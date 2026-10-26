@@ -489,13 +489,20 @@ class RelayReceiver(
       return if (welcomed) Outcome.LOST_AFTER_WELCOME else Outcome.LOST
     } finally {
       pinger?.interrupt()
-      synchronized(lock) {
+      val ours = synchronized(lock) {
         if (socket === connection) {
           socket = null
           output = null
+          true
+        } else {
+          false
         }
       }
-      runCatching { connection.close() }
+      // A connection that disconnect() or a new connect() took is closed by its bye thread once the bye is written:
+      // closed here first, the phone read no bye but a closed socket (p2/noon-test-check-2026-10-26.md C3)
+      if (ours) {
+        runCatching { connection.close() }
+      }
       if (welcomed) {
         runCatching { listener.onDisconnected() }
       }

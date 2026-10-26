@@ -795,6 +795,8 @@ class RelayServer(
           }
           if (headset.pendingSteady != null) {
             needed = true
+            // The encoder made for it starts at the rate its link allows
+            allowed += headset.rate.allowedBps
             continue
           }
           val why = if (quality == RelayQuality.AUTOMATIC) headset.policy.onFullTick(nowNs, age, dropped) else null
@@ -810,12 +812,16 @@ class RelayServer(
             }
             needed = true
             askSwitch = true
+            allowed += headset.rate.allowedBps
           }
         }
       }
     }
     source.setEnabled(enabled, nowNs)
     source.setCapableReceivers(capable, nowNs)
+    // The rate before the need: an encoder this tick makes starts at the rate of the receivers that wait for it, and
+    // with none on the steady stream the next one starts at 8 Mbit/s (p2/noon-test-check-2026-10-26.md C9)
+    encoderRate.next(allowed, null, nowNs)?.let { source.setBitrate(it, nowNs) }
     source.setNeeded(needed, nowNs)
     if (askSwitch) {
       source.requestKey(RelayKeyCause.SWITCH, nowNs)
@@ -823,7 +829,6 @@ class RelayServer(
     if (askDrop) {
       source.requestKey(RelayKeyCause.DROP, nowNs)
     }
-    encoderRate.next(allowed, null, nowNs)?.let { source.setBitrate(it, nowNs) }
     source.setPictureRate(if (slow) 15 else 30, nowNs)
     source.tick(nowNs)
   }
@@ -1006,6 +1011,9 @@ class RelayServer(
     var primed = false
     var reservation = false
     var headset: RelayHeadset? = null
+    // Why the receiver left, as its reader saw it (p2/noon-test-check-2026-10-26.md C3); a close the phone made first
+    // (stopped, silent, stalled, write failed, phone bye) keeps its own reason
+    var ended = "reader ended"
     try {
       socket.tcpNoDelay = true
       runCatching { socket.trafficClass = RelayWire.TRAFFIC_CLASS }
@@ -1192,13 +1200,19 @@ class RelayServer(
       log("$who $number joined from $address" + if (primed) ", the last key picture sent first" else "")
       onChange()
       socket.soTimeout = pingTimeoutMs
-      readLoop(joined, input)
+      ended = readLoop(joined, input)
     } catch (error: RelayProtocolException) {
       unexpected(error.reason)
+      ended = "unexpected"
+    } catch (_: SocketTimeoutException) {
+      // After the welcome: nothing read for the ping timeout (a receiver pings every 500 ms)
+      ended = "timeout"
     } catch (_: IOException) {
-      // The headset left, timed out or the phone stopped
+      // The receiver's socket closed without a bye (or the phone closed it first, for its own reason)
+      ended = "closed"
     } catch (error: RuntimeException) {
       unexpected(error.javaClass.simpleName)
+      ended = "unexpected"
     } finally {
       if (inHandshake) {
         handshakes.decrementAndGet()
@@ -1209,15 +1223,18 @@ class RelayServer(
       }
       val joined = headset
       if (joined != null) {
-        joined.close("reader ended")
+        joined.close(ended)
       } else {
         runCatching { socket.close() }
       }
     }
   }
 
-  /** The headset's records after the welcome: pings and a bye; anything else closes it */
-  private fun readLoop(headset: RelayHeadset, input: DataInputStream) {
+  /**
+   * The headset's records after the welcome: pings and a bye; anything else closes it. Returns why it ended: "bye" for
+   * the receiver's bye (a TV's watch page that closes says it), "unexpected" for a record it may not send
+   */
+  private fun readLoop(headset: RelayHeadset, input: DataInputStream): String {
     while (!headset.closed) {
       val record = RelayWire.read(input, fromPhone = false)
       when (record.type) {
@@ -1228,13 +1245,14 @@ class RelayServer(
           // The send time is written by the writer when the pong leaves
           headset.queue.offerPong(RelayWire.pongBody(ping.sendNs, received, 0), received)
         }
-        RelayWire.HEADSET_BYE -> return
+        RelayWire.HEADSET_BYE -> return "bye"
         else -> {
           unexpected("a second hello")
-          return
+          return "unexpected"
         }
       }
     }
+    return "reader ended"
   }
 
   private fun refuse(output: OutputStream, reason: String) {

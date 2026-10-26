@@ -135,14 +135,15 @@ class RelayRateControlTest {
   }
 
   @Test
-  fun atTheFloorAndStillLateItGoesToFifteenAndBackAfterFiveClearSecondsAtThreeMegabits() {
+  fun atTheFloorAndStillLateItGoesToFifteenAndBackAfterOneClearSecondAtThreeMegabits() {
     val rate = RelayRateController()
     rate.onTick(0, 0, 1_000_000, 0, dropped = true)
     assertEquals(RelayRateController.MIN_BPS, rate.allowedBps)
     assertFalse(rate.slow)
     rate.onTick(600 * ms, 300 * ms, 1_000_000, 0, dropped = false)
     assertTrue(rate.slow)
-    // Clear from now on: the rate climbs back by a quarter every 2 s, then 5 s at 3 Mbit/s or more
+    // Clear from now on: the rate climbs back by a quarter every 2 s, then 1 s at 3 Mbit/s or more
+    // (p2/noon-test-check-2026-10-26.md C10: 5 s before, about 13 s at 15 a second after each fall)
     var now = 700 * ms
     var backAt: Long? = null
     while (now < 30 * second && backAt == null) {
@@ -154,8 +155,8 @@ class RelayRateControlTest {
     }
     val back = backAt!!
     assertTrue("back at ${back / ms} ms", rate.allowedBps >= RelayRateController.SLOW_BACK_BPS)
-    // 1.5, 1.875, 2.34, 2.93, 3.66 Mbit/s: four raises of 2 s, then 5 s at 3.66
-    assertTrue("back at ${back / ms} ms", back in (12 * second)..(15 * second))
+    // 1.5, 1.875, 2.34, 2.93, 3.66 Mbit/s: four raises of 2 s, then 1 s at 3.66
+    assertTrue("back at ${back / ms} ms", back in (9 * second)..(11 * second))
   }
 
   @Test
@@ -170,6 +171,17 @@ class RelayRateControlTest {
     assertEquals(3_000_000, encoder.next(listOf(3_000_000), null, 600 * ms))
     assertEquals(6_000_000, encoder.next(listOf(12_000_000), 6_000_000, 1_200 * ms))
     assertEquals(6_000_000, encoder.currentBps)
+  }
+
+  /** p2/noon-test-check-2026-10-26.md C9: with nobody on the steady stream, the next encoder starts at 8 Mbit/s */
+  @Test
+  fun withNoSteadyReceiverTheEncoderRateGoesBackToEightMegabitsAndTheNextOneIsGivenAtOnce() {
+    val encoder = RelayEncoderRate()
+    assertEquals(1_500_000, encoder.next(listOf(1_500_000), null, 0))
+    assertEquals(RelayRateController.START_BPS, encoder.next(emptyList(), null, 100 * ms))
+    assertNull(encoder.next(emptyList(), null, 150 * ms))
+    // The next receiver's rate at once, though the last one was given 100 ms ago
+    assertEquals(1_500_000, encoder.next(listOf(1_500_000), null, 200 * ms))
   }
 
   @Test
@@ -193,12 +205,29 @@ class RelayRateControlTest {
     }
   }
 
+  /**
+   * The TV's path on the steady stream in the noon test of 26 October, its seconds 19 to 77 (relay-line-20261026.csv,
+   * made by make_relay_line.py beside it): what it carried when backlogged, else at least the best second it carried in
+   * the session, 13.4 Mbit/s
+   */
+  private fun line26(): List<Double> {
+    val text = javaClass.classLoader!!.getResourceAsStream("djilink/relay-line-20261026.csv")!!
+      .bufferedReader().readText()
+    return text.lines().filter { it.isNotBlank() && !it.startsWith("#") && !it.startsWith("second") }.map { line ->
+      val cells = line.split(',')
+      val carried = cells[1].toDouble() * 1024 * 8
+      if (cells[2] == "1") carried else maxOf(carried, 13.4e6)
+    }
+  }
+
   private class Replay(
     val drops: Int,
     val underAtEnd: Double,
     val underAll: Double,
     val medianBps: Double,
     val rates: List<Int> = emptyList(),
+    /** Seconds at 15 pictures a second */
+    val slowSeconds: Double = 0.0,
   )
 
   /**
@@ -217,10 +246,12 @@ class RelayRateControlTest {
     var maxAge = 0L
     var produce = 0.0
     val rates = mutableListOf<Int>()
+    var slowSteps = 0
     for (step in 0 until seconds.size * 10) {
       val now = step * 100 * ms
       val bps = if (adaptive) rate.allowedBps else RelayRateController.START_BPS
       val perSecond = if (rate.slow) 15 else 30
+      if (rate.slow) slowSteps += 1
       produce += perSecond / 10.0
       while (produce >= 1 - 1e-9) {
         produce -= 1
@@ -260,7 +291,13 @@ class RelayRateControlTest {
     }
     val sorted = rates.sorted()
     val count = seconds.size.toDouble()
-    return Replay(drops, underEnd / count, underAll / count, sorted[sorted.size / 2].toDouble())
+    return Replay(
+      drops,
+      underEnd / count,
+      underAll / count,
+      sorted[sorted.size / 2].toDouble(),
+      slowSeconds = slowSteps / 10.0,
+    )
   }
 
   @Test
@@ -307,11 +344,13 @@ class RelayRateControlTest {
     var frame = 0
     var waitKey = false
     val rates = mutableListOf<Int>()
+    var slowSteps = 0
     val first = if (startBps != null) 1 else 0
     for (step in first until seconds.size * 10) {
       val now = step * 100 * ms
       val bps = rate.allowedBps
       val perSecond = if (rate.slow) 15 else 30
+      if (rate.slow) slowSteps += 1
       val group = 2 * perSecond
       produce += perSecond / 10.0
       while (produce >= 1 - 1e-9) {
@@ -366,7 +405,7 @@ class RelayRateControlTest {
     }
     val sorted = rates.sorted()
     val count = seconds.size.toDouble()
-    return Replay(drops, underEnd / count, underAll / count, sorted[sorted.size / 2].toDouble(), rates)
+    return Replay(drops, underEnd / count, underAll / count, sorted[sorted.size / 2].toDouble(), rates, slowSteps / 10.0)
   }
 
   @Test
@@ -381,6 +420,35 @@ class RelayRateControlTest {
     assertTrue("drops ${replayed.drops}", replayed.drops <= 40)
     assertTrue("under 0.3 s at the end of ${replayed.underAtEnd}", replayed.underAtEnd >= 0.85)
     assertTrue("under 0.3 s all through ${replayed.underAll}", replayed.underAll >= 0.78)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C10 (item 6 of its section 4): after each fall to the floor the TV stayed about
+   * 13 s at 15 a second, 44 of its 59 steady seconds; the replay of its line gives the same 44 s with the 5 s hold.
+   * With 1 s the same line spends about half of that at 15, and neither line drops more than with the 5 s hold
+   * (25 October: 19 drops with uniform units, 20 with key pictures; 26 October: 5 and 6). A faster climb from the
+   * floor was replayed too and dropped more on 25 October (23 to 27): not taken.
+   */
+  @Test
+  fun theTvsSteadyLineOf26OctoberSpendsLessTimeAtFifteenWithNoMoreDrops() {
+    val line = line26()
+    assertEquals(59, line.size)
+    val uniform = replay(line)
+    val keys = replayWithKeys(line)
+    val october25 = replay(capacity())
+    val october25Keys = replayWithKeys(capacity())
+    println(
+      "26 October, the TV's steady line, 59 s: ${uniform.drops} drops, ${"%.1f".format(uniform.slowSeconds)} s at " +
+        "15 a second; with key pictures ${keys.drops} drops, ${"%.1f".format(keys.slowSeconds)} s at 15; 25 October " +
+        "${october25.drops} and ${october25Keys.drops} drops, ${"%.1f".format(october25.slowSeconds)} and " +
+        "${"%.1f".format(october25Keys.slowSeconds)} s at 15",
+    )
+    assertTrue("drops ${uniform.drops}", uniform.drops <= 5)
+    assertTrue("drops with keys ${keys.drops}", keys.drops <= 6)
+    assertTrue("25 October drops ${october25.drops}", october25.drops <= 19)
+    assertTrue("25 October drops with keys ${october25Keys.drops}", october25Keys.drops <= 20)
+    assertTrue("at 15 a second ${uniform.slowSeconds} s", uniform.slowSeconds <= 30.0)
+    assertTrue("at 15 a second with keys ${keys.slowSeconds} s", keys.slowSeconds <= 30.0)
   }
 
   @Test

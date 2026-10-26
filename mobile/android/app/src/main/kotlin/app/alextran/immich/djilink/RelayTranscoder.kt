@@ -376,6 +376,11 @@ class RelayTranscoder(
   private var encoderSinceNs: Long? = null
   private var encoderRunNs = 0L
 
+  /** Decoder 2's own time, and its time with no encoder (p2/noon-test-check-2026-10-26.md C11), counted on the tick */
+  private var decoderTickNs: Long? = null
+  private var decoderRunNs = 0L
+  private var decoderAloneNs = 0L
+
   // Timeline
   private val timeline = IntArray(TIMELINE_SECONDS * COLUMNS)
   private var seconds = 0L
@@ -539,6 +544,9 @@ class RelayTranscoder(
     batteryWhile.clear()
     encoderSinceNs = null
     encoderRunNs = 0
+    decoderTickNs = null
+    decoderRunNs = 0
+    decoderAloneNs = 0
     timeline.fill(0)
     seconds = 0
     decodedAtSample = 0
@@ -831,17 +839,21 @@ class RelayTranscoder(
       runCatching { made.release() }
       return
     }
-    synchronized(lock) {
+    val correction = synchronized(lock) {
       encoder = made
       setup = made.setup
-      bitrateBps = minOf(askedBps, capLocked() ?: askedBps)
-      noteBitrateLocked(bitrateBps)
+      // It runs at the rate it was made with; a rate asked or a thermal cap that came while it was made goes to it now,
+      // counted (p2/noon-test-check-2026-10-26.md 3.4)
+      bitrateBps = rate
+      noteBitrateLocked(rate)
       keys.onEncoderStarted()
       decimator.reset()
       decimator.perSecond = perSecondLocked()
       slowSinceNs = null
       slowAtFifteenNs = null
+      applyBitrateLocked()
     }
+    correction?.let { (port, target) -> runCatching { port.setBitrate(target) } }
     val setupMade = made.setup
     log("encoder ${made.name} ${setupMade.width}x${setupMade.height} ${setupMade.bitrateMode} level ${setupMade.level}")
     onChange()
@@ -1227,6 +1239,18 @@ class RelayTranscoder(
       } else {
         encoderSinceNs = null
       }
+      val decoderSince = decoderTickNs
+      if (decoder != null) {
+        if (decoderSince != null) {
+          decoderRunNs += nowNs - decoderSince
+          if (encoder == null) {
+            decoderAloneNs += nowNs - decoderSince
+          }
+        }
+        decoderTickNs = nowNs
+      } else {
+        decoderTickNs = null
+      }
       val retry = retryAtNs
       if (unavailable != null && retry != null && nowNs >= retry) {
         // A creation that failed is tried again at the next need
@@ -1265,6 +1289,9 @@ class RelayTranscoder(
         }
       }
       if (keys.due(nowNs)) {
+        askKey = encoder
+      } else if (encoder != null && needed && keys.periodDue(nowNs)) {
+        // No key picture for 2 s at 15 a second: the encoder counts its period in pictures at 30
         askKey = encoder
       }
       val notNeeded = notNeededSinceNs
@@ -1446,6 +1473,12 @@ class RelayTranscoder(
       put("perSecond", perSecondLocked())
       put("bitrateMode", made?.bitrateMode)
       put("latencyAccepted", made?.latencyAccepted)
+      // Whether it behaved as a latency of one picture whatever its output format says: its encode p95, from the swap
+      // to the output, under one picture at the rate it was configured with (p2/noon-test-check-2026-10-26.md C14)
+      put(
+        "latencyMeasured",
+        made?.let { configured -> encodeTimes.percentileMs(0.95)?.let { it < 1000.0 / configured.perSecond } },
+      )
       put("headersOnKeys", made?.headersOnKeys)
       // Whether every key picture came out with its sets in band, null before the first
       put("headersOnKeysTaken", if (keysOut == 0L) null else setsAdded == 0L)
@@ -1461,12 +1494,21 @@ class RelayTranscoder(
       put("encodedBytes", encodedBytes)
       put("encodedWithoutSets", unitsWithoutSets)
       put("keySetsAddedInBand", setsAdded)
+      // Over the relay's time since it started, which pins that start; over the encoder's own time beside it
+      // (p2/noon-test-check-2026-10-26.md C13)
+      put("relayRunningS", spanS)
       put("megabitsPerSecondMean", encodedBytes * 8.0 / 1e6 / spanS)
+      put(
+        "megabitsPerSecondWhileRunning",
+        if (encoderRunNs > 0) encodedBytes * 8.0 / 1e6 / (encoderRunNs / 1e9) else null,
+      )
       put("bitrateNowKbps", if (encoder != null) bitrateBps / 1000 else null)
       put("bitrateMinKbps", bitrateMin?.div(1000))
       put("bitrateMaxKbps", bitrateMax?.div(1000))
       put("bitrateChanges", bitrateChanges)
       put("keysPeriodic", keys.keysPeriodic)
+      // The first key of each encoder no request waited for, apart from its periodic ones
+      put("keysFirst", keys.keysFirst)
       put("keysAsked", keys.keysAsked)
       put("keyRequests", buildJsonObject { keys.byCause.forEach { (cause, count) -> put(cause.wire, count) } })
       put("keyRequestsSent", keys.sent)
@@ -1501,6 +1543,8 @@ class RelayTranscoder(
       put("pilotDecodeP95WhileMedianMs", pilotDuring.percentileMs(0.5))
       put("pilotDecodeP95WhileMaxMs", pilotDuring.maxMs)
       put("encoderRunningS", encoderRunNs / 1e9)
+      put("decoderRunningS", decoderRunNs / 1e9)
+      put("decoderAloneS", decoderAloneNs / 1e9)
       put(
         "failures",
         buildJsonArray {

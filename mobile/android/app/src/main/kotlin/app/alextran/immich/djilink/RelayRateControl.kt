@@ -15,7 +15,11 @@ package app.alextran.immich.djilink
  *    down for the flight (p2/review-bandwidth-2026-10-25.md M4). A tick of rule 2 or 3 starts the time again.
  * 5. Within [MIN_BPS] and [MAX_BPS]; a rule that lowers it never raises it.
  * 6. At [MIN_BPS] and still over [downAgeNs]: 15 pictures a second ([slow]), back to 30 after [SLOW_BACK_NS] under
- *    [CLEAR_AGE_NS] at [SLOW_BACK_BPS] or more.
+ *    [CLEAR_AGE_NS] at [SLOW_BACK_BPS] or more, a rate rule 4 reaches only after 2 s clear. At 3 Mbit/s a picture at
+ *    30 a second is as large as one at the floor at 15. The hold was 5 s until the noon test of 26 October, where the
+ *    TV stayed about 13 s at 15 a second after each fall, 44 of its 59 steady seconds
+ *    (p2/noon-test-check-2026-10-26.md C10); with 1 s its line and the flights of 25 October replay with no more drops
+ *    and half the time at 15 on the TV's line (RelayRateControlTest).
  *
  * Replayed on the capacity the Wi-Fi had in the flights of 25 October, with a key picture of eight P pictures every
  * 2 s, one after each drop and the writes they block, this gives about 20 clean drops in 250 s and the queue under
@@ -37,7 +41,7 @@ class RelayRateController(headset: Boolean = false) {
     const val UP_AFTER_NS = 2_000_000_000L
     const val CLEAR_SHARE = 0.9
     const val UP_FACTOR = 1.25
-    const val SLOW_BACK_NS = 5_000_000_000L
+    const val SLOW_BACK_NS = 1_000_000_000L
     const val SLOW_BACK_BPS = 3_000_000
 
     fun clamp(bps: Double): Int = bps.coerceIn(MIN_BPS.toDouble(), MAX_BPS.toDouble()).toInt()
@@ -144,9 +148,12 @@ class RelayRateController(headset: Boolean = false) {
 }
 
 /**
- * The bit rate the phone's encoder runs at (p2/relay-bandwidth-2026-10-25.md, 7.6): the least rate the steady receivers
- * allow, under the thermal cap when there is one, set at most every [everyNs] (an encoder takes a new rate at its next
- * picture). Pure.
+ * The bit rate the phone's encoder runs at (p2/relay-bandwidth-2026-10-25.md, 7.6): the least rate the receivers on
+ * the steady stream or waiting for it allow, under the thermal cap when there is one, set at most every [everyNs] (an
+ * encoder takes a new rate at its next picture). With none, the rate given last is forgotten and
+ * [RelayRateController.START_BPS] is given once, at once the next time: an encoder made for the next receiver starts
+ * at the rate of a receiver nothing is known of, not at the one the last receiver left
+ * (p2/noon-test-check-2026-10-26.md C9). Pure.
  */
 class RelayEncoderRate(private val everyNs: Long = EVERY_NS) {
   companion object {
@@ -160,7 +167,17 @@ class RelayEncoderRate(private val everyNs: Long = EVERY_NS) {
 
   /** The rate to give the encoder now, or null when it stays as it is (unchanged, or set less than [everyNs] ago) */
   fun next(allowed: List<Int>, capBps: Int?, nowNs: Long): Int? {
-    var target = allowed.minOrNull() ?: return null
+    if (allowed.isEmpty()) {
+      // No receiver on the steady stream: the next one's rate is given as soon as it comes
+      lastSetNs = null
+      val given = currentBps ?: return null
+      if (given == RelayRateController.START_BPS) {
+        return null
+      }
+      currentBps = RelayRateController.START_BPS
+      return RelayRateController.START_BPS
+    }
+    var target = allowed.min()
     if (capBps != null) {
       target = minOf(target, capBps)
     }

@@ -214,7 +214,10 @@ class RelayQueueSteadyTest {
     // Within 300 ms of the next periodic key (2 s after the last): it waits for that one
     assertFalse(keys.request(RelayKeyCause.DROP, 2_900 * ms))
     assertFalse(keys.onKey(3_070 * ms))
-    assertEquals(mapOf(RelayKeyCause.JOIN to 1L, RelayKeyCause.DROP to 3L, RelayKeyCause.SWITCH to 1L), keys.byCause)
+    assertEquals(
+      mapOf(RelayKeyCause.JOIN to 1L, RelayKeyCause.DROP to 3L, RelayKeyCause.SWITCH to 1L, RelayKeyCause.PERIOD to 0L),
+      keys.byCause,
+    )
     assertEquals(2L, keys.sent)
     assertEquals(4L, keys.coalesced)
     assertEquals(2L, keys.keysAsked)
@@ -239,6 +242,34 @@ class RelayQueueSteadyTest {
     keys.onKey(4_150 * ms)
     assertFalse(keys.due(4_300 * ms))
     assertEquals(1L, keys.sent)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md 3.5: none for 2 s (and the 100 ms of a late one), a key is asked for the period;
+   * not while one is asked, nor before a new encoder's first
+   */
+  @Test
+  fun aKeyIsAskedForThePeriodWhenNoneCameForTwoSecondsButNotBeforeANewEncodersFirst() {
+    val keys = RelayKeyRequests()
+    keys.onEncoderStarted()
+    keys.onKey(0)
+    assertFalse(keys.periodDue(2_000 * ms))
+    assertFalse(keys.periodDue(2_099 * ms))
+    assertTrue(keys.periodDue(2_100 * ms))
+    // Asked: not again while its key may still come
+    assertFalse(keys.periodDue(2_500 * ms))
+    // No key within a second: asked again
+    assertTrue(keys.periodDue(3_100 * ms))
+    assertTrue(keys.onKey(3_150 * ms))
+    assertFalse(keys.periodDue(5_000 * ms))
+    // A new encoder: its first output is a key anyway
+    keys.onEncoderStarted()
+    assertFalse(keys.periodDue(5_300 * ms))
+    keys.onKey(5_400 * ms)
+    assertFalse(keys.periodDue(7_400 * ms))
+    assertTrue(keys.periodDue(7_500 * ms))
+    assertEquals(3L, keys.byCause[RelayKeyCause.PERIOD])
+    assertEquals(3L, keys.sent)
   }
 
   @Test

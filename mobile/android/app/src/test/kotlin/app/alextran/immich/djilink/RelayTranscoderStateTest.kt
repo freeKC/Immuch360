@@ -2,6 +2,7 @@ package app.alextran.immich.djilink
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.double
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -39,6 +40,9 @@ class FakeRelayDecoder(private val core: RelayTranscoder) : RelayDecoderPort {
 
 class FakeRelayEncoder(var rateBps: Int, override val setup: RelayEncoderSetup) : RelayEncoderPort {
   override val name = "c2.fake.hevc.encoder"
+
+  /** The rate it was made with */
+  val madeAtBps = rateBps
   var keys = 0
   var released = false
   val bitrates = mutableListOf<Int>()
@@ -490,7 +494,8 @@ class RelayTranscoderStateTest {
     assertEquals(1, encoder.keys)
     core.requestKey(RelayKeyCause.DROP, now)
     assertEquals(1, encoder.keys)
-    val counts = mapOf(RelayKeyCause.JOIN to 1L, RelayKeyCause.DROP to 1L, RelayKeyCause.SWITCH to 0L)
+    val counts =
+      mapOf(RelayKeyCause.JOIN to 1L, RelayKeyCause.DROP to 1L, RelayKeyCause.SWITCH to 0L, RelayKeyCause.PERIOD to 0L)
     assertEquals(counts, core.keyCounts())
     val requests = core.report(now)!!["keyRequests"]!!.jsonObject
     assertEquals(1, requests["drop"]!!.jsonPrimitive.int)
@@ -797,6 +802,216 @@ class RelayTranscoderStateTest {
     assertEquals(1920, report["codedWidth"]!!.jsonPrimitive.int)
     assertEquals(1088, report["codedHeight"]!!.jsonPrimitive.int)
     assertEquals("true", report["headersOnKeysTaken"]!!.jsonPrimitive.content)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md 3.4 (item 4 of its section 4): a rate the tick asks while the encoder is being made
+   * reaches the encoder once it is made, and is counted; so does the thermal cap that comes meanwhile
+   */
+  @Test
+  fun aRateAskedWhileTheEncoderIsMadeReachesItAndIsCounted() {
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    codecs.whileEncoderMade = { core.setBitrate(3_000_000, now) }
+    core.setNeeded(true, now)
+    val encoder = codecs.encoders.single()
+    assertEquals(8_000_000, encoder.madeAtBps)
+    assertEquals(3_000_000, encoder.rateBps)
+    val report = core.report(now)!!
+    assertEquals(3_000L, report["bitrateNowKbps"]!!.jsonPrimitive.long)
+    assertEquals(1L, report["bitrateChanges"]!!.jsonPrimitive.long)
+    assertEquals(3_000L, report["bitrateMinKbps"]!!.jsonPrimitive.long)
+    assertEquals(8_000L, report["bitrateMaxKbps"]!!.jsonPrimitive.long)
+    // Made again (a recoverable encoder error) while the phone gets hot: the cap reaches the new one
+    core.setBitrate(8_000_000, now)
+    codecs.whileEncoderMade = { core.onThermal(RelayTranscoder.THERMAL_MODERATE, now) }
+    core.onEncoderError("reset", recoverable = true, nowNs = now)
+    val again = codecs.encoders.last()
+    assertEquals(2, codecs.encoders.size)
+    assertEquals(RelayTranscoder.HOT_CAP_BPS, again.rateBps)
+    assertEquals(6_000L, core.report(now)!!["bitrateNowKbps"]!!.jsonPrimitive.long)
+  }
+
+  /**
+   * The encoder of the S24+ as the noon test of 26 October read it (p2/noon-test-check-2026-10-26.md 3.5): its key
+   * period is 60 pictures, counted at whatever rate it is fed, and an asked key starts the count again. Runs [seconds]
+   * of the drone's stream at 60 a second, the steady stream at [perSecond], the server's tick every 100 ms; returns the
+   * times the key pictures came out.
+   */
+  private fun keysOfAnEncoderCountingPictures(perSecond: Int, seconds: Int): List<Long> {
+    val (decoder, encoder) = steady()
+    core.setPictureRate(perSecond, now)
+    val keyTimes = mutableListOf<Long>()
+    var sinceKey = 0
+    var asked = encoder.keys
+    var index = 1
+    val end = now + seconds * second
+    var nextTick = now + 100 * ms
+    while (now < end) {
+      now += 50 * ms / 3
+      core.offer(droneUnit(index++), drone)
+      for (input in decoder.pull(now)) {
+        if (!core.onDecoded(input.ptsUs, now)) {
+          continue
+        }
+        core.onDrawn(input.ptsUs, now)
+        val key = keyTimes.isEmpty() || sinceKey >= 60 || encoder.keys > asked
+        asked = encoder.keys
+        sinceKey = if (key) 1 else sinceKey + 1
+        core.onEncoded(encoded("a1080", if (key) 0 else 1), input.ptsUs, config = false, key = key, nowNs = now)
+        if (key) keyTimes += now
+      }
+      if (now >= nextTick) {
+        core.tick(now)
+        nextTick += 100 * ms
+      }
+    }
+    return keyTimes
+  }
+
+  /** p2/noon-test-check-2026-10-26.md 3.5 (item 5): at 15 a second a key picture still comes every 2 s */
+  @Test
+  fun atFifteenASecondAKeyIsAskedWhenNoneCameForTwoSeconds() {
+    val keyTimes = keysOfAnEncoderCountingPictures(15, 20)
+    val gaps = keyTimes.zipWithNext { a, b -> (b - a) / ms }
+    assertTrue("gaps $gaps", gaps.all { it <= 2_300 })
+    assertTrue("keys ${keyTimes.size}", keyTimes.size >= 9)
+    val report = core.report(now)!!
+    val asked = report["keyRequests"]!!.jsonObject["period"]!!.jsonPrimitive.long
+    // Asked for the period with its own cause, and answered: every key but the encoder's first
+    assertEquals(keyTimes.size - 1L, asked)
+    assertEquals(keyTimes.size - 1L, report["keysAsked"]!!.jsonPrimitive.long)
+    assertEquals(1L, report["keysFirst"]!!.jsonPrimitive.long)
+    assertEquals(0L, report["keysPeriodic"]!!.jsonPrimitive.long)
+  }
+
+  /** At 30 a second the encoder's own period is 2 s: nothing is asked, no key twice */
+  @Test
+  fun atThirtyASecondTheEncodersOwnKeysAreEnough() {
+    val keyTimes = keysOfAnEncoderCountingPictures(30, 20)
+    val gaps = keyTimes.zipWithNext { a, b -> (b - a) / ms }
+    assertTrue("gaps $gaps", gaps.all { it in 1_900..2_100 })
+    val report = core.report(now)!!
+    assertEquals(0L, report["keyRequests"]!!.jsonObject["period"]!!.jsonPrimitive.long)
+    assertEquals(0L, report["keysAsked"]!!.jsonPrimitive.long)
+    assertEquals(1L, report["keysFirst"]!!.jsonPrimitive.long)
+    assertEquals(keyTimes.size - 1L, report["keysPeriodic"]!!.jsonPrimitive.long)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md R4 (item 7): the first key of an encoder made again at a drone key with new sets
+   * is counted apart, not as one of the encoder's periodic keys
+   */
+  @Test
+  fun theFirstKeyOfEachEncoderIsCountedApartFromItsPeriodicOnes() {
+    val (decoder, _) = steady()
+    now += 20 * ms
+    step(1, decoder)
+    repeat(5) {
+      now += 50 * ms / 3
+      step(2 + it, decoder)
+    }
+    // The drone's encoder restarts with new sets: decoder 2 and the encoder are made again, its first output a key
+    val other = ResolvedDescription(EncodedUnits.descriptionOf(encoded("a1080", 0))!!, DescriptionSource.SESSION)
+    now += 50 * ms / 3
+    core.offer(droneUnit(10, key = true), other)
+    assertEquals(2, codecs.encoders.size)
+    for (input in codecs.decoders.last().pull(now)) {
+      if (core.onDecoded(input.ptsUs, now)) {
+        core.onDrawn(input.ptsUs, now)
+        core.onEncoded(encoded("a1080", 0), input.ptsUs, config = false, key = true, nowNs = now + 15 * ms)
+      }
+    }
+    val report = core.report(now)!!
+    assertEquals(0L, report["keysPeriodic"]!!.jsonPrimitive.long)
+    assertEquals(0L, report["keysAsked"]!!.jsonPrimitive.long)
+    assertEquals(2L, report["keysFirst"]!!.jsonPrimitive.long)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C13 (item 8): megabitsPerSecondMean divides by the relay's time, which pins the
+   * relay's start; the export says that time and the rate over the encoder's own time beside it
+   */
+  @Test
+  fun theReportSaysTheRelaysTimeAndTheRateWhileTheEncoderRan() {
+    running()
+    // 10 s of relay with no steady receiver, then 4 s of steady stream
+    now += 10 * second
+    core.tick(now)
+    core.offer(droneUnit(0, key = true), drone)
+    core.setNeeded(true, now)
+    val decoder = codecs.decoders.last()
+    core.tick(now)
+    repeat(4 * 60) {
+      now += 50 * ms / 3
+      step(it + 1, decoder)
+      if (it % 6 == 5) core.tick(now)
+    }
+    core.tick(now)
+    val report = core.report(now)!!
+    val bytes = report["encodedBytes"]!!.jsonPrimitive.long
+    assertTrue(bytes > 0)
+    val relayS = report["relayRunningS"]!!.jsonPrimitive.double
+    val encoderS = report["encoderRunningS"]!!.jsonPrimitive.double
+    assertEquals(14.0, relayS, 0.01)
+    assertEquals(4.0, encoderS, 0.01)
+    assertEquals(bytes * 8 / 1e6 / relayS, report["megabitsPerSecondMean"]!!.jsonPrimitive.double, 1e-9)
+    assertEquals(bytes * 8 / 1e6 / encoderS, report["megabitsPerSecondWhileRunning"]!!.jsonPrimitive.double, 1e-9)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C11 (item 11): decoder 2 runs while a receiver of this build is connected, with no
+   * encoder until one needs the steady stream; its own time and its time alone are in the export
+   */
+  @Test
+  fun theReportSaysDecoderTwosTimeAndItsTimeWithoutAnEncoder() {
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    assertEquals(1, codecs.decoders.size)
+    assertTrue(codecs.encoders.isEmpty())
+    // Decoder 2 takes its units as they come
+    codecs.decoders.single().pull(now)
+    repeat(31) {
+      core.tick(now)
+      now += 100 * ms
+    }
+    // 3 s alone, then 2 s with the encoder
+    now -= 100 * ms
+    core.setNeeded(true, now)
+    assertEquals(1, codecs.encoders.size)
+    repeat(20) {
+      now += 100 * ms
+      core.tick(now)
+    }
+    val report = core.report(now)!!
+    assertEquals(5.0, report["decoderRunningS"]!!.jsonPrimitive.double, 0.001)
+    assertEquals(3.0, report["decoderAloneS"]!!.jsonPrimitive.double, 0.001)
+    // The encoder's time is counted from the first tick that sees it, one tick later
+    assertEquals(2.0, report["encoderRunningS"]!!.jsonPrimitive.double, 0.101)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C14 (item 12): the S24+'s output format says nothing of KEY_LATENCY, so
+   * latencyAccepted is null, while its encode p95 of 11 ms is under one picture: the export says what was measured
+   */
+  @Test
+  fun theReportSaysWhetherTheEncoderBehavedAsALatencyOfOnePicture() {
+    codecs.latencyAccepted = null
+    val (decoder, _) = steady()
+    assertNull(core.report(now)!!["latencyMeasured"]!!.jsonPrimitive.contentOrNullSafe())
+    repeat(30) {
+      now += 50 * ms / 3
+      step(it + 1, decoder, encodeMs = 11)
+    }
+    val report = core.report(now)!!
+    assertNull(report["latencyAccepted"]!!.jsonPrimitive.contentOrNullSafe())
+    assertEquals("true", report["latencyMeasured"]!!.jsonPrimitive.content)
+    // An encoder that holds a picture: its encode time passes one period at the 30 a second it was configured with
+    repeat(120) {
+      now += 50 * ms / 3
+      step(31 + it, decoder, encodeMs = 45)
+    }
+    assertEquals("false", core.report(now)!!["latencyMeasured"]!!.jsonPrimitive.content)
   }
 
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null

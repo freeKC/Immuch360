@@ -161,12 +161,14 @@ class MonotonicPts {
 }
 
 /**
- * The key pictures asked of the phone's encoder (p2/relay-bandwidth-2026-10-25.md, 7.5 item 5): one encoder serves
- * every steady receiver, so a key asked for one goes to all. A request within [spacingNs] of the last key waits until
- * then; one within [spacingNs] of the next periodic key ([periodNs] after the last) waits for it, and is asked anyway
- * when that key is [LATE_NS] late (an encoder that keeps its own schedule, or counts its interval in pictures at 15 a
- * second: p2/review-bandwidth-2026-10-25.md m1); one made while an earlier request has not brought its key yet (for up
- * to a second) is served by it. Counted by cause. Pure, with the times given; its user holds the lock.
+ * The key pictures asked of the phone's encoder (p2/relay-bandwidth-2026-10-25.md, 7.5 items 4 and 5): one encoder
+ * serves every steady receiver, so a key asked for one goes to all. A request within [spacingNs] of the last key waits
+ * until then; one within [spacingNs] of the next periodic key ([periodNs] after the last) waits for it, and is asked
+ * anyway when that key is [LATE_NS] late (an encoder that keeps its own schedule, or counts its interval in pictures at
+ * 15 a second: p2/review-bandwidth-2026-10-25.md m1); one made while an earlier request has not brought its key yet
+ * (for up to a second) is served by it. When no key came out for [periodNs] and [LATE_NS], one is asked for the period
+ * ([periodDue]): the encoder counts its period in pictures at the 30 a second it was configured with, every 4 s at 15
+ * (p2/noon-test-check-2026-10-26.md 3.5). Counted by cause. Pure, with the times given; its user holds the lock.
  */
 class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val periodNs: Long = PERIOD_NS) {
   companion object {
@@ -183,8 +185,16 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
   /** A request left to the periodic key: asked anyway when that key is late */
   private var waitingPeriodic = false
 
+  /** A new encoder's first key picture has not come out yet: it comes anyway, nothing is asked for the period */
+  private var firstPending = false
+
   /** Requests by cause */
-  val byCause = linkedMapOf(RelayKeyCause.JOIN to 0L, RelayKeyCause.DROP to 0L, RelayKeyCause.SWITCH to 0L)
+  val byCause = linkedMapOf(
+    RelayKeyCause.JOIN to 0L,
+    RelayKeyCause.DROP to 0L,
+    RelayKeyCause.SWITCH to 0L,
+    RelayKeyCause.PERIOD to 0L,
+  )
 
   /** Requests served by a key already asked or due */
   var coalesced = 0L
@@ -194,8 +204,14 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
   var sent = 0L
     private set
 
-  /** Key pictures out of the encoder that were asked, and the others (its own period, its first) */
+  /**
+   * Key pictures out of the encoder: those asked, the first of each encoder that no request waited for (an encoder made
+   * again at a drone key with new sets or after an error: p2/noon-test-check-2026-10-26.md R4), and the others, its own
+   * period
+   */
   var keysAsked = 0L
+    private set
+  var keysFirst = 0L
     private set
   var keysPeriodic = 0L
     private set
@@ -245,6 +261,25 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
     return true
   }
 
+  /**
+   * On a tick while the encoder runs for a receiver: true when no key picture came out for [periodNs] and [LATE_NS]
+   * and none is asked already, whatever the picture rate; counted under [RelayKeyCause.PERIOD]
+   */
+  fun periodDue(nowNs: Long): Boolean {
+    val key = lastKeyNs ?: return false
+    if (firstPending || waiting || waitingPeriodic || nowNs - key < periodNs + LATE_NS) {
+      return false
+    }
+    val asked = lastRequestNs
+    if (asked != null && asked > key && nowNs - asked < ANSWER_NS) {
+      return false
+    }
+    byCause[RelayKeyCause.PERIOD] = (byCause[RelayKeyCause.PERIOD] ?: 0L) + 1
+    lastRequestNs = nowNs
+    sent += 1
+    return true
+  }
+
   /** A key picture came out of the encoder at [nowNs]: true when it was asked for */
   fun onKey(nowNs: Long): Boolean {
     val asked = lastRequestNs
@@ -252,7 +287,12 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
     val wasAsked = asked != null && (previous == null || asked > previous)
     lastKeyNs = nowNs
     waitingPeriodic = false
-    if (wasAsked) keysAsked += 1 else keysPeriodic += 1
+    when {
+      wasAsked -> keysAsked += 1
+      firstPending -> keysFirst += 1
+      else -> keysPeriodic += 1
+    }
+    firstPending = false
     return wasAsked
   }
 
@@ -260,5 +300,6 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
   fun onEncoderStarted() {
     waiting = false
     waitingPeriodic = false
+    firstPending = true
   }
 }

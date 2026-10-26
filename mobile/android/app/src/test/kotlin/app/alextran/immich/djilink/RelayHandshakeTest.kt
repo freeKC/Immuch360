@@ -3,10 +3,17 @@ package app.alextran.immich.djilink
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicLong
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 
 /** The handshake and the rules of who may connect, on real sockets of 127.0.0.1 (design 4.5, 4.11, 6) */
 class RelayHandshakeTest {
@@ -229,6 +236,83 @@ class RelayHandshakeTest {
       headset.send(RelayWire.HEADSET_BYE, ByteArray(0))
       assertTrue(eventually { server.headsetCount == 0 })
       assertEquals(0L, server.unexpectedRecords)
+    }
+  }
+
+  /** Why the last receiver to leave left, as the export says it */
+  private fun leftWhy(): String? =
+    server.report()["receivers"]!!.jsonArray.last().jsonObject["leftWhy"]!!.jsonPrimitive.contentOrNull
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C3 (item 9): "reader ended" said the same of a bye, a socket closed and a read
+   * timeout; the five TV connections of 26 October that ended so were its watch page closing, which says bye
+   */
+  @Test
+  fun aReceiverThatDisconnectsLeavesWithABye() {
+    val port = start()
+    val listener = RecordingReceiverListener()
+    val receiver = RelayReceiver(listener, pingIntervalMs = 50)
+    try {
+      receiver.connect("127.0.0.1", port, code, null, "Salon 2", "test", kind = "tv")
+      assertNotNull(listener.await("connected"))
+      assertTrue(eventually { server.headsetCount == 1 })
+      receiver.disconnect()
+      assertTrue(eventually { server.headsetCount == 0 })
+      assertEquals("bye", leftWhy())
+    } finally {
+      receiver.disconnect()
+    }
+  }
+
+  @Test
+  fun aSocketClosedWithoutAByeAndASilentOneAreToldApart() {
+    val port = start()
+    TestHeadset(port).use { headset ->
+      assertEquals(RelayWire.WELCOME, headset.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      headset.close()
+      assertTrue(eventually { server.headsetCount == 0 })
+      assertEquals("closed", leftWhy())
+    }
+    // No ping for the read timeout, with no tick to say "silent" first
+    server.stop()
+    server = RelayServer(clockNs = { now.get() }, runTicker = false, pingTimeoutMs = 300)
+    val again = start()
+    TestHeadset(again).use { headset ->
+      assertEquals(RelayWire.WELCOME, headset.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertTrue(eventually { server.headsetCount == 0 })
+      assertEquals("timeout", leftWhy())
+    }
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md R1 (item 10): a receiver's last ping may come after its last line of the
+   * timeline; what it said there (pictures shown) is kept in the export, with how long before the end it came
+   */
+  @Test
+  fun aReceiversLastPingAfterItsLastTimelineLineIsKept() {
+    val port = start()
+    TestHeadset(port).use { headset ->
+      assertEquals(RelayWire.WELCOME, headset.join(code, kind = "tv").type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      headset.send(RelayWire.PING, RelayWire.pingBody(1, 12_000, 0))
+      assertTrue(eventually { server.snapshot().headsets.single().picturesShownPerSecond == 0.0 })
+      now.addAndGet(1_000 * ms)
+      server.tick(now.get())
+      // After its last line: a ping that says 29 pictures a second shown, then its bye 220 ms later
+      now.addAndGet(300 * ms)
+      headset.send(RelayWire.PING, RelayWire.pingBody(2, 12_000, 290))
+      assertTrue(eventually { server.snapshot().headsets.single().picturesShownPerSecond == 29.0 })
+      now.addAndGet(220 * ms)
+      headset.send(RelayWire.HEADSET_BYE, ByteArray(0))
+      assertTrue(eventually { server.headsetCount == 0 })
+      val tv = server.report()["receivers"]!!.jsonArray.single().jsonObject
+      val columns = tv["timelineColumns"]!!.jsonPrimitive.content.split(',')
+      val line = tv["timeline"]!!.jsonArray.single().jsonPrimitive.content.split(',')
+      assertEquals("0", line[columns.indexOf("shownPer10s")])
+      assertEquals(220L, tv["lastPingAgoMs"]!!.jsonPrimitive.long)
+      assertEquals(290, tv["lastPingShownPer10s"]!!.jsonPrimitive.int)
     }
   }
 
