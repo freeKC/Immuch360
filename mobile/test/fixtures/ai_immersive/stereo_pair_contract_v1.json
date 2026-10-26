@@ -1,0 +1,128 @@
+{
+  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. cacheKeys gives the text of each relief cache key and its SHA-256. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
+  "sbsPhoto": [
+    {
+      "name": "ours",
+      "request": {
+        "kind": "sbsPhoto",
+        "version": 1,
+        "layout": "leftRight",
+        "eyes": "full",
+        "origin": "estimatedDepth",
+        "leftEye": "original"
+      }
+    },
+    {
+      "name": "another tool, eyes swapped, half width",
+      "request": {
+        "kind": "sbsPhoto",
+        "version": 1,
+        "layout": "rightLeft",
+        "eyes": "half",
+        "origin": "unknown",
+        "leftEye": "unknown"
+      }
+    }
+  ],
+  "depthRelief": [
+    {
+      "name": "a photo of the server",
+      "request": {
+        "kind": "depthRelief",
+        "version": 1,
+        "model": "/data/user/0/com.aprogsys.immuch360/files/ai-components/models/depth-anything-v2-small/depth_anything_v2_small.tflite",
+        "modelSize": 99530468,
+        "modelId": "depth-anything-v2-small@651415f1",
+        "cacheKey": "448add6b9d133349558e237bd153dccc15b85c23f75231323ec5be4f8ae8a79c",
+        "parallax": 0.02,
+        "convergence": 0.5,
+        "quarterTurns": 0
+      }
+    },
+    {
+      "name": "a photo of a share, turned once",
+      "request": {
+        "kind": "depthRelief",
+        "version": 1,
+        "model": "/data/user/0/com.aprogsys.immuch360/files/ai-components/models/depth-anything-v2-small/depth_anything_v2_small.tflite",
+        "modelSize": 99530468,
+        "modelId": "depth-anything-v2-small@651415f1",
+        "cacheKey": "c50073109b15a039ecce095402c90213f4d7be326a366f2831c189182d0fe668",
+        "parallax": 0.02,
+        "convergence": 0.5,
+        "quarterTurns": 1
+      }
+    }
+  ],
+  "cacheKeys": [
+    {
+      "identity": "sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=",
+      "modelId": "depth-anything-v2-small@651415f1",
+      "pipeline": "relief-v1",
+      "parallax": 0.02,
+      "convergence": 0.5,
+      "quarterTurns": 0,
+      "text": "sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=|depth-anything-v2-small@651415f1|relief-v1|0.02|0.5|0",
+      "key": "448add6b9d133349558e237bd153dccc15b85c23f75231323ec5be4f8ae8a79c"
+    },
+    {
+      "share": {
+        "source": "nas-photos",
+        "path": "/Photos/2026/salon été.jpg",
+        "size": 4182311,
+        "modifiedMs": 1793092320000
+      },
+      "identity": "share:nas-photos:/Photos/2026/salon été.jpg:4182311:1793092320000",
+      "modelId": "depth-anything-v2-small@651415f1",
+      "pipeline": "relief-v1",
+      "parallax": 0.02,
+      "convergence": 0.5,
+      "quarterTurns": 1,
+      "text": "share:nas-photos:/Photos/2026/salon été.jpg:4182311:1793092320000|depth-anything-v2-small@651415f1|relief-v1|0.02|0.5|1",
+      "key": "c50073109b15a039ecce095402c90213f4d7be326a366f2831c189182d0fe668"
+    }
+  ],
+  "unknown": [
+    {
+      "kind": "sbsPhoto",
+      "version": 2,
+      "layout": "leftRight",
+      "eyes": "full",
+      "origin": "estimatedDepth",
+      "leftEye": "original"
+    },
+    {
+      "kind": "sbsPhoto",
+      "version": 1,
+      "layout": "topBottom",
+      "eyes": "full",
+      "origin": "unknown",
+      "leftEye": "unknown"
+    },
+    {
+      "kind": "depthRelief",
+      "version": 2,
+      "model": "/data/user/0/com.aprogsys.immuch360/files/ai-components/models/depth-anything-v2-small/depth_anything_v2_small.tflite",
+      "modelSize": 99530468,
+      "modelId": "depth-anything-v2-small@651415f1",
+      "cacheKey": "448add6b9d133349558e237bd153dccc15b85c23f75231323ec5be4f8ae8a79c",
+      "parallax": 0.02,
+      "convergence": 0.5,
+      "quarterTurns": 0
+    },
+    {
+      "kind": "depthRelief",
+      "version": 1,
+      "modelSize": 99530468,
+      "modelId": "depth-anything-v2-small@651415f1",
+      "cacheKey": "448add6b9d133349558e237bd153dccc15b85c23f75231323ec5be4f8ae8a79c",
+      "parallax": 0.02,
+      "convergence": 0.5,
+      "quarterTurns": 0
+    },
+    {
+      "kind": "volumetricScene",
+      "version": 1
+    }
+  ]
+}
