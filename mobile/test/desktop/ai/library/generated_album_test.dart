@@ -296,6 +296,50 @@ void main() {
     expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.excluded);
   });
 
+  test('the album is excluded before desktop_ai.json says so: a failed write leaves it excluded', () async {
+    await syncService().sync();
+    final failing = GeneratedAlbumKeeper(album: GeneratedAlbumRow(db), settings: _FailingWrites(support));
+
+    await expectLater(failing.ensureExcluded(), throwsA(isA<FileSystemException>()));
+    expect(await generatedSelection(), BackupSelection.excluded);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.pending);
+    // The next check only writes the state down
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await generatedSelection(), BackupSelection.excluded);
+  });
+
+  test('the switch turned while a check runs waits for it, so the check never undoes the choice', () async {
+    await syncService().sync();
+    final reads = _HeldReads(support);
+    final both = GeneratedAlbumKeeper(album: GeneratedAlbumRow(db), settings: reads);
+    final release = Completer<void>();
+    reads.hold = release.future;
+
+    // The check of a sync that ends, held once it has read desktop_ai.json, and the switch turned on meanwhile
+    final check = both.ensureExcluded();
+    await _until(() async => reads.holding);
+    final turned = both.setBacksUpGenerated(true);
+    // Not in turn, the switch would be done by now, and the check would then exclude the album again
+    await Future.any([turned, Future<void>.delayed(const Duration(milliseconds: 300))]);
+    release.complete();
+
+    expect(await check, AiGeneratedAlbumState.excluded);
+    expect(await turned, isTrue);
+    expect(await generatedSelection(), BackupSelection.none);
+  });
+
+  test('the switch turned before the first exclusion does that exclusion first, so no check undoes it', () async {
+    await syncService().sync();
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.pending);
+
+    expect(await keeper.setBacksUpGenerated(true), isTrue);
+    expect(await generatedSelection(), BackupSelection.none);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.excluded);
+    // The check of the next sync keeps the user's choice
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await generatedSelection(), BackupSelection.none);
+  });
+
   test('a check reads the album first, so a sync in between cannot hide local tables made anew', () async {
     await syncService().sync();
     await keeper.ensureExcluded();
@@ -421,6 +465,15 @@ void main() {
       expect(values, [null, true, false, true]);
     });
   });
+}
+
+/// desktop_ai.json on a disk that refuses every write
+class _FailingWrites extends DesktopAiSettingsStore {
+  _FailingWrites(Directory directory) : super(settingsDirectory: () async => directory);
+
+  @override
+  Future<DesktopAiSettings> update(DesktopAiSettings Function(DesktopAiSettings settings) change) async =>
+      throw const FileSystemException('No space left on device');
 }
 
 /// desktop_ai.json whose next read, once done, is held until [hold] completes
