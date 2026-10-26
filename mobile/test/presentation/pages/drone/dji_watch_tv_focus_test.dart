@@ -414,6 +414,42 @@ void main() {
     expect(fullScreenFocused(), isTrue);
   });
 
+  testWidgets('the notice read again, a phone typed by its address refuses this TV: the notice keeps the focus', (
+    tester,
+  ) async {
+    final (_, _, listener) = await open(tester, noticeRead: true);
+    // A network without multicast: the phone is typed by its address and never listed
+    final relayNotifier = ProviderScope.containerOf(tester.element(watchPage())).read(djiRelayProvider.notifier);
+    unawaited(
+      relayNotifier.connect(const DjiRelayPhone(name: '192.168.1.21', host: '192.168.1.21', port: 8362), 'K7M2Q9XRTH'),
+    );
+    await tester.pumpAndSettle();
+    listener!.snapshotChanged(picture());
+    await tester.pumpAndSettle();
+    expect(fullScreenFocused(), isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('dji_watch_tv_safety')),
+      100,
+      scrollable: find.descendant(of: optionsPanel(), matching: find.byType(Scrollable)).first,
+    );
+    await tester.tap(find.byKey(const Key('dji_watch_tv_safety')));
+    await tester.pumpAndSettle();
+    expect(focusIn(tester, text()), isTrue);
+
+    // The phone removed this TV: the phones view comes back behind the notice, no phone listed in it
+    listener.snapshotChanged(fakeSnapshot(relayReceiving: fakeReceiving(state: DjiRelayReceiveState.wrongCode)));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_watch_tv_full'), skipOffstage: false), findsNothing);
+    expect(find.byKey(const Key('dji_watch_address'), skipOffstage: false), findsOneWidget);
+    expect(find.byKey(const ValueKey('dji_watch_phone_192.168.1.21:8362'), skipOffstage: false), findsNothing);
+    expect(focusIn(tester, text()), isTrue, reason: 'ungated, the autofocus of Phone not listed? took it');
+
+    await readAndAccept(tester);
+    expect(focusIn(tester, find.byKey(const Key('dji_watch_address'))), isTrue);
+  });
+
   testWidgets('a page over the watch page when the first picture comes keeps the focus; back, the full screen has it', (
     tester,
   ) async {
