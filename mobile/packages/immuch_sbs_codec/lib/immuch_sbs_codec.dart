@@ -42,8 +42,9 @@ class NativeCodecException implements Exception {
   String toString() => 'NativeCodecException(${status.name}): $message';
 }
 
-/// A decoded JPEG: RGBA rows as the file stores them, no orientation applied, no colour conversion, and the ICC
-/// profile those pixels are in (null when the file has none, or one for another colour space)
+/// A decoded JPEG: opaque RGBA rows as the file stores them, no orientation applied, no colour management (a grey,
+/// CMYK or YCCK file comes out as RGB the way libjpeg-turbo turns it), and the ICC profile those pixels are in (null
+/// when the file has none, or one for another colour space)
 class NativeJpeg {
   const NativeJpeg({required this.width, required this.height, required this.rgba, this.iccProfile});
 

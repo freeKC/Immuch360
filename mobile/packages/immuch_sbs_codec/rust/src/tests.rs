@@ -1,6 +1,7 @@
-// cargo test: the codec round trip, the ICC profile copied byte for byte, the quality and the subsampling written as
-// asked, the segments in their order, a panic turned into a status, and the C functions as Dart calls them. The
-// measure of a 48 Mpx pair is an ignored test, run by hand with a photo (see `measure`).
+// cargo test: the codec round trip, the colours of grey, CMYK, YCCK, RGB stored and progressive originals, the ICC
+// profile copied byte for byte, the quality and the subsampling written as asked, the segments in their order, a panic
+// turned into a status, and the C functions as Dart calls them. The measure of a 48 Mpx pair is an ignored test, run
+// by hand with a photo (see `measure`).
 
 use std::time::Instant;
 
@@ -302,7 +303,7 @@ fn transparency_laid_on_black() {
 }
 
 #[test]
-fn grey_and_cmyk_originals_come_out_as_rgba() {
+fn grey_original_comes_out_as_opaque_rgba() {
     let (width, height) = (16, 16);
     let grey: Vec<u8> = (0..width * height).map(|i| (i % 256) as u8).collect();
     let mut jpeg = Vec::new();
@@ -319,20 +320,128 @@ fn grey_and_cmyk_originals_come_out_as_rgba() {
             .iter()
             .all(|p| p[0] == p[1] && p[1] == p[2] && p[3] == 255)
     );
+}
 
-    let cmyk = vec![40u8; width * height * 4];
+/// The two JPEGs of fixtures/make_fixtures.py, written by Pillow 10.2.0 (libjpeg-turbo 3.0.1): eight 8 x 8 blocks of
+/// one colour each, quality 100, 4:4:4, an Adobe APP14 segment
+const ADOBE_CMYK: &[u8] = include_bytes!("../fixtures/adobe_cmyk.jpg");
+const ADOBE_RGB: &[u8] = include_bytes!("../fixtures/adobe_rgb.jpg");
+
+/// The inks of the CMYK blocks, as a print shop counts them (0 is no ink)
+const CMYK_INKS: [[u8; 4]; 8] = [
+    [0, 0, 0, 0],
+    [255, 0, 0, 0],
+    [0, 255, 0, 0],
+    [0, 0, 255, 0],
+    [0, 0, 0, 255],
+    [0, 0, 0, 128],
+    [0, 128, 255, 64],
+    [200, 40, 10, 30],
+];
+
+/// What Pillow and libjpeg-turbo show for those inks: (255 - ink) (255 - black) / 255 per channel
+const CMYK_AS_RGB: [[u8; 3]; 8] = [
+    [255, 255, 255],
+    [0, 255, 255],
+    [255, 0, 255],
+    [255, 255, 0],
+    [0, 0, 0],
+    [127, 127, 127],
+    [191, 95, 0],
+    [49, 190, 216],
+];
+
+/// The colours of the RGB blocks, stored as they are
+const RGB_STORED: [[u8; 3]; 8] = [
+    [255, 255, 255],
+    [255, 0, 0],
+    [0, 255, 0],
+    [0, 0, 255],
+    [0, 0, 0],
+    [200, 100, 50],
+    [30, 160, 220],
+    [128, 128, 128],
+];
+
+/// Every pixel of a strip of 8 x 8 blocks within [tolerance] of the colour of its block, and opaque
+fn assert_blocks(decoded: &codec::Decoded, colours: &[[u8; 3]], tolerance: u8, what: &str) {
+    assert_eq!((decoded.width, decoded.height), (8 * colours.len(), 8), "{what}");
+    assert_eq!(decoded.rgba.len(), decoded.width * decoded.height * 4, "{what}");
+    for (index, pixel) in decoded.rgba.as_chunks::<4>().0.iter().enumerate() {
+        let (x, y) = (index % decoded.width, index / decoded.width);
+        let expected = colours[x / 8];
+        assert_eq!(pixel[3], 255, "{what}: alpha at ({x}, {y})");
+        for channel in 0..3 {
+            assert!(
+                pixel[channel].abs_diff(expected[channel]) <= tolerance,
+                "{what}: {:?} at ({x}, {y}), {expected:?} expected",
+                &pixel[..3]
+            );
+        }
+    }
+}
+
+#[test]
+fn cmyk_original_of_photoshop_kind_decoded_to_its_colours() {
+    let decoded = codec::decode(ADOBE_CMYK).unwrap();
+    assert_blocks(&decoded, &CMYK_AS_RGB, 2, "Adobe CMYK");
+    assert!(decoded.icc.is_none());
+}
+
+#[test]
+fn rgb_stored_original_decoded_as_it_is() {
+    let decoded = codec::decode(ADOBE_RGB).unwrap();
+    assert_blocks(&decoded, &RGB_STORED, 1, "RGB stored");
+}
+
+#[test]
+fn cmyk_and_ycck_of_another_encoder_decoded_to_their_colours() {
+    let width = 8 * CMYK_INKS.len();
+    let mut cmyk = Vec::with_capacity(width * 8 * 4);
+    for _ in 0..8 {
+        for x in 0..width {
+            cmyk.extend_from_slice(&CMYK_INKS[x / 8]);
+        }
+    }
+    for (colour_type, what) in [
+        (jpeg_encoder::ColorType::Cmyk, "CMYK"),
+        (jpeg_encoder::ColorType::CmykAsYcck, "YCCK"),
+    ] {
+        let mut jpeg = Vec::new();
+        let mut encoder = jpeg_encoder::Encoder::new(&mut jpeg, 100);
+        encoder.set_sampling_factor(jpeg_encoder::SamplingFactor::F_1_1);
+        encoder.add_icc_profile(&profile(400, b"CMYK")).unwrap();
+        encoder.encode(&cmyk, width as u16, 8, colour_type).unwrap();
+        let decoded = codec::decode(&jpeg).unwrap();
+        assert_blocks(&decoded, &CMYK_AS_RGB, 3, what);
+        assert!(
+            decoded.icc.is_none(),
+            "{what}: the CMYK profile is not the one of the RGB pixels"
+        );
+    }
+}
+
+#[test]
+fn progressive_original_decoded_to_its_colours() {
+    let width = 8 * RGB_STORED.len();
+    let mut rgb = Vec::with_capacity(width * 8 * 3);
+    for _ in 0..8 {
+        for x in 0..width {
+            rgb.extend_from_slice(&RGB_STORED[x / 8]);
+        }
+    }
     let mut jpeg = Vec::new();
-    let mut encoder = jpeg_encoder::Encoder::new(&mut jpeg, 95);
-    encoder.add_icc_profile(&profile(400, b"CMYK")).unwrap();
+    let mut encoder = jpeg_encoder::Encoder::new(&mut jpeg, 100);
+    encoder.set_sampling_factor(jpeg_encoder::SamplingFactor::F_1_1);
+    encoder.set_progressive(true);
     encoder
-        .encode(&cmyk, width as u16, height as u16, jpeg_encoder::ColorType::Cmyk)
+        .encode(&rgb, width as u16, 8, jpeg_encoder::ColorType::Rgb)
         .unwrap();
-    let decoded = codec::decode(&jpeg).unwrap();
-    assert_eq!(decoded.rgba.len(), width * height * 4);
     assert!(
-        decoded.icc.is_none(),
-        "the CMYK profile is not the one of the RGB pixels"
+        jpeg.windows(2).any(|marker| marker == [0xff, 0xc2]),
+        "a progressive frame"
     );
+    assert_blocks(&codec::decode(&jpeg).unwrap(), &RGB_STORED, 3, "progressive");
 }
 
 #[test]

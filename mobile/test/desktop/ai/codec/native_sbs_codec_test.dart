@@ -1,9 +1,10 @@
 // The Rust codec of mobile/packages/immuch_sbs_codec through dart:ffi, as the AI job will call it: a pair written with
 // its segments in the order of SbsCodec and read back by package:image and the XMP reader of the app, the ICC
-// profile kept byte for byte, the subsampling and the quality written as asked, transparency laid on black, a broken
-// file refused with SbsCodecException. The library is built by the package's build hook on Windows, Linux and macOS;
-// elsewhere, or without Rust, these tests are skipped with the reason. IMMUCH360_SBS_MEASURE (a JPEG) adds the measure
-// of the plan, a photo decoded and laid twice side by side, then encoded, with the time of each step printed.
+// profile kept byte for byte, the subsampling and the quality written as asked, transparency laid on black, CMYK and
+// RGB stored originals in their colours, a broken file refused with SbsCodecException. The library is built by the
+// package's build hook on Windows, Linux and macOS; elsewhere, or without Rust, these tests are skipped with the
+// reason. IMMUCH360_SBS_MEASURE (a JPEG) adds the measure of the plan, a photo decoded and laid twice side by side,
+// then encoded, with the time of each step printed.
 
 import 'dart:convert';
 import 'dart:io';
@@ -73,6 +74,31 @@ double meanError(Uint8List a, Uint8List b) {
   }
   return sum / (a.length / 4 * 3);
 }
+
+/// The JPEGs of packages/immuch_sbs_codec/rust/fixtures (Pillow and libjpeg-turbo), eight 8 x 8 blocks of one colour
+/// each, and the colour libjpeg-turbo shows for each block
+const adobeFixtures = {
+  'adobe_cmyk.jpg': [
+    [255, 255, 255],
+    [0, 255, 255],
+    [255, 0, 255],
+    [255, 255, 0],
+    [0, 0, 0],
+    [127, 127, 127],
+    [191, 95, 0],
+    [49, 190, 216],
+  ],
+  'adobe_rgb.jpg': [
+    [255, 255, 255],
+    [255, 0, 0],
+    [0, 255, 0],
+    [0, 0, 255],
+    [0, 0, 0],
+    [200, 100, 50],
+    [30, 160, 220],
+    [128, 128, 128],
+  ],
+};
 
 StereoPhotoXmp sampleXmp() => StereoPhotoXmp.estimated(
   eyeWidth: 48,
@@ -168,6 +194,25 @@ void main() {
     final decoded = codec.decodeJpeg(jpeg);
     expect(decoded.rgba[0], lessThan(8));
     expect(decoded.rgba[decoded.rgba.length - 4], greaterThan(210));
+  }, skip: skip);
+
+  test('CMYK of the Photoshop kind and RGB stored as is come out opaque, in their colours', () {
+    for (final MapEntry(key: name, value: colours) in adobeFixtures.entries) {
+      final decoded = codec.decodeJpeg(File('packages/immuch_sbs_codec/rust/fixtures/$name').readAsBytesSync());
+      expect((decoded.width, decoded.height), (64, 8), reason: name);
+      for (var at = 0; at < decoded.rgba.length; at += 4) {
+        final x = (at ~/ 4) % decoded.width;
+        expect(decoded.rgba[at + 3], 255, reason: '$name: alpha at pixel ${at ~/ 4}');
+        for (var channel = 0; channel < 3; channel++) {
+          expect(
+            (decoded.rgba[at + channel] - colours[x ~/ 8][channel]).abs(),
+            lessThanOrEqualTo(2),
+            reason: '$name: channel $channel of pixel ${at ~/ 4}',
+          );
+        }
+      }
+      expect(decoded.iccProfile, isNull, reason: name);
+    }
   }, skip: skip);
 
   test('a broken file and a refused segment become SbsCodecException', () {

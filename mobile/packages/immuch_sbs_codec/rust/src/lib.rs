@@ -35,7 +35,8 @@ pub unsafe extern "C" fn isc_licenses(out_length: *mut usize) -> *const u8 {
     text.as_ptr()
 }
 
-/// Decodes the JPEG of `jpeg_length` bytes at `jpeg` into RGBA rows, without orientation nor colour conversion.
+/// Decodes the JPEG of `jpeg_length` bytes at `jpeg` into opaque RGBA rows, without orientation nor colour management
+/// (a grey, CMYK or YCCK file comes out as RGB the way libjpeg-turbo turns it).
 /// On success the pixels are at `*out_rgba` (`*out_rgba_length` bytes) and the ICC profile at `*out_icc`, or null;
 /// both go back through isc_free.
 ///

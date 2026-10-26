@@ -89,7 +89,8 @@ impl Subsampling {
     }
 }
 
-/// An original as its file stores it: RGBA rows, no orientation applied, no colour conversion
+/// An original as its file stores it: RGBA rows, opaque, no orientation applied, no colour conversion beyond the
+/// one to RGB (YCbCr, grey, CMYK and YCCK as libjpeg-turbo turns them into RGB)
 pub struct Decoded {
     pub width: usize,
     pub height: usize,
@@ -108,10 +109,13 @@ impl std::fmt::Debug for Decoded {
 }
 
 pub fn decode(jpeg: &[u8]) -> Result<Decoded, CodecError> {
+    // RGB and not RGBA: zune-jpeg 0.5.15 maps every colour space it reads to RGB, but its CMYK and YCCK paths to RGBA
+    // write 3 bytes per pixel into rows of 4 (alpha left at 0, each row squeezed) and it has no path from a JPEG
+    // stored as RGB to RGBA at all. The rows are widened to RGBA below, in the same buffer.
     let options = DecoderOptions::default()
         .set_max_width(MAX_SIDE)
         .set_max_height(MAX_SIDE)
-        .jpeg_set_out_colorspace(ColorSpace::RGBA);
+        .jpeg_set_out_colorspace(ColorSpace::RGB);
     let mut decoder = JpegDecoder::new_with_options(ZCursor::new(jpeg), options);
     decoder
         .decode_headers()
@@ -126,16 +130,19 @@ pub fn decode(jpeg: &[u8]) -> Result<Decoded, CodecError> {
             format!("{width} x {height} is more than {MAX_DECODE_PIXELS} pixels"),
         ));
     }
-    let size = decoder
+    let rgb_size = decoder
         .output_buffer_size()
-        .ok_or_else(|| CodecError::new(Status::TooLarge, format!("{width} x {height}")))?;
+        .filter(|&size| size == pixels * 3)
+        .ok_or_else(|| CodecError::new(Status::DecodeFailed, format!("{width} x {height}, not 3 bytes a pixel")))?;
+    let size = pixels * 4;
     let mut rgba = Vec::new();
     rgba.try_reserve_exact(size)
         .map_err(|_| CodecError::new(Status::OutOfMemory, format!("{size} bytes for {width} x {height}")))?;
     rgba.resize(size, 0);
     decoder
-        .decode_into(&mut rgba)
+        .decode_into(&mut rgba[..rgb_size])
         .map_err(|error| CodecError::new(Status::DecodeFailed, error.to_string()))?;
+    widen_to_rgba(&mut rgba);
     let icc = decoder.icc_profile().filter(|profile| is_rgb_profile(profile));
     Ok(Decoded {
         width,
@@ -143,6 +150,17 @@ pub fn decode(jpeg: &[u8]) -> Result<Decoded, CodecError> {
         rgba,
         icc,
     })
+}
+
+/// RGB pixels packed in the first three quarters of [buffer] spread to RGBA over all of it, opaque. Pixel i moves
+/// from 3 i to 4 i, the last one first, so that each write only covers bytes of pixels already moved.
+fn widen_to_rgba(buffer: &mut [u8]) {
+    let pixels = buffer.len() / 4;
+    for index in (0..pixels).rev() {
+        let (from, to) = (index * 3, index * 4);
+        let (r, g, b) = (buffer[from], buffer[from + 1], buffer[from + 2]);
+        buffer[to..to + 4].copy_from_slice(&[r, g, b, 255]);
+    }
 }
 
 /// Whether [profile] describes RGB data: the colour space signature of its header, bytes 16 to 19
