@@ -110,6 +110,14 @@ void main() {
       expect(await api.getAssetsCountSince(generatedAlbumId, 0), 0);
     });
 
+    test('a folder of the same name gets its parent in front', () async {
+      fixture.write('Photos/$generatedAlbumName/IMG_4.jpg', jpegBytes(width: 4, height: 3));
+      final names = [for (final album in await fixture.syncApi().getAlbums()) album.name];
+
+      expect(names.where((name) => name == generatedAlbumName), hasLength(1));
+      expect(names, contains('Photos/$generatedAlbumName'));
+    });
+
     test('not declared without a folder', () async {
       fixture.library().removeRoot(rootId);
       expect(await fixture.syncApi().getAlbums(), isEmpty);

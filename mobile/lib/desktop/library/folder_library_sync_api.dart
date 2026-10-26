@@ -160,6 +160,8 @@ class FolderLibrarySyncApi implements NativeSyncApi {
     final names = albumDisplayNames({
       for (final album in albums)
         album.id: [rootNames[album.rootId] ?? '', ...album.relativeDir.split('/').where((part) => part.isNotEmpty)],
+      // A folder named like the album of the generated photos gets its parent in front
+      generatedAlbumId: const [generatedAlbumName],
     });
     final generated = index.generatedSummary();
     return [
