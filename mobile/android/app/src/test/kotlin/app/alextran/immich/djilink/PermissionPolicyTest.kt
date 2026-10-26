@@ -96,7 +96,7 @@ class PermissionPolicyTest {
   fun anotherAccessoryIsNotRefusedBecauseTheFirstWas() {
     attempt(Trigger.START, 0)
     policy.onResult(granted = false)
-    assertEquals(Decision.Ask, attempt(Trigger.START, 1_000, key = "DJI|WM160|2.0|other"))
+    assertEquals(Decision.Ask, attempt(Trigger.START, 1_000, key = "DJI|com.dji.somethingnew|2.0|other"))
   }
 
   @Test
