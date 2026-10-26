@@ -84,8 +84,8 @@
     "reason": "DJI relay smoothness (feat-dji-relay): the network and display facts of the exports and Diagnostics"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DeviceProfile.kt": {
-    "blob": "831d45a0843fa4be2ba5110405a9b3b469c8a5ea",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the RC-N3 and Neo 2 profile supported for six capabilities with the provenance of the 23 October capture, its stream description seed, and the pilot binding; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "018a424481c3268d6e7fb335fa38ab9a7ea16fe0",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the RC-N3 and Neo 2 profile supported for six capabilities with the provenance of the 23 October capture, its stream description seed, and the pilot binding; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI accessory filter (fix-accessory-filter): the known models and the starting profiles keep only the identity string of our own capture of 23 October 2026"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiFlightViewActivity.kt": {
     "blob": "16b583e386decebf64aa266b335ef8c7bd22700e",
@@ -344,8 +344,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): the panel ids of the Quest flight view; DJI finalisation (feat-dji-final): the ids of the columns and of the alert panel; DJI obstacle ring (feat-dji-obstacle-ui): the ids of the halo panels in place of the alert panel; DJI integration (feat-dji-30): the ids of the circle's panels"
   },
   "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
-    "blob": "7f0505a21455f9ccfed4142d68fed0dd7b116e21",
-    "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes"
+    "blob": "46cc9494b2c2d01fcdb02c6dffd4e967dcf35e57",
+    "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes; DJI accessory filter (fix-accessory-filter): any DJI accessory plus the identity string of our own capture of 23 October 2026, the two unseen model strings dropped"
   },
   "mobile/android/app/src/quest/AndroidManifest.xml": {
     "blob": "aa0594a5212975f49c0b582ae60ecd08f1bb730c",
@@ -480,8 +480,8 @@
     "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; DJI decoder fix round (feat-dji-ux): unit test of the key unit kept per remote"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/PermissionPolicyTest.kt": {
-    "blob": "0c20b870f6991802edcee27778444c294d376aa8",
-    "reason": "DJI link (feat-dji-link, fix round of 22 October): unit tests of the permission rules, run by the Kotlin unit tests job"
+    "blob": "b04da80aec73130cff4cb4b21732462053cad011",
+    "reason": "DJI link (feat-dji-link, fix round of 22 October): unit tests of the permission rules, run by the Kotlin unit tests job; DJI accessory filter (fix-accessory-filter): the other accessory's key no longer names an unseen model string"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/PictureCounterTest.kt": {
     "blob": "f5edb0f0f8a74ba3db028e24958da2790d002710",
