@@ -195,6 +195,33 @@ void main() {
       expect(live(), before, reason: 'after a model that cannot be read');
     });
 
+    // ONNX Runtime makes the threads of a session when it opens and joins them when it closes: intra-op N runs on the
+    // caller and N minus 1 threads of its own, inter-op 1 (one model run at a time) on none. The proof that the
+    // settings reach ONNX Runtime
+    test('makes the threads the settings ask for, and stops them on close', () {
+      Set<String> threads() => {for (final task in Directory('/proc/self/task').listSync()) p.basename(task.path)};
+      int threadsOfSession(int intraOp) {
+        final before = threads();
+        final session = runtime.openSession(
+          tinyDepthModelPath(),
+          settings: OrtSessionSettings(intraOpThreads: intraOp),
+        );
+        final born = threads().difference(before);
+        session.close();
+        // A joined thread may stay listed for a moment; a thread of the Dart VM born meanwhile stays: not counted
+        var left = born.intersection(threads());
+        for (var i = 0; i < 50 && left.isNotEmpty; i++) {
+          sleep(const Duration(milliseconds: 20));
+          left = left.intersection(threads());
+        }
+        return born.length - left.length;
+      }
+
+      expect(threadsOfSession(1), 0);
+      expect(threadsOfSession(2), 1);
+      expect(threadsOfSession(5), 4);
+    }, skip: Platform.isLinux ? null : 'counts the threads in /proc/self/task, on Linux only');
+
     test('turns an error of ONNX Runtime into an OrtException with its message, and the session still runs', () {
       final session = runtime.openSession(tinyDepthModelPath());
       addTearDown(session.close);
