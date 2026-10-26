@@ -25,9 +25,10 @@ List<String> _table(String bindings) {
   if (struct == null) {
     throw StateError('No struct OrtApi in $_bindings');
   }
+  // Only the fields: the body also holds the $allocate method of ffigen, whose parameters name every entry
   return [
-    for (final field in struct.group(1)!.split(';'))
-      if (field.contains('external')) RegExp(r'(\w+)\s*$').firstMatch(field.trim())!.group(1)!,
+    for (final chunk in struct.group(1)!.split(';'))
+      if (chunk.trim().startsWith('external ')) RegExp(r'(\w+)\s*$').firstMatch(chunk.trim())!.group(1)!,
   ];
 }
 
@@ -45,6 +46,22 @@ void main() {
     expect(list['apiVersion'], ortApiVersion);
     expect(sizes['api31'], table.length);
     expect(sizes['api23'], lessThan(sizes['api31']!));
+  });
+
+  // sizeof(OrtApi) / sizeof(void*) in the official headers: 390 entries in 1.23.2, 428 in 1.31.0
+  test('the table of the bindings has 428 entries, each named once, from CreateStatus to GetModelPackageApi', () {
+    expect(table, hasLength(428));
+    expect(table.toSet(), hasLength(table.length));
+    expect(table.first, 'CreateStatus');
+    expect(table.last, 'GetModelPackageApi');
+    expect(table.indexOf('GetModelPackageApi'), 427);
+  });
+
+  test('the table of API 23 has 390 entries and ends where the bindings have its last entry', () {
+    expect(sizes['api23'], 390);
+    expect(list['api23LastEntry'], 'CreateExternalInitializerInfo');
+    expect(table[sizes['api23']! - 1], list['api23LastEntry']);
+    expect(table[sizes['api23']!], 'TensorTypeAndShape_HasShape');
   });
 
   test('every entry listed is at its place in the bindings, below the size of the table of API 23', () {

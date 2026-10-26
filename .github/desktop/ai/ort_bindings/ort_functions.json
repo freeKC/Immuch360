@@ -2,9 +2,10 @@
   "about": "The entries of struct OrtApi that mobile/lib/desktop/ai/ort calls, with their place in the table (from 0). Written by .github/desktop/ai/ort_bindings/generate.sh; checked by test/desktop/ai/ort/ort_bindings_test.dart.",
   "apiVersion": 23,
   "tableSize": {
-    "api23": 391,
-    "api31": 429
+    "api23": 390,
+    "api31": 428
   },
+  "api23LastEntry": "CreateExternalInitializerInfo",
   "api23Header": "https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/include/onnxruntime/core/session/onnxruntime_c_api.h",
   "functions": [
     {

@@ -35,10 +35,13 @@ def table(bindings: str) -> list:
     if not found:
         sys.exit('no "final class OrtApi extends ffi.Struct" in the bindings')
     names = []
+    # Only the fields: the body also holds the $allocate method of ffigen, whose parameters name every entry
     for chunk in found.group(1).split(';'):
-        if 'external' in chunk:
+        if chunk.strip().startswith('external '):
             name = FIELD_NAME.search(chunk.strip())
             names.append(name.group(1))
+    if len(set(names)) != len(names):
+        sys.exit('struct OrtApi names an entry twice: the bindings were not read right')
     return names
 
 
@@ -84,6 +87,7 @@ def main() -> int:
                  'test/desktop/ai/ort/ort_bindings_test.dart.',
         'apiVersion': API_VERSION,
         'tableSize': {'api23': len(older), 'api31': len(current)},
+        'api23LastEntry': older[-1],
         'api23Header': HEADER_1_23_2,
         'functions': entries,
     }
