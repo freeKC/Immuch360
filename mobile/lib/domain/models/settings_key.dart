@@ -100,7 +100,12 @@ enum SettingsKey<T> {
 
   // Settings, Advanced, "DJI link diagnostics (experimental)", on by default: the DJI link page that reads a DJI
   // remote controller plugged in as a USB accessory (Android phones and the Meta Quest build, not the TV layout)
-  djiLinkEnabled<bool>();
+  djiLinkEnabled<bool>(),
+
+  // The AI features (relief estimated by AI), experimental and on by default, see AiImmersiveConfig
+  aiImmersiveEnabled<bool>(),
+  // "AI relief on Quest 2 and Quest Pro (untested)", off by default
+  aiImmersiveOlderHeadsets<bool>();
 
   final ValueCodec<T>? _codecOverride;
 
