@@ -1,0 +1,13 @@
+# The tool that writes mobile/lib/desktop/ai/ort/ort_api_bindings.dart from the C header of ONNX Runtime 1.31.0
+# (generate.sh, design-final 2026-10-26 section 2.1). A package of its own so that ffigen stays out of
+# mobile/pubspec.lock: the phone builds keep the packages they have (check_phone_packages.py). Nothing here is built
+# into the app.
+name: ort_bindings
+publish_to: none
+
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+
+dev_dependencies:
+  # BSD-3-Clause, https://github.com/dart-lang/native/tree/main/pkgs/ffigen
+  ffigen: 23.0.0

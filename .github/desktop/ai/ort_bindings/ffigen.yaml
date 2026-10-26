@@ -1,0 +1,44 @@
+# ffigen on the C API of ONNX Runtime 1.31.0 (include/, copied from the release archive and equal to the files of
+# https://github.com/microsoft/onnxruntime/tree/402979ac1bef89dcd55add41eaa7277c407599eb/include/onnxruntime/core/session,
+# MIT, include/LICENSE). Only what the app reaches is written out: OrtGetApiBase, the OrtApiBase that gives the table,
+# and the table itself (struct OrtApi, every entry in its order, since the entries are found by their place). The other
+# structs a signature names stay opaque. Enums are plain ints, as the C API passes them.
+#
+# The header is read as Linux sees it: ORTCHAR_T is char there and wchar_t on Windows, a pointer either way, so
+# ort_session.dart passes a UTF-16 path under that Pointer<Char> on Windows. Run generate.sh, not ffigen alone.
+name: OrtBindings
+description: The C API of ONNX Runtime 1.31.0, reached through OrtGetApiBase
+output: '../../../../mobile/lib/desktop/ai/ort/ort_api_bindings.dart'
+headers:
+  entry-points:
+    - 'include/onnxruntime_c_api.h'
+  include-directives:
+    - '**/onnxruntime_c_api.h'
+    - '**/onnxruntime_error_code.h'
+exclude-all-by-default: true
+functions:
+  include:
+    - OrtGetApiBase
+structs:
+  include:
+    - OrtApi
+    - OrtApiBase
+  dependency-only: opaque
+enums:
+  as-int:
+    include:
+      - '.*'
+unnamed-enums:
+  as-int:
+    include:
+      - '.*'
+comments: false
+# ffigen warns that the size of a C enum is up to the compiler: it is an int on every system the app runs ONNX Runtime
+# on (Windows x64, Linux x64, macOS arm64 and x86_64), the size ffigen gives them
+silence-enum-warning: true
+preamble: |
+  // The C API of ONNX Runtime 1.31.0 for dart:ffi (design-final 2026-10-26 section 2.1): OrtGetApiBase, then the table
+  // of functions it gives. Written by .github/desktop/ai/ort_bindings/generate.sh with ffigen from the header kept
+  // there (MIT, Microsoft Corporation); do not edit, run the script again. The session asks for the table of API 23,
+  // which ONNX Runtime 1.23.2 (the last one for Intel Macs) and 1.31.0 both give; every entry it uses sits below the
+  // size of that table (ort_functions.json, checked by test/desktop/ai/ort/ort_bindings_test.dart).
