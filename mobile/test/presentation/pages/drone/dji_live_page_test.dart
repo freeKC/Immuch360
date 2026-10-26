@@ -66,6 +66,23 @@ void main() {
     captureBytes: captureBytes,
   );
 
+  List<Override> liveOverrides(
+    FakeDjiLinkApi api,
+    void Function(DjiLinkEvents?) onEvents, {
+    FakeRelayEnvironment? relay,
+    bool noticeRead = true,
+  }) => [
+    djiLinkApiProvider.overrideWithValue(api),
+    djiLinkEventsSetUpProvider.overrideWithValue(onEvents),
+    djiRelayEnvironmentProvider.overrideWithValue((relay ?? FakeRelayEnvironment()).build()),
+    djiLiveNoticeReadProvider.overrideWith((ref) => noticeRead),
+    djiLiveMemoryProvider.overrideWithValue(memory.build()),
+    // No platform view under flutter test: a placeholder stands where the picture is
+    djiLinkVideoViewBuilderProvider.overrideWithValue(
+      () => const ColoredBox(key: Key('dji_live_placeholder'), color: Colors.black),
+    ),
+  ];
+
   /// Opens the live screen from a page under it, so that Back has somewhere to go; returns the events listener
   Future<DjiLinkEvents?> openLive(
     WidgetTester tester,
@@ -88,17 +105,7 @@ void main() {
           ),
         ),
       ),
-      overrides: [
-        djiLinkApiProvider.overrideWithValue(api),
-        djiLinkEventsSetUpProvider.overrideWithValue((events) => listener = events),
-        djiRelayEnvironmentProvider.overrideWithValue((relay ?? FakeRelayEnvironment()).build()),
-        djiLiveNoticeReadProvider.overrideWith((ref) => noticeRead),
-        djiLiveMemoryProvider.overrideWithValue(memory.build()),
-        // No platform view under flutter test: a placeholder stands where the picture is
-        djiLinkVideoViewBuilderProvider.overrideWithValue(
-          () => const ColoredBox(key: Key('dji_live_placeholder'), color: Colors.black),
-        ),
-      ],
+      overrides: liveOverrides(api, (events) => listener = events, relay: relay, noticeRead: noticeRead),
     );
     await tester.tap(find.byKey(const Key('open_live')));
     await tester.pump();
@@ -156,6 +163,39 @@ void main() {
     expect(find.byKey(const Key('dji_live_notice')), findsNothing);
     expect(find.byKey(const Key('dji_live')), findsNothing);
   });
+
+  testWidgets(
+    'Back on the safety notice with another page over the live screen leaves the live screen, not that page',
+    (tester) async {
+      await tester.binding.setSurfaceSize(_large);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      late NavigatorState navigator;
+      await tester.pumpTestWidget(
+        context,
+        Builder(
+          builder: (context) {
+            navigator = Navigator.of(context);
+            return const Text('first page');
+          },
+        ),
+        overrides: liveOverrides(phone(), (_) {}, noticeRead: false),
+      );
+      // The live screen, and in the same instant another page over it; the notice comes over both
+      navigator.push(MaterialPageRoute<void>(builder: (_) => const DjiLivePage())).ignore();
+      navigator
+          .push(MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('page over the live screen'))))
+          .ignore();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('dji_live_notice')), findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('dji_live_notice')), findsNothing);
+      expect(find.byKey(const Key('dji_live'), skipOffstage: false), findsNothing, reason: 'the live screen left');
+      expect(find.text('page over the live screen'), findsOneWidget, reason: 'a pop closed this one instead');
+    },
+  );
 
   testWidgets('the screen starts the link and the capture, and stays on while it is in front', (tester) async {
     final relay = FakeRelayEnvironment();

@@ -37,6 +37,7 @@ import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/routing/leave_own_route.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 /// After this many failed attempts in a row, the state line says what to check
@@ -269,25 +270,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     if (read) {
       ref.read(djiLiveNoticeReadProvider.notifier).state = true;
     } else {
-      _leave();
-    }
-  }
-
-  /// Back on the notice leaves this page, even with another page over it (one that a key pressed while this page
-  /// opened reached): a pop would close that one and leave this page there
-  void _leave() {
-    final route = ModalRoute.of(context);
-    if (route == null || route.isCurrent) {
-      Navigator.of(context).pop();
-      return;
-    }
-    final page = route.settings;
-    final router = page is AutoRoutePage ? page.routeData.router : null;
-    if (page is AutoRoutePage && router is StackRouter) {
-      // A page of the router: out of its stack, which the navigator follows
-      router.removeRoute(page.routeData);
-    } else {
-      Navigator.of(context).removeRoute(route);
+      // Back on the notice leaves this page, even with another page over it
+      leaveOwnRoute(context);
     }
   }
 

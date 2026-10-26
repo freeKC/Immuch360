@@ -5,6 +5,9 @@
 // the page. These tests send the remote's keys and check where they go. Nothing here ran on a TV: these are widget
 // tests.
 
+import 'dart:async';
+
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -287,6 +290,71 @@ void main() {
     navigator.pop();
     await tester.pumpAndSettle();
     expect(find.text('first page'), findsOneWidget);
+  });
+
+  testWidgets('pages of the router, as in the app: Back on the notice with a page over the watch page removes it', (
+    tester,
+  ) async {
+    final api = television();
+    final relay = FakeRelayEnvironment();
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          initial: true,
+          page: PageInfo('FirstRoute', builder: (_) => const Text('first page')),
+        ),
+        AutoRoute(
+          path: '/watch',
+          page: PageInfo('WatchRoute', builder: (_) => const DjiWatchPage()),
+        ),
+        AutoRoute(
+          path: '/over',
+          page: PageInfo('OverRoute', builder: (_) => const Scaffold(body: Text('page over the watch page'))),
+        ),
+      ],
+    );
+    await tester.binding.setSurfaceSize(_tv);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      EasyLocalization(
+        supportedLocales: locales.values.toList(),
+        path: translationsPath,
+        startLocale: locales.values.first,
+        fallbackLocale: locales.values.first,
+        saveLocale: false,
+        useFallbackTranslations: true,
+        assetLoader: const CodegenLoader(),
+        child: ProviderScope(
+          overrides: [...context.overrides, ...overrides(api, relay, (_) {})],
+          child: Builder(
+            builder: (context) => MaterialApp.router(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              routerConfig: router.config(),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    // The watch page, and in the same instant another page over it; the notice comes over both
+    unawaited(router.pushPath('/watch'));
+    unawaited(router.pushPath('/over'));
+    await tester.pumpAndSettle();
+    expect(router.stack.map((page) => page.routeData.name), ['FirstRoute', 'WatchRoute', 'OverRoute']);
+    expect(notice(), findsOneWidget);
+    final stops = api.stops;
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(notice(), findsNothing);
+    expect(watchPage(), findsNothing);
+    expect(router.stack.map((page) => page.routeData.name), ['FirstRoute', 'OverRoute']);
+    expect(find.text('page over the watch page'), findsOneWidget);
+    expect(api.stops, greaterThan(stops), reason: 'leaving stops the link, as a plain Back does');
   });
 
   testWidgets('Options open on the phones view when the first picture comes: Options keeps the focus', (tester) async {
