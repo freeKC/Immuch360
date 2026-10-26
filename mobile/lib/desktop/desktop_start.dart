@@ -1,6 +1,7 @@
 // The start of Immuch360 Desktop, run by lib/main_desktop.dart once the Flutter binding exists and before the start
 // the phones share (runImmich in main.dart).
 
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec_licenses.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
@@ -21,5 +22,7 @@ Future<void> startDesktop(List<String> args) async {
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();
+  // The Rust crates of the JPEG codec of the AI features, from the texts the library carries (the three systems)
+  registerSbsCodecLicenses();
   await setUpDesktopWindow();
 }
