@@ -46,6 +46,22 @@ void main() {
     expect(sbsTargetName('${'x' * 300}.jpg'), endsWith('.jpg'));
   });
 
+  test('a long name is shortened before the marker, which stays whole', () {
+    for (final length in [180, 181, 190, 199, 300]) {
+      final name = sbsTargetName('${'x' * length}.jpg');
+
+      expect(name, endsWith('_3D_LRF_Full_SBS.jpg'), reason: '$length characters');
+      expect(name.length, lessThanOrEqualTo(200));
+    }
+    expect(sbsTargetName('${'x' * 179}.jpg'), '${'x' * 179}_3D_LRF_Full_SBS.jpg');
+    // Never half of a character outside the basic plane
+    final emoji = sbsTargetName('${'x' * 179}\u{1F4F7}\u{1F4F7}.jpg');
+    expect(emoji, '${'x' * 179}_3D_LRF_Full_SBS.jpg');
+    // A name Windows keeps for a device, made safe, and still whole at the end
+    expect(sbsTargetName('con.${'x' * 300}.jpg'), endsWith('_3D_LRF_Full_SBS.jpg'));
+    expect(sbsTargetName('con.${'x' * 300}.jpg').length, lessThanOrEqualTo(200));
+  });
+
   test('only our XMP with a DerivativeId, made from the same original, may be replaced', () {
     expect(isReplaceableVersion(ours, original: salon), isTrue);
     expect(isReplaceableVersion(oursWithoutId, original: salon), isFalse);

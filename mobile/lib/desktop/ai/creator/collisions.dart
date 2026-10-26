@@ -18,8 +18,29 @@ import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 /// How much of the head of a file is read for its XMP, as the scan and the panorama viewer read GPano
 const versionHeadLength = 128 * 1024;
 
-/// The name of the 3D photo of [originalName] on a computer: "salon_3D_LRF_Full_SBS.jpg", made safe for Windows
-String sbsTargetName(String originalName) => safeFileName(sbsFileNameFor(originalName));
+const _sbsNameEnd = '$sbsFullNameSuffix$sbsFileExtension';
+
+/// The name of the 3D photo of [originalName] on a computer: "salon_3D_LRF_Full_SBS.jpg", made safe for Windows. A
+/// name too long is shortened before "_3D_LRF_Full_SBS.jpg", which always stays whole: SKYBOX, DeoVR and iw3 read it.
+String sbsTargetName(String originalName) {
+  var stem = fileStem(originalName);
+  for (;;) {
+    final name = safeFileName('$stem$_sbsNameEnd');
+    if (name.endsWith(_sbsNameEnd) || stem.isEmpty) {
+      return name;
+    }
+    // safeFileName cut the end of the name: the name of the original loses what was cut instead
+    final over = '$stem$_sbsNameEnd'.length - name.length;
+    var keep = stem.length - (over > 0 ? over : 1);
+    if (keep > 0 && _isHighSurrogate(stem.codeUnitAt(keep - 1))) {
+      // Never half of a character outside the basic plane
+      keep--;
+    }
+    stem = stem.substring(0, keep < 0 ? 0 : keep);
+  }
+}
+
+bool _isHighSurrogate(int unit) => unit >= 0xd800 && unit <= 0xdbff;
 
 /// The original of a job, as the XMP of its 3D photos names it (design-final 4.2): its SHA-1 in base64, its name and
 /// its size. [path] is the file on this computer, never replaced nor even read by the writer.
