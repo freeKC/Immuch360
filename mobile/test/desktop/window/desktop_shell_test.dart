@@ -1,7 +1,7 @@
 // The window of Immuch360 Desktop (design 1.8, 4.2 and 4.4): F11 anywhere and F in a viewer toggle full screen,
 // Escape and the back button of a mouse leave it first, then close the viewer, a dialog keeps its own Escape, a letter
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
-// first while uploads or the share of the computer run.
+// first while uploads, the share of the computer or 3D conversions run.
 
 import 'dart:async';
 
@@ -430,6 +430,21 @@ void main() {
 
       window.clickClose();
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('desktop_close_quit')));
+      await tester.pumpAndSettle();
+      expect(window.calls, contains('destroy'));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('names the 3D conversions that quitting stops', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      reasons = {DesktopCloseReason.conversions};
+      await pumpShell(tester);
+
+      window.clickClose();
+      await tester.pumpAndSettle();
+      expect(find.text('3D conversions are running: quitting stops them.'), findsOneWidget);
+      expect(find.textContaining('Uploads are running'), findsNothing);
       await tester.tap(find.byKey(const Key('desktop_close_quit')));
       await tester.pumpAndSettle();
       expect(window.calls, contains('destroy'));

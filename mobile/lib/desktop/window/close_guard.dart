@@ -1,5 +1,6 @@
 // The close guard of the window on a computer (design 1.8). Closing the window quits the app, which stops the uploads
-// under way (they go on at the next start) and the share of the computer on the network. The window tells the app of
+// under way (they go on at the next start), the share of the computer on the network and the 3D conversions (the
+// queue does not survive the window, design-final 2026-10-26 section 2.6.5). The window tells the app of
 // every close instead of closing (DesktopWindow.setPreventClose, set once by DesktopShell): the app asks first when
 // one of those runs, and closes at once otherwise. Deciding at the moment of the close, rather than switching the
 // prevention on and off with the uploads, keeps the providers below untouched until then: one that was never created
@@ -9,6 +10,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
@@ -24,6 +26,9 @@ enum DesktopCloseReason {
 
   /// "Share this computer on the network"
   computerShare,
+
+  /// A photo made into 3D, or waiting to be
+  conversions,
 }
 
 /// Whether the backup is sending a file: a failed one stays in the list until the next run, and stops nothing
@@ -40,6 +45,8 @@ final desktopCloseReasonsProvider = Provider<Set<DesktopCloseReason> Function()>
       DesktopCloseReason.uploads,
     if (ref.exists(phoneShareProvider) && runs(phoneShareProvider, (state) => state.isEnabled))
       DesktopCloseReason.computerShare,
+    if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.hasWork))
+      DesktopCloseReason.conversions,
   };
 });
 
@@ -77,6 +84,7 @@ class DesktopCloseDialog extends StatelessWidget {
           children: [
             if (reasons.contains(DesktopCloseReason.uploads)) Text(t.desktop_close_uploads_running),
             if (reasons.contains(DesktopCloseReason.computerShare)) Text(t.desktop_close_share_running),
+            if (reasons.contains(DesktopCloseReason.conversions)) Text(t.ai_immersive_close_running),
           ],
         ),
         actions: [
