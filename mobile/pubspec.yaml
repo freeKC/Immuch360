@@ -104,6 +104,11 @@ dependencies:
   # package; its plugin declares windows only, used under lib/desktop/ only
   immuch_desktop_video:
     path: packages/immuch_desktop_video
+  # Immuch360 Desktop: the Rust JPEG codec of the AI features for the big photos (zune-jpeg, jpeg-encoder), the
+  # fork's own package; its build hook compiles the crate for Windows, Linux and macOS only, used under lib/desktop/
+  # only
+  immuch_sbs_codec:
+    path: packages/immuch_sbs_codec
   # Immuch360 Desktop: the thumbhash decoder of the computers, pure Dart, used under lib/desktop/ only. The phones
   # decode thumbhashes in the native core (native/), whose buffer the computers could not free with malloc.free on
   # Windows (another heap)
