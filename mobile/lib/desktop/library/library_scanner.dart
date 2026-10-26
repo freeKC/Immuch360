@@ -575,6 +575,12 @@ class _Scan {
           // Still not readable: nothing new for the app
           continue;
         }
+        if (before == null && metadata.readFailed && _namedLikeVersion(entry.name)) {
+          // Most likely a 3D photo the app made, which only its XMP tells: shown now, it would be a plain photo of its
+          // folder, which a folder chosen for the backup sends. So it waits for a scan that can read it. The name only
+          // ever holds a file back, it never makes one a version.
+          continue;
+        }
         batch.add(
           _record(
             root: root,
@@ -605,6 +611,10 @@ class _Scan {
       ..markRootScanned(root.id, now());
     return ScanSummary(written: written, removed: gone.length, cloudOnly: cloudOnly, moved: moved ? 1 : 0);
   }
+
+  static final _versionSuffix = sbsFullNameSuffix.toLowerCase();
+
+  static bool _namedLikeVersion(String name) => name.toLowerCase().contains(_versionSuffix);
 
   static bool _isUnder(String relativePath, String dir) => dir.isEmpty || relativePath.startsWith('$dir/');
 

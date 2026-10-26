@@ -162,6 +162,54 @@ void main() {
     expect(await candidates(), ['salon.jpg', 'salon_3D_LRF_Full_SBS.jpg']);
   });
 
+  test('a new version that cannot be read waits for the next scan, never a plain photo of its folder', () async {
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await chooseForBackup('Salon');
+
+    // Held by another program as the scan comes: a sharing violation on Windows, a NAS that drops
+    writeVersion();
+    fixture.failing.add(p.join(fixture.files.path, 'Pictures', 'Salon', 'salon_3D_LRF_Full_SBS.jpg'));
+    await fixture.scan();
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await hash();
+    expect(await candidates(), ['salon.jpg']);
+
+    // Read at the next scan: in its folder and in the album, still out of the backup
+    fixture.failing.clear();
+    await fixture.scan();
+    await syncService().sync();
+    await hash();
+    expect(await candidates(), ['salon.jpg']);
+    expect(await LocalAlbumRepository(db).getAssetIds(generatedAlbumId), hasLength(1));
+  });
+
+  test('a version changed and not readable keeps what its XMP said until it is read again', () async {
+    writeVersion();
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await chooseForBackup('Salon');
+    await hash();
+    expect(await candidates(), ['salon.jpg']);
+
+    // Written over (made again, or copied over it), and held as the scan comes
+    final path = p.join(fixture.files.path, 'Pictures', 'Salon', 'salon_3D_LRF_Full_SBS.jpg');
+    fixture
+      ..write(
+        'Pictures/Salon/salon_3D_LRF_Full_SBS.jpg',
+        fakeSbsJpeg(xmp: versionXmp(original)),
+        modified: DateTime(2030),
+      )
+      ..failing.add(path);
+    await fixture.scan();
+    await syncService().sync();
+    await hash();
+
+    expect(await candidates(), ['salon.jpg']);
+    expect(await LocalAlbumRepository(db).getAssetIds(generatedAlbumId), hasLength(1));
+  });
+
   test('Select all selects the album too and the switch shows on; turned off, the album is excluded again', () async {
     writeVersion();
     await syncService().sync();

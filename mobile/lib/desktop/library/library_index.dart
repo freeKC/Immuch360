@@ -521,9 +521,7 @@ class LibraryIndex {
           width = excluded.width, height = excluded.height, duration_ms = excluded.duration_ms,
           playback_style = excluded.playback_style, latitude = excluded.latitude, longitude = excluded.longitude,
           projection = excluded.projection, cloud_only = excluded.cloud_only, read_failed = excluded.read_failed,
-          change_seq = excluded.change_seq, stereo = excluded.stereo, origin = excluded.origin,
-          source_sha1 = excluded.source_sha1, derivative_id = excluded.derivative_id,
-          derived_settings = excluded.derived_settings''');
+          change_seq = excluded.change_seq, $_keptWhenUnread''');
       // A file that comes back before the app learnt it was gone is a change, not a deletion followed by an addition
       final revive = _db.prepare('DELETE FROM tombstones WHERE id = ?');
       try {
@@ -562,6 +560,13 @@ class LibraryIndex {
       }
     });
   }
+
+  // What the XMP of a file said, kept when the file changed but could not be read again: a version would otherwise
+  // leave the album the backup leaves out, and its folder would send it before the next scan reads it
+  static final _keptWhenUnread = [
+    for (final column in ['stereo', 'origin', 'source_sha1', 'derivative_id', 'derived_settings'])
+      '$column = CASE WHEN excluded.read_failed = 1 THEN files.$column ELSE excluded.$column END',
+  ].join(', ');
 
   /// Removes the files [ids] of a root, gone from its folders, as one generation
   void removeFiles(Iterable<String> ids) {
