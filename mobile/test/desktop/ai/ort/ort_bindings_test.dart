@@ -32,7 +32,8 @@ List<String> _table(String bindings) {
 }
 
 void main() {
-  final table = _table(File(_bindings).readAsStringSync());
+  // A Windows checkout may turn the line ends into CRLF
+  final table = _table(File(_bindings).readAsStringSync().replaceAll('\r\n', '\n'));
   final list = jsonDecode(File(_list).readAsStringSync()) as Map<String, dynamic>;
   final listed = {
     for (final entry in (list['functions'] as List).cast<Map<String, dynamic>>())
