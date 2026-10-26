@@ -71,6 +71,19 @@ void main() {
       );
     }, skip: other == null ? 'no system library known here' : null);
 
+    test('the library of the tests: none named skips, a name that leads to no file fails', () {
+      expect(ortForTests(const {}).skip, startsWith('no ONNX Runtime: set IMMUCH360_ORT_LIB'));
+      expect(ortForTests(const {'IMMUCH360_ORT_LIB': ''}).library, isNull);
+      final missing = p.join(Directory.systemTemp.path, 'immuch360-no-ort', 'libonnxruntime.so.1.31.0');
+      expect(
+        () => ortForTests({'IMMUCH360_ORT_LIB': missing}),
+        throwsA(isA<StateError>().having((e) => e.message, 'message', 'IMMUCH360_ORT_LIB names no file: $missing')),
+      );
+      final found = ortForTests({'IMMUCH360_ORT_LIB': tinyDepthModelPath()});
+      expect(found.library, tinyDepthModelPath());
+      expect(found.skip, isNull);
+    });
+
     test('the settings of the design: all logical processors but two, at least one, no spinning', () {
       expect(OrtSessionSettings.forProcessors(32).intraOpThreads, 30);
       expect(OrtSessionSettings.forProcessors(8).intraOpThreads, 6);

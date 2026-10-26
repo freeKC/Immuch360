@@ -1,7 +1,9 @@
 // The real ONNX Runtime of the tests that need one (ort_session_test, ort_depth_backend_test, ort_real_model_test):
 // the library of an official release archive, named by IMMUCH360_ORT_LIB, one version per run since a process keeps
-// the first ONNX Runtime it loads. Without it those tests are skipped with this reason. The desktop workflow downloads
-// the archives by their SHA-256: 1.31.0 and 1.23.2 on Linux (the job test), 1.31.0 on Windows (the job windows).
+// the first ONNX Runtime it loads. Without it those tests are skipped with this reason; a name that leads to no file
+// fails them, so that a run of the CI that looks for a library in the wrong place cannot pass by skipping them all. The
+// desktop workflow downloads the archives by their SHA-256: 1.31.0 and 1.23.2 on Linux (the job test), 1.31.0 on
+// Windows (the job windows).
 //
 //   Linux:   tar -xzf onnxruntime-linux-x64-1.31.0.tgz
 //            IMMUCH360_ORT_LIB=$PWD/onnxruntime-linux-x64-1.31.0/lib/libonnxruntime.so.1.31.0 flutter test test/desktop/ai/ort
@@ -22,8 +24,10 @@ import 'package:path/path.dart' as p;
 /// The ONNX Runtime library to load, or why the tests that need one are skipped
 typedef OrtForTests = ({String? library, String? skip});
 
-OrtForTests ortForTests() {
-  final given = Platform.environment['IMMUCH360_ORT_LIB'];
+/// The library [environment] (the process's by default) names in IMMUCH360_ORT_LIB. Throws [StateError] when it names
+/// no file: called by main, that fails the whole test file.
+OrtForTests ortForTests([Map<String, String>? environment]) {
+  final given = (environment ?? Platform.environment)['IMMUCH360_ORT_LIB'];
   if (given == null || given.isEmpty) {
     return (
       library: null,
@@ -31,7 +35,7 @@ OrtForTests ortForTests() {
     );
   }
   if (!File(given).existsSync()) {
-    return (library: null, skip: 'IMMUCH360_ORT_LIB names no file: $given');
+    throw StateError('IMMUCH360_ORT_LIB names no file: $given');
   }
   return (library: p.absolute(given), skip: null);
 }
