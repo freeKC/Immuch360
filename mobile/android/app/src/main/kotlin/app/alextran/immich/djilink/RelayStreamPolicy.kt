@@ -64,6 +64,9 @@ enum class RelayKeyCause(val wire: String) {
   JOIN("join"),
   DROP("drop"),
   SWITCH("switch"),
+
+  /** No key picture came out for 2 s (p2/noon-test-check-2026-10-26.md 3.5) */
+  PERIOD("period"),
 }
 
 /**

@@ -1270,6 +1270,9 @@ class RelayTranscoder(
       }
       if (keys.due(nowNs)) {
         askKey = encoder
+      } else if (encoder != null && needed && keys.periodDue(nowNs)) {
+        // No key picture for 2 s at 15 a second: the encoder counts its period in pictures at 30
+        askKey = encoder
       }
       val notNeeded = notNeededSinceNs
       if (!needed && encoder != null && notNeeded != null && nowNs - notNeeded >= RELEASE_AFTER_NS) {
