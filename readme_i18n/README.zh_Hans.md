@@ -59,16 +59,16 @@
 
 <div align="center">
 
-| Platform | Where to get it | Status on 26 October 2026 |
+| 平台 | 获取方式 | 2026 年 10 月 26 日状态 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 31 sent for Google's review on 26 October, in place of build 29), build 31 on GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手机和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 上为 build 25（build 31 已于 10 月 26 日提交 Google 审核，取代 build 29），GitHub 上为 build 31 |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 版本 3.3.1（build 27）自 10 月 22 日起等待 Apple 审核，随后是版本 3.3.2（build 28），正在 TestFlight 中进行内部测试；期间可以[自行构建](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 31 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
-| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October, under LG's tests on 26 October; until it is published, it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 上为 build 31：扫描二维码即可[用手机登录](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)，视频播放器为遥控器提供[进度条、音频和字幕](#on-android-tv-and-google-tv)，还可观看由手机转发的[无人机实时画面](#watch-it-in-a-meta-quest-or-on-an-android-tv)（实验性）；电视版应用列表正在接受 Google 审核 |
+| 搭载 webOS 5.0 及更高版本的 **LG 电视** | [.ipk，版本 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store（审核中） | 版本 1.0.0 已于 10 月 24 日提交至 LG Content Store，10 月 26 日正在接受 LG 测试；在发布之前可在 [Developer Mode](#lg-tvs-webos) 下安装。它已在 LG Cloud Test Lab 的 webOS 25 电视上运行过 |
 | 搭载 Tizen 5.5 及更高版本的 **Samsung 电视** | [.wgt 测试 build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | 同一电视应用的测试 build 0.2.0，需用您自己的 Samsung 证书签名，并在 [Developer mode](#samsung-tvs-tizen) 下安装；0.1.0 已在一位测试者的 Samsung 电视上运行过，0.2.0 包含了那次运行后的修复；不在 Samsung 的商店中 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October; build 31 sent as the next submission on 26 October), build 31 on GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, previews: photos, 360° photos and flat videos (360° videos play flat), an Immich server and network shares; desktop build 11 tried on 26 October in an Ubuntu 24.04 container and on a Mac; unsigned on macOS |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 上为 build 28（自 10 月 25 日起上架；build 31 已于 10 月 26 日作为下一次提交送审），GitHub 上为 build 31 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安装程序或 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | 桌面版 build 12，已签名的预览版：照片、扁平和 360° 视频、共享、Plex、摄像头（尚未用真实摄像头验证）、用手机登录、一键旋转照片、89 种语言的界面 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | 桌面版 build 12，预览版：照片、360° 照片和扁平视频（360° 视频以扁平方式播放）、Immich 服务器和网络共享；桌面版 build 11 已于 10 月 26 日在 Ubuntu 24.04 容器中和一台 Mac 上试过；macOS 版未签名 |
 
 *每次发布都会更新这些状态；逐个 build 的详细信息见[发布状态](../docs/immuch360/release-status.md)。*
 
@@ -111,42 +111,42 @@
 
 | 功能 | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ |
-| Sign in with your phone (QR code) | ✅ | ✅ (its web page tried) | ✅ (which way not recorded) |
+| 配合 Immich 服务器的图库、相册、搜索 | ✅ | ✅ | ✅ |
+| 用手机登录（二维码） | ✅ | ✅（试过其网页） | ✅（未记录使用哪种方式） |
 | 无服务器：设备自身的媒体 | ✅ 文件夹 | ✅ 文件夹 | ✅ 文件夹 |
 | 扁平照片和视频 | ✅ | ✅ | ✅ |
 | 一键旋转照片 | ✅ | ✅ | ✅ |
-| 360° photos as a sphere | ✅ | ✅ | ✅ |
+| 360° 照片以球体显示 | ✅ | ✅ | ✅ |
 | 360° 视频 | ✅ | 仅扁平 | 仅扁平 |
 | 3D 和 VR180 | ✅ 单眼 | 照片单眼，视频扁平 | 照片单眼，视频扁平 |
 | Spatial 2.5D（头部追踪） | 🔜 开发中 | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye, from a server | ✅ one eye |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ photos, videos flat | ✅ photos, videos flat |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ |
+| Apple 空间照片 | ✅ 单眼 | ✅ 单眼，来自服务器 | ✅ 单眼 |
+| Insta360、GoPro 和 DJI 原始文件 | ✅ | ✅ 照片，视频扁平 | ✅ 照片，视频扁平 |
+| SMB、WebDAV、DLNA 共享 | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
 | Tapo 摄像头：录像 | ✅ | 🔧 CI | 🔧 CI |
 | Tapo 摄像头：实时画面 | ✅ | 🔧 CI | 🔧 CI |
 | 在网络上共享此设备 | ✅ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | ✅ | ✅ |
+| 从共享和设备上传到 Immich | ✅ | ✅ | ✅ |
 | 通过 USB 从 DJI 无人机或存储卡导入（实验性） | ❌ | ❌ | ❌ |
 | DJI 无人机实时画面（实验性） | ❌ | ❌ | ❌ |
 | 深色主题 | 跟随系统 | 跟随系统 | 跟随系统 |
 | 输入方式 | 鼠标、键盘 | 鼠标、键盘 | 鼠标、键盘、触控板 |
 | 获取方式 | 安装程序或 ZIP（已签名预览版） | .deb、.rpm（预览版） | DMG 或 ZIP（未签名预览版） |
 
-*Linux and macOS: desktop build 11, tried on 26 October 2026 on Ubuntu 24.04, in a container with a test Immich server and test shares, and by the author on a Mac.*
+*Linux 和 macOS：桌面版 build 11 已于 2026 年 10 月 26 日在 Ubuntu 24.04 上、在一个带有测试 Immich 服务器和测试共享的容器中试过，作者也在一台 Mac 上试过。*
 
 ✅ 该平台应用中已支持 · ❌ 该平台不提供 · 🔜 计划中 · 🔧 CI 源码中已有，已由项目的 CI 在该系统上构建并启动，但尚未在该系统上用真实的服务器、共享或摄像头验证 · 仅扁平：视频以扁平方式播放并显示提示信息，因为电脑上的 360° 视频渲染器目前仅支持 Windows；在 LG 电视上，webOS 能否把视频帧交给球体渲染仍有待测量；在一位测试者的 Samsung 电视上，浏览器交给 3D 视图的是黑色视频帧。“单眼”是指 3D 文件在平面屏幕上只显示左眼画面。LG 和 Samsung 两栏是同一个独立的电视应用：LG 版本 1.0.0，其共享和 Plex 已用真实服务器验证，摄像头已在项目的构建主机上用模拟摄像头验证，但尚未在电视上验证；以及 Samsung 测试 build 0.2.0。并非每个 ✅ 都已在真实设备上验证：具体在哪里验证过什么、还有什么待确认，见[功能](../docs/immuch360/features.md)、[平台支持](../docs/immuch360/platform-support.md)和[兼容性](../docs/immuch360/compatibility.md)。
 
 - **Android 手机和平板**：完整版应用，支持触摸和陀螺仪，支持所有来源。
 - **iPhone 和 iPad**：完整版应用；360° 视频播放器目前只支持播放和暂停，Tapo 实时画面和用手机登录的手机端将随下一个 iOS 版本推出，在 Apple 授予多播权限之前，DLNA 搜索会发送单播请求。
-- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; on 26 October, with build 30, the steady stream that answers them kept that TV's picture coming in flight, with 7 freezes.
+- **Android TV 和 Google TV**：使用同一个 APK，由遥控器操作，默认深色主题；仅作为查看器：备份、上传和编辑器均被隐藏，详细信息为只读，但照片仍可一键旋转。所有搜索筛选器都可以用遥控器操作：位置和相机会在列表中打开其选项，日期筛选器会显示全部选项，标签、位置、日期、媒体类型、星级评分和显示选项面板会把清空和应用放在选项旁边，只需按一次右键即可到达，面板占据屏幕的大部分高度。照片网格占用的图像内存更少，按住方向键时每秒最多移动约 10 行。从 build 28 起，它可以通过二维码或短代码从手机登录（已在两个模拟器之间以手动输入代码的方式试过，尚未用摄像头试过）。从 build 29 起，视频的进度条可获得遥控器焦点，影片带有音频和字幕菜单，共享中的下一个文件会带着自己的控件打开。已在 Google TV 模拟器上验证；build 28 于 10 月 23 日在真实 Android TV 上运行过，在那里发现的视频问题已在 build 29 中修复，这些修复已在模拟器上验证，尚未在那台电视上验证。从 build 30 起，它的 Drone 卡片会显示由手机转发的 DJI 无人机实时画面，并带有无人机的数值和障碍物环（实验性）：配对和画面已于 10 月 25 日在一台 TCL Android TV 上试过，之前的转发方式出现卡顿和偏绿；10 月 26 日，使用 build 30，为此推出的稳定流让那台电视在飞行中持续收到画面，期间卡住 7 次。
 - **搭载 webOS 5.0 及更高版本的 LG 电视**：一个独立应用，适用于遥控器和 Magic Remote，基于 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 构建：一个 Immich 查看器，360° 照片以球体显示，照片可一键旋转，深色主题，支持应用的 89 种语言（电视应用自身的少量文字目前仍为英文）；通过其在电视上的自有服务支持网络共享、Plex 和 Tapo 摄像头的实时画面（SMB 自 webOS 22 起）；360° 视频以扁平方式播放。版本 1.0.0 已于 10 月 24 日提交至 LG Content Store，并在 LG Cloud Test Lab 中三个型号的 webOS 25 电视上运行过：登录、手机登录页面、照片、相册、一段视频、360° 视图、幻灯片放映、一次搜索，以及从每个页面返回。版本 0.1.0 已在一位测试者的 LG 电视（webOS 22）上运行过。共享和 Plex 已用真实服务器验证，摄像头已在项目的构建主机上用模拟摄像头验证，但尚未在电视上验证。
 - **搭载 Tizen 5.5 及更高版本的 Samsung 电视**：为 Samsung 电视打包的 LG 电视应用，测试 build 0.2.0，需自行签名和安装：一个供遥控器使用的 Immich 查看器，手动输入登录（服务器地址，然后是电子邮件和密码或 API 密钥），支持幻灯片放映、球体上的 360° 照片、一键旋转照片，以及一个说明电视支持哪些功能的“关于”页面；暂不支持用手机登录、共享、Plex 和摄像头；360° 视频以扁平方式播放，并显示提示。版本 0.1.0 已在一位测试者搭载 Tizen 9 的 Samsung 电视上运行过：4K 及以下的照片和视频可以播放，超过 4K 的都无法解码，电视的浏览器交给 3D 视图的是黑色视频帧。版本 0.2.0 包含了那次运行后的修复（超出电视解码器能力或卡住的视频会显示提示，360° 视频以扁平方式播放并显示提示），尚未在电视上运行过。
 - **Meta Quest 2、Pro、3 和 3S**：应用以窗口形式运行，并支持沉浸式视图，从 build 30 起还有一张 Drone 卡片，可显示由手机转发的 DJI 无人机实时画面（实验性），将首次随 build 30 测试；HEVC 是最可靠的编码格式，H.264 在 Quest 3 上的上限约为 4096x2304；目前仅测试过 Quest 3，Quest 2、Quest Pro 和 Quest 3S 尚未测试。
 - **Windows 10 和 11**：预览版，使用文件夹代替图库，配备自带的视频播放器（libmpv）播放扁平和 360° 视频，原始文件由显卡芯片拼接，文件和文件夹可以用程序打开或拖放到窗口上，提供安装程序或 ZIP，由 APROGSYS 签名。
 - **Linux**：由项目的 CI 构建的 .deb 和 .rpm，已在 Ubuntu 22.04 和 24.04、Debian 12 以及 Fedora 40 和 44 上安装并验证；通过系统的 libmpv 显示照片、360° 照片并播放扁平视频（360°、3D 和原始视频会以扁平方式播放并显示提示信息），从桌面版 build 7 起在 X11 会话中也通过硬件路径绘制；SMB 共享从 Ubuntu 22.04 和 Debian 12 起可用；在没有密钥环（GNOME Keyring 或 KWallet）的情况下，应用首次启动时不再卡住 25 s：它只在本次会话中保存密码，并在设置中加以说明；尚未在真实的 Linux 电脑上运行，仅在 WSLg 和容器中运行过。
-- **macOS**: a DMG and a ZIP built by the project's CI, universal, unsigned (Gatekeeper asks once); it starts, opens the files and folders given to it, Finder included, keeps its secrets in the login keychain and plays flat videos with its own libmpv, first checked on the project's CI Mac; on 26 October 2026 the author tried desktop build 11 on a Mac, and it worked.
+- **macOS**：由项目的 CI 构建的 DMG 和 ZIP，通用二进制，未签名（Gatekeeper 会询问一次）；应用可以启动，能打开交给它的文件和文件夹（包括来自 Finder 的），将机密信息保存在登录钥匙串中，并用自带的 libmpv 播放扁平视频，以上最初在项目的 CI Mac 上验证；2026 年 10 月 26 日，作者在一台 Mac 上试用了桌面版 build 11，运行正常。
 
 <a id="what-you-can-do"></a>
 ## 您可以做什么
@@ -194,7 +194,7 @@
 <a id="lg-tvs-webos"></a>
 ### LG 电视（webOS）
 
-1. Version 1.0.0 is in LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
+1. 版本 1.0.0 正在接受 LG 审核。在它上架 LG Content Store 之前，需在 Developer Mode 下安装：您需要一台搭载 webOS 5.0 或更高版本的 LG 电视、一台位于同一网络中的电脑，以及一个免费的 LG 开发者账户。在电视上，从 LG Content Store 安装 Developer Mode 应用，登录，打开 Dev Mode Status，并让电视重启；记下电视的 IP 地址以及应用显示的密码短语（passphrase）。
 2. 在电脑上安装 webOS CLI（Node.js 18 或更高版本）：`npm install -g @webos-tools/cli`，然后用 `ares-setup-device` 注册电视（其 IP 地址、端口 9922、用户 `prisoner`），再执行 `ares-novacom --device <name> --getkey`，它会要求输入密码短语。
 3. 从 [webOS 1.0.0 预发布版](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0)下载适用于 UHD 电视的 `Immuch360-webOS-1.0.0.ipk`，或适用于全高清电视（LG 只为其提供 1280x720 应用）的 `Immuch360-webOS-1.0.0-1280x720.ipk`。用 `SHA256SUMS.txt` 核对，然后执行 `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`。webosbrew 的 [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) 无需命令行即可完成同样的操作。
 4. 一次 Developer Mode 会话持续 1000 小时，Developer Mode 应用中的 EXTEND 按钮可以为其续期；会话到期后，电视会删除以这种方式安装的应用。详细信息见 [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode)。
@@ -217,18 +217,18 @@
 <a id="windows"></a>
 ### Windows
 
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.12-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
+1. 从[桌面版预发布版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12)下载 `Immuch360-Desktop-3.3.0-rc.0-desktop.12-windows-x64-setup.exe`（可用 `SHA256SUMS.txt` 核对），然后打开它。安装程序和 ZIP 均已签名；Windows 会显示发布者为 APROGSYS。由于该发布者对 SmartScreen 来说还很新，它仍可能询问一次：选择“更多信息”，再选择“仍要运行”。
 2. 选择“仅为我安装”（无需管理员权限）或“为所有用户安装”，然后选择安装程序的语言，默认已选中 Windows 当前使用的语言。
 3. 从开始菜单启动 Immuch360 Desktop。照片和视频可以在“打开方式”中找到它（右键单击文件，选择打开方式）；它绝不会将自己设为默认程序。新 build 首次启动可能需要长达一分钟，因为 Windows 需要扫描文件。
 4. Windows 10 或 11，64 位。要更新，只需打开下一个 build 的安装程序：您的登录状态、文件夹和设置都会保留。同一版本的 ZIP 是同一个程序的文件夹形式，可以解压到任意位置，然后从中启动 `immuch360.exe`。在桌面版 build 4 至 8 启动时因“duplicate column name: group_date”而停止的电脑上，build 9 能打开该数据库并保留您的数据。
 
 ### Linux
 
-On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
+在 Ubuntu 22.04 或更高版本以及 Debian 12 或更高版本上：`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-amd64.deb`；在 Fedora 40 或更高版本上：`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-x86_64.rpm`，两者均来自[桌面版预发布版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12)。然后从应用程序中启动 Immuch360 Desktop。这是一个预览版：支持电脑上的文件夹、照片和以球形显示的 360° 照片，并通过系统的 libmpv（由软件包一并安装）播放扁平视频（360°、3D 和原始视频以扁平方式播放并显示提示信息）；SMB 共享从 Ubuntu 22.04 和 Debian 12 起可用。在 Fedora 上，相机视频需要 RPM Fusion 的 FFmpeg。如果没有 GNOME Keyring 或 KWallet，密码只会在本次会话中保存，应用的设置中会对此加以说明。
 
 ### macOS
 
-Open `Immuch360-Desktop-3.3.0-rc.0-desktop.12-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. The author tried desktop build 11 on a Mac on 26 October 2026, and it worked; other Macs and macOS versions have not been tried, and reports are welcome.
+从[桌面版预发布版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12)打开 `Immuch360-Desktop-3.3.0-rc.0-desktop.12-macos.dmg`，将应用拖到“应用程序”文件夹（支持 Apple silicon 和 Intel，macOS 12 或更高版本）。它尚未签名，也未经公证：在 macOS 14 或更早版本中，按住 Control 单击它并选择打开；在 macOS 15 或更高版本中，则需要在“系统设置”的“隐私与安全性”中选择“仍要打开”。作者于 2026 年 10 月 26 日在一台 Mac 上试用了桌面版 build 11，运行正常；其他 Mac 和 macOS 版本尚未试过，欢迎反馈。
 
 <a id="how-to"></a>
 ## 操作指南
@@ -279,8 +279,8 @@ Immuch360 能识别扁平照片和视频、全景照片、360° 照片和视频�
 
 在大屏幕上用遥控器看照片。所有电视应用的操作方式都一样：方向键移动选框，OK 键打开，返回键返回，在 360° 照片中用方向键环顾四周。电视本身没有照片，因此它显示的是您的 Immich 服务器，在 Android TV 和 LG 电视上还包括您的网络共享、Plex 服务器和摄像头。
 
-- **Android TV and Google TV**: the Android app itself, build 31, from GitHub until Google Play offers it on TVs.
-- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, in LG's review for the LG Content Store.
+- **Android TV 和 Google TV**：就是 Android 应用本身，build 31，在 Google Play 于电视上提供之前从 GitHub 获取。
+- **搭载 webOS 5.0 及更高版本的 LG 电视**：一个独立的电视应用，版本 1.0.0，正在接受 LG 针对 LG Content Store 的审核。
 - **搭载 Tizen 5.5 及更高版本的 Samsung 电视**：与 LG 电视相同的电视应用，测试 build 0.2.0，需自行签名和安装。
 
 <p align="center">
@@ -403,7 +403,7 @@ Immich 自己的应用无法安装到 LG 电视上。Immuch360 为搭载 webOS 5
 2. 在设置、资源查看器、视频中，“视频来源”可以选择：设备能解码时使用原始文件、始终使用原始文件，或始终使用转码流。
 3. 要把一张 360° 照片展示给没有安装此应用的人，可以用 Immich 的共享链接分享：Immich 网页版会在对方的浏览器中以球体形式显示它。
 
-The current build, build 31, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 to 30; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+目前的 build，即 build 31，与 build 28 至 30 一样基于 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0）；build 28 已针对基于同一 Immich `main` 构建的服务器进行了测试，build 27 还针对 Immich 3.2.4 服务器进行了测试。如有问题，请在[议题](https://github.com/freeKC/Immuch360/issues)中反馈，而不要反馈给 Immich 项目。
 
 哪些保持不变、Immuch360 增加了什么，见[与 Immich 对比](#compared-with-immich)。
 
@@ -432,7 +432,7 @@ TP-Link 的 Tapo 摄像头，就在您的照片旁边，无需 Tapo 应用。应
 <a id="your-dji-drone-experimental"></a>
 ### 您的 DJI 无人机（实验性）
 
-A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI.
+「资源库」中的 Drone 卡片（实验性，默认开启）汇集了 Immuch360 对 DJI 无人机的所有功能：在 Android 手机上，通过遥控器查看无人机的实时画面，以及通过 USB 把它的照片和视频导入 Immich；在 Meta Quest 或 Android TV 上，观看由手机转发的实时画面。Immuch360 不是 DJI 产品，未经 DJI 认可，也不会向 DJI 发送任何数据。
 
 <a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
 <a id="see-what-your-drone-sees-on-your-phone"></a>
@@ -442,13 +442,13 @@ A Drone card in the Library, experimental and on by default, gathers what Immuch
   <img src="../.github/readme/drone-live-phone.png" width="720" alt="插画，非截图：两只手握着一个上方夹着手机的无人机遥控器，手机屏幕显示海岸的实时航拍画面，一架小型无人机在黄昏的海湾上空飞行">
 </p>
 
-See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October, then with build 30 on 26 October.
+在您的 Android 手机上看到 DJI 无人机所看到的画面，无需 DJI Fly，也无需任何账户：用数据线将 DJI RC-N3 遥控器连接到手机，Immuch360 就会横屏全屏显示无人机的实时画面（1080p 的 H.265），以及从数据线读取的飞行数值。遥控器仍完全掌控无人机。已用一个 RC-N3、一台 DJI Neo 2 和一部 Samsung Galaxy S24+ 试过：build 29 在地面上，build 30 的测试版本于 10 月 24 日和 25 日在飞行中，随后 build 30 于 10 月 26 日在飞行中。
 
-**Which remotes and drones**, on 26 October 2026: the live video comes through a DJI remote that holds the phone on its cable. Tried another pair? On the live screen, open Advanced, then Diagnostics, and tell us in [Issues](https://github.com/freeKC/Immuch360/issues) which drone and remote you used and what Diagnostics shows.
+**哪些遥控器和无人机**，截至 2026 年 10 月 26 日：实时画面通过一个夹住手机并用数据线连接手机的 DJI 遥控器传来。试过其他组合？在实时画面界面中打开“高级”，然后打开“诊断”，并在 [Issues](https://github.com/freeKC/Immuch360/issues) 中告诉我们您使用的无人机和遥控器，以及“诊断”显示的内容。
 
-- **Tested**: a DJI Neo 2 fitted with its Digital Transceiver, which it needs to fly with any remote, and a DJI RC-N3, with a Samsung Galaxy S24+; on the ground on 23 October and in flight, indoors, from 24 to 26 October.
-- **Expected, not tried**: the RC-N3 with the other drones DJI lists for it (Neo, Flip, Mini 4 Pro, Mini 5 Pro, Air 3, Air 3S, Lito 1, Lito X1, and the Avata 360 by its own guide), and the RC-N2, which holds the phone on the same cable, with the same drones and the Neo 2. The app shows H.265 video only, and the flight values are proven on the Neo 2 only: with another drone the picture or the values may be missing.
-- **Not supported**: remotes with their own screen (DJI RC, RC 2, RC Pro 2), and so the Mavic 4 Pro, which DJI ships with one of them; DJI goggles; the RC-N1, the RC-N1C and older remotes; a drone flown from the phone over Wi-Fi, without a remote.
+- **已测试**：一台装有 Digital Transceiver 的 DJI Neo 2（它配合任何遥控器飞行都需要此模块），以及一个 DJI RC-N3，搭配一部 Samsung Galaxy S24+；10 月 23 日在地面上，10 月 24 日至 26 日在室内飞行中。
+- **预计可用，未试过**：RC-N3 搭配 DJI 为其列出的其他无人机（Neo、Flip、Mini 4 Pro、Mini 5 Pro、Air 3、Air 3S、Lito 1、Lito X1，以及按其自身指南的 Avata 360），以及通过同一种数据线连接手机的 RC-N2，搭配同样的无人机和 Neo 2。应用只显示 H.265 视频，飞行数值仅在 Neo 2 上得到验证：使用其他无人机时，画面或数值可能缺失。
+- **不支持**：自带屏幕的遥控器（DJI RC、RC 2、RC Pro 2），因此也包括 DJI 搭配其中之一销售的 Mavic 4 Pro；DJI 飞行眼镜；RC-N1、RC-N1C 及更早的遥控器；不使用遥控器、由手机通过 Wi-Fi 操控飞行的无人机。
 
 它只监听。绝不会向遥控器或无人机发送任何指令：从遥控器打开 20 秒后开始，页面每秒写入的那一个字节只用于判断遥控器是否接收数据，不携带任何指令。
 
@@ -467,7 +467,7 @@ See what your DJI drone sees on your Android phone, without DJI Fly and without 
 <a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
 #### 在 Meta Quest 或 Android TV 上观看
 
-The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; on 26 October, with build 30, after the switch to the steady stream, the TV kept showing the picture through a flight where the drone sent 18 Mbit/s, with 7 freezes, the longest 1.7 s; how the picture looked was not recorded. From build 31 the safety notice on the TV keeps the focus of the remote (checked by widget tests, not yet on that TV); in build 30 the view under it could take the focus, so the notice could be neither read nor accepted, and the only way out was Back, which leaves the page. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
+连接遥控器的手机可以把无人机的画面和数值发送到同一局域网中 Meta Quest、Android TV 或 Google TV 上的 Immuch360，供您身边的人观看。头显会在一个窗口中显示它们，或在您面前以更大的飞行视图显示；电视则全屏显示，数值和障碍物环与手机相同。它们只能观看：头显或电视上的任何操作都不会传到遥控器或无人机。它们的提示（如“仅观看”）会在几秒后淡出，按键、点按或按下按钮即可重新显示。无人机的画面曾于 10 月 24 日通过家庭 Wi-Fi 传到一台 Quest 3 上一次；带有数值和障碍物环的头显窗口和飞行视图将首次随 build 30 测试，Quest 2、Pro 和 3S 尚未试过。如果头显中的圆环遮住了画面中央，可在其菜单中选择“边缘的边框”，让中央保持清晰。在一台 TCL Android TV 上，配对和画面已于 10 月 25 日试过，之前的转发方式出现卡顿和偏绿；10 月 26 日，使用 build 30，切换到稳定流后，在一次无人机发送 18 Mbit/s 的飞行中，电视始终显示着画面，期间卡住 7 次，最长 1.7 s；画面看起来如何未作记录。从 build 31 起，电视上的安全提示会保持遥控器焦点（已通过 widget 测试验证，尚未在那台电视上验证）；在 build 30 中，提示下方的视图可能抢走焦点，导致提示既无法阅读也无法接受，唯一的出路是返回键，而这会离开该页面。在观看头显或电视的同时飞行，需要身边有一位始终目视无人机的观察员（欧盟开放类）；如果没有，请看着无人机。
 
 1. 在手机上的实时画面界面中，点按“Send to a headset or a TV”并将其打开。
 2. **Meta Quest**：打开 Immuch360、「资源库」、Drone，然后选择手机；输入手机显示的代码，每部手机只需输入一次。画面会在窗口中打开；“Open the flight view”可将其放大，按 B 或 Y 返回窗口。
@@ -475,7 +475,7 @@ The phone plugged into the remote can send the drone's picture and values to Imm
 4. 手机和屏幕必须位于同一局域网中。在外时，打开手机的热点（如支持，请使用 5 GHz 频段），并让头显或电视连接到该热点。
 5. 如需提交错误报告，头显的菜单和电视的 Options 中有 Diagnostics 和“Save a reception record”，后者会保存该屏幕接收到的内容。
 
-**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once its Wi-Fi has carried the steady picture for 30 s without a stall; on 26 October that TV's Wi-Fi never did, and the TV stayed on the steady picture, at 15 pictures a second for 44 of its 59 seconds. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture first ran on a phone on 26 October, with build 30: a Galaxy S24+, encoding it in hardware HEVC at a constant bit rate. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
+**转发质量**，build 30 新增，位于手机上的“高级”中：飞行时无人机发送约 18 Mbit/s，10 月 25 日，一条从手机经路由器到电视的家庭 Wi-Fi 链路只有三分之一的飞行时间能承载完整的数据流；其余时间电视画面卡顿、花屏并偏绿。在默认的“自动”模式下，如果某个屏幕的 Wi-Fi 跟不上，它会收到由手机为其重新编码的稳定画面，最高 1080p、每秒 30 帧，码率与其 Wi-Fi 能承载的相符，以较少的细节换取清晰，而不是花屏；当其 Wi-Fi 已连续 30 s 无停顿地承载稳定画面后，会在下一次降落或起飞时恢复为无人机的原始画面；10 月 26 日，那台电视的 Wi-Fi 始终未能做到，电视一直停留在稳定画面上，其 59 秒中有 44 秒为每秒 15 帧。“完整流”始终按原样发送无人机的画面，“稳定流”始终发送手机重新编码的画面。稳定画面于 10 月 26 日随 build 30 首次在手机上运行：一部 Galaxy S24+，以硬件 HEVC 按恒定码率编码。使用以太网线连接的电视，或连接到手机自身热点的屏幕，只需经过一段 Wi-Fi，而不是两段。
 
 此 build 中尚未提供：iPhone 和 iPad 上的无人机功能（尚未开始）、向 LG 和 Samsung 电视转发，以及验证 1.8 m 和 1.5 m/s 以上的数值，之后是卫星和与返航点的距离，这些都有待一次户外飞行。
 
@@ -584,11 +584,11 @@ Immuch360 是 [Immich](https://github.com/immich-app/immich) 手机应用的非�
 
 尚未完成的工作，最可能先做的排在前面。这里的内容都不是承诺，[问题跟踪器](https://github.com/freeKC/Immuch360/issues)中的反馈有助于决定先做什么。
 
-- **The stores**: Google Play (build 31 in review since 26 October; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 31 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
-- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked in a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
+- **应用商店**：Google Play（build 31 自 10 月 26 日起审核中；电视版列表审核中）、App Store（版本 3.3.1 审核中，随后是包含 build 28 的版本 3.3.2）、包含 build 31 的 Meta Horizon Store（自 10 月 25 日起上架 build 28）、LG Content Store（版本 1.0.0 自 10 月 24 日起由 LG 审核中），之后是 Samsung 商店。
+- **无人机**：进行一次户外飞行，用卷尺验证 1.8 m 和 1.5 m/s 以上的高度和速度以及障碍物距离，然后显示卫星和与返航点的距离；在头显中验证转发的稳定画面；向 LG 和 Samsung 电视转发；iPhone 和 iPad 上的无人机功能，尚未开始；用一台真实的 DJI Neo 2 测试导入页面，然后把手机录制的声音合并到其片段中。在完成这些测试之前，不计划提供任何向无人机发送指令的功能。
 - **电视**：在真实的 Android TV 上测试 build 29，包括其视频控件和用手机登录；在真实的 LG 电视上测试 LG 应用的共享、Plex 和实时画面，以及 webOS 26；在真实的 Samsung 电视上测试 Samsung 测试 build 0.2.0，然后是 Samsung 电视上的用手机登录、共享、Plex 和摄像头；然后是 LG 电视球体上的 360° 视频、摄像头的声音及其录像（2026 年 12 月之前不会提供）。
 - **摄像头**：用真实摄像头验证 Tapo 摄像头。
-- **Computers**: the test of each function by hand on a Windows PC, sign in with your phone included; Spatial 2.5D with the webcam on Windows, in development for November 2026; then the 360° video renderer on Linux and macOS, a test on a real Linux PC; then automatic updates and a signed macOS app.
+- **电脑**：在 Windows 电脑上对每个功能进行手动测试，包括用手机登录；Windows 上配合网络摄像头的 Spatial 2.5D，正在开发中，计划于 2026 年 11 月推出；然后是 Linux 和 macOS 上的 360° 视频渲染器，并在真实的 Linux 电脑上测试；接着是自动更新和已签名的 macOS 应用。
 - **手机和平板**：随下一个 iOS 版本在 iPhone 和 iPad 上推出 Tapo 实时画面和大屏幕登录；为 iOS 的 360° 视频播放器加入进度条，为手机的 360° 播放器加入上一个和下一个，为 iOS 扁平播放器加入音轨和字幕菜单。
 - **沉浸式媒体**：双鱼眼 .dng 文件，根据 GoPro 和 DJI 自身的运动数据对视频进行水平校正，在解码器允许的情况下让 Quest 上的空间视频以 3D 显示，以及在头显中为空间照片加入上一个和下一个切换。
 - **来源**：在共享文件夹的文件之间滑动切换，为 WebDAV 支持 Digest 认证，用二维码从电脑导入 Plex 令牌，为 Plex 支持 IPv6，支持 H.265 格式的 Tapo 录像，以及在电视主屏幕上显示频道。
