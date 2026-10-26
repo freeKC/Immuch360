@@ -385,6 +385,30 @@ void main() {
       expect(components.statusOf(_runtimeComponent).state, AiComponentState.removedNextStart);
     });
 
+    test('remove all deletes a link as a link, and nothing out of the folders of the app', () async {
+      final components = service();
+      await components.install(_modelComponent);
+      final shared = Directory(p.join(temp.path, 'shared'))..createSync();
+      final precious = File(p.join(shared.path, 'precious.txt'))..writeAsStringSync('not ours');
+      final link = Link(p.join(root.path, 'models', 'linked'));
+      try {
+        link.createSync(shared.path);
+      } on FileSystemException catch (error) {
+        markTestSkipped('this system refuses to make a link here: $error');
+        return;
+      }
+      final notes = File(p.join(root.path, 'notes.txt'))..writeAsStringSync('not ours either');
+
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+
+      expect(precious.existsSync(), isTrue, reason: 'what a link leads to is never touched');
+      expect(link.existsSync(), isFalse);
+      expect(notes.existsSync(), isTrue, reason: 'only the folders of the app and installed.json go');
+      expect(installedFile(_modelComponent).existsSync(), isFalse);
+      expect(Directory(p.join(root.path, 'models')).existsSync(), isFalse);
+      expect(installedJson()['pendingDeletes'], isEmpty);
+    });
+
     test('a service that goes away stops its downloads and tells nobody', () async {
       final components = service();
       final install = components.install(_modelComponent);

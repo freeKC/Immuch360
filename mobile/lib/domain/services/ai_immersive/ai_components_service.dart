@@ -86,11 +86,17 @@ class AiComponentsService extends ChangeNotifier {
   bool Function() inUse;
 
   static bool _never() => false;
-  static Future<void> _deleteEntity(FileSystemEntity entity) => entity.delete(recursive: true);
+
+  /// A link goes as a link, never what it leads to
+  static Future<void> _deleteEntity(FileSystemEntity entity) =>
+      entity is Link ? entity.delete() : entity.delete(recursive: true);
 
   static const installedFileName = 'installed.json';
   static const _tmp = 'tmp';
   static const _licenses = 'licenses';
+
+  /// The folders of the app in the folder of the components: Remove all touches nothing else, but installed.json
+  static const _ownFolders = ['runtime', 'models', _licenses, _tmp];
 
   /// The source written in installed.json for a file that was already in place with the right sum
   static const alreadyOnDisk = 'already on disk';
@@ -152,11 +158,14 @@ class AiComponentsService extends ChangeNotifier {
     installed.pendingDeletes = kept;
   }
 
-  /// The file or folder at [relative] ("/" between folders) inside [root], null when it would be outside
+  /// The file, folder or link at [relative] ("/" between folders) inside [root], null when it would be outside
   static FileSystemEntity? _entityIn(Directory root, String relative) {
     final path = p.normalize(p.joinAll([root.path, ...relative.split('/')]));
     if (!p.isWithin(root.path, path)) {
       return null;
+    }
+    if (FileSystemEntity.isLinkSync(path)) {
+      return Link(path);
     }
     return FileSystemEntity.isDirectorySync(path) ? Directory(path) : File(path);
   }
@@ -432,8 +441,9 @@ class AiComponentsService extends ChangeNotifier {
     return deferred ? AiRemoveOutcome.nextStart : AiRemoveOutcome.removed;
   }
 
-  /// Removes everything in the folder: every component (those of other versions too), the licences and the .part
-  /// files. Refused while a conversion runs.
+  /// Removes the folders of the app in the folder of the components: every component (those of other versions too),
+  /// the licences and the .part files, and installed.json (the keys of a newer version too). Nothing else in the
+  /// folder, and never what a link leads to. Refused while a conversion runs.
   Future<AiRemoveOutcome> removeAll() async {
     await load();
     if (inUse()) {
@@ -443,27 +453,18 @@ class AiComponentsService extends ChangeNotifier {
       await _stop(component);
     }
     final root = _root!;
+    final folders = [
+      for (final name in _ownFolders)
+        if (FileSystemEntity.typeSync(p.join(root.path, name), followLinks: false) != FileSystemEntityType.notFound)
+          name,
+    ];
     final kept = <String>[];
-    if (root.existsSync()) {
-      final files = await root.list(recursive: true).where((entity) => entity is File).toList();
-      for (final file in files) {
-        if (p.equals(file.path, p.join(root.path, installedFileName))) {
-          continue;
-        }
-        if (!await _tryDelete(file, _delete)) {
-          kept.add(p.split(p.relative(file.path, from: root.path)).join('/'));
-        }
-      }
-      // The folders left empty, the deepest first
-      final folders = await root.list(recursive: true).where((entity) => entity is Directory).toList()
-        ..sort((a, b) => b.path.length.compareTo(a.path.length));
-      for (final folder in folders) {
-        try {
-          await folder.delete();
-        } on FileSystemException {
-          // Not empty: it holds a file kept for the next start
-        }
-      }
+    for (final name in folders) {
+      kept.addAll(await _empty(root, name));
+    }
+    final leftover = File(p.join(root.path, '$installedFileName.tmp'));
+    if (FileSystemEntity.typeSync(leftover.path, followLinks: false) == FileSystemEntityType.file) {
+      await _tryDelete(leftover, _delete);
     }
     _installed
       ..components.clear()
@@ -477,6 +478,35 @@ class AiComponentsService extends ChangeNotifier {
     }
     _notify();
     return kept.isEmpty ? AiRemoveOutcome.removed : AiRemoveOutcome.nextStart;
+  }
+
+  /// Deletes the folder [name] of [root] and what it holds, a link as a link (never followed); returns the paths the
+  /// system keeps ("/" between folders)
+  Future<List<String>> _empty(Directory root, String name) async {
+    final path = p.join(root.path, name);
+    if (FileSystemEntity.typeSync(path, followLinks: false) != FileSystemEntityType.directory) {
+      // A file or a link where the app keeps a folder
+      final entity = FileSystemEntity.isLinkSync(path) ? Link(path) : File(path);
+      return await _tryDelete(entity, _delete) ? const [] : [name];
+    }
+    final kept = <String>[];
+    final entities = await Directory(path).list(recursive: true, followLinks: false).toList();
+    for (final entity in entities) {
+      if (entity is! Directory && !await _tryDelete(entity, _delete)) {
+        kept.add(p.split(p.relative(entity.path, from: root.path)).join('/'));
+      }
+    }
+    // The folders left empty, the deepest first, this one last
+    final folders = [...entities.whereType<Directory>(), Directory(path)]
+      ..sort((a, b) => b.path.length.compareTo(a.path.length));
+    for (final folder in folders) {
+      try {
+        await folder.delete();
+      } on FileSystemException {
+        // Not empty: it holds a file kept for the next start
+      }
+    }
+    return kept;
   }
 
   /// Cancels the download of [component] and waits for its end
