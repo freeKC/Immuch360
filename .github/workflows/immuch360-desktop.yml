@@ -153,6 +153,10 @@ jobs:
       - name: The file types of the packages, and the document types of the macOS app
         run: python3 .github/desktop/desktop_installers.py check
 
+      # relief-v1 is written once, in Python: the Dart of the computers and the Kotlin of the Quest meet its fixture
+      - name: The golden fixture of relief-v1 is what its script writes
+        run: python3 .github/desktop/ai/make_relief_golden.py --check
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
