@@ -164,8 +164,35 @@ void main() {
       // ignore: avoid_print
       print('resident memory after 200 passes: ${growth >= 0 ? '+' : ''}${(growth / 1048576).toStringAsFixed(1)} MiB');
       expect(last, expected);
-      // One input left behind would be 4.3 MB a pass, one output 1.4 MB: 280 MB or more over 200 passes
+      // One output left behind would be 1.4 MB a pass, 280 MB over 200 passes. The 4.3 MB of the input belong to the
+      // arena of Dart, and the small native objects a pass makes are counted by the test below
       expect(growth, lessThan(48 * 1048576));
+    });
+
+    test('gives back every native object it makes: in a pass, after an error of ONNX Runtime, and on close', () {
+      Map<String, int> live() => {
+        for (final MapEntry(:key, :value) in runtime.liveObjects.entries)
+          if (value != 0) key: value,
+      };
+      final before = live();
+      final session = runtime.openSession(tinyDepthModelPath());
+      final open = live();
+      expect(open['OrtEnv'], (before['OrtEnv'] ?? 0) + 1);
+      expect(open['OrtSession'], (before['OrtSession'] ?? 0) + 1);
+      expect(open.keys, unorderedEquals(['OrtEnv', 'OrtSession']));
+      for (var i = 0; i < 3; i++) {
+        session.run(tiny.sample, tiny.sampleShape);
+        expect(live(), open, reason: 'after pass ${i + 1}');
+      }
+      expect(() => session.run(Float32List(2 * 4 * 5), [1, 2, 4, 5]), throwsA(isA<OrtException>()));
+      expect(live(), open, reason: 'after an error of Run');
+      session.close();
+      expect(live(), before);
+      expect(
+        () => runtime.openSession(p.join(Directory.systemTemp.path, 'immuch360-no-model', 'm.onnx')),
+        throwsA(isA<OrtException>()),
+      );
+      expect(live(), before, reason: 'after a model that cannot be read');
     });
 
     test('turns an error of ONNX Runtime into an OrtException with its message, and the session still runs', () {

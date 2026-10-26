@@ -6,9 +6,10 @@
 // one out, which is all a depth model needs.
 //
 // Every OrtStatus that is not null becomes an OrtException carrying ONNX Runtime's own message, and every native
-// object is released in a finally. The calls are synchronous: the worker isolate of lot A4b runs a whole job as one
-// event. Settings of the design: intra-op threads = logical processors minus two (at least one), inter-op threads = 1,
-// and session.intra_op.allow_spinning = 0 so that ONNX Runtime's threads do not spin between two passes.
+// object is released in a finally, counted by kind on the way (OrtRuntime.liveObjects, for the tests). The calls are
+// synchronous: the worker isolate of lot A4b runs a whole job as one event. Settings of the design: intra-op threads =
+// logical processors minus two (at least one), inter-op threads = 1, and session.intra_op.allow_spinning = 0 so that
+// ONNX Runtime's threads do not spin between two passes.
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -17,6 +18,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:immich_mobile/desktop/ai/ort/ort_api_bindings.dart' as ort;
 
 /// The version of the table of functions asked of ONNX Runtime: 1.23 and every later release give it
@@ -128,6 +130,11 @@ final class OrtRuntime {
 
   final _OrtCalls _calls;
 
+  /// The native objects made through this library and not given back yet, by kind (OrtEnv, OrtSession, OrtValue,
+  /// OrtMemoryInfo...): an open session holds one OrtEnv and one OrtSession, a pass leaves nothing
+  @visibleForTesting
+  Map<String, int> get liveObjects => Map.unmodifiable(_calls.live);
+
   /// A session on the model at [modelPath]. Throws [OrtException] with ONNX Runtime's message when the model cannot
   /// be read.
   OrtSession openSession(String modelPath, {OrtSessionSettings? settings}) =>
@@ -150,11 +157,13 @@ final class OrtSession {
         ),
         'CreateEnv',
       );
+      calls.made('OrtEnv');
       final env = envOut.value;
       Pointer<ort.OrtSession> session = nullptr;
       try {
         final optionsOut = arena<Pointer<ort.OrtSessionOptions>>();
         calls.check(calls.createSessionOptions(optionsOut), 'CreateSessionOptions');
+        calls.made('OrtSessionOptions');
         final options = optionsOut.value;
         try {
           calls.check(calls.setIntraOpNumThreads(options, settings.intraOpThreads), 'SetIntraOpNumThreads');
@@ -173,6 +182,7 @@ final class OrtSession {
           );
           final sessionOut = arena<Pointer<ort.OrtSession>>();
           calls.check(calls.createSession(env, _nativePath(modelPath, arena), options, sessionOut), 'CreateSession');
+          calls.made('OrtSession');
           session = sessionOut.value;
         } finally {
           calls.releaseSessionOptions(options);
@@ -230,6 +240,7 @@ final class OrtSession {
         ),
         'CreateCpuMemoryInfo',
       );
+      calls.made('OrtMemoryInfo');
       final memoryInfo = memoryInfoOut.value;
       // Zeroed by the arena (calloc), so that the finally below sees null for a value never made
       final inputOut = arena<Pointer<ort.OrtValue>>();
@@ -247,12 +258,15 @@ final class OrtSession {
           ),
           'CreateTensorWithDataAsOrtValue',
         );
+        calls.made('OrtValue');
         final inputName = arena<Pointer<Char>>()..value = inputs.first.name.toNativeUtf8(allocator: arena).cast();
         final outputName = arena<Pointer<Char>>()..value = outputs.first.name.toNativeUtf8(allocator: arena).cast();
         calls.check(calls.run(_session, nullptr, inputName, inputOut, 1, outputName, 1, outputOut), 'Run');
+        calls.made('OrtValue');
         final output = outputOut.value;
         final infoOut = arena<Pointer<ort.OrtTensorTypeAndShapeInfo>>();
         calls.check(calls.getTensorTypeAndShape(output, infoOut), 'GetTensorTypeAndShape');
+        calls.made('OrtTensorTypeAndShapeInfo');
         final OrtTensorSpec described;
         try {
           described = calls.describe(outputs.first.name, infoOut.value);
@@ -319,7 +333,7 @@ final class _OrtCalls {
 
   late final createEnv = _api.ref.CreateEnv
       .asFunction<Pointer<ort.OrtStatus> Function(int, Pointer<Char>, Pointer<Pointer<ort.OrtEnv>>)>();
-  late final releaseEnv = _api.ref.ReleaseEnv.asFunction<void Function(Pointer<ort.OrtEnv>)>();
+  late final releaseEnv = _counted('OrtEnv', _api.ref.ReleaseEnv.asFunction<void Function(Pointer<ort.OrtEnv>)>());
 
   late final createSessionOptions = _api.ref.CreateSessionOptions
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<Pointer<ort.OrtSessionOptions>>)>();
@@ -331,8 +345,10 @@ final class _OrtCalls {
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, int)>();
   late final addSessionConfigEntry = _api.ref.AddSessionConfigEntry
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, Pointer<Char>, Pointer<Char>)>();
-  late final releaseSessionOptions = _api.ref.ReleaseSessionOptions
-      .asFunction<void Function(Pointer<ort.OrtSessionOptions>)>();
+  late final releaseSessionOptions = _counted(
+    'OrtSessionOptions',
+    _api.ref.ReleaseSessionOptions.asFunction<void Function(Pointer<ort.OrtSessionOptions>)>(),
+  );
 
   late final createSession = _api.ref.CreateSession
       .asFunction<
@@ -343,7 +359,10 @@ final class _OrtCalls {
           Pointer<Pointer<ort.OrtSession>>,
         )
       >();
-  late final releaseSession = _api.ref.ReleaseSession.asFunction<void Function(Pointer<ort.OrtSession>)>();
+  late final releaseSession = _counted(
+    'OrtSession',
+    _api.ref.ReleaseSession.asFunction<void Function(Pointer<ort.OrtSession>)>(),
+  );
 
   late final sessionGetInputCount = _api.ref.SessionGetInputCount
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSession>, Pointer<Size>)>();
@@ -365,7 +384,10 @@ final class _OrtCalls {
       .asFunction<
         Pointer<ort.OrtStatus> Function(Pointer<ort.OrtTypeInfo>, Pointer<Pointer<ort.OrtTensorTypeAndShapeInfo>>)
       >();
-  late final releaseTypeInfo = _api.ref.ReleaseTypeInfo.asFunction<void Function(Pointer<ort.OrtTypeInfo>)>();
+  late final releaseTypeInfo = _counted(
+    'OrtTypeInfo',
+    _api.ref.ReleaseTypeInfo.asFunction<void Function(Pointer<ort.OrtTypeInfo>)>(),
+  );
 
   late final getTensorElementType = _api.ref.GetTensorElementType
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtTensorTypeAndShapeInfo>, Pointer<UnsignedInt>)>();
@@ -377,8 +399,10 @@ final class _OrtCalls {
       .asFunction<
         Pointer<ort.OrtStatus> Function(Pointer<ort.OrtValue>, Pointer<Pointer<ort.OrtTensorTypeAndShapeInfo>>)
       >();
-  late final releaseTensorTypeAndShapeInfo = _api.ref.ReleaseTensorTypeAndShapeInfo
-      .asFunction<void Function(Pointer<ort.OrtTensorTypeAndShapeInfo>)>();
+  late final releaseTensorTypeAndShapeInfo = _counted(
+    'OrtTensorTypeAndShapeInfo',
+    _api.ref.ReleaseTensorTypeAndShapeInfo.asFunction<void Function(Pointer<ort.OrtTensorTypeAndShapeInfo>)>(),
+  );
 
   late final getAllocatorWithDefaultOptions = _api.ref.GetAllocatorWithDefaultOptions
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<Pointer<ort.OrtAllocator>>)>();
@@ -387,7 +411,10 @@ final class _OrtCalls {
 
   late final createCpuMemoryInfo = _api.ref.CreateCpuMemoryInfo
       .asFunction<Pointer<ort.OrtStatus> Function(int, int, Pointer<Pointer<ort.OrtMemoryInfo>>)>();
-  late final releaseMemoryInfo = _api.ref.ReleaseMemoryInfo.asFunction<void Function(Pointer<ort.OrtMemoryInfo>)>();
+  late final releaseMemoryInfo = _counted(
+    'OrtMemoryInfo',
+    _api.ref.ReleaseMemoryInfo.asFunction<void Function(Pointer<ort.OrtMemoryInfo>)>(),
+  );
   late final createTensorWithDataAsOrtValue = _api.ref.CreateTensorWithDataAsOrtValue
       .asFunction<
         Pointer<ort.OrtStatus> Function(
@@ -415,7 +442,25 @@ final class _OrtCalls {
       >();
   late final getTensorMutableData = _api.ref.GetTensorMutableData
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtValue>, Pointer<Pointer<Void>>)>();
-  late final releaseValue = _api.ref.ReleaseValue.asFunction<void Function(Pointer<ort.OrtValue>)>();
+  late final releaseValue = _counted(
+    'OrtValue',
+    _api.ref.ReleaseValue.asFunction<void Function(Pointer<ort.OrtValue>)>(),
+  );
+
+  /// The native objects made and not given back yet, by kind ([OrtRuntime.liveObjects])
+  final live = <String, int>{};
+
+  /// Counts one native object of [kind], made by the call that just succeeded
+  void made(String kind) => live[kind] = (live[kind] ?? 0) + 1;
+
+  /// Counts one native object of [kind] given back
+  void given(String kind) => live[kind] = (live[kind] ?? 0) - 1;
+
+  /// [release], counting the object it gives back
+  void Function(Pointer<T>) _counted<T extends NativeType>(String kind, void Function(Pointer<T>) release) => (object) {
+    given(kind);
+    release(object);
+  };
 
   /// Throws the OrtException of [status] when it is not null, after releasing it
   void check(Pointer<ort.OrtStatus> status, String call) {
@@ -449,17 +494,20 @@ final class _OrtCalls {
               : sessionGetOutputName(session, index, allocator, nameOut),
           input ? 'SessionGetInputName' : 'SessionGetOutputName',
         );
+        made('name');
         final String name;
         try {
           name = _string(nameOut.value);
         } finally {
           check(allocatorFree(allocator, nameOut.value.cast()), 'AllocatorFree');
+          given('name');
         }
         final typeOut = arena<Pointer<ort.OrtTypeInfo>>();
         check(
           input ? sessionGetInputTypeInfo(session, index, typeOut) : sessionGetOutputTypeInfo(session, index, typeOut),
           input ? 'SessionGetInputTypeInfo' : 'SessionGetOutputTypeInfo',
         );
+        made('OrtTypeInfo');
         try {
           final tensorOut = arena<Pointer<ort.OrtTensorTypeAndShapeInfo>>();
           check(castTypeInfoToTensorInfo(typeOut.value, tensorOut), 'CastTypeInfoToTensorInfo');
