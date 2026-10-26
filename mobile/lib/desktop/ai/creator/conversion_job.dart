@@ -127,20 +127,19 @@ abstract interface class ConversionSource {
   Future<void> release();
 }
 
-/// A file of this computer, read in place: the folders of the library and the files opened with the program
+/// A file of this computer, read in place: the folders of the library and the files opened with the program.
+///
+/// Its sum is computed on its bytes at each run, never taken from the library index (design 2.3.1): an edit that keeps
+/// the size, a turn written in the EXIF before the next scan, would give the 3D photo the sum of a photo that is gone
+/// for good, and would find the version of that old photo with the same settings. It costs some 60 ms for 10 MB.
 class LocalFileSource implements ConversionSource {
-  /// [sha1] and [size] as the library index knows them; the sum is computed again when the file changed size since
   LocalFileSource(
     this.path, {
-    this.sha1,
-    this.size,
     this.exif = const ImmersiveExif(),
     Future<String> Function(String path, NativeCancelFlag cancel)? hash,
   }) : _hash = hash ?? sha1InIsolate;
 
   final String path;
-  final String? sha1;
-  final int? size;
   @override
   final ImmersiveExif exif;
   final Future<String> Function(String path, NativeCancelFlag cancel) _hash;
@@ -155,9 +154,7 @@ class LocalFileSource implements ConversionSource {
   Future<ImmersiveSource> prepare(NativeCancelFlag cancel) async {
     try {
       final length = await File(path).length();
-      final known = sha1;
-      final sum = known != null && known.isNotEmpty && length == size ? known : await _hash(path, cancel);
-      return ImmersiveSource(name: name, size: length, sha1: sum, path: path);
+      return ImmersiveSource(name: name, size: length, sha1: await _hash(path, cancel), path: path);
     } on FileSystemException catch (error) {
       throw ConversionException(ImmersiveErrorCode.sourceLost, error.osError?.message ?? error.message);
     } on Sha1Cancelled {

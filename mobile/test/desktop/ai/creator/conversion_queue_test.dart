@@ -109,6 +109,9 @@ class _Output implements ConversionOutput {
 
 String _sumOf(List<int> bytes) => base64.encode(crypto.sha1.convert(bytes).bytes);
 
+/// The sum of the file at [path] in Dart, without an isolate per job
+Future<String> _dartSum(String path, NativeCancelFlag cancel) async => _sumOf(File(path).readAsBytesSync());
+
 void main() {
   late Directory root;
   late String photos;
@@ -156,7 +159,7 @@ void main() {
     final path = p.join(photos, name);
     File(path).writeAsBytesSync(bytes);
     return ConversionRequest(
-      source: LocalFileSource(path, sha1: _sumOf(bytes), size: bytes.length),
+      source: LocalFileSource(path, hash: _dartSum),
       target: ConversionTarget.nextTo(path),
       quarterTurns: turns,
     );
@@ -388,6 +391,24 @@ void main() {
       expect(output.begun, isEmpty);
     });
 
+    test('an original edited in place at the same size since then is converted again: its sum is read now', () async {
+      final request = photo('salon.jpg');
+      final original = p.join(photos, 'salon.jpg');
+      version(original, 'salon_3D_LRF_Full_SBS.jpg');
+      // Turned outside the app, one byte of the EXIF changed, before any scan
+      File(original).writeAsBytesSync([...File(original).readAsBytesSync()]..[10] ^= 0xff);
+
+      final id = queue().add([request]).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.done);
+      expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
+      expect(
+        StereoPhotoXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())!.sourceSha1,
+        _sumOf(File(original).readAsBytesSync()),
+      );
+    });
+
     test('with other settings does not count: the new one goes beside it', () async {
       final request = photo('salon.jpg');
       version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg', turns: 1);
@@ -568,23 +589,22 @@ void main() {
       path = (File(p.join(photos, 'salon.jpg'))..writeAsBytesSync(bytes)).path;
     });
 
-    test('keeps the sum the index knows while the size is the same, and computes it otherwise', () async {
-      final hashed = <String>[];
-      Future<String> hash(String path, NativeCancelFlag cancel) async {
-        hashed.add(path);
-        return 'computed';
-      }
-
+    test('computes the sum on the bytes at each run, even after an edit that kept the size', () async {
       final cancel = NativeCancelFlag();
       addTearDown(cancel.free);
-      final known = await LocalFileSource(path, sha1: 'known', size: bytes.length, hash: hash).prepare(cancel);
-      final changed = await LocalFileSource(path, sha1: 'known', size: 12, hash: hash).prepare(cancel);
-      final unknown = await LocalFileSource(path, hash: hash).prepare(cancel);
+      final source = LocalFileSource(path);
 
-      expect([known.sha1, changed.sha1, unknown.sha1], ['known', 'computed', 'computed']);
-      expect(hashed, [path, path]);
-      expect([known.name, known.size, known.path], ['salon.jpg', bytes.length, path]);
-      expect(LocalFileSource(path).folder, photos);
+      final before = await source.prepare(cancel);
+      // A turn written in the EXIF in place: one byte changed, the same size, before any scan
+      final edited = [...bytes]..[100] ^= 0xff;
+      File(path).writeAsBytesSync(edited);
+      final after = await source.prepare(cancel);
+
+      expect(before.sha1, _sumOf(bytes));
+      expect(after.sha1, _sumOf(edited));
+      expect(after.size, before.size);
+      expect([after.name, after.size, after.path], ['salon.jpg', bytes.length, path]);
+      expect(source.folder, photos);
     });
 
     test('the sum is the SHA-1 of the bytes in base64, computed in an isolate', () async {
