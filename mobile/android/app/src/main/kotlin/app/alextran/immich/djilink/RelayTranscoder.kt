@@ -1473,6 +1473,12 @@ class RelayTranscoder(
       put("perSecond", perSecondLocked())
       put("bitrateMode", made?.bitrateMode)
       put("latencyAccepted", made?.latencyAccepted)
+      // Whether it behaved as a latency of one picture whatever its output format says: its encode p95, from the swap
+      // to the output, under one picture at the rate it was configured with (p2/noon-test-check-2026-10-26.md C14)
+      put(
+        "latencyMeasured",
+        made?.let { configured -> encodeTimes.percentileMs(0.95)?.let { it < 1000.0 / configured.perSecond } },
+      )
       put("headersOnKeys", made?.headersOnKeys)
       // Whether every key picture came out with its sets in band, null before the first
       put("headersOnKeysTaken", if (keysOut == 0L) null else setsAdded == 0L)

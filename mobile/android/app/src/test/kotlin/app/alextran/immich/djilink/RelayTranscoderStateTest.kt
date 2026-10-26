@@ -990,5 +990,29 @@ class RelayTranscoderStateTest {
     assertEquals(2.0, report["encoderRunningS"]!!.jsonPrimitive.double, 0.101)
   }
 
+  /**
+   * p2/noon-test-check-2026-10-26.md C14 (item 12): the S24+'s output format says nothing of KEY_LATENCY, so
+   * latencyAccepted is null, while its encode p95 of 11 ms is under one picture: the export says what was measured
+   */
+  @Test
+  fun theReportSaysWhetherTheEncoderBehavedAsALatencyOfOnePicture() {
+    codecs.latencyAccepted = null
+    val (decoder, _) = steady()
+    assertNull(core.report(now)!!["latencyMeasured"]!!.jsonPrimitive.contentOrNullSafe())
+    repeat(30) {
+      now += 50 * ms / 3
+      step(it + 1, decoder, encodeMs = 11)
+    }
+    val report = core.report(now)!!
+    assertNull(report["latencyAccepted"]!!.jsonPrimitive.contentOrNullSafe())
+    assertEquals("true", report["latencyMeasured"]!!.jsonPrimitive.content)
+    // An encoder that holds a picture: its encode time passes one period at the 30 a second it was configured with
+    repeat(120) {
+      now += 50 * ms / 3
+      step(31 + it, decoder, encodeMs = 45)
+    }
+    assertEquals("false", core.report(now)!!["latencyMeasured"]!!.jsonPrimitive.content)
+  }
+
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null
 }
