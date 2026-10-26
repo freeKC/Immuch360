@@ -284,14 +284,22 @@ class ReliefSynthesizerTest {
   }
 
   @Test
-  fun `a value the model got wrong counts as far, never past the bounds`() {
+  fun `a value the model got wrong stays in the middle and out of the percentiles, as on the computers`() {
     val depth = DoubleArray(16) { it.toDouble() }
     depth[5] = Double.NaN
+    depth[6] = Double.POSITIVE_INFINITY
+    depth[7] = Double.NEGATIVE_INFINITY
     val normalized = ReliefSynthesizer.normalize(depth, 4, 4)
     assertTrue(normalized.values.all { it in 0.0..1.0 })
-    assertEquals(0.0, normalized.values[5], 0.0)
-    assertEquals("the percentiles skip it", 15.0, normalized.p98, 0.0)
+    assertEquals(0.5, normalized.values[5], 0.0)
+    assertEquals(1.0, normalized.values[6], 0.0)
+    assertEquals(0.0, normalized.values[7], 0.0)
+    assertEquals("the percentiles skip them", 0.0, normalized.p2, 0.0)
+    assertEquals(15.0, normalized.p98, 0.0)
     assertEquals(1.0, normalized.values[15], 0.0)
+    val nothing = ReliefSynthesizer.normalize(DoubleArray(4) { Double.NaN }, 2, 2)
+    assertTrue(nothing.lowRelief)
+    assertTrue(nothing.values.all { it == 0.5 })
   }
 
   @Test

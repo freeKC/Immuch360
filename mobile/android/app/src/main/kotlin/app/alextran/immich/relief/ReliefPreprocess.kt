@@ -1,14 +1,13 @@
 package app.alextran.immich.relief
 
-import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
 // The input of the depth model of the Meta Quest made from a photo, and its output cut back to the photo (design-final
-// 2026-10-26, sections 2.3 point 5 and 3.4 point 4). The same rule as the computers (lib/desktop/ai/relief), so that
-// both draw the same map from the same photo. Plain JVM code, without Android: the photo comes as ARGB rows, as
-// Bitmap.getPixels gives them, and the tensor goes to the engine as a float array.
+// 2026-10-26, sections 2.3 point 5 and 3.4 point 4). The same rule and the same arithmetic as the computers
+// (lib/desktop/ai/relief/relief_input.dart), so that from the same pixels both give the same float32 values and draw
+// the same map. Plain JVM code, without Android: the photo comes as ARGB rows, as Bitmap.getPixels gives them, and the
+// tensor goes to the engine as a float array.
 
 /**
  * Where the photo lies in the input of the model, in pixels of the input: the whole input when it is stretched, a
@@ -25,15 +24,19 @@ class ReliefInput(val tensor: FloatArray, val frame: ReliefFrame)
 
 /**
  * The input of Depth Anything V2 Small, fixed by its LiteRT export at `[1, 3, 518, 686]`:
- * 1. **Frame.** A photo 1.0 to 1.9 times as wide as high is stretched to the whole 686 x 518 (the model card says the
- *    export is validated stretched). Another one (a portrait, a flat panorama) keeps its proportions: the side that
- *    limits takes the whole input, the other one `round(side * 686 / W)` or `round(side * 518 / H)` (half up, at least
- *    1), centred with the offset rounded down, on a background of the mean colour of the photo.
- * 2. **Area average.** Each pixel of the frame is the mean of the photo over the area it covers, the pixels at its
- *    edges weighted by the part they share with it; the same rule enlarges a photo smaller than the frame. In double
- *    precision, never rounded to bytes.
- * 3. **Normalisation.** `(v / 255 - mean) / std` with the ImageNet means 0.485, 0.456, 0.406 and deviations 0.229,
- *    0.224, 0.225, in NCHW: the red plane, the green plane, the blue plane, each row after row. 4.3 MB.
+ * 1. **Frame.** A photo 1.0 to 1.9 times as wide as high (`width >= height` and `10 * width <= 19 * height`, in
+ *    integers) is stretched to the whole 686 x 518: the model card says the export is validated stretched. Another one
+ *    (a portrait, a flat panorama) keeps its proportions: the side that limits takes the whole input, the other one
+ *    `round(side * 686 / W)` or `round(side * 518 / H)` (half up, in integers, at least 1), centred with the offset
+ *    rounded down, on a background of the mean colour of the photo.
+ * 2. **Area average, exact in integers.** On each axis of S photo pixels and N frame pixels, the frame pixel i covers
+ *    `[i * S, (i + 1) * S)` and the photo pixel j covers `[j * N, (j + 1) * N)`, in units of 1 / N of a photo pixel.
+ *    The sum of `overlapX * overlapY * value` over the photo, divided by `S_x * S_y` as a double, is the value of the
+ *    frame pixel. It reduces and enlarges alike.
+ * 3. **Background.** The sum of the photo divided by its number of pixels, as a double.
+ * 4. **Normalisation.** `(v / 255 - mean) / std` in double with the ImageNet means 0.485, 0.456, 0.406 and deviations
+ *    0.229, 0.224, 0.225, stored in float32, NCHW: the red plane, the green plane, the blue plane, each row after row.
+ *    4.3 MB. The alpha of the photo is not read.
  *
  * The output of the model, `[1, 518, 686]`, is cut back to the frame by [cropDepth] before relief-v1 normalises it.
  */
@@ -42,18 +45,13 @@ object ReliefPreprocess {
   const val INPUT_HEIGHT = 518
   const val TENSOR_SIZE = 3 * INPUT_WIDTH * INPUT_HEIGHT
 
-  /** A photo whose width over height is in this range is stretched */
-  const val MIN_STRETCH_RATIO = 1.0
-  const val MAX_STRETCH_RATIO = 1.9
-
   private val MEAN = doubleArrayOf(0.485, 0.456, 0.406)
   private val STD = doubleArrayOf(0.229, 0.224, 0.225)
 
   /** The frame of a photo of [width] x [height] in the input */
   fun frameFor(width: Int, height: Int): ReliefFrame {
     require(width > 0 && height > 0) { "a photo of $width x $height" }
-    val ratio = width.toDouble() / height
-    if (ratio >= MIN_STRETCH_RATIO && ratio <= MAX_STRETCH_RATIO) {
+    if (width >= height && 10L * width <= 19L * height) {
       return ReliefFrame(0, 0, INPUT_WIDTH, INPUT_HEIGHT)
     }
     // width / height <= 686 / 518: the height limits
@@ -80,50 +78,48 @@ object ReliefPreprocess {
     require(width > 0 && height > 0) { "a photo of $width x $height" }
     require(out.size == TENSOR_SIZE) { "a tensor of $TENSOR_SIZE values, not ${out.size}" }
     val frame = frameFor(width, height)
-    val across = AreaWeights(width, frame.width)
-    val down = AreaWeights(height, frame.height)
+    val columns = AxisCover(width, frame.width)
+    val rows = AxisCover(height, frame.height)
     val pixels = IntArray(width)
-    // The last source row read and averaged across, R, G, B for each column of the frame
-    val sourceRow = DoubleArray(3 * frame.width)
-    var lastRead = -1
-    // The frame, R, G, B for each pixel, row after row
-    val area = DoubleArray(3 * frame.width * frame.height)
-    val rowSum = DoubleArray(3 * frame.width)
-    for (fy in 0 until frame.height) {
-      rowSum.fill(0.0)
-      var weightSum = 0.0
-      for (k in 0 until down.count[fy]) {
-        val sy = down.first[fy] + k
-        val weight = down.weight(fy, k)
-        if (sy != lastRead) {
-          read.read(sy, pixels)
-          averageAcross(pixels, across, sourceRow)
-          lastRead = sy
-        }
-        for (i in rowSum.indices) rowSum[i] += sourceRow[i] * weight
-        weightSum += weight
-      }
-      val base = 3 * frame.width * fy
-      for (i in rowSum.indices) area[base + i] = rowSum[i] / weightSum
-    }
-    val background = DoubleArray(3)
-    if (!frame.stretched) {
-      for (i in area.indices) background[i % 3] += area[i]
-      for (c in 0..2) background[c] /= (frame.width * frame.height).toDouble()
-    }
+    // The sums of overlapX * value of the last photo row read, R, G, B for each column of the frame: the next row of
+    // the frame may share that photo row
+    val across = LongArray(3 * frame.width)
+    var acrossRow = -1
+    // The sum of the photo, in units of 1 / frame.width: each photo pixel is covered by frame.width units in all
+    val photoSum = LongArray(3)
+    val sums = LongArray(3 * frame.width)
     val plane = INPUT_WIDTH * INPUT_HEIGHT
-    for (c in 0..2) {
-      val outside = normalize(background[c], c)
-      for (y in 0 until INPUT_HEIGHT) {
-        val fy = y - frame.y
-        for (x in 0 until INPUT_WIDTH) {
-          val fx = x - frame.x
-          out[c * plane + y * INPUT_WIDTH + x] =
-            if (fy in 0 until frame.height && fx in 0 until frame.width) {
-              normalize(area[3 * (fy * frame.width + fx) + c], c)
-            } else {
-              outside
-            }
+    val area = (width.toLong() * height).toDouble()
+    for (outY in 0 until frame.height) {
+      sums.fill(0L)
+      for (k in rows.first[outY] until rows.first[outY + 1]) {
+        val photoY = rows.source[k]
+        val overlapY = rows.overlap[k].toLong()
+        if (photoY != acrossRow) {
+          acrossRow = photoY
+          read.read(photoY, pixels)
+          sumAcross(pixels, columns, across)
+          for (i in across.indices) photoSum[i % 3] += across[i]
+        }
+        for (i in sums.indices) sums[i] += overlapY * across[i]
+      }
+      val at = (frame.y + outY) * INPUT_WIDTH + frame.x
+      for (outX in 0 until frame.width) {
+        for (c in 0..2) out[c * plane + at + outX] = normalize(sums[3 * outX + c] / area, c)
+      }
+    }
+    if (!frame.stretched) {
+      for (c in 0..2) {
+        val value = normalize(photoSum[c] / (frame.width * area), c)
+        val start = c * plane
+        for (y in 0 until INPUT_HEIGHT) {
+          val row = start + y * INPUT_WIDTH
+          if (y < frame.y || y >= frame.y + frame.height) {
+            out.fill(value, row, row + INPUT_WIDTH)
+          } else {
+            out.fill(value, row, row + frame.x)
+            out.fill(value, row + frame.x + frame.width, row + INPUT_WIDTH)
+          }
         }
       }
     }
@@ -159,52 +155,57 @@ object ReliefPreprocess {
   /** `round(a / b)` for positive values, half up, in integers */
   private fun roundedRatio(a: Long, b: Long): Int = ((2 * a + b) / (2 * b)).toInt()
 
-  /** One row of the photo averaged over the columns of the frame, R, G, B for each column */
-  private fun averageAcross(pixels: IntArray, across: AreaWeights, out: DoubleArray) {
-    for (fx in 0 until across.size) {
-      var r = 0.0
-      var g = 0.0
-      var b = 0.0
-      var weightSum = 0.0
-      for (k in 0 until across.count[fx]) {
-        val p = pixels[across.first[fx] + k]
-        val weight = across.weight(fx, k)
-        r += ((p shr 16) and 0xFF) * weight
-        g += ((p shr 8) and 0xFF) * weight
-        b += (p and 0xFF) * weight
-        weightSum += weight
+  /** The sums of `overlapX * value` of one photo row, R, G, B for each column of the frame */
+  private fun sumAcross(pixels: IntArray, columns: AxisCover, out: LongArray) {
+    for (outX in 0 until columns.size) {
+      var r = 0L
+      var g = 0L
+      var b = 0L
+      for (k in columns.first[outX] until columns.first[outX + 1]) {
+        val weight = columns.overlap[k].toLong()
+        val p = pixels[columns.source[k]]
+        r += weight * ((p shr 16) and 0xFF)
+        g += weight * ((p shr 8) and 0xFF)
+        b += weight * (p and 0xFF)
       }
-      out[3 * fx] = r / weightSum
-      out[3 * fx + 1] = g / weightSum
-      out[3 * fx + 2] = b / weightSum
+      out[3 * outX] = r
+      out[3 * outX + 1] = g
+      out[3 * outX + 2] = b
     }
   }
 
   /**
-   * How the [source] pixels of a line spread over the [size] pixels of the frame: the pixel i of the frame covers
-   * `[i * source / size, (i + 1) * source / size)` of the source, and takes each source pixel it touches with the
-   * length they share
+   * For each of the [size] frame pixels along one axis of [photoSize] photo pixels, the photo pixels it covers and by
+   * how much, in units of 1 / [size] of a photo pixel: the frame pixel i covers `[i * photoSize, (i + 1) * photoSize)`,
+   * the photo pixel j `[j * size, (j + 1) * size)`. The covers of i are `first[i]` to `first[i + 1] - 1` in [source]
+   * and [overlap].
    */
-  private class AreaWeights(source: Int, val size: Int) {
-    val first = IntArray(size)
-    val count = IntArray(size)
-    private val start = DoubleArray(size)
-    private val end = DoubleArray(size)
+  private class AxisCover(photoSize: Int, val size: Int) {
+    val first = IntArray(size + 1)
+    val source: IntArray
+    val overlap: IntArray
 
     init {
+      val sources = ArrayList<Int>()
+      val overlaps = ArrayList<Int>()
       for (i in 0 until size) {
-        start[i] = i.toDouble() * source / size
-        end[i] = (i + 1).toDouble() * source / size
-        first[i] = floor(start[i]).toInt()
-        val last = min(source, ceil(end[i]).toInt())
-        count[i] = max(1, last - first[i])
+        first[i] = sources.size
+        val start = i.toLong() * photoSize
+        val end = (i + 1).toLong() * photoSize
+        var j = (start / size).toInt()
+        while (j.toLong() * size < end && j < photoSize) {
+          val from = maxOf(j.toLong() * size, start)
+          val to = minOf((j + 1).toLong() * size, end)
+          if (to > from) {
+            sources += j
+            overlaps += (to - from).toInt()
+          }
+          j++
+        }
       }
-    }
-
-    /** The weight of the k-th source pixel of the pixel [i] of the frame */
-    fun weight(i: Int, k: Int): Double {
-      val j = (first[i] + k).toDouble()
-      return min(j + 1, end[i]) - max(j, start[i])
+      first[size] = sources.size
+      source = sources.toIntArray()
+      overlap = overlaps.toIntArray()
     }
   }
 }

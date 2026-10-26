@@ -105,9 +105,10 @@ object ReliefSynthesizer {
     normalize(DoubleArray(depth.size) { depth[it].toDouble() }, width, height)
 
   /**
-   * Step 1: `d = (D - p2) / (p98 - p2)`, clamped to [0, 1], 0.5 everywhere when `p98 - p2` is not positive. The
-   * percentiles are taken over the finite values; a value that is not a number counts as far (0), as Python's min and
-   * max make it.
+   * Step 1: `d = (D - p2) / (p98 - p2)`, clamped to [0, 1], 0.5 everywhere when `p98 - p2` is not positive. A value
+   * that is not finite (a model that went wrong) is left out of the percentiles and becomes 1 for +infinity, 0 for
+   * -infinity and 0.5 for NaN, as on the computers (lib/desktop/ai/relief/relief_map.dart); a map with no finite value
+   * is taken as flat.
    */
   fun normalize(depth: DoubleArray, width: Int, height: Int): NormalizedDepth {
     require(width > 0 && height > 0 && depth.size == width * height) { "a map of $width x $height" }
@@ -125,10 +126,13 @@ object ReliefSynthesizer {
     }
     val values =
       DoubleArray(depth.size) { i ->
-        // max(0.0, v) then min(1.0, v) as Python writes them: a comparison that fails keeps the bound
         val v = (depth[i] - p2) / spread
-        val low = if (v > 0.0) v else 0.0
-        if (low < 1.0) low else 1.0
+        when {
+          v.isNaN() -> 0.5
+          v < 0.0 -> 0.0
+          v > 1.0 -> 1.0
+          else -> v
+        }
       }
     return NormalizedDepth(width, height, values, p2, p98, lowRelief)
   }

@@ -33,6 +33,25 @@ class ReliefPreprocessTest {
   }
 
   @Test
+  fun `the bounds of the stretch are decided in integers`() {
+    assertTrue(ReliefPreprocess.frameFor(19_000, 10_000).stretched)
+    assertFalse(ReliefPreprocess.frameFor(19_001, 10_000).stretched)
+    assertTrue(ReliefPreprocess.frameFor(10_000, 10_000).stretched)
+    assertFalse(ReliefPreprocess.frameFor(9_999, 10_000).stretched)
+  }
+
+  @Test
+  fun `the background is the mean of the photo itself`() {
+    // 3 x 7, one bright pixel: the frame averages it with its neighbours, the background is 255 / 21 exactly as the
+    // computers compute it (sum over the photo divided by its pixel count, in double)
+    val photo = IntArray(3 * 7) { if (it == 10) argb(255, 255, 255) else argb(0, 0, 0) }
+    val input = ReliefPreprocess.prepare(photo, 3, 7)
+    assertFalse(input.frame.stretched)
+    val expected = ((255.0 * input.frame.width / (input.frame.width * 21.0)) / 255.0 - 0.485) / 0.229
+    assertEquals(expected.toFloat(), input.tensor[0], 0f)
+  }
+
+  @Test
   fun `a portrait or a flat panorama keeps its proportions, centred`() {
     assertEquals(ReliefFrame(148, 0, 389, 518), ReliefPreprocess.frameFor(3000, 4000))
     assertEquals(ReliefFrame(213, 0, 259, 518), ReliefPreprocess.frameFor(300, 600))
@@ -52,7 +71,7 @@ class ReliefPreprocessTest {
     assertEquals(((0.0 - 0.406) / 0.225).toFloat(), red[2 * plane], 1e-6f)
     val colour = ReliefPreprocess.prepare(IntArray(800 * 600) { argb(10, 128, 240) }, 800, 600).tensor
     val expected = floatArrayOf(normalized(10.0, 0), normalized(128.0, 1), normalized(240.0, 2))
-    for (i in colour.indices) assertEquals("value $i", expected[i / plane], colour[i], 1e-6f)
+    for (i in colour.indices) assertEquals("value $i", expected[i / plane], colour[i], 0f)
   }
 
   @Test
@@ -92,18 +111,18 @@ class ReliefPreprocessTest {
     assertEquals(ReliefFrame(213, 0, 259, 518), input.frame)
     val tensor = input.tensor
     val grey = normalized(127.5, 0)
-    assertEquals(grey, tensor[0], 1e-6f)
-    assertEquals(grey, tensor[212], 1e-6f)
-    assertEquals(grey, tensor[472], 1e-6f)
-    assertEquals(grey, tensor[(INPUT_HEIGHT - 1) * INPUT_WIDTH + 685], 1e-6f)
-    assertEquals(normalized(255.0, 0), tensor[213], 1e-6f)
-    assertEquals(normalized(255.0, 0), tensor[258 * INPUT_WIDTH + 471], 1e-6f)
-    assertEquals(normalized(0.0, 0), tensor[259 * INPUT_WIDTH + 213], 1e-6f)
+    assertEquals(grey, tensor[0], 0f)
+    assertEquals(grey, tensor[212], 0f)
+    assertEquals(grey, tensor[472], 0f)
+    assertEquals(grey, tensor[(INPUT_HEIGHT - 1) * INPUT_WIDTH + 685], 0f)
+    assertEquals(normalized(255.0, 0), tensor[213], 0f)
+    assertEquals(normalized(255.0, 0), tensor[258 * INPUT_WIDTH + 471], 0f)
+    assertEquals(normalized(0.0, 0), tensor[259 * INPUT_WIDTH + 213], 0f)
     // A flat panorama in the same colour all over: the band above and below takes that colour
     val panorama = ReliefPreprocess.prepare(IntArray(1800 * 600) { argb(30, 60, 90) }, 1800, 600)
     assertEquals(ReliefFrame(0, 144, 686, 229), panorama.frame)
-    assertEquals(normalized(30.0, 0), panorama.tensor[0], 1e-6f)
-    assertEquals(normalized(90.0, 2), panorama.tensor[2 * plane + 517 * INPUT_WIDTH], 1e-6f)
+    assertEquals(normalized(30.0, 0), panorama.tensor[0], 0f)
+    assertEquals(normalized(90.0, 2), panorama.tensor[2 * plane + 517 * INPUT_WIDTH], 0f)
   }
 
   @Test
