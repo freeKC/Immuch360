@@ -74,7 +74,8 @@ class _RemoteFocusableState extends State<RemoteFocusable> {
 /// remote control layout, when that item has no autofocus of its own (a button of immich_ui for instance). The first
 /// is the top one on screen, the left one of a row: the order of the focus tree puts the buttons inside a list tile
 /// before the tile itself. A page that scrolls brings that item into view: a focus given this way does not scroll by
-/// itself, unlike a move of the arrows, and the focused item could sit below the screen.
+/// itself, unlike a move of the arrows, and the focused item could sit below the screen. Under a dialog or another
+/// page it waits until its page is on top again: requestFocus would take the focus from under them.
 class RemoteInitialFocus extends StatefulWidget {
   const RemoteInitialFocus({super.key, this.enabled = true, required this.child});
 
@@ -89,10 +90,24 @@ class _RemoteInitialFocusState extends State<RemoteInitialFocus> {
   final _node = FocusNode(debugLabel: 'RemoteInitialFocus', canRequestFocus: false, skipTraversal: true);
   bool _done = false;
 
+  /// The first item showed while another route was over this one: it gets the focus once this route is on top
+  bool _waiting = false;
+
   @override
   void initState() {
     super.initState();
     _focusFirstAfterFrame();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // A dependency: told when the dialog or the page over this one closes
+    final front = ModalRoute.isCurrentOf(context) ?? true;
+    if (_waiting && front) {
+      _waiting = false;
+      _focusFirstAfterFrame();
+    }
   }
 
   @override
@@ -113,6 +128,10 @@ class _RemoteInitialFocusState extends State<RemoteInitialFocus> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !widget.enabled || _done) {
+        return;
+      }
+      if (!(ModalRoute.isCurrentOf(context) ?? true)) {
+        _waiting = true;
         return;
       }
       final first = topLeftFocusNode(_node.traversalDescendants);

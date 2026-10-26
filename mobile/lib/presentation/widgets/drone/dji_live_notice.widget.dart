@@ -1,8 +1,9 @@
 // The safety notice of the DJI live video (p2/design-ux-phone-2026-10-24.md, 3.2): once per run of the app, before the
 // first picture, with the rules of the Diagnostics banner word for word. On a headset the observer rule and "Watching
 // only" come first, on a TV the same two rules worded for a TV (p2/design-tv-2026-10-24.md, 7.1). The link starts
-// behind it, so reading it costs no time; Back on it leaves the screen it covers. On a TV the text is one stop of the
-// remote that the arrows scroll, and "I understand" comes after its last line.
+// behind it, so reading it costs no time; Back on it leaves the screen it covers. On a TV, and on a phone in the remote
+// control layout, the text is one stop of the remote that the arrows scroll, and "I understand" comes after its last
+// line.
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,30 +16,35 @@ final djiLiveNoticeReadProvider = StateProvider<bool>((_) => false);
 
 /// Shows the notice over the current screen; true once "I understand" was tapped, false when Back left it. With
 /// [alert], the obstacle ring may show: its "information only" line follows the existing ones. On a TV ([tv]) the
-/// two rules come first worded for a TV.
+/// two rules come first worded for a TV. In the remote control layout ([remote]) the text scrolls with the arrows, as
+/// on a TV.
 Future<bool> showDjiLiveNotice(
   BuildContext context, {
   required bool headset,
   bool tv = false,
+  bool remote = false,
   bool alert = false,
 }) async {
   final read = await Navigator.of(context).push<bool>(
     MaterialPageRoute<bool>(
       fullscreenDialog: true,
-      builder: (_) => DjiLiveNotice(headset: headset, tv: tv, alert: alert),
+      builder: (_) => DjiLiveNotice(headset: headset, tv: tv, remote: remote, alert: alert),
     ),
   );
   return read ?? false;
 }
 
 class DjiLiveNotice extends StatelessWidget {
-  const DjiLiveNotice({super.key, required this.headset, this.tv = false, this.alert = false});
+  const DjiLiveNotice({super.key, required this.headset, this.tv = false, this.remote = false, this.alert = false});
 
   /// The observer rule and "Watching only" first
   final bool headset;
 
   /// Those two rules worded for a TV
   final bool tv;
+
+  /// The remote control layout: the text is one stop that the arrows scroll, as on a TV
+  final bool remote;
 
   /// The obstacle ring may show: it says it never steers or stops the drone
   final bool alert;
@@ -93,7 +99,7 @@ class DjiLiveNotice extends StatelessWidget {
     const padding = EdgeInsets.fromLTRB(24, 16, 24, 8);
     // On a TV the arrows scroll the text, which has no stop of its own: a remote without channel keys reaches its
     // last lines, then "I understand". Built whole, so that its last line is there to bring into view.
-    final text = tv
+    final text = tv || remote
         ? RemoteScrollArea(
             key: const Key('dji_live_notice_text'),
             autofocus: true,

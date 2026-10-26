@@ -37,6 +37,7 @@ import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/routing/leave_own_route.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 /// After this many failed attempts in a row, the state line says what to check
@@ -269,7 +270,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     if (read) {
       ref.read(djiLiveNoticeReadProvider.notifier).state = true;
     } else {
-      Navigator.of(context).pop();
+      // Back on the notice leaves this page, even with another page over it
+      leaveOwnRoute(context);
     }
   }
 

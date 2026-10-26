@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
+import 'package:immich_mobile/routing/route_opening_key_gate.dart';
 
 class AppNavigationObserver extends AutoRouterObserver {
   /// Riverpod Instance
@@ -25,7 +26,7 @@ class AppNavigationObserver extends AutoRouterObserver {
         ref.read(previousRouteDataProvider.notifier).state = previousRoute?.settings;
       }),
     );
-    _keepAFocus(route);
+    _keepAFocus(route, opening: true);
   }
 
   @override
@@ -37,14 +38,26 @@ class AppNavigationObserver extends AutoRouterObserver {
 
   /// In the remote control layout an item always has the focus (the TV guidelines), or the first arrow is lost: a
   /// page that focuses nothing by itself gets its first item, and so does a page that comes back without the item it
-  /// had focused.
-  void _keepAFocus(Route? route) {
+  /// had focused. A route [opening] holds the keys that move or press until then (RouteOpeningKeyGate): before its
+  /// first frame they would reach the page under it.
+  void _keepAFocus(Route? route, {bool opening = false}) {
     if (route is! ModalRoute || !ref.read(tvModeProvider)) {
       return;
     }
+    if (opening) {
+      RouteOpeningKeyGate.instance.opening(route);
+    }
     SchedulerBinding.instance.addPostFrameCallback((_) {
       // The autofocus of the page applies in a microtask of the frame that built it: after it
-      scheduleMicrotask(() => focusFirstItemIfNone(route));
+      scheduleMicrotask(() {
+        try {
+          focusFirstItemIfNone(route);
+        } finally {
+          if (opening) {
+            RouteOpeningKeyGate.instance.opened(route);
+          }
+        }
+      });
     });
   }
 }

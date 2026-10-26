@@ -261,10 +261,25 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
   Timer? _longWaitTimer;
   bool _longWait = false;
 
+  /// The move of the focus this view was to make while the notice, Options or a page covered it: made once it is in
+  /// front again
+  VoidCallback? _whenInFront;
+
   @override
   void initState() {
     super.initState();
     FocusManager.instance.addEarlyKeyEventHandler(_dropRestOfHeldOk);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The notice, Options or the page over this one closed: the focus this view was to take meanwhile
+    final move = _whenInFront;
+    if (move != null && _inFront) {
+      _whenInFront = null;
+      _moveFocusAfterFrame(move);
+    }
   }
 
   @override
@@ -280,16 +295,44 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     super.dispose();
   }
 
-  /// After the next frame, the focus on the first phone row, unless the remote already moved it elsewhere than "Phone
-  /// not listed?"
-  void _focusRowAfterFrame() {
+  /// The page of this view is the top route: no notice, Options or other page over it. Read in build, so that a
+  /// change rebuilds the view and calls [didChangeDependencies].
+  bool get _inFront => ModalRoute.isCurrentOf(context) ?? true;
+
+  /// Runs [move] after the next frame while this view is in front. Under the notice, Options or a page pushed over it,
+  /// keeps it for when the view is in front again, the last one asked: requestFocus does not look at routes, it would
+  /// take the focus from under them, and the arrows and OK would go to a view nobody sees (the notice on a TV, 26
+  /// October).
+  void _moveFocusAfterFrame(VoidCallback move) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _fullScreen || _rowFocus.context == null) {
+      if (!mounted) {
+        return;
+      }
+      if (!_inFront) {
+        _whenInFront = move;
+        return;
+      }
+      _whenInFront = null;
+      move();
+    });
+  }
+
+  /// After the next frame, the focus on the first phone row, unless the remote already moved it elsewhere than "Phone
+  /// not listed?"; with no phone listed, on "Phone not listed?" when nothing in the view has it (the full screen view
+  /// left under the notice)
+  void _focusRowAfterFrame() {
+    _moveFocusAfterFrame(() {
+      if (_fullScreen) {
         return;
       }
       final primary = FocusManager.instance.primaryFocus;
-      if (primary == null || identical(primary, _addressFocus) || primary is FocusScopeNode) {
-        _rowFocus.requestFocus();
+      final free = primary == null || primary is FocusScopeNode;
+      if (_rowFocus.context != null) {
+        if (free || identical(primary, _addressFocus)) {
+          _rowFocus.requestFocus();
+        }
+      } else if (free && _addressFocus.context != null) {
+        _addressFocus.requestFocus();
       }
     });
   }
@@ -315,8 +358,8 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     }
     setState(() => _fullScreen = true);
     _showHint();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _fullScreen) {
+    _moveFocusAfterFrame(() {
+      if (_fullScreen) {
         _fullFocus.requestFocus();
       }
     });
@@ -482,6 +525,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+    // Nothing in this view asks for the focus while another route is over it: an autofocus applies whenever the
+    // view's own scope has no focused item left, under the notice too
+    final front = _inFront;
     // The first picture of a connection opens the full screen view, once per phone watched
     ref.listen<bool>(djiLinkProvider.select((state) => _picturesShow(state.snapshot)), (previous, next) {
       final target = ref.read(djiRelayProvider).target?.address;
@@ -564,8 +610,8 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
           key: const Key('dji_watch'),
           backgroundColor: _fullScreen ? Colors.black : null,
           body: _fullScreen
-              ? _fullScreenView(t, relay, active, decode, picture, shows: shows)
-              : _phonesView(t, relay, active, decode, picture, shows: shows),
+              ? _fullScreenView(t, relay, active, decode, picture, shows: shows, front: front)
+              : _phonesView(t, relay, active, decode, picture, shows: shows, front: front),
         ),
       ),
     );
@@ -595,6 +641,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     DjiLinkDecode? decode,
     Widget picture, {
     required bool shows,
+    required bool front,
   }) {
     final card = relay.ownCodeCardShows && !shows;
     final noPhone = relay.phones.isEmpty && relay.target == null;
@@ -634,7 +681,10 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(flex: 2, child: _phones(t, relay, focusTarget, shows: shows)),
+                  Expanded(
+                    flex: 2,
+                    child: _phones(t, relay, focusTarget, shows: shows, front: front),
+                  ),
                   const SizedBox(width: 24),
                   Expanded(
                     flex: 3,
@@ -685,7 +735,13 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
         phones.first;
   }
 
-  Widget _phones(Translations t, DjiRelayState relay, DjiRelayPhone? focusTarget, {required bool shows}) {
+  Widget _phones(
+    Translations t,
+    DjiRelayState relay,
+    DjiRelayPhone? focusTarget, {
+    required bool shows,
+    required bool front,
+  }) {
     final small = context.textTheme.bodyMedium;
     final connectError = relay.connectError;
     final error = widget.addressError ?? (connectError == null ? null : djiRelayConnectErrorText(t, connectError));
@@ -699,7 +755,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
           ListTile(
             key: ValueKey('dji_watch_phone_${phone.address}'),
             focusNode: identical(phone, focusTarget) ? _rowFocus : null,
-            autofocus: identical(phone, focusTarget),
+            autofocus: front && identical(phone, focusTarget),
             leading: const Icon(Icons.smartphone_rounded),
             title: Text(phone.name, maxLines: 2, overflow: TextOverflow.ellipsis),
             subtitle: Text(_phoneLine(t, relay, phone)),
@@ -715,7 +771,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
         ListTile(
           key: const Key('dji_watch_address'),
           focusNode: _addressFocus,
-          autofocus: focusTarget == null,
+          autofocus: front && focusTarget == null,
           leading: const Icon(Icons.edit_rounded),
           title: Text(t.dji_live_watch_address),
           onTap: widget.onTypeAddress,
@@ -898,12 +954,13 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     DjiLinkDecode? decode,
     Widget picture, {
     required bool shows,
+    required bool front,
   }) {
     final hidden = ref.watch(djiWatchTvNumbersHiddenProvider);
     return Focus(
       key: const Key('dji_watch_tv_full'),
       focusNode: _fullFocus,
-      autofocus: true,
+      autofocus: front,
       onKeyEvent: _onFullKey,
       child: Stack(
         fit: StackFit.expand,

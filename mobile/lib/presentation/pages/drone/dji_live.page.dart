@@ -31,6 +31,8 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/routing/leave_own_route.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
 
@@ -138,14 +140,20 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     if (!mounted || ref.read(djiLiveNoticeReadProvider)) {
       return;
     }
-    final read = await showDjiLiveNotice(context, headset: false, alert: _alertOffered());
+    final read = await showDjiLiveNotice(
+      context,
+      headset: false,
+      remote: ref.read(tvModeProvider),
+      alert: _alertOffered(),
+    );
     if (!mounted) {
       return;
     }
     if (read) {
       ref.read(djiLiveNoticeReadProvider.notifier).state = true;
     } else {
-      Navigator.of(context).pop();
+      // Back on the notice leaves this screen, even with another page over it
+      leaveOwnRoute(context);
     }
   }
 
@@ -235,7 +243,7 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
 
   Future<void> _safetyAgain() async {
     setState(() => _panel = null);
-    await showDjiLiveNotice(context, headset: false, alert: _alertOffered());
+    await showDjiLiveNotice(context, headset: false, remote: ref.read(tvModeProvider), alert: _alertOffered());
   }
 
   /// The obstacle ring is offered on this device: the notice then says it never steers or stops the drone
