@@ -959,5 +959,36 @@ class RelayTranscoderStateTest {
     assertEquals(bytes * 8 / 1e6 / encoderS, report["megabitsPerSecondWhileRunning"]!!.jsonPrimitive.double, 1e-9)
   }
 
+  /**
+   * p2/noon-test-check-2026-10-26.md C11 (item 11): decoder 2 runs while a receiver of this build is connected, with no
+   * encoder until one needs the steady stream; its own time and its time alone are in the export
+   */
+  @Test
+  fun theReportSaysDecoderTwosTimeAndItsTimeWithoutAnEncoder() {
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    assertEquals(1, codecs.decoders.size)
+    assertTrue(codecs.encoders.isEmpty())
+    // Decoder 2 takes its units as they come
+    codecs.decoders.single().pull(now)
+    repeat(31) {
+      core.tick(now)
+      now += 100 * ms
+    }
+    // 3 s alone, then 2 s with the encoder
+    now -= 100 * ms
+    core.setNeeded(true, now)
+    assertEquals(1, codecs.encoders.size)
+    repeat(20) {
+      now += 100 * ms
+      core.tick(now)
+    }
+    val report = core.report(now)!!
+    assertEquals(5.0, report["decoderRunningS"]!!.jsonPrimitive.double, 0.001)
+    assertEquals(3.0, report["decoderAloneS"]!!.jsonPrimitive.double, 0.001)
+    // The encoder's time is counted from the first tick that sees it, one tick later
+    assertEquals(2.0, report["encoderRunningS"]!!.jsonPrimitive.double, 0.101)
+  }
+
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null
 }

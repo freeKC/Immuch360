@@ -376,6 +376,11 @@ class RelayTranscoder(
   private var encoderSinceNs: Long? = null
   private var encoderRunNs = 0L
 
+  /** Decoder 2's own time, and its time with no encoder (p2/noon-test-check-2026-10-26.md C11), counted on the tick */
+  private var decoderTickNs: Long? = null
+  private var decoderRunNs = 0L
+  private var decoderAloneNs = 0L
+
   // Timeline
   private val timeline = IntArray(TIMELINE_SECONDS * COLUMNS)
   private var seconds = 0L
@@ -539,6 +544,9 @@ class RelayTranscoder(
     batteryWhile.clear()
     encoderSinceNs = null
     encoderRunNs = 0
+    decoderTickNs = null
+    decoderRunNs = 0
+    decoderAloneNs = 0
     timeline.fill(0)
     seconds = 0
     decodedAtSample = 0
@@ -1231,6 +1239,18 @@ class RelayTranscoder(
       } else {
         encoderSinceNs = null
       }
+      val decoderSince = decoderTickNs
+      if (decoder != null) {
+        if (decoderSince != null) {
+          decoderRunNs += nowNs - decoderSince
+          if (encoder == null) {
+            decoderAloneNs += nowNs - decoderSince
+          }
+        }
+        decoderTickNs = nowNs
+      } else {
+        decoderTickNs = null
+      }
       val retry = retryAtNs
       if (unavailable != null && retry != null && nowNs >= retry) {
         // A creation that failed is tried again at the next need
@@ -1517,6 +1537,8 @@ class RelayTranscoder(
       put("pilotDecodeP95WhileMedianMs", pilotDuring.percentileMs(0.5))
       put("pilotDecodeP95WhileMaxMs", pilotDuring.maxMs)
       put("encoderRunningS", encoderRunNs / 1e9)
+      put("decoderRunningS", decoderRunNs / 1e9)
+      put("decoderAloneS", decoderAloneNs / 1e9)
       put(
         "failures",
         buildJsonArray {
