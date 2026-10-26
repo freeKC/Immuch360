@@ -129,7 +129,8 @@ fn icc_profile_copied_byte_for_byte_over_several_chunks() {
     assert_eq!(chunks.len(), 2);
     assert_eq!(&chunks[0].1[..14], b"ICC_PROFILE\0\x01\x02");
     assert_eq!(&chunks[1].1[..14], b"ICC_PROFILE\0\x02\x02");
-    assert_eq!(chunks[0].1.len() - 14, codec::ICC_CHUNK);
+    // The contract: 65 535 less the length, the signature and the two counters
+    assert_eq!(chunks[0].1.len() - 14, 65_519);
     assert_eq!(codec::decode(&jpeg).unwrap().icc.as_deref(), Some(icc.as_slice()));
 }
 
