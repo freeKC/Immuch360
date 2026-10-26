@@ -1,0 +1,31 @@
+# The JPEG codec of the AI features of Immuch360 Desktop (design-final 2026-10-26, section 2.8): zune-jpeg decodes
+# an original without any colour conversion, jpeg-encoder writes the side by side pair, both in release builds for the
+# big photos where package:image takes seconds. A Cargo workspace of its own, out of upstream's native/ tree, so that
+# nothing here moves the hook of native_core that the phones build.
+[package]
+name = "immuch_sbs_codec"
+version = "1.0.0"
+edition = "2024"
+license = "AGPL-3.0-only"
+publish = false
+
+# native_toolchain_rust wants the explicit name and both crate types.
+[lib]
+name = "immuch_sbs_codec"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+jpeg-encoder = { version = "=0.7.1", default-features = false, features = ["std", "simd"] }
+zune-core = { version = "=0.5.3", default-features = false, features = ["std"] }
+zune-jpeg = { version = "=0.5.15", default-features = false, features = ["std", "x86", "neon"] }
+
+[workspace]
+
+[lints.clippy]
+undocumented_unsafe_blocks = "deny"
+
+# catch_unwind at the FFI boundary needs unwinding, so no panic = "abort" here.
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

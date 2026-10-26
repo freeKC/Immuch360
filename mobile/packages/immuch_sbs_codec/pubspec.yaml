@@ -1,0 +1,16 @@
+name: immuch_sbs_codec
+description: The JPEG codec of the AI features of Immuch360 Desktop, a Rust crate (zune-jpeg, jpeg-encoder) called through dart:ffi, for the big photos.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+
+# A build hook package, as upstream's native_core: hook/build.dart compiles rust/ on Windows x64, Linux x64 and macOS
+# (arm64 and x86_64), and builds nothing for any other target, so that no library of it enters the phone or Quest
+# APKs nor the iOS app. No plugin platform: Flutter registers nothing, the phone plugin lists do not change.
+dependencies:
+  code_assets: ^1.2.1
+  ffi: ^2.2.0
+  hooks: ^2.2.0
+  native_toolchain_rust: ^1.0.6
