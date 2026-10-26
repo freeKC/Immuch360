@@ -385,6 +385,17 @@ void main() {
       expect(components.statusOf(_runtimeComponent).state, AiComponentState.removedNextStart);
     });
 
+    test('a service that goes away stops its downloads and tells nobody', () async {
+      final components = service();
+      final install = components.install(_modelComponent);
+      components.dispose();
+
+      await expectLater(
+        install,
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.cancelled)),
+      );
+    });
+
     test('a download under way is cancelled', () async {
       final components = service();
       final install = components.install(_modelComponent);

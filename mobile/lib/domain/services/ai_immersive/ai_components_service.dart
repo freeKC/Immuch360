@@ -215,7 +215,7 @@ class AiComponentsService extends ChangeNotifier {
     for (final component in catalogue) {
       _statuses[component.id] = AiComponentStatus(await _stateOnDisk(component));
     }
-    notifyListeners();
+    _notify();
   }
 
   /// Keeps only the .part of the catalogue's files, which a download resumes
@@ -265,7 +265,26 @@ class AiComponentsService extends ChangeNotifier {
 
   void _set(AiComponent component, AiComponentStatus status) {
     _statuses[component.id] = status;
-    notifyListeners();
+    _notify();
+  }
+
+  bool _disposed = false;
+
+  void _notify() {
+    // A download that ends after the provider went away has nobody to tell
+    if (!_disposed) {
+      notifyListeners();
+    }
+  }
+
+  /// Stops the downloads under way; their .part files stay
+  @override
+  void dispose() {
+    _disposed = true;
+    for (final cancel in _cancels.values) {
+      cancel.cancel();
+    }
+    super.dispose();
   }
 
   /// The file of [component] for the engine, when it is installed and still has its size (checked at each call);
@@ -448,6 +467,7 @@ class AiComponentsService extends ChangeNotifier {
     }
     _installed
       ..components.clear()
+      ..rest.clear()
       ..pendingDeletes = kept;
     await _save();
     for (final component in catalogue) {
@@ -455,7 +475,7 @@ class AiComponentsService extends ChangeNotifier {
         kept.contains(component.installPath) ? AiComponentState.removedNextStart : AiComponentState.notInstalled,
       );
     }
-    notifyListeners();
+    _notify();
     return kept.isEmpty ? AiRemoveOutcome.removed : AiRemoveOutcome.nextStart;
   }
 
