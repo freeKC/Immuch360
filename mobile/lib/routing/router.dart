@@ -98,9 +98,11 @@ import 'package:immich_mobile/presentation/pages/video.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/auth_guard.dart';
 import 'package:immich_mobile/routing/duplicate_guard.dart';
 import 'package:immich_mobile/routing/locked_guard.dart';
+import 'package:immich_mobile/routing/route_opening_key_gate.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/services/auth.service.dart';
 import 'package:immich_mobile/services/local_auth.service.dart';
@@ -111,12 +113,17 @@ part 'router.gr.dart';
 
 final appRouterProvider = Provider(
   // ignore: dispose-provided-instances
-  (ref) => AppRouter(
-    ref.watch(apiServiceProvider),
-    ref.watch(authServiceProvider),
-    ref.watch(secureStorageServiceProvider),
-    ref.watch(localAuthServiceProvider),
-  ),
+  (ref) {
+    final router = AppRouter(
+      ref.watch(apiServiceProvider),
+      ref.watch(authServiceProvider),
+      ref.watch(secureStorageServiceProvider),
+      ref.watch(localAuthServiceProvider),
+    );
+    // In the remote control layout, the keys pressed while a page of the router opens do not reach the page under it
+    ref.onDispose(holdKeysOnNewPages(router, () => ref.read(tvModeProvider)));
+    return router;
+  },
 );
 
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')

@@ -10,9 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
 import 'package:immich_mobile/routing/route_opening_key_gate.dart';
+import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/services/auth.service.dart';
+import 'package:immich_mobile/services/local_auth.service.dart';
+import 'package:immich_mobile/services/secure_storage.service.dart';
+import 'package:mocktail/mocktail.dart';
+
+import '../service.mocks.dart';
+
+class _LocalAuthService extends Mock implements LocalAuthService {}
 
 /// The app with the real navigation observer, in the remote control layout, and a button that pushes [page]
 class _ObservedApp extends ConsumerStatefulWidget {
@@ -518,6 +528,39 @@ void main() {
       expect(taps, ['open']);
       expect(router.stack.length, 2);
       expect(hasFocus(tester, 'first'), isTrue);
+    });
+
+    testWidgets('the app router holds the keys of each page it adds, in the remote control layout only', (
+      tester,
+    ) async {
+      final remote = StateProvider<bool>((ref) => false);
+      final container = ProviderContainer(
+        overrides: [
+          apiServiceProvider.overrideWithValue(MockApiService()),
+          authServiceProvider.overrideWithValue(MockAuthService()),
+          secureStorageServiceProvider.overrideWithValue(MockSecureStorageService()),
+          localAuthServiceProvider.overrideWithValue(_LocalAuthService()),
+          tvModeProvider.overrideWith((ref) => ref.watch(remote)),
+        ],
+      );
+      addTearDown(container.dispose);
+      // The router the app shows (main.dart), with nothing more done to it
+      final router = container.read(appRouterProvider);
+      final gate = RouteOpeningKeyGate.instance;
+
+      unawaited(router.push(const ChangePasswordRoute()));
+      await tester.idle();
+      expect(router.stack.length, 1);
+      expect(gate.holds, isFalse, reason: 'out of the remote control layout');
+
+      container.read(remote.notifier).state = true;
+      unawaited(router.push(const WelcomeRoute()));
+      await tester.idle();
+      expect(router.stack.length, 2);
+      expect(gate.holds, isTrue, reason: 'held until the frame that shows the page');
+
+      await tester.pump();
+      expect(gate.holds, isFalse);
     });
   });
 }
