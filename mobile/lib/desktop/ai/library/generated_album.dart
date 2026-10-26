@@ -9,7 +9,9 @@
 // Until that exclusion is done (generatedAlbumState in desktop_ai.json), no conversion writes into a folder of the
 // library: the album is still empty then, so no version can leave between the scan and the exclusion. A database of
 // the local tables made anew loses the album with its exclusion: the state goes back to pending, and the next sync
-// that brings the album in excludes it again.
+// that brings the album in excludes it again. "Reset SQLite Database" of the settings does that while the app runs,
+// and a sync may bring the album back right after: so the keeper listens to the row of the album, and the moment it
+// leaves the local tables the state goes back to pending, before any sync can make it look as if nothing happened.
 //
 // The switch "Also back up generated 3D photos" of the settings shows the selection of the album and keeps nothing of
 // its own: off when the album is excluded, on otherwise. "Select all" of the backup albums selects this album too (an
@@ -88,8 +90,10 @@ class GeneratedAlbumKeeper {
   Future<AiGeneratedAlbumState> ensureExcluded() => _serial(_ensureExcluded);
 
   Future<AiGeneratedAlbumState> _ensureExcluded() async {
-    final state = (await _settings.read()).generatedAlbumState;
+    // The row first: read after desktop_ai.json, an album a sync brought back in between would pass for one whose
+    // exclusion still holds
     final selection = await _album.selection();
+    final state = (await _settings.read()).generatedAlbumState;
     if (selection == null) {
       // Not in the local tables yet, or no more (a database made anew): nothing is excluded, nothing may be written
       if (state != AiGeneratedAlbumState.pending) {
@@ -106,6 +110,14 @@ class GeneratedAlbumKeeper {
     }
     return AiGeneratedAlbumState.excluded;
   }
+
+  /// The album left the local tables (heard from its row): its exclusion went with it, whatever comes next. The row is
+  /// not read again, since a sync may already have brought the album back with no choice.
+  Future<void> albumLeft() => _serial(() async {
+    if ((await _settings.read()).generatedAlbumState != AiGeneratedAlbumState.pending) {
+      await _settings.update((settings) => settings.copyWith(generatedAlbumState: AiGeneratedAlbumState.pending));
+    }
+  });
 
   /// "Also back up generated 3D photos": on when the album is selected or has no choice, off when it is excluded, null
   /// while the local tables do not have it yet
@@ -156,25 +168,34 @@ final generatedAlbumSettingsProvider = Provider<DesktopAiSettingsStore>((ref) =>
 
 /// The keeper of the app. While it lives (FolderLibraryHost keeps it), every local sync that ends excludes the album
 /// if it is new: the start, the sign in and a rescan each sync the local tables. It also looks once as the app starts,
-/// before the first sync of the window as a rule, so that local tables made anew are seen without the album.
+/// so that local tables made anew are seen without the album, and it listens to the row of the album from the start:
+/// the moment the row leaves (a database reset while the app runs), the exclusion is known to be gone.
 final generatedAlbumKeeperProvider = Provider<GeneratedAlbumKeeper>((ref) {
+  final album = GeneratedAlbumRow(ref.watch(driftProvider));
   final keeper = GeneratedAlbumKeeper(
-    album: GeneratedAlbumRow(ref.watch(driftProvider)),
+    album: album,
     settings: ref.watch(generatedAlbumSettingsProvider),
     onSelectionChanged: () => unawaited(ref.read(backupAlbumProvider.notifier).getAll()),
   );
-  void check() => unawaited(
-    keeper.ensureExcluded().catchError((Object error, StackTrace stackTrace) {
-      _log.warning('Could not exclude the album of the generated photos from the backup', error, stackTrace);
-      return AiGeneratedAlbumState.pending;
-    }),
-  );
+  void run(Future<void> Function() step) => unawaited(() async {
+    try {
+      await step();
+    } catch (error, stackTrace) {
+      _log.warning('Could not keep the album of the generated photos out of the backup', error, stackTrace);
+    }
+  }());
   ref.listen(syncStatusProvider.select((status) => status.localSyncStatus), (_, status) {
     if (status == SyncStatus.success) {
-      check();
+      run(keeper.ensureExcluded);
     }
   });
-  check();
+  final rows = album.watchSelection().listen((selection) {
+    if (selection == null) {
+      run(keeper.albumLeft);
+    }
+  });
+  ref.onDispose(rows.cancel);
+  run(keeper.ensureExcluded);
   return keeper;
 });
 

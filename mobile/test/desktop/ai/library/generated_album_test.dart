@@ -2,6 +2,7 @@
 // local tables in memory and the real query of the backup (backup.repository.dart): a version never leaves for Immich
 // on its own, even from a folder chosen for the backup, until the user chooses so.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart' as drift;
@@ -247,6 +248,28 @@ void main() {
     expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.excluded);
   });
 
+  test('a check reads the album first, so a sync in between cannot hide local tables made anew', () async {
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    final fresh = memoryDatabase();
+    addTearDown(fresh.close);
+    final reads = _HeldReads(support);
+    final freshKeeper = GeneratedAlbumKeeper(album: GeneratedAlbumRow(fresh), settings: reads);
+    final release = Completer<void>();
+    reads.hold = release.future;
+
+    // The look at the start, held once it has read desktop_ai.json, and the first sync of the window meanwhile
+    final check = freshKeeper.ensureExcluded();
+    await _until(() async => reads.holding);
+    await syncService(fresh).sync(full: true);
+    release.complete();
+
+    expect(await check, AiGeneratedAlbumState.pending);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.pending);
+    expect(await freshKeeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await GeneratedAlbumRow(fresh).selection(), BackupSelection.excluded);
+  });
+
   test('a database made anew brings the exclusion back with the album', () async {
     await syncService().sync();
     await keeper.ensureExcluded();
@@ -311,6 +334,25 @@ void main() {
       expect(await GeneratedAlbumRow(fresh).selection(), BackupSelection.excluded);
     });
 
+    test('Reset SQLite Database while the app runs, then a sync: the album comes back excluded', () async {
+      container.read(generatedAlbumKeeperProvider);
+      final status = container.read(syncStatusProvider.notifier);
+      await syncService().sync();
+      status.completeLocalSync();
+      await _until(() async => (await settings.read()).generatedAlbumState == AiGeneratedAlbumState.excluded);
+      expect(await generatedSelection(), BackupSelection.excluded);
+
+      // What the settings page does (sync_status_and_actions.dart), the app going on, and a sync before any restart:
+      // the sync button of the same page, or a file changed in a watched folder
+      status.startLocalSync();
+      await db.reset();
+      await syncService().sync(full: true);
+      status.completeLocalSync();
+
+      await _until(() async => await generatedSelection() == BackupSelection.excluded);
+      expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.excluded);
+    });
+
     test('the switch of the settings follows the album', () async {
       final values = <bool?>[];
       // Each change of the table may be heard more than once: the values in turn
@@ -331,6 +373,28 @@ void main() {
       expect(values, [null, true, false, true]);
     });
   });
+}
+
+/// desktop_ai.json whose next read, once done, is held until [hold] completes
+class _HeldReads extends DesktopAiSettingsStore {
+  _HeldReads(Directory directory) : super(settingsDirectory: () async => directory);
+
+  Future<void>? hold;
+
+  /// The held read is waiting
+  var holding = false;
+
+  @override
+  Future<DesktopAiSettings> read() async {
+    final settings = await super.read();
+    final held = hold;
+    hold = null;
+    if (held != null) {
+      holding = true;
+      await held;
+    }
+    return settings;
+  }
 }
 
 /// Waits until [done] holds, a few seconds at most
