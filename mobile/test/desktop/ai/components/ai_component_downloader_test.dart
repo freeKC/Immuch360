@@ -58,13 +58,17 @@ class _FullDisk implements AiFileSink {
 
 void main() {
   late Directory temp;
+  late Directory certificatesFolder;
   TestCertificates? certificates;
   late ComponentTestServer server;
 
   setUpAll(() async {
-    final folder = await Directory.systemTemp.createTemp('ai-components-certs');
-    certificates = await TestCertificates.make(folder);
+    certificatesFolder = await Directory.systemTemp.createTemp('ai-components-certs');
+    certificates = await TestCertificates.make(certificatesFolder);
   });
+
+  // The keys of the test authority go with the run
+  tearDownAll(() => certificatesFolder.delete(recursive: true));
 
   setUp(() async {
     temp = await Directory.systemTemp.createTemp('ai-components');
