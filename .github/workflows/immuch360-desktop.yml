@@ -220,9 +220,20 @@ jobs:
         working-directory: mobile/packages/immuch_sbs_codec/rust
         run: mise exec -- cargo test --release
 
-      # The whole suite: the phone regression gate, test/desktop included
+      # Its format and its lints, warnings as errors; the components may be missing from the toolchain mise installs
+      - name: Format and lints of the JPEG codec of the AI features (cargo)
+        working-directory: mobile/packages/immuch_sbs_codec/rust
+        run: |
+          mise exec -- rustup component add clippy rustfmt
+          mise exec -- cargo fmt --check
+          mise exec -- cargo clippy --all-targets -- -D warnings
+
+      # The whole suite: the phone regression gate, test/desktop included. IMMUCH360_REQUIRE_SBS_CODEC turns the skip
+      # of the dart:ffi tests of the JPEG codec into a failure: here the build hook must have built the library
       - name: Tests
         working-directory: mobile
+        env:
+          IMMUCH360_REQUIRE_SBS_CODEC: '1'
         run: mise exec -- flutter test
 
   linux:
@@ -589,8 +600,11 @@ jobs:
           tar -xf generated-dart.tar && rm generated-dart.tar
           flutter pub get --enforce-lockfile
 
+      # IMMUCH360_REQUIRE_SBS_CODEC: the dart:ffi tests of the JPEG codec fail rather than skip without the library
       - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts)
         working-directory: mobile
+        env:
+          IMMUCH360_REQUIRE_SBS_CODEC: '1'
         run: flutter test test/desktop
 
       - name: Build

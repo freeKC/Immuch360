@@ -21,5 +21,6 @@ and on a loaded i5 build machine).
 Tests: `cargo test` in `rust/` (round trip, ICC profile copied, quality, subsampling, segments, a panic turned into
 a status, the C functions, and the colours of grey, CMYK, YCCK, RGB stored and progressive originals, two of them
 written by Pillow: `rust/fixtures/make_fixtures.py`), and `mobile/test/desktop/ai/codec/native_sbs_codec_test.dart`
-through dart:ffi, skipped with its reason when the library is not built. The measure of a 48 Mpx pair:
+through dart:ffi, skipped with its reason when the library is not built, unless `IMMUCH360_REQUIRE_SBS_CODEC=1` (the
+test jobs of the desktop CI) turns the skip into a failure. The measure of a 48 Mpx pair:
 `IMMUCH360_SBS_MEASURE=photo.jpg cargo test --release -- --ignored --nocapture measure`.

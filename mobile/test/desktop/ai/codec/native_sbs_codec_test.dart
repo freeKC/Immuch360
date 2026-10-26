@@ -3,8 +3,9 @@
 // profile kept byte for byte, the subsampling and the quality written as asked, transparency laid on black, CMYK and
 // RGB stored originals in their colours, a broken file refused with SbsCodecException, a copy that finds no memory
 // refused as outOfMemory. The library is built by the package's build hook on Windows, Linux and macOS; elsewhere, or
-// without Rust, these tests are skipped with the reason. IMMUCH360_SBS_MEASURE (a JPEG) adds the measure of the plan,
-// a photo decoded and laid twice side by side, then encoded, with the time of each step printed.
+// without Rust, these tests are skipped with the reason, unless IMMUCH360_REQUIRE_SBS_CODEC is 1 (the test jobs of the
+// CI), where a missing library fails. IMMUCH360_SBS_MEASURE (a JPEG) adds the measure of the plan, a photo decoded and
+// laid twice side by side, then encoded, with the time of each step printed.
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -128,11 +129,16 @@ StereoPhotoXmp sampleXmp() => StereoPhotoXmp.estimated(
 
 void main() {
   const codec = NativeSbsCodec();
-  final Object skip = NativeSbsCodec.available
+  final required = Platform.environment['IMMUCH360_REQUIRE_SBS_CODEC'] == '1';
+  final Object skip = NativeSbsCodec.available || required
       ? false
       : 'native codec not built here: ${NativeSbsCodec.unavailableReason}';
 
   test('names itself native', () => expect(codec.name, 'native'));
+
+  test('the library is in this build where IMMUCH360_REQUIRE_SBS_CODEC asks for it', () {
+    expect(NativeSbsCodec.unavailableReason, isNull);
+  }, skip: required ? false : 'IMMUCH360_REQUIRE_SBS_CODEC is not 1');
 
   test('a pair with its EXIF, XMP and ICC, in that order, read back by package:image and the XMP reader', () {
     final picture = pair(48, 32);
