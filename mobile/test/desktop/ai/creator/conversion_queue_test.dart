@@ -299,6 +299,34 @@ void main() {
     expect(current().hasWork, isFalse);
   });
 
+  test('the 3D photo keeps the dates and place of the original, with the Software of the app', () async {
+    final path = p.join(photos, 'salon.jpg');
+    File(path).writeAsBytesSync(List.generate(64, (i) => i));
+    const exif = ImmersiveExif(
+      dateTimeOriginal: '2026:10:20 09:00:00',
+      offsetTimeOriginal: '+02:00',
+      latitude: 45.5,
+      longitude: 6.25,
+      altitude: 1200,
+      software: 'Adobe Lightroom 9.1',
+    );
+
+    queue().add([
+      ConversionRequest(
+        source: LocalFileSource(path, exif: exif, hash: _dartSum),
+        target: ConversionTarget.nextTo(path),
+      ),
+    ]);
+    await allEnded();
+
+    final kept = engines.fallback.jobs.single.exif;
+    expect(kept.software, 'Immuch360 Desktop 3.3.0');
+    expect(
+      [kept.dateTimeOriginal, kept.offsetTimeOriginal, kept.latitude, kept.longitude, kept.altitude],
+      ['2026:10:20 09:00:00', '+02:00', 45.5, 6.25, 1200],
+    );
+  });
+
   test('one job at a time, in their order, each with its place in the batch', () async {
     engines.fallback = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
     final hold = engines.fallback;

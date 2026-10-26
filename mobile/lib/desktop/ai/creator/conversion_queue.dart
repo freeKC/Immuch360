@@ -476,7 +476,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   }
 }
 
-ImmersiveExif _withSoftware(ImmersiveExif exif, String? software) => exif.software != null || software == null
+/// The fields of the original with the Software of the app: the 3D photo is made by it, whatever made the original
+/// ("Adobe Lightroom" would be wrong on it)
+ImmersiveExif _withSoftware(ImmersiveExif exif, String? software) => software == null
     ? exif
     : ImmersiveExif(
         dateTimeOriginal: exif.dateTimeOriginal,
