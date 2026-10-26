@@ -59,16 +59,16 @@
 
 <div align="center">
 
-| 平台 | 喺邊度攞 | 2026 年 10 月 25 日狀態 |
+| Platform | Where to get it | Status on 26 October 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 電話同平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 喺 Google Play 上面（build 25；build 29 喺 Google 審核中，取代 build 28），build 30 上咗 GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 31 sent for Google's review on 26 October, in place of build 29), build 31 on GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 同 iPad** | App Store | 3.3.1 版本（build 27）由 10 月 22 日起等緊 Apple 審核，之後係 3.3.2 版本（build 28），喺 TestFlight 做內部測試；期間可以[自己編譯](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 上咗 GitHub：掃 QR code 就可以[用電話登入](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)，影片播放器有畀遙控器用嘅[時間軸、音訊同字幕](#on-android-tv-and-google-tv)，仲有由電話轉播嘅[無人機直播影像](#watch-it-in-a-meta-quest-or-on-an-android-tv)（實驗性）；電視版本仲喺 Google 審核中 |
-| 行 webOS 5.0 或以上嘅 **LG 電視** | [.ipk，1.0.0 版本](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store（審核中） | 1.0.0 版本，10 月 24 日提交咗去 LG Content Store，等緊 LG 審核；喺嗰之前要喺 [Developer Mode](#lg-tvs-webos) 安裝。佢喺 LG Cloud Test Lab 嘅 webOS 25 電視上面行過 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 31 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
+| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October, under LG's tests on 26 October; until it is published, it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
 | 行 Tizen 5.5 或以上嘅 **Samsung 電視** | [.wgt 測試 build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | 同一個電視 app 嘅測試 build 0.2.0，要用你自己嘅 Samsung 憑證簽署，再喺 [Developer mode](#samsung-tvs-tizen) 安裝；0.1.0 喺一位測試者嘅 Samsung 電視上面行過，0.2.0 包含咗嗰次測試之後嘅修正；唔喺 Samsung 嘅商店 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | 喺 Horizon Store 上面（build 28，10 月 25 日起上架），build 30 上咗 GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安裝程式或者 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | 桌面版 build 11，一個已簽署嘅預覽版：相片、平面同 360° 影片、共享、Plex、相機（仲未用真嘅相機測試過）、用電話登入、一個掣轉相、89 種語言嘅介面 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 同 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | 預覽版：Linux 嗰邊有相片、360° 相片同平面影片（360° 影片會以平面播放）；macOS 一樣，不過淨係喺專案嘅 CI Mac 上面測試過，未簽署 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October; build 31 sent as the next submission on 26 October), build 31 on GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, previews: photos, 360° photos and flat videos (360° videos play flat), an Immich server and network shares; desktop build 11 tried on 26 October in an Ubuntu 24.04 container and on a Mac; unsigned on macOS |
 
 *每次發布都會更新呢啲狀態；每個 build 嘅詳情喺[發布狀態](../docs/immuch360/release-status.md)入面。*
 
@@ -111,40 +111,42 @@
 
 | 功能 | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
-| 圖庫、相簿、搜尋，連接 Immich 伺服器 | ✅ | 🔧 CI | 🔧 CI |
-| 用電話登入（QR code） | ✅ | 🔧 CI | 🔧 CI |
+| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ |
+| Sign in with your phone (QR code) | ✅ | ✅ (its web page tried) | ✅ (which way not recorded) |
 | 唔使伺服器：裝置本身嘅媒體 | ✅ 資料夾 | ✅ 資料夾 | ✅ 資料夾 |
 | 平面相片同影片 | ✅ | ✅ | ✅ |
 | 一個掣轉相 | ✅ | ✅ | ✅ |
-| 360° 相片，以球體顯示 | ✅ | ✅ | 🔧 CI |
+| 360° photos as a sphere | ✅ | ✅ | ✅ |
 | 360° 影片 | ✅ | 淨係平面 | 淨係平面 |
 | 3D 同 VR180 | ✅ 一邊眼 | 相片一邊眼，影片平面 | 相片一邊眼，影片平面 |
 | 空間 2.5D（頭部追蹤） | 🔜 開發緊 | ❌ | ❌ |
-| Apple 空間相片 | ✅ 一邊眼 | 🔧 CI | 🔧 CI |
-| Insta360、GoPro 同 DJI 嘅原始檔案 | ✅ | 🔧 CI 相片，影片平面 | 🔧 CI 相片，影片平面 |
-| SMB、WebDAV、DLNA 共享 | ✅ | 🔧 CI | 🔧 CI |
+| Apple spatial photos | ✅ one eye | ✅ one eye, from a server | ✅ one eye |
+| Raw Insta360, GoPro and DJI files | ✅ | ✅ photos, videos flat | ✅ photos, videos flat |
+| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
 | Tapo 相機：錄影 | ✅ | 🔧 CI | 🔧 CI |
 | Tapo 相機：直播畫面 | ✅ | 🔧 CI | 🔧 CI |
 | 將呢部裝置分享喺網絡上 | ✅ | ❌ | ❌ |
-| 由共享同裝置上傳去 Immich | ✅ | 🔧 CI | 🔧 CI |
+| Upload to Immich from shares and the device | ✅ | ✅ | ✅ |
 | 用 USB 由 DJI 無人機或者記憶卡匯入（實驗性） | ❌ | ❌ | ❌ |
 | DJI 無人機嘅直播影像（實驗性） | ❌ | ❌ | ❌ |
 | 深色主題 | 跟系統 | 跟系統 | 跟系統 |
 | 輸入方式 | 滑鼠、鍵盤 | 滑鼠、鍵盤 | 滑鼠、鍵盤、觸控板 |
 | 喺邊度攞 | 安裝程式或者 ZIP（已簽署預覽版） | .deb、.rpm（預覽版） | DMG 或者 ZIP（未簽署預覽版） |
 
+*Linux and macOS: desktop build 11, tried on 26 October 2026 on Ubuntu 24.04, in a container with a test Immich server and test shares, and by the author on a Mac.*
+
 ✅ 代表喺嗰個平台嘅 app 入面有 · ❌ 代表嗰度未提供 · 🔜 代表計劃中 · 🔧 CI 代表已經喺原始碼入面，由專案嘅 CI 喺嗰個系統上建置同啟動過，但仲未喺嗰度用真實嘅伺服器、共享或者相機測試過 · 淨係平面：影片會以平面播放，並顯示一個訊息，因為電腦嘅 360° 影片渲染器淨係 Windows 有；喺 LG 電視上面，webOS 會唔會將影片畫面交畀球體仲有待量度；喺一位測試者嘅 Samsung 電視上面，瀏覽器畀 3D 畫面嘅係黑色嘅影片畫面。「一邊眼」即係話一個 3D 檔案淨係會喺平面螢幕上面顯示左眼嗰邊嘅畫面。LG 同 Samsung 呢兩欄係同一個獨立嘅電視 app：LG 1.0.0 版本，佢嘅共享同 Plex 已經對住真實伺服器測試過，相機就喺專案嘅建置主機上面對住一部模擬相機測試過，仲未喺電視上面試過，以及 Samsung 測試 build 0.2.0。唔係每個 ✅ 都已經喺真實裝置上面測試過：邊樣喺邊度測試過、仲有乜要確認，可以睇[功能](../docs/immuch360/features.md)、[平台支援](../docs/immuch360/platform-support.md)同[相容性](../docs/immuch360/compatibility.md)。
 
 - **Android 電話同平板**：完整嘅 app，支援觸控同陀螺儀，所有來源都得。
 - **iPhone 同 iPad**：完整嘅 app；360° 影片播放器暫時淨係得播放同暫停，Tapo 直播畫面同用電話登入嘅電話嗰邊會喺下一個 iOS 版本推出，DLNA 搜尋會發送單播請求，直到 Apple 批准多播權限為止。
-- **Android TV 同 Google TV**：同一個 APK，用遙控器操作，預設深色主題；屬於檢視器模式：備份、上傳同編輯器都隱藏咗，詳情淨係睇唔改得，不過相片照樣可以一個掣轉。所有搜尋篩選器都可以用遙控器操作：「位置」同「相機」會喺一個清單入面打開佢哋嘅選項，日期篩選器會顯示晒所有選項，而「標籤」、「位置」、「日期」、「媒體類型」、「評分」同「顯示選項」面板會將「清空」同「套用」放喺選項旁邊，㩒一下向右就去到，面板佔咗螢幕大部分高度。相片格仔用少咗圖像記憶體，㩒住方向鍵嗰陣每秒最多移動大約 10 行。由 build 28 開始，佢可以由電話登入，用佢嘅 QR code 或者短代碼（喺兩個模擬器之間用打字輸入代碼試過，仲未用鏡頭掃過）。由 build 29 開始，影片嘅時間軸可以攞到遙控器嘅焦點，電影有音訊同字幕選單，共享入面嘅下一個檔案會連埋自己嘅控制項打開。已經喺 Google TV 模擬器上面測試過；build 28 喺 10 月 23 日喺一部真嘅 Android TV 上面行過，喺嗰度發現嘅影片問題就係 build 29 嘅修正，已經喺模擬器上面測試過，仲未喺嗰部電視上面試過。由 build 30 開始，佢嘅「Drone」卡會顯示由電話轉播嘅 DJI 無人機直播影像，連埋無人機嘅數值同障礙環（實驗性）：配對同畫面喺 10 月 25 日喺一部 TCL Android TV 上面試過，之前嘅轉播會窒同偏綠；針對呢啲問題嘅穩定串流會喺 build 30 第一次測試。
+- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; on 26 October, with build 30, the steady stream that answers them kept that TV's picture coming in flight, with 7 freezes.
 - **行 webOS 5.0 或以上嘅 LG 電視**：一個獨立嘅 app，畀遙控器同 Magic Remote 用，基於 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 整：一個 Immich 檢視器，360° 相片以球體顯示，相片可以一個掣轉，深色主題，仲有 app 嘅 89 種語言（電視 app 本身嘅少量文字暫時仲係英文）；網絡共享、Plex 同 Tapo 相機嘅直播畫面，經過佢喺電視上面自己嘅服務（SMB 由 webOS 22 起）；360° 影片以平面播放。1.0.0 版本喺 10 月 24 日提交咗去 LG Content Store，喺 LG Cloud Test Lab 三個型號嘅 webOS 25 電視上面行過：登入、電話登入頁面、相片、相簿、一段影片、360° 畫面、幻燈片、一次搜尋，同埋喺每一頁㩒返回。0.1.0 版本喺一位測試者嘅 LG 電視（webOS 22）上面行過。共享同 Plex 已經對住真實伺服器測試過，相機就喺專案嘅建置主機上面對住一部模擬相機測試過，仲未喺電視上面試過。
 - **行 Tizen 5.5 或以上嘅 Samsung 電視**：為 Samsung 電視打包嘅 LG 電視 app，測試 build 0.2.0，要自己簽署同安裝：一個畀遙控器用嘅 Immich 檢視器，用打字登入（伺服器地址，然後電郵同密碼或者 API 金鑰），有幻燈片、球體上面嘅 360° 相片、一個掣轉相，同埋一個講明電視支援乜嘢嘅「關於」頁面；暫時未有用電話登入、共享、Plex 或者相機；360° 影片以平面播放，並有提示。0.1.0 版本喺一位測試者行 Tizen 9 嘅 Samsung 電視上面行過：4K 以內嘅相片同影片播到，4K 以上嘅解碼唔到，而電視嘅瀏覽器畀 3D 畫面嘅係黑色嘅影片畫面。0.2.0 版本包含咗嗰次測試之後嘅修正（超出電視解碼器能力或者卡住嘅影片會有訊息，360° 影片以平面播放並有提示），仲未喺電視上面行過。
 - **Meta Quest 2、Pro、3 同 3S**：app 以視窗形式運行，加上沉浸式畫面，由 build 30 開始仲有一張「Drone」卡，顯示由電話轉播嘅 DJI 無人機直播影像（實驗性），會喺 build 30 第一次測試；HEVC 係穩陣嘅編碼格式，H.264 喺 Quest 3 上面大約去到 4096x2304 就停；淨係測試過 Quest 3，Quest 2、Quest Pro 同 Quest 3S 仲未測試過。
 - **Windows 10 同 11**：一個預覽版，用資料夾代替圖庫，有自己嘅影片播放器（libmpv）播放平面同 360° 影片，原始檔案用顯示卡拼接，檔案同資料夾可以用程式開啟，或者拖去視窗，仲有安裝程式或者 ZIP，由 APROGSYS 簽署。
 - **Linux**：由專案嘅 CI 建置嘅 .deb 同 .rpm，喺 Ubuntu 22.04 同 24.04、Debian 12，仲有 Fedora 40 同 44 上面安裝同測試過；透過系統嘅 libmpv 顯示相片、360° 相片同播放平面影片（360°、3D 同原始影片會以平面播放，並顯示訊息），由桌面版 build 7 起喺 X11 session 入面都用硬件路徑繪畫；SMB 共享由 Ubuntu 22.04 同 Debian 12 起支援；冇鑰匙圈（GNOME Keyring 或者 KWallet）嘅話，app 第一次開嗰陣唔會再卡住 25 s：佢淨係會喺今次 session 保存密碼，並喺設定入面講明；仲未喺真嘅 Linux 電腦上面行過，淨係喺 WSLg 同容器入面行過。
-- **macOS**：由專案嘅 CI 建置嘅 DMG 同 ZIP，通用版本（universal），未簽署（Gatekeeper 會問一次）；佢開得到，可以打開交畀佢嘅檔案同資料夾，包括由 Finder 交畀佢嘅，將機密資料保存喺登入鑰匙圈，仲會用自己嘅 libmpv 播放平面影片，以上全部淨係喺專案嘅 CI Mac 上面測試過；仲未有任何嘢喺真嘅 Mac 上面行過。
+- **macOS**: a DMG and a ZIP built by the project's CI, universal, unsigned (Gatekeeper asks once); it starts, opens the files and folders given to it, Finder included, keeps its secrets in the login keychain and plays flat videos with its own libmpv, first checked on the project's CI Mac; on 26 October 2026 the author tried desktop build 11 on a Mac, and it worked.
 
 <a id="what-you-can-do"></a>
 ## 你可以做乜
@@ -192,7 +194,7 @@
 <a id="lg-tvs-webos"></a>
 ### LG 電視（webOS）
 
-1. 1.0.0 版本等緊 LG 審核。喺上架 LG Content Store 之前，要喺 Developer Mode 安裝：你需要一部行 webOS 5.0 或以上嘅 LG 電視、一部喺同一個網絡嘅電腦，同埋一個免費嘅 LG 開發人員帳戶。喺電視上面，由 LG Content Store 安裝 Developer Mode app，登入，開咗 Dev Mode Status，等電視重新啟動；記低電視嘅 IP 地址同 app 顯示嘅密碼短語（passphrase）。
+1. Version 1.0.0 is in LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
 2. 喺電腦上面安裝 webOS CLI（Node.js 18 或以上）：`npm install -g @webos-tools/cli`，然後用 `ares-setup-device` 登記電視（佢嘅 IP 地址、連接埠 9922、使用者 `prisoner`），再用 `ares-novacom --device <name> --getkey`，佢會問你攞密碼短語。
 3. 由 [webOS 1.0.0 預發布](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0)，UHD 電視就下載 `Immuch360-webOS-1.0.0.ipk`，Full HD 電視就下載 `Immuch360-webOS-1.0.0-1280x720.ipk`，因為 LG 畀呢啲電視嘅 app 係 1280x720。用 `SHA256SUMS.txt` 核對，然後行 `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`。webosbrew 嘅 [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) 唔使用指令行都做到同樣嘅嘢。
 4. 一個 Developer Mode session 會維持 1000 個鐘，Developer Mode app 嘅 EXTEND 按鈕可以續期；到期之後，電視會刪除用呢個方法安裝嘅 app。詳情喺 [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode)。
@@ -215,18 +217,18 @@
 <a id="windows"></a>
 ### Windows
 
-1. 由[桌面版預發布](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11)下載 `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe`（連埋 `SHA256SUMS.txt` 畀你核對），然後開佢。安裝程式同 ZIP 都已經簽署；Windows 會顯示 APROGSYS 係發行者。由於呢個發行者對 SmartScreen 嚟講仲係新嘅，佢可能仍然會問一次：揀「其他資訊」，再揀「仍要執行」。
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.12-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
 2. 揀「只為我安裝」（唔使管理員權限）或者「為所有使用者安裝」，跟住係安裝程式嘅語言，已經預設揀咗 Windows 而家用嗰種。
 3. 喺開始功能表揀 Immuch360 Desktop 打開。相片同影片會出現喺「開啟方式」入面（㩒右鍵揀「開啟方式」）；佢永遠都唔會將自己變成預設程式。新 build 第一次啟動可能要用到成一分鐘，因為 Windows 要掃描檔案。
 4. Windows 10 或者 11，64 位元。想更新就開下一個 build 嘅安裝程式：你嘅登入、資料夾同設定都唔會變。同一個版本嗰個 ZIP 係同一個程式，淨係用資料夾形式提供，解壓去任何地方都得，再喺入面開 `immuch360.exe` 就得。喺桌面版 build 4 至 8 開機時停喺「duplicate column name: group_date」嘅電腦上面，build 9 會打開嗰個資料庫，保留你嘅資料。
 
 ### Linux
 
-Ubuntu 22.04 或以上同 Debian 12 或以上：`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`；Fedora 40 或以上：`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`，兩個都喺[桌面版預發布](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11)攞。跟住喺你嘅應用程式入面揀 Immuch360 Desktop 開。一個預覽版：電腦嘅資料夾、相片同用球體顯示嘅 360° 相片，仲有透過系統嘅 libmpv 播放平面影片，libmpv 會由套件一齊安裝（360°、3D 同原始影片會以平面播放，並顯示訊息）；SMB 共享由 Ubuntu 22.04 同 Debian 12 起用得。喺 Fedora 上面，相機影片需要 RPM Fusion 嘅 FFmpeg。冇 GNOME Keyring 或者 KWallet 嘅話，密碼淨係會保留到今次工作階段完結，app 嘅設定會講明。
+On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
 
 ### macOS
 
-由[桌面版預發布](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11)開 `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg`，將 app 拖去「應用程式」資料夾（Apple silicon 同 Intel 都得，macOS 12 或以上）。佢仲未簽署，都未經公證：喺 macOS 14 或之前，㩒住 Control 揀佢，然後揀開啟；又或者喺 macOS 15 或以上，去「系統設定」嘅「隱私權與安全性」揀「仍要打開」。呢個專案冇人有 Mac：app 淨係喺專案嘅 CI Mac 行過，喺嗰度佢開得到檔案同資料夾，仲用自己嘅 libmpv 播到平面影片；網絡存取就未試過。歡迎提交報告。
+Open `Immuch360-Desktop-3.3.0-rc.0-desktop.12-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. The author tried desktop build 11 on a Mac on 26 October 2026, and it worked; other Macs and macOS versions have not been tried, and reports are welcome.
 
 <a id="how-to"></a>
 ## 點樣用
@@ -277,8 +279,8 @@ Immuch360 識得平面相片同影片、全景、360° 相片同影片、VR180�
 
 用遙控器喺大螢幕睇你啲相。所有電視 app 嘅操作都一樣：方向鍵移動框框，OK 打開，返回鍵返去上一頁，喺 360° 相片入面方向鍵就係四圍睇。電視本身冇相，所以佢會顯示你嘅 Immich 伺服器，而喺 Android TV 同 LG 電視上面，仲有你嘅網絡共享、你嘅 Plex 伺服器同你嘅相機。
 
-- **Android TV 同 Google TV**：就係 Android app 本身，build 30，喺 Google Play 喺電視上提供之前由 GitHub 攞。
-- **行 webOS 5.0 或以上嘅 LG 電視**：一個獨立嘅電視 app，1.0.0 版本，喺 LG Content Store 等緊 LG 審核。
+- **Android TV and Google TV**: the Android app itself, build 31, from GitHub until Google Play offers it on TVs.
+- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, in LG's review for the LG Content Store.
 - **行 Tizen 5.5 或以上嘅 Samsung 電視**：同 LG 電視一樣嘅電視 app，測試 build 0.2.0，要你自己簽署同安裝。
 
 <p align="center">
@@ -401,7 +403,7 @@ Immich 自己嘅 app 唔裝得落 LG 電視。Immuch360 有一個獨立嘅電視
 2. 喺「設定」、「資源檢視器」、「影片」入面，「影片來源」可以揀呢部裝置解碼得到就用原始檔案、永遠用原始檔案，或者永遠用轉碼串流。
 3. 如果想將一張 360° 相片展示畀冇裝呢個 app 嘅人睇，可以用 Immich 共享連結分享：Immich 嘅網頁版 app 會喺佢哋嘅瀏覽器入面以球體顯示。
 
-目前嘅 build，即係 build 30，基於 2026 年 10 月 10 日嘅 Immich `main`（3.3.0-rc.0 版本），同 build 28 同 29 一樣；build 28 已經對住一部由同一個 Immich `main` 建置嘅伺服器測試過，build 27 亦都對住一部 Immich 3.2.4 伺服器測試過。有問題請喺 [Issues](https://github.com/freeKC/Immuch360/issues) 報告，唔好報去 Immich 專案。
+The current build, build 31, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 to 30; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
 有乜一樣、Immuch360 加咗乜，可以睇[同 Immich 比較](#compared-with-immich)。
 
@@ -430,7 +432,7 @@ TP-Link 嘅 Tapo 相機，同你啲相放埋一齊，唔使 Tapo app。app 會�
 <a id="your-dji-drone-experimental"></a>
 ### 你部 DJI 無人機（實驗性）
 
-「媒體庫」入面有一張「Drone」卡，屬於實驗性功能，預設開咗，集合咗 Immuch360 對 DJI 無人機做嘅嘢：喺 Android 電話上面，經遙控器睇無人機嘅直播影像，同埋經 USB 將佢嘅相片同影片帶去 Immich；喺 Meta Quest 或者 Android TV 上面，睇由電話轉播嘅嗰個直播影像。Immuch360 唔係 DJI 嘅產品，亦冇經 DJI 認可，冇任何嘢會傳去 DJI。喺呢個 build，無人機嘅畫面淨係有英文；翻譯遲啲先有。
+A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI.
 
 <a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
 <a id="see-what-your-drone-sees-on-your-phone"></a>
@@ -440,7 +442,13 @@ TP-Link 嘅 Tapo 相機，同你啲相放埋一齊，唔使 Tapo app。app 會�
   <img src="../.github/readme/drone-live-phone.png" width="720" alt="插圖，唔係截圖：兩隻手揸住一個上面夾住電話嘅無人機遙控器，電話螢幕顯示海岸嘅空中直播畫面，同時一部細細嘅無人機喺黃昏時飛過海灣">
 </p>
 
-唔使 DJI Fly、唔使任何帳戶，就可以喺你部 Android 電話睇你部 DJI 無人機見到嘅嘢：用條線將 DJI RC-N3 遙控器插落電話，Immuch360 就會以橫向全螢幕顯示無人機嘅直播影像，H.265 1080p，連埋由條線讀取嘅飛行數值。遙控器仍然完全控制住部無人機。已經用 RC-N3、DJI Neo 2 同 Samsung Galaxy S24+ 試過：喺地面用 build 29，喺 10 月 24 日同 25 日用 build 30 嘅測試 build 飛行時試過。其他遙控器同無人機仲未試過。
+See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October, then with build 30 on 26 October.
+
+**Which remotes and drones**, on 26 October 2026: the live video comes through a DJI remote that holds the phone on its cable. Tried another pair? On the live screen, open Advanced, then Diagnostics, and tell us in [Issues](https://github.com/freeKC/Immuch360/issues) which drone and remote you used and what Diagnostics shows.
+
+- **Tested**: a DJI Neo 2 fitted with its Digital Transceiver, which it needs to fly with any remote, and a DJI RC-N3, with a Samsung Galaxy S24+; on the ground on 23 October and in flight, indoors, from 24 to 26 October.
+- **Expected, not tried**: the RC-N3 with the other drones DJI lists for it (Neo, Flip, Mini 4 Pro, Mini 5 Pro, Air 3, Air 3S, Lito 1, Lito X1, and the Avata 360 by its own guide), and the RC-N2, which holds the phone on the same cable, with the same drones and the Neo 2. The app shows H.265 video only, and the flight values are proven on the Neo 2 only: with another drone the picture or the values may be missing.
+- **Not supported**: remotes with their own screen (DJI RC, RC 2, RC Pro 2), and so the Mavic 4 Pro, which DJI ships with one of them; DJI goggles; the RC-N1, the RC-N1C and older remotes; a drone flown from the phone over Wi-Fi, without a remote.
 
 佢淨係會聽。永遠唔會有任何指令送去遙控器或者無人機：由遙控器打開之後 20 秒開始，頁面每秒寫出嘅嗰一個 byte，淨係用嚟知道遙控器收唔收資料，冇帶任何指令。
 
@@ -459,7 +467,7 @@ TP-Link 嘅 Tapo 相機，同你啲相放埋一齊，唔使 Tapo app。app 會�
 <a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
 #### 喺 Meta Quest 或者 Android TV 睇
 
-插住遙控器嘅電話可以將無人機嘅畫面同數值傳去同一個本地網絡入面 Meta Quest 或者 Android TV 或 Google TV 上面嘅 Immuch360，畀你身邊嘅人睇。頭戴裝置會喺一個視窗入面顯示，或者喺你面前一個更大嘅飛行畫面顯示，電視就全螢幕顯示，數值同障礙環同電話一樣。佢哋淨係睇：頭戴裝置或者電視做嘅任何嘢都唔會影響遙控器或者無人機。佢哋嘅提示，例如「Watching only」，幾秒之後會淡出，㩒一個鍵、㩒一下或者㩒一個按鈕就會再出現。無人機嘅畫面喺 10 月 24 日經家用 Wi-Fi 傳到過一部 Quest 3 一次；頭戴裝置視窗同埋有數值同障礙環嘅飛行畫面會喺 build 30 第一次測試，Quest 2、Pro 同 3S 仲未試過。如果喺頭戴裝置入面個圓圈遮住畫面中間，佢選單入面嘅「Frame at the edges」可以令中間保持清晰。喺一部 TCL Android TV 上面，配對同畫面喺 10 月 25 日試過，之前嘅轉播會窒同偏綠；針對呢啲問題嘅穩定串流會喺 build 30 第一次測試。一邊睇頭戴裝置或者電視一邊飛，需要身邊有一個觀察員一直望住部無人機（歐盟開放類別）；冇嘅話，就望住部無人機。
+The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; on 26 October, with build 30, after the switch to the steady stream, the TV kept showing the picture through a flight where the drone sent 18 Mbit/s, with 7 freezes, the longest 1.7 s; how the picture looked was not recorded. From build 31 the safety notice on the TV keeps the focus of the remote (checked by widget tests, not yet on that TV); in build 30 the view under it could take the focus, so the notice could be neither read nor accepted, and the only way out was Back, which leaves the page. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
 
 1. 喺電話嘅直播畫面上面，㩒「Send to a headset or a TV」，然後開咗佢。
 2. **Meta Quest**：打開 Immuch360、「媒體庫」、「Drone」，揀部電話；輸入電話顯示嘅代碼，同一部電話淨係要輸入一次。畫面會喺視窗入面打開；「Open the flight view」會放大佢，B 或者 Y 會返返去視窗。
@@ -467,7 +475,7 @@ TP-Link 嘅 Tapo 相機，同你啲相放埋一齊，唔使 Tapo app。app 會�
 4. 電話同螢幕一定要喺同一個本地網絡。喺出面嘅話，開咗電話嘅熱點，有 5 GHz 頻段就用 5 GHz，再由頭戴裝置或者電視連上去。
 5. 要報告錯誤嘅話，頭戴裝置嘅選單同電視嘅 Options 都有 Diagnostics 同「Save a reception record」，會保存嗰個螢幕收到嘅嘢。
 
-**轉播質素**（Relay quality），build 30 嘅新功能，喺電話嘅 Advanced 入面：飛行時無人機大約傳送 18 Mbit/s，而喺 10 月 25 日，由電話經路由器去電視嘅家用 Wi-Fi 路徑淨係喺三分之一嘅飛行時間傳得到完整串流；其餘時間電視嘅畫面會窒、會爛同偏綠。用預設嘅 Automatic，Wi-Fi 跟唔上嘅螢幕會收到一個由電話為佢重新編碼嘅穩定畫面，最高 1080p、每秒 30 幅畫面，速率按佢 Wi-Fi 承受到嘅，目標係保持乾淨，細節少啲，而唔係爛畫面；到下一次降落或者起飛，Wi-Fi 有空間嘅時候，就會返返去無人機本身嘅畫面。Full stream 永遠照原樣傳送無人機嘅畫面，Steady stream 永遠傳送電話嘅畫面。穩定畫面係新功能：會喺 build 30 第一次測試，喺 10 月 25 日仲未喺電話上面行過。插住 Ethernet 線嘅電視，或者直接連去電話熱點嘅螢幕，就淨係經一段 Wi-Fi 而唔係兩段。
+**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once its Wi-Fi has carried the steady picture for 30 s without a stall; on 26 October that TV's Wi-Fi never did, and the TV stayed on the steady picture, at 15 pictures a second for 44 of its 59 seconds. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture first ran on a phone on 26 October, with build 30: a Galaxy S24+, encoding it in hardware HEVC at a constant bit rate. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
 
 呢個 build 未有：iPhone 同 iPad 上面嘅無人機功能（未開始）、轉播去 LG 同 Samsung 電視，以及證實超過 1.8 m 同 1.5 m/s 嘅數值，之後先有衛星同離返航點嘅距離，呢啲要等一次戶外飛行。
 
@@ -576,11 +584,11 @@ Immuch360 係 [Immich](https://github.com/immich-app/immich) 手機 app 嘅非�
 
 仲未做嘅嘢，最有可能先做嘅排先。呢度冇任何承諾，喺 [issue tracker](https://github.com/freeKC/Immuch360/issues) 上面嘅回饋會幫手決定先做邊樣。
 
-- **商店**：Google Play（build 29 審核中，之後係 build 30；電視版本審核中）、App Store（3.3.1 版本審核中，之後係 build 28 嘅 3.3.2 版本）、Meta Horizon Store 上 build 30（build 28 由 10 月 25 日起喺嗰度）、LG Content Store（1.0.0 版本由 10 月 24 日起喺 LG 審核中），之後係 Samsung 嘅商店。
-- **無人機**：一次戶外飛行，用捲尺證實超過 1.8 m 同 1.5 m/s 嘅高度同速度，同埋障礙物距離，之後顯示衛星同離返航點嘅距離；用電話、電視同頭戴裝置核對轉播嘅穩定畫面；轉播去 LG 同 Samsung 電視；iPhone 同 iPad 上面嘅無人機功能，未開始；用真嘅 DJI Neo 2 測試匯入頁面，之後將電話錄嘅聲音合併入佢嘅片段。喺呢啲測試之前，冇計劃任何會向無人機發出指令嘅功能。
+- **The stores**: Google Play (build 31 in review since 26 October; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 31 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
+- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked in a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
 - **電視**：喺真嘅 Android TV 上面測試 build 29，包括佢嘅影片控制項同用電話登入；喺真嘅 LG 電視上面測試 LG app 嘅共享、Plex 同直播畫面，仲有 webOS 26；喺真嘅 Samsung 電視上面測試 Samsung 測試 build 0.2.0，之後喺 Samsung 電視上面加入用電話登入、共享、Plex 同相機；然後係 LG 電視球體上面嘅 360° 影片、相機嘅聲音同佢哋嘅錄影（2026 年 12 月之前唔會有）。
 - **相機**：用真嘅相機測試 Tapo 相機。
-- **電腦**：喺 Windows PC 上面逐個功能手動測試，包括用電話登入；Windows 上面用網絡攝影機嘅 Spatial 2.5D，開發緊，目標係 2026 年 11 月；然後係 Linux 同 macOS 嘅 360° 影片渲染器，仲有用真 Mac 同真 Linux 電腦測試；跟住係自動更新同已簽署嘅 macOS app。
+- **Computers**: the test of each function by hand on a Windows PC, sign in with your phone included; Spatial 2.5D with the webcam on Windows, in development for November 2026; then the 360° video renderer on Linux and macOS, a test on a real Linux PC; then automatic updates and a signed macOS app.
 - **電話同平板**：下一個 iOS 版本會為 iPhone 同 iPad 帶嚟 Tapo 直播畫面同大螢幕登入；iOS 360° 影片播放器加時間軸、電話嘅 360° 播放器加上一個同下一個、iOS 平面播放器加音軌同字幕選單。
 - **沉浸式媒體**：雙魚眼 .dng、用 GoPro 同 DJI 自己嘅動態數據校平影片、如果解碼器容許就喺 Quest 上面以 3D 顯示空間影片、頭戴裝置入面空間相片之間嘅上一個同下一個。
 - **來源**：喺共享資料夾嘅檔案之間滑動切換、WebDAV 嘅 Digest 驗證、用 QR code 由電腦攞 Plex token、Plex 支援 IPv6、H.265 嘅 Tapo 錄影、電視主畫面嘅頻道。
