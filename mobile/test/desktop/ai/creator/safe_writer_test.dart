@@ -341,6 +341,20 @@ void main() {
     });
   });
 
+  group('a failure at the end', () {
+    test('a rename that fails: nothing under the final name, not even the empty reservation', () async {
+      final part = await writer.createPart(folder.path, 'salon_3D_LRF_Full_SBS.jpg');
+      File(part.path).writeAsBytesSync(ourVersion());
+      files.renameFailures[folder.path] = OSError('Input/output error', Platform.isWindows ? 1117 : 5);
+
+      await expectLater(writer.commit(part, original: salon), throwsA(isA<CreatorWriteException>()));
+
+      expect(files.calls, contains('reserve ${p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg')}'));
+      expect(namesIn(folder), isEmpty);
+      expect(noted(), isEmpty);
+    });
+  });
+
   group('the original of a job', () {
     for (final whenExists in AiWhenExists.values) {
       test('keeps its bytes and its date through a whole job (${whenExists.name})', () async {

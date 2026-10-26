@@ -1,5 +1,6 @@
 // The file system of the creator as the tests see it: every call written down with its path, on the real files of a
-// temporary folder, and failures of the system played on chosen folders (a disk full, a folder that refuses).
+// temporary folder, and failures of the system played on chosen folders (a disk full, a folder that refuses), on
+// every write or on the renames only.
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -18,6 +19,9 @@ class RecordingCreatorFiles implements CreatorFileSystem {
   /// The error of the system each write in one of these folders fails with
   final failures = <String, OSError>{};
 
+  /// The error of the system each rename into one of these folders fails with, the other writes going through
+  final renameFailures = <String, OSError>{};
+
   /// The calls whose path is [folder] or lies under it
   List<String> callsUnder(String folder) => [
     for (final call in calls)
@@ -26,8 +30,8 @@ class RecordingCreatorFiles implements CreatorFileSystem {
 
   static bool _isUnder(String path, String folder) => p.equals(path, folder) || p.isWithin(folder, path);
 
-  void _fail(String path) {
-    for (final MapEntry(key: folder, value: error) in failures.entries) {
+  void _fail(String path, {bool rename = false}) {
+    for (final MapEntry(key: folder, value: error) in [...failures.entries, if (rename) ...renameFailures.entries]) {
       if (_isUnder(path, folder)) {
         throw FileSystemException('Write refused', path, error);
       }
@@ -77,7 +81,7 @@ class RecordingCreatorFiles implements CreatorFileSystem {
   Future<void> rename(String from, String to) {
     calls.add('rename $from');
     calls.add('renameTo $to');
-    _fail(to);
+    _fail(to, rename: true);
     return inner.rename(from, to);
   }
 
