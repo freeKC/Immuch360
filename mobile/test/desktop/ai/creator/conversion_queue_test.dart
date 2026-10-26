@@ -31,6 +31,9 @@ class _Engines implements ImmersiveEngine {
 
   FakeImmersiveEngine fallback;
   final byName = <String, FakeImmersiveEngine>{};
+
+  /// The photos whose engine never sees the stop flag, as the real one after its last check
+  final deaf = <String>{};
   final ran = <String>[];
   var _running = 0;
   var mostAtOnce = 0;
@@ -43,10 +46,12 @@ class _Engines implements ImmersiveEngine {
   }) async {
     ran.add(job.source.name);
     mostAtOnce = math.max(mostAtOnce, ++_running);
+    final unheard = deaf.contains(job.source.name) ? NativeCancelFlag() : null;
     try {
-      return await (byName[job.source.name] ?? fallback).run(job, cancel: cancel, onProgress: onProgress);
+      return await (byName[job.source.name] ?? fallback).run(job, cancel: unheard ?? cancel, onProgress: onProgress);
     } finally {
       _running--;
+      unheard?.free();
     }
   }
 
@@ -128,9 +133,11 @@ class _Index implements DerivedVersionIndex {
 
   /// Thrown by each question: the database closed
   Error? error;
+  final asked = <String>[];
 
   @override
   Future<List<String>> versionPathsOf(String sourceSha1) async {
+    asked.add(sourceSha1);
     final failure = error;
     if (failure != null) {
       throw failure;
@@ -151,6 +158,7 @@ void main() {
   late _Output output;
   late _Index index;
   late Future<List<String>> Function(String folder) listFolder;
+  late List<String> listed;
   late ProviderContainer container;
   late int derivatives;
 
@@ -161,7 +169,11 @@ void main() {
     engines = _Engines();
     output = _Output();
     index = _Index();
-    listFolder = listFileNames;
+    listed = [];
+    listFolder = (folder) {
+      listed.add(folder);
+      return listFileNames(folder);
+    };
     derivatives = 0;
     container = ProviderContainer(
       overrides: [
@@ -350,6 +362,33 @@ void main() {
     expect([for (final id in ids) job(id).state], everyElement(ConversionState.done));
   });
 
+  test('one job at a time, even when a batch or a Retry comes while a photo is computed', () async {
+    engines.byName['x.jpg'] = FakeImmersiveEngine(failAt: ImmersiveStage.decoding);
+    final failed = queue().add([photo('x.jpg')]).single;
+    await allEnded();
+    expect(job(failed).state, ConversionState.failed);
+    engines.byName.remove('x.jpg');
+    final hold = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    engines.byName['a.jpg'] = hold;
+    final held = hold.reachedHold.stream.first;
+
+    final first = queue().add([photo('a.jpg')]).single;
+    await held;
+    final second = queue().add([photo('b.jpg')]).single;
+    queue().retry(failed);
+    // Time enough for another run to start, if one could
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+
+    expect(engines.mostAtOnce, 1);
+    expect([job(second).state, job(failed).state], everyElement(ConversionState.waiting));
+    hold.release();
+    await allEnded();
+
+    expect(engines.mostAtOnce, 1);
+    expect(engines.ran, ['x.jpg', 'a.jpg', 'x.jpg', 'b.jpg']);
+    expect([job(first).state, job(second).state, job(failed).state], everyElement(ConversionState.done));
+  });
+
   test('a failure stays with its photo: the others are done, and nothing of it is left', () async {
     engines.byName['b.jpg'] = FakeImmersiveEngine(
       failAt: ImmersiveStage.depth,
@@ -412,6 +451,64 @@ void main() {
     expect([for (final id in ids) job(id).state], everyElement(ConversionState.done));
   });
 
+  group('a pause of a disk full also ends with', () {
+    /// a done, b failed by a disk full, c waiting, the queue paused; the space freed
+    Future<List<String>> pausedOnB() async {
+      engines.byName['b.jpg'] = FakeImmersiveEngine(
+        failAt: ImmersiveStage.writing,
+        failure: ImmersiveErrorCode.diskFull,
+      );
+      final ids = queue().add([photo('a.jpg'), photo('b.jpg'), photo('c.jpg')]);
+      await until((state) => state.isPaused);
+      engines.byName.remove('b.jpg');
+      return ids;
+    }
+
+    test('Retry of that photo', () async {
+      final ids = await pausedOnB();
+
+      queue().retry(ids[1]);
+      expect(current().isPaused, isFalse);
+      await allEnded();
+
+      expect([for (final id in ids) job(id).state], everyElement(ConversionState.done));
+    });
+
+    test('Retry failed', () async {
+      final ids = await pausedOnB();
+
+      queue().retryFailed();
+      expect(current().isPaused, isFalse);
+      await allEnded();
+
+      expect([for (final id in ids) job(id).state], everyElement(ConversionState.done));
+    });
+
+    test('Cancel all: nothing is left to hold', () async {
+      final ids = await pausedOnB();
+
+      queue().cancelAll();
+
+      expect(current().isPaused, isFalse);
+      expect(job(ids[2]).state, ConversionState.cancelled);
+      expect(current().hasWork, isFalse);
+    });
+
+    test('Clear finished once nothing waits, not before', () async {
+      final ids = await pausedOnB();
+
+      queue().clearFinished();
+      expect(current().isPaused, isTrue);
+      expect([for (final job in current().jobs) job.id], [ids[2]]);
+
+      queue().cancel(ids[2]);
+      expect(current().isPaused, isTrue);
+      queue().clearFinished();
+      expect(current().isPaused, isFalse);
+      expect(current().jobs, isEmpty);
+    });
+  });
+
   test('Retry runs a failed photo again, Retry failed every one of them', () async {
     engines.byName['b.jpg'] = FakeImmersiveEngine(
       failAt: ImmersiveStage.depth,
@@ -453,6 +550,8 @@ void main() {
       expect(job(id).existingVersionPath, existing);
       expect(engines.ran, isEmpty);
       expect(output.begun, isEmpty);
+      expect(index.asked, hasLength(1));
+      expect(listed, [photos]);
     });
 
     test('an original edited in place at the same size since then is converted again: its sum is read now', () async {
@@ -496,6 +595,9 @@ void main() {
       expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
       expect(File(existing).readAsBytesSync(), old);
       expect(StereoPhotoXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())!.derivativeId, isNot('urn:uuid:old'));
+      // Nothing is looked for
+      expect(index.asked, isEmpty);
+      expect(listed, isEmpty);
     });
 
     test('Replace takes the place of that version, read again just before', () async {
@@ -700,6 +802,27 @@ void main() {
     queue().retry(ids[0]);
     await allEnded();
     expect(job(ids[0]).state, ConversionState.done);
+  });
+
+  test('a Cancel the engine no longer sees is still a cancel: no file is left', () async {
+    final hold = FakeImmersiveEngine(holdStage: ImmersiveStage.encoding);
+    engines.byName['a.jpg'] = hold;
+    engines.deaf.add('a.jpg');
+    final held = hold.reachedHold.stream.first;
+
+    final id = queue().add([photo('a.jpg')]).single;
+    await held;
+    queue().cancel(id);
+    hold.release();
+    await allEnded();
+
+    // The engine wrote its .part to the end; the queue read the flag after it
+    expect(hold.jobs, hasLength(1));
+    expect(job(id).state, ConversionState.cancelled);
+    expect(job(id).writtenPath, isNull);
+    expect(output.finished, isEmpty);
+    expect(output.discarded, output.begun);
+    expect(leftInFolder({'a.jpg'}), isEmpty);
   });
 
   test('Clear finished forgets the jobs that ended, not those to come', () async {
