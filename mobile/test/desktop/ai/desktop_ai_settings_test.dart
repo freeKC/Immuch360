@@ -97,6 +97,22 @@ void main() {
     expect(settings.folder, '/chosen');
   });
 
+  test('reads in turn with the writes, which Windows needs: none fails while the file is renamed over', () async {
+    var round = 0;
+    final reads = <Future<DesktopAiSettings>>[];
+    final writes = <Future<DesktopAiSettings>>[];
+    for (var i = 0; i < 40; i++) {
+      writes.add(store.update((settings) => settings.copyWith(networkRootsAllowed: ['root:${round++}'])));
+      reads.add(store.read());
+    }
+
+    await Future.wait([...writes, ...reads]);
+    // Each read saw the write queued just before it
+    for (var i = 0; i < 40; i++) {
+      expect((await reads[i]).networkRootsAllowed, ['root:$i']);
+    }
+  });
+
   test('the chosen folder goes back to the download folder', () async {
     await store.write(const DesktopAiSettings(folder: '/chosen'));
 

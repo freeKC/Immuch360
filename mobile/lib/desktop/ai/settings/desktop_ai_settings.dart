@@ -153,8 +153,17 @@ class DesktopAiSettingsStore {
   final Future<Directory> Function() _settingsDirectory;
   Future<void> _writing = Future.value();
 
-  /// The settings kept, the defaults when there are none or the file cannot be read
-  Future<DesktopAiSettings> read() async => DesktopAiSettings.fromJson(await _readMap(await _file()));
+  /// The settings kept, the defaults when there are none or the file cannot be read. In turn with the writes: on
+  /// Windows a file being renamed over cannot be opened, and a file open for reading cannot be renamed over.
+  Future<DesktopAiSettings> read() async {
+    late DesktopAiSettings settings;
+    await _queue(() async {
+      settings = await _readSettings();
+    });
+    return settings;
+  }
+
+  Future<DesktopAiSettings> _readSettings() async => DesktopAiSettings.fromJson(await _readMap(await _file()));
 
   /// Keeps [settings], the keys of the file this build does not know left as they are
   Future<void> write(DesktopAiSettings settings) => _queue(() => _save(settings));
@@ -163,7 +172,7 @@ class DesktopAiSettingsStore {
   Future<DesktopAiSettings> update(DesktopAiSettings Function(DesktopAiSettings settings) change) async {
     late DesktopAiSettings changed;
     await _queue(() async {
-      changed = change(await read());
+      changed = change(await _readSettings());
       await _save(changed);
     });
     return changed;
