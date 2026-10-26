@@ -893,12 +893,15 @@ jobs:
           fi
           binary="$framework/$(basename "$framework" .framework)"
           archs=$(lipo -archs "$binary")
-          echo "${framework#"$app/"}: $archs, $(stat -f %z "$binary") bytes"
+          # The binary of a framework is a link to Versions/Current: its size is the one of the file it names
+          echo "${framework#"$app/"}: $archs, $(stat -L -f %z "$binary") bytes"
           otool -L "$binary"
-          case " $archs " in
-            *" x86_64 "*" arm64 "*|*" arm64 "*" x86_64 "*) ;;
-            *) echo "::error::the codec is not built for both slices: $archs"; exit 1 ;;
-          esac
+          for arch in arm64 x86_64; do
+            case " $archs " in
+              *" $arch "*) ;;
+              *) echo "::error::the codec has no $arch slice: $archs"; exit 1 ;;
+            esac
+          done
 
       # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the app with its notice and licence texts and the archive of its
       # sources, assets of the package (mobile/packages/dart_smb2/libsmb2) that the licence page of the app shows. The
