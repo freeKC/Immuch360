@@ -269,7 +269,25 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     if (read) {
       ref.read(djiLiveNoticeReadProvider.notifier).state = true;
     } else {
+      _leave();
+    }
+  }
+
+  /// Back on the notice leaves this page, even with another page over it (one that a key pressed while this page
+  /// opened reached): a pop would close that one and leave this page there
+  void _leave() {
+    final route = ModalRoute.of(context);
+    if (route == null || route.isCurrent) {
       Navigator.of(context).pop();
+      return;
+    }
+    final page = route.settings;
+    final router = page is AutoRoutePage ? page.routeData.router : null;
+    if (page is AutoRoutePage && router is StackRouter) {
+      // A page of the router: out of its stack, which the navigator follows
+      router.removeRoute(page.routeData);
+    } else {
+      Navigator.of(context).removeRoute(route);
     }
   }
 

@@ -251,6 +251,44 @@ void main() {
     expect(find.byKey(const Key('open_watch')), findsOneWidget, reason: 'back on the page that opened it');
   });
 
+  testWidgets('Back on the notice with another page over the watch page leaves the watch page, not that page', (
+    tester,
+  ) async {
+    final api = television();
+    final relay = FakeRelayEnvironment();
+    await tester.binding.setSurfaceSize(_tv);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    late NavigatorState navigator;
+    await tester.pumpTestWidget(
+      context,
+      Builder(
+        builder: (context) {
+          navigator = Navigator.of(context);
+          return const Text('first page');
+        },
+      ),
+      overrides: overrides(api, relay, (_) {}),
+    );
+    // The watch page, and in the same instant another page over it, as a second OK on the page left behind did on the
+    // emulator; the notice comes over both
+    navigator.push(MaterialPageRoute<void>(builder: (_) => const DjiWatchPage())).ignore();
+    navigator
+        .push(MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('page over the watch page'))))
+        .ignore();
+    await tester.pumpAndSettle();
+    expect(notice(), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(notice(), findsNothing);
+    expect(watchPage(), findsNothing, reason: 'the notice not read leaves the watch page');
+    expect(find.text('page over the watch page'), findsOneWidget, reason: 'build 30 closed this one instead');
+    navigator.pop();
+    await tester.pumpAndSettle();
+    expect(find.text('first page'), findsOneWidget);
+  });
+
   testWidgets('Options open on the phones view when the first picture comes: Options keeps the focus', (tester) async {
     final (_, relay, listener) = await open(tester, noticeRead: true);
     relay.browsed.add(fakeAnnounced('192.168.1.21', fakeDroneTxt));
