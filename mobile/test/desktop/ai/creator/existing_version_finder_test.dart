@@ -131,6 +131,24 @@ void main() {
       expect(index.asked, [_sum]);
     });
 
+    test('only in the folder: what the index knows elsewhere is left out, and not even read', () async {
+      final moved = version(elsewhere, 'salon_3D_LRF_Full_SBS.jpg');
+      final here = version(photos, 'salon_3D_LRF_Full_SBS (1).jpg');
+      final index = _Index({
+        _sum: [moved, here],
+      });
+
+      final found = await finder(index: index).versionsOf(original, folder: photos, onlyInFolder: true).toList();
+
+      expect(found.map((version) => version.path), [here]);
+      expect(read, ['salon_3D_LRF_Full_SBS (1).jpg']);
+      expect(
+        (await finder(index: index).withSettings(original, sameSettings, folder: photos, onlyInFolder: true))?.path,
+        here,
+      );
+      expect((await finder(index: index).withSettings(original, sameSettings, folder: photos))?.path, moved);
+    });
+
     test('a file the index still lists but that is gone, changed or made from another photo is no version', () async {
       final gone = p.join(elsewhere, 'gone_3D_LRF_Full_SBS.jpg');
       final foreign = p.join(elsewhere, 'foreign.jpg');

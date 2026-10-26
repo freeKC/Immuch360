@@ -256,10 +256,10 @@ class ConversionJob {
   /// The destination for real, once done: the name may differ from the one planned ("name (1)")
   final String? writtenPath;
 
-  /// The 3D photo took the place of an existing version, at [writtenPath]
+  /// The 3D photo took the place of an existing version, at [writtenPath], as the writer did it
   final bool replaced;
 
-  /// The version with the same settings found before the run: the reason of a skip, or the file replaced
+  /// The version with the same settings found before the run, the reason of a skip; or the file replaced
   final String? existingVersionPath;
 
   /// The size of one eye of the 3D photo, and whether the original was wider than the cap and reduced

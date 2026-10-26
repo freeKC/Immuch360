@@ -53,14 +53,21 @@ class _Engines implements ImmersiveEngine {
   Future<void> dispose() async {}
 }
 
-/// The writer of the 3D photos, reduced to what the queue relies on
+/// The writer of the 3D photos, reduced to what the queue relies on: SafeWriter.commit of lot A5b, a version replaced
+/// only in the folder of the .part and only when it still carries our XMP with a DerivativeId
 class _Output implements ConversionOutput {
   final begun = <String>[];
   final discarded = <String>[];
+
+  /// The replaceName of each finish
+  final replaceNames = <String?>[];
   ImmersiveErrorCode? failFinish;
 
   /// The name is taken and the user chose Skip for such files
   bool skipTaken = false;
+
+  /// Runs at the start of each finish: another tool writing meanwhile
+  void Function()? beforeFinish;
 
   @override
   Future<String> begin(ConversionJob job) async {
@@ -72,21 +79,28 @@ class _Output implements ConversionOutput {
   }
 
   @override
-  Future<String?> finish(ConversionJob job, String partPath, {String? replacing}) async {
+  Future<ConversionSaved> finish(ConversionJob job, String partPath, {String? replaceName}) async {
+    replaceNames.add(replaceName);
+    beforeFinish?.call();
     final code = failFinish;
     if (code != null) {
       throw ConversionException(code, 'Scripted failure of the rename');
     }
-    if (replacing != null) {
-      File(partPath).renameSync(replacing);
-      return replacing;
-    }
     final target = job.target!;
+    if (replaceName != null) {
+      final replacing = p.join(p.dirname(partPath), replaceName);
+      final file = File(replacing);
+      final id = file.existsSync() ? StereoPhotoXmp.findIn(file.readAsBytesSync())?.derivativeId : null;
+      if (id != null && id.trim().isNotEmpty) {
+        File(partPath).renameSync(replacing);
+        return ConversionSaved(path: replacing, outcome: ConversionSaveOutcome.replaced);
+      }
+    }
     var path = target.path;
     for (var n = 1; File(path).existsSync(); n++) {
       if (skipTaken) {
         File(partPath).deleteSync();
-        return null;
+        return ConversionSaved(path: target.path, outcome: ConversionSaveOutcome.skipped);
       }
       path = p.join(
         target.folder,
@@ -94,7 +108,7 @@ class _Output implements ConversionOutput {
       );
     }
     File(partPath).renameSync(path);
-    return path;
+    return ConversionSaved(path: path, outcome: ConversionSaveOutcome.saved);
   }
 
   @override
@@ -107,6 +121,14 @@ class _Output implements ConversionOutput {
   }
 }
 
+/// The index of the library as lot A6a fills it: the versions of an original by its sum
+class _Index implements DerivedVersionIndex {
+  final paths = <String, List<String>>{};
+
+  @override
+  Future<List<String>> versionPathsOf(String sourceSha1) async => paths[sourceSha1] ?? const [];
+}
+
 String _sumOf(List<int> bytes) => base64.encode(crypto.sha1.convert(bytes).bytes);
 
 /// The sum of the file at [path] in Dart, without an isolate per job
@@ -117,6 +139,7 @@ void main() {
   late String photos;
   late _Engines engines;
   late _Output output;
+  late _Index index;
   late ProviderContainer container;
   late int derivatives;
 
@@ -126,6 +149,7 @@ void main() {
     Directory(photos).createSync();
     engines = _Engines();
     output = _Output();
+    index = _Index();
     derivatives = 0;
     container = ProviderContainer(
       overrides: [
@@ -133,7 +157,7 @@ void main() {
           ConversionTools(
             engine: engines,
             output: output,
-            finder: ExistingVersionFinder(),
+            finder: ExistingVersionFinder(index: index),
             creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
             software: 'Immuch360 Desktop 3.3.0',
             now: () => DateTime(2026, 10, 27, 10, 12),
@@ -165,8 +189,8 @@ void main() {
     );
   }
 
-  /// A 3D photo of ours made from the original at [originalPath], at [name] in the photos folder
-  String version(String originalPath, String name, {int turns = 0, String id = 'urn:uuid:old'}) {
+  /// A 3D photo of ours made from the original at [originalPath], at [name] in [folder], the photos folder by default
+  String version(String originalPath, String name, {int turns = 0, String id = 'urn:uuid:old', String? folder}) {
     final bytes = File(originalPath).readAsBytesSync();
     final xmp = StereoPhotoXmp.estimated(
       eyeWidth: 8,
@@ -180,7 +204,7 @@ void main() {
       creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
       derivativeId: id,
     );
-    return (File(p.join(photos, name))..writeAsBytesSync(fakeSbsJpeg(xmp: xmp))).path;
+    return (File(p.join(folder ?? photos, name))..writeAsBytesSync(fakeSbsJpeg(xmp: xmp))).path;
   }
 
   /// Completes once [test] holds for the state of the queue
@@ -444,11 +468,68 @@ void main() {
       expect(job(id).state, ConversionState.done);
       expect(job(id).replaced, isTrue);
       expect(job(id).writtenPath, existing);
+      expect(job(id).existingVersionPath, existing);
+      expect(output.replaceNames, ['salon_3D_LRF_Full_SBS.jpg']);
       expect(
         StereoPhotoXmp.findIn(File(existing).readAsBytesSync())!.derivativeId,
         'urn:uuid:00000000-0000-4000-8000-000000000001',
       );
       expect(leftInFolder({'salon.jpg'}), ['salon_3D_LRF_Full_SBS.jpg']);
+    });
+
+    test('known by the index in another folder, with the same settings, is skipped too', () async {
+      final request = photo('salon.jpg');
+      final original = p.join(photos, 'salon.jpg');
+      final other = (Directory(p.join(root.path, 'other'))..createSync()).path;
+      final moved = version(original, 'salon_3D_LRF_Full_SBS.jpg', folder: other);
+      index.paths[_sumOf(File(original).readAsBytesSync())] = [moved];
+
+      final id = queue().add([request]).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.skipped);
+      expect(job(id).existingVersionPath, moved);
+      expect(engines.ran, isEmpty);
+    });
+
+    test(
+      'Replace only takes a version of the destination folder: one elsewhere stays, the new one goes there',
+      () async {
+        final request = photo('salon.jpg');
+        final original = p.join(photos, 'salon.jpg');
+        final other = (Directory(p.join(root.path, 'other'))..createSync()).path;
+        final moved = version(original, 'salon_3D_LRF_Full_SBS.jpg', folder: other);
+        final old = File(moved).readAsBytesSync();
+        index.paths[_sumOf(File(original).readAsBytesSync())] = [moved];
+
+        final id = queue().add([request], existing: ExistingVersionChoice.replace).single;
+        await allEnded();
+
+        expect(job(id).state, ConversionState.done);
+        expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS.jpg'));
+        expect(job(id).replaced, isFalse);
+        expect(job(id).existingVersionPath, isNull);
+        expect(output.replaceNames, [null]);
+        expect(File(moved).readAsBytesSync(), old);
+        expect(Directory(other).listSync().map((entry) => p.basename(entry.path)), ['salon_3D_LRF_Full_SBS.jpg']);
+      },
+    );
+
+    test('the job says replaced only when the writer did: a file no longer ours at the rename is kept', () async {
+      final request = photo('salon.jpg');
+      final existing = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
+      // Another tool writes over it after the queue looked, just before the rename
+      output.beforeFinish = () => File(existing).writeAsBytesSync([0xff, 0xd8, 0xff, 0xd9]);
+
+      final id = queue().add([request], existing: ExistingVersionChoice.replace).single;
+      await allEnded();
+
+      expect(output.replaceNames, ['salon_3D_LRF_Full_SBS.jpg']);
+      expect(job(id).state, ConversionState.done);
+      expect(job(id).replaced, isFalse);
+      expect(job(id).existingVersionPath, isNull);
+      expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
+      expect(File(existing).readAsBytesSync(), [0xff, 0xd8, 0xff, 0xd9]);
     });
 
     test('Replace never takes the place of a file that is no longer ours: both are kept', () async {

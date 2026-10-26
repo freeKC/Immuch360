@@ -86,13 +86,18 @@ class ExistingVersionFinder {
   final Future<List<String>> Function(String folder) _listFolder;
 
   /// The versions of [original]: those the index knows first, then those among the neighbours in [folder] (the
-  /// destination of the job). Each file is read once, when it is reached.
-  Stream<ExistingVersion> versionsOf(DerivedRuleOriginal original, {String? folder}) async* {
+  /// destination of the job). With [onlyInFolder], those the index knows elsewhere are left out without being read.
+  /// Each file is read once, when it is reached.
+  Stream<ExistingVersion> versionsOf(DerivedRuleOriginal original, {String? folder, bool onlyInFolder = false}) async* {
     final seen = <String>{};
     final sum = original.sha1;
     final known = index;
+    final inFolder = folder == null ? null : p.canonicalize(folder);
     if (known != null && sum != null && sum.isNotEmpty) {
       for (final path in await known.versionPathsOf(sum)) {
+        if (onlyInFolder && p.canonicalize(p.dirname(path)) != inFolder) {
+          continue;
+        }
         if (seen.add(p.canonicalize(path))) {
           final found = await _versionAt(path, p.dirname(path), original);
           if (found != null) {
@@ -116,9 +121,15 @@ class ExistingVersionFinder {
     }
   }
 
-  /// The first version of [original] made with [settingsKey] (see [versionSettingsKey]), null when there is none
-  Future<ExistingVersion?> withSettings(DerivedRuleOriginal original, String settingsKey, {String? folder}) async {
-    await for (final version in versionsOf(original, folder: folder)) {
+  /// The first version of [original] made with [settingsKey] (see [versionSettingsKey]), null when there is none; see
+  /// [versionsOf] for [folder] and [onlyInFolder]
+  Future<ExistingVersion?> withSettings(
+    DerivedRuleOriginal original,
+    String settingsKey, {
+    String? folder,
+    bool onlyInFolder = false,
+  }) async {
+    await for (final version in versionsOf(original, folder: folder, onlyInFolder: onlyInFolder)) {
       if (version.settingsKey == settingsKey) {
         return version;
       }

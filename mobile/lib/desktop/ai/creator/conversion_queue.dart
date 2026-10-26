@@ -24,8 +24,30 @@ import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart'
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 
 final _log = Logger('ConversionQueue');
+
+/// What became of a 3D photo at the end of its job, as the writer tells it (SaveOutcome of the writer of lot A5b)
+enum ConversionSaveOutcome {
+  /// Under its name, or the first free "name (n)" of it
+  saved,
+
+  /// In place of an earlier 3D photo of ours
+  replaced,
+
+  /// Not kept: the name was taken and the user chose to skip such files
+  skipped,
+}
+
+/// The file a job ended with
+class ConversionSaved {
+  const ConversionSaved({required this.path, required this.outcome});
+
+  /// The 3D photo; for a skipped one, the file that was already there
+  final String path;
+  final ConversionSaveOutcome outcome;
+}
 
 /// Where the 3D photos are written (lot A5b): a .part with a dot name in the destination folder, kept in the journal
 /// of partial files while it is written, then renamed onto the final name, reserved only at the end
@@ -34,11 +56,12 @@ abstract interface class ConversionOutput {
   /// [ConversionException]: readOnly, diskFull or writeFailed.
   Future<String> begin(ConversionJob job);
 
-  /// Renames [partPath] onto the final name of [job] and gives the path written, which may differ from the target
-  /// ("name (1)"). [replacing] is a version of ours, read again just before, that the new file takes the place of. Null
-  /// when the name is taken and the user chose to skip such files; the .part is deleted then. Throws a
-  /// [ConversionException] as [begin].
-  Future<String?> finish(ConversionJob job, String partPath, {String? replacing});
+  /// Puts [partPath] under the final name of [job], in the folder of its target and nowhere else, and tells what it
+  /// did: the name may differ from the target ("name (1)"). [replaceName] is a file of that folder, a version with the
+  /// same settings, that the new one takes the place of only when it is still a 3D photo of ours with its
+  /// DerivativeId, read again just before; otherwise both are kept. Throws a [ConversionException] as [begin], and the
+  /// queue discards the .part then.
+  Future<ConversionSaved> finish(ConversionJob job, String partPath, {String? replaceName});
 
   /// Deletes [partPath] and forgets it; nothing when it is gone already
   Future<void> discard(String partPath);
@@ -275,10 +298,13 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
       ExistingVersion? same;
       if (job.existing != ExistingVersionChoice.newVersion) {
+        // Skip looks wherever the index knows a version; Replace only in the destination folder, where the new 3D
+        // photo goes and was checked: a version elsewhere stays, and the new one is written beside the others
         same = await tools.finder.withSettings(
           DerivedRuleOriginal(name: source.name, size: source.size, folder: job.source.folder, sha1: source.sha1),
           versionSettingsKey(depthModelSha256: tools.depthModelSha256, quarterTurns: job.quarterTurns),
           folder: target.folder,
+          onlyInFolder: job.existing == ExistingVersionChoice.replace,
         );
         if (same != null && job.existing == ExistingVersionChoice.skip) {
           final path = same.path;
@@ -329,23 +355,26 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       failure = ImmersiveErrorCode.writeFailed;
       _set(id, (job) => job.copyWith(state: ConversionState.writing));
       // Read again just before: a file that is no longer ours is never replaced, the new one goes beside it
-      final replacing = same != null && job.existing == ExistingVersionChoice.replace && await _stillOurs(tools, same)
-          ? same.path
+      final replaceName = same != null && job.existing == ExistingVersionChoice.replace && await _stillOurs(tools, same)
+          ? p.basename(same.path)
           : null;
-      final written = await tools.output.finish(state.byId(id) ?? job, part, replacing: replacing);
-      if (written == null) {
+      final saved = await tools.output.finish(state.byId(id) ?? job, part, replaceName: replaceName);
+      // Renamed, or deleted for a name taken: the writer took it
+      part = null;
+      if (saved.outcome == ConversionSaveOutcome.skipped) {
         _set(id, (job) => job.copyWith(state: ConversionState.skipped, skipReason: ConversionSkipReason.nameTaken));
         return;
       }
-      part = null;
+      // What the writer did, not what was asked: it keeps both when the version is no longer ours at the rename
+      final replaced = saved.outcome == ConversionSaveOutcome.replaced;
       _set(
         id,
         (job) => job.copyWith(
           state: ConversionState.done,
           perMille: 1000,
-          writtenPath: written,
-          replaced: replacing != null,
-          existingVersionPath: same?.path,
+          writtenPath: saved.path,
+          replaced: replaced,
+          existingVersionPath: replaced ? saved.path : null,
           eyeWidth: result.eyeWidth,
           eyeHeight: result.eyeHeight,
           reduced: result.reduced,
