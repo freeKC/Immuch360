@@ -69,12 +69,13 @@ class WriteProbe {
   final SafeWriter _writer;
   final LibraryPathRules _rules;
 
-  /// How many folders are checked at most; the others are checked by their jobs
+  /// How many distinct folders are checked at most; the others are checked by their jobs
   final int maxFolders;
 
   final _results = <String, ProbeResult>{};
   final _parts = <String, PartFile>{};
-  var _checked = 0;
+  // The distinct folders checked: checking one again (Change, Next to the original) does not count twice
+  final _checked = <String>{};
 
   /// The check of [folder], null while it was not checked
   ProbeResult? resultOf(String folder) => _results[_key(folder)];
@@ -87,10 +88,10 @@ class WriteProbe {
       final key = _key(request.folder);
       var result = _results[key];
       if (result == null) {
-        if (_checked >= maxFolders) {
+        if (!_checked.contains(key) && _checked.length >= maxFolders) {
           result = const ProbeResult(ProbeStatus.notChecked);
         } else {
-          _checked++;
+          _checked.add(key);
           result = await _check(request);
         }
         _results[key] = result;

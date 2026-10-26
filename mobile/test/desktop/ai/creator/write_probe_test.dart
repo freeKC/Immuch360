@@ -104,6 +104,30 @@ void main() {
     expect(WriteProbe(writer).maxFolders, 50);
   });
 
+  test('a folder checked again counts once against the fifty', () async {
+    probe = WriteProbe(writer, maxFolders: 2);
+    final refusing = folder('Refusing');
+    final other = folder('Other');
+    files.failures[refusing.path] = OSError('Access denied', Platform.isWindows ? 5 : 13);
+    final requests = [
+      ProbeRequest(jobId: 'r', folder: refusing.path, finalName: 'r.jpg'),
+      ProbeRequest(jobId: 'o', folder: other.path, finalName: 'o.jpg'),
+    ];
+    await probe.check(requests);
+    files.failures.clear();
+
+    // "Next to the original" again, then a job that moves away and back
+    probe.forgetRefusals();
+    final again = await probe.check(requests);
+    await probe.keepOnly({'r': refusing.path});
+    final back = await probe.check(requests);
+
+    expect(again[refusing.path]!.status, ProbeStatus.ready);
+    expect(back[other.path]!.status, ProbeStatus.ready);
+    expect(partsIn(refusing.path), hasLength(1));
+    expect(partsIn(other.path), hasLength(1));
+  });
+
   test('a folder that refuses, a full disk, a missing folder: told, nothing left behind', () async {
     final refusing = folder('Refusing');
     final full = folder('Full');
