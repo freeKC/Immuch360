@@ -77,6 +77,18 @@ void main() {
       );
       expect(
         backend.refusalOf([
+          image([1, 3, 512, 686]),
+        ], map),
+        'The input pixel_values [1, 3, 512, 686] of model.onnx does not take a float32 image [1, 3, 518, 686]',
+      );
+      expect(
+        backend.refusalOf([
+          image([1, 3, 518, 512]),
+        ], map),
+        'The input pixel_values [1, 3, 518, 512] of model.onnx does not take a float32 image [1, 3, 518, 686]',
+      );
+      expect(
+        backend.refusalOf([
           image([1, 1, 518, 686]),
         ], map),
         isNotNull,
@@ -123,6 +135,35 @@ void main() {
         ),
         'The output depth [-1, -1, -1] of model.onnx is not float32',
       );
+    });
+
+    test('takes a map whose leading dimensions are 1, and refuses a batch or a single row of values', () {
+      final values = Float32List.fromList(List<double>.generate(20, (i) => i.toDouble()));
+      for (final shape in [
+        [1, 4, 5],
+        [4, 5],
+        [1, 1, 4, 5],
+      ]) {
+        final map = OrtDepthBackend.mapOf(OrtTensor(shape, values));
+        expect((map.width, map.height), (5, 4), reason: '$shape');
+        expect(map.at(4, 3), 19, reason: '$shape');
+      }
+      for (final shape in [
+        [2, 2, 5],
+        [2, 1, 2, 5],
+        [20],
+      ]) {
+        expect(
+          () => OrtDepthBackend.mapOf(OrtTensor(shape, values)),
+          throwsA(
+            isA<DepthBackendException>().having(
+              (e) => e.message,
+              'message',
+              'The model gave a map of shape $shape, not [1, height, width]',
+            ),
+          ),
+        );
+      }
     });
   });
 

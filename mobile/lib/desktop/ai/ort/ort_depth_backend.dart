@@ -62,6 +62,12 @@ class OrtDepthBackend implements DepthBackend {
     } on OrtException catch (error) {
       throw DepthBackendException(error.message);
     }
+    return mapOf(output);
+  }
+
+  /// The map [output] holds: its last two dimensions, the others 1. Throws [DepthBackendException] for any other shape
+  @visibleForTesting
+  static DepthMap mapOf(OrtTensor output) {
     final shape = output.shape;
     if (shape.length < 2 || shape.take(shape.length - 2).any((dimension) => dimension != 1)) {
       throw DepthBackendException('The model gave a map of shape $shape, not [1, height, width]');
