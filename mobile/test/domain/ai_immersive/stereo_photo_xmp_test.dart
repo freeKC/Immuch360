@@ -146,6 +146,15 @@ void main() {
       expect(read.settingsKey, isNull);
     });
 
+    test('an entity that names no character is left as written, and the rest of the packet is read', () {
+      final damaged = fixture.replaceFirst('salon.jpg', '&#x110000;&#99999999999999999999999;&#x41;&#66;');
+      final read = StereoPhotoXmp.parse(damaged)!;
+
+      expect(read.sourceName, '&#x110000;&#99999999999999999999999;AB');
+      expect(read.sourceSha1, _sample.sourceSha1);
+      expect(StereoPhotoXmp.findIn(Uint8List.fromList(utf8.encode(damaged)))!.derivativeId, _sample.derivativeId);
+    });
+
     test('a packet without our namespace, or without a Kind, is not ours', () {
       expect(
         StereoPhotoXmp.parse('<x:xmpmeta><rdf:Description GPano:ProjectionType="equirectangular"/></x:xmpmeta>'),
