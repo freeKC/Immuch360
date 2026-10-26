@@ -19,7 +19,9 @@
 // the refusals in desktop_ai.json.
 //
 // macOS: the library does not mark network roots there yet (volume_id.dart reads the mount point only), so the mount
-// table of the system tells which folders are on a NAS, and those wait for the yes as on the other systems.
+// table of the system tells which folders are on a NAS, and those wait for the yes as on the other systems. The volume
+// of such a folder is its own mount, wherever it is mounted (/Volumes/photos, /net/nas/photos): a yes given for a
+// file opened from it never covers the boot disk.
 
 import 'dart:io';
 
@@ -157,9 +159,9 @@ List<MacMount> parseMacMounts(String output) => [
         MacMount(match.group(2)!, local: options.contains('local')),
 ];
 
-/// Whether [folder] is on a network file system of [mounts]: the deepest mount point that holds it is not local. Case
-/// is ignored, as on the disks of macOS.
-bool isOnNetworkMount(List<MacMount> mounts, String folder) {
+/// The network mount of [mounts] that holds [folder]: the deepest mount point that holds it, when it is not local;
+/// null for a folder on a local disk. Case is ignored, as on the disks of macOS.
+MacMount? networkMountOf(List<MacMount> mounts, String folder) {
   final path = p.posix.normalize(folder).toLowerCase();
   MacMount? deepest;
   for (final mount in mounts) {
@@ -169,8 +171,11 @@ bool isOnNetworkMount(List<MacMount> mounts, String folder) {
       deepest = mount;
     }
   }
-  return deepest != null && !deepest.local;
+  return deepest == null || deepest.local ? null : deepest;
 }
+
+/// Whether [folder] is on a network file system of [mounts]
+bool isOnNetworkMount(List<MacMount> mounts, String folder) => networkMountOf(mounts, folder) != null;
 
 /// The volumes of this computer, through volume_id.dart, and on macOS its mount table too
 class SystemFolderVolumes implements FolderVolumes {
@@ -202,7 +207,7 @@ class SystemFolderVolumes implements FolderVolumes {
   FolderVolume? of(String folder) => _volumes.putIfAbsent(folder, () => _identify(folder));
 
   FolderVolume? _identify(String folder) {
-    final identity = _probe.identify(folder);
+    final identity = _networkMountIdentity(folder) ?? _probe.identify(folder);
     if (identity == null) {
       return null;
     }
@@ -210,13 +215,32 @@ class SystemFolderVolumes implements FolderVolumes {
       volumeKey: identity.volumeKey,
       folderKey: identity.rootId(caseFold: _rules.caseFold),
       mountPoint: identity.mountPoint,
-      isNetwork: identity.isNetwork || isNetworkMount(folder),
+      isNetwork: identity.isNetwork,
     );
   }
 
+  /// On macOS, the volume of a [folder] on a network mount, read from the mount table: "mnt-" and its mount point, as
+  /// MountPathVolumeProbe names the volumes under /Volumes; null elsewhere
+  VolumeIdentity? _networkMountIdentity(String folder) {
+    final mount = _macOS ? networkMountOf(_mounts, folder) : null;
+    if (mount == null) {
+      return null;
+    }
+    final point = p.posix.normalize(mount.mountPoint);
+    final path = p.posix.normalize(folder);
+    final inside = path.length > point.length ? path.substring(point.length) : '';
+    return VolumeIdentity(
+      volumeKey: 'mnt-${mount.mountPoint}',
+      mountPoint: mount.mountPoint,
+      pathInVolume: inside.startsWith('/') ? inside : '/$inside',
+      isNetwork: true,
+    );
+  }
+
+  List<MacMount> get _mounts => _macMounts ??= parseMacMounts(_readMacMounts());
+
   @override
-  bool isNetworkMount(String folder) =>
-      _macOS && isOnNetworkMount(_macMounts ??= parseMacMounts(_readMacMounts()), folder);
+  bool isNetworkMount(String folder) => _macOS && isOnNetworkMount(_mounts, folder);
 }
 
 /// Where a 3D photo goes

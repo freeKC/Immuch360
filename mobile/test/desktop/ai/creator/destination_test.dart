@@ -7,6 +7,7 @@ import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
@@ -340,6 +341,71 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       expect(again, same(first));
       expect(first!.folderKey, startsWith('uuid-1:/'));
       expect(probe.identified, ['/home/me/Pictures', '/home/me/Videos']);
+    });
+
+    test('a file opened from a NAS, or a folder chosen on it, is on the network, whatever its mount point', () {
+      final macRules = LibraryPathRules(context: p.posix, caseFold: true);
+      final mac = SystemFolderVolumes(
+        macOS: true,
+        probe: const MountPathVolumeProbe(),
+        rules: macRules,
+        readMacMounts: () =>
+            '$output'
+            'nas:/export/photos on /net/nas/photos (nfs, nodev, nosuid, automounted, nobrowse)\n'
+            'nas2:/export/videos on /net/nas2/videos (nfs, nodev, nosuid, automounted, nobrowse)\n',
+      );
+
+      final volumes = mac.of('/Volumes/photos/2024')!;
+      final automounted = mac.of('/net/nas/photos/2024')!;
+      final boot = mac.of('/Users/me/Pictures')!;
+      final card = mac.of('/Volumes/Card/DCIM')!;
+
+      expect(volumes.isNetwork, isTrue);
+      expect(volumes.volumeKey, 'mnt-/Volumes/photos');
+      expect(volumes.mountPoint, '/Volumes/photos');
+      expect(volumes.folderKey, 'mnt-/Volumes/photos:/2024');
+      expect(automounted.isNetwork, isTrue);
+      expect(automounted.volumeKey, 'mnt-/net/nas/photos');
+      expect(automounted.mountPoint, '/net/nas/photos');
+      expect(automounted.folderKey, 'mnt-/net/nas/photos:/2024');
+      expect(boot.isNetwork, isFalse);
+      expect(boot.volumeKey, 'mnt-/');
+      expect(card.isNetwork, isFalse);
+
+      // The question names the NAS, and its yes covers the NAS alone, never the boot disk
+      final planner = DestinationPlanner(
+        settings: const DesktopAiSettings(),
+        chosenFolder: '/Users/me/Downloads/Immuch360',
+        volumes: mac,
+        rules: macRules,
+      );
+      final opened = planner.plan(const OpenedOriginal(name: 'a.jpg', path: '/net/nas/photos/2024/a.jpg'));
+      expect(opened.waitsForConsent, isTrue);
+      expect(opened.consentKey, 'mnt-/net/nas/photos');
+      expect(opened.consentFolder, '/net/nas/photos');
+      final allowed = DestinationPlanner(
+        settings: const DesktopAiSettings(networkRootsAllowed: ['mnt-/net/nas/photos']),
+        chosenFolder: '/Users/me/Downloads/Immuch360',
+        volumes: mac,
+        rules: macRules,
+      );
+      expect(
+        allowed.plan(const OpenedOriginal(name: 'a.jpg', path: '/net/nas/photos/2024/a.jpg')).waitsForConsent,
+        isFalse,
+      );
+      expect(allowed.plan(const OpenedOriginal(name: 'b.jpg', path: '/Volumes/photos/b.jpg')).waitsForConsent, isTrue);
+      expect(allowed.plan(const OpenedOriginal(name: 'c.jpg', path: '/net/nas2/videos/c.jpg')).waitsForConsent, isTrue);
+      expect(allowed.plan(const OpenedOriginal(name: 'd.jpg', path: '/Users/me/d.jpg')).waitsForConsent, isFalse);
+      expect(planner.plan(const ServerOriginal(name: 'c.jpg')).isNetwork, isFalse);
+      expect(
+        DestinationPlanner(
+          settings: const DesktopAiSettings(),
+          chosenFolder: '/Volumes/photos/3D',
+          volumes: mac,
+          rules: macRules,
+        ).plan(const ServerOriginal(name: 'c.jpg')).isNetwork,
+        isTrue,
+      );
     });
 
     test('read once, and only on macOS', () {
