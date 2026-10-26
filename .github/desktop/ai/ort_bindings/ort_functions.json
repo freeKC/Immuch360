@@ -1,0 +1,147 @@
+{
+  "about": "The entries of struct OrtApi that mobile/lib/desktop/ai/ort calls, with their place in the table (from 0). Written by .github/desktop/ai/ort_bindings/generate.sh; checked by test/desktop/ai/ort/ort_bindings_test.dart.",
+  "apiVersion": 23,
+  "tableSize": {
+    "api23": 391,
+    "api31": 429
+  },
+  "api23Header": "https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/include/onnxruntime/core/session/onnxruntime_c_api.h",
+  "functions": [
+    {
+      "name": "AddSessionConfigEntry",
+      "rank": 130
+    },
+    {
+      "name": "AllocatorFree",
+      "rank": 76
+    },
+    {
+      "name": "CastTypeInfoToTensorInfo",
+      "rank": 55
+    },
+    {
+      "name": "CreateCpuMemoryInfo",
+      "rank": 69
+    },
+    {
+      "name": "CreateEnv",
+      "rank": 3
+    },
+    {
+      "name": "CreateSession",
+      "rank": 7
+    },
+    {
+      "name": "CreateSessionOptions",
+      "rank": 10
+    },
+    {
+      "name": "CreateTensorWithDataAsOrtValue",
+      "rank": 49
+    },
+    {
+      "name": "GetAllocatorWithDefaultOptions",
+      "rank": 78
+    },
+    {
+      "name": "GetDimensions",
+      "rank": 62
+    },
+    {
+      "name": "GetDimensionsCount",
+      "rank": 61
+    },
+    {
+      "name": "GetErrorCode",
+      "rank": 1
+    },
+    {
+      "name": "GetErrorMessage",
+      "rank": 2
+    },
+    {
+      "name": "GetTensorElementType",
+      "rank": 60
+    },
+    {
+      "name": "GetTensorMutableData",
+      "rank": 51
+    },
+    {
+      "name": "GetTensorTypeAndShape",
+      "rank": 65
+    },
+    {
+      "name": "ReleaseEnv",
+      "rank": 92
+    },
+    {
+      "name": "ReleaseMemoryInfo",
+      "rank": 94
+    },
+    {
+      "name": "ReleaseSession",
+      "rank": 95
+    },
+    {
+      "name": "ReleaseSessionOptions",
+      "rank": 100
+    },
+    {
+      "name": "ReleaseStatus",
+      "rank": 93
+    },
+    {
+      "name": "ReleaseTensorTypeAndShapeInfo",
+      "rank": 99
+    },
+    {
+      "name": "ReleaseTypeInfo",
+      "rank": 98
+    },
+    {
+      "name": "ReleaseValue",
+      "rank": 96
+    },
+    {
+      "name": "Run",
+      "rank": 9
+    },
+    {
+      "name": "SessionGetInputCount",
+      "rank": 30
+    },
+    {
+      "name": "SessionGetInputName",
+      "rank": 36
+    },
+    {
+      "name": "SessionGetInputTypeInfo",
+      "rank": 33
+    },
+    {
+      "name": "SessionGetOutputCount",
+      "rank": 31
+    },
+    {
+      "name": "SessionGetOutputName",
+      "rank": 37
+    },
+    {
+      "name": "SessionGetOutputTypeInfo",
+      "rank": 34
+    },
+    {
+      "name": "SetInterOpNumThreads",
+      "rank": 25
+    },
+    {
+      "name": "SetIntraOpNumThreads",
+      "rank": 24
+    },
+    {
+      "name": "SetSessionGraphOptimizationLevel",
+      "rank": 23
+    }
+  ]
+}
