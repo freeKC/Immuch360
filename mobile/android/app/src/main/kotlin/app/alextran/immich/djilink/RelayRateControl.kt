@@ -144,9 +144,12 @@ class RelayRateController(headset: Boolean = false) {
 }
 
 /**
- * The bit rate the phone's encoder runs at (p2/relay-bandwidth-2026-10-25.md, 7.6): the least rate the steady receivers
- * allow, under the thermal cap when there is one, set at most every [everyNs] (an encoder takes a new rate at its next
- * picture). Pure.
+ * The bit rate the phone's encoder runs at (p2/relay-bandwidth-2026-10-25.md, 7.6): the least rate the receivers on
+ * the steady stream or waiting for it allow, under the thermal cap when there is one, set at most every [everyNs] (an
+ * encoder takes a new rate at its next picture). With none, the rate given last is forgotten and
+ * [RelayRateController.START_BPS] is given once, at once the next time: an encoder made for the next receiver starts
+ * at the rate of a receiver nothing is known of, not at the one the last receiver left
+ * (p2/noon-test-check-2026-10-26.md C9). Pure.
  */
 class RelayEncoderRate(private val everyNs: Long = EVERY_NS) {
   companion object {
@@ -160,7 +163,17 @@ class RelayEncoderRate(private val everyNs: Long = EVERY_NS) {
 
   /** The rate to give the encoder now, or null when it stays as it is (unchanged, or set less than [everyNs] ago) */
   fun next(allowed: List<Int>, capBps: Int?, nowNs: Long): Int? {
-    var target = allowed.minOrNull() ?: return null
+    if (allowed.isEmpty()) {
+      // No receiver on the steady stream: the next one's rate is given as soon as it comes
+      lastSetNs = null
+      val given = currentBps ?: return null
+      if (given == RelayRateController.START_BPS) {
+        return null
+      }
+      currentBps = RelayRateController.START_BPS
+      return RelayRateController.START_BPS
+    }
+    var target = allowed.min()
     if (capBps != null) {
       target = minOf(target, capBps)
     }

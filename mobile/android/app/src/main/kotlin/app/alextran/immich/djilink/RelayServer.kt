@@ -795,6 +795,8 @@ class RelayServer(
           }
           if (headset.pendingSteady != null) {
             needed = true
+            // The encoder made for it starts at the rate its link allows
+            allowed += headset.rate.allowedBps
             continue
           }
           val why = if (quality == RelayQuality.AUTOMATIC) headset.policy.onFullTick(nowNs, age, dropped) else null
@@ -810,12 +812,16 @@ class RelayServer(
             }
             needed = true
             askSwitch = true
+            allowed += headset.rate.allowedBps
           }
         }
       }
     }
     source.setEnabled(enabled, nowNs)
     source.setCapableReceivers(capable, nowNs)
+    // The rate before the need: an encoder this tick makes starts at the rate of the receivers that wait for it, and
+    // with none on the steady stream the next one starts at 8 Mbit/s (p2/noon-test-check-2026-10-26.md C9)
+    encoderRate.next(allowed, null, nowNs)?.let { source.setBitrate(it, nowNs) }
     source.setNeeded(needed, nowNs)
     if (askSwitch) {
       source.requestKey(RelayKeyCause.SWITCH, nowNs)
@@ -823,7 +829,6 @@ class RelayServer(
     if (askDrop) {
       source.requestKey(RelayKeyCause.DROP, nowNs)
     }
-    encoderRate.next(allowed, null, nowNs)?.let { source.setBitrate(it, nowNs) }
     source.setPictureRate(if (slow) 15 else 30, nowNs)
     source.tick(nowNs)
   }

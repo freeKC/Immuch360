@@ -172,6 +172,17 @@ class RelayRateControlTest {
     assertEquals(6_000_000, encoder.currentBps)
   }
 
+  /** p2/noon-test-check-2026-10-26.md C9: with nobody on the steady stream, the next encoder starts at 8 Mbit/s */
+  @Test
+  fun withNoSteadyReceiverTheEncoderRateGoesBackToEightMegabitsAndTheNextOneIsGivenAtOnce() {
+    val encoder = RelayEncoderRate()
+    assertEquals(1_500_000, encoder.next(listOf(1_500_000), null, 0))
+    assertEquals(RelayRateController.START_BPS, encoder.next(emptyList(), null, 100 * ms))
+    assertNull(encoder.next(emptyList(), null, 150 * ms))
+    // The next receiver's rate at once, though the last one was given 100 ms ago
+    assertEquals(1_500_000, encoder.next(listOf(1_500_000), null, 200 * ms))
+  }
+
   @Test
   fun theUnsentBytesBoundIsATenthOfASecondOfTheRateAndAtLeast32KiB() {
     assertEquals(100_000, RelayLowWater.bytesFor(8_000_000))

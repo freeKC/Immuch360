@@ -39,6 +39,9 @@ class FakeRelayDecoder(private val core: RelayTranscoder) : RelayDecoderPort {
 
 class FakeRelayEncoder(var rateBps: Int, override val setup: RelayEncoderSetup) : RelayEncoderPort {
   override val name = "c2.fake.hevc.encoder"
+
+  /** The rate it was made with */
+  val madeAtBps = rateBps
   var keys = 0
   var released = false
   val bitrates = mutableListOf<Int>()
