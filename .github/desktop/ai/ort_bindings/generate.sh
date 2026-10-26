@@ -3,9 +3,13 @@
 # ort_functions.json: the entries of the table the app calls, their place, and the size of the table of API 23 read
 # from the header of 1.23.2 (downloaded at its release commit and checked by its SHA-256, never kept here).
 #
-# Needs Dart 3.13 or later on the PATH (the Flutter of mobile/mise.toml: mise exec -C mobile -- <this script>), libclang
-# for ffigen (clang 19 on Debian 13), curl, sha256sum and python3. Run it again after a change of the header or of the
-# entries mobile/lib/desktop/ai/ort calls, and commit what it writes.
+# Needs Dart 3.13 or later on the PATH (the Flutter of mobile/mise.toml), libclang for ffigen (clang 19 on Debian 13),
+# curl, sha256sum and python3. From the root of the repository, with an absolute path since mise runs it from mobile:
+#
+#   mise exec -C mobile -- "$PWD/.github/desktop/ai/ort_bindings/generate.sh"
+#
+# Run it again after a change of the header or of the entries mobile/lib/desktop/ai/ort calls, and commit what it
+# writes.
 set -euo pipefail
 
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
