@@ -33,7 +33,8 @@ resolution of the model (relative disparity: larger is nearer), with the paralla
    each filled pixel becomes (f[x - 1] + f[x] + f[x + 1]) / 3 per channel, read on the filled row f, the neighbours
    clamped to the row. Every channel is finally rounded as floor(v + 0.5), clamped to [0, 255].
 7. Flags: hiddenAreas when more than 5 % of the pixels were filled; dark when the mean of
-   0.2126 R + 0.7152 G + 0.0722 B over the photo is under 20. In the order lowRelief, hiddenAreas, dark.
+   0.2126 R + 0.7152 G + 0.0722 B over the photo (added pixel after pixel, row after row, then divided by L * H) is
+   under 20. In the order lowRelief, hiddenAreas, dark.
 
   make_relief_golden.py           writes the fixture
   make_relief_golden.py --check   exit 1 when the fixture differs from what this script writes (a CI step)
@@ -196,7 +197,13 @@ def relief_v1(image: list[list[list[int]]], depth: list[list[float]], parallax: 
         right_eye.append([to_byte(channel) for pixel in row for channel in pixel])
         holes.append("".join("1" if hole else "0" for hole in row_holes))
         filled += sum(row_holes)
-    luma = sum(0.2126 * r + 0.7152 * g + 0.0722 * b for row in image for (r, g, b) in row) / (width * height)
+    # Added one pixel after the other, never with sum(): from Python 3.12 it compensates the rounding of floats, which
+    # Dart and Kotlin do not
+    total = 0.0
+    for row in image:
+        for r, g, b in row:
+            total += 0.2126 * r + 0.7152 * g + 0.0722 * b
+    luma = total / (width * height)
     flags = []
     if low_relief:
         flags.append("lowRelief")
