@@ -473,7 +473,9 @@ class DestinationJob {
   String get finalName => sbsTargetName(original.name);
 }
 
-/// The destinations of a selection, from the opening of the conversion dialog to its launch or its closing
+/// The destinations of a selection, from the opening of the conversion dialog to its launch or its closing. Its
+/// gestures run one after the other, in the order they came, even when the dialog does not wait for each one: two
+/// close clicks never check a folder twice, and the closing comes after the checks before it.
 class DestinationSession {
   DestinationSession(
     this.jobs, {
@@ -502,6 +504,8 @@ class DestinationSession {
   AiDestination? _saveTo;
   final _declined = <String>{};
   var _plans = <String, PlannedDestination>{};
+  Future<void> _gestures = Future.value();
+  var _closed = false;
 
   /// Where each photo goes now, by job id
   Map<String, PlannedDestination> get destinations => Map.unmodifiable(_plans);
@@ -521,34 +525,34 @@ class DestinationSession {
   }
 
   /// The dialog opens: every photo planned, and the folders that may be tried now checked
-  Future<void> open() async {
+  Future<void> open() => _inTurn(() async {
     _settings = await _store.read();
     _defaultFolder = await _downloadFolder();
     await _settle();
-  }
+  });
 
   /// "Yes, for this network folder": kept for [key], then its folders checked
-  Future<void> allowNetwork(String key) async {
+  Future<void> allowNetwork(String key) => _inTurn(() async {
     _settings = await NetworkRootConsent(store: _store).allow(key);
     _declined.remove(key);
     await _settle();
-  }
+  });
 
   /// "No, choose a folder": the photos of [key] go to the chosen folder, and nothing is tried in the network folder
-  Future<void> declineNetwork(String key) async {
+  Future<void> declineNetwork(String key) => _inTurn(() async {
     _declined.add(key);
     await _settle();
-  }
+  });
 
   /// "Change": every photo that goes to a chosen folder goes to [folder], kept for the roots that refused
-  Future<void> chooseFolder(String folder) async {
+  Future<void> chooseFolder(String folder) => _inTurn(() async {
     _folderChosenHere = folder;
     await _settle();
-  }
+  });
 
   /// "Save to" for the whole selection. Next to the original forgets the refusals kept for the roots of the selection
   /// and checks their folders again: the user asked for it.
-  Future<void> saveTo(AiDestination destination) async {
+  Future<void> saveTo(AiDestination destination) => _inTurn(() async {
     _saveTo = destination;
     if (destination == AiDestination.nextToOriginal) {
       final keys = {for (final plan in _plans.values) ?plan.rootKey};
@@ -565,15 +569,30 @@ class DestinationSession {
       _probe.forgetRefusals();
     }
     await _settle();
-  }
+  });
 
-  /// At the launch: the partial file the check made for [jobId], which its job takes over; null when it has none
+  /// At the launch, once the last gesture is done: the partial file the check made for [jobId], which its job takes
+  /// over; null when it has none
   PartFile? takePart(String jobId) => _probe.take(jobId);
 
-  /// The dialog closed, launched or not: the partial files no job took are deleted
-  Future<void> close() => _probe.release();
+  /// The dialog closed, launched or not: after the gestures before it, the partial files no job took are deleted, and
+  /// the gestures after it check nothing
+  Future<void> close() => _inTurn(() async {
+    _closed = true;
+    await _probe.release();
+  });
+
+  /// [gesture] once the gestures before it are done; a gesture that fails does not stop the next ones
+  Future<void> _inTurn(Future<void> Function() gesture) {
+    final next = _gestures.then((_) => gesture());
+    _gestures = next.then((_) {}, onError: (Object _) {});
+    return next;
+  }
 
   Future<void> _settle() async {
+    if (_closed) {
+      return;
+    }
     for (var pass = 0; ; pass++) {
       _plans = _planAll();
       await _probe.keepOnly({

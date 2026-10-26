@@ -745,6 +745,38 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       await dialog.close();
     });
 
+    test('gestures close together run one after the other: one check per folder, nothing left at the end', () async {
+      final photos = folder('Photos');
+      photo(photos, 'a.jpg');
+      files.failures[photos.path] = OSError('Access denied', Platform.isWindows ? 5 : 13);
+      final mine = p.join(root.path, 'Mine');
+      final dialog = session([
+        DestinationJob(id: 'j1', original: local(photos, 'a.jpg')),
+        const DestinationJob(
+          id: 'j2',
+          original: ServerOriginal(name: 'b.jpg'),
+        ),
+      ]);
+      final opening = dialog.open();
+      final first = dialog.chooseFolder(mine);
+      final second = dialog.chooseFolder(mine);
+
+      await Future.wait([opening, first, second]);
+
+      expect(partsIn(mine), hasLength(1));
+      expect(partsIn(downloads), isEmpty);
+      expect(await noted(), hasLength(1));
+
+      final again = dialog.chooseFolder(downloads);
+      final closing = dialog.close();
+      final afterClosing = dialog.chooseFolder(mine);
+      await Future.wait([again, closing, afterClosing]);
+
+      expect(partsIn(mine), isEmpty);
+      expect(partsIn(downloads), isEmpty);
+      expect(await noted(), isEmpty);
+    });
+
     test('a full disk next to the original: the chosen folder with "Disk full", not kept for the root', () async {
       final photos = folder('Photos');
       files.failures[photos.path] = OSError('No space left', Platform.isWindows ? 112 : 28);
