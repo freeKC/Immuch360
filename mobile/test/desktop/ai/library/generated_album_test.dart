@@ -13,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
 import 'package:immich_mobile/domain/services/hash.service.dart';
@@ -274,9 +275,11 @@ void main() {
   test('the guard refuses a folder of the library until the album is excluded, never a folder outside it', () async {
     final elsewhere = Directory(p.join(fixture.dir.path, 'elsewhere'))..createSync();
     fixture.probe.mounts[elsewhere.path] = 'win-0000cafe';
+    // As the app asks, in an isolate of its own
     final guard = GeneratedAlbumGuard(
       keeper: keeper,
-      inLibrary: (folder) async => fixture.library().holdsFolder(folder),
+      inLibrary: (folder) =>
+          FolderLibrary.holdsFolderOffWindow(fixture.indexPath, folder, probe: fixture.probe, rules: fixture.rules),
     );
     final salon = p.join(fixture.files.path, 'Pictures', 'Salon');
 

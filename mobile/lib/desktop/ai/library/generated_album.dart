@@ -209,6 +209,6 @@ final generatedAlbumBackupProvider = StreamProvider<bool?>((ref) {
 final generatedAlbumGuardProvider = Provider<GeneratedAlbumGuard>(
   (ref) => GeneratedAlbumGuard(
     keeper: ref.watch(generatedAlbumKeeperProvider),
-    inLibrary: (folder) async => (await FolderLibrary.shared()).holdsFolder(folder),
+    inLibrary: (folder) async => FolderLibrary.holdsFolderOffWindow((await FolderLibrary.shared()).indexPath, folder),
   ),
 );
