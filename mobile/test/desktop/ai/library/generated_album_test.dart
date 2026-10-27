@@ -195,6 +195,13 @@ void main() {
     expect((renamed.id, renamed.backupSelection), (generatedAlbumId, BackupSelection.excluded));
     expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
     expect(selectionChanges, 1, reason: 'excluded once, at the first sync, never again');
+    // The guard of the writes still lets the conversions write into the folders of the library
+    final guard = GeneratedAlbumGuard(
+      keeper: keeper,
+      inLibrary: (folder) =>
+          FolderLibrary.holdsFolderOffWindow(fixture.indexPath, folder, probe: fixture.probe, rules: fixture.rules),
+    );
+    expect(await guard.mayWriteInto(p.join(fixture.files.path, 'Pictures', 'Salon')), isTrue);
 
     // A delta that brings a scene renames it too, still excluded
     await (db.localAlbumEntity.update()..where((row) => row.id.equals(generatedAlbumId))).write(
