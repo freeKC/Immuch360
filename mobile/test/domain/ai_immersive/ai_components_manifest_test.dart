@@ -36,6 +36,29 @@ void main() {
       }
     });
 
+    test('every component has a name; ONNX Runtime has its notices, downloaded as a file of their own', () {
+      expect(depthModelOnnxComponent.title, 'Depth Anything V2 Small');
+      expect(onnxRuntimeMacIntelComponent.title, 'ONNX Runtime 1.23.2');
+      for (final component in aiComponents) {
+        expect(component.name, isNotNull, reason: component.id);
+        expect(component.notices == null, component.kind == AiComponentKind.model, reason: component.id);
+      }
+
+      final notices = onnxRuntimeLinuxComponent.noticesDownload!;
+      expect(notices.assetName, 'onnxruntime-1.31.0-ThirdPartyNotices.txt');
+      expect(notices.installPath, 'licenses/onnxruntime-1.31.0-linux-x64-ThirdPartyNotices.txt');
+      expect(notices.size, 338088);
+      expect(notices.sha256, '143764b952fdb1a7c69ce653bfba74a7744d6a8a573bfb73e235fba356c83de3');
+      expect(notices.compression, AiCompression.none);
+      expect(notices.urls(), [
+        'https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-ThirdPartyNotices.txt',
+      ]);
+      expect(onnxRuntimeMacIntelComponent.notices!.assetName, 'onnxruntime-1.23.2-ThirdPartyNotices.txt');
+      expect(depthModelOnnxComponent.noticesDownload, isNull);
+      // A component without a name shows its id
+      expect(onnxRuntimeLinuxComponent.noticesDownload!.title, 'onnxruntime-1.31.0-linux-x64-notices');
+    });
+
     test('ids are unique, licences are permissive, sums are hexadecimal SHA-256', () {
       expect(aiComponents.map((component) => component.id).toSet(), hasLength(aiComponents.length));
       expect(aiComponents.map((component) => component.assetName).toSet(), hasLength(aiComponents.length));
