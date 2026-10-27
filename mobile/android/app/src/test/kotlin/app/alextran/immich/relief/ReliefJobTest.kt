@@ -380,6 +380,35 @@ class ReliefJobTest {
   }
 
   @Test
+  fun `out of memory during a pass leaves the photo flat for the memory`() {
+    val job = job()
+    val photo = FakePhoto(64, 48)
+    val recorder = Recorder()
+    engine.duringPass = { throw OutOfMemoryError("test") }
+
+    start(job, photo, recorder)
+    worker.runDue()
+
+    assertEquals(listOf(ReliefStop.NOT_ENOUGH_MEMORY to ""), recorder.flat)
+    assertTrue(recorder.done.isEmpty())
+    assertEquals(1, photo.released)
+  }
+
+  @Test
+  fun `the message of a failure is cut to 120 characters for the status line`() {
+    val job = job()
+    val recorder = Recorder()
+    engine.duringPass = { path -> throw DepthEstimatorException(DepthFailure.RUN_FAILED, path, "x".repeat(300)) }
+
+    start(job, FakePhoto(64, 48), recorder)
+    worker.runDue()
+
+    val (reason, detail) = recorder.flat.single()
+    assertEquals(ReliefStop.FAILED, reason)
+    assertEquals("x".repeat(120), detail)
+  }
+
+  @Test
   fun `a failure the engine names gets its own reason`() {
     for ((failure, reason) in
       listOf(
