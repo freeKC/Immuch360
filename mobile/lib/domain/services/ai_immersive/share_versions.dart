@@ -27,7 +27,7 @@ String shareFolderOf(String path) {
   return slash <= 0 ? '/' : path.substring(0, slash);
 }
 
-/// The 3D versions of [original] among [neighbours], the files of its folder (others are left out), the newest
+/// The 3D versions of [original] among [neighbours], the pictures of its folder (others are left out), the newest
 /// first. [readerOf] reads a neighbour; a neighbour that cannot be read is skipped. Empty when the size of the
 /// original is unknown: the rule needs it. Never throws.
 Future<List<ShareVersion>> findShareVersions(
@@ -42,7 +42,7 @@ Future<List<ShareVersion>> findShareVersions(
   final folder = shareFolderOf(original.path);
   final files = {
     for (final entry in neighbours)
-      if (!entry.isDirectory && entry.sourceId == original.sourceId && shareFolderOf(entry.path) == folder)
+      if (entry.isImage && entry.sourceId == original.sourceId && shareFolderOf(entry.path) == folder)
         entry.name: entry,
   };
   final names = derivedNameCandidates(original.name, files.keys);

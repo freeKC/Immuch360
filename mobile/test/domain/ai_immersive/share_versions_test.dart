@@ -1,6 +1,7 @@
 // The 3D versions of a photo of a share, found among its neighbours by the name, the SourceName and the SourceSize of
 // their XMP (design-final 2026-10-26, sections 3.8 and 4.2).
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -91,6 +92,22 @@ void main() {
     ], readerOf: readerOf);
 
     expect(versions, isEmpty);
+  });
+
+  test('a file beside a version that copies its XMP, a sidecar, is no version: only pictures are', () async {
+    // digiKam writes salon_3D_LRF_Full_SBS.jpg.xmp, with our XMP kept, after the version
+    files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = version();
+    files['/Photos/salon_3D_LRF_Full_SBS.jpg.xmp'] = Uint8List.fromList(utf8.encode(ourXmp().toXml()));
+    final neighbours = [
+      original,
+      file('/Photos/salon_3D_LRF_Full_SBS.jpg', modified: DateTime.utc(2026, 10, 27, 10)),
+      file('/Photos/salon_3D_LRF_Full_SBS.jpg.xmp', modified: DateTime.utc(2026, 10, 27, 11)),
+    ];
+
+    final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
+
+    expect(versions.map((v) => v.entry.name), ['salon_3D_LRF_Full_SBS.jpg']);
+    expect(reads, isNot(contains('/Photos/salon_3D_LRF_Full_SBS.jpg.xmp')));
   });
 
   test('reads five neighbours at most, 128 KiB each', () async {
