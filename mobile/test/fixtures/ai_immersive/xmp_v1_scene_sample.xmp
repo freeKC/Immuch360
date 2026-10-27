@@ -1,0 +1,46 @@
+<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/"
+    xmlns:Immuch360="http://ns.aprogsys.com/immuch360/1.0/"
+    xmp:CreatorTool="Immuch360 Desktop 3.4.0 (windows)"
+    Iptc4xmpExt:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/compositeWithTrainedAlgorithmicMedia"
+    Immuch360:FormatVersion="1"
+    Immuch360:Kind="VolumetricScene"
+    Immuch360:Origin="ReconstructedFromPhoto"
+    Immuch360:Pipeline="scene-v1"
+    Immuch360:SceneFormat="glb-layers-v1"
+    Immuch360:SceneLength="6712344"
+    Immuch360:SceneSha256="3040c8c4f61d1a2a5b7cc6485a952bbb1ad346d70e76a7332b285f7f8de41d1d"
+    Immuch360:SceneMeshes="2"
+    Immuch360:SceneVertices="58210"
+    Immuch360:SceneTriangles="113877"
+    Immuch360:SceneTextureMax="4096"
+    Immuch360:SceneScale="1.0"
+    Immuch360:GridStep="4"
+    Immuch360:SafeLateral="0.22"
+    Immuch360:SafeVertical="0.13"
+    Immuch360:SafeForward="0.48"
+    Immuch360:SafeBackward="0.11"
+    Immuch360:FieldOfView="65.4"
+    Immuch360:FieldOfViewSource="Exif"
+    Immuch360:GeometryModel="moge-2-vits-normal-onnx-immuch360"
+    Immuch360:GeometryModelSha256="653eb363fffa3c1e5ebb5ea9368c26c1e99230adaa63918bd7e77655aec18ee8"
+    Immuch360:InpaintModel="migan-512-places2-onnx"
+    Immuch360:InpaintModelSha256="ec30338f4bb6b3886cfdf83b8a3751e73859e7370a14fe6d775b43e69746ad1d"
+    Immuch360:HiddenFraction="0.07"
+    Immuch360:DerivativeId="urn:uuid:6f1c2e0a-0000-4000-8000-000000000001"
+    Immuch360:SourceName="salon.jpg"
+    Immuch360:SourceSize="4182311"
+    Immuch360:SourceSha1="X8tYgvibyzHDDN2yXGU/ft1XxeM&#x3D;"
+    Immuch360:SourceQuarterTurns="0"
+    Immuch360:QualityFlags="hiddenAreas"
+    Immuch360:Created="2026-10-27T10:12:00+01:00">
+   <dc:description><rdf:Alt><rdf:li xml:lang="x-default">3D scene made by Immuch360 from a single photo. Reconstructed from one photo, explore within its limits: the depth is estimated and the areas hidden in the photo are filled in by AI.</rdf:li></rdf:Alt></dc:description>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>
