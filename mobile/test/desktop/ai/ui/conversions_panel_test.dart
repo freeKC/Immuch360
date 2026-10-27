@@ -31,6 +31,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../widget_tester_extensions.dart';
 import '../fakes/fake_immersive_engine.dart';
+import 'settle_still.dart';
 
 /// The engine of the test: the fake of a photo by its name, else one that ends well
 class _Engines implements ImmersiveEngine {
@@ -126,12 +127,8 @@ void main() {
     return ConversionRequest(source: LocalFileSource(path), target: ConversionTarget.nextTo(path));
   }
 
-  Future<void> settle(WidgetTester tester) async {
-    for (var step = 0; step < 30; step++) {
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
-      await tester.pump();
-    }
-  }
+  /// Until the screen is still (see settleStill)
+  Future<void> settle(WidgetTester tester, {bool Function()? until}) => settleStill(tester, until: until);
 
   Future<ProviderContainer> pumpPanel(WidgetTester tester) async {
     tester.view.physicalSize = const Size(1200, 1600);
@@ -299,7 +296,7 @@ void main() {
   testWidgets('Delete this 3D photo asks first, deletes ours, and refuses a file that is not ours', (tester) async {
     final container = await pumpPanel(tester);
     final ids = container.read(conversionQueueProvider.notifier).add([photo('a.jpg'), photo('b.jpg')]);
-    await settle(tester);
+    await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
     final ours = File(p.join(photos, 'a_3D_LRF_Full_SBS.jpg'));
     final foreign = File(p.join(photos, 'b_3D_LRF_Full_SBS.jpg'));
     expect(ours.existsSync() && foreign.existsSync(), isTrue);
