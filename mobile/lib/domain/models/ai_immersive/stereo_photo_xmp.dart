@@ -410,11 +410,14 @@ String? _descriptionOf(String xmp, String prefix) {
   return _unescape(preferred.group(2)!);
 }
 
+// = is written as &#x3D;: ExifTool reads a value that ends with = (every SHA-1 in base64 does) as the start of another
+// attribute, and loses that field and the next one. An XML reader, ours included, reads the same character.
 String _escape(String value) => value
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
+    .replaceAll('=', '&#x3D;')
     .replaceAll('\n', '&#xA;')
     .replaceAll('\r', '&#xD;')
     .replaceAll('\t', '&#x9;');

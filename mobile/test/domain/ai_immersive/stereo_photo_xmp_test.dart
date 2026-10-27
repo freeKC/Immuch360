@@ -81,6 +81,34 @@ void main() {
       expect(read.description, stereoPhotoDescription);
     });
 
+    test('no value ends with = before its quote, which ExifTool reads as the start of another attribute', () {
+      // ExifTool 13 reads Immuch360:SourceSha1="X8tY...xeM=" as an attribute named up to that last =, and loses
+      // SourceSha1 and the attribute after it. Every SHA-1 in base64 ends with =: it is written as &#x3D;, the same
+      // character for an XML reader.
+      final made = StereoPhotoXmp.estimated(
+        eyeWidth: 1,
+        eyeHeight: 1,
+        depthModelSha256: depthModelOnnxSha256,
+        sourceName: 'a=b=.jpg',
+        sourceSize: 1,
+        sourceSha1: 'AAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+        sourceQuarterTurns: 1,
+        created: '2026-10-27T10:12:00+01:00',
+        creatorTool: 'Immuch360 Desktop',
+      );
+
+      final packet = made.toXml();
+
+      final closingAfterEquals = RegExp(r'''=["']([ \t\r\n]|/?>)''');
+      expect(packet, isNot(matches(closingAfterEquals)));
+      expect(packet, contains('Immuch360:SourceSha1="AAAAAAAAAAAAAAAAAAAAAAAAAAA&#x3D;"'));
+      final read = StereoPhotoXmp.parse(packet)!;
+      expect(read.sourceSha1, 'AAAAAAAAAAAAAAAAAAAAAAAAAAA=');
+      expect(read.sourceName, 'a=b=.jpg');
+      expect(read.sourceQuarterTurns, 1);
+      expect(fixture, isNot(matches(closingAfterEquals)));
+    });
+
     test('two packets made by the app have two derivative ids', () {
       StereoPhotoXmp make() => StereoPhotoXmp.estimated(
         eyeWidth: 1,
