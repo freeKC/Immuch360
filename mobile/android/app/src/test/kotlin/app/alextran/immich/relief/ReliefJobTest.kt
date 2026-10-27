@@ -452,6 +452,24 @@ class ReliefJobTest {
   }
 
   @Test
+  fun `a pass that fails after Stop relief says nothing more than the stop`() {
+    val job = job()
+    val photo = FakePhoto(64, 48)
+    val recorder = Recorder()
+    lateinit var run: ReliefRun
+    engine.duringPass = { job.stop(run) }
+    engine.runFailure = DepthFailure.RUN_FAILED
+
+    run = start(job, photo, recorder)
+    worker.runDue()
+
+    // The user asked for the stop: "The relief failed" would not be the answer
+    assertEquals(listOf(ReliefStop.STOPPED to ""), recorder.flat)
+    assertTrue(recorder.done.isEmpty())
+    assertEquals(1, photo.released)
+  }
+
+  @Test
   fun `a right eye stopped halfway is dropped`() {
     val job = job()
     val photo = FakePhoto(40, 200)
