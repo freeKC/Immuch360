@@ -304,6 +304,29 @@ class ReliefSynthesizerTest {
   }
 
   @Test
+  fun `low relief is a spread under a tenth of p98, not at a tenth`() {
+    // p2 = 9 and p98 = 10 on two values: a spread of exactly 0.1 x p98
+    assertFalse(ReliefSynthesizer.normalize(doubleArrayOf(9.0, 10.0), 2, 1).lowRelief)
+    assertTrue(ReliefSynthesizer.normalize(doubleArrayOf(9.0, 9.99), 2, 1).lowRelief)
+  }
+
+  @Test
+  fun `the flags say hidden areas past 5 percent filled and dark under a luma of 20, in their order`() {
+    // The cases of relief_flags_test.dart on the computers, on 100 x 20 pixels
+    fun flags(lowRelief: Boolean = false, filled: Int = 0, luma: Double = 100.0) =
+      ReliefSynthesizer.flags(lowRelief, filled, 100, 20, luma)
+    assertEquals(emptyList<ReliefFlag>(), flags())
+    assertEquals(emptyList<ReliefFlag>(), flags(filled = 100))
+    assertEquals(listOf(ReliefFlag.HIDDEN_AREAS), flags(filled = 101))
+    assertEquals(emptyList<ReliefFlag>(), flags(luma = 20.0))
+    assertEquals(listOf(ReliefFlag.DARK), flags(luma = 19.99))
+    assertEquals(
+      listOf(ReliefFlag.LOW_RELIEF, ReliefFlag.HIDDEN_AREAS, ReliefFlag.DARK),
+      flags(lowRelief = true, filled = 2000, luma = 3.0),
+    )
+  }
+
+  @Test
   fun `the float map of the model gives the same normalisation as its doubles`() {
     val floats = FloatArray(16 * 4) { i -> 1f + 0.37f * (i % 16) + 0.11f * (i / 16) }
     val fromFloats = ReliefSynthesizer.normalize(floats, 16, 4)
