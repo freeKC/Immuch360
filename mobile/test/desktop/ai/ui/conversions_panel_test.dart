@@ -207,9 +207,13 @@ void main() {
       ids[0]: const ConversionJobInfo(isNetwork: true, serverEdits: true),
       ids[1]: const ConversionJobInfo(isNetwork: false),
     });
-    await settle(tester);
+    // Both done, however slow the real files of this system are
+    for (var step = 0; step < 20 && container.read(conversionQueueProvider).hasWork; step++) {
+      await settle(tester);
+    }
 
     expect(inRow(ids[0], find.text('Done')), findsOneWidget);
+    expect(inRow(ids[1], find.text('Done')), findsOneWidget);
     expect(inRow(ids[0], find.byKey(const Key('ai_job_local_only'))), findsNothing);
     expect(inRow(ids[0], find.text('Edits made in Immich, except the rotation, are not applied')), findsOneWidget);
     expect(inRow(ids[1], find.byKey(const Key('ai_job_local_only'))), findsOneWidget);
