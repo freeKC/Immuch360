@@ -168,6 +168,11 @@ jobs:
           python3 .github/desktop/ai/make_focal_shift_golden.py --check
           python3 .github/desktop/ai/make_pano_golden.py --check
 
+      # The tiny models that stand for MoGe-2 ViT-S, LaMa and MI-GAN in test/desktop/ai/ort, and the slow one whose run
+      # another isolate stops (lot C1): written by a small encoder of ONNX in pure Python, the same bytes everywhere
+      - name: The tiny models of ONNX Runtime are what their script writes
+        run: python3 .github/desktop/ai/make_tiny_models.py --check
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}

@@ -1,0 +1,270 @@
+{
+ "about": "Made by .github/desktop/ai/make_tiny_models.py with the four tiny models: their inputs and outputs as ONNX Runtime reports them (-1 for a free dimension), their constants, and a sample of tiny_moge.onnx with its outputs, exact in float32.",
+ "tiny_moge.onnx": {
+  "inputs": [
+   {
+    "name": "image",
+    "type": "float32",
+    "shape": [
+     -1,
+     3,
+     -1,
+     -1
+    ]
+   },
+   {
+    "name": "num_tokens",
+    "type": "int64",
+    "shape": []
+   }
+  ],
+  "outputs": [
+   {
+    "name": "points",
+    "type": "float32",
+    "shape": [
+     -1,
+     -1,
+     -1,
+     3
+    ]
+   },
+   {
+    "name": "normal",
+    "type": "float32",
+    "shape": [
+     -1,
+     -1,
+     -1,
+     3
+    ]
+   },
+   {
+    "name": "mask",
+    "type": "float32",
+    "shape": [
+     -1,
+     -1,
+     -1
+    ]
+   },
+   {
+    "name": "scale",
+    "type": "float32",
+    "shape": [
+     -1
+    ]
+   }
+  ],
+  "scaleDivisor": 1024,
+  "sampleShape": [
+   1,
+   3,
+   2,
+   3
+  ],
+  "sampleTokens": 2500,
+  "sampleImage": [
+   0.0,
+   0.03125,
+   0.0625,
+   0.15625,
+   0.1875,
+   0.21875,
+   0.625,
+   0.65625,
+   0.6875,
+   0.78125,
+   0.8125,
+   0.84375,
+   1.25,
+   1.28125,
+   1.3125,
+   1.40625,
+   1.4375,
+   1.46875
+  ],
+  "expectedShapes": {
+   "points": [
+    1,
+    2,
+    3,
+    3
+   ],
+   "normal": [
+    1,
+    2,
+    3,
+    3
+   ],
+   "mask": [
+    1,
+    2,
+    3
+   ],
+   "scale": [
+    1
+   ]
+  },
+  "expected": {
+   "points": [
+    -1.0,
+    0.25,
+    1.5,
+    -0.9375,
+    0.3125,
+    1.5625,
+    -0.875,
+    0.375,
+    1.625,
+    -0.6875,
+    0.5625,
+    1.8125,
+    -0.625,
+    0.625,
+    1.875,
+    -0.5625,
+    0.6875,
+    1.9375
+   ],
+   "normal": [
+    1.0,
+    0.375,
+    -0.25,
+    0.96875,
+    0.34375,
+    -0.28125,
+    0.9375,
+    0.3125,
+    -0.3125,
+    0.84375,
+    0.21875,
+    -0.40625,
+    0.8125,
+    0.1875,
+    -0.4375,
+    0.78125,
+    0.15625,
+    -0.46875
+   ],
+   "mask": [
+    0.0,
+    0.03125,
+    0.0625,
+    0.15625,
+    0.1875,
+    0.21875
+   ],
+   "scale": [
+    2.44140625
+   ]
+  }
+ },
+ "tiny_lama.onnx": {
+  "inputs": [
+   {
+    "name": "image",
+    "type": "float32",
+    "shape": [
+     -1,
+     3,
+     512,
+     512
+    ]
+   },
+   {
+    "name": "mask",
+    "type": "float32",
+    "shape": [
+     -1,
+     1,
+     512,
+     512
+    ]
+   }
+  ],
+  "outputs": [
+   {
+    "name": "output",
+    "type": "float32",
+    "shape": [
+     -1,
+     3,
+     512,
+     512
+    ]
+   }
+  ],
+  "hole": 0.5
+ },
+ "tiny_migan.onnx": {
+  "inputs": [
+   {
+    "name": "image",
+    "type": "uint8",
+    "shape": [
+     -1,
+     3,
+     -1,
+     -1
+    ]
+   },
+   {
+    "name": "mask",
+    "type": "uint8",
+    "shape": [
+     -1,
+     1,
+     -1,
+     -1
+    ]
+   }
+  ],
+  "outputs": [
+   {
+    "name": "result",
+    "type": "uint8",
+    "shape": [
+     -1,
+     3,
+     -1,
+     -1
+    ]
+   }
+  ],
+  "hole": 128
+ },
+ "tiny_slow.onnx": {
+  "inputs": [
+   {
+    "name": "state",
+    "type": "float32",
+    "shape": [
+     384,
+     384
+    ]
+   },
+   {
+    "name": "iterations",
+    "type": "int64",
+    "shape": []
+   }
+  ],
+  "outputs": [
+   {
+    "name": "rotated",
+    "type": "float32",
+    "shape": [
+     384,
+     384
+    ]
+   },
+   {
+    "name": "count",
+    "type": "int64",
+    "shape": []
+   }
+  ],
+  "size": 384
+ }
+}
