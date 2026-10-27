@@ -12,15 +12,20 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/asset_edit.model.dart';
+import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
@@ -33,10 +38,13 @@ import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -45,6 +53,7 @@ import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.da
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -60,11 +69,13 @@ import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provid
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:openapi/api.dart' show RotateParameters;
 
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
+import '../ai_immersive/quest_relief_fakes.dart';
 
 class _MockTimelineService extends Mock implements TimelineService {}
 
@@ -2958,6 +2969,208 @@ void main() {
 
       expect(view3dButton, findsNothing);
       expect(reads, 0);
+    });
+  });
+  group('ViewerTopAppBar "AI relief" button on a Meta Quest', () {
+    const server = PresentationContext.serverEndpoint;
+    final reliefButton = find.byKey(aiReliefButtonKey);
+    final contract =
+        jsonDecode(File('test/fixtures/ai_immersive/stereo_pair_contract_v1.json').readAsStringSync())
+            as Map<String, dynamic>;
+    final serverPhoto = ((contract['depthRelief'] as List)[0] as Map<String, dynamic>)['request'];
+    late InstalledModelService components;
+
+    setUp(() {
+      components = InstalledModelService()
+        ..setStatus(depthModelTfliteComponent, const AiComponentStatus(AiComponentState.installed));
+    });
+
+    /// A photo of the server whose checksum is the one of the stereoPair contract
+    RemoteAsset salon({String name = 'salon.jpg', bool isEdited = false}) => owned(
+      name: name,
+      width: 4000,
+      height: 3000,
+    ).copyWith(checksum: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=', isEdited: isEdited);
+
+    /// The headset: [flavor], [device] seeing [memoryMiB], the depth model installed, [asset] read as a flat photo
+    List<Override> headset(
+      BaseAsset asset, {
+      String? flavor = 'quest',
+      String device = 'eureka',
+      int memoryMiB = 7600,
+      FlatStereoPhoto? flat,
+    }) => [
+      appFlavorProvider.overrideWithValue(flavor),
+      reliefDeviceFactsProvider.overrideWith((ref) async => ReliefDeviceFacts(device: device, memoryMiB: memoryMiB)),
+      aiComponentsServiceProvider.overrideWithValue(components),
+      flatStereoProvider(asset).overrideWith((ref) async => flat),
+    ];
+
+    List<dynamic> openedWith() => verify(
+      () => immersiveApi.open(
+        captureAny(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+      ),
+    ).captured;
+
+    testWidgets('asks the immersive viewer for the relief of the original, the JSON of the contract', (tester) async {
+      final asset = salon();
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset));
+
+      expect(reliefButton, findsOneWidget);
+      expect(find.byTooltip('AI relief'), findsOneWidget);
+
+      await tester.tap(reliefButton);
+      await tester.pumpAndSettle();
+
+      final captured = openedWith();
+      // The original the headset estimates the relief of, never an edit of it
+      expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
+      expect(captured[1], isFalse, reason: 'a photo');
+      final labels = captured[2] as Map<String, String>;
+      expect(labels['ai2dOriginal'], '2D (original)');
+      expect(labels['aiReliefEstimated'], 'Relief estimated by AI');
+      expect(jsonDecode(captured[3] as String), serverPhoto);
+    });
+
+    testWidgets('keys the relief with the turns the user sees: the rotation saved on the server and the one drawn', (
+      tester,
+    ) async {
+      final asset = salon(isEdited: true);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: [
+          ...headset(asset),
+          displayQuarterTurnsProvider(asset).overrideWith((ref) => 1),
+          viewRotationServerProvider.overrideWithValue(
+            ViewRotationServer(
+              edits: (_) async => [RotateEdit(RotateParameters(angle: 90))],
+              hasUnknownEdits: (_) async => false,
+              apply: (_, _) async => null,
+            ),
+          ),
+        ],
+      );
+
+      await tester.tap(reliefButton);
+      await tester.pumpAndSettle();
+
+      final relief = jsonDecode(openedWith()[3] as String) as Map<String, dynamic>;
+      expect(relief['quarterTurns'], 2);
+      expect(
+        relief['cacheKey'],
+        reliefCacheKey(
+          identity: 'sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=',
+          modelId: 'depth-anything-v2-small@651415f1',
+          quarterTurns: 2,
+        ),
+      );
+    });
+
+    testWidgets('greys it with its reason in the APK of the phone flavour', (tester) async {
+      final asset = salon();
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset, flavor: 'phone'));
+
+      expect(reliefButton, findsOneWidget);
+      expect(tester.widget<IconButton>(reliefButton).onPressed, isNull);
+      expect(find.byTooltip('Not in this version of the app'), findsOneWidget);
+    });
+
+    testWidgets('greys it on a device that sees 4.5 GiB, and on a Quest 2 until the untested switch is on', (
+      tester,
+    ) async {
+      final asset = salon();
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset, memoryMiB: 4608));
+      expect(find.byTooltip('Not enough memory'), findsOneWidget);
+
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: headset(asset, device: 'hollywood', memoryMiB: 5600),
+      );
+      expect(find.byTooltip('Not tested on this headset yet'), findsOneWidget);
+      expect(tester.widget<IconButton>(reliefButton).onPressed, isNull);
+
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        appConfig: const AppConfig(aiImmersive: AiImmersiveConfig(olderHeadsets: true)),
+        extraOverrides: headset(asset, device: 'hollywood', memoryMiB: 5600),
+      );
+      expect(find.byTooltip('AI relief'), findsOneWidget);
+      expect(tester.widget<IconButton>(reliefButton).onPressed, isNotNull);
+    });
+
+    testWidgets('shows no AI button at all with the AI features off', (tester) async {
+      final asset = salon();
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        appConfig: const AppConfig(aiImmersive: AiImmersiveConfig(enabled: false)),
+        extraOverrides: headset(asset),
+      );
+
+      expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown on a phone', (tester) async {
+      final asset = salon();
+      await pumpTopBar(tester, asset, extraOverrides: headset(asset));
+
+      expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a 360° photo, which keeps its 360° button', (tester) async {
+      final asset = salon(name: 'pano.jpg');
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        projectionType: ProjectionType.equirectangular,
+        extraOverrides: headset(asset),
+      );
+
+      expect(panoramaButton, findsOneWidget);
+      expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a photo of two eyes side by side, which has "View in 3D"', (tester) async {
+      final asset = salon(name: 'salon_3D_LRF_Full_SBS.jpg');
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: headset(
+          asset,
+          flat: FlatStereoPhoto(eyes: StereoEyes.full, xmp: ourXmp()),
+        ),
+      );
+
+      expect(find.byKey(const Key('apple_spatial_view_3d')), findsOneWidget);
+      expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a video', (tester) async {
+      final asset = owned(type: AssetType.video, name: 'clip.mp4', width: 1920, height: 1080);
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset));
+
+      expect(reliefButton, findsNothing);
     });
   });
 }

@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
@@ -18,12 +19,14 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -68,7 +71,8 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// a "View in 3D" button, which shows both eyes in the immersive viewer. So does a flat photo holding two eyes side by
 /// side (see [NetworkMediaInfo.stereoPhoto]): the 3D photos a computer makes, those of other tools. An ordinary photo
 /// whose folder holds a 3D version of it (see findShareVersions) gets "View the 3D version", which opens that version
-/// the same way, without any AI on the headset.
+/// the same way, without any AI on the headset. An ordinary photo also gets "AI relief" (see AiReliefButton), which
+/// opens it on the same quad with a relief the headset estimates, greyed with its reason where the headset cannot.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -387,8 +391,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   /// Shows both eyes of the photo of the share at [path] in the immersive viewer, as [stereo] describes them (an
-  /// Apple spatial photo, two eyes side by side): read through the media bridge at [url], or at the URL of [path] when
-  /// none is given, like any photo of a share. No previous or next from there yet: the viewer says so itself.
+  /// Apple spatial photo, two eyes side by side, a relief the headset estimates): read through the media bridge at
+  /// [url], or at the URL of [path] when none is given, like any photo of a share. No previous or next from there yet:
+  /// the viewer says so itself.
   Future<void> _openStereo(String path, StereoPhotoRequest stereo, {Uri? url}) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
@@ -452,6 +457,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Watched here, in the build of this page: the photo is known once the file was read, which rebuilds the page
     final current = _current;
     final turns = current == null ? 0 : _turnsOf(current);
+    // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
+    final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -526,6 +533,20 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                                 url: widget.folder?.urls[version.entry.path],
                               ),
                             ),
+                    ),
+                  if (photo != null && reliefGate.visible)
+                    AiReliefButton(
+                      gate: reliefGate,
+                      target: ReliefTarget(
+                        identity: () async => reliefIdentityOfShareFile(
+                          sourceId: widget.sourceId,
+                          path: widget.path,
+                          size: photo.entry.size,
+                          modified: photo.entry.modified,
+                        ),
+                        quarterTurns: () async => turns,
+                        open: (stereo) => _openStereo(photo.entry.path, stereo, url: photo.url),
+                      ),
                     ),
                   if (photo != null && is360)
                     IconButton(

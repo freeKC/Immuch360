@@ -16,15 +16,18 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -114,9 +117,10 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // the photos whose name or frame says so are read (see FlatStereoService.isCandidate), only on the headset, and
     // never a photo shown as 360°, which keeps its own viewer (a band of the sphere has the frame of two eyes). One of
     // a newer format keeps its button, greyed with the reason.
-    final flatStereo = isHorizonOs && asset.isImage && stereoPair == null && !hasPanoramaView
-        ? ref.watch(flatStereoProvider(asset)).valueOrNull
+    final flatStereoState = isHorizonOs && asset.isImage && stereoPair == null && !hasPanoramaView
+        ? ref.watch(flatStereoProvider(asset))
         : null;
+    final flatStereo = flatStereoState?.valueOrNull;
     final sbsRequest = flatStereo?.request;
     final StereoPhotoRequest? stereoRequest = stereoPair != null
         ? StereoPhotoRequest.heic(stereoPair)
@@ -131,6 +135,23 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
             onPressed: stereoRequest == null
                 ? null
                 : () => unawaited(_openStereoPhoto(context, ref, asset, stereoRequest)),
+          )
+        : null;
+
+    // "AI relief" on a Meta Quest: a flat photo once known to be one (neither 360°, VR180 nor raw, nor a spatial photo,
+    // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last), its
+    // relief estimated by the headset itself. Greyed with its reason where the gate refuses; nothing with the AI
+    // features off (see reliefGateProvider).
+    final isFlatPhoto =
+        flatStereoState != null &&
+        flatStereoState.hasValue &&
+        flatStereo == null &&
+        ref.watch(rotationModeProvider(asset)) != RotationMode.none;
+    final reliefGate = isFlatPhoto ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
+    final reliefButton = reliefGate.visible
+        ? AiReliefButton(
+            gate: reliefGate,
+            target: assetReliefTarget(ref, asset, open: (stereo) => _openStereoPhoto(context, ref, asset, stereo)),
           )
         : null;
 
@@ -207,6 +228,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   panoramaButton != null ||
                                   spatialButton != null ||
                                   view3dButton != null ||
+                                  reliefButton != null ||
                                   rotateButton != null ||
                                   fullScreenButton != null)
                           ? ImmichColorOverride(
@@ -219,6 +241,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ?view3dButton,
+                                    ?reliefButton,
                                     ?panoramaButton,
                                     ?spatialButton,
                                     ?rotateButton,
@@ -245,8 +268,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 }
 
-/// Opens [asset], an Apple spatial photo or a side by side photo as [stereo] describes it, in 3D in the immersive
-/// viewer (see [openStereoPhotoViewer]); a message says when it could not open
+/// Opens [asset], an Apple spatial photo, a side by side photo or a photo for an AI relief as [stereo] describes it, in
+/// 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says when it could not open
 Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, StereoPhotoRequest stereo) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);

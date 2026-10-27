@@ -167,6 +167,11 @@ class DepthReliefRequest {
   int get hashCode => Object.hash(model, modelSize, modelId, cacheKey, parallax, convergence, quarterTurns);
 }
 
+/// The folder of the relief cache of the headset in the cache folder of the app (Context.getCacheDir() on Android,
+/// getTemporaryDirectory() in Flutter): one `<key>.u16` file per photo, written by the immersive viewer
+/// (ReliefCache.FOLDER in Kotlin), sized and cleared by the advanced settings
+const reliefCacheFolderName = 'ai-relief';
+
 /// Who a photo is, for the relief cache: its SHA-1 when the asset has one (server, device), otherwise its place on a
 /// share
 abstract final class ReliefSourceIdentity {

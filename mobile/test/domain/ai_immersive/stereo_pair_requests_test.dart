@@ -148,6 +148,14 @@ void main() {
     });
   });
 
+  test('the folder of the relief cache is the one the immersive viewer writes in', () {
+    // ReliefCache.FOLDER of the Kotlin side, read from its source: both sides must name the same folder
+    final kotlin = File('android/app/src/main/kotlin/app/alextran/immich/relief/ReliefCache.kt').readAsStringSync();
+
+    expect(RegExp(r'const val FOLDER = "([^"]+)"').firstMatch(kotlin)?.group(1), reliefCacheFolderName);
+    expect(reliefCacheFolderName, 'ai-relief');
+  });
+
   test('the model id is the name and the first 8 digits of the SHA-256', () {
     expect(depthModelId(depthModelTfliteSha256), 'depth-anything-v2-small@651415f1');
     expect(depthModelId(depthModelOnnxSha256), 'depth-anything-v2-small@afb6a5c2');
