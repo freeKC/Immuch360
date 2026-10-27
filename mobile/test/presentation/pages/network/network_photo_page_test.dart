@@ -530,6 +530,46 @@ void main() {
       await endRealIo(tester);
     });
 
+    testWidgets('on a Meta Quest, a newer 3D scene beside the original leaves "View the 3D version" to the 3D photo', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length),
+      );
+      final scene = File('test/fixtures/ai_immersive/xmp_v1_scene_sample.xmp').readAsStringSync();
+      share.files['/Photos/salon_scene3D.jpg'] = jpegFile(
+        width: 2048,
+        height: 1536,
+        xmpText: scene.replaceFirst('SourceSize="4182311"', 'SourceSize="${png.length}"'),
+      );
+      NetworkEntry dated(String path, DateTime modified) => NetworkEntry(
+        sourceId: share.source.id,
+        path: path,
+        isDirectory: false,
+        size: share.files[path]!.length,
+        modified: modified,
+      );
+      share.folders['/Photos'] = [
+        share.file('/Photos/salon.jpg'),
+        dated('/Photos/salon_3D_LRF_Full_SBS.jpg', DateTime.utc(2026, 10, 1)),
+        dated('/Photos/salon_scene3D.jpg', DateTime.utc(2026, 10, 27)),
+      ];
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => versionButton.evaluate().isNotEmpty);
+
+      expect(share.reads.map((read) => read.$1), contains('/Photos/salon_scene3D.jpg'));
+      await tester.tap(versionButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+      expect(immersiveApi.opened.single['url'], server.urlOf('/Photos/salon_3D_LRF_Full_SBS.jpg').toString());
+
+      await endRealIo(tester);
+    });
+
     testWidgets('opened from its folder, the version is found among the files the page got, and opens at its URL', (
       tester,
     ) async {

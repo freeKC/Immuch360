@@ -1,12 +1,15 @@
-// The 3D versions of a photo of a share, found among its neighbours by the name, the SourceName and the SourceSize of
-// their XMP (design-final 2026-10-26, sections 3.8 and 4.2).
+// The versions of a photo of a share, found among its neighbours by the name, the SourceName and the SourceSize of
+// their XMP (design-final 2026-10-26, sections 3.8 and 4.2), each kind kept by its probe (design-final 2026-10-27,
+// section 8.4, point 5).
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -57,7 +60,8 @@ void main() {
     final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
 
     expect(versions.map((v) => v.entry.path), ['/Photos/salon_3D_LRF_Full_SBS.jpg']);
-    final photo = versions.single.photo;
+    expect(versions.single.kind, ImmersiveKind.stereoPhoto);
+    final photo = versions.single.photo!;
     expect(photo.isEstimatedRelief, isTrue);
     expect(photo.request?.toJson(), {
       'kind': 'sbsPhoto',
@@ -205,8 +209,71 @@ void main() {
       file('/Photos/salon_3D_LRF_Full_SBS.jpg'),
     ], readerOf: readerOf);
 
-    expect(versions.single.photo.request?.toJson()['eyes'], 'half');
-    expect(versions.single.photo.request?.toJson()['layout'], 'rightLeft');
+    expect(versions.single.photo!.request?.toJson()['eyes'], 'half');
+    expect(versions.single.photo!.request?.toJson()['layout'], 'rightLeft');
+  });
+
+  group('of every kind', () {
+    String sample(String name) => File('test/fixtures/ai_immersive/xmp_v1_${name}_sample.xmp').readAsStringSync();
+
+    test('finds a 3D scene, a panorama and its 3D version beside the original, each kept by its probe', () async {
+      files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = version();
+      files['/Photos/salon_scene3D.jpg'] = jpegFile(width: 2048, height: 1536, xmpText: sample('scene'));
+      files['/Photos/salon_360.jpg'] = jpegFile(width: 8192, height: 4096, xmpText: sample('panorama'));
+      files['/Photos/salon_360_3D.jpg'] = jpegFile(width: 4096, height: 4096, xmpText: sample('stereo_panorama'));
+      final neighbours = [
+        original,
+        file('/Photos/cuisine.jpg'),
+        for (final (index, path) in files.keys.indexed) file(path, modified: DateTime.utc(2026, 10, 20 + index)),
+      ];
+
+      final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
+
+      expect(versions.map((v) => (v.entry.name, v.kind)), [
+        ('salon_360_3D.jpg', ImmersiveKind.stereoPanorama360),
+        ('salon_360.jpg', ImmersiveKind.panorama360),
+        ('salon_scene3D.jpg', ImmersiveKind.volumetricScene),
+        ('salon_3D_LRF_Full_SBS.jpg', ImmersiveKind.stereoPhoto),
+      ]);
+      // Each with its packet as its kind reads it; only the 3D photo is two eyes side by side
+      final byKind = {for (final v in versions) v.kind: v};
+      expect(byKind[ImmersiveKind.volumetricScene]!.xmp, ImmersiveXmp.parse(sample('scene')));
+      expect((byKind[ImmersiveKind.volumetricScene]!.xmp as SceneXmp).request, isNotNull);
+      expect(byKind[ImmersiveKind.panorama360]!.xmp, isA<PanoramaXmp>());
+      expect(byKind[ImmersiveKind.stereoPanorama360]!.xmp, isA<StereoPanoramaXmp>());
+      expect(versions.where((v) => v.photo != null).map((v) => v.entry.name), ['salon_3D_LRF_Full_SBS.jpg']);
+      expect(reads, isNot(contains('/Photos/cuisine.jpg')));
+    });
+
+    test('a panorama the 360° rules do not take, and a 3D panorama not stacked, are not kept', () async {
+      final withoutGPano = sample('panorama').replaceAll(RegExp(r'\s*GPano:ProjectionType="[^"]*"'), '');
+      files['/Photos/salon_360.jpg'] = jpegFile(width: 8192, height: 4096, xmpText: withoutGPano);
+      files['/Photos/salon_360_3D.jpg'] = jpegFile(width: 8192, height: 4096, xmpText: sample('stereo_panorama'));
+      final neighbours = [original, for (final path in files.keys) file(path)];
+
+      expect(await findShareVersions(original, neighbours, readerOf: readerOf), isEmpty);
+      expect(reads, hasLength(2), reason: 'both read, neither recognised');
+    });
+
+    test('a scene of another original, or of a newer format, by the rule and as the viewer needs it', () async {
+      files['/Photos/salon_scene3D.jpg'] = jpegFile(
+        width: 2048,
+        height: 1536,
+        xmpText: sample('scene').replaceFirst('SourceSize="4182311"', 'SourceSize="12"'),
+      );
+      files['/Photos/salon_scene3D (1).jpg'] = jpegFile(
+        width: 2048,
+        height: 1536,
+        xmpText: sample('scene').replaceFirst('Immuch360:FormatVersion="1"', 'Immuch360:FormatVersion="2"'),
+      );
+      final neighbours = [original, for (final path in files.keys) file(path)];
+
+      final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
+
+      // Kept, so that the viewer can say it was made by a newer version
+      expect(versions.map((v) => v.entry.name), ['salon_scene3D (1).jpg']);
+      expect((versions.single.xmp as SceneXmp).request, isNull);
+    });
   });
 
   test('the folder of a share path', () {
