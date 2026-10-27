@@ -12,7 +12,8 @@ const aiComponentsReleaseTag = 'ai-components-1';
 const aiComponentsReleaseBase = 'https://github.com/freeKC/Immuch360/releases/download/$aiComponentsReleaseTag/';
 
 /// The environment variable that replaces [aiComponentsReleaseBase] for the tests and the checks made before the
-/// release is published: a URL or a file:// folder holding the same files
+/// release is published: an https URL or a local folder (file://) holding the same files. The mirror is not exempt
+/// from the rule of the downloads: an http:// mirror is refused like any http:// address.
 const aiComponentsMirrorVariable = 'IMMUCH360_AI_COMPONENTS_MIRROR';
 
 /// The systems and processors a component runs on
@@ -77,12 +78,12 @@ class AiComponent {
   int? get bytesToDownload => downloadSize ?? size;
 
   /// The addresses tried in order: the mirror alone when one is given (the tests stay offline), else the release then
-  /// the official source
-  List<String> urls({String? mirror}) {
+  /// the official source. [release] is the base of the release, another one only in the tests of the downloader.
+  List<String> urls({String? mirror, String release = aiComponentsReleaseBase}) {
     if (mirror != null && mirror.isNotEmpty) {
       return [_joined(mirror, assetName)];
     }
-    return [_joined(aiComponentsReleaseBase, assetName), ...officialUrls];
+    return [_joined(release, assetName), ...officialUrls];
   }
 }
 

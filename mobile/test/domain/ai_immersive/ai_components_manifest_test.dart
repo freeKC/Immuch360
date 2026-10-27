@@ -59,8 +59,12 @@ void main() {
       expect(depthModelTfliteComponent.urls(mirror: 'file:///mnt/d/mirror'), [
         'file:///mnt/d/mirror/depth_anything_v2_small.tflite',
       ]);
-      expect(onnxRuntimeLinuxComponent.urls(mirror: 'http://127.0.0.1:8080/'), [
-        'http://127.0.0.1:8080/onnxruntime-1.31.0-linux-x64.so.gz',
+      expect(onnxRuntimeLinuxComponent.urls(mirror: 'https://mirror.test/ai/'), [
+        'https://mirror.test/ai/onnxruntime-1.31.0-linux-x64.so.gz',
+      ]);
+      expect(depthModelOnnxComponent.urls(release: 'https://127.0.0.1:4430/release'), [
+        'https://127.0.0.1:4430/release/depth_anything_v2_small.onnx',
+        ...depthModelOnnxComponent.officialUrls,
       ]);
       expect(onnxRuntimeLinuxComponent.urls(mirror: ''), [
         'https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-linux-x64.so.gz',
