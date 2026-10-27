@@ -33,6 +33,19 @@ void main() {
       expect(cut.values.last, 71);
     });
 
+    test('keeps only the columns a centered portrait filled', () {
+      // A 1:3 portrait in an input of 12 x 8: 3 x 8, columns 4 to 6
+      final frame = reliefInputFrameFor(10, 30, inputWidth: 12, inputHeight: 8);
+      expect(frame.framing, ReliefFraming.centered);
+      expect([frame.left, frame.top, frame.width, frame.height], [4, 0, 3, 8]);
+      final map = DepthMap(12, 8, Float32List.fromList([for (var index = 0; index < 96; index++) index.toDouble()]));
+      final cut = cropToPhoto(map, frame);
+      expect([cut.width, cut.height], [3, 8]);
+      expect(cut.values.sublist(0, 3), [4, 5, 6]);
+      expect(cut.values.sublist(3, 6), [16, 17, 18]);
+      expect(cut.values.last, 90);
+    });
+
     test('refuses a map of another size than the input', () {
       final frame = reliefInputFrameFor(100, 100, inputWidth: 8, inputHeight: 6);
       expect(() => cropToPhoto(DepthMap(6, 8, Float32List(48)), frame), throwsArgumentError);
