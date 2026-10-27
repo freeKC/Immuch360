@@ -11,6 +11,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:path/path.dart' as p;
 
@@ -324,6 +325,25 @@ void main() {
         isEdited: false,
       );
       expect((await container.read(photoVersionsProvider(remote).future)).versions, isEmpty);
+    });
+
+    test('a neighbour kept online only is never read, so never downloaded by the details', () async {
+      await fixture.scan();
+      final reads = <String>[];
+      final finder = PhotoVersionsFinder(
+        fixture.library(),
+        readHead: (path) {
+          reads.add(p.basename(path));
+          return readFileHead(path);
+        },
+        // OneDrive freed its space after the last scan
+        attributes: (path) => p.basename(path) == 'salon_3D_LRF_Full_SBS.jpg' ? fileAttributeRecallOnDataAccess : 0,
+      );
+
+      final found = await finder.find(idOf('salon.jpg'));
+
+      expect(reads, isNot(contains('salon_3D_LRF_Full_SBS.jpg')));
+      expect(found.versions, isEmpty);
     });
 
     test('a neighbour that cannot be read costs only itself', () async {
