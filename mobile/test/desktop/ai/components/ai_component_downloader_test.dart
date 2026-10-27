@@ -428,6 +428,192 @@ void main() {
     );
   });
 
+  group('a file in parts', () {
+    /// A component of [bytes] in parts of [size] bytes, served at the release; [official] its whole file elsewhere
+    AiComponent inParts(List<int> bytes, int size, {List<String> official = const [], String? sum}) {
+      final cut = cutInParts('big.bin', bytes, size, _sha);
+      for (final MapEntry(:key, :value) in cut.served.entries) {
+        server.files[key] = ServedFile(Uint8List.fromList(value));
+      }
+      return testComponent('big.bin', bytes, sha256: sum ?? _sha(bytes), parts: cut.parts, officialUrls: official);
+    }
+
+    httpsTest('the parts are put end to end, each checked, the whole installed under its final name', () async {
+      final bytes = _bytes(250 * 1024, 40);
+      final component = inParts(bytes, 100 * 1024);
+      final totals = <int?>{};
+      var last = 0;
+
+      final source = await downloader().download(
+        component,
+        target: target(),
+        part: part(),
+        onProgress: (received, total) {
+          totals.add(total);
+          expect(received, greaterThanOrEqualTo(last));
+          last = received;
+        },
+      );
+
+      expect(target().readAsBytesSync(), bytes);
+      expect(server.requests.map((request) => request.path), [
+        '/files/big.bin.001',
+        '/files/big.bin.002',
+        '/files/big.bin.003',
+      ]);
+      expect(server.requests.map((request) => request.range), everyElement(isNull));
+      expect(totals, {bytes.length});
+      expect(last, bytes.length);
+      expect(source.toString(), server.url('files', 'big.bin.001'));
+      expect(Directory(p.join(temp.path, 'tmp')).listSync(), isEmpty);
+    });
+
+    httpsTest('a cut in the second part resumes with Range in that part', () async {
+      final bytes = _bytes(300 * 1024, 41);
+      final component = inParts(bytes, 128 * 1024);
+      server.files['big.bin.002']!.cutFirstAfter = 50 * 1024;
+
+      await downloader().download(component, target: target(), part: part());
+
+      expect(target().readAsBytesSync(), bytes);
+      expect(server.requests.map((request) => '${request.path} ${request.range}'), [
+        '/files/big.bin.001 null',
+        '/files/big.bin.002 null',
+        '/files/big.bin.002 bytes=${50 * 1024}-',
+        '/files/big.bin.003 null',
+      ]);
+    });
+
+    httpsTest(
+      'a .part left in the middle of the second part: the first is checked on the disk, the rest resumed',
+      () async {
+        final bytes = _bytes(300 * 1024, 42);
+        final component = inParts(bytes, 128 * 1024);
+        part()
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes.sublist(0, 200 * 1024));
+
+        await downloader().download(component, target: target(), part: part());
+
+        expect(target().readAsBytesSync(), bytes);
+        expect(server.requests.map((request) => '${request.path} ${request.range}'), [
+          '/files/big.bin.002 bytes=${(200 - 128) * 1024}-',
+          '/files/big.bin.003 null',
+        ]);
+      },
+    );
+
+    httpsTest('a .part that holds every part, right: installed without a request', () async {
+      final bytes = _bytes(256 * 1024, 52);
+      final component = inParts(bytes, 128 * 1024);
+      part()
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(bytes);
+
+      await downloader().download(component, target: target(), part: part());
+
+      expect(target().readAsBytesSync(), bytes);
+      expect(server.requests, isEmpty);
+    });
+
+    httpsTest('a damaged first part left on the disk is downloaded again', () async {
+      final bytes = _bytes(300 * 1024, 43);
+      final component = inParts(bytes, 128 * 1024);
+      part()
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(_bytes(140 * 1024, 44));
+
+      await downloader().download(component, target: target(), part: part());
+
+      expect(target().readAsBytesSync(), bytes);
+      expect(server.requests.first.path, '/files/big.bin.001');
+      expect(server.requests.first.range, isNull);
+    });
+
+    httpsTest(
+      'a damaged part at the release: cut back to the parts before it, then the official file resumes',
+      () async {
+        final bytes = _bytes(300 * 1024, 45);
+        server.files['official.bin'] = ServedFile(bytes);
+        final component = inParts(bytes, 128 * 1024, official: [server.url('files', 'official.bin')]);
+        server.files['big.bin.002'] = ServedFile(_bytes(128 * 1024, 46));
+
+        final source = await downloader().download(component, target: target(), part: part());
+
+        expect(source.toString(), server.url('files', 'official.bin'));
+        expect(target().readAsBytesSync(), bytes);
+        expect(server.requests.map((request) => '${request.path} ${request.range}'), [
+          '/files/big.bin.001 null',
+          '/files/big.bin.002 null',
+          '/files/official.bin bytes=${128 * 1024}-',
+        ]);
+      },
+    );
+
+    httpsTest('each part right but the whole not the one of the catalogue: damaged, nothing kept', () async {
+      final bytes = _bytes(200 * 1024, 47);
+      final component = inParts(bytes, 128 * 1024, sum: _sha(_bytes(200 * 1024, 48)));
+
+      await expectLater(
+        downloader().download(component, target: target(), part: part()),
+        _fails(AiDownloadFailure.damaged),
+      );
+      expect(target().existsSync(), isFalse);
+      expect(part().existsSync(), isFalse);
+    });
+
+    httpsTest('a part missing at the release, and no official source: not found, the parts before it kept', () async {
+      final bytes = _bytes(300 * 1024, 49);
+      final component = inParts(bytes, 128 * 1024);
+      server.files.remove('big.bin.003');
+
+      await expectLater(
+        downloader().download(component, target: target(), part: part()),
+        _fails(AiDownloadFailure.notFound),
+      );
+      expect(part().lengthSync(), 256 * 1024);
+    });
+
+    test('from the folder of a mirror, which holds the parts', () async {
+      final bytes = _bytes(90 * 1024, 50);
+      final cut = cutInParts('big.bin', bytes, 40 * 1024, _sha);
+      final mirror = Directory(p.join(temp.path, 'mirror'))..createSync();
+      for (final MapEntry(:key, :value) in cut.served.entries) {
+        File(p.join(mirror.path, key)).writeAsBytesSync(value);
+      }
+      final component = testComponent('big.bin', bytes, sha256: _sha(bytes), parts: cut.parts);
+      final downloader = AiComponentDownloader(mirror: () => mirror.path, retryDelay: Duration.zero);
+
+      final source = await downloader.download(component, target: target(), part: part());
+
+      expect(target().readAsBytesSync(), bytes);
+      expect(source, Uri.file(p.join(mirror.path, 'big.bin.001')));
+      expect(downloader.addressesOf(component), [Uri.directory(mirror.path).resolve('big.bin.001')]);
+    });
+
+    test('without a release given, each component comes from the release of its family', () {
+      final downloader = AiComponentDownloader(mirror: () => null);
+      final scene = testComponent('scene.onnx', [1, 2, 3], sha256: _sha([1, 2, 3]), releaseTag: 'ai-components-2');
+
+      expect(downloader.addressesOf(scene), [
+        Uri.parse('https://github.com/freeKC/Immuch360/releases/download/ai-components-2/scene.onnx'),
+      ]);
+      final cut = cutInParts('big.bin', _bytes(10, 51), 4, _sha);
+      final big = testComponent(
+        'big.bin',
+        _bytes(10, 51),
+        sha256: _sha(_bytes(10, 51)),
+        parts: cut.parts,
+        releaseTag: 'ai-components-3',
+        officialUrls: ['https://huggingface.co/x/y/resolve/0123/big.bin'],
+      );
+      expect(downloader.addressesOf(big), [
+        Uri.parse('https://github.com/freeKC/Immuch360/releases/download/ai-components-3/big.bin.001'),
+        Uri.parse('https://huggingface.co/x/y/resolve/0123/big.bin'),
+      ]);
+    });
+  });
+
   group('the mirror', () {
     late Directory mirror;
 
