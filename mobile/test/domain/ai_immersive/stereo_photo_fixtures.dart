@@ -7,11 +7,12 @@ import 'dart:typed_data';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 
-/// Our packet for a photo of [eyeWidth] x [eyeHeight] pixels per eye, made from [sourceName]
+/// Our packet for a photo of [eyeWidth] x [eyeHeight] pixels per eye, made from [sourceName] of [sourceSize] bytes
 StereoPhotoXmp ourXmp({
   int eyeWidth = 4000,
   int eyeHeight = 3000,
   String sourceName = 'salon.jpg',
+  int sourceSize = 4182311,
   StereoEyes eyes = StereoEyes.full,
   EyeOrder eyeOrder = EyeOrder.leftRight,
   int formatVersion = immersiveFormatVersion,
@@ -30,7 +31,7 @@ StereoPhotoXmp ourXmp({
   convergence: ReliefV1.convergence,
   derivativeId: 'urn:uuid:6f1c2e0a-0000-4000-8000-000000000000',
   sourceName: sourceName,
-  sourceSize: 4182311,
+  sourceSize: sourceSize,
   sourceSha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=',
   sourceQuarterTurns: 0,
   created: '2026-10-27T10:12:00+01:00',
