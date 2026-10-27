@@ -421,6 +421,8 @@ String _escape(String value) => value
 
 final _entity = RegExp(r'&(#x[0-9A-Fa-f]+|#[0-9]+|amp|lt|gt|quot|apos);');
 
+// An entity that names no character ("&#x110000;", a number too long for an int) is left as written: a damaged field
+// never costs the rest of the packet, nor the rest of what the file says
 String _unescape(String value) => value.replaceAllMapped(_entity, (match) {
   final name = match.group(1)!;
   return switch (name) {
@@ -429,7 +431,9 @@ String _unescape(String value) => value.replaceAllMapped(_entity, (match) {
     'gt' => '>',
     'quot' => '"',
     'apos' => "'",
-    _ when name.startsWith('#x') => String.fromCharCode(int.parse(name.substring(2), radix: 16)),
-    _ => String.fromCharCode(int.parse(name.substring(1))),
+    _ when name.startsWith('#x') => _character(int.tryParse(name.substring(2), radix: 16)) ?? match.group(0)!,
+    _ => _character(int.tryParse(name.substring(1))) ?? match.group(0)!,
   };
 });
+
+String? _character(int? code) => code == null || code > 0x10ffff ? null : String.fromCharCode(code);

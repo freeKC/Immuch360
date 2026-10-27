@@ -31,6 +31,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
 /// One entry of a folder
@@ -574,6 +575,12 @@ class _Scan {
           // Still not readable: nothing new for the app
           continue;
         }
+        if (before == null && metadata.readFailed && _namedLikeVersion(entry.name)) {
+          // Most likely a 3D photo the app made, which only its XMP tells: shown now, it would be a plain photo of its
+          // folder, which a folder chosen for the backup sends. So it waits for a scan that can read it. The name only
+          // ever holds a file back, it never makes one a version.
+          continue;
+        }
         batch.add(
           _record(
             root: root,
@@ -605,6 +612,10 @@ class _Scan {
     return ScanSummary(written: written, removed: gone.length, cloudOnly: cloudOnly, moved: moved ? 1 : 0);
   }
 
+  static final _versionSuffix = sbsFullNameSuffix.toLowerCase();
+
+  static bool _namedLikeVersion(String name) => name.toLowerCase().contains(_versionSuffix);
+
   static bool _isUnder(String relativePath, String dir) => dir.isEmpty || relativePath.startsWith('$dir/');
 
   IndexedFile _record({
@@ -624,6 +635,7 @@ class _Scan {
       LibraryMediaKind.image when metadata.animated => 3,
       LibraryMediaKind.image => 1,
     };
+    final xmp = metadata.immersive;
     return IndexedFile(
       id: id,
       rootId: root.id,
@@ -643,6 +655,24 @@ class _Scan {
       projection: metadata.projection,
       cloudOnly: cloudOnly,
       readFailed: metadata.readFailed,
+      // A file of a newer format keeps its link and its place out of the backup, but is not shown in 3D
+      stereo: xmp != null && xmp.isReadableStereoPhoto
+          ? switch (xmp.eyes) {
+              StereoEyes.full => IndexedStereo.sbsFull,
+              StereoEyes.half => IndexedStereo.sbsHalf,
+              null => null,
+            }
+          : null,
+      origin: switch (xmp?.origin) {
+        ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
+        ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
+        // An Origin this build does not know (a later format): the id of the file still says the app made it
+        _ when xmp?.derivativeId?.isNotEmpty ?? false => IndexedOrigin.other,
+        _ => null,
+      },
+      sourceSha1: xmp?.sourceSha1,
+      derivativeId: xmp?.derivativeId,
+      derivedSettings: xmp?.settingsKey,
     );
   }
 }

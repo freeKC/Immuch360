@@ -128,20 +128,22 @@ List<int> _segment(int marker, List<int> payload) => [
   ...payload,
 ];
 
-/// A JPEG head: an EXIF APP1 from [tiff], an XMP APP1 declaring [gpanoProjection], then the frame of [width] by
-/// [height] and an empty scan
-Uint8List jpegBytes({required int width, required int height, Uint8List? tiff, String? gpanoProjection}) {
-  final xmp = gpanoProjection == null
-      ? null
-      : '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
-            '<rdf:Description xmlns:GPano="http://ns.google.com/photos/1.0/panorama/" '
-            'GPano:ProjectionType="$gpanoProjection" GPano:UsePanoramaViewer="True"/></rdf:RDF></x:xmpmeta>';
+/// A JPEG head: an EXIF APP1 from [tiff], an XMP APP1 declaring [gpanoProjection] or holding the packet [xmp], then
+/// the frame of [width] by [height] and an empty scan
+Uint8List jpegBytes({required int width, required int height, Uint8List? tiff, String? gpanoProjection, String? xmp}) {
+  final packet =
+      xmp ??
+      (gpanoProjection == null
+          ? null
+          : '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+                '<rdf:Description xmlns:GPano="http://ns.google.com/photos/1.0/panorama/" '
+                'GPano:ProjectionType="$gpanoProjection" GPano:UsePanoramaViewer="True"/></rdf:RDF></x:xmpmeta>');
   return Uint8List.fromList([
     0xff, 0xd8,
     // APP0 JFIF
     ..._segment(0xe0, [...ascii.encode('JFIF'), 0, 1, 1, 0, 0, 1, 0, 1, 0, 0]),
     if (tiff != null) ..._segment(0xe1, [...ascii.encode('Exif'), 0, 0, ...tiff]),
-    if (xmp != null) ..._segment(0xe1, [...ascii.encode('http://ns.adobe.com/xap/1.0/'), 0, ...utf8.encode(xmp)]),
+    if (packet != null) ..._segment(0xe1, [...ascii.encode('http://ns.adobe.com/xap/1.0/'), 0, ...utf8.encode(packet)]),
     // SOF0: precision, height, width, one component
     ..._segment(0xc0, [8, height >> 8, height & 0xff, width >> 8, width & 0xff, 1, 1, 0x11, 0]),
     // SOS then EOI: no picture data
@@ -172,8 +174,8 @@ Uint8List pngBytes({required int width, required int height, bool animated = fal
   ]);
 }
 
-/// A WebP head with a VP8X chunk
-Uint8List webpBytes({required int width, required int height, bool animated = false}) {
+/// A WebP head with a VP8X chunk, and an XMP chunk holding [xmp] when given
+Uint8List webpBytes({required int width, required int height, bool animated = false, String? xmp}) {
   final w = width - 1;
   final h = height - 1;
   final vp8x = [
@@ -188,7 +190,25 @@ Uint8List webpBytes({required int width, required int height, bool animated = fa
     h >> 8 & 0xff,
     h >> 16,
   ];
-  final body = [...ascii.encode('WEBP'), ...ascii.encode('VP8X'), vp8x.length, 0, 0, 0, ...vp8x];
+  final packet = xmp == null ? const <int>[] : utf8.encode(xmp);
+  final body = [
+    ...ascii.encode('WEBP'),
+    ...ascii.encode('VP8X'),
+    vp8x.length,
+    0,
+    0,
+    0,
+    ...vp8x,
+    if (xmp != null) ...[
+      ...ascii.encode('XMP '),
+      packet.length & 0xff,
+      packet.length >> 8 & 0xff,
+      packet.length >> 16 & 0xff,
+      0,
+      ...packet,
+      if (packet.length.isOdd) 0,
+    ],
+  ];
   return Uint8List.fromList([...ascii.encode('RIFF'), body.length & 0xff, body.length >> 8 & 0xff, 0, 0, ...body]);
 }
 

@@ -4,8 +4,11 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:path/path.dart' as p;
 
+import '../ai/fakes/fake_immersive_engine.dart';
 import 'library_fixtures.dart';
 
 MediaMetadata _image(Uint8List bytes) => readMediaMetadata(BytesSource(bytes), LibraryMediaKind.image);
@@ -69,6 +72,65 @@ void main() {
       }
       final damaged = Uint8List.fromList(whole)..fillRange(30, 60, 0xff);
       expect(() => _image(damaged), returnsNormally);
+    });
+  });
+
+  group('the Immuch360 XMP of a 3D photo', () {
+    // The example of the design, as A0 froze it
+    final sample = File('test/fixtures/ai_immersive/xmp_v1_sample.xmp').readAsStringSync();
+
+    test('read from the XMP of a JPEG, beside its frame and its EXIF', () {
+      final tiff = tiffBytes(exif: const [(0x9003, 2, '2026:10:27 10:12:00'), (0x9011, 2, '+01:00')]);
+      final metadata = _image(jpegBytes(width: 8000, height: 3000, tiff: tiff, xmp: sample));
+
+      expect(metadata.immersive, StereoPhotoXmp.parse(sample));
+      expect(metadata.immersive!.sourceSha1, 'X8tYgvibyzHDDN2yXGU/ft1XxeM=');
+      expect(metadata.immersive!.derivativeId, 'urn:uuid:6f1c2e0a-0000-4000-8000-000000000000');
+      expect(metadata.immersive!.origin, ImmersiveOrigin.estimatedDepth);
+      expect((metadata.width, metadata.height), (8000, 3000));
+      expect(metadata.takenAt, DateTime.utc(2026, 10, 27, 9, 12));
+      expect(metadata.projection, isNull);
+    });
+
+    test('read from the file the fake engine writes, a real JPEG encoded by package:image', () {
+      final xmp = StereoPhotoXmp.estimated(
+        eyeWidth: 8,
+        eyeHeight: 6,
+        depthModelSha256: depthModelOnnxSha256,
+        sourceName: 'salon.jpg',
+        sourceSize: 4182311,
+        sourceSha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=',
+        sourceQuarterTurns: 1,
+        created: '2026-10-27T10:12:00+01:00',
+        creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
+      );
+      final metadata = _image(fakeSbsJpeg(xmp: xmp));
+
+      expect(metadata.immersive, xmp);
+      expect((metadata.width, metadata.height), (16, 6));
+    });
+
+    test('read from the XMP chunk of a WebP', () {
+      final metadata = _image(webpBytes(width: 200, height: 75, xmp: sample));
+
+      expect(metadata.immersive, StereoPhotoXmp.parse(sample));
+      expect((metadata.width, metadata.height), (200, 75));
+    });
+
+    test('none in a photo with only GPano, nor in a packet of our namespace without a Kind', () {
+      expect(_image(jpegBytes(width: 4, height: 2, gpanoProjection: 'equirectangular')).immersive, isNull);
+      final noKind = sample.replaceAll(RegExp(r'\s*Immuch360:Kind="[^"]*"'), '');
+      expect(_image(jpegBytes(width: 4, height: 2, xmp: noKind)).immersive, isNull);
+    });
+
+    test('a damaged packet loses at most itself', () {
+      final damaged = sample.replaceFirst('salon.jpg', '&#x110000;');
+      final metadata = _image(jpegBytes(width: 40, height: 15, xmp: damaged));
+
+      // An entity that names no character: the reader of the packet leaves it as written, or throws, which the
+      // library catches; either way the rest of the file keeps what it says
+      expect(metadata.immersive?.sourceName, anyOf(isNull, '&#x110000;'));
+      expect((metadata.width, metadata.height), (40, 15));
     });
   });
 
