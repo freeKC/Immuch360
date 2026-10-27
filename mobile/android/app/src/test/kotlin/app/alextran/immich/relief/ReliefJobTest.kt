@@ -299,6 +299,37 @@ class ReliefJobTest {
   }
 
   @Test
+  fun `the parallax and the convergence of the request reach the right eye`() {
+    val job = job()
+    val photo = FakePhoto(64, 48)
+    val map = ReliefMap(16, 12, ShortArray(16 * 12) { i -> ((i % 16) * 4000).toShort() })
+    assertNotNull(cache.write(KEY, map))
+
+    for ((parallax, convergence) in listOf(0.06 to ReliefV1.CONVERGENCE, ReliefV1.PARALLAX to 0.3)) {
+      val recorder = Recorder()
+      start(job, photo, recorder, ReliefRequest(model, MODEL_SIZE, MODEL_ID, KEY, parallax, convergence))
+      worker.runDue()
+
+      val eye = recorder.done.single().eye.pixels
+      val expected = IntArray(photo.width * photo.height)
+      ReliefSynthesizer.rightEye(
+        photo.pixels,
+        photo.width,
+        photo.height,
+        map.toNormalized(),
+        map.width,
+        map.height,
+        expected,
+        parallax = parallax,
+        convergence = convergence,
+      )
+      assertArrayEquals("$parallax, $convergence", expected, eye)
+      // Not the eye of the default settings
+      assertFalse("$parallax, $convergence", expectedEye(photo, map).contentEquals(eye))
+    }
+  }
+
+  @Test
   fun `the second look at a photo comes from the cache with the same right eye`() {
     val job = job()
     val first = Recorder()
