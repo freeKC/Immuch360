@@ -135,8 +135,12 @@ void main() {
     await scrollTo(tester, meshSwitch);
 
     expect(find.text('Open AI reliefs in 2.5D (experimental)'), findsOneWidget);
+    // A mesh of one layer: what a near object hides is never shown, the text promises no look behind it
     expect(
-      find.text('Move your head to see around the objects. Off: they open in 3D. The 3D button switches at any time.'),
+      find.text(
+        'The relief follows your head: near objects move in front of the background. '
+        'Off: they open in 3D. The 3D button switches at any time.',
+      ),
       findsOneWidget,
     );
     expect(tester.widget<SwitchListTile>(meshSwitch).value, isFalse);
