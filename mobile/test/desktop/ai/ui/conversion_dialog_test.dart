@@ -37,6 +37,7 @@ import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.da
 import '../../../widget_tester_extensions.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/recording_creator_files.dart';
+import 'settle_still.dart';
 
 const _gib = 1 << 30;
 
@@ -193,13 +194,9 @@ void main() {
     ];
   }
 
-  /// Lets the real files be read and written: each step waits for the real event loop, then a frame
-  Future<void> settle(WidgetTester tester) async {
-    for (var step = 0; step < 30; step++) {
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
-      await tester.pump();
-    }
-  }
+  /// Until the screen is still (see settleStill), the calls to the files included
+  Future<void> settle(WidgetTester tester, {bool Function()? until}) =>
+      settleStill(tester, watched: () => files.calls.length, until: until);
 
   /// desktop_ai.json as the store gives it once the writes of the page are done. Read in the zone of the test and
   /// pumped, never inside runAsync: a read waits for the writes queued before it, whose steps only run when the test
@@ -362,7 +359,10 @@ void main() {
     expect(convertEnabled(tester), isFalse);
 
     await tapIn(tester, find.byKey(const Key('ai_conversion_network_yes')));
-    await settle(tester);
+    await settle(
+      tester,
+      until: () => find.byKey(const Key('ai_conversion_network_yes')).evaluate().isEmpty && convertEnabled(tester),
+    );
 
     expect(find.byKey(const Key('ai_conversion_network_yes')), findsNothing);
     expect((await keptSettings(tester)).networkRootsAllowed, ['net-//nas/photos']);
