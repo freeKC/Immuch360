@@ -184,6 +184,9 @@ void main() {
     expect(opened, isEmpty);
     expect(identitiesAsked, 0, reason: 'no photo is read for nothing');
     expect(button(tester).onPressed, isNotNull);
+    // Closing is an answer: nothing is said afterwards
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.text('The AI components are not installed'), findsNothing);
   });
 
   testWidgets('a model damaged on the disk is offered again in the sheet', (tester) async {
