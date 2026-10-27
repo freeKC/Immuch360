@@ -1,11 +1,11 @@
 {
   "mobile/android/app/build.gradle": {
-    "blob": "5019051e9bbe0aab7c4dbc6535f11c159b66f430",
-    "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services; AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): LiteRT 2.3.0 and its GPU accelerator in the quest flavour only, without the Play library of its API, and the Kotlin metadata check skipped for the quest compilations"
+    "blob": "2a1ae61499bb302359c30c2282bfc31aa2119f0a",
+    "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services; AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): LiteRT 2.3.0 and its GPU accelerator in the quest flavour only, without the Play library of its API, the Kotlin metadata check skipped for the quest compilations, the LiteRT version from the catalogue in the BuildConfig of the quest flavour and the R8 rules of LiteRT in a file of the quest flavour"
   },
-  "mobile/android/app/proguard-rules.pro": {
-    "blob": "6112dc7944ad517dcd283688f757866532f21614",
-    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): R8 keeps the classes of the LiteRT API, which its JNI library builds by name"
+  "mobile/android/app/proguard-quest.pro": {
+    "blob": "03dc9629780a88541c902fa4939dac9374522b1b",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the R8 rules of the quest flavour only, which keep the classes of the LiteRT API that its JNI library builds by name"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
     "blob": "13f25557c5d2ca850cc88cfba30426836e3b8d28",
@@ -300,11 +300,11 @@
     "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of the phones, ZXing with the camera permission asked first"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/DepthEstimator.kt": {
-    "blob": "9a98856c52e3494cac2ae119eedd3bb2da81224f",
-    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model of the Quest behind one interface, and the failures the relief reports"
+    "blob": "be06591a8d9d1ea3992ff59398d4e90dd4eec1ae",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model of the Quest behind one interface, the failures the relief reports, and what a call into the engine may throw mapped to them"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/GpuParityCheck.kt": {
-    "blob": "9bc09542c461d91e8e1ba3ff1887772640513fc1",
+    "blob": "8d308748e54d1cb2ad36d145d7fccee7f2067a51",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the GPU of the headset checked against its CPU at the first relief, the path kept per system build, engine and model"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefCache.kt": {
@@ -372,7 +372,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes; DJI accessory filter (fix-accessory-filter): any DJI accessory plus the identity string of our own capture of 23 October 2026, the two unseen model strings dropped"
   },
   "mobile/android/app/src/phone/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
-    "blob": "68b44972d9af154bef0fce505f6d1c742fde307c",
+    "blob": "0c044dba81559867bd22afe695ec7b775042bd6f",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the stub of the phone flavour, which has no depth engine and says so"
   },
   "mobile/android/app/src/quest/AndroidManifest.xml": {
@@ -380,7 +380,7 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): no relay service on the headset, passthrough declared not required for the flight view"
   },
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
-    "blob": "f5fc46dae0f5a4f5a4a1fdcd488c7cbd32b239b3",
+    "blob": "a23329349881097db0918c485209bb3a0b53d801",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model on LiteRT CompiledModel, the GPU in fp32 or the CPU on 4 threads, quest flavour only"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
@@ -655,8 +655,12 @@
     "blob": "f13cc58645385059ee7207014b069f28729db001",
     "reason": "Sign in with your phone (feat-qr-pairing): unit tests of the scanner result mapping, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/DepthEngineCallTest.kt": {
+    "blob": "aa1f8bd49144293ba1669d2ec88ea94b0c7d0e42",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit tests of the mapping of what the engine throws to a depth failure, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/GpuParityCheckTest.kt": {
-    "blob": "113d52eda588f0c99db8fcdf5fb8bd281d39c5ea",
+    "blob": "d49e8c4bf4904f0a44585b20551bb8980073210a",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit tests of the GPU parity check with fake engines, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefCacheTest.kt": {
@@ -724,7 +728,7 @@
     "reason": "DJI finalisation (feat-dji-final): bodies of our capture of 23 October, position bytes set to zero, no serial number"
   },
   "mobile/android/app/src/testPhone/kotlin/app/alextran/immich/relief/DepthEstimatorsPhoneTest.kt": {
-    "blob": "0466ca0de95febbfc8fc2fb1058602aa01a30fd3",
+    "blob": "c840226f30af332966f5a34c5d7e989ac5508739",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit test of the stub of the phone flavour, run by the Kotlin unit tests job"
   },
   "mobile/android/gradle/libs.versions.toml": {
