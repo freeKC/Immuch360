@@ -132,6 +132,25 @@ void main() {
     expect(shareVersionHeadLength, 128 * 1024);
   });
 
+  test('with more versions than it reads, reads the newest: the cap of five comes after the order by date', () async {
+    // Listed in the order of the names, where the plain name comes after (1) to (5): it is the newest
+    final names = [for (var i = 1; i <= 5; i++) 'salon_3D_LRF_Full_SBS ($i).jpg', 'salon_3D_LRF_Full_SBS.jpg'];
+    for (final name in names) {
+      files['/Photos/$name'] = version();
+    }
+    final neighbours = [
+      original,
+      for (var i = 0; i < 5; i++) file('/Photos/${names[i]}', modified: DateTime.utc(2026, 10, i + 1)),
+      file('/Photos/${names[5]}', modified: DateTime.utc(2026, 10, 27)),
+    ];
+
+    final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
+
+    expect(versions.first.entry.name, 'salon_3D_LRF_Full_SBS.jpg');
+    expect(versions, hasLength(5));
+    expect(reads, isNot(contains('/Photos/salon_3D_LRF_Full_SBS (1).jpg')), reason: 'the oldest is the one left');
+  });
+
   test('looks in the folder of the original only', () async {
     files['/Other/salon_3D_LRF_Full_SBS.jpg'] = version();
 

@@ -2,8 +2,9 @@
 // sections 3.8 and 4.2): what "View the 3D version" opens on the Meta Quest, the 3D photo a computer saved next to the
 // original on a NAS (route 9.1 of the specification). A share gives no SHA-1 of its files, so the rule of
 // derived_file_rule.dart goes by the folder, the name, and the SourceName and SourceSize of the XMP of the version.
-// Only the neighbours whose name starts like a version are read, five at most, the head of each (128 KiB): a folder
-// without such a name costs no read at all. Shared code: the Quest reads it, the computers have their own index.
+// Only the neighbours whose name starts like a version are read, the five newest at most, the head of each (128 KiB):
+// a folder without such a name costs no read at all. Shared code: the Quest reads it, the computers have their own
+// index.
 
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
@@ -40,8 +41,15 @@ Future<List<ShareVersion>> findShareVersions(
     return const [];
   }
   final folder = shareFolderOf(original.path);
+  // The newest first before derivedNameCandidates keeps five of them: with more versions than that, the newest are
+  // read. Equal dates keep the order of the folder.
+  final ordered = neighbours.indexed.toList()
+    ..sort((a, b) {
+      final byDate = _newestFirst(a.$2.modified, b.$2.modified);
+      return byDate != 0 ? byDate : a.$1.compareTo(b.$1);
+    });
   final files = {
-    for (final entry in neighbours)
+    for (final (_, entry) in ordered)
       if (entry.isImage && entry.sourceId == original.sourceId && shareFolderOf(entry.path) == folder)
         entry.name: entry,
   };
@@ -68,16 +76,17 @@ Future<List<ShareVersion>> findShareVersions(
       _log.info('Could not read $name for the versions of ${original.name}: $error');
     }
   }
-  versions.sort((a, b) {
-    final aDate = a.entry.modified;
-    final bDate = b.entry.modified;
-    if (aDate == null || bDate == null) {
-      return aDate == null ? (bDate == null ? 0 : 1) : -1;
-    }
-    return bDate.compareTo(aDate);
-  });
+  versions.sort((a, b) => _newestFirst(a.entry.modified, b.entry.modified));
   if (versions.isNotEmpty) {
     _log.info('${original.name} has ${versions.length} 3D versions: ${versions.map((v) => v.entry.name).join(', ')}');
   }
   return versions;
+}
+
+/// The newer of two dates first, a missing date last
+int _newestFirst(DateTime? a, DateTime? b) {
+  if (a == null || b == null) {
+    return a == null ? (b == null ? 0 : 1) : -1;
+  }
+  return b.compareTo(a);
 }
