@@ -8,7 +8,8 @@ name: Immuch360 Desktop
 #                  archive of the sources of libsmb2 that every build carries, and the version numbers of the desktop
 #                  builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
-#   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
+#   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists, then
+#                  the tests of ONNX Runtime by FFI on the official Linux libraries of 1.31.0 and 1.23.2
 #   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too from
 #                  the archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
 #                  build playing a video on a virtual screen (Xvfb)
@@ -17,8 +18,9 @@ name: Immuch360 Desktop
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
-#   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
-#                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
+#   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 included), the release build, the ZIP and
+#                  the installer (Inno Setup) for the owner as artifacts named
+#                  Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), and the app of
 #                  the ZIP started on a database an older build left behind
 #   packages       the seven files of the build (the six packages and the libsmb2 sources) together with their
@@ -216,6 +218,35 @@ jobs:
       - name: Tests
         working-directory: mobile
         run: mise exec -- flutter test
+
+      # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
+      # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
+      # since a process keeps the first ONNX Runtime it loads. The archives are checked by their SHA-256 and cached
+      - name: ONNX Runtime archives cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/onnxruntime
+          key: onnxruntime-linux-x64-1.31.0-cc5c72ba-1.23.2-1fa4dcae
+
+      - name: ONNX Runtime by FFI on 1.31.0 and 1.23.2
+        working-directory: mobile
+        run: |
+          ort="$RUNNER_TEMP/onnxruntime"
+          mkdir -p "$ort"
+          fetch() {
+            archive="onnxruntime-linux-x64-$1.tgz"
+            [ -f "$ort/$archive" ] || curl -sSfL --retry 3 -o "$ort/$archive" \
+              "https://github.com/microsoft/onnxruntime/releases/download/v$1/$archive"
+            echo "$2  $ort/$archive" | sha256sum -c -
+            tar -xzf "$ort/$archive" -C "$ort"
+          }
+          fetch 1.31.0 cc5c72baf5ae5c8238a6841f0897227be2d02826b9cf98eaf02fdefaeeb03a57
+          fetch 1.23.2 1fa4dcaef22f6f7d5cd81b28c2800414350c10116f5fdd46a2160082551c5f9b
+          for version in 1.31.0 1.23.2; do
+            echo "ONNX Runtime $version"
+            IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
+              mise exec -- flutter test test/desktop/ai/ort
+          done
 
   linux:
     name: Linux build
@@ -557,8 +588,35 @@ jobs:
           tar -xf generated-dart.tar && rm generated-dart.tar
           flutter pub get --enforce-lockfile
 
-      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts)
+      # onnxruntime.dll of the official archive of ONNX Runtime 1.31.0 for test/desktop/ai/ort (lot A4a), checked by its
+      # SHA-256; the archive (83 MB, most of it the debug symbols left out here) is cached
+      - name: ONNX Runtime archive cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/onnxruntime
+          key: onnxruntime-win-x64-1.31.0-3958d8a4
+
+      - name: ONNX Runtime 1.31.0 for the tests
+        id: ort
+        run: |
+          ort="$(cygpath -u "$RUNNER_TEMP")/onnxruntime"
+          archive="$ort/onnxruntime-win-x64-1.31.0.zip"
+          mkdir -p "$ort"
+          [ -f "$archive" ] || curl -sSfL --retry 3 -o "$archive" \
+            https://github.com/microsoft/onnxruntime/releases/download/v1.31.0/onnxruntime-win-x64-1.31.0.zip
+          echo "3958d8a44984160692c1b4ffd0de3cb48f8c39f9d34bb31e433db06e30b82195  $archive" | sha256sum -c -
+          python - "$(cygpath -w "$archive")" "$(cygpath -w "$ort")" <<'PY'
+          import pathlib, sys, zipfile
+          archive, out = sys.argv[1], pathlib.Path(sys.argv[2])
+          with zipfile.ZipFile(archive) as bundle:
+              (out / 'onnxruntime.dll').write_bytes(bundle.read('onnxruntime-win-x64-1.31.0/lib/onnxruntime.dll'))
+          PY
+          echo "lib=$(cygpath -w "$ort/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
+
+      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime)
         working-directory: mobile
+        env:
+          IMMUCH360_ORT_LIB: ${{ steps.ort.outputs.lib }}
         run: flutter test test/desktop
 
       - name: Build
