@@ -159,22 +159,69 @@ void main() {
   });
 
   group('derivedNameCandidates', () {
-    test('keeps the names that start like a version, at most five, never the original', () {
+    test('keeps the names that start like a version, at most eight, never the original', () {
       final names = [
         'salon.jpg',
         'salon2.jpg',
         'salon_3D_LRF_Full_SBS.jpg',
         'salon2_3D_LRF_Full_SBS.jpg',
-        for (var i = 1; i <= 6; i++) 'salon_3D_LRF_Full_SBS ($i).jpg',
+        for (var i = 1; i <= 9; i++) 'salon_3D_LRF_Full_SBS ($i).jpg',
       ];
 
       expect(derivedNameCandidates('salon.jpg', names), [
         'salon_3D_LRF_Full_SBS.jpg',
-        'salon_3D_LRF_Full_SBS (1).jpg',
-        'salon_3D_LRF_Full_SBS (2).jpg',
-        'salon_3D_LRF_Full_SBS (3).jpg',
-        'salon_3D_LRF_Full_SBS (4).jpg',
+        for (var i = 1; i <= 7; i++) 'salon_3D_LRF_Full_SBS ($i).jpg',
       ]);
+      expect(maxDerivedCandidates, 8);
+    });
+
+    test('knows the four kinds of versions, and the 3D version of a photo whose name says 360', () {
+      final names = [
+        'salon_scene3D.jpg',
+        'salon_360.jpg',
+        'salon_360_3D.jpg',
+        'salon_360 (2).jpg',
+        'salon_scene3D (1).jpg',
+        'PANO_0001_3D.jpg',
+        // Close names: no read
+        'salon_3Dmax.jpg',
+        'salon_3600.jpg',
+        'salon_360x.jpg',
+        'salon_scene3Dx.jpg',
+        'salon2_360.jpg',
+        'salon_360.jpg.txt',
+      ];
+
+      expect(derivedNameCandidates('salon.jpg', names), [
+        'salon_scene3D.jpg',
+        'salon_360.jpg',
+        'salon_360_3D.jpg',
+        'salon_360 (2).jpg',
+        'salon_scene3D (1).jpg',
+      ]);
+      expect(derivedNameCandidates('PANO_0001.jpg', names), ['PANO_0001_3D.jpg']);
+      // The names the app writes are candidates of their original
+      for (final kind in ImmersiveKind.values) {
+        expect(isDerivedNameCandidate('salon.jpg', derivedFileNameFor(kind, 'salon.jpg')), isTrue, reason: '$kind');
+        expect(
+          isDerivedNameCandidate('PANO_0001.jpg', derivedFileNameFor(kind, 'PANO_0001.jpg')),
+          isTrue,
+          reason: '$kind',
+        );
+      }
+    });
+
+    test('a scene or a panorama is a version by its sum, whatever its kind, as a 3D photo', () {
+      const original = DerivedRuleOriginal(name: 'salon.jpg', size: 4182311, folder: '/photos', sha1: _sum);
+      for (final kind in [ImmersiveKind.volumetricScene, ImmersiveKind.panorama360, ImmersiveKind.stereoPanorama360]) {
+        final xmp = StereoPhotoXmp(kind: kind, sourceSha1: _sum, sourceName: 'salon.jpg');
+
+        expect(
+          isDerivedFrom(DerivedRuleCandidate(name: 'renamed.jpg', folder: '/elsewhere', xmp: xmp), original),
+          isTrue,
+          reason: '$kind',
+        );
+      }
     });
 
     test('accepts the name the computers write for a name Windows refuses', () {

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
@@ -110,9 +111,9 @@ void main() {
     expect(reads, isNot(contains('/Photos/salon_3D_LRF_Full_SBS.jpg.xmp')));
   });
 
-  test('reads five neighbours at most, 128 KiB each', () async {
+  test('reads eight neighbours at most, 128 KiB each', () async {
     final lengths = <int>[];
-    final names = [for (var i = 1; i <= 7; i++) '/Photos/salon_3D_LRF_Full_SBS ($i).jpg'];
+    final names = [for (var i = 1; i <= maxDerivedCandidates + 2; i++) '/Photos/salon_3D_LRF_Full_SBS ($i).jpg'];
     for (final name in names) {
       files[name] = version();
     }
@@ -126,28 +127,30 @@ void main() {
       },
     );
 
-    expect(reads, names.take(5));
-    expect(versions, hasLength(5));
+    expect(reads, names.take(maxDerivedCandidates));
+    expect(versions, hasLength(maxDerivedCandidates));
+    expect(maxDerivedCandidates, 8);
     expect(lengths, everyElement(shareVersionHeadLength));
     expect(shareVersionHeadLength, 128 * 1024);
   });
 
-  test('with more versions than it reads, reads the newest: the cap of five comes after the order by date', () async {
-    // Listed in the order of the names, where the plain name comes after (1) to (5): it is the newest
-    final names = [for (var i = 1; i <= 5; i++) 'salon_3D_LRF_Full_SBS ($i).jpg', 'salon_3D_LRF_Full_SBS.jpg'];
+  test('with more versions than it reads, reads the newest: the cap comes after the order by date', () async {
+    // Listed in the order of the names, where the plain name comes after (1) to (8): it is the newest
+    const cap = maxDerivedCandidates;
+    final names = [for (var i = 1; i <= cap; i++) 'salon_3D_LRF_Full_SBS ($i).jpg', 'salon_3D_LRF_Full_SBS.jpg'];
     for (final name in names) {
       files['/Photos/$name'] = version();
     }
     final neighbours = [
       original,
-      for (var i = 0; i < 5; i++) file('/Photos/${names[i]}', modified: DateTime.utc(2026, 10, i + 1)),
-      file('/Photos/${names[5]}', modified: DateTime.utc(2026, 10, 27)),
+      for (var i = 0; i < cap; i++) file('/Photos/${names[i]}', modified: DateTime.utc(2026, 10, i + 1)),
+      file('/Photos/${names[cap]}', modified: DateTime.utc(2026, 10, 27)),
     ];
 
     final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
 
     expect(versions.first.entry.name, 'salon_3D_LRF_Full_SBS.jpg');
-    expect(versions, hasLength(5));
+    expect(versions, hasLength(cap));
     expect(reads, isNot(contains('/Photos/salon_3D_LRF_Full_SBS (1).jpg')), reason: 'the oldest is the one left');
   });
 

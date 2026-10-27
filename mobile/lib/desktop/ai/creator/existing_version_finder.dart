@@ -1,7 +1,7 @@
 // The 3D versions an original already has, so that a batch can skip a photo whose version with the same settings is
 // there (design-final 2026-10-26, section 2.6.1), or replace that version on purpose. The library index is asked
 // first: it knows the versions of the scanned folders by the sum of their original, wherever they were moved (lot A6a
-// fills it). Then the neighbours of the destination folder whose name starts like a version are read, five at most and
+// fills it). Then the neighbours of the destination folder whose name starts like a version are read, eight at most and
 // 128 KiB each: that covers an external drive or a NAS not scanned again yet. A file only counts once its own XMP
 // links it to the original (derived_file_rule.dart), so close names and stale rows of the index never mislead it.
 
