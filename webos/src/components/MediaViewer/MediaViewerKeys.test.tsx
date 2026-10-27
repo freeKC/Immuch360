@@ -1,8 +1,9 @@
 // Immuch360: the keys of the viewer on a photo, with the real key hooks (useWebOSKeys, useAutoHideControls), so the
-// order of their listeners is tested too. Discussion 8 (gthrepwood, 26 October 2026): Up and Down zoom a flat photo at
-// once, zoomed in the arrows move it, Back zooms out, OK alone brings the controls; a 360° photo keeps the arrows.
+// order of their listeners is tested too. Discussion 8 (gthrepwood, 26 October 2026): Up zooms a flat photo in at once,
+// zoomed in the arrows move it, Back zooms out, OK alone brings the controls; a 360° photo keeps the arrows.
 import React from 'react';
 import {act, fireEvent, render, screen} from '@testing-library/react';
+import Spotlight from '@enact/spotlight';
 import {RepositoryProvider} from '../../domain/RepositoryContext';
 import type {PhotoRepository} from '../../domain/PhotoRepository';
 import type {TimelineAsset} from '../../domain/types';
@@ -75,6 +76,8 @@ const KEYS = {
 };
 let onClose: jest.Mock;
 let onNavigate: jest.Mock;
+// Whether the pointer of the Magic Remote shows (Spotlight's pointer mode); off: the 5-way keys
+let pointerMode: jest.SpyInstance;
 
 // A photo between two others, so that Left and Right have somewhere to go
 const mount = (middle: TimelineAsset = photo('b')) => {
@@ -100,6 +103,10 @@ const wait = (ms: number) =>
 	});
 /** Presses a key of the remote; true when the viewer took it (its default prevented, Spotlight never sees it) */
 const press = (key: keyof typeof KEYS): boolean => !fireEvent.keyDown(window, {key, keyCode: KEYS[key]});
+/** The repeats of a key held down */
+const hold = (key: keyof typeof KEYS, repeats: number) => {
+	for (let i = 0; i < repeats; i++) fireEvent.keyDown(window, {key, keyCode: KEYS[key], repeat: true});
+};
 const image = () => screen.getByRole('presentation') as HTMLImageElement;
 /** The photo on screen, as a load and two frames put it there (jsdom has no decode()) */
 const paint = () => {
@@ -121,8 +128,10 @@ beforeEach(() => {
 	onNavigate = jest.fn();
 	mockBar.focusChange = null;
 	resetVideoSession();
+	pointerMode = jest.spyOn(Spotlight, 'getPointerMode').mockReturnValue(false);
 });
 afterEach(() => {
+	pointerMode.mockRestore();
 	jest.useRealTimers();
 });
 
@@ -194,6 +203,33 @@ describe('a flat photo', () => {
 		expect(onNavigate).not.toHaveBeenCalled();
 	});
 
+	test('Up held down zooms once: its repeats neither zoom further nor move the photo; a new press moves it', () => {
+		mount();
+		paint();
+		expect(press('ArrowUp')).toBe(true);
+		hold('ArrowUp', 5);
+		expect(transform()).toBe('scale(1.25) translate(0%, 0%)');
+		expect(onNavigate).not.toHaveBeenCalled();
+		// Released, then pressed again: zoomed in, it moves the photo
+		expect(press('ArrowUp')).toBe(true);
+		expect(transform()).toMatch(/^scale\(1\.25\) translate\(0%, [1-9]/);
+		// A held arrow that did not zoom still moves the photo at each repeat, up to its edge
+		press('ArrowDown');
+		const once = transform();
+		hold('ArrowDown', 1);
+		expect(transform()).not.toBe(once);
+	});
+
+	test('Down held down at 1x: the level only, never a neighbour', () => {
+		mount();
+		paint();
+		expect(press('ArrowDown')).toBe(true);
+		hold('ArrowDown', 5);
+		expect(transform()).toBe('');
+		expect(screen.getByText('100%')).toBeTruthy();
+		expect(onNavigate).not.toHaveBeenCalled();
+	});
+
 	test('not zoomed, Left and Right still go to the previous and next item', () => {
 		mount();
 		paint();
@@ -236,6 +272,55 @@ describe('a flat photo', () => {
 		expect(controlsShown()).toBe(true);
 		// They still go 5 s after the last key
 		hideControls();
+	});
+
+	test('a click of the Magic Remote on the photo shows or hides the controls and leaves the pointer alone', () => {
+		mount();
+		paint();
+		pointerMode.mockReturnValue(true);
+		mockForceFocus.mockClear();
+		expect(controlsShown()).toBe(true);
+		fireEvent.click(stage());
+		expect(controlsShown()).toBe(false);
+		fireEvent.click(stage());
+		expect(controlsShown()).toBe(true);
+		fireEvent.click(stage());
+		expect(controlsShown()).toBe(false);
+		// forceFocus would leave pointer mode and put the focus ring on Zoom in
+		expect(mockForceFocus).not.toHaveBeenCalled();
+	});
+
+	test('the controls go 5 s after OK: the zoom keys pressed meanwhile do not keep them', () => {
+		mount();
+		paint();
+		hideControls();
+		press('Enter');
+		expect(controlsShown()).toBe(true);
+		wait(4000);
+		press('ArrowUp');
+		press('ArrowDown');
+		expect(controlsShown()).toBe(true);
+		wait(1000);
+		expect(controlsShown()).toBe(false);
+	});
+
+	test('a photo that did not load has nothing to zoom: Left and Right go on, Back closes', () => {
+		mount();
+		// Up while the photo comes zooms it; then it fails
+		press('ArrowUp');
+		expect(transform()).toBe('scale(1.25) translate(0%, 0%)');
+		fireEvent.error(image());
+		expect(screen.getByRole('alert').textContent).toBe('Error loading image');
+		// No level over the message, and the zoom keys and buttons zoom nothing
+		expect(screen.queryByRole('status')).toBeNull();
+		for (const key of ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown'] as const) expect(press(key)).toBe(true);
+		fireEvent.click(screen.getByRole('button', {name: 'Zoom in'}));
+		expect(screen.queryByRole('status')).toBeNull();
+		expect(press('ArrowLeft')).toBe(true);
+		expect(press('ArrowRight')).toBe(true);
+		expect(onNavigate.mock.calls).toEqual([['prev'], ['next']]);
+		expect(press('GoBack')).toBe(true);
+		expect(onClose).toHaveBeenCalledTimes(1);
 	});
 
 	test('the channel keys and the zoom buttons still zoom, with the level', () => {
@@ -290,7 +375,10 @@ describe('a flat photo', () => {
 		);
 		expect(image().getAttribute('src')).toBe('/preview/c');
 		expect(transform()).toBe('');
-		expect(screen.queryByText('125%')).toBeNull();
+		// No zoom level at all, not even 100%, until a zoom key is pressed on it
+		expect(screen.queryByRole('status')).toBeNull();
+		wait(299);
+		expect(screen.queryByRole('status')).toBeNull();
 	});
 });
 
@@ -308,6 +396,12 @@ describe('other items keep their keys', () => {
 		expect(press('Enter')).toBe(true);
 		expect(controlsShown()).toBe(true);
 		fireEvent.click(stage());
+		expect(mockForceFocus).toHaveBeenCalledWith(ZOOM_IN);
+		// The pointer of the Magic Remote too, as before: the controls with Zoom in focused
+		pointerMode.mockReturnValue(true);
+		mockForceFocus.mockClear();
+		fireEvent.click(stage());
+		expect(controlsShown()).toBe(true);
 		expect(mockForceFocus).toHaveBeenCalledWith(ZOOM_IN);
 		expect(screen.queryByText('125%')).toBeNull();
 	});

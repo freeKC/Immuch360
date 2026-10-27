@@ -232,6 +232,16 @@ test('another photo: a wait of its own, its pill after 300 ms', () => {
 	expect(pill()).toBeNull();
 });
 
+test('leaving the viewer while a photo comes leaves no timer behind', () => {
+	const {unmount} = mount();
+	wait(100);
+	// The zoom level's time runs too
+	fireEvent.keyDown(window, {key: 'PageUp', keyCode: 33});
+	expect(jest.getTimerCount()).toBeGreaterThan(0);
+	unmount();
+	expect(jest.getTimerCount()).toBe(0);
+});
+
 test('a video and a 360° photo show no pill', () => {
 	(useAssetRotation as jest.Mock).mockReturnValue({rotation: 0, rotate: jest.fn(), notice: null, phase: 'idle'});
 	const others: TimelineAsset[] = [

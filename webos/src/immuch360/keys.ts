@@ -6,7 +6,7 @@
 //
 // | Remote key              | webOS keyCode (key)            | Samsung keyCode | Action                                     |
 // |-------------------------|--------------------------------|-----------------|--------------------------------------------|
-// | Arrows                  | 37 38 39 40                    | same            | move the focus; viewer: previous and next; photo: Up zooms in, Down out, zoomed in they move it |
+// | Arrows                  | 37 38 39 40                    | same            | move the focus; viewer: previous and next; photo: Up zooms in, zoomed in they move it |
 // | OK                      | 13 (Enter)                     | same            | open; photo: controls, zoom button focused; video: controls |
 // | Back                    | 461 (GoBack), 1536, 8, 10009, 27 | 10009         | close the overlay, then the page           |
 // | Channel up and down     | 33 34 (PageUp, PageDown)       | 427 428         | timeline: a page; viewers: zoom by 1.25    |
@@ -175,7 +175,7 @@ export function playPauseWantsPlay(action: RemoteAction | null, isPlaying: boole
 
 /**
  * The quarter turns a key gives a flat photo: 1 clockwise (yellow, R), -1 counterclockwise (blue, Shift R), null for a
- * key that does not turn it. The arrows never turn it: Up and Down zoom it (photoArrows), and a turn is saved on the
+ * key that does not turn it. The arrows never turn it: Up zooms it (photoArrows), and a turn is saved on the
  * server, which a key pressed by habit must not do.
  */
 export function photoRotationStep(action: RemoteAction | null): 1 | -1 | null {
@@ -196,9 +196,10 @@ export interface PhotoArrows {
 
 /**
  * The arrows on a flat photo (a 360° photo turns with them, src/immuch360/sphere/SphereView.tsx). On the photo, Left and
- * Right go to the previous and next item, Up zooms in at once and Down zooms out (at 1x it only shows the level), as
- * asked on discussion 8; zoomed in, the four arrows move the photo. In the controls' bar, Left and Right move along it,
- * Up goes back to the photo and Down does nothing. OK, not an arrow, brings the controls.
+ * Right go to the previous and next item and Up zooms in at once, as asked on discussion 8 (Down has nothing to zoom
+ * out at 1x: it only shows the level); zoomed in, the four arrows move the photo, and the channel keys or the zoom
+ * buttons zoom further. In the controls' bar, Left and Right move along it, Up goes back to the photo and Down does
+ * nothing. OK, not an arrow, brings the controls.
  */
 export function photoArrows({zoomed, inActionBar}: {zoomed: boolean; inActionBar: boolean}): PhotoArrows {
 	if (inActionBar) return {left: null, right: null, up: 'toStage', down: 'swallow'};

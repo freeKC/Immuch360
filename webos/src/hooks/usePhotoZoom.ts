@@ -1,5 +1,5 @@
-// Immuch360: the zoom of a flat photo in the viewer. Up and Down, the channel keys and the zoom buttons zoom by 1.25 (up
-// to 4 times); once zoomed in, the arrows move the photo instead of going to the next one, and Back zooms out first.
+// Immuch360: the zoom of a flat photo in the viewer. Up, the channel keys and the zoom buttons zoom by 1.25 (up to 4
+// times); once zoomed in, the arrows move the photo instead of going to the next one, and Back zooms out first.
 // Each zoom key or button counts a pulse, which shows the zoom level a moment (src/components/MediaViewer/PhotoStatus.tsx).
 import {useCallback, useState} from 'react';
 import {ZOOM_STEP} from '../immuch360/sphere/rules';
