@@ -1,6 +1,7 @@
-// The 3D versions of a photo of the folder library, and the photo a version was made from, as the details panel of the
-// viewer shows them (design-final 2026-10-26, section 4.2). Everything comes from the files themselves: the scan keeps
-// what the XMP of a version says (library_index.dart), among which the SHA-1 of its original, so a version moved to
+// The versions of a photo of the folder library (a 3D photo, a 3D scene, a 360° panorama, a 360° 3D panorama), and the
+// photo a version was made from, as the details panel of the viewer shows them (design-final 2026-10-26, section 4.2;
+// design-final 2026-10-27, section 8.4). Everything comes from the files themselves: the scan keeps what the XMP of a
+// version says (library_index.dart), its kind and the SHA-1 of its original among the rest, so a version moved to
 // another folder of the library stays linked, a deleted one leaves the index with the next scan, and one on a drive
 // that is not connected is still listed, greyed. Where the sum of the original is not known yet (it is computed for
 // the folders chosen for the backup only), the rule of derived_file_rule.dart falls back to the folder, the name and
@@ -16,21 +17,26 @@ import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('PhotoVersions');
 
-/// A file of the library as the versions section shows it: its name, its folder, whether it can be opened now, and the
-/// asset its thumbnail is read for
+/// A file of the library as the versions section shows it: its name, its folder, what it is, whether it can be opened
+/// now, and the asset its thumbnail is read for
 class VersionFile {
-  const VersionFile({required this.file, this.origin});
+  const VersionFile({required this.file, this.origin, this.kind});
 
   final LibraryFile file;
 
   /// Where its content comes from, for a version; null for an original
   final IndexedOrigin? origin;
+
+  /// What a version is, as its XMP declares it; null for an original, and for a version of a kind this build does not
+  /// know or not read again since the index learnt the kinds
+  final ImmersiveKind? kind;
 
   String get name => file.name;
 
@@ -56,14 +62,14 @@ class VersionFile {
   );
 }
 
-/// What the details of a photo of the library tell of its 3D versions
+/// What the details of a photo of the library tell of its versions
 class PhotoVersions {
   const PhotoVersions({this.versions = const [], this.self, this.original});
 
   /// Nothing to show: no version, and the photo is none
   static const none = PhotoVersions();
 
-  /// The versions of an original, in every folder of the library, those that can be opened first
+  /// The versions of an original of every kind, in every folder of the library, those that can be opened first
   final List<VersionFile> versions;
 
   /// The photo itself when it is a version, null for any other photo
@@ -112,10 +118,10 @@ class PhotoVersionsFinder {
     if (found.isEmpty) {
       return PhotoVersions.none;
     }
-    final origins = {for (final file in found) file.id: file.origin};
+    final indexed = {for (final file in found) file.id: file};
     final versions = [
       for (final file in _library.files(found.map((file) => file.id)))
-        VersionFile(file: file, origin: origins[file.assetId]),
+        VersionFile(file: file, origin: indexed[file.assetId]?.origin, kind: indexed[file.assetId]?.immersiveKind),
     ]..sort(_availableFirst);
     return PhotoVersions(versions: versions);
   }
@@ -154,7 +160,7 @@ class PhotoVersionsFinder {
     if (self == null) {
       return PhotoVersions.none;
     }
-    final selfFile = VersionFile(file: self, origin: version.origin);
+    final selfFile = VersionFile(file: self, origin: version.origin, kind: version.immersiveKind);
     final original = await _originalOf(version, self);
     return PhotoVersions(
       self: selfFile,
