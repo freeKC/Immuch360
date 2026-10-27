@@ -141,6 +141,31 @@ void main() {
     expect(results, isEmpty, reason: 'the sheet stays open');
   });
 
+  testWidgets('Cancel while the runtime ends normally: the model is not started', (tester) async {
+    final finish = Completer<void>();
+    service.onInstall = (component) async {
+      if (component == runtime) {
+        // The download is past the point where a cancel stops it: it ends well all the same
+        await finish.future;
+      }
+    };
+    await pumpOpener(tester, windows);
+
+    await tester.tap(find.byKey(const Key('ai_install_download')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('ai_install_cancel')));
+    await tester.pump();
+    finish.complete();
+    await tester.pumpAndSettle();
+
+    expect(service.installs, [runtime.id], reason: 'the sheet checks Cancel between two components');
+    expect(service.statusOf(runtime).state, AiComponentState.installed);
+    expect(service.statusOf(model).state, AiComponentState.notInstalled);
+    expect(find.byKey(const Key('ai_install_failure')), findsNothing);
+    expect(find.byKey(const Key('ai_install_download')), findsOneWidget);
+    expect(results, isEmpty, reason: 'the sheet stays open');
+  });
+
   testWidgets('a failure is said in words, and Download tries again', (tester) async {
     var attempts = 0;
     service.onInstall = (component) async {
