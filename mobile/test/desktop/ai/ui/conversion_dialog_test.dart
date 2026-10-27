@@ -201,6 +201,23 @@ void main() {
     }
   }
 
+  /// desktop_ai.json as the store gives it once the writes of the page are done. Read in the zone of the test and
+  /// pumped, never inside runAsync: a read waits for the writes queued before it, whose steps only run when the test
+  /// pumps, so a read inside runAsync would wait for ever on a slow machine.
+  Future<DesktopAiSettings> keptSettings(WidgetTester tester) async {
+    DesktopAiSettings? read;
+    Object? failure;
+    unawaited(store.read().then((settings) => read = settings, onError: (Object error) => failure = error));
+    for (var step = 0; step < 500 && read == null && failure == null; step++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    if (failure != null) {
+      fail('desktop_ai.json could not be read: $failure');
+    }
+    return read ?? fail('desktop_ai.json was not read in time');
+  }
+
   /// Taps [finder] once it is scrolled into view
   Future<void> tapIn(WidgetTester tester, Finder finder) async {
     await tester.ensureVisible(finder);
@@ -348,7 +365,7 @@ void main() {
     await settle(tester);
 
     expect(find.byKey(const Key('ai_conversion_network_yes')), findsNothing);
-    expect((await tester.runAsync(store.read))!.networkRootsAllowed, ['net-//nas/photos']);
+    expect((await keptSettings(tester)).networkRootsAllowed, ['net-//nas/photos']);
     expect(files.callsUnder(nas).where((call) => call.startsWith('createNew')), hasLength(1));
     expect(convertEnabled(tester), isTrue);
 
@@ -373,7 +390,7 @@ void main() {
 
     expect(files.callsUnder(nas), isEmpty);
     expect(find.textContaining(chosen), findsOneWidget);
-    expect((await tester.runAsync(store.read))!.networkRootsAllowed, isEmpty);
+    expect((await keptSettings(tester)).networkRootsAllowed, isEmpty);
     expect(convertEnabled(tester), isTrue);
   });
 
@@ -444,7 +461,7 @@ void main() {
     expect(job.existing, ExistingVersionChoice.newVersion);
     expect(job.target!.folder, photos);
     expect(job.target!.fileName, 'salon_3D_LRF_Full_SBS.jpg');
-    expect((await tester.runAsync(store.read))!.skipExisting, isFalse);
+    expect((await keptSettings(tester)).skipExisting, isFalse);
     expect(engine.jobs.single.partPath, probe, reason: 'the job writes the partial file of the check');
     engine.release();
     await settle(tester);
@@ -523,7 +540,7 @@ void main() {
       tester.widget<RadioListTile<AiDestination>>(find.byKey(const Key('ai_conversion_next_to_original'))).enabled,
       isFalse,
     );
-    expect((await tester.runAsync(store.read))!.destination, AiDestination.nextToOriginal, reason: 'kept as chosen');
+    expect((await keptSettings(tester)).destination, AiDestination.nextToOriginal, reason: 'kept as chosen');
   });
 
   testWidgets('a hardware refusal is said in the dialog, and Convert stays off', (tester) async {

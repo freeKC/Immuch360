@@ -4,6 +4,7 @@
 // allowed, each taken back; the backup of the generated photos, which follows their album; the hardware line; and
 // the conversions stopped before the components are removed.
 
+import 'dart:async';
 import 'dart:ffi' show Abi;
 import 'dart:io';
 
@@ -129,6 +130,23 @@ void main() {
     }
   }
 
+  /// desktop_ai.json as the store gives it once the writes of the page are done. Read in the zone of the test and
+  /// pumped, never inside runAsync: a read waits for the writes queued before it, whose steps only run when the test
+  /// pumps, so a read inside runAsync would wait for ever on a slow machine.
+  Future<DesktopAiSettings> keptSettings(WidgetTester tester) async {
+    DesktopAiSettings? read;
+    Object? failure;
+    unawaited(store.read().then((settings) => read = settings, onError: (Object error) => failure = error));
+    for (var step = 0; step < 500 && read == null && failure == null; step++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    if (failure != null) {
+      fail('desktop_ai.json could not be read: $failure');
+    }
+    return read ?? fail('desktop_ai.json was not read in time');
+  }
+
   Future<void> pump(WidgetTester tester, {bool enabled = true, bool? backsUp = false}) async {
     tester.view.physicalSize = const Size(1200, 2400);
     tester.view.devicePixelRatio = 1;
@@ -204,19 +222,19 @@ void main() {
     );
 
     await tapIn(tester, find.byKey(const Key('ai_settings_chosen_folder')));
-    expect((await tester.runAsync(store.read))!.destination, AiDestination.folder);
+    expect((await keptSettings(tester)).destination, AiDestination.folder);
 
     final picked = p.join(root.path, '3D');
     pickers.answer = picked;
     await tapIn(tester, find.byKey(const Key('ai_settings_change_folder')));
-    final kept = (await tester.runAsync(store.read))!;
+    final kept = await keptSettings(tester);
     expect(kept.folder, picked);
     expect(kept.destination, AiDestination.folder);
     expect(find.text(picked), findsOneWidget);
     expect(pickers.asked, ['/home/me/Downloads/Immuch360']);
 
     await tapIn(tester, find.byKey(const Key('ai_settings_next_to_original')));
-    expect((await tester.runAsync(store.read))!.destination, AiDestination.nextToOriginal);
+    expect((await keptSettings(tester)).destination, AiDestination.nextToOriginal);
   });
 
   testWidgets('a 3D photo with the same name, and the photos that already have a 3D version', (tester) async {
@@ -230,7 +248,7 @@ void main() {
     await tapIn(tester, find.byKey(const Key('ai_settings_when_exists_replace')));
     await tapIn(tester, find.byKey(const Key('ai_settings_skip_existing')));
 
-    final kept = (await tester.runAsync(store.read))!;
+    final kept = await keptSettings(tester);
     expect(kept.whenExists, AiWhenExists.replace);
     expect(kept.skipExisting, isFalse);
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('ai_settings_skip_existing'))).value, isFalse);
@@ -247,7 +265,7 @@ void main() {
     expect(find.text('/Volumes/photos'), findsOneWidget);
 
     await tapIn(tester, find.byKey(const ValueKey('ai_settings_network_root_remove_net-//nas/photos:/2024')));
-    expect((await tester.runAsync(store.read))!.networkRootsAllowed, ['mnt-/Volumes/photos']);
+    expect((await keptSettings(tester)).networkRootsAllowed, ['mnt-/Volumes/photos']);
     expect(find.text('//nas/photos/2024'), findsNothing);
   });
 
