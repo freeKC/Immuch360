@@ -266,8 +266,8 @@ const stereoPanoramaNameSuffix = '_360_3D';
 /// What follows the name of a source that already says 360 or pano in the name of its 3D version: "PANO_0001_3D.jpg"
 const stereoOf360NameSuffix = '_3D';
 
-/// The suffixes of the names of the versions of an original, the longest first: a 3D photo, a 3D scene, a 360° 3D
-/// panorama, a 360° panorama and the 3D version of a 360° photo
+/// The suffixes of the names of the versions of an original: a 3D photo, a 360° 3D panorama, a 3D scene, a 360°
+/// panorama and the 3D version of a 360° photo (isDerivedNameCandidate tries each, so their order does not matter)
 const derivedNameSuffixes = [
   sbsFullNameSuffix,
   stereoPanoramaNameSuffix,
