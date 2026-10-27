@@ -1,5 +1,6 @@
 package app.alextran.immich.relief
 
+import app.alextran.immich.BuildConfig
 import com.google.ai.edge.litert.Accelerator
 import com.google.ai.edge.litert.CompiledModel
 import com.google.ai.edge.litert.TensorBuffer
@@ -26,7 +27,11 @@ import java.io.File
 
 /** LiteRT, the engine of the quest flavour */
 object DepthEstimators : DepthEngine {
-  const val LITERT_VERSION = "2.3.0"
+  /**
+   * The version of LiteRT in the APK, from the version catalogue (gradle/libs.versions.toml, through a BuildConfig
+   * field of the quest flavour in build.gradle), so that a LiteRT update is a new engine and gets a new parity check
+   */
+  val LITERT_VERSION: String = BuildConfig.LITERT_VERSION
   const val CPU_THREADS = 4
 
   /** The names of the input and the output of the export (serving_default signature of its model card) */

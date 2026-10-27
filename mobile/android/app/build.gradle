@@ -61,6 +61,9 @@ android {
       targetSdk = 34
       // No TV entry in the Horizon Store build: the headset has no TV launcher and its upload checks are unknown there
       manifestPlaceholders += [tvLauncherCategory: "android.intent.category.DEFAULT"]
+      // The version of LiteRT, the engine of the AI relief, written once in the version catalogue: the parity check
+      // of the GPU keys its decisions on it (relief/DepthEstimators.kt of src/quest)
+      buildConfigField "String", "LITERT_VERSION", "\"${libs.versions.litert.get()}\""
     }
   }
 
