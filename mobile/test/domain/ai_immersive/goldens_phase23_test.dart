@@ -241,11 +241,38 @@ void main() {
 
     test('the EXIF fixes the focal length, and a mismatch over 25 % says fovGuessed', () {
       Map<String, dynamic> named(String name) => cases.firstWhere((entry) => entry['name'] == name);
+      double fov(Map<String, dynamic> entry, double focal) => 2 * math.atan((entry['spanX'] as num) / focal);
 
       _close((named('exif')['exifFocal'] as num).toDouble(), 28 / 21.635, tolerance);
       expect(named('exif')['fovGuessed'], isFalse);
       expect(named('exifMismatch')['fovGuessed'], isTrue);
       expect(named('exact')['fovGuessed'], isTrue, reason: 'no EXIF');
+      // The rule compares focal lengths, against that of the EXIF
+      for (final entry in cases) {
+        final exifFocal = (entry['exifFocal'] as num?)?.toDouble();
+        final focal = (entry['focal'] as num).toDouble();
+
+        expect(
+          entry['fovGuessed'],
+          exifFocal == null || (focal - exifFocal).abs() > SceneV1.fovMismatch * exifFocal,
+          reason: entry['name'] as String,
+        );
+      }
+      // On each side of the threshold, where the wrong rules give the other answer
+      final near = named('exifNear');
+      final far = named('exifFar');
+      final nearFocal = (near['focal'] as num).toDouble();
+      final farFocal = (far['focal'] as num).toDouble();
+      final nearExif = (near['exifFocal'] as num).toDouble();
+      final farExif = (far['exifFocal'] as num).toDouble();
+      expect(near['fovGuessed'], isFalse);
+      expect(far['fovGuessed'], isTrue);
+      expect((nearFocal - nearExif).abs() / nearFocal, greaterThan(SceneV1.fovMismatch), reason: 'over the model');
+      expect(
+        (fov(far, farFocal) - fov(far, farExif)).abs() / fov(far, farExif),
+        lessThan(SceneV1.fovMismatch),
+        reason: 'fields of view',
+      );
       final exif = named('exif');
       final shift = (exif['shiftForExif'] as num).toDouble();
       final focal = (exif['exifFocal'] as num).toDouble();

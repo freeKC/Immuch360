@@ -128,7 +128,8 @@ enum ReliefQualityFlag {
   /// More than 15 % of the photo is sky or has no depth: it stays on a far plane
   sky('sky'),
 
-  /// The field of view was estimated by the model, or the EXIF and the model differ by more than 25 %
+  /// The field of view was estimated by the model: no EXIF, or the focal length of the model differs from that of the
+  /// EXIF by more than 25 % of the latter
   fovGuessed('fovGuessed'),
 
   /// The zone the eye may move in is under 12 cm to each side: the 3D photo may suit the picture better
@@ -433,7 +434,8 @@ abstract final class SceneV1 {
   /// hiddenAreas when the bands cover more than this fraction of the photo
   static const hiddenAreasRatio = 0.08;
 
-  /// fovGuessed when the field of view of the EXIF and that of the model differ by more than this fraction
+  /// fovGuessed when the focal length of the model differs from that of the EXIF by more than this fraction of the
+  /// latter (focal lengths, not fields of view: make_focal_shift_golden.py, step 5)
   static const fovMismatch = 0.25;
 
   /// The grid of points the focal length and the shift are fitted on

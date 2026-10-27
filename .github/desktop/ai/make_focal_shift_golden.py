@@ -25,7 +25,9 @@ reference):
 4. The depth is then z + s (times the metric scale of MoGe-2, outside this reference); the horizontal field of view
    2 * atan(span_x / focal) in degrees; the focal length in pixels of a map W wide, focal * W / (2 * span_x).
 5. From the EXIF: a focal length F35 equivalent to 35 mm (a diagonal of 43.27 mm) gives focal = F35 / 21.635. The flag
-   fovGuessed when the focal of the model and that of the EXIF differ by more than 25 % of the latter, or without EXIF.
+   fovGuessed when |focal of the model - focal of the EXIF| > 0.25 * focal of the EXIF, or without EXIF: focal
+   lengths, not fields of view, and measured against the EXIF (the cases exifNear and exifFar sit on each side of the
+   threshold, where comparing fields of view, or dividing by the focal of the model, gives the other answer).
 
   make_focal_shift_golden.py           writes the fixture
   make_focal_shift_golden.py --check   exit 1 when the fixture differs from what this script writes (a CI step)
@@ -161,6 +163,11 @@ def build() -> dict:
              28 / HALF_DIAGONAL_35MM, 1.5, lambda i, j: 4.0 + 0.2 * math.sin(i) + 0.1 * j, 0.0005, exif35=28.0),
         case("exifMismatch", "a 4:3 frame whose EXIF says 50 mm while the points say a wide lens: fovGuessed", 16, 12,
              0.8, 0.2, lambda i, j: 1.5 + 0.08 * i, 0.0005, exif35=50.0),
+        case("exifNear", "an EXIF of 26 mm, the points a focal length 22 % shorter: within 25 %, not fovGuessed", 16,
+             12, 0.78 * 26 / HALF_DIAGONAL_35MM, 0.3, lambda i, j: 2.5 + 0.06 * i + 0.04 * j, 0.0005, exif35=26.0),
+        case("exifFar", "an EXIF of 26 mm, the points a focal length 28 % longer: fovGuessed, though the fields of "
+             "view differ by less than 25 %", 16, 12, 1.28 * 26 / HALF_DIAGONAL_35MM, 0.3,
+             lambda i, j: 2.5 + 0.06 * i + 0.04 * j, 0.0005, exif35=26.0),
     ]
     return {
         "about": "Made by .github/desktop/ai/make_focal_shift_golden.py, whose header describes the fit. points are x, "
