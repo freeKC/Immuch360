@@ -40,8 +40,9 @@ void main() {
       for (final MapEntry(key: id, value: name) in after.entries)
         if (!before.containsKey(id) && (!Platform.isLinux || name == sessionThreadName)) id,
     };
-    // Intra-op 3: the calling thread and two of the session's own; 1.31.0 starts one more at the first session
-    expect(born.length, inInclusiveRange(intraOp - 1, intraOp + 2));
+    // Intra-op 3: the calling thread and two of the session's own; 1.31.0 starts one more at the first session. Windows
+    // may start threads of its own meanwhile, which it does not name
+    expect(born.length, Platform.isLinux ? inInclusiveRange(intraOp - 1, intraOp) : greaterThanOrEqualTo(intraOp - 1));
     expect(lowered, born.length);
     for (final id in born) {
       expect(system.priorityOf(id), Platform.isWindows ? windowsBelowNormal : linuxComputeNice, reason: 'thread $id');
