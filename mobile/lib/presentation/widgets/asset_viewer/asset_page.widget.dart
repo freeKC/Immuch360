@@ -386,7 +386,8 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       return ProgressiveImage(
         provider: imageProvider,
         builder: (context, provider) => PhotoView.customChild(
-          key: Key(asset.heroTag),
+          // A view of its own per mode: each mode has its own size, which the scale of the view starts from
+          key: Key('${asset.heroTag}_${sbsMode.name}'),
           childSize: desktopSbsShownSize(asset, sbsPhoto, sbsMode),
           onDragStart: _onDragStart,
           onDragUpdate: _onDragUpdate,
