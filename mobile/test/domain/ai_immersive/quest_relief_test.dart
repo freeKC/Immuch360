@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:path/path.dart' as p;
@@ -50,6 +51,18 @@ void main() {
 
       expect(identity, cacheKeys[1]['identity']);
       expect(jsonDecode(relief.toJsonString()), request(1));
+    });
+
+    test('of a photo of the server first shown in 2.5D is the JSON of the contract, with the same cache key', () {
+      final relief = questReliefRequest(
+        modelPath: modelPath,
+        identity: cacheKeys[0]['identity'] as String,
+        quarterTurns: 0,
+        mode: ReliefViewMode.mesh25d,
+      );
+
+      expect(jsonDecode(relief.toJsonString()), request(2));
+      expect(relief.cacheKey, request(0)['cacheKey']);
     });
 
     test('names the model of the Quest by the size and the sum of the catalogue', () {

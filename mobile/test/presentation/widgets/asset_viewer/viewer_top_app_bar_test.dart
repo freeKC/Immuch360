@@ -2978,6 +2978,7 @@ void main() {
         jsonDecode(File('test/fixtures/ai_immersive/stereo_pair_contract_v1.json').readAsStringSync())
             as Map<String, dynamic>;
     final serverPhoto = ((contract['depthRelief'] as List)[0] as Map<String, dynamic>)['request'];
+    final serverPhotoIn25d = ((contract['depthRelief'] as List)[2] as Map<String, dynamic>)['request'];
     late InstalledModelService components;
 
     setUp(() {
@@ -3042,6 +3043,22 @@ void main() {
       expect(labels['ai2dOriginal'], '2D (original)');
       expect(labels['aiReliefEstimated'], 'Relief estimated by AI');
       expect(jsonDecode(captured[3] as String), serverPhoto);
+    });
+
+    testWidgets('asks for 2.5D first when the advanced settings say so, the JSON of the contract', (tester) async {
+      final asset = salon();
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        appConfig: const AppConfig(aiImmersive: AiImmersiveConfig(questMode: ReliefViewMode.mesh25d)),
+        extraOverrides: headset(asset),
+      );
+
+      await tester.tap(reliefButton);
+      await tester.pumpAndSettle();
+
+      expect(jsonDecode(openedWith()[3] as String), serverPhotoIn25d);
     });
 
     testWidgets('keys the relief with the turns the user sees: the rotation saved on the server and the one drawn', (

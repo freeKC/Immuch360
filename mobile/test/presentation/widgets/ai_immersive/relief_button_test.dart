@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
@@ -25,6 +26,7 @@ void main() {
       jsonDecode(File('test/fixtures/ai_immersive/stereo_pair_contract_v1.json').readAsStringSync())
           as Map<String, dynamic>;
   final serverPhoto = ((contract['depthRelief'] as List)[0] as Map<String, dynamic>)['request'];
+  final serverPhotoIn25d = ((contract['depthRelief'] as List)[2] as Map<String, dynamic>)['request'];
 
   late InstalledModelService service;
   late List<StereoPhotoRequest> opened;
@@ -45,12 +47,18 @@ void main() {
     open: (request) async => opened.add(request),
   );
 
-  Future<void> pumpButton(WidgetTester tester, ReliefGate gate, {int quarterTurns = 0}) => tester.pumpConsumerWidget(
+  Future<void> pumpButton(
+    WidgetTester tester,
+    ReliefGate gate, {
+    int quarterTurns = 0,
+    ReliefViewMode mode = ReliefViewMode.stereo,
+  }) => tester.pumpConsumerWidget(
     Scaffold(
       body: Center(
         child: AiReliefButton(
           gate: gate,
           target: target(quarterTurns: quarterTurns),
+          mode: mode,
         ),
       ),
     ),
@@ -101,6 +109,16 @@ void main() {
     expect(opened, hasLength(1));
     expect(jsonOf(opened.single), serverPhoto);
     expect(opened.single, isA<DepthReliefStereoPhotoRequest>());
+  });
+
+  testWidgets('asks for 2.5D first when the setting says so, the same photo and the same cache key', (tester) async {
+    service.setStatus(model, const AiComponentStatus(AiComponentState.installed));
+    await pumpButton(tester, ReliefGate.offered, mode: ReliefViewMode.mesh25d);
+
+    await tester.tap(find.byKey(aiReliefButtonKey));
+    await tester.pumpAndSettle();
+
+    expect(jsonOf(opened.single), serverPhotoIn25d);
   });
 
   testWidgets('keys the relief with the quarter turns the photo is seen with', (tester) async {

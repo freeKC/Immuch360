@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
@@ -31,6 +32,7 @@ import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.da
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
@@ -459,6 +461,10 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final turns = current == null ? 0 : _turnsOf(current);
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
     final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
+    // The view a relief first shows in, read with the gate: a page without the button reads no setting
+    final reliefMode = reliefGate.visible
+        ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode))
+        : ReliefViewMode.stereo;
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -537,6 +543,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                   if (photo != null && reliefGate.visible)
                     AiReliefButton(
                       gate: reliefGate,
+                      mode: reliefMode,
                       target: ReliefTarget(
                         identity: () async => reliefIdentityOfShareFile(
                           sourceId: widget.sourceId,
