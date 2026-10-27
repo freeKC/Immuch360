@@ -517,7 +517,8 @@ void main() {
     }, skip: skipCiScripts);
 
     test('says what is wrong: a component in the release of another family, parts that do not add up, a section', () {
-      var text = File(_catalogue).readAsStringSync();
+      // A checkout on Windows may hold CRLF line ends; the script reads either
+      var text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
       text = text.replaceFirst(
         "  features: {AiFeature.scene},\n  releaseTag: aiComponentsScenesReleaseTag,",
         "  features: {AiFeature.scene},\n  releaseTag: aiComponentsPanoramasReleaseTag,",
@@ -528,6 +529,12 @@ void main() {
       final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
 
       expect(run.exitCode, 1, reason: '$run');
+      expect(
+        text,
+        contains(
+          '  releaseTag: aiComponentsPanoramasReleaseTag,\n  officialUrls: [\n    \'https://huggingface.co/Carve',
+        ),
+      );
       expect(run.output, contains('lama-onnx: in ai-components-3, its family is in ai-components-2'));
       expect(run.output, contains('qwen3-4b-q4_k_m: 2497281312 bytes, so parts of 2039480320 bytes'));
       expect(
