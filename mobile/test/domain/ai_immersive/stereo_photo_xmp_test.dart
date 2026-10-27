@@ -73,6 +73,8 @@ void main() {
 
       expect(read, made);
       expect(read!.sourceName, 'Tom & "Léa" <été>.jpg');
+      // Our reader would read the raw name back too: what other readers need is the escaped form
+      expect(made.toXml(), contains('Immuch360:SourceName="Tom &amp; &quot;Léa&quot; &lt;été&gt;.jpg"'));
       expect(read.sourceQuarterTurns, 1);
       expect(read.qualityFlags, [ReliefQualityFlag.lowRelief, ReliefQualityFlag.dark]);
       expect(made.toXml(), contains('Immuch360:QualityFlags="lowRelief,dark"'));
