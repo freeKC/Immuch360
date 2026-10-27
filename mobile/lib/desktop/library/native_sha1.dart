@@ -16,6 +16,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
@@ -100,6 +101,34 @@ String sha1OfFile(String path, {Sha1Engine? engine, bool Function()? isCancelled
   } finally {
     malloc.free(buffer);
     file.close();
+  }
+}
+
+/// SHA-1 of [bytes] already in memory, in base64: the sum of an original the AI features read whole, checked against
+/// the one taken when the job was queued (lib/desktop/ai/engine/immersive_chain.dart). Copied to the digest by chunks
+/// of [sha1ChunkLength] through one native buffer.
+String sha1OfBytes(Uint8List bytes, {Sha1Engine? engine}) {
+  final length = math.min(sha1ChunkLength, math.max(1, bytes.length));
+  final buffer = malloc<Uint8>(length);
+  try {
+    final digest = (engine ?? Sha1Engine.system()).start();
+    var finished = false;
+    try {
+      final window = buffer.asTypedList(length);
+      for (var at = 0; at < bytes.length; at += length) {
+        final count = math.min(length, bytes.length - at);
+        window.setRange(0, count, bytes, at);
+        digest.update(buffer, count);
+      }
+      finished = true;
+      return base64.encode(digest.finish());
+    } finally {
+      if (!finished) {
+        digest.discard();
+      }
+    }
+  } finally {
+    malloc.free(buffer);
   }
 }
 

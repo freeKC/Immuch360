@@ -50,6 +50,24 @@ void main() {
     }
   });
 
+  test('bytes in memory give the sum of the same file, on every engine and across chunk boundaries', () {
+    final random = Random(20261027);
+    final engines = [Sha1Engine.system(), const DartSha1Engine()];
+    for (final length in [0, 1, 64, sha1ChunkLength - 1, sha1ChunkLength, 2 * sha1ChunkLength + 3]) {
+      final bytes = Uint8List.fromList(List.generate(length, (_) => random.nextInt(256)));
+      final file = write('m$length.bin', bytes);
+      for (final engine in engines) {
+        expect(
+          sha1OfBytes(bytes, engine: engine),
+          sha1OfFile(file.path, engine: engine),
+          reason: '$length bytes',
+        );
+        expect(sha1OfBytes(bytes, engine: engine), reference(bytes), reason: '${engine.name}, $length bytes');
+      }
+    }
+    expect(sha1OfBytes(ascii.encode('abc')), 'qZk+NkcGgWq6PiVxeFDCbJzQ2J0=');
+  });
+
   test('the known answer of "abc", as the phones give it', () {
     final file = write('abc.txt', ascii.encode('abc'));
     expect(sha1OfFile(file.path), 'qZk+NkcGgWq6PiVxeFDCbJzQ2J0=');
