@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
@@ -329,6 +331,9 @@ class _AssetTypeIcons extends StatelessWidget {
         if (asset.isAnimatedImage)
           const Padding(padding: EdgeInsets.only(right: 10.0, top: 6.0), child: _TileOverlayIcon(Icons.gif_rounded)),
         PanoramaBadge(asset: asset),
+        // Immuch360 Desktop: "3D AI" on a photo whose relief was estimated by AI, "3D" on another photo of two eyes
+        // side by side (lib/desktop/ai/library/stereo_badge.dart)
+        if (CurrentPlatform.isDesktop) DesktopStereoBadge(asset: asset),
       ],
     );
   }
