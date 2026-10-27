@@ -1,14 +1,20 @@
 // "AI and 3D" in the This computer settings, with fakes: the switch of the AI features (off, the settings of the
 // conversions hide, the components stay listed so that their space can be freed); where the 3D photos go and Change;
 // what happens when a 3D photo with the same name exists, and the photos that already have one; the network folders
-// allowed, each taken back; the backup of the generated photos, which follows their album; and the hardware line.
+// allowed, each taken back; the backup of the generated photos, which follows their album; the hardware line; and
+// the conversions stopped before the components are removed.
 
 import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
+import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -22,6 +28,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../fakes/fake_immersive_engine.dart';
 
 class _Pickers implements FilePickers {
   String? answer;
@@ -48,6 +55,50 @@ class _NoFiles implements AiComponentFiles {
 
   @override
   AiComponentState stateOf(AiComponent component) => AiComponentState.notInstalled;
+}
+
+/// Every component installed, as files of [folder]
+class _AllFiles implements AiComponentFiles {
+  _AllFiles(this.folder);
+
+  final String folder;
+
+  @override
+  Future<File?> verifiedFile(AiComponent component) async => File(p.join(folder, component.id));
+
+  @override
+  AiComponentState stateOf(AiComponent component) => AiComponentState.installed;
+}
+
+/// The writer of the test: the .part next to the target, renamed onto the final name
+class _Output implements ConversionOutput {
+  @override
+  Future<String> begin(ConversionJob job) async {
+    final target = job.target!;
+    final path = p.join(target.folder, '.${target.fileName}.part');
+    File(path).writeAsBytesSync(const []);
+    return path;
+  }
+
+  @override
+  Future<ConversionSaved> finish(
+    ConversionJob job,
+    String partPath, {
+    required ImmersiveSource original,
+    required AiWhenExists whenExists,
+    String? replaceName,
+  }) async {
+    File(partPath).renameSync(job.target!.path);
+    return ConversionSaved(path: job.target!.path, outcome: ConversionSaveOutcome.saved);
+  }
+
+  @override
+  Future<void> discard(String partPath) async {
+    final file = File(partPath);
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
+  }
 }
 
 void main() {
@@ -123,6 +174,7 @@ void main() {
     expect(find.text('AI features'), findsOneWidget);
     expect(find.text('Off: no AI button anywhere, nothing downloaded'), findsOneWidget);
     expect(find.text('AI components'), findsOneWidget);
+    expect(find.byKey(const Key('ai_components_download')), findsOneWidget);
     expect(find.text('Save to'), findsOneWidget);
 
     await tapIn(tester, find.byKey(const Key('ai_settings_enabled')));
@@ -132,6 +184,7 @@ void main() {
     await pump(tester, enabled: false);
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('ai_settings_enabled'))).value, isFalse);
     expect(find.text('AI components'), findsOneWidget);
+    expect(find.byKey(const Key('ai_components_download')), findsNothing, reason: 'off: nothing downloaded');
     expect(find.text('Save to'), findsNothing);
     expect(find.byKey(const Key('ai_settings_backup_generated')), findsNothing);
   });
@@ -228,6 +281,76 @@ void main() {
       find.text('NVIDIA GeForce RTX 4060 Laptop GPU\nGPU acceleration: not yet, the processor is used'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('removing the components during a conversion: every job cancelled, the wait, then the model let go', (
+    tester,
+  ) async {
+    final photos = Directory(p.join(root.path, 'photos'))..createSync();
+    final held = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    final engine = DesktopAiEngine(
+      gate: HardwareGate(
+        components: _AllFiles(root.path),
+        facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+      ),
+      create: (_) => held,
+    );
+    late WidgetRef widgetRef;
+    await tester.pumpConsumerWidget(
+      Consumer(
+        builder: (context, ref, _) {
+          widgetRef = ref;
+          return const SizedBox.shrink();
+        },
+      ),
+      overrides: [
+        desktopAiEngineProvider.overrideWithValue(engine),
+        conversionToolsProvider.overrideWithValue(
+          ConversionTools(
+            engine: engine,
+            output: _Output(),
+            finder: ExistingVersionFinder(),
+            creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
+          ),
+        ),
+      ],
+    );
+    final container = ProviderScope.containerOf(tester.element(find.byType(Consumer)));
+    ConversionRequest photo(String name) {
+      final path = p.join(photos.path, name);
+      File(path).writeAsBytesSync(List.generate(100, (i) => (i * 7 + name.length) & 0xff));
+      return ConversionRequest(source: LocalFileSource(path), target: ConversionTarget.nextTo(path));
+    }
+
+    container.read(conversionQueueProvider.notifier).add([photo('a.jpg'), photo('b.jpg')]);
+    await settle(tester);
+    expect(engine.isRunning, isTrue, reason: 'a.jpg held in the model');
+
+    var stopped = false;
+    final stopping = stopConversionsForRemoval(
+      widgetRef,
+      wait: const Duration(seconds: 20),
+    ).then((_) => stopped = true);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(container.read(conversionQueueProvider).jobs.last.state, ConversionState.cancelled);
+    expect(stopped, isFalse, reason: 'it waits while the model runs');
+    expect(held.disposed, isFalse, reason: 'the model is never let go under a job');
+
+    held.release();
+    for (var step = 0; step < 20 && !stopped; step++) {
+      await settle(tester);
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    await stopping;
+    expect(stopped, isTrue);
+    expect(engine.isRunning, isFalse);
+    expect(container.read(conversionQueueProvider).jobs.map((job) => job.state), [
+      ConversionState.cancelled,
+      ConversionState.cancelled,
+    ]);
+    expect(held.disposed, isTrue, reason: 'the model let go once nothing ran');
+    expect(photos.listSync().map((entry) => p.basename(entry.path)).toSet(), {'a.jpg', 'b.jpg'});
   });
 
   test('a network folder allowed reads as a path', () {

@@ -26,12 +26,18 @@ final _log = Logger('AiComponentsTile');
 /// what uses them (the conversions on a computer, the relief on the Quest), offered when a removal is refused. Its
 /// future must complete only once nothing uses the components any more (the queue stopped, the ONNX Runtime session
 /// or the relief closed): the tile tries the removal once more right after, and when that try is refused too, it says
-/// the conversion is still stopping and removes nothing.
+/// the conversion is still stopping and removes nothing. [canDownload] false (the AI features off) leaves Remove only.
 class AiComponentsTile extends ConsumerStatefulWidget {
-  const AiComponentsTile({super.key, required this.components, required this.onCancelConversions});
+  const AiComponentsTile({
+    super.key,
+    required this.components,
+    required this.onCancelConversions,
+    this.canDownload = true,
+  });
 
   final List<AiComponent> components;
   final Future<void> Function() onCancelConversions;
+  final bool canDownload;
 
   @override
   ConsumerState<AiComponentsTile> createState() => _AiComponentsTileState();
@@ -148,7 +154,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
                 alignment: WrapAlignment.end,
                 spacing: 8,
                 children: [
-                  if (missing.isNotEmpty)
+                  if (missing.isNotEmpty && widget.canDownload)
                     TextButton(
                       key: const Key('ai_components_download'),
                       onPressed: () => unawaited(_install(missing)),

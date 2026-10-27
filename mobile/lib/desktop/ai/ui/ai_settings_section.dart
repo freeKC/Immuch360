@@ -114,11 +114,13 @@ class DesktopAiSettingsSection extends ConsumerWidget {
           subtitle: Text(t.ai_immersive_enabled_subtitle),
           onChanged: (on) => unawaited(ref.read(aiFeaturesSwitchProvider)(on)),
         ),
-        // The components stay listed with the features off: their space can still be freed
+        // The components stay listed with the features off, so that their space can still be freed; nothing is
+        // downloaded then
         if (platform != null)
           AiComponentsTile(
             components: aiComponentsFor(platform),
             onCancelConversions: () => stopConversionsForRemoval(ref),
+            canDownload: enabled,
           )
         else
           ListTile(title: Text(t.ai_immersive_unavailable_system, style: secondary)),
