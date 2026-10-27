@@ -24,7 +24,9 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
+import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
@@ -394,6 +396,17 @@ void main() {
     expect(convertEnabled(tester), isTrue);
   });
 
+  testWidgets('a 3D scene of the library is skipped as a version the app made, in its words', (tester) async {
+    original('salon.jpg');
+    facts['salon_scene3D.jpg'] = const ConversionPhotoFacts(
+      version: (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene),
+    );
+    await openDialog(tester, [_photo('salon.jpg'), _photo('salon_scene3D.jpg')]);
+
+    expect(find.text('Skipped (1)'), findsOneWidget);
+    expect(find.text('salon_scene3D.jpg: Already an AI version'), findsOneWidget);
+  });
+
   testWidgets('the photos skipped are listed with why, and reach the queue skipped', (tester) async {
     original('salon.jpg');
     facts['sphere.jpg'] = const ConversionPhotoFacts(isPanorama: true);
@@ -566,5 +579,126 @@ void main() {
       ConversionSkipReason.unreadableFormat,
     );
     expect(conversionSkipOf(_photo('IMG_1.HEIC'), const ConversionPhotoFacts(), linux: false), isNull);
+  });
+
+  group('the photos each type takes', () {
+    const flatKinds = [ConversionKind.sbsFromPhoto, ConversionKind.sceneFromPhoto, ConversionKind.panoramaFromPhoto];
+    const ofPanorama = ConversionKind.stereoPanoramaFromPanorama;
+    const generatedPanorama = (origin: IndexedOrigin.generated, kind: ImmersiveKind.panorama360);
+    final sphere = _photo('trip.jpg', width: 8000, height: 4000);
+
+    test('a flat photo makes a 3D photo, a 3D scene or a panorama, never the 3D version of a 360° photo', () {
+      final photo = _photo('salon.jpg');
+      for (final kind in flatKinds) {
+        expect(conversionSkipOf(photo, const ConversionPhotoFacts(), kind: kind), isNull, reason: kind.name);
+      }
+      expect(conversionSkipOf(photo, const ConversionPhotoFacts(), kind: ofPanorama), ConversionSkipReason.notSphere);
+    });
+
+    test('a 360° photo that holds one eye makes its 3D version, and nothing made from a flat photo', () {
+      const facts = ConversionPhotoFacts(isPanorama: true);
+      expect(conversionSkipOf(sphere, facts, kind: ofPanorama), isNull);
+      for (final kind in flatKinds) {
+        expect(conversionSkipOf(sphere, facts, kind: kind), ConversionSkipReason.sphere360, reason: kind.name);
+      }
+      // A panorama the app generated too
+      expect(
+        conversionSkipOf(
+          sphere,
+          const ConversionPhotoFacts(isPanorama: true, version: generatedPanorama),
+          kind: ofPanorama,
+        ),
+        isNull,
+      );
+      // The size not known yet: the engine checks the picture it decodes
+      expect(
+        conversionSkipOf(
+          LocalAsset(
+            id: 'unsized',
+            name: 'trip.jpg',
+            type: AssetType.image,
+            createdAt: DateTime(2026),
+            updatedAt: DateTime(2026),
+            playbackStyle: AssetPlaybackStyle.image,
+            isEdited: false,
+          ),
+          facts,
+          kind: ofPanorama,
+        ),
+        isNull,
+      );
+    });
+
+    test('the 3D version of a 360° photo is refused to a 3D, VR180, raw or partial one, and to our other versions', () {
+      const facts = ConversionPhotoFacts(isPanorama: true);
+      // Two eyes stacked or side by side in the frame, a 360° 3D panorama the app made
+      expect(
+        conversionSkipOf(_photo('tb.jpg', width: 4096, height: 4096), facts, kind: ofPanorama),
+        ConversionSkipReason.alreadyStereo,
+      );
+      expect(
+        conversionSkipOf(_photo('lr.jpg', width: 8192, height: 2048), facts, kind: ofPanorama),
+        ConversionSkipReason.alreadyStereo,
+      );
+      expect(
+        conversionSkipOf(
+          sphere,
+          const ConversionPhotoFacts(
+            isPanorama: true,
+            isStereo: true,
+            version: (origin: IndexedOrigin.generated, kind: ImmersiveKind.stereoPanorama360),
+          ),
+          kind: ofPanorama,
+        ),
+        ConversionSkipReason.alreadyStereo,
+      );
+      expect(
+        conversionSkipOf(_photo('trip_180.jpg', width: 8000, height: 4000), facts, kind: ofPanorama),
+        ConversionSkipReason.vr180,
+      );
+      expect(
+        conversionSkipOf(sphere, const ConversionPhotoFacts(isPanorama: true, isRaw360: true), kind: ofPanorama),
+        ConversionSkipReason.unreadableFormat,
+      );
+      expect(
+        conversionSkipOf(_photo('crop.jpg', width: 8000, height: 2500), facts, kind: ofPanorama),
+        ConversionSkipReason.notSphere,
+      );
+      expect(
+        conversionSkipOf(
+          sphere,
+          const ConversionPhotoFacts(
+            isPanorama: true,
+            version: (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene),
+          ),
+          kind: ofPanorama,
+        ),
+        ConversionSkipReason.alreadyVersion,
+      );
+      expect(conversionSkipOf(sphere, facts, kind: ofPanorama, linux: true), isNull, reason: 'a JPEG reads everywhere');
+    });
+
+    test('a version the app made is never made into a flat kind again, two eyes or not', () {
+      final scene = _photo('salon_scene3D.jpg');
+      const sceneFacts = ConversionPhotoFacts(
+        version: (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene),
+      );
+      for (final kind in flatKinds) {
+        expect(conversionSkipOf(scene, sceneFacts, kind: kind), ConversionSkipReason.alreadyVersion, reason: kind.name);
+        expect(
+          conversionSkipOf(scene, const ConversionPhotoFacts(isStereo: true), kind: kind),
+          ConversionSkipReason.alreadyStereo,
+          reason: kind.name,
+        );
+      }
+    });
+
+    test('our versions that hold two eyes, and those of a kind this build does not know', () {
+      expect(versionHoldsTwoEyes((origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)), isTrue);
+      expect(versionHoldsTwoEyes((origin: IndexedOrigin.generated, kind: ImmersiveKind.stereoPanorama360)), isTrue);
+      expect(versionHoldsTwoEyes((origin: IndexedOrigin.other, kind: null)), isTrue);
+      expect(versionHoldsTwoEyes(generatedPanorama), isFalse);
+      expect(versionHoldsTwoEyes((origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene)), isFalse);
+    });
   });
 }
