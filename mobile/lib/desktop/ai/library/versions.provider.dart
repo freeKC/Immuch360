@@ -14,6 +14,7 @@ import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -77,12 +78,16 @@ class PhotoVersions {
 /// Reads the head of the file at a path for its XMP, null when it cannot be read
 typedef VersionHeadReader = Future<Uint8List?> Function(String path);
 
-/// Finds the versions of a photo of [_library], and the original of a version
+/// Finds the versions of a photo of [_library], and the original of a version. [attributes] tells a file kept online
+/// only (Windows); the system's reader by default.
 class PhotoVersionsFinder {
-  PhotoVersionsFinder(this._library, {VersionHeadReader? readHead}) : _readHead = readHead ?? readFileHead;
+  PhotoVersionsFinder(this._library, {VersionHeadReader? readHead, FileAttributesReader? attributes})
+    : _readHead = readHead ?? readFileHead,
+      _readAttributes = attributes;
 
   final FolderLibrary _library;
   final VersionHeadReader _readHead;
+  final FileAttributesReader? _readAttributes;
 
   LibraryIndex get _index => _library.index;
 
@@ -119,15 +124,16 @@ class PhotoVersionsFinder {
   Future<List<IndexedFile>> _byName(IndexedFile original) async {
     final candidates =
         _index
-            .filesOfAlbum(original.albumId)
-            .where((file) => file.isGenerated && isDerivedNameCandidate(original.name, file.name))
+            .generatedFilesOfAlbum(original.albumId)
+            .where((file) => isDerivedNameCandidate(original.name, file.name))
             .toList()
           ..sort((a, b) => a.name.compareTo(b.name));
     final rule = DerivedRuleOriginal(name: original.name, size: original.size, folder: original.albumId);
     final read = candidates.take(maxDerivedCandidates).toList();
+    // A file kept online only since the last scan is not opened: its client would download it
     final paths = {
       for (final file in _library.files(read.map((file) => file.id)))
-        if (file.readable) file.assetId: file.path,
+        if (file.readable && !isCloudPlaceholderFile(file.path, reader: _readAttributes)) file.assetId: file.path,
     };
     final found = <IndexedFile>[];
     for (final candidate in read) {

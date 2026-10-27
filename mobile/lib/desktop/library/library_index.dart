@@ -675,6 +675,10 @@ class LibraryIndex {
 
   List<String> fileIdsOfAlbum(String albumId) => _shownIds('album_id = ?', [albumId]);
 
+  /// The files of [albumId] Immuch360 made; the other files of the folder are not loaded
+  List<IndexedFile> generatedFilesOfAlbum(String albumId) =>
+      _shownFiles('album_id = ? AND origin IS NOT NULL', [albumId], null);
+
   /// Files of [albumId] the index first saw after [seconds]
   int countAddedSince(String albumId, int seconds) => _countAddedSince('album_id = ?', [albumId], seconds);
 

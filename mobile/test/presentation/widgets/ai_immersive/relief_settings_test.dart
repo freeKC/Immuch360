@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
@@ -134,8 +135,12 @@ void main() {
     await scrollTo(tester, meshSwitch);
 
     expect(find.text('Open AI reliefs in 2.5D (experimental)'), findsOneWidget);
+    // A mesh of one layer: what a near object hides is never shown, the text promises no look behind it
     expect(
-      find.text('Move your head to see around the objects. Off: they open in 3D. The 3D button switches at any time.'),
+      find.text(
+        'The relief follows your head: near objects move in front of the background. '
+        'Off: they open in 3D. The 3D button switches at any time.',
+      ),
       findsOneWidget,
     );
     expect(tester.widget<SwitchListTile>(meshSwitch).value, isFalse);
@@ -205,6 +210,22 @@ void main() {
     expect(components.installs, isEmpty, reason: 'nothing is downloaded from the settings by themselves');
   });
 
+  testWidgets('with the AI features off, the components offer no Download, and are still listed for Remove', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    await scrollTo(tester, find.byType(AiComponentsTile));
+    expect(find.byKey(const Key('ai_components_download')), findsOneWidget);
+
+    await scrollTo(tester, aiSwitch);
+    await tester.tap(aiSwitch);
+    await tester.pumpAndSettle();
+    await scrollTo(tester, find.byType(AiComponentsTile));
+
+    expect(find.byKey(const Key('ai_components_download')), findsNothing, reason: 'off: nothing downloaded');
+    expect(find.text('Depth Anything V2 Small'), findsOneWidget);
+  });
+
   testWidgets('the APK of the phone flavour on a headset: the switches, no cache, no components', (tester) async {
     await pumpSettings(tester, flavor: 'phone');
     await scrollTo(tester, olderSwitch);
@@ -213,6 +234,24 @@ void main() {
     expect(meshSwitch, findsNothing);
     expect(cacheTile, findsNothing);
     expect(find.byType(AiComponentsTile), findsNothing);
+  });
+
+  test('the relief cache of the app is ai-relief in its temporary folder, where the immersive viewer writes', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
+    final temporary = Directory.systemTemp.createTempSync('ai_relief_temporary_');
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    // The temporary folder only: another folder of path_provider would be a different place
+    messenger.setMockMethodCallHandler(
+      pathProvider,
+      (call) async => call.method == 'getTemporaryDirectory' ? temporary.path : p.join(temporary.path, 'other'),
+    );
+    addTearDown(() {
+      messenger.setMockMethodCallHandler(pathProvider, null);
+      temporary.deleteSync(recursive: true);
+    });
+
+    expect((await appReliefCacheFolder()).path, p.join(temporary.path, 'ai-relief'));
   });
 
   testWidgets('off Horizon OS, nothing of it', (tester) async {

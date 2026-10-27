@@ -2,8 +2,8 @@
 // and 4.5), translated here and sent with the other labels of the immersive viewer when a photo opens on the quad
 // (see stereoPhotoViewerLabels): the 2D button of a photo whose left eye is the original itself, the honesty label of
 // a relief estimated by AI, what previous and next say on such a photo, and for a relief the headset makes, its
-// stages, its Stop relief button, why it left a photo flat and its 2.5D view on the 3D button. The viewer has their English texts for a key it does
-// not get (StereoComposer.label), and puts the message of a failure where {reason} is.
+// stages, its Stop relief button, why it left a photo flat and its 2.5D view on the 3D button. The viewer has their
+// English texts for a key it does not get (StereoComposer.label), and puts the message of a failure where {reason} is.
 
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/generated/translations.g.dart';

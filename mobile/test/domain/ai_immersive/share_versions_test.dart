@@ -1,6 +1,7 @@
 // The 3D versions of a photo of a share, found among its neighbours by the name, the SourceName and the SourceSize of
 // their XMP (design-final 2026-10-26, sections 3.8 and 4.2).
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -93,6 +94,22 @@ void main() {
     expect(versions, isEmpty);
   });
 
+  test('a file beside a version that copies its XMP, a sidecar, is no version: only pictures are', () async {
+    // digiKam writes salon_3D_LRF_Full_SBS.jpg.xmp, with our XMP kept, after the version
+    files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = version();
+    files['/Photos/salon_3D_LRF_Full_SBS.jpg.xmp'] = Uint8List.fromList(utf8.encode(ourXmp().toXml()));
+    final neighbours = [
+      original,
+      file('/Photos/salon_3D_LRF_Full_SBS.jpg', modified: DateTime.utc(2026, 10, 27, 10)),
+      file('/Photos/salon_3D_LRF_Full_SBS.jpg.xmp', modified: DateTime.utc(2026, 10, 27, 11)),
+    ];
+
+    final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
+
+    expect(versions.map((v) => v.entry.name), ['salon_3D_LRF_Full_SBS.jpg']);
+    expect(reads, isNot(contains('/Photos/salon_3D_LRF_Full_SBS.jpg.xmp')));
+  });
+
   test('reads five neighbours at most, 128 KiB each', () async {
     final lengths = <int>[];
     final names = [for (var i = 1; i <= 7; i++) '/Photos/salon_3D_LRF_Full_SBS ($i).jpg'];
@@ -113,6 +130,25 @@ void main() {
     expect(versions, hasLength(5));
     expect(lengths, everyElement(shareVersionHeadLength));
     expect(shareVersionHeadLength, 128 * 1024);
+  });
+
+  test('with more versions than it reads, reads the newest: the cap of five comes after the order by date', () async {
+    // Listed in the order of the names, where the plain name comes after (1) to (5): it is the newest
+    final names = [for (var i = 1; i <= 5; i++) 'salon_3D_LRF_Full_SBS ($i).jpg', 'salon_3D_LRF_Full_SBS.jpg'];
+    for (final name in names) {
+      files['/Photos/$name'] = version();
+    }
+    final neighbours = [
+      original,
+      for (var i = 0; i < 5; i++) file('/Photos/${names[i]}', modified: DateTime.utc(2026, 10, i + 1)),
+      file('/Photos/${names[5]}', modified: DateTime.utc(2026, 10, 27)),
+    ];
+
+    final versions = await findShareVersions(original, neighbours, readerOf: readerOf);
+
+    expect(versions.first.entry.name, 'salon_3D_LRF_Full_SBS.jpg');
+    expect(versions, hasLength(5));
+    expect(reads, isNot(contains('/Photos/salon_3D_LRF_Full_SBS (1).jpg')), reason: 'the oldest is the one left');
   });
 
   test('looks in the folder of the original only', () async {

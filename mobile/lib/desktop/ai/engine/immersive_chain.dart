@@ -265,6 +265,8 @@ class _Run {
       _lowered = openWithLowThreads(chain.backend, chain.priority);
       map = chain.backend.estimate(input.nchw);
     } on DepthBackendException catch (error) {
+      // A run that failed once the session was open: its memory is given back now, not at the next job
+      chain.closeSession();
       throw _Stop(ImmersiveErrorCode.modelFailed, error.message);
     }
     chain._sessionOpen = true;
@@ -520,7 +522,7 @@ ImmersiveExif mergedExif(ImmersiveExif job, ImmersiveExif original) {
   );
 }
 
-/// The pair of [eye]: twice its width, the eye on the left, the right half to be written (opaque black until then)
+/// The pair of [eye]: twice its width, the eye on the left, the right half to be written (transparent zeros until then)
 Uint8List pairWithLeftEye(SbsDecoded eye) {
   final width = eye.width;
   final rowBytes = 4 * width;

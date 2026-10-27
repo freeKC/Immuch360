@@ -73,6 +73,8 @@ void main() {
 
       expect(read, made);
       expect(read!.sourceName, 'Tom & "Léa" <été>.jpg');
+      // Our reader would read the raw name back too: what other readers need is the escaped form
+      expect(made.toXml(), contains('Immuch360:SourceName="Tom &amp; &quot;Léa&quot; &lt;été&gt;.jpg"'));
       expect(read.sourceQuarterTurns, 1);
       expect(read.qualityFlags, [ReliefQualityFlag.lowRelief, ReliefQualityFlag.dark]);
       expect(made.toXml(), contains('Immuch360:QualityFlags="lowRelief,dark"'));
@@ -107,6 +109,29 @@ void main() {
       expect(read.sourceName, 'a=b=.jpg');
       expect(read.sourceQuarterTurns, 1);
       expect(fixture, isNot(matches(closingAfterEquals)));
+    });
+
+    test('a control character of a file name is written as U+FFFD, which XML 1.0 can hold', () {
+      // A Linux name may hold one. Raw, or even as a reference, it makes the packet invalid XML, which ExifTool or
+      // Immich would refuse whole, the description included. Tab, line feed and carriage return are allowed.
+      final made = StereoPhotoXmp.estimated(
+        eyeWidth: 1,
+        eyeHeight: 1,
+        depthModelSha256: depthModelOnnxSha256,
+        sourceName: 'a\u0001b\u001F\tc.jpg',
+        sourceSize: 1,
+        sourceSha1: 'AAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+        sourceQuarterTurns: 0,
+        created: '2026-10-27T10:12:00+01:00',
+        creatorTool: 'Immuch360 Desktop',
+      );
+
+      final packet = made.toXml();
+
+      expect(packet, isNot(matches(RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F]'))));
+      expect(packet, contains('Immuch360:SourceName="a\uFFFDb\uFFFD&#x9;c.jpg"'));
+      expect(StereoPhotoXmp.parse(packet)!.sourceName, 'a\uFFFDb\uFFFD\tc.jpg');
+      expect(xmpSafeText('a\u0000b\nc\rd'), 'a\uFFFDb\nc\rd');
     });
 
     test('two packets made by the app have two derivative ids', () {

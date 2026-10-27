@@ -410,9 +410,16 @@ String? _descriptionOf(String xmp, String prefix) {
   return _unescape(preferred.group(2)!);
 }
 
+final _notInXml = RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F]');
+
+/// [value] as an XMP packet can hold it. A control character other than tab, line feed and carriage return has no
+/// place in XML 1.0, not even as a reference: it is written as U+FFFD, and a packet that held one raw would be refused
+/// whole by ExifTool or Immich. A name read from a packet is compared with a file name in this form.
+String xmpSafeText(String value) => value.replaceAll(_notInXml, '\uFFFD');
+
 // = is written as &#x3D;: ExifTool reads a value that ends with = (every SHA-1 in base64 does) as the start of another
 // attribute, and loses that field and the next one. An XML reader, ours included, reads the same character.
-String _escape(String value) => value
+String _escape(String value) => xmpSafeText(value)
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')

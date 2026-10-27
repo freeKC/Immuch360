@@ -2127,7 +2127,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           ensureActive()
           val source = if (result.fromCache) "the cache" else "the model on ${result.path}"
           val made = mesh?.let { "${it.columns}x${it.rows} mesh" } ?: "no mesh"
-          Log.i(TAG, "relief shown in ${if (stereo25d) "2.5D" else "3D"}, depth map from $source, $made")
+          // 2.5D only with its mesh and a scene ready for it: the quad shows the 3D otherwise
+          val shownIn = if (stereo25d && mesh != null && reliefMeshReady) "2.5D" else "3D"
+          Log.i(TAG, "relief shown in $shownIn, depth map from $source, $made")
           reliefMesh = mesh
           reliefMeshWritten = false
           reliefAttenuation = 1.0
@@ -2373,6 +2375,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val mode = if (view == StereoView.THREE_D) StereoMode.LeftRight else StereoMode.MonoLeft
     stereoQuadMaterial?.setStereoMode(mode)
     if (view == StereoView.MESH_25D) showReliefMesh() else reliefMeshEntity?.setComponent(Visible(false))
+    // A mesh the SDK could not write went back to 3D, whose mode the call within writeReliefMesh set and said
+    if (stereoView() != view) return
     val backdrop = if (view == StereoView.MESH_25D) ", backdrop of the 2.5D mesh" else ""
     Log.i(TAG, "stereo quad mode is now $mode$backdrop")
   }
@@ -2396,8 +2400,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val next = StereoComposer.nextView(stereoView(), meshAvailable = reliefMesh != null && reliefMeshReady)
     stereo3d = next != StereoView.TWO_D
     stereo25d = next == StereoView.MESH_25D
-    // A new 2.5D view starts from where the head is: the whole relief, faded as the head moves away
-    if (next == StereoView.MESH_25D) reliefAttenuation = 1.0
+    // The mesh is exact from the pose the quad was placed at, not from where the head is now: showReliefMesh fades the
+    // relief with the distance of the head from that pose (ReliefMesh.attenuation), flat from FLAT_M away
     applyStereoMode()
     applyStereoPlacement()
     updateStereoView()

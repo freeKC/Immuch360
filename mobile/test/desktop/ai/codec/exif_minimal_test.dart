@@ -107,6 +107,12 @@ void main() {
       for (final word in [camera['make'], camera['model'], camera['software']].cast<String>()) {
         expect(latin1.decode(written).contains(word), isFalse, reason: word);
       }
+      // Written back south and west, as another reader and ours read it
+      final reread = readByPackageImage(written);
+      expect(reread.gpsIfd.gpsLatitudeRef, 'S');
+      expect(reread.gpsIfd.gpsLongitudeRef, 'W');
+      expect(keptExif(written, software: 'again').latitude, closeTo(camera['latitude'] as double, 1e-7));
+      expect(keptExif(written, software: 'again').longitude, closeTo(camera['longitude'] as double, 1e-7));
     });
 
     test('the orientation of each fixture, 1 when absent or unreadable', () {

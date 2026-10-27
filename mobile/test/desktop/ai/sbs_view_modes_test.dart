@@ -59,6 +59,20 @@ class _ReadyImage extends ImageProvider<_ReadyImage> {
       OneFrameImageStreamCompleter(SynchronousFuture(ImageInfo(image: image.clone())));
 }
 
+Widget _thumbnail(BuildContext context) => const Text('thumbnail');
+
+/// A file that cannot be read as a picture
+class _BrokenImage extends ImageProvider<_BrokenImage> {
+  const _BrokenImage();
+
+  @override
+  Future<_BrokenImage> obtainKey(ImageConfiguration configuration) => SynchronousFuture(this);
+
+  @override
+  ImageStreamCompleter loadImage(_BrokenImage key, ImageDecoderCallback decode) =>
+      OneFrameImageStreamCompleter(Future<ImageInfo>.error(const FormatException('Invalid image data')));
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -199,6 +213,27 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       expect(painterOf(tester).showRight, isFalse);
       expect(painterOf(tester).mode, SbsViewMode.leftEye);
+    });
+
+    testWidgets('a file that cannot be read shows what the page gives for it, without an unhandled error', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: SbsPhotoView(
+            image: _BrokenImage(),
+            photo: FlatStereoPhoto(eyes: StereoEyes.full),
+            mode: SbsViewMode.leftEye,
+            errorBuilder: _thumbnail,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('sbs_photo_view')), findsNothing);
+      expect(find.text('thumbnail'), findsOneWidget);
     });
 
     testWidgets('no timer is left once the view is gone', (tester) async {

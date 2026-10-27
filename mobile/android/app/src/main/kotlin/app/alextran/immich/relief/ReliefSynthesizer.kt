@@ -291,13 +291,19 @@ object ReliefSynthesizer {
       write.write(y, row.out)
     }
     val meanLuma = luma / (width.toLong() * height)
-    val flags = buildList {
+    return RightEye(filled, meanLuma, flags(lowRelief, filled, width, height, meanLuma))
+  }
+
+  /**
+   * The flags of step 8 in their order: [lowRelief] from step 1, hiddenAreas past 5 % of the pixels filled (not at
+   * 5 %), dark under a mean luma of 20 (not at 20), as reliefFlags does on the computers (relief_flags.dart)
+   */
+  fun flags(lowRelief: Boolean, filledPixels: Int, width: Int, height: Int, meanLuma: Double): List<ReliefFlag> =
+    buildList {
       if (lowRelief) add(ReliefFlag.LOW_RELIEF)
-      if (filled > ReliefV1.HIDDEN_AREAS_RATIO * width * height) add(ReliefFlag.HIDDEN_AREAS)
+      if (filledPixels > ReliefV1.HIDDEN_AREAS_RATIO * width * height) add(ReliefFlag.HIDDEN_AREAS)
       if (meanLuma < ReliefV1.DARK_LUMA) add(ReliefFlag.DARK)
     }
-    return RightEye(filled, meanLuma, flags)
-  }
 
   /** The buffers of one row of the right eye, reused from row to row */
   private class RowWork(private val width: Int) {

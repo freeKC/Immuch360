@@ -299,6 +299,37 @@ class ReliefJobTest {
   }
 
   @Test
+  fun `the parallax and the convergence of the request reach the right eye`() {
+    val job = job()
+    val photo = FakePhoto(64, 48)
+    val map = ReliefMap(16, 12, ShortArray(16 * 12) { i -> ((i % 16) * 4000).toShort() })
+    assertNotNull(cache.write(KEY, map))
+
+    for ((parallax, convergence) in listOf(0.06 to ReliefV1.CONVERGENCE, ReliefV1.PARALLAX to 0.3)) {
+      val recorder = Recorder()
+      start(job, photo, recorder, ReliefRequest(model, MODEL_SIZE, MODEL_ID, KEY, parallax, convergence))
+      worker.runDue()
+
+      val eye = recorder.done.single().eye.pixels
+      val expected = IntArray(photo.width * photo.height)
+      ReliefSynthesizer.rightEye(
+        photo.pixels,
+        photo.width,
+        photo.height,
+        map.toNormalized(),
+        map.width,
+        map.height,
+        expected,
+        parallax = parallax,
+        convergence = convergence,
+      )
+      assertArrayEquals("$parallax, $convergence", expected, eye)
+      // Not the eye of the default settings
+      assertFalse("$parallax, $convergence", expectedEye(photo, map).contentEquals(eye))
+    }
+  }
+
+  @Test
   fun `the second look at a photo comes from the cache with the same right eye`() {
     val job = job()
     val first = Recorder()
@@ -346,6 +377,35 @@ class ReliefJobTest {
     assertEquals(ReliefStop.FAILED, recorder.flat.single().first)
     assertEquals(1, photo.released)
     assertTrue(recorder.done.isEmpty())
+  }
+
+  @Test
+  fun `out of memory during a pass leaves the photo flat for the memory`() {
+    val job = job()
+    val photo = FakePhoto(64, 48)
+    val recorder = Recorder()
+    engine.duringPass = { throw OutOfMemoryError("test") }
+
+    start(job, photo, recorder)
+    worker.runDue()
+
+    assertEquals(listOf(ReliefStop.NOT_ENOUGH_MEMORY to ""), recorder.flat)
+    assertTrue(recorder.done.isEmpty())
+    assertEquals(1, photo.released)
+  }
+
+  @Test
+  fun `the message of a failure is cut to 120 characters for the status line`() {
+    val job = job()
+    val recorder = Recorder()
+    engine.duringPass = { path -> throw DepthEstimatorException(DepthFailure.RUN_FAILED, path, "x".repeat(300)) }
+
+    start(job, FakePhoto(64, 48), recorder)
+    worker.runDue()
+
+    val (reason, detail) = recorder.flat.single()
+    assertEquals(ReliefStop.FAILED, reason)
+    assertEquals("x".repeat(120), detail)
   }
 
   @Test
@@ -448,6 +508,24 @@ class ReliefJobTest {
     assertEquals(listOf(ReliefStage.PREPARING, ReliefStage.ESTIMATING), recorder.stages)
     assertTrue(eyes.isEmpty())
     assertNull(cache.read(KEY))
+    assertEquals(1, photo.released)
+  }
+
+  @Test
+  fun `a pass that fails after Stop relief says nothing more than the stop`() {
+    val job = job()
+    val photo = FakePhoto(64, 48)
+    val recorder = Recorder()
+    lateinit var run: ReliefRun
+    engine.duringPass = { job.stop(run) }
+    engine.runFailure = DepthFailure.RUN_FAILED
+
+    run = start(job, photo, recorder)
+    worker.runDue()
+
+    // The user asked for the stop: "The relief failed" would not be the answer
+    assertEquals(listOf(ReliefStop.STOPPED to ""), recorder.flat)
+    assertTrue(recorder.done.isEmpty())
     assertEquals(1, photo.released)
   }
 

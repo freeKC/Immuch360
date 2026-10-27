@@ -252,6 +252,36 @@ class ReliefSynthesizerTest {
   }
 
   @Test
+  fun `two neighbours within the link threshold of 4 hundredths are linked, and open beyond it`() {
+    // The cases of right_eye_test.dart on the computers: 100 near pixels then 100 far ones, c = 0. The dilation of
+    // the map makes the near part 102 pixels wide here (Dart gets the map dilated already): they move left by 100 d,
+    // the far ones stay, and the step between columns 101 and 102 is linked or opens 4 holes.
+    val width = 200
+    val left = IntArray(width) { x -> GoldenCase.argb(x % 256, 3 * x % 256, 255 - x % 256) }
+    for ((near, holesWanted) in listOf(0.04 to 0, 0.0375 to 0, 0.0425 to 4, 0.0401 to 4)) {
+      val map = DoubleArray(width) { x -> if (x < 100) near else 0.0 }
+      val out = IntArray(width)
+      val mask = BooleanArray(width)
+      val eye =
+        ReliefSynthesizer.rightEye(
+          left,
+          width,
+          1,
+          map,
+          width,
+          1,
+          out,
+          parallax = 0.5,
+          convergence = 0.0,
+          holes = { _, row -> row.copyInto(mask) },
+        )
+      assertEquals("near at $near", holesWanted, eye.filledPixels)
+      val wanted = if (holesWanted > 0) listOf(98, 99, 100, 101) else emptyList()
+      assertEquals("near at $near", wanted, (0 until width).filter { mask[it] })
+    }
+  }
+
+  @Test
   fun `a row where nothing lands is black`() {
     val width = 10
     val left = IntArray(width * 2) { GoldenCase.argb(200, 100, 50) }
@@ -271,6 +301,29 @@ class ReliefSynthesizerTest {
     assertEquals(1.0, ReliefSynthesizer.percentile(ten, 2), 0.0)
     assertEquals(10.0, ReliefSynthesizer.percentile(ten, 98), 0.0)
     assertEquals(7.0, ReliefSynthesizer.percentile(doubleArrayOf(7.0), 98), 0.0)
+  }
+
+  @Test
+  fun `low relief is a spread under a tenth of p98, not at a tenth`() {
+    // p2 = 9 and p98 = 10 on two values: a spread of exactly 0.1 x p98
+    assertFalse(ReliefSynthesizer.normalize(doubleArrayOf(9.0, 10.0), 2, 1).lowRelief)
+    assertTrue(ReliefSynthesizer.normalize(doubleArrayOf(9.0, 9.99), 2, 1).lowRelief)
+  }
+
+  @Test
+  fun `the flags say hidden areas past 5 percent filled and dark under a luma of 20, in their order`() {
+    // The cases of relief_flags_test.dart on the computers, on 100 x 20 pixels
+    fun flags(lowRelief: Boolean = false, filled: Int = 0, luma: Double = 100.0) =
+      ReliefSynthesizer.flags(lowRelief, filled, 100, 20, luma)
+    assertEquals(emptyList<ReliefFlag>(), flags())
+    assertEquals(emptyList<ReliefFlag>(), flags(filled = 100))
+    assertEquals(listOf(ReliefFlag.HIDDEN_AREAS), flags(filled = 101))
+    assertEquals(emptyList<ReliefFlag>(), flags(luma = 20.0))
+    assertEquals(listOf(ReliefFlag.DARK), flags(luma = 19.99))
+    assertEquals(
+      listOf(ReliefFlag.LOW_RELIEF, ReliefFlag.HIDDEN_AREAS, ReliefFlag.DARK),
+      flags(lowRelief = true, filled = 2000, luma = 3.0),
+    )
   }
 
   @Test

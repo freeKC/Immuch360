@@ -51,10 +51,12 @@ bool isDerivedFrom(DerivedRuleCandidate candidate, DerivedRuleOriginal original)
     return originalSum == sourceSum;
   }
   final folder = original.folder;
+  final written = xmp.sourceName;
   return folder != null &&
       candidate.folder == folder &&
       isDerivedNameCandidate(original.name, candidate.name) &&
-      xmp.sourceName == original.name &&
+      written != null &&
+      xmpSafeText(written) == xmpSafeText(original.name) &&
       xmp.sourceSize == original.size;
 }
 

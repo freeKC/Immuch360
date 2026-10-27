@@ -31,14 +31,17 @@ class ReliefMap(val width: Int, val height: Int, val levels: ShortArray) {
   companion object {
     const val MAX_LEVEL = 65535
 
-    /** The map of [normalized] values (0 to 1; outside, or not a number, they are clamped, NaN to 0) */
+    /**
+     * The map of [normalized] values (0 to 1; outside they are clamped, and not a number is 0.5, the middle level, as
+     * step 1 of relief-v1 makes it in [ReliefSynthesizer.normalize] and on the computers)
+     */
     fun quantize(width: Int, height: Int, normalized: DoubleArray): ReliefMap =
       ReliefMap(
         width,
         height,
         ShortArray(normalized.size) { i ->
           val v = normalized[i]
-          val clamped = if (v > 0.0) (if (v < 1.0) v else 1.0) else 0.0
+          val clamped = if (v.isNaN()) 0.5 else if (v > 0.0) (if (v < 1.0) v else 1.0) else 0.0
           floor(clamped * MAX_LEVEL + 0.5).toInt().toShort()
         },
       )

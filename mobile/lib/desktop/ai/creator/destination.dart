@@ -678,7 +678,7 @@ class DestinationSession {
 String? destinationReasonText(Translations t, DestinationReason? reason, {String? message}) => switch (reason) {
   null || DestinationReason.networkDeclined => null,
   DestinationReason.sourceReadOnly => t.ai_immersive_source_read_only,
-  DestinationReason.folderReadOnly => t.ai_immersive_failed_read_only,
+  DestinationReason.folderReadOnly => t.ai_immersive_original_folder_read_only,
   DestinationReason.diskFull => t.ai_immersive_failed_disk_full,
   DestinationReason.folderMissing => t.ai_immersive_failed_source,
   DestinationReason.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),

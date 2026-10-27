@@ -30,10 +30,10 @@ import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 
-/// What a program can do with the priority of its own threads, on one system
 /// The name the opening thread lends to the threads of the session on Linux (15 characters at most)
 const sessionThreadName = 'immuch360-ai';
 
+/// What a program can do with the priority of its own threads, on one system
 abstract interface class ThreadPriorityPlatform {
   /// The platform of this computer; plain objects, sent to the worker isolate of the jobs
   factory ThreadPriorityPlatform.system() {

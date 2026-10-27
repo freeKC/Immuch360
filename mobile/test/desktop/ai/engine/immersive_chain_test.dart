@@ -16,6 +16,7 @@ import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
@@ -40,6 +41,7 @@ void main() {
     DepthBackend? other,
     List<SbsCodec>? codecs,
     int? available = 8 * 1024 * 1024 * 1024,
+    MemoryProbe? memory,
     PartWriter? writePart,
   }) {
     final fake = backend ?? FakeDepthBackend();
@@ -49,7 +51,7 @@ void main() {
       chain: ImmersiveChain(
         backend: other ?? fake,
         codecs: codecs ?? [codec],
-        memory: FixedMemoryProbe(available: available),
+        memory: memory ?? FixedMemoryProbe(available: available),
         priority: ComputePriority(priority),
         writePart: writePart ?? writePartFile,
       ),
@@ -382,6 +384,57 @@ void main() {
       expect(File(part).existsSync(), isFalse);
     });
 
+    test('the session not open yet counts in the need: refused first, accepted once a job opened it', () {
+      // 32 x 16, an eye as large: the need with the session open and with it still to open
+      final open = jobMemoryNeed(sourceWidth: 32, sourceHeight: 16, eyeWidth: 32, eyeHeight: 16);
+      final closed = jobMemoryNeed(sourceWidth: 32, sourceHeight: 16, eyeWidth: 32, eyeHeight: 16, sessionOpen: false);
+      final memory = SettableMemoryProbe((open + closed) ~/ 2);
+      final tools = chainOn(memory: memory);
+
+      var outcome = runOn(tools.chain, jobFor(path, partPath: partIn(folder, 'a.jpg')));
+      expect((outcome.result.error, outcome.memoryNeed), (ImmersiveErrorCode.outOfMemory, closed));
+      expect(tools.backend.calls, 0);
+
+      memory.available = 8 * 1024 * 1024 * 1024;
+      expect(runOn(tools.chain, jobFor(path, partPath: partIn(folder, 'b.jpg'))).result.isDone, isTrue);
+      expect(tools.chain.sessionOpen, isTrue);
+
+      memory.available = (open + closed) ~/ 2;
+      outcome = runOn(tools.chain, jobFor(path, partPath: partIn(folder, 'c.jpg')));
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      expect(outcome.memoryNeed, open);
+    });
+
+    test('a photo the engine decoded is checked too, the model never run', () async {
+      final png = codecFixturePath('transparent.png');
+      final decoded = await decodeWithEngine(File(png).readAsBytesSync(), windows: false);
+      final tools = chainOn(available: 1000 * 1000);
+      final outcome = runOn(tools.chain, jobFor(png, partPath: partIn(folder, 'transparent.png')), decoded: decoded);
+      expect(outcome.result.error, ImmersiveErrorCode.outOfMemory);
+      expect(outcome.memoryNeed, greaterThan(1000 * 1000));
+      expect(tools.backend.calls, 0);
+      expect(File(partIn(folder, 'transparent.png')).existsSync(), isFalse);
+    });
+
+    test('a photo turned a quarter is checked for the eye it gives once turned, JPEG or not', () async {
+      // 32 x 16 stored, 16 x 32 turned, capped at 8 wide: an eye of 8 x 16 (8 x 4 if the turn were forgotten)
+      final need = jobMemoryNeed(sourceWidth: 32, sourceHeight: 16, eyeWidth: 8, eyeHeight: 16, sessionOpen: false);
+      final jpeg = runOn(
+        chainOn().chain,
+        jobFor(path, partPath: partIn(folder, 'orientation_1.jpg'), maxEyeWidth: 8, quarterTurns: 1),
+      );
+      expect((jpeg.result.isDone, jpeg.memoryNeed), (true, need));
+
+      final png = codecFixturePath('transparent.png');
+      final decoded = await decodeWithEngine(File(png).readAsBytesSync(), windows: false);
+      final engine = runOn(
+        chainOn().chain,
+        jobFor(png, partPath: partIn(folder, 'transparent.png'), maxEyeWidth: 8, quarterTurns: 1),
+        decoded: decoded,
+      );
+      expect((engine.result.isDone, engine.memoryNeed), (true, need));
+    });
+
     test('a system that does not say its free memory (macOS) is not refused on it', () {
       final result = runOn(
         chainOn(available: null).chain,
@@ -441,6 +494,15 @@ void main() {
       ).result;
       expect(result.error, ImmersiveErrorCode.modelFailed);
       expect(result.message, contains('10 x 10'));
+    });
+
+    test('a run of the model that fails once its session is open gives the session back at once', () {
+      // The fake opens its session as the run starts, then fails: the memory of the session is not left taken
+      final tools = chainOn(backend: FakeDepthBackend(failure: 'Run: not enough memory'));
+      final result = runOn(tools.chain, jobFor(path, partPath: partIn(folder, 'orientation_1.jpg'))).result;
+      expect(result.error, ImmersiveErrorCode.modelFailed);
+      expect(tools.backend.calls, 1);
+      expect((tools.chain.sessionOpen, tools.backend.closed), (false, true));
     });
 
     test('the photo changed after it was chosen: sourceLost, never a 3D photo with the sum of another', () {
@@ -579,4 +641,14 @@ void main() {
     expect((mine.latitude, mine.longitude, mine.altitude), (1, 2, null));
     expect(mine.software, isNull, reason: 'never the software of the original');
   });
+}
+
+/// A memory whose free part the test changes between two jobs
+class SettableMemoryProbe implements MemoryProbe {
+  SettableMemoryProbe(this.available);
+
+  int? available;
+
+  @override
+  MemoryFacts read() => MemoryFacts(physical: 16 * 1024 * 1024 * 1024, available: available);
 }

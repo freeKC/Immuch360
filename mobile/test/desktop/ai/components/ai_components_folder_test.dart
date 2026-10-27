@@ -1,6 +1,6 @@
 // Where a computer keeps the AI components: the local app data on Windows (not the roaming support folder), the
-// support folder on Linux and macOS (not the caches); and the Windows uninstaller, which deletes that folder and
-// nothing else of the user
+// support folder on Linux and macOS (not the caches), the components found under the other name of the support folder
+// of Linux moved in; and the Windows uninstaller, which deletes that folder and nothing else of the user
 
 import 'dart:io';
 
@@ -26,7 +26,7 @@ void main() {
   });
 
   test('Linux and macOS: in the support folder, which no cleaning empties', () async {
-    final support = Directory(p.join('home', 'u', '.local', 'share', 'com.aprogsys.immuch360'));
+    final support = Directory(p.join('home', 'u', '.local', 'share', 'immuch360'));
     final folder = await desktopAiComponentsFolder(
       windows: false,
       localAppData: () async => throw StateError('the cache folder is not for the components'),
@@ -62,4 +62,66 @@ void main() {
         ? false
         : 'no CI scripts here',
   );
+
+  group('Linux: the support folder has two names', () {
+    late Directory data;
+
+    setUp(() => data = Directory.systemTemp.createTempSync('ai_components_folder_'));
+    tearDown(() => data.deleteSync(recursive: true));
+
+    /// Components installed in the support folder named [supportName], under the data folder of the user
+    Directory installedUnder(String supportName) {
+      final folder = Directory(p.join(data.path, supportName, aiComponentsFolderName))..createSync(recursive: true);
+      File(p.join(folder.path, AiComponentsService.installedFileName)).writeAsStringSync('{"version":1}');
+      File(p.join(folder.path, 'models', 'model.onnx'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('model');
+      return folder;
+    }
+
+    for (final (from, to) in [('com.aprogsys.immuch360', 'immuch360'), ('immuch360', 'com.aprogsys.immuch360')]) {
+      test('the components installed in $from are moved into $to, where the app looks now', () async {
+        installedUnder(from);
+        final support = Directory(p.join(data.path, to))..createSync();
+
+        final folder = await desktopAiComponentsFolder(windows: false, linux: true, support: () async => support);
+
+        expect(folder.path, p.join(support.path, aiComponentsFolderName));
+        expect(File(p.join(folder.path, AiComponentsService.installedFileName)).readAsStringSync(), '{"version":1}');
+        expect(File(p.join(folder.path, 'models', 'model.onnx')).readAsStringSync(), 'model');
+        expect(Directory(p.join(data.path, from, aiComponentsFolderName)).existsSync(), isFalse);
+      });
+    }
+
+    test('nothing moves once the support folder of the app has its own components folder', () async {
+      final theirs = installedUnder('com.aprogsys.immuch360');
+      final ours = Directory(p.join(data.path, 'immuch360', aiComponentsFolderName))..createSync(recursive: true);
+
+      final folder = await desktopAiComponentsFolder(windows: false, linux: true, support: () async => ours.parent);
+
+      expect(folder.path, ours.path);
+      expect(ours.listSync(), isEmpty);
+      expect(File(p.join(theirs.path, AiComponentsService.installedFileName)).existsSync(), isTrue);
+    });
+
+    test('nothing moves without installed.json, off Linux, or for a support folder of another name', () async {
+      final support = Directory(p.join(data.path, 'immuch360'))..createSync();
+      final unfinished = Directory(p.join(data.path, 'com.aprogsys.immuch360', aiComponentsFolderName, 'tmp'))
+        ..createSync(recursive: true);
+
+      await desktopAiComponentsFolder(windows: false, linux: true, support: () async => support);
+
+      expect(Directory(p.join(support.path, aiComponentsFolderName)).existsSync(), isFalse);
+      expect(unfinished.existsSync(), isTrue);
+
+      final theirs = installedUnder('com.aprogsys.immuch360');
+      await desktopAiComponentsFolder(windows: false, linux: false, support: () async => support);
+      final macOS = Directory(p.join(data.path, 'com.aprogsys.immuch360.desktop'))..createSync();
+      await desktopAiComponentsFolder(windows: false, linux: true, support: () async => macOS);
+
+      expect(Directory(p.join(support.path, aiComponentsFolderName)).existsSync(), isFalse);
+      expect(Directory(p.join(macOS.path, aiComponentsFolderName)).existsSync(), isFalse);
+      expect(File(p.join(theirs.path, AiComponentsService.installedFileName)).existsSync(), isTrue);
+    });
+  });
 }

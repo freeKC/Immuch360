@@ -11,6 +11,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:path/path.dart' as p;
 
@@ -183,6 +184,18 @@ void main() {
       expect(found.versions, hasLength(5));
     });
 
+    test('an original changed after it was hashed no longer lists the versions of its old sum', () async {
+      await fixture.scan();
+      hash('salon.jpg', original);
+      expect((await finder().find(idOf('salon.jpg'))).versions, hasLength(2));
+
+      // Retouched: the index keeps the old sum, which no longer says what the file is
+      fixture.write('Photos/salon.jpg', [...jpegBytes(width: 64, height: 48), 0]);
+      await fixture.scan();
+
+      expect((await finder().find(idOf('salon.jpg'))).versions, isEmpty);
+    });
+
     test('a photo without versions, a video and a file the library does not have show nothing', () async {
       fixture.write('Photos/clip.mp4', [0, 0, 0, 0]);
       await fixture.scan();
@@ -247,6 +260,18 @@ void main() {
       expect((found.isVersion, found.original), (true, null));
     });
 
+    test('is not found by a sum its original no longer has', () async {
+      await fixture.scan();
+      hash('salon.jpg', original);
+      expect((await finder().find(idOf('3D/salon_3D_LRF_Full_SBS (1).jpg'))).original?.name, 'salon.jpg');
+
+      fixture.write('Photos/salon.jpg', [...jpegBytes(width: 64, height: 48), 0]);
+      await fixture.scan();
+
+      final found = await finder().find(idOf('3D/salon_3D_LRF_Full_SBS (1).jpg'));
+      expect((found.isVersion, found.original), (true, null));
+    });
+
     test('a version of a newer format and one of an unknown origin are versions all the same', () async {
       final newer = versionXmp(original).toXml().replaceFirst('FormatVersion="1"', 'FormatVersion="2"');
       final other = versionXmp(original).toXml().replaceFirst('Origin="EstimatedDepth"', 'Origin="TwoViews"');
@@ -300,6 +325,25 @@ void main() {
         isEdited: false,
       );
       expect((await container.read(photoVersionsProvider(remote).future)).versions, isEmpty);
+    });
+
+    test('a neighbour kept online only is never read, so never downloaded by the details', () async {
+      await fixture.scan();
+      final reads = <String>[];
+      final finder = PhotoVersionsFinder(
+        fixture.library(),
+        readHead: (path) {
+          reads.add(p.basename(path));
+          return readFileHead(path);
+        },
+        // OneDrive freed its space after the last scan
+        attributes: (path) => p.basename(path) == 'salon_3D_LRF_Full_SBS.jpg' ? fileAttributeRecallOnDataAccess : 0,
+      );
+
+      final found = await finder.find(idOf('salon.jpg'));
+
+      expect(reads, isNot(contains('salon_3D_LRF_Full_SBS.jpg')));
+      expect(found.versions, isEmpty);
     });
 
     test('a neighbour that cannot be read costs only itself', () async {

@@ -87,6 +87,11 @@ void main() {
 
         expect(index.generatedFileIds(), unorderedEquals(versions.map((file) => file.id)));
         expect(index.generatedFiles().map((file) => file.id), unorderedEquals(versions.map((file) => file.id)));
+        // Those of one folder alone, without the original nor another tool's file beside them
+        final beside = index.file(fixture.ids.file(rootId, 'salon_3D_LRF_Full_SBS.jpg'))!;
+        expect(index.generatedFilesOfAlbum(beside.albumId).map((file) => file.relativePath), [
+          'salon_3D_LRF_Full_SBS.jpg',
+        ]);
         final summary = index.generatedSummary();
         expect(summary.assetCount, 2);
         expect(summary.updatedSeconds, greaterThan(0));

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -7,6 +8,7 @@ import 'package:immich_mobile/desktop/ai/codec/engine_picture.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 
+import '../../../test_utils/heif_builder.dart';
 import 'codec_fixtures.dart';
 
 void main() {
@@ -55,6 +57,24 @@ void main() {
   group('the profile of a HEIC', () {
     test('read from the colr box of its primary item, byte for byte', () {
       expect(heifIccProfile(codecFixture('display_p3.heic')), codecFixture('display_p3.icc'));
+    });
+
+    test('of the primary item, when another item carries its own', () {
+      // As in a HEIC of an iPhone: a thumbnail, a gain map or a depth image may carry a colr box of its own, and come
+      // first in ipco
+      final heif = HeifBuilder(
+        items: const [
+          HeifItem(1, 'hvc1', hidden: true, properties: [1]),
+          HeifItem(2, 'hvc1', properties: [2]),
+        ],
+        properties: [
+          heifBox('colr', [...ascii.encode('prof'), ...ascii.encode('THUMB')]),
+          heifBox('colr', [...ascii.encode('prof'), ...ascii.encode('PRIMARY')]),
+        ],
+        primaryItemId: 2,
+      ).build();
+
+      expect(heifIccProfile(heif), ascii.encode('PRIMARY'));
     });
 
     test('kept on Windows only, where the system decoder converts nothing', () {

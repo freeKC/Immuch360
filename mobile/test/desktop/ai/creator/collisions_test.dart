@@ -79,6 +79,12 @@ void main() {
     expect(isReplaceableVersion(ofTheHeic, original: const OriginalIdentity(name: 'salon.jpg', size: 1234)), isFalse);
   });
 
+  test('a name with a control character still tells the same original, written in the XMP as U+FFFD', () {
+    const original = OriginalIdentity(name: 'sa\u0001lon.jpg', size: 1234);
+
+    expect(isReplaceableVersion(withXmp(of(name: 'sa\u0001lon.jpg', sha1: null)), original: original), isTrue);
+  });
+
   test('a free name is always taken as it is', () {
     for (final whenExists in AiWhenExists.values) {
       expect(collisionAction(whenExists: whenExists, taken: false), CollisionAction.newName);

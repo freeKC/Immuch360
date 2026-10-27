@@ -33,6 +33,19 @@ void main() {
       expect(cut.values.last, 71);
     });
 
+    test('keeps only the columns a centered portrait filled', () {
+      // A 1:3 portrait in an input of 12 x 8: 3 x 8, columns 4 to 6
+      final frame = reliefInputFrameFor(10, 30, inputWidth: 12, inputHeight: 8);
+      expect(frame.framing, ReliefFraming.centered);
+      expect([frame.left, frame.top, frame.width, frame.height], [4, 0, 3, 8]);
+      final map = DepthMap(12, 8, Float32List.fromList([for (var index = 0; index < 96; index++) index.toDouble()]));
+      final cut = cropToPhoto(map, frame);
+      expect([cut.width, cut.height], [3, 8]);
+      expect(cut.values.sublist(0, 3), [4, 5, 6]);
+      expect(cut.values.sublist(3, 6), [16, 17, 18]);
+      expect(cut.values.last, 90);
+    });
+
     test('refuses a map of another size than the input', () {
       final frame = reliefInputFrameFor(100, 100, inputWidth: 8, inputHeight: 6);
       expect(() => cropToPhoto(DepthMap(6, 8, Float32List(48)), frame), throwsArgumentError);
@@ -91,10 +104,24 @@ void main() {
       expect(normalised.depth.values[41], 1);
       expect(normalised.depth.values[42], 0);
       expect(normalised.p2.isFinite && normalised.p98.isFinite, isTrue);
+      // Ranks 2 and 96 of the 97 finite values: an infinity counted in would give 0 and 99
+      expect(normalised.p2, 1);
+      expect(normalised.p98, 98);
 
       final broken = normaliseDepth(ReliefDepth(2, 2, Float64List.fromList([double.nan, double.nan, double.nan, 1])));
       expect(broken.depth.values, everyElement(0.5));
       expect(broken.lowRelief, isTrue);
+    });
+
+    test('keeps p98 finite when more than 2 % of the map is infinite', () {
+      // 10 % of +infinity: counted in the percentiles, p98 would be infinite and those values NaN
+      final values = Float64List.fromList([for (var index = 0; index < 100; index++) index.toDouble()]);
+      values.fillRange(90, 100, double.infinity);
+      final normalised = normaliseDepth(ReliefDepth(10, 10, values));
+      expect(normalised.p2, 1);
+      expect(normalised.p98, 88);
+      expect(normalised.depth.values.every((value) => value >= 0 && value <= 1), isTrue);
+      expect(normalised.depth.values.sublist(90), everyElement(1));
     });
   });
 

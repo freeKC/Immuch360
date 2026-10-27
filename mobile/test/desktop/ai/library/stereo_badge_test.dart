@@ -5,14 +5,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
+import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/sync_status.provider.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
+import '../../library/library_fixtures.dart';
+import '../../library/library_test_support.dart';
+import '../fakes/fake_immersive_engine.dart';
+import 'version_fixtures.dart';
 
 LocalAsset _photo(String id, String name, {int? width, int? height}) => LocalAsset(
   id: id,
@@ -56,6 +64,36 @@ void main() {
       expect(stereoBadgeOf(origin: null, name: 'trip_sbs.jpg', width: 8000, height: 2000, isPanorama: true), isNull);
       // A generated panorama keeps the 360° badge
       expect(stereoBadgeOf(origin: IndexedOrigin.generated, name: 'sky.jpg', width: 8000, height: 4000), isNull);
+    });
+  });
+
+  group('the origins the badges read', () {
+    late TestLibrary fixture;
+    setUp(() {
+      fixture = TestLibrary();
+      fixture.probe.mounts[fixture.files.path] = 'win-0000beef';
+    });
+    tearDown(() => fixture.dispose());
+
+    test('are read from the index again when a local sync ends, so that a new version shows "3D AI"', () async {
+      final original = jpegBytes(width: 40, height: 30);
+      fixture.write('Photos/salon.jpg', original);
+      final library = fixture.library();
+      final root = library.addRoot(p.join(fixture.files.path, 'Photos'));
+      await fixture.scan();
+      final container = ProviderContainer(overrides: [folderLibraryProvider.overrideWith((ref) async => library)]);
+      addTearDown(container.dispose);
+      expect(await container.read(generatedOriginsProvider.future), isEmpty);
+
+      // A 3D photo made meanwhile, which the scan of the next sync finds
+      fixture.write('Photos/salon_3D_LRF_Full_SBS.jpg', fakeSbsJpeg(xmp: versionXmp(original)));
+      await fixture.scan();
+      final sync = container.read(syncStatusProvider.notifier);
+      sync.startLocalSync();
+      sync.completeLocalSync();
+
+      final id = fixture.ids.file(root.id, 'salon_3D_LRF_Full_SBS.jpg');
+      expect(await container.read(generatedOriginsProvider.future), {id: IndexedOrigin.estimated});
     });
   });
 

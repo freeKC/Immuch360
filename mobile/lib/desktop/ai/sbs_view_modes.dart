@@ -156,13 +156,17 @@ class SbsPhotoPainter extends CustomPainter {
 }
 
 /// [image], a photo of two eyes side by side as [photo] describes them, in [mode]. The picture of the previous
-/// provider stays until the next one is decoded, as the viewer moves from the thumbnail to the full photo.
+/// provider stays until the next one is decoded, as the viewer moves from the thumbnail to the full photo. A file that
+/// cannot be read shows [errorBuilder], as the viewer does for any other photo.
 class SbsPhotoView extends StatefulWidget {
-  const SbsPhotoView({super.key, required this.image, required this.photo, required this.mode});
+  const SbsPhotoView({super.key, required this.image, required this.photo, required this.mode, this.errorBuilder});
 
   final ImageProvider image;
   final FlatStereoPhoto photo;
   final SbsViewMode mode;
+
+  /// What shows when [image] cannot be read and no picture came before; black without it
+  final WidgetBuilder? errorBuilder;
 
   @override
   State<SbsPhotoView> createState() => _SbsPhotoViewState();
@@ -170,8 +174,9 @@ class SbsPhotoView extends StatefulWidget {
 
 class _SbsPhotoViewState extends State<SbsPhotoView> {
   ImageStream? _stream;
-  late final _listener = ImageStreamListener(_onImage);
+  late final _listener = ImageStreamListener(_onImage, onError: _onError);
   ImageInfo? _info;
+  bool _failed = false;
   Timer? _wiggle;
   bool _showRight = false;
 
@@ -213,7 +218,14 @@ class _SbsPhotoViewState extends State<SbsPhotoView> {
       return;
     }
     _stream?.removeListener(_listener);
+    _failed = false;
     _stream = stream..addListener(_listener);
+  }
+
+  void _onError(Object error, StackTrace? stackTrace) {
+    if (mounted) {
+      setState(() => _failed = true);
+    }
   }
 
   void _onImage(ImageInfo info, bool synchronousCall) {
@@ -238,7 +250,7 @@ class _SbsPhotoViewState extends State<SbsPhotoView> {
   Widget build(BuildContext context) {
     final info = _info;
     if (info == null) {
-      return const SizedBox.expand();
+      return _failed ? widget.errorBuilder?.call(context) ?? const SizedBox.expand() : const SizedBox.expand();
     }
     return CustomPaint(
       key: const Key('sbs_photo_view'),

@@ -142,6 +142,30 @@ void main() {
       }
     });
 
+    test('of a centered portrait lies between two sides of its mean colour', () {
+      // A 1:3 photo in an input of 12 x 8: 3 x 8 on columns 4 to 6; red on its top half, blue on its bottom half
+      final input = reliefInputOf(
+        photo(10, 30, (x, y) => y < 15 ? [255, 0, 0] : [0, 0, 255]),
+        width: 10,
+        height: 30,
+        inputWidth: 12,
+        inputHeight: 8,
+      );
+      expect(input.frame.framing, ReliefFraming.centered);
+      expect([input.frame.left, input.frame.top, input.frame.width, input.frame.height], [4, 0, 3, 8]);
+      const plane = 12 * 8;
+      for (var y = 0; y < 8; y++) {
+        for (var x = 0; x < 12; x++) {
+          final inside = x >= 4 && x < 7;
+          final red = inside ? (y < 4 ? 255.0 : 0.0) : 127.5;
+          final blue = inside ? (y < 4 ? 0.0 : 255.0) : 127.5;
+          expect(input.nchw[y * 12 + x], normalised(red, 0), reason: 'R ($x, $y)');
+          expect(input.nchw[plane + y * 12 + x], normalised(0, 1), reason: 'G ($x, $y)');
+          expect(input.nchw[2 * plane + y * 12 + x], normalised(blue, 2), reason: 'B ($x, $y)');
+        }
+      }
+    });
+
     test('reads a photo inside a wider buffer, and never its alpha', () {
       // The left eye of a pair: rows of 2 x 3 pixels, the eye on the left 3
       final pair = photo(6, 3, (x, y) => x < 3 ? [30, 60, 90] : [255, 255, 255]);

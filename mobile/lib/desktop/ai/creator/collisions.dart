@@ -66,7 +66,8 @@ class OriginalIdentity {
     if (mine.isNotEmpty && theirs.isNotEmpty) {
       return mine == theirs;
     }
-    return xmp.sourceName == name && xmp.sourceSize == size;
+    final written = xmp.sourceName;
+    return written != null && xmpSafeText(written) == xmpSafeText(name) && xmp.sourceSize == size;
   }
 
   @override

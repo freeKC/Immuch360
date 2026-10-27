@@ -27,7 +27,8 @@ void main() {
 
   tearDown(() => temporary.deleteSync(recursive: true));
 
-  FlatStereoService service() => FlatStereoService(
+  FlatStereoService service({int maxEntries = 2000}) => FlatStereoService(
+    maxEntries: maxEntries,
     localFile: (localId) async {
       localLookups.add(localId);
       return localFiles[localId];
@@ -130,6 +131,26 @@ void main() {
 
     expect(await stereo.detect(asset), isNull);
     expect(stereo.cached(asset), isNull);
+  });
+
+  test('past maxEntries photos, the one read first is forgotten and read again', () async {
+    final assets = [
+      for (final name in ['a', 'b', 'c']) remote('${name}_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000),
+    ];
+    for (final asset in assets) {
+      serverFiles[asset.id] = RecordingReader(jpegFile(width: 8000, height: 3000, xmp: ourXmp()));
+    }
+    final stereo = service(maxEntries: 2);
+
+    for (final asset in assets) {
+      expect((await stereo.detect(asset))?.isOurs, isTrue);
+    }
+    expect(stereo.cached(assets[0]), isNull);
+    expect(stereo.cached(assets[1])?.isOurs, isTrue);
+    expect(stereo.cached(assets[2])?.isOurs, isTrue);
+
+    expect((await stereo.detect(assets[0]))?.isOurs, isTrue);
+    expect(serverReads.where((id) => id == assets[0].id), hasLength(2));
   });
 
   test('two callers at once share one read', () async {

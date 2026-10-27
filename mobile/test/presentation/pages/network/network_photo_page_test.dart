@@ -14,6 +14,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -154,6 +157,7 @@ void main() {
     String path, {
     _RecordingImmersiveApi? immersiveApi,
     NetworkFolderMedia? folder,
+    AppConfig appConfig = const AppConfig(),
     List<Override> extraOverrides = const [],
   }) async {
     await pumpNetworkRouter(
@@ -165,7 +169,7 @@ void main() {
         overrideConnections((ref) => FakeConnections(ref, share, baseUrl: server.baseUrl)),
         isHorizonOsProvider.overrideWith((ref) async => immersiveApi != null),
         if (immersiveApi != null) immersiveApiProvider.overrideWithValue(immersiveApi),
-        appConfigProvider.overrideWithValue(const AppConfig()),
+        appConfigProvider.overrideWithValue(appConfig),
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
         ...extraOverrides,
@@ -526,6 +530,93 @@ void main() {
       await endRealIo(tester);
     });
 
+    testWidgets('opened from its folder, the version is found among the files the page got, and opens at its URL', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length),
+      );
+      share.files['/Photos/cuisine.jpg'] = png;
+      // As the browser opens a photo: with the photos of its folder and their URLs, told apart here from the URL the
+      // media bridge would give; the folder is not listed again
+      const paths = ['/Photos/cuisine.jpg', '/Photos/salon.jpg', '/Photos/salon_3D_LRF_Full_SBS.jpg'];
+      final folder = NetworkFolderMedia(
+        entries: [for (final path in paths) share.file(path)],
+        urls: {
+          for (final path in paths) path: server.urlOf(path).replace(queryParameters: {'from': 'folder'}),
+        },
+        index: 1,
+      );
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi, folder: folder);
+      await pumpRealIo(tester, () => versionButton.evaluate().isNotEmpty);
+
+      expect(share.listed, isEmpty);
+
+      await tester.tap(versionButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], folder.urls['/Photos/salon_3D_LRF_Full_SBS.jpg'].toString());
+      expect(immersiveApi.opened.single['title'], 'salon_3D_LRF_Full_SBS.jpg');
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, a 3D photo of a newer format keeps "View in 3D", greyed with its reason', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(formatVersion: immersiveFormatVersion + 1),
+      );
+      await pumpPhotoPage(tester, '/salon_3D_LRF_Full_SBS.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => view3dButton.evaluate().isNotEmpty);
+
+      expect(view3dButton, findsOneWidget);
+      expect(tester.widget<IconButton>(view3dButton).onPressed, isNull);
+      expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, a version of a newer format keeps "View the 3D version", greyed with its reason', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length, formatVersion: immersiveFormatVersion + 1),
+      );
+      share.folders['/Photos'] = [share.file('/Photos/salon.jpg'), share.file('/Photos/salon_3D_LRF_Full_SBS.jpg')];
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => versionButton.evaluate().isNotEmpty);
+
+      expect(versionButton, findsOneWidget);
+      expect(tester.widget<IconButton>(versionButton).onPressed, isNull);
+      expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a phone, a photo of two eyes side by side has no "View in 3D"', (tester) async {
+      share.files['/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(width: 8000, height: 3000, xmp: ourXmp());
+      await pumpPhotoPage(tester, '/salon_3D_LRF_Full_SBS.jpg');
+      await settleDetection(tester);
+
+      expect(view3dButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
     testWidgets('a neighbour made from another photo of the same name is no version of it', (tester) async {
       final immersiveApi = _RecordingImmersiveApi();
       png = await makePng(tester);
@@ -643,6 +734,40 @@ void main() {
           quarterTurns: 1,
         ).cacheKey,
       );
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('asks for 2.5D first when the advanced settings say so, with the same key', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.png'] = png;
+      await pumpPhotoPage(
+        tester,
+        '/Photos/salon.png',
+        immersiveApi: immersiveApi,
+        appConfig: const AppConfig(aiImmersive: AiImmersiveConfig(questMode: ReliefViewMode.mesh25d)),
+        extraOverrides: headset(),
+      );
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      await tester.tap(reliefButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      final expected = questReliefRequest(
+        modelPath: components.modelPath,
+        identity: reliefIdentityOfShareFile(
+          sourceId: _source.id,
+          path: '/Photos/salon.png',
+          size: png.length,
+          modified: MemoryShare.modified,
+        ),
+        quarterTurns: 0,
+        mode: ReliefViewMode.mesh25d,
+      );
+      final relief = jsonDecode(immersiveApi.stereoPairs.single!) as Map<String, dynamic>;
+      expect(relief, jsonDecode(expected.toJsonString()));
+      expect(relief['mode'], 'mesh25d');
 
       await endRealIo(tester);
     });

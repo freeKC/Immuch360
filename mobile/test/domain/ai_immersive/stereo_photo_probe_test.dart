@@ -230,6 +230,20 @@ void main() {
       expect(square?.eyes, StereoEyes.full);
     });
 
+    test('full and half tell the width next to sbs only, not as words of a title', () async {
+      // "Full HD": the frame of a video still, two half width eyes
+      final (fullHd, _) = await probe(jpegFile(width: 1920, height: 1080), 'Avatar Full HD SBS.jpg');
+      expect(fullHd, const FlatStereoPhoto(eyes: StereoEyes.half));
+      // "Half Dome": a Full SBS of 3.56:1, which a half width reading would refuse as too wide
+      final (halfDome, _) = await probe(jpegFile(width: 7120, height: 2000), 'Half Dome_sbs.jpg');
+      expect(halfDome, const FlatStereoPhoto(eyes: StereoEyes.full));
+      // Next to sbs, before or after it, they do
+      final (fullSbs, _) = await probe(jpegFile(width: 3000, height: 2000), 'clip_Full-SBS.jpg');
+      expect(fullSbs, const FlatStereoPhoto(eyes: StereoEyes.full));
+      final (sbsHalf, _) = await probe(jpegFile(width: 3000, height: 2000), 'clip_SBS_Half.jpg');
+      expect(sbsHalf, const FlatStereoPhoto(eyes: StereoEyes.half));
+    });
+
     test('iw3, half width (_LR)', () async {
       final (found, _) = await probe(pngFile(width: 4032, height: 3024), 'photo_LR.png');
 
@@ -255,6 +269,18 @@ void main() {
 
       final (half, _) = await probe(jpegFile(width: 1920, height: 1080), 'scene_rl.jpg');
       expect(half, const FlatStereoPhoto(eyes: StereoEyes.half, eyeOrder: EyeOrder.rightLeft));
+    });
+
+    test('a name that says full width is trusted for wide eyes too: a 21:9 photo, a 3:1 panorama', () async {
+      final (wide, _) = await probe(pngFile(width: 8000, height: 1714), 'photo_LRF_Full_SBS.png');
+      expect(wide, const FlatStereoPhoto(eyes: StereoEyes.full));
+
+      final (panorama, _) = await probe(pngFile(width: 12000, height: 2000), 'pano_LRF_Full_SBS.png');
+      expect(panorama, const FlatStereoPhoto(eyes: StereoEyes.full));
+
+      // Not when the width comes from the frame: 5:1 makes two half width eyes, too wide
+      final (guessed, _) = await probe(jpegFile(width: 10000, height: 2000), 'view_sbs.jpg');
+      expect(guessed, isNull);
     });
 
     test('a frame that holds no two photos is flat, whatever the name', () async {
@@ -333,6 +359,12 @@ void main() {
       final progressive = jpegFile(width: 640, height: 480);
       progressive[3] = 0xc2;
       expect(frameOfHead(progressive), (width: 640, height: 480));
+    });
+
+    test('JPEG whose Huffman tables come before the frame, as some encoders write it', () {
+      // A DHT segment (FF C4) is no frame, though its marker sits among those of the frames
+      final dht = Uint8List.fromList([0xff, 0xc4, 0x00, 0x0b, 0x10, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);
+      expect(frameOfHead(jpegFile(width: 640, height: 480, segments: [dht])), (width: 640, height: 480));
     });
 
     test('PNG', () {
