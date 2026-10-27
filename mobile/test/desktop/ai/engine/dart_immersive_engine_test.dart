@@ -74,7 +74,7 @@ void main() {
     expect(StereoPhotoXmp.findIn(out)!.sourceSha1, sha1OfFile(path));
     expect(progress.first, const ImmersiveProgress(ImmersiveStage.reading, 0));
     expect(progress.last, const ImmersiveProgress(ImmersiveStage.writing, 1000));
-    expect(result.stageTimes.keys.toSet(), ImmersiveStage.values.toSet());
+    expect(result.stageTimes.keys.toSet(), ImmersiveStage.sbs.toSet());
     expect(engine.lastOutcome!.decoder, 'dart');
     expect(engine.isRunning, isFalse);
   });

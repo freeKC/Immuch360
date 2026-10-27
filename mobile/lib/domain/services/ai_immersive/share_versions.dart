@@ -2,7 +2,7 @@
 // sections 3.8 and 4.2): what "View the 3D version" opens on the Meta Quest, the 3D photo a computer saved next to the
 // original on a NAS (route 9.1 of the specification). A share gives no SHA-1 of its files, so the rule of
 // derived_file_rule.dart goes by the folder, the name, and the SourceName and SourceSize of the XMP of the version.
-// Only the neighbours whose name starts like a version are read, the five newest at most, the head of each (128 KiB):
+// Only the neighbours whose name starts like a version are read, the eight newest at most, the head of each (128 KiB):
 // a folder without such a name costs no read at all. Shared code: the Quest reads it, the computers have their own
 // index.
 
@@ -41,7 +41,7 @@ Future<List<ShareVersion>> findShareVersions(
     return const [];
   }
   final folder = shareFolderOf(original.path);
-  // The newest first before derivedNameCandidates keeps five of them: with more versions than that, the newest are
+  // The newest first before derivedNameCandidates keeps eight of them: with more versions than that, the newest are
   // read. Equal dates keep the order of the folder.
   final ordered = neighbours.indexed.toList()
     ..sort((a, b) {

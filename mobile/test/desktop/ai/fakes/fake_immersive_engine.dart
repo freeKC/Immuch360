@@ -73,11 +73,11 @@ class FakeImmersiveEngine implements ImmersiveEngine {
     jobs.add(job);
     final times = <ImmersiveStage, Duration>{};
     var written = 0;
-    for (final (index, stage) in ImmersiveStage.values.indexed) {
+    for (final (index, stage) in ImmersiveStage.sbs.indexed) {
       if (cancel.isCancelled) {
         return ImmersiveResult.failed(ImmersiveErrorCode.cancelled, stageTimes: times);
       }
-      final step = ImmersiveProgress(stage, 1000 * index ~/ ImmersiveStage.values.length);
+      final step = ImmersiveProgress(stage, 1000 * index ~/ ImmersiveStage.sbs.length);
       progress.add(step);
       onProgress?.call(step);
       final watch = Stopwatch()..start();

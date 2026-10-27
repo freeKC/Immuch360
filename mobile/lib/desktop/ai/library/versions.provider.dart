@@ -4,7 +4,7 @@
 // another folder of the library stays linked, a deleted one leaves the index with the next scan, and one on a drive
 // that is not connected is still listed, greyed. Where the sum of the original is not known yet (it is computed for
 // the folders chosen for the backup only), the rule of derived_file_rule.dart falls back to the folder, the name and
-// the SourceName and SourceSize of the XMP, reading the head of five neighbours at most.
+// the SourceName and SourceSize of the XMP, reading the head of eight neighbours at most.
 
 import 'dart:typed_data';
 

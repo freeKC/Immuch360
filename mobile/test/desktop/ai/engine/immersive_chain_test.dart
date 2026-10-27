@@ -283,7 +283,7 @@ void main() {
   group('cancelled', () {
     final path = codecFixturePath('orientation_1.jpg');
 
-    for (final stage in ImmersiveStage.values) {
+    for (final stage in ImmersiveStage.sbs) {
       test('at ${stage.name}: nothing written, the .part as it was', () {
         for (final existed in [false, true]) {
           final part = partIn(folder, 'orientation_1.jpg');
@@ -564,7 +564,7 @@ void main() {
       }
       expect(progress.where((step) => step.stage == ImmersiveStage.rightEye).length, greaterThan(3));
       expect(progress.last, const ImmersiveProgress(ImmersiveStage.writing, 1000));
-      expect(result.stageTimes.keys.toSet(), ImmersiveStage.values.toSet());
+      expect(result.stageTimes.keys.toSet(), ImmersiveStage.sbs.toSet());
     });
 
     test("the job's thread lowered for its body and put back after it, even when it fails", () {

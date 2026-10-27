@@ -1,15 +1,17 @@
-// When a 3D photo is a version of an original (design-final 2026-10-26, section 4.2). Everything is in the files
-// themselves, so any device can make the link again, after a copy or a rename: the XMP of the version carries the
-// SHA-1 of its original. Where that sum is not known (a file of a share seen from the Quest, an original not hashed
-// yet), the version must sit in the folder of the original, under a name that starts with the name of the original,
-// and its XMP must name the original and give its size. Close names ("salon.jpg", "salon2.jpg",
-// "salon_3D_LRF_Full_SBS (1).jpg") never mislead the rule. Pure: the callers read the files.
+// When a file of Immuch360 is a version of an original (design-final 2026-10-26, section 4.2; design-final 2026-10-27,
+// section 8.4): a 3D photo, a 3D scene, a 360° panorama or a 360° 3D panorama. Everything is in the files themselves,
+// so any device can make the link again, after a copy or a rename: the XMP of the version carries the SHA-1 of its
+// original, whatever its kind (a 360° 3D panorama made from a generated panorama names the photo, not the panorama).
+// Where that sum is not known (a file of a share seen from the Quest, an original not hashed yet), the version must
+// sit in the folder of the original, under a name that starts with the name of the original and one of the suffixes
+// of the versions, and its XMP must name the original and give its size. Close names ("salon.jpg", "salon2.jpg",
+// "salon_3D_LRF_Full_SBS (1).jpg", "salon_3Dmax.jpg") never mislead the rule. Pure: the callers read the files.
 
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 
 /// At most this many neighbours of an original are read to find its versions by name (128 KiB each)
-const maxDerivedCandidates = 5;
+const maxDerivedCandidates = 8;
 
 /// An original, as the rule sees it
 class DerivedRuleOriginal {
@@ -61,16 +63,34 @@ bool isDerivedFrom(DerivedRuleCandidate candidate, DerivedRuleOriginal original)
 }
 
 /// Whether the name [candidate] starts like the name of a version of [originalName]: its name without extension, then
-/// "_3D_LRF_Full_SBS". The name the computers give it may have the characters Windows refuses replaced by "_"; that
-/// form is accepted too.
+/// one of the suffixes of the versions ("_3D_LRF_Full_SBS", "_scene3D", "_360", "_360_3D", "_3D", see
+/// derivedNameSuffixes). The name the computers give it may have the characters Windows refuses replaced by "_"; that
+/// form is accepted too. After "_3D_LRF_Full_SBS" anything may follow, as in phase 1; after the other suffixes only
+/// " (n)" and the extension, so that "salon_3Dmax.jpg" or "salon_3600.jpg" cost no read.
 bool isDerivedNameCandidate(String originalName, String candidate) {
   final stem = fileStem(originalName);
   if (stem.isEmpty) {
     return false;
   }
-  return candidate.startsWith('$stem$sbsFullNameSuffix') ||
-      candidate.startsWith('${stem.replaceAll(_windowsForbidden, '_')}$sbsFullNameSuffix');
+  for (final start in {stem, stem.replaceAll(_windowsForbidden, '_')}) {
+    if (!candidate.startsWith(start)) {
+      continue;
+    }
+    final rest = candidate.substring(start.length);
+    if (rest.startsWith(sbsFullNameSuffix)) {
+      return true;
+    }
+    for (final suffix in derivedNameSuffixes) {
+      if (rest.startsWith(suffix) && _versionEnd.hasMatch(rest.substring(suffix.length))) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
+
+// What may follow the suffix of a version: " (2)" when the name was taken, then the extension
+final _versionEnd = RegExp(r'^(?: \(\d+\))?(?:\.[^.]*)?$');
 
 /// The names of [folderNames] that may be versions of [originalName], at most [maxDerivedCandidates], in the order
 /// given; the original itself is never one of them

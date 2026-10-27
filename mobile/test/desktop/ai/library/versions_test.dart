@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:path/path.dart' as p;
 
@@ -170,8 +171,8 @@ void main() {
       );
     });
 
-    test('without the sum, five neighbours at most are read', () async {
-      for (var i = 1; i <= 7; i++) {
+    test('without the sum, eight neighbours at most are read', () async {
+      for (var i = 1; i <= maxDerivedCandidates + 2; i++) {
         fixture.write('Photos/salon_3D_LRF_Full_SBS ($i).jpg', fakeSbsJpeg(xmp: versionXmp(original)));
       }
       File(p.join(photos, '3D', 'salon_3D_LRF_Full_SBS (1).jpg')).deleteSync();
@@ -180,8 +181,8 @@ void main() {
 
       final found = await finder(reads: reads).find(idOf('salon.jpg'));
 
-      expect(reads, hasLength(5));
-      expect(found.versions, hasLength(5));
+      expect(reads, hasLength(maxDerivedCandidates));
+      expect(found.versions, hasLength(maxDerivedCandidates));
     });
 
     test('an original changed after it was hashed no longer lists the versions of its old sum', () async {

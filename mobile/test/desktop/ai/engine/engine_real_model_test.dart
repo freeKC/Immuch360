@@ -74,7 +74,7 @@ void main() {
         final total = watch.elapsedMilliseconds;
         expect(result.isDone, isTrue, reason: '$name: ${result.error} ${result.message}');
         final steps = [
-          for (final stage in ImmersiveStage.values) '${stage.name} ${result.stageTimes[stage]?.inMilliseconds} ms',
+          for (final stage in ImmersiveStage.sbs) '${stage.name} ${result.stageTimes[stage]?.inMilliseconds} ms',
         ].join(', ');
         final outcome = engine.lastOutcome!;
 

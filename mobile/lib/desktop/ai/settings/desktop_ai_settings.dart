@@ -1,6 +1,9 @@
 // The settings of the AI features that only a computer has (design-final 2026-10-26, section 4.4): where the 3D photos
 // go, what to do when one exists, the network folders the user allowed to receive them, and whether the virtual album
-// of the generated photos was excluded from the backup once. Kept in desktop_ai.json of the support folder, beside
+// of the generated photos was excluded from the backup once. Phases 2 and 3 add (design-final 2026-10-27, sections
+// 7.4 and 9): the type last chosen in the dialog, the 3D version made after a panorama, the .glb copy of a scene, the
+// folder the AI components were moved to, the integrated graphics allowed, the times measured per step, and the
+// address of the ComfyUI of the user. Kept in desktop_ai.json of the support folder, beside
 // desktop_files.json and written the same way: a whole new file renamed over the old one, so a crash never leaves half
 // a setting. Keys this build does not know (a newer version) are kept as they are.
 //
@@ -40,6 +43,13 @@ class DesktopAiSettings {
     this.networkRootsAllowed = const [],
     this.rootFallbacks = const {},
     this.generatedAlbumState = AiGeneratedAlbumState.pending,
+    this.lastType,
+    this.alsoStereoPanorama = true,
+    this.exportGlb = false,
+    this.componentsFolder,
+    this.integratedGpuAllowed = false,
+    this.timings = const {},
+    this.comfyUiUrl,
   });
 
   final AiDestination destination;
@@ -58,6 +68,29 @@ class DesktopAiSettings {
   final Map<String, String> rootFallbacks;
   final AiGeneratedAlbumState generatedAlbumState;
 
+  /// The type the dialog chose last, by the name of its ConversionKind ("sceneFromPhoto"); kept by name so that a
+  /// type of a later version reads as none here; null for the 3D photo, the first type
+  final String? lastType;
+
+  /// "Also make the 3D version" of a panorama, checked by default
+  final bool alsoStereoPanorama;
+
+  /// "Also save a .glb copy" of a scene, off by default
+  final bool exportGlb;
+
+  /// The folder the AI components were moved to ("Move the AI components"); null for the folder of the app
+  final String? componentsFolder;
+
+  /// "Try on integrated graphics (untested)", off by default
+  final bool integratedGpuAllowed;
+
+  /// The milliseconds each step took on this computer, by kind and by step (ConversionKind and ImmersiveStage names),
+  /// which weigh the progress and give the time shown in the dialog
+  final Map<String, Map<String, int>> timings;
+
+  /// The address of the ComfyUI of the user, local only; null for the default, http://127.0.0.1:8188
+  final String? comfyUiUrl;
+
   DesktopAiSettings copyWith({
     AiDestination? destination,
     String? Function()? folder,
@@ -66,6 +99,13 @@ class DesktopAiSettings {
     List<String>? networkRootsAllowed,
     Map<String, String>? rootFallbacks,
     AiGeneratedAlbumState? generatedAlbumState,
+    String? Function()? lastType,
+    bool? alsoStereoPanorama,
+    bool? exportGlb,
+    String? Function()? componentsFolder,
+    bool? integratedGpuAllowed,
+    Map<String, Map<String, int>>? timings,
+    String? Function()? comfyUiUrl,
   }) => DesktopAiSettings(
     destination: destination ?? this.destination,
     folder: folder == null ? this.folder : folder(),
@@ -74,6 +114,13 @@ class DesktopAiSettings {
     networkRootsAllowed: networkRootsAllowed ?? this.networkRootsAllowed,
     rootFallbacks: rootFallbacks ?? this.rootFallbacks,
     generatedAlbumState: generatedAlbumState ?? this.generatedAlbumState,
+    lastType: lastType == null ? this.lastType : lastType(),
+    alsoStereoPanorama: alsoStereoPanorama ?? this.alsoStereoPanorama,
+    exportGlb: exportGlb ?? this.exportGlb,
+    componentsFolder: componentsFolder == null ? this.componentsFolder : componentsFolder(),
+    integratedGpuAllowed: integratedGpuAllowed ?? this.integratedGpuAllowed,
+    timings: timings ?? this.timings,
+    comfyUiUrl: comfyUiUrl == null ? this.comfyUiUrl : comfyUiUrl(),
   );
 
   Map<String, Object?> toJson() => {
@@ -84,6 +131,13 @@ class DesktopAiSettings {
     'networkRootsAllowed': networkRootsAllowed,
     'rootFallbacks': rootFallbacks,
     'generatedAlbumState': generatedAlbumState.name,
+    'lastType': lastType,
+    'alsoStereoPanorama': alsoStereoPanorama,
+    'exportGlb': exportGlb,
+    'componentsFolder': componentsFolder,
+    'integratedGpuAllowed': integratedGpuAllowed,
+    'timings': timings,
+    'comfyUiUrl': comfyUiUrl,
   };
 
   /// The settings of [json], a default for each value that is missing or not understood
@@ -95,6 +149,15 @@ class DesktopAiSettings {
     final roots = json['networkRootsAllowed'];
     final fallbacks = json['rootFallbacks'];
     final skip = json['skipExisting'];
+    String? text(String key) => switch (json[key]) {
+      final String value when value.isNotEmpty => value,
+      _ => null,
+    };
+    bool flag(String key, bool fallback) => switch (json[key]) {
+      final bool value => value,
+      _ => fallback,
+    };
+    final timings = json['timings'];
     return DesktopAiSettings(
       destination: named(AiDestination.values, json['destination'], defaults.destination),
       folder: folder is String && folder.isNotEmpty ? folder : null,
@@ -112,6 +175,22 @@ class DesktopAiSettings {
         json['generatedAlbumState'],
         defaults.generatedAlbumState,
       ),
+      lastType: text('lastType'),
+      alsoStereoPanorama: flag('alsoStereoPanorama', defaults.alsoStereoPanorama),
+      exportGlb: flag('exportGlb', defaults.exportGlb),
+      componentsFolder: text('componentsFolder'),
+      integratedGpuAllowed: flag('integratedGpuAllowed', defaults.integratedGpuAllowed),
+      timings: timings is Map
+          ? Map.unmodifiable({
+              for (final MapEntry(:key, :value) in timings.entries)
+                if (key is String && value is Map)
+                  key: Map<String, int>.unmodifiable({
+                    for (final MapEntry(key: step, value: millis) in value.entries)
+                      if (step is String && millis is int && millis >= 0) step: millis,
+                  }),
+            })
+          : const {},
+      comfyUiUrl: text('comfyUiUrl'),
     );
   }
 
@@ -124,7 +203,14 @@ class DesktopAiSettings {
       other.skipExisting == skipExisting &&
       _sameList(other.networkRootsAllowed, networkRootsAllowed) &&
       _sameMap(other.rootFallbacks, rootFallbacks) &&
-      other.generatedAlbumState == generatedAlbumState;
+      other.generatedAlbumState == generatedAlbumState &&
+      other.lastType == lastType &&
+      other.alsoStereoPanorama == alsoStereoPanorama &&
+      other.exportGlb == exportGlb &&
+      other.componentsFolder == componentsFolder &&
+      other.integratedGpuAllowed == integratedGpuAllowed &&
+      _sameTimings(other.timings, timings) &&
+      other.comfyUiUrl == comfyUiUrl;
 
   @override
   int get hashCode => Object.hash(
@@ -135,6 +221,13 @@ class DesktopAiSettings {
     Object.hashAll(networkRootsAllowed),
     Object.hashAllUnordered(rootFallbacks.entries.map((entry) => Object.hash(entry.key, entry.value))),
     generatedAlbumState,
+    lastType,
+    alsoStereoPanorama,
+    exportGlb,
+    componentsFolder,
+    integratedGpuAllowed,
+    Object.hashAllUnordered(timings.keys),
+    comfyUiUrl,
   );
 }
 
@@ -224,3 +317,12 @@ bool _sameList(List<String> a, List<String> b) {
 
 bool _sameMap(Map<String, String> a, Map<String, String> b) =>
     a.length == b.length && a.entries.every((entry) => b[entry.key] == entry.value);
+
+bool _sameTimings(Map<String, Map<String, int>> a, Map<String, Map<String, int>> b) =>
+    a.length == b.length &&
+    a.entries.every((entry) {
+      final other = b[entry.key];
+      return other != null &&
+          other.length == entry.value.length &&
+          entry.value.entries.every((step) => other[step.key] == step.value);
+    });

@@ -85,6 +85,71 @@ void main() {
     expect(settings.generatedAlbumState, AiGeneratedAlbumState.excluded);
   });
 
+  group('the settings of phases 2 and 3', () {
+    test('their defaults: the 3D version of a panorama checked, no .glb copy, no integrated graphics', () async {
+      final settings = await store.read();
+
+      expect(settings.lastType, isNull);
+      expect(settings.alsoStereoPanorama, isTrue);
+      expect(settings.exportGlb, isFalse);
+      expect(settings.componentsFolder, isNull);
+      expect(settings.integratedGpuAllowed, isFalse);
+      expect(settings.timings, isEmpty);
+      expect(settings.comfyUiUrl, isNull);
+    });
+
+    test('written then read, every one', () async {
+      const settings = DesktopAiSettings(
+        lastType: 'sceneFromPhoto',
+        alsoStereoPanorama: false,
+        exportGlb: true,
+        componentsFolder: r'D:\DEV\immuch\ai-components',
+        integratedGpuAllowed: true,
+        timings: {
+          'sceneFromPhoto': {'geometry': 2100, 'inpaint': 900},
+          'panoramaFromPhoto': {'generating': 412000},
+        },
+        comfyUiUrl: 'http://127.0.0.1:8188',
+      );
+
+      await store.write(settings);
+      final read = await DesktopAiSettingsStore(settingsDirectory: () async => folder).read();
+
+      expect(read, settings);
+      expect(read.timings['sceneFromPhoto']!['geometry'], 2100);
+      expect(read.copyWith(componentsFolder: () => null).componentsFolder, isNull);
+      expect(read.copyWith(exportGlb: false), isNot(settings));
+    });
+
+    test('values that do not read give their defaults, a timing that does not read is left out', () async {
+      file().writeAsStringSync(
+        jsonEncode({
+          'lastType': 3,
+          'alsoStereoPanorama': 'no',
+          'exportGlb': 1,
+          'componentsFolder': '',
+          'integratedGpuAllowed': null,
+          'timings': {
+            'sceneFromPhoto': {'geometry': 2100, 'layers': -1, 'mesh': 'fast'},
+            'bad': 4,
+          },
+          'comfyUiUrl': '',
+        }),
+      );
+      final settings = await store.read();
+
+      expect(settings.lastType, isNull);
+      expect(settings.alsoStereoPanorama, isTrue);
+      expect(settings.exportGlb, isFalse);
+      expect(settings.componentsFolder, isNull);
+      expect(settings.integratedGpuAllowed, isFalse);
+      expect(settings.timings, {
+        'sceneFromPhoto': {'geometry': 2100},
+      });
+      expect(settings.comfyUiUrl, isNull);
+    });
+  });
+
   test('changes made at once are all kept', () async {
     await Future.wait([
       store.update((settings) => settings.copyWith(networkRootsAllowed: [...settings.networkRootsAllowed, 'one'])),
