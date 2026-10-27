@@ -20,6 +20,12 @@ glb-layers-v1, as written here and read by GlbReader.kt and glb_reader.dart:
   - asset.generator names the maker and scene-v1; extras.immuch360 holds the format, the safe zone, the scale and the
     field of view; KHR_xmp_json_ld holds the main fields of the packet as JSON-LD.
 
+The tiny scene is a fixture for the readers (the gate of the Dart side, GlbReader.kt, the preview of the computers),
+not the model of the writer of the app (lot S1), which follows section 8.2 of the design in full: where the app writes
+a minimal EXIF APP1 in the JPEG, this file has a JFIF APP0; where the app writes in KHR_xmp_json_ld the same packet as
+the XMP (IPTC, sums, Source fields), this file holds only Kind, Pipeline and the description; and it has not been
+through the glTF-Validator of Khronos, which S1 runs on the files of the app.
+
 The JPEGs are written by a small baseline encoder made for flat 8 x 8 blocks (every block one colour: only the DC
 coefficient, quantised by 1, a 4:4:4 frame): pure Python, so the bytes are the same on every machine, with or
 without Pillow, and the colour of each block comes back exactly. Enough for a fixture and for a texture that loads
