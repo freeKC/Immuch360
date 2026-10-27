@@ -146,6 +146,23 @@ describe('useAutoHideControls', () => {
 		});
 	});
 
+	// Immuch360: the viewer of a photo, where Up and Down zoom: OK alone brings the controls back
+	test('with OK as the only reveal key, Up and Down neither reveal the controls nor are swallowed', () => {
+		const revealKeys = ['Enter'];
+		const {result} = renderHook(() => useAutoHideControls({enabled: true, controlsRef, hideDelayMs: 4000, revealKeys}));
+		act(() => {
+			jest.advanceTimersByTime(4000);
+		});
+		['ArrowUp', 'ArrowDown'].forEach((key) => {
+			const event = pressKey(key);
+			expect(event.defaultPrevented).toBe(false);
+			expect(result.current.visible).toBe(false);
+		});
+		const ok = pressKey('Enter');
+		expect(ok.defaultPrevented).toBe(true);
+		expect(result.current.visible).toBe(true);
+	});
+
 	test('removes its keydown listener on unmount', () => {
 		const removeSpy = jest.spyOn(window, 'removeEventListener');
 		const {unmount} = renderHook(() => useAutoHideControls({enabled: true, controlsRef, hideDelayMs: 4000}));

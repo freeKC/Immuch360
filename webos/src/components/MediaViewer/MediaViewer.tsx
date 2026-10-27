@@ -6,11 +6,22 @@ import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {useAssetRotation} from '../../hooks/useAssetRotation';
 import {useAssetDetailsQuery} from '../../hooks/useAssetDetails';
 import {usePhotoZoom} from '../../hooks/usePhotoZoom';
+import {usePhotoLoading} from '../../hooks/usePhotoLoading';
 import {useRepository} from '../../domain/RepositoryContext';
 import {createSpotlightContainer, forceFocus, SpottableDiv} from '../../utils/spotlight';
 import type {TimelineAsset} from '../../domain/types';
 import {i18nKey, t} from '../../immuch360/i18n';
-import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, VIDEO_STALL_MS, photoRotationStep, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
+import {
+	CONTROLS_HIDE_AFTER_MS,
+	SEEK_STEP_SECONDS,
+	VIDEO_STALL_MS,
+	photoArrows,
+	photoRotationStep,
+	playPauseWantsPlay,
+	remoteAction,
+	videoArrows,
+	type PhotoArrow,
+} from '../../immuch360/keys';
 import {isForced360, setForced360, setSphereChoice, sphereChoice, type SphereChoice} from '../../immuch360/forced360';
 import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView, type StereoLayout} from '../../immuch360/sphere/rules';
 import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereView';
@@ -31,8 +42,9 @@ import {
 } from '../../immuch360/video/limits';
 import {holdsFlatVideoNotice} from '../../immuch360/video/session';
 import {usePlaysOriginal, useVideoGate, useVideoSession} from '../../immuch360/video/useVideoGate';
-import {MediaControls, ACTION_BAR_SPOTLIGHT_ID, type ViewerAction} from './MediaControls';
+import {MediaControls, type ViewerAction} from './MediaControls';
 import {VideoPlayer, VideoPlayerApi, viewerVideoElement} from './VideoPlayer';
+import {PhotoLoading, ZoomLevel} from './PhotoStatus';
 import css from './MediaViewer.module.less';
 
 interface MediaViewerProps {
@@ -47,7 +59,7 @@ interface MediaViewerProps {
 
 const VIEWER_SPOTLIGHT_ID = 'media-viewer';
 const STAGE_SPOTLIGHT_ID = 'media-viewer-stage';
-// Immuch360: OK on a 360° photo focuses this button, as the Flutter viewer does on Android TV
+// Immuch360: OK on a photo focuses this button, as the Flutter viewer does on Android TV for a 360° photo
 const ZOOM_IN_SPOTLIGHT_ID = 'media-viewer-zoom-in';
 // Immuch360: the Back button under the message of a video that does not play
 const VIDEO_BACK_SPOTLIGHT_ID = 'media-viewer-video-back';
@@ -61,8 +73,9 @@ const adviceText = (advice: VideoAdvice): string => (advice === 'transcode' ? t(
 // trigger NavigationRail's focus-based expand and other surprises).
 const ViewerContainer = createSpotlightContainer({enterTo: 'last-focused'});
 
-// Immuch360: on a 360° photo the arrows turn the view, so only OK brings the controls back
-const SPHERE_REVEAL_KEYS: readonly string[] = ['Enter'];
+// Immuch360: the arrows turn a 360° photo and zoom or move a flat one, so only OK brings the controls back. A constant:
+// a new list at each render would install the listener of useAutoHideControls again, after the arrows' one.
+const PHOTO_REVEAL_KEYS: readonly string[] = ['Enter'];
 
 // Immuch360: the name of each 3D layout on the 2D/3D button, held through i18nKey so that tools/build-i18n.mjs bundles
 // the three texts (a key chosen by a ternary inside t() is not seen by it)
@@ -80,7 +93,6 @@ const looksEquirect = (ratio: number) => Math.abs(ratio / 2 - 1) <= 0.02;
 // is enough to fully swallow a key (Spotlight never sees it → focus can't leak).
 const swallowKey = () => {};
 const focusStage = () => forceFocus(STAGE_SPOTLIGHT_ID);
-const focusActionBar = () => forceFocus(ACTION_BAR_SPOTLIGHT_ID);
 
 export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, totalCount, currentIndex, position, onClose, onNavigate, onStartSlideshow}) => {
 	const repository = useRepository();
@@ -189,17 +201,23 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	const [actionBarFocused, setActionBarFocused] = useState(false);
 	const {rotation, rotate, notice: rotationNotice, phase: rotationPhase} = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
-	const {zoom, zoomed, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
+	const {zoom, zoomed, pulse: zoomPulse, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
 	if (zoomedPast2x !== zoom.scale > FULLSIZE_FROM_SCALE) setZoomedPast2x(zoom.scale > FULLSIZE_FROM_SCALE);
-	const sharp = !isVideo && !show360 && wantsFullsize(zoom.scale, details?.width, details?.height);
+	// Immuch360: the photo whose full-size picture the TV could not load or decode (memory, a timeout): it stays on its
+	// preview, without a message, until another photo is opened
+	const [fullsizeFailed, setFullsizeFailed] = useState<string | null>(null);
+	const sharp = !isVideo && !show360 && !!asset && fullsizeFailed !== asset.id && wantsFullsize(zoom.scale, details?.width, details?.height);
+	// Immuch360: the picture of a flat photo, and whether it is on screen yet (the loading pill, an error)
+	const photoSrc = !asset || isVideo || show360 ? null : sharp ? repository.fullsizeUrl(asset.id) : repository.previewUrl(asset.id);
+	const photoLoad = usePhotoLoading(photoSrc);
 	const controlsRef = useRef<HTMLDivElement>(null);
 
 	// Auto-hide is for still images only. Video keeps its always-visible MediaControls and
 	// relies on Sandstone VideoPlayer's own auto-hide (OK/Select is play/pause there).
-	const {visible: controlsVisible, show: showControls, hide: hideControls} = useAutoHideControls({
+	const {visible: controlsVisible, show: showControls} = useAutoHideControls({
 		enabled: !isVideo,
 		controlsRef,
-		revealKeys: show360 ? SPHERE_REVEAL_KEYS : undefined,
+		revealKeys: PHOTO_REVEAL_KEYS,
 	});
 	const inActionBar = !isVideo && controlsVisible && actionBarFocused;
 
@@ -237,6 +255,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		// A video that failed is tried again, and checked again, when it is opened again
 		setVideoFailure(null);
 		setVideoStall(null);
+		// And the full-size picture of a photo
+		setFullsizeFailed(null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
@@ -339,7 +359,18 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const panRight = useCallback(() => pan(1, 0), [pan]);
 	const panUp = useCallback(() => pan(0, -1), [pan]);
 	const panDown = useCallback(() => pan(0, 1), [pan]);
-	const panning = zoomed && !inActionBar;
+	// Immuch360: what each arrow does on a flat photo (keys.ts, photoArrows); a pan moves the photo the arrow's way
+	const photoArrow = (arrow: PhotoArrow, panThisWay: () => void): (() => void) | undefined => {
+		if (arrow === 'previous') return handlePrev;
+		if (arrow === 'next') return handleNext;
+		if (arrow === 'zoomIn') return photoZoomIn;
+		// Down at 1x has nothing to zoom out: the level shows 100%, so the key answers
+		if (arrow === 'zoomOut') return photoZoomOut;
+		if (arrow === 'pan') return panThisWay;
+		if (arrow === 'toStage') return focusStage;
+		if (arrow === 'swallow') return swallowKey;
+		return undefined;
+	};
 
 	let arrowLeft: (() => void) | undefined;
 	let arrowRight: (() => void) | undefined;
@@ -356,18 +387,14 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		// The sphere turns with the arrows (SphereView) unless the focus is in the action bar
 		arrowUp = inActionBar ? focusStage : undefined;
 		arrowDown = inActionBar ? swallowKey : undefined;
-	} else if (panning) {
-		arrowLeft = panLeft;
-		arrowRight = panRight;
-		arrowUp = panUp;
-		arrowDown = panDown;
 	} else {
-		// Left/right page between media, except inside the action bar (Spotlight moves between its buttons)
-		arrowLeft = inActionBar ? undefined : handlePrev;
-		arrowRight = inActionBar ? undefined : handleNext;
-		// Unassigned, up/down are reveal keys (useAutoHideControls)
-		arrowUp = inActionBar ? focusStage : controlsVisible ? swallowKey : undefined;
-		arrowDown = inActionBar ? swallowKey : controlsVisible ? focusActionBar : undefined;
+		// Left/right page between media and Up/Down zoom, except inside the action bar (Spotlight moves between its
+		// buttons, Up goes back to the photo); zoomed in, the four arrows move the photo
+		const arrows = photoArrows({zoomed, inActionBar});
+		arrowLeft = photoArrow(arrows.left, panLeft);
+		arrowRight = photoArrow(arrows.right, panRight);
+		arrowUp = photoArrow(arrows.up, panUp);
+		arrowDown = photoArrow(arrows.down, panDown);
 	}
 
 	useWebOSKeys({onBack: handleBack, onArrowLeft: arrowLeft, onArrowRight: arrowRight, onArrowUp: arrowUp, onArrowDown: arrowDown});
@@ -375,7 +402,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// Immuch360: the other keys of the remote in the viewer: yellow turns a flat photo 90° clockwise and blue
 	// counterclockwise (R and Shift R on a keyboard), as on Android TV; the track keys go to the neighbours, Stop closes
 	// a video, rewind and fast forward step 10 s, the play and pause keys do as their name says, the channel keys zoom a
-	// photo
+	// photo as Up and Down do
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			const action = remoteAction(event);
@@ -416,16 +443,20 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		forceFocus(isVideo ? VIEWER_SPOTLIGHT_ID : STAGE_SPOTLIGHT_ID);
 	}, [isVideo]);
 
-	// Immuch360: OK on a 360° photo shows the controls with the zoom button focused (the arrows turn the view)
+	// Immuch360: OK on a photo shows the controls with the zoom button focused: the arrows turn a 360° photo and zoom or
+	// move a flat one, so OK is the way into the controls. They hide 5 s after the last key, Up leaves them.
 	const handleStageClick = useCallback(() => {
-		if (show360) {
-			showControls();
-			forceFocus(ZOOM_IN_SPOTLIGHT_ID);
-			return;
-		}
-		if (controlsVisible) hideControls();
-		else showControls();
-	}, [show360, controlsVisible, hideControls, showControls]);
+		showControls();
+		forceFocus(ZOOM_IN_SPOTLIGHT_ID);
+	}, [showControls]);
+
+	// Immuch360: a full-size picture that fails gives way to the preview; a preview that fails says so
+	const onPhotoError = photoLoad.onError;
+	const assetIdForError = asset?.id;
+	const handlePhotoError = useCallback(() => {
+		if (sharp && assetIdForError) setFullsizeFailed(assetIdForError);
+		else onPhotoError();
+	}, [sharp, assetIdForError, onPhotoError]);
 
 	useEffect(() => {
 		const prefetch = (index: number) => {
@@ -524,7 +555,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	if (!asset) return null;
 
-	const mediaUrl = isVideo ? repository.videoPlaybackUrl(asset.id) : sharp ? repository.fullsizeUrl(asset.id) : repository.previewUrl(asset.id);
+	const mediaUrl = isVideo ? repository.videoPlaybackUrl(asset.id) : (photoSrc ?? repository.previewUrl(asset.id));
 	let notice: string | undefined;
 	if (show360) notice = t('tv_look_hint');
 	else if (rotationNotice === 'failed') notice = t('rotate_failed');
@@ -564,6 +595,11 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 						onFailed={handleSphereFailed}
 						onResolved={setResolved}
 					/>
+				) : photoLoad.failed ? (
+					// Immuch360: a preview that did not load: why, where the photo would be; Left, Right and Back go on
+					<div className={css.videoMessage} role="alert">
+						<p className={css.videoMessageText}>{online ? t('error_loading_image') : t('webos_error_offline')}</p>
+					</div>
 				) : (
 					<div className={css.zoomBox} style={zoomStyle}>
 						<img
@@ -571,6 +607,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 							alt=""
 							className={rotation % 180 ? `${css.photo} ${css.quarterTurn}` : css.photo}
 							style={rotation ? {transform: `rotate(${rotation}deg)`} : undefined}
+							onLoad={photoLoad.onLoad}
+							onError={handlePhotoError}
 						/>
 					</div>
 				)}
@@ -593,6 +631,10 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			/>
 			{/* Immuch360: from a yellow or blue press until the turned picture is shown, over the photo, out of the way of the keys */}
 			<RotationIndicator key={asset?.id} active={rotationPhase === 'turning'} />
+			{/* Immuch360: while the picture of a flat photo is on its way past 300 ms, in the middle; the zoom level a moment
+			    after each zoom key or button, at the top, where the pill of a turn would be */}
+			<PhotoLoading active={photoLoad.loading} />
+			<ZoomLevel key={`zoom-${asset.id}`} pulse={zoomPulse} scale={zoom.scale} hidden={rotationPhase === 'turning'} />
 			{detailsOpen && <AssetDetailsPanel asset={asset} details={details} />}
 		</ViewerContainer>
 	);

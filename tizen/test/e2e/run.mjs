@@ -17,8 +17,9 @@
 // Steps, each with a screenshot in --out: the sign in page (no Phone tab; server, email and password typed, the
 // keyboard's Done key), Back with the keyboard popup open (it closes the popup, not the form), the timeline
 // (ChannelDown pages down), a 360° photo (the sphere is drawn, the arrows turn it, ChannelUp zooms), a video (it plays
-// and holds the screen saver where the engine has H.264, else the "could not play" message shows), a slideshow (the
-// Play/Pause key of a Samsung remote pauses and resumes it, the screen saver held), the rail (no Network shares), the
+// and holds the screen saver where the engine has H.264, else the "could not play" message shows), a flat photo (Up
+// zooms it in, Back out) and a slideshow started from its controls (the Play/Pause key of a Samsung remote pauses and
+// resumes it, the screen saver held), the rail (no Network shares), the
 // About page (Tizen lines, no policy block, no DUID), a locale file read under the policy, the remote keys asked for,
 // and Back on the first screen closing the app. An uncaught exception in the page fails the run too, unless
 // KNOWN_EXCEPTIONS names it. results.json lists the steps; the exit code is 1 when one failed.
@@ -509,7 +510,7 @@ async function main() {
 		return {asset: tile, h264: h264 || 'no', outcome, screenSaver: after};
 	});
 
-	await step('slideshow: the Play/Pause key of a Samsung remote (10252) pauses and resumes it, the screen saver held', async () => {
+	await step('flat photo and slideshow: Up zooms in, Back out; the Play/Pause key of a Samsung remote (10252) pauses and resumes the slideshow, the screen saver held', async () => {
 		// A flat photo: no 360° badge, no duration
 		const tile = await waitFor(`(function () {
 			var tiles = document.querySelectorAll('[data-asset-id]');
@@ -523,8 +524,18 @@ async function main() {
 		await click(await waitFor(centreOf(`[data-asset-id="${tile}"]`), 'the photo tile'));
 		await waitFor(`!!document.querySelector('[data-spotlight-id="media-viewer"]')`, 'the viewer', 20000);
 		await sleep(500);
-		// Up shows the controls of a photo (and does nothing more once they show), Down goes into their bar, Right moves
-		// along it until the tooltip of the focused button says Slideshow, OK starts it: as with a remote
+		// Up zooms the photo in at once (discussion 8), Back zooms it out and leaves the viewer open
+		const zoomOf = `(function () {
+			var img = document.querySelector('[data-spotlight-id="media-viewer"] img');
+			return img && img.parentNode ? img.parentNode.style.transform : null;
+		})()`;
+		await key(KEY.up);
+		await waitFor(`(${zoomOf} || '').indexOf('scale(1.25)') === 0`, 'Up to zoom the photo in (scale 1.25)', 5000);
+		await key(KEY.back);
+		await waitFor(`${zoomOf} === ''`, 'Back to zoom the photo out', 5000);
+		if (!(await evaluate(OVERLAY_OPEN))) throw new Error('Back closed the viewer instead of zooming the photo out');
+		// OK shows the controls of a photo with Zoom in focused (a first OK only brings them back once they hid), Right moves
+		// along the bar until the tooltip of the focused button says Slideshow, OK starts it: as with a remote
 		const barShown = `(function () {
 			var bar = document.querySelector('[data-spotlight-id="media-viewer-actions"]');
 			return !!bar && getComputedStyle(bar).visibility === 'visible' && getComputedStyle(bar.parentNode.parentNode).opacity === '1';
@@ -533,9 +544,9 @@ async function main() {
 			var bar = document.querySelector('[data-spotlight-id="media-viewer-actions"]');
 			return !!bar && bar.contains(document.activeElement);
 		})()`;
-		await key(KEY.up);
+		await key(KEY.enter);
 		await waitFor(barShown, 'the controls of the photo', 10000);
-		await key(KEY.down);
+		if (!(await evaluate(inBar))) await key(KEY.enter);
 		await waitFor(inBar, 'the focus in the bar of the controls', 5000);
 		const seen = [];
 		let found = false;

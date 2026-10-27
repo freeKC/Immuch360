@@ -7,6 +7,7 @@ import {
 	CONTROLS_HIDE_AFTER_MS,
 	SEEK_STEP_SECONDS,
 	keyShowsVideoControls,
+	photoArrows,
 	photoRotationStep,
 	playPauseWantsPlay,
 	remoteAction,
@@ -100,7 +101,7 @@ describe('one key turns a flat photo by 90°, as on Android TV', () => {
 		assert.equal(remoteAction({keyCode: 82, key: 'r'}, true), null);
 	});
 
-	test('the arrows never turn it, Up included (pressed by habit, and a turn is saved on the server)', () => {
+	test('the arrows never turn it, Up included (Up and Down zoom it, and a turn is saved on the server)', () => {
 		assert.equal(photoRotationStep(remoteAction({keyCode: 38, key: 'ArrowUp'})), null);
 		for (const action of ['up', 'down', 'left', 'right', 'ok', 'back', 'channelUp', 'info', 'red', 'green', null]) {
 			assert.equal(photoRotationStep(action), null, String(action));
@@ -110,5 +111,22 @@ describe('one key turns a flat photo by 90°, as on Android TV', () => {
 	test('the brackets of the web editor are no turn keys on the TV', () => {
 		assert.equal(remoteAction({keyCode: 219, key: '['}), null);
 		assert.equal(remoteAction({keyCode: 221, key: ']'}), null);
+	});
+});
+
+// Discussion 8 (gthrepwood, 26 October 2026): Up and Down zoom a photo at once; OK, not an arrow, brings the controls
+describe('the arrows on a flat photo', () => {
+	test('on the photo: Left and Right go to the neighbours, Up zooms in, Down zooms out', () => {
+		assert.deepEqual(photoArrows({zoomed: false, inActionBar: false}), {left: 'previous', right: 'next', up: 'zoomIn', down: 'zoomOut'});
+	});
+
+	test('zoomed in: the four arrows move the photo, none goes to a neighbour or zooms', () => {
+		assert.deepEqual(photoArrows({zoomed: true, inActionBar: false}), {left: 'pan', right: 'pan', up: 'pan', down: 'pan'});
+	});
+
+	test('in the controls bar, zoomed or not: Left and Right move along it, Up goes back to the photo, Down does nothing', () => {
+		for (const zoomed of [false, true]) {
+			assert.deepEqual(photoArrows({zoomed, inActionBar: true}), {left: null, right: null, up: 'toStage', down: 'swallow'}, String(zoomed));
+		}
 	});
 });
