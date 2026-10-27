@@ -131,6 +131,47 @@ class StereoComposerTest {
   }
 
   @Test
+  fun `an estimated relief is never wider than 60 degrees`() {
+    // At 60 degrees the 2 percent of relief-v1 make 1.25 degrees, at 90 they would make 1.8
+    assertEquals(60f, StereoComposer.maxAngle(estimatedRelief = true))
+    assertEquals(90f, StereoComposer.maxAngle(estimatedRelief = false))
+    assertEquals(60f, StereoComposer.nextAngle(54f, 1, StereoComposer.maxAngle(estimatedRelief = true)))
+    assertEquals(60f, StereoComposer.nextAngle(60f, 1, StereoComposer.maxAngle(estimatedRelief = true)))
+    assertEquals(54f, StereoComposer.nextAngle(60f, -1, StereoComposer.maxAngle(estimatedRelief = true)))
+    // A file of another tool, a spatial photo: up to 90 as before
+    assertEquals(66f, StereoComposer.nextAngle(60f, 1, StereoComposer.maxAngle(estimatedRelief = false)))
+    // A choice kept over a recreation stays within the cap of its photo
+    val wide = StereoPhotoChoices("u", 1L, threeD = true, angleDeg = 84f)
+    assertEquals(60f, wide.forPhoto("u", 1L, StereoComposer.maxAngle(estimatedRelief = true))?.angleDeg)
+    assertEquals(84f, wide.forPhoto("u", 1L)?.angleDeg)
+  }
+
+  @Test
+  fun `the 2D button names the original when the left eye is the photo itself`() {
+    assertEquals(StereoComposer.LABEL_2D_ORIGINAL, StereoComposer.twoDLabelKey(leftEyeIsOriginal = true))
+    assertEquals(StereoComposer.LABEL_2D, StereoComposer.twoDLabelKey(leftEyeIsOriginal = false))
+    assertEquals("2D (original)", StereoComposer.label(emptyMap(), StereoComposer.LABEL_2D_ORIGINAL))
+    assertEquals("2D (left eye)", StereoComposer.label(emptyMap(), StereoComposer.LABEL_2D))
+    assertEquals("2D (original)", StereoComposer.label(mapOf("ai2dOriginal" to " "), "ai2dOriginal"))
+    val french = mapOf("ai2dOriginal" to "2D (photo d'origine)")
+    assertEquals("2D (photo d'origine)", StereoComposer.label(french, "ai2dOriginal"))
+  }
+
+  @Test
+  fun `the honesty label and the navigation of 3D photos have their own English texts`() {
+    assertEquals("Relief estimated by AI", StereoComposer.label(emptyMap(), StereoComposer.LABEL_RELIEF_ESTIMATED))
+    assertEquals(
+      "Previous and next are not available for 3D photos yet",
+      StereoComposer.label(emptyMap(), StereoComposer.LABEL_NO_NAVIGATION_3D),
+    )
+    // The Apple spatial photos keep theirs
+    assertEquals(
+      "Previous and next are not available for spatial photos yet",
+      StereoComposer.label(emptyMap(), StereoComposer.LABEL_NO_NAVIGATION),
+    )
+  }
+
+  @Test
   fun `labels fall back to English`() {
     assertEquals("3D", StereoComposer.label(emptyMap(), StereoComposer.LABEL_3D))
     assertEquals("2D (œil gauche)", StereoComposer.label(mapOf("spatial2d" to "2D (œil gauche)"), "spatial2d"))

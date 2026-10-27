@@ -6,10 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
-import 'package:immich_mobile/domain/models/apple_spatial.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -63,7 +65,10 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// the calibration read from the share.
 ///
 /// On a Meta Quest, an Apple spatial photo (a HEIF file holding a stereo pair, see [NetworkMediaInfo.stereoPair]) gets
-/// a "View in 3D" button, which shows both eyes in the immersive viewer.
+/// a "View in 3D" button, which shows both eyes in the immersive viewer. So does a flat photo holding two eyes side by
+/// side (see [NetworkMediaInfo.stereoPhoto]): the 3D photos a computer makes, those of other tools. An ordinary photo
+/// whose folder holds a 3D version of it (see findShareVersions) gets "View the 3D version", which opens that version
+/// the same way, without any AI on the headset.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -91,6 +96,10 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
 
   /// Reads the file straight from the share, for the calibration of a raw photo; null until the share is open
   ByteRangeReader? _shareReader;
+
+  /// The 3D versions of the photo in its folder, the newest first: looked for on a Meta Quest once the photo is known
+  /// to be an ordinary one, null until then
+  List<ShareVersion>? _versions;
 
   // The size of the photo, once the flat view decoded it (scaled down, but with its aspect ratio): the 3D layout of
   // the immersive viewer is guessed from it
@@ -188,10 +197,16 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   /// Whether the photo turns with the one-key rotation: once its file was read, when it is neither 360° nor a stereo
-  /// pair nor the raw file of a 360° camera. Those keep their views, which turn the camera rather than the picture.
+  /// pair nor two eyes side by side nor the raw file of a 360° camera. Those keep their views, which turn the camera
+  /// rather than the picture, or hold their eyes where they are.
   bool get _canRotate {
     final info = _info;
-    return info != null && !info.is360 && info.stereoPair == null && info.rawKind == null && !isRawPhotoName(_name);
+    return info != null &&
+        !info.is360 &&
+        info.stereoPair == null &&
+        info.stereoPhoto == null &&
+        info.rawKind == null &&
+        !isRawPhotoName(_name);
   }
 
   /// The quarter turns kept on this device for [photo], 0 for a photo that does not turn
@@ -246,19 +261,50 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final connections = ref.read(networkConnectionsProvider);
     final service = ref.read(networkMediaServiceProvider);
     final client = ref.read(networkBridgeClientProvider);
+    final isHorizonOs = ref.read(isHorizonOsProvider.future);
     final fileSystem = await connections.fileSystem(widget.sourceId);
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
     _shareReader = networkFileReader(fileSystem, widget.path);
-    unawaited(_detect(service, entry, httpRangeReader(client, url)));
+    unawaited(_detect(service, entry, httpRangeReader(client, url), fileSystem, isHorizonOs));
     return _current = (entry: entry, url: url);
   }
 
-  // Through the media bridge, with range requests, like the players read the file
-  Future<void> _detect(NetworkMediaService service, NetworkEntry entry, ByteRangeReader read) async {
+  // Through the media bridge, with range requests, like the players read the file. Then, on a Meta Quest, the 3D
+  // versions of an ordinary photo, straight from the share.
+  Future<void> _detect(
+    NetworkMediaService service,
+    NetworkEntry entry,
+    ByteRangeReader read,
+    NetworkFileSystem fileSystem,
+    Future<bool> isHorizonOs,
+  ) async {
     final info = await service.detect(entry, read, thorough: true);
     if (info != null && mounted) {
       setState(() => _info = info);
+    }
+    final ordinary =
+        info != null && !info.is360 && info.stereoPair == null && info.stereoPhoto == null && info.rawKind == null;
+    if (ordinary && entry.isImage && await isHorizonOs.catchError((_) => false)) {
+      await _findVersions(entry, fileSystem);
+    }
+  }
+
+  /// Looks for the 3D versions of [entry] among the files of its folder: those of the folder the page was opened
+  /// from, else the listing of the folder
+  Future<void> _findVersions(NetworkEntry entry, NetworkFileSystem fileSystem) async {
+    try {
+      final neighbours = widget.folder?.entries ?? await fileSystem.list(shareFolderOf(entry.path));
+      final versions = await findShareVersions(
+        entry,
+        neighbours,
+        readerOf: (neighbour) => networkFileReader(fileSystem, neighbour.path),
+      );
+      if (versions.isNotEmpty && mounted) {
+        setState(() => _versions = versions);
+      }
+    } catch (error) {
+      _log.info('Could not look for the 3D versions of ${entry.name}: $error');
     }
   }
 
@@ -269,6 +315,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     }
     setState(() {
       _current = null;
+      _versions = null;
       _photo = _load();
     });
   }
@@ -339,24 +386,27 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     ).push(MaterialPageRoute<void>(builder: (_) => PanoramaViewerPage.source(source: source)));
   }
 
-  /// Shows both eyes of [photo], an Apple spatial photo whose pair is [pair], in the immersive viewer: read through the
-  /// media bridge, like any photo of a share. No previous or next from there yet: the viewer says so itself.
-  Future<void> _openStereo(_Photo photo, HeicStereoPair pair) async {
+  /// Shows both eyes of the photo of the share at [path] in the immersive viewer, as [stereo] describes them (an
+  /// Apple spatial photo, two eyes side by side): read through the media bridge at [url], or at the URL of [path] when
+  /// none is given, like any photo of a share. No previous or next from there yet: the viewer says so itself.
+  Future<void> _openStereo(String path, StereoPhotoRequest stereo, {Uri? url}) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
-    final stereoLabels = sphereViewerLabels(context.t);
-    final request = ImmersiveRequest(
-      url: photo.url.toString(),
-      isVideo: false,
-      title: photo.entry.name,
-      view: stereoPhotoSphereView,
-      stereoPair: pair.toImmersiveJson(),
-    );
+    final stereoLabels = stereoPhotoViewerLabels(context.t);
+    final connections = ref.read(networkConnectionsProvider);
+    final name = path.split('/').last;
     try {
+      final request = ImmersiveRequest(
+        url: (url ?? await connections.mediaUrl(widget.sourceId, path)).toString(),
+        isVideo: false,
+        title: name,
+        view: stereoPhotoSphereView,
+        stereoPair: stereo.toImmersiveJson(),
+      );
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels);
     } catch (error) {
-      _log.warning('Could not open ${photo.entry.name} in 3D: $error');
+      _log.warning('Could not open $name in 3D: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
@@ -408,6 +458,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         final photo = snapshot.data;
         final is360 = _info?.is360 ?? false;
         final stereoPair = isHorizonOs ? _info?.stereoPair : null;
+        // Two eyes side by side: "View in 3D", greyed with its reason for a file of a newer format
+        final stereoPhoto = isHorizonOs && stereoPair == null ? _info?.stereoPhoto : null;
+        final sbsRequest = stereoPhoto?.request;
+        // The newest 3D version a computer saved next to this photo
+        final version = isHorizonOs ? _versions?.firstOrNull : null;
+        final versionRequest = version?.photo.request;
         final appBar = AppBar(
           backgroundColor: Colors.black38,
           foregroundColor: Colors.white,
@@ -438,7 +494,38 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       key: const Key('apple_spatial_view_3d'),
                       icon: const Icon(Icons.view_in_ar_rounded),
                       tooltip: context.t.apple_spatial_view_3d,
-                      onPressed: () => unawaited(_openStereo(photo, stereoPair)),
+                      onPressed: () =>
+                          unawaited(_openStereo(photo.entry.path, StereoPhotoRequest.heic(stereoPair), url: photo.url)),
+                    ),
+                  if (photo != null && stereoPhoto != null)
+                    IconButton(
+                      key: const Key('apple_spatial_view_3d'),
+                      icon: const Icon(Icons.view_in_ar_rounded),
+                      tooltip: sbsRequest != null
+                          ? context.t.apple_spatial_view_3d
+                          : context.t.ai_immersive_newer_version,
+                      onPressed: sbsRequest == null
+                          ? null
+                          : () => unawaited(
+                              _openStereo(photo.entry.path, StereoPhotoRequest.sbs(sbsRequest), url: photo.url),
+                            ),
+                    ),
+                  if (photo != null && version != null)
+                    IconButton(
+                      key: const Key('ai_immersive_view_3d_version'),
+                      icon: const Icon(Icons.view_in_ar_outlined),
+                      tooltip: versionRequest != null
+                          ? context.t.ai_immersive_view_3d_version
+                          : context.t.ai_immersive_newer_version,
+                      onPressed: versionRequest == null
+                          ? null
+                          : () => unawaited(
+                              _openStereo(
+                                version.entry.path,
+                                StereoPhotoRequest.sbs(versionRequest),
+                                url: widget.folder?.urls[version.entry.path],
+                              ),
+                            ),
                     ),
                   if (photo != null && is360)
                     IconButton(

@@ -291,6 +291,22 @@
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
+    "blob": "c3199e9af0afabad95e1307e3df24a3e23f0475e",
+    "reason": "AI immersive lot A7: the stereo quad shows side by side 3D photos (sbsPhoto) and reads the depthRelief kind; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/SbsPhoto.kt": {
+    "blob": "846882f23a5f24eae3d4f9ad7fb47866657890bb",
+    "reason": "AI immersive lot A7: decoding and cutting a side by side photo for the stereo quad; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
+    "blob": "3b6e9ceadae6b1fcd7b6eece8f5b59d8f75bb795",
+    "reason": "AI immersive lot A7: 2D (original), Relief estimated by AI and the 60 degree cap of an estimated relief; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
+    "blob": "727471d6828adddaa658cb2afde7e30ba8ae5710",
+    "reason": "AI immersive lot A7: the three kinds of the stereoPair JSON; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
     "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of the phones, ZXing with the camera permission asked first"
@@ -630,6 +646,18 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/DocumentTreeReadsTest.kt": {
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SbsPhotoTest.kt": {
+    "blob": "09fca7bff919e58554d854fa7b2a863673fee150",
+    "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
+    "blob": "a1afe4585d330c3f56094848341aeb43f9fc6120",
+    "reason": "AI immersive lot A7: tests of the 60 degree cap and the labels; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
+    "blob": "f8c86faa857bd7323d345dd795ac642dc9d1fa27",
+    "reason": "AI immersive lot A7: the stereoPair contract read by the Kotlin side; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",

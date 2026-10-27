@@ -12,6 +12,8 @@
 //
 // An Apple spatial photo goes to it with the stereoPair JSON of its two eyes (see HeicStereoPair.toImmersiveJson): the
 // viewer decodes both and shows them on a flat quad in front of the user (see ImmersiveAssetResolver.resolveStereoPhoto).
+// A flat photo holding two eyes side by side goes to the same quad with the sbsPhoto JSON (see SbsPhotoRequest), and a
+// flat photo whose relief the headset estimates with the depthRelief JSON: see StereoPhotoRequest.
 
 import 'dart:async';
 import 'dart:io';
@@ -22,6 +24,7 @@ import 'package:flutter/painting.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
@@ -574,11 +577,12 @@ class ImmersiveAssetResolver {
     }
   }
 
-  /// What the viewer opens for [asset], an Apple spatial photo whose two eyes [pair] describes: its copy on the device
-  /// when there is one, which saves downloading the original, else the original on the server with the headers of the
-  /// session, and the stereoPair JSON, from which the viewer decodes both eyes and shows them on a flat quad. The
-  /// sphere view is a plain mono one: the viewer shows no sphere for it. Throws when there is no file to open.
-  Future<ImmersiveRequest> resolveStereoPhoto(BaseAsset asset, HeicStereoPair pair) async {
+  /// What the viewer opens for [asset], a photo of the stereo quad that [stereo] describes (an Apple spatial photo, a
+  /// side by side photo, a photo for an AI relief): its copy on the device when there is one, which saves downloading
+  /// the original, else the original on the server with the headers of the session, and the stereoPair JSON, from
+  /// which the viewer decodes both eyes and shows them on a flat quad. The sphere view is a plain mono one: the viewer
+  /// shows no sphere for it. Throws when there is no file to open.
+  Future<ImmersiveRequest> resolveStereoPhoto(BaseAsset asset, StereoPhotoRequest stereo) async {
     File? localFile;
     final localId = asset.localId;
     if (localId != null) {
@@ -590,7 +594,8 @@ class ImmersiveAssetResolver {
     }
     final remoteId = asset.remoteId;
     // The original as it was read for the pair, never an edit the server made of it: the offset of pitm is the one of
-    // that file, and an edited picture holds one view only
+    // that file, an edited picture holds one view only, and the eyes of a side by side photo lie where the file put
+    // them
     final url =
         localFile?.uri.toString() ?? (remoteId == null ? null : getOriginalUrlForRemoteId(remoteId, edited: false));
     if (url == null) {
@@ -602,7 +607,7 @@ class ImmersiveAssetResolver {
       isVideo: false,
       title: asset.name,
       view: stereoPhotoSphereView,
-      stereoPair: pair.toImmersiveJson(),
+      stereoPair: stereo.toImmersiveJson(),
     );
   }
 
@@ -717,28 +722,75 @@ Future<void> openImmersiveViewer(
   }
 }
 
-/// The sphere view of an Apple spatial photo: the viewer shows it on a flat quad, the layout and the coverage tell it
-/// nothing
+/// What the stereo quad of the immersive viewer of the Meta Quest is asked to show (StereoPhotoKind on its side), as
+/// the stereoPair JSON of ImmersiveApi.open: an Apple spatial photo ([HeicStereoPhotoRequest]), a flat photo holding
+/// two eyes side by side ([SbsStereoPhotoRequest]), or a flat photo whose right eye the headset makes from its
+/// estimated depth ([DepthReliefStereoPhotoRequest]). A kind the viewer does not know shows the photo flat.
+sealed class StereoPhotoRequest {
+  const StereoPhotoRequest();
+
+  const factory StereoPhotoRequest.heic(HeicStereoPair pair) = HeicStereoPhotoRequest;
+
+  const factory StereoPhotoRequest.sbs(SbsPhotoRequest request) = SbsStereoPhotoRequest;
+
+  const factory StereoPhotoRequest.relief(DepthReliefRequest request) = DepthReliefStereoPhotoRequest;
+
+  /// The stereoPair JSON of ImmersiveApi.open
+  String toImmersiveJson();
+}
+
+/// An Apple spatial photo, its two eyes in two items of its HEIF file
+final class HeicStereoPhotoRequest extends StereoPhotoRequest {
+  const HeicStereoPhotoRequest(this.pair);
+
+  final HeicStereoPair pair;
+
+  @override
+  String toImmersiveJson() => pair.toImmersiveJson();
+}
+
+/// A flat photo holding two eyes side by side, ours or another tool's
+final class SbsStereoPhotoRequest extends StereoPhotoRequest {
+  const SbsStereoPhotoRequest(this.request);
+
+  final SbsPhotoRequest request;
+
+  @override
+  String toImmersiveJson() => request.toJsonString();
+}
+
+/// A flat photo whose relief the headset estimates
+final class DepthReliefStereoPhotoRequest extends StereoPhotoRequest {
+  const DepthReliefStereoPhotoRequest(this.request);
+
+  final DepthReliefRequest request;
+
+  @override
+  String toImmersiveJson() => request.toJsonString();
+}
+
+/// The sphere view of a photo of the stereo quad: the viewer shows it on a flat quad, the layout and the coverage tell
+/// it nothing
 const SphereView stereoPhotoSphereView = (
   layout: StereoLayout.mono,
   coverage: SphereCoverage.full,
   coverageGuess: SphereCoverage.full,
 );
 
-/// Opens [asset], an Apple spatial photo whose two eyes [pair] describes, in the immersive viewer in stereo photo mode
-/// (see [ImmersiveAssetResolver.resolveStereoPhoto]), the controls labelled with [stereoLabels]. Previous and next do
-/// not lead from there to other photos yet: the viewer says so itself. Throws when there is no file to open or the
-/// viewer does not open.
+/// Opens [asset] in the immersive viewer in stereo photo mode, as [stereo] describes it (an Apple spatial photo, a
+/// side by side photo, a photo for an AI relief, see [ImmersiveAssetResolver.resolveStereoPhoto]), the controls
+/// labelled with [stereoLabels]. Previous and next do not lead from there to other photos yet: the viewer says so
+/// itself. Throws when there is no file to open or the viewer does not open.
 Future<void> openStereoPhotoViewer(
   WidgetRef ref,
   BaseAsset asset,
-  HeicStereoPair pair, {
+  StereoPhotoRequest stereo, {
   required Map<String, String> stereoLabels,
 }) async {
   // Read before the first await: the viewer may be gone by then
   final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
   final session = ref.read(immersiveSessionProvider);
-  final request = await resolver.resolveStereoPhoto(asset, pair);
+  final request = await resolver.resolveStereoPhoto(asset, stereo);
   final openingId = session.start(null);
   try {
     await resolver.open(request, openingId: openingId);

@@ -43,6 +43,7 @@ import app.alextran.immich.core.raw.RawProjection
 import app.alextran.immich.core.raw.RawStitchException
 import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
+import app.alextran.immich.djilink.TransientText
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -158,6 +159,12 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * each eye its half (StereoMode.LeftRight, the mechanism of the 3D photos on the skybox). The 3D button switches to the
  * left eye for both eyes (MonoLeft), the thumbstick up or down resizes the quad and left or right brings it in front
  * of the gaze again; previous and next are not available for it yet. See [showStereoPhoto].
+ *
+ * A flat photo holding two eyes side by side comes with the sbsPhoto JSON (see [StereoPhotoKind] and [SbsPhotoSpec]):
+ * the same quad, its frame cut in two eyes ([SbsPhoto]). When the file says its relief was estimated by AI (the 3D
+ * photos the computers make), the quad says so for a few seconds when it shows in 3D, its 2D button reads "2D
+ * (original)" and it stays within 60 degrees; the file of another tool keeps the labels of any stereo photo. A
+ * depthRelief request shows its photo flat on the quad for now.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -194,8 +201,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val rawProjection: String? = null,
     /**
-     * The stereoPair JSON of an Apple spatial photo (see [StereoPairSpec]), shown on the stereo quad rather than on a
-     * sphere. Null for any other media, and ignored for a video.
+     * The stereoPair JSON of a photo shown on the stereo quad rather than on a sphere (see [StereoPhotoKind]): an
+     * Apple spatial photo, a side by side photo, a flat photo for an AI relief. Null for any other media, and ignored
+     * for a video.
      */
     val stereoPairJson: String? = null,
     /**
@@ -208,12 +216,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val isRawVideo: Boolean
       get() = isVideo && rawProjection != null
 
-    /** An Apple spatial photo: on the stereo quad, in 3D when its pair reads, flat otherwise. */
+    /** A photo of the stereo quad: in 3D when its JSON reads and both eyes decode, flat otherwise. */
     val isStereoPhoto: Boolean
       get() = !isVideo && stereoPairJson != null
 
-    /** The two eyes of a spatial photo, null when its JSON does not read (the photo then shows flat on the quad). */
-    val stereoPair: StereoPairSpec? by lazy { if (isStereoPhoto) StereoPairSpec.parse(stereoPairJson) else null }
+    /** What the quad shows, null when the JSON does not read (the photo then shows flat on the quad). */
+    val stereoKind: StereoPhotoKind? by lazy { if (isStereoPhoto) StereoPhotoKind.parse(stereoPairJson) else null }
+
+    /** The two eyes of an Apple spatial photo, null for any other kind. */
+    val stereoPair: StereoPairSpec?
+      get() = (stereoKind as? StereoPhotoKind.HeicPair)?.spec
+
+    /** The widest the thumbstick makes the quad of this photo, see StereoComposer.maxAngle. */
+    val stereoMaxAngleDeg: Float
+      get() = StereoComposer.maxAngle(stereoKind?.isEstimatedRelief == true)
   }
 
   /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
@@ -301,6 +317,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var stereoChoicesFor: Pair<String, Long>? = null
   /** The choices on the spatial photo shown before a recreation (see onCreate), taken back once by showStereoPhoto. */
   private var restoredStereoChoices: StereoPhotoChoices? = null
+  /** Takes "Relief estimated by AI" off the status line once it was read, see [showReliefEstimated]. */
+  private var reliefLabelJob: Job? = null
+  /** The status line of the stereo photo shown, under a passing label. */
+  private var stereoStatus = ""
 
   // Info panel views
   private var titleView: TextView? = null
@@ -638,6 +658,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun showRequest(revealInfo: Boolean = true) {
     val media = request
     loadJob?.cancel()
+    reliefLabelJob?.cancel()
+    reliefLabelJob = null
     hideInfoJob?.cancel()
     hideInfoJob = null
     endNavigation()
@@ -668,7 +690,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
     if (media.isRawVideo) Log.i(TAG, "raw 360 video, stitched on the headset")
-    if (media.isStereoPhoto) Log.i(TAG, "spatial photo, on the stereo quad: ${media.stereoPair ?: "pair unreadable"}")
+    if (media.isStereoPhoto) Log.i(TAG, "stereo photo, on the stereo quad: ${media.stereoKind ?: "JSON unreadable"}")
     titleView?.text = media.title
     updateVideoControls()
     updateStereoView()
@@ -779,8 +801,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     if (media.isStereoPhoto) {
-      // 3D or 2D (left eye): what the quad shows now
-      val key = if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D else StereoComposer.LABEL_2D
+      // 3D or 2D (left eye, or the original itself): what the quad shows now
+      val key =
+        if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D
+        else StereoComposer.twoDLabelKey(media.stereoKind?.leftEyeIsOriginal == true)
       view.text = StereoComposer.label(media.stereoLabels, key)
       view.visibility = View.VISIBLE
       return
@@ -1149,8 +1173,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (closing || isFinishing) return
     val shown = request
     if (shown != null && shown.isStereoPhoto) {
-      // Flutter finds no spatial photo before or after this one yet: said rather than asked
-      val text = StereoComposer.label(shown.stereoLabels, StereoComposer.LABEL_NO_NAVIGATION)
+      // Flutter finds no spatial or 3D photo before or after this one yet: said rather than asked
+      val key =
+        when (shown.stereoKind) {
+          is StereoPhotoKind.Sbs,
+          is StereoPhotoKind.DepthRelief -> StereoComposer.LABEL_NO_NAVIGATION_3D
+          else -> StereoComposer.LABEL_NO_NAVIGATION
+        }
+      val text = StereoComposer.label(shown.stereoLabels, key)
       Log.i(TAG, "no previous or next from a spatial photo (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
@@ -1777,9 +1807,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * Shows [media], an Apple spatial photo, on the stereo quad: no sphere around (black), its file read whole (a few MB:
-   * the bridge or the server original, or the file on the headset), both eyes decoded (see [decodeStereo]) and set
-   * side by side on one texture. A pair that does not read, or a second eye that does not decode, shows the left eye
+   * Shows [media] on the stereo quad: no sphere around (black), its file read whole (a few MB: the bridge or the
+   * server original, or the file on the headset), both eyes decoded and set side by side on one texture: the two
+   * items of an Apple spatial photo (see [decodeStereo]), the two halves of a side by side photo (see [SbsPhoto]). A
+   * JSON that does not read, a kind this build does not know, or a second eye that does not decode, shows the photo
    * in 2D.
    */
   private fun showStereoPhoto(media: MediaRequest) {
@@ -1788,13 +1819,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     skyboxEntity?.setComponent(Visible(false))
     halfSphereEntity?.setComponent(Visible(false))
     hideStereoQuad()
+    val kind = media.stereoKind
     val spec = media.stereoPair
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
-    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId)
+    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.stereoMaxAngleDeg)
     restoredStereoChoices = null
     stereo3d = restored?.threeD ?: true
     stereoHasSecondEye = false
-    stereoAngleDeg = restored?.angleDeg ?: StereoComposer.initialAngle(spec?.horizontalFovDeg)
+    stereoAngleDeg =
+      restored?.angleDeg
+        ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceAtMost(media.stereoMaxAngleDeg)
     stereoChoicesFor = media.url to media.openingId
     updateStereoView()
     setStatus(getString(R.string.immersive_loading))
@@ -1803,10 +1837,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         try {
           val local = ImmersiveMedia.localFileFor(media.url)
           val bytes = if (local != null) withContext(Dispatchers.IO) { local.readBytes() } else download(media.url)
-          Log.i(TAG, "spatial photo: ${bytes.size} bytes")
+          Log.i(TAG, "stereo photo: ${bytes.size} bytes")
           val holder = AtomicReference<StereoTexture?>()
           try {
-            decodeMutex.withLock { withContext(Dispatchers.Default) { holder.set(decodeStereo(bytes, spec)) } }
+            decodeMutex.withLock {
+              withContext(Dispatchers.Default) {
+                holder.set(if (kind is StereoPhotoKind.Sbs) decodeSbs(bytes, kind.spec) else decodeStereo(bytes, spec))
+              }
+            }
             ensureActive()
             val texture = holder.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
             applyStereoTexture(texture)
@@ -1816,10 +1854,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         } catch (e: CancellationException) {
           throw e
         } catch (e: Throwable) {
-          Log.e(TAG, "spatial photo failed", e)
+          Log.e(TAG, "stereo photo failed", e)
           showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
         }
       }
+  }
+
+  /** Both eyes of the side by side photo of [bytes] on one texture, off the main thread, see [SbsPhoto.decode]. */
+  private fun decodeSbs(bytes: ByteArray, spec: SbsPhotoSpec): StereoTexture? {
+    val (texture, split) = SbsPhoto.decode(bytes, spec) ?: return null
+    return StereoTexture(texture, split.eyeWidth, split.eyeHeight, hasSecondEye = true)
   }
 
   /**
@@ -1941,14 +1985,47 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoQuadEntity?.setComponent(Visible(true))
     updateStereoView()
     val media = request
+    stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
     if (media?.stereoPair != null && !stereo.hasSecondEye) {
       // Shown at once and longer, as the decoder warning: the user expected 3D
       showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
       scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+    } else if (stereo3d) {
+      setStatus(stereoStatus)
+      showReliefEstimated()
+      scheduleInfoHide()
     } else {
-      setStatus(getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight))
+      setStatus(stereoStatus)
       scheduleInfoHide()
     }
+  }
+
+  /**
+   * "Relief estimated by AI" on the status line while an estimated relief shows in 3D, then the line goes back to what
+   * it said: the label comes and goes (FreeKC's rule of 25 October, djilink/TransientText.kt), at each new photo and
+   * each return to 3D. Nothing for any other photo, which makes no such claim.
+   */
+  private fun showReliefEstimated() {
+    val media = request ?: return
+    if (media.stereoKind?.isEstimatedRelief != true || !stereo3d || !stereoHasSecondEye) return
+    val label = StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_RELIEF_ESTIMATED)
+    Log.i(TAG, "stereo photo: relief estimated by AI, said for ${TransientText.HOLD_MS} ms")
+    setStatus(label)
+    reliefLabelJob?.cancel()
+    reliefLabelJob =
+      scope.launch {
+        delay(TransientText.HOLD_MS)
+        reliefLabelJob = null
+        if (statusView?.text?.toString() == label) showStatus(stereoStatus)
+      }
+  }
+
+  /** The label goes with the 3D it describes. */
+  private fun hideReliefEstimated() {
+    val job = reliefLabelJob ?: return
+    job.cancel()
+    reliefLabelJob = null
+    setStatus(stereoStatus)
   }
 
   /** LeftRight in 3D, each eye its half of the texture; MonoLeft in 2D or without a second eye. */
@@ -1967,6 +2044,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereo3d = !stereo3d
     applyStereoMode()
     updateStereoView()
+    if (stereo3d) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }
 
@@ -2002,7 +2080,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** The thumbstick up ([step] 1) or down (-1) on a spatial photo: a wider or narrower quad, where it is. */
   private fun resizeStereoQuad(step: Int) {
-    stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step)
+    val maxAngleDeg = request?.stereoMaxAngleDeg ?: StereoComposer.MAX_ANGLE_DEG
+    stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step, maxAngleDeg)
     applyStereoScale()
     Log.i(TAG, "stereo quad is now $stereoAngleDeg degrees wide")
     val text = "${stereoAngleDeg.roundToInt()}°"

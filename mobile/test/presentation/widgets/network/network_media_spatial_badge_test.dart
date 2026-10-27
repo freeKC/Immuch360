@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 
+import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../unit/presentation/presentation_context.dart';
 
 /// No upload under way
@@ -94,6 +97,54 @@ void main() {
     await pumpTile(tester, entry('/IMG_0004.HEIC'), null);
 
     expect(spatialBadge, findsNothing);
+  });
+
+  group('flat 3D photos', () {
+    final aiBadge = find.byKey(const Key('network_media_ai_3d_badge'));
+
+    testWidgets('one of ours gets the 3D AI badge: its relief was estimated', (tester) async {
+      await pumpTile(
+        tester,
+        entry('/salon_3D_LRF_Full_SBS.jpg'),
+        NetworkMediaInfo(
+          stereoPhoto: FlatStereoPhoto(eyes: StereoEyes.full, xmp: ourXmp()),
+        ),
+      );
+
+      expect(aiBadge, findsOneWidget);
+      expect(find.descendant(of: aiBadge, matching: find.text('3D AI')), findsOneWidget);
+      expect(spatialBadge, findsNothing);
+    });
+
+    testWidgets('the side by side file of another tool gets the plain 3D badge', (tester) async {
+      await pumpTile(
+        tester,
+        entry('/trip_LRF_Full_SBS.png'),
+        const NetworkMediaInfo(stereoPhoto: FlatStereoPhoto(eyes: StereoEyes.full)),
+      );
+
+      expect(spatialBadge, findsOneWidget);
+      expect(find.descendant(of: spatialBadge, matching: find.text('3D')), findsOneWidget);
+      expect(aiBadge, findsNothing);
+    });
+
+    test('the badge of each kind of file', () {
+      expect(networkStereoBadgeOf(null), isNull);
+      expect(networkStereoBadgeOf(const NetworkMediaInfo()), isNull);
+      expect(networkStereoBadgeOf(const NetworkMediaInfo(stereoPair: pair)), NetworkStereoBadge.stereo);
+      expect(
+        networkStereoBadgeOf(const NetworkMediaInfo(stereoPhoto: FlatStereoPhoto(eyes: StereoEyes.half))),
+        NetworkStereoBadge.stereo,
+      );
+      expect(
+        networkStereoBadgeOf(
+          NetworkMediaInfo(
+            stereoPhoto: FlatStereoPhoto(eyes: StereoEyes.full, xmp: ourXmp()),
+          ),
+        ),
+        NetworkStereoBadge.estimated,
+      );
+    });
   });
 
   testWidgets('next to the 360° badge when both show', (tester) async {

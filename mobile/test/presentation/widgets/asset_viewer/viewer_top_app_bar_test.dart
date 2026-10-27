@@ -12,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -20,6 +21,7 @@ import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
@@ -34,6 +36,7 @@ import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -58,6 +61,7 @@ import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
@@ -2847,6 +2851,113 @@ void main() {
       await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [spatial(asset, null)]);
 
       expect(view3dButton, findsNothing);
+    });
+  });
+
+  group('ViewerTopAppBar "View in 3D" button for side by side photos', () {
+    const server = PresentationContext.serverEndpoint;
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+    final ours = FlatStereoPhoto(eyes: StereoEyes.full, xmp: ourXmp());
+    var reads = 0;
+
+    setUp(() => reads = 0);
+
+    // What the head of [asset] says, without reading it; counts the reads
+    Override flat(BaseAsset asset, FlatStereoPhoto? photo) => flatStereoProvider(asset).overrideWith((ref) async {
+      reads++;
+      return photo;
+    });
+
+    List<dynamic> openedWith() => verify(
+      () => immersiveApi.open(
+        captureAny(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+      ),
+    ).captured;
+
+    testWidgets('opens one of ours on the stereo quad of a Meta Quest, saying how it was made', (tester) async {
+      final asset = owned(name: 'salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000);
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [flat(asset, ours)]);
+
+      expect(view3dButton, findsOneWidget);
+      expect(find.byTooltip('View in 3D'), findsOneWidget);
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      final captured = openedWith();
+      // The original, where the file has its eyes, never an edit of it
+      expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
+      expect(captured[1], isFalse, reason: 'a photo');
+      final labels = captured[2] as Map<String, String>;
+      expect(labels['ai2dOriginal'], '2D (original)');
+      expect(labels['aiReliefEstimated'], 'Relief estimated by AI');
+      expect(labels['aiNoNavigation'], 'Previous and next are not available for 3D photos yet');
+      expect(jsonDecode(captured[3] as String), {
+        'kind': 'sbsPhoto',
+        'version': 1,
+        'layout': 'leftRight',
+        'eyes': 'full',
+        'origin': 'estimatedDepth',
+        'leftEye': 'original',
+      });
+    });
+
+    testWidgets('opens the file of another tool without a word about how it was made', (tester) async {
+      final asset = owned(name: 'trip_RLF_cross.png', width: 3840, height: 1080);
+      const theirs = FlatStereoPhoto(eyes: StereoEyes.full, eyeOrder: EyeOrder.rightLeft);
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [flat(asset, theirs)]);
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      expect(jsonDecode(openedWith()[3] as String), {
+        'kind': 'sbsPhoto',
+        'version': 1,
+        'layout': 'rightLeft',
+        'eyes': 'full',
+        'origin': 'unknown',
+        'leftEye': 'unknown',
+      });
+    });
+
+    testWidgets('greys the button of a file of a newer format, with the reason', (tester) async {
+      final asset = owned(name: 'salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000);
+      final newer = FlatStereoPhoto(
+        eyes: StereoEyes.full,
+        xmp: ourXmp(formatVersion: immersiveFormatVersion + 1),
+      );
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [flat(asset, newer)]);
+
+      expect(view3dButton, findsOneWidget);
+      expect(tester.widget<IconButton>(view3dButton).onPressed, isNull);
+      expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
+    });
+
+    testWidgets('is not shown for an ordinary photo', (tester) async {
+      final asset = owned(name: 'salon.jpg', width: 4000, height: 3000);
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [flat(asset, null)]);
+
+      expect(view3dButton, findsNothing);
+    });
+
+    testWidgets('is not shown on a phone, which reads nothing for it', (tester) async {
+      final asset = owned(name: 'salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000);
+      await pumpTopBar(tester, asset, extraOverrides: [flat(asset, ours)]);
+
+      expect(view3dButton, findsNothing);
+      expect(reads, 0);
     });
   });
 }
