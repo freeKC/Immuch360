@@ -168,6 +168,8 @@ void main() {
 
   setUp(() {
     root = Directory.systemTemp.createTempSync('conversion_queue_kinds');
+    // Before the containers, so that it runs after them: Windows deletes no folder with a file still open
+    addTearDown(() => root.deleteSync(recursive: true));
     photos = p.join(root.path, 'photos');
     Directory(photos).createSync();
     final support = Directory(p.join(root.path, 'support'))..createSync();
@@ -184,8 +186,6 @@ void main() {
     seeds = [11, 12, 13, 14];
     container = containerWith();
   });
-
-  tearDown(() => root.deleteSync(recursive: true));
 
   ConversionQueueNotifier queue() => container.read(conversionQueueProvider.notifier);
   ConversionQueueState current() => container.read(conversionQueueProvider);

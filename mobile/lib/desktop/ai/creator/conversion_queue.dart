@@ -660,6 +660,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         );
         return;
       }
+      // Kept before the job is told done: nothing of it is still written once it shows done
+      await _keepTimings(tools, job.kind, result.stageTimes);
       // What the writer did, not what was asked: it keeps both when the version is no longer ours at the rename
       final replaced = saved.outcome == ConversionSaveOutcome.replaced;
       _set(
@@ -678,7 +680,6 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           remaining: () => null,
         ),
       );
-      await _keepTimings(tools, job.kind, result.stageTimes);
     } on ConversionException catch (error) {
       _end(id, error.code, error.message);
     } catch (error, stack) {
