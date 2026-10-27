@@ -698,6 +698,7 @@
   "ai_immersive_skip": "Skip",
   "ai_immersive_skipped_360": "360° photo",
   "ai_immersive_skipped_3d": "Already a 3D photo",
+  "ai_immersive_skipped_parent": "Its 360° panorama was not made",
   "ai_immersive_skipped_same_settings": "A 3D version with the same settings exists",
   "ai_immersive_skipped_spatial": "Spatial photo",
   "ai_immersive_skipped_video": "Video",

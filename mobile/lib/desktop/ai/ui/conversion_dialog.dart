@@ -127,6 +127,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
   ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
   ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
   ConversionSkipReason.unreachable => t.ai_immersive_failed_source,
+  ConversionSkipReason.parentNotMade => t.ai_immersive_skipped_parent,
 };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere, holds two eyes

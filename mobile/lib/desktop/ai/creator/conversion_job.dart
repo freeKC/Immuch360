@@ -3,6 +3,10 @@
 // and skipped or cancelled for a batch), its progress, its destination planned then real, the quality flags of its
 // result and "3 of 12" for its batch. The queue (conversion_queue.dart) changes jobs, the screens only show them.
 //
+// Phases 2 and 3 (design-final 2026-10-27, sections 4.5 and 9.1) add the kind of each job and its lane, the job a 360°
+// 3D panorama is chained after (the panorama it is made from), "step 12 of 28" and the time left, and why a job still
+// waits when the other lane runs.
+//
 // A source says how to get the bytes the engine reads: a file of this computer is read in place, a server original or
 // a file of a share is copied to a temporary folder first (by the screens, lot A5c). Either way the original is never
 // opened for writing.
@@ -39,6 +43,52 @@ enum ConversionKind {
 
   /// The steps of its engine, in their order
   List<ImmersiveStage> get stages => ImmersiveStage.of(output);
+
+  /// How long a job of this kind takes on this computer, as [timings] tell its steps
+  Duration expectedDuration(AiTimings timings) =>
+      Duration(milliseconds: stages.fold(0, (sum, stage) => sum + (timings.of(name, stage.name) ?? 0)));
+}
+
+/// The time left of a job of [kind] at [stage], which has taken [inStage] so far: the time the step itself tells
+/// ([stageLeft], the steps of a generation), else what its timing leaves of it, then the timings of the steps after it;
+/// null when nothing tells any of them
+Duration? conversionTimeLeft(
+  ConversionKind kind,
+  ImmersiveStage stage, {
+  required AiTimings timings,
+  Duration inStage = Duration.zero,
+  Duration? stageLeft,
+}) {
+  final stages = kind.stages;
+  final at = stages.indexOf(stage);
+  if (at < 0) {
+    return null;
+  }
+  var known = stageLeft != null;
+  var left = stageLeft ?? Duration.zero;
+  if (stageLeft == null) {
+    final expected = timings.of(kind.name, stage.name);
+    if (expected != null) {
+      known = true;
+      final rest = Duration(milliseconds: expected) - inStage;
+      left += rest.isNegative ? Duration.zero : rest;
+    }
+  }
+  for (final later in stages.skip(at + 1)) {
+    final expected = timings.of(kind.name, later.name);
+    if (expected != null) {
+      known = true;
+      left += Duration(milliseconds: expected);
+    }
+  }
+  return known ? left : null;
+}
+
+/// Why a job still waits while its lane is free
+enum ConversionWait {
+  /// The other lane runs and the memory free cannot hold both jobs (memory_probe.dart): the job starts when it can,
+  /// at the latest when the other one ends
+  memory,
 }
 
 /// Where a job is: the steps of the engines between waiting and the four ends, in the order of ImmersiveStage, so
@@ -140,6 +190,9 @@ enum ConversionSkipReason {
   /// The original cannot be reached from this computer: a file gone since the last scan, a photo of a server the app
   /// is not signed in to
   unreachable,
+
+  /// A 360° 3D panorama chained after a panorama that was not made: failed, cancelled, or skipped without a file
+  parentNotMade,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
@@ -290,6 +343,8 @@ class ConversionJob {
     required this.batchSize,
     this.target,
     this.kind = ConversionKind.sbsFromPhoto,
+    this.parentId,
+    this.inputPath,
     this.quarterTurns = 0,
     this.existing = ExistingVersionChoice.skip,
     this.whenExists = AiWhenExists.keepBoth,
@@ -302,14 +357,27 @@ class ConversionJob {
     this.eyeHeight,
     this.reduced = false,
     this.qualityFlags = const [],
+    this.details,
     this.error,
     this.message,
     this.skipReason,
+    this.step,
+    this.steps,
+    this.remaining,
+    this.waitingFor,
   });
 
   final String id;
+
+  /// The original: the photo, also for a 360° 3D panorama chained after the panorama made from it
   final ConversionSource source;
   final ConversionKind kind;
+
+  /// The job whose file this one is made from: the panorama of a 360° 3D panorama chained after it
+  final String? parentId;
+
+  /// The file the job reads instead of its source, once its parent made it (or found it with the same settings)
+  final String? inputPath;
 
   /// Its place in the batch it came with, from 1: "3 of 12"
   final int batchIndex;
@@ -342,16 +410,32 @@ class ConversionJob {
   final bool reduced;
   final List<ReliefQualityFlag> qualityFlags;
 
+  /// What the file written tells of itself, per kind (the size of an eye, the meshes of a scene, the seed of a
+  /// panorama)
+  final ImmersiveResultDetails? details;
+
   /// Why it failed, and the words of the system or of the model
   final ImmersiveErrorCode? error;
   final String? message;
   final ConversionSkipReason? skipReason;
+
+  /// The step of a long step of the engine under way, "step 12 of 28"; null when it tells none
+  final int? step;
+  final int? steps;
+
+  /// The time left of the whole job, while it runs; null when nothing tells it
+  final Duration? remaining;
+
+  /// Why it still waits; null for a job that waits for its turn
+  final ConversionWait? waitingFor;
 
   ConversionPhase get phase => state.phase;
 
   /// From 0 to 1
   double get progress => perMille / 1000;
 
+  /// A copy with the values given; [inputPath], [step], [steps], [remaining] and [waitingFor] are given as functions,
+  /// so that they may go back to null
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -362,9 +446,15 @@ class ConversionJob {
     int? eyeHeight,
     bool? reduced,
     List<ReliefQualityFlag>? qualityFlags,
+    ImmersiveResultDetails? details,
     ImmersiveErrorCode? error,
     String? message,
     ConversionSkipReason? skipReason,
+    String? Function()? inputPath,
+    int? Function()? step,
+    int? Function()? steps,
+    Duration? Function()? remaining,
+    ConversionWait? Function()? waitingFor,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -372,6 +462,8 @@ class ConversionJob {
     batchSize: batchSize,
     target: target,
     kind: kind,
+    parentId: parentId,
+    inputPath: inputPath == null ? this.inputPath : inputPath(),
     quarterTurns: quarterTurns,
     existing: existing,
     whenExists: whenExists,
@@ -384,12 +476,17 @@ class ConversionJob {
     eyeHeight: eyeHeight ?? this.eyeHeight,
     reduced: reduced ?? this.reduced,
     qualityFlags: qualityFlags ?? this.qualityFlags,
+    details: details ?? this.details,
     error: error ?? this.error,
     message: message ?? this.message,
     skipReason: skipReason ?? this.skipReason,
+    step: step == null ? this.step : step(),
+    steps: steps == null ? this.steps : steps(),
+    remaining: remaining == null ? this.remaining : remaining(),
+    waitingFor: waitingFor == null ? this.waitingFor : waitingFor(),
   );
 
-  /// The job as it was added, to run again
+  /// The job as it was added, to run again; a chained job reads again what its parent makes then
   ConversionJob restarted() => ConversionJob(
     id: id,
     source: source,
@@ -397,11 +494,13 @@ class ConversionJob {
     batchSize: batchSize,
     target: target,
     kind: kind,
+    parentId: parentId,
+    inputPath: parentId == null ? inputPath : null,
     quarterTurns: quarterTurns,
     existing: existing,
     whenExists: whenExists,
   );
 
   @override
-  String toString() => 'ConversionJob($id, ${source.name}, ${state.name})';
+  String toString() => 'ConversionJob($id, ${kind.name}, ${source.name}, ${state.name})';
 }
