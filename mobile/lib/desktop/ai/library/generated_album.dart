@@ -1,10 +1,14 @@
-// The virtual album of the 3D photos Immuch360 makes, "Immuch360 3D (AI)" (design-final 2026-10-26, section 4.3). A
-// version written in a folder of the library is a photo of that folder, so a folder chosen for the backup to Immich
-// would send it on its own, which the spec refuses (6.6): publishing a generated file is a choice. So the folder
+// The virtual album of the versions Immuch360 makes, "Immuch360 AI versions" (design-final 2026-10-26, section 4.3;
+// design-final 2026-10-27, section 8.4, point 3): the 3D photos, 3D scenes and 360° panoramas the app makes from a
+// photo. A version written in a folder of the library is a photo of that folder, so a folder chosen for the backup to
+// Immich would send it on its own, which the spec refuses (6.6): publishing a generated file is a choice. So the folder
 // library declares this album from its first scan, empty or not, and puts every version in it besides its folder
 // (FolderLibrarySyncApi). The first time the album reaches the local tables, it is put in the excluded albums of the
 // backup, and the query of the backup leaves out any asset of an excluded album, even when its folder is chosen
 // (backup.repository.dart). The shared code of the backup is not changed.
+//
+// The album was named "Immuch360 3D (AI)" while it held 3D photos only. It keeps its id: a computer that excluded it
+// keeps it excluded, the next sync only gives it its new name.
 //
 // Until that exclusion is done (generatedAlbumState in desktop_ai.json), no conversion writes into a folder of the
 // library: the album is still empty then, so no version can leave between the scan and the exclusion. A database of
@@ -13,10 +17,10 @@
 // and a sync may bring the album back right after: so the keeper listens to the row of the album, and the moment it
 // leaves the local tables the state goes back to pending, before any sync can make it look as if nothing happened.
 //
-// The switch "Also back up generated 3D photos" of the settings shows the selection of the album and keeps nothing of
-// its own: off when the album is excluded, on otherwise. "Select all" of the backup albums selects this album too (an
-// explicit gesture on a list where it reads by its name), and the switch then shows on. Turning it on puts the album
-// back to no choice, so the versions follow their folders; turning it off excludes it again.
+// The switch "Also back up AI versions" of the settings shows the selection of the album and keeps nothing of its own:
+// off when the album is excluded, on otherwise. "Select all" of the backup albums selects this album too (an explicit
+// gesture on a list where it reads by its name), and the switch then shows on. Turning it on puts the album back to
+// no choice, so the versions follow their folders; turning it off excludes it again.
 
 import 'dart:async';
 
@@ -32,11 +36,13 @@ import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:logging/logging.dart';
 
-/// The id of the album in the local tables; no folder album has it (theirs are "d" and 40 hex digits, folder_roots.dart)
+/// The id of the album in the local tables; no folder album has it (theirs are "d" and 40 hex digits, folder_roots.dart).
+/// The same since phase 1, whatever its name says.
 const generatedAlbumId = 'immuch360-generated-3d';
 
-/// Its name, as the backup albums list it
-const generatedAlbumName = 'Immuch360 3D (AI)';
+/// Its name, as the backup albums list it: a name of the app, the same in every language (the sync services that give
+/// it run in an isolate without the translations), as "Immuch360 3D (AI)" was in phase 1
+const generatedAlbumName = 'Immuch360 AI versions';
 
 final _log = Logger('GeneratedAlbum');
 
@@ -119,8 +125,8 @@ class GeneratedAlbumKeeper {
     }
   });
 
-  /// "Also back up generated 3D photos": on when the album is selected or has no choice, off when it is excluded, null
-  /// while the local tables do not have it yet
+  /// "Also back up AI versions": on when the album is selected or has no choice, off when it is excluded, null while
+  /// the local tables do not have it yet
   Future<bool?> backsUpGenerated() async {
     final selection = await _album.selection();
     return selection == null ? null : selection != BackupSelection.excluded;

@@ -526,6 +526,7 @@
   "ai_immersive_album_ai_versions": "Immuch360 AI versions",
   "ai_immersive_also_stereo": "Also make the 3D version",
   "ai_immersive_backup_ai_versions": "Also back up AI versions",
+  "ai_immersive_backup_ai_versions_hint": "Off: AI versions stay on this computer. Select all in the backup albums turns this on too.",
   "ai_immersive_backup_generated": "Also back up generated 3D photos",
   "ai_immersive_backup_generated_hint": "Off: generated 3D photos stay on this computer. Select all in the backup albums turns this on too.",
   "ai_immersive_badge": "3D AI",

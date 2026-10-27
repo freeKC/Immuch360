@@ -2,8 +2,8 @@
 // features (on by default, the app being a lab; off, no AI button anywhere and nothing downloaded), the AI components
 // (their sizes, licences, Remove, the total, Remove all), where the 3D photos go by default, what happens when a 3D
 // photo with the same name exists, whether photos that already have a 3D version are skipped, the network folders
-// allowed to receive 3D photos (each can be taken back), whether the generated 3D photos are backed up to Immich (the
-// switch follows the album "Immuch360 3D (AI)" of the backup pages, design 4.3), and what this computer has: its
+// allowed to receive 3D photos (each can be taken back), whether the AI versions are backed up to Immich (the switch
+// follows the album "Immuch360 AI versions" of the backup pages, design 4.3), and what this computer has: its
 // logical processors, its memory, its GPU, which phase 1 does not use yet.
 //
 // The settings of the conversions live in desktop_ai.json (DesktopAiSettings); the switch of the AI features is a
@@ -48,7 +48,7 @@ final aiGpuNameProvider = FutureProvider.autoDispose<String?>(
   (ref) async => (await DesktopGpuDecoders.adapter())?.name,
 );
 
-/// Turns the backup of the generated 3D photos on or off (lot A6a); replaced in tests
+/// Turns the backup of the AI versions on or off (lot A6a); replaced in tests
 final aiBackupGeneratedSetterProvider = Provider<Future<bool> Function(bool on)>(
   (ref) => ref.watch(generatedAlbumKeeperProvider).setBacksUpGenerated,
 );
@@ -298,8 +298,8 @@ class _BackupGenerated extends ConsumerWidget {
     return SwitchListTile(
       key: const Key('ai_settings_backup_generated'),
       value: on ?? false,
-      title: Text(t.ai_immersive_backup_generated),
-      subtitle: Text(t.ai_immersive_backup_generated_hint),
+      title: Text(t.ai_immersive_backup_ai_versions),
+      subtitle: Text(t.ai_immersive_backup_ai_versions_hint),
       // Until the album reached the local tables, there is nothing to turn
       onChanged: on == null ? null : (value) => unawaited(ref.read(aiBackupGeneratedSetterProvider)(value)),
     );

@@ -29,7 +29,7 @@ enum AiWhenExists {
   skip,
 }
 
-/// Whether the virtual album "Immuch360 3D (AI)" was put in the excluded albums of the backup. Until it was, no
+/// Whether the virtual album "Immuch360 AI versions" was put in the excluded albums of the backup. Until it was, no
 /// conversion writes into a folder of the library (design 4.3).
 enum AiGeneratedAlbumState { pending, excluded }
 
