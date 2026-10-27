@@ -15,6 +15,6 @@ object DepthEstimators : DepthEngine {
     throw DepthEstimatorException(
       DepthFailure.NOT_IN_THIS_VERSION,
       path,
-      "this version of the app has no depth engine: the relief is in the Meta Horizon Store version",
+      "this version of the app has no depth engine: the relief is in the Quest version of the app",
     )
 }

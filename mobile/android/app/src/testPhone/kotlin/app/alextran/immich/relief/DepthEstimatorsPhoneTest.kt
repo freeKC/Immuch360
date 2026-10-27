@@ -5,6 +5,7 @@ import java.nio.file.Files
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
@@ -28,6 +29,8 @@ class DepthEstimatorsPhoneTest {
       } catch (e: DepthEstimatorException) {
         assertEquals(DepthFailure.NOT_IN_THIS_VERSION, e.failure)
         assertEquals(path, e.path)
+        // The quest APK is in the Horizon Store and in the GitHub releases alike
+        assertTrue(e.message, e.message!!.endsWith("the relief is in the Quest version of the app"))
       }
     }
   }
