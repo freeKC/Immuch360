@@ -23,8 +23,8 @@ class _TextBundle extends CachingAssetBundle {
 }
 
 void main() {
-  // The LiteRT licence of the repository, the text of its packages
-  final licence = File('assets/licenses/litert/LICENSE').readAsStringSync();
+  // The LiteRT licence of the repository, the text of its packages (a checkout on Windows may end its lines with \r\n)
+  final licence = File('assets/licenses/litert/LICENSE').readAsStringSync().replaceAll('\r\n', '\n');
 
   test('the quest flavour lists LiteRT with its licence and where the notices of its libraries are', () async {
     final entries = await liteRtLicenses(flavor: 'quest', bundle: _TextBundle({liteRtLicenseAsset: licence})).toList();

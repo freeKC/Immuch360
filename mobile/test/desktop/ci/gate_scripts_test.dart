@@ -588,7 +588,11 @@ abstract class SyncEvents {
       final run = check({'app-quest-release.apk': 106500, 'app-phone-release.aab': 150100}, options: options);
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('(+6.500 %), ok (threshold of the quest kind: 7 %)'));
-      expect(run.output, contains('app-phone-release.aab: aab, 150100 bytes against 150000 (+0.067 %), ok\n'));
+      // The other kinds say nothing of a threshold of their own (Windows ends the lines with \r\n)
+      expect(
+        LineSplitter.split(run.output),
+        contains('app-phone-release.aab: aab, 150100 bytes against 150000 (+0.067 %), ok'),
+      );
 
       final phone = check({
         'app-quest-release.apk': 106500,
