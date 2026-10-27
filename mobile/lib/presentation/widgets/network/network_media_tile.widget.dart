@@ -293,6 +293,22 @@ final networkMediaInfoProvider = FutureProvider.autoDispose.family<NetworkMediaI
   return service.detect(entry, networkFileReader(fileSystem, key.path), isWanted: () => wanted);
 });
 
+/// The 3D badge of a tile: [estimated] for a 3D photo whose relief was estimated by AI ("3D AI", the honesty label of
+/// design-final 2026-10-26, section 4.5), [stereo] for a real pair (an Apple spatial photo or video) or the side by
+/// side file of another tool ("3D")
+enum NetworkStereoBadge { stereo, estimated }
+
+/// The 3D badge of a file of a share that declares [info], null for none (a flat photo, a file not read yet)
+NetworkStereoBadge? networkStereoBadgeOf(NetworkMediaInfo? info) {
+  if (info == null) {
+    return null;
+  }
+  if (info.stereoPhoto?.isEstimatedRelief ?? false) {
+    return NetworkStereoBadge.estimated;
+  }
+  return info.isAppleSpatial || info.stereoPhoto != null ? NetworkStereoBadge.stereo : null;
+}
+
 /// A photo or a video of a share in the grid of the browser. [url] is its media bridge URL, null when there is none.
 class NetworkMediaTile extends ConsumerWidget {
   const NetworkMediaTile({
@@ -326,9 +342,9 @@ class NetworkMediaTile extends ConsumerWidget {
     final is360 = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.is360 ?? false),
     );
-    // Apple spatial photos and videos, told by the same read
-    final isSpatial = ref.watch(
-      networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.isAppleSpatial ?? false),
+    // Apple spatial photos and videos, and the flat photos holding two eyes side by side, told by the same read
+    final stereoBadge = ref.watch(
+      networkMediaInfoProvider(networkMediaKey(entry)).select((info) => networkStereoBadgeOf(info.valueOrNull)),
     );
     final record = ref.watch(networkUploadRecordsProvider.select((records) => records[UploadRecordStore.keyOf(entry)]));
     final wasSent = isKeptOnServer(record);
@@ -383,15 +399,25 @@ class NetworkMediaTile extends ConsumerWidget {
                   bottom: 6,
                   child: Icon(Icons.play_circle_outline_rounded, color: Colors.white, size: 20, shadows: _shadows),
                 ),
-              if (isSpatial)
+              if (stereoBadge != null)
                 Positioned(
-                  key: const Key('network_media_spatial_badge'),
+                  key: Key(
+                    stereoBadge == NetworkStereoBadge.estimated
+                        ? 'network_media_ai_3d_badge'
+                        : 'network_media_spatial_badge',
+                  ),
                   // Left of the 360° badge when both show
                   right: is360 ? 28 : 6,
                   top: 6,
-                  child: const Text(
-                    '3D',
-                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700, shadows: _shadows),
+                  child: Text(
+                    // The honesty label of a relief estimated by AI, "3D" for a real pair or another tool's file
+                    stereoBadge == NetworkStereoBadge.estimated ? context.t.ai_immersive_badge : '3D',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      shadows: _shadows,
+                    ),
                   ),
                 ),
               if (is360)

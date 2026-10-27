@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -20,6 +20,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.wi
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -108,12 +109,27 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final stereoPair = isHorizonOs && asset.isImage && isHeifName(asset.name)
         ? ref.watch(appleSpatialInfoProvider(asset)).valueOrNull?.photo
         : null;
-    final view3dButton = stereoPair != null
+    // So does a flat photo holding two eyes side by side: the 3D photos a computer makes, those of other tools. Only
+    // the photos whose name or frame says so are read (see FlatStereoService.isCandidate), only on the headset, and
+    // never a photo shown as 360°, which keeps its own viewer (a band of the sphere has the frame of two eyes). One of
+    // a newer format keeps its button, greyed with the reason.
+    final flatStereo = isHorizonOs && asset.isImage && stereoPair == null && !hasPanoramaView
+        ? ref.watch(flatStereoProvider(asset)).valueOrNull
+        : null;
+    final sbsRequest = flatStereo?.request;
+    final StereoPhotoRequest? stereoRequest = stereoPair != null
+        ? StereoPhotoRequest.heic(stereoPair)
+        : sbsRequest != null
+        ? StereoPhotoRequest.sbs(sbsRequest)
+        : null;
+    final view3dButton = stereoPair != null || flatStereo != null
         ? IconButton(
             key: const Key('apple_spatial_view_3d'),
             icon: const Icon(Icons.view_in_ar_rounded),
-            tooltip: context.t.apple_spatial_view_3d,
-            onPressed: () => unawaited(_openStereoPhoto(context, ref, asset, stereoPair)),
+            tooltip: stereoRequest != null ? context.t.apple_spatial_view_3d : context.t.ai_immersive_newer_version,
+            onPressed: stereoRequest == null
+                ? null
+                : () => unawaited(_openStereoPhoto(context, ref, asset, stereoRequest)),
           )
         : null;
 
@@ -225,15 +241,15 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 }
 
-/// Opens [asset], an Apple spatial photo, in 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says
-/// when it could not open
-Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, HeicStereoPair pair) async {
+/// Opens [asset], an Apple spatial photo or a side by side photo as [stereo] describes it, in 3D in the immersive
+/// viewer (see [openStereoPhotoViewer]); a message says when it could not open
+Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, StereoPhotoRequest stereo) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
   final errorMessage = context.t.immersive_viewer_open_failed;
-  final stereoLabels = sphereViewerLabels(context.t);
+  final stereoLabels = stereoPhotoViewerLabels(context.t);
   try {
-    await openStereoPhotoViewer(ref, asset, pair, stereoLabels: stereoLabels);
+    await openStereoPhotoViewer(ref, asset, stereo, stereoLabels: stereoLabels);
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

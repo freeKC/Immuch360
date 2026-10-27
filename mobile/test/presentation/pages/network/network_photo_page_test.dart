@@ -28,6 +28,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
+import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../fixtures/raw/insta360.stub.dart';
 import 'network_viewer_fakes.dart';
 
@@ -412,6 +413,147 @@ void main() {
       await tester.pump();
 
       expect(view3dButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+  });
+
+  group('flat 3D photos', () {
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+    final versionButton = find.byKey(const Key('ai_immersive_view_3d_version'));
+
+    /// Waits until the head of the photo was read through the media bridge, and a little more for the page
+    Future<void> settleDetection(WidgetTester tester) async {
+      await pumpRealIo(tester, () => server.requests.any((request) => request.range != null));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pump();
+    }
+
+    testWidgets('on a Meta Quest, one of ours opens on the stereo quad from the media bridge, said to be estimated', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(width: 8000, height: 3000, xmp: ourXmp());
+      await pumpPhotoPage(tester, '/salon_3D_LRF_Full_SBS.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => view3dButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('View in 3D'), findsOneWidget);
+      expect(find.byTooltip('360°'), findsNothing, reason: 'two eyes side by side are no 360° photo');
+      expect(find.byKey(const Key('network_photo_rotate')), findsNothing, reason: 'the eyes stay where they are');
+
+      await tester.tap(view3dButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/salon_3D_LRF_Full_SBS.jpg').toString());
+      expect(immersiveApi.opened.single['title'], 'salon_3D_LRF_Full_SBS.jpg');
+      expect(jsonDecode(immersiveApi.stereoPairs.single!), {
+        'kind': 'sbsPhoto',
+        'version': 1,
+        'layout': 'leftRight',
+        'eyes': 'full',
+        'origin': 'estimatedDepth',
+        'leftEye': 'original',
+      });
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, the file of another tool opens as its name says, without a word on its making', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/trip_LRF_Full_SBS.png'] = pngFile(width: 3000, height: 1000);
+      await pumpPhotoPage(tester, '/trip_LRF_Full_SBS.png', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => view3dButton.evaluate().isNotEmpty);
+
+      await tester.tap(view3dButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(jsonDecode(immersiveApi.stereoPairs.single!), {
+        'kind': 'sbsPhoto',
+        'version': 1,
+        'layout': 'leftRight',
+        'eyes': 'full',
+        'origin': 'unknown',
+        'leftEye': 'unknown',
+      });
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, an original opens the 3D version a computer saved next to it', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length),
+      );
+      share.files['/Photos/cuisine.jpg'] = png;
+      share.folders['/Photos'] = [
+        for (final path in ['/Photos/cuisine.jpg', '/Photos/salon.jpg', '/Photos/salon_3D_LRF_Full_SBS.jpg'])
+          share.file(path),
+      ];
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => versionButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('View the 3D version'), findsOneWidget);
+      expect(view3dButton, findsNothing, reason: 'the original itself is a flat photo');
+      expect(share.listed, ['/Photos']);
+      expect(
+        share.reads.map((read) => read.$1),
+        isNot(contains('/Photos/cuisine.jpg')),
+        reason: 'only a neighbour named like a version is read',
+      );
+
+      await tester.tap(versionButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/Photos/salon_3D_LRF_Full_SBS.jpg').toString());
+      expect(immersiveApi.opened.single['title'], 'salon_3D_LRF_Full_SBS.jpg');
+      expect((jsonDecode(immersiveApi.stereoPairs.single!) as Map)['origin'], 'estimatedDepth');
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('a neighbour made from another photo of the same name is no version of it', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length + 1),
+      );
+      share.folders['/Photos'] = [share.file('/Photos/salon.jpg'), share.file('/Photos/salon_3D_LRF_Full_SBS.jpg')];
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await settleDetection(tester);
+      await pumpRealIo(tester, () => share.reads.any((read) => read.$1 == '/Photos/salon_3D_LRF_Full_SBS.jpg'));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pump();
+
+      expect(versionButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a phone, neither "View in 3D" nor "View the 3D version", and no folder read for it', (
+      tester,
+    ) async {
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length),
+      );
+      share.folders['/Photos'] = [share.file('/Photos/salon.jpg'), share.file('/Photos/salon_3D_LRF_Full_SBS.jpg')];
+      await pumpPhotoPage(tester, '/Photos/salon.jpg');
+      await settleDetection(tester);
+
+      expect(versionButton, findsNothing);
+      expect(share.listed, isEmpty);
 
       await endRealIo(tester);
     });
