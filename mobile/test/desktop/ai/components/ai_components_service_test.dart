@@ -538,7 +538,13 @@ void main() {
       geometry = model('geometry', {AiFeature.scene, AiFeature.panorama});
       filling = model('filling', {AiFeature.scene});
       // The panoramas need a generator too, never installed here
-      catalogue = [runtime, depth, geometry, filling, model('generator', {AiFeature.panorama})];
+      catalogue = [
+        runtime,
+        depth,
+        geometry,
+        filling,
+        model('generator', {AiFeature.panorama}),
+      ];
     });
 
     Future<AiComponentsService> installed(List<AiComponent> components) async {
@@ -603,6 +609,172 @@ void main() {
       expect(removal.outcome, AiRemoveOutcome.busy);
       expect(service.statusOf(geometry).state, AiComponentState.installed);
       expect(installedFile(geometry).existsSync(), isTrue);
+    });
+  });
+
+  group('moving the components to another folder', () {
+    late Directory target;
+    late List<Directory> remembered;
+
+    setUp(() {
+      target = Directory(p.join(temp.path, 'drive-d', 'ai-components'));
+      remembered = [];
+    });
+
+    Future<void> remember(Directory folder) async => remembered.add(folder);
+
+    File under(Directory folder, AiComponent component) =>
+        File(p.joinAll([folder.path, ...component.installPath.split('/')]));
+
+    test('copies each installed file, checks its sum, keeps the new folder, then empties the old one', () async {
+      final components = service();
+      await components.install(_runtimeComponent);
+      await components.install(_modelComponent);
+      final progress = <int>[];
+
+      final result = await components.moveTo(
+        target,
+        remember: (folder) async {
+          // Remembered once the copies are checked, before the old folder goes
+          expect(under(target, _modelComponent).readAsBytesSync(), _model);
+          expect(installedFile(_modelComponent).existsSync(), isTrue);
+          await remember(folder);
+        },
+        onProgress: (done, total) => progress.add(done * 100 ~/ total),
+      );
+
+      expect(result.outcome, AiMoveOutcome.moved);
+      expect(remembered.map((folder) => folder.path), [target.path]);
+      expect(under(target, _runtimeComponent).readAsBytesSync(), _runtime);
+      expect(File(p.join(target.path, 'licenses', 'test-model.txt')).existsSync(), isTrue);
+      expect(File(p.join(target.path, 'licenses', 'test-runtime-ThirdPartyNotices.txt')).readAsBytesSync(), _notices);
+      final moved = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+      expect((moved['components'] as Map).keys, unorderedEquals(['test-runtime', 'test-model']));
+      expect(moved.containsKey('movedFrom'), isFalse);
+      // Nothing of the app left in the old folder
+      expect(root.existsSync() ? root.listSync() : <FileSystemEntity>[], isEmpty);
+      // The service now serves the new folder
+      expect((await components.verifiedFile(_modelComponent))?.path, under(target, _modelComponent).path);
+      expect(components.statusOf(_runtimeComponent).state, AiComponentState.installed);
+      expect(progress.last, 100);
+    });
+
+    test('refused while a conversion runs, and while a download runs', () async {
+      final busy = service(inUse: () => true);
+      await busy.load();
+      expect((await busy.moveTo(target, remember: remember)).outcome, AiMoveOutcome.busy);
+
+      final reached = Completer<void>();
+      final gate = Completer<void>();
+      final downloading = service(
+        openSink: (file, {required append}) async =>
+            _HeldSink(await AiFileSink.open(file, append: append), reached, gate.future),
+      );
+      final install = downloading.install(_modelComponent);
+      await reached.future;
+      expect((await downloading.moveTo(target, remember: remember)).outcome, AiMoveOutcome.busy);
+      gate.complete();
+      await install;
+
+      expect(remembered, isEmpty);
+      expect(target.existsSync(), isFalse);
+    });
+
+    test('a copy whose sum is wrong: nothing kept in the new folder, the old one untouched', () async {
+      final components = service();
+      await components.install(_modelComponent);
+      // The same size, other bytes: the size check of the load passes, the sum of the copy does not
+      installedFile(_modelComponent).writeAsBytesSync(Uint8List(_model.length));
+
+      final result = await components.moveTo(target, remember: remember);
+
+      expect(result.outcome, AiMoveOutcome.failed);
+      expect(result.detail, contains('test-model'));
+      expect(remembered, isEmpty);
+      expect(target.existsSync(), isFalse);
+      expect(installedFile(_modelComponent).existsSync(), isTrue);
+      expect((await components.verifiedFile(_modelComponent))?.path, installedFile(_modelComponent).path);
+    });
+
+    test('the new folder kept nowhere: the copies go, the old folder stays', () async {
+      final components = service();
+      await components.install(_modelComponent);
+
+      final result = await components.moveTo(target, remember: (_) async => throw const FileSystemException('full'));
+
+      expect(result.outcome, AiMoveOutcome.failed);
+      expect(target.existsSync(), isFalse);
+      expect(installedFile(_modelComponent).readAsBytesSync(), _model);
+    });
+
+    test('a folder that is not empty, or inside the old one, is refused', () async {
+      final components = service();
+      await components.install(_modelComponent);
+      File(p.join(target.path, 'mine.txt'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('the user keeps this');
+
+      expect((await components.moveTo(target, remember: remember)).outcome, AiMoveOutcome.notEmpty);
+      expect(
+        (await components.moveTo(Directory(p.join(root.path, 'models', 'inner')), remember: remember)).outcome,
+        AiMoveOutcome.notEmpty,
+      );
+      expect((await components.moveTo(root, remember: remember)).outcome, AiMoveOutcome.same);
+      expect(File(p.join(target.path, 'mine.txt')).readAsStringSync(), 'the user keeps this');
+      expect(remembered, isEmpty);
+    });
+
+    test('a drive too small for the copies is refused before the first byte', () async {
+      final components = AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: [_runtimeComponent, _modelComponent],
+        freeSpace: (folder) async => AiFreeSpace(
+          free: p.isWithin(temp.path, folder.path) && folder.path.contains('drive-d') ? 1000 : 1 << 40,
+          volume: 'D:',
+        ),
+      );
+      await components.install(_modelComponent);
+
+      final result = await components.moveTo(target, remember: remember);
+
+      expect(result.outcome, AiMoveOutcome.notEnoughSpace);
+      expect(result.shortage?.volume, 'D:');
+      expect(result.shortage?.free, 1000);
+      expect(target.existsSync(), isFalse);
+    });
+
+    test('an old file the system holds: noted, and deleted by the next start of the app in the new folder', () async {
+      await service().install(_runtimeComponent);
+      final locked = installedFile(_runtimeComponent);
+      final components = service(
+        delete: (entity) async {
+          if (p.equals(entity.path, locked.path)) {
+            throw FileSystemException('locked', entity.path, const OSError('Access is denied.', 5));
+          }
+          await entity.delete(recursive: true);
+        },
+      );
+      await components.load();
+
+      final result = await components.moveTo(target, remember: remember);
+
+      expect(result.outcome, AiMoveOutcome.movedNextStart);
+      expect(locked.existsSync(), isTrue);
+      final moved = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+      expect(moved['movedFrom'], root.path);
+      expect(under(target, _runtimeComponent).readAsBytesSync(), _runtime);
+
+      // The next start, in the new folder
+      AiComponentsService.resetStartPassForTests();
+      await AiComponentsService.freePendingAtStart(() async => target);
+
+      expect(locked.existsSync(), isFalse);
+      expect(root.existsSync() ? root.listSync(recursive: true).whereType<File>() : <File>[], isEmpty);
+      final after = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+      expect(after.containsKey('movedFrom'), isFalse);
+      expect((after['components'] as Map).keys, ['test-runtime']);
+      AiComponentsService.resetStartPassForTests();
     });
   });
 
