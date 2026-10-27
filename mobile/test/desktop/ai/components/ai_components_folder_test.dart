@@ -1,6 +1,6 @@
 // Where a computer keeps the AI components: the local app data on Windows (not the roaming support folder), the
-// support folder on Linux and macOS (not the caches); and the Windows uninstaller, which deletes that folder and nothing
-// else of the user
+// support folder on Linux and macOS (not the caches); and the Windows uninstaller, which deletes that folder and
+// nothing else of the user
 
 import 'dart:io';
 

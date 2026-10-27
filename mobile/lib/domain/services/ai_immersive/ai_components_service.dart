@@ -3,11 +3,11 @@
 // each load (the SHA-256 is checked once, at the download), removal, and installed.json.
 //
 // The folder (aiComponentsFolderProvider) holds runtime/, models/, licenses/ (the licence of each component, copied at
-// its installation, and the notices of the libraries built into ONNX Runtime, downloaded with it), tmp/ (the .part files, kept to resume a download) and installed.json (version, size, SHA-256,
-// date and source of each component, and the files whose deletion waits for the next start). Windows does not delete
-// a DLL that is loaded: removing ONNX Runtime after a conversion notes the file, and the pass of the next start
-// (freePendingAtStart, run by the desktop start before anything loads a component) deletes it. A removal is refused
-// while a conversion runs (inUse).
+// its installation, and the notices of the libraries built into ONNX Runtime, downloaded with it), tmp/ (the .part
+// files, kept to resume a download) and installed.json (version, size, SHA-256, date and source of each component,
+// and the files whose deletion waits for the next start). Windows does not delete a DLL that is loaded: removing ONNX
+// Runtime after a conversion notes the file, and the pass of the next start (freePendingAtStart, run by the desktop
+// start before anything loads a component) deletes it. A removal is refused while a conversion runs (inUse).
 //
 // installed.json and the memory of the service say the same thing: an entry is kept only once written, and a removal
 // is written before any file goes (the file noted for the next start meanwhile), so that a removal that cannot be
