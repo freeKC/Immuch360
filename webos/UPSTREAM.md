@@ -19,7 +19,7 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
   are the `webos_*` keys of the fork's `i18n/en.json`); dates and numbers in the language of the TV.
 - The dark palette of the fork (`src/styles/_theme.less`).
 - The viewer (`src/components/MediaViewer`): the 360° sphere (`src/immuch360/sphere`), "View as 360°", the 3D and
-  coverage buttons, the zoom of photos (Up and Down zoom, OK alone brings the controls), the key policy of the Android TV
+  coverage buttons, the zoom of photos (Up zooms in, OK alone brings the controls), the key policy of the Android TV
   app on videos, the top bar of videos that hides, 5 s before the controls hide; `useAutoHideControls` takes the keys
   that reveal them; a loading pill and the zoom level over a photo (`PhotoStatus`).
 - The one-key rotation (`src/immuch360/rotation`): yellow and blue turn a photo, saved through Immich's photo editor

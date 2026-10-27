@@ -29,7 +29,7 @@ Immuch360 is not affiliated with Immich, nor with LG.
 | Leave a playing video with the remote | Left and Right go to the previous or next item, even while it plays; a video alone seeks 10 s | Same while the bar is hidden |
 | Know why a video does not play | After a media error, or 20 s with nothing shown, a message gives its format and size instead of an endless spinner | Spinner |
 | Watch a film without the date over it | The top bar of a video hides with the controls, 5 s after the last key | Always shown |
-| Look closer at a photo | Up zooms in at once and Down out, as do the channel keys and the zoom buttons; zoomed in, the arrows move the photo; Back zooms out. The zoom level shows a moment. Past 2x the full-size picture replaces the preview when the server makes one (Administration, Image settings) | Not available |
+| Look closer at a photo | Up zooms in at once, to 125%; zoomed in, the arrows move the photo, the channel keys or the zoom buttons zoom further, and Back zooms out. The zoom level shows a moment. Past 2x the full-size picture replaces the preview when the server makes one (Administration, Image settings) | Not available |
 | Tell a dark photo from one still loading | A "Loading…" pill shows in the middle when a photo is not on screen after 0.3 s, until it is, also while the full-size picture comes; a photo that does not load says so | Not available |
 | Read the name, size and camera of a photo or video | Info (or the details button) opens a panel that stays as you move to the next item; Back closes it | Date and place only |
 | Turn a sideways photo | One key, as on Android TV: yellow turns it 90° clockwise, blue counterclockwise (R and Shift R on a keyboard). Your own photos are turned through Immich's photo editor (Immich 2.6 and later), so they show turned everywhere; the others are turned on this TV only | A button in the photo's controls, kept on the TV |
@@ -110,7 +110,7 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 
 | Key | webOS code | In lists | Photo | 360° photo | Video |
 |---|---|---|---|---|---|
-| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; Up: zoom in, Down: zoom out; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
+| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; Up: zoom in; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
 | OK | 13 | open | controls, zoom button focused | controls, zoom button focused | controls |
 | Back | 461, 1536, 8, 10009, 27 | back | zoom out, then close | close | close the controls, then the video |
 | Channel up, down | 33, 34 | timeline: a page up, down | zoom in, out | zoom in, out | |
@@ -125,7 +125,8 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 
 One key turns a photo by 90°, with the keys of the Android TV app: yellow clockwise, blue counterclockwise, R and
 Shift R on a keyboard. A Magic Remote without colour keys shows them on screen (its `...` or `123` button), and the turn
-button of the photo's controls (OK, then Left twice to it, then OK) does the same. Holding a key down turns the photo once.
+button of the photo's controls (OK, twice when the controls are hidden, then Left twice to it, then OK) does the same.
+Holding a key down turns the photo once.
 
 Where the turn is kept, as in the other Immuch360 apps:
 
@@ -136,8 +137,9 @@ Where the turn is kept, as in the other Immuch360 apps:
 - the photos of a partner or of a shared album, motion photos, GIFs, an older server, or a key without those
   permissions: on this TV only, for that photo (the viewer says so the first time), and the slideshow shows it too.
 
-The arrows never turn a photo: Up and Down zoom it, and a turn is saved, which a key pressed by habit must not do. OK
-brings the controls of a photo, with the Zoom in button focused; they hide 5 s after the last key.
+The arrows never turn a photo: Up zooms it, and a turn is saved, which a key pressed by habit must not do. OK brings
+the controls of a photo, with the Zoom in button focused; they hide 5 s after OK or the last key pressed in them. A
+click of the Magic Remote on a photo shows or hides them.
 
 1536 is Back on recent firmwares, but the wheel of the Magic Remote sends it too (with the key "Unidentified"): that
 pair is not Back. 8 is Back on a few firmwares, except while typing.
