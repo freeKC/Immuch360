@@ -2127,7 +2127,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           ensureActive()
           val source = if (result.fromCache) "the cache" else "the model on ${result.path}"
           val made = mesh?.let { "${it.columns}x${it.rows} mesh" } ?: "no mesh"
-          Log.i(TAG, "relief shown in ${if (stereo25d) "2.5D" else "3D"}, depth map from $source, $made")
+          // 2.5D only with its mesh and a scene ready for it: the quad shows the 3D otherwise
+          val shownIn = if (stereo25d && mesh != null && reliefMeshReady) "2.5D" else "3D"
+          Log.i(TAG, "relief shown in $shownIn, depth map from $source, $made")
           reliefMesh = mesh
           reliefMeshWritten = false
           reliefAttenuation = 1.0
@@ -2373,6 +2375,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val mode = if (view == StereoView.THREE_D) StereoMode.LeftRight else StereoMode.MonoLeft
     stereoQuadMaterial?.setStereoMode(mode)
     if (view == StereoView.MESH_25D) showReliefMesh() else reliefMeshEntity?.setComponent(Visible(false))
+    // A mesh the SDK could not write went back to 3D, whose mode the call within writeReliefMesh set and said
+    if (stereoView() != view) return
     val backdrop = if (view == StereoView.MESH_25D) ", backdrop of the 2.5D mesh" else ""
     Log.i(TAG, "stereo quad mode is now $mode$backdrop")
   }
