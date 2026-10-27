@@ -159,6 +159,15 @@ jobs:
       - name: The golden fixture of relief-v1 is what its script writes
         run: python3 .github/desktop/ai/make_relief_golden.py --check
 
+      # So are scene-v1, the focal length and shift of MoGe, pano-v1 and relief-360-v1, the tiny scene and the XMP
+      # samples of phases 2 and 3 (pure Python, the same bytes on every system)
+      - name: The golden fixtures and samples of phases 2 and 3 are what their scripts write
+        run: |
+          python3 .github/desktop/ai/make_scene_fixture.py --check
+          python3 .github/desktop/ai/make_scene_golden.py --check
+          python3 .github/desktop/ai/make_focal_shift_golden.py --check
+          python3 .github/desktop/ai/make_pano_golden.py --check
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
