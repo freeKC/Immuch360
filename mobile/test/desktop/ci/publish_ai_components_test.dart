@@ -540,7 +540,7 @@ void main() {
       final run = runCiScript(_script, ['--check']);
 
       expect(run.exitCode, 0, reason: '$run');
-      expect(run.output, contains('6 components, each complete'));
+      expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
       expect(File(_licences).readAsStringSync(), contains('Date: '));
     }, skip: skipCiScripts);
 
