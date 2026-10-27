@@ -409,7 +409,12 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           tightMode: true,
           onPageBuild: _onPageBuild,
           enablePanAlways: true,
-          child: SbsPhotoView(image: provider, photo: sbsPhoto, mode: sbsMode),
+          child: SbsPhotoView(
+            image: provider,
+            photo: sbsPhoto,
+            mode: sbsMode,
+            errorBuilder: (_) => Thumbnail.fromAsset(asset: asset, fit: BoxFit.contain),
+          ),
         ),
       );
     }
