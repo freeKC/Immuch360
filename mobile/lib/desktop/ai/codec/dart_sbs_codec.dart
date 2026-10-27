@@ -70,6 +70,9 @@ class DartSbsCodec implements SbsCodec {
       return withSegments(encoded, exif: options.exif, xmp: options.xmp, iccProfile: options.iccProfile);
     } on FormatException catch (error) {
       throw SbsCodecException(error.message);
+    } on ArgumentError catch (error) {
+      // An XMP packet too big for one APP1 segment, which the native codec refuses with its own status
+      throw SbsCodecException('${error.message}');
     }
   }
 }

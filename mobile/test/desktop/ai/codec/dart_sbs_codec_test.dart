@@ -338,6 +338,16 @@ void main() {
       );
     });
 
+    test('an XMP packet too big for one segment is a codec error, as in the native codec', () {
+      expect(
+        () => codec.encodeSbs(
+          SbsPicture(width: 2, height: 1, rgba: Uint8List(8)),
+          SbsEncodeOptions(quality: 90, xmp: 'x' * 70000),
+        ),
+        throwsA(isA<SbsCodecException>()),
+      );
+    });
+
     test('its name, for the logs and the measures', () {
       expect(codec.name, 'dart');
     });
