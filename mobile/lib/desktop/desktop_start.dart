@@ -4,6 +4,7 @@
 import 'dart:async';
 
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
@@ -24,6 +25,8 @@ Future<void> startDesktop(List<String> args) async {
   listenForLaterStarts();
   // An AI component removed while it was loaded (a DLL on Windows) is deleted now, before anything loads it
   unawaited(AiComponentsService.freePendingAtStart(desktopAiComponentsFolder));
+  // The partial 3D photos a crash or a power cut left in the folders of the user, deleted while the app starts
+  unawaited(cleanUpPartFilesAtStart());
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();
