@@ -359,6 +359,12 @@ class JpegHeader {
   }
 }
 
+/// Whether [profile] describes RGB pixels: the colour space signature of its 128 byte header, bytes 16 to 19, says
+/// "RGB ". The decoders give RGB pixels whatever the file holds (a CMYK JPEG of a print shop, a grey one), so a CMYK
+/// or grey profile kept with them would describe other pixels; the native codec of lot A2c keeps the same rule.
+bool isRgbIccProfile(Uint8List profile) =>
+    profile.length >= 128 && profile[16] == 0x52 && profile[17] == 0x47 && profile[18] == 0x42 && profile[19] == 0x20;
+
 /// The quality of the pair made from an original whose luminance table gives [originalQuality]: the same, kept
 /// between [sbsMinQuality] and [sbsMaxQuality]; [sbsDefaultQuality] without one (design-final 2.3, point 9)
 int sbsQualityFor(int? originalQuality) =>
