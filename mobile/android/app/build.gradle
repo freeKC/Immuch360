@@ -111,6 +111,16 @@ android {
   namespace 'app.alextran.immich'
 }
 
+// LiteRT 2.3.0 (questImplementation below) is built with Kotlin 2.4, whose class metadata the Kotlin 2.2.20 of the app
+// does not read (it reads up to 2.3): with LiteRT on the classpath, every Kotlin compilation of the quest flavour stops
+// on "module was compiled with an incompatible version of Kotlin". Those compilations skip the check; the phone
+// flavour, which has no LiteRT, keeps it, so another dependency built for a newer Kotlin still stops the phone build.
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+  if (name.contains('Quest')) {
+    compilerOptions.freeCompilerArgs.add('-Xskip-metadata-version-check')
+  }
+}
+
 flutter {
   source '../..'
 }
@@ -156,6 +166,14 @@ dependencies {
 
   // The QR code scanner of "Connect a TV or computer" (sign in with your phone): ZXing, without Google Play services
   implementation libs.zxing.android.embedded
+
+  // The depth model of the AI relief on the Quest (relief/DepthEstimators.kt of src/quest): LiteRT 2.3.0, Apache 2.0,
+  // in the quest flavour only, so that the phone APKs keep their size. Its API brings
+  // com.google.android.play:ai-delivery (Play Core Software Development Kit Terms of Service, with Google Play
+  // services) for the models of Play for On-device AI, which the app never uses: left out, the app ships code under
+  // Apache 2.0, MIT or BSD only
+  questImplementation(libs.litert) { exclude group: 'com.google.android.play', module: 'ai-delivery' }
+  questImplementation(libs.litert.gpu) { exclude group: 'com.google.android.play', module: 'ai-delivery' }
 
   testImplementation libs.junit
 }
