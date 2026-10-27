@@ -92,11 +92,31 @@ class StereoPhotoKindTest {
   }
 
   @Test
+  fun `a relief request names its mode for 2_5D only, and stereo is the rest`() {
+    val requests = requests("depthRelief")
+    val server = StereoPhotoKind.parse(requests.getValue("a photo of the server")) as StereoPhotoKind.DepthRelief
+    val mesh =
+      StereoPhotoKind.parse(requests.getValue("a photo of the server, first shown in 2.5D")) as StereoPhotoKind.DepthRelief
+
+    assertEquals(ReliefViewMode.STEREO, server.spec.mode)
+    assertEquals(ReliefViewMode.MESH_25D, mesh.spec.mode)
+    // The same photo, the same map: only the first view changes
+    assertEquals(server.spec.copy(mode = ReliefViewMode.MESH_25D), mesh.spec)
+    val text = requests.getValue("a photo of the server, first shown in 2.5D")
+    for (other in listOf("\"volumetric\"", "\"stereo\"", "2", "null")) {
+      val read = StereoPhotoKind.parse(text.replace("\"mesh25d\"", other)) as StereoPhotoKind.DepthRelief
+      assertEquals(other, ReliefViewMode.STEREO, read.spec.mode)
+    }
+  }
+
+  @Test
   fun `the cache keys of the requests are those of the contract`() {
     val keys = contract.getValue("cacheKeys").jsonArray.map { it.jsonObject.getValue("key").jsonPrimitive.content }
     val read =
       requests("depthRelief").values.map { (StereoPhotoKind.parse(it) as StereoPhotoKind.DepthRelief).spec.cacheKey }
-    assertEquals(keys, read)
+    // The request in 2.5D is the photo of the server again
+    assertEquals(keys, read.distinct())
+    assertEquals(3, read.size)
   }
 
   @Test
@@ -159,7 +179,7 @@ class StereoPhotoKindTest {
   fun `the contract file is the one of the Dart tests`() {
     // Both groups the viewer reads are there, so that an empty file cannot pass the tests above
     assertEquals(2, (contract.getValue("sbsPhoto").jsonArray).size)
-    assertEquals(2, (contract.getValue("depthRelief").jsonArray).size)
+    assertEquals(3, (contract.getValue("depthRelief").jsonArray).size)
     assertTrue(contract.getValue("unknown").jsonArray.all { it is JsonObject })
   }
 }

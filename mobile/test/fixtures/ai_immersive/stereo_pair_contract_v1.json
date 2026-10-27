@@ -1,5 +1,5 @@
 {
-  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. cacheKeys gives the text of each relief cache key and its SHA-256. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
+  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. A depthRelief request names its mode only for 2.5D (mesh25d); without it, or with a mode a reader does not know, the relief first shows in stereo. cacheKeys gives the text of each relief cache key and its SHA-256: the mode is not part of it, the map is the same. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
   "sbsPhoto": [
     {
       "name": "ours",
@@ -51,6 +51,21 @@
         "parallax": 0.02,
         "convergence": 0.5,
         "quarterTurns": 1
+      }
+    },
+    {
+      "name": "a photo of the server, first shown in 2.5D",
+      "request": {
+        "kind": "depthRelief",
+        "version": 1,
+        "model": "/data/user/0/com.aprogsys.immuch360/files/ai-components/models/depth-anything-v2-small/depth_anything_v2_small.tflite",
+        "modelSize": 99530468,
+        "modelId": "depth-anything-v2-small@651415f1",
+        "cacheKey": "448add6b9d133349558e237bd153dccc15b85c23f75231323ec5be4f8ae8a79c",
+        "parallax": 0.02,
+        "convergence": 0.5,
+        "quarterTurns": 0,
+        "mode": "mesh25d"
       }
     }
   ],
