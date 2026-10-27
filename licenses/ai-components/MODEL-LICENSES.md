@@ -4,8 +4,12 @@ Date: 2026-10-27. Written by `.github/desktop/ai/publish_ai_components.py` from 
 `ai-components-1`: https://github.com/freeKC/Immuch360/releases/tag/ai-components-1
 
 The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built
-into the app, and copies its licence next to it (`ai-components/licenses/`). Only Apache-2.0, MIT, BSD or
-equivalent licences are used. When two pages disagree on a licence, the more restrictive one applies.
+into the app, and copies its licence next to it (`ai-components/licenses/`). The depth model is Apache-2.0,
+ONNX Runtime is MIT. ONNX Runtime has other libraries built in, each under its own licence, listed in
+its notices (below): mostly BSD, Apache-2.0, MIT, Boost, zlib or public domain, and Eigen under MPL-2.0,
+a weak copyleft licence. The notices cover the whole ONNX Runtime project, not only what these builds
+hold. The libraries are redistributed as Microsoft built them, unmodified, with those notices. When two
+pages disagree on a licence, the more restrictive one applies.
 
 ## Depth model: Depth Anything V2 Small, Apache-2.0
 
@@ -42,6 +46,18 @@ app holds the text of the licence, and downloads the notices with the library.
 | `onnxruntime-1.23.2-ThirdPartyNotices.txt` | 326866 | `e9e90971a8e75a9a8ac0c6412e29c1202d079998389915aa485f46c816c3b4cc` |
 | `onnxruntime-1.31.0-LICENSE.txt` | 1073 | `2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c` |
 | `onnxruntime-1.31.0-ThirdPartyNotices.txt` | 338088 | `143764b952fdb1a7c69ce653bfba74a7744d6a8a573bfb73e235fba356c83de3` |
+
+## Telemetry of ONNX Runtime, turned off
+
+The official builds of ONNX Runtime 1.31.0 send telemetry to Microsoft by default
+(https://github.com/microsoft/onnxruntime/blob/v1.31.0/docs/Privacy.md). The libraries for Linux and
+macOS carry the 1DS SDK: at their first session they write a device id and queue events for
+https://mobile.events.data.microsoft.com/OneCollector/1.0/. The Windows DLL reports through ETW
+(provider `Microsoft.ML.ONNXRuntime`). Immuch360 turns both off: it sets `ORT_DISABLE_TELEMETRY=1` in its
+process before it opens the library, so that 1DS never starts, and calls `DisableTelemetryEvents` on each
+environment it makes, which stops the ETW events. On Windows, ONNX Runtime may write one start event to
+ETW before that call; ETW events leave the computer only through the diagnostic data of Windows, under its
+own setting. 1.23.2 for the Intel Macs has no telemetry.
 
 ## Not used
 
