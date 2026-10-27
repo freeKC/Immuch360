@@ -526,6 +526,42 @@ void main() {
       await endRealIo(tester);
     });
 
+    testWidgets('opened from its folder, the version is found among the files the page got, and opens at its URL', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length),
+      );
+      share.files['/Photos/cuisine.jpg'] = png;
+      // As the browser opens a photo: with the photos of its folder and their URLs, told apart here from the URL the
+      // media bridge would give; the folder is not listed again
+      const paths = ['/Photos/cuisine.jpg', '/Photos/salon.jpg', '/Photos/salon_3D_LRF_Full_SBS.jpg'];
+      final folder = NetworkFolderMedia(
+        entries: [for (final path in paths) share.file(path)],
+        urls: {
+          for (final path in paths) path: server.urlOf(path).replace(queryParameters: {'from': 'folder'}),
+        },
+        index: 1,
+      );
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi, folder: folder);
+      await pumpRealIo(tester, () => versionButton.evaluate().isNotEmpty);
+
+      expect(share.listed, isEmpty);
+
+      await tester.tap(versionButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], folder.urls['/Photos/salon_3D_LRF_Full_SBS.jpg'].toString());
+      expect(immersiveApi.opened.single['title'], 'salon_3D_LRF_Full_SBS.jpg');
+
+      await endRealIo(tester);
+    });
+
     testWidgets('a neighbour made from another photo of the same name is no version of it', (tester) async {
       final immersiveApi = _RecordingImmersiveApi();
       png = await makePng(tester);
