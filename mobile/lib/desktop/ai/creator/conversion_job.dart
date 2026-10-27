@@ -18,15 +18,49 @@ import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
-/// What a job makes; phase 1 has one kind, "2D to 3D SBS"
-enum ConversionKind { sbsFromPhoto }
+/// The two lanes of the queue (design-final 2026-10-27, section 4.5), one job at a time on each: the processor, and
+/// the graphics card for a generation
+enum ConversionLane { cpu, gpu }
 
-/// Where a job is: the steps of the engine between waiting and the four ends
+/// What a job makes: "2D to 3D SBS" (phase 1), "2D to 3D scene", "2D to 360° panorama", "360° to 3D 360°"
+enum ConversionKind {
+  sbsFromPhoto(ImmersiveKind.stereoPhoto, ConversionLane.cpu),
+  sceneFromPhoto(ImmersiveKind.volumetricScene, ConversionLane.cpu),
+  panoramaFromPhoto(ImmersiveKind.panorama360, ConversionLane.gpu),
+  stereoPanoramaFromPanorama(ImmersiveKind.stereoPanorama360, ConversionLane.cpu);
+
+  const ConversionKind(this.output, this.lane);
+
+  /// The kind of file it writes
+  final ImmersiveKind output;
+
+  /// The lane it runs on
+  final ConversionLane lane;
+
+  /// The steps of its engine, in their order
+  List<ImmersiveStage> get stages => ImmersiveStage.of(output);
+}
+
+/// Where a job is: the steps of the engines between waiting and the four ends, in the order of ImmersiveStage, so
+/// that a state reported never goes back
 enum ConversionState {
   waiting,
   reading,
   decoding,
+  fieldOfView,
+  projection,
+  loadingModels,
+  generating,
+  seam,
+  upscale,
+  pasteBack,
+  geometry,
+  layers,
+  inpaint,
+  mesh,
+  textures,
   depth,
+  panoramaDepth,
   rightEye,
   encoding,
   writing,
@@ -35,16 +69,21 @@ enum ConversionState {
   cancelled,
   failed;
 
+  /// The step of the engine it stands for, null for waiting and the ends
+  ImmersiveStage? get stage => isActive ? ImmersiveStage.values.byName(name) : null;
+
   /// What the screens show for it
   ConversionPhase get phase => switch (this) {
     waiting => ConversionPhase.waiting,
-    reading || decoding => ConversionPhase.preparing,
-    depth || rightEye => ConversionPhase.computing,
-    encoding || writing => ConversionPhase.finishing,
     done => ConversionPhase.done,
     skipped => ConversionPhase.skipped,
     cancelled => ConversionPhase.cancelled,
     failed => ConversionPhase.failed,
+    _ => switch (stage!.phase) {
+      ImmersivePhase.preparing => ConversionPhase.preparing,
+      ImmersivePhase.computing => ConversionPhase.computing,
+      ImmersivePhase.finishing => ConversionPhase.finishing,
+    },
   };
 
   /// Done, skipped, cancelled or failed: nothing more happens to the job unless it is retried
@@ -56,7 +95,20 @@ enum ConversionState {
   static ConversionState of(ImmersiveStage stage) => switch (stage) {
     ImmersiveStage.reading => reading,
     ImmersiveStage.decoding => decoding,
+    ImmersiveStage.fieldOfView => fieldOfView,
+    ImmersiveStage.projection => projection,
+    ImmersiveStage.loadingModels => loadingModels,
+    ImmersiveStage.generating => generating,
+    ImmersiveStage.seam => seam,
+    ImmersiveStage.upscale => upscale,
+    ImmersiveStage.pasteBack => pasteBack,
+    ImmersiveStage.geometry => geometry,
+    ImmersiveStage.layers => layers,
+    ImmersiveStage.inpaint => inpaint,
+    ImmersiveStage.mesh => mesh,
+    ImmersiveStage.textures => textures,
     ImmersiveStage.depth => depth,
+    ImmersiveStage.panoramaDepth => panoramaDepth,
     ImmersiveStage.rightEye => rightEye,
     ImmersiveStage.encoding => encoding,
     ImmersiveStage.writing => writing,

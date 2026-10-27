@@ -47,7 +47,7 @@ void main() {
 
       expect(result.isDone, isTrue);
       expect(result.eyeWidth, 8);
-      expect(heard.map((step) => step.stage).toSet().toList(), ImmersiveStage.values);
+      expect(heard.map((step) => step.stage).toSet().toList(), ImmersiveStage.sbs);
       expect(heard.last, const ImmersiveProgress(ImmersiveStage.writing, 1000));
       final bytes = File(job().partPath).readAsBytesSync();
       expect(result.bytesWritten, bytes.length);

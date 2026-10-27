@@ -170,6 +170,14 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
   ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
   ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
   ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
+  ImmersiveErrorCode.gpuUnavailable => t.ai_immersive_failed_gpu_unavailable,
+  ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
+  ImmersiveErrorCode.gpuOutOfMemory => t.ai_immersive_failed_gpu_memory,
+  ImmersiveErrorCode.generatorFailed => t.ai_immersive_failed_generator(message: message ?? ''),
+  ImmersiveErrorCode.generatorStalled => t.ai_immersive_failed_generator_stalled,
+  ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
+  ImmersiveErrorCode.tooLarge => t.ai_immersive_failed_too_large,
+  ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
 };
 
 /// The words of a quality flag of a result

@@ -203,6 +203,8 @@ class _Run {
         ImmersiveStage.decoding => ImmersiveErrorCode.decodeFailed,
         ImmersiveStage.depth || ImmersiveStage.rightEye => ImmersiveErrorCode.modelFailed,
         ImmersiveStage.encoding || ImmersiveStage.writing => ImmersiveErrorCode.writeFailed,
+        // The steps of the other kinds of job are never those of this chain
+        _ => ImmersiveErrorCode.modelFailed,
       }, '$error');
     }
     return ChainOutcome(result, decoder: _decoder, encoder: _encoder, threadsLowered: _lowered, memoryNeed: _need);
