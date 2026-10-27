@@ -37,6 +37,10 @@ class FakeAiComponentsService extends AiComponentsService {
   /// What a removal that is not refused answers
   AiRemoveOutcome removeOutcome = AiRemoveOutcome.removed;
 
+  /// What the drive lacks for an installation, and the components it was asked for
+  AiSpaceShortage? shortage;
+  final spaceAsked = <List<String>>[];
+
   /// The licence and notices files the dialogs read; a path with no file by default
   File? licence;
   File? notices;
@@ -73,6 +77,12 @@ class FakeAiComponentsService extends AiComponentsService {
 
   @override
   void cancel(AiComponent component) => cancels.add(component.id);
+
+  @override
+  Future<AiSpaceShortage?> spaceShortage(Iterable<AiComponent> components) async {
+    spaceAsked.add([for (final component in components) component.id]);
+    return shortage;
+  }
 
   @override
   Future<AiRemoveOutcome> remove(AiComponent component) async {

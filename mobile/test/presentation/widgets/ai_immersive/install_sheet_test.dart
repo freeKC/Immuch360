@@ -74,6 +74,27 @@ void main() {
     expect(service.installs, isEmpty);
   });
 
+  testWidgets('a drive without the space: said with the drive and the way out before the first byte', (tester) async {
+    service.shortage = const AiSpaceShortage(needed: 7400000000, free: 3100000000, volume: 'C:');
+    await pumpOpener(tester, windows);
+
+    await tester.tap(find.byKey(const Key('ai_install_download')));
+    await tester.pumpAndSettle();
+
+    expect(service.spaceAsked, [
+      [runtime.id, model.id],
+    ]);
+    expect(service.installs, isEmpty);
+    expect(
+      find.text(
+        'Not enough space on C: (${formatBytes(7400000000)} needed, ${formatBytes(3100000000)} free). Move the AI '
+        'components to another drive in the settings.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('ai_install_download')), findsOneWidget);
+  });
+
   testWidgets('on the Quest: the model, 94.9 MiB, Apache-2.0 with its link', (tester) async {
     await pumpOpener(tester, aiComponentsFor(AiPlatform.questArm64));
 
@@ -205,7 +226,10 @@ void main() {
 
     final texts = {
       for (final failure in AiDownloadFailure.values)
-        failure: aiDownloadFailureText(t, AiDownloadException(failure, 'detail')),
+        failure: aiDownloadFailureText(
+          t,
+          AiDownloadException(failure, 'detail', const AiSpaceShortage(needed: 2048, free: 1024, volume: '/home')),
+        ),
     };
 
     // In words, none an internal name such as insecureAddress
@@ -218,6 +242,9 @@ void main() {
       AiDownloadFailure.diskFull: 'Disk full',
       AiDownloadFailure.writeFailed: 'Download failed: the file could not be written',
       AiDownloadFailure.cancelled: 'Cancelled',
+      AiDownloadFailure.notEnoughSpace:
+          'Not enough space on /home (${formatBytes(2048)} needed, ${formatBytes(1024)} free). Move the AI components '
+          'to another drive in the settings.',
     });
   });
 }

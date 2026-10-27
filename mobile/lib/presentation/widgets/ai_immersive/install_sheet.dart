@@ -7,7 +7,8 @@
 //
 // Also here, for the tile of the components: the licence link and its dialog (the licence copied at the
 // installation, else the text the app keeps, and the notices of the libraries inside ONNX Runtime), and the text of
-// each download failure.
+// each download failure. Phases 2 and 3 (design-final 2026-10-27, section 7.1): the free space of the drive is asked
+// for all the missing components before the first byte, and a drive too small is named with the way out.
 
 import 'dart:async';
 import 'dart:io';
@@ -42,7 +43,15 @@ String aiDownloadFailureText(Translations t, AiDownloadException error) => switc
   AiDownloadFailure.writeFailed => t.ai_immersive_download_write_failed,
   AiDownloadFailure.incomplete => t.ai_immersive_download_incomplete,
   AiDownloadFailure.insecureAddress => t.ai_immersive_download_insecure,
+  AiDownloadFailure.notEnoughSpace => aiSpaceShortageText(t, error.shortage),
 };
+
+/// "Not enough space on C: (7.4 GB needed, 3.1 GB free). Move the AI components to another drive in the settings."
+String aiSpaceShortageText(Translations t, AiSpaceShortage? shortage) => t.ai_immersive_disk_space(
+  drive: shortage?.volume ?? '',
+  needed: formatBytes(shortage?.needed ?? 0),
+  free: formatBytes(shortage?.free ?? 0),
+);
 
 /// "6.0 MiB to download, 16.5 MiB on disk", from the catalogue, the notices included
 String aiComponentSizes(Translations t, AiComponent component) => t.ai_immersive_component_sizes(
@@ -119,6 +128,11 @@ class _AiInstallPanelState extends ConsumerState<AiInstallPanel> {
       _failure = null;
     });
     try {
+      // The drive is asked once for all of them, before the first byte (design-final 2026-10-27, section 7.1)
+      final shortage = await _service.spaceShortage(missing);
+      if (shortage != null) {
+        throw AiDownloadException(AiDownloadFailure.notEnoughSpace, '$shortage', shortage);
+      }
       for (final component in missing) {
         if (_stopping) {
           return;

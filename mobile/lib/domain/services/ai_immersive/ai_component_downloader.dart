@@ -55,15 +55,34 @@ enum AiDownloadFailure {
 
   /// Asked to stop; the bytes received stay in the .part for the next download
   cancelled,
+
+  /// The drive of the components has not the space they need, read before the first byte: nothing was written
+  notEnoughSpace,
+}
+
+/// What an installation lacks: the bytes it needs (what the components take and a margin), those free on the drive,
+/// and the name of the drive ("C:", or the folder a Linux or macOS drive is mounted on)
+class AiSpaceShortage {
+  const AiSpaceShortage({required this.needed, required this.free, required this.volume});
+
+  final int needed;
+  final int free;
+  final String volume;
+
+  @override
+  String toString() => '$needed bytes needed, $free free on $volume';
 }
 
 class AiDownloadException implements Exception {
-  const AiDownloadException(this.failure, [this.detail]);
+  const AiDownloadException(this.failure, [this.detail, this.shortage]);
 
   final AiDownloadFailure failure;
 
   /// What happened, in English, for the log
   final String? detail;
+
+  /// For [AiDownloadFailure.notEnoughSpace]: what is needed and what is free
+  final AiSpaceShortage? shortage;
 
   /// The text shown for this failure (i18n/en.json; aiDownloadFailureText of the install sheet gives the same)
   String get messageKey => switch (failure) {
@@ -75,6 +94,7 @@ class AiDownloadException implements Exception {
     AiDownloadFailure.writeFailed => 'ai_immersive_download_write_failed',
     AiDownloadFailure.incomplete => 'ai_immersive_download_incomplete',
     AiDownloadFailure.insecureAddress => 'ai_immersive_download_insecure',
+    AiDownloadFailure.notEnoughSpace => 'ai_immersive_disk_space',
   };
 
   /// The {reason} of ai_immersive_download_failed, for a screen that names the failure itself

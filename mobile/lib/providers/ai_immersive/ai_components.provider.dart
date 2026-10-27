@@ -17,9 +17,16 @@ Future<Directory> supportAiComponentsFolder() async =>
 /// Where the components are kept
 final aiComponentsFolderProvider = Provider<Future<Directory> Function()>((ref) => supportAiComponentsFolder);
 
+/// How the free space of the drive of the components is read before an installation; none on the Quest, the computers
+/// replace it in desktopOverrides() with systemFreeSpace
+final aiFreeSpaceProvider = Provider<AiFreeSpaceReader?>((ref) => null);
+
 /// The components of this device; nothing is read before the first use, and nothing is downloaded unless asked
 final aiComponentsServiceProvider = Provider<AiComponentsService>((ref) {
-  final service = AiComponentsService(folder: ref.watch(aiComponentsFolderProvider));
+  final service = AiComponentsService(
+    folder: ref.watch(aiComponentsFolderProvider),
+    freeSpace: ref.watch(aiFreeSpaceProvider),
+  );
   ref.onDispose(service.dispose);
   return service;
 });

@@ -16,11 +16,13 @@
 //
 // Phases 2 and 3 (design-final 2026-10-27, section 7.1): an archive (an engine of several files) is unpacked into
 // engines/<id>/, each file checked against the catalogue (ai_component_archive.dart), and engines/ is one of the
-// folders Remove all empties.
+// folders Remove all empties. The free space of the drive is read before the first byte of an installation (a reader
+// given by the computers, none on the Quest): what the components take plus 10 %, 1 GiB at least.
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
@@ -32,6 +34,21 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _log = Logger('AiComponentsService');
+
+/// The free space of the drive of a folder, and the name of the drive
+class AiFreeSpace {
+  const AiFreeSpace({required this.free, required this.volume, this.total});
+
+  final int free;
+  final int? total;
+  final String volume;
+}
+
+/// Reads the free space of the drive of a folder that may not exist yet; null when it cannot
+typedef AiFreeSpaceReader = Future<AiFreeSpace?> Function(Directory folder);
+
+/// The space asked to install components that take [bytes]: those bytes and a margin of 10 %, 1 GiB at least
+int aiSpaceNeeded(int bytes) => bytes <= 0 ? 0 : bytes + max(bytes ~/ 10, 1024 * 1024 * 1024);
 
 /// The name of the folder of the components, in the folder of the app that holds it
 const aiComponentsFolderName = 'ai-components';
@@ -85,6 +102,7 @@ class AiComponentsService extends ChangeNotifier {
     DateTime Function()? now,
     @visibleForTesting Future<void> Function(FileSystemEntity entity)? delete,
     this._setExecutable = setExecutableBit,
+    this.freeSpace,
   }) : _downloader = downloader ?? AiComponentDownloader(),
        inUse = inUse ?? _never,
        _now = now ?? DateTime.now,
@@ -96,6 +114,9 @@ class AiComponentsService extends ChangeNotifier {
   final DateTime Function() _now;
   final Future<void> Function(FileSystemEntity entity) _delete;
   final AiSetExecutable _setExecutable;
+
+  /// Reads the free space of the drive of the components; null where it is not checked (the Quest)
+  final AiFreeSpaceReader? freeSpace;
 
   /// Whether a conversion runs, set by the engine: removal waits for its end
   bool Function() inUse;
@@ -405,6 +426,11 @@ class AiComponentsService extends ChangeNotifier {
       if (component.isArchive ? await _hasArchiveFiles(component) : await _hasSum(target, component)) {
         source = alreadyOnDisk;
       } else {
+        // Refused before the first byte when the drive cannot hold it
+        final shortage = await spaceShortage([component]);
+        if (shortage != null) {
+          throw AiDownloadException(AiDownloadFailure.notEnoughSpace, '$shortage', shortage);
+        }
         var shown = -1;
         final uri = await _downloader.download(
           component,
@@ -504,6 +530,29 @@ class AiComponentsService extends ChangeNotifier {
     final temporary = File('${licence.path}.tmp');
     await temporary.writeAsString(aiComponentLicenceNotice(component, source: source, installedAt: installedAt));
     await temporary.rename(licence.path);
+  }
+
+  /// What installing [components] lacks on the drive of the components, those already installed left out; null when
+  /// the space is there or cannot be read
+  Future<AiSpaceShortage?> spaceShortage(Iterable<AiComponent> components) async {
+    final reader = freeSpace;
+    if (reader == null) {
+      return null;
+    }
+    await load();
+    final missing = {
+      for (final component in components)
+        if (statusOf(component).state != AiComponentState.installed) component.id: component,
+    };
+    final needed = aiSpaceNeeded(diskBytesOf(missing.values));
+    if (needed == 0) {
+      return null;
+    }
+    final space = await reader(_root!);
+    if (space == null || space.free >= needed) {
+      return null;
+    }
+    return AiSpaceShortage(needed: needed, free: space.free, volume: space.volume);
   }
 
   /// Stops the download of [component], if one runs; its .part stays for the next one

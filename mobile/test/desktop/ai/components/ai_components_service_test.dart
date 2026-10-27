@@ -490,6 +490,68 @@ void main() {
     });
   });
 
+  group('the free space, read before the first byte', () {
+    const gib = 1024 * 1024 * 1024;
+
+    AiComponentsService withSpace(int free, {List<AiComponent>? catalogue, List<Directory>? asked}) =>
+        AiComponentsService(
+          folder: () async => root,
+          downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+          catalogue: catalogue ?? [_runtimeComponent, _modelComponent],
+          freeSpace: (folder) async {
+            asked?.add(folder);
+            return AiFreeSpace(free: free, volume: 'D:');
+          },
+        );
+
+    test('too little: refused with what is needed and what is free, nothing written', () async {
+      final asked = <Directory>[];
+      final components = withSpace(gib, asked: asked);
+
+      final error = await components
+          .install(_modelComponent)
+          .then<AiDownloadException?>((_) => null, onError: (Object error) => error as AiDownloadException);
+
+      expect(error?.failure, AiDownloadFailure.notEnoughSpace);
+      expect(error?.messageKey, 'ai_immersive_disk_space');
+      expect(error?.shortage?.volume, 'D:');
+      expect(error?.shortage?.needed, _model.length + gib);
+      expect(error?.shortage?.free, gib);
+      expect(asked.single.path, root.path);
+      expect(installedFile(_modelComponent).existsSync(), isFalse);
+      expect(Directory(p.join(root.path, 'tmp')).existsSync(), isFalse);
+      expect(components.statusOf(_modelComponent).failure?.failure, AiDownloadFailure.notEnoughSpace);
+    });
+
+    test('for several components at once, as the install sheet asks before the first one', () async {
+      final components = withSpace(gib + 50 * 1024);
+      final notices = _runtimeComponent.notices!.size;
+
+      final shortage = await components.spaceShortage([_runtimeComponent, _modelComponent]);
+
+      expect(shortage?.needed, _runtime.length + notices + _model.length + gib);
+      expect(await withSpace(3 * gib).spaceShortage([_runtimeComponent, _modelComponent]), isNull);
+      // Those already installed ask for nothing
+      final enough = withSpace(3 * gib);
+      await enough.install(_modelComponent);
+      expect(await withSpace(gib + 40 * 1024 + notices).spaceShortage([_modelComponent]), isNull);
+    });
+
+    test('enough: installed; an unreadable drive refuses nothing', () async {
+      await withSpace(2 * gib).install(_modelComponent);
+      expect(installedFile(_modelComponent).readAsBytesSync(), _model);
+
+      final unknown = AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: [_runtimeComponent, _modelComponent],
+        freeSpace: (_) async => null,
+      );
+      await unknown.install(_runtimeComponent);
+      expect(unknown.statusOf(_runtimeComponent).state, AiComponentState.installed);
+    });
+  });
+
   group('loading', () {
     test('the size is checked at each load: a file that changed is damaged and not given to the engine', () async {
       await service().install(_modelComponent);
