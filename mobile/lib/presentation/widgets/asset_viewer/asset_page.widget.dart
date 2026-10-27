@@ -109,12 +109,16 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       case TimelineReloadEvent():
         final asset = ref.read(timelineServiceProvider).getAssetSafe(widget.index);
         if (asset != _asset) {
-          _isZoomed = false;
-          _viewer.setZoomed(false);
+          _resetZoom();
           setState(() => _asset = asset);
         }
       default:
     }
+  }
+
+  void _resetZoom() {
+    _isZoomed = false;
+    _viewer.setZoomed(false);
   }
 
   void _showDetails() {
@@ -506,6 +510,12 @@ class _AssetPageState extends ConsumerState<AssetPage> {
 
     // The one-key rotation (view_rotation.provider.dart): none for anything but a flat photo, whatever is kept for it
     final quarterTurns = ref.watch(displayQuarterTurnsProvider(displayAsset));
+    // Immuch360 Desktop: another view mode of a photo of two eyes side by side, or a mode picked for one told by its
+    // name, gives a new view, contained, which does not say so itself
+    if (CurrentPlatform.isDesktop) {
+      ref.listen(sbsViewModeProvider, (_, _) => _resetZoom());
+      ref.listen(sbsChosenPhotosProvider, (_, _) => _resetZoom());
+    }
     // The details sit under the photo: once turned, its height is known after the next layout
     ref.listen(displayQuarterTurnsProvider(displayAsset), (_, _) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

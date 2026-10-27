@@ -182,4 +182,35 @@ void main() {
       });
     });
   });
+
+  group('the zoom', () {
+    bool zoomed(ProviderContainer container) => container.read(assetViewerProvider).isZoomed;
+
+    testWidgets('is given back when the view mode changes: a new view, contained', (tester) async {
+      await on(TargetPlatform.windows, () async {
+        final container = await pumpPage(tester, photo: ours, zoomed: true);
+        expect(zoomed(container), isTrue);
+
+        container.read(sbsViewModeProvider.notifier).state = SbsViewMode.sideBySide;
+        await tester.pump();
+
+        expect(tester.widget<SbsPhotoView>(sbsView).mode, SbsViewMode.sideBySide);
+        expect(zoomed(container), isFalse);
+      });
+    });
+
+    testWidgets('is given back when a photo told by its name alone is shown in a mode', (tester) async {
+      await on(TargetPlatform.linux, () async {
+        final container = await pumpPage(tester, photo: const FlatStereoPhoto(eyes: StereoEyes.half), zoomed: true);
+        expectShownAsStored(tester);
+        expect(zoomed(container), isTrue);
+
+        container.read(sbsChosenPhotosProvider.notifier).state = {flatStereoKey(sbs)};
+        await tester.pump();
+
+        expect(sbsView, findsOneWidget);
+        expect(zoomed(container), isFalse);
+      });
+    });
+  });
 }
