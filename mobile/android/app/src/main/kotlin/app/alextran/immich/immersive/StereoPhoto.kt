@@ -222,18 +222,19 @@ internal object StereoHeicDecoder {
 }
 
 /**
- * The 3D or 2D choice and the angular width of a spatial photo on the quad, with the photo they belong to: its url and
+ * The 3D or 2D choice and the angular width of a photo on the stereo quad, with the photo they belong to: its url and
  * the opening of the viewer it was shown in. Kept over a recreation of the viewer, so that the photo comes back as the
  * user left it rather than with the defaults of a new photo.
  */
 internal data class StereoPhotoChoices(val url: String, val openingId: Long, val threeD: Boolean, val angleDeg: Float) {
   /**
    * These choices for the photo of [url] shown in the opening [openingId], null for any other photo or opening, which
-   * starts from the defaults. The angle stays within the bounds of the thumbstick.
+   * starts from the defaults. The angle stays within the bounds of the thumbstick, [maxAngleDeg] at most (see
+   * StereoComposer.maxAngle).
    */
-  fun forPhoto(url: String, openingId: Long): StereoPhotoChoices? =
+  fun forPhoto(url: String, openingId: Long, maxAngleDeg: Float = StereoComposer.MAX_ANGLE_DEG): StereoPhotoChoices? =
     if (url != this.url || openingId != this.openingId || angleDeg.isNaN()) null
-    else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, StereoComposer.MAX_ANGLE_DEG))
+    else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, maxAngleDeg))
 }
 
 /**
@@ -291,9 +292,16 @@ internal object StereoComposer {
     if (horizontalFovDeg == null || horizontalFovDeg <= 0f) DEFAULT_ANGLE_DEG
     else (0.8f * horizontalFovDeg).coerceIn(MIN_FILE_ANGLE_DEG, MAX_FILE_ANGLE_DEG)
 
-  /** The angular width after a push of the thumbstick, up ([step] 1) or down (-1). */
-  fun nextAngle(angleDeg: Float, step: Int): Float =
-    (angleDeg + step * ANGLE_STEP_DEG).coerceIn(MIN_ANGLE_DEG, MAX_ANGLE_DEG)
+  /**
+   * The widest the thumbstick makes the quad: an estimated relief stays within MAX_FILE_ANGLE_DEG (60 degrees), where
+   * the 2 percent of relief-v1 make 1.25 degrees rather than the 1.8 they would make at 90 (design-final 2026-10-26,
+   * section 3.3); any other photo goes up to MAX_ANGLE_DEG.
+   */
+  fun maxAngle(estimatedRelief: Boolean): Float = if (estimatedRelief) MAX_FILE_ANGLE_DEG else MAX_ANGLE_DEG
+
+  /** The angular width after a push of the thumbstick, up ([step] 1) or down (-1), [maxAngleDeg] at most. */
+  fun nextAngle(angleDeg: Float, step: Int, maxAngleDeg: Float = MAX_ANGLE_DEG): Float =
+    (angleDeg + step * ANGLE_STEP_DEG).coerceIn(MIN_ANGLE_DEG, maxAngleDeg)
 
   /**
    * Width and height in meters of the quad that shows an eye of [eyeWidth] x [eyeHeight] (gutters included, as the
@@ -365,12 +373,27 @@ internal object StereoComposer {
       LABEL_2D to "2D (left eye)",
       LABEL_NO_NAVIGATION to "Previous and next are not available for spatial photos yet",
       LABEL_SECOND_EYE_FAILED to "The second eye could not be decoded: shown in 2D",
+      LABEL_2D_ORIGINAL to "2D (original)",
+      LABEL_RELIEF_ESTIMATED to "Relief estimated by AI",
+      LABEL_NO_NAVIGATION_3D to "Previous and next are not available for 3D photos yet",
     )
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"
   const val LABEL_NO_NAVIGATION = "spatialNoNavigation"
   const val LABEL_SECOND_EYE_FAILED = "spatialSecondEyeFailed"
+
+  /** The 2D button of a photo whose left eye is the original itself (see StereoPhotoKind.leftEyeIsOriginal). */
+  const val LABEL_2D_ORIGINAL = "ai2dOriginal"
+
+  /** The honesty label of a relief estimated by AI, shown for a few seconds when the photo shows in 3D. */
+  const val LABEL_RELIEF_ESTIMATED = "aiReliefEstimated"
+
+  /** Previous and next on a flat 3D photo (side by side, or with its relief made in the headset). */
+  const val LABEL_NO_NAVIGATION_3D = "aiNoNavigation"
+
+  /** Key of the 2D label: "2D (original)" when the left eye is the photo itself, "2D (left eye)" otherwise. */
+  fun twoDLabelKey(leftEyeIsOriginal: Boolean): String = if (leftEyeIsOriginal) LABEL_2D_ORIGINAL else LABEL_2D
 
   /** Label of [key] from the translated [labels], the English one when it is missing or blank. */
   fun label(labels: Map<String, String>, key: String): String =
