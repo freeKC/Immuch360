@@ -24,16 +24,23 @@ void main() {
       expect(aiComponentsFor(AiPlatform.macosX64).first.version, '1.23.2');
     });
 
-    test('the runtimes wait for lot A3b and are never offered meanwhile', () {
+    test('the runtimes carry what the publication script read from the official archives', () {
       final runtimes = aiComponents.where((component) => component.kind == AiComponentKind.runtime);
 
       expect(runtimes, hasLength(4));
       for (final runtime in runtimes) {
-        expect(runtime.isComplete, isFalse, reason: runtime.id);
+        expect(runtime.isComplete, isTrue, reason: runtime.id);
         expect(runtime.compression, AiCompression.gzip);
+        expect(runtime.downloadSize, lessThan(runtime.size!), reason: runtime.id);
+        expect(runtime.bytesToDownload, runtime.downloadSize);
         expect(runtime.officialUrls, isEmpty);
         expect(runtime.licence, 'MIT');
       }
+      // The sizes the design gives (section 2.1): 17.3 MB, 29 345 384 bytes, 44.8 MB
+      expect(onnxRuntimeWindowsComponent.size, 17253176);
+      expect(onnxRuntimeLinuxComponent.size, 29345384);
+      expect(onnxRuntimeMacArmComponent.size, 44830288);
+      expect(onnxRuntimeMacIntelComponent.size, 39742608);
     });
 
     test('every component has a name; ONNX Runtime has its notices, downloaded as a file of their own', () {
