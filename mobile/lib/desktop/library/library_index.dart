@@ -702,6 +702,19 @@ class LibraryIndex {
   /// The versions of the original whose SHA-1 in base64 is [sha1], in every folder of the library
   List<IndexedFile> filesDerivedFrom(String sha1) => _shownFiles('source_sha1 = ?', [sha1], null);
 
+  /// The files whose SHA-1 in base64, computed on them as they are now, is [sha1]: the original a version names. The
+  /// checksums are not indexed: a version's details ask it once.
+  List<IndexedFile> filesWithChecksum(String sha1) => [
+    for (final file in _shownFiles('checksum = ?', [sha1], null))
+      if (file.currentChecksum == sha1) file,
+  ];
+
+  /// Where the content of each file Immuch360 made comes from, by id: the badges of the thumbnails
+  Map<String, IndexedOrigin> generatedOrigins() => {
+    for (final row in _db.select('SELECT id, origin FROM files WHERE origin IS NOT NULL AND cloud_only = 0'))
+      row['id'] as String: ?_byName(IndexedOrigin.values, row['origin']),
+  };
+
   // The files the app is shown (none kept online only) that match [where], those changed after a date when given
   List<IndexedFile> _shownFiles(String where, List<Object?> arguments, int? changedAfterSeconds) => [
     for (final row in _db.select(
