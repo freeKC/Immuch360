@@ -208,13 +208,16 @@ void main() {
         failure: aiDownloadFailureText(t, AiDownloadException(failure, 'detail')),
     };
 
-    expect(texts[AiDownloadFailure.damaged], 'The file received is damaged. Try again.');
-    expect(texts[AiDownloadFailure.diskFull], 'Disk full');
-    expect(texts[AiDownloadFailure.network], 'Download failed: the server cannot be reached');
-    expect(texts[AiDownloadFailure.writeFailed], 'Download failed: the file could not be written');
-    expect(texts[AiDownloadFailure.insecureAddress], 'Download failed: insecureAddress');
-    for (final MapEntry(:key, :value) in texts.entries) {
-      expect(value, isNot(startsWith('ai_immersive_')), reason: '${key.name} has its text in en.json');
-    }
+    // In words, none an internal name such as insecureAddress
+    expect(texts, {
+      AiDownloadFailure.incomplete: 'Download failed: not available in this version of the app',
+      AiDownloadFailure.insecureAddress: 'Download failed: this address is not secure',
+      AiDownloadFailure.notFound: 'Download failed: file not found on the server',
+      AiDownloadFailure.network: 'Download failed: the server cannot be reached',
+      AiDownloadFailure.damaged: 'The file received is damaged. Try again.',
+      AiDownloadFailure.diskFull: 'Disk full',
+      AiDownloadFailure.writeFailed: 'Download failed: the file could not be written',
+      AiDownloadFailure.cancelled: 'Cancelled',
+    });
   });
 }

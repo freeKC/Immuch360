@@ -546,6 +546,8 @@
   "ai_immersive_download": "Download",
   "ai_immersive_download_damaged": "The file received is damaged. Try again.",
   "ai_immersive_download_failed": "Download failed: {reason}",
+  "ai_immersive_download_incomplete": "Download failed: not available in this version of the app",
+  "ai_immersive_download_insecure": "Download failed: this address is not secure",
   "ai_immersive_download_network": "Download failed: the server cannot be reached",
   "ai_immersive_download_not_found": "Download failed: file not found on the server",
   "ai_immersive_download_write_failed": "Download failed: the file could not be written",

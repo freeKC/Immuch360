@@ -55,7 +55,7 @@ class AiDownloadException implements Exception {
 
   final AiDownloadFailure failure;
 
-  /// What happened, in English, for the log and the {reason} of ai_immersive_download_failed
+  /// What happened, in English, for the log
   final String? detail;
 
   /// The text shown for this failure (i18n/en.json; aiDownloadFailureText of the install sheet gives the same)
@@ -66,10 +66,11 @@ class AiDownloadException implements Exception {
     AiDownloadFailure.notFound => 'ai_immersive_download_not_found',
     AiDownloadFailure.network => 'ai_immersive_download_network',
     AiDownloadFailure.writeFailed => 'ai_immersive_download_write_failed',
-    AiDownloadFailure.incomplete || AiDownloadFailure.insecureAddress => 'ai_immersive_download_failed',
+    AiDownloadFailure.incomplete => 'ai_immersive_download_incomplete',
+    AiDownloadFailure.insecureAddress => 'ai_immersive_download_insecure',
   };
 
-  /// The {reason} of ai_immersive_download_failed
+  /// The {reason} of ai_immersive_download_failed, for a screen that names the failure itself
   String get reason => detail ?? failure.name;
 
   @override

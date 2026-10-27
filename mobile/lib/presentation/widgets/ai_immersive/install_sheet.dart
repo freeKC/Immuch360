@@ -40,8 +40,8 @@ String aiDownloadFailureText(Translations t, AiDownloadException error) => switc
   AiDownloadFailure.notFound => t.ai_immersive_download_not_found,
   AiDownloadFailure.network => t.ai_immersive_download_network,
   AiDownloadFailure.writeFailed => t.ai_immersive_download_write_failed,
-  AiDownloadFailure.incomplete ||
-  AiDownloadFailure.insecureAddress => t.ai_immersive_download_failed(reason: error.failure.name),
+  AiDownloadFailure.incomplete => t.ai_immersive_download_incomplete,
+  AiDownloadFailure.insecureAddress => t.ai_immersive_download_insecure,
 };
 
 /// "6.0 MiB to download, 16.5 MiB on disk", from the catalogue, the notices included
