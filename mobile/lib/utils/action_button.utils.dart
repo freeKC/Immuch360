@@ -171,8 +171,14 @@ enum ActionButtonType {
       // The action decides from the exif and the choices kept on the device: "View as 360°", or "Stop treating as
       // 360°" once chosen. Nothing changes on the server, so it stays in the locked view too.
       ActionButtonType.viewAs360 => context.asset.isImage || context.asset.isVideo,
-      // Immuch360 Desktop: "Make 3D (AI)" of a flat photo (lib/desktop/ai/ui), absent while the AI features are off
-      ActionButtonType.makeImmersive => CurrentPlatform.isDesktop && context.asset.isImage,
+      // Immuch360 Desktop: "Make 3D (AI)" of a flat photo (lib/desktop/ai/ui), absent while the AI features are off.
+      // Never in the locked folder, where nothing takes a photo out, nor in the trash.
+      ActionButtonType.makeImmersive =>
+        CurrentPlatform.isDesktop &&
+            !context.isInLockedView &&
+            context.timelineOrigin != TimelineOrigin.lockedFolder &&
+            context.timelineOrigin != TimelineOrigin.trash &&
+            context.asset.isImage,
     };
   }
 
@@ -233,7 +239,11 @@ enum ActionButtonType {
       ),
       ActionButtonType.cast => const ActionMenuItem(action: CastAction()),
       ActionButtonType.viewAs360 => ActionMenuItem(action: ViewAs360Action(source: context.source)),
-      ActionButtonType.makeImmersive => DesktopMakeImmersiveButton(source: context.source, menuItem: true),
+      // Guarded, so that the phones and the Quest do not carry the desktop screens
+      ActionButtonType.makeImmersive =>
+        CurrentPlatform.isDesktop
+            ? DesktopMakeImmersiveButton(source: context.source, menuItem: true)
+            : const SizedBox.shrink(),
     };
   }
 

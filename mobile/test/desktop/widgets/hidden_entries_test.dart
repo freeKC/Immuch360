@@ -2,7 +2,8 @@
 // device", the map of the location editor, whose coordinates stay, the Places card of the Library, the map of the
 // details, and the mobile data and charging options of the backup, replaced by a line saying that the backup runs
 // while the app is open. The phones keep every one of them. The settings list and the OAuth line are tested with their
-// pages (settings_page_test.dart, login_form_tv_test.dart).
+// pages (settings_page_test.dart, login_form_tv_test.dart). The other way round, "Make 3D (AI)" and the button of its
+// conversions are on the computers only, and never in the locked folder nor in the trash.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -12,10 +13,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversions_bar_button.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/memory.model.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/pages/library.page.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
@@ -27,6 +31,7 @@ import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/action_button.utils.dart';
 import 'package:immich_mobile/widgets/asset_viewer/detail_panel/exif_map.dart';
+import 'package:immich_mobile/widgets/common/immich_sliver_app_bar.dart';
 import 'package:immich_mobile/widgets/common/location_picker.dart';
 import 'package:immich_mobile/widgets/map/map_thumbnail.dart';
 import 'package:immich_mobile/widgets/settings/backup_settings/backup_settings.dart';
@@ -37,15 +42,20 @@ import '../../unit/presentation/presentation_context.dart';
 
 const _desktops = [TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.linux];
 
-ActionButtonContext _viewerContext(BaseAsset asset) => ActionButtonContext(
+ActionButtonContext _viewerContext(
+  BaseAsset asset, {
+  bool locked = false,
+  TimelineOrigin origin = TimelineOrigin.main,
+}) => ActionButtonContext(
   asset: asset,
   isOwner: true,
   isArchived: false,
   isStacked: false,
-  isInLockedView: false,
+  isInLockedView: locked,
   currentAlbum: null,
   advancedTroubleshooting: false,
   source: ActionSource.viewer,
+  timelineOrigin: origin,
 );
 
 final _remote = RemoteAsset(
@@ -81,6 +91,100 @@ void main() {
       expect(ActionButtonType.cast.shouldShow(_viewerContext(_remote)), phone, reason: platform.name);
       expect(ActionButtonType.deleteLocal.shouldShow(_viewerContext(_merged)), phone, reason: platform.name);
     }
+  });
+
+  test('"Make 3D (AI)" is on the computers only: the menu of the viewer, its button, the selection sheets', () {
+    for (final platform in TargetPlatform.values) {
+      debugDefaultTargetPlatformOverride = platform;
+      final computer = _desktops.contains(platform);
+      expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(_remote)), computer, reason: platform.name);
+      expect(
+        ActionButtonType.makeImmersive.buildButton(_viewerContext(_remote)),
+        computer ? isA<DesktopMakeImmersiveButton>() : isNot(isA<DesktopMakeImmersiveButton>()),
+        reason: platform.name,
+      );
+      final actions = withDesktopSelectionActions(const [SizedBox.shrink()]);
+      expect(actions.whereType<DesktopMakeImmersiveButton>(), hasLength(computer ? 1 : 0), reason: platform.name);
+      expect(actions, hasLength(computer ? 2 : 1), reason: platform.name);
+    }
+  });
+
+  test('"Make 3D (AI)" is never offered in the locked folder, where nothing takes a photo out, nor in the trash', () {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    final locked = _viewerContext(_remote, locked: true, origin: TimelineOrigin.lockedFolder);
+    expect(ActionButtonType.download.shouldShow(locked), isFalse);
+    expect(ActionButtonType.shareLink.shouldShow(locked), isFalse);
+    expect(ActionButtonType.makeImmersive.shouldShow(locked), isFalse);
+    expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(_remote, locked: true)), isFalse);
+    expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(_remote, origin: TimelineOrigin.trash)), isFalse);
+    expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(_merged)), isTrue);
+    final video = RemoteAsset(
+      id: 'clip',
+      name: 'clip.mp4',
+      ownerId: 'owner',
+      checksum: 'clip',
+      type: AssetType.video,
+      createdAt: DateTime(2025),
+      updatedAt: DateTime(2025),
+      isEdited: false,
+    );
+    expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(video)), isFalse);
+  });
+
+  group('the app bar', () {
+    late PresentationContext context;
+
+    setUp(() async {
+      context = await PresentationContext.create();
+    });
+
+    tearDown(() async => context.dispose());
+
+    /// The app bar of a session without a server (no backup button), the AI features on
+    Future<void> pumpAppBar(WidgetTester tester, TargetPlatform platform) async {
+      debugDefaultTargetPlatformOverride = platform;
+      await tester.pumpWidget(
+        EasyLocalization(
+          supportedLocales: locales.values.toList(),
+          path: translationsPath,
+          startLocale: locales.values.first,
+          fallbackLocale: locales.values.first,
+          saveLocale: false,
+          useFallbackTranslations: true,
+          assetLoader: const CodegenLoader(),
+          child: ProviderScope(
+            overrides: [
+              ...context.overrides,
+              localSessionProvider.overrideWith(_LocalSession.new),
+              localeProvider.overrideWithValue(const Locale('en')),
+              aiFeaturesEnabledProvider.overrideWith((ref) => true),
+            ],
+            child: Builder(
+              builder: (context) => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                localizationsDelegates: context.localizationDelegates,
+                supportedLocales: context.supportedLocales,
+                locale: context.locale,
+                home: const Scaffold(body: CustomScrollView(slivers: [ImmichSliverAppBar()])),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('of a computer has the button of the 3D conversions', (tester) async {
+      await pumpAppBar(tester, TargetPlatform.windows);
+      expect(find.byType(DesktopConversionsBarButton), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('of a phone does not', (tester) async {
+      await pumpAppBar(tester, TargetPlatform.android);
+      expect(find.byType(DesktopConversionsBarButton), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
   });
 
   group('the preferences', () {
@@ -282,4 +386,10 @@ void main() {
 class _ServerSession extends LocalSessionNotifier {
   @override
   bool build() => false;
+}
+
+/// A session without a server: no backup button in the app bar
+class _LocalSession extends LocalSessionNotifier {
+  @override
+  bool build() => true;
 }
