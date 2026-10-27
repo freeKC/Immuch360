@@ -113,6 +113,7 @@ class SafeWriterOutput implements ConversionOutput {
         original: OriginalIdentity.of(original),
         whenExists: whenExists,
         replacing: replaceName,
+        kind: job.kind.output,
       );
       return ConversionSaved(
         path: saved.path,

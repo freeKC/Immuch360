@@ -178,6 +178,41 @@ void main() {
       expect(noted(), isEmpty);
     });
 
+    test('taken, replace: a version of ours of another kind is never replaced, one of the same kind is', () async {
+      Uint8List scene() => fakeSbsJpeg(
+        xmp: const StereoPhotoXmp(
+          kind: ImmersiveKind.volumetricScene,
+          origin: ImmersiveOrigin.reconstructedFromPhoto,
+          sourceName: 'salon.jpg',
+          sourceSize: 1234,
+          sourceSha1: 'c2Fsb24uanBn',
+          derivativeId: 'urn:uuid:11111111-2222-4333-8444-555555555555',
+        ),
+      );
+      final existing = File(p.join(folder.path, 'salon_scene3D.jpg'))..writeAsBytesSync(scene());
+      Future<PartFile> sceneWritten() async {
+        final part = await writer.createPart(folder.path, 'salon_scene3D.jpg');
+        File(part.path).writeAsBytesSync(userPhoto());
+        return part;
+      }
+
+      // A job of a 3D photo that would take this name keeps both
+      final kept = await writer.commit(await sceneWritten(), original: salon, whenExists: AiWhenExists.replace);
+      expect(kept.outcome, SaveOutcome.saved);
+      expect(p.basename(kept.path), 'salon_scene3D (1).jpg');
+      expect(existing.readAsBytesSync(), scene());
+
+      final replaced = await writer.commit(
+        await sceneWritten(),
+        original: salon,
+        whenExists: AiWhenExists.replace,
+        kind: ImmersiveKind.volumetricScene,
+      );
+      expect(replaced.outcome, SaveOutcome.replaced);
+      expect(replaced.path, existing.path);
+      expect(existing.readAsBytesSync(), userPhoto());
+    });
+
     test('taken, replace: a file without our XMP is never replaced, both are kept', () async {
       final existing = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(userPhoto());
       final part = await written(ourVersion());

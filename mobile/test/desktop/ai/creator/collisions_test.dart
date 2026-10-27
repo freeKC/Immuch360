@@ -62,6 +62,30 @@ void main() {
     expect(sbsTargetName('con.${'x' * 300}.jpg').length, lessThanOrEqualTo(200));
   });
 
+  test('the name of the version of each kind, made safe for Windows, its end always whole', () {
+    expect(versionTargetName(ImmersiveKind.stereoPhoto, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
+    expect(versionTargetName(ImmersiveKind.volumetricScene, 'salon.jpg'), 'salon_scene3D.jpg');
+    expect(versionTargetName(ImmersiveKind.panorama360, 'salon.heic'), 'salon_360.jpg');
+    expect(versionTargetName(ImmersiveKind.stereoPanorama360, 'salon.jpg'), 'salon_360_3D.jpg');
+    // A 360° photo whose name already says it
+    expect(versionTargetName(ImmersiveKind.stereoPanorama360, 'PANO_0001.jpg'), 'PANO_0001_3D.jpg');
+    expect(versionTargetName(ImmersiveKind.volumetricScene, '12:30?.png'), '12_30__scene3D.jpg');
+    for (final kind in ImmersiveKind.values) {
+      final end = derivedNameEnd(kind, 'salon.jpg');
+      for (final length in [180, 190, 199, 300]) {
+        final name = versionTargetName(kind, '${'x' * length}.jpg');
+
+        expect(name, endsWith(end), reason: '$kind, $length characters');
+        expect(name.length, lessThanOrEqualTo(200), reason: '$kind, $length characters');
+      }
+      expect(versionTargetName(kind, '${'x' * 300}\u{1F4F7}.jpg'), endsWith(end), reason: '$kind');
+    }
+    // The 3D photo of phase 1 keeps its name
+    for (final name in ['salon.jpg', '12:30?.png', '${'x' * 300}.jpg', 'con.${'x' * 300}.jpg']) {
+      expect(sbsTargetName(name), versionTargetName(ImmersiveKind.stereoPhoto, name));
+    }
+  });
+
   test('only our XMP with a DerivativeId, made from the same original, may be replaced', () {
     expect(isReplaceableVersion(ours, original: salon), isTrue);
     expect(isReplaceableVersion(oursWithoutId, original: salon), isFalse);
@@ -83,6 +107,49 @@ void main() {
     const original = OriginalIdentity(name: 'sa\u0001lon.jpg', size: 1234);
 
     expect(isReplaceableVersion(withXmp(of(name: 'sa\u0001lon.jpg', sha1: null)), original: original), isTrue);
+  });
+
+  test('a version is only replaced by a version of its own kind; a kind this build does not know, never', () {
+    Uint8List ofKind(ImmersiveKind? kind) => withXmp(
+      StereoPhotoXmp(
+        kind: kind,
+        derivativeId: id,
+        sourceName: 'salon.jpg',
+        sourceSize: 1234,
+        sourceSha1: 'c2Fsb24uanBn',
+      ),
+    );
+    final scene = ofKind(ImmersiveKind.volumetricScene);
+
+    expect(isReplaceableVersion(scene, original: salon, kind: ImmersiveKind.volumetricScene), isTrue);
+    expect(isReplaceableVersion(scene, original: salon), isFalse, reason: 'a 3D photo never replaces a scene');
+    expect(isReplaceableVersion(scene, original: salon, kind: ImmersiveKind.panorama360), isFalse);
+    expect(isReplaceableVersion(ours, original: salon, kind: ImmersiveKind.volumetricScene), isFalse);
+    for (final kind in ImmersiveKind.values) {
+      expect(
+        isReplaceableVersion(ofKind(kind), original: salon, kind: kind),
+        isTrue,
+        reason: '$kind',
+      );
+    }
+    // A Kind of a later version reads as none
+    final later = withXmp(of()).toList();
+    final text = latin1.decode(later).replaceFirst('Kind="StereoPhoto"', 'Kind="LightField"');
+    expect(isReplaceableVersion(Uint8List.fromList(latin1.encode(text)), original: salon), isFalse);
+    expect(
+      collisionAction(
+        whenExists: AiWhenExists.replace,
+        taken: true,
+        head: scene,
+        original: salon,
+        kind: ImmersiveKind.volumetricScene,
+      ),
+      CollisionAction.replace,
+    );
+    expect(
+      collisionAction(whenExists: AiWhenExists.replace, taken: true, head: scene, original: salon),
+      CollisionAction.newName,
+    );
   });
 
   test('a free name is always taken as it is', () {
