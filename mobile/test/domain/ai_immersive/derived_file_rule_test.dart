@@ -104,6 +104,22 @@ void main() {
       );
     });
 
+    test('a name with a control character, which an XMP holds as U+FFFD, still names its original', () {
+      const unhashed = DerivedRuleOriginal(name: 'sa\u0001lon.jpg', size: 4182311, folder: '/photos');
+
+      expect(
+        isDerivedFrom(
+          DerivedRuleCandidate(
+            name: 'sa\u0001lon_3D_LRF_Full_SBS.jpg',
+            folder: '/photos',
+            xmp: _xmp(sourceName: 'sa\uFFFDlon.jpg'),
+          ),
+          unhashed,
+        ),
+        isTrue,
+      );
+    });
+
     test('close names do not mislead it', () {
       const salon2 = DerivedRuleOriginal(name: 'salon2.jpg', size: 4182311, folder: '/photos');
 
