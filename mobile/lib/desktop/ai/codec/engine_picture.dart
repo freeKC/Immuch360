@@ -13,6 +13,9 @@
 //    Windows 11 PC with the HEIF and HEVC extensions, the red patch of test/fixtures/ai_immersive/codec/display_p3.heic
 //    came out (185, 71, 65), its Display P3 value (185, 71, 66), not its sRGB value (200, 60, 60). So a HEIC or an
 //    AVIF keeps the ICC profile of its colr box, as a JPEG keeps its own; without one, nothing is written (sRGB).
+//    The AVIF follows the rule of the HEIC without a measure of its own. A file that gives its colours by an nclx
+//    colr box rather than a profile (most AVIF files, the HEIC of some Android phones) gets no profile either: if
+//    the decoder gives its values as they are, wide gamut colours come out dull, so they are not guaranteed.
 // 3. macOS: Skia's Core Graphics generator draws the picture into an sRGB context (SkImageGeneratorCG.cpp and
 //    SkCreateCGImageRef.cpp, same revision): the pixels are sRGB, no profile.
 // 4. Linux has no HEIC decoder: the photo is not readable here.

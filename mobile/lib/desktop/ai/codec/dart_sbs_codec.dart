@@ -2,8 +2,9 @@
 // desktop/library/local_image_codec.dart): an original decoded without any colour conversion, so that its ICC profile
 // still describes its pixels, and the side by side pair encoded at the quality and the colour subsampling of the
 // original (design-final 2026-10-26, section 2.3). The segments around the pixels are read and written by
-// jpeg_segments.dart, the EXIF by exif_minimal.dart; the native codec of lot A2c takes over for the big photos and
-// shares both. Synchronous and free of dart:ui, so that it runs in the worker isolate of a job.
+// jpeg_segments.dart, the EXIF by exif_minimal.dart. The native codec of lot A2c, which shares both, comes first at
+// every size when the build has it (SbsCodecChoice in engine/immersive_chain.dart); this one decodes what it refuses,
+// and does everything without it. Synchronous and free of dart:ui, so that it runs in the worker isolate of a job.
 //
 // Also here, shared by both codecs: turning the decoded pixels upright (EXIF orientation) and by the quarter turns the
 // user gave in the viewers, in one pass. The decoders give the pixels as stored; package:image would turn a JPEG by
@@ -20,12 +21,6 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 /// The codec on package:image
 class DartSbsCodec implements SbsCodec {
   const DartSbsCodec();
-
-  /// The largest pair this codec writes in reasonable time, in pixels: the pair of the 12 Mpx photo of a phone (4032 x
-  /// 3024 makes 24.4 Mpx). Measured on real photos (lot A2b note): such a photo is decoded in 0.5 s and its pair
-  /// encoded in 1.5 s on a Core i9-13980HX (Dart compiled AOT), while a 24 Mpx photo takes 1.3 s and 3.6 s. The
-  /// native codec of lot A2c takes the larger ones.
-  static const comfortablePairPixels = 25 * 1000 * 1000;
 
   @override
   String get name => 'dart';
