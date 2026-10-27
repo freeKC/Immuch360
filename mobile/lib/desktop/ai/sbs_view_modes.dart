@@ -7,6 +7,10 @@
 // The XMP of our files decides the honesty label: "Relief estimated by AI" beside the mode button; a file of a newer
 // format is shown flat with its reason. A half width eye is shown twice as wide as it is stored, and a file whose right
 // eye comes first (crossed eyes) is put back in order, so every mode shows the left eye on the left.
+//
+// A file of another tool whose eyes would be half width is told by its name alone, in a frame an ordinary photo has:
+// "IMG_1234_LR.jpg" may well be one (stereo_photo_probe.dart). The viewer shows it as stored until the user picks a
+// mode for it in the menu, so that such a photo is never shown cut in half and stretched by surprise.
 
 import 'dart:async';
 import 'dart:ui' as ui;
@@ -47,6 +51,14 @@ const sbsWiggleInterval = Duration(milliseconds: 140);
 
 /// The mode the viewer shows the photos of two eyes in, kept while the app runs; the left eye at first
 final sbsViewModeProvider = StateProvider<SbsViewMode>((ref) => SbsViewMode.leftEye);
+
+/// The photos told by their name alone (see [sbsShownAtOnce]) the user picked a mode for in this session, by
+/// flatStereoKey
+final sbsChosenPhotosProvider = StateProvider<Set<String>>((ref) => const {});
+
+/// Whether the viewer shows [photo] in its mode as soon as it opens: ours, whose XMP says what it is, and two full
+/// width eyes, whose frame no ordinary photo has; a file of another tool with half width eyes waits for a choice
+bool sbsShownAtOnce(FlatStereoPhoto photo) => photo.isOurs || photo.eyes == StereoEyes.full;
 
 /// The part of a frame of [frame] pixels that holds the left eye, or the right one when [left] is false, for a file
 /// whose eyes come in [order]
@@ -243,13 +255,20 @@ class _SbsPhotoViewState extends State<SbsPhotoView> {
 }
 
 /// The photo of two eyes side by side the viewer of a computer shows in its modes: [asset] when its file holds two eyes
-/// this build shows, null for any other photo, for a file of a newer format, and while its head is read
+/// this build shows (and, for one told by its name alone, once the user picked a mode for it), null for any other photo,
+/// for a file of a newer format, and while its head is read
 FlatStereoPhoto? desktopSbsPhotoOf(WidgetRef ref, BaseAsset asset) {
   if (!FlatStereoService.isCandidate(asset)) {
     return null;
   }
   final photo = ref.watch(flatStereoProvider(asset)).valueOrNull;
-  return photo != null && photo.canShowIn3d ? photo : null;
+  if (photo == null || !photo.canShowIn3d) {
+    return null;
+  }
+  final key = flatStereoKey(asset);
+  return sbsShownAtOnce(photo) || ref.watch(sbsChosenPhotosProvider.select((chosen) => chosen.contains(key)))
+      ? photo
+      : null;
 }
 
 /// The size the viewer gives the photo of [asset] in [mode], null when its frame is not known
@@ -289,7 +308,10 @@ class DesktopSbsViewButton extends ConsumerWidget {
         child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.info_outline_rounded)),
       );
     }
-    final mode = ref.watch(sbsViewModeProvider);
+    final key = flatStereoKey(asset);
+    final shown = sbsShownAtOnce(photo) || ref.watch(sbsChosenPhotosProvider.select((chosen) => chosen.contains(key)));
+    // Nothing is checked while the photo is shown as stored
+    final mode = shown ? ref.watch(sbsViewModeProvider) : null;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -313,9 +335,14 @@ class DesktopSbsViewButton extends ConsumerWidget {
         PopupMenuButton<SbsViewMode>(
           key: const Key('desktop_sbs_view_mode'),
           icon: const Icon(Icons.view_in_ar_rounded),
-          tooltip: sbsViewModeLabel(mode, t),
+          tooltip: mode == null ? t.ai_immersive_3d_photo : sbsViewModeLabel(mode, t),
           initialValue: mode,
-          onSelected: (chosen) => ref.read(sbsViewModeProvider.notifier).state = chosen,
+          onSelected: (chosen) {
+            ref.read(sbsViewModeProvider.notifier).state = chosen;
+            if (!shown) {
+              ref.read(sbsChosenPhotosProvider.notifier).update((chosenPhotos) => {...chosenPhotos, key});
+            }
+          },
           itemBuilder: (context) => [
             for (final item in SbsViewMode.values)
               CheckedPopupMenuItem(value: item, checked: item == mode, child: Text(sbsViewModeLabel(item, t))),

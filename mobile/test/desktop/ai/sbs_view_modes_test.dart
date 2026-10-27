@@ -268,6 +268,63 @@ void main() {
       expect(find.byKey(const Key('desktop_sbs_view_mode')), findsOneWidget);
     });
 
+    test('ours and two full width eyes show in their mode at once, half width eyes told by a name wait', () {
+      expect(sbsShownAtOnce(ours), isTrue);
+      expect(sbsShownAtOnce(FlatStereoPhoto(eyes: StereoEyes.half, xmp: versionXmp(Uint8List(4)))), isTrue);
+      expect(sbsShownAtOnce(const FlatStereoPhoto(eyes: StereoEyes.full)), isTrue);
+      expect(sbsShownAtOnce(const FlatStereoPhoto(eyes: StereoEyes.half)), isFalse);
+    });
+
+    testWidgets('a photo told by its name alone, with half width eyes, stays as stored until a mode is picked', (
+      tester,
+    ) async {
+      // An export of a photo editor may well be named so: one photo, not two eyes
+      final named = LocalAsset(
+        id: 'f9',
+        name: 'IMG_1234_LR.jpg',
+        type: AssetType.image,
+        createdAt: DateTime(2026),
+        updatedAt: DateTime(2026),
+        width: 4000,
+        height: 3000,
+        playbackStyle: AssetPlaybackStyle.image,
+        isEdited: false,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpTestWidget(
+        context,
+        ColoredBox(
+          color: Colors.black,
+          child: Column(
+            children: [
+              DesktopSbsViewButton(asset: named),
+              Consumer(
+                builder: (context, ref, _) => Text(desktopSbsPhotoOf(ref, named) == null ? 'as stored' : 'in its mode'),
+              ),
+            ],
+          ),
+        ),
+        overrides: [
+          flatStereoProvider(named).overrideWith((ref) async => const FlatStereoPhoto(eyes: StereoEyes.half)),
+        ],
+      );
+
+      expect(find.text('as stored'), findsOneWidget);
+      final menu = tester.widget<PopupMenuButton<SbsViewMode>>(find.byKey(const Key('desktop_sbs_view_mode')));
+      expect((menu.initialValue, menu.tooltip), (null, '3D photo'));
+
+      await tester.tap(find.byKey(const Key('desktop_sbs_view_mode')));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.ancestor(of: find.text('Side by side'), matching: find.byType(CheckedPopupMenuItem<SbsViewMode>)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('in its mode'), findsOneWidget);
+      final chosen = tester.widget<PopupMenuButton<SbsViewMode>>(find.byKey(const Key('desktop_sbs_view_mode')));
+      expect((chosen.initialValue, chosen.tooltip), (SbsViewMode.sideBySide, 'Side by side'));
+    });
+
     testWidgets('a file of a newer format says why it is flat, an ordinary photo shows nothing', (tester) async {
       final newer = FlatStereoPhoto(
         eyes: StereoEyes.full,
