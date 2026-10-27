@@ -1,7 +1,8 @@
 // The "This computer" section of the settings, on the computers only (settings.page.dart): what a computer needs that a
 // phone has from its system. Each group comes from the part of the app it sets: the folders of the library (the
 // folders page), the download folder (files), the network adapter for discovery and sharing, the trusted certificates
-// (network), and on Linux the notice of secrets kept for the session only (platform/linux_secret_storage.dart).
+// (network), the AI and 3D features (ai/ui/ai_settings_section.dart), and on Linux the notice of secrets kept for the
+// session only (platform/linux_secret_storage.dart).
 //
 // The section is drawn under one focus ring (design 4.7): Material only tints a focused tile, which is hard to follow
 // on a computer screen, so the control that has the keyboard focus gets the ring of the remote control layout, the
@@ -10,6 +11,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:immich_mobile/desktop/ai/ui/ai_settings_section.dart';
 import 'package:immich_mobile/desktop/files/download_folder_tile.dart';
 import 'package:immich_mobile/desktop/network/network_choice.dart';
 import 'package:immich_mobile/desktop/network/trusted_certificates_settings.dart';
@@ -64,6 +66,7 @@ class ComputerSettings extends StatelessWidget {
             ],
           ),
           const TrustedCertificatesSettings(),
+          const DesktopAiSettingsSection(),
         ],
       ),
     );

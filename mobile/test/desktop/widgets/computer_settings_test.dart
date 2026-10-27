@@ -1,20 +1,42 @@
 // The "This computer" section of the settings (plan 1.2, design 4.7): its groups and their labels, the Tab order from
 // the folders down to the certificates with a visible ring on each stop, and a large text size that still fits; on
 // Linux, the notice of secrets kept for the session only while there is no keyring. The files the groups read live in
-// a temporary folder.
+// a temporary folder. The group of the AI features ("AI and 3D") is tested on its own (test/desktop/ai/ui); here it
+// runs on fakes.
 
+import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/ui/ai_settings_section.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/network/network_choice.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/settings/computer_settings.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+
+import '../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
+
+class _NoComponents implements AiComponentFiles {
+  @override
+  Future<File?> verifiedFile(AiComponent component) async => null;
+
+  @override
+  AiComponentState stateOf(AiComponent component) => AiComponentState.notInstalled;
+}
 
 void main() {
   late Directory folder;
@@ -56,16 +78,35 @@ void main() {
         saveLocale: false,
         useFallbackTranslations: true,
         assetLoader: const CodegenLoader(),
-        child: Builder(
-          builder: (context) => MaterialApp(
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
-              child: child!,
+        child: ProviderScope(
+          overrides: [
+            aiFeaturesEnabledProvider.overrideWith((ref) => true),
+            aiPlatformProvider.overrideWithValue(AiPlatform.linuxX64),
+            aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+            desktopAiSettingsStoreProvider.overrideWithValue(
+              DesktopAiSettingsStore(settingsDirectory: () async => folder),
             ),
-            home: Scaffold(body: ComputerSettings(sessionSecrets: sessionSecrets)),
+            desktopAiGateProvider.overrideWithValue(
+              HardwareGate(
+                components: _NoComponents(),
+                facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
+              ),
+            ),
+            generatedAlbumBackupProvider.overrideWith((ref) => Stream.value(false)),
+            aiGpuNameProvider.overrideWith((ref) async => null),
+            aiDefaultFolderProvider.overrideWith((ref) async => folder.path),
+          ],
+          child: Builder(
+            builder: (context) => MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
+                child: child!,
+              ),
+              home: Scaffold(body: ComputerSettings(sessionSecrets: sessionSecrets)),
+            ),
           ),
         ),
       ),
@@ -74,8 +115,10 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('the four groups, named', (tester) async {
+  testWidgets('the five groups, named', (tester) async {
     await pumpSettings(tester);
+    expect(find.text('AI and 3D'), findsOneWidget);
+    expect(find.text('AI components'), findsOneWidget);
     expect(find.text('Folders on this computer'), findsOneWidget);
     expect(find.text('Download folder'), findsOneWidget);
     expect(find.text('Network for discovery and sharing'), findsOneWidget);
