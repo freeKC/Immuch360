@@ -119,8 +119,8 @@ class PhotoVersionsFinder {
   Future<List<IndexedFile>> _byName(IndexedFile original) async {
     final candidates =
         _index
-            .filesOfAlbum(original.albumId)
-            .where((file) => file.isGenerated && isDerivedNameCandidate(original.name, file.name))
+            .generatedFilesOfAlbum(original.albumId)
+            .where((file) => isDerivedNameCandidate(original.name, file.name))
             .toList()
           ..sort((a, b) => a.name.compareTo(b.name));
     final rule = DerivedRuleOriginal(name: original.name, size: original.size, folder: original.albumId);
