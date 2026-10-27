@@ -140,4 +140,42 @@ class ImmersiveMediaTest {
     assertEquals(0L, ImmersiveMedia.closingPositionMs(true, -1_000L, null, 5_000L))
     assertEquals(0L, ImmersiveMedia.closingPositionMs(true, null, null, -1L))
   }
+  @Test
+  fun `a photo for a relief is decoded so that it fits as an eye of the quad once turned`() {
+    // 12 Mpx landscape: 2560 wide, the aspect kept
+    assertEquals(2560 to 1920, ImmersiveMedia.reliefDecodeSize(4000, 3000, 0))
+    // Turned once, the decoded photo is the other way round: its height becomes the width of the eye
+    assertEquals(3413 to 2560, ImmersiveMedia.reliefDecodeSize(4000, 3000, 1))
+    assertEquals(2560 to 1920, ImmersiveMedia.reliefDecodeSize(4000, 3000, 2))
+    // A portrait limited by the height of the eye, 4088 (the texture minus its gutters)
+    assertEquals(2300 to 4088, ImmersiveMedia.reliefDecodeSize(3000, 5333, 0))
+    // A small photo is not enlarged; the turns count modulo 4
+    assertEquals(800 to 600, ImmersiveMedia.reliefDecodeSize(800, 600, 0))
+    assertEquals(800 to 600, ImmersiveMedia.reliefDecodeSize(800, 600, 5))
+  }
+
+  @Test
+  fun `a turned photo lands on its new frame, clockwise`() {
+    val (width, height) = 40 to 30
+    for (turns in 0..3) {
+      val (turnedWidth, turnedHeight) = ImmersiveMedia.turnedSize(width, height, turns)
+      val (dx, dy) = ImmersiveMedia.turnOffset(width, height, turns)
+      // Matrix.postRotate(90 * turns) then postTranslate(dx, dy), in the y down coordinates of a bitmap
+      fun turned(x: Float, y: Float): Pair<Float, Float> {
+        var (u, v) = x to y
+        repeat(turns) { val t = u; u = -v; v = t }
+        return u + dx to v + dy
+      }
+      val corners = listOf(0f to 0f, width.toFloat() to 0f, 0f to height.toFloat(), width.toFloat() to height.toFloat())
+      val landed = corners.map { (x, y) -> turned(x, y) }
+      assertEquals("turns $turns", setOf(0f, turnedWidth.toFloat()), landed.map { it.first }.toSet())
+      assertEquals("turns $turns", setOf(0f, turnedHeight.toFloat()), landed.map { it.second }.toSet())
+    }
+    // Once clockwise: the top left corner goes to the top right, the frame is 30 x 40
+    assertEquals(30 to 40, ImmersiveMedia.turnedSize(width, height, 1))
+    assertEquals(30f to 0f, ImmersiveMedia.turnOffset(width, height, 1))
+    assertEquals(0f to 0f, ImmersiveMedia.turnOffset(width, height, 0))
+    assertEquals(40f to 30f, ImmersiveMedia.turnOffset(width, height, 2))
+    assertEquals(0f to 40f, ImmersiveMedia.turnOffset(width, height, 3))
+  }
 }

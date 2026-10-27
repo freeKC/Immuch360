@@ -2,10 +2,17 @@ package app.alextran.immich.immersive
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorSpace
+import android.graphics.ImageDecoder
+import android.graphics.Matrix
+import android.graphics.Paint
 import android.os.Build
 import android.util.Log
 import java.io.File
 import java.net.URI
+import java.nio.ByteBuffer
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -249,6 +256,72 @@ internal object ImmersiveMedia {
       inSampleSize = sample
       inPreferredConfig = Bitmap.Config.ARGB_8888
       inScaled = false
+    }
+  }
+
+  /**
+   * The size to decode a photo of [width] x [height] (its EXIF orientation applied) at for a relief made in the
+   * headset, so that once turned by [quarterTurns] clockwise it fits as an eye of the stereo quad
+   * (StereoHeicDecoder.MAX_EYE_WIDTH x MAX_EYE_HEIGHT), its aspect kept; as it is when it fits.
+   */
+  fun reliefDecodeSize(width: Int, height: Int, quarterTurns: Int): Pair<Int, Int> =
+    if ((quarterTurns and 1) == 1) {
+      StereoComposer.fitWithin(width, height, StereoHeicDecoder.MAX_EYE_HEIGHT, StereoHeicDecoder.MAX_EYE_WIDTH)
+    } else {
+      StereoComposer.fitWithin(width, height, StereoHeicDecoder.MAX_EYE_WIDTH, StereoHeicDecoder.MAX_EYE_HEIGHT)
+    }
+
+  /** The size of a picture of [width] x [height] turned by [quarterTurns]: the sides swap for an odd number. */
+  fun turnedSize(width: Int, height: Int, quarterTurns: Int): Pair<Int, Int> =
+    if ((quarterTurns and 1) == 1) height to width else width to height
+
+  /**
+   * Where a picture of [width] x [height] turned by [quarterTurns] clockwise about its top left corner
+   * (Matrix.postRotate, y down) moves to so that it fills its new frame from (0, 0).
+   */
+  fun turnOffset(width: Int, height: Int, quarterTurns: Int): Pair<Float, Float> =
+    when (quarterTurns and 3) {
+      1 -> height.toFloat() to 0f
+      2 -> width.toFloat() to height.toFloat()
+      3 -> 0f to width.toFloat()
+      else -> 0f to 0f
+    }
+
+  /**
+   * A flat photo for a relief made in the headset (design-final 2026-10-26, section 3.4 point 2): decoded by
+   * ImageDecoder, which applies its EXIF orientation ([decodeBytes] goes through BitmapFactory, which does not), in
+   * sRGB so that both eyes have the same colours, at the size of an eye of the quad ([reliefDecodeSize]), then turned
+   * by the user's [quarterTurns] clockwise and set on black when it has transparency, as the computers do before the
+   * model. An ARGB_8888 software bitmap, upright and opaque. Null before Android 9; throws when the image does not
+   * decode.
+   */
+  fun decodeForRelief(bytes: ByteArray, quarterTurns: Int): Bitmap? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
+    val turns = quarterTurns and 3
+    val decoded =
+      ImageDecoder.decodeBitmap(ImageDecoder.createSource(ByteBuffer.wrap(bytes))) { decoder, info, _ ->
+        decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+        decoder.setTargetColorSpace(ColorSpace.get(ColorSpace.Named.SRGB))
+        val (width, height) = reliefDecodeSize(info.size.width, info.size.height, turns)
+        if (width != info.size.width || height != info.size.height) decoder.setTargetSize(width, height)
+        Log.d(TAG, "relief photo ${info.mimeType} ${info.size.width}x${info.size.height}, decoded at ${width}x$height")
+      }
+    if (turns == 0 && !decoded.hasAlpha() && decoded.config == Bitmap.Config.ARGB_8888) return decoded
+    try {
+      val (width, height) = turnedSize(decoded.width, decoded.height, turns)
+      val upright = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+      upright.eraseColor(Color.BLACK)
+      val (dx, dy) = turnOffset(decoded.width, decoded.height, turns)
+      val matrix =
+        Matrix().apply {
+          postRotate(90f * turns)
+          postTranslate(dx, dy)
+        }
+      Canvas(upright).drawBitmap(decoded, matrix, Paint(Paint.FILTER_BITMAP_FLAG))
+      Log.d(TAG, "relief photo turned $turns times, ${decoded.config} on black: ${width}x$height")
+      return upright
+    } finally {
+      decoded.recycle()
     }
   }
 
