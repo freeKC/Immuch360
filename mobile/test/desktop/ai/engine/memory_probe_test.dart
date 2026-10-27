@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 void main() {
   group('/proc/meminfo', () {
@@ -67,6 +68,43 @@ void main() {
       // 4 GB machines report 3.6 to 3.9 GiB
       expect((3.6 * 1024 * 1024 * 1024).round(), greaterThanOrEqualTo(aiMinimumPhysicalMemory));
       expect(3 * 1024 * 1024 * 1024, lessThan(aiMinimumPhysicalMemory));
+    });
+  });
+
+  group('a job beside one of the other lane', () {
+    const gib = 1024 * 1024 * 1024;
+
+    test('each kind needs its own memory: the panorama most, the scene 2 GiB (M2), then the 3D photo', () {
+      expect(jobMemoryNeedOf(ImmersiveKind.volumetricScene), 2 * gib);
+      expect(jobMemoryNeedOf(ImmersiveKind.panorama360), greaterThanOrEqualTo(6 * gib));
+      expect(jobMemoryNeedOf(ImmersiveKind.stereoPanorama360), inInclusiveRange(gib ~/ 2, gib));
+      expect(
+        jobMemoryNeedOf(ImmersiveKind.stereoPhoto),
+        jobMemoryNeed(sourceWidth: 6000, sourceHeight: 4000, eyeWidth: 6000, eyeHeight: 4000, sessionOpen: false),
+      );
+      for (final kind in ImmersiveKind.values) {
+        expect(jobMemoryNeedOf(kind), lessThanOrEqualTo(jobMemoryNeedOf(ImmersiveKind.panorama360)), reason: '$kind');
+      }
+    });
+
+    test('a scene starts during a generation from 3 GiB free (M3), not under', () {
+      final scene = jobMemoryNeedOf(ImmersiveKind.volumetricScene);
+
+      expect(fitsBeside(scene, const MemoryFacts(physical: 16 * gib, available: 3 * gib)), isTrue);
+      expect(fitsBeside(scene, const MemoryFacts(physical: 16 * gib, available: 3 * gib - 1)), isFalse);
+      // A panorama beside a scene asks for its 6 GiB and more
+      expect(
+        fitsBeside(
+          jobMemoryNeedOf(ImmersiveKind.panorama360),
+          const MemoryFacts(physical: 16 * gib, available: 6 * gib),
+        ),
+        isFalse,
+      );
+    });
+
+    test('a system that does not say what is free never makes a job wait', () {
+      expect(fitsBeside(jobMemoryNeedOf(ImmersiveKind.panorama360), const MemoryFacts(physical: 16 * gib)), isTrue);
+      expect(fitsBeside(jobMemoryNeedOf(ImmersiveKind.panorama360), const MemoryFacts()), isTrue);
     });
   });
 }

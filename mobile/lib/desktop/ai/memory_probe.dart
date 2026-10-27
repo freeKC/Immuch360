@@ -10,11 +10,17 @@
 //  - macOS: sysctl hw.memsize for the physical memory. macOS keeps most of its memory busy with caches and compresses
 //    the rest, and gives no simple "available" figure: none is read there, and a job is not checked against it.
 // A probe that fails gives nothing rather than a guess: the gate and the jobs then do not refuse on memory.
+//
+// The queue runs two lanes, the processor and the graphics card (design-final 2026-10-27, section 4.5): a job starts
+// beside the one under way on the other lane only when the memory a program can take now covers its own need
+// ([jobMemoryNeedOf], per kind) and a reserve for the job under way ([secondLaneReserve]); otherwise it waits for that
+// job to end.
 
 import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 /// What the memory of a computer is, in bytes
 class MemoryFacts {
@@ -139,4 +145,50 @@ int jobMemoryNeed({
       16 * 1024 * 1024 + // the input and the map of the model
       (sessionOpen ? 0 : depthSessionMemory) +
       64 * 1024 * 1024;
+}
+
+const _mib = 1024 * 1024;
+const _gib = 1024 * _mib;
+
+/// What the job of a 3D scene needs at its peak: MoGe-2 ViT-S at 2 500 tokens took 1.35 GB with the arena of ONNX
+/// Runtime off, then LaMa 0.91 GB beside the 0.28 GB MoGe keeps, some 1.6 GB with the pictures of a 12 Mpx photo
+/// (M2 on ai1, which proposed 2 GiB)
+const sceneJobMemory = 2 * _gib;
+
+/// What the job of a 360° panorama needs of the memory of the computer at its peak: stable-diffusion.cpp took up to
+/// 6 GiB of private memory with the text encoder on the processor (M3 on the RTX 4060 Laptop), plus the pictures of the
+/// upscale and of the photo pasted back
+const panoramaJobMemory = 6 * _gib + 512 * _mib;
+
+/// What the job of a 360° 3D panorama needs at its peak: the panorama decoded and its copy (8192 x 4096, 4 bytes a
+/// pixel), the two eyes and the copy the encoder works on (4096 x 4096), the maps of the tangent views and the session
+/// of the depth model
+const stereoPanoramaJobMemory = 2 * 4 * 8192 * 4096 + 2 * 4 * 4096 * 4096 + 64 * _mib + depthSessionMemory + 64 * _mib;
+
+/// What a job that makes a file of [kind] needs at its peak, told before it runs, to decide whether it may run beside
+/// a job of the other lane: a 3D photo of 24 Mpx with its session to open for the 3D photo, whose own job then checks
+/// the size of its photo (jobMemoryNeed)
+int jobMemoryNeedOf(ImmersiveKind kind) => switch (kind) {
+  ImmersiveKind.stereoPhoto => jobMemoryNeed(
+    sourceWidth: 6000,
+    sourceHeight: 4000,
+    eyeWidth: 6000,
+    eyeHeight: 4000,
+    sessionOpen: false,
+  ),
+  ImmersiveKind.volumetricScene => sceneJobMemory,
+  ImmersiveKind.panorama360 => panoramaJobMemory,
+  ImmersiveKind.stereoPanorama360 => stereoPanoramaJobMemory,
+};
+
+/// What is kept free for the job under way on the other lane when a second one starts: M3 saw the free memory of
+/// Windows go down to 871 MiB while stable-diffusion.cpp ran, and proposed that the lane of the processor waits under
+/// 3 GiB free, the need of a scene and this reserve
+const secondLaneReserve = _gib;
+
+/// Whether a job that needs [need] bytes may start beside a job of the other lane, the memory being [facts]: always
+/// when the system does not say what is available (macOS), as the gate
+bool fitsBeside(int need, MemoryFacts facts) {
+  final available = facts.available;
+  return available == null || available >= need + secondLaneReserve;
 }
