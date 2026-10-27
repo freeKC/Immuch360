@@ -234,15 +234,27 @@ abstract interface class ConversionAssetFiles {
   Future<({OriginalLocation location, ConversionSource source})?> locate(BaseAsset asset);
 }
 
-/// A file opened with the program, a file of the folder library, or the original of a photo of the server
+/// A file opened with the program, a file of the folder library, or the original of a photo of the server.
+/// [library], [endpoint] and [opened] are the folder library of the window, the address of the server signed in, and
+/// the files opened with the program; the tests give theirs.
 class DesktopConversionAssetFiles implements ConversionAssetFiles {
-  const DesktopConversionAssetFiles();
+  const DesktopConversionAssetFiles({
+    this.library = FolderLibrary.shared,
+    this.endpoint = _serverEndpoint,
+    this.opened = OpenedFiles.file,
+  });
+
+  final Future<FolderLibrary> Function() library;
+  final String? Function() endpoint;
+  final LibraryFile? Function(String assetId) opened;
+
+  static String? _serverEndpoint() => Store.tryGet(StoreKey.serverEndpoint);
 
   @override
   Future<({OriginalLocation location, ConversionSource source})?> locate(BaseAsset asset) async {
     final localId = asset.localId;
     if (localId != null) {
-      final opened = OpenedFiles.file(localId);
+      final opened = this.opened(localId);
       if (opened != null) {
         return (
           location: OpenedOriginal(name: opened.name, path: opened.path),
@@ -250,7 +262,7 @@ class DesktopConversionAssetFiles implements ConversionAssetFiles {
         );
       }
       try {
-        final library = await FolderLibrary.shared();
+        final library = await this.library();
         final original = LibraryOriginal.of(library, localId);
         if (original != null && (library.file(localId)?.available ?? false)) {
           return (location: original, source: LocalFileSource(original.path, exif: _exifOf(asset)));
@@ -259,8 +271,8 @@ class DesktopConversionAssetFiles implements ConversionAssetFiles {
         _log.warning('The file of ${asset.name} is not found in the library', error, stack);
       }
     }
-    final remoteId = asset is RemoteAsset ? asset.id : null;
-    final endpoint = Store.tryGet(StoreKey.serverEndpoint);
+    final remoteId = asset.remoteId;
+    final endpoint = this.endpoint();
     if (remoteId == null || endpoint == null) {
       return null;
     }
@@ -348,11 +360,17 @@ ConversionSkipReason? conversionSkipOf(BaseAsset asset, ConversionPhotoFacts fac
   if (facts.isSpatial) {
     return ConversionSkipReason.spatial;
   }
-  final name = asset.name.toLowerCase();
-  if ((linux ?? Platform.isLinux) && (isHeifName(name) || name.endsWith('.avif'))) {
+  if (isUnreadableHere(asset.name, linux: linux)) {
     return ConversionSkipReason.unreadableFormat;
   }
   return null;
+}
+
+/// Whether a photo named [name] cannot be decoded on this system: HEIF and AVIF on Linux ([linux]), which has no
+/// decoder for them
+bool isUnreadableHere(String name, {bool? linux}) {
+  final lower = name.toLowerCase();
+  return (linux ?? Platform.isLinux) && (isHeifName(lower) || lower.endsWith('.avif'));
 }
 
 /// A source with a name only, for a photo skipped before it runs
@@ -375,15 +393,26 @@ class _SkippedSource implements ConversionSource {
   Future<void> release() async {}
 }
 
-/// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo, neither 360° nor two eyes side by side
+/// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo this system can read, neither 360°, nor two eyes
+/// side by side, nor an Apple spatial photo (hidden until the check of a HEIF photo answered)
 final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
-  if (!asset.isImage || ref.watch(isPanoramaProvider(asset))) {
+  if (!asset.isImage || ref.watch(isPanoramaProvider(asset)) || isUnreadableHere(asset.name)) {
     return false;
   }
   final localId = asset.localId;
   final made =
       localId != null && ref.watch(generatedOriginsProvider.select((origins) => origins.valueOrNull?[localId])) != null;
-  return !made && decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) == null;
+  if (made || decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null) {
+    return false;
+  }
+  if (isHeifName(asset.name)) {
+    final spatial = ref.watch(appleSpatialInfoProvider(asset));
+    // A check that failed tells nothing: the entry stays
+    if ((spatial.isLoading && !spatial.hasValue && !spatial.hasError) || spatial.valueOrNull?.photo != null) {
+      return false;
+    }
+  }
+  return true;
 });
 
 /// "Make 3D (AI)" for the photos of [source]: a menu item of the viewer, or a button of the bottom sheet of a

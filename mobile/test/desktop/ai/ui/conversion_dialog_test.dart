@@ -1,9 +1,9 @@
 // "Make 3D (AI)" and its dialog on a computer, with fakes: the entry absent while the AI features are off and greyed
 // with its reason when the hardware gate refuses; the dialog that installs the missing components before it offers
 // Convert; the question of a network folder, nothing tried there before the yes; the photos skipped and why; the
-// choice for a photo that already has a 3D version, handed to the queue and kept; the turns of each photo handed to the
-// queue, with the rotation and the edits of Immich said; and the folders of the library left alone while the album of
-// the generated photos is not out of the backup.
+// choice for a photo that already has a 3D version, handed to the queue and kept; the settings kept, read again; the
+// turns of each photo handed to the queue, with the rotation and the edits of Immich said; and the folders of the
+// library left alone while the album of the generated photos is not out of the backup.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -30,6 +30,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/utils/asset_filter.dart';
+import 'package:immich_ui/immich_ui.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
@@ -271,12 +272,20 @@ void main() {
       expect(tester.widget<Tooltip>(find.byKey(const Key('ai_make_3d_refused'))).message, 'Not yet on this processor');
     });
 
-    testWidgets('is offered when only the components are missing: the dialog installs them', (tester) async {
+    testWidgets('is offered when only the components are missing or damaged: the dialog installs them', (tester) async {
       service = FakeAiComponentsService();
       await pumpEntry(tester, menuItem: false);
       await settle(tester);
       expect(find.text('Make 3D (AI)'), findsOneWidget);
       expect(find.byKey(const Key('ai_make_3d_refused')), findsNothing);
+
+      service = FakeAiComponentsService(states: {for (final component in linux) component: AiComponentState.damaged});
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpEntry(tester, menuItem: false);
+      await settle(tester);
+      expect(find.text('Make 3D (AI)'), findsOneWidget);
+      expect(find.byKey(const Key('ai_make_3d_refused')), findsNothing);
+      expect(tester.widget<ImmichColumnButton>(find.byKey(const Key('ai_make_3d'))).disabled, isFalse);
     });
 
     testWidgets('is absent for a selection of videos only, and for a photo the viewer does not show flat', (
@@ -342,6 +351,15 @@ void main() {
     expect((await tester.runAsync(store.read))!.networkRootsAllowed, ['net-//nas/photos']);
     expect(files.callsUnder(nas).where((call) => call.startsWith('createNew')), hasLength(1));
     expect(convertEnabled(tester), isTrue);
+
+    // Its 3D photo is on the network: never "saved on this computer only"
+    final container = ProviderScope.containerOf(tester.element(find.byKey(const Key('ai_conversion_dialog'))));
+    await tapIn(tester, convert());
+    await settle(tester);
+    final job = container.read(conversionQueueProvider).jobs.single;
+    expect(container.read(conversionJobInfoProvider)[job.id]!.isNetwork, isTrue);
+    engine.release();
+    await settle(tester);
   });
 
   testWidgets('a network folder: No sends the 3D photos to the folder of my choice, the NAS left alone', (
@@ -463,6 +481,29 @@ void main() {
     await openDialog(tester, [_photo('salon.jpg')]);
     expect(find.byKey(const Key('ai_conversion_rotation')), findsNothing);
     expect(find.byKey(const Key('ai_conversion_server_edits')), findsNothing);
+  });
+
+  testWidgets('the settings kept: the photos that have a version not skipped, and a name taken replaced', (
+    tester,
+  ) async {
+    await tester.runAsync(
+      () => store.write(const DesktopAiSettings(skipExisting: false, whenExists: AiWhenExists.replace)),
+    );
+    original('salon.jpg');
+    final container = await openDialog(tester, [_photo('salon.jpg')]);
+    expect(
+      tester.widget<RadioGroup<ExistingVersionChoice>>(find.byType(RadioGroup<ExistingVersionChoice>)).groupValue,
+      ExistingVersionChoice.newVersion,
+      reason: 'as kept in desktop_ai.json',
+    );
+
+    await tapIn(tester, convert());
+    await settle(tester);
+    final job = container.read(conversionQueueProvider).jobs.single;
+    expect(job.existing, ExistingVersionChoice.newVersion);
+    expect(job.whenExists, AiWhenExists.replace);
+    engine.release();
+    await settle(tester);
   });
 
   testWidgets('while the album of the generated photos is not out of the backup, the library is left alone', (
