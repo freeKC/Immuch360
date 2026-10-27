@@ -15,6 +15,7 @@
 // journal of the .part files cleans up what a quit left.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
@@ -60,10 +61,10 @@ abstract interface class ConversionOutput {
 
   /// Puts [partPath] under the final name of [job], in the folder of its target and nowhere else, as [whenExists] says
   /// when that name is taken, and tells what it did: keepBoth takes the first free "name (n)"; replace takes the place
-  /// of [replaceName] (a file of that folder, the final name when null) only when it is a 3D photo of ours with its
-  /// DerivativeId, read again just before, and keeps both otherwise; skip leaves the file there and deletes the .part.
-  /// The original of [job] is never replaced. This is SafeWriter.commit of lot A5b, with the same rule for a file that
-  /// may be replaced.
+  /// of [replaceName] (a file of that folder, the final name when null) only when it is a 3D photo of ours made from
+  /// [original] (its sum, else its name and size) with its DerivativeId, read again just before, and keeps both
+  /// otherwise; skip leaves the file there and deletes the .part. [original] itself is never replaced. This is
+  /// SafeWriter.commit of lot A5b, with the same rule for a file that may be replaced.
   ///
   /// Throws a [ConversionException] as [begin], and the queue discards the .part then. The writer of A5b throws
   /// CreatorWriteException: its adapter gives failure.errorCode in a ConversionException, or a disk full at the rename
@@ -71,6 +72,7 @@ abstract interface class ConversionOutput {
   Future<ConversionSaved> finish(
     ConversionJob job,
     String partPath, {
+    required ImmersiveSource original,
     required AiWhenExists whenExists,
     String? replaceName,
   });
@@ -253,6 +255,21 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     state = ConversionQueueState(jobs: jobs, isPaused: state.isPaused && jobs.isNotEmpty);
   }
 
+  /// Forgets a job that ended, as Clear finished does for all of them: a 3D photo deleted from the panel. Nothing for
+  /// a job waiting or under way.
+  void remove(String id) {
+    final job = state.byId(id);
+    if (job == null || !job.state.isEnded) {
+      return;
+    }
+    _diskFull.remove(id);
+    final jobs = [
+      for (final other in state.jobs)
+        if (other.id != id) other,
+    ];
+    state = ConversionQueueState(jobs: jobs, isPaused: state.isPaused && jobs.any((job) => !job.state.isEnded));
+  }
+
   /// Goes on after a disk full, the photos it failed first
   void resume() {
     if (!state.isPaused) {
@@ -378,6 +395,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       final saved = await tools.output.finish(
         state.byId(id) ?? job,
         part,
+        original: source,
         whenExists: whenExists,
         replaceName: replaceName,
       );
@@ -461,12 +479,18 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  void _progress(String id, ImmersiveProgress progress) => _set(
-    id,
-    (job) => job.state.isActive
-        ? job.copyWith(state: ConversionState.of(progress.stage), perMille: progress.perMille.clamp(0, 1000))
-        : job,
-  );
+  /// What the engine reports, never going back: the root isolate and the worker of the real engine may both tell the
+  /// reading of a photo that is not a JPEG, and a step or a percentage shown again lower would look like a restart
+  void _progress(String id, ImmersiveProgress progress) => _set(id, (job) {
+    if (!job.state.isActive) {
+      return job;
+    }
+    final reported = ConversionState.of(progress.stage);
+    return job.copyWith(
+      state: reported.index > job.state.index ? reported : job.state,
+      perMille: math.max(job.perMille, progress.perMille.clamp(0, 1000)),
+    );
+  });
 
   void _set(String id, ConversionJob Function(ConversionJob job) change) {
     if (_disposed) {
