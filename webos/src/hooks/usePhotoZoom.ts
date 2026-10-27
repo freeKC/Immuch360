@@ -1,5 +1,6 @@
-// Immuch360: the zoom of a flat photo in the viewer. The channel keys and the zoom buttons zoom by 1.25 (up to 4
+// Immuch360: the zoom of a flat photo in the viewer. Up, the channel keys and the zoom buttons zoom by 1.25 (up to 4
 // times); once zoomed in, the arrows move the photo instead of going to the next one, and Back zooms out first.
+// Each zoom key or button counts a pulse, which shows the zoom level a moment (src/components/MediaViewer/PhotoStatus.tsx).
 import {useCallback, useState} from 'react';
 import {ZOOM_STEP} from '../immuch360/sphere/rules';
 
@@ -33,14 +34,16 @@ export function panZoom(zoom: PhotoZoom, dx: number, dy: number): PhotoZoom {
 }
 
 export const usePhotoZoom = (assetId: string | undefined) => {
-	const [state, setState] = useState<{assetId: string | undefined; zoom: PhotoZoom}>({assetId, zoom: NO_ZOOM});
+	// pulse: the zoom keys and buttons pressed on this photo, out at 1x or in at 4x included (the level shows each time)
+	const [state, setState] = useState<{assetId: string | undefined; zoom: PhotoZoom; pulse: number}>({assetId, zoom: NO_ZOOM, pulse: 0});
 	// A new photo opens unzoomed (state adjusted during render, as the inherited hooks do)
-	if (state.assetId !== assetId) setState({assetId, zoom: NO_ZOOM});
+	if (state.assetId !== assetId) setState({assetId, zoom: NO_ZOOM, pulse: 0});
 	const zoom = state.assetId === assetId ? state.zoom : NO_ZOOM;
-	const zoomIn = useCallback(() => setState((s) => ({...s, zoom: stepZoom(s.zoom, true)})), []);
-	const zoomOut = useCallback(() => setState((s) => ({...s, zoom: stepZoom(s.zoom, false)})), []);
+	const pulse = state.assetId === assetId ? state.pulse : 0;
+	const zoomIn = useCallback(() => setState((s) => ({...s, zoom: stepZoom(s.zoom, true), pulse: s.pulse + 1})), []);
+	const zoomOut = useCallback(() => setState((s) => ({...s, zoom: stepZoom(s.zoom, false), pulse: s.pulse + 1})), []);
 	const reset = useCallback(() => setState((s) => ({...s, zoom: NO_ZOOM})), []);
 	const pan = useCallback((dx: number, dy: number) => setState((s) => ({...s, zoom: panZoom(s.zoom, dx, dy)})), []);
 	const style = zoom.scale > 1 ? {transform: `scale(${zoom.scale}) translate(${zoom.x * 100}%, ${zoom.y * 100}%)`} : undefined;
-	return {zoom, zoomed: zoom.scale > 1, zoomIn, zoomOut, reset, pan, style};
+	return {zoom, zoomed: zoom.scale > 1, pulse, zoomIn, zoomOut, reset, pan, style};
 };

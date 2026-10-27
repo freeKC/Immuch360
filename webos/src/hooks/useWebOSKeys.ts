@@ -5,12 +5,15 @@ import {recordError} from '../immuch360/diagnostics/errorLog';
 import {features} from '../platform/features';
 import {exitTizenApp} from '../platform/tizen';
 
+// Immuch360: an arrow's handler gets its keydown, a repeat of a held key included (event.repeat)
+export type ArrowHandler = (event: KeyboardEvent) => void;
+
 interface UseWebOSKeysOptions {
 	onBack?: () => void;
-	onArrowLeft?: () => void;
-	onArrowRight?: () => void;
-	onArrowUp?: () => void;
-	onArrowDown?: () => void;
+	onArrowLeft?: ArrowHandler;
+	onArrowRight?: ArrowHandler;
+	onArrowUp?: ArrowHandler;
+	onArrowDown?: ArrowHandler;
 }
 
 // LG remote Back fires a different keyCode depending on the webOS / WAM version. We support
@@ -264,7 +267,7 @@ export const useWebOSKeys = ({onBack, onArrowLeft, onArrowRight, onArrowUp, onAr
 		if (onBack) backStack.push(onBack);
 
 		const handleArrowKeys = (event: KeyboardEvent) => {
-			let handler: (() => void) | undefined;
+			let handler: ArrowHandler | undefined;
 			if (event.key === 'ArrowLeft') handler = onArrowLeft;
 			else if (event.key === 'ArrowRight') handler = onArrowRight;
 			else if (event.key === 'ArrowUp') handler = onArrowUp;
@@ -274,7 +277,7 @@ export const useWebOSKeys = ({onBack, onArrowLeft, onArrowRight, onArrowUp, onAr
 			// A handler must be the sole consumer of the key: Spotlight (bubble) and Sandstone
 			// (e.g. VideoPlayer seek) listen to the same keydown.
 			event.stopImmediatePropagation();
-			handler();
+			handler(event);
 		};
 		const needsArrowListener = !!(onArrowLeft || onArrowRight || onArrowUp || onArrowDown);
 		if (needsArrowListener) {

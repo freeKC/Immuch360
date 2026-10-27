@@ -1,0 +1,76 @@
+// Immuch360: the loading pill and the zoom level of the viewer (PhotoStatus.tsx), in the look of the pill of a turn
+// (RotationIndicator.module.less). 4K-space lengths, halved at FHD, like the rest of the LESS; no flex gap nor inset
+// (_theme.less: Chromium 68 and 79 drop them).
+@import '../../styles/_theme.less';
+
+.pill() {
+	position: absolute;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	padding: 12px 32px;
+	border-radius: @radius-pill;
+	background: @scrim;
+	color: rgba(255, 255, 255, 0.85);
+	font-size: var(--font-caption);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	// Above the photo and the chrome, never in the way of the pointer of the Magic Remote, never focused
+	z-index: 1;
+	pointer-events: none;
+	animation: photo-status-in 200ms ease-out;
+}
+
+// In the middle of the screen, where the photo comes
+.loading {
+	.pill();
+
+	top: 50%;
+	transform: translate(-50%, -50%);
+	padding-left: 24px;
+}
+
+// At the top, where the pill of a turn shows (the viewer never shows both)
+.zoomLevel {
+	.pill();
+
+	top: 72px;
+	transform: translateX(-50%);
+}
+
+.spinner {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	margin-right: 20px;
+	border: 5px solid rgba(255, 255, 255, 0.24);
+	border-top-color: @accent;
+	border-radius: 50%;
+	animation: photo-status-spin 900ms linear infinite;
+}
+
+@keyframes photo-status-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes photo-status-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+// Reduce Motion (Chromium 74+): the pills appear at once and the ring stays still; the text says it all
+@media (prefers-reduced-motion: reduce) {
+	.loading,
+	.zoomLevel,
+	.spinner {
+		animation: none;
+	}
+}
