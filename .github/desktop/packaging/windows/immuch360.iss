@@ -15,7 +15,8 @@
 ; user only in %LOCALAPPDATA%\Programs (no rights needed, the default). A first dialog asks; /ALLUSERS and /CURRENTUSER
 ; answer on the command line. The language of the installer is that of Windows, and the next dialog lists every
 ; language Inno Setup ships (/LANG= on the command line). Uninstalling removes the program, its shortcuts and its
-; registry entries; the sign in, folders and settings of each user stay in their profile, as with the ZIP.
+; registry entries, and the AI components the user downloaded ([UninstallDelete]); the sign in, folders and settings
+; of each user stay in their profile, as with the ZIP.
 
 #ifndef SourceDir
   #error Give the folder made by windows_bundle.py: iscc /DSourceDir=<folder> (see desktop_installers.py)
@@ -92,6 +93,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[UninstallDelete]
+; The AI components the app downloads when the user asks for them (ONNX Runtime and the depth model, about 110 MB,
+; mobile/lib/desktop/ai/components/ai_components_folder.dart): uninstalling frees their space. That folder only, in
+; the local app data of the user who uninstalls (for an installation for every user, the account that gives the
+; administrator rights). The sign in, folders and settings stay in the profile, as with the ZIP.
+Type: filesandordirs; Name: "{localappdata}\com.aprogsys\Immuch360 Desktop\ai-components"
 
 [Icons]
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"
