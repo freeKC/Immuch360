@@ -1,6 +1,7 @@
-// ONNX Runtime by FFI (lot A4a): what happens without the library, then, with IMMUCH360_ORT_LIB, the tiny model
-// loaded, its names and shapes read, its output exact, the session reused for 200 passes without the memory growing,
-// and ONNX Runtime's errors turned into exceptions with its message. Paths with accents: ort_accented_path_test.dart.
+// ONNX Runtime by FFI (lot A4a): what happens without the library (its telemetry turned off before any library is
+// opened), then, with IMMUCH360_ORT_LIB, the tiny model loaded, its names and shapes read, its output exact, the
+// session reused for 200 passes without the memory growing, and ONNX Runtime's errors turned into exceptions with its
+// message. Paths with accents: ort_accented_path_test.dart. The telemetry of a real session: ort_telemetry_test.dart.
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -10,6 +11,7 @@ import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:path/path.dart' as p;
 
 import 'ort_for_tests.dart';
+import 'process_environment.dart';
 
 /// A library of the system that is not ONNX Runtime, null where none is known
 String? _otherLibrary() {
@@ -55,6 +57,17 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('the telemetry of ONNX Runtime is turned off before a library is opened', () {
+      final saved = processVariable(ortTelemetryOffVariable);
+      addTearDown(() => setProcessVariable(ortTelemetryOffVariable, saved));
+      setProcessVariable(ortTelemetryOffVariable, null);
+
+      // The system refuses to open this file: the variable was set before
+      expect(() => OrtRuntime.load(tinyDepthModelPath()), throwsA(isA<OrtLoadException>()));
+
+      expect(processVariable(ortTelemetryOffVariable), '1');
     });
 
     final other = _otherLibrary();
@@ -114,6 +127,15 @@ void main() {
       expect(runtime.version, matches(RegExp(r'^1\.\d+\.\d+')));
       final minor = int.parse(runtime.version.split('.')[1]);
       expect(minor, greaterThanOrEqualTo(ortApiVersion));
+    });
+
+    test('keeps the telemetry of ONNX Runtime off: the variable set, and its events turned off on each session', () {
+      final before = runtime.telemetryEventsOff;
+
+      runtime.openSession(tinyDepthModelPath()).close();
+
+      expect(runtime.telemetryEventsOff, before + 1);
+      expect(processVariable(ortTelemetryOffVariable), '1');
     });
 
     test('reads the names and shapes of the model, never constants', () {

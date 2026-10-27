@@ -2,7 +2,8 @@
 // server in ai_component_downloader_test.dart), installed.json, the copied licence, the size checked at each load,
 // removal, removal refused during a conversion, the deferred deletion of a locked file (simulated everywhere, and a
 // real loaded DLL on Windows), remove all (a link is deleted as a link, only the folders of the app), and an
-// installed.json that cannot be written. Shared with the Quest; kept under test/desktop so that the Windows job runs it
+// installed.json that cannot be written, and the notices of the libraries inside ONNX Runtime downloaded and removed
+// with it. Shared with the Quest; kept under test/desktop so that the Windows job runs it
 // on a real Windows.
 
 import 'dart:async';
@@ -22,6 +23,7 @@ import 'package:path/path.dart' as p;
 final _model = Uint8List.fromList(List.generate(40 * 1024, (index) => (index * 7) % 256));
 final _runtime = Uint8List.fromList(List.generate(30 * 1024, (index) => (index * 13) % 256));
 final _runtimePacked = Uint8List.fromList(gzip.encode(_runtime));
+final _notices = Uint8List.fromList(utf8.encode('Third party notices of the test runtime\n' * 40));
 
 final _modelComponent = AiComponent(
   id: 'test-model',
@@ -50,6 +52,11 @@ final _runtimeComponent = AiComponent(
   downloadSize: _runtimePacked.length,
   licence: 'MIT',
   licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
+  notices: AiNoticesFile(
+    assetName: 'test-runtime-ThirdPartyNotices.txt',
+    size: _notices.length,
+    sha256: sha256.convert(_notices).toString(),
+  ),
 );
 
 /// A sink whose first write waits for [gate]: a download held in the middle
@@ -84,6 +91,7 @@ void main() {
     mirror = Directory(p.join(temp.path, 'mirror'))..createSync();
     File(p.join(mirror.path, _modelComponent.assetName)).writeAsBytesSync(_model);
     File(p.join(mirror.path, _runtimeComponent.assetName)).writeAsBytesSync(_runtimePacked);
+    File(p.join(mirror.path, _runtimeComponent.notices!.assetName)).writeAsBytesSync(_notices);
   });
 
   tearDown(() {
@@ -155,18 +163,72 @@ void main() {
       await components.install(_runtimeComponent);
 
       expect(installedFile(_runtimeComponent).readAsBytesSync(), _runtime);
+      final notices = (await components.noticesOf(_runtimeComponent))!;
+      expect(notices.path, p.join(root.path, 'licenses', 'test-runtime-ThirdPartyNotices.txt'));
+      expect(notices.readAsBytesSync(), _notices);
       final text = (await components.licenceOf(_runtimeComponent)).readAsStringSync();
+      expect(text, contains('licenses/test-runtime-ThirdPartyNotices.txt'));
       expect(text, contains('https://github.com/microsoft/onnxruntime/blob/v1.31.0/ThirdPartyNotices.txt'));
       expect(text, endsWith(onnxRuntimeLicence));
+      expect(Directory(p.join(root.path, 'tmp')).listSync(), isEmpty);
+      expect(await components.noticesOf(_modelComponent), isNull);
+    });
+
+    test('without its notices a runtime is not installed; the next call keeps the library and gets them', () async {
+      final noticesInMirror = File(p.join(mirror.path, _runtimeComponent.notices!.assetName));
+      noticesInMirror.deleteSync();
+      final components = service();
+
+      await expectLater(components.install(_runtimeComponent), throwsA(isA<AiDownloadException>()));
+
+      expect(components.statusOf(_runtimeComponent).state, AiComponentState.notInstalled);
+      expect(await components.verifiedFile(_runtimeComponent), isNull);
+      expect(installedFile(_runtimeComponent).readAsBytesSync(), _runtime);
+      expect(installedJson()['components'], isEmpty);
+
+      noticesInMirror.writeAsBytesSync(_notices);
+      File(p.join(mirror.path, _runtimeComponent.assetName)).deleteSync();
+      await components.install(_runtimeComponent);
+
+      expect(components.statusOf(_runtimeComponent).state, AiComponentState.installed);
+      expect((installedJson()['components'] as Map)['test-runtime'], containsPair('source', 'already on disk'));
+      expect((await components.noticesOf(_runtimeComponent))!.readAsBytesSync(), _notices);
+    });
+
+    test('a runtime installed without its notices file gets it at the next call', () async {
+      final components = service();
+      await components.install(_runtimeComponent);
+      (await components.noticesOf(_runtimeComponent))!.deleteSync();
+
+      await components.install(_runtimeComponent);
+
+      expect((await components.noticesOf(_runtimeComponent))!.readAsBytesSync(), _notices);
+      expect(components.statusOf(_runtimeComponent).state, AiComponentState.installed);
+    });
+
+    test('damaged notices fail the installation like a damaged library', () async {
+      File(p.join(mirror.path, _runtimeComponent.notices!.assetName)).writeAsBytesSync(_notices.reversed.toList());
+      final components = service();
+
+      await expectLater(
+        components.install(_runtimeComponent),
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+      );
+
+      expect((await components.noticesOf(_runtimeComponent))!.existsSync(), isFalse);
+      expect(components.statusOf(_runtimeComponent).failure?.failure, AiDownloadFailure.damaged);
     });
 
     test('the sizes: before from the catalogue, after from the disk', () async {
       final components = service();
       expect(
         AiComponentsService.downloadBytesOf([_runtimeComponent, _modelComponent]),
-        _runtimePacked.length + _model.length,
+        _runtimePacked.length + _notices.length + _model.length,
       );
-      expect(AiComponentsService.diskBytesOf([_runtimeComponent, _modelComponent]), _runtime.length + _model.length);
+      expect(
+        AiComponentsService.diskBytesOf([_runtimeComponent, _modelComponent]),
+        _runtime.length + _notices.length + _model.length,
+      );
       expect(await components.spaceUsed(), 0);
 
       await components.install(_runtimeComponent);
@@ -226,10 +288,23 @@ void main() {
     });
 
     test('an incomplete component of the catalogue is refused', () async {
-      final components = service(catalogue: aiComponents);
+      const incomplete = AiComponent(
+        id: 'incomplete-runtime',
+        version: '1',
+        kind: AiComponentKind.runtime,
+        platforms: {AiPlatform.linuxX64},
+        assetName: 'incomplete.so.gz',
+        installPath: 'runtime/incomplete/libincomplete.so',
+        size: null,
+        sha256: null,
+        compression: AiCompression.gzip,
+        licence: 'MIT',
+        licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
+      );
+      final components = service(catalogue: [...aiComponents, incomplete]);
 
       await expectLater(
-        components.install(onnxRuntimeLinuxComponent),
+        components.install(incomplete),
         throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.incomplete)),
       );
     });
@@ -341,11 +416,14 @@ void main() {
         ..createSync(recursive: true)
         ..writeAsBytesSync(_runtimePacked.sublist(0, 100));
       final unpacked = File('${part.path}.unpack')..writeAsBytesSync(_runtime.sublist(0, 300));
+      final noticesPart = File(p.join(root.path, 'tmp', 'test-runtime-ThirdPartyNotices.txt.part'))
+        ..writeAsBytesSync(_notices.sublist(0, 10));
 
       expect(await components.remove(_runtimeComponent), AiRemoveOutcome.removed);
 
       expect(part.existsSync(), isFalse);
       expect(unpacked.existsSync(), isFalse);
+      expect(noticesPart.existsSync(), isFalse);
       expect(await components.spaceUsed(), 0);
     });
 
@@ -382,6 +460,7 @@ void main() {
       expect(installedJson()['pendingDeletes'], ['runtime/test-runtime-1.31.0/libtest.so']);
       expect(installedJson()['components'], isEmpty);
       expect((await components.licenceOf(_runtimeComponent)).existsSync(), isFalse);
+      expect((await components.noticesOf(_runtimeComponent))!.existsSync(), isFalse);
 
       // The next start
       final next = service();

@@ -24,6 +24,19 @@ enum AiComponentKind { model, runtime }
 /// How the file travels: as it is, or gzip compressed (the libraries), unpacked while it downloads
 enum AiCompression { none, gzip }
 
+/// A text that comes with a component and is installed with it in the licences folder: the notices of the libraries
+/// built into ONNX Runtime, its ThirdPartyNotices.txt
+class AiNoticesFile {
+  const AiNoticesFile({required this.assetName, required this.size, required this.sha256});
+
+  /// The name of the file in the release (and in a mirror)
+  final String assetName;
+  final int size;
+
+  /// SHA-256 in hexadecimal
+  final String sha256;
+}
+
 /// One downloadable file
 class AiComponent {
   const AiComponent({
@@ -40,10 +53,15 @@ class AiComponent {
     required this.licenceUrl,
     this.downloadSize,
     this.officialUrls = const [],
+    this.name,
+    this.notices,
   });
 
   /// "depth-anything-v2-small-onnx"
   final String id;
+
+  /// What the screens call it: "Depth Anything V2 Small", "ONNX Runtime 1.31.0"; the id when null
+  final String? name;
   final String version;
   final AiComponentKind kind;
   final Set<AiPlatform> platforms;
@@ -71,11 +89,39 @@ class AiComponent {
   /// The official source, pinned to a commit, tried after the release; never for a library
   final List<String> officialUrls;
 
+  /// The notices downloaded with the component (ONNX Runtime), from the release only
+  final AiNoticesFile? notices;
+
+  /// The name shown
+  String get title => name ?? id;
+
   /// Whether the catalogue knows the size and the sum: an incomplete component is never offered
   bool get isComplete => size != null && sha256 != null;
 
-  /// The bytes the download takes
+  /// The bytes the download takes, the notices apart
   int? get bytesToDownload => downloadSize ?? size;
+
+  /// The notices as the downloader takes them: a file of their own, installed as licenses/ID-ThirdPartyNotices.txt;
+  /// null when the component has none
+  AiComponent? get noticesDownload {
+    final file = notices;
+    if (file == null) {
+      return null;
+    }
+    return AiComponent(
+      id: '$id-notices',
+      version: version,
+      kind: kind,
+      platforms: platforms,
+      assetName: file.assetName,
+      installPath: 'licenses/$id-ThirdPartyNotices.txt',
+      size: file.size,
+      sha256: file.sha256,
+      compression: AiCompression.none,
+      licence: licence,
+      licenceUrl: licenceUrl,
+    );
+  }
 
   /// The addresses tried in order: the mirror alone when one is given (the tests stay offline), else the release then
   /// the official source. [release] is the base of the release, another one only in the tests of the downloader.
@@ -92,6 +138,7 @@ String _joined(String base, String name) => base.endsWith('/') ? '$base$name' : 
 /// The depth model of the computers: Depth Anything V2 Small, fp32 ONNX export of onnx-community, revision 4472b736
 const depthModelOnnxComponent = AiComponent(
   id: 'depth-anything-v2-small-onnx',
+  name: 'Depth Anything V2 Small',
   version: '4472b736',
   kind: AiComponentKind.model,
   platforms: {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64, AiPlatform.macosX64},
@@ -110,6 +157,7 @@ const depthModelOnnxComponent = AiComponent(
 /// The depth model of the Quest: the same weights, fp32 LiteRT export of litert-community, revision 178427e4
 const depthModelTfliteComponent = AiComponent(
   id: 'depth-anything-v2-small-tflite',
+  name: 'Depth Anything V2 Small',
   version: '178427e4',
   kind: AiComponentKind.model,
   platforms: {AiPlatform.questArm64},
@@ -126,70 +174,97 @@ const depthModelTfliteComponent = AiComponent(
 );
 
 // ONNX Runtime, the libraries of the official archives copied as they are (the Authenticode signature of the DLL
-// kept), gzip compressed in the release. To be completed by lot A3b: the size and SHA-256 of each installed file, and
-// the size of each compressed one, which its publication script reads. Known so far: onnxruntime.dll 17.3 MB,
-// libonnxruntime.so.1.31.0 29 345 384 bytes (archive of 11 408 003 bytes), libonnxruntime.1.31.0.dylib 44.8 MB.
+// kept), gzip compressed in the release, with the notices of the libraries built into each version. The size and
+// SHA-256 of each installed file, the size of each compressed one and those of the notices are written by
+// .github/desktop/ai/publish_ai_components.py --write, from the files it makes for the release (lot A3b), and checked
+// against licenses/ai-components/MODEL-LICENSES.md by its --check.
 
 const _ortLicence = 'MIT';
+
+/// ThirdPartyNotices.txt of ONNX Runtime 1.31.0, the same in its three archives (CRLF line ends in the Windows one)
+const _onnxRuntimeNotices1310 = AiNoticesFile(
+  assetName: 'onnxruntime-1.31.0-ThirdPartyNotices.txt',
+  size: 338088,
+  sha256: '143764b952fdb1a7c69ce653bfba74a7744d6a8a573bfb73e235fba356c83de3',
+);
+
+/// ThirdPartyNotices.txt of ONNX Runtime 1.23.2
+const _onnxRuntimeNotices1232 = AiNoticesFile(
+  assetName: 'onnxruntime-1.23.2-ThirdPartyNotices.txt',
+  size: 326866,
+  sha256: 'e9e90971a8e75a9a8ac0c6412e29c1202d079998389915aa485f46c816c3b4cc',
+);
 
 /// ONNX Runtime 1.31.0 for Windows x64
 const onnxRuntimeWindowsComponent = AiComponent(
   id: 'onnxruntime-1.31.0-win-x64',
+  name: 'ONNX Runtime 1.31.0',
   version: '1.31.0',
   kind: AiComponentKind.runtime,
   platforms: {AiPlatform.windowsX64},
   assetName: 'onnxruntime-1.31.0-win-x64.dll.gz',
   installPath: 'runtime/onnxruntime-1.31.0/onnxruntime.dll',
-  size: null,
-  sha256: null,
+  size: 17253176,
+  sha256: '0c42dc4e278f0968fdf9ebf1b1e54a74c657a9942e70803e453c91993451cf4c',
   compression: AiCompression.gzip,
+  downloadSize: 6308414,
   licence: _ortLicence,
   licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
+  notices: _onnxRuntimeNotices1310,
 );
 
 /// ONNX Runtime 1.31.0 for Linux x64 (glibc 2.28 and later)
 const onnxRuntimeLinuxComponent = AiComponent(
   id: 'onnxruntime-1.31.0-linux-x64',
+  name: 'ONNX Runtime 1.31.0',
   version: '1.31.0',
   kind: AiComponentKind.runtime,
   platforms: {AiPlatform.linuxX64},
   assetName: 'onnxruntime-1.31.0-linux-x64.so.gz',
   installPath: 'runtime/onnxruntime-1.31.0/libonnxruntime.so.1.31.0',
-  size: null,
-  sha256: null,
+  size: 29345384,
+  sha256: '469849977cb60744ea160927e1a3a0643fd4c55c0aff743251c6d293402e334e',
   compression: AiCompression.gzip,
+  downloadSize: 11112796,
   licence: _ortLicence,
   licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
+  notices: _onnxRuntimeNotices1310,
 );
 
 /// ONNX Runtime 1.31.0 for macOS on Apple silicon
 const onnxRuntimeMacArmComponent = AiComponent(
   id: 'onnxruntime-1.31.0-osx-arm64',
+  name: 'ONNX Runtime 1.31.0',
   version: '1.31.0',
   kind: AiComponentKind.runtime,
   platforms: {AiPlatform.macosArm64},
   assetName: 'onnxruntime-1.31.0-osx-arm64.dylib.gz',
   installPath: 'runtime/onnxruntime-1.31.0/libonnxruntime.1.31.0.dylib',
-  size: null,
-  sha256: null,
+  size: 44830288,
+  sha256: '2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70',
   compression: AiCompression.gzip,
+  downloadSize: 12524281,
   licence: _ortLicence,
   licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
+  notices: _onnxRuntimeNotices1310,
 );
 
 /// ONNX Runtime 1.23.2 for the Intel Macs, the last release with an osx-x86_64 archive; the app asks it for API 23
 const onnxRuntimeMacIntelComponent = AiComponent(
   id: 'onnxruntime-1.23.2-osx-x86_64',
+  name: 'ONNX Runtime 1.23.2',
   version: '1.23.2',
   kind: AiComponentKind.runtime,
   platforms: {AiPlatform.macosX64},
   assetName: 'onnxruntime-1.23.2-osx-x86_64.dylib.gz',
   installPath: 'runtime/onnxruntime-1.23.2/libonnxruntime.1.23.2.dylib',
-  size: null,
-  sha256: null,
+  size: 39742608,
+  sha256: '8c9c78de65ea3786f987c0d980e9c1b13a3a5fbc6b3e2965ba05b450e6e4c054',
   compression: AiCompression.gzip,
+  downloadSize: 11437397,
   licence: _ortLicence,
   licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.23.2/LICENSE',
+  notices: _onnxRuntimeNotices1232,
 );
 
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)

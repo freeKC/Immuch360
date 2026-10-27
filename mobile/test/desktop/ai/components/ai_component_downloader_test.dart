@@ -404,10 +404,23 @@ void main() {
     });
 
     httpsTest(
-      'an incomplete component of the catalogue (an ONNX Runtime before lot A3b) is never downloaded',
+      'an incomplete component of the catalogue (an ONNX Runtime before lot A3b wrote its sums) is never downloaded',
       () async {
+        const incomplete = AiComponent(
+          id: 'incomplete-runtime',
+          version: '1',
+          kind: AiComponentKind.runtime,
+          platforms: {AiPlatform.linuxX64},
+          assetName: 'incomplete.so.gz',
+          installPath: 'runtime/incomplete/libincomplete.so',
+          size: null,
+          sha256: null,
+          compression: AiCompression.gzip,
+          licence: 'MIT',
+          licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
+        );
         await expectLater(
-          downloader().download(onnxRuntimeLinuxComponent, target: target(), part: part()),
+          downloader().download(incomplete, target: target(), part: part()),
           _fails(AiDownloadFailure.incomplete),
         );
         expect(server.requests, isEmpty);

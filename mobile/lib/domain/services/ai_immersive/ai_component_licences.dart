@@ -2,7 +2,8 @@
 // licenses/<id>.txt in the folder of the components says what the file is, where it came from and under which terms,
 // offline, and the tile of the components shows it. The texts are kept in the app, so nothing more is downloaded for
 // them: the Apache License 2.0 of Depth Anything V2 Small and of its two exports, and the MIT licence of ONNX Runtime
-// (its LICENSE file at v1.31.0 and v1.23.2, the same text), whose ThirdPartyNotices.txt is named by its address.
+// (its LICENSE file at v1.31.0 and v1.23.2, the same text), whose ThirdPartyNotices.txt is downloaded with the library
+// (licenses/ID-ThirdPartyNotices.txt) and named by its address too.
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 
@@ -16,7 +17,10 @@ String aiComponentLicenceNotice(AiComponent component, {required String source, 
     'Downloaded from: $source',
     'Installed: ${installedAt.toUtc().toIso8601String()}',
     'Licence: ${component.licence}, ${component.licenceUrl}',
-    if (component.kind == AiComponentKind.runtime)
+    if (component.noticesDownload case final notices?)
+      'The notices of the libraries built into ONNX Runtime: ${notices.installPath}, and '
+          '$_onnxRuntimeRepository/v${component.version}/ThirdPartyNotices.txt'
+    else if (component.kind == AiComponentKind.runtime)
       'The notices of the libraries built into ONNX Runtime: $_onnxRuntimeRepository/v${component.version}/ThirdPartyNotices.txt',
   ];
   return '${lines.join('\n')}\n\n${aiLicenceText(component)}';

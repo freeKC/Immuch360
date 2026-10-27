@@ -3,11 +3,11 @@
 // each load (the SHA-256 is checked once, at the download), removal, and installed.json.
 //
 // The folder (aiComponentsFolderProvider) holds runtime/, models/, licenses/ (the licence of each component, copied at
-// its installation), tmp/ (the .part files, kept to resume a download) and installed.json (version, size, SHA-256,
-// date and source of each component, and the files whose deletion waits for the next start). Windows does not delete
-// a DLL that is loaded: removing ONNX Runtime after a conversion notes the file, and the pass of the next start
-// (freePendingAtStart, run by the desktop start before anything loads a component) deletes it. A removal is refused
-// while a conversion runs (inUse).
+// its installation, and the notices of the libraries built into ONNX Runtime, downloaded with it), tmp/ (the .part
+// files, kept to resume a download) and installed.json (version, size, SHA-256, date and source of each component,
+// and the files whose deletion waits for the next start). Windows does not delete a DLL that is loaded: removing ONNX
+// Runtime after a conversion notes the file, and the pass of the next start (freePendingAtStart, run by the desktop
+// start before anything loads a component) deletes it. A removal is refused while a conversion runs (inUse).
 //
 // installed.json and the memory of the service say the same thing: an entry is kept only once written, and a removal
 // is written before any file goes (the file noted for the next start meanwhile), so that a removal that cannot be
@@ -117,13 +117,13 @@ class AiComponentsService extends ChangeNotifier {
   final _cancels = <String, AiDownloadCancel>{};
   Future<void> _saving = Future.value();
 
-  /// The bytes to download for [components], from the catalogue
+  /// The bytes to download for [components], from the catalogue, their notices included
   static int downloadBytesOf(Iterable<AiComponent> components) =>
-      components.fold(0, (sum, component) => sum + (component.bytesToDownload ?? 0));
+      components.fold(0, (sum, component) => sum + (component.bytesToDownload ?? 0) + (component.notices?.size ?? 0));
 
-  /// The space [components] take once installed, from the catalogue
+  /// The space [components] take once installed, from the catalogue, their notices included
   static int diskBytesOf(Iterable<AiComponent> components) =>
-      components.fold(0, (sum, component) => sum + (component.size ?? 0));
+      components.fold(0, (sum, component) => sum + (component.size ?? 0) + (component.notices?.size ?? 0));
 
   static Future<void>? _startPass;
 
@@ -242,7 +242,12 @@ class AiComponentsService extends ChangeNotifier {
     if (!tmp.existsSync()) {
       return;
     }
-    final parts = {for (final component in catalogue) '${component.assetName}.part'};
+    final parts = {
+      for (final component in catalogue) ...[
+        '${component.assetName}.part',
+        if (component.notices != null) '${component.notices!.assetName}.part',
+      ],
+    };
     await for (final entity in tmp.list()) {
       if (!parts.contains(p.basename(entity.path))) {
         await _tryDelete(entity, _delete);
@@ -258,6 +263,16 @@ class AiComponentsService extends ChangeNotifier {
 
   /// The licence copied at the installation of [component] (it may not exist)
   Future<File> licenceOf(AiComponent component) async => _licenceIn(_root ?? await _folder(), component);
+
+  /// The notices downloaded with [component] (ONNX Runtime), null for a component without notices; the file may not
+  /// exist
+  Future<File?> noticesOf(AiComponent component) async {
+    final notices = component.noticesDownload;
+    if (notices == null) {
+      return null;
+    }
+    return File(p.joinAll([(_root ?? await _folder()).path, ...notices.installPath.split('/')]));
+  }
 
   /// The state the disk gives, the size checked
   Future<AiComponentState> _stateOnDisk(AiComponent component) async {
@@ -350,7 +365,9 @@ class AiComponentsService extends ChangeNotifier {
       if (!component.isComplete) {
         throw AiDownloadException(AiDownloadFailure.incomplete, component.id);
       }
-      if (await _stateOnDisk(component) == AiComponentState.installed) {
+      final notices = component.noticesDownload;
+      if (await _stateOnDisk(component) == AiComponentState.installed &&
+          (notices == null || _fileOf(notices).existsSync())) {
         _set(component, const AiComponentStatus(AiComponentState.installed));
         return;
       }
@@ -380,6 +397,11 @@ class AiComponentsService extends ChangeNotifier {
           },
         );
         source = uri.toString();
+      }
+      // The notices of the libraries inside come with the library: without them, it is not installed (the library
+      // stays in place and is kept by the next call when its sum is right)
+      if (notices != null && !await _hasSum(_fileOf(notices), notices)) {
+        await _downloader.download(notices, target: _fileOf(notices), part: _partOf(notices), cancel: cancel);
       }
       final installedAt = _now();
       await _writeLicence(component, source: source, installedAt: installedAt);
@@ -469,7 +491,13 @@ class AiComponentsService extends ChangeNotifier {
       }
     }
     final deferred = !await _tryDelete(_fileOf(component), _delete);
-    for (final other in [_licenceIn(root, component), _partOf(component), File('${_partOf(component).path}.unpack')]) {
+    final notices = component.noticesDownload;
+    for (final other in [
+      _licenceIn(root, component),
+      _partOf(component),
+      File('${_partOf(component).path}.unpack'),
+      if (notices != null) ...[_fileOf(notices), _partOf(notices)],
+    ]) {
       await _tryDelete(other, _delete);
     }
     if (!deferred && _installed.pendingDeletes.remove(path) && !await _trySave()) {

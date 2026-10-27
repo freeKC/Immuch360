@@ -24,16 +24,46 @@ void main() {
       expect(aiComponentsFor(AiPlatform.macosX64).first.version, '1.23.2');
     });
 
-    test('the runtimes wait for lot A3b and are never offered meanwhile', () {
+    test('the runtimes carry what the publication script read from the official archives', () {
       final runtimes = aiComponents.where((component) => component.kind == AiComponentKind.runtime);
 
       expect(runtimes, hasLength(4));
       for (final runtime in runtimes) {
-        expect(runtime.isComplete, isFalse, reason: runtime.id);
+        expect(runtime.isComplete, isTrue, reason: runtime.id);
         expect(runtime.compression, AiCompression.gzip);
+        expect(runtime.downloadSize, lessThan(runtime.size!), reason: runtime.id);
+        expect(runtime.bytesToDownload, runtime.downloadSize);
         expect(runtime.officialUrls, isEmpty);
         expect(runtime.licence, 'MIT');
       }
+      // The sizes the design gives (section 2.1): 17.3 MB, 29 345 384 bytes, 44.8 MB
+      expect(onnxRuntimeWindowsComponent.size, 17253176);
+      expect(onnxRuntimeLinuxComponent.size, 29345384);
+      expect(onnxRuntimeMacArmComponent.size, 44830288);
+      expect(onnxRuntimeMacIntelComponent.size, 39742608);
+    });
+
+    test('every component has a name; ONNX Runtime has its notices, downloaded as a file of their own', () {
+      expect(depthModelOnnxComponent.title, 'Depth Anything V2 Small');
+      expect(onnxRuntimeMacIntelComponent.title, 'ONNX Runtime 1.23.2');
+      for (final component in aiComponents) {
+        expect(component.name, isNotNull, reason: component.id);
+        expect(component.notices == null, component.kind == AiComponentKind.model, reason: component.id);
+      }
+
+      final notices = onnxRuntimeLinuxComponent.noticesDownload!;
+      expect(notices.assetName, 'onnxruntime-1.31.0-ThirdPartyNotices.txt');
+      expect(notices.installPath, 'licenses/onnxruntime-1.31.0-linux-x64-ThirdPartyNotices.txt');
+      expect(notices.size, 338088);
+      expect(notices.sha256, '143764b952fdb1a7c69ce653bfba74a7744d6a8a573bfb73e235fba356c83de3');
+      expect(notices.compression, AiCompression.none);
+      expect(notices.urls(), [
+        'https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-ThirdPartyNotices.txt',
+      ]);
+      expect(onnxRuntimeMacIntelComponent.notices!.assetName, 'onnxruntime-1.23.2-ThirdPartyNotices.txt');
+      expect(depthModelOnnxComponent.noticesDownload, isNull);
+      // A component without a name shows its id
+      expect(onnxRuntimeLinuxComponent.noticesDownload!.title, 'onnxruntime-1.31.0-linux-x64-notices');
     });
 
     test('ids are unique, licences are permissive, sums are hexadecimal SHA-256', () {
