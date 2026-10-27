@@ -1,0 +1,152 @@
+{
+ "exifCamera": {
+  "altitude": 512.5,
+  "dateTimeOriginal": "2025:05:03 09:20:00",
+  "latitude": -33.8568,
+  "longitude": -70.6483,
+  "make": "DJI",
+  "model": "FC3582",
+  "offsetTimeOriginal": "+02:00",
+  "orientation": 6,
+  "software": "10.01.02.07"
+ },
+ "heic": {
+  "height": 32,
+  "tool": "pillow-heif 0.18.0",
+  "width": 64
+ },
+ "iccProfiles": {
+  "display_p3.jpg": {
+   "chunks": 1,
+   "length": 2536,
+   "sha256": "fdc0d215e37d12f73280bfe16f457b582a5ecced15b75890101c565ce6bc6a2a"
+  },
+  "icc_two_chunks.jpg": {
+   "chunks": 2,
+   "length": 72516,
+   "sha256": "d8cdd1174441ed428476eaccc33848119c837a180bfcda639de643047f7e4871"
+  }
+ },
+ "orientation": {
+  "quarters": {
+   "bottomLeft": [
+    40,
+    60,
+    220
+   ],
+   "bottomRight": [
+    230,
+    220,
+    40
+   ],
+   "topLeft": [
+    220,
+    40,
+    40
+   ],
+   "topRight": [
+    40,
+    200,
+    60
+   ]
+  },
+  "uprightHeight": 16,
+  "uprightWidth": 32
+ },
+ "p3Patches": {
+  "green": {
+   "p3": [
+    98,
+    168,
+    98
+   ],
+   "srgb": [
+    70,
+    170,
+    90
+   ]
+  },
+  "grey": {
+   "p3": [
+    128,
+    128,
+    128
+   ],
+   "srgb": [
+    128,
+    128,
+    128
+   ]
+  },
+  "red": {
+   "p3": [
+    185,
+    71,
+    66
+   ],
+   "srgb": [
+    200,
+    60,
+    60
+   ]
+  }
+ },
+ "png": {
+  "clear": {
+   "onBlack": [
+    0,
+    0,
+    0
+   ],
+   "rgba": [
+    0,
+    0,
+    255,
+    0
+   ],
+   "x": 24,
+   "y": 12
+  },
+  "half": {
+   "onBlack": [
+    0,
+    100,
+    0
+   ],
+   "rgba": [
+    0,
+    200,
+    0,
+    128
+   ],
+   "x": 24,
+   "y": 4
+  },
+  "opaque": {
+   "onBlack": [
+    200,
+    30,
+    30
+   ],
+   "rgba": [
+    200,
+    30,
+    30,
+    255
+   ],
+   "x": 8,
+   "y": 8
+  }
+ },
+ "qualities": [
+  75,
+  90,
+  95
+ ],
+ "subsampling": [
+  "444",
+  "422",
+  "420"
+ ],
+ "tool": "Pillow 10.2.0"
+}
