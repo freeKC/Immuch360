@@ -12,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
@@ -2969,6 +2970,25 @@ void main() {
 
       expect(view3dButton, findsNothing);
       expect(reads, 0);
+    });
+
+    testWidgets('on a computer, the menu of the view modes takes its place; never on a phone', (tester) async {
+      final asset = owned(name: 'salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000);
+      final modes = find.byKey(const Key('desktop_sbs_view_mode'));
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        await pumpTopBar(tester, asset, extraOverrides: [flat(asset, ours)]);
+
+        expect(find.byType(DesktopSbsViewButton), findsOneWidget);
+        expect(modes, findsOneWidget);
+        expect(view3dButton, findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+
+      await pumpTopBar(tester, asset, extraOverrides: [flat(asset, ours)]);
+      expect(find.byType(DesktopSbsViewButton), findsNothing);
+      expect(modes, findsNothing);
     });
   });
   group('ViewerTopAppBar "AI relief" button on a Meta Quest', () {
