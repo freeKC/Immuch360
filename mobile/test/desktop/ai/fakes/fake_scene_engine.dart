@@ -197,6 +197,7 @@ class FakeSceneEngine extends FakeStagedEngine<SceneJob> {
       sceneTriangles: scene.sceneTriangles!,
       sceneTextureMax: scene.sceneTextureMax!,
       sceneScale: scene.sceneScale!,
+      gridStep: scene.gridStep!,
       safe: scene.safe!,
       fieldOfView: scene.fieldOfView!,
       fieldOfViewSource: FieldOfViewSource.model,

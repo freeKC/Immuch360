@@ -129,7 +129,7 @@ def scene_fields(scene: dict) -> list:
             ("SceneSha256", scene["sceneSha256"]), ("SceneMeshes", str(scene["meshes"])),
             ("SceneVertices", str(scene["vertices"])), ("SceneTriangles", str(scene["triangles"])),
             ("SceneTextureMax", str(scene["textureMax"])), ("SceneScale", decimal(scene["scale"])),
-            ("GridStep", "4"), ("SafeLateral", decimal(safe["lateral"])),
+            ("GridStep", str(scene["gridStep"])), ("SafeLateral", decimal(safe["lateral"])),
             ("SafeVertical", decimal(safe["vertical"])), ("SafeForward", decimal(safe["forward"])),
             ("SafeBackward", decimal(safe["backward"])), ("FieldOfView", decimal(scene["fovDegrees"])),
             ("FieldOfViewSource", scene["fovSource"]), ("GeometryModel", scene["geometryModel"]),
@@ -167,7 +167,7 @@ SAMPLE_COMMON = {
 }
 # Sums of the sample only: the real ones come with the catalogue (M2, M3)
 SAMPLE_GEOMETRY_SHA256 = hashlib.sha256(b"sample of moge-2-vits-normal-onnx-immuch360").hexdigest()
-SAMPLE_INPAINT_SHA256 = hashlib.sha256(b"sample of migan-512-places2-onnx").hexdigest()
+SAMPLE_INPAINT_SHA256 = hashlib.sha256(b"sample of lama-onnx").hexdigest()
 SAMPLE_GENERATOR_SHA256 = hashlib.sha256(b"sample of flux2-klein-base-4b-q8_0").hexdigest()
 SAMPLE_LORA_SHA256 = hashlib.sha256(b"sample of flux2-klein-4b-360-erp-lora-v1").hexdigest()
 DEPTH_ONNX_SHA256 = "afb6a5c28f3b6bf1618c6e43f02073ef9dfdc70e937502d51603e57b0a1df10c"
@@ -177,9 +177,9 @@ def scene_sample() -> str:
     """The scene of section 8.5 of the design, the one of stereo_pair_contract_v1.json"""
     scene = {"sceneLength": 6712344, "sceneSha256": hashlib.sha256(b"glb-layers-v1 sample of the stereoPair contract")
              .hexdigest(), "meshes": 2, "vertices": 58210, "triangles": 113877, "textureMax": 4096, "scale": 1.0,
-             "safe": {"lateral": 0.22, "vertical": 0.13, "forward": 0.48, "backward": 0.11}, "fovDegrees": 65.4,
-             "fovSource": "Exif", "geometryModel": "moge-2-vits-normal-onnx-immuch360",
-             "geometryModelSha256": SAMPLE_GEOMETRY_SHA256, "inpaintModel": "migan-512-places2-onnx",
+             "gridStep": 4, "safe": {"lateral": 0.22, "vertical": 0.13, "forward": 0.48, "backward": 0.11},
+             "fovDegrees": 65.4, "fovSource": "Exif", "geometryModel": "moge-2-vits-normal-onnx-immuch360",
+             "geometryModelSha256": SAMPLE_GEOMETRY_SHA256, "inpaintModel": "lama-onnx",
              "inpaintModelSha256": SAMPLE_INPAINT_SHA256, "hiddenFraction": 0.07}
     common = dict(SAMPLE_COMMON, derivativeId="urn:uuid:6f1c2e0a-0000-4000-8000-000000000001",
                   qualityFlags=["hiddenAreas"])
@@ -445,10 +445,10 @@ def scene_file(name: str, preview: tuple, layers: list, textures: list, safe: di
     triangles = sum(len(mesh[2]) // 3 for mesh in meshes)
     fields = {"sceneLength": len(scene), "sceneSha256": hashlib.sha256(scene).hexdigest(), "meshes": len(meshes),
               "vertices": vertices, "triangles": triangles,
-              "textureMax": max(max(texture[0], texture[1]) for texture in textures), "scale": 1.0, "safe": safe,
-              "fovDegrees": fov, "fovSource": "Exif", "geometryModel": "moge-2-vits-normal-onnx-immuch360",
-              "geometryModelSha256": SAMPLE_GEOMETRY_SHA256, "inpaintModel": "migan-512-places2-onnx",
-              "inpaintModelSha256": SAMPLE_INPAINT_SHA256, "hiddenFraction": hidden}
+              "textureMax": max(max(texture[0], texture[1]) for texture in textures), "scale": 1.0, "gridStep": 4,
+              "safe": safe, "fovDegrees": fov, "fovSource": "Exif",
+              "geometryModel": "moge-2-vits-normal-onnx-immuch360", "geometryModelSha256": SAMPLE_GEOMETRY_SHA256,
+              "inpaintModel": "lama-onnx", "inpaintModelSha256": SAMPLE_INPAINT_SHA256, "hiddenFraction": hidden}
     common = {"creatorTool": "Immuch360 make_scene_fixture.py",
               "derivativeId": "urn:uuid:7a2d3f1b-0000-4000-8000-000000000001", "sourceName": name,
               "sourceSize": size, "sourceSha1": sha1, "sourceQuarterTurns": 0, "qualityFlags": flags,

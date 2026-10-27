@@ -349,11 +349,12 @@ abstract final class ReliefV1 {
 }
 
 /// The constants of scene-v1, the 3D scene made from one photo: its geometry estimated by MoGe-2, two layers cut at the
-/// breaks of depth, the bands the near layer hides filled in by MI-GAN, meshes in metres (design-final 2026-10-27,
-/// sections 2.3, 2.4 and 3.4). The algorithm is written once in .github/desktop/ai/make_scene_golden.py, whose
-/// fixture (test/fixtures/ai_immersive/scene_golden_v1.json) holds the Dart of the computers and the Kotlin of the
-/// Quest. The measures in the headset (MQ) may tighten the zone by 25 %, or move the comfort distance to 0.6 m, without
-/// changing the format.
+/// breaks of depth, the bands the near layer hides filled in by LaMa, meshes in metres (design-final 2026-10-27,
+/// sections 2.3, 2.4 and 3.4, with the decisions of the measure M2: the grid step of [gridStepFor], LaMa for every
+/// band, MI-GAN kept for the seam of a panorama only). The algorithm is written once in
+/// .github/desktop/ai/make_scene_golden.py, whose fixture (test/fixtures/ai_immersive/scene_golden_v1.json) holds the
+/// Dart of the computers and the Kotlin of the Quest. The measures in the headset (MQ) may tighten the zone by 25 %, or
+/// move the comfort distance to 0.6 m, without changing the format.
 abstract final class SceneV1 {
   /// Immuch360:Pipeline
   static const pipeline = 'scene-v1';
@@ -364,8 +365,32 @@ abstract final class SceneV1 {
   /// The longest side of the map of the geometry, in pixels
   static const mapLongSide = 1024;
 
-  /// One vertex every this many pixels of the map
+  /// One vertex every this many pixels of the map, or more for a nearly square photo: the step of a map is the smallest
+  /// from this one whose main grid keeps at most [maxGridVertices] vertices ([gridStepFor])
   static const gridStep = 4;
+
+  /// The most vertices of the main grid of a scene, the near layer before any cut (M2: a square map of 1024 at step 4
+  /// makes 257 x 257 = 66 049 vertices, over the 65 535 of a mesh and the budget of the headset)
+  static const maxGridVertices = 50000;
+
+  /// The columns, or the rows, of the grid of a side of [length] values of the map at [step], as ReliefMesh makes them:
+  /// round(length / step) + 1, at least 2
+  static int gridLineCount(int length, int step) {
+    final lines = (length + step ~/ 2) ~/ step + 1;
+    return lines < 2 ? 2 : lines;
+  }
+
+  /// The grid step of a map of [width] x [height]: [gridStep], or the smallest step above it whose grid of
+  /// [gridLineCount] columns and rows has at most [maxGridVertices] vertices. 4 for the 4:3, 3:2, 16:9 and 3:1 maps of
+  /// 1024, 5 for a square one; the same both ways round, so a quarter turn keeps it. It goes to Immuch360:GridStep and
+  /// to the key of the settings ([SceneXmp.settingsKey]).
+  static int gridStepFor(int width, int height) {
+    var step = gridStep;
+    while (gridLineCount(width, step) * gridLineCount(height, step) > maxGridVertices) {
+      step++;
+    }
+    return step;
+  }
 
   /// Two neighbours stay linked when their normalised disparities differ by this much at most (the rule of relief-v1)
   static const breakThreshold = ReliefV1.linkThreshold;
@@ -387,11 +412,11 @@ abstract final class SceneV1 {
   /// The window the depth of a band is smoothed over
   static const bandSmoothing = 5;
 
-  /// The pixels MI-GAN fills reach this many times the band into the near side, so the fill continues the background
+  /// The pixels LaMa fills reach this many times the band into the near side, so the fill continues the background
   static const inpaintMaskFactor = 2;
 
-  /// The regions sent to MI-GAN: the boxes of the bands widened by this margin, merged when they touch, cut beyond
-  /// the largest side
+  /// The regions sent to LaMa: the boxes of the bands widened by this margin, merged when they touch, cut beyond
+  /// the largest side (LaMa takes windows of 512 x 512 of the map)
   static const inpaintMargin = 64;
   static const inpaintRegionMax = 512;
 

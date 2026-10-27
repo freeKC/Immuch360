@@ -2,8 +2,8 @@
 // in test/desktop/ai/fakes, so that the engines, the queue and the screens are built and tested before any model is
 // there:
 //  - GeometryBackend: the metric point map of a photo (MoGe-2 ViT-S through ONNX Runtime, lot S1);
-//  - InpaintBackend: the areas a layer hides, filled in (MI-GAN through ONNX Runtime, LaMa behind the same seam if M2
-//    asks for it; the seam of a panorama too);
+//  - InpaintBackend: the areas a layer hides, filled in through ONNX Runtime: LaMa for the bands of a scene, MI-GAN for
+//    the seam of a panorama (the decision of M2: LaMa leaves no ghost of the near layer);
 //  - GeneratorBackend and UpscaleBackend: the panorama around a photo and its upscale (stable-diffusion.cpp as a child
 //    process, lot P2, or the ComfyUI of the user, lot P5);
 //  - SceneBackend: the empty place of a model that makes a whole scene from one or several photos, none in version 1;
@@ -69,7 +69,8 @@ abstract interface class GeometryBackend {
 }
 
 /// A region to fill in: [width] x [height] pixels of [rgb] (three bytes a pixel), [mask] 255 where the pixel is known
-/// and 0 where it is to be filled, as MI-GAN takes them
+/// and 0 where it is to be filled. Each backend turns it into what its model takes: LaMa float32 in [0, 1] with 1 on
+/// the holes, MI-GAN these bytes as they are.
 class InpaintRegion {
   InpaintRegion({required this.width, required this.height, required this.rgb, required this.mask})
     : assert(rgb.length == 3 * width * height && mask.length == width * height, 'A region of $width x $height');
@@ -80,9 +81,10 @@ class InpaintRegion {
   final Uint8List mask;
 }
 
-/// Fills in what a region hides
+/// Fills in what a region hides: LaMa for the bands of a scene, MI-GAN for the seam of a panorama
 abstract interface class InpaintBackend {
-  /// The largest side of a region the model takes whole (512 for MI-GAN): a larger one is cut by the caller
+  /// The largest side of a region the model takes whole (512 for LaMa and for MI-GAN): a larger one is cut by the
+  /// caller
   int get regionMax;
 
   /// The SHA-256 of the model file, written as InpaintModelSha256

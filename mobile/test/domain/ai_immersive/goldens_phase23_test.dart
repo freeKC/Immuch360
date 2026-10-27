@@ -32,6 +32,7 @@ void main() {
     test('holds the constants of SceneV1', () {
       expect(golden['pipeline'], SceneV1.pipeline);
       expect(golden['gridStep'], SceneV1.gridStep);
+      expect(golden['maxGridVertices'], SceneV1.maxGridVertices);
       expect(golden['breakThreshold'], SceneV1.breakThreshold);
       expect(golden['percentiles'], [SceneV1.lowPercentile, SceneV1.highPercentile]);
       expect(golden['comfortDistance'], SceneV1.comfortDistance);
@@ -77,17 +78,35 @@ void main() {
       }
     });
 
+    test('the grid steps from 4 to keep the main grid under 50 000 vertices: 5 for a square photo', () {
+      for (final row in (golden['gridSteps'] as List).cast<List<dynamic>>()) {
+        final width = row[0] as int;
+        final height = row[1] as int;
+        final step = row[2] as int;
+        final reason = '$width x $height';
+
+        expect(SceneV1.gridStepFor(width, height), step, reason: reason);
+        expect(SceneV1.gridStepFor(height, width), step, reason: reason);
+        expect(SceneV1.gridLineCount(width, step), row[3], reason: reason);
+        expect(SceneV1.gridLineCount(height, step), row[4], reason: reason);
+      }
+      final square = cases.firstWhere((entry) => entry['name'] == 'square');
+      expect(square['gridStep'], SceneV1.gridStepFor(1024, 1024));
+      expect(square['gridStep'], 5);
+    });
+
     test('every case: a grid of ReliefMesh, masks of the map, flags of a scene, a zone within its bounds', () {
-      expect(cases.map((entry) => entry['name']), ['step', 'person', 'close', 'ledge', 'flat', 'sky']);
-      final width = golden['mapWidth'] as int;
-      final height = golden['mapHeight'] as int;
+      expect(cases.map((entry) => entry['name']), ['step', 'person', 'close', 'ledge', 'flat', 'sky', 'square']);
       for (final entry in cases) {
         final reason = entry['name'] as String;
+        final width = entry['width'] as int;
+        final height = entry['height'] as int;
+        final step = entry['gridStep'] as int;
         final columns = entry['columns'] as int;
         final rows = entry['rows'] as int;
 
-        expect(columns, (width + SceneV1.gridStep ~/ 2) ~/ SceneV1.gridStep + 1, reason: reason);
-        expect(rows, (height + SceneV1.gridStep ~/ 2) ~/ SceneV1.gridStep + 1, reason: reason);
+        expect(columns, SceneV1.gridLineCount(width, step), reason: reason);
+        expect(rows, SceneV1.gridLineCount(height, step), reason: reason);
         expect(entry['vertices'] as List, hasLength(3 * columns * rows), reason: reason);
         for (final key in ['band', 'inpaintMask']) {
           final mask = (entry[key] as List).cast<String>();
@@ -102,8 +121,9 @@ void main() {
             expect(inpaint[i], '1', reason: reason);
           }
         }
+        final flags = (entry['flags'] as List).cast<String>();
         expect(
-          (entry['flags'] as List).cast<String>().every(
+          flags.every(
             (flag) => qualityFlagsOf(ImmersiveKind.volumetricScene).contains(ReliefQualityFlag.fromXmp(flag)),
           ),
           isTrue,

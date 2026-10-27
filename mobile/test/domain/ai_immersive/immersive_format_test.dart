@@ -98,6 +98,33 @@ void main() {
       expect(Relief360V1.maxShiftDegrees, 1.0);
     });
 
+    test('the grid of a scene: step 4, the next steps when the main grid would pass 50 000 vertices', () {
+      // The frames of M2, as maps of 1024 on their longest side
+      expect(SceneV1.gridStepFor(1024, 768), 4);
+      expect(SceneV1.gridLineCount(1024, 4) * SceneV1.gridLineCount(768, 4), 49601);
+      expect(SceneV1.gridStepFor(1024, 683), 4);
+      expect(SceneV1.gridStepFor(1024, 576), 4);
+      expect(SceneV1.gridStepFor(1024, 341), 4);
+      // A square photo: 257 x 257 = 66 049 at 4, over the 65 535 of a mesh
+      expect(SceneV1.gridLineCount(1024, 4), 257);
+      expect(SceneV1.gridStepFor(1024, 1024), 5);
+      expect(SceneV1.gridStepFor(768, 1024), SceneV1.gridStepFor(1024, 768));
+      // The rule, not a table: a larger map goes on stepping up
+      expect(SceneV1.gridStepFor(2048, 2048), 10);
+      for (final (width, height) in [(1024, 773), (1024, 774), (1024, 1024), (2048, 2048), (24, 16), (1, 1)]) {
+        final step = SceneV1.gridStepFor(width, height);
+        int vertices(int at) => SceneV1.gridLineCount(width, at) * SceneV1.gridLineCount(height, at);
+
+        expect(vertices(step), lessThanOrEqualTo(SceneV1.maxGridVertices), reason: '$width x $height');
+        if (step > SceneV1.gridStep) {
+          expect(vertices(step - 1), greaterThan(SceneV1.maxGridVertices), reason: '$width x $height');
+        }
+      }
+      expect(SceneV1.gridStepFor(1024, 773), 4);
+      expect(SceneV1.gridStepFor(1024, 774), 5);
+      expect(SceneV1.gridLineCount(1, 4), 2);
+    });
+
     test('the stem of a name drops only the last extension', () {
       expect(fileStem('salon.jpg'), 'salon');
       expect(fileStem('archive.tar.gz'), 'archive.tar');

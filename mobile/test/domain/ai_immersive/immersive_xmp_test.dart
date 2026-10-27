@@ -25,7 +25,8 @@ void main() {
   const tool = 'Immuch360 Desktop 3.4.0 (windows)';
   const region = PhotoRegion(yaw: 0, pitch: 0, hfov: 65.4, vfov: 50.6);
 
-  SceneXmp scene() => SceneXmp.reconstructed(
+  // The scene of the sample, from a 4:3 photo; [width] x [height] is the size of its map
+  SceneXmp scene({int width = 1024, int height = 768}) => SceneXmp.reconstructed(
     sceneLength: 6712344,
     sceneSha256: _sha256Of('glb-layers-v1 sample of the stereoPair contract'),
     sceneMeshes: 2,
@@ -33,13 +34,14 @@ void main() {
     sceneTriangles: 113877,
     sceneTextureMax: 4096,
     sceneScale: 1.0,
+    gridStep: SceneV1.gridStepFor(width, height),
     safe: const SceneSafeZone(lateral: 0.22, vertical: 0.13, forward: 0.48, backward: 0.11),
     fieldOfView: 65.4,
     fieldOfViewSource: FieldOfViewSource.exif,
     geometryModel: 'moge-2-vits-normal-onnx-immuch360',
     geometryModelSha256: _sha256Of('sample of moge-2-vits-normal-onnx-immuch360'),
-    inpaintModel: 'migan-512-places2-onnx',
-    inpaintModelSha256: _sha256Of('sample of migan-512-places2-onnx'),
+    inpaintModel: 'lama-onnx',
+    inpaintModelSha256: _sha256Of('sample of lama-onnx'),
     hiddenFraction: 0.07,
     sourceName: salon.name,
     sourceSize: salon.size,
@@ -164,6 +166,18 @@ void main() {
   group('the settings keys, one per kind', () {
     test('a scene: the sums of its two models, the pipeline, the step of the grid and the quarter turns', () {
       expect(scene().settingsKey, '${scene().geometryModelSha256}|${scene().inpaintModelSha256}|scene-v1|4|0');
+    });
+
+    test('a scene of a square photo: its grid at 5, written in the packet and in the key', () {
+      final square = scene(width: 1024, height: 1024);
+      final read = SceneXmp.parse(square.toXml())!;
+
+      expect(square.toXml(), contains('Immuch360:GridStep="5"'));
+      expect(read.gridStep, 5);
+      expect(read.settingsKey, '${square.geometryModelSha256}|${square.inpaintModelSha256}|scene-v1|5|0');
+      expect(read.settingsKey, isNot(scene().settingsKey));
+      // A quarter turn keeps the step
+      expect(scene(width: 768, height: 1024).gridStep, 4);
     });
 
     test('a panorama: the sums of the transformer and of the LoRA, the pipeline, the steps; never the seed', () {

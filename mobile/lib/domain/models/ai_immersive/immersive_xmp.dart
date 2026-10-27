@@ -520,7 +520,7 @@ final class SceneXmp extends ImmersiveVersionXmp {
     super.sources = const [],
   });
 
-  /// The packet of a scene made by scene-v1 from [sourceName]
+  /// The packet of a scene made by scene-v1 from [sourceName], its grid at [gridStep] (SceneV1.gridStepFor of its map)
   factory SceneXmp.reconstructed({
     required int sceneLength,
     required String sceneSha256,
@@ -529,6 +529,7 @@ final class SceneXmp extends ImmersiveVersionXmp {
     required int sceneTriangles,
     required int sceneTextureMax,
     required double sceneScale,
+    required int gridStep,
     required SceneSafeZone safe,
     required double fieldOfView,
     required FieldOfViewSource fieldOfViewSource,
@@ -556,7 +557,7 @@ final class SceneXmp extends ImmersiveVersionXmp {
     sceneTriangles: sceneTriangles,
     sceneTextureMax: sceneTextureMax,
     sceneScale: sceneScale,
-    gridStep: SceneV1.gridStep,
+    gridStep: gridStep,
     safe: safe,
     fieldOfView: fieldOfView,
     fieldOfViewSource: fieldOfViewSource,
@@ -596,7 +597,7 @@ final class SceneXmp extends ImmersiveVersionXmp {
   /// The comfort scale the scene was enlarged by around the eye
   final double? sceneScale;
 
-  /// One vertex every this many pixels of the map
+  /// One vertex every this many pixels of the map: 4, 5 for a nearly square photo (SceneV1.gridStepFor)
   final int? gridStep;
 
   /// The zone the eye may move in, in metres
