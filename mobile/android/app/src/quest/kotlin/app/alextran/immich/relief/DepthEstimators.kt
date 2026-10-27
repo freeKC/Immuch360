@@ -2,7 +2,6 @@ package app.alextran.immich.relief
 
 import com.google.ai.edge.litert.Accelerator
 import com.google.ai.edge.litert.CompiledModel
-import com.google.ai.edge.litert.LiteRtException
 import com.google.ai.edge.litert.TensorBuffer
 import com.google.ai.edge.litert.TensorType
 import java.io.File
@@ -20,6 +19,10 @@ import java.io.File
 // LiteRT 2.3.0 is built with Kotlin 2.4 and the app with Kotlin 2.2.20, which reads class metadata up to 2.3 only: the
 // Kotlin compilations of the quest flavour skip that check (-Xskip-metadata-version-check in build.gradle). Only plain
 // calls are made here (constructors, named arguments, methods), which the 2.4 metadata describes as before.
+//
+// Every call into LiteRT goes through engineCall (relief/DepthEstimator.kt): a LiteRtException, a RuntimeException of
+// its Java layer or a native library refused becomes a DepthEstimatorException, so that GpuParityCheck falls back to
+// the CPU and closes the model whatever LiteRT threw.
 
 /** LiteRT, the engine of the quest flavour */
 object DepthEstimators : DepthEngine {
@@ -41,24 +44,24 @@ object DepthEstimators : DepthEngine {
       throw DepthEstimatorException(DepthFailure.MODEL_MISSING, path, "no readable model at ${model.path}")
     }
     val compiled =
-      try {
+      engineCall(DepthFailure.OPEN_FAILED, path, "LiteRT would not load the model") {
         CompiledModel.create(model.absolutePath, options(path))
-      } catch (e: LiteRtException) {
-        val reason = "LiteRT would not load the model on $path: ${e.message}"
-        throw DepthEstimatorException(DepthFailure.OPEN_FAILED, path, reason, e)
-      } catch (e: LinkageError) {
-        // A native library of LiteRT missing or refused by the system
-        throw DepthEstimatorException(DepthFailure.OPEN_FAILED, path, "LiteRT is not usable here: $e", e)
       }
     try {
       checkShape("input", INPUT_SHAPE, path) { compiled.getInputTensorType(INPUT_NAME) }
       checkShape("output", OUTPUT_SHAPE, path) { compiled.getOutputTensorType(OUTPUT_NAME) }
-      return LiteRtEstimator(path, compiled, compiled.createInputBuffers(), compiled.createOutputBuffers())
-    } catch (e: LiteRtException) {
-      compiled.close()
-      throw DepthEstimatorException(DepthFailure.OPEN_FAILED, path, "LiteRT made no buffers on $path: ${e.message}", e)
+      val inputs =
+        engineCall(DepthFailure.OPEN_FAILED, path, "LiteRT made no input buffers") { compiled.createInputBuffers() }
+      val outputs =
+        try {
+          engineCall(DepthFailure.OPEN_FAILED, path, "LiteRT made no output buffers") { compiled.createOutputBuffers() }
+        } catch (e: DepthEstimatorException) {
+          closeQuietly(inputs)
+          throw e
+        }
+      return LiteRtEstimator(path, compiled, inputs, outputs)
     } catch (e: DepthEstimatorException) {
-      compiled.close()
+      closeQuietly(listOf(compiled))
       throw e
     }
   }
@@ -79,13 +82,7 @@ object DepthEstimators : DepthEngine {
 
   /** The tensor [what] of the model must be float32 of [shape], else the file is not the model of this version */
   private fun checkShape(what: String, shape: List<Int>, path: DepthPath, type: () -> TensorType) {
-    val found =
-      try {
-        type()
-      } catch (e: LiteRtException) {
-        val reason = "the model has no $what of this version: ${e.message}"
-        throw DepthEstimatorException(DepthFailure.WRONG_MODEL, path, reason, e)
-      }
+    val found = engineCall(DepthFailure.WRONG_MODEL, path, "the model has no $what of this version", type)
     val dimensions = found.layout?.dimensions
     if (found.elementType != TensorType.ElementType.FLOAT || dimensions != shape) {
       throw DepthEstimatorException(
@@ -110,12 +107,10 @@ private class LiteRtEstimator(
     check(!closed) { "the depth model is closed" }
     require(input.size == ReliefPreprocess.TENSOR_SIZE) { "an input of ${ReliefPreprocess.TENSOR_SIZE} values" }
     val depth =
-      try {
+      engineCall(DepthFailure.RUN_FAILED, path, "the pass failed") {
         inputs[0].writeFloat(input)
         model.run(inputs, outputs)
         outputs[0].readFloat()
-      } catch (e: LiteRtException) {
-        throw DepthEstimatorException(DepthFailure.RUN_FAILED, path, "the $path pass failed: ${e.message}", e)
       }
     if (depth.size != ReliefPreprocess.INPUT_WIDTH * ReliefPreprocess.INPUT_HEIGHT) {
       throw DepthEstimatorException(DepthFailure.WRONG_MODEL, path, "a map of ${depth.size} values")
@@ -126,7 +121,17 @@ private class LiteRtEstimator(
   override fun close() {
     if (closed) return
     closed = true
-    (inputs + outputs).forEach { it.close() }
-    model.close()
+    closeQuietly(inputs + outputs + model)
+  }
+}
+
+/** Closes each of [natives], the next ones too when one fails: a buffer that will not close must not keep the model */
+private fun closeQuietly(natives: List<AutoCloseable>) {
+  for (native in natives) {
+    try {
+      native.close()
+    } catch (e: Exception) {
+      // Nothing more to free from it
+    }
   }
 }

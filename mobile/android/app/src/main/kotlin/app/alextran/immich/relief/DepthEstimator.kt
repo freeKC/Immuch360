@@ -58,6 +58,24 @@ interface DepthEstimator : AutoCloseable {
   override fun close()
 }
 
+/**
+ * Runs [call], a call into the native engine on [path], so that whatever it throws becomes a [DepthEstimatorException]
+ * of [failure] whose message starts with [what]: the engine's own exceptions (LiteRtException is a checked exception),
+ * a RuntimeException of its Java layer, a native library missing or refused (LinkageError). A DepthEstimatorException
+ * goes through as it is, and so does any other Error of the virtual machine. The parity check then falls back to the
+ * CPU and closes what was open, whatever the engine threw.
+ */
+fun <T> engineCall(failure: DepthFailure, path: DepthPath, what: String, call: () -> T): T =
+  try {
+    call()
+  } catch (e: DepthEstimatorException) {
+    throw e
+  } catch (e: Exception) {
+    throw DepthEstimatorException(failure, path, "$what on $path: ${e.message ?: e.javaClass.simpleName}", e)
+  } catch (e: LinkageError) {
+    throw DepthEstimatorException(failure, path, "$what on $path: $e", e)
+  }
+
 /** What opens the depth model: LiteRT in the quest flavour, nothing in the phone flavour */
 interface DepthEngine {
   /** Whether this version of the app has a depth engine */
