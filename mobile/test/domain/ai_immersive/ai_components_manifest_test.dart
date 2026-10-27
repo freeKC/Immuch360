@@ -120,6 +120,37 @@ void main() {
       expect(aiComponentsReleaseBaseOf(aiComponentsReleaseTag), aiComponentsReleaseBase);
     });
 
+    test('the 3D photo keeps the components of phase 1, which alone live in ai-components-1', () {
+      // An entry of a later phase that forgets its features (the 3D photo by default) or its release (ai-components-1
+      // by default) fails here: the 3D photo never depends on a component of a scene or of a panorama
+      const phase1 = {
+        'depth-anything-v2-small-onnx',
+        'depth-anything-v2-small-tflite',
+        'onnxruntime-1.31.0-win-x64',
+        'onnxruntime-1.31.0-linux-x64',
+        'onnxruntime-1.31.0-osx-arm64',
+        'onnxruntime-1.23.2-osx-x86_64',
+      };
+      Set<String> idsWhere(bool Function(AiComponent) test) =>
+          aiComponents.where(test).map((component) => component.id).toSet();
+
+      expect(idsWhere((component) => component.features.contains(AiFeature.stereoPhoto)), phase1);
+      expect(idsWhere((component) => component.releaseTag == aiComponentsReleaseTag), phase1);
+      expect(
+        {
+          for (final platform in AiPlatform.values)
+            platform: aiComponentsFor(platform).map((component) => component.id).toList(),
+        },
+        {
+          AiPlatform.windowsX64: ['onnxruntime-1.31.0-win-x64', 'depth-anything-v2-small-onnx'],
+          AiPlatform.linuxX64: ['onnxruntime-1.31.0-linux-x64', 'depth-anything-v2-small-onnx'],
+          AiPlatform.macosArm64: ['onnxruntime-1.31.0-osx-arm64', 'depth-anything-v2-small-onnx'],
+          AiPlatform.macosX64: ['onnxruntime-1.23.2-osx-x86_64', 'depth-anything-v2-small-onnx'],
+          AiPlatform.questArm64: ['depth-anything-v2-small-tflite'],
+        },
+      );
+    });
+
     test('a component of another release, in parts, downloads from its own release or the mirror', () {
       const transformer = AiComponent(
         id: 'flux2-klein-base-4b-q8_0',
