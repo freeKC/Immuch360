@@ -41,6 +41,10 @@
       "rank": 49
     },
     {
+      "name": "DisableTelemetryEvents",
+      "rank": 6
+    },
+    {
       "name": "GetAllocatorWithDefaultOptions",
       "rank": 78
     },

@@ -10,6 +10,12 @@
 // synchronous: the worker isolate of lot A4b runs a whole job as one event. Settings of the design: intra-op threads =
 // logical processors minus two (at least one), inter-op threads = 1, and session.intra_op.allow_spinning = 0 so that
 // ONNX Runtime's threads do not spin between two passes.
+//
+// The official builds of ONNX Runtime 1.31.0 send telemetry to Microsoft unless told not to (its docs/Privacy.md): on
+// Linux and macOS, at the first OrtEnv, they write a device id and queue an event for
+// mobile.events.data.microsoft.com; on Windows, the DLL reports through ETW. The app is local only, so both are
+// turned off: ORT_DISABLE_TELEMETRY=1 in the environment of the process before the library is opened, then
+// DisableTelemetryEvents on each OrtEnv. 1.23.2 for Intel Macs has no telemetry; the two calls are harmless there.
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -23,6 +29,9 @@ import 'package:immich_mobile/desktop/ai/ort/ort_api_bindings.dart' as ort;
 
 /// The version of the table of functions asked of ONNX Runtime: 1.23 and every later release give it
 const ortApiVersion = 23;
+
+/// The variable that keeps the telemetry of ONNX Runtime off for the whole process, read when its first OrtEnv is made
+const ortTelemetryOffVariable = 'ORT_DISABLE_TELEMETRY';
 
 /// A call to ONNX Runtime failed; [message] is ONNX Runtime's own when it gave one
 class OrtException implements Exception {
@@ -100,6 +109,9 @@ final class OrtRuntime {
     if (!File(libraryPath).existsSync()) {
       throw OrtLoadException('No ONNX Runtime library at $libraryPath');
     }
+    if (!_turnTelemetryOff()) {
+      throw OrtLoadException('$libraryPath is not loaded: the telemetry of ONNX Runtime could not be turned off');
+    }
     final DynamicLibrary library;
     try {
       library = DynamicLibrary.open(libraryPath);
@@ -135,6 +147,10 @@ final class OrtRuntime {
   @visibleForTesting
   Map<String, int> get liveObjects => Map.unmodifiable(_calls.live);
 
+  /// How many OrtEnv had their telemetry events turned off (DisableTelemetryEvents): one per session opened
+  @visibleForTesting
+  int get telemetryEventsOff => _calls.telemetryOff;
+
   /// A session on the model at [modelPath]. Throws [OrtException] with ONNX Runtime's message when the model cannot
   /// be read.
   OrtSession openSession(String modelPath, {OrtSessionSettings? settings}) =>
@@ -161,6 +177,9 @@ final class OrtSession {
       final env = envOut.value;
       Pointer<ort.OrtSession> session = nullptr;
       try {
+        // What turns off the ETW events of the Windows DLL; elsewhere ORT_DISABLE_TELEMETRY already did it
+        calls.check(calls.disableTelemetryEvents(env), 'DisableTelemetryEvents');
+        calls.telemetryOff++;
         final optionsOut = arena<Pointer<ort.OrtSessionOptions>>();
         calls.check(calls.createSessionOptions(optionsOut), 'CreateSessionOptions');
         calls.made('OrtSessionOptions');
@@ -306,6 +325,25 @@ final class OrtSession {
   }
 }
 
+/// Sets ORT_DISABLE_TELEMETRY=1 in the environment of the process, where ONNX Runtime reads it (getenv, or
+/// GetEnvironmentVariableW on Windows); Platform.environment is a copy made at start, so the system is called. False
+/// when the system refused.
+bool _turnTelemetryOff() => using((arena) {
+  if (Platform.isWindows) {
+    final setVariable = DynamicLibrary.open('kernel32.dll')
+        .lookupFunction<Int32 Function(Pointer<Utf16>, Pointer<Utf16>), int Function(Pointer<Utf16>, Pointer<Utf16>)>(
+          'SetEnvironmentVariableW',
+        );
+    return setVariable(ortTelemetryOffVariable.toNativeUtf16(allocator: arena), '1'.toNativeUtf16(allocator: arena)) !=
+        0;
+  }
+  final setenv = DynamicLibrary.process()
+      .lookupFunction<Int Function(Pointer<Utf8>, Pointer<Utf8>, Int), int Function(Pointer<Utf8>, Pointer<Utf8>, int)>(
+        'setenv',
+      );
+  return setenv(ortTelemetryOffVariable.toNativeUtf8(allocator: arena), '1'.toNativeUtf8(allocator: arena), 1) == 0;
+});
+
 /// A path as ONNX Runtime reads it (ORTCHAR_T): UTF-16 on Windows, UTF-8 elsewhere
 Pointer<Char> _nativePath(String path, Allocator allocator) => Platform.isWindows
     ? path.toNativeUtf16(allocator: allocator).cast()
@@ -334,6 +372,8 @@ final class _OrtCalls {
   late final createEnv = _api.ref.CreateEnv
       .asFunction<Pointer<ort.OrtStatus> Function(int, Pointer<Char>, Pointer<Pointer<ort.OrtEnv>>)>();
   late final releaseEnv = _counted('OrtEnv', _api.ref.ReleaseEnv.asFunction<void Function(Pointer<ort.OrtEnv>)>());
+  late final disableTelemetryEvents = _api.ref.DisableTelemetryEvents
+      .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtEnv>)>();
 
   late final createSessionOptions = _api.ref.CreateSessionOptions
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<Pointer<ort.OrtSessionOptions>>)>();
@@ -449,6 +489,9 @@ final class _OrtCalls {
 
   /// The native objects made and not given back yet, by kind ([OrtRuntime.liveObjects])
   final live = <String, int>{};
+
+  /// The calls to DisableTelemetryEvents that succeeded ([OrtRuntime.telemetryEventsOff])
+  var telemetryOff = 0;
 
   /// Counts one native object of [kind], made by the call that just succeeded
   void made(String kind) => live[kind] = (live[kind] ?? 0) + 1;
