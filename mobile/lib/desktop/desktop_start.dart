@@ -3,6 +3,7 @@
 
 import 'dart:async';
 
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec_licenses.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
@@ -30,5 +31,7 @@ Future<void> startDesktop(List<String> args) async {
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();
+  // The Rust crates of the JPEG codec of the AI features, from the texts the library carries (the three systems)
+  registerSbsCodecLicenses();
   await setUpDesktopWindow();
 }
