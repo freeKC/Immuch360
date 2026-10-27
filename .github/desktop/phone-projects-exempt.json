@@ -300,8 +300,8 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "8a70ad9623a8bfca3256f74e42e29e18ec3635eb",
-    "reason": "AI immersive lots A7, A9a and A11: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); feat-ai-immersive, not yet on the phone branch"
+    "blob": "b11a856f3f97c536c4d5d4832d4f7182acb0df32",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefHost.kt": {
     "blob": "eec358898e431128aaa415bf0429ebc962ccc39f",
@@ -336,8 +336,8 @@
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the GPU of the headset checked against its CPU at the first relief, the path kept per system build, engine and model"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefCache.kt": {
-    "blob": "fe38be500004d1d0a61c17b6443a8904046a1545",
-    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the 16 bit depth maps of the relief cache of the Quest, 200 MB at most"
+    "blob": "1990179c06c15c8d923eb918e4f5c191aa7f67b4",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): the 16 bit depth maps of the relief cache of the Quest, 200 MB at most"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefJob.kt": {
     "blob": "55818e799c315be70617c64f316f52dafbb58bf8",
@@ -348,8 +348,8 @@
     "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the 686 x 518 input of the depth model made from a photo, and its output cut back to the photo"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefSynthesizer.kt": {
-    "blob": "33d5a5ec2ee86135f9a6d54926f39cc7b00a95cc",
-    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the right eye the Quest makes from a flat photo and its estimated depth, held to the golden fixture of the computers"
+    "blob": "befb3bd51e398518764d46b76009f3fcc468d8b5",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): the right eye the Quest makes from a flat photo and its estimated depth, held to the golden fixture of the computers"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlaybackReport.kt": {
     "blob": "98bf447a264a700196aa94270c45916032417769",
@@ -720,24 +720,24 @@
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit tests of the GPU parity check with fake engines, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefCacheTest.kt": {
-    "blob": "c7f70724384217e65f0929c220b2affa7708d539",
-    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of the relief cache on a real folder, run by the Kotlin unit tests job"
+    "blob": "d1cfbce6db8855b6aa12b74500198b20ba4843fc",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): unit tests of the relief cache on a real folder, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefFixtures.kt": {
     "blob": "270cf18708f9e1d2c6ef3ee1570217c249b7ca71",
     "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the reader of the shared fixtures of mobile/test/fixtures/ai_immersive for the Kotlin unit tests"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefJobTest.kt": {
-    "blob": "fa9d8e29f7919825809c4560d19c0b817dffd4a2",
-    "reason": "AI immersive lots A9a and A11: unit tests of the relief job with a fake engine and a fake thread, the map handed with the eyes included, run by the Kotlin unit tests job"
+    "blob": "e6b6111e38d40b73ecdd26bed3f5199b5b21e212",
+    "reason": "AI immersive lots A9a and A11, and their review minors: unit tests of the relief job with a fake engine and a fake thread, the map handed with the eyes included, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefPreprocessTest.kt": {
     "blob": "1e09a27f3ae0e38a9a60642d70aba2889b96c2c2",
     "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of the input of the depth model, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefSynthesizerTest.kt": {
-    "blob": "5ec353ed4725cbdce791d983905853b9cccda5b6",
-    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of relief-v1 against relief_golden_v1.json, run by the Kotlin unit tests job"
+    "blob": "76b6a5ee70948d069382d4ea4f1f341dd6e11d32",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): unit tests of relief-v1 against relief_golden_v1.json, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
