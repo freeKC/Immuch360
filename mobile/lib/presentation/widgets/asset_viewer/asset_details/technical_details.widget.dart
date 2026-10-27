@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
@@ -8,6 +9,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
@@ -40,6 +42,9 @@ class TechnicalDetails extends ConsumerWidget {
         _buildFileInfoTile(context, ref, asset, exifInfo),
         // Only a HEIF photo may hold a stereo pair: no other photo is read for one
         if (asset.isImage && isHeifName(asset.name)) _SpatialPhotoTile(asset: asset),
+        // Immuch360 Desktop: the 3D versions of a photo of the folder library, or the photo a version was made from
+        // (lib/desktop/ai/library/versions_section.dart)
+        if (CurrentPlatform.isDesktop && asset.isImage) DesktopVersionsTiles(asset: asset),
         if (asset.isVideo) _VideoDecodeTiles(asset: asset),
         if (cameraTitle != null) ...[
           const SizedBox(height: 16),
