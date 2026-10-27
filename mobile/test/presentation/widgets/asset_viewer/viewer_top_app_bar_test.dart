@@ -3013,18 +3013,20 @@ void main() {
       height: 3000,
     ).copyWith(checksum: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=', isEdited: isEdited);
 
-    /// The headset: [flavor], [device] seeing [memoryMiB], the depth model installed, [asset] read as a flat photo
+    /// The headset: [flavor], [device] seeing [memoryMiB], the depth model installed, [asset] read as a flat photo, or
+    /// still being read until [reading] ends
     List<Override> headset(
       BaseAsset asset, {
       String? flavor = 'quest',
       String device = 'eureka',
       int memoryMiB = 7600,
       FlatStereoPhoto? flat,
+      Future<FlatStereoPhoto?>? reading,
     }) => [
       appFlavorProvider.overrideWithValue(flavor),
       reliefDeviceFactsProvider.overrideWith((ref) async => ReliefDeviceFacts(device: device, memoryMiB: memoryMiB)),
       aiComponentsServiceProvider.overrideWithValue(components),
-      flatStereoProvider(asset).overrideWith((ref) async => flat),
+      flatStereoProvider(asset).overrideWith((ref) => reading ?? Future.value(flat)),
     ];
 
     List<dynamic> openedWith() => verify(
@@ -3208,6 +3210,41 @@ void main() {
       await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset));
 
       expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a HEIF photo while its spatial pair is looked for, nor for one in the trash', (
+      tester,
+    ) async {
+      // The one-key rotation tells a flat photo: none for a photo that may hold two eyes, or in the trash
+      final heif = salon(name: 'IMG_0001.HEIC');
+      await pumpTopBar(
+        tester,
+        heif,
+        horizonOs: true,
+        extraOverrides: [
+          ...headset(heif),
+          appleSpatialInfoProvider(heif).overrideWith((ref) => Completer<AppleSpatialInfo?>().future),
+        ],
+      );
+      expect(reliefButton, findsNothing);
+
+      final trashed = salon().copyWith(deletedAt: DateTime.utc(2026, 10, 27));
+      await pumpTopBar(tester, trashed, horizonOs: true, extraOverrides: headset(trashed));
+      expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown while the photo is still read for two eyes side by side', (tester) async {
+      // A candidate of the server: its head is read through the network before the headset knows it is flat
+      final asset = salon(name: 'salon_3D_LRF_Full_SBS.jpg');
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: headset(asset, reading: Completer<FlatStereoPhoto?>().future),
+      );
+
+      expect(reliefButton, findsNothing);
+      expect(find.byKey(const Key('apple_spatial_view_3d')), findsNothing);
     });
   });
 }
