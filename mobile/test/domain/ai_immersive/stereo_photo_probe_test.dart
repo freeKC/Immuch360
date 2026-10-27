@@ -335,6 +335,12 @@ void main() {
       expect(frameOfHead(progressive), (width: 640, height: 480));
     });
 
+    test('JPEG whose Huffman tables come before the frame, as some encoders write it', () {
+      // A DHT segment (FF C4) is no frame, though its marker sits among those of the frames
+      final dht = Uint8List.fromList([0xff, 0xc4, 0x00, 0x0b, 0x10, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);
+      expect(frameOfHead(jpegFile(width: 640, height: 480, segments: [dht])), (width: 640, height: 480));
+    });
+
     test('PNG', () {
       expect(frameOfHead(pngFile(width: 100000, height: 3)), (width: 100000, height: 3));
     });

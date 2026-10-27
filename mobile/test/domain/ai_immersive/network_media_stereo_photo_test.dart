@@ -105,6 +105,25 @@ void main() {
     expect(info?.stereoPhoto, isNull);
   });
 
+  test('our XMP in a photo that also declares an equirectangular GPano still tells two flat eyes', () async {
+    final (info, _) = await _detect(
+      '/Photos/salon_3D_LRF_Full_SBS.jpg',
+      jpegFile(width: 8000, height: 4000, xmp: ourXmp(eyeWidth: 4000, eyeHeight: 4000), segments: [gpanoSegment()]),
+    );
+
+    expect(info?.gpano, isNotNull);
+    expect(info?.stereoPhoto?.isOurs, isTrue);
+    expect(info?.stereoPhoto?.eyes, StereoEyes.full);
+  });
+
+  test('the photo of a 360° camera told by its name only stays a 360° photo, even under a side by side name', () async {
+    final (info, _) = await _detect('/Photos/street_sbs.36p', jpegFile(width: 8000, height: 3000));
+
+    expect(info?.gpano, isNull);
+    expect(info?.cameraEquirect, isTrue);
+    expect(info?.stereoPhoto, isNull);
+  });
+
   test('a FormatVersion 2 file is shown flat, made by a newer version', () async {
     final (info, _) = await _detect(
       '/Photos/salon_3D_LRF_Full_SBS.jpg',
