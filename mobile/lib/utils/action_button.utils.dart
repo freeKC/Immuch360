@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
@@ -71,6 +72,7 @@ enum ActionButtonType {
   viewInTimeline,
   slideshow,
   viewAs360,
+  makeImmersive,
   download,
   upload,
   openInBrowser,
@@ -169,6 +171,8 @@ enum ActionButtonType {
       // The action decides from the exif and the choices kept on the device: "View as 360°", or "Stop treating as
       // 360°" once chosen. Nothing changes on the server, so it stays in the locked view too.
       ActionButtonType.viewAs360 => context.asset.isImage || context.asset.isVideo,
+      // Immuch360 Desktop: "Make 3D (AI)" of a flat photo (lib/desktop/ai/ui), absent while the AI features are off
+      ActionButtonType.makeImmersive => CurrentPlatform.isDesktop && context.asset.isImage,
     };
   }
 
@@ -229,6 +233,7 @@ enum ActionButtonType {
       ),
       ActionButtonType.cast => const ActionMenuItem(action: CastAction()),
       ActionButtonType.viewAs360 => ActionMenuItem(action: ViewAs360Action(source: context.source)),
+      ActionButtonType.makeImmersive => DesktopMakeImmersiveButton(source: context.source, menuItem: true),
     };
   }
 
