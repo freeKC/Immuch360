@@ -13,6 +13,10 @@
 // is written before any file goes (the file noted for the next start meanwhile), so that a removal that cannot be
 // written changes nothing and installed.json never gives as installed a file that is gone. A write that failed does
 // not stop the next one.
+//
+// Phases 2 and 3 (design-final 2026-10-27, section 7.1): an archive (an engine of several files) is unpacked into
+// engines/<id>/, each file checked against the catalogue (ai_component_archive.dart), and engines/ is one of the
+// folders Remove all empties.
 
 import 'dart:async';
 import 'dart:convert';
@@ -21,6 +25,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_archive.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
 import 'package:logging/logging.dart';
@@ -79,6 +84,7 @@ class AiComponentsService extends ChangeNotifier {
     bool Function()? inUse,
     DateTime Function()? now,
     @visibleForTesting Future<void> Function(FileSystemEntity entity)? delete,
+    this._setExecutable = setExecutableBit,
   }) : _downloader = downloader ?? AiComponentDownloader(),
        inUse = inUse ?? _never,
        _now = now ?? DateTime.now,
@@ -89,6 +95,7 @@ class AiComponentsService extends ChangeNotifier {
   final List<AiComponent> catalogue;
   final DateTime Function() _now;
   final Future<void> Function(FileSystemEntity entity) _delete;
+  final AiSetExecutable _setExecutable;
 
   /// Whether a conversion runs, set by the engine: removal waits for its end
   bool Function() inUse;
@@ -104,7 +111,7 @@ class AiComponentsService extends ChangeNotifier {
   static const _licenses = 'licenses';
 
   /// The folders of the app in the folder of the components: Remove all touches nothing else, but installed.json
-  static const _ownFolders = ['runtime', 'models', _licenses, _tmp];
+  static const _ownFolders = ['runtime', 'models', 'engines', _licenses, _tmp];
 
   /// The source written in installed.json for a file that was already in place with the right sum
   static const alreadyOnDisk = 'already on disk';
@@ -121,9 +128,10 @@ class AiComponentsService extends ChangeNotifier {
   static int downloadBytesOf(Iterable<AiComponent> components) =>
       components.fold(0, (sum, component) => sum + (component.bytesToDownload ?? 0) + (component.notices?.size ?? 0));
 
-  /// The space [components] take once installed, from the catalogue, their notices included
+  /// The space [components] take once installed, from the catalogue, their notices included (the files of an
+  /// archive, not the archive)
   static int diskBytesOf(Iterable<AiComponent> components) =>
-      components.fold(0, (sum, component) => sum + (component.size ?? 0) + (component.notices?.size ?? 0));
+      components.fold(0, (sum, component) => sum + (component.installedSize ?? 0) + (component.notices?.size ?? 0));
 
   static Future<void>? _startPass;
 
@@ -255,7 +263,18 @@ class AiComponentsService extends ChangeNotifier {
     }
   }
 
-  File _fileOf(AiComponent component) => File(p.joinAll([_root!.path, ...component.installPath.split('/')]));
+  /// The file the engines use: the file of the component, or the program of an archive
+  File _fileOf(AiComponent component) => File(p.joinAll([_root!.path, ...component.mainPath.split('/')]));
+
+  /// What the component installs: its file, or the folder of an archive
+  FileSystemEntity _installedOf(AiComponent component) {
+    final path = p.joinAll([_root!.path, ...component.installPath.split('/')]);
+    return component.isArchive ? Directory(path) : File(path);
+  }
+
+  /// The file of [archive] (a component of kind archive) under [path] of its folder
+  File _archiveFileOf(AiComponent archive, String path) =>
+      File(p.joinAll([_root!.path, ...archive.installPath.split('/'), ...path.split('/')]));
 
   File _partOf(AiComponent component) => File(p.join(_root!.path, _tmp, '${component.assetName}.part'));
 
@@ -283,11 +302,15 @@ class AiComponentsService extends ChangeNotifier {
     if (entry == null) {
       return AiComponentState.notInstalled;
     }
-    final file = _fileOf(component);
-    final size = file.existsSync() ? await file.length() : -1;
-    if (size != component.size) {
-      _log.warning('${component.id}: $size bytes on the disk, ${component.size} expected');
-      return AiComponentState.damaged;
+    final expected = component.isArchive
+        ? {for (final file in component.archiveFiles) _archiveFileOf(component, file.path): file.size}
+        : {_fileOf(component): component.size};
+    for (final MapEntry(key: file, value: wanted) in expected.entries) {
+      final size = file.existsSync() ? await file.length() : -1;
+      if (size != wanted) {
+        _log.warning('${component.id}: ${file.path} has $size bytes on the disk, $wanted expected');
+        return AiComponentState.damaged;
+      }
     }
     return AiComponentState.installed;
   }
@@ -376,9 +399,10 @@ class AiComponentsService extends ChangeNotifier {
       if (_installed.pendingDeletes.remove(component.installPath)) {
         await _save(undo: () => _installed.pendingDeletes.add(component.installPath));
       }
-      final target = _fileOf(component);
+      // An archive comes into tmp/, then its files are unpacked into their folder
+      final target = component.isArchive ? File(p.join(_root!.path, _tmp, component.assetName)) : _fileOf(component);
       String source;
-      if (await _hasSum(target, component)) {
+      if (component.isArchive ? await _hasArchiveFiles(component) : await _hasSum(target, component)) {
         source = alreadyOnDisk;
       } else {
         var shown = -1;
@@ -397,6 +421,18 @@ class AiComponentsService extends ChangeNotifier {
           },
         );
         source = uri.toString();
+        if (component.isArchive) {
+          try {
+            await installAiArchive(
+              target,
+              _installedOf(component) as Directory,
+              component.archiveFiles,
+              setExecutable: _setExecutable,
+            );
+          } finally {
+            await _tryDelete(target, _delete);
+          }
+        }
       }
       // The notices of the libraries inside come with the library: without them, it is not installed (the library
       // stays in place and is kept by the next call when its sum is right)
@@ -441,6 +477,19 @@ class AiComponentsService extends ChangeNotifier {
   Future<AiComponentState> _stateAfterFailure(AiComponent component) async =>
       _root == null ? AiComponentState.notInstalled : _stateOnDisk(component);
 
+  /// Whether every file of the archive [component] is in its folder with its size and SHA-256
+  Future<bool> _hasArchiveFiles(AiComponent component) async {
+    for (final file in component.archiveFiles) {
+      final installed = _archiveFileOf(component, file.path);
+      if (!installed.existsSync() ||
+          await installed.length() != file.size ||
+          (await sha256.bind(installed.openRead()).first).toString() != file.sha256) {
+        return false;
+      }
+    }
+    return component.archiveFiles.isNotEmpty;
+  }
+
   /// Whether [file] is there with the size and the SHA-256 of [component]
   Future<bool> _hasSum(File file, AiComponent component) async {
     if (!file.existsSync() || await file.length() != component.size) {
@@ -471,7 +520,7 @@ class AiComponentsService extends ChangeNotifier {
     final path = component.installPath;
     // Written first: the entry goes and the file is noted for the next start, then the file goes
     final entry = _installed.components.remove(component.id);
-    final noted = _fileOf(component).existsSync() && !_installed.pendingDeletes.contains(path);
+    final noted = _installedOf(component).existsSync() && !_installed.pendingDeletes.contains(path);
     if (noted) {
       _installed.pendingDeletes.add(path);
     }
@@ -490,7 +539,7 @@ class AiComponentsService extends ChangeNotifier {
         return AiRemoveOutcome.writeFailed;
       }
     }
-    final deferred = !await _tryDelete(_fileOf(component), _delete);
+    final deferred = !await _tryDelete(_installedOf(component), _delete);
     final notices = component.noticesDownload;
     for (final other in [
       _licenceIn(root, component),
@@ -545,8 +594,11 @@ class AiComponentsService extends ChangeNotifier {
       _log.warning('the folders of the components stay noted in installed.json until the next start');
     }
     for (final component in catalogue) {
+      final path = component.installPath;
       _statuses[component.id] = AiComponentStatus(
-        kept.contains(component.installPath) ? AiComponentState.removedNextStart : AiComponentState.notInstalled,
+        kept.any((left) => left == path || left.startsWith('$path/'))
+            ? AiComponentState.removedNextStart
+            : AiComponentState.notInstalled,
       );
     }
     _notify();

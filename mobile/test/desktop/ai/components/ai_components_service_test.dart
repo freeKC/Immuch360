@@ -14,6 +14,7 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/files/zip_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
@@ -57,6 +58,49 @@ final _runtimeComponent = AiComponent(
     size: _notices.length,
     sha256: sha256.convert(_notices).toString(),
   ),
+);
+
+/// The files of the engine of the tests, as stable-diffusion.cpp would come: a program and two libraries in a folder
+final _engineFiles = {
+  'sd-cli': utf8.encode('ELF program of the tests ' * 20),
+  'lib/libggml-vulkan.so': utf8.encode('ELF library of the tests ' * 30),
+  'lib/libggml.so': utf8.encode('ELF base library of the tests ' * 10),
+};
+
+/// The zip of [files] (path to bytes), as our CI makes an engine
+Uint8List _zipOf(Map<String, List<int>> files) => zipFiles([
+  for (final MapEntry(:key, :value) in files.entries)
+    ZipEntry(name: key, bytes: Uint8List.fromList(value), modified: DateTime.utc(1980)),
+]);
+
+/// The archive component of [zip], whose catalogue lists [files] (path to bytes), [programs] among them
+AiComponent _engineComponent(
+  Uint8List zip,
+  Map<String, List<int>> files, {
+  Set<String> programs = const {'sd-cli'},
+  String id = 'test-engine',
+}) => AiComponent(
+  id: id,
+  version: 'test',
+  kind: AiComponentKind.archive,
+  platforms: const {AiPlatform.linuxX64, AiPlatform.windowsX64},
+  assetName: '$id.zip',
+  installPath: 'engines/$id',
+  size: zip.length,
+  sha256: sha256.convert(zip).toString(),
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE',
+  features: const {AiFeature.panorama},
+  archiveFiles: [
+    for (final MapEntry(:key, :value) in files.entries)
+      AiArchiveFile(
+        path: key,
+        size: value.length,
+        sha256: sha256.convert(value).toString(),
+        executable: programs.contains(key),
+      ),
+  ],
 );
 
 /// A sink whose first write waits for [gate]: a download held in the middle
@@ -315,6 +359,134 @@ void main() {
       await Future.wait([components.install(_modelComponent), components.install(_modelComponent)]);
 
       expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+    });
+  });
+
+  group('an archive', () {
+    AiComponentsService withEngine(AiComponent engine, Uint8List zip) {
+      File(p.join(mirror.path, engine.assetName)).writeAsBytesSync(zip);
+      return service(catalogue: [_runtimeComponent, _modelComponent, engine]);
+    }
+
+    test('is unpacked into engines/, each file checked, its program executable, nothing left in tmp', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+
+      await components.install(engine);
+
+      for (final MapEntry(:key, :value) in _engineFiles.entries) {
+        expect(File(p.joinAll([root.path, 'engines', 'test-engine', ...key.split('/')])).readAsBytesSync(), value);
+      }
+      final program = File(p.join(root.path, 'engines', 'test-engine', 'sd-cli'));
+      if (!Platform.isWindows) {
+        expect(program.statSync().mode & 0x49, 0x49, reason: 'executable by its owner, group and others');
+        expect(
+          File(p.join(root.path, 'engines', 'test-engine', 'lib', 'libggml.so')).statSync().mode & 0x40,
+          0,
+          reason: 'a library is not a program',
+        );
+      }
+      expect(components.statusOf(engine).state, AiComponentState.installed);
+      expect((await components.verifiedFile(engine))?.path, program.path);
+      expect((installedJson()['components'] as Map)['test-engine'], containsPair('path', 'engines/test-engine'));
+      expect(Directory(p.join(root.path, 'tmp')).listSync(), isEmpty);
+      // Its size on the disk is that of its files
+      expect(
+        AiComponentsService.diskBytesOf([engine]),
+        _engineFiles.values.fold<int>(0, (sum, bytes) => sum + bytes.length),
+      );
+      expect(AiComponentsService.downloadBytesOf([engine]), zip.length);
+    });
+
+    test('a file inside with another sum than the catalogue: damaged, nothing unpacked is kept', () async {
+      final zip = _zipOf({..._engineFiles, 'lib/libggml.so': utf8.encode('another library')});
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+
+      await expectLater(
+        components.install(engine),
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+      );
+      expect(
+        Directory(p.join(root.path, 'engines')).existsSync() ? Directory(p.join(root.path, 'engines')).listSync() : [],
+        isEmpty,
+      );
+      expect(components.statusOf(engine).state, AiComponentState.notInstalled);
+      expect(Directory(p.join(root.path, 'tmp')).listSync(), isEmpty);
+    });
+
+    for (final name in ['../escaped.so', '/etc/escaped.so', 'C:/escaped.dll', r'lib\escaped.dll', 'lib/./x.so']) {
+      test('a path that would leave its folder is refused: $name', () async {
+        final files = {..._engineFiles, name: utf8.encode('escaped')};
+        final zip = _zipOf(files);
+        final engine = _engineComponent(zip, files);
+        final components = withEngine(engine, zip);
+
+        await expectLater(
+          components.install(engine),
+          throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+        );
+        expect(File(p.join(temp.path, 'escaped.so')).existsSync(), isFalse);
+        expect(File(p.join(root.path, 'escaped.so')).existsSync(), isFalse);
+        expect(Directory(p.join(root.path, 'engines', 'test-engine')).existsSync(), isFalse);
+      });
+    }
+
+    test('a file of the archive that the catalogue does not list is refused', () async {
+      final zip = _zipOf({..._engineFiles, 'extra.so': utf8.encode('not in the catalogue')});
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+
+      await expectLater(
+        components.install(engine),
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+      );
+      expect(Directory(p.join(root.path, 'engines', 'test-engine')).existsSync(), isFalse);
+    });
+
+    test('a file of the folder gone behind the app makes it damaged; removed, the folder goes', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+      await components.install(engine);
+      File(p.join(root.path, 'engines', 'test-engine', 'lib', 'libggml.so')).deleteSync();
+
+      expect(await components.verifiedFile(engine), isNull);
+      expect(components.statusOf(engine).state, AiComponentState.damaged);
+
+      expect(await components.remove(engine), AiRemoveOutcome.removed);
+      expect(Directory(p.join(root.path, 'engines', 'test-engine')).existsSync(), isFalse);
+      expect((installedJson()['components'] as Map).containsKey('test-engine'), isFalse);
+    });
+
+    test('remove all empties engines/ too', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+      await components.install(engine);
+      await components.install(_modelComponent);
+
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+
+      expect(Directory(p.join(root.path, 'engines')).existsSync(), isFalse);
+      expect(Directory(p.join(root.path, 'models')).existsSync(), isFalse);
+    });
+
+    test('unpacked files already in place with their sums are kept without downloading', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      for (final MapEntry(:key, :value) in _engineFiles.entries) {
+        File(p.joinAll([root.path, 'engines', 'test-engine', ...key.split('/')]))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(value);
+      }
+      final components = service(catalogue: [engine]);
+
+      await components.install(engine);
+
+      expect((installedJson()['components'] as Map)['test-engine'], containsPair('source', 'already on disk'));
+      expect(components.statusOf(engine).state, AiComponentState.installed);
     });
   });
 
