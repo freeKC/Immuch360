@@ -4,6 +4,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
+import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/desktop_asset_media_repository.dart';
@@ -53,6 +55,8 @@ List<Override> desktopOverrides() => [
   openedFileSiblingProvider.overrideWithValue(OpenedFiles.sibling),
   // The AI components in a folder that does not roam with a Windows profile
   aiComponentsFolderProvider.overrideWithValue(desktopAiComponentsFolder),
+  // The 3D conversions run with the engine on ONNX Runtime, the safe writer and the index of the folder library
+  conversionToolsProvider.overrideWith(desktopConversionTools),
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,

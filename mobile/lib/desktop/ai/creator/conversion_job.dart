@@ -84,6 +84,10 @@ enum ConversionSkipReason {
 
   /// The name of the 3D photo is taken and the user chose Skip for such files
   nameTaken,
+
+  /// The original cannot be reached from this computer: a file gone since the last scan, a photo of a server the app
+  /// is not signed in to
+  unreachable,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is

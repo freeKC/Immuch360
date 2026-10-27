@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
@@ -78,7 +79,8 @@ class _GeneralBottomSheetState extends ConsumerState<GeneralBottomSheet> {
       minChildSize: widget.minChildSize,
       maxChildSize: 0.85,
       shouldCloseOnMinExtent: false,
-      actions: const <ActionColumnButton>[
+      // Immuch360 Desktop adds "Make 3D (AI)" of the photos of the selection (lib/desktop/ai/ui)
+      actions: withDesktopSelectionActions(const <ActionColumnButton>[
         .new(action: AssetDebugAction(source: .timeline)),
         .new(action: ShareAction(source: .timeline)),
         .new(action: ShareLinkAction(source: .timeline)),
@@ -93,7 +95,7 @@ class _GeneralBottomSheetState extends ConsumerState<GeneralBottomSheet> {
         .new(action: StackAction(source: .timeline)),
         .new(action: CleanupLocalAction(source: .timeline)),
         .new(action: UploadAction(source: .timeline)),
-      ],
+      ]),
       // Albums live on the server: none to add to in a session without one
       slivers: [
         if (hasServer) ...[

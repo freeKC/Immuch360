@@ -34,6 +34,10 @@ class _Engines implements ImmersiveEngine {
 
   /// The photos whose engine never sees the stop flag, as the real one after its last check
   final deaf = <String>{};
+
+  /// The photos whose engine first tells a step and a percentage again lower, as the real one does for a photo that
+  /// is not a JPEG (its root isolate tells the decoding, then its worker the reading once more)
+  final backwards = <String>{};
   final ran = <String>[];
   var _running = 0;
   var mostAtOnce = 0;
@@ -47,6 +51,11 @@ class _Engines implements ImmersiveEngine {
     ran.add(job.source.name);
     mostAtOnce = math.max(mostAtOnce, ++_running);
     final unheard = deaf.contains(job.source.name) ? NativeCancelFlag() : null;
+    if (backwards.contains(job.source.name)) {
+      onProgress?.call(const ImmersiveProgress(ImmersiveStage.reading, 0));
+      onProgress?.call(const ImmersiveProgress(ImmersiveStage.decoding, 40));
+      onProgress?.call(const ImmersiveProgress(ImmersiveStage.reading, 20));
+    }
     try {
       return await (byName[job.source.name] ?? fallback).run(job, cancel: unheard ?? cancel, onProgress: onProgress);
     } finally {
@@ -65,8 +74,9 @@ class _Output implements ConversionOutput {
   final begun = <String>[];
   final discarded = <String>[];
 
-  /// What each finish was asked
+  /// What each finish was asked, and the original it was given
   final finished = <(AiWhenExists, String?)>[];
+  final originals = <ImmersiveSource>[];
   ImmersiveErrorCode? failFinish;
 
   @override
@@ -82,10 +92,12 @@ class _Output implements ConversionOutput {
   Future<ConversionSaved> finish(
     ConversionJob job,
     String partPath, {
+    required ImmersiveSource original,
     required AiWhenExists whenExists,
     String? replaceName,
   }) async {
     finished.add((whenExists, replaceName));
+    originals.add(original);
     final code = failFinish;
     if (code != null) {
       throw ConversionException(code, 'Scripted failure of the rename');
@@ -309,6 +321,62 @@ void main() {
     expect(original.readAsBytesSync(), before);
     expect(original.lastModifiedSync(), modified);
     expect(current().hasWork, isFalse);
+  });
+
+  test('the writer is given the original as the engine read it, its sum and size, to tell a version of it', () async {
+    final request = photo('salon.jpg');
+    final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
+
+    queue().add([request]);
+    await allEnded();
+
+    final original = output.originals.single;
+    expect(original.name, 'salon.jpg');
+    expect(original.size, bytes.length);
+    expect(original.sha1, _sumOf(bytes));
+    expect(original.path, p.join(photos, 'salon.jpg'));
+  });
+
+  test('a step or a percentage told again lower never shows: the panel would read it as a restart', () async {
+    engines.byName['salon.png'] = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    engines.backwards.add('salon.png');
+    final request = photo('salon.png');
+    final seen = <(ConversionState, int)>[];
+    container.listen(conversionQueueProvider, (_, next) {
+      final job = next.jobs.firstOrNull;
+      if (job != null && job.state.isActive) {
+        seen.add((job.state, job.perMille));
+      }
+    });
+
+    final id = queue().add([request]).single;
+    await engines.byName['salon.png']!.reachedHold.stream.first;
+
+    for (var index = 1; index < seen.length; index++) {
+      expect(seen[index].$1.index, greaterThanOrEqualTo(seen[index - 1].$1.index), reason: '$seen');
+      expect(seen[index].$2, greaterThanOrEqualTo(seen[index - 1].$2), reason: '$seen');
+    }
+    expect(seen.map((step) => step.$1), contains(ConversionState.decoding));
+    expect(job(id).state, ConversionState.depth);
+    engines.byName['salon.png']!.release();
+    await allEnded();
+    expect(job(id).state, ConversionState.done);
+  });
+
+  test('a job that ended is forgotten alone (its 3D photo deleted), one waiting or under way is not', () async {
+    engines.byName['b.jpg'] = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    final ids = queue().add([photo('a.jpg'), photo('b.jpg'), photo('c.jpg')]);
+    await engines.byName['b.jpg']!.reachedHold.stream.first;
+
+    queue().remove(ids[1]);
+    queue().remove(ids[2]);
+    expect(current().jobs.map((job) => job.id), ids, reason: 'under way and waiting stay');
+    queue().remove(ids[0]);
+    expect(current().jobs.map((job) => job.id), ids.sublist(1));
+
+    engines.byName['b.jpg']!.release();
+    await allEnded();
+    expect(current().jobs.map((job) => job.state), [ConversionState.done, ConversionState.done]);
   });
 
   test('the 3D photo keeps the dates and place of the original, with the Software of the app', () async {
