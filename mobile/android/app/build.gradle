@@ -64,6 +64,8 @@ android {
       // The version of LiteRT, the engine of the AI relief, written once in the version catalogue: the parity check
       // of the GPU keys its decisions on it (relief/DepthEstimators.kt of src/quest)
       buildConfigField "String", "LITERT_VERSION", "\"${libs.versions.litert.get()}\""
+      // The R8 rules of LiteRT, kept out of the phone flavour so that they hide nothing there
+      proguardFile 'proguard-quest.pro'
     }
   }
 
