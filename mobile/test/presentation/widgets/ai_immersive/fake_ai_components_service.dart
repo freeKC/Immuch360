@@ -37,6 +37,9 @@ class FakeAiComponentsService extends AiComponentsService {
   /// What a removal that is not refused answers
   AiRemoveOutcome removeOutcome = AiRemoveOutcome.removed;
 
+  /// The groups given to removeGroup, in order
+  final groupRemovals = <AiFeatureGroup>[];
+
   /// What the drive lacks for an installation, and the components it was asked for
   AiSpaceShortage? shortage;
   final spaceAsked = <List<String>>[];
@@ -95,6 +98,23 @@ class FakeAiComponentsService extends AiComponentsService {
     }
     _removed(component.id);
     return removeOutcome;
+  }
+
+  @override
+  Future<AiGroupRemoval> removeGroup(AiPlatform platform, AiFeatureGroup group) async {
+    groupRemovals.add(group);
+    if (converting) {
+      return const AiGroupRemoval(AiRemoveOutcome.busy, []);
+    }
+    final entry = aiComponentGroupsFor(platform, catalogue: catalogue).firstWhere((entry) => entry.group == group);
+    final kept = [
+      for (final component in entry.all)
+        if (groupsUsing(platform, component, besides: group).isNotEmpty) component,
+    ];
+    for (final component in entry.all.where((component) => !kept.contains(component))) {
+      _removed(component.id);
+    }
+    return AiGroupRemoval(removeOutcome, kept);
   }
 
   @override

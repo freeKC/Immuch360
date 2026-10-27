@@ -99,7 +99,11 @@ const _kIntParamNames = [
 
 const _kParamTypeOverrides = <String, String>{
   'advanced_settings_clear_image_cache_success.size': 'String',
-  // Sizes of the AI components and of the relief cache, which the callers write with formatBytes ("94.5 MiB")
+  // Sizes of the AI components and of the relief cache, which the callers write with formatBytes ("94.5 MiB"); the
+  // groups of features of the tile too ("3D scenes: 332.7 MiB")
+  'ai_immersive_components_panoramas.size': 'String',
+  'ai_immersive_components_photos.size': 'String',
+  'ai_immersive_components_scenes.size': 'String',
   'ai_immersive_components_total.size': 'String',
   'ai_immersive_install_prompt.size': 'String',
   'ai_immersive_relief_cache_size.size': 'String',
