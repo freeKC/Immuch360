@@ -5,11 +5,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart' show Drag, kTouchSlop;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/scroll_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.provider.dart';
@@ -373,6 +375,40 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       localFilePath: localFilePath,
       remoteThumbnailSize: remoteThumbnailSize,
     );
+
+    // Immuch360 Desktop: a photo of two eyes side by side, one eye, both, each in turn or in red and cyan, in the mode of
+    // the top bar (lib/desktop/ai/sbs_view_modes.dart); a photo turned by the user stays flat
+    final sbsPhoto = CurrentPlatform.isDesktop && quarterTurns == 0 && !isPlayingMotionVideo
+        ? desktopSbsPhotoOf(ref, asset)
+        : null;
+    if (sbsPhoto != null) {
+      final sbsMode = ref.watch(sbsViewModeProvider);
+      return ProgressiveImage(
+        provider: imageProvider,
+        builder: (context, provider) => PhotoView.customChild(
+          // A view of its own per mode: each mode has its own size, which the scale of the view starts from
+          key: Key('${asset.heroTag}_${sbsMode.name}'),
+          childSize: desktopSbsShownSize(asset, sbsPhoto, sbsMode),
+          onDragStart: _onDragStart,
+          onDragUpdate: _onDragUpdate,
+          onDragEnd: _onDragEnd,
+          onDragCancel: _onDragCancel,
+          onTapUp: _onTapUp,
+          scaleStateChangedCallback: _onScaleStateChanged,
+          heroAttributes: heroAttributes,
+          filterQuality: FilterQuality.high,
+          basePosition: Alignment.center,
+          disableScaleGestures: _showingDetails,
+          minScale: PhotoViewComputedScale.contained,
+          maxScale: PhotoViewComputedScale.contained * _maxScaleMultiplier,
+          initialScale: PhotoViewComputedScale.contained,
+          tightMode: true,
+          onPageBuild: _onPageBuild,
+          enablePanAlways: true,
+          child: SbsPhotoView(image: provider, photo: sbsPhoto, mode: sbsMode),
+        ),
+      );
+    }
 
     if (asset.isImage && !isPlayingMotionVideo) {
       return ProgressiveImage(
