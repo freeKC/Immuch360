@@ -46,6 +46,7 @@ import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -57,8 +58,10 @@ import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
+import 'package:immich_mobile/utils/editor.utils.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -127,27 +130,41 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
 };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere, holds two eyes
-/// already, is an Apple spatial photo, and how many quarter turns the user sees it with
+/// already, is an Apple spatial photo, how many quarter turns the user sees it with, and whether Immich holds edits of
+/// it that its original lacks
 class ConversionPhotoFacts {
   const ConversionPhotoFacts({
     this.isPanorama = false,
     this.isStereo = false,
     this.isSpatial = false,
     this.quarterTurns = 0,
+    this.serverEdits = false,
   });
 
   final bool isPanorama;
   final bool isStereo;
   final bool isSpatial;
+
+  /// The turns the viewer draws, plus those of the rotation saved in the edits of Immich: the original is unedited
   final int quarterTurns;
+
+  /// Edited in Immich: what the viewer shows is the edited picture, the 3D photo is made from the unedited original
+  /// (a file of the library or the original of the server), the rotation alone applied
+  final bool serverEdits;
 }
 
 /// Reads the facts of a photo
 typedef ConversionFactsReader = Future<ConversionPhotoFacts> Function(BaseAsset asset);
 
+/// How long the facts of a photo may wait for its exif or its stereo check
+const _factsWait = Duration(seconds: 10);
+
 /// The facts as the viewers know them: the 360° rules, the index of the library and the rule of the name and frame
-/// for two eyes side by side, the Apple spatial probe for a HEIF photo, the turns the viewer draws. The providers that
-/// read a file are listened to while they do, so that they live until they answer.
+/// for two eyes side by side, the Apple spatial probe for a HEIF photo, the turns the viewer draws and the rotation of
+/// the edits of Immich. The providers that read a file are listened to while they do, so that they live until they
+/// answer. Outside the viewer nothing else keeps the turns and the 360° rules: read at once they would say "no turn"
+/// and "flat" while the exif of a photo of the server, or the stereo check of a HEIF one, still loads; so they are
+/// listened to from the start and read once those answered.
 final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
   Future<T> answer<T>(ProviderListenable<Future<T>> provider) async {
     final subscription = ref.listen(provider, (_, _) {});
@@ -159,31 +176,55 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
   }
 
   return (asset) async {
-    final localId = asset.localId;
-    var origins = const <String, Object>{};
+    final turns = ref.listen(displayQuarterTurnsProvider(asset), (_, _) {});
+    final panorama = ref.listen(isPanoramaProvider(asset), (_, _) {});
     try {
-      origins = await answer(generatedOriginsProvider.future);
-    } catch (error) {
-      _log.fine('The origins of the library are not known: $error');
-    }
-    final isStereo =
-        (localId != null && origins.containsKey(localId)) ||
-        decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null;
-    var isSpatial = false;
-    if (asset.isImage && isHeifName(asset.name) && !Platform.isLinux) {
+      final localId = asset.localId;
+      var origins = const <String, Object>{};
       try {
-        isSpatial =
-            (await answer(appleSpatialInfoProvider(asset).future).timeout(const Duration(seconds: 10)))?.photo != null;
+        origins = await answer(generatedOriginsProvider.future);
       } catch (error) {
-        _log.fine('${asset.name} could not be read for a spatial photo: $error');
+        _log.fine('The origins of the library are not known: $error');
       }
+      final isStereo =
+          (localId != null && origins.containsKey(localId)) ||
+          decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null;
+      if (asset.hasRemote) {
+        try {
+          await answer(assetExifProvider(asset).future).timeout(_factsWait);
+        } catch (error) {
+          _log.fine('The exif of ${asset.name} is not known: $error');
+        }
+      }
+      var isSpatial = false;
+      if (asset.isImage && isHeifName(asset.name) && !Platform.isLinux) {
+        try {
+          isSpatial = (await answer(appleSpatialInfoProvider(asset).future).timeout(_factsWait))?.photo != null;
+        } catch (error) {
+          _log.fine('${asset.name} could not be read for a spatial photo: $error');
+        }
+      }
+      final remoteId = asset.remoteId;
+      final serverEdits = asset.isEdited && remoteId != null;
+      var editTurns = 0;
+      if (serverEdits) {
+        try {
+          editTurns = quarterTurnsOfEdits(await ref.read(viewRotationServerProvider).edits(remoteId));
+        } catch (error) {
+          _log.warning('The edits of ${asset.name} could not be read: $error');
+        }
+      }
+      return ConversionPhotoFacts(
+        isPanorama: panorama.read(),
+        isStereo: isStereo,
+        isSpatial: isSpatial,
+        quarterTurns: normalizeQuarterTurns(turns.read() + editTurns),
+        serverEdits: serverEdits,
+      );
+    } finally {
+      turns.close();
+      panorama.close();
     }
-    return ConversionPhotoFacts(
-      isPanorama: ref.read(isPanoramaProvider(asset)),
-      isStereo: isStereo,
-      isSpatial: isSpatial,
-      quarterTurns: ref.read(displayQuarterTurnsProvider(asset)),
-    );
   };
 });
 
@@ -272,6 +313,7 @@ class ConversionCandidate {
     this.location,
     this.skip,
     this.quarterTurns = 0,
+    this.serverEdits = false,
     this.id,
   });
 
@@ -280,6 +322,9 @@ class ConversionCandidate {
   final OriginalLocation? location;
   final ConversionSkipReason? skip;
   final int quarterTurns;
+
+  /// Edited in Immich: its edits, the rotation aside, are not in its 3D photo
+  final bool serverEdits;
 
   /// Its id in the destination session of the dialog, null for a photo skipped
   final String? id;
@@ -491,6 +536,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           source: found.source,
           location: found.location,
           quarterTurns: known.quarterTurns,
+          serverEdits: known.serverEdits,
           id: 'photo-$index',
         ),
       );
@@ -620,7 +666,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       infos[id] = ConversionJobInfo(
         asset: candidate.asset,
         isNetwork: plan?.isNetwork ?? false,
-        serverEdits: candidate.location is ServerOriginal && candidate.asset.isEdited,
+        serverEdits: candidate.serverEdits,
       );
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
@@ -684,7 +730,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 if (session != null) ..._existingChoice(t),
                 if (_runs.any((candidate) => candidate.quarterTurns != 0))
                   _Note(key: const Key('ai_conversion_rotation'), text: t.ai_immersive_rotation_applied),
-                if (_runs.any((candidate) => candidate.location is ServerOriginal && candidate.asset.isEdited))
+                if (_runs.any((candidate) => candidate.serverEdits))
                   _Note(key: const Key('ai_conversion_server_edits'), text: t.ai_immersive_server_edits_ignored),
                 if (skipped.isNotEmpty) _SkippedList(skipped: skipped),
               ],

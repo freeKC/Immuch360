@@ -1,8 +1,9 @@
 // "Make 3D (AI)" and its dialog on a computer, with fakes: the entry absent while the AI features are off and greyed
 // with its reason when the hardware gate refuses; the dialog that installs the missing components before it offers
 // Convert; the question of a network folder, nothing tried there before the yes; the photos skipped and why; the
-// choice for a photo that already has a 3D version, handed to the queue and kept; and the folders of the library
-// left alone while the album of the generated photos is not out of the backup.
+// choice for a photo that already has a 3D version, handed to the queue and kept; the turns of each photo handed to the
+// queue, with the rotation and the edits of Immich said; and the folders of the library left alone while the album of
+// the generated photos is not out of the backup.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -430,6 +431,38 @@ void main() {
     engine.release();
     await settle(tester);
     expect(container.read(conversionQueueProvider).jobs.single.state, ConversionState.done);
+  });
+
+  testWidgets('the turns of each photo reach the queue and the dialog says so; the edits of Immich are said too', (
+    tester,
+  ) async {
+    original('salon.jpg');
+    original('jardin.jpg');
+    facts['salon.jpg'] = const ConversionPhotoFacts(quarterTurns: 1);
+    facts['jardin.jpg'] = const ConversionPhotoFacts(quarterTurns: 3, serverEdits: true);
+    final container = await openDialog(tester, [_photo('salon.jpg'), _photo('jardin.jpg')]);
+
+    expect(find.byKey(const Key('ai_conversion_rotation')), findsOneWidget);
+    expect(find.text('The rotation you chose is applied'), findsOneWidget);
+    expect(find.text('Edits made in Immich, except the rotation, are not applied'), findsOneWidget);
+
+    await tapIn(tester, convert());
+    await settle(tester);
+    final jobs = container.read(conversionQueueProvider).jobs;
+    expect(jobs.map((job) => job.quarterTurns), [1, 3]);
+    final infos = container.read(conversionJobInfoProvider);
+    expect((infos[jobs.first.id]!.serverEdits, infos[jobs.last.id]!.serverEdits), (false, true));
+    engine.release();
+    await settle(tester);
+    engine.release();
+    await settle(tester);
+  });
+
+  testWidgets('a photo neither turned nor edited: no word of rotation nor of edits', (tester) async {
+    original('salon.jpg');
+    await openDialog(tester, [_photo('salon.jpg')]);
+    expect(find.byKey(const Key('ai_conversion_rotation')), findsNothing);
+    expect(find.byKey(const Key('ai_conversion_server_edits')), findsNothing);
   });
 
   testWidgets('while the album of the generated photos is not out of the backup, the library is left alone', (
