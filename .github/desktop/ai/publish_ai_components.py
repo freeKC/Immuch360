@@ -604,31 +604,52 @@ class GitHub:
         return json.loads(raw) if raw else None
 
 
+def drafts_of(github: GitHub, repo: str) -> list:
+    """The drafts of [repo] with the tag of the release, which GET /releases/tags does not see"""
+    found = []
+    page = 1
+    while True:
+        releases = github.call('GET', f'/repos/{repo}/releases?per_page=100&page={page}') or []
+        found += [release for release in releases if release.get('draft') and release.get('tag_name') == TAG]
+        if len(releases) < 100:
+            return found
+        page += 1
+
+
 def publish(args, made: dict, token: str) -> int:
     github = GitHub(args.api, token)
     if github.call('GET', f'/repos/{args.repo}/releases/tags/{TAG}') is not None:
         print(f'{TAG} exists already on {args.repo}: nothing is changed. Delete it by hand to publish it again.')
+        return 1
+    drafts = drafts_of(github, args.repo)
+    if drafts:
+        print(f'a draft of {TAG} exists already on {args.repo}: {drafts[0].get("html_url")}. Nothing is changed. '
+              f'Delete it by hand to publish again.')
         return 1
     release = github.call('POST', f'/repos/{args.repo}/releases', {
         'tag_name': TAG, 'name': 'AI components 1', 'body': NOTES, 'draft': True, 'prerelease': True,
         'make_latest': 'false',
     })
     print(f'draft made: {release["html_url"]}')
-    upload = release['upload_url'].split('{', 1)[0]
-    for name in sorted(made['files']):
-        size, digest = made['files'][name]
-        path = args.out / name
-        if path.stat().st_size != size or sha256_file(path) != digest:
-            raise Failure(f'{path} changed since it was made')
-        content_type = CONTENT_TYPES.get(path.suffix.lower(), 'application/octet-stream')
-        asset = github.call('POST', f'{upload}?{urllib.parse.urlencode({"name": name})}', data=path.read_bytes(),
-                            content_type=content_type)
-        held = asset.get('digest') or ''
-        if asset.get('size') != size or (held.startswith('sha256:') and held[7:] != digest):
-            raise Failure(f'{name}: GitHub holds {asset.get("size")} bytes, {held}; the file has {size} bytes, '
-                          f'sha256:{digest}. The release stays a draft.')
-        print(f'uploaded: {name} ({size} bytes)')
-    release = github.call('PATCH', release['url'], {'draft': False, 'prerelease': True, 'make_latest': 'false'})
+    try:
+        upload = release['upload_url'].split('{', 1)[0]
+        for name in sorted(made['files']):
+            size, digest = made['files'][name]
+            path = args.out / name
+            if path.stat().st_size != size or sha256_file(path) != digest:
+                raise Failure(f'{path} changed since it was made')
+            content_type = CONTENT_TYPES.get(path.suffix.lower(), 'application/octet-stream')
+            asset = github.call('POST', f'{upload}?{urllib.parse.urlencode({"name": name})}', data=path.read_bytes(),
+                                content_type=content_type)
+            held = asset.get('digest') or ''
+            if asset.get('size') != size or (held.startswith('sha256:') and held[7:] != digest):
+                raise Failure(f'{name}: GitHub holds {asset.get("size")} bytes, {held}; the file has {size} bytes, '
+                              f'sha256:{digest}')
+            print(f'uploaded: {name} ({size} bytes)')
+        release = github.call('PATCH', release['url'], {'draft': False, 'prerelease': True, 'make_latest': 'false'})
+    except (Failure, OSError) as error:
+        raise Failure(f'{error}. A draft is left at {release["html_url"]}: delete it by hand before the next run.') \
+            from None
     if not release.get('prerelease') or release.get('draft'):
         raise Failure(f'{TAG} is not a published prerelease: {release.get("html_url")}')
     latest = github.call('GET', f'/repos/{args.repo}/releases/latest')

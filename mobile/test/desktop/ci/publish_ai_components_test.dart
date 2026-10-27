@@ -134,7 +134,8 @@ String _catalogueFor(Map<String, dynamic> sources) {
   return text;
 }
 
-/// The part of the GitHub API the script uses, in memory
+/// The part of the GitHub API the script uses, in memory. As on GitHub, a draft has no tag yet: the list of the
+/// releases shows it, GET /releases/tags does not
 class _FakeGitHub {
   late final HttpServer _server;
   final requests = <String>[];
@@ -142,6 +143,10 @@ class _FakeGitHub {
   final uploads = <String, List<int>>{};
   Map<String, dynamic>? created;
   final patches = <Map<String, dynamic>>[];
+
+  /// The asset whose upload GitHub refuses (HTTP 500), and the one whose digest it answers wrong
+  String? refusedUpload;
+  String? wrongDigest;
 
   String get base => 'http://127.0.0.1:${_server.port}';
 
@@ -175,8 +180,11 @@ class _FakeGitHub {
     final tagged = RegExp(r'^/repos/owner/repo/releases/tags/(.+)$').firstMatch(path);
     if (request.method == 'GET' && tagged != null) {
       final tag = Uri.decodeComponent(tagged.group(1)!);
-      final found = releases.where((release) => release['tag_name'] == tag).toList();
+      final found = releases.where((release) => release['tag_name'] == tag && release['draft'] != true).toList();
       return found.isEmpty ? send(404, {'message': 'Not Found'}) : send(200, found.single);
+    }
+    if (request.method == 'GET' && path == '/repos/owner/repo/releases') {
+      return send(200, releases);
     }
     if (request.method == 'POST' && path == '/repos/owner/repo/releases') {
       final json = jsonDecode(utf8.decode(body)) as Map<String, dynamic>;
@@ -193,8 +201,12 @@ class _FakeGitHub {
     }
     if (request.method == 'POST' && path == '/uploads/1/assets') {
       final name = request.uri.queryParameters['name']!;
+      if (name == refusedUpload) {
+        return send(500, {'message': 'Server Error'});
+      }
       uploads[name] = body;
-      return send(201, {'name': name, 'size': body.length, 'digest': 'sha256:${sha256.convert(body)}'});
+      final digest = name == wrongDigest ? '0' * 64 : sha256.convert(body).toString();
+      return send(201, {'name': name, 'size': body.length, 'digest': 'sha256:$digest'});
     }
     if (request.method == 'PATCH' && path == '/repos/owner/repo/releases/1') {
       final json = jsonDecode(utf8.decode(body)) as Map<String, dynamic>;
@@ -454,6 +466,45 @@ void main() {
       expect(github.requests, ['GET /repos/owner/repo/releases/tags/ai-components-1']);
     }, skip: skipCiScripts);
 
+    test('GitHub holding another digest stops it: no publication, the draft stays and its address is said', () async {
+      github.wrongDigest = 'depth_anything_v2_small.onnx';
+
+      final run = await runCiScriptAsync(_script, publishing(), environment: {'GH_TOKEN': _token});
+
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('depth_anything_v2_small.onnx: GitHub holds '));
+      expect(run.output, contains('sha256:${'0' * 64}'));
+      expect(run.output, contains('A draft is left at ${github.base}/owner/repo/releases/tag/ai-components-1'));
+      expect(github.patches, isEmpty);
+      expect(github.releases.single['draft'], isTrue);
+      expect(github.requests, isNot(contains('GET /repos/owner/repo/releases/latest')));
+    }, skip: skipCiScripts);
+
+    test('an upload refused leaves a draft, said with its address; the next run makes no second draft', () async {
+      github.refusedUpload = 'SHA256SUMS';
+
+      final first = await runCiScriptAsync(_script, publishing(), environment: {'GH_TOKEN': _token});
+
+      expect(first.exitCode, 1, reason: '$first');
+      expect(first.output, contains('HTTP 500'));
+      final draft = '${github.base}/owner/repo/releases/tag/ai-components-1';
+      expect(first.output, contains('A draft is left at $draft: delete it by hand before the next run.'));
+      expect(github.patches, isEmpty);
+
+      github
+        ..refusedUpload = null
+        ..requests.clear();
+      final second = await runCiScriptAsync(_script, publishing(), environment: {'GH_TOKEN': _token});
+
+      expect(second.exitCode, 1, reason: '$second');
+      expect(second.output, contains('a draft of ai-components-1 exists already on owner/repo: $draft.'));
+      expect(github.requests, [
+        'GET /repos/owner/repo/releases/tags/ai-components-1',
+        'GET /repos/owner/repo/releases',
+      ]);
+      expect(github.releases, hasLength(1));
+    }, skip: skipCiScripts);
+
     test('refused, without a request, when the catalogue does not name these files', () async {
       final run = await runCiScriptAsync(_script, publishing(write: false), environment: {'GH_TOKEN': _token});
 
@@ -473,6 +524,18 @@ void main() {
   });
 
   group('publish_ai_components.py --check', () {
+    test('refuses a component whose licence this project does not allow', () {
+      final text = File(_catalogue).readAsStringSync();
+      final start = text.indexOf("  id: 'depth-anything-v2-small-onnx',");
+      final licence = text.indexOf("  licence: 'Apache-2.0',", start);
+      catalogue.writeAsStringSync(text.replaceRange(licence, licence + 24, "  licence: 'CC-BY-NC-4.0',"));
+
+      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('depth-anything-v2-small-onnx: licence CC-BY-NC-4.0 is not one this project allows'));
+    }, skip: skipCiScripts);
+
     test('the catalogue of the app and MODEL-LICENSES.md of the repository agree, every component complete', () {
       final run = runCiScript(_script, ['--check']);
 
