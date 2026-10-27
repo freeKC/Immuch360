@@ -59,6 +59,21 @@ environment it makes, which stops the ETW events. On Windows, ONNX Runtime may w
 ETW before that call; ETW events leave the computer only through the diagnostic data of Windows, under its
 own setting. 1.23.2 for the Intel Macs has no telemetry.
 
+## LiteRT 2.3.0, Apache-2.0 (in the quest APK, not downloaded)
+
+`com.google.ai.edge.litert:litert`, `litert-api` and `litert-gpu` 2.3.0 run the depth model on the Meta
+Quest. They are built into the APK of the quest flavour only; the phone APKs and the computers do not have
+them. Licence: Apache-2.0, https://github.com/google-ai-edge/LiteRT/blob/main/LICENSE. The notices of the
+libraries LiteRT is built from (`THIRD_PARTY_NOTICE.txt` of its packages, 1960672 bytes, SHA-256
+`db6e1ff4b16c11eb01c45f135928527a50a05282739054686793ec70f442f119`) ship in the quest APK and are shown on
+its licence page. Its native libraries carry XNNPACK, pthreadpool and cpuinfo (BSD), and FP16 and FXdiv
+(MIT); the notices also list Eigen 3 under MPL-2.0, a weak copyleft licence, which its CPU code may hold.
+The notices cover the whole LiteRT build, not only what these libraries hold. Left out of the APK:
+`com.google.android.play:ai-delivery` 0.1.1-alpha01 (Play Core Software Development Kit Terms of Service),
+which `litert-api` brings for Play for On-device AI and which the app never calls. Brought in by
+`litert-api`, quest flavour only, all Apache-2.0: `androidx.lifecycle:lifecycle-runtime` 2.10.0,
+`com.google.guava:guava` 33.5.0-android and `org.jetbrains.kotlinx:kotlinx-coroutines-guava` 1.8.0.
+
 ## Not used
 
 These were looked at and left out, because of their licence:
