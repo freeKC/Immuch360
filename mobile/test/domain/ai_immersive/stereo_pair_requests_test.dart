@@ -107,10 +107,7 @@ void main() {
         expect(DepthReliefRequest.fromJson(json)!.mode, ReliefViewMode.stereo, reason: '$mode');
       }
       // A stereo request does not name its mode: the JSON of every request before 2.5D
-      expect(
-        DepthReliefRequest.fromJson(request('depthRelief', 0))!.toJson().containsKey('mode'),
-        isFalse,
-      );
+      expect(DepthReliefRequest.fromJson(request('depthRelief', 0))!.toJson().containsKey('mode'), isFalse);
     });
   });
 
