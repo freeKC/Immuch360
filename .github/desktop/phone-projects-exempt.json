@@ -295,17 +295,25 @@
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveMedia.kt": {
+    "blob": "11d6ab553e0bb1adcd98f559055f4a1f9515065b",
+    "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "c3199e9af0afabad95e1307e3df24a3e23f0475e",
-    "reason": "AI immersive lot A7: the stereo quad shows side by side 3D photos (sbsPhoto) and reads the depthRelief kind; feat-ai-immersive, not yet on the phone branch"
+    "blob": "c2f4ba466513128bd8008e57d53ae1cbed4069c0",
+    "reason": "AI immersive lots A7 and A9a: the stereo quad shows side by side 3D photos (sbsPhoto), and makes the relief of a depthRelief photo with its stages, Stop relief and its reasons; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefHost.kt": {
+    "blob": "eec358898e431128aaa415bf0429ebc962ccc39f",
+    "reason": "AI immersive lot A9a: the Android side of the relief of the immersive view (HandlerThread at background priority, bitmaps, preferences, memory, thermal listener); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/SbsPhoto.kt": {
     "blob": "846882f23a5f24eae3d4f9ad7fb47866657890bb",
     "reason": "AI immersive lot A7: decoding and cutting a side by side photo for the stereo quad; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
-    "blob": "3b6e9ceadae6b1fcd7b6eece8f5b59d8f75bb795",
-    "reason": "AI immersive lot A7: 2D (original), Relief estimated by AI and the 60 degree cap of an estimated relief; feat-ai-immersive, not yet on the phone branch"
+    "blob": "b1228f0ff2221faa0661110ac580553e526afa8a",
+    "reason": "AI immersive lots A7 and A9a: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, and the labels of a relief made in the headset; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
     "blob": "727471d6828adddaa658cb2afde7e30ba8ae5710",
@@ -326,6 +334,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefCache.kt": {
     "blob": "fe38be500004d1d0a61c17b6443a8904046a1545",
     "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the 16 bit depth maps of the relief cache of the Quest, 200 MB at most"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefJob.kt": {
+    "blob": "3f28542cda8c71c8d65756d196a21b8115911a27",
+    "reason": "AI immersive lot A9a: the relief of a flat photo in the immersive view (cache, model, right eye, stop, heat, model closed after 60 s); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefPreprocess.kt": {
     "blob": "1f7d7b2ee557f33c766fcbf08a438724bc0362a0",
@@ -370,6 +382,10 @@
   "mobile/android/app/src/main/res/layout/dji_flight_strip.xml": {
     "blob": "b7fd38e59aec0ae4704b25eb66bb4ca104a98d53",
     "reason": "DJI link stage 2b (feat-dji-link-3): the strip under the video of the Quest flight view, which no button hides; DJI integration (feat-dji-30): the strip's warnings come and go"
+  },
+  "mobile/android/app/src/main/res/layout/immersive_info_panel.xml": {
+    "blob": "fc7fb35d63d99a9e8fbeb14359a8bc7a629d11e3",
+    "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/res/values-television-v31/styles.xml": {
     "blob": "439e233a038a6eb09eec03874e02a4aedff2dcfa",
@@ -667,13 +683,17 @@
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveMediaTest.kt": {
+    "blob": "1a45a5027dcc209679927c754476bd7e43d4f320",
+    "reason": "AI immersive lot A9a: tests of the size and the turn of the photo of a relief; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SbsPhotoTest.kt": {
     "blob": "09fca7bff919e58554d854fa7b2a863673fee150",
     "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
-    "blob": "a1afe4585d330c3f56094848341aeb43f9fc6120",
-    "reason": "AI immersive lot A7: tests of the 60 degree cap and the labels; feat-ai-immersive, not yet on the phone branch"
+    "blob": "2f87ed747155bf1fb8f1dbfb9364232565e61132",
+    "reason": "AI immersive lots A7 and A9a: tests of the 60 degree cap, the labels and those of a relief made in the headset; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
     "blob": "f8c86faa857bd7323d345dd795ac642dc9d1fa27",
@@ -698,6 +718,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefFixtures.kt": {
     "blob": "270cf18708f9e1d2c6ef3ee1570217c249b7ca71",
     "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the reader of the shared fixtures of mobile/test/fixtures/ai_immersive for the Kotlin unit tests"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefJobTest.kt": {
+    "blob": "cefc263507813ee2835a84a71af0b9f6edc20f28",
+    "reason": "AI immersive lot A9a: unit tests of the relief job with a fake engine and a fake thread, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefPreprocessTest.kt": {
     "blob": "1e09a27f3ae0e38a9a60642d70aba2889b96c2c2",

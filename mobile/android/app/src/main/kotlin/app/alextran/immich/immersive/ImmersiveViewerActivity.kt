@@ -8,11 +8,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.OptIn
@@ -44,6 +47,13 @@ import app.alextran.immich.core.raw.RawStitchException
 import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
 import app.alextran.immich.djilink.TransientText
+import app.alextran.immich.relief.ReliefJob
+import app.alextran.immich.relief.ReliefListener
+import app.alextran.immich.relief.ReliefRequest
+import app.alextran.immich.relief.ReliefResult
+import app.alextran.immich.relief.ReliefRun
+import app.alextran.immich.relief.ReliefStage
+import app.alextran.immich.relief.ReliefStop
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -163,8 +173,12 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * A flat photo holding two eyes side by side comes with the sbsPhoto JSON (see [StereoPhotoKind] and [SbsPhotoSpec]):
  * the same quad, its frame cut in two eyes ([SbsPhoto]). When the file says its relief was estimated by AI (the 3D
  * photos the computers make), the quad says so for a few seconds when it shows in 3D, its 2D button reads "2D
- * (original)" and it stays within 60 degrees; the file of another tool keeps the labels of any stereo photo. A
- * depthRelief request shows its photo flat on the quad for now.
+ * (original)" and it stays within 60 degrees; the file of another tool keeps the labels of any stereo photo.
+ *
+ * A flat photo whose relief the headset estimates comes with the depthRelief JSON: shown flat on the quad at once,
+ * then [ReliefJob] makes its right eye on a thread of its own, the stages on the status line under an indeterminate
+ * bar, and the 3D button reads "Stop relief" meanwhile; both eyes replace the flat photo once ready. A relief stopped,
+ * refused or failed leaves the photo flat with its reason for a few seconds. See [showReliefPhoto].
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -322,9 +336,22 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The status line of the stereo photo shown, under a passing label. */
   private var stereoStatus = ""
 
+  // AI relief of a flat photo, see showReliefPhoto
+  /** The reliefs of this viewer, made at its first depthRelief photo and closed with it. */
+  private var reliefJob: ReliefJob? = null
+  /** The relief of the photo shown while it runs: the 3D button reads "Stop relief" meanwhile. */
+  private var reliefRun: ReliefRun? = null
+  /** Puts both eyes of a finished relief on the quad. */
+  private var reliefApplyJob: Job? = null
+  /** The heat of the headset, watched while the viewer has a relief job. */
+  private var thermalWatch: ThermalWatch? = null
+  private val mainHandler = Handler(Looper.getMainLooper())
+
   // Info panel views
   private var titleView: TextView? = null
   private var statusView: TextView? = null
+  /** Indeterminate bar under the status line while a relief is made. */
+  private var reliefProgressView: ProgressBar? = null
   private var stereoView: Button? = null
   private var coverageView: Button? = null
   /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
@@ -658,6 +685,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun showRequest(revealInfo: Boolean = true) {
     val media = request
     loadJob?.cancel()
+    dropRelief()
     reliefLabelJob?.cancel()
     reliefLabelJob = null
     hideInfoJob?.cancel()
@@ -710,6 +738,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun bindInfoPanel(root: View) {
     titleView = root.findViewById(R.id.immersive_title)
     statusView = root.findViewById(R.id.immersive_status)
+    reliefProgressView = root.findViewById(R.id.immersive_relief_progress)
+    setReliefProgress(reliefRun?.running == true)
     stereoView = root.findViewById(R.id.immersive_stereo)
     coverageView = root.findViewById(R.id.immersive_coverage)
     turnButton = root.findViewById(R.id.immersive_turn)
@@ -801,9 +831,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     if (media.isStereoPhoto) {
-      // 3D or 2D (left eye, or the original itself): what the quad shows now
+      // 3D or 2D (left eye, or the original itself): what the quad shows now; "Stop relief" while a relief is made
       val key =
-        if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D
+        if (reliefRun?.running == true) StereoComposer.LABEL_RELIEF_STOP
+        else if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D
         else StereoComposer.twoDLabelKey(media.stereoKind?.leftEyeIsOriginal == true)
       view.text = StereoComposer.label(media.stereoLabels, key)
       view.visibility = View.VISIBLE
@@ -1503,6 +1534,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     closing = true
     Log.i(TAG, "immersive viewer closing")
     loadJob?.cancel()
+    releaseRelief()
     hideInfoJob?.cancel()
     stopProgressTicker()
     // A media Flutter sends for a request from now on is refused, and the closed event stops its search
@@ -1809,9 +1841,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * Shows [media] on the stereo quad: no sphere around (black), its file read whole (a few MB: the bridge or the
    * server original, or the file on the headset), both eyes decoded and set side by side on one texture: the two
-   * items of an Apple spatial photo (see [decodeStereo]), the two halves of a side by side photo (see [SbsPhoto]). A
-   * JSON that does not read, a kind this build does not know, or a second eye that does not decode, shows the photo
-   * in 2D.
+   * items of an Apple spatial photo (see [decodeStereo]), the two halves of a side by side photo (see [SbsPhoto]), or
+   * a flat photo and the right eye the headset makes of it (see [showReliefPhoto]). A JSON that does not read, a kind
+   * this build does not know, or a second eye that does not decode, shows the photo in 2D.
    */
   private fun showStereoPhoto(media: MediaRequest) {
     stopVideo()
@@ -1838,6 +1870,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           val local = ImmersiveMedia.localFileFor(media.url)
           val bytes = if (local != null) withContext(Dispatchers.IO) { local.readBytes() } else download(media.url)
           Log.i(TAG, "stereo photo: ${bytes.size} bytes")
+          if (kind is StereoPhotoKind.DepthRelief) {
+            showReliefPhoto(media, kind.spec, bytes)
+            return@launch
+          }
           val holder = AtomicReference<StereoTexture?>()
           try {
             decodeMutex.withLock {
@@ -1858,6 +1894,158 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
         }
       }
+  }
+
+  /**
+   * A flat photo whose relief the headset makes (the depthRelief JSON, design-final 2026-10-26, section 3.4): decoded
+   * upright by [ImmersiveMedia.decodeForRelief] (EXIF orientation, the user's quarter turns, transparency on black),
+   * shown flat on the quad at once, then handed to the relief job (see [startRelief]).
+   */
+  private suspend fun showReliefPhoto(media: MediaRequest, spec: DepthReliefSpec, bytes: ByteArray) {
+    val photo = AtomicReference<Bitmap?>()
+    val flat = AtomicReference<StereoTexture?>()
+    try {
+      decodeMutex.withLock {
+        withContext(Dispatchers.Default) {
+          val decoded = ImmersiveMedia.decodeForRelief(bytes, spec.quarterTurns) ?: return@withContext
+          photo.set(decoded)
+          val crop = StereoComposer.Crop(0, 0, decoded.width)
+          val texture = StereoComposer.compose(decoded, decoded, crop)
+          flat.set(StereoTexture(texture, decoded.width, decoded.height, hasSecondEye = false))
+        }
+      }
+      coroutineContext.ensureActive()
+      val texture = flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
+      Log.i(TAG, "relief photo: ${texture.eyeWidth}x${texture.eyeHeight}, shown flat, ${spec.quarterTurns} turns")
+      applyStereoTexture(texture)
+      startRelief(media, spec, photo.getAndSet(null) ?: return)
+    } finally {
+      photo.getAndSet(null)?.recycle()
+      flat.getAndSet(null)?.bitmap?.recycle()
+    }
+  }
+
+  /**
+   * Hands [photo], shown flat, to the relief job of this viewer (made at its first relief, with the watch of the heat):
+   * the stages go to the status line under the indeterminate bar, the panel stays on screen, the 3D button reads
+   * "Stop relief". The job owns [photo] from now on.
+   */
+  private fun startRelief(media: MediaRequest, spec: DepthReliefSpec, photo: Bitmap) {
+    val job =
+      reliefJob
+        ?: run {
+          val watch = ThermalWatch(this) { status -> reliefJob?.onThermalStatus(status) }
+          thermalWatch = watch
+          watch.start()
+          ReliefHost.newJob(this, mainHandler, watch).also { reliefJob = it }
+        }
+    val request =
+      ReliefRequest(File(spec.model), spec.modelSize, spec.modelId, spec.cacheKey, spec.parallax, spec.convergence)
+    cancelInfoHide()
+    reliefRun = job.start(request, BitmapReliefPhoto(photo), ::BitmapReliefEye, ReliefViewListener(media))
+    setReliefProgress(true)
+    updateStereoView()
+  }
+
+  /** What the relief job says of the photo of [media], on the main thread; nothing once another media is shown. */
+  private inner class ReliefViewListener(private val media: MediaRequest) :
+    ReliefListener<BitmapReliefPhoto, BitmapReliefEye> {
+    private val shown: Boolean
+      get() = request === media && !closing
+
+    override fun onStage(stage: ReliefStage) {
+      if (!shown) return
+      setReliefProgress(true)
+      setStatus(StereoComposer.label(media.stereoLabels, StereoComposer.reliefStageLabelKey(stage)))
+    }
+
+    override fun onDone(result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
+      reliefRun = null
+      if (!shown) {
+        result.photo.release()
+        result.eye.release()
+        return
+      }
+      showRelief(media, result)
+    }
+
+    override fun onFlat(reason: ReliefStop, detail: String) {
+      reliefRun = null
+      if (!shown) return
+      setReliefProgress(false)
+      updateStereoView()
+      val text = StereoComposer.reliefStopText(media.stereoLabels, reason, detail)
+      Log.i(TAG, "relief: the photo stays flat ($reason)")
+      if (text == null) {
+        setStatus(stereoStatus)
+        scheduleInfoHide()
+      } else {
+        // The reason comes and goes, as the honesty label does
+        showPassing(text)
+        scheduleInfoHide(TransientText.HOLD_MS)
+      }
+    }
+  }
+
+  /** Both eyes of a finished relief on the quad in place of the flat photo, where the quad is now. */
+  private fun showRelief(media: MediaRequest, result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
+    reliefApplyJob?.cancel()
+    reliefApplyJob =
+      scope.launch {
+        val holder = AtomicReference<StereoTexture?>()
+        try {
+          decodeMutex.withLock {
+            withContext(Dispatchers.Default) {
+              val left = result.photo.bitmap
+              val texture = StereoComposer.compose(left, result.eye.bitmap, StereoComposer.Crop(0, 0, left.width))
+              holder.set(StereoTexture(texture, left.width, left.height, hasSecondEye = true))
+            }
+          }
+          ensureActive()
+          val source = if (result.fromCache) "the cache" else "the model on ${result.path}"
+          Log.i(TAG, "relief shown in 3D, depth map from $source")
+          setReliefProgress(false)
+          applyStereoTexture(holder.getAndSet(null) ?: return@launch, place = false)
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "relief: the eyes could not be put on the quad", e)
+          setReliefProgress(false)
+          updateStereoView()
+          val reason = if (e is OutOfMemoryError) ReliefStop.NOT_ENOUGH_MEMORY else ReliefStop.FAILED
+          StereoComposer.reliefStopText(media.stereoLabels, reason, e.message ?: e.javaClass.simpleName)?.let {
+            showPassing(it)
+          }
+          scheduleInfoHide(TransientText.HOLD_MS)
+        } finally {
+          holder.getAndSet(null)?.bitmap?.recycle()
+          result.photo.release()
+          result.eye.release()
+        }
+      }
+  }
+
+  /** The indeterminate bar under the status line, while a relief is made. */
+  private fun setReliefProgress(visible: Boolean) {
+    reliefProgressView?.visibility = if (visible) View.VISIBLE else View.GONE
+  }
+
+  /** Another media, or the end of the viewer: the relief of the photo shown is dropped without a word. */
+  private fun dropRelief() {
+    reliefApplyJob?.cancel()
+    reliefApplyJob = null
+    reliefRun = null
+    reliefJob?.cancel()
+    setReliefProgress(false)
+  }
+
+  /** The end of the viewer: the relief dropped, the model closed, its thread ended, the heat no longer watched. */
+  private fun releaseRelief() {
+    dropRelief()
+    thermalWatch?.stop()
+    thermalWatch = null
+    reliefJob?.close()
+    reliefJob = null
   }
 
   /** Both eyes of the side by side photo of [bytes] on one texture, off the main thread, see [SbsPhoto.decode]. */
@@ -1940,10 +2128,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Uploads [stereo] as the texture of the quad, recycles its bitmap, destroys the previous texture, then shows the
-   * quad in front of the user with the mode and the size of this photo. Kept for later while the material is not
-   * ready.
+   * quad with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of a relief
+   * replace the flat photo where the quad is). Kept for later while the material is not ready.
    */
-  private fun applyStereoTexture(stereo: StereoTexture) {
+  private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true) {
     val material = stereoQuadMaterial
     if (material == null) {
       Log.w(TAG, "stereo quad not ready yet, keeping the spatial photo for later")
@@ -1981,7 +2169,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
     stereoHasSecondEye = stereo.hasSecondEye
     applyStereoMode()
-    placeStereoQuad()
+    if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
     stereoQuadEntity?.setComponent(Visible(true))
     updateStereoView()
     val media = request
@@ -1990,6 +2178,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       // Shown at once and longer, as the decoder warning: the user expected 3D
       showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
       scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+    } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
+      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
+      setStatus(stereoStatus)
     } else if (stereo3d) {
       setStatus(stereoStatus)
       showReliefEstimated()
@@ -2010,13 +2201,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (media.stereoKind?.isEstimatedRelief != true || !stereo3d || !stereoHasSecondEye) return
     val label = StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_RELIEF_ESTIMATED)
     Log.i(TAG, "stereo photo: relief estimated by AI, said for ${TransientText.HOLD_MS} ms")
-    setStatus(label)
+    showPassing(label)
+  }
+
+  /** [text] on the status line for TransientText.HOLD_MS, then the line of the stereo photo again. */
+  private fun showPassing(text: String) {
+    setStatus(text)
     reliefLabelJob?.cancel()
     reliefLabelJob =
       scope.launch {
         delay(TransientText.HOLD_MS)
         reliefLabelJob = null
-        if (statusView?.text?.toString() == label) showStatus(stereoStatus)
+        if (statusView?.text?.toString() == text) showStatus(stereoStatus)
       }
   }
 
@@ -2035,8 +2231,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     Log.i(TAG, "stereo quad mode is now $mode")
   }
 
-  /** The 3D button on a spatial photo: 3D, or the left eye in 2D. Nothing to switch without a second eye. */
+  /**
+   * The 3D button on a spatial photo: 3D, or the left eye in 2D. Nothing to switch without a second eye. While a relief
+   * is made it reads "Stop relief", and stops it: the photo stays flat.
+   */
   private fun toggleStereoPhotoMode(fromPanel: Boolean) {
+    val run = reliefRun
+    if (run != null && run.running) {
+      Log.i(TAG, "relief: Stop relief")
+      reliefJob?.stop(run)
+      return
+    }
     if (!stereoHasSecondEye) {
       Log.i(TAG, "spatial photo without a second eye: stays in 2D")
       return
@@ -3019,6 +3224,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     if (liveViewer === this) liveViewer = null
+    releaseRelief()
     scope.cancel()
     super.onDestroy()
   }
@@ -3030,6 +3236,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingRequestId = null
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
+    releaseRelief()
     scope.cancel()
     // The player first, then the lens compositor, before the panel goes
     releasePlayer()

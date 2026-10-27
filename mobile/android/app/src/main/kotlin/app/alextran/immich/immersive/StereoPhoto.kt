@@ -10,6 +10,8 @@ import android.media.MediaDataSource
 import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Log
+import app.alextran.immich.relief.ReliefStage
+import app.alextran.immich.relief.ReliefStop
 import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.Vector3
 import java.nio.ByteBuffer
@@ -376,6 +378,16 @@ internal object StereoComposer {
       LABEL_2D_ORIGINAL to "2D (original)",
       LABEL_RELIEF_ESTIMATED to "Relief estimated by AI",
       LABEL_NO_NAVIGATION_3D to "Previous and next are not available for 3D photos yet",
+      LABEL_RELIEF_PREPARING to "Preparing",
+      LABEL_RELIEF_ESTIMATING to "Estimating the relief (AI)",
+      LABEL_RELIEF_BUILDING to "Building the right eye",
+      LABEL_RELIEF_STOP to "Stop relief",
+      LABEL_RELIEF_TOO_WARM to "Headset too warm, relief stopped",
+      LABEL_RELIEF_FAILED to "The relief failed: $REASON",
+      LABEL_RELIEF_NOT_IN_VERSION to "Not in this version of the app",
+      LABEL_RELIEF_NO_MEMORY to "Not enough memory",
+      LABEL_RELIEF_MISSING to "The AI components are not installed",
+      LABEL_RELIEF_DAMAGED to "An AI component is damaged",
     )
 
   const val LABEL_3D = "spatial3d"
@@ -391,6 +403,52 @@ internal object StereoComposer {
 
   /** Previous and next on a flat 3D photo (side by side, or with its relief made in the headset). */
   const val LABEL_NO_NAVIGATION_3D = "aiNoNavigation"
+
+  /**
+   * The stages of a relief made in the headset, on the status line under an indeterminate bar while the photo shows
+   * flat (design-final 2026-10-26, section 3.6), and the 3D button of the quad meanwhile.
+   */
+  const val LABEL_RELIEF_PREPARING = "aiReliefPreparing"
+  const val LABEL_RELIEF_ESTIMATING = "aiReliefEstimating"
+  const val LABEL_RELIEF_BUILDING = "aiReliefBuilding"
+  const val LABEL_RELIEF_STOP = "aiReliefStop"
+
+  /** Why a relief left its photo flat, said for a few seconds; FAILED holds [REASON], the message of the failure. */
+  const val LABEL_RELIEF_TOO_WARM = "aiReliefTooWarm"
+  const val LABEL_RELIEF_FAILED = "aiReliefFailed"
+  const val LABEL_RELIEF_NOT_IN_VERSION = "aiReliefNotInVersion"
+  const val LABEL_RELIEF_NO_MEMORY = "aiReliefNoMemory"
+  const val LABEL_RELIEF_MISSING = "aiReliefMissing"
+  const val LABEL_RELIEF_DAMAGED = "aiReliefDamaged"
+
+  /** Where the message of a failure goes in the label of [LABEL_RELIEF_FAILED], as in its translation key. */
+  const val REASON = "{reason}"
+
+  /** Key of the label of a relief at [stage]. */
+  fun reliefStageLabelKey(stage: ReliefStage): String =
+    when (stage) {
+      ReliefStage.PREPARING -> LABEL_RELIEF_PREPARING
+      ReliefStage.ESTIMATING -> LABEL_RELIEF_ESTIMATING
+      ReliefStage.BUILDING -> LABEL_RELIEF_BUILDING
+    }
+
+  /** Key of what a photo left flat for [reason] says; null for the stop of the user, which needs no word. */
+  fun reliefStopLabelKey(reason: ReliefStop): String? =
+    when (reason) {
+      ReliefStop.STOPPED -> null
+      ReliefStop.TOO_WARM -> LABEL_RELIEF_TOO_WARM
+      ReliefStop.NOT_IN_THIS_VERSION -> LABEL_RELIEF_NOT_IN_VERSION
+      ReliefStop.NOT_ENOUGH_MEMORY -> LABEL_RELIEF_NO_MEMORY
+      ReliefStop.MODEL_MISSING -> LABEL_RELIEF_MISSING
+      ReliefStop.MODEL_DAMAGED -> LABEL_RELIEF_DAMAGED
+      ReliefStop.FAILED -> LABEL_RELIEF_FAILED
+    }
+
+  /** What a photo left flat for [reason] says, with the [detail] of a failure in it; null for the stop of the user. */
+  fun reliefStopText(labels: Map<String, String>, reason: ReliefStop, detail: String): String? {
+    val key = reliefStopLabelKey(reason) ?: return null
+    return label(labels, key).replace(REASON, detail)
+  }
 
   /** Key of the 2D label: "2D (original)" when the left eye is the photo itself, "2D (left eye)" otherwise. */
   fun twoDLabelKey(leftEyeIsOriginal: Boolean): String = if (leftEyeIsOriginal) LABEL_2D_ORIGINAL else LABEL_2D
