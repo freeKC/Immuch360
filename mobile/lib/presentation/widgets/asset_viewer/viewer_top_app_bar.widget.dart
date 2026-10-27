@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -119,6 +120,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
     final fullScreenButton = CurrentPlatform.isDesktop ? const DesktopFullScreenButton() : null;
+    // Immuch360 Desktop: the view modes of a photo of two eyes side by side (lib/desktop/ai/sbs_view_modes.dart)
+    final sbsViewButton = CurrentPlatform.isDesktop ? DesktopSbsViewButton(asset: asset) : null;
 
     // The one-key rotation: here on a computer, and in the read only mode of a phone, whose bottom row is hidden. A TV
     // has it in its bottom bar, a phone otherwise in the bottom row (see RotateAction).
@@ -203,6 +206,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                     ?panoramaButton,
                                     ?spatialButton,
                                     ?rotateButton,
+                                    ?sbsViewButton,
                                     ?fullScreenButton,
                                     if (!isViewOnly) ...(isInLockedView ? lockedViewActions : actions),
                                   ],
