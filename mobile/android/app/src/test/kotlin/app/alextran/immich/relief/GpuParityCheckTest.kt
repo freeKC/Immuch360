@@ -49,7 +49,9 @@ class GpuParityCheckTest {
   /** A depth map of the model: a ramp, nearer to the right and to the bottom, as the CPU gives it */
   private fun ramp(): FloatArray = FloatArray(width * height) { i -> (i % width + 2 * (i / width)).toFloat() }
 
-  private fun input(frame: ReliefFrame = wholeFrame) = ReliefInput(FloatArray(ReliefPreprocess.TENSOR_SIZE), frame)
+  /** An input tensor whose values differ from one place to the next, so that another array is told apart */
+  private fun input(frame: ReliefFrame = wholeFrame) =
+    ReliefInput(FloatArray(ReliefPreprocess.TENSOR_SIZE) { (it % 997) / 997f }, frame)
 
   /** A fake engine: what each path gives, and what fails */
   private inner class FakeEngine(
@@ -59,8 +61,15 @@ class GpuParityCheckTest {
     override val available = true
     override var engine = "litert-2.3.0"
 
-    var gpuOpenFails = false
+    /** Why the GPU will not open the model, null when it opens */
+    var gpuOpenFailure: DepthFailure? = null
     var cpuOpenFails: DepthFailure? = null
+
+    /** Why the failing GPU passes fail */
+    var gpuRunFailure = DepthFailure.RUN_FAILED
+
+    /** The input array each pass received, with its path, in order */
+    val inputs = mutableListOf<Pair<DepthPath, FloatArray>>()
 
     /** The GPU passes that fail, counted from 1 over the whole test */
     val gpuRunsFailing = mutableSetOf<Int>()
@@ -71,8 +80,8 @@ class GpuParityCheckTest {
     var mostOpen = 0
 
     override fun open(model: File, path: DepthPath): DepthEstimator {
-      if (path == DepthPath.GPU && gpuOpenFails) {
-        throw DepthEstimatorException(DepthFailure.OPEN_FAILED, path, "no OpenGL ES 3.1 context")
+      if (path == DepthPath.GPU) {
+        gpuOpenFailure?.let { throw DepthEstimatorException(it, path, "no OpenGL ES 3.1 context") }
       }
       if (path == DepthPath.CPU) {
         cpuOpenFails?.let { throw DepthEstimatorException(it, path, "not the model") }
@@ -87,10 +96,11 @@ class GpuParityCheckTest {
         override fun estimate(input: FloatArray): FloatArray {
           check(!closed)
           nowNs += if (path == DepthPath.GPU) 700_000_000L else 2_500_000_000L
+          inputs += path to input
           if (path == DepthPath.GPU) {
             gpuRuns += 1
             if (gpuRuns in gpuRunsFailing) {
-              throw DepthEstimatorException(DepthFailure.RUN_FAILED, path, "the GPU pass failed")
+              throw DepthEstimatorException(gpuRunFailure, path, "the GPU pass failed")
             }
             return gpuDepth()
           }
@@ -197,7 +207,8 @@ class GpuParityCheckTest {
   fun `within the thresholds the GPU is kept, remembered, and stays open for the next photo`() {
     val engine = FakeEngine(gpuDepth = { ramp().map { it * 3f + 7f }.toFloatArray() })
     val parityCheck = check(engine)
-    val pass = parityCheck.estimate(model, modelId, input())
+    val photo = input()
+    val pass = parityCheck.estimate(model, modelId, photo)
     assertEquals(DepthPath.GPU, pass.path)
     val parity = pass.parity!!
     assertEquals(ParityVerdict.SAME, parity.verdict)
@@ -207,6 +218,9 @@ class GpuParityCheckTest {
     assertEquals(7f, pass.depth[0], 0f)
     // One CPU pass and one GPU pass with the same input, never two models open at once
     assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.inputs.map { it.first })
+    assertSame(photo.tensor, engine.inputs[0].second)
+    assertSame(photo.tensor, engine.inputs[1].second)
     assertEquals(1, engine.cpuRuns)
     assertEquals(1, engine.gpuRuns)
     assertEquals(1, engine.mostOpen)
@@ -268,7 +282,7 @@ class GpuParityCheckTest {
 
   @Test
   fun `a GPU that will not load means the CPU, remembered`() {
-    val engine = FakeEngine().apply { gpuOpenFails = true }
+    val engine = FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }
     val pass = check(engine).estimate(model, modelId, input())
     assertEquals(DepthPath.CPU, pass.path)
     assertEquals(ParityVerdict.GPU_FAILED, pass.parity?.verdict)
@@ -288,6 +302,51 @@ class GpuParityCheckTest {
     assertEquals(DepthPath.CPU, memory(engine = engine.engine).path(modelId))
     assertEquals(0, engine.openNow)
     parity.close()
+  }
+
+  @Test
+  fun `a GPU that says the model is wrong after the CPU took it means the CPU, remembered`() {
+    // The CPU opened the same file with the right shapes: a refusal on the GPU comes from the accelerator
+    val engine = FakeEngine().apply { gpuOpenFailure = DepthFailure.WRONG_MODEL }
+    val parity = check(engine)
+    val pass = parity.estimate(model, modelId, input())
+    assertEquals(DepthPath.CPU, pass.path)
+    assertEquals(ParityVerdict.GPU_FAILED, pass.parity?.verdict)
+    assertArrayEquals(ramp(), pass.depth, 0f)
+    assertEquals(DepthPath.CPU, memory(engine = engine.engine).path(modelId))
+    // The next photo goes to the CPU without trying the GPU again
+    val next = parity.estimate(model, modelId, input())
+    assertEquals(DepthPath.CPU, next.path)
+    assertNull(next.parity)
+    assertEquals(listOf(DepthPath.CPU, DepthPath.CPU), engine.opened)
+    assertEquals(2, engine.cpuRuns)
+    parity.close()
+    assertEquals(0, engine.openNow)
+  }
+
+  @Test
+  fun `a first GPU pass that says the model is wrong means the CPU, remembered`() {
+    val engine =
+      FakeEngine().apply {
+        gpuRunsFailing += 1
+        gpuRunFailure = DepthFailure.WRONG_MODEL
+      }
+    val pass = check(engine).estimate(model, modelId, input())
+    assertEquals(DepthPath.CPU, pass.path)
+    assertEquals(ParityVerdict.GPU_FAILED, pass.parity?.verdict)
+    assertEquals(DepthPath.CPU, memory(engine = engine.engine).path(modelId))
+    assertEquals(0, engine.openNow)
+  }
+
+  @Test
+  fun `a GPU map of another size than the CPU one means the CPU, remembered`() {
+    val engine = FakeEngine(gpuDepth = { FloatArray(10) })
+    val pass = check(engine).estimate(model, modelId, input())
+    assertEquals(DepthPath.CPU, pass.path)
+    assertEquals(ParityVerdict.GPU_FAILED, pass.parity?.verdict)
+    assertArrayEquals(ramp(), pass.depth, 0f)
+    assertEquals(DepthPath.CPU, memory(engine = engine.engine).path(modelId))
+    assertEquals(0, engine.openNow)
   }
 
   @Test
@@ -333,7 +392,7 @@ class GpuParityCheckTest {
 
   @Test
   fun `a remembered CPU never opens the GPU`() {
-    check(FakeEngine().apply { gpuOpenFails = true }).estimate(model, modelId, input())
+    check(FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }).estimate(model, modelId, input())
     val engine = FakeEngine()
     val pass = check(engine).estimate(model, modelId, input())
     assertEquals(DepthPath.CPU, pass.path)
@@ -343,7 +402,7 @@ class GpuParityCheckTest {
 
   @Test
   fun `a system update checks again`() {
-    check(FakeEngine().apply { gpuOpenFails = true }).estimate(model, modelId, input())
+    check(FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }).estimate(model, modelId, input())
     val engine = FakeEngine()
     val updated = "oculus/eureka/eureka:14/UP1A.231005.007.A1/2:user/release-keys"
     val pass = check(engine, system = updated).estimate(model, modelId, input())
@@ -357,7 +416,7 @@ class GpuParityCheckTest {
 
   @Test
   fun `another model or another engine checks again`() {
-    check(FakeEngine().apply { gpuOpenFails = true }).estimate(model, modelId, input())
+    check(FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }).estimate(model, modelId, input())
     val otherModel = check(FakeEngine()).estimate(model, "depth-anything-v2-small@0badc0de", input())
     assertEquals(ParityVerdict.SAME, otherModel.parity?.verdict)
     // The first model keeps its own decision
@@ -391,13 +450,56 @@ class GpuParityCheckTest {
   // Later failures
 
   @Test
-  fun `a remembered GPU that will not load any more falls back to the CPU and remembers it`() {
+  fun `a remembered GPU that will not load gives its session to the CPU, and the next session checks again`() {
     check(FakeEngine()).estimate(model, modelId, input())
-    val engine = FakeEngine().apply { gpuOpenFails = true }
-    val pass = check(engine).estimate(model, modelId, input())
+    val engine = FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }
+    val session = check(engine)
+    val pass = session.estimate(model, modelId, input())
+    assertEquals(DepthPath.CPU, pass.path)
+    assertNull(pass.parity)
+    assertArrayEquals(ramp(), pass.depth, 0f)
+    // One failure, perhaps passing, does not put the headset on the CPU until the next system update
+    assertNull(memory(engine = engine.engine).path(modelId))
+    // The rest of the session is on the CPU, the GPU not tried again
+    assertEquals(DepthPath.CPU, session.estimate(model, modelId, input()).path)
+    assertEquals(listOf(DepthPath.CPU), engine.opened)
+    assertEquals(2, engine.cpuRuns)
+    session.close()
+    // The next session runs the parity check again; a GPU that works again is kept again
+    val again = FakeEngine()
+    assertEquals(ParityVerdict.SAME, check(again).estimate(model, modelId, input()).parity?.verdict)
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), again.opened)
+    assertEquals(DepthPath.GPU, memory(engine = again.engine).path(modelId))
+  }
+
+  @Test
+  fun `a remembered GPU that fails again at the check of the next session means the CPU, remembered`() {
+    check(FakeEngine()).estimate(model, modelId, input())
+    check(FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }).estimate(model, modelId, input())
+    val pass = check(FakeEngine().apply { gpuOpenFailure = DepthFailure.OPEN_FAILED }).estimate(model, modelId, input())
     assertEquals(DepthPath.CPU, pass.path)
     assertEquals(ParityVerdict.GPU_FAILED, pass.parity?.verdict)
-    assertEquals(DepthPath.CPU, memory(engine = engine.engine).path(modelId))
+    assertEquals(DepthPath.CPU, memory(engine = "litert-2.3.0").path(modelId))
+  }
+
+  @Test
+  fun `a remembered GPU that says the model is wrong gives the photo to the CPU instead of failing`() {
+    check(FakeEngine()).estimate(model, modelId, input())
+    for (failure in listOf(DepthFailure.WRONG_MODEL, DepthFailure.RUN_FAILED)) {
+      val engine =
+        FakeEngine().apply {
+          gpuRunsFailing += 1
+          gpuRunFailure = failure
+        }
+      val pass = check(engine).estimate(model, modelId, input())
+      assertEquals(failure.name, DepthPath.CPU, pass.path)
+      assertArrayEquals(ramp(), pass.depth, 0f)
+      assertEquals(listOf(DepthPath.GPU, DepthPath.CPU), engine.opened)
+      // The CPU model stays open for the next photo, the GPU one is closed
+      assertEquals(1, engine.openNow)
+      // Put the decision back for the next round
+      memory(engine = engine.engine).remember(modelId, DepthPath.GPU)
+    }
   }
 
   @Test

@@ -9,7 +9,8 @@ import kotlin.math.abs
 // relief runs the model on both with the same input and compares the two maps: the GPU is kept only when they agree.
 // The decision is kept in the app's preferences against the system build, the engine and the model, on the model of
 // DecoderMemory (djilink/DecoderPolicy.kt): a system update, a new engine or a new model checks again. A GPU that will
-// not load or fails its first pass means the CPU. Plain JVM code, without Android.
+// not load or fails its first pass means the CPU: design 3.2 point 3 asks for the CPU whenever the accelerator fails.
+// Plain JVM code, without Android.
 
 /** How far apart two normalised depth maps are: the mean of the differences and their 99th percentile */
 class DepthComparison(val meanError: Double, val p99Error: Double) {
@@ -28,7 +29,10 @@ enum class ParityVerdict {
   /** The two maps differ: the CPU is kept */
   DIFFERENT,
 
-  /** The GPU would not load the model or failed its first pass: the CPU is kept */
+  /**
+   * The GPU would not load the model, refused it or failed its first pass, after the CPU took the same file: the CPU
+   * is kept
+   */
   GPU_FAILED,
 }
 
@@ -99,14 +103,18 @@ class DepthPathMemory(
  *    models (about 375 MB each on the CPU, q0-measures 2) are never loaded together. This first relief costs one CPU
  *    pass more, once per system build.
  * 2. **GPU remembered**: the GPU model opens; if it will not load or fails before a first good pass in this session,
- *    the photo goes to the CPU and the CPU is remembered. A GPU that fails later gives that photo and the rest of the
- *    session to the CPU without changing the decision.
+ *    the photo and the rest of the session go to the CPU and the decision is forgotten, so that the next session
+ *    runs the parity check again: a passing failure (the GPU memory held by the immersive scene, an OpenGL context
+ *    refused for a moment) does not put the headset on the CPU until the next system update, and a GPU that fails
+ *    again at that check means the CPU, remembered. A GPU that fails after good passes gives that photo and the rest
+ *    of the session to the CPU without changing the decision.
  * 3. **CPU remembered**, or [preferred] CPU: the GPU is never opened.
  *
- * A failure of the CPU path, or a model of another size, stops the pass with [DepthEstimatorException] and keeps no
- * decision. The path taken and the time of each pass go to [log] (the app's log on the headset). One thread only: the
- * one that runs the relief (the OpenGL context of the GPU path belongs to it). [close] frees the model; the next
- * [estimate] opens it again.
+ * On the GPU path any [DepthEstimatorException] is a failure of the accelerator, [DepthFailure.WRONG_MODEL] included:
+ * the CPU took the same file. A failure of the CPU path, or a CPU map of another size, stops the pass with
+ * [DepthEstimatorException] and keeps no decision. The path taken and the time of each pass go to [log] (the app's log
+ * on the headset). One thread only: the one that runs the relief (the OpenGL context of the GPU path belongs to it).
+ * [close] frees the model; the next [estimate] opens it again.
  */
 class GpuParityCheck(
   private val engine: DepthEngine,
@@ -190,19 +198,17 @@ class GpuParityCheck(
         gpuPassedFor = modelId
         return gpu
       } catch (e: DepthEstimatorException) {
-        if (e.failure == DepthFailure.WRONG_MODEL) throw e
         e
       }
     closeOpen()
+    gpuDroppedFor = modelId
     if (gpuPassedFor == modelId) {
       log("depth model: the GPU failed after good passes (${failure.message}), the CPU takes this session")
-      gpuDroppedFor = modelId
-      return pass(model, DepthPath.CPU, input)
+    } else {
+      log("depth model: the GPU failed (${failure.message}), the CPU takes this session, the next one checks again")
+      memory.forget(modelId)
     }
-    log("depth model: the GPU failed (${failure.message}), the CPU is kept for $modelId")
-    val cpu = pass(model, DepthPath.CPU, input)
-    memory.remember(modelId, DepthPath.CPU)
-    return cpu.withParity(ParityVerdict.GPU_FAILED, null)
+    return pass(model, DepthPath.CPU, input)
   }
 
   private fun firstRelief(model: File, modelId: String, input: ReliefInput): DepthPass {
@@ -213,7 +219,7 @@ class GpuParityCheck(
       try {
         pass(model, DepthPath.GPU, input)
       } catch (e: DepthEstimatorException) {
-        if (e.failure == DepthFailure.WRONG_MODEL) throw e
+        // The CPU took the same file: whatever the GPU says, the accelerator failed
         closeOpen()
         log("depth model: the GPU failed (${e.message}), the CPU is kept for $modelId")
         memory.remember(modelId, DepthPath.CPU)
@@ -274,8 +280,9 @@ class GpuParityCheck(
     DepthPass(depth, path, elapsedMs, ParityResult(verdict, path, comparison))
 
   private fun closeOpen() {
-    open?.close()
+    val estimator = open
     open = null
     openModel = null
+    estimator?.close()
   }
 }
