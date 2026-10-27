@@ -87,6 +87,18 @@ void main() {
       expect(sceneBytesOf(damaged, xmp), isNull);
     });
 
+    test('a sum in capitals: wrong, as the request of the headset refuses it', () async {
+      final upper = SceneXmp.parse(xmp.toXml().replaceAll(xmp.sceneSha256!, xmp.sceneSha256!.toUpperCase()))!;
+
+      expect(upper.sceneSha256, isNot(xmp.sceneSha256));
+      expect(upper.request, isNull);
+      expect(
+        (await checkSceneTail(reader(file), fileLength: file.length, xmp: upper)).problem,
+        SceneTailProblem.wrongSum,
+      );
+      expect(sceneBytesOf(file, upper), isNull);
+    });
+
     test('bytes appended after the scene: not a glTF where the packet says it starts', () async {
       final longer = Uint8List.fromList([...file, 0, 0, 0, 0]);
 

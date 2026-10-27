@@ -35,7 +35,8 @@ enum SceneTailProblem {
   /// The header gives another length than the packet
   wrongLength,
 
-  /// The bytes are not those the packet sums
+  /// The bytes are not those the packet sums, or the sum is not in lowercase hexadecimal (the rule of
+  /// VolumetricSceneRequest and of VolumetricSceneSpec.kt, so that a tail this side accepts is one the headset opens)
   wrongSum,
 }
 
@@ -101,7 +102,8 @@ SceneTailProblem? checkSceneHeader(Uint8List header, {required int sceneLength})
 }
 
 /// Checks the scene of a file of [fileLength] bytes read by [read], whose head holds [xmp]: its place, its header and,
-/// with [verifySum], its SHA-256 (the whole tail read, in chunks of [chunk] bytes; about 30 ms for 8 MB)
+/// with [verifySum], its SHA-256 in lowercase hexadecimal (the whole tail read, in chunks of [chunk] bytes; about 30 ms
+/// for 8 MB)
 Future<SceneTailCheck> checkSceneTail(
   ByteRangeReader read, {
   required int fileLength,
@@ -130,7 +132,7 @@ Future<SceneTailCheck> checkSceneTail(
       input.add(bytes);
     }
     input.close();
-    if (output.value.toString() != expected.toLowerCase()) {
+    if (output.value.toString() != expected) {
       return const SceneTailCheck.failed(SceneTailProblem.wrongSum);
     }
   }
@@ -149,7 +151,7 @@ Uint8List? sceneBytesOf(Uint8List file, SceneXmp xmp) {
     return null;
   }
   final expected = xmp.sceneSha256;
-  if (expected == null || sha256.convert(bytes).toString() != expected.toLowerCase()) {
+  if (expected == null || sha256.convert(bytes).toString() != expected) {
     return null;
   }
   return bytes;
