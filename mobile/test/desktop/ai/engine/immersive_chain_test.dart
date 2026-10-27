@@ -496,6 +496,15 @@ void main() {
       expect(result.message, contains('10 x 10'));
     });
 
+    test('a run of the model that fails once its session is open gives the session back at once', () {
+      // The fake opens its session as the run starts, then fails: the memory of the session is not left taken
+      final tools = chainOn(backend: FakeDepthBackend(failure: 'Run: not enough memory'));
+      final result = runOn(tools.chain, jobFor(path, partPath: partIn(folder, 'orientation_1.jpg'))).result;
+      expect(result.error, ImmersiveErrorCode.modelFailed);
+      expect(tools.backend.calls, 1);
+      expect((tools.chain.sessionOpen, tools.backend.closed), (false, true));
+    });
+
     test('the photo changed after it was chosen: sourceLost, never a 3D photo with the sum of another', () {
       final part = partIn(folder, 'orientation_1.jpg');
       final result = runOn(chainOn().chain, jobFor(path, partPath: part, sha1: 'AAAAAAAAAAAAAAAAAAAAAAAAAAA=')).result;

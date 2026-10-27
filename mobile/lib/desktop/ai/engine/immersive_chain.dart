@@ -265,6 +265,8 @@ class _Run {
       _lowered = openWithLowThreads(chain.backend, chain.priority);
       map = chain.backend.estimate(input.nchw);
     } on DepthBackendException catch (error) {
+      // A run that failed once the session was open: its memory is given back now, not at the next job
+      chain.closeSession();
       throw _Stop(ImmersiveErrorCode.modelFailed, error.message);
     }
     chain._sessionOpen = true;
