@@ -6,8 +6,8 @@
 //  2. Without it, a photo the 360° rules take (an equirectangular GPano, or a 360° camera's own equirect photo) stays
 //     theirs. Else the words of the name that the Spatial 2.5D player reads (sbs, lr, rl..., see guessSpatialLayout)
 //     or that iw3 writes (_LRF_Full_SBS, _LR, _RLF_cross), with a frame that fits: full width eyes when the name says
-//     so or when the frame is 2.2 to 4.0 times as wide as high, half width eyes otherwise. The frame alone never
-//     decides: a flat 3:1 panorama stays flat.
+//     so (then however wide) or when the frame is 2.2 to 4.0 times as wide as high, half width eyes otherwise. The
+//     frame alone never decides: a flat 3:1 panorama stays flat.
 //  3. Else a flat photo.
 //
 // A photo of the library is read only when its name or its frame makes it a candidate (see isStereoPhotoCandidate):
@@ -82,7 +82,9 @@ class FlatStereoPhoto {
 const _fullFrameMin = 2.2;
 const _fullFrameMax = 4.0;
 
-// The shapes an eye may have once shown, from a tall 2:5 to a wide 2.2:1; other frames do not hold two photos
+// The shapes an eye may have once shown, from a tall 2:5 to a wide 2.2:1; other frames do not hold two photos. A name
+// that says full width eyes is trusted for wider ones (a 21:9 photo, a flat panorama made 3D by iw3): only the floor
+// applies to it
 const _eyeRatioMin = 0.4;
 const _eyeRatioMax = 2.2;
 
@@ -189,8 +191,9 @@ FlatStereoPhoto? decideStereoPhoto({
     return null;
   }
   final words = _wordListOf(name);
+  final namedFull = _saysWidth(words, _fullWidthWords, 'full');
   final StereoEyes eyes;
-  if (_saysWidth(words, _fullWidthWords, 'full')) {
+  if (namedFull) {
     eyes = StereoEyes.full;
   } else if (_saysWidth(words, _halfWidthWords, 'half')) {
     eyes = StereoEyes.half;
@@ -199,7 +202,7 @@ FlatStereoPhoto? decideStereoPhoto({
   }
   // A half width eye is shown twice as wide as it is stored
   final eyeRatio = eyes == StereoEyes.full ? ratio / 2 : ratio;
-  if (eyeRatio < _eyeRatioMin || eyeRatio > _eyeRatioMax) {
+  if (eyeRatio < _eyeRatioMin || (eyeRatio > _eyeRatioMax && !namedFull)) {
     return null;
   }
   return FlatStereoPhoto(eyes: eyes, eyeOrder: order);

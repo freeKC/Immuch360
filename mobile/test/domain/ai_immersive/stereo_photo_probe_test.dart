@@ -271,6 +271,18 @@ void main() {
       expect(half, const FlatStereoPhoto(eyes: StereoEyes.half, eyeOrder: EyeOrder.rightLeft));
     });
 
+    test('a name that says full width is trusted for wide eyes too: a 21:9 photo, a 3:1 panorama', () async {
+      final (wide, _) = await probe(pngFile(width: 8000, height: 1714), 'photo_LRF_Full_SBS.png');
+      expect(wide, const FlatStereoPhoto(eyes: StereoEyes.full));
+
+      final (panorama, _) = await probe(pngFile(width: 12000, height: 2000), 'pano_LRF_Full_SBS.png');
+      expect(panorama, const FlatStereoPhoto(eyes: StereoEyes.full));
+
+      // Not when the width comes from the frame: 5:1 makes two half width eyes, too wide
+      final (guessed, _) = await probe(jpegFile(width: 10000, height: 2000), 'view_sbs.jpg');
+      expect(guessed, isNull);
+    });
+
     test('a frame that holds no two photos is flat, whatever the name', () async {
       final (tooWide, _) = await probe(jpegFile(width: 6000, height: 1000), 'view_hsbs.jpg');
       expect(tooWide, isNull);
