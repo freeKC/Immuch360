@@ -90,10 +90,18 @@ void main() {
         for (final key in ['depth', 'normalized', 'dilated']) {
           final rows = (entry[key] as List).cast<List<dynamic>>();
           expect(rows, hasLength(mapHeight), reason: reason);
-          expect(rows.every((row) => row.cast<double>().length == mapWidth), isTrue, reason: reason);
+          expect(
+            rows.every((row) => row.length == mapWidth && row.every((value) => value is double)),
+            isTrue,
+            reason: reason,
+          );
         }
         final eyeDepth = (entry['eyeDepth'] as List).cast<List<dynamic>>();
-        expect(eyeDepth.every((row) => row.cast<double>().length == eyeWidth), isTrue, reason: reason);
+        expect(
+          eyeDepth.every((row) => row.length == eyeWidth && row.every((value) => value is double)),
+          isTrue,
+          reason: reason,
+        );
         final holes = (entry['holes'] as List).cast<String>();
         expect(holes.every((row) => RegExp('^[01]{$eyeWidth}\$').hasMatch(row)), isTrue, reason: reason);
         expect(holes.join().split('').where((cell) => cell == '1').length, entry['filledPixels'], reason: reason);
