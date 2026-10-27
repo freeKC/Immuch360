@@ -5,6 +5,8 @@
 // before the next scan, and has "Delete this 3D photo" (lot A5c), which asks first and deletes only a file that still
 // carries our XMP with its DerivativeId, never the original. What they find is in versions.provider.dart.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
@@ -25,6 +27,17 @@ final versionOpenerProvider = Provider<void Function(String path)>(
   (ref) =>
       (path) => DesktopOpenRequests.add([path]),
 );
+
+/// The 3D photos deleted from the app in this session: the index keeps them until the next scan of their folder (up to
+/// a quarter of an hour on a network folder), so their rows are left out while their files stay gone
+class DeletedVersions extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  void add(String path) => state = {...state, path};
+}
+
+final deletedVersionsProvider = NotifierProvider<DeletedVersions, Set<String>>(DeletedVersions.new);
 
 /// The thumbnail of a version in its row; replaced in tests
 final versionThumbnailProvider = Provider<Widget Function(VersionFile file)>(
@@ -48,7 +61,13 @@ class DesktopVersionsTiles extends ConsumerWidget {
     if (self != null) {
       return _MadeFromTile(self: self, original: found.original);
     }
-    if (found.versions.isEmpty) {
+    final deleted = ref.watch(deletedVersionsProvider);
+    // A 3D photo made again at the same place comes back
+    final versions = [
+      for (final version in found.versions)
+        if (!deleted.contains(version.path) || File(version.path).existsSync()) version,
+    ];
+    if (versions.isEmpty) {
       return const SizedBox.shrink();
     }
     return Column(
@@ -59,7 +78,7 @@ class DesktopVersionsTiles extends ConsumerWidget {
           title: context.t.ai_immersive_versions,
           titleStyle: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceSecondary),
         ),
-        for (final version in found.versions) _VersionTile(version: version, original: asset),
+        for (final version in versions) _VersionTile(version: version, original: asset),
       ],
     );
   }
@@ -102,7 +121,7 @@ class _VersionTile extends ConsumerWidget {
               tooltip: t.ai_immersive_delete_result,
               icon: const Icon(Icons.delete_outline_rounded),
               onPressed: () async {
-                if (await confirmDeleteVersion(context, version.path)) {
+                if (await confirmDeleteVersion(context, ref, version.path)) {
                   ref.invalidate(photoVersionsProvider(original));
                 }
               },

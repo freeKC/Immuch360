@@ -2,7 +2,8 @@
 // name, kind, state in the words of the spec, "n of m", destination, quality flags and actions (Cancel, Retry, Open
 // folder, View by the path of the opened files, Delete this 3D photo asked first and refused for a file that is not
 // ours); at the bottom Cancel all, Retry failed, Clear finished, and Resume after a disk full; the button that shows
-// the jobs under way. Then "Delete this 3D photo" from the Versions of the details.
+// the jobs under way. Then "Delete this 3D photo" from the Versions of the details, whose row goes at once, and the
+// files it never deletes: ours without a DerivativeId, and any other.
 
 import 'dart:io';
 
@@ -150,6 +151,8 @@ void main() {
     container.read(conversionJobInfoProvider.notifier).addAll({ids[0]: const ConversionJobInfo(isNetwork: false)});
     await settle(tester);
 
+    // The honesty label under the title
+    expect(find.text('Relief estimated by AI'), findsOneWidget);
     // a.jpg done: its 3D photo, the quality flag, saved on this computer only, and its actions
     final written = p.join(photos, 'a_3D_LRF_Full_SBS.jpg');
     expect(inRow(ids[0], find.text('a.jpg')), findsOneWidget);
@@ -193,6 +196,53 @@ void main() {
     await tester.tap(inRow(ids[1], find.byKey(const Key('ai_job_retry'))));
     await settle(tester);
     expect(inRow(ids[1], find.text('Done')), findsOneWidget);
+  });
+
+  testWidgets('a 3D photo on a network folder is not "saved on this computer only"; the edits of Immich are said', (
+    tester,
+  ) async {
+    final container = await pumpPanel(tester);
+    final ids = container.read(conversionQueueProvider.notifier).add([photo('nas.jpg'), photo('here.jpg')]);
+    container.read(conversionJobInfoProvider.notifier).addAll({
+      ids[0]: const ConversionJobInfo(isNetwork: true, serverEdits: true),
+      ids[1]: const ConversionJobInfo(isNetwork: false),
+    });
+    await settle(tester);
+
+    expect(inRow(ids[0], find.text('Done')), findsOneWidget);
+    expect(inRow(ids[0], find.byKey(const Key('ai_job_local_only'))), findsNothing);
+    expect(inRow(ids[0], find.text('Edits made in Immich, except the rotation, are not applied')), findsOneWidget);
+    expect(inRow(ids[1], find.byKey(const Key('ai_job_local_only'))), findsOneWidget);
+    expect(inRow(ids[1], find.text('Edits made in Immich, except the rotation, are not applied')), findsNothing);
+  });
+
+  test('Delete never touches a file with our XMP but no DerivativeId, nor one without our XMP', () async {
+    const noId = StereoPhotoXmp(
+      eyes: StereoEyes.full,
+      eyeOrder: EyeOrder.leftRight,
+      eyeWidth: 8,
+      eyeHeight: 6,
+      origin: ImmersiveOrigin.estimatedDepth,
+      sourceName: 'salon.jpg',
+    );
+    const blankId = StereoPhotoXmp(
+      eyes: StereoEyes.full,
+      eyeOrder: EyeOrder.leftRight,
+      eyeWidth: 8,
+      eyeHeight: 6,
+      origin: ImmersiveOrigin.estimatedDepth,
+      derivativeId: '  ',
+    );
+    final withoutId = File(p.join(photos, 'a_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(fakeSbsJpeg(xmp: noId));
+    final blank = File(p.join(photos, 'b_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(fakeSbsJpeg(xmp: blankId));
+    final plain = File(p.join(photos, 'c_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(List.generate(300, (i) => i & 0xff));
+    expect(StereoPhotoXmp.findIn(withoutId.readAsBytesSync()), isNotNull, reason: 'our packet is there');
+
+    expect(await deleteOurVersion(withoutId.path), VersionDeleteOutcome.refused);
+    expect(await deleteOurVersion(blank.path), VersionDeleteOutcome.refused);
+    expect(await deleteOurVersion(plain.path), VersionDeleteOutcome.refused);
+    expect([withoutId, blank, plain].every((file) => file.existsSync()), isTrue);
+    expect(await deleteOurVersion(p.join(photos, 'gone_3D_LRF_Full_SBS.jpg')), VersionDeleteOutcome.failed);
   });
 
   testWidgets('a failure says why; Retry failed, Cancel all and Clear finished act on the whole queue', (tester) async {
@@ -267,6 +317,7 @@ void main() {
     expect(ours.existsSync(), isFalse);
     expect(File(p.join(photos, 'a.jpg')).existsSync(), isTrue, reason: 'the original stays');
     expect(find.byKey(ValueKey('ai_job_${ids[0]}')), findsNothing, reason: 'its job is gone from the panel');
+    expect(container.read(deletedVersionsProvider), {ours.path}, reason: 'left out of the details until the next scan');
 
     await tester.tap(inRow(ids[1], find.byKey(const Key('ai_job_delete'))));
     await tester.pumpAndSettle();
@@ -369,6 +420,9 @@ void main() {
     await settle(tester);
     expect(ours.existsSync(), isFalse);
     expect(asked, 2, reason: 'the versions are read again');
+    // The index still lists it until the next scan of its folder: its row goes all the same
+    expect(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS.jpg')), findsNothing);
+    expect(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS (1).jpg')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS (1).jpg')));
     await tester.pumpAndSettle();
@@ -377,5 +431,13 @@ void main() {
     expect(foreign.existsSync(), isTrue);
     expect(find.text('This file was not made by Immuch360, so it is not deleted'), findsOneWidget);
     expect(viewed, isEmpty, reason: 'the delete button does not open the version');
+
+    // Made again at the same place, it comes back
+    ours.writeAsBytesSync(fakeSbsJpeg(xmp: xmp));
+    ProviderScope.containerOf(
+      tester.element(find.byType(DesktopVersionsTiles)),
+    ).invalidate(photoVersionsProvider(original));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS.jpg')), findsOneWidget);
   });
 }

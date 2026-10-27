@@ -108,8 +108,8 @@ Future<VersionDeleteOutcome> deleteOurVersion(String path) async {
 }
 
 /// "Delete this 3D photo": asks first, then deletes the 3D photo at [path] only when it is still one of ours. True
-/// when it was deleted; a refusal is said.
-Future<bool> confirmDeleteVersion(BuildContext context, String path) async {
+/// when it was deleted, and then left out of the versions of the details until the next scan; a refusal is said.
+Future<bool> confirmDeleteVersion(BuildContext context, WidgetRef ref, String path) async {
   final t = context.t;
   final messenger = ScaffoldMessenger.maybeOf(context);
   final confirmed = await showDialog<bool>(
@@ -134,6 +134,7 @@ Future<bool> confirmDeleteVersion(BuildContext context, String path) async {
   final outcome = await deleteOurVersion(path);
   switch (outcome) {
     case VersionDeleteOutcome.deleted:
+      ref.read(deletedVersionsProvider.notifier).add(path);
       return true;
     case VersionDeleteOutcome.refused:
       messenger?.showSnackBar(SnackBar(content: Text(t.ai_immersive_delete_refused)));
@@ -344,7 +345,7 @@ class _JobRow extends ConsumerWidget {
         TextButton(
           key: const Key('ai_job_delete'),
           onPressed: () async {
-            if (await confirmDeleteVersion(context, written)) {
+            if (await confirmDeleteVersion(context, ref, written)) {
               notifier.remove(job.id);
             }
           },
