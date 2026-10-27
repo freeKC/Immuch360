@@ -626,7 +626,7 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
         expect(plan.reason, DestinationReason.folderReadOnly);
         expect(
           destinationReasonText(StaticTranslations.instance, plan.reason),
-          'This folder does not accept new files',
+          'The folder of the original does not accept new files: choose another folder',
         );
         expect(dialog.checkOf('j1')!.status, ProbeStatus.ready);
         expect(partsIn(downloads), hasLength(1));
@@ -802,7 +802,10 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       destinationReasonText(t, DestinationReason.sourceReadOnly),
       'This source cannot be written to: choose a folder',
     );
-    expect(destinationReasonText(t, DestinationReason.folderReadOnly), 'This folder does not accept new files');
+    expect(
+      destinationReasonText(t, DestinationReason.folderReadOnly),
+      'The folder of the original does not accept new files: choose another folder',
+    );
     expect(destinationReasonText(t, DestinationReason.diskFull), 'Disk full');
     expect(destinationReasonText(t, DestinationReason.folderMissing), 'The original cannot be reached any more');
     expect(
