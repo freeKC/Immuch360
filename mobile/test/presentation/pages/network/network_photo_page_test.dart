@@ -13,9 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
@@ -23,13 +26,17 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../fixtures/raw/insta360.stub.dart';
+import '../../widgets/ai_immersive/quest_relief_fakes.dart';
 import 'network_viewer_fakes.dart';
 
 /// Records what the immersive viewer is asked to open
@@ -147,6 +154,7 @@ void main() {
     String path, {
     _RecordingImmersiveApi? immersiveApi,
     NetworkFolderMedia? folder,
+    List<Override> extraOverrides = const [],
   }) async {
     await pumpNetworkRouter(
       tester,
@@ -160,6 +168,7 @@ void main() {
         appConfigProvider.overrideWithValue(const AppConfig()),
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
+        ...extraOverrides,
       ],
     );
   }
@@ -554,6 +563,141 @@ void main() {
 
       expect(versionButton, findsNothing);
       expect(share.listed, isEmpty);
+
+      await endRealIo(tester);
+    });
+  });
+  group('AI relief', () {
+    final reliefButton = find.byKey(aiReliefButtonKey);
+    late InstalledModelService components;
+
+    setUp(() {
+      components = InstalledModelService()
+        ..setStatus(depthModelTfliteComponent, const AiComponentStatus(AiComponentState.installed));
+    });
+
+    /// A Quest 3 with the quest flavour and the depth model installed, or the APK of [flavor]
+    List<Override> headset({String? flavor = 'quest'}) => [
+      appFlavorProvider.overrideWithValue(flavor),
+      reliefDeviceFactsProvider.overrideWith((ref) async => const ReliefDeviceFacts(device: 'eureka', memoryMiB: 7600)),
+      aiComponentsServiceProvider.overrideWithValue(components),
+    ];
+
+    testWidgets('on a Meta Quest, an ordinary photo asks for its relief from the media bridge, keyed by its place', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.png'] = png;
+      await pumpPhotoPage(tester, '/Photos/salon.png', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('AI relief'), findsOneWidget);
+
+      await tester.tap(reliefButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/Photos/salon.png').toString());
+      expect(immersiveApi.opened.single['title'], 'salon.png');
+      final expected = questReliefRequest(
+        modelPath: components.modelPath,
+        identity: reliefIdentityOfShareFile(
+          sourceId: _source.id,
+          path: '/Photos/salon.png',
+          size: png.length,
+          modified: MemoryShare.modified,
+        ),
+        quarterTurns: 0,
+      );
+      expect(jsonDecode(immersiveApi.stereoPairs.single!), jsonDecode(expected.toJsonString()));
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('the turns the photo is seen with go in the request and its key', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.png'] = png;
+      await pumpPhotoPage(tester, '/Photos/salon.png', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      // The one-key rotation of the page, kept on this device for the file
+      await tester.tap(find.byKey(const Key('network_photo_rotate')));
+      await tester.pump();
+      await pumpRealIo(tester, () => tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns == 1);
+      await tester.tap(reliefButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      final relief = jsonDecode(immersiveApi.stereoPairs.single!) as Map<String, dynamic>;
+      expect(relief['quarterTurns'], 1);
+      expect(
+        relief['cacheKey'],
+        questReliefRequest(
+          modelPath: components.modelPath,
+          identity: reliefIdentityOfShareFile(
+            sourceId: _source.id,
+            path: '/Photos/salon.png',
+            size: png.length,
+            modified: MemoryShare.modified,
+          ),
+          quarterTurns: 1,
+        ).cacheKey,
+      );
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('greyed with its reason in the APK of the phone flavour', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.png'] = png;
+      await pumpPhotoPage(
+        tester,
+        '/Photos/salon.png',
+        immersiveApi: immersiveApi,
+        extraOverrides: headset(flavor: 'phone'),
+      );
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      expect(tester.widget<IconButton>(reliefButton).onPressed, isNull);
+      expect(find.byTooltip('Not in this version of the app'), findsOneWidget);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('not for two eyes side by side, which has "View in 3D"', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(width: 8000, height: 3000, xmp: ourXmp());
+      await pumpPhotoPage(tester, '/salon_3D_LRF_Full_SBS.jpg', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, () => find.byKey(const Key('apple_spatial_view_3d')).evaluate().isNotEmpty);
+
+      expect(reliefButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('not for a 360° photo', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/pano.png'] = withXmp(png, equirectangularXmp);
+      await pumpPhotoPage(tester, '/pano.png', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, shows360Button);
+
+      expect(reliefButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('not on a phone', (tester) async {
+      png = await makePng(tester);
+      share.files['/Photos/salon.png'] = png;
+      await pumpPhotoPage(tester, '/Photos/salon.png', extraOverrides: headset());
+      await pumpRealIo(tester, showsDecodedPhoto);
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pump();
+
+      expect(find.byKey(const Key('network_photo_rotate')), findsOneWidget, reason: 'the file was read');
+      expect(reliefButton, findsNothing);
 
       await endRealIo(tester);
     });
