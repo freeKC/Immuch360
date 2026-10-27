@@ -402,6 +402,17 @@ def landscape_depth() -> list:
             for y in range(MAP_HEIGHT)]
 
 
+def near_depth() -> list:
+    """A vase at 0.5 m in front of a wall at 5.5 m: a strong jump close to the eye, whose band of 48 values covers a
+    step aside of 11 cm only (smallZone)"""
+    return [[0.5 if 9 <= x <= 14 and 5 <= y <= 12 else 5.5 for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
+
+
+def nearest_depth() -> list:
+    """A hand at 0.46 m in front of a wall at 10 m: the step aside falls under the floor, the zone stays at 10 cm"""
+    return [[0.46 if 9 <= x <= 14 and 5 <= y <= 12 else 10.0 for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
+
+
 SQUARE = 20
 
 
@@ -430,6 +441,10 @@ CASES = [
     ("flat", "a flat wall: no break, the whole zone, lowRelief", flat_depth, all_valid, None),
     ("sky", "a landscape with 31 % of sky on its far plane, a rock near the left edge", landscape_depth, sky_mask,
      None),
+    ("near", "a vase close to the eye before a far wall: a lateral zone of 11 cm, smallZone", near_depth, all_valid,
+     None),
+    ("nearest", "a hand closer still before a farther wall: the lateral zone held at its floor of 10 cm, smallZone",
+     nearest_depth, all_valid, None),
     ("square", "a square drone photo: its grid at the step of a square map of 1024, 5", square_depth, square_valid,
      grid_step(1024, 1024)),
 ]

@@ -96,7 +96,17 @@ void main() {
     });
 
     test('every case: a grid of ReliefMesh, masks of the map, flags of a scene, a zone within its bounds', () {
-      expect(cases.map((entry) => entry['name']), ['step', 'person', 'close', 'ledge', 'flat', 'sky', 'square']);
+      expect(cases.map((entry) => entry['name']), [
+        'step',
+        'person',
+        'close',
+        'ledge',
+        'flat',
+        'sky',
+        'near',
+        'nearest',
+        'square',
+      ]);
       for (final entry in cases) {
         final reason = entry['name'] as String;
         final width = entry['width'] as int;
@@ -131,6 +141,13 @@ void main() {
         );
         final safe = (entry['safe'] as Map).cast<String, num>();
         expect(safe['lateral'], inInclusiveRange(SceneV1.lateralMin, SceneV1.lateralMax), reason: reason);
+        // The flags by their rules: smallZone under 12 cm of lateral zone, hiddenAreas over 8 % of the map in bands
+        expect(flags.contains('smallZone'), safe['lateral']! < SceneV1.smallZone, reason: reason);
+        expect(
+          flags.contains('hiddenAreas'),
+          '1'.allMatches(band).length > SceneV1.hiddenAreasRatio * width * height,
+          reason: reason,
+        );
         _close(safe['vertical']!.toDouble(), SceneV1.verticalShare * safe['lateral']!, tolerance, reason: reason);
         expect(safe['forward'], inInclusiveRange(SceneV1.forwardMin, SceneV1.forwardMax), reason: reason);
         expect(safe['backward'], inInclusiveRange(SceneV1.backwardMin, SceneV1.backwardMax), reason: reason);
@@ -146,10 +163,27 @@ void main() {
             reason: reason,
           );
         }
+        // The lateral zone: the percentile 10, by nearest rank, of the step aside each break allows, clamped
+        final depth = (entry['depth'] as List).map(_doubles).toList();
+        final focal = (entry['focal'] as num).toDouble();
+        final steps = [
+          for (var i = 0; i < breaks.length; i++)
+            widths[i] /
+                (focal *
+                    (1 / depth[breaks[i][1] as int][breaks[i][0] as int] -
+                        1 / depth[breaks[i][3] as int][breaks[i][2] as int])),
+        ]..sort();
+        final lateral = steps.isEmpty
+            ? SceneV1.lateralMax
+            : steps[math.max(1, (SceneV1.zonePercentile * steps.length + 99) ~/ 100) - 1].clamp(
+                SceneV1.lateralMin,
+                SceneV1.lateralMax,
+              );
+        _close(safe['lateral']!.toDouble(), lateral, tolerance, reason: reason);
       }
     });
 
-    test('the cases cover the comfort scale, the sky, a flat wall and a narrow band', () {
+    test('the cases cover the comfort scale, the sky, a flat wall, a narrow band and a small zone', () {
       Map<String, dynamic> named(String name) => cases.firstWhere((entry) => entry['name'] == name);
 
       _close((named('close')['scale'] as num).toDouble(), SceneV1.comfortDistance / 0.30, tolerance);
@@ -159,6 +193,13 @@ void main() {
       expect(named('flat')['breaks'], isEmpty);
       expect((named('flat')['safe'] as Map)['lateral'], SceneV1.lateralMax);
       expect(named('ledge')['bandWidths'], contains(10));
+      // A small zone: between the floor and 12 cm, then held at the floor
+      final near = (named('near')['safe'] as Map)['lateral'] as num;
+      expect(near, allOf(greaterThan(SceneV1.lateralMin), lessThan(SceneV1.smallZone)));
+      expect(named('near')['flags'], ['hiddenAreas', 'smallZone']);
+      expect((named('nearest')['safe'] as Map)['lateral'], SceneV1.lateralMin);
+      expect(named('nearest')['flags'], contains('smallZone'));
+      expect(named('close')['flags'], isNot(contains('smallZone')), reason: 'just over 12 cm');
     });
   });
 
@@ -350,6 +391,30 @@ void main() {
           1e-12,
         ),
       );
+    });
+
+    test('relief-360-v1: hiddenAreas over 5 % filled, refused over 8 % or without relief', () {
+      final reliefs = {
+        for (final entry in (golden['reliefs'] as List).cast<Map<String, dynamic>>()) entry['name'] as String: entry,
+      };
+      final frame = (golden['frameWidth'] as int) * (golden['frameHeight'] as int);
+
+      for (final entry in reliefs.values) {
+        final reason = entry['name'] as String;
+        final fraction = (entry['filledFraction'] as num).toDouble();
+        final flags = (entry['flags'] as List).cast<String>();
+
+        expect(fraction, closeTo((entry['filledPixels'] as int) / frame, 1e-12), reason: reason);
+        expect(flags.contains('hiddenAreas'), fraction > ReliefV1.hiddenAreasRatio, reason: reason);
+        expect(entry['refused'], flags.contains('lowRelief') || fraction > Relief360V1.maxFilled, reason: reason);
+      }
+      final hidden = (reliefs['hidden']!['filledFraction'] as num).toDouble();
+      expect(hidden, allOf(greaterThan(ReliefV1.hiddenAreasRatio), lessThanOrEqualTo(Relief360V1.maxFilled)));
+      expect(reliefs['hidden']!['flags'], ['hiddenAreas']);
+      expect(reliefs['hidden']!['refused'], isFalse);
+      expect((reliefs['tooMuch']!['filledFraction'] as num).toDouble(), greaterThan(Relief360V1.maxFilled));
+      expect(reliefs['tooMuch']!['flags'], ['hiddenAreas']);
+      expect(reliefs['tooMuch']!['refused'], isTrue);
     });
   });
 }

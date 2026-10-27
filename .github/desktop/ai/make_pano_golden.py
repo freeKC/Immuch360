@@ -244,6 +244,12 @@ def object_across_seam() -> list:
             for y in range(FRAME_HEIGHT)]
 
 
+def object_and_pillar() -> list:
+    """The same room and object, with a near pillar too, columns 22 to 27, rows 4 to 19"""
+    return [[9.0 if 22 <= x <= 27 and 4 <= y <= 19 else value for x, value in enumerate(row)]
+            for y, row in enumerate(object_across_seam())]
+
+
 def flat_disparity() -> list:
     return [[4.0] * FRAME_WIDTH for _ in range(FRAME_HEIGHT)]
 
@@ -304,6 +310,10 @@ def build() -> dict:
                         object_across_seam, MAX_SHIFT_DEGREES),
             relief_case("strong", "a shift of 30° that opens holes beside the object, across the seam",
                         object_across_seam, 30.0),
+            relief_case("hidden", "a shift of 60°: between 5 % and 8 % filled, hiddenAreas, still made",
+                        object_across_seam, 60.0),
+            relief_case("tooMuch", "a shift of 40° with a pillar too: more than 8 % filled, refused",
+                        object_and_pillar, 40.0),
             relief_case("flat", "a constant map: lowRelief, refused", flat_disparity, MAX_SHIFT_DEGREES),
         ],
     }
