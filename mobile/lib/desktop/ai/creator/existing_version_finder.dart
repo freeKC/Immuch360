@@ -8,6 +8,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
@@ -15,9 +16,6 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _log = Logger('ExistingVersionFinder');
-
-/// The head of a file read to find its XMP, as the readers of GPano do
-const versionHeadBytes = 128 * 1024;
 
 /// What two versions of one original are compared on, as [StereoPhotoXmp.settingsKey] gives it for a file: the model
 /// file, the pipeline, the parallax, the convergence and the quarter turns
@@ -50,12 +48,12 @@ class ExistingVersion {
   String? get settingsKey => xmp.settingsKey;
 }
 
-/// The first [versionHeadBytes] of the file at [path], null when it cannot be read
+/// The first [versionHeadLength] of the file at [path], null when it cannot be read
 Future<Uint8List?> readFileHead(String path) async {
   RandomAccessFile? file;
   try {
     file = await File(path).open();
-    return await file.read(versionHeadBytes);
+    return await file.read(versionHeadLength);
   } on FileSystemException {
     return null;
   } finally {

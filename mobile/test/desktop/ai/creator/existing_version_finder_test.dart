@@ -6,6 +6,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -277,9 +278,9 @@ void main() {
     final near = File(p.join(photos, 'near.jpg'))
       ..writeAsBytesSync([...xmpApp1Segment(xmp.toXml()), ...List.filled(200 * 1024, 0)]);
     final far = File(p.join(photos, 'far.jpg'))
-      ..writeAsBytesSync([...List.filled(versionHeadBytes, 0), ...xmpApp1Segment(xmp.toXml())]);
+      ..writeAsBytesSync([...List.filled(versionHeadLength, 0), ...xmpApp1Segment(xmp.toXml())]);
 
-    expect((await readFileHead(near.path))!.length, versionHeadBytes);
+    expect((await readFileHead(near.path))!.length, versionHeadLength);
     expect(StereoPhotoXmp.findIn((await readFileHead(near.path))!), isNotNull);
     expect(StereoPhotoXmp.findIn((await readFileHead(far.path))!), isNull);
     expect(await readFileHead(p.join(photos, 'none.jpg')), isNull);
