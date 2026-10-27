@@ -520,7 +520,7 @@ ImmersiveExif mergedExif(ImmersiveExif job, ImmersiveExif original) {
   );
 }
 
-/// The pair of [eye]: twice its width, the eye on the left, the right half to be written (opaque black until then)
+/// The pair of [eye]: twice its width, the eye on the left, the right half to be written (transparent zeros until then)
 Uint8List pairWithLeftEye(SbsDecoded eye) {
   final width = eye.width;
   final rowBytes = 4 * width;
