@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -558,6 +559,57 @@ void main() {
 
       expect(immersiveApi.opened.single['url'], folder.urls['/Photos/salon_3D_LRF_Full_SBS.jpg'].toString());
       expect(immersiveApi.opened.single['title'], 'salon_3D_LRF_Full_SBS.jpg');
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, a 3D photo of a newer format keeps "View in 3D", greyed with its reason', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(formatVersion: immersiveFormatVersion + 1),
+      );
+      await pumpPhotoPage(tester, '/salon_3D_LRF_Full_SBS.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => view3dButton.evaluate().isNotEmpty);
+
+      expect(view3dButton, findsOneWidget);
+      expect(tester.widget<IconButton>(view3dButton).onPressed, isNull);
+      expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, a version of a newer format keeps "View the 3D version", greyed with its reason', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.jpg'] = png;
+      share.files['/Photos/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(
+        width: 8000,
+        height: 3000,
+        xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: png.length, formatVersion: immersiveFormatVersion + 1),
+      );
+      share.folders['/Photos'] = [share.file('/Photos/salon.jpg'), share.file('/Photos/salon_3D_LRF_Full_SBS.jpg')];
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => versionButton.evaluate().isNotEmpty);
+
+      expect(versionButton, findsOneWidget);
+      expect(tester.widget<IconButton>(versionButton).onPressed, isNull);
+      expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a phone, a photo of two eyes side by side has no "View in 3D"', (tester) async {
+      share.files['/salon_3D_LRF_Full_SBS.jpg'] = jpegFile(width: 8000, height: 3000, xmp: ourXmp());
+      await pumpPhotoPage(tester, '/salon_3D_LRF_Full_SBS.jpg');
+      await settleDetection(tester);
+
+      expect(view3dButton, findsNothing);
 
       await endRealIo(tester);
     });
