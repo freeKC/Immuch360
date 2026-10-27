@@ -72,6 +72,7 @@ import com.meta.spatial.runtime.SceneMesh
 import com.meta.spatial.runtime.SceneTexture
 import com.meta.spatial.runtime.SessionState
 import com.meta.spatial.runtime.StereoMode
+import com.meta.spatial.runtime.TriangleMesh
 import com.meta.spatial.toolkit.AppSystemActivity
 import com.meta.spatial.toolkit.DpDisplayOptions
 import com.meta.spatial.toolkit.Equirect180ShapeOptions
@@ -179,6 +180,12 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * then [ReliefJob] makes its right eye on a thread of its own, the stages on the status line under an indeterminate
  * bar, and the 3D button reads "Stop relief" meanwhile; both eyes replace the flat photo once ready. A relief stopped,
  * refused or failed leaves the photo flat with its reason for a few seconds. See [showReliefPhoto].
+ *
+ * Such a relief can also show in 2.5D (experimental): the photo on a mesh moved by its depth map ([ReliefMesh]), which
+ * answers the head as well as the eyes, the quad just behind it as a backdrop for the gaps of the mesh. The 3D button
+ * goes from 3D to 2.5D, then 2D; the request says which of 3D or 2.5D comes first (stereo by default, the
+ * aiReliefQuestMode setting). The relief fades as the head moves away from where the quad was placed. See
+ * [applyStereoPlacement].
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -331,6 +338,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var stereoChoicesFor: Pair<String, Long>? = null
   /** The choices on the spatial photo shown before a recreation (see onCreate), taken back once by showStereoPhoto. */
   private var restoredStereoChoices: StereoPhotoChoices? = null
+  /** Where the eyes were and where they looked when the quad was last placed: the start pose of the 2.5D view. */
+  private var stereoEyes: Vector3? = null
+  private var stereoGaze: Vector3? = null
   /** Takes "Relief estimated by AI" off the status line once it was read, see [showReliefEstimated]. */
   private var reliefLabelJob: Job? = null
   /** The status line of the stereo photo shown, under a passing label. */
@@ -345,6 +355,26 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefApplyJob: Job? = null
   /** The heat of the headset, watched while the viewer has a relief job. */
   private var thermalWatch: ThermalWatch? = null
+
+  // 2.5D view of a relief, see createReliefMesh and ReliefMesh
+  /** The mesh of the 2.5D view, hidden but while a relief shows in 2.5D. */
+  private var reliefMeshEntity: Entity? = null
+  /** Its material, once its scene object is there. */
+  private var reliefMeshMaterial: SceneMaterial? = null
+  /** Its triangles and the scene mesh made of them, written by the mesh creator. */
+  @Volatile private var reliefTriangles: TriangleMesh? = null
+  @Volatile private var reliefSceneMesh: SceneMesh? = null
+  /** The mesh of the relief shown, null for any other photo and before its relief is made. */
+  private var reliefMesh: ReliefMesh? = null
+  /** The texture coordinates and the triangles of [reliefMesh] are in the triangles of the scene. */
+  private var reliefMeshWritten = false
+  /** 2.5D chosen for the relief shown (its request, a recreation, the 3D button): shown once its mesh is there. */
+  private var stereo25d = false
+  /** The part of the relief the vertices were last placed for, see ReliefMesh.attenuation. */
+  private var reliefAttenuation = 1.0
+  /** The arrays handed to the triangles, made at the first 2.5D view. */
+  private var meshPositions: FloatArray? = null
+  private var meshTextureCoordinates: FloatArray? = null
   private val mainHandler = Handler(Looper.getMainLooper())
 
   // Info panel views
@@ -517,6 +547,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           saved.openingId,
           threeD = savedInstanceState.getBoolean(STATE_STEREO_3D, true),
           angleDeg = savedInstanceState.getFloat(STATE_STEREO_ANGLE_DEG),
+          mesh25d = savedInstanceState.getBoolean(STATE_STEREO_25D, false),
         )
     }
     liveViewer = this
@@ -524,8 +555,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Keeps the media shown now for a recreation (see onCreate), with the 3D layout and the field of view on screen (the
-   * user's corrections), for a video the position it reached and for a spatial photo its 3D or 2D choice and the width
-   * of its quad, so that the new viewer carries on with the same opening as if nothing happened.
+   * user's corrections), for a video the position it reached and for a spatial photo its 3D, 2.5D or 2D choice and the
+   * width of its quad, so that the new viewer carries on with the same opening as if nothing happened.
    */
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -543,12 +574,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       when {
         !media.isStereoPhoto -> null
         stereoChoicesFor == media.url to media.openingId ->
-          StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg)
+          StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg, stereo25d)
         else -> restoredStereoChoices?.forPhoto(media.url, media.openingId)
       }
     if (choices != null) {
       outState.putBoolean(STATE_STEREO_3D, choices.threeD)
       outState.putFloat(STATE_STEREO_ANGLE_DEG, choices.angleDeg)
+      outState.putBoolean(STATE_STEREO_25D, choices.mesh25d)
     }
   }
 
@@ -580,6 +612,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       createSkybox()
       createHalfSphere()
       createStereoQuad()
+      createReliefMesh()
       videoEntity = Entity.create(Panel(R.id.immersive_video_panel), Transform(), Visible(false))
       infoEntity =
         Entity.createPanelEntity(
@@ -831,11 +864,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     if (media.isStereoPhoto) {
-      // 3D or 2D (left eye, or the original itself): what the quad shows now; "Stop relief" while a relief is made
+      // 3D, 2.5D or 2D (left eye, or the original itself): what the quad shows now; "Stop relief" while a relief runs
       val key =
         if (reliefRun?.running == true) StereoComposer.LABEL_RELIEF_STOP
-        else if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D
-        else StereoComposer.twoDLabelKey(media.stereoKind?.leftEyeIsOriginal == true)
+        else StereoComposer.viewLabelKey(stereoView(), media.stereoKind?.leftEyeIsOriginal == true)
       view.text = StereoComposer.label(media.stereoLabels, key)
       view.visibility = View.VISIBLE
       return
@@ -1004,6 +1036,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       centerSpheresOnHead(head.t)
       // A spatial photo shown before the first head pose goes in front of the user once it is known
       if (!stereoPlacedWithHead && stereoEyeSize != null && request?.isStereoPhoto == true) placeStereoQuad()
+      if (reliefMeshShown) followHeadWithRelief(head.t)
     }
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
@@ -1839,6 +1872,81 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
+   * The mesh of the 2.5D view of a relief (see [ReliefMesh]): one TriangleMesh of ReliefMesh.MAX_VERTICES vertices and
+   * MAX_INDICES indices, made once as the lines of the SDK make theirs (TriangleMesh, updateGeometry, updatePrimitives,
+   * SceneMesh.fromTriangleMesh, then updateWithTriangleMesh after each change), with an unlit material made like the
+   * quad one, double sided too. Nothing drawn until a relief shows in 2.5D: every triangle has no area, and two
+   * vertices give it bounds as wide as any relief. Its texture is the one of the quad, read with the stereo mode None:
+   * the mesh itself gives each eye its view.
+   */
+  private fun createReliefMesh() {
+    registerMeshCreator(RELIEF_MESH) { entity ->
+      val material =
+        entity.getComponent<Material>().generateSceneMaterial(entity, this).apply {
+          setSidedness(MaterialSidedness.DOUBLE_SIDED)
+          setStereoMode(StereoMode.None)
+        }
+      try {
+        val triangles =
+          TriangleMesh(
+            ReliefMesh.MAX_VERTICES,
+            ReliefMesh.MAX_INDICES,
+            intArrayOf(0, ReliefMesh.MAX_INDICES),
+            arrayOf(material),
+          )
+        val bounds =
+          FloatArray(3 * ReliefMesh.MAX_VERTICES).apply {
+            floatArrayOf(-10f, -10f, ReliefMesh.MIN_DEPTH_M.toFloat()).copyInto(this, 0)
+            floatArrayOf(10f, 10f, ReliefMesh.MAX_DEPTH_M.toFloat()).copyInto(this, 3)
+          }
+        triangles.updateGeometry(
+          0,
+          bounds,
+          RELIEF_MESH_NORMALS,
+          FloatArray(2 * ReliefMesh.MAX_VERTICES),
+          IntArray(ReliefMesh.MAX_VERTICES) { WHITE },
+        )
+        triangles.updatePrimitives(0, IntArray(ReliefMesh.MAX_INDICES))
+        SceneMesh.fromTriangleMesh(triangles, false).also {
+          reliefTriangles = triangles
+          reliefSceneMesh = it
+        }
+      } catch (e: Throwable) {
+        // Without its triangles the entity stays hidden and the reliefs in 3D
+        Log.e(TAG, "relief mesh could not be made, reliefs stay in 3D", e)
+        SceneMesh.singleSidedQuad(0.5f, 0.5f, material)
+      }
+    }
+    val entity =
+      Entity.create(
+        listOf(
+          Mesh(Uri.parse(RELIEF_MESH), hittable = MeshCollision.NoCollision),
+          Material().apply { unlit = true },
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, 0f), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        ),
+      )
+    reliefMeshEntity = entity
+    systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
+      runOnUiThread {
+        val material = sceneObject.mesh?.materials?.firstOrNull()
+        if (material == null) {
+          Log.e(TAG, "relief mesh material not found, reliefs stay in 3D")
+          return@runOnUiThread
+        }
+        Log.i(TAG, "relief mesh ready, ${ReliefMesh.MAX_VERTICES} vertices")
+        reliefMeshMaterial = material
+        // A relief may wait for it in 2.5D
+        if (reliefMesh != null && stereo25d) {
+          applyStereoMode()
+          applyStereoPlacement()
+          updateStereoView()
+        }
+      }
+    } ?: Log.e(TAG, "relief mesh scene object not available")
+  }
+
+  /**
    * Shows [media] on the stereo quad: no sphere around (black), its file read whole (a few MB: the bridge or the
    * server original, or the file on the headset), both eyes decoded and set side by side on one texture: the two
    * items of an Apple spatial photo (see [decodeStereo]), the two halves of a side by side photo (see [SbsPhoto]), or
@@ -1857,6 +1965,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.stereoMaxAngleDeg)
     restoredStereoChoices = null
     stereo3d = restored?.threeD ?: true
+    // A relief first shows as its request says, 3D or 2.5D; the photo of a recreation as the user left it
+    stereo25d =
+      restored?.mesh25d ?: ((kind as? StereoPhotoKind.DepthRelief)?.spec?.mode == ReliefViewMode.MESH_25D)
     stereoHasSecondEye = false
     stereoAngleDeg =
       restored?.angleDeg
@@ -1987,23 +2098,39 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
-  /** Both eyes of a finished relief on the quad in place of the flat photo, where the quad is now. */
+  /**
+   * Both eyes of a finished relief on the quad in place of the flat photo, where the quad is now, and the mesh of its
+   * 2.5D view made from its depth map: shown at once when 2.5D comes first, else at the 3D button.
+   */
   private fun showRelief(media: MediaRequest, result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
     reliefApplyJob?.cancel()
     reliefApplyJob =
       scope.launch {
         val holder = AtomicReference<StereoTexture?>()
+        var mesh: ReliefMesh? = null
         try {
           decodeMutex.withLock {
             withContext(Dispatchers.Default) {
               val left = result.photo.bitmap
               val texture = StereoComposer.compose(left, result.eye.bitmap, StereoComposer.Crop(0, 0, left.width))
               holder.set(StereoTexture(texture, left.width, left.height, hasSecondEye = true))
+              // The relief stays in 3D without it: the 3D button then goes to 2D as for any stereo photo
+              mesh =
+                try {
+                  ReliefMesh(result.map)
+                } catch (e: Throwable) {
+                  Log.e(TAG, "relief: no 2.5D mesh for this photo", e)
+                  null
+                }
             }
           }
           ensureActive()
           val source = if (result.fromCache) "the cache" else "the model on ${result.path}"
-          Log.i(TAG, "relief shown in 3D, depth map from $source")
+          val made = mesh?.let { "${it.columns}x${it.rows} mesh" } ?: "no mesh"
+          Log.i(TAG, "relief shown in ${if (stereo25d) "2.5D" else "3D"}, depth map from $source, $made")
+          reliefMesh = mesh
+          reliefMeshWritten = false
+          reliefAttenuation = 1.0
           setReliefProgress(false)
           applyStereoTexture(holder.getAndSet(null) ?: return@launch, place = false)
         } catch (e: CancellationException) {
@@ -2164,6 +2291,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     material.setAlbedoTexture(texture)
+    // The mesh of the 2.5D view reads the same texture: never the one destroyed below
+    reliefMeshMaterial?.setAlbedoTexture(texture)
     stereoTexture?.destroy()
     stereoTexture = texture
     stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
@@ -2198,7 +2327,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun showReliefEstimated() {
     val media = request ?: return
-    if (media.stereoKind?.isEstimatedRelief != true || !stereo3d || !stereoHasSecondEye) return
+    if (media.stereoKind?.isEstimatedRelief != true || stereoView() == StereoView.TWO_D) return
     val label = StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_RELIEF_ESTIMATED)
     Log.i(TAG, "stereo photo: relief estimated by AI, said for ${TransientText.HOLD_MS} ms")
     showPassing(label)
@@ -2224,16 +2353,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setStatus(stereoStatus)
   }
 
-  /** LeftRight in 3D, each eye its half of the texture; MonoLeft in 2D or without a second eye. */
+  /**
+   * What the quad shows now: 3D when the photo has both eyes and the user left it in 3D, 2.5D when a relief has its
+   * mesh and 2.5D was chosen, 2D otherwise.
+   */
+  private fun stereoView(): StereoView =
+    when {
+      reliefMeshShown -> StereoView.MESH_25D
+      stereo3d && stereoHasSecondEye -> StereoView.THREE_D
+      else -> StereoView.TWO_D
+    }
+
+  /**
+   * LeftRight in 3D, each eye its half of the texture; MonoLeft in 2D or without a second eye, and in 2.5D, where the
+   * quad is the backdrop of the mesh. The mesh shows in 2.5D only. [applyStereoPlacement] puts both where they go.
+   */
   private fun applyStereoMode() {
-    val mode = if (stereo3d && stereoHasSecondEye) StereoMode.LeftRight else StereoMode.MonoLeft
+    val view = stereoView()
+    val mode = if (view == StereoView.THREE_D) StereoMode.LeftRight else StereoMode.MonoLeft
     stereoQuadMaterial?.setStereoMode(mode)
-    Log.i(TAG, "stereo quad mode is now $mode")
+    if (view == StereoView.MESH_25D) showReliefMesh() else reliefMeshEntity?.setComponent(Visible(false))
+    val backdrop = if (view == StereoView.MESH_25D) ", backdrop of the 2.5D mesh" else ""
+    Log.i(TAG, "stereo quad mode is now $mode$backdrop")
   }
 
   /**
-   * The 3D button on a spatial photo: 3D, or the left eye in 2D. Nothing to switch without a second eye. While a relief
-   * is made it reads "Stop relief", and stops it: the photo stays flat.
+   * The 3D button on a spatial photo: 3D, or the left eye in 2D; a relief made in the headset goes through 2.5D between
+   * them (see StereoComposer.nextView). Nothing to switch without a second eye. While a relief is made it reads "Stop
+   * relief", and stops it: the photo stays flat.
    */
   private fun toggleStereoPhotoMode(fromPanel: Boolean) {
     val run = reliefRun
@@ -2246,10 +2393,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "spatial photo without a second eye: stays in 2D")
       return
     }
-    stereo3d = !stereo3d
+    val next = StereoComposer.nextView(stereoView(), meshAvailable = reliefMesh != null && reliefMeshReady)
+    stereo3d = next != StereoView.TWO_D
+    stereo25d = next == StereoView.MESH_25D
+    // A new 2.5D view starts from where the head is: the whole relief, faded as the head moves away
+    if (next == StereoView.MESH_25D) reliefAttenuation = 1.0
     applyStereoMode()
+    applyStereoPlacement()
     updateStereoView()
-    if (stereo3d) showReliefEstimated() else hideReliefEstimated()
+    if (next != StereoView.TWO_D) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }
 
@@ -2259,25 +2411,60 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * eye position; [onFrame] places it again once the pose is known.
    */
   private fun placeStereoQuad() {
-    val entity = stereoQuadEntity ?: return
+    if (stereoQuadEntity == null) return
     val head = lastHeadPosition
     val eyes = head ?: Vector3(0f, DEFAULT_EYE_HEIGHT, 0f)
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
     val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
     val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = eyes + (direction * StereoComposer.DISTANCE_M)
-    position.y = eyes.y
-    entity.setComponent(Transform(Pose(position, StereoComposer.quadRotation(direction))))
+    stereoEyes = Vector3(eyes.x, eyes.y, eyes.z)
+    stereoGaze = direction
     stereoPlacedWithHead = head != null
-    applyStereoScale()
+    // A 2.5D view starts again from here: the whole relief
+    if (reliefMeshShown) {
+      reliefAttenuation = 1.0
+      writeReliefMesh(withTriangles = false)
+    }
+    applyStereoPlacement()
     Log.i(
       TAG,
-      "stereo quad placed at $position, gaze $direction, head ${if (head != null) "known" else "unknown"}",
+      "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}",
     )
   }
 
-  /** The size of the quad for the angular width chosen and the eyes of the photo shown. */
+  /**
+   * The quad at the start pose [placeStereoQuad] took last: 2 m along the gaze, at the height of the eyes, as wide as
+   * its angle. In 2.5D the mesh has its eyes at that pose, and the quad goes just behind the farthest vertex of the
+   * mesh, as wide to the eyes: a backdrop that shows the photo through the gaps the breaks of the mesh leave, so that
+   * nothing is missing from the start pose, and that comes back to the plane of the quad as the relief fades.
+   */
+  private fun applyStereoPlacement() {
+    val entity = stereoQuadEntity ?: return
+    val eyes = stereoEyes ?: return
+    val gaze = stereoGaze ?: return
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    val rotation = StereoComposer.quadRotation(gaze)
+    val view = if (reliefMeshShown) reliefView() else null
+    val mesh = reliefMesh
+    val distance =
+      if (view != null && mesh != null) {
+        (mesh.farthest(view, reliefAttenuation) * (1 + BACKDROP_MARGIN) + BACKDROP_MARGIN_M).toFloat()
+      } else {
+        StereoComposer.DISTANCE_M
+      }
+    entity.setComponent(Transform(Pose(eyes + (gaze * distance), rotation)))
+    val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight, distance)
+    entity.setComponent(Scale(Vector3(width, height, 1f)))
+    if (view != null) reliefMeshEntity?.setComponent(Transform(Pose(eyes, rotation)))
+  }
+
+  /** The size of the quad for the angular width chosen and the eyes of the photo shown; the mesh too in 2.5D. */
   private fun applyStereoScale() {
+    if (reliefMeshShown) {
+      writeReliefMesh(withTriangles = false)
+      applyStereoPlacement()
+      return
+    }
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
     val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight)
     stereoQuadEntity?.setComponent(Scale(Vector3(width, height, 1f)))
@@ -2293,9 +2480,105 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (infoVisible) setStatus(text) else showFeedback(text)
   }
 
-  /** Any other media: the quad goes away (its texture stays until the next spatial photo replaces it). */
+  /** The scene made the mesh of the 2.5D view and its material. */
+  private val reliefMeshReady: Boolean
+    get() = reliefMeshMaterial != null && reliefTriangles != null && reliefSceneMesh != null
+
+  /** The relief shown is on its mesh: 2.5D chosen, its mesh made, the scene ready, the texture of its eyes there. */
+  private val reliefMeshShown: Boolean
+    get() = stereo25d && stereoHasSecondEye && reliefMesh != null && reliefMeshReady
+
+  /** The photo of the quad as the mesh sees it, with the settings of relief-v1 of its request. */
+  private fun reliefView(): ReliefView? {
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return null
+    val spec = (request?.stereoKind as? StereoPhotoKind.DepthRelief)?.spec ?: return null
+    return ReliefView.forQuad(stereoAngleDeg, eyeWidth, eyeHeight, spec.parallax, spec.convergence)
+  }
+
+  /**
+   * The mesh of the relief shown, in 2.5D: the texture of the quad on it, its triangles and texture coordinates written
+   * once for this photo, its vertices for where the head is now (see [writeReliefMesh]), then visible.
+   */
+  private fun showReliefMesh() {
+    val material = reliefMeshMaterial ?: return
+    val texture = stereoTexture ?: return
+    material.setAlbedoTexture(texture)
+    material.setStereoMode(StereoMode.None)
+    val eyes = stereoEyes
+    val head = lastHeadPosition
+    reliefAttenuation =
+      if (eyes != null && head != null) ReliefMesh.attenuation(head.distanceTo(eyes).toDouble()) else 1.0
+    if (!writeReliefMesh(withTriangles = !reliefMeshWritten)) return
+    reliefMeshEntity?.setComponent(Visible(true))
+  }
+
+  /**
+   * Writes the vertices of the mesh for [reliefAttenuation] and the photo of the quad as it is now, and with
+   * [withTriangles] its texture coordinates and its triangles too. A failure of the SDK leaves the relief in 3D, said
+   * in the log: false then.
+   */
+  private fun writeReliefMesh(withTriangles: Boolean): Boolean {
+    val mesh = reliefMesh ?: return false
+    val triangles = reliefTriangles ?: return false
+    val sceneMesh = reliefSceneMesh ?: return false
+    val view = reliefView() ?: return false
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return false
+    return try {
+      val positions = mesh.positions(view, reliefAttenuation, meshPositions ?: FloatArray(3 * ReliefMesh.MAX_VERTICES))
+      meshPositions = positions
+      val textureCoordinates =
+        if (withTriangles) {
+          val out = meshTextureCoordinates ?: FloatArray(2 * ReliefMesh.MAX_VERTICES)
+          meshTextureCoordinates = out
+          mesh.textureCoordinates(eyeWidth, eyeHeight, out)
+        } else {
+          null
+        }
+      triangles.updateGeometry(0, positions, RELIEF_MESH_NORMALS, textureCoordinates, null)
+      if (withTriangles) triangles.updatePrimitives(0, mesh.indices())
+      sceneMesh.updateWithTriangleMesh(triangles, false)
+      if (withTriangles) {
+        reliefMeshWritten = true
+        Log.i(TAG, "relief mesh written: ${mesh.columns}x${mesh.rows} vertices, ${view.width}x${view.height} m")
+      }
+      true
+    } catch (e: Throwable) {
+      Log.e(TAG, "relief: the 2.5D mesh could not be written, shown in 3D", e)
+      reliefMesh = null
+      stereo25d = false
+      reliefMeshEntity?.setComponent(Visible(false))
+      applyStereoMode()
+      applyStereoPlacement()
+      updateStereoView()
+      false
+    }
+  }
+
+  /**
+   * In 2.5D, at each frame with a head pose: the relief fades as the head moves away from the start pose (see
+   * ReliefMesh.attenuation), the vertices and the backdrop moving again before a change could show.
+   */
+  private fun followHeadWithRelief(head: Vector3) {
+    val eyes = stereoEyes ?: return
+    val attenuation = ReliefMesh.attenuation(head.distanceTo(eyes).toDouble())
+    if (!ReliefMesh.needsUpdate(reliefAttenuation, attenuation)) return
+    if (attenuation == 0.0 || attenuation == 1.0) {
+      Log.i(TAG, "relief: the 2.5D relief is now ${if (attenuation == 0.0) "flat" else "whole"}")
+    }
+    reliefAttenuation = attenuation
+    if (writeReliefMesh(withTriangles = false)) applyStereoPlacement()
+  }
+
+  /**
+   * Any other media: the quad goes away (its texture stays until the next spatial photo replaces it), and the mesh of
+   * a relief with it.
+   */
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
+    reliefMeshEntity?.setComponent(Visible(false))
+    reliefMesh = null
+    reliefMeshWritten = false
+    stereo25d = false
     pendingStereo?.bitmap?.recycle()
     pendingStereo = null
     stereoPlacedWithHead = false
@@ -3252,6 +3535,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingStereo = null
     stereoTexture = null
     stereoQuadMaterial = null
+    // The triangles go with the scene, as the textures do
+    reliefMesh = null
+    reliefMeshMaterial = null
+    reliefTriangles = null
+    reliefSceneMesh = null
     super.onSpatialShutdown()
   }
 
@@ -3275,6 +3563,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
     private const val STATE_STEREO_3D = "app.alextran.immich.immersive.STEREO_3D"
     private const val STATE_STEREO_ANGLE_DEG = "app.alextran.immich.immersive.STEREO_ANGLE_DEG"
+    private const val STATE_STEREO_25D = "app.alextran.immich.immersive.STEREO_25D"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
@@ -3328,6 +3617,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
     /** Mesh of the stereo quad of the spatial photos: a unit quad, sized with its Scale component. */
     private const val STEREO_QUAD_MESH = "mesh://immuch_stereo_quad"
+
+    /** Mesh of the 2.5D view of a relief, see [ReliefMesh]. */
+    private const val RELIEF_MESH = "mesh://immuch_relief_mesh"
+
+    /** The normals of the mesh, towards the user (an unlit material does not read them), and its vertex colour. */
+    private val RELIEF_MESH_NORMALS by lazy {
+      FloatArray(3 * ReliefMesh.MAX_VERTICES).also { normals ->
+        for (k in 0 until ReliefMesh.MAX_VERTICES) normals[3 * k + 2] = -1f
+      }
+    }
+    private const val WHITE = -1
+
+    /**
+     * The backdrop of the 2.5D view, the quad, goes this much behind the farthest vertex of the mesh, in part of its
+     * distance and in meters: never in the mesh, and on the plane of the quad but 6 cm when the relief is flat.
+     */
+    private const val BACKDROP_MARGIN = 0.02
+    private const val BACKDROP_MARGIN_M = 0.02
 
     /** Eye height used to place the quad before the first head pose. */
     private const val DEFAULT_EYE_HEIGHT = 1.6f

@@ -95,14 +95,13 @@ class StereoPhotoKindTest {
   fun `a relief request names its mode for 2_5D only, and stereo is the rest`() {
     val requests = requests("depthRelief")
     val server = StereoPhotoKind.parse(requests.getValue("a photo of the server")) as StereoPhotoKind.DepthRelief
-    val mesh =
-      StereoPhotoKind.parse(requests.getValue("a photo of the server, first shown in 2.5D")) as StereoPhotoKind.DepthRelief
+    val text = requests.getValue("a photo of the server, first shown in 2.5D")
+    val mesh = StereoPhotoKind.parse(text) as StereoPhotoKind.DepthRelief
 
     assertEquals(ReliefViewMode.STEREO, server.spec.mode)
     assertEquals(ReliefViewMode.MESH_25D, mesh.spec.mode)
     // The same photo, the same map: only the first view changes
     assertEquals(server.spec.copy(mode = ReliefViewMode.MESH_25D), mesh.spec)
-    val text = requests.getValue("a photo of the server, first shown in 2.5D")
     for (other in listOf("\"volumetric\"", "\"stereo\"", "2", "null")) {
       val read = StereoPhotoKind.parse(text.replace("\"mesh25d\"", other)) as StereoPhotoKind.DepthRelief
       assertEquals(other, ReliefViewMode.STEREO, read.spec.mode)

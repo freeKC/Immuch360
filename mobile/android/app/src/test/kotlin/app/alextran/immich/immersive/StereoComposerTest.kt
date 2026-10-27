@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -120,6 +121,34 @@ class StereoComposerTest {
     assertEquals(choices, choices.forPhoto("https://server/photo.heic", 7L))
     assertNull(choices.forPhoto("https://server/other.heic", 7L))
     assertNull(choices.forPhoto("https://server/photo.heic", 8L))
+    // The 2.5D view of a relief comes back too; any other photo is not in 2.5D
+    val mesh = choices.copy(threeD = true, mesh25d = true)
+    assertEquals(mesh, mesh.forPhoto("https://server/photo.heic", 7L))
+    assertFalse(StereoPhotoChoices("u", 1L, threeD = true, angleDeg = 48f).mesh25d)
+  }
+
+  @Test
+  fun `the 3D button goes from 3D to 2_5D when the relief has its mesh, then to 2D, then back to 3D`() {
+    assertEquals(StereoView.MESH_25D, StereoComposer.nextView(StereoView.THREE_D, meshAvailable = true))
+    assertEquals(StereoView.TWO_D, StereoComposer.nextView(StereoView.MESH_25D, meshAvailable = true))
+    assertEquals(StereoView.THREE_D, StereoComposer.nextView(StereoView.TWO_D, meshAvailable = true))
+    // Any other stereo photo, or a relief whose mesh could not be made: 3D and 2D as before
+    assertEquals(StereoView.TWO_D, StereoComposer.nextView(StereoView.THREE_D, meshAvailable = false))
+    assertEquals(StereoView.THREE_D, StereoComposer.nextView(StereoView.TWO_D, meshAvailable = false))
+    assertEquals(StereoView.TWO_D, StereoComposer.nextView(StereoView.MESH_25D, meshAvailable = false))
+  }
+
+  @Test
+  fun `the 3D button says what the quad shows, 2_5D experimental included`() {
+    assertEquals(StereoComposer.LABEL_3D, StereoComposer.viewLabelKey(StereoView.THREE_D, leftEyeIsOriginal = true))
+    assertEquals(StereoComposer.LABEL_25D, StereoComposer.viewLabelKey(StereoView.MESH_25D, leftEyeIsOriginal = true))
+    assertEquals(
+      StereoComposer.LABEL_2D_ORIGINAL,
+      StereoComposer.viewLabelKey(StereoView.TWO_D, leftEyeIsOriginal = true),
+    )
+    assertEquals(StereoComposer.LABEL_2D, StereoComposer.viewLabelKey(StereoView.TWO_D, leftEyeIsOriginal = false))
+    assertEquals("2.5D (experimental)", StereoComposer.label(emptyMap(), StereoComposer.LABEL_25D))
+    assertEquals("2,5D (expérimental)", StereoComposer.label(mapOf("ai25d" to "2,5D (expérimental)"), "ai25d"))
   }
 
   @Test
@@ -236,6 +265,7 @@ class StereoComposerTest {
     val translated =
       mapOf(
         StereoComposer.LABEL_2D_ORIGINAL to "ai_immersive_2d_original",
+        StereoComposer.LABEL_25D to "ai_immersive_mode_25d",
         StereoComposer.LABEL_RELIEF_ESTIMATED to "ai_immersive_relief_estimated",
         StereoComposer.LABEL_NO_NAVIGATION_3D to "ai_immersive_no_navigation",
         StereoComposer.LABEL_RELIEF_PREPARING to "ai_immersive_state_preparing",
