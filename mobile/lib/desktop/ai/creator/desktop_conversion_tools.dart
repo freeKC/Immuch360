@@ -1,6 +1,11 @@
-// What the queue of the 3D conversions runs with on a computer (ConversionTools of conversion_queue.dart), put together
-// from the lots that made each part: the engine of lot A4b behind the hardware gate, the writer of the 3D photos of
+// What the queue of the AI conversions runs with on a computer (ConversionTools of conversion_queue.dart), put together
+// from the lots that made each part: the engine of lot A4b behind the hardware gate, the writer of the versions of
 // lot A5b, and the versions the index of the folder library knows (lot A6a). desktopOverrides() gives them to the queue.
+//
+// The engines of the kinds of phases 2 and 3 are registered by kind in conversionEnginesProvider (lot C3): the 3D scene
+// by lot S1, the 3D version of a 360° panorama by P1, the 360° panorama by P3 (or the ComfyUI of the user, P5). Until
+// a lot registers its kind, this build does not make it (ConversionTools.supports), and the tests give the fakes. The
+// times of the steps are kept in desktop_ai.json for the time left of the jobs.
 //
 // The engine is made when a job runs, from the components installed at that moment: they may be downloaded after the
 // app started, from the conversion dialog or the settings. While it runs, or while the queue has a job under way, the
@@ -161,7 +166,7 @@ class LibraryVersionIndex implements DerivedVersionIndex {
   }
 }
 
-/// The engine of the conversions, made from the components installed when a job runs: DartImmersiveEngine on ONNX
+/// The engine of the 3D photos, made from the components installed when a job runs: DartImmersiveEngine on ONNX
 /// Runtime and Depth Anything V2 Small, kept from one job to the next while the same files serve
 class DesktopAiEngine implements ImmersiveEngine {
   DesktopAiEngine({required this.gate, ImmersiveEngine Function(AiGateResult gate)? create})
@@ -256,7 +261,7 @@ final desktopAiGateProvider = Provider<HardwareGate>(
   (ref) => HardwareGate(components: ServiceComponentFiles(ref.watch(aiComponentsServiceProvider))),
 );
 
-/// The engine of the app. While it runs, or while the queue has a job under way, the components stay.
+/// The engine of the 3D photos of the app. While it runs, or while the queue has a job under way, the components stay.
 final desktopAiEngineProvider = Provider<DesktopAiEngine>((ref) {
   final engine = DesktopAiEngine(gate: ref.watch(desktopAiGateProvider));
   final service = ref.watch(aiComponentsServiceProvider);
@@ -268,6 +273,10 @@ final desktopAiEngineProvider = Provider<DesktopAiEngine>((ref) {
   });
   return engine;
 });
+
+/// The engines of the kinds of phases 2 and 3, by kind: none in this build yet. S1, P1 and P3 (or P5) add theirs here,
+/// each with the key of the settings its files carry; the tests give the fakes.
+final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>>((ref) => const {});
 
 /// desktop_ai.json, where the screens read and keep the settings of the conversions
 final desktopAiSettingsStoreProvider = Provider<DesktopAiSettingsStore>((ref) => DesktopAiSettingsStore.instance);
@@ -299,9 +308,11 @@ ConversionTools desktopConversionTools(Ref ref) {
   final version = ref.watch(aiAppVersionProvider).valueOrNull ?? '';
   return ConversionTools(
     engine: ref.watch(desktopAiEngineProvider),
+    engines: ref.watch(conversionEnginesProvider),
     output: ref.watch(safeWriterOutputProvider),
     finder: ExistingVersionFinder(index: LibraryVersionIndex()),
     creatorTool: aiCreatorTool(version),
     software: aiSoftware(version),
+    settings: ref.watch(desktopAiSettingsStoreProvider),
   );
 }

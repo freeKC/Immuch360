@@ -24,7 +24,9 @@ import 'package:path/path.dart' as p;
 
 import '../../library/library_fixtures.dart';
 import '../../library/library_test_support.dart';
+import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
+import '../fakes/fake_scene_engine.dart';
 import '../fakes/recording_creator_files.dart';
 import '../library/version_fixtures.dart';
 
@@ -116,6 +118,58 @@ void main() {
     expect(files.calls.where((call) => call.startsWith('createNew')), ['createNew ${probe.path}']);
     expect(folder(), ['salon.jpg', 'salon_3D_LRF_Full_SBS.jpg']);
     expect(guarded, [photos], reason: 'the guard is asked before the final name');
+  });
+
+  test('the engines of the other kinds come by kind, and the writer knows the kind of each version', () async {
+    final bare = ProviderContainer();
+    addTearDown(bare.dispose);
+    expect(bare.read(conversionEnginesProvider), isEmpty, reason: 'S1, P1 and P3 register theirs');
+
+    final scenes = ProviderContainer(
+      overrides: [
+        conversionToolsProvider.overrideWithValue(
+          ConversionTools(
+            engine: engines,
+            engines: fakeConversionEngines(scene: FakeSceneEngine()),
+            output: output,
+            finder: ExistingVersionFinder(),
+            creatorTool: aiCreatorTool('3.3.0', system: 'linux'),
+          ),
+        ),
+      ],
+    );
+    addTearDown(scenes.dispose);
+    final sceneQueue = scenes.read(conversionQueueProvider.notifier);
+    Future<ConversionJob> made(ExistingVersionChoice existing) async {
+      final path = p.join(photos, 'salon.jpg');
+      File(path).writeAsBytesSync(List.generate(64, (i) => i));
+      final id = sceneQueue
+          .add(
+            [
+              ConversionRequest(
+                source: LocalFileSource(path),
+                target: ConversionTarget.nextTo(path, kind: ConversionKind.sceneFromPhoto),
+              ),
+            ],
+            kind: ConversionKind.sceneFromPhoto,
+            existing: existing,
+          )
+          .single;
+      for (var wait = 0; wait < 500 && !scenes.read(conversionQueueProvider).byId(id)!.state.isEnded; wait++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+      return scenes.read(conversionQueueProvider).byId(id)!;
+    }
+
+    final first = await made(ExistingVersionChoice.skip);
+    expect(first.writtenPath, p.join(photos, 'salon_scene3D.jpg'));
+    final again = await made(ExistingVersionChoice.replace);
+
+    // The scene of ours took its own place: the writer was told it replaces a scene
+    expect(again.state, ConversionState.done);
+    expect(again.replaced, isTrue);
+    expect(again.writtenPath, first.writtenPath);
+    expect(folder(), ['salon.jpg', 'salon_scene3D.jpg']);
   });
 
   test('a partial file no job took is deleted once its job ends: a photo cancelled while it waited', () async {
