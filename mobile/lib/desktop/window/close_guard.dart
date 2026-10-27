@@ -5,11 +5,15 @@
 // one of those runs, and closes at once otherwise. Deciding at the moment of the close, rather than switching the
 // prevention on and off with the uploads, keeps the providers below untouched until then: one that was never created
 // has nothing running.
+//
+// A 360° panorama being generated (design-final 2026-10-27, section 4.5.7) is told with its step, "A 360° panorama is
+// being generated (step 12 of 28). Closing stops it.", in place of the line of the conversions.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
@@ -29,6 +33,9 @@ enum DesktopCloseReason {
 
   /// A photo made into 3D, or waiting to be
   conversions,
+
+  /// A 360° panorama being generated, once its generation tells its steps
+  generation,
 }
 
 /// Whether the backup is sending a file: a failed one stays in the list until the next run, and stops nothing
@@ -47,6 +54,8 @@ final desktopCloseReasonsProvider = Provider<Set<DesktopCloseReason> Function()>
       DesktopCloseReason.computerShare,
     if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.hasWork))
       DesktopCloseReason.conversions,
+    if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.generating != null))
+      DesktopCloseReason.generation,
   };
 });
 
@@ -65,15 +74,19 @@ Future<bool> confirmDesktopClose(BuildContext context, Set<DesktopCloseReason> r
 }
 
 /// Under the focus ring of the remote control layout, as the "This computer" settings: Cancel and Quit are reached
-/// with Tab, and Material only tints a focused button (design 4.7)
-class DesktopCloseDialog extends StatelessWidget {
+/// with Tab, and Material only tints a focused button (design 4.7). A generation is read from the queue for its step.
+class DesktopCloseDialog extends ConsumerWidget {
   const DesktopCloseDialog({super.key, required this.reasons});
 
   final Set<DesktopCloseReason> reasons;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
+    // The reason comes from the queue, which exists then
+    final generating = reasons.contains(DesktopCloseReason.generation)
+        ? ref.read(conversionQueueProvider).generating
+        : null;
     return TvFocusRing(
       child: AlertDialog(
         title: Text(t.desktop_close_title),
@@ -84,7 +97,13 @@ class DesktopCloseDialog extends StatelessWidget {
           children: [
             if (reasons.contains(DesktopCloseReason.uploads)) Text(t.desktop_close_uploads_running),
             if (reasons.contains(DesktopCloseReason.computerShare)) Text(t.desktop_close_share_running),
-            if (reasons.contains(DesktopCloseReason.conversions)) Text(t.ai_immersive_close_running),
+            if (generating case ConversionJob(:final step?, :final steps?))
+              Text(
+                t.ai_immersive_close_generating(step: step, steps: steps),
+                key: const Key('desktop_close_generating'),
+              )
+            else if (reasons.contains(DesktopCloseReason.conversions))
+              Text(t.ai_immersive_close_running),
           ],
         ),
         actions: [

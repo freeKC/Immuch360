@@ -1,7 +1,7 @@
 // The window of Immuch360 Desktop (design 1.8, 4.2 and 4.4): F11 anywhere and F in a viewer toggle full screen,
 // Escape and the back button of a mouse leave it first, then close the viewer, a dialog keeps its own Escape, a letter
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
-// first while uploads, the share of the computer or 3D conversions run.
+// first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step.
 
 import 'dart:async';
 
@@ -13,6 +13,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
@@ -91,7 +93,7 @@ void main() {
 
   tearDown(() => debugDefaultTargetPlatformOverride = null);
 
-  Future<void> pumpShell(WidgetTester tester) async {
+  Future<void> pumpShell(WidgetTester tester, {List<Override> overrides = const []}) async {
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: locales.values.toList(),
@@ -110,6 +112,7 @@ void main() {
               backs++;
               return navigatorKey.currentState!.maybePop();
             }),
+            ...overrides,
           ],
           child: Builder(
             builder: (context) => MaterialApp(
@@ -451,6 +454,23 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('names a 360° panorama being generated with its step, in place of the line of the conversions', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      reasons = {DesktopCloseReason.conversions, DesktopCloseReason.generation};
+      await pumpShell(tester, overrides: [conversionQueueProvider.overrideWith(_Generating.new)]);
+
+      window.clickClose();
+      await tester.pumpAndSettle();
+      expect(find.text('A 360° panorama is being generated (step 12 of 28). Closing stops it.'), findsOneWidget);
+      expect(find.text('3D conversions are running: quitting stops them.'), findsNothing);
+      await tester.tap(find.byKey(const Key('desktop_close_cancel')));
+      await tester.pumpAndSettle();
+      expect(window.calls, isNot(contains('destroy')));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('the dialog follows Tab from Cancel to Quit', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       reasons = {DesktopCloseReason.uploads};
@@ -471,4 +491,24 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
   });
+}
+
+/// A queue whose panorama is at step 12 of 28 of its generation
+class _Generating extends ConversionQueueNotifier {
+  @override
+  ConversionQueueState build() => ConversionQueueState(
+    jobs: [
+      ConversionJob(
+        id: 'conversion-1',
+        source: LocalFileSource('/photos/salon.jpg'),
+        kind: ConversionKind.panoramaFromPhoto,
+        batchIndex: 1,
+        batchSize: 1,
+        target: ConversionTarget.nextTo('/photos/salon.jpg', kind: ConversionKind.panoramaFromPhoto),
+        state: ConversionState.generating,
+        step: 12,
+        steps: 28,
+      ),
+    ],
+  );
 }
