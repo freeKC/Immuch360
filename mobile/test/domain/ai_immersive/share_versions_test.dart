@@ -245,6 +245,19 @@ void main() {
       expect(reads, isNot(contains('/Photos/cuisine.jpg')));
     });
 
+    test('the 3D version of a 360° photo whose name says pano is "_3D" after its name', () async {
+      final pano = file('/Photos/PANO_0001.jpg', size: originalSize);
+      files['/Photos/PANO_0001_3D.jpg'] = jpegFile(
+        width: 4096,
+        height: 4096,
+        xmpText: sample('stereo_panorama').replaceFirst('SourceName="salon.jpg"', 'SourceName="PANO_0001.jpg"'),
+      );
+
+      final versions = await findShareVersions(pano, [pano, file('/Photos/PANO_0001_3D.jpg')], readerOf: readerOf);
+
+      expect(versions.map((v) => (v.entry.name, v.kind)), [('PANO_0001_3D.jpg', ImmersiveKind.stereoPanorama360)]);
+    });
+
     test('a panorama the 360° rules do not take, and a 3D panorama not stacked, are not kept', () async {
       final withoutGPano = sample('panorama').replaceAll(RegExp(r'\s*GPano:ProjectionType="[^"]*"'), '');
       files['/Photos/salon_360.jpg'] = jpegFile(width: 8192, height: 4096, xmpText: withoutGPano);

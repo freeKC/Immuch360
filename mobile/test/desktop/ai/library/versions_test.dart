@@ -227,6 +227,24 @@ void main() {
       expect(reads, contains('salon_scene3D (1).jpg'));
     });
 
+    test(
+      'the 3D version of a 360° photo whose name says pano, "_3D" after its name, by the name and by the sum',
+      () async {
+        final pano = jpegBytes(width: 80, height: 40);
+        fixture
+          ..write('Photos/PANO_0001.jpg', pano)
+          ..write('Photos/PANO_0001_3D.jpg', versionFileOf(stereoPanoramaVersionXmp(pano, name: 'PANO_0001.jpg')));
+        await fixture.scan();
+
+        final byName = await finder().find(idOf('PANO_0001.jpg'));
+        expect(byName.versions.map((version) => (version.name, version.kind, version.origin)), [
+          ('PANO_0001_3D.jpg', ImmersiveKind.stereoPanorama360, IndexedOrigin.estimated),
+        ]);
+        hash('PANO_0001.jpg', pano);
+        expect((await finder().find(idOf('PANO_0001.jpg'))).versions, hasLength(1));
+      },
+    );
+
     test('without the sum, eight neighbours at most are read', () async {
       for (var i = 1; i <= maxDerivedCandidates + 2; i++) {
         fixture.write('Photos/salon_3D_LRF_Full_SBS ($i).jpg', fakeSbsJpeg(xmp: versionXmp(original)));
