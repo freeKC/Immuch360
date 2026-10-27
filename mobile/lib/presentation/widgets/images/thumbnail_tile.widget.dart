@@ -331,8 +331,8 @@ class _AssetTypeIcons extends StatelessWidget {
         if (asset.isAnimatedImage)
           const Padding(padding: EdgeInsets.only(right: 10.0, top: 6.0), child: _TileOverlayIcon(Icons.gif_rounded)),
         PanoramaBadge(asset: asset),
-        // Immuch360 Desktop: "3D AI" on a photo whose relief was estimated by AI, "3D" on another photo of two eyes
-        // side by side (lib/desktop/ai/library/stereo_badge.dart)
+        // Immuch360 Desktop: "3D AI", "3D scene" or "360° AI" on a file the app made, "3D" on another photo of two
+        // eyes side by side (lib/desktop/ai/library/stereo_badge.dart)
         if (CurrentPlatform.isDesktop) DesktopStereoBadge(asset: asset),
       ],
     );

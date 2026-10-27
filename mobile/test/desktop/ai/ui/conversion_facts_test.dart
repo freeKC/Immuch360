@@ -20,6 +20,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
@@ -108,13 +109,13 @@ void main() {
 
   /// A container where the exif of each asset of [exif] comes a moment later (an asset of the server not in it has its
   /// exif still loading), the stereo check of each HEIF photo of [spatial] answers as given, the signed in user is
-  /// [_userId] on a server that takes edits, [edits] are the edits of Immich by remote id, and [origins] the versions
+  /// [_userId] on a server that takes edits, [edits] are the edits of Immich by remote id, and [versions] the versions
   /// the library knows
   ProviderContainer createContainer({
     Map<BaseAsset, ExifInfo?> exif = const {},
     Map<BaseAsset, Future<AppleSpatialInfo?>> spatial = const {},
     Map<String, List<AssetEdit>> edits = const {},
-    Map<String, IndexedOrigin> origins = const {},
+    Map<String, IndexedVersion> versions = const {},
   }) {
     final users = MockUserService();
     when(users.tryGetMyUser).thenReturn(UserFactory.createDto(id: _userId));
@@ -135,7 +136,7 @@ void main() {
             apply: (_, _) async => null,
           ),
         ),
-        generatedOriginsProvider.overrideWith((ref) async => origins),
+        generatedVersionsProvider.overrideWith((ref) async => versions),
         for (final MapEntry(key: asset, value: info) in exif.entries)
           assetExifProvider(asset).overrideWith((ref) => _late(info)),
         for (final asset in [...spatial.keys]) appleSpatialInfoProvider(asset).overrideWith((ref) => spatial[asset]!),
@@ -218,7 +219,10 @@ void main() {
       final sphere = RemoteAssetFactory.create(ownerId: _userId, name: 'sphere.jpg', width: 8000, height: 4000);
       final version = LocalAssetFactory.create(id: 'made', name: 'salon_3D.jpg');
       final photo = LocalAssetFactory.create(id: 'photo', name: 'salon.jpg');
-      final container = createContainer(exif: {sphere: _sphereExif}, origins: {'made': IndexedOrigin.estimated});
+      final container = createContainer(
+        exif: {sphere: _sphereExif},
+        versions: {'made': (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)},
+      );
       final read = container.read(conversionFactsReaderProvider);
 
       expect((await read(sphere)).isPanorama, isTrue);
@@ -257,7 +261,7 @@ void main() {
       final checking = LocalAssetFactory.create(id: 'checking', name: 'IMG_0003.HEIC');
       final container = createContainer(
         exif: {sphere: _sphereExif},
-        origins: {'made': IndexedOrigin.estimated},
+        versions: {'made': (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)},
         spatial: {
           spatial: Future.value(const AppleSpatialInfo.photo(_pair)),
           heic: Future<AppleSpatialInfo?>.value(),

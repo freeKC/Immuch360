@@ -750,11 +750,6 @@ class LibraryIndex {
       if (file.currentChecksum == sha1) file,
   ];
 
-  /// Where the content of each file Immuch360 made comes from, by id: the badges of the thumbnails
-  Map<String, IndexedOrigin> generatedOrigins() => {
-    for (final MapEntry(key: id, value: version) in generatedVersions().entries) id: version.origin,
-  };
-
   /// Where the content of each file Immuch360 made comes from and its kind, by id: the badges of the thumbnails and
   /// the entries of the viewer
   Map<String, IndexedVersion> generatedVersions() => {

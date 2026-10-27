@@ -180,14 +180,14 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
     final panorama = ref.listen(isPanoramaProvider(asset), (_, _) {});
     try {
       final localId = asset.localId;
-      var origins = const <String, Object>{};
+      var versions = const <String, Object>{};
       try {
-        origins = await answer(generatedOriginsProvider.future);
+        versions = await answer(generatedVersionsProvider.future);
       } catch (error) {
-        _log.fine('The origins of the library are not known: $error');
+        _log.fine('The versions of the library are not known: $error');
       }
       final isStereo =
-          (localId != null && origins.containsKey(localId)) ||
+          (localId != null && versions.containsKey(localId)) ||
           decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null;
       if (asset.hasRemote) {
         try {
@@ -401,7 +401,8 @@ final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, a
   }
   final localId = asset.localId;
   final made =
-      localId != null && ref.watch(generatedOriginsProvider.select((origins) => origins.valueOrNull?[localId])) != null;
+      localId != null &&
+      ref.watch(generatedVersionsProvider.select((versions) => versions.valueOrNull?[localId])) != null;
   if (made || decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null) {
     return false;
   }
