@@ -2,11 +2,13 @@
 // section 4.2): on an original, "Versions", each one with its thumbnail, what it is ("3D photo, relief estimated by
 // AI") and its folder, greyed with its reason on a drive that is not connected; on a version, "Made from salon.jpg"
 // or "Original not found". A row opens its file the way a file given to the program opens (open_files.dart), even
-// before the next scan. What they find is in versions.provider.dart.
+// before the next scan, and has "Delete this 3D photo" (lot A5c), which asks first and deletes only a file that still
+// carries our XMP with its DerivativeId, never the original. What they find is in versions.provider.dart.
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -57,7 +59,7 @@ class DesktopVersionsTiles extends ConsumerWidget {
           title: context.t.ai_immersive_versions,
           titleStyle: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceSecondary),
         ),
-        for (final version in found.versions) _VersionTile(version: version),
+        for (final version in found.versions) _VersionTile(version: version, original: asset),
       ],
     );
   }
@@ -68,9 +70,12 @@ String _kindOf(VersionFile file, Translations t) =>
     file.isEstimatedRelief ? t.ai_immersive_3d_photo_estimated : t.ai_immersive_3d_photo;
 
 class _VersionTile extends ConsumerWidget {
-  const _VersionTile({required this.version});
+  const _VersionTile({required this.version, required this.original});
 
   final VersionFile version;
+
+  /// The photo whose details show it, whose versions are read again once it is deleted
+  final BaseAsset original;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -91,6 +96,18 @@ class _VersionTile extends ConsumerWidget {
       ].join('\n'),
       subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
       onTap: available ? () => ref.read(versionOpenerProvider)(version.path) : null,
+      trailing: available
+          ? IconButton(
+              key: ValueKey('desktop_version_delete_${version.asset.id}'),
+              tooltip: t.ai_immersive_delete_result,
+              icon: const Icon(Icons.delete_outline_rounded),
+              onPressed: () async {
+                if (await confirmDeleteVersion(context, version.path)) {
+                  ref.invalidate(photoVersionsProvider(original));
+                }
+              },
+            )
+          : null,
     );
     return available ? tile : Opacity(opacity: 0.5, child: tile);
   }

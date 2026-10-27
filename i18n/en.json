@@ -571,6 +571,7 @@
   "ai_immersive_install_prompt": "This needs the components below, downloaded once ({size}). They run on this device and work offline afterwards; no photo leaves it.",
   "ai_immersive_job_type": "2D to 3D SBS",
   "ai_immersive_keep_both": "Keep both",
+  "ai_immersive_library_not_ready": "The library is still being read: next to the original will be possible in a moment",
   "ai_immersive_licence": "Licence: {licence}",
   "ai_immersive_licence_notices": "Notices of the libraries inside",
   "ai_immersive_made_from": "Made from {name}",

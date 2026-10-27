@@ -268,6 +268,9 @@ final desktopAiEngineProvider = Provider<DesktopAiEngine>((ref) {
   return engine;
 });
 
+/// desktop_ai.json, where the screens read and keep the settings of the conversions
+final desktopAiSettingsStoreProvider = Provider<DesktopAiSettingsStore>((ref) => DesktopAiSettingsStore.instance);
+
 /// Whether a 3D photo may be written into a folder now: the guard of the album of the versions (lot A6a)
 final aiWriteGuardProvider = Provider<Future<bool> Function(String folder)>(
   (ref) => ref.watch(generatedAlbumGuardProvider).mayWriteInto,

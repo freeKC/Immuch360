@@ -191,7 +191,8 @@ void main() {
   test('Replace takes the place of a version made from the same original only, by its sum', () async {
     final request = photo('salon.jpg');
     final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
-    final ours = File(p.join(photos, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(fakeSbsJpeg(xmp: versionXmp(bytes)));
+    final ours = File(p.join(photos, 'salon_3D_LRF_Full_SBS.jpg'))
+      ..writeAsBytesSync(fakeSbsJpeg(xmp: versionXmp(bytes)));
     final oldId = StereoPhotoXmp.findIn(ours.readAsBytesSync())!.derivativeId;
 
     final id = queue().add([request], existing: ExistingVersionChoice.newVersion, whenExists: .replace).single;
@@ -224,9 +225,9 @@ void main() {
     fixture.library().addRoot(library);
     await fixture.scan();
 
-    final paths = await LibraryVersionIndex(library: () async => fixture.library()).versionPathsOf(
-      sha1Base64(original),
-    );
+    final paths = await LibraryVersionIndex(
+      library: () async => fixture.library(),
+    ).versionPathsOf(sha1Base64(original));
 
     expect(paths.toSet(), {
       p.join(library, 'salon_3D_LRF_Full_SBS.jpg'),
