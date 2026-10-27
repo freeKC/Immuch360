@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
@@ -213,6 +214,24 @@ void main() {
     expect(meshSwitch, findsNothing);
     expect(cacheTile, findsNothing);
     expect(find.byType(AiComponentsTile), findsNothing);
+  });
+
+  test('the relief cache of the app is ai-relief in its temporary folder, where the immersive viewer writes', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
+    final temporary = Directory.systemTemp.createTempSync('ai_relief_temporary_');
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    // The temporary folder only: another folder of path_provider would be a different place
+    messenger.setMockMethodCallHandler(
+      pathProvider,
+      (call) async => call.method == 'getTemporaryDirectory' ? temporary.path : p.join(temporary.path, 'other'),
+    );
+    addTearDown(() {
+      messenger.setMockMethodCallHandler(pathProvider, null);
+      temporary.deleteSync(recursive: true);
+    });
+
+    expect((await appReliefCacheFolder()).path, p.join(temporary.path, 'ai-relief'));
   });
 
   testWidgets('off Horizon OS, nothing of it', (tester) async {
