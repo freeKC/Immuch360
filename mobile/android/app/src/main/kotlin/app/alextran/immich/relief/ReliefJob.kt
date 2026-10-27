@@ -98,7 +98,8 @@ enum class ReliefStop {
 /**
  * A relief made: [photo] and its right [eye], the viewer's to show and to free; [fromCache] when the map came from the
  * cache, [path] the path of the model otherwise; the [flags] of relief-v1 (the headset does not show them, they go to
- * the log)
+ * the log); [map], the depth map the eye was made from as the cache keeps it, which the 2.5D view moves its mesh with
+ * (immersive/ReliefMesh.kt), even when the cache could not keep it
  */
 class ReliefResult<P : ReliefPhoto, E : ReliefEye>(
   val photo: P,
@@ -106,6 +107,7 @@ class ReliefResult<P : ReliefPhoto, E : ReliefEye>(
   val fromCache: Boolean,
   val path: DepthPath?,
   val flags: List<ReliefFlag>,
+  val map: ReliefMap,
 )
 
 /** What the viewer is told, always on its main thread, and never for a relief it dropped */
@@ -339,7 +341,7 @@ class ReliefJob(
           "whole relief in ${elapsedMs(started)} ms"
       )
       photoHeld = false
-      done(run, listener, ReliefResult(photo, eye, cached != null, path, right.flags))
+      done(run, listener, ReliefResult(photo, eye, cached != null, path, right.flags, map))
     } catch (e: ReliefRefused) {
       log("relief: ${e.message}")
       flat(run, listener, e.reason, "")

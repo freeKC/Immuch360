@@ -193,6 +193,7 @@ class ReliefJobTest {
     preferred: DepthPath = DepthPath.CPU,
     totalMemoryBytes: Long = 7 * GIB,
     available: Boolean = true,
+    cache: ReliefCache = this.cache,
   ): ReliefJob {
     engine.available = available
     return ReliefJob(
@@ -254,6 +255,24 @@ class ReliefJobTest {
     assertNotNull(map)
     assertEquals(686 to 518, map!!.width to map.height)
     assertArrayEquals(expectedEye(photo, map), result.eye.pixels)
+    // The map comes with the eyes, as the cache keeps it: the 2.5D view moves its mesh with it
+    assertEquals(map.width to map.height, result.map.width to result.map.height)
+    assertArrayEquals(map.levels, result.map.levels)
+  }
+
+  @Test
+  fun `the map comes with the eyes even when the cache cannot keep it`() {
+    val full = File(folder, "full")
+    full.writeText("a file where the folder of the cache should be")
+    val job = job(cache = ReliefCache(File(full, "ai-relief")))
+    val recorder = Recorder()
+
+    start(job, FakePhoto(64, 48), recorder)
+    worker.runDue()
+
+    val result = recorder.done.single()
+    assertEquals(686 to 518, result.map.width to result.map.height)
+    assertArrayEquals(expectedEye(FakePhoto(64, 48), result.map), result.eye.pixels)
   }
 
   @Test
@@ -274,6 +293,7 @@ class ReliefJobTest {
     assertTrue(result.fromCache)
     assertNull(result.path)
     assertArrayEquals(expectedEye(photo, map), result.eye.pixels)
+    assertArrayEquals(map.levels, result.map.levels)
     // No model open, nothing to close later
     assertEquals(0, worker.pending)
   }
