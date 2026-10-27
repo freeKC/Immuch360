@@ -490,6 +490,122 @@ void main() {
     });
   });
 
+  group('removing a group of features', () {
+    /// A model of the tests for [features], served by the mirror
+    AiComponent model(String id, Set<AiFeature> features) {
+      final bytes = utf8.encode('model $id of the tests ' * 50);
+      File(p.join(mirror.path, '$id.onnx')).writeAsBytesSync(bytes);
+      return AiComponent(
+        id: id,
+        version: '1',
+        kind: AiComponentKind.model,
+        platforms: const {AiPlatform.linuxX64},
+        assetName: '$id.onnx',
+        installPath: 'models/$id/$id.onnx',
+        size: bytes.length,
+        sha256: sha256.convert(bytes).toString(),
+        compression: AiCompression.none,
+        licence: 'MIT',
+        licenceUrl: 'https://example.org/licence',
+        features: features,
+      );
+    }
+
+    late AiComponent runtime;
+    late AiComponent depth;
+    late AiComponent geometry;
+    late AiComponent filling;
+    late List<AiComponent> catalogue;
+
+    setUp(() {
+      runtime = AiComponent(
+        id: _runtimeComponent.id,
+        version: _runtimeComponent.version,
+        kind: AiComponentKind.runtime,
+        platforms: const {AiPlatform.linuxX64},
+        assetName: _runtimeComponent.assetName,
+        installPath: _runtimeComponent.installPath,
+        size: _runtimeComponent.size,
+        sha256: _runtimeComponent.sha256,
+        compression: AiCompression.gzip,
+        downloadSize: _runtimeComponent.downloadSize,
+        licence: 'MIT',
+        licenceUrl: _runtimeComponent.licenceUrl,
+        notices: _runtimeComponent.notices,
+        features: AiFeature.values.toSet(),
+      );
+      depth = model('depth', {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
+      geometry = model('geometry', {AiFeature.scene, AiFeature.panorama});
+      filling = model('filling', {AiFeature.scene});
+      // The panoramas need a generator too, never installed here
+      catalogue = [runtime, depth, geometry, filling, model('generator', {AiFeature.panorama})];
+    });
+
+    Future<AiComponentsService> installed(List<AiComponent> components) async {
+      final service = AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: catalogue,
+      );
+      for (final component in components) {
+        await service.install(component);
+      }
+      return service;
+    }
+
+    test('the scenes go, ONNX Runtime stays while the 3D photos use it, and the removal says so', () async {
+      final service = await installed([runtime, depth, geometry, filling]);
+
+      expect(service.groupsUsing(AiPlatform.linuxX64, runtime, besides: AiFeatureGroup.scenes), [
+        AiFeatureGroup.photos,
+      ]);
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.scenes);
+
+      expect(removal.outcome, AiRemoveOutcome.removed);
+      expect(removal.kept, [runtime]);
+      expect(service.statusOf(geometry).state, AiComponentState.notInstalled);
+      expect(service.statusOf(filling).state, AiComponentState.notInstalled);
+      expect(service.statusOf(runtime).state, AiComponentState.installed);
+      expect(service.statusOf(depth).state, AiComponentState.installed);
+      expect(installedFile(geometry).existsSync(), isFalse);
+      expect(installedFile(runtime).existsSync(), isTrue);
+    });
+
+    test('the 3D photos go while the scenes stay: their model only', () async {
+      final service = await installed([runtime, depth, geometry, filling]);
+
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.photos);
+
+      expect(removal.kept, [runtime]);
+      expect(service.statusOf(depth).state, AiComponentState.notInstalled);
+      expect(service.statusOf(runtime).state, AiComponentState.installed);
+      expect(service.statusOf(geometry).state, AiComponentState.installed);
+    });
+
+    test('the last installed group that uses a component takes it along', () async {
+      // The 3D photos are not complete: their model is missing, so they keep nothing
+      final service = await installed([runtime, geometry, filling]);
+
+      expect(service.groupsUsing(AiPlatform.linuxX64, runtime, besides: AiFeatureGroup.scenes), isEmpty);
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.scenes);
+
+      expect(removal.kept, isEmpty);
+      expect(service.statusOf(runtime).state, AiComponentState.notInstalled);
+      expect(installedFile(runtime).existsSync(), isFalse);
+    });
+
+    test('refused while a conversion runs: nothing removed', () async {
+      final service = await installed([runtime, geometry, filling]);
+      service.inUse = () => true;
+
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.scenes);
+
+      expect(removal.outcome, AiRemoveOutcome.busy);
+      expect(service.statusOf(geometry).state, AiComponentState.installed);
+      expect(installedFile(geometry).existsSync(), isTrue);
+    });
+  });
+
   group('the free space, read before the first byte', () {
     const gib = 1024 * 1024 * 1024;
 

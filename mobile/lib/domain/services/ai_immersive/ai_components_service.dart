@@ -92,6 +92,14 @@ enum AiRemoveOutcome {
   writeFailed,
 }
 
+/// What the removal of a group of features did, and the shared components it left to the other installed groups
+class AiGroupRemoval {
+  const AiGroupRemoval(this.outcome, this.kept);
+
+  final AiRemoveOutcome outcome;
+  final List<AiComponent> kept;
+}
+
 /// See the top of this file
 class AiComponentsService extends ChangeNotifier {
   AiComponentsService({
@@ -604,6 +612,44 @@ class AiComponentsService extends ChangeNotifier {
     }
     _set(component, AiComponentStatus(deferred ? AiComponentState.removedNextStart : AiComponentState.notInstalled));
     return deferred ? AiRemoveOutcome.nextStart : AiRemoveOutcome.removed;
+  }
+
+  /// Whether every component of [group] on [platform] is installed
+  bool _isInstalled(AiGroupComponents group) =>
+      group.all.every((component) => statusOf(component).state == AiComponentState.installed);
+
+  /// The other groups of [platform], installed, that need [component] beside the group [besides]: a shared component
+  /// stays while one of them does (design-final 2026-10-27, section 7.1, point 7)
+  List<AiFeatureGroup> groupsUsing(AiPlatform platform, AiComponent component, {required AiFeatureGroup besides}) => [
+    for (final group in aiComponentGroupsFor(platform, catalogue: catalogue))
+      if (group.group != besides && group.all.any((other) => other.id == component.id) && _isInstalled(group))
+        group.group,
+  ];
+
+  /// Removes the components of [group] on [platform], those another installed group needs apart, which are given
+  /// back in [AiGroupRemoval.kept]. Refused while a conversion runs.
+  Future<AiGroupRemoval> removeGroup(AiPlatform platform, AiFeatureGroup group) async {
+    await load();
+    if (inUse()) {
+      return const AiGroupRemoval(AiRemoveOutcome.busy, []);
+    }
+    final components = aiComponentGroupsFor(
+      platform,
+      catalogue: catalogue,
+    ).where((entry) => entry.group == group).expand((entry) => entry.all).toList();
+    final kept = [
+      for (final component in components)
+        if (groupsUsing(platform, component, besides: group).isNotEmpty) component,
+    ];
+    var outcome = AiRemoveOutcome.removed;
+    for (final component in components.where((component) => !kept.contains(component))) {
+      final removed = await remove(component);
+      // The worst outcome is the one said: a write that failed, a refusal, then the space at the next start
+      if (removed.index > outcome.index) {
+        outcome = removed;
+      }
+    }
+    return AiGroupRemoval(outcome, kept);
   }
 
   /// Removes the folders of the app in the folder of the components: every component (those of other versions too),
