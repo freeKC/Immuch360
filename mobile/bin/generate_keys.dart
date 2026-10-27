@@ -99,6 +99,11 @@ const _kIntParamNames = [
 
 const _kParamTypeOverrides = <String, String>{
   'advanced_settings_clear_image_cache_success.size': 'String',
+  // Sizes of the AI components and of the relief cache, which the callers write with formatBytes ("94.5 MiB")
+  'ai_immersive_components_total.size': 'String',
+  'ai_immersive_install_prompt.size': 'String',
+  'ai_immersive_relief_cache_size.size': 'String',
+  'ai_immersive_size_on_disk.size': 'String',
   // A length in millimetres, which the caller writes with its decimals for the locale
   'apple_spatial_baseline.mm': 'String',
   // The size of each eye of a spatial photo: the digits alone, as for the frame sizes below
