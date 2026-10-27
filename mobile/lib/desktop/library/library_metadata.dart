@@ -1,7 +1,7 @@
 // What the folder library reads in a photo or a video file, in place of what the gallery of a phone keeps: the size of
 // the picture as it is shown, when it was taken, where, how long a video runs, the projection a 360° photo declares,
-// and the Immuch360 XMP of a 3D photo the app made from a 2D one (what it is, and the original it was made from). The
-// width and the height matter beyond the grid: the 360° scan only reads the files whose shape or name hints at 360°
+// and the Immuch360 XMP of a file the app made from a photo (its kind, and the original it was made from). The width
+// and the height matter beyond the grid: the 360° scan only reads the files whose shape or name hints at 360°
 // (local_panorama.service.dart).
 //
 // Only the heads of the files are read, a few small reads each, and only for files that are new or changed since the
@@ -23,7 +23,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
-import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 
 /// What a media file tells about itself
 class MediaMetadata {
@@ -66,8 +66,9 @@ class MediaMetadata {
   /// The projection type of the GPano XMP of a photo ("equirectangular"), null without one
   final String? projection;
 
-  /// The Immuch360 XMP of a file the app made (a 3D photo from a 2D one), null without one
-  final StereoPhotoXmp? immersive;
+  /// The Immuch360 XMP of a file the app made, read as its kind reads it (a 3D photo, a 3D scene, a panorama), null
+  /// without one
+  final ImmersiveXmp? immersive;
 
   /// An animated GIF, WebP or PNG
   final bool animated;
@@ -350,7 +351,7 @@ MediaMetadata _exifToMetadata(
   int? width,
   int? height,
   String? projection,
-  StereoPhotoXmp? immersive,
+  ImmersiveXmp? immersive,
   bool animated = false,
 }) {
   final orientation = exif.orientation;
@@ -382,13 +383,13 @@ String? gpanoProjectionOf(String xmp) {
 }
 
 // What one XMP packet of a file says, read once for both the GPano and the Immuch360 fields
-({String? projection, StereoPhotoXmp? immersive}) _readXmp(Uint8List packet) =>
+({String? projection, ImmersiveXmp? immersive}) _readXmp(Uint8List packet) =>
     (projection: gpanoProjectionOf(latin1.decode(packet, allowInvalid: true)), immersive: _immersiveXmpOf(packet));
 
 // A damaged Immuch360 packet (an entity that names no character) loses only itself, not the rest of the file's metadata
-StereoPhotoXmp? _immersiveXmpOf(Uint8List packet) {
+ImmersiveXmp? _immersiveXmpOf(Uint8List packet) {
   try {
-    return StereoPhotoXmp.findIn(packet);
+    return ImmersiveXmp.findIn(packet);
   } on ArgumentError {
     return null;
   } on FormatException {
@@ -404,7 +405,7 @@ MediaMetadata _readJpeg(ByteSource source) {
   var offset = 2;
   _Exif? exif;
   String? projection;
-  StereoPhotoXmp? immersive;
+  ImmersiveXmp? immersive;
   int? width;
   int? height;
   for (var segments = 0; segments < 256 && offset + 4 <= source.length; segments++) {
@@ -492,7 +493,7 @@ MediaMetadata _readWebp(ByteSource source) {
   var animated = false;
   _Exif? exif;
   String? projection;
-  StereoPhotoXmp? immersive;
+  ImmersiveXmp? immersive;
   var offset = 12;
   for (var chunks = 0; chunks < 32 && offset + 8 <= source.length; chunks++) {
     final header = source.read(offset, 8);

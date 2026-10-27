@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:path/path.dart' as p;
 
@@ -121,6 +122,21 @@ void main() {
       expect(_image(jpegBytes(width: 4, height: 2, gpanoProjection: 'equirectangular')).immersive, isNull);
       final noKind = sample.replaceAll(RegExp(r'\s*Immuch360:Kind="[^"]*"'), '');
       expect(_image(jpegBytes(width: 4, height: 2, xmp: noKind)).immersive, isNull);
+    });
+
+    test('a 3D scene, a 360° panorama and a 360° 3D panorama are read as their kind reads them', () {
+      for (final name in ['scene', 'panorama', 'stereo_panorama']) {
+        final sample = File('test/fixtures/ai_immersive/xmp_v1_${name}_sample.xmp').readAsStringSync();
+        final metadata = _image(jpegBytes(width: 64, height: 32, xmp: sample));
+
+        expect(metadata.immersive, ImmersiveXmp.parse(sample), reason: name);
+        expect(metadata.immersive, isNot(isA<StereoPhotoXmp>()), reason: name);
+        expect(metadata.immersive!.settingsKey, isNotNull, reason: name);
+      }
+      final scene = _image(File('test/fixtures/ai_immersive/tiny_scene3D.jpg').readAsBytesSync());
+      expect(scene.immersive, isA<SceneXmp>());
+      expect(scene.immersive!.kind, ImmersiveKind.volumetricScene);
+      expect(scene.projection, isNull);
     });
 
     test('a damaged packet loses at most itself', () {

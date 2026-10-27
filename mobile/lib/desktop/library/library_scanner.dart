@@ -32,7 +32,24 @@ import 'package:immich_mobile/desktop/library/library_metadata.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:path/path.dart' as p;
+
+final _sbsSuffix = sbsFullNameSuffix.toLowerCase();
+
+// The end of the name of a version of phases 2 and 3, always a JPEG: one of their suffixes, " (n)" when the name was
+// taken, then the extension ("salon_scene3D.jpg", "salon_360 (2).jpg", "PANO_0001_3D.jpg"), in any case. A video
+// named "trip_3D.mp4" is no version of ours.
+final _versionEnd = RegExp(
+  '(?:${derivedNameSuffixes.where((suffix) => suffix != sbsFullNameSuffix).map(RegExp.escape).join('|')})'
+  r'(?: \(\d+\))?\.jpe?g$',
+  caseSensitive: false,
+);
+
+/// Whether a file named [name] is named like a version the app makes, which a scan that cannot read it holds back:
+/// "_3D_LRF_Full_SBS" anywhere, as in phase 1, or a JPEG whose name ends with the suffix of a 3D scene, a 360°
+/// panorama or a 360° 3D panorama
+bool isNamedLikeVersion(String name) => name.toLowerCase().contains(_sbsSuffix) || _versionEnd.hasMatch(name);
 
 /// One entry of a folder
 class ListedEntry {
@@ -575,10 +592,10 @@ class _Scan {
           // Still not readable: nothing new for the app
           continue;
         }
-        if (before == null && metadata.readFailed && _namedLikeVersion(entry.name)) {
-          // Most likely a 3D photo the app made, which only its XMP tells: shown now, it would be a plain photo of its
-          // folder, which a folder chosen for the backup sends. So it waits for a scan that can read it. The name only
-          // ever holds a file back, it never makes one a version.
+        if (before == null && metadata.readFailed && isNamedLikeVersion(entry.name)) {
+          // Most likely a version the app made (a 3D photo, a 3D scene, a panorama), which only its XMP tells: shown
+          // now, it would be a plain photo of its folder, which a folder chosen for the backup sends. So it waits for a
+          // scan that can read it. The name only ever holds a file back, it never makes one a version.
           continue;
         }
         batch.add(
@@ -612,10 +629,6 @@ class _Scan {
     return ScanSummary(written: written, removed: gone.length, cloudOnly: cloudOnly, moved: moved ? 1 : 0);
   }
 
-  static final _versionSuffix = sbsFullNameSuffix.toLowerCase();
-
-  static bool _namedLikeVersion(String name) => name.toLowerCase().contains(_versionSuffix);
-
   static bool _isUnder(String relativePath, String dir) => dir.isEmpty || relativePath.startsWith('$dir/');
 
   IndexedFile _record({
@@ -636,6 +649,15 @@ class _Scan {
       LibraryMediaKind.image => 1,
     };
     final xmp = metadata.immersive;
+    final pair = xmp is StereoPhotoXmp && xmp.isReadableStereoPhoto ? xmp : null;
+    final origin = switch (xmp?.origin) {
+      ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
+      ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
+      ImmersiveOrigin.reconstructedFromPhoto => IndexedOrigin.reconstructed,
+      // An Origin this build does not know (a later format): the id of the file still says the app made it
+      _ when xmp?.derivativeId?.isNotEmpty ?? false => IndexedOrigin.other,
+      _ => null,
+    };
     return IndexedFile(
       id: id,
       rootId: root.id,
@@ -655,24 +677,19 @@ class _Scan {
       projection: metadata.projection,
       cloudOnly: cloudOnly,
       readFailed: metadata.readFailed,
-      // A file of a newer format keeps its link and its place out of the backup, but is not shown in 3D
-      stereo: xmp != null && xmp.isReadableStereoPhoto
-          ? switch (xmp.eyes) {
-              StereoEyes.full => IndexedStereo.sbsFull,
-              StereoEyes.half => IndexedStereo.sbsHalf,
-              null => null,
-            }
-          : null,
-      origin: switch (xmp?.origin) {
-        ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
-        ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
-        // An Origin this build does not know (a later format): the id of the file still says the app made it
-        _ when xmp?.derivativeId?.isNotEmpty ?? false => IndexedOrigin.other,
-        _ => null,
+      // A file of a newer format keeps its link and its place out of the backup, but is not shown in 3D; nor is
+      // any other kind of ours
+      stereo: switch (pair?.eyes) {
+        StereoEyes.full => IndexedStereo.sbsFull,
+        StereoEyes.half => IndexedStereo.sbsHalf,
+        null => null,
       },
+      origin: origin,
       sourceSha1: xmp?.sourceSha1,
       derivativeId: xmp?.derivativeId,
       derivedSettings: xmp?.settingsKey,
+      // Kept with the origin only: a packet of ours without an id makes no version
+      immersiveKind: origin == null ? null : xmp?.kind,
     );
   }
 }
