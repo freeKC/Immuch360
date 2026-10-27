@@ -46,7 +46,14 @@ class DartSbsCodec implements SbsCodec {
       // package:image throws its own exceptions, and range errors on damaged data
       throw SbsCodecException('The JPEG could not be decoded: $error');
     }
-    return SbsDecoded(width: image.width, height: image.height, rgba: _rgbaOf(image), iccProfile: header.iccProfile);
+    // The profile of the pixels only: package:image gives RGB whatever the file holds
+    final profile = header.iccProfile;
+    return SbsDecoded(
+      width: image.width,
+      height: image.height,
+      rgba: _rgbaOf(image),
+      iccProfile: profile != null && isRgbIccProfile(profile) ? profile : null,
+    );
   }
 
   @override

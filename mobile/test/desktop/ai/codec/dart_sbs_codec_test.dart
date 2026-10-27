@@ -208,6 +208,23 @@ void main() {
       }
     });
 
+    test('a CMYK or grey profile is not given with the RGB pixels, an RGB one is', () {
+      // The decoder gives RGB whatever the file holds: a profile of another colour space would describe other pixels
+      Uint8List withSpace(String space) {
+        final profile = Uint8List.fromList(codecFixture('display_p3.icc'));
+        profile.setRange(16, 20, ascii.encode(space));
+        return withSegments(codecFixture('quality_90.jpg'), iccProfile: profile);
+      }
+
+      for (final space in ['CMYK', 'GRAY', 'Lab ']) {
+        final file = withSpace(space);
+        expect(JpegHeader.read(file).iccProfile, isNotNull, reason: 'the header still reads the $space profile');
+        expect(codec.decodeJpeg(file).iccProfile, isNull, reason: space);
+      }
+      expect(codec.decodeJpeg(withSpace('RGB ')).iccProfile, hasLength(2536));
+      expect(isRgbIccProfile(Uint8List(127)..setRange(16, 20, ascii.encode('RGB '))), isFalse, reason: 'too short');
+    });
+
     test('no profile asked, none written', () {
       final decoded = codec.decodeJpeg(codecFixture('quality_90.jpg'));
       final out = codec.encodeSbs(pairOf(decoded), const SbsEncodeOptions(quality: 90));

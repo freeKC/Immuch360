@@ -256,7 +256,7 @@ void main() {
       final copy = Uint8List.fromList(left);
       final depth = ReliefDepth(6, 3, Float64List.fromList([1, 2, 3, 9, 9, 1, 1, 2, 3, 9, 9, 1, 1, 2, 3, 9, 9, 1]));
       final alone = Uint8List(width * height * 4);
-      reliefV1RightEye(
+      final aloneResult = reliefV1RightEye(
         left: left,
         width: width,
         height: height,
@@ -271,7 +271,7 @@ void main() {
       for (var y = 0; y < height; y++) {
         pair.setRange(y * 2 * width * 4, y * 2 * width * 4 + width * 4, left, y * width * 4);
       }
-      reliefV1RightEye(
+      final inPair = reliefV1RightEye(
         left: pair,
         width: width,
         height: height,
@@ -287,6 +287,10 @@ void main() {
         final row = y * 2 * width * 4;
         expect(pair.sublist(row + width * 4, row + 2 * width * 4), alone.sublist(y * width * 4, (y + 1) * width * 4));
       }
+      // The luma and the flags of the eye, read with its stride in the pair whose right half was black at the start
+      expect(inPair.meanLuma, aloneResult.meanLuma);
+      expect(inPair.flags, aloneResult.flags);
+      expect(inPair.filledPixels, aloneResult.filledPixels);
     });
   });
 
