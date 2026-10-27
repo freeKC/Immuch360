@@ -12,8 +12,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The three kinds of the stereoPair JSON (design-final 2026-10-26, section 4.1), read against the contract the Dart
- * side writes: mobile/test/fixtures/ai_immersive/stereo_pair_contract_v1.json.
+ * The kinds of the stereoPair JSON (design-final 2026-10-26, section 4.1, and the 3D scene of design-final 2026-10-27,
+ * section 8.5), read against the contract the Dart side writes: mobile/test/fixtures/ai_immersive/
+ * stereo_pair_contract_v1.json.
  */
 class StereoPhotoKindTest {
   private val contract = ReliefFixtures.json("stereo_pair_contract_v1.json")
@@ -119,6 +120,88 @@ class StereoPhotoKindTest {
   }
 
   @Test
+  fun `reads both scenes of the contract`() {
+    val requests = requests("volumetricScene")
+    val design = StereoPhotoKind.parse(requests.getValue("a scene of the design"))
+    val close = StereoPhotoKind.parse(requests.getValue("a close photo scaled for comfort, no flags"))
+
+    assertEquals(
+      StereoPhotoKind.VolumetricScene(
+        VolumetricSceneSpec(
+          format = "glb-layers-v1",
+          sceneLength = 6712344L,
+          sceneSha256 = "3040c8c4f61d1a2a5b7cc6485a952bbb1ad346d70e76a7332b285f7f8de41d1d",
+          meshes = 2,
+          vertices = 58210,
+          triangles = 113877,
+          textureMax = 4096,
+          scale = 1.0,
+          safe = VolumetricSceneSpec.SafeZone(lateral = 0.22, vertical = 0.13, forward = 0.48, backward = 0.11),
+          fovDegrees = 65.4,
+          origin = VolumetricSceneSpec.Origin.RECONSTRUCTED_FROM_PHOTO,
+          flags = listOf("hiddenAreas"),
+        )
+      ),
+      design,
+    )
+    val spec = (close as StereoPhotoKind.VolumetricScene).spec
+    assertEquals(1.6, spec.scale, 0.0)
+    assertEquals(emptyList<String>(), spec.flags)
+    assertEquals(VolumetricSceneSpec.SafeZone(0.1, 0.06, 0.1, 0.05), spec.safe)
+  }
+
+  @Test
+  fun `a scene shows flat on the quad until the scene viewer takes it`() {
+    val scene = StereoPhotoKind.parse(requests("volumetricScene").getValue("a scene of the design"))!!
+
+    // No relief label and no "2D (original)": the preview of the file is a photo, as an unknown kind showed it
+    assertFalse(scene.isEstimatedRelief)
+    assertFalse(scene.leftEyeIsOriginal)
+  }
+
+  @Test
+  fun `a later origin or flag of a scene is read, not refused`() {
+    val text = requests("volumetricScene").getValue("a scene of the design")
+    val later =
+      StereoPhotoKind.parse(text.replace("reconstructedFromPhoto", "fromSeveralPhotos").replace("hiddenAreas", "x"))
+    val bare = StereoPhotoKind.parse(text.replace(",\"flags\":[\"hiddenAreas\"]", ""))
+
+    assertEquals(VolumetricSceneSpec.Origin.UNKNOWN, (later as StereoPhotoKind.VolumetricScene).spec.origin)
+    // The viewer shows the flags it knows; one of a later build is kept and left aside there
+    assertEquals(listOf("x"), later.spec.flags)
+    assertEquals(emptyList<String>(), (bare as StereoPhotoKind.VolumetricScene).spec.flags)
+  }
+
+  @Test
+  fun `a scene request that cannot be right is none`() {
+    val scene = requests("volumetricScene").getValue("a scene of the design")
+    val sha = "3040c8c4f61d1a2a5b7cc6485a952bbb1ad346d70e76a7332b285f7f8de41d1d"
+    for (text in
+      listOf(
+        scene.replace("\"version\":1", "\"version\":2"),
+        // A later format of the tail: this build cannot read its meshes, the photo shows flat
+        scene.replace("glb-layers-v1", "glb-layers-v2"),
+        scene.replace("\"format\":\"glb-layers-v1\",", ""),
+        scene.replace("6712344", "0"),
+        scene.replace("6712344", "\"6712344\""),
+        scene.replace(sha, sha.uppercase()),
+        scene.replace(sha, "../scene"),
+        scene.replace("\"meshes\":2", "\"meshes\":0"),
+        scene.replace("\"vertices\":58210", "\"vertices\":-1"),
+        scene.replace("\"triangles\":113877", "\"triangles\":0"),
+        scene.replace("\"textureMax\":4096", "\"textureMax\":0"),
+        scene.replace("\"scale\":1.0", "\"scale\":0"),
+        scene.replace("\"lateral\":0.22", "\"lateral\":-0.22"),
+        scene.replace("\"backward\":0.11", "\"backward\":\"0.11\""),
+        scene.replace("\"fovDegrees\":65.4", "\"fovDegrees\":180"),
+        scene.replace("\"fovDegrees\":65.4,", ""),
+        scene.replace("\"flags\":[\"hiddenAreas\"]", "\"flags\":\"hiddenAreas\""),
+      )) {
+      assertNull(text, StereoPhotoKind.parse(text))
+    }
+  }
+
+  @Test
   fun `refuses every request the contract lists as unknown to version 1`() {
     for (request in contract.getValue("unknown").jsonArray) {
       assertNull("$request", StereoPhotoKind.parse(request.toString()))
@@ -179,6 +262,7 @@ class StereoPhotoKindTest {
     // Both groups the viewer reads are there, so that an empty file cannot pass the tests above
     assertEquals(2, (contract.getValue("sbsPhoto").jsonArray).size)
     assertEquals(3, (contract.getValue("depthRelief").jsonArray).size)
+    assertEquals(2, (contract.getValue("volumetricScene").jsonArray).size)
     assertTrue(contract.getValue("unknown").jsonArray.all { it is JsonObject })
   }
 }

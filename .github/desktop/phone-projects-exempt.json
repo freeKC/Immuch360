@@ -320,8 +320,8 @@
     "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
-    "blob": "3e5a3c7451a78f81bf9e4fe48c1ea782eeb57166",
-    "reason": "AI immersive lots A7 and A11: the three kinds of the stereoPair JSON, and the view a relief first shows in; feat-ai-immersive, not yet on the phone branch"
+    "blob": "2a6bc8e23bd4e57b9d76c6abee2726e2fb345b14",
+    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
@@ -704,8 +704,8 @@
     "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
-    "blob": "bb42b1d0116943ca2ee8cf3204119ae7478cdc90",
-    "reason": "AI immersive lots A7 and A11: the stereoPair contract read by the Kotlin side, the 2.5D request included; feat-ai-immersive, not yet on the phone branch"
+    "blob": "60bf53529057dacf9460c3cd2c3a0b657da6dd23",
+    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the stereoPair contract read by the Kotlin side, the 2.5D request and the 3D scene included; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",
