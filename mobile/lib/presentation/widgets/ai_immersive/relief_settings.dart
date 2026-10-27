@@ -89,8 +89,13 @@ class AiReliefSettings extends HookConsumerWidget {
             subtitle: t.ai_immersive_relief_25d_subtitle,
           ),
           const ReliefCacheTile(),
-          // A relief runs in the immersive viewer, never under the settings: nothing to stop before a removal
-          AiComponentsTile(components: ref.watch(reliefComponentsProvider), onCancelConversions: () async {}),
+          // A relief runs in the immersive viewer, never under the settings: nothing to stop before a removal. With
+          // the AI features off, Remove only: nothing is downloaded
+          AiComponentsTile(
+            components: ref.watch(reliefComponentsProvider),
+            onCancelConversions: () async {},
+            canDownload: enabled.value,
+          ),
         ],
       ],
     );

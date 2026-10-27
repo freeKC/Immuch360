@@ -206,6 +206,22 @@ void main() {
     expect(components.installs, isEmpty, reason: 'nothing is downloaded from the settings by themselves');
   });
 
+  testWidgets('with the AI features off, the components offer no Download, and are still listed for Remove', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    await scrollTo(tester, find.byType(AiComponentsTile));
+    expect(find.byKey(const Key('ai_components_download')), findsOneWidget);
+
+    await scrollTo(tester, aiSwitch);
+    await tester.tap(aiSwitch);
+    await tester.pumpAndSettle();
+    await scrollTo(tester, find.byType(AiComponentsTile));
+
+    expect(find.byKey(const Key('ai_components_download')), findsNothing, reason: 'off: nothing downloaded');
+    expect(find.text('Depth Anything V2 Small'), findsOneWidget);
+  });
+
   testWidgets('the APK of the phone flavour on a headset: the switches, no cache, no components', (tester) async {
     await pumpSettings(tester, flavor: 'phone');
     await scrollTo(tester, olderSwitch);
