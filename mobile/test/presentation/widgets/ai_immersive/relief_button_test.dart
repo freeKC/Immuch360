@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -264,5 +265,27 @@ void main() {
   test('the Quest needs the depth model of the Quest only', () {
     expect(aiComponentsFor(AiPlatform.questArm64), [model]);
     expect(AiComponentsService.downloadBytesOf([model]), 99530468);
+  });
+
+  test('the relief asks for the components of the 3D photo, whatever the catalogue holds for the later features', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    const later = AiComponent(
+      id: 'later-quest-model',
+      version: '1',
+      kind: AiComponentKind.model,
+      platforms: {AiPlatform.questArm64},
+      assetName: 'later.tflite',
+      installPath: 'models/later/later.tflite',
+      size: 1,
+      sha256: null,
+      compression: AiCompression.none,
+      licence: 'MIT',
+      licenceUrl: 'https://example.org',
+      features: {AiFeature.scene},
+    );
+
+    expect(container.read(reliefComponentsProvider), [model]);
+    expect(reliefComponentsOf([model, later]), [model]);
   });
 }
