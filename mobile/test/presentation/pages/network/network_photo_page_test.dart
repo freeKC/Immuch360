@@ -15,6 +15,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -155,6 +157,7 @@ void main() {
     String path, {
     _RecordingImmersiveApi? immersiveApi,
     NetworkFolderMedia? folder,
+    AppConfig appConfig = const AppConfig(),
     List<Override> extraOverrides = const [],
   }) async {
     await pumpNetworkRouter(
@@ -166,7 +169,7 @@ void main() {
         overrideConnections((ref) => FakeConnections(ref, share, baseUrl: server.baseUrl)),
         isHorizonOsProvider.overrideWith((ref) async => immersiveApi != null),
         if (immersiveApi != null) immersiveApiProvider.overrideWithValue(immersiveApi),
-        appConfigProvider.overrideWithValue(const AppConfig()),
+        appConfigProvider.overrideWithValue(appConfig),
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
         ...extraOverrides,
@@ -731,6 +734,40 @@ void main() {
           quarterTurns: 1,
         ).cacheKey,
       );
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('asks for 2.5D first when the advanced settings say so, with the same key', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      share.files['/Photos/salon.png'] = png;
+      await pumpPhotoPage(
+        tester,
+        '/Photos/salon.png',
+        immersiveApi: immersiveApi,
+        appConfig: const AppConfig(aiImmersive: AiImmersiveConfig(questMode: ReliefViewMode.mesh25d)),
+        extraOverrides: headset(),
+      );
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      await tester.tap(reliefButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      final expected = questReliefRequest(
+        modelPath: components.modelPath,
+        identity: reliefIdentityOfShareFile(
+          sourceId: _source.id,
+          path: '/Photos/salon.png',
+          size: png.length,
+          modified: MemoryShare.modified,
+        ),
+        quarterTurns: 0,
+        mode: ReliefViewMode.mesh25d,
+      );
+      final relief = jsonDecode(immersiveApi.stereoPairs.single!) as Map<String, dynamic>;
+      expect(relief, jsonDecode(expected.toJsonString()));
+      expect(relief['mode'], 'mesh25d');
 
       await endRealIo(tester);
     });
