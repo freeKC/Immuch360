@@ -198,6 +198,11 @@ flutter:
     - assets/
     - assets/feature_message/
     - assets/pairing/
+    # LiteRT, the engine of the AI relief on the Quest, is in the APK of the quest flavour only, and so are its licence
+    # and the notices of the libraries it is built from (lib/utils/litert_licenses.dart)
+    - path: assets/licenses/litert/
+      flavors:
+        - quest
   fonts:
     - family: GoogleSans
       fonts:

@@ -51,6 +51,7 @@ import 'package:immich_mobile/utils/cache/widgets_binding.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/utils/libsmb2_license.dart';
 import 'package:immich_mobile/utils/licenses.dart';
+import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
@@ -164,6 +165,8 @@ Future<void> initApp() async {
   LicenseRegistry.addLicense(libsmb2Licenses);
   // The noble libraries of the browser page of the big screens, ZXing on Android (lib/utils/pairing_licenses.dart)
   LicenseRegistry.addLicense(pairingLicenses);
+  // LiteRT, the engine of the AI relief, in the quest flavour (lib/utils/litert_licenses.dart)
+  LicenseRegistry.addLicense(liteRtLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
