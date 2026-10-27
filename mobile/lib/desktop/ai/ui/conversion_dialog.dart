@@ -114,6 +114,8 @@ String aiGateReasonText(Translations t, AiGateResult gate) => switch (gate.reaso
   AiGateReason.componentsMissing => t.ai_immersive_unavailable_missing,
   AiGateReason.componentsDamaged => t.ai_immersive_unavailable_damaged,
   AiGateReason.runtimeFailed => t.ai_immersive_failed_model(message: gate.message ?? ''),
+  AiGateReason.notHere => t.ai_immersive_unavailable_system,
+  AiGateReason.notInThisVersion => t.ai_immersive_unavailable_build,
 };
 
 /// The words of a reason to skip a photo
