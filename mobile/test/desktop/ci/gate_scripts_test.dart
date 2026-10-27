@@ -543,7 +543,7 @@ abstract class SyncEvents {
   }, skip: skipCiScripts);
 
   group('check_apk_sizes.py', () {
-    ScriptRun check(Map<String, int> apks) {
+    ScriptRun check(Map<String, int> apks, {List<String> options = const []}) {
       final root = tree({
         'reference.json': jsonEncode({'arm64-v8a': 100000, 'universal': 200000, 'quest': 100000, 'aab': 150000}),
       });
@@ -553,6 +553,7 @@ abstract class SyncEvents {
       return runCiScript('check_apk_sizes.py', [
         '--reference-json',
         p.join(root.path, 'reference.json'),
+        ...options,
         for (final name in apks.keys) p.join(root.path, name),
       ]);
     }
@@ -579,6 +580,38 @@ abstract class SyncEvents {
       expect(run.exitCode, 1, reason: '$run');
       expect(run.output, contains('(+1.100 %), more than 1 %'));
       expect(run.output, contains('(-2.000 %), more than 1 %'));
+    });
+
+    test('--kind-threshold gives one kind its own threshold, the other kinds keep 1 %', () {
+      // The release that adds LiteRT to the Quest APK alone: about +6.5 % there, nothing elsewhere
+      const options = ['--kind-threshold', 'quest=7'];
+      final run = check({'app-quest-release.apk': 106500, 'app-phone-release.aab': 150100}, options: options);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('(+6.500 %), ok (threshold of the quest kind: 7 %)'));
+      expect(run.output, contains('app-phone-release.aab: aab, 150100 bytes against 150000 (+0.067 %), ok\n'));
+
+      final phone = check({
+        'app-quest-release.apk': 106500,
+        'app-arm64-v8a-phone-release.apk': 101100,
+      }, options: options);
+      expect(phone.exitCode, 1, reason: '$phone');
+      expect(phone.output, contains('(+1.100 %), more than 1 %'));
+
+      final over = check({'app-quest-release.apk': 107100}, options: options);
+      expect(over.exitCode, 1, reason: '$over');
+      expect(over.output, contains('(+7.100 %), more than 7 % (threshold of the quest kind: 7 %)'));
+
+      final ordinary = check({'app-quest-release.apk': 106500});
+      expect(ordinary.exitCode, 1, reason: '$ordinary');
+      expect(ordinary.output, contains('(+6.500 %), more than 1 %'));
+    });
+
+    test('--kind-threshold refuses an unknown kind or a value that is no percent', () {
+      for (final value in ['watch=7', 'quest', 'quest=x', 'quest=-1']) {
+        final run = check({'app-quest-release.apk': 100000}, options: ['--kind-threshold', value]);
+        expect(run.exitCode, 2, reason: '$value: $run');
+        expect(run.output, contains('--kind-threshold'), reason: value);
+      }
     });
   }, skip: skipCiScripts);
 
