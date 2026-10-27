@@ -1,17 +1,46 @@
-// The tools of the engine without their systems, for the tests of the chain, the worker and the engine: a slow
-// model, a memory of a chosen size, codecs that record what they are given or refuse it. Every one of them is a plain
-// object, so that it travels to the worker isolate.
+// The tools of the engine without their systems, for the tests of the chain, the worker and the engine: a model the
+// worker isolate can make from a plain description (FakeBackendSpec), a memory of a chosen size, codecs that record
+// what they are given or refuse it. Every one of them is a plain object, so that it travels to the worker isolate.
 
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/engine/ai_worker.dart';
 import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 import 'fake_depth_backend.dart';
+
+/// A FakeDepthBackend made in the worker isolate, which can take its time or end the isolate in the middle of a run
+class FakeBackendSpec implements DepthBackendSpec {
+  const FakeBackendSpec({
+    this.shape = FakeDepthShape.gradient,
+    this.failure,
+    this.delay = Duration.zero,
+    this.endIsolateInRun = false,
+    this.modelSha256 = depthModelOnnxSha256,
+  });
+
+  final FakeDepthShape shape;
+  final String? failure;
+
+  /// How long each run of the model takes, the thread busy as with a real model
+  final Duration delay;
+
+  /// The worker isolate ends in the middle of the run, as after an error nobody caught
+  final bool endIsolateInRun;
+  final String modelSha256;
+
+  @override
+  DepthBackend create() => SlowDepthBackend(
+    FakeDepthBackend(shape: shape, failure: failure, modelSha256: modelSha256),
+    delay: delay,
+    endIsolateInRun: endIsolateInRun,
+  );
+}
 
 /// [inner], slowed down; [onEstimate] hears each run before it ends
 class SlowDepthBackend implements DepthBackend {
