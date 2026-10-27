@@ -92,12 +92,30 @@ const _eyeRatioMax = 2.2;
 const _fullLeftRightWords = {'lrf'};
 const _fullRightLeftWords = {'rlf'};
 
-// The words that tell the width of the eyes; with none of them the frame tells
-const _fullWidthWords = {'full', 'fsbs', 'fullsbs', 'lrf', 'rlf'};
-const _halfWidthWords = {'half', 'hsbs', 'halfsbs'};
+// The words that tell the width of the eyes; with none of them the frame tells. "full" and "half" alone are words of
+// titles too ("Avatar Full HD SBS", "Half Dome_sbs"): they tell the width next to "sbs" only ("_LRF_Full_SBS",
+// "3D-Half-SBS", "SBS_Full")
+const _fullWidthWords = {'fsbs', 'fullsbs', 'lrf', 'rlf'};
+const _halfWidthWords = {'hsbs', 'halfsbs'};
 
 // Split as guessSpatialLayout splits a name: on dots, underscores, dashes and spaces, in any case
-Set<String> _wordsOf(String name) => name.toLowerCase().split(RegExp(r'[._\- ]+')).toSet();
+List<String> _wordListOf(String name) => name.toLowerCase().split(RegExp(r'[._\- ]+'));
+
+Set<String> _wordsOf(String name) => _wordListOf(name).toSet();
+
+/// Whether [words] say a width: one of [widthWords], or [plain] ("full", "half") next to "sbs"
+bool _saysWidth(List<String> words, Set<String> widthWords, String plain) {
+  for (var at = 0; at < words.length; at++) {
+    if (widthWords.contains(words[at])) {
+      return true;
+    }
+    if (words[at] == plain &&
+        ((at > 0 && words[at - 1] == 'sbs') || (at + 1 < words.length && words[at + 1] == 'sbs'))) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /// Which eye comes first in a photo named [name] when its name marks two eyes side by side, null when it does not: the
 /// words of the Spatial 2.5D player (sbs, lr, fullsbs... and rl for the right eye first, see guessSpatialLayout) and
@@ -170,11 +188,11 @@ FlatStereoPhoto? decideStereoPhoto({
       guessSphereCoverage(fileName: name, width: null, height: null) == SphereCoverage.half) {
     return null;
   }
-  final words = _wordsOf(name);
+  final words = _wordListOf(name);
   final StereoEyes eyes;
-  if (words.any(_fullWidthWords.contains)) {
+  if (_saysWidth(words, _fullWidthWords, 'full')) {
     eyes = StereoEyes.full;
-  } else if (words.any(_halfWidthWords.contains)) {
+  } else if (_saysWidth(words, _halfWidthWords, 'half')) {
     eyes = StereoEyes.half;
   } else {
     eyes = ratio >= _fullFrameMin && ratio <= _fullFrameMax ? StereoEyes.full : StereoEyes.half;

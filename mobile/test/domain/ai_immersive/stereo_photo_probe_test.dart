@@ -230,6 +230,20 @@ void main() {
       expect(square?.eyes, StereoEyes.full);
     });
 
+    test('full and half tell the width next to sbs only, not as words of a title', () async {
+      // "Full HD": the frame of a video still, two half width eyes
+      final (fullHd, _) = await probe(jpegFile(width: 1920, height: 1080), 'Avatar Full HD SBS.jpg');
+      expect(fullHd, const FlatStereoPhoto(eyes: StereoEyes.half));
+      // "Half Dome": a Full SBS of 3.56:1, which a half width reading would refuse as too wide
+      final (halfDome, _) = await probe(jpegFile(width: 7120, height: 2000), 'Half Dome_sbs.jpg');
+      expect(halfDome, const FlatStereoPhoto(eyes: StereoEyes.full));
+      // Next to sbs, before or after it, they do
+      final (fullSbs, _) = await probe(jpegFile(width: 3000, height: 2000), 'clip_Full-SBS.jpg');
+      expect(fullSbs, const FlatStereoPhoto(eyes: StereoEyes.full));
+      final (sbsHalf, _) = await probe(jpegFile(width: 3000, height: 2000), 'clip_SBS_Half.jpg');
+      expect(sbsHalf, const FlatStereoPhoto(eyes: StereoEyes.half));
+    });
+
     test('iw3, half width (_LR)', () async {
       final (found, _) = await probe(pngFile(width: 4032, height: 3024), 'photo_LR.png');
 
