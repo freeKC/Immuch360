@@ -123,13 +123,6 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  Future<void> settle(WidgetTester tester) async {
-    for (var step = 0; step < 20; step++) {
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
-      await tester.pump();
-    }
-  }
-
   /// desktop_ai.json as the store gives it once the writes of the page are done. Read in the zone of the test and
   /// pumped, never inside runAsync: a read waits for the writes queued before it, whose steps only run when the test
   /// pumps, so a read inside runAsync would wait for ever on a slow machine.
@@ -145,6 +138,24 @@ void main() {
       fail('desktop_ai.json could not be read: $failure');
     }
     return read ?? fail('desktop_ai.json was not read in time');
+  }
+
+  /// Lets the page finish, however slow the files of this machine: real time and frames, then every read and write of
+  /// desktop_ai.json queued so far. A change of the page writes, then reads again: two turns of the queue of the store,
+  /// with frames between them for the page to ask its read, then a frame.
+  Future<void> settle(WidgetTester tester) async {
+    Future<void> frames(int count) async {
+      for (var step = 0; step < count; step++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+    }
+
+    await frames(20);
+    await keptSettings(tester);
+    await frames(5);
+    await keptSettings(tester);
+    await tester.pump();
   }
 
   Future<void> pump(WidgetTester tester, {bool enabled = true, bool? backsUp = false}) async {
