@@ -183,6 +183,18 @@ void main() {
       expect(found.versions, hasLength(5));
     });
 
+    test('an original changed after it was hashed no longer lists the versions of its old sum', () async {
+      await fixture.scan();
+      hash('salon.jpg', original);
+      expect((await finder().find(idOf('salon.jpg'))).versions, hasLength(2));
+
+      // Retouched: the index keeps the old sum, which no longer says what the file is
+      fixture.write('Photos/salon.jpg', [...jpegBytes(width: 64, height: 48), 0]);
+      await fixture.scan();
+
+      expect((await finder().find(idOf('salon.jpg'))).versions, isEmpty);
+    });
+
     test('a photo without versions, a video and a file the library does not have show nothing', () async {
       fixture.write('Photos/clip.mp4', [0, 0, 0, 0]);
       await fixture.scan();
@@ -244,6 +256,18 @@ void main() {
       File(p.join(photos, 'salon.jpg')).deleteSync();
       await fixture.scan();
       final found = await finder().find(idOf('salon_3D_LRF_Full_SBS.jpg'));
+      expect((found.isVersion, found.original), (true, null));
+    });
+
+    test('is not found by a sum its original no longer has', () async {
+      await fixture.scan();
+      hash('salon.jpg', original);
+      expect((await finder().find(idOf('3D/salon_3D_LRF_Full_SBS (1).jpg'))).original?.name, 'salon.jpg');
+
+      fixture.write('Photos/salon.jpg', [...jpegBytes(width: 64, height: 48), 0]);
+      await fixture.scan();
+
+      final found = await finder().find(idOf('3D/salon_3D_LRF_Full_SBS (1).jpg'));
       expect((found.isVersion, found.original), (true, null));
     });
 
