@@ -197,7 +197,8 @@ class ReliefCacheTest {
   @Test
   fun `a normalised map is kept in 65 536 levels`() {
     val map = ReliefMap.quantize(7, 1, doubleArrayOf(0.0, 0.5, 1.0, 0.25, -0.1, 1.2, Double.NaN))
-    assertEquals(listOf(0, 32768, 65535, 16384, 0, 65535, 0), (0 until 7).map { map.level(it) })
+    // Not a number stays in the middle, as step 1 of relief-v1 makes it here and on the computers
+    assertEquals(listOf(0, 32768, 65535, 16384, 0, 65535, 32768), (0 until 7).map { map.level(it) })
     val values = DoubleArray(1000) { it / 999.0 }
     val back = ReliefMap.quantize(1000, 1, values).toNormalized()
     for (i in values.indices) assertEquals(values[i], back[i], 0.5 / 65535 + 1e-12)
