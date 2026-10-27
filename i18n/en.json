@@ -535,6 +535,7 @@
   "ai_immersive_component_sizes": "{download} to download, {disk} on disk",
   "ai_immersive_components": "AI components",
   "ai_immersive_components_busy": "A conversion is running. Cancel it to remove the components?",
+  "ai_immersive_components_still_busy": "The conversion is still stopping. Try again in a moment.",
   "ai_immersive_components_total": "Total: {size}",
   "ai_immersive_conversions": "Conversions",
   "ai_immersive_convert": "Convert",

@@ -30,14 +30,17 @@ void main() {
     cancelled = 0;
   });
 
-  Future<void> pumpTile(WidgetTester tester) => tester.pumpConsumerWidget(
+  /// The tile; its cancel stops the conversions unless [stops] is false (one that has not ended when it answers)
+  Future<void> pumpTile(WidgetTester tester, {bool stops = true}) => tester.pumpConsumerWidget(
     Scaffold(
       body: SingleChildScrollView(
         child: AiComponentsTile(
           components: linux,
           onCancelConversions: () async {
             cancelled++;
-            service.converting = false;
+            if (stops) {
+              service.converting = false;
+            }
           },
         ),
       ),
@@ -172,6 +175,28 @@ void main() {
     expect(service.statusOf(model).state, AiComponentState.notInstalled);
     expect(inRow(model, find.text('Not installed')), findsOneWidget);
     expect(find.text('Total: ${formatBytes(AiComponentsService.diskBytesOf([runtime]))}'), findsOneWidget);
+  });
+
+  testWidgets('a conversion still running after the cancel: said in a sentence, not asked again, nothing removed', (
+    tester,
+  ) async {
+    service
+      ..setStatus(model, const AiComponentStatus(AiComponentState.installed))
+      ..space = AiComponentsService.diskBytesOf([model])
+      ..converting = true;
+    await pumpTile(tester, stops: false);
+
+    await tester.tap(find.byKey(Key('ai_component_remove_${model.id}')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('ai_components_cancel_conversions')));
+    await tester.pumpAndSettle();
+
+    expect(cancelled, 1);
+    expect(service.removals, [model.id, model.id], reason: 'one more try after the cancel, no loop');
+    final message = find.descendant(of: find.byType(SnackBar), matching: find.byType(Text));
+    expect(tester.widget<Text>(message).data, 'The conversion is still stopping. Try again in a moment.');
+    expect(find.text('A conversion is running. Cancel it to remove the components?'), findsNothing);
+    expect(service.statusOf(model).state, AiComponentState.installed);
   });
 
   testWidgets('a file the system keeps: "space freed at the next start", on the row and in a message', (tester) async {

@@ -23,7 +23,10 @@ import 'package:logging/logging.dart';
 final _log = Logger('AiComponentsTile');
 
 /// See the top of this file. [components] are those of this system (aiComponentsFor); [onCancelConversions] stops
-/// what uses them (the conversions on a computer, the relief on the Quest), offered when a removal is refused.
+/// what uses them (the conversions on a computer, the relief on the Quest), offered when a removal is refused. Its
+/// future must complete only once nothing uses the components any more (the queue stopped, the ONNX Runtime session
+/// or the relief closed): the tile tries the removal once more right after, and when that try is refused too, it says
+/// the conversion is still stopping and removes nothing.
 class AiComponentsTile extends ConsumerStatefulWidget {
   const AiComponentsTile({super.key, required this.components, required this.onCancelConversions});
 
@@ -77,7 +80,8 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
       final message = switch (outcome) {
         AiRemoveOutcome.removed => null,
         AiRemoveOutcome.nextStart => t.ai_immersive_removed_next_start,
-        AiRemoveOutcome.busy => t.ai_immersive_components_busy,
+        // Only after Yes: what used the components had not stopped yet
+        AiRemoveOutcome.busy => t.ai_immersive_components_still_busy,
         AiRemoveOutcome.writeFailed => t.ai_immersive_remove_failed,
       };
       if (message != null) {
