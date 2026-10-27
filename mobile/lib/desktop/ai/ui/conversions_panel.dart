@@ -177,6 +177,12 @@ String qualityFlagText(Translations t, ReliefQualityFlag flag) => switch (flag) 
   ReliefQualityFlag.lowRelief => t.ai_immersive_quality_flat,
   ReliefQualityFlag.hiddenAreas => t.ai_immersive_quality_hidden,
   ReliefQualityFlag.dark => t.ai_immersive_quality_dark,
+  ReliefQualityFlag.sky => t.ai_immersive_quality_sky,
+  ReliefQualityFlag.fovGuessed => t.ai_immersive_quality_fov,
+  ReliefQualityFlag.smallZone => t.ai_immersive_quality_small_zone,
+  ReliefQualityFlag.wideGamut => t.ai_immersive_quality_wide_gamut,
+  ReliefQualityFlag.seam => t.ai_immersive_quality_seam,
+  ReliefQualityFlag.mostlyInvented => t.ai_immersive_quality_mostly_invented,
 };
 
 /// See the top of this file

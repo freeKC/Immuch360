@@ -45,6 +45,59 @@ void main() {
       expect(qualityFlagsFromXmp(null), isEmpty);
     });
 
+    test('each kind has its name, the end of which a shortened name keeps whole', () {
+      expect(
+        {for (final kind in ImmersiveKind.values) kind: derivedFileNameFor(kind, 'salon.jpg')},
+        {
+          ImmersiveKind.stereoPhoto: 'salon_3D_LRF_Full_SBS.jpg',
+          ImmersiveKind.volumetricScene: 'salon_scene3D.jpg',
+          ImmersiveKind.panorama360: 'salon_360.jpg',
+          ImmersiveKind.stereoPanorama360: 'salon_360_3D.jpg',
+        },
+      );
+      // The 3D version of a 360° photo whose name says so only adds _3D
+      expect(derivedFileNameFor(ImmersiveKind.stereoPanorama360, 'PANO_0001.jpg'), 'PANO_0001_3D.jpg');
+      expect(derivedFileNameFor(ImmersiveKind.stereoPanorama360, 'trip 360.jpg'), 'trip 360_3D.jpg');
+      expect(derivedFileNameFor(ImmersiveKind.stereoPanorama360, 'IMG_1360.jpg'), 'IMG_1360_360_3D.jpg');
+      expect(derivedNameEnd(ImmersiveKind.volumetricScene, 'salon.jpg'), '_scene3D.jpg');
+      expect(derivedFileNameFor(ImmersiveKind.stereoPhoto, 'salon.jpg'), sbsFileNameFor('salon.jpg'));
+    });
+
+    test('each kind raises its own flags, in the order of the XMP; the flags of phase 1 keep their place', () {
+      expect(ReliefQualityFlag.values.take(3), [
+        ReliefQualityFlag.lowRelief,
+        ReliefQualityFlag.hiddenAreas,
+        ReliefQualityFlag.dark,
+      ]);
+      expect(qualityFlagsOf(ImmersiveKind.stereoPhoto), ReliefQualityFlag.values.take(3));
+      expect(qualityFlagsOf(ImmersiveKind.volumetricScene), contains(ReliefQualityFlag.smallZone));
+      expect(qualityFlagsOf(ImmersiveKind.panorama360), contains(ReliefQualityFlag.mostlyInvented));
+      for (final kind in ImmersiveKind.values) {
+        final flags = qualityFlagsOf(kind);
+        expect(flags, [...flags]..sort((a, b) => a.index - b.index), reason: '$kind');
+      }
+      expect(qualityFlagsFromXmp('seam, sky mostlyInvented'), [
+        ReliefQualityFlag.seam,
+        ReliefQualityFlag.sky,
+        ReliefQualityFlag.mostlyInvented,
+      ]);
+      expect(qualityFlagsToXmp([ReliefQualityFlag.seam, ReliefQualityFlag.sky]), 'sky,seam');
+    });
+
+    test('the origin of a scene, its safe zone and the honesty of each kind', () {
+      expect(ImmersiveOrigin.reconstructedFromPhoto.xmp, 'ReconstructedFromPhoto');
+      expect(ImmersiveOrigin.fromJson('reconstructedFromPhoto'), ImmersiveOrigin.reconstructedFromPhoto);
+      const zone = SceneSafeZone(lateral: 0.22, vertical: 0.13, forward: 0.48, backward: 0.11);
+      expect(SceneSafeZone.fromJson(zone.toJson()), zone);
+      expect(SceneSafeZone.fromJson({'lateral': 0.2}), isNull);
+      expect(sceneDescription, contains(sceneHonesty));
+      expect(panoramaDescription, contains(panoramaHonesty));
+      expect(stereoPanoramaDescription, contains(panoramaHonesty));
+      expect(SceneV1.format, glbLayersV1);
+      expect(SceneV1.breakThreshold, ReliefV1.linkThreshold);
+      expect(Relief360V1.maxShiftDegrees, 1.0);
+    });
+
     test('the stem of a name drops only the last extension', () {
       expect(fileStem('salon.jpg'), 'salon');
       expect(fileStem('archive.tar.gz'), 'archive.tar');
