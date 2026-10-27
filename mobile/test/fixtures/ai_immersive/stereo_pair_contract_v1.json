@@ -1,5 +1,5 @@
 {
-  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. A depthRelief request names its mode only for 2.5D (mesh25d); without it, or with a mode a reader does not know, the relief first shows in stereo. cacheKeys gives the text of each relief cache key and its SHA-256: the mode is not part of it, the map is the same. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
+  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. A depthRelief request names its mode only for 2.5D (mesh25d); without it, or with a mode a reader does not know, the relief first shows in stereo. cacheKeys gives the text of each relief cache key and its SHA-256: the mode is not part of it, the map is the same. volumetricScene holds the request of a 3D scene of phase 2 (design-final 2026-10-27, section 8.5): the scene is the glb-layers-v1 tail of the file, sceneLength bytes long, checked by sceneSha256; flags may be empty. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
   "sbsPhoto": [
     {
       "name": "ours",
@@ -66,6 +66,58 @@
         "convergence": 0.5,
         "quarterTurns": 0,
         "mode": "mesh25d"
+      }
+    }
+  ],
+  "volumetricScene": [
+    {
+      "name": "a scene of the design",
+      "request": {
+        "kind": "volumetricScene",
+        "version": 1,
+        "format": "glb-layers-v1",
+        "sceneLength": 6712344,
+        "sceneSha256": "3040c8c4f61d1a2a5b7cc6485a952bbb1ad346d70e76a7332b285f7f8de41d1d",
+        "meshes": 2,
+        "vertices": 58210,
+        "triangles": 113877,
+        "textureMax": 4096,
+        "scale": 1.0,
+        "safe": {
+          "lateral": 0.22,
+          "vertical": 0.13,
+          "forward": 0.48,
+          "backward": 0.11
+        },
+        "fovDegrees": 65.4,
+        "origin": "reconstructedFromPhoto",
+        "flags": [
+          "hiddenAreas"
+        ]
+      }
+    },
+    {
+      "name": "a close photo scaled for comfort, no flags",
+      "request": {
+        "kind": "volumetricScene",
+        "version": 1,
+        "format": "glb-layers-v1",
+        "sceneLength": 412,
+        "sceneSha256": "52b2821c534acb71a9dce8ffb4e116de078225f25f9cf09998b51f33bc71c1d5",
+        "meshes": 1,
+        "vertices": 9,
+        "triangles": 8,
+        "textureMax": 64,
+        "scale": 1.6,
+        "safe": {
+          "lateral": 0.1,
+          "vertical": 0.06,
+          "forward": 0.1,
+          "backward": 0.05
+        },
+        "fovDegrees": 50.0,
+        "origin": "reconstructedFromPhoto",
+        "flags": []
       }
     }
   ],
@@ -137,7 +189,7 @@
     },
     {
       "kind": "volumetricScene",
-      "version": 1
+      "version": 2
     }
   ]
 }

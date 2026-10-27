@@ -1,6 +1,7 @@
 package app.alextran.immich.immersive
 
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -12,10 +13,11 @@ import kotlinx.serialization.json.longOrNull
  * What the stereo quad of the viewer is asked to show, read once from the stereoPair JSON of ImmersiveApi.open: an
  * Apple spatial photo (two HEIF items, see [StereoPairSpec]), a flat photo holding two eyes side by side (ours, made
  * from a 2D photo by a computer, or another tool's, see [SbsPhotoSpec]), or a flat photo whose right eye the headset
- * makes from its estimated depth (see [DepthReliefSpec]). The JSON of the last two is frozen in
+ * makes from its estimated depth (see [DepthReliefSpec]), or a photo that carries a 3D scene a computer made from one
+ * photo (see [VolumetricSceneSpec]). The JSON of the last three is frozen in
  * mobile/test/fixtures/ai_immersive/stereo_pair_contract_v1.json, which the Dart side writes against
- * (design-final 2026-10-26, section 4.1). A kind or a version this build does not know reads as none: the viewer then
- * shows the photo flat, as before.
+ * (design-final 2026-10-26, section 4.1, and design-final 2026-10-27, section 8.5). A kind or a version this build does
+ * not know reads as none: the viewer then shows the photo flat, as before.
  */
 internal sealed interface StereoPhotoKind {
   /** The relief was estimated by AI: the quad says so, and stays within 60 degrees (see StereoComposer.maxAngle). */
@@ -48,6 +50,18 @@ internal sealed interface StereoPhotoKind {
       get() = true
   }
 
+  /**
+   * The quad shows the preview of the file flat, as it showed an unknown kind, until the scene viewer takes this kind
+   * before the quad: no relief label, no "2D (original)".
+   */
+  data class VolumetricScene(val spec: VolumetricSceneSpec) : StereoPhotoKind {
+    override val isEstimatedRelief: Boolean
+      get() = false
+
+    override val leftEyeIsOriginal: Boolean
+      get() = false
+  }
+
   companion object {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -68,6 +82,7 @@ internal sealed interface StereoPhotoKind {
         StereoPairSpec.KIND -> StereoPairSpec.parse(text)?.let(::HeicPair)
         SbsPhotoSpec.KIND -> SbsPhotoSpec.fromJson(root)?.let(::Sbs)
         DepthReliefSpec.KIND -> DepthReliefSpec.fromJson(root)?.let(::DepthRelief)
+        VolumetricSceneSpec.KIND -> VolumetricSceneSpec.fromJson(root)?.let(::VolumetricScene)
         else -> null
       }
     }
@@ -83,6 +98,10 @@ internal fun JsonObject.string(key: String): String? = primitive(key)?.takeIf { 
 
 /** The whole number of [key] when it is a JSON number without a fraction. */
 internal fun JsonObject.integer(key: String): Int? = primitive(key)?.takeIf { !it.isString }?.intOrNull
+
+/** The finite number of [key] when it is a JSON number. */
+internal fun JsonObject.finite(key: String): Double? =
+  primitive(key)?.takeIf { !it.isString }?.doubleOrNull?.takeIf { it.isFinite() }
 
 /**
  * How the viewer first shows a relief it made (ReliefViewMode in lib/domain/models/ai_immersive): both eyes on the
@@ -145,6 +164,101 @@ internal data class DepthReliefSpec(
           cacheKeyForm.matches(it.cacheKey) &&
           it.parallax >= 0 &&
           it.convergence in 0.0..1.0
+      }
+    }
+  }
+}
+
+/**
+ * A photo that carries a 3D scene (design-final 2026-10-27, sections 3.2 and 8.5): a JPEG preview, then the scene in
+ * the glb-layers-v1 [format] in the last [sceneLength] bytes of the file, checked by [sceneSha256]. The sizes are those
+ * the gate of the headset weighs before reading the scene; the [safe] zone is in metres around the eye at the start,
+ * after the comfort [scale]; [fovDegrees] is the horizontal field of view of the photo. [flags] are the quality flags
+ * of the file, a token this build does not know kept and left aside by the viewer. The XMP at the head of the file is
+ * read again when the scene opens, and wins over this JSON.
+ */
+internal data class VolumetricSceneSpec(
+  val format: String,
+  val sceneLength: Long,
+  val sceneSha256: String,
+  val meshes: Int,
+  val vertices: Int,
+  val triangles: Int,
+  val textureMax: Int,
+  val scale: Double,
+  val safe: SafeZone,
+  val fovDegrees: Double,
+  val origin: Origin,
+  val flags: List<String>,
+) {
+  /** How far the eye may go from where it started, in metres, before the scene flattens (SceneNavigator). */
+  data class SafeZone(val lateral: Double, val vertical: Double, val forward: Double, val backward: Double)
+
+  enum class Origin(val json: String) {
+    RECONSTRUCTED_FROM_PHOTO("reconstructedFromPhoto"),
+    UNKNOWN("unknown"),
+  }
+
+  companion object {
+    const val KIND = "volumetricScene"
+    const val VERSION = 1
+
+    /** The only scene format this build reads: our meshes and their textures, see GlbReader. */
+    const val FORMAT = "glb-layers-v1"
+
+    private val sha256Form = Regex("[0-9a-f]{64}")
+
+    /**
+     * The request of [root], null for another version or format, a missing field or a value that cannot be right. An
+     * origin this build does not know reads as unknown, as the Dart side reads it.
+     */
+    fun fromJson(root: JsonObject): VolumetricSceneSpec? {
+      if (root.string("kind") != KIND || root.integer("version") != VERSION) return null
+      if (root.string("format") != FORMAT) return null
+      val safe = root["safe"] as? JsonObject ?: return null
+      val flags =
+        when (val value = root["flags"]) {
+          null,
+          is JsonNull -> emptyList()
+          is JsonArray -> value.mapNotNull { (it as? JsonPrimitive)?.takeIf { flag -> flag.isString }?.content }
+          else -> return null
+        }
+      val spec =
+        VolumetricSceneSpec(
+          format = FORMAT,
+          sceneLength = root.primitive("sceneLength")?.takeIf { !it.isString }?.longOrNull ?: return null,
+          sceneSha256 = root.string("sceneSha256") ?: return null,
+          meshes = root.integer("meshes") ?: return null,
+          vertices = root.integer("vertices") ?: return null,
+          triangles = root.integer("triangles") ?: return null,
+          textureMax = root.integer("textureMax") ?: return null,
+          scale = root.finite("scale") ?: return null,
+          safe =
+            SafeZone(
+              lateral = safe.finite("lateral") ?: return null,
+              vertical = safe.finite("vertical") ?: return null,
+              forward = safe.finite("forward") ?: return null,
+              backward = safe.finite("backward") ?: return null,
+            ),
+          fovDegrees = root.finite("fovDegrees") ?: return null,
+          origin = root.string("origin").let { value -> Origin.entries.firstOrNull { it.json == value } }
+            ?: Origin.UNKNOWN,
+          flags = flags,
+        )
+      return spec.takeIf {
+        it.sceneLength > 0 &&
+          sha256Form.matches(it.sceneSha256) &&
+          it.meshes > 0 &&
+          it.vertices > 0 &&
+          it.triangles > 0 &&
+          it.textureMax > 0 &&
+          it.scale > 0 &&
+          it.safe.lateral >= 0 &&
+          it.safe.vertical >= 0 &&
+          it.safe.forward >= 0 &&
+          it.safe.backward >= 0 &&
+          it.fovDegrees > 0 &&
+          it.fovDegrees < 180
       }
     }
   }

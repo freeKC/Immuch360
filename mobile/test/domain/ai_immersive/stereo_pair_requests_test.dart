@@ -111,11 +111,117 @@ void main() {
     });
   });
 
+  group('volumetricScene', () {
+    const designSha256 = '3040c8c4f61d1a2a5b7cc6485a952bbb1ad346d70e76a7332b285f7f8de41d1d';
+
+    test('the scene of the design writes the JSON of the contract', () {
+      const scene = VolumetricSceneRequest(
+        sceneLength: 6712344,
+        sceneSha256: designSha256,
+        meshes: 2,
+        vertices: 58210,
+        triangles: 113877,
+        textureMax: 4096,
+        safe: SceneSafeZone(lateral: 0.22, vertical: 0.13, forward: 0.48, backward: 0.11),
+        fovDegrees: 65.4,
+        flags: [ReliefQualityFlag.hiddenAreas],
+      );
+
+      expect(jsonDecode(scene.toJsonString()), request('volumetricScene', 0));
+      expect(scene.origin, ImmersiveOrigin.reconstructedFromPhoto);
+      expect(scene.format, glbLayersV1);
+    });
+
+    test('a close photo scaled for comfort, without flags, writes the JSON of the contract', () {
+      final close = request('volumetricScene', 1);
+      final scene = VolumetricSceneRequest(
+        sceneLength: 412,
+        sceneSha256: close['sceneSha256'] as String,
+        meshes: 1,
+        vertices: 9,
+        triangles: 8,
+        textureMax: 64,
+        scale: 1.6,
+        safe: const SceneSafeZone(lateral: 0.1, vertical: 0.06, forward: 0.1, backward: 0.05),
+        fovDegrees: 50,
+      );
+
+      expect(jsonDecode(scene.toJsonString()), close);
+    });
+
+    test('reads back what it writes', () {
+      for (var i = 0; i < 2; i++) {
+        final read = VolumetricSceneRequest.fromJson(request('volumetricScene', i));
+
+        expect(read, isNotNull);
+        expect(read!.toJson(), request('volumetricScene', i));
+      }
+    });
+
+    test('the flags are written in the order of the XMP, a later origin or flag reads as unknown', () {
+      final json = {
+        ...request('volumetricScene', 0),
+        'origin': 'fromSeveralPhotos',
+        'flags': ['sparkles', 'dark', 'hiddenAreas'],
+      };
+      final read = VolumetricSceneRequest.fromJson(json)!;
+
+      expect(read.origin, ImmersiveOrigin.unknown);
+      expect(read.flags, [ReliefQualityFlag.hiddenAreas, ReliefQualityFlag.dark]);
+      expect(read.toJson()['flags'], ['hiddenAreas', 'dark']);
+    });
+
+    test('a request that cannot be right is none', () {
+      final scene = request('volumetricScene', 0);
+      for (final change in <Map<String, Object?>>[
+        {'version': 2},
+        {'format': 'glb-layers-v2'},
+        {'format': null},
+        {'sceneLength': 0},
+        {'sceneLength': '6712344'},
+        {'sceneSha256': designSha256.toUpperCase()},
+        {'sceneSha256': '../scene'},
+        {'meshes': 0},
+        {'vertices': -1},
+        {'triangles': 0},
+        {'textureMax': 0},
+        {'scale': 0},
+        {'safe': null},
+        {
+          'safe': {'lateral': 0.22, 'vertical': 0.13, 'forward': 0.48},
+        },
+        {
+          'safe': {'lateral': -0.22, 'vertical': 0.13, 'forward': 0.48, 'backward': 0.11},
+        },
+        {'fovDegrees': 180},
+        {'fovDegrees': null},
+        {'flags': 'hiddenAreas'},
+      ]) {
+        expect(VolumetricSceneRequest.fromJson({...scene, ...change}), isNull, reason: '$change');
+      }
+      // No flags at all is no flag
+      expect(VolumetricSceneRequest.fromJson({...scene}..remove('flags'))!.flags, isEmpty);
+    });
+  });
+
   test('the requests a reader of version 1 refuses are refused', () {
     for (final unknown in (contract['unknown'] as List).cast<Map<String, dynamic>>()) {
       expect(SbsPhotoRequest.fromJson(unknown), isNull, reason: '$unknown');
       expect(DepthReliefRequest.fromJson(unknown), isNull, reason: '$unknown');
+      expect(VolumetricSceneRequest.fromJson(unknown), isNull, reason: '$unknown');
     }
+    // A 3D scene of version 1 is a request of this build, no longer an unknown one
+    expect(
+      (contract['unknown'] as List).cast<Map<String, dynamic>>().where(
+        (unknown) => unknown['kind'] == volumetricSceneKind && unknown['version'] == volumetricSceneVersion,
+      ),
+      isEmpty,
+    );
+  });
+
+  test('the keys of the labels of a generated panorama are those the immersive viewer reads', () {
+    expect(generatedNoticeLabelKey, 'generatedNotice');
+    expect(photoRegionLabelKey, 'photoRegion');
   });
 
   group('the relief cache key', () {

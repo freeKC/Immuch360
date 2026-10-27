@@ -66,11 +66,13 @@ enum EyeOrder {
 }
 
 /// Where the content of a file comes from: [estimatedDepth] for a relief estimated by AI from one photo,
-/// [generatedContent] reserved for a panorama that was invented, [unknown] for a 3D photo of another tool, which says
-/// nothing of how it was made
+/// [generatedContent] for a panorama invented beyond the edges of the photo, [reconstructedFromPhoto] for a 3D scene
+/// rebuilt from one photo (its hidden areas filled in), [unknown] for a 3D photo of another tool, which says nothing of
+/// how it was made
 enum ImmersiveOrigin {
   estimatedDepth('EstimatedDepth', 'estimatedDepth'),
   generatedContent('GeneratedContent', 'generatedContent'),
+  reconstructedFromPhoto('ReconstructedFromPhoto', 'reconstructedFromPhoto'),
   unknown('Unknown', 'unknown');
 
   const ImmersiveOrigin(this.xmp, this.json);
@@ -136,6 +138,57 @@ String qualityFlagsToXmp(Iterable<ReliefQualityFlag> flags) {
     for (final flag in ReliefQualityFlag.values)
       if (set.contains(flag)) flag.xmp,
   ].join(',');
+}
+
+/// The format of the 3D scene a photo carries after its JPEG (Immuch360:SceneFormat, "format" of the volumetricScene
+/// JSON): a binary glTF of our meshes and their textures (design-final 2026-10-27, section 8.2)
+const glbLayersV1 = 'glb-layers-v1';
+
+/// How far the eye may go from where it started in a 3D scene before the scene flattens, in metres, after the comfort
+/// scale (design-final 2026-10-27, section 2.4): Immuch360:SafeLateral, SafeVertical, SafeForward and SafeBackward,
+/// and "safe" in the volumetricScene JSON
+class SceneSafeZone {
+  const SceneSafeZone({required this.lateral, required this.vertical, required this.forward, required this.backward});
+
+  final double lateral;
+  final double vertical;
+  final double forward;
+  final double backward;
+
+  Map<String, double> toJson() => {'lateral': lateral, 'vertical': vertical, 'forward': forward, 'backward': backward};
+
+  /// The zone [json] holds, null when a side is missing, not a number or negative
+  static SceneSafeZone? fromJson(Object? json) {
+    if (json is! Map) {
+      return null;
+    }
+    double? side(String key) => switch (json[key]) {
+      final num value when value.isFinite && value >= 0 => value.toDouble(),
+      _ => null,
+    };
+    final lateral = side('lateral');
+    final vertical = side('vertical');
+    final forward = side('forward');
+    final backward = side('backward');
+    if (lateral == null || vertical == null || forward == null || backward == null) {
+      return null;
+    }
+    return SceneSafeZone(lateral: lateral, vertical: vertical, forward: forward, backward: backward);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is SceneSafeZone &&
+      other.lateral == lateral &&
+      other.vertical == vertical &&
+      other.forward == forward &&
+      other.backward == backward;
+
+  @override
+  int get hashCode => Object.hash(lateral, vertical, forward, backward);
+
+  @override
+  String toString() => 'SceneSafeZone($lateral, $vertical, $forward, $backward)';
 }
 
 /// What follows the name of the original in the name of a full side by side 3D photo. "_LRF_Full_SBS" is what SKYBOX,
