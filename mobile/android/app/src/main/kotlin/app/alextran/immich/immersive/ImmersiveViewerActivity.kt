@@ -2396,8 +2396,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val next = StereoComposer.nextView(stereoView(), meshAvailable = reliefMesh != null && reliefMeshReady)
     stereo3d = next != StereoView.TWO_D
     stereo25d = next == StereoView.MESH_25D
-    // A new 2.5D view starts from where the head is: the whole relief, faded as the head moves away
-    if (next == StereoView.MESH_25D) reliefAttenuation = 1.0
+    // The mesh is exact from the pose the quad was placed at, not from where the head is now: showReliefMesh fades the
+    // relief with the distance of the head from that pose (ReliefMesh.attenuation), flat from FLAT_M away
     applyStereoMode()
     applyStereoPlacement()
     updateStereoView()
