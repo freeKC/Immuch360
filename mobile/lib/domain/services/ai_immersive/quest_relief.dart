@@ -40,13 +40,15 @@ String reliefIdentityOfShareFile({required String sourceId, required String path
     );
 
 /// The depthRelief request of a photo of [identity] that the user sees turned by [quarterTurns] clockwise from its
-/// unedited file, the headset reading [model] at [modelPath]: the settings of relief-v1, and the key of its depth map
-/// in the cache, which a new model, a new setting or another turn misses by itself
+/// unedited file, the headset reading [model] at [modelPath]: the settings of relief-v1, the key of its depth map in
+/// the cache, which a new model, a new setting or another turn misses by itself, and the view the relief first shows
+/// in, [mode] (the same map for both)
 DepthReliefRequest questReliefRequest({
   required String modelPath,
   AiComponent model = depthModelTfliteComponent,
   required String identity,
   required int quarterTurns,
+  ReliefViewMode mode = ReliefViewMode.stereo,
 }) {
   final modelId = depthModelId(model.sha256!);
   final turns = quarterTurns & 3;
@@ -58,6 +60,7 @@ DepthReliefRequest questReliefRequest({
     parallax: ReliefV1.parallax,
     convergence: ReliefV1.convergence,
     quarterTurns: turns,
+    mode: mode,
   );
 }
 

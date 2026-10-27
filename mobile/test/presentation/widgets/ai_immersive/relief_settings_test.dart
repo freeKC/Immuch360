@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_settings.dart';
@@ -44,6 +45,10 @@ void main() {
   );
   final olderSwitch = find.descendant(
     of: find.byKey(const Key('advanced_settings_ai_older_headsets')),
+    matching: find.byType(SwitchListTile),
+  );
+  final meshSwitch = find.descendant(
+    of: find.byKey(const Key('advanced_settings_ai_relief_25d')),
     matching: find.byType(SwitchListTile),
   );
   final cacheTile = find.byKey(const Key('ai_relief_cache_tile'));
@@ -122,6 +127,39 @@ void main() {
     expect(SettingsRepository.instance.appConfig.aiImmersive.olderHeadsets, isTrue);
   });
 
+  testWidgets('a relief opens in stereo; the 2.5D switch turns 2.5D first, and waits for the AI features', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    await scrollTo(tester, meshSwitch);
+
+    expect(find.text('Open AI reliefs in 2.5D (experimental)'), findsOneWidget);
+    expect(
+      find.text('Move your head to see around the objects. Off: they open in 3D. The 3D button switches at any time.'),
+      findsOneWidget,
+    );
+    expect(tester.widget<SwitchListTile>(meshSwitch).value, isFalse);
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questMode, ReliefViewMode.stereo);
+
+    await tester.tap(meshSwitch);
+    await tester.pumpAndSettle();
+    expect(tester.widget<SwitchListTile>(meshSwitch).value, isTrue);
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questMode, ReliefViewMode.mesh25d);
+
+    await tester.tap(meshSwitch);
+    await tester.pumpAndSettle();
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questMode, ReliefViewMode.stereo);
+
+    // With the AI features off, it does not move
+    await scrollTo(tester, aiSwitch);
+    await tester.tap(aiSwitch);
+    await tester.pumpAndSettle();
+    await scrollTo(tester, meshSwitch);
+    await tester.tap(meshSwitch);
+    await tester.pumpAndSettle();
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questMode, ReliefViewMode.stereo);
+  });
+
   testWidgets('the relief cache shows its size, and Clear removes its maps and nothing else', (tester) async {
     writeMap('${'a' * 64}.u16', 710712);
     writeMap('${'b' * 64}.u16', 710712);
@@ -172,6 +210,7 @@ void main() {
     await scrollTo(tester, olderSwitch);
 
     expect(aiSwitch, findsOneWidget);
+    expect(meshSwitch, findsNothing);
     expect(cacheTile, findsNothing);
     expect(find.byType(AiComponentsTile), findsNothing);
   });

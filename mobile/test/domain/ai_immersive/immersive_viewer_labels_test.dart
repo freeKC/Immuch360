@@ -40,6 +40,7 @@ void main() {
 
     expect(labels.keys, {
       'ai2dOriginal',
+      'ai25d',
       'aiReliefEstimated',
       'aiNoNavigation',
       'aiReliefPreparing',
@@ -68,6 +69,10 @@ void main() {
     expect(labels['aiReliefNoMemory'], 'Not enough memory');
     expect(labels['aiReliefMissing'], 'The AI components are not installed');
     expect(labels['aiReliefDamaged'], 'An AI component is damaged');
+  });
+
+  testWidgets('the 3D button names the 2.5D view of a relief, experimental', (tester) async {
+    expect(aiImmersiveViewerLabels(await english(tester))['ai25d'], '2.5D (experimental)');
   });
 
   testWidgets('a failed relief keeps the place of its reason for the headset', (tester) async {

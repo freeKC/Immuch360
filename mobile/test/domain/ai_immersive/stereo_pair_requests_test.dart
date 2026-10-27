@@ -75,10 +75,39 @@ void main() {
       expect(jsonDecode(relief.toJsonString()), request('depthRelief', 1));
     });
 
+    test('a photo of the server first shown in 2.5D writes the JSON of the contract', () {
+      final relief = DepthReliefRequest(
+        model: model,
+        modelSize: 99530468,
+        modelId: depthModelId(depthModelTfliteSha256),
+        cacheKey: reliefCacheKey(
+          identity: ReliefSourceIdentity.sha1('X8tYgvibyzHDDN2yXGU/ft1XxeM='),
+          modelId: depthModelId(depthModelTfliteSha256),
+        ),
+        mode: ReliefViewMode.mesh25d,
+      );
+
+      expect(jsonDecode(relief.toJsonString()), request('depthRelief', 2));
+      // The same photo and the same map as in stereo: only the first view changes
+      expect(relief.cacheKey, request('depthRelief', 0)['cacheKey']);
+    });
+
     test('reads back what it writes', () {
-      for (var i = 0; i < 2; i++) {
+      for (var i = 0; i < 3; i++) {
         expect(DepthReliefRequest.fromJson(request('depthRelief', i))!.toJson(), request('depthRelief', i));
       }
+      expect(DepthReliefRequest.fromJson(request('depthRelief', 2))!.mode, ReliefViewMode.mesh25d);
+    });
+
+    test('a request without a mode, or with a mode this build does not know, first shows in stereo', () {
+      expect(DepthReliefRequest.fromJson(request('depthRelief', 0))!.mode, ReliefViewMode.stereo);
+      for (final mode in ['volumetric', 'stereo', 2, null]) {
+        final json = {...request('depthRelief', 2), 'mode': mode};
+
+        expect(DepthReliefRequest.fromJson(json)!.mode, ReliefViewMode.stereo, reason: '$mode');
+      }
+      // A stereo request does not name its mode: the JSON of every request before 2.5D
+      expect(DepthReliefRequest.fromJson(request('depthRelief', 0))!.toJson().containsKey('mode'), isFalse);
     });
   });
 

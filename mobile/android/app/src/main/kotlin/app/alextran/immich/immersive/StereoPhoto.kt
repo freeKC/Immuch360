@@ -224,11 +224,17 @@ internal object StereoHeicDecoder {
 }
 
 /**
- * The 3D or 2D choice and the angular width of a photo on the stereo quad, with the photo they belong to: its url and
- * the opening of the viewer it was shown in. Kept over a recreation of the viewer, so that the photo comes back as the
- * user left it rather than with the defaults of a new photo.
+ * The 3D or 2D choice, the 2.5D choice of a relief and the angular width of a photo on the stereo quad, with the photo
+ * they belong to: its url and the opening of the viewer it was shown in. Kept over a recreation of the viewer, so that
+ * the photo comes back as the user left it rather than with the defaults of a new photo.
  */
-internal data class StereoPhotoChoices(val url: String, val openingId: Long, val threeD: Boolean, val angleDeg: Float) {
+internal data class StereoPhotoChoices(
+  val url: String,
+  val openingId: Long,
+  val threeD: Boolean,
+  val angleDeg: Float,
+  val mesh25d: Boolean = false,
+) {
   /**
    * These choices for the photo of [url] shown in the opening [openingId], null for any other photo or opening, which
    * starts from the defaults. The angle stays within the bounds of the thumbstick, [maxAngleDeg] at most (see
@@ -237,6 +243,16 @@ internal data class StereoPhotoChoices(val url: String, val openingId: Long, val
   fun forPhoto(url: String, openingId: Long, maxAngleDeg: Float = StereoComposer.MAX_ANGLE_DEG): StereoPhotoChoices? =
     if (url != this.url || openingId != this.openingId || angleDeg.isNaN()) null
     else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, maxAngleDeg))
+}
+
+/**
+ * What the quad shows of a photo with two eyes: both eyes (3D), the relief of the headset on its 2.5D mesh (see
+ * [ReliefMesh], experimental), or the left eye for both (2D)
+ */
+internal enum class StereoView {
+  THREE_D,
+  MESH_25D,
+  TWO_D,
 }
 
 /**
@@ -376,6 +392,7 @@ internal object StereoComposer {
       LABEL_NO_NAVIGATION to "Previous and next are not available for spatial photos yet",
       LABEL_SECOND_EYE_FAILED to "The second eye could not be decoded: shown in 2D",
       LABEL_2D_ORIGINAL to "2D (original)",
+      LABEL_25D to "2.5D (experimental)",
       LABEL_RELIEF_ESTIMATED to "Relief estimated by AI",
       LABEL_NO_NAVIGATION_3D to "Previous and next are not available for 3D photos yet",
       LABEL_RELIEF_PREPARING to "Preparing",
@@ -397,6 +414,9 @@ internal object StereoComposer {
 
   /** The 2D button of a photo whose left eye is the original itself (see StereoPhotoKind.leftEyeIsOriginal). */
   const val LABEL_2D_ORIGINAL = "ai2dOriginal"
+
+  /** The 3D button while a relief made in the headset shows on its 2.5D mesh (see [ReliefMesh]). */
+  const val LABEL_25D = "ai25d"
 
   /** The honesty label of a relief estimated by AI, shown for a few seconds when the photo shows in 3D. */
   const val LABEL_RELIEF_ESTIMATED = "aiReliefEstimated"
@@ -449,6 +469,25 @@ internal object StereoComposer {
     val key = reliefStopLabelKey(reason) ?: return null
     return label(labels, key).replace(REASON, detail)
   }
+
+  /**
+   * What the 3D button shows next after [view]: 3D, then 2.5D when the relief shown has its mesh ([meshAvailable]),
+   * then 2D, then 3D again. Any other stereo photo goes from 3D to 2D and back, as before.
+   */
+  fun nextView(view: StereoView, meshAvailable: Boolean): StereoView =
+    when (view) {
+      StereoView.THREE_D -> if (meshAvailable) StereoView.MESH_25D else StereoView.TWO_D
+      StereoView.MESH_25D -> StereoView.TWO_D
+      StereoView.TWO_D -> StereoView.THREE_D
+    }
+
+  /** Key of the label of the 3D button while the quad shows [view] (see [twoDLabelKey] for 2D). */
+  fun viewLabelKey(view: StereoView, leftEyeIsOriginal: Boolean): String =
+    when (view) {
+      StereoView.THREE_D -> LABEL_3D
+      StereoView.MESH_25D -> LABEL_25D
+      StereoView.TWO_D -> twoDLabelKey(leftEyeIsOriginal)
+    }
 
   /** Key of the 2D label: "2D (original)" when the left eye is the photo itself, "2D (left eye)" otherwise. */
   fun twoDLabelKey(leftEyeIsOriginal: Boolean): String = if (leftEyeIsOriginal) LABEL_2D_ORIGINAL else LABEL_2D

@@ -85,10 +85,26 @@ internal fun JsonObject.string(key: String): String? = primitive(key)?.takeIf { 
 internal fun JsonObject.integer(key: String): Int? = primitive(key)?.takeIf { !it.isString }?.intOrNull
 
 /**
+ * How the viewer first shows a relief it made (ReliefViewMode in lib/domain/models/ai_immersive): both eyes on the
+ * stereo quad, or the photo on a mesh moved by its depth map that follows the head (2.5D, experimental, see
+ * [ReliefMesh]). The 3D button of the quad switches between 3D, 2.5D and 2D whatever the request says.
+ */
+internal enum class ReliefViewMode(val json: String) {
+  STEREO("stereo"),
+  MESH_25D("mesh25d");
+
+  companion object {
+    /** The mode of [value]; stereo for a missing value or one this build does not know, the safe default */
+    fun of(value: String?): ReliefViewMode = entries.firstOrNull { it.json == value } ?: STEREO
+  }
+}
+
+/**
  * A flat photo whose relief the headset estimates (design-final 2026-10-26, sections 3.4 and 3.7): the model file on
  * the headset and its size, checked before it loads, its identifier, the key of the cached depth map (a file name of
- * the cache, so 64 hexadecimal digits and nothing else), the settings of relief-v1 and the quarter turns the user gave
- * the photo, clockwise. Read here; the relief itself comes with the AI relief of the headset.
+ * the cache, so 64 hexadecimal digits and nothing else), the settings of relief-v1, the quarter turns the user gave
+ * the photo, clockwise, and the [mode] it first shows in ("mode" is written for 2.5D only: without it, stereo). Read
+ * here; the relief itself comes with the AI relief of the headset.
  */
 internal data class DepthReliefSpec(
   val model: String,
@@ -98,6 +114,7 @@ internal data class DepthReliefSpec(
   val parallax: Double,
   val convergence: Double,
   val quarterTurns: Int,
+  val mode: ReliefViewMode = ReliefViewMode.STEREO,
 ) {
   companion object {
     const val KIND = "depthRelief"
@@ -119,6 +136,7 @@ internal data class DepthReliefSpec(
           parallax = number("parallax") ?: return null,
           convergence = number("convergence") ?: return null,
           quarterTurns = (root.integer("quarterTurns") ?: return null) and 3,
+          mode = ReliefViewMode.of(root.string("mode")),
         )
       return spec.takeIf {
         it.model.isNotBlank() &&

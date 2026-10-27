@@ -77,8 +77,27 @@ class SbsPhotoRequest {
   int get hashCode => Object.hash(layout, eyes, origin, leftEye);
 }
 
+/// How the immersive viewer of the Meta Quest first shows a relief it made: both eyes on the stereo quad, or the photo
+/// on a mesh moved by its depth map, which follows the head (2.5D, experimental). The 3D button of the quad switches
+/// between them and 2D whatever the request says. Stored by name in the settings (aiReliefQuestMode).
+enum ReliefViewMode {
+  stereo('stereo'),
+  mesh25d('mesh25d');
+
+  const ReliefViewMode(this.json);
+
+  /// The value of "mode" in the depthRelief JSON
+  final String json;
+
+  /// The mode of [value]; stereo for a missing value or one this build does not know, the safe default
+  static ReliefViewMode fromJson(Object? value) =>
+      values.firstWhere((mode) => mode.json == value, orElse: () => ReliefViewMode.stereo);
+}
+
 /// A flat photo whose relief the headset estimates: the model file on the headset, its size (checked before loading),
-/// its identifier, the key of the cached depth map, the settings of relief-v1 and the quarter turns applied to the photo
+/// its identifier, the key of the cached depth map, the settings of relief-v1, the quarter turns applied to the photo
+/// and the mode it first shows in. "mode" is written for 2.5D only: a request without it is a stereo one, as every
+/// request was before it existed.
 class DepthReliefRequest {
   const DepthReliefRequest({
     required this.model,
@@ -88,6 +107,7 @@ class DepthReliefRequest {
     this.parallax = ReliefV1.parallax,
     this.convergence = ReliefV1.convergence,
     this.quarterTurns = 0,
+    this.mode = ReliefViewMode.stereo,
   });
 
   /// Absolute path of the model file on the headset
@@ -105,6 +125,9 @@ class DepthReliefRequest {
   /// Clockwise, 0 to 3
   final int quarterTurns;
 
+  /// How the viewer first shows the relief (see [ReliefViewMode])
+  final ReliefViewMode mode;
+
   Map<String, Object> toJson() => {
     'kind': depthReliefKind,
     'version': depthReliefVersion,
@@ -115,6 +138,7 @@ class DepthReliefRequest {
     'parallax': parallax,
     'convergence': convergence,
     'quarterTurns': quarterTurns,
+    if (mode != ReliefViewMode.stereo) 'mode': mode.json,
   };
 
   /// The stereoPair JSON of ImmersiveApi.open
@@ -149,6 +173,7 @@ class DepthReliefRequest {
       parallax: parallax.toDouble(),
       convergence: convergence.toDouble(),
       quarterTurns: quarterTurns & 3,
+      mode: ReliefViewMode.fromJson(json['mode']),
     );
   }
 
@@ -161,10 +186,11 @@ class DepthReliefRequest {
       other.cacheKey == cacheKey &&
       other.parallax == parallax &&
       other.convergence == convergence &&
-      other.quarterTurns == quarterTurns;
+      other.quarterTurns == quarterTurns &&
+      other.mode == mode;
 
   @override
-  int get hashCode => Object.hash(model, modelSize, modelId, cacheKey, parallax, convergence, quarterTurns);
+  int get hashCode => Object.hash(model, modelSize, modelId, cacheKey, parallax, convergence, quarterTurns, mode);
 }
 
 /// The folder of the relief cache of the headset in the cache folder of the app (Context.getCacheDir() on Android,

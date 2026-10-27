@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/models/value_codec.dart';
@@ -105,7 +106,10 @@ enum SettingsKey<T> {
   // The AI features (relief estimated by AI), experimental and on by default, see AiImmersiveConfig
   aiImmersiveEnabled<bool>(),
   // "AI relief on Quest 2 and Quest Pro (untested)", off by default
-  aiImmersiveOlderHeadsets<bool>();
+  aiImmersiveOlderHeadsets<bool>(),
+  // How the immersive viewer of the Meta Quest first shows an AI relief: stereo by default, 2.5D (experimental) when
+  // "Open AI reliefs in 2.5D" is on, see AiImmersiveConfig.questMode
+  aiReliefQuestMode<ReliefViewMode>(codec: EnumCodec(ReliefViewMode.values));
 
   final ValueCodec<T>? _codecOverride;
 

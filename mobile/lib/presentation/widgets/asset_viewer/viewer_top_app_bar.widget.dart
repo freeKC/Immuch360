@@ -152,6 +152,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ? AiReliefButton(
             gate: reliefGate,
             target: assetReliefTarget(ref, asset, open: (stereo) => _openStereoPhoto(context, ref, asset, stereo)),
+            mode: ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode)),
           )
         : null;
 

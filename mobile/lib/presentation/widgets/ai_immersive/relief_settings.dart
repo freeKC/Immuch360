@@ -1,7 +1,9 @@
-// The AI settings of the Meta Quest, in the advanced settings (design-final 2026-10-26, sections 3.5, 3.7 and 5): the
-// switch of the AI features (on by default, off hides every AI button and downloads nothing), the untested switch of
-// the Quest 2 and Pro, the relief cache with its size and Clear, and the AI components (lot A3b) with their sizes,
-// licences and Remove. The cache and the components come with the quest flavour only, the one that computes reliefs.
+// The AI settings of the Meta Quest, in the advanced settings (design-final 2026-10-26, sections 3.3, 3.5, 3.7 and 5):
+// the switch of the AI features (on by default, off hides every AI button and downloads nothing), the untested switch
+// of the Quest 2 and Pro, whether a relief opens in 2.5D (experimental, off: stereo stays the default until FreeKC's
+// comfort session), the relief cache with its size and Clear, and the AI components (lot A3b) with their sizes,
+// licences and Remove. The 2.5D switch, the cache and the components come with the quest flavour only, the one that
+// computes reliefs.
 
 import 'dart:async';
 import 'dart:io';
@@ -49,6 +51,15 @@ class AiReliefSettings extends HookConsumerWidget {
       olderHeadsets.value,
       (_, _) => unawaited(ref.read(settingsProvider).write(.aiImmersiveOlderHeadsets, olderHeadsets.value)),
     );
+    final mesh25d = useState(ref.watch(appConfigProvider).aiImmersive.questMode == ReliefViewMode.mesh25d);
+    useValueChanged<bool, void>(
+      mesh25d.value,
+      (_, _) => unawaited(
+        ref
+            .read(settingsProvider)
+            .write(.aiReliefQuestMode, mesh25d.value ? ReliefViewMode.mesh25d : ReliefViewMode.stereo),
+      ),
+    );
     final computesReliefs = ref.watch(appFlavorProvider) == questFlavor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -70,6 +81,13 @@ class AiReliefSettings extends HookConsumerWidget {
           title: t.ai_immersive_older_headsets,
         ),
         if (computesReliefs) ...[
+          SettingsSwitchListTile(
+            key: const Key('advanced_settings_ai_relief_25d'),
+            valueNotifier: mesh25d,
+            enabled: enabled.value,
+            title: t.ai_immersive_relief_25d,
+            subtitle: t.ai_immersive_relief_25d_subtitle,
+          ),
           const ReliefCacheTile(),
           // A relief runs in the immersive viewer, never under the settings: nothing to stop before a removal
           AiComponentsTile(components: ref.watch(reliefComponentsProvider), onCancelConversions: () async {}),

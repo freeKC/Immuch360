@@ -4,7 +4,8 @@
 //
 // Pressed, it installs the depth model first when it is missing (the install sheet of lot A3b: 99.5 MB, its licence,
 // nothing downloaded before Download), then sends the depthRelief request: the model file on the headset, the key of
-// the relief cache from who the photo is and the quarter turns the user sees it with. Refused by the gate (see
+// the relief cache from who the photo is, the quarter turns the user sees it with, and the view the relief first
+// shows in (stereo, or 2.5D when the advanced settings say so). Refused by the gate (see
 // reliefGateProvider), it stays visible, greyed with its reason. On a Quest 2 or Pro allowed by the untested switch, a
 // passing message says that the relief can take several seconds there.
 
@@ -13,6 +14,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
@@ -96,12 +98,14 @@ ReliefTarget assetReliefTarget(
   );
 }
 
-/// See the top of this file. [gate] says whether it is offered or greyed; a hidden gate shows nothing.
+/// See the top of this file. [gate] says whether it is offered or greyed; a hidden gate shows nothing. [mode] is the
+/// view the relief first shows in, the aiReliefQuestMode setting.
 class AiReliefButton extends ConsumerStatefulWidget {
-  const AiReliefButton({super.key, required this.gate, required this.target});
+  const AiReliefButton({super.key, required this.gate, required this.target, this.mode = ReliefViewMode.stereo});
 
   final ReliefGate gate;
   final ReliefTarget target;
+  final ReliefViewMode mode;
 
   @override
   ConsumerState<AiReliefButton> createState() => _AiReliefButtonState();
@@ -154,11 +158,12 @@ class _AiReliefButtonState extends ConsumerState<AiReliefButton> {
         model: model,
         identity: identity,
         quarterTurns: quarterTurns,
+        mode: widget.mode,
       );
       if (!mounted) {
         return;
       }
-      _log.info('AI relief of key ${request.cacheKey}, ${request.quarterTurns} quarter turns');
+      _log.info('AI relief of key ${request.cacheKey}, ${request.quarterTurns} quarter turns, ${request.mode.json}');
       await widget.target.open(StereoPhotoRequest.relief(request));
     } catch (error, stack) {
       _log.warning('Could not ask for the AI relief', error, stack);
