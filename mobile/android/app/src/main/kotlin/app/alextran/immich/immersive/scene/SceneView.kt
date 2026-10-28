@@ -312,7 +312,8 @@ internal data class SceneViewerOptions(
       for (line in text.orEmpty().lines()) {
         val trimmed = line.trim()
         val equals = trimmed.indexOf('=')
-        if (trimmed.startsWith("#") || equals <= 0) continue
+        // A comment, "#darken=...", is a key of its own, which this build does not know
+        if (equals <= 0) continue
         val value = trimmed.substring(equals + 1).trim().lowercase(Locale.ROOT)
         when (trimmed.substring(0, equals).trim()) {
           "darken" ->

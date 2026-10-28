@@ -96,6 +96,10 @@ class SceneViewTest {
     // Weighed on the request, the tail is never read: a tail gone still says the scene is too heavy
     val heavyWithoutTail = refusalOf(open(file = SceneTestFiles.tinyPreview(), caps = quest3.copy(maxTriangles = 9)))
     assertEquals(SceneRefusal.TOO_HEAVY, heavyWithoutTail.reason)
+    // The heat too: a headset too warm reads no tail
+    val warmWithoutTail =
+      refusalOf(open(file = SceneTestFiles.tinyPreview(), thermal = SceneGate.THERMAL_STATUS_SEVERE))
+    assertEquals(SceneRefusal.TOO_WARM, warmWithoutTail.reason)
   }
 
   @Test
