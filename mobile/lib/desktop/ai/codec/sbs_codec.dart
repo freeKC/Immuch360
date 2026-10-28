@@ -29,6 +29,11 @@ class SbsPicture {
     : assert(width.isEven, 'Two eyes side by side'),
       assert(rgba.length == width * height * 4, 'RGBA of $width x $height');
 
+  /// One picture of any width rather than a pair: a texture or the preview of a 3D scene (lot S1), which the codecs
+  /// write the same way
+  SbsPicture.single({required this.width, required this.height, required this.rgba})
+    : assert(rgba.length == width * height * 4, 'RGBA of $width x $height');
+
   /// The width of the pair, two eyes
   final int width;
   final int height;

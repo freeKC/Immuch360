@@ -21,6 +21,7 @@ const _tagGpsIfd = 0x8825;
 const _tagExifVersion = 0x9000;
 const _tagDateTimeOriginal = 0x9003;
 const _tagOffsetTimeOriginal = 0x9011;
+const _tagFocalLength35mm = 0xA405;
 const _tagGpsVersion = 0x0000;
 const _tagGpsLatitudeRef = 0x0001;
 const _tagGpsLatitude = 0x0002;
@@ -99,6 +100,21 @@ int exifOrientation(Uint8List? exif) {
   final value = tiff?.ifd(tiff.firstIfd)[_tagOrientation];
   final orientation = value == null ? null : tiff!.integer(value);
   return orientation != null && orientation >= 1 && orientation <= 8 ? orientation : 1;
+}
+
+/// The focal length equivalent to 35 mm of [exif] (FocalLengthIn35mmFilm of the Exif IFD), in millimetres; null
+/// without one, or when it is 0 (unknown) or cannot be read. A 3D scene fixes the focal length of its geometry by it
+/// (design-final 2026-10-27, section 2.3, step 3).
+int? exifFocalLength35mm(Uint8List? exif) {
+  final tiff = _Tiff.of(exif);
+  if (tiff == null) {
+    return null;
+  }
+  final ifd0 = tiff.ifd(tiff.firstIfd);
+  final exifIfd = ifd0[_tagExifIfd] == null ? const <int, _Value>{} : tiff.ifd(tiff.integer(ifd0[_tagExifIfd]!));
+  final value = exifIfd[_tagFocalLength35mm];
+  final focal = value == null ? null : tiff.integer(value);
+  return focal == null || focal <= 0 ? null : focal;
 }
 
 /// The fields of the EXIF of an original that its 3D photo keeps: the date taken and its offset, the GPS position;
