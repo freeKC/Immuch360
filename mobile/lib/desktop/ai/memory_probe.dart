@@ -157,6 +157,41 @@ const _gib = 1024 * _mib;
 /// (M2 on ai1, which proposed 2 GiB)
 const sceneJobMemory = 2 * _gib;
 
+/// The photo [sceneJobMemory] counts the pictures of: 12 Mpx
+const sceneJobPixels = 12 * 1000 * 1000;
+
+/// What the sessions of MoGe-2 and of LaMa hold once open in the worker of the scenes (0.28 GB and 0.51 GB after a job,
+/// S1-review, remark 2): a job that finds them open needs that much less
+const sceneMogeSessionMemory = 280 * 1000 * 1000;
+const sceneLamaSessionMemory = 510 * 1000 * 1000;
+
+/// What Windows gives a scene beyond the memory it says available (ullAvailPhys, which counts neither what idle
+/// programs give back when their working sets are trimmed nor the page file): V2 made ten scenes on the 16 GB laptop of
+/// the owner with 2.0 GB said available, Photoshop, Viber and SQL Server open, the system going down to 0.56 GB without
+/// a failure. Linux says MemAvailable, the kernel's own estimate of what a program can take: nothing more there.
+const sceneTrimAllowance = _gib;
+
+/// The allowance of a scene on this system: [sceneTrimAllowance] on Windows, nothing elsewhere
+int sceneMemoryAllowanceFor({required bool isWindows}) => isWindows ? sceneTrimAllowance : 0;
+
+/// What the job of a 3D scene still needs when it starts on a photo of [sourceWidth] x [sourceHeight], checked before
+/// the photo is decoded as the 3D photo checks [jobMemoryNeed] (V2 saw a scene take the free memory of a 16 GB laptop
+/// from 2.0 GB to 0.56 GB): [sceneJobMemory] for a photo of 12 Mpx with both its models to open, the pictures of a
+/// larger photo beyond it (decoded, then turned or reduced, 4 bytes a pixel each), less what the sessions the worker
+/// keeps open already hold
+int sceneJobMemoryNeed({
+  required int sourceWidth,
+  required int sourceHeight,
+  bool mogeOpen = false,
+  bool lamaOpen = false,
+}) {
+  final beyond = sourceWidth * sourceHeight - sceneJobPixels;
+  return sceneJobMemory +
+      (beyond > 0 ? 2 * 4 * beyond : 0) -
+      (mogeOpen ? sceneMogeSessionMemory : 0) -
+      (lamaOpen ? sceneLamaSessionMemory : 0);
+}
+
 /// What the job of a 360° panorama needs of the memory of the computer at its peak: stable-diffusion.cpp took up to
 /// 6 GiB of private memory with the text encoder on the processor (M3 on the RTX 4060 Laptop), plus the pictures of the
 /// upscale and of the photo pasted back

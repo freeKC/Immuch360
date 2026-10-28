@@ -12,8 +12,11 @@
 //
 // The chain, in the steps the screens show (ImmersiveStage.scene), its shares of the job from the times of M2 on ai1:
 //  1. reading (0 to 4 %): the SHA-1 of the bytes read, the one the job was queued with, or the photo changed;
-//  2. decoding (to 8 %): the photo upright and turned as the user sees it (phase 1), then its texture at 4 096, its
-//     preview at 2 048 and the map of MoGe at 1 024 (scene_textures.dart);
+//  2. decoding (to 8 %): first the memory the job still needs for a photo of its size (sceneJobMemoryNeed, less what
+//     the sessions the worker keeps open hold) against what the system can give now (1 GiB more on Windows, which
+//     trims idle programs: sceneTrimAllowance), "out of memory" with both figures when it cannot, as for a 3D photo;
+//     then the photo upright and turned as the user sees it (phase 1), its texture at 4 096, its preview at 2 048 and
+//     the map of MoGe at 1 024 (scene_textures.dart);
 //  3. geometry (to 25 %): MoGe-2 on the map, 2 500 tokens;
 //  4. layers (to 27 %): the focal length and the shift (focal_shift.dart; the EXIF's focal length when the photo has
 //     one, fovGuessed beyond 25 % of it or without it), the metric depth, then scene-v1 (scene_layout.dart): sky,
@@ -47,6 +50,7 @@ import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/scene/focal_shift.dart';
 import 'package:immich_mobile/desktop/ai/scene/glb_writer.dart';
@@ -116,9 +120,16 @@ class SceneOutcome {
 
 /// The chain of one scene, in one synchronous call: see the top of this file
 class SceneChain {
-  SceneChain({required this.models, List<SbsCodec>? codecs, this.writePart = writePartFile, Sha1Engine? sha1})
-    : codecs = codecs ?? SbsCodecChoice.auto.codecs(),
-      sha1 = sha1 ?? Sha1Engine.system() {
+  SceneChain({
+    required this.models,
+    List<SbsCodec>? codecs,
+    this.writePart = writePartFile,
+    Sha1Engine? sha1,
+    this.memory,
+    this.sessionsOpen = const {},
+    this.memoryAllowance = 0,
+  }) : codecs = codecs ?? SbsCodecChoice.auto.codecs(),
+       sha1 = sha1 ?? Sha1Engine.system() {
     if (this.codecs.isEmpty) {
       throw ArgumentError('A chain needs a JPEG codec');
     }
@@ -128,6 +139,15 @@ class SceneChain {
   final List<SbsCodec> codecs;
   final PartWriter writePart;
   final Sha1Engine sha1;
+
+  /// The memory of the computer, read before the photo is decoded; null: not checked (a chain the tests run alone)
+  final MemoryProbe? memory;
+
+  /// The sessions the worker kept open from earlier jobs when this one started ([mogeSession], [lamaSession])
+  final Set<String> sessionsOpen;
+
+  /// What the system gives beyond the memory it says available, in bytes (sceneMemoryAllowanceFor)
+  final int memoryAllowance;
 
   /// Makes the scene of [job] from [original] into its .part. Never throws: a failure is in the result.
   SceneOutcome run(
@@ -414,6 +434,7 @@ class _SceneRun {
   _Upright _decodeUpright() {
     final engineDecoded = original.decoded;
     if (engineDecoded != null) {
+      _checkMemory(engineDecoded.width, engineDecoded.height);
       _decoder = 'engine';
       return _Upright(orientDecoded(engineDecoded, quarterTurns: job.quarterTurns), exif: job.exif);
     }
@@ -423,6 +444,7 @@ class _SceneRun {
     } on FormatException catch (error) {
       throw _Stop(ImmersiveErrorCode.decodeFailed, 'Not a JPEG this app reads: ${error.message}');
     }
+    _checkMemory(header.width, header.height);
     SbsDecoded? decoded;
     for (final (index, codec) in chain.codecs.indexed) {
       try {
@@ -443,6 +465,28 @@ class _SceneRun {
       exif: mergedExif(job.exif, keptExif(header.exif)),
       focal35: exifFocalLength35mm(header.exif),
     );
+  }
+
+  /// Fails the job when the scene of a photo of [width] x [height] needs more memory than the system can give now
+  /// (where it says), before the photo is decoded: see the top of this file
+  void _checkMemory(int width, int height) {
+    final available = chain.memory?.read().available;
+    if (available == null || width < 1 || height < 1) {
+      return;
+    }
+    final need = sceneJobMemoryNeed(
+      sourceWidth: width,
+      sourceHeight: height,
+      mogeOpen: chain.sessionsOpen.contains(mogeSession),
+      lamaOpen: chain.sessionsOpen.contains(lamaSession),
+    );
+    if (need > available + chain.memoryAllowance) {
+      const mb = 1000 * 1000;
+      throw _Stop(
+        ImmersiveErrorCode.outOfMemory,
+        'This photo needs about ${need ~/ mb} MB of memory, ${available ~/ mb} MB are free',
+      );
+    }
   }
 
   void _write(String path, Uint8List bytes) {
@@ -587,6 +631,7 @@ class SceneTask implements AiWorkerTask<SceneOutcome> {
     required this.models,
     this.codec = SbsCodecChoice.auto,
     this.priority,
+    this.memory = const SystemMemoryProbe(),
     this.earlierTimes = const {},
   }) : _bytes = TransferableTypedData.fromList([bytes]),
        _pixels = decoded == null ? null : TransferableTypedData.fromList([decoded.rgba]),
@@ -600,6 +645,9 @@ class SceneTask implements AiWorkerTask<SceneOutcome> {
 
   /// The system of thread priorities, this computer's when null
   final ThreadPriorityPlatform? priority;
+
+  /// The memory of the computer, read by the chain before it decodes the photo
+  final MemoryProbe memory;
   final Map<ImmersiveStage, Duration> earlierTimes;
   final TransferableTypedData _bytes;
   final TransferableTypedData? _pixels;
@@ -624,7 +672,15 @@ class SceneTask implements AiWorkerTask<SceneOutcome> {
     final lowered = ComputePriority(priority ?? ThreadPriorityPlatform.system());
     final SceneChain chain;
     try {
-      chain = SceneChain(models: models.create(context, lowered), codecs: codec.codecs());
+      // The sessions open before this job, read before it opens any
+      final open = context.sessions.openNames.toSet();
+      chain = SceneChain(
+        models: models.create(context, lowered),
+        codecs: codec.codecs(),
+        memory: memory,
+        sessionsOpen: open,
+        memoryAllowance: sceneMemoryAllowanceFor(isWindows: Platform.isWindows),
+      );
     } catch (error) {
       return SceneOutcome(ImmersiveResult.failed(ImmersiveErrorCode.modelFailed, message: '$error'));
     }
@@ -649,6 +705,7 @@ class SceneEngine implements ImmersiveEngine {
     this.codec = SbsCodecChoice.auto,
     this.keepSession = aiSessionKeep,
     this.priority,
+    this.memory = const SystemMemoryProbe(),
   }) : _decodeOther = decodeOther ?? decodeWithEngine;
 
   /// MoGe-2 and LaMa on ONNX Runtime from the files of the AI components; their sizes are checked before each job
@@ -687,6 +744,9 @@ class SceneEngine implements ImmersiveEngine {
   final SbsCodecChoice codec;
   final Duration keepSession;
   final ThreadPriorityPlatform? priority;
+
+  /// The memory of the computer, checked by each job before it decodes its photo
+  final MemoryProbe memory;
   final OtherPhotoDecoder _decodeOther;
 
   AiWorker? _worker;
@@ -782,6 +842,7 @@ class SceneEngine implements ImmersiveEngine {
             models: models,
             codec: codec,
             priority: priority,
+            memory: memory,
             earlierTimes: times,
           ),
           cancelAddress: cancel.address,
