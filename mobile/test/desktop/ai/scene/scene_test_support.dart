@@ -90,13 +90,22 @@ class GlbView {
   Map<String, dynamic> get extras => (json['extras'] as Map)['immuch360'] as Map<String, dynamic>;
 }
 
-/// A JPEG of [width] x [height] whose left half is a dark gradient and right half a light one, written in [folder]
-String scenePhoto(Directory folder, String name, {int width = 48, int height = 32, Uint8List? exif}) {
+/// A JPEG of [width] x [height] whose left half is a dark gradient and right half a light one, each value times
+/// [brightness], written in [folder]
+String scenePhoto(
+  Directory folder,
+  String name, {
+  int width = 48,
+  int height = 32,
+  Uint8List? exif,
+  double brightness = 1,
+}) {
   final image = img.Image(width: width, height: height);
+  int lit(int value) => (value * brightness).round();
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
       final left = x < width ~/ 2;
-      image.setPixelRgb(x, y, left ? 60 + x : 180 + y, left ? 90 + y : 160, left ? 40 : 120 + x);
+      image.setPixelRgb(x, y, lit(left ? 60 + x : 180 + y), lit(left ? 90 + y : 160), lit(left ? 40 : 120 + x));
     }
   }
   var bytes = img.encodeJpg(image, quality: 95);
@@ -157,6 +166,53 @@ Uint8List exifWithOrientation(int orientation) {
     ..setUint16(18, orientation, Endian.little)
     ..setUint32(22, 0, Endian.little);
   return Uint8List.fromList([0x45, 0x78, 0x69, 0x66, 0, 0, ...tiff.buffer.asUint8List()]);
+}
+
+/// An ICC display profile of the colour [space] ('RGB ', 'GRAY') whose description tag says [text]: of type 'desc' as
+/// in a version 2 profile, 'mluc' (one record, en US) as in a version 4 one when [v4]
+Uint8List iccProfileDescribed(String text, {bool v4 = false, String space = 'RGB '}) {
+  final units = text.codeUnits;
+  final ByteData tag;
+  if (v4) {
+    tag = ByteData(28 + 2 * units.length)
+      ..setUint32(0, 0x6D6C7563)
+      ..setUint32(8, 1)
+      ..setUint32(12, 12)
+      ..setUint16(16, 0x656E)
+      ..setUint16(18, 0x5553)
+      ..setUint32(20, 2 * units.length)
+      ..setUint32(24, 28);
+    for (var i = 0; i < units.length; i++) {
+      tag.setUint16(28 + 2 * i, units[i]);
+    }
+  } else {
+    // The ASCII with its null, then an empty Unicode and an empty ScriptCode description
+    tag = ByteData(12 + units.length + 1 + 8 + 3 + 67)
+      ..setUint32(0, 0x64657363)
+      ..setUint32(8, units.length + 1);
+    for (var i = 0; i < units.length; i++) {
+      tag.setUint8(12 + i, units[i]);
+    }
+  }
+  final tagLength = tag.lengthInBytes;
+  final size = 144 + (tagLength + 3) ~/ 4 * 4;
+  final profile = ByteData(size)
+    ..setUint32(0, size)
+    ..setUint32(8, v4 ? 0x04300000 : 0x02100000)
+    ..setUint32(12, 0x6D6E7472)
+    ..setUint32(36, 0x61637370)
+    ..setUint32(128, 1)
+    ..setUint32(132, 0x64657363)
+    ..setUint32(136, 144)
+    ..setUint32(140, tagLength);
+  for (var i = 0; i < 4; i++) {
+    profile
+      ..setUint8(16 + i, space.codeUnitAt(i))
+      ..setUint8(20 + i, 'XYZ '.codeUnitAt(i));
+  }
+  final bytes = profile.buffer.asUint8List();
+  bytes.setRange(144, 144 + tagLength, tag.buffer.asUint8List());
+  return bytes;
 }
 
 /// A scene job for the photo at [path] (or its [bytes]), with the fields the fixtures fix

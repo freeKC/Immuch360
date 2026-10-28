@@ -15,6 +15,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
+import 'package:immich_mobile/desktop/ai/scene/scene_textures.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
@@ -28,6 +29,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.
     show parseGPanoProjectionType;
 import 'package:path/path.dart' as p;
 
+import '../codec/codec_fixtures.dart';
 import '../fakes/fake_backends.dart';
 import '../fakes/fake_thread_priority.dart';
 import 'scene_test_support.dart';
@@ -134,6 +136,8 @@ void main() {
       expect(xmp.fieldOfViewSource, FieldOfViewSource.model);
       expect(xmp.qualityFlags, outcome.result.qualityFlags);
       expect(xmp.qualityFlags, contains(ReliefQualityFlag.fovGuessed), reason: 'no EXIF');
+      expect(xmp.qualityFlags, isNot(contains(ReliefQualityFlag.dark)));
+      expect(xmp.qualityFlags, isNot(contains(ReliefQualityFlag.wideGamut)), reason: 'no profile');
       expect(xmp.settingsKey, '${xmp.geometryModelSha256}|${xmp.inpaintModelSha256}|scene-v1|4|0');
       expect(xmp.request, isNotNull, reason: 'the headset gets its request from the packet');
 
@@ -315,6 +319,35 @@ void main() {
       expect(SceneV1.gridStepFor(background.width, background.height), 5);
       expect(file.xmp.settingsKey, endsWith('|scene-v1|5|0'));
       expect(file.xmp.settingsKey, await keyOf(path, 0));
+    });
+
+    test('a Display P3 photo: wideGamut, its profile kept with the pixels; an sRGB one: not', () {
+      final p3 = p.join(folder.path, 'p3.jpg');
+      File(p3).writeAsBytesSync(codecFixture('display_p3.jpg'));
+      final srgb = p.join(folder.path, 'srgb.jpg');
+      File(srgb).writeAsBytesSync(
+        withSegments(
+          File(scenePhoto(folder, 'plain.jpg')).readAsBytesSync(),
+          iccProfile: iccProfileDescribed('sRGB IEC61966-2.1'),
+        ),
+      );
+
+      final wide = runChain(p3);
+      final file = written('p3.jpg');
+      final plain = runChain(srgb);
+
+      expect(wide.result.qualityFlags, contains(ReliefQualityFlag.wideGamut));
+      expect(file.xmp.qualityFlags, contains(ReliefQualityFlag.wideGamut));
+      expect(JpegHeader.read(file.glb.image(0)).iccProfile, codecFixture('display_p3.icc'));
+      expect(plain.result.isDone, isTrue, reason: '${plain.result.error}: ${plain.result.message}');
+      expect(plain.result.qualityFlags, isNot(contains(ReliefQualityFlag.wideGamut)));
+    });
+
+    test('a dark photo: dark, as relief-v1 tells it', () {
+      final outcome = runChain(scenePhoto(folder, 'night.jpg', brightness: 0.1));
+
+      expect(outcome.result.isDone, isTrue);
+      expect(outcome.result.qualityFlags, contains(ReliefQualityFlag.dark));
     });
 
     test('the .glb copy holds the same scene as the tail', () {
@@ -614,6 +647,22 @@ void main() {
       expect(worker.isAlive, isFalse);
       expect((await engine.run(job, cancel: cancel)).error, ImmersiveErrorCode.modelFailed);
     });
+  });
+
+  test('the gamut of a profile by its description: sRGB in version 2 or 4 is not wide, Display P3 is', () {
+    const srgbV4 = 'sRGB v4 ICC preference perceptual intent beta';
+    expect(iccDescriptionOf(iccProfileDescribed('sRGB IEC61966-2.1')), 'sRGB IEC61966-2.1');
+    expect(iccDescriptionOf(iccProfileDescribed(srgbV4, v4: true)), srgbV4, reason: 'the first record of its mluc');
+    expect(iccDescriptionOf(codecFixture('display_p3.icc')), 'Display P3 (Immuch360 test)');
+
+    expect(isWideGamutProfile(iccProfileDescribed('sRGB IEC61966-2.1')), isFalse);
+    expect(isWideGamutProfile(iccProfileDescribed(srgbV4, v4: true)), isFalse);
+    expect(isWideGamutProfile(iccProfileDescribed('IEC 61966-2.1 Default RGB colour space')), isFalse);
+    expect(isWideGamutProfile(codecFixture('display_p3.icc')), isTrue);
+    expect(isWideGamutProfile(iccProfileDescribed('Display P3', v4: true)), isTrue);
+    expect(isWideGamutProfile(iccProfileDescribed('Adobe RGB (1998)')), isTrue);
+    expect(isWideGamutProfile(iccProfileDescribed('Dot Gain 20%', space: 'GRAY')), isFalse, reason: 'grey');
+    expect(isWideGamutProfile(null), isFalse);
   });
 
   test('the focal length equivalent to 35 mm of an EXIF', () {
