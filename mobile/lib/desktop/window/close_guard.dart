@@ -7,7 +7,8 @@
 // has nothing running.
 //
 // A 360° panorama being generated (design-final 2026-10-27, section 4.5.7) is told with its step, "A 360° panorama is
-// being generated (step 12 of 28). Closing stops it.", in place of the line of the conversions.
+// being generated (step 12 of 28). Closing stops it.", which follows the generation while the dialog shows; the line
+// of the conversions stays beside it when other jobs run or wait on the queue, since quitting stops them too.
 
 import 'dart:async';
 
@@ -74,7 +75,8 @@ Future<bool> confirmDesktopClose(BuildContext context, Set<DesktopCloseReason> r
 }
 
 /// Under the focus ring of the remote control layout, as the "This computer" settings: Cancel and Quit are reached
-/// with Tab, and Material only tints a focused button (design 4.7). A generation is read from the queue for its step.
+/// with Tab, and Material only tints a focused button (design 4.7). A generation is watched on the queue for its step,
+/// with the number of jobs not ended, the generation included.
 class DesktopCloseDialog extends ConsumerWidget {
   const DesktopCloseDialog({super.key, required this.reasons});
 
@@ -84,9 +86,13 @@ class DesktopCloseDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
     // The reason comes from the queue, which exists then
-    final generating = reasons.contains(DesktopCloseReason.generation)
-        ? ref.read(conversionQueueProvider).generating
-        : null;
+    final (generating, pending) = reasons.contains(DesktopCloseReason.generation)
+        ? ref.watch(conversionQueueProvider.select((state) => (state.generating, state.pending)))
+        : (null, 0);
+    final generation = switch (generating) {
+      ConversionJob(:final step?, :final steps?) => (step: step, steps: steps),
+      _ => null,
+    };
     return TvFocusRing(
       child: AlertDialog(
         title: Text(t.desktop_close_title),
@@ -97,12 +103,13 @@ class DesktopCloseDialog extends ConsumerWidget {
           children: [
             if (reasons.contains(DesktopCloseReason.uploads)) Text(t.desktop_close_uploads_running),
             if (reasons.contains(DesktopCloseReason.computerShare)) Text(t.desktop_close_share_running),
-            if (generating case ConversionJob(:final step?, :final steps?))
+            if (generation != null)
               Text(
-                t.ai_immersive_close_generating(step: step, steps: steps),
+                t.ai_immersive_close_generating(step: generation.step, steps: generation.steps),
                 key: const Key('desktop_close_generating'),
-              )
-            else if (reasons.contains(DesktopCloseReason.conversions))
+              ),
+            // The 3D photos, scenes and versions beside the generation or waiting after it stop too
+            if (reasons.contains(DesktopCloseReason.conversions) && (generation == null || pending > 1))
               Text(t.ai_immersive_close_running),
           ],
         ),

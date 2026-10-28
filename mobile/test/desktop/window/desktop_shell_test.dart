@@ -471,6 +471,46 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('the step of the generation goes on while the dialog shows', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      reasons = {DesktopCloseReason.conversions, DesktopCloseReason.generation};
+      late _Generating queue;
+      await pumpShell(tester, overrides: [conversionQueueProvider.overrideWith(() => queue = _Generating())]);
+
+      window.clickClose();
+      await tester.pumpAndSettle();
+      expect(find.text('A 360° panorama is being generated (step 12 of 28). Closing stops it.'), findsOneWidget);
+
+      queue.nextStep();
+      await tester.pump();
+      expect(find.text('A 360° panorama is being generated (step 13 of 28). Closing stops it.'), findsOneWidget);
+      expect(find.textContaining('step 12 of 28'), findsNothing);
+      await tester.tap(find.byKey(const Key('desktop_close_cancel')));
+      await tester.pumpAndSettle();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a generation beside other conversions names both: quitting stops them too', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      reasons = {DesktopCloseReason.conversions, DesktopCloseReason.generation};
+      await pumpShell(
+        tester,
+        overrides: [
+          conversionQueueProvider.overrideWith(
+            () => _Generating(others: [ConversionState.geometry, ConversionState.waiting, ConversionState.done]),
+          ),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pumpAndSettle();
+      expect(find.text('A 360° panorama is being generated (step 12 of 28). Closing stops it.'), findsOneWidget);
+      expect(find.text('3D conversions are running: quitting stops them.'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('desktop_close_cancel')));
+      await tester.pumpAndSettle();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('the dialog follows Tab from Cancel to Quit', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       reasons = {DesktopCloseReason.uploads};
@@ -493,8 +533,12 @@ void main() {
   });
 }
 
-/// A queue whose panorama is at step 12 of 28 of its generation
+/// A queue whose panorama is at step 12 of 28 of its generation, with jobs of the other lane in [others]
 class _Generating extends ConversionQueueNotifier {
+  _Generating({this.others = const []});
+
+  final List<ConversionState> others;
+
   @override
   ConversionQueueState build() => ConversionQueueState(
     jobs: [
@@ -509,6 +553,23 @@ class _Generating extends ConversionQueueNotifier {
         step: 12,
         steps: 28,
       ),
+      for (final (index, other) in others.indexed)
+        ConversionJob(
+          id: 'conversion-${index + 2}',
+          source: LocalFileSource('/photos/$index.jpg'),
+          kind: ConversionKind.sceneFromPhoto,
+          batchIndex: index + 1,
+          batchSize: others.length,
+          target: ConversionTarget.nextTo('/photos/$index.jpg', kind: ConversionKind.sceneFromPhoto),
+          state: other,
+        ),
+    ],
+  );
+
+  /// The generation goes one step further
+  void nextStep() => state = state.copyWith(
+    jobs: [
+      for (final job in state.jobs) job.id == 'conversion-1' ? job.copyWith(step: () => (job.step ?? 0) + 1) : job,
     ],
   );
 }
