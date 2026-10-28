@@ -11,6 +11,10 @@ names and shapes from the model as it does with the real one:
                     points and normal float32 [batch, height, width, 3], mask float32 [batch, height, width] and
                     scale float32 [batch] out (IR 7, opset 14). Inside: points = 2 t - 1 and normal = 1 - t where t is
                     the image turned channels last, mask = the first channel, scale = num_tokens / 1024 for each image.
+                    Every dimension of the outputs is free in the signature, the 3 of points and normal too, as ONNX
+                    Runtime reads our export (moge-op14-scale-name.onnx: [-1, -1, -1, -1]): t goes through a Reshape
+                    to [0, 0, 0, -1], a shape computed from num_tokens that shape inference cannot follow, so that a
+                    check of the signature that passes on the tiny model passes on the real one.
   tiny_lama.onnx    LaMa (lama_fp32.onnx): image float32 [batch, 3, 512, 512] and mask float32 [batch, 1, 512, 512]
                     in, output float32 [batch, 3, height, width] out, in [0, 255] (IR 8, opset 17). Inside:
                     output = 255 (image (1 - mask) + 0.5 mask): the holes painted mid grey.
@@ -166,9 +170,16 @@ def model(graph_bytes: bytes, ir_version: int, opset: int, doc: str) -> bytes:
 def tiny_moge() -> bytes:
     nodes = [
         node("Transpose", ["image"], ["channels_last"], "turn", [attribute_ints("perm", [0, 2, 3, 1])]),
-        node("Mul", ["channels_last", "two"], ["doubled"], "double"),
+        # The same tensor, reshaped to [0, 0, 0, 0] + [0, 0, 0, 1] min(num_tokens, -1) = [0, 0, 0, -1]: a shape
+        # computed from an input, without a Concat that the optimizer of ONNX Runtime would read, so that the last
+        # dimension is unknown to shape inference and free in the signature, as in our export
+        node("Min", ["num_tokens", "minus_one"], ["last"], "last"),
+        node("Mul", ["last_only", "last"], ["last_free"], "last_free"),
+        node("Add", ["copied", "last_free"], ["free_shape"], "free_shape"),
+        node("Reshape", ["channels_last", "free_shape"], ["coordinates"], "coordinates"),
+        node("Mul", ["coordinates", "two"], ["doubled"], "double"),
         node("Sub", ["doubled", "one"], ["points"], "points"),
-        node("Sub", ["one", "channels_last"], ["normal"], "normal"),
+        node("Sub", ["one", "coordinates"], ["normal"], "normal"),
         node("Slice", ["image", "first", "second", "channel_axis"], ["first_channel"], "first_channel"),
         node("Squeeze", ["first_channel", "channel_axis"], ["mask"], "mask"),
         node("ReduceMax", ["image"], ["largest"], "largest", [attribute_ints("axes", [1, 2, 3]), attribute_int(
@@ -186,14 +197,17 @@ def tiny_moge() -> bytes:
         tensor("first", INT64, [1], [0]),
         tensor("second", INT64, [1], [1]),
         tensor("channel_axis", INT64, [1], [1]),
+        tensor("minus_one", INT64, [], [-1]),
+        tensor("last_only", INT64, [4], [0, 0, 0, 1]),
+        tensor("copied", INT64, [4], [0, 0, 0, 0]),
     )
     inputs = [
         value_info("image", FLOAT, ["batch_size", 3, "height", "width"]),
         value_info("num_tokens", INT64, []),
     ]
     outputs = [
-        value_info("points", FLOAT, ["batch_size", "height", "width", 3]),
-        value_info("normal", FLOAT, ["batch_size", "height", "width", 3]),
+        value_info("points", FLOAT, ["batch_size", "height", "width", "points_coordinates"]),
+        value_info("normal", FLOAT, ["batch_size", "height", "width", "normal_coordinates"]),
         value_info("mask", FLOAT, ["batch_size", "height", "width"]),
         value_info("scale", FLOAT, ["batch_size"]),
     ]
@@ -321,8 +335,9 @@ def expected_json() -> str:
         "tiny_moge.onnx": {
             "inputs": [spec("image", FLOAT, ["b", 3, "h", "w"]), spec("num_tokens", INT64, [])],
             "outputs": [
-                spec("points", FLOAT, ["b", "h", "w", 3]),
-                spec("normal", FLOAT, ["b", "h", "w", 3]),
+                # Free, as ONNX Runtime reads our export of MoGe (moge-op14-scale-name.onnx): [-1, -1, -1, -1]
+                spec("points", FLOAT, ["b", "h", "w", "c"]),
+                spec("normal", FLOAT, ["b", "h", "w", "c"]),
                 spec("mask", FLOAT, ["b", "h", "w"]),
                 spec("scale", FLOAT, ["b"]),
             ],
