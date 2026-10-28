@@ -22,10 +22,12 @@ import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/exif_head.dart';
@@ -47,6 +49,7 @@ class NetworkMediaInfo {
     this.cameraEquirect = false,
     this.stereoPair,
     this.stereoPhoto,
+    this.scene,
     this.frameWidth,
     this.frameHeight,
   });
@@ -71,6 +74,10 @@ class NetworkMediaInfo {
   /// The two eyes side by side of a flat 3D photo, ours or another tool's (see decideStereoPhoto), null for any other
   /// file. Told apart from the 360° rules, which do not change: [is360] says what they say.
   final FlatStereoPhoto? stereoPhoto;
+
+  /// The packet of the 3D scene the photo carries after its JPEG (design-final 2026-10-27, section 8.2), null for any
+  /// other file: "Explore the 3D scene" on the Quest, the "3D scene" badge of the browser
+  final SceneXmp? scene;
 
   /// The size of the picture of a photo its EXIF gives (PixelXDimension and PixelYDimension), null when it gives none
   /// or the photo was told without reading it
@@ -129,7 +136,7 @@ class NetworkMediaInfo {
   String toString() =>
       'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, rawKind: $rawKind, '
       'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair, stereoPhoto: $stereoPhoto, '
-      'frame: $frameWidth x $frameHeight)';
+      'scene: ${scene != null}, frame: $frameWidth x $frameHeight)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -268,6 +275,9 @@ class NetworkMediaService {
       if (info.stereoPhoto case final stereoPhoto?) {
         _log.info('${entry.name} holds two eyes side by side: $stereoPhoto');
       }
+      if (info.scene case final scene?) {
+        _log.info('${entry.name} carries a 3D scene: ${scene.sceneTriangles} triangles, ${scene.sceneFormat}');
+      }
       return info;
     } catch (error) {
       _log.info('Could not read what ${entry.name} declares: $error');
@@ -337,6 +347,8 @@ class NetworkMediaService {
       cameraEquirect: cameraEquirect,
       stereoPair: stereoPair,
       stereoPhoto: stereoPhoto,
+      // Our packet within the head the GPano read went through already: no read more
+      scene: sceneXmpOfHead(remembering.head),
       frameWidth: exif?.pixelWidth,
       frameHeight: exif?.pixelHeight,
     );
