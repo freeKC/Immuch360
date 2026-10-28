@@ -34,6 +34,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/utils/asset_filter.dart';
@@ -42,6 +43,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_scene_engine.dart';
@@ -1023,9 +1025,15 @@ void main() {
         conversionSkipOf(_photo('trip_180.jpg', width: 8000, height: 4000), facts, kind: ofPanorama),
         ConversionSkipReason.vr180,
       );
+      // The app reads it and shows it as a sphere: not a format it cannot read, a picture not stitched yet
       expect(
         conversionSkipOf(sphere, const ConversionPhotoFacts(isPanorama: true, isRaw360: true), kind: ofPanorama),
-        ConversionSkipReason.unreadableFormat,
+        ConversionSkipReason.raw360,
+      );
+      loadEnglishTexts();
+      expect(
+        conversionSkipText(StaticTranslations.instance, ConversionSkipReason.raw360),
+        'Raw 360° photo, not stitched',
       );
       expect(
         conversionSkipOf(_photo('crop.jpg', width: 8000, height: 2500), facts, kind: ofPanorama),
