@@ -105,11 +105,25 @@ void main() {
     }
   }
 
+  /// A card held by a game until the test frees it, and how often it was asked
+  ({Future<GpuReport> Function() probe, void Function() free, int Function() calls}) heldCard() {
+    var held = true;
+    var calls = 0;
+    return (
+      probe: () async {
+        calls++;
+        return held ? FakeGpuReports.rtx4060Busy : FakeGpuReports.rtx4060;
+      },
+      free: () => held = false,
+      calls: () => calls,
+    );
+  }
+
   test(
     'a panorama waits while a game holds the card, told what is free; scenes go on; it runs once the card is free',
     () async {
-      final probe = FakeGpuProbe([FakeGpuReports.rtx4060Busy, FakeGpuReports.rtx4060Busy, FakeGpuReports.rtx4060]);
-      container = containerWith(probe.probe);
+      final card = heldCard();
+      container = containerWith(card.probe);
 
       final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
       final made = add('jardin.jpg', ConversionKind.sceneFromPhoto);
@@ -118,13 +132,17 @@ void main() {
       expect(job(pano).state, ConversionState.waiting);
       expect(job(pano).waitingFree, 2000 * _mib);
       await until((state) => state.byId(made)!.state == ConversionState.done);
+      // Asked again every 30 ms meanwhile, and still held
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(card.calls(), greaterThan(1));
+      expect(job(pano).waitingFor, ConversionWait.graphicsMemory);
       expect(panorama.jobs, isEmpty);
 
+      card.free();
       await until((state) => state.byId(pano)!.state.isEnded);
       expect(job(pano).state, ConversionState.done);
       expect(job(pano).waitingFor, isNull);
       expect(job(pano).waitingFree, isNull);
-      expect(probe.calls, 3);
       expect(panorama.jobs, hasLength(1));
     },
   );
@@ -142,19 +160,27 @@ void main() {
   });
 
   test('a panorama waiting holds the next one back: one probe per check, the first runs first', () async {
-    final probe = FakeGpuProbe([FakeGpuReports.rtx4060Busy, FakeGpuReports.rtx4060]);
-    container = containerWith(probe.probe, recheck: const Duration(milliseconds: 200));
+    final card = heldCard();
+    container = containerWith(card.probe, recheck: const Duration(hours: 1));
 
     final first = add('a.jpg', ConversionKind.panoramaFromPhoto);
     final second = add('b.jpg', ConversionKind.panoramaFromPhoto);
     await until((state) => state.byId(first)!.waitingFor == ConversionWait.graphicsMemory);
     await Future<void>.delayed(const Duration(milliseconds: 50));
-
-    expect(probe.calls, 1);
+    expect(card.calls(), 1, reason: 'the second panorama is not asked while the first waits');
     expect(job(second).waitingFor, isNull);
+
+    // Asked again with the card still held: the first only
+    queue().checkGraphicsCardAgain();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(card.calls(), 2);
+    expect(job(first).waitingFor, ConversionWait.graphicsMemory);
+
+    card.free();
+    queue().checkGraphicsCardAgain();
     await until((state) => state.jobs.every((job) => job.state.isEnded));
     expect([for (final spec in panorama.jobs) spec.source.name], ['a.jpg', 'b.jpg']);
-    expect(probe.calls, 3, reason: 'each panorama asks before it runs');
+    expect(card.calls(), 4, reason: 'each panorama asks before it runs');
   });
 
   test('asked again at once when the user asks for it', () async {

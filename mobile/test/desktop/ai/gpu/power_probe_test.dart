@@ -43,7 +43,7 @@ void main() {
     });
 
     test('plugged in through USB C', () {
-      supply('ucsi-source-psy-USBC000:001', {'type': 'USB', 'online': '1'});
+      supply('ucsi-source-psy-USBC000-001', {'type': 'USB', 'online': '1'});
       supply('BAT1', {'type': 'Battery', 'status': 'Discharging'});
       expect(onBatteryFromPowerSupply(folder), isFalse);
     });
