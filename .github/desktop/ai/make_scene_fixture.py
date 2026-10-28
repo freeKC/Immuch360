@@ -17,6 +17,13 @@ glb-layers-v1, as written here and read by GlbReader.kt and glb_reader.dart:
     the top left of the texture), indices uint32 (each under 65 536), one material;
   - materials opaque, KHR_materials_unlit, the base colour texture a JPEG held in the buffer (image/jpeg), sampler
     linear and clamped;
+  - the photo is the first image (images[0]): every mesh whose material shows it belongs to the photo layer, the near
+    one, and any mesh that shows another image to the background layer (the filling behind the breaks); the readers
+    tell the layers so, whatever the order of the meshes, and flatten each one towards its own plane at the edge of
+    the zone (the photo plane, the background 1 cm behind it);
+  - no node carries a matrix, translation, rotation or scale: the positions are those of the camera frame, and a
+    reader refuses a node that moves its mesh;
+  - indices are uint32 only: a reader refuses uint16 or uint8 indices, even under 65 536;
   - asset.generator names the maker and scene-v1; extras.immuch360 holds the format, the safe zone, the scale and the
     field of view; KHR_xmp_json_ld holds the main fields of the packet as JSON-LD.
 
