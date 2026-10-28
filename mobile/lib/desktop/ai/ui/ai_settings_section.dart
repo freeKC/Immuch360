@@ -72,28 +72,29 @@ final _aiSettingsProvider = FutureProvider.autoDispose<DesktopAiSettings>(
 );
 
 /// Stops the conversions so that the components can be removed: every job cancelled, then, once none runs any more,
-/// the model let go. Ends when nothing uses the components, or after [wait] at most: the tile then says the conversion
-/// is still stopping.
+/// the models of every engine let go (keptAiEnginesProvider). Ends when nothing uses the components, or after [wait] at
+/// most: the tile then says the conversion is still stopping.
 Future<void> stopConversionsForRemoval(WidgetRef ref, {Duration wait = const Duration(seconds: 30)}) async {
   ref.read(conversionQueueProvider.notifier).cancelAll();
-  final engine = ref.read(desktopAiEngineProvider);
+  final engines = ref.read(keptAiEnginesProvider);
   final until = DateTime.now().add(wait);
-  while ((engine.isRunning || ref.read(conversionQueueProvider).current != null) && DateTime.now().isBefore(until)) {
+  while ((engines.any((engine) => engine.isRunning) || ref.read(conversionQueueProvider).current != null) &&
+      DateTime.now().isBefore(until)) {
     await Future<void>.delayed(const Duration(milliseconds: 100));
   }
-  await engine.release();
+  await Future.wait([for (final engine in engines) engine.release()]);
 }
 
 /// Moves the AI components into the folder [chosen] the user picked, [onProgress] getting the bytes copied and those to
 /// copy (moveAiComponents)
 typedef AiComponentsMover = Future<AiMoveResult> Function(String chosen, void Function(int done, int total) onProgress);
 
-/// The move of the app; replaced in tests. An engine kept between two jobs holds ONNX Runtime: it is let go first, so
-/// that the old folder empties now rather than at the next start.
+/// The move of the app; replaced in tests. The engines kept between two jobs hold ONNX Runtime and their models: they
+/// are let go first, so that the old folder empties now rather than at the next start.
 final aiComponentsMoverProvider = Provider<AiComponentsMover>(
   (ref) => (chosen, onProgress) async {
     if (ref.read(conversionQueueProvider).current == null) {
-      await ref.read(desktopAiEngineProvider).release();
+      await Future.wait([for (final engine in ref.read(keptAiEnginesProvider)) engine.release()]);
     }
     return moveAiComponents(
       ref.read(aiComponentsServiceProvider),

@@ -4,13 +4,15 @@
 // allowed, each taken back; the backup of the generated photos, which follows their album; the hardware line; and
 // the conversions stopped before the components are removed. Phase 2: the components by group of features, "Move the
 // AI components" with its folder, its progress and what a refusal says, the folder of a drive not connected, and
-// "Also save a .glb copy".
+// "Also save a .glb copy"; the engine of the 3D scenes let go with the one of the 3D photos before a removal and
+// before a move.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
@@ -35,7 +37,9 @@ import 'package:path/path.dart' as p;
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
 import '../creator/english_texts.dart';
+import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
+import '../fakes/fake_scene_engine.dart';
 
 class _Pickers implements FilePickers {
   String? answer;
@@ -107,6 +111,24 @@ class _Output implements ConversionOutput {
     if (file.existsSync()) {
       file.deleteSync();
     }
+  }
+}
+
+/// A move that copies nothing: it notes what [held] says when the copy would begin
+class _MoveService extends FakeAiComponentsService {
+  _MoveService(this.held);
+
+  final List<bool> Function() held;
+  final heldAtMove = <List<bool>>[];
+
+  @override
+  Future<AiMoveResult> moveTo(
+    Directory target, {
+    required Future<void> Function(Directory folder) remember,
+    void Function(int done, int total)? onProgress,
+  }) async {
+    heldAtMove.add(held());
+    return const AiMoveResult(AiMoveOutcome.moved);
   }
 }
 
@@ -407,6 +429,146 @@ void main() {
     ]);
     expect(held.disposed, isTrue, reason: 'the model let go once nothing ran');
     expect(photos.listSync().map((entry) => p.basename(entry.path)).toSet(), {'a.jpg', 'b.jpg'});
+  });
+
+  /// The engines of the app on fakes, as the queue is given them: the 3D photos ([photoModel]) and the 3D scenes
+  /// ([sceneModel]), each made when its first job runs and kept after it
+  ({DesktopAiEngine photos, DesktopSceneEngine scenes, List<Override> overrides}) keptEngines({
+    required FakeImmersiveEngine photoModel,
+    required FakeSceneEngine sceneModel,
+  }) {
+    final gate = HardwareGate(
+      components: _AllFiles(root.path),
+      facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
+      loadRuntime: (path) async => (version: '1.31.0', error: null),
+    );
+    final photos = DesktopAiEngine(gate: gate, create: (_) => photoModel);
+    final scenes = DesktopSceneEngine(gate: gate, create: (_) => sceneModel);
+    return (
+      photos: photos,
+      scenes: scenes,
+      overrides: [
+        desktopAiEngineProvider.overrideWithValue(photos),
+        desktopSceneEngineProvider.overrideWithValue(scenes),
+        conversionToolsProvider.overrideWithValue(
+          ConversionTools(
+            engine: photos,
+            engines: {
+              ConversionKind.sceneFromPhoto: ConversionEngine(
+                engine: scenes,
+                settingsKey: (source, turns) => fakeSceneSettingsKey(turns),
+              ),
+            },
+            output: _Output(),
+            finder: ExistingVersionFinder(),
+            creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// A photo of [folder] to make into [kind]
+  ConversionRequest photoIn(Directory folder, String name, {ConversionKind kind = ConversionKind.sbsFromPhoto}) {
+    final path = p.join(folder.path, name);
+    File(path).writeAsBytesSync(List.generate(100, (i) => (i * 7 + name.length) & 0xff));
+    return ConversionRequest(
+      source: LocalFileSource(path),
+      target: ConversionTarget.nextTo(path, kind: kind),
+    );
+  }
+
+  testWidgets('removing the components during a 3D scene: the wait, then both engines let go', (tester) async {
+    final photos = Directory(p.join(root.path, 'photos'))..createSync();
+    final photoModel = FakeImmersiveEngine();
+    final sceneModel = FakeSceneEngine(holdStage: ImmersiveStage.geometry);
+    final engines = keptEngines(photoModel: photoModel, sceneModel: sceneModel);
+    late WidgetRef widgetRef;
+    await tester.pumpConsumerWidget(
+      Consumer(
+        builder: (context, ref, _) {
+          widgetRef = ref;
+          return const SizedBox.shrink();
+        },
+      ),
+      overrides: engines.overrides,
+    );
+    final container = ProviderScope.containerOf(tester.element(find.byType(Consumer)));
+    final queue = container.read(conversionQueueProvider.notifier);
+
+    final photoId = queue.add([photoIn(photos, 'a.jpg')]).single;
+    for (var step = 0; step < 20 && !container.read(conversionQueueProvider).byId(photoId)!.state.isEnded; step++) {
+      await settle(tester);
+    }
+    expect(container.read(conversionQueueProvider).byId(photoId)!.state, ConversionState.done);
+    queue.add([photoIn(photos, 'b.jpg', kind: ConversionKind.sceneFromPhoto)], kind: ConversionKind.sceneFromPhoto);
+    for (var step = 0; step < 20 && !engines.scenes.isRunning; step++) {
+      await settle(tester);
+    }
+    expect(engines.scenes.isRunning, isTrue, reason: 'b.jpg held in MoGe-2');
+    expect(photoModel.disposed, isFalse, reason: 'the model of the 3D photos kept for the next job');
+
+    var stopped = false;
+    final stopping = stopConversionsForRemoval(
+      widgetRef,
+      wait: const Duration(seconds: 20),
+    ).then((_) => stopped = true);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(stopped, isFalse, reason: 'it waits while the scene runs');
+    expect(sceneModel.disposed, isFalse, reason: 'the models of the scene are never let go under a job');
+
+    sceneModel.release();
+    for (var step = 0; step < 20 && !stopped; step++) {
+      await settle(tester);
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    await stopping;
+    expect(stopped, isTrue);
+    expect(engines.scenes.isRunning, isFalse);
+    expect(container.read(conversionQueueProvider).jobs.last.state, ConversionState.cancelled);
+    expect(photoModel.disposed, isTrue, reason: 'the model of the 3D photos let go');
+    expect(sceneModel.disposed, isTrue, reason: 'MoGe-2 and LaMa let go too, once the scene stopped');
+  });
+
+  test('a move lets the engines of the 3D photos and of the 3D scenes go before it copies', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    // The folder of the app, wherever moveAiComponents asks it on this system
+    messenger.setMockMethodCallHandler(pathProvider, (call) async => p.join(root.path, 'app'));
+    addTearDown(() => messenger.setMockMethodCallHandler(pathProvider, null));
+    final photos = Directory(p.join(root.path, 'photos'))..createSync();
+    final photoModel = FakeImmersiveEngine();
+    final sceneModel = FakeSceneEngine();
+    final engines = keptEngines(photoModel: photoModel, sceneModel: sceneModel);
+    final service = _MoveService(() => [photoModel.disposed, sceneModel.disposed]);
+    final container = ProviderContainer(
+      overrides: [
+        ...engines.overrides,
+        aiComponentsServiceProvider.overrideWithValue(service),
+        desktopAiSettingsStoreProvider.overrideWithValue(store),
+      ],
+    );
+    addTearDown(container.dispose);
+    final queue = container.read(conversionQueueProvider.notifier);
+    Future<void> made(ConversionRequest request, ConversionKind kind) async {
+      final id = queue.add([request], kind: kind).single;
+      for (var wait = 0; wait < 500 && !container.read(conversionQueueProvider).byId(id)!.state.isEnded; wait++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+      expect(container.read(conversionQueueProvider).byId(id)!.state, ConversionState.done);
+    }
+
+    await made(photoIn(photos, 'a.jpg'), ConversionKind.sbsFromPhoto);
+    await made(photoIn(photos, 'b.jpg', kind: ConversionKind.sceneFromPhoto), ConversionKind.sceneFromPhoto);
+    expect([photoModel.disposed, sceneModel.disposed], [false, false], reason: 'each engine keeps its models');
+
+    final moved = await container.read(aiComponentsMoverProvider)(p.join(root.path, 'drive-d'), (done, total) {});
+
+    expect(moved.outcome, AiMoveOutcome.moved);
+    expect(service.heldAtMove, [
+      [true, true],
+    ], reason: 'the model of the 3D photos, MoGe-2 and LaMa let go before the copy');
   });
 
   testWidgets('the components by group of features, each with the size of all it needs', (tester) async {

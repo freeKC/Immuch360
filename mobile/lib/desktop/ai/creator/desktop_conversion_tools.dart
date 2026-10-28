@@ -10,7 +10,8 @@
 //
 // The engine is made when a job runs, from the components installed at that moment: they may be downloaded after the
 // app started, from the conversion dialog or the settings. While it runs, or while the queue has a job under way, the
-// components are not removed (AiComponentsService.inUse).
+// components are not removed (AiComponentsService.inUse). Each engine kept between two jobs (keptAiEnginesProvider)
+// is let go before the components are removed or moved (ai_settings_section.dart).
 //
 // The writer adapts SafeWriter to the queue. The partial file the dialog made to check a folder is handed over to the
 // job of that photo, which writes into it; one no job took (a photo skipped, cancelled while waiting) is deleted at
@@ -168,9 +169,18 @@ class LibraryVersionIndex implements DerivedVersionIndex {
   }
 }
 
+/// An engine kept from one job to the next, which holds ONNX Runtime and its models until it is let go
+abstract interface class KeptAiEngine {
+  /// Whether a job runs: the components are not removed meanwhile
+  bool get isRunning;
+
+  /// Lets the models and their worker go, before the components are removed or moved; the next job makes them again
+  Future<void> release();
+}
+
 /// The engine of the 3D photos, made from the components installed when a job runs: DartImmersiveEngine on ONNX
 /// Runtime and Depth Anything V2 Small, kept from one job to the next while the same files serve
-class DesktopAiEngine implements ImmersiveEngine {
+class DesktopAiEngine implements ImmersiveEngine, KeptAiEngine {
   DesktopAiEngine({required this.gate, ImmersiveEngine Function(AiGateResult gate)? create})
     : _create = create ?? onnxEngineFor;
 
@@ -181,7 +191,7 @@ class DesktopAiEngine implements ImmersiveEngine {
   String? _files;
   var _running = false;
 
-  /// Whether a job runs: the components are not removed meanwhile
+  @override
   bool get isRunning => _running;
 
   /// DartImmersiveEngine on the files [gate] found, their sizes those of the catalogue
@@ -229,7 +239,7 @@ class DesktopAiEngine implements ImmersiveEngine {
     }
   }
 
-  /// Lets the model and its worker go, before the components are removed; the next job makes them again
+  @override
   Future<void> release() async {
     final engine = _engine;
     _engine = null;
@@ -244,7 +254,7 @@ class DesktopAiEngine implements ImmersiveEngine {
 /// The engine of the 3D scenes, made from the components of the feature scene installed when a job runs (ONNX Runtime,
 /// MoGe-2 ViT-S, LaMa): SceneEngine, kept from one job to the next while the same files serve. A scene asked while a
 /// component is missing fails with componentsMissing, never downloads anything.
-class DesktopSceneEngine implements ImmersiveEngine {
+class DesktopSceneEngine implements ImmersiveEngine, KeptAiEngine {
   DesktopSceneEngine({required this.gate, ImmersiveEngine Function(AiGateResult gate)? create})
     : _create = create ?? onnxSceneEngineFor;
 
@@ -255,7 +265,7 @@ class DesktopSceneEngine implements ImmersiveEngine {
   String? _files;
   var _running = false;
 
-  /// Whether a job runs: the components are not removed meanwhile
+  @override
   bool get isRunning => _running;
 
   /// SceneEngine on the files [gate] found for the feature scene, their sizes and sums those of the catalogue
@@ -313,7 +323,7 @@ class DesktopSceneEngine implements ImmersiveEngine {
     }
   }
 
-  /// Lets the models and their worker go, before the components are removed; the next job makes them again
+  @override
   Future<void> release() async {
     final engine = _engine;
     _engine = null;
@@ -378,6 +388,12 @@ final desktopSceneEngineProvider = Provider<DesktopSceneEngine>((ref) {
   ref.onDispose(() => unawaited(engine.dispose()));
   return engine;
 });
+
+/// The engines kept between two jobs, let go before the components are removed or moved: the 3D photos and the 3D
+/// scenes (S1); P1 and P3 (or P5) add theirs here
+final keptAiEnginesProvider = Provider<List<KeptAiEngine>>(
+  (ref) => [ref.watch(desktopAiEngineProvider), ref.watch(desktopSceneEngineProvider)],
+);
 
 /// The engines of the kinds of phases 2 and 3, by kind, each with the key of the settings its files carry: the 3D
 /// scene (S1); P1 and P3 (or P5) add theirs here. The tests give the fakes.
