@@ -73,6 +73,20 @@ class _WritingRunner implements ProcessRunner {
   }
 }
 
+/// The fake runner, writing [bytes] at the output of each launch: a file sd-cli would leave broken
+class _BytesRunner implements ProcessRunner {
+  _BytesRunner(this.inner, this.bytes);
+
+  final FakeProcessRunner inner;
+  final List<int> bytes;
+
+  @override
+  Future<RunningProcess> start(ProcessLaunch launch) async {
+    File(launch.arguments[launch.arguments.indexOf('-o') + 1]).writeAsBytesSync(bytes);
+    return inner.start(launch);
+  }
+}
+
 /// [image] with its first row the pure green of the control frame: 32 of the 480 pixels outside the photo
 img.Image _greenRow(img.Image image) {
   for (var x = 0; x < image.width; x++) {
@@ -315,7 +329,7 @@ void main() {
       },
     );
 
-    test('cut into segments, it is stopped at once and refused, never a file', () async {
+    test('cut into segments, it is stopped at once and refused as gpuBusy, never a file', () async {
       final runner = FakeProcessRunner([
         FakeProcessScript(
           lines: _generation(
@@ -331,7 +345,7 @@ void main() {
         generator(runner).generate(request(), cancel: cancel, onProgress: heard.add),
         throwsA(
           isA<BackendException>()
-              .having((error) => error.code, 'code', ImmersiveErrorCode.outputRejected)
+              .having((error) => error.code, 'code', ImmersiveErrorCode.gpuBusy)
               .having((error) => error.message, 'message', contains('27 segments')),
         ),
       );
@@ -503,6 +517,25 @@ void main() {
         final failure = await run(image);
         expect(failure?.code, ImmersiveErrorCode.outputRejected, reason: reason);
         expect(failure?.message, contains(reason));
+        expect(File(request().outputPath).existsSync(), isFalse, reason: reason);
+      }
+    });
+
+    test('a file that is no image, or a PNG cut short, is refused and deleted', () async {
+      writeControl();
+      for (final (bytes, reason) in [
+        (List<int>.filled(64, 7), 'no image'),
+        (img.encodePng(_varied(32, 16)).sublist(0, 60), 'cut short'),
+      ]) {
+        final runner = _BytesRunner(FakeProcessRunner([FakeProcessScript(lines: _generation(steps: 1))]), bytes);
+        final failure = await generator(runner, checkImages: true)
+            .generate(request(width: 32, height: 16), cancel: cancel)
+            .then<Object?>((_) => null, onError: (Object error) => error);
+        expect(
+          failure,
+          isA<BackendException>().having((error) => error.code, 'code', ImmersiveErrorCode.outputRejected),
+          reason: reason,
+        );
         expect(File(request().outputPath).existsSync(), isFalse, reason: reason);
       }
     });
