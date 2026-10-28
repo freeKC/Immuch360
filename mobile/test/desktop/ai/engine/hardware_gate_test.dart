@@ -102,15 +102,26 @@ void main() {
       expect(result.files.keys, unorderedEquals([onnxRuntimeWindowsComponent.id, depthModelOnnxComponent.id]));
     });
 
-    test('a 360° panorama: not on a Mac; not in this version until the engine of P2 is in the catalogue', () async {
+    test('a 360° panorama: not on a Mac; not in this version while its group is held, its engine written', () async {
       final mac = await gate(abi: Abi.macosArm64).evaluate(feature: AiFeature.panorama);
       final windows = await gate(abi: Abi.windowsX64).evaluate(feature: AiFeature.panorama);
 
       expect(mac.reason, AiGateReason.notHere);
       expect(mac.reason!.textKey, 'ai_immersive_unavailable_system');
+      expect(sdCppWindowsComponent.isComplete, isTrue);
       expect(windows.reason, AiGateReason.notInThisVersion);
       expect(windows.reason!.textKey, 'ai_immersive_unavailable_build');
-      expect(windows.missing, [sdCppWindowsComponent]);
+      expect(windows.missing, isEmpty);
+
+      // Once the hold is lifted (P3, U3 and ai-components-3), the components are asked for, the engine of P2 first
+      final lifted = await HardwareGate(
+        components: _FakeComponents(folder, states: {sdCppWindowsComponent.id: AiComponentState.notInstalled}),
+        facts: () => const AiHardwareFacts(abi: Abi.windowsX64, processors: 8, physicalMemory: 16 * _gib),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+        heldGroups: const {},
+      ).evaluate(feature: AiFeature.panorama);
+      expect(lifted.reason, AiGateReason.componentsMissing);
+      expect(lifted.missing, [sdCppWindowsComponent]);
     });
 
     test('the variant of a component is the one the memory of the card takes', () async {
@@ -140,6 +151,8 @@ void main() {
         facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 * _gib),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
         catalogue: catalogue,
+        // The panoramas held back by this version are not what this test looks at
+        heldGroups: const {},
       );
 
       final small = await variants.evaluate(feature: AiFeature.panorama, graphicsMemory: 8 * _gib);

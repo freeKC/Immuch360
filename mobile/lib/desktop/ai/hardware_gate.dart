@@ -14,8 +14,9 @@
 // when none is named), asks for the components of that feature only, each by its id (the engines read their files by
 // id, no more "one file per kind, the last one wins"), and of a component and its variant the one the memory of the
 // graphics card takes. A feature not offered on this system is refused as such ("Not on this system yet"), and so is
-// one whose components this version of the app does not have yet ("Not in this version of the app": the engine of
-// the panoramas until lot P2). The rules of the graphics card are lot C6.
+// one whose components this version of the app does not have yet, or whose group it holds back ("Not in this version
+// of the app": the panoramas, whose engine archives P2 wrote, until the engine of P3, the screens of U3 and the
+// publication of ai-components-3). The rules of the graphics card are lot C6.
 
 import 'dart:ffi' show Abi;
 import 'dart:io';
@@ -191,11 +192,16 @@ class HardwareGate {
     Future<RuntimeLoad> Function(String path)? loadRuntime,
     this.minimumMemory = aiMinimumPhysicalMemory,
     this.catalogue = aiComponents,
+    this.heldGroups = aiHeldFeatureGroups,
   }) : _facts = facts ?? AiHardwareFacts.ofThisComputer,
        _loadRuntime = loadRuntime ?? loadRuntimeInIsolate;
 
   /// The catalogue of the components; another one only in the tests
   final List<AiComponent> catalogue;
+
+  /// The groups of features this version does not offer yet, whatever the catalogue says (aiHeldFeatureGroups: the 360°
+  /// panoramas until their engine, their screens and their release)
+  final Set<AiFeatureGroup> heldGroups;
 
   final AiComponentFiles components;
   final AiHardwareFacts Function() _facts;
@@ -235,6 +241,9 @@ class HardwareGate {
     final incomplete = needed.where((component) => !component.isComplete).toList();
     if (incomplete.isNotEmpty) {
       return refused(AiGateReason.notInThisVersion, missing: incomplete);
+    }
+    if (heldGroups.any((group) => group.features.contains(feature))) {
+      return refused(AiGateReason.notInThisVersion);
     }
 
     final files = <String, File>{};
