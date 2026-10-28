@@ -972,6 +972,12 @@ void main() {
       }
     }
 
+    /// The partial files the checks of the dialog made, by their final names
+    List<String> checkedNames() => [
+      for (final call in files.calls)
+        if (call.startsWith('createNew ')) p.basename(call.substring('createNew '.length)),
+    ];
+
     Future<void> choosePanorama(WidgetTester tester) async {
       await tapIn(tester, find.byKey(const Key('ai_conversion_type_panoramaFromPhoto')));
       await settle(tester);
@@ -1187,6 +1193,18 @@ void main() {
       expect(find.text('Relief estimated by AI'), findsOneWidget);
       expect(find.byKey(const Key('ai_conversion_also_stereo')), findsNothing);
       expect(find.byKey(const Key('ai_conversion_gpu_busy')), findsNothing);
+      expect(checkedNames().last, startsWith('.salon_360_3D.jpg.'));
+
+      final container = ProviderScope.containerOf(tester.element(find.byKey(const Key('ai_conversion_dialog'))));
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.kind, ConversionKind.stereoPanoramaFromPanorama);
+      expect(
+        container.read(conversionJobInfoProvider)[job.id]!.generatedSource,
+        isTrue,
+        reason: 'the panel says it under the sentence of the panorama',
+      );
     });
 
     test('the part invented: the solid angle of the photo on the sphere, a phone camera when the EXIF is silent', () {

@@ -5,7 +5,9 @@
 // the jobs under way. Then "Delete this 3D photo" from the Versions of the details, whose row goes at once, and the
 // files it never deletes: ours without a DerivativeId, and any other. Phases 2 and 3: the two lanes in two sections,
 // the type of each job, its step in words, "step 12 of 28, about 3 min left" counted down, why a job waits, the share
-// of a scene filled in, and "Delete this version" asked as such.
+// of a scene filled in, and "Delete this version" asked as such. Phase 3: a job waiting for the memory of the graphics
+// card with what is free and Resume, the named failures of a panorama in words, and the 3D version of a generated
+// panorama under the sentence of the panorama.
 
 import 'dart:io';
 
@@ -29,9 +31,11 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_scene_engine.dart';
@@ -90,14 +94,18 @@ class _Output implements ConversionOutput {
   }
 }
 
-/// A queue that shows [shown], for the words of the rows
+/// A queue that shows [shown], for the words of the rows; it counts the times the graphics card is asked again
 class _ShownQueue extends ConversionQueueNotifier {
   _ShownQueue(this.shown);
 
   final ConversionQueueState shown;
+  var cardAsked = 0;
 
   @override
   ConversionQueueState build() => shown;
+
+  @override
+  void checkGraphicsCardAgain() => cardAsked++;
 }
 
 void main() {
@@ -464,9 +472,16 @@ void main() {
       int? steps,
       Duration? remaining,
       ConversionWait? waitingFor,
+      int? waitingFree,
+      String? parentId,
+      ImmersiveErrorCode? error,
+      String? message,
     }) => ConversionJob(
       id: name,
       source: LocalFileSource(p.join(photos, name)),
+      parentId: parentId,
+      error: error,
+      message: message,
       batchIndex: 1,
       batchSize: 1,
       kind: kind,
@@ -477,9 +492,17 @@ void main() {
       steps: steps,
       remaining: remaining,
       waitingFor: waitingFor,
+      waitingFree: waitingFree,
     );
 
-    Future<void> pumpShown(WidgetTester tester, List<ConversionJob> jobs, {DateTime Function()? clock}) async {
+    late _ShownQueue shownQueue;
+
+    Future<void> pumpShown(
+      WidgetTester tester,
+      List<ConversionJob> jobs, {
+      DateTime Function()? clock,
+      Map<String, ConversionJobInfo> infos = const {},
+    }) async {
       tester.view.physicalSize = const Size(1200, 1600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -487,10 +510,15 @@ void main() {
         const Scaffold(body: ConversionsPanel()),
         overrides: [
           ...overrides(),
-          conversionQueueProvider.overrideWith(() => _ShownQueue(ConversionQueueState(jobs: jobs))),
+          conversionQueueProvider.overrideWith(() => shownQueue = _ShownQueue(ConversionQueueState(jobs: jobs))),
           if (clock != null) conversionClockProvider.overrideWithValue(clock),
         ],
       );
+      if (infos.isNotEmpty) {
+        ProviderScope.containerOf(
+          tester.element(find.byType(ConversionsPanel)),
+        ).read(conversionJobInfoProvider.notifier).addAll(infos);
+      }
       await tester.pump();
     }
 
@@ -637,6 +665,107 @@ void main() {
       expect(File(written).existsSync(), isFalse);
       expect(File(path).existsSync(), isTrue, reason: 'the original stays');
       expect(find.byKey(ValueKey('ai_job_$id')), findsNothing);
+    });
+
+    testWidgets(
+      'a panorama waiting for the memory of the graphics card: what is free, and Resume asks the card again',
+      (tester) async {
+        await pumpShown(tester, [
+          job(
+            'plage.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.waiting,
+            waitingFor: ConversionWait.graphicsMemory,
+            waitingFree: 2 << 30,
+          ),
+          job('jardin.jpg', ConversionKind.sbsFromPhoto, ConversionState.waiting, waitingFor: ConversionWait.memory),
+        ]);
+
+        expect(
+          tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_waiting')))).data,
+          'Other apps use the graphics card memory (2.0 GiB free): close games or 3D apps',
+        );
+        expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_check_gpu'))), findsNothing);
+        expect(inRow('plage.jpg', find.text('Resume')), findsOneWidget);
+        await tester.tap(inRow('plage.jpg', find.byKey(const Key('ai_job_check_gpu'))));
+        await tester.pump();
+        expect(shownQueue.cardAsked, 1);
+      },
+    );
+
+    testWidgets('the named failures of a panorama, in words', (tester) async {
+      await pumpShown(tester, [
+        job(
+          'busy.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuBusy,
+          message: 'sd-cli cut the generator into 27 segments',
+        ),
+        job(
+          'silent.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuUnavailable,
+          message: 'gpuNoAnswer',
+        ),
+        job(
+          'stalled.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.generatorStalled,
+        ),
+      ]);
+      expect(
+        inRow('busy.jpg', find.text('Other apps use the graphics card memory: close games or 3D apps')),
+        findsOneWidget,
+      );
+      expect(inRow('silent.jpg', find.text('The graphics card did not answer')), findsOneWidget);
+      expect(inRow('stalled.jpg', find.text('The generator stopped responding')), findsOneWidget);
+    });
+
+    test('a graphics card that cannot take the job says why when the queue named the reason of the gate', () {
+      loadEnglishTexts();
+      final t = StaticTranslations.instance;
+      String text(String? message) => conversionFailureText(t, ImmersiveErrorCode.gpuUnavailable, message);
+      expect(text('gpuNoAnswer'), 'The graphics card did not answer');
+      expect(text('gpuNone'), 'No graphics card with Vulkan found');
+      expect(text('gpuIntegrated'), "Integrated graphics share the computer's memory: too slow for panoramas");
+      expect(text('notYetOnMac'), 'Not yet on Mac');
+      expect(text('gpuTooSmall'), 'No graphics card can make this panorama', reason: 'its numbers are not in the job');
+      expect(text(null), 'No graphics card can make this panorama');
+      expect(text('something else'), 'No graphics card can make this panorama');
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.gpuOutOfMemory, 'need 4109.22 MB device'),
+        'The graphics card ran out of memory: close games or 3D apps and retry',
+      );
+      expect(conversionFailureText(t, ImmersiveErrorCode.outputRejected, 'grey'), 'The generated image was not usable');
+    });
+
+    testWidgets('the 3D version of a generated panorama is under the sentence of the panorama', (tester) async {
+      await pumpShown(tester, [
+        job('plage.jpg', ConversionKind.panoramaFromPhoto, ConversionState.done),
+        job('plage-3d', ConversionKind.stereoPanoramaFromPanorama, ConversionState.waiting, parentId: 'plage.jpg'),
+      ]);
+      expect(find.text("Generated by AI beyond the photo's edges"), findsOneWidget);
+      expect(find.text('Relief estimated by AI'), findsNothing);
+      expect(inRow('plage-3d', find.text('360° to 3D 360°')), findsOneWidget);
+
+      // Chosen by itself, from a panorama the app generated, as the dialog says it
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpShown(
+        tester,
+        [job('salon_360.jpg', ConversionKind.stereoPanoramaFromPanorama, ConversionState.waiting)],
+        infos: {'salon_360.jpg': const ConversionJobInfo(generatedSource: true)},
+      );
+      expect(find.text("Generated by AI beyond the photo's edges"), findsOneWidget);
+      expect(find.text('Relief estimated by AI'), findsNothing);
+
+      // A 360° photo of the user: its relief only
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpShown(tester, [job('trip.jpg', ConversionKind.stereoPanoramaFromPanorama, ConversionState.waiting)]);
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(find.text("Generated by AI beyond the photo's edges"), findsNothing);
     });
   });
 }

@@ -560,6 +560,7 @@ class ConversionCandidate {
     this.quarterTurns = 0,
     this.serverEdits = false,
     this.id,
+    this.generated = false,
   });
 
   final BaseAsset asset;
@@ -567,6 +568,9 @@ class ConversionCandidate {
   final OriginalLocation? location;
   final ConversionSkipReason? skip;
   final int quarterTurns;
+
+  /// A panorama the app generated: its 3D version is said as generated too
+  final bool generated;
 
   /// Edited in Immich: its edits, the rotation aside, are not in its 3D photo
   final bool serverEdits;
@@ -988,6 +992,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           quarterTurns: photo.facts.quarterTurns,
           serverEdits: photo.facts.serverEdits,
           id: 'photo-$index',
+          generated: photo.facts.version?.kind == ImmersiveKind.panorama360,
         ),
   ];
 
@@ -1206,6 +1211,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         asset: candidate.asset,
         isNetwork: plan?.isNetwork ?? false,
         serverEdits: candidate.serverEdits,
+        generatedSource: candidate.generated,
       );
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
