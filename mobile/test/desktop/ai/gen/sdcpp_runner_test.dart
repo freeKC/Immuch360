@@ -545,7 +545,10 @@ void main() {
       // take: the closure of the check must not carry it (V3: every panorama of the app was refused so)
       writeControl();
       final pending = Completer<void>();
-      final runner = _WritingRunner(FakeProcessRunner([FakeProcessScript(lines: _generation())]), image: _varied(32, 16));
+      final runner = _WritingRunner(
+        FakeProcessRunner([FakeProcessScript(lines: _generation())]),
+        image: _varied(32, 16),
+      );
       final failure = await generator(runner, checkImages: true)
           .generate(
             request(width: 32, height: 16),
