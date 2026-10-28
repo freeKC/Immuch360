@@ -292,6 +292,29 @@ void main() {
       expect(runner.processes.single.killed, isFalse);
     });
 
+    test(
+      'a bar of as many tiles as steps before the sampling is no step: only the bars after "generating image"',
+      () async {
+        // 40 steps, and the VAE encodes the reference in 40 tiles before the sampling starts
+        final runner = FakeProcessRunner([FakeProcessScript(lines: _generation(steps: 40))]);
+        final heard = <GeneratorProgress>[];
+        final request40 = GeneratorRequest(
+          controlPath: request().controlPath,
+          outputPath: request().outputPath,
+          workFolder: folder.path,
+          prompt: 'p',
+          seed: 1,
+          steps: 40,
+        );
+        await expectLater(
+          generator(runner).generate(request40, cancel: cancel, onProgress: heard.add),
+          throwsA(isA<BackendException>().having((error) => error.code, 'code', ImmersiveErrorCode.generatorFailed)),
+        );
+        expect(heard.map((progress) => progress.step), List.generate(40, (index) => index + 1));
+        expect(heard.first.secondsPerStep, 8.31);
+      },
+    );
+
     test('cut into segments, it is stopped at once and refused, never a file', () async {
       final runner = FakeProcessRunner([
         FakeProcessScript(
