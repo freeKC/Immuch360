@@ -295,6 +295,10 @@
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/GeneratedPanorama.kt": {
+    "blob": "71ebaad27dca4bb900521e34f67945ebe4ef4ba4",
+    "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveInputSystem.kt": {
     "blob": "25179a9b035fb587cc8944e7b3392a02501fa8b1",
     "reason": "AI immersive phases 2 and 3, lot S3: the buttons held every frame, and the controls of a 3D scene (the left thumbstick glides, a thumbstick click resets); feat-ai-immersive, not yet on the phone branch"
@@ -304,8 +308,12 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "a1db3fb7f9cacd6fac5b2423b19672433391a382",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; feat-ai-immersive, not yet on the phone branch"
+    "blob": "e74f7baf703b8d784545f36f0935dc585bbd3444",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
+    "blob": "f555b014f4298cd66b0d334b4e916324b965225b",
+    "reason": "AI immersive phases 2 and 3, lot P4: the four arcs of the outline of the photo on a generated panorama and their ribbons; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefHost.kt": {
     "blob": "eec358898e431128aaa415bf0429ebc962ccc39f",
@@ -711,6 +719,10 @@
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/GeneratedPanoramaTest.kt": {
+    "blob": "048d09764907fb677fc27d28b7992842b03922c1",
+    "reason": "AI immersive phases 2 and 3, lot P4: the packet of a generated panorama against the samples of the contract, the opening yaw, the text on every path of the sphere; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveInputTest.kt": {
     "blob": "716f141f81a8d06bf20598f8058ec18182483efe",
     "reason": "AI immersive phases 2 and 3, lot S3: the controls of a 3D scene and the left thumbstick held; feat-ai-immersive, not yet on the phone branch"
@@ -718,6 +730,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveMediaTest.kt": {
     "blob": "1a45a5027dcc209679927c754476bd7e43d4f320",
     "reason": "AI immersive lot A9a: tests of the size and the turn of the photo of a relief; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PanoramaOutlineTest.kt": {
+    "blob": "4b848f0af829cb7b153b98371364e209a53fe8a0",
+    "reason": "AI immersive phases 2 and 3, lot P4: the arcs of the outline against the golden projection of pano-v1, and the ribbons of the mesh; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ReliefMeshTest.kt": {
     "blob": "f054903d2e647621f29134d01b02ad15f1f76b36",
