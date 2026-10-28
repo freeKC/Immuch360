@@ -298,6 +298,7 @@ class AiWorkerStatus {
     required this.sessionCloses,
     this.openSessions = const [],
     this.runOptionsHeld = 0,
+    this.runOptionsAlive = 0,
   });
 
   /// The jobs it ran, tasks included
@@ -314,6 +315,10 @@ class AiWorkerStatus {
 
   /// The run options it keeps until the root isolate lets them go
   final int runOptionsHeld;
+
+  /// The OrtRunOptions made in the worker and not given back to ONNX Runtime yet, counted by the libraries themselves:
+  /// [runOptionsHeld] once the worker gave back every one the root isolate let go
+  final int runOptionsAlive;
 }
 
 /// The worker went away during a call: a crash of its isolate, or [AiWorker.close]
@@ -713,6 +718,7 @@ void _workerMain((AiWorkerSetup, SendPort) start) {
               sessionCloses: sessions.closes,
               openSessions: sessions.openNames,
               runOptionsHeld: held.length,
+              runOptionsAlive: OrtRuntime.liveInThisIsolate('OrtRunOptions'),
             ),
           ),
         );

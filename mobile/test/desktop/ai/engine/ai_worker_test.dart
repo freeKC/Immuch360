@@ -251,7 +251,10 @@ void main() {
       expect(result, 'moge opened 1 time, cancelled: false');
       expect(progress, const [ImmersiveProgress(ImmersiveStage.geometry, 400)]);
       final status = await worker.status();
-      expect((status.jobs, status.openSessions.join(' '), status.runOptionsHeld), (1, 'moge', 0));
+      expect(
+        (status.jobs, status.openSessions.join(' '), status.runOptionsHeld, status.runOptionsAlive),
+        (1, 'moge', 0, 0),
+      );
     });
 
     test('a task reads the cancel flag of its job', () async {

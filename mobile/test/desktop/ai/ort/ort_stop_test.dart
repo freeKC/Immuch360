@@ -3,7 +3,7 @@
 // another isolate through its own binding (ort_terminate.dart), and the run turned into OrtRunStopped; the options
 // stopped once stay stopped, fresh ones run; nothing native left behind. Then the same through the worker: a task
 // cancelled on the root isolate ends within a second, its run options kept by the worker until the root isolate lets
-// them go, and at most two sessions kept open.
+// them go and then given back to ONNX Runtime (counted by the library), and at most two sessions kept open.
 
 import 'dart:ffi';
 import 'dart:io';
@@ -214,7 +214,7 @@ void main() {
         print('the task ended ${watch.elapsedMilliseconds} ms after the cancel');
         expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
         final status = await worker.status();
-        expect((status.runOptionsHeld, status.openSessions.join(' ')), (0, 'slow'));
+        expect((status.runOptionsHeld, status.runOptionsAlive, status.openSessions.join(' ')), (0, 0, 'slow'));
       });
 
       test('a task cancelled before its options reach the root isolate is stopped as soon as they do', () async {
@@ -230,13 +230,19 @@ void main() {
         addTearDown(cancel.free);
         worker.holdRunOptions = true;
 
-        expect(await worker.runTask(_SlowTask(ort.library!, 4), cancelAddress: cancel.address), 'done 4');
-        expect((await worker.status()).runOptionsHeld, 1);
-        expect(await worker.runTask(_SlowTask(ort.library!, 2), cancelAddress: cancel.address), 'done 2');
-        expect((await worker.status()).runOptionsHeld, 2);
+        Future<(int, int)> options() async {
+          final status = await worker.status();
+          return (status.runOptionsHeld, status.runOptionsAlive);
+        }
 
+        expect(await worker.runTask(_SlowTask(ort.library!, 4), cancelAddress: cancel.address), 'done 4');
+        expect(await options(), (1, 1));
+        expect(await worker.runTask(_SlowTask(ort.library!, 2), cancelAddress: cancel.address), 'done 2');
+        expect(await options(), (2, 2));
+
+        // Given back to ONNX Runtime, not only forgotten
         worker.releaseRunOptions();
-        expect((await worker.status()).runOptionsHeld, 0);
+        expect(await options(), (0, 0));
       });
 
       test('at most two sessions stay open: a third gives back the one used least recently', () async {

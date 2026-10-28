@@ -159,6 +159,11 @@ final class OrtRuntime {
   @visibleForTesting
   Map<String, int> get liveObjects => Map.unmodifiable(_calls.live);
 
+  /// The native objects of [kind] (OrtRunOptions, OrtValue...) made through every library opened in this isolate and
+  /// not given back yet: what the worker isolate says of itself (AiWorkerStatus)
+  static int liveInThisIsolate(String kind) =>
+      _opened.values.fold(0, (count, runtime) => count + (runtime._calls.live[kind] ?? 0));
+
   /// How many OrtEnv had their telemetry events turned off (DisableTelemetryEvents): one per session opened
   @visibleForTesting
   int get telemetryEventsOff => _calls.telemetryOff;
