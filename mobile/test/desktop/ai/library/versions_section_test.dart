@@ -1,15 +1,18 @@
 // The rows of the details panel of a computer for the versions of a photo: "Versions" on an original, each one with
 // what it is in the words of its honesty label and its folder, greyed on a drive that is not connected; "Made from" or
 // "Original not found" on a version; a row that opens its file; "Export for other 3D apps (.glb)" on a 3D scene, on
-// its row and on its own; and nothing of it on a phone.
+// its row and on its own; "Make the 3D version" on a 360° panorama the app generated, on its row and on its own; and
+// nothing of it on a phone.
 
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
@@ -60,10 +63,16 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late PresentationContext context;
   late List<String> opened;
+  late List<String> madeStereo;
+  late bool aiOn;
+  late List<ConversionKind> offered;
 
   setUp(() async {
     context = await PresentationContext.create();
     opened = [];
+    madeStereo = [];
+    aiOn = true;
+    offered = const [ConversionKind.sbsFromPhoto, ConversionKind.stereoPanoramaFromPanorama];
   });
   tearDown(() async => context.dispose());
 
@@ -82,6 +91,9 @@ void main() {
         photoVersionsProvider(asset).overrideWith((ref) async => versions),
         versionThumbnailProvider.overrideWithValue((file) => const ColoredBox(color: Colors.grey)),
         versionOpenerProvider.overrideWithValue(opened.add),
+        aiFeaturesEnabledProvider.overrideWith((ref) => aiOn),
+        offeredConversionKindsProvider.overrideWith((ref) => offered),
+        versionStereoMakerProvider.overrideWithValue((context, ref, panorama) async => madeStereo.add(panorama.name)),
       ],
     );
   }
@@ -274,6 +286,85 @@ void main() {
       PhotoVersions(self: photo3d, original: _file(original)),
     );
     expect(find.byKey(ValueKey('desktop_version_export_${photo3d.asset.id}')), findsNothing);
+  });
+
+  testWidgets('"Make the 3D version" of a generated panorama, from its row and from its own; on no other version', (
+    tester,
+  ) async {
+    final panorama = _file(
+      p.join('Photos', 'salon_360.jpg'),
+      origin: IndexedOrigin.generated,
+      kind: ImmersiveKind.panorama360,
+    );
+    final stereoPanorama = _file(
+      p.join('Photos', 'salon_360_3D.jpg'),
+      origin: IndexedOrigin.generated,
+      kind: ImmersiveKind.stereoPanorama360,
+    );
+    final scene = _file(
+      p.join('Photos', 'salon_scene3D.jpg'),
+      origin: IndexedOrigin.reconstructed,
+      kind: ImmersiveKind.volumetricScene,
+    );
+    final photo3d = _file(here, origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto);
+    Finder make(VersionFile file) => find.byKey(ValueKey('desktop_version_make_3d_${file.asset.id}'));
+
+    await pump(
+      tester,
+      DesktopVersionsTiles(asset: photo),
+      photo,
+      PhotoVersions(versions: [photo3d, scene, panorama, stereoPanorama]),
+    );
+    expect(make(panorama), findsOneWidget);
+    expect(tester.widget<IconButton>(make(panorama)).tooltip, 'Make the 3D version');
+    for (final other in [photo3d, scene, stereoPanorama]) {
+      expect(make(other), findsNothing, reason: other.path);
+    }
+    await tester.tap(make(panorama));
+    await tester.pump();
+    expect(madeStereo, ['salon_360.jpg']);
+    expect(opened, isEmpty, reason: 'the button does not open the panorama');
+
+    await pump(
+      tester,
+      DesktopVersionsTiles(asset: photo),
+      photo,
+      PhotoVersions(self: panorama, original: _file(original)),
+    );
+    expect(make(panorama), findsOneWidget);
+    await tester.tap(make(panorama));
+    await tester.pump();
+    expect(madeStereo, ['salon_360.jpg', 'salon_360.jpg']);
+  });
+
+  testWidgets('"Make the 3D version" is absent while the AI features are off, or without the type, or its drive', (
+    tester,
+  ) async {
+    final panorama = _file(
+      p.join('Photos', 'salon_360.jpg'),
+      origin: IndexedOrigin.generated,
+      kind: ImmersiveKind.panorama360,
+    );
+    Finder make() => find.byKey(ValueKey('desktop_version_make_3d_${panorama.asset.id}'));
+
+    aiOn = false;
+    await pump(tester, DesktopVersionsTiles(asset: photo), photo, PhotoVersions(versions: [panorama]));
+    expect(make(), findsNothing);
+
+    aiOn = true;
+    offered = const [ConversionKind.sbsFromPhoto];
+    await pump(tester, DesktopVersionsTiles(asset: photo), photo, PhotoVersions(versions: [panorama]));
+    expect(make(), findsNothing);
+
+    offered = const [ConversionKind.sbsFromPhoto, ConversionKind.stereoPanoramaFromPanorama];
+    final away = _file(
+      p.join('E', 'salon_360.jpg'),
+      origin: IndexedOrigin.generated,
+      kind: ImmersiveKind.panorama360,
+      available: false,
+    );
+    await pump(tester, DesktopVersionsTiles(asset: photo), photo, PhotoVersions(versions: [away]));
+    expect(find.byKey(ValueKey('desktop_version_make_3d_${away.asset.id}')), findsNothing);
   });
 
   testWidgets('a version not read again since the index learnt the kinds is told by its origin', (tester) async {

@@ -6,7 +6,11 @@
 // library left alone while the album of the generated photos is not out of the backup. Phase 2: the choice of the type
 // once the build makes another one (the fake engine of the scenes), its honesty sentence, components, free space and
 // time, the type greyed with its reason, the plan of each photo of a mixed selection, the selection planned again for
-// another type, and the type kept for the next dialog.
+// another type, and the type kept for the next dialog. Phase 3: the 360° panorama, not offered while this version holds
+// it back, then its sentence, the part invented, "Also make the 3D version" with the components of both, the warning
+// of the graphics card, its time, the question on battery, its reasons of the card, and the type asked for by "Make the
+// 3D version". The components moved meanwhile, a refusal of one type that greys nothing, and what the user chose kept
+// when the type changes.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -15,6 +19,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+// Pure Dart, already in the lock through maplibre_gl, as in lib/desktop/library/local_image_codec.dart
+// ignore: depend_on_referenced_packages
+import 'package:image/image.dart' as img;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
@@ -22,11 +29,14 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
+import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -45,10 +55,13 @@ import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.da
 import '../../../widget_tester_extensions.dart';
 import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
+import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
+import '../fakes/fake_panorama_engine.dart';
 import '../fakes/fake_scene_engine.dart';
 import '../fakes/fake_stereo_panorama_engine.dart';
 import '../fakes/recording_creator_files.dart';
+import '../scene/scene_test_support.dart' show exifWithFocal35, insertAfterSoi;
 import 'settle_still.dart';
 
 const _gib = 1 << 30;
@@ -91,6 +104,32 @@ class _Originals implements ConversionAssetFiles {
   }
 }
 
+/// The folder dialog of the test: it answers [answer]
+class _FolderPicker implements FilePickers {
+  _FolderPicker(this.answer);
+
+  final String answer;
+
+  @override
+  Future<String?> folder({String? initialDirectory, String? confirmButtonText}) async => answer;
+
+  @override
+  Future<String?> saveLocation({
+    required String suggestedName,
+    String? initialDirectory,
+    String? typeLabel,
+    List<String> extensions = const [],
+  }) async => null;
+}
+
+/// On battery or not, as the test says
+class _Power implements PowerProbe {
+  bool? battery;
+
+  @override
+  bool? onBattery() => battery;
+}
+
 /// Every folder on a local disk
 class _LocalVolumes implements FolderVolumes {
   @override
@@ -119,6 +158,11 @@ void main() {
   late FakeImmersiveEngine engine;
   late Map<ConversionKind, ConversionEngine> kinds;
   late List<AiComponent> catalogue;
+  late Set<AiFeatureGroup> held;
+  late GpuReport cards;
+  late _Power power;
+  late Map<String, int> focals;
+  late Set<String> partial;
 
   final linux = aiComponentsFor(AiPlatform.linuxX64);
   final rules = LibraryPathRules(context: p.context, caseFold: false);
@@ -148,6 +192,11 @@ void main() {
     engine = FakeImmersiveEngine(holdStage: .depth);
     kinds = const {};
     catalogue = aiComponents;
+    held = aiHeldFeatureGroups;
+    cards = FakeGpuReports.rtx4060;
+    power = _Power();
+    focals = {};
+    partial = {};
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -176,9 +225,14 @@ void main() {
           facts: () => AiHardwareFacts(abi: abi, processors: 8, physicalMemory: memory),
           loadRuntime: (path) async => (version: '1.31.0', error: null),
           catalogue: catalogue,
+          heldGroups: held,
+          gpu: FakeGpuProbe.of(cards),
         ),
       ),
       conversionEnginesProvider.overrideWithValue(kinds),
+      aiPowerProbeProvider.overrideWithValue(power),
+      conversionFocalReaderProvider.overrideWithValue((source) async => focals[source.name]),
+      conversionPartialSphereReaderProvider.overrideWithValue((source) async => partial.contains(source.name)),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
             (asset) async => facts[asset.name] ?? const ConversionPhotoFacts(),
@@ -241,8 +295,9 @@ void main() {
     await tester.tap(finder);
   }
 
-  /// A page with a button that opens the dialog for [assets], in a window the size of a computer screen
-  Future<ProviderContainer> openDialog(WidgetTester tester, List<BaseAsset> assets) async {
+  /// A page with a button that opens the dialog for [assets] (on the type [kind]), in a window the size of a computer
+  /// screen
+  Future<ProviderContainer> openDialog(WidgetTester tester, List<BaseAsset> assets, {ConversionKind? kind}) async {
     tester.view.physicalSize = const Size(1600, 1200);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -251,7 +306,7 @@ void main() {
         body: Consumer(
           builder: (context, ref, _) => TextButton(
             key: const Key('open'),
-            onPressed: () => unawaited(openConversionDialog(context, ref, assets)),
+            onPressed: () => unawaited(openConversionDialog(context, ref, assets, kind: kind)),
             child: const Text('open'),
           ),
         ),
@@ -819,6 +874,129 @@ void main() {
       expect(convertEnabled(tester), isTrue);
     });
 
+    testWidgets('a phone panorama of part of the sphere in a 2:1 frame is no sphere to go around: skipped', (
+      tester,
+    ) async {
+      kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+      original('beach.jpg');
+      original('PANO_0002.jpg');
+      facts['beach.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      facts['PANO_0002.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      partial.add('PANO_0002.jpg');
+      await openDialog(tester, [
+        _photo('beach.jpg', width: 6000, height: 3000),
+        _photo('PANO_0002.jpg', width: 8000, height: 4000),
+      ]);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      expect(find.text('PANO_0002.jpg: Not a 360° photo'), findsOneWidget);
+      expect(checked().single, startsWith('.beach_360_3D.jpg.'));
+    });
+
+    testWidgets('while the AI components are moved, Convert waits and says why; the gate is read again after', (
+      tester,
+    ) async {
+      original('salon.jpg');
+      await openDialog(tester, [_photo('salon.jpg')]);
+      expect(convertEnabled(tester), isTrue);
+
+      service.moving = true;
+      await settle(tester);
+      expect(find.text('Moving the AI components: Convert waits for the end'), findsOneWidget);
+      expect(find.byKey(const Key('ai_conversion_install')), findsNothing, reason: 'nothing to download meanwhile');
+      expect(convertEnabled(tester), isFalse);
+
+      service.moving = false;
+      await settle(tester);
+      expect(find.byKey(const Key('ai_conversion_moving')), findsNothing);
+      expect(convertEnabled(tester), isTrue);
+    });
+
+    testWidgets('the entry stays offered when the gate refuses one type only, greyed when it refuses them all', (
+      tester,
+    ) async {
+      sceneEngine();
+      // A component of the scenes this version does not have whole: the scene is refused, the 3D photo is not
+      catalogue = [
+        for (final component in aiComponents)
+          if (component.id == lamaInpaintComponent.id)
+            AiComponent(
+              id: component.id,
+              name: component.name,
+              version: component.version,
+              kind: component.kind,
+              platforms: component.platforms,
+              assetName: component.assetName,
+              installPath: component.installPath,
+              size: component.size,
+              sha256: null,
+              compression: component.compression,
+              licence: component.licence,
+              licenceUrl: component.licenceUrl,
+              features: component.features,
+            )
+          else
+            component,
+      ];
+      await tester.pumpConsumerWidget(
+        const Scaffold(body: DesktopMakeImmersiveButton(source: ActionSource.timeline)),
+        overrides: overrides(selected: [_photo('salon.jpg')]),
+      );
+      await settle(tester);
+      expect(find.byKey(const Key('ai_make_3d_refused')), findsNothing);
+      expect(tester.widget<ImmichColumnButton>(find.byKey(const Key('ai_make_3d'))).disabled, isFalse);
+
+      memory = 2 * _gib;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpConsumerWidget(
+        const Scaffold(body: DesktopMakeImmersiveButton(source: ActionSource.timeline)),
+        overrides: overrides(selected: [_photo('salon.jpg')]),
+      );
+      await settle(tester);
+      expect(tester.widget<ImmichColumnButton>(find.byKey(const Key('ai_make_3d'))).disabled, isTrue);
+    });
+
+    testWidgets('another type keeps what the user chose: a folder of my choice, the folder picked, a No', (
+      tester,
+    ) async {
+      sceneEngine();
+      for (final component in scene) {
+        service.setStatus(component, const AiComponentStatus(AiComponentState.installed));
+      }
+      original('salon.jpg');
+      original('jardin.jpg', folder: nas, network: true);
+      final picked = p.join(root.path, 'Picked');
+      Directory(picked).createSync();
+      filePickers = _FolderPicker(picked);
+      addTearDown(() => filePickers = const SystemFilePickers());
+      final container = await openDialog(tester, [_photo('salon.jpg'), _photo('jardin.jpg')]);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_network_no')));
+      await settle(tester);
+      await tapIn(tester, find.byKey(const Key('ai_conversion_chosen_folder')));
+      await settle(tester);
+      await tapIn(tester, find.byKey(const Key('ai_conversion_change_folder')));
+      await settle(tester);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_sceneFromPhoto')));
+      await settle(tester);
+      expect(
+        tester.widget<RadioGroup<AiDestination>>(find.byType(RadioGroup<AiDestination>)).groupValue,
+        AiDestination.folder,
+      );
+      expect(find.byKey(const Key('ai_conversion_network_no')), findsNothing, reason: 'the No answered again');
+      expect(files.callsUnder(nas), isEmpty);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final jobs = container.read(conversionQueueProvider).jobs;
+      expect(jobs.map((job) => (job.kind, job.target?.folder, job.target?.fileName)), [
+        (ConversionKind.sceneFromPhoto, picked, 'salon_scene3D.jpg'),
+        (ConversionKind.sceneFromPhoto, picked, 'jardin_scene3D.jpg'),
+      ]);
+    });
+
     testWidgets('a type the gate refuses stays listed, greyed with its reason', (tester) async {
       sceneEngine();
       // A component of the scenes this version does not have whole
@@ -910,6 +1088,324 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
         await openWith(const AiFreeSpace(free: 50 * _gib, volume: 'E:'));
         expect(find.text('The folder of the AI components cannot be reached: $unplugged'), findsOneWidget);
+      },
+    );
+  });
+
+  group('the 360° panorama', () {
+    final panoramaComponents = aiComponentsFor(
+      AiPlatform.linuxX64,
+      feature: AiFeature.panorama,
+      graphicsMemory: rtx4060Laptop.localMemory,
+    );
+    final stereoComponents = aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.stereoPanorama);
+
+    ConversionKind chosenType(WidgetTester tester) =>
+        tester.widget<RadioGroup<ConversionKind>>(find.byKey(const Key('ai_conversion_types'))).groupValue!;
+
+    bool alsoStereo(WidgetTester tester) =>
+        tester.widget<CheckboxListTile>(find.byKey(const Key('ai_conversion_also_stereo'))).value!;
+
+    /// The engines of the panorama and of its 3D version, the panoramas no longer held back
+    void panoramas() {
+      kinds = fakeConversionEngines(panorama: FakePanoramaEngine(), stereoPanorama: FakeStereoPanoramaEngine());
+      held = const {};
+    }
+
+    void installed(Iterable<AiComponent> components) {
+      for (final component in components) {
+        service.setStatus(component, const AiComponentStatus(AiComponentState.installed));
+      }
+    }
+
+    /// The partial files the checks of the dialog made, by their final names
+    List<String> checkedNames() => [
+      for (final call in files.calls)
+        if (call.startsWith('createNew ')) p.basename(call.substring('createNew '.length)),
+    ];
+
+    Future<void> choosePanorama(WidgetTester tester) async {
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_panoramaFromPhoto')));
+      await settle(tester);
+    }
+
+    testWidgets('held back by this version, it is not listed, whatever the engine', (tester) async {
+      kinds = fakeConversionEngines(panorama: FakePanoramaEngine(), stereoPanorama: FakeStereoPanoramaEngine());
+      original('salon.jpg');
+      await openDialog(tester, [_photo('salon.jpg')]);
+
+      expect(find.byKey(const Key('ai_conversion_type_panoramaFromPhoto')), findsNothing);
+      expect(find.text('360° panorama'), findsNothing);
+      expect(find.byKey(const Key('ai_conversion_type_stereoPanoramaFromPanorama')), findsOneWidget);
+    });
+
+    testWidgets(
+      'its sentence, the part invented, the 3D version checked, the warning, the time; Convert makes both, kept',
+      (tester) async {
+        panoramas();
+        installed([...panoramaComponents, ...stereoComponents]);
+        original('salon.jpg');
+        final container = await openDialog(tester, [_photo('salon.jpg')]);
+        expect(find.text('360° panorama'), findsOneWidget);
+
+        await choosePanorama(tester);
+        expect(chosenType(tester), ConversionKind.panoramaFromPhoto);
+        expect(find.text("Generated by AI beyond the photo's edges"), findsOneWidget);
+        expect(find.text('About 92% of this panorama will be invented by AI'), findsOneWidget);
+        expect(
+          find.text('The graphics card stays busy for several minutes; games and videos may stutter'),
+          findsOneWidget,
+        );
+        expect(find.text('About 4 min per photo on this graphics card'), findsOneWidget, reason: 'the timings of M3');
+        expect(find.text('Also make the 3D version'), findsOneWidget);
+        expect(alsoStereo(tester), isTrue, reason: 'checked by default');
+        expect(find.text('If a version exists'), findsOneWidget);
+        expect(find.text('Skip photos that already have one'), findsOneWidget);
+        expect(find.byKey(const Key('ai_conversion_install')), findsNothing);
+        expect(convertEnabled(tester), isTrue);
+
+        await tapIn(tester, convert());
+        await settle(
+          tester,
+          until: () {
+            final jobs = container.read(conversionQueueProvider).jobs;
+            return jobs.length == 2 && jobs.every((job) => job.state.isEnded);
+          },
+        );
+        final jobs = container.read(conversionQueueProvider).jobs;
+        expect(jobs.map((job) => (job.kind, job.target?.fileName, job.state)), [
+          (ConversionKind.panoramaFromPhoto, 'salon_360.jpg', ConversionState.done),
+          (ConversionKind.stereoPanoramaFromPanorama, 'salon_360_3D.jpg', ConversionState.done),
+        ]);
+        expect(jobs.last.parentId, jobs.first.id);
+        final kept = await keptSettings(tester);
+        expect(kept.lastType, 'panoramaFromPhoto');
+        expect(kept.alsoStereoPanorama, isTrue);
+      },
+    );
+
+    testWidgets('the 3D version unchecked: its components no longer asked, one job, the choice kept', (tester) async {
+      panoramas();
+      service = FakeAiComponentsService();
+      await tester.runAsync(() => store.write(const DesktopAiSettings(lastType: 'panoramaFromPhoto')));
+      original('salon.jpg');
+      final container = await openDialog(tester, [_photo('salon.jpg')]);
+
+      expect(chosenType(tester), ConversionKind.panoramaFromPhoto);
+      final install = find.byKey(const Key('ai_conversion_install'));
+      expect(find.descendant(of: install, matching: find.text('FLUX.2 klein base 4B (Q4_0)')), findsOneWidget);
+      expect(find.descendant(of: install, matching: find.text('360 ERP Outpaint LoRA')), findsOneWidget);
+      expect(
+        find.descendant(of: install, matching: find.text('Depth Anything V2 Small')),
+        findsOneWidget,
+        reason: 'the model of the 3D version chained after it',
+      );
+      expect(convertEnabled(tester), isFalse);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_also_stereo')));
+      await settle(tester);
+      expect(alsoStereo(tester), isFalse);
+      expect(find.descendant(of: install, matching: find.text('Depth Anything V2 Small')), findsNothing);
+      expect(find.descendant(of: install, matching: find.text('FLUX.2 klein base 4B (Q4_0)')), findsOneWidget);
+
+      await tapIn(tester, find.byKey(const Key('ai_install_download')));
+      await settle(tester);
+      expect(service.installs, [for (final component in panoramaComponents) component.id]);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final jobs = container.read(conversionQueueProvider).jobs;
+      expect(jobs.map((job) => (job.kind, job.target?.fileName)), [
+        (ConversionKind.panoramaFromPhoto, 'salon_360.jpg'),
+      ]);
+      expect((await keptSettings(tester)).alsoStereoPanorama, isFalse);
+    });
+
+    testWidgets('on battery, Convert asks first: Cancel queues nothing, Convert goes', (tester) async {
+      panoramas();
+      installed([...panoramaComponents, ...stereoComponents]);
+      await tester.runAsync(() => store.write(const DesktopAiSettings(lastType: 'panoramaFromPhoto')));
+      power.battery = true;
+      original('salon.jpg');
+      final container = await openDialog(tester, [_photo('salon.jpg')]);
+
+      await tapIn(tester, convert());
+      await tester.pumpAndSettle();
+      expect(find.text('On battery: a panorama keeps the graphics card busy for several minutes'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('ai_conversion_battery_cancel')));
+      await settle(tester);
+      expect(container.read(conversionQueueProvider).jobs, isEmpty);
+      expect(find.byKey(const Key('ai_conversion_dialog')), findsOneWidget, reason: 'the dialog stays');
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('ai_conversion_battery_go')));
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      expect(container.read(conversionQueueProvider).jobs.map((job) => job.kind), [
+        ConversionKind.panoramaFromPhoto,
+        ConversionKind.stereoPanoramaFromPanorama,
+      ]);
+    });
+
+    testWidgets('on the mains, or when the system does not tell, nothing is asked; nor for another type', (
+      tester,
+    ) async {
+      panoramas();
+      installed([...panoramaComponents, ...stereoComponents]);
+      power.battery = false;
+      original('salon.jpg');
+      final container = await openDialog(tester, [_photo('salon.jpg')]);
+      await choosePanorama(tester);
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      expect(find.byKey(const Key('ai_conversion_battery')), findsNothing);
+
+      power.battery = true;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await openDialog(tester, [_photo('salon.jpg')], kind: ConversionKind.sbsFromPhoto);
+      expect(chosenType(tester), ConversionKind.sbsFromPhoto);
+      await tapIn(tester, convert());
+      await settle(tester);
+      expect(
+        find.byKey(const Key('ai_conversion_battery')),
+        findsNothing,
+        reason: 'the 3D photo runs on the processor',
+      );
+      engine.release();
+      await settle(tester);
+    });
+
+    testWidgets('greyed with the reason of the card: integrated graphics, a card too small, a Mac', (tester) async {
+      panoramas();
+      original('salon.jpg');
+      Finder reason(String text) =>
+          find.descendant(of: find.byKey(const Key('ai_conversion_type_panoramaFromPhoto')), matching: find.text(text));
+      bool enabled() => tester
+          .widget<RadioListTile<ConversionKind>>(find.byKey(const Key('ai_conversion_type_panoramaFromPhoto')))
+          .enabled!;
+
+      cards = FakeGpuReports.integratedOnly;
+      await openDialog(tester, [_photo('salon.jpg')]);
+      expect(enabled(), isFalse);
+      expect(reason("Integrated graphics share the computer's memory: too slow for panoramas"), findsOneWidget);
+
+      cards = FakeGpuReports.sixGigabytes;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await openDialog(tester, [_photo('salon.jpg')]);
+      expect(enabled(), isFalse);
+      expect(reason('The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB'), findsOneWidget);
+
+      abi = Abi.macosArm64;
+      cards = FakeGpuReports.mac;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await openDialog(tester, [_photo('salon.jpg')]);
+      expect(enabled(), isFalse);
+      expect(reason('Not yet on Mac'), findsOneWidget);
+    });
+
+    testWidgets('the part invented follows the focal length the photo tells, the smallest of a selection', (
+      tester,
+    ) async {
+      panoramas();
+      installed([...panoramaComponents, ...stereoComponents]);
+      await tester.runAsync(() => store.write(const DesktopAiSettings(lastType: 'panoramaFromPhoto')));
+      original('tele.jpg');
+      focals['tele.jpg'] = 85;
+      await openDialog(tester, [_photo('tele.jpg')]);
+      expect(find.text('About 99% of this panorama will be invented by AI'), findsOneWidget);
+
+      original('wide.jpg');
+      focals['wide.jpg'] = 13;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await openDialog(tester, [_photo('tele.jpg'), _photo('wide.jpg')]);
+      expect(find.text('About 81% of this panorama will be invented by AI'), findsOneWidget);
+    });
+
+    testWidgets('"Make the 3D version" opens the dialog on the 3D version of the panorama', (tester) async {
+      panoramas();
+      original('salon_360.jpg');
+      facts['salon_360.jpg'] = const ConversionPhotoFacts(
+        isPanorama: true,
+        version: (origin: IndexedOrigin.generated, kind: ImmersiveKind.panorama360),
+      );
+      await tester.runAsync(() => store.write(const DesktopAiSettings(lastType: 'panoramaFromPhoto')));
+      await openDialog(tester, [
+        _photo('salon_360.jpg', width: 6144, height: 3072),
+      ], kind: ConversionKind.stereoPanoramaFromPanorama);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(find.byKey(const Key('ai_conversion_also_stereo')), findsNothing);
+      expect(find.byKey(const Key('ai_conversion_gpu_busy')), findsNothing);
+      expect(checkedNames().last, startsWith('.salon_360_3D.jpg.'));
+
+      final container = ProviderScope.containerOf(tester.element(find.byKey(const Key('ai_conversion_dialog'))));
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.kind, ConversionKind.stereoPanoramaFromPanorama);
+      expect(
+        container.read(conversionJobInfoProvider)[job.id]!.generatedSource,
+        isTrue,
+        reason: 'the panel says it under the sentence of the panorama',
+      );
+    });
+
+    test('the part invented: the solid angle of the photo on the sphere, a phone camera when the EXIF is silent', () {
+      expect(panoramaInventedShare(width: 4000, height: 3000, focal35: 26), closeTo(0.9203816426076312, 1e-12));
+      expect(panoramaInventedShare(width: 4000, height: 3000), closeTo(0.9203816426076312, 1e-12));
+      expect(panoramaInventedShare(), closeTo(0.9203816426076312, 1e-12), reason: 'a frame not known is 4:3');
+      expect(panoramaInventedShare(width: 3000, height: 4000, focal35: 85), closeTo(0.9904103030274461, 1e-12));
+      expect(panoramaInventedShare(width: 6000, height: 4000, focal35: 50), closeTo(0.9748083588193973, 1e-12));
+      expect(panoramaInventedShare(width: 4000, height: 3000, focal35: 0), closeTo(0.9203816426076312, 1e-12));
+    });
+
+    test('the focal length read from the EXIF of a JPEG of this computer; nothing from another file', () async {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      final read = container.read(conversionFocalReaderProvider);
+      final jpeg = insertAfterSoi(img.encodeJpg(img.Image(width: 8, height: 6)), exifWithFocal35(85));
+      final withFocal = File(p.join(root.path, 'tele.jpg'))..writeAsBytesSync(jpeg);
+      final without = File(p.join(root.path, 'plain.jpg'))
+        ..writeAsBytesSync(img.encodeJpg(img.Image(width: 8, height: 6)));
+      final notJpeg = File(p.join(root.path, 'noise.jpg'))..writeAsBytesSync(List.generate(300, (i) => i & 0xff));
+      expect(await read(LocalFileSource(withFocal.path)), 85);
+      expect(await read(LocalFileSource(without.path)), isNull);
+      expect(await read(LocalFileSource(notJpeg.path)), isNull);
+      expect(await read(LocalFileSource(p.join(root.path, 'gone.jpg'))), isNull);
+    });
+
+    test(
+      'a GPano crop of part of the sphere read from a file of this computer; a whole sphere or no crop is not',
+      () async {
+        final container = ProviderContainer();
+        addTearDown(container.dispose);
+        final read = container.read(conversionPartialSphereReaderProvider);
+        File jpegWith(String name, String gpano) {
+          final xmp =
+              '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+              '<rdf:Description xmlns:GPano="http://ns.google.com/photos/1.0/panorama/" '
+              'GPano:ProjectionType="equirectangular" $gpano/></rdf:RDF></x:xmpmeta>';
+          return File(p.join(root.path, name))..writeAsBytesSync([...xmp.codeUnits, ...List.filled(64, 0)]);
+        }
+
+        final half = jpegWith(
+          'half.jpg',
+          'GPano:FullPanoWidthPixels="8000" GPano:FullPanoHeightPixels="4000" GPano:CroppedAreaImageWidthPixels="4000" '
+              'GPano:CroppedAreaImageHeightPixels="2000" GPano:CroppedAreaLeftPixels="2000" GPano:CroppedAreaTopPixels="1000"',
+        );
+        final whole = jpegWith(
+          'whole.jpg',
+          'GPano:FullPanoWidthPixels="8000" GPano:FullPanoHeightPixels="4000" GPano:CroppedAreaImageWidthPixels="8000" '
+              'GPano:CroppedAreaImageHeightPixels="4000" GPano:CroppedAreaLeftPixels="0" GPano:CroppedAreaTopPixels="0"',
+        );
+        final bare = jpegWith('bare.jpg', '');
+        expect(await read(LocalFileSource(half.path)), isTrue);
+        expect(await read(LocalFileSource(whole.path)), isFalse);
+        expect(await read(LocalFileSource(bare.path)), isFalse);
+        expect(await read(LocalFileSource(p.join(root.path, 'gone.jpg'))), isFalse);
       },
     );
   });
@@ -1037,6 +1533,11 @@ void main() {
       );
       expect(
         conversionSkipOf(_photo('crop.jpg', width: 8000, height: 2500), facts, kind: ofPanorama),
+        ConversionSkipReason.notSphere,
+      );
+      // A 2:1 frame whose GPano crop leaves part of the sphere out
+      expect(
+        conversionSkipOf(sphere, const ConversionPhotoFacts(isPanorama: true, partialSphere: true), kind: ofPanorama),
         ConversionSkipReason.notSphere,
       );
       expect(

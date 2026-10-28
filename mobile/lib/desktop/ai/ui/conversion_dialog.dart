@@ -7,7 +7,9 @@
 // and, since the 3D version of a 360° photo has its type in the dialog (lot P1), for a 360° photo too. What each type
 // of version takes is told by type, by aiSourceProvider and conversionSkipOf (design-final 2026-10-27, section 9.1,
 // point 1): a flat photo for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one
-// eye, of the user or a panorama the app generated, for its 3D version.
+// eye, of the user or a panorama the app generated, for its 3D version. Whether a 2:1 frame is a full sphere is told
+// by its GPano crop too, which the dialog reads from a file of this computer (a phone panorama of 180° x 90° is
+// skipped, "Not a 360° photo", before its job would refuse it).
 //
 // The dialog says what the conversion is ("Relief estimated by AI from a single photo") and that a finished one does
 // not guarantee a good result; installs the missing components (their name, size and licence, Download, a bar,
@@ -23,35 +25,52 @@
 // the 3D photos go to the folder of my choice, with the reason.
 //
 // Phases 2 and 3 (design-final 2026-10-27, section 9.1, point 2): the dialog starts with the type of version, among the
-// types registered in conversionDialogKinds that this build makes (the 3D photo, the 3D scene and the 3D version of a
-// 360° photo here; lot U3 adds the panoramas), the one chosen last kept in desktop_ai.json (lastType). A type the
-// gate refuses stays listed, greyed with its reason. Under the choice, what the type is (its honesty sentence), the
-// components of its feature that are missing with the free space of their drive, its gate, and the time a photo takes
-// on this computer; then the destination, the question of a network folder, "If a 3D version exists", and for a mixed
-// selection the plan of each photo: those the type makes, and those skipped and why. Changing the type plans the
-// selection again for it (the photos it takes, the names of their files), with what the user chose in this dialog.
+// types registered in conversionDialogKinds that this build makes (the 3D photo, the 3D scene, the 360° panorama and
+// the 3D version of a 360° photo), the one chosen last kept in desktop_ai.json (lastType). A type the gate refuses
+// stays listed, greyed with its reason; a type whose group this version holds back (aiHeldFeatureGroups: the 360°
+// panoramas until their release) is not listed, being no feature of this version. Under the choice, what the type is
+// (its honesty sentence), the components of its feature that are missing with the free space of their drive, its
+// gate, and the time a photo takes on this computer; then the destination, the question of a network folder, "If a
+// version exists", and for a mixed selection the plan of each photo: those the type makes, and those skipped and why.
+// Changing the type plans the selection again for it (the photos it takes, the names of their files), with what the
+// user chose in this dialog. While the AI components are moved to another folder ("Move the AI components"), they
+// read as missing: the dialog says Convert waits for the end of the copy instead of offering to download them.
+//
+// The 360° panorama (lot U3; design-final 2026-10-27, sections 4.7 and 9.1, point 2): the part of it the AI invents
+// ("About 92% of this panorama will be invented by AI", from the field of view the EXIF of the photo tells, or that of
+// the main camera of a phone), "Also make the 3D version", checked by default and kept (alsoStereoPanorama), which
+// chains the 3D version after each panorama and asks for its components too, what a generation does to the computer
+// ("The graphics card stays busy for several minutes; games and videos may stutter"), and, on battery, a question
+// before Convert. "360° 3D panorama" is the 360° panorama with that box checked: two types and a box would say the
+// same thing twice.
 // The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo, and a
 // 360° photo of a whole sphere that holds one eye for its 3D version. With "Also save a .glb copy", each scene made
 // gets its .glb next to it (scene_glb_export.dart).
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
+import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
+import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
+import 'package:immich_mobile/desktop/ai/power_probe.dart';
+import 'package:immich_mobile/desktop/ai/scene/focal_shift.dart' show halfDiagonal35mm;
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
@@ -75,6 +94,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoFile;
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -95,11 +115,13 @@ final aiFeaturesEnabledProvider = Provider.autoDispose<bool>(
   (ref) => ref.watch(appConfigProvider.select((config) => config.aiImmersive.enabled)),
 );
 
-/// What the hardware gate says now of [AiFeature]; asked again when a component is installed or removed
+/// What the hardware gate says now of [AiFeature]; asked again when a component is installed or removed, and when the
+/// components start or end a move to another folder (C5-review point 1: they read as missing meanwhile)
 final aiGateResultForProvider = FutureProvider.autoDispose.family<AiGateResult, AiFeature>((ref, feature) async {
   final service = ref.watch(aiComponentsServiceProvider);
   final gate = ref.watch(desktopAiGateProvider);
-  String states() => [for (final component in aiComponents) service.statusOf(component).state.name].join(',');
+  String states() =>
+      [service.isMoving, for (final component in aiComponents) service.statusOf(component).state.name].join(',');
   var known = states();
   void changed() {
     final now = states();
@@ -124,20 +146,25 @@ final aiGateResultForProvider = FutureProvider.autoDispose.family<AiGateResult, 
 final aiGateResultProvider = aiGateResultForProvider(AiFeature.stereoPhoto);
 
 /// The types of version the dialog offers, in their order (design-final 2026-10-27, section 9.1, point 2): the 3D photo
-/// of phase 1, the 3D scene of phase 2 and the 3D version of a 360° photo (lot P1). Lot U3 adds the panoramas here.
+/// of phase 1, the 3D scene of phase 2, the 360° panorama of phase 3 (lot U3) and the 3D version of a 360° photo (lot
+/// P1)
 const conversionDialogKinds = [
   ConversionKind.sbsFromPhoto,
   ConversionKind.sceneFromPhoto,
+  ConversionKind.panoramaFromPhoto,
   ConversionKind.stereoPanoramaFromPanorama,
 ];
 
 /// The types of [conversionDialogKinds] this build makes: the 3D photo always, another one once its lot registered its
-/// engine in conversionEnginesProvider, the registry the tools of the queue are given (ConversionTools.supports)
+/// engine in conversionEnginesProvider, the registry the tools of the queue are given (ConversionTools.supports), and
+/// its group is not held back by this version (HardwareGate.heldGroups)
 final offeredConversionKindsProvider = Provider.autoDispose<List<ConversionKind>>((ref) {
   final engines = ref.watch(conversionEnginesProvider);
+  final held = ref.watch(desktopAiGateProvider).heldGroups;
+  bool isHeld(ConversionKind kind) => held.any((group) => group.features.contains(aiFeatureOf(kind)));
   return [
     for (final kind in conversionDialogKinds)
-      if (kind == ConversionKind.sbsFromPhoto || engines.containsKey(kind)) kind,
+      if (kind == ConversionKind.sbsFromPhoto || (engines.containsKey(kind) && !isHeld(kind))) kind,
   ];
 });
 
@@ -189,13 +216,93 @@ String? conversionTimeText(Translations t, ConversionKind kind, AiTimings timing
       : t.ai_immersive_time_per_photo(time: time);
 }
 
-/// The free space of the drive of the AI components, and what installing the components [feature] lacks takes there
+/// The focal length equivalent to 35 mm the dialog takes for a photo whose EXIF does not tell it: the main camera of a
+/// phone. The engine finds the field of view of such a photo by its model of the geometry; the dialog only estimates.
+const panoramaDefaultFocal35 = 26;
+
+/// The part of a 360° panorama the AI invents around a photo of [width] x [height] taken at [focal35] millimetres
+/// equivalent to 35 mm ([panoramaDefaultFocal35] when not known), from 0 to 1. The field of view comes from the focal
+/// length on the diagonal of 43.27 mm, then across the width and the height of the frame (design-final 2026-10-27,
+/// section 4.3, point 2); the photo projected at the centre covers the solid angle of its rectangle, 4 asin(sin(h / 2)
+/// sin(v / 2)) of the 4 pi of the sphere, what the engine writes as SourceCoverage. A frame not known is taken as 4:3.
+double panoramaInventedShare({int? width, int? height, int? focal35}) {
+  final known = width != null && height != null && width > 0 && height > 0;
+  final w = known ? width.toDouble() : 4.0;
+  final h = known ? height.toDouble() : 3.0;
+  final focal = focal35 != null && focal35 > 0 ? focal35 : panoramaDefaultFocal35;
+  // tan of half the diagonal field of view, spread over the width and the height
+  final tanHalf = halfDiagonal35mm / focal / math.sqrt(w * w + h * h);
+  final halfWidth = math.atan(tanHalf * w);
+  final halfHeight = math.atan(tanHalf * h);
+  return 1 - math.asin(math.sin(halfWidth) * math.sin(halfHeight)) / math.pi;
+}
+
+/// The focal length equivalent to 35 mm the EXIF of a photo tells (FocalLengthIn35mmFilm), for the part of a panorama
+/// invented; null when it does not tell it
+typedef ConversionFocalReader = Future<int?> Function(ConversionSource source);
+
+/// Reads it from the head of a JPEG of this computer; null for a photo of the server or of a share, which would have
+/// to be copied first, and for another format
+final conversionFocalReaderProvider = Provider<ConversionFocalReader>(
+  (ref) => (source) async {
+    if (source is! LocalFileSource) {
+      return null;
+    }
+    final head = await readFileHead(source.path);
+    if (head == null) {
+      return null;
+    }
+    try {
+      return exifFocalLength35mm(JpegHeader.read(head).exif);
+    } on Object {
+      // Not a JPEG, or one whose head is cut before its image: the main camera of a phone is taken
+      return null;
+    }
+  },
+);
+
+/// Whether the GPano crop of a 360° photo leaves part of the sphere out, read from the head or the tail of a file of
+/// this computer as the viewers read it (P1-review m3: the engine refuses such a photo, the dialog skips it before);
+/// false for a photo of the server or of a share, which the engine checks once copied
+typedef ConversionPartialSphereReader = Future<bool> Function(ConversionSource source);
+
+final conversionPartialSphereReaderProvider = Provider<ConversionPartialSphereReader>(
+  (ref) => (source) async {
+    if (source is! LocalFileSource) {
+      return false;
+    }
+    try {
+      final crop = (await readGPanoFile(File(source.path)))?.crop;
+      return crop != null && isPartialSphere(crop);
+    } on Object {
+      // Unreadable now: the engine reads it again
+      return false;
+    }
+  },
+);
+
+/// The features a choice of the dialog needs: that of [kind], and that of the 3D version of a panorama chained after it
+typedef AiChoiceFeatures = ({AiFeature feature, AiFeature? chained});
+
+/// The free space of the drive of the AI components, and what installing the components a choice lacks takes there
 typedef AiInstallSpace = ({AiFreeSpace? space, AiSpaceShortage? shortage});
 
 /// See [AiInstallSpace]; null while nothing is missing, or where the free space is not read
-final aiInstallSpaceProvider = FutureProvider.autoDispose.family<AiInstallSpace?, AiFeature>((ref, feature) async {
+final aiInstallSpaceProvider = FutureProvider.autoDispose.family<AiInstallSpace?, AiChoiceFeatures>((
+  ref,
+  choice,
+) async {
   final reader = ref.watch(aiFreeSpaceProvider);
-  final missing = (await ref.watch(aiGateResultForProvider(feature).future)).missing;
+  final chained = choice.chained;
+  final lacking = [
+    ...(await ref.watch(aiGateResultForProvider(choice.feature).future)).missing,
+    if (chained != null) ...(await ref.watch(aiGateResultForProvider(chained).future)).missing,
+  ];
+  // A component two features share counts once
+  final missing = [
+    for (final (index, component) in lacking.indexed)
+      if (lacking.indexWhere((other) => other.id == component.id) == index) component,
+  ];
   if (reader == null || missing.isEmpty) {
     return null;
   }
@@ -277,6 +384,7 @@ class ConversionPhotoFacts {
     this.isSpatial = false,
     this.quarterTurns = 0,
     this.serverEdits = false,
+    this.partialSphere = false,
   });
 
   final bool isPanorama;
@@ -298,6 +406,22 @@ class ConversionPhotoFacts {
   /// Edited in Immich: what the viewer shows is the edited picture, the 3D photo is made from the unedited original
   /// (a file of the library or the original of the server), the rotation alone applied
   final bool serverEdits;
+
+  /// A 360° photo whose GPano crop leaves part of the sphere out (a phone panorama of 180° x 90° in a 2:1 frame): it
+  /// has no sphere to go around for its 3D version. Read by the dialog from the file, once it knows where it is.
+  final bool partialSphere;
+
+  /// The same facts, of a photo whose GPano crop leaves part of the sphere out or not
+  ConversionPhotoFacts withPartialSphere(bool partial) => ConversionPhotoFacts(
+    isPanorama: isPanorama,
+    isRaw360: isRaw360,
+    isStereo: isStereo,
+    version: version,
+    isSpatial: isSpatial,
+    quarterTurns: quarterTurns,
+    serverEdits: serverEdits,
+    partialSphere: partial,
+  );
 }
 
 /// Reads the facts of a photo
@@ -479,6 +603,7 @@ class ConversionCandidate {
     this.quarterTurns = 0,
     this.serverEdits = false,
     this.id,
+    this.generated = false,
   });
 
   final BaseAsset asset;
@@ -486,6 +611,9 @@ class ConversionCandidate {
   final OriginalLocation? location;
   final ConversionSkipReason? skip;
   final int quarterTurns;
+
+  /// A panorama the app generated: its 3D version is said as generated too
+  final bool generated;
 
   /// Edited in Immich: its edits, the rotation aside, are not in its 3D photo
   final bool serverEdits;
@@ -535,8 +663,8 @@ ConversionSkipReason? conversionSkipOf(
     if (facts.version case final version? when version.kind != ImmersiveKind.panorama360) {
       return ConversionSkipReason.alreadyVersion;
     }
-    if (!_fullSphereFrame(asset.width, asset.height)) {
-      // A partial panorama: its crop leaves no sphere to go around
+    if (!_fullSphereFrame(asset.width, asset.height) || facts.partialSphere) {
+      // A partial panorama: its frame or its crop leaves no sphere to go around
       return ConversionSkipReason.notSphere;
     }
   } else {
@@ -705,20 +833,21 @@ List<Widget> withDesktopSelectionActions(List<Widget> actions) => [
   if (CurrentPlatform.isDesktop) const DesktopMakeImmersiveButton(source: ActionSource.timeline),
 ];
 
-/// Opens the conversion dialog for [assets]; once photos were handed to the queue, the panel of the conversions shows
-/// and the selection ends
+/// Opens the conversion dialog for [assets], on the type [kind] when it takes one of them ("Make the 3D version" of a
+/// panorama); once photos were handed to the queue, the panel of the conversions shows and the selection ends
 Future<void> openConversionDialog(
   BuildContext context,
   WidgetRef ref,
   List<BaseAsset> assets, {
   ActionSource source = ActionSource.viewer,
+  ConversionKind? kind,
 }) async {
   final clearSelection = ref.read(clearSelectionProvider(source));
   // The menu that opened the dialog may be gone when it closes: the panel opens from the navigator
   final navigator = Navigator.of(context, rootNavigator: true);
   final launched = await showDialog<bool>(
     context: context,
-    builder: (context) => ConversionDialog(assets: assets),
+    builder: (context) => ConversionDialog(assets: assets, kind: kind),
   );
   if (launched != true) {
     return;
@@ -732,9 +861,12 @@ Future<void> openConversionDialog(
 
 /// See the top of this file
 class ConversionDialog extends ConsumerStatefulWidget {
-  const ConversionDialog({super.key, required this.assets});
+  const ConversionDialog({super.key, required this.assets, this.kind});
 
   final List<BaseAsset> assets;
+
+  /// The type to start with when this build makes it and it takes a photo, before the one chosen last
+  final ConversionKind? kind;
 
   @override
   ConsumerState<ConversionDialog> createState() => _ConversionDialogState();
@@ -777,6 +909,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   List<ConversionKind> _offered = const [ConversionKind.sbsFromPhoto];
   ConversionKind _kind = ConversionKind.sbsFromPhoto;
 
+  /// "Also make the 3D version" of each panorama, as kept in desktop_ai.json
+  var _alsoStereo = true;
+
+  /// The part of the panoramas of the selection the AI invents, in percent, the smallest of them; null until read
+  int? _invented;
+
+  /// The question asked on battery is open
+  var _asking = false;
+
   /// What the user changed in this dialog, which holds when the type changes: "Save to", the folder chosen with
   /// Change, the network folders answered No
   var _saveToChosen = false;
@@ -818,14 +959,20 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   Future<void> _prepare() async {
     _settings = await _store.read();
     _existing = _settings.skipExisting ? ExistingVersionChoice.skip : ExistingVersionChoice.newVersion;
+    _alsoStereo = _settings.alsoStereoPanorama;
     _offered = ref.read(offeredConversionKindsProvider);
     final facts = ref.read(conversionFactsReaderProvider);
     final files = ref.read(conversionAssetFilesProvider);
+    final partial = ref.read(conversionPartialSphereReaderProvider);
     final photos = <_Photo>[];
     for (final asset in widget.assets) {
-      final known = await facts(asset);
+      var known = await facts(asset);
       final taken = _offered.any((kind) => conversionSkipOf(asset, known, kind: kind) == null);
-      photos.add(_Photo(asset, known, taken ? await files.locate(asset) : null));
+      final found = taken ? await files.locate(asset) : null;
+      if (known.isPanorama && found != null) {
+        known = known.withPartialSphere(await partial(found.source));
+      }
+      photos.add(_Photo(asset, known, found));
     }
     if (!mounted || _closed) {
       return;
@@ -835,12 +982,45 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     await _plan();
   }
 
-  /// The type chosen last when this build makes it and it takes a photo of the selection, else the first that takes
-  /// one
+  /// The type asked for, then the type chosen last, when this build makes it and it takes a photo of the selection;
+  /// else the first that takes one
   ConversionKind _initialKind() {
+    final asked = _offered.where((kind) => kind == widget.kind).firstOrNull;
     final kept = _offered.where((kind) => kind.name == _settings.lastType).firstOrNull;
     bool takes(ConversionKind kind) => _photos!.any((photo) => _skipOf(photo, kind) == null);
-    return [?kept, ..._offered].where(takes).firstOrNull ?? kept ?? _offered.first;
+    return [?asked, ?kept, ..._offered].where(takes).firstOrNull ?? kept ?? _offered.first;
+  }
+
+  /// The features the choice needs: those of the type, and those of the 3D version chained after a panorama
+  AiChoiceFeatures get _choiceFeatures => (
+    feature: aiFeatureOf(_kind),
+    chained: _kind == ConversionKind.panoramaFromPhoto && _alsoStereo ? AiFeature.stereoPanorama : null,
+  );
+
+  /// Reads the part invented of the panoramas of [candidates], the smallest of them, for the planning [planning]
+  Future<void> _readInvented(List<ConversionCandidate> candidates, int planning) async {
+    final focal = ref.read(conversionFocalReaderProvider);
+    double? least;
+    for (final candidate in candidates) {
+      if (!candidate.runs) {
+        continue;
+      }
+      int? focal35;
+      try {
+        focal35 = await focal(candidate.source);
+      } catch (error) {
+        _log.fine('The focal length of ${candidate.asset.name} is not known: $error');
+      }
+      final share = panoramaInventedShare(
+        width: candidate.asset.width,
+        height: candidate.asset.height,
+        focal35: focal35,
+      );
+      least = least == null ? share : math.min(least, share);
+    }
+    if (least != null && mounted && !_closed && planning == _plannings) {
+      setState(() => _invented = (least! * 100).round());
+    }
   }
 
   /// Why [photo] is skipped for a version of [kind], null when it runs
@@ -860,6 +1040,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           quarterTurns: photo.facts.quarterTurns,
           serverEdits: photo.facts.serverEdits,
           id: 'photo-$index',
+          generated: photo.facts.version?.kind == ImmersiveKind.panorama360,
         ),
   ];
 
@@ -874,7 +1055,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (earlier != null) {
       unawaited(earlier.close());
     }
-    setState(() => _candidates = candidates);
+    setState(() {
+      _candidates = candidates;
+      _invented = null;
+    });
+    if (kind == ConversionKind.panoramaFromPhoto) {
+      unawaited(_readInvented(candidates, planning));
+    }
 
     // No folder of the library is checked nor written into before the album of the versions is out of the backup
     final guard = ref.read(aiWriteGuardProvider);
@@ -996,11 +1183,42 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   }
 
   Future<void> _convert(DestinationSession session) async {
-    if (_launched) {
+    if (_launched || _asking) {
       return;
     }
-    _launched = true;
     final kind = _kind;
+    // A generation keeps the graphics card busy for minutes: on battery, asked first (design-final 2026-10-27, 4.7.5)
+    if (kind.lane == ConversionLane.gpu && ref.read(aiPowerProbeProvider).onBattery() == true) {
+      setState(() => _asking = true);
+      final go = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          key: const Key('ai_conversion_battery'),
+          content: Text(context.t.ai_immersive_battery_confirm),
+          actions: [
+            TextButton(
+              key: const Key('ai_conversion_battery_cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(context.t.cancel),
+            ),
+            FilledButton(
+              key: const Key('ai_conversion_battery_go'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(context.t.ai_immersive_convert),
+            ),
+          ],
+        ),
+      );
+      if (!mounted || _closed) {
+        return;
+      }
+      setState(() => _asking = false);
+      if (go != true || _launched) {
+        return;
+      }
+    }
+    _launched = true;
+    final alsoStereo = kind == ConversionKind.panoramaFromPhoto && _alsoStereo;
     final candidates = _candidates!;
     final settings = await _store.read();
     final requests = <ConversionRequest>[];
@@ -1024,13 +1242,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final output = ref.read(safeWriterOutputProvider);
     final ids = ref
         .read(conversionQueueProvider.notifier)
-        .add(
-          requests,
-          kind: kind,
-          existing: _existing,
-          whenExists: settings.whenExists,
-          alsoStereo: settings.alsoStereoPanorama,
-        );
+        .add(requests, kind: kind, existing: _existing, whenExists: settings.whenExists, alsoStereo: alsoStereo);
     final infos = <String, ConversionJobInfo>{};
     final queue = ref.read(conversionQueueProvider);
     final requestOf = requestIndexOfJobs(ids, queue);
@@ -1047,6 +1259,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         asset: candidate.asset,
         isNetwork: plan?.isNetwork ?? false,
         serverEdits: candidate.serverEdits,
+        generatedSource: candidate.generated,
       );
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
@@ -1055,8 +1268,16 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
     _close();
     final skipExisting = _existing == ExistingVersionChoice.skip;
-    if (settings.skipExisting != skipExisting || settings.lastType != kind.name) {
-      unawaited(_store.update((kept) => kept.copyWith(skipExisting: skipExisting, lastType: () => kind.name)));
+    final stereoKept = kind == ConversionKind.panoramaFromPhoto ? _alsoStereo : settings.alsoStereoPanorama;
+    if (settings.skipExisting != skipExisting ||
+        settings.lastType != kind.name ||
+        settings.alsoStereoPanorama != stereoKept) {
+      unawaited(
+        _store.update(
+          (kept) =>
+              kept.copyWith(skipExisting: skipExisting, lastType: () => kind.name, alsoStereoPanorama: stereoKept),
+        ),
+      );
     }
     if (mounted) {
       Navigator.of(context).pop(true);
@@ -1067,15 +1288,25 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   Widget build(BuildContext context) {
     final t = context.t;
     final kind = _kind;
-    final feature = aiFeatureOf(kind);
-    final gate = ref.watch(aiGateResultForProvider(feature));
+    final choice = _choiceFeatures;
+    final feature = choice.feature;
+    final features = [feature, ?choice.chained];
+    final gates = [for (final each in features) ref.watch(aiGateResultForProvider(each))];
+    final gate = gates.first;
     final candidates = _candidates;
     final session = _session;
     final found = gate.valueOrNull;
-    final refused = aiGateRefuses(found);
-    final missing = found != null && !found.isAvailable && !refused;
-    final busy = _gestures > 0 || candidates == null;
-    final canConvert = !busy && found != null && found.isAvailable && session != null && _ready(session);
+    final results = [for (final each in gates) each.valueOrNull];
+    // The refusal of the type, else that of the 3D version chained after it
+    final refusal = results.where(aiGateRefuses).firstOrNull;
+    final refused = refusal != null;
+    final known = results.every((result) => result != null);
+    final available = known && results.every((result) => result!.isAvailable);
+    final missing = known && !available && !refused;
+    // The components being moved read as missing until the copy ends: nothing to download, Convert waits
+    final moving = ref.read(aiComponentsServiceProvider).isMoving;
+    final busy = _gestures > 0 || candidates == null || _asking;
+    final canConvert = !busy && !moving && available && session != null && _ready(session);
     final count = widget.assets.length;
     // Each type with the refusal of its gate, when it refuses
     final refusals = {
@@ -1103,18 +1334,37 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 key: const Key('ai_conversion_honesty'),
                 style: Theme.of(context).textTheme.titleSmall,
               ),
+              if (kind == ConversionKind.panoramaFromPhoto && _invented != null)
+                _Note(
+                  key: const Key('ai_conversion_invented'),
+                  text: t.ai_immersive_invented_share(percent: _invented!),
+                ),
               const SizedBox(height: 4),
               Text(t.ai_immersive_no_guarantee, style: Theme.of(context).textTheme.bodySmall),
               if (time != null) _Note(key: const Key('ai_conversion_time'), text: time),
+              if (kind.lane == ConversionLane.gpu)
+                _Note(key: const Key('ai_conversion_gpu_busy'), text: t.ai_immersive_gpu_busy_warning),
+              if (kind == ConversionKind.panoramaFromPhoto)
+                CheckboxListTile(
+                  key: const Key('ai_conversion_also_stereo'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _alsoStereo,
+                  title: Text(t.ai_immersive_also_stereo),
+                  onChanged: busy || _launched ? null : (on) => setState(() => _alsoStereo = on ?? false),
+                ),
               const SizedBox(height: 12),
-              if (gate.isLoading || candidates == null)
+              if (gates.any((each) => each.isLoading) || candidates == null)
                 const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
                 ),
-              if (refused)
-                _Note(key: const Key('ai_conversion_refused'), text: aiGateReasonText(t, found!), error: true),
-              if (missing && found.platform != null)
+              if (refusal != null)
+                _Note(key: const Key('ai_conversion_refused'), text: aiGateReasonText(t, refusal), error: true),
+              if (moving)
+                _Note(key: const Key('ai_conversion_moving'), text: t.ai_immersive_components_moving)
+              else if (missing && found?.platform != null)
                 Card(
                   key: const Key('ai_conversion_install'),
                   child: Padding(
@@ -1124,18 +1374,22 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                       children: [
                         AiInstallPanel(
                           // Another type, other components: the panel reads what is missing again
-                          key: ValueKey('ai_conversion_install_${feature.name}'),
-                          components: aiComponentsFor(found.platform!, feature: feature),
-                          onInstalled: () => ref.invalidate(aiGateResultForProvider(feature)),
+                          key: ValueKey('ai_conversion_install_${features.map((each) => each.name).join('_')}'),
+                          components: _componentsOf(found!.platform!, features, results),
+                          onInstalled: () {
+                            for (final each in features) {
+                              ref.invalidate(aiGateResultForProvider(each));
+                            }
+                          },
                         ),
-                        _InstallSpace(feature: feature),
+                        _InstallSpace(choice: choice),
                       ],
                     ),
                   ),
                 ),
               if (candidates != null && !refused) ...[
                 if (session != null) ..._destination(t, session),
-                if (session != null) ..._existingChoice(t),
+                if (session != null) ..._existingChoice(t, kind),
                 if (_runs.any((candidate) => candidate.quarterTurns != 0))
                   _Note(key: const Key('ai_conversion_rotation'), text: t.ai_immersive_rotation_applied),
                 if (_runs.any((candidate) => candidate.serverEdits))
@@ -1159,6 +1413,24 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         ),
       ],
     );
+  }
+
+  /// The components of [features] on [platform], each once, those of a panorama in the variant its card takes (the
+  /// gate of each feature in [results])
+  static List<AiComponent> _componentsOf(AiPlatform platform, List<AiFeature> features, List<AiGateResult?> results) {
+    final components = <AiComponent>[];
+    for (final (index, feature) in features.indexed) {
+      for (final component in aiComponentsFor(
+        platform,
+        feature: feature,
+        graphicsMemory: results[index]?.graphicsMemory,
+      )) {
+        if (!components.any((other) => other.id == component.id)) {
+          components.add(component);
+        }
+      }
+    }
+    return components;
   }
 
   /// The types this build makes, each greyed with its reason when the gate refuses it
@@ -1269,8 +1541,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     ];
   }
 
-  List<Widget> _existingChoice(Translations t) => [
-    Text(t.ai_immersive_existing, style: Theme.of(context).textTheme.titleSmall),
+  /// "If a 3D version exists" for a 3D photo, as in phase 1; "If a version exists" for the other types, each looked up
+  /// by its own kind
+  List<Widget> _existingChoice(Translations t, ConversionKind kind) => [
+    Text(
+      kind == ConversionKind.sbsFromPhoto ? t.ai_immersive_existing : t.ai_immersive_existing_version,
+      style: Theme.of(context).textTheme.titleSmall,
+    ),
     RadioGroup<ExistingVersionChoice>(
       groupValue: _existing,
       onChanged: (value) {
@@ -1281,7 +1558,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       child: Column(
         children: [
           for (final (choice, label) in [
-            (ExistingVersionChoice.skip, t.ai_immersive_existing_skip),
+            (
+              ExistingVersionChoice.skip,
+              kind == ConversionKind.sbsFromPhoto ? t.ai_immersive_existing_skip : t.ai_immersive_existing_skip_version,
+            ),
             (ExistingVersionChoice.newVersion, t.ai_immersive_existing_new),
             (ExistingVersionChoice.replace, t.ai_immersive_existing_replace),
           ])
@@ -1492,14 +1772,14 @@ class _PlanList extends StatelessWidget {
 /// Under the components to install: what the drive of the components lacks for them, else its free space; and the
 /// folder they were moved to when its drive is not connected
 class _InstallSpace extends ConsumerWidget {
-  const _InstallSpace({required this.feature});
+  const _InstallSpace({required this.choice});
 
-  final AiFeature feature;
+  final AiChoiceFeatures choice;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    final space = ref.watch(aiInstallSpaceProvider(feature)).valueOrNull;
+    final space = ref.watch(aiInstallSpaceProvider(choice)).valueOrNull;
     final unreachable = ref.watch(aiComponentsFolderMissingProvider).valueOrNull;
     final colors = Theme.of(context).colorScheme;
     return Column(

@@ -10,8 +10,14 @@
 // photos", "3D scenes"), each group with its size, Download and Remove; "Move the AI components" to a folder the user
 // picks, another drive, with its folder, its progress and what a refusal means, and the folder said when its drive is
 // not connected; "Also save a .glb copy" of each 3D scene, off by default. The name of the graphics card comes from the
-// probe of lot C6, which also gives the line of the card for the panoramas (aiGpuLineText); that line and "Try on
-// integrated graphics (untested)" are shown by lot U3.
+// probe of lot C6, which also gives the line of the card for the panoramas (aiGpuLineText).
+//
+// Once this version offers the 360° panoramas (lot U3; design-final 2026-10-27, sections 4.7 and 9.1, point 5: their
+// engine registered and their group no longer held back), the hardware line names the card they would run on and
+// whether it makes them ("NVIDIA GeForce RTX 4060 Laptop GPU, 7.8 GiB, Vulkan 1.4: 360° panoramas available", or the
+// card and why not), in place of "GPU acceleration: not yet", true of phases 1 and 2 only; and "Try on integrated
+// graphics (untested)", off by default, lets a panorama run on integrated graphics, with a warning on the time that
+// fades after a few seconds.
 //
 // The settings of the conversions live in desktop_ai.json (DesktopAiSettings); the switch of the AI features is a
 // setting shared with the Meta Quest (AiImmersiveConfig).
@@ -22,6 +28,7 @@ import 'dart:ffi' show Abi;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/network_root_consent.dart';
@@ -55,12 +62,18 @@ final aiFeaturesSwitchProvider = Provider<Future<void> Function(bool on)>(
 /// The download folder, "A folder of my choice" while none was chosen
 final aiDefaultFolderProvider = FutureProvider.autoDispose<String>((ref) => DownloadFolder.instance.currentPath());
 
+/// The name of the adapter Windows draws the app on, as the decoders of the videos read it; replaced in tests
+final aiWindowsAdapterNameProvider = Provider<Future<String?> Function()>(
+  (ref) =>
+      () async => (await DesktopGpuDecoders.adapter())?.name,
+);
+
 /// The name of the graphics card of this computer: the dedicated one the probe of the graphics cards finds (lot C6),
 /// not the first adapter of Windows, which on a laptop is its integrated graphics; the adapter of Windows when the
 /// probe finds none (no Vulkan)
 final aiGpuNameProvider = FutureProvider.autoDispose<String?>((ref) async {
   final report = await ref.watch(desktopAiGateProvider).gpuReport();
-  return gpuNameOf(report) ?? (await DesktopGpuDecoders.adapter())?.name;
+  return gpuNameOf(report) ?? await ref.watch(aiWindowsAdapterNameProvider)();
 });
 
 /// The line of the graphics card for the 360° panoramas, from what the gate says of them ([panorama]): "NVIDIA GeForce
@@ -225,6 +238,7 @@ class DesktopAiSettingsSection extends ConsumerWidget {
           if (settings.networkRootsAllowed.isNotEmpty) _NetworkRoots(roots: settings.networkRootsAllowed),
           const _BackupGenerated(),
           const _Hardware(),
+          if (ref.watch(aiPanoramasOfferedProvider)) _IntegratedGpu(settings: settings),
         ],
       ],
     );
@@ -487,6 +501,11 @@ class _BackupGenerated extends ConsumerWidget {
   }
 }
 
+/// Whether this version offers the 360° panoramas: their engine registered, their group not held back
+final aiPanoramasOfferedProvider = Provider.autoDispose<bool>(
+  (ref) => ref.watch(offeredConversionKindsProvider).contains(ConversionKind.panoramaFromPhoto),
+);
+
 class _Hardware extends ConsumerWidget {
   const _Hardware();
 
@@ -498,6 +517,15 @@ class _Hardware extends ConsumerWidget {
     if (gate == null) {
       return const SizedBox.shrink();
     }
+    // The panoramas run on the graphics card: their line says which card and whether it makes them, the name alone
+    // until the probe answered
+    final String card;
+    if (ref.watch(aiPanoramasOfferedProvider)) {
+      final panorama = ref.watch(aiGateResultForProvider(AiFeature.panorama)).valueOrNull;
+      card = panorama == null ? gpu ?? '' : aiGpuLineText(t, panorama);
+    } else {
+      card = [?gpu, t.ai_immersive_gpu_later].join('\n');
+    }
     final memory = gate.physicalMemory;
     return ListTile(
       key: const Key('ai_settings_hardware'),
@@ -505,7 +533,36 @@ class _Hardware extends ConsumerWidget {
       title: Text(
         t.ai_immersive_hardware(processors: gate.processors, memory: memory == null ? '?' : formatBytes(memory)),
       ),
-      subtitle: Text([?gpu, t.ai_immersive_gpu_later].join('\n')),
+      subtitle: card.isEmpty ? null : Text(card),
+    );
+  }
+}
+
+/// "Try on integrated graphics (untested)": a panorama may run on integrated graphics, which share the memory of the
+/// computer; the gate reads the setting at each evaluation, so its answer for the panoramas is asked again
+class _IntegratedGpu extends ConsumerWidget {
+  const _IntegratedGpu({required this.settings});
+
+  final DesktopAiSettings settings;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    return SwitchListTile(
+      key: const Key('ai_settings_integrated_gpu'),
+      value: settings.integratedGpuAllowed,
+      title: Text(t.ai_immersive_gpu_integrated_allowed),
+      onChanged: (on) async {
+        final messenger = ScaffoldMessenger.maybeOf(context);
+        await _update(ref, (kept) => kept.copyWith(integratedGpuAllowed: on));
+        ref.invalidate(aiGateResultForProvider(AiFeature.panorama));
+        if (on) {
+          // A warning that fades, as the lab does it: the switch stays where the user put it
+          messenger
+            ?..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(t.ai_immersive_gpu_integrated_warning)));
+        }
+      },
     );
   }
 }

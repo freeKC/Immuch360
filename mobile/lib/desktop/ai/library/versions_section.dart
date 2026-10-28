@@ -7,16 +7,21 @@
 // or "Delete this version" (lot A5c), which asks first and deletes only a file that still carries our XMP with its
 // DerivativeId, never the original. A 3D scene has "Preview in 3D" (lib/desktop/ai/scene_preview), and "Export for
 // other 3D apps (.glb)" on its row and on its own "Made from" row (design-final 2026-10-27, section 8.2, point 5;
-// scene_glb_export.dart). What they find is in versions.provider.dart.
+// scene_glb_export.dart). A 360° panorama the app generated has "Make the 3D version" on its row and on its own
+// (design-final 2026-10-27, section 9.1, point 4; lot U3): the dialog of the conversions on the type of the 3D version
+// of a 360° photo, which makes it a version of the photo the panorama came from, as "Also make the 3D version" does.
+// What they find is in versions.provider.dart.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
@@ -47,6 +52,15 @@ class DeletedVersions extends Notifier<Set<String>> {
 }
 
 final deletedVersionsProvider = NotifierProvider<DeletedVersions, Set<String>>(DeletedVersions.new);
+
+/// "Make the 3D version" of a panorama: the dialog of the conversions on the 3D version of a 360° photo; replaced in
+/// tests
+final versionStereoMakerProvider =
+    Provider<Future<void> Function(BuildContext context, WidgetRef ref, BaseAsset panorama)>(
+      (ref) =>
+          (context, widgetRef, panorama) =>
+              openConversionDialog(context, widgetRef, [panorama], kind: ConversionKind.stereoPanoramaFromPanorama),
+    );
 
 /// The thumbnail of a version in its row; replaced in tests
 final versionThumbnailProvider = Provider<Widget Function(VersionFile file)>(
@@ -148,6 +162,7 @@ class _VersionTile extends ConsumerWidget {
                     path: version.path,
                   ),
                 if (version.kind == ImmersiveKind.volumetricScene) _ExportGlbButton(version: version),
+                if (version.kind == ImmersiveKind.panorama360) _MakeStereoButton(version: version),
                 IconButton(
                   key: ValueKey('desktop_version_delete_${version.asset.id}'),
                   tooltip: version.kind == ImmersiveKind.stereoPhoto
@@ -194,9 +209,11 @@ class _MadeFromTile extends ConsumerWidget {
           ].join(_separator),
           subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
           onTap: original != null && available ? () => ref.read(versionOpenerProvider)(original.path) : null,
-          trailing: self.kind == ImmersiveKind.volumetricScene && self.available
-              ? _ExportGlbButton(version: self)
-              : null,
+          trailing: switch (self.kind) {
+            ImmersiveKind.volumetricScene when self.available => _ExportGlbButton(version: self),
+            ImmersiveKind.panorama360 when self.available => _MakeStereoButton(version: self),
+            _ => null,
+          },
         ),
       ],
     );
@@ -216,4 +233,26 @@ class _ExportGlbButton extends StatelessWidget {
     icon: const Icon(Icons.ios_share_rounded),
     onPressed: () => unawaited(exportSceneGlb(context, version.path)),
   );
+}
+
+/// "Make the 3D version" of a 360° panorama the app generated, while the AI features are on and this build makes the
+/// 3D version of a 360° photo
+class _MakeStereoButton extends ConsumerWidget {
+  const _MakeStereoButton({required this.version});
+
+  final VersionFile version;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(aiFeaturesEnabledProvider) ||
+        !ref.watch(offeredConversionKindsProvider).contains(ConversionKind.stereoPanoramaFromPanorama)) {
+      return const SizedBox.shrink();
+    }
+    return IconButton(
+      key: ValueKey('desktop_version_make_3d_${version.asset.id}'),
+      tooltip: context.t.ai_immersive_make_3d_version,
+      icon: const Icon(Icons.view_in_ar_outlined),
+      onPressed: () => unawaited(ref.read(versionStereoMakerProvider)(context, ref, version.asset)),
+    );
+  }
 }

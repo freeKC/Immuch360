@@ -13,7 +13,8 @@
 //
 // The 3D version of a panorama is chained after it: it waits for the panorama, is made from the file the panorama job
 // wrote (or the version with the same settings it found), as a version of the photo, and is skipped with its reason
-// when the panorama was not made; Retry of the panorama runs it again too.
+// when the panorama was not made; Retry of the panorama runs it again too. A panorama the app generated, chosen by
+// itself later ("Make the 3D version"), gives a version of its photo the same way, from the packet it carries.
 //
 // A disk full fails its job (its .part deleted) and pauses the queue, both lanes: nothing new starts until the user
 // frees some space and Resume runs that photo again. A photo that already has a version of the kind with the same
@@ -39,6 +40,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
@@ -636,7 +638,25 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       final ImmersiveSource original;
       PanoramaXmp? parent;
       if (input == null) {
-        source = original = await job.source.prepare(cancel);
+        final prepared = await job.source.prepare(cancel);
+        // A panorama the app generated, chosen by itself ("Make the 3D version"): its 3D version is a version of the
+        // photo it was generated from, as when it is chained after it
+        final generated = job.kind == ConversionKind.stereoPanoramaFromPanorama
+            ? await _generatedPanoramaIn(prepared)
+            : null;
+        if (generated == null) {
+          source = original = prepared;
+        } else {
+          parent = generated;
+          source = ImmersiveSource(
+            name: prepared.name,
+            size: prepared.size,
+            sha1: '',
+            path: prepared.path,
+            bytes: prepared.bytes,
+          );
+          original = _photoNamedBy(generated);
+        }
       } else {
         // The panorama its parent made: the 3D version is a version of the photo the panorama names
         (source, parent) = await _panoramaAt(input);
@@ -905,6 +925,30 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       throw ConversionException(ImmersiveErrorCode.sourceLost, error.osError?.message ?? error.message);
     }
   }
+
+  /// The packet of [source] when it is a panorama the app generated that names its photo, null for any other picture
+  /// (a 360° photo of the user)
+  Future<PanoramaXmp?> _generatedPanoramaIn(ImmersiveSource source) async {
+    final path = source.path;
+    final bytes = source.bytes;
+    final head = path != null
+        ? await readFileHead(path)
+        : bytes == null
+        ? null
+        : Uint8List.sublistView(bytes, 0, math.min(bytes.length, versionHeadLength));
+    final xmp = head == null ? null : ImmersiveXmp.findIn(head);
+    return xmp is PanoramaXmp && xmp.sourceName != null && xmp.sourceSize != null && xmp.sourceSha1 != null
+        ? xmp
+        : null;
+  }
+
+  /// The photo [panorama] names, for a panorama chosen by itself: where its file is, the queue does not know
+  ImmersiveSource _photoNamedBy(PanoramaXmp panorama) => ImmersiveSource(
+    name: panorama.sourceName!,
+    size: panorama.sourceSize!,
+    sha1: panorama.sourceSha1!,
+    bytes: Uint8List(0),
+  );
 
   /// The photo a panorama was made from, as its packet names it: its file on this computer when the job came from one,
   /// so that the writer never takes its place

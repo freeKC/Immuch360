@@ -5,7 +5,9 @@
 // the conversions stopped before the components are removed. Phase 2: the components by group of features, "Move the
 // AI components" with its folder, its progress and what a refusal says, the folder of a drive not connected, and
 // "Also save a .glb copy"; the engine of the 3D scenes let go with the one of the 3D photos before a removal and
-// before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them.
+// before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them; once this version
+// offers the 360° panoramas, the line of the graphics card for them and "Try on integrated graphics (untested)", kept,
+// with its warning that fades.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -19,6 +21,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
@@ -38,7 +41,9 @@ import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.da
 import '../../../widget_tester_extensions.dart';
 import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
+import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
+import '../fakes/fake_panorama_engine.dart';
 import '../fakes/fake_scene_engine.dart';
 import '../fakes/fake_stereo_panorama_engine.dart';
 
@@ -198,6 +203,8 @@ void main() {
     bool enabled = true,
     bool? backsUp = false,
     AiComponentsService? service,
+    HardwareGate? gate,
+    Map<ConversionKind, ConversionEngine>? engines,
   }) async {
     tester.view.physicalSize = const Size(1200, 2400);
     tester.view.devicePixelRatio = 1;
@@ -219,12 +226,14 @@ void main() {
           return true;
         }),
         desktopAiGateProvider.overrideWithValue(
-          HardwareGate(
-            components: _NoFiles(),
-            facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 22, physicalMemory: 32 << 30),
-          ),
+          gate ??
+              HardwareGate(
+                components: _NoFiles(),
+                facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 22, physicalMemory: 32 << 30),
+              ),
         ),
         aiGpuNameProvider.overrideWith((ref) async => 'NVIDIA GeForce RTX 4060 Laptop GPU'),
+        if (engines != null) conversionEnginesProvider.overrideWithValue(engines),
       ],
     );
     await settle(tester);
@@ -360,6 +369,75 @@ void main() {
       find.text('NVIDIA GeForce RTX 4060 Laptop GPU\nGPU acceleration: not yet, the processor is used'),
       findsOneWidget,
     );
+    expect(find.byKey(const Key('ai_settings_integrated_gpu')), findsNothing);
+  });
+
+  group('the graphics card for the 360° panoramas', () {
+    HardwareGate gateWith(GpuReport report, {Set<AiFeatureGroup> held = const {}}) => HardwareGate(
+      components: _NoFiles(),
+      facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 22, physicalMemory: 32 << 30),
+      heldGroups: held,
+      gpu: FakeGpuProbe.of(report),
+      integratedGpuAllowed: integratedGpuAllowedOf(store),
+    );
+    final panoramas = fakeConversionEngines(panorama: FakePanoramaEngine(), stereoPanorama: FakeStereoPanoramaEngine());
+
+    testWidgets('while this version holds them back: the line of phase 1, no switch', (tester) async {
+      await pump(
+        tester,
+        gate: gateWith(FakeGpuReports.rtx4060, held: aiHeldFeatureGroups),
+        engines: panoramas,
+      );
+      expect(
+        find.text('NVIDIA GeForce RTX 4060 Laptop GPU\nGPU acceleration: not yet, the processor is used'),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('ai_settings_integrated_gpu')), findsNothing);
+    });
+
+    testWidgets('offered: the card, its memory and its Vulkan, the components aside', (tester) async {
+      await pump(tester, gate: gateWith(FakeGpuReports.twoCards), engines: panoramas);
+      expect(
+        find.text('NVIDIA GeForce RTX 4060 Laptop GPU, 8.0 GiB, Vulkan 1.4: 360° panoramas available'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('GPU acceleration: not yet'), findsNothing);
+      expect(find.text('Try on integrated graphics (untested)'), findsOneWidget);
+    });
+
+    testWidgets('"Try on integrated graphics (untested)": off by default, kept, its warning, the line read again', (
+      tester,
+    ) async {
+      await pump(tester, gate: gateWith(FakeGpuReports.integratedOnly), engines: panoramas);
+      final tile = find.byKey(const Key('ai_settings_integrated_gpu'));
+      expect(tester.widget<SwitchListTile>(tile).value, isFalse);
+      expect(
+        find.text(
+          "Intel(R) Iris(R) Xe Graphics (TGL GT2): Integrated graphics share the computer's memory: too slow for "
+          'panoramas',
+        ),
+        findsOneWidget,
+      );
+
+      await tapIn(tester, tile);
+      expect((await keptSettings(tester)).integratedGpuAllowed, isTrue);
+      expect(tester.widget<SwitchListTile>(tile).value, isTrue);
+      expect(find.text('On integrated graphics a panorama may take a very long time'), findsOneWidget);
+      expect(
+        find.text('Intel(R) Iris(R) Xe Graphics (TGL GT2), 15.0 GiB, Vulkan 1.4: 360° panoramas available'),
+        findsOneWidget,
+      );
+
+      // The warning fades: its entrance, then its few seconds, then its exit
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pumpAndSettle();
+      expect(find.text('On integrated graphics a panorama may take a very long time'), findsNothing);
+
+      await tapIn(tester, tile);
+      expect((await keptSettings(tester)).integratedGpuAllowed, isFalse);
+      expect(find.textContaining('Integrated graphics share'), findsOneWidget);
+    });
   });
 
   testWidgets('removing the components during a conversion: every job cancelled, the wait, then the model let go', (
