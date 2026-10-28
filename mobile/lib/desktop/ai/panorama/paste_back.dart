@@ -4,7 +4,8 @@
 // .github/desktop/ai/make_pano_golden.py: each pixel inside the photo (the projection of erp_projection.dart at that
 // size) takes alpha * photo + (1 - alpha) * generated, alpha = clamp(e / 0.02, 0, 1) and e the distance to the nearest
 // edge of the photo as a fraction of its size, so that the photo blends in over 2 % of its edge; outside, the
-// generated pixel as it is. The pixels of the photo keep the colour space of the original (design 8.7).
+// generated pixel as it is. The pixels of the photo keep the colour space of the original (design 8.7). Only the
+// rows and columns the photo can reach are read: about 5 % of a panorama of 6144 x 3072 for a photo of 65° across.
 
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -29,11 +30,19 @@ Uint8List pastePhotoBack(
   final h = photo.height;
   final out = Uint8List.fromList(generated.rgba);
   final colour = Float64List(3);
-  for (var y = 0; y < height; y++) {
+  // Only where the photo can be: every point of it is within hfov / 2 of the centre across and atan(s) (half its
+  // vertical field) up or down; one pixel more on each side, so that nothing the full scan would find is missed
+  final halfAcross = hfov * (math.pi / 180) / 2;
+  final halfDown = math.atan(math.tan(halfAcross) * h / w);
+  final left = math.max(0, (width * (0.5 - halfAcross / (2 * math.pi)) - 0.5).floor() - 1);
+  final right = math.min(width - 1, (width * (0.5 + halfAcross / (2 * math.pi)) - 0.5).ceil() + 1);
+  final top = math.max(0, (height * (0.5 - halfDown / math.pi) - 0.5).floor() - 1);
+  final bottom = math.min(height - 1, (height * (0.5 + halfDown / math.pi) - 0.5).ceil() + 1);
+  for (var y = top; y <= bottom; y++) {
     if (y % 64 == 0 && (isCancelled?.call() ?? false)) {
       throw const ProjectionCancelled();
     }
-    for (var x = 0; x < width; x++) {
+    for (var x = left; x <= right; x++) {
       final point = photoPointOf(x, y, width, height, photoWidth: w, photoHeight: h, hfov: hfov);
       if (point == null) {
         continue;
