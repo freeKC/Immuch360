@@ -18,6 +18,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -707,7 +708,7 @@ void main() {
           ConversionKind.panoramaFromPhoto,
           ConversionState.failed,
           error: ImmersiveErrorCode.gpuUnavailable,
-          message: 'gpuNoAnswer',
+          message: AiGateReason.gpuNoAnswer.name,
         ),
         job(
           'stalled.jpg',
@@ -728,11 +729,18 @@ void main() {
       loadEnglishTexts();
       final t = StaticTranslations.instance;
       String text(String? message) => conversionFailureText(t, ImmersiveErrorCode.gpuUnavailable, message);
-      expect(text('gpuNoAnswer'), 'The graphics card did not answer');
-      expect(text('gpuNone'), 'No graphics card with Vulkan found');
-      expect(text('gpuIntegrated'), "Integrated graphics share the computer's memory: too slow for panoramas");
-      expect(text('notYetOnMac'), 'Not yet on Mac');
-      expect(text('gpuTooSmall'), 'No graphics card can make this panorama', reason: 'its numbers are not in the job');
+      expect(text(AiGateReason.gpuNoAnswer.name), 'The graphics card did not answer');
+      expect(text(AiGateReason.gpuNone.name), 'No graphics card with Vulkan found');
+      expect(
+        text(AiGateReason.gpuIntegrated.name),
+        "Integrated graphics share the computer's memory: too slow for panoramas",
+      );
+      expect(text(AiGateReason.notYetOnMac.name), 'Not yet on Mac');
+      expect(
+        text(AiGateReason.gpuTooSmall.name),
+        'No graphics card can make this panorama',
+        reason: 'its numbers are not in the job',
+      );
       expect(text(null), 'No graphics card can make this panorama');
       expect(text('something else'), 'No graphics card can make this panorama');
       expect(
