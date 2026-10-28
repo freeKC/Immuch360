@@ -165,6 +165,15 @@ const sceneJobPixels = 12 * 1000 * 1000;
 const sceneMogeSessionMemory = 280 * 1000 * 1000;
 const sceneLamaSessionMemory = 510 * 1000 * 1000;
 
+/// What Windows gives a scene beyond the memory it says available (ullAvailPhys, which counts neither what idle
+/// programs give back when their working sets are trimmed nor the page file): V2 made ten scenes on the 16 GB laptop of
+/// the owner with 2.0 GB said available, Photoshop, Viber and SQL Server open, the system going down to 0.56 GB without
+/// a failure. Linux says MemAvailable, the kernel's own estimate of what a program can take: nothing more there.
+const sceneTrimAllowance = _gib;
+
+/// The allowance of a scene on this system: [sceneTrimAllowance] on Windows, nothing elsewhere
+int sceneMemoryAllowanceFor({required bool isWindows}) => isWindows ? sceneTrimAllowance : 0;
+
 /// What the job of a 3D scene still needs when it starts on a photo of [sourceWidth] x [sourceHeight], checked before
 /// the photo is decoded as the 3D photo checks [jobMemoryNeed] (V2 saw a scene take the free memory of a 16 GB laptop
 /// from 2.0 GB to 0.56 GB): [sceneJobMemory] for a photo of 12 Mpx with both its models to open, the pictures of a

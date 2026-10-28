@@ -13,9 +13,10 @@
 // The chain, in the steps the screens show (ImmersiveStage.scene), its shares of the job from the times of M2 on ai1:
 //  1. reading (0 to 4 %): the SHA-1 of the bytes read, the one the job was queued with, or the photo changed;
 //  2. decoding (to 8 %): first the memory the job still needs for a photo of its size (sceneJobMemoryNeed, less what
-//     the sessions the worker keeps open hold) against what the system can give now, "out of memory" with both
-//     figures when it cannot, as for a 3D photo; then the photo upright and turned as the user sees it (phase 1), its
-//     texture at 4 096, its preview at 2 048 and the map of MoGe at 1 024 (scene_textures.dart);
+//     the sessions the worker keeps open hold) against what the system can give now (1 GiB more on Windows, which
+//     trims idle programs: sceneTrimAllowance), "out of memory" with both figures when it cannot, as for a 3D photo;
+//     then the photo upright and turned as the user sees it (phase 1), its texture at 4 096, its preview at 2 048 and
+//     the map of MoGe at 1 024 (scene_textures.dart);
 //  3. geometry (to 25 %): MoGe-2 on the map, 2 500 tokens;
 //  4. layers (to 27 %): the focal length and the shift (focal_shift.dart; the EXIF's focal length when the photo has
 //     one, fovGuessed beyond 25 % of it or without it), the metric depth, then scene-v1 (scene_layout.dart): sky,
@@ -126,6 +127,7 @@ class SceneChain {
     Sha1Engine? sha1,
     this.memory,
     this.sessionsOpen = const {},
+    this.memoryAllowance = 0,
   }) : codecs = codecs ?? SbsCodecChoice.auto.codecs(),
        sha1 = sha1 ?? Sha1Engine.system() {
     if (this.codecs.isEmpty) {
@@ -143,6 +145,9 @@ class SceneChain {
 
   /// The sessions the worker kept open from earlier jobs when this one started ([mogeSession], [lamaSession])
   final Set<String> sessionsOpen;
+
+  /// What the system gives beyond the memory it says available, in bytes (sceneMemoryAllowanceFor)
+  final int memoryAllowance;
 
   /// Makes the scene of [job] from [original] into its .part. Never throws: a failure is in the result.
   SceneOutcome run(
@@ -475,7 +480,7 @@ class _SceneRun {
       mogeOpen: chain.sessionsOpen.contains(mogeSession),
       lamaOpen: chain.sessionsOpen.contains(lamaSession),
     );
-    if (need > available) {
+    if (need > available + chain.memoryAllowance) {
       const mb = 1000 * 1000;
       throw _Stop(
         ImmersiveErrorCode.outOfMemory,
@@ -674,6 +679,7 @@ class SceneTask implements AiWorkerTask<SceneOutcome> {
         codecs: codec.codecs(),
         memory: memory,
         sessionsOpen: open,
+        memoryAllowance: sceneMemoryAllowanceFor(isWindows: Platform.isWindows),
       );
     } catch (error) {
       return SceneOutcome(ImmersiveResult.failed(ImmersiveErrorCode.modelFailed, message: '$error'));
