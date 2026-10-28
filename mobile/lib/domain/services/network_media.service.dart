@@ -22,6 +22,7 @@ import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -50,6 +51,7 @@ class NetworkMediaInfo {
     this.stereoPair,
     this.stereoPhoto,
     this.scene,
+    this.panorama,
     this.frameWidth,
     this.frameHeight,
   });
@@ -78,6 +80,10 @@ class NetworkMediaInfo {
   /// The packet of the 3D scene the photo carries after its JPEG (design-final 2026-10-27, section 8.2), null for any
   /// other file: "Explore the 3D scene" on the Quest, the "3D scene" badge of the browser
   final SceneXmp? scene;
+
+  /// Our packet of a 360° panorama a computer generated beyond the edges of a photo, or of the 3D version of a 360°
+  /// photo (design-final 2026-10-27, section 5), null for any other file: the "360° AI" or "3D AI" badge of the browser
+  final GeneratedPanoramaInfo? panorama;
 
   /// The size of the picture of a photo its EXIF gives (PixelXDimension and PixelYDimension), null when it gives none
   /// or the photo was told without reading it
@@ -136,7 +142,7 @@ class NetworkMediaInfo {
   String toString() =>
       'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, rawKind: $rawKind, '
       'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair, stereoPhoto: $stereoPhoto, '
-      'scene: ${scene != null}, frame: $frameWidth x $frameHeight)';
+      'scene: ${scene != null}, panorama: $panorama, frame: $frameWidth x $frameHeight)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -306,9 +312,15 @@ class NetworkMediaService {
     // A HEIF photo keeps its meta box at its head, which the GPano read just went through: the bytes are there
     final stereoPair = isHeifName(entry.name) ? await probeHeicStereoPair(remembering.read) : null;
     if (gpano != null && isEquirectangularGPano(gpano)) {
-      // A 360° photo, unless our XMP says it holds two flat eyes: the head is there already
+      // A 360° photo, unless our XMP says it holds two flat eyes: the head is there already, and with it our packet of
+      // a panorama generated beyond the edges of a photo
       final stereoPhoto = probeStereoPhotoHead(remembering.head, name: entry.name, isSphere: true);
-      return NetworkMediaInfo(gpano: gpano, stereoPair: stereoPair, stereoPhoto: stereoPhoto);
+      return NetworkMediaInfo(
+        gpano: gpano,
+        stereoPair: stereoPair,
+        stereoPhoto: stereoPhoto,
+        panorama: generatedPanoramaOfHead(remembering.head),
+      );
     }
     if (isRawPhotoName(entry.name)) {
       return NetworkMediaInfo(gpano: gpano, rawKind: RawMediaKind.insta360Photo);

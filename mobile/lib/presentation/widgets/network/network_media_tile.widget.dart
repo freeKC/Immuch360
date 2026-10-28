@@ -1,6 +1,7 @@
 // The tiles of the network share browser: a photo with its thumbnail (or the one its server made), a video with a
-// frame of it, a 360° badge on the files that declare a 360° projection, a 3D badge on the 3D photos and videos and a
-// "3D scene" badge on the photos that carry a 3D scene, a badge on the files sent to the server before, the selection
+// frame of it, a 360° badge on the files that declare a 360° projection, a 3D badge on the 3D photos and videos, a
+// "3D scene" badge on the photos that carry a 3D scene and a "360° AI" badge on the panoramas generated beyond the
+// edges of a photo, a badge on the files sent to the server before, the selection
 // mark and the progress of an upload, and the folder rows.
 
 import 'dart:async';
@@ -295,10 +296,11 @@ final networkMediaInfoProvider = FutureProvider.autoDispose.family<NetworkMediaI
 });
 
 /// The 3D badge of a tile: [estimated] for a 3D photo whose relief was estimated by AI ("3D AI", the honesty label of
-/// design-final 2026-10-26, section 4.5), [stereo] for a real pair (an Apple spatial photo or video) or the side by
-/// side file of another tool ("3D"), [scene] for a photo that carries a 3D scene a computer made from it ("3D scene",
-/// design-final 2026-10-27, section 9.2)
-enum NetworkStereoBadge { stereo, estimated, scene }
+/// design-final 2026-10-26, section 4.5), the 3D version of a 360° photo too, [stereo] for a real pair (an Apple
+/// spatial photo or video) or the side by side file of another tool ("3D"), [scene] for a photo that carries a 3D
+/// scene a computer made from it ("3D scene", design-final 2026-10-27, section 9.2), [generatedPanorama] for a 360°
+/// panorama a computer generated beyond the edges of a photo, or its 3D version ("360° AI", section 5)
+enum NetworkStereoBadge { stereo, estimated, scene, generatedPanorama }
 
 /// The 3D badge of a file of a share that declares [info], null for none (a flat photo, a file not read yet)
 NetworkStereoBadge? networkStereoBadgeOf(NetworkMediaInfo? info) {
@@ -307,6 +309,13 @@ NetworkStereoBadge? networkStereoBadgeOf(NetworkMediaInfo? info) {
   }
   if (info.scene != null) {
     return NetworkStereoBadge.scene;
+  }
+  final panorama = info.panorama;
+  if (panorama != null && panorama.isGenerated) {
+    return NetworkStereoBadge.generatedPanorama;
+  }
+  if (panorama != null && panorama.isEstimatedRelief) {
+    return NetworkStereoBadge.estimated;
   }
   if (info.stereoPhoto?.isEstimatedRelief ?? false) {
     return NetworkStereoBadge.estimated;
@@ -409,17 +418,19 @@ class NetworkMediaTile extends ConsumerWidget {
                   key: Key(switch (stereoBadge) {
                     NetworkStereoBadge.estimated => 'network_media_ai_3d_badge',
                     NetworkStereoBadge.scene => 'network_media_scene_badge',
+                    NetworkStereoBadge.generatedPanorama => 'network_media_ai_360_badge',
                     NetworkStereoBadge.stereo => 'network_media_spatial_badge',
                   }),
                   // Left of the 360° badge when both show
                   right: is360 ? 28 : 6,
                   top: 6,
                   child: Text(
-                    // The honesty label of a relief estimated by AI, "3D scene" for a scene, "3D" for a real pair or
-                    // another tool's file
+                    // The honesty label of a relief estimated by AI, "3D scene" for a scene, "360° AI" for a panorama
+                    // generated beyond the edges of a photo, "3D" for a real pair or another tool's file
                     switch (stereoBadge) {
                       NetworkStereoBadge.estimated => context.t.ai_immersive_badge,
                       NetworkStereoBadge.scene => context.t.ai_immersive_badge_scene,
+                      NetworkStereoBadge.generatedPanorama => context.t.ai_immersive_badge_360,
                       NetworkStereoBadge.stereo => '3D',
                     },
                     style: const TextStyle(
