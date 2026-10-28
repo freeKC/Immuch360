@@ -161,9 +161,8 @@ abstract interface class GeneratorBackend {
   String get loraSha256;
 
   /// Writes the image of [request]. [cancel] stops the generator within a second. Throws [BackendException]:
-  /// gpuOutOfMemory, gpuBusy (its graph cut into segments for want of free memory), generatorStalled (180 s without a
-  /// line), generatorFailed (with the end of the error output), outputRejected (the image grey, green left, of the
-  /// wrong size), cancelled.
+  /// gpuOutOfMemory, generatorStalled (180 s without a line), generatorFailed (with the end of the error output),
+  /// cancelled.
   Future<void> generate(
     GeneratorRequest request, {
     required NativeCancelFlag cancel,

@@ -10,9 +10,8 @@
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
 //  - a generation whose graph sd-cli cut into segments ("flux using 27 segments", when the free memory of the card is
-//    short) is stopped at once and refused as a busy card (gpuBusy, "Other apps use the graphics card memory: close
-//    games or 3D apps"): with the LoRA applied at run time and the guidance, the image comes out spoilt (M3, section 2,
-//    point 2), so it never becomes a file, and making it again with the same memory free would spoil it again;
+//    short) is stopped at once and refused (outputRejected): with the LoRA applied at run time and the guidance, the
+//    image comes out spoilt (M3, section 2, point 2), so it never becomes a file;
 //  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read), generatorStalled
 //    after 180 s without a line, generatorFailed with the end of its error output, cancelled within a second of the
 //    flag; the process is killed in every case where it still runs;
@@ -354,7 +353,7 @@ class SdCppGenerator implements GeneratorBackend {
         final segments = sdCppSegmentsOf(line);
         if (segments != null && segments > 1) {
           return BackendException(
-            ImmersiveErrorCode.gpuBusy,
+            ImmersiveErrorCode.outputRejected,
             'sd-cli cut the generator into $segments segments, the memory of the graphics card being short: the image '
             'would be spoilt (close games or 3D apps and retry)',
           );

@@ -128,8 +128,7 @@ enum ImmersiveErrorCode {
   /// No graphics card this job can run on (none found, too small, integrated and not allowed)
   gpuUnavailable,
 
-  /// Other programs hold the memory of the graphics card: sd-cli cut its graph into segments for want of free memory,
-  /// which spoils the image (M3), so the generation was stopped without a file
+  /// Other programs hold the memory of the graphics card: the job waits, then fails with this if it is cancelled
   gpuBusy,
 
   /// The graphics card ran out of memory during the generation (told by the error output of the generator)

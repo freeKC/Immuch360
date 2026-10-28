@@ -315,7 +315,7 @@ void main() {
       },
     );
 
-    test('cut into segments, it is stopped at once and refused as a busy card, never a file', () async {
+    test('cut into segments, it is stopped at once and refused, never a file', () async {
       final runner = FakeProcessRunner([
         FakeProcessScript(
           lines: _generation(
@@ -331,7 +331,7 @@ void main() {
         generator(runner).generate(request(), cancel: cancel, onProgress: heard.add),
         throwsA(
           isA<BackendException>()
-              .having((error) => error.code, 'code', ImmersiveErrorCode.gpuBusy)
+              .having((error) => error.code, 'code', ImmersiveErrorCode.outputRejected)
               .having((error) => error.message, 'message', contains('27 segments')),
         ),
       );
