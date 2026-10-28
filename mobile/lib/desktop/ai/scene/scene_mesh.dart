@@ -7,18 +7,23 @@
 // -z): X = (u - W / 2) z / f, Y = (H / 2 - v) z / f, Z = -z. A cell over two neighbours that break has no triangle;
 // the others give (a, c, b) and (b, c, d), counter clockwise as the camera sees them.
 //
-// The cut cells, so that the scene seen from where the photo was taken is the photo (design 2.1, 2.3 step 5, 3.4 and
-// 8.2; S1-review M1, remedy A, chosen by V2): the cells the grid leaves without triangles get two triangles of their
-// own on vertices of their own, each on the ray of its point of the photo at the depth behind the band nearest to it,
-// the depth of the background without its push. From the start each of their points shows where the photo has it;
-// a step aside slides them with the far side, just in front of the background, which fills what the step uncovers.
-// They join the photo layer after the grid (its texture is the photo): the grid of the golden fixture is untouched.
+// The scene seen from where the photo was taken is the photo (design 2.1, 2.3 step 5, 3.4 and 8.2; S1-review M1,
+// remedy A, chosen by V2, which found the background in front of the far side as well): along the ray of any point
+// of the photo, the photo layer comes first.
+//
+// The cut cells: the cells the grid leaves without triangles get two triangles of their own on vertices of their own,
+// each on the ray of its point of the photo at the depth behind the band nearest to it, or at the depth of the grid
+// there when that lies farther (a far side that recedes), the depth of the background without its push. From the
+// start each of their points shows where the photo has it; a step aside slides them with the far side, just in front
+// of the background, which fills what the step uncovers. They join the photo layer after the grid (its texture is the
+// photo): the grid of the golden fixture is untouched.
 //
 // The background layer, which the golden fixture leaves to the engine: the cells of the same grid whose values touch a
 // band, and one cell more all around so that it reaches under the far side and no slit shows between the layers. Each
 // of its vertices lies on the ray of its point of the photo at the depth behind the band nearest to it (the value of
-// the band nearest to its point of the map), pushed back by [backgroundPush] so that where it lies under the far side
-// of the photo layer the two never fight; its uv are those of the photo layer, on the filled image of the map.
+// the band nearest to its point of the map), or at the depth of the grid there when that lies farther, pushed back by
+// [backgroundPush]: where it lies under the far side of the photo layer the two never fight, and it never comes in
+// front of the photo. Its uv are those of the photo layer, on the filled image of the map.
 //
 // Each layer keeps only the vertices its triangles use; beyond SceneV1.maxMeshVertices it is cut in bands of rows
 // (the triangles come row after row), each mesh numbering its own vertices, at most SceneV1.maxMeshes meshes in all.
@@ -174,12 +179,13 @@ GridLayer joinedLayers(GridLayer first, GridLayer then) {
 }
 
 /// The vertices of [grid] the triangles [indices] use, each on the ray of its point at the depth behind the value of
-/// [band] nearest to it times [push]; the others at 0
+/// [band] nearest to it, or at the depth of the grid [photo] there when that is farther, times [push]; the others at 0
 Float64List _behindBands(
   SceneGrid grid,
   Int32List indices,
   Uint8List band,
   Float64List depthBehind,
+  Float64List photo,
   double focal,
   double push,
 ) {
@@ -203,14 +209,22 @@ Float64List _behindBands(
     final i = vertex % grid.columns;
     final j = vertex ~/ grid.columns;
     final nearest = bandValues.nearestTo(grid.xs[i], grid.ys[j]);
-    grid.positionAt(i, j, depthBehind[nearest] * push, focal, positions, 3 * vertex);
+    final depth = math.max(depthBehind[nearest], -photo[3 * vertex + 2]);
+    grid.positionAt(i, j, depth * push, focal, positions, 3 * vertex);
   }
   return positions;
 }
 
-/// The cells of [grid] a break cuts (0 in [keptCells]) as seen from the start: see the top of this file. Null when no
-/// cell is cut, or without a band.
-GridLayer? cutCellsLayerOf(SceneGrid grid, Uint8List keptCells, Uint8List band, Float64List depthBehind, double focal) {
+/// The cells of [grid] a break cuts (0 in [keptCells]) as seen from the start, [photo] the positions of the grid: see
+/// the top of this file. Null when no cell is cut, or without a band.
+GridLayer? cutCellsLayerOf(
+  SceneGrid grid,
+  Uint8List keptCells,
+  Uint8List band,
+  Float64List depthBehind,
+  Float64List photo,
+  double focal,
+) {
   final cut = Uint8List(keptCells.length);
   var any = false;
   for (var cell = 0; cell < keptCells.length; cell++) {
@@ -224,14 +238,15 @@ GridLayer? cutCellsLayerOf(SceneGrid grid, Uint8List keptCells, Uint8List band, 
   }
   final indices = cellTriangles(grid, cut);
   return GridLayer(
-    positions: _behindBands(grid, indices, band, depthBehind, focal, 1),
+    positions: _behindBands(grid, indices, band, depthBehind, photo, focal, 1),
     uvs: gridUvs(grid),
     indices: indices,
   );
 }
 
-/// The background layer of a scene: see the top of this file. Null when there is no band.
-GridLayer? backgroundLayerOf(SceneGrid grid, Uint8List band, Float64List depthBehind, double focal) {
+/// The background layer of a scene, [photo] the positions of the grid: see the top of this file. Null when there is no
+/// band.
+GridLayer? backgroundLayerOf(SceneGrid grid, Uint8List band, Float64List depthBehind, Float64List photo, double focal) {
   final width = grid.width;
   final cellColumns = grid.columns - 1;
   final cellRows = grid.rows - 1;
@@ -269,7 +284,7 @@ GridLayer? backgroundLayerOf(SceneGrid grid, Uint8List band, Float64List depthBe
   }
   final indices = cellTriangles(grid, cells);
   return GridLayer(
-    positions: _behindBands(grid, indices, band, depthBehind, focal, backgroundPush),
+    positions: _behindBands(grid, indices, band, depthBehind, photo, focal, backgroundPush),
     uvs: gridUvs(grid),
     indices: indices,
   );

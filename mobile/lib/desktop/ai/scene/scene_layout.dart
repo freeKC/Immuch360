@@ -137,10 +137,10 @@ class SceneLayout {
   /// own behind their band, so that the scene seen from the start is the photo (scene_mesh.dart, cutCellsLayerOf)
   GridLayer get photoLayer {
     final layer = GridLayer(positions: vertices, uvs: gridUvs(grid), indices: indices);
-    final cut = cutCellsLayerOf(grid, keptCells, band, depthBehind, focal);
+    final cut = cutCellsLayerOf(grid, keptCells, band, depthBehind, vertices, focal);
     return cut == null ? layer : joinedLayers(layer, cut);
   }
 
-  /// The background layer, null without a band
-  GridLayer? get backgroundLayer => backgroundLayerOf(grid, band, depthBehind, focal);
+  /// The background layer, never in front of the photo layer; null without a band
+  GridLayer? get backgroundLayer => backgroundLayerOf(grid, band, depthBehind, vertices, focal);
 }
