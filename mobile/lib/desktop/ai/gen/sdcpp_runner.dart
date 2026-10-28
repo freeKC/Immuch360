@@ -378,11 +378,9 @@ class SdCppGenerator implements GeneratorBackend {
     if (!checkImages) {
       return;
     }
-    final path = request.outputPath;
-    final control = request.controlPath;
     final GeneratedImageReport report;
     try {
-      report = await Isolate.run(() => checkGeneratedFile(path, controlPath: control));
+      report = await checkGeneratedFileInIsolate(request.outputPath, controlPath: request.controlPath);
     } catch (error) {
       // No image, or one the decoder gives up on (a PNG cut short): refused as any other, never left behind
       if (output.existsSync()) {
@@ -398,6 +396,13 @@ class SdCppGenerator implements GeneratorBackend {
     }
   }
 }
+
+/// [checkGeneratedFile] in an isolate of its own, from a closure built apart from the generation so that it holds the
+/// two paths only: one built inside [SdCppGenerator.generate] would carry the context of its progress callback, which
+/// reaches the queue, its settings store and their futures, which no isolate can take (found by V3 on the PC: every
+/// panorama of the app was refused so)
+Future<GeneratedImageReport> checkGeneratedFileInIsolate(String path, {String? controlPath}) =>
+    Isolate.run(() => checkGeneratedFile(path, controlPath: controlPath));
 
 /// The upscale of a panorama: Real-ESRGAN x4plus through sd-cli
 class SdCppUpscaler implements UpscaleBackend {
