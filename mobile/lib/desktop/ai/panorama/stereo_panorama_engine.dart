@@ -21,7 +21,8 @@
 //     generated). A frame that is not 2:1 within 10 % is no whole sphere and is refused. The left eye is the panorama
 //     at 4096 x 2048 at most (an exact 2:1, by area), the map of the depth half as wide (2048 x 1024 at most);
 //  3. panoramaDepth (to 70 %): the 20 tangent views through the depth model, "step k of 20", then merged
-//     (pano_depth.dart); a flat map is refused here, before the right eye;
+//     (pano_depth.dart); a flat map is refused here, before the right eye, and so is a map with pixels no view kept
+//     sees (views the model read the wrong way round left out);
 //  4. rightEye (to 85 %): relief-360-v1 (relief_360.dart) into the lower half of the frame; refused past 8 % filled;
 //  5. encoding (to 97 %): the JPEG at quality 90, with the EXIF the 3D photo keeps, the XMP (StereoPanoramaXmp: GPano
 //     of a whole sphere, the IPTC digital source type, the parent panorama when there is one) and the ICC profile of
@@ -140,6 +141,7 @@ class StereoPanoramaChain {
     this.memory,
     this.sessionOpen = false,
     this.memoryAllowance = 0,
+    this.maxShiftDegrees = Relief360V1.maxShiftDegrees,
   }) : codecs = codecs ?? SbsCodecChoice.auto.codecs(),
        priority = priority ?? ComputePriority(ThreadPriorityPlatform.system()),
        sha1 = sha1 ?? Sha1Engine.system() {
@@ -163,6 +165,10 @@ class StereoPanoramaChain {
 
   /// What the system gives beyond the memory it says available, in bytes (sceneMemoryAllowanceFor)
   final int memoryAllowance;
+
+  /// The shift of the nearest at the equator: the 1° of relief-360-v1, which the packet of the file says. Another
+  /// value is for the tests only, to reach the refusals of the right eye through the chain.
+  final double maxShiftDegrees;
 
   /// Makes the 3D version of the panorama of [job] from [original] into its .part. Never throws: a failure is in the
   /// result.
@@ -304,6 +310,14 @@ class _StereoPanoramaRun {
     }
     final depth = mergeViewDepths(views, maps, width: mapWidth, height: mapHeight);
     _alignments = depth.alignments;
+    if (depth.uncovered > 0) {
+      // Views the model read the wrong way round were left out, and nothing else saw these pixels: their depth would
+      // be made up
+      throw _Stop(
+        ImmersiveErrorCode.notEnoughRelief,
+        '${depth.uncovered} pixels of the sphere have no depth the views agree on',
+      );
+    }
     final normalised = normaliseDepth(depth.map);
     if (normalised.lowRelief) {
       throw const _Stop(ImmersiveErrorCode.notEnoughRelief, 'The panorama has too little relief');
@@ -319,6 +333,7 @@ class _StereoPanoramaRun {
       height: eyeHeight,
       map: normalised.depth,
       lowRelief: normalised.lowRelief,
+      maxShiftDegrees: chain.maxShiftDegrees,
       target: frame,
       targetOffset: half,
       isCancelled: isCancelled,
