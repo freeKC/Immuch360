@@ -3,7 +3,10 @@
 // Convert; the question of a network folder, nothing tried there before the yes; the photos skipped and why; the
 // choice for a photo that already has a 3D version, handed to the queue and kept; the settings kept, read again; the
 // turns of each photo handed to the queue, with the rotation and the edits of Immich said; and the folders of the
-// library left alone while the album of the generated photos is not out of the backup.
+// library left alone while the album of the generated photos is not out of the backup. Phase 2: the choice of the type
+// once the build makes another one (the fake engine of the scenes), its honesty sentence, components, free space and
+// time, the type greyed with its reason, the plan of each photo of a mixed selection, the selection planned again for
+// another type, and the type kept for the next dialog.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -28,6 +31,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -37,7 +41,9 @@ import 'package:path/path.dart' as p;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
+import '../fakes/fake_scene_engine.dart';
 import '../fakes/recording_creator_files.dart';
 import 'settle_still.dart';
 
@@ -107,6 +113,8 @@ void main() {
   late int memory;
   late Abi abi;
   late FakeImmersiveEngine engine;
+  late Map<ConversionKind, ConversionEngine> kinds;
+  late List<AiComponent> catalogue;
 
   final linux = aiComponentsFor(AiPlatform.linuxX64);
   final rules = LibraryPathRules(context: p.context, caseFold: false);
@@ -134,6 +142,8 @@ void main() {
     memory = 16 * _gib;
     abi = Abi.linuxX64;
     engine = FakeImmersiveEngine(holdStage: .depth);
+    kinds = const {};
+    catalogue = aiComponents;
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -161,8 +171,10 @@ void main() {
           components: _GateFiles(service, root.path),
           facts: () => AiHardwareFacts(abi: abi, processors: 8, physicalMemory: memory),
           loadRuntime: (path) async => (version: '1.31.0', error: null),
+          catalogue: catalogue,
         ),
       ),
+      conversionEnginesProvider.overrideWithValue(kinds),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
             (asset) async => facts[asset.name] ?? const ConversionPhotoFacts(),
@@ -185,6 +197,7 @@ void main() {
       conversionToolsProvider.overrideWithValue(
         ConversionTools(
           engine: engine,
+          engines: kinds,
           output: output,
           finder: ExistingVersionFinder(),
           creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
@@ -564,6 +577,246 @@ void main() {
     expect(find.byKey(const Key('ai_conversion_refused')), findsOneWidget);
     expect(find.text('Not enough memory'), findsOneWidget);
     expect(convertEnabled(tester), isFalse);
+  });
+
+  group('the type of version', () {
+    final scene = aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.scene);
+
+    void sceneEngine() => kinds = fakeConversionEngines(scene: FakeSceneEngine());
+
+    ConversionKind chosenType(WidgetTester tester) =>
+        tester.widget<RadioGroup<ConversionKind>>(find.byKey(const Key('ai_conversion_types'))).groupValue!;
+
+    /// The partial files the checks of the dialog made, by their final names
+    List<String> checked() => [
+      for (final call in files.calls)
+        if (call.startsWith('createNew ')) p.basename(call.substring('createNew '.length)),
+    ];
+
+    testWidgets('a build that makes the 3D photo only: no choice, the dialog of phase 1, with the time of a photo', (
+      tester,
+    ) async {
+      original('salon.jpg');
+      await openDialog(tester, [_photo('salon.jpg')]);
+
+      expect(find.byKey(const Key('ai_conversion_types')), findsNothing);
+      expect(find.text('Relief estimated by AI from a single photo'), findsOneWidget);
+      expect(find.text('About 3 s per photo'), findsOneWidget, reason: 'the timings of the design, 2.8 s');
+    });
+
+    testWidgets(
+      'the 3D scene: its sentence, its components, its time; Convert makes salon_scene3D.jpg, kept as the type',
+      (tester) async {
+        sceneEngine();
+        original('salon.jpg');
+        final container = await openDialog(tester, [_photo('salon.jpg')]);
+
+        expect(chosenType(tester), ConversionKind.sbsFromPhoto, reason: 'the first type while none was chosen');
+        expect(find.text('3D photo'), findsOneWidget);
+        expect(find.text('3D scene'), findsOneWidget);
+        expect(checked().single, startsWith('.salon_3D_LRF_Full_SBS.jpg.'));
+
+        await tapIn(tester, find.byKey(const Key('ai_conversion_type_sceneFromPhoto')));
+        await settle(tester);
+
+        expect(chosenType(tester), ConversionKind.sceneFromPhoto);
+        expect(find.text('Reconstructed from one photo, explore within its limits'), findsOneWidget);
+        expect(find.text('Relief estimated by AI from a single photo'), findsNothing);
+        expect(find.text('About 23 s per photo'), findsOneWidget, reason: 'the timings of M2');
+        expect(find.byKey(const Key('ai_conversion_install')), findsOneWidget);
+        expect(find.text('MoGe-2 ViT-S'), findsOneWidget);
+        expect(find.text('LaMa'), findsOneWidget);
+        expect(find.text('Depth Anything V2 Small'), findsNothing);
+        expect(convertEnabled(tester), isFalse);
+        expect(checked().last, startsWith('.salon_scene3D.jpg.'), reason: 'the folder checked for the name of a scene');
+        expect(
+          Directory(photos).listSync().map((entry) => p.basename(entry.path)).where((name) => name.contains('_SBS')),
+          isEmpty,
+          reason: 'the partial file of the 3D photo deleted with its session',
+        );
+
+        await tapIn(tester, find.byKey(const Key('ai_install_download')));
+        await settle(tester);
+        expect(service.installs, [
+          for (final component in scene)
+            if (!linux.contains(component)) component.id,
+        ]);
+        expect(convertEnabled(tester), isTrue);
+
+        await tapIn(tester, convert());
+        await settle(
+          tester,
+          until: () => container.read(conversionQueueProvider).jobs.single.state == ConversionState.done,
+        );
+        final job = container.read(conversionQueueProvider).jobs.single;
+        expect(job.kind, ConversionKind.sceneFromPhoto);
+        expect(job.target!.fileName, 'salon_scene3D.jpg');
+        expect(job.state, ConversionState.done);
+        expect(File(p.join(photos, 'salon_scene3D.jpg')).existsSync(), isTrue);
+        expect((await keptSettings(tester)).lastType, 'sceneFromPhoto');
+
+        // The next dialog starts with the 3D scene
+        await tester.pumpWidget(const SizedBox.shrink());
+        await openDialog(tester, [_photo('salon.jpg')]);
+        expect(chosenType(tester), ConversionKind.sceneFromPhoto);
+        expect(find.text('Reconstructed from one photo, explore within its limits'), findsOneWidget);
+      },
+    );
+
+    testWidgets('a mixed selection: the plan of each photo, planned again for another type', (tester) async {
+      sceneEngine();
+      for (final component in scene) {
+        service.setStatus(component, const AiComponentStatus(AiComponentState.installed));
+      }
+      original('salon.jpg');
+      original('jardin.jpg');
+      facts['sphere.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      final container = await openDialog(tester, [
+        _photo('salon.jpg'),
+        _photo('jardin.jpg'),
+        _photo('sphere.jpg', width: 8000, height: 4000),
+      ]);
+
+      expect(
+        find.descendant(of: find.byKey(const Key('ai_conversion_made')), matching: find.text('3D photo (2)')),
+        findsOneWidget,
+      );
+      expect(find.text('salon.jpg'), findsOneWidget);
+      expect(find.text('jardin.jpg'), findsOneWidget);
+      expect(find.text('Skipped (1)'), findsOneWidget);
+      expect(find.text('sphere.jpg: 360° photo'), findsOneWidget);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_sceneFromPhoto')));
+      await settle(tester);
+      expect(find.text('3D scene (2)'), findsOneWidget);
+      expect(find.text('sphere.jpg: 360° photo'), findsOneWidget);
+      expect(checked().last, matches(RegExp(r'^\.(salon|jardin)_scene3D\.jpg\.')));
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final jobs = container.read(conversionQueueProvider).jobs;
+      expect(jobs.map((job) => (job.kind, job.target?.fileName, job.skipReason)), [
+        (ConversionKind.sceneFromPhoto, 'salon_scene3D.jpg', null),
+        (ConversionKind.sceneFromPhoto, 'jardin_scene3D.jpg', null),
+        (ConversionKind.sceneFromPhoto, null, ConversionSkipReason.sphere360),
+      ]);
+    });
+
+    testWidgets('a type the gate refuses stays listed, greyed with its reason', (tester) async {
+      sceneEngine();
+      // A component of the scenes this version does not have whole
+      catalogue = [
+        for (final component in aiComponents)
+          if (component.id == lamaInpaintComponent.id)
+            AiComponent(
+              id: component.id,
+              name: component.name,
+              version: component.version,
+              kind: component.kind,
+              platforms: component.platforms,
+              assetName: component.assetName,
+              installPath: component.installPath,
+              size: component.size,
+              sha256: null,
+              compression: component.compression,
+              licence: component.licence,
+              licenceUrl: component.licenceUrl,
+              features: component.features,
+            )
+          else
+            component,
+      ];
+      original('salon.jpg');
+      await openDialog(tester, [_photo('salon.jpg')]);
+
+      final tile = tester.widget<RadioListTile<ConversionKind>>(
+        find.byKey(const Key('ai_conversion_type_sceneFromPhoto')),
+      );
+      expect(tile.enabled, isFalse);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('ai_conversion_type_sceneFromPhoto')),
+          matching: find.text('Not in this version of the app'),
+        ),
+        findsOneWidget,
+      );
+      expect(chosenType(tester), ConversionKind.sbsFromPhoto);
+      expect(convertEnabled(tester), isTrue, reason: 'the 3D photo runs');
+    });
+
+    testWidgets(
+      'the components to install: the free space of their drive, or what it lacks, or a drive not connected',
+      (tester) async {
+        sceneEngine();
+        await tester.runAsync(() => store.write(const DesktopAiSettings(lastType: 'sceneFromPhoto')));
+        original('salon.jpg');
+        Future<void> openWith(AiFreeSpace space) async {
+          tester.view.physicalSize = const Size(1600, 1200);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          await tester.pumpConsumerWidget(
+            Scaffold(
+              body: Consumer(
+                builder: (context, ref, _) => TextButton(
+                  key: const Key('open'),
+                  onPressed: () => unawaited(openConversionDialog(context, ref, [_photo('salon.jpg')])),
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+            overrides: [
+              ...overrides(),
+              aiFreeSpaceProvider.overrideWithValue((folder) async => space),
+              aiComponentsFolderProvider.overrideWithValue(() async => Directory(p.join(root.path, 'components'))),
+            ],
+          );
+          await tester.tap(find.byKey(const Key('open')));
+          await settle(tester);
+        }
+
+        await openWith(const AiFreeSpace(free: 50 * _gib, volume: 'C:'));
+        expect(find.text('50.0 GiB free on C:'), findsOneWidget);
+
+        service.shortage = const AiSpaceShortage(needed: 2 * _gib, free: _gib ~/ 2, volume: 'C:');
+        await tester.pumpWidget(const SizedBox.shrink());
+        await openWith(const AiFreeSpace(free: _gib ~/ 2, volume: 'C:'));
+        expect(
+          find.text(
+            'Not enough space on C: (2.0 GiB needed, 512.0 MiB free). Move the AI components to another drive in the '
+            'settings.',
+          ),
+          findsOneWidget,
+        );
+
+        final unplugged = p.join(root.path, 'drive-e', 'Immuch360', 'ai-components');
+        await tester.runAsync(() => store.update((kept) => kept.copyWith(componentsFolder: () => unplugged)));
+        await tester.pumpWidget(const SizedBox.shrink());
+        await openWith(const AiFreeSpace(free: 50 * _gib, volume: 'E:'));
+        expect(find.text('The folder of the AI components cannot be reached: $unplugged'), findsOneWidget);
+      },
+    );
+  });
+
+  test('each job of a batch comes from its request, a 3D version chained after its panorama from the same one', () {
+    ConversionJob job(String id, {String? parent}) => ConversionJob(
+      id: id,
+      source: LocalFileSource('/photos/$id.jpg'),
+      batchIndex: 1,
+      batchSize: 2,
+      parentId: parent,
+    );
+    final queue = ConversionQueueState(
+      jobs: [
+        job('a'),
+        job('a3d', parent: 'a'),
+        job('b'),
+        job('b3d', parent: 'b'),
+        job('c'),
+      ],
+    );
+    expect(requestIndexOfJobs(['a', 'a3d', 'b', 'b3d', 'c'], queue), [0, 0, 1, 1, 2]);
+    expect(requestIndexOfJobs(['a', 'b', 'c'], queue), [0, 1, 2]);
   });
 
   test('a photo is skipped before anything runs for what it is', () {

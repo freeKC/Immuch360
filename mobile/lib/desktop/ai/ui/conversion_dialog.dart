@@ -21,6 +21,17 @@
 // takes it over at the launch, and those no job takes are deleted when the dialog closes. A folder of the library is
 // neither checked nor written into before the album of the generated photos is out of the backup (lot A6a): until then
 // the 3D photos go to the folder of my choice, with the reason.
+//
+// Phases 2 and 3 (design-final 2026-10-27, section 9.1, point 2): the dialog starts with the type of version, among the
+// types registered in conversionDialogKinds that this build makes (the 3D photo and the 3D scene here; lot P1 adds the
+// 3D version of a 360° photo, lot U3 the panoramas), the one chosen last kept in desktop_ai.json (lastType). A type the
+// gate refuses stays listed, greyed with its reason. Under the choice, what the type is (its honesty sentence), the
+// components of its feature that are missing with the free space of their drive, its gate, and the time a photo takes
+// on this computer; then the destination, the question of a network folder, "If a 3D version exists", and for a mixed
+// selection the plan of each photo: those the type makes, and those skipped and why. Changing the type plans the
+// selection again for it (the photos it takes, the names of their files), with what the user chose in this dialog.
+// The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo now, a
+// 360° photo once lot P1 registers the type of its 3D version.
 
 import 'dart:async';
 import 'dart:io';
@@ -53,6 +64,8 @@ import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -67,6 +80,7 @@ import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
+import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/utils/editor.utils.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
@@ -79,8 +93,8 @@ final aiFeaturesEnabledProvider = Provider.autoDispose<bool>(
   (ref) => ref.watch(appConfigProvider.select((config) => config.aiImmersive.enabled)),
 );
 
-/// What the hardware gate says now; asked again when a component is installed or removed
-final aiGateResultProvider = FutureProvider.autoDispose<AiGateResult>((ref) async {
+/// What the hardware gate says now of [AiFeature]; asked again when a component is installed or removed
+final aiGateResultForProvider = FutureProvider.autoDispose.family<AiGateResult, AiFeature>((ref, feature) async {
   final service = ref.watch(aiComponentsServiceProvider);
   final gate = ref.watch(desktopAiGateProvider);
   String states() => [for (final component in aiComponents) service.statusOf(component).state.name].join(',');
@@ -101,7 +115,98 @@ final aiGateResultProvider = FutureProvider.autoDispose<AiGateResult>((ref) asyn
     _log.warning('The folder of the AI components could not be read: $error');
   }
   known = states();
-  return gate.evaluate();
+  return gate.evaluate(feature: feature);
+});
+
+/// What the hardware gate says now of the 3D photo, the feature of phase 1
+final aiGateResultProvider = aiGateResultForProvider(AiFeature.stereoPhoto);
+
+/// The types of version the dialog offers, in their order (design-final 2026-10-27, section 9.1, point 2): the 3D photo
+/// of phase 1 and the 3D scene of phase 2. Lot P1 adds the 3D version of a 360° photo here, lot U3 the panoramas.
+const conversionDialogKinds = [ConversionKind.sbsFromPhoto, ConversionKind.sceneFromPhoto];
+
+/// The types of [conversionDialogKinds] this build makes: the 3D photo always, another one once its lot registered its
+/// engine in conversionEnginesProvider, the registry the tools of the queue are given (ConversionTools.supports)
+final offeredConversionKindsProvider = Provider.autoDispose<List<ConversionKind>>((ref) {
+  final engines = ref.watch(conversionEnginesProvider);
+  return [
+    for (final kind in conversionDialogKinds)
+      if (kind == ConversionKind.sbsFromPhoto || engines.containsKey(kind)) kind,
+  ];
+});
+
+/// The feature of the AI a type of version needs: its components and its gate
+AiFeature aiFeatureOf(ConversionKind kind) => switch (kind) {
+  ConversionKind.sbsFromPhoto => AiFeature.stereoPhoto,
+  ConversionKind.sceneFromPhoto => AiFeature.scene,
+  ConversionKind.panoramaFromPhoto => AiFeature.panorama,
+  ConversionKind.stereoPanoramaFromPanorama => AiFeature.stereoPanorama,
+};
+
+/// The name of a type of version in the dialog: "3D photo", "3D scene"
+String conversionKindName(Translations t, ConversionKind kind) => switch (kind) {
+  ConversionKind.sbsFromPhoto => t.ai_immersive_3d_photo,
+  ConversionKind.sceneFromPhoto => t.ai_immersive_type_scene,
+  ConversionKind.panoramaFromPhoto => t.ai_immersive_type_panorama,
+  ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_type_stereo_360,
+};
+
+/// What a type of version is, in the words of its honesty label
+String conversionKindHonesty(Translations t, ConversionKind kind) => switch (kind) {
+  ConversionKind.sbsFromPhoto => t.ai_immersive_dialog_title,
+  ConversionKind.sceneFromPhoto => t.ai_immersive_scene_honesty,
+  ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
+  ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
+};
+
+/// "6 s", "4 min": a time of the conversions, the seconds rounded up under a minute, the minutes rounded above
+String aiDurationText(Translations t, Duration duration) {
+  var seconds = (duration.inMilliseconds / 1000).ceil();
+  if (seconds < 1) {
+    seconds = 1;
+  }
+  return seconds < 60
+      ? t.ai_immersive_duration_seconds(seconds: seconds)
+      : t.ai_immersive_duration_minutes(minutes: (seconds / 60).round());
+}
+
+/// "About 6 s per photo", from the times of the steps on this computer (AiTimings); "on this graphics card" for a type
+/// of the graphics card; null when nothing tells it
+String? conversionTimeText(Translations t, ConversionKind kind, AiTimings timings) {
+  final expected = kind.expectedDuration(timings);
+  if (expected <= Duration.zero) {
+    return null;
+  }
+  final time = aiDurationText(t, expected);
+  return kind.lane == ConversionLane.gpu
+      ? t.ai_immersive_time_per_photo_gpu(time: time)
+      : t.ai_immersive_time_per_photo(time: time);
+}
+
+/// The free space of the drive of the AI components, and what installing the components [feature] lacks takes there
+typedef AiInstallSpace = ({AiFreeSpace? space, AiSpaceShortage? shortage});
+
+/// See [AiInstallSpace]; null while nothing is missing, or where the free space is not read
+final aiInstallSpaceProvider = FutureProvider.autoDispose.family<AiInstallSpace?, AiFeature>((ref, feature) async {
+  final reader = ref.watch(aiFreeSpaceProvider);
+  final missing = (await ref.watch(aiGateResultForProvider(feature).future)).missing;
+  if (reader == null || missing.isEmpty) {
+    return null;
+  }
+  final shortage = await ref.watch(aiComponentsServiceProvider).spaceShortage(missing);
+  final space = await reader(await ref.watch(aiComponentsFolderProvider)());
+  return (space: space, shortage: shortage);
+});
+
+/// The folder the AI components were moved to when its drive cannot be reached now (unplugged): the components then
+/// read as not installed and a download would fail to write, so the screens say why; null otherwise
+final aiComponentsFolderMissingProvider = FutureProvider.autoDispose<String?>((ref) async {
+  final moved = (await ref.watch(desktopAiSettingsStoreProvider).read()).componentsFolder;
+  if (moved == null) {
+    return null;
+  }
+  // Only the folder gone with its parent: a folder deleted by hand on a drive still there is made again by a download
+  return Directory(moved).existsSync() || Directory(p.dirname(moved)).existsSync() ? null : moved;
 });
 
 /// Whether the gate refuses for a reason the dialog cannot mend: anything but components to install
@@ -542,12 +647,18 @@ class DesktopMakeImmersiveButton extends ConsumerWidget {
     if (!assets.any((asset) => asset.isImage)) {
       return const SizedBox.shrink();
     }
-    if (source == ActionSource.viewer && !ref.watch(aiFlatPhotoProvider(assets.first))) {
+    // In the viewer, the types that take the photo shown; in a selection, every type, the dialog plans each photo
+    final kinds = [
+      for (final kind in ref.watch(offeredConversionKindsProvider))
+        if (source != ActionSource.viewer || ref.watch(aiSourceProvider((asset: assets.first, kind: kind)))) kind,
+    ];
+    if (kinds.isEmpty) {
       return const SizedBox.shrink();
     }
     final t = context.t;
-    final gate = ref.watch(aiGateResultProvider).valueOrNull;
-    final refusal = aiGateRefuses(gate) ? aiGateReasonText(t, gate!) : null;
+    // Greyed only when the gate refuses every type, with the reason of the first
+    final gates = [for (final kind in kinds) ref.watch(aiGateResultForProvider(aiFeatureOf(kind))).valueOrNull];
+    final refusal = gates.every(aiGateRefuses) ? aiGateReasonText(t, gates.first!) : null;
     // Not waited for: the menu of the viewer closes at once, the dialog opens over the page
     void open() => unawaited(openConversionDialog(context, ref, assets, source: source));
     final Widget button = menuItem
@@ -610,17 +721,53 @@ class ConversionDialog extends ConsumerStatefulWidget {
   ConsumerState<ConversionDialog> createState() => _ConversionDialogState();
 }
 
+/// A photo of the selection as the dialog read it once: what it is, and where its original is (null when this computer
+/// cannot reach it, or when no type takes it)
+class _Photo {
+  const _Photo(this.asset, this.facts, this.found);
+
+  final BaseAsset asset;
+  final ConversionPhotoFacts facts;
+  final ({OriginalLocation location, ConversionSource source})? found;
+}
+
+/// For each job of [ids], the index of the request it came from: a panorama is followed by the 3D version chained
+/// after it (its parentId), which comes from the same request
+List<int> requestIndexOfJobs(List<String> ids, ConversionQueueState queue) {
+  final indexes = <int>[];
+  var index = -1;
+  for (final id in ids) {
+    if (queue.byId(id)?.parentId == null) {
+      index++;
+    }
+    indexes.add(index);
+  }
+  return indexes;
+}
+
 class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   late final DesktopAiSettingsStore _store = ref.read(desktopAiSettingsStoreProvider);
+  List<_Photo>? _photos;
   List<ConversionCandidate>? _candidates;
   DestinationSession? _session;
   DesktopAiSettings _settings = const DesktopAiSettings();
   ExistingVersionChoice _existing = ExistingVersionChoice.skip;
   AiDestination _saveTo = AiDestination.nextToOriginal;
 
+  /// The types this build makes, read as the dialog opens, and the one chosen
+  List<ConversionKind> _offered = const [ConversionKind.sbsFromPhoto];
+  ConversionKind _kind = ConversionKind.sbsFromPhoto;
+
+  /// What the user changed in this dialog, which holds when the type changes: "Save to", the folder chosen with
+  /// Change, the network folders answered No
+  var _saveToChosen = false;
+  String? _folderChosen;
+  final _declined = <String>{};
+
   /// False while the album of the generated photos is not out of the backup: no folder of the library then
   var _libraryReady = true;
   var _gestures = 0;
+  var _plannings = 0;
   var _launched = false;
   var _closed = false;
 
@@ -652,66 +799,123 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   Future<void> _prepare() async {
     _settings = await _store.read();
     _existing = _settings.skipExisting ? ExistingVersionChoice.skip : ExistingVersionChoice.newVersion;
+    _offered = ref.read(offeredConversionKindsProvider);
     final facts = ref.read(conversionFactsReaderProvider);
     final files = ref.read(conversionAssetFilesProvider);
-    final candidates = <ConversionCandidate>[];
-    for (final (index, asset) in widget.assets.indexed) {
+    final photos = <_Photo>[];
+    for (final asset in widget.assets) {
       final known = await facts(asset);
-      final skip = conversionSkipOf(asset, known);
-      final found = skip == null ? await files.locate(asset) : null;
-      if (skip != null || found == null) {
-        candidates.add(
-          ConversionCandidate(
-            asset: asset,
-            source: _SkippedSource(asset.name),
-            skip: skip ?? ConversionSkipReason.unreachable,
-          ),
-        );
-        continue;
-      }
-      candidates.add(
+      final taken = _offered.any((kind) => conversionSkipOf(asset, known, kind: kind) == null);
+      photos.add(_Photo(asset, known, taken ? await files.locate(asset) : null));
+    }
+    if (!mounted || _closed) {
+      return;
+    }
+    _photos = photos;
+    _kind = _initialKind();
+    await _plan();
+  }
+
+  /// The type chosen last when this build makes it and it takes a photo of the selection, else the first that takes
+  /// one
+  ConversionKind _initialKind() {
+    final kept = _offered.where((kind) => kind.name == _settings.lastType).firstOrNull;
+    bool takes(ConversionKind kind) => _photos!.any((photo) => _skipOf(photo, kind) == null);
+    return [?kept, ..._offered].where(takes).firstOrNull ?? kept ?? _offered.first;
+  }
+
+  /// Why [photo] is skipped for a version of [kind], null when it runs
+  ConversionSkipReason? _skipOf(_Photo photo, ConversionKind kind) =>
+      conversionSkipOf(photo.asset, photo.facts, kind: kind) ??
+      (photo.found == null ? ConversionSkipReason.unreachable : null);
+
+  List<ConversionCandidate> _candidatesFor(ConversionKind kind) => [
+    for (final (index, photo) in _photos!.indexed)
+      if (_skipOf(photo, kind) case final skip?)
+        ConversionCandidate(asset: photo.asset, source: _SkippedSource(photo.asset.name), skip: skip)
+      else
         ConversionCandidate(
-          asset: asset,
-          source: found.source,
-          location: found.location,
-          quarterTurns: known.quarterTurns,
-          serverEdits: known.serverEdits,
+          asset: photo.asset,
+          source: photo.found!.source,
+          location: photo.found!.location,
+          quarterTurns: photo.facts.quarterTurns,
+          serverEdits: photo.facts.serverEdits,
           id: 'photo-$index',
         ),
-      );
+  ];
+
+  /// Plans the selection for the type chosen: the photos it takes, a destination session for them (the one of the
+  /// type before closed, its partial files deleted), its folders checked, then what the user changed in this dialog
+  Future<void> _plan() async {
+    final planning = ++_plannings;
+    final kind = _kind;
+    final candidates = _candidatesFor(kind);
+    final earlier = _session;
+    _session = null;
+    if (earlier != null) {
+      unawaited(earlier.close());
     }
+    setState(() => _candidates = candidates);
 
     // No folder of the library is checked nor written into before the album of the versions is out of the backup
     final guard = ref.read(aiWriteGuardProvider);
     final libraryFolders = {
       for (final candidate in candidates)
-        if (candidate.location case LibraryOriginal(:final path)) p.dirname(path),
+        if (candidate.runs)
+          if (candidate.location case LibraryOriginal(:final path)) p.dirname(path),
     };
+    var libraryReady = true;
     for (final folder in libraryFolders) {
       if (!await guard(folder)) {
-        _libraryReady = false;
+        libraryReady = false;
         break;
       }
     }
-    _saveTo = _libraryReady ? _settings.destination : AiDestination.folder;
 
     final jobs = [
       for (final candidate in candidates)
-        if (candidate.runs) DestinationJob(id: candidate.id!, original: candidate.location!),
+        if (candidate.runs) DestinationJob(id: candidate.id!, original: candidate.location!, kind: kind.output),
     ];
     final session = jobs.isEmpty
         ? null
-        : ref.read(destinationSessionFactoryProvider)(jobs, _libraryReady ? _store : _ChosenFolderStore(_store));
-    if (!mounted || _closed) {
+        : ref.read(destinationSessionFactoryProvider)(jobs, libraryReady ? _store : _ChosenFolderStore(_store));
+    if (!mounted || _closed || planning != _plannings) {
+      if (session != null) {
+        unawaited(session.close());
+      }
       return;
     }
     setState(() {
-      _candidates = candidates;
       _session = session;
+      _libraryReady = libraryReady;
+      if (!_saveToChosen || !libraryReady) {
+        _saveTo = libraryReady ? _settings.destination : AiDestination.folder;
+      }
     });
-    if (session != null) {
-      await _gesture(session.open);
+    if (session == null) {
+      return;
     }
+    await _gesture(() async {
+      await session.open();
+      if (_saveToChosen) {
+        await session.saveTo(_saveTo);
+      }
+      if (_folderChosen case final folder?) {
+        await session.chooseFolder(folder);
+      }
+      for (final key in _declined) {
+        await session.declineNetwork(key);
+      }
+    });
+  }
+
+  /// Another type chosen: the selection planned again for it
+  void _choose(ConversionKind kind) {
+    if (kind == _kind || _gestures > 0 || _launched || _photos == null) {
+      return;
+    }
+    setState(() => _kind = kind);
+    unawaited(_plan());
   }
 
   /// Runs a gesture of the destination session; Convert waits for it
@@ -741,6 +945,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       return;
     }
     if (picked != null && mounted) {
+      _folderChosen = picked;
       await _gesture(() => session.chooseFolder(picked!));
     }
   }
@@ -750,11 +955,14 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (session == null || destination == _saveTo) {
       return;
     }
-    setState(() => _saveTo = destination);
+    setState(() {
+      _saveTo = destination;
+      _saveToChosen = true;
+    });
     await _gesture(() => session.saveTo(destination));
   }
 
-  /// Whether every photo that runs has a folder that may receive its 3D photo
+  /// Whether every photo that runs has a folder that may receive its version
   bool _ready(DestinationSession session) {
     if (session.pendingConsents.isNotEmpty) {
       return false;
@@ -773,6 +981,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       return;
     }
     _launched = true;
+    final kind = _kind;
     final candidates = _candidates!;
     final settings = await _store.read();
     final requests = <ConversionRequest>[];
@@ -783,22 +992,35 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
             ? ConversionRequest(source: candidate.source, skip: candidate.skip ?? ConversionSkipReason.unreachable)
             : ConversionRequest(
                 source: candidate.source,
-                target: ConversionTarget(folder: plan.folder, fileName: sbsTargetName(candidate.location!.name)),
+                target: ConversionTarget(
+                  folder: plan.folder,
+                  fileName: versionTargetName(kind.output, candidate.location!.name),
+                ),
                 quarterTurns: candidate.quarterTurns,
               ),
       );
     }
-    // The version of the app goes into each 3D photo
+    // The version of the app goes into each file
     await ref.read(aiAppVersionProvider.future);
     final output = ref.read(safeWriterOutputProvider);
     final ids = ref
         .read(conversionQueueProvider.notifier)
-        .add(requests, existing: _existing, whenExists: settings.whenExists);
+        .add(
+          requests,
+          kind: kind,
+          existing: _existing,
+          whenExists: settings.whenExists,
+          alsoStereo: settings.alsoStereoPanorama,
+        );
     final infos = <String, ConversionJobInfo>{};
-    for (final (index, candidate) in candidates.indexed) {
-      final id = ids[index];
+    final queue = ref.read(conversionQueueProvider);
+    final requestOf = requestIndexOfJobs(ids, queue);
+    for (final (index, id) in ids.indexed) {
+      final candidate = candidates[requestOf[index]];
       final plan = candidate.id == null ? null : session.destinations[candidate.id];
-      final part = candidate.id == null ? null : session.takePart(candidate.id!);
+      // The partial file of the check goes to the job of the photo, never to a version chained after it
+      final chained = queue.byId(id)?.parentId != null;
+      final part = candidate.id == null || chained ? null : session.takePart(candidate.id!);
       if (part != null) {
         output.adopt(id, part);
       }
@@ -810,8 +1032,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
     _close();
-    if (settings.skipExisting != (_existing == ExistingVersionChoice.skip)) {
-      unawaited(_store.update((kept) => kept.copyWith(skipExisting: _existing == ExistingVersionChoice.skip)));
+    final skipExisting = _existing == ExistingVersionChoice.skip;
+    if (settings.skipExisting != skipExisting || settings.lastType != kind.name) {
+      unawaited(_store.update((kept) => kept.copyWith(skipExisting: skipExisting, lastType: () => kind.name)));
     }
     if (mounted) {
       Navigator.of(context).pop(true);
@@ -821,7 +1044,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final gate = ref.watch(aiGateResultProvider);
+    final kind = _kind;
+    final feature = aiFeatureOf(kind);
+    final gate = ref.watch(aiGateResultForProvider(feature));
     final candidates = _candidates;
     final session = _session;
     final found = gate.valueOrNull;
@@ -829,8 +1054,16 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final missing = found != null && !found.isAvailable && !refused;
     final busy = _gestures > 0 || candidates == null;
     final canConvert = !busy && found != null && found.isAvailable && session != null && _ready(session);
-    final skipped = candidates?.where((candidate) => !candidate.runs).toList() ?? const <ConversionCandidate>[];
     final count = widget.assets.length;
+    // Each type with the refusal of its gate, when it refuses
+    final refusals = {
+      for (final offered in _offered)
+        offered: switch (ref.watch(aiGateResultForProvider(aiFeatureOf(offered))).valueOrNull) {
+          final result? when aiGateRefuses(result) => aiGateReasonText(t, result),
+          _ => null,
+        },
+    };
+    final time = _runs.isEmpty ? null : conversionTimeText(t, kind, AiTimings(_settings.timings));
 
     return AlertDialog(
       key: const Key('ai_conversion_dialog'),
@@ -842,9 +1075,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(t.ai_immersive_dialog_title, style: Theme.of(context).textTheme.titleSmall),
+              if (_offered.length > 1) ...[_typeChoice(t, refusals), const SizedBox(height: 8)],
+              Text(
+                conversionKindHonesty(t, kind),
+                key: const Key('ai_conversion_honesty'),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const SizedBox(height: 4),
               Text(t.ai_immersive_no_guarantee, style: Theme.of(context).textTheme.bodySmall),
+              if (time != null) _Note(key: const Key('ai_conversion_time'), text: time),
               const SizedBox(height: 12),
               if (gate.isLoading || candidates == null)
                 const Padding(
@@ -858,9 +1097,17 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                   key: const Key('ai_conversion_install'),
                   child: Padding(
                     padding: const EdgeInsets.all(12),
-                    child: AiInstallPanel(
-                      components: aiComponentsFor(found.platform!),
-                      onInstalled: () => ref.invalidate(aiGateResultProvider),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AiInstallPanel(
+                          // Another type, other components: the panel reads what is missing again
+                          key: ValueKey('ai_conversion_install_${feature.name}'),
+                          components: aiComponentsFor(found.platform!, feature: feature),
+                          onInstalled: () => ref.invalidate(aiGateResultForProvider(feature)),
+                        ),
+                        _InstallSpace(feature: feature),
+                      ],
                     ),
                   ),
                 ),
@@ -871,7 +1118,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                   _Note(key: const Key('ai_conversion_rotation'), text: t.ai_immersive_rotation_applied),
                 if (_runs.any((candidate) => candidate.serverEdits))
                   _Note(key: const Key('ai_conversion_server_edits'), text: t.ai_immersive_server_edits_ignored),
-                if (skipped.isNotEmpty) _SkippedList(skipped: skipped),
+                _PlanList(candidates: candidates, kindName: conversionKindName(t, kind)),
               ],
             ],
           ),
@@ -891,6 +1138,31 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       ],
     );
   }
+
+  /// The types this build makes, each greyed with its reason when the gate refuses it
+  Widget _typeChoice(Translations t, Map<ConversionKind, String?> refusals) => RadioGroup<ConversionKind>(
+    key: const Key('ai_conversion_types'),
+    groupValue: _kind,
+    onChanged: (kind) {
+      if (kind != null) {
+        _choose(kind);
+      }
+    },
+    child: Column(
+      children: [
+        for (final offered in _offered)
+          RadioListTile<ConversionKind>(
+            key: Key('ai_conversion_type_${offered.name}'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            value: offered,
+            enabled: refusals[offered] == null && _gestures == 0 && _photos != null,
+            title: Text(conversionKindName(t, offered)),
+            subtitle: refusals[offered] == null ? null : Text(refusals[offered]!),
+          ),
+      ],
+    ),
+  );
 
   List<Widget> _destination(Translations t, DestinationSession session) {
     final plans = session.destinations;
@@ -964,7 +1236,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           key: ValueKey('ai_conversion_network_$key'),
           folder: folder,
           onYes: _gestures == 0 ? () => unawaited(_gesture(() => session.allowNetwork(key))) : null,
-          onNo: _gestures == 0 ? () => unawaited(_gesture(() => session.declineNetwork(key))) : null,
+          onNo: _gestures == 0
+              ? () {
+                  _declined.add(key);
+                  unawaited(_gesture(() => session.declineNetwork(key)));
+                }
+              : null,
         ),
       const SizedBox(height: 8),
     ];
@@ -1141,11 +1418,13 @@ class _NetworkQuestion extends StatelessWidget {
   }
 }
 
-/// The photos that will be skipped, each with why
-class _SkippedList extends StatelessWidget {
-  const _SkippedList({required this.skipped});
+/// What will be done with each photo of the selection: for a mixed one, the photos the type makes, under its name;
+/// then the photos skipped, each with why
+class _PlanList extends StatelessWidget {
+  const _PlanList({required this.candidates, required this.kindName});
 
-  final List<ConversionCandidate> skipped;
+  final List<ConversionCandidate> candidates;
+  final String kindName;
 
   /// More than this many are counted, not listed
   static const _listed = 20;
@@ -1153,19 +1432,75 @@ class _SkippedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final colors = Theme.of(context).colorScheme;
+    final secondary = TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant);
+    final title = Theme.of(context).textTheme.titleSmall;
+    final runs = candidates.where((candidate) => candidate.runs).toList();
+    final skipped = candidates.where((candidate) => !candidate.runs).toList();
     return Column(
-      key: const Key('ai_conversion_skipped'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 8),
-        Text('${t.ai_immersive_state_skipped} (${skipped.length})', style: Theme.of(context).textTheme.titleSmall),
-        for (final candidate in skipped.take(_listed))
+        if (runs.isNotEmpty && skipped.isNotEmpty)
+          Column(
+            key: const Key('ai_conversion_made'),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8),
+              Text('$kindName (${runs.length})', style: title),
+              for (final candidate in runs.take(_listed)) Text(candidate.asset.name, style: secondary),
+              if (runs.length > _listed) Text('…', style: secondary),
+            ],
+          ),
+        if (skipped.isNotEmpty)
+          Column(
+            key: const Key('ai_conversion_skipped'),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8),
+              Text('${t.ai_immersive_state_skipped} (${skipped.length})', style: title),
+              for (final candidate in skipped.take(_listed))
+                Text('${candidate.asset.name}: ${conversionSkipText(t, candidate.skip!)}', style: secondary),
+              if (skipped.length > _listed) Text('…', style: secondary),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+/// Under the components to install: what the drive of the components lacks for them, else its free space; and the
+/// folder they were moved to when its drive is not connected
+class _InstallSpace extends ConsumerWidget {
+  const _InstallSpace({required this.feature});
+
+  final AiFeature feature;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    final space = ref.watch(aiInstallSpaceProvider(feature)).valueOrNull;
+    final unreachable = ref.watch(aiComponentsFolderMissingProvider).valueOrNull;
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (unreachable != null)
           Text(
-            '${candidate.asset.name}: ${conversionSkipText(t, candidate.skip!)}',
+            t.ai_immersive_components_folder_missing(folder: unreachable),
+            key: const Key('ai_conversion_folder_missing'),
+            style: TextStyle(color: colors.error),
+          )
+        else if (space?.shortage case final shortage?)
+          Text(
+            aiSpaceShortageText(t, shortage),
+            key: const Key('ai_conversion_space_short'),
+            style: TextStyle(color: colors.error),
+          )
+        else if (space?.space case final free?)
+          Text(
+            t.ai_immersive_free_space(free: formatBytes(free.free), drive: free.volume),
+            key: const Key('ai_conversion_free_space'),
             style: TextStyle(color: colors.onSurfaceVariant),
           ),
-        if (skipped.length > _listed) Text('…', style: TextStyle(color: colors.onSurfaceVariant)),
       ],
     );
   }
