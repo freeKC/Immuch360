@@ -112,10 +112,10 @@ void main() {
       },
     );
 
-    test('a graph cut into segments is stopped before its first step and refused', () async {
+    test('a graph cut into segments is stopped before its first step and refused as a busy card', () async {
       final heard = <GeneratorProgress>[];
       final failure = await generate('segments', onProgress: heard.add);
-      expect(failure?.code, ImmersiveErrorCode.outputRejected);
+      expect(failure?.code, ImmersiveErrorCode.gpuBusy);
       expect(heard, isEmpty);
       expect(processImageOf(childPid()!), isNull);
       expect(File(request().outputPath).existsSync(), isFalse);
