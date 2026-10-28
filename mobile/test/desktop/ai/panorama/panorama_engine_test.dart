@@ -1,10 +1,11 @@
 // The engine of the 360° panoramas generated around a photo, pano-v1 (lot P3, design-final 2026-10-27, sections 4.3,
 // 4.5 and 10.1 point 6), on the fakes of lot C0 at small sizes: the whole chain from a JPEG to the .part, its steps in
 // order with "step k of n" and the time left, the XMP with GPano, the IPTC, the region and the coverage, the photo
-// pasted back to the pixel, the seam and its flag, the field of view from the EXIF, MoGe-2 or the guess, the turns of
-// the photo, a refused image made once more then refused, the named failures of the generator, the cancel, the
-// components, the source changed, a photo that is not a JPEG; the steps sent to isolates of their own as the app runs
-// them; then the same chain through the runner of lot P2 and the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI).
+// pasted back to the pixel, a photo much larger than the frame reduced to its density first, the seam and its flag,
+// the field of view from the EXIF, MoGe-2 or the guess, the turns of the photo, a refused image made once more then
+// refused, the named failures of the generator, the cancel, the components, the source changed, a photo that is not a
+// JPEG; the steps sent to isolates of their own as the app runs them; then the same chain through the runner of lot P2
+// and the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI).
 
 import 'dart:convert';
 import 'dart:io';
@@ -173,6 +174,53 @@ void main() {
   String photo({bool focal = true}) =>
       scenePhoto(folder, 'salon.jpg', width: 48, height: 32, exif: focal ? exifWithFocal35(26) : null);
 
+  /// A photo of [width] x [height] in a checkerboard of single pixels, with a focal length of 26 mm equivalent: read
+  /// pixel by pixel instead of reduced to the density of the frame, it aliases
+  String finePhoto(int width, int height) {
+    final image = img.Image(width: width, height: height);
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        final light = (x + y).isEven;
+        image.setPixelRgb(x, y, light ? 230 : 20, light ? 210 : 40, light ? 30 : 200);
+      }
+    }
+    final path = p.join(folder.path, 'fine.jpg');
+    File(path).writeAsBytesSync(insertAfterSoi(img.encodeJpg(image, quality: 95), exifWithFocal35(26)));
+    return path;
+  }
+
+  /// Each pixel of [written] (192 x 96) where the photo is whole is the photo reduced to the density of the panorama,
+  /// read at that point
+  void expectPastedBack(SbsPicture written, SbsDecoded photoPixels, double hfov) {
+    expect((written.width, written.height), (192, 96));
+    final reduced = photoForFrame(photoPixels, hfov: hfov, frameWidth: 192);
+    final colour = Float64List(3);
+    var whole = 0;
+    for (var y = 0; y < 96; y++) {
+      for (var x = 0; x < 192; x++) {
+        final point = photoPointOf(x, y, 192, 96, photoWidth: reduced.width, photoHeight: reduced.height, hfov: hfov);
+        if (point == null) {
+          continue;
+        }
+        final (u, v) = point;
+        final edge = [
+          u / reduced.width,
+          1 - u / reduced.width,
+          v / reduced.height,
+          1 - v / reduced.height,
+        ].reduce((a, b) => a < b ? a : b);
+        if (edge < PanoV1.pasteFeather) {
+          continue;
+        }
+        whole++;
+        readPhoto(reduced, u, v, colour);
+        final at = 4 * (y * 192 + x);
+        expect(written.rgba.sublist(at, at + 3), [for (final c in colour) toByte(c)], reason: '($x, $y)');
+      }
+    }
+    expect(whole, greaterThan(100));
+  }
+
   PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1}) {
     final bytes = File(path).readAsBytesSync();
     return PanoramaJob(
@@ -318,37 +366,54 @@ void main() {
       final recording = RecordingCodec(const DartSbsCodec());
       final result = await engineOf(codecs: () => [recording]).run(jobOf(path), cancel: cancel);
       expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
-      final written = recording.pictures.single;
-      expect((written.width, written.height), (192, 96));
-      final photoPixels = recording.decoded.last;
-      final hfov = photoFovOfExif(48, 32, 26)!.hfov;
-      final reduced = photoForFrame(photoPixels, hfov: hfov, frameWidth: 192);
-      final colour = Float64List(3);
-      var whole = 0;
-      for (var y = 0; y < 96; y++) {
-        for (var x = 0; x < 192; x++) {
-          final point = photoPointOf(x, y, 192, 96, photoWidth: reduced.width, photoHeight: reduced.height, hfov: hfov);
-          if (point == null) {
-            continue;
-          }
-          final (u, v) = point;
-          final edge = [
-            u / reduced.width,
-            1 - u / reduced.width,
-            v / reduced.height,
-            1 - v / reduced.height,
-          ].reduce((a, b) => a < b ? a : b);
-          if (edge < PanoV1.pasteFeather) {
-            continue;
-          }
-          whole++;
-          readPhoto(reduced, u, v, colour);
-          final at = 4 * (y * 192 + x);
-          expect(written.rgba.sublist(at, at + 3), [for (final c in colour) toByte(c)], reason: '($x, $y)');
-        }
-      }
-      expect(whole, greaterThan(100));
+      expectPastedBack(recording.pictures.single, recording.decoded.last, photoFovOfExif(48, 32, 26)!.hfov);
     });
+
+    test(
+      'a photo much larger than the frame: reduced to its density for the control frame and the paste back',
+      () async {
+        // A photo of 12 to 50 Mpx read pixel by pixel would alias in the frame the LoRA sees and in the region pasted
+        // back; here a checkerboard of single pixels over 512 x 340, far more than 1.5 pixels of the photo per pixel of
+        // a frame of 64 or of a panorama of 192
+        final path = finePhoto(512, 340);
+        final recording = RecordingCodec(const DartSbsCodec());
+        final controls = <List<int>>[];
+        final result = await engineOf(
+          generator: _Watching(
+            FakeGeneratorBackend(),
+            (request) => controls.add(File(request.controlPath).readAsBytesSync()),
+          ),
+          codecs: () => [recording],
+        ).run(jobOf(path), cancel: cancel);
+        expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+        final photoPixels = recording.decoded.first;
+        expect((photoPixels.width, photoPixels.height), (512, 340));
+        final hfov = photoFovOfExif(512, 340, 26)!.hfov;
+
+        final reduced = photoForFrame(photoPixels, hfov: hfov, frameWidth: 64);
+        expect(reduced.width, lessThan(512 ~/ 4), reason: 'the photo is reduced for the frame');
+        final expected = projectPhoto(reduced, hfov: hfov, width: 64, height: 32);
+        final control = img.decodePng(Uint8List.fromList(controls.single))!;
+        expect((control.width, control.height), (64, 32));
+        var inside = 0;
+        for (var y = 0; y < 32; y++) {
+          for (var x = 0; x < 64; x++) {
+            final pixel = control.getPixel(x, y);
+            final at = 4 * (y * 64 + x);
+            inside += expected.inside[y * 64 + x] == 0 ? 0 : 1;
+            expect(
+              [pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt()],
+              expected.rgba.sublist(at, at + 3),
+              reason: '($x, $y)',
+            );
+          }
+        }
+        expect(inside, greaterThan(20));
+
+        expect(photoForFrame(photoPixels, hfov: hfov, frameWidth: 192).width, lessThan(512 ~/ 2));
+        expectPastedBack(recording.pictures.single, recording.decoded.last, hfov);
+      },
+    );
 
     test('the steps sent to isolates of their own, as the app runs them; the generator asked from this one', () async {
       final generator = FakeGeneratorBackend();
