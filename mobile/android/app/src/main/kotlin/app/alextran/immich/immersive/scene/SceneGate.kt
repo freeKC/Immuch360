@@ -57,6 +57,28 @@ internal object SceneGate {
     BYTES_PER_PIXEL.toLong() * ((size.width + sample - 1) / sample) * ((size.height + sample - 1) / sample)
 
   /**
+   * What the packet at the head of a file says before anything is weighed, the request it makes ([SceneHead.spec])
+   * being null for a packet this build cannot read:
+   * 1. a later Immuch360:FormatVersion, whatever its kind, or a later SceneFormat glb-layers-vN:
+   *    [SceneRefusal.NEWER_VERSION], "Made by a newer version of Immuch360";
+   * 2. another Kind of ours, or a SceneFormat written that is not a format of ours: [SceneRefusal.NOT_OURS];
+   * 3. null otherwise: the request is then weighed by [check]. A packet of our kind and version with a field missing
+   *    or a value that cannot be right, SceneFormat absent or empty included, passes here with no request: the viewer
+   *    says the scene data is missing (SceneFileProblem.MISSING, "The 3D scene data is missing from this file"), as
+   *    for a tail gone.
+   */
+  fun checkHead(head: SceneHead): SceneRefusal? {
+    if ((head.formatVersion ?: FORMAT_VERSION) > FORMAT_VERSION) return SceneRefusal.NEWER_VERSION
+    val format = head.sceneFormat
+    if (!format.isNullOrEmpty() && format != GlbReader.FORMAT) {
+      val version = GlbReader.formatVersionOf(format)
+      if (version != null && version > 1) return SceneRefusal.NEWER_VERSION
+    }
+    if (head.kind != SceneFile.KIND) return SceneRefusal.NOT_OURS
+    return if (format.isNullOrEmpty() || format == GlbReader.FORMAT) null else SceneRefusal.NOT_OURS
+  }
+
+  /**
    * Whether a scene of [weight] opens on a headset of [caps] with [availableMemory] bytes free (null when unknown)
    * at the thermal status [thermalStatus] (null when unknown). In this order: the version, the geometry (triangles,
    * then vertices), the textures (count, then side), the file, the memory, the heat. The memory is weighed only once

@@ -2,6 +2,8 @@ package app.alextran.immich.immersive.scene
 
 import app.alextran.immich.immersive.VolumetricSceneSpec
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -196,5 +198,37 @@ class SceneGateTest {
       SceneWeight.of(scene, formatVersion = 1, fileBytes = 6438),
     )
     assertEquals(SceneVerdict.Open(listOf(1, 1), 4L * (32 * 24 + 16 * 16)), check(SceneWeight.of(scene, 1, 6438)))
+  }
+
+  private fun head(preview: ByteArray): SceneHead = SceneFile.readHead(SceneSource.of(preview))!!
+
+  @Test
+  fun `the packet at the head says a newer version or not ours before anything is weighed`() {
+    // A packet of a later FormatVersion or a later scene format, as read from the head of a file
+    val version = head(SceneTestFiles.previewWith("FormatVersion", "2"))
+    assertNull(version.spec)
+    assertEquals(SceneRefusal.NEWER_VERSION, SceneGate.checkHead(version))
+    val format = head(SceneTestFiles.previewWith("SceneFormat", "glb-layers-v2"))
+    assertEquals(SceneRefusal.NEWER_VERSION, SceneGate.checkHead(format))
+    // Another kind of ours, or a scene format that is not ours
+    assertEquals(SceneRefusal.NOT_OURS, SceneGate.checkHead(head(SceneTestFiles.previewWith("Kind", "Panorama360"))))
+    assertEquals(SceneRefusal.NOT_OURS, SceneGate.checkHead(head(SceneTestFiles.previewWith("SceneFormat", "splat"))))
+    // The version is told first, whatever the kind
+    val both = SceneHead(formatVersion = 3, kind = "Panorama360", sceneFormat = null, spec = null)
+    assertEquals(SceneRefusal.NEWER_VERSION, SceneGate.checkHead(both))
+    // The packet of the fixture passes, its request then weighed
+    val tiny = head(SceneTestFiles.tinyPreview())
+    assertNull(SceneGate.checkHead(tiny))
+    assertNotNull(tiny.spec)
+    // A packet of our kind and version with a field missing or wrong, the scene format included, passes with no
+    // request: the viewer says the scene data is missing, as for a tail gone
+    val broken =
+      listOf("SceneLength" to "", "SceneSha256" to "ABC", "SceneFormat" to "").map { (name, value) ->
+        "$name=$value" to head(SceneTestFiles.previewWith(name, value))
+      } + listOf("SceneFormat", "SceneLength").map { "no $it" to head(SceneTestFiles.previewWithout(it)) }
+    for ((what, packet) in broken) {
+      assertNull(what, SceneGate.checkHead(packet))
+      assertNull(what, packet.spec)
+    }
   }
 }

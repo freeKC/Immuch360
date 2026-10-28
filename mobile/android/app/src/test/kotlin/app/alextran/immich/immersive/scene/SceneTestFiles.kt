@@ -315,4 +315,12 @@ internal object SceneTestFiles {
     check(pattern.containsMatchIn(text)) { "no $name in the packet" }
     return pattern.replace(text, "Immuch360:$name=\"$value\"").toByteArray(Charsets.ISO_8859_1)
   }
+
+  /** The preview of the fixture without its packet's [name] attribute, the segment lengths left as they were */
+  fun previewWithout(name: String): ByteArray {
+    val text = String(tinyPreview(), Charsets.ISO_8859_1)
+    val pattern = Regex("\\s+Immuch360:$name=\"[^\"]*\"")
+    check(pattern.containsMatchIn(text)) { "no $name in the packet" }
+    return pattern.replace(text, "").toByteArray(Charsets.ISO_8859_1)
+  }
 }

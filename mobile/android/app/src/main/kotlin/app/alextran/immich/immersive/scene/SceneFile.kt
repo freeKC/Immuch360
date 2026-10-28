@@ -84,7 +84,8 @@ internal object SceneFile {
 
   /**
    * The request the viewer opens: the one of the [head] when the head holds our packet (null when that packet names a
-   * scene this build cannot read, or misses a field), the JSON [request] only for a file without our packet.
+   * scene this build cannot read, or misses a field; SceneGate.checkHead tells which), the JSON [request] only for a
+   * file without our packet.
    */
   fun specOf(head: SceneHead?, request: VolumetricSceneSpec?): VolumetricSceneSpec? =
     if (head != null) head.spec else request
@@ -265,8 +266,9 @@ internal sealed interface SceneTailResult {
 
 /**
  * What the packet at the head of a file says of its scene: Immuch360:FormatVersion, Kind and SceneFormat as written
- * (SceneGate tells a newer version by them), and the request its fields make, null when the packet is of a newer
- * version, of another kind, of another scene format, or misses a field or holds a value that cannot be right.
+ * (SceneGate.checkHead tells a newer version or another kind by them), and the request its fields make, null when the
+ * packet is of a newer version, of another kind, of another scene format, or misses a field or holds a value that
+ * cannot be right.
  */
 internal data class SceneHead(
   val formatVersion: Int?,
