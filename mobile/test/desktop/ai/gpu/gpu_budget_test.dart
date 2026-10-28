@@ -42,19 +42,22 @@ void main() {
     expect(check.card.name, rtx4060Laptop.name);
   });
 
-  test('the answer of the probe of Windows on the RTX 4060 while another program held 4.0 GiB: the job waits', () async {
-    // V3, on the PC of the owner: the budget of Vulkan alone said 7.5 GB; the probe lowers it to what the counters of
-    // Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage)
-    final report = GpuReport.fromJson(
-      jsonDecode(File('test/fixtures/ai_immersive/gpu_probe_rtx4060_laptop_busy.json').readAsStringSync())
-          as Map<String, Object?>,
-    );
-    final check = await budget(FakeGpuProbe.of(report)).check();
+  test(
+    'the answer of the probe of Windows on the RTX 4060 while another program held 4.0 GiB: the job waits',
+    () async {
+      // V3, on the PC of the owner: the budget of Vulkan alone said 7.5 GB; the probe lowers it to what the counters of
+      // Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage)
+      final report = GpuReport.fromJson(
+        jsonDecode(File('test/fixtures/ai_immersive/gpu_probe_rtx4060_laptop_busy.json').readAsStringSync())
+            as Map<String, Object?>,
+      );
+      final check = await budget(FakeGpuProbe.of(report)).check();
 
-    expect(check, isA<GpuBudgetWait>());
-    expect((check as GpuBudgetWait).card.name, rtx4060Laptop.name);
-    expect(check.free, 4064452608);
-  });
+      expect(check, isA<GpuBudgetWait>());
+      expect((check as GpuBudgetWait).card.name, rtx4060Laptop.name);
+      expect(check.free, 4064452608);
+    },
+  );
 
   test('just the memory asked is enough, a byte less waits', () async {
     GpuReport card(int free) => GpuReport(
