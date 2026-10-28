@@ -244,6 +244,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
   ConversionSkipReason.alreadyStereo => t.ai_immersive_skipped_3d,
   ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
   ConversionSkipReason.notSphere => t.ai_immersive_skipped_not_360,
+  ConversionSkipReason.raw360 => t.ai_immersive_skipped_raw_360,
   ConversionSkipReason.unreadableFormat => t.ai_immersive_unavailable_format,
   ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
   ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
@@ -514,7 +515,7 @@ ConversionSkipReason? conversionSkipOf(
     }
     if (facts.isRaw360) {
       // Two fisheye circles, no equirectangular picture to make a relief of
-      return ConversionSkipReason.unreadableFormat;
+      return ConversionSkipReason.raw360;
     }
     if (facts.isStereo || guessStereoLayout(width: asset.width, height: asset.height) != StereoLayout.mono) {
       return ConversionSkipReason.alreadyStereo;

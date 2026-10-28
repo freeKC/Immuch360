@@ -184,6 +184,10 @@ enum ConversionSkipReason {
   /// Not a 360° photo of a full sphere, for the 3D version of a 360° photo
   notSphere,
 
+  /// A raw photo of a 360° camera (an Insta360 .insp), its two lenses not stitched: the app shows it as a sphere, but
+  /// it holds no equirectangular picture to make a 3D version of
+  raw360,
+
   /// A format this computer cannot read (HEIC on Linux)
   unreadableFormat,
 
