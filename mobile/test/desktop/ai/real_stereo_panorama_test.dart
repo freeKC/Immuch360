@@ -147,7 +147,9 @@ void main() {
           final merged = mergeViewDepths(views, maps, width: Relief360V1.mapWidth, height: Relief360V1.mapHeight);
           final normalised = normaliseDepth(merged.map);
           entry['lowRelief'] = normalised.lowRelief;
-          File(p.join(out.path, '${p.basenameWithoutExtension(name)}_depth.png')).writeAsBytesSync(_grey(normalised.depth));
+          File(
+            p.join(out.path, '${p.basenameWithoutExtension(name)}_depth.png'),
+          ).writeAsBytesSync(_grey(normalised.depth));
         } finally {
           backend.close();
         }
