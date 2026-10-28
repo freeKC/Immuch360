@@ -680,6 +680,48 @@ void main() {
       expect(target.existsSync(), isFalse);
     });
 
+    test(
+      'while the copies are kept, nothing is removed nor handed out, and a download waits for the new folder',
+      () async {
+        final components = service();
+        await components.install(_runtimeComponent);
+        final reached = Completer<void>();
+        final held = Completer<void>();
+        final moving = components.moveTo(
+          target,
+          remember: (folder) async {
+            reached.complete();
+            await held.future;
+            await remember(folder);
+          },
+        );
+        await reached.future;
+
+        expect(components.isMoving, isTrue);
+        expect(await components.verifiedFile(_runtimeComponent), isNull, reason: 'a job would load the old folder');
+        expect(await components.remove(_runtimeComponent), AiRemoveOutcome.busy);
+        expect(await components.removeAll(), AiRemoveOutcome.busy);
+        expect(
+          (await components.moveTo(Directory(p.join(temp.path, 'other')), remember: remember)).outcome,
+          AiMoveOutcome.busy,
+        );
+        var installed = false;
+        final install = components.install(_modelComponent).then((_) => installed = true);
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(installed, isFalse, reason: 'the download waits for the move');
+
+        held.complete();
+        expect((await moving).outcome, AiMoveOutcome.moved);
+        await install;
+        expect(components.isMoving, isFalse);
+        expect(under(target, _modelComponent).readAsBytesSync(), _model, reason: 'downloaded into the new folder');
+        expect(installedFile(_modelComponent).existsSync(), isFalse);
+        expect((await components.verifiedFile(_runtimeComponent))?.path, under(target, _runtimeComponent).path);
+        final kept = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+        expect((kept['components'] as Map).keys, unorderedEquals(['test-runtime', 'test-model']));
+      },
+    );
+
     test('a copy whose sum is wrong: nothing kept in the new folder, the old one untouched', () async {
       final components = service();
       await components.install(_modelComponent);
