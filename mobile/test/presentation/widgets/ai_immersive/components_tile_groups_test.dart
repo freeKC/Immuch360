@@ -1,6 +1,8 @@
 // The tile of the AI components of a computer, by group of features (design-final 2026-10-27, sections 7.1 and 9.1):
-// "3D photos" and "3D scenes" with their sizes, each component under the first group that needs it, Download and
-// Remove by group, a shared component that stays said as such, the panoramas absent while their engine is missing.
+// "3D photos" and "3D scenes" with the size of what each needs (a shared component counted in both), each component
+// under the first group that needs it, Download and Remove by group, Remove only where it would remove something, a
+// shared component that stays said as such, the panoramas absent while their engine is missing, and every button
+// greyed while the components are being moved.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -53,23 +55,28 @@ void main() {
     }
   }
 
-  testWidgets('the 3D photos and the 3D scenes with their sizes, each component once; no panoramas yet', (
-    tester,
-  ) async {
-    await pumpTile(tester);
+  testWidgets(
+    'the 3D photos and the 3D scenes with the size of what each needs, each component once; no panoramas yet',
+    (tester) async {
+      await pumpTile(tester);
 
-    final photos = AiComponentsService.diskBytesOf([runtime, depth]);
-    expect(find.text('3D photos: ${formatBytes(photos)}'), findsOneWidget);
-    expect(find.text('3D scenes: ${formatBytes(AiComponentsService.diskBytesOf([moge, lama]))}'), findsOneWidget);
-    expect(find.textContaining('360° panoramas'), findsNothing);
-    expect(inGroup(AiFeatureGroup.photos, find.text('ONNX Runtime 1.31.0')), findsOneWidget);
-    expect(inGroup(AiFeatureGroup.scenes, find.text('MoGe-2 ViT-S')), findsOneWidget);
-    expect(inGroup(AiFeatureGroup.scenes, find.text('LaMa')), findsOneWidget);
-    expect(find.text('ONNX Runtime 1.31.0'), findsOneWidget, reason: 'listed under the 3D photos only');
-    expect(find.byKey(const Key('ai_components_group_download_scenes')), findsOneWidget);
-    expect(find.byKey(const Key('ai_components_group_remove_scenes')), findsNothing);
-    expect(service.installs, isEmpty);
-  });
+      final photos = AiComponentsService.diskBytesOf([runtime, depth]);
+      expect(find.text('3D photos: ${formatBytes(photos)}'), findsOneWidget);
+      expect(
+        find.text('3D scenes: ${formatBytes(AiComponentsService.diskBytesOf([runtime, moge, lama]))}'),
+        findsOneWidget,
+        reason: 'ONNX Runtime counted too: Download takes it when it is missing',
+      );
+      expect(find.textContaining('360° panoramas'), findsNothing);
+      expect(inGroup(AiFeatureGroup.photos, find.text('ONNX Runtime 1.31.0')), findsOneWidget);
+      expect(inGroup(AiFeatureGroup.scenes, find.text('MoGe-2 ViT-S')), findsOneWidget);
+      expect(inGroup(AiFeatureGroup.scenes, find.text('LaMa')), findsOneWidget);
+      expect(find.text('ONNX Runtime 1.31.0'), findsOneWidget, reason: 'listed under the 3D photos only');
+      expect(find.byKey(const Key('ai_components_group_download_scenes')), findsOneWidget);
+      expect(find.byKey(const Key('ai_components_group_remove_scenes')), findsNothing);
+      expect(service.installs, isEmpty);
+    },
+  );
 
   testWidgets('Download of the scenes asks for every component they need, ONNX Runtime too when missing', (
     tester,
@@ -103,6 +110,38 @@ void main() {
       expect(find.text('Kept while 3D scenes use it'), findsNothing);
     },
   );
+
+  testWidgets('Remove only where it removes something: the scenes alone installed keep ONNX Runtime from the photos', (
+    tester,
+  ) async {
+    installed([runtime, moge, lama]);
+    await pumpTile(tester);
+
+    expect(find.byKey(const Key('ai_components_group_remove_photos')), findsNothing);
+    expect(find.byKey(const Key('ai_components_group_remove_scenes')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('ai_components_group_remove_scenes')));
+    await tester.pumpAndSettle();
+    expect(service.statusOf(runtime).state, AiComponentState.notInstalled, reason: 'no other group keeps it');
+    expect(find.byKey(const Key('ai_components_group_remove_photos')), findsNothing);
+  });
+
+  testWidgets('while the components are moved, nothing can be downloaded nor removed', (tester) async {
+    installed([runtime, depth]);
+    service.moving = true;
+    await pumpTile(tester);
+
+    expect(tester.widget<TextButton>(find.byKey(const Key('ai_components_group_download_scenes'))).onPressed, isNull);
+    expect(tester.widget<IconButton>(find.byKey(const Key('ai_components_group_remove_photos'))).onPressed, isNull);
+
+    service.moving = false;
+    await tester.pump();
+    expect(
+      tester.widget<TextButton>(find.byKey(const Key('ai_components_group_download_scenes'))).onPressed,
+      isNotNull,
+    );
+    expect(tester.widget<IconButton>(find.byKey(const Key('ai_components_group_remove_photos'))).onPressed, isNotNull);
+  });
 
   testWidgets('a removal refused while a conversion runs offers to cancel it, then removes', (tester) async {
     installed([runtime, depth, moge, lama]);
