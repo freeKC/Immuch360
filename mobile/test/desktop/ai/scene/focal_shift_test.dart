@@ -134,6 +134,51 @@ void main() {
     }
   });
 
+  // The real cases of the measure M2 (p2/results/ai1/focal_shift_reference_m2.json, four photos at 2 500 tokens):
+  // the samples of MoGe at 64 x 64 and what recover_focal_shift of MoGe found, free and with a focal length fixed, and
+  // the exact minimum. By hand only, the file staying out of the repository (1 MB): IMMUCH360_AI_FOCAL_REFERENCE.
+  final reference = Platform.environment['IMMUCH360_AI_FOCAL_REFERENCE'];
+  test('the real cases of M2: the samples of MoGe, its focal length and shift within 1e-4', () {
+    final cases = ((jsonDecode(File(reference!).readAsStringSync()) as Map)['cases'] as List).cast<Map>();
+    expect(cases, isNotEmpty);
+    for (final entry in cases) {
+      final width = entry['width'] as int;
+      final height = entry['height'] as int;
+      final reason = entry['photo'] as String;
+      expect(entry['sample_rows'], [for (var row = 0; row < 64; row++) row * height ~/ 64], reason: reason);
+      expect(entry['sample_cols'], [for (var column = 0; column < 64; column++) column * width ~/ 64], reason: reason);
+      final spans = viewPlaneSpans(width, height);
+      final points = <double>[];
+      final uv = <double>[];
+      for (var row = 0; row < 64; row++) {
+        for (var column = 0; column < 64; column++) {
+          final pixelUv = ((entry['uv_64'] as List)[row] as List)[column] as List;
+          final x = (entry['sample_cols'] as List)[column] as int;
+          final y = (entry['sample_rows'] as List)[row] as int;
+          expect(pixelUv[0], closeTo(spans.x * (2 * (x + 0.5) / width - 1), 1e-6), reason: reason);
+          expect(pixelUv[1], closeTo(spans.y * (2 * (y + 0.5) / height - 1), 1e-6), reason: reason);
+          if (((entry['mask_64'] as List)[row] as List)[column] == 1) {
+            points.addAll(
+              (((entry['points_64'] as List)[row] as List)[column] as List).map((value) => (value as num).toDouble()),
+            );
+            uv.addAll(pixelUv.map((value) => (value as num).toDouble()));
+          }
+        }
+      }
+      final samples = FocalShiftSamples(Float64List.fromList(points), Float64List.fromList(uv));
+      final free = recoverFocalShift(samples);
+      final fixedFocal = (entry['fixed_focal'] as num).toDouble();
+      final fixed = recoverFocalShift(samples, exifFocal: fixedFocal);
+
+      expect(free.focal, closeTo((entry['moge_focal'] as num).toDouble(), 1e-4 * free.focal), reason: reason);
+      expect(free.shift, closeTo((entry['moge_shift'] as num).toDouble(), 1e-4), reason: reason);
+      expect(free.focal, closeTo((entry['exact_focal'] as num).toDouble(), 1e-6 * free.focal), reason: reason);
+      expect(free.shift, closeTo((entry['exact_shift'] as num).toDouble(), 1e-6), reason: reason);
+      expect(fixed.shift, closeTo((entry['moge_shift_with_fixed_focal'] as num).toDouble(), 1e-4), reason: reason);
+      expect(fixed.shift, closeTo((entry['exact_shift_with_fixed_focal'] as num).toDouble(), 1e-6), reason: reason);
+    }
+  }, skip: reference == null ? 'by hand: set IMMUCH360_AI_FOCAL_REFERENCE to focal_shift_reference_m2.json' : null);
+
   test('a map of fewer than two valid points: the shift 0 and the focal length 1, as MoGe', () {
     final none = FocalShiftSamples(Float64List(0), Float64List(0));
     final one = FocalShiftSamples(Float64List.fromList([0.1, 0.2, 2]), Float64List.fromList([0.1, 0.2]));
