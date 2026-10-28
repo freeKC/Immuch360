@@ -37,6 +37,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/local_only_message.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
@@ -202,11 +203,11 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
   ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
   ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
   ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
-  ImmersiveErrorCode.gpuUnavailable => switch (message) {
-    'gpuNoAnswer' => t.ai_immersive_gpu_no_answer,
-    'gpuNone' => t.ai_immersive_gpu_none,
-    'gpuIntegrated' => t.ai_immersive_gpu_integrated,
-    'notYetOnMac' => t.ai_immersive_gpu_not_on_mac,
+  ImmersiveErrorCode.gpuUnavailable => switch (AiGateReason.values.asNameMap()[message]) {
+    AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
+    AiGateReason.gpuNone => t.ai_immersive_gpu_none,
+    AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
+    AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
     _ => t.ai_immersive_failed_gpu_unavailable,
   },
   ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,

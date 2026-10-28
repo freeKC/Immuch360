@@ -16,6 +16,7 @@ import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:path/path.dart' as p;
@@ -155,7 +156,7 @@ void main() {
 
     expect(job(pano).state, ConversionState.failed);
     expect(job(pano).error, ImmersiveErrorCode.gpuUnavailable);
-    expect(job(pano).message, 'gpuNone');
+    expect(job(pano).message, AiGateReason.gpuNone.name);
     expect(panorama.jobs, isEmpty);
   });
 

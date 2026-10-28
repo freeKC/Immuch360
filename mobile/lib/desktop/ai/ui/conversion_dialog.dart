@@ -184,11 +184,13 @@ String conversionKindName(Translations t, ConversionKind kind) => switch (kind) 
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_type_stereo_360,
 };
 
-/// What a type of version is, in the words of its honesty label
-String conversionKindHonesty(Translations t, ConversionKind kind) => switch (kind) {
+/// What a type of version is, in the words of its honesty label; the 3D version of a panorama the app [generated] is
+/// said as generated, as its file, the panel and "Versions" say it
+String conversionKindHonesty(Translations t, ConversionKind kind, {bool generated = false}) => switch (kind) {
   ConversionKind.sbsFromPhoto => t.ai_immersive_dialog_title,
   ConversionKind.sceneFromPhoto => t.ai_immersive_scene_honesty,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
+  ConversionKind.stereoPanoramaFromPanorama when generated => t.ai_immersive_panorama_honesty,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
 };
 
@@ -997,10 +999,11 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     chained: _kind == ConversionKind.panoramaFromPhoto && _alsoStereo ? AiFeature.stereoPanorama : null,
   );
 
-  /// Reads the part invented of the panoramas of [candidates], the smallest of them, for the planning [planning]
+  /// Reads the part invented of the panoramas of [candidates], the largest of them, so that the sentence never says
+  /// less than a panorama of the selection invents, for the planning [planning]
   Future<void> _readInvented(List<ConversionCandidate> candidates, int planning) async {
     final focal = ref.read(conversionFocalReaderProvider);
-    double? least;
+    double? most;
     for (final candidate in candidates) {
       if (!candidate.runs) {
         continue;
@@ -1016,10 +1019,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         height: candidate.asset.height,
         focal35: focal35,
       );
-      least = least == null ? share : math.min(least, share);
+      most = most == null ? share : math.max(most, share);
     }
-    if (least != null && mounted && !_closed && planning == _plannings) {
-      setState(() => _invented = (least! * 100).round());
+    if (most != null && mounted && !_closed && planning == _plannings) {
+      setState(() => _invented = (most! * 100).round());
     }
   }
 
@@ -1330,7 +1333,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
             children: [
               if (_offered.length > 1) ...[_typeChoice(t, refusals), const SizedBox(height: 8)],
               Text(
-                conversionKindHonesty(t, kind),
+                conversionKindHonesty(t, kind, generated: _runs.any((candidate) => candidate.generated)),
                 key: const Key('ai_conversion_honesty'),
                 style: Theme.of(context).textTheme.titleSmall,
               ),
