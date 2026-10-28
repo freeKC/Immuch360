@@ -386,9 +386,10 @@ void main() {
         final runner = FakeProcessRunner([FakeProcessScript(lines: _generation(steps: 3), hangs: true)]);
         Object? failure;
         unawaited(
-          generator(runner, elapsed: () => async.elapsed)
-              .generate(request(), cancel: cancel)
-              .then<void>((_) {}, onError: (Object error) => failure = error),
+          generator(
+            runner,
+            elapsed: () => async.elapsed,
+          ).generate(request(), cancel: cancel).then<void>((_) {}, onError: (Object error) => failure = error),
         );
         async.elapse(const Duration(seconds: 179));
         expect(failure, isNull);
