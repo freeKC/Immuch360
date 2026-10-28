@@ -133,7 +133,15 @@ internal object SceneFile {
     val sceneFormat = value("SceneFormat")
     val readable = (formatVersion ?: 1) <= SUPPORTED_FORMAT_VERSION && kind == KIND
     val spec = if (readable) requestOf(::value) else null
-    return SceneHead(formatVersion = formatVersion, kind = kind, sceneFormat = sceneFormat, spec = spec)
+    // The part of the photo the near layer hides and the filling invented, for the panel ("Hidden areas filled: 7%")
+    val hidden = value("HiddenFraction")?.toDoubleOrNull()?.takeIf { it.isFinite() && it in 0.0..1.0 }
+    return SceneHead(
+      formatVersion = formatVersion,
+      kind = kind,
+      sceneFormat = sceneFormat,
+      spec = spec,
+      hiddenFraction = if (readable) hidden else null,
+    )
   }
 
   /** The version of our packets this build reads (Immuch360:FormatVersion) */
@@ -267,11 +275,13 @@ internal sealed interface SceneTailResult {
  * What the packet at the head of a file says of its scene: Immuch360:FormatVersion, Kind and SceneFormat as written
  * (SceneGate.checkHead tells a newer version or another kind by them), and the request its fields make, null when the
  * packet is of a newer version, of another kind, of another scene format, or misses a field or holds a value that
- * cannot be right.
+ * cannot be right. [hiddenFraction] is Immuch360:HiddenFraction, the part of the photo hidden by the near layer and
+ * filled in, from 0 to 1; null when the packet does not say it, or is not one this build reads.
  */
 internal data class SceneHead(
   val formatVersion: Int?,
   val kind: String?,
   val sceneFormat: String?,
   val spec: VolumetricSceneSpec?,
+  val hiddenFraction: Double? = null,
 )

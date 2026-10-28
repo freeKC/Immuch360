@@ -323,4 +323,7 @@ internal object SceneTestFiles {
     check(pattern.containsMatchIn(text)) { "no $name in the packet" }
     return pattern.replace(text, "").toByteArray(Charsets.ISO_8859_1)
   }
+
+  /** A JPEG of nothing but its start and its end, without our packet: what a file of another program holds */
+  fun minimalJpeg(): ByteArray = byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte(), 0xD9.toByte())
 }
