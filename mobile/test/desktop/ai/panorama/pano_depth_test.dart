@@ -2,7 +2,8 @@
 // section 4.4, point 1): the convention of make_pano_golden.py for the direction of a pixel, the icosahedron and its
 // tangent views (every direction seen, each view level), the input of the depth model read around the sphere, then the
 // maps of the views of a synthetic room, each with a scale and a shift of its own as Depth Anything gives them,
-// aligned and merged back into the disparity of the room; a flat world stays flat, and the seam is no edge.
+// aligned and merged back into the disparity of the room; a view the model read inverted is left out, and what no
+// view kept sees is counted; a flat world stays flat, and the seam is no edge.
 
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -265,6 +266,52 @@ void main() {
       // 0.007 % and 1.3 % on ai1, the largest where a corner of the room is read in bilinear
       expect(errors[errors.length ~/ 2], lessThan(0.001));
       expect(errors.last, lessThan(0.02));
+    });
+
+    test('a view the model read inverted is left out, the others solved again: the room stays within 1 %', () {
+      // Each view is brought between its own percentiles: had the whole alignment been given up for this one view,
+      // the twenty would be merged at twenty scales, 25 % off in the median
+      final maps = [for (var k = 0; k < views.length; k++) _modelMap(views[k], k)];
+      final inverted = maps[2];
+      maps[2] = DepthMap(inverted.width, inverted.height, Float32List.fromList([for (final v in inverted.values) -v]));
+      final merged = mergeViewDepths(views, maps, width: width, height: height);
+
+      expect(merged.uncovered, 0, reason: 'its neighbours see what it saw');
+      expect(merged.alignments[2].isUsed, isFalse);
+      expect(merged.alignments[2].scale, 0);
+      for (final (k, alignment) in merged.alignments.indexed) {
+        if (k != 2) {
+          expect(alignment.isUsed, isTrue, reason: 'view $k');
+        }
+      }
+      final errors = _relativeErrors(merged.map.values, _roomDisparity(width, height));
+      expect(errors[errors.length ~/ 2], lessThan(0.01));
+      expect(errors[errors.length * 9 ~/ 10], lessThan(0.03));
+    });
+
+    test('the five views around the north pole read inverted: left out, the pole seen by no view is counted', () {
+      final maps = [for (var k = 0; k < views.length; k++) _modelMap(views[k], k)];
+      for (var k = 0; k < 5; k++) {
+        maps[k] = DepthMap(maps[k].width, maps[k].height, Float32List.fromList([for (final v in maps[k].values) -v]));
+      }
+      final merged = mergeViewDepths(views, maps, width: width, height: height);
+
+      expect(
+        [for (final alignment in merged.alignments) alignment.isUsed],
+        [for (var k = 0; k < views.length; k++) k >= 5],
+      );
+      expect(merged.uncovered, greaterThan(0));
+      // The pixels no view saw are left at 0, and only around the pole, past the reach of the ring of the equator
+      var unseen = 0;
+      for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+          if (merged.map.values[y * width + x] == 0) {
+            unseen++;
+            expect(_degrees(erpLatitude(y, height)), greaterThan(50), reason: 'row $y, column $x');
+          }
+        }
+      }
+      expect(unseen, merged.uncovered);
     });
 
     test('the seam is no edge: the columns on each side of it differ as little as two neighbours elsewhere', () {
