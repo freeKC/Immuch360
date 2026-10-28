@@ -5,9 +5,14 @@
 // The engines of the kinds of phases 2 and 3 are registered by kind in conversionEnginesProvider (lot C3): the 3D scene
 // by lot S1 (DesktopSceneEngine, MoGe-2 and LaMa behind the gate of the feature scene), the 3D version of a 360°
 // panorama by P1 (DesktopStereoPanoramaEngine, the depth model of phase 1 behind the gate of the feature
-// stereoPanorama), the 360° panorama by P3 (or the ComfyUI of the user, P5). Until a lot registers its kind, this build
-// does not make it (ConversionTools.supports), and the tests give the fakes. The times of the steps are kept in
-// desktop_ai.json for the time left of the jobs.
+// stereoPanorama), the 360° panorama by P3 (DesktopPanoramaEngine: stable-diffusion.cpp on the graphics card the gate
+// found, MoGe-2 and MI-GAN, behind the gate of the feature panorama; the dialog offers it once lot U3 lists it and the
+// hold of the panoramas is lifted). Until a lot registers its kind, this build does not make it
+// (ConversionTools.supports), and the tests give the fakes. The times of the steps are kept in desktop_ai.json for the
+// time left of the jobs.
+//
+// The programs the engines start (sd-cli) belong to one AiProcessSession of the app, opened at the first job that
+// starts one: the programs an earlier session left running are stopped then, once (managed_process.dart).
 //
 // The gate and the queue ask the graphics cards through the probe of lot C6 (gpu_probe.dart): the gate when it looks at
 // the 360° panoramas, the queue again before each job of the graphics card, through the gate, whose answer the dialog
@@ -28,6 +33,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/codec/engine_picture.dart';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
@@ -36,17 +42,21 @@ import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -446,6 +456,208 @@ ConversionEngine stereoPanoramaConversionEngine(ImmersiveEngine engine) => Conve
   ),
 );
 
+/// How long sd-cli may stay silent on an integrated card allowed by "Try on integrated graphics (untested)": a step of
+/// the generation there can take minutes, where 180 s is the rule of a dedicated card (review of lot P2, point 9)
+const panoramaIntegratedStallTimeout = Duration(minutes: 15);
+
+/// What the engine of a panorama is made from, read from what the gate found: sd-cli and its models, the card by its
+/// index for ggml, MoGe-2 and MI-GAN, and on Linux the launcher of the archive
+class PanoramaSetup {
+  const PanoramaSetup({
+    required this.settings,
+    required this.models,
+    required this.requiredFiles,
+    required this.transformer,
+    required this.card,
+    this.linuxLauncher,
+  });
+
+  final SdCppSettings settings;
+  final OrtPanoramaModelsSpec models;
+  final Map<String, int?> requiredFiles;
+
+  /// The variant of the transformer the gate chose for the card
+  final AiComponent transformer;
+  final GpuAdapter card;
+  final String? linuxLauncher;
+}
+
+/// Why the engine of a panorama cannot be made from what the gate found
+class PanoramaSetupRefused implements Exception {
+  const PanoramaSetupRefused(this.code, this.message);
+
+  final ImmersiveErrorCode code;
+  final String message;
+}
+
+/// The engine of a panorama as the gate [found] it available: sd-cli of the archive of this system, the card the gate
+/// chose given to it by its index among the cards ggml numbers (`Vulkan<n>`, never with GGML_VK_VISIBLE_DEVICES: review
+/// of lot P2, point 4), the models of the catalogue by their id. Throws [PanoramaSetupRefused].
+PanoramaSetup panoramaSetupOf(AiGateResult found) {
+  final platform = found.platform!;
+  final card = found.gpu;
+  final report = found.gpuReport;
+  final index = card == null || report == null ? null : ggmlVulkanIndexOf(report, card);
+  if (card == null || index == null) {
+    throw PanoramaSetupRefused(
+      ImmersiveErrorCode.gpuUnavailable,
+      card == null ? 'No graphics card was chosen' : '${card.name} is not one ggml numbers',
+    );
+  }
+  final components = aiComponentsFor(platform, feature: AiFeature.panorama, graphicsMemory: found.graphicsMemory);
+  File need(AiComponent component) =>
+      found.fileOf(component.id) ??
+      (throw PanoramaSetupRefused(ImmersiveErrorCode.componentsMissing, 'An AI component is missing: ${component.id}'));
+  final archive = components.firstWhere((component) => component.kind == AiComponentKind.archive);
+  final transformer = components.firstWhere(
+    (component) => (component.variantOf ?? component.id) == fluxTransformerComponent.id,
+  );
+  final folder = p.dirname(need(archive).path);
+  final windows = platform == AiPlatform.windowsX64;
+  final models = [transformer, fluxVaeComponent, qwenTextEncoderComponent, panoramaLoraComponent, upscalerComponent];
+  return PanoramaSetup(
+    settings: SdCppSettings(
+      sdCli: sdCliIn(folder, windows: windows),
+      models: SdCppModels(
+        diffusionModel: need(transformer).path,
+        vae: need(fluxVaeComponent).path,
+        textEncoder: need(qwenTextEncoderComponent).path,
+        lora: need(panoramaLoraComponent).path,
+        upscaler: need(upscalerComponent).path,
+      ),
+      device: 'Vulkan$index',
+      stallTimeout: card.kind == GpuKind.integrated ? panoramaIntegratedStallTimeout : const Duration(seconds: 180),
+    ),
+    models: OrtPanoramaModelsSpec(
+      libraryPath: found.runtimeFile!.path,
+      miganPath: need(miganInpaintComponent).path,
+      inpaintSha256: miganInpaintComponent.sha256!,
+      mogePath: need(mogeGeometryComponent).path,
+      mogeSha256: mogeGeometryComponent.sha256!,
+    ),
+    requiredFiles: {for (final component in models) need(component).path: component.size},
+    transformer: transformer,
+    card: card,
+    linuxLauncher: platform == AiPlatform.linuxX64 ? p.join(folder, linuxLauncherName) : null,
+  );
+}
+
+/// The code a panorama the gate refused for [reason] fails with, its message being the name of the reason (that of
+/// ONNX Runtime when it does not load): a card the gate finds wanting is gpuUnavailable, a shortage of memory
+/// outOfMemory, a component missing or damaged componentsMissing; a feature this computer or this version does not
+/// offer is told by its reason after "The AI model failed", as the other engines tell it. Every reason is placed, so
+/// that a new one has to be.
+ImmersiveErrorCode panoramaRefusalCode(AiGateReason? reason) => switch (reason) {
+  AiGateReason.gpuNone ||
+  AiGateReason.gpuNoAnswer ||
+  AiGateReason.gpuIntegrated ||
+  AiGateReason.gpuTooSmall ||
+  AiGateReason.notYetOnMac => ImmersiveErrorCode.gpuUnavailable,
+  AiGateReason.memory || AiGateReason.panoramaMemory => ImmersiveErrorCode.outOfMemory,
+  AiGateReason.componentsMissing || AiGateReason.componentsDamaged || null => ImmersiveErrorCode.componentsMissing,
+  AiGateReason.runtimeFailed ||
+  AiGateReason.system ||
+  AiGateReason.processor ||
+  AiGateReason.notHere ||
+  AiGateReason.notInThisVersion => ImmersiveErrorCode.modelFailed,
+};
+
+/// The engine of the 360° panoramas (lot P3), made for each job from what the gate finds then: the components of the
+/// feature panorama and the graphics card the probe reads again (the queue asked it just before, gpu_budget.dart).
+/// Nothing is kept between two jobs: sd-cli is a program of its own for each generation, and MoGe-2 and MI-GAN are
+/// opened by the step that needs them. A panorama asked while a component is missing fails with componentsMissing,
+/// never downloads anything; one without a card that can make it fails with gpuUnavailable and the reason of the gate.
+class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
+  DesktopPanoramaEngine({required this.gate, AiProcessSession Function()? session, this.create})
+    : _openSession = session ?? AiProcessSession.new;
+
+  final HardwareGate gate;
+  final AiProcessSession Function() _openSession;
+
+  /// Makes the engine of a job from its setup; null: PanoramaEngine on sd-cli ([sdCppEngineFor])
+  final ImmersiveEngine Function(PanoramaSetup setup)? create;
+  AiProcessSession? _session;
+  var _running = false;
+
+  @override
+  bool get isRunning => _running;
+
+  /// PanoramaEngine on sd-cli, through a runner of the session of the programs of the app
+  static ImmersiveEngine sdCppEngineFor(PanoramaSetup setup, AiProcessSession session) {
+    final runner = session.runner(linuxLauncher: setup.linuxLauncher);
+    return PanoramaEngine(
+      generator: SdCppGenerator(
+        runner: runner,
+        settings: setup.settings,
+        generatorSha256: setup.transformer.sha256!,
+        loraSha256: panoramaLoraComponent.sha256!,
+      ),
+      upscaler: SdCppUpscaler(runner: runner, settings: setup.settings, modelSha256: upscalerComponent.sha256!),
+      models: setup.models,
+      folders: session.folders,
+      requiredFiles: setup.requiredFiles,
+      decodeOther: (bytes, {maxWidth}) => decodeWithEngine(bytes, maxWidth: maxWidth),
+    );
+  }
+
+  @override
+  Future<ImmersiveResult> run(
+    PanoramaJob job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) async {
+    _running = true;
+    ImmersiveEngine? engine;
+    try {
+      final found = await gate.evaluate(feature: AiFeature.panorama);
+      if (!found.isAvailable) {
+        return ImmersiveResult.failed(
+          panoramaRefusalCode(found.reason),
+          message: found.message ?? found.reason?.name ?? 'The panorama cannot be made here',
+        );
+      }
+      final setup = panoramaSetupOf(found);
+      final create = this.create;
+      engine = create == null ? sdCppEngineFor(setup, _session ??= _openSession()) : create(setup);
+      return await engine.run(job, cancel: cancel, onProgress: onProgress);
+    } on PanoramaSetupRefused catch (refused) {
+      return ImmersiveResult.failed(refused.code, message: refused.message);
+    } catch (error, stack) {
+      _log.warning('The panorama ${job.id} could not run', error, stack);
+      return ImmersiveResult.failed(ImmersiveErrorCode.modelFailed, message: '$error');
+    } finally {
+      await engine?.dispose();
+      _running = false;
+    }
+  }
+
+  /// Nothing is kept between two jobs
+  @override
+  Future<void> release() async {}
+
+  @override
+  Future<void> dispose() => release();
+}
+
+/// The key of the settings a 360° panorama of a photo seen with [quarterTurns] would carry (PanoramaXmp.settingsKey):
+/// the transformer and the LoRA of the catalogue, pano-v1 and its steps; the seed is not part of it
+String? panoramaSettingsKeyOf(int quarterTurns) => PanoramaXmp(
+  pipeline: PanoV1.pipeline,
+  generatorSha256: fluxTransformerComponent.sha256,
+  generatorLoraSha256: panoramaLoraComponent.sha256,
+  steps: PanoV1.steps,
+  sourceQuarterTurns: quarterTurns & 3,
+).settingsKey;
+
+/// The engine of the 360° panoramas as the queue is given it: the key of the settings, the transformer of the
+/// catalogue and the steps of pano-v1 (M3)
+ConversionEngine panoramaConversionEngine(ImmersiveEngine engine) => ConversionEngine(
+  engine: engine,
+  settingsKey: (source, quarterTurns) => panoramaSettingsKeyOf(quarterTurns),
+  generator: fluxTransformerComponent.id,
+  steps: PanoV1.steps,
+);
+
 /// "Immuch360 Desktop 3.3.0 (windows)", the xmp:CreatorTool of the 3D photos
 String aiCreatorTool(String version, {String? system}) =>
     '${aiSoftware(version)} (${system ?? Platform.operatingSystem})';
@@ -513,21 +725,37 @@ final desktopStereoPanoramaEngineProvider = Provider<DesktopStereoPanoramaEngine
   return engine;
 });
 
+/// The programs of the AI features in this session of the app, opened at the first job that starts one
+final aiProcessSessionProvider = Provider<AiProcessSession>((ref) => AiProcessSession());
+
+/// The engine of the 360° panoramas of the app (lot P3)
+final desktopPanoramaEngineProvider = Provider<DesktopPanoramaEngine>((ref) {
+  final engine = DesktopPanoramaEngine(
+    gate: ref.watch(desktopAiGateProvider),
+    session: () => ref.read(aiProcessSessionProvider),
+  );
+  ref.onDispose(() => unawaited(engine.dispose()));
+  return engine;
+});
+
 /// The engines kept between two jobs, let go before the components are removed or moved: the 3D photos, the 3D scenes
-/// (S1) and the 3D versions of the 360° panoramas (P1); P3 (or P5) adds its own here
+/// (S1), the 3D versions of the 360° panoramas (P1), and the 360° panoramas (P3), which keep nothing but tell while
+/// they run
 final keptAiEnginesProvider = Provider<List<KeptAiEngine>>(
   (ref) => [
     ref.watch(desktopAiEngineProvider),
     ref.watch(desktopSceneEngineProvider),
     ref.watch(desktopStereoPanoramaEngineProvider),
+    ref.watch(desktopPanoramaEngineProvider),
   ],
 );
 
 /// The engines of the kinds of phases 2 and 3, by kind, each with the key of the settings its files carry: the 3D
-/// scene (S1), the 3D version of a 360° panorama (P1); P3 (or P5) adds its own here. The tests give the fakes.
+/// scene (S1), the 360° panorama (P3), the 3D version of a 360° panorama (P1). The tests give the fakes.
 final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>>(
   (ref) => {
     ConversionKind.sceneFromPhoto: sceneConversionEngine(ref.watch(desktopSceneEngineProvider)),
+    ConversionKind.panoramaFromPhoto: panoramaConversionEngine(ref.watch(desktopPanoramaEngineProvider)),
     ConversionKind.stereoPanoramaFromPanorama: stereoPanoramaConversionEngine(
       ref.watch(desktopStereoPanoramaEngineProvider),
     ),

@@ -10,13 +10,15 @@
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
 //  - a generation whose graph sd-cli cut into segments ("flux using 27 segments", when the free memory of the card is
-//    short) is stopped at once and refused (outputRejected): with the LoRA applied at run time and the guidance, the
-//    image comes out spoilt (M3, section 2, point 2), so it never becomes a file;
+//    short) is stopped at once and refused as gpuBusy ("Other apps use the graphics card memory: close games or 3D
+//    apps"): with the LoRA applied at run time and the guidance, the image comes out spoilt (M3, section 2, point 2),
+//    so it never becomes a file;
 //  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read), generatorStalled
 //    after 180 s without a line, generatorFailed with the end of its error output, cancelled within a second of the
 //    flag; the process is killed in every case where it still runs;
 //  - the image it wrote is checked (image_checks.dart, in an isolate of its own): its size, not grey, no pure green
-//    left outside the photo; a refused image is outputRejected (the engine of P3 makes it once more, then gives up).
+//    left outside the photo; a refused image, or a file that does not decode, is deleted and outputRejected (the
+//    engine of P3 makes it once more, then gives up).
 
 import 'dart:async';
 import 'dart:io';
@@ -353,7 +355,7 @@ class SdCppGenerator implements GeneratorBackend {
         final segments = sdCppSegmentsOf(line);
         if (segments != null && segments > 1) {
           return BackendException(
-            ImmersiveErrorCode.outputRejected,
+            ImmersiveErrorCode.gpuBusy,
             'sd-cli cut the generator into $segments segments, the memory of the graphics card being short: the image '
             'would be spoilt (close games or 3D apps and retry)',
           );
@@ -381,8 +383,13 @@ class SdCppGenerator implements GeneratorBackend {
     final GeneratedImageReport report;
     try {
       report = await Isolate.run(() => checkGeneratedFile(path, controlPath: control));
-    } on FormatException catch (error) {
-      throw BackendException(ImmersiveErrorCode.outputRejected, 'sd-cli wrote no readable image: ${error.message}');
+    } catch (error) {
+      // No image, or one the decoder gives up on (a PNG cut short): refused as any other, never left behind
+      if (output.existsSync()) {
+        output.deleteSync();
+      }
+      final why = error is FormatException ? error.message : '$error';
+      throw BackendException(ImmersiveErrorCode.outputRejected, 'sd-cli wrote no readable image: $why');
     }
     final problem = report.problemFor(request.width, request.height);
     if (problem != null) {

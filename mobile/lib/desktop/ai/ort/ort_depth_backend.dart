@@ -5,10 +5,15 @@
 // image [1, 3, height, width] and give a float32 map whose leading dimensions are 1; any failure, with ONNX Runtime's
 // message, becomes a DepthBackendException, so that the job ends with modelFailed and that message.
 
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+
 import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+// Pure Dart rather than Flutter's foundation, so that the engines also build into a program without Flutter (the
+// measure of the 360° panoramas, test/desktop/ai/tools/panorama_probe.dart)
+// ignore: depend_on_referenced_packages
+import 'package:meta/meta.dart' show visibleForTesting;
 
 class OrtDepthBackend implements DepthBackend {
   OrtDepthBackend({

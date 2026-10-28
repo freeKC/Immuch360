@@ -32,10 +32,13 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
-import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:immich_mobile/desktop/ai/ort/ort_api_bindings.dart' as ort;
 import 'package:immich_mobile/desktop/ai/ort/ort_tensor.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_terminate.dart';
+// Pure Dart rather than Flutter's foundation, so that the engines also build into a program without Flutter (the
+// measure of the 360° panoramas, test/desktop/ai/tools/panorama_probe.dart)
+// ignore: depend_on_referenced_packages
+import 'package:meta/meta.dart' show visibleForTesting;
 
 export 'package:immich_mobile/desktop/ai/ort/ort_tensor.dart';
 export 'package:immich_mobile/desktop/ai/ort/ort_terminate.dart' show OrtRunStopHandle, OrtRunStopper;

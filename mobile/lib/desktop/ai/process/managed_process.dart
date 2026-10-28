@@ -176,8 +176,9 @@ class AiWorkFolders {
     }
   }
 
-  /// Deletes the work folders not changed for [maxAge] (an hour), those of jobs an earlier session left; returns how
-  /// many went
+  /// Deletes the work folders not changed for [maxAge] (an hour), those of jobs an earlier session left, and the
+  /// answers of the probe of the graphics cards (`gpu-probe-<pid>-<n>.json`) a probe stopped before it could delete them
+  /// left; returns how many went
   int deleteOld({Duration maxAge = const Duration(hours: 1), DateTime? now}) {
     if (!root.existsSync()) {
       return 0;
@@ -185,12 +186,48 @@ class AiWorkFolders {
     final limit = (now ?? DateTime.now()).subtract(maxAge);
     var deleted = 0;
     for (final entry in root.listSync()) {
-      if (entry is io.Directory && entry.statSync().modified.isBefore(limit) && delete(entry)) {
+      if (!entry.statSync().modified.isBefore(limit)) {
+        continue;
+      }
+      if (entry is io.Directory && delete(entry)) {
         deleted++;
+      } else if (entry is io.File && _probeAnswer.hasMatch(p.basename(entry.path))) {
+        try {
+          entry.deleteSync();
+          deleted++;
+        } on io.FileSystemException catch (error) {
+          _log.warning('${entry.path} could not be deleted: $error');
+        }
       }
     }
     return deleted;
   }
+
+  static final _probeAnswer = RegExp(r'^gpu-probe-\d+-\d+\.json$');
+}
+
+/// The programs of the AI features in one session of the app: the journal and the work folders, read once when the
+/// session opens (the programs an earlier session left running stopped, its old work folders deleted), then a runner
+/// for each engine that starts programs, all writing to the same journal. [ManagedProcessRunner.open] reaps at every
+/// call, which would stop the generator of this very session if a second engine opened one meanwhile (review of lot
+/// P2, point 3): the app opens one session, at its first job of the graphics card.
+class AiProcessSession {
+  factory AiProcessSession({AiWorkFolders? folders, ProcessJournal? journal}) {
+    final work = folders ?? AiWorkFolders.system();
+    return AiProcessSession._(work, journal ?? ProcessJournal(io.File(p.join(work.root.path, 'processes.json'))));
+  }
+
+  AiProcessSession._(this.folders, this.journal) {
+    journal.reap();
+    folders.deleteOld();
+  }
+
+  final AiWorkFolders folders;
+  final ProcessJournal journal;
+
+  /// A runner on the journal of this session; on Linux its programs are started through [linuxLauncher] when given
+  ManagedProcessRunner runner({String? linuxLauncher}) =>
+      ManagedProcessRunner(linuxLauncher: linuxLauncher, journal: journal);
 }
 
 /// The runner of the programs of the AI features
@@ -211,8 +248,8 @@ class ManagedProcessRunner implements ProcessRunner {
        _isLinux = isLinux ?? io.Platform.isLinux,
        _appPid = appPid ?? io.pid;
 
-  /// The runner of the app: the programs an earlier session left running are stopped and the work folders it left are
-  /// deleted first
+  /// A runner that first stops the programs an earlier session left running and deletes the work folders it left: for
+  /// a program that runs once (the measure of lot P2); the app opens an [AiProcessSession] instead
   factory ManagedProcessRunner.open({String? linuxLauncher, AiWorkFolders? folders}) {
     final work = folders ?? AiWorkFolders.system();
     final journal = ProcessJournal(io.File(p.join(work.root.path, 'processes.json')));

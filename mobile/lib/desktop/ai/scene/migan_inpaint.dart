@@ -6,8 +6,12 @@
 // pipeline crops around the mask, brings it to 512 and pastes it back.
 //
 // M2 saw the pixels under a hole leak into the first three pixels of its fill (the pipeline blends with a dilated,
-// blurred mask): every hole is painted first with the mean colour of the known pixels, so that nothing of what the
-// hole hides comes through. Only the holes are taken from the result.
+// blurred mask), and measured MI-GAN on the bands of a scene with every hole painted first with the mean colour of the
+// known pixels, so that nothing of the near layer the hole hides came through; it gave those bands to LaMa all the
+// same. That paint is paintHoles, true by default as S1 wrote it, which nothing in the app asks for any more. The seam
+// of a panorama, the only user of this class in the app, hides nothing but the seam: its holes keep their pixels
+// (paintHoles false), so that the blend at the edge of the band meets the panorama around it rather than a line of that
+// mean colour (lot P3). Only the holes are taken from the result.
 
 import 'dart:typed_data';
 
@@ -29,12 +33,44 @@ String? miganRefusalOf(List<OrtTensorSpec> inputs, List<OrtTensorSpec> outputs) 
   return null;
 }
 
+/// The image and the mask MI-GAN takes for [region]: the image as planes of one colour (all red, then green, then
+/// blue), the mask 255 where the pixel is known and 0 on a hole; the holes painted with the mean colour of the known
+/// pixels when [paintHoles], their own pixels otherwise (see the top of this file)
+(Uint8List, Uint8List) miganInputsOf(InpaintRegion region, {bool paintHoles = true}) {
+  final plane = region.width * region.height;
+  final sums = [0, 0, 0];
+  var known = 0;
+  for (var i = 0; i < plane; i++) {
+    if (region.mask[i] != 0) {
+      known++;
+      for (var c = 0; c < 3; c++) {
+        sums[c] += region.rgb[3 * i + c];
+      }
+    }
+  }
+  final mean = [for (final sum in sums) known == 0 ? 128 : (sum + known ~/ 2) ~/ known];
+  final image = Uint8List(3 * plane);
+  final mask = Uint8List(plane);
+  for (var i = 0; i < plane; i++) {
+    final hole = region.mask[i] == 0;
+    mask[i] = hole ? 0 : 255;
+    for (var c = 0; c < 3; c++) {
+      image[c * plane + i] = hole && paintHoles ? mean[c] : region.rgb[3 * i + c];
+    }
+  }
+  return (image, mask);
+}
+
 /// The MI-GAN pipeline on ONNX Runtime
 class OrtMiganInpaint implements InpaintBackend {
-  OrtMiganInpaint({required this.session, required this.modelSha256, this.options});
+  OrtMiganInpaint({required this.session, required this.modelSha256, this.options, this.paintHoles = true});
 
   final OrtSession Function() session;
   final OrtRunOptions? Function()? options;
+
+  /// Whether the holes are painted with the mean colour of the known pixels before the run: true as M2 measured MI-GAN
+  /// on the bands of a scene, false for the seam of a panorama (see the top of this file)
+  final bool paintHoles;
 
   @override
   final String modelSha256;
@@ -42,31 +78,15 @@ class OrtMiganInpaint implements InpaintBackend {
   @override
   int get regionMax => SceneV1.inpaintRegionMax;
 
+  /// The image and the mask the model is given for [region] (miganInputsOf, with [paintHoles])
+  (Uint8List, Uint8List) inputsOf(InpaintRegion region) => miganInputsOf(region, paintHoles: paintHoles);
+
   @override
   Uint8List fill(InpaintRegion region) {
     final width = region.width;
     final height = region.height;
     final plane = width * height;
-    final sums = [0, 0, 0];
-    var known = 0;
-    for (var i = 0; i < plane; i++) {
-      if (region.mask[i] != 0) {
-        known++;
-        for (var c = 0; c < 3; c++) {
-          sums[c] += region.rgb[3 * i + c];
-        }
-      }
-    }
-    final mean = [for (final sum in sums) known == 0 ? 128 : (sum + known ~/ 2) ~/ known];
-    final image = Uint8List(3 * plane);
-    final mask = Uint8List(plane);
-    for (var i = 0; i < plane; i++) {
-      final hole = region.mask[i] == 0;
-      mask[i] = hole ? 0 : 255;
-      for (var c = 0; c < 3; c++) {
-        image[c * plane + i] = hole ? mean[c] : region.rgb[3 * i + c];
-      }
-    }
+    final (image, mask) = inputsOf(region);
     final OrtTensor result;
     try {
       result = session().runNamed(

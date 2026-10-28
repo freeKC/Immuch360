@@ -26,7 +26,7 @@ import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/codec/native_sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
-import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart' show writeFailureOf;
+import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
 import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';

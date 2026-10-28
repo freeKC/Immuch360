@@ -20,9 +20,9 @@ name: Immuch360 Desktop
 #                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
-#                  fake sd-cli and the probe of a generation as the artifact Immuch360-AI-tools-windows-x64, the release
-#                  build, the ZIP and the installer (Inno Setup) for the owner as artifacts named
-#                  Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
+#                  fake sd-cli and the probes of a generation and of a panorama as the artifact
+#                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
+#                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), the probe of
 #                  the graphics cards of the build, and the app of the ZIP started on a database an older build left
 #                  behind
@@ -313,8 +313,8 @@ jobs:
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
       # since a process keeps the first ONNX Runtime it loads: the depth model, the tiny models of several inputs and
       # outputs, and the stop of a run from another isolate (lot C1); then test/desktop/ai/scene, the engine of the 3D
-      # scenes on the tiny models of MoGe-2 and LaMa (lot S1), whose scenes the next step validates. The archives are
-      # checked by their SHA-256 and cached
+      # scenes on the tiny models of MoGe-2 and LaMa (lot S1), whose scenes the next step validates, and the engine of
+      # the 360° panoramas on those of MoGe-2 and MI-GAN (lot P3). The archives are checked by their SHA-256 and cached
       - name: ONNX Runtime archives cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -339,7 +339,8 @@ jobs:
             echo "ONNX Runtime $version"
             IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
               IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-$version" \
-              mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene
+              mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
+                test/desktop/ai/panorama/panorama_engine_ort_test.dart
           done
 
       # The glTF-Validator of Khronos on the 3D scenes of phase 2 (lot S1; design-final 2026-10-27, section 8.2): the
@@ -761,11 +762,12 @@ jobs:
           PY
           echo "lib=$(cygpath -w "$ort/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
 
-      # The fake sd-cli of the 360° panoramas, for the tests of the runner and of the job object below (lot P2), and
+      # The fake sd-cli of the 360° panoramas, for the tests of the runner and of the job object below (lot P2),
       # sdcpp_probe, the program that runs a real generation through the same runner and launcher on a PC with a
-      # graphics card (the essay of the lot), both compiled by dart compile exe without Flutter; kept together as the
-      # artifact Immuch360-AI-tools-windows-x64, a name no release takes
-      - name: The fake sd-cli and the probe of a generation
+      # graphics card (the essay of lot P2), and panorama_probe, the engine of the panoramas on the same PC (the essay
+      # of lot P3), all compiled by dart compile exe without Flutter; kept together as the artifact
+      # Immuch360-AI-tools-windows-x64, a name no release takes
+      - name: The fake sd-cli and the probes of a generation and of a panorama
         id: fake_sd_cli
         working-directory: mobile
         run: |
@@ -773,6 +775,7 @@ jobs:
           mkdir -p "$tools"
           dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$tools/fake-sd-cli.exe"
           dart compile exe test/desktop/ai/tools/sdcpp_probe.dart -o "$tools/sdcpp-probe.exe"
+          dart compile exe test/desktop/ai/tools/panorama_probe.dart -o "$tools/panorama-probe.exe"
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
           echo "tools=$(cygpath -w "$tools")" >> "$GITHUB_OUTPUT"
 

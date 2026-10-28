@@ -19,13 +19,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
-import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+
+export 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
 
 final _log = Logger('SafeWriter');
 
@@ -46,63 +48,6 @@ bool isPartFileName(String name) => _partFileName.hasMatch(name);
 int? partFileProcess(String name) {
   final match = _partFileName.firstMatch(name);
   return match == null ? null : int.parse(match.group(1)!);
-}
-
-/// Why a write failed, as the user is told
-enum WriteFailure {
-  /// No space left: ENOSPC (28) on Linux and macOS, ERROR_DISK_FULL (112) and ERROR_HANDLE_DISK_FULL (39) on Windows.
-  /// The queue pauses until the user frees some space.
-  diskFull,
-
-  /// The folder does not accept new files: EPERM, EACCES, EROFS; ERROR_ACCESS_DENIED, ERROR_WRITE_PROTECT,
-  /// ERROR_NETWORK_ACCESS_DENIED
-  readOnly,
-
-  /// The folder is not there: a drive unplugged, a share gone
-  folderMissing,
-
-  /// Anything else, with the message of the system
-  other;
-
-  /// The code a job ends with
-  ImmersiveErrorCode get errorCode => switch (this) {
-    WriteFailure.diskFull => ImmersiveErrorCode.diskFull,
-    WriteFailure.readOnly => ImmersiveErrorCode.readOnly,
-    WriteFailure.folderMissing || WriteFailure.other => ImmersiveErrorCode.writeFailed,
-  };
-}
-
-const _posixDiskFull = {28};
-const _windowsDiskFull = {112, 39};
-const _posixReadOnly = {1, 13, 30};
-const _windowsReadOnly = {5, 19, 65};
-// ENOENT, ENOTDIR; ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND, ERROR_NOT_READY, ERROR_BAD_NETPATH, ERROR_BAD_NET_NAME
-const _posixMissing = {2, 20};
-const _windowsMissing = {2, 3, 21, 53, 67};
-
-/// What [error], thrown by a write, means for the user. [windows] tells how to read the code of the system, since the
-/// codes of Windows are not those of Linux and macOS (28 is ENOSPC there, "out of paper" on Windows); this computer by
-/// default.
-WriteFailure writeFailureOf(Object error, {bool? windows}) {
-  final code = switch (error) {
-    FileSystemException(osError: OSError(:final errorCode)) => errorCode,
-    OSError(:final errorCode) => errorCode,
-    _ => null,
-  };
-  if (code == null) {
-    return WriteFailure.other;
-  }
-  final onWindows = windows ?? Platform.isWindows;
-  if ((onWindows ? _windowsDiskFull : _posixDiskFull).contains(code)) {
-    return WriteFailure.diskFull;
-  }
-  if ((onWindows ? _windowsReadOnly : _posixReadOnly).contains(code)) {
-    return WriteFailure.readOnly;
-  }
-  if ((onWindows ? _windowsMissing : _posixMissing).contains(code)) {
-    return WriteFailure.folderMissing;
-  }
-  return WriteFailure.other;
 }
 
 /// A write of the creator that failed, and why
