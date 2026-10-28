@@ -31,49 +31,45 @@ class _NoFiles implements AiComponentFiles {
 const _cardReasons = {AiGateReason.gpuNone, AiGateReason.gpuNoAnswer, AiGateReason.gpuIntegrated};
 
 void main() {
-  test(
-    'the built app answers its flag within its time, and the gate reads its answer',
-    () async {
-      final app = File(_app!).absolute.path;
-      final watch = Stopwatch()..start();
-      final report = await ProcessGpuProbe(executable: app).probe();
-      watch.stop();
-      stdout.writeln('The probe of $app answered in ${watch.elapsedMilliseconds} ms:');
-      stdout.writeln(const JsonEncoder.withIndent('  ').convert(report.toJson()));
+  test('the built app answers its flag within its time, and the gate reads its answer', () async {
+    final app = File(_app!).absolute.path;
+    final watch = Stopwatch()..start();
+    final report = await ProcessGpuProbe(executable: app).probe();
+    watch.stop();
+    stdout.writeln('The probe of $app answered in ${watch.elapsedMilliseconds} ms:');
+    stdout.writeln(const JsonEncoder.withIndent('  ').convert(report.toJson()));
 
-      expect(report.problem, isNot(GpuProbeProblem.noAnswer), reason: 'the probe must answer within 10 s');
-      expect(report.problem, isNot(GpuProbeProblem.failed), reason: 'the probe must write its answer and not crash');
-      expect(watch.elapsed, lessThan(gpuProbeTimeout));
-      final expected = _expected;
-      if (expected != null && expected.isNotEmpty) {
-        expect(gpuNameOf(report), contains(expected));
-      }
+    expect(report.problem, isNot(GpuProbeProblem.noAnswer), reason: 'the probe must answer within 10 s');
+    expect(report.problem, isNot(GpuProbeProblem.failed), reason: 'the probe must write its answer and not crash');
+    expect(watch.elapsed, lessThan(gpuProbeTimeout));
+    final expected = _expected;
+    if (expected != null && expected.isNotEmpty) {
+      expect(gpuNameOf(report), contains(expected));
+    }
 
-      // The rules of the gate on that answer, the switch of the integrated graphics off then on
-      final abi = Platform.isWindows ? Abi.windowsX64 : Abi.linuxX64;
-      Future<AiGateResult> panorama({required bool integrated}) => HardwareGate(
-        components: _NoFiles(),
-        facts: () => AiHardwareFacts(abi: abi, processors: Platform.numberOfProcessors, physicalMemory: 32 << 30),
-        gpu: _Answer(report),
-        integratedGpuAllowed: () async => integrated,
-      ).evaluate(feature: AiFeature.panorama);
-      final off = await panorama(integrated: false);
-      final on = await panorama(integrated: true);
-      for (final (name, result) in [('switch off', off), ('switch on', on)]) {
-        final card = result.gpu;
-        final index = card == null ? null : ggmlVulkanIndexOf(report, card);
-        stdout.writeln(
-          'Gate, $name: ${result.reason?.name ?? 'available'}, card ${card?.name}, '
-          'Vulkan${index ?? '?'} for ggml, ${card?.freeMemory} bytes free',
-        );
-      }
-      if (off.gpu?.kind == GpuKind.integrated) {
-        expect(off.reason, AiGateReason.gpuIntegrated);
-        expect(_cardReasons, isNot(contains(on.reason)), reason: 'the switch lets the integrated graphics in');
-      }
-    },
-    skip: _app == null ? 'IMMUCH360_GPU_PROBE_REAL names no built app' : false,
-  );
+    // The rules of the gate on that answer, the switch of the integrated graphics off then on
+    final abi = Platform.isWindows ? Abi.windowsX64 : Abi.linuxX64;
+    Future<AiGateResult> panorama({required bool integrated}) => HardwareGate(
+      components: _NoFiles(),
+      facts: () => AiHardwareFacts(abi: abi, processors: Platform.numberOfProcessors, physicalMemory: 32 << 30),
+      gpu: _Answer(report),
+      integratedGpuAllowed: () async => integrated,
+    ).evaluate(feature: AiFeature.panorama);
+    final off = await panorama(integrated: false);
+    final on = await panorama(integrated: true);
+    for (final (name, result) in [('switch off', off), ('switch on', on)]) {
+      final card = result.gpu;
+      final index = card == null ? null : ggmlVulkanIndexOf(report, card);
+      stdout.writeln(
+        'Gate, $name: ${result.reason?.name ?? 'available'}, card ${card?.name}, '
+        'Vulkan${index ?? '?'} for ggml, ${card?.freeMemory} bytes free',
+      );
+    }
+    if (off.gpu?.kind == GpuKind.integrated) {
+      expect(off.reason, AiGateReason.gpuIntegrated);
+      expect(_cardReasons, isNot(contains(on.reason)), reason: 'the switch lets the integrated graphics in');
+    }
+  }, skip: _app == null ? 'IMMUCH360_GPU_PROBE_REAL names no built app' : false);
 }
 
 /// The answer read above, given to the gate as its probe
