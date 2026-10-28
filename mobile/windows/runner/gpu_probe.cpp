@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include <dxgi.h>
+#include <pdh.h>
 #include <shellapi.h>
 
 #include <cstddef>
@@ -22,8 +23,10 @@
 // stable-diffusion.cpp look at: its name, its kind, its vendor and device ids,
 // the versions of its driver and of its Vulkan, the memory local to it and,
 // with VK_EXT_memory_budget, the budget the system gives and what is used of
-// it; its UUID, LUID, driver id and 16 bit storage, by which the app tells the
-// index ggml gives the card. The adapters DXGI lists that Vulkan does not
+// it, the budget lowered to what the other programs leave of the card when
+// the counters of Windows say more of it is held (see DedicatedUsage); its
+// UUID, LUID, driver id and 16 bit storage, by which the app tells the index
+// ggml gives the card. The adapters DXGI lists that Vulkan does not
 // (a card without a Vulkan driver) follow, as "dxgi". The JSON is the one
 // GpuReport.fromJson reads (lib/desktop/ai/engine/backends.dart). The probe
 // of Linux (linux/runner/gpu_probe.cc) is the same without DXGI: a change to
@@ -322,6 +325,67 @@ Function FromProc(FARPROC proc) {
   return reinterpret_cast<Function>(reinterpret_cast<void (*)()>(proc));
 }
 
+// What all the programs hold now of the dedicated memory of the card whose
+// LUID is [luid] (VkPhysicalDeviceIDProperties::deviceLUID: LowPart, then
+// HighPart), from the counter Windows keeps for it, the memory the Task
+// Manager shows: \GPU Adapter Memory(luid_0x<high>_0x<low>_phys_0)\Dedicated
+// Usage. The budget of VK_EXT_memory_budget leaves it out on the driver of
+// NVIDIA (lot V3, on the RTX 4060 Laptop: a second sd-cli held 4.3 GB of the
+// card, the budget of the probe stayed at 7.5 GB), so that a game would never
+// make a panorama wait. False when the counter is not there (a runner without
+// a card, an older Windows): the budget of Vulkan alone is kept then.
+bool DedicatedUsage(const uint8_t* luid, uint64_t* used) {
+  HMODULE pdh =
+      ::LoadLibraryExW(L"pdh.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+  if (pdh == nullptr) {
+    return false;
+  }
+  using OpenQuery = PDH_STATUS(WINAPI*)(LPCWSTR, DWORD_PTR, PDH_HQUERY*);
+  using AddCounter =
+      PDH_STATUS(WINAPI*)(PDH_HQUERY, LPCWSTR, DWORD_PTR, PDH_HCOUNTER*);
+  using Collect = PDH_STATUS(WINAPI*)(PDH_HQUERY);
+  using Value = PDH_STATUS(WINAPI*)(PDH_HCOUNTER, DWORD, LPDWORD,
+                                    PPDH_FMT_COUNTERVALUE);
+  using CloseQuery = PDH_STATUS(WINAPI*)(PDH_HQUERY);
+  const auto open =
+      FromProc<OpenQuery>(::GetProcAddress(pdh, "PdhOpenQueryW"));
+  const auto add =
+      FromProc<AddCounter>(::GetProcAddress(pdh, "PdhAddEnglishCounterW"));
+  const auto collect =
+      FromProc<Collect>(::GetProcAddress(pdh, "PdhCollectQueryData"));
+  const auto value =
+      FromProc<Value>(::GetProcAddress(pdh, "PdhGetFormattedCounterValue"));
+  const auto close =
+      FromProc<CloseQuery>(::GetProcAddress(pdh, "PdhCloseQuery"));
+  bool found = false;
+  PDH_HQUERY query = nullptr;
+  if (open != nullptr && add != nullptr && collect != nullptr &&
+      value != nullptr && close != nullptr &&
+      open(nullptr, 0, &query) == ERROR_SUCCESS) {
+    uint32_t low = 0;
+    uint32_t high = 0;
+    std::memcpy(&low, luid, sizeof(low));
+    std::memcpy(&high, luid + sizeof(low), sizeof(high));
+    wchar_t path[128];
+    swprintf_s(path,
+               L"\\GPU Adapter Memory(luid_0x%08x_0x%08x_phys_0)\\Dedicated "
+               L"Usage",
+               high, low);
+    PDH_HCOUNTER counter = nullptr;
+    PDH_FMT_COUNTERVALUE counted = {};
+    if (add(query, path, 0, &counter) == ERROR_SUCCESS &&
+        collect(query) == ERROR_SUCCESS &&
+        value(counter, PDH_FMT_LARGE, nullptr, &counted) == ERROR_SUCCESS &&
+        counted.CStatus == ERROR_SUCCESS && counted.largeValue >= 0) {
+      *used = static_cast<uint64_t>(counted.largeValue);
+      found = true;
+    }
+    close(query);
+  }
+  ::FreeLibrary(pdh);
+  return found;
+}
+
 template <typename Function>
 Function Load(PFN_vkGetInstanceProcAddr get, VkInstance instance,
               const char* name) {
@@ -376,6 +440,8 @@ Adapter ReadDevice(const InstanceFunctions& vk, VkPhysicalDevice device,
 
   VkPhysicalDeviceMemoryProperties memory = {};
   VkPhysicalDeviceMemoryBudgetPropertiesEXT budget = {};
+  uint8_t luid[8] = {};
+  bool has_luid = false;
   if (core11) {
     VkPhysicalDeviceDriverProperties driver = {};
     driver.sType = kPhysicalDeviceDriverProperties;
@@ -389,6 +455,8 @@ Adapter ReadDevice(const InstanceFunctions& vk, VkPhysicalDevice device,
     adapter.uuid = Hex(id.deviceUUID, sizeof(id.deviceUUID));
     if (id.deviceLUIDValid) {
       adapter.luid = Hex(id.deviceLUID, sizeof(id.deviceLUID));
+      std::memcpy(luid, id.deviceLUID, sizeof(luid));
+      has_luid = true;
     }
     if (has_driver) {
       adapter.driver_id = driver.driverID;
@@ -432,6 +500,16 @@ Adapter ReadDevice(const InstanceFunctions& vk, VkPhysicalDevice device,
     }
   }
   adapter.has_budget = has_budget;
+  // What the other programs leave of the card, when Windows counts more of it
+  // held than the budget of Vulkan says (see DedicatedUsage)
+  uint64_t held = 0;
+  if (has_budget && has_luid && DedicatedUsage(luid, &held)) {
+    const uint64_t left =
+        held < adapter.local_memory ? adapter.local_memory - held : 0;
+    if (left < adapter.budget) {
+      adapter.budget = left;
+    }
+  }
   return adapter;
 }
 
