@@ -362,16 +362,19 @@ void main() {
     expect(tester.widget<SwitchListTile>(tile).onChanged, isNull);
   });
 
-  testWidgets('the hardware line: logical processors, memory, the GPU, which is not used yet', skip: true, // the hold of the panoramas is lifted on this test branch of lot V3
+  testWidgets(
+    'the hardware line: logical processors, memory, the GPU, which is not used yet',
+    skip: true, // the hold of the panoramas is lifted on this test branch of lot V3
     (tester) async {
-    await pump(tester);
-    expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
-    expect(
-      find.text('NVIDIA GeForce RTX 4060 Laptop GPU\nGPU acceleration: not yet, the processor is used'),
-      findsOneWidget,
-    );
-    expect(find.byKey(const Key('ai_settings_integrated_gpu')), findsNothing);
-  });
+      await pump(tester);
+      expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
+      expect(
+        find.text('NVIDIA GeForce RTX 4060 Laptop GPU\nGPU acceleration: not yet, the processor is used'),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('ai_settings_integrated_gpu')), findsNothing);
+    },
+  );
 
   group('the graphics card for the 360° panoramas', () {
     HardwareGate gateWith(GpuReport report, {Set<AiFeatureGroup> held = const {}}) => HardwareGate(

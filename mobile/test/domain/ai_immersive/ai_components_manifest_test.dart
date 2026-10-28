@@ -186,56 +186,60 @@ void main() {
       },
     );
 
-    test('the archives of the engine are complete (P2), and the panoramas held until their engine and release', skip: 'the hold of the panoramas is lifted on this test branch of lot V3', () {
-      for (final engine in [sdCppWindowsComponent, sdCppLinuxComponent]) {
-        expect(engine.isComplete, isTrue, reason: engine.id);
-        expect(engine.version, 'be48649-2', reason: 'the id of .github/desktop/ai/sd_cpp.lock.json');
-        expect(engine.licenceUrl, contains('/be486498eadc29dc3cd234d944c2180ed42b1415/'), reason: engine.id);
-        final paths = engine.archiveFiles.map((file) => file.path).toList();
-        expect(paths, containsAll(['licenses/stable-diffusion.cpp-LICENSE.txt', 'licenses/ggml-LICENSE.txt']));
-        expect(paths, contains('licenses/THIRD-PARTY.md'));
-        expect(paths, contains('BUILD-INFO.txt'));
-        // Vulkan only: no library of CUDA, nor of any other backend than the processor and Vulkan
-        expect(
-          paths.where((path) => RegExp('cuda|cublas|hip|sycl|musa', caseSensitive: false).hasMatch(path)),
-          isEmpty,
-        );
-        expect(engine.installedSize, engine.archiveFiles.fold<int>(0, (sum, file) => sum + file.size));
-      }
-      final windows = sdCppWindowsComponent.archiveFiles;
-      expect(windows.where((file) => file.executable).map((file) => file.path), ['sd-cli.exe']);
-      expect(sdCppWindowsComponent.mainPath, 'engines/sd-cpp-vulkan-win-x64/sd-cli.exe');
-      // The Visual C++ runtime a clean Windows lacks travels with it
-      expect(windows.map((file) => file.path), containsAll(['vcruntime140.dll', 'msvcp140.dll', 'ggml-vulkan.dll']));
-      final linux = sdCppLinuxComponent.archiveFiles;
-      expect(linux.where((file) => file.executable).map((file) => file.path), ['immuch360-run', 'sd-cli']);
-      // The launcher comes first: the program the app starts, sd-cli beside it
-      expect(sdCppLinuxComponent.mainPath, 'engines/sd-cpp-vulkan-linux-x64/immuch360-run');
-      expect(linux.map((file) => file.path), contains('libggml-vulkan.so'));
-      for (final component in [
-        miganInpaintComponent,
-        fluxTransformerComponent,
-        qwenTextEncoderComponent,
-        fluxVaeComponent,
-        panoramaLoraComponent,
-        upscalerComponent,
-      ]) {
-        expect(component.isComplete, isTrue, reason: component.id);
-        expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
-      }
-      for (final platform in AiPlatform.values) {
-        expect(
-          aiComponentGroupsFor(platform).map((group) => group.group),
-          isNot(contains(AiFeatureGroup.panoramas)),
-          reason: platform.name,
-        );
-      }
-      // The transformer M3 kept: Q4_0, for a dedicated card of 7.5 GiB at least
-      expect(fluxTransformerComponent.minGraphicsMemory, 8053063680);
-      expect(fluxTransformerComponent.assetName, 'flux-2-klein-base-4b-Q4_0.gguf');
-      // sd-cli finds the LoRA by the name of its file
-      expect(panoramaLoraComponent.installPath, endsWith('/flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors'));
-    });
+    test(
+      'the archives of the engine are complete (P2), and the panoramas held until their engine and release',
+      skip: 'the hold of the panoramas is lifted on this test branch of lot V3',
+      () {
+        for (final engine in [sdCppWindowsComponent, sdCppLinuxComponent]) {
+          expect(engine.isComplete, isTrue, reason: engine.id);
+          expect(engine.version, 'be48649-2', reason: 'the id of .github/desktop/ai/sd_cpp.lock.json');
+          expect(engine.licenceUrl, contains('/be486498eadc29dc3cd234d944c2180ed42b1415/'), reason: engine.id);
+          final paths = engine.archiveFiles.map((file) => file.path).toList();
+          expect(paths, containsAll(['licenses/stable-diffusion.cpp-LICENSE.txt', 'licenses/ggml-LICENSE.txt']));
+          expect(paths, contains('licenses/THIRD-PARTY.md'));
+          expect(paths, contains('BUILD-INFO.txt'));
+          // Vulkan only: no library of CUDA, nor of any other backend than the processor and Vulkan
+          expect(
+            paths.where((path) => RegExp('cuda|cublas|hip|sycl|musa', caseSensitive: false).hasMatch(path)),
+            isEmpty,
+          );
+          expect(engine.installedSize, engine.archiveFiles.fold<int>(0, (sum, file) => sum + file.size));
+        }
+        final windows = sdCppWindowsComponent.archiveFiles;
+        expect(windows.where((file) => file.executable).map((file) => file.path), ['sd-cli.exe']);
+        expect(sdCppWindowsComponent.mainPath, 'engines/sd-cpp-vulkan-win-x64/sd-cli.exe');
+        // The Visual C++ runtime a clean Windows lacks travels with it
+        expect(windows.map((file) => file.path), containsAll(['vcruntime140.dll', 'msvcp140.dll', 'ggml-vulkan.dll']));
+        final linux = sdCppLinuxComponent.archiveFiles;
+        expect(linux.where((file) => file.executable).map((file) => file.path), ['immuch360-run', 'sd-cli']);
+        // The launcher comes first: the program the app starts, sd-cli beside it
+        expect(sdCppLinuxComponent.mainPath, 'engines/sd-cpp-vulkan-linux-x64/immuch360-run');
+        expect(linux.map((file) => file.path), contains('libggml-vulkan.so'));
+        for (final component in [
+          miganInpaintComponent,
+          fluxTransformerComponent,
+          qwenTextEncoderComponent,
+          fluxVaeComponent,
+          panoramaLoraComponent,
+          upscalerComponent,
+        ]) {
+          expect(component.isComplete, isTrue, reason: component.id);
+          expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
+        }
+        for (final platform in AiPlatform.values) {
+          expect(
+            aiComponentGroupsFor(platform).map((group) => group.group),
+            isNot(contains(AiFeatureGroup.panoramas)),
+            reason: platform.name,
+          );
+        }
+        // The transformer M3 kept: Q4_0, for a dedicated card of 7.5 GiB at least
+        expect(fluxTransformerComponent.minGraphicsMemory, 8053063680);
+        expect(fluxTransformerComponent.assetName, 'flux-2-klein-base-4b-Q4_0.gguf');
+        // sd-cli finds the LoRA by the name of its file
+        expect(panoramaLoraComponent.installPath, endsWith('/flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors'));
+      },
+    );
 
     test('a file in parts: parts of 1945 MiB end to end, each under the limit of GitHub, in its release', () {
       for (final component in aiComponents.where((component) => component.isInParts)) {
@@ -327,66 +331,68 @@ void main() {
       }
     });
 
-    test('the groups: each component under the first group that needs it, a shared one counted once', skip: 'the hold of the panoramas is lifted on this test branch of lot V3', () {
-      final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
-      expect(windows.map((group) => group.group), [AiFeatureGroup.photos, AiFeatureGroup.scenes]);
-      expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
-      expect(windows.last.all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
-      expect(windows.last.own, [mogeGeometryComponent, lamaInpaintComponent]);
-      expect(aiComponentGroupsFor(AiPlatform.questArm64).single.own, [depthModelTfliteComponent]);
+    test(
+      'the groups: each component under the first group that needs it, a shared one counted once',
+      skip: 'the hold of the panoramas is lifted on this test branch of lot V3',
+      () {
+        final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
+        expect(windows.map((group) => group.group), [AiFeatureGroup.photos, AiFeatureGroup.scenes]);
+        expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
+        expect(windows.last.all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
+        expect(windows.last.own, [mogeGeometryComponent, lamaInpaintComponent]);
+        expect(aiComponentGroupsFor(AiPlatform.questArm64).single.own, [depthModelTfliteComponent]);
 
-      // Once the engine has its files, the panoramas join: MoGe stays under the scenes, ONNX Runtime under the photos
-      const engine = AiComponent(
-        id: 'sd-cpp-vulkan-win-x64',
-        version: 'test',
-        kind: AiComponentKind.archive,
-        platforms: {AiPlatform.windowsX64},
-        assetName: 'sd-cpp-vulkan-win-x64.zip',
-        installPath: 'engines/sd-cpp-vulkan-win-x64',
-        size: 100,
-        sha256: 'aa',
-        compression: AiCompression.none,
-        licence: 'MIT',
-        licenceUrl: 'https://example.org',
-        features: {AiFeature.panorama},
-        releaseTag: aiComponentsPanoramasReleaseTag,
-        archiveFiles: [
-          AiArchiveFile(path: 'ggml-vulkan.dll', size: 40, sha256: 'bb'),
-          AiArchiveFile(path: 'sd-cli.exe', size: 50, sha256: 'cc', executable: true),
-        ],
-      );
-      final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
-      // Lifted on this branch of lot V3; held back, the panoramas are never offered
-      expect(aiHeldFeatureGroups, isEmpty);
-      expect(
-        aiComponentGroupsFor(
-          AiPlatform.windowsX64,
-          catalogue: complete,
-          held: const {AiFeatureGroup.panoramas},
-        ).map((group) => group.group),
-        [
-        AiFeatureGroup.photos,
-        AiFeatureGroup.scenes,
-      ]);
-      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete, held: const {});
-      expect(groups.map((group) => group.group), AiFeatureGroup.values);
-      expect(groups.last.own.map((component) => component.id), [
-        'sd-cpp-vulkan-win-x64',
-        'migan-512-places2-onnx',
-        'flux2-klein-base-4b-q4_0',
-        'qwen3-4b-q4_k_m',
-        'flux2-vae',
-        'flux2-klein-4b-360-erp-lora-v1',
-        'realesrgan-x4plus',
-      ]);
-      expect(groups.last.all, containsAll([onnxRuntimeWindowsComponent, mogeGeometryComponent]));
-      // An archive: its size installed is that of its files, the program it runs its first executable
-      expect(engine.installedSize, 90);
-      expect(engine.mainPath, 'engines/sd-cpp-vulkan-win-x64/sd-cli.exe');
-      expect(engine.isComplete, isTrue);
-      expect(depthModelOnnxComponent.mainPath, depthModelOnnxComponent.installPath);
-      expect(depthModelOnnxComponent.installedSize, depthModelOnnxComponent.size);
-    });
+        // Once the engine has its files, the panoramas join: MoGe stays under the scenes, ONNX Runtime under the photos
+        const engine = AiComponent(
+          id: 'sd-cpp-vulkan-win-x64',
+          version: 'test',
+          kind: AiComponentKind.archive,
+          platforms: {AiPlatform.windowsX64},
+          assetName: 'sd-cpp-vulkan-win-x64.zip',
+          installPath: 'engines/sd-cpp-vulkan-win-x64',
+          size: 100,
+          sha256: 'aa',
+          compression: AiCompression.none,
+          licence: 'MIT',
+          licenceUrl: 'https://example.org',
+          features: {AiFeature.panorama},
+          releaseTag: aiComponentsPanoramasReleaseTag,
+          archiveFiles: [
+            AiArchiveFile(path: 'ggml-vulkan.dll', size: 40, sha256: 'bb'),
+            AiArchiveFile(path: 'sd-cli.exe', size: 50, sha256: 'cc', executable: true),
+          ],
+        );
+        final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
+        // Lifted on this branch of lot V3; held back, the panoramas are never offered
+        expect(aiHeldFeatureGroups, isEmpty);
+        expect(
+          aiComponentGroupsFor(
+            AiPlatform.windowsX64,
+            catalogue: complete,
+            held: const {AiFeatureGroup.panoramas},
+          ).map((group) => group.group),
+          [AiFeatureGroup.photos, AiFeatureGroup.scenes],
+        );
+        final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete, held: const {});
+        expect(groups.map((group) => group.group), AiFeatureGroup.values);
+        expect(groups.last.own.map((component) => component.id), [
+          'sd-cpp-vulkan-win-x64',
+          'migan-512-places2-onnx',
+          'flux2-klein-base-4b-q4_0',
+          'qwen3-4b-q4_k_m',
+          'flux2-vae',
+          'flux2-klein-4b-360-erp-lora-v1',
+          'realesrgan-x4plus',
+        ]);
+        expect(groups.last.all, containsAll([onnxRuntimeWindowsComponent, mogeGeometryComponent]));
+        // An archive: its size installed is that of its files, the program it runs its first executable
+        expect(engine.installedSize, 90);
+        expect(engine.mainPath, 'engines/sd-cpp-vulkan-win-x64/sd-cli.exe');
+        expect(engine.isComplete, isTrue);
+        expect(depthModelOnnxComponent.mainPath, depthModelOnnxComponent.installPath);
+        expect(depthModelOnnxComponent.installedSize, depthModelOnnxComponent.size);
+      },
+    );
 
     test('the 3D photo keeps the components of phase 1, which alone live in ai-components-1', () {
       // An entry of a later phase that forgets its features (the 3D photo by default) or its release (ai-components-1
