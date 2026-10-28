@@ -1,7 +1,8 @@
 // The graphics card in the settings (lot C6; design-final 2026-10-27, section 4.7, point 6): its name from the probe,
-// the dedicated card of a laptop rather than the first adapter of Windows (V2, remark 10); and the line of the card
-// for the 360° panoramas, which lot U3 shows: the card, its memory and its Vulkan when it passes, whatever the
-// components; the card and the reason when it does not; the reason alone without a card.
+// the dedicated card of a laptop rather than the first adapter of Windows (V2, remark 10), which stays the name when
+// the probe finds no card; and the line of the card for the 360° panoramas, which lot U3 shows: the card, its memory
+// and its Vulkan when it passes, whatever the components; the card and the reason when it does not; the reason alone
+// without a card.
 
 import 'dart:convert';
 import 'dart:ffi' show Abi;
@@ -41,8 +42,13 @@ void main() {
   setUpAll(loadEnglishTexts);
 
   group('the name of the graphics card', () {
-    Future<String?> nameWith(GpuReport report) async {
-      final container = ProviderContainer(overrides: [desktopAiGateProvider.overrideWithValue(_gate(report))]);
+    Future<String?> nameWith(GpuReport report, {String? adapter}) async {
+      final container = ProviderContainer(
+        overrides: [
+          desktopAiGateProvider.overrideWithValue(_gate(report)),
+          aiWindowsAdapterNameProvider.overrideWithValue(() async => adapter),
+        ],
+      );
       addTearDown(container.dispose);
       return container.read(aiGpuNameProvider.future);
     }
@@ -57,6 +63,13 @@ void main() {
 
     test('the integrated graphics when there is nothing else', () async {
       expect(await nameWith(FakeGpuReports.integratedOnly), irisXe.name);
+    });
+
+    test('the adapter of Windows when the probe finds no card, as in phase 1; nothing when neither tells', () async {
+      expect(await nameWith(FakeGpuReports.noVulkan, adapter: 'Intel(R) UHD Graphics'), 'Intel(R) UHD Graphics');
+      expect(await nameWith(FakeGpuReports.noAnswer, adapter: 'Intel(R) UHD Graphics'), 'Intel(R) UHD Graphics');
+      expect(await nameWith(FakeGpuReports.twoCards, adapter: 'Intel(R) UHD Graphics'), rtx4060Laptop.name);
+      expect(await nameWith(FakeGpuReports.noVulkan), isNull);
     });
   });
 
