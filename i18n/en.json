@@ -637,6 +637,8 @@
   "ai_immersive_move_busy": "Not while a conversion or a download runs",
   "ai_immersive_move_components": "Move the AI components",
   "ai_immersive_move_failed": "The AI components could not be moved: {reason}",
+  "ai_immersive_move_no_space": "Not enough space on {drive} ({needed} needed, {free} free)",
+  "ai_immersive_move_not_empty": "Choose an empty folder",
   "ai_immersive_moving_components": "Moving the AI components: {percent}%",
   "ai_immersive_network_root_ask": "Save 3D photos in the folders of this network folder? Immuch360 writes new files there, never the originals.",
   "ai_immersive_network_root_no": "No, choose a folder",
