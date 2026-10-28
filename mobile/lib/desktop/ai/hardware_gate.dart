@@ -14,8 +14,9 @@
 // when none is named), asks for the components of that feature only, each by its id (the engines read their files by
 // id, no more "one file per kind, the last one wins"), and of a component and its variant the one the memory of the
 // graphics card takes. A feature not offered on this system is refused as such ("Not on this system yet"), and so is
-// one whose components this version of the app does not have yet ("Not in this version of the app": the engine of
-// the panoramas until lot P2).
+// one whose components this version of the app does not have yet, or whose group it holds back ("Not in this version
+// of the app": the panoramas, whose engine archives P2 wrote, until the engine of P3, the screens of U3 and the
+// publication of ai-components-3).
 //
 // The 360° panorama runs on the graphics card (lot C6, design 4.7, point 2), and only there does the gate look at the
 // cards, through the probe of gpu_probe.dart (a child process; its answer kept 10 minutes, one without a card 30
@@ -289,6 +290,7 @@ class HardwareGate {
     this.minimumMemory = aiMinimumPhysicalMemory,
     this.panoramaMemory = aiPanoramaMinimumPhysicalMemory,
     this.catalogue = aiComponents,
+    this.heldGroups = aiHeldFeatureGroups,
     this.gpu,
     Future<bool> Function()? integratedGpuAllowed,
     DateTime Function()? now,
@@ -299,6 +301,10 @@ class HardwareGate {
 
   /// The catalogue of the components; another one only in the tests
   final List<AiComponent> catalogue;
+
+  /// The groups of features this version does not offer yet, whatever the catalogue says (aiHeldFeatureGroups: the 360°
+  /// panoramas until their engine, their screens and their release)
+  final Set<AiFeatureGroup> heldGroups;
 
   final AiComponentFiles components;
   final AiHardwareFacts Function() _facts;
@@ -421,6 +427,9 @@ class HardwareGate {
     final incomplete = needed.where((component) => !component.isComplete).toList();
     if (incomplete.isNotEmpty) {
       return refused(AiGateReason.notInThisVersion, missing: incomplete);
+    }
+    if (heldGroups.any((group) => group.features.contains(feature))) {
+      return refused(AiGateReason.notInThisVersion);
     }
 
     final files = <String, File>{};

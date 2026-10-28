@@ -490,19 +490,25 @@ abstract final class SceneV1 {
 
 /// The constants of pano-v1, the 360° panorama generated around a photo (design-final 2026-10-27, section 4.3). The
 /// projection and the pasting back are written once in .github/desktop/ai/make_pano_golden.py (fixture
-/// test/fixtures/ai_immersive/pano_golden_v1.json). The steps, the quantization and the threshold of the seam come
-/// from the measure M3.
+/// test/fixtures/ai_immersive/pano_golden_v1.json). The size of the generation, the steps, the guidance, the strength
+/// of the LoRA and the quantization come from the measure M3 (phase23/m3-measures-2026-10-27.md, section 9): 2048 x 1024
+/// is broken on Vulkan in the pinned stable-diffusion.cpp, 1536 x 768 is clean, and the author's graph gives the rest.
 abstract final class PanoV1 {
   /// Immuch360:Pipeline
   static const pipeline = 'pano-v1';
 
-  /// The control image: the photo projected at the centre of an equirectangular frame, pure green elsewhere
+  /// The control image: the photo projected at the centre of an equirectangular frame, pure green elsewhere (the
+  /// generator reduces it to about one megapixel for its reference)
   static const controlWidth = 2048;
   static const controlHeight = 1024;
 
+  /// The image the generator makes (M3: 2048 x 1024 falls apart in blocks with the pinned build)
+  static const generationWidth = 1536;
+  static const generationHeight = 768;
+
   /// The panorama written, after the upscale
-  static const outputWidth = 8192;
-  static const outputHeight = 4096;
+  static const outputWidth = generationWidth * upscale;
+  static const outputHeight = generationHeight * upscale;
   static const upscale = 4;
 
   /// The columns added on each side by wrapping before the upscale, cut after it
@@ -514,9 +520,12 @@ abstract final class PanoV1 {
   /// The edge of the photo pasted back is blended over this fraction of its size
   static const pasteFeather = 0.02;
 
-  /// The generation: guidance and strength of the LoRA
-  static const guidance = 4.0;
-  static const loraStrength = 1.0;
+  /// The generation, as the author's graph of the LoRA runs it (M3): its steps, guidance and strength of the LoRA,
+  /// and its negative prompt
+  static const steps = 20;
+  static const guidance = 5.0;
+  static const loraStrength = 0.9;
+  static const negativePrompt = 'text, worst quality, blurry, ugly';
 
   /// The checks of the output: the luminance must vary more than this (a grey image is refused), at most this
   /// fraction of pure green may stay

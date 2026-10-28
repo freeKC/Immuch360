@@ -484,41 +484,321 @@ const miganInpaintComponent = AiComponent(
   ],
 );
 
-/// stable-diffusion.cpp on Vulkan for Windows x64, built and signed by our CI (lot P2): sd-cli and the libraries of
-/// ggml, unpacked into engines/
+/// stable-diffusion.cpp on Vulkan for Windows x64, built by our CI from .github/desktop/ai/sd_cpp.lock.json (its id is
+/// the version) and signed by the release workflow (lot P2): sd-cli.exe, the libraries of stable-diffusion.cpp and of
+/// ggml, the Visual C++ runtime they import, and the licences in licenses/, unpacked into engines/
 const sdCppWindowsComponent = AiComponent(
   id: 'sd-cpp-vulkan-win-x64',
   name: 'stable-diffusion.cpp (Vulkan)',
-  version: 'P2',
+  version: 'be48649-2',
   kind: AiComponentKind.archive,
   platforms: {AiPlatform.windowsX64},
   assetName: 'sd-cpp-vulkan-win-x64.zip',
   installPath: 'engines/sd-cpp-vulkan-win-x64',
-  size: null,
-  sha256: null,
+  size: 30853245,
+  sha256: '6aacb8a7831c8b43bc66f177f3961169df345ed55d80ff4519db4f73aed35d57',
   compression: AiCompression.none,
   licence: 'MIT',
-  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/be486498eadc29dc3cd234d944c2180ed42b1415/LICENSE',
   features: {AiFeature.panorama},
   releaseTag: aiComponentsPanoramasReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 866,
+      sha256: 'b0ecfcf53275bed6db8468f9bb5b38a678bb1e7052377149abbaf029ddf93664',
+    ),
+    AiArchiveFile(
+      path: 'ggml-base.dll',
+      size: 697160,
+      sha256: '0e93bda5087456fbcfef7fada22e1a6ffd44463ebe1c002d4e9968ffdc2ba30a',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-alderlake.dll',
+      size: 1016648,
+      sha256: '24d18be3806be9f11172b5fa91f790c686baf65c3d00a84a35d269b35fc5fbeb',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-cannonlake.dll',
+      size: 1062216,
+      sha256: 'e2a640523f66bc1b14782027ce1c356e2037cfec8ec2fb78c43095452effda85',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-cascadelake.dll',
+      size: 1060680,
+      sha256: '2a6463b9acf1a87a516e638fdc59ea2dbf76054b7f92ad6d541a6c71d2e50815',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-haswell.dll',
+      size: 1017672,
+      sha256: '48c7c4483b46e1c5041fc54e4aa4c12892d3f072dd60be9b8a138c45919fc061',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-icelake.dll',
+      size: 1060680,
+      sha256: 'fff19b695e5c0d2b599bcd22be03f81e057faeff691046aa66b826fb4a4c45c1',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-sandybridge.dll',
+      size: 1046344,
+      sha256: 'f5d8821452620b645d761528f61ee2661a62413175122bae87d1091acd073ed6',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-skylakex.dll',
+      size: 1062216,
+      sha256: 'aeeb1df73493ba54ed5225c2c99b940f590daba35339df5b600b5307cd51a003',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-sse42.dll',
+      size: 883016,
+      sha256: '2abb813018268da1853849812867c5abf8b3008cd53c6663885b3ff15dbc8094',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-x64.dll',
+      size: 885064,
+      sha256: '89d0aabc54fddf30040656654238ac78844950a1f90c978ec9b2fc27767db8e9',
+    ),
+    AiArchiveFile(
+      path: 'ggml-vulkan.dll',
+      size: 40152904,
+      sha256: '781624a958dacf56c4c354c86aaacd7cbfc56ac04ed2d4e86b3cd33cac5f4ce9',
+    ),
+    AiArchiveFile(
+      path: 'ggml.dll',
+      size: 76104,
+      sha256: '9549c8c214d97e3fb0ab95606e7be3d52ed730e06b42e7e447948a141953948f',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1185,
+      sha256: '26f980b88d5210da2e6024efbd56d3d2ca77de7010bc73989b660187ce53528a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6968,
+      sha256: '0d58c599729e84498452fce4fbafa819cc6529683d0711c60b3a965132444b70',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1491,
+      sha256: 'ed8437dc7358a40ef10afd3635ac1cd43c88fbaaaf6cd27c414f8ada5d68f447',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1099,
+      sha256: 'bcd8ec749126d45cb06737d0690295d73df4b6e7e194205bcf91190368f27285',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1082,
+      sha256: '4e76049398df734a97db46f3bd4b5cbc460cb5f6bfaf737cdc3d6fbb8ab3de27',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140.dll',
+      size: 557728,
+      sha256: '0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140_codecvt_ids.dll',
+      size: 31872,
+      sha256: 'f2069a52880ec885ee7f0511186100eb7fada0411a2b4948fafea7735b878a18',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli.exe',
+      size: 801096,
+      sha256: 'd33481cef0001920f878ede5101dfeef4fa05df50bd6201048cb45a51b88ba1d',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'stable-diffusion.dll',
+      size: 36008776,
+      sha256: 'ad6b904bdbda24a347db9c84a70249980d500b2831e6615c0430b8b9939d85ff',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140.dll',
+      size: 124544,
+      sha256: 'd5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140_1.dll',
+      size: 49792,
+      sha256: '1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f',
+    ),
+  ],
 );
 
-/// stable-diffusion.cpp on Vulkan for Linux x64, with immuch360-run, its launcher (lot P2)
+/// stable-diffusion.cpp on Vulkan for Linux x64, built by our CI from the same lock (lot P2): sd-cli, the libraries of
+/// stable-diffusion.cpp and of ggml, and immuch360-run, the launcher that makes sd-cli die with the app, the first
+/// program of the archive by the order of the paths (mainPath); the runner finds sd-cli beside it (sdCliIn)
 const sdCppLinuxComponent = AiComponent(
   id: 'sd-cpp-vulkan-linux-x64',
   name: 'stable-diffusion.cpp (Vulkan)',
-  version: 'P2',
+  version: 'be48649-2',
   kind: AiComponentKind.archive,
   platforms: {AiPlatform.linuxX64},
   assetName: 'sd-cpp-vulkan-linux-x64.zip',
   installPath: 'engines/sd-cpp-vulkan-linux-x64',
-  size: null,
-  sha256: null,
+  size: 35817545,
+  sha256: '5e7052dc93eec36ad156974e7f56bd7fa13df3482b412935848319680cb5d535',
   compression: AiCompression.none,
   licence: 'MIT',
-  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/be486498eadc29dc3cd234d944c2180ed42b1415/LICENSE',
   features: {AiFeature.panorama},
   releaseTag: aiComponentsPanoramasReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 816,
+      sha256: '1549479c0023cb2ea02dfbcbcc9e1773e682f2308fdf70b5261069d2f809545d',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-run',
+      size: 16552,
+      sha256: '779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'libggml-base.so.0',
+      size: 905856,
+      sha256: '724d0388655f31af515a16a06e89852529286936bc3905fb0fc000391f06af09',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-alderlake.so',
+      size: 1306432,
+      sha256: 'db8a29641675ad642fc7056932568f20bc3216224eaf9b803b5ae15df9725f25',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cannonlake.so',
+      size: 1384360,
+      sha256: '66d26b13e9c989dc898be445a894916a9923eab34b328871a73163c98d056e57',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cascadelake.so',
+      size: 1400448,
+      sha256: '204de1f7d965852dc2122fb4a0b00240af20f234efe55416cd989e0330b5a3d8',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cooperlake.so',
+      size: 1400448,
+      sha256: '68d763f49d062b0b74bde1afaae488bafae2f52da04874b0eba730b61ae0de0a',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-haswell.so',
+      size: 1306432,
+      sha256: '9d597a3d4fe9cc4257fce0bfd634850f037ed9f54647c0403ed1c0088c347666',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-icelake.so',
+      size: 1400448,
+      sha256: '7e1da9f4a14883fd0ae7771d31f228efc9d6ae92cd9c5341a09e74edd40bc4cf',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-ivybridge.so',
+      size: 1235152,
+      sha256: '757283c265130c252eb1a2b411eca6139579417151e0f764f6163bbdb7049867',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-piledriver.so',
+      size: 1231056,
+      sha256: 'f459112286127171de81c29978aa7e1ac150fa73bf8d0964c871ff10bcd83858',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sandybridge.so',
+      size: 1255752,
+      sha256: '6873b28211bdaa720a7d79c7605fa10a933db7ab6de07df59501695b0037eafd',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sapphirerapids.so',
+      size: 1696688,
+      sha256: 'd696cdc358c7cc3135e7ea8b2ef721a9d292ca31482791817e84a1b2ed792ce6',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-skylakex.so',
+      size: 1384360,
+      sha256: '2aa0285fca0986a124071e5c2f0e9d722615a113e698d913730cb7c29b5b1979',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sse42.so',
+      size: 984640,
+      sha256: 'c2adef8dff8e2ee42a2029de496161601b7bd6c536ba8c8df2f6efb84689f6d4',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-x64.so',
+      size: 980680,
+      sha256: '4138dcbf8b45b21880c92fd7248c14eb0f8deb1f796a6f0c1bf595ac7e91a8b2',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-zen4.so',
+      size: 1400448,
+      sha256: '712d67cbda8490241de13934a1c6a6c1f0a2c359ff41eab9706d60a9211998ce',
+    ),
+    AiArchiveFile(
+      path: 'libggml-vulkan.so',
+      size: 40829024,
+      sha256: '655e8a3ac90e029a12d8a29fe73b4be2ad55d389e161ac87c12a4e95b5ecdef7',
+    ),
+    AiArchiveFile(
+      path: 'libggml.so.0',
+      size: 51040,
+      sha256: 'f7edd32a571306f777f380ca868af8728a89d21a3abcc8b97a7e4f738ab40c0a',
+    ),
+    AiArchiveFile(
+      path: 'libstable-diffusion.so',
+      size: 41639088,
+      sha256: 'a0d2134f6f82bd97f7c56376cad7aea0d3b6fdc950f8a31b3a8e55698492500d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1169,
+      sha256: 'dfc8ee008f776c77648f9c6692fce332ad190a2479653c6399bc2873b5d7e8be',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6862,
+      sha256: 'de31b8552d1bdb1765a3b75781df6763f576d8762fc9a58d652a4d4733bcf70b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1481,
+      sha256: '155f59997298ee336602c49f9c1110f268ac394ca2197eb02647a3555935ad52',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1078,
+      sha256: '94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1062,
+      sha256: 'b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli',
+      size: 1368216,
+      sha256: '6d8f92b3cb97c27cfc6b2a8e97a76b09bcedf3a68f2358df0b72e288105d715e',
+      executable: true,
+    ),
+  ],
 );
 
 /// The memory of graphics card the Q4_0 transformer asks for: a dedicated card of 7.5 GiB at least (M3: 5.39 GiB
@@ -722,16 +1002,25 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
   return need(b) < need(a) ? b : a;
 }
 
+/// The groups the app does not offer yet, whatever their catalogue says: the 360° panoramas, whose components are
+/// complete since lot P2 wrote the archives of stable-diffusion.cpp, wait for the engine that uses them (P3), its
+/// screens (U3) and the publication of ai-components-3 (D6), which lift this hold
+const aiHeldFeatureGroups = {AiFeatureGroup.panoramas};
+
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
-/// none of its features is offered here or one of its components is incomplete (never offered)
+/// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)
 List<AiGroupComponents> aiComponentGroupsFor(
   AiPlatform platform, {
   int? graphicsMemory,
   List<AiComponent> catalogue = aiComponents,
+  Set<AiFeatureGroup> held = aiHeldFeatureGroups,
 }) {
   final groups = <AiGroupComponents>[];
   final earlier = <String>{};
   for (final group in AiFeatureGroup.values) {
+    if (held.contains(group)) {
+      continue;
+    }
     final all = <AiComponent>[];
     for (final feature in group.features) {
       for (final component in aiComponentsFor(

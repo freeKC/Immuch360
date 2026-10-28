@@ -19,6 +19,12 @@ AZURE_CLIENT_SECRET), which the client reads from the environment; this script n
       BUILD-INFO.txt that the build is signed, and writes the ZIP again in <out>, under its name, with the same entries
       in the same order. The signed folder stays in the work folder: desktop_installers.py windows --sign-with DIR
       makes the installer from it, and Inno Setup signs the uninstaller and the installer through the command below.
+  windows_sign.py files --tools DIR --zip FILE --work DIR --out DIR [--github-output]
+      the archive of an engine of the AI features, stable-diffusion.cpp (.github/desktop/ai/sdcpp_build.py pack, lot
+      P2): unzips it into the work folder, signs every .exe and .dll there that has no valid signature yet (the Visual
+      C++ runtime Microsoft signed keeps its signature), checks every one of them, and writes the archive again in
+      <out>, under its name, with the same entries in the same order. Its files lie at the top of the archive and it
+      has no note about the signature to change
   windows_sign.py sign --tools DIR FILE ...
       signs the files (SHA-256 digest, RFC 3161 timestamp of Microsoft, SHA-256 too), and tries a file that is not
       signed afterwards twice more; the log of signtool also goes to sign.log in the tools folder, since Inno Setup
@@ -31,8 +37,8 @@ AZURE_CLIENT_SECRET), which the client reads from the environment; this script n
       must be signed by APROGSYS and whose files must be those of the ZIP, byte for byte, next to the three files of
       the uninstaller (unins000.exe, .dat and .msg)
 
---github-output writes the results for the next steps (bundle: folder, file_version; check: zip_sha256,
-setup_sha256), and check writes a table in the run summary. signing.json names the signtool command; the tests point
+--github-output writes the results for the next steps (bundle: folder, file_version; files: archive, sha256; check:
+zip_sha256, setup_sha256), and check writes a table in the run summary. signing.json names the signtool command; the tests point
 it at a fake signtool. Only the Python standard library is used, as on every runner.
 Exit codes: 0 good, 1 a file is not signed as it must be, 2 bad arguments or missing files.
 """
@@ -300,12 +306,17 @@ def verify(args) -> int:
 # --- the ZIP -----------------------------------------------------------------------------------------------------
 
 
-def safe_entries(archive: zipfile.ZipFile) -> list:
+def safe_paths(archive: zipfile.ZipFile) -> list:
     entries = archive.infolist()
     for entry in entries:
         path = pathlib.PurePosixPath(entry.filename)
         if path.is_absolute() or '..' in path.parts or '\\' in entry.filename or ':' in entry.filename:
             raise Problem(f'unsafe path in the ZIP: {entry.filename}')
+    return entries
+
+
+def safe_entries(archive: zipfile.ZipFile) -> list:
+    entries = safe_paths(archive)
     tops = {entry.filename.split('/', 1)[0] for entry in entries}
     if len(tops) != 1 or not all('/' in entry.filename for entry in entries):
         raise Problem('the ZIP does not hold one folder, as windows_bundle.py makes it')
@@ -381,6 +392,49 @@ def bundle(args) -> int:
           f'SHA-256 {sha256(out)}; {EXE} file version {version}')
     if args.github_output:
         github_output({'folder': folder, 'file_version': version or ''})
+    return 0
+
+
+def engine_files(args) -> int:
+    settings = load_tools(args.tools)
+    if not args.zip.is_file():
+        raise FileNotFoundError(str(args.zip))
+    work = args.work.resolve()
+    if work.exists():
+        shutil.rmtree(work)
+    with zipfile.ZipFile(args.zip) as archive:
+        entries = safe_paths(archive)
+        archive.extractall(work)
+    files = pe_files(work)
+    if not files:
+        raise Problem(f'{args.zip.name} holds no .exe and no .dll')
+    keep, unsigned = {}, []
+    for path in files:
+        signature = verify_file(settings, path)
+        if signature['valid']:
+            keep[path] = signature
+        else:
+            unsigned.append(path)
+    print(f'{len(files)} .exe and .dll files: {len(unsigned)} to sign, {len(keep)} signed already')
+    for path, signature in keep.items():
+        print(f'  kept: {path.relative_to(work).as_posix()}, {describe(signature)}')
+    sign_files(settings, unsigned)
+    failed = 0
+    for path in files:
+        signature = verify_file(settings, path)
+        good = ours(signature) if path in unsigned else signature['valid']
+        print(f'  {path.relative_to(work).as_posix()}: {describe(signature)}')
+        if not good:
+            failed += 1
+    if failed:
+        raise Problem(f'{failed} files of {args.zip.name} without a valid signature')
+    out = args.out.resolve() / args.zip.name
+    repack(entries, work, out)
+    digest = sha256(out)
+    print(f'{out}: {len(unsigned)} files signed by {PUBLISHER}, {len(files)} checked, {len(entries)} entries as in the '
+          f'build, SHA-256 {digest}')
+    if args.github_output:
+        github_output({'archive': out, 'sha256': digest})
     return 0
 
 
@@ -494,6 +548,12 @@ def main(argv=None) -> int:
     pack.add_argument('--work', type=pathlib.Path, required=True)
     pack.add_argument('--out', type=pathlib.Path, required=True)
     pack.add_argument('--github-output', action='store_true')
+    engine = commands.add_parser('files', help='sign the files of the archive of an engine and write it again')
+    engine.add_argument('--tools', type=pathlib.Path, required=True)
+    engine.add_argument('--zip', type=pathlib.Path, required=True)
+    engine.add_argument('--work', type=pathlib.Path, required=True)
+    engine.add_argument('--out', type=pathlib.Path, required=True)
+    engine.add_argument('--github-output', action='store_true')
     one = commands.add_parser('sign', help='sign files')
     one.add_argument('--tools', type=pathlib.Path, required=True)
     one.add_argument('files', nargs='+')
@@ -508,7 +568,8 @@ def main(argv=None) -> int:
     final.add_argument('--github-output', action='store_true')
     args = parser.parse_args(argv)
     try:
-        return {'tools': tools, 'bundle': bundle, 'sign': sign, 'verify': verify, 'check': check}[args.command](args)
+        return {'tools': tools, 'bundle': bundle, 'files': engine_files, 'sign': sign, 'verify': verify,
+                'check': check}[args.command](args)
     except Problem as error:
         print(f'windows_sign: {error}')
         return 1

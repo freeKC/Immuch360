@@ -719,10 +719,12 @@ FAMILY_NOTES = {
         'attribution of that part comes with a later version of this file. MI-GAN: MIT, code and weights, Copyright (c)',
         '2024 Picsart AI Research (PAIR), trained on Places2, a research dataset. Real-ESRGAN x4plus: BSD-3-Clause,',
         'Copyright (c) 2021, Xintao Wang. stable-diffusion.cpp and ggml: MIT',
-        '(https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE,',
-        'https://github.com/ggml-org/ggml/blob/master/LICENSE), built and signed by our CI at the commits of',
-        '`.github/desktop/ai/sd_cpp.lock.json`, run by the app as a child process. No CUDA: the graphics card is',
-        'reached through Vulkan only.',
+        '(https://github.com/leejet/stable-diffusion.cpp/blob/be486498eadc29dc3cd234d944c2180ed42b1415/LICENSE,',
+        'https://github.com/leejet/ggml/blob/a5915eb0e47adef21c3f25b889a008925ea838c2/LICENSE), built by our CI at the',
+        'commits of `.github/desktop/ai/sd_cpp.lock.json` and signed for Windows, run by the app as a child process;',
+        'their licences and those of the code built into them (Oniguruma, utf8proc, Darts-clone, JSON for Modern C++,',
+        'miniz, stb, llamafile sgemm) are in the `licenses/` folder of each archive, from `licenses/sdcpp/` of the',
+        'repository. No CUDA: the graphics card is reached through Vulkan only.',
     ],
 }
 

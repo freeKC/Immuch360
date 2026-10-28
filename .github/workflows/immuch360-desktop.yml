@@ -19,8 +19,9 @@ name: Immuch360 Desktop
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
-#   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 included), the release build, the ZIP and
-#                  the installer (Inno Setup) for the owner as artifacts named
+#   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
+#                  fake sd-cli and the probe of a generation as the artifact Immuch360-AI-tools-windows-x64, the release
+#                  build, the ZIP and the installer (Inno Setup) for the owner as artifacts named
 #                  Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), the probe of
 #                  the graphics cards of the build, and the app of the ZIP started on a database an older build left
@@ -30,6 +31,10 @@ name: Immuch360 Desktop
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
 #                  point 7 in the run summary. An upstream sync reaches the desktop branch through the phone branch;
 #                  an upstream-sync/* branch is made from the desktop branch to see the effect of a sync before it lands.
+#   sdcpp-windows, sdcpp-linux
+#                  stable-diffusion.cpp on Vulkan, the generator of the 360° panoramas, built from the commits of
+#                  .github/desktop/ai/sd_cpp.lock.json: only when asked (the sdcpp input) or when the lock changed,
+#                  as artifacts Immuch360-AI-sdcpp-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
 #
 # Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
 # from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
@@ -46,8 +51,18 @@ on:
   pull_request:
     branches: [desktop]
   workflow_dispatch:
+    inputs:
+      sdcpp:
+        description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
+        type: boolean
+        default: false
   # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
   workflow_call:
+    inputs:
+      sdcpp:
+        description: Also build stable-diffusion.cpp, for the release workflow to sign it (never for a release)
+        type: boolean
+        default: false
     outputs:
       label:
         description: The version label of the build, which names its files
@@ -73,6 +88,7 @@ jobs:
       build_number: ${{ steps.version.outputs.build_number }}
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
+      sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -84,6 +100,30 @@ jobs:
       - name: Version numbers
         id: version
         run: python3 .github/desktop/desktop_version.py --github-output
+
+      # The sdcpp jobs build stable-diffusion.cpp when the lock differs from the base: the target branch of a pull
+      # request, the commit before a push; never on a run by hand or from the release workflow, which ask with the
+      # sdcpp input
+      - name: Did sd_cpp.lock.json change
+        id: sdcpp
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=
+          if [ "$EVENT" = pull_request ]; then
+            base=$(git merge-base HEAD "origin/$BASE_REF")
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          fi
+          changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/sd_cpp.lock.json; then
+            changed=true
+          fi
+          echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -246,12 +286,27 @@ jobs:
           mise exec -- cargo fmt --check
           mise exec -- cargo clippy --all-targets -- -D warnings
 
+      # The fake sd-cli of the 360° panoramas compiled into a real program (no Flutter in it), and immuch360-run, the
+      # Linux launcher that makes sd-cli die with the app: the runner and the launcher of lot P2 are tested on them in
+      # the suite below (test/desktop/ai/gen, test/desktop/ai/process)
+      - name: The fake sd-cli and the launcher
+        id: fake_sd_cli
+        working-directory: mobile
+        run: |
+          mkdir -p "$RUNNER_TEMP/sdcpp-fakes"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli"
+          gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/sdcpp-fakes/immuch360-run" ../.github/desktop/ai/immuch360_run.c
+          echo "fake=$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli" >> "$GITHUB_OUTPUT"
+          echo "launcher=$RUNNER_TEMP/sdcpp-fakes/immuch360-run" >> "$GITHUB_OUTPUT"
+
       # The whole suite: the phone regression gate, test/desktop included. IMMUCH360_REQUIRE_SBS_CODEC turns the skip
       # of the dart:ffi tests of the JPEG codec into a failure: here the build hook must have built the library
       - name: Tests
         working-directory: mobile
         env:
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
+          IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
+          IMMUCH360_RUN_LAUNCHER: ${{ steps.fake_sd_cli.outputs.launcher }}
         run: mise exec -- flutter test
 
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
@@ -706,12 +761,36 @@ jobs:
           PY
           echo "lib=$(cygpath -w "$ort/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
 
+      # The fake sd-cli of the 360° panoramas, for the tests of the runner and of the job object below (lot P2), and
+      # sdcpp_probe, the program that runs a real generation through the same runner and launcher on a PC with a
+      # graphics card (the essay of the lot), both compiled by dart compile exe without Flutter; kept together as the
+      # artifact Immuch360-AI-tools-windows-x64, a name no release takes
+      - name: The fake sd-cli and the probe of a generation
+        id: fake_sd_cli
+        working-directory: mobile
+        run: |
+          tools="$(cygpath -u "$RUNNER_TEMP")/sdcpp-tools"
+          mkdir -p "$tools"
+          dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$tools/fake-sd-cli.exe"
+          dart compile exe test/desktop/ai/tools/sdcpp_probe.dart -o "$tools/sdcpp-probe.exe"
+          echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
+          echo "tools=$(cygpath -w "$tools")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the fake sd-cli and the probe
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-AI-tools-windows-x64
+          path: ${{ steps.fake_sd_cli.outputs.tools }}
+          retention-days: 14
+          if-no-files-found: error
+
       # IMMUCH360_REQUIRE_SBS_CODEC: the dart:ffi tests of the JPEG codec fail rather than skip without the library
-      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime)
+      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime, the job object)
         working-directory: mobile
         env:
           IMMUCH360_ORT_LIB: ${{ steps.ort.outputs.lib }}
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
+          IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
         run: flutter test test/desktop
 
       - name: Build
@@ -1227,6 +1306,151 @@ jobs:
             cat release/SHA256SUMS.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # stable-diffusion.cpp on Vulkan, the generator of the 360° panoramas (lot P2; design-final 2026-10-27, section 7.5),
+  # built from the commits of .github/desktop/ai/sd_cpp.lock.json with the Vulkan SDK of LunarG it names, checked by
+  # its SHA-256 (the headers and glslc of Ubuntu 22.04 are too old for the Vulkan backend of ggml), on the pinned images
+  # of the desktop builds: Windows with Visual Studio 2022, Linux on Ubuntu 22.04 for its glibc. Only when asked (the
+  # sdcpp input) or when the lock changed, never on every pull request otherwise. The archive is named
+  # Immuch360-AI-sdcpp-<lock>-<system>.zip, not Immuch360-Desktop-*, so neither the packages job nor a release takes it;
+  # immuch360-desktop-release.yml signs the Windows one (with_sdcpp), and publish_ai_components.py --from-run puts both
+  # into ai-components-3. sd-cli --help is compared with the fixture the arguments of the runner are frozen by
+  # (.github/desktop/ai/sdcpp_build.py)
+  sdcpp-windows:
+    name: stable-diffusion.cpp for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.sdcpp || needs.codegen.outputs.sdcpp_lock_changed == 'true' }}
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/sdcpp_build.py lock --system windows-x64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python .github/desktop/ai/sdcpp_build.py sources --dir "$RUNNER_TEMP/sdcpp"
+
+      # The installer of LunarG, as stable-diffusion.cpp's own workflow runs it, into C:\VulkanSDK\<version>
+      - name: Vulkan SDK of LunarG
+        env:
+          SDK_URL: ${{ steps.lock.outputs.sdk_url }}
+          SDK_SHA256: ${{ steps.lock.outputs.sdk_sha256 }}
+          SDK_VERSION: ${{ steps.lock.outputs.sdk_version }}
+        run: |
+          installer="$RUNNER_TEMP/vulkansdk.exe"
+          curl -sSfL --retry 3 -o "$installer" "$SDK_URL"
+          echo "$SDK_SHA256  $installer" | sha256sum -c -
+          "$installer" --accept-licenses --default-answer --confirm-command install
+          echo "VULKAN_SDK=C:\\VulkanSDK\\$SDK_VERSION" >> "$GITHUB_ENV"
+          echo "C:\\VulkanSDK\\$SDK_VERSION\\Bin" >> "$GITHUB_PATH"
+
+      - name: Build
+        run: |
+          glslc --version
+          python .github/desktop/ai/sdcpp_build.py build --system windows-x64 --source "$RUNNER_TEMP/sdcpp" \
+            --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli.exe" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python .github/desktop/ai/sdcpp_build.py help --output "$RUNNER_TEMP/sd-cli-help.txt"
+
+      - name: The archive
+        id: pack
+        run: |
+          python .github/desktop/ai/sdcpp_build.py pack --system windows-x64 --source "$RUNNER_TEMP/sdcpp" \
+            --bin "$RUNNER_TEMP/sdcpp-build/bin" --out dist
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli.exe" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  sdcpp-linux:
+    name: stable-diffusion.cpp for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.sdcpp || needs.codegen.outputs.sdcpp_lock_changed == 'true' }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/sdcpp_build.py lock --system linux-x64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python3 .github/desktop/ai/sdcpp_build.py sources --dir "$RUNNER_TEMP/sdcpp"
+
+      # The tarball of LunarG: its headers, glslc and the loader to link with (the drivers bring the loader at run time)
+      - name: Vulkan SDK of LunarG
+        env:
+          SDK_URL: ${{ steps.lock.outputs.sdk_url }}
+          SDK_SHA256: ${{ steps.lock.outputs.sdk_sha256 }}
+          SDK_VERSION: ${{ steps.lock.outputs.sdk_version }}
+        run: |
+          tarball="$RUNNER_TEMP/vulkansdk.tar.xz"
+          curl -sSfL --retry 3 -o "$tarball" "$SDK_URL"
+          echo "$SDK_SHA256  $tarball" | sha256sum -c -
+          tar -xJf "$tarball" -C "$RUNNER_TEMP"
+          sdk="$RUNNER_TEMP/$SDK_VERSION/x86_64"
+          echo "VULKAN_SDK=$sdk" >> "$GITHUB_ENV"
+          echo "$sdk/bin" >> "$GITHUB_PATH"
+          echo "LD_LIBRARY_PATH=$sdk/lib" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: |
+          glslc --version
+          python3 .github/desktop/ai/sdcpp_build.py build --system linux-x64 --source "$RUNNER_TEMP/sdcpp" \
+            --build "$RUNNER_TEMP/sdcpp-build"
+
+      # The launcher that makes sd-cli die with the app (PR_SET_PDEATHSIG), then the same check of its signal as the
+      # tests of the app make: the child of a killed shell is gone
+      - name: immuch360-run
+        run: |
+          gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+          launcher="$RUNNER_TEMP/immuch360-run"
+          "$launcher" --parent $$ -- /bin/echo "the launcher runs"
+          bash -c "\"$launcher\" --parent \$\$ -- /bin/sh -c 'echo \$\$ > \"$RUNNER_TEMP/child\"; exec sleep 300' & sleep 1; kill -9 \$\$" || true
+          sleep 1
+          child=$(cat "$RUNNER_TEMP/child")
+          if [ -e "/proc/$child" ]; then echo "::error::the child $child outlived its parent"; exit 1; fi
+          echo "the child $child died with its parent"
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          LD_LIBRARY_PATH= "$RUNNER_TEMP/sdcpp-build/bin/sd-cli" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python3 .github/desktop/ai/sdcpp_build.py help --output "$RUNNER_TEMP/sd-cli-help.txt"
+
+      - name: The archive
+        run: |
+          python3 .github/desktop/ai/sdcpp_build.py pack --system linux-x64 --source "$RUNNER_TEMP/sdcpp" \
+            --bin "$RUNNER_TEMP/sdcpp-build/bin" --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/sd-cli"
+          LD_LIBRARY_PATH= "$RUNNER_TEMP/unpacked/sd-cli" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
 
   # An upstream change of a pigeon contract, of main.dart or of the HTTP clients shows on the day of the merge: the
   # test and linux jobs of the same run analyze, test and build the sync; this job adds what to read by hand

@@ -67,6 +67,14 @@ class FakeRunningProcess implements RunningProcess {
     _exit.complete(code);
   }
 
+  /// Writes [line] on the output (or the error output with [isError]) of a process still running, as a long job does
+  /// now and then
+  void emit(String line, {bool isError = false}) {
+    if (!_exit.isCompleted) {
+      (isError ? _err : _out).add(line);
+    }
+  }
+
   @override
   void kill() {
     killed = true;

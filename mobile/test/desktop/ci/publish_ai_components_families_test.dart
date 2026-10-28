@@ -222,6 +222,23 @@ class _FakeApis {
 }
 
 /// [text] with the component [id] given [size] and [sha256], and without its parts
+/// [text] of the catalogue with the two engines of P2 as they were before the lot wrote them: no size, no sum, no file
+/// (the run of a release that has no artifact of the CI yet, and the check that says them pending)
+String _enginesPending(String catalogue) {
+  // A checkout on Windows may hold CRLF line ends; the script reads either
+  var text = catalogue.replaceAll('\r\n', '\n');
+  for (final id in ['sd-cpp-vulkan-win-x64', 'sd-cpp-vulkan-linux-x64']) {
+    final start = text.indexOf("  id: '$id',");
+    final end = text.indexOf('\n);\n', start);
+    var body = text.substring(start, end);
+    body = body.replaceFirst(RegExp(r'  size: \d+,'), '  size: null,');
+    body = body.replaceFirst(RegExp(r"  sha256: '[0-9a-f]{64}',"), '  sha256: null,');
+    body = body.replaceFirst(RegExp(r'  archiveFiles: \[\n.*?\n  \],\n?', dotAll: true), '');
+    text = text.replaceRange(start, end, body.endsWith('\n') ? body.substring(0, body.length - 1) : body);
+  }
+  return text;
+}
+
 String _withEntry(String text, String id, int size, String sha256) {
   final start = text.indexOf("  id: '$id',");
   final end = text.indexOf('\n);', start);
@@ -282,7 +299,7 @@ void main() {
     // Our export, made beforehand, waits in the cache under its asset name
     File(p.join(cache.path, 'moge_2_vits_normal_immuch360.onnx')).writeAsBytesSync(_models.first.bytes);
     sources = File(p.join(temp.path, 'sources.json'))..writeAsStringSync(jsonEncode({'upstream': upstream}));
-    catalogue = File(p.join(temp.path, 'ai_components_manifest.dart'))..writeAsStringSync(text);
+    catalogue = File(p.join(temp.path, 'ai_components_manifest.dart'))..writeAsStringSync(_enginesPending(text));
     licences = File(p.join(temp.path, 'MODEL-LICENSES.md'))..writeAsStringSync(File(_licences).readAsStringSync());
     apis = _FakeApis();
     await apis.start();
@@ -505,12 +522,13 @@ void main() {
   });
 
   group('publish_ai_components.py --check, the three releases', () {
-    test('the catalogue of the app and MODEL-LICENSES.md agree; the engines of P2 are said pending', () {
+    test('the catalogue of the app and MODEL-LICENSES.md agree; the engines of P2 are written, nothing pending', () {
       final run = runCiScript(_script, ['--check']);
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
-      expect(run.output, contains('pending for lot P2: sd-cpp-vulkan-linux-x64, sd-cpp-vulkan-win-x64'));
+      // Pending before lot P2 wrote them: the run of the panoramas above starts from such a catalogue
+      expect(run.output, isNot(contains('pending')));
       for (final release in ['ai-components-1', 'ai-components-2', 'ai-components-3']) {
         expect(runCiScript(_script, ['--check', '--release', release]).exitCode, 0, reason: release);
       }
@@ -544,7 +562,7 @@ void main() {
     }, skip: skipCiScripts);
 
     test('an engine half written by hand is incomplete, not pending', () {
-      final text = File(_catalogue).readAsStringSync();
+      final text = _enginesPending(File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n'));
       final start = text.indexOf("  id: 'sd-cpp-vulkan-linux-x64',");
       final size = text.indexOf('  size: null,', start);
       catalogue.writeAsStringSync(text.replaceRange(size, size + 13, '  size: 1000,'));

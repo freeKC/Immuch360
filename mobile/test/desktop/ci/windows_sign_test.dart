@@ -184,6 +184,90 @@ void main() {
       expect(File(p.join(signing.path, 'sign.log')).readAsStringSync(), contains('Successfully signed'));
     });
 
+    test('files: the archive of stable-diffusion.cpp, its programs and libraries signed at the top, the rest kept', () {
+      final signing = tools();
+      final root = tree({});
+      final zip = p.join(root.path, 'Immuch360-AI-sdcpp-be48649-1-windows-x64.zip');
+      const make = r'''
+import sys, zipfile
+files = [('BUILD-INFO.txt', b'lock be48649-1'), ('ggml-vulkan.dll', b'MZ vulkan'), ('licenses/THIRD-PARTY.md', b'MIT'),
+         ('sd-cli.exe', b'MZ cli'), ('vcruntime140.dll', b'MZ rt\nFAKE-SIGNATURE:Microsoft Corporation')]
+with zipfile.ZipFile(sys.argv[1], 'w', zipfile.ZIP_DEFLATED) as archive:
+    for name, data in files:
+        info = zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0))
+        info.external_attr = (0o100755 if name.endswith('.exe') else 0o100644) << 16
+        archive.writestr(info, data)
+''';
+      expect(runPython(['-c', make, zip]).exitCode, 0);
+      final before = readZip(zip);
+      final output = File(p.join(root.path, 'github-output.txt'))..writeAsStringSync('');
+
+      final run = runCiScript(
+        'windows_sign.py',
+        [
+          'files',
+          '--tools',
+          signing.path,
+          '--zip',
+          zip,
+          '--work',
+          p.join(root.path, 'work'),
+          '--out',
+          p.join(root.path, 'signed'),
+          '--github-output',
+        ],
+        environment: {'GITHUB_OUTPUT': output.path},
+      );
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('3 .exe and .dll files: 2 to sign, 1 signed already'));
+      final signed = p.join(root.path, 'signed', 'Immuch360-AI-sdcpp-be48649-1-windows-x64.zip');
+      final after = readZip(signed);
+      expect(after['names'], before['names']);
+      expect(after['dates'], before['dates']);
+      final files = after['files'] as Map<String, dynamic>;
+      expect(files['sd-cli.exe'], endsWith('FAKE-SIGNATURE:APROGSYS'));
+      expect(files['ggml-vulkan.dll'], endsWith('FAKE-SIGNATURE:APROGSYS'));
+      expect(files['vcruntime140.dll'], endsWith('FAKE-SIGNATURE:Microsoft Corporation'));
+      expect(files['BUILD-INFO.txt'], 'lock be48649-1');
+      expect(files['licenses/THIRD-PARTY.md'], 'MIT');
+      final values = output.readAsStringSync();
+      // The path resolved by the script: a Windows temporary folder may be given in its short form (RUNNER~1)
+      expect(values, matches(RegExp(r'archive=.+[\\/]signed[\\/]Immuch360-AI-sdcpp-be48649-1-windows-x64\.zip')));
+      expect(values, matches(RegExp(r'sha256=[0-9a-f]{64}')));
+
+      // A path that leaves the archive, or an archive without a program, is refused before anything is signed
+      final unsafe = p.join(root.path, 'unsafe.zip');
+      expect(runPython(['-c', make.replaceFirst("('sd-cli.exe'", "('../sd-cli.exe'"), unsafe]).exitCode, 0);
+      final refused = runCiScript('windows_sign.py', [
+        'files',
+        '--tools',
+        signing.path,
+        '--zip',
+        unsafe,
+        '--work',
+        p.join(root.path, 'work2'),
+        '--out',
+        p.join(root.path, 'signed2'),
+      ]);
+      expect(refused.exitCode, 1, reason: '$refused');
+      expect(refused.output, contains('unsafe path in the ZIP: ../sd-cli.exe'));
+      final empty = p.join(root.path, 'empty.zip');
+      expect(runPython(['-c', make.replaceAll('.exe', '.txt').replaceAll('.dll', '.txt'), empty]).exitCode, 0);
+      final none = runCiScript('windows_sign.py', [
+        'files',
+        '--tools',
+        signing.path,
+        '--zip',
+        empty,
+        '--work',
+        p.join(root.path, 'work3'),
+        '--out',
+        p.join(root.path, 'signed3'),
+      ]);
+      expect(none.exitCode, 1, reason: '$none');
+      expect(none.output, contains('holds no .exe and no .dll'));
+    });
+
     test('check passes the signed files and refuses a ZIP or an installer that APROGSYS did not sign', () {
       final signing = tools();
       final root = tree({});

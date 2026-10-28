@@ -334,6 +334,15 @@ void main() {
       expect(golden['hiddenAreasRatio'], ReliefV1.hiddenAreasRatio);
     });
 
+    test('the generation M3 kept: 1536 x 768, upscaled x4 to 6144 x 3072, 20 steps, guidance 5, LoRA at 0.9', () {
+      // 2048 x 1024 falls apart in blocks with the pinned stable-diffusion.cpp on Vulkan (M3, section 2)
+      expect((PanoV1.generationWidth, PanoV1.generationHeight), (1536, 768));
+      expect((PanoV1.outputWidth, PanoV1.outputHeight), (6144, 3072));
+      expect((PanoV1.controlWidth, PanoV1.controlHeight), (2048, 1024));
+      expect((PanoV1.steps, PanoV1.guidance, PanoV1.loraStrength), (20, 5.0, 0.9));
+      expect(PanoV1.negativePrompt, 'text, worst quality, blurry, ugly');
+    });
+
     test('a photo projected on the control frame: green around it, its coverage, the roll of half a turn', () {
       final width = golden['frameWidth'] as int;
       final height = golden['frameHeight'] as int;
