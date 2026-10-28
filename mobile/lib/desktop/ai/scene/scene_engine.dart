@@ -19,7 +19,8 @@
 //     one, fovGuessed beyond 25 % of it or without it), the metric depth, then scene-v1 (scene_layout.dart): sky,
 //     comfort scale, breaks, bands, mask of the filling, depth behind the bands, grid, zone; the regions to fill;
 //  5. inpaint (to 88 %): LaMa on each region, "region k of n" (LaMa is not even loaded for a scene without a break);
-//  6. mesh (to 90 %): the photo layer and the background layer (scene_mesh.dart), cut at 65 535 vertices;
+//  6. mesh (to 90 %): the photo layer (its grid, then the cells a break cuts, so that the start shows the photo) and
+//     the background layer (scene_mesh.dart), cut at 65 535 vertices;
 //  7. textures (to 97 %): the JPEG of the photo (quality 90) and of the filled map (85), the profile of the photo kept;
 //  8. writing (to 100 %): the glb, the packet, the preview, the file in one write to the .part (and the glb to
 //     SceneJob.glbPartPath when given, which the app does not do: its .glb copy is SceneGlbCopies), as the 3D photo is

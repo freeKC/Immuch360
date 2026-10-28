@@ -133,8 +133,13 @@ class SceneLayout {
     return count / band.length;
   }
 
-  /// The photo layer: the grid, its triangles, the uv of the photo
-  GridLayer get photoLayer => GridLayer(positions: vertices, uvs: gridUvs(grid), indices: indices);
+  /// The photo layer: the grid, its triangles, the uv of the photo; then the cells a break cuts, on vertices of their
+  /// own behind their band, so that the scene seen from the start is the photo (scene_mesh.dart, cutCellsLayerOf)
+  GridLayer get photoLayer {
+    final layer = GridLayer(positions: vertices, uvs: gridUvs(grid), indices: indices);
+    final cut = cutCellsLayerOf(grid, keptCells, band, depthBehind, focal);
+    return cut == null ? layer : joinedLayers(layer, cut);
+  }
 
   /// The background layer, null without a band
   GridLayer? get backgroundLayer => backgroundLayerOf(grid, band, depthBehind, focal);
