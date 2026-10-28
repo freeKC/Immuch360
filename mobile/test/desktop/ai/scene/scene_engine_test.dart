@@ -57,6 +57,7 @@ void main() {
     String? partPath,
     MemoryProbe? memory,
     Set<String> sessionsOpen = const {},
+    int memoryAllowance = 0,
   }) {
     final job = sceneJobFor(
       path,
@@ -71,6 +72,7 @@ void main() {
       writePart: writePart,
       memory: memory,
       sessionsOpen: sessionsOpen,
+      memoryAllowance: memoryAllowance,
     ).run(
       job,
       ChainOriginal(bytes: File(path).readAsBytesSync()),
@@ -503,6 +505,25 @@ void main() {
       expect(geometry.calls, 0, reason: 'checked before the photo is decoded');
       expect(File(scenePartIn(folder, 'tight.jpg')).existsSync(), isFalse);
       expect(File(path).readAsBytesSync(), before);
+    });
+
+    test('on Windows a scene may go 1 GiB beyond the memory said available, which idle programs give back', () {
+      final path = scenePhoto(folder, 'paged.jpg');
+      const free = FixedMemoryProbe(available: 1200 * 1000 * 1000);
+
+      expect(sceneMemoryAllowanceFor(isWindows: true), sceneTrimAllowance);
+      expect(sceneMemoryAllowanceFor(isWindows: false), 0, reason: 'Linux says what a program can take');
+      expect(runChain(path, memory: free).result.error, ImmersiveErrorCode.outOfMemory);
+      final allowed = runChain(path, memory: free, memoryAllowance: sceneTrimAllowance);
+      expect(allowed.result.isDone, isTrue, reason: '${allowed.result.error}: ${allowed.result.message}');
+      // Under 1.07 GB free, even Windows cannot
+      final short = runChain(
+        path,
+        memory: const FixedMemoryProbe(available: 1000 * 1000 * 1000),
+        memoryAllowance: sceneTrimAllowance,
+      );
+      expect(short.result.error, ImmersiveErrorCode.outOfMemory);
+      expect(short.result.message, 'This photo needs about 2147 MB of memory, 1000 MB are free');
     });
 
     test('the sessions the worker keeps open count as memory the scene already has; no figure, no check', () {
