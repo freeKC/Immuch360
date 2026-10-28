@@ -1,11 +1,14 @@
-// What happens when the name of a 3D photo is taken (spec 6.4; design-final 2026-10-26, section 2.5), as chosen in the
+// What happens when the name of a version is taken (spec 6.4; design-final 2026-10-26, section 2.5), as chosen in the
 // conversion dialog and kept in desktop_ai.json: keep both (the default, "name (1)"), replace, or skip. Replace only
-// ever takes the place of a 3D photo of ours made from the same original, read again just before the rename: our XMP,
-// a DerivativeId, and the SourceSha1 of the original (else its SourceName and SourceSize, the rule of design-final
-// 4.2). salon.jpg and salon.heic both give salon_3D_LRF_Full_SBS.jpg: the 3D photo of the one is never replaced by that
-// of the other. A photo of the user, the 3D photo of another tool, or one of ours without an id is never replaced
-// either, both are kept instead. Nor is the original of the job, whatever it carries. Pure rules: SafeWriter reads the
-// files and acts.
+// ever takes the place of a version of ours of the same kind made from the same original, read again just before the
+// rename: our XMP, its Kind, a DerivativeId, and the SourceSha1 of the original (else its SourceName and SourceSize, the
+// rule of design-final 4.2). salon.jpg and salon.heic both give salon_3D_LRF_Full_SBS.jpg: the 3D photo of the one is
+// never replaced by that of the other, nor a 3D scene by a 3D photo. A photo of the user, the 3D photo of another tool,
+// one of ours without an id or of a kind this build does not know is never replaced either, both are kept instead.
+// Nor is the original of the job, whatever it carries. Pure rules: SafeWriter reads the files and acts.
+//
+// The name of each kind (design-final 2026-10-27, section 8.3) keeps its end whole when it is shortened for Windows:
+// "_3D_LRF_Full_SBS.jpg", "_scene3D.jpg", "_360.jpg", "_360_3D.jpg" or "_3D.jpg".
 
 import 'dart:typed_data';
 
@@ -13,24 +16,28 @@ import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
-import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 
 /// How much of the head of a file is read for its XMP, as the scan and the panorama viewer read GPano
 const versionHeadLength = 128 * 1024;
 
-const _sbsNameEnd = '$sbsFullNameSuffix$sbsFileExtension';
-
 /// The name of the 3D photo of [originalName] on a computer: "salon_3D_LRF_Full_SBS.jpg", made safe for Windows. A
 /// name too long is shortened before "_3D_LRF_Full_SBS.jpg", which always stays whole: SKYBOX, DeoVR and iw3 read it.
-String sbsTargetName(String originalName) {
+String sbsTargetName(String originalName) => versionTargetName(ImmersiveKind.stereoPhoto, originalName);
+
+/// The name of the version of [kind] of [originalName] on a computer, made safe for Windows: "salon_scene3D.jpg",
+/// "salon_360.jpg", "salon_360_3D.jpg", "PANO_0001_3D.jpg" (derivedNameEnd). A name too long is shortened before its
+/// end, which always stays whole: the devices and the search of the neighbours read it.
+String versionTargetName(ImmersiveKind kind, String originalName) {
+  final end = derivedNameEnd(kind, originalName);
   var stem = fileStem(originalName);
   for (;;) {
-    final name = safeFileName('$stem$_sbsNameEnd');
-    if (name.endsWith(_sbsNameEnd) || stem.isEmpty) {
+    final name = safeFileName('$stem$end');
+    if (name.endsWith(end) || stem.isEmpty) {
       return name;
     }
     // safeFileName cut the end of the name: the name of the original loses what was cut instead
-    final over = '$stem$_sbsNameEnd'.length - name.length;
+    final over = '$stem$end'.length - name.length;
     var keep = stem.length - (over > 0 ? over : 1);
     if (keep > 0 && _isHighSurrogate(stem.codeUnitAt(keep - 1))) {
       // Never half of a character outside the basic plane
@@ -58,9 +65,9 @@ class OriginalIdentity {
   final String? sha1;
   final String? path;
 
-  /// Whether [xmp] is that of a 3D photo made from this original: the same SourceSha1 when both are known, else the
-  /// same SourceName and SourceSize
-  bool madeFrom(StereoPhotoXmp xmp) {
+  /// Whether [xmp] is that of a version made from this original, whatever its kind: the same SourceSha1 when both are
+  /// known, else the same SourceName and SourceSize
+  bool madeFrom(ImmersiveXmp xmp) {
     final mine = sha1?.trim() ?? '';
     final theirs = xmp.sourceSha1?.trim() ?? '';
     if (mine.isNotEmpty && theirs.isNotEmpty) {
@@ -74,12 +81,16 @@ class OriginalIdentity {
   String toString() => 'OriginalIdentity($name, $size, $sha1)';
 }
 
-/// Whether [head], the first bytes of a file, show a 3D photo of ours that may be replaced by a new one of [original]:
-/// our XMP, with a DerivativeId, made from that same original
-bool isReplaceableVersion(Uint8List head, {required OriginalIdentity original}) {
-  final xmp = StereoPhotoXmp.findIn(head);
+/// Whether [head], the first bytes of a file, show a version of ours of [kind] that may be replaced by a new one of
+/// [original]: our XMP of that Kind, with a DerivativeId, made from that same original
+bool isReplaceableVersion(
+  Uint8List head, {
+  required OriginalIdentity original,
+  ImmersiveKind kind = ImmersiveKind.stereoPhoto,
+}) {
+  final xmp = ImmersiveXmp.findIn(head);
   final id = xmp?.derivativeId;
-  return xmp != null && id != null && id.trim().isNotEmpty && original.madeFrom(xmp);
+  return xmp != null && xmp.kind == kind && id != null && id.trim().isNotEmpty && original.madeFrom(xmp);
 }
 
 /// What becomes of a 3D photo whose name may be taken
@@ -95,14 +106,15 @@ enum CollisionAction {
 }
 
 /// What [whenExists] does with a name that is [taken] by a file whose first bytes are [head] (null when they could not
-/// be read), for a new 3D photo of [original] (null when it is not known: never a replace then). [isOriginal] when that
-/// file is the original of the job, which is never replaced.
+/// be read), for a new version of [kind] of [original] (null when it is not known: never a replace then).
+/// [isOriginal] when that file is the original of the job, which is never replaced.
 CollisionAction collisionAction({
   required AiWhenExists whenExists,
   required bool taken,
   Uint8List? head,
   OriginalIdentity? original,
   bool isOriginal = false,
+  ImmersiveKind kind = ImmersiveKind.stereoPhoto,
 }) {
   if (!taken) {
     return CollisionAction.newName;
@@ -111,7 +123,7 @@ CollisionAction collisionAction({
     AiWhenExists.keepBoth => CollisionAction.newName,
     AiWhenExists.skip => CollisionAction.skip,
     AiWhenExists.replace =>
-      !isOriginal && head != null && original != null && isReplaceableVersion(head, original: original)
+      !isOriginal && head != null && original != null && isReplaceableVersion(head, original: original, kind: kind)
           ? CollisionAction.replace
           : CollisionAction.newName,
   };

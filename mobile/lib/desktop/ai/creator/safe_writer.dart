@@ -22,6 +22,7 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -386,18 +387,19 @@ class SafeWriter {
     return part;
   }
 
-  /// The 3D photo of [original] written in [part] put under its final name, as [whenExists] says when that name is
-  /// taken: keepBoth reserves the first free "name (n)", at this moment only; replace takes the place of the file there
-  /// only when it is a 3D photo of ours made from [original], read again just before, else both are kept; skip leaves
-  /// the existing file and deletes the partial one. [replacing] is another version the queue found, its name or its
-  /// path: it is replaced only in the folder of [part], a version elsewhere stays where it is (the final name is
-  /// looked at instead). The file of [original] is never replaced. Throws a [CreatorWriteException], the partial file
-  /// then deleted.
+  /// The version of [kind] of [original] written in [part] put under its final name, as [whenExists] says when that
+  /// name is taken: keepBoth reserves the first free "name (n)", at this moment only; replace takes the place of the
+  /// file there only when it is a version of ours of the same kind made from [original], read again just before, else
+  /// both are kept; skip leaves the existing file and deletes the partial one. [replacing] is another version the queue
+  /// found, its name or its path: it is replaced only in the folder of [part], a version elsewhere stays where it is
+  /// (the final name is looked at instead). The file of [original] is never replaced. Throws a
+  /// [CreatorWriteException], the partial file then deleted.
   Future<SavedVersion> commit(
     PartFile part, {
     required OriginalIdentity original,
     AiWhenExists whenExists = AiWhenExists.keepBoth,
     String? replacing,
+    ImmersiveKind kind = ImmersiveKind.stereoPhoto,
   }) async {
     try {
       final target = whenExists == AiWhenExists.replace
@@ -413,6 +415,7 @@ class SafeWriter {
         head: taken && !isOriginal && whenExists == AiWhenExists.replace ? await _headOf(target) : null,
         original: original,
         isOriginal: isOriginal,
+        kind: kind,
       );
       if (action == CollisionAction.skip) {
         await discard(part);

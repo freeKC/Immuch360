@@ -10,6 +10,7 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:path/path.dart' as p;
 
@@ -260,6 +261,192 @@ void main() {
       version(photos, 'salon_3D_LRF_Full_SBS (1).jpg', parallax: 0.04);
 
       expect(await finder().withSettings(original, sameSettings, folder: photos), isNull);
+    });
+
+    test(
+      'with a condition, the first version of the same settings that meets it, reading on past the others',
+      () async {
+        version(photos, 'salon_3D_LRF_Full_SBS (1).jpg');
+        final wanted = version(photos, 'salon_3D_LRF_Full_SBS (2).jpg');
+
+        final found = await finder().withSettings(
+          original,
+          sameSettings,
+          folder: photos,
+          where: (version) => p.basename(version.path) != 'salon_3D_LRF_Full_SBS (1).jpg',
+        );
+
+        expect(found?.path, wanted);
+        expect(await finder().withSettings(original, sameSettings, folder: photos, where: (_) => false), isNull);
+      },
+    );
+  });
+
+  group('by kind', () {
+    const geometry = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    const inpaint = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const transformer = 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc';
+    const lora = 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd';
+
+    /// A version of ours of a phase 2 or 3 kind at [folder]/[name], made from salon.jpg with [turns]
+    String versionOf(ImmersiveXmp xmp, String folder, String name) {
+      final file = File(p.join(folder, name))
+        ..writeAsBytesSync([0xff, 0xd8, ...xmpApp1Segment(xmp.toXml()), 0xff, 0xd9]);
+      return file.path;
+    }
+
+    SceneXmp scene({int turns = 0, int step = 4}) => SceneXmp(
+      pipeline: SceneV1.pipeline,
+      gridStep: step,
+      geometryModelSha256: geometry,
+      inpaintModelSha256: inpaint,
+      derivativeId: 'urn:uuid:22222222-0000-4000-8000-000000000000',
+      sourceName: 'salon.jpg',
+      sourceSize: _size,
+      sourceSha1: _sum,
+      sourceQuarterTurns: turns,
+    );
+    PanoramaXmp panorama({int seed = 7}) => PanoramaXmp(
+      pipeline: PanoV1.pipeline,
+      width: 64,
+      height: 32,
+      generatorSha256: transformer,
+      generatorLoraSha256: lora,
+      seed: seed,
+      steps: 20,
+      derivativeId: 'urn:uuid:33333333-0000-4000-8000-000000000000',
+      sourceName: 'salon.jpg',
+      sourceSize: _size,
+      sourceSha1: _sum,
+      sourceQuarterTurns: 0,
+    );
+    const stereoPanorama = StereoPanoramaXmp(
+      pipeline: Relief360V1.pipeline,
+      width: 64,
+      height: 64,
+      depthModelSha256: depthModelOnnxSha256,
+      maxShiftDegrees: Relief360V1.maxShiftDegrees,
+      derivativeId: 'urn:uuid:44444444-0000-4000-8000-000000000000',
+      sourceName: 'salon.jpg',
+      sourceSize: _size,
+      sourceSha1: _sum,
+      sourceQuarterTurns: 0,
+    );
+
+    test('the names of the versions of each kind, close names never taken', () {
+      final names = [
+        'salon_3D_LRF_Full_SBS.jpg',
+        'salon_3D_LRF_Full_SBS (1).jpg',
+        'salon_scene3D.jpg',
+        'salon_scene3D (2).jpg',
+        'salon_scene3Dmax.jpg',
+        'salon_360.jpg',
+        'salon_360 (1).jpg',
+        'salon_3600.jpg',
+        'salon_360_3D.jpg',
+        'salon_360_3D (1).jpg',
+        'salon2_scene3D.jpg',
+        'salon.jpg',
+      ];
+      expect(versionNameCandidates(ImmersiveKind.stereoPhoto, 'salon.jpg', names), [
+        'salon_3D_LRF_Full_SBS.jpg',
+        'salon_3D_LRF_Full_SBS (1).jpg',
+      ]);
+      expect(versionNameCandidates(ImmersiveKind.volumetricScene, 'salon.jpg', names), [
+        'salon_scene3D.jpg',
+        'salon_scene3D (2).jpg',
+      ]);
+      expect(versionNameCandidates(ImmersiveKind.panorama360, 'salon.jpg', names), [
+        'salon_360.jpg',
+        'salon_360 (1).jpg',
+      ]);
+      expect(versionNameCandidates(ImmersiveKind.stereoPanorama360, 'salon.jpg', names), [
+        'salon_360_3D.jpg',
+        'salon_360_3D (1).jpg',
+      ]);
+      // A 360° photo whose name says it: its 3D version only adds _3D, never mistaken for a 3D photo
+      expect(
+        versionNameCandidates(ImmersiveKind.stereoPanorama360, 'PANO_0001.jpg', [
+          'PANO_0001_3D.jpg',
+          'PANO_0001_3D_LRF_Full_SBS.jpg',
+          'PANO_0001_3D (1).jpeg',
+        ]),
+        ['PANO_0001_3D.jpg', 'PANO_0001_3D (1).jpeg'],
+      );
+      // The name the computers give an original Windows refuses
+      expect(isVersionNameOf(ImmersiveKind.volumetricScene, '12:30.jpg', '12_30_scene3D.jpg'), isTrue);
+      // At most eight
+      expect(
+        versionNameCandidates(ImmersiveKind.volumetricScene, 'salon.jpg', [
+          for (var i = 1; i < 20; i++) 'salon_scene3D ($i).jpg',
+        ]),
+        hasLength(maxDerivedCandidates),
+      );
+    });
+
+    test('each kind finds its own version by its own key, never one of another kind', () async {
+      final photo = version(photos, 'salon_3D_LRF_Full_SBS.jpg');
+      final made = versionOf(scene(), photos, 'salon_scene3D.jpg');
+      final generated = versionOf(panorama(), photos, 'salon_360.jpg');
+      final relief = versionOf(stereoPanorama, photos, 'salon_360_3D.jpg');
+
+      Future<String?> found(ImmersiveKind kind, String? key) async =>
+          (await finder().withSettings(original, key!, folder: photos, kind: kind))?.path;
+
+      expect(await found(ImmersiveKind.stereoPhoto, sameSettings), photo);
+      expect(await found(ImmersiveKind.volumetricScene, scene().settingsKey), made);
+      expect(await found(ImmersiveKind.panorama360, panorama().settingsKey), generated);
+      expect(await found(ImmersiveKind.stereoPanorama360, stereoPanorama.settingsKey), relief);
+      // Another seed is the same settings: "Make a new version" draws one
+      expect(await found(ImmersiveKind.panorama360, panorama(seed: 8).settingsKey), generated);
+      // Another quarter turn or another step of the grid is not
+      expect(await found(ImmersiveKind.volumetricScene, scene(turns: 1).settingsKey), isNull);
+      expect(await found(ImmersiveKind.volumetricScene, scene(step: 5).settingsKey), isNull);
+      // The key of a scene never finds the 3D photo, even asked for any kind
+      expect(await found(ImmersiveKind.stereoPhoto, scene().settingsKey), isNull);
+      expect((await finder().withSettings(original, scene().settingsKey!, folder: photos))?.path, made);
+
+      final all = await finder().versionsOf(original, folder: photos).toList();
+      expect(
+        {for (final version in all) p.basename(version.path): version.kind},
+        {
+          'salon_3D_LRF_Full_SBS.jpg': ImmersiveKind.stereoPhoto,
+          'salon_scene3D.jpg': ImmersiveKind.volumetricScene,
+          'salon_360.jpg': ImmersiveKind.panorama360,
+          'salon_360_3D.jpg': ImmersiveKind.stereoPanorama360,
+        },
+      );
+    });
+
+    test('the neighbours of a kind are read by its suffix: eight 3D photos never hide the scene', () async {
+      for (var i = 0; i < 9; i++) {
+        version(photos, i == 0 ? 'salon_3D_LRF_Full_SBS.jpg' : 'salon_3D_LRF_Full_SBS ($i).jpg', turns: 1);
+      }
+      final made = versionOf(scene(), photos, 'salon_scene3D.jpg');
+
+      final found = await finder().withSettings(
+        original,
+        scene().settingsKey!,
+        folder: photos,
+        kind: ImmersiveKind.volumetricScene,
+      );
+
+      expect(found?.path, made);
+      expect(read, ['salon_scene3D.jpg']);
+    });
+
+    test('a version the index knows is given for its own kind only', () async {
+      final elsewhereScene = versionOf(scene(), elsewhere, 'renamed.jpg');
+      final elsewherePhoto = version(elsewhere, 'other name.jpg');
+      final index = _Index({
+        _sum: [elsewherePhoto, elsewhereScene],
+      });
+
+      final found = await finder(
+        index: index,
+      ).versionsOf(original, folder: photos, kind: ImmersiveKind.volumetricScene).toList();
+
+      expect(found.map((version) => version.path), [elsewhereScene]);
     });
   });
 

@@ -186,4 +186,53 @@ void main() {
     expect(back.folder, isNull);
     expect((await store.read()).folder, isNull);
   });
+
+  group('the times of the steps', () {
+    test('those of the measures of the design before any job: a scene some 25 s, a panorama at most 250 s', () {
+      int total(String kind) => aiDefaultTimings[kind]!.values.fold(0, (sum, millis) => sum + millis);
+
+      expect(const AiTimings().of('sceneFromPhoto', 'geometry'), 4500);
+      expect(total('sceneFromPhoto'), inInclusiveRange(20000, 30000));
+      expect(total('panoramaFromPhoto'), inInclusiveRange(200000, 260000));
+      expect(total('stereoPanoramaFromPanorama'), inInclusiveRange(8000, 15000));
+      expect(const AiTimings().of('sceneFromPhoto', 'rightEye'), isNull);
+      expect(const AiTimings().of('lightFieldFromPhoto', 'reading'), isNull);
+    });
+
+    test('what this computer measured comes first, step by step', () {
+      const timings = AiTimings({
+        'sceneFromPhoto': {'geometry': 2100},
+      });
+
+      expect(timings.of('sceneFromPhoto', 'geometry'), 2100);
+      expect(timings.of('sceneFromPhoto', 'inpaint'), aiDefaultTimings['sceneFromPhoto']!['inpaint']);
+    });
+
+    test('a finished job is taken in: its time the first time, then the mean with what was kept', () {
+      final first = AiTimings.merged(
+        const {
+          'sbsFromPhoto': {'depth': 900},
+        },
+        'sceneFromPhoto',
+        {'geometry': 3000, 'inpaint': 9000},
+      );
+      expect(first, {
+        'sbsFromPhoto': {'depth': 900},
+        'sceneFromPhoto': {'geometry': 3000, 'inpaint': 9000},
+      });
+
+      final second = AiTimings.merged(first, 'sceneFromPhoto', {'geometry': 1000, 'mesh': 400, 'layers': -5});
+      expect(second['sceneFromPhoto'], {'geometry': 2000, 'inpaint': 9000, 'mesh': 400});
+      expect(second['sbsFromPhoto'], {'depth': 900});
+    });
+
+    test('kept in desktop_ai.json and read back', () async {
+      await store.update(
+        (settings) =>
+            settings.copyWith(timings: AiTimings.merged(settings.timings, 'sceneFromPhoto', {'geometry': 2500})),
+      );
+
+      expect(AiTimings((await store.read()).timings).of('sceneFromPhoto', 'geometry'), 2500);
+    });
+  });
 }

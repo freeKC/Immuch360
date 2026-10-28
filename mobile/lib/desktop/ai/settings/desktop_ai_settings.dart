@@ -3,7 +3,8 @@
 // of the generated photos was excluded from the backup once. Phases 2 and 3 add (design-final 2026-10-27, sections
 // 7.4 and 9): the type last chosen in the dialog, the 3D version made after a panorama, the .glb copy of a scene, the
 // folder the AI components were moved to, the integrated graphics allowed, the times measured per step, and the
-// address of the ComfyUI of the user. Kept in desktop_ai.json of the support folder, beside
+// address of the ComfyUI of the user. The times of the steps start from the measures of the design (AiTimings) and follow
+// the jobs this computer finished. Kept in desktop_ai.json of the support folder, beside
 // desktop_files.json and written the same way: a whole new file renamed over the old one, so a crash never leaves half
 // a setting. Keys this build does not know (a newer version) are kept as they are.
 //
@@ -229,6 +230,76 @@ class DesktopAiSettings {
     Object.hashAllUnordered(timings.keys),
     comfyUiUrl,
   );
+}
+
+/// The milliseconds each step of each kind of job takes before this computer finished one, by the names of
+/// ConversionKind and ImmersiveStage: the 3D photo as phase 1 runs it (a few seconds a photo), the 3D scene as M2
+/// measured it on ai1 (some 25 s, MoGe-2 4.1 s, LaMa 8.4 s to load and 3.1 s a region), the 360° panorama as M3
+/// measured it on the RTX 4060 Laptop (at most 250 s, the generation some 200 s, the upscale 41 s, the photo pasted
+/// back and the JPEG 3 s), the 360° 3D panorama as the design estimates it (some 10 s)
+const aiDefaultTimings = <String, Map<String, int>>{
+  'sbsFromPhoto': {'reading': 100, 'decoding': 500, 'depth': 1000, 'rightEye': 500, 'encoding': 600, 'writing': 100},
+  'sceneFromPhoto': {
+    'reading': 200,
+    'decoding': 1500,
+    'geometry': 4500,
+    'layers': 1000,
+    'inpaint': 12000,
+    'mesh': 1000,
+    'textures': 2500,
+    'writing': 300,
+  },
+  'panoramaFromPhoto': {
+    'reading': 100,
+    'decoding': 1000,
+    'fieldOfView': 3000,
+    'projection': 500,
+    'loadingModels': 10000,
+    'generating': 195000,
+    'seam': 1000,
+    'upscale': 41000,
+    'pasteBack': 2000,
+    'encoding': 1000,
+    'writing': 300,
+  },
+  'stereoPanoramaFromPanorama': {
+    'reading': 200,
+    'decoding': 2000,
+    'panoramaDepth': 5000,
+    'rightEye': 2000,
+    'encoding': 1500,
+    'writing': 300,
+  },
+};
+
+/// The time the steps of the jobs take on this computer: those it measured (DesktopAiSettings.timings), else
+/// [aiDefaultTimings]. They give the time left of a job and the time a photo takes in the dialog.
+class AiTimings {
+  const AiTimings([this.measured = const {}]);
+
+  final Map<String, Map<String, int>> measured;
+
+  /// The milliseconds the step [stage] of a job of [kind] takes, null when nothing tells it
+  int? of(String kind, String stage) => measured[kind]?[stage] ?? aiDefaultTimings[kind]?[stage];
+
+  /// [measured] with the steps of a job of [kind] that just ended well: each step the mean of what it was and what it
+  /// took this time (the first time, what it took), so that one slow job weighs but half and a faster computer is
+  /// soon told. The other kinds stay as they were.
+  static Map<String, Map<String, int>> merged(
+    Map<String, Map<String, int>> measured,
+    String kind,
+    Map<String, int> stepTimes,
+  ) {
+    final kept = measured[kind] ?? const {};
+    return {
+      ...measured,
+      kind: {
+        ...kept,
+        for (final MapEntry(key: stage, value: millis) in stepTimes.entries)
+          if (millis >= 0) stage: kept[stage] == null ? millis : (kept[stage]! + millis + 1) ~/ 2,
+      },
+    };
+  }
 }
 
 /// Reads and writes desktop_ai.json
