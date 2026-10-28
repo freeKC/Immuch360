@@ -9,8 +9,9 @@
 // Phases 2 and 3 (design-final 2026-10-27, sections 7.4 and 9.1, point 5): the components grouped by feature ("3D
 // photos", "3D scenes"), each group with its size, Download and Remove; "Move the AI components" to a folder the user
 // picks, another drive, with its folder, its progress and what a refusal means, and the folder said when its drive is
-// not connected; "Also save a .glb copy" of each 3D scene, off by default. The line of the graphics card and the
-// integrated graphics are lot C6.
+// not connected; "Also save a .glb copy" of each 3D scene, off by default. The name of the graphics card comes from the
+// probe of lot C6, which also gives the line of the card for the panoramas (aiGpuLineText); that line and "Try on
+// integrated graphics (untested)" are shown by lot U3.
 //
 // The settings of the conversions live in desktop_ai.json (DesktopAiSettings); the switch of the AI features is a
 // setting shared with the Meta Quest (AiImmersiveConfig).
@@ -24,6 +25,7 @@ import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/network_root_consent.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -53,10 +55,35 @@ final aiFeaturesSwitchProvider = Provider<Future<void> Function(bool on)>(
 /// The download folder, "A folder of my choice" while none was chosen
 final aiDefaultFolderProvider = FutureProvider.autoDispose<String>((ref) => DownloadFolder.instance.currentPath());
 
-/// The name of the GPU in use, where the system tells it (Windows)
-final aiGpuNameProvider = FutureProvider.autoDispose<String?>(
-  (ref) async => (await DesktopGpuDecoders.adapter())?.name,
-);
+/// The name of the graphics card of this computer: the dedicated one the probe of the graphics cards finds (lot C6),
+/// not the first adapter of Windows, which on a laptop is its integrated graphics; the adapter of Windows when the
+/// probe finds none (no Vulkan)
+final aiGpuNameProvider = FutureProvider.autoDispose<String?>((ref) async {
+  final report = await ref.watch(desktopAiGateProvider).gpuReport();
+  return gpuNameOf(report) ?? (await DesktopGpuDecoders.adapter())?.name;
+});
+
+/// The line of the graphics card for the 360° panoramas, from what the gate says of them ([panorama]): "NVIDIA GeForce
+/// RTX 4060 Laptop GPU, 7.8 GiB, Vulkan 1.4: 360° panoramas available" when the card and the memory of the computer
+/// pass, whatever the components; the card and the reason when they do not ("Intel(R) Iris(R) Xe Graphics: Integrated
+/// graphics share the computer's memory: too slow for panoramas"); the reason alone without a card. For the settings
+/// of lot U3.
+String aiGpuLineText(Translations t, AiGateResult panorama) {
+  final card = panorama.gpu;
+  if (card == null) {
+    return aiGateReasonText(t, panorama);
+  }
+  // The refusals of the card and of the memory; the components and the version of the app are another matter
+  if (panorama.reason
+      case AiGateReason.gpuIntegrated ||
+          AiGateReason.gpuTooSmall ||
+          AiGateReason.panoramaMemory ||
+          AiGateReason.gpuNone) {
+    return '${card.name}: ${aiGateReasonText(t, panorama)}';
+  }
+  final (major, minor) = card.vulkanVersion;
+  return t.ai_immersive_gpu_line(name: card.name, memory: formatBytes(card.localMemory), version: '$major.$minor');
+}
 
 /// Turns the backup of the AI versions on or off (lot A6a); replaced in tests
 final aiBackupGeneratedSetterProvider = Provider<Future<bool> Function(bool on)>(

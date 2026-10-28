@@ -15,16 +15,30 @@
 // id, no more "one file per kind, the last one wins"), and of a component and its variant the one the memory of the
 // graphics card takes. A feature not offered on this system is refused as such ("Not on this system yet"), and so is
 // one whose components this version of the app does not have yet ("Not in this version of the app": the engine of
-// the panoramas until lot P2). The rules of the graphics card are lot C6.
+// the panoramas until lot P2).
+//
+// The 360° panorama runs on the graphics card (lot C6, design 4.7, point 2), and only there does the gate look at the
+// cards, through the probe of gpu_probe.dart (a child process; its answer kept 10 minutes, one without a card 30
+// seconds): Windows x64 or Linux x64 ("Not yet on Mac"); 14 GiB of memory seen, a computer sold with 16 GB seeing 15.6
+// (stable-diffusion.cpp holds up to 6 GiB of it, M3); a card of Vulkan 1.2 with 16 bit storage buffers, the dedicated
+// one with the most memory, an integrated one only with "Try on integrated graphics (untested)", and the loader of
+// Vulkan 1.2 too ("No graphics card with Vulkan found", "Integrated graphics share the computer's memory: too slow for
+// panoramas", "The graphics card did not answer"); the memory of that card at least what the transformer it takes asks
+// for ("The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB"). The card goes with the result, for the
+// line of the settings and for the index stable-diffusion.cpp must be given (ggmlVulkanIndexOf).
 
 import 'dart:ffi' show Abi;
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('HardwareGate');
 
 /// Why the gate refuses
 enum AiGateReason {
@@ -50,7 +64,25 @@ enum AiGateReason {
   notHere('ai_immersive_unavailable_system'),
 
   /// A component of the feature is not complete in the catalogue of this version (never offered)
-  notInThisVersion('ai_immersive_unavailable_build');
+  notInThisVersion('ai_immersive_unavailable_build'),
+
+  /// The 360° panoramas on a Mac: they wait for a lot of their own
+  notYetOnMac('ai_immersive_gpu_not_on_mac'),
+
+  /// Less physical memory than [aiPanoramaMinimumPhysicalMemory] for a panorama ({needed}, {memory})
+  panoramaMemory('ai_immersive_gpu_memory'),
+
+  /// No Vulkan, no card, or none of Vulkan 1.2 with 16 bit storage buffers
+  gpuNone('ai_immersive_gpu_none'),
+
+  /// The probe did not answer within 10 s, or ended without its answer
+  gpuNoAnswer('ai_immersive_gpu_no_answer'),
+
+  /// Only integrated graphics, while "Try on integrated graphics (untested)" is off
+  gpuIntegrated('ai_immersive_gpu_integrated'),
+
+  /// The card has less memory than the transformer asks for ({memory}, {needed})
+  gpuTooSmall('ai_immersive_gpu_too_small');
 
   const AiGateReason(this.textKey);
 
@@ -72,6 +104,11 @@ class AiGateResult {
     this.missing = const [],
     this.physicalMemory,
     required this.processors,
+    this.gpu,
+    this.gpuReport,
+    this.graphicsMemory,
+    this.graphicsMemoryNeeded,
+    this.memoryNeeded,
   });
 
   /// The feature evaluated
@@ -107,6 +144,17 @@ class AiGateResult {
   final int? physicalMemory;
   final int processors;
 
+  /// The graphics card a panorama would run on, and the whole answer of the probe; null for the other features
+  final GpuAdapter? gpu;
+  final GpuReport? gpuReport;
+
+  /// The memory of that card, and what the transformer asks for, for [AiGateReason.gpuTooSmall]
+  final int? graphicsMemory;
+  final int? graphicsMemoryNeeded;
+
+  /// What a panorama asks of the physical memory, for [AiGateReason.panoramaMemory]
+  final int? memoryNeeded;
+
   bool get isAvailable => reason == null;
 
   @override
@@ -141,6 +189,55 @@ const _platforms = {
 
 /// The AI platform of [abi], null for one the AI features do not run on
 AiPlatform? aiPlatformOf(Abi abi) => _platforms[abi];
+
+/// The least physical memory a 360° panorama runs with: a computer sold with 16 GB, which sees 15.6 GiB (the laptop of
+/// the owner), not 16
+const aiPanoramaMinimumPhysicalMemory = 14 * 1024 * 1024 * 1024;
+
+/// What the cards of [report] give a 360° panorama: the card it would run on, or why none
+typedef PanoramaCard = ({GpuAdapter? card, AiGateReason? refusal});
+
+/// See the top of this file: the dedicated card of Vulkan 1.2 with the most memory, else an integrated one when
+/// [integratedAllowed]; the card is given with its refusal when it is integrated and not allowed
+PanoramaCard panoramaCardOf(GpuReport report, {required bool integratedAllowed}) {
+  switch (report.problem) {
+    case GpuProbeProblem.noAnswer || GpuProbeProblem.failed:
+      return (card: null, refusal: AiGateReason.gpuNoAnswer);
+    case GpuProbeProblem.notSupported:
+      return (card: null, refusal: AiGateReason.notYetOnMac);
+    case GpuProbeProblem.noVulkan:
+      return (card: null, refusal: AiGateReason.gpuNone);
+    case null:
+      break;
+  }
+  bool atLeast12((int, int) version) => version.$1 > 1 || (version.$1 == 1 && version.$2 >= 2);
+  if (report.instanceVersion != null && !atLeast12(vulkanMajorMinor(report.instanceVersion))) {
+    return (card: null, refusal: AiGateReason.gpuNone);
+  }
+  GpuAdapter? best(GpuKind kind) {
+    GpuAdapter? found;
+    for (final adapter in report.adapters) {
+      if (adapter.source == 'vulkan' &&
+          adapter.kind == kind &&
+          atLeast12(adapter.vulkanVersion) &&
+          adapter.storage16Bit != false &&
+          (found == null || adapter.localMemory > found.localMemory)) {
+        found = adapter;
+      }
+    }
+    return found;
+  }
+
+  final discrete = best(GpuKind.discrete);
+  if (discrete != null) {
+    return (card: discrete, refusal: null);
+  }
+  final integrated = best(GpuKind.integrated);
+  if (integrated != null) {
+    return (card: integrated, refusal: integratedAllowed ? null : AiGateReason.gpuIntegrated);
+  }
+  return (card: null, refusal: AiGateReason.gpuNone);
+}
 
 /// Why [abi] is refused: "not yet on this processor" for Windows and Linux on another processor, "not on this system
 /// yet" for the rest
@@ -190,9 +287,15 @@ class HardwareGate {
     AiHardwareFacts Function()? facts,
     Future<RuntimeLoad> Function(String path)? loadRuntime,
     this.minimumMemory = aiMinimumPhysicalMemory,
+    this.panoramaMemory = aiPanoramaMinimumPhysicalMemory,
     this.catalogue = aiComponents,
+    this.gpu,
+    Future<bool> Function()? integratedGpuAllowed,
+    DateTime Function()? now,
   }) : _facts = facts ?? AiHardwareFacts.ofThisComputer,
-       _loadRuntime = loadRuntime ?? loadRuntimeInIsolate;
+       _loadRuntime = loadRuntime ?? loadRuntimeInIsolate,
+       _integratedGpuAllowed = integratedGpuAllowed ?? (() async => false),
+       _now = now ?? DateTime.now;
 
   /// The catalogue of the components; another one only in the tests
   final List<AiComponent> catalogue;
@@ -201,26 +304,79 @@ class HardwareGate {
   final AiHardwareFacts Function() _facts;
   final Future<RuntimeLoad> Function(String path) _loadRuntime;
   final int minimumMemory;
+  final int panoramaMemory;
+
+  /// The probe of the graphics cards; without one (the tests of the other features) no card is known
+  final GpuProbe? gpu;
+  final Future<bool> Function() _integratedGpuAllowed;
+  final DateTime Function() _now;
 
   /// One try per file, by its path, size and date: a file installed again is tried again
   final _loads = <String, Future<RuntimeLoad>>{};
 
+  /// The last answer of the probe and when it came
+  Future<GpuReport>? _gpuReport;
+  DateTime? _gpuAsked;
+
+  /// How long an answer of the probe is kept: the cards do not change while the app runs, a probe that did not answer
+  /// or found none is asked again sooner
+  static const gpuReportKept = Duration(minutes: 10);
+  static const gpuReportWithoutCardKept = Duration(seconds: 30);
+
+  /// What the probe of the graphics cards answers, asked again when [fresh] or when the answer kept is old
+  Future<GpuReport> gpuReport({bool fresh = false}) async {
+    final probe = gpu;
+    if (probe == null) {
+      return const GpuReport();
+    }
+    final kept = _gpuReport;
+    final asked = _gpuAsked;
+    if (!fresh && kept != null && asked != null) {
+      final report = await kept;
+      final keep = report.adapters.isEmpty || report.problem != null ? gpuReportWithoutCardKept : gpuReportKept;
+      if (_now().difference(asked) < keep && identical(kept, _gpuReport)) {
+        return report;
+      }
+    }
+    _gpuAsked = _now();
+    return _gpuReport = probe.probe().catchError((Object error) {
+      _log.warning('The probe of the graphics cards failed: $error');
+      return const GpuReport(problem: GpuProbeProblem.failed);
+    });
+  }
+
   /// Whether [feature] can run here, with the files of its components; [graphicsMemory] (the dedicated memory of the
   /// card, from the probe of lot C6) chooses between a component and its variant
+  ///
+  /// For a 360° panorama the card comes from the probe (see the top of this file); [graphicsMemory], when given, stands
+  /// for the memory of that card.
   Future<AiGateResult> evaluate({AiFeature feature = AiFeature.stereoPhoto, int? graphicsMemory}) async {
     final facts = _facts();
     final memory = facts.physicalMemory;
     final platform = aiPlatformOf(facts.abi);
-    AiGateResult refused(AiGateReason reason, {String? message, List<AiComponent> missing = const []}) =>
-        AiGateResult._(
-          reason: reason,
-          message: message,
-          platform: platform,
-          feature: feature,
-          missing: missing,
-          physicalMemory: memory,
-          processors: facts.processors,
-        );
+    GpuReport? cards;
+    GpuAdapter? card;
+    int? cardMemory;
+    int? cardNeeds;
+    AiGateResult refused(
+      AiGateReason reason, {
+      String? message,
+      List<AiComponent> missing = const [],
+      int? memoryNeeded,
+    }) => AiGateResult._(
+      reason: reason,
+      message: message,
+      platform: platform,
+      feature: feature,
+      missing: missing,
+      physicalMemory: memory,
+      processors: facts.processors,
+      gpu: card,
+      gpuReport: cards,
+      graphicsMemory: cardMemory,
+      graphicsMemoryNeeded: cardNeeds,
+      memoryNeeded: memoryNeeded,
+    );
 
     if (platform == null) {
       return refused(refusalOf(facts.abi));
@@ -228,7 +384,37 @@ class HardwareGate {
     if (memory != null && memory < minimumMemory) {
       return refused(AiGateReason.memory);
     }
-    final needed = aiComponentsFor(platform, feature: feature, graphicsMemory: graphicsMemory, catalogue: catalogue);
+    if (feature == AiFeature.panorama) {
+      if (platform == AiPlatform.macosArm64 || platform == AiPlatform.macosX64) {
+        return refused(AiGateReason.notYetOnMac);
+      }
+      cards = await gpuReport();
+      final choice = panoramaCardOf(cards, integratedAllowed: await _integratedGpuAllowed());
+      card = choice.card;
+      cardMemory = graphicsMemory ?? card?.localMemory;
+      if (memory != null && memory < panoramaMemory) {
+        return refused(AiGateReason.panoramaMemory, memoryNeeded: panoramaMemory);
+      }
+      if (choice.refusal case final refusal?) {
+        return refused(refusal);
+      }
+      // The memory the transformer of that card asks for: the variant it takes, else the one that asks the least
+      for (final component in aiComponentsFor(
+        platform,
+        feature: feature,
+        graphicsMemory: cardMemory,
+        catalogue: catalogue,
+      )) {
+        final asks = component.minGraphicsMemory;
+        if (asks != null && (cardNeeds == null || asks > cardNeeds)) {
+          cardNeeds = asks;
+        }
+      }
+      if (cardNeeds != null && cardMemory != null && cardMemory < cardNeeds) {
+        return refused(AiGateReason.gpuTooSmall);
+      }
+    }
+    final needed = aiComponentsFor(platform, feature: feature, graphicsMemory: cardMemory, catalogue: catalogue);
     if (needed.isEmpty) {
       return refused(AiGateReason.notHere);
     }
@@ -276,6 +462,10 @@ class HardwareGate {
       runtimeVersion: load.version,
       physicalMemory: memory,
       processors: facts.processors,
+      gpu: card,
+      gpuReport: cards,
+      graphicsMemory: cardMemory,
+      graphicsMemoryNeeded: cardNeeds,
     );
   }
 }

@@ -8,6 +8,7 @@
 #include "app_identity.h"
 #include "crash_dumps.h"
 #include "flutter_window.h"
+#include "gpu_probe.h"
 #include "utils.h"
 
 namespace {
@@ -92,6 +93,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   std::vector<std::string> command_line_arguments =
       GetCommandLineArguments();
+
+  // A start of the app by itself to read the graphics cards
+  // (lib/desktop/ai/gpu/gpu_probe.dart): it writes their JSON and ends here,
+  // before the guard of the single instance, which would hand it to the
+  // window that runs, and before any window
+  std::wstring gpu_probe_output;
+  if (GpuProbeRequested(&gpu_probe_output)) {
+    return RunGpuProbe(gpu_probe_output);
+  }
 
   // Kept for the life of the process; the system releases it at exit
   HANDLE instance_mutex =

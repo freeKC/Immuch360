@@ -25,6 +25,11 @@
 // A job tells "step 12 of 28" when its engine does, and its time left: the time the step tells (a generation), else
 // the times of the steps on this computer (AiTimings), which each job done keeps up to date in desktop_ai.json.
 //
+// Before a job of the graphics card starts, the card is asked again for the memory it has free (lot C6,
+// gpu_budget.dart): held by other programs, the job waits with what is free, the lane of the graphics card with it
+// (a second panorama would only wait the same), the processor lane going on; the card is asked again a little later,
+// or at once when the user asks (checkGraphicsCardAgain), and a card gone fails the job.
+//
 // The queue does not survive the window: closing it asks first (close_guard.dart, reasons "conversions" and
 // "generation"), and the journal of the .part files cleans up what a quit left.
 
@@ -37,6 +42,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -131,6 +138,8 @@ class ConversionTools {
     this.engines = const {},
     this.memory = const SystemMemoryProbe(),
     this.memoryRecheck = const Duration(seconds: 5),
+    this.gpuBudget,
+    this.gpuRecheck = const Duration(seconds: 15),
     this.settings,
     DateTime Function()? now,
     String Function()? newDerivativeId,
@@ -158,6 +167,11 @@ class ConversionTools {
   /// waits for it reads it again
   final MemoryProbe memory;
   final Duration memoryRecheck;
+
+  /// Asked before each job of the graphics card whether the card has the memory free for it now, and how often a job
+  /// that waits for it asks again; null in the tests and builds that give none: such a job starts as any other
+  final GpuBudget? gpuBudget;
+  final Duration gpuRecheck;
 
   /// Where the times of the steps are kept (desktop_ai.json); null: the timings of the design only, nothing kept
   final DesktopAiSettingsStore? settings;
@@ -257,6 +271,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// The times of the steps this computer measured, read once from the settings then kept up to date
   Map<String, Map<String, int>>? _measured;
   Timer? _recheck;
+
+  /// A job of the graphics card waits for its memory: no job starts on that lane until [_gpuRecheck] asks again
+  var _gpuWaits = false;
+  Timer? _gpuRecheck;
   var _disposed = false;
   var _lastId = 0;
 
@@ -265,6 +283,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     ref.onDispose(() {
       _disposed = true;
       _recheck?.cancel();
+      _gpuRecheck?.cancel();
       // The jobs under way stop at their next check; their own end frees the flag, which the engine may still read
       for (final flag in _flags.values) {
         flag.cancel();
@@ -341,7 +360,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     if (job.state == ConversionState.waiting) {
       _stoppedWithParent.remove(id);
       _set(id, (job) => job.copyWith(state: ConversionState.cancelled, waitingFor: () => null));
-      _pump();
+      // The job the lane of the graphics card waited for is gone: the next one asks the card at once
+      if (job.waitingFor == ConversionWait.graphicsMemory) {
+        checkGraphicsCardAgain();
+      } else {
+        _pump();
+      }
     } else if (job.state.isActive) {
       _flags[id]?.cancel();
     }
@@ -370,6 +394,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     for (final flag in _flags.values) {
       flag.cancel();
     }
+    // Nothing waits for the graphics card any more: the next job of it asks the card at once
+    _gpuRecheck?.cancel();
+    _gpuRecheck = null;
+    _gpuWaits = false;
     _settleChained();
   }
 
@@ -425,6 +453,14 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         if (other.id != id) other,
     ];
     state = ConversionQueueState(jobs: jobs, isPaused: state.isPaused && jobs.any((job) => !job.state.isEnded));
+  }
+
+  /// Asks the graphics card again now for the memory the job waiting for it needs, instead of a little later
+  void checkGraphicsCardAgain() {
+    _gpuRecheck?.cancel();
+    _gpuRecheck = null;
+    _gpuWaits = false;
+    _pump();
   }
 
   /// Goes on after a disk full, the photos it failed first
@@ -514,7 +550,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     final order = {for (final (index, job) in state.jobs.indexed) job.id: index};
     final candidates = [
       for (final lane in ConversionLane.values)
-        if (!_lanes.containsKey(lane))
+        if (!_lanes.containsKey(lane) && !(lane == ConversionLane.gpu && _gpuWaits))
           ?state.jobs
               .where(
                 (job) =>
@@ -571,6 +607,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _end(id, ImmersiveErrorCode.modelFailed, 'This build has no engine for ${job.kind.name}');
       return;
     }
+    if (job.kind.lane == ConversionLane.gpu && !await _graphicsCardReady(id, tools)) {
+      return;
+    }
     final cancel = NativeCancelFlag();
     _flags[id] = cancel;
     _stepStarted[id] = tools.now();
@@ -580,6 +619,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         state: ConversionState.reading,
         perMille: 0,
         waitingFor: () => null,
+        waitingFree: () => null,
         step: () => null,
         steps: () => null,
         remaining: () => null,
@@ -735,6 +775,43 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _flags.remove(id);
       _stepStarted.remove(id);
       cancel.free();
+    }
+  }
+
+  /// Whether the job [id] of the graphics card may start now: the card has the memory free (or nothing is asked of it,
+  /// tools without a budget). Otherwise the job waits with what is free and the lane with it, asked again after
+  /// ConversionTools.gpuRecheck; or it fails when no card can take it. False too when it was cancelled meanwhile.
+  Future<bool> _graphicsCardReady(String id, ConversionTools tools) async {
+    final budget = tools.gpuBudget;
+    if (budget == null) {
+      return true;
+    }
+    GpuBudgetCheck check;
+    try {
+      check = await budget.check();
+    } catch (error, stack) {
+      _log.warning('The graphics card could not be asked for $id', error, stack);
+      check = const GpuBudgetUnavailable(AiGateReason.gpuNoAnswer);
+    }
+    if (state.byId(id)?.state != ConversionState.waiting) {
+      return false;
+    }
+    switch (check) {
+      case GpuBudgetReady():
+        return true;
+      case GpuBudgetWait(:final free):
+        _set(id, (job) => job.copyWith(waitingFor: () => ConversionWait.graphicsMemory, waitingFree: () => free));
+        _gpuWaits = true;
+        _gpuRecheck?.cancel();
+        _gpuRecheck = Timer(tools.gpuRecheck, () {
+          _gpuRecheck = null;
+          _gpuWaits = false;
+          _pump();
+        });
+        return false;
+      case GpuBudgetUnavailable(:final reason):
+        _end(id, ImmersiveErrorCode.gpuUnavailable, reason.name);
+        return false;
     }
   }
 

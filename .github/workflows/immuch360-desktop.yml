@@ -12,8 +12,8 @@ name: Immuch360 Desktop
 #                  the tests of ONNX Runtime by FFI on the official Linux libraries of 1.31.0 and 1.23.2 (with the
 #                  engine of the 3D scenes on the tiny models), and the glTF-Validator of Khronos on the scenes
 #   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too from
-#                  the archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
-#                  build playing a video on a virtual screen (Xvfb)
+#                  the archive of its sources, the video tests on the system's libmpv, the probe of the graphics cards
+#                  of the build, its .deb and .rpm (nFPM), and the build playing a video on a virtual screen (Xvfb)
 #   linux-packages each package installed in a clean container of a distribution, its libraries checked, and the
 #                  installed app playing a video there
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
@@ -22,8 +22,9 @@ name: Immuch360 Desktop
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 included), the release build, the ZIP and
 #                  the installer (Inno Setup) for the owner as artifacts named
 #                  Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
-#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), and the app of
-#                  the ZIP started on a database an older build left behind
+#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), the probe of
+#                  the graphics cards of the build, and the app of the ZIP started on a database an older build left
+#                  behind
 #   packages       the seven files of the build (the six packages and the libsmb2 sources) together with their
 #                  SHA-256, as a release gets them
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
@@ -498,6 +499,16 @@ jobs:
           mise exec -- flutter test test/desktop/video/camera_live_libmpv_test.dart \
             test/desktop/video/mpv_references_test.dart test/desktop/video/desktop_player_libmpv_test.dart
 
+      # The probe of the graphics cards of the AI features (lot C6, linux/runner/gpu_probe.cc): the app of the bundle
+      # started with --immuch360-gpu-probe=<file> must answer within 10 s without crashing; the runner has no graphics
+      # card, so what it found is printed, not asked for. Run after a failed test above too
+      - name: The probe of the graphics cards of the build
+        if: ${{ !cancelled() }}
+        working-directory: mobile
+        env:
+          IMMUCH360_GPU_PROBE_REAL: build/linux/x64/release/bundle/immuch360
+        run: mise exec -- flutter test test/desktop/ai/gpu/gpu_probe_real_test.dart
+
       # The isolated EGL context of the video outputs next to the GL context GDK leaves current on the platform thread
       # (mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 10): a GTK window painted with GL content as Flutter's
       # view paints, the context made current where libglvnd refused it before (EGL_BAD_ACCESS under GLX), GDK's and
@@ -831,6 +842,15 @@ jobs:
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart
+
+      # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
+      # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
+      # hosted runners have no graphics card, so what it found is printed, not asked for
+      - name: The probe of the graphics cards of the build
+        working-directory: mobile
+        env:
+          IMMUCH360_GPU_PROBE_REAL: build/windows/x64/runner/Release/immuch360.exe
+        run: flutter test test/desktop/ai/gpu/gpu_probe_real_test.dart
 
       # The app of the ZIP started on a database an older build left behind: the tables and indexes of schema 35 at
       # user_version 34, as a build at 34 leaves a database a build at 35 had migrated (desktop builds 6 to 8 failed

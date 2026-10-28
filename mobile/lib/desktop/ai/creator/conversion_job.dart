@@ -89,6 +89,10 @@ enum ConversionWait {
   /// The other lane runs and the memory free cannot hold both jobs (memory_probe.dart): the job starts when it can,
   /// at the latest when the other one ends
   memory,
+
+  /// Other programs hold the memory of the graphics card (gpu_budget.dart): the job starts once enough is free, asked
+  /// again a little later or when the user asks for it; the memory free goes with it (ConversionJob.waitingFree)
+  graphicsMemory,
 }
 
 /// Where a job is: the steps of the engines between waiting and the four ends, in the order of ImmersiveStage, so
@@ -375,6 +379,7 @@ class ConversionJob {
     this.steps,
     this.remaining,
     this.waitingFor,
+    this.waitingFree,
   });
 
   final String id;
@@ -439,13 +444,16 @@ class ConversionJob {
   /// Why it still waits; null for a job that waits for its turn
   final ConversionWait? waitingFor;
 
+  /// The memory of the graphics card free when it was asked, for [ConversionWait.graphicsMemory], in bytes
+  final int? waitingFree;
+
   ConversionPhase get phase => state.phase;
 
   /// From 0 to 1
   double get progress => perMille / 1000;
 
-  /// A copy with the values given; [inputPath], [step], [steps], [remaining] and [waitingFor] are given as functions,
-  /// so that they may go back to null
+  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [waitingFree] are given
+  /// as functions, so that they may go back to null
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -465,6 +473,7 @@ class ConversionJob {
     int? Function()? steps,
     Duration? Function()? remaining,
     ConversionWait? Function()? waitingFor,
+    int? Function()? waitingFree,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -494,6 +503,7 @@ class ConversionJob {
     steps: steps == null ? this.steps : steps(),
     remaining: remaining == null ? this.remaining : remaining(),
     waitingFor: waitingFor == null ? this.waitingFor : waitingFor(),
+    waitingFree: waitingFree == null ? this.waitingFree : waitingFree(),
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then

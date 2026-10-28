@@ -39,6 +39,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
@@ -249,9 +250,10 @@ String? conversionProgressText(Translations t, ConversionJob job, Duration? left
   return t.ai_immersive_time_left(time: time);
 }
 
-/// Why a job waits while its lane is free
-String conversionWaitText(Translations t, ConversionWait wait) => switch (wait) {
+/// Why a job waits while its lane is free; [free], the memory of the graphics card free when it was asked
+String conversionWaitText(Translations t, ConversionWait wait, {int? free}) => switch (wait) {
   ConversionWait.memory => t.ai_immersive_waiting_memory,
+  ConversionWait.graphicsMemory => t.ai_immersive_gpu_budget_wait(free: formatBytes(free ?? 0)),
 };
 
 /// The words of a quality flag of a result
@@ -484,7 +486,11 @@ class _JobRowState extends ConsumerState<_JobRow> {
       ),
       Text([conversionStateText(t, job), ?stage].join('  •  '), key: const Key('ai_job_state')),
       if (job.state == ConversionState.waiting && job.waitingFor != null)
-        Text(conversionWaitText(t, job.waitingFor!), key: const Key('ai_job_waiting'), style: secondary),
+        Text(
+          conversionWaitText(t, job.waitingFor!, free: job.waitingFree),
+          key: const Key('ai_job_waiting'),
+          style: secondary,
+        ),
       if (job.state.isActive) ...[
         const SizedBox(height: 4),
         LinearProgressIndicator(value: job.phase == ConversionPhase.preparing ? null : job.progress),
