@@ -202,8 +202,10 @@ SbsDecoded _blueWorld(bool Function(double longitude, double latitude) near) {
   return SbsDecoded(width: width, height: height, rgba: rgba);
 }
 
-/// A pillar straight ahead, 60° wide and 50° high, the columns 300 to 419 and the rows 130 to 229
-SbsDecoded _pillar() => _blueWorld((longitude, latitude) => longitude.abs() < 30 && latitude.abs() < 25);
+/// A pillar straight ahead, 30° wide and 60° high: the columns 330 to 389 and the rows 120 to 239, 2.8 % of the frame.
+/// Few views see it, so the merged map before its normalisation has it at about 2 (the far at 0.25): a right eye fed
+/// that map instead of the normalised one would move it 4 pixels at the equator, not 2.
+SbsDecoded _pillar() => _blueWorld((longitude, latitude) => longitude.abs() < 15 && latitude.abs() < 30);
 
 /// A fence of 9 posts around the eye, 20° wide every 40°, up to 40° above and below the horizon
 SbsDecoded _fence() => _blueWorld((longitude, latitude) {
@@ -542,7 +544,7 @@ void main() {
       expect(shifts.values.reduce(math.max), lessThanOrEqualTo(2), reason: 'the budget of 1°: $shifts');
       expect(shifts.values.reduce(math.min), greaterThanOrEqualTo(0), reason: 'never the wrong way: $shifts');
       for (final MapEntry(key: x0, value: shift) in shifts.entries) {
-        if (x0 + 32 <= 292 || x0 >= 428) {
+        if (x0 + 32 <= 324 || x0 >= 396) {
           expect(shift, 0, reason: 'the far world at the column $x0 stays put');
         }
       }
