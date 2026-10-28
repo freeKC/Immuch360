@@ -265,6 +265,48 @@ void main() {
       expect(folders.delete(job), isTrue);
       expect(AiWorkFolders.system().root.path, p.join(Directory.systemTemp.path, 'immuch360-ai'));
     });
+
+    test('the answer of a probe of the graphics cards an earlier session left is deleted with the old folders', () {
+      final folders = AiWorkFolders(Directory(p.join(folder.path, aiWorkFolderName)));
+      folders.root.createSync(recursive: true);
+      final probe = File(p.join(folders.root.path, 'gpu-probe-4242-3.json'))..writeAsStringSync('{}');
+      final journal = File(p.join(folders.root.path, 'processes.json'))..writeAsStringSync('[]');
+      final other = File(p.join(folders.root.path, 'notes.json'))..writeAsStringSync('{}');
+      expect(folders.deleteOld(now: DateTime.now().add(const Duration(minutes: 30))), 0);
+      expect(probe.existsSync(), isTrue);
+      expect(folders.deleteOld(now: DateTime.now().add(const Duration(minutes: 61))), 1);
+      expect(probe.existsSync(), isFalse);
+      expect(journal.existsSync(), isTrue);
+      expect(other.existsSync(), isTrue);
+    });
+  });
+
+  group('a session of the app', () {
+    test('the programs an earlier session left are stopped once, never those this session starts', () {
+      final killed = <int>[];
+      final images = {10: '/e/sd-cli', 20: '/e/sd-cli'};
+      final root = Directory(p.join(folder.path, aiWorkFolderName));
+      final journal = ProcessJournal(
+        File(p.join(root.path, 'processes.json')),
+        imageOf: (pid) => images[pid],
+        kill: (pid) {
+          killed.add(pid);
+          return true;
+        },
+      );
+      journal.add(10, '/e/sd-cli');
+      final session = AiProcessSession(folders: AiWorkFolders(root), journal: journal);
+      expect(killed, [10]);
+      // sd-cli of this session runs, and a second engine asks for a runner meanwhile
+      final first = session.runner(linuxLauncher: '/e/immuch360-run');
+      journal.add(20, '/e/sd-cli');
+      final second = session.runner();
+      expect(killed, [10]);
+      expect(journal.read().map((entry) => entry.pid), [20]);
+      expect(first.journal, same(journal));
+      expect(second.journal, same(journal));
+      expect(first.linuxLauncher, '/e/immuch360-run');
+    });
   });
 
   group('real programs', () {
