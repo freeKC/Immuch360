@@ -18,6 +18,7 @@ import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/search/tv_search_navigation.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 class _NotReadOnly extends ReadOnlyModeNotifier {
@@ -153,6 +154,29 @@ void main() {
 
     await back(tester);
     expect(systemPops, 1, reason: 'out to the TV home, without a confirmation');
+  });
+
+  testWidgets('Back from active Search results resets Search before leaving the tab', (tester) async {
+    await pumpShell(tester, tvMode: true);
+    await tester.tap(find.text('Search'));
+    await tester.pumpAndSettle();
+    Focus.of(tester.element(find.text('search content'))).requestFocus();
+    await tester.pumpAndSettle();
+
+    final container = ProviderScope.containerOf(tester.element(find.text('search content')));
+    container.read(tvSearchHasActiveQueryProvider.notifier).state = true;
+    final before = container.read(tvSearchReturnToStartProvider);
+
+    await back(tester);
+    expect(container.read(tvSearchReturnToStartProvider), before + 1);
+    expect(find.text('search content'), findsOneWidget);
+    expect(hasFocus(tester, 'Search'), isFalse, reason: 'Back first resets results in the Search content');
+
+    // After SearchPage clears its query, the next Back goes to the rail.
+    container.read(tvSearchHasActiveQueryProvider.notifier).state = false;
+    await back(tester);
+    expect(hasFocus(tester, 'Search'), isTrue);
+    expect(systemPops, 0);
   });
 
   testWidgets('Back from the content of Photos goes to the rail first', (tester) async {
