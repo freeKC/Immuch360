@@ -722,16 +722,25 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
   return need(b) < need(a) ? b : a;
 }
 
+/// The groups the app does not offer yet, whatever their catalogue says: the 360° panoramas, whose components are
+/// complete since lot P2 wrote the archives of stable-diffusion.cpp, wait for the engine that uses them (P3), its
+/// screens (U3) and the publication of ai-components-3 (D6), which lift this hold
+const aiHeldFeatureGroups = {AiFeatureGroup.panoramas};
+
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
-/// none of its features is offered here or one of its components is incomplete (never offered)
+/// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)
 List<AiGroupComponents> aiComponentGroupsFor(
   AiPlatform platform, {
   int? graphicsMemory,
   List<AiComponent> catalogue = aiComponents,
+  Set<AiFeatureGroup> held = aiHeldFeatureGroups,
 }) {
   final groups = <AiGroupComponents>[];
   final earlier = <String>{};
   for (final group in AiFeatureGroup.values) {
+    if (held.contains(group)) {
+      continue;
+    }
     final all = <AiComponent>[];
     for (final feature in group.features) {
       for (final component in aiComponentsFor(

@@ -329,7 +329,13 @@ void main() {
         ],
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
-      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete);
+      // Held until the engine of P3, the screens of U3 and the publication of ai-components-3: never offered
+      expect(aiHeldFeatureGroups, {AiFeatureGroup.panoramas});
+      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), [
+        AiFeatureGroup.photos,
+        AiFeatureGroup.scenes,
+      ]);
+      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete, held: const {});
       expect(groups.map((group) => group.group), AiFeatureGroup.values);
       expect(groups.last.own.map((component) => component.id), [
         'sd-cpp-vulkan-win-x64',
