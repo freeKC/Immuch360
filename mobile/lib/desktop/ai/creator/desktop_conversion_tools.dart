@@ -4,7 +4,8 @@
 //
 // The engines of the kinds of phases 2 and 3 are registered by kind in conversionEnginesProvider (lot C3): the 3D scene
 // by lot S1 (DesktopSceneEngine, MoGe-2 and LaMa behind the gate of the feature scene), the 3D version of a 360°
-// panorama by P1, the 360° panorama by P3 (or the ComfyUI of the user, P5). Until a lot registers its kind, this build
+// panorama by P1 (DesktopStereoPanoramaEngine, the depth model of phase 1 behind the gate of the feature
+// stereoPanorama), the 360° panorama by P3 (or the ComfyUI of the user, P5). Until a lot registers its kind, this build
 // does not make it (ConversionTools.supports), and the tests give the fakes. The times of the steps are kept in
 // desktop_ai.json for the time left of the jobs.
 //
@@ -32,6 +33,7 @@ import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
@@ -347,6 +349,96 @@ ConversionEngine sceneConversionEngine(ImmersiveEngine engine) => ConversionEngi
   ),
 );
 
+/// The engine of the 3D versions of the 360° panoramas (lot P1), made from the components of the feature stereoPanorama
+/// installed when a job runs (ONNX Runtime and Depth Anything V2 Small, those of the 3D photo): StereoPanoramaEngine,
+/// kept from one job to the next while the same files serve. A job asked while a component is missing fails with
+/// componentsMissing, never downloads anything.
+class DesktopStereoPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
+  DesktopStereoPanoramaEngine({required this.gate, ImmersiveEngine Function(AiGateResult gate)? create})
+    : _create = create ?? onnxStereoPanoramaEngineFor;
+
+  final HardwareGate gate;
+  final ImmersiveEngine Function(AiGateResult gate) _create;
+
+  ImmersiveEngine? _engine;
+  String? _files;
+  var _running = false;
+
+  @override
+  bool get isRunning => _running;
+
+  /// StereoPanoramaEngine on the files [gate] found for the feature stereoPanorama, their sizes and sums those of the
+  /// catalogue
+  static ImmersiveEngine onnxStereoPanoramaEngineFor(AiGateResult gate) {
+    final runtime = aiComponentsFor(
+      gate.platform!,
+      feature: AiFeature.stereoPanorama,
+    ).firstWhere((component) => component.kind == AiComponentKind.runtime);
+    return StereoPanoramaEngine.onnx(
+      libraryPath: gate.runtimeFile!.path,
+      modelPath: gate.fileOf(depthModelOnnxComponent.id)!.path,
+      modelSha256: depthModelOnnxComponent.sha256 ?? depthModelOnnxSha256,
+      librarySize: runtime.size,
+      modelSize: depthModelOnnxComponent.size,
+    );
+  }
+
+  @override
+  Future<ImmersiveResult> run(
+    StereoPanoramaJob job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) async {
+    _running = true;
+    try {
+      final found = await gate.evaluate(feature: AiFeature.stereoPanorama);
+      final model = found.fileOf(depthModelOnnxComponent.id);
+      if (!found.isAvailable || model == null) {
+        return ImmersiveResult.failed(switch (found.reason) {
+          AiGateReason.componentsMissing ||
+          AiGateReason.componentsDamaged ||
+          null => ImmersiveErrorCode.componentsMissing,
+          _ => ImmersiveErrorCode.modelFailed,
+        }, message: found.message ?? found.reason?.name ?? 'The depth model is missing');
+      }
+      final files = '${found.runtimeFile!.path}|${model.path}';
+      var engine = _engine;
+      if (engine == null || files != _files) {
+        await engine?.dispose();
+        engine = _engine = _create(found);
+        _files = files;
+      }
+      return await engine.run(job, cancel: cancel, onProgress: onProgress);
+    } catch (error, stack) {
+      _log.warning('The 3D panorama ${job.id} could not run', error, stack);
+      return ImmersiveResult.failed(ImmersiveErrorCode.modelFailed, message: '$error');
+    } finally {
+      _running = false;
+    }
+  }
+
+  @override
+  Future<void> release() async {
+    final engine = _engine;
+    _engine = null;
+    _files = null;
+    await engine?.dispose();
+  }
+
+  @override
+  Future<void> dispose() => release();
+}
+
+/// The engine of the 3D versions of the 360° panoramas as the queue is given it: the key of the settings with the sum of
+/// the depth model of the catalogue and the turns of the job (those of the photo of a generated panorama)
+ConversionEngine stereoPanoramaConversionEngine(ImmersiveEngine engine) => ConversionEngine(
+  engine: engine,
+  settingsKey: (source, quarterTurns) => stereoPanoramaSettingsKeyOf(
+    quarterTurns,
+    depthModelSha256: depthModelOnnxComponent.sha256 ?? depthModelOnnxSha256,
+  ),
+);
+
 /// "Immuch360 Desktop 3.3.0 (windows)", the xmp:CreatorTool of the 3D photos
 String aiCreatorTool(String version, {String? system}) =>
     '${aiSoftware(version)} (${system ?? Platform.operatingSystem})';
@@ -389,16 +481,32 @@ final desktopSceneEngineProvider = Provider<DesktopSceneEngine>((ref) {
   return engine;
 });
 
-/// The engines kept between two jobs, let go before the components are removed or moved: the 3D photos and the 3D
-/// scenes (S1); P1 and P3 (or P5) add theirs here
+/// The engine of the 3D versions of the 360° panoramas of the app (lot P1)
+final desktopStereoPanoramaEngineProvider = Provider<DesktopStereoPanoramaEngine>((ref) {
+  final engine = DesktopStereoPanoramaEngine(gate: ref.watch(desktopAiGateProvider));
+  ref.onDispose(() => unawaited(engine.dispose()));
+  return engine;
+});
+
+/// The engines kept between two jobs, let go before the components are removed or moved: the 3D photos, the 3D scenes
+/// (S1) and the 3D versions of the 360° panoramas (P1); P3 (or P5) adds its own here
 final keptAiEnginesProvider = Provider<List<KeptAiEngine>>(
-  (ref) => [ref.watch(desktopAiEngineProvider), ref.watch(desktopSceneEngineProvider)],
+  (ref) => [
+    ref.watch(desktopAiEngineProvider),
+    ref.watch(desktopSceneEngineProvider),
+    ref.watch(desktopStereoPanoramaEngineProvider),
+  ],
 );
 
 /// The engines of the kinds of phases 2 and 3, by kind, each with the key of the settings its files carry: the 3D
-/// scene (S1); P1 and P3 (or P5) add theirs here. The tests give the fakes.
+/// scene (S1), the 3D version of a 360° panorama (P1); P3 (or P5) adds its own here. The tests give the fakes.
 final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>>(
-  (ref) => {ConversionKind.sceneFromPhoto: sceneConversionEngine(ref.watch(desktopSceneEngineProvider))},
+  (ref) => {
+    ConversionKind.sceneFromPhoto: sceneConversionEngine(ref.watch(desktopSceneEngineProvider)),
+    ConversionKind.stereoPanoramaFromPanorama: stereoPanoramaConversionEngine(
+      ref.watch(desktopStereoPanoramaEngineProvider),
+    ),
+  },
 );
 
 /// desktop_ai.json, where the screens read and keep the settings of the conversions

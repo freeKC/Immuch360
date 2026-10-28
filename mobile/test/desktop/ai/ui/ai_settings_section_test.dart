@@ -5,7 +5,7 @@
 // the conversions stopped before the components are removed. Phase 2: the components by group of features, "Move the
 // AI components" with its folder, its progress and what a refusal says, the folder of a drive not connected, and
 // "Also save a .glb copy"; the engine of the 3D scenes let go with the one of the 3D photos before a removal and
-// before a move.
+// before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -40,6 +40,7 @@ import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_scene_engine.dart';
+import '../fakes/fake_stereo_panorama_engine.dart';
 
 class _Pickers implements FilePickers {
   String? answer;
@@ -431,11 +432,14 @@ void main() {
     expect(photos.listSync().map((entry) => p.basename(entry.path)).toSet(), {'a.jpg', 'b.jpg'});
   });
 
-  /// The engines of the app on fakes, as the queue is given them: the 3D photos ([photoModel]) and the 3D scenes
-  /// ([sceneModel]), each made when its first job runs and kept after it
-  ({DesktopAiEngine photos, DesktopSceneEngine scenes, List<Override> overrides}) keptEngines({
+  /// The engines of the app on fakes, as the queue is given them: the 3D photos ([photoModel]), the 3D scenes
+  /// ([sceneModel]) and the 3D versions of the 360° panoramas ([stereoModel]), each made when its first job runs and
+  /// kept after it
+  ({DesktopAiEngine photos, DesktopSceneEngine scenes, DesktopStereoPanoramaEngine panoramas, List<Override> overrides})
+  keptEngines({
     required FakeImmersiveEngine photoModel,
     required FakeSceneEngine sceneModel,
+    FakeStereoPanoramaEngine? stereoModel,
   }) {
     final gate = HardwareGate(
       components: _AllFiles(root.path),
@@ -444,12 +448,15 @@ void main() {
     );
     final photos = DesktopAiEngine(gate: gate, create: (_) => photoModel);
     final scenes = DesktopSceneEngine(gate: gate, create: (_) => sceneModel);
+    final panoramas = DesktopStereoPanoramaEngine(gate: gate, create: (_) => stereoModel ?? FakeStereoPanoramaEngine());
     return (
       photos: photos,
       scenes: scenes,
+      panoramas: panoramas,
       overrides: [
         desktopAiEngineProvider.overrideWithValue(photos),
         desktopSceneEngineProvider.overrideWithValue(scenes),
+        desktopStereoPanoramaEngineProvider.overrideWithValue(panoramas),
         conversionToolsProvider.overrideWithValue(
           ConversionTools(
             engine: photos,
@@ -457,6 +464,10 @@ void main() {
               ConversionKind.sceneFromPhoto: ConversionEngine(
                 engine: scenes,
                 settingsKey: (source, turns) => fakeSceneSettingsKey(turns),
+              ),
+              ConversionKind.stereoPanoramaFromPanorama: ConversionEngine(
+                engine: panoramas,
+                settingsKey: (source, turns) => fakeStereoPanoramaSettingsKey(turns),
               ),
             },
             output: _Output(),
@@ -530,7 +541,7 @@ void main() {
     expect(sceneModel.disposed, isTrue, reason: 'MoGe-2 and LaMa let go too, once the scene stopped');
   });
 
-  test('a move lets the engines of the 3D photos and of the 3D scenes go before it copies', () async {
+  test('a move lets the engines of the 3D photos, the 3D scenes and the 3D panoramas go before it copies', () async {
     TestWidgetsFlutterBinding.ensureInitialized();
     const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -540,8 +551,9 @@ void main() {
     final photos = Directory(p.join(root.path, 'photos'))..createSync();
     final photoModel = FakeImmersiveEngine();
     final sceneModel = FakeSceneEngine();
-    final engines = keptEngines(photoModel: photoModel, sceneModel: sceneModel);
-    final service = _MoveService(() => [photoModel.disposed, sceneModel.disposed]);
+    final stereoModel = FakeStereoPanoramaEngine();
+    final engines = keptEngines(photoModel: photoModel, sceneModel: sceneModel, stereoModel: stereoModel);
+    final service = _MoveService(() => [photoModel.disposed, sceneModel.disposed, stereoModel.disposed]);
     final container = ProviderContainer(
       overrides: [
         ...engines.overrides,
@@ -561,14 +573,26 @@ void main() {
 
     await made(photoIn(photos, 'a.jpg'), ConversionKind.sbsFromPhoto);
     await made(photoIn(photos, 'b.jpg', kind: ConversionKind.sceneFromPhoto), ConversionKind.sceneFromPhoto);
-    expect([photoModel.disposed, sceneModel.disposed], [false, false], reason: 'each engine keeps its models');
+    await made(
+      photoIn(photos, 'c_360.jpg', kind: ConversionKind.stereoPanoramaFromPanorama),
+      ConversionKind.stereoPanoramaFromPanorama,
+    );
+    expect(
+      [photoModel.disposed, sceneModel.disposed, stereoModel.disposed],
+      [false, false, false],
+      reason: 'each engine keeps its models',
+    );
 
     final moved = await container.read(aiComponentsMoverProvider)(p.join(root.path, 'drive-d'), (done, total) {});
 
     expect(moved.outcome, AiMoveOutcome.moved);
-    expect(service.heldAtMove, [
-      [true, true],
-    ], reason: 'the model of the 3D photos, MoGe-2 and LaMa let go before the copy');
+    expect(
+      service.heldAtMove,
+      [
+        [true, true, true],
+      ],
+      reason: 'the model of the 3D photos, MoGe-2, LaMa and the depth model of the 3D panoramas let go before the copy',
+    );
   });
 
   testWidgets('the components by group of features, each with the size of all it needs', (tester) async {

@@ -34,6 +34,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/utils/asset_filter.dart';
@@ -42,9 +43,11 @@ import 'package:path/path.dart' as p;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_scene_engine.dart';
+import '../fakes/fake_stereo_panorama_engine.dart';
 import '../fakes/recording_creator_files.dart';
 import 'settle_still.dart';
 
@@ -334,6 +337,30 @@ void main() {
       );
       expect(find.byKey(const Key('ai_make_3d')), findsNothing);
     });
+  });
+
+  testWidgets('in the viewer, a 360° photo that holds one eye has the entry once the type of its 3D version is in', (
+    tester,
+  ) async {
+    Future<void> pumpSphere() => tester.pumpConsumerWidget(
+      const Scaffold(body: DesktopMakeImmersiveButton(source: ActionSource.viewer, menuItem: true)),
+      overrides: [
+        ...overrides(selected: [_photo('PANO_0001.jpg', width: 8000, height: 4000)]),
+        aiFlatPhotoProvider.overrideWith((ref, asset) => false),
+        aiMonoPanoramaProvider.overrideWith((ref, asset) => true),
+      ],
+    );
+
+    await pumpSphere();
+    await settle(tester);
+    expect(find.byKey(const Key('ai_make_3d')), findsNothing, reason: 'a build without the engine of the 3D version');
+
+    kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpSphere();
+    await settle(tester);
+    expect(find.text('Make 3D (AI)'), findsOneWidget);
+    expect(tester.widget<MenuItemButton>(find.byType(MenuItemButton)).onPressed, isNotNull);
   });
 
   testWidgets('with components missing, the dialog shows them and Convert waits until they are installed', (
@@ -732,6 +759,66 @@ void main() {
       ]);
     });
 
+    testWidgets('the 3D version of a 360° photo: the sphere of a mixed selection, its sentence, PANO_0001_3D.jpg', (
+      tester,
+    ) async {
+      kinds = fakeConversionEngines(scene: FakeSceneEngine(), stereoPanorama: FakeStereoPanoramaEngine());
+      original('salon.jpg');
+      original('PANO_0001.jpg');
+      facts['PANO_0001.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      final container = await openDialog(tester, [
+        _photo('salon.jpg'),
+        _photo('PANO_0001.jpg', width: 8000, height: 4000),
+      ]);
+
+      expect(chosenType(tester), ConversionKind.sbsFromPhoto, reason: 'the first type that takes a photo');
+      expect(find.text('3D version of a 360° photo'), findsOneWidget);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_stereoPanoramaFromPanorama')));
+      await settle(tester);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('ai_conversion_made')),
+          matching: find.text('3D version of a 360° photo (1)'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byKey(const Key('ai_conversion_made')), matching: find.text('PANO_0001.jpg')),
+        findsOneWidget,
+      );
+      expect(find.text('salon.jpg: Not a 360° photo'), findsOneWidget, reason: 'the reasons of this type');
+      expect(find.byKey(const Key('ai_conversion_install')), findsNothing, reason: 'the components of the 3D photo');
+      expect(checked().last, startsWith('.PANO_0001_3D.jpg.'), reason: 'the name already says pano: only _3D');
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final jobs = container.read(conversionQueueProvider).jobs;
+      expect(jobs.map((job) => (job.kind, job.target?.fileName, job.skipReason, job.state)), [
+        (ConversionKind.stereoPanoramaFromPanorama, null, ConversionSkipReason.notSphere, ConversionState.skipped),
+        (ConversionKind.stereoPanoramaFromPanorama, 'PANO_0001_3D.jpg', null, ConversionState.done),
+      ]);
+      expect(File(p.join(photos, 'PANO_0001_3D.jpg')).existsSync(), isTrue);
+      expect((await keptSettings(tester)).lastType, 'stereoPanoramaFromPanorama');
+    });
+
+    testWidgets('a selection of 360° photos only starts with their 3D version, named _360_3D when the name is plain', (
+      tester,
+    ) async {
+      kinds = fakeConversionEngines(scene: FakeSceneEngine(), stereoPanorama: FakeStereoPanoramaEngine());
+      original('beach.jpg');
+      facts['beach.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      await openDialog(tester, [_photo('beach.jpg', width: 6000, height: 3000)]);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(checked().single, startsWith('.beach_360_3D.jpg.'));
+      expect(convertEnabled(tester), isTrue);
+    });
+
     testWidgets('a type the gate refuses stays listed, greyed with its reason', (tester) async {
       sceneEngine();
       // A component of the scenes this version does not have whole
@@ -938,9 +1025,15 @@ void main() {
         conversionSkipOf(_photo('trip_180.jpg', width: 8000, height: 4000), facts, kind: ofPanorama),
         ConversionSkipReason.vr180,
       );
+      // The app reads it and shows it as a sphere: not a format it cannot read, a picture not stitched yet
       expect(
         conversionSkipOf(sphere, const ConversionPhotoFacts(isPanorama: true, isRaw360: true), kind: ofPanorama),
-        ConversionSkipReason.unreadableFormat,
+        ConversionSkipReason.raw360,
+      );
+      loadEnglishTexts();
+      expect(
+        conversionSkipText(StaticTranslations.instance, ConversionSkipReason.raw360),
+        'Raw 360° photo, not stitched',
       );
       expect(
         conversionSkipOf(_photo('crop.jpg', width: 8000, height: 2500), facts, kind: ofPanorama),

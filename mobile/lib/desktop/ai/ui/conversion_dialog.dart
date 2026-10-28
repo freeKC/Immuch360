@@ -4,10 +4,10 @@
 // The entry is absent while the AI features are off (Settings, This computer, AI and 3D). It is greyed with its reason
 // when this computer cannot run them (the hardware gate: system, processor, memory, ONNX Runtime that does not load);
 // missing components do not grey it, the dialog offers to install them. In the viewer it is offered for a flat photo
-// only, until the 3D version of a 360° photo has its type in the dialog (lot P1). What each type of version takes is
-// told by type, by aiSourceProvider and conversionSkipOf (design-final 2026-10-27, section 9.1, point 1): a flat photo
-// for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one eye, of the user or a
-// panorama the app generated, for its 3D version.
+// and, since the 3D version of a 360° photo has its type in the dialog (lot P1), for a 360° photo too. What each type
+// of version takes is told by type, by aiSourceProvider and conversionSkipOf (design-final 2026-10-27, section 9.1,
+// point 1): a flat photo for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one
+// eye, of the user or a panorama the app generated, for its 3D version.
 //
 // The dialog says what the conversion is ("Relief estimated by AI from a single photo") and that a finished one does
 // not guarantee a good result; installs the missing components (their name, size and licence, Download, a bar,
@@ -23,16 +23,16 @@
 // the 3D photos go to the folder of my choice, with the reason.
 //
 // Phases 2 and 3 (design-final 2026-10-27, section 9.1, point 2): the dialog starts with the type of version, among the
-// types registered in conversionDialogKinds that this build makes (the 3D photo and the 3D scene here; lot P1 adds the
-// 3D version of a 360° photo, lot U3 the panoramas), the one chosen last kept in desktop_ai.json (lastType). A type the
+// types registered in conversionDialogKinds that this build makes (the 3D photo, the 3D scene and the 3D version of a
+// 360° photo here; lot U3 adds the panoramas), the one chosen last kept in desktop_ai.json (lastType). A type the
 // gate refuses stays listed, greyed with its reason. Under the choice, what the type is (its honesty sentence), the
 // components of its feature that are missing with the free space of their drive, its gate, and the time a photo takes
 // on this computer; then the destination, the question of a network folder, "If a 3D version exists", and for a mixed
 // selection the plan of each photo: those the type makes, and those skipped and why. Changing the type plans the
 // selection again for it (the photos it takes, the names of their files), with what the user chose in this dialog.
-// The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo now, a
-// 360° photo once lot P1 registers the type of its 3D version. With "Also save a .glb copy", each scene made gets its
-// .glb next to it (scene_glb_export.dart).
+// The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo, and a
+// 360° photo of a whole sphere that holds one eye for its 3D version. With "Also save a .glb copy", each scene made
+// gets its .glb next to it (scene_glb_export.dart).
 
 import 'dart:async';
 import 'dart:io';
@@ -124,8 +124,12 @@ final aiGateResultForProvider = FutureProvider.autoDispose.family<AiGateResult, 
 final aiGateResultProvider = aiGateResultForProvider(AiFeature.stereoPhoto);
 
 /// The types of version the dialog offers, in their order (design-final 2026-10-27, section 9.1, point 2): the 3D photo
-/// of phase 1 and the 3D scene of phase 2. Lot P1 adds the 3D version of a 360° photo here, lot U3 the panoramas.
-const conversionDialogKinds = [ConversionKind.sbsFromPhoto, ConversionKind.sceneFromPhoto];
+/// of phase 1, the 3D scene of phase 2 and the 3D version of a 360° photo (lot P1). Lot U3 adds the panoramas here.
+const conversionDialogKinds = [
+  ConversionKind.sbsFromPhoto,
+  ConversionKind.sceneFromPhoto,
+  ConversionKind.stereoPanoramaFromPanorama,
+];
 
 /// The types of [conversionDialogKinds] this build makes: the 3D photo always, another one once its lot registered its
 /// engine in conversionEnginesProvider, the registry the tools of the queue are given (ConversionTools.supports)
@@ -240,6 +244,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
   ConversionSkipReason.alreadyStereo => t.ai_immersive_skipped_3d,
   ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
   ConversionSkipReason.notSphere => t.ai_immersive_skipped_not_360,
+  ConversionSkipReason.raw360 => t.ai_immersive_skipped_raw_360,
   ConversionSkipReason.unreadableFormat => t.ai_immersive_unavailable_format,
   ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
   ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
@@ -510,7 +515,7 @@ ConversionSkipReason? conversionSkipOf(
     }
     if (facts.isRaw360) {
       // Two fisheye circles, no equirectangular picture to make a relief of
-      return ConversionSkipReason.unreadableFormat;
+      return ConversionSkipReason.raw360;
     }
     if (facts.isStereo || guessStereoLayout(width: asset.width, height: asset.height) != StereoLayout.mono) {
       return ConversionSkipReason.alreadyStereo;
