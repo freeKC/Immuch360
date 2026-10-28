@@ -229,6 +229,18 @@ String aiGateReasonText(Translations t, AiGateResult gate) => switch (gate.reaso
   AiGateReason.runtimeFailed => t.ai_immersive_failed_model(message: gate.message ?? ''),
   AiGateReason.notHere => t.ai_immersive_unavailable_system,
   AiGateReason.notInThisVersion => t.ai_immersive_unavailable_build,
+  AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
+  AiGateReason.panoramaMemory => t.ai_immersive_gpu_memory(
+    needed: formatBytes(gate.memoryNeeded ?? 0),
+    memory: formatBytes(gate.physicalMemory ?? 0),
+  ),
+  AiGateReason.gpuNone => t.ai_immersive_gpu_none,
+  AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
+  AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
+  AiGateReason.gpuTooSmall => t.ai_immersive_gpu_too_small(
+    memory: formatBytes(gate.graphicsMemory ?? 0),
+    needed: formatBytes(gate.graphicsMemoryNeeded ?? 0),
+  ),
 };
 
 /// The words of a reason to skip a photo
