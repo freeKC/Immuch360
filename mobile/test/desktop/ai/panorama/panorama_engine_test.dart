@@ -4,8 +4,8 @@
 // pasted back to the pixel, a photo much larger than the frame reduced to its density first, the seam and its flag,
 // the field of view from the EXIF, MoGe-2 or the guess, the turns of the photo, a refused image made once more then
 // refused, the named failures of the generator, the cancel, the components, the source changed, a photo that is not a
-// JPEG; the steps sent to isolates of their own as the app runs them; then the same chain through the runner of lot P2
-// and the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI).
+// JPEG (decoded again for the paste back); the steps sent to isolates of their own as the app runs them; then the same
+// chain through the runner of lot P2 and the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI).
 
 import 'dart:convert';
 import 'dart:io';
@@ -591,11 +591,12 @@ void main() {
       ..writeAsBytesSync(img.encodePng(img.Image(width: 30, height: 20)..clear(img.ColorRgb8(90, 120, 30))));
     final without = await engineOf().run(jobOf(png.path), cancel: cancel);
     expect(without.error, ImmersiveErrorCode.unsupportedFormat);
-    var asked = 0;
+    final heard = <String>[];
     final job = jobOf(png.path);
     final result = await engineOf(
+      generator: _Watching(FakeGeneratorBackend(), (_) => heard.add('generated')),
       decodeOther: (bytes, {maxWidth}) async {
-        asked++;
+        heard.add('decoded');
         return SbsDecoded(
           width: 30,
           height: 20,
@@ -606,8 +607,29 @@ void main() {
       },
     ).run(job, cancel: cancel);
     expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
-    expect(asked, 1);
+    // Decoded again for the paste back, as a JPEG is: its pixels (about 200 MB at 48 Mpx) are not held by the engine
+    // through the minutes of the generation, while sd-cli takes up to 6 GB (M3, section 9, point 10)
+    expect(heard, ['decoded', 'generated', 'decoded']);
     expect((ImmersiveXmp.findIn(File(job.partPath).readAsBytesSync())! as PanoramaXmp).region!.hfov, 65);
+  });
+
+  test('a photo that is not a JPEG no longer read at the end: decodeFailed, nothing written', () async {
+    final png = File(p.join(folder.path, 'salon.png'))
+      ..writeAsBytesSync(img.encodePng(img.Image(width: 30, height: 20)..clear(img.ColorRgb8(90, 120, 30))));
+    var asked = 0;
+    final job = jobOf(png.path);
+    final result = await engineOf(
+      decodeOther: (bytes, {maxWidth}) async {
+        if (++asked > 1) {
+          throw const SbsCodecException('The engine could not decode it');
+        }
+        return SbsDecoded(width: 30, height: 20, rgba: Uint8List(4 * 600)..fillRange(0, 4 * 600, 200));
+      },
+    ).run(job, cancel: cancel);
+    expect(result.error, ImmersiveErrorCode.decodeFailed);
+    expect(asked, 2);
+    expect(File(job.partPath).existsSync(), isFalse);
+    expect(workLeft(), isFalse);
   });
 
   group('through the runner of sd-cli and the compiled fake sd-cli', () {
