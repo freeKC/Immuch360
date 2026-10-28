@@ -356,7 +356,7 @@ void main() {
         ],
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
-      // Held until the engine of P3, the screens of U3 and the publication of ai-components-3: never offered
+      // Held until the publication of ai-components-3 (the engine of P3 and the screens of U3 are in): never offered
       expect(aiHeldFeatureGroups, {AiFeatureGroup.panoramas});
       expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), [
         AiFeatureGroup.photos,

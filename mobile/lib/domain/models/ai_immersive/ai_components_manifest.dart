@@ -1003,8 +1003,8 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
 }
 
 /// The groups the app does not offer yet, whatever their catalogue says: the 360° panoramas, whose components are
-/// complete since lot P2 wrote the archives of stable-diffusion.cpp, wait for the engine that uses them (P3), its
-/// screens (U3) and the publication of ai-components-3 (D6), which lift this hold
+/// complete since lot P2 wrote the archives of stable-diffusion.cpp and whose engine (P3) and screens (U3) are in, wait
+/// for the publication of ai-components-3 (D6), which lifts this hold
 const aiHeldFeatureGroups = {AiFeatureGroup.panoramas};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when

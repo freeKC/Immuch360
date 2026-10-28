@@ -15,8 +15,7 @@
 // id, no more "one file per kind, the last one wins"), and of a component and its variant the one the memory of the
 // graphics card takes. A feature not offered on this system is refused as such ("Not on this system yet"), and so is
 // one whose components this version of the app does not have yet, or whose group it holds back ("Not in this version
-// of the app": the panoramas, whose engine archives P2 wrote, until the engine of P3, the screens of U3 and the
-// publication of ai-components-3).
+// of the app": the panoramas, whose engine (P3) and screens (U3) are in, until the publication of ai-components-3).
 //
 // The 360° panorama runs on the graphics card (lot C6, design 4.7, point 2), and only there does the gate look at the
 // cards, through the probe of gpu_probe.dart (a child process; its answer kept 10 minutes, one without a card 30
@@ -309,7 +308,7 @@ class HardwareGate {
   final List<AiComponent> catalogue;
 
   /// The groups of features this version does not offer yet, whatever the catalogue says (aiHeldFeatureGroups: the 360°
-  /// panoramas until their engine, their screens and their release)
+  /// panoramas until the publication of their components)
   final Set<AiFeatureGroup> heldGroups;
 
   final AiComponentFiles components;
