@@ -19,9 +19,13 @@
 //     weights of both views (rule 5): least squares, the scales averaging 1, with a pull of 1e-5 of the mean weight
 //     of a view towards a = 1 and b = 0, so that a view that sees no relief (the sky) still has a solution (a pull of
 //     1e-3 already moved the disparity of a synthetic room by 0.6 %, the shifts being weakly held by the data). A
-//     solution with a scale that is not above zero is not used: each view keeps a = 1, b = 0.
+//     view whose scale comes out not above zero (a map the model read the wrong way round, a sky or a ceiling with
+//     nothing to hold on to) is left out, the one with the lowest scale first, and the others are solved again
+//     without it, until every scale left is above zero. A view left out has no weight in the map.
 //  5. The map: at each pixel, the disparities of the views that see it, each weighted by (1 - e)^2, e the larger of
-//     the distances of the pixel to the centre of the view across and down, from 0 at the centre to 1 at the edge.
+//     the distances of the pixel to the centre of the view across and down, from 0 at the centre to 1 at the edge. A
+//     pixel no view kept sees is left at 0 and counted (uncovered): the engine refuses such a map rather than make
+//     up its depth.
 //
 // Synchronous and in double precision, like the right eye: it runs in the worker isolate of the engine.
 
@@ -79,8 +83,14 @@ Float32List tangentViewInput(SbsDecoded panorama, TangentView view) {
 class ViewAlignment {
   const ViewAlignment(this.scale, this.shift);
 
+  /// A view left out of the map (rule 4)
+  static const unused = ViewAlignment(0, 0);
+
   final double scale;
   final double shift;
+
+  /// Whether the view has a weight in the map: its scale above zero
+  bool get isUsed => scale > 0 && shift.isFinite;
 
   @override
   String toString() => 'ViewAlignment($scale, $shift)';
@@ -94,7 +104,8 @@ class PanoramaDepth {
   final ReliefDepth map;
   final List<ViewAlignment> alignments;
 
-  /// The pixels of the map no view saw (none with the views of relief-360-v1), left at 0
+  /// The pixels of the map no view kept saw, left at 0: none with the views of relief-360-v1 unless views were left
+  /// out (rule 4)
   final int uncovered;
 }
 
@@ -245,6 +256,10 @@ PanoramaDepth mergeViewDepths(
       var numerator = 0.0;
       var denominator = 0.0;
       for (var k = 0; k < n; k++) {
+        final alignment = alignments[k];
+        if (!alignment.isUsed) {
+          continue;
+        }
         final at = 9 * k;
         final cosine = dx * axes[at] + dy * axes[at + 1] + dz * axes[at + 2];
         if (cosine <= cosLimit) {
@@ -263,7 +278,6 @@ PanoramaDepth mergeViewDepths(
         if (value.isNaN) {
           continue;
         }
-        final alignment = alignments[k];
         numerator += weight * cosine * (alignment.scale * value + alignment.shift);
         denominator += weight;
       }
@@ -277,11 +291,12 @@ PanoramaDepth mergeViewDepths(
   return PanoramaDepth(ReliefDepth(width, height, values), alignments, uncovered: uncovered);
 }
 
-/// The scale and the shift of each view (rule 4)
+/// The scale and the shift of each view (rule 4); [ViewAlignment.unused] for a view left out
 List<ViewAlignment> _align(List<_ViewMap> maps, double cosLimit, int width, int height, int step, double share) {
   final n = maps.length;
-  final size = 2 * n;
-  final normal = List.generate(size, (_) => Float64List(size));
+  // The normal equations of each pair of views apart, so that a view left out takes its pairs with it: the 4 x 4
+  // block of (a_k, b_k, a_l, b_l) at k * n + l, k < l
+  final pairs = List<Float64List?>.filled(n * n, null);
   for (var y = step ~/ 2; y < height; y += step) {
     final lat = erpLatitude(y, height);
     final area = math.cos(lat);
@@ -294,13 +309,63 @@ List<ViewAlignment> _align(List<_ViewMap> maps, double cosLimit, int width, int 
           final second = seen[q];
           final weight = area * first.weight * second.weight;
           // The difference of the two disparities, a linear form of (a_k, b_k, a_l, b_l)
-          final index = [2 * first.view, 2 * first.view + 1, 2 * second.view, 2 * second.view + 1];
           final row = [first.cosine * first.x, first.cosine, -second.cosine * second.x, -second.cosine];
+          final block = pairs[first.view * n + second.view] ??= Float64List(16);
           for (var r = 0; r < 4; r++) {
             for (var c = 0; c < 4; c++) {
-              normal[index[r]][index[c]] += weight * row[r] * row[c];
+              block[4 * r + c] += weight * row[r] * row[c];
             }
           }
+        }
+      }
+    }
+  }
+
+  final used = List<bool>.filled(n, true);
+  while (true) {
+    final active = [
+      for (var k = 0; k < n; k++)
+        if (used[k]) k,
+    ];
+    if (active.isEmpty) {
+      return List.filled(n, ViewAlignment.unused);
+    }
+    final solution = _solveViews(pairs, n, active, share);
+    if (solution == null) {
+      return [for (var k = 0; k < n; k++) used[k] ? const ViewAlignment(1, 0) : ViewAlignment.unused];
+    }
+    final alignments = List.filled(n, ViewAlignment.unused);
+    int? worst;
+    for (final (index, k) in active.indexed) {
+      final alignment = ViewAlignment(solution[2 * index], solution[2 * index + 1]);
+      alignments[k] = alignment;
+      if (!alignment.isUsed && (worst == null || !(alignment.scale >= alignments[worst].scale))) {
+        worst = k;
+      }
+    }
+    if (worst == null) {
+      return alignments;
+    }
+    used[worst] = false;
+  }
+}
+
+/// The scales and shifts of the views [active] (a_k, b_k in their order) from the blocks of their [pairs] (see
+/// _align), the scales averaging 1, with the pull of rule 4; null when the system is singular
+List<double>? _solveViews(List<Float64List?> pairs, int n, List<int> active, double share) {
+  final m = active.length;
+  final size = 2 * m;
+  final normal = List.generate(size, (_) => Float64List(size));
+  for (var p = 0; p < m; p++) {
+    for (var q = p + 1; q < m; q++) {
+      final block = pairs[active[p] * n + active[q]];
+      if (block == null) {
+        continue;
+      }
+      final index = [2 * p, 2 * p + 1, 2 * q, 2 * q + 1];
+      for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 4; c++) {
+          normal[index[r]][index[c]] += block[4 * r + c];
         }
       }
     }
@@ -311,7 +376,7 @@ List<ViewAlignment> _align(List<_ViewMap> maps, double cosLimit, int width, int 
   }
   final pull = trace > 0 ? share * trace / size : 1e-9;
 
-  // [normal + pull, the sum of the scales; that sum, 0] [a, b...; mu] = [pull for each a, 0 for each b; n]
+  // [normal + pull, the sum of the scales; that sum, 0] [a, b...; mu] = [pull for each a, 0 for each b; m]
   final system = List.generate(size + 1, (_) => Float64List(size + 2));
   for (var i = 0; i < size; i++) {
     for (var j = 0; j < size; j++) {
@@ -324,17 +389,8 @@ List<ViewAlignment> _align(List<_ViewMap> maps, double cosLimit, int width, int 
       system[i][size + 1] = pull;
     }
   }
-  system[size][size + 1] = n.toDouble();
-  final solution = _solve(system);
-  final identity = [for (var k = 0; k < n; k++) const ViewAlignment(1, 0)];
-  if (solution == null) {
-    return identity;
-  }
-  final alignments = [for (var k = 0; k < n; k++) ViewAlignment(solution[2 * k], solution[2 * k + 1])];
-  if (alignments.any((alignment) => !(alignment.scale > 0) || !alignment.shift.isFinite)) {
-    return identity;
-  }
-  return alignments;
+  system[size][size + 1] = m.toDouble();
+  return _solve(system);
 }
 
 /// The solution of the augmented system [rows] (each row its coefficients then its right side), by Gaussian
