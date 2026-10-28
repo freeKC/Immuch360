@@ -232,11 +232,48 @@ class GlbReaderTest {
   }
 
   @Test
+  fun `the photo is images 0 whichever mesh comes first, and a texture is counted among the images shown`() {
+    val (photo, wall) = SceneTestFiles.tinyImages()
+    // The background first, then the photo: the layer follows the image, not the order of the meshes
+    val backFirst =
+      GlbReader.read(
+        SceneTestFiles.glb(
+          listOf(SceneTestFiles.grid(2, 2, 3f, 1), SceneTestFiles.grid(3, 3, 2f, 0)),
+          listOf(photo, wall),
+        )
+      )
+    assertEquals(listOf(SceneLayer.BACKGROUND, SceneLayer.PHOTO), backFirst.meshes.map { it.layer })
+    // The textures in the order the meshes first show them: the wall, then the photo
+    assertEquals(listOf(16 to 16, 32 to 24), backFirst.textures.map { it.width to it.height })
+    assertEquals(listOf(0, 1), backFirst.meshes.map { it.texture })
+    // Image 1 shown by no mesh: the wall, image 2, is the second texture, not the third
+    val skipped =
+      GlbReader.read(
+        SceneTestFiles.glb(
+          listOf(SceneTestFiles.grid(3, 3, 2f, 0), SceneTestFiles.grid(2, 2, 3f, 2)),
+          listOf(photo, photo, wall),
+        )
+      )
+    assertEquals(listOf(0, 1), skipped.meshes.map { it.texture })
+    assertEquals(listOf(32 to 24, 16 to 16), skipped.textures.map { it.width to it.height })
+    assertEquals(listOf(SceneLayer.PHOTO, SceneLayer.BACKGROUND), skipped.meshes.map { it.layer })
+  }
+
+  @Test
+  fun `what extras says of the scene is read as the file says it`() {
+    val scene = GlbReader.read(tinyWith("extras", "immuch360", "scale", value = JsonPrimitive(1.25)))
+    assertEquals(1.25, scene.scale!!, 0.0)
+    assertEquals(null, GlbReader.read(tinyWith("extras", "immuch360", "scale", value = null)).scale)
+  }
+
+  @Test
   fun `a glb cut short or with chunks out of place is not ours`() {
     val glb = SceneTestFiles.tinyGlb()
     assertNotOurs(glb.copyOf(glb.size - 8), "cut")
     assertNotOurs(glb.copyOf(16), "header only")
     assertNotOurs(glb.copyOf().also { it[0] = 'G'.code.toByte() }, "magic")
+    // Bytes after the length its header gives
+    assertNotOurs(glb + ByteArray(4), "longer than its header says")
     assertNotOurs(glb.copyOf().also { it[4] = 1 }, "version 1")
     assertNotOurs(glb.copyOf().also { it[16] = 'X'.code.toByte() }, "JSON chunk type")
     val (json, bin) = SceneTestFiles.split(glb)
@@ -254,8 +291,12 @@ class GlbReaderTest {
       (2 until progressive.size - 1).first { progressive[it] == 0xFF.toByte() && progressive[it + 1] == 0xC0.toByte() }
     progressive[sof + 1] = 0xC2.toByte()
     assertEquals(32 to 24, GlbReader.jpegSize(progressive, 0, progressive.size))
-    // No frame before the scan, a PNG, nothing at all
+    // No frame before the scan, a frame of no width or no height, a PNG, nothing at all
     assertEquals(null, GlbReader.jpegSize(texture.copyOf().also { it[sof + 1] = 0xC4.toByte() }, 0, texture.size))
+    val noWidth = texture.copyOf().also { it[sof + 7] = 0; it[sof + 8] = 0 }
+    assertEquals(null, GlbReader.jpegSize(noWidth, 0, texture.size))
+    val noHeight = texture.copyOf().also { it[sof + 5] = 0; it[sof + 6] = 0 }
+    assertEquals(null, GlbReader.jpegSize(noHeight, 0, texture.size))
     val png = byteArrayOf(0x89.toByte(), 'P'.code.toByte(), 'N'.code.toByte(), 'G'.code.toByte())
     assertEquals(null, GlbReader.jpegSize(png, 0, 4))
     assertEquals(null, GlbReader.jpegSize(ByteArray(0), 0, 0))

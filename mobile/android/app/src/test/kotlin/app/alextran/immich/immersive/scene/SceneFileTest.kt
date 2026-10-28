@@ -191,6 +191,13 @@ class SceneFileTest {
   fun `entities are decoded, and a head without our packet reads as none`() {
     val head = SceneFile.readHead(SceneSource.of(SceneTestFiles.previewWith("QualityFlags", "hiddenAreas&#x2C;sky")))!!
     assertEquals(listOf("hiddenAreas", "sky"), head.spec!!.flags)
+    val named = SceneFile.readHead(SceneSource.of(SceneTestFiles.previewWith("QualityFlags", "hiddenAreas&amp;sky")))!!
+    assertEquals(listOf("hiddenAreas&sky"), named.spec!!.flags)
+    // Each entity of XML and both forms of a character; one that names nothing stays as written
+    assertEquals(
+      "a&b<c>d\"e'f,g,h&bogus;&#xZZ;",
+      SceneFile.unescape("a&amp;b&lt;c&gt;d&quot;e&apos;f&#44;g&#x2c;h&bogus;&#xZZ;"),
+    )
 
     assertNull(SceneFile.readHead(SceneSource.of(ByteArray(64))))
     assertNull(SceneFile.readHead(SceneSource.of(ByteArray(0))))

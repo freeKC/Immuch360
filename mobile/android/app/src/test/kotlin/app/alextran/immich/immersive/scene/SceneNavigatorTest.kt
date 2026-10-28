@@ -152,6 +152,10 @@ class SceneNavigatorTest {
       assertEquals(front.positions[3 * k + 1] / front.positions[3 * k + 2], flat[3 * k + 1] / flat[3 * k + 2], 1e-6f)
     }
     for (k in 0 until back.vertexCount) assertEquals(-2.26f, background[3 * k + 2], 1e-6f)
+    // A vertex at the camera or behind it stays where it is
+    val corners = floatArrayOf(0.3f, 0.2f, 0.5f, 0.1f, 0.1f, 0f)
+    val behind = GlbMesh(corners, FloatArray(4), intArrayOf(0, 1, 1), 0, SceneLayer.PHOTO)
+    assertTrue(behind.positions.contentEquals(SceneNavigator.flatten(behind, 1.0, plane, FloatArray(6))))
     // A float mesh gives the golden vertex within the precision of a float
     val probe = cases[0].getValue("flattenedVertex").jsonObject
     val vertex = doubles(probe.getValue("vertex").jsonArray)
@@ -268,7 +272,8 @@ class SceneNavigatorTest {
     navigator.anchor(0.0, 1.6, 0.0, 0.0)
     val edge = navigator.hold(3.0, 1.0, 0.0)
     assertTrue(edge.rho <= 1.0 + 1e-9)
-    assertEquals(0.2, edge.eyeX, 0.002)
+    // At the edge itself: each step that would cross it is cut where it meets it
+    assertEquals(0.2, edge.eyeX, 1e-6)
     assertEquals(0.0, edge.flatten, 1e-6)
     // Backward is shorter than forward
     val back = navigator(SafeZone(0.2, 0.12, 0.4, 0.1)).apply { anchor(0.0, 1.6, 0.0, 0.0) }.hold(3.0, 0.0, -1.0)
