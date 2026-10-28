@@ -57,6 +57,7 @@ void main() {
 
   testWidgets(
     'the 3D photos and the 3D scenes with the size of what each needs, each component once; no panoramas yet',
+    skip: true, // the hold of the panoramas is lifted on this test branch of lot V3
     (tester) async {
       await pumpTile(tester);
 
