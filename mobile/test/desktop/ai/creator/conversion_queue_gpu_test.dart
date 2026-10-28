@@ -211,6 +211,22 @@ void main() {
     expect([for (final spec in panorama.jobs) spec.source.name], ['b.jpg']);
   });
 
+  test('after Cancel all, a panorama added asks the card at once', () async {
+    final card = heldCard();
+    container = containerWith(card.probe, recheck: const Duration(hours: 1));
+
+    final first = add('a.jpg', ConversionKind.panoramaFromPhoto);
+    await until((state) => state.byId(first)!.waitingFor == ConversionWait.graphicsMemory);
+    queue().cancelAll();
+    card.free();
+    final second = add('b.jpg', ConversionKind.panoramaFromPhoto);
+    await until((state) => state.byId(second)!.state.isEnded);
+
+    expect(job(first).state, ConversionState.cancelled);
+    expect(job(second).state, ConversionState.done);
+    expect([for (final spec in panorama.jobs) spec.source.name], ['b.jpg']);
+  });
+
   test('cancelled while the probe answers: never runs', () async {
     final answer = Completer<GpuReport>();
     var asked = 0;
