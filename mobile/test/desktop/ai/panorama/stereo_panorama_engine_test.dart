@@ -249,6 +249,23 @@ StereoPanoramaJob _pictureJob(Directory folder, String name) => StereoPanoramaJo
   created: '2026-10-28T10:12:00+01:00',
 );
 
+/// A GPano packet of an equirectangular panorama of [width] x [height] at ([left], [top]) of a full panorama of
+/// [fullWidth] x [fullHeight]
+String _gpanoPacket({
+  required int width,
+  required int height,
+  required int fullWidth,
+  required int fullHeight,
+  int left = 0,
+  int top = 0,
+}) =>
+    '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+    '<rdf:Description rdf:about="" xmlns:GPano="http://ns.google.com/photos/1.0/panorama/" '
+    'GPano:ProjectionType="equirectangular" GPano:FullPanoWidthPixels="$fullWidth" '
+    'GPano:FullPanoHeightPixels="$fullHeight" GPano:CroppedAreaImageWidthPixels="$width" '
+    'GPano:CroppedAreaImageHeightPixels="$height" GPano:CroppedAreaLeftPixels="$left" '
+    'GPano:CroppedAreaTopPixels="$top"/></rdf:RDF></x:xmpmeta>';
+
 /// The packet of a panorama generated from salon.jpg, which the queue gives a chained job
 PanoramaXmp _generatedPanorama() => PanoramaXmp.generated(
   width: 192,
@@ -770,6 +787,37 @@ void main() {
       expect(result.error, ImmersiveErrorCode.cancelled);
       expect(engine.worker, isNull);
     });
+
+    test(
+      'a 2:1 panorama whose GPano crop is 180° x 90°: unsupportedFormat before the worker; a whole one is made',
+      () async {
+        final pixels = const DartSbsCodec().decodeJpeg(File(_panorama(folder, 'plain.jpg')).readAsBytesSync());
+        String written(String name, String xmp) {
+          final (jpeg, _) = encodeScenePicture(const [DartSbsCodec()], pixels, quality: 95, xmp: xmp);
+          final path = p.join(folder.path, name);
+          File(path).writeAsBytesSync(jpeg);
+          return path;
+        }
+
+        // A phone panorama of 180° x 90°: a 2:1 frame of a quarter of the sphere, centred
+        final partial = written(
+          'PANO_half.jpg',
+          _gpanoPacket(width: 192, height: 96, fullWidth: 384, fullHeight: 192, left: 96, top: 48),
+        );
+        // A camera that writes the crop of a whole sphere
+        final whole = written('PANO_whole.jpg', _gpanoPacket(width: 192, height: 96, fullWidth: 192, fullHeight: 96));
+        final engine = engineWith();
+
+        final refused = await engine.run(_jobFor(partial, partPath: _partIn(folder, 'PANO_half.jpg')), cancel: cancel);
+        expect(refused.error, ImmersiveErrorCode.unsupportedFormat);
+        expect(refused.message, 'A partial panorama of 180° x 90° has no sphere to go around');
+        expect(engine.worker, isNull, reason: 'refused before the worker starts');
+        expect(File(_partIn(folder, 'PANO_half.jpg')).existsSync(), isFalse);
+
+        final made = await engine.run(_jobFor(whole, partPath: _partIn(folder, 'PANO_whole.jpg')), cancel: cancel);
+        expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
+      },
+    );
 
     test('the worker checks the memory before it decodes the panorama, from its header', () async {
       // The head of a JPEG of 16 384 x 8 192: about 1.8 GB to make, more than the 100 MB free and the 1 GiB Windows
