@@ -13,7 +13,9 @@
 // An Apple spatial photo goes to it with the stereoPair JSON of its two eyes (see HeicStereoPair.toImmersiveJson): the
 // viewer decodes both and shows them on a flat quad in front of the user (see ImmersiveAssetResolver.resolveStereoPhoto).
 // A flat photo holding two eyes side by side goes to the same quad with the sbsPhoto JSON (see SbsPhotoRequest), and a
-// flat photo whose relief the headset estimates with the depthRelief JSON: see StereoPhotoRequest.
+// flat photo whose relief the headset estimates with the depthRelief JSON: see StereoPhotoRequest. A photo that carries
+// a 3D scene goes there too, with the volumetricScene JSON its packet makes once the gate of the headset let it through
+// (see sceneGateOf): the viewer shows its preview flat on the quad, then the scene in its place.
 
 import 'dart:async';
 import 'dart:io';
@@ -724,8 +726,9 @@ Future<void> openImmersiveViewer(
 
 /// What the stereo quad of the immersive viewer of the Meta Quest is asked to show (StereoPhotoKind on its side), as
 /// the stereoPair JSON of ImmersiveApi.open: an Apple spatial photo ([HeicStereoPhotoRequest]), a flat photo holding
-/// two eyes side by side ([SbsStereoPhotoRequest]), or a flat photo whose right eye the headset makes from its
-/// estimated depth ([DepthReliefStereoPhotoRequest]). A kind the viewer does not know shows the photo flat.
+/// two eyes side by side ([SbsStereoPhotoRequest]), a flat photo whose right eye the headset makes from its
+/// estimated depth ([DepthReliefStereoPhotoRequest]), or a photo that carries a 3D scene
+/// ([VolumetricSceneStereoPhotoRequest]). A kind the viewer does not know shows the photo flat.
 sealed class StereoPhotoRequest {
   const StereoPhotoRequest();
 
@@ -734,6 +737,8 @@ sealed class StereoPhotoRequest {
   const factory StereoPhotoRequest.sbs(SbsPhotoRequest request) = SbsStereoPhotoRequest;
 
   const factory StereoPhotoRequest.relief(DepthReliefRequest request) = DepthReliefStereoPhotoRequest;
+
+  const factory StereoPhotoRequest.scene(VolumetricSceneRequest request) = VolumetricSceneStereoPhotoRequest;
 
   /// The stereoPair JSON of ImmersiveApi.open
   String toImmersiveJson();
@@ -764,6 +769,17 @@ final class DepthReliefStereoPhotoRequest extends StereoPhotoRequest {
   const DepthReliefStereoPhotoRequest(this.request);
 
   final DepthReliefRequest request;
+
+  @override
+  String toImmersiveJson() => request.toJsonString();
+}
+
+/// A photo that carries a 3D scene, as the packet at the head of its file asks for it (SceneXmp.request): the viewer
+/// reads the packet again, which wins over this JSON, then the scene at the end of the file
+final class VolumetricSceneStereoPhotoRequest extends StereoPhotoRequest {
+  const VolumetricSceneStereoPhotoRequest(this.request);
+
+  final VolumetricSceneRequest request;
 
   @override
   String toImmersiveJson() => request.toJsonString();
