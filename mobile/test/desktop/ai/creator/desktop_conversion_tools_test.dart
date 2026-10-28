@@ -125,8 +125,18 @@ void main() {
     addTearDown(bare.dispose);
     expect(bare.read(conversionEnginesProvider).keys, [
       ConversionKind.sceneFromPhoto,
-    ], reason: 'S1 registers the 3D scene, P1 and P3 will register theirs');
+      ConversionKind.stereoPanoramaFromPanorama,
+    ], reason: 'S1 registers the 3D scene, P1 the 3D version of a 360° panorama, P3 will register its own');
     expect(bare.read(conversionEnginesProvider)[ConversionKind.sceneFromPhoto]!.engine, isA<DesktopSceneEngine>());
+    expect(
+      bare.read(conversionEnginesProvider)[ConversionKind.stereoPanoramaFromPanorama]!.engine,
+      isA<DesktopStereoPanoramaEngine>(),
+    );
+    expect(
+      bare.read(keptAiEnginesProvider),
+      contains(bare.read(desktopStereoPanoramaEngineProvider)),
+      reason: 'let go with the others before the components are removed or moved',
+    );
 
     final scenes = ProviderContainer(
       overrides: [
@@ -370,6 +380,7 @@ void main() {
   });
 
   _sceneEngineTests(() => root);
+  _stereoPanoramaEngineTests(() => root);
 }
 
 /// The head of a JPEG of [width] x [height]: its frame header, then the start of its scan
@@ -494,6 +505,92 @@ void _sceneEngineTests(Directory Function() root) {
       expect(await keyOf(png, 0), isNull, reason: 'its size is not read before it is decoded: no version looked for');
       expect(await keyOf(p.join(root().path, 'gone.jpg'), 0), isNull);
     });
+  });
+}
+
+/// The engine of the 3D versions of the 360° panoramas of the app (lot P1), on the gate of the feature stereoPanorama
+void _stereoPanoramaEngineTests(Directory Function() root) {
+  group('the engine of the 3D versions of the 360° panoramas of the app', () {
+    late _Components components;
+    late List<AiGateResult> made;
+    late List<_CountingEngine> counted;
+
+    DesktopStereoPanoramaEngine engineOf() => DesktopStereoPanoramaEngine(
+      gate: HardwareGate(
+        components: components,
+        facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+      ),
+      create: (gate) {
+        made.add(gate);
+        final engine = _CountingEngine();
+        counted.add(engine);
+        return engine;
+      },
+    );
+
+    StereoPanoramaJob job() => const StereoPanoramaJob(
+      id: 'pano',
+      source: ImmersiveSource(name: 'PANO_0001.jpg', size: 1, sha1: 'sum', path: '/nowhere/PANO_0001.jpg'),
+      partPath: '/nowhere/.part',
+      derivativeId: 'urn:uuid:1',
+      creatorTool: 'test',
+      created: '2026-10-28T10:12:00+01:00',
+    );
+
+    setUp(() {
+      components = _Components(root().path);
+      made = [];
+      counted = [];
+    });
+
+    test('without the depth model, a 3D panorama ends as components missing, and no model is made', () async {
+      final engine = engineOf();
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      components.install(onnxRuntimeLinuxComponent);
+
+      final result = await engine.run(job(), cancel: flag);
+
+      expect(result.error, ImmersiveErrorCode.componentsMissing);
+      expect(made, isEmpty);
+      expect(engine.isRunning, isFalse);
+    });
+
+    test('made from ONNX Runtime and the depth model of the 3D photo, kept while they serve, let go', () async {
+      final engine = engineOf();
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      components.install(onnxRuntimeLinuxComponent);
+      components.install(depthModelOnnxComponent);
+
+      final running = <bool>[];
+      expect((await engine.run(job(), cancel: flag, onProgress: (_) => running.add(engine.isRunning))).isDone, isTrue);
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+
+      expect(made, hasLength(1), reason: 'one engine for the two panoramas');
+      expect(made.single.feature, AiFeature.stereoPanorama);
+      expect(made.single.runtimeFile!.path, components.fileOf(onnxRuntimeLinuxComponent).path);
+      expect(made.single.fileOf(depthModelOnnxComponent.id)!.path, components.fileOf(depthModelOnnxComponent).path);
+      expect(counted.single.runs, 2);
+      expect(running, [true]);
+
+      await engine.release();
+      expect(counted.single.disposed, isTrue);
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+      expect(made, hasLength(2), reason: 'made again after it was let go');
+    });
+
+    test(
+      'the key of the settings: the depth model of the catalogue, relief-360-v1, 1°, the turns of the job',
+      () async {
+        final engine = stereoPanoramaConversionEngine(engineOf());
+        const source = ImmersiveSource(name: 'PANO_0001.jpg', size: 1, sha1: 's', path: '/nowhere/PANO_0001.jpg');
+
+        expect(await engine.settingsKey(source, 0), '${depthModelOnnxComponent.sha256}|relief-360-v1|1.0|0');
+        expect(await engine.settingsKey(source, 3), '${depthModelOnnxComponent.sha256}|relief-360-v1|1.0|3');
+      },
+    );
   });
 }
 
