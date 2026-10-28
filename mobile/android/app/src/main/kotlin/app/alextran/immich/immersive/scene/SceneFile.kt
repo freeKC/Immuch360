@@ -6,7 +6,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.security.MessageDigest
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -143,7 +142,8 @@ internal object SceneFile {
   /**
    * The request the fields of a packet make, through the reader of the JSON so that both refuse the same values:
    * numbers must read as numbers, the origin is written with a capital in the packet and without one in the JSON, the
-   * quality flags are a list separated by commas, a missing scale is 1 (the Dart side reads it so)
+   * quality flags are a list separated by commas, a scale missing or that does not read as a number is 1 (SceneXmp of
+   * the Dart side reads it so and offers the button)
    */
   private fun requestOf(value: (String) -> String?): VolumetricSceneSpec? {
     fun whole(name: String): JsonPrimitive? = value(name)?.toLongOrNull()?.let(::JsonPrimitive)
@@ -159,8 +159,7 @@ internal object SceneFile {
       whole("SceneVertices")?.let { put("vertices", it) }
       whole("SceneTriangles")?.let { put("triangles", it) }
       whole("SceneTextureMax")?.let { put("textureMax", it) }
-      // A scale written but not a number leaves the request without one, so it is refused
-      put("scale", if (value("SceneScale") == null) JsonPrimitive(1.0) else decimal("SceneScale") ?: JsonNull)
+      put("scale", decimal("SceneScale") ?: JsonPrimitive(1.0))
       val lateral = decimal("SafeLateral")
       val vertical = decimal("SafeVertical")
       val forward = decimal("SafeForward")

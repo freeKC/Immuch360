@@ -203,4 +203,18 @@ class SceneFileTest {
 
     assertNull(SceneFile.readHead(SceneSource.of(far)))
   }
+
+  @Test
+  fun `a scale missing or that does not read as a number is 1, as the Dart side reads it`() {
+    fun scaleOf(preview: ByteArray): Double? = SceneFile.readHead(SceneSource.of(preview))!!.spec?.scale
+    assertEquals(1.25, scaleOf(SceneTestFiles.previewWith("SceneScale", "1.25"))!!, 0.0)
+    assertEquals(1.0, scaleOf(SceneTestFiles.previewWithout("SceneScale"))!!, 0.0)
+    // SceneXmp.request reads such a value as no scale, then 1: the button is offered, so the headset opens it too
+    for (value in listOf("", "wide", "NaN", "Infinity")) {
+      assertEquals(value, 1.0, scaleOf(SceneTestFiles.previewWith("SceneScale", value))!!, 0.0)
+    }
+    // A number that cannot be a scale gives no request on either side (VolumetricSceneRequest.fromJson)
+    assertNull(scaleOf(SceneTestFiles.previewWith("SceneScale", "0")))
+    assertNull(scaleOf(SceneTestFiles.previewWith("SceneScale", "-1")))
+  }
 }
