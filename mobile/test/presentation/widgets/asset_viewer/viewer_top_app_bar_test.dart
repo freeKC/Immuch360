@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
+import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart'
+    show DesktopScenePreviewButton, SceneFile, sceneFileOfAssetProvider;
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
@@ -75,6 +77,7 @@ import 'package:immich_ui/immich_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:openapi/api.dart' show RotateParameters;
 
+import '../../../desktop/ai/scene/glb_reader_test_files.dart' show tinySceneFile;
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
@@ -2992,6 +2995,34 @@ void main() {
       await pumpTopBar(tester, asset, extraOverrides: [flat(asset, ours)]);
       expect(find.byType(DesktopSbsViewButton), findsNothing);
       expect(modes, findsNothing);
+    });
+
+    testWidgets('on a computer, "Preview in 3D" for a photo that carries a scene; on a phone nothing, nothing read', (
+      tester,
+    ) async {
+      final asset = owned(name: 'salon_scene3D.jpg', width: 2048, height: 1366);
+      final xmp = ImmersiveXmp.findIn(tinySceneFile())! as SceneXmp;
+      var sceneReads = 0;
+      final scene = sceneFileOfAssetProvider(asset).overrideWith((ref) async {
+        sceneReads++;
+        return SceneFile(path: '/photos/salon_scene3D.jpg', xmp: xmp);
+      });
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        await pumpTopBar(tester, asset, extraOverrides: [flat(asset, null), scene]);
+        await tester.pump();
+
+        expect(find.byType(DesktopScenePreviewButton), findsOneWidget);
+        expect(find.byKey(const Key('desktop_scene_preview')), findsOneWidget);
+        expect(find.byType(DesktopSbsViewButton), findsOneWidget, reason: 'beside the button of the view modes');
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+
+      sceneReads = 0;
+      await pumpTopBar(tester, asset, extraOverrides: [flat(asset, null), scene]);
+      expect(find.byType(DesktopScenePreviewButton), findsNothing);
+      expect(sceneReads, 0);
     });
   });
   group('ViewerTopAppBar "AI relief" button on a Meta Quest', () {

@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -99,6 +100,25 @@ void main() {
       );
       // The same glb carried again reads
       expect(_problemOf(_carrying(tinyGlb())), isNull);
+    });
+
+    test('heavier than a Quest 3 opens, by its packet or by its glb, or a file over 64 MiB: too heavy, not drawn', () async {
+      final file = tinySceneFile();
+      expect(_problemOf(_fileWith(file, 'SceneTriangles', '400001')), ScenePreviewProblem.tooHeavy);
+      expect(_problemOf(_fileWith(file, 'SceneVertices', '200001')), ScenePreviewProblem.tooHeavy);
+      expect(_problemOf(_fileWith(file, 'SceneTriangles', '400000')), isNull, reason: 'the cap itself opens');
+      // A file of 64 MiB and a byte: refused before it is read
+      final folder = Directory.systemTemp.createTempSync('scene_preview_heavy');
+      addTearDown(() => folder.deleteSync(recursive: true));
+      final big = File(p.join(folder.path, 'big_scene3D.jpg'));
+      final handle = big.openSync(mode: FileMode.write)
+        ..writeFromSync(file)
+        ..truncateSync(64 * 1024 * 1024 + 1);
+      handle.closeSync();
+      await expectLater(
+        readScenePreview(big.path),
+        throwsA(isA<ScenePreviewException>().having((e) => e.problem, 'problem', ScenePreviewProblem.tooHeavy)),
+      );
     });
 
     test('read away from the screen; a file that cannot be read says so', () async {
@@ -239,13 +259,14 @@ void main() {
       expect(moved.y, closeTo(0, 1e-9));
       expect(resetEnabled(tester), isTrue);
 
-      // The wheel pushed away goes forward
+      // The wheel pushed away goes forward, a notch as this computer sends one: 100 / 3 logical pixels on the phone of
+      // the tests (3 to its pixel), so 100 pixels are three notches
       final pointer = TestPointer(1, PointerDeviceKind.mouse);
       final centre = tester.getCenter(find.byKey(const Key('scene_preview_canvas')));
       await tester.sendEventToBinding(pointer.hover(centre));
       await tester.sendEventToBinding(pointer.scroll(const Offset(0, -100)));
       await tester.pump();
-      expect(painter(tester).eye.z, closeTo(-0.25 * 0.3, 1e-9));
+      expect(painter(tester).eye.z, closeTo(-0.75 * 0.3, 1e-9));
       expect(painter(tester).eye.x, moved.x);
 
       // Reset: back where the photo was taken
@@ -259,6 +280,59 @@ void main() {
       await settleStill(tester, until: () => find.byKey(const Key('scene_preview')).evaluate().isEmpty);
       expect(find.byKey(const Key('scene_preview')), findsNothing);
       expect(find.byKey(const Key('open')), findsOneWidget);
+    });
+
+    testWidgets('a notch of a Windows wheel at 200 % is 50 logical pixels: a quarter of the reach', (tester) async {
+      tester.view.devicePixelRatio = 2;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        final path = fileOf('salon_scene3D.jpg', tinySceneFile());
+        await pumpOpener(tester, path);
+        await settleStill(tester, until: () => find.byKey(const Key('scene_preview_canvas')).evaluate().isNotEmpty);
+        final pointer = TestPointer(1, PointerDeviceKind.mouse);
+        await tester.sendEventToBinding(pointer.hover(tester.getCenter(find.byKey(const Key('scene_preview_canvas')))));
+        await tester.sendEventToBinding(pointer.scroll(const Offset(0, -50)));
+        await tester.pump();
+
+        expect(painter(tester).eye.z, closeTo(-0.25 * 0.3, 1e-9));
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('on a touchpad two fingers parted go forward, closed go back, moved go like a drag', (tester) async {
+      final path = fileOf('salon_scene3D.jpg', tinySceneFile());
+      await pumpOpener(tester, path);
+      await settleStill(tester, until: () => find.byKey(const Key('scene_preview_canvas')).evaluate().isNotEmpty);
+      final centre = tester.getCenter(find.byKey(const Key('scene_preview_canvas')));
+      final pad = TestPointer(2, PointerDeviceKind.trackpad);
+
+      await tester.sendEventToBinding(pad.panZoomStart(centre));
+      for (final scale in [1.2, 1.5, 2.0, 2.5]) {
+        await tester.sendEventToBinding(pad.panZoomUpdate(centre, scale: scale));
+      }
+      await tester.sendEventToBinding(pad.panZoomEnd());
+      await tester.pump();
+      final forward = painter(tester).eye;
+      expect(forward.z, lessThan(-0.05), reason: 'parted: forward');
+      expect(forward.x, closeTo(0, 1e-9));
+
+      await tester.sendEventToBinding(pad.panZoomStart(centre));
+      for (final scale in [0.8, 0.5, 0.3]) {
+        await tester.sendEventToBinding(pad.panZoomUpdate(centre, scale: scale));
+      }
+      await tester.sendEventToBinding(pad.panZoomEnd());
+      await tester.pump();
+      expect(painter(tester).eye.z, greaterThan(forward.z), reason: 'closed: back');
+
+      await tester.sendEventToBinding(pad.panZoomStart(centre));
+      for (final dx in [20.0, 40.0, 60.0]) {
+        await tester.sendEventToBinding(pad.panZoomUpdate(centre, pan: Offset(dx, 0)));
+      }
+      await tester.sendEventToBinding(pad.panZoomEnd());
+      await tester.pump();
+      expect(painter(tester).eye.x, greaterThan(0), reason: 'moved right: the eye goes right');
     });
 
     testWidgets('a photo whose scene is gone is shown flat with its reason, and closes', (tester) async {
