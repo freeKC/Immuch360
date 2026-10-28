@@ -15,6 +15,7 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
@@ -40,12 +41,14 @@ import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -3245,6 +3248,93 @@ void main() {
 
       expect(reliefButton, findsNothing);
       expect(find.byKey(const Key('apple_spatial_view_3d')), findsNothing);
+    });
+  });
+
+  group('ViewerTopAppBar "Explore the 3D scene" button on a Meta Quest', () {
+    const server = PresentationContext.serverEndpoint;
+    final exploreButton = find.byKey(exploreSceneButtonKey);
+    final reliefButton = find.byKey(aiReliefButtonKey);
+    final contract =
+        jsonDecode(File('test/fixtures/ai_immersive/stereo_pair_contract_v1.json').readAsStringSync())
+            as Map<String, dynamic>;
+    final designRequest = ((contract['volumetricScene'] as List).first as Map<String, dynamic>)['request'];
+    final sample =
+        ImmersiveXmp.parse(File('test/fixtures/ai_immersive/xmp_v1_scene_sample.xmp').readAsStringSync())!
+            as SceneXmp;
+    late InstalledModelService components;
+
+    setUp(() {
+      components = InstalledModelService()
+        ..setStatus(depthModelTfliteComponent, const AiComponentStatus(AiComponentState.installed));
+    });
+
+    /// A Quest 3 where the relief would be offered, [asset] read as carrying [scene], or still read until [reading]
+    List<Override> headset(BaseAsset asset, {SceneXmp? scene, Future<SceneXmp?>? reading}) => [
+      appFlavorProvider.overrideWithValue('quest'),
+      reliefDeviceFactsProvider.overrideWith((ref) async => const ReliefDeviceFacts(device: 'eureka', memoryMiB: 7600)),
+      aiComponentsServiceProvider.overrideWithValue(components),
+      flatStereoProvider(asset).overrideWith((ref) async => null),
+      scenePhotoProvider(asset).overrideWith((ref) => reading ?? Future.value(scene)),
+    ];
+
+    testWidgets('opens the original that carries the scene, with the request of its packet', (tester) async {
+      final asset = owned(name: 'salon_scene3D.jpg', width: 2048, height: 1536);
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset, scene: sample));
+
+      expect(find.byTooltip('Explore the 3D scene'), findsOneWidget);
+      expect(reliefButton, findsNothing, reason: 'the preview of a scene is no photo to relieve');
+
+      await tester.tap(exploreButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => immersiveApi.open(
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+        ),
+      ).captured;
+      expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
+      final labels = captured[1] as Map<String, String>;
+      expect(labels['sceneReset'], 'Reset');
+      expect(labels['sceneHonesty'], 'Reconstructed from one photo, explore within its limits');
+      expect(jsonDecode(captured[2] as String), designRequest);
+    });
+
+    testWidgets('a photo named like a scene shows no relief while its head is read, nor once found ordinary', (
+      tester,
+    ) async {
+      final asset = owned(name: 'holiday_scene3D.jpg', width: 4000, height: 3000);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: headset(asset, reading: Completer<SceneXmp?>().future),
+      );
+      expect(exploreButton, findsNothing);
+      expect(reliefButton, findsNothing);
+
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset));
+      expect(exploreButton, findsNothing);
+      expect(reliefButton, findsOneWidget, reason: 'an ordinary photo after all');
+    });
+
+    testWidgets('is not shown on a phone', (tester) async {
+      final asset = owned(name: 'salon_scene3D.jpg', width: 2048, height: 1536);
+      await pumpTopBar(tester, asset, extraOverrides: headset(asset, scene: sample));
+
+      expect(exploreButton, findsNothing);
     });
   });
 }

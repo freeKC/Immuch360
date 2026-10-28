@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -21,6 +23,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
@@ -75,6 +78,9 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// whose folder holds a 3D version of it (see findShareVersions) gets "View the 3D version", which opens that version
 /// the same way, without any AI on the headset. An ordinary photo also gets "AI relief" (see AiReliefButton), which
 /// opens it on the same quad with a relief the headset estimates, greyed with its reason where the headset cannot.
+/// A photo that carries a 3D scene (see [NetworkMediaInfo.scene]) gets "Explore the 3D scene", and an original whose
+/// folder holds one of its scenes "View the 3D scene" (see AiSceneButton), each greyed with its reason where the gate
+/// of the headset refuses the scene.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -203,14 +209,15 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   /// Whether the photo turns with the one-key rotation: once its file was read, when it is neither 360° nor a stereo
-  /// pair nor two eyes side by side nor the raw file of a 360° camera. Those keep their views, which turn the camera
-  /// rather than the picture, or hold their eyes where they are.
+  /// pair nor two eyes side by side nor the raw file of a 360° camera nor the preview of a 3D scene. Those keep their
+  /// views, which turn the camera rather than the picture, or hold their eyes or their scene where they are.
   bool get _canRotate {
     final info = _info;
     return info != null &&
         !info.is360 &&
         info.stereoPair == null &&
         info.stereoPhoto == null &&
+        info.scene == null &&
         info.rawKind == null &&
         !isRawPhotoName(_name);
   }
@@ -290,7 +297,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       setState(() => _info = info);
     }
     final ordinary =
-        info != null && !info.is360 && info.stereoPair == null && info.stereoPhoto == null && info.rawKind == null;
+        info != null &&
+        !info.is360 &&
+        info.stereoPair == null &&
+        info.stereoPhoto == null &&
+        info.scene == null &&
+        info.rawKind == null;
     if (ordinary && entry.isImage && await isHorizonOs.catchError((_) => false)) {
       await _findVersions(entry, fileSystem);
     }
@@ -393,9 +405,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   /// Shows both eyes of the photo of the share at [path] in the immersive viewer, as [stereo] describes them (an
-  /// Apple spatial photo, two eyes side by side, a relief the headset estimates): read through the media bridge at
-  /// [url], or at the URL of [path] when none is given, like any photo of a share. No previous or next from there yet:
-  /// the viewer says so itself.
+  /// Apple spatial photo, two eyes side by side, a relief the headset estimates, a 3D scene): read through the media
+  /// bridge at [url], or at the URL of [path] when none is given, like any photo of a share. No previous or next from
+  /// there yet: the viewer says so itself.
   Future<void> _openStereo(String path, StereoPhotoRequest stereo, {Uri? url}) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
@@ -477,6 +489,11 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         // The newest 3D photo a computer saved next to this photo; the other kinds have their own entries
         final version = isHorizonOs ? _versions?.where((found) => found.photo != null).firstOrNull : null;
         final versionRequest = version?.photo?.request;
+        // A photo that carries a 3D scene, and the newest scene a computer saved next to an original
+        final scene = isHorizonOs ? _info?.scene : null;
+        final sceneVersion = isHorizonOs
+            ? _versions?.where((found) => found.kind == ImmersiveKind.volumetricScene && found.xmp is SceneXmp).firstOrNull
+            : null;
         final appBar = AppBar(
           backgroundColor: Colors.black38,
           foregroundColor: Colors.white,
@@ -539,6 +556,20 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                                 url: widget.folder?.urls[version.entry.path],
                               ),
                             ),
+                    ),
+                  if (photo != null && scene != null)
+                    AiSceneButton(
+                      xmp: scene,
+                      fileSize: photo.entry.size,
+                      open: (stereo) => _openStereo(photo.entry.path, stereo, url: photo.url),
+                    ),
+                  if (photo != null && sceneVersion != null)
+                    AiSceneButton(
+                      xmp: sceneVersion.xmp as SceneXmp,
+                      fromOriginal: true,
+                      fileSize: sceneVersion.entry.size,
+                      open: (stereo) =>
+                          _openStereo(sceneVersion.entry.path, stereo, url: widget.folder?.urls[sceneVersion.entry.path]),
                     ),
                   if (photo != null && reliefGate.visible)
                     AiReliefButton(

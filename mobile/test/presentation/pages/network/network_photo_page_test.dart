@@ -30,6 +30,7 @@ import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
@@ -863,6 +864,119 @@ void main() {
 
       expect(find.byKey(const Key('network_photo_rotate')), findsOneWidget, reason: 'the file was read');
       expect(reliefButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+  });
+
+  group('3D scenes', () {
+    final exploreButton = find.byKey(exploreSceneButtonKey);
+    final viewSceneButton = find.byKey(viewSceneButtonKey);
+    // The photo that carries a scene of the fixtures (make_scene_fixture.py), and the packet of the design
+    final tinyScene = File('test/fixtures/ai_immersive/tiny_scene3D.jpg').readAsBytesSync();
+    final sceneSample = File('test/fixtures/ai_immersive/xmp_v1_scene_sample.xmp').readAsStringSync();
+
+    /// The headset whose Build.DEVICE is [device]
+    List<Override> headset({String device = 'eureka'}) => [
+      reliefDeviceFactsProvider.overrideWith((ref) async => ReliefDeviceFacts(device: device, memoryMiB: 7600)),
+    ];
+
+    /// The folder /Photos: the original salon.jpg and its scene, whose packet is the sample made from it with
+    /// [fields] written as given
+    void originalAndScene(Uint8List original, {Map<String, String> fields = const {}}) {
+      var packet = sceneSample.replaceFirst('SourceSize="4182311"', 'SourceSize="${original.length}"');
+      fields.forEach((name, value) {
+        packet = packet.replaceFirst(RegExp('Immuch360:$name="[^"]*"'), 'Immuch360:$name="$value"');
+      });
+      share.files['/Photos/salon.jpg'] = original;
+      share.files['/Photos/salon_scene3D.jpg'] = jpegFile(width: 2048, height: 1536, xmpText: packet);
+      share.folders['/Photos'] = [share.file('/Photos/salon.jpg'), share.file('/Photos/salon_scene3D.jpg')];
+    }
+
+    testWidgets('on a Meta Quest, a photo that carries a scene opens it from the media bridge with its request', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/Photos/salon_scene3D.jpg'] = tinyScene;
+      await pumpPhotoPage(tester, '/Photos/salon_scene3D.jpg', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, () => exploreButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('Explore the 3D scene'), findsOneWidget);
+      expect(find.byKey(const Key('network_photo_rotate')), findsNothing, reason: 'the scene stays as it was made');
+      expect(find.byKey(aiReliefButtonKey), findsNothing, reason: 'the preview of a scene is no photo to relieve');
+      expect(viewSceneButton, findsNothing);
+
+      await tester.tap(exploreButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/Photos/salon_scene3D.jpg').toString());
+      expect(immersiveApi.opened.single['title'], 'salon_scene3D.jpg');
+      final request = jsonDecode(immersiveApi.stereoPairs.single!) as Map<String, dynamic>;
+      expect(request['kind'], 'volumetricScene');
+      expect(request['version'], 1);
+      expect(request['format'], 'glb-layers-v1');
+      expect(request['sceneLength'], 3740);
+      expect(request['triangles'], 10);
+      expect(request['flags'], ['hiddenAreas']);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a Meta Quest, an original opens the scene a computer saved next to it', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      originalAndScene(png);
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, () => viewSceneButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('View the 3D scene'), findsOneWidget);
+      expect(exploreButton, findsNothing, reason: 'the original itself carries no scene');
+
+      await tester.tap(viewSceneButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/Photos/salon_scene3D.jpg').toString());
+      final contract =
+          jsonDecode(File('test/fixtures/ai_immersive/stereo_pair_contract_v1.json').readAsStringSync())
+              as Map<String, dynamic>;
+      expect(
+        jsonDecode(immersiveApi.stereoPairs.single!),
+        ((contract['volumetricScene'] as List).first as Map<String, dynamic>)['request'],
+      );
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('a scene too heavy for a Quest 2 keeps its button, greyed with its numbers', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      originalAndScene(png, fields: {'SceneTriangles': '250000'});
+      await pumpPhotoPage(
+        tester,
+        '/Photos/salon.jpg',
+        immersiveApi: immersiveApi,
+        extraOverrides: headset(device: 'hollywood'),
+      );
+      await pumpRealIo(tester, () => viewSceneButton.evaluate().isNotEmpty);
+
+      expect(tester.widget<IconButton>(viewSceneButton).onPressed, isNull);
+      expect(
+        find.byTooltip('This scene is too heavy for this headset (250000 triangles, at most 200000)'),
+        findsOneWidget,
+      );
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a phone, neither button', (tester) async {
+      share.files['/Photos/salon_scene3D.jpg'] = tinyScene;
+      await pumpPhotoPage(tester, '/Photos/salon_scene3D.jpg', extraOverrides: headset());
+      await pumpRealIo(tester, () => server.requests.any((request) => request.range != null));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pump();
+
+      expect(exploreButton, findsNothing);
+      expect(viewSceneButton, findsNothing);
 
       await endRealIo(tester);
     });

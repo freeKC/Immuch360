@@ -9,6 +9,7 @@ import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -17,6 +18,7 @@ import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -24,6 +26,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -138,14 +141,27 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
           )
         : null;
 
+    // "Explore the 3D scene" on a Meta Quest: a photo named like one that carries a 3D scene a computer made from it,
+    // told by our packet at the head of its file; greyed with the reason the gate of the headset reads there (see
+    // AiSceneButton). Nothing of the AI is needed to read a scene: the AI features off leave it.
+    final sceneState = isHorizonOs && ScenePhotoService.isCandidate(asset) && !hasPanoramaView
+        ? ref.watch(scenePhotoProvider(asset))
+        : null;
+    final sceneXmp = sceneState?.valueOrNull;
+    final sceneButton = sceneXmp != null
+        ? AiSceneButton(xmp: sceneXmp, open: (stereo) => _openStereoPhoto(context, ref, asset, stereo))
+        : null;
+
     // "AI relief" on a Meta Quest: a flat photo once known to be one (neither 360°, VR180 nor raw, nor a spatial photo,
     // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last), its
-    // relief estimated by the headset itself. Greyed with its reason where the gate refuses; nothing with the AI
+    // relief estimated by the headset itself; not the preview of a 3D scene, which has its own button, nor a photo
+    // named like one while its head is read. Greyed with its reason where the gate refuses; nothing with the AI
     // features off (see reliefGateProvider).
     final isFlatPhoto =
         flatStereoState != null &&
         flatStereoState.hasValue &&
         flatStereo == null &&
+        (sceneState == null || (sceneState.hasValue && sceneXmp == null)) &&
         ref.watch(rotationModeProvider(asset)) != RotationMode.none;
     final reliefGate = isFlatPhoto ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
     final reliefButton = reliefGate.visible
@@ -229,6 +245,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   panoramaButton != null ||
                                   spatialButton != null ||
                                   view3dButton != null ||
+                                  sceneButton != null ||
                                   reliefButton != null ||
                                   rotateButton != null ||
                                   fullScreenButton != null)
@@ -242,6 +259,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ?view3dButton,
+                                    ?sceneButton,
                                     ?reliefButton,
                                     ?panoramaButton,
                                     ?spatialButton,
@@ -269,8 +287,9 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 }
 
-/// Opens [asset], an Apple spatial photo, a side by side photo or a photo for an AI relief as [stereo] describes it, in
-/// 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says when it could not open
+/// Opens [asset], an Apple spatial photo, a side by side photo, a photo for an AI relief or a photo that carries a 3D
+/// scene as [stereo] describes it, in 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says when it
+/// could not open
 Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, StereoPhotoRequest stereo) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
