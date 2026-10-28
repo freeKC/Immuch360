@@ -338,28 +338,31 @@ class ScenePreviewModel {
   Int32List _sorted(Float64List depth) {
     final meshes = scene.meshes;
     final order = Int32List(_meshOf.length);
+    final ids = Int32List(_meshOf.length);
+    final keys = Float64List(_meshOf.length);
     var drawn = 0;
     for (final layer in const [SceneLayer.background, SceneLayer.photo]) {
-      final ids = <int>[];
-      final keys = <double>[];
+      var count = 0;
       for (var m = 0; m < meshes.length; m++) {
         final mesh = meshes[m];
         if (mesh.layer != layer) {
           continue;
         }
         final base = _vertexBase[m];
+        final first = _triangleBase[m];
         final indices = mesh.indices;
         for (var t = 0; t < mesh.triangleCount; t++) {
           final a = depth[base + indices[3 * t]];
           final b = depth[base + indices[3 * t + 1]];
           final c = depth[base + indices[3 * t + 2]];
           if (a >= SceneView.nearest && b >= SceneView.nearest && c >= SceneView.nearest) {
-            ids.add(_triangleBase[m] + t);
-            keys.add((a + b + c) / 3);
+            ids[count] = first + t;
+            keys[count] = (a + b + c) / 3;
+            count++;
           }
         }
       }
-      for (final rank in farthestFirst(Float64List.fromList(keys))) {
+      for (final rank in farthestFirst(Float64List.sublistView(keys, 0, count))) {
         order[drawn++] = ids[rank];
       }
     }
@@ -370,86 +373,112 @@ class ScenePreviewModel {
   /// within each draw
   List<SceneBatch> _batches(Int32List order, Float32List screen, List<Size> textureSizes, int most) {
     final meshes = scene.meshes;
-    final batches = <SceneBatch>[];
-    // The draw each vertex was last put in (0: none yet), and its number there
-    final stamp = Int32List(_vertexCount);
-    final local = Int32List(_vertexCount);
-    var batch = 0;
-    var texture = -1;
-    var count = 0;
-    var positions = Float32List(0);
-    var coordinates = Float32List(0);
-    var indices = <int>[];
-
-    void flush({bool last = false}) {
-      if (indices.isNotEmpty) {
-        batches.add(
-          SceneBatch(
-            texture: texture,
-            positions: Float32List.sublistView(positions, 0, 2 * count),
-            textureCoordinates: Float32List.sublistView(coordinates, 0, 2 * count),
-            indices: Uint16List.fromList(indices),
-          ),
-        );
-      }
-      if (last) {
-        return;
-      }
-      batch++;
-      count = 0;
-      positions = Float32List(2 * most);
-      coordinates = Float32List(2 * most);
-      indices = <int>[];
-    }
-
-    late GlbMesh mesh;
-    late Size size;
-    late int base;
-    void put(int g) {
-      if (stamp[g] != batch) {
-        stamp[g] = batch;
-        local[g] = count;
-        final k = g - base;
-        positions[2 * count] = screen[2 * g];
-        positions[2 * count + 1] = screen[2 * g + 1];
-        coordinates[2 * count] = mesh.uvs[2 * k] * size.width;
-        coordinates[2 * count + 1] = mesh.uvs[2 * k + 1] * size.height;
-        count++;
-      }
-      indices.add(local[g]);
-    }
-
+    final writer = _BatchWriter(screen, _vertexCount, most);
     for (final id in order) {
       final m = _meshOf[id];
-      mesh = meshes[m];
+      final mesh = meshes[m];
       final t = id - _triangleBase[m];
-      base = _vertexBase[m];
+      final base = _vertexBase[m];
       final g0 = base + mesh.indices[3 * t];
       final g1 = base + mesh.indices[3 * t + 1];
       final g2 = base + mesh.indices[3 * t + 2];
-      var needed = 0;
-      if (stamp[g0] != batch) {
-        needed++;
+      if (mesh.texture != writer.texture || writer.count + writer.needed(g0, g1, g2) > most) {
+        final size = mesh.texture < textureSizes.length
+            ? textureSizes[mesh.texture]
+            : Size(scene.textures[mesh.texture].width.toDouble(), scene.textures[mesh.texture].height.toDouble());
+        writer.start(mesh.texture, size.width, size.height);
       }
-      if (g1 != g0 && stamp[g1] != batch) {
-        needed++;
-      }
-      if (g2 != g0 && g2 != g1 && stamp[g2] != batch) {
-        needed++;
-      }
-      if (mesh.texture != texture || count + needed > most) {
-        flush();
-        texture = mesh.texture;
-      }
-      size = mesh.texture < textureSizes.length
-          ? textureSizes[mesh.texture]
-          : Size(scene.textures[mesh.texture].width.toDouble(), scene.textures[mesh.texture].height.toDouble());
-      put(g0);
-      put(g1);
-      put(g2);
+      writer.put(g0, base, mesh.uvs);
+      writer.put(g1, base, mesh.uvs);
+      writer.put(g2, base, mesh.uvs);
     }
-    flush(last: true);
-    return batches;
+    writer.end();
+    return writer.batches;
+  }
+}
+
+/// Writes the draws of a frame: the vertices of each draw numbered again from 0, at most [most] of them
+class _BatchWriter {
+  _BatchWriter(this.screen, int vertices, this.most) : stamp = Int32List(vertices), local = Int32List(vertices);
+
+  final Float32List screen;
+  final int most;
+
+  /// The draw each vertex was last put in (0: none yet), and its number there
+  final Int32List stamp;
+  final Int32List local;
+  final batches = <SceneBatch>[];
+
+  var batch = 0;
+  var texture = -1;
+  var count = 0;
+  var indexCount = 0;
+  var width = 0.0;
+  var height = 0.0;
+  var positions = Float32List(0);
+  var coordinates = Float32List(0);
+  var indices = Uint16List(0);
+
+  /// The vertices of the triangle [g0], [g1], [g2] the draw under way does not hold yet
+  int needed(int g0, int g1, int g2) {
+    var needed = 0;
+    if (stamp[g0] != batch) {
+      needed++;
+    }
+    if (g1 != g0 && stamp[g1] != batch) {
+      needed++;
+    }
+    if (g2 != g0 && g2 != g1 && stamp[g2] != batch) {
+      needed++;
+    }
+    return needed;
+  }
+
+  /// Ends the draw under way and starts one of [texture], decoded at [textureWidth] x [textureHeight]
+  void start(int texture, double textureWidth, double textureHeight) {
+    end();
+    batch++;
+    this.texture = texture;
+    width = textureWidth;
+    height = textureHeight;
+    count = 0;
+    indexCount = 0;
+    positions = Float32List(2 * most);
+    coordinates = Float32List(2 * most);
+    indices = Uint16List(math.min(3 * most, 3 << 16));
+  }
+
+  /// Puts vertex [g] (vertex g - [base] of a mesh of texture coordinates [uvs]) in the draw under way
+  void put(int g, int base, Float32List uvs) {
+    if (stamp[g] != batch) {
+      stamp[g] = batch;
+      local[g] = count;
+      final k = g - base;
+      positions[2 * count] = screen[2 * g];
+      positions[2 * count + 1] = screen[2 * g + 1];
+      coordinates[2 * count] = uvs[2 * k] * width;
+      coordinates[2 * count + 1] = uvs[2 * k + 1] * height;
+      count++;
+    }
+    if (indexCount == indices.length) {
+      indices = Uint16List(2 * indices.length)..setRange(0, indexCount, indices);
+    }
+    indices[indexCount++] = local[g];
+  }
+
+  /// Ends the draw under way
+  void end() {
+    if (indexCount > 0) {
+      batches.add(
+        SceneBatch(
+          texture: texture,
+          positions: Float32List.sublistView(positions, 0, 2 * count),
+          textureCoordinates: Float32List.sublistView(coordinates, 0, 2 * count),
+          indices: Uint16List.sublistView(indices, 0, indexCount),
+        ),
+      );
+      indexCount = 0;
+    }
   }
 }
 
@@ -464,31 +493,44 @@ Int32List farthestFirst(Float64List keys) {
   }
   var low = keys[0];
   var high = keys[0];
-  for (final key in keys) {
-    low = math.min(low, key);
-    high = math.max(high, key);
+  for (var i = 1; i < n; i++) {
+    final key = keys[i];
+    if (key < low) {
+      low = key;
+    }
+    if (key > high) {
+      high = key;
+    }
   }
   final buckets = math.min(n, 1 << 16);
   final scale = high > low ? (buckets - 1) / (high - low) : 0.0;
-  int bucketOf(int i) => ((high - keys[i]) * scale).floor().clamp(0, buckets - 1);
+  final bucketOf = Int32List(n);
   final starts = Int32List(buckets + 1);
   for (var i = 0; i < n; i++) {
-    starts[bucketOf(i) + 1]++;
+    var b = ((high - keys[i]) * scale).floor();
+    if (b < 0) {
+      b = 0;
+    } else if (b >= buckets) {
+      b = buckets - 1;
+    }
+    bucketOf[i] = b;
+    starts[b + 1]++;
   }
   for (var b = 0; b < buckets; b++) {
     starts[b + 1] += starts[b];
   }
   final next = Int32List.fromList(starts);
   for (var i = 0; i < n; i++) {
-    order[next[bucketOf(i)]++] = i;
+    order[next[bucketOf[i]]++] = i;
   }
   // Within a bucket, by key from the largest, then by rank: an insertion sort, the buckets being small
   for (var b = 0; b < buckets; b++) {
-    for (var i = starts[b] + 1; i < starts[b + 1]; i++) {
+    final first = starts[b];
+    for (var i = first + 1; i < starts[b + 1]; i++) {
       final rank = order[i];
       final key = keys[rank];
       var j = i - 1;
-      while (j >= starts[b] && (keys[order[j]] < key || (keys[order[j]] == key && order[j] > rank))) {
+      while (j >= first && (keys[order[j]] < key || (keys[order[j]] == key && order[j] > rank))) {
         order[j + 1] = order[j];
         j--;
       }
