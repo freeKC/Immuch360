@@ -548,9 +548,17 @@ void main() {
   group('through the runner of sd-cli and the compiled fake sd-cli', () {
     final fake = Platform.environment['IMMUCH360_FAKE_SD_CLI'];
     final launcher = Platform.environment['IMMUCH360_RUN_LAUNCHER'];
+    final withoutFake = fake == null || (Platform.isLinux && launcher == null)
+        ? 'IMMUCH360_FAKE_SD_CLI (and on Linux IMMUCH360_RUN_LAUNCHER) not given'
+        : null;
 
-    PanoramaEngine engineWith(String mode, ManagedProcessRunner runner) {
+    PanoramaEngine engineWith(
+      String mode,
+      ManagedProcessRunner runner, {
+      Duration stall = const Duration(seconds: 180),
+    }) {
       final settings = SdCppSettings(
+        stallTimeout: stall,
         sdCli: fake!,
         models: SdCppModels(
           diffusionModel: p.join(folder.path, 'flux.gguf'),
@@ -568,38 +576,75 @@ void main() {
       );
     }
 
-    test(
-      'a panorama made, its steps heard; grey refused twice; short of memory; cut into segments',
-      () async {
-        final runner = ManagedProcessRunner(
-          linuxLauncher: Platform.isLinux ? launcher : null,
-          journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
-        );
-        final heard = <ImmersiveProgress>[];
-        final job = jobOf(photo());
-        final made = await engineWith('ok', runner).run(job, cancel: cancel, onProgress: heard.add);
-        expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
-        expect(
-          heard.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.step),
-          [1, 2, 3, 4],
-        );
-        expect(const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync()).width, 192);
+    test('a panorama made, its steps heard; grey refused twice; short of memory; cut into segments', () async {
+      final runner = ManagedProcessRunner(
+        linuxLauncher: Platform.isLinux ? launcher : null,
+        journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
+      );
+      final heard = <ImmersiveProgress>[];
+      final job = jobOf(photo());
+      final made = await engineWith('ok', runner).run(job, cancel: cancel, onProgress: heard.add);
+      expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
+      expect(heard.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.step), [
+        1,
+        2,
+        3,
+        4,
+      ]);
+      expect(const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync()).width, 192);
 
-        for (final (mode, code) in [
-          ('grey', ImmersiveErrorCode.outputRejected),
-          ('oom', ImmersiveErrorCode.gpuOutOfMemory),
-          ('segments', ImmersiveErrorCode.gpuBusy),
-        ]) {
-          final failed = await engineWith(mode, runner).run(jobOf(photo()), cancel: cancel);
-          expect(failed.error, code, reason: mode);
-        }
-        expect(runner.journal!.read(), isEmpty);
-        expect(workLeft(), isFalse);
-      },
-      skip: fake == null || (Platform.isLinux && launcher == null)
-          ? 'IMMUCH360_FAKE_SD_CLI (and on Linux IMMUCH360_RUN_LAUNCHER) not given'
-          : false,
-    );
+      for (final (mode, code) in [
+        ('grey', ImmersiveErrorCode.outputRejected),
+        ('oom', ImmersiveErrorCode.gpuOutOfMemory),
+        ('segments', ImmersiveErrorCode.gpuBusy),
+      ]) {
+        final failed = await engineWith(mode, runner).run(jobOf(photo()), cancel: cancel);
+        expect(failed.error, code, reason: mode);
+      }
+      expect(runner.journal!.read(), isEmpty);
+      expect(workLeft(), isFalse);
+    }, skip: withoutFake);
+
+    test('a generator that fails, one that says nothing, one cancelled: named, stopped, gone', () async {
+      final runner = ManagedProcessRunner(
+        linuxLauncher: Platform.isLinux ? launcher : null,
+        journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
+      );
+      final failed = await engineWith('fail', runner).run(jobOf(photo()), cancel: cancel);
+      expect(failed.error, ImmersiveErrorCode.generatorFailed);
+      expect(failed.message, contains('load the control image failed'));
+
+      final silent = await engineWith(
+        'silent',
+        runner,
+        stall: const Duration(seconds: 1),
+      ).run(jobOf(photo()), cancel: cancel);
+      expect(silent.error, ImmersiveErrorCode.generatorStalled);
+
+      final slow = NativeCancelFlag();
+      addTearDown(slow.free);
+      final job = jobOf(photo());
+      final pids = <int>[];
+      final watch = Stopwatch();
+      final cancelled = await engineWith('slow', runner).run(
+        job,
+        cancel: slow,
+        onProgress: (progress) {
+          if (progress.stage == ImmersiveStage.generating && progress.step == 1 && !slow.isCancelled) {
+            pids.addAll(runner.journal!.read().map((entry) => entry.pid));
+            watch.start();
+            slow.cancel();
+          }
+        },
+      );
+      expect(cancelled.error, ImmersiveErrorCode.cancelled);
+      expect(watch.elapsed, lessThan(const Duration(seconds: 2)));
+      expect(pids, hasLength(1));
+      expect(processImageOf(pids.single), isNull, reason: 'sd-cli is gone');
+      expect(runner.journal!.read(), isEmpty, reason: 'every sd-cli ended and left the journal');
+      expect(File(job.partPath).existsSync(), isFalse);
+      expect(workLeft(), isFalse);
+    }, skip: withoutFake);
   });
 }
 
