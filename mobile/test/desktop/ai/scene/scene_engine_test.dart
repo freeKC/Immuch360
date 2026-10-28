@@ -15,6 +15,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_textures.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
@@ -32,6 +33,7 @@ import 'package:path/path.dart' as p;
 
 import '../codec/codec_fixtures.dart';
 import '../fakes/fake_backends.dart';
+import '../fakes/fake_engine_tools.dart';
 import '../fakes/fake_thread_priority.dart';
 import 'scene_test_support.dart';
 
@@ -53,6 +55,8 @@ void main() {
     String? glbPartPath,
     String? sha1,
     String? partPath,
+    MemoryProbe? memory,
+    Set<String> sessionsOpen = const {},
   }) {
     final job = sceneJobFor(
       path,
@@ -61,7 +65,13 @@ void main() {
       quarterTurns: quarterTurns,
       glbPartPath: glbPartPath,
     );
-    return SceneChain(models: models ?? fakeSceneModels(), codecs: const [DartSbsCodec()], writePart: writePart).run(
+    return SceneChain(
+      models: models ?? fakeSceneModels(),
+      codecs: const [DartSbsCodec()],
+      writePart: writePart,
+      memory: memory,
+      sessionsOpen: sessionsOpen,
+    ).run(
       job,
       ChainOriginal(bytes: File(path).readAsBytesSync()),
       isCancelled: isCancelled ?? () => false,
@@ -478,6 +488,36 @@ void main() {
       expect(runChain(broken).result.error, ImmersiveErrorCode.decodeFailed);
     });
 
+    test('a photo the memory of the computer cannot take now: outOfMemory with both figures, before any model', () {
+      final path = scenePhoto(folder, 'tight.jpg');
+      final before = File(path).readAsBytesSync();
+      final geometry = FakeGeometryBackend();
+      final outcome = runChain(
+        path,
+        models: fakeSceneModels(geometry: geometry),
+        memory: const FixedMemoryProbe(available: 1000 * 1000 * 1000),
+      );
+
+      expect(outcome.result.error, ImmersiveErrorCode.outOfMemory);
+      expect(outcome.result.message, 'This photo needs about 2147 MB of memory, 1000 MB are free');
+      expect(geometry.calls, 0, reason: 'checked before the photo is decoded');
+      expect(File(scenePartIn(folder, 'tight.jpg')).existsSync(), isFalse);
+      expect(File(path).readAsBytesSync(), before);
+    });
+
+    test('the sessions the worker keeps open count as memory the scene already has; no figure, no check', () {
+      final path = scenePhoto(folder, 'kept.jpg');
+      const free = FixedMemoryProbe(available: 1500 * 1000 * 1000);
+
+      expect(runChain(path, memory: free).result.error, ImmersiveErrorCode.outOfMemory);
+      expect(runChain(path, memory: free, sessionsOpen: {mogeSession}).result.error, ImmersiveErrorCode.outOfMemory);
+      final both = runChain(path, memory: free, sessionsOpen: {mogeSession, lamaSession});
+      expect(both.result.isDone, isTrue, reason: '${both.result.error}: ${both.result.message}');
+      // macOS gives no available memory: the job runs, as a 3D photo does
+      final unknown = runChain(path, memory: const FixedMemoryProbe(available: null));
+      expect(unknown.result.isDone, isTrue, reason: '${unknown.result.error}: ${unknown.result.message}');
+    });
+
     test('a disk full at the write: diskFull, nothing left', () {
       final path = scenePhoto(folder, 'full.jpg');
       final outcome = runChain(
@@ -524,12 +564,17 @@ void main() {
     setUp(() => cancel = NativeCancelFlag());
     tearDown(() => cancel.free());
 
-    SceneEngine engineWith({SceneModelsSpec models = const FakeSceneModelsSpec(), Map<String, int?> files = const {}}) {
+    SceneEngine engineWith({
+      SceneModelsSpec models = const FakeSceneModelsSpec(),
+      Map<String, int?> files = const {},
+      MemoryProbe memory = const FixedMemoryProbe(),
+    }) {
       final engine = SceneEngine(
         models: models,
         requiredFiles: files,
         codec: SbsCodecChoice.dart,
         priority: FakeThreadPriority(threads: {1: 'main'}),
+        memory: memory,
       );
       addTearDown(engine.dispose);
       return engine;
@@ -551,6 +596,18 @@ void main() {
       expect(engine.lastOutcome!.regions, greaterThan(0));
       expect(seen.map((progress) => progress.stage).toSet().toList(), ImmersiveStage.scene);
       expect((await engine.worker!.status()).jobs, 1);
+    });
+
+    test('the worker checks the memory before it decodes the photo: outOfMemory on a computer too full', () async {
+      final path = scenePhoto(folder, 'salon.jpg');
+      final result = await engineWith(memory: const FixedMemoryProbe(available: 256 * 1000 * 1000)).run(
+        sceneJobFor(path, partPath: scenePartIn(folder, 'salon.jpg'), sha1: sha1OfFile(path)),
+        cancel: cancel,
+      );
+
+      expect(result.error, ImmersiveErrorCode.outOfMemory);
+      expect(result.message, 'This photo needs about 2147 MB of memory, 256 MB are free');
+      expect(File(scenePartIn(folder, 'salon.jpg')).existsSync(), isFalse);
     });
 
     test('a source given as bytes: a server original or a file of a share, copied before', () async {

@@ -72,6 +72,25 @@ void main() {
     });
   });
 
+  group('the memory a scene still needs when it starts', () {
+    const gib = 1024 * 1024 * 1024;
+
+    test('2 GiB for a photo of 12 Mpx with its two models to open, more for a larger one, less with them open', () {
+      expect(sceneJobMemoryNeed(sourceWidth: 4000, sourceHeight: 3000), 2 * gib);
+      expect(sceneJobMemoryNeed(sourceWidth: 4000, sourceHeight: 3000), jobMemoryNeedOf(ImmersiveKind.volumetricScene));
+      expect(sceneJobMemoryNeed(sourceWidth: 100, sourceHeight: 100), 2 * gib, reason: 'the models count first');
+      expect(sceneJobMemoryNeed(sourceWidth: 6000, sourceHeight: 4000), 2 * gib + 8 * 12 * 1000 * 1000);
+      expect(
+        sceneJobMemoryNeed(sourceWidth: 4000, sourceHeight: 3000, mogeOpen: true),
+        2 * gib - sceneMogeSessionMemory,
+      );
+      expect(
+        sceneJobMemoryNeed(sourceWidth: 4000, sourceHeight: 3000, mogeOpen: true, lamaOpen: true),
+        2 * gib - sceneMogeSessionMemory - sceneLamaSessionMemory,
+      );
+    });
+  });
+
   group('a job beside one of the other lane', () {
     const gib = 1024 * 1024 * 1024;
 
