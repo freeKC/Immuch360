@@ -10,9 +10,11 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/scene/glb_reader.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_projection.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 import '../scene/glb_reader_test_files.dart';
@@ -227,6 +229,40 @@ void main() {
       expect([for (final batch in frame.batches) batch.indices.length ~/ 3], [2, 3]);
     });
 
+    test('the eye in front of a near triangle leaves it out, the others drawn, every coordinate finite', () {
+      // A photo triangle at 0.3 m and two at 2 m; the eye 0.27 m forward stands 3 cm from the near one
+      List<double> triangle(double x, double depth) => [x, 0, -depth, x + 0.1, 0, -depth, x, 0.1, -depth];
+      final photo = _mesh(
+        [...triangle(0, 0.3), ...triangle(-0.5, 2), ...triangle(0.5, 2)],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      );
+      final model = ScenePreviewModel(_scene([photo]), safe: _zone, fovDegrees: 60);
+      final view = SceneView.fit(const Size(400, 300), aspect: 4 / 3, fovDegrees: 60);
+      final frame = model.frame(view, const SceneEye(0, 0, -0.27), textureSizes: _sizes);
+
+      expect(frame.order, [1, 2], reason: 'the triangle 3 cm from the eye is left out');
+      for (final batch in frame.batches) {
+        expect(batch.positions.every((value) => value.isFinite), isTrue);
+      }
+    });
+
+    test('one key far beyond the others sorts as fast and as exactly as the scene around it', () {
+      // 120 000 keys from 1 to 5 m and one at 1 000 km: all but one in the first buckets (S4-review m4: 6 s on ai1)
+      final random = math.Random(7);
+      final keys = Float64List.fromList([for (var i = 0; i < 120000; i++) 1 + 4 * random.nextDouble(), 1e6]);
+      final watch = Stopwatch()..start();
+      final order = farthestFirst(keys);
+      watch.stop();
+
+      expect(order.first, 120000);
+      for (var i = 1; i < order.length; i++) {
+        final before = keys[order[i - 1]];
+        final now = keys[order[i]];
+        expect(before > now || (before == now && order[i - 1] < order[i]), isTrue, reason: 'rank $i');
+      }
+      expect(watch.elapsedMilliseconds, lessThan(1500));
+    });
+
     test('the sort keeps its order exact within its buckets, ties in the order of the meshes', () {
       final keys = Float64List.fromList([1, 7, 3.0000001, 3, 7, 0.5, 3.0000002, 1000]);
       expect(farthestFirst(keys), [7, 1, 4, 6, 2, 3, 0, 5]);
@@ -356,19 +392,48 @@ void main() {
     });
 
     test('the wheel goes forward by its forward reach and back by its backward reach, a notch a quarter of it', () {
-      final forward = SceneEyeMoves.wheel(SceneEye.start, -100, _zone);
+      final forward = SceneEyeMoves.wheel(SceneEye.start, -100, _zone, notch: 100);
       expect(forward.z, closeTo(-0.25 * _zone.forward, 1e-12));
-      final back = SceneEyeMoves.wheel(SceneEye.start, 100, _zone);
+      final back = SceneEyeMoves.wheel(SceneEye.start, 100, _zone, notch: 100);
       expect(back.z, closeTo(0.25 * _zone.backward, 1e-12));
       // From behind the start, forward again: through the start, then by the forward reach
-      final through = SceneEyeMoves.wheel(back, -200, _zone);
+      final through = SceneEyeMoves.wheel(back, -200, _zone, notch: 100);
       expect(through.z, closeTo(-0.25 * _zone.forward, 1e-12));
       // Many notches stop at rho 2
       var eye = SceneEye.start;
       for (var i = 0; i < 40; i++) {
-        eye = SceneEyeMoves.wheel(eye, -100, _zone);
+        eye = SceneEyeMoves.wheel(eye, -100, _zone, notch: 100);
       }
       expect(eye.z, closeTo(-2 * _zone.forward, 1e-12));
+    });
+
+    test('a notch is what this computer sends for one, and one event counts three notches at most', () {
+      // Windows sends 100 physical pixels, 50 logical at 200 % (V2 needed 16 notches for rho 2 instead of 8)
+      for (final (platform, ratio) in [
+        (TargetPlatform.windows, 2.0),
+        (TargetPlatform.windows, 1.5),
+        (TargetPlatform.linux, 1.0),
+        (TargetPlatform.macOS, 2.0),
+      ]) {
+        final notch = desktopWheelNotch(platform, ratio);
+        final one = SceneEyeMoves.wheel(SceneEye.start, -notch, _zone, notch: notch);
+        expect(one.z, closeTo(-0.25 * _zone.forward, 1e-12), reason: '$platform at $ratio');
+      }
+      final jump = SceneEyeMoves.wheel(SceneEye.start, -1000, _zone, notch: 50);
+      expect(jump.z, closeTo(-0.75 * _zone.forward, 1e-12));
+    });
+
+    test('two fingers apart on a touchpad go forward, together go back, a doubling half the reach', () {
+      final apart = SceneEyeMoves.pinch(SceneEye.start, 2, _zone);
+      expect(apart.z, closeTo(-0.5 * _zone.forward, 1e-12));
+      final together = SceneEyeMoves.pinch(SceneEye.start, 0.5, _zone);
+      expect(together.z, closeTo(0.5 * _zone.backward, 1e-12));
+      // In two steps as in one
+      final twice = SceneEyeMoves.pinch(SceneEyeMoves.pinch(SceneEye.start, math.sqrt2, _zone), math.sqrt2, _zone);
+      expect(twice.z, closeTo(apart.z, 1e-12));
+      expect(SceneEyeMoves.pinch(const SceneEye(0.1, 0, 0), 1, _zone), const SceneEye(0.1, 0, 0));
+      // Far apart stops at rho 2
+      expect(SceneEyeMoves.pinch(SceneEye.start, 1000, _zone).z, closeTo(-2 * _zone.forward, 1e-12));
     });
   });
 }

@@ -5,7 +5,8 @@
 //
 // What the preview does, as the headset does it (SceneNavigator.kt, make_scene_golden.py step 10):
 // 1. The eye starts where the photo was taken, looking towards -z, the photo filling the view across its field of
-//    view; the mouse moves the eye within the zone, the wheel forward and back, and nothing turns the view: a scene
+//    view; the mouse moves the eye within the zone, the wheel forward and back (a notch as this computer sends one,
+//    three at most per event), two fingers apart or together on a touchpad too, and nothing turns the view: a scene
 //    is frontal.
 // 2. Beyond the safe zone (rho over 1) the layers flatten towards the photo plane on their rays from the camera, flat
 //    at rho 1.5 (the background 1 cm behind), and the scene darkens from rho 1.25 up to 95 %.
@@ -482,6 +483,9 @@ class _BatchWriter {
   }
 }
 
+/// The largest bucket [farthestFirst] sorts by insertion
+const _insertionSortMost = 32;
+
 /// The ranks of [keys] from the largest to the smallest, equal keys in their order: a counting sort over buckets of
 /// the range of the keys, each bucket then sorted exactly. A frame of a scene sorts some 100 000 triangles at each move
 /// of the mouse, in a time that grows with their count only.
@@ -523,9 +527,19 @@ Int32List farthestFirst(Float64List keys) {
   for (var i = 0; i < n; i++) {
     order[next[bucketOf[i]]++] = i;
   }
-  // Within a bucket, by key from the largest, then by rank: an insertion sort, the buckets being small
+  // Within a bucket, by key from the largest, then by rank: an insertion sort while the bucket is small, a sort of
+  // the bucket beyond (one key far from the others gathers the rest in a few buckets: S4-review m4)
   for (var b = 0; b < buckets; b++) {
     final first = starts[b];
+    if (starts[b + 1] - first > _insertionSortMost) {
+      final bucket = order.sublist(first, starts[b + 1])
+        ..sort((x, y) {
+          final byKey = keys[y].compareTo(keys[x]);
+          return byKey != 0 ? byKey : x.compareTo(y);
+        });
+      order.setRange(first, starts[b + 1], bucket);
+      continue;
+    }
     for (var i = first + 1; i < starts[b + 1]; i++) {
       final rank = order[i];
       final key = keys[rank];
@@ -549,9 +563,12 @@ abstract final class SceneEyeMoves {
   /// middle to a side, to where the scene is flat
   static const dragReaches = 4.0;
 
-  /// A notch of the wheel (100 logical pixels of scroll) moves the eye by this share of its reach
+  /// A notch of the wheel moves the eye by this share of its reach, one event by three notches at most
   static const notchShare = 0.25;
-  static const notch = 100.0;
+  static const notchesMost = 3.0;
+
+  /// Two fingers twice as far apart on a touchpad move the eye forward by this share of its reach
+  static const pinchShare = 0.5;
 
   /// The eye moved by a drag of [delta] in a view of [size]: the way the pointer goes, up being up
   static SceneEye drag(SceneEye eye, Offset delta, Size size, SceneSafeZone safe) {
@@ -568,12 +585,30 @@ abstract final class SceneEyeMoves {
     );
   }
 
-  /// The eye moved by [scroll] of the wheel: forward (towards the scene) when it is negative, by the forward reach in
-  /// front of the start and the backward one behind it
-  static SceneEye wheel(SceneEye eye, double scroll, SceneSafeZone safe) {
+  /// The eye moved by [scroll] of the wheel, in logical pixels, [notch] of them for one notch of this computer
+  /// (desktopWheelNotch): forward (towards the scene) when it is negative, by the forward reach in front of the start
+  /// and the backward one behind it
+  static SceneEye wheel(SceneEye eye, double scroll, SceneSafeZone safe, {required double notch}) {
+    if (notch <= 0) {
+      return eye;
+    }
+    return _along(eye, (scroll / notch).clamp(-notchesMost, notchesMost) * notchShare, safe);
+  }
+
+  /// The eye moved by two fingers on a touchpad going from 1 to [ratio] times as far apart: forward when they part,
+  /// back when they close, a doubling moving it by [pinchShare] of its reach
+  static SceneEye pinch(SceneEye eye, double ratio, SceneSafeZone safe) {
+    if (!(ratio > 0) || ratio == 1) {
+      return eye;
+    }
+    return _along(eye, -math.log(ratio) / math.ln2 * pinchShare, safe);
+  }
+
+  /// The eye moved along the axis of the view by [shares] of its reach: towards the scene when negative
+  static SceneEye _along(SceneEye eye, double shares, SceneSafeZone safe) {
     double share(double z, double reach) => reach > 0 ? z / reach : 0;
     final now = eye.z < 0 ? share(eye.z, safe.forward) : share(eye.z, safe.backward);
-    final next = now + scroll / notch * notchShare;
+    final next = now + shares;
     return clamp(SceneEye(eye.x, eye.y, next < 0 ? next * safe.forward : next * safe.backward), safe);
   }
 
