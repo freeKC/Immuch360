@@ -5,9 +5,9 @@
 // drive that is not connected; on a version, "Made from salon.jpg" or "Original not found". A row opens its file the
 // way a file given to the program opens (open_files.dart), even before the next scan, and has "Delete this 3D photo"
 // or "Delete this version" (lot A5c), which asks first and deletes only a file that still carries our XMP with its
-// DerivativeId, never the original. A 3D scene also has "Export for other 3D apps (.glb)", on its row and on its own
-// "Made from" row (design-final 2026-10-27, section 8.2, point 5; scene_glb_export.dart). What they find is in
-// versions.provider.dart.
+// DerivativeId, never the original. A 3D scene has "Preview in 3D" (lib/desktop/ai/scene_preview), and "Export for
+// other 3D apps (.glb)" on its row and on its own "Made from" row (design-final 2026-10-27, section 8.2, point 5;
+// scene_glb_export.dart). What they find is in versions.provider.dart.
 
 import 'dart:async';
 import 'dart:io';
@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
+import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
@@ -140,6 +141,12 @@ class _VersionTile extends ConsumerWidget {
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // A 3D scene can be seen on this computer before it goes to the headset (lib/desktop/ai/scene_preview)
+                if (isSceneVersion(version.kind, version.origin))
+                  ScenePreviewIconButton(
+                    key: ValueKey('desktop_version_preview_${version.asset.id}'),
+                    path: version.path,
+                  ),
                 if (version.kind == ImmersiveKind.volumetricScene) _ExportGlbButton(version: version),
                 IconButton(
                   key: ValueKey('desktop_version_delete_${version.asset.id}'),
