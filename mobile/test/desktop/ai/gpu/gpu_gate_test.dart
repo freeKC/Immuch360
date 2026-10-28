@@ -2,7 +2,9 @@
 // sections 4.7 and 10.1 point 7): the answers of the probe of each case (no Vulkan, no card, an Iris Xe that shares the
 // memory, a card of 6 GB, the RTX 4060 of 8 GB, two cards, a probe that does not answer, a Mac, 15.6 GiB of memory) and
 // the reason each one gives; the integrated graphics allowed by their switch; the features of phases 1 and 2 never
-// starting the probe; the words of each reason.
+// starting the probe; the words of each reason. The panoramas this version holds back (aiHeldFeatureGroups, lot P2)
+// are let in here, so that the rules of the card are what the tests see; one test keeps the hold, and the card is looked
+// at first all the same.
 
 import 'dart:convert';
 import 'dart:ffi' show Abi;
@@ -78,6 +80,7 @@ void main() {
     int? memory = 16 * _gib,
     bool integratedAllowed = false,
     List<AiComponent>? catalogue,
+    Set<AiFeatureGroup> heldGroups = const {},
   }) => HardwareGate(
     components: _Installed(folder),
     facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: memory),
@@ -85,6 +88,7 @@ void main() {
     gpu: gpu,
     integratedGpuAllowed: () async => integratedAllowed,
     catalogue: catalogue ?? [onnxRuntimeWindowsComponent, onnxRuntimeLinuxComponent, _transformer()],
+    heldGroups: heldGroups,
   );
 
   Future<AiGateResult> panorama(GpuReport report, {Abi abi = Abi.windowsX64, int? memory = 16 * _gib}) =>
@@ -317,6 +321,7 @@ void main() {
         gpu: probe,
         now: () => now,
         catalogue: [onnxRuntimeWindowsComponent, _transformer()],
+        heldGroups: const {},
       );
 
       expect((await timed.evaluate(feature: AiFeature.panorama)).reason, AiGateReason.gpuNoAnswer);
@@ -333,6 +338,20 @@ void main() {
       final result = await gate(null).evaluate(feature: AiFeature.panorama);
       expect(result.reason, AiGateReason.gpuNone);
     });
+  });
+
+  test('while the panoramas are held back, the card is looked at first, refused or named for the settings', () async {
+    Future<AiGateResult> held(GpuReport report) =>
+        gate(FakeGpuProbe.of(report), heldGroups: aiHeldFeatureGroups).evaluate(feature: AiFeature.panorama);
+
+    final passes = await held(FakeGpuReports.rtx4060);
+    expect(passes.reason, AiGateReason.notInThisVersion);
+    expect(passes.missing, isEmpty);
+    expect(passes.gpu!.name, rtx4060Laptop.name);
+
+    final integrated = await held(FakeGpuReports.integratedOnly);
+    expect(integrated.reason, AiGateReason.gpuIntegrated);
+    expect(integrated.gpu!.name, irisXe.name);
   });
 
   test('the words of each reason, with the memories they name', () async {

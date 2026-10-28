@@ -127,6 +127,8 @@ void main() {
         facts: () => const AiHardwareFacts(abi: Abi.windowsX64, processors: 8, physicalMemory: 16 * _gib),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
         heldGroups: const {},
+        // A card the panoramas take (lot C6), so that the components are what is looked at
+        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       ).evaluate(feature: AiFeature.panorama);
       expect(lifted.reason, AiGateReason.componentsMissing);
       expect(lifted.missing, [sdCppWindowsComponent]);
