@@ -323,6 +323,22 @@
     "blob": "2a6bc8e23bd4e57b9d76c6abee2726e2fb345b14",
     "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/GlbReader.kt": {
+    "blob": "cbc5f9d1234eabfbb0848780ab87240705305a7a",
+    "reason": "AI immersive phases 2 and 3, lot S2: the reader of glb-layers-v1 in the headset (8 meshes of 65 535 vertices at most, float32 positions and uvs, uint32 indices, JPEG textures, layers told by their image); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneFile.kt": {
+    "blob": "522a92141fab1d62f7a42696721db8c6bea7b560",
+    "reason": "AI immersive phases 2 and 3, lot S2: the packet at the head of a photo that carries a 3D scene, and its tail checked by length and SHA-256 in the headset; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneGate.kt": {
+    "blob": "76c25970d1f31b57842605bf863dc86bfb5a7d16",
+    "reason": "AI immersive phases 2 and 3, lot S2: the gate of the 3D scenes per headset (caps, free memory, heat, version); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneNavigator.kt": {
+    "blob": "f9c78555d4e7bfe3c490e54f4489b2c410c1a213",
+    "reason": "AI immersive phases 2 and 3, lot S2: the edge of the zone of a 3D scene (flattening, darkening), the glide of the left thumbstick, and the passage to the left handed frame of the Spatial SDK; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
     "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of the phones, ZXing with the camera permission asked first"
@@ -706,6 +722,26 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
     "blob": "60bf53529057dacf9460c3cd2c3a0b657da6dd23",
     "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the stereoPair contract read by the Kotlin side, the 2.5D request and the 3D scene included; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/GlbReaderTest.kt": {
+    "blob": "739c50ac3f120cb2230b7c6f772c621e22370110",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the glb-layers-v1 reader against tiny_scene3D.jpg, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneFileTest.kt": {
+    "blob": "6034f0624d278f89f0f4b6db602e3e46d1f02544",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the head packet and the tail of a scene, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneGateTest.kt": {
+    "blob": "2ab19e56a4cf06a546bd8a0a8ed76fe65c226a2c",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the gate of the scenes, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneNavigatorTest.kt": {
+    "blob": "4cf5010d1a0d7218644817cecf5efbf43b8bd582",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the edge and the glide against scene_golden_v1.json, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneTestFiles.kt": {
+    "blob": "46f27e5b7f6d8742cf7d8ad59b03c0edd79e2609",
+    "reason": "AI immersive phases 2 and 3, lot S2: the scene fixture taken apart and glbs made for the scene tests; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",

@@ -161,6 +161,22 @@ void main() {
         isNull,
       );
     });
+
+    test('a scale missing or that does not read as a number is 1, as the headset reads it (SceneFile.kt)', () {
+      const written = 'Immuch360:SceneScale="1.0"';
+      final sample = _fixture('xmp_v1_scene_sample.xmp');
+      expect(sample, contains(written));
+      double? scaleOf(String scale) => SceneXmp.parse(sample.replaceAll(written, scale))!.request?.scale;
+
+      expect(scaleOf('Immuch360:SceneScale="1.25"'), 1.25);
+      expect(scaleOf(''), 1.0);
+      for (final value in ['', 'wide', 'NaN', 'Infinity']) {
+        expect(scaleOf('Immuch360:SceneScale="$value"'), 1.0, reason: value);
+      }
+      // A number that cannot be a scale gives no request on either side
+      expect(scaleOf('Immuch360:SceneScale="0"'), isNull);
+      expect(scaleOf('Immuch360:SceneScale="-1"'), isNull);
+    });
   });
 
   group('the settings keys, one per kind', () {
