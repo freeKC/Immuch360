@@ -67,7 +67,8 @@ void main() {
     final input = exactValues(3 * width * height);
     final maps = OrtMogeGeometry(session: () => moge, modelSha256: 'sum').estimate(input, width: width, height: height);
 
-    expect(maps.metricScale, mogeTokens / TinyModels.load().mogeScaleDivisor);
+    // The tokens reach the model: tiny_moge gives them back in its scale
+    expect(maps.metricScale, 2500 / TinyModels.load().mogeScaleDivisor, reason: 'the 2 500 tokens of M2');
     expect((maps.width, maps.height), (width, height));
     for (var i = 0; i < width * height; i++) {
       // tiny_moge: points = 2 t - 1 of the image turned channels last, mask = its first channel
@@ -208,8 +209,19 @@ void main() {
     expect(File(scenePartIn(folder, 'salon.jpg')).existsSync(), isFalse);
   }, skip: skip);
 
-  test('the scene engine keeps the order of its constants', () {
+  test('the scene engine keeps the order of its constants, and the decisions of M2', () {
     expect(SceneProgress.inpaint, lessThan(SceneProgress.mesh));
     expect(SceneV1.inpaintRegionMax, 512);
+    expect(mogeTokens, 2500, reason: 'M2: 2 500 tokens for MoGe-2 ViT-S on the map of 1 024');
+    const spec = OrtSceneModelsSpec(
+      libraryPath: 'ort',
+      mogePath: 'moge',
+      mogeSha256: 'a',
+      lamaPath: 'lama',
+      lamaSha256: 'b',
+      geometryModel: 'g',
+      inpaintModel: 'i',
+    );
+    expect(spec.tokens, 2500, reason: 'the engine of the app asks MoGe-2 for them');
   });
 }

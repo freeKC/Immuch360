@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
@@ -490,16 +491,31 @@ void main() {
 
     test('the regions go to the filling in windows of the map, and only the holes of each tile come back', () {
       final path = scenePhoto(folder, 'regions.jpg', width: 160, height: 96);
-      final inpaint = FakeInpaintBackend();
+      // Its holes green, and the known pixels it should give back as they were magenta
+      final inpaint = _DamagingInpaint();
       runChain(path, models: fakeSceneModels(inpaint: inpaint));
       final file = written('regions.jpg');
       final background = const DartSbsCodec().decodeJpeg(file.glb.image(1));
+      final rgba = background.rgba;
+      var magenta = 0;
+      var green = 0;
+      for (var i = 0; i < rgba.length; i += 4) {
+        // The photo has no green under 90 nor over 185
+        if (rgba[i + 1] < 60) {
+          magenta++;
+        }
+        if (rgba[i] < 80 && rgba[i + 1] > 200 && rgba[i + 2] < 80) {
+          green++;
+        }
+      }
 
       expect(inpaint.regions, isNotEmpty);
       for (final region in inpaint.regions) {
         expect((region.width, region.height), (160, 96), reason: 'the whole map, smaller than a window');
       }
       expect((background.width, background.height), (160, 96));
+      expect(green, greaterThan(0), reason: 'the holes come back from the filling');
+      expect(magenta, 0, reason: 'the known pixels of the tile stay those of the map');
     });
   });
 
@@ -670,4 +686,16 @@ void main() {
     expect(exifFocalLength35mm(exifWithFocal35(0)), isNull, reason: '0 is unknown');
     expect(exifFocalLength35mm(null), isNull);
   });
+}
+
+/// A filling that paints its holes green and spoils the known pixels it was given, which the chain never takes back
+class _DamagingInpaint extends FakeInpaintBackend {
+  @override
+  Uint8List fill(InpaintRegion region) {
+    final out = super.fill(region);
+    for (var i = 0; i < region.mask.length; i++) {
+      out.setRange(3 * i, 3 * i + 3, region.mask[i] == 255 ? const [255, 0, 255] : const [0, 255, 0]);
+    }
+    return out;
+  }
 }
