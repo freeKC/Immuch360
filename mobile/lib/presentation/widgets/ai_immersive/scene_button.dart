@@ -26,9 +26,10 @@ String sceneRefusalText(Translations t, SceneGateVerdict verdict) => switch (ver
   SceneRefusal.newerVersion => t.ai_immersive_newer_version,
   SceneRefusal.notOurs => t.ai_immersive_scene_not_ours,
   SceneRefusal.missing => t.ai_immersive_scene_missing,
-  SceneRefusal.tooHeavy when verdict.triangles != null && verdict.maxTriangles != null => t
-      .ai_immersive_scene_too_heavy(triangles: '${verdict.triangles}', max: '${verdict.maxTriangles}'),
-  SceneRefusal.tooHeavy => t.ai_immersive_scene_too_heavy_plain,
+  SceneRefusal.tooHeavy => switch ((verdict.triangles, verdict.maxTriangles)) {
+    (final int triangles, final int max) => t.ai_immersive_scene_too_heavy(triangles: triangles, max: max),
+    _ => t.ai_immersive_scene_too_heavy_plain,
+  },
   null => '',
 };
 

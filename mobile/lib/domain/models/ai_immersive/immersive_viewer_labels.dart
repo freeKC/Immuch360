@@ -27,6 +27,13 @@ Map<String, String> aiImmersiveViewerLabels(Translations t) => {
   'aiReliefDamaged': t.ai_immersive_unavailable_damaged,
 };
 
+// The numbers of the translations that are typed as numbers ({size}, {max}): a number no text holds stands for each,
+// then gives way to its place, where the headset puts the value it reads in the file
+const _sizeMark = 918273645;
+const _maxMark = 918273646;
+
+String _placeOf(String text, int mark, String place) => text.replaceAll('$mark', place);
+
 /// Translated labels of a 3D scene in the headset (design-final 2026-10-27, sections 3.3, 3.5 and 3.7), under the keys
 /// SceneTexts reads: its panel (Reset, the photo or the scene on the 3D button, its controller mapping, the room to move,
 /// the areas filled, the flags of the file), its passing texts (the honesty sentence, the edge of the zone) and why it
@@ -40,9 +47,13 @@ Map<String, String> sceneViewerLabels(Translations t) => {
   'scenePhoto2d': t.ai_immersive_scene_photo_2d,
   'scene3d': t.ai_immersive_type_scene,
   'sceneHint': t.ai_immersive_scene_hint,
-  'sceneZone': t.ai_immersive_scene_zone(size: '{size}'),
+  'sceneZone': _placeOf(t.ai_immersive_scene_zone(size: _sizeMark), _sizeMark, '{size}'),
   'sceneHidden': t.ai_immersive_hidden_filled(percent: '{percent}'),
-  'sceneTooHeavy': t.ai_immersive_scene_too_heavy(triangles: '{triangles}', max: '{max}'),
+  'sceneTooHeavy': _placeOf(
+    t.ai_immersive_scene_too_heavy(triangles: '{triangles}', max: _maxMark),
+    _maxMark,
+    '{max}',
+  ),
   'sceneTooHeavyPlain': t.ai_immersive_scene_too_heavy_plain,
   'sceneNewer': t.ai_immersive_newer_version,
   'sceneNotOurs': t.ai_immersive_scene_not_ours,

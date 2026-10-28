@@ -134,7 +134,7 @@ void main() {
     expect(reader.reads, [(0, 131072), (file.length - 131072, 131072)]);
 
     final ordinary = await NetworkMediaService().detect(
-      NetworkEntry(sourceId: 'nas', path: '/Photos/salon.jpg', isDirectory: false, size: 4096),
+      const NetworkEntry(sourceId: 'nas', path: '/Photos/salon.jpg', isDirectory: false, size: 4096),
       RecordingReader(jpegFile(width: 4000, height: 3000)).call,
     );
     expect(ordinary?.scene, isNull);
