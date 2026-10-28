@@ -18,8 +18,9 @@
 //  2. decoding (to 10 %): the memory the job needs for a panorama of its size against what the system gives now, then
 //     the panorama upright by its EXIF orientation, never turned by the quarter turns of the job: a 360° photo does
 //     not turn in the viewers, and a generated panorama is upright already (its photo was turned before it was
-//     generated). A frame that is not 2:1 within 10 % is no whole sphere and is refused. The left eye is the panorama
-//     at 4096 x 2048 at most (an exact 2:1, by area), the map of the depth half as wide (2048 x 1024 at most);
+//     generated). A frame that is not 2:1 within 10 % is no whole sphere and is refused, and so is a 2:1 frame whose
+//     GPano crop leaves part of the sphere out (read on the root isolate, before the worker). The left eye is the
+//     panorama at 4096 x 2048 at most (an exact 2:1, by area), the map of the depth half as wide (2048 x 1024 at most);
 //  3. panoramaDepth (to 70 %): the 20 tangent views through the depth model, "step k of 20", then merged
 //     (pano_depth.dart); a flat map is refused here, before the right eye, and so is a map with pixels no view kept
 //     sees (views the model read the wrong way round left out);
@@ -61,6 +62,8 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart' show isPartialSphere;
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoTags;
 import 'package:logging/logging.dart';
 
 final _log = Logger('StereoPanoramaEngine');
@@ -685,6 +688,20 @@ class StereoPanoramaEngine implements ImmersiveEngine {
       } on FileSystemException catch (error) {
         return failed(ImmersiveErrorCode.sourceLost, error.osError?.message ?? error.message);
       }
+      // A phone panorama of part of the sphere can have a 2:1 frame too: its GPano crop, read as the viewers of the
+      // app read it, tells. Its 3D version would stretch it over the whole sphere.
+      final crop = (await readGPanoTags(
+        (offset, length) async => _windowOf(bytes, offset, length),
+        bytes.length,
+      ))?.crop;
+      if (crop != null && isPartialSphere(crop)) {
+        final across = (360 * crop.width).round();
+        final down = (180 * crop.height).round();
+        return failed(
+          ImmersiveErrorCode.unsupportedFormat,
+          'A partial panorama of $across° x $down° has no sphere to go around',
+        );
+      }
       times[ImmersiveStage.reading] = watch.elapsed;
       if (cancel.isCancelled) {
         return failed(ImmersiveErrorCode.cancelled);
@@ -817,6 +834,10 @@ String? stereoPanoramaSettingsKeyOf(int quarterTurns, {required String depthMode
   maxShiftDegrees: Relief360V1.maxShiftDegrees,
   sourceQuarterTurns: quarterTurns & 3,
 ).settingsKey;
+
+/// The [length] bytes of [bytes] from [offset], fewer at its end
+Uint8List _windowOf(Uint8List bytes, int offset, int length) =>
+    Uint8List.sublistView(bytes, math.min(offset, bytes.length), math.min(bytes.length, offset + length));
 
 /// [job] without the bytes of its sources, which travel apart to the worker
 StereoPanoramaJob _withoutBytes(StereoPanoramaJob job) {
