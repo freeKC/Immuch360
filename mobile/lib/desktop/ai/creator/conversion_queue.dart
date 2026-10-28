@@ -250,6 +250,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// When the step shown of each job under way started, for its time left
   final _stepStarted = <String, DateTime>{};
 
+  /// The 3D versions waiting for their panorama when Cancel all was asked: skipped with their reason once it ends
+  /// without its file, cancelled when it was written all the same (its rename was under way)
+  final _stoppedWithParent = <String>{};
+
   /// The times of the steps this computer measured, read once from the settings then kept up to date
   Map<String, Map<String, int>>? _measured;
   Timer? _recheck;
@@ -335,6 +339,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       return;
     }
     if (job.state == ConversionState.waiting) {
+      _stoppedWithParent.remove(id);
       _set(id, (job) => job.copyWith(state: ConversionState.cancelled, waitingFor: () => null));
       _pump();
     } else if (job.state.isActive) {
@@ -342,13 +347,22 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// Cancels every job waiting and those under way; a pause has nothing left to hold
+  /// Cancels every job waiting and those under way; a pause has nothing left to hold. A 3D version waiting for its
+  /// panorama is skipped with its reason once the panorama ends cancelled (at once for one that waited), as after
+  /// Cancel of the panorama: Retry of the panorama runs it again. Nothing starts after it: one whose panorama was
+  /// written all the same is cancelled.
   void cancelAll() {
     _diskFull.clear();
+    bool waitsForParent(ConversionJob job) =>
+        job.state == ConversionState.waiting && job.parentId != null && job.inputPath == null;
+    _stoppedWithParent.addAll([
+      for (final job in state.jobs)
+        if (waitsForParent(job)) job.id,
+    ]);
     state = ConversionQueueState(
       jobs: [
         for (final job in state.jobs)
-          job.state == ConversionState.waiting
+          job.state == ConversionState.waiting && !waitsForParent(job)
               ? job.copyWith(state: ConversionState.cancelled, waitingFor: () => null)
               : job,
       ],
@@ -356,6 +370,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     for (final flag in _flags.values) {
       flag.cancel();
     }
+    _settleChained();
   }
 
   /// Runs a failed or cancelled job again, and the 3D version chained after it. Asking for it is asking the queue to
@@ -439,7 +454,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         job,
   ];
 
-  /// Gives each chained job waiting the file its parent made, or skips it when the parent ended without one
+  /// Gives each chained job waiting the file its parent made, or skips it when the parent ended without one; cancels it
+  /// when Cancel all stopped its parent
   void _settleChained() {
     for (final job in state.jobs) {
       final parentId = job.parentId;
@@ -450,6 +466,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       if (parent != null && !parent.state.isEnded) {
         continue;
       }
+      final stopped = _stoppedWithParent.remove(job.id);
       final made = switch (parent) {
         ConversionJob(state: ConversionState.done, :final writtenPath) => writtenPath,
         ConversionJob(
@@ -462,13 +479,15 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       };
       _set(
         job.id,
-        (job) => made == null
-            ? job.copyWith(
-                state: ConversionState.skipped,
-                skipReason: ConversionSkipReason.parentNotMade,
-                waitingFor: () => null,
-              )
-            : job.copyWith(inputPath: () => made),
+        (job) => switch (made) {
+          null => job.copyWith(
+            state: ConversionState.skipped,
+            skipReason: ConversionSkipReason.parentNotMade,
+            waitingFor: () => null,
+          ),
+          _ when stopped => job.copyWith(state: ConversionState.cancelled, waitingFor: () => null),
+          _ => job.copyWith(inputPath: () => made),
+        },
       );
     }
   }

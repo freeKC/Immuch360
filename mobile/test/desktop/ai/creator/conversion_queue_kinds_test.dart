@@ -118,6 +118,30 @@ class _Scripted implements ImmersiveEngine {
   Future<void> dispose() async {}
 }
 
+/// The writer, held at the rename of the first job of [kind] until [hold] completes
+class _HeldFinish extends FakeConversionOutput {
+  _HeldFinish(this.kind);
+
+  final ConversionKind kind;
+  final reached = Completer<void>();
+  final hold = Completer<void>();
+
+  @override
+  Future<ConversionSaved> finish(
+    ConversionJob job,
+    String partPath, {
+    required ImmersiveSource original,
+    required AiWhenExists whenExists,
+    String? replaceName,
+  }) async {
+    if (job.kind == kind && !reached.isCompleted) {
+      reached.complete();
+      await hold.future;
+    }
+    return super.finish(job, partPath, original: original, whenExists: whenExists, replaceName: replaceName);
+  }
+}
+
 void main() {
   late Directory root;
   late String photos;
@@ -715,6 +739,67 @@ void main() {
       panorama.release();
       await allEnded();
       expect(current().hasWork, isFalse);
+    });
+
+    test('Cancel all skips the 3D versions with their reason; Retry of a panorama runs its 3D version again', () async {
+      panorama = FakePanoramaEngine(holdStage: ImmersiveStage.generating);
+      final held = panorama.reachedHold.stream.first;
+      final ids = queue().add(
+        [
+          photo('a.jpg', kind: ConversionKind.panoramaFromPhoto),
+          photo('b.jpg', kind: ConversionKind.panoramaFromPhoto),
+        ],
+        kind: ConversionKind.panoramaFromPhoto,
+        alsoStereo: true,
+      );
+      await held;
+
+      queue().cancelAll();
+      // The panorama that waited, and its 3D version, at once
+      expect(job(ids[2]).state, ConversionState.cancelled);
+      expect(job(ids[3]).skipReason, ConversionSkipReason.parentNotMade);
+      // The one being generated stops at its next check
+      panorama.release();
+      await allEnded();
+      expect(job(ids[0]).state, ConversionState.cancelled);
+      expect(job(ids[1]).state, ConversionState.skipped);
+      expect(job(ids[1]).skipReason, ConversionSkipReason.parentNotMade);
+      expect(stereo.jobs, isEmpty);
+
+      panorama = FakePanoramaEngine();
+      container.invalidate(conversionToolsProvider);
+      queue().retry(ids[0]);
+      await allEnded();
+      expect([job(ids[0]).state, job(ids[1]).state], everyElement(ConversionState.done));
+      expect(job(ids[1]).writtenPath, p.join(photos, 'a_360_3D.jpg'));
+      expect([job(ids[2]).state, job(ids[3]).state], [ConversionState.cancelled, ConversionState.skipped]);
+    });
+
+    test('Cancel all while the panorama is renamed: it is kept, its 3D version is cancelled, never started', () async {
+      final renaming = _HeldFinish(ConversionKind.panoramaFromPhoto);
+      output = renaming;
+      container = containerWith();
+      final ids = queue().add(
+        [photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto)],
+        kind: ConversionKind.panoramaFromPhoto,
+        alsoStereo: true,
+      );
+      await renaming.reached.future;
+
+      queue().cancelAll();
+      renaming.hold.complete();
+      await allEnded();
+
+      expect(job(ids[0]).state, ConversionState.done);
+      expect(job(ids[1]).state, ConversionState.cancelled);
+      expect(stereo.jobs, isEmpty);
+      expect(folder(), ['salon.jpg', 'salon_360.jpg']);
+
+      // Its own Retry makes it from that panorama
+      queue().retry(ids[1]);
+      await allEnded();
+      expect(job(ids[1]).state, ConversionState.done);
+      expect(stereo.jobs.single.source.path, job(ids[0]).writtenPath);
     });
 
     test('a panorama skipped for the same settings gives its file to the 3D version', () async {
