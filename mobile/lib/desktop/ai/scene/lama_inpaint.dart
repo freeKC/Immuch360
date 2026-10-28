@@ -5,8 +5,11 @@
 // in; output float32 [1, 3, 512, 512] in [0, 255] out. It masks the holes itself and gives the known pixels back.
 //
 // A region is a window of the map of 512 x 512 at most; a smaller one (the map of a 3:1 panorama is 341 values high)
-// is padded to 512 on its right and bottom by reflection, the padding known, as M2 measured it. Only the holes are
-// taken from the output, rounded to the nearest level. The session and the options of the runs come as for MoGe
+// is padded to 512 on its right and bottom by reflection, its mask with it, as the evaluation code of LaMa pads both
+// (pad_img_to_modulo in saicinpainting/evaluation/data.py): the reflection of a hole is a hole, so that LaMa never
+// takes the near layer a hole still shows for the context of its filling. M2 measured with the padding all known; the
+// two differ only for a map under 512 on a side, near a hole on its edge. Only the holes of the region are taken from
+// the output, rounded to the nearest level. The session and the options of the runs come as for MoGe
 // (moge_geometry.dart): a stopped run is BackendException(cancelled), any other failure modelFailed.
 
 import 'dart:math' as math;
@@ -47,6 +50,29 @@ int reflectIndex(int i, int length) {
   return folded < length ? folded : period - folded;
 }
 
+/// The input of LaMa for [region]: the image float32 [1, 3, 512, 512] in [0, 1] and the mask float32 [1, 1, 512, 512],
+/// 1 on the holes, the region padded to 512 on its right and bottom by reflection ([reflectIndex]), its mask with it
+(Float32List, Float32List) lamaInputOf(InpaintRegion region) {
+  const side = SceneV1.inpaintRegionMax;
+  const plane = side * side;
+  final image = Float32List(3 * plane);
+  final mask = Float32List(plane);
+  for (var y = 0; y < side; y++) {
+    final sy = reflectIndex(y, region.height);
+    for (var x = 0; x < side; x++) {
+      final sx = reflectIndex(x, region.width);
+      final from = sy * region.width + sx;
+      final at = y * side + x;
+      for (var c = 0; c < 3; c++) {
+        image[c * plane + at] = region.rgb[3 * from + c] / 255;
+      }
+      // The reflection of a hole is a hole: what it shows is the near layer, not context
+      mask[at] = region.mask[from] == 0 ? 1 : 0;
+    }
+  }
+  return (image, mask);
+}
+
 /// LaMa on ONNX Runtime
 class OrtLamaInpaint implements InpaintBackend {
   OrtLamaInpaint({required this.session, required this.modelSha256, this.options});
@@ -67,21 +93,7 @@ class OrtLamaInpaint implements InpaintBackend {
       throw BackendException(ImmersiveErrorCode.modelFailed, 'A region of ${region.width} x ${region.height}');
     }
     const plane = side * side;
-    final image = Float32List(3 * plane);
-    final mask = Float32List(plane);
-    for (var y = 0; y < side; y++) {
-      final sy = reflectIndex(y, region.height);
-      for (var x = 0; x < side; x++) {
-        final sx = reflectIndex(x, region.width);
-        final from = sy * region.width + sx;
-        final at = y * side + x;
-        for (var c = 0; c < 3; c++) {
-          image[c * plane + at] = region.rgb[3 * from + c] / 255;
-        }
-        // The padding is known: only the holes of the region itself are filled
-        mask[at] = y < region.height && x < region.width && region.mask[from] == 0 ? 1 : 0;
-      }
-    }
+    final (image, mask) = lamaInputOf(region);
     final OrtTensor output;
     try {
       output = session().runNamed(
