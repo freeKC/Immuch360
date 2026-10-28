@@ -7,7 +7,9 @@
 // and, since the 3D version of a 360° photo has its type in the dialog (lot P1), for a 360° photo too. What each type
 // of version takes is told by type, by aiSourceProvider and conversionSkipOf (design-final 2026-10-27, section 9.1,
 // point 1): a flat photo for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one
-// eye, of the user or a panorama the app generated, for its 3D version.
+// eye, of the user or a panorama the app generated, for its 3D version. Whether a 2:1 frame is a full sphere is told
+// by its GPano crop too, which the dialog reads from a file of this computer (a phone panorama of 180° x 90° is
+// skipped, "Not a 360° photo", before its job would refuse it).
 //
 // The dialog says what the conversion is ("Relief estimated by AI from a single photo") and that a finished one does
 // not guarantee a good result; installs the missing components (their name, size and licence, Download, a bar,
@@ -91,6 +93,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoFile;
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -255,6 +258,26 @@ final conversionFocalReaderProvider = Provider<ConversionFocalReader>(
   },
 );
 
+/// Whether the GPano crop of a 360° photo leaves part of the sphere out, read from the head or the tail of a file of
+/// this computer as the viewers read it (P1-review m3: the engine refuses such a photo, the dialog skips it before);
+/// false for a photo of the server or of a share, which the engine checks once copied
+typedef ConversionPartialSphereReader = Future<bool> Function(ConversionSource source);
+
+final conversionPartialSphereReaderProvider = Provider<ConversionPartialSphereReader>(
+  (ref) => (source) async {
+    if (source is! LocalFileSource) {
+      return false;
+    }
+    try {
+      final crop = (await readGPanoFile(File(source.path)))?.crop;
+      return crop != null && isPartialSphere(crop);
+    } on Object {
+      // Unreadable now: the engine reads it again
+      return false;
+    }
+  },
+);
+
 /// The features a choice of the dialog needs: that of [kind], and that of the 3D version of a panorama chained after it
 typedef AiChoiceFeatures = ({AiFeature feature, AiFeature? chained});
 
@@ -358,6 +381,7 @@ class ConversionPhotoFacts {
     this.isSpatial = false,
     this.quarterTurns = 0,
     this.serverEdits = false,
+    this.partialSphere = false,
   });
 
   final bool isPanorama;
@@ -379,6 +403,22 @@ class ConversionPhotoFacts {
   /// Edited in Immich: what the viewer shows is the edited picture, the 3D photo is made from the unedited original
   /// (a file of the library or the original of the server), the rotation alone applied
   final bool serverEdits;
+
+  /// A 360° photo whose GPano crop leaves part of the sphere out (a phone panorama of 180° x 90° in a 2:1 frame): it
+  /// has no sphere to go around for its 3D version. Read by the dialog from the file, once it knows where it is.
+  final bool partialSphere;
+
+  /// The same facts, of a photo whose GPano crop leaves part of the sphere out or not
+  ConversionPhotoFacts withPartialSphere(bool partial) => ConversionPhotoFacts(
+    isPanorama: isPanorama,
+    isRaw360: isRaw360,
+    isStereo: isStereo,
+    version: version,
+    isSpatial: isSpatial,
+    quarterTurns: quarterTurns,
+    serverEdits: serverEdits,
+    partialSphere: partial,
+  );
 }
 
 /// Reads the facts of a photo
@@ -620,8 +660,8 @@ ConversionSkipReason? conversionSkipOf(
     if (facts.version case final version? when version.kind != ImmersiveKind.panorama360) {
       return ConversionSkipReason.alreadyVersion;
     }
-    if (!_fullSphereFrame(asset.width, asset.height)) {
-      // A partial panorama: its crop leaves no sphere to go around
+    if (!_fullSphereFrame(asset.width, asset.height) || facts.partialSphere) {
+      // A partial panorama: its frame or its crop leaves no sphere to go around
       return ConversionSkipReason.notSphere;
     }
   } else {
@@ -920,11 +960,16 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     _offered = ref.read(offeredConversionKindsProvider);
     final facts = ref.read(conversionFactsReaderProvider);
     final files = ref.read(conversionAssetFilesProvider);
+    final partial = ref.read(conversionPartialSphereReaderProvider);
     final photos = <_Photo>[];
     for (final asset in widget.assets) {
-      final known = await facts(asset);
+      var known = await facts(asset);
       final taken = _offered.any((kind) => conversionSkipOf(asset, known, kind: kind) == null);
-      photos.add(_Photo(asset, known, taken ? await files.locate(asset) : null));
+      final found = taken ? await files.locate(asset) : null;
+      if (known.isPanorama && found != null) {
+        known = known.withPartialSphere(await partial(found.source));
+      }
+      photos.add(_Photo(asset, known, found));
     }
     if (!mounted || _closed) {
       return;

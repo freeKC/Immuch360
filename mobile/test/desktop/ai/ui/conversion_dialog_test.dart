@@ -142,6 +142,7 @@ void main() {
   late GpuReport cards;
   late _Power power;
   late Map<String, int> focals;
+  late Set<String> partial;
 
   final linux = aiComponentsFor(AiPlatform.linuxX64);
   final rules = LibraryPathRules(context: p.context, caseFold: false);
@@ -175,6 +176,7 @@ void main() {
     cards = FakeGpuReports.rtx4060;
     power = _Power();
     focals = {};
+    partial = {};
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -210,6 +212,7 @@ void main() {
       conversionEnginesProvider.overrideWithValue(kinds),
       aiPowerProbeProvider.overrideWithValue(power),
       conversionFocalReaderProvider.overrideWithValue((source) async => focals[source.name]),
+      conversionPartialSphereReaderProvider.overrideWithValue((source) async => partial.contains(source.name)),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
             (asset) async => facts[asset.name] ?? const ConversionPhotoFacts(),
@@ -851,6 +854,25 @@ void main() {
       expect(convertEnabled(tester), isTrue);
     });
 
+    testWidgets('a phone panorama of part of the sphere in a 2:1 frame is no sphere to go around: skipped', (
+      tester,
+    ) async {
+      kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+      original('beach.jpg');
+      original('PANO_0002.jpg');
+      facts['beach.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      facts['PANO_0002.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      partial.add('PANO_0002.jpg');
+      await openDialog(tester, [
+        _photo('beach.jpg', width: 6000, height: 3000),
+        _photo('PANO_0002.jpg', width: 8000, height: 4000),
+      ]);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      expect(find.text('PANO_0002.jpg: Not a 360° photo'), findsOneWidget);
+      expect(checked().single, startsWith('.beach_360_3D.jpg.'));
+    });
+
     testWidgets('a type the gate refuses stays listed, greyed with its reason', (tester) async {
       sceneEngine();
       // A component of the scenes this version does not have whole
@@ -1230,6 +1252,38 @@ void main() {
       expect(await read(LocalFileSource(notJpeg.path)), isNull);
       expect(await read(LocalFileSource(p.join(root.path, 'gone.jpg'))), isNull);
     });
+
+    test(
+      'a GPano crop of part of the sphere read from a file of this computer; a whole sphere or no crop is not',
+      () async {
+        final container = ProviderContainer();
+        addTearDown(container.dispose);
+        final read = container.read(conversionPartialSphereReaderProvider);
+        File jpegWith(String name, String gpano) {
+          final xmp =
+              '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+              '<rdf:Description xmlns:GPano="http://ns.google.com/photos/1.0/panorama/" '
+              'GPano:ProjectionType="equirectangular" $gpano/></rdf:RDF></x:xmpmeta>';
+          return File(p.join(root.path, name))..writeAsBytesSync([...xmp.codeUnits, ...List.filled(64, 0)]);
+        }
+
+        final half = jpegWith(
+          'half.jpg',
+          'GPano:FullPanoWidthPixels="8000" GPano:FullPanoHeightPixels="4000" GPano:CroppedAreaImageWidthPixels="4000" '
+              'GPano:CroppedAreaImageHeightPixels="2000" GPano:CroppedAreaLeftPixels="2000" GPano:CroppedAreaTopPixels="1000"',
+        );
+        final whole = jpegWith(
+          'whole.jpg',
+          'GPano:FullPanoWidthPixels="8000" GPano:FullPanoHeightPixels="4000" GPano:CroppedAreaImageWidthPixels="8000" '
+              'GPano:CroppedAreaImageHeightPixels="4000" GPano:CroppedAreaLeftPixels="0" GPano:CroppedAreaTopPixels="0"',
+        );
+        final bare = jpegWith('bare.jpg', '');
+        expect(await read(LocalFileSource(half.path)), isTrue);
+        expect(await read(LocalFileSource(whole.path)), isFalse);
+        expect(await read(LocalFileSource(bare.path)), isFalse);
+        expect(await read(LocalFileSource(p.join(root.path, 'gone.jpg'))), isFalse);
+      },
+    );
   });
 
   test('each job of a batch comes from its request, a 3D version chained after its panorama from the same one', () {
@@ -1355,6 +1409,11 @@ void main() {
       );
       expect(
         conversionSkipOf(_photo('crop.jpg', width: 8000, height: 2500), facts, kind: ofPanorama),
+        ConversionSkipReason.notSphere,
+      );
+      // A 2:1 frame whose GPano crop leaves part of the sphere out
+      expect(
+        conversionSkipOf(sphere, const ConversionPhotoFacts(isPanorama: true, partialSphere: true), kind: ofPanorama),
         ConversionSkipReason.notSphere,
       );
       expect(
