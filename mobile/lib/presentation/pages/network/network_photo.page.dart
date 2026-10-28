@@ -6,12 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
@@ -80,7 +82,9 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// opens it on the same quad with a relief the headset estimates, greyed with its reason where the headset cannot.
 /// A photo that carries a 3D scene (see [NetworkMediaInfo.scene]) gets "Explore the 3D scene", and an original whose
 /// folder holds one of its scenes "View the 3D scene" (see AiSceneButton), each greyed with its reason where the gate
-/// of the headset refuses the scene.
+/// of the headset refuses the scene. An original whose folder holds a 360° panorama a computer generated beyond its
+/// edges gets "View the 360° version", which opens the newest one (its 3D version, top and bottom, when it is newer)
+/// on the sphere of the immersive viewer; the viewer reads the packet of the panorama itself and says so.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -430,6 +434,36 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     }
   }
 
+  /// Opens [version], a 360° panorama a computer generated beyond the edges of this photo, on the sphere of the
+  /// immersive viewer: mono, or top and bottom for its 3D version, over the whole sphere; previous and next go from it
+  /// through the folder, as from any 360° photo of it
+  Future<void> _openPanoramaVersion(ShareVersion version) async {
+    // Read before the first await: the page may be gone by then
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final errorMessage = context.t.immersive_viewer_open_failed;
+    final stereoLabels = sphereViewerLabels(context.t);
+    final connections = ref.read(networkConnectionsProvider);
+    final entry = version.entry;
+    try {
+      final url = widget.folder?.urls[entry.path] ?? await connections.mediaUrl(widget.sourceId, entry.path);
+      final SphereView view = (
+        layout: version.kind == ImmersiveKind.stereoPanorama360 ? StereoLayout.topBottom : StereoLayout.mono,
+        coverage: SphereCoverage.full,
+        coverageGuess: SphereCoverage.full,
+      );
+      final request = ImmersiveRequest(url: url.toString(), isVideo: false, title: entry.name, view: view);
+      if (!mounted) {
+        return;
+      }
+      final around = widget.folder?.around(entry, url) ?? (items: [(entry: entry, url: url)], index: 0);
+      final navigator = FolderImmersiveNavigator.read(ref, items: around.items, index: around.index, request: request);
+      await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels, navigator: navigator);
+    } catch (error) {
+      _log.warning('Could not open the 360° version ${entry.name}: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    }
+  }
+
   Future<void> _openImmersive(_Photo photo, SphereView view) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
@@ -495,6 +529,10 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
             ? _versions
                   ?.where((found) => found.kind == ImmersiveKind.volumetricScene && found.xmp is SceneXmp)
                   .firstOrNull
+            : null;
+        // The newest panorama a computer generated beyond the edges of this photo, or its 3D version
+        final panoramaVersion = isHorizonOs
+            ? _versions?.where((found) => GeneratedPanoramaInfo.of(found.xmp)?.isGenerated ?? false).firstOrNull
             : null;
         final appBar = AppBar(
           backgroundColor: Colors.black38,
@@ -575,6 +613,13 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                         stereo,
                         url: widget.folder?.urls[sceneVersion.entry.path],
                       ),
+                    ),
+                  if (photo != null && panoramaVersion != null)
+                    IconButton(
+                      key: const Key('ai_immersive_view_360_version'),
+                      icon: const Icon(Icons.panorama_photosphere_outlined),
+                      tooltip: context.t.ai_immersive_view_360_version,
+                      onPressed: () => unawaited(_openPanoramaVersion(panoramaVersion)),
                     ),
                   if (photo != null && reliefGate.visible)
                     AiReliefButton(

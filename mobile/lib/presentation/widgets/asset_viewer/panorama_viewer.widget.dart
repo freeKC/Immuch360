@@ -2,7 +2,9 @@
 // what is a panorama (isPanoramaProvider), shared with the top bar and the edit action. The
 // only new dependency is sensors_plus, for the optional gyroscope mode. The raw dual fisheye
 // photos of Insta360 cameras are stitched into equirect images before the sphere shows them
-// (see dual_fisheye_stitcher.dart).
+// (see dual_fisheye_stitcher.dart). A panorama a computer generated beyond the edges of a photo
+// (see generated_panorama.dart) opens on the photo, says so for a few seconds while the photo is
+// outlined, and keeps its "360° AI" badge.
 
 import 'dart:async';
 import 'dart:io';
@@ -22,6 +24,7 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -41,6 +44,7 @@ import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
@@ -620,6 +624,24 @@ final panoramaImageProvider = Provider<ImageProvider Function(BaseAsset asset, S
 /// replace it.
 final panoramaGPanoClientProvider = Provider<http.Client>((_) => NetworkRepository.client);
 
+/// Reads the original of the photo [remoteId] on the server by ranges, for the head that holds our packet of a panorama
+/// generated beyond the edges of a photo (the server copies only the GPano tags into the preview); null without a
+/// server or its client. The app's shared client, with the headers of the session. Tests replace it.
+final panoramaOriginalReaderProvider = Provider<ByteRangeReader? Function(String remoteId)>(
+  (_) => (remoteId) {
+    try {
+      return httpRangeReader(
+        NetworkRepository.client,
+        Uri.parse(getOriginalUrlForRemoteId(remoteId, edited: false)),
+        headers: ApiService.getRequestHeaders(),
+      );
+    } catch (error) {
+      _log.fine('No server to read the head of the original $remoteId: $error');
+      return null;
+    }
+  },
+);
+
 /// A photo the panorama viewer shows that is no asset: a file of a network share, for example. [image] is the photo,
 /// [name] its file name (see [resolveSphereView]), [length] its size in bytes when known, and [read] reads its bytes
 /// for its GPano tags (see [readGPanoTags]), null when they cannot be read.
@@ -671,6 +693,14 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   SphereCoverage? _chosenSourceCoverage;
   // Size of the image decoded last: the image of a raw photo is let go once stitched
   Size? _frameSize;
+  // Our packet of a panorama a computer generated beyond the edges of a photo, or of the 3D version of a 360° photo,
+  // read with the GPano tags (see _loadGPano): null for any other photo
+  GeneratedPanoramaInfo? _generated;
+  // The outline of its photo, when it was generated and its packet places the photo
+  List<List<SpherePoint>>? _photoOutline;
+  // The bytes the GPano read took from the start of the file of a photo on the device or of a source, where our
+  // packet is: no read more for it
+  Uint8List? _fileHead;
 
   // Whether the photo is a raw dual fisheye one, whose images are stitched before the sphere shows them, with its
   // calibration (see _startRaw). Null until known: a photo that is no asset is found raw by reading its file, and
@@ -902,10 +932,15 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   // Partial spheres and initial views: the server copies the GPano tags into the preview's XMP (same source as web);
   // a photo only on the device has them in its file, and so does a photo that is no asset. The unedited preview, as
   // the sphere shows (see panoramaImageProvider).
+  //
+  // Our packet of a panorama generated beyond the edges of a photo comes from the head the GPano read went through
+  // for a file, and from the head of the original for a photo on the server, read meanwhile (the preview has only the
+  // GPano tags). Such a panorama writes no initial view: it opens on the photo itself.
   Future<void> _loadGPano() async {
     final source = widget.source;
     final remoteId = widget.asset?.remoteId;
     final localId = widget.asset?.localId;
+    final serverPacket = source == null && remoteId != null ? _readServerPacket(remoteId) : null;
     final gpano = source != null
         ? await _readSourceGPano(source)
         : remoteId != null
@@ -916,25 +951,64 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
         : localId != null
         ? await _readLocalGPano(localId)
         : null;
-    if (gpano == null || !mounted) {
+    final head = _fileHead;
+    _fileHead = null;
+    final generated = serverPacket != null
+        ? await serverPacket
+        : head == null
+        ? null
+        : generatedPanoramaOfHead(head);
+    if ((gpano == null && generated == null) || !mounted) {
       return;
     }
     setState(() {
-      final crop = gpano.crop;
+      final crop = gpano?.crop;
       if (crop != null) {
         _gpanoCrop = crop;
         // Without an initial view, start looking at the center of the captured area
         _longitude = 360 * (crop.left + crop.width / 2 - 0.5);
         _latitude = 90 - 180 * (crop.top + crop.height / 2);
       }
-      final initialView = gpano.initialView;
+      final initialView = gpano?.initialView;
       if (initialView != null) {
         final direction = initialViewDirection(initialView);
         _longitude = direction.longitude;
         _latitude = direction.latitude;
       }
+      _generated = generated;
+      final region = generated?.region;
+      _photoOutline = region != null && generated!.isGenerated ? photoRegionOutline(region) : null;
+      if (region != null && initialView == null) {
+        _log.info('$_name was generated beyond the edges of a photo: opening on the photo ($region)');
+        _longitude = region.yaw;
+        _latitude = region.pitch.clamp(-90.0, 90.0);
+      }
     });
   }
+
+  // Our packet at the head of the original of [remoteId] on the server; null when there is none or it cannot be read
+  // within a few seconds, the photo then shown as any other
+  Future<GeneratedPanoramaInfo?> _readServerPacket(String remoteId) async {
+    final read = ref.read(panoramaOriginalReaderProvider)(remoteId);
+    if (read == null) {
+      return null;
+    }
+    try {
+      return generatedPanoramaOfHead(await read(0, generatedPanoramaHeadLength).timeout(const Duration(seconds: 5)));
+    } catch (error) {
+      _log.info('Could not read the head of the original of $_name: $error');
+      return null;
+    }
+  }
+
+  // [read], keeping what it reads from the start of the file in _fileHead
+  ByteRangeReader _keepingHead(ByteRangeReader read) => (offset, length) async {
+    final bytes = await read(offset, length);
+    if (offset == 0) {
+      _fileHead = bytes;
+    }
+    return bytes;
+  };
 
   // The GPano tags of the file on the device, from the same windows as on the server. Painting waits for them, so a
   // file that does not come within a few seconds (one still in the cloud, on iOS) keeps the full sphere.
@@ -942,7 +1016,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     final storage = ref.read(storageRepositoryProvider);
     try {
       final file = await storage.getFileForAsset(localId).timeout(const Duration(seconds: 5));
-      final tags = file == null ? null : await readGPanoFile(file).timeout(const Duration(seconds: 5));
+      final tags = file == null ? null : await _readFileGPano(file).timeout(const Duration(seconds: 5));
       if (tags == null || (tags.crop == null && tags.initialView == null)) {
         return null;
       }
@@ -950,6 +1024,22 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     } catch (error) {
       _log.info('Could not read the GPano tags of $_name: $error');
       return null; // keep the full sphere
+    }
+  }
+
+  // The GPano tags of a file on the device, as readGPanoFile reads them, its head kept for our packet
+  Future<GPanoTags?> _readFileGPano(File file) async {
+    final handle = await file.open();
+    try {
+      return await readGPanoTags(
+        _keepingHead((offset, length) async {
+          await handle.setPosition(offset);
+          return handle.read(length);
+        }),
+        await handle.length(),
+      );
+    } finally {
+      await handle.close();
     }
   }
 
@@ -961,7 +1051,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       return null;
     }
     try {
-      final tags = await readGPanoTags(read, source.length ?? 0).timeout(const Duration(seconds: 5));
+      final tags = await readGPanoTags(_keepingHead(read), source.length ?? 0).timeout(const Duration(seconds: 5));
       if (tags == null || (tags.crop == null && tags.initialView == null)) {
         return null;
       }
@@ -1433,6 +1523,14 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     if (tvMode && showsSphere) {
       _startLookHint();
     }
+    // A panorama of ours: its badge stays, its sentence and the outline of its photo come and go once the sphere shows
+    final generated = isRaw ? null : _generated;
+    final generatedNotice = generated == null
+        ? null
+        : generated.isGenerated
+        ? context.t.ai_immersive_panorama_honesty
+        : context.t.ai_immersive_relief_estimated;
+    final photoOutline = isRaw ? null : _photoOutline;
     // The sphere covers the screen, under the app bar too: from a button, Left would land on it rather than on Close.
     // Out of the directional moves while the app bar has the focus (set here, not while the focus changes); Down and
     // Back go back to it.
@@ -1450,6 +1548,11 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (showsSphere && generated != null && generatedNotice != null)
+                _GeneratedBadge(
+                  text: generated.isGenerated ? context.t.ai_immersive_badge_360 : context.t.ai_immersive_badge,
+                  honesty: generatedNotice,
+                ),
               if (showsSphere && tvMode) ...[
                 IconButton(
                   key: const Key('panorama_zoom_out'),
@@ -1547,7 +1650,24 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                           ),
                           size: Size.infinite,
                         ),
-                        if ((isRaw && calibrationSource != null) || _lookHintVisible)
+                        if (photoOutline != null)
+                          // The photo itself, outlined while the sentence passes
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: DjiTransient(
+                                key: const Key('panorama_photo_region'),
+                                kind: generated,
+                                child: _PhotoRegionOutline(
+                                  outline: photoOutline,
+                                  caption: context.t.ai_immersive_photo_region,
+                                  longitude: _longitude,
+                                  latitude: _latitude,
+                                  fov: _fov,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if ((isRaw && calibrationSource != null) || _lookHintVisible || generatedNotice != null)
                           Positioned(
                             left: 16,
                             right: 16,
@@ -1558,6 +1678,12 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                                 mainAxisSize: MainAxisSize.min,
                                 spacing: 8,
                                 children: [
+                                  if (generatedNotice != null)
+                                    DjiTransient(
+                                      key: const Key('panorama_generated_notice'),
+                                      kind: generated,
+                                      child: _HintPill(text: generatedNotice),
+                                    ),
                                   if (_lookHintVisible) _HintPill(text: context.t.tv_look_hint),
                                   if (isRaw && calibrationSource != null) _RawStitchLabel(source: calibrationSource),
                                 ],
@@ -1636,6 +1762,181 @@ class _RawStitchLabel extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Where the point of the sphere at [point] shows on a view of [size] looking at [longitude] and [latitude] with the
+/// vertical field of view [fov], all in degrees, as the sphere of the panorama viewer projects its vertices; null for a
+/// point further than about 80° from the view
+@visibleForTesting
+Offset? projectSpherePoint(
+  SpherePoint point, {
+  required double longitude,
+  required double latitude,
+  required double fov,
+  required Size size,
+}) {
+  final cosPitch = math.cos(latitude * math.pi / 180);
+  final sinPitch = math.sin(latitude * math.pi / 180);
+  final elevation = point.latitude * math.pi / 180;
+  final azimuth = (point.longitude - longitude) * math.pi / 180;
+  final x = math.cos(elevation) * math.sin(azimuth);
+  final y = math.sin(elevation) * cosPitch - math.cos(elevation) * math.cos(azimuth) * sinPitch;
+  final depth = math.sin(elevation) * sinPitch + math.cos(elevation) * math.cos(azimuth) * cosPitch;
+  if (depth < _SpherePainter._minDepth) {
+    return null;
+  }
+  final focalLength = size.height / 2 / math.tan(fov * math.pi / 360);
+  final center = size.center(Offset.zero);
+  return Offset(center.dx + focalLength * x / depth, center.dy - focalLength * y / depth);
+}
+
+/// The outline of the photo itself on a panorama generated beyond its edges, as the sphere shows it from the view
+/// ([_PhotoRegionPainter]), with [caption] ("The original photo") above the middle of its top edge while it is in view
+class _PhotoRegionOutline extends StatelessWidget {
+  const _PhotoRegionOutline({
+    required this.outline,
+    required this.caption,
+    required this.longitude,
+    required this.latitude,
+    required this.fov,
+  });
+
+  final List<List<SpherePoint>> outline;
+  final String caption;
+  final double longitude;
+  final double latitude;
+  final double fov;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = constraints.biggest;
+        final top = outline.first;
+        final at = projectSpherePoint(
+          top[top.length ~/ 2],
+          longitude: longitude,
+          latitude: latitude,
+          fov: fov,
+          size: size,
+        );
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomPaint(
+              painter: _PhotoRegionPainter(outline: outline, longitude: longitude, latitude: latitude, fov: fov),
+              size: Size.infinite,
+            ),
+            if (at != null && size.contains(at))
+              Positioned(
+                left: at.dx,
+                top: at.dy,
+                child: FractionalTranslation(
+                  translation: const Offset(-0.5, -1.3),
+                  child: Text(
+                    caption,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      shadows: [Shadow(blurRadius: 4.0, color: Color.fromRGBO(0, 0, 0, 0.8))],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// The badge of a panorama a computer generated beyond the edges of a photo ("360° AI"), or of the 3D version of a 360°
+/// photo ("3D AI"), with its honesty sentence as tooltip: it stays while the panorama shows
+class _GeneratedBadge extends StatelessWidget {
+  const _GeneratedBadge({required this.text, required this.honesty});
+
+  final String text;
+  final String honesty;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: honesty,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Text(
+          text,
+          key: const Key('panorama_generated_badge'),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            shadows: [Shadow(blurRadius: 5.0, color: Color.fromRGBO(0, 0, 0, 0.6))],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Paints the outline of the photo itself on a panorama generated beyond its edges ([outline], see
+/// photoRegionOutline), as the sphere of [_SpherePainter] shows it from the same view: a dark line under a light one,
+/// so that it shows on a bright sky as on a dark wall. A stretch further than about 80° from the view is not drawn.
+class _PhotoRegionPainter extends CustomPainter {
+  const _PhotoRegionPainter({
+    required this.outline,
+    required this.longitude,
+    required this.latitude,
+    required this.fov,
+  });
+
+  final List<List<SpherePoint>> outline;
+  final double longitude;
+  final double latitude;
+  final double fov;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path();
+    for (final arc in outline) {
+      var drawing = false;
+      for (final point in arc) {
+        final offset = projectSpherePoint(point, longitude: longitude, latitude: latitude, fov: fov, size: size);
+        if (offset == null) {
+          drawing = false;
+          continue;
+        }
+        if (drawing) {
+          path.lineTo(offset.dx, offset.dy);
+        } else {
+          path.moveTo(offset.dx, offset.dy);
+          drawing = true;
+        }
+      }
+    }
+    canvas
+      ..drawPath(
+        path,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 4
+          ..color = Colors.black54,
+      )
+      ..drawPath(
+        path,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2
+          ..color = Colors.white,
+      );
+  }
+
+  @override
+  bool shouldRepaint(_PhotoRegionPainter oldDelegate) =>
+      oldDelegate.outline != outline ||
+      oldDelegate.longitude != longitude ||
+      oldDelegate.latitude != latitude ||
+      oldDelegate.fov != fov;
 }
 
 /// Paints a sphere textured with an equirectangular image, as seen from its centre. Only the [textureRect] part of

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
@@ -160,6 +161,45 @@ void main() {
     expect(find.descendant(of: sceneBadge, matching: find.text('3D scene')), findsOneWidget);
     expect(spatialBadge, findsNothing);
     expect(networkStereoBadgeOf(NetworkMediaInfo(scene: scene)), NetworkStereoBadge.scene);
+  });
+
+  group('panoramas generated beyond the edges of a photo', () {
+    final panoramaSample = File('test/fixtures/ai_immersive/xmp_v1_panorama_sample.xmp').readAsStringSync();
+    final stereoSample = File('test/fixtures/ai_immersive/xmp_v1_stereo_panorama_sample.xmp').readAsStringSync();
+    const gpano = (projectionType: 'equirectangular', crop: null, initialView: null);
+
+    testWidgets('a panorama of ours gets the "360° AI" badge next to the 360° one, its honesty label', (tester) async {
+      final panorama = generatedPanoramaOfHead(jpegFile(width: 8192, height: 4096, xmpText: panoramaSample));
+      await pumpTile(tester, entry('/salon_360.jpg'), NetworkMediaInfo(gpano: gpano, panorama: panorama));
+
+      final aiBadge360 = find.byKey(const Key('network_media_ai_360_badge'));
+      expect(aiBadge360, findsOneWidget);
+      expect(find.descendant(of: aiBadge360, matching: find.text('360° AI')), findsOneWidget);
+      expect(badge360, findsOneWidget);
+      expect(tester.getTopRight(aiBadge360).dx, lessThan(tester.getTopLeft(badge360).dx));
+      expect(spatialBadge, findsNothing);
+    });
+
+    test('its 3D version gets "360° AI" too, the 3D version of a 360° photo of the user "3D AI"', () {
+      final stereo = generatedPanoramaOfHead(jpegFile(width: 4096, height: 4096, xmpText: stereoSample));
+      final user = generatedPanoramaOfHead(
+        jpegFile(
+          width: 4096,
+          height: 4096,
+          xmpText: stereoSample
+              .replaceFirst('Immuch360:Origin="GeneratedContent"', 'Immuch360:Origin="EstimatedDepth"')
+              .replaceFirst(RegExp(r'\s*Immuch360:Relief="[^"]*"'), ''),
+        ),
+      );
+
+      expect(
+        networkStereoBadgeOf(NetworkMediaInfo(gpano: gpano, panorama: stereo)),
+        NetworkStereoBadge.generatedPanorama,
+      );
+      expect(networkStereoBadgeOf(NetworkMediaInfo(gpano: gpano, panorama: user)), NetworkStereoBadge.estimated);
+      // An ordinary 360° photo keeps its 360° badge alone
+      expect(networkStereoBadgeOf(const NetworkMediaInfo(gpano: gpano)), isNull);
+    });
   });
 
   testWidgets('next to the 360° badge when both show', (tester) async {

@@ -981,4 +981,90 @@ void main() {
       await endRealIo(tester);
     });
   });
+
+  group('360° panoramas generated beyond the edges of a photo', () {
+    final viewPanoramaButton = find.byKey(const Key('ai_immersive_view_360_version'));
+    final panoramaSample = File('test/fixtures/ai_immersive/xmp_v1_panorama_sample.xmp').readAsStringSync();
+    final stereoSample = File('test/fixtures/ai_immersive/xmp_v1_stereo_panorama_sample.xmp').readAsStringSync();
+
+    /// The folder /Photos: the original salon.jpg and the panoramas made from it, named [names] (the sample of the
+    /// contract made from it, its 3D version when the name says 3D), each a little newer than the one before
+    void originalAndPanoramas(Uint8List original, List<String> names) {
+      share.files['/Photos/salon.jpg'] = original;
+      for (final name in names) {
+        final sample = name.contains('_3D') ? stereoSample : panoramaSample;
+        final packet = sample.replaceFirst('SourceSize="4182311"', 'SourceSize="${original.length}"');
+        final size = name.contains('_3D') ? 4096 : 8192;
+        share.files['/Photos/$name'] = jpegFile(width: size, height: 4096, xmpText: packet);
+      }
+      share.folders['/Photos'] = [
+        share.file('/Photos/salon.jpg'),
+        for (final (k, name) in names.indexed)
+          NetworkEntry(
+            sourceId: _source.id,
+            path: '/Photos/$name',
+            isDirectory: false,
+            size: share.files['/Photos/$name']!.length,
+            modified: DateTime.utc(2026, 10, 28, 10, k),
+          ),
+      ];
+    }
+
+    testWidgets('on a Meta Quest, an original opens its panorama on the sphere, mono, from the media bridge', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      originalAndPanoramas(png, ['salon_360.jpg']);
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => viewPanoramaButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('View the 360° version'), findsOneWidget);
+
+      await tester.tap(viewPanoramaButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single, {
+        'url': server.urlOf('/Photos/salon_360.jpg').toString(),
+        'isVideo': false,
+        'title': 'salon_360.jpg',
+        'layout': ImmersiveStereoLayout.mono,
+        'coverage': ImmersiveSphereCoverage.full,
+      });
+      // On the sphere: the viewer reads the packet of the panorama itself and says so
+      expect(immersiveApi.stereoPairs.single, isNull);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('its 3D version, made after it, opens instead, top and bottom', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      png = await makePng(tester);
+      originalAndPanoramas(png, ['salon_360.jpg', 'salon_360_3D.jpg']);
+      await pumpPhotoPage(tester, '/Photos/salon.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => viewPanoramaButton.evaluate().isNotEmpty);
+
+      await tester.tap(viewPanoramaButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/Photos/salon_360_3D.jpg').toString());
+      expect(immersiveApi.opened.single['layout'], ImmersiveStereoLayout.topBottom);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a phone, no button and no folder read for it', (tester) async {
+      png = await makePng(tester);
+      originalAndPanoramas(png, ['salon_360.jpg']);
+      await pumpPhotoPage(tester, '/Photos/salon.jpg');
+      await pumpRealIo(tester, showsDecodedPhoto);
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pump();
+
+      expect(viewPanoramaButton, findsNothing);
+      expect(server.requests.where((request) => request.path.contains('salon_360')), isEmpty);
+
+      await endRealIo(tester);
+    });
+  });
 }
