@@ -4,7 +4,9 @@
 // the budget the system gives it; otherwise the job waits, "Other apps use the graphics card memory (2.1 GB free):
 // close games or 3D apps", and the queue asks again a little later, or at once when the user asks for it
 // (ConversionQueueNotifier.checkGraphicsCardAgain). A card gone since (an external card unplugged, a driver removed)
-// fails the job: "No graphics card can make this panorama".
+// fails the job: "No graphics card can make this panorama". The budget of VK_EXT_memory_budget leaves out what other
+// programs hold on the driver of NVIDIA under Windows (V3: 7.5 GB with 4.3 GB held by another program): the probe of
+// Windows lowers it to what the counters of Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage).
 //
 // Why 6 GiB (M3, section 9, point 6): stable-diffusion.cpp took 5.39 GiB of the card for the transformer in Q4_0 at
 // 1536 x 768, and keeps 512 MiB of the free memory in reserve; with less free, it cuts its graph into segments, which
