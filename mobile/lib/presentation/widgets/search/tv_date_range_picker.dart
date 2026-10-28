@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:intl/intl.dart';
 
@@ -103,7 +102,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(start ? context.t.start_date : context.t.end_date, style: Theme.of(context).textTheme.titleMedium),
+        Text(start ? 'Start date' : 'End date', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         Text(DateFormat.yMMMMd().format(date)),
         const SizedBox(height: 8),
@@ -148,7 +147,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(context.t.search_filter_date_title, style: Theme.of(context).textTheme.headlineSmall),
+              Text('Date range', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 20),
               _dateRow(start: true),
               const SizedBox(height: 24),
@@ -161,12 +160,12 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(onPressed: () => Navigator.pop(context), child: Text(context.t.cancel)),
+                  OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
                   const SizedBox(width: 12),
                   ElevatedButton(
                     key: const Key('tv_date_range_apply'),
                     onPressed: valid ? () => Navigator.pop(context, DateTimeRange(start: _start, end: _end)) : null,
-                    child: Text(context.t.select),
+                    child: const Text('Select'),
                   ),
                 ],
               ),
