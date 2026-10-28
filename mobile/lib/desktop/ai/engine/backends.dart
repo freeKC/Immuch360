@@ -98,18 +98,18 @@ abstract interface class InpaintBackend {
 }
 
 /// One generation: the control frame at [controlPath] (the photo projected on pure green), the fixed [prompt], the
-/// [steps], the [seed], the [guidance] and the strength of the LoRA; the image goes to [outputPath] (PNG), the
-/// generator works in [workFolder]
+/// [steps], the [seed], the [guidance] and the strength of the LoRA; the image of [width] x [height] goes to
+/// [outputPath] (PNG), the generator works in [workFolder]
 class GeneratorRequest {
   const GeneratorRequest({
     required this.controlPath,
     required this.outputPath,
     required this.workFolder,
     required this.prompt,
-    required this.steps,
     required this.seed,
-    this.width = PanoV1.controlWidth,
-    this.height = PanoV1.controlHeight,
+    this.steps = PanoV1.steps,
+    this.width = PanoV1.generationWidth,
+    this.height = PanoV1.generationHeight,
     this.guidance = PanoV1.guidance,
     this.loraStrength = PanoV1.loraStrength,
   });
