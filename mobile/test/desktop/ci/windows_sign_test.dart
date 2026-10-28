@@ -231,7 +231,8 @@ with zipfile.ZipFile(sys.argv[1], 'w', zipfile.ZIP_DEFLATED) as archive:
       expect(files['BUILD-INFO.txt'], 'lock be48649-1');
       expect(files['licenses/THIRD-PARTY.md'], 'MIT');
       final values = output.readAsStringSync();
-      expect(values, contains('archive=$signed'));
+      // The path resolved by the script: a Windows temporary folder may be given in its short form (RUNNER~1)
+      expect(values, matches(RegExp(r'archive=.+[\\/]signed[\\/]Immuch360-AI-sdcpp-be48649-1-windows-x64\.zip')));
       expect(values, matches(RegExp(r'sha256=[0-9a-f]{64}')));
 
       // A path that leaves the archive, or an archive without a program, is refused before anything is signed
