@@ -9,7 +9,8 @@ name: Immuch360 Desktop
 #                  builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists, then
-#                  the tests of ONNX Runtime by FFI on the official Linux libraries of 1.31.0 and 1.23.2
+#                  the tests of ONNX Runtime by FFI on the official Linux libraries of 1.31.0 and 1.23.2 (with the
+#                  engine of the 3D scenes on the tiny models), and the glTF-Validator of Khronos on the scenes
 #   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too from
 #                  the archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
 #                  build playing a video on a virtual screen (Xvfb)
@@ -255,8 +256,9 @@ jobs:
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
       # since a process keeps the first ONNX Runtime it loads: the depth model, the tiny models of several inputs and
-      # outputs, and the stop of a run from another isolate (lot C1). The archives are checked by their SHA-256 and
-      # cached
+      # outputs, and the stop of a run from another isolate (lot C1); then test/desktop/ai/scene, the engine of the 3D
+      # scenes on the tiny models of MoGe-2 and LaMa (lot S1), whose scenes the next step validates. The archives are
+      # checked by their SHA-256 and cached
       - name: ONNX Runtime archives cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -280,8 +282,29 @@ jobs:
           for version in 1.31.0 1.23.2; do
             echo "ONNX Runtime $version"
             IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
-              mise exec -- flutter test test/desktop/ai/ort
+              IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-$version" \
+              mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene
           done
+
+      # The glTF-Validator of Khronos on the 3D scenes of phase 2 (lot S1; design-final 2026-10-27, section 8.2): the
+      # fixture of make_scene_fixture.py, the one the engine wrote with the fakes (tiny_scene3D_dart.jpg, which the
+      # Kotlin of the Quest reads too), and the scenes the engine wrote on the tiny models with each ONNX Runtime, the
+      # step above. No error and no warning. The npm package gltf-validator 2.0.0-dev.3.10 (Apache-2.0) is a tool of
+      # the CI only, its archive checked by its SHA-256 (the same as the integrity the npm registry gives)
+      - name: The 3D scenes pass the glTF-Validator of Khronos
+        working-directory: mobile
+        run: |
+          validator="$RUNNER_TEMP/gltf-validator"
+          mkdir -p "$validator"
+          curl -sSfL --retry 3 -o "$validator/gltf-validator.tgz" \
+            https://registry.npmjs.org/gltf-validator/-/gltf-validator-2.0.0-dev.3.10.tgz
+          echo "4e03dbdc3bc0d1342afd5d2d7ae341a7e3474502ccb872b02dbbaddaee0fdec6  $validator/gltf-validator.tgz" \
+            | sha256sum -c -
+          tar -xzf "$validator/gltf-validator.tgz" -C "$validator"
+          node --version
+          node ../.github/desktop/ai/validate_scenes.mjs "$validator/package" \
+            test/fixtures/ai_immersive/tiny_scene3D.jpg test/fixtures/ai_immersive/tiny_scene3D_dart.jpg \
+            "$RUNNER_TEMP"/scenes-*/*.jpg
 
   linux:
     name: Linux build
