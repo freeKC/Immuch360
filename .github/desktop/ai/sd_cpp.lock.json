@@ -1,5 +1,5 @@
 {
-  "id": "be48649-1",
+  "id": "be48649-2",
   "stableDiffusionCpp": {
     "repository": "https://github.com/leejet/stable-diffusion.cpp",
     "commit": "be486498eadc29dc3cd234d944c2180ed42b1415",
@@ -43,7 +43,7 @@
       "Ninja",
       "-DCMAKE_C_COMPILER=cl.exe",
       "-DCMAKE_CXX_COMPILER=cl.exe",
-      "-DCMAKE_CXX_FLAGS=/bigobj"
+      "-DCMAKE_CXX_FLAGS=/DWIN32 /D_WINDOWS /EHsc /bigobj"
     ],
     "linux-x64": [
       "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON",
