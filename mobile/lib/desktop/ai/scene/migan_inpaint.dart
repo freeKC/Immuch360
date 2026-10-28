@@ -76,12 +76,15 @@ class OrtMiganInpaint implements InpaintBackend {
   @override
   int get regionMax => SceneV1.inpaintRegionMax;
 
+  /// The image and the mask the model is given for [region] (miganInputsOf, with [paintHoles])
+  (Uint8List, Uint8List) inputsOf(InpaintRegion region) => miganInputsOf(region, paintHoles: paintHoles);
+
   @override
   Uint8List fill(InpaintRegion region) {
     final width = region.width;
     final height = region.height;
     final plane = width * height;
-    final (image, mask) = miganInputsOf(region, paintHoles: paintHoles);
+    final (image, mask) = inputsOf(region);
     final OrtTensor result;
     try {
       result = session().runNamed(

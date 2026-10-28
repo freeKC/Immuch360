@@ -70,6 +70,10 @@ import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:logging/logging.dart';
+// Pure Dart rather than Flutter's foundation, so that the engine also builds into a program without Flutter (the
+// measure of the 360° panoramas, test/desktop/ai/tools/panorama_probe.dart)
+// ignore: depend_on_referenced_packages
+import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as p;
 
 final _log = Logger('PanoramaEngine');
@@ -230,6 +234,12 @@ class _OwnedGeometry implements GeometryBackend {
     session.close();
   }
 }
+
+/// What the filling [inpaint] that OrtPanoramaModelsSpec opened gives MI-GAN for [region], the image and the mask: the
+/// tests see there that the holes of the seam keep their pixels (openInpaint)
+@visibleForTesting
+(Uint8List, Uint8List) panoramaMiganInputsOf(InpaintBackend inpaint, InpaintRegion region) =>
+    ((inpaint as _OwnedInpaint).inner as OrtMiganInpaint).inputsOf(region);
 
 /// A filling that gives its session back when closed
 class _OwnedInpaint implements InpaintBackend {
