@@ -10,6 +10,7 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:path/path.dart' as p;
@@ -583,6 +584,30 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       expect(partsIn(downloads), isEmpty);
       expect(await noted(), isEmpty);
     });
+
+    test(
+      'a job of another kind checks its folder with the partial file of its own name, which its job takes',
+      () async {
+        final photos = folder('Photos');
+        photo(photos, 'salon.jpg');
+        final dialog = session([
+          DestinationJob(id: 'j1', original: local(photos, 'salon.jpg'), kind: ImmersiveKind.volumetricScene),
+        ]);
+
+        await dialog.open();
+
+        expect(dialog.checkOf('j1')!.status, ProbeStatus.ready);
+        final part = dialog.takePart('j1')!;
+        expect(part.finalName, 'salon_scene3D.jpg');
+        expect(part.folder, photos.path);
+        expect(
+          DestinationJob(id: 'j2', original: local(photos, 'salon.jpg')).finalName,
+          'salon_3D_LRF_Full_SBS.jpg',
+          reason: 'the 3D photo by default',
+        );
+        await dialog.close();
+      },
+    );
 
     test('one partial file per folder, whatever the number of photos in it', () async {
       final photos = folder('Photos');
