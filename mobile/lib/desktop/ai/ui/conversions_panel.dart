@@ -2,8 +2,9 @@
 // panel over the window, opened by the button of the app bar and after a launch. Per photo: its thumbnail, its name,
 // "2D to 3D SBS", its state in the words of the spec with a bar while it runs, "3 of 12", where its 3D photo goes then
 // went, the quality flags of the result, and its actions: Cancel while it waits or runs, Retry once it failed or was
-// cancelled; for a 3D photo made, Open folder, View, and Delete this 3D photo. At the bottom: Cancel all, Retry
-// failed, Clear finished, and Resume when a disk full paused the queue.
+// cancelled; for a 3D photo made, Open folder, View, and Delete this 3D photo, and Preview in 3D for a 3D scene
+// (lib/desktop/ai/scene_preview). At the bottom: Cancel all, Retry failed, Clear finished, and Resume when a disk full
+// paused the queue.
 //
 // View opens the 3D photo the way a file given to the program opens (open_files.dart), at once, before any scan.
 // Delete this 3D photo asks first, then deletes only a file that still carries our XMP with its DerivativeId, read
@@ -22,6 +23,7 @@ import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/local_only_message.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
+import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -342,6 +344,13 @@ class _JobRow extends ConsumerWidget {
           child: Text(t.ai_immersive_retry),
         ),
       if (job.state == ConversionState.done && written != null) ...[
+        // A scene is judged here before it goes to the NAS; the panel stays under the preview for the next one
+        if (job.kind == ConversionKind.sceneFromPhoto)
+          TextButton(
+            key: const Key('ai_job_preview_3d'),
+            onPressed: () => ref.read(scenePreviewOpenerProvider)(context, written),
+            child: Text(t.ai_immersive_preview_3d),
+          ),
         TextButton(
           key: const Key('ai_job_open_folder'),
           onPressed: () => unawaited(ref.read(conversionFolderOpenerProvider)(p.dirname(written))),
