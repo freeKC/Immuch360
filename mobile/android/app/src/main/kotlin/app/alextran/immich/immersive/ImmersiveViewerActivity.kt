@@ -3217,6 +3217,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       applySphereTransforms()
       Log.i(TAG, "panorama: sphere at ${photoYaw.toInt()} degrees, its photo where the user looks (${gaze.toInt()})")
     }
+    // Not on a 3D version: its relief brings things nearer than the outline, which would cut them
+    if (!head.drawsOutline) return
     outlineRegion = region
     writeOutline(region)
   }
@@ -3239,7 +3241,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     } else {
       showNotice(text)
     }
-    if (panoramaHead?.isGenerated == true) showOutline()
+    if (panoramaHead?.drawsOutline == true) showOutline()
   }
 
   /** The status line of a photo on a sphere, held under the sentence of a generated panorama while it passes. */
