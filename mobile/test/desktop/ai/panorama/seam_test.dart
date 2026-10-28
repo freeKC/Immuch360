@@ -118,15 +118,16 @@ void main() {
     expect(joined.rgba, isNot(equals(rgba)));
   });
 
-  test('a panorama taller than a region: regions down the band, each after the one above it, which it sees', () {
+  test('a panorama taller than a region: regions down the band, each after the one above it, blended into it', () {
     const width = 64;
     const height = 50;
     final inpaint = _RowMean(regionMax: 20);
     final tops = joinSeamRegionTops(height, 20);
     expect(tops, [0, 10, 20, 30]);
     final done = <(int, int)>[];
+    final rgba = _ramp(width, height);
     final joined = joinSeam(
-      _ramp(width, height),
+      rgba,
       width,
       height,
       inpaint,
@@ -135,7 +136,7 @@ void main() {
     );
     expect(joined.regions, 4);
     expect(done, [(1, 4), (2, 4), (3, 4), (4, 4)]);
-    // Every row of the band is a hole exactly once, the rows above it in a region already filled and known
+    // Every row of the band is a hole; the last rows a region filled are filled again by the next, then blended
     final holes = List.filled(height, 0);
     for (final (index, region) in inpaint.regions.indexed) {
       expect(region.width, lessThanOrEqualTo(20));
@@ -146,7 +147,12 @@ void main() {
         }
       }
     }
-    expect(holes, List.filled(height, 1));
+    final blend = seamRegionBlend(20);
+    expect(blend, greaterThan(0));
+    for (var y = 0; y < height; y++) {
+      final again = [20, 30, 40].any((end) => y >= end - blend && y < end);
+      expect(holes[y], again ? 2 : 1, reason: 'row $y');
+    }
   });
 
   test('cancelled between two regions, and the failure of the filling, are told', () {
