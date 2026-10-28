@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
@@ -224,6 +227,61 @@ void main() {
         GpuKind.other,
       );
       expect(GpuReport.fromJson({'problem': 'noAnswer'}).problem, GpuProbeProblem.noAnswer);
+    });
+
+    test('a card of Vulkan tells its place in the loader, its UUID and LUID, its driver and its 16 bit storage', () {
+      const report = GpuReport(
+        instanceVersion: '1.4.341',
+        adapters: [
+          GpuAdapter(
+            name: 'RTX 4060',
+            kind: GpuKind.discrete,
+            localMemory: 8 << 30,
+            vulkanIndex: 1,
+            uuid: '00000000000000000000000000004060',
+            luid: '2b68010000000000',
+            driverId: 4,
+            storage16Bit: true,
+          ),
+          GpuAdapter(name: 'Old card', kind: GpuKind.discrete, localMemory: 1 << 30, source: 'dxgi'),
+        ],
+      );
+      final read = GpuReport.fromJson(jsonDecode(jsonEncode(report.toJson())));
+
+      expect(read.instanceVersion, '1.4.341');
+      final card = read.adapters.first;
+      expect(
+        (card.vulkanIndex, card.uuid, card.luid, card.driverId, card.storage16Bit),
+        (1, '00000000000000000000000000004060', '2b68010000000000', 4, true),
+      );
+      final old = read.adapters.last;
+      expect(
+        (old.vulkanIndex, old.uuid, old.luid, old.driverId, old.storage16Bit, old.source),
+        (null, null, null, null, null, 'dxgi'),
+      );
+    });
+
+    test('the answer of the native probe on the laptop of the owner and on ai1 reads whole', () {
+      GpuReport fixture(String name) =>
+          GpuReport.fromJson(jsonDecode(File('test/fixtures/ai_immersive/$name').readAsStringSync()));
+      final laptop = fixture('gpu_probe_rtx4060_laptop.json');
+      final ai1 = fixture('gpu_probe_iris_xe_mesa.json');
+
+      expect(laptop.instanceVersion, '1.4.341');
+      expect(laptop.adapters.map((adapter) => (adapter.kind, adapter.vulkanIndex)), [
+        (GpuKind.integrated, 0),
+        (GpuKind.discrete, 1),
+        (GpuKind.integrated, 2),
+      ]);
+      final rtx = laptop.bestDiscrete!;
+      expect(rtx.name, 'NVIDIA GeForce RTX 4060 Laptop GPU');
+      expect(rtx.localMemory, 7956 << 20);
+      expect(rtx.freeMemory, 7537164288);
+      expect(rtx.vulkanVersion, (1, 4));
+      expect(rtx.driverVersion, '616.56');
+      expect(ai1.bestDiscrete, isNull);
+      expect(ai1.adapters.map((adapter) => adapter.kind), [GpuKind.integrated, GpuKind.cpu]);
+      expect(ai1.adapters.first.driverId, 6);
     });
   });
 }

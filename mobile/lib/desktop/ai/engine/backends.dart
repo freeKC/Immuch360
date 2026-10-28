@@ -265,8 +265,13 @@ enum GpuKind {
 
 /// One graphics card as the probe saw it: its [name], its kind, its vendor and device ids, the versions of its driver
 /// and of its Vulkan, the memory local to it, and when VK_EXT_memory_budget answers, the budget the system gives the
-/// app and what other programs use of it, all in bytes. [source] says who told: "vulkan", or "dxgi" for an adapter
-/// Windows lists that Vulkan does not.
+/// probe (what other programs hold already left out) and what the probe uses of it (nothing: it allocates nothing), all
+/// in bytes. [source] says who told: "vulkan", or "dxgi" for an adapter Windows lists that Vulkan does not.
+///
+/// A card of Vulkan also tells its place in the list of the loader ([vulkanIndex]), its deviceUUID and deviceLUID in
+/// hexadecimal, its VkDriverId and whether it has 16 bit storage buffers: what ggml looks at to number the cards
+/// (lot C6, gpu_probe.dart), which stable-diffusion.cpp must be told (M3: Vulkan0 is the integrated graphics of a
+/// laptop, its dedicated card Vulkan1).
 class GpuAdapter {
   const GpuAdapter({
     required this.name,
@@ -279,6 +284,11 @@ class GpuAdapter {
     this.budget,
     this.usage,
     this.source = 'vulkan',
+    this.vulkanIndex,
+    this.uuid,
+    this.luid,
+    this.driverId,
+    this.storage16Bit,
   });
 
   final String name;
@@ -294,14 +304,18 @@ class GpuAdapter {
   final int? usage;
   final String source;
 
+  /// Null when not told (an adapter of DXGI, a device of Vulkan 1.0)
+  final int? vulkanIndex;
+  final String? uuid;
+  final String? luid;
+  final int? driverId;
+  final bool? storage16Bit;
+
   /// The memory free for a job now: the budget less what is used, the local memory when the budget is not known
   int get freeMemory => budget == null ? localMemory : (budget! - (usage ?? 0)).clamp(0, budget!);
 
   /// The major and minor of [apiVersion], (0, 0) when it is not known
-  (int, int) get vulkanVersion {
-    final parts = (apiVersion ?? '').split('.');
-    return (parts.isNotEmpty ? int.tryParse(parts[0]) ?? 0 : 0, parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0);
-  }
+  (int, int) get vulkanVersion => vulkanMajorMinor(apiVersion);
 
   Map<String, Object?> toJson() => {
     'name': name,
@@ -314,6 +328,11 @@ class GpuAdapter {
     'budget': budget,
     'usage': usage,
     'source': source,
+    'vulkanIndex': vulkanIndex,
+    'uuid': uuid,
+    'luid': luid,
+    'driverId': driverId,
+    'storage16Bit': storage16Bit,
   };
 
   /// The adapter of [json], null when its name or its memory is missing
@@ -339,8 +358,19 @@ class GpuAdapter {
       budget: integer('budget'),
       usage: integer('usage'),
       source: text('source') ?? 'vulkan',
+      vulkanIndex: integer('vulkanIndex'),
+      uuid: text('uuid'),
+      luid: text('luid'),
+      driverId: integer('driverId'),
+      storage16Bit: json['storage16Bit'] is bool ? json['storage16Bit'] as bool : null,
     );
   }
+}
+
+/// The major and minor of a version written "1.4.312", (0, 0) when it is not known
+(int, int) vulkanMajorMinor(String? version) {
+  final parts = (version ?? '').split('.');
+  return (parts.isNotEmpty ? int.tryParse(parts[0]) ?? 0 : 0, parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0);
 }
 
 /// Why the probe has no adapter to tell
@@ -358,12 +388,14 @@ enum GpuProbeProblem {
   notSupported,
 }
 
-/// What the probe found: the adapters, or why there are none
+/// What the probe found: the adapters, or why there are none; and the version of the Vulkan loader, "1.4.309"
+/// (vkEnumerateInstanceVersion), when there is one
 class GpuReport {
-  const GpuReport({this.adapters = const [], this.problem});
+  const GpuReport({this.adapters = const [], this.problem, this.instanceVersion});
 
   final List<GpuAdapter> adapters;
   final GpuProbeProblem? problem;
+  final String? instanceVersion;
 
   /// The dedicated card with the most local memory, null when there is none
   GpuAdapter? get bestDiscrete {
@@ -377,6 +409,7 @@ class GpuReport {
   }
 
   Map<String, Object?> toJson() => {
+    'instanceVersion': instanceVersion,
     'adapters': [for (final adapter in adapters) adapter.toJson()],
     'problem': problem?.name,
   };
@@ -388,9 +421,11 @@ class GpuReport {
     }
     final adapters = json['adapters'];
     final problem = json['problem'];
+    final instanceVersion = json['instanceVersion'];
     return GpuReport(
       adapters: [if (adapters is List) ...adapters.map(GpuAdapter.fromJson).nonNulls],
       problem: GpuProbeProblem.values.where((value) => value.name == problem).firstOrNull,
+      instanceVersion: instanceVersion is String ? instanceVersion : null,
     );
   }
 }
