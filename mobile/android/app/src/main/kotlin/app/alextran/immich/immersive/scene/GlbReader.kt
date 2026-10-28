@@ -31,7 +31,8 @@ import kotlinx.serialization.json.booleanOrNull
  *    texture (texture coordinates 0) is a JPEG held in the buffer; the sampler is left aside (the viewer filters
  *    linearly and clamps);
  * 4. the nodes move nothing (no matrix, translation, rotation or scale): positions are in metres in the frame of the
- *    camera of the photo, x right, y up, looking towards -z;
+ *    camera of the photo, x right, y up, looking towards -z (right handed, as glTF; SdkFrame writes them for the left
+ *    handed world of the Spatial SDK);
  * 5. the layer of a mesh is told by its image: the photo is the first image of the file (images[0]), and every mesh
  *    that shows it belongs to the photo layer, the near one; a mesh that shows another image (the filled background)
  *    belongs to the background layer. The edge of the zone flattens each layer towards its own plane (SceneNavigator).
@@ -346,8 +347,10 @@ internal class GlbScene(
 }
 
 /**
- * One mesh: x, y, z of each vertex in metres in the frame of the camera, u, v of each vertex, three indices per
- * triangle (counter clockwise seen from the camera), the index of its texture in [GlbScene.textures], and its layer
+ * One mesh as the glb holds it: x, y, z of each vertex in metres in the frame of the camera (right handed, looking
+ * towards -z), u, v of each vertex, three indices per triangle (counter clockwise seen from the camera), the index of
+ * its texture in [GlbScene.textures], and its layer. The viewer writes the positions and the triangles for the Spatial
+ * SDK through SdkFrame, never as they are.
  */
 internal class GlbMesh(
   val positions: FloatArray,

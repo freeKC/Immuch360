@@ -2,9 +2,12 @@ package app.alextran.immich.immersive.scene
 
 import app.alextran.immich.immersive.VolumetricSceneSpec.SafeZone
 import app.alextran.immich.relief.ReliefFixtures
+import java.util.Random
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.double
@@ -21,7 +24,9 @@ import org.junit.Test
  * The edge of the zone and the glide in a scene (design-final 2026-10-27, section 3.4): rho, the flattening and the
  * darkening, the photo plane and the flattened vertices read again in scene_golden_v1.json (make_scene_golden.py, step
  * 10), the glide of the left thumbstick in the frame of the gaze, eased and stopped at the edge of the zone, the
- * meshes made again only when the flattening moved by 0.02, the passing text at the edge, and Reset.
+ * meshes made again only when the flattening moved by 0.02, the passing text at the edge, and Reset; the root pose
+ * against the eye for any yaw and glide, and the passage to the left handed world of the Spatial SDK (SdkFrame): the
+ * photo not mirrored, the stick gliding the way it is pushed, the triangles facing the camera.
  */
 class SceneNavigatorTest {
   private val golden = ReliefFixtures.json("scene_golden_v1.json")
@@ -351,5 +356,147 @@ class SceneNavigatorTest {
     val up = navigator.update(0.0, 1.61, 0.0, 0.0, 0.0, 0.0, frame)
     assertEquals(1.0, up.flatten, 0.0)
     assertEquals(0.95, up.darken, 0.0)
+  }
+
+  /** Quaternion(0f, [degrees], 0f) of the Spatial SDK applied to [x], [z]: a positive yaw takes +z towards +x */
+  private fun sdkTurn(degrees: Double, x: Double, z: Double): Pair<Double, Double> {
+    val a = Math.toRadians(degrees)
+    return Pair(x * cos(a) + z * sin(a), -x * sin(a) + z * cos(a))
+  }
+
+  /** Where the point [x], [y], [z] of the glb lands in the world of the SDK, the root posed as [step] says */
+  private fun sdkWorldOf(step: SceneNavigation, x: Double, y: Double, z: Double): DoubleArray {
+    // The mesh holds the point as SdkFrame writes it
+    val local = SdkFrame.positions(floatArrayOf(x.toFloat(), y.toFloat(), z.toFloat()), FloatArray(3))
+    val (turnedX, turnedZ) = sdkTurn(step.sdkRootYawDegrees, local[0].toDouble(), local[2].toDouble())
+    return doubleArrayOf(step.sdkRootX + turnedX, step.sdkRootY + local[1], step.sdkRootZ + turnedZ)
+  }
+
+  @Test
+  fun `the root pose puts the eye where the navigator says, for any yaw and any glide`() {
+    val random = Random(42)
+    fun between(low: Double, high: Double) = low + (high - low) * random.nextDouble()
+    repeat(200) {
+      val navigator = navigator(SafeZone(3.0, 3.0, 3.0, 3.0))
+      val originX = between(-2.0, 2.0)
+      val originY = between(1.2, 1.8)
+      val originZ = between(-2.0, 2.0)
+      navigator.anchor(originX, originY, originZ, between(-PI, PI))
+      repeat(1 + random.nextInt(80)) {
+        val x = originX + between(-0.5, 0.5)
+        val y = originY + between(-0.2, 0.2)
+        val z = originZ + between(-0.5, 0.5)
+        val step = navigator.update(x, y, z, between(-PI, PI), between(-1.0, 1.0), between(-1.0, 1.0), frame)
+        // R(-rootYaw) applied to the head minus the root is the eye in the frame of the scene
+        val c = cos(step.rootYaw)
+        val s = sin(step.rootYaw)
+        val dx = x - step.rootX
+        val dz = z - step.rootZ
+        assertEquals(step.eyeX, dx * c - dz * s, 1e-9)
+        assertEquals(step.eyeY, y - step.rootY, 1e-9)
+        assertEquals(step.eyeZ, dx * s + dz * c, 1e-9)
+      }
+    }
+  }
+
+  @Test
+  fun `in the left handed world of the SDK the photo is not mirrored and the stick glides the way it is pushed`() {
+    val random = Random(7)
+    fun between(low: Double, high: Double) = low + (high - low) * random.nextDouble()
+    repeat(100) { round ->
+      // The head somewhere, its gaze turned by [turn] from +z of the SDK towards +x (the first round looks along +z)
+      val turn = if (round == 0) 0.0 else between(-PI, PI)
+      val gazeX = sin(turn)
+      val gazeZ = cos(turn)
+      // The right of the user, Up x gaze in the SDK (StereoComposer.quadRotation)
+      val rightX = gazeZ
+      val rightZ = -gazeX
+      val x = between(-2.0, 2.0)
+      val y = between(1.2, 1.8)
+      val z = between(-2.0, 2.0)
+      val navigator = navigator(SafeZone(5.0, 5.0, 5.0, 5.0))
+      navigator.anchorInSdk(x, y, z, gazeX, gazeZ)
+      val start = navigator.updateInSdk(x, y, z, gazeX, gazeZ, 0.0, 0.0, frame)
+      // The point 1 m right of the centre of the photo, 0.5 m above it, 2 m ahead of its camera: right of the user,
+      // above, ahead
+      val edge = sdkWorldOf(start, 1.0, 0.5, -2.0)
+      assertEquals("ahead", 2.0, (edge[0] - x) * gazeX + (edge[2] - z) * gazeZ, 1e-5)
+      assertEquals("right", 1.0, (edge[0] - x) * rightX + (edge[2] - z) * rightZ, 1e-5)
+      assertEquals("above", 0.5, edge[1] - y, 1e-5)
+      // The head 10 cm to the right of the user: 10 cm along x of the scene
+      val leaning = navigator.updateInSdk(x + 0.1 * rightX, y, z + 0.1 * rightZ, gazeX, gazeZ, 0.0, 0.0, frame)
+      assertEquals(0.1, leaning.eyeX, 1e-9)
+      assertEquals(0.0, leaning.eyeZ, 1e-9)
+      // The stick pushed to the right for 1 s: the user glides 0.225 m to the right, so the scene goes to the left
+      var glided = start
+      repeat(100) { glided = navigator.updateInSdk(x, y, z, gazeX, gazeZ, 1.0, 0.0, frame) }
+      val movedX = glided.sdkRootX - start.sdkRootX
+      val movedZ = glided.sdkRootZ - start.sdkRootZ
+      assertEquals("glide to the right", -0.225, movedX * rightX + movedZ * rightZ, 0.004)
+      assertEquals(0.0, movedX * gazeX + movedZ * gazeZ, 1e-9)
+      assertEquals(0.225, glided.eyeX, 0.004)
+      // Pushed forward for 1 s, the speed turning from the right to ahead: the scene comes 0.2 m or more towards the
+      // user
+      var ahead = glided
+      repeat(100) { ahead = navigator.updateInSdk(x, y, z, gazeX, gazeZ, 0.0, 1.0, frame) }
+      val came = (ahead.sdkRootX - glided.sdkRootX) * gazeX + (ahead.sdkRootZ - glided.sdkRootZ) * gazeZ
+      assertTrue("glide forward $came", came < -0.2 && came > -0.25)
+      // In the SDK too, the root pose turned back puts the head at the eye of the navigator, z the other way
+      for (step in listOf(start, glided, ahead)) {
+        val (eyeX, eyeZ) = sdkTurn(-step.sdkRootYawDegrees, x - step.sdkRootX, z - step.sdkRootZ)
+        assertEquals(step.eyeX, eyeX, 1e-9)
+        assertEquals(step.eyeY, y - step.sdkRootY, 1e-9)
+        assertEquals(-step.eyeZ, eyeZ, 1e-9)
+      }
+    }
+    // The gaze along +z of the SDK is yaw 0 for the navigator, along +x a quarter turn clockwise seen from above
+    assertEquals(0.0, SdkFrame.yawOfGaze(0.0, 1.0), 0.0)
+    assertEquals(-PI / 2, SdkFrame.yawOfGaze(1.0, 0.0), 1e-12)
+  }
+
+  private fun cross(p: FloatArray, a: Int, b: Int, c: Int): DoubleArray {
+    fun at(k: Int, i: Int) = p[3 * k + i].toDouble()
+    val u = DoubleArray(3) { at(b, it) - at(a, it) }
+    val v = DoubleArray(3) { at(c, it) - at(a, it) }
+    return doubleArrayOf(u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
+  }
+
+  /** Whether the triangle [a], [b], [c] of [p] turns counter clockwise about its normal towards the origin */
+  private fun facesOrigin(p: FloatArray, a: Int, b: Int, c: Int): Boolean {
+    val n = cross(p, a, b, c)
+    return (0 until 3).sumOf { -n[it] * (p[3 * a + it] + p[3 * b + it] + p[3 * c + it]) } > 0
+  }
+
+  @Test
+  fun `the meshes written for the SDK keep their places and face the camera with the winding of singleSidedQuad`() {
+    // SceneMesh.singleSidedQuad of the SDK (javap, 0.14.0): normal +z, triangles 0 1 2 and 0 2 3 counter clockwise
+    // about it, written in the numbers of the SDK; its uv put 0, 0 at the top left, as glTF does
+    val quad = floatArrayOf(-0.5f, -0.5f, 0f, 0.5f, -0.5f, 0f, 0.5f, 0.5f, 0f, -0.5f, 0.5f, 0f)
+    assertTrue(cross(quad, 0, 1, 2)[2] > 0 && cross(quad, 0, 2, 3)[2] > 0)
+
+    val scene = GlbReader.read(SceneTestFiles.tinyGlb())
+    for (mesh in scene.meshes) {
+      val positions = SdkFrame.positions(mesh.positions, FloatArray(mesh.positions.size))
+      for (k in 0 until mesh.vertexCount) {
+        assertEquals(mesh.positions[3 * k], positions[3 * k], 0f)
+        assertEquals(mesh.positions[3 * k + 1], positions[3 * k + 1], 0f)
+        assertEquals(-mesh.positions[3 * k + 2], positions[3 * k + 2], 0f)
+      }
+      val indices = SdkFrame.indices(mesh.indices)
+      assertEquals(mesh.indices.size, indices.size)
+      for (t in 0 until mesh.indices.size / 3) {
+        val (a, b, c) = mesh.indices.copyOfRange(3 * t, 3 * t + 3).toList()
+        // In the glb the triangle faces the camera, counter clockwise seen from it
+        assertTrue(facesOrigin(mesh.positions, a, b, c))
+        // Written for the SDK: the same corners, the winding the SDK's single sided quad gives its front
+        assertEquals(listOf(a, c, b), indices.copyOfRange(3 * t, 3 * t + 3).toList())
+        assertTrue(facesOrigin(positions, indices[3 * t], indices[3 * t + 1], indices[3 * t + 2]))
+        assertFalse(facesOrigin(positions, a, b, c))
+      }
+    }
+    // Written in place, as the viewer does after flatten
+    val flat = SceneNavigator.flatten(scene.meshes[0], 1.0, 2.25, FloatArray(scene.meshes[0].positions.size))
+    assertTrue(SdkFrame.positions(flat, flat).all { it.isFinite() })
+    assertEquals(2.25f, flat[2], 1e-6f)
   }
 }
