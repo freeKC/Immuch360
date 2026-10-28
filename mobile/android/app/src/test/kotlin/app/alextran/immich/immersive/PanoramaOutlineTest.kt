@@ -154,6 +154,34 @@ class PanoramaOutlineTest {
     assertTrue(PanoramaOutline.WIDTH_DEGREES < PanoramaOutline.DARK_WIDTH_DEGREES)
   }
 
+  @Test
+  fun `each segment of a ribbon is two triangles of four distinct vertices, a band and not a saw tooth`() {
+    for (ribbon in listOf(PanoramaOutline.ribbon(sample), PanoramaOutline.ribbon(sample, 260f, 0.7))) {
+      for (k in 0 until ribbon.indices.size / 6) {
+        val quad = ribbon.indices.copyOfRange(6 * k, 6 * k + 6)
+        assertEquals("segment $k", 4, quad.toSet().size)
+        for (triangle in 0 until 2) {
+          val (a, b, c) = (0 until 3).map { vertex(ribbon.positions, quad[3 * triangle + it]) }
+          val ab = DoubleArray(3) { b[it] - a[it] }
+          val ac = DoubleArray(3) { c[it] - a[it] }
+          val cross =
+            doubleArrayOf(ab[1] * ac[2] - ab[2] * ac[1], ab[2] * ac[0] - ab[0] * ac[2], ab[0] * ac[1] - ab[1] * ac[0])
+          assertTrue("segment $k, triangle $triangle has an area", length(cross) / 2 > 1e-3)
+        }
+      }
+    }
+  }
+
+  @Test
+  fun `the dark ribbon is opaque black and the light one opaque white, whatever the order of the channels`() {
+    assertEquals(0xFF000000.toInt(), PanoramaOutline.DARK)
+    assertEquals(0xFFFFFFFF.toInt(), PanoramaOutline.LIGHT)
+    val mesh = PanoramaOutline.mesh(sample)
+    assertTrue(mesh.colors.all { it ushr 24 == 0xFF })
+  }
+
+  private fun vertex(positions: FloatArray, index: Int) = DoubleArray(3) { positions[3 * index + it].toDouble() }
+
   private fun angleBetween(a: DoubleArray, b: DoubleArray): Double {
     val dot = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / (length(a) * length(b))
     return Math.toDegrees(Math.acos(dot.coerceIn(-1.0, 1.0)))
