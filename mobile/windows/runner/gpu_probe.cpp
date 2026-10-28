@@ -520,8 +520,15 @@ void ReadVulkan(Report* report) {
   }
 }
 
+// The Microsoft Basic Render Driver, the adapter of Windows that draws on the
+// processor: on a machine without a graphics driver (the hosted runners of
+// the CI) DXGI lists it without the software flag
+constexpr UINT kBasicRenderVendor = 0x1414;
+constexpr UINT kBasicRenderDevice = 0x8C;
+
 // The adapters DXGI lists and Vulkan does not, matched by their LUID; the
-// software adapter of Windows (Microsoft Basic Render Driver) left out
+// software adapter of Windows (Microsoft Basic Render Driver) left out, by
+// its flag or by its ids
 void ReadDxgi(Report* report) {
   HMODULE library =
       ::LoadLibraryExW(L"dxgi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
@@ -546,7 +553,9 @@ void ReadDxgi(Report* report) {
     }
     DXGI_ADAPTER_DESC1 description = {};
     if (SUCCEEDED(found->GetDesc1(&description)) &&
-        (description.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0) {
+        (description.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0 &&
+        !(description.VendorId == kBasicRenderVendor &&
+          description.DeviceId == kBasicRenderDevice)) {
       uint8_t luid[8];
       std::memcpy(luid, &description.AdapterLuid, sizeof(luid));
       const std::string key = Hex(luid, sizeof(luid));
