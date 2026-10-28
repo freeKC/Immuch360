@@ -696,54 +696,6 @@ void main() {
       expect(folder(), ['salon.jpg', 'salon_360.jpg', 'salon_360_3D.jpg']);
     });
 
-    test(
-      'asked by itself later ("Make the 3D version"), it is a version of the photo too, from that panorama',
-      () async {
-        final request = photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto);
-        final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
-        final made = queue().add([request], kind: ConversionKind.panoramaFromPhoto).single;
-        await allEnded();
-        final panoramaPath = job(made).writtenPath!;
-        final panoramaXmp = ImmersiveXmp.findIn(File(panoramaPath).readAsBytesSync())! as PanoramaXmp;
-
-        // The panorama chosen as the source, as the dialog hands it to the queue
-        final id = queue().add([
-          ConversionRequest(
-            source: LocalFileSource(panoramaPath, hash: _dartSum),
-            target: ConversionTarget.nextTo(panoramaPath, kind: ConversionKind.stereoPanoramaFromPanorama),
-          ),
-        ], kind: ConversionKind.stereoPanoramaFromPanorama).single;
-        await allEnded();
-
-        final relief = job(id);
-        expect(relief.state, ConversionState.done);
-        expect(relief.writtenPath, p.join(photos, 'salon_360_3D.jpg'));
-        final spec = stereo.jobs.single;
-        expect(spec.source.path, panoramaPath);
-        expect(spec.photo?.name, 'salon.jpg');
-        expect(spec.original.sha1, _sumOf(bytes));
-        expect(spec.parent?.derivativeId, panoramaXmp.derivativeId);
-        final written = ImmersiveXmp.findIn(File(relief.writtenPath!).readAsBytesSync())! as StereoPanoramaXmp;
-        expect(written.sourceName, 'salon.jpg');
-        expect(written.sourceSha1, _sumOf(bytes));
-        expect(written.parentDerivativeId, panoramaXmp.derivativeId);
-        expect(output.originals.last.sha1, _sumOf(bytes), reason: 'the writer tells the photo, not the panorama');
-      },
-    );
-
-    test('a 360° photo of the user asked by itself stays its own original', () async {
-      final request = photo('PANO_0001.jpg', kind: ConversionKind.stereoPanoramaFromPanorama);
-      final bytes = File(p.join(photos, 'PANO_0001.jpg')).readAsBytesSync();
-      final id = queue().add([request], kind: ConversionKind.stereoPanoramaFromPanorama).single;
-      await allEnded();
-
-      expect(job(id).state, ConversionState.done);
-      final spec = stereo.jobs.single;
-      expect(spec.photo, isNull);
-      expect(spec.parent, isNull);
-      expect(spec.original.sha1, _sumOf(bytes));
-    });
-
     test('a panorama that failed skips its 3D version with that reason; Retry of the panorama runs both', () async {
       panorama = FakePanoramaEngine(failAt: ImmersiveStage.generating, failure: ImmersiveErrorCode.gpuOutOfMemory);
 
@@ -974,6 +926,54 @@ void main() {
       expect(stereo.jobs.single.photo, isNull);
       expect(stereo.jobs.single.parent, isNull);
       expect(stereo.jobs.single.original.sha1, _sumOf(bytes));
+    });
+
+    test(
+      'asked by itself later ("Make the 3D version"), it is a version of the photo too, from that panorama',
+      () async {
+        final request = photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto);
+        final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
+        final made = queue().add([request], kind: ConversionKind.panoramaFromPhoto).single;
+        await allEnded();
+        final panoramaPath = job(made).writtenPath!;
+        final panoramaXmp = ImmersiveXmp.findIn(File(panoramaPath).readAsBytesSync())! as PanoramaXmp;
+
+        // The panorama chosen as the source, as the dialog hands it to the queue
+        final id = queue().add([
+          ConversionRequest(
+            source: LocalFileSource(panoramaPath, hash: _dartSum),
+            target: ConversionTarget.nextTo(panoramaPath, kind: ConversionKind.stereoPanoramaFromPanorama),
+          ),
+        ], kind: ConversionKind.stereoPanoramaFromPanorama).single;
+        await allEnded();
+
+        final relief = job(id);
+        expect(relief.state, ConversionState.done);
+        expect(relief.writtenPath, p.join(photos, 'salon_360_3D.jpg'));
+        final spec = stereo.jobs.single;
+        expect(spec.source.path, panoramaPath);
+        expect(spec.photo?.name, 'salon.jpg');
+        expect(spec.original.sha1, _sumOf(bytes));
+        expect(spec.parent?.derivativeId, panoramaXmp.derivativeId);
+        final written = ImmersiveXmp.findIn(File(relief.writtenPath!).readAsBytesSync())! as StereoPanoramaXmp;
+        expect(written.sourceName, 'salon.jpg');
+        expect(written.sourceSha1, _sumOf(bytes));
+        expect(written.parentDerivativeId, panoramaXmp.derivativeId);
+        expect(output.originals.last.sha1, _sumOf(bytes), reason: 'the writer tells the photo, not the panorama');
+      },
+    );
+
+    test('a 360° photo of the user asked by itself stays its own original', () async {
+      final request = photo('PANO_0001.jpg', kind: ConversionKind.stereoPanoramaFromPanorama);
+      final bytes = File(p.join(photos, 'PANO_0001.jpg')).readAsBytesSync();
+      final id = queue().add([request], kind: ConversionKind.stereoPanoramaFromPanorama).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.done);
+      final spec = stereo.jobs.single;
+      expect(spec.photo, isNull);
+      expect(spec.parent, isNull);
+      expect(spec.original.sha1, _sumOf(bytes));
     });
   });
 
