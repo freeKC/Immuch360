@@ -660,6 +660,7 @@
   "ai_immersive_photo_region": "The original photo",
   "ai_immersive_preview_3d": "Preview in 3D",
   "ai_immersive_preview_banner": "Preview: the headset shows the full detail",
+  "ai_immersive_preview_too_heavy": "This scene is too heavy to preview",
   "ai_immersive_progress_count": "{index} of {total}",
   "ai_immersive_quality_dark": "Dark photo: the relief may be wrong",
   "ai_immersive_quality_flat": "Little depth found: the relief may be weak",

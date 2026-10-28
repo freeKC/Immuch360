@@ -102,24 +102,27 @@ void main() {
       expect(_problemOf(_carrying(tinyGlb())), isNull);
     });
 
-    test('heavier than a Quest 3 opens, by its packet or by its glb, or a file over 64 MiB: too heavy, not drawn', () async {
-      final file = tinySceneFile();
-      expect(_problemOf(_fileWith(file, 'SceneTriangles', '400001')), ScenePreviewProblem.tooHeavy);
-      expect(_problemOf(_fileWith(file, 'SceneVertices', '200001')), ScenePreviewProblem.tooHeavy);
-      expect(_problemOf(_fileWith(file, 'SceneTriangles', '400000')), isNull, reason: 'the cap itself opens');
-      // A file of 64 MiB and a byte: refused before it is read
-      final folder = Directory.systemTemp.createTempSync('scene_preview_heavy');
-      addTearDown(() => folder.deleteSync(recursive: true));
-      final big = File(p.join(folder.path, 'big_scene3D.jpg'));
-      final handle = big.openSync(mode: FileMode.write)
-        ..writeFromSync(file)
-        ..truncateSync(64 * 1024 * 1024 + 1);
-      handle.closeSync();
-      await expectLater(
-        readScenePreview(big.path),
-        throwsA(isA<ScenePreviewException>().having((e) => e.problem, 'problem', ScenePreviewProblem.tooHeavy)),
-      );
-    });
+    test(
+      'heavier than a Quest 3 opens, by its packet or by its glb, or a file over 64 MiB: too heavy, not drawn',
+      () async {
+        final file = tinySceneFile();
+        expect(_problemOf(_fileWith(file, 'SceneTriangles', '400001')), ScenePreviewProblem.tooHeavy);
+        expect(_problemOf(_fileWith(file, 'SceneVertices', '200001')), ScenePreviewProblem.tooHeavy);
+        expect(_problemOf(_fileWith(file, 'SceneTriangles', '400000')), isNull, reason: 'the cap itself opens');
+        // A file of 64 MiB and a byte: refused before it is read
+        final folder = Directory.systemTemp.createTempSync('scene_preview_heavy');
+        addTearDown(() => folder.deleteSync(recursive: true));
+        final big = File(p.join(folder.path, 'big_scene3D.jpg'));
+        final handle = big.openSync(mode: FileMode.write)
+          ..writeFromSync(file)
+          ..truncateSync(64 * 1024 * 1024 + 1);
+        handle.closeSync();
+        await expectLater(
+          readScenePreview(big.path),
+          throwsA(isA<ScenePreviewException>().having((e) => e.problem, 'problem', ScenePreviewProblem.tooHeavy)),
+        );
+      },
+    );
 
     test('read away from the screen; a file that cannot be read says so', () async {
       final data = await readScenePreview(File(tinyScenePath).absolute.path);
@@ -259,14 +262,14 @@ void main() {
       expect(moved.y, closeTo(0, 1e-9));
       expect(resetEnabled(tester), isTrue);
 
-      // The wheel pushed away goes forward, a notch as this computer sends one: 100 / 3 logical pixels on the phone of
-      // the tests (3 to its pixel), so 100 pixels are three notches
+      // The wheel pushed away goes forward, a notch as this computer sends one: 100 pixels for the phone of the tests,
+      // one physical pixel to a logical one, as under Windows at 100 % (a test pointer scrolls in physical pixels)
       final pointer = TestPointer(1, PointerDeviceKind.mouse);
       final centre = tester.getCenter(find.byKey(const Key('scene_preview_canvas')));
       await tester.sendEventToBinding(pointer.hover(centre));
       await tester.sendEventToBinding(pointer.scroll(const Offset(0, -100)));
       await tester.pump();
-      expect(painter(tester).eye.z, closeTo(-0.75 * 0.3, 1e-9));
+      expect(painter(tester).eye.z, closeTo(-0.25 * 0.3, 1e-9));
       expect(painter(tester).eye.x, moved.x);
 
       // Reset: back where the photo was taken
@@ -282,7 +285,7 @@ void main() {
       expect(find.byKey(const Key('open')), findsOneWidget);
     });
 
-    testWidgets('a notch of a Windows wheel at 200 % is 50 logical pixels: a quarter of the reach', (tester) async {
+    testWidgets('a notch of a Windows wheel at 200 %, 50 logical pixels, is a quarter of the reach', (tester) async {
       tester.view.devicePixelRatio = 2;
       addTearDown(tester.view.resetDevicePixelRatio);
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
@@ -292,7 +295,8 @@ void main() {
         await settleStill(tester, until: () => find.byKey(const Key('scene_preview_canvas')).evaluate().isNotEmpty);
         final pointer = TestPointer(1, PointerDeviceKind.mouse);
         await tester.sendEventToBinding(pointer.hover(tester.getCenter(find.byKey(const Key('scene_preview_canvas')))));
-        await tester.sendEventToBinding(pointer.scroll(const Offset(0, -50)));
+        // 100 physical pixels for a notch, 50 logical at 200 %, which the fixed 100 of S4 counted as half a notch
+        await tester.sendEventToBinding(pointer.scroll(const Offset(0, -100)));
         await tester.pump();
 
         expect(painter(tester).eye.z, closeTo(-0.25 * 0.3, 1e-9));

@@ -6,8 +6,9 @@
 // The page reads the whole photo away from the screen (its packet, its tail checked by its sum, its glb by
 // glb_reader.dart), decodes its textures at 2048 pixels at most, then draws the scene with Canvas.drawVertices
 // (scene_projection.dart): no shader, nothing new in the pubspec. A drag moves the eye within the zone, the wheel
-// forward and back, Reset brings it back to where the photo was taken; beyond the zone the scene flattens and darkens
-// as in the headset. The honesty label stays under the scene: "Reconstructed from one photo, explore within its
+// forward and back, as two fingers apart or together on a touchpad, Reset brings it back to where the photo was taken;
+// beyond the zone the scene flattens and darkens as in the headset. A scene heavier than a Quest 3 opens, or a file
+// over its 64 MiB, is not drawn: "This scene is too heavy to preview". The honesty label stays under the scene: "Reconstructed from one photo, explore within its
 // limits", with "Preview: the headset shows the full detail". A photo whose scene cannot be read is shown flat with
 // its reason, the words of the headset: the scene data missing, not a scene of ours, made by a newer version.
 //
@@ -18,9 +19,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,8 +32,10 @@ import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/desktop/ai/scene/glb_reader.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_projection.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/scene_gate.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/scene_container.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -58,6 +61,10 @@ enum ScenePreviewProblem {
   /// The packet names a scene the file does not hold, or not the bytes it sums (another program saved the JPEG
   /// again): "The 3D scene data is missing from this file"
   missing,
+
+  /// More vertices or triangles than a Quest 3 opens, or a file over its 64 MiB (sceneCurrentHeadsets): "This scene is
+  /// too heavy to preview"
+  tooHeavy,
 }
 
 class ScenePreviewException implements Exception {
@@ -75,7 +82,12 @@ String scenePreviewProblemText(Translations t, ScenePreviewProblem problem) => s
   ScenePreviewProblem.notOurs => t.ai_immersive_scene_not_ours,
   ScenePreviewProblem.newerVersion => t.ai_immersive_newer_version,
   ScenePreviewProblem.missing => t.ai_immersive_scene_missing,
+  ScenePreviewProblem.tooHeavy => t.ai_immersive_preview_too_heavy,
 };
+
+/// Whether a scene of [vertices] and [triangles] is heavier than a Quest 3 opens
+bool _heavierThanHeadsets(int? vertices, int? triangles) =>
+    (vertices ?? 0) > sceneCurrentHeadsets.maxVertices || (triangles ?? 0) > sceneCurrentHeadsets.maxTriangles;
 
 /// The scene of a photo, read: its packet and its glb
 class ScenePreviewData {
@@ -97,12 +109,20 @@ ScenePreviewData scenePreviewOf(Uint8List file) {
   if (!xmp.isReadableScene) {
     throw const ScenePreviewException(ScenePreviewProblem.notOurs);
   }
+  if (file.length > sceneCurrentHeadsets.maxFileBytes || _heavierThanHeadsets(xmp.sceneVertices, xmp.sceneTriangles)) {
+    throw const ScenePreviewException(ScenePreviewProblem.tooHeavy);
+  }
   final glb = sceneBytesOf(file, xmp);
   if (glb == null) {
     throw const ScenePreviewException(ScenePreviewProblem.missing);
   }
   try {
-    return ScenePreviewData(xmp: xmp, scene: GlbReader.read(glb));
+    final scene = GlbReader.read(glb);
+    // The packet may say less than its glb holds
+    if (_heavierThanHeadsets(scene.vertices, scene.triangles)) {
+      throw const ScenePreviewException(ScenePreviewProblem.tooHeavy);
+    }
+    return ScenePreviewData(xmp: xmp, scene: scene);
   } on GlbException catch (error) {
     _log.info('The scene cannot be previewed: $error');
     throw ScenePreviewException(
@@ -115,7 +135,12 @@ ScenePreviewData scenePreviewOf(Uint8List file) {
 Future<ScenePreviewData> readScenePreview(String path) => Isolate.run(() {
   final Uint8List file;
   try {
-    file = File(path).readAsBytesSync();
+    final source = File(path);
+    // A file over what the headset reads is not read at all
+    if (source.lengthSync() > sceneCurrentHeadsets.maxFileBytes) {
+      throw const ScenePreviewException(ScenePreviewProblem.tooHeavy);
+    }
+    file = source.readAsBytesSync();
   } on FileSystemException {
     throw const ScenePreviewException(ScenePreviewProblem.unreadable);
   }
@@ -296,6 +321,9 @@ class _ScenePreviewPageState extends ConsumerState<ScenePreviewPage> {
   SceneEye _eye = SceneEye.start;
   bool _disposed = false;
 
+  /// How far apart the fingers of a pinch were at its last update, 1 at its start
+  double _pinch = 1;
+
   @override
   void initState() {
     super.initState();
@@ -340,15 +368,26 @@ class _ScenePreviewPageState extends ConsumerState<ScenePreviewPage> {
     final Widget body;
     if (loaded != null) {
       final safe = loaded.model.safe;
+      // A notch as this computer sends one, on the screen of the window
+      final notch = desktopWheelNotch(defaultTargetPlatform, View.of(context).devicePixelRatio);
       body = LayoutBuilder(
         builder: (context, constraints) => Listener(
           onPointerSignal: (event) {
             if (event is PointerScrollEvent) {
-              _move(SceneEyeMoves.wheel(_eye, event.scrollDelta.dy, safe));
+              _move(SceneEyeMoves.wheel(_eye, event.scrollDelta.dy, safe, notch: notch));
             }
           },
+          // A drag of the mouse or of a finger, and on a touchpad two fingers moved (a drag) or parted (a pinch)
           child: GestureDetector(
-            onPanUpdate: (details) => _move(SceneEyeMoves.drag(_eye, details.delta, constraints.biggest, safe)),
+            onScaleStart: (_) => _pinch = 1,
+            onScaleUpdate: (details) {
+              var eye = SceneEyeMoves.drag(_eye, details.focalPointDelta, constraints.biggest, safe);
+              if (details.scale > 0 && details.scale != _pinch) {
+                eye = SceneEyeMoves.pinch(eye, details.scale / _pinch, safe);
+                _pinch = details.scale;
+              }
+              _move(eye);
+            },
             child: MouseRegion(
               cursor: SystemMouseCursors.move,
               child: ClipRect(

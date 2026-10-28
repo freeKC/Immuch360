@@ -232,7 +232,10 @@ void main() {
     test('the eye in front of a near triangle leaves it out, the others drawn, every coordinate finite', () {
       // A photo triangle at 0.3 m and two at 2 m; the eye 0.27 m forward stands 3 cm from the near one
       List<double> triangle(double x, double depth) => [x, 0, -depth, x + 0.1, 0, -depth, x, 0.1, -depth];
-      final photo = _mesh([...triangle(0, 0.3), ...triangle(-0.5, 2), ...triangle(0.5, 2)], [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+      final photo = _mesh(
+        [...triangle(0, 0.3), ...triangle(-0.5, 2), ...triangle(0.5, 2)],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      );
       final model = ScenePreviewModel(_scene([photo]), safe: _zone, fovDegrees: 60);
       final view = SceneView.fit(const Size(400, 300), aspect: 4 / 3, fovDegrees: 60);
       final frame = model.frame(view, const SceneEye(0, 0, -0.27), textureSizes: _sizes);
