@@ -13,16 +13,25 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+// ignore: depend_on_referenced_packages
+import 'package:image/image.dart' as img;
+import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
+import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:path/path.dart' as p;
 
+import '../fakes/fake_backends.dart';
 import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_conversion_output.dart';
 import '../fakes/fake_immersive_engine.dart';
@@ -696,6 +705,58 @@ void main() {
       expect(folder(), ['salon.jpg', 'salon_360.jpg', 'salon_360_3D.jpg']);
     });
 
+    test('the panorama of the engine of P3 on the fakes of its backends, then its 3D version made from it', () async {
+      final request = photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto);
+      // A real JPEG under the name the request reads: the engine decodes it
+      final jpeg = img.encodeJpg(img.Image(width: 48, height: 32)..clear(img.ColorRgb8(90, 120, 30)));
+      File(p.join(photos, 'salon.jpg')).writeAsBytesSync(jpeg);
+      final engine = PanoramaEngine(
+        generator: FakeGeneratorBackend(),
+        upscaler: FakeUpscaleBackend(),
+        models: const _InlineModels(),
+        folders: AiWorkFolders(Directory(p.join(root.path, 'work'))),
+        codecs: _dartCodecs,
+        compute: panoramaInline,
+        sizes: const PanoramaSizes(
+          controlWidth: 64,
+          controlHeight: 32,
+          generationWidth: 48,
+          generationHeight: 24,
+          scale: 4,
+          padding: 4,
+        ),
+      );
+      engines = () => {
+        ...fakeConversionEngines(scene: scene, stereoPanorama: stereo),
+        ConversionKind.panoramaFromPhoto: ConversionEngine(
+          engine: engine,
+          settingsKey: (source, turns) => fakePanoramaSettingsKey(turns),
+          generator: fakePanoramaGenerator,
+          steps: 4,
+        ),
+      };
+      container = containerWith();
+
+      final ids = queue().add([request], kind: ConversionKind.panoramaFromPhoto, alsoStereo: true);
+      await allEnded();
+
+      final generated = job(ids[0]);
+      final relief = job(ids[1]);
+      expect([generated.state, relief.state], everyElement(ConversionState.done), reason: '${generated.message}');
+      expect(generated.writtenPath, p.join(photos, 'salon_360.jpg'));
+      final details = generated.details! as PanoramaResultDetails;
+      expect((details.width, details.height, details.seed, details.steps), (192, 96, 11, 4));
+      final spec = stereo.jobs.single;
+      expect(spec.source.path, generated.writtenPath);
+      expect(spec.photo?.name, 'salon.jpg');
+      expect(spec.photo?.sha1, _sumOf(jpeg));
+      final parent = spec.parent!;
+      expect(parent.seed, 11);
+      expect(parent.region!.hfov, 65);
+      expect(parent.qualityFlags, containsAll([ReliefQualityFlag.fovGuessed, ReliefQualityFlag.mostlyInvented]));
+      expect(folder(), ['salon.jpg', 'salon_360.jpg', 'salon_360_3D.jpg']);
+    });
+
     test('a panorama that failed skips its 3D version with that reason; Retry of the panorama runs both', () async {
       panorama = FakePanoramaEngine(failAt: ImmersiveStage.generating, failure: ImmersiveErrorCode.gpuOutOfMemory);
 
@@ -1080,3 +1141,19 @@ void main() {
     });
   });
 }
+
+/// The models of a panorama on the processor for the engine of P3 run inline: no MoGe-2 (the 65° of M3), the fake filling
+class _InlineModels implements PanoramaModelsSpec {
+  const _InlineModels();
+
+  @override
+  GeometryBackend? openGeometry() => null;
+
+  @override
+  InpaintBackend openInpaint() => FakeInpaintBackend();
+
+  @override
+  String get inpaintSha256 => '4' * 64;
+}
+
+List<SbsCodec> _dartCodecs() => const [DartSbsCodec()];
