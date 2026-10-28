@@ -8,6 +8,10 @@
 // does not make it (ConversionTools.supports), and the tests give the fakes. The times of the steps are kept in
 // desktop_ai.json for the time left of the jobs.
 //
+// The gate and the queue ask the graphics cards through the probe of lot C6 (gpu_probe.dart): the gate when it looks at
+// the 360° panoramas, the queue again before each job of the graphics card, through the gate, whose answer the dialog
+// and the settings then see too.
+//
 // The engine is made when a job runs, from the components installed at that moment: they may be downloaded after the
 // app started, from the conversion dialog or the settings. While it runs, or while the queue has a job under way, the
 // components are not removed (AiComponentsService.inUse). Each engine kept between two jobs (keptAiEnginesProvider)
@@ -28,8 +32,11 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
@@ -364,9 +371,27 @@ final aiAppVersionProvider = FutureProvider<String>((ref) async {
   }
 });
 
-/// The hardware gate of this computer, on the components of the app
+/// The probe of the graphics cards of this computer: the app started again with its flag (lot C6)
+final aiGpuProbeProvider = Provider<GpuProbe>((ref) => ProcessGpuProbe.ofThisApp());
+
+/// Whether "Try on integrated graphics (untested)" is on (desktop_ai.json); off when the settings cannot be read
+Future<bool> Function() integratedGpuAllowedOf(DesktopAiSettingsStore store) => () async {
+  try {
+    return (await store.read()).integratedGpuAllowed;
+  } catch (error) {
+    _log.warning('The settings of the conversions could not be read: $error');
+    return false;
+  }
+};
+
+/// The hardware gate of this computer, on the components of the app; for the 360° panoramas, on the graphics cards
+/// the probe finds
 final desktopAiGateProvider = Provider<HardwareGate>(
-  (ref) => HardwareGate(components: ServiceComponentFiles(ref.watch(aiComponentsServiceProvider))),
+  (ref) => HardwareGate(
+    components: ServiceComponentFiles(ref.watch(aiComponentsServiceProvider)),
+    gpu: ref.watch(aiGpuProbeProvider),
+    integratedGpuAllowed: integratedGpuAllowedOf(ref.watch(desktopAiSettingsStoreProvider)),
+  ),
 );
 
 /// The engine of the 3D photos of the app. While it runs, or while the queue has a job under way, the components stay.
@@ -429,6 +454,7 @@ void dropUntakenParts(SafeWriterOutput output, ConversionQueueState state) {
 /// conversionToolsProvider
 ConversionTools desktopConversionTools(Ref ref) {
   final version = ref.watch(aiAppVersionProvider).valueOrNull ?? '';
+  final gate = ref.watch(desktopAiGateProvider);
   return ConversionTools(
     engine: ref.watch(desktopAiEngineProvider),
     engines: ref.watch(conversionEnginesProvider),
@@ -437,5 +463,10 @@ ConversionTools desktopConversionTools(Ref ref) {
     creatorTool: aiCreatorTool(version),
     software: aiSoftware(version),
     settings: ref.watch(desktopAiSettingsStoreProvider),
+    // The answer of the probe the gate keeps is asked again, so that the dialog and the settings see it too
+    gpuBudget: GpuBudget(
+      probe: () => gate.gpuReport(fresh: true),
+      integratedAllowed: integratedGpuAllowedOf(ref.watch(desktopAiSettingsStoreProvider)),
+    ),
   );
 }
