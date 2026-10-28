@@ -128,7 +128,8 @@ enum ImmersiveErrorCode {
   /// No graphics card this job can run on (none found, too small, integrated and not allowed)
   gpuUnavailable,
 
-  /// Other programs hold the memory of the graphics card: the job waits, then fails with this if it is cancelled
+  /// Other programs hold the memory of the graphics card: the job waits, then fails with this if it is cancelled, or
+  /// when the generator found too little of it free and cut its work into segments, which spoils the image
   gpuBusy,
 
   /// The graphics card ran out of memory during the generation (told by the error output of the generator)
