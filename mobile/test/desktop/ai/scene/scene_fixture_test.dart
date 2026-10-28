@@ -2,15 +2,20 @@
 // S1) with the fakes of lot C0 and the Dart codec, which the Kotlin of the Quest reads in SceneCrossContractTest.kt
 // with the readers of lot S2: the contract between the writer and the headset, tested on both sides. This test makes
 // it again and compares it with the file of the repository, byte for byte under Linux, where it was written (another
-// system may give another last digit to an arc tangent). IMMUCH360_WRITE_SCENE_FIXTURE=1 writes it instead.
+// system may give another last digit to an arc tangent). IMMUCH360_WRITE_SCENE_FIXTURE=1 writes it instead. The
+// preview of the computers (lot S4) reads it as the headset does: the packet, the tail it sums, the layers by their
+// image (design-final 2026-10-27, section 10.1, point 6, read back by our reader).
 
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
+import 'package:immich_mobile/desktop/ai/scene/glb_reader.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
+import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
@@ -75,5 +80,28 @@ void main() {
     expect(glb.imageOf(1), 1);
     expect(xmp.qualityFlags, contains(ReliefQualityFlag.hiddenAreas));
     expect(xmp.request, isNotNull);
+  });
+
+  test('the preview of the computers reads it as the headset does: packet, tail, layers by their image', () {
+    final preview = scenePreviewOf(File(_fixture).readAsBytesSync());
+    final xmp = preview.xmp;
+    final scene = preview.scene;
+
+    expect(scene.meshes, hasLength(xmp.sceneMeshes));
+    expect(scene.vertices, xmp.sceneVertices);
+    expect(scene.triangles, xmp.sceneTriangles);
+    final longest = scene.textures.map((texture) => math.max(texture.width, texture.height)).reduce(math.max);
+    expect(longest, xmp.sceneTextureMax);
+    expect(scene.format, glbLayersV1);
+    expect(scene.safe, xmp.safe);
+    expect(scene.scale, xmp.sceneScale);
+    expect(scene.fovDegrees, xmp.fieldOfView);
+    expect(scene.generator, 'Immuch360 Desktop 3.4.0 scene-v1');
+    final [photo, background] = scene.meshes;
+    expect((photo.layer, photo.texture), (SceneLayer.photo, 0));
+    expect((background.layer, background.texture), (SceneLayer.background, 1));
+    expect(scene.photoTexture, 0);
+    // The photo texture is the photo, the background the filled map: both 48 x 32 here
+    expect([for (final texture in scene.textures) (texture.width, texture.height)], [(48, 32), (48, 32)]);
   });
 }
