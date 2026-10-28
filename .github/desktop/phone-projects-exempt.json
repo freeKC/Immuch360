@@ -727,6 +727,10 @@
     "blob": "739c50ac3f120cb2230b7c6f772c621e22370110",
     "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the glb-layers-v1 reader against tiny_scene3D.jpg, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneCrossContractTest.kt": {
+    "blob": "423c0b10ab5b9b7bafbb6972a0edb1ee5f645149",
+    "reason": "AI immersive phases 2 and 3, lot S1: the cross contract of the 3D scene, the file the engine of the computers writes (tiny_scene3D_dart.jpg) read by the readers of the headset; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneFileTest.kt": {
     "blob": "6034f0624d278f89f0f4b6db602e3e46d1f02544",
     "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the head packet and the tail of a scene, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
