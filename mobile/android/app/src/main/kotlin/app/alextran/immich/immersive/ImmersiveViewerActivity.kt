@@ -128,6 +128,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -3045,8 +3046,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setStatus(getString(R.string.immersive_loading))
     loadJob =
       scope.launch {
-        // A panorama generated beyond the edges of a photo opens with the photo where the user looks: its head first
-        readPanoramaHead(media)
+        // A panorama generated beyond the edges of a photo opens with the photo where the user looks: its head is read
+        // beside the preview, and waited for only before the first image goes on the sphere (P4-review, m1: any 360°
+        // photo would otherwise wait for one more request before its preview starts)
+        val headRead = async { readPanoramaHead(media) }
         var shown = false
         // A photo on the headset has no preview: the file itself is right there
         val isLocal = ImmersiveMedia.localFileFor(media.url) != null
@@ -3054,6 +3057,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         if (previewUrl != null) {
           try {
             val bytes = download(previewUrl)
+            headRead.await()
             decodeAndApply { ImmersiveMedia.decodeBytes(bytes) }?.let { (w, h) ->
               shown = true
               setPhotoStatus(getString(R.string.immersive_preview_loading_full, w, h))
@@ -3066,6 +3070,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           }
         }
         try {
+          headRead.await()
           val (w, h) = loadFullResolution(media)
           setPhotoStatus(getString(R.string.immersive_full_resolution, w, h))
           announcePanorama(media)
