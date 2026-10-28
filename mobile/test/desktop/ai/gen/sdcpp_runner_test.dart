@@ -540,6 +540,28 @@ void main() {
       }
     });
 
+    test('the check runs in an isolate whatever the progress callback of the caller holds', () async {
+      // The progress callback of the app reaches the queue, its settings store and their futures, which no isolate can
+      // take: the closure of the check must not carry it (V3: every panorama of the app was refused so)
+      writeControl();
+      final pending = Completer<void>();
+      final runner = _WritingRunner(FakeProcessRunner([FakeProcessScript(lines: _generation())]), image: _varied(32, 16));
+      final failure = await generator(runner, checkImages: true)
+          .generate(
+            request(width: 32, height: 16),
+            cancel: cancel,
+            onProgress: (progress) {
+              if (!pending.isCompleted) {
+                pending.complete();
+              }
+            },
+          )
+          .then<Object?>((_) => null, onError: (Object error) => error);
+      expect(failure, isNull);
+      expect(pending.isCompleted, isTrue, reason: 'the callback was called');
+      expect(File(request().outputPath).existsSync(), isTrue);
+    });
+
     test('pure green inside the photo is the photo: kept', () async {
       // The photo of the control frame covers x 12 to 19, y 6 to 9 of a 32 x 16 image
       final image = _varied(32, 16);
