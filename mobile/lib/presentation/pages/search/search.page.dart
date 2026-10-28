@@ -17,6 +17,7 @@ import 'package:immich_mobile/models/search/search_filter.model.dart';
 import 'package:immich_mobile/presentation/pages/search/paginated_search.provider.dart';
 import 'package:immich_mobile/presentation/widgets/bottom_sheet/general_bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/search/quick_date_picker.dart';
+import 'package:immich_mobile/presentation/widgets/search/tv_date_range_picker.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
@@ -352,7 +353,14 @@ class SearchPage extends HookConsumerWidget {
         dateRange = DateTimeRange(start: dateRange.start, end: lastDate);
       }
 
-      final date = await showDateRangePicker(
+      final date = ref.read(tvModeProvider)
+          ? await showTvSearchDateRangePicker(
+              context: context,
+              firstDate: firstDate,
+              lastDate: lastDate,
+              initialDateRange: dateRange,
+            )
+          : await showDateRangePicker(
         context: context,
         firstDate: firstDate,
         lastDate: lastDate,
@@ -370,9 +378,8 @@ class SearchPage extends HookConsumerWidget {
         keyboardType: TextInputType.text,
       );
 
-      if (date == null) {
-        datePicked(null);
-      } else {
+      // Cancel/Back leaves the previous date filter intact.
+      if (date != null) {
         datePicked(CustomDateFilter.fromRange(date));
       }
     }
