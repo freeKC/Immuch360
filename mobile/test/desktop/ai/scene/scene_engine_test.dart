@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
@@ -72,6 +73,29 @@ void main() {
     final glb = sceneBytesOf(bytes, xmp);
     expect(glb, isNotNull, reason: 'the tail is where the packet says, with its sum');
     return (bytes: bytes, xmp: xmp, glb: GlbView.read(glb!));
+  }
+
+  /// The key of the settings the queue computes for the photo at [path] before its job, with the sums of the fakes
+  Future<String?> keyOf(String path, int quarterTurns) {
+    final bytes = File(path).readAsBytesSync();
+    return sceneSettingsKeyOf(
+      ImmersiveSource(name: p.basename(path), size: bytes.length, sha1: sha1OfFile(path), path: path),
+      quarterTurns,
+      geometrySha256: FakeGeometryBackend().modelSha256,
+      inpaintSha256: FakeInpaintBackend().modelSha256,
+    );
+  }
+
+  /// The mean luma of the rows [top] to [bottom] (excluded) of [picture]
+  double lumaOfRows(SbsDecoded picture, int top, int bottom) {
+    var total = 0.0;
+    for (var y = top; y < bottom; y++) {
+      for (var x = 0; x < picture.width; x++) {
+        final at = 4 * (y * picture.width + x);
+        total += 0.2126 * picture.rgba[at] + 0.7152 * picture.rgba[at + 1] + 0.0722 * picture.rgba[at + 2];
+      }
+    }
+    return total / ((bottom - top) * picture.width);
   }
 
   group('the chain', () {
@@ -247,7 +271,7 @@ void main() {
       expect(xmp.qualityFlags, isNot(contains(ReliefQualityFlag.fovGuessed)), reason: 'within 25 % of the model');
     });
 
-    test('a photo turned a quarter: a portrait scene, its turns in the packet and the key', () {
+    test('a photo turned a quarter: a portrait scene, its turns in the packet and the key', () async {
       final path = scenePhoto(folder, 'turned.jpg');
       runChain(path, quarterTurns: 1);
       final file = written('turned.jpg');
@@ -256,6 +280,41 @@ void main() {
       expect((photo.width, photo.height), (32, 48));
       expect(file.xmp.sourceQuarterTurns, 1);
       expect(file.xmp.settingsKey, endsWith('|scene-v1|4|1'));
+      expect(file.xmp.settingsKey, await keyOf(path, 1), reason: 'the key the queue computes before the job');
+    });
+
+    test('a photo with the orientation 6 of its EXIF: the scene upright as the photo is seen, the same key', () async {
+      // Stored 48 x 32, its left half dark: seen 32 x 48, the dark half on top
+      final path = scenePhoto(folder, 'phone.jpg', exif: exifWithOrientation(6));
+      final outcome = runChain(path);
+      final file = written('phone.jpg');
+      final photo = const DartSbsCodec().decodeJpeg(file.glb.image(0));
+      final background = const DartSbsCodec().decodeJpeg(file.glb.image(1));
+      final preview = JpegHeader.read(file.bytes);
+
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      expect((photo.width, photo.height), (32, 48));
+      expect((background.width, background.height), (32, 48), reason: 'the map of MoGe upright too');
+      expect((preview.width, preview.height), (32, 48));
+      expect(exifOrientation(preview.exif), 1, reason: 'the preview is upright, nothing left to turn');
+      expect(lumaOfRows(photo, 0, 16), lessThan(lumaOfRows(photo, 32, 48) - 40), reason: 'the dark half on top');
+      expect(file.xmp.sourceQuarterTurns, 0);
+      expect(file.xmp.settingsKey, await keyOf(path, 0));
+    });
+
+    test('a nearly square photo: its grid at the step 5 of M2, the key the queue computes before the job', () async {
+      final path = scenePhoto(folder, 'square.jpg', width: 1100, height: 1080);
+      final outcome = runChain(path);
+      final file = written('square.jpg');
+      final background = const DartSbsCodec().decodeJpeg(file.glb.image(1));
+
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      expect(background.width, SceneV1.mapLongSide);
+      expect(background.height, greaterThan(SceneV1.mapLongSide * 9 ~/ 10));
+      expect(file.xmp.gridStep, 5, reason: 'at 4 its grid would have over 64 000 vertices');
+      expect(SceneV1.gridStepFor(background.width, background.height), 5);
+      expect(file.xmp.settingsKey, endsWith('|scene-v1|5|0'));
+      expect(file.xmp.settingsKey, await keyOf(path, 0));
     });
 
     test('the .glb copy holds the same scene as the tail', () {

@@ -143,6 +143,22 @@ Uint8List exifWithFocal35(int focal35) {
   return Uint8List.fromList([0x45, 0x78, 0x69, 0x66, 0, 0, ...tiff.buffer.asUint8List()]);
 }
 
+/// An EXIF of a little endian TIFF whose IFD0 holds the Orientation [orientation] (6: turn a quarter clockwise to see)
+Uint8List exifWithOrientation(int orientation) {
+  final tiff = ByteData(8 + 2 + 12 + 4);
+  tiff
+    ..setUint16(0, 0x4949)
+    ..setUint16(2, 42, Endian.little)
+    ..setUint32(4, 8, Endian.little)
+    ..setUint16(8, 1, Endian.little)
+    ..setUint16(10, 0x0112, Endian.little)
+    ..setUint16(12, 3, Endian.little)
+    ..setUint32(14, 1, Endian.little)
+    ..setUint16(18, orientation, Endian.little)
+    ..setUint32(22, 0, Endian.little);
+  return Uint8List.fromList([0x45, 0x78, 0x69, 0x66, 0, 0, ...tiff.buffer.asUint8List()]);
+}
+
 /// A scene job for the photo at [path] (or its [bytes]), with the fields the fixtures fix
 SceneJob sceneJobFor(
   String path, {
