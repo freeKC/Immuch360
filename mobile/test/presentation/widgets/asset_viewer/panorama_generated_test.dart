@@ -105,6 +105,7 @@ void main() {
     expect(find.byTooltip(honesty), findsOneWidget, reason: 'the badge carries its honesty sentence');
     expect(find.text(honesty), findsOneWidget);
     expect(outline, findsOneWidget);
+    expect(find.descendant(of: outline, matching: find.text('The original photo')), findsOneWidget);
     // The packet came with the head the GPano read went through: no read more
     expect(reads.where((read) => read.$1 == 0), hasLength(1));
 
@@ -114,7 +115,24 @@ void main() {
     await tester.pump();
     expect(find.text(honesty), findsNothing);
     expect(find.descendant(of: outline, matching: find.byType(CustomPaint)), findsNothing);
+    expect(find.text('The original photo'), findsNothing);
     expect(badge, findsOneWidget);
+  });
+
+  test('the outline and its caption are where the sphere shows the photo', () {
+    const size = Size(800, 600);
+    // The centre of the view, and a point 90° away from it, out of view
+    expect(
+      projectSpherePoint((longitude: 30, latitude: 10), longitude: 30, latitude: 10, fov: 90, size: size),
+      const Offset(400, 300),
+    );
+    expect(projectSpherePoint((longitude: 120, latitude: 0), longitude: 30, latitude: 0, fov: 90, size: size), isNull);
+    // Half the vertical field of view up: the top of the view; to the right of the centre: the right of it
+    final up = projectSpherePoint((longitude: 0, latitude: 45), longitude: 0, latitude: 0, fov: 90, size: size)!;
+    expect(up.dx, closeTo(400, 1e-9));
+    expect(up.dy, closeTo(0, 1e-9));
+    final right = projectSpherePoint((longitude: 20, latitude: 0), longitude: 0, latitude: 0, fov: 90, size: size)!;
+    expect(right.dx, greaterThan(400));
   });
 
   testWidgets('a photo turned right of the centre column and looking up opens where it is', (tester) async {
