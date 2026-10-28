@@ -21,6 +21,8 @@ import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/search/search_input_focus.provider.dart';
+import 'package:immich_mobile/providers/search/tv_search_navigation.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/feature_check.dart';
@@ -50,8 +52,7 @@ class SearchPage extends HookConsumerWidget {
       serverFeatures.smartSearch ? context.t.sunrise_on_the_beach : context.t.file_name_or_extension,
     );
     final textSearchController = useTextEditingController();
-    final filter = useState<SearchFilter>(
-      SearchFilter(
+    final emptyFilter = SearchFilter(
         people: {},
         location: const SearchLocationFilter(),
         camera: const SearchCameraFilter(),
@@ -61,8 +62,8 @@ class SearchPage extends HookConsumerWidget {
         mediaType: AssetType.other,
         language: "${context.locale.languageCode}-${context.locale.countryCode}",
         tagIds: [],
-      ),
     );
+    final filter = useState<SearchFilter>(emptyFilter);
 
     final dateInputFilter = useState<DateFilterInputModel?>(null);
 
@@ -78,6 +79,7 @@ class SearchPage extends HookConsumerWidget {
     final userPreferences = ref.watch(Store.userMetadata.preferences()).valueOrNull;
 
     void search(SearchFilter f) {
+      ref.read(tvSearchHasActiveQueryProvider.notifier).state = !f.isEmpty;
       if (f == filter.value) {
         return;
       }
@@ -90,6 +92,24 @@ class SearchPage extends HookConsumerWidget {
         unawaited(ref.read(paginatedSearchProvider.notifier).search(f));
       }
     }
+
+    // Back from results in the TV tab shell restores the starting Search UI
+    // without switching tabs, and leaves the Search field ready for another query.
+    ref.listen<int>(tvSearchReturnToStartProvider, (_, __) {
+      textSearchController.clear();
+      dateInputFilter.value = null;
+      peopleCurrentFilterWidget.value = null;
+      dateRangeCurrentFilterWidget.value = null;
+      cameraCurrentFilterWidget.value = null;
+      locationCurrentFilterWidget.value = null;
+      tagCurrentFilterWidget.value = null;
+      mediaTypeCurrentFilterWidget.value = null;
+      ratingCurrentFilterWidget.value = null;
+      displayOptionCurrentFilterWidget.value = null;
+      ref.read(searchPreFilterProvider.notifier).clear();
+      search(emptyFilter);
+      ref.read(searchInputFocusProvider).requestFocus();
+    });
 
     void loadMoreSearchResults() {
       unawaited(ref.read(paginatedSearchProvider.notifier).search(filter.value));
@@ -564,6 +584,9 @@ class SearchPage extends HookConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        // The TV entry includes a focus ring and a helper line under the field.
+        // A normal 56dp toolbar clips the helper text below its bounds.
+        toolbarHeight: ref.watch(tvModeProvider) ? 104 : kToolbarHeight,
         automaticallyImplyLeading: true,
         actions: [
           Padding(
@@ -692,6 +715,7 @@ class SearchPage extends HookConsumerWidget {
           ),
           child: SearchField(
             hintText: searchHintText.value,
+            tvDialogTitle: context.t.search,
             key: const Key('search_text_field'),
             controller: textSearchController,
             contentPadding: filter.value.assetId != null ? const EdgeInsets.only(left: 24) : const EdgeInsets.all(8),
