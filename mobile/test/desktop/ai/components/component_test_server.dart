@@ -270,6 +270,8 @@ AiComponent testComponent(
   List<String> officialUrls = const [],
   String id = 'test-component',
   String installPath = 'models/test/test.bin',
+  List<AiComponentPart> parts = const [],
+  String releaseTag = aiComponentsReleaseTag,
 }) => AiComponent(
   id: id,
   version: '1',
@@ -284,4 +286,25 @@ AiComponent testComponent(
   licence: 'Apache-2.0',
   licenceUrl: 'https://www.apache.org/licenses/LICENSE-2.0',
   officialUrls: officialUrls,
+  parts: parts,
+  releaseTag: releaseTag,
 );
+
+/// [bytes] cut into parts of [size] bytes named ASSET.001, ASSET.002, ..., as the publication script cuts them; their
+/// bytes by asset name, to serve
+({List<AiComponentPart> parts, Map<String, List<int>> served}) cutInParts(
+  String assetName,
+  List<int> bytes,
+  int size,
+  String Function(List<int> bytes) sha256Of,
+) {
+  final parts = <AiComponentPart>[];
+  final served = <String, List<int>>{};
+  for (var start = 0, index = 1; start < bytes.length; start += size, index++) {
+    final piece = bytes.sublist(start, start + size < bytes.length ? start + size : bytes.length);
+    final name = '$assetName.${'$index'.padLeft(3, '0')}';
+    parts.add(AiComponentPart(assetName: name, size: piece.length, sha256: sha256Of(piece)));
+    served[name] = piece;
+  }
+  return (parts: parts, served: served);
+}

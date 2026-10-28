@@ -14,6 +14,7 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/files/zip_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
@@ -57,6 +58,49 @@ final _runtimeComponent = AiComponent(
     size: _notices.length,
     sha256: sha256.convert(_notices).toString(),
   ),
+);
+
+/// The files of the engine of the tests, as stable-diffusion.cpp would come: a program and two libraries in a folder
+final _engineFiles = {
+  'sd-cli': utf8.encode('ELF program of the tests ' * 20),
+  'lib/libggml-vulkan.so': utf8.encode('ELF library of the tests ' * 30),
+  'lib/libggml.so': utf8.encode('ELF base library of the tests ' * 10),
+};
+
+/// The zip of [files] (path to bytes), as our CI makes an engine
+Uint8List _zipOf(Map<String, List<int>> files) => zipFiles([
+  for (final MapEntry(:key, :value) in files.entries)
+    ZipEntry(name: key, bytes: Uint8List.fromList(value), modified: DateTime.utc(1980)),
+]);
+
+/// The archive component of [zip], whose catalogue lists [files] (path to bytes), [programs] among them
+AiComponent _engineComponent(
+  Uint8List zip,
+  Map<String, List<int>> files, {
+  Set<String> programs = const {'sd-cli'},
+  String id = 'test-engine',
+}) => AiComponent(
+  id: id,
+  version: 'test',
+  kind: AiComponentKind.archive,
+  platforms: const {AiPlatform.linuxX64, AiPlatform.windowsX64},
+  assetName: '$id.zip',
+  installPath: 'engines/$id',
+  size: zip.length,
+  sha256: sha256.convert(zip).toString(),
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE',
+  features: const {AiFeature.panorama},
+  archiveFiles: [
+    for (final MapEntry(:key, :value) in files.entries)
+      AiArchiveFile(
+        path: key,
+        size: value.length,
+        sha256: sha256.convert(value).toString(),
+        executable: programs.contains(key),
+      ),
+  ],
 );
 
 /// A sink whose first write waits for [gate]: a download held in the middle
@@ -315,6 +359,484 @@ void main() {
       await Future.wait([components.install(_modelComponent), components.install(_modelComponent)]);
 
       expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+    });
+  });
+
+  group('an archive', () {
+    AiComponentsService withEngine(AiComponent engine, Uint8List zip) {
+      File(p.join(mirror.path, engine.assetName)).writeAsBytesSync(zip);
+      return service(catalogue: [_runtimeComponent, _modelComponent, engine]);
+    }
+
+    test('is unpacked into engines/, each file checked, its program executable, nothing left in tmp', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+
+      await components.install(engine);
+
+      for (final MapEntry(:key, :value) in _engineFiles.entries) {
+        expect(File(p.joinAll([root.path, 'engines', 'test-engine', ...key.split('/')])).readAsBytesSync(), value);
+      }
+      final program = File(p.join(root.path, 'engines', 'test-engine', 'sd-cli'));
+      if (!Platform.isWindows) {
+        expect(program.statSync().mode & 0x49, 0x49, reason: 'executable by its owner, group and others');
+        expect(
+          File(p.join(root.path, 'engines', 'test-engine', 'lib', 'libggml.so')).statSync().mode & 0x40,
+          0,
+          reason: 'a library is not a program',
+        );
+      }
+      expect(components.statusOf(engine).state, AiComponentState.installed);
+      expect((await components.verifiedFile(engine))?.path, program.path);
+      expect((installedJson()['components'] as Map)['test-engine'], containsPair('path', 'engines/test-engine'));
+      expect(Directory(p.join(root.path, 'tmp')).listSync(), isEmpty);
+      // Its size on the disk is that of its files
+      expect(
+        AiComponentsService.diskBytesOf([engine]),
+        _engineFiles.values.fold<int>(0, (sum, bytes) => sum + bytes.length),
+      );
+      expect(AiComponentsService.downloadBytesOf([engine]), zip.length);
+    });
+
+    test('a file inside with another sum than the catalogue: damaged, nothing unpacked is kept', () async {
+      final zip = _zipOf({..._engineFiles, 'lib/libggml.so': utf8.encode('another library')});
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+
+      await expectLater(
+        components.install(engine),
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+      );
+      expect(
+        Directory(p.join(root.path, 'engines')).existsSync() ? Directory(p.join(root.path, 'engines')).listSync() : [],
+        isEmpty,
+      );
+      expect(components.statusOf(engine).state, AiComponentState.notInstalled);
+      expect(Directory(p.join(root.path, 'tmp')).listSync(), isEmpty);
+    });
+
+    for (final name in ['../escaped.so', '/etc/escaped.so', 'C:/escaped.dll', r'lib\escaped.dll', 'lib/./x.so']) {
+      test('a path that would leave its folder is refused: $name', () async {
+        final files = {..._engineFiles, name: utf8.encode('escaped')};
+        final zip = _zipOf(files);
+        final engine = _engineComponent(zip, files);
+        final components = withEngine(engine, zip);
+
+        await expectLater(
+          components.install(engine),
+          throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+        );
+        expect(File(p.join(temp.path, 'escaped.so')).existsSync(), isFalse);
+        expect(File(p.join(root.path, 'escaped.so')).existsSync(), isFalse);
+        expect(Directory(p.join(root.path, 'engines', 'test-engine')).existsSync(), isFalse);
+      });
+    }
+
+    test('a file of the archive that the catalogue does not list is refused', () async {
+      final zip = _zipOf({..._engineFiles, 'extra.so': utf8.encode('not in the catalogue')});
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+
+      await expectLater(
+        components.install(engine),
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.damaged)),
+      );
+      expect(Directory(p.join(root.path, 'engines', 'test-engine')).existsSync(), isFalse);
+    });
+
+    test('a file of the folder gone behind the app makes it damaged; removed, the folder goes', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+      await components.install(engine);
+      File(p.join(root.path, 'engines', 'test-engine', 'lib', 'libggml.so')).deleteSync();
+
+      expect(await components.verifiedFile(engine), isNull);
+      expect(components.statusOf(engine).state, AiComponentState.damaged);
+
+      expect(await components.remove(engine), AiRemoveOutcome.removed);
+      expect(Directory(p.join(root.path, 'engines', 'test-engine')).existsSync(), isFalse);
+      expect((installedJson()['components'] as Map).containsKey('test-engine'), isFalse);
+    });
+
+    test('remove all empties engines/ too', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      final components = withEngine(engine, zip);
+      await components.install(engine);
+      await components.install(_modelComponent);
+
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+
+      expect(Directory(p.join(root.path, 'engines')).existsSync(), isFalse);
+      expect(Directory(p.join(root.path, 'models')).existsSync(), isFalse);
+    });
+
+    test('unpacked files already in place with their sums are kept without downloading', () async {
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles);
+      for (final MapEntry(:key, :value) in _engineFiles.entries) {
+        File(p.joinAll([root.path, 'engines', 'test-engine', ...key.split('/')]))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(value);
+      }
+      final components = service(catalogue: [engine]);
+
+      await components.install(engine);
+
+      expect((installedJson()['components'] as Map)['test-engine'], containsPair('source', 'already on disk'));
+      expect(components.statusOf(engine).state, AiComponentState.installed);
+    });
+  });
+
+  group('removing a group of features', () {
+    /// A model of the tests for [features], served by the mirror
+    AiComponent model(String id, Set<AiFeature> features) {
+      final bytes = utf8.encode('model $id of the tests ' * 50);
+      File(p.join(mirror.path, '$id.onnx')).writeAsBytesSync(bytes);
+      return AiComponent(
+        id: id,
+        version: '1',
+        kind: AiComponentKind.model,
+        platforms: const {AiPlatform.linuxX64},
+        assetName: '$id.onnx',
+        installPath: 'models/$id/$id.onnx',
+        size: bytes.length,
+        sha256: sha256.convert(bytes).toString(),
+        compression: AiCompression.none,
+        licence: 'MIT',
+        licenceUrl: 'https://example.org/licence',
+        features: features,
+      );
+    }
+
+    late AiComponent runtime;
+    late AiComponent depth;
+    late AiComponent geometry;
+    late AiComponent filling;
+    late List<AiComponent> catalogue;
+
+    setUp(() {
+      runtime = AiComponent(
+        id: _runtimeComponent.id,
+        version: _runtimeComponent.version,
+        kind: AiComponentKind.runtime,
+        platforms: const {AiPlatform.linuxX64},
+        assetName: _runtimeComponent.assetName,
+        installPath: _runtimeComponent.installPath,
+        size: _runtimeComponent.size,
+        sha256: _runtimeComponent.sha256,
+        compression: AiCompression.gzip,
+        downloadSize: _runtimeComponent.downloadSize,
+        licence: 'MIT',
+        licenceUrl: _runtimeComponent.licenceUrl,
+        notices: _runtimeComponent.notices,
+        features: AiFeature.values.toSet(),
+      );
+      depth = model('depth', {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
+      geometry = model('geometry', {AiFeature.scene, AiFeature.panorama});
+      filling = model('filling', {AiFeature.scene});
+      // The panoramas need a generator too, never installed here
+      catalogue = [
+        runtime,
+        depth,
+        geometry,
+        filling,
+        model('generator', {AiFeature.panorama}),
+      ];
+    });
+
+    Future<AiComponentsService> installed(List<AiComponent> components) async {
+      final service = AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: catalogue,
+      );
+      for (final component in components) {
+        await service.install(component);
+      }
+      return service;
+    }
+
+    test('the scenes go, ONNX Runtime stays while the 3D photos use it, and the removal says so', () async {
+      final service = await installed([runtime, depth, geometry, filling]);
+
+      expect(service.groupsUsing(AiPlatform.linuxX64, runtime, besides: AiFeatureGroup.scenes), [
+        AiFeatureGroup.photos,
+      ]);
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.scenes);
+
+      expect(removal.outcome, AiRemoveOutcome.removed);
+      expect(removal.kept, [runtime]);
+      expect(service.statusOf(geometry).state, AiComponentState.notInstalled);
+      expect(service.statusOf(filling).state, AiComponentState.notInstalled);
+      expect(service.statusOf(runtime).state, AiComponentState.installed);
+      expect(service.statusOf(depth).state, AiComponentState.installed);
+      expect(installedFile(geometry).existsSync(), isFalse);
+      expect(installedFile(runtime).existsSync(), isTrue);
+    });
+
+    test('the 3D photos go while the scenes stay: their model only', () async {
+      final service = await installed([runtime, depth, geometry, filling]);
+
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.photos);
+
+      expect(removal.kept, [runtime]);
+      expect(service.statusOf(depth).state, AiComponentState.notInstalled);
+      expect(service.statusOf(runtime).state, AiComponentState.installed);
+      expect(service.statusOf(geometry).state, AiComponentState.installed);
+    });
+
+    test('the last installed group that uses a component takes it along', () async {
+      // The 3D photos are not complete: their model is missing, so they keep nothing
+      final service = await installed([runtime, geometry, filling]);
+
+      expect(service.groupsUsing(AiPlatform.linuxX64, runtime, besides: AiFeatureGroup.scenes), isEmpty);
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.scenes);
+
+      expect(removal.kept, isEmpty);
+      expect(service.statusOf(runtime).state, AiComponentState.notInstalled);
+      expect(installedFile(runtime).existsSync(), isFalse);
+    });
+
+    test('refused while a conversion runs: nothing removed', () async {
+      final service = await installed([runtime, geometry, filling]);
+      service.inUse = () => true;
+
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.scenes);
+
+      expect(removal.outcome, AiRemoveOutcome.busy);
+      expect(service.statusOf(geometry).state, AiComponentState.installed);
+      expect(installedFile(geometry).existsSync(), isTrue);
+    });
+  });
+
+  group('moving the components to another folder', () {
+    late Directory target;
+    late List<Directory> remembered;
+
+    setUp(() {
+      target = Directory(p.join(temp.path, 'drive-d', 'ai-components'));
+      remembered = [];
+    });
+
+    Future<void> remember(Directory folder) async => remembered.add(folder);
+
+    File under(Directory folder, AiComponent component) =>
+        File(p.joinAll([folder.path, ...component.installPath.split('/')]));
+
+    test('copies each installed file, checks its sum, keeps the new folder, then empties the old one', () async {
+      final components = service();
+      await components.install(_runtimeComponent);
+      await components.install(_modelComponent);
+      final progress = <int>[];
+
+      final result = await components.moveTo(
+        target,
+        remember: (folder) async {
+          // Remembered once the copies are checked, before the old folder goes
+          expect(under(target, _modelComponent).readAsBytesSync(), _model);
+          expect(installedFile(_modelComponent).existsSync(), isTrue);
+          await remember(folder);
+        },
+        onProgress: (done, total) => progress.add(done * 100 ~/ total),
+      );
+
+      expect(result.outcome, AiMoveOutcome.moved);
+      expect(remembered.map((folder) => folder.path), [target.path]);
+      expect(under(target, _runtimeComponent).readAsBytesSync(), _runtime);
+      expect(File(p.join(target.path, 'licenses', 'test-model.txt')).existsSync(), isTrue);
+      expect(File(p.join(target.path, 'licenses', 'test-runtime-ThirdPartyNotices.txt')).readAsBytesSync(), _notices);
+      final moved = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+      expect((moved['components'] as Map).keys, unorderedEquals(['test-runtime', 'test-model']));
+      expect(moved.containsKey('movedFrom'), isFalse);
+      // Nothing of the app left in the old folder
+      expect(root.existsSync() ? root.listSync() : <FileSystemEntity>[], isEmpty);
+      // The service now serves the new folder
+      expect((await components.verifiedFile(_modelComponent))?.path, under(target, _modelComponent).path);
+      expect(components.statusOf(_runtimeComponent).state, AiComponentState.installed);
+      expect(progress.last, 100);
+    });
+
+    test('refused while a conversion runs, and while a download runs', () async {
+      final busy = service(inUse: () => true);
+      await busy.load();
+      expect((await busy.moveTo(target, remember: remember)).outcome, AiMoveOutcome.busy);
+
+      final reached = Completer<void>();
+      final gate = Completer<void>();
+      final downloading = service(
+        openSink: (file, {required append}) async =>
+            _HeldSink(await AiFileSink.open(file, append: append), reached, gate.future),
+      );
+      final install = downloading.install(_modelComponent);
+      await reached.future;
+      expect((await downloading.moveTo(target, remember: remember)).outcome, AiMoveOutcome.busy);
+      gate.complete();
+      await install;
+
+      expect(remembered, isEmpty);
+      expect(target.existsSync(), isFalse);
+    });
+
+    test('a copy whose sum is wrong: nothing kept in the new folder, the old one untouched', () async {
+      final components = service();
+      await components.install(_modelComponent);
+      // The same size, other bytes: the size check of the load passes, the sum of the copy does not
+      installedFile(_modelComponent).writeAsBytesSync(Uint8List(_model.length));
+
+      final result = await components.moveTo(target, remember: remember);
+
+      expect(result.outcome, AiMoveOutcome.failed);
+      expect(result.detail, contains('test-model'));
+      expect(remembered, isEmpty);
+      expect(target.existsSync(), isFalse);
+      expect(installedFile(_modelComponent).existsSync(), isTrue);
+      expect((await components.verifiedFile(_modelComponent))?.path, installedFile(_modelComponent).path);
+    });
+
+    test('the new folder kept nowhere: the copies go, the old folder stays', () async {
+      final components = service();
+      await components.install(_modelComponent);
+
+      final result = await components.moveTo(target, remember: (_) async => throw const FileSystemException('full'));
+
+      expect(result.outcome, AiMoveOutcome.failed);
+      expect(target.existsSync(), isFalse);
+      expect(installedFile(_modelComponent).readAsBytesSync(), _model);
+    });
+
+    test('a folder that is not empty, or inside the old one, is refused', () async {
+      final components = service();
+      await components.install(_modelComponent);
+      File(p.join(target.path, 'mine.txt'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('the user keeps this');
+
+      expect((await components.moveTo(target, remember: remember)).outcome, AiMoveOutcome.notEmpty);
+      expect(
+        (await components.moveTo(Directory(p.join(root.path, 'models', 'inner')), remember: remember)).outcome,
+        AiMoveOutcome.notEmpty,
+      );
+      expect((await components.moveTo(root, remember: remember)).outcome, AiMoveOutcome.same);
+      expect(File(p.join(target.path, 'mine.txt')).readAsStringSync(), 'the user keeps this');
+      expect(remembered, isEmpty);
+    });
+
+    test('a drive too small for the copies is refused before the first byte', () async {
+      final components = AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: [_runtimeComponent, _modelComponent],
+        freeSpace: (folder) async => AiFreeSpace(
+          free: p.isWithin(temp.path, folder.path) && folder.path.contains('drive-d') ? 1000 : 1 << 40,
+          volume: 'D:',
+        ),
+      );
+      await components.install(_modelComponent);
+
+      final result = await components.moveTo(target, remember: remember);
+
+      expect(result.outcome, AiMoveOutcome.notEnoughSpace);
+      expect(result.shortage?.volume, 'D:');
+      expect(result.shortage?.free, 1000);
+      expect(target.existsSync(), isFalse);
+    });
+
+    test('an old file the system holds: noted, and deleted by the next start of the app in the new folder', () async {
+      await service().install(_runtimeComponent);
+      final locked = installedFile(_runtimeComponent);
+      final components = service(
+        delete: (entity) async {
+          if (p.equals(entity.path, locked.path)) {
+            throw FileSystemException('locked', entity.path, const OSError('Access is denied.', 5));
+          }
+          await entity.delete(recursive: true);
+        },
+      );
+      await components.load();
+
+      final result = await components.moveTo(target, remember: remember);
+
+      expect(result.outcome, AiMoveOutcome.movedNextStart);
+      expect(locked.existsSync(), isTrue);
+      final moved = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+      expect(moved['movedFrom'], root.path);
+      expect(under(target, _runtimeComponent).readAsBytesSync(), _runtime);
+
+      // The next start, in the new folder
+      AiComponentsService.resetStartPassForTests();
+      await AiComponentsService.freePendingAtStart(() async => target);
+
+      expect(locked.existsSync(), isFalse);
+      expect(root.existsSync() ? root.listSync(recursive: true).whereType<File>() : <File>[], isEmpty);
+      final after = jsonDecode(File(p.join(target.path, 'installed.json')).readAsStringSync()) as Map<String, dynamic>;
+      expect(after.containsKey('movedFrom'), isFalse);
+      expect((after['components'] as Map).keys, ['test-runtime']);
+      AiComponentsService.resetStartPassForTests();
+    });
+  });
+
+  group('the free space, read before the first byte', () {
+    const gib = 1024 * 1024 * 1024;
+
+    AiComponentsService withSpace(int free, {List<AiComponent>? catalogue, List<Directory>? asked}) =>
+        AiComponentsService(
+          folder: () async => root,
+          downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+          catalogue: catalogue ?? [_runtimeComponent, _modelComponent],
+          freeSpace: (folder) async {
+            asked?.add(folder);
+            return AiFreeSpace(free: free, volume: 'D:');
+          },
+        );
+
+    test('too little: refused with what is needed and what is free, nothing written', () async {
+      final asked = <Directory>[];
+      final components = withSpace(gib, asked: asked);
+
+      final error = await components
+          .install(_modelComponent)
+          .then<AiDownloadException?>((_) => null, onError: (Object error) => error as AiDownloadException);
+
+      expect(error?.failure, AiDownloadFailure.notEnoughSpace);
+      expect(error?.messageKey, 'ai_immersive_disk_space');
+      expect(error?.shortage?.volume, 'D:');
+      expect(error?.shortage?.needed, _model.length + gib);
+      expect(error?.shortage?.free, gib);
+      expect(asked.single.path, root.path);
+      expect(installedFile(_modelComponent).existsSync(), isFalse);
+      expect(Directory(p.join(root.path, 'tmp')).existsSync(), isFalse);
+      expect(components.statusOf(_modelComponent).failure?.failure, AiDownloadFailure.notEnoughSpace);
+    });
+
+    test('for several components at once, as the install sheet asks before the first one', () async {
+      final components = withSpace(gib + 50 * 1024);
+      final notices = _runtimeComponent.notices!.size;
+
+      final shortage = await components.spaceShortage([_runtimeComponent, _modelComponent]);
+
+      expect(shortage?.needed, _runtime.length + notices + _model.length + gib);
+      expect(await withSpace(3 * gib).spaceShortage([_runtimeComponent, _modelComponent]), isNull);
+      // Those already installed ask for nothing
+      final enough = withSpace(3 * gib);
+      await enough.install(_modelComponent);
+      expect(await withSpace(gib + 40 * 1024 + notices).spaceShortage([_modelComponent]), isNull);
+    });
+
+    test('enough: installed; an unreadable drive refuses nothing', () async {
+      await withSpace(2 * gib).install(_modelComponent);
+      expect(installedFile(_modelComponent).readAsBytesSync(), _model);
+
+      final unknown = AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: [_runtimeComponent, _modelComponent],
+        freeSpace: (_) async => null,
+      );
+      await unknown.install(_runtimeComponent);
+      expect(unknown.statusOf(_runtimeComponent).state, AiComponentState.installed);
     });
   });
 

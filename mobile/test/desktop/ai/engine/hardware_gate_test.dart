@@ -63,6 +63,93 @@ void main() {
     },
   );
 
+  group('by feature, each component asked for by its id', () {
+    test('a 3D scene asks for ONNX Runtime, MoGe and LaMa, and gives each file by its id', () async {
+      final loads = <String>[];
+      final result = await gate(abi: Abi.linuxX64, loads: loads).evaluate(feature: AiFeature.scene);
+
+      expect(result.isAvailable, isTrue, reason: '$result');
+      expect(result.feature, AiFeature.scene);
+      expect(result.fileOf(mogeGeometryComponent.id)!.path, endsWith(mogeGeometryComponent.installPath));
+      expect(result.fileOf(lamaInpaintComponent.id)!.path, endsWith(lamaInpaintComponent.installPath));
+      expect(result.fileOf(depthModelOnnxComponent.id), isNull);
+      expect(result.runtimeFile!.path, endsWith(onnxRuntimeLinuxComponent.installPath));
+      expect(loads, hasLength(1));
+    });
+
+    test('LaMa missing: the scene is refused with LaMa to install; the 3D photo stays available', () async {
+      final missing = gate(abi: Abi.linuxX64, states: {lamaInpaintComponent.id: AiComponentState.notInstalled});
+
+      final scene = await missing.evaluate(feature: AiFeature.scene);
+      final photo = await missing.evaluate();
+
+      expect(scene.reason, AiGateReason.componentsMissing);
+      expect(scene.missing, [lamaInpaintComponent]);
+      expect(photo.isAvailable, isTrue);
+      expect(photo.feature, AiFeature.stereoPhoto);
+    });
+
+    test('the 3D photo never asks for a component of a later feature', () async {
+      final result = await gate(
+        abi: Abi.windowsX64,
+        states: {
+          for (final component in aiComponents)
+            if (!component.features.contains(AiFeature.stereoPhoto)) component.id: AiComponentState.damaged,
+        },
+      ).evaluate();
+
+      expect(result.isAvailable, isTrue, reason: '$result');
+      expect(result.files.keys, unorderedEquals([onnxRuntimeWindowsComponent.id, depthModelOnnxComponent.id]));
+    });
+
+    test('a 360° panorama: not on a Mac; not in this version until the engine of P2 is in the catalogue', () async {
+      final mac = await gate(abi: Abi.macosArm64).evaluate(feature: AiFeature.panorama);
+      final windows = await gate(abi: Abi.windowsX64).evaluate(feature: AiFeature.panorama);
+
+      expect(mac.reason, AiGateReason.notHere);
+      expect(mac.reason!.textKey, 'ai_immersive_unavailable_system');
+      expect(windows.reason, AiGateReason.notInThisVersion);
+      expect(windows.reason!.textKey, 'ai_immersive_unavailable_build');
+      expect(windows.missing, [sdCppWindowsComponent]);
+    });
+
+    test('the variant of a component is the one the memory of the card takes', () async {
+      AiComponent transformer(String id, int memory, {String? of}) => AiComponent(
+        id: id,
+        version: '1',
+        kind: AiComponentKind.model,
+        platforms: const {AiPlatform.linuxX64},
+        assetName: '$id.gguf',
+        installPath: 'models/t/$id.gguf',
+        size: 10,
+        sha256: 'a' * 64,
+        compression: AiCompression.none,
+        licence: 'Apache-2.0',
+        licenceUrl: 'https://example.org',
+        features: const {AiFeature.panorama},
+        variantOf: of,
+        minGraphicsMemory: memory,
+      );
+      final catalogue = [
+        onnxRuntimeLinuxComponent,
+        transformer('q8', 10 * _gib),
+        transformer('q4', 7 * _gib, of: 'q8'),
+      ];
+      final variants = HardwareGate(
+        components: _FakeComponents(folder),
+        facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 * _gib),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+        catalogue: catalogue,
+      );
+
+      final small = await variants.evaluate(feature: AiFeature.panorama, graphicsMemory: 8 * _gib);
+      final large = await variants.evaluate(feature: AiFeature.panorama, graphicsMemory: 12 * _gib);
+
+      expect(small.files.keys, unorderedEquals([onnxRuntimeLinuxComponent.id, 'q4']));
+      expect(large.files.keys, unorderedEquals([onnxRuntimeLinuxComponent.id, 'q8']));
+    });
+  });
+
   group('the system and the processor', () {
     test('Windows x64, Linux x64 and both kinds of Mac are offered, each with its own runtime', () async {
       for (final (abi, platform, runtime) in [

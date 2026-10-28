@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:path/path.dart' as p;
 
@@ -34,6 +35,56 @@ void main() {
     );
 
     expect(folder.path, p.join(support.path, 'ai-components'));
+  });
+
+  group('moved by the user ("Move the AI components")', () {
+    late Directory temp;
+    late Directory support;
+    late DesktopAiSettingsStore store;
+
+    setUp(() {
+      temp = Directory.systemTemp.createTempSync('ai-components-folder');
+      support = Directory(p.join(temp.path, 'support'))..createSync();
+      store = DesktopAiSettingsStore(settingsDirectory: () async => support);
+    });
+
+    tearDown(() => temp.deleteSync(recursive: true));
+
+    test('the folder kept in desktop_ai.json is the folder of the components, on every system', () async {
+      final moved = p.join(temp.path, 'D', 'AI', 'ai-components');
+      await store.update((settings) => settings.copyWith(componentsFolder: () => moved));
+
+      for (final windows in [true, false]) {
+        final folder = await desktopAiComponentsFolder(
+          windows: windows,
+          localAppData: () async => local,
+          support: () async => support,
+        );
+        expect(folder.path, moved);
+      }
+    });
+
+    test('moved into the ai-components folder of the chosen folder, kept; moved back home, forgotten', () async {
+      final home = Directory(p.join(support.path, 'ai-components'));
+      final service = AiComponentsService(folder: () async => home, catalogue: const []);
+      final chosen = p.join(temp.path, 'D', 'AI');
+
+      final there = await moveAiComponents(service, chosen, store: store, home: home);
+
+      expect(there.outcome, AiMoveOutcome.moved);
+      expect((await store.read()).componentsFolder, p.join(chosen, 'ai-components'));
+      final folder = await desktopAiComponentsFolder(windows: false, linux: false, support: () async => support);
+      expect(folder.path, p.join(chosen, 'ai-components'));
+
+      final back = await moveAiComponents(service, support.path, store: store, home: home);
+
+      expect(back.outcome, AiMoveOutcome.moved);
+      expect((await store.read()).componentsFolder, isNull);
+      expect(
+        (await desktopAiComponentsFolder(windows: false, linux: false, support: () async => support)).path,
+        home.path,
+      );
+    });
   });
 
   test(

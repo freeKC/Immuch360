@@ -7,6 +7,12 @@
 // A removal is refused while a conversion runs: the tile asks whether to cancel it, then removes. A file the system
 // keeps (a loaded DLL on Windows) is freed at the next start, which the row and a message say. Nothing is downloaded
 // from here unless the user taps Download, which opens the install sheet.
+//
+// On a computer (design-final 2026-10-27, sections 7.1 and 9.1) the tile is given its system and shows the groups of
+// features: "3D photos: 116 MB", "3D scenes: 349 MB", and the 360° panoramas once their engine is in the catalogue.
+// Each component is listed under the first group that needs it; Download and Remove act on a whole group, and a
+// component another installed group needs stays, its row saying which ("Kept while 3D scenes use it"). The Quest keeps
+// the one list of phase 1.
 
 import 'dart:async';
 
@@ -30,12 +36,17 @@ final _log = Logger('AiComponentsTile');
 class AiComponentsTile extends ConsumerStatefulWidget {
   const AiComponentsTile({
     super.key,
-    required this.components,
+    this.components = const [],
     required this.onCancelConversions,
     this.canDownload = true,
+    this.platform,
   });
 
+  /// The one list of a system without groups (the Quest)
   final List<AiComponent> components;
+
+  /// The system whose groups of features are shown (a computer); [components] is then left aside
+  final AiPlatform? platform;
   final Future<void> Function() onCancelConversions;
   final bool canDownload;
 
@@ -69,10 +80,16 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   }
 
   /// Removes [component], or every component when null; asks to cancel the conversions when one runs
-  Future<void> _remove(AiComponent? component) async {
+  Future<void> _remove(AiComponent? component) =>
+      _removeWith(() => component == null ? _service.removeAll() : _service.remove(component));
+
+  /// Removes the components of [group], those another installed group needs apart
+  Future<void> _removeGroup(AiFeatureGroup group) =>
+      _removeWith(() async => (await _service.removeGroup(widget.platform!, group)).outcome);
+
+  Future<void> _removeWith(Future<AiRemoveOutcome> Function() attempt) async {
     final t = context.t;
     final messenger = ScaffoldMessenger.maybeOf(context);
-    Future<AiRemoveOutcome> attempt() => component == null ? _service.removeAll() : _service.remove(component);
     setState(() => _removing = true);
     try {
       var outcome = await attempt();
@@ -124,13 +141,61 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
     await _refresh();
   }
 
+  /// A group: its title and size, Download and Remove, then the components it brings
+  Widget _group(BuildContext context, AiPlatform platform, AiGroupComponents group) {
+    final t = context.t;
+    final missing = aiMissingComponents(_service, group.all);
+    final removable = group.own.any((component) {
+      final state = _service.statusOf(component).state;
+      return state == AiComponentState.installed || state == AiComponentState.damaged;
+    });
+    final name = group.group.name;
+    return Column(
+      key: Key('ai_components_group_$name'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListTile(
+          title: Text(aiFeatureGroupTitle(t, group), style: const TextStyle(fontWeight: FontWeight.w500)),
+          trailing: Wrap(
+            spacing: 4,
+            children: [
+              if (missing.isNotEmpty && widget.canDownload)
+                TextButton(
+                  key: Key('ai_components_group_download_$name'),
+                  onPressed: () => unawaited(_install(missing)),
+                  child: Text(t.ai_immersive_download),
+                ),
+              if (removable)
+                IconButton(
+                  key: Key('ai_components_group_remove_$name'),
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  tooltip: t.ai_immersive_remove,
+                  onPressed: _removing ? null : () => unawaited(_removeGroup(group.group)),
+                ),
+            ],
+          ),
+        ),
+        for (final component in group.own)
+          _ComponentRow(
+            component: component,
+            status: _service.statusOf(component),
+            onRemove: null,
+            inGroup: true,
+            keptFor: _service.groupsUsing(platform, component, besides: group.group).firstOrNull,
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+    final platform = widget.platform;
     return ListenableBuilder(
       listenable: _service,
       builder: (context, _) {
-        final missing = aiMissingComponents(_service, widget.components);
+        final groups = platform == null ? null : aiComponentGroupsFor(platform, catalogue: _service.catalogue);
+        final missing = groups == null ? aiMissingComponents(_service, widget.components) : const <AiComponent>[];
         final used = _spaceUsed;
         final hasFiles = used != null && used > 0;
         return Column(
@@ -142,12 +207,15 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
               title: Text(t.ai_immersive_components, style: const TextStyle(fontWeight: FontWeight.w500)),
               subtitle: used == null ? null : Text(t.ai_immersive_components_total(size: formatBytes(used))),
             ),
-            for (final component in widget.components)
-              _ComponentRow(
-                component: component,
-                status: _service.statusOf(component),
-                onRemove: _removing ? null : () => unawaited(_remove(component)),
-              ),
+            if (groups == null)
+              for (final component in widget.components)
+                _ComponentRow(
+                  component: component,
+                  status: _service.statusOf(component),
+                  onRemove: _removing ? null : () => unawaited(_remove(component)),
+                )
+            else
+              for (final group in groups) _group(context, platform!, group),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -176,12 +244,42 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   }
 }
 
+/// The name of a group of features, as the line of a shared component says it
+String aiFeatureGroupName(Translations t, AiFeatureGroup group) => switch (group) {
+  AiFeatureGroup.photos => t.ai_immersive_feature_photos,
+  AiFeatureGroup.scenes => t.ai_immersive_feature_scenes,
+  AiFeatureGroup.panoramas => t.ai_immersive_feature_panoramas,
+};
+
+/// "3D scenes: 349 MB", the size of the components a group brings itself, from the catalogue
+String aiFeatureGroupTitle(Translations t, AiGroupComponents group) {
+  final size = formatBytes(AiComponentsService.diskBytesOf(group.own));
+  return switch (group.group) {
+    AiFeatureGroup.photos => t.ai_immersive_components_photos(size: size),
+    AiFeatureGroup.scenes => t.ai_immersive_components_scenes(size: size),
+    AiFeatureGroup.panoramas => t.ai_immersive_components_panoramas(size: size),
+  };
+}
+
 class _ComponentRow extends StatelessWidget {
-  const _ComponentRow({required this.component, required this.status, required this.onRemove});
+  const _ComponentRow({
+    required this.component,
+    required this.status,
+    required this.onRemove,
+    this.inGroup = false,
+    this.keptFor,
+  });
 
   final AiComponent component;
   final AiComponentStatus status;
+
   final VoidCallback? onRemove;
+
+  /// In a group, which is removed as a whole: no Remove of its own
+  final bool inGroup;
+
+  /// The installed group that keeps this component when its own group goes
+  final AiFeatureGroup? keptFor;
 
   @override
   Widget build(BuildContext context) {
@@ -206,12 +304,15 @@ class _ComponentRow extends StatelessWidget {
       },
       if (failure != null && status.state != AiComponentState.downloading)
         Text(aiDownloadFailureText(t, failure), style: error),
+      if (keptFor != null && status.state == AiComponentState.installed)
+        Text(t.ai_immersive_component_shared(feature: aiFeatureGroupName(t, keptFor!))),
       Align(
         alignment: AlignmentDirectional.centerStart,
         child: AiLicenceLink(component: component),
       ),
     ];
-    final removable = status.state == AiComponentState.installed || status.state == AiComponentState.damaged;
+    final removable =
+        !inGroup && (status.state == AiComponentState.installed || status.state == AiComponentState.damaged);
     return ListTile(
       key: Key('ai_component_${component.id}'),
       title: Text(component.title),

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/components/disk_space.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/platform/desktop_overrides.dart';
@@ -51,6 +52,10 @@ void main() {
 
     expect(desktop.read(aiComponentsFolderProvider), desktopAiComponentsFolder);
     expect(quest.read(aiComponentsFolderProvider), supportAiComponentsFolder);
+    // The free space of the drive is read on a computer only
+    expect(desktop.read(aiFreeSpaceProvider), systemFreeSpace);
+    expect(desktop.read(aiComponentsServiceProvider).freeSpace, systemFreeSpace);
+    expect(quest.read(aiFreeSpaceProvider), isNull);
   });
 
   test('the phones look for the other file of an X3 pair in the database only', () {

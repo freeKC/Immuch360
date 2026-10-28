@@ -3,7 +3,10 @@
 // offline, and the tile of the components shows it. The texts are kept in the app, so nothing more is downloaded for
 // them: the Apache License 2.0 of Depth Anything V2 Small and of its two exports, and the MIT licence of ONNX Runtime
 // (its LICENSE file at v1.31.0 and v1.23.2, the same text), whose ThirdPartyNotices.txt is downloaded with the library
-// (licenses/ID-ThirdPartyNotices.txt) and named by its address too.
+// (licenses/ID-ThirdPartyNotices.txt) and named by its address too. Phases 2 and 3 (design-final 2026-10-27, section
+// 7.3) add the MIT licences of MoGe (with the Apache License 2.0 of its DINOv2 parts) and of MI-GAN, and the BSD
+// 3-Clause licence of Real-ESRGAN, each with its own copyright line; the other models of the scenes and panoramas are
+// under the Apache License 2.0.
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 
@@ -32,8 +35,76 @@ const _onnxRuntimeRepository = 'https://github.com/microsoft/onnxruntime/blob';
 String aiLicenceText(AiComponent component) => switch (component.licence) {
   'Apache-2.0' => apacheLicence2,
   'MIT' when component.kind == AiComponentKind.runtime => onnxRuntimeLicence,
+  'MIT' when component.id == mogeGeometryComponent.id => mogeLicence,
+  'MIT' when component.id == miganInpaintComponent.id => miganLicence,
+  'BSD-3-Clause' when component.id == upscalerComponent.id => realEsrganLicence,
   _ => 'See ${component.licenceUrl}\n',
 };
+
+/// The MIT licence, with the copyright line of [holder]
+String _mitLicence(String holder) =>
+    '''MIT License
+
+Copyright (c) $holder
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+''';
+
+/// The LICENSE of microsoft/MoGe at 74fbce05: MIT, and the Apache License 2.0 of the parts taken from DINOv2
+final mogeLicence =
+    '${_mitLicence('Microsoft Corporation.')}\nThe parts taken from DINOv2 (the backbone, '
+    'https://github.com/facebookresearch/dinov2) are under the Apache License, Version 2.0:\n$apacheLicence2';
+
+/// LICENSE-WEIGHTS of Picsart-AI-Research/MI-GAN, code and weights
+final miganLicence = _mitLicence('2024 Picsart AI Research (PAIR)');
+
+/// The BSD 3-Clause licence of xinntao/Real-ESRGAN, its LICENSE at 0573f32d
+const realEsrganLicence = '''BSD 3-Clause License
+
+Copyright (c) 2021, Xintao Wang
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+''';
 
 /// The MIT licence of ONNX Runtime, its LICENSE file
 const onnxRuntimeLicence = r'''MIT License

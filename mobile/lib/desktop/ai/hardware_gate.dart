@@ -9,6 +9,13 @@
 //  4. ONNX Runtime loads: tried once per file in a short isolate, its message shown when it does not (a Linux too old
 //     for it, a library the system refuses).
 // The GPU is not looked at: phase 1 runs on the processor.
+//
+// Phases 2 and 3 (design-final 2026-10-27, sections 4.7 and 7.1): the gate is evaluated for one feature (the 3D photo
+// when none is named), asks for the components of that feature only, each by its id (the engines read their files by
+// id, no more "one file per kind, the last one wins"), and of a component and its variant the one the memory of the
+// graphics card takes. A feature not offered on this system is refused as such ("Not on this system yet"), and so is
+// one whose components this version of the app does not have yet ("Not in this version of the app": the engine of
+// the panoramas until lot P2). The rules of the graphics card are lot C6.
 
 import 'dart:ffi' show Abi;
 import 'dart:io';
@@ -37,7 +44,13 @@ enum AiGateReason {
   componentsDamaged('ai_immersive_unavailable_damaged'),
 
   /// ONNX Runtime does not load here: the text takes its message ({message})
-  runtimeFailed('ai_immersive_failed_model');
+  runtimeFailed('ai_immersive_failed_model'),
+
+  /// The feature is not offered on this system (the panoramas on a Mac)
+  notHere('ai_immersive_unavailable_system'),
+
+  /// A component of the feature is not complete in the catalogue of this version (never offered)
+  notInThisVersion('ai_immersive_unavailable_build');
 
   const AiGateReason(this.textKey);
 
@@ -51,6 +64,8 @@ class AiGateResult {
     this.reason,
     this.message,
     this.platform,
+    this.feature = AiFeature.stereoPhoto,
+    this.files = const {},
     this.runtimeFile,
     this.modelFile,
     this.runtimeVersion,
@@ -58,6 +73,15 @@ class AiGateResult {
     this.physicalMemory,
     required this.processors,
   });
+
+  /// The feature evaluated
+  final AiFeature feature;
+
+  /// The file of each component of the feature, by its id, when available
+  final Map<String, File> files;
+
+  /// The file of the component [id], when available
+  File? fileOf(String id) => files[id];
 
   /// Null when the AI features can run
   final AiGateReason? reason;
@@ -68,7 +92,8 @@ class AiGateResult {
   /// The AI platform of this computer, null on a system the AI features do not know
   final AiPlatform? platform;
 
-  /// The files the engine runs, when available
+  /// The files the engine runs, when available: ONNX Runtime, and the first model of the feature (the depth model of
+  /// the 3D photo)
   final File? runtimeFile;
   final File? modelFile;
 
@@ -165,8 +190,12 @@ class HardwareGate {
     AiHardwareFacts Function()? facts,
     Future<RuntimeLoad> Function(String path)? loadRuntime,
     this.minimumMemory = aiMinimumPhysicalMemory,
+    this.catalogue = aiComponents,
   }) : _facts = facts ?? AiHardwareFacts.ofThisComputer,
        _loadRuntime = loadRuntime ?? loadRuntimeInIsolate;
+
+  /// The catalogue of the components; another one only in the tests
+  final List<AiComponent> catalogue;
 
   final AiComponentFiles components;
   final AiHardwareFacts Function() _facts;
@@ -176,7 +205,9 @@ class HardwareGate {
   /// One try per file, by its path, size and date: a file installed again is tried again
   final _loads = <String, Future<RuntimeLoad>>{};
 
-  Future<AiGateResult> evaluate() async {
+  /// Whether [feature] can run here, with the files of its components; [graphicsMemory] (the dedicated memory of the
+  /// card, from the probe of lot C6) chooses between a component and its variant
+  Future<AiGateResult> evaluate({AiFeature feature = AiFeature.stereoPhoto, int? graphicsMemory}) async {
     final facts = _facts();
     final memory = facts.physicalMemory;
     final platform = aiPlatformOf(facts.abi);
@@ -185,6 +216,7 @@ class HardwareGate {
           reason: reason,
           message: message,
           platform: platform,
+          feature: feature,
           missing: missing,
           physicalMemory: memory,
           processors: facts.processors,
@@ -196,21 +228,34 @@ class HardwareGate {
     if (memory != null && memory < minimumMemory) {
       return refused(AiGateReason.memory);
     }
+    final needed = aiComponentsFor(platform, feature: feature, graphicsMemory: graphicsMemory, catalogue: catalogue);
+    if (needed.isEmpty) {
+      return refused(AiGateReason.notHere);
+    }
+    final incomplete = needed.where((component) => !component.isComplete).toList();
+    if (incomplete.isNotEmpty) {
+      return refused(AiGateReason.notInThisVersion, missing: incomplete);
+    }
 
-    final files = <AiComponentKind, File>{};
+    final files = <String, File>{};
     final missing = <AiComponent>[];
     var damaged = false;
-    for (final component in aiComponentsFor(platform)) {
+    for (final component in needed) {
       final file = await components.verifiedFile(component);
       if (file != null) {
-        files[component.kind] = file;
+        files[component.id] = file;
         continue;
       }
       missing.add(component);
       damaged = damaged || components.stateOf(component) == AiComponentState.damaged;
     }
-    final runtime = files[AiComponentKind.runtime];
-    final model = files[AiComponentKind.model];
+    File? first(AiComponentKind kind) {
+      final component = needed.where((component) => component.kind == kind).firstOrNull;
+      return component == null ? null : files[component.id];
+    }
+
+    final runtime = first(AiComponentKind.runtime);
+    final model = first(AiComponentKind.model);
     if (missing.isNotEmpty || runtime == null || model == null) {
       return refused(damaged ? AiGateReason.componentsDamaged : AiGateReason.componentsMissing, missing: missing);
     }
@@ -224,6 +269,8 @@ class HardwareGate {
     }
     return AiGateResult._(
       platform: platform,
+      feature: feature,
+      files: files,
       runtimeFile: runtime,
       modelFile: model,
       runtimeVersion: load.version,

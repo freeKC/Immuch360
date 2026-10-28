@@ -13,20 +13,48 @@
 // is written before any file goes (the file noted for the next start meanwhile), so that a removal that cannot be
 // written changes nothing and installed.json never gives as installed a file that is gone. A write that failed does
 // not stop the next one.
+//
+// Phases 2 and 3 (design-final 2026-10-27, section 7.1): an archive (an engine of several files) is unpacked into
+// engines/<id>/, each file checked against the catalogue (ai_component_archive.dart), and engines/ is one of the
+// folders Remove all empties. The free space of the drive is read before the first byte of an installation (a reader
+// given by the computers, none on the Quest): what the components take plus 10 %, 1 GiB at least.
+//
+// "Move the AI components" (section 7.4): every installed file is copied into the new folder and checked by its sum,
+// the new installed.json written there, the new folder kept by the caller (desktop_ai.json), and only then the folders
+// of the app in the old one are emptied. A file the system holds (a loaded DLL) stays, and the start pass of the next
+// start, which reads the new folder, empties what is left of the old one (movedFrom in installed.json). Refused while a
+// conversion or a download runs, into a folder that is not empty, and when the drive cannot take the copies.
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_archive.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _log = Logger('AiComponentsService');
+
+/// The free space of the drive of a folder, and the name of the drive
+class AiFreeSpace {
+  const AiFreeSpace({required this.free, required this.volume, this.total});
+
+  final int free;
+  final int? total;
+  final String volume;
+}
+
+/// Reads the free space of the drive of a folder that may not exist yet; null when it cannot
+typedef AiFreeSpaceReader = Future<AiFreeSpace?> Function(Directory folder);
+
+/// The space asked to install components that take [bytes]: those bytes and a margin of 10 %, 1 GiB at least
+int aiSpaceNeeded(int bytes) => bytes <= 0 ? 0 : bytes + max(bytes ~/ 10, 1024 * 1024 * 1024);
 
 /// The name of the folder of the components, in the folder of the app that holds it
 const aiComponentsFolderName = 'ai-components';
@@ -70,6 +98,49 @@ enum AiRemoveOutcome {
   writeFailed,
 }
 
+enum AiMoveOutcome {
+  /// Moved, nothing left in the old folder
+  moved,
+
+  /// Moved; a file the system holds in the old folder goes at the next start
+  movedNextStart,
+
+  /// A conversion or a download runs: nothing was moved
+  busy,
+
+  /// The new folder holds files already, or is inside the old one
+  notEmpty,
+
+  /// The new folder is the one in use
+  same,
+
+  /// The drive of the new folder cannot take the copies
+  notEnoughSpace,
+
+  /// A copy failed or did not have its sum, or the new folder could not be kept: the copies are gone, the old folder
+  /// is used as before
+  failed,
+}
+
+/// What a move did, with what the drive lacks or why it failed
+class AiMoveResult {
+  const AiMoveResult(this.outcome, {this.shortage, this.detail});
+
+  final AiMoveOutcome outcome;
+  final AiSpaceShortage? shortage;
+
+  /// Why it failed, in English
+  final String? detail;
+}
+
+/// What the removal of a group of features did, and the shared components it left to the other installed groups
+class AiGroupRemoval {
+  const AiGroupRemoval(this.outcome, this.kept);
+
+  final AiRemoveOutcome outcome;
+  final List<AiComponent> kept;
+}
+
 /// See the top of this file
 class AiComponentsService extends ChangeNotifier {
   AiComponentsService({
@@ -79,6 +150,8 @@ class AiComponentsService extends ChangeNotifier {
     bool Function()? inUse,
     DateTime Function()? now,
     @visibleForTesting Future<void> Function(FileSystemEntity entity)? delete,
+    this._setExecutable = setExecutableBit,
+    this.freeSpace,
   }) : _downloader = downloader ?? AiComponentDownloader(),
        inUse = inUse ?? _never,
        _now = now ?? DateTime.now,
@@ -89,6 +162,10 @@ class AiComponentsService extends ChangeNotifier {
   final List<AiComponent> catalogue;
   final DateTime Function() _now;
   final Future<void> Function(FileSystemEntity entity) _delete;
+  final AiSetExecutable _setExecutable;
+
+  /// Reads the free space of the drive of the components; null where it is not checked (the Quest)
+  final AiFreeSpaceReader? freeSpace;
 
   /// Whether a conversion runs, set by the engine: removal waits for its end
   bool Function() inUse;
@@ -104,7 +181,7 @@ class AiComponentsService extends ChangeNotifier {
   static const _licenses = 'licenses';
 
   /// The folders of the app in the folder of the components: Remove all touches nothing else, but installed.json
-  static const _ownFolders = ['runtime', 'models', _licenses, _tmp];
+  static const _ownFolders = ['runtime', 'models', 'engines', _licenses, _tmp];
 
   /// The source written in installed.json for a file that was already in place with the right sum
   static const alreadyOnDisk = 'already on disk';
@@ -121,9 +198,10 @@ class AiComponentsService extends ChangeNotifier {
   static int downloadBytesOf(Iterable<AiComponent> components) =>
       components.fold(0, (sum, component) => sum + (component.bytesToDownload ?? 0) + (component.notices?.size ?? 0));
 
-  /// The space [components] take once installed, from the catalogue, their notices included
+  /// The space [components] take once installed, from the catalogue, their notices included (the files of an
+  /// archive, not the archive)
   static int diskBytesOf(Iterable<AiComponent> components) =>
-      components.fold(0, (sum, component) => sum + (component.size ?? 0) + (component.notices?.size ?? 0));
+      components.fold(0, (sum, component) => sum + (component.installedSize ?? 0) + (component.notices?.size ?? 0));
 
   static Future<void>? _startPass;
 
@@ -133,15 +211,57 @@ class AiComponentsService extends ChangeNotifier {
     try {
       final root = await folder();
       final installed = await _Installed.read(root);
-      if (installed.pendingDeletes.isEmpty) {
-        return;
+      var changed = false;
+      if (installed.pendingDeletes.isNotEmpty) {
+        await _freePending(root, installed, _deleteEntity);
+        changed = true;
       }
-      await _freePending(root, installed, _deleteEntity);
-      await installed.write(root);
+      // What a move left in the old folder
+      final former = installed.rest[_movedFrom];
+      if (former is String && await _emptyFormer(Directory(former), _deleteEntity)) {
+        installed.rest.remove(_movedFrom);
+        changed = true;
+      }
+      if (changed) {
+        await installed.write(root);
+      }
     } catch (error, stack) {
       _log.warning('the files noted for deletion could not be freed', error, stack);
     }
   }();
+
+  /// The key of installed.json that names the folder the components were moved from, while files of the app are left
+  /// in it
+  static const _movedFrom = 'movedFrom';
+
+  /// Empties the folders of the app in [old], the folder a move left; true once nothing of the app is left there
+  static Future<bool> _emptyFormer(Directory old, Future<void> Function(FileSystemEntity entity) delete) async {
+    if (!old.existsSync()) {
+      return true;
+    }
+    final kept = <String>[];
+    for (final name in _ownFolders) {
+      if (FileSystemEntity.typeSync(p.join(old.path, name), followLinks: false) != FileSystemEntityType.notFound) {
+        kept.addAll(await _emptyIn(old, name, delete));
+      }
+    }
+    for (final name in [installedFileName, '$installedFileName.tmp']) {
+      final file = File(p.join(old.path, name));
+      if (FileSystemEntity.typeSync(file.path, followLinks: false) == FileSystemEntityType.file) {
+        await _tryDelete(file, delete);
+      }
+    }
+    if (kept.isNotEmpty) {
+      return false;
+    }
+    try {
+      // Only when empty: a file of the user stays, and so does the folder
+      await old.delete();
+    } on FileSystemException {
+      // Not empty
+    }
+    return true;
+  }
 
   @visibleForTesting
   static void resetStartPassForTests() => _startPass = null;
@@ -255,7 +375,18 @@ class AiComponentsService extends ChangeNotifier {
     }
   }
 
-  File _fileOf(AiComponent component) => File(p.joinAll([_root!.path, ...component.installPath.split('/')]));
+  /// The file the engines use: the file of the component, or the program of an archive
+  File _fileOf(AiComponent component) => File(p.joinAll([_root!.path, ...component.mainPath.split('/')]));
+
+  /// What the component installs: its file, or the folder of an archive
+  FileSystemEntity _installedOf(AiComponent component) {
+    final path = p.joinAll([_root!.path, ...component.installPath.split('/')]);
+    return component.isArchive ? Directory(path) : File(path);
+  }
+
+  /// The file of [archive] (a component of kind archive) under [path] of its folder
+  File _archiveFileOf(AiComponent archive, String path) =>
+      File(p.joinAll([_root!.path, ...archive.installPath.split('/'), ...path.split('/')]));
 
   File _partOf(AiComponent component) => File(p.join(_root!.path, _tmp, '${component.assetName}.part'));
 
@@ -283,11 +414,15 @@ class AiComponentsService extends ChangeNotifier {
     if (entry == null) {
       return AiComponentState.notInstalled;
     }
-    final file = _fileOf(component);
-    final size = file.existsSync() ? await file.length() : -1;
-    if (size != component.size) {
-      _log.warning('${component.id}: $size bytes on the disk, ${component.size} expected');
-      return AiComponentState.damaged;
+    final expected = component.isArchive
+        ? {for (final file in component.archiveFiles) _archiveFileOf(component, file.path): file.size}
+        : {_fileOf(component): component.size};
+    for (final MapEntry(key: file, value: wanted) in expected.entries) {
+      final size = file.existsSync() ? await file.length() : -1;
+      if (size != wanted) {
+        _log.warning('${component.id}: ${file.path} has $size bytes on the disk, $wanted expected');
+        return AiComponentState.damaged;
+      }
     }
     return AiComponentState.installed;
   }
@@ -376,11 +511,17 @@ class AiComponentsService extends ChangeNotifier {
       if (_installed.pendingDeletes.remove(component.installPath)) {
         await _save(undo: () => _installed.pendingDeletes.add(component.installPath));
       }
-      final target = _fileOf(component);
+      // An archive comes into tmp/, then its files are unpacked into their folder
+      final target = component.isArchive ? File(p.join(_root!.path, _tmp, component.assetName)) : _fileOf(component);
       String source;
-      if (await _hasSum(target, component)) {
+      if (component.isArchive ? await _hasArchiveFiles(component) : await _hasSum(target, component)) {
         source = alreadyOnDisk;
       } else {
+        // Refused before the first byte when the drive cannot hold it
+        final shortage = await spaceShortage([component]);
+        if (shortage != null) {
+          throw AiDownloadException(AiDownloadFailure.notEnoughSpace, '$shortage', shortage);
+        }
         var shown = -1;
         final uri = await _downloader.download(
           component,
@@ -397,6 +538,18 @@ class AiComponentsService extends ChangeNotifier {
           },
         );
         source = uri.toString();
+        if (component.isArchive) {
+          try {
+            await installAiArchive(
+              target,
+              _installedOf(component) as Directory,
+              component.archiveFiles,
+              setExecutable: _setExecutable,
+            );
+          } finally {
+            await _tryDelete(target, _delete);
+          }
+        }
       }
       // The notices of the libraries inside come with the library: without them, it is not installed (the library
       // stays in place and is kept by the next call when its sum is right)
@@ -441,6 +594,19 @@ class AiComponentsService extends ChangeNotifier {
   Future<AiComponentState> _stateAfterFailure(AiComponent component) async =>
       _root == null ? AiComponentState.notInstalled : _stateOnDisk(component);
 
+  /// Whether every file of the archive [component] is in its folder with its size and SHA-256
+  Future<bool> _hasArchiveFiles(AiComponent component) async {
+    for (final file in component.archiveFiles) {
+      final installed = _archiveFileOf(component, file.path);
+      if (!installed.existsSync() ||
+          await installed.length() != file.size ||
+          (await sha256.bind(installed.openRead()).first).toString() != file.sha256) {
+        return false;
+      }
+    }
+    return component.archiveFiles.isNotEmpty;
+  }
+
   /// Whether [file] is there with the size and the SHA-256 of [component]
   Future<bool> _hasSum(File file, AiComponent component) async {
     if (!file.existsSync() || await file.length() != component.size) {
@@ -457,6 +623,29 @@ class AiComponentsService extends ChangeNotifier {
     await temporary.rename(licence.path);
   }
 
+  /// What installing [components] lacks on the drive of the components, those already installed left out; null when
+  /// the space is there or cannot be read
+  Future<AiSpaceShortage?> spaceShortage(Iterable<AiComponent> components) async {
+    final reader = freeSpace;
+    if (reader == null) {
+      return null;
+    }
+    await load();
+    final missing = {
+      for (final component in components)
+        if (statusOf(component).state != AiComponentState.installed) component.id: component,
+    };
+    final needed = aiSpaceNeeded(diskBytesOf(missing.values));
+    if (needed == 0) {
+      return null;
+    }
+    final space = await reader(_root!);
+    if (space == null || space.free >= needed) {
+      return null;
+    }
+    return AiSpaceShortage(needed: needed, free: space.free, volume: space.volume);
+  }
+
   /// Stops the download of [component], if one runs; its .part stays for the next one
   void cancel(AiComponent component) => _cancels[component.id]?.cancel();
 
@@ -471,7 +660,7 @@ class AiComponentsService extends ChangeNotifier {
     final path = component.installPath;
     // Written first: the entry goes and the file is noted for the next start, then the file goes
     final entry = _installed.components.remove(component.id);
-    final noted = _fileOf(component).existsSync() && !_installed.pendingDeletes.contains(path);
+    final noted = _installedOf(component).existsSync() && !_installed.pendingDeletes.contains(path);
     if (noted) {
       _installed.pendingDeletes.add(path);
     }
@@ -490,7 +679,7 @@ class AiComponentsService extends ChangeNotifier {
         return AiRemoveOutcome.writeFailed;
       }
     }
-    final deferred = !await _tryDelete(_fileOf(component), _delete);
+    final deferred = !await _tryDelete(_installedOf(component), _delete);
     final notices = component.noticesDownload;
     for (final other in [
       _licenceIn(root, component),
@@ -506,6 +695,44 @@ class AiComponentsService extends ChangeNotifier {
     }
     _set(component, AiComponentStatus(deferred ? AiComponentState.removedNextStart : AiComponentState.notInstalled));
     return deferred ? AiRemoveOutcome.nextStart : AiRemoveOutcome.removed;
+  }
+
+  /// Whether every component of [group] on [platform] is installed
+  bool _isInstalled(AiGroupComponents group) =>
+      group.all.every((component) => statusOf(component).state == AiComponentState.installed);
+
+  /// The other groups of [platform], installed, that need [component] beside the group [besides]: a shared component
+  /// stays while one of them does (design-final 2026-10-27, section 7.1, point 7)
+  List<AiFeatureGroup> groupsUsing(AiPlatform platform, AiComponent component, {required AiFeatureGroup besides}) => [
+    for (final group in aiComponentGroupsFor(platform, catalogue: catalogue))
+      if (group.group != besides && group.all.any((other) => other.id == component.id) && _isInstalled(group))
+        group.group,
+  ];
+
+  /// Removes the components of [group] on [platform], those another installed group needs apart, which are given
+  /// back in [AiGroupRemoval.kept]. Refused while a conversion runs.
+  Future<AiGroupRemoval> removeGroup(AiPlatform platform, AiFeatureGroup group) async {
+    await load();
+    if (inUse()) {
+      return const AiGroupRemoval(AiRemoveOutcome.busy, []);
+    }
+    final components = aiComponentGroupsFor(
+      platform,
+      catalogue: catalogue,
+    ).where((entry) => entry.group == group).expand((entry) => entry.all).toList();
+    final kept = [
+      for (final component in components)
+        if (groupsUsing(platform, component, besides: group).isNotEmpty) component,
+    ];
+    var outcome = AiRemoveOutcome.removed;
+    for (final component in components.where((component) => !kept.contains(component))) {
+      final removed = await remove(component);
+      // The worst outcome is the one said: a write that failed, a refusal, then the space at the next start
+      if (removed.index > outcome.index) {
+        outcome = removed;
+      }
+    }
+    return AiGroupRemoval(outcome, kept);
   }
 
   /// Removes the folders of the app in the folder of the components: every component (those of other versions too),
@@ -545,8 +772,11 @@ class AiComponentsService extends ChangeNotifier {
       _log.warning('the folders of the components stay noted in installed.json until the next start');
     }
     for (final component in catalogue) {
+      final path = component.installPath;
       _statuses[component.id] = AiComponentStatus(
-        kept.contains(component.installPath) ? AiComponentState.removedNextStart : AiComponentState.notInstalled,
+        kept.any((left) => left == path || left.startsWith('$path/'))
+            ? AiComponentState.removedNextStart
+            : AiComponentState.notInstalled,
       );
     }
     _notify();
@@ -555,17 +785,23 @@ class AiComponentsService extends ChangeNotifier {
 
   /// Deletes the folder [name] of [root] and what it holds, a link as a link (never followed); returns the paths the
   /// system keeps ("/" between folders)
-  Future<List<String>> _empty(Directory root, String name) async {
+  Future<List<String>> _empty(Directory root, String name) => _emptyIn(root, name, _delete);
+
+  static Future<List<String>> _emptyIn(
+    Directory root,
+    String name,
+    Future<void> Function(FileSystemEntity entity) delete,
+  ) async {
     final path = p.join(root.path, name);
     if (FileSystemEntity.typeSync(path, followLinks: false) != FileSystemEntityType.directory) {
       // A file or a link where the app keeps a folder
       final entity = FileSystemEntity.isLinkSync(path) ? Link(path) : File(path);
-      return await _tryDelete(entity, _delete) ? const [] : [name];
+      return await _tryDelete(entity, delete) ? const [] : [name];
     }
     final kept = <String>[];
     final entities = await Directory(path).list(recursive: true, followLinks: false).toList();
     for (final entity in entities) {
-      if (entity is! Directory && !await _tryDelete(entity, _delete)) {
+      if (entity is! Directory && !await _tryDelete(entity, delete)) {
         kept.add(p.split(p.relative(entity.path, from: root.path)).join('/'));
       }
     }
@@ -580,6 +816,147 @@ class AiComponentsService extends ChangeNotifier {
       }
     }
     return kept;
+  }
+
+  /// Moves the components into [target], a folder empty or not made yet; [remember] keeps it as the folder of the
+  /// components (desktop_ai.json) once every copy is checked, before the old folder is emptied. [onProgress] gets the
+  /// bytes copied out of those to copy. See the top of this file.
+  Future<AiMoveResult> moveTo(
+    Directory target, {
+    required Future<void> Function(Directory folder) remember,
+    void Function(int done, int total)? onProgress,
+  }) async {
+    await load();
+    if (inUse() || _installs.isNotEmpty) {
+      return const AiMoveResult(AiMoveOutcome.busy);
+    }
+    final old = _root!;
+    final destination = Directory(p.normalize(target.absolute.path));
+    if (p.equals(destination.path, old.path)) {
+      return const AiMoveResult(AiMoveOutcome.same);
+    }
+    if (p.isWithin(old.path, destination.path) ||
+        p.isWithin(destination.path, old.path) ||
+        (destination.existsSync() && destination.listSync().isNotEmpty)) {
+      return const AiMoveResult(AiMoveOutcome.notEmpty);
+    }
+
+    // What to copy: each installed component, its notices and its licence, with the sums of the catalogue
+    final copies = <({String path, int? size, String? sha256})>[];
+    final kept = <String, Map<String, dynamic>>{};
+    for (final MapEntry(key: id, value: entry) in _installed.components.entries) {
+      final component = catalogue.where((component) => component.id == id).firstOrNull;
+      if (component == null) {
+        // A component of a newer version: its file goes along as it is
+        final path = entry['path'];
+        if (path is String && _entityIn(old, path) is File && File(p.join(old.path, path)).existsSync()) {
+          copies.add((path: path, size: null, sha256: null));
+          kept[id] = entry;
+        }
+        continue;
+      }
+      if (statusOf(component).state != AiComponentState.installed) {
+        continue;
+      }
+      if (component.isArchive) {
+        for (final file in component.archiveFiles) {
+          copies.add((path: '${component.installPath}/${file.path}', size: file.size, sha256: file.sha256));
+        }
+      } else {
+        copies.add((path: component.installPath, size: component.size, sha256: component.sha256));
+      }
+      final notices = component.noticesDownload;
+      if (notices != null && _fileOf(notices).existsSync()) {
+        copies.add((path: notices.installPath, size: notices.size, sha256: notices.sha256));
+      }
+      if (_licenceIn(old, component).existsSync()) {
+        copies.add((path: '$_licenses/${component.id}.txt', size: null, sha256: null));
+      }
+      kept[id] = entry;
+    }
+    final sizes = [
+      for (final copy in copies) copy.size ?? File(p.joinAll([old.path, ...copy.path.split('/')])).lengthSync(),
+    ];
+    final total = sizes.fold<int>(0, (sum, size) => sum + size);
+    final reader = freeSpace;
+    if (reader != null && total > 0) {
+      final space = await reader(destination);
+      final needed = aiSpaceNeeded(total);
+      if (space != null && space.free < needed) {
+        return AiMoveResult(
+          AiMoveOutcome.notEnoughSpace,
+          shortage: AiSpaceShortage(needed: needed, free: space.free, volume: space.volume),
+        );
+      }
+    }
+
+    final moved = _Installed(components: kept, rest: {..._installed.rest, _movedFrom: old.path});
+    try {
+      var done = 0;
+      onProgress?.call(0, total);
+      for (final copy in copies) {
+        done = await _copyChecked(old, destination, copy, done, total, onProgress);
+      }
+      await moved.write(destination);
+      await remember(destination);
+    } on Object catch (error) {
+      _log.warning('the components were not moved to ${destination.path}: $error');
+      try {
+        if (destination.existsSync()) {
+          await destination.delete(recursive: true);
+        }
+      } on FileSystemException catch (failure) {
+        _log.warning('the copies in ${destination.path} could not all be deleted: $failure');
+      }
+      return AiMoveResult(AiMoveOutcome.failed, detail: '$error');
+    }
+
+    // The new folder is the one now: the old one is emptied, what the system holds left to the next start
+    _root = destination;
+    _installed = moved;
+    final emptied = await _emptyFormer(old, _delete);
+    if (emptied) {
+      _installed.rest.remove(_movedFrom);
+      await _trySave();
+    }
+    _notify();
+    return AiMoveResult(emptied ? AiMoveOutcome.moved : AiMoveOutcome.movedNextStart);
+  }
+
+  /// Copies [copy] from [from] into [to], beside then renamed, its size and sum checked; returns the bytes copied so far
+  Future<int> _copyChecked(
+    Directory from,
+    Directory to,
+    ({String path, int? size, String? sha256}) copy,
+    int done,
+    int total,
+    void Function(int done, int total)? onProgress,
+  ) async {
+    final source = File(p.joinAll([from.path, ...copy.path.split('/')]));
+    final target = File(p.joinAll([to.path, ...copy.path.split('/')]));
+    await target.parent.create(recursive: true);
+    final temporary = File('${target.path}.tmp');
+    final digest = _DigestSink();
+    final hash = sha256.startChunkedConversion(digest);
+    final sink = temporary.openWrite();
+    var copied = 0;
+    try {
+      await for (final chunk in source.openRead()) {
+        hash.add(chunk);
+        sink.add(chunk);
+        copied += chunk.length;
+        onProgress?.call(done + copied, total);
+      }
+      await sink.flush();
+    } finally {
+      await sink.close();
+    }
+    hash.close();
+    if ((copy.size != null && copied != copy.size) || (copy.sha256 != null && digest.value.toString() != copy.sha256)) {
+      throw FileSystemException('the copy of ${copy.path} is not the file of the catalogue', target.path);
+    }
+    await temporary.rename(target.path);
+    return done + copied;
   }
 
   /// Cancels the download of [component] and waits for its end
@@ -639,6 +1016,18 @@ class AiComponentsService extends ChangeNotifier {
       return false;
     }
   }
+}
+
+class _DigestSink implements Sink<Digest> {
+  Digest? _value;
+
+  Digest get value => _value!;
+
+  @override
+  void add(Digest data) => _value = data;
+
+  @override
+  void close() {}
 }
 
 /// installed.json: the components installed, the files whose deletion waits for the next start, and the keys of a

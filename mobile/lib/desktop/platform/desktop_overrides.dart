@@ -4,6 +4,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/components/disk_space.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
@@ -53,8 +54,10 @@ List<Override> desktopOverrides() => [
   viewIntentHandlerProvider.overrideWith((ref) => DesktopOpenFilesHandler(ref)),
   // The other file of an X3 pair opened with the program is next to it on the disk, not in the local tables
   openedFileSiblingProvider.overrideWithValue(OpenedFiles.sibling),
-  // The AI components in a folder that does not roam with a Windows profile
+  // The AI components in a folder that does not roam with a Windows profile, the free space of its drive read before
+  // an installation
   aiComponentsFolderProvider.overrideWithValue(desktopAiComponentsFolder),
+  aiFreeSpaceProvider.overrideWithValue(systemFreeSpace),
   // The 3D conversions run with the engine on ONNX Runtime, the safe writer and the index of the folder library
   conversionToolsProvider.overrideWith(desktopConversionTools),
 ];

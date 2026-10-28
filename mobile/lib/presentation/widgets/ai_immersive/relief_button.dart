@@ -32,8 +32,13 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('AiReliefButton');
 
-/// The components the relief of the headset needs: the depth model of the Quest. Tests replace it.
-final reliefComponentsProvider = Provider<List<AiComponent>>((_) => aiComponentsFor(AiPlatform.questArm64));
+/// The components the relief of the headset needs: those of the 3D photo on the Quest, its depth model, and never one
+/// of a later feature (design-final 2026-10-27, section 7.1). Tests replace it.
+final reliefComponentsProvider = Provider<List<AiComponent>>((_) => reliefComponentsOf(aiComponents));
+
+/// The components of the 3D photo on the Quest in [catalogue]
+List<AiComponent> reliefComponentsOf(List<AiComponent> catalogue) =>
+    aiComponentsFor(AiPlatform.questArm64, feature: AiFeature.stereoPhoto, catalogue: catalogue);
 
 /// The key of the button, for the tests and the focus of a remote
 const aiReliefButtonKey = Key('ai_immersive_view_relief');
