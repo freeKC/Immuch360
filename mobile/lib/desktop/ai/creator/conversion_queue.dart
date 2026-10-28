@@ -394,6 +394,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     for (final flag in _flags.values) {
       flag.cancel();
     }
+    // Nothing waits for the graphics card any more: the next job of it asks the card at once
+    _gpuRecheck?.cancel();
+    _gpuRecheck = null;
+    _gpuWaits = false;
     _settleChained();
   }
 
