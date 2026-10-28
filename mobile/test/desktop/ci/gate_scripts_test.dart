@@ -92,6 +92,66 @@ const _signJob = r'''
         run: python .github/desktop/windows_sign.py bundle
 ''';
 
+/// The two jobs of the desktop workflow that build stable-diffusion.cpp (lot P2), as immuch360-desktop.yml has them
+const _sdcppJobs = r'''
+  sdcpp-windows:
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.sdcpp || needs.codegen.outputs.sdcpp_lock_changed == 'true' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python .github/desktop/ai/sdcpp_build.py pack --system windows-x64
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+  sdcpp-linux:
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.sdcpp || needs.codegen.outputs.sdcpp_lock_changed == 'true' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/ai/sdcpp_build.py pack --system linux-x64
+''';
+
+/// The release workflow with the with_sdcpp input, as immuch360-desktop-release.yml has it: passed to the build only,
+/// and the release job never running with it nor with sign_test
+const _releaseWithSdcpp = '''
+name: Release fixture
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+    inputs:
+      sign_test:
+        type: boolean
+      with_sdcpp:
+        type: boolean
+permissions: {}
+jobs:
+  build:
+    uses: ./.github/workflows/immuch360-desktop.yml
+    permissions:
+      contents: read
+    with:
+      sdcpp: \${{ inputs.with_sdcpp == true }}
+  release:
+    needs: build
+    if: \${{ !inputs.sign_test && !inputs.with_sdcpp }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/desktop_release.py
+''';
+
 const _mise = '''
 [tools]
 java = "21.0.2"
@@ -694,6 +754,45 @@ abstract class SyncEvents {
       expect(check(_goodWorkflow.replaceFirst('permissions:\n  contents: read\n', '')).exitCode, 1);
     });
 
+    test('the jobs of stable-diffusion.cpp: on the images of the desktop builds, when asked, never as a package', () {
+      const good = '$_goodWorkflow$_sdcppJobs';
+      final run = check(good);
+      expect(run.exitCode, 0, reason: '$run');
+      for (final (workflow, message) in [
+        (
+          good.replaceFirst('runs-on: ubuntu-22.04', 'runs-on: ubuntu-24.04'),
+          'the job sdcpp-linux runs on ubuntu-24.04: stable-diffusion.cpp builds on ubuntu-22.04',
+        ),
+        (
+          good.replaceFirst('runs-on: windows-2022\n    needs: codegen', 'runs-on: windows-2025\n    needs: codegen'),
+          'the job sdcpp-windows runs on windows-2025',
+        ),
+        (
+          good.replaceFirst(
+            "    if: \${{ inputs.sdcpp || needs.codegen.outputs.sdcpp_lock_changed == 'true' }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3",
+            '    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3',
+          ),
+          'the job sdcpp-linux runs on every event',
+        ),
+        (
+          good.replaceFirst(
+            '          path: dist/',
+            '          name: Immuch360-Desktop-sdcpp.zip\n          path: dist/',
+          ),
+          'the job sdcpp-windows uploads Immuch360-Desktop-sdcpp.zip',
+        ),
+        (
+          good.replaceFirst('  sdcpp-linux:', '  sdcpp-macos:'),
+          'the job sdcpp-macos builds stable-diffusion.cpp on no known',
+        ),
+      ]) {
+        expect(workflow, isNot(good));
+        final refused = check(workflow);
+        expect(refused.exitCode, 1, reason: '$refused');
+        expect(refused.output, contains(message));
+      }
+    });
+
     group('--release', () {
       ScriptRun release(String workflow) {
         final root = tree({'workflow.yml': workflow, 'mise.toml': _mise});
@@ -746,6 +845,32 @@ abstract class SyncEvents {
         expect(release(_releaseWorkflow.replaceFirst(RegExp(r'checkout@\w+ # v7.0.1'), 'checkout@v7')).exitCode, 1);
         expect(release(_releaseWorkflow.replaceFirst('persist-credentials: false', 'fetch-depth: 0')).exitCode, 1);
         expect(release(_releaseWorkflow.replaceFirst('permissions: {}\n', '')).exitCode, 1);
+      });
+
+      test('with_sdcpp goes to the build only, and the job that writes never runs with it nor with sign_test', () {
+        final run = release(_releaseWithSdcpp);
+        expect(run.exitCode, 0, reason: '$run');
+        for (final (workflow, message) in [
+          (
+            _releaseWithSdcpp.replaceFirst('sdcpp: \${{ inputs.with_sdcpp == true }}', 'sdcpp: true'),
+            'the job build passes sdcpp: true',
+          ),
+          (
+            _releaseWithSdcpp.replaceFirst(' && !inputs.with_sdcpp', ''),
+            'the job release writes the contents and may run with with_sdcpp',
+          ),
+          (
+            _releaseWithSdcpp.replaceFirst('!inputs.sign_test && ', ''),
+            'the job release writes the contents and may run with sign_test',
+          ),
+        ]) {
+          expect(workflow, isNot(_releaseWithSdcpp));
+          final refused = release(workflow);
+          expect(refused.exitCode, 1, reason: '$refused');
+          expect(refused.output, contains(message));
+        }
+        // Without the input, a release workflow is held to nothing more
+        expect(release(_releaseWorkflow).exitCode, 0);
       });
 
       test('lets the credentials of the signing account into the steps of sign-windows that run a command only', () {
