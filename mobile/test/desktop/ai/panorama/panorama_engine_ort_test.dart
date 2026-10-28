@@ -1,9 +1,9 @@
 // The ONNX Runtime side of the engine of the 360° panoramas (lot P3) on the tiny models of lot C1, which have the names,
 // types and ranks of MoGe-2 and MI-GAN (make_tiny_models.py): the models of a panorama opened in the isolate of the
-// step that needs them, refused when they are not the models asked for, and a whole panorama made with its steps sent
-// to isolates of their own as the app runs them, the generator and the upscaler fakes. Skipped without
-// IMMUCH360_ORT_LIB (see ort_for_tests.dart); the desktop workflow runs it on ONNX Runtime 1.31.0 and 1.23.2 under
-// Linux and 1.31.0 under Windows.
+// step that needs them, MI-GAN given the seam with the pixels of its holes, refused when they are not the models asked
+// for, and a whole panorama made with its steps sent to isolates of their own as the app runs them, the generator and
+// the upscaler fakes. Skipped without IMMUCH360_ORT_LIB (see ort_for_tests.dart); the desktop workflow runs it on ONNX
+// Runtime 1.31.0 and 1.23.2 under Linux and 1.31.0 under Windows.
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -55,6 +55,24 @@ void main() {
     );
     expect(filled, hasLength(96));
     inpaint.close();
+  }, skip: skip);
+
+  test('the MI-GAN of the seam keeps the pixels of its holes: no line of the mean colour along the band', () {
+    // The first run on the RTX 4060 saw bright lines along both edges of the band while its holes were painted with the
+    // mean colour of the known pixels: MI-GAN blends the first pixels of its fill with what lies under a hole
+    final inpaint = spec().openInpaint();
+    addTearDown(inpaint.close);
+    // Two pixels across, one known (10, 20, 30), one a hole holding the panorama's own (200, 100, 50)
+    final region = InpaintRegion(
+      width: 2,
+      height: 1,
+      rgb: Uint8List.fromList([10, 20, 30, 200, 100, 50]),
+      mask: Uint8List.fromList([255, 0]),
+    );
+    final (image, mask) = panoramaMiganInputsOf(inpaint, region);
+    expect(image, [10, 200, 20, 100, 30, 50], reason: 'planes of one colour, the hole as the panorama has it');
+    expect(mask, [255, 0]);
+    expect(inpaint.fill(region), hasLength(6));
   }, skip: skip);
 
   test('a model that is not the one asked for is refused: modelFailed', () {
