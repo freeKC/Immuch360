@@ -158,9 +158,16 @@ class TinyModels {
   int get mogeScaleDivisor => of('tiny_moge.onnx')['scaleDivisor'] as int;
 }
 
-/// [values] made of multiples of 1/32 below 2, so that float32 computes the tiny models exactly
-Float32List exactValues(int count, {int seed = 0}) =>
-    Float32List.fromList([for (var i = 0; i < count; i++) ((7 * i + seed) % 64) / 32]);
+/// [count] values made of multiples of 1/32 below 2, so that float32 computes the tiny models exactly. Written in
+/// place: a list of doubles copied after would leave one object per value behind (12.6 million for an image of 2048 x
+/// 2048, some 300 MB), which the collector of Dart gives back to the system while the memory tests measure.
+Float32List exactValues(int count, {int seed = 0}) {
+  final values = Float32List(count);
+  for (var i = 0; i < count; i++) {
+    values[i] = ((7 * i + seed) % 64) / 32;
+  }
+  return values;
+}
 
 /// [state] turned by [turns] columns to the right: what tiny_slow gives after [turns] turns
 Float32List turned(Float32List state, int size, int turns) {

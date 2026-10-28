@@ -324,7 +324,10 @@ void main() {
 
     // What the arena keeps after a pass is what the setting is for (MoGe: 2.25 GB at the peak with it, 1.35 without,
     // measure M2): a pass of the tiny MoGe on a large image leaves its intermediate tensors in the arena when it is
-    // kept, and gives them back when it is off. Measured on Linux, where malloc_trim shows what was really given back
+    // kept (some 190 MB), and gives them back when it is off. Measured on Linux, where malloc_trim shows what was
+    // really given back. Each measure has its own bound, so that memory the collector of Dart gives back meanwhile
+    // can neither hide an arena never turned off nor fail a right one: the input is made before, and nothing of a
+    // size is made in Dart during a pass (the scale only is read back)
     test('a session without the arena gives the memory of a pass back; one with the arena keeps it', () {
       const side = 2048;
       final inputs = {
@@ -350,7 +353,8 @@ void main() {
       final withoutArena = keptAfterAPass(false);
       // ignore: avoid_print
       print('kept after a pass of 2048 x 2048: ${withArena >> 20} MiB with the arena, ${withoutArena >> 20} without');
-      expect(withArena - withoutArena, greaterThan(64 * 1048576));
+      expect(withArena, greaterThan(128 * 1048576), reason: 'the arena keeps the memory of the pass');
+      expect(withoutArena, lessThan(32 * 1048576), reason: 'without the arena the pass gives its memory back');
     }, skip: Platform.isLinux ? null : 'reads what malloc_trim gives back, on Linux only');
 
     for (final arena in [true, false]) {
