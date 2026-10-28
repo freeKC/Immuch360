@@ -3,7 +3,9 @@
 // engine of the app (SceneEngine.onnx, its worker, its sessions kept from one photo to the next) on every photo of
 // IMMUCH360_AI_PHOTOS. Each scene is read back by the probe of the phase 1 (a flat photo), by the scanner of the
 // library (a scene), by the reader of the tail and a reader of its glb; its zone is not empty, its meshes keep the
-// bounds of the format; the originals are compared byte for byte after the run. The scenes, their .glb and a summary
+// bounds of the format and the whole scene the budget of the headset at the start (design-final 2026-10-27, section
+// 3.6: 60 000 vertices and 120 000 triangles, until the session MQ measures it); the originals are compared byte for
+// byte after the run. The scenes, their .glb and a summary
 // with the time of each step go to IMMUCH360_AI_WORK, for a look in a glTF viewer and the comparison with the measure
 // M2.
 //
@@ -35,6 +37,10 @@ import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.da
 import 'package:path/path.dart' as p;
 
 import 'scene/scene_test_support.dart';
+
+/// The budget of a scene at the start, a hypothesis until the measure MQ in the headset (design-final 2026-10-27, 3.6)
+const _startVertices = 60000;
+const _startTriangles = 120000;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -121,6 +127,8 @@ void main() {
         expect(xmp.safe!.lateral, greaterThan(0), reason: '$name: a zone');
         expect(xmp.request, isNotNull, reason: '$name: the request of the headset');
         final details = result.details! as SceneResultDetails;
+        expect(details.vertices, lessThanOrEqualTo(_startVertices), reason: '$name: the budget at the start');
+        expect(details.triangles, lessThanOrEqualTo(_startTriangles), reason: '$name: the budget at the start');
         final outcome = engine.lastOutcome!;
         final entry = {
           'photo': name,
@@ -132,7 +140,7 @@ void main() {
           'meshes': details.meshes,
           'vertices': details.vertices,
           'triangles': details.triangles,
-          'withinStartBudget': details.vertices <= 60000 && details.triangles <= 120000,
+          'withinStartBudget': details.vertices <= _startVertices && details.triangles <= _startTriangles,
           'gridStep': xmp.gridStep,
           'safe': xmp.safe!.toJson(),
           'scale': xmp.sceneScale,
