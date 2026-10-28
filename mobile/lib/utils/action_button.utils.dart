@@ -172,9 +172,9 @@ enum ActionButtonType {
       // 360°" once chosen. Nothing changes on the server, so it stays in the locked view too.
       ActionButtonType.viewAs360 => context.asset.isImage || context.asset.isVideo,
       // Immuch360 Desktop: "Make 3D (AI)" of a photo one of the types of the dialog takes (lib/desktop/ai/ui), which the
-      // button asks for each type: a flat photo, and a 360° photo once lot P1 registers the 3D version of a 360° photo.
-      // Absent while the AI features are off. Never in the locked folder, where nothing takes a photo out, nor in the
-      // trash.
+      // button asks for each type: a flat photo, and a 360° photo of a whole sphere that holds one eye for its 3D
+      // version (lot P1). Absent while the AI features are off. Never in the locked folder, where nothing takes a photo
+      // out, nor in the trash.
       ActionButtonType.makeImmersive =>
         CurrentPlatform.isDesktop &&
             !context.isInLockedView &&
