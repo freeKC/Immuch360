@@ -225,7 +225,8 @@ class _FakeApis {
 /// [text] of the catalogue with the two engines of P2 as they were before the lot wrote them: no size, no sum, no file
 /// (the run of a release that has no artifact of the CI yet, and the check that says them pending)
 String _enginesPending(String catalogue) {
-  var text = catalogue;
+  // A checkout on Windows may hold CRLF line ends; the script reads either
+  var text = catalogue.replaceAll('\r\n', '\n');
   for (final id in ['sd-cpp-vulkan-win-x64', 'sd-cpp-vulkan-linux-x64']) {
     final start = text.indexOf("  id: '$id',");
     final end = text.indexOf('\n);\n', start);
