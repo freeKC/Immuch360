@@ -5,12 +5,16 @@
 // drive that is not connected; on a version, "Made from salon.jpg" or "Original not found". A row opens its file the
 // way a file given to the program opens (open_files.dart), even before the next scan, and has "Delete this 3D photo"
 // or "Delete this version" (lot A5c), which asks first and deletes only a file that still carries our XMP with its
-// DerivativeId, never the original. What they find is in versions.provider.dart.
+// DerivativeId, never the original. A 3D scene also has "Export for other 3D apps (.glb)", on its row and on its own
+// "Made from" row (design-final 2026-10-27, section 8.2, point 5; scene_glb_export.dart). What they find is in
+// versions.provider.dart.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
@@ -133,17 +137,23 @@ class _VersionTile extends ConsumerWidget {
       subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
       onTap: available ? () => ref.read(versionOpenerProvider)(version.path) : null,
       trailing: available
-          ? IconButton(
-              key: ValueKey('desktop_version_delete_${version.asset.id}'),
-              tooltip: version.kind == ImmersiveKind.stereoPhoto
-                  ? t.ai_immersive_delete_result
-                  : t.ai_immersive_delete_version,
-              icon: const Icon(Icons.delete_outline_rounded),
-              onPressed: () async {
-                if (await confirmDeleteVersion(context, ref, version.path)) {
-                  ref.invalidate(photoVersionsProvider(original));
-                }
-              },
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (version.kind == ImmersiveKind.volumetricScene) _ExportGlbButton(version: version),
+                IconButton(
+                  key: ValueKey('desktop_version_delete_${version.asset.id}'),
+                  tooltip: version.kind == ImmersiveKind.stereoPhoto
+                      ? t.ai_immersive_delete_result
+                      : t.ai_immersive_delete_version,
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  onPressed: () async {
+                    if (await confirmDeleteVersion(context, ref, version.path, kind: version.kind)) {
+                      ref.invalidate(photoVersionsProvider(original));
+                    }
+                  },
+                ),
+              ],
             )
           : null,
     );
@@ -177,8 +187,26 @@ class _MadeFromTile extends ConsumerWidget {
           ].join(_separator),
           subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
           onTap: original != null && available ? () => ref.read(versionOpenerProvider)(original.path) : null,
+          trailing: self.kind == ImmersiveKind.volumetricScene && self.available
+              ? _ExportGlbButton(version: self)
+              : null,
         ),
       ],
     );
   }
+}
+
+/// "Export for other 3D apps (.glb)" of a 3D scene
+class _ExportGlbButton extends StatelessWidget {
+  const _ExportGlbButton({required this.version});
+
+  final VersionFile version;
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    key: ValueKey('desktop_version_export_${version.asset.id}'),
+    tooltip: context.t.ai_immersive_export_glb,
+    icon: const Icon(Icons.ios_share_rounded),
+    onPressed: () => unawaited(exportSceneGlb(context, version.path)),
+  );
 }

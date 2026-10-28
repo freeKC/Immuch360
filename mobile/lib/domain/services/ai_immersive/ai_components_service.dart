@@ -23,7 +23,9 @@
 // the new installed.json written there, the new folder kept by the caller (desktop_ai.json), and only then the folders
 // of the app in the old one are emptied. A file the system holds (a loaded DLL) stays, and the start pass of the next
 // start, which reads the new folder, empties what is left of the old one (movedFrom in installed.json). Refused while a
-// conversion or a download runs, into a folder that is not empty, and when the drive cannot take the copies.
+// conversion or a download runs, into a folder that is not empty, and when the drive cannot take the copies. While
+// the copies are made nothing is removed nor handed out (a job would load the old folder, emptied right after), and a
+// download asked meanwhile waits for the new folder.
 
 import 'dart:async';
 import 'dart:convert';
@@ -170,6 +172,9 @@ class AiComponentsService extends ChangeNotifier {
   /// Whether a conversion runs, set by the engine: removal waits for its end
   bool Function() inUse;
 
+  /// Whether the components are being moved to another folder (moveTo): the screens grey what would wait for it
+  bool get isMoving => _move != null;
+
   static bool _never() => false;
 
   /// A link goes as a link, never what it leads to
@@ -191,6 +196,9 @@ class AiComponentsService extends ChangeNotifier {
   Future<void>? _loaded;
   final _statuses = <String, AiComponentStatus>{};
   final _installs = <String, Future<void>>{};
+
+  /// The move under way, until the new folder is the one in use and the old one emptied
+  Future<void>? _move;
   final _cancels = <String, AiDownloadCancel>{};
   Future<void> _saving = Future.value();
 
@@ -459,7 +467,7 @@ class AiComponentsService extends ChangeNotifier {
   /// null otherwise, the state then says why
   Future<File?> verifiedFile(AiComponent component) async {
     await load();
-    if (_installs.containsKey(component.id)) {
+    if (_installs.containsKey(component.id) || _move != null) {
       return null;
     }
     final state = await _stateOnDisk(component);
@@ -493,6 +501,10 @@ class AiComponentsService extends ChangeNotifier {
 
   Future<void> _install(AiComponent component, AiDownloadCancel cancel) async {
     try {
+      // Into the new folder, once a move under way is done
+      for (var move = _move; move != null; move = _move) {
+        await move;
+      }
       await load();
       if (cancel.isCancelled) {
         throw const AiDownloadException(AiDownloadFailure.cancelled);
@@ -652,7 +664,7 @@ class AiComponentsService extends ChangeNotifier {
   /// Removes [component]: its file, its licence and its .part. Refused while a conversion runs.
   Future<AiRemoveOutcome> remove(AiComponent component) async {
     await load();
-    if (inUse()) {
+    if (inUse() || _move != null) {
       return AiRemoveOutcome.busy;
     }
     await _stop(component);
@@ -713,7 +725,7 @@ class AiComponentsService extends ChangeNotifier {
   /// back in [AiGroupRemoval.kept]. Refused while a conversion runs.
   Future<AiGroupRemoval> removeGroup(AiPlatform platform, AiFeatureGroup group) async {
     await load();
-    if (inUse()) {
+    if (inUse() || _move != null) {
       return const AiGroupRemoval(AiRemoveOutcome.busy, []);
     }
     final components = aiComponentGroupsFor(
@@ -740,7 +752,7 @@ class AiComponentsService extends ChangeNotifier {
   /// folder, and never what a link leads to. Refused while a conversion runs.
   Future<AiRemoveOutcome> removeAll() async {
     await load();
-    if (inUse()) {
+    if (inUse() || _move != null) {
       return AiRemoveOutcome.busy;
     }
     for (final component in catalogue) {
@@ -827,9 +839,26 @@ class AiComponentsService extends ChangeNotifier {
     void Function(int done, int total)? onProgress,
   }) async {
     await load();
-    if (inUse() || _installs.isNotEmpty) {
+    if (inUse() || _installs.isNotEmpty || _move != null) {
       return const AiMoveResult(AiMoveOutcome.busy);
     }
+    final moving = Completer<void>();
+    _move = moving.future;
+    _notify();
+    try {
+      return await _moveTo(target, remember: remember, onProgress: onProgress);
+    } finally {
+      _move = null;
+      moving.complete();
+      _notify();
+    }
+  }
+
+  Future<AiMoveResult> _moveTo(
+    Directory target, {
+    required Future<void> Function(Directory folder) remember,
+    void Function(int done, int total)? onProgress,
+  }) async {
     final old = _root!;
     final destination = Directory(p.normalize(target.absolute.path));
     if (p.equals(destination.path, old.path)) {

@@ -9,10 +9,12 @@
 // from here unless the user taps Download, which opens the install sheet.
 //
 // On a computer (design-final 2026-10-27, sections 7.1 and 9.1) the tile is given its system and shows the groups of
-// features: "3D photos: 116 MB", "3D scenes: 349 MB", and the 360° panoramas once their engine is in the catalogue.
-// Each component is listed under the first group that needs it; Download and Remove act on a whole group, and a
-// component another installed group needs stays, its row saying which ("Kept while 3D scenes use it"). The Quest keeps
-// the one list of phase 1.
+// features: "3D photos: 116 MB", "3D scenes: 378 MB", and the 360° panoramas once their engine is in the catalogue,
+// each with the size of all it needs, a shared component counted in each group (what its Download takes when nothing
+// is installed). Each component is listed under the first group that needs it; Download and Remove act on a whole
+// group, Remove shown only where it would remove something, and a component another installed group needs stays, its
+// row saying which ("Kept while 3D scenes use it"). While the components are being moved to another folder, nothing
+// is downloaded nor removed from here. The Quest keeps the one list of phase 1.
 
 import 'dart:async';
 
@@ -145,10 +147,13 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   Widget _group(BuildContext context, AiPlatform platform, AiGroupComponents group) {
     final t = context.t;
     final missing = aiMissingComponents(_service, group.all);
-    final removable = group.own.any((component) {
+    // What removeGroup takes: a component of the group installed (or damaged) that no other installed group keeps
+    final removable = group.all.any((component) {
       final state = _service.statusOf(component).state;
-      return state == AiComponentState.installed || state == AiComponentState.damaged;
+      return (state == AiComponentState.installed || state == AiComponentState.damaged) &&
+          _service.groupsUsing(platform, component, besides: group.group).isEmpty;
     });
+    final moving = _service.isMoving;
     final name = group.group.name;
     return Column(
       key: Key('ai_components_group_$name'),
@@ -162,7 +167,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
               if (missing.isNotEmpty && widget.canDownload)
                 TextButton(
                   key: Key('ai_components_group_download_$name'),
-                  onPressed: () => unawaited(_install(missing)),
+                  onPressed: moving ? null : () => unawaited(_install(missing)),
                   child: Text(t.ai_immersive_download),
                 ),
               if (removable)
@@ -170,7 +175,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
                   key: Key('ai_components_group_remove_$name'),
                   icon: const Icon(Icons.delete_outline_rounded),
                   tooltip: t.ai_immersive_remove,
-                  onPressed: _removing ? null : () => unawaited(_removeGroup(group.group)),
+                  onPressed: _removing || moving ? null : () => unawaited(_removeGroup(group.group)),
                 ),
             ],
           ),
@@ -198,6 +203,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
         final missing = groups == null ? aiMissingComponents(_service, widget.components) : const <AiComponent>[];
         final used = _spaceUsed;
         final hasFiles = used != null && used > 0;
+        final moving = _service.isMoving;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -212,7 +218,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
                 _ComponentRow(
                   component: component,
                   status: _service.statusOf(component),
-                  onRemove: _removing ? null : () => unawaited(_remove(component)),
+                  onRemove: _removing || moving ? null : () => unawaited(_remove(component)),
                 )
             else
               for (final group in groups) _group(context, platform!, group),
@@ -225,13 +231,13 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
                   if (missing.isNotEmpty && widget.canDownload)
                     TextButton(
                       key: const Key('ai_components_download'),
-                      onPressed: () => unawaited(_install(missing)),
+                      onPressed: moving ? null : () => unawaited(_install(missing)),
                       child: Text(t.ai_immersive_download),
                     ),
                   if (hasFiles)
                     TextButton(
                       key: const Key('ai_components_remove_all'),
-                      onPressed: _removing ? null : () => unawaited(_remove(null)),
+                      onPressed: _removing || moving ? null : () => unawaited(_remove(null)),
                       child: Text(t.ai_immersive_remove_all),
                     ),
                 ],
@@ -251,9 +257,10 @@ String aiFeatureGroupName(Translations t, AiFeatureGroup group) => switch (group
   AiFeatureGroup.panoramas => t.ai_immersive_feature_panoramas,
 };
 
-/// "3D scenes: 349 MB", the size of the components a group brings itself, from the catalogue
+/// "3D scenes: 378 MB", the size of all the components a group needs, from the catalogue: those it shares with another
+/// group counted too, what its Download takes when none is installed
 String aiFeatureGroupTitle(Translations t, AiGroupComponents group) {
-  final size = formatBytes(AiComponentsService.diskBytesOf(group.own));
+  final size = formatBytes(AiComponentsService.diskBytesOf(group.all));
   return switch (group.group) {
     AiFeatureGroup.photos => t.ai_immersive_components_photos(size: size),
     AiFeatureGroup.scenes => t.ai_immersive_components_scenes(size: size),

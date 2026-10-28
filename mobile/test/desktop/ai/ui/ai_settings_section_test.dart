@@ -2,7 +2,9 @@
 // conversions hide, the components stay listed so that their space can be freed); where the 3D photos go and Change;
 // what happens when a 3D photo with the same name exists, and the photos that already have one; the network folders
 // allowed, each taken back; the backup of the generated photos, which follows their album; the hardware line; and
-// the conversions stopped before the components are removed.
+// the conversions stopped before the components are removed. Phase 2: the components by group of features, "Move the
+// AI components" with its folder, its progress and what a refusal says, the folder of a drive not connected, and
+// "Also save a .glb copy".
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -23,21 +25,27 @@ import 'package:immich_mobile/desktop/ai/ui/ai_settings_section.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
 import '../fakes/fake_immersive_engine.dart';
 
 class _Pickers implements FilePickers {
   String? answer;
   final asked = <String?>[];
+  final confirms = <String?>[];
 
   @override
   Future<String?> folder({String? initialDirectory, String? confirmButtonText}) async {
     asked.add(initialDirectory);
+    confirms.add(confirmButtonText);
     return answer;
   }
 
@@ -108,6 +116,8 @@ void main() {
   late _Pickers pickers;
   late List<bool> switched;
   late List<bool> backups;
+  late String componentsFolder;
+  late AiComponentsMover mover;
 
   setUp(() {
     root = Directory.systemTemp.createTempSync('ai_settings_section');
@@ -116,6 +126,8 @@ void main() {
     filePickers = pickers;
     switched = [];
     backups = [];
+    componentsFolder = p.join(root.path, 'app', 'ai-components');
+    mover = (chosen, onProgress) async => const AiMoveResult(AiMoveOutcome.moved);
   });
 
   tearDown(() {
@@ -158,7 +170,12 @@ void main() {
     await tester.pump();
   }
 
-  Future<void> pump(WidgetTester tester, {bool enabled = true, bool? backsUp = false}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    bool enabled = true,
+    bool? backsUp = false,
+    AiComponentsService? service,
+  }) async {
     tester.view.physicalSize = const Size(1200, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -168,7 +185,9 @@ void main() {
         aiFeaturesEnabledProvider.overrideWith((ref) => enabled),
         aiFeaturesSwitchProvider.overrideWithValue((on) async => switched.add(on)),
         aiPlatformProvider.overrideWithValue(AiPlatform.linuxX64),
-        aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        aiComponentsServiceProvider.overrideWithValue(service ?? FakeAiComponentsService()),
+        aiComponentsFolderProvider.overrideWithValue(() async => Directory(componentsFolder)),
+        aiComponentsMoverProvider.overrideWithValue((chosen, onProgress) => mover(chosen, onProgress)),
         desktopAiSettingsStoreProvider.overrideWithValue(store),
         aiDefaultFolderProvider.overrideWith((ref) async => '/home/me/Downloads/Immuch360'),
         generatedAlbumBackupProvider.overrideWith((ref) => Stream.value(backsUp)),
@@ -203,7 +222,7 @@ void main() {
     expect(find.text('AI features'), findsOneWidget);
     expect(find.text('Off: no AI button anywhere, nothing downloaded'), findsOneWidget);
     expect(find.text('AI components'), findsOneWidget);
-    expect(find.byKey(const Key('ai_components_download')), findsOneWidget);
+    expect(find.byKey(const Key('ai_components_group_download_photos')), findsOneWidget);
     expect(find.text('Save to'), findsOneWidget);
 
     await tapIn(tester, find.byKey(const Key('ai_settings_enabled')));
@@ -213,7 +232,17 @@ void main() {
     await pump(tester, enabled: false);
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('ai_settings_enabled'))).value, isFalse);
     expect(find.text('AI components'), findsOneWidget);
-    expect(find.byKey(const Key('ai_components_download')), findsNothing, reason: 'off: nothing downloaded');
+    expect(
+      find.byKey(const Key('ai_components_group_download_photos')),
+      findsNothing,
+      reason: 'off: nothing downloaded',
+    );
+    expect(
+      find.byKey(const Key('ai_settings_move_components')),
+      findsOneWidget,
+      reason: 'it frees the drive, as Remove',
+    );
+    expect(find.byKey(const Key('ai_settings_export_glb')), findsNothing);
     expect(find.text('Save to'), findsNothing);
     expect(find.byKey(const Key('ai_settings_backup_generated')), findsNothing);
   });
@@ -378,6 +407,120 @@ void main() {
     ]);
     expect(held.disposed, isTrue, reason: 'the model let go once nothing ran');
     expect(photos.listSync().map((entry) => p.basename(entry.path)).toSet(), {'a.jpg', 'b.jpg'});
+  });
+
+  testWidgets('the components by group of features, each with the size of all it needs', (tester) async {
+    await pump(tester);
+    final photos = aiComponentsFor(AiPlatform.linuxX64);
+    final scenes = aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.scene);
+    expect(find.text('3D photos: ${formatBytes(AiComponentsService.diskBytesOf(photos))}'), findsOneWidget);
+    expect(find.text('3D scenes: ${formatBytes(AiComponentsService.diskBytesOf(scenes))}'), findsOneWidget);
+    expect(find.byKey(const Key('ai_components_group_download_scenes')), findsOneWidget);
+  });
+
+  testWidgets('"Move the AI components": its folder, the folder picked, the progress, then the new folder', (
+    tester,
+  ) async {
+    final moves = <String>[];
+    final release = Completer<AiMoveResult>();
+    void Function(int done, int total)? progress;
+    mover = (chosen, onProgress) {
+      moves.add(chosen);
+      progress = onProgress;
+      return release.future;
+    };
+    pickers.answer = p.join(root.path, 'drive-d');
+    await pump(tester);
+    expect(find.text('Move the AI components'), findsOneWidget);
+    expect(find.text(componentsFolder), findsOneWidget);
+
+    await tapIn(tester, find.byKey(const Key('ai_settings_move_components')));
+    expect(moves, [p.join(root.path, 'drive-d')]);
+    expect(pickers.asked.last, p.join(root.path, 'app'), reason: 'the dialog opens beside the folder in use');
+    expect(pickers.confirms.last, 'Move the AI components');
+
+    progress!(42, 100);
+    await tester.pump();
+    expect(find.text('Moving the AI components: 42%'), findsOneWidget);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_settings_move_components'))).onTap, isNull);
+
+    componentsFolder = p.join(root.path, 'drive-d', 'ai-components');
+    release.complete(const AiMoveResult(AiMoveOutcome.moved));
+    await settle(tester);
+    expect(find.text(componentsFolder), findsOneWidget);
+    expect(find.textContaining('Moving the AI components'), findsNothing);
+    expect(find.byType(SnackBar), findsNothing, reason: 'moved: the new folder says it');
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_settings_move_components'))).onTap, isNotNull);
+  });
+
+  testWidgets('a move that did not happen says why, closed without a folder nothing moves', (tester) async {
+    var result = const AiMoveResult(AiMoveOutcome.busy);
+    final moves = <String>[];
+    mover = (chosen, onProgress) async {
+      moves.add(chosen);
+      return result;
+    };
+    await pump(tester);
+
+    await tapIn(tester, find.byKey(const Key('ai_settings_move_components')));
+    expect(moves, isEmpty, reason: 'no folder picked');
+
+    pickers.answer = p.join(root.path, 'drive-d');
+    await tapIn(tester, find.byKey(const Key('ai_settings_move_components')));
+    expect(find.text('Not while a conversion or a download runs'), findsOneWidget);
+
+    result = const AiMoveResult(AiMoveOutcome.notEmpty);
+    await tapIn(tester, find.byKey(const Key('ai_settings_move_components')));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('Choose an empty folder'), findsOneWidget);
+    expect(find.text('Not while a conversion or a download runs'), findsNothing, reason: 'the new answer replaces it');
+    expect(moves, hasLength(2));
+  });
+
+  test('the words of a move that did not simply happen', () {
+    loadEnglishTexts();
+    final t = StaticTranslations.instance;
+    expect(aiMoveOutcomeText(t, const AiMoveResult(AiMoveOutcome.moved)), isNull);
+    expect(aiMoveOutcomeText(t, const AiMoveResult(AiMoveOutcome.same)), isNull);
+    expect(aiMoveOutcomeText(t, const AiMoveResult(AiMoveOutcome.movedNextStart)), 'Space freed at the next start');
+    expect(
+      aiMoveOutcomeText(
+        t,
+        const AiMoveResult(
+          AiMoveOutcome.notEnoughSpace,
+          shortage: AiSpaceShortage(needed: 2 << 30, free: 1 << 30, volume: 'D:'),
+        ),
+      ),
+      'Not enough space on D: (2.0 GiB needed, 1.0 GiB free)',
+    );
+    expect(
+      aiMoveOutcomeText(t, const AiMoveResult(AiMoveOutcome.failed, detail: 'the copy of models/x is not the file')),
+      'The AI components could not be moved: the copy of models/x is not the file',
+    );
+  });
+
+  testWidgets('the folder of the components on a drive not connected is said', (tester) async {
+    final unplugged = p.join(root.path, 'drive-e', 'Immuch360', 'ai-components');
+    await tester.runAsync(() => store.write(DesktopAiSettings(componentsFolder: unplugged)));
+    await pump(tester);
+    expect(find.text('The folder of the AI components cannot be reached: $unplugged'), findsOneWidget);
+
+    // Its drive back, the folder deleted by hand: a download makes it again, nothing to say
+    Directory(p.dirname(unplugged)).createSync(recursive: true);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pump(tester);
+    expect(find.textContaining('cannot be reached'), findsNothing);
+  });
+
+  testWidgets('"Also save a .glb copy": off by default, kept', (tester) async {
+    await pump(tester);
+    final tile = find.byKey(const Key('ai_settings_export_glb'));
+    expect(find.text('Also save a .glb copy'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(tile).value, isFalse);
+
+    await tapIn(tester, tile);
+    expect((await keptSettings(tester)).exportGlb, isTrue);
+    expect(tester.widget<SwitchListTile>(tile).value, isTrue);
   });
 
   test('a network folder allowed reads as a path', () {

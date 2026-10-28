@@ -26,6 +26,18 @@ class FakeAiComponentsService extends AiComponentsService {
   /// Whether a conversion runs: removals are refused while it does
   bool converting = false;
 
+  /// Whether the components are being moved: setting it tells the screens
+  bool get moving => _moving;
+  set moving(bool value) {
+    _moving = value;
+    notifyListeners();
+  }
+
+  var _moving = false;
+
+  @override
+  bool get isMoving => _moving;
+
   /// The ids given to install, cancel and remove, in order; null in [removals] for Remove all
   final installs = <String>[];
   final cancels = <String>[];

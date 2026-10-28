@@ -34,6 +34,7 @@ import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -463,14 +464,18 @@ class DestinationPlanner {
 
 /// A photo of the selection of the conversion dialog
 class DestinationJob {
-  const DestinationJob({required this.id, required this.original});
+  const DestinationJob({required this.id, required this.original, this.kind = ImmersiveKind.stereoPhoto});
 
   /// The id its job takes in the queue
   final String id;
   final OriginalLocation original;
 
-  /// The name its 3D photo takes
-  String get finalName => sbsTargetName(original.name);
+  /// What its job makes, the 3D photo by default: the folder is checked with the partial file of the name of that
+  /// version, which the job then takes over
+  final ImmersiveKind kind;
+
+  /// The name its version takes: "salon_3D_LRF_Full_SBS.jpg", "salon_scene3D.jpg"
+  String get finalName => versionTargetName(kind, original.name);
 }
 
 /// The destinations of a selection, from the opening of the conversion dialog to its launch or its closing. Its

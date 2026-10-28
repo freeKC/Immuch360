@@ -9,6 +9,13 @@
 // Delete this 3D photo asks first, then deletes only a file that still carries our XMP with its DerivativeId, read
 // again just before: a file of the user that took its name meanwhile is never deleted (design 4.2). The original is
 // never touched.
+//
+// Phases 2 and 3 (design-final 2026-10-27, section 9.1, point 3): under the honesty label of each type in the queue,
+// two sections once the graphics card has a job, "Processor" and "Graphics card"; per job its type ("2D to 3D scene",
+// "2D to 360° panorama", "360° to 3D 360°"), the step of a long job in words ("Estimating the geometry"), "step 12 of
+// 28, about 3 min left" (the time left counted down between two progresses), why a job still waits (the memory the
+// other lane holds), the part of a scene filled in, its .glb copy when one was asked for ("Also save a .glb copy"),
+// and "Delete this version" for a version that is not a 3D photo.
 
 import 'dart:async';
 import 'dart:io';
@@ -21,6 +28,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/local_only_message.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
@@ -107,17 +115,26 @@ Future<VersionDeleteOutcome> deleteOurVersion(String path) async {
   }
 }
 
-/// "Delete this 3D photo": asks first, then deletes the 3D photo at [path] only when it is still one of ours. True
-/// when it was deleted, and then left out of the versions of the details until the next scan; a refusal is said.
-Future<bool> confirmDeleteVersion(BuildContext context, WidgetRef ref, String path) async {
+/// "Delete this 3D photo", or "Delete this version" for a version of another [kind] (null for one whose kind the index
+/// does not tell): asks first, then deletes the file at [path] only when it is still one of ours. True when it was
+/// deleted, and then left out of the versions of the details until the next scan; a refusal is said.
+Future<bool> confirmDeleteVersion(
+  BuildContext context,
+  WidgetRef ref,
+  String path, {
+  required ImmersiveKind? kind,
+}) async {
   final t = context.t;
   final messenger = ScaffoldMessenger.maybeOf(context);
+  final photo = kind == ImmersiveKind.stereoPhoto;
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
       key: const Key('ai_delete_confirm'),
-      title: Text(t.ai_immersive_delete_result),
-      content: Text('${t.ai_immersive_delete_confirm}\n${p.basename(path)}'),
+      title: Text(photo ? t.ai_immersive_delete_result : t.ai_immersive_delete_version),
+      content: Text(
+        '${photo ? t.ai_immersive_delete_confirm : t.ai_immersive_delete_version_confirm}\n${p.basename(path)}',
+      ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(t.cancel)),
         FilledButton(
@@ -180,6 +197,61 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
   ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
 };
 
+/// What a job makes, in the words of the panel: "2D to 3D SBS", "2D to 3D scene", "2D to 360° panorama", "360° to 3D
+/// 360°"
+String conversionKindText(Translations t, ConversionKind kind) => switch (kind) {
+  ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
+  ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
+  ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
+  ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
+};
+
+/// The honesty label of the files of a kind, as the head of the panel says it
+String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind) {
+  ConversionKind.sbsFromPhoto || ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
+  ConversionKind.sceneFromPhoto => t.ai_immersive_scene_honesty,
+  ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
+};
+
+/// The step of a long job in words ("Estimating the geometry", "Filling hidden areas: 2 of 5"), null for the steps
+/// the state says well enough (those of the 3D photo)
+String? conversionStageText(Translations t, ConversionJob job) => switch (job.state) {
+  ConversionState.geometry => t.ai_immersive_stage_geometry,
+  ConversionState.layers => t.ai_immersive_stage_layers,
+  ConversionState.inpaint => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_inpaint(index: step, total: steps),
+    _ => null,
+  },
+  ConversionState.mesh => t.ai_immersive_stage_mesh,
+  ConversionState.loadingModels => t.ai_immersive_stage_loading_models,
+  ConversionState.generating => t.ai_immersive_stage_generating,
+  ConversionState.seam => t.ai_immersive_stage_seam,
+  ConversionState.upscale => t.ai_immersive_stage_upscale,
+  ConversionState.pasteBack => t.ai_immersive_stage_paste_back,
+  ConversionState.panoramaDepth => t.ai_immersive_stage_panorama_depth,
+  _ => null,
+};
+
+/// "step 12 of 28, about 3 min left" while a generation tells its steps, else "About 20 s left"; [left] is what is
+/// left of the job now, null when nothing tells it
+String? conversionProgressText(Translations t, ConversionJob job, Duration? left) {
+  if (left == null) {
+    return null;
+  }
+  final time = aiDurationText(t, left);
+  final (step, steps) = (job.step, job.steps);
+  // The regions of the hidden areas are counted in the words of their step
+  if (step != null && steps != null && job.state != ConversionState.inpaint) {
+    return t.ai_immersive_step_progress(step: step, steps: steps, time: time);
+  }
+  return t.ai_immersive_time_left(time: time);
+}
+
+/// Why a job waits while its lane is free
+String conversionWaitText(Translations t, ConversionWait wait) => switch (wait) {
+  ConversionWait.memory => t.ai_immersive_waiting_memory,
+};
+
 /// The words of a quality flag of a result
 String qualityFlagText(Translations t, ReliefQualityFlag flag) => switch (flag) {
   ReliefQualityFlag.lowRelief => t.ai_immersive_quality_flat,
@@ -203,6 +275,22 @@ class ConversionsPanel extends ConsumerWidget {
     final queue = ref.watch(conversionQueueProvider);
     final notifier = ref.read(conversionQueueProvider.notifier);
     final colors = Theme.of(context).colorScheme;
+    // The honesty label of each kind in the queue, the 3D photo's when it is empty
+    final labels = {
+      for (final job in queue.jobs) conversionKindLabel(t, job.kind),
+      if (queue.jobs.isEmpty) t.ai_immersive_relief_estimated,
+    };
+    // Two sections once the graphics card has a job, the latest first in each
+    final sections = queue.jobs.any((job) => job.kind.lane == ConversionLane.gpu);
+    List<Widget> rows(ConversionLane lane) => [
+      for (final job in queue.jobs.reversed)
+        if (job.kind.lane == lane) _JobRow(key: ValueKey('ai_job_${job.id}'), job: job),
+    ];
+    Widget header(ConversionLane lane, String title) => Padding(
+      key: Key('ai_conversions_lane_${lane.name}'),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Text(title, style: Theme.of(context).textTheme.titleSmall),
+    );
     return Column(
       key: const Key('ai_conversions_panel'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -220,10 +308,11 @@ class ConversionsPanel extends ConsumerWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(t.ai_immersive_relief_estimated, style: TextStyle(color: colors.onSurfaceVariant)),
-        ),
+        for (final label in labels)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(label, style: TextStyle(color: colors.onSurfaceVariant)),
+          ),
         if (queue.isPaused)
           Container(
             key: const Key('ai_conversions_paused'),
@@ -249,7 +338,18 @@ class ConversionsPanel extends ConsumerWidget {
         const Divider(height: 16),
         Expanded(
           child: ListView(
-            children: [for (final job in queue.jobs.reversed) _JobRow(key: ValueKey('ai_job_${job.id}'), job: job)],
+            children: sections
+                ? [
+                    if (rows(ConversionLane.gpu) case final gpu when gpu.isNotEmpty) ...[
+                      header(ConversionLane.gpu, t.ai_immersive_lane_gpu),
+                      ...gpu,
+                    ],
+                    if (rows(ConversionLane.cpu) case final cpu when cpu.isNotEmpty) ...[
+                      header(ConversionLane.cpu, t.ai_immersive_lane_cpu),
+                      ...cpu,
+                    ],
+                  ]
+                : [for (final job in queue.jobs.reversed) _JobRow(key: ValueKey('ai_job_${job.id}'), job: job)],
           ),
         ),
         const Divider(height: 1),
@@ -286,33 +386,107 @@ class ConversionsPanel extends ConsumerWidget {
   }
 }
 
-class _JobRow extends ConsumerWidget {
+/// When the rows read the time: the clock of the system; replaced in tests
+final conversionClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
+class _JobRow extends ConsumerStatefulWidget {
   const _JobRow({super.key, required this.job});
 
   final ConversionJob job;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_JobRow> createState() => _JobRowState();
+}
+
+class _JobRowState extends ConsumerState<_JobRow> {
+  /// The time left the queue told last, and when the row saw it: the row counts it down between two progresses (a
+  /// long step tells nothing until it ends)
+  Duration? _told;
+  DateTime? _toldAt;
+  Timer? _tick;
+
+  @override
+  void initState() {
+    super.initState();
+    _follow();
+  }
+
+  @override
+  void didUpdateWidget(_JobRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _follow();
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
+
+  void _follow() {
+    final job = widget.job;
+    if (job.remaining != _told || _toldAt == null) {
+      _told = job.remaining;
+      _toldAt = ref.read(conversionClockProvider)();
+    }
+    final counting = job.state.isActive && job.remaining != null;
+    if (counting) {
+      _tick ??= Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    } else {
+      _tick?.cancel();
+      _tick = null;
+    }
+  }
+
+  /// What is left of the job now
+  Duration? get _left {
+    final told = _told;
+    final at = _toldAt;
+    if (told == null || at == null) {
+      return null;
+    }
+    final left = told - ref.read(conversionClockProvider)().difference(at);
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final job = widget.job;
     final t = context.t;
     final colors = Theme.of(context).colorScheme;
     final info = ref.watch(conversionJobInfoProvider.select((infos) => infos[job.id]));
+    final glb = ref.watch(sceneGlbCopiesProvider.select((copies) => copies[job.id]));
     final notifier = ref.read(conversionQueueProvider.notifier);
     final asset = info?.asset;
     final written = job.writtenPath;
     final folder = written != null ? p.dirname(written) : job.target?.folder;
     final secondary = TextStyle(color: colors.onSurfaceVariant);
+    final stage = job.state.isActive ? conversionStageText(t, job) : null;
+    final progress = job.state.isActive ? conversionProgressText(t, job, _left) : null;
+    final hidden = switch (job.details) {
+      SceneResultDetails(:final hiddenFraction) when hiddenFraction > 0 => hiddenFraction,
+      _ => null,
+    };
+    final photo = job.kind.output == ImmersiveKind.stereoPhoto;
     final lines = <Widget>[
       Text(
         [
-          t.ai_immersive_job_type,
+          conversionKindText(t, job.kind),
           if (job.batchSize > 1) t.ai_immersive_progress_count(index: job.batchIndex, total: job.batchSize),
         ].join('  •  '),
         style: secondary,
       ),
-      Text(conversionStateText(t, job), key: const Key('ai_job_state')),
+      Text([conversionStateText(t, job), ?stage].join('  •  '), key: const Key('ai_job_state')),
+      if (job.state == ConversionState.waiting && job.waitingFor != null)
+        Text(conversionWaitText(t, job.waitingFor!), key: const Key('ai_job_waiting'), style: secondary),
       if (job.state.isActive) ...[
         const SizedBox(height: 4),
         LinearProgressIndicator(value: job.phase == ConversionPhase.preparing ? null : job.progress),
+        if (progress != null) Text(progress, key: const Key('ai_job_time_left'), style: secondary),
       ],
       if (job.skipReason case final reason?)
         Text(conversionSkipText(t, reason, name: job.target?.fileName), style: secondary),
@@ -326,8 +500,18 @@ class _JobRow extends ConsumerWidget {
       ],
       if (job.state == ConversionState.done) ...[
         if (job.reduced && job.eyeWidth != null) Text(t.ai_immersive_reduced(width: job.eyeWidth!), style: secondary),
-        for (final flag in job.qualityFlags) Text(qualityFlagText(t, flag), style: secondary),
+        if (hidden != null) Text(t.ai_immersive_hidden_filled(percent: (hidden * 100).round()), style: secondary),
+        for (final flag in job.qualityFlags)
+          // The share filled in says it better than the flag
+          if (flag != ReliefQualityFlag.hiddenAreas || hidden == null) Text(qualityFlagText(t, flag), style: secondary),
         if (info?.serverEdits ?? false) Text(t.ai_immersive_server_edits_ignored, style: secondary),
+        if (glb?.path case final copy?) SelectableText(copy, key: const Key('ai_job_glb'), style: secondary),
+        if (glb?.error case final error?)
+          Text(
+            sceneGlbProblemText(t, error),
+            key: const Key('ai_job_glb'),
+            style: TextStyle(color: colors.error),
+          ),
         if (localOnlyMessage(t, isNetwork: info?.isNetwork ?? false) case final message?)
           Text(message, key: const Key('ai_job_local_only'), style: secondary),
       ],
@@ -359,11 +543,11 @@ class _JobRow extends ConsumerWidget {
         TextButton(
           key: const Key('ai_job_delete'),
           onPressed: () async {
-            if (await confirmDeleteVersion(context, ref, written)) {
+            if (await confirmDeleteVersion(context, ref, written, kind: job.kind.output)) {
               notifier.remove(job.id);
             }
           },
-          child: Text(t.ai_immersive_delete_result),
+          child: Text(photo ? t.ai_immersive_delete_result : t.ai_immersive_delete_version),
         ),
       ],
     ];

@@ -6,6 +6,12 @@
 // follows the album "Immuch360 AI versions" of the backup pages, design 4.3), and what this computer has: its
 // logical processors, its memory, its GPU, which phase 1 does not use yet.
 //
+// Phases 2 and 3 (design-final 2026-10-27, sections 7.4 and 9.1, point 5): the components grouped by feature ("3D
+// photos", "3D scenes"), each group with its size, Download and Remove; "Move the AI components" to a folder the user
+// picks, another drive, with its folder, its progress and what a refusal means, and the folder said when its drive is
+// not connected; "Also save a .glb copy" of each 3D scene, off by default. The line of the graphics card and the
+// integrated graphics are lot C6.
+//
 // The settings of the conversions live in desktop_ai.json (DesktopAiSettings); the switch of the AI features is a
 // setting shared with the Meta Quest (AiImmersiveConfig).
 
@@ -14,6 +20,7 @@ import 'dart:ffi' show Abi;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/network_root_consent.dart';
@@ -25,12 +32,15 @@ import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 
 final _log = Logger('AiSettingsSection');
 
@@ -74,6 +84,50 @@ Future<void> stopConversionsForRemoval(WidgetRef ref, {Duration wait = const Dur
   await engine.release();
 }
 
+/// Moves the AI components into the folder [chosen] the user picked, [onProgress] getting the bytes copied and those to
+/// copy (moveAiComponents)
+typedef AiComponentsMover = Future<AiMoveResult> Function(String chosen, void Function(int done, int total) onProgress);
+
+/// The move of the app; replaced in tests. An engine kept between two jobs holds ONNX Runtime: it is let go first, so
+/// that the old folder empties now rather than at the next start.
+final aiComponentsMoverProvider = Provider<AiComponentsMover>(
+  (ref) => (chosen, onProgress) async {
+    if (ref.read(conversionQueueProvider).current == null) {
+      await ref.read(desktopAiEngineProvider).release();
+    }
+    return moveAiComponents(
+      ref.read(aiComponentsServiceProvider),
+      chosen,
+      store: ref.read(desktopAiSettingsStoreProvider),
+      onProgress: onProgress,
+    );
+  },
+);
+
+/// The folder of the AI components now, null when it cannot be told
+final aiComponentsFolderPathProvider = FutureProvider.autoDispose<String?>((ref) async {
+  try {
+    return (await ref.watch(aiComponentsFolderProvider)()).path;
+  } catch (error) {
+    _log.warning('The folder of the AI components is not known: $error');
+    return null;
+  }
+});
+
+/// What a move of the components says when it did not simply move them; null when it did
+String? aiMoveOutcomeText(Translations t, AiMoveResult result) => switch (result.outcome) {
+  AiMoveOutcome.moved || AiMoveOutcome.same => null,
+  AiMoveOutcome.movedNextStart => t.ai_immersive_removed_next_start,
+  AiMoveOutcome.busy => t.ai_immersive_move_busy,
+  AiMoveOutcome.notEmpty => t.ai_immersive_move_not_empty,
+  AiMoveOutcome.notEnoughSpace => t.ai_immersive_move_no_space(
+    drive: result.shortage?.volume ?? '',
+    needed: formatBytes(result.shortage?.needed ?? 0),
+    free: formatBytes(result.shortage?.free ?? 0),
+  ),
+  AiMoveOutcome.failed => t.ai_immersive_move_failed(reason: result.detail ?? ''),
+};
+
 /// How a root or a volume allowed reads: "//nas/photos/2024" for "net-//nas/photos:/2024"
 String networkRootLabel(String key) {
   var label = key;
@@ -116,13 +170,14 @@ class DesktopAiSettingsSection extends ConsumerWidget {
         ),
         // The components stay listed with the features off, so that their space can still be freed; nothing is
         // downloaded then
-        if (platform != null)
+        if (platform != null) ...[
           AiComponentsTile(
-            components: aiComponentsFor(platform),
+            platform: platform,
             onCancelConversions: () => stopConversionsForRemoval(ref),
             canDownload: enabled,
-          )
-        else
+          ),
+          const _MoveComponents(),
+        ] else
           ListTile(title: Text(t.ai_immersive_unavailable_system, style: secondary)),
         if (enabled && settings != null) ...[
           _SaveTo(settings: settings),
@@ -132,6 +187,12 @@ class DesktopAiSettingsSection extends ConsumerWidget {
             value: settings.skipExisting,
             title: Text(t.ai_immersive_existing_skip),
             onChanged: (on) => unawaited(_update(ref, (kept) => kept.copyWith(skipExisting: on))),
+          ),
+          SwitchListTile(
+            key: const Key('ai_settings_export_glb'),
+            value: settings.exportGlb,
+            title: Text(t.ai_immersive_export_glb_setting),
+            onChanged: (on) => unawaited(_update(ref, (kept) => kept.copyWith(exportGlb: on))),
           ),
           if (settings.networkRootsAllowed.isNotEmpty) _NetworkRoots(roots: settings.networkRootsAllowed),
           const _BackupGenerated(),
@@ -284,6 +345,98 @@ class _NetworkRoots extends ConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// "Move the AI components": the folder they are in, then the folder the user picks, the copies with their progress,
+/// and a message when the move did not simply happen. Offered with the AI features off too, as Remove is: it frees the
+/// drive of the app.
+class _MoveComponents extends ConsumerStatefulWidget {
+  const _MoveComponents();
+
+  @override
+  ConsumerState<_MoveComponents> createState() => _MoveComponentsState();
+}
+
+class _MoveComponentsState extends ConsumerState<_MoveComponents> {
+  /// From 0 to 1 while the components are being moved, null otherwise
+  double? _progress;
+
+  Future<void> _move() async {
+    final t = context.t;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final current = ref.read(aiComponentsFolderPathProvider).valueOrNull;
+    final String? picked;
+    try {
+      picked = await filePickers.folder(
+        initialDirectory: current == null ? null : p.dirname(current),
+        confirmButtonText: t.ai_immersive_move_components,
+      );
+    } on Exception catch (error) {
+      _log.warning('The folder dialog failed: $error');
+      return;
+    }
+    if (picked == null || !mounted) {
+      return;
+    }
+    setState(() => _progress = 0);
+    AiMoveResult result;
+    try {
+      result = await ref.read(aiComponentsMoverProvider)(picked, (done, total) {
+        if (mounted) {
+          setState(() => _progress = total <= 0 ? 1 : done / total);
+        }
+      });
+    } catch (error, stack) {
+      _log.warning('The AI components were not moved', error, stack);
+      result = AiMoveResult(AiMoveOutcome.failed, detail: '$error');
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _progress = null);
+    // The components are read from their new folder now
+    ref.invalidate(aiComponentsFolderPathProvider);
+    ref.invalidate(aiComponentsFolderMissingProvider);
+    ref.invalidate(aiGateResultForProvider);
+    if (aiMoveOutcomeText(t, result) case final message?) {
+      // A new answer takes the place of the one before
+      messenger
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final colors = Theme.of(context).colorScheme;
+    final folder = ref.watch(aiComponentsFolderPathProvider).valueOrNull;
+    final unreachable = ref.watch(aiComponentsFolderMissingProvider).valueOrNull;
+    final progress = _progress;
+    return ListTile(
+      key: const Key('ai_settings_move_components'),
+      leading: const Icon(Icons.drive_file_move_outline),
+      title: Text(t.ai_immersive_move_components),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (folder != null) Text(folder, key: const Key('ai_settings_components_folder')),
+          if (unreachable != null)
+            Text(
+              t.ai_immersive_components_folder_missing(folder: unreachable),
+              key: const Key('ai_settings_components_folder_missing'),
+              style: TextStyle(color: colors.error),
+            ),
+          if (progress != null) ...[
+            const SizedBox(height: 4),
+            LinearProgressIndicator(value: progress),
+            Text(t.ai_immersive_moving_components(percent: (progress * 100).floor())),
+          ],
+        ],
+      ),
+      onTap: progress == null ? () => unawaited(_move()) : null,
     );
   }
 }
