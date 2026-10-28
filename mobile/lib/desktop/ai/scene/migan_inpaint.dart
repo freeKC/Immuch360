@@ -6,10 +6,12 @@
 // pipeline crops around the mask, brings it to 512 and pastes it back.
 //
 // M2 saw the pixels under a hole leak into the first three pixels of its fill (the pipeline blends with a dilated,
-// blurred mask): for the bands of a scene every hole is painted first with the mean colour of the known pixels, so that
-// nothing of what the hole hides comes through. The seam of a panorama hides nothing but the seam: its holes keep their
-// pixels (paintHoles false), so that the blend at the edge of the band meets the panorama around it rather than a line
-// of that mean colour (lot P3). Only the holes are taken from the result.
+// blurred mask), and measured MI-GAN on the bands of a scene with every hole painted first with the mean colour of the
+// known pixels, so that nothing of the near layer the hole hides came through; it gave those bands to LaMa all the
+// same. That paint is paintHoles, true by default as S1 wrote it, which nothing in the app asks for any more. The seam
+// of a panorama, the only user of this class in the app, hides nothing but the seam: its holes keep their pixels
+// (paintHoles false), so that the blend at the edge of the band meets the panorama around it rather than a line of that
+// mean colour (lot P3). Only the holes are taken from the result.
 
 import 'dart:typed_data';
 
@@ -66,8 +68,8 @@ class OrtMiganInpaint implements InpaintBackend {
   final OrtSession Function() session;
   final OrtRunOptions? Function()? options;
 
-  /// Whether the holes are painted with the mean colour of the known pixels before the run: true for the bands of a
-  /// scene, false for the seam of a panorama
+  /// Whether the holes are painted with the mean colour of the known pixels before the run: true as M2 measured MI-GAN
+  /// on the bands of a scene, false for the seam of a panorama (see the top of this file)
   final bool paintHoles;
 
   @override
