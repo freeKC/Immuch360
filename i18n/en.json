@@ -579,6 +579,8 @@
   "ai_immersive_existing_new": "Make a new version",
   "ai_immersive_existing_replace": "Replace",
   "ai_immersive_existing_skip": "Skip photos that already have a 3D version",
+  "ai_immersive_existing_skip_version": "Skip photos that already have one",
+  "ai_immersive_existing_version": "If a version exists",
   "ai_immersive_exists": "{name} already exists",
   "ai_immersive_explore_scene": "Explore the 3D scene",
   "ai_immersive_export_glb": "Export for other 3D apps (.glb)",
