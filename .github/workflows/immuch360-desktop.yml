@@ -313,8 +313,8 @@ jobs:
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
       # since a process keeps the first ONNX Runtime it loads: the depth model, the tiny models of several inputs and
       # outputs, and the stop of a run from another isolate (lot C1); then test/desktop/ai/scene, the engine of the 3D
-      # scenes on the tiny models of MoGe-2 and LaMa (lot S1), whose scenes the next step validates. The archives are
-      # checked by their SHA-256 and cached
+      # scenes on the tiny models of MoGe-2 and LaMa (lot S1), whose scenes the next step validates, and the engine of
+      # the 360° panoramas on those of MoGe-2 and MI-GAN (lot P3). The archives are checked by their SHA-256 and cached
       - name: ONNX Runtime archives cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -339,7 +339,8 @@ jobs:
             echo "ONNX Runtime $version"
             IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
               IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-$version" \
-              mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene
+              mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
+                test/desktop/ai/panorama/panorama_engine_ort_test.dart
           done
 
       # The glTF-Validator of Khronos on the 3D scenes of phase 2 (lot S1; design-final 2026-10-27, section 8.2): the
