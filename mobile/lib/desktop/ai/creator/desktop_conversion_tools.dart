@@ -542,16 +542,24 @@ PanoramaSetup panoramaSetupOf(AiGateResult found) {
   );
 }
 
-/// The code a panorama the gate refused for [reason] fails with
+/// The code a panorama the gate refused for [reason] fails with, its message being the name of the reason (that of
+/// ONNX Runtime when it does not load): a card the gate finds wanting is gpuUnavailable, a shortage of memory
+/// outOfMemory, a component missing or damaged componentsMissing; a feature this computer or this version does not
+/// offer is told by its reason after "The AI model failed", as the other engines tell it. Every reason is placed, so
+/// that a new one has to be.
 ImmersiveErrorCode panoramaRefusalCode(AiGateReason? reason) => switch (reason) {
   AiGateReason.gpuNone ||
   AiGateReason.gpuNoAnswer ||
   AiGateReason.gpuIntegrated ||
   AiGateReason.gpuTooSmall ||
-  AiGateReason.notYetOnMac ||
-  AiGateReason.panoramaMemory => ImmersiveErrorCode.gpuUnavailable,
-  AiGateReason.runtimeFailed => ImmersiveErrorCode.modelFailed,
-  _ => ImmersiveErrorCode.componentsMissing,
+  AiGateReason.notYetOnMac => ImmersiveErrorCode.gpuUnavailable,
+  AiGateReason.memory || AiGateReason.panoramaMemory => ImmersiveErrorCode.outOfMemory,
+  AiGateReason.componentsMissing || AiGateReason.componentsDamaged || null => ImmersiveErrorCode.componentsMissing,
+  AiGateReason.runtimeFailed ||
+  AiGateReason.system ||
+  AiGateReason.processor ||
+  AiGateReason.notHere ||
+  AiGateReason.notInThisVersion => ImmersiveErrorCode.modelFailed,
 };
 
 /// The engine of the 360° panoramas (lot P3), made for each job from what the gate finds then: the components of the
