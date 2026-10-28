@@ -1024,6 +1024,34 @@ void main() {
       },
     );
 
+    test('a panorama of ours received as bytes (server, share) asked by itself is a version of its photo too', () async {
+      final request = photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto);
+      final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
+      final made = queue().add([request], kind: ConversionKind.panoramaFromPhoto).single;
+      await allEnded();
+      final panoramaBytes = File(job(made).writtenPath!).readAsBytesSync();
+      final panoramaXmp = ImmersiveXmp.findIn(panoramaBytes)! as PanoramaXmp;
+
+      final id = queue().add([
+        ConversionRequest(
+          source: _BytesSource('salon_360.jpg', panoramaBytes),
+          target: ConversionTarget.inFolder(photos, 'salon_360.jpg', kind: ConversionKind.stereoPanoramaFromPanorama),
+        ),
+      ], kind: ConversionKind.stereoPanoramaFromPanorama).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.done);
+      final spec = stereo.jobs.single;
+      expect(spec.source.bytes, isNotNull, reason: 'the panorama read from its bytes');
+      expect(spec.photo?.name, 'salon.jpg');
+      expect(spec.original.sha1, _sumOf(bytes));
+      expect(spec.parent?.derivativeId, panoramaXmp.derivativeId);
+      final written = ImmersiveXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())! as StereoPanoramaXmp;
+      expect(written.sourceName, 'salon.jpg');
+      expect(written.parentDerivativeId, panoramaXmp.derivativeId);
+      expect(written.origin, ImmersiveOrigin.generatedContent, reason: 'its world was invented by the generator');
+    });
+
     test('a 360° photo of the user asked by itself stays its own original', () async {
       final request = photo('PANO_0001.jpg', kind: ConversionKind.stereoPanoramaFromPanorama);
       final bytes = File(p.join(photos, 'PANO_0001.jpg')).readAsBytesSync();
@@ -1191,6 +1219,32 @@ void main() {
 }
 
 /// The models of a panorama on the processor for the engine of P3 run inline: no MoGe-2 (the 65° of M3), the fake filling
+/// A picture known only by its bytes, as a photo of the server or a file of a share reaches the queue
+class _BytesSource implements ConversionSource {
+  _BytesSource(this.name, this.bytes);
+
+  @override
+  final String name;
+  final Uint8List bytes;
+
+  @override
+  String? get folder => null;
+
+  @override
+  ImmersiveExif get exif => const ImmersiveExif();
+
+  @override
+  Future<ImmersiveSource> prepare(NativeCancelFlag cancel) async => ImmersiveSource(
+    name: name,
+    size: bytes.length,
+    sha1: base64.encode(crypto.sha1.convert(bytes).bytes),
+    bytes: bytes,
+  );
+
+  @override
+  Future<void> release() async {}
+}
+
 class _InlineModels implements PanoramaModelsSpec {
   const _InlineModels();
 
