@@ -304,7 +304,7 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "09d519180f443ec9de9fac8fcae9f88a6804e8fe",
+    "blob": "a1db3fb7f9cacd6fac5b2423b19672433391a382",
     "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefHost.kt": {
