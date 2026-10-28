@@ -517,6 +517,10 @@ abstract final class PanoV1 {
   /// The band of the seam filled in after a roll of half a turn, in pixels of the control frame
   static const seamBand = 128;
 
+  /// The flag seam is raised when, once filled in, the jump from the last column to the first stays above this many
+  /// times the mean jump between two neighbouring columns (M3, section 9, point 8: 2.2 to 4.3 before any filling)
+  static const seamRatio = 2.0;
+
   /// The edge of the photo pasted back is blended over this fraction of its size
   static const pasteFeather = 0.02;
 
