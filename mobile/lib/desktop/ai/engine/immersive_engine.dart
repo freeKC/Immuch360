@@ -273,8 +273,10 @@ final class ImmersiveJob extends ImmersiveJobSpec {
 typedef SbsJob = ImmersiveJob;
 
 /// One photo to make into a 3D scene, `<name>_scene3D.jpg` (scene-v1). [sources] holds one photo in version 1, never
-/// none; a scene made from several, one day, comes through SceneBackend with the same spec. With [glbPartPath], the scene is
-/// also written as a .glb there ("Also save a .glb copy").
+/// none; a scene made from several, one day, comes through SceneBackend with the same spec. With [glbPartPath], the
+/// engine also writes the scene as a .glb there. The app leaves it null: "Also save a .glb copy" copies the scene the
+/// file carries once it is written, checked by its length and its SHA-256, outside the queue (SceneGlbCopies in
+/// scene_glb_export.dart); only the tests of the engine give it.
 final class SceneJob extends ImmersiveJobSpec {
   const SceneJob({
     required super.id,

@@ -21,8 +21,9 @@
 //  5. inpaint (to 88 %): LaMa on each region, "region k of n" (LaMa is not even loaded for a scene without a break);
 //  6. mesh (to 90 %): the photo layer and the background layer (scene_mesh.dart), cut at 65 535 vertices;
 //  7. textures (to 97 %): the JPEG of the photo (quality 90) and of the filled map (85), the profile of the photo kept;
-//  8. writing (to 100 %): the glb, the packet, the preview, the file in one write to the .part (and the .glb copy when
-//     asked), as the 3D photo is written.
+//  8. writing (to 100 %): the glb, the packet, the preview, the file in one write to the .part (and the glb to
+//     SceneJob.glbPartPath when given, which the app does not do: its .glb copy is SceneGlbCopies), as the 3D photo is
+//     written.
 // The flags: lowRelief, hiddenAreas, sky and smallZone from scene-v1, dark as relief-v1 tells it (on the map),
 // fovGuessed, and wideGamut for a profile other than sRGB. The cancel flag is read between two steps and two regions;
 // a cancelled or failed job leaves the .part as it found it. The original is never opened for writing.
