@@ -117,6 +117,8 @@ https://github.com/freeKC/Immuch360/releases/tag/ai-components-3
 | `flux2-klein-base-4b-vae.safetensors` | `flux2-vae` | 168120878 | `ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04` | Apache-2.0 | https://huggingface.co/black-forest-labs/FLUX.2-klein-base-4B, revision `a3b4f484`, `vae/diffusion_pytorch_model.safetensors` |
 | `flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors` | `flux2-klein-4b-360-erp-lora-v1` | 46224184 | `567cc22de03800d2c9d4309e0cf6f971cc00da6b39fb26b0311031f2563de166` | Apache-2.0 | https://huggingface.co/nomadoor/flux-2-klein-4B-360-erp-outpaint-lora, revision `124129f3`, `flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors` |
 | `RealESRGAN_x4plus.pth` | `realesrgan-x4plus` | 67040989 | `4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1` | BSD-3-Clause | https://github.com/xinntao/Real-ESRGAN/releases/tag/v0.1.0, revision `v0.1.0`, `RealESRGAN_x4plus.pth` |
+| `sd-cpp-vulkan-win-x64.zip` | `sd-cpp-vulkan-win-x64` | 30853245 | `6aacb8a7831c8b43bc66f177f3961169df345ed55d80ff4519db4f73aed35d57` | MIT | built and signed by our CI |
+| `sd-cpp-vulkan-linux-x64.zip` | `sd-cpp-vulkan-linux-x64` | 35817545 | `5e7052dc93eec36ad156974e7f56bd7fa13df3482b412935848319680cb5d535` | MIT | built and signed by our CI |
 
 The files of 2 GiB or more are in parts (GitHub refuses a larger asset), put end to end by the app, which
 checks the sum of each part and of the whole:
@@ -128,9 +130,69 @@ checks the sum of each part and of the whole:
 | `Qwen3-4B-Q4_K_M.gguf.001` | 1 of 2 of `Qwen3-4B-Q4_K_M.gguf` | 2039480320 | `ab33d061bb101f87505c5e13bec02b39da4d310f1bcde1a5a916691230183ad3` |
 | `Qwen3-4B-Q4_K_M.gguf.002` | 2 of 2 of `Qwen3-4B-Q4_K_M.gguf` | 457800992 | `ed05d20e6c453c59371bac0e35f3f6dc3fbc551088e6628a8e79f94db3512a51` |
 
-`sd-cpp-vulkan-win-x64`: pending, written by lot P2 from the signed artifacts of our CI.
+`sd-cpp-vulkan-win-x64.zip` holds, unpacked into `engines/sd-cpp-vulkan-win-x64`:
 
-`sd-cpp-vulkan-linux-x64`: pending, written by lot P2 from the signed artifacts of our CI.
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 866 | `b0ecfcf53275bed6db8468f9bb5b38a678bb1e7052377149abbaf029ddf93664` | no |
+| `ggml-base.dll` | 697160 | `0e93bda5087456fbcfef7fada22e1a6ffd44463ebe1c002d4e9968ffdc2ba30a` | no |
+| `ggml-cpu-alderlake.dll` | 1016648 | `24d18be3806be9f11172b5fa91f790c686baf65c3d00a84a35d269b35fc5fbeb` | no |
+| `ggml-cpu-cannonlake.dll` | 1062216 | `e2a640523f66bc1b14782027ce1c356e2037cfec8ec2fb78c43095452effda85` | no |
+| `ggml-cpu-cascadelake.dll` | 1060680 | `2a6463b9acf1a87a516e638fdc59ea2dbf76054b7f92ad6d541a6c71d2e50815` | no |
+| `ggml-cpu-haswell.dll` | 1017672 | `48c7c4483b46e1c5041fc54e4aa4c12892d3f072dd60be9b8a138c45919fc061` | no |
+| `ggml-cpu-icelake.dll` | 1060680 | `fff19b695e5c0d2b599bcd22be03f81e057faeff691046aa66b826fb4a4c45c1` | no |
+| `ggml-cpu-sandybridge.dll` | 1046344 | `f5d8821452620b645d761528f61ee2661a62413175122bae87d1091acd073ed6` | no |
+| `ggml-cpu-skylakex.dll` | 1062216 | `aeeb1df73493ba54ed5225c2c99b940f590daba35339df5b600b5307cd51a003` | no |
+| `ggml-cpu-sse42.dll` | 883016 | `2abb813018268da1853849812867c5abf8b3008cd53c6663885b3ff15dbc8094` | no |
+| `ggml-cpu-x64.dll` | 885064 | `89d0aabc54fddf30040656654238ac78844950a1f90c978ec9b2fc27767db8e9` | no |
+| `ggml-vulkan.dll` | 40152904 | `781624a958dacf56c4c354c86aaacd7cbfc56ac04ed2d4e86b3cd33cac5f4ce9` | no |
+| `ggml.dll` | 76104 | `9549c8c214d97e3fb0ab95606e7be3d52ed730e06b42e7e447948a141953948f` | no |
+| `licenses/README.md` | 1185 | `26f980b88d5210da2e6024efbd56d3d2ca77de7010bc73989b660187ce53528a` | no |
+| `licenses/THIRD-PARTY.md` | 6968 | `0d58c599729e84498452fce4fbafa819cc6529683d0711c60b3a965132444b70` | no |
+| `licenses/darts-clone-LICENSE.txt` | 1491 | `ed8437dc7358a40ef10afd3635ac1cd43c88fbaaaf6cd27c414f8ada5d68f447` | no |
+| `licenses/ggml-LICENSE.txt` | 1099 | `bcd8ec749126d45cb06737d0690295d73df4b6e7e194205bcf91190368f27285` | no |
+| `licenses/oniguruma-COPYING.txt` | 1366 | `0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933` | no |
+| `licenses/stable-diffusion.cpp-LICENSE.txt` | 1082 | `4e76049398df734a97db46f3bd4b5cbc460cb5f6bfaf737cdc3d6fbb8ab3de27` | no |
+| `licenses/utf8proc-LICENSE.md` | 5218 | `767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644` | no |
+| `msvcp140.dll` | 557728 | `0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9` | no |
+| `msvcp140_codecvt_ids.dll` | 31872 | `f2069a52880ec885ee7f0511186100eb7fada0411a2b4948fafea7735b878a18` | no |
+| `sd-cli.exe` | 801096 | `d33481cef0001920f878ede5101dfeef4fa05df50bd6201048cb45a51b88ba1d` | yes |
+| `stable-diffusion.dll` | 36008776 | `ad6b904bdbda24a347db9c84a70249980d500b2831e6615c0430b8b9939d85ff` | no |
+| `vcruntime140.dll` | 124544 | `d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066` | no |
+| `vcruntime140_1.dll` | 49792 | `1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f` | no |
+
+`sd-cpp-vulkan-linux-x64.zip` holds, unpacked into `engines/sd-cpp-vulkan-linux-x64`:
+
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 816 | `1549479c0023cb2ea02dfbcbcc9e1773e682f2308fdf70b5261069d2f809545d` | no |
+| `immuch360-run` | 16552 | `779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b` | yes |
+| `libggml-base.so.0` | 905856 | `724d0388655f31af515a16a06e89852529286936bc3905fb0fc000391f06af09` | no |
+| `libggml-cpu-alderlake.so` | 1306432 | `db8a29641675ad642fc7056932568f20bc3216224eaf9b803b5ae15df9725f25` | no |
+| `libggml-cpu-cannonlake.so` | 1384360 | `66d26b13e9c989dc898be445a894916a9923eab34b328871a73163c98d056e57` | no |
+| `libggml-cpu-cascadelake.so` | 1400448 | `204de1f7d965852dc2122fb4a0b00240af20f234efe55416cd989e0330b5a3d8` | no |
+| `libggml-cpu-cooperlake.so` | 1400448 | `68d763f49d062b0b74bde1afaae488bafae2f52da04874b0eba730b61ae0de0a` | no |
+| `libggml-cpu-haswell.so` | 1306432 | `9d597a3d4fe9cc4257fce0bfd634850f037ed9f54647c0403ed1c0088c347666` | no |
+| `libggml-cpu-icelake.so` | 1400448 | `7e1da9f4a14883fd0ae7771d31f228efc9d6ae92cd9c5341a09e74edd40bc4cf` | no |
+| `libggml-cpu-ivybridge.so` | 1235152 | `757283c265130c252eb1a2b411eca6139579417151e0f764f6163bbdb7049867` | no |
+| `libggml-cpu-piledriver.so` | 1231056 | `f459112286127171de81c29978aa7e1ac150fa73bf8d0964c871ff10bcd83858` | no |
+| `libggml-cpu-sandybridge.so` | 1255752 | `6873b28211bdaa720a7d79c7605fa10a933db7ab6de07df59501695b0037eafd` | no |
+| `libggml-cpu-sapphirerapids.so` | 1696688 | `d696cdc358c7cc3135e7ea8b2ef721a9d292ca31482791817e84a1b2ed792ce6` | no |
+| `libggml-cpu-skylakex.so` | 1384360 | `2aa0285fca0986a124071e5c2f0e9d722615a113e698d913730cb7c29b5b1979` | no |
+| `libggml-cpu-sse42.so` | 984640 | `c2adef8dff8e2ee42a2029de496161601b7bd6c536ba8c8df2f6efb84689f6d4` | no |
+| `libggml-cpu-x64.so` | 980680 | `4138dcbf8b45b21880c92fd7248c14eb0f8deb1f796a6f0c1bf595ac7e91a8b2` | no |
+| `libggml-cpu-zen4.so` | 1400448 | `712d67cbda8490241de13934a1c6a6c1f0a2c359ff41eab9706d60a9211998ce` | no |
+| `libggml-vulkan.so` | 40829024 | `655e8a3ac90e029a12d8a29fe73b4be2ad55d389e161ac87c12a4e95b5ecdef7` | no |
+| `libggml.so.0` | 51040 | `f7edd32a571306f777f380ca868af8728a89d21a3abcc8b97a7e4f738ab40c0a` | no |
+| `libstable-diffusion.so` | 41639088 | `a0d2134f6f82bd97f7c56376cad7aea0d3b6fdc950f8a31b3a8e55698492500d` | no |
+| `licenses/README.md` | 1169 | `dfc8ee008f776c77648f9c6692fce332ad190a2479653c6399bc2873b5d7e8be` | no |
+| `licenses/THIRD-PARTY.md` | 6862 | `de31b8552d1bdb1765a3b75781df6763f576d8762fc9a58d652a4d4733bcf70b` | no |
+| `licenses/darts-clone-LICENSE.txt` | 1481 | `155f59997298ee336602c49f9c1110f268ac394ca2197eb02647a3555935ad52` | no |
+| `licenses/ggml-LICENSE.txt` | 1078 | `94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d` | no |
+| `licenses/oniguruma-COPYING.txt` | 1366 | `0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933` | no |
+| `licenses/stable-diffusion.cpp-LICENSE.txt` | 1062 | `b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee` | no |
+| `licenses/utf8proc-LICENSE.md` | 5218 | `767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644` | no |
+| `sd-cli` | 1368216 | `6d8f92b3cb97c27cfc6b2a8e97a76b09bcedf3a68f2358df0b72e288105d715e` | yes |
 
 FLUX.2 klein base 4B: Apache-2.0 (https://huggingface.co/black-forest-labs/FLUX.2-klein-base-4B), as GGUF by
 leejet (Apache-2.0); the Q4_0 file, the one that holds in a graphics card of 8 GB (measure M3). Its VAE: the
@@ -140,10 +202,12 @@ under CC0 and in the public domain, with a part under CC BY (its card and `TRAIN
 attribution of that part comes with a later version of this file. MI-GAN: MIT, code and weights, Copyright (c)
 2024 Picsart AI Research (PAIR), trained on Places2, a research dataset. Real-ESRGAN x4plus: BSD-3-Clause,
 Copyright (c) 2021, Xintao Wang. stable-diffusion.cpp and ggml: MIT
-(https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE,
-https://github.com/ggml-org/ggml/blob/master/LICENSE), built and signed by our CI at the commits of
-`.github/desktop/ai/sd_cpp.lock.json`, run by the app as a child process. No CUDA: the graphics card is
-reached through Vulkan only.
+(https://github.com/leejet/stable-diffusion.cpp/blob/be486498eadc29dc3cd234d944c2180ed42b1415/LICENSE,
+https://github.com/leejet/ggml/blob/a5915eb0e47adef21c3f25b889a008925ea838c2/LICENSE), built by our CI at the
+commits of `.github/desktop/ai/sd_cpp.lock.json` and signed for Windows, run by the app as a child process;
+their licences and those of the code built into them (Oniguruma, utf8proc, Darts-clone, JSON for Modern C++,
+miniz, stb, llamafile sgemm) are in the `licenses/` folder of each archive, from `licenses/sdcpp/` of the
+repository. No CUDA: the graphics card is reached through Vulkan only.
 
 <!-- end of the releases -->
 ## Not used

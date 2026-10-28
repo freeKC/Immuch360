@@ -143,7 +143,11 @@ void main() {
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
-        expect(component.archiveFiles, isEmpty, reason: '${component.id}: lot P2 writes the files of the archives');
+        expect(
+          component.archiveFiles.isNotEmpty,
+          component.isArchive,
+          reason: '${component.id}: files of archives only',
+        );
         expect(component.isArchive, component.id.startsWith('sd-cpp-'), reason: component.id);
         // Only a file of 2 GiB or more comes in parts
         expect(component.isInParts, (component.size ?? 0) >= aiReleaseAssetLimit, reason: component.id);
@@ -182,9 +186,32 @@ void main() {
       },
     );
 
-    test('the panoramas wait for P2: the archives of the engine are incomplete, so the group is never offered', () {
-      expect(sdCppWindowsComponent.isComplete, isFalse);
-      expect(sdCppLinuxComponent.isComplete, isFalse);
+    test('the archives of the engine are complete (P2), and the panoramas held until their engine and release', () {
+      for (final engine in [sdCppWindowsComponent, sdCppLinuxComponent]) {
+        expect(engine.isComplete, isTrue, reason: engine.id);
+        expect(engine.version, 'be48649-2', reason: 'the id of .github/desktop/ai/sd_cpp.lock.json');
+        expect(engine.licenceUrl, contains('/be486498eadc29dc3cd234d944c2180ed42b1415/'), reason: engine.id);
+        final paths = engine.archiveFiles.map((file) => file.path).toList();
+        expect(paths, containsAll(['licenses/stable-diffusion.cpp-LICENSE.txt', 'licenses/ggml-LICENSE.txt']));
+        expect(paths, contains('licenses/THIRD-PARTY.md'));
+        expect(paths, contains('BUILD-INFO.txt'));
+        // Vulkan only: no library of CUDA, nor of any other backend than the processor and Vulkan
+        expect(
+          paths.where((path) => RegExp('cuda|cublas|hip|sycl|musa', caseSensitive: false).hasMatch(path)),
+          isEmpty,
+        );
+        expect(engine.installedSize, engine.archiveFiles.fold<int>(0, (sum, file) => sum + file.size));
+      }
+      final windows = sdCppWindowsComponent.archiveFiles;
+      expect(windows.where((file) => file.executable).map((file) => file.path), ['sd-cli.exe']);
+      expect(sdCppWindowsComponent.mainPath, 'engines/sd-cpp-vulkan-win-x64/sd-cli.exe');
+      // The Visual C++ runtime a clean Windows lacks travels with it
+      expect(windows.map((file) => file.path), containsAll(['vcruntime140.dll', 'msvcp140.dll', 'ggml-vulkan.dll']));
+      final linux = sdCppLinuxComponent.archiveFiles;
+      expect(linux.where((file) => file.executable).map((file) => file.path), ['immuch360-run', 'sd-cli']);
+      // The launcher comes first: the program the app starts, sd-cli beside it
+      expect(sdCppLinuxComponent.mainPath, 'engines/sd-cpp-vulkan-linux-x64/immuch360-run');
+      expect(linux.map((file) => file.path), contains('libggml-vulkan.so'));
       for (final component in [
         miganInpaintComponent,
         fluxTransformerComponent,
