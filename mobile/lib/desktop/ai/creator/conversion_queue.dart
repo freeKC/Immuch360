@@ -7,9 +7,12 @@
 // Two lanes, one job at a time on each: the processor (3D photos, 3D scenes, 360° 3D panoramas), where one photo
 // already takes every core but two, and the graphics card (360° panoramas), so that a generation of several minutes
 // never holds the 3D photos back. A job starts beside the one of the other lane only when the memory free holds both
-// (memory_probe.dart); it waits otherwise, looked at again every few seconds, and starts at the latest when the other
-// ends. The 3D version of a panorama is chained after it: it waits for the panorama, is made from the file the panorama
-// job wrote (or the version with the same settings it found), as a version of the photo, and is skipped with its reason
+// (memory_probe.dart), counting what that job may still take: all its need until its models run, a panorama that reads
+// its photo having taken nothing yet. It waits otherwise, looked at again every few seconds, and starts at the latest
+// when the other ends.
+//
+// The 3D version of a panorama is chained after it: it waits for the panorama, is made from the file the panorama job
+// wrote (or the version with the same settings it found), as a version of the photo, and is skipped with its reason
 // when the panorama was not made; Retry of the panorama runs it again too.
 //
 // A disk full fails its job (its .part deleted) and pauses the queue, both lanes: nothing new starts until the user
@@ -471,7 +474,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   }
 
   /// Starts on each free lane the first job waiting that may run: its parent made, if it has one; beside a job of the
-  /// other lane, only when the memory free holds both. Nothing starts while the queue is paused.
+  /// other lane, only when the memory free holds both, that job counted with what it may still take (one started a
+  /// moment before in this same pass included). Nothing starts while the queue is paused.
   void _pump() {
     if (_disposed) {
       return;
@@ -502,7 +506,17 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
               .firstOrNull,
     ]..sort((a, b) => order[a.id]!.compareTo(order[b.id]!));
     for (final next in candidates) {
-      if (tools != null && _lanes.isNotEmpty && !fitsBeside(jobMemoryNeedOf(next.kind.output), tools.memory.read())) {
+      // The job under way on the other lane, one started a moment before in this pass included
+      final beside = [for (final id in _lanes.values) state.byId(id)].nonNulls.firstOrNull;
+      if (tools != null &&
+          _lanes.isNotEmpty &&
+          !fitsBeside(
+            jobMemoryNeedOf(next.kind.output),
+            tools.memory.read(),
+            besideNeeds: beside == null || beside.state.isEnded
+                ? 0
+                : jobMemoryStillNeeded(beside.kind.output, beside.state.stage),
+          )) {
         if (next.waitingFor != ConversionWait.memory) {
           _set(next.id, (job) => job.copyWith(waitingFor: () => ConversionWait.memory));
         }

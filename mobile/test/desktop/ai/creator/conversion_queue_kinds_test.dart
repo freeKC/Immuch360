@@ -415,6 +415,132 @@ void main() {
       },
     );
 
+    test(
+      'a scene waits beside a panorama that has not loaded its models yet: the memory free counts none of them',
+      () async {
+        panorama = FakePanoramaEngine(holdStage: ImmersiveStage.fieldOfView);
+        final held = panorama.reachedHold.stream.first;
+        // Enough for a scene beside a generation (3 GiB), not for a scene and the 6 GiB the panorama has still to take
+        memory.available = 4 * _gib;
+
+        final generated = queue().add([
+          photo('a.jpg', kind: ConversionKind.panoramaFromPhoto),
+        ], kind: ConversionKind.panoramaFromPhoto).single;
+        // At once, the panorama reading its photo
+        final waiting = queue().add([photo('b.jpg')], kind: ConversionKind.sceneFromPhoto).single;
+        await held;
+        // Time enough for a few checks of the memory
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+
+        expect(job(generated).state, ConversionState.fieldOfView);
+        expect(job(waiting).state, ConversionState.waiting);
+        expect(job(waiting).waitingFor, ConversionWait.memory);
+        expect(scene.jobs, isEmpty);
+
+        // The generation takes its memory (M3 saw 0.9 to 1.7 GiB free then): the scene runs once the panorama ends
+        memory.available = _gib;
+        panorama.release();
+        await allEnded();
+        expect([job(generated).state, job(waiting).state], everyElement(ConversionState.done));
+        expect(runs.kinds, [ConversionKind.panoramaFromPhoto, ConversionKind.sceneFromPhoto]);
+        expect(runs.mostAtOnce, 1);
+      },
+    );
+
+    test(
+      'once the panorama generates, the memory free counts it: a scene starts beside when it holds the scene',
+      () async {
+        final engine = _Scripted([
+          const ImmersiveProgress(ImmersiveStage.reading, 0),
+          const ImmersiveProgress(ImmersiveStage.fieldOfView, 50),
+          const ImmersiveProgress(ImmersiveStage.loadingModels, 100),
+        ]);
+        engines = () => {
+          ...fakeConversionEngines(scene: scene),
+          ConversionKind.panoramaFromPhoto: ConversionEngine(
+            engine: engine,
+            settingsKey: (_, _) => null,
+            generator: fakePanoramaGenerator,
+            steps: fakePanoramaSteps,
+          ),
+        };
+        container = containerWith();
+        memory.available = 4 * _gib;
+
+        final generated = queue().add([
+          photo('a.jpg', kind: ConversionKind.panoramaFromPhoto),
+        ], kind: ConversionKind.panoramaFromPhoto).single;
+        await engine.told.future;
+        final waiting = queue().add([photo('b.jpg')], kind: ConversionKind.sceneFromPhoto).single;
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        expect(job(generated).state, ConversionState.loadingModels);
+        expect(job(waiting).waitingFor, ConversionWait.memory);
+        expect(scene.jobs, isEmpty);
+
+        // Its models loaded, the generation runs; the 4 GiB read now are what is left beside it
+        engine.tell(const ImmersiveProgress(ImmersiveStage.generating, 200, step: 1, steps: fakePanoramaSteps));
+        await until((state) => state.byId(waiting)!.state == ConversionState.done);
+        expect(job(generated).state, ConversionState.generating);
+        expect(runs.mostAtOnce, 2);
+
+        queue().cancel(generated);
+        engine.release();
+        await allEnded();
+      },
+    );
+
+    test(
+      'a panorama waits beside a scene that has not run its models yet, and starts beside it once they run',
+      () async {
+        final engine = _Scripted([
+          const ImmersiveProgress(ImmersiveStage.reading, 0),
+          const ImmersiveProgress(ImmersiveStage.decoding, 100),
+        ]);
+        engines = () => {
+          ...fakeConversionEngines(panorama: panorama),
+          ConversionKind.sceneFromPhoto: ConversionEngine(engine: engine, settingsKey: (_, _) => null),
+        };
+        container = containerWith();
+        // A panorama beside a scene asks for 6.5 GiB and the reserve: enough beside the scene once it holds its 2 GiB
+        memory.available = 8 * _gib;
+
+        final decoding = queue().add([photo('a.jpg')], kind: ConversionKind.sceneFromPhoto).single;
+        await engine.told.future;
+        final waiting = queue().add([
+          photo('b.jpg', kind: ConversionKind.panoramaFromPhoto),
+        ], kind: ConversionKind.panoramaFromPhoto).single;
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        expect(job(waiting).waitingFor, ConversionWait.memory);
+        expect(panorama.jobs, isEmpty);
+
+        engine.tell(const ImmersiveProgress(ImmersiveStage.geometry, 200));
+        await until((state) => state.byId(waiting)!.state == ConversionState.done);
+        expect(job(decoding).state, ConversionState.geometry);
+
+        queue().cancel(decoding);
+        engine.release();
+        await allEnded();
+      },
+    );
+
+    test('a computer with memory for both starts a scene beside a panorama still reading its photo', () async {
+      panorama = FakePanoramaEngine(holdStage: ImmersiveStage.fieldOfView);
+      final held = panorama.reachedHold.stream.first;
+      memory.available = 12 * _gib;
+
+      final generated = queue().add([
+        photo('a.jpg', kind: ConversionKind.panoramaFromPhoto),
+      ], kind: ConversionKind.panoramaFromPhoto).single;
+      final beside = queue().add([photo('b.jpg')], kind: ConversionKind.sceneFromPhoto).single;
+      await held;
+      await until((state) => state.byId(beside)!.state == ConversionState.done);
+
+      expect(job(generated).state, ConversionState.fieldOfView);
+      expect(runs.mostAtOnce, 2);
+      panorama.release();
+      await allEnded();
+    });
+
     test('memory freed while the other lane runs lets the waiting job start beside it', () async {
       panorama = FakePanoramaEngine(holdStage: ImmersiveStage.generating);
       final held = panorama.reachedHold.stream.first;

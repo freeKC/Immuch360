@@ -13,13 +13,15 @@
 //
 // The queue runs two lanes, the processor and the graphics card (design-final 2026-10-27, section 4.5): a job starts
 // beside the one under way on the other lane only when the memory a program can take now covers its own need
-// ([jobMemoryNeedOf], per kind) and a reserve for the job under way ([secondLaneReserve]); otherwise it waits for that
-// job to end.
+// ([jobMemoryNeedOf], per kind), what the job under way may still take ([jobMemoryStillNeeded]: all its need until its
+// models run, since the memory read before counts none of it) and a reserve for that job ([secondLaneReserve]);
+// otherwise it waits, at the latest for that job to end.
 
 import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 /// What the memory of a computer is, in bytes
@@ -186,9 +188,26 @@ int jobMemoryNeedOf(ImmersiveKind kind) => switch (kind) {
 /// 3 GiB free, the need of a scene and this reserve
 const secondLaneReserve = _gib;
 
-/// Whether a job that needs [need] bytes may start beside a job of the other lane, the memory being [facts]: always
-/// when the system does not say what is available (macOS), as the gate
-bool fitsBeside(int need, MemoryFacts facts) {
+/// The step from which a job of [kind] holds the memory [jobMemoryNeedOf] counts for it: the one where its models run,
+/// the depth of a 3D photo or of a 360° 3D panorama, the geometry of a scene, the generation of a panorama once
+/// stable-diffusion.cpp loaded its models. What it takes after that step stays within [secondLaneReserve].
+ImmersiveStage memoryPeakOf(ImmersiveKind kind) => switch (kind) {
+  ImmersiveKind.stereoPhoto => ImmersiveStage.depth,
+  ImmersiveKind.volumetricScene => ImmersiveStage.geometry,
+  ImmersiveKind.panorama360 => ImmersiveStage.generating,
+  ImmersiveKind.stereoPanorama360 => ImmersiveStage.panoramaDepth,
+};
+
+/// What a job of [kind] at [stage] (null: not started yet) may still take beyond the memory free read now: its whole
+/// need until its models run ([memoryPeakOf]), the memory read counting little of it before (a panorama reading its
+/// photo holds nothing of its 6 GiB yet); nothing from that step on, the memory read counting it then
+int jobMemoryStillNeeded(ImmersiveKind kind, ImmersiveStage? stage) =>
+    stage != null && stage.index >= memoryPeakOf(kind).index ? 0 : jobMemoryNeedOf(kind);
+
+/// Whether a job that needs [need] bytes may start beside the job of the other lane, which may still take
+/// [besideNeeds] ([jobMemoryStillNeeded]), the memory being [facts]: always when the system does not say what is
+/// available (macOS), as the gate
+bool fitsBeside(int need, MemoryFacts facts, {int besideNeeds = 0}) {
   final available = facts.available;
-  return available == null || available >= need + secondLaneReserve;
+  return available == null || available - besideNeeds >= need + secondLaneReserve;
 }

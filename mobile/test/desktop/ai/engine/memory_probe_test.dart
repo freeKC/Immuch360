@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
@@ -100,6 +101,65 @@ void main() {
         ),
         isFalse,
       );
+    });
+
+    test('a job under way counts its whole need until its models run, nothing once they do', () {
+      const panorama = ImmersiveKind.panorama360;
+      final need = jobMemoryNeedOf(panorama);
+
+      for (final stage in [null, ImmersiveStage.reading, ImmersiveStage.fieldOfView, ImmersiveStage.loadingModels]) {
+        expect(jobMemoryStillNeeded(panorama, stage), need, reason: '$stage');
+      }
+      for (final stage in [ImmersiveStage.generating, ImmersiveStage.upscale, ImmersiveStage.writing]) {
+        expect(jobMemoryStillNeeded(panorama, stage), 0, reason: '$stage');
+      }
+      // The step of the models of each kind is one of its own steps
+      for (final kind in ImmersiveKind.values) {
+        expect(ImmersiveStage.of(kind), contains(memoryPeakOf(kind)), reason: '$kind');
+        expect(jobMemoryStillNeeded(kind, ImmersiveStage.of(kind).first), jobMemoryNeedOf(kind), reason: '$kind');
+        expect(jobMemoryStillNeeded(kind, memoryPeakOf(kind)), 0, reason: '$kind');
+      }
+      expect(jobMemoryStillNeeded(ImmersiveKind.volumetricScene, ImmersiveStage.decoding), 2 * gib);
+      expect(jobMemoryStillNeeded(ImmersiveKind.volumetricScene, ImmersiveStage.inpaint), 0);
+    });
+
+    test('a scene waits beside a panorama that has not loaded its models yet, not beside its generation', () {
+      final scene = jobMemoryNeedOf(ImmersiveKind.volumetricScene);
+      const fourFree = MemoryFacts(physical: 16 * gib, available: 4 * gib);
+      final loading = jobMemoryStillNeeded(ImmersiveKind.panorama360, ImmersiveStage.fieldOfView);
+      final generating = jobMemoryStillNeeded(ImmersiveKind.panorama360, ImmersiveStage.generating);
+
+      expect(fitsBeside(scene, fourFree, besideNeeds: loading), isFalse);
+      expect(fitsBeside(scene, fourFree, besideNeeds: generating), isTrue);
+      // A computer with memory for both
+      expect(
+        fitsBeside(
+          scene,
+          const MemoryFacts(physical: 32 * gib, available: 12 * gib),
+          besideNeeds: loading,
+        ),
+        isTrue,
+      );
+      // A panorama beside a scene still reading its photo
+      final panorama = jobMemoryNeedOf(ImmersiveKind.panorama360);
+      const eightFree = MemoryFacts(physical: 16 * gib, available: 8 * gib);
+      expect(
+        fitsBeside(
+          panorama,
+          eightFree,
+          besideNeeds: jobMemoryStillNeeded(ImmersiveKind.volumetricScene, ImmersiveStage.reading),
+        ),
+        isFalse,
+      );
+      expect(
+        fitsBeside(
+          panorama,
+          eightFree,
+          besideNeeds: jobMemoryStillNeeded(ImmersiveKind.volumetricScene, ImmersiveStage.geometry),
+        ),
+        isTrue,
+      );
+      expect(fitsBeside(scene, const MemoryFacts(physical: 16 * gib), besideNeeds: loading), isTrue);
     });
 
     test('a system that does not say what is free never makes a job wait', () {
