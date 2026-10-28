@@ -1,23 +1,31 @@
 // The engine of the 3D versions of the 360° panoramas (lot P1, design-final 2026-10-27, sections 4.4 and 10.1) with a
 // depth model of the tests: the chain in this isolate (the file read back by every reader of the app, the version of
-// a generated panorama, the refusals, the cancel at each step, what it leaves), then the engine with its worker. The
-// same on the real model and a real 360° photo, by hand: real_stereo_panorama_test.dart.
+// a generated panorama, the shift read back in the file against the budget of 1°, the date and the profile of the
+// source, the refusals, the cancel at each step and between two views, what it leaves), then the engine with its
+// worker. The same on the real model and a real 360° photo, by hand: real_stereo_panorama_test.dart.
 
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 // Pure Dart, already in the lock through maplibre_gl, as in lib/desktop/library/local_image_codec.dart
 // ignore: depend_on_referenced_packages
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
+import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/ai_worker.dart';
 import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
+import 'package:immich_mobile/desktop/ai/panorama/pano_depth.dart';
 import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
+import 'package:immich_mobile/desktop/ai/relief/relief_input.dart';
+import 'package:immich_mobile/desktop/ai/scene/scene_textures.dart' show encodeScenePicture;
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
@@ -31,6 +39,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.
     show parseGPanoCrop, parseGPanoProjectionType;
 import 'package:path/path.dart' as p;
 
+import '../codec/codec_fixtures.dart';
 import '../fakes/fake_depth_backend.dart';
 import '../fakes/fake_engine_tools.dart';
 import '../fakes/fake_thread_priority.dart';
@@ -130,6 +139,116 @@ StereoPanoramaJob _jobFor(
   );
 }
 
+/// A depth model of the tests that reads the depth off the picture it is given: the blue of a pixel, 0 to 255, is its
+/// disparity 1 / r up to a factor, and it answers 1 / z, z = r cos(theta) the depth along the axis of the view, as
+/// Depth Anything gives a disparity; the views of [inverted] (by the order they run, 0 the first) it reads the wrong
+/// way round. Views of 64 x 48, counted.
+class _BlueDepthBackend implements DepthBackend {
+  _BlueDepthBackend({this.inverted = const {}});
+
+  final Set<int> inverted;
+  var calls = 0;
+
+  @override
+  int get inputWidth => 64;
+
+  @override
+  int get inputHeight => 48;
+
+  @override
+  String get modelSha256 => depthModelOnnxSha256;
+
+  @override
+  DepthMap estimate(Float32List nchw) {
+    final view = calls++;
+    final plane = inputWidth * inputHeight;
+    final tanX = panoDepthViewTanY * inputWidth / inputHeight;
+    final values = Float32List(plane);
+    for (var j = 0; j < inputHeight; j++) {
+      for (var i = 0; i < inputWidth; i++) {
+        final at = j * inputWidth + i;
+        final blue = nchw[2 * plane + at] * reliefInputStd[2] + reliefInputMean[2];
+        final a = ((i + 0.5) / inputWidth * 2 - 1) * tanX;
+        final b = (1 - (j + 0.5) / inputHeight * 2) * panoDepthViewTanY;
+        final disparity = blue * math.sqrt(1 + a * a + b * b);
+        values[at] = inverted.contains(view) ? -disparity : disparity;
+      }
+    }
+    return DepthMap(inputWidth, inputHeight, values);
+  }
+
+  @override
+  void close() {}
+}
+
+/// A 360° panorama of 720 x 360 pixels, 2 a degree, for [_BlueDepthBackend]: what [near] says (longitude and
+/// latitude in degrees, 0 ahead) is 1 m away (blue 255), the rest of the world 12 m (blue 21); red and green in
+/// vertical stripes of 23 and 37 pixels, for the block matching
+SbsDecoded _blueWorld(bool Function(double longitude, double latitude) near) {
+  const width = 720;
+  const height = 360;
+  final rgba = Uint8List(4 * width * height);
+  for (var y = 0; y < height; y++) {
+    final latitude = 90 - (y + 0.5) * 180 / height;
+    for (var x = 0; x < width; x++) {
+      final longitude = (x + 0.5) * 360 / width - 180;
+      final at = 4 * (y * width + x);
+      rgba[at] = (128 + 100 * math.sin(2 * math.pi * x / 23)).round();
+      rgba[at + 1] = (128 + 100 * math.sin(2 * math.pi * x / 37 + 1)).round();
+      rgba[at + 2] = near(longitude, latitude) ? 255 : 21;
+      rgba[at + 3] = 255;
+    }
+  }
+  return SbsDecoded(width: width, height: height, rgba: rgba);
+}
+
+/// A pillar straight ahead, 60° wide and 50° high, the columns 300 to 419 and the rows 130 to 229
+SbsDecoded _pillar() => _blueWorld((longitude, latitude) => longitude.abs() < 30 && latitude.abs() < 25);
+
+/// A fence of 9 posts around the eye, 20° wide every 40°, up to 40° above and below the horizon
+SbsDecoded _fence() => _blueWorld((longitude, latitude) {
+  final along = (longitude + 180) % 40;
+  return along >= 10 && along < 30 && latitude.abs() < 40;
+});
+
+/// How many pixels to the left the right eye of [frame] (top and bottom, the left eye on top) moved the columns [x0]
+/// to [x0] + 31 of the [rows]: the shift, from -12 to 12, with the least difference of brightness
+int _shiftAt(SbsDecoded frame, int x0, Iterable<int> rows) {
+  final width = frame.width;
+  final eye = frame.height ~/ 2;
+  final rgba = frame.rgba;
+  int brightness(int x, int y) {
+    final at = 4 * (y * width + x % width);
+    return 299 * rgba[at] + 587 * rgba[at + 1] + 114 * rgba[at + 2];
+  }
+
+  var best = 0;
+  var least = -1;
+  for (var shift = -12; shift <= 12; shift++) {
+    var difference = 0;
+    for (final y in rows) {
+      for (var x = x0; x < x0 + 32; x++) {
+        difference += (brightness(x, y) - brightness(x - shift, eye + y)).abs();
+      }
+    }
+    if (least < 0 || difference < least) {
+      least = difference;
+      best = shift;
+    }
+  }
+  return best;
+}
+
+/// The job of the 3D version of a panorama already decoded, named [name] in [folder]: no sum to check
+StereoPanoramaJob _pictureJob(Directory folder, String name) => StereoPanoramaJob(
+  id: 'job-$name',
+  source: ImmersiveSource(name: name, size: 1, sha1: '', bytes: Uint8List(1)),
+  partPath: _partIn(folder, name),
+  derivativeId: 'urn:uuid:6f1c2e0a-0000-4000-8000-000000000004',
+  creatorTool: 'Immuch360 Desktop 3.4.0 (linux)',
+  created: '2026-10-28T10:12:00+01:00',
+);
+
 /// The packet of a panorama generated from salon.jpg, which the queue gives a chained job
 PanoramaXmp _generatedPanorama() => PanoramaXmp.generated(
   width: 192,
@@ -163,19 +282,23 @@ void main() {
   StereoPanoramaOutcome runChain(
     StereoPanoramaJob job, {
     FakeDepthShape shape = FakeDepthShape.gradient,
+    DepthBackend? backend,
+    SbsDecoded? decoded,
+    double maxShiftDegrees = Relief360V1.maxShiftDegrees,
     bool Function()? isCancelled,
     void Function(ImmersiveProgress progress)? onProgress,
     PartWriter writePart = writePartFile,
     MemoryProbe? memory,
   }) =>
       StereoPanoramaChain(
-        backend: FakeDepthBackend(shape: shape, inputWidth: 64, inputHeight: 48),
+        backend: backend ?? FakeDepthBackend(shape: shape, inputWidth: 64, inputHeight: 48),
         codecs: const [DartSbsCodec()],
         writePart: writePart,
         memory: memory,
+        maxShiftDegrees: maxShiftDegrees,
       ).run(
         job,
-        ChainOriginal(bytes: job.source.bytes ?? File(job.source.path!).readAsBytesSync()),
+        ChainOriginal(bytes: job.source.bytes ?? File(job.source.path!).readAsBytesSync(), decoded: decoded),
         isCancelled: isCancelled ?? () => false,
         onProgress: onProgress,
       );
@@ -384,6 +507,146 @@ void main() {
 
       expect(outcome.result.error, ImmersiveErrorCode.outOfMemory);
       expect(outcome.result.message, matches(RegExp(r'^This panorama needs about \d+ MB of memory, 100 MB are free$')));
+    });
+  });
+
+  group('the chain, what it writes and what it refuses', () {
+    test('the nearest moves 1° at the equator and no more, the far stays, the poles do not move: read in the file', () {
+      final job = _pictureJob(folder, 'pillar.png');
+      final outcome = runChain(job, backend: _BlueDepthBackend(), decoded: _pillar());
+
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      final frame = const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync());
+      expect((frame.width, frame.height), (720, 720));
+      // 2 pixels a degree: the pillar, the nearest, 2 pixels at the equator, and no column more than that
+      final equator = [for (var y = 172; y < 188; y++) y];
+      final shifts = {for (var x0 = 0; x0 + 32 <= 720; x0 += 32) x0: _shiftAt(frame, x0, equator)};
+      expect(shifts[352], 2, reason: 'the pillar ahead, d = 1: 1° at the equator');
+      expect(shifts.values.reduce(math.max), lessThanOrEqualTo(2), reason: 'the budget of 1°: $shifts');
+      expect(shifts.values.reduce(math.min), greaterThanOrEqualTo(0), reason: 'never the wrong way: $shifts');
+      for (final MapEntry(key: x0, value: shift) in shifts.entries) {
+        if (x0 + 32 <= 292 || x0 >= 428) {
+          expect(shift, 0, reason: 'the far world at the column $x0 stays put');
+        }
+      }
+      final poles = [for (var y = 0; y < 8; y++) y, for (var y = 352; y < 360; y++) y];
+      for (var x0 = 0; x0 + 32 <= 720; x0 += 32) {
+        expect(_shiftAt(frame, x0, poles), 0, reason: 'nothing moves at the poles, column $x0');
+      }
+    });
+
+    test('cancelled between two views: the views after it never run', () {
+      final path = _panorama(folder, 'pano.jpg');
+      final backend = FakeDepthBackend(inputWidth: 64, inputHeight: 48);
+      final outcome = runChain(
+        _jobFor(path, partPath: _partIn(folder, 'pano.jpg')),
+        backend: backend,
+        isCancelled: () => backend.calls >= 3,
+      );
+
+      expect(outcome.result.error, ImmersiveErrorCode.cancelled);
+      expect(backend.calls, lessThanOrEqualTo(4), reason: 'not the twenty views');
+    });
+
+    test('the date of the 360° photo and its Display P3 profile go into its 3D version', () {
+      final profile = codecFixture('display_p3.icc');
+      final pixels = const DartSbsCodec().decodeJpeg(File(_panorama(folder, 'plain.jpg')).readAsBytesSync());
+      final (jpeg, _) = encodeScenePicture(
+        const [DartSbsCodec()],
+        SbsDecoded(width: pixels.width, height: pixels.height, rgba: pixels.rgba, iccProfile: profile),
+        quality: 95,
+        exif: minimalExif(const ImmersiveExif(dateTimeOriginal: '2026:07:14 18:30:00', offsetTimeOriginal: '+02:00')),
+      );
+      final path = p.join(folder.path, 'PANO_0002.jpg');
+      File(path).writeAsBytesSync(jpeg);
+      final job = _jobFor(path, partPath: _partIn(folder, 'PANO_0002.jpg'));
+      final outcome = runChain(job);
+
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      final header = JpegHeader.read(File(job.partPath).readAsBytesSync());
+      final kept = keptExif(header.exif);
+      expect((kept.dateTimeOriginal, kept.offsetTimeOriginal), ('2026:07:14 18:30:00', '+02:00'));
+      expect(header.iccProfile, profile);
+    });
+
+    test('more than 8 % of the right eye filled in: notEnoughRelief, no file, the mono panorama stays', () {
+      final job = _pictureJob(folder, 'fence.png');
+      final outcome = runChain(job, backend: _BlueDepthBackend(), decoded: _fence(), maxShiftDegrees: 14);
+
+      expect(outcome.result.error, ImmersiveErrorCode.notEnoughRelief);
+      expect(outcome.result.message, matches(RegExp(r'^\d+\.\d % of the right eye would be filled in$')));
+      expect(double.parse(outcome.result.message!.split(' ').first), greaterThan(8));
+      expect(File(job.partPath).existsSync(), isFalse);
+    });
+
+    test('between 5 and 8 % of the right eye filled in: made, hiddenAreas in the result and in the packet', () {
+      final job = _pictureJob(folder, 'fence.png');
+      final outcome = runChain(job, backend: _BlueDepthBackend(), decoded: _fence(), maxShiftDegrees: 7);
+
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      final filled = (outcome.result.details! as StereoPanoramaResultDetails).filledFraction;
+      expect(filled, inExclusiveRange(ReliefV1.hiddenAreasRatio, Relief360V1.maxFilled));
+      expect(outcome.result.qualityFlags, [ReliefQualityFlag.hiddenAreas]);
+      final xmp = ImmersiveXmp.findIn(File(job.partPath).readAsBytesSync())! as StereoPanoramaXmp;
+      expect(xmp.qualityFlags, [ReliefQualityFlag.hiddenAreas]);
+    });
+
+    test('views left out until part of the sphere has no depth: notEnoughRelief, no file, nothing made up', () {
+      // The five views around the north pole read the wrong way round: each left out, and the pole seen by no view
+      final job = _pictureJob(folder, 'fence.png');
+      final outcome = runChain(
+        job,
+        backend: _BlueDepthBackend(inverted: {0, 1, 2, 3, 4}),
+        decoded: _fence(),
+      );
+
+      expect(outcome.result.error, ImmersiveErrorCode.notEnoughRelief);
+      expect(outcome.result.message, matches(RegExp(r'^\d+ pixels of the sphere have no depth the views agree on$')));
+      expect(
+        [for (final alignment in outcome.alignments) alignment.isUsed],
+        [for (var k = 0; k < Relief360V1.tangentViews; k++) k >= 5],
+      );
+      expect(File(job.partPath).existsSync(), isFalse);
+    });
+
+    test('the depth model fails: modelFailed, its session closed at once, nothing written', () {
+      final path = _panorama(folder, 'pano.jpg');
+      final backend = FakeDepthBackend(inputWidth: 64, inputHeight: 48, failure: 'broken model');
+      final outcome = runChain(_jobFor(path, partPath: _partIn(folder, 'pano.jpg')), backend: backend);
+
+      expect(outcome.result.error, ImmersiveErrorCode.modelFailed);
+      expect(outcome.result.message, 'broken model');
+      expect(backend.calls, 1);
+      expect(backend.closed, isTrue, reason: 'its memory given back now, not at the next job');
+      expect(File(_partIn(folder, 'pano.jpg')).existsSync(), isFalse);
+    });
+
+    test('cancelled once the file is written: cancelled, the .part as it was found', () {
+      final path = _panorama(folder, 'pano.jpg');
+      final part = _partIn(folder, 'pano.jpg');
+      for (final probed in [true, false]) {
+        if (probed) {
+          // The write probe left an empty .part
+          File(part).writeAsBytesSync(const []);
+        }
+        var cancelled = false;
+        final outcome = runChain(
+          _jobFor(path, partPath: part),
+          isCancelled: () => cancelled,
+          writePart: (path, bytes) {
+            writePartFile(path, bytes);
+            cancelled = true;
+          },
+        );
+
+        expect(outcome.result.error, ImmersiveErrorCode.cancelled, reason: 'probed $probed');
+        if (probed) {
+          expect(File(part).lengthSync(), 0, reason: 'empty again');
+          File(part).deleteSync();
+        } else {
+          expect(File(part).existsSync(), isFalse, reason: 'gone again');
+        }
+      }
     });
   });
 
