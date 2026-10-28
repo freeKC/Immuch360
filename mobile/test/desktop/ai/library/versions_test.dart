@@ -13,6 +13,7 @@ import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:path/path.dart' as p;
 
@@ -171,6 +172,79 @@ void main() {
       );
     });
 
+    test('of every kind are found by its sum, each with its kind, wherever it is', () async {
+      final panorama = panoramaVersionXmp(original);
+      fixture
+        ..write('Photos/salon_scene3D.jpg', versionFileOf(sceneVersionXmp(original)))
+        ..write('Photos/Panoramas/salon_360.jpg', versionFileOf(panorama))
+        ..write(
+          'Photos/Panoramas/salon_360_3D.jpg',
+          versionFileOf(stereoPanoramaVersionXmp(original, parent: panorama)),
+        );
+      await fixture.scan();
+      hash('salon.jpg', original);
+      final reads = <String>[];
+
+      final found = await finder(reads: reads).find(idOf('salon.jpg'));
+
+      expect(
+        {for (final version in found.versions) version.name: (version.kind, version.origin)},
+        {
+          'salon_3D_LRF_Full_SBS.jpg': (ImmersiveKind.stereoPhoto, IndexedOrigin.estimated),
+          'salon_3D_LRF_Full_SBS (1).jpg': (ImmersiveKind.stereoPhoto, IndexedOrigin.estimated),
+          'salon_scene3D.jpg': (ImmersiveKind.volumetricScene, IndexedOrigin.reconstructed),
+          'salon_360.jpg': (ImmersiveKind.panorama360, IndexedOrigin.generated),
+          'salon_360_3D.jpg': (ImmersiveKind.stereoPanorama360, IndexedOrigin.generated),
+        },
+      );
+      expect(reads, isEmpty);
+    });
+
+    test('without the sum, those beside it named with the suffix of each kind whose XMP names it', () async {
+      final panorama = panoramaVersionXmp(original);
+      fixture
+        ..write('Photos/salon_scene3D.jpg', versionFileOf(sceneVersionXmp(original)))
+        ..write('Photos/salon_360.jpg', versionFileOf(panorama))
+        ..write('Photos/salon_360_3D.jpg', versionFileOf(stereoPanoramaVersionXmp(original, parent: panorama)))
+        // A version of another photo of the same name and another size, and a close name that costs no read
+        ..write('Photos/salon_scene3D (1).jpg', versionFileOf(sceneVersionXmp([...original, 0])))
+        ..write('Photos/salon_3600.jpg', versionFileOf(panoramaVersionXmp(original)));
+      await fixture.scan();
+      final reads = <String>[];
+
+      final found = await finder(reads: reads).find(idOf('salon.jpg'));
+
+      expect(
+        {for (final version in found.versions) version.name: version.kind},
+        {
+          'salon_3D_LRF_Full_SBS.jpg': ImmersiveKind.stereoPhoto,
+          'salon_scene3D.jpg': ImmersiveKind.volumetricScene,
+          'salon_360.jpg': ImmersiveKind.panorama360,
+          'salon_360_3D.jpg': ImmersiveKind.stereoPanorama360,
+        },
+      );
+      expect(reads, isNot(contains('salon_3600.jpg')));
+      expect(reads, contains('salon_scene3D (1).jpg'));
+    });
+
+    test(
+      'the 3D version of a 360° photo whose name says pano, "_3D" after its name, by the name and by the sum',
+      () async {
+        final pano = jpegBytes(width: 80, height: 40);
+        fixture
+          ..write('Photos/PANO_0001.jpg', pano)
+          ..write('Photos/PANO_0001_3D.jpg', versionFileOf(stereoPanoramaVersionXmp(pano, name: 'PANO_0001.jpg')));
+        await fixture.scan();
+
+        final byName = await finder().find(idOf('PANO_0001.jpg'));
+        expect(byName.versions.map((version) => (version.name, version.kind, version.origin)), [
+          ('PANO_0001_3D.jpg', ImmersiveKind.stereoPanorama360, IndexedOrigin.estimated),
+        ]);
+        hash('PANO_0001.jpg', pano);
+        expect((await finder().find(idOf('PANO_0001.jpg'))).versions, hasLength(1));
+      },
+    );
+
     test('without the sum, eight neighbours at most are read', () async {
       for (var i = 1; i <= maxDerivedCandidates + 2; i++) {
         fixture.write('Photos/salon_3D_LRF_Full_SBS ($i).jpg', fakeSbsJpeg(xmp: versionXmp(original)));
@@ -225,6 +299,26 @@ void main() {
       expect(found.original!.path, p.join(photos, 'Originals', 'salon.jpg'));
       expect(found.original!.available, isTrue);
       expect(reads, isEmpty);
+    });
+
+    test('of a scene or a panorama is found the same way, and the version says what it is', () async {
+      fixture
+        ..write('Photos/salon_scene3D.jpg', versionFileOf(sceneVersionXmp(original)))
+        ..write('Photos/Panoramas/salon_360.jpg', versionFileOf(panoramaVersionXmp(original)));
+      await fixture.scan();
+
+      final scene = await finder().find(idOf('salon_scene3D.jpg'));
+      expect((scene.self!.kind, scene.self!.origin), (ImmersiveKind.volumetricScene, IndexedOrigin.reconstructed));
+      expect(scene.original!.name, 'salon.jpg', reason: 'beside it: by the name and the size its XMP gives');
+
+      final away = await finder().find(idOf('Panoramas/salon_360.jpg'));
+      expect(
+        (away.self!.kind, away.original),
+        (ImmersiveKind.panorama360, null),
+        reason: 'away from it: the sum is needed',
+      );
+      hash('salon.jpg', original);
+      expect((await finder().find(idOf('Panoramas/salon_360.jpg'))).original!.name, 'salon.jpg');
     });
 
     test('is found by the name and the size its XMP gives, in its folder, when its sum is not known', () async {

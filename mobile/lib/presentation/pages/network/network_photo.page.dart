@@ -103,8 +103,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   /// Reads the file straight from the share, for the calibration of a raw photo; null until the share is open
   ByteRangeReader? _shareReader;
 
-  /// The 3D versions of the photo in its folder, the newest first: looked for on a Meta Quest once the photo is known
-  /// to be an ordinary one, null until then
+  /// The versions of the photo in its folder (3D photos, 3D scenes, panoramas), the newest first: looked for on a Meta
+  /// Quest once the photo is known to be an ordinary one, null until then
   List<ShareVersion>? _versions;
 
   // The size of the photo, once the flat view decoded it (scaled down, but with its aspect ratio): the 3D layout of
@@ -296,7 +296,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     }
   }
 
-  /// Looks for the 3D versions of [entry] among the files of its folder: those of the folder the page was opened
+  /// Looks for the versions of [entry] among the files of its folder: those of the folder the page was opened
   /// from, else the listing of the folder
   Future<void> _findVersions(NetworkEntry entry, NetworkFileSystem fileSystem) async {
     try {
@@ -310,7 +310,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         setState(() => _versions = versions);
       }
     } catch (error) {
-      _log.info('Could not look for the 3D versions of ${entry.name}: $error');
+      _log.info('Could not look for the versions of ${entry.name}: $error');
     }
   }
 
@@ -474,9 +474,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         // Two eyes side by side: "View in 3D", greyed with its reason for a file of a newer format
         final stereoPhoto = isHorizonOs && stereoPair == null ? _info?.stereoPhoto : null;
         final sbsRequest = stereoPhoto?.request;
-        // The newest 3D version a computer saved next to this photo
-        final version = isHorizonOs ? _versions?.firstOrNull : null;
-        final versionRequest = version?.photo.request;
+        // The newest 3D photo a computer saved next to this photo; the other kinds have their own entries
+        final version = isHorizonOs ? _versions?.where((found) => found.photo != null).firstOrNull : null;
+        final versionRequest = version?.photo?.request;
         final appBar = AppBar(
           backgroundColor: Colors.black38,
           foregroundColor: Colors.white,

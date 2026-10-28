@@ -280,13 +280,11 @@ void main() {
     expect(find.text('//nas/photos/2024'), findsNothing);
   });
 
-  testWidgets('the backup of the generated 3D photos follows their album; greyed until the album exists', (
-    tester,
-  ) async {
+  testWidgets('the backup of the AI versions follows their album; greyed until the album exists', (tester) async {
     await pump(tester);
-    expect(find.text('Also back up generated 3D photos'), findsOneWidget);
+    expect(find.text('Also back up AI versions'), findsOneWidget);
     expect(
-      find.text('Off: generated 3D photos stay on this computer. Select all in the backup albums turns this on too.'),
+      find.text('Off: AI versions stay on this computer. Select all in the backup albums turns this on too.'),
       findsOneWidget,
     );
     final tile = find.byKey(const Key('ai_settings_backup_generated'));

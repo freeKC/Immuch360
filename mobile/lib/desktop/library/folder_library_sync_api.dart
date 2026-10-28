@@ -50,9 +50,9 @@ const _hashCancelledCode = 'HASH_CANCELLED';
 /// (MessagesImpl30.kt): albums sorted by id, dates in seconds, the size as shown with orientation 0, a delta of the
 /// generations since the checkpoint, and the same cancel codes.
 ///
-/// One album is no folder: "Immuch360 3D (AI)", which holds every 3D photo the app made, each also in its folder. It is
-/// declared from the first scan, empty or not, so that it can be excluded from the backup before any version is in it
-/// (generated_album.dart).
+/// One album is no folder: "Immuch360 AI versions", which holds every version the app made (3D photos, 3D scenes, 360°
+/// panoramas), each also in its folder. It is declared from the first scan, empty or not, so that it can be excluded
+/// from the backup before any version is in it (generated_album.dart).
 class FolderLibrarySyncApi implements NativeSyncApi {
   FolderLibrarySyncApi({
     Future<String> Function()? indexPath,
@@ -160,7 +160,7 @@ class FolderLibrarySyncApi implements NativeSyncApi {
     final names = albumDisplayNames({
       for (final album in albums)
         album.id: [rootNames[album.rootId] ?? '', ...album.relativeDir.split('/').where((part) => part.isNotEmpty)],
-      // A folder named like the album of the generated photos gets its parent in front
+      // A folder named like the album of the versions gets its parent in front
       generatedAlbumId: const [generatedAlbumName],
     });
     final generated = index.generatedSummary();
@@ -173,7 +173,7 @@ class FolderLibrarySyncApi implements NativeSyncApi {
           isCloud: false,
           assetCount: album.assetCount,
         ),
-      // With the first folder, before any 3D photo exists; dated 0 while empty, so that it stays the same
+      // With the first folder, before any version exists; dated 0 while empty, so that it stays the same
       if (index.hasRoots)
         PlatformAlbum(
           id: generatedAlbumId,

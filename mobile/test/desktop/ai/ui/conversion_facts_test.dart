@@ -20,6 +20,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
@@ -32,6 +33,7 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
@@ -108,13 +110,14 @@ void main() {
 
   /// A container where the exif of each asset of [exif] comes a moment later (an asset of the server not in it has its
   /// exif still loading), the stereo check of each HEIF photo of [spatial] answers as given, the signed in user is
-  /// [_userId] on a server that takes edits, [edits] are the edits of Immich by remote id, and [origins] the versions
+  /// [_userId] on a server that takes edits, [edits] are the edits of Immich by remote id, and [versions] the versions
   /// the library knows
   ProviderContainer createContainer({
     Map<BaseAsset, ExifInfo?> exif = const {},
     Map<BaseAsset, Future<AppleSpatialInfo?>> spatial = const {},
     Map<String, List<AssetEdit>> edits = const {},
-    Map<String, IndexedOrigin> origins = const {},
+    Map<String, IndexedVersion> versions = const {},
+    Set<BaseAsset> panoramas = const {},
   }) {
     final users = MockUserService();
     when(users.tryGetMyUser).thenReturn(UserFactory.createDto(id: _userId));
@@ -135,10 +138,12 @@ void main() {
             apply: (_, _) async => null,
           ),
         ),
-        generatedOriginsProvider.overrideWith((ref) async => origins),
+        generatedVersionsProvider.overrideWith((ref) async => versions),
         for (final MapEntry(key: asset, value: info) in exif.entries)
           assetExifProvider(asset).overrideWith((ref) => _late(info)),
         for (final asset in [...spatial.keys]) appleSpatialInfoProvider(asset).overrideWith((ref) => spatial[asset]!),
+        // Photos of the library the 360° rules take, as the scan of the device would have found them
+        for (final asset in panoramas) isEquirectangularProvider(asset).overrideWith((ref) => true),
       ],
     );
     addTearDown(container.dispose);
@@ -214,11 +219,46 @@ void main() {
       expect((ofPlain.quarterTurns, ofPlain.serverEdits), (0, false), reason: 'not edited: its edits are not read');
     });
 
+    test('a version of the library says its kind; a 3D scene or a panorama holds no two eyes', () async {
+      final scene = LocalAssetFactory.create(id: 'scene', name: 'salon_scene3D.jpg');
+      final pano = LocalAssetFactory.create(id: 'pano', name: 'salon_360.jpg');
+      final stereo = LocalAssetFactory.create(id: 'stereo', name: 'salon_360_3D.jpg');
+      const sceneVersion = (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene);
+      const panoVersion = (origin: IndexedOrigin.generated, kind: ImmersiveKind.panorama360);
+      const stereoVersion = (origin: IndexedOrigin.generated, kind: ImmersiveKind.stereoPanorama360);
+      final container = createContainer(
+        versions: {'scene': sceneVersion, 'pano': panoVersion, 'stereo': stereoVersion},
+        panoramas: {pano, stereo},
+      );
+      final read = container.read(conversionFactsReaderProvider);
+
+      final ofScene = await read(scene);
+      expect((ofScene.version, ofScene.isStereo, ofScene.isPanorama), (sceneVersion, false, false));
+      final ofPano = await read(pano);
+      expect((ofPano.version, ofPano.isStereo, ofPano.isPanorama), (panoVersion, false, true));
+      expect((await read(stereo)).isStereo, isTrue);
+      expect(
+        conversionSkipOf(scene, ofScene, kind: ConversionKind.sceneFromPhoto),
+        ConversionSkipReason.alreadyVersion,
+      );
+      expect(conversionSkipOf(pano, ofPano, kind: ConversionKind.stereoPanoramaFromPanorama), isNull);
+    });
+
+    test('a raw photo of a 360° camera is said, its lenses not stitched', () async {
+      final raw = LocalAssetFactory.create(id: 'raw', name: 'IMG_20261020_101010_00_001.insp');
+      final container = createContainer();
+      final facts = await container.read(conversionFactsReaderProvider)(raw);
+      expect((facts.isPanorama, facts.isRaw360), (true, true));
+    });
+
     test('a 360° photo of the server is told once its exif answered; one of our versions is two eyes', () async {
       final sphere = RemoteAssetFactory.create(ownerId: _userId, name: 'sphere.jpg', width: 8000, height: 4000);
       final version = LocalAssetFactory.create(id: 'made', name: 'salon_3D.jpg');
       final photo = LocalAssetFactory.create(id: 'photo', name: 'salon.jpg');
-      final container = createContainer(exif: {sphere: _sphereExif}, origins: {'made': IndexedOrigin.estimated});
+      final container = createContainer(
+        exif: {sphere: _sphereExif},
+        versions: {'made': (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)},
+      );
       final read = container.read(conversionFactsReaderProvider);
 
       expect((await read(sphere)).isPanorama, isTrue);
@@ -257,7 +297,7 @@ void main() {
       final checking = LocalAssetFactory.create(id: 'checking', name: 'IMG_0003.HEIC');
       final container = createContainer(
         exif: {sphere: _sphereExif},
-        origins: {'made': IndexedOrigin.estimated},
+        versions: {'made': (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)},
         spatial: {
           spatial: Future.value(const AppleSpatialInfo.photo(_pair)),
           heic: Future<AppleSpatialInfo?>.value(),
@@ -272,6 +312,79 @@ void main() {
       expect(await offered(container, spatial), isFalse);
       expect(await offered(container, checking), isFalse, reason: 'until its check answered');
       expect(await offered(container, heic), !Platform.isLinux, reason: 'no decoder for HEIF on Linux');
+    });
+  });
+
+  group('the entry of the viewer by type', () {
+    /// What [provider] says once what it reads had the time to answer
+    Future<bool> says(ProviderContainer container, ProviderListenable<bool> provider) async {
+      final subscription = container.listen(provider, (_, _) {});
+      addTearDown(subscription.close);
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      return container.read(provider);
+    }
+
+    LocalAsset local(String id, String name, int width, int height) => LocalAsset(
+      id: id,
+      name: name,
+      type: AssetType.image,
+      createdAt: DateTime(2026, 10, 20),
+      updatedAt: DateTime(2026, 10, 20),
+      width: width,
+      height: height,
+      playbackStyle: AssetPlaybackStyle.image,
+      isEdited: false,
+    );
+
+    test(
+      'a 360° photo that holds one eye is offered its 3D version, a flat photo the kinds made from a photo',
+      () async {
+        final sphere = RemoteAssetFactory.create(ownerId: _userId, name: 'sphere.jpg', width: 8000, height: 4000);
+        final flat = local('flat', 'salon.jpg', 4000, 3000);
+        final generated = local('pano', 'salon_360.jpg', 8192, 4096);
+        final container = createContainer(
+          exif: {sphere: _sphereExif},
+          versions: {'pano': (origin: IndexedOrigin.generated, kind: ImmersiveKind.panorama360)},
+          panoramas: {generated},
+        );
+
+        for (final (asset, isFlat, isSphere) in [
+          (sphere, false, true),
+          (flat, true, false),
+          (generated, false, true),
+        ]) {
+          expect(await says(container, aiMonoPanoramaProvider(asset)), isSphere, reason: asset.name);
+          for (final kind in ConversionKind.values) {
+            final offered = kind == ConversionKind.stereoPanoramaFromPanorama ? isSphere : isFlat;
+            expect(
+              await says(container, aiSourceProvider((asset: asset, kind: kind))),
+              offered,
+              reason: '${asset.name} ${kind.name}',
+            );
+          }
+        }
+      },
+    );
+
+    test('never a 3D one, a VR180 one, a raw one, nor another version of ours', () async {
+      final stacked = RemoteAssetFactory.create(ownerId: _userId, name: 'stacked.jpg', width: 4096, height: 4096);
+      final vr180 = RemoteAssetFactory.create(ownerId: _userId, name: 'trip_180.jpg', width: 8000, height: 4000);
+      final raw = local('raw', 'IMG_20261020_101010_00_001.insp', 6080, 3040);
+      final stereoVersion = local('stereo', 'salon_360_3D.jpg', 8192, 4096);
+      final scene = local('scene', 'salon_scene3D.jpg', 2048, 1536);
+      final container = createContainer(
+        exif: {stacked: _sphereExif, vr180: _sphereExif},
+        versions: {
+          'stereo': (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPanorama360),
+          'scene': (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene),
+        },
+        panoramas: {stereoVersion},
+      );
+
+      for (final asset in [stacked, vr180, raw, stereoVersion, scene]) {
+        expect(await says(container, aiMonoPanoramaProvider(asset)), isFalse, reason: asset.name);
+      }
+      expect(await says(container, aiFlatPhotoProvider(scene)), isFalse, reason: 'a version of ours');
     });
   });
 

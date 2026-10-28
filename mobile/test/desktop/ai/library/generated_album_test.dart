@@ -1,6 +1,7 @@
-// The album of the 3D photos the app makes, with the folder library behind the sync services of the phones, the real
-// local tables in memory and the real query of the backup (backup.repository.dart): a version never leaves for Immich
-// on its own, even from a folder chosen for the backup, until the user chooses so.
+// The album of the versions the app makes (3D photos, 3D scenes, 360° panoramas), with the folder library behind the
+// sync services of the phones, the real local tables in memory and the real query of the backup
+// (backup.repository.dart): a version never leaves for Immich on its own, even from a folder chosen for the backup,
+// until the user chooses so; the album renamed for phase 2 keeps that.
 
 import 'dart:async';
 import 'dart:io';
@@ -11,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/data/db/main/table/local/album.drift.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
@@ -153,6 +155,93 @@ void main() {
     final inFolder = await LocalAlbumRepository(db).getAssetIds((await albumNamed('Salon'))!.id);
     expect(inFolder, containsAll(inAlbum));
   });
+
+  test('versions of every kind stay out of the backup, even from a folder chosen for it', () async {
+    final panorama = panoramaVersionXmp(original);
+    writeVersion();
+    fixture
+      ..write('Pictures/Salon/salon_scene3D.jpg', versionFileOf(sceneVersionXmp(original)))
+      ..write('Pictures/Salon/salon_360.jpg', versionFileOf(panorama))
+      ..write('Pictures/Salon/salon_360_3D.jpg', versionFileOf(stereoPanoramaVersionXmp(original, parent: panorama)))
+      // The 3D version of a 360° photo of the user, saved beside it
+      ..write('Pictures/Trips/beach_3D.jpg', versionFileOf(stereoPanoramaVersionXmp(original, name: 'beach.jpg')));
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await chooseForBackup('Salon');
+    await chooseForBackup('Trips');
+    await hash();
+
+    expect(await candidates(), ['beach.jpg', 'salon.jpg']);
+    final album = (await albumNamed(generatedAlbumName))!;
+    expect((album.id, album.assetCount, album.backupSelection), (generatedAlbumId, 5, BackupSelection.excluded));
+  });
+
+  test('the album renamed keeps its exclusion: by the full sync the index of schema 4 asks, and by a delta', () async {
+    writeVersion();
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await chooseForBackup('Salon');
+    // As a build of phase 1 left the local tables: the album under its former name, excluded
+    await (db.localAlbumEntity.update()..where((row) => row.id.equals(generatedAlbumId))).write(
+      const LocalAlbumEntityCompanion(name: drift.Value('Immuch360 3D (AI)')),
+    );
+    expect(await albumNamed('Immuch360 3D (AI)'), isNotNull);
+
+    // Nothing changed in the folders, the index asks for a full sync (its migration to schema 4 does)
+    fixture.index().clearCheckpoint();
+    await syncService().sync();
+    expect(await albumNamed('Immuch360 3D (AI)'), isNull);
+    final renamed = (await albumNamed(generatedAlbumName))!;
+    expect((renamed.id, renamed.backupSelection), (generatedAlbumId, BackupSelection.excluded));
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(selectionChanges, 1, reason: 'excluded once, at the first sync, never again');
+    // The guard of the writes still lets the conversions write into the folders of the library
+    final guard = GeneratedAlbumGuard(
+      keeper: keeper,
+      inLibrary: (folder) =>
+          FolderLibrary.holdsFolderOffWindow(fixture.indexPath, folder, probe: fixture.probe, rules: fixture.rules),
+    );
+    expect(await guard.mayWriteInto(p.join(fixture.files.path, 'Pictures', 'Salon')), isTrue);
+
+    // A delta that brings a scene renames it too, still excluded
+    await (db.localAlbumEntity.update()..where((row) => row.id.equals(generatedAlbumId))).write(
+      const LocalAlbumEntityCompanion(name: drift.Value('Immuch360 3D (AI)')),
+    );
+    fixture.write('Pictures/Salon/salon_scene3D.jpg', versionFileOf(sceneVersionXmp(original)));
+    await fixture.scan();
+    await syncService().sync();
+    await hash();
+    final album = (await albumNamed(generatedAlbumName))!;
+    expect((album.assetCount, album.backupSelection), (2, BackupSelection.excluded));
+    expect(await candidates(), ['salon.jpg']);
+  });
+
+  test(
+    'a new scene or panorama that cannot be read waits for the next scan, never a plain photo of its folder',
+    () async {
+      await syncService().sync();
+      await keeper.ensureExcluded();
+      await chooseForBackup('Salon');
+
+      fixture
+        ..write('Pictures/Salon/salon_scene3D.jpg', versionFileOf(sceneVersionXmp(original)))
+        ..write('Pictures/Salon/salon_360.jpg', versionFileOf(panoramaVersionXmp(original)));
+      for (final name in ['salon_scene3D.jpg', 'salon_360.jpg']) {
+        fixture.failing.add(p.join(fixture.files.path, 'Pictures', 'Salon', name));
+      }
+      await fixture.scan();
+      await syncService().sync();
+      await hash();
+      expect(await candidates(), ['salon.jpg']);
+
+      fixture.failing.clear();
+      await fixture.scan();
+      await syncService().sync();
+      await hash();
+      expect(await candidates(), ['salon.jpg']);
+      expect(await LocalAlbumRepository(db).getAssetIds(generatedAlbumId), hasLength(2));
+    },
+  );
 
   test('without the exclusion the folder would send its version: the album is what keeps it out', () async {
     writeVersion();

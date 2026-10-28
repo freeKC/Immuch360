@@ -178,6 +178,12 @@ enum ConversionSkipReason {
   /// Already a side by side photo, ours or of another tool
   alreadyStereo,
 
+  /// Already a version the app made from a photo (a 3D scene, a 360° panorama for a kind made from a flat photo)
+  alreadyVersion,
+
+  /// Not a 360° photo of a full sphere, for the 3D version of a 360° photo
+  notSphere,
+
   /// A format this computer cannot read (HEIC on Linux)
   unreadableFormat,
 

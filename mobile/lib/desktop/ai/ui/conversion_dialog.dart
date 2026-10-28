@@ -4,7 +4,10 @@
 // The entry is absent while the AI features are off (Settings, This computer, AI and 3D). It is greyed with its reason
 // when this computer cannot run them (the hardware gate: system, processor, memory, ONNX Runtime that does not load);
 // missing components do not grey it, the dialog offers to install them. In the viewer it is offered for a flat photo
-// only.
+// only, until the 3D version of a 360° photo has its type in the dialog (lot P1). What each type of version takes is
+// told by type, by aiSourceProvider and conversionSkipOf (design-final 2026-10-27, section 9.1, point 1): a flat photo
+// for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one eye, of the user or a
+// panorama the app generated, for its 3D version.
 //
 // The dialog says what the conversion is ("Relief estimated by AI from a single photo") and that a finished one does
 // not guarantee a good result; installs the missing components (their name, size and licence, Download, a bar,
@@ -41,10 +44,13 @@ import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
+import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
@@ -125,6 +131,8 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
   ConversionSkipReason.vr180 => t.ai_immersive_skipped_vr180,
   ConversionSkipReason.spatial => t.ai_immersive_skipped_spatial,
   ConversionSkipReason.alreadyStereo => t.ai_immersive_skipped_3d,
+  ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
+  ConversionSkipReason.notSphere => t.ai_immersive_skipped_not_360,
   ConversionSkipReason.unreadableFormat => t.ai_immersive_unavailable_format,
   ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
   ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
@@ -132,20 +140,32 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
   ConversionSkipReason.parentNotMade => t.ai_immersive_skipped_parent,
 };
 
-/// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere, holds two eyes
-/// already, is an Apple spatial photo, how many quarter turns the user sees it with, and whether Immich holds edits of
-/// it that its original lacks
+/// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
+/// camera, its lenses not stitched, among them), holds two eyes already, is one of the versions the app made and of
+/// which kind, is an Apple spatial photo, how many quarter turns the user sees it with, and whether Immich holds edits
+/// of it that its original lacks
 class ConversionPhotoFacts {
   const ConversionPhotoFacts({
     this.isPanorama = false,
+    this.isRaw360 = false,
     this.isStereo = false,
+    this.version,
     this.isSpatial = false,
     this.quarterTurns = 0,
     this.serverEdits = false,
   });
 
   final bool isPanorama;
+
+  /// A raw photo of a 360° camera (an Insta360 .insp), its two lenses not stitched: a sphere for the viewers, no
+  /// equirectangular picture for a conversion
+  final bool isRaw360;
+
+  /// Two eyes: side by side by its name and frame, or a version of ours that holds two (see versionHoldsTwoEyes)
   final bool isStereo;
+
+  /// What the library knows of it when the app made it, null for any other photo
+  final IndexedVersion? version;
   final bool isSpatial;
 
   /// The turns the viewer draws, plus those of the rotation saved in the edits of Immich: the original is unedited
@@ -181,16 +201,18 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
   return (asset) async {
     final turns = ref.listen(displayQuarterTurnsProvider(asset), (_, _) {});
     final panorama = ref.listen(isPanoramaProvider(asset), (_, _) {});
+    final raw = ref.listen(rawMediaKindProvider(asset), (_, _) {});
     try {
       final localId = asset.localId;
-      var origins = const <String, Object>{};
+      var versions = const <String, IndexedVersion>{};
       try {
-        origins = await answer(generatedOriginsProvider.future);
+        versions = await answer(generatedVersionsProvider.future);
       } catch (error) {
-        _log.fine('The origins of the library are not known: $error');
+        _log.fine('The versions of the library are not known: $error');
       }
+      final version = localId == null ? null : versions[localId];
       final isStereo =
-          (localId != null && origins.containsKey(localId)) ||
+          (version != null && versionHoldsTwoEyes(version)) ||
           decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null;
       if (asset.hasRemote) {
         try {
@@ -219,7 +241,9 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
       }
       return ConversionPhotoFacts(
         isPanorama: panorama.read(),
+        isRaw360: raw.read() != null,
         isStereo: isStereo,
+        version: version,
         isSpatial: isSpatial,
         quarterTurns: normalizeQuarterTurns(turns.read() + editTurns),
         serverEdits: serverEdits,
@@ -227,6 +251,7 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
     } finally {
       turns.close();
       panorama.close();
+      raw.close();
     }
   };
 });
@@ -347,18 +372,59 @@ class ConversionCandidate {
   bool get runs => skip == null;
 }
 
-/// The reason to skip [asset] known before anything runs, from its [facts], null when it is converted. [linux]: no
+/// Whether a version of ours holds two eyes: a 3D photo, a 360° 3D panorama, and a version whose kind this build does
+/// not know (or not read again since the index learnt the kinds), which is never made into another version either
+bool versionHoldsTwoEyes(IndexedVersion version) => switch (version.kind) {
+  ImmersiveKind.volumetricScene || ImmersiveKind.panorama360 => false,
+  ImmersiveKind.stereoPhoto || ImmersiveKind.stereoPanorama360 || null => true,
+};
+
+/// The reason to skip [asset] for a version of [kind] known before anything runs, from its [facts], null when it is
+/// converted. A 3D photo, a 3D scene and a 360° panorama are made from a flat photo; the 3D version of a 360° photo from
+/// a 360° photo of a full sphere that holds one eye, a photo of the user or a panorama the app generated. [linux]: no
 /// decoder for HEIF and AVIF there.
-ConversionSkipReason? conversionSkipOf(BaseAsset asset, ConversionPhotoFacts facts, {bool? linux}) {
+ConversionSkipReason? conversionSkipOf(
+  BaseAsset asset,
+  ConversionPhotoFacts facts, {
+  ConversionKind kind = ConversionKind.sbsFromPhoto,
+  bool? linux,
+}) {
   if (asset.isVideo || !asset.isImage) {
     return ConversionSkipReason.video;
   }
-  if (facts.isPanorama) {
-    final half = guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height);
-    return half == SphereCoverage.half ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360;
-  }
-  if (facts.isStereo) {
-    return ConversionSkipReason.alreadyStereo;
+  final halfSphere =
+      guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height) == SphereCoverage.half;
+  if (kind == ConversionKind.stereoPanoramaFromPanorama) {
+    if (!facts.isPanorama) {
+      return ConversionSkipReason.notSphere;
+    }
+    if (halfSphere) {
+      return ConversionSkipReason.vr180;
+    }
+    if (facts.isRaw360) {
+      // Two fisheye circles, no equirectangular picture to make a relief of
+      return ConversionSkipReason.unreadableFormat;
+    }
+    if (facts.isStereo || guessStereoLayout(width: asset.width, height: asset.height) != StereoLayout.mono) {
+      return ConversionSkipReason.alreadyStereo;
+    }
+    if (facts.version case final version? when version.kind != ImmersiveKind.panorama360) {
+      return ConversionSkipReason.alreadyVersion;
+    }
+    if (!_fullSphereFrame(asset.width, asset.height)) {
+      // A partial panorama: its crop leaves no sphere to go around
+      return ConversionSkipReason.notSphere;
+    }
+  } else {
+    if (facts.isPanorama) {
+      return halfSphere ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360;
+    }
+    if (facts.isStereo) {
+      return ConversionSkipReason.alreadyStereo;
+    }
+    if (facts.version != null) {
+      return ConversionSkipReason.alreadyVersion;
+    }
   }
   if (facts.isSpatial) {
     return ConversionSkipReason.spatial;
@@ -368,6 +434,11 @@ ConversionSkipReason? conversionSkipOf(BaseAsset asset, ConversionPhotoFacts fac
   }
   return null;
 }
+
+/// A frame of 2:1 within 10 %, an equirectangular picture of the whole sphere; true when the size is not known (the
+/// engine checks the picture it decodes)
+bool _fullSphereFrame(int? width, int? height) =>
+    width == null || height == null || height <= 0 || (width / height - 2).abs() <= 0.2;
 
 /// Whether a photo named [name] cannot be decoded on this system: HEIF and AVIF on Linux ([linux]), which has no
 /// decoder for them
@@ -396,16 +467,35 @@ class _SkippedSource implements ConversionSource {
   Future<void> release() async {}
 }
 
+/// What the library knows of [asset] when the app made it, null for any other photo
+IndexedVersion? _versionOf(Ref ref, BaseAsset asset) {
+  final localId = asset.localId;
+  return localId == null
+      ? null
+      : ref.watch(generatedVersionsProvider.select((versions) => versions.valueOrNull?[localId]));
+}
+
+/// Whether the viewer may offer "Make 3D (AI)" for [asset] to make a version of [kind]: a flat photo for a 3D photo, a
+/// 3D scene and a 360° panorama ([aiFlatPhotoProvider]), a 360° photo that holds one eye for its 3D version
+/// ([aiMonoPanoramaProvider])
+final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, ConversionKind kind})>(
+  (ref, source) => switch (source.kind) {
+    ConversionKind.sbsFromPhoto ||
+    ConversionKind.sceneFromPhoto ||
+    ConversionKind.panoramaFromPhoto => ref.watch(aiFlatPhotoProvider(source.asset)),
+    ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
+  },
+);
+
 /// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo this system can read, neither 360°, nor two eyes
-/// side by side, nor an Apple spatial photo (hidden until the check of a HEIF photo answered)
+/// side by side, nor a version the app made, nor an Apple spatial photo (hidden until the check of a HEIF photo
+/// answered)
 final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
   if (!asset.isImage || ref.watch(isPanoramaProvider(asset)) || isUnreadableHere(asset.name)) {
     return false;
   }
-  final localId = asset.localId;
-  final made =
-      localId != null && ref.watch(generatedOriginsProvider.select((origins) => origins.valueOrNull?[localId])) != null;
-  if (made || decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null) {
+  if (_versionOf(ref, asset) != null ||
+      decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null) {
     return false;
   }
   if (isHeifName(asset.name)) {
@@ -416,6 +506,23 @@ final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, a
     }
   }
   return true;
+});
+
+/// Whether [asset] may get its 3D version (design-final 2026-10-27, sections 4.4 and 9.1): a 360° photo of a full
+/// sphere that holds one eye, of the user or a panorama the app generated, which this system can read; never a raw
+/// photo of a 360° camera, a VR180 or 3D one, nor another version of ours
+final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
+  if (!asset.isImage || !ref.watch(isPanoramaProvider(asset))) {
+    return false;
+  }
+  final version = _versionOf(ref, asset);
+  final facts = ConversionPhotoFacts(
+    isPanorama: true,
+    isRaw360: ref.watch(rawMediaKindProvider(asset)) != null,
+    isStereo: version != null && versionHoldsTwoEyes(version),
+    version: version,
+  );
+  return conversionSkipOf(asset, facts, kind: ConversionKind.stereoPanoramaFromPanorama) == null;
 });
 
 /// "Make 3D (AI)" for the photos of [source]: a menu item of the viewer, or a button of the bottom sheet of a
