@@ -1,15 +1,18 @@
 package app.alextran.immich.immersive
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.util.Log
 import android.view.Surface
 import android.view.View
@@ -47,6 +50,17 @@ import app.alextran.immich.core.raw.RawStitchException
 import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
 import app.alextran.immich.djilink.TransientText
+import app.alextran.immich.immersive.scene.SceneGate
+import app.alextran.immich.immersive.scene.SceneOpener
+import app.alextran.immich.immersive.scene.SceneOpening
+import app.alextran.immich.immersive.scene.ScenePrepared
+import app.alextran.immich.immersive.scene.SceneRefusal
+import app.alextran.immich.immersive.scene.SceneSource
+import app.alextran.immich.immersive.scene.SceneStop
+import app.alextran.immich.immersive.scene.SceneTexts
+import app.alextran.immich.immersive.scene.SceneVerdict
+import app.alextran.immich.immersive.scene.SceneView
+import app.alextran.immich.immersive.scene.SceneViewerOptions
 import app.alextran.immich.relief.ReliefJob
 import app.alextran.immich.relief.ReliefListener
 import app.alextran.immich.relief.ReliefRequest
@@ -99,6 +113,7 @@ import com.meta.spatial.vr.LocomotionSystem
 import com.meta.spatial.vr.VRFeature
 import java.io.File
 import java.io.IOException
+import java.io.RandomAccessFile
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
@@ -186,6 +201,14 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * goes from 3D to 2.5D, then 2D; the request says which of 3D or 2.5D comes first (stereo by default, the
  * aiReliefQuestMode setting). The relief fades as the head moves away from where the quad was placed. See
  * [applyStereoPlacement].
+ *
+ * A photo that carries a 3D scene a computer made from it comes with the volumetricScene JSON (design-final
+ * 2026-10-27, section 3, lot S3): its file is read whole into the cache, its JPEG preview shows flat on the quad at
+ * once under "Preparing the 3D scene" and the bar, then the scene replaces it once its meshes are made (see
+ * [showScene] and [SceneView]): fixed in the world, the left thumbstick glides within the zone the file allows, a click
+ * of a thumbstick or Reset in the panel lays it at the head again, the 3D button switches to the photo (2D) and back,
+ * the right thumbstick does nothing and previous and next are not offered. A scene the gate or the file refuses leaves
+ * the preview flat with the reason for a few seconds. Nothing of the AI is needed to read a scene.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -251,6 +274,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The widest the thumbstick makes the quad of this photo, see StereoComposer.maxAngle. */
     val stereoMaxAngleDeg: Float
       get() = StereoComposer.maxAngle(stereoKind?.isEstimatedRelief == true)
+
+    /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
+    val isScene: Boolean
+      get() = stereoKind is StereoPhotoKind.VolumetricScene
   }
 
   /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
@@ -377,11 +404,30 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var meshTextureCoordinates: FloatArray? = null
   private val mainHandler = Handler(Looper.getMainLooper())
 
+  // 3D scene of a photo, see showScene and SceneView
+  /** The scene of the photo shown, null for any other media and until its textures are decoded. */
+  private var sceneView: SceneView? = null
+  /** The file of the scene is read, its meshes being made: the bar shows under "Preparing the 3D scene". */
+  private var scenePreparing = false
+  /** The scene shown rather than its photo (false after "Photo (2D)"). */
+  private var sceneChosen = true
+  /** The lines the panel keeps for the scene: the honesty sentence, the room to move, the flags of the file. */
+  private var sceneDetails: List<String> = emptyList()
+  /** The buttons held on the controllers at the last frame, for the glide of the left thumbstick. */
+  private var heldButtons = 0
+  /** The uptime of the last frame in nanoseconds, 0 before the first one. */
+  private var lastFrameNanos = 0L
+
   // Info panel views
   private var titleView: TextView? = null
   private var statusView: TextView? = null
   /** Indeterminate bar under the status line while a relief is made. */
   private var reliefProgressView: ProgressBar? = null
+  private var hintView: TextView? = null
+  /** The lines of a 3D scene under the controller mapping, see [sceneDetails]. */
+  private var sceneDetailsView: TextView? = null
+  private var navigationRow: View? = null
+  private var resetButton: Button? = null
   private var stereoView: Button? = null
   private var coverageView: Button? = null
   /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
@@ -613,6 +659,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       createHalfSphere()
       createStereoQuad()
       createReliefMesh()
+      createSceneMeshes()
       videoEntity = Entity.create(Panel(R.id.immersive_video_panel), Transform(), Visible(false))
       infoEntity =
         Entity.createPanelEntity(
@@ -719,6 +766,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val media = request
     loadJob?.cancel()
     dropRelief()
+    dropScene()
     reliefLabelJob?.cancel()
     reliefLabelJob = null
     hideInfoJob?.cancel()
@@ -757,6 +805,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     updateCoverageView()
     updateTurnButton()
+    updateSceneControls()
     if (revealInfo) setInfoVisible(true, reposition = true)
     when {
       media.isVideo -> showVideo(media)
@@ -772,7 +821,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     titleView = root.findViewById(R.id.immersive_title)
     statusView = root.findViewById(R.id.immersive_status)
     reliefProgressView = root.findViewById(R.id.immersive_relief_progress)
-    setReliefProgress(reliefRun?.running == true)
+    setReliefProgress(reliefRun?.running == true || scenePreparing)
+    hintView = root.findViewById(R.id.immersive_hint)
+    sceneDetailsView = root.findViewById(R.id.immersive_scene_details)
+    navigationRow = root.findViewById(R.id.immersive_navigation_row)
+    resetButton = root.findViewById(R.id.immersive_reset)
     stereoView = root.findViewById(R.id.immersive_stereo)
     coverageView = root.findViewById(R.id.immersive_coverage)
     turnButton = root.findViewById(R.id.immersive_turn)
@@ -793,6 +846,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(turnButton) { rotateSphere(YAW_STEP_DEGREES) }
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
+    onPanelClick(resetButton) { resetScene() }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -803,6 +857,30 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     updateCoverageView()
     updateTurnButton()
+    updateSceneControls()
+  }
+
+  /**
+   * The rows of a 3D scene in the info panel: its controller mapping in place of the general one, its lines (see
+   * [sceneDetails]) under it, Reset once the scene shows; previous and next are not offered there, the left thumbstick
+   * gliding instead. Any other media gets the panel as before.
+   */
+  private fun updateSceneControls() {
+    val media = request
+    val scene = media?.isScene == true
+    hintView?.text =
+      if (scene) SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
+      else getString(R.string.immersive_hint)
+    sceneDetailsView?.let { view ->
+      view.text = sceneDetails.joinToString("\n")
+      view.visibility = if (scene && sceneDetails.isNotEmpty()) View.VISIBLE else View.GONE
+    }
+    navigationRow?.visibility = if (scene) View.GONE else View.VISIBLE
+    resetButton?.let { button ->
+      button.text = SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_RESET)
+      button.visibility = if (scene) View.VISIBLE else View.GONE
+      button.isEnabled = scene && sceneView?.isReady == true && sceneChosen
+    }
   }
 
   /** The turn button is there for the media shown on a sphere only. */
@@ -863,6 +941,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       view.visibility = View.GONE
       return
     }
+    if (media.isScene) {
+      // What shows now, the scene or its photo; greyed while the scene is prepared, and for a scene that stays flat
+      val ready = sceneView?.isReady == true
+      val key = if (ready && sceneChosen) SceneTexts.LABEL_SCENE_3D else SceneTexts.LABEL_PHOTO_2D
+      view.text = SceneTexts.label(media.stereoLabels, if (ready) key else SceneTexts.LABEL_SCENE_3D)
+      view.isEnabled = ready
+      view.visibility = View.VISIBLE
+      return
+    }
+    view.isEnabled = true
     if (media.isStereoPhoto) {
       // 3D, 2.5D or 2D (left eye, or the original itself): what the quad shows now; "Stop relief" while a relief runs
       val key =
@@ -993,25 +1081,40 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * of where the user looks now: the answer to a thumbstick action while the info panel is hidden, which it neither
    * shows nor moves. A new text restarts the delay.
    */
-  private fun showFeedback(text: String) {
+  private fun showFeedback(text: String, holdMs: Long = FEEDBACK_SHOW_MS) {
     if (text.isBlank()) return
     feedbackText = text
     feedbackView?.text = text
     val panel = feedbackEntity ?: return
     placeFeedbackInFront(panel)
+    feedbackView?.animate()?.cancel()
+    feedbackView?.alpha = 1f
     panel.setComponent(Visible(infoPlaced))
     feedbackJob?.cancel()
     feedbackJob =
       scope.launch {
-        delay(FEEDBACK_SHOW_MS)
+        delay(holdMs)
+        // A notice fades out, as the passing texts do (TransientText); the answer to a thumbstick just goes
+        if (holdMs > FEEDBACK_SHOW_MS) {
+          feedbackView?.animate()?.alpha(0f)?.setDuration(TransientText.FADE_OUT_MS)
+          delay(TransientText.FADE_OUT_MS)
+        }
         feedbackJob = null
         hideFeedback()
       }
   }
 
+  /**
+   * [text] on the feedback panel in front of the user while the info panel is hidden, held TransientText.HOLD_MS then
+   * fading out: what a 3D scene says on entering it and at the edge of its zone.
+   */
+  private fun showNotice(text: String) = showFeedback(text, TransientText.HOLD_MS)
+
   private fun hideFeedback() {
     feedbackJob?.cancel()
     feedbackJob = null
+    feedbackView?.animate()?.cancel()
+    feedbackView?.alpha = 1f
     feedbackEntity?.setComponent(Visible(false))
   }
 
@@ -1029,7 +1132,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   // ---------------------------------------------------------------------------------------------
   // Frame and input
 
+  override fun onButtonsHeld(controllerBits: Int) {
+    heldButtons = controllerBits
+  }
+
   override fun onFrame(head: Pose?) {
+    val now = System.nanoTime()
+    val seconds = if (lastFrameNanos == 0L) 0.0 else (now - lastFrameNanos) / 1e9
+    lastFrameNanos = now
     if (head != null && (head.t.x != 0f || head.t.y != 0f || head.t.z != 0f)) {
       lastHeadPosition = Vector3(head.t.x, head.t.y, head.t.z)
       lastHeadForward = head.forward()
@@ -1037,6 +1147,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       // A spatial photo shown before the first head pose goes in front of the user once it is known
       if (!stereoPlacedWithHead && stereoEyeSize != null && request?.isStereoPhoto == true) placeStereoQuad()
       if (reliefMeshShown) followHeadWithRelief(head.t)
+      // A 3D scene: the glide, the edge, its root fixed in the world, laid at the head at its first frame
+      sceneView?.onFrame(head, heldButtons, seconds)
     }
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
@@ -1165,7 +1277,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val panel = if (infoVisible) "shown" else "hidden"
     val controller = Integer.toHexString(controllerBits)
     Log.d(TAG, "buttons pressed: controller 0x$controller, hand 0x${Integer.toHexString(handBits)}, panel $panel")
-    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible)
+    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible, scene = request?.isScene == true)
     if (!focused) {
       Log.w(TAG, "button press while the session was not reported focused: taken as focused (resumed=$resumed)")
       focused = true
@@ -1211,6 +1323,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         ImmersiveControls.Action.SHOW_PANEL -> setInfoVisible(true, reposition = true)
         ImmersiveControls.Action.PLAY_PAUSE -> togglePlayPause()
+        ImmersiveControls.Action.RESET -> resetScene()
       }
     }
   }
@@ -1241,7 +1354,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val key =
         when (shown.stereoKind) {
           is StereoPhotoKind.Sbs,
-          is StereoPhotoKind.DepthRelief -> StereoComposer.LABEL_NO_NAVIGATION_3D
+          is StereoPhotoKind.DepthRelief,
+          is StereoPhotoKind.VolumetricScene -> StereoComposer.LABEL_NO_NAVIGATION_3D
           else -> StereoComposer.LABEL_NO_NAVIGATION
         }
       val text = StereoComposer.label(shown.stereoLabels, key)
@@ -1568,6 +1682,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     Log.i(TAG, "immersive viewer closing")
     loadJob?.cancel()
     releaseRelief()
+    dropScene()
     hideInfoJob?.cancel()
     stopProgressTicker()
     // A media Flutter sends for a request from now on is refused, and the closed event stops its search
@@ -1973,6 +2088,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       restored?.angleDeg
         ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceAtMost(media.stereoMaxAngleDeg)
     stereoChoicesFor = media.url to media.openingId
+    if (kind is StereoPhotoKind.VolumetricScene) {
+      showScene(media, kind.spec)
+      return
+    }
     updateStereoView()
     setStatus(getString(R.string.immersive_loading))
     loadJob =
@@ -2154,7 +2273,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
   }
 
-  /** The indeterminate bar under the status line, while a relief is made. */
+  /** The indeterminate bar under the status line, while a relief or a 3D scene is made. */
   private fun setReliefProgress(visible: Boolean) {
     reliefProgressView?.visibility = if (visible) View.VISIBLE else View.GONE
   }
@@ -2177,6 +2296,300 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     reliefJob = null
   }
 
+  // ---------------------------------------------------------------------------------------------
+  // 3D scene of a photo, see SceneView
+
+  /**
+   * The mesh creator of the scenes (see [SceneView.createMesh]), registered once with the scene. An entity of a scene
+   * gone, or one whose mesh the SDK could not make, gets a quad too small to see, and stays hidden anyway.
+   */
+  private fun createSceneMeshes() {
+    registerMeshCreator(SceneView.MESH_URI) { entity: Entity, uri: Uri ->
+      sceneView?.createMesh(entity, uri)
+        ?: SceneMesh.singleSidedQuad(
+          0.001f,
+          0.001f,
+          entity.getComponent<Material>().generateSceneMaterial(entity, this),
+        )
+    }
+  }
+
+  /**
+   * [media], a photo that carries a 3D scene (design-final 2026-10-27, section 3.2): its file read whole into the cache
+   * (or where it is, on the headset), its preview flat on the quad at once under "Preparing the 3D scene" and the bar;
+   * then, off the main thread, the scene opened from the file (the packet at its head wins over [json]), weighed by
+   * the gate of this headset, its textures decoded in sRGB at the sizes the gate allows. [SceneView] makes its meshes
+   * and replaces the preview once they are there. A scene the gate or the file refuses leaves the preview flat with
+   * its reason for a few seconds; the panel keeps it too.
+   */
+  private fun showScene(media: MediaRequest, json: VolumetricSceneSpec) {
+    val labels = media.stereoLabels
+    stereoAngleDeg = StereoComposer.initialAngle(json.fovDegrees.toFloat())
+    sceneChosen = true
+    scenePreparing = true
+    sceneDetails = SceneTexts.detailLines(labels, json, null)
+    cancelInfoHide()
+    setReliefProgress(true)
+    setStatus(SceneTexts.label(labels, SceneTexts.LABEL_PREPARING))
+    updateStereoView()
+    updateSceneControls()
+    val options = readSceneOptions()
+    val caps = SceneGate.capsFor(Build.DEVICE)
+    loadJob =
+      scope.launch {
+        val local = ImmersiveMedia.localFileFor(media.url)
+        val file = local ?: File(cacheDir, "$ORIGINAL_PREFIX${System.nanoTime()}")
+        val flat = AtomicReference<StereoTexture?>()
+        val made = AtomicReference<Pair<ScenePrepared, List<Bitmap>>?>()
+        var previewShown = false
+        try {
+          if (local == null) Log.i(TAG, "scene: ${downloadTo(media.url, file)} bytes downloaded")
+          else Log.i(TAG, "scene: ${file.length()} bytes on the headset")
+          decodeMutex.withLock {
+            withContext(Dispatchers.Default) { ImmersiveMedia.decodeFile(file)?.let { flat.set(flatTexture(it)) } }
+          }
+          ensureActive()
+          applyStereoTexture(flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded"))
+          previewShown = true
+          val opening =
+            decodeMutex.withLock {
+              withContext(Dispatchers.Default) {
+                val opened =
+                  RandomAccessFile(file, "r").use { access ->
+                    SceneOpener.open(SceneSource.of(access), json, caps, { availableMemory() }, { thermalStatus() })
+                  }
+                if (opened is SceneOpening.Ready) {
+                  SceneView.decodeTextures(opened.scene, opened.open.sampleSizes)?.let { bitmaps ->
+                    made.set(ScenePrepared.of(opened) to bitmaps)
+                  }
+                }
+                opened
+              }
+            }
+          ensureActive()
+          when (opening) {
+            is SceneOpening.Stopped -> sceneStopped(media, opening.stop)
+            is SceneOpening.Ready -> {
+              sceneDetails = SceneTexts.detailLines(labels, opening.spec, opening.hiddenFraction)
+              updateSceneControls()
+              val (prepared, bitmaps) = made.getAndSet(null) ?: (null to null)
+              if (prepared == null || bitmaps == null) {
+                sceneStopped(media, SceneStop.Failed("a texture does not decode"))
+              } else {
+                attachScene(media, prepared, bitmaps, options)
+              }
+            }
+          }
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "scene failed", e)
+          val reason = e.message ?: e.javaClass.simpleName
+          when {
+            !previewShown -> {
+              scenePreparing = false
+              sceneDetails = emptyList()
+              setReliefProgress(false)
+              updateSceneControls()
+              showError(getString(R.string.immersive_error_photo, reason))
+            }
+            e is OutOfMemoryError ->
+              sceneStopped(media, SceneStop.Refused(SceneVerdict.Refused(SceneRefusal.NOT_ENOUGH_MEMORY)))
+            else -> sceneStopped(media, SceneStop.Failed(reason))
+          }
+        } finally {
+          flat.getAndSet(null)?.bitmap?.recycle()
+          made.getAndSet(null)?.second?.forEach { it.recycle() }
+          if (local == null) file.delete()
+        }
+      }
+  }
+
+  /** The textures of [prepared] uploaded from [bitmaps], which are recycled, and the scene handed to a [SceneView]. */
+  private fun attachScene(
+    media: MediaRequest,
+    prepared: ScenePrepared,
+    bitmaps: List<Bitmap>,
+    options: SceneViewerOptions,
+  ) {
+    val textures = mutableListOf<SceneTexture>()
+    try {
+      for (bitmap in bitmaps) {
+        textures +=
+          SceneTexture(
+            bitmap,
+            SamplerConfig(
+              Filter.LINEAR,
+              Filter.LINEAR,
+              Filter.LINEAR,
+              AddressMode.CLAMP_TO_EDGE,
+              AddressMode.CLAMP_TO_EDGE,
+              0f,
+            ),
+          )
+      }
+    } catch (e: Throwable) {
+      Log.e(TAG, "scene: a texture could not be uploaded", e)
+      textures.forEach { runCatching { it.destroy() } }
+      sceneStopped(media, SceneStop.Failed(e.message ?: e.javaClass.simpleName))
+      return
+    } finally {
+      bitmaps.forEach { it.recycle() }
+    }
+    val view = SceneView(this, systemManager, mainHandler, prepared, textures, options, SceneListener(media))
+    sceneView = view
+    view.attach()
+  }
+
+  /** What the scene of [media] says, on the main thread; nothing once another media is shown. */
+  private inner class SceneListener(private val media: MediaRequest) : SceneView.Listener {
+    private val current: Boolean
+      get() = request === media && !closing
+
+    override fun onSceneShown() {
+      if (!current) return
+      scenePreparing = false
+      setReliefProgress(false)
+      if (sceneChosen) stereoQuadEntity?.setComponent(Visible(false))
+      stereoStatus = SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_SCENE_3D)
+      updateStereoView()
+      updateSceneControls()
+      // The honesty sentence comes and goes (FreeKC's rule of 25 October), and stays written in the panel
+      val honesty = SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_HONESTY)
+      Log.i(TAG, "scene: reconstructed from one photo, said for ${TransientText.HOLD_MS} ms")
+      if (infoVisible) {
+        showPassing(honesty)
+        scheduleInfoHide(TransientText.HOLD_MS)
+      } else {
+        showNotice(honesty)
+      }
+    }
+
+    override fun onSceneFailed(reason: String) {
+      if (!current) return
+      dropScene()
+      stereoQuadEntity?.setComponent(Visible(true))
+      sceneStopped(media, SceneStop.Failed(reason))
+    }
+
+    override fun onSceneEdge() {
+      if (!current) return
+      val text = SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_EDGE)
+      if (infoVisible) showPassing(text) else showNotice(text)
+    }
+  }
+
+  /**
+   * The scene of [media] is not shown, for [stop]: its preview stays flat, the reason comes and goes on the status
+   * line and stays written in the panel, where the 3D button is greyed.
+   */
+  private fun sceneStopped(media: MediaRequest, stop: SceneStop) {
+    if (request !== media || closing) return
+    val text = SceneTexts.stopText(media.stereoLabels, stop)
+    scenePreparing = false
+    sceneDetails = listOf(text)
+    setReliefProgress(false)
+    updateStereoView()
+    updateSceneControls()
+    Log.i(TAG, "scene: the photo stays flat ($stop)")
+    showPassing(text)
+    scheduleInfoHide(TransientText.HOLD_MS)
+  }
+
+  /** Another media, or the end of the viewer: the scene shown goes, without a word. */
+  private fun dropScene() {
+    sceneView?.destroy()
+    sceneView = null
+    scenePreparing = false
+    sceneChosen = true
+    sceneDetails = emptyList()
+  }
+
+  /** Reset, from the panel or a click of a thumbstick: the camera of the photo at the head again, the scene whole. */
+  private fun resetScene() {
+    val view = sceneView ?: return
+    if (!view.isReady || !sceneChosen) return
+    view.reset()
+  }
+
+  /** The 3D button of a scene: its photo (2D) on the quad in front of the user, or the scene again. */
+  private fun toggleScenePhoto(fromPanel: Boolean) {
+    val view = sceneView ?: return
+    if (!view.isReady) return
+    sceneChosen = !sceneChosen
+    view.setVisible(sceneChosen)
+    if (sceneChosen) {
+      stereoQuadEntity?.setComponent(Visible(false))
+    } else {
+      placeStereoQuad()
+      stereoQuadEntity?.setComponent(Visible(true))
+    }
+    Log.i(TAG, "scene: ${if (sceneChosen) "the scene" else "the photo (2D)"} shows")
+    updateStereoView()
+    updateSceneControls()
+    showControlChange(fromPanel)
+  }
+
+  /** The free memory Android reports (ActivityManager.MemoryInfo.availMem), null when unknown. */
+  private fun availableMemory(): Long? {
+    val manager = getSystemService(ACTIVITY_SERVICE) as? ActivityManager ?: return null
+    return try {
+      ActivityManager.MemoryInfo().also(manager::getMemoryInfo).availMem
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  /** PowerManager.currentThermalStatus, null when unknown (before Android 10). */
+  private fun thermalStatus(): Int? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
+    val power = getSystemService(POWER_SERVICE) as? PowerManager ?: return null
+    return try {
+      power.currentThermalStatus
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  /** The options a measuring session pushed to the headset (see [SceneViewerOptions]), the defaults otherwise. */
+  private fun readSceneOptions(): SceneViewerOptions {
+    val folder = getExternalFilesDir(null) ?: return SceneViewerOptions()
+    val file = File(folder, SceneViewerOptions.FILE_NAME)
+    if (!file.isFile) return SceneViewerOptions()
+    return try {
+      SceneViewerOptions.parse(file.readText()).also { Log.i(TAG, "scene options from ${file.name}: $it") }
+    } catch (e: Exception) {
+      Log.w(TAG, "scene options unreadable: ${e.message}")
+      SceneViewerOptions()
+    }
+  }
+
+  /**
+   * [single] as the texture of a flat photo on the quad, the same picture for both eyes, within the size of an eye
+   * (StereoHeicDecoder.MAX_EYE_WIDTH x MAX_EYE_HEIGHT), off the main thread; [single] is recycled.
+   */
+  private fun flatTexture(single: Bitmap): StereoTexture {
+    val (width, height) =
+      StereoComposer.fitWithin(
+        single.width,
+        single.height,
+        StereoHeicDecoder.MAX_EYE_WIDTH,
+        StereoHeicDecoder.MAX_EYE_HEIGHT,
+      )
+    val eye =
+      if (width != single.width || height != single.height) {
+        Bitmap.createScaledBitmap(single, width, height, true).also { if (it !== single) single.recycle() }
+      } else {
+        single
+      }
+    try {
+      val crop = StereoComposer.Crop(0, 0, eye.width)
+      return StereoTexture(StereoComposer.compose(eye, eye, crop), eye.width, eye.height, hasSecondEye = false)
+    } finally {
+      eye.recycle()
+    }
+  }
+
   /** Both eyes of the side by side photo of [bytes] on one texture, off the main thread, see [SbsPhoto.decode]. */
   private fun decodeSbs(bytes: ByteArray, spec: SbsPhotoSpec): StereoTexture? {
     val (texture, split) = SbsPhoto.decode(bytes, spec) ?: return null
@@ -2190,28 +2603,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * item ids, the sizes, the path that gave the right eye and the difference, for the headset checks.
    */
   private fun decodeStereo(bytes: ByteArray, spec: StereoPairSpec?): StereoTexture? {
-    if (spec == null) {
-      val single = ImmersiveMedia.decodeBytes(bytes) ?: return null
-      val (width, height) =
-        StereoComposer.fitWithin(
-          single.width,
-          single.height,
-          StereoHeicDecoder.MAX_EYE_WIDTH,
-          StereoHeicDecoder.MAX_EYE_HEIGHT,
-        )
-      val eye =
-        if (width != single.width || height != single.height) {
-          Bitmap.createScaledBitmap(single, width, height, true).also { if (it !== single) single.recycle() }
-        } else {
-          single
-        }
-      try {
-        val crop = StereoComposer.Crop(0, 0, eye.width)
-        return StereoTexture(StereoComposer.compose(eye, eye, crop), eye.width, eye.height, hasSecondEye = false)
-      } finally {
-        eye.recycle()
-      }
-    }
+    if (spec == null) return flatTexture(ImmersiveMedia.decodeBytes(bytes) ?: return null)
     val left = StereoHeicDecoder.decodeEye(bytes, spec, spec.leftItemId)
     Log.i(TAG, "spatial photo: left eye item ${spec.leftItemId} decoded ${left.width}x${left.height}")
     var right: Bitmap? = null
@@ -2312,6 +2704,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
       // The flat photo while its relief is made: the panel stays for the stages, see startRelief
       setStatus(stereoStatus)
+    } else if (media?.isScene == true && scenePreparing) {
+      // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
+      setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
     } else if (stereo3d) {
       setStatus(stereoStatus)
       showReliefEstimated()
@@ -2387,6 +2782,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * relief", and stops it: the photo stays flat.
    */
   private fun toggleStereoPhotoMode(fromPanel: Boolean) {
+    if (request?.isScene == true) {
+      toggleScenePhoto(fromPanel)
+      return
+    }
     val run = reliefRun
     if (run != null && run.running) {
       Log.i(TAG, "relief: Stop relief")
@@ -3512,6 +3911,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob = null
     if (liveViewer === this) liveViewer = null
     releaseRelief()
+    dropScene()
     scope.cancel()
     super.onDestroy()
   }
@@ -3524,6 +3924,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     releaseRelief()
+    // The entities and the textures of a scene go with the scene, as the other textures do
+    sceneView?.abandon()
+    sceneView = null
     scope.cancel()
     // The player first, then the lens compositor, before the panel goes
     releasePlayer()

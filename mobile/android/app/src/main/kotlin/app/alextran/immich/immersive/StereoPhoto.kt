@@ -10,6 +10,7 @@ import android.media.MediaDataSource
 import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Log
+import app.alextran.immich.immersive.scene.SceneTexts
 import app.alextran.immich.relief.ReliefStage
 import app.alextran.immich.relief.ReliefStop
 import com.meta.spatial.core.Quaternion
@@ -384,28 +385,29 @@ internal object StereoComposer {
     return texture
   }
 
-  /** English labels of the stereo photo mode, for a key Flutter did not send. */
+  /** English labels of the stereo photo mode and of the 3D scenes (SceneTexts), for a key Flutter did not send. */
   private val defaultLabels =
-    mapOf(
-      LABEL_3D to "3D",
-      LABEL_2D to "2D (left eye)",
-      LABEL_NO_NAVIGATION to "Previous and next are not available for spatial photos yet",
-      LABEL_SECOND_EYE_FAILED to "The second eye could not be decoded: shown in 2D",
-      LABEL_2D_ORIGINAL to "2D (original)",
-      LABEL_25D to "2.5D (experimental)",
-      LABEL_RELIEF_ESTIMATED to "Relief estimated by AI",
-      LABEL_NO_NAVIGATION_3D to "Previous and next are not available for 3D photos yet",
-      LABEL_RELIEF_PREPARING to "Preparing",
-      LABEL_RELIEF_ESTIMATING to "Estimating the relief (AI)",
-      LABEL_RELIEF_BUILDING to "Building the right eye",
-      LABEL_RELIEF_STOP to "Stop relief",
-      LABEL_RELIEF_TOO_WARM to "Headset too warm, relief stopped",
-      LABEL_RELIEF_FAILED to "The relief failed: $REASON",
-      LABEL_RELIEF_NOT_IN_VERSION to "Not in this version of the app",
-      LABEL_RELIEF_NO_MEMORY to "Not enough memory",
-      LABEL_RELIEF_MISSING to "The AI components are not installed",
-      LABEL_RELIEF_DAMAGED to "An AI component is damaged",
-    )
+    SceneTexts.englishLabels +
+      mapOf(
+        LABEL_3D to "3D",
+        LABEL_2D to "2D (left eye)",
+        LABEL_NO_NAVIGATION to "Previous and next are not available for spatial photos yet",
+        LABEL_SECOND_EYE_FAILED to "The second eye could not be decoded: shown in 2D",
+        LABEL_2D_ORIGINAL to "2D (original)",
+        LABEL_25D to "2.5D (experimental)",
+        LABEL_RELIEF_ESTIMATED to "Relief estimated by AI",
+        LABEL_NO_NAVIGATION_3D to "Previous and next are not available for 3D photos yet",
+        LABEL_RELIEF_PREPARING to "Preparing",
+        LABEL_RELIEF_ESTIMATING to "Estimating the relief (AI)",
+        LABEL_RELIEF_BUILDING to "Building the right eye",
+        LABEL_RELIEF_STOP to "Stop relief",
+        LABEL_RELIEF_TOO_WARM to "Headset too warm, relief stopped",
+        LABEL_RELIEF_FAILED to "The relief failed: $REASON",
+        LABEL_RELIEF_NOT_IN_VERSION to "Not in this version of the app",
+        LABEL_RELIEF_NO_MEMORY to "Not enough memory",
+        LABEL_RELIEF_MISSING to "The AI components are not installed",
+        LABEL_RELIEF_DAMAGED to "An AI component is damaged",
+      )
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
@@ -145,6 +148,18 @@ void main() {
         NetworkStereoBadge.estimated,
       );
     });
+  });
+
+  testWidgets('a photo that carries a 3D scene gets the "3D scene" badge, never the 3D one', (tester) async {
+    final scene =
+        ImmersiveXmp.parse(File('test/fixtures/ai_immersive/xmp_v1_scene_sample.xmp').readAsStringSync())! as SceneXmp;
+    await pumpTile(tester, entry('/salon_scene3D.jpg'), NetworkMediaInfo(scene: scene));
+
+    final sceneBadge = find.byKey(const Key('network_media_scene_badge'));
+    expect(sceneBadge, findsOneWidget);
+    expect(find.descendant(of: sceneBadge, matching: find.text('3D scene')), findsOneWidget);
+    expect(spatialBadge, findsNothing);
+    expect(networkStereoBadgeOf(NetworkMediaInfo(scene: scene)), NetworkStereoBadge.scene);
   });
 
   testWidgets('next to the 360° badge when both show', (tester) async {
