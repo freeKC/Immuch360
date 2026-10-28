@@ -1024,33 +1024,36 @@ void main() {
       },
     );
 
-    test('a panorama of ours received as bytes (server, share) asked by itself is a version of its photo too', () async {
-      final request = photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto);
-      final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
-      final made = queue().add([request], kind: ConversionKind.panoramaFromPhoto).single;
-      await allEnded();
-      final panoramaBytes = File(job(made).writtenPath!).readAsBytesSync();
-      final panoramaXmp = ImmersiveXmp.findIn(panoramaBytes)! as PanoramaXmp;
+    test(
+      'a panorama of ours received as bytes (server, share) asked by itself is a version of its photo too',
+      () async {
+        final request = photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto);
+        final bytes = File(p.join(photos, 'salon.jpg')).readAsBytesSync();
+        final made = queue().add([request], kind: ConversionKind.panoramaFromPhoto).single;
+        await allEnded();
+        final panoramaBytes = File(job(made).writtenPath!).readAsBytesSync();
+        final panoramaXmp = ImmersiveXmp.findIn(panoramaBytes)! as PanoramaXmp;
 
-      final id = queue().add([
-        ConversionRequest(
-          source: _BytesSource('salon_360.jpg', panoramaBytes),
-          target: ConversionTarget.inFolder(photos, 'salon_360.jpg', kind: ConversionKind.stereoPanoramaFromPanorama),
-        ),
-      ], kind: ConversionKind.stereoPanoramaFromPanorama).single;
-      await allEnded();
+        final id = queue().add([
+          ConversionRequest(
+            source: _BytesSource('salon_360.jpg', panoramaBytes),
+            target: ConversionTarget.inFolder(photos, 'salon_360.jpg', kind: ConversionKind.stereoPanoramaFromPanorama),
+          ),
+        ], kind: ConversionKind.stereoPanoramaFromPanorama).single;
+        await allEnded();
 
-      expect(job(id).state, ConversionState.done);
-      final spec = stereo.jobs.single;
-      expect(spec.source.bytes, isNotNull, reason: 'the panorama read from its bytes');
-      expect(spec.photo?.name, 'salon.jpg');
-      expect(spec.original.sha1, _sumOf(bytes));
-      expect(spec.parent?.derivativeId, panoramaXmp.derivativeId);
-      final written = ImmersiveXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())! as StereoPanoramaXmp;
-      expect(written.sourceName, 'salon.jpg');
-      expect(written.parentDerivativeId, panoramaXmp.derivativeId);
-      expect(written.origin, ImmersiveOrigin.generatedContent, reason: 'its world was invented by the generator');
-    });
+        expect(job(id).state, ConversionState.done);
+        final spec = stereo.jobs.single;
+        expect(spec.source.bytes, isNotNull, reason: 'the panorama read from its bytes');
+        expect(spec.photo?.name, 'salon.jpg');
+        expect(spec.original.sha1, _sumOf(bytes));
+        expect(spec.parent?.derivativeId, panoramaXmp.derivativeId);
+        final written = ImmersiveXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())! as StereoPanoramaXmp;
+        expect(written.sourceName, 'salon.jpg');
+        expect(written.parentDerivativeId, panoramaXmp.derivativeId);
+        expect(written.origin, ImmersiveOrigin.generatedContent, reason: 'its world was invented by the generator');
+      },
+    );
 
     test('a 360° photo of the user asked by itself stays its own original', () async {
       final request = photo('PANO_0001.jpg', kind: ConversionKind.stereoPanoramaFromPanorama);
