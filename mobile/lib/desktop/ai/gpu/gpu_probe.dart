@@ -22,6 +22,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart' show aiWorkFolderName;
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
@@ -33,8 +34,9 @@ const gpuProbeFlag = '--immuch360-gpu-probe=';
 /// How long the probe may take; the runners end it past the same time themselves
 const gpuProbeTimeout = Duration(seconds: 10);
 
-/// The folder of the files of the AI jobs, under the temporary folder of the system (design 4.5, point 2)
-Directory aiWorkFolder() => Directory(p.join(Directory.systemTemp.path, 'immuch360-ai'));
+/// The folder of the files of the AI jobs, under the temporary folder of the system (design 4.5, point 2): the one of
+/// the work folders and the journal of the programs of lot P2 (AiWorkFolders)
+Directory aiWorkFolder() => Directory(p.join(Directory.systemTemp.path, aiWorkFolderName));
 
 /// The probe of the app: its own executable started with [gpuProbeFlag]
 class ProcessGpuProbe implements GpuProbe {

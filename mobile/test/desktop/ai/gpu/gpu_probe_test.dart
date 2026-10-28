@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 
 import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_process_runner.dart';
@@ -116,6 +117,10 @@ void main() {
 
     test('the probe of the app is its own executable', () {
       expect(ProcessGpuProbe.ofThisApp().executable, Platform.resolvedExecutable);
+    });
+
+    test('its file goes to the folder of the work folders and the journal of the programs (lot P2)', () {
+      expect(aiWorkFolder().path, AiWorkFolders.system().root.path);
     });
   });
 
