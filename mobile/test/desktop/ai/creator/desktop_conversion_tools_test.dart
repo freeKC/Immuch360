@@ -123,7 +123,10 @@ void main() {
   test('the engines of the other kinds come by kind, and the writer knows the kind of each version', () async {
     final bare = ProviderContainer();
     addTearDown(bare.dispose);
-    expect(bare.read(conversionEnginesProvider), isEmpty, reason: 'S1, P1 and P3 register theirs');
+    expect(bare.read(conversionEnginesProvider).keys, [
+      ConversionKind.sceneFromPhoto,
+    ], reason: 'S1 registers the 3D scene, P1 and P3 will register theirs');
+    expect(bare.read(conversionEnginesProvider)[ConversionKind.sceneFromPhoto]!.engine, isA<DesktopSceneEngine>());
 
     final scenes = ProviderContainer(
       overrides: [
@@ -365,6 +368,133 @@ void main() {
       expect(made, hasLength(2), reason: 'made again after it was let go');
     });
   });
+
+  _sceneEngineTests(() => root);
+}
+
+/// The head of a JPEG of [width] x [height]: its frame header, then the start of its scan
+Uint8List jpegOfSize(int width, int height) => Uint8List.fromList([
+  ...[0xFF, 0xD8],
+  ...[
+    0xFF,
+    0xC0,
+    0,
+    17,
+    8,
+    height >> 8,
+    height & 0xFF,
+    width >> 8,
+    width & 0xFF,
+    3,
+    1,
+    0x11,
+    0,
+    2,
+    0x11,
+    1,
+    3,
+    0x11,
+    1,
+  ],
+  ...[0xFF, 0xDA, 0, 12, 3, 1, 0, 2, 0x11, 3, 0x11, 0, 63, 0],
+  ...[0xFF, 0xD9],
+]);
+
+/// The engine of the 3D scenes of the app (lot S1), on the gate of the feature scene
+void _sceneEngineTests(Directory Function() root) {
+  group('the engine of the 3D scenes of the app', () {
+    late _Components components;
+    late List<AiGateResult> made;
+    late List<_CountingEngine> counted;
+
+    DesktopSceneEngine engineOf() => DesktopSceneEngine(
+      gate: HardwareGate(
+        components: components,
+        facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+      ),
+      create: (gate) {
+        made.add(gate);
+        final engine = _CountingEngine();
+        counted.add(engine);
+        return engine;
+      },
+    );
+
+    SceneJob job() => const SceneJob(
+      id: 'scene',
+      sources: [ImmersiveSource(name: 'salon.jpg', size: 1, sha1: 'sum', path: '/nowhere/salon.jpg')],
+      partPath: '/nowhere/.part',
+      derivativeId: 'urn:uuid:1',
+      creatorTool: 'test',
+      created: '2026-10-28T10:12:00+01:00',
+    );
+
+    setUp(() {
+      components = _Components(root().path);
+      made = [];
+      counted = [];
+    });
+
+    test('without MoGe-2 or LaMa, a scene ends as components missing, and no model is made', () async {
+      final engine = engineOf();
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      components.install(onnxRuntimeLinuxComponent);
+      components.install(depthModelOnnxComponent);
+      components.install(mogeGeometryComponent);
+
+      final result = await engine.run(job(), cancel: flag);
+
+      expect(result.error, ImmersiveErrorCode.componentsMissing);
+      expect(made, isEmpty);
+      expect(engine.isRunning, isFalse);
+    });
+
+    test('made from ONNX Runtime, MoGe-2 and LaMa installed when a job runs, kept while they serve', () async {
+      final engine = engineOf();
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      components.install(onnxRuntimeLinuxComponent);
+      components.install(mogeGeometryComponent);
+      components.install(lamaInpaintComponent);
+
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+
+      expect(made, hasLength(1), reason: 'one engine for the two scenes');
+      expect(made.single.feature, AiFeature.scene);
+      expect(made.single.fileOf(mogeGeometryComponent.id)!.path, components.fileOf(mogeGeometryComponent).path);
+      expect(made.single.fileOf(lamaInpaintComponent.id)!.path, components.fileOf(lamaInpaintComponent).path);
+      expect(counted.single.runs, 2);
+
+      await engine.release();
+      expect(counted.single.disposed, isTrue);
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+      expect(made, hasLength(2), reason: 'made again after it was let go');
+    });
+
+    test('the key of the settings of a scene: the sums of the catalogue, the step of the grid of the photo', () async {
+      final engine = sceneConversionEngine(engineOf());
+      String photo(String name, int width, int height) {
+        final path = p.join(root().path, name);
+        File(path).writeAsBytesSync(jpegOfSize(width, height));
+        return path;
+      }
+
+      Future<String?> keyOf(String path, int turns) => Future.value(
+        engine.settingsKey(ImmersiveSource(name: p.basename(path), size: 1, sha1: 's', path: path), turns),
+      );
+      final sums = '${mogeGeometryComponent.sha256}|${lamaInpaintComponent.sha256}';
+
+      expect(await keyOf(photo('wide.jpg', 4032, 3024), 0), '$sums|scene-v1|4|0');
+      expect(await keyOf(photo('square.jpg', 3000, 3000), 1), '$sums|scene-v1|5|1', reason: 'a square map of 1024');
+      final png = p.join(root().path, 'drawing.png');
+      File(png).writeAsBytesSync([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0]);
+      expect(await keyOf(png, 0), isNull, reason: 'its size is not read before it is decoded: no version looked for');
+      expect(await keyOf(p.join(root().path, 'gone.jpg'), 0), isNull);
+    });
+  });
 }
 
 /// The components of a test: a file per component installed, none otherwise
@@ -392,14 +522,14 @@ class _Components implements AiComponentFiles {
       _installed.contains(component.id) ? AiComponentState.installed : AiComponentState.notInstalled;
 }
 
-/// An engine that counts its jobs and tells one step
+/// An engine that counts its jobs, of any kind, and tells one step
 class _CountingEngine implements ImmersiveEngine {
   var runs = 0;
   var disposed = false;
 
   @override
   Future<ImmersiveResult> run(
-    ImmersiveJob job, {
+    ImmersiveJobSpec job, {
     required NativeCancelFlag cancel,
     void Function(ImmersiveProgress progress)? onProgress,
   }) async {
