@@ -9,7 +9,8 @@
 // another type, and the type kept for the next dialog. Phase 3: the 360° panorama, not offered while this version holds
 // it back, then its sentence, the part invented, "Also make the 3D version" with the components of both, the warning
 // of the graphics card, its time, the question on battery, its reasons of the card, and the type asked for by "Make the
-// 3D version".
+// 3D version". The components moved meanwhile, a refusal of one type that greys nothing, and what the user chose kept
+// when the type changes.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -35,6 +36,7 @@ import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -100,6 +102,24 @@ class _Originals implements ConversionAssetFiles {
     final original = byName[asset.name];
     return original == null ? null : (location: original, source: LocalFileSource(original.path));
   }
+}
+
+/// The folder dialog of the test: it answers [answer]
+class _FolderPicker implements FilePickers {
+  _FolderPicker(this.answer);
+
+  final String answer;
+
+  @override
+  Future<String?> folder({String? initialDirectory, String? confirmButtonText}) async => answer;
+
+  @override
+  Future<String?> saveLocation({
+    required String suggestedName,
+    String? initialDirectory,
+    String? typeLabel,
+    List<String> extensions = const [],
+  }) async => null;
 }
 
 /// On battery or not, as the test says
@@ -871,6 +891,110 @@ void main() {
       expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
       expect(find.text('PANO_0002.jpg: Not a 360° photo'), findsOneWidget);
       expect(checked().single, startsWith('.beach_360_3D.jpg.'));
+    });
+
+    testWidgets('while the AI components are moved, Convert waits and says why; the gate is read again after', (
+      tester,
+    ) async {
+      original('salon.jpg');
+      await openDialog(tester, [_photo('salon.jpg')]);
+      expect(convertEnabled(tester), isTrue);
+
+      service.moving = true;
+      await settle(tester);
+      expect(find.text('Moving the AI components: Convert waits for the end'), findsOneWidget);
+      expect(find.byKey(const Key('ai_conversion_install')), findsNothing, reason: 'nothing to download meanwhile');
+      expect(convertEnabled(tester), isFalse);
+
+      service.moving = false;
+      await settle(tester);
+      expect(find.byKey(const Key('ai_conversion_moving')), findsNothing);
+      expect(convertEnabled(tester), isTrue);
+    });
+
+    testWidgets('the entry stays offered when the gate refuses one type only, greyed when it refuses them all', (
+      tester,
+    ) async {
+      sceneEngine();
+      // A component of the scenes this version does not have whole: the scene is refused, the 3D photo is not
+      catalogue = [
+        for (final component in aiComponents)
+          if (component.id == lamaInpaintComponent.id)
+            AiComponent(
+              id: component.id,
+              name: component.name,
+              version: component.version,
+              kind: component.kind,
+              platforms: component.platforms,
+              assetName: component.assetName,
+              installPath: component.installPath,
+              size: component.size,
+              sha256: null,
+              compression: component.compression,
+              licence: component.licence,
+              licenceUrl: component.licenceUrl,
+              features: component.features,
+            )
+          else
+            component,
+      ];
+      await tester.pumpConsumerWidget(
+        const Scaffold(body: DesktopMakeImmersiveButton(source: ActionSource.timeline)),
+        overrides: overrides(selected: [_photo('salon.jpg')]),
+      );
+      await settle(tester);
+      expect(find.byKey(const Key('ai_make_3d_refused')), findsNothing);
+      expect(tester.widget<ImmichColumnButton>(find.byKey(const Key('ai_make_3d'))).disabled, isFalse);
+
+      memory = 2 * _gib;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpConsumerWidget(
+        const Scaffold(body: DesktopMakeImmersiveButton(source: ActionSource.timeline)),
+        overrides: overrides(selected: [_photo('salon.jpg')]),
+      );
+      await settle(tester);
+      expect(tester.widget<ImmichColumnButton>(find.byKey(const Key('ai_make_3d'))).disabled, isTrue);
+    });
+
+    testWidgets('another type keeps what the user chose: a folder of my choice, the folder picked, a No', (
+      tester,
+    ) async {
+      sceneEngine();
+      for (final component in scene) {
+        service.setStatus(component, const AiComponentStatus(AiComponentState.installed));
+      }
+      original('salon.jpg');
+      original('jardin.jpg', folder: nas, network: true);
+      final picked = p.join(root.path, 'Picked');
+      Directory(picked).createSync();
+      filePickers = _FolderPicker(picked);
+      addTearDown(() => filePickers = const SystemFilePickers());
+      final container = await openDialog(tester, [_photo('salon.jpg'), _photo('jardin.jpg')]);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_network_no')));
+      await settle(tester);
+      await tapIn(tester, find.byKey(const Key('ai_conversion_chosen_folder')));
+      await settle(tester);
+      await tapIn(tester, find.byKey(const Key('ai_conversion_change_folder')));
+      await settle(tester);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_sceneFromPhoto')));
+      await settle(tester);
+      expect(
+        tester.widget<RadioGroup<AiDestination>>(find.byType(RadioGroup<AiDestination>)).groupValue,
+        AiDestination.folder,
+      );
+      expect(find.byKey(const Key('ai_conversion_network_no')), findsNothing, reason: 'the No answered again');
+      expect(files.callsUnder(nas), isEmpty);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final jobs = container.read(conversionQueueProvider).jobs;
+      expect(jobs.map((job) => (job.kind, job.target?.folder, job.target?.fileName)), [
+        (ConversionKind.sceneFromPhoto, picked, 'salon_scene3D.jpg'),
+        (ConversionKind.sceneFromPhoto, picked, 'jardin_scene3D.jpg'),
+      ]);
     });
 
     testWidgets('a type the gate refuses stays listed, greyed with its reason', (tester) async {

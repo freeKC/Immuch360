@@ -547,6 +547,7 @@
   "ai_immersive_components": "AI components",
   "ai_immersive_components_busy": "A conversion is running. Cancel it to remove the components?",
   "ai_immersive_components_folder_missing": "The folder of the AI components cannot be reached: {folder}",
+  "ai_immersive_components_moving": "Moving the AI components: Convert waits for the end",
   "ai_immersive_components_panoramas": "360° panoramas: {size}",
   "ai_immersive_components_photos": "3D photos: {size}",
   "ai_immersive_components_scenes": "3D scenes: {size}",

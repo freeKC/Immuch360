@@ -33,7 +33,8 @@
 // gate, and the time a photo takes on this computer; then the destination, the question of a network folder, "If a
 // version exists", and for a mixed selection the plan of each photo: those the type makes, and those skipped and why.
 // Changing the type plans the selection again for it (the photos it takes, the names of their files), with what the
-// user chose in this dialog.
+// user chose in this dialog. While the AI components are moved to another folder ("Move the AI components"), they
+// read as missing: the dialog says Convert waits for the end of the copy instead of offering to download them.
 //
 // The 360° panorama (lot U3; design-final 2026-10-27, sections 4.7 and 9.1, point 2): the part of it the AI invents
 // ("About 92% of this panorama will be invented by AI", from the field of view the EXIF of the photo tells, or that of
@@ -114,11 +115,13 @@ final aiFeaturesEnabledProvider = Provider.autoDispose<bool>(
   (ref) => ref.watch(appConfigProvider.select((config) => config.aiImmersive.enabled)),
 );
 
-/// What the hardware gate says now of [AiFeature]; asked again when a component is installed or removed
+/// What the hardware gate says now of [AiFeature]; asked again when a component is installed or removed, and when the
+/// components start or end a move to another folder (C5-review point 1: they read as missing meanwhile)
 final aiGateResultForProvider = FutureProvider.autoDispose.family<AiGateResult, AiFeature>((ref, feature) async {
   final service = ref.watch(aiComponentsServiceProvider);
   final gate = ref.watch(desktopAiGateProvider);
-  String states() => [for (final component in aiComponents) service.statusOf(component).state.name].join(',');
+  String states() =>
+      [service.isMoving, for (final component in aiComponents) service.statusOf(component).state.name].join(',');
   var known = states();
   void changed() {
     final now = states();
@@ -1300,8 +1303,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final known = results.every((result) => result != null);
     final available = known && results.every((result) => result!.isAvailable);
     final missing = known && !available && !refused;
+    // The components being moved read as missing until the copy ends: nothing to download, Convert waits
+    final moving = ref.read(aiComponentsServiceProvider).isMoving;
     final busy = _gestures > 0 || candidates == null || _asking;
-    final canConvert = !busy && available && session != null && _ready(session);
+    final canConvert = !busy && !moving && available && session != null && _ready(session);
     final count = widget.assets.length;
     // Each type with the refusal of its gate, when it refuses
     final refusals = {
@@ -1357,7 +1362,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 ),
               if (refusal != null)
                 _Note(key: const Key('ai_conversion_refused'), text: aiGateReasonText(t, refusal), error: true),
-              if (missing && found?.platform != null)
+              if (moving)
+                _Note(key: const Key('ai_conversion_moving'), text: t.ai_immersive_components_moving)
+              else if (missing && found?.platform != null)
                 Card(
                   key: const Key('ai_conversion_install'),
                   child: Padding(
