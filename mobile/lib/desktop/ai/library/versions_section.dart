@@ -140,7 +140,7 @@ class _VersionTile extends ConsumerWidget {
                   : t.ai_immersive_delete_version,
               icon: const Icon(Icons.delete_outline_rounded),
               onPressed: () async {
-                if (await confirmDeleteVersion(context, ref, version.path)) {
+                if (await confirmDeleteVersion(context, ref, version.path, kind: version.kind)) {
                   ref.invalidate(photoVersionsProvider(original));
                 }
               },
