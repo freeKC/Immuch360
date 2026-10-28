@@ -261,13 +261,21 @@ void main() {
       for (var y = mark.top; y < mark.bottom; y += 4) {
         for (var x = mark.left; x < mark.right; x += 4) {
           final i = 4 * (y * photo.width + x);
-          expect((photo.rgba[i] + photo.rgba[i + 1] + photo.rgba[i + 2]) / 3, greaterThan(55), reason: 'texture $x, $y');
+          expect(
+            (photo.rgba[i] + photo.rgba[i + 1] + photo.rgba[i + 2]) / 3,
+            greaterThan(55),
+            reason: 'texture $x, $y',
+          );
         }
       }
     });
 
     test('the mark is drawn on a copy, and only on a preview of 256 pixels or more on its short side', () {
-      final grey = SbsDecoded(width: 600, height: 400, rgba: Uint8List(600 * 400 * 4)..fillRange(0, 600 * 400 * 4, 128));
+      final grey = SbsDecoded(
+        width: 600,
+        height: 400,
+        rgba: Uint8List(600 * 400 * 4)..fillRange(0, 600 * 400 * 4, 128),
+      );
       final marked = withSceneMark(grey);
       expect(grey.rgba.every((value) => value == 128), isTrue, reason: 'the picture given is not touched');
       expect(identical(marked.rgba, grey.rgba), isFalse);
