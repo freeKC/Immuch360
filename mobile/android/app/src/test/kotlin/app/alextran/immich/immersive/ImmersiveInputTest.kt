@@ -261,6 +261,51 @@ class ImmersiveInputTest {
     assertDirection("what was ${STEP.toInt()} degrees on the right", Vector3(0f, 0f, 1f), sphere * onTheRight)
   }
 
+  // A 3D scene (design-final 2026-10-27, section 3.3)
+
+  private fun sceneActions(controller: Int = 0, hand: Int = 0, panelVisible: Boolean = false): List<Action> =
+    ImmersiveControls.actionsFor(controller, hand, panelVisible, scene = true)
+
+  @Test
+  fun `in a scene the thumbsticks glide and reset, neither previous, next, turn nor resize`() {
+    val directions = ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK
+    for (bit in (0 until 32).map { 1 shl it }.filter { directions and it != 0 }) {
+      assertEquals("direction 0x${Integer.toHexString(bit)}", emptyList<Action>(), sceneActions(controller = bit))
+    }
+    assertEquals(listOf(Action.RESET), sceneActions(controller = ButtonBits.ButtonThumbLClick))
+    assertEquals(listOf(Action.RESET), sceneActions(controller = ButtonBits.ButtonThumbRClick))
+    // Filed under a hand after a wake up, a click is still a controller's
+    assertEquals(listOf(Action.RESET), sceneActions(hand = ButtonBits.ButtonThumbRClick))
+    // Out of a scene a click does nothing, as before
+    assertEquals(emptyList<Action>(), actions(controller = ButtonBits.ButtonThumbLClick))
+  }
+
+  @Test
+  fun `in a scene B or Y go back, A, X, grip and menu keep the panel, the trigger plays nothing`() {
+    assertEquals(listOf(Action.CLOSE), sceneActions(controller = ButtonBits.ButtonB or ButtonBits.ButtonThumbLClick))
+    assertEquals(listOf(Action.TOGGLE_PANEL), sceneActions(controller = ButtonBits.ButtonA))
+    assertEquals(listOf(Action.TOGGLE_PANEL), sceneActions(controller = ButtonBits.ButtonSqueezeL, panelVisible = true))
+    assertEquals(listOf(Action.SHOW_PANEL), sceneActions(hand = ButtonBits.ButtonX))
+    assertEquals(emptyList<Action>(), sceneActions(controller = ButtonBits.ButtonTriggerR))
+    assertEquals(
+      listOf(Action.RESET, Action.TOGGLE_PANEL),
+      sceneActions(controller = ButtonBits.ButtonThumbRClick or ButtonBits.ButtonA),
+    )
+  }
+
+  @Test
+  fun `the left thumbstick held glides one way or the other on each axis, a diagonal on both`() {
+    assertEquals(0.0 to 0.0, SceneStick.of(0))
+    assertEquals(1.0 to 0.0, SceneStick.of(ButtonBits.ButtonThumbLR))
+    assertEquals(-1.0 to 0.0, SceneStick.of(ButtonBits.ButtonThumbLL))
+    assertEquals(0.0 to 1.0, SceneStick.of(ButtonBits.ButtonThumbLU))
+    assertEquals(0.0 to -1.0, SceneStick.of(ButtonBits.ButtonThumbLD))
+    assertEquals(1.0 to 1.0, SceneStick.of(ButtonBits.ButtonThumbLR or ButtonBits.ButtonThumbLU))
+    // Both ways at once cancel; the right thumbstick and the buttons do not glide
+    assertEquals(0.0 to 0.0, SceneStick.of(ButtonBits.ButtonThumbLL or ButtonBits.ButtonThumbLR))
+    assertEquals(0.0 to 0.0, SceneStick.of(ControllerEdges.RIGHT_STICK or ButtonBits.ButtonA))
+  }
+
   private fun assertDirection(message: String, expected: Vector3, actual: Vector3) {
     assertEquals("$message, x", expected.x, actual.x, 1e-4f)
     assertEquals("$message, y", expected.y, actual.y, 1e-4f)
