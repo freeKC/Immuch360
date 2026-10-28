@@ -121,3 +121,61 @@ class TinyDepthModel {
     return output;
   }
 }
+
+/// The tiny models of phases 2 and 3 (.github/desktop/ai/make_tiny_models.py): tiny_moge, tiny_lama, tiny_migan and
+/// tiny_slow, as absolute paths
+String tinyModelPath(String name) => p.absolute('test/fixtures/ai_immersive/$name');
+
+/// tiny_models_expected.json: the inputs and outputs of each tiny model as ONNX Runtime reports them, their constants,
+/// and a sample of tiny_moge with its outputs
+class TinyModels {
+  TinyModels._(this._json);
+
+  factory TinyModels.load() => TinyModels._(
+    jsonDecode(File('test/fixtures/ai_immersive/tiny_models_expected.json').readAsStringSync()) as Map<String, dynamic>,
+  );
+
+  final Map<String, dynamic> _json;
+
+  Map<String, dynamic> of(String model) => _json[model] as Map<String, dynamic>;
+
+  /// The inputs or outputs of [model], each as "name type [shape]"
+  List<String> specs(String model, {required bool inputs}) => [
+    for (final spec in (of(model)[inputs ? 'inputs' : 'outputs'] as List).cast<Map<String, dynamic>>())
+      '${spec['name']} ${spec['type']} ${(spec['shape'] as List).cast<int>().toList()}',
+  ];
+
+  /// The side of the square state of tiny_slow
+  int get slowSize => of('tiny_slow.onnx')['size'] as int;
+
+  /// What tiny_lama paints in a hole, before the factor of 255
+  double get lamaHole => (of('tiny_lama.onnx')['hole'] as num).toDouble();
+
+  /// What tiny_migan paints in a hole
+  int get miganHole => of('tiny_migan.onnx')['hole'] as int;
+
+  /// What tiny_moge divides num_tokens by for its scale
+  int get mogeScaleDivisor => of('tiny_moge.onnx')['scaleDivisor'] as int;
+}
+
+/// [count] values made of multiples of 1/32 below 2, so that float32 computes the tiny models exactly. Written in
+/// place: a list of doubles copied after would leave one object per value behind (12.6 million for an image of 2048 x
+/// 2048, some 300 MB), which the collector of Dart gives back to the system while the memory tests measure.
+Float32List exactValues(int count, {int seed = 0}) {
+  final values = Float32List(count);
+  for (var i = 0; i < count; i++) {
+    values[i] = ((7 * i + seed) % 64) / 32;
+  }
+  return values;
+}
+
+/// [state] turned by [turns] columns to the right: what tiny_slow gives after [turns] turns
+Float32List turned(Float32List state, int size, int turns) {
+  final out = Float32List(state.length);
+  for (var row = 0; row < size; row++) {
+    for (var column = 0; column < size; column++) {
+      out[row * size + column] = state[row * size + (column - turns) % size];
+    }
+  }
+  return out;
+}

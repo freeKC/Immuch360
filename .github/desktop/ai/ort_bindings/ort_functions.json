@@ -21,12 +21,12 @@
       "rank": 55
     },
     {
-      "name": "CreateCpuMemoryInfo",
-      "rank": 69
-    },
-    {
       "name": "CreateEnv",
       "rank": 3
+    },
+    {
+      "name": "CreateRunOptions",
+      "rank": 39
     },
     {
       "name": "CreateSession",
@@ -37,8 +37,12 @@
       "rank": 10
     },
     {
-      "name": "CreateTensorWithDataAsOrtValue",
-      "rank": 49
+      "name": "CreateTensorAsOrtValue",
+      "rank": 48
+    },
+    {
+      "name": "DisableCpuMemArena",
+      "rank": 19
     },
     {
       "name": "DisableTelemetryEvents",
@@ -81,8 +85,8 @@
       "rank": 92
     },
     {
-      "name": "ReleaseMemoryInfo",
-      "rank": 94
+      "name": "ReleaseRunOptions",
+      "rank": 97
     },
     {
       "name": "ReleaseSession",
@@ -111,6 +115,10 @@
     {
       "name": "Run",
       "rank": 9
+    },
+    {
+      "name": "RunOptionsSetTerminate",
+      "rank": 46
     },
     {
       "name": "SessionGetInputCount",

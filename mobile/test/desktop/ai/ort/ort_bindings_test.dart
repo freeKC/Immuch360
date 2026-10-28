@@ -72,6 +72,23 @@ void main() {
     }
   });
 
+  // Lot C1 (design-final 2026-10-27, section 2.5): the options of a run and their stop from another isolate, the
+  // tensors ONNX Runtime allocates, the arena turned off for MoGe; all within the table of API 23, so Intel Macs too
+  test('the entries of the stop of a run and of the tensors of several types are where the plan read them', () {
+    const places = {
+      'DisableCpuMemArena': 19,
+      'CreateRunOptions': 39,
+      'RunOptionsSetTerminate': 46,
+      'CreateTensorAsOrtValue': 48,
+      'ReleaseRunOptions': 97,
+    };
+    for (final MapEntry(key: name, value: rank) in places.entries) {
+      expect(listed[name], rank, reason: name);
+      expect(table.indexOf(name), rank, reason: name);
+      expect(rank, lessThan(sizes['api23']!), reason: name);
+    }
+  });
+
   test('the code calls exactly the entries listed', () {
     final entries = table.toSet();
     final called = <String>{};

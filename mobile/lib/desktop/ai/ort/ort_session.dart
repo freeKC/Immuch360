@@ -2,8 +2,16 @@
 // the user installs on demand with the AI components (lot A3a), opened by its path. The code asks it for the table of
 // API 23, which ONNX Runtime 1.31.0 (Windows x64, Linux x64, Apple Silicon) and 1.23.2 (the last release built for
 // Intel Macs) both give, so one set of bindings (ort_api_bindings.dart) serves every computer. A session reads the
-// names and shapes of its input and output from the model, never from constants, and runs one float32 tensor in and
-// one out, which is all a depth model needs.
+// names, types and shapes of its inputs and outputs from the model, never from constants.
+//
+// Phase 1 ran one float32 tensor in and one out ([OrtSession.run], kept for the depth model). The models of phases 2
+// and 3 take and give more (design-final 2026-10-27, sections 2.3, 2.5 and 10.1 point 3, lot C1): [OrtSession.runNamed]
+// gives named inputs of float32, uint8 or int64 (ort_tensor.dart), in shapes the model leaves free, and reads every
+// output it is asked for. A run takes the OrtRunOptions of its job ([OrtRunOptions]): the root isolate stops a run
+// in progress through them from outside (ort_terminate.dart), since the isolate that runs the model is blocked in Run;
+// the run then throws [OrtRunStopped]. A session may also give its memory back after each run instead of keeping the
+// arena of ONNX Runtime ([OrtSessionSettings.cpuMemArena]): 0.9 GB less at the peak of MoGe for the same time
+// (measure M2).
 //
 // Every OrtStatus that is not null becomes an OrtException carrying ONNX Runtime's own message, and every native
 // object is released in a finally, counted by kind on the way (OrtRuntime.liveObjects, for the tests). The calls are
@@ -26,6 +34,11 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:immich_mobile/desktop/ai/ort/ort_api_bindings.dart' as ort;
+import 'package:immich_mobile/desktop/ai/ort/ort_tensor.dart';
+import 'package:immich_mobile/desktop/ai/ort/ort_terminate.dart';
+
+export 'package:immich_mobile/desktop/ai/ort/ort_tensor.dart';
+export 'package:immich_mobile/desktop/ai/ort/ort_terminate.dart' show OrtRunStopHandle, OrtRunStopper;
 
 /// The version of the table of functions asked of ONNX Runtime: 1.23 and every later release give it
 const ortApiVersion = 23;
@@ -51,9 +64,22 @@ class OrtLoadException extends OrtException {
   const OrtLoadException(super.message);
 }
 
+/// A run ended because another isolate stopped it through its [OrtRunOptions]: the job was cancelled
+class OrtRunStopped extends OrtException {
+  const OrtRunStopped(super.message, {super.code});
+
+  @override
+  String toString() => 'OrtRunStopped: $message';
+}
+
 /// How a session uses the processor
 class OrtSessionSettings {
-  const OrtSessionSettings({required this.intraOpThreads, this.interOpThreads = 1, this.allowSpinning = false});
+  const OrtSessionSettings({
+    required this.intraOpThreads,
+    this.interOpThreads = 1,
+    this.allowSpinning = false,
+    this.cpuMemArena = true,
+  });
 
   /// The settings of the design for a computer with [logicalProcessors]: all of them but two for one pass
   factory OrtSessionSettings.forProcessors(int logicalProcessors) =>
@@ -67,29 +93,18 @@ class OrtSessionSettings {
 
   /// Whether ONNX Runtime's threads keep spinning between two passes (session.intra_op.allow_spinning)
   final bool allowSpinning;
-}
 
-/// An input or an output of a model: its name, its element type (ONNXTensorElementDataType) and its shape, -1 for a
-/// dimension the model leaves free
-class OrtTensorSpec {
-  const OrtTensorSpec(this.name, this.elementType, this.shape);
+  /// Whether the session keeps the memory of a pass in the arena of ONNX Runtime for the next one (its default), or
+  /// gives it back after each pass (DisableCpuMemArena: MoGe peaks at 1.35 GB instead of 2.25, measure M2)
+  final bool cpuMemArena;
 
-  final String name;
-  final int elementType;
-  final List<int> shape;
-
-  bool get isFloat => elementType == ort.ONNXTensorElementDataType.ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT;
-
-  @override
-  String toString() => '$name $shape';
-}
-
-/// A float32 tensor given by a session
-class OrtTensor {
-  const OrtTensor(this.shape, this.values);
-
-  final List<int> shape;
-  final Float32List values;
+  /// These settings with [cpuMemArena] set
+  OrtSessionSettings withCpuMemArena(bool keep) => OrtSessionSettings(
+    intraOpThreads: intraOpThreads,
+    interOpThreads: interOpThreads,
+    allowSpinning: allowSpinning,
+    cpuMemArena: keep,
+  );
 }
 
 /// ONNX Runtime opened from one file, and its table of functions at API [ortApiVersion]
@@ -143,9 +158,14 @@ final class OrtRuntime {
   final _OrtCalls _calls;
 
   /// The native objects made through this library and not given back yet, by kind (OrtEnv, OrtSession, OrtValue,
-  /// OrtMemoryInfo...): an open session holds one OrtEnv and one OrtSession, a pass leaves nothing
+  /// OrtRunOptions...): an open session holds one OrtEnv and one OrtSession, a pass leaves nothing
   @visibleForTesting
   Map<String, int> get liveObjects => Map.unmodifiable(_calls.live);
+
+  /// The native objects of [kind] (OrtRunOptions, OrtValue...) made through every library opened in this isolate and
+  /// not given back yet: what the worker isolate says of itself (AiWorkerStatus)
+  static int liveInThisIsolate(String kind) =>
+      _opened.values.fold(0, (count, runtime) => count + (runtime._calls.live[kind] ?? 0));
 
   /// How many OrtEnv had their telemetry events turned off (DisableTelemetryEvents): one per session opened
   @visibleForTesting
@@ -155,6 +175,59 @@ final class OrtRuntime {
   /// be read.
   OrtSession openSession(String modelPath, {OrtSessionSettings? settings}) =>
       OrtSession._open(this, modelPath, settings ?? OrtSessionSettings.forThisComputer());
+
+  /// The options of the runs of one job, to be given back by [OrtRunOptions.release]
+  OrtRunOptions createRunOptions() => using((arena) {
+    final out = arena<Pointer<ort.OrtRunOptions>>();
+    _calls.check(_calls.createRunOptions(out), 'CreateRunOptions');
+    _calls.made('OrtRunOptions');
+    return OrtRunOptions._(this, out.value, calloc<Int32>());
+  });
+}
+
+/// The options of the runs of one job (OrtRunOptions), made in the isolate that runs the model. Another isolate stops
+/// the run in progress, and every later run with the same options, through [handle] (OrtRunStopper, ort_terminate.dart);
+/// the run then throws [OrtRunStopped]. Next to the options lives a flag in native memory that the stopper raises
+/// before it asks ONNX Runtime to stop, so that the session tells a stopped run from a failed one without reading
+/// ONNX Runtime's message. [release] gives both back, once no isolate can stop the runs any more.
+final class OrtRunOptions {
+  OrtRunOptions._(this.runtime, this._options, this._asked);
+
+  final OrtRuntime runtime;
+  final Pointer<ort.OrtRunOptions> _options;
+  final Pointer<Int32> _asked;
+  var _released = false;
+
+  bool get isReleased => _released;
+
+  /// What another isolate needs to stop the runs: plain values, sent in a message. Throws [StateError] once released.
+  OrtRunStopHandle get handle {
+    if (_released) {
+      throw StateError('These OrtRunOptions were given back');
+    }
+    return OrtRunStopHandle(
+      libraryPath: runtime.libraryPath,
+      optionsAddress: _options.address,
+      askedAddress: _asked.address,
+    );
+  }
+
+  /// Whether a stop was asked, from any isolate
+  bool get stopAsked => !_released && _asked.value != 0;
+
+  /// Stops the run in progress and every later run with these options, as another isolate does through [handle]
+  void stop() => OrtRunStopper(handle).stop();
+
+  /// Gives the options back. Only once no isolate can call [OrtRunStopper.stop] on them any more (ai_worker.dart waits
+  /// for the root isolate to say so).
+  void release() {
+    if (_released) {
+      return;
+    }
+    _released = true;
+    runtime._calls.releaseRunOptions(_options);
+    calloc.free(_asked);
+  }
 }
 
 /// A model loaded by ONNX Runtime, ready to run; [close] gives its memory back
@@ -187,6 +260,9 @@ final class OrtSession {
         try {
           calls.check(calls.setIntraOpNumThreads(options, settings.intraOpThreads), 'SetIntraOpNumThreads');
           calls.check(calls.setInterOpNumThreads(options, settings.interOpThreads), 'SetInterOpNumThreads');
+          if (!settings.cpuMemArena) {
+            calls.check(calls.disableCpuMemArena(options), 'DisableCpuMemArena');
+          }
           calls.check(
             calls.setSessionGraphOptimizationLevel(options, ort.GraphOptimizationLevel.ORT_ENABLE_ALL),
             'SetSessionGraphOptimizationLevel',
@@ -238,78 +314,96 @@ final class OrtSession {
     if (_closed) {
       throw StateError('The ONNX Runtime session of $modelPath is closed');
     }
-    final count = shape.fold(1, (total, dimension) => total * dimension);
-    if (count != values.length) {
-      throw ArgumentError('A tensor of shape $shape holds $count values, not ${values.length}');
+    final output = runNamed({inputs.first.name: OrtTensor(shape, values)}, outputs: [outputs.first.name]).values.single;
+    if (output.type != OrtElementType.float32) {
+      throw OrtException('The output ${outputs.first.name} of $modelPath is not float32 (type ${output.type.onnx})');
+    }
+    return output;
+  }
+
+  /// Runs the model on [given], its inputs by name, and gives the outputs named in [wanted] (every output of the
+  /// model when null), by name, each with the shape and the type ONNX Runtime gave it. [options] are the options of
+  /// the runs of the job: when another isolate stops them, the run ends at its next node and this throws
+  /// [OrtRunStopped]. Throws [ArgumentError] for an output the model does not have, and [OrtException] with ONNX
+  /// Runtime's message when the model refuses the inputs (a name, a type or a shape it does not take, one missing).
+  Map<String, OrtTensor> runNamed(Map<String, OrtTensor> given, {List<String>? outputs, OrtRunOptions? options}) {
+    if (_closed) {
+      throw StateError('The ONNX Runtime session of $modelPath is closed');
+    }
+    final wanted = outputs ?? [for (final output in this.outputs) output.name];
+    for (final name in wanted) {
+      if (!this.outputs.any((output) => output.name == name)) {
+        throw ArgumentError('$modelPath has no output $name: it gives ${this.outputs.join(', ')}');
+      }
+    }
+    if (options != null && (options.isReleased || !identical(options.runtime, runtime))) {
+      throw ArgumentError('The run options were given back, or belong to another ONNX Runtime');
     }
     final calls = runtime._calls;
+    final names = given.keys.toList(growable: false);
     return using((arena) {
-      final data = arena<Float>(values.isEmpty ? 1 : values.length);
-      data.asTypedList(values.length).setAll(0, values);
-      final dimensions = arena<Int64>(shape.isEmpty ? 1 : shape.length);
-      for (var i = 0; i < shape.length; i++) {
-        dimensions[i] = shape[i];
-      }
-      final memoryInfoOut = arena<Pointer<ort.OrtMemoryInfo>>();
-      calls.check(
-        calls.createCpuMemoryInfo(
-          ort.OrtAllocatorType.OrtArenaAllocator,
-          ort.OrtMemType.OrtMemTypeDefault,
-          memoryInfoOut,
-        ),
-        'CreateCpuMemoryInfo',
-      );
-      calls.made('OrtMemoryInfo');
-      final memoryInfo = memoryInfoOut.value;
       // Zeroed by the arena (calloc), so that the finally below sees null for a value never made
-      final inputOut = arena<Pointer<ort.OrtValue>>();
-      final outputOut = arena<Pointer<ort.OrtValue>>();
+      final inputNames = arena<Pointer<Char>>(math.max(1, names.length));
+      final inputValues = arena<Pointer<ort.OrtValue>>(math.max(1, names.length));
+      final outputNames = arena<Pointer<Char>>(math.max(1, wanted.length));
+      final outputValues = arena<Pointer<ort.OrtValue>>(math.max(1, wanted.length));
       try {
-        calls.check(
-          calls.createTensorWithDataAsOrtValue(
-            memoryInfo,
-            data.cast(),
-            values.length * sizeOf<Float>(),
-            dimensions,
-            shape.length,
-            ort.ONNXTensorElementDataType.ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT,
-            inputOut,
-          ),
-          'CreateTensorWithDataAsOrtValue',
-        );
-        calls.made('OrtValue');
-        final inputName = arena<Pointer<Char>>()..value = inputs.first.name.toNativeUtf8(allocator: arena).cast();
-        final outputName = arena<Pointer<Char>>()..value = outputs.first.name.toNativeUtf8(allocator: arena).cast();
-        calls.check(calls.run(_session, nullptr, inputName, inputOut, 1, outputName, 1, outputOut), 'Run');
-        calls.made('OrtValue');
-        final output = outputOut.value;
-        final infoOut = arena<Pointer<ort.OrtTensorTypeAndShapeInfo>>();
-        calls.check(calls.getTensorTypeAndShape(output, infoOut), 'GetTensorTypeAndShape');
-        calls.made('OrtTensorTypeAndShapeInfo');
-        final OrtTensorSpec described;
-        try {
-          described = calls.describe(outputs.first.name, infoOut.value);
-        } finally {
-          calls.releaseTensorTypeAndShapeInfo(infoOut.value);
-        }
-        if (!described.isFloat) {
-          throw OrtException(
-            'The output ${described.name} of $modelPath is not float32 (type ${described.elementType})',
+        final allocatorOut = arena<Pointer<ort.OrtAllocator>>();
+        calls.check(calls.getAllocatorWithDefaultOptions(allocatorOut), 'GetAllocatorWithDefaultOptions');
+        for (var i = 0; i < names.length; i++) {
+          inputNames[i] = names[i].toNativeUtf8(allocator: arena).cast();
+          final tensor = given[names[i]]!;
+          final shape = tensor.shape;
+          final dimensions = arena<Int64>(math.max(1, shape.length));
+          for (var d = 0; d < shape.length; d++) {
+            dimensions[d] = shape[d];
+          }
+          final valueOut = arena<Pointer<ort.OrtValue>>();
+          calls.check(
+            calls.createTensorAsOrtValue(allocatorOut.value, dimensions, shape.length, tensor.type.onnx, valueOut),
+            'CreateTensorAsOrtValue',
           );
+          calls.made('OrtValue');
+          // Given back by the finally from here on
+          inputValues[i] = valueOut.value;
+          final length = tensor.data.lengthInBytes;
+          if (length > 0) {
+            final dataOut = arena<Pointer<Void>>();
+            calls.check(calls.getTensorMutableData(valueOut.value, dataOut), 'GetTensorMutableData');
+            dataOut.value.cast<Uint8>().asTypedList(length).setAll(0, tensor.rawBytes);
+          }
         }
-        final outputCount = described.shape.fold(1, (total, dimension) => total * dimension);
-        final dataOut = arena<Pointer<Void>>();
-        calls.check(calls.getTensorMutableData(output, dataOut), 'GetTensorMutableData');
-        final result = Float32List.fromList(dataOut.value.cast<Float>().asTypedList(outputCount));
-        return OrtTensor(described.shape, result);
+        for (var i = 0; i < wanted.length; i++) {
+          outputNames[i] = wanted[i].toNativeUtf8(allocator: arena).cast();
+        }
+        final status = calls.run(
+          _session,
+          options?._options ?? nullptr,
+          inputNames,
+          inputValues,
+          names.length,
+          outputNames,
+          wanted.length,
+          outputValues,
+        );
+        for (var i = 0; i < wanted.length; i++) {
+          if (outputValues[i] != nullptr) {
+            calls.made('OrtValue');
+          }
+        }
+        calls.check(status, 'Run', stopped: options != null && options.stopAsked);
+        return {for (var i = 0; i < wanted.length; i++) wanted[i]: calls.read(outputValues[i], wanted[i], modelPath)};
       } finally {
-        if (outputOut.value != nullptr) {
-          calls.releaseValue(outputOut.value);
+        for (var i = 0; i < wanted.length; i++) {
+          if (outputValues[i] != nullptr) {
+            calls.releaseValue(outputValues[i]);
+          }
         }
-        if (inputOut.value != nullptr) {
-          calls.releaseValue(inputOut.value);
+        for (var i = 0; i < names.length; i++) {
+          if (inputValues[i] != nullptr) {
+            calls.releaseValue(inputValues[i]);
+          }
         }
-        calls.releaseMemoryInfo(memoryInfo);
       }
     });
   }
@@ -381,6 +475,8 @@ final class _OrtCalls {
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, int)>();
   late final setInterOpNumThreads = _api.ref.SetInterOpNumThreads
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, int)>();
+  late final disableCpuMemArena = _api.ref.DisableCpuMemArena
+      .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>)>();
   late final setSessionGraphOptimizationLevel = _api.ref.SetSessionGraphOptimizationLevel
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, int)>();
   late final addSessionConfigEntry = _api.ref.AddSessionConfigEntry
@@ -449,18 +545,10 @@ final class _OrtCalls {
   late final allocatorFree = _api.ref.AllocatorFree
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtAllocator>, Pointer<Void>)>();
 
-  late final createCpuMemoryInfo = _api.ref.CreateCpuMemoryInfo
-      .asFunction<Pointer<ort.OrtStatus> Function(int, int, Pointer<Pointer<ort.OrtMemoryInfo>>)>();
-  late final releaseMemoryInfo = _counted(
-    'OrtMemoryInfo',
-    _api.ref.ReleaseMemoryInfo.asFunction<void Function(Pointer<ort.OrtMemoryInfo>)>(),
-  );
-  late final createTensorWithDataAsOrtValue = _api.ref.CreateTensorWithDataAsOrtValue
+  late final createTensorAsOrtValue = _api.ref.CreateTensorAsOrtValue
       .asFunction<
         Pointer<ort.OrtStatus> Function(
-          Pointer<ort.OrtMemoryInfo>,
-          Pointer<Void>,
-          int,
+          Pointer<ort.OrtAllocator>,
           Pointer<Int64>,
           int,
           int,
@@ -480,6 +568,12 @@ final class _OrtCalls {
           Pointer<Pointer<ort.OrtValue>>,
         )
       >();
+  late final createRunOptions = _api.ref.CreateRunOptions
+      .asFunction<Pointer<ort.OrtStatus> Function(Pointer<Pointer<ort.OrtRunOptions>>)>();
+  late final releaseRunOptions = _counted(
+    'OrtRunOptions',
+    _api.ref.ReleaseRunOptions.asFunction<void Function(Pointer<ort.OrtRunOptions>)>(),
+  );
   late final getTensorMutableData = _api.ref.GetTensorMutableData
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtValue>, Pointer<Pointer<Void>>)>();
   late final releaseValue = _counted(
@@ -505,16 +599,45 @@ final class _OrtCalls {
     release(object);
   };
 
-  /// Throws the OrtException of [status] when it is not null, after releasing it
-  void check(Pointer<ort.OrtStatus> status, String call) {
+  /// Throws the OrtException of [status] when it is not null, after releasing it: an [OrtRunStopped] when the call
+  /// failed after a stop was asked ([stopped])
+  void check(Pointer<ort.OrtStatus> status, String call, {bool stopped = false}) {
     if (status == nullptr) {
       return;
     }
-    try {
-      throw OrtException('$call: ${_string(getErrorMessage(status))}', code: getErrorCode(status));
-    } finally {
-      releaseStatus(status);
-    }
+    final message = '$call: ${_string(getErrorMessage(status))}';
+    final code = getErrorCode(status);
+    releaseStatus(status);
+    throw stopped ? OrtRunStopped(message, code: code) : OrtException(message, code: code);
+  }
+
+  /// A copy of the tensor [value] gave as the output [name] of [modelPath]. Throws [OrtException] for a type the app
+  /// does not read.
+  OrtTensor read(Pointer<ort.OrtValue> value, String name, String modelPath) {
+    return using((arena) {
+      final infoOut = arena<Pointer<ort.OrtTensorTypeAndShapeInfo>>();
+      check(getTensorTypeAndShape(value, infoOut), 'GetTensorTypeAndShape');
+      made('OrtTensorTypeAndShapeInfo');
+      final OrtTensorSpec described;
+      try {
+        described = describe(name, infoOut.value);
+      } finally {
+        releaseTensorTypeAndShapeInfo(infoOut.value);
+      }
+      final type = described.type;
+      if (type == null) {
+        throw OrtException(
+          'The output $name of $modelPath is of type ${described.elementType}, which the app does not read',
+        );
+      }
+      final length = elementCountOf(described.shape) * type.bytes;
+      if (length == 0) {
+        return OrtTensor.copyOf(type, described.shape, Uint8List(0));
+      }
+      final dataOut = arena<Pointer<Void>>();
+      check(getTensorMutableData(value, dataOut), 'GetTensorMutableData');
+      return OrtTensor.copyOf(type, described.shape, dataOut.value.cast<Uint8>().asTypedList(length));
+    });
   }
 
   /// The name, type and shape of the inputs or outputs of [session]

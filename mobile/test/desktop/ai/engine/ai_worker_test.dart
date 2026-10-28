@@ -1,6 +1,9 @@
 // The worker isolate (lot A4b): a job run there with FakeBackendSpec and the Dart codec, its progress heard on the
 // root isolate, a cancel from the root isolate seen in the middle of the job, the model's session kept between jobs
-// and given back after keepSession, a worker that dies.
+// and given back after keepSession, a worker that dies. Lot C1: the keeper of the sessions (at most two, each given
+// back after keepSession without use), tasks of other kinds run in the worker with their progress, their result or
+// their failure (told apart from a cancel), and the session of the 3D photo kept with theirs. The stop of a run of ONNX
+// Runtime, which needs the library: ort/ort_stop_test.dart.
 
 import 'dart:io';
 
@@ -9,6 +12,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/ai_worker.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 
@@ -147,4 +151,240 @@ void main() {
     expect(worker.isAlive, isFalse);
     await worker.close();
   });
+
+  group('the keeper of the sessions', () {
+    late List<String> closed;
+    setUp(() => closed = []);
+
+    String Function() opener(String name) =>
+        () => name;
+    void close(String session) => closed.add(session);
+
+    test('keeps a session open between uses and opens it once', () {
+      final keeper = AiSessionKeeper(keep: const Duration(minutes: 1));
+      var opened = 0;
+      String open() {
+        opened++;
+        return 'moge';
+      }
+
+      expect(keeper.open('moge', open, close), 'moge');
+      keeper.endJob();
+      expect(keeper.open('moge', open, close), 'moge');
+      keeper.endJob();
+      expect((opened, keeper.openNames.join(' '), closed.join(' ')), (1, 'moge', ''));
+      keeper.closeAll();
+      expect((keeper.openNames.join(' '), closed.join(' '), keeper.closes), ('', 'moge', 1));
+    });
+
+    test('keeps two at most: a third gives back the one used least recently', () {
+      final keeper = AiSessionKeeper(keep: const Duration(minutes: 1));
+      keeper.open('moge', opener('moge'), close);
+      keeper.open('lama', opener('lama'), close);
+      keeper.open('moge', opener('moge'), close);
+      keeper.endJob();
+      expect(keeper.openNames, ['lama', 'moge']);
+
+      keeper.open('migan', opener('migan'), close);
+
+      expect((keeper.openNames.join(' '), closed.join(' '), keeper.closes), ('moge migan', 'lama', 1));
+      keeper.closeAll();
+    });
+
+    test('a session its owner opens: room made before, adopted after, forgotten when the owner closed it', () {
+      final keeper = AiSessionKeeper(keep: const Duration(minutes: 1));
+      keeper.open('moge', opener('moge'), close);
+      keeper.open('lama', opener('lama'), close);
+      keeper.endJob();
+
+      keeper.makeRoom(aiDepthSession);
+      expect((keeper.openNames.join(' '), closed.join(' ')), ('lama', 'moge'));
+      keeper.adopt(aiDepthSession, () => closed.add('depth'));
+      keeper.endJob();
+      expect(keeper.openNames, ['lama', aiDepthSession]);
+
+      keeper.makeRoom(aiDepthSession);
+      expect(keeper.openNames, ['lama', aiDepthSession], reason: 'open already: nothing to give back');
+      keeper.forget(aiDepthSession);
+      expect((keeper.openNames.join(' '), closed.join(' ')), ('lama', 'moge'), reason: 'forgotten, not closed again');
+      keeper.closeAll();
+    });
+
+    test('gives a session back after keep without use, counted from the end of the job that used it', () async {
+      final keeper = AiSessionKeeper(keep: const Duration(milliseconds: 200));
+      keeper.open('moge', opener('moge'), close);
+      keeper.open('lama', opener('lama'), close);
+      keeper.endJob();
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+      keeper.open('lama', opener('lama'), close);
+      keeper.endJob();
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+
+      expect((keeper.openNames.join(' '), closed.join(' ')), ('lama', 'moge'));
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+      expect((keeper.openNames.join(' '), closed.join(' '), keeper.closes), ('', 'moge lama', 2));
+    });
+
+    test('a session that fails to open is not kept, and a session of another type is refused', () {
+      final keeper = AiSessionKeeper(keep: const Duration(minutes: 1));
+      expect(() => keeper.open<String>('moge', () => throw StateError('no model'), close), throwsStateError);
+      expect(keeper.openNames, isEmpty);
+      keeper.open('moge', opener('moge'), close);
+      expect(() => keeper.open<List<int>>('moge', () => [1], (_) {}), throwsStateError);
+      keeper.closeAll();
+    });
+  });
+
+  group('tasks', () {
+    test('a task runs in the worker: its progress heard, its result given back, counted as a job', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      final progress = <ImmersiveProgress>[];
+
+      final result = await worker.runTask(
+        const _CountingTask('moge'),
+        cancelAddress: cancel.address,
+        onProgress: progress.add,
+      );
+
+      expect(result, 'moge opened 1 time, cancelled: false');
+      expect(progress, const [ImmersiveProgress(ImmersiveStage.geometry, 400)]);
+      final status = await worker.status();
+      expect(
+        (status.jobs, status.openSessions.join(' '), status.runOptionsHeld, status.runOptionsAlive),
+        (1, 'moge', 0, 0),
+      );
+    });
+
+    test('a task reads the cancel flag of its job', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag()..cancel();
+      addTearDown(cancel.free);
+      expect(
+        await worker.runTask(const _CountingTask('moge'), cancelAddress: cancel.address),
+        'moge opened 1 time, cancelled: true',
+      );
+    });
+
+    test('a task that throws fails its call with its message, and the worker goes on', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      await expectLater(
+        worker.runTask(const _CountingTask('broken'), cancelAddress: cancel.address),
+        throwsA(
+          isA<AiWorkerTaskFailed>()
+              .having((e) => e.message, 'message', 'Bad state: no model for broken')
+              .having((e) => e.cancelled, 'cancelled', isFalse),
+        ),
+      );
+      expect(await worker.runTask(const _CountingTask('lama'), cancelAddress: cancel.address), startsWith('lama'));
+    });
+
+    test('a task that lets the stop of its run out fails its call as cancelled, not as failed', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      await expectLater(
+        worker.runTask(const _ThrowingTask(stop: true), cancelAddress: cancel.address),
+        throwsA(
+          isA<AiWorkerTaskFailed>()
+              .having((e) => e.message, 'message', 'OrtRunStopped: Run: $_terminated')
+              .having((e) => e.cancelled, 'cancelled', isTrue)
+              .having((e) => '$e', 'text', 'AiWorkerTaskFailed (cancelled): OrtRunStopped: Run: $_terminated'),
+        ),
+      );
+    });
+
+    test('a task that throws anything once its job was cancelled fails its call as cancelled', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      await expectLater(
+        worker.runTask(const _ThrowingTask(stop: false), cancelAddress: cancel.address),
+        throwsA(isA<AiWorkerTaskFailed>().having((e) => e.cancelled, 'cancelled', isFalse)),
+      );
+      cancel.cancel();
+      await expectLater(
+        worker.runTask(const _ThrowingTask(stop: false), cancelAddress: cancel.address),
+        throwsA(
+          isA<AiWorkerTaskFailed>()
+              .having((e) => e.message, 'message', 'Bad state: no region left')
+              .having((e) => e.cancelled, 'cancelled', isTrue),
+        ),
+      );
+    });
+
+    test('the session of the 3D photo is one of the two: tasks that open two more give it back', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      final outcome = await worker.run(
+        workerJob(jobFor(codecFixturePath('orientation_1.jpg'), partPath: partIn(folder, 'a.jpg')), cancel),
+      );
+      expect(outcome.result.isDone, isTrue);
+      expect((await worker.status()).openSessions, [aiDepthSession]);
+
+      await worker.runTask(const _CountingTask('moge'), cancelAddress: cancel.address);
+      expect((await worker.status()).openSessions, [aiDepthSession, 'moge']);
+      await worker.runTask(const _CountingTask('lama'), cancelAddress: cancel.address);
+      var status = await worker.status();
+      expect((status.openSessions.join(' '), status.sessionOpen, status.sessionCloses), ('moge lama', false, 1));
+
+      // The next 3D photo opens it again, and gives back the one used least recently
+      await worker.run(
+        workerJob(jobFor(codecFixturePath('orientation_1.jpg'), partPath: partIn(folder, 'b.jpg')), cancel),
+      );
+      status = await worker.status();
+      expect((status.openSessions.join(' '), status.sessionOpen, status.sessionCloses), ('lama depth', true, 2));
+    });
+  });
+}
+
+/// What ONNX Runtime says of a run it stopped
+const _terminated = 'Exiting due to terminate flag being set to true.';
+
+/// Throws what a run stopped by the cancel throws ([stop]), or a StateError
+class _ThrowingTask implements AiWorkerTask<String> {
+  const _ThrowingTask({required this.stop});
+
+  final bool stop;
+
+  @override
+  String run(AiWorkerContext context) {
+    if (stop) {
+      throw const OrtRunStopped('Run: $_terminated', code: 1);
+    }
+    throw StateError('no region left');
+  }
+}
+
+/// Opens the session [name] (a string) through the keeper, says how often it was opened and whether the job was
+/// cancelled; "broken" fails to open
+class _CountingTask implements AiWorkerTask<String> {
+  const _CountingTask(this.name);
+
+  final String name;
+
+  static final _opened = <String, int>{};
+
+  @override
+  String run(AiWorkerContext context) {
+    context.progress(const ImmersiveProgress(ImmersiveStage.geometry, 400));
+    context.sessions.open(name, () {
+      if (name == 'broken') {
+        throw StateError('no model for $name');
+      }
+      _opened[name] = (_opened[name] ?? 0) + 1;
+      return name;
+    }, (_) {});
+    return '$name opened ${_opened[name]} time, cancelled: ${context.isCancelled}';
+  }
 }

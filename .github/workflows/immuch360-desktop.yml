@@ -168,6 +168,11 @@ jobs:
           python3 .github/desktop/ai/make_focal_shift_golden.py --check
           python3 .github/desktop/ai/make_pano_golden.py --check
 
+      # The tiny models that stand for MoGe-2 ViT-S, LaMa and MI-GAN in test/desktop/ai/ort, and the slow one whose run
+      # another isolate stops (lot C1): written by a small encoder of ONNX in pure Python, the same bytes everywhere
+      - name: The tiny models of ONNX Runtime are what their script writes
+        run: python3 .github/desktop/ai/make_tiny_models.py --check
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
@@ -249,7 +254,9 @@ jobs:
 
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
-      # since a process keeps the first ONNX Runtime it loads. The archives are checked by their SHA-256 and cached
+      # since a process keeps the first ONNX Runtime it loads: the depth model, the tiny models of several inputs and
+      # outputs, and the stop of a run from another isolate (lot C1). The archives are checked by their SHA-256 and
+      # cached
       - name: ONNX Runtime archives cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
