@@ -3,7 +3,8 @@
 // "View the 3D scene" on an original that has one next to it on a share. Both open the photo that carries the scene in
 // the immersive viewer with the volumetricScene request its packet makes; nothing of the AI is needed, nothing is
 // downloaded but the file. A scene the gate of the headset refuses (sceneGateOf, read in the packet at the head of the
-// file) keeps its button, greyed with the reason (spec 10.2); the viewer checks again on the scene itself.
+// file) keeps its button, greyed with the reason (spec 10.2), from the moment the headset is known; the viewer checks
+// again on the scene itself.
 
 import 'dart:async';
 
@@ -27,7 +28,8 @@ String sceneRefusalText(Translations t, SceneGateVerdict verdict) => switch (ver
   SceneRefusal.notOurs => t.ai_immersive_scene_not_ours,
   SceneRefusal.missing => t.ai_immersive_scene_missing,
   SceneRefusal.tooHeavy => switch ((verdict.triangles, verdict.maxTriangles)) {
-    (final int triangles, final int max) => t.ai_immersive_scene_too_heavy(triangles: triangles, max: max),
+    // The digits alone, as the headset writes them
+    (final int triangles, final int max) => t.ai_immersive_scene_too_heavy(triangles: '$triangles', max: '$max'),
     _ => t.ai_immersive_scene_too_heavy_plain,
   },
   null => '',
@@ -45,8 +47,13 @@ class AiSceneButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // The headset, for its caps: those of the Quest 3 until it is read, the viewer checking again
-    final device = ref.watch(reliefDeviceFactsProvider).valueOrNull?.device;
+    // The headset, for its caps: nothing until it is read, so that a scene too heavy for it is never offered first;
+    // those of the Quest 3 when it cannot be read, the viewer checking again
+    final facts = ref.watch(reliefDeviceFactsProvider);
+    if (facts.isLoading && !facts.hasValue && !facts.hasError) {
+      return const SizedBox.shrink();
+    }
+    final device = facts.valueOrNull?.device;
     final verdict = sceneGateOf(xmp, device: device, fileSize: fileSize);
     final request = verdict.request;
     final t = context.t;
