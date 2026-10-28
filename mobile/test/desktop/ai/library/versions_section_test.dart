@@ -182,6 +182,16 @@ void main() {
     for (final file in files.skip(1)) {
       expect(deleteTooltip(file), 'Delete this version', reason: file.path);
     }
+
+    // Asked in the same words, then nothing deleted on Cancel
+    await tester.tap(find.byKey(ValueKey('desktop_version_delete_${files[1].asset.id}')));
+    await tester.pumpAndSettle();
+    expect(find.text('Delete this version? The original stays as it is.\nsalon_scene3D.jpg'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ValueKey('desktop_version_delete_${photo3d.asset.id}')));
+    await tester.pumpAndSettle();
+    expect(find.text('Delete this 3D photo? The original stays as it is.\nsalon_3D_LRF_Full_SBS.jpg'), findsOneWidget);
   });
 
   testWidgets('a scene tells the photo it was made from, in its own words', (tester) async {
