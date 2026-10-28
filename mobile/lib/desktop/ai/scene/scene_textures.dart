@@ -4,8 +4,15 @@
 // (fitEye), never enlarged. The pixels keep the space of the photo and its ICC profile goes with them, as in phase 1;
 // a profile other than sRGB raises wideGamut ("Colours may look duller in other 3D apps"), the conversion by lcms2
 // being a lot after V2.
+//
+// The preview carries a small "3D SCENE" mark in its bottom left corner (design D11, applied by V2): Immich took each
+// photo of the lot V and its scene for duplicates, the preview being the photo itself, and may offer to keep the
+// heavier file, often the scene. The mark lets the eye tell them apart there and wherever the file shows as a plain
+// photo. It is drawn on a copy of the preview when it is written, never on the texture the headset and the computers
+// draw the scene with, nor on the map MoGe-2 reads; a preview under 256 pixels on its short side has none.
 
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
@@ -28,6 +35,100 @@ class ScenePictures {
   final SbsDecoded texture;
   final SbsDecoded preview;
   final SbsDecoded map;
+}
+
+/// Where the mark of a preview goes, in pixels: [left] and [top] included, [right] and [bottom] excluded
+class SceneMarkBox {
+  const SceneMarkBox(this.left, this.top, this.right, this.bottom);
+
+  final int left;
+  final int top;
+  final int right;
+  final int bottom;
+}
+
+/// The short side a preview needs for its mark
+const sceneMarkMinSide = 256;
+
+/// The words of the mark, and its letters in cells of 5 x 7, a row of 5 bits per line from the top
+const _markText = '3D SCENE';
+const _markGlyphs = {
+  '3': [0x0E, 0x11, 0x01, 0x06, 0x01, 0x11, 0x0E],
+  'D': [0x1E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x1E],
+  'S': [0x0F, 0x10, 0x10, 0x0E, 0x01, 0x01, 0x1E],
+  'C': [0x0E, 0x11, 0x10, 0x10, 0x10, 0x11, 0x0E],
+  'E': [0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x1F],
+  'N': [0x11, 0x19, 0x15, 0x13, 0x11, 0x11, 0x11],
+};
+
+/// The width of a letter of the mark in cells, a space being 3, and the cell between two letters
+int _markCells(String letter) => letter == ' ' ? 3 : 5;
+const _markGap = 1;
+
+/// The cell of the mark of a preview of [width] x [height], in pixels: some 3 on a preview of 2048 x 1366
+int _markCell(int width, int height) => math.max(1, (math.min(width, height) / 450).round());
+
+/// Where the mark of a preview of [width] x [height] goes, in its bottom left corner; null for a preview under
+/// [sceneMarkMinSide] on its short side
+SceneMarkBox? sceneMarkBox(int width, int height) {
+  if (math.min(width, height) < sceneMarkMinSide) {
+    return null;
+  }
+  final cell = _markCell(width, height);
+  var cells = 0;
+  for (var i = 0; i < _markText.length; i++) {
+    cells += _markCells(_markText[i]) + (i == 0 ? 0 : _markGap);
+  }
+  final padding = 2 * cell;
+  final margin = 4 * cell;
+  final boxWidth = cells * cell + 2 * padding;
+  final boxHeight = 7 * cell + 2 * padding;
+  return SceneMarkBox(margin, height - margin - boxHeight, margin + boxWidth, height - margin);
+}
+
+/// [preview] with the mark of a scene: a copy, its ground a quarter of the photo under it, its letters white; the
+/// preview itself when it is too small for one
+SbsDecoded withSceneMark(SbsDecoded preview) {
+  final box = sceneMarkBox(preview.width, preview.height);
+  if (box == null) {
+    return preview;
+  }
+  final rgba = Uint8List.fromList(preview.rgba);
+  final width = preview.width;
+  for (var y = box.top; y < box.bottom; y++) {
+    for (var x = box.left; x < box.right; x++) {
+      final at = 4 * (y * width + x);
+      rgba[at] = rgba[at] ~/ 4;
+      rgba[at + 1] = rgba[at + 1] ~/ 4;
+      rgba[at + 2] = rgba[at + 2] ~/ 4;
+    }
+  }
+  final cell = _markCell(preview.width, preview.height);
+  var left = box.left + 2 * cell;
+  final top = box.top + 2 * cell;
+  for (var i = 0; i < _markText.length; i++) {
+    final letter = _markText[i];
+    final rows = _markGlyphs[letter];
+    if (rows != null) {
+      for (var row = 0; row < 7; row++) {
+        for (var column = 0; column < 5; column++) {
+          if (rows[row] & (0x10 >> column) == 0) {
+            continue;
+          }
+          for (var y = top + row * cell; y < top + (row + 1) * cell; y++) {
+            for (var x = left + column * cell; x < left + (column + 1) * cell; x++) {
+              final at = 4 * (y * width + x);
+              rgba[at] = 255;
+              rgba[at + 1] = 255;
+              rgba[at + 2] = 255;
+            }
+          }
+        }
+      }
+    }
+    left += (_markCells(letter) + _markGap) * cell;
+  }
+  return SbsDecoded(width: preview.width, height: preview.height, rgba: rgba, iccProfile: preview.iccProfile);
 }
 
 /// The size of the map of a photo of [width] x [height] upright: the size [ScenePictures.of] gives it, through the

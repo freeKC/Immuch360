@@ -235,6 +235,82 @@ void main() {
       expect(const DartSbsCodec().decodeJpeg(preview).width, 48);
     });
 
+    test('the preview of a photo of some size carries a small "3D SCENE" mark in its bottom left corner (D11)', () {
+      // Immich takes a photo and its scene for duplicates (V2 on ai1, five pairs of five): the mark tells them apart
+      final path = scenePhoto(folder, 'large.jpg', width: 1200, height: 800);
+      runChain(path);
+      final file = written('large.jpg');
+      final tail = sceneTailOf(fileLength: file.bytes.length, xmp: file.xmp)!;
+      final preview = const DartSbsCodec().decodeJpeg(Uint8List.sublistView(file.bytes, 0, tail.offset));
+      final photo = const DartSbsCodec().decodeJpeg(file.glb.image(0));
+      final mark = sceneMarkBox(preview.width, preview.height)!;
+
+      expect((preview.width, preview.height), (1200, 800));
+      expect(mark.left, greaterThan(0));
+      expect(mark.right, lessThan(preview.width ~/ 4), reason: 'small, in the corner');
+      expect(mark.bottom, lessThan(preview.height));
+      expect(mark.top, greaterThan(preview.height * 3 ~/ 4));
+      var dark = 0;
+      var white = 0;
+      for (var y = mark.top; y < mark.bottom; y++) {
+        for (var x = mark.left; x < mark.right; x++) {
+          final at = 4 * (y * preview.width + x);
+          final luma = (preview.rgba[at] + preview.rgba[at + 1] + preview.rgba[at + 2]) / 3;
+          if (luma < 50) {
+            dark++;
+          }
+          if (luma > 200) {
+            white++;
+          }
+        }
+      }
+      final area = (mark.right - mark.left) * (mark.bottom - mark.top);
+      expect(dark, greaterThan(area ~/ 3), reason: 'the dark ground of the mark (the photo has no luma under 60)');
+      expect(white, greaterThan(area ~/ 20), reason: 'its white letters');
+      // The rest of the preview is the photo, and the texture of the scene has no mark
+      final at = 4 * (100 * preview.width + 900);
+      expect((preview.rgba[at] - photo.rgba[4 * (100 * photo.width + 900)]).abs(), lessThan(12));
+      for (var y = mark.top; y < mark.bottom; y += 4) {
+        for (var x = mark.left; x < mark.right; x += 4) {
+          final i = 4 * (y * photo.width + x);
+          expect(
+            (photo.rgba[i] + photo.rgba[i + 1] + photo.rgba[i + 2]) / 3,
+            greaterThan(55),
+            reason: 'texture $x, $y',
+          );
+        }
+      }
+    });
+
+    test('the mark is drawn on a copy, and only on a preview of 256 pixels or more on its short side', () {
+      final grey = SbsDecoded(
+        width: 600,
+        height: 400,
+        rgba: Uint8List(600 * 400 * 4)..fillRange(0, 600 * 400 * 4, 128),
+      );
+      final marked = withSceneMark(grey);
+      expect(grey.rgba.every((value) => value == 128), isTrue, reason: 'the picture given is not touched');
+      expect(identical(marked.rgba, grey.rgba), isFalse);
+      final box = sceneMarkBox(600, 400)!;
+      var changed = 0;
+      for (var y = 0; y < 400; y++) {
+        for (var x = 0; x < 600; x++) {
+          final inside = x >= box.left && x < box.right && y >= box.top && y < box.bottom;
+          final same = marked.rgba[4 * (y * 600 + x)] == 128;
+          if (!inside) {
+            expect(same, isTrue, reason: 'outside the mark: $x, $y');
+          } else if (!same) {
+            changed++;
+          }
+        }
+      }
+      expect(changed, (box.right - box.left) * (box.bottom - box.top), reason: 'the whole box is the mark');
+      expect(marked.iccProfile, grey.iccProfile);
+      final small = SbsDecoded(width: 300, height: 200, rgba: Uint8List(300 * 200 * 4));
+      expect(sceneMarkBox(300, 200), isNull);
+      expect(identical(withSceneMark(small), small), isTrue);
+    });
+
     test('the phase 1 reads it as a flat photo of its library, the scanner as a scene', () {
       final path = scenePhoto(folder, 'salon.jpg');
       runChain(path);
