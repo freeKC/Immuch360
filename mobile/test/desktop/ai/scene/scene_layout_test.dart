@@ -99,7 +99,7 @@ void main() {
     });
   }
 
-  test('the photo layer as one mesh: only the vertices its triangles use, the uv of the photo', () {
+  test('the photo layer as one mesh: the grid with the uv of the photo, then its cut cells, nothing else', () {
     final entry = cases.firstWhere((entry) => entry['name'] == 'person');
     final width = entry['width'] as int;
     final layout = SceneLayout.build(
@@ -110,29 +110,123 @@ void main() {
       (entry['focal'] as num).toDouble(),
       entry['gridStep'] as int,
     );
-    final meshes = meshesOf(layout.photoLayer, 0);
-    final used = layout.indices.toSet();
+    final layer = layout.photoLayer;
+    final meshes = meshesOf(layer, 0);
+    final count = layout.grid.vertexCount;
+    final cut = layout.keptCells.where((kept) => kept == 0).length;
 
+    expect(cut, greaterThan(0), reason: 'the person stands in front of the wall');
     expect(meshes, hasLength(1));
     final mesh = meshes.single;
-    expect(mesh.vertices, used.length);
-    expect(mesh.triangles, layout.indices.length ~/ 3);
     expect(mesh.texture, 0);
-    for (var t = 0; t < mesh.indices.length; t++) {
-      final vertex = layout.indices[t];
-      final i = vertex % layout.grid.columns;
-      final j = vertex ~/ layout.grid.columns;
+    expect(mesh.triangles, layout.indices.length ~/ 3 + 2 * cut);
+    expect(mesh.vertices, layer.indices.toSet().length);
+    // The grid first, as the golden fixture has it
+    expect(layer.indices.sublist(0, layout.indices.length), layout.indices);
+    for (var t = 0; t < layer.indices.length; t++) {
+      final vertex = layer.indices[t];
+      final grid = vertex % count;
+      final i = grid % layout.grid.columns;
+      final j = grid ~/ layout.grid.columns;
       final local = mesh.indices[t];
       for (var c = 0; c < 3; c++) {
-        expect(mesh.positions[3 * local + c], closeTo(layout.vertices[3 * vertex + c], 1e-6));
+        expect(mesh.positions[3 * local + c], closeTo(layer.positions[3 * vertex + c], 1e-6));
+        if (vertex < count) {
+          expect(layer.positions[3 * vertex + c], layout.vertices[3 * vertex + c]);
+        }
       }
       expect(mesh.uvs[2 * local], closeTo(i / (layout.grid.columns - 1), 1e-7));
       expect(mesh.uvs[2 * local + 1], closeTo(j / (layout.grid.rows - 1), 1e-7));
     }
   });
 
+  test('seen from the start the photo layer is the photo: every cell, the cut ones behind their band', () {
+    for (final entry in cases) {
+      final name = entry['name'] as String;
+      final width = entry['width'] as int;
+      final height = entry['height'] as int;
+      final layout = SceneLayout.build(
+        _flat(entry['input']),
+        _flat(entry['mask']),
+        width,
+        height,
+        (entry['focal'] as num).toDouble(),
+        entry['gridStep'] as int,
+      );
+      final grid = layout.grid;
+      final layer = layout.photoLayer;
+      final count = grid.vertexCount;
+      final cellColumns = grid.columns - 1;
+
+      // Each cell of the grid shows from the start, the kept ones by the grid and the cut ones by their own two
+      // triangles: the cell of a triangle pair is that of its first corner
+      final shown = <int>[];
+      for (var t = 0; t < layer.indices.length; t += 6) {
+        final corner = layer.indices[t] % count;
+        shown.add((corner ~/ grid.columns) * cellColumns + corner % grid.columns);
+      }
+      expect(shown.toSet().length, shown.length, reason: '$name: no cell twice');
+      expect(shown.toSet(), {for (var c = 0; c < layout.keptCells.length; c++) c}, reason: '$name: every cell');
+
+      // Every vertex on the ray of its point of the photo: the start sees it where the photo has it
+      for (final vertex in layer.indices.toSet()) {
+        final at = vertex % count;
+        final i = at % grid.columns;
+        final j = at ~/ grid.columns;
+        final depth = -layer.positions[3 * vertex + 2];
+        expect(depth, greaterThan(0), reason: '$name: vertex $vertex in front of the camera');
+        expect(
+          layer.positions[3 * vertex] * layout.focal / depth + width / 2,
+          closeTo(i / (grid.columns - 1) * width, 1e-7),
+          reason: '$name: vertex $vertex',
+        );
+        expect(
+          height / 2 - layer.positions[3 * vertex + 1] * layout.focal / depth,
+          closeTo(j / (grid.rows - 1) * height, 1e-7),
+          reason: '$name: vertex $vertex',
+        );
+      }
+
+      // The vertices of the cut cells at the depth behind their band, or of the grid where it recedes farther, the
+      // background right behind them
+      final bandValues = NearestPoints(
+        [
+          for (var v = 0; v < layout.band.length; v++)
+            if (layout.band[v] == 1) v,
+        ],
+        width,
+        height,
+      );
+      final background = layout.backgroundLayer;
+      for (var t = layout.indices.length; t < layer.indices.length; t++) {
+        final vertex = layer.indices[t];
+        expect(vertex, greaterThanOrEqualTo(count), reason: '$name: a cut cell has vertices of its own');
+        final at = vertex - count;
+        final nearest = bandValues.nearestTo(grid.xs[at % grid.columns], grid.ys[at ~/ grid.columns]);
+        final depth = -layer.positions[3 * vertex + 2];
+        expect(depth, closeTo(math.max(layout.depthBehind[nearest], -layout.vertices[3 * at + 2]), 1e-9));
+        expect(
+          -background!.positions[3 * at + 2],
+          closeTo(depth * backgroundPush, 1e-9),
+          reason: '$name: the background lies right behind it',
+        );
+      }
+
+      // The background never in front of the grid of the photo: along the ray of each of its vertices it lies behind
+      if (background != null) {
+        for (final vertex in background.indices.toSet()) {
+          expect(
+            -background.positions[3 * vertex + 2],
+            greaterThanOrEqualTo(-layout.vertices[3 * vertex + 2] * backgroundPush - 1e-9),
+            reason: '$name: background vertex $vertex in front of the photo',
+          );
+        }
+      }
+    }
+  });
+
   test(
-    'the background lies behind every band, reaches one cell beyond, at the depth behind its nearest band value',
+    'the background lies behind every band, reaches one cell beyond, behind its nearest band value and the photo',
     () {
       final entry = cases.firstWhere((entry) => entry['name'] == 'person');
       final width = entry['width'] as int;
@@ -167,18 +261,24 @@ void main() {
           expect(covered, isTrue, reason: 'band value $x, $y');
         }
       }
-      // Its vertices on the rays of their points, behind the band
-      final behind = [
-        for (var i = 0; i < layout.depthBehind.length; i++)
-          if (layout.band[i] == 1) layout.depthBehind[i],
-      ];
-      final farthest = behind.reduce(math.max);
-      final nearest = behind.reduce(math.min);
+      // Its vertices on the rays of their points, behind the band, or behind the grid where the far side recedes
+      final bandValues = NearestPoints(
+        [
+          for (var i = 0; i < layout.band.length; i++)
+            if (layout.band[i] == 1) i,
+        ],
+        width,
+        height,
+      );
       for (final vertex in used) {
         final i = vertex % grid.columns;
         final j = vertex ~/ grid.columns;
         final depth = -background.positions[3 * vertex + 2];
-        expect(depth, inInclusiveRange(nearest * backgroundPush - 1e-9, farthest * backgroundPush + 1e-9));
+        final nearestBand = bandValues.nearestTo(grid.xs[i], grid.ys[j]);
+        expect(
+          depth,
+          closeTo(math.max(layout.depthBehind[nearestBand], -layout.vertices[3 * vertex + 2]) * backgroundPush, 1e-9),
+        );
         expect(
           background.positions[3 * vertex],
           closeTo((i / (grid.columns - 1) * width - width / 2) * depth / layout.focal, 1e-9),
