@@ -19,8 +19,9 @@ name: Immuch360 Desktop
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
-#   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 included), the release build, the ZIP and
-#                  the installer (Inno Setup) for the owner as artifacts named
+#   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
+#                  fake sd-cli and the probe of a generation as the artifact Immuch360-AI-tools-windows-x64, the release
+#                  build, the ZIP and the installer (Inno Setup) for the owner as artifacts named
 #                  Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), and the app of
 #                  the ZIP started on a database an older build left behind
@@ -284,12 +285,27 @@ jobs:
           mise exec -- cargo fmt --check
           mise exec -- cargo clippy --all-targets -- -D warnings
 
+      # The fake sd-cli of the 360° panoramas compiled into a real program (no Flutter in it), and immuch360-run, the
+      # Linux launcher that makes sd-cli die with the app: the runner and the launcher of lot P2 are tested on them in
+      # the suite below (test/desktop/ai/gen, test/desktop/ai/process)
+      - name: The fake sd-cli and the launcher
+        id: fake_sd_cli
+        working-directory: mobile
+        run: |
+          mkdir -p "$RUNNER_TEMP/sdcpp-fakes"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli"
+          gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/sdcpp-fakes/immuch360-run" ../.github/desktop/ai/immuch360_run.c
+          echo "fake=$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli" >> "$GITHUB_OUTPUT"
+          echo "launcher=$RUNNER_TEMP/sdcpp-fakes/immuch360-run" >> "$GITHUB_OUTPUT"
+
       # The whole suite: the phone regression gate, test/desktop included. IMMUCH360_REQUIRE_SBS_CODEC turns the skip
       # of the dart:ffi tests of the JPEG codec into a failure: here the build hook must have built the library
       - name: Tests
         working-directory: mobile
         env:
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
+          IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
+          IMMUCH360_RUN_LAUNCHER: ${{ steps.fake_sd_cli.outputs.launcher }}
         run: mise exec -- flutter test
 
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
@@ -734,12 +750,36 @@ jobs:
           PY
           echo "lib=$(cygpath -w "$ort/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
 
+      # The fake sd-cli of the 360° panoramas, for the tests of the runner and of the job object below (lot P2), and
+      # sdcpp_probe, the program that runs a real generation through the same runner and launcher on a PC with a
+      # graphics card (the essay of the lot), both compiled by dart compile exe without Flutter; kept together as the
+      # artifact Immuch360-AI-tools-windows-x64, a name no release takes
+      - name: The fake sd-cli and the probe of a generation
+        id: fake_sd_cli
+        working-directory: mobile
+        run: |
+          tools="$(cygpath -u "$RUNNER_TEMP")/sdcpp-tools"
+          mkdir -p "$tools"
+          dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$tools/fake-sd-cli.exe"
+          dart compile exe test/desktop/ai/tools/sdcpp_probe.dart -o "$tools/sdcpp-probe.exe"
+          echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
+          echo "tools=$(cygpath -w "$tools")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the fake sd-cli and the probe
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-AI-tools-windows-x64
+          path: ${{ steps.fake_sd_cli.outputs.tools }}
+          retention-days: 14
+          if-no-files-found: error
+
       # IMMUCH360_REQUIRE_SBS_CODEC: the dart:ffi tests of the JPEG codec fail rather than skip without the library
-      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime)
+      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime, the job object)
         working-directory: mobile
         env:
           IMMUCH360_ORT_LIB: ${{ steps.ort.outputs.lib }}
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
+          IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
         run: flutter test test/desktop
 
       - name: Build

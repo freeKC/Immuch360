@@ -177,7 +177,8 @@ def command_build(args) -> int:
     lock = load_lock(args.lock)
     options = [*lock['cmake']['common'], *lock['cmake'][args.system]]
     configure = ['cmake', '-S', str(args.source), '-B', str(args.build), *options]
-    build = ['cmake', '--build', str(args.build), '--config', 'Release', '--parallel']
+    # Four jobs, the processors of the hosted runners: more is the out of memory killer on the Vulkan backend
+    build = ['cmake', '--build', str(args.build), '--config', 'Release', '--parallel', '4']
     if args.system == 'linux-x64':
         run(configure)
         run(build)
