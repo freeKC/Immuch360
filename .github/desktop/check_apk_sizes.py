@@ -8,16 +8,17 @@ ABI, the universal APK, the Quest APK, the AAB), and fails when one differs by m
 
   check_apk_sizes.py --release v3.3.0-rc.0-20 APK ...            sizes of that release of freeKC/Immuch360 (GitHub API)
   check_apk_sizes.py --reference-json FILE APK ...               sizes from a file: {"arm64-v8a": 134198546, ...}
+  check_apk_sizes.py --release TAG --reference-json FILE APK ... sizes of the release TAG, from a file (no API call)
   check_apk_sizes.py --release TAG --kind-threshold quest=7 APK ...   one kind with its own threshold
 
 APK names as Flutter writes them (app-arm64-v8a-phone-release.apk) or as the release has them
 (Immuch360-v3.3.0-rc.0-20-arm64-v8a-release.apk). A local release build signed with another key differs by a few
 kilobytes, far under the default 1 %.
 
---kind-threshold KIND=PERCENT (repeatable) is for the one release that adds a known weight to one kind, every other
-kind keeping --threshold. The release that brings the AI relief of the Quest passes quest=7: LiteRT 2.3.0 adds about
-9.4 MB of native libraries to the Quest APK alone, about +6.5 % of its 144.4 MB (design-final 2026-10-26, section
-3.10). The release after it compares with that release and the ordinary threshold again.
+A release that adds a known weight to one kind gets a threshold of its own for that kind, once: in
+ONE_TIME_KIND_THRESHOLDS below, keyed by the published release it is compared with (--release), or by hand with
+--kind-threshold KIND=PERCENT (repeatable), which wins over the table. Every other kind keeps --threshold. The release
+after it compares with that release and the ordinary threshold again.
 """
 from __future__ import annotations
 
@@ -30,6 +31,23 @@ import urllib.request
 # The Quest first: its APK is arm64 too
 KINDS = ('quest', 'arm64-v8a', 'armeabi-v7a', 'x86_64')
 ALL_KINDS = KINDS + ('universal', 'aab')
+
+# One-time thresholds in percent, by the published release the build is compared with: each entry is for the one
+# release that adds a known weight, never for the release after it.
+ONE_TIME_KIND_THRESHOLDS = {
+    # 29 October 2026, for Android build 32, the release of the AI immersive features (phases 1 to 3), compared with
+    # release 31, whose Quest APK is 144,411,843 bytes. The Quest APK of feat-ai-immersive at 8e50a3a1d measures
+    # 155,878,518 bytes, +7.94 % (CI run 40783336966, same tree). Its steps: the AI relief and the 3D scenes,
+    # 154,502,078 bytes, +6.99 %, of which LiteRT 2.3.0 is about 9.4 MB of native libraries in the Quest APK alone
+    # (design-final 2026-10-26, section 3.10, the reason for the 7 % first planned); the panoramas, 65,720 bytes
+    # more, a step of 64 KiB that phase23/lots/integration-vague-5.md puts down to an alignment boundary crossed by
+    # the small changes of the Dart code shared by the phones and the Quest (not verified there), which left the APK
+    # 47,126 bytes over 7 %; then the 257 texts of the features in 88 languages, compiled into the Dart code, 1,310,720
+    # bytes more. 8.5 % stops at 156,686,849 bytes and leaves about 0.8 MB for the fixes of the headset tests. The
+    # other kinds keep the ordinary threshold. Once build 32 is published, the next release compares with it and this
+    # entry no longer applies.
+    'v3.3.0-rc.0-31': {'quest': 8.5},
+}
 
 
 def kind(name: str) -> str:
@@ -67,14 +85,21 @@ def kind_threshold(value: str) -> tuple:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('apks', nargs='+', type=pathlib.Path)
-    parser.add_argument('--release', help='tag of the published release to compare with')
+    parser.add_argument('--release', help='tag of the published release to compare with (its sizes come from '
+                        '--reference-json when given)')
     parser.add_argument('--repository', default='freeKC/Immuch360')
     parser.add_argument('--reference-json', type=pathlib.Path, help='sizes by kind instead of a release')
     parser.add_argument('--threshold', type=float, default=1.0, help='percent, default 1')
     parser.add_argument('--kind-threshold', type=kind_threshold, action='append', default=[], metavar='KIND=PERCENT',
                         help='percent for one kind (quest, arm64-v8a, armeabi-v7a, x86_64, universal, aab)')
     args = parser.parse_args(argv)
-    thresholds = dict(args.kind_threshold)
+    # The one-time thresholds of the release compared with, then those given by hand, which win
+    one_time = ONE_TIME_KIND_THRESHOLDS.get(args.release, {})
+    given = dict(args.kind_threshold)
+    thresholds = {**one_time, **given}
+    for what, threshold in sorted(one_time.items()):
+        if what not in given:
+            print(f'{what}: one-time threshold of {threshold:g} % against {args.release} (ONE_TIME_KIND_THRESHOLDS)')
 
     if args.reference_json:
         reference = json.loads(args.reference_json.read_text(encoding='utf-8'))
