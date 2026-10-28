@@ -71,6 +71,36 @@ class _RowMean implements InpaintBackend {
   void close() {}
 }
 
+/// A filling that writes one grey into the holes of each region, a different one for each: [greyOf] the index of the
+/// region
+class _GreyPerRegion implements InpaintBackend {
+  _GreyPerRegion(this.regionMax);
+
+  @override
+  final int regionMax;
+
+  @override
+  String get modelSha256 => '4' * 64;
+  var _regions = 0;
+
+  static int greyOf(int region) => 30 + 60 * region;
+
+  @override
+  Uint8List fill(InpaintRegion region) {
+    final grey = greyOf(_regions++);
+    final out = Uint8List.fromList(region.rgb);
+    for (var i = 0; i < region.width * region.height; i++) {
+      if (region.mask[i] == 0) {
+        out.fillRange(3 * i, 3 * i + 3, grey);
+      }
+    }
+    return out;
+  }
+
+  @override
+  void close() {}
+}
+
 void main() {
   test('the band of the seam is that of the control frame in proportion: 96 columns of a generation of 1536', () {
     expect(seamBandFor(PanoV1.generationWidth), 96);
@@ -152,6 +182,35 @@ void main() {
     for (var y = 0; y < height; y++) {
       final again = [20, 30, 40].any((end) => y >= end - blend && y < end);
       expect(holes[y], again ? 2 : 1, reason: 'row $y');
+    }
+  });
+
+  test('where two regions meet, the rows filled again go from the fill above to the one below in even steps', () {
+    // The bright lines of the first run on the RTX 4060 came back with a hard edge at the first row filled again (no
+    // blend) or at the end of the region above (the blend the other way round): each region writes its own grey here,
+    // and down a column of the band no row may jump by more than one step of the blend
+    const width = 64;
+    const height = 160;
+    const regionMax = 64;
+    expect(joinSeamRegionTops(height, regionMax), [0, 32, 64, 96]);
+    final blend = seamRegionBlend(regionMax);
+    expect(blend, 4);
+    final joined = joinSeam(_ramp(width, height), width, height, _GreyPerRegion(regionMax), band: 8);
+    // Column 0 is in the band, which straddles the seam (columns 60 to 63 and 0 to 3)
+    final column = [for (var y = 0; y < height; y++) joined.rgba[4 * y * width]];
+    // 60 between two greys over the 4 rows filled again and the first row below them: 12 a row
+    final step = (_GreyPerRegion.greyOf(1) - _GreyPerRegion.greyOf(0)) ~/ (blend + 1);
+    for (final (index, end) in [64, 96, 128].indexed) {
+      final above = _GreyPerRegion.greyOf(index);
+      final below = _GreyPerRegion.greyOf(index + 1);
+      expect(column[end - blend - 1], above, reason: 'the last row the region above keeps as it filled it');
+      for (var k = 0; k < blend; k++) {
+        expect(column[end - blend + k], above + (k + 1) * step, reason: 'row ${end - blend + k}, filled again');
+      }
+      expect(column[end], below, reason: 'row $end, the first row only the region below filled');
+    }
+    for (var y = 1; y < height; y++) {
+      expect((column[y] - column[y - 1]).abs(), lessThanOrEqualTo(step), reason: 'row $y');
     }
   });
 
