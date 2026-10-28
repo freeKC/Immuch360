@@ -3,6 +3,7 @@
 // a disk full at the rename that still pauses it, the guard of the album of the versions before the final name), the
 // versions the index of the folder library knows, and the engine made from the components installed when a job runs.
 
+import 'dart:convert';
 import 'dart:ffi' show Abi;
 import 'dart:io';
 import 'dart:typed_data';
@@ -14,10 +15,12 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:path/path.dart' as p;
@@ -25,6 +28,7 @@ import 'package:path/path.dart' as p;
 import '../../library/library_fixtures.dart';
 import '../../library/library_test_support.dart';
 import '../fakes/fake_conversion_engines.dart';
+import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_scene_engine.dart';
 import '../fakes/recording_creator_files.dart';
@@ -125,8 +129,18 @@ void main() {
     addTearDown(bare.dispose);
     expect(bare.read(conversionEnginesProvider).keys, [
       ConversionKind.sceneFromPhoto,
+      ConversionKind.panoramaFromPhoto,
       ConversionKind.stereoPanoramaFromPanorama,
-    ], reason: 'S1 registers the 3D scene, P1 the 3D version of a 360° panorama, P3 will register its own');
+    ], reason: 'S1 registers the 3D scene, P3 the 360° panorama, P1 the 3D version of a 360° panorama');
+    final panorama = bare.read(conversionEnginesProvider)[ConversionKind.panoramaFromPhoto]!;
+    expect(panorama.engine, isA<DesktopPanoramaEngine>());
+    expect(panorama.generator, fluxTransformerComponent.id);
+    expect(panorama.steps, PanoV1.steps);
+    expect(
+      bare.read(keptAiEnginesProvider),
+      contains(bare.read(desktopPanoramaEngineProvider)),
+      reason: 'the components of the panoramas are not removed while one is made',
+    );
     expect(bare.read(conversionEnginesProvider)[ConversionKind.sceneFromPhoto]!.engine, isA<DesktopSceneEngine>());
     expect(
       bare.read(conversionEnginesProvider)[ConversionKind.stereoPanoramaFromPanorama]!.engine,
@@ -381,6 +395,7 @@ void main() {
 
   _sceneEngineTests(() => root);
   _stereoPanoramaEngineTests(() => root);
+  _panoramaEngineTests(() => root);
 }
 
 /// The head of a JPEG of [width] x [height]: its frame header, then the start of its scan
@@ -589,6 +604,152 @@ void _stereoPanoramaEngineTests(Directory Function() root) {
 
         expect(await engine.settingsKey(source, 0), '${depthModelOnnxComponent.sha256}|relief-360-v1|1.0|0');
         expect(await engine.settingsKey(source, 3), '${depthModelOnnxComponent.sha256}|relief-360-v1|1.0|3');
+      },
+    );
+  });
+}
+
+/// The engine of the 360° panoramas of the app (lot P3), on the gate of the feature panorama and the probe of the cards
+void _panoramaEngineTests(Directory Function() root) {
+  group('the engine of the 360° panoramas of the app', () {
+    late _Components components;
+    late List<PanoramaSetup> made;
+    late List<_CountingEngine> counted;
+    late GpuReport cards;
+
+    GpuReport fixture(String name) =>
+        GpuReport.fromJson(jsonDecode(File('test/fixtures/ai_immersive/$name').readAsStringSync()));
+
+    DesktopPanoramaEngine engineOf({Abi abi = Abi.windowsX64, bool integratedAllowed = false}) => DesktopPanoramaEngine(
+      gate: HardwareGate(
+        components: components,
+        facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: 16 << 30),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+        gpu: FakeGpuProbe.of(cards),
+        integratedGpuAllowed: () async => integratedAllowed,
+        heldGroups: const {},
+      ),
+      create: (setup) {
+        made.add(setup);
+        final engine = _CountingEngine();
+        counted.add(engine);
+        return engine;
+      },
+    );
+
+    PanoramaJob job() => const PanoramaJob(
+      id: 'pano',
+      source: ImmersiveSource(name: 'salon.jpg', size: 1, sha1: 'sum', path: '/nowhere/salon.jpg'),
+      partPath: '/nowhere/.part',
+      derivativeId: 'urn:uuid:1',
+      creatorTool: 'test',
+      created: '2026-10-28T10:12:00+01:00',
+      generator: 'flux2-klein-base-4b-q4_0',
+      steps: 20,
+      seed: 1002,
+    );
+
+    void installAll(AiPlatform platform) {
+      for (final component in aiComponentsFor(platform, feature: AiFeature.panorama, graphicsMemory: 8 << 30)) {
+        components.install(component);
+      }
+    }
+
+    setUp(() {
+      components = _Components(root().path);
+      made = [];
+      counted = [];
+      cards = fixture('gpu_probe_rtx4060_laptop.json');
+    });
+
+    test('a component missing: componentsMissing, and nothing is made', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      components.install(onnxRuntimeWindowsComponent);
+      final result = await engineOf().run(job(), cancel: flag);
+      expect(result.error, ImmersiveErrorCode.componentsMissing);
+      expect(made, isEmpty);
+    });
+
+    test('no card that can make it: gpuUnavailable with the reason of the gate', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.windowsX64);
+      cards = const GpuReport(problem: GpuProbeProblem.noVulkan);
+      final none = await engineOf().run(job(), cancel: flag);
+      expect(none.error, ImmersiveErrorCode.gpuUnavailable);
+      expect(none.message, AiGateReason.gpuNone.name);
+      expect(made, isEmpty);
+    });
+
+    test(
+      'on the laptop of the owner: sd-cli of the archive, the models of the gate, the RTX 4060 as Vulkan1',
+      () async {
+        final flag = NativeCancelFlag();
+        addTearDown(flag.free);
+        installAll(AiPlatform.windowsX64);
+        final engine = engineOf();
+
+        final running = <bool>[];
+        expect(
+          (await engine.run(job(), cancel: flag, onProgress: (_) => running.add(engine.isRunning))).isDone,
+          isTrue,
+        );
+        expect(running, [true]);
+        expect(engine.isRunning, isFalse);
+
+        final setup = made.single;
+        final settings = setup.settings;
+        final archive = p.dirname(components.fileOf(sdCppWindowsComponent).path);
+        expect(settings.sdCli, p.join(archive, 'sd-cli.exe'));
+        expect(settings.device, 'Vulkan1');
+        expect(settings.stallTimeout, const Duration(seconds: 180));
+        expect(settings.environment, isEmpty, reason: 'never GGML_VK_VISIBLE_DEVICES with Vulkan<n> (review of P2, 4)');
+        expect(settings.models.diffusionModel, components.fileOf(fluxTransformerComponent).path);
+        expect(settings.models.vae, components.fileOf(fluxVaeComponent).path);
+        expect(settings.models.textEncoder, components.fileOf(qwenTextEncoderComponent).path);
+        expect(settings.models.lora, components.fileOf(panoramaLoraComponent).path);
+        expect(settings.models.upscaler, components.fileOf(upscalerComponent).path);
+        expect(setup.models.libraryPath, components.fileOf(onnxRuntimeWindowsComponent).path);
+        expect(setup.models.miganPath, components.fileOf(miganInpaintComponent).path);
+        expect(setup.models.mogePath, components.fileOf(mogeGeometryComponent).path);
+        expect(setup.models.inpaintSha256, miganInpaintComponent.sha256);
+        expect(setup.transformer, same(fluxTransformerComponent));
+        expect(setup.linuxLauncher, isNull);
+        expect(setup.card.name, contains('RTX 4060'));
+        expect(counted.single.disposed, isTrue, reason: 'one engine per job: the card is asked again before each one');
+      },
+    );
+
+    test('on Linux: through immuch360-run of the archive', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.linuxX64);
+      expect((await engineOf(abi: Abi.linuxX64).run(job(), cancel: flag)).isDone, isTrue);
+      final archive = p.dirname(components.fileOf(sdCppLinuxComponent).path);
+      expect(made.single.settings.sdCli, p.join(archive, 'sd-cli'));
+      expect(made.single.linuxLauncher, p.join(archive, 'immuch360-run'));
+    });
+
+    test('integrated graphics allowed by the switch: a step may take minutes, the silence allowed is longer', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.linuxX64);
+      cards = fixture('gpu_probe_iris_xe_mesa.json');
+      final result = await engineOf(abi: Abi.linuxX64, integratedAllowed: true).run(job(), cancel: flag);
+      expect(result.isDone, isTrue, reason: '${result.error} ${result.message}');
+      expect(made.single.settings.stallTimeout, panoramaIntegratedStallTimeout);
+      expect(made.single.settings.device, 'Vulkan0');
+    });
+
+    test(
+      'the key of the settings: the transformer and the LoRA of the catalogue, pano-v1, the steps, the turns',
+      () async {
+        final engine = panoramaConversionEngine(engineOf());
+        const source = ImmersiveSource(name: 'salon.jpg', size: 1, sha1: 's', path: '/nowhere/salon.jpg');
+        final sums = '${fluxTransformerComponent.sha256}|${panoramaLoraComponent.sha256}';
+        expect(await engine.settingsKey(source, 0), '$sums|pano-v1|20|0');
+        expect(await engine.settingsKey(source, 1), '$sums|pano-v1|20|1');
       },
     );
   });
