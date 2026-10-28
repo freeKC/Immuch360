@@ -2,8 +2,8 @@
 // root isolate, a cancel from the root isolate seen in the middle of the job, the model's session kept between jobs
 // and given back after keepSession, a worker that dies. Lot C1: the keeper of the sessions (at most two, each given
 // back after keepSession without use), tasks of other kinds run in the worker with their progress, their result or
-// their failure, and the session of the 3D photo kept with theirs. The stop of a run of ONNX Runtime, which needs the
-// library: ort/ort_stop_test.dart.
+// their failure (told apart from a cancel), and the session of the 3D photo kept with theirs. The stop of a run of ONNX
+// Runtime, which needs the library: ort/ort_stop_test.dart.
 
 import 'dart:io';
 
@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/ai_worker.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 
@@ -275,9 +276,49 @@ void main() {
       addTearDown(cancel.free);
       await expectLater(
         worker.runTask(const _CountingTask('broken'), cancelAddress: cancel.address),
-        throwsA(isA<AiWorkerTaskFailed>().having((e) => e.message, 'message', 'Bad state: no model for broken')),
+        throwsA(
+          isA<AiWorkerTaskFailed>()
+              .having((e) => e.message, 'message', 'Bad state: no model for broken')
+              .having((e) => e.cancelled, 'cancelled', isFalse),
+        ),
       );
       expect(await worker.runTask(const _CountingTask('lama'), cancelAddress: cancel.address), startsWith('lama'));
+    });
+
+    test('a task that lets the stop of its run out fails its call as cancelled, not as failed', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      await expectLater(
+        worker.runTask(const _ThrowingTask(stop: true), cancelAddress: cancel.address),
+        throwsA(
+          isA<AiWorkerTaskFailed>()
+              .having((e) => e.message, 'message', 'OrtRunStopped: Run: $_terminated')
+              .having((e) => e.cancelled, 'cancelled', isTrue)
+              .having((e) => '$e', 'text', 'AiWorkerTaskFailed (cancelled): OrtRunStopped: Run: $_terminated'),
+        ),
+      );
+    });
+
+    test('a task that throws anything once its job was cancelled fails its call as cancelled', () async {
+      final worker = await AiWorker.spawn(setupWith());
+      addTearDown(worker.close);
+      final cancel = NativeCancelFlag();
+      addTearDown(cancel.free);
+      await expectLater(
+        worker.runTask(const _ThrowingTask(stop: false), cancelAddress: cancel.address),
+        throwsA(isA<AiWorkerTaskFailed>().having((e) => e.cancelled, 'cancelled', isFalse)),
+      );
+      cancel.cancel();
+      await expectLater(
+        worker.runTask(const _ThrowingTask(stop: false), cancelAddress: cancel.address),
+        throwsA(
+          isA<AiWorkerTaskFailed>()
+              .having((e) => e.message, 'message', 'Bad state: no region left')
+              .having((e) => e.cancelled, 'cancelled', isTrue),
+        ),
+      );
     });
 
     test('the session of the 3D photo is one of the two: tasks that open two more give it back', () async {
@@ -305,6 +346,24 @@ void main() {
       expect((status.openSessions.join(' '), status.sessionOpen, status.sessionCloses), ('lama depth', true, 2));
     });
   });
+}
+
+/// What ONNX Runtime says of a run it stopped
+const _terminated = 'Exiting due to terminate flag being set to true.';
+
+/// Throws what a run stopped by the cancel throws ([stop]), or a StateError
+class _ThrowingTask implements AiWorkerTask<String> {
+  const _ThrowingTask({required this.stop});
+
+  final bool stop;
+
+  @override
+  String run(AiWorkerContext context) {
+    if (stop) {
+      throw const OrtRunStopped('Run: $_terminated', code: 1);
+    }
+    throw StateError('no region left');
+  }
 }
 
 /// Opens the session [name] (a string) through the keeper, says how often it was opened and whether the job was

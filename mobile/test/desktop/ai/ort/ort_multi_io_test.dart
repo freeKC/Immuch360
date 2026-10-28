@@ -99,6 +99,12 @@ void main() {
       expect(const OrtTensorSpec('x', _float16, [-1]).type, isNull);
     });
 
+    test('a stopped run says so: it is not shown as any failure of ONNX Runtime', () {
+      const stopped = OrtRunStopped('Run: Exiting due to terminate flag being set to true.', code: 1);
+      expect('$stopped', 'OrtRunStopped: Run: Exiting due to terminate flag being set to true.');
+      expect('${const OrtException('Run: bad input', code: 2)}', 'OrtException: Run: bad input');
+    });
+
     test('a session keeps the arena of ONNX Runtime unless told otherwise', () {
       final settings = OrtSessionSettings.forProcessors(8);
       expect(settings.cpuMemArena, isTrue);

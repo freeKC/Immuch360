@@ -67,6 +67,9 @@ class OrtLoadException extends OrtException {
 /// A run ended because another isolate stopped it through its [OrtRunOptions]: the job was cancelled
 class OrtRunStopped extends OrtException {
   const OrtRunStopped(super.message, {super.code});
+
+  @override
+  String toString() => 'OrtRunStopped: $message';
 }
 
 /// How a session uses the processor

@@ -19,9 +19,9 @@
 //    LaMa takes seconds and the worker is blocked in Run meanwhile. So a task makes the OrtRunOptions of its job in the
 //    worker and sends their handle to the root isolate at once; the root isolate watches the cancel flag of the job and,
 //    when it is raised, stops the run through its own binding of the same library (ort_terminate.dart): Run ends
-//    within milliseconds with OrtRunStopped, which the task turns into a cancelled job. When the job ends, the root
-//    isolate forgets the handle, then tells the worker, which only then gives the options back: no stop can reach
-//    options given back.
+//    within milliseconds with OrtRunStopped, which the task turns into a cancelled job (a task that lets it out fails
+//    its call as cancelled, AiWorkerTaskFailed.cancelled). When the job ends, the root isolate forgets the handle,
+//    then tells the worker, which only then gives the options back: no stop can reach options given back.
 
 import 'dart:async';
 import 'dart:isolate';
@@ -194,18 +194,28 @@ abstract interface class AiWorkerContext {
 
 /// A job run in the worker as one synchronous event: a plain object sent to the worker isolate, where [run] runs. What
 /// it gives back is sent to the root isolate; what it throws fails the call with [AiWorkerTaskFailed].
+///
+/// A cancelled job is not a failed one (design-final 2026-10-27, section 2.5). A task reads
+/// [AiWorkerContext.isCancelled] between its steps, and turns the OrtRunStopped of a run stopped by the cancel into
+/// its own cancelled result. When it lets OrtRunStopped out, or throws anything once its job was cancelled, the call
+/// fails with an [AiWorkerTaskFailed] whose [AiWorkerTaskFailed.cancelled] is true: the caller then shows the job as
+/// cancelled, not failed.
 abstract interface class AiWorkerTask<T> {
   T run(AiWorkerContext context);
 }
 
-/// A task threw in the worker: its [message]
+/// A task threw in the worker: its [message], and whether its job was [cancelled]
 class AiWorkerTaskFailed implements Exception {
-  const AiWorkerTaskFailed(this.message);
+  const AiWorkerTaskFailed(this.message, {this.cancelled = false});
 
   final String message;
 
+  /// The task threw because its job was cancelled: OrtRunStopped out of a run the cancel stopped, or anything thrown
+  /// once the cancel flag of the job was raised. The job is to be shown as cancelled.
+  final bool cancelled;
+
   @override
-  String toString() => 'AiWorkerTaskFailed: $message';
+  String toString() => 'AiWorkerTaskFailed${cancelled ? ' (cancelled)' : ''}: $message';
 }
 
 /// How the worker makes its model: a plain object sent to the worker isolate, where [create] runs
@@ -411,9 +421,9 @@ class AiWorker {
       case _Reply(:final id, :final value):
         _ended(id);
         _pending.remove(id)?.complete(value);
-      case _TaskFailed(:final id, :final message):
+      case _TaskFailed(:final id, :final message, :final cancelled):
         _ended(id);
-        _pending.remove(id)?.completeError(AiWorkerTaskFailed(message));
+        _pending.remove(id)?.completeError(AiWorkerTaskFailed(message, cancelled: cancelled));
     }
   }
 
@@ -518,8 +528,8 @@ class AiWorker {
       (await _ask((id) => _RunCommand(id, job), onProgress: onProgress))! as ChainOutcome;
 
   /// Runs [task] in the worker; the flag at [cancelAddress] (a NativeCancelFlag) cancels it, and stops the runs of
-  /// ONNX Runtime it made options for. Throws [AiWorkerTaskFailed] when the task throws, [AiWorkerStopped] when the
-  /// worker goes away meanwhile.
+  /// ONNX Runtime it made options for. Throws [AiWorkerTaskFailed] when the task throws (its cancelled set when the
+  /// task threw because of the cancel), [AiWorkerStopped] when the worker goes away meanwhile.
   Future<T> runTask<T>(
     AiWorkerTask<T> task, {
     required int cancelAddress,
@@ -604,10 +614,11 @@ class _Reply {
 }
 
 class _TaskFailed {
-  const _TaskFailed(this.id, this.message);
+  const _TaskFailed(this.id, this.message, {required this.cancelled});
 
   final int id;
   final String message;
+  final bool cancelled;
 }
 
 /// What a task runs with: the cancel flag of its job, the sessions of the worker, the options of its runs
@@ -701,7 +712,7 @@ void _workerMain((AiWorkerSetup, SendPort) start) {
         try {
           reply = _Reply(command.id, command.task.run(context));
         } catch (error) {
-          reply = _TaskFailed(command.id, '$error');
+          reply = _TaskFailed(command.id, '$error', cancelled: error is OrtRunStopped || context.isCancelled);
         }
         jobs++;
         sessions.endJob();

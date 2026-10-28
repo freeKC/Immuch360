@@ -3,7 +3,8 @@
 // another isolate through its own binding (ort_terminate.dart), and the run turned into OrtRunStopped; the options
 // stopped once stay stopped, fresh ones run; nothing native left behind. Then the same through the worker: a task
 // cancelled on the root isolate ends within a second, its run options kept by the worker until the root isolate lets
-// them go and then given back to ONNX Runtime (counted by the library), and at most two sessions kept open.
+// them go and then given back to ONNX Runtime (counted by the library), a stop the task lets out reported as a cancel,
+// and at most two sessions kept open.
 
 import 'dart:ffi';
 import 'dart:io';
@@ -39,12 +40,14 @@ void _stopLater((OrtRunStopHandle, Duration, SendPort) message) {
   port.send(at);
 }
 
-/// The slow model run in the worker for [turns] turns, with the options of its job; the session kept as 'slow'
+/// The slow model run in the worker for [turns] turns, with the options of its job; the session kept as 'slow'. A
+/// stopped run is caught when [catchStop], let out otherwise.
 class _SlowTask implements AiWorkerTask<String> {
-  const _SlowTask(this.library, this.turns);
+  const _SlowTask(this.library, this.turns, {this.catchStop = true});
 
   final String library;
   final int turns;
+  final bool catchStop;
 
   @override
   String run(AiWorkerContext context) {
@@ -66,6 +69,9 @@ class _SlowTask implements AiWorkerTask<String> {
       )['count']!;
       return 'done ${count.integers.single}';
     } on OrtRunStopped {
+      if (!catchStop) {
+        rethrow;
+      }
       return context.isCancelled ? 'cancelled' : 'stopped without a cancel';
     }
   }
@@ -215,6 +221,28 @@ void main() {
         expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
         final status = await worker.status();
         expect((status.runOptionsHeld, status.runOptionsAlive, status.openSessions.join(' ')), (0, 0, 'slow'));
+      });
+
+      test('a task that lets the stopped run out fails its call as cancelled; its options are given back', () async {
+        final cancel = NativeCancelFlag();
+        addTearDown(cancel.free);
+        final result = worker.runTask(
+          _SlowTask(ort.library!, _endless, catchStop: false),
+          cancelAddress: cancel.address,
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+        cancel.cancel();
+
+        await expectLater(
+          result,
+          throwsA(
+            isA<AiWorkerTaskFailed>()
+                .having((e) => e.cancelled, 'cancelled', isTrue)
+                .having((e) => e.message, 'message', startsWith('OrtRunStopped: Run: ')),
+          ),
+        );
+        final status = await worker.status();
+        expect((status.runOptionsHeld, status.runOptionsAlive), (0, 0));
       });
 
       test('a task cancelled before its options reach the root isolate is stopped as soon as they do', () async {
