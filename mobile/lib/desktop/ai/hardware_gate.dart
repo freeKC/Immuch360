@@ -33,6 +33,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart' show ggmlVulkanDevices;
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -199,7 +200,8 @@ const aiPanoramaMinimumPhysicalMemory = 14 * 1024 * 1024 * 1024;
 typedef PanoramaCard = ({GpuAdapter? card, AiGateReason? refusal});
 
 /// See the top of this file: the dedicated card of Vulkan 1.2 with the most memory, else an integrated one when
-/// [integratedAllowed]; the card is given with its refusal when it is integrated and not allowed
+/// [integratedAllowed], among the cards ggml numbers; the card is given with its refusal when it is integrated and not
+/// allowed
 PanoramaCard panoramaCardOf(GpuReport report, {required bool integratedAllowed}) {
   switch (report.problem) {
     case GpuProbeProblem.noAnswer || GpuProbeProblem.failed:
@@ -215,11 +217,15 @@ PanoramaCard panoramaCardOf(GpuReport report, {required bool integratedAllowed})
   if (report.instanceVersion != null && !atLeast12(vulkanMajorMinor(report.instanceVersion))) {
     return (card: null, refusal: AiGateReason.gpuNone);
   }
+  // Only the cards ggml numbers: a card seen through two drivers (the same UUID or LUID) is the one of the driver ggml
+  // keeps, whose index sd-cli is given (ggmlVulkanIndexOf); the other one has no index there
+  final numbered = ggmlVulkanDevices(report);
   GpuAdapter? best(GpuKind kind) {
     GpuAdapter? found;
     for (final adapter in report.adapters) {
       if (adapter.source == 'vulkan' &&
           adapter.kind == kind &&
+          numbered.any((kept) => identical(kept, adapter)) &&
           atLeast12(adapter.vulkanVersion) &&
           adapter.storage16Bit != false &&
           (found == null || adapter.localMemory > found.localMemory)) {
