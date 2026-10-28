@@ -199,7 +199,11 @@ class OrtPanoramaModelsSpec implements PanoramaModelsSpec {
   @override
   InpaintBackend openInpaint() {
     final session = _open(miganPath, OrtSessionSettings.forThisComputer(), miganRefusalOf);
-    return _OwnedInpaint(OrtMiganInpaint(session: () => session, modelSha256: inpaintSha256), session);
+    // The seam hides nothing but itself: the holes keep their pixels, no line of the mean colour along the band
+    return _OwnedInpaint(
+      OrtMiganInpaint(session: () => session, modelSha256: inpaintSha256, paintHoles: false),
+      session,
+    );
   }
 }
 
