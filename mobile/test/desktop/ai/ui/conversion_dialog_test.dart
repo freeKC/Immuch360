@@ -192,7 +192,7 @@ void main() {
     engine = FakeImmersiveEngine(holdStage: .depth);
     kinds = const {};
     catalogue = aiComponents;
-    held = aiHeldFeatureGroups;
+    held = const {AiFeatureGroup.panoramas};
     cards = FakeGpuReports.rtx4060;
     power = _Power();
     focals = {};

@@ -356,9 +356,15 @@ void main() {
         ],
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
-      // Held until the publication of ai-components-3 (the engine of P3 and the screens of U3 are in): never offered
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.panoramas});
-      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), [
+      // Lifted on this branch of lot V3; held back, the panoramas are never offered
+      expect(aiHeldFeatureGroups, isEmpty);
+      expect(
+        aiComponentGroupsFor(
+          AiPlatform.windowsX64,
+          catalogue: complete,
+          held: const {AiFeatureGroup.panoramas},
+        ).map((group) => group.group),
+        [
         AiFeatureGroup.photos,
         AiFeatureGroup.scenes,
       ]);

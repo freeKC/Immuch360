@@ -385,7 +385,7 @@ void main() {
     testWidgets('while this version holds them back: the line of phase 1, no switch', (tester) async {
       await pump(
         tester,
-        gate: gateWith(FakeGpuReports.rtx4060, held: aiHeldFeatureGroups),
+        gate: gateWith(FakeGpuReports.rtx4060, held: const {AiFeatureGroup.panoramas}),
         engines: panoramas,
       );
       expect(
