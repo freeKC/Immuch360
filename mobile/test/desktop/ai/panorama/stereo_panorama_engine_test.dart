@@ -68,6 +68,34 @@ String _panorama(Directory folder, String name, {int width = 192, int height = 9
   return path;
 }
 
+/// The head of a JPEG of [width] x [height]: its frame header, then the start of its scan, no picture
+List<int> _jpegHeadOfSize(int width, int height) => [
+  ...[0xFF, 0xD8],
+  ...[
+    0xFF,
+    0xC0,
+    0,
+    17,
+    8,
+    height >> 8,
+    height & 0xFF,
+    width >> 8,
+    width & 0xFF,
+    3,
+    1,
+    0x11,
+    0,
+    2,
+    0x11,
+    1,
+    3,
+    0x11,
+    1,
+  ],
+  ...[0xFF, 0xDA, 0, 12, 3, 1, 0, 2, 0x11, 3, 0x11, 0, 63, 0],
+  ...[0xFF, 0xD9],
+];
+
 /// The .part of the 3D version of [name] in [folder]
 String _partIn(Directory folder, String name) => p.join(folder.path, '.${p.basenameWithoutExtension(name)}_3D.part');
 
@@ -335,8 +363,12 @@ void main() {
       final part = _partIn(folder, 'pano.jpg');
       final outcome = runChain(
         _jobFor(path, partPath: part),
-        writePart: (path, bytes) =>
-            throw FileSystemException('No space left on device', path, const OSError('No space left on device', 28)),
+        // The code of a disk full on this system, as writeFailureOf reads it
+        writePart: (path, bytes) => throw FileSystemException(
+          'No space left on device',
+          path,
+          OSError('No space left on device', Platform.isWindows ? 112 : 28),
+        ),
       );
 
       expect(outcome.result.error, ImmersiveErrorCode.diskFull);
@@ -476,13 +508,17 @@ void main() {
       expect(engine.worker, isNull);
     });
 
-    test('the worker checks the memory before it decodes the panorama', () async {
-      final path = _panorama(folder, 'pano.jpg');
+    test('the worker checks the memory before it decodes the panorama, from its header', () async {
+      // The head of a JPEG of 16 384 x 8 192: about 1.8 GB to make, more than the 100 MB free and the 1 GiB Windows
+      // gives beyond them; refused before anything is decoded
+      final path = p.join(folder.path, 'huge.jpg');
+      File(path).writeAsBytesSync(_jpegHeadOfSize(16384, 8192));
       final result = await engineWith(
         memory: const FixedMemoryProbe(available: 100 * 1000 * 1000),
-      ).run(_jobFor(path, partPath: _partIn(folder, 'pano.jpg')), cancel: cancel);
+      ).run(_jobFor(path, partPath: _partIn(folder, 'huge.jpg')), cancel: cancel);
 
       expect(result.error, ImmersiveErrorCode.outOfMemory);
+      expect(result.message, matches(RegExp(r'^This panorama needs about \d+ MB of memory, 100 MB are free$')));
     });
   });
 }
