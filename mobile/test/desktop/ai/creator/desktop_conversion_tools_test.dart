@@ -620,14 +620,19 @@ void _panoramaEngineTests(Directory Function() root) {
     GpuReport fixture(String name) =>
         GpuReport.fromJson(jsonDecode(File('test/fixtures/ai_immersive/$name').readAsStringSync()));
 
-    DesktopPanoramaEngine engineOf({Abi abi = Abi.windowsX64, bool integratedAllowed = false}) => DesktopPanoramaEngine(
+    DesktopPanoramaEngine engineOf({
+      Abi abi = Abi.windowsX64,
+      bool integratedAllowed = false,
+      int physicalMemory = 16 << 30,
+      Set<AiFeatureGroup> heldGroups = const {},
+    }) => DesktopPanoramaEngine(
       gate: HardwareGate(
         components: components,
-        facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: 16 << 30),
+        facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: physicalMemory),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
         gpu: FakeGpuProbe.of(cards),
         integratedGpuAllowed: () async => integratedAllowed,
-        heldGroups: const {},
+        heldGroups: heldGroups,
       ),
       create: (setup) {
         made.add(setup);
@@ -679,6 +684,52 @@ void _panoramaEngineTests(Directory Function() root) {
       final none = await engineOf().run(job(), cancel: flag);
       expect(none.error, ImmersiveErrorCode.gpuUnavailable);
       expect(none.message, AiGateReason.gpuNone.name);
+      expect(made, isEmpty);
+    });
+
+    test('each reason of the gate fails with the code whose words say it, never "not installed" for another', () {
+      // The panel shows the words of the code (and, for gpuUnavailable, those of the reason the message names); a
+      // shortage of memory is not a missing card, a feature held back is not a missing component
+      const expected = {
+        AiGateReason.system: ImmersiveErrorCode.modelFailed,
+        AiGateReason.processor: ImmersiveErrorCode.modelFailed,
+        AiGateReason.memory: ImmersiveErrorCode.outOfMemory,
+        AiGateReason.componentsMissing: ImmersiveErrorCode.componentsMissing,
+        AiGateReason.componentsDamaged: ImmersiveErrorCode.componentsMissing,
+        AiGateReason.runtimeFailed: ImmersiveErrorCode.modelFailed,
+        AiGateReason.notHere: ImmersiveErrorCode.modelFailed,
+        AiGateReason.notInThisVersion: ImmersiveErrorCode.modelFailed,
+        AiGateReason.notYetOnMac: ImmersiveErrorCode.gpuUnavailable,
+        AiGateReason.panoramaMemory: ImmersiveErrorCode.outOfMemory,
+        AiGateReason.gpuNone: ImmersiveErrorCode.gpuUnavailable,
+        AiGateReason.gpuNoAnswer: ImmersiveErrorCode.gpuUnavailable,
+        AiGateReason.gpuIntegrated: ImmersiveErrorCode.gpuUnavailable,
+        AiGateReason.gpuTooSmall: ImmersiveErrorCode.gpuUnavailable,
+      };
+      expect(expected.keys, unorderedEquals(AiGateReason.values), reason: 'every reason has its code');
+      for (final reason in AiGateReason.values) {
+        expect(panoramaRefusalCode(reason), expected[reason], reason: reason.name);
+      }
+      expect(panoramaRefusalCode(null), ImmersiveErrorCode.componentsMissing);
+    });
+
+    test('less than 14 GB of memory: outOfMemory, not a missing card', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.windowsX64);
+      final result = await engineOf(physicalMemory: 12 << 30).run(job(), cancel: flag);
+      expect(result.error, ImmersiveErrorCode.outOfMemory);
+      expect(result.message, AiGateReason.panoramaMemory.name);
+      expect(made, isEmpty);
+    });
+
+    test('the panoramas held back in this version: the reason told, not "not installed"', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.windowsX64);
+      final result = await engineOf(heldGroups: const {AiFeatureGroup.panoramas}).run(job(), cancel: flag);
+      expect(result.error, ImmersiveErrorCode.modelFailed);
+      expect(result.message, AiGateReason.notInThisVersion.name);
       expect(made, isEmpty);
     });
 
