@@ -1657,14 +1657,12 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                               child: DjiTransient(
                                 key: const Key('panorama_photo_region'),
                                 kind: generated,
-                                child: CustomPaint(
-                                  painter: _PhotoRegionPainter(
-                                    outline: photoOutline,
-                                    longitude: _longitude,
-                                    latitude: _latitude,
-                                    fov: _fov,
-                                  ),
-                                  size: Size.infinite,
+                                child: _PhotoRegionOutline(
+                                  outline: photoOutline,
+                                  caption: context.t.ai_immersive_photo_region,
+                                  longitude: _longitude,
+                                  latitude: _latitude,
+                                  fov: _fov,
                                 ),
                               ),
                             ),
@@ -1766,6 +1764,92 @@ class _RawStitchLabel extends StatelessWidget {
   }
 }
 
+/// Where the point of the sphere at [point] shows on a view of [size] looking at [longitude] and [latitude] with the
+/// vertical field of view [fov], all in degrees, as the sphere of the panorama viewer projects its vertices; null for a
+/// point further than about 80° from the view
+@visibleForTesting
+Offset? projectSpherePoint(
+  SpherePoint point, {
+  required double longitude,
+  required double latitude,
+  required double fov,
+  required Size size,
+}) {
+  final cosPitch = math.cos(latitude * math.pi / 180);
+  final sinPitch = math.sin(latitude * math.pi / 180);
+  final elevation = point.latitude * math.pi / 180;
+  final azimuth = (point.longitude - longitude) * math.pi / 180;
+  final x = math.cos(elevation) * math.sin(azimuth);
+  final y = math.sin(elevation) * cosPitch - math.cos(elevation) * math.cos(azimuth) * sinPitch;
+  final depth = math.sin(elevation) * sinPitch + math.cos(elevation) * math.cos(azimuth) * cosPitch;
+  if (depth < _SpherePainter._minDepth) {
+    return null;
+  }
+  final focalLength = size.height / 2 / math.tan(fov * math.pi / 360);
+  final center = size.center(Offset.zero);
+  return Offset(center.dx + focalLength * x / depth, center.dy - focalLength * y / depth);
+}
+
+/// The outline of the photo itself on a panorama generated beyond its edges, as the sphere shows it from the view
+/// ([_PhotoRegionPainter]), with [caption] ("The original photo") above the middle of its top edge while it is in view
+class _PhotoRegionOutline extends StatelessWidget {
+  const _PhotoRegionOutline({
+    required this.outline,
+    required this.caption,
+    required this.longitude,
+    required this.latitude,
+    required this.fov,
+  });
+
+  final List<List<SpherePoint>> outline;
+  final String caption;
+  final double longitude;
+  final double latitude;
+  final double fov;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = constraints.biggest;
+        final top = outline.first;
+        final at = projectSpherePoint(
+          top[top.length ~/ 2],
+          longitude: longitude,
+          latitude: latitude,
+          fov: fov,
+          size: size,
+        );
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomPaint(
+              painter: _PhotoRegionPainter(outline: outline, longitude: longitude, latitude: latitude, fov: fov),
+              size: Size.infinite,
+            ),
+            if (at != null && size.contains(at))
+              Positioned(
+                left: at.dx,
+                top: at.dy,
+                child: FractionalTranslation(
+                  translation: const Offset(-0.5, -1.3),
+                  child: Text(
+                    caption,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      shadows: [Shadow(blurRadius: 4.0, color: Color.fromRGBO(0, 0, 0, 0.8))],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 /// The badge of a panorama a computer generated beyond the edges of a photo ("360° AI"), or of the 3D version of a 360°
 /// photo ("3D AI"), with its honesty sentence as tooltip: it stays while the panorama shows
 class _GeneratedBadge extends StatelessWidget {
@@ -1813,26 +1897,15 @@ class _PhotoRegionPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final yaw = longitude * math.pi / 180;
-    final cosPitch = math.cos(latitude * math.pi / 180);
-    final sinPitch = math.sin(latitude * math.pi / 180);
-    final focalLength = size.height / 2 / math.tan(fov * math.pi / 360);
-    final center = size.center(Offset.zero);
     final path = Path();
     for (final arc in outline) {
       var drawing = false;
       for (final point in arc) {
-        // As _SpherePainter projects a vertex
-        final elevation = point.latitude * math.pi / 180;
-        final azimuth = point.longitude * math.pi / 180 - yaw;
-        final x = math.cos(elevation) * math.sin(azimuth);
-        final y = math.sin(elevation) * cosPitch - math.cos(elevation) * math.cos(azimuth) * sinPitch;
-        final depth = math.sin(elevation) * sinPitch + math.cos(elevation) * math.cos(azimuth) * cosPitch;
-        if (depth < _SpherePainter._minDepth) {
+        final offset = projectSpherePoint(point, longitude: longitude, latitude: latitude, fov: fov, size: size);
+        if (offset == null) {
           drawing = false;
           continue;
         }
-        final offset = Offset(center.dx + focalLength * x / depth, center.dy - focalLength * y / depth);
         if (drawing) {
           path.lineTo(offset.dx, offset.dy);
         } else {
