@@ -63,10 +63,7 @@ void main() {
         sceneGateOf(sampleWith({'SceneTriangles': '200001'}), device: device),
         const SceneGateVerdict.refused(SceneRefusal.tooHeavy, triangles: 200001, maxTriangles: 200000),
       );
-      expect(
-        sceneGateOf(sampleWith({'SceneVertices': '100001'}), device: device).refusal,
-        SceneRefusal.tooHeavy,
-      );
+      expect(sceneGateOf(sampleWith({'SceneVertices': '100001'}), device: device).refusal, SceneRefusal.tooHeavy);
     }
   });
 

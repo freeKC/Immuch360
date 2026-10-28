@@ -93,7 +93,10 @@ void main() {
     final opened = await pumpButton(tester, sampleWith({'SceneTriangles': '250000'}), device: 'hollywood');
 
     expect(button(tester, exploreSceneButtonKey).onPressed, isNull);
-    expect(find.byTooltip('This scene is too heavy for this headset (250000 triangles, at most 200000)'), findsOneWidget);
+    expect(
+      find.byTooltip('This scene is too heavy for this headset (250000 triangles, at most 200000)'),
+      findsOneWidget,
+    );
     await tester.tap(find.byKey(exploreSceneButtonKey));
     expect(opened, isEmpty);
   });
@@ -104,21 +107,22 @@ void main() {
     expect(button(tester, exploreSceneButtonKey).onPressed, isNotNull);
   });
 
-  testWidgets('a scene of a newer version, of another format, without its request or too large: greyed, each its reason', (
-    tester,
-  ) async {
-    await pumpButton(tester, sampleWith({'FormatVersion': '2'}));
-    expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
-    expect(button(tester, exploreSceneButtonKey).onPressed, isNull);
+  testWidgets(
+    'a scene of a newer version, of another format, without its request or too large: greyed, each its reason',
+    (tester) async {
+      await pumpButton(tester, sampleWith({'FormatVersion': '2'}));
+      expect(find.byTooltip('Made by a newer version of Immuch360: shown flat'), findsOneWidget);
+      expect(button(tester, exploreSceneButtonKey).onPressed, isNull);
 
-    await pumpButton(tester, sampleWith({'SceneFormat': 'splat-v1'}));
-    expect(find.byTooltip('Not a scene made by Immuch360'), findsOneWidget);
+      await pumpButton(tester, sampleWith({'SceneFormat': 'splat-v1'}));
+      expect(find.byTooltip('Not a scene made by Immuch360'), findsOneWidget);
 
-    await pumpButton(tester, sampleWith({'SceneLength': ''}));
-    expect(find.byTooltip('The 3D scene data is missing from this file'), findsOneWidget);
+      await pumpButton(tester, sampleWith({'SceneLength': ''}));
+      expect(find.byTooltip('The 3D scene data is missing from this file'), findsOneWidget);
 
-    await pumpButton(tester, sampleWith(), fileSize: 65 * 1024 * 1024);
-    expect(find.byTooltip('This scene is too heavy for this headset'), findsOneWidget);
-    expect(button(tester, exploreSceneButtonKey).onPressed, isNull);
-  });
+      await pumpButton(tester, sampleWith(), fileSize: 65 * 1024 * 1024);
+      expect(find.byTooltip('This scene is too heavy for this headset'), findsOneWidget);
+      expect(button(tester, exploreSceneButtonKey).onPressed, isNull);
+    },
+  );
 }

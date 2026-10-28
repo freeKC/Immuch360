@@ -49,11 +49,7 @@ Map<String, String> sceneViewerLabels(Translations t) => {
   'sceneHint': t.ai_immersive_scene_hint,
   'sceneZone': _placeOf(t.ai_immersive_scene_zone(size: _sizeMark), _sizeMark, '{size}'),
   'sceneHidden': t.ai_immersive_hidden_filled(percent: '{percent}'),
-  'sceneTooHeavy': _placeOf(
-    t.ai_immersive_scene_too_heavy(triangles: '{triangles}', max: _maxMark),
-    _maxMark,
-    '{max}',
-  ),
+  'sceneTooHeavy': _placeOf(t.ai_immersive_scene_too_heavy(triangles: '{triangles}', max: _maxMark), _maxMark, '{max}'),
   'sceneTooHeavyPlain': t.ai_immersive_scene_too_heavy_plain,
   'sceneNewer': t.ai_immersive_newer_version,
   'sceneNotOurs': t.ai_immersive_scene_not_ours,

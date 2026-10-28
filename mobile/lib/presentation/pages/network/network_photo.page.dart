@@ -492,7 +492,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         // A photo that carries a 3D scene, and the newest scene a computer saved next to an original
         final scene = isHorizonOs ? _info?.scene : null;
         final sceneVersion = isHorizonOs
-            ? _versions?.where((found) => found.kind == ImmersiveKind.volumetricScene && found.xmp is SceneXmp).firstOrNull
+            ? _versions
+                  ?.where((found) => found.kind == ImmersiveKind.volumetricScene && found.xmp is SceneXmp)
+                  .firstOrNull
             : null;
         final appBar = AppBar(
           backgroundColor: Colors.black38,
@@ -568,8 +570,11 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       xmp: sceneVersion.xmp as SceneXmp,
                       fromOriginal: true,
                       fileSize: sceneVersion.entry.size,
-                      open: (stereo) =>
-                          _openStereo(sceneVersion.entry.path, stereo, url: widget.folder?.urls[sceneVersion.entry.path]),
+                      open: (stereo) => _openStereo(
+                        sceneVersion.entry.path,
+                        stereo,
+                        url: widget.folder?.urls[sceneVersion.entry.path],
+                      ),
                     ),
                   if (photo != null && reliefGate.visible)
                     AiReliefButton(

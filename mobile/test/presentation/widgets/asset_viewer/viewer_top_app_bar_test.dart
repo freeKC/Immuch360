@@ -3260,8 +3260,7 @@ void main() {
             as Map<String, dynamic>;
     final designRequest = ((contract['volumetricScene'] as List).first as Map<String, dynamic>)['request'];
     final sample =
-        ImmersiveXmp.parse(File('test/fixtures/ai_immersive/xmp_v1_scene_sample.xmp').readAsStringSync())!
-            as SceneXmp;
+        ImmersiveXmp.parse(File('test/fixtures/ai_immersive/xmp_v1_scene_sample.xmp').readAsStringSync())! as SceneXmp;
     late InstalledModelService components;
 
     setUp(() {

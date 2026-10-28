@@ -55,7 +55,10 @@ enum SceneRefusal {
 /// What the gate says of a scene: open with the [request] for the viewer, or refused with its [refusal] (and for too
 /// many triangles, their number and the most this headset takes)
 class SceneGateVerdict {
-  const SceneGateVerdict.open(VolumetricSceneRequest this.request) : refusal = null, triangles = null, maxTriangles = null;
+  const SceneGateVerdict.open(VolumetricSceneRequest this.request)
+    : refusal = null,
+      triangles = null,
+      maxTriangles = null;
 
   const SceneGateVerdict.refused(SceneRefusal this.refusal, {this.triangles, this.maxTriangles}) : request = null;
 
@@ -95,9 +98,7 @@ SceneGateVerdict sceneGateOf(SceneXmp xmp, {String? device, int? fileSize}) {
   final format = xmp.sceneFormat;
   if (format != null && format.isNotEmpty && format != SceneV1.format) {
     final version = int.tryParse(_sceneFormatName.firstMatch(format)?.group(1) ?? '');
-    return SceneGateVerdict.refused(
-      version != null && version > 1 ? SceneRefusal.newerVersion : SceneRefusal.notOurs,
-    );
+    return SceneGateVerdict.refused(version != null && version > 1 ? SceneRefusal.newerVersion : SceneRefusal.notOurs);
   }
   final request = xmp.request;
   if (request == null) {

@@ -66,9 +66,7 @@ void main() {
 
   test('a scene on the server is read by its head once, then kept in memory', () async {
     final asset = remote('salon_scene3D.jpg');
-    final file = serverFiles[asset.id] = RecordingReader(
-      Uint8List.fromList([...tiny, ...List.filled(200 * 1024, 0)]),
-    );
+    final file = serverFiles[asset.id] = RecordingReader(Uint8List.fromList([...tiny, ...List.filled(200 * 1024, 0)]));
     final scenes = service();
 
     final found = await scenes.detect(asset);
