@@ -182,17 +182,18 @@ class ExistingVersionFinder {
   }
 
   /// The first version of [original] made with [settingsKey] (the settingsKey of the XMP of its kind, see
-  /// [versionSettingsKey] for a 3D photo), null when there is none; see [versionsOf] for [folder], [onlyInFolder] and
-  /// [kind]
+  /// [versionSettingsKey] for a 3D photo) for which [where] holds when given, null when there is none; see [versionsOf]
+  /// for [folder], [onlyInFolder] and [kind]
   Future<ExistingVersion?> withSettings(
     DerivedRuleOriginal original,
     String settingsKey, {
     String? folder,
     bool onlyInFolder = false,
     ImmersiveKind? kind,
+    bool Function(ExistingVersion version)? where,
   }) async {
     await for (final version in versionsOf(original, folder: folder, onlyInFolder: onlyInFolder, kind: kind)) {
-      if (version.settingsKey == settingsKey) {
+      if (version.settingsKey == settingsKey && (where == null || where(version))) {
         return version;
       }
     }

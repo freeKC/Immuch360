@@ -737,6 +737,99 @@ void main() {
       expect(folder(), ['salon.jpg', 'salon_360.jpg', 'salon_360_3D.jpg']);
     });
 
+    group('the same settings of a 3D version are those of its own panorama', () {
+      /// "360° 3D panorama" of salon.jpg with [existing], the panorama made with [steps]
+      Future<List<String>> panoramaAnd3D({
+        ExistingVersionChoice existing = ExistingVersionChoice.skip,
+        int steps = fakePanoramaSteps,
+      }) async {
+        engines = () => {
+          ...fakeConversionEngines(scene: scene, stereoPanorama: stereo),
+          ConversionKind.panoramaFromPhoto: ConversionEngine(
+            engine: panorama,
+            settingsKey: (_, turns) => fakePanoramaSettingsKey(turns, steps: steps),
+            generator: fakePanoramaGenerator,
+            steps: steps,
+          ),
+        };
+        container.invalidate(conversionToolsProvider);
+        final ids = queue().add(
+          [photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto)],
+          kind: ConversionKind.panoramaFromPhoto,
+          existing: existing,
+          alsoStereo: true,
+        );
+        await allEnded();
+        return ids;
+      }
+
+      StereoPanoramaXmp stereoAt(String name) =>
+          ImmersiveXmp.findIn(File(p.join(photos, name)).readAsBytesSync())! as StereoPanoramaXmp;
+      PanoramaXmp panoramaAt(String path) => ImmersiveXmp.findIn(File(path).readAsBytesSync())! as PanoramaXmp;
+
+      test('Skip: a new panorama of the photo gets its own 3D version, the older one stays', () async {
+        await panoramaAnd3D();
+        final older = File(p.join(photos, 'salon_360_3D.jpg')).readAsBytesSync();
+
+        // The settings of the panorama changed (another variant of the generator, a component updated)
+        final ids = await panoramaAnd3D(steps: 28);
+
+        final generated = job(ids[0]);
+        final relief = job(ids[1]);
+        expect(generated.writtenPath, p.join(photos, 'salon_360 (1).jpg'));
+        expect(relief.state, ConversionState.done);
+        expect(relief.skipReason, isNull);
+        expect(relief.writtenPath, p.join(photos, 'salon_360_3D (1).jpg'));
+        expect(stereoAt('salon_360_3D (1).jpg').parentDerivativeId, panoramaAt(generated.writtenPath!).derivativeId);
+        expect(File(p.join(photos, 'salon_360_3D.jpg')).readAsBytesSync(), older);
+        expect(stereo.jobs, hasLength(2));
+      });
+
+      test('Replace: the 3D version of the older panorama is kept, never taken by the new one', () async {
+        await panoramaAnd3D();
+        final olderPanorama = panoramaAt(p.join(photos, 'salon_360.jpg')).derivativeId;
+        final older = File(p.join(photos, 'salon_360_3D.jpg')).readAsBytesSync();
+
+        final ids = await panoramaAnd3D(steps: 28, existing: ExistingVersionChoice.replace);
+
+        final relief = job(ids[1]);
+        expect(relief.state, ConversionState.done);
+        expect(relief.replaced, isFalse);
+        expect(relief.writtenPath, p.join(photos, 'salon_360_3D (1).jpg'));
+        expect(File(p.join(photos, 'salon_360_3D.jpg')).readAsBytesSync(), older);
+        expect(stereoAt('salon_360_3D.jpg').parentDerivativeId, olderPanorama);
+      });
+
+      test(
+        'a panorama skipped for a second one of the same settings gives that one, whose 3D version is made',
+        () async {
+          await panoramaAnd3D();
+          // A second panorama of the same settings, without its 3D version
+          final second = queue()
+              .add(
+                [photo('salon.jpg', kind: ConversionKind.panoramaFromPhoto)],
+                kind: ConversionKind.panoramaFromPhoto,
+                existing: ExistingVersionChoice.newVersion,
+              )
+              .single;
+          await allEnded();
+          final secondPath = job(second).writtenPath!;
+          expect(secondPath, p.join(photos, 'salon_360 (1).jpg'));
+
+          final ids = await panoramaAnd3D();
+
+          // The neighbours are read in the order of their names: "salon_360 (1).jpg" first
+          expect(job(ids[0]).skipReason, ConversionSkipReason.sameSettingsExists);
+          expect(job(ids[0]).existingVersionPath, secondPath);
+          final relief = job(ids[1]);
+          expect(relief.state, ConversionState.done);
+          expect(relief.writtenPath, p.join(photos, 'salon_360_3D (1).jpg'));
+          expect(stereo.jobs.last.source.path, secondPath);
+          expect(stereoAt('salon_360_3D (1).jpg').parentDerivativeId, panoramaAt(secondPath).derivativeId);
+        },
+      );
+    });
+
     test('the 3D version of a 360° photo of the user runs alone, a version of that photo', () async {
       final request = photo('PANO_0001.jpg', kind: ConversionKind.stereoPanoramaFromPanorama);
       final bytes = File(p.join(photos, 'PANO_0001.jpg')).readAsBytesSync();

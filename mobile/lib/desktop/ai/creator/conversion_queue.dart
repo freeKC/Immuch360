@@ -592,7 +592,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       if (job.existing != ExistingVersionChoice.newVersion) {
         // Skip looks wherever the index knows a version; Replace only in the destination folder, where the new file
         // goes and was checked: a version elsewhere stays, and the new one is written beside the others
-        same = await _sameSettings(tools, kindEngine, job, source, original, target);
+        same = await _sameSettings(tools, kindEngine, job, source, original, target, parent: parent);
         if (same != null && job.existing == ExistingVersionChoice.skip) {
           final path = same.path;
           _set(
@@ -826,17 +826,23 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// The version of the original of [job] of its kind with its settings, null when there is none or the engine cannot
   /// tell its key before the run. A search that fails (the index closed, a drive gone to sleep) finds none: the
   /// original is fine, so the photo is converted, never failed for it.
+  ///
+  /// A 3D version chained after its panorama ([parent], the packet of the panorama it reads) is the same only when it
+  /// was made from that panorama: its key names the depth model and the turns, not the panorama, and the 3D version of
+  /// another panorama of the photo would otherwise skip this one, or be replaced while its panorama stays.
   Future<ExistingVersion?> _sameSettings(
     ConversionTools tools,
     ConversionEngine kindEngine,
     ConversionJob job,
     ImmersiveSource source,
     ImmersiveSource original,
-    ConversionTarget target,
-  ) async {
+    ConversionTarget target, {
+    PanoramaXmp? parent,
+  }) async {
     try {
       final key = await kindEngine.settingsKey(source, job.quarterTurns);
-      if (key == null) {
+      final panoramaId = parent?.derivativeId;
+      if (key == null || (parent != null && panoramaId == null)) {
         return null;
       }
       return await tools.finder.withSettings(
@@ -845,6 +851,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         folder: target.folder,
         onlyInFolder: job.existing == ExistingVersionChoice.replace,
         kind: job.kind.output,
+        where: parent == null
+            ? null
+            : (version) => switch (version.xmp) {
+                StereoPanoramaXmp(:final parentDerivativeId) => parentDerivativeId == panoramaId,
+                _ => false,
+              },
       );
     } catch (error, stack) {
       _log.warning('The versions of ${job.source.name} could not be looked up', error, stack);

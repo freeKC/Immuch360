@@ -262,6 +262,24 @@ void main() {
 
       expect(await finder().withSettings(original, sameSettings, folder: photos), isNull);
     });
+
+    test(
+      'with a condition, the first version of the same settings that meets it, reading on past the others',
+      () async {
+        version(photos, 'salon_3D_LRF_Full_SBS (1).jpg');
+        final wanted = version(photos, 'salon_3D_LRF_Full_SBS (2).jpg');
+
+        final found = await finder().withSettings(
+          original,
+          sameSettings,
+          folder: photos,
+          where: (version) => p.basename(version.path) != 'salon_3D_LRF_Full_SBS (1).jpg',
+        );
+
+        expect(found?.path, wanted);
+        expect(await finder().withSettings(original, sameSettings, folder: photos, where: (_) => false), isNull);
+      },
+    );
   });
 
   group('by kind', () {
