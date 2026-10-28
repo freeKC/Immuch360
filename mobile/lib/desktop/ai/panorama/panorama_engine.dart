@@ -8,8 +8,11 @@
 // The steps, in the order the screens show them (ImmersiveStage.panorama), their shares of the job from M3 (about
 // 250 s on an RTX 4060 Laptop: 30 s before the first step, 8.7 s a step, 41 s of upscale, 3 s to finish):
 //  1. reading, decoding (0 to 2 %): the sum of the original checked against the one it was queued with, the photo
-//     decoded upright and turned as the user sees it (the quarter turns of the job);
-//  2. fieldOfView (to 3.5 %): from the focal length of its EXIF, else MoGe-2, else 65° (photo_fov.dart);
+//     decoded upright and turned as the user sees it (the quarter turns of the job); a photo that is not a JPEG (HEIC,
+//     PNG, WebP) is decoded by the engine of the app in the isolate of this engine, for this step and again for the
+//     last one;
+//  2. fieldOfView (to 3.5 %): from the focal length of its EXIF, else MoGe-2, else 65° (photo_fov.dart). Only the EXIF
+//     of a JPEG is read: a photo that is not one goes to MoGe-2 (fovGuessed) even when its file has the focal length;
 //  3. projection (to 5 %): the control frame of 2048 x 1024, the photo at its centre and pure green elsewhere,
 //     written as a PNG to the work folder of the job, and the part of the sphere the photo covers;
 //  4. loadingModels, then generating (to 80 %): the generator (GeneratorBackend: sd-cli of lot P2, on the graphics
@@ -861,18 +864,13 @@ class PanoramaEngine implements ImmersiveEngine {
       } on FileSystemException catch (error) {
         return failed(ImmersiveErrorCode.sourceLost, error.osError?.message ?? error.message);
       }
-      SbsDecoded? decoded;
-      if (!_isJpeg(bytes)) {
-        final decode = decodeOther;
-        if (decode == null) {
-          return failed(ImmersiveErrorCode.unsupportedFormat, 'Only JPEG photos here');
-        }
-        try {
-          decoded = await decode(bytes);
-        } on SbsCodecException catch (error) {
-          return failed(ImmersiveErrorCode.decodeFailed, error.message);
-        }
+      if (!_isJpeg(bytes) && decodeOther == null) {
+        return failed(ImmersiveErrorCode.unsupportedFormat, 'Only JPEG photos here');
       }
+      // A photo that is not a JPEG is decoded here, for the first step, then again for the last one, as a JPEG is
+      // decoded by each of its steps: its pixels (about 200 MB at 48 Mpx) are not held through the minutes of the
+      // generation, while sd-cli takes up to 6 GB (M3, section 9, point 10)
+      var decoded = await _decodedOther(bytes);
       timed(ImmersiveStage.reading);
       partExisted = File(job.partPath).existsSync();
       folder = folders.create(job.id);
@@ -900,6 +898,7 @@ class PanoramaEngine implements ImmersiveEngine {
         onEntered: entered,
         onTimes: merge,
       );
+      decoded = null;
       _log.info('${job.id}: ${prepared.fov}, ${(100 * prepared.coverage).toStringAsFixed(2)} % of the sphere');
 
       // 4, made once more when the image is refused
@@ -1035,6 +1034,10 @@ class PanoramaEngine implements ImmersiveEngine {
         return failed(ImmersiveErrorCode.cancelled);
       }
       watch.reset();
+      decoded = await _decodedOther(bytes);
+      if (decoded != null) {
+        timed(ImmersiveStage.decoding);
+      }
       final written = await _onProcessor(
         compute,
         cancel.address,
@@ -1092,6 +1095,20 @@ class PanoramaEngine implements ImmersiveEngine {
         folders.delete(folder);
       }
       _running = false;
+    }
+  }
+
+  /// [bytes] decoded by [decodeOther] when they are not a JPEG, upright; null for a JPEG, which the steps decode. Throws
+  /// a [_Stop] decodeFailed when the decoder cannot.
+  Future<SbsDecoded?> _decodedOther(Uint8List bytes) async {
+    final decode = decodeOther;
+    if (_isJpeg(bytes) || decode == null) {
+      return null;
+    }
+    try {
+      return await decode(bytes);
+    } on SbsCodecException catch (error) {
+      throw _Stop(ImmersiveErrorCode.decodeFailed, error.message);
     }
   }
 
