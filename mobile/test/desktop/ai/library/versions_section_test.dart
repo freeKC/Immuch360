@@ -1,12 +1,16 @@
 // The rows of the details panel of a computer for the versions of a photo: "Versions" on an original, each one with
 // what it is in the words of its honesty label and its folder, greyed on a drive that is not connected; "Made from" or
-// "Original not found" on a version; a row that opens its file; and nothing of it on a phone.
+// "Original not found" on a version; a row that opens its file; "Export for other 3D apps (.glb)" on a 3D scene, on
+// its row and on its own; and nothing of it on a phone.
+
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
+import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
@@ -17,6 +21,23 @@ import 'package:path/path.dart' as p;
 
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
+import '../fakes/fake_scene_engine.dart';
+
+/// The save dialog of the test: it answers [answer]
+class _Pickers implements FilePickers {
+  String? answer;
+
+  @override
+  Future<String?> folder({String? initialDirectory, String? confirmButtonText}) async => null;
+
+  @override
+  Future<String?> saveLocation({
+    required String suggestedName,
+    String? initialDirectory,
+    String? typeLabel,
+    List<String> extensions = const [],
+  }) async => answer;
+}
 
 VersionFile _file(String path, {IndexedOrigin? origin, ImmersiveKind? kind, bool available = true}) => VersionFile(
   file: LibraryFile(
@@ -210,6 +231,49 @@ void main() {
     );
     expect(find.text('Made from salon.jpg'), findsOneWidget);
     expect(find.text('3D scene, reconstructed from one photo'), findsOneWidget);
+  });
+
+  testWidgets('a 3D scene is exported for other 3D apps, from its row and from its own; no other version is', (
+    tester,
+  ) async {
+    final folder = Directory.systemTemp.createTempSync('versions_export');
+    addTearDown(() => folder.deleteSync(recursive: true));
+    final path = File('test/fixtures/ai_immersive/tiny_scene3D.jpg').copySync(p.join(folder.path, 'salon_scene3D.jpg'));
+    final pickers = _Pickers()..answer = p.join(folder.path, 'for blender.glb');
+    filePickers = pickers;
+    addTearDown(() => filePickers = const SystemFilePickers());
+    final scene = _file(path.path, origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene);
+    final photo3d = _file(here, origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto);
+    await pump(tester, DesktopVersionsTiles(asset: photo), photo, PhotoVersions(versions: [photo3d, scene]));
+
+    final export = find.byKey(ValueKey('desktop_version_export_${scene.asset.id}'));
+    expect(export, findsOneWidget);
+    expect(tester.widget<IconButton>(export).tooltip, 'Export for other 3D apps (.glb)');
+    expect(find.byKey(ValueKey('desktop_version_export_${photo3d.asset.id}')), findsNothing);
+
+    final written = File(p.join(folder.path, 'for blender.glb'));
+    await tester.tap(export);
+    for (var step = 0; step < 300 && !written.existsSync(); step++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    expect(written.readAsBytesSync(), FakeSceneTail.fixture.glb);
+    expect(opened, isEmpty, reason: 'the export does not open the version');
+
+    await pump(
+      tester,
+      DesktopVersionsTiles(asset: photo),
+      photo,
+      PhotoVersions(self: scene, original: _file(original)),
+    );
+    expect(find.byKey(ValueKey('desktop_version_export_${scene.asset.id}')), findsOneWidget);
+    await pump(
+      tester,
+      DesktopVersionsTiles(asset: photo),
+      photo,
+      PhotoVersions(self: photo3d, original: _file(original)),
+    );
+    expect(find.byKey(ValueKey('desktop_version_export_${photo3d.asset.id}')), findsNothing);
   });
 
   testWidgets('a version not read again since the index learnt the kinds is told by its origin', (tester) async {

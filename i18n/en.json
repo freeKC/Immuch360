@@ -601,6 +601,8 @@
   "ai_immersive_feature_photos": "3D photos",
   "ai_immersive_feature_scenes": "3D scenes",
   "ai_immersive_free_space": "{free} free on {drive}",
+  "ai_immersive_glb_failed": "The .glb copy could not be written: {message}",
+  "ai_immersive_glb_saved": "Saved in {folder}: {name}",
   "ai_immersive_gpu_budget_wait": "Other apps use the graphics card memory ({free} free): close games or 3D apps",
   "ai_immersive_gpu_busy_warning": "The graphics card stays busy for several minutes; games and videos may stutter",
   "ai_immersive_gpu_integrated": "Integrated graphics share the computer's memory: too slow for panoramas",

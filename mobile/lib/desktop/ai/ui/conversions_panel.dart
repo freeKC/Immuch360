@@ -14,8 +14,8 @@
 // two sections once the graphics card has a job, "Processor" and "Graphics card"; per job its type ("2D to 3D scene",
 // "2D to 360° panorama", "360° to 3D 360°"), the step of a long job in words ("Estimating the geometry"), "step 12 of
 // 28, about 3 min left" (the time left counted down between two progresses), why a job still waits (the memory the
-// other lane holds), the part of a scene filled in, its .glb copy when one was asked for, and "Delete this version" for
-// a version that is not a 3D photo.
+// other lane holds), the part of a scene filled in, its .glb copy when one was asked for ("Also save a .glb copy"),
+// and "Delete this version" for a version that is not a 3D photo.
 
 import 'dart:async';
 import 'dart:io';
@@ -28,6 +28,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/local_only_message.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
@@ -458,6 +459,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final t = context.t;
     final colors = Theme.of(context).colorScheme;
     final info = ref.watch(conversionJobInfoProvider.select((infos) => infos[job.id]));
+    final glb = ref.watch(sceneGlbCopiesProvider.select((copies) => copies[job.id]));
     final notifier = ref.read(conversionQueueProvider.notifier);
     final asset = info?.asset;
     final written = job.writtenPath;
@@ -503,6 +505,13 @@ class _JobRowState extends ConsumerState<_JobRow> {
           // The share filled in says it better than the flag
           if (flag != ReliefQualityFlag.hiddenAreas || hidden == null) Text(qualityFlagText(t, flag), style: secondary),
         if (info?.serverEdits ?? false) Text(t.ai_immersive_server_edits_ignored, style: secondary),
+        if (glb?.path case final copy?) SelectableText(copy, key: const Key('ai_job_glb'), style: secondary),
+        if (glb?.error case final error?)
+          Text(
+            sceneGlbProblemText(t, error),
+            key: const Key('ai_job_glb'),
+            style: TextStyle(color: colors.error),
+          ),
         if (localOnlyMessage(t, isNetwork: info?.isNetwork ?? false) case final message?)
           Text(message, key: const Key('ai_job_local_only'), style: secondary),
       ],

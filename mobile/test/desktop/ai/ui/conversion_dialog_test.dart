@@ -23,6 +23,7 @@ import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
@@ -662,6 +663,34 @@ void main() {
         expect(find.text('Reconstructed from one photo, explore within its limits'), findsOneWidget);
       },
     );
+
+    testWidgets('"Also save a .glb copy": the scene made gets its .glb next to it, which the panel names', (
+      tester,
+    ) async {
+      sceneEngine();
+      for (final component in scene) {
+        service.setStatus(component, const AiComponentStatus(AiComponentState.installed));
+      }
+      await tester.runAsync(() => store.write(const DesktopAiSettings(lastType: 'sceneFromPhoto', exportGlb: true)));
+      original('salon.jpg');
+      final container = await openDialog(tester, [_photo('salon.jpg')]);
+
+      await tapIn(tester, convert());
+      await settle(
+        tester,
+        until: () {
+          final job = container.read(conversionQueueProvider).jobs.single;
+          return container.read(sceneGlbCopiesProvider).containsKey(job.id);
+        },
+      );
+      final copy = p.join(photos, 'salon_scene3D.glb');
+      expect(File(copy).readAsBytesSync(), FakeSceneTail.fixture.glb);
+      expect(
+        find.descendant(of: find.byKey(const Key('ai_job_glb')), matching: find.text(copy)),
+        findsOneWidget,
+        reason: 'the panel shows after the launch',
+      );
+    });
 
     testWidgets('a mixed selection: the plan of each photo, planned again for another type', (tester) async {
       sceneEngine();

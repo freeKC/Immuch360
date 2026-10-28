@@ -31,7 +31,8 @@
 // selection the plan of each photo: those the type makes, and those skipped and why. Changing the type plans the
 // selection again for it (the photos it takes, the names of their files), with what the user chose in this dialog.
 // The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo now, a
-// 360° photo once lot P1 registers the type of its 3D version.
+// 360° photo once lot P1 registers the type of its 3D version. With "Also save a .glb copy", each scene made gets its
+// .glb next to it (scene_glb_export.dart).
 
 import 'dart:async';
 import 'dart:io';
@@ -49,6 +50,7 @@ import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
@@ -1031,6 +1033,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       );
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
+    if (kind == ConversionKind.sceneFromPhoto && settings.exportGlb) {
+      ref.read(sceneGlbCopiesProvider.notifier).follow(ids);
+    }
     _close();
     final skipExisting = _existing == ExistingVersionChoice.skip;
     if (settings.skipExisting != skipExisting || settings.lastType != kind.name) {
