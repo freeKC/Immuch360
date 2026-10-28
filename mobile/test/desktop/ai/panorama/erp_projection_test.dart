@@ -124,13 +124,15 @@ void main() {
       final photo = SbsDecoded(
         width: 400,
         height: 300,
-        rgba: Uint8List.fromList([for (var i = 0; i < 400 * 300; i++) ...[90, 120, 30, 255]]),
+        rgba: Uint8List.fromList([
+          for (var i = 0; i < 400 * 300; i++) ...[90, 120, 30, 255],
+        ]),
       );
       final frame = projectPhoto(photo, hfov: 65, width: PanoV1.controlWidth, height: PanoV1.controlHeight);
       // The centre is the photo, the column of the seam is green
-      final centre = 4 * ((PanoV1.controlHeight ~/ 2) * PanoV1.controlWidth + PanoV1.controlWidth ~/ 2);
+      const centre = 4 * ((PanoV1.controlHeight ~/ 2) * PanoV1.controlWidth + PanoV1.controlWidth ~/ 2);
       expect(frame.rgba.sublist(centre, centre + 3), [90, 120, 30]);
-      final edge = 4 * ((PanoV1.controlHeight ~/ 2) * PanoV1.controlWidth);
+      const edge = 4 * ((PanoV1.controlHeight ~/ 2) * PanoV1.controlWidth);
       expect(frame.rgba.sublist(edge, edge + 3), [0, 255, 0]);
       // 4 asin(sin(32.5°) sin(25.5°)) / 4 pi, the solid angle of the photo: 7.4 % of the sphere
       expect(frame.coverage, closeTo(0.0744, 0.001));

@@ -36,7 +36,9 @@ double seamRatioOf(Uint8List rgba, int width, int height) {
     }
     final last = row + 4 * (width - 1);
     edge +=
-        (rgba[last] - rgba[row]).abs() + (rgba[last + 1] - rgba[row + 1]).abs() + (rgba[last + 2] - rgba[row + 2]).abs();
+        (rgba[last] - rgba[row]).abs() +
+        (rgba[last + 1] - rgba[row + 1]).abs() +
+        (rgba[last + 2] - rgba[row + 2]).abs();
   }
   final usual = width < 2 ? 0.0 : neighbours / (3 * height * (width - 1));
   return (edge / (3 * height)) / math.max(usual, 1e-6);

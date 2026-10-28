@@ -20,7 +20,6 @@ import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
-import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';

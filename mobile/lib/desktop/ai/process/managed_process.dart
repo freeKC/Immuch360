@@ -177,7 +177,7 @@ class AiWorkFolders {
   }
 
   /// Deletes the work folders not changed for [maxAge] (an hour), those of jobs an earlier session left, and the
-  /// answers of the probe of the graphics cards (gpu-probe-<pid>-<n>.json) a probe stopped before it could delete them
+  /// answers of the probe of the graphics cards (`gpu-probe-<pid>-<n>.json`) a probe stopped before it could delete them
   /// left; returns how many went
   int deleteOld({Duration maxAge = const Duration(hours: 1), DateTime? now}) {
     if (!root.existsSync()) {
