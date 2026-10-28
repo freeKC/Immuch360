@@ -232,6 +232,29 @@ void main() {
       expect(result.gpu!.name, 'Large');
     });
 
+    test('one card seen through two drivers: the one ggml keeps, so that sd-cli is given its index', () async {
+      // An RX 7600 under AMDVLK (first in the loader) and under RADV, the same UUID: ggml keeps RADV alone, as Vulkan0
+      GpuAdapter amd(String name, int place, int driver) => GpuAdapter(
+        name: name,
+        kind: GpuKind.discrete,
+        localMemory: 8 * _gib,
+        vendorId: 0x1002,
+        apiVersion: '1.3.280',
+        vulkanIndex: place,
+        uuid: '0000000000000000000000000000abcd',
+        driverId: driver,
+        storage16Bit: true,
+      );
+      final report = GpuReport(
+        instanceVersion: '1.3.280',
+        adapters: [amd('AMD Radeon RX 7600', 0, 2), amd('AMD Radeon RX 7600 (RADV NAVI33)', 1, 3)],
+      );
+      final card = panoramaCardOf(report, integratedAllowed: false).card!;
+      expect(card.name, 'AMD Radeon RX 7600 (RADV NAVI33)');
+      expect(ggmlVulkanIndexOf(report, card), 0);
+      expect((await panorama(report)).gpu!.vulkanIndex, 1);
+    });
+
     test('a processor that Vulkan lists (llvmpipe) is no graphics card', () async {
       final result = await panorama(
         GpuReport(
