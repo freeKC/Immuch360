@@ -6,11 +6,14 @@ import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:path/path.dart' as p;
+
+import '../fakes/fake_gpu_probe.dart';
 
 const _gib = 1024 * 1024 * 1024;
 
@@ -54,6 +57,7 @@ void main() {
     Map<String, AiComponentState> states = const {},
     String? runtimeError,
     List<String>? loads,
+    GpuProbe? gpu,
   }) => HardwareGate(
     components: _FakeComponents(folder, states: states),
     facts: () => AiHardwareFacts(abi: abi, processors: 8, physicalMemory: memory),
@@ -61,6 +65,7 @@ void main() {
       loads?.add(path);
       return runtimeError == null ? (version: '1.31.0', error: null) : (version: null, error: runtimeError);
     },
+    gpu: gpu,
   );
 
   group('by feature, each component asked for by its id', () {
@@ -102,12 +107,15 @@ void main() {
       expect(result.files.keys, unorderedEquals([onnxRuntimeWindowsComponent.id, depthModelOnnxComponent.id]));
     });
 
-    test('a 360° panorama: not on a Mac; not in this version until the engine of P2 is in the catalogue', () async {
+    test('a 360° panorama: not yet on Mac; not in this version until the engine of P2 is in the catalogue', () async {
       final mac = await gate(abi: Abi.macosArm64).evaluate(feature: AiFeature.panorama);
-      final windows = await gate(abi: Abi.windowsX64).evaluate(feature: AiFeature.panorama);
+      final windows = await gate(
+        abi: Abi.windowsX64,
+        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
+      ).evaluate(feature: AiFeature.panorama);
 
-      expect(mac.reason, AiGateReason.notHere);
-      expect(mac.reason!.textKey, 'ai_immersive_unavailable_system');
+      expect(mac.reason, AiGateReason.notYetOnMac);
+      expect(mac.reason!.textKey, 'ai_immersive_gpu_not_on_mac');
       expect(windows.reason, AiGateReason.notInThisVersion);
       expect(windows.reason!.textKey, 'ai_immersive_unavailable_build');
       expect(windows.missing, [sdCppWindowsComponent]);
@@ -140,6 +148,7 @@ void main() {
         facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 * _gib),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
         catalogue: catalogue,
+        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       );
 
       final small = await variants.evaluate(feature: AiFeature.panorama, graphicsMemory: 8 * _gib);
