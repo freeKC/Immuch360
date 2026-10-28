@@ -805,6 +805,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     updateCoverageView()
     updateTurnButton()
+    updateSceneControls()
     if (revealInfo) setInfoVisible(true, reposition = true)
     when {
       media.isVideo -> showVideo(media)
@@ -2387,7 +2388,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           when {
             !previewShown -> {
               scenePreparing = false
+              sceneDetails = emptyList()
               setReliefProgress(false)
+              updateSceneControls()
               showError(getString(R.string.immersive_error_photo, reason))
             }
             e is OutOfMemoryError ->
