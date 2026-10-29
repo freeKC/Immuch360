@@ -31,6 +31,12 @@ class _WithoutServer extends LocalSessionNotifier {
   bool build() => true;
 }
 
+/// Search and Albums need a server: without one their destinations are disabled and a tap on them does nothing
+class _WithServer extends LocalSessionNotifier {
+  @override
+  bool build() => false;
+}
+
 class _NoHaptics extends HapticNotifier {
   _NoHaptics(super.ref);
 
@@ -61,7 +67,12 @@ void main() {
     );
   });
 
-  Future<void> pumpShell(WidgetTester tester, {required bool tvMode, Size size = const Size(1920, 1080)}) async {
+  Future<void> pumpShell(
+    WidgetTester tester, {
+    required bool tvMode,
+    Size size = const Size(1920, 1080),
+    bool hasServer = false,
+  }) async {
     // A TV screen: landscape, so the tabs are a navigation rail
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 2;
@@ -104,7 +115,7 @@ void main() {
           overrides: [
             tvModeProvider.overrideWithValue(tvMode),
             readonlyModeProvider.overrideWith(_NotReadOnly.new),
-            localSessionProvider.overrideWith(_WithoutServer.new),
+            localSessionProvider.overrideWith(hasServer ? _WithServer.new : _WithoutServer.new),
             hapticFeedbackProvider.overrideWith(_NoHaptics.new),
           ],
           child: Builder(
@@ -157,7 +168,7 @@ void main() {
   });
 
   testWidgets('Back from active Search results resets Search before leaving the tab', (tester) async {
-    await pumpShell(tester, tvMode: true);
+    await pumpShell(tester, tvMode: true, hasServer: true);
     await tester.tap(find.text('Search'));
     await tester.pumpAndSettle();
     Focus.of(tester.element(find.text('search content'))).requestFocus();
@@ -217,6 +228,24 @@ void main() {
 
     await back(tester);
     expect(systemPops, 1);
+  });
+
+  testWidgets('out of the remote control layout Back from Search results goes to Photos as before', (tester) async {
+    await pumpShell(tester, tvMode: false, hasServer: true);
+    await tester.tap(find.text('Search'));
+    await tester.pumpAndSettle();
+    expect(find.text('search content'), findsOneWidget);
+    Focus.of(tester.element(find.text('search content'))).requestFocus();
+    await tester.pumpAndSettle();
+
+    final container = ProviderScope.containerOf(tester.element(find.text('search content')));
+    container.read(tvSearchHasActiveQueryProvider.notifier).state = true;
+    final before = container.read(tvSearchReturnToStartProvider);
+
+    await back(tester);
+    expect(find.text('photos content'), findsOneWidget, reason: 'straight to Photos, the results left as they are');
+    expect(container.read(tvSearchReturnToStartProvider), before, reason: 'Search is not reset');
+    expect(systemPops, 0);
   });
 
   testWidgets('a phone that turns during a selection keeps its bottom bar hidden', (tester) async {
