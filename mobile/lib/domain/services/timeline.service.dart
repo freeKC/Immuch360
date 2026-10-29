@@ -241,4 +241,17 @@ class TimelineService {
     _buffer = [];
     _bufferOffset = 0;
   }
+
+  /// Immuch360: the assets of [index, index + count) without moving the buffer, from the buffer when it holds them,
+  /// from the source otherwise (fewer at the end of the timeline). The months and years of the timeline read their
+  /// thumbnails here, from all over the library, while the grid keeps its buffer where it scrolls.
+  Future<List<BaseAsset>> peekAssets(int index, int count) {
+    if (index < 0 || count <= 0) {
+      return Future.value(const []);
+    }
+    if (hasRange(index, count)) {
+      return Future.value(getAssets(index, count));
+    }
+    return _assetSource(index, count);
+  }
 }
