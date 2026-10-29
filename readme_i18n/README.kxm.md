@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>ภาษาเขมรถิ่นไทย</b> · ภาษาอื่น (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. สื่อของเจ้า. จอใดก็ได้. ทุกมุมมอง. ภาพถ่ายกับวิดีโอแบบแบน, 360° และ 3D จากอุปกรณ์ของเจ้า, NAS ของเจ้า, เซิร์ฟเวอร์ Immich ของเจ้า, กล้องของเจ้า และโดรนของเจ้า. บ่ต้องมีบัญชี. Android, iPhone กับ iPad, Android TV, ทีวี LG กับ Samsung, Meta Quest, Windows, macOS, Linux. ภาพวาดตอนพลบค่ำหน้าอ่าวทะเล: กล่องเก็บข้อมูล, โทรศัพท์, แท็บเล็ต, ทีวี, แล็ปท็อป และเฮดเซ็ต, โดรนบนฟ้ากับกล้องในบ้าน, เชื่อมกันด้วยเส้นโค้งของแสง">
+  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. สื่อของเจ้า. จอใดก็ได้. ทุกมุมมอง. ใหม่: เปลี่ยนภาพถ่ายของเจ้าเป็นภาพถ่าย 3D, ฉาก 3D และพาโนรามา 360°. AI ทำให้บนคอมพิวเตอร์ของเจ้าเอง. ภาพถ่ายของเจ้าบ่เคยออกไปจากมัน. Android, iPhone กับ iPad, Android TV, ทีวี LG กับ Samsung, Meta Quest, Windows, macOS, Linux. เป็นภาพวาด บ่แม่นภาพหน้าจอ: ตอนพลบค่ำหน้าอ่าวทะเล, ห้องเดียวกันสี่เทื่อ, เป็นภาพถ่ายแบบแบนบนโทรศัพท์, เป็นชั้นลอยอยู่หน้าเฮดเซ็ตสีขาว, เป็นฉากบนแล็ปท็อป และคลี่ออกบนแถบโค้งเหมือนพาโนรามา, เชื่อมกันด้วยเส้นโค้งของแสง">
 </p>
 
 # Immuch360
@@ -9,6 +9,17 @@
 **สื่อของเจ้า. จอใดก็ได้. ทุกมุมมอง.**
 
 ภาพถ่ายกับวิดีโอแบบแบน, 360° และ 3D จากอุปกรณ์ของเจ้า, NAS ของเจ้า, เซิร์ฟเวอร์ Immich ของเจ้า, กล้องของเจ้า และโดรนของเจ้า. บ่ต้องมีบัญชี. Immuch360 เป็นแอปฟรีและโอเพนซอร์สที่อ่านภาพถ่ายกับวิดีโอของเจ้าตรงที่มันอยู่ แล้วเล่นแต่ละอันในวิวเวอร์ที่เหมาะกับมัน: แบบแบน, เป็นทรงกลมที่เจ้ามองไปรอบๆ ได้, เป็น 3D, หรืออยู่รอบตัวเจ้าในเฮดเซ็ต. มันรันบนโทรศัพท์, แท็บเล็ต, ทีวี, เฮดเซ็ต Meta Quest และคอมพิวเตอร์.
+
+**ใหม่: ภาพถ่ายแบบแบนของเจ้า, เป็น 3D.** เลือกภาพถ่ายบนคอมพิวเตอร์ของเจ้า แล้วได้ภาพถ่าย 3D, ฉาก 3D ที่เดินเข้าไปได้, หรือพาโนรามา 360° ที่จินตนาการส่วนที่เหลือของสถานที่รอบตัวเจ้า. ใน Meta Quest 3 หรือ 3S, กด "ความลึก AI" เทื่อเดียว ภาพถ่ายแบบแบนใดก็ได้จะนูนออกมา. AI ทำงานบนคอมพิวเตอร์กับเฮดเซ็ตของเจ้าเอง, และบ่มีอะไรถูกส่งไปไหน. ยังทดลองอยู่. [เบิ่งวิธี](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="ภาพถ่าย 3D ที่ Immuch360 ทำจากภาพถ่ายธรรมดาภาพเดียวของห้องโถงเก่าที่มีระเบียง, เสา และโคมระย้า, ในมุมมอง สลับไปมา: ตาซ้ายกับตาขวาของมันสลับกัน, ประมาณหกเทื่อต่อวินาที, ให้เสานูนออกมาจากผนัง">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="ภาพถ่ายเดียว, สี่แบบ, ทั้งหมดเป็นผลลัพธ์จริงของ Immuch360: ห้องสีขาวที่มีโต๊ะกลมกับหน้าต่าง, ตามที่ถ่ายมา; ภาพถ่าย 3D ของมัน, แสดงตาที่แอปคำนวณ, ป้าย AI 3D, ความลึกที่ AI ประเมิน; ฉาก 3D ของมันมองจากซ้ายและจากขวา, ป้าย ฉาก 3D; ด้านล่าง, พาโนรามา 360° ที่สร้างรอบมัน, ป้าย AI 360°, ภาพถ่ายต้นฉบับมีเส้นขอบอยู่ตรงกลาง และทั้งสตูดิโอถูกสร้างขึ้นรอบมัน, รวมทั้งของแปลกๆ อีกสองสามอย่าง">
+</p>
+<p align="center"><sub>ผลลัพธ์จริงของแอปจากภาพถ่าย CC0 ของ Poly Haven, ย่อขนาด, บ่ได้รีทัช, เพิ่มป้ายของแอปสำหรับหน้านี้. ด้านบน, ภาพถ่าย 3D, สองตาของมันสลับกัน; ด้านล่าง, ภาพถ่ายเดียวสี่แบบ, สองมุมมองของฉากวาดจากไฟล์ฉาก. ทุกอย่างที่อยู่นอกเส้นขอบของพาโนรามา AI สร้างขึ้นเอง.</sub></p>
 
 <p align="center">
   <sub>เวอร์ชันไม่เป็นทางการที่แยกมาจากแอป Immich มือถือ. ไม่เกี่ยวข้องกับ Immich หรือ FUTO. ชื่อนี้อ่านได้ว่า "I am much 360".</sub>
@@ -22,6 +33,7 @@
 - [เจ้าเฮ็ดอะไรได้บ้าง](#what-you-can-do)
 - [ติดตั้งบนอุปกรณ์ของเจ้า](#get-it-on-your-device)
 - [วิธีใช้](#how-to)
+  - [เปลี่ยนภาพถ่ายเดียวเป็น 3D, ฉาก, พาโนรามา](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [ดูภาพถ่ายและวิดีโอของเจ้า, จะมีหรือบ่มีเซิร์ฟเวอร์ก็ได้](#watch-your-photos-and-videos-with-or-without-a-server)
   - [สำรวจพาโนรามา, 360°, VR180 กับ 3D](#explore-panoramas-360-vr180-and-3d)
   - [ดูบนทีวีด้วยรีโมท](#watch-on-the-tv-with-the-remote): [Android TV กับ Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
@@ -45,6 +57,7 @@
 <a id="who-it-is-for"></a>
 ## แอปนี้เหมาะกับใคร
 
+- **ภาพถ่ายของเจ้าแบน** และเจ้าอยากได้มันเป็น 3D, เป็นฉากที่โน้มตัวเข้าไปเบิ่งในเฮดเซ็ต, หรืออยู่ในพาโนรามา 360°, โดยบ่ต้องมีกล้อง 3D: [เปลี่ยนภาพถ่ายเดียวเป็น 3D, ฉาก, พาโนรามา](#turn-one-photo-into-3d-a-scene-a-panorama), ใหม่, AI ทำให้บนคอมพิวเตอร์ของเจ้าเอง.
 - **เจ้าถ่าย 360° หรือ 3D** และอยากมองไปรอบๆ ในภาพของเจ้า, บ่ใช่เห็นมันแบน, ซ้อนเป็นสอง หรือยืดออก: [360°, VR180 และ 3D](#explore-panoramas-360-vr180-and-3d).
 - **ภาพถ่ายกับหนังของเจ้าอยู่บน NAS, คอมพิวเตอร์, Plex หรือ Immich** และเจ้าอยากดูมันบนทีวีโดยบ่ต้องก๊อปปี้อะไร: [บนทีวี](#watch-on-the-tv-with-the-remote), [NAS, แชร์ และ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **เจ้ามี Meta Quest** และอยากเข้าไปอยู่ในภาพถ่ายกับวิดีโอของเจ้าเอง: [ในเฮดเซ็ต](#step-inside-your-photos-and-videos-with-a-meta-quest).
@@ -52,23 +65,23 @@
 - **เจ้าเฝ้าบ้านด้วยกล้อง Tapo** และอยากเห็นมันข้างๆ ภาพถ่ายของเจ้า, บนทีวีด้วย (ยังบ่ได้ตรวจกับกล้องจริง): [กล้องในบ้าน](#watch-your-home-cameras-on-the-big-screen).
 - **เจ้าบินโดรน DJI** และอยากเห็นภาพสดของมันบนโทรศัพท์โดยบ่ต้องใช้ DJI Fly, และใน Meta Quest หรือบน Android TV ให้คนที่อยู่กับเจ้าดู (ยังทดลองอยู่): [โดรนของเจ้า](#see-what-your-drone-sees-on-your-phone).
 
-บ่มีบัญชี Immuch360 ให้สร้าง, และบ่มีอะไรส่งมาหาพวกเรา: แอปคุยแค่กับอุปกรณ์ของเจ้าและเซิร์ฟเวอร์ที่เจ้าเลือก.
+บ่มีบัญชี Immuch360 ให้สร้าง, และบ่มีอะไรส่งมาหาพวกเรา: แอปคุยแค่กับอุปกรณ์ของเจ้าและเซิร์ฟเวอร์ที่เจ้าเลือก, และดาวน์โหลดส่วนประกอบ AI แค่ตอนที่เจ้าขอเท่านั้น.
 
 <a id="which-screens"></a>
 ## จอไหนบ้าง
 
 <div align="center">
 
-| แพลตฟอร์ม | ได้มาจากไหน | สถานะเมื่อ 26 ตุลาคม 2026 |
+| แพลตฟอร์ม | ได้มาจากไหน | สถานะเมื่อ 29 ตุลาคม 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** โทรศัพท์กับแท็บเล็ต | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | บน Google Play (build 25; build 31 ส่งให้ Google ตรวจสอบวันที่ 26 ตุลาคม, แทน build 29), build 31 บน GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** โทรศัพท์กับแท็บเล็ต | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | บน Google Play (build 25; build 32 ส่งให้ Google ตรวจสอบวันที่ 29 ตุลาคม, แทน build 31), build 32 บน GitHub, ที่เปิด[พาโนรามา 360° ที่ทำบนคอมพิวเตอร์](#turn-one-photo-into-3d-a-scene-a-panorama) พร้อมป้าย AI ของมัน |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone กับ iPad** | App Store | เวอร์ชัน 3.3.1 (build 27) รอการตรวจสอบของ Apple ตั้งแต่วันที่ 22 ตุลาคม, แล้วก็เวอร์ชัน 3.3.2 (build 28) อยู่ใน TestFlight สำหรับทดสอบภายใน; [สร้างขึ้นเอง](../docs/immuch360/build.md) ในระหว่างนี้ |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV กับ Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 31 บน GitHub: [เข้าสู่ระบบด้วยโทรศัพท์](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) โดยสแกน QR code, [แถบเวลา, เสียง และคำบรรยาย](#on-android-tv-and-google-tv) สำหรับรีโมทในตัวเล่นวิดีโอ, และ[วิดีโอสดของโดรน](#watch-it-in-a-meta-quest-or-on-an-android-tv) ที่โทรศัพท์ส่งต่อมา (ยังทดลองอยู่); รายการบนทีวีกำลังให้ Google ตรวจสอบ |
-| **ทีวี LG** ที่ใช้ webOS 5.0 ขึ้นไป | [.ipk, เวอร์ชัน 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (กำลังตรวจสอบ) | เวอร์ชัน 1.0.0, ส่งเข้า LG Content Store วันที่ 24 ตุลาคม, อยู่ในการทดสอบของ LG วันที่ 26 ตุลาคม; จนกว่าจะเผยแพร่ ติดตั้งใน [Developer Mode](#lg-tvs-webos). มันได้รันบนทีวี webOS 25 ใน Cloud Test Lab ของ LG |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV กับ Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 32 บน GitHub: [เข้าสู่ระบบด้วยโทรศัพท์](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) โดยสแกน QR code, [แถบเวลา, เสียง และคำบรรยาย](#on-android-tv-and-google-tv) สำหรับรีโมทในตัวเล่นวิดีโอ, และ[วิดีโอสดของโดรน](#watch-it-in-a-meta-quest-or-on-an-android-tv) ที่โทรศัพท์ส่งต่อมา (ยังทดลองอยู่); รายการบนทีวีกำลังให้ Google ตรวจสอบ |
+| **ทีวี LG** ที่ใช้ webOS 5.0 ขึ้นไป | [.ipk, เวอร์ชัน 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store (กำลังตรวจสอบ) | เวอร์ชัน 1.0.0, ส่งเข้า LG Content Store วันที่ 24 ตุลาคม, อยู่ในการทดสอบของ LG ตั้งแต่ 26 ตุลาคม; เวอร์ชัน 1.0.1, บน GitHub ตั้งแต่ 27 ตุลาคม, ซูมภาพถ่ายด้วยลูกศร และบอกตอนภาพถ่ายยังโหลดอยู่; จนกว่า LG จะเผยแพร่แอป, ติดตั้งใน [Developer Mode](#lg-tvs-webos). เวอร์ชัน 1.0.0 ได้รันบนทีวี webOS 25 ใน Cloud Test Lab ของ LG |
 | **ทีวี Samsung** ที่ใช้ Tizen 5.5 ขึ้นไป | [build ทดสอบ .wgt](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | build ทดสอบ 0.2.0 ของแอปทีวีตัวเดียวกัน, ต้องเซ็นด้วย certificate Samsung ของเจ้าเองแล้วติดตั้งใน [Developer mode](#samsung-tvs-tizen); 0.1.0 ได้รันบนทีวี Samsung ของผู้ทดสอบคนหนึ่ง, และ 0.2.0 มีการแก้ไขจากรอบนั้น; บ่มีในร้านค้าของ Samsung |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 กับ 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | บน Horizon Store (build 28, เผยแพร่แล้วตั้งแต่ 25 ตุลาคม; build 31 ส่งเป็นการส่งเทื่อถัดไปวันที่ 26 ตุลาคม), build 31 บน GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ตัวติดตั้งหรือ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, เป็นพรีวิวที่เซ็นแล้ว: ภาพถ่าย, วิดีโอแบบแบนกับ 360°, แชร์, Plex, กล้อง (ยังบ่ได้ตรวจกับกล้องจริง), เข้าสู่ระบบด้วยโทรศัพท์, หมุนภาพถ่ายด้วยปุ่มเดียว, หน้าตาแอปใน 89 ภาษา |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS กับ Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, พรีวิว: ภาพถ่าย, ภาพถ่าย 360° และวิดีโอแบบแบน (วิดีโอ 360° เล่นแบบแบน), เซิร์ฟเวอร์ Immich และแชร์ในเครือข่าย; desktop build 11 ได้ลองวันที่ 26 ตุลาคม ใน container Ubuntu 24.04 และบน Mac; บน macOS ยังบ่ได้เซ็น |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 กับ 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | บน Horizon Store (build 31, เผยแพร่แล้วตั้งแต่ 28 ตุลาคม; build 32 ส่งวันที่ 29 ตุลาคม), build 32 บน GitHub, พร้อม[ความลึก AI](#turn-one-photo-into-3d-a-scene-a-panorama) ของภาพถ่ายแบบแบนบน Quest 3 กับ 3S (ยังทดลองอยู่) |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ตัวติดตั้งหรือ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | desktop build 13, เป็นพรีวิวที่เซ็นแล้ว: ภาพถ่าย, วิดีโอแบบแบนกับ 360°, แชร์, Plex, กล้อง (ยังบ่ได้ตรวจกับกล้องจริง), เข้าสู่ระบบด้วยโทรศัพท์, หมุนภาพถ่ายด้วยปุ่มเดียว, หน้าตาแอปใน 89 ภาษา, และใหม่, [ภาพถ่าย 3D, ฉาก 3D และพาโนรามา 360° ที่ทำจากภาพถ่ายของเจ้า](#turn-one-photo-into-3d-a-scene-a-panorama) ด้วย AI (ยังทดลองอยู่) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS กับ Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | desktop build 13, พรีวิว: ภาพถ่าย, ภาพถ่าย 360° และวิดีโอแบบแบน (วิดีโอ 360° เล่นแบบแบน), เซิร์ฟเวอร์ Immich และแชร์ในเครือข่าย, และใหม่, [ภาพถ่าย 3D กับฉาก 3D](#turn-one-photo-into-3d-a-scene-a-panorama) ที่ AI ทำจากภาพถ่ายของเจ้า, พร้อมพาโนรามา 360° บน Linux ด้วยการ์ดจอ 8 GB; desktop build 11 ได้ลองวันที่ 26 ตุลาคม ใน container Ubuntu 24.04 และบน Mac; บน macOS ยังบ่ได้เซ็น |
 
 *สถานะพวกนี้อัปเดตทุกครั้งที่ออกเวอร์ชันใหม่; รายละเอียด, ทีละ build, อยู่ใน [สถานะเวอร์ชัน](../docs/immuch360/release-status.md).*
 
@@ -96,6 +109,9 @@
 | 3D กับ VR180 | ✅ ตาเดียว | ✅ ตาเดียว | ✅ ตาเดียว | ภาพถ่ายตาเดียว, วิดีโอแบน | ภาพถ่ายตาเดียว, วิดีโอแบน | ✅ 3D จริง |
 | Spatial 2.5D (ตามหัว) | ✅ ยังทดลองอยู่ | ✅ ยังทดลองอยู่ | ❌ | ❌ | ❌ | ❌ |
 | ภาพ spatial ของ Apple | ✅ ตาเดียว | ✅ ตาเดียว | ✅ ตาเดียว | ❌ | ❌ | ✅ 3D |
+| ภาพถ่าย 3D จากภาพถ่าย 2D (AI) | ✅ อ่านได้, เคียงข้างกัน | ✅ อ่านได้, เคียงข้างกัน | ✅ อ่านได้, เคียงข้างกัน | ✅ อ่านได้, เคียงข้างกัน | ✅ อ่านได้, เคียงข้างกัน | ✅ ความลึก AI ในเฮดเซ็ต (Quest 3 กับ 3S), แสดงเป็น 3D |
+| ฉาก 3D จากภาพถ่าย 2D (AI) | ✅ อ่านได้, เป็นภาพถ่ายของมัน | ✅ อ่านได้, เป็นภาพถ่ายของมัน | ✅ อ่านได้, เป็นภาพถ่ายของมัน | ✅ อ่านได้, เป็นภาพถ่ายของมัน | ✅ อ่านได้, เป็นภาพถ่ายของมัน | ✅ สำรวจเป็น 3D |
+| พาโนรามา 360° จากภาพถ่าย 2D (AI) | ✅ อ่านได้, พร้อมป้าย AI | ✅ อ่านเป็นภาพถ่าย 360°, ป้าย 🔜 | ✅ อ่านได้, พร้อมป้าย AI | ✅ อ่านเป็นภาพถ่าย 360°, ป้าย 🔜 | ✅ อ่านเป็นภาพถ่าย 360°, ป้าย 🔜 | ✅ อ่านได้รอบตัวเจ้า, พร้อมป้าย AI |
 | ไฟล์ raw ของ Insta360, GoPro, และ DJI | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | แชร์ SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB ตั้งแต่ webOS 22 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
@@ -121,6 +137,9 @@
 | 3D กับ VR180 | ✅ ตาเดียว | ภาพถ่ายตาเดียว, วิดีโอแบน | ภาพถ่ายตาเดียว, วิดีโอแบน |
 | Spatial 2.5D (ตามหัว) | 🔜 กำลังพัฒนา | ❌ | ❌ |
 | ภาพ spatial ของ Apple | ✅ ตาเดียว | ✅ ตาเดียว, จากเซิร์ฟเวอร์ | ✅ ตาเดียว |
+| ภาพถ่าย 3D จากภาพถ่าย 2D (AI) | ✅ | ✅ | ✅ ยังบ่ได้ลองบน Mac |
+| ฉาก 3D จากภาพถ่าย 2D (AI) | ✅ | ✅ | ✅ ยังบ่ได้ลองบน Mac |
+| พาโนรามา 360° จากภาพถ่าย 2D (AI) | ✅ การ์ดจอ 8 GB | ✅ การ์ดจอ 8 GB, ยังบ่ได้ลองกับการ์ดแบบนั้น | 🔜 ยังบ่มีบน Mac |
 | ไฟล์ raw ของ Insta360, GoPro, และ DJI | ✅ | ✅ ภาพถ่าย, วิดีโอแบน | ✅ ภาพถ่าย, วิดีโอแบน |
 | แชร์ SMB, WebDAV, DLNA | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
@@ -134,38 +153,41 @@
 | การควบคุม | เมาส์, คีย์บอร์ด | เมาส์, คีย์บอร์ด | เมาส์, คีย์บอร์ด, แทร็กแพด |
 | จะหามันได้ที่ไหน | ตัวติดตั้งหรือ ZIP (พรีวิวที่เซ็นแล้ว) | .deb, .rpm (พรีวิว) | DMG หรือ ZIP (พรีวิวที่ยังบ่ได้เซ็น) |
 
-*Linux กับ macOS: desktop build 11, ได้ลองวันที่ 26 ตุลาคม 2026 บน Ubuntu 24.04, ใน container ที่มีเซิร์ฟเวอร์ Immich สำหรับทดสอบกับแชร์สำหรับทดสอบ, และผู้เขียนได้ลองบน Mac.*
+*Linux กับ macOS: desktop build 11, ได้ลองวันที่ 26 ตุลาคม 2026 บน Ubuntu 24.04, ใน container ที่มีเซิร์ฟเวอร์ Immich สำหรับทดสอบกับแชร์สำหรับทดสอบ, และผู้เขียนได้ลองบน Mac. แถว AI, ด้วย build ทดสอบของโค้ด desktop build 13, ตั้งแต่ 27 ถึง 29 ตุลาคม 2026: ภาพถ่าย 3D ทำโดยแอป Linux ใน container บน Linux PC, ฉากทำโดยแอป Windows บนแล็ปท็อปที่มี RTX 4060 และโดยเอนจินบน Linux PC เครื่องนั้น, พาโนรามา 360° บนแล็ปท็อปเครื่องนั้น; ยังบ่ได้ลองบน Mac.*
 
 ✅ มีในแอปบนแพลตฟอร์มนั้น · ❌ บ่มีให้ที่นั่น · 🔜 กำลังวางแผนไว้ · 🔧 CI อยู่ในซอร์สโค้ด, CI ของโปรเจกต์สร้างและเปิดรันบนระบบนั้นแล้ว, แต่ยังบ่ได้ตรวจกับเซิร์ฟเวอร์, แชร์ หรือกล้องจริงที่นั่น · แบนเท่านั้น: วิดีโอเล่นแบบแบนพร้อมข้อความแจ้ง, เพราะตัวเรนเดอร์วิดีโอ 360° ของคอมพิวเตอร์มีแค่บน Windows; บนทีวี LG ยังต้องวัดดูก่อนว่า webOS ส่งเฟรมวิดีโอให้ทรงกลมได้หรือบ่; บนทีวี Samsung ของผู้ทดสอบคนหนึ่ง, เบราว์เซอร์ส่งเฟรมวิดีโอสีดำให้วิว 3D. "ตาเดียว" หมายถึงไฟล์ 3D แสดงตาซ้ายของมันบนจอแบน. คอลัมน์ LG กับ Samsung เป็นแอปทีวีแยกต่างหากตัวเดียว: LG เวอร์ชัน 1.0.0, ซึ่งแชร์กับ Plex ได้ตรวจกับเซิร์ฟเวอร์จริงและกล้องได้ตรวจกับกล้องจำลองบนเครื่อง build ของโปรเจกต์, ยังบ่ได้ตรวจบนทีวี, และ Samsung build ทดสอบ 0.2.0. บ่ใช่ทุก ✅ ที่ได้ตรวจสอบบนอุปกรณ์จริงแล้ว: ตรวจอะไรไว้ที่ไหนแล้ว, และอะไรที่ยังต้องยืนยันอีก, อยู่ใน [ฟีเจอร์](../docs/immuch360/features.md), [รองรับแพลตฟอร์ม](../docs/immuch360/platform-support.md) และ [ความเข้ากันได้](../docs/immuch360/compatibility.md).
 
-- **โทรศัพท์และแท็บเล็ต Android**: แอปแบบเต็ม, สัมผัสกับไจโรสโคป, ทุกแหล่งข้อมูล.
+ในแถว AI, "อ่านได้" หมายความว่าอุปกรณ์เปิดสิ่งที่คอมพิวเตอร์ทำ, และบ่ได้ทำอะไรเอง: ภาพถ่าย 3D แสดงสองตาของมันเคียงข้างกัน, ฉากแสดงเป็นภาพถ่ายของมันพร้อมเครื่องหมายเล็กๆ ฉาก 3D, พาโนรามาเปิดในวิวเวอร์ 360°. ป้าย AI ของมันคือป้าย "AI 360°", ประโยค "AI สร้างส่วนที่อยู่นอกขอบรูป" และเส้นขอบของภาพถ่ายต้นฉบับ, ซึ่งแอป iPhone, iPad, LG และ Samsung ยังบ่แสดง. มีแค่คอมพิวเตอร์กับ Quest ที่ทำอะไรได้. สิ่งที่ตรวจแล้วสำหรับแถวเหล่านี้อยู่ใน[วิธีใช้](#turn-one-photo-into-3d-a-scene-a-panorama), ยังบ่อยู่ใน Features และ Platform support.
+
+- **โทรศัพท์และแท็บเล็ต Android**: แอปแบบเต็ม, สัมผัสกับไจโรสโคป, ทุกแหล่งข้อมูล; ตั้งแต่ build 32 มันเปิดพาโนรามา 360° ที่ทำบนคอมพิวเตอร์พร้อมป้าย AI ของมัน.
 - **iPhone กับ iPad**: แอปแบบเต็ม; ตัวเล่นวิดีโอ 360° มีแค่เล่นกับหยุด, ดูภาพสด Tapo และฝั่งโทรศัพท์ของการเข้าสู่ระบบด้วยโทรศัพท์จะมากับรีลีส iOS ถัดไป, และการค้นหา DLNA ส่ง unicast request ไปจนกว่า Apple จะให้สิทธิ์ multicast.
 - **Android TV กับ Google TV**: APK ตัวเดียวกัน, คุมด้วยรีโมท, เป็นธีมมืดตั้งแต่เริ่มต้น; เป็นแค่วิวเวอร์: backup, อัปโหลด และตัวแก้ไข ถูกซ่อนไว้ และรายละเอียดอ่านได้อย่างเดียว, แต่ภาพถ่ายยังหมุนได้ด้วยปุ่มเดียว. ตัวกรองการค้นหาทุกอันใช้กับรีโมทได้: สถานที่กับกล้องเปิดตัวเลือกของมันเป็นรายการ, ตัวกรองวันที่แสดงตัวเลือกทั้งหมด, และแผ่นตัวเลือกของ แท็ก, สถานที่, วันที่, ประเภทสื่อ, คะแนนดาว และการแสดงผล วางปุ่มล้างกับใช้ไว้ข้างตัวเลือก, ห่างไปแค่กดขวาเทื่อเดียว, บนพื้นที่เกือบเต็มความสูงของจอ. ตารางภาพถ่ายใช้หน่วยความจำภาพน้อยลง, และการกดลูกศรค้างไว้จะเลื่อนได้บ่เกินประมาณ 10 แถวต่อวินาที. ตั้งแต่ build 28 มันเข้าสู่ระบบจากโทรศัพท์ได้, ด้วย QR code หรือโค้ดสั้นของมัน (ลองระหว่าง emulator สองตัวโดยพิมพ์โค้ด, ยังบ่ได้ลองกับกล้อง). ตั้งแต่ build 29 แถบเวลาของวิดีโอได้โฟกัสของรีโมท, หนังมีเมนูเสียงกับคำบรรยาย, และไฟล์ถัดไปของแชร์เปิดพร้อมตัวควบคุมของมันเอง. ตรวจสอบบน Google TV emulator; build 28 ได้รันบน Android TV จริงวันที่ 23 ตุลาคม, และปัญหาวิดีโอที่เจอตอนนั้นได้แก้ใน build 29, ตรวจบน emulator แล้ว, ยังบ่ได้ตรวจบนทีวีเครื่องนั้น. ตั้งแต่ build 30, การ์ด Drone ของมันแสดงวิดีโอสดของโดรน DJI ที่โทรศัพท์ส่งต่อมา, พร้อมค่าต่างๆ ของโดรนและวงแหวนสิ่งกีดขวาง (ยังทดลองอยู่): การจับคู่กับภาพได้ลองบนทีวี Android ของ TCL วันที่ 25 ตุลาคม, มีภาพกระตุกและออกสีเขียวกับการส่งต่อแบบเก่า; วันที่ 26 ตุลาคม, กับ build 30, สตรีมแบบเสถียรที่แก้ปัญหานี้ทำให้ภาพยังมาถึงทีวีเครื่องนั้นตอนบิน, ค้าง 7 เทื่อ.
 - **ทีวี LG ที่ใช้ webOS 5.0 ขึ้นไป**: แอปแยกต่างหากสำหรับรีโมทและ Magic Remote, สร้างมาจาก [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): วิวเวอร์ Immich ที่มีภาพถ่าย 360° บนทรงกลม, หมุนภาพถ่ายด้วยปุ่มเดียว, ธีมมืด และ 89 ภาษาของแอป (ข้อความบ่กี่อันของแอปทีวีเองยังเป็นภาษาอังกฤษอยู่ตอนนี้); แชร์ในเครือข่าย, Plex และภาพสดจากกล้อง Tapo, ผ่านเซอร์วิสของมันเองบนทีวี (SMB ตั้งแต่ webOS 22); วิดีโอ 360° เล่นแบบแบน. เวอร์ชัน 1.0.0, ที่ส่งเข้า LG Content Store วันที่ 24 ตุลาคม, ได้รันบนทีวี webOS 25 สามรุ่นใน Cloud Test Lab ของ LG: เข้าสู่ระบบ, หน้าเข้าสู่ระบบด้วยโทรศัพท์, ภาพถ่าย, อัลบั้ม, วิดีโอ, วิว 360°, สไลด์โชว์, การค้นหา และ Back จากทุกหน้า. เวอร์ชัน 0.1.0 ได้รันบนทีวี LG ของผู้ทดสอบคนหนึ่ง (webOS 22). แชร์กับ Plex ได้ตรวจกับเซิร์ฟเวอร์จริงและกล้องได้ตรวจกับกล้องจำลองบนเครื่อง build ของโปรเจกต์, ยังบ่ได้ตรวจบนทีวี.
 - **ทีวี Samsung ที่ใช้ Tizen 5.5 ขึ้นไป**: แอปทีวี LG ที่แพ็กมาสำหรับทีวี Samsung, build ทดสอบ 0.2.0, เจ้าต้องเซ็นและติดตั้งเอง: วิวเวอร์ Immich สำหรับรีโมท, เข้าสู่ระบบด้วยการพิมพ์ (ที่อยู่เซิร์ฟเวอร์, แล้วอีเมลกับรหัสผ่านหรือ API key), พร้อมสไลด์โชว์, ภาพถ่าย 360° บนทรงกลม, หมุนภาพถ่ายด้วยปุ่มเดียว และหน้าข้อมูลที่บอกว่าทีวีรองรับอะไร; ยังบ่มีการเข้าสู่ระบบด้วยโทรศัพท์, แชร์, Plex หรือกล้อง; วิดีโอ 360° เล่นแบบแบน, พร้อมข้อความแจ้ง. เวอร์ชัน 0.1.0 ได้รันบนทีวี Samsung ของผู้ทดสอบคนหนึ่งที่ใช้ Tizen 9: ภาพถ่ายกับวิดีโอถึง 4K เล่นได้, อะไรที่เกิน 4K ถอดรหัสบ่ได้, และเบราว์เซอร์ของทีวีส่งเฟรมวิดีโอสีดำให้วิว 3D. เวอร์ชัน 0.2.0 มีการแก้ไขจากรอบนั้น (ข้อความสำหรับวิดีโอที่เกินตัวถอดรหัสของทีวีหรือวิดีโอที่ค้าง, วิดีโอ 360° แบบแบนพร้อมข้อความแจ้ง) และยังบ่ได้รันบนทีวี.
-- **Meta Quest 2, Pro, 3 กับ 3S**: แอปเป็นหน้าต่าง, บวกกับวิวแบบดื่มดำ และ, ตั้งแต่ build 30, การ์ด Drone ที่แสดงวิดีโอสดของโดรน DJI ที่โทรศัพท์ส่งต่อมา (ยังทดลองอยู่), ทดสอบเทื่อแรกกับ build 30; HEVC เป็น codec ที่ปลอดภัย, H.264 หยุดอยู่ที่ประมาณ 4096x2304 บน Quest 3; ทดสอบแค่ Quest 3, ส่วน Quest 2, Quest Pro กับ Quest 3S ยังบ่ได้ทดสอบ.
-- **Windows 10 กับ 11**: เป็นพรีวิว, มีโฟลเดอร์แทนแกลเลอรี, มีตัวเล่นวิดีโอของตัวเอง (libmpv) สำหรับวิดีโอแบบแบนกับ 360°, ไฟล์ raw ที่ต่อให้เป็นภาพเดียวด้วยชิปกราฟิก, ไฟล์และโฟลเดอร์ที่เปิดด้วยแอปหรือลากมาวางบนหน้าต่าง, แล้วก็ตัวติดตั้งหรือ ZIP, ที่ APROGSYS เซ็นไว้.
-- **Linux**: .deb กับ .rpm ที่สร้างโดย CI ของโปรเจกต์, ติดตั้งและตรวจแล้วบน Ubuntu 22.04 กับ 24.04, Debian 12 และ Fedora 40 กับ 44; ภาพถ่าย, ภาพถ่าย 360° และวิดีโอแบบแบนผ่าน libmpv ของระบบ (วิดีโอ 360°, 3D และ raw เล่นแบบแบนพร้อมข้อความแจ้ง), วาดผ่านฮาร์ดแวร์บนเซสชัน X11 ด้วยตั้งแต่ desktop build 7; แชร์ SMB ตั้งแต่ Ubuntu 22.04 กับ Debian 12 ขึ้นไป; ถ้าบ่มี keyring (GNOME Keyring หรือ KWallet) แอปจะบ่ค้าง 25 s ตอนเปิดครั้งแรกอีกแล้ว: มันเก็บรหัสผ่านไว้แค่ในเซสชันนั้น และบอกไว้ในการตั้งค่าของมัน; ยังบ่ได้รันบน Linux PC จริง, มีแค่ใน WSLg และในคอนเทนเนอร์.
-- **macOS**: DMG กับ ZIP ที่สร้างโดย CI ของโปรเจกต์, เป็นแบบ universal, ยังบ่ได้เซ็น (Gatekeeper จะถามครั้งเดียว); มันเปิดได้, เปิดไฟล์และโฟลเดอร์ที่ส่งให้มัน รวมทั้งจาก Finder, เก็บข้อมูลลับไว้ใน login keychain และเล่นวิดีโอแบบแบนด้วย libmpv ของตัวเอง, ตรวจเทื่อแรกบน Mac ของ CI โปรเจกต์; วันที่ 26 ตุลาคม 2026 ผู้เขียนได้ลอง desktop build 11 บน Mac, และมันใช้ได้.
+- **Meta Quest 2, Pro, 3 กับ 3S**: แอปเป็นหน้าต่าง, บวกกับวิวแบบดื่มดำ และ, ตั้งแต่ build 30, การ์ด Drone ที่แสดงวิดีโอสดของโดรน DJI ที่โทรศัพท์ส่งต่อมา (ยังทดลองอยู่), ทดสอบเทื่อแรกกับ build 30; HEVC เป็น codec ที่ปลอดภัย, H.264 หยุดอยู่ที่ประมาณ 4096x2304 บน Quest 3; ทดสอบแค่ Quest 3, ส่วน Quest 2, Quest Pro กับ Quest 3S ยังบ่ได้ทดสอบ. ตั้งแต่ build 32, บน Quest 3 หรือ 3S, ความลึก AI แสดงภาพถ่ายแบบแบนเป็น 3D, คำนวณในเฮดเซ็ตเอง, และภาพถ่าย 3D, ฉาก และพาโนรามาที่ทำบนคอมพิวเตอร์ เปิดเป็น 3D (ยังทดลองอยู่).
+- **Windows 10 กับ 11**: เป็นพรีวิว, มีโฟลเดอร์แทนแกลเลอรี, มีตัวเล่นวิดีโอของตัวเอง (libmpv) สำหรับวิดีโอแบบแบนกับ 360°, ไฟล์ raw ที่ต่อให้เป็นภาพเดียวด้วยชิปกราฟิก, ไฟล์และโฟลเดอร์ที่เปิดด้วยแอปหรือลากมาวางบนหน้าต่าง, แล้วก็ตัวติดตั้งหรือ ZIP, ที่ APROGSYS เซ็นไว้; ตั้งแต่ desktop build 13, "ทำ 3D (AI)" เปลี่ยนภาพถ่ายของเจ้าเป็นภาพถ่าย 3D กับฉาก 3D บนโปรเซสเซอร์, และเป็นพาโนรามา 360° บนการ์ดจอ 8 GB.
+- **Linux**: .deb กับ .rpm ที่สร้างโดย CI ของโปรเจกต์, ติดตั้งและตรวจแล้วบน Ubuntu 22.04 กับ 24.04, Debian 12 และ Fedora 40 กับ 44; ภาพถ่าย, ภาพถ่าย 360° และวิดีโอแบบแบนผ่าน libmpv ของระบบ (วิดีโอ 360°, 3D และ raw เล่นแบบแบนพร้อมข้อความแจ้ง), วาดผ่านฮาร์ดแวร์บนเซสชัน X11 ด้วยตั้งแต่ desktop build 7; แชร์ SMB ตั้งแต่ Ubuntu 22.04 กับ Debian 12 ขึ้นไป; ถ้าบ่มี keyring (GNOME Keyring หรือ KWallet) แอปจะบ่ค้าง 25 s ตอนเปิดครั้งแรกอีกแล้ว: มันเก็บรหัสผ่านไว้แค่ในเซสชันนั้น และบอกไว้ในการตั้งค่าของมัน; ตั้งแต่ desktop build 13, "ทำ 3D (AI)" ทำภาพถ่าย 3D กับฉากบนโปรเซสเซอร์, และพาโนรามา 360° บนการ์ดจอ 8 GB (ลองแค่ขนาดเล็ก, บนกราฟิก Intel); ยังบ่ได้รันบน Linux PC จริง, มีแค่ใน WSLg และในคอนเทนเนอร์.
+- **macOS**: DMG กับ ZIP ที่สร้างโดย CI ของโปรเจกต์, เป็นแบบ universal, ยังบ่ได้เซ็น (Gatekeeper จะถามครั้งเดียว); มันเปิดได้, เปิดไฟล์และโฟลเดอร์ที่ส่งให้มัน รวมทั้งจาก Finder, เก็บข้อมูลลับไว้ใน login keychain และเล่นวิดีโอแบบแบนด้วย libmpv ของตัวเอง, ตรวจเทื่อแรกบน Mac ของ CI โปรเจกต์; วันที่ 26 ตุลาคม 2026 ผู้เขียนได้ลอง desktop build 11 บน Mac, และมันใช้ได้. ตั้งแต่ desktop build 13, ภาพถ่าย 3D กับฉากก็ทำบนโปรเซสเซอร์ได้ด้วย (ยังบ่ได้ลองบน Mac); ยังบ่มีพาโนรามา 360° บน Mac.
 
 <a id="what-you-can-do"></a>
 ## เจ้าเฮ็ดอะไรได้บ้าง
 
 แต่ละบรรทัดพาไปที่วิธีใช้ของมันข้างล่าง. คู่มือฉบับเต็ม, ทุกตัวเลือก, ทุกข้อความ, และข้อจำกัด, อยู่ใน [คู่มือผู้ใช้](../docs/immuch360/user-guide.md).
 
-1. [ดูภาพถ่ายและวิดีโอของเจ้า, จะมีหรือบ่มีเซิร์ฟเวอร์ก็ได้](#watch-your-photos-and-videos-with-or-without-a-server): แกลเลอรีและตัวเล่น, บนอุปกรณ์อย่างเดียวหรือกับเซิร์ฟเวอร์ Immich ของเจ้า.
-2. [มองไปรอบๆ ในภาพถ่ายและวิดีโอ 360°, พาโนรามา, VR180 และ 3D](#explore-panoramas-360-vr180-and-3d): ทรงกลมที่เจ้าหมุนด้วยนิ้ว, ด้วยโทรศัพท์ หรือด้วยรีโมท.
-3. [ดูบนทีวีด้วยรีโมท](#watch-on-the-tv-with-the-remote): Android TV กับ Google TV, ทีวี LG, และทีวี Samsung แบบ build ทดสอบ.
-4. [เข้าสู่ระบบทีวี, เฮดเซ็ต หรือคอมพิวเตอร์ด้วยโทรศัพท์ของเจ้า](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): สแกน QR code ของมัน, ยืนยัน, แล้วดู.
-5. [เข้าไปอยู่ในภาพถ่ายและวิดีโอของเจ้าด้วย Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° รอบตัวเจ้า, 3D เป็น 3D จริง.
-6. [เล่นไฟล์จาก NAS, คอมพิวเตอร์, เซิร์ฟเวอร์สื่อ หรือ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): ตรงที่มันอยู่, บ่ต้องก๊อปปี้อะไร.
-7. [เก็บไลบรารี Immich ของเจ้าไว้, พร้อมของเพิ่ม](#keep-your-immich-library-with-more): แอป Immich มือถือ, บวกกับวิวเวอร์แบบดื่มดำและจอใหญ่.
-8. [ดูกล้อง Tapo ของเจ้า](#watch-your-home-cameras-on-the-big-screen): ภาพสด, และวิดีโอบันทึกในเมมโมรีการ์ดของมัน; ยังบ่ได้ตรวจกับกล้องจริง.
-9. [เบิ่งวิดีโอสดของโดรน DJI ของเจ้าบนโทรศัพท์](#see-what-your-drone-sees-on-your-phone), และ[ใน Meta Quest หรือบน Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): ผ่านรีโมท DJI RC-N3, รับอย่างเดียว. *ยังทดลองอยู่.*
-10. [เอาภาพถ่ายและวิดีโอของโดรนหรือการ์ดกล้องไปไว้ใน Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): ผ่าน USB, จากโทรศัพท์ Android. *ยังทดลองอยู่.*
-11. [เปิดไฟล์ raw ของกล้อง 360°](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX และ DJI Osmo 360, แอปต่อภาพให้.
-12. [หมุนภาพถ่ายด้วยปุ่มเดียว](#turn-a-photo-with-one-key): ปุ่มบนจอ, ปุ่มบนคีย์บอร์ด หรือปุ่มสีบนรีโมท.
-13. [ใช้คอมพิวเตอร์ของเจ้าเป็นเครื่องเล่นสื่อ](#use-your-computer-as-the-media-player): โฟลเดอร์ของเจ้า, Open with, ไฟล์ที่ลากมาวางบนหน้าต่าง. *พรีวิว.*
+1. [เปลี่ยนภาพถ่ายเดียวเป็นภาพถ่าย 3D, ฉาก 3D หรือพาโนรามา 360°](#turn-one-photo-into-3d-a-scene-a-panorama): AI ทำให้บนคอมพิวเตอร์ของเจ้า, เบิ่งเป็น 3D ใน Meta Quest, ซึ่งยังให้ความลึกกับภาพถ่ายแบบแบนใดก็ได้. *ใหม่, ยังทดลองอยู่.*
+2. [ดูภาพถ่ายและวิดีโอของเจ้า, จะมีหรือบ่มีเซิร์ฟเวอร์ก็ได้](#watch-your-photos-and-videos-with-or-without-a-server): แกลเลอรีและตัวเล่น, บนอุปกรณ์อย่างเดียวหรือกับเซิร์ฟเวอร์ Immich ของเจ้า.
+3. [มองไปรอบๆ ในภาพถ่ายและวิดีโอ 360°, พาโนรามา, VR180 และ 3D](#explore-panoramas-360-vr180-and-3d): ทรงกลมที่เจ้าหมุนด้วยนิ้ว, ด้วยโทรศัพท์ หรือด้วยรีโมท.
+4. [ดูบนทีวีด้วยรีโมท](#watch-on-the-tv-with-the-remote): Android TV กับ Google TV, ทีวี LG, และทีวี Samsung แบบ build ทดสอบ.
+5. [เข้าสู่ระบบทีวี, เฮดเซ็ต หรือคอมพิวเตอร์ด้วยโทรศัพท์ของเจ้า](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): สแกน QR code ของมัน, ยืนยัน, แล้วดู.
+6. [เข้าไปอยู่ในภาพถ่ายและวิดีโอของเจ้าด้วย Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° รอบตัวเจ้า, 3D เป็น 3D จริง.
+7. [เล่นไฟล์จาก NAS, คอมพิวเตอร์, เซิร์ฟเวอร์สื่อ หรือ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): ตรงที่มันอยู่, บ่ต้องก๊อปปี้อะไร.
+8. [เก็บไลบรารี Immich ของเจ้าไว้, พร้อมของเพิ่ม](#keep-your-immich-library-with-more): แอป Immich มือถือ, บวกกับวิวเวอร์แบบดื่มดำและจอใหญ่.
+9. [ดูกล้อง Tapo ของเจ้า](#watch-your-home-cameras-on-the-big-screen): ภาพสด, และวิดีโอบันทึกในเมมโมรีการ์ดของมัน; ยังบ่ได้ตรวจกับกล้องจริง.
+10. [เบิ่งวิดีโอสดของโดรน DJI ของเจ้าบนโทรศัพท์](#see-what-your-drone-sees-on-your-phone), และ[ใน Meta Quest หรือบน Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): ผ่านรีโมท DJI RC-N3, รับอย่างเดียว. *ยังทดลองอยู่.*
+11. [เอาภาพถ่ายและวิดีโอของโดรนหรือการ์ดกล้องไปไว้ใน Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): ผ่าน USB, จากโทรศัพท์ Android. *ยังทดลองอยู่.*
+12. [เปิดไฟล์ raw ของกล้อง 360°](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX และ DJI Osmo 360, แอปต่อภาพให้.
+13. [หมุนภาพถ่ายด้วยปุ่มเดียว](#turn-a-photo-with-one-key): ปุ่มบนจอ, ปุ่มบนคีย์บอร์ด หรือปุ่มสีบนรีโมท.
+14. [ใช้คอมพิวเตอร์ของเจ้าเป็นเครื่องเล่นสื่อ](#use-your-computer-as-the-media-player): โฟลเดอร์ของเจ้า, Open with, ไฟล์ที่ลากมาวางบนหน้าต่าง. *พรีวิว.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -196,7 +218,7 @@
 
 1. เวอร์ชัน 1.0.0 อยู่ในการตรวจสอบของ LG. จนกว่ามันจะอยู่บน LG Content Store, มันติดตั้งใน Developer Mode: เจ้าต้องมีทีวี LG ที่ใช้ webOS 5.0 ขึ้นไป, คอมพิวเตอร์ในเครือข่ายเดียวกัน และบัญชีนักพัฒนา LG ฟรี. บนทีวี, ติดตั้ง Developer Mode จาก LG Content Store, เข้าสู่ระบบ, เปิด Dev Mode Status แล้วปล่อยให้ทีวีรีสตาร์ท; จดที่อยู่ IP ของมันกับ passphrase ที่แอปแสดงไว้.
 2. บนคอมพิวเตอร์, ติดตั้ง webOS CLI (Node.js 18 ขึ้นไป): `npm install -g @webos-tools/cli`, แล้วลงทะเบียนทีวีด้วย `ares-setup-device` (ที่อยู่ IP ของมัน, พอร์ต 9922, ผู้ใช้ `prisoner`) และ `ares-novacom --device <name> --getkey`, ซึ่งจะถาม passphrase.
-3. จาก [พรีรีลีส webOS 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), ดาวน์โหลด `Immuch360-webOS-1.0.0.ipk` สำหรับทีวี UHD, หรือ `Immuch360-webOS-1.0.0-1280x720.ipk` สำหรับทีวี Full HD, ที่ LG ให้แอป 1280x720. ตรวจกับ `SHA256SUMS.txt`, แล้วก็ `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) ของ webosbrew เฮ็ดแบบเดียวกันได้โดยบ่ต้องใช้บรรทัดคำสั่ง.
+3. จาก [พรีรีลีส webOS 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1), ดาวน์โหลด `Immuch360-webOS-1.0.1.ipk` สำหรับทีวี UHD, หรือ `Immuch360-webOS-1.0.1-1280x720.ipk` สำหรับทีวี Full HD, ที่ LG ให้แอป 1280x720. ตรวจกับ `SHA256SUMS.txt`, แล้วก็ `ares-install --device <name> Immuch360-webOS-1.0.1.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) ของ webosbrew เฮ็ดแบบเดียวกันได้โดยบ่ต้องใช้บรรทัดคำสั่ง.
 4. เซสชัน Developer Mode อยู่ได้ 1000 ชั่วโมง และปุ่ม EXTEND ในแอป Developer Mode จะต่ออายุให้; พอหมดอายุ, ทีวีจะลบแอปที่ติดตั้งแบบนี้ออก. รายละเอียดอยู่ใน [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 5. เมื่อแอปอยู่บน LG Content Store แล้ว, ลบตัวที่ติดตั้งใน Developer Mode ออก แล้วติดตั้งจากร้านค้า.
 
@@ -217,23 +239,70 @@
 <a id="windows"></a>
 ### Windows
 
-1. ดาวน์โหลด `Immuch360-Desktop-3.3.0-rc.0-desktop.12-windows-x64-setup.exe` จาก [พรีรีลีสของเดสก์ท็อป](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) (พร้อม `SHA256SUMS.txt` ไว้ตรวจสอบมัน) แล้วเปิดมัน. ตัวติดตั้งกับ ZIP เซ็นแล้ว; Windows แสดง APROGSYS เป็นผู้เผยแพร่. ระหว่างที่ผู้เผยแพร่ยังใหม่สำหรับ SmartScreen, มันอาจยังถามอีกเทื่อหนึ่ง: "More info", แล้วก็ "Run anyway".
+1. ดาวน์โหลด `Immuch360-Desktop-3.3.0-rc.0-desktop.13-windows-x64-setup.exe` จาก [พรีรีลีสของเดสก์ท็อป](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) (พร้อม `SHA256SUMS.txt` ไว้ตรวจสอบมัน) แล้วเปิดมัน. ตัวติดตั้งกับ ZIP เซ็นแล้ว; Windows แสดง APROGSYS เป็นผู้เผยแพร่. ระหว่างที่ผู้เผยแพร่ยังใหม่สำหรับ SmartScreen, มันอาจยังถามอีกเทื่อหนึ่ง: "More info", แล้วก็ "Run anyway".
 2. เลือก "Install for me only" (บ่ต้องมีสิทธิ์ผู้ดูแลระบบ) หรือ "Install for all users", แล้วเลือกภาษาของตัวติดตั้ง, ซึ่งเลือกภาษาที่ Windows ใช้อยู่ไว้ให้ก่อนแล้ว.
 3. เริ่ม Immuch360 Desktop จากเมนู Start. ภาพถ่ายและวิดีโอจะพบมันอยู่ใน "Open with" (คลิกขวาที่ไฟล์, Open with); มันบ่เคยตั้งตัวเองเป็นแอปเริ่มต้นสำหรับไฟล์พวกนั้นเลย. การเริ่มครั้งแรกของ build ใหม่อาจใช้เวลาถึงหนึ่งนาทีตอนที่ Windows กำลังสแกนไฟล์อยู่.
 4. Windows 10 หรือ 11, 64 บิต. ถ้าจะอัปเดต, เปิดตัวติดตั้งของ build ถัดไป: การเข้าสู่ระบบ, โฟลเดอร์ และการตั้งค่าของเจ้ายังอยู่เหมือนเดิม. ZIP ของรีลีสเดียวกันก็คือแอปตัวเดียวกันในรูปโฟลเดอร์, แตกไฟล์ที่ไหนก็ได้แล้วเริ่ม `immuch360.exe` จากในนั้น. บนคอมพิวเตอร์ที่ desktop build 4 ถึง 8 หยุดตอนเริ่มที่ "duplicate column name: group_date", build 9 เปิดฐานข้อมูลนั้นได้และเก็บข้อมูลของเจ้าไว้.
 
 ### Linux
 
-บน Ubuntu 22.04 ขึ้นไปและ Debian 12 ขึ้นไป: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-amd64.deb`; บน Fedora 40 ขึ้นไป: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-x86_64.rpm`, ทั้งสองอันจาก [พรีรีลีสของเดสก์ท็อป](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12). แล้วเริ่ม Immuch360 Desktop จากเมนูแอปของเจ้า. เป็นพรีวิว: โฟลเดอร์ของคอมพิวเตอร์, ภาพถ่ายและภาพถ่าย 360° เป็นทรงกลม, และวิดีโอแบบแบนผ่าน libmpv ของระบบ ซึ่งแพ็กเกจติดตั้งให้ (วิดีโอ 360°, 3D และ raw เล่นแบบแบน, พร้อมข้อความแจ้ง); แชร์ SMB ใช้ได้ตั้งแต่ Ubuntu 22.04 กับ Debian 12 ขึ้นไป. บน Fedora, วิดีโอจากกล้องต้องใช้ FFmpeg ของ RPM Fusion. ถ้าบ่มี GNOME Keyring หรือ KWallet, รหัสผ่านจะเก็บไว้แค่ในเซสชันนั้น, และการตั้งค่าของแอปก็บอกไว้.
+บน Ubuntu 22.04 ขึ้นไปและ Debian 12 ขึ้นไป: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-amd64.deb`; บน Fedora 40 ขึ้นไป: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-x86_64.rpm`, ทั้งสองอันจาก [พรีรีลีสของเดสก์ท็อป](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13). แล้วเริ่ม Immuch360 Desktop จากเมนูแอปของเจ้า. เป็นพรีวิว: โฟลเดอร์ของคอมพิวเตอร์, ภาพถ่ายและภาพถ่าย 360° เป็นทรงกลม, และวิดีโอแบบแบนผ่าน libmpv ของระบบ ซึ่งแพ็กเกจติดตั้งให้ (วิดีโอ 360°, 3D และ raw เล่นแบบแบน, พร้อมข้อความแจ้ง); แชร์ SMB ใช้ได้ตั้งแต่ Ubuntu 22.04 กับ Debian 12 ขึ้นไป. บน Fedora, วิดีโอจากกล้องต้องใช้ FFmpeg ของ RPM Fusion. ถ้าบ่มี GNOME Keyring หรือ KWallet, รหัสผ่านจะเก็บไว้แค่ในเซสชันนั้น, และการตั้งค่าของแอปก็บอกไว้.
 
 ### macOS
 
-เปิด `Immuch360-Desktop-3.3.0-rc.0-desktop.12-macos.dmg` จาก [พรีรีลีสของเดสก์ท็อป](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) แล้วลากแอปไปที่ Applications (Apple silicon กับ Intel, macOS 12 ขึ้นไป). มันยังบ่ได้เซ็นหรือ notarized เลย: กด Control ค้างแล้วคลิกมัน แล้วเลือก Open บน macOS 14 กับรุ่นก่อนหน้า, หรือเลือก "Open Anyway" ใน System Settings, Privacy & Security บน macOS 15 ขึ้นไป. ผู้เขียนได้ลอง desktop build 11 บน Mac วันที่ 26 ตุลาคม 2026, และมันใช้ได้; Mac เครื่องอื่นกับ macOS รุ่นอื่นยังบ่ได้ลอง, และยินดีรับรายงาน.
+เปิด `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` จาก [พรีรีลีสของเดสก์ท็อป](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) แล้วลากแอปไปที่ Applications (Apple silicon กับ Intel, macOS 12 ขึ้นไป). มันยังบ่ได้เซ็นหรือ notarized เลย: กด Control ค้างแล้วคลิกมัน แล้วเลือก Open บน macOS 14 กับรุ่นก่อนหน้า, หรือเลือก "Open Anyway" ใน System Settings, Privacy & Security บน macOS 15 ขึ้นไป. ผู้เขียนได้ลอง desktop build 11 บน Mac วันที่ 26 ตุลาคม 2026, และมันใช้ได้; Mac เครื่องอื่นกับ macOS รุ่นอื่นยังบ่ได้ลอง, และยินดีรับรายงาน.
 
 <a id="how-to"></a>
 ## วิธีใช้
 
 แต่ละหัวข้อบอกว่าเจ้าได้อะไร, แล้วขั้นตอน, แล้วข้อจำกัด. [คู่มือผู้ใช้](../docs/immuch360/user-guide.md) มีทุกตัวเลือกและทุกข้อความ.
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### เปลี่ยนภาพถ่ายเดียวเป็น 3D, ฉาก, พาโนรามา
+
+ภาพถ่ายส่วนใหญ่ของเจ้าแบน, และเจ้าบ่สามารถย้อนกลับไปถ่ายใหม่เป็น 3D ได้. Immuch360 ให้ความลึกกับพวกมัน. บนคอมพิวเตอร์ของเจ้า, ภาพถ่ายเดียวกลายเป็น **ภาพถ่าย 3D**, **ฉาก 3D** ที่เจ้าโน้มตัวเข้าไปเบิ่งในเฮดเซ็ต, หรือ **พาโนรามา 360°** ที่จินตนาการส่วนที่เหลือของสถานที่รอบตัวเจ้า. Quest 3 หรือ 3S ทำความลึกเองได้, สำหรับภาพถ่ายแบบแบนใดก็ได้. ทุกอย่างทำงานบนคอมพิวเตอร์กับเฮดเซ็ตของเจ้าเอง: บ่มีคลาวด์, บ่มีบัญชี, ต้นฉบับของเจ้าบ่เคยถูกแก้. ใหม่ใน build 32 และ desktop build 13, ยังทดลองอยู่และเปิดไว้เป็นค่าเริ่มต้น. แอป Immich บ่มีอะไรแบบนี้.
+
+**บนคอมพิวเตอร์ของเจ้า**, ด้วย desktop build 13 บน Windows, Linux หรือ macOS:
+
+1. เลือกภาพถ่ายหนึ่งภาพหรือหลายภาพในไลบรารีหรือในโฟลเดอร์, แล้วก็ "ทำ 3D (AI)".
+2. เลือกสิ่งที่เจ้าต้องการ: "รูป 3D", "ฉาก 3D", "พาโนรามา 360°", หรือ "เวอร์ชัน 3D ของรูป 360°" สำหรับภาพ 360° ที่เจ้าถ่ายเอง. กล่องบอกว่า AI จะประเมินหรือสร้างอะไร ("ประมาณ 96% ของพาโนรามานี้จะถูก AI สร้างขึ้นเอง"), ใช้เวลาประมาณเท่าใดบนคอมพิวเตอร์เครื่องนี้, และไฟล์จะไปอยู่ไหน: "ข้างต้นฉบับ" หรือ "โฟลเดอร์ที่เลือกเอง". แบบที่คอมพิวเตอร์เครื่องนี้ทำบ่ได้จะเป็นสีเทา, พร้อมเหตุผล, เช่น "ยังบ่มีบน Mac" หรือ "การ์ดจอมีหน่วยความจำ 6.0 GiB พาโนรามา 360° ต้องใช้ 7.5 GiB".
+3. เทื่อแรก, กล่องเสนอส่วนประกอบของแบบนั้น: ดาวน์โหลด, เทื่อเดียว. มันทำงานบนคอมพิวเตอร์เครื่องนี้ และใช้งานแบบออฟไลน์ได้หลังจากนั้น.
+4. แปลง. งานเข้าคิวในสองเลน, โปรเซสเซอร์กับการ์ดจอ, พร้อมขั้นตอนและเวลาที่เหลือ; ยกเลิก หยุดงานหนึ่งได้ทุกเวลา, และการออกจากแอปจะถามก่อน.
+5. เปิดผลลัพธ์. ภาพถ่าย 3D แสดงเป็น "ตาซ้าย", "เคียงข้างกัน", "สลับไปมา" (ภาพเคลื่อนไหวด้านบนของหน้านี้) หรือ "แดงแล้วก็ฟ้าอมเขียว" สำหรับแว่นตา; ฉากมี "เบิ่งตัวอย่างแบบ 3D", หมุนด้วยเมาส์หรือทัชแพด, และ "ส่งออกสำหรับแอป 3D อื่น (.glb)"; พาโนรามาเปิดในวิวเวอร์ 360°.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="กล่อง ทำ 3D (AI) ของแอป Windows: รูป 3D, ฉาก 3D, พาโนรามา 360° ที่เลือกไว้, และ เวอร์ชัน 3D ของรูป 360°; AI สร้างส่วนที่อยู่นอกขอบรูป; ประมาณ 96% ของพาโนรามานี้จะถูก AI สร้างขึ้นเอง; การแปลงที่เสร็จแล้วบ่ได้รับประกันว่าผลจะออกมาดี; ประมาณ 5 min ต่อรูปบนการ์ดจอนี้; ทำเวอร์ชัน 3D ด้วย, ติ๊กไว้; บันทึกที่: ข้างต้นฉบับ, หรือ โฟลเดอร์ที่เลือกเอง; ยกเลิก และ แปลง">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="วิวเวอร์ 360° ของแอป Windows เปิดพาโนรามาที่มันสร้างจากภาพถ่ายอ่าวที่มองจากภูเขา: ป้าย AI 360° กับ 360° ที่มุมขวาบน, ภาพถ่ายต้นฉบับมีเส้นขอบอยู่ตรงกลางใต้คำว่า รูปต้นฉบับ, และ AI สร้างส่วนที่อยู่นอกขอบรูป ที่ด้านล่าง">
+</p>
+
+| | ภาพถ่าย 3D | ฉาก 3D | พาโนรามา 360° |
+|---|---|---|---|
+| เจ้าได้อะไร | `<name>_3D_LRF_Full_SBS.jpg`, ภาพถ่าย 3D แบบเคียงข้างกัน: ภาพถ่ายของเจ้าสำหรับตาซ้าย, ตาขวาที่คำนวณ | `<name>_scene3D.jpg`, ภาพถ่ายที่บรรจุฉากไว้เป็นชั้นๆ | `<name>_360.jpg`, 6144 x 3072, และถ้าเปิด "ทำเวอร์ชัน 3D ด้วย", `<name>_360_3D.jpg` |
+| AI ทำอะไร | ประเมินความลึกของภาพถ่าย (Depth Anything V2 Small) | ประเมินรูปทรงของสถานที่ (MoGe-2) และเติมส่วนที่ภาพถ่ายซ่อนไว้ (LaMa), สำหรับฉากแบบชั้น | สร้างทุกอย่างที่อยู่นอกขอบภาพถ่าย (FLUX.2 klein 4B กับ LoRA 360°); พิกเซลของเจ้าเองอยู่ที่เดิม |
+| ใช้เวลาเท่าใด | บ่กี่วินาทีต่อภาพ | 15 ถึง 45 วินาทีต่อภาพ | ประมาณ 5 นาทีบนแล็ปท็อปที่มี RTX 4060, อีก 30 วินาทีสำหรับเวอร์ชัน 3D ของมัน |
+| มันทำงานบน | โปรเซสเซอร์ของคอมพิวเตอร์ Windows, Linux หรือ macOS | โปรเซสเซอร์ของคอมพิวเตอร์ Windows, Linux หรือ macOS | การ์ดจอที่รองรับ Vulkan และมีหน่วยความจำของมันเอง 8 GB, ในคอมพิวเตอร์ Windows หรือ Linux ที่มีหน่วยความจำ 16 GB; ลอง NVIDIA แล้ว, การ์ด AMD กับ Intel ยังบ่ได้ลอง; ยังบ่มีบน Mac |
+| ดาวน์โหลดเทื่อเดียว, ตอนเจ้าขอ | ประมาณ 110 MB | เพิ่มอีก 349 MB | เพิ่มอีกประมาณ 5.4 GB |
+| เบิ่งได้ที่ไหน | เป็น 3D ใน Meta Quest; "สลับไปมา" หรือ "แดงแล้วก็ฟ้าอมเขียว" บนคอมพิวเตอร์ | ใน Meta Quest, ที่เจ้าโน้มตัวเข้าไปเบิ่ง; "เบิ่งตัวอย่างแบบ 3D" บนคอมพิวเตอร์ | รอบตัวเจ้าใน Meta Quest, และในวิวเวอร์ 360° ทุกตัว |
+
+ไฟล์ใหม่ทุกไฟล์ไปอยู่ข้างต้นฉบับของมัน, บ่เคยเขียนทับมัน, หรือไปอยู่ในโฟลเดอร์ที่เจ้าเลือกเมื่อโฟลเดอร์ของต้นฉบับบ่รับไฟล์ใหม่; บนโฟลเดอร์เครือข่าย, ก็ต่อเมื่อเจ้าตกลงสำหรับโฟลเดอร์นั้นแล้ว ("Immuch360 เขียนแต่ไฟล์ใหม่ที่นั่น บ่แตะต้นฉบับเลย"). ไลบรารีเชื่อมแต่ละเวอร์ชันกับต้นฉบับของมันพร้อมป้าย, "AI 3D", "ฉาก 3D" หรือ "AI 360°", ในอัลบั้ม "เวอร์ชัน AI ของ Immuch360", ซึ่งอยู่นอกการสำรองข้อมูล Immich ของเจ้า เว้นแต่เจ้าจะเปิด "สำรองข้อมูลเวอร์ชัน AI ด้วย"; ระวัง, "เลือกทั้งหมด" ในอัลบั้มสำรองข้อมูลจะเลือกอัลบั้มนี้ด้วยและเปิดสวิตช์นั้น. เพื่อเบิ่งไฟล์ใน Quest, บันทึกมันไว้บน NAS ของเจ้า, สำรองมันไปที่เซิร์ฟเวอร์ Immich ของเจ้า หรือ, บน Windows, เปิด "แชร์คอมพิวเตอร์นี้ในเครือข่าย".
+
+**ใน Meta Quest**, ด้วย build 32:
+
+- **ความลึก AI**: เปิดภาพถ่ายแบบแบนใดก็ได้, จากไลบรารีของเจ้าหรือจากแชร์, แล้วกด "ความลึก AI" ในแถบด้านบน: เฮดเซ็ตประเมินความลึกเอง และแสดงภาพถ่ายเป็น 3D, "ความลึกที่ AI ประเมิน". โมเดลขนาด 99.5 MB ดาวน์โหลดเทื่อแรกที่เจ้ากด, และความลึกเก็บไว้ในแคช. "เปิดรูปความลึก AI แบบ 2.5D (ทดลอง)", ใน การตั้งค่า, ขั้นสูง, "AI แล้วก็ 3D", ทำให้วัตถุที่อยู่ใกล้ขยับอยู่หน้าพื้นหลังเมื่อเจ้าขยับหัว. บน Quest 2 หรือ Quest Pro ปุ่มจะเป็นสีเทา, "ยังบ่ได้ทดสอบบนแว่นนี้", จนกว่าเจ้าจะเปิด "ความลึก AI บน Quest 2 แล้วก็ Quest Pro (ยังบ่ได้ทดสอบ)" ที่นั่น.
+- **ภาพถ่าย 3D กับฉากจากคอมพิวเตอร์**: "เบิ่งแบบ 3D" แสดงภาพถ่าย 3D เป็น 3D จริง. "เบิ่งฉาก 3D" บนต้นฉบับ, หรือ "สำรวจฉาก 3D" บนฉาก, วางฉากไว้ในห้องของเจ้า: โน้มตัวเข้าไป, หรือเลื่อนด้วยจอยสติ๊กซ้ายภายในพื้นที่ที่สร้างขึ้นใหม่ ("พื้นที่เคลื่อนที่: ประมาณ 0.5 m ในแต่ละทิศ" สำหรับห้องด้านบนของหน้านี้); ชั้นต่างๆ จะแบนและมืดลงที่ขอบของมัน, กดจอยสติ๊กเพื่อรีเซ็ตมุมมอง, และ B หรือ Y เพื่อย้อนกลับ.
+- **พาโนรามา**: พาโนรามาที่สร้างขึ้นเปิดรอบตัวเจ้า, หันหน้าไปทางภาพถ่ายของเจ้า, พร้อม "AI สร้างส่วนที่อยู่นอกขอบรูป" และเส้นขอบบางๆ ของภาพถ่ายต้นฉบับ, ซึ่งจางหายไปหลังจากสองสามวินาที; เวอร์ชัน 3D ของมันเป็น 3D จริง.
+
+**บนโทรศัพท์, แท็บเล็ต และทีวี**, ไฟล์ที่คอมพิวเตอร์ทำเปิดตามที่มันเป็น, และบ่มีอะไรถูกสร้างที่นั่น. พาโนรามาเปิดในวิวเวอร์ 360° พร้อมป้าย "AI 360°", ประโยค และเส้นขอบ บนโทรศัพท์, แท็บเล็ต Android และ Android TV; บน iPhone, iPad, ทีวี LG กับ Samsung มันเปิดเป็นภาพถ่าย 360° ธรรมดาไปก่อน. ฉากแสดงเป็นภาพถ่ายของมัน, พร้อมเครื่องหมายเล็กๆ ฉาก 3D ที่มุม; บน Android, รายละเอียดของมันเพิ่ม "เปิดใน Meta Quest เพื่อสำรวจ". ภาพถ่าย 3D แสดงสองตาของมันเคียงข้างกัน.
+
+**อะไรจริง อะไรบ่จริง, บอกไว้เสมอ.** นี่คือหัวใจ, บ่แม่นตัวหนังสือเล็กๆ. ความลึกของภาพถ่าย 3D ประเมินจากภาพถ่ายเดียว, และส่วนที่ภาพถ่ายซ่อนไว้ถูกเติมขึ้นและบ่ใช่ของจริง. ฉากคือ "สร้างขึ้นใหม่จากรูปเดียว สำรวจภายในขอบเขตของมัน". พาโนรามาเก็บพิกเซลจริงของเจ้าไว้ที่เดิม และสร้างส่วนที่เหลือ, ประมาณ 90% ของทรงกลมสำหรับภาพถ่ายทั่วไป, และกล่องบอกว่าเท่าใดก่อนเจ้าเริ่ม. แอปบอกเรื่องนี้ตรงที่เจ้าเบิ่ง, ด้วย "ความลึกที่ AI ประเมิน", "AI สร้างส่วนที่อยู่นอกขอบรูป" และป้ายต่างๆ, และไฟล์ก็บอกด้วย: ใน XMP ของพวกเรา, และสำหรับฉากกับพาโนรามา ในประเภทแหล่งที่มาดิจิทัล IPTC ของภาพที่ทำด้วย AI, เพื่อให้แอปอื่นแยกพาโนรามาที่สร้างขึ้นออกจากภาพถ่าย 360° จริงได้. ต้นฉบับของเจ้าบ่เคยถูกแก้, และบ่มีอะไรออกจากคอมพิวเตอร์หรือเฮดเซ็ตของเจ้า. อย่างที่กล่องบอก: "การแปลงที่เสร็จแล้วบ่ได้รับประกันว่าผลจะออกมาดี."
+
+**สิ่งที่ตรวจแล้ว**, ภายในวันที่ 29 ตุลาคม 2026, ด้วย build ทดสอบของโค้ดนี้: ภาพถ่าย 3D โดยแอป Linux ใน container บน Linux PC, แบบออฟไลน์ด้วย; ฉากโดยแอป Windows บนแล็ปท็อปที่มี RTX 4060 Laptop GPU (สิบฉากใน 2 min 39 s) และโดยเอนจินบน Linux PC; บนแล็ปท็อปเครื่องนั้น, พาโนรามาสี่ภาพ ภาพละ 4 min 16 s ถึง 4 min 44 s, เวอร์ชัน 3D ของพวกมันประมาณ 30 s, พร้อมการยกเลิก, แอปที่ถูกปิดกลางคัน, โปรแกรมอื่นที่ยึดการ์ดจอไว้, และแอปบ่มีการเชื่อมต่อเครือข่ายเลยระหว่างการทดสอบ.
+
+ข้อจำกัด: ยังบ่มีพาโนรามา 360° บน Mac ("ยังบ่มีบน Mac"), และบ่มีถ้าบ่มีการ์ดจอที่เหมาะ, และกล่องบอกเหตุผล ("บ่พบการ์ดจอที่รองรับ Vulkan", "กราฟิกในตัวใช้หน่วยความจำร่วมกับคอมพิวเตอร์: ช้าเกินไปสำหรับพาโนรามา", พร้อม "ลองใช้กราฟิกในตัว (ยังบ่ได้ทดสอบ)" เพื่อลองอยู่ดี); ในพาโนรามา, ขอบภาพถ่ายของเจ้าอาจเห็นเป็นรอยต่อของโทนสีที่ชัด; ฉากส่วนใหญ่บอกว่า "มุมรับภาพเป็นการคาดเดา: รูปทรงอาจเพี้ยน"; ฉากต้องใช้หน่วยความจำว่างประมาณ 2 GB (บ่อย่างนั้นจะขึ้น "หน่วยความจำบ่พอ"); เมื่อสำรองเวอร์ชัน AI ไว้, ตัวหาไฟล์ซ้ำของ Immich จะจับคู่แต่ละภาพถ่ายกับฉากของมัน และมักแนะนำให้เก็บฉาก, ซึ่งเป็นไฟล์ที่หนักกว่า: ให้เก็บต้นฉบับไว้. โทรศัพท์กับทีวีบ่ได้ทำอะไร, และเฮดเซ็ตทำแค่ความลึก; ฉากมาจากภาพถ่ายเดียว, ยังบ่ได้มาจากหลายภาพถ่ายของสถานที่เดียวกัน.
+
+**ส่วนประกอบ**: บนคอมพิวเตอร์, การตั้งค่า, "AI แล้วก็ 3D" แสดงรายการส่วนประกอบของแต่ละฟีเจอร์พร้อมขนาด, ดาวน์โหลด และ เอาออก, แล้วก็ "เอาส่วนประกอบ AI ออกทั้งหมด" และ "ย้ายส่วนประกอบ AI" ไปไดรฟ์อื่น; ปิด "ฟีเจอร์ AI" จะซ่อนปุ่ม AI ทุกปุ่มและบ่ดาวน์โหลดอะไรเลย. แต่ละไฟล์ตรวจด้วย SHA-256 ของมัน. บน Windows มันอยู่ใน `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, ซึ่งตัวถอนการติดตั้งจะลบ (บ่แม่นโฟลเดอร์ที่เจ้าย้ายมันไป); บน Linux อยู่ใน `~/.local/share/immuch360/ai-components` บนระบบส่วนใหญ่, และบน Mac อยู่ใน `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. ใน Quest, "AI แล้วก็ 3D" อยู่ใน การตั้งค่า, ขั้นสูง, พร้อมแคชความลึก.
+
+เพิ่มเติม: บันทึกของ [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) และ [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), และ [โมเดล, สัญญาอนุญาต, แหล่งที่มา และค่าตรวจสอบของพวกมัน](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). คู่มือผู้ใช้จะได้บท AI ในรอบถัดไป; จนถึงตอนนั้น, ส่วนนี้คือคู่มือ.
 
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
@@ -279,8 +348,8 @@ Immuch360 รู้จักภาพถ่ายและวิดีโอแ�
 
 ภาพถ่ายของเจ้าบนจอใหญ่, ด้วยรีโมท. แอปทีวีทุกตัวทำงานแบบเดียวกัน: ลูกศรเลื่อนกรอบ, OK เปิด, Back ย้อนกลับ, และในภาพถ่าย 360° ลูกศรใช้มองไปรอบๆ. ทีวีบ่มีภาพถ่ายของตัวเอง, ก็เลยมันแสดงเซิร์ฟเวอร์ Immich ของเจ้า และ, บน Android TV กับทีวี LG, แชร์ในเครือข่าย, เซิร์ฟเวอร์ Plex และกล้องของเจ้า.
 
-- **Android TV กับ Google TV**: แอป Android ตัวเดียวกันนั่นแหละ, build 31, จาก GitHub จนกว่า Google Play จะให้มันบนทีวี.
-- **ทีวี LG ที่ใช้ webOS 5.0 ขึ้นไป**: แอปทีวีของมันเอง, เวอร์ชัน 1.0.0, อยู่ในการตรวจสอบของ LG สำหรับ LG Content Store.
+- **Android TV กับ Google TV**: แอป Android ตัวเดียวกันนั่นแหละ, build 32, จาก GitHub จนกว่า Google Play จะให้มันบนทีวี.
+- **ทีวี LG ที่ใช้ webOS 5.0 ขึ้นไป**: แอปทีวีของมันเอง, เวอร์ชัน 1.0.0, อยู่ในการตรวจสอบของ LG สำหรับ LG Content Store, และเวอร์ชัน 1.0.1 บน GitHub.
 - **ทีวี Samsung ที่ใช้ Tizen 5.5 ขึ้นไป**: แอปทีวีตัวเดียวกับบนทีวี LG, build ทดสอบ 0.2.0, ที่เจ้าเซ็นและติดตั้งเอง.
 
 <p align="center">
@@ -310,7 +379,7 @@ build 28 ได้รันบน Android TV จริงวันที่ 23 �
 
 1. ติดตั้งมันบนทีวีใน Developer Mode, ดู [ติดตั้ง](#lg-tvs-webos). มันมี app id ของตัวเอง, ก็เลยติดตั้งอยู่ข้างๆ Immich TV ของ Seeky91 ได้.
 2. เข้าสู่ระบบด้วยโทรศัพท์ของเจ้า (สแกน QR code), ด้วยอีเมลกับรหัสผ่าน, หรือด้วย API key.
-3. เลื่อนดูด้วยลูกศรกับ OK. ในวิวเวอร์, ซ้ายกับขวาไปภาพถ่ายหรือวิดีโอก่อนหน้าหรือถัดไป, ตอนวิดีโอเล่นอยู่ก็ได้; ตัวควบคุมซ่อนไป 5 s หลังกดปุ่มสุดท้าย; Info เปิดรายละเอียด; ปุ่มช่องใช้ซูม; ตัวชี้กับล้อของ Magic Remote ใช้ได้.
+3. เลื่อนดูด้วยลูกศรกับ OK. ในวิวเวอร์, ซ้ายกับขวาไปภาพถ่ายหรือวิดีโอก่อนหน้าหรือถัดไป, ตอนวิดีโอเล่นอยู่ก็ได้; ตัวควบคุมซ่อนไป 5 s หลังกดปุ่มสุดท้าย; Info เปิดรายละเอียด; ปุ่มช่องใช้ซูม; ตัวชี้กับล้อของ Magic Remote ใช้ได้. ตั้งแต่เวอร์ชัน 1.0.1, บน GitHub, ปุ่มขึ้นซูมภาพถ่ายเข้าทันที, แล้วลูกศรเลื่อนมัน และปุ่ม Back ซูมออก, และป้าย กำลังโหลด จะขึ้นมาตอนภาพถ่ายยังมาบ่ถึง.
 4. ภาพถ่าย 360° เปิดบนทรงกลม: กดลูกศรแต่ละเทื่อจะหมุนมันไปหนึ่งขั้น, และกดค้างไว้จะหมุนต่อไปเรื่อยๆ. "ดูเป็น 360°" ใช้ได้กับภาพ 2:1 ที่เซิร์ฟเวอร์บ่ได้ระบุไว้; ภาพ VR180 แสดงบนครึ่งทรงกลม และภาพ 3D แสดงด้วยตาเดียว. ปุ่มเหลืองกับน้ำเงินหมุนภาพแบบแบน.
 5. หลังเข้าสู่ระบบแล้ว, "แชร์ในเครือข่าย" ในแถบด้านข้างของแอป: เพิ่มแชร์ SMB, WebDAV หรือ DLNA, เซิร์ฟเวอร์ Plex (เข้าสู่ระบบด้วยโค้ดที่ plex.tv/link) หรือกล้อง Tapo. ภาพถ่ายของพวกมันเปิดในวิวเวอร์เดียวกัน, ภาพถ่าย 360° อยู่บนทรงกลม.
 
@@ -403,7 +472,7 @@ build 28 ได้รันบน Android TV จริงวันที่ 23 �
 2. ใน Settings, Asset Viewer, Videos, "แหล่งวิดีโอ" เลือกต้นฉบับเมื่ออุปกรณ์นี้ถอดรหัสมันได้, ต้นฉบับเสมอ, หรือสตรีมที่แปลงแล้วเสมอ.
 3. ถ้าจะโชว์ภาพถ่าย 360° ให้คนที่บ่มีแอปดู, แชร์มันด้วยลิงก์แชร์ของ Immich: แอปเว็บ Immich จะแสดงมันเป็นทรงกลมในเบราว์เซอร์ของเขา.
 
-build ปัจจุบัน, build 31, สร้างมาจาก `main` ของ Immich วันที่ 10 ตุลาคม 2026 (เวอร์ชัน 3.3.0-rc.0) เหมือน build 28 ถึง 30; build 28 ได้ทดสอบกับเซิร์ฟเวอร์ที่สร้างจาก `main` อันเดียวกันของ Immich, และ build 27 ยังได้ทดสอบกับเซิร์ฟเวอร์ Immich 3.2.4 ด้วย. โปรดแจ้งปัญหาที่ [Issues](https://github.com/freeKC/Immuch360/issues), บ่ใช่ไปที่โปรเจกต์ Immich.
+build ปัจจุบัน, build 32, สร้างมาจาก `main` ของ Immich วันที่ 10 ตุลาคม 2026 (เวอร์ชัน 3.3.0-rc.0) เหมือน build 28 ถึง 31; build 28 ได้ทดสอบกับเซิร์ฟเวอร์ที่สร้างจาก `main` อันเดียวกันของ Immich, และ build 27 ยังได้ทดสอบกับเซิร์ฟเวอร์ Immich 3.2.4 ด้วย. โปรดแจ้งปัญหาที่ [Issues](https://github.com/freeKC/Immuch360/issues), บ่ใช่ไปที่โปรเจกต์ Immich.
 
 อะไรที่เหมือนกันและอะไรที่ Immuch360 เพิ่มเข้ามา อยู่ใน [เทียบกับ Immich](#compared-with-immich).
 
@@ -553,6 +622,7 @@ Immuch360 เก็บแอป Immich มือถือไว้ทั้ง�
 | **เหมือนกัน** | เซิร์ฟเวอร์และบัญชี Immich ของเจ้า: backup, ไทม์ไลน์, อัลบั้ม, การค้นหา, ผู้คน, ความทรงจำ, การแชร์และพาร์ทเนอร์, ซิงก์กับเซิร์ฟเวอร์ของเจ้าทั้งหมด. มันติดตั้งข้างๆ แอปทางการได้. |
 | **บ่ต้องมีเซิร์ฟเวอร์** | มันรันได้โดยบ่มีเซิร์ฟเวอร์หรือบัญชีด้วย, กับภาพถ่ายและวิดีโอของอุปกรณ์, โฟลเดอร์ของคอมพิวเตอร์ และแชร์ในเครือข่าย; Plex กับกล้องใช้การเข้าสู่ระบบของพวกมันเอง, บ่เคยใช้บัญชี Immuch360. |
 | **360° และดื่มดำ** | ภาพถ่ายและวิดีโอ 360° เป็นทรงกลม, พาโนรามา, VR180 และ 3D, วิวแบบดื่มดำใน Meta Quest, ป้าย 360° และรายการ 360°. การดู 360° ในแอป Immich มือถือมีคนขอมาตั้งแต่มกราคม 2024 และยังบ่มี. |
+| **3D จากภาพถ่ายของเจ้า** | บนคอมพิวเตอร์, ภาพถ่ายเดียวกลายเป็นภาพถ่าย 3D, ฉาก 3D หรือพาโนรามา 360°, และใน Meta Quest 3 หรือ 3S ภาพถ่ายแบบแบนใดก็ได้ได้ความลึกของมัน: AI ทำบนคอมพิวเตอร์กับเฮดเซ็ตของเจ้าเอง, มีป้ายบอกแบบนั้นทั้งในแอปและในไฟล์, ต้นฉบับบ่เคยถูกแก้. แอป Immich บ่ได้ทำอะไรเป็น 3D. |
 | **บนทีวี** | แอปตัวเดียวกันบน Android TV กับ Google TV, และแอปทีวีสำหรับทีวี LG, ที่แพ็กไว้สำหรับทีวี Samsung เป็น build ทดสอบด้วย. แอปของ Immich เองติดตั้งบนทีวี LG บ่ได้. |
 | **เข้าสู่ระบบด้วยโทรศัพท์** | ทีวี, เฮดเซ็ต หรือคอมพิวเตอร์เข้าสู่ระบบเมื่อโทรศัพท์ของเจ้าสแกน QR code ของมัน, และรหัสผ่านของเจ้าอยู่แค่ในโทรศัพท์. แอป Immich บ่มีอะไรแบบนี้. |
 | **แชร์และ Plex** | แชร์ SMB, WebDAV และ DLNA และเซิร์ฟเวอร์ Plex, เล่นตรงที่มันอยู่, และส่งไฟล์ของพวกมันไปเซิร์ฟเวอร์ของเจ้าด้วยมือ. |
@@ -569,6 +639,8 @@ Immuch360 เก็บแอป Immich มือถือไว้ทั้ง�
 
 ไม่มีอะไรส่งไปให้ผู้พัฒนาเลย: บ่มีบัญชี, บ่มี analytics, บ่มี crash reporting service, บ่มีโฆษณา. แอปคุยกับแค่เซิร์ฟเวอร์ที่เจ้าเลือก (เซิร์ฟเวอร์ Immich ของเจ้า, แชร์ของเจ้า, เซิร์ฟเวอร์ Plex ของเจ้า, กล้องของเจ้า) และ, ถ้าบ่มีเซิร์ฟเวอร์, ก็บ่คุยกับใครเลย. รหัสผ่านและ token อยู่ในที่เก็บข้อมูลปลอดภัยของอุปกรณ์; ทีวี LG กับ Samsung บ่มีที่เก็บแบบนี้ให้แอป, ก็เลยบนทีวีพวกนี้มันอยู่ในที่เก็บของแอปเอง, บ่ได้เข้ารหัส. กล้องใช้ในอุปกรณ์เท่านั้น, โดยตัวเล่น Spatial 2.5D และเพื่อสแกนโค้ดของจอที่เจ้าจะเข้าสู่ระบบ; ภาพของมันไม่ถูกเก็บและไม่ถูกส่งไปไหนเลย. จอที่เข้าสู่ระบบจากโทรศัพท์ของเจ้าได้ session ของมันเอง, ส่งแบบเข้ารหัสในเครือข่ายบ้านของเจ้า, บ่เคยได้รหัสผ่านของเจ้า; ทีวี LG เข้าสู่ระบบผ่านหน้าเว็บในเบราว์เซอร์ของโทรศัพท์, ซึ่งส่งอีเมลกับรหัสผ่านของเจ้าไปที่ทีวีแบบบ่เข้ารหัสในเครือข่ายบ้านของเจ้า, และทีวีเก็บไว้แค่ session. ข้อมูลที่จับไว้และบันทึกการรับของหน้าโดรนอยู่ในอุปกรณ์ เว้นแต่เจ้าจะแชร์มัน: มันมีวิดีโอของโดรนและอาจมีตำแหน่งของมัน, และข้อมูลที่จับไว้มีหมายเลขซีเรียลของรีโมทกับตัวโดรน. ภาพและค่าต่างๆ ของโดรนไปจากโทรศัพท์แค่ถึงเฮดเซ็ตกับทีวีที่เจ้าจับคู่ไว้, ในเครือข่ายท้องถิ่นของเจ้า, บ่ได้เข้ารหัส, เหมือนโทรศัพท์ที่แชร์บน Wi-Fi. บ่มีอะไรส่งไปให้ DJI, หรือ TP-Link. นโยบายฉบับเต็มอยู่ใน [PRIVACY.md](../PRIVACY.md), และรายละเอียดแต่ละแหล่งอยู่ใน [คู่มือผู้ใช้](../docs/immuch360/user-guide.md#privacy).
 
+**ฟีเจอร์ AI** ทำงานบนอุปกรณ์ของเจ้าเท่านั้น. ภาพถ่าย, ความลึกของมัน, ฉากของมัน และพาโนรามาของมัน คำนวณบนคอมพิวเตอร์หรือในเฮดเซ็ตของเจ้า และบ่ถูกส่งไปไหน. แอปเชื่อมต่อแค่เพื่อดาวน์โหลดส่วนประกอบที่เจ้าขอ, จากรีลีสของโปรเจกต์นี้บน GitHub หรือ, ถ้าบ่ได้, จากหน้าทางการของโมเดลเมื่อมันมี, ตรวจแต่ละไฟล์ด้วย SHA-256 ของมัน, แล้วก็ทำงานแบบออฟไลน์. ONNX Runtime, ซึ่งรันโมเดลบนคอมพิวเตอร์, ส่ง telemetry ไปที่ Microsoft ใน build ทางการของมัน; Immuch360 ปิดมันไว้. ไฟล์ใหม่ไปอยู่ข้างต้นฉบับของเจ้า, บ่เคยเขียนทับ, และไปถึงเซิร์ฟเวอร์ Immich ของเจ้าก็ต่อเมื่อเจ้าเปิด "สำรองข้อมูลเวอร์ชัน AI ด้วย" ("เลือกทั้งหมด" ในอัลบั้มสำรองข้อมูลก็เปิดมันด้วย).
+
 <a id="the-project"></a>
 <a id="licences-and-credits"></a>
 ## สัญญาอนุญาตและเครดิต
@@ -577,14 +649,23 @@ Immuch360 เป็นเวอร์ชันไม่เป็นทางก�
 
 วิวเวอร์ภาพถ่าย 360° อ้างอิงมาจาก pull request ต้นทาง [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ของ dmitry-brazhenko, ซึ่งสร้างมาจาก prototype ของ bencefr ใน [#30192](https://github.com/immich-app/immich/pull/30192) อีกที; ขอบคุณทั้งสองคน. การแก้รีโมทในตัวกรองการค้นหากับการเรียงอัลบั้มบนทีวีเริ่มมาจากงานของ mlc70 ใน [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), และแถบปุ่มคำสั่งกับแผ่นตัวกรองที่สูง 80 เปอร์เซ็นต์ของจอมาจาก [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) ของ mlc70, โดยเก็บชื่อผู้เขียนไว้ตามเดิม; ขอบคุณ mlc70. แอป LG webOS, ซึ่งแพ็กสำหรับทีวี Samsung ด้วย, สร้างมาจาก [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ของ Seeky91, ภายใต้ license MIT, เก็บไว้ในโฟลเดอร์ของมันเอง; ขอบคุณ Seeky91. กล้อง Tapo เขียนขึ้นมาจากสิ่งที่ [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), และ [python-kasa](https://github.com/python-kasa/python-kasa) บอกไว้. วิว Meta Quest พึ่งพา Meta Spatial SDK, ที่บ่เป็น open source, ก็เลยเก็บไว้แค่ในเวอร์ชันนี้. แชร์ SMB ใช้ libsmb2, ภายใต้ LGPL 2.1 ขึ้นไป: ตั้งแต่ build 27 และ desktop build 7, ทุก build มีประกาศของมัน, ข้อความ license ของมัน และไฟล์ source ของมัน, `Immuch360-libsmb2-sources.tar.gz`, ซึ่งแนบไว้กับทุกรีลีสด้วย. build ของ Windows และ macOS มี libmpv (ไลบรารีของ [mpv](https://mpv.io), พร้อม [FFmpeg](https://ffmpeg.org)) ที่โปรเจกต์สร้างขึ้น, ภายใต้ LGPL, พร้อม license และ source ของมัน, ซึ่งมีรายชื่ออยู่ในหน้า license ของแอป (Licenses, ด้านล่างสุดของเมนูโปรไฟล์); รายละเอียดและ trademark ของแพลตฟอร์มที่พูดถึงในหน้านี้อยู่ใน [License และ trademark](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-ภาพในหน้านี้เป็นภาพจริงของแอป: ภาพโทรศัพท์จาก build Android ใน emulator, ภาพ Android TV จาก Google TV emulator, ภาพ LG กับ Samsung ในเบราว์เซอร์ที่ใช้แทนทีวี, ภาพ Windows บน PC Windows 11 และหน้าต่าง Meta Quest ใน Quest 3, ทั้งหมดใช้พาโนรามา CC0 จาก [Poly Haven](https://polyhaven.com); ภาพแบบดื่มดำของเฮดเซ็ตถ่ายบน Quest 3 ด้วยสื่อของผู้เขียนเอง, และภาพ iPad ใน iPad simulator, ด้วยพาโนรามา CC0 ของ Poly Haven. ภาพเปิดและภาพของทีวี, การเข้าสู่ระบบ, การหมุน, กล้อง และโดรน เป็นภาพวาดที่ทำมาสำหรับโปรเจกต์: บ่มีจอของแอป, บ่มีโลโก้ของบริษัทอื่น และบ่มีใบหน้า. แต่ละภาพ, พร้อมแหล่งที่มา, วันที่ และสัญญาอนุญาต, อยู่ในรายการใน [CAPTURES.md](../.github/readme/CAPTURES.md).
+ฟีเจอร์ AI รันโมเดลและเอนจินที่คนอื่นทำ, ดาวน์โหลดแค่ตอนเจ้าขอ, จากพรีรีลีส [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1), [ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2) และ [ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3) ของ repository นี้; แต่ละไฟล์, แหล่งที่มา, สัญญาอนุญาต และ SHA-256 ของมัน อยู่ใน [MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). ขอบคุณผู้สร้างพวกมัน:
+
+- **ภาพถ่าย 3D**: Depth Anything V2 Small (Apache 2.0), รันด้วย ONNX Runtime (MIT) บนคอมพิวเตอร์ และด้วย LiteRT 2.3.0 (Apache 2.0), ภายใน APK ของ Quest, ในเฮดเซ็ต.
+- **ฉาก 3D**: MoGe-2 ViT-S (MIT), ส่งออกเป็น ONNX โดยโปรเจกต์จาก weights MIT ของมัน, และ LaMa (Apache 2.0).
+- **พาโนรามา 360°**: FLUX.2 klein base 4B พร้อม VAE ของมัน (Apache 2.0), Qwen3 4B (Apache 2.0), LoRA 360° ของ nomadoor (Apache 2.0), MI-GAN (MIT) และ Real-ESRGAN x4plus (BSD 3 Clause), รันด้วย stable-diffusion.cpp และ ggml (MIT), สร้างโดย CI ของโปรเจกต์ และเซ็นบน Windows.
+
+LoRA 360° ของ nomadoor เป็น Apache 2.0 ตามการ์ดของมัน และเทรนด้วยภาพ CC0 และสาธารณสมบัติ, โดยมีส่วนหนึ่งเป็น CC BY: การให้เครดิตของส่วนนั้นจะมาใน MODEL-LICENSES.md เวอร์ชันถัดไป. บ่มีอะไรในนี้ที่อยู่ภายใต้สัญญาอนุญาตแบบห้ามใช้เชิงพาณิชย์, และบ่มีอะไรต้องใช้ CUDA. ONNX Runtime กับ LiteRT มีไลบรารีอื่นฝังอยู่, มีรายชื่ออยู่ในประกาศของพวกมัน, ในนั้นมี Eigen ภายใต้ MPL 2.0, สัญญาอนุญาต copyleft แบบอ่อน.
+
+ภาพในหน้านี้เป็นภาพจริงของแอป: ภาพโทรศัพท์จาก build Android ใน emulator, ภาพ Android TV จาก Google TV emulator, ภาพ LG กับ Samsung ในเบราว์เซอร์ที่ใช้แทนทีวี, ภาพ Windows บน PC Windows 11 และหน้าต่าง Meta Quest ใน Quest 3, ทั้งหมดใช้พาโนรามา CC0 จาก [Poly Haven](https://polyhaven.com); ภาพแบบดื่มดำของเฮดเซ็ตถ่ายบน Quest 3 ด้วยสื่อของผู้เขียนเอง, และภาพ iPad ใน iPad simulator, ด้วยพาโนรามา CC0 ของ Poly Haven. ภาพของตัวสร้าง AI เป็นผลลัพธ์จริงของแอป, ทำจากภาพถ่าย CC0 ของ Poly Haven, พร้อมภาพจริงสองภาพของแอป Windows. ภาพเปิดและภาพของทีวี, การเข้าสู่ระบบ, การหมุน, กล้อง และโดรน เป็นภาพวาดที่ทำมาสำหรับโปรเจกต์: บ่มีจอของแอป, บ่มีโลโก้ของบริษัทอื่น และบ่มีใบหน้า. แต่ละภาพ, พร้อมแหล่งที่มา, วันที่ และสัญญาอนุญาต, อยู่ในรายการใน [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## แผนงาน
 
 สิ่งที่ยังบ่เสร็จ อันที่น่าจะมาก่อนอยู่ข้างบน บ่มีอะไรในนี้เป็นคำสัญญา แล้วความคิดเห็นใน [ตัวติดตามปัญหา](https://github.com/freeKC/Immuch360/issues) ช่วยตัดสินว่าอะไรจะมาก่อน
 
-- **ร้านค้า**: Google Play (build 31 กำลังตรวจสอบตั้งแต่ 26 ตุลาคม; รายการทีวีกำลังตรวจสอบ), App Store (เวอร์ชัน 3.3.1 กำลังตรวจสอบ, แล้วก็เวอร์ชัน 3.3.2 กับ build 28), Meta Horizon Store กับ build 31 (build 28 อยู่ที่นั่นตั้งแต่ 25 ตุลาคม), LG Content Store (เวอร์ชัน 1.0.0 กำลังให้ LG ตรวจสอบตั้งแต่ 24 ตุลาคม), และทีหลังก็ร้านค้าของ Samsung.
+- **ร้านค้า**: Google Play (build 32 กำลังตรวจสอบตั้งแต่ 29 ตุลาคม, แทน build 31; รายการทีวีกำลังตรวจสอบ), App Store (เวอร์ชัน 3.3.1 กำลังตรวจสอบ, แล้วก็เวอร์ชัน 3.3.2 กับ build 28), Meta Horizon Store กับ build 32 (build 31 อยู่ที่นั่นตั้งแต่ 28 ตุลาคม), LG Content Store (เวอร์ชัน 1.0.0 กำลังให้ LG ตรวจสอบตั้งแต่ 24 ตุลาคม, แล้วก็เวอร์ชัน 1.0.1), และทีหลังก็ร้านค้าของ Samsung.
+- **ตัวสร้าง AI**: พาโนรามา 360° บน Mac; ฉากที่สร้างขึ้นใหม่จากหลายภาพถ่ายของสถานที่เดียวกัน; Gaussian splat (.spz, .ply) ที่ทำด้วยเครื่องมืออื่น, อ่านในเฮดเซ็ต; ป้าย AI ในแอป iOS, LG และ Samsung; พาโนรามาที่ลองบน Linux PC ที่มีการ์ดจอ, และบนการ์ด AMD กับ Intel.
 - **โดรน**: การบินกลางแจ้งเพื่อพิสูจน์ความสูงกับความเร็วที่เกิน 1.8 m และ 1.5 m/s และระยะสิ่งกีดขวางเทียบกับตลับเมตร, แล้วแสดงดาวเทียมกับระยะห่างจากจุดเริ่มต้น; ภาพแบบเสถียรของการส่งต่อที่ตรวจในเฮดเซ็ต; การส่งต่อไปทีวี LG กับ Samsung; โดรนบน iPhone กับ iPad, ยังบ่ได้เริ่ม; ทดสอบหน้านำเข้ากับ DJI Neo 2 จริง, แล้วรวมเสียงที่โทรศัพท์บันทึกเข้าไปในคลิปของมัน. บ่มีอะไรที่ส่งคำสั่งไปที่โดรนอยู่ในแผนก่อนการทดสอบพวกนั้น.
 - **ทีวี**: build 29 บน Android TV จริง, รวมทั้งตัวควบคุมวิดีโอและการเข้าสู่ระบบด้วยโทรศัพท์; แชร์, Plex และภาพสดของแอป LG บนทีวี LG จริง, และ webOS 26; build ทดสอบ Samsung 0.2.0 บนทีวี Samsung จริง, แล้วการเข้าสู่ระบบด้วยโทรศัพท์, แชร์, Plex และกล้องบนทีวี Samsung; แล้ววิดีโอ 360° บนทรงกลมของทีวี LG, เสียงของกล้องและวิดีโอบันทึกของมัน (บ่ก่อนเดือนธันวาคม 2026).
 - **กล้อง**: กล้อง Tapo ที่ตรวจกับกล้องจริง.
@@ -606,6 +687,7 @@ Immuch360 เป็นเวอร์ชันไม่เป็นทางก�
 - [Platform support: แต่ละระบบมีอะไร, ติดตั้งยังไง, ต่างกันยังไง](../docs/immuch360/platform-support.md)
 - [Known issues](../docs/immuch360/known-issues.md) และ [Troubleshooting](../docs/immuch360/troubleshooting.md), พร้อม log ที่ต้องแนบไปกับรายงาน
 - [รายละเอียดทางเทคนิค: architecture, Flutter กับ native module, media bridge, stitching pipeline, ตัวถอดรหัส](../docs/immuch360/technical-details.md)
+- [ส่วนประกอบ AI: แต่ละโมเดล, แหล่งที่มา, สัญญาอนุญาต, ขนาด และค่าตรวจสอบของมัน](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)
 - [ตัว render วิดีโอ 360° ของ desktop: libmpv, projection pass, และการวัดที่อยู่หลังมัน](../docs/immuch360/desktop-360-video-renderer.md)
 - [Release status: build, ร้าน, และสิ่งที่แต่ละร้านมี](../docs/immuch360/release-status.md)
 - [สร้างขึ้นเอง: โทรศัพท์, เฮดเซ็ต, ทีวี, และคอมพิวเตอร์](../docs/immuch360/build.md)
@@ -626,6 +708,7 @@ Immuch360 เป็นเวอร์ชันไม่เป็นทางก�
 - **การอ่านตามต้องการ**: บริดจ์ท้องถิ่นหนึ่งคอยให้ตัวเล่นใช้ byte range กับ token ต่อหนึ่ง session; บล็อกใหญ่ๆ, อ่านล่วงหน้า, และได้ถึงหกการเชื่อมต่อ SMB พร้อมกัน; รูปย่อมาจากเฟรมหนึ่งของวิดีโอแต่ละอัน; ไม่มีอะไรถูกคัดลอกเข้าอุปกรณ์เลย.
 - **ฮาร์ดแวร์**: ใช้ตัวถอดรหัสฮาร์ดแวร์ทุกที่ที่มี, พร้อมข้อจำกัดที่วัดไว้ (ขีดจำกัด H.264 ของ Quest 3, เลนส์ 2048x2048 สองตัวเป็นอย่างมากสำหรับตัวถอดรหัสซอฟต์แวร์); บน Windows ชิปกราฟิกวาดวิว 360° จากแต่ละเฟรมที่ถอดรหัสแล้ว, วัดขนาดเฟรมบนคอมพิวเตอร์แต่ละเครื่อง, จำได้ว่าเป็นชิปแบบรวมหรือแบบแยก.
 - **เฉพาะแต่ละแพลตฟอร์ม**: ไจโรสโคปกับตัวเล่น Spatial 2.5D บนโทรศัพท์; วิวแบบดื่มดำ, คอนโทรลเลอร์กับมือบน Quest; เลย์เอาต์ของรีโมท, ไดอะล็อกคีย์บอร์ด และแบนเนอร์บน Android TV; บนคอมพิวเตอร์, เมาส์กับคีย์บอร์ด, เต็มจอ, หน้าต่างเดียว, ไฟล์และโฟลเดอร์ที่เปิดด้วยแอปหรือลากมาวางบนหน้าต่างของมัน, อ่านได้เหมือนไฟล์ในโฟลเดอร์ของเจ้า, รวมทั้งภาพถ่าย HEIC, AVIF, TIFF และภาพถ่าย raw จากกล้องของโฟลเดอร์เมื่อ Windows มีตัวถอดรหัสให้มัน, แล้วก็ระบบป้องกันข้อมูลของ Windows สำหรับรหัสผ่านและ token.
-- **ความเป็นส่วนตัวตั้งแต่ออกแบบ**: บ่มีบัญชี, บ่มีคลาวด์, บ่มี analytics; รหัสผ่านและ token อยู่ในที่เก็บข้อมูลปลอดภัยของอุปกรณ์ (บนทีวี LG กับ Samsung, ซึ่งบ่มีที่เก็บแบบนี้ให้แอป, อยู่ในที่เก็บของแอปเอง, บ่ได้เข้ารหัส); จอที่เข้าสู่ระบบจากโทรศัพท์ได้ session ของมันเอง, ส่งแบบเข้ารหัสในเครือข่ายบ้าน, บ่เคยได้รหัสผ่าน (ทีวี LG ได้รหัสผ่านจากหน้าเว็บในเบราว์เซอร์ของโทรศัพท์, แบบบ่เข้ารหัสในเครือข่ายบ้าน, และเก็บไว้แค่ session); กล้องของตัวเล่น Spatial และของตัวสแกนโค้ดใช้ในอุปกรณ์เท่านั้น; แชร์, Plex, และกล้อง เข้าถึงได้แค่ในเครือข่ายของเจ้าเท่านั้น.
+- **ตัวสร้าง AI**: ภาพถ่าย 3D เป็น JPEG แบบเคียงข้างกันเต็มความกว้าง, ตาซ้ายก่อน, ความลึกจาก Depth Anything V2 Small ผ่าน ONNX Runtime 1.31.0 บนโปรเซสเซอร์ (1.23.2 บน Intel Mac); ฉากเป็น JPEG ที่บรรจุฉาก glTF แบบชั้นที่ตัดตรงที่ความลึกขาด, จาก MoGe-2 ViT-S และ LaMa, พร้อมการส่งออก .glb; พาโนรามา 360° ขนาด 6144 x 3072, สร้างโดย FLUX.2 klein base 4B กับ LoRA 360° ผ่าน stable-diffusion.cpp บน Vulkan, รอยต่อเชื่อมด้วย MI-GAN, รายละเอียดเพิ่มด้วย Real-ESRGAN และใส่พิกเซลจริงกลับคืน; เวอร์ชัน 3D ของภาพถ่าย 360° แบบบนล่าง; ในทุกไฟล์มี XMP ของพวกเรา (ชนิด, ที่มา, SHA-1 ของต้นฉบับ, แฟล็กคุณภาพ), และในฉากกับพาโนรามามีประเภทแหล่งที่มาดิจิทัล IPTC; ความลึกของ Quest ด้วย LiteRT, บนชิปกราฟิกหรือโปรเซสเซอร์ของมัน, เก็บไว้ในแคช; บนคอมพิวเตอร์, คิวสองเลน และประตูที่อ่านการ์ดจอผ่าน Vulkan และรอขณะที่โปรแกรมอื่นยึดหน่วยความจำของมัน; แต่ละส่วนประกอบตรวจด้วย SHA-256 ของมัน, ตัวสร้างของ Windows เซ็นแล้ว.
+- **ความเป็นส่วนตัวตั้งแต่ออกแบบ**: บ่มีบัญชี, บ่มีคลาวด์, บ่มี analytics; รหัสผ่านและ token อยู่ในที่เก็บข้อมูลปลอดภัยของอุปกรณ์ (บนทีวี LG กับ Samsung, ซึ่งบ่มีที่เก็บแบบนี้ให้แอป, อยู่ในที่เก็บของแอปเอง, บ่ได้เข้ารหัส); จอที่เข้าสู่ระบบจากโทรศัพท์ได้ session ของมันเอง, ส่งแบบเข้ารหัสในเครือข่ายบ้าน, บ่เคยได้รหัสผ่าน (ทีวี LG ได้รหัสผ่านจากหน้าเว็บในเบราว์เซอร์ของโทรศัพท์, แบบบ่เข้ารหัสในเครือข่ายบ้าน, และเก็บไว้แค่ session); กล้องของตัวเล่น Spatial และของตัวสแกนโค้ดใช้ในอุปกรณ์เท่านั้น; แชร์, Plex, และกล้อง เข้าถึงได้แค่ในเครือข่ายของเจ้าเท่านั้น; AI คำนวณในอุปกรณ์, ส่วนประกอบของมันดาวน์โหลดแค่ตอนเจ้าขอ และตรวจด้วย SHA-256 ของมัน, telemetry ของ ONNX Runtime ปิดไว้.
 
 </details>

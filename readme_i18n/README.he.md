@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>עברית</b> · שפות אחרות (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. המדיה שלך. כל מסך. כל זווית. תמונות וסרטונים שטוחים, 360° ו-3D מהמכשיר שלך, מה-NAS שלך, משרת ה-Immich שלך, מהמצלמות שלך ומהרחפן שלך. לא צריך חשבון. Android, iPhone ו-iPad, Android TV, טלוויזיות LG ו-Samsung, Meta Quest, Windows, macOS, Linux. איור בשעת דמדומים מול מפרץ ים: קופסת אחסון, טלפון, טאבלט, טלוויזיה, מחשב נייד וקסדה, רחפן בשמיים ומצלמה ביתית, מחוברים בקשתות של אור">
+  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. המדיה שלך. כל מסך. כל זווית. חדש: הפוך את התמונות שלך לתמונות 3D, לסצנות 3D ולפנורמות 360°. נוצר על ידי AI במחשב שלך. התמונות שלך אף פעם לא יוצאות ממנו. Android, iPhone ו-iPad, Android TV, טלוויזיות LG ו-Samsung, Meta Quest, Windows, macOS, Linux. איור, לא צילום מסך: בדמדומים מול מפרץ ים, אותו חדר ארבע פעמים, כתמונה שטוחה בטלפון, בשכבות מרחפות מול קסדה לבנה, כסצנה במחשב נייד ופרוש על רצועה מעוקלת כמו פנורמה, מחוברים בקשתות של אור">
 </p>
 
 # Immuch360
@@ -9,6 +9,17 @@
 **המדיה שלך. כל מסך. כל זווית.**
 
 תמונות וסרטונים שטוחים, 360° ו-3D מהמכשיר שלך, מה-NAS שלך, משרת ה-Immich שלך, מהמצלמות שלך ומהרחפן שלך. לא צריך חשבון. Immuch360 היא אפליקציה חופשית בקוד פתוח שקוראת את התמונות והסרטונים שלך במקום שבו הם נמצאים ומנגנת כל אחד מהם במציג שמתאים לו: שטוח, כספירה שמסתכלים סביב בתוכה, ב-3D, או סביבך לגמרי בקסדה. היא רצה בטלפונים, בטאבלטים, בטלוויזיות, בקסדות Meta Quest ובמחשבים.
+
+**חדש: התמונות השטוחות שלך, ב-3D.** בחר תמונה במחשב שלך וקבל תמונת 3D, סצנת 3D להיכנס אליה, או פנורמת 360° שמדמיינת את שאר המקום סביבך. ב-Meta Quest 3 או 3S, לחיצה אחת על "עומק AI" וכל תמונה שטוחה בולטת. ה-AI רץ במחשב ובקסדה שלך, ושום דבר לא נשלח לשום מקום. ניסיוני. [איך עושים את זה](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="תמונת 3D ש-Immuch360 יצרה מתמונה רגילה אחת של אולם ישן עם גלריה, עמודים ונברשת, בתצוגת נדנוד: העין השמאלית והעין הימנית שלה לסירוגין, כשש פעמים בשנייה, כך שהעמודים בולטים מהקירות">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="תמונה אחת, ארבע דרכים, כולן תוצרים אמיתיים של Immuch360: חדר לבן עם שולחן עגול וחלון, כפי שצולם; תמונת ה-3D שלו, שמציגה את העין שהאפליקציה מחשבת, תג 3D AI, עומק שהוערך על ידי AI; סצנת ה-3D שלו במבט משמאל ומימין, תג סצנת 3D; למטה, פנורמת ה-360° שנוצרה סביבו, תג 360° AI, התמונה המקורית מסומנת בקו מתאר באמצע וסטודיו שלם שהומצא סביבה, כולל כמה חפצים משונים">
+</p>
+<p align="center"><sub>תוצרים אמיתיים של האפליקציה מתמונות CC0 של Poly Haven, מוקטנים, לא מרוטשים, עם התגים של האפליקציה שנוספו לעמוד הזה. למעלה, תמונת 3D, שתי העיניים שלה לסירוגין; למטה, תמונה אחת בארבע דרכים, שתי תצוגות הסצנה רונדרו מקובץ הסצנה. כל מה שמחוץ לקו המתאר של הפנורמה הומצא על ידי AI.</sub></p>
 
 <p align="center">
   <sub>פיצול (fork) לא רשמי של אפליקציית המובייל של Immich. לא קשור ל-Immich או ל-FUTO. השם נשמע כמו "I am much 360".</sub>
@@ -22,6 +33,7 @@
 - [מה אפשר לעשות](#what-you-can-do)
 - [להשיג אותה במכשיר שלך](#get-it-on-your-device)
 - [איך עושים](#how-to)
+  - [להפוך תמונה אחת ל-3D, לסצנה, לפנורמה](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [לצפות בתמונות ובסרטונים שלך, עם שרת או בלעדיו](#watch-your-photos-and-videos-with-or-without-a-server)
   - [לחקור פנורמות, 360°, VR180 ו-3D](#explore-panoramas-360-vr180-and-3d)
   - [לצפות בטלוויזיה עם השלט](#watch-on-the-tv-with-the-remote): [Android TV ו-Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
@@ -45,6 +57,7 @@
 <a id="who-it-is-for"></a>
 ## למי זה מיועד
 
+- **התמונות שלך שטוחות** ואתה רוצה אותן ב-3D, כסצנה להתכופף לתוכה בקסדה, או בתוך פנורמת 360°, בלי מצלמת 3D: [להפוך תמונה אחת ל-3D, לסצנה, לפנורמה](#turn-one-photo-into-3d-a-scene-a-panorama), חדש, נוצר על ידי AI במחשב שלך.
 - **אתה מצלם ב-360° או ב-3D** ורוצה להסתכל סביב בתוך הצילומים שלך, ולא לראות אותם שטוחים, כפולים או מתוחים: [360°, VR180 ו-3D](#explore-panoramas-360-vr180-and-3d).
 - **התמונות והסרטים שלך נמצאים על NAS, מחשב, Plex או Immich** ואתה רוצה אותם בטלוויזיה בלי להעתיק כלום: [בטלוויזיה](#watch-on-the-tv-with-the-remote), [NAS, שיתופים ו-Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **יש לך Meta Quest** ואתה רוצה להיכנס לתוך התמונות והסרטונים שלך: [בקסדה](#step-inside-your-photos-and-videos-with-a-meta-quest).
@@ -52,23 +65,23 @@
 - **אתה שומר על הבית שלך עם מצלמות Tapo** ורוצה אותן ליד התמונות שלך, גם בטלוויזיה (עוד לא נבדק עם מצלמה אמיתית): [מצלמות הבית](#watch-your-home-cameras-on-the-big-screen).
 - **אתה מטיס רחפן DJI** ורוצה את התמונה החיה שלו בטלפון שלך בלי DJI Fly, וב-Meta Quest או ב-Android TV לאנשים שאיתך (ניסיוני): [הרחפן שלך](#see-what-your-drone-sees-on-your-phone).
 
-אין חשבון Immuch360 ליצור, ושום דבר לא מגיע אלינו: האפליקציה מתקשרת רק עם המכשירים שלך ועם השרתים שבחרת.
+אין חשבון Immuch360 ליצור, ושום דבר לא מגיע אלינו: האפליקציה מתקשרת רק עם המכשירים שלך ועם השרתים שבחרת, ומורידה רכיב AI רק כשאתה מבקש.
 
 <a id="which-screens"></a>
 ## אילו מסכים
 
 <div align="center">
 
-| פלטפורמה | איפה להשיג | מצב ב-26 באוקטובר 2026 |
+| פלטפורמה | איפה להשיג | מצב ב-29 באוקטובר 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> טלפונים וטאבלטים עם **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ב-Google Play (בנייה 25; בנייה 31 נשלחה לבדיקת Google ב-26 באוקטובר, במקום בנייה 29), בנייה 31 ב-GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> טלפונים וטאבלטים עם **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ב-Google Play (בנייה 25; בנייה 32 נשלחה לבדיקת Google ב-29 באוקטובר, במקום בנייה 31), בנייה 32 ב-GitHub, שפותחת את [פנורמות ה-360° שנוצרו במחשב](#turn-one-photo-into-3d-a-scene-a-panorama) עם סימון ה-AI שלהן |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ו-iPad** | App Store | גרסה 3.3.1 (בנייה 27) מחכה לבדיקת Apple מאז 22 באוקטובר, ואחריה גרסה 3.3.2 (בנייה 28), ב-TestFlight לבדיקות פנימיות; בינתיים אפשר [לבנות בעצמך](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ו-Google TV** | [APK](#android-tv-and-google-tv) · Google Play | בנייה 31 ב-GitHub: [התחברות עם הטלפון שלך](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) בסריקת קוד QR, [סרגל זמן, שמע וכתוביות](#on-android-tv-and-google-tv) לשלט בנגן הווידאו, ו[וידאו חי של רחפן](#watch-it-in-a-meta-quest-or-on-an-android-tv) שמועבר דרך טלפון (ניסיוני); רישום הטלוויזיה בבדיקת Google |
-| **טלוויזיות LG** עם webOS 5.0 ואילך | [.ipk, גרסה 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (בבדיקה) | גרסה 1.0.0, הוגשה ל-LG Content Store ב-24 באוקטובר, בבדיקות של LG ב-26 באוקטובר; עד שתפורסם, היא מותקנת ב-[Developer Mode](#lg-tvs-webos). היא רצה על טלוויזיות webOS 25 ב-Cloud Test Lab של LG |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ו-Google TV** | [APK](#android-tv-and-google-tv) · Google Play | בנייה 32 ב-GitHub: [התחברות עם הטלפון שלך](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) בסריקת קוד QR, [סרגל זמן, שמע וכתוביות](#on-android-tv-and-google-tv) לשלט בנגן הווידאו, ו[וידאו חי של רחפן](#watch-it-in-a-meta-quest-or-on-an-android-tv) שמועבר דרך טלפון (ניסיוני); רישום הטלוויזיה בבדיקת Google |
+| **טלוויזיות LG** עם webOS 5.0 ואילך | [.ipk, גרסה 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store (בבדיקה) | גרסה 1.0.0, הוגשה ל-LG Content Store ב-24 באוקטובר, בבדיקות של LG מאז 26 באוקטובר; גרסה 1.0.1, ב-GitHub מאז 27 באוקטובר, מבצעת זום לתמונה מהחצים ומציינת מתי תמונה עדיין נטענת; עד ש-LG תפרסם את האפליקציה, היא מותקנת ב-[Developer Mode](#lg-tvs-webos). גרסה 1.0.0 רצה על טלוויזיות webOS 25 ב-Cloud Test Lab של LG |
 | **טלוויזיות Samsung** עם Tizen 5.5 ואילך | [בניית בדיקה .wgt](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | בניית בדיקה 0.2.0 של אותה אפליקציית טלוויזיה, לחתימה עם תעודת Samsung משלך ולהתקנה ב-[Developer mode](#samsung-tvs-tizen); 0.1.0 רצה על טלוויזיית Samsung של בודק, ו-0.2.0 כוללת את התיקונים מההרצה הזו; לא בחנות של Samsung |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ו-3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | ב-Horizon Store (בנייה 28, זמינה מאז 25 באוקטובר; בנייה 31 נשלחה כהגשה הבאה ב-26 באוקטובר), בנייה 31 ב-GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [תוכנת התקנה או ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | בנייה 12 של שולחן העבודה, תצוגה מקדימה חתומה: תמונות, סרטונים שטוחים ו-360°, שיתופים, Plex, מצלמות (עוד לא נבדק עם מצלמה אמיתית), התחברות עם הטלפון שלך, תמונות שמסתובבות במקש אחד, הממשק ב-89 שפות |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ו-Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | בנייה 12 של שולחן העבודה, תצוגות מקדימות: תמונות, תמונות 360° וסרטונים שטוחים (סרטוני 360° מתנגנים שטוחים), שרת Immich ושיתופי רשת; בנייה 11 של שולחן העבודה נוסתה ב-26 באוקטובר בקונטיינר Ubuntu 24.04 וב-Mac; לא חתומה ב-macOS |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ו-3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | ב-Horizon Store (בנייה 31, זמינה מאז 28 באוקטובר; בנייה 32 הוגשה ב-29 באוקטובר), בנייה 32 ב-GitHub, עם [עומק AI](#turn-one-photo-into-3d-a-scene-a-panorama) לתמונה שטוחה ב-Quest 3 וב-3S (ניסיוני) |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [תוכנת התקנה או ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | בנייה 13 של שולחן העבודה, תצוגה מקדימה חתומה: תמונות, סרטונים שטוחים ו-360°, שיתופים, Plex, מצלמות (עוד לא נבדק עם מצלמה אמיתית), התחברות עם הטלפון שלך, תמונות שמסתובבות במקש אחד, הממשק ב-89 שפות, וחדש, [תמונות 3D, סצנות 3D ופנורמות 360° מהתמונות שלך](#turn-one-photo-into-3d-a-scene-a-panorama) על ידי AI (ניסיוני) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ו-Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | בנייה 13 של שולחן העבודה, תצוגות מקדימות: תמונות, תמונות 360° וסרטונים שטוחים (סרטוני 360° מתנגנים שטוחים), שרת Immich ושיתופי רשת, וחדש, [תמונות 3D וסצנות 3D](#turn-one-photo-into-3d-a-scene-a-panorama) שנוצרות על ידי AI מהתמונות שלך, עם פנורמות 360° ב-Linux על כרטיס מסך של 8 GB; בנייה 11 של שולחן העבודה נוסתה ב-26 באוקטובר בקונטיינר Ubuntu 24.04 וב-Mac; לא חתומה ב-macOS |
 
 *הסטטוסים מתעדכנים בכל גרסה; הפרטים, בנייה אחר בנייה, נמצאים ב[סטטוס הגרסאות](../docs/immuch360/release-status.md).*
 
@@ -96,6 +109,9 @@
 | 3D ו-VR180 | ✅ עין אחת | ✅ עין אחת | ✅ עין אחת | תמונות בעין אחת, סרטונים שטוחים | תמונות בעין אחת, סרטונים שטוחים | ✅ 3D אמיתי |
 | Spatial 2.5D (מעקב ראש) | ✅ ניסיוני | ✅ ניסיוני | ❌ | ❌ | ❌ | ❌ |
 | תמונות Spatial של Apple | ✅ עין אחת | ✅ עין אחת | ✅ עין אחת | ❌ | ❌ | ✅ 3D |
+| תמונת 3D מתמונת 2D (AI) | ✅ קורא אותה, זה לצד זה | ✅ קורא אותה, זה לצד זה | ✅ קורא אותה, זה לצד זה | ✅ קורא אותה, זה לצד זה | ✅ קורא אותה, זה לצד זה | ✅ עומק AI בקסדה (Quest 3 ו-3S), מוצגת ב-3D |
+| סצנת 3D מתמונת 2D (AI) | ✅ קורא אותה, כתמונה שלה | ✅ קורא אותה, כתמונה שלה | ✅ קורא אותה, כתמונה שלה | ✅ קורא אותה, כתמונה שלה | ✅ קורא אותה, כתמונה שלה | ✅ סיור ב-3D |
+| פנורמת 360° מתמונת 2D (AI) | ✅ קורא אותה, עם סימון ה-AI שלה | ✅ קורא אותה כתמונת 360°, סימון 🔜 | ✅ קורא אותה, עם סימון ה-AI שלה | ✅ קורא אותה כתמונת 360°, סימון 🔜 | ✅ קורא אותה כתמונת 360°, סימון 🔜 | ✅ קורא אותה סביבך, עם סימון ה-AI שלה |
 | קבצי Insta360, GoPro ו-DJI גולמיים | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | שיתופי SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB החל מ-webOS 22 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
@@ -121,6 +137,9 @@
 | 3D ו-VR180 | ✅ עין אחת | תמונות בעין אחת, סרטונים שטוחים | תמונות בעין אחת, סרטונים שטוחים |
 | Spatial 2.5D (מעקב ראש) | 🔜 בפיתוח | ❌ | ❌ |
 | תמונות Spatial של Apple | ✅ עין אחת | ✅ עין אחת, משרת | ✅ עין אחת |
+| תמונת 3D מתמונת 2D (AI) | ✅ | ✅ | ✅ עדיין לא נוסה ב-Mac |
+| סצנת 3D מתמונת 2D (AI) | ✅ | ✅ | ✅ עדיין לא נוסה ב-Mac |
+| פנורמת 360° מתמונת 2D (AI) | ✅ כרטיס מסך של 8 GB | ✅ כרטיס מסך של 8 GB, עדיין לא נוסה עם כרטיס כזה | 🔜 עדיין לא ב-Mac |
 | קבצי Insta360, GoPro ו-DJI גולמיים | ✅ | ✅ תמונות, סרטונים שטוחים | ✅ תמונות, סרטונים שטוחים |
 | שיתופי SMB, WebDAV, DLNA | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
@@ -134,38 +153,41 @@
 | קלט | עכבר, מקלדת | עכבר, מקלדת | עכבר, מקלדת, משטח מגע |
 | איפה להשיג | תוכנת התקנה או ZIP (תצוגה מקדימה חתומה) | .deb, .rpm (תצוגה מקדימה) | DMG או ZIP (תצוגה מקדימה לא חתומה) |
 
-*Linux ו-macOS: בנייה 11 של שולחן העבודה, נוסתה ב-26 באוקטובר 2026 ב-Ubuntu 24.04, בקונטיינר עם שרת Immich לבדיקה ושיתופים לבדיקה, ועל ידי המחבר ב-Mac.*
+*Linux ו-macOS: בנייה 11 של שולחן העבודה, נוסתה ב-26 באוקטובר 2026 ב-Ubuntu 24.04, בקונטיינר עם שרת Immich לבדיקה ושיתופים לבדיקה, ועל ידי המחבר ב-Mac. שורות ה-AI, עם בניות בדיקה של הקוד של בנייה 13 של שולחן העבודה, מ-27 עד 29 באוקטובר 2026: תמונות 3D שנוצרו על ידי אפליקציית Linux בקונטיינר במחשב Linux, סצנות על ידי אפליקציית Windows במחשב נייד עם RTX 4060 ועל ידי המנוע באותו מחשב Linux, פנורמות 360° באותו מחשב נייד; עדיין לא נוסה ב-Mac.*
 
 ✅ באפליקציה בפלטפורמה הזו · ❌ לא מוצע בה · 🔜 מתוכנן · 🔧 CI במקורות, נבנה והופעל על ידי ה-CI של הפרויקט במערכת הזו, עדיין לא נבדק שם עם שרת, שיתוף או מצלמה אמיתיים · שטוח בלבד: הסרטון מתנגן שטוח, עם הודעה, כי מנוע הרינדור של סרטוני 360° במחשבים קיים רק ב-Windows; בטלוויזיות LG עוד צריך למדוד אם webOS מעביר את פריימי הווידאו לספירה; בטלוויזיית Samsung של בודק, הדפדפן נתן פריימי וידאו שחורים לתצוגת ה-3D. "עין אחת" פירושו שקובץ 3D מציג את העין השמאלית שלו במסך שטוח. עמודות LG ו-Samsung הן אפליקציית טלוויזיה נפרדת אחת: גרסת LG 1.0.0, שהשיתופים וה-Plex שלה נבדקו מול שרתים אמיתיים והמצלמות שלה מול מצלמה מדומה במכונת הבנייה של הפרויקט, עדיין לא על טלוויזיה, ובניית הבדיקה של Samsung 0.2.0. לא כל ה-✅ נבדק עדיין במכשיר אמיתי: מה נבדק ואיפה, ומה נותר לאשר, מופיע ב[תכונות](../docs/immuch360/features.md), ב[תמיכה בפלטפורמות](../docs/immuch360/platform-support.md) וב[תאימות](../docs/immuch360/compatibility.md).
 
-- **טלפונים וטאבלטים עם Android**: האפליקציה המלאה, מגע וגירוסקופ, כל מקור.
+בשורות ה-AI, "קורא אותה" פירושו שהמכשיר פותח את מה שמחשב יצר, ולא יוצר דבר בעצמו: תמונת 3D מציגה את שתי העיניים שלה זו לצד זו, סצנה מוצגת כתמונה שלה עם סימן קטן סצנת 3D, פנורמה נפתחת במציג ה-360°. סימון ה-AI שלה הוא התג "360° AI", המשפט "נוצר על ידי AI מעבר לשולי התמונה" וקו המתאר של התמונה המקורית, שאפליקציות iPhone, iPad, LG ו-Samsung עדיין לא מציגות. רק המחשבים וה-Quest יוצרים משהו. מה שנבדק עבור השורות האלה נמצא [במדריך](#turn-one-photo-into-3d-a-scene-a-panorama), עדיין לא בתכונות ובתמיכה בפלטפורמות.
+
+- **טלפונים וטאבלטים עם Android**: האפליקציה המלאה, מגע וגירוסקופ, כל מקור; החל מבנייה 32 הם פותחים את פנורמות ה-360° שנוצרו במחשב עם סימון ה-AI שלהן.
 - **iPhone ו-iPad**: האפליקציה המלאה; לנגן הווידאו של 360° יש רק הפעלה והשהיה, השידור החי של Tapo וצד הטלפון של ההתחברות עם הטלפון מגיעים עם גרסת ה-iOS הבאה, וחיפוש ה-DLNA שולח בקשות unicast עד ש-Apple תעניק את הרשאת ה-multicast.
 - **Android TV ו-Google TV**: אותו APK, מופעל על ידי השלט, כהה כברירת מחדל; מציג בלבד: גיבוי, העלאות והעורך מוסתרים והפרטים לקריאה בלבד, אבל תמונה עדיין מסתובבת במקש אחד. כל מסנן חיפוש עובד עם השלט: "מיקום" ו"מצלמה" פותחים את האפשרויות שלהם ברשימה, מסנן התאריך מציג את כל האפשרויות שלו, והגיליונות "תגים", "מיקום", "תאריך", "סוג מדיה", "דירוג כוכבים" ו"אפשרויות תצוגה" מציבים את "נקה" ו"החל" ליד האפשרויות, במרחק לחיצה אחת ימינה, על רוב גובה המסך. רשת התמונות משתמשת בפחות זיכרון תמונה, וחץ לחוץ מזיז אותה לכל היותר כ-10 שורות בשנייה. החל מבנייה 28 היא מתחברת מטלפון, דרך קוד ה-QR שלה או הקוד הקצר שלה (נוסה בין שני אמולטורים עם הקוד מוקלד, עדיין לא עם מצלמה). החל מבנייה 29 סרגל הזמן של סרטון מקבל את המיקוד של השלט, לסרטים יש תפריטי שמע וכתוביות, והקובץ הבא של שיתוף נפתח עם פקדים משלו. נבדק על אמולטור Google TV; בנייה 28 רצה על Android TV אמיתי ב-23 באוקטובר, ובעיות הווידאו שנמצאו שם הן התיקונים של בנייה 29, שנבדקו על האמולטור, עדיין לא על הטלוויזיה הזו. החל מבנייה 30, כרטיס ה"רחפן" שלה מציג את הווידאו החי של רחפן DJI שטלפון מעביר, עם הערכים של הרחפן וטבעת המכשולים (ניסיוני): הצימוד והתמונה נוסו על Android TV של TCL ב-25 באוקטובר, עם גמגומים וגוון ירוק בהעברה הקודמת; ב-26 באוקטובר, עם בנייה 30, הזרם היציב שעונה על כך שמר על התמונה בטלוויזיה הזו לאורך הטיסה, עם 7 קפיאות.
 - **טלוויזיות LG עם webOS 5.0 ואילך**: אפליקציה נפרדת לשלט ול-Magic Remote, בנויה על [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): מציג Immich עם תמונות ה-360° על ספירה, תמונה שמסתובבת במקש אחד, ערכת נושא כהה ו-89 השפות של האפליקציה (הטקסטים המעטים של אפליקציית הטלוויזיה עצמה באנגלית בינתיים); שיתופי הרשת, Plex והשידור החי של מצלמות Tapo, דרך השירות שלה בטלוויזיה (SMB החל מ-webOS 22); סרטוני 360° שטוחים. גרסה 1.0.0, שהוגשה ל-LG Content Store ב-24 באוקטובר, רצה על טלוויזיות webOS 25 משלושה דגמים ב-Cloud Test Lab של LG: התחברות, דף ההתחברות בטלפון, תמונות, אלבומים, סרטון, תצוגת ה-360°, מצגת השקופיות, חיפוש ו-Back מכל עמוד. גרסה 0.1.0 רצה על טלוויזיית LG של בודק (webOS 22). השיתופים ו-Plex נבדקו מול שרתים אמיתיים והמצלמות מול מצלמה מדומה במכונת הבנייה של הפרויקט, עדיין לא על טלוויזיה.
 - **טלוויזיות Samsung עם Tizen 5.5 ואילך**: אפליקציית הטלוויזיה של LG ארוזה לטלוויזיות Samsung, בניית בדיקה 0.2.0, לחתימה ולהתקנה בעצמך: מציג Immich לשלט, עם התחברות בהקלדה (כתובת השרת, ואז אימייל וסיסמה או מפתח API), עם מצגת שקופיות, תמונות 360° על ספירה, תמונה שמסתובבת במקש אחד ועמוד "אודות" שמציין במה הטלוויזיה תומכת; עדיין בלי התחברות עם טלפון, שיתופים, Plex או מצלמות; סרטוני 360° שטוחים, עם הודעה. גרסה 0.1.0 רצה על טלוויזיית Samsung של בודק עם Tizen 9: תמונות וסרטונים עד 4K התנגנו, שום דבר מעל 4K לא פוענח, והדפדפן של הטלוויזיה נתן פריימי וידאו שחורים לתצוגת ה-3D. גרסה 0.2.0 כוללת את התיקונים מההרצה הזו (הודעה לסרטון שחורג ממפענחי הטלוויזיה או לסרטון שנתקע, סרטוני 360° שטוחים עם הודעה) ועדיין לא רצה על טלוויזיה.
-- **Meta Quest 2, Pro, 3 ו-3S**: האפליקציה כחלון, ובנוסף התצוגה הסוחפת, והחל מבנייה 30 כרטיס Drone שמציג את הווידאו החי של רחפן DJI שמועבר דרך טלפון (ניסיוני), שנבדק לראשונה עם בנייה 30; HEVC הוא הקודק הבטוח, H.264 נעצר בסביבות 4096x2304 ב-Quest 3; רק ה-Quest 3 נבדק, ה-Quest 2, ה-Quest Pro וה-Quest 3S עדיין לא נבדקו.
-- **Windows 10 ו-11**: תצוגה מקדימה, עם תיקיות במקום גלריה, נגן וידאו משלו (libmpv) לסרטונים שטוחים ו-360°, קבצים גולמיים מאוחדים בשבב הגרפיקה, קבצים ותיקיות שנפתחים עם התוכנה או שנגררים לחלון, תוכנת התקנה או ZIP, חתומים על ידי APROGSYS.
-- **Linux**: קובץ .deb וקובץ .rpm שנבנו על ידי ה-CI של הפרויקט, הותקנו ונבדקו ב-Ubuntu 22.04 ו-24.04, ב-Debian 12 וב-Fedora 40 ו-44; תמונות, תמונות 360° וסרטונים שטוחים דרך ה-libmpv של המערכת (סרטוני 360°, 3D וסרטונים גולמיים מתנגנים שטוחים עם הודעה), מצוירים במסלול החומרה גם בסשנים של X11 החל מבנייה 7 של שולחן העבודה; שיתופי SMB החל מ-Ubuntu 22.04 ו-Debian 12; בלי מחזיק מפתחות (GNOME Keyring או KWallet) האפליקציה כבר לא קופאת למשך 25 s בהפעלה הראשונה: היא שומרת את הסיסמאות לסשן בלבד ואומרת זאת בהגדרות שלה; עדיין לא הורץ על מחשב Linux אמיתי, רק תחת WSLg ובקונטיינרים.
-- **macOS**: קובץ DMG וקובץ ZIP שנבנו על ידי ה-CI של הפרויקט, אוניברסליים, לא חתומים (Gatekeeper שואל פעם אחת); האפליקציה מופעלת, פותחת את הקבצים והתיקיות שמועברים אליה, כולל מ-Finder, שומרת את הסודות שלה בצרור המפתחות של ההתחברות ומנגנת סרטונים שטוחים עם ה-libmpv שלה, נבדק תחילה ב-Mac של ה-CI של הפרויקט; ב-26 באוקטובר 2026 המחבר ניסה את בנייה 11 של שולחן העבודה על Mac, והיא עבדה.
+- **Meta Quest 2, Pro, 3 ו-3S**: האפליקציה כחלון, ובנוסף התצוגה הסוחפת, והחל מבנייה 30 כרטיס Drone שמציג את הווידאו החי של רחפן DJI שמועבר דרך טלפון (ניסיוני), שנבדק לראשונה עם בנייה 30; HEVC הוא הקודק הבטוח, H.264 נעצר בסביבות 4096x2304 ב-Quest 3; רק ה-Quest 3 נבדק, ה-Quest 2, ה-Quest Pro וה-Quest 3S עדיין לא נבדקו. החל מבנייה 32, ב-Quest 3 או 3S, עומק ה-AI מציג תמונה שטוחה ב-3D, מחושב בקסדה, ותמונות ה-3D, הסצנות והפנורמות שנוצרו במחשב נפתחות ב-3D (ניסיוני).
+- **Windows 10 ו-11**: תצוגה מקדימה, עם תיקיות במקום גלריה, נגן וידאו משלו (libmpv) לסרטונים שטוחים ו-360°, קבצים גולמיים מאוחדים בשבב הגרפיקה, קבצים ותיקיות שנפתחים עם התוכנה או שנגררים לחלון, תוכנת התקנה או ZIP, חתומים על ידי APROGSYS; החל מבנייה 13 של שולחן העבודה, "יצירת 3D (AI)" הופך את התמונות שלך לתמונות 3D ולסצנות 3D במעבד, ולפנורמות 360° בכרטיס מסך של 8 GB.
+- **Linux**: קובץ .deb וקובץ .rpm שנבנו על ידי ה-CI של הפרויקט, הותקנו ונבדקו ב-Ubuntu 22.04 ו-24.04, ב-Debian 12 וב-Fedora 40 ו-44; תמונות, תמונות 360° וסרטונים שטוחים דרך ה-libmpv של המערכת (סרטוני 360°, 3D וסרטונים גולמיים מתנגנים שטוחים עם הודעה), מצוירים במסלול החומרה גם בסשנים של X11 החל מבנייה 7 של שולחן העבודה; שיתופי SMB החל מ-Ubuntu 22.04 ו-Debian 12; בלי מחזיק מפתחות (GNOME Keyring או KWallet) האפליקציה כבר לא קופאת למשך 25 s בהפעלה הראשונה: היא שומרת את הסיסמאות לסשן בלבד ואומרת זאת בהגדרות שלה; החל מבנייה 13 של שולחן העבודה, "יצירת 3D (AI)" יוצר תמונות 3D וסצנות במעבד, ופנורמות 360° בכרטיס מסך של 8 GB (נוסה רק בגודל קטן, על גרפיקה של Intel); עדיין לא הורץ על מחשב Linux אמיתי, רק תחת WSLg ובקונטיינרים.
+- **macOS**: קובץ DMG וקובץ ZIP שנבנו על ידי ה-CI של הפרויקט, אוניברסליים, לא חתומים (Gatekeeper שואל פעם אחת); האפליקציה מופעלת, פותחת את הקבצים והתיקיות שמועברים אליה, כולל מ-Finder, שומרת את הסודות שלה בצרור המפתחות של ההתחברות ומנגנת סרטונים שטוחים עם ה-libmpv שלה, נבדק תחילה ב-Mac של ה-CI של הפרויקט; ב-26 באוקטובר 2026 המחבר ניסה את בנייה 11 של שולחן העבודה על Mac, והיא עבדה. החל מבנייה 13 של שולחן העבודה, תמונות 3D וסצנות נוצרות גם במעבד (עדיין לא נוסה ב-Mac); עדיין אין פנורמות 360° ב-Mac.
 
 <a id="what-you-can-do"></a>
 ## מה אפשר לעשות
 
 כל שורה פותחת למטה את ההוראות שלה. המדריך המלא, עם כל האפשרויות, ההודעות והמגבלות, נמצא ב[מדריך למשתמש](../docs/immuch360/user-guide.md).
 
-1. [לצפות בתמונות ובסרטונים שלך, עם שרת או בלעדיו](#watch-your-photos-and-videos-with-or-without-a-server): גלריה ונגן, במכשיר לבד או עם שרת ה-Immich שלך.
-2. [להסתכל סביב בתמונות ובסרטוני 360°, פנורמות, VR180 ו-3D](#explore-panoramas-360-vr180-and-3d): ספירה שמסובבים באצבע, עם הטלפון או עם השלט.
-3. [לצפות בטלוויזיה עם השלט](#watch-on-the-tv-with-the-remote): Android TV ו-Google TV, טלוויזיות LG, וטלוויזיות Samsung כבניית בדיקה.
-4. [לחבר טלוויזיה, קסדה או מחשב עם הטלפון שלך](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): לסרוק את קוד ה-QR, לאשר, לצפות.
-5. [להיכנס לתוך התמונות והסרטונים שלך עם Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° סביבך, 3D ב-3D אמיתי.
-6. [לנגן את הקבצים של NAS, מחשב, שרת מדיה או Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): במקומם, בלי להעתיק כלום.
-7. [לשמור על ספריית ה-Immich שלך, ועוד](#keep-your-immich-library-with-more): אפליקציית Immich לנייד, ובנוסף המציגים הסוחפים והמסכים הגדולים.
-8. [לצפות במצלמות ה-Tapo שלך](#watch-your-home-cameras-on-the-big-screen): בשידור חי, וההקלטות של כרטיס הזיכרון שלהן; עוד לא נבדק עם מצלמה אמיתית.
-9. [לראות את הווידאו החי של רחפן ה-DJI שלך בטלפון](#see-what-your-drone-sees-on-your-phone), ו[ב-Meta Quest או ב-Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): דרך בקר DJI RC-N3, קבלה בלבד. *ניסיוני.*
-10. [להעביר ל-Immich את התמונות והסרטונים של רחפן או של כרטיס מצלמה](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): דרך USB, מטלפון Android. *ניסיוני.*
-11. [לפתוח את הקבצים הגולמיים של מצלמות 360°](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX ו-DJI Osmo 360, מאוחדים על ידי האפליקציה.
-12. [לסובב תמונה במקש אחד](#turn-a-photo-with-one-key): כפתור, מקש במקלדת או מקש צבעוני בשלט.
-13. [להשתמש במחשב שלך כנגן המדיה](#use-your-computer-as-the-media-player): התיקיות שלך, "פתח באמצעות", קובץ שנגרר לחלון. *תצוגה מקדימה.*
+1. [להפוך תמונה אחת לתמונת 3D, לסצנת 3D או לפנורמת 360°](#turn-one-photo-into-3d-a-scene-a-panorama): נוצר על ידי AI במחשב שלך, נצפה ב-3D ב-Meta Quest, שגם נותן עומק לכל תמונה שטוחה. *חדש, ניסיוני.*
+2. [לצפות בתמונות ובסרטונים שלך, עם שרת או בלעדיו](#watch-your-photos-and-videos-with-or-without-a-server): גלריה ונגן, במכשיר לבד או עם שרת ה-Immich שלך.
+3. [להסתכל סביב בתמונות ובסרטוני 360°, פנורמות, VR180 ו-3D](#explore-panoramas-360-vr180-and-3d): ספירה שמסובבים באצבע, עם הטלפון או עם השלט.
+4. [לצפות בטלוויזיה עם השלט](#watch-on-the-tv-with-the-remote): Android TV ו-Google TV, טלוויזיות LG, וטלוויזיות Samsung כבניית בדיקה.
+5. [לחבר טלוויזיה, קסדה או מחשב עם הטלפון שלך](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): לסרוק את קוד ה-QR, לאשר, לצפות.
+6. [להיכנס לתוך התמונות והסרטונים שלך עם Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° סביבך, 3D ב-3D אמיתי.
+7. [לנגן את הקבצים של NAS, מחשב, שרת מדיה או Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): במקומם, בלי להעתיק כלום.
+8. [לשמור על ספריית ה-Immich שלך, ועוד](#keep-your-immich-library-with-more): אפליקציית Immich לנייד, ובנוסף המציגים הסוחפים והמסכים הגדולים.
+9. [לצפות במצלמות ה-Tapo שלך](#watch-your-home-cameras-on-the-big-screen): בשידור חי, וההקלטות של כרטיס הזיכרון שלהן; עוד לא נבדק עם מצלמה אמיתית.
+10. [לראות את הווידאו החי של רחפן ה-DJI שלך בטלפון](#see-what-your-drone-sees-on-your-phone), ו[ב-Meta Quest או ב-Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): דרך בקר DJI RC-N3, קבלה בלבד. *ניסיוני.*
+11. [להעביר ל-Immich את התמונות והסרטונים של רחפן או של כרטיס מצלמה](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): דרך USB, מטלפון Android. *ניסיוני.*
+12. [לפתוח את הקבצים הגולמיים של מצלמות 360°](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX ו-DJI Osmo 360, מאוחדים על ידי האפליקציה.
+13. [לסובב תמונה במקש אחד](#turn-a-photo-with-one-key): כפתור, מקש במקלדת או מקש צבעוני בשלט.
+14. [להשתמש במחשב שלך כנגן המדיה](#use-your-computer-as-the-media-player): התיקיות שלך, "פתח באמצעות", קובץ שנגרר לחלון. *תצוגה מקדימה.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -196,7 +218,7 @@
 
 1. גרסה 1.0.0 בבדיקת LG. עד שהיא תהיה ב-LG Content Store, היא מותקנת ב-Developer Mode: צריך טלוויזיית LG עם webOS 5.0 ואילך, מחשב באותה רשת וחשבון מפתח LG חינמי. בטלוויזיה, התקן את Developer Mode מ-LG Content Store, התחבר, הפעל את Dev Mode Status ותן לטלוויזיה להפעיל את עצמה מחדש; רשום את כתובת ה-IP שלה ואת ביטוי הסיסמה שהאפליקציה מציגה.
 2. במחשב, התקן את webOS CLI (Node.js 18 ואילך): `npm install -g @webos-tools/cli`, ואז רשום את הטלוויזיה עם `ares-setup-device` (כתובת ה-IP שלה, פורט 9922, משתמש `prisoner`) ו-`ares-novacom --device <name> --getkey`, שמבקש את ביטוי הסיסמה.
-3. מ[הגרסה המקדימה של webOS 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), הורד את `Immuch360-webOS-1.0.0.ipk` לטלוויזיית UHD, או את `Immuch360-webOS-1.0.0-1280x720.ipk` לטלוויזיית Full HD, ש-LG נותנת לה אפליקציות ב-1280x720. בדוק אותו מול `SHA256SUMS.txt`, ואז `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) של webosbrew עושה את אותו הדבר בלי שורת הפקודה.
+3. מ[הגרסה המקדימה של webOS 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1), הורד את `Immuch360-webOS-1.0.1.ipk` לטלוויזיית UHD, או את `Immuch360-webOS-1.0.1-1280x720.ipk` לטלוויזיית Full HD, ש-LG נותנת לה אפליקציות ב-1280x720. בדוק אותו מול `SHA256SUMS.txt`, ואז `ares-install --device <name> Immuch360-webOS-1.0.1.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) של webosbrew עושה את אותו הדבר בלי שורת הפקודה.
 4. סשן של Developer Mode נמשך 1000 שעות, וכפתור EXTEND באפליקציית Developer Mode מחדש אותו; כשהוא פג, הטלוויזיה מסירה את האפליקציות שהותקנו בדרך הזו. הפרטים נמצאים ב-[webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 5. כשהאפליקציה תהיה ב-LG Content Store, הסר את העותק של Developer Mode והתקן אותה מהחנות.
 
@@ -217,23 +239,70 @@
 <a id="windows"></a>
 ### Windows
 
-1. הורד את `Immuch360-Desktop-3.3.0-rc.0-desktop.12-windows-x64-setup.exe` מ[הגרסה המקדימה של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) (עם `SHA256SUMS.txt` כדי לבדוק אותו) ופתח אותו. תוכנת ההתקנה וה-ZIP חתומים; Windows מציג את APROGSYS כמפרסם. כל עוד המפרסם חדש עבור SmartScreen, הוא עשוי עדיין לשאול פעם אחת: "מידע נוסף", ואז "הפעל בכל זאת".
+1. הורד את `Immuch360-Desktop-3.3.0-rc.0-desktop.13-windows-x64-setup.exe` מ[הגרסה המקדימה של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) (עם `SHA256SUMS.txt` כדי לבדוק אותו) ופתח אותו. תוכנת ההתקנה וה-ZIP חתומים; Windows מציג את APROGSYS כמפרסם. כל עוד המפרסם חדש עבור SmartScreen, הוא עשוי עדיין לשאול פעם אחת: "מידע נוסף", ואז "הפעל בכל זאת".
 2. בחר ב"Install for me only" (בלי הרשאות מנהל) או ב"Install for all users", ואז את שפת תוכנת ההתקנה, זו של Windows שכבר נבחרה.
 3. הפעל את Immuch360 Desktop מתפריט ההתחלה. תמונות וסרטונים מקבלים אותה ב"פתח באמצעות" (לחיצה ימנית על קובץ, פתח באמצעות); היא לעולם לא הופכת את עצמה לתוכנת המחדל שלהם. ההפעלה הראשונה של בנייה חדשה יכולה לקחת עד דקה בזמן ש-Windows סורק את הקבצים.
 4. Windows 10 או 11, 64 סיביות. לעדכון, פתח את תוכנת ההתקנה של הבנייה הבאה: ההתחברות, התיקיות וההגדרות שלך נשארות. קובץ ה-ZIP של אותה גרסה הוא אותה תוכנה כתיקייה, לחילוץ בכל מקום ולהפעלת `immuch360.exe` ממנה. במחשב שבו בניות 4 עד 8 של שולחן העבודה נעצרו בהפעלה עם "duplicate column name: group_date", בנייה 9 פותחת את מסד הנתונים הזה ושומרת את הנתונים שלך.
 
 ### Linux
 
-ב-Ubuntu 22.04 ואילך וב-Debian 12 ואילך: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-amd64.deb`; ב-Fedora 40 ואילך: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-x86_64.rpm`, שניהם מ[הגרסה המקדימה של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12). לאחר מכן הפעל את Immuch360 Desktop מהיישומים שלך. תצוגה מקדימה: התיקיות של המחשב, תמונות ותמונות 360° כספירה, וסרטונים שטוחים דרך ה-libmpv של המערכת, שהחבילה מתקינה (סרטוני 360°, 3D וסרטונים גולמיים מתנגנים שטוחים, עם הודעה); שיתופי SMB עובדים החל מ-Ubuntu 22.04 ו-Debian 12. ב-Fedora, סרטוני מצלמה דורשים את ה-FFmpeg של RPM Fusion. בלי GNOME Keyring או KWallet, הסיסמאות נשמרות לסשן בלבד, וההגדרות של האפליקציה אומרות זאת.
+ב-Ubuntu 22.04 ואילך וב-Debian 12 ואילך: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-amd64.deb`; ב-Fedora 40 ואילך: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-x86_64.rpm`, שניהם מ[הגרסה המקדימה של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13). לאחר מכן הפעל את Immuch360 Desktop מהיישומים שלך. תצוגה מקדימה: התיקיות של המחשב, תמונות ותמונות 360° כספירה, וסרטונים שטוחים דרך ה-libmpv של המערכת, שהחבילה מתקינה (סרטוני 360°, 3D וסרטונים גולמיים מתנגנים שטוחים, עם הודעה); שיתופי SMB עובדים החל מ-Ubuntu 22.04 ו-Debian 12. ב-Fedora, סרטוני מצלמה דורשים את ה-FFmpeg של RPM Fusion. בלי GNOME Keyring או KWallet, הסיסמאות נשמרות לסשן בלבד, וההגדרות של האפליקציה אומרות זאת.
 
 ### macOS
 
-פתח את `Immuch360-Desktop-3.3.0-rc.0-desktop.12-macos.dmg` מ[הגרסה המקדימה של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) וגרור את האפליקציה ליישומים (Apple silicon ו-Intel, macOS 12 ואילך). היא עדיין לא חתומה ולא מאושרת (notarized): לחץ עליה עם Control ובחר לפתוח אותה ב-macOS 14 ומטה, או בחר "פתח בכל זאת" ב"הגדרות המערכת, פרטיות ואבטחה" ב-macOS 15 ואילך. המחבר ניסה את בנייה 11 של שולחן העבודה על Mac ב-26 באוקטובר 2026, והיא עבדה; מחשבי Mac וגרסאות macOS אחרים לא נוסו, ודיווחים מתקבלים בברכה.
+פתח את `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` מ[הגרסה המקדימה של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) וגרור את האפליקציה ליישומים (Apple silicon ו-Intel, macOS 12 ואילך). היא עדיין לא חתומה ולא מאושרת (notarized): לחץ עליה עם Control ובחר לפתוח אותה ב-macOS 14 ומטה, או בחר "פתח בכל זאת" ב"הגדרות המערכת, פרטיות ואבטחה" ב-macOS 15 ואילך. המחבר ניסה את בנייה 11 של שולחן העבודה על Mac ב-26 באוקטובר 2026, והיא עבדה; מחשבי Mac וגרסאות macOS אחרים לא נוסו, ודיווחים מתקבלים בברכה.
 
 <a id="how-to"></a>
 ## איך עושים
 
 כל סעיף אומר מה תקבל, אחר כך את השלבים, ואחר כך את המגבלות. ב[מדריך למשתמש](../docs/immuch360/user-guide.md) יש כל אפשרות וכל הודעה.
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### להפוך תמונה אחת ל-3D, לסצנה, לפנורמה
+
+רוב התמונות שלך שטוחות, ואי אפשר לחזור אחורה ולצלם אותן שוב ב-3D. Immuch360 נותנת להן עומק. במחשב שלך, תמונה אחת הופכת ל**תמונת 3D**, ל**סצנת 3D** שאתה מתכופף לתוכה בקסדה, או ל**פנורמת 360°** שמדמיינת את שאר המקום סביבך. Quest 3 או 3S יוצרים את העומק בעצמם, לכל תמונה שטוחה. הכל רץ במחשב ובקסדה שלך: בלי ענן, בלי חשבון, המקוריים שלך לעולם לא משתנים. חדש בבנייה 32 ובבנייה 13 של שולחן העבודה, ניסיוני ומופעל כברירת מחדל. לאפליקציית Immich אין שום דבר כזה.
+
+**במחשב שלך**, עם בנייה 13 של שולחן העבודה ב-Windows, Linux או macOS:
+
+1. בחר תמונה אחת או יותר בספרייה או בתיקייה, ואז "יצירת 3D (AI)".
+2. בחר מה אתה רוצה: "תמונת 3D", "סצנת 3D", "פנורמת 360°", או "גרסת 3D של תמונת 360°" לצילומי ה-360° שלך. החלון אומר מה ה-AI יעריך או ימציא ("כ-96% מהפנורמה הזו יומצאו על ידי AI"), בערך כמה זמן זה לוקח במחשב הזה, ולאן הקובץ הולך: "ליד המקור" או "תיקייה לבחירתי". סוג שהמחשב הזה לא יכול ליצור נשאר אפור, עם הסיבה, כמו "עדיין לא ב-Mac" או "לכרטיס המסך יש 6.0 GiB זיכרון, פנורמות 360° צריכות 7.5 GiB".
+3. בפעם הראשונה, החלון מציע את הרכיבים של הסוג הזה: הורדה, פעם אחת. הם רצים במחשב הזה ועובדים אחר כך בלי חיבור לרשת.
+4. המרה. המשימות עומדות בתור בשני מסלולים, המעבד וכרטיס המסך, עם השלבים שלהן והזמן שנותר; ביטול עוצר אחת מהן בכל רגע, ויציאה מהאפליקציה שואלת קודם.
+5. פתח את התוצאה. תמונת 3D מוצגת כ"עין שמאל", "זה לצד זה", "נדנוד" (האנימציה בראש העמוד הזה) או "אדום וציאן" למשקפיים; לסצנה יש "תצוגה מקדימה ב-3D", שמסובבים עם העכבר או משטח המגע, ו"ייצוא לאפליקציות 3D אחרות (.glb)"; פנורמה נפתחת במציג ה-360°.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="חלון יצירת 3D (AI) של אפליקציית Windows: תמונת 3D, סצנת 3D, פנורמת 360°, נבחר, וגרסת 3D של תמונת 360°; נוצר על ידי AI מעבר לשולי התמונה; כ-96% מהפנורמה הזו יומצאו על ידי AI; המרה שהסתיימה אינה מבטיחה תוצאה טובה; כ-5 min לתמונה בכרטיס המסך הזה; יצירה גם של גרסת ה-3D, מסומן; שמירה ב: ליד המקור, או תיקייה לבחירתי; ביטול והמרה">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="מציג ה-360° של אפליקציית Windows פותח פנורמה שהיא יצרה מתמונה של מפרץ שנראה מהר: התגים 360° AI ו-360° למעלה מימין, התמונה המקורית מסומנת בקו מתאר באמצע מתחת למילים התמונה המקורית, והמשפט נוצר על ידי AI מעבר לשולי התמונה למטה">
+</p>
+
+| | תמונת 3D | סצנת 3D | פנורמת 360° |
+|---|---|---|---|
+| מה מקבלים | `<name>_3D_LRF_Full_SBS.jpg`, תמונת 3D בתצורת זה לצד זה: התמונה שלך לעין השמאלית, עין ימנית מחושבת | `<name>_scene3D.jpg`, תמונה שנושאת את הסצנה, בשכבות | `<name>_360.jpg`, 6144 x 3072, ועם "יצירה גם של גרסת ה-3D", `<name>_360_3D.jpg` |
+| מה ה-AI עושה | מעריך את העומק של התמונה (Depth Anything V2 Small) | מעריך את צורת המקום (MoGe-2) וממלא את מה שהתמונה מסתירה (LaMa), לסצנה בשכבות | ממציא את כל מה שמעבר לשולי התמונה (FLUX.2 klein 4B ו-LoRA של 360°); הפיקסלים שלך נשארים במקומם |
+| כמה זמן | כמה שניות לתמונה | 15 עד 45 שניות לתמונה | כ-5 דקות במחשב נייד עם RTX 4060, ועוד 30 שניות לגרסת ה-3D שלה |
+| רץ על | המעבד של מחשב Windows, Linux או macOS | המעבד של מחשב Windows, Linux או macOS | כרטיס מסך עם Vulkan ו-8 GB זיכרון משלו, במחשב Windows או Linux עם 16 GB זיכרון; NVIDIA נוסה, כרטיסי AMD ו-Intel עדיין לא; עדיין לא ב-Mac |
+| הורדה חד פעמית, כשאתה מבקש | כ-110 MB | עוד 349 MB | עוד כ-5.4 GB |
+| איפה רואים | ב-3D ב-Meta Quest; "נדנוד" או "אדום וציאן" במחשב | ב-Meta Quest, שם אתה מתכופף לתוכה; "תצוגה מקדימה ב-3D" במחשב | סביבך ב-Meta Quest, ובכל מציג 360° |
+
+כל קובץ חדש נשמר ליד המקור שלו, לעולם לא מעליו, או בתיקייה לבחירתך כשתיקיית המקור לא מקבלת קובץ חדש; בתיקיית רשת, רק אחרי שאמרת כן לתיקייה הזו ("Immuch360 כותב שם קבצים חדשים, לעולם לא את המקוריים"). הספרייה מקשרת כל גרסה למקור שלה עם התג שלה, "3D AI", "סצנת 3D" או "360° AI", באלבום "גרסאות AI של Immuch360", שנשאר מחוץ לגיבוי ה-Immich שלך אלא אם תפעיל "גיבוי גם של גרסאות AI"; זהירות, "בחר הכל" באלבומי הגיבוי בוחר גם את האלבום הזה ומפעיל את המתג הזה. כדי לראות קובץ ב-Quest, שמור אותו ב-NAS שלך, גבה אותו לשרת ה-Immich שלך או, ב-Windows, הפעל "שיתוף המחשב הזה ברשת".
+
+**ב-Meta Quest**, עם בנייה 32:
+
+- **עומק AI**: פתח כל תמונה שטוחה, מהספרייה שלך או משיתוף, ולחץ על "עומק AI" בסרגל העליון: הקסדה מעריכה את העומק בעצמה ומציגה את התמונה ב-3D, "עומק שהוערך על ידי AI". המודל, 99.5 MB, יורד בפעם הראשונה שאתה לוחץ, והעומקים נשמרים במטמון. "פתיחת עומק AI ב-2.5D (ניסיוני)", בהגדרות, מתקדם, "AI ו-3D", גורם לעצמים קרובים לזוז מול הרקע כשאתה מזיז את הראש. ב-Quest 2 או ב-Quest Pro הכפתור נשאר אפור, "עדיין לא נבדק במשקפת הזו", עד שתפעיל שם את "עומק AI ב-Quest 2 וב-Quest Pro (לא נבדק)".
+- **תמונות 3D וסצנות מהמחשב**: "הצגה ב-3D" מציג תמונת 3D ב-3D אמיתי. "הצגת סצנת ה-3D" על המקור, או "סיור בסצנת ה-3D" על הסצנה, מציב את הסצנה בחדר שלך: התכופף פנימה, או גלוש עם הסטיק השמאלי בתוך האזור המשוחזר ("מרחב תנועה: כ-0.5 m לכל כיוון" לחדר שבראש העמוד הזה); השכבות משתטחות ומחשיכות בשוליו, לחיצה על סטיק מאפסת את התצוגה, ו-B או Y חוזרים אחורה.
+- **פנורמות**: פנורמה שנוצרה נפתחת סביבך, מול התמונה שלך, עם "נוצר על ידי AI מעבר לשולי התמונה" וקו מתאר דק של התמונה המקורית, שדוהים אחרי כמה שניות; גרסת ה-3D שלה היא ב-3D אמיתי.
+
+**בטלפונים, בטאבלטים ובטלוויזיות**, הקבצים שמחשב יצר נפתחים כמו שהם, ושום דבר לא נוצר שם. פנורמה נפתחת במציג ה-360° עם התג "360° AI", המשפט וקו המתאר בטלפונים ובטאבלטים עם Android וב-Android TV; ב-iPhone, ב-iPad ובטלוויזיות LG ו-Samsung היא נפתחת בינתיים כתמונת 360° רגילה. סצנה מוצגת כתמונה שלה, עם סימן קטן סצנת 3D בפינה; ב-Android, הפרטים שלה מוסיפים "פתחו אותה ב-Meta Quest כדי לסייר בה". תמונת 3D מציגה את שתי העיניים שלה זו לצד זו.
+
+**מה אמיתי ומה לא, תמיד נאמר.** זה העיקר, לא האותיות הקטנות. העומק של תמונת 3D מוערך מתמונה אחת, ומה שהתמונה מסתירה ממולא ואינו אמיתי. סצנה היא "שוחזרה מתמונה אחת, סיירו בה בגבולותיה". פנורמה שומרת את הפיקסלים האמיתיים שלך במקומם וממציאה את השאר, כ-90% מהכדור לתמונה טיפוסית, והחלון אומר כמה לפני שאתה מתחיל. האפליקציה אומרת את זה איפה שאתה מסתכל, עם "עומק שהוערך על ידי AI", "נוצר על ידי AI מעבר לשולי התמונה" והתגים, וגם הקבצים אומרים את זה: ב-XMP שלנו, ובסצנות ובפנורמות בסוג המקור הדיגיטלי של IPTC של תמונה שנוצרה עם AI, כדי שאפליקציות אחרות יוכלו להבחין בין פנורמה שנוצרה לבין תמונת 360° אמיתית. המקוריים שלך לעולם לא משתנים, ושום דבר לא יוצא מהמחשב או מהקסדה שלך. כמו שהחלון אומר: "המרה שהסתיימה אינה מבטיחה תוצאה טובה."
+
+**מה נבדק**, עד 29 באוקטובר 2026, עם בניות בדיקה של הקוד הזה: תמונות 3D על ידי אפליקציית Linux בקונטיינר במחשב Linux, גם בלי חיבור לרשת; סצנות על ידי אפליקציית Windows במחשב נייד עם RTX 4060 Laptop GPU (עשר ב-2 min 39 s) ועל ידי המנוע במחשב ה-Linux; באותו מחשב נייד, ארבע פנורמות ב-4 min 16 s עד 4 min 44 s כל אחת, גרסאות ה-3D שלהן בכ-30 s, עם ביטול, אפליקציה שנסגרה בכוח, תוכנה אחרת שתפסה את כרטיס המסך, ובלי שום חיבור רשת של האפליקציה במהלך הבדיקות.
+
+מגבלות: עדיין אין פנורמת 360° ב-Mac ("עדיין לא ב-Mac"), וגם לא בלי כרטיס מסך מתאים, והחלון אומר למה ("לא נמצא כרטיס מסך עם Vulkan", "גרפיקה משולבת חולקת את הזיכרון של המחשב: איטית מדי לפנורמות", עם "ניסיון על גרפיקה משולבת (לא נבדק)" כדי לנסות בכל זאת); בתוך פנורמה, שולי התמונה שלך יכולים להיראות כמדרגה חדה בגוון; רוב הסצנות אומרות "שדה הראייה נוחש: הצורות עלולות להיות מעוותות"; סצנה צריכה כ-2 GB זיכרון פנוי (אחרת "אין מספיק זיכרון"); כשגרסאות AI מגובות, מאתר הכפילויות של Immich מצמיד כל תמונה לסצנה שלה ולעתים קרובות מציע לשמור את הסצנה, הקובץ הכבד יותר: שמור את המקור. טלפונים וטלוויזיות לא יוצרים דבר, והקסדה יוצרת רק עומק; סצנה נוצרת מתמונה אחת, עדיין לא מכמה תמונות של אותו מקום.
+
+**הרכיבים**: במחשב, הגדרות, "AI ו-3D" מציג את הרכיבים של כל תכונה עם הגודל שלהם, הורדה והסרה, ואז "הסרת כל רכיבי ה-AI" ו"העברת רכיבי ה-AI" לכונן אחר; כש"תכונות AI" כבוי, כל כפתורי ה-AI מוסתרים ושום דבר לא יורד. כל קובץ נבדק לפי ה-SHA-256 שלו. ב-Windows הם נמצאים ב-`%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, שתוכנת ההסרה מוחקת (לא תיקייה שהעברת אליה אותם); ב-Linux ב-`~/.local/share/immuch360/ai-components` ברוב המערכות, וב-Mac ב-`~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. ב-Quest, "AI ו-3D" נמצא בהגדרות, מתקדם, עם מטמון העומק.
+
+עוד: ההערות של [בנייה 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) ושל [בנייה 13 של שולחן העבודה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), ו[המודלים, הרישיונות שלהם, המקורות שלהם וסכומי הביקורת שלהם](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). מדריך המשתמש יקבל את פרק ה-AI שלו בסבב הבא; עד אז, הסעיף הזה הוא המדריך.
 
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
@@ -279,8 +348,8 @@ Immuch360 מכירה תמונות וסרטונים שטוחים, פנורמות,
 
 התמונות שלך על המסך הגדול, עם השלט. כל אפליקציות הטלוויזיה עובדות באותה דרך: החצים מזיזים את המסגרת, OK פותח, Back חוזר, ובתמונת 360° החצים מסתכלים סביב. לטלוויזיה אין תמונות משלה, ולכן היא מציגה את שרת ה-Immich שלך, וב-Android TV ובטלוויזיות LG גם את שיתופי הרשת שלך, את שרת ה-Plex שלך ואת המצלמות שלך.
 
-- **Android TV ו-Google TV**: אפליקציית ה-Android עצמה, בנייה 31, מ-GitHub עד ש-Google Play יציע אותה בטלוויזיות.
-- **טלוויזיות LG עם webOS 5.0 ואילך**: אפליקציית טלוויזיה משלה, גרסה 1.0.0, בבדיקת LG עבור LG Content Store.
+- **Android TV ו-Google TV**: אפליקציית ה-Android עצמה, בנייה 32, מ-GitHub עד ש-Google Play יציע אותה בטלוויזיות.
+- **טלוויזיות LG עם webOS 5.0 ואילך**: אפליקציית טלוויזיה משלה, גרסה 1.0.0, בבדיקת LG עבור LG Content Store, וגרסה 1.0.1 ב-GitHub.
 - **טלוויזיות Samsung עם Tizen 5.5 ואילך**: אותה אפליקציית טלוויזיה כמו בטלוויזיות LG, בניית בדיקה 0.2.0, שאתה חותם ומתקין בעצמך.
 
 <p align="center">
@@ -310,7 +379,7 @@ Immuch360 מכירה תמונות וסרטונים שטוחים, פנורמות,
 
 1. התקן אותה בטלוויזיה ב-Developer Mode, ראה [התקנה](#lg-tvs-webos). יש לה מזהה אפליקציה משלה, כך שהיא מותקנת לצד Immich TV של Seeky91.
 2. התחבר עם הטלפון שלך (סרוק את קוד ה-QR), עם הדוא"ל והסיסמה שלך, או עם מפתח API.
-3. דפדף עם החצים ו-OK. במציג, שמאלה וימינה עוברים לתמונה או לסרטון הקודם או הבא, גם בזמן שסרטון מתנגן; הפקדים נעלמים 5 s אחרי המקש האחרון; Info פותח את הפרטים; מקשי הערוצים מבצעים זום; הסמן והגלגלת של ה-Magic Remote עובדים.
+3. דפדף עם החצים ו-OK. במציג, שמאלה וימינה עוברים לתמונה או לסרטון הקודם או הבא, גם בזמן שסרטון מתנגן; הפקדים נעלמים 5 s אחרי המקש האחרון; Info פותח את הפרטים; מקשי הערוצים מבצעים זום; הסמן והגלגלת של ה-Magic Remote עובדים. החל מגרסה 1.0.1, ב-GitHub, למעלה מגדיל תמונה מיד, החצים מזיזים אותה אחר כך וחזרה מקטינה, ותווית טעינה מופיעה כל עוד תמונה עדיין מגיעה.
 4. תמונת 360° נפתחת על ספירה: כל לחיצה על חץ מסובבת אותה בצעד, ומקש לחוץ ממשיך לסובב אותה. "הצג כ-360°" מכסה תמונה ביחס 2:1 שהשרת לא מסמן; תמונת VR180 מוצגת על חצי ספירה ותמונת 3D בעין אחת. המקשים הצהוב והכחול מסובבים תמונה שטוחה.
 5. אחרי ההתחברות, "שיתופי רשת" בסרגל הצד של האפליקציה: הוסף שיתוף SMB, WebDAV או DLNA, שרת Plex (מחובר עם קוד ב-plex.tv/link) או מצלמת Tapo. התמונות שלהם נפתחות באותו מציג, תמונות 360° על הספירה.
 
@@ -403,7 +472,7 @@ Immuch360 מכירה תמונות וסרטונים שטוחים, פנורמות,
 2. בהגדרות, מציג הפריטים, סרטונים, "מקור הווידאו" בוחר את הקובץ המקורי כשהמכשיר הזה מפענח אותו, תמיד את המקורי, או תמיד את הזרם המומר.
 3. כדי להציג תמונת 360° למישהו שאין לו את האפליקציה, שתף אותה עם קישור משותף של Immich: אפליקציית האינטרנט של Immich מציגה אותה כספירה בדפדפן שלו.
 
-הבנייה הנוכחית, בנייה 31, מבוססת על `main` של Immich מתאריך 10 באוקטובר 2026 (גרסה 3.3.0-rc.0), כמו בניות 28 עד 30; בנייה 28 נבדקה מול שרת שנבנה מאותו `main` של Immich, ובנייה 27 גם מול שרת Immich בגרסה 3.2.4. יש לדווח על תקלות ב[Issues](https://github.com/freeKC/Immuch360/issues), ולא לפרויקט Immich.
+הבנייה הנוכחית, בנייה 32, מבוססת על `main` של Immich מתאריך 10 באוקטובר 2026 (גרסה 3.3.0-rc.0), כמו בניות 28 עד 31; בנייה 28 נבדקה מול שרת שנבנה מאותו `main` של Immich, ובנייה 27 גם מול שרת Immich בגרסה 3.2.4. יש לדווח על תקלות ב[Issues](https://github.com/freeKC/Immuch360/issues), ולא לפרויקט Immich.
 
 מה זהה ומה Immuch360 מוסיפה מופיע ב[בהשוואה ל-Immich](#compared-with-immich).
 
@@ -553,6 +622,7 @@ Immuch360 שומרת את כל אפליקציית Immich לנייד ומוסיפ
 | **אותו הדבר** | שרת ה-Immich והחשבון שלך: גיבוי, ציר זמן, אלבומים, חיפוש, אנשים, זכרונות, שיתוף ושותפים, הכול מסונכרן עם השרת שלך. היא מותקנת לצד האפליקציה הרשמית. |
 | **בלי צורך בשרת** | היא רצה גם בלי שרת או חשבון, על התמונות והסרטונים של המכשיר, התיקיות של מחשב ושיתופי רשת; Plex והמצלמות משתמשים בהתחברות משלהם, אף פעם לא בחשבון Immuch360. |
 | **360° וסוחף** | תמונות וסרטוני 360° כספירה, פנורמות, VR180 ו-3D, תצוגה סוחפת ב-Meta Quest, תג 360° ורשימת 360°. צפייה ב-360° באפליקציית Immich לנייד מתבקשת מאז ינואר 2024 ועדיין לא קיימת. |
+| **3D מהתמונות שלך** | במחשב, תמונה אחת הופכת לתמונת 3D, לסצנת 3D או לפנורמת 360°, וב-Meta Quest 3 או 3S כל תמונה שטוחה מקבלת עומק: נוצר על ידי AI במחשב ובקסדה שלך, מסומן ככזה באפליקציה ובקבצים, המקור לעולם לא משתנה. אפליקציית Immich לא יוצרת שום דבר ב-3D. |
 | **בטלוויזיה** | אותה אפליקציה ב-Android TV וב-Google TV, ואפליקציית טלוויזיה לטלוויזיות LG, שארוזה גם לטלוויזיות Samsung כבניית בדיקה. האפליקציות של Immich עצמה לא מותקנות בטלוויזיית LG. |
 | **התחברות עם הטלפון שלך** | טלוויזיה, קסדה או מחשב מתחברים כשהטלפון שלך סורק את קוד ה-QR שלהם, והסיסמה שלך נשארת בטלפון. לאפליקציית Immich אין שום דבר דומה. |
 | **שיתופים ו-Plex** | שיתופי SMB, WebDAV ו-DLNA ושרתי Plex, שמתנגנים במקומם, והקבצים שלהם נשלחים לשרת שלך ידנית. |
@@ -569,6 +639,8 @@ Immuch360 שומרת את כל אפליקציית Immich לנייד ומוסיפ
 
 שום דבר לא מגיע למפתח: בלי חשבון, בלי אנליטיקס, בלי שירות דיווח קריסות, בלי פרסומות. האפליקציה מתקשרת רק עם השרתים שבחרת (שרת ה-Immich שלך, השיתופים שלך, שרת ה-Plex שלך, המצלמות שלך), ובלי שרת, עם שום דבר בכלל. סיסמאות וטוקנים נשארים באחסון המאובטח של המכשיר; לטלוויזיות LG ו-Samsung אין אחסון כזה לאפליקציה, ולכן שם הם נשארים באחסון של האפליקציה עצמה, לא מוצפנים. המצלמה בשימוש במכשיר בלבד, על ידי נגן ה-Spatial 2.5D וכדי לסרוק את הקוד של מסך שאתה מחבר; התמונות שלה לעולם לא נשמרות ולעולם לא נשלחות לשום מקום. מסך שמתחבר מהטלפון שלך מקבל סשן משלו, שנשלח מוצפן ברשת הביתית שלך, לעולם לא את הסיסמה שלך; טלוויזיית LG מתחברת דרך עמוד בדפדפן של הטלפון, ששולח את האימייל והסיסמה שלך לטלוויזיה בלי הצפנה ברשת הביתית שלך, והטלוויזיה שומרת רק את הסשן. ההקלטות ורשומות הקבלה של עמודי הרחפן נשארות במכשיר אלא אם תשתף אותן: הן מכילות את הווידאו של הרחפן ועשויות להכיל את המיקום שלו, והקלטה מכילה גם את המספרים הסידוריים של הבקר ושל כלי הטיס. התמונה והערכים של הרחפן עוברים מהטלפון רק לקסדות ולטלוויזיות שאתה מצמד, ברשת המקומית שלך, לא מוצפנים, כמו עם טלפון שמשותף ב-Wi-Fi. שום דבר לא נשלח ל-DJI, וגם לא ל-TP-Link. המדיניות המלאה נמצאת ב[PRIVACY.md](../PRIVACY.md), והפרטים לפי מקור ב[מדריך למשתמש](../docs/immuch360/user-guide.md#privacy).
 
+**תכונות ה-AI** עובדות במכשירים שלך בלבד. התמונה, העומק שלה, הסצנה שלה והפנורמה שלה מחושבים במחשב או בקסדה שלך ולא נשלחים לשום מקום. האפליקציה מתחברת רק כדי להוריד רכיב שביקשת, מהגרסאות של הפרויקט הזה ב-GitHub או, אם זה לא אפשרי, מהעמוד הרשמי של המודל כשיש לו כזה, בודקת כל קובץ לפי ה-SHA-256 שלו, ואז עובדת בלי חיבור לרשת. ONNX Runtime, שמריץ את המודלים במחשב, שולח טלמטריה ל-Microsoft בבניות הרשמיות שלו; Immuch360 מכבה אותה. הקבצים החדשים נשמרים ליד המקוריים שלך, לעולם לא מעליהם, ומגיעים לשרת ה-Immich שלך רק אם תפעיל "גיבוי גם של גרסאות AI" ("בחר הכל" באלבומי הגיבוי מפעיל את זה גם כן).
+
 <a id="the-project"></a>
 <a id="licences-and-credits"></a>
 ## רישיונות וקרדיטים
@@ -577,14 +649,23 @@ Immuch360 היא פיצול (fork) לא רשמי של אפליקציית המו�
 
 מציג התמונות של 360° מבוסס על בקשת המשיכה המקורית (upstream) [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) של dmitry-brazhenko, שעצמה נבנתה על הפרוטוטייפ של bencefr ב-[#30192](https://github.com/immich-app/immich/pull/30192); תודה לשניהם. התיקונים לשלט הרחוק במסנני החיפוש ומיון האלבומים בטלוויזיות התחילו מהעבודה של mlc70 ב-[mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), ומסילת הפעולות וגיליונות המסננים על 80 אחוז מגובה המסך מגיעים מ-[mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) של mlc70, עם שמירת המחברות שלהם; תודה ל-mlc70. אפליקציית LG webOS, שארוזה גם לטלוויזיות Samsung, בנויה על [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) של Seeky91, תחת רישיון MIT, שמורה בתיקייה שלה; תודה ל-Seeky91. מצלמות ה-Tapo נכתבו לפי מה שמתועד ב-[pytapo](https://github.com/JurajNyiri/pytapo), ב-[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) וב-[python-kasa](https://github.com/python-kasa/python-kasa). התצוגה של Meta Quest נשענת על Meta Spatial SDK, שאינו קוד פתוח, ולכן היא נשארת בפיצול הזה. שיתופי SMB משתמשים ב-libsmb2, תחת LGPL 2.1 ואילך: החל מבנייה 27 ובנייה 7 של שולחן העבודה, כל בנייה נושאת את ההודעה שלה, את טקסטי הרישיון שלה ואת ארכיון המקורות שלה, `Immuch360-libsmb2-sources.tar.gz`, שמצורף גם לכל גרסה. הבנייות של Windows ו-macOS נושאות את libmpv (הספרייה של [mpv](https://mpv.io), עם [FFmpeg](https://ffmpeg.org)) שנבנתה על ידי הפרויקט, במסגרת רישיון LGPL, עם הרישיונות והמקורות שלה, המפורטים בעמוד הרישיונות של האפליקציה ("רישיונות", בתחתית תפריט הפרופיל); הפרטים וסימני המסחר של הפלטפורמות הנקובות בעמוד הזה נמצאים ב[רישיון וסימני מסחר](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-צילומי המסך בעמוד הזה הם צילומי מסך אמיתיים של האפליקציה: אלה של הטלפון בבניית Android באמולטור, אלה של Android TV באמולטור Google TV, אלה של LG ו-Samsung בדפדפן שמחליף את הטלוויזיה, אלה של Windows במחשב Windows 11 וחלון ה-Meta Quest ב-Quest 3, כולם עם פנורמות CC0 מ-[Poly Haven](https://polyhaven.com); צילומי המסך הסוחפים של הקסדה צולמו ב-Quest 3 עם המדיה של המחבר עצמו, וזה של ה-iPad בסימולטור iPad, עם פנורמה CC0 של Poly Haven. תמונת הפתיחה והתמונות של הטלוויזיה, ההתחברות, הסיבוב, המצלמות והרחפן הן איורים שנעשו לפרויקט: הם לא מציגים שום מסך של האפליקציה, שום לוגו של חברה אחרת ושום פנים. כל תמונה, עם המקור, התאריך והרישיון שלה, רשומה ב-[CAPTURES.md](../.github/readme/CAPTURES.md).
+תכונות ה-AI מריצות מודלים ומנועים שאחרים יצרו, שיורדים רק כשאתה מבקש, מגרסאות הקדם [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1), [ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2) ו-[ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3) של המאגר הזה; כל קובץ, המקור שלו, הרישיון שלו וה-SHA-256 שלו נמצאים ב-[MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). תודה ליוצרים שלהם:
+
+- **תמונות 3D**: Depth Anything V2 Small (Apache 2.0), מורץ על ידי ONNX Runtime (MIT) במחשב ועל ידי LiteRT 2.3.0 (Apache 2.0), בתוך ה-APK של Quest, בקסדה.
+- **סצנות 3D**: MoGe-2 ViT-S (MIT), שיוצא ל-ONNX על ידי הפרויקט מהמשקלים שלו ברישיון MIT, ו-LaMa (Apache 2.0).
+- **פנורמות 360°**: FLUX.2 klein base 4B עם ה-VAE שלו (Apache 2.0), Qwen3 4B (Apache 2.0), ה-LoRA של 360° של nomadoor (Apache 2.0), MI-GAN (MIT) ו-Real-ESRGAN x4plus (BSD 3 Clause), מורצים על ידי stable-diffusion.cpp ו-ggml (MIT), נבנים על ידי ה-CI של הפרויקט וחתומים ב-Windows.
+
+ה-LoRA של 360° של nomadoor הוא Apache 2.0 לפי הכרטיס שלו ואומן על תמונות CC0 ונחלת הכלל, עם חלק תחת CC BY: הייחוס של החלק הזה יגיע בגרסה מאוחרת יותר של MODEL-LICENSES.md. שום דבר כאן אינו תחת רישיון לא מסחרי, ושום דבר לא צריך CUDA. ב-ONNX Runtime וב-LiteRT משולבות ספריות אחרות, הרשומות בהודעות שלהן, ביניהן Eigen תחת MPL 2.0, רישיון copyleft חלש.
+
+צילומי המסך בעמוד הזה הם צילומי מסך אמיתיים של האפליקציה: אלה של הטלפון בבניית Android באמולטור, אלה של Android TV באמולטור Google TV, אלה של LG ו-Samsung בדפדפן שמחליף את הטלוויזיה, אלה של Windows במחשב Windows 11 וחלון ה-Meta Quest ב-Quest 3, כולם עם פנורמות CC0 מ-[Poly Haven](https://polyhaven.com); צילומי המסך הסוחפים של הקסדה צולמו ב-Quest 3 עם המדיה של המחבר עצמו, וזה של ה-iPad בסימולטור iPad, עם פנורמה CC0 של Poly Haven. התמונות של יוצר ה-AI הן תוצרים אמיתיים של האפליקציה, שנוצרו מתמונות CC0 של Poly Haven, עם שני צילומי מסך אמיתיים של אפליקציית Windows. תמונת הפתיחה והתמונות של הטלוויזיה, ההתחברות, הסיבוב, המצלמות והרחפן הן איורים שנעשו לפרויקט: הם לא מציגים שום מסך של האפליקציה, שום לוגו של חברה אחרת ושום פנים. כל תמונה, עם המקור, התאריך והרישיון שלה, רשומה ב-[CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## מפת דרכים
 
 מה שעוד לא בוצע, הסביר ביותר קודם. שום דבר כאן אינו הבטחה, ומשוב ב[מעקב הבעיות](https://github.com/freeKC/Immuch360/issues) עוזר להחליט מה בא קודם.
 
-- **החנויות**: Google Play (בנייה 31 בבדיקה מאז 26 באוקטובר; רישום הטלוויזיה בבדיקה), App Store (גרסה 3.3.1 בבדיקה, ואז גרסה 3.3.2 עם בנייה 28), Meta Horizon Store עם בנייה 31 (בנייה 28 שם מאז 25 באוקטובר), LG Content Store (גרסה 1.0.0 בבדיקת LG מאז 24 באוקטובר), ובהמשך החנות של Samsung.
+- **החנויות**: Google Play (בנייה 32 בבדיקה מאז 29 באוקטובר, במקום בנייה 31; רישום הטלוויזיה בבדיקה), App Store (גרסה 3.3.1 בבדיקה, ואז גרסה 3.3.2 עם בנייה 28), Meta Horizon Store עם בנייה 32 (בנייה 31 שם מאז 28 באוקטובר), LG Content Store (גרסה 1.0.0 בבדיקת LG מאז 24 באוקטובר, ואז גרסה 1.0.1), ובהמשך החנות של Samsung.
+- **יוצר ה-AI**: פנורמות 360° ב-Mac; סצנה שמשוחזרת מכמה תמונות של אותו מקום; Gaussian splats (.spz, .ply) שנוצרו בכלים אחרים, נקראים בקסדה; סימוני ה-AI באפליקציות iOS, LG ו-Samsung; פנורמות שנוסו במחשב Linux עם כרטיס מסך, ועל כרטיסי AMD ו-Intel.
 - **רחפנים**: טיסה בחוץ כדי להוכיח את הגובה והמהירויות מעל 1.8 m ו-1.5 m/s ואת המרחקים מהמכשולים מול סרט מדידה, ואחר כך כדי להציג את הלווינים ואת המרחק מנקודת הבית; התמונה היציבה של ההעברה נבדקת בקסדה; ההעברה לטלוויזיות LG ו-Samsung; הרחפן ב-iPhone וב-iPad, לא התחיל; בדיקה של עמוד הייבוא עם DJI Neo 2 אמיתי, ואחר כך הקול שהטלפון הקליט ממוזג לתוך הקליפ שלו. שום דבר ששולח פקודה לרחפן לא מתוכנן לפני הבדיקות האלה.
 - **טלוויזיות**: בנייה 29 על Android TV אמיתי, כולל פקדי הווידאו שלה וההתחברות עם הטלפון; השיתופים, Plex והשידור החי של אפליקציית LG על טלוויזיית LG אמיתית, ו-webOS 26; בניית הבדיקה של Samsung 0.2.0 על טלוויזיית Samsung אמיתית, ואחר כך ההתחברות עם טלפון, השיתופים, Plex והמצלמות בטלוויזיות Samsung; ואז סרטוני ה-360° על הספירה של טלוויזיות LG, הקול של המצלמות וההקלטות שלהן (לא לפני דצמבר 2026).
 - **מצלמות**: מצלמות Tapo שנבדקו עם מצלמה אמיתית.
@@ -606,6 +687,7 @@ Immuch360 היא פיצול (fork) לא רשמי של אפליקציית המו�
 - [תמיכה בפלטפורמות: מה יש בכל מערכת, איך מתקינים אותה, מה שונה](../docs/immuch360/platform-support.md)
 - [תקלות ידועות](../docs/immuch360/known-issues.md) ו[פתרון תקלות](../docs/immuch360/troubleshooting.md), עם היומנים (logs) לצרף לדיווח
 - [פרטים טכניים: ארכיטקטורה, מודולי Flutter ומודולים טבעיים, גשר המדיה, צינור האיחוד, המפענחים](../docs/immuch360/technical-details.md)
+- [רכיבי ה-AI: כל מודל, המקור שלו, הרישיון שלו, הגודל שלו וסכום הביקורת שלו](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)
 - [מרנדר הווידאו של 360° בשולחן העבודה: libmpv, מעבר ההטלה והמדידות שמאחוריו](../docs/immuch360/desktop-360-video-renderer.md)
 - [סטטוס הגרסאות: בניות, חנויות ומה יש בכל חנות](../docs/immuch360/release-status.md)
 - [לבנות בעצמך: טלפונים, קסדות, טלוויזיות ומחשבים](../docs/immuch360/build.md)
@@ -626,6 +708,7 @@ Immuch360 היא פיצול (fork) לא רשמי של אפליקציית המו�
 - **קריאה לפי דרישה**: גשר מקומי מגיש לנגנים טווחי בייטים וטוקן לכל הפעלה; בלוקים גדולים, קריאה מקדימה ועד שש חיבורי SMB במקביל; תמונות ממוזערות מפריים של כל סרטון; שום דבר לא מועתק למכשיר.
 - **חומרה**: מפענחי חומרה בשימוש בכל מקום שהם קיימים, עם המגבלות הנמדדות שלהם (התקרה של H.264 ב-Quest 3, עד שתי עדשות 2048x2048 למפענחי תוכנה); ב-Windows התצוגה של 360° מצוירת על ידי שבב הגרפיקה מכל פריים מפוענח, גודל הפריים נמדד בכל מחשב, השבב המשולב או הנפרד מתגלה.
 - **פרטי הפלטפורמות**: הגירוסקופ ונגן ה-Spatial 2.5D בטלפונים; התצוגה הסוחפת, הבקרים והידיים ב-Quest; פריסת השלט, תיבת הדו-שיח של המקלדת והבאנר ב-Android TV; במחשב, עכבר ומקלדת, מסך מלא, חלון יחיד, קבצים ותיקיות שנפתחים עם התוכנה או שנגררים לחלון שלה, נקראים כמו הקבצים של התיקיות שלך, תמונות HEIC, AVIF, TIFF, וגם תמונות גולמיות של מצלמה, מהתיקיות, כש-Windows יש לו מפענח בשבילן, וההגנה על הנתונים של Windows לסיסמאות וטוקנים.
-- **פרטיות מובנית**: בלי חשבון, בלי ענן, בלי אנליטיקס; סיסמאות וטוקנים באחסון המאובטח של המכשיר (בטלוויזיות LG ו-Samsung, שאין בהן אחסון כזה לאפליקציה, באחסון של האפליקציה עצמה, לא מוצפן); מסך שמתחבר מטלפון מקבל סשן משלו, שנשלח מוצפן ברשת הביתית, לעולם לא את הסיסמה (טלוויזיית LG מקבלת את הסיסמה מעמוד בדפדפן של הטלפון, לא מוצפנת ברשת הביתית, ושומרת רק את הסשן); המצלמה של נגן ה-Spatial ושל סורק הקוד בשימוש במכשיר בלבד; שיתופים, Plex ומצלמות מושגים ברשת שלך בלבד.
+- **יוצר ה-AI**: תמונות 3D כקובצי JPEG זה לצד זה ברוחב מלא, העין השמאלית קודם, העומק מ-Depth Anything V2 Small דרך ONNX Runtime 1.31.0 במעבד (1.23.2 ב-Mac עם Intel); סצנות כקובץ JPEG שנושא סצנת glTF בשכבות שנחתכות היכן שהעומק נשבר, מ-MoGe-2 ViT-S ו-LaMa, עם ייצוא .glb; פנורמות 360° של 6144 x 3072, שנוצרות על ידי FLUX.2 klein base 4B ו-LoRA של 360° דרך stable-diffusion.cpp על Vulkan, התפר מחובר על ידי MI-GAN, הפרטים מחודדים על ידי Real-ESRGAN והפיקסלים האמיתיים מוחזרים למקומם; גרסאות 3D של תמונות 360°, למעלה ולמטה; בכל קובץ ה-XMP שלנו (סוג, מוצא, ה-SHA-1 של המקור, דגלי איכות), ובסצנות ובפנורמות סוג המקור הדיגיטלי של IPTC; העומק של ה-Quest על ידי LiteRT, בשבב הגרפיקה או במעבד שלו, נשמר במטמון; במחשב, תור בשני מסלולים ושער שקורא את כרטיס המסך דרך Vulkan ומחכה כל עוד תוכנות אחרות תופסות את הזיכרון שלו; כל רכיב נבדק לפי ה-SHA-256 שלו, המחולל של Windows חתום.
+- **פרטיות מובנית**: בלי חשבון, בלי ענן, בלי אנליטיקס; סיסמאות וטוקנים באחסון המאובטח של המכשיר (בטלוויזיות LG ו-Samsung, שאין בהן אחסון כזה לאפליקציה, באחסון של האפליקציה עצמה, לא מוצפן); מסך שמתחבר מטלפון מקבל סשן משלו, שנשלח מוצפן ברשת הביתית, לעולם לא את הסיסמה (טלוויזיית LG מקבלת את הסיסמה מעמוד בדפדפן של הטלפון, לא מוצפנת ברשת הביתית, ושומרת רק את הסשן); המצלמה של נגן ה-Spatial ושל סורק הקוד בשימוש במכשיר בלבד; שיתופים, Plex ומצלמות מושגים ברשת שלך בלבד; ה-AI מחושב במכשיר, הרכיבים שלו יורדים רק כשאתה מבקש ונבדקים לפי ה-SHA-256 שלהם, הטלמטריה של ONNX Runtime כבויה.
 
 </details>
