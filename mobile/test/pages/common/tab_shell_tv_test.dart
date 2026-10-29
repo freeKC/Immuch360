@@ -10,7 +10,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/kiosk_config.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
+import 'package:immich_mobile/domain/models/kiosk_media.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/common/tab_shell.page.dart';
@@ -20,6 +22,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/kiosk/kiosk_start.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 class _NotReadOnly extends ReadOnlyModeNotifier {
@@ -37,6 +40,22 @@ class _NoHaptics extends HapticNotifier {
 
   @override
   void selectionClick() {}
+}
+
+/// Counts the kiosk starts the shell asks for, and what each did
+class _CountingKioskStart extends KioskStart {
+  final List<KioskStartOutcome> outcomes = [];
+
+  @override
+  Future<KioskStartOutcome> run({
+    required KioskConfig config,
+    required Future<bool> Function() isHorizonOs,
+    required KioskOpener Function(KioskMedia media) prepare,
+  }) async {
+    final outcome = await super.run(config: config, isHorizonOs: isHorizonOs, prepare: prepare);
+    outcomes.add(outcome);
+    return outcome;
+  }
 }
 
 void main() {
@@ -62,7 +81,12 @@ void main() {
     );
   });
 
-  Future<void> pumpShell(WidgetTester tester, {required bool tvMode, Size size = const Size(1920, 1080)}) async {
+  Future<void> pumpShell(
+    WidgetTester tester, {
+    required bool tvMode,
+    Size size = const Size(1920, 1080),
+    KioskStart? kioskStart,
+  }) async {
     // A TV screen: landscape, so the tabs are a navigation rail
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 2;
@@ -109,6 +133,7 @@ void main() {
             hapticFeedbackProvider.overrideWith(_NoHaptics.new),
             // No kiosk media chosen: the shell starts as usual (see startKiosk)
             appConfigProvider.overrideWithValue(const AppConfig()),
+            if (kioskStart != null) kioskStartProvider.overrideWithValue(kioskStart),
           ],
           child: Builder(
             builder: (context) => MaterialApp.router(
@@ -140,6 +165,17 @@ void main() {
     Focus.of(tester.element(find.text('library content'))).requestFocus();
     await tester.pumpAndSettle();
   }
+
+  testWidgets('the shell asks for the kiosk start once, which opens nothing with no media chosen', (tester) async {
+    final kiosk = _CountingKioskStart();
+    await pumpShell(tester, tvMode: true, kioskStart: kiosk);
+    expect(kiosk.outcomes, [KioskStartOutcome.off]);
+
+    // Another tab builds the shell again: no second start
+    await openLibraryAndFocusItsContent(tester);
+    expect(kiosk.outcomes, [KioskStartOutcome.off]);
+    expect(find.byType(SnackBar), findsNothing);
+  });
 
   testWidgets('Back: the rail, then Photos, then out of the app, in three presses', (tester) async {
     await pumpShell(tester, tvMode: true);
