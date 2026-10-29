@@ -130,9 +130,21 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(start ? context.t.start_date : context.t.end_date, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Text(DateFormat.yMMMMd().format(date)),
+        // The name of the date and the date in words on one line, so that the dialog holds on the screen of a TV
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Expanded(
+              child: Text(
+                start ? context.t.start_date : context.t.end_date,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Text(DateFormat.yMMMMd().format(date)),
+          ],
+        ),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -158,7 +170,10 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
     return Dialog(
       child: ConstrainedBox(
         constraints: const BoxConstraints(minWidth: 450, maxWidth: 680),
-        child: Padding(
+        // It holds on a TV screen of 540 dp, the error line shown; with a larger text it scrolls, the focus bringing
+        // each button into view
+        child: SingleChildScrollView(
+          key: const Key('tv_date_range_body'),
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -169,7 +184,13 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
               _dateRow(start: true),
               const SizedBox(height: 24),
               _dateRow(start: false),
-              if (!valid) ...[const SizedBox(height: 12), Text(context.t.tv_date_range_start_after_end)],
+              if (!valid) ...[
+                const SizedBox(height: 12),
+                Text(
+                  context.t.tv_date_range_start_after_end,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
