@@ -48,6 +48,23 @@ class FlatStereoTest {
   }
 
   @Test
+  fun `a video said full by its name alone is squeezed when its frame says so, as the Flutter rule reads it`() {
+    // A share page asked before its player told the frame size: 1920 x 1080 holds two squeezed 16:9 eyes
+    assertEquals(FlatFormat.HALF_SBS, FlatStereo.videoFormat(FlatFormat.SBS, 1920, 1080))
+    assertEquals(FlatFormat.SBS, FlatStereo.videoFormat(FlatFormat.SBS, 3840, 1080))
+    // Two square eyes side by side are full
+    assertEquals(FlatFormat.SBS, FlatStereo.videoFormat(FlatFormat.SBS, 2160, 1080))
+    assertEquals(FlatFormat.HALF_TB, FlatStereo.videoFormat(FlatFormat.TB, 1920, 1080))
+    assertEquals(FlatFormat.TB, FlatStereo.videoFormat(FlatFormat.TB, 1920, 2160))
+    // Stacked eyes of exactly 2.5:1 are full
+    assertEquals(FlatFormat.TB, FlatStereo.videoFormat(FlatFormat.TB, 2700, 2160))
+    // Squeezed stays squeezed, an unknown frame keeps what Flutter said
+    assertEquals(FlatFormat.HALF_SBS, FlatStereo.videoFormat(FlatFormat.HALF_SBS, 3840, 1080))
+    assertEquals(FlatFormat.HALF_TB, FlatStereo.videoFormat(FlatFormat.HALF_TB, 1920, 2160))
+    assertEquals(FlatFormat.SBS, FlatStereo.videoFormat(FlatFormat.SBS, 0, 0))
+  }
+
+  @Test
   fun `the video layer shows each eye its half in 3D, the first eye in 2D`() {
     assertEquals(StereoMode.LeftRight, FlatStereo.stereoModeFor(FlatFormat.HALF_SBS, threeD = true))
     assertEquals(StereoMode.MonoLeft, FlatStereo.stereoModeFor(FlatFormat.SBS, threeD = false))

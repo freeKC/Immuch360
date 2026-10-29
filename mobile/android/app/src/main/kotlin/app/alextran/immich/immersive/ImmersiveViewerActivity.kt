@@ -4149,8 +4149,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.w(TAG, "flat video panel without a shape config, ${spec.format} not applied")
       return
     }
-    val mode = FlatStereo.stereoModeFor(spec.format, stereo3d)
-    val aspect = flatVideoSize?.let { (width, height) -> FlatStereo.eyeAspect(spec.format, width, height) } ?: 0f
+    // Eyes the name alone said full, squeezed when the frame says so (a share page asks before its player knows it)
+    val frame = flatVideoSize
+    val format = if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second)
+    val mode = FlatStereo.stereoModeFor(format, stereo3d)
+    val aspect = if (frame == null) 0f else FlatStereo.eyeAspect(format, frame.first, frame.second)
     val (width, height) = FlatStereo.screenSize(aspect, FLAT_SCREEN_ANGLE_DEG, StereoComposer.DISTANCE_M)
     if (config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f) return
     try {
@@ -4158,7 +4161,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       config.width = width
       config.height = height
       panel.reshape(config)
-      Log.i(TAG, "flat video screen is now $mode, ${width}x$height m (${spec.format}, frame ${flatVideoSize})")
+      Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($format for ${spec.format}, frame $frame)")
     } catch (e: Exception) {
       Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
     }

@@ -72,6 +72,22 @@ internal object FlatStereo {
   }
 
   /**
+   * The packing of a flat 3D video of [width] x [height] (its display size) that Flutter named [format]: eyes said full
+   * but narrower than square side by side, or wider than 2.5:1 stacked, are squeezed ones, as guessFlatStereoFormat
+   * reads a video on the Flutter side, which a share page can only do once its player told the frame size. [format]
+   * itself for squeezed eyes and for a size not known yet.
+   */
+  fun videoFormat(format: FlatFormat, width: Int, height: Int): FlatFormat {
+    if (width <= 0 || height <= 0) return format
+    return when (format) {
+      FlatFormat.SBS -> if (width / 2f / height < 1f) FlatFormat.HALF_SBS else format
+      FlatFormat.TB -> if (width / (height / 2f) > 2.5f) FlatFormat.HALF_TB else format
+      FlatFormat.HALF_SBS,
+      FlatFormat.HALF_TB -> format
+    }
+  }
+
+  /**
    * The size of the image of one eye on the texture, in pixels: the height of its [region] (its width for eyes squeezed
    * side by side) at the shape of [eyeAspect], within [maxWidth] x [maxHeight].
    */
