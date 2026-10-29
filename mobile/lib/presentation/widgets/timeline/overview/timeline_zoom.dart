@@ -60,7 +60,7 @@ const kZoomYearsLeaveScale = 0.62;
 const kZoomMonthsRestScale = 0.7;
 const kZoomYearsRestScale = 0.42;
 
-/// The tiles per row of the grid for a pinch scale: 7 - floor(scale) on [1, 5], 6 to 2
+/// The tiles per row of the grid for a pinch scale: 7-floor(scale) on [1, 5], 6 to 2
 int gridColumnsForScale(double scale) => 7 - scale.clamp(kTimelineMinGridScale, kTimelineMaxScale).floor();
 
 /// A pinch scale kept inside the ladder: down to the years when the timeline has them, down to 6 per row otherwise
@@ -102,8 +102,8 @@ TimelineZoom zoomForScale(double scale, TimelineZoom current, {required bool ove
   }
 }
 
-/// The scale a pinch starts from on [zoom]: 7 - tiles per row on the grid, as before; inside the band of the months or
-/// of the years otherwise
+/// The scale a pinch starts from on [zoom]: 7 less the tiles per row on the grid, as before; inside the band of the
+/// months or of the years otherwise
 double restScaleFor(TimelineZoom zoom) => switch (zoom.level) {
   TimelineZoomLevel.grid => (7 - zoom.columns.clamp(kTimelineMinColumns, kTimelineMaxColumns)).toDouble(),
   TimelineZoomLevel.months => kZoomMonthsRestScale,

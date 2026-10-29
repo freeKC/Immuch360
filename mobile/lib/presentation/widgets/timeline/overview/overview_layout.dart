@@ -1,7 +1,7 @@
 // The sizes of the months and the years, from the width of the timeline alone, so that every block of a level has the
 // same height and the offsets are known before anything is built.
 //
-// A month: its header, then one row of K tiny thumbnails, K = clamp(floor((width - 22) / (t + 2)), 4, 16) with tiles
+// A month: its header, then one row of K tiny thumbnails, K = clamp(floor((width-22)/(t+2)), 4, 16) with tiles
 // of about t = 56 dp under 600 dp and 72 dp above (a phone of 412 dp: 6 thumbnails of 63 dp, a block of 119 dp, seven
 // months on a screen; a tablet of 800 dp: 10; a computer: 16).
 // A year: its header, then its twelve months, 6 x 2 under 600 dp and 12 x 1 above, cells of about 61 dp.

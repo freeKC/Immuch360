@@ -9,7 +9,7 @@ void main() {
   const years = TimelineZoom.years();
 
   group('the grid', () {
-    test('keeps 7 - floor(scale) tiles per row between 1 and 5, as before', () {
+    test('keeps 7-floor(scale) tiles per row between 1 and 5, as before', () {
       expect(gridColumnsForScale(1), 6);
       expect(gridColumnsForScale(1.99), 6);
       expect(gridColumnsForScale(2), 5);
@@ -59,7 +59,7 @@ void main() {
     });
   });
 
-  test('a pinch starts from 7 - tiles per row on the grid, from inside the band of the months or the years', () {
+  test('a pinch starts from 7 less the tiles per row on the grid, inside the band of the months or the years', () {
     expect(restScaleFor(const TimelineZoom.grid(4)), 3);
     expect(restScaleFor(const TimelineZoom.grid(6)), 1);
     expect(restScaleFor(months), kZoomMonthsRestScale);
