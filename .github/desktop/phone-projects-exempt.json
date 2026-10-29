@@ -768,8 +768,8 @@
     "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
-    "blob": "5ba5b9170dbd7225c148268b88cdf2859f3e0a58",
-    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch"
+    "blob": "61b313156b19384cd88f70e95fe6eeda6a37b0f9",
+    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, fix round): the English fallbacks of the flat 3D texts against en.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
     "blob": "60bf53529057dacf9460c3cd2c3a0b657da6dd23",
