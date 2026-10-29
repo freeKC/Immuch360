@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
+import 'package:immich_mobile/desktop/selection/network_selection.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
@@ -122,6 +125,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
 
   /// Whether the share is being looked for on the network, for the message of the page
   bool _relocating = false;
+
+  /// Immuch360 Desktop: the clicks and keys of a selection on the photos and videos (lib/desktop/selection)
+  final _desktopSelection = DesktopNetworkSelectionKey();
 
   NetworkFolderKey get _folderKey => (sourceId: widget.sourceId, path: widget.path);
 
@@ -243,6 +249,10 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   }
 
   void _open(NetworkEntry entry, _Folder folder) {
+    // Immuch360 Desktop: Control, Shift and the clicks while picking go to the selection
+    if (CurrentPlatform.isDesktop && desktopNetworkClick(_desktopSelection, entry)) {
+      return;
+    }
     final selection = ref.read(networkSelectionProvider(_folderKey));
     if (selection.isActive && !entry.isDirectory) {
       // A tap picks or leaves out while picking files
@@ -268,6 +278,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       notifier.toggle(entry.path);
     } else {
       notifier.start(entry.path);
+    }
+    if (CurrentPlatform.isDesktop) {
+      desktopNetworkAnchor(_desktopSelection, entry);
     }
   }
 
@@ -365,7 +378,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       elevation: 0,
       centerTitle: false,
       leading: IconButton(icon: const Icon(Icons.close_rounded), tooltip: context.t.cancel, onPressed: notifier.end),
-      title: Text(context.t.network_upload_selected(count: selection.paths.length)),
+      title: withDesktopSelectionHint(context, Text(context.t.network_upload_selected(count: selection.paths.length))),
       actions: [
         IconButton(
           icon: const Icon(Icons.select_all_rounded),
@@ -386,12 +399,19 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
             // A refresh keeps the folder on screen until the new list comes
             final folder = snapshot.data;
             if (folder != null) {
-              return _FolderView(
-                folder: folder,
-                selection: selection,
-                onOpen: (entry) => _open(entry, folder),
-                onSelect: tvMode ? null : _select,
-                focusFirst: tvMode,
+              return withDesktopNetworkSelection(
+                key: _desktopSelection,
+                folder: _folderKey,
+                media: () => _media,
+                enabled: !tvMode,
+                onUpload: () => unawaited(_upload()),
+                child: _FolderView(
+                  folder: folder,
+                  selection: selection,
+                  onOpen: (entry) => _open(entry, folder),
+                  onSelect: tvMode ? null : _select,
+                  focusFirst: tvMode,
+                ),
               );
             }
             if (snapshot.connectionState != ConnectionState.done) {
@@ -520,7 +540,7 @@ class _FolderView extends StatelessWidget {
               itemCount: media.length,
               itemBuilder: (context, index) {
                 final entry = media[index];
-                return NetworkMediaTile(
+                final tile = NetworkMediaTile(
                   key: ValueKey(entry.path),
                   entry: entry,
                   url: folder.urls[entry.path],
@@ -529,6 +549,8 @@ class _FolderView extends StatelessWidget {
                   isSelected: selection.isActive ? selection.contains(entry.path) : null,
                   autofocus: focusFirst && folders.isEmpty && index == 0,
                 );
+                // Immuch360 Desktop: a right click opens the menu of the selection
+                return withDesktopNetworkTile(context, entry, tile);
               },
             ),
           ),
