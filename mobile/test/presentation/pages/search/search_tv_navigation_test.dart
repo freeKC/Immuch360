@@ -215,4 +215,37 @@ void main() {
       expect(find.text('Date'), findsOneWidget);
     });
   });
+
+  group('search entry', () {
+    testWidgets('on a TV the keyboard is titled Search, not with the example of the hint', (tester) async {
+      when(() => tvApi.editText(any())).thenAnswer((_) async => null);
+      await pumpSearch(tester, tvMode: true);
+      expect(find.text('File name or extension'), findsOneWidget, reason: 'the hint stays in the field');
+
+      await tester.tap(find.byKey(const Key('search_text_field')));
+      await tester.pumpAndSettle();
+      final request = verify(() => tvApi.editText(captureAny())).captured.single as TvTextRequest;
+      expect(request.title, 'Search');
+    });
+
+    testWidgets('on a TV the app bar is high enough for the line under the entry', (tester) async {
+      await pumpSearch(tester, tvMode: true);
+      final bar = tester.getRect(find.byType(AppBar));
+      final line = tester.getRect(find.text('Press OK to type'));
+      expect(line.bottom, lessThanOrEqualTo(bar.bottom), reason: 'not clipped by the toolbar');
+      expect(tester.getRect(find.byKey(const Key('search_text_field'))).top, greaterThanOrEqualTo(bar.top));
+    });
+
+    testWidgets('a phone keeps the toolbar of Immich and its text field', (tester) async {
+      await pumpSearch(tester, tvMode: false);
+      expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
+      expect(find.text('Press OK to type'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'beach');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+      expect(find.text(noResults), findsOneWidget);
+      verifyNever(() => tvApi.editText(any()));
+    });
+  });
 }
