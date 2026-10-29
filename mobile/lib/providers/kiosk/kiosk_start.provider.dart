@@ -1,8 +1,12 @@
 // The start of the kiosk mode of the Meta Quest (lot quest-kiosk, see KioskConfig and KioskSettings): once per run of
 // the app, after the first frame of the tab shell, the photo or the film chosen opens in the immersive viewer as a
 // kiosk (KioskSession on the headset), without previous or next. Nothing happens with the switch off or nothing chosen,
-// which phones, TVs and computers never have (the setting shows on a Meta Quest only), nor off a Meta Quest. The need
-// comes from the exhibition builds of ppawelstachh-sys/Immuch360 (branch immuch360).
+// which phones, TVs and computers never have (the setting shows on a Meta Quest only), nor off a Meta Quest. On a Meta
+// Quest a notice with Cancel comes first, for a few seconds (kioskCountdown): the way back to the settings when the
+// kiosk cannot be left in the headset (hands only, no B or Y; a viewer that fails on the media). The need comes from the
+// exhibition builds of ppawelstachh-sys/Immuch360 (branch immuch360).
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -41,11 +45,20 @@ enum KioskStartOutcome {
 
   /// The kiosk start ran already in this run of the app
   ranBefore,
+
+  /// Cancel was pressed on the notice before the opening: the app starts as usual, its settings at hand
+  cancelled,
 }
 
 /// Opens the media of the kiosk in the immersive viewer: what [KioskStart.run] calls once the device is known to be a
 /// Meta Quest. Throws when the media cannot be found or read, or when the viewer does not open.
 typedef KioskOpener = Future<void> Function();
+
+/// The notice before a kiosk opens, see [kioskCountdown]: true to open [media], false when Cancel was pressed
+typedef KioskCountdown = Future<bool> Function(KioskMedia media);
+
+/// How long the notice before a kiosk stays on screen, its Cancel at hand
+const kioskCountdownDelay = Duration(seconds: 8);
 
 /// The kiosk start of a run of the app: once, whatever builds the tab shell again later (a login, a return from the
 /// welcome page), so that choosing a media never turns a running app into a kiosk
@@ -56,12 +69,13 @@ class KioskStart {
   bool get ran => _ran;
 
   /// With the kiosk [config] on and a media chosen, on a Meta Quest ([isHorizonOs]), opens the media through the
-  /// opener [prepare] makes for it. [prepare] is called before any wait, the caller reading its services there; never
-  /// for a kiosk that is off.
+  /// opener [prepare] makes for it, once the notice [countdown] ends without Cancel. [prepare] is called before any
+  /// wait, the caller reading its services there; never for a kiosk that is off.
   Future<KioskStartOutcome> run({
     required KioskConfig config,
     required Future<bool> Function() isHorizonOs,
     required KioskOpener Function(KioskMedia media) prepare,
+    required KioskCountdown countdown,
   }) async {
     if (_ran) {
       return KioskStartOutcome.ranBefore;
@@ -76,6 +90,10 @@ class KioskStart {
       _log.info('A kiosk media is chosen, but this device is no Meta Quest');
       return KioskStartOutcome.notHeadset;
     }
+    if (!await countdown(media)) {
+      _log.info('Kiosk mode: ${media.name} cancelled on the notice, the app starts as usual');
+      return KioskStartOutcome.cancelled;
+    }
     try {
       await open();
       _log.info('Kiosk mode: ${media.name} opened for visitors');
@@ -89,6 +107,43 @@ class KioskStart {
 
 /// The kiosk start of this run of the app
 final kioskStartProvider = Provider<KioskStart>((_) => KioskStart());
+
+/// Says through [messenger] that the kiosk opens soon ([text]), for [delay] once the notice is on screen, with a
+/// [cancelLabel] action. Completes with false when it is pressed, else with true: at the end of [delay], or as soon as
+/// the notice is swiped away. The messages shown before are cleared, so that the notice shows at once.
+Future<bool> kioskCountdown(
+  ScaffoldMessengerState messenger, {
+  required String text,
+  required String cancelLabel,
+  Duration delay = kioskCountdownDelay,
+}) {
+  final result = Completer<bool>();
+  Timer? timer;
+  void finish({required bool open}) {
+    timer?.cancel();
+    if (!result.isCompleted) {
+      result.complete(open);
+    }
+  }
+
+  messenger.clearSnackBars();
+  // A timer of its own rather than the one of the SnackBar, which keeps a SnackBar with an action until it is closed
+  late final ScaffoldFeatureController<SnackBar, SnackBarClosedReason> notice;
+  notice = messenger.showSnackBar(
+    SnackBar(
+      content: Text(text),
+      persist: true,
+      onVisible: () => timer ??= Timer(delay, () {
+        finish(open: true);
+        notice.close();
+      }),
+      action: SnackBarAction(label: cancelLabel, onPressed: () => finish(open: false)),
+    ),
+  );
+  // Closed another way (swiped away): the kiosk opens. Cancel completed already, before the notice slides away
+  unawaited(notice.closed.then((_) => finish(open: true)));
+  return result.future;
+}
 
 /// What the viewer of a kiosk is told, in the language of the app ([t]): the end card text typed in the settings, else
 /// "Thank you for the journey", and how to leave
@@ -172,7 +227,8 @@ Future<void> openKioskRequest(
 }
 
 /// The kiosk start of this run of the app ([KioskStart.run]) with the services of the app, from the tab shell once its
-/// first frame is on screen. [messenger] says when the media chosen did not open.
+/// first frame is on screen. [messenger] shows the notice with Cancel before the opening ([kioskCountdown]), and says
+/// when the media chosen did not open.
 Future<void> startKiosk(WidgetRef ref, {ScaffoldMessengerState? messenger}) async {
   final start = ref.read(kioskStartProvider);
   final config = ref.read(appConfigProvider).kiosk;
@@ -181,6 +237,14 @@ Future<void> startKiosk(WidgetRef ref, {ScaffoldMessengerState? messenger}) asyn
     config: config,
     isHorizonOs: () => ref.read(isHorizonOsProvider.future),
     prepare: (media) => _appKioskOpener(ref, media, kioskOptions(config, t)),
+    // MaterialApp gives the shell a messenger; without one, there is nothing to show the notice on
+    countdown: (media) async =>
+        messenger == null ||
+        await kioskCountdown(
+          messenger,
+          text: t.kiosk_mode_opening_soon(name: media.name),
+          cancelLabel: t.cancel,
+        ),
   );
   if (outcome == KioskStartOutcome.failed) {
     messenger?.showSnackBar(SnackBar(content: Text(t.kiosk_mode_open_failed(name: config.chosenMedia?.name ?? ''))));

@@ -1,8 +1,9 @@
 // The start of the kiosk mode of the Meta Quest: once per run of the app; nothing with the switch off or nothing
-// chosen, without even asking the platform; nothing off a Meta Quest; the asset found on the server or on the device,
-// the file of a share read as its page reads it, opened as a kiosk with its texts and without previous or next; a media
-// gone or unreachable told as a failure.
+// chosen, without even asking the platform; nothing off a Meta Quest; on a Meta Quest a notice with Cancel first, Cancel
+// opening nothing; the asset found on the server or on the device, the file of a share read as its page reads it,
+// opened as a kiosk with its texts and without previous or next; a media gone or unreachable told as a failure.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -89,6 +90,7 @@ void main() {
     late List<KioskMedia> prepared;
     late int opened;
     late int asked;
+    late List<KioskMedia> noticed;
     Exception? openFailure;
 
     setUp(() {
@@ -96,10 +98,12 @@ void main() {
       prepared = [];
       opened = 0;
       asked = 0;
+      noticed = [];
       openFailure = null;
     });
 
-    Future<KioskStartOutcome> run(KioskConfig config, {bool horizonOs = true}) => start.run(
+    /// The notice before the opening ends with [notice]: true without Cancel, false with it
+    Future<KioskStartOutcome> run(KioskConfig config, {bool horizonOs = true, Future<bool>? notice}) => start.run(
       config: config,
       isHorizonOs: () async {
         asked++;
@@ -115,12 +119,17 @@ void main() {
           opened++;
         };
       },
+      countdown: (media) {
+        noticed.add(media);
+        return notice ?? Future.value(true);
+      },
     );
 
     test('nothing chosen: the app starts as usual, without a question to the platform', () async {
       expect(await run(const KioskConfig()), KioskStartOutcome.off);
       expect(asked, 0);
       expect(prepared, isEmpty);
+      expect(noticed, isEmpty);
     });
 
     test('the switch off: the media chosen stays where it is', () async {
@@ -134,15 +143,17 @@ void main() {
       expect(prepared, isEmpty);
     });
 
-    test('off a Meta Quest, nothing opens', () async {
+    test('off a Meta Quest, nothing opens, and no notice', () async {
       expect(await run(KioskConfig(media: _film.encode()), horizonOs: false), KioskStartOutcome.notHeadset);
       expect(opened, 0);
+      expect(noticed, isEmpty);
     });
 
-    test('on a Meta Quest, the media chosen opens, once per run of the app', () async {
+    test('on a Meta Quest, the media chosen opens after the notice, once per run of the app', () async {
       final config = KioskConfig(media: _film.encode());
 
       expect(await run(config), KioskStartOutcome.opened);
+      expect(noticed, [_film]);
       expect(prepared, [_film]);
       expect(opened, 1);
       expect(start.ran, isTrue);
@@ -151,6 +162,30 @@ void main() {
       expect(await run(config), KioskStartOutcome.ranBefore);
       expect(opened, 1);
       expect(asked, 1);
+    });
+
+    test('Cancel on the notice: nothing opens, the app starts as usual, and no second notice in this run', () async {
+      final config = KioskConfig(media: _film.encode());
+
+      expect(await run(config, notice: Future.value(false)), KioskStartOutcome.cancelled);
+      expect(noticed, [_film]);
+      expect(opened, 0);
+
+      expect(await run(config), KioskStartOutcome.ranBefore);
+      expect(noticed, [_film]);
+      expect(opened, 0);
+    });
+
+    test('without Cancel, the media opens only once the notice is over', () async {
+      final notice = Completer<bool>();
+      final outcome = run(KioskConfig(media: _film.encode()), notice: notice.future);
+      await pumpEventQueue();
+      expect(noticed, [_film]);
+      expect(opened, 0, reason: 'the notice is still on screen');
+
+      notice.complete(true);
+      expect(await outcome, KioskStartOutcome.opened);
+      expect(opened, 1);
     });
 
     test('a media that does not open is a failure, and is not tried again in this run', () async {
@@ -311,6 +346,80 @@ void main() {
     });
   });
 
+  group('kioskCountdown', () {
+    /// A screen of the app with its messenger, and the notice asked on it; [shownBefore] a message already on screen
+    Future<({Future<bool> open, List<bool> done})> showNotice(WidgetTester tester, {bool shownBefore = false}) async {
+      await tester.pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox.expand())));
+      final messenger = tester.state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger));
+      if (shownBefore) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: const Text('Backup paused'),
+            action: SnackBarAction(label: 'Retry', onPressed: () {}),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+      final done = <bool>[];
+      final open = kioskCountdown(
+        messenger,
+        text: 'Kiosk mode: expo_360.mp4 opens in a few seconds',
+        cancelLabel: 'Cancel',
+      );
+      unawaited(open.then(done.add));
+      await tester.pumpAndSettle();
+      return (open: open, done: done);
+    }
+
+    final notice = find.text('Kiosk mode: expo_360.mp4 opens in a few seconds');
+
+    testWidgets('Cancel: the kiosk does not open, and the notice goes', (tester) async {
+      final shown = await showNotice(tester);
+      expect(notice, findsOneWidget);
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(await shown.open, isFalse);
+      expect(notice, findsNothing);
+    });
+
+    testWidgets('no Cancel: the kiosk opens once the notice was on screen for its delay, not before', (tester) async {
+      final shown = await showNotice(tester);
+      expect(notice, findsOneWidget);
+
+      await tester.pump(kioskCountdownDelay - const Duration(seconds: 1));
+      expect(shown.done, isEmpty, reason: 'one second left');
+      expect(notice, findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(shown.done, [true]);
+      expect(await shown.open, isTrue);
+      expect(notice, findsNothing);
+    });
+
+    testWidgets('swiped away: the kiosk opens at once, as without Cancel', (tester) async {
+      final shown = await showNotice(tester);
+
+      await tester.fling(notice, const Offset(0, 300), 1000);
+      await tester.pumpAndSettle();
+
+      expect(notice, findsNothing);
+      expect(shown.done, [true]);
+    });
+
+    testWidgets('a message on screen before goes, so that the notice and its Cancel show at once', (tester) async {
+      final shown = await showNotice(tester, shownBefore: true);
+
+      expect(find.text('Backup paused'), findsNothing);
+      expect(notice, findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(await shown.open, isFalse);
+    });
+  });
+
   testWidgets('the end card says the text typed, else "Thank you for the journey", and the notice how to leave', (
     tester,
   ) async {
@@ -332,5 +441,6 @@ void main() {
       ),
     );
     expect(kioskOptions(const KioskConfig(endText: 'Merci et à bientôt'), t).endText, 'Merci et à bientôt');
+    expect(t.kiosk_mode_opening_soon(name: 'expo_360.mp4'), 'Kiosk mode: expo_360.mp4 opens in a few seconds');
   });
 }
