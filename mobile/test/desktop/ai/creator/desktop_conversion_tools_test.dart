@@ -723,7 +723,7 @@ void _panoramaEngineTests(Directory Function() root) {
       expect(made, isEmpty);
     });
 
-    test('the panoramas held back in this version: the reason told, not "not installed"', () async {
+    test('the panoramas held back by a version: the reason told, not "not installed"', () async {
       final flag = NativeCancelFlag();
       addTearDown(flag.free);
       installAll(AiPlatform.windowsX64);

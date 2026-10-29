@@ -107,7 +107,7 @@ void main() {
       expect(result.files.keys, unorderedEquals([onnxRuntimeWindowsComponent.id, depthModelOnnxComponent.id]));
     });
 
-    test('a 360° panorama: not yet on Mac; not in this version while its group is held, its engine written', () async {
+    test('a 360° panorama: not yet on Mac; offered on Windows, its engine asked for first; refused while held', () async {
       final mac = await gate(abi: Abi.macosArm64).evaluate(feature: AiFeature.panorama);
       final windows = await gate(
         abi: Abi.windowsX64,
@@ -116,22 +116,33 @@ void main() {
 
       expect(mac.reason, AiGateReason.notYetOnMac);
       expect(mac.reason!.textKey, 'ai_immersive_gpu_not_on_mac');
+      // Nothing held back by default since ai-components-3 was published: every component installed, a card it takes
+      expect(gate().heldGroups, isEmpty);
       expect(sdCppWindowsComponent.isComplete, isTrue);
-      expect(windows.reason, AiGateReason.notInThisVersion);
-      expect(windows.reason!.textKey, 'ai_immersive_unavailable_build');
-      expect(windows.missing, isEmpty);
+      expect(windows.isAvailable, isTrue, reason: '$windows');
+      expect(windows.fileOf(sdCppWindowsComponent.id), isNotNull);
 
-      // Once the hold is lifted (P3, U3 and ai-components-3), the components are asked for, the engine of P2 first
-      final lifted = await HardwareGate(
-        components: _FakeComponents(folder, states: {sdCppWindowsComponent.id: AiComponentState.notInstalled}),
-        facts: () => const AiHardwareFacts(abi: Abi.windowsX64, processors: 8, physicalMemory: 16 * _gib),
-        loadRuntime: (path) async => (version: '1.31.0', error: null),
-        heldGroups: const {},
+      // The engine of P2 not installed: the components are asked for, the engine first
+      final missing = await gate(
+        abi: Abi.windowsX64,
+        states: {sdCppWindowsComponent.id: AiComponentState.notInstalled},
         // A card the panoramas take (lot C6), so that the components are what is looked at
         gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       ).evaluate(feature: AiFeature.panorama);
-      expect(lifted.reason, AiGateReason.componentsMissing);
-      expect(lifted.missing, [sdCppWindowsComponent]);
+      expect(missing.reason, AiGateReason.componentsMissing);
+      expect(missing.missing, [sdCppWindowsComponent]);
+
+      // A group this version holds back is not in this version, its components complete
+      final held = await HardwareGate(
+        components: _FakeComponents(folder),
+        facts: () => const AiHardwareFacts(abi: Abi.windowsX64, processors: 8, physicalMemory: 16 * _gib),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+        heldGroups: const {AiFeatureGroup.panoramas},
+        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
+      ).evaluate(feature: AiFeature.panorama);
+      expect(held.reason, AiGateReason.notInThisVersion);
+      expect(held.reason!.textKey, 'ai_immersive_unavailable_build');
+      expect(held.missing, isEmpty);
     });
 
     test('the variant of a component is the one the memory of the card takes', () async {
@@ -162,8 +173,6 @@ void main() {
         loadRuntime: (path) async => (version: '1.31.0', error: null),
         catalogue: catalogue,
         gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
-        // The panoramas held back by this version are not what this test looks at
-        heldGroups: const {},
       );
 
       final small = await variants.evaluate(feature: AiFeature.panorama, graphicsMemory: 8 * _gib);

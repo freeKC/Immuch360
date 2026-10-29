@@ -307,8 +307,8 @@ class HardwareGate {
   /// The catalogue of the components; another one only in the tests
   final List<AiComponent> catalogue;
 
-  /// The groups of features this version does not offer yet, whatever the catalogue says (aiHeldFeatureGroups: the 360°
-  /// panoramas until the publication of their components)
+  /// The groups of features this version does not offer yet, whatever the catalogue says (aiHeldFeatureGroups: none
+  /// since the publication of the components of the 360° panoramas; another set only in the tests)
   final Set<AiFeatureGroup> heldGroups;
 
   final AiComponentFiles components;

@@ -1002,10 +1002,12 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
   return need(b) < need(a) ? b : a;
 }
 
-/// The groups the app does not offer yet, whatever their catalogue says: the 360° panoramas, whose components are
-/// complete since lot P2 wrote the archives of stable-diffusion.cpp and whose engine (P3) and screens (U3) are in, wait
-/// for the publication of ai-components-3 (D6), which lifts this hold
-const aiHeldFeatureGroups = {AiFeatureGroup.panoramas};
+/// The groups the app does not offer yet, whatever their catalogue says; none since 29 October 2026. The 360°
+/// panoramas were held here until their components were published: ai-components-3 is out (D6) and FreeKC gave his go
+/// for build 32, so they ship as an experimental feature, behind the gate of the graphics card and with their honesty
+/// texts. The author's own judgement of their quality in a headset is pending; the release notes report it. A group
+/// put back here is no longer offered: not listed in the dialog, refused by the gate as not in this version.
+const aiHeldFeatureGroups = <AiFeatureGroup>{};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
 /// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)

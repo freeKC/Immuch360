@@ -186,7 +186,7 @@ void main() {
       },
     );
 
-    test('the archives of the engine are complete (P2), and the panoramas held until their engine and release', () {
+    test('the archives of the engine are complete (P2), and the panoramas offered on Windows and Linux only', () {
       for (final engine in [sdCppWindowsComponent, sdCppLinuxComponent]) {
         expect(engine.isComplete, isTrue, reason: engine.id);
         expect(engine.version, 'be48649-2', reason: 'the id of .github/desktop/ai/sd_cpp.lock.json');
@@ -223,10 +223,14 @@ void main() {
         expect(component.isComplete, isTrue, reason: component.id);
         expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
       }
+      // Nothing held back since ai-components-3 was published: the panoramas are offered where their engine runs
+      expect(aiHeldFeatureGroups, isEmpty);
       for (final platform in AiPlatform.values) {
         expect(
           aiComponentGroupsFor(platform).map((group) => group.group),
-          isNot(contains(AiFeatureGroup.panoramas)),
+          platform == AiPlatform.windowsX64 || platform == AiPlatform.linuxX64
+              ? contains(AiFeatureGroup.panoramas)
+              : isNot(contains(AiFeatureGroup.panoramas)),
           reason: platform.name,
         );
       }
@@ -329,13 +333,13 @@ void main() {
 
     test('the groups: each component under the first group that needs it, a shared one counted once', () {
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
-      expect(windows.map((group) => group.group), [AiFeatureGroup.photos, AiFeatureGroup.scenes]);
+      expect(windows.map((group) => group.group), AiFeatureGroup.values);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
-      expect(windows.last.all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
-      expect(windows.last.own, [mogeGeometryComponent, lamaInpaintComponent]);
+      expect(windows[1].all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
+      expect(windows[1].own, [mogeGeometryComponent, lamaInpaintComponent]);
       expect(aiComponentGroupsFor(AiPlatform.questArm64).single.own, [depthModelTfliteComponent]);
 
-      // Once the engine has its files, the panoramas join: MoGe stays under the scenes, ONNX Runtime under the photos
+      // An engine with its files: the panoramas join, MoGe stays under the scenes, ONNX Runtime under the photos
       const engine = AiComponent(
         id: 'sd-cpp-vulkan-win-x64',
         version: 'test',
@@ -356,13 +360,18 @@ void main() {
         ],
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
-      // Held until the publication of ai-components-3 (the engine of P3 and the screens of U3 are in): never offered
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.panoramas});
-      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), [
-        AiFeatureGroup.photos,
-        AiFeatureGroup.scenes,
-      ]);
-      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete, held: const {});
+      // A group held back is never offered, its components complete; nothing is held back by default since the
+      // publication of ai-components-3 (29 October 2026)
+      expect(
+        aiComponentGroupsFor(
+          AiPlatform.windowsX64,
+          catalogue: complete,
+          held: const {AiFeatureGroup.panoramas},
+        ).map((group) => group.group),
+        [AiFeatureGroup.photos, AiFeatureGroup.scenes],
+      );
+      expect(aiHeldFeatureGroups, isEmpty);
+      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete);
       expect(groups.map((group) => group.group), AiFeatureGroup.values);
       expect(groups.last.own.map((component) => component.id), [
         'sd-cpp-vulkan-win-x64',
