@@ -12,8 +12,12 @@
     "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "80b06c12896f9f010b625ab626ef81a3766014e0",
-    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine"
+    "blob": "12f497d0fe4977790f0c5c38f12f474665c2dd11",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the sideways thumbstick scrolls of the flat app window handed to QuestStickPaging, one page call per push to the asset viewer"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/QuestStickPaging.kt": {
+    "blob": "52a57a7c99d2f9984f989b967ab5c841434d96f3",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the channel the asset viewer asks the thumbstick pushes on, and StickPushDetector, one page per push with a deadzone"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
     "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
@@ -295,6 +299,10 @@
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatStereo.kt": {
+    "blob": "c643801f51bf89091ac3f7cfd473c9aca8aedbec",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): where the eyes of a flat 3D frame lie, the stereo mode of the flat video screen, and FlatStereoSpec, the flat3d JSON of the stereoPair parameter"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/GeneratedPanorama.kt": {
     "blob": "4bef68b7d6a0e3a50938f6b6a85c099c4faaa102",
     "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): no outline on the 3D version of a generated panorama, the flags on one line of the panel"
@@ -308,8 +316,8 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "1b135ebe90c60c26f4eb005314b35226c48e6e30",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama"
+    "blob": "625df4fd7c855b8c756a7fafc2d4a942d839af7d",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
     "blob": "f555b014f4298cd66b0d334b4e916324b965225b",
@@ -328,12 +336,12 @@
     "reason": "AI immersive lot A7: decoding and cutting a side by side photo for the stereo quad; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
-    "blob": "26462451cfbb9dc229946d8525904906e90570b4",
-    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch"
+    "blob": "68eba9ba0cc3e46b24fac920645878ea1220e644",
+    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
-    "blob": "2a6bc8e23bd4e57b9d76c6abee2726e2fb345b14",
-    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch"
+    "blob": "031a250582b6cfdb623b9f764e1283bcdfc2feaf",
+    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d kind of the stereoPair JSON"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/GlbReader.kt": {
     "blob": "cbc5f9d1234eabfbb0848780ab87240705305a7a",
@@ -435,6 +443,10 @@
     "blob": "8200c08dcd29a3b11f88c38c369a5b51b890ca07",
     "reason": "DJI link stage 2b (feat-dji-link-3): the panel ids of the Quest flight view; DJI finalisation (feat-dji-final): the ids of the columns and of the alert panel; DJI obstacle ring (feat-dji-obstacle-ui): the ids of the halo panels in place of the alert panel; DJI integration (feat-dji-30): the ids of the circle's panels"
   },
+  "mobile/android/app/src/main/res/values/immersive.xml": {
+    "blob": "780ae11f65ee5536b86feed939e8d8ffa968de4b",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the id of the flat video panel"
+  },
   "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
     "blob": "46cc9494b2c2d01fcdb02c6dffd4e967dcf35e57",
     "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes; DJI accessory filter (fix-accessory-filter): any DJI accessory plus the identity string of our own capture of 23 October 2026, the two unseen model strings dropped"
@@ -450,6 +462,10 @@
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
     "blob": "a23329349881097db0918c485209bb3a0b53d801",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model on LiteRT CompiledModel, the GPU in fp32 or the CPU on 4 threads, quest flavour only"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/QuestStickPagingTest.kt": {
+    "blob": "d6935a5f9e755acd80c76a653edeb2a059e6bcb3",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the push detection (direction, deadzone, one page per push)"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
     "blob": "18b6fbf88948bc64016d8427f23ad469a5da38a0",
@@ -718,6 +734,14 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/DocumentTreeReadsTest.kt": {
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoSpecTest.kt": {
+    "blob": "c12470ebb72a39906cac0abf3baf073920082b2e",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d JSON against the samples of flat3d_contract_v1.json"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoTest.kt": {
+    "blob": "87722c75cba1f7b3e2d601c8fbb18b1ca43091de",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the eyes of a flat 3D frame and of the stereo mode of its video layer"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/GeneratedPanoramaTest.kt": {
     "blob": "dd41cafe9ab601c0012ef69de03890a9779935db",
