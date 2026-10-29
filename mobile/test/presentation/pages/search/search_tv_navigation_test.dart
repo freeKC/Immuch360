@@ -98,9 +98,17 @@ void main() {
 
   /// The date chip, its sheet, and a choice of the sheet
   Future<void> pickDate(WidgetTester tester, {required String chip, required String choice}) async {
+    // The chips scroll sideways: on a phone the date chip starts beyond the right edge of the screen
+    final chips = find.descendant(
+      of: find.byKey(const Key('search_filter_chip_list')),
+      matching: find.byType(Scrollable),
+    );
+    await tester.scrollUntilVisible(find.text(chip), 100, scrollable: chips.first);
     await tester.tap(find.text(chip));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(choice).last);
+    // Custom range is one row that takes the tap and OK as a whole, its text under an IgnorePointer: the tap on the
+    // text reaches the row, as a finger does
+    await tester.tap(find.text(choice).last, warnIfMissed: false);
     await tester.pumpAndSettle();
   }
 
