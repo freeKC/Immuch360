@@ -1,8 +1,8 @@
 // The tile of the AI components of a computer, by group of features (design-final 2026-10-27, sections 7.1 and 9.1):
-// "3D photos" and "3D scenes" with the size of what each needs (a shared component counted in both), each component
-// under the first group that needs it, Download and Remove by group, Remove only where it would remove something, a
-// shared component that stays said as such, the panoramas absent while their engine is missing, and every button
-// greyed while the components are being moved.
+// "3D photos", "3D scenes" and "360° panoramas" (offered since ai-components-3 was published) with the size of what
+// each needs (a shared component counted in each), each component under the first group that needs it, Download and
+// Remove by group, Remove only where it would remove something, a shared component that stays said as such, and every
+// button greyed while the components are being moved.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +56,7 @@ void main() {
   }
 
   testWidgets(
-    'the 3D photos and the 3D scenes with the size of what each needs, each component once; no panoramas yet',
+    'the 3D photos, the 3D scenes and the 360° panoramas with the size of what each needs, each component once',
     (tester) async {
       await pumpTile(tester);
 
@@ -67,11 +67,30 @@ void main() {
         findsOneWidget,
         reason: 'ONNX Runtime counted too: Download takes it when it is missing',
       );
-      expect(find.textContaining('360° panoramas'), findsNothing);
+      final panoramas = AiComponentsService.diskBytesOf([
+        runtime,
+        moge,
+        sdCppWindowsComponent,
+        miganInpaintComponent,
+        fluxTransformerComponent,
+        qwenTextEncoderComponent,
+        fluxVaeComponent,
+        panoramaLoraComponent,
+        upscalerComponent,
+      ]);
+      expect(
+        find.text('360° panoramas: ${formatBytes(panoramas)}'),
+        findsOneWidget,
+        reason: 'offered by this version, nothing held back; ONNX Runtime and MoGe-2 counted too',
+      );
       expect(inGroup(AiFeatureGroup.photos, find.text('ONNX Runtime 1.31.0')), findsOneWidget);
       expect(inGroup(AiFeatureGroup.scenes, find.text('MoGe-2 ViT-S')), findsOneWidget);
       expect(inGroup(AiFeatureGroup.scenes, find.text('LaMa')), findsOneWidget);
+      expect(inGroup(AiFeatureGroup.panoramas, find.text('stable-diffusion.cpp (Vulkan)')), findsOneWidget);
+      expect(inGroup(AiFeatureGroup.panoramas, find.text('FLUX.2 klein base 4B (Q4_0)')), findsOneWidget);
       expect(find.text('ONNX Runtime 1.31.0'), findsOneWidget, reason: 'listed under the 3D photos only');
+      expect(find.text('MoGe-2 ViT-S'), findsOneWidget, reason: 'listed under the 3D scenes only');
+      expect(find.byKey(const Key('ai_components_group_download_panoramas')), findsOneWidget);
       expect(find.byKey(const Key('ai_components_group_download_scenes')), findsOneWidget);
       expect(find.byKey(const Key('ai_components_group_remove_scenes')), findsNothing);
       expect(service.installs, isEmpty);

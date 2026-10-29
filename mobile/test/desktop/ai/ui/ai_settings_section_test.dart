@@ -5,9 +5,9 @@
 // the conversions stopped before the components are removed. Phase 2: the components by group of features, "Move the
 // AI components" with its folder, its progress and what a refusal says, the folder of a drive not connected, and
 // "Also save a .glb copy"; the engine of the 3D scenes let go with the one of the 3D photos before a removal and
-// before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them; once this version
-// offers the 360° panoramas, the line of the graphics card for them and "Try on integrated graphics (untested)", kept,
-// with its warning that fades.
+// before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them; the 360° panoramas this
+// version offers (nothing held back by default), the line of the graphics card for them and "Try on integrated
+// graphics (untested)", kept, with its warning that fades; a group held back keeps the line of phase 1.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -362,18 +362,30 @@ void main() {
     expect(tester.widget<SwitchListTile>(tile).onChanged, isNull);
   });
 
-  testWidgets('the hardware line: logical processors, memory, the GPU, which is not used yet', (tester) async {
-    await pump(tester);
+  testWidgets('the hardware line: logical processors, memory, and the card of the 360° panoramas this build offers', (
+    tester,
+  ) async {
+    // The engines and the hold of this build: nothing held back since ai-components-3 was published
+    await pump(
+      tester,
+      gate: HardwareGate(
+        components: _NoFiles(),
+        facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 22, physicalMemory: 32 << 30),
+        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
+      ),
+    );
+    expect(aiHeldFeatureGroups, isEmpty);
     expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
     expect(
-      find.text('NVIDIA GeForce RTX 4060 Laptop GPU\nGPU acceleration: not yet, the processor is used'),
+      find.text('NVIDIA GeForce RTX 4060 Laptop GPU, 8.0 GiB, Vulkan 1.4: 360° panoramas available'),
       findsOneWidget,
     );
-    expect(find.byKey(const Key('ai_settings_integrated_gpu')), findsNothing);
+    expect(find.textContaining('GPU acceleration: not yet'), findsNothing);
+    expect(find.text('Try on integrated graphics (untested)'), findsOneWidget);
   });
 
   group('the graphics card for the 360° panoramas', () {
-    HardwareGate gateWith(GpuReport report, {Set<AiFeatureGroup> held = const {}}) => HardwareGate(
+    HardwareGate gateWith(GpuReport report, {Set<AiFeatureGroup> held = aiHeldFeatureGroups}) => HardwareGate(
       components: _NoFiles(),
       facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 22, physicalMemory: 32 << 30),
       heldGroups: held,
@@ -382,10 +394,10 @@ void main() {
     );
     final panoramas = fakeConversionEngines(panorama: FakePanoramaEngine(), stereoPanorama: FakeStereoPanoramaEngine());
 
-    testWidgets('while this version holds them back: the line of phase 1, no switch', (tester) async {
+    testWidgets('while a version holds them back: the line of phase 1, no switch', (tester) async {
       await pump(
         tester,
-        gate: gateWith(FakeGpuReports.rtx4060, held: aiHeldFeatureGroups),
+        gate: gateWith(FakeGpuReports.rtx4060, held: const {AiFeatureGroup.panoramas}),
         engines: panoramas,
       );
       expect(

@@ -6,11 +6,11 @@
 // library left alone while the album of the generated photos is not out of the backup. Phase 2: the choice of the type
 // once the build makes another one (the fake engine of the scenes), its honesty sentence, components, free space and
 // time, the type greyed with its reason, the plan of each photo of a mixed selection, the selection planned again for
-// another type, and the type kept for the next dialog. Phase 3: the 360° panorama, not offered while this version holds
-// it back, then its sentence, the part invented, "Also make the 3D version" with the components of both, the warning
-// of the graphics card, its time, the question on battery, its reasons of the card, and the type asked for by "Make the
-// 3D version". The components moved meanwhile, a refusal of one type that greys nothing, and what the user chose kept
-// when the type changes.
+// another type, and the type kept for the next dialog. Phase 3: the 360° panorama, offered by this build (nothing held
+// back since ai-components-3 was published) and not listed while a version holds it back; its sentence, the part
+// invented, "Also make the 3D version" with the components of both, the warning of the graphics card, its time, the
+// question on battery, its reasons of the card, and the type asked for by "Make the 3D version". The components moved
+// meanwhile, a refusal of one type that greys nothing, and what the user chose kept when the type changes.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -1106,10 +1106,9 @@ void main() {
     bool alsoStereo(WidgetTester tester) =>
         tester.widget<CheckboxListTile>(find.byKey(const Key('ai_conversion_also_stereo'))).value!;
 
-    /// The engines of the panorama and of its 3D version, the panoramas no longer held back
+    /// The engines of the panorama and of its 3D version; the hold is that of this build (setUp), nothing held back
     void panoramas() {
       kinds = fakeConversionEngines(panorama: FakePanoramaEngine(), stereoPanorama: FakeStereoPanoramaEngine());
-      held = const {};
     }
 
     void installed(Iterable<AiComponent> components) {
@@ -1129,8 +1128,12 @@ void main() {
       await settle(tester);
     }
 
-    testWidgets('held back by this version, it is not listed, whatever the engine', (tester) async {
-      kinds = fakeConversionEngines(panorama: FakePanoramaEngine(), stereoPanorama: FakeStereoPanoramaEngine());
+    testWidgets('held back by a version, it is not listed, whatever the engine; this build holds nothing', (
+      tester,
+    ) async {
+      expect(aiHeldFeatureGroups, isEmpty);
+      panoramas();
+      held = const {AiFeatureGroup.panoramas};
       original('salon.jpg');
       await openDialog(tester, [_photo('salon.jpg')]);
 

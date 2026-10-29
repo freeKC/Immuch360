@@ -27,14 +27,15 @@
 // Phases 2 and 3 (design-final 2026-10-27, section 9.1, point 2): the dialog starts with the type of version, among the
 // types registered in conversionDialogKinds that this build makes (the 3D photo, the 3D scene, the 360° panorama and
 // the 3D version of a 360° photo), the one chosen last kept in desktop_ai.json (lastType). A type the gate refuses
-// stays listed, greyed with its reason; a type whose group this version holds back (aiHeldFeatureGroups: the 360°
-// panoramas until their release) is not listed, being no feature of this version. Under the choice, what the type is
-// (its honesty sentence), the components of its feature that are missing with the free space of their drive, its
-// gate, and the time a photo takes on this computer; then the destination, the question of a network folder, "If a
-// version exists", and for a mixed selection the plan of each photo: those the type makes, and those skipped and why.
-// Changing the type plans the selection again for it (the photos it takes, the names of their files), with what the
-// user chose in this dialog. While the AI components are moved to another folder ("Move the AI components"), they
-// read as missing: the dialog says Convert waits for the end of the copy instead of offering to download them.
+// stays listed, greyed with its reason; a type whose group this version holds back (aiHeldFeatureGroups, empty since
+// the release of the components of the 360° panoramas) is not listed, being no feature of this version. Under the
+// choice, what the type is (its honesty sentence), the components of its feature that are missing with the free space
+// of their drive, its gate, and the time a photo takes on this computer; then the destination, the question of a
+// network folder, "If a version exists", and for a mixed selection the plan of each photo: those the type makes, and
+// those skipped and why. Changing the type plans the selection again for it (the photos it takes, the names of their
+// files), with what the user chose in this dialog. While the AI components are moved to another folder ("Move the AI
+// components"), they read as missing: the dialog says Convert waits for the end of the copy instead of offering to
+// download them.
 //
 // The 360° panorama (lot U3; design-final 2026-10-27, sections 4.7 and 9.1, point 2): the part of it the AI invents
 // ("About 92% of this panorama will be invented by AI", from the field of view the EXIF of the photo tells, or that of
