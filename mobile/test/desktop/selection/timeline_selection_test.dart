@@ -68,6 +68,7 @@ void main() {
     bool shell = true,
     bool tvMode = false,
     MultiSelectState? selection,
+    TimelineOrigin origin = TimelineOrigin.main,
   }) async {
     tester.view
       ..physicalSize = const Size(1600, 2400)
@@ -77,7 +78,7 @@ void main() {
     final service = TimelineService((
       assetSource: (i, n) async => assets.sublist(i, math.min(i + n, assets.length)),
       bucketSource: () => Stream.value([TimeBucket(date: DateTime(2026, 10, 5), assetCount: assets.length)]),
-      origin: TimelineOrigin.main,
+      origin: origin,
     ));
     addTearDown(service.dispose);
 
@@ -337,6 +338,35 @@ void main() {
       expect(selected(tester), isEmpty);
       expect(container(tester).read(multiSelectProvider).forceEnable, isTrue);
       expect(container(tester).read(multiSelectProvider).lockedSelectionAssets, {assets[2]});
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the trash offers no action in the menu, only to select', (tester) async {
+      await pumpTimeline(tester, assets: photos(12), origin: TimelineOrigin.trash);
+      await rightClick(tester, tile(1));
+      await settle(tester);
+      expect(selected(tester), {'p1'});
+      expect(find.byKey(const Key('desktop_selection_select_all')), findsOneWidget);
+      expect(
+        find.byKey(const Key('desktop_selection_share')),
+        findsNothing,
+        reason: 'restore or delete, from the sheet',
+      );
+      expect(find.byKey(const Key('desktop_selection_upload')), findsNothing);
+      expect(find.byType(DesktopMakeImmersiveButton), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the locked folder offers no "Make 3D (AI)" in the menu', (tester) async {
+      await pumpTimeline(tester, assets: photos(12), origin: TimelineOrigin.lockedFolder);
+      await rightClick(tester, tile(1));
+      await settle(tester);
+      expect(
+        find.byKey(const Key('desktop_selection_share')),
+        findsOneWidget,
+        reason: 'as the sheet of the locked folder',
+      );
+      expect(find.byType(DesktopMakeImmersiveButton), findsNothing);
       debugDefaultTargetPlatformOverride = null;
     });
 
