@@ -17,6 +17,7 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/actions/download.action.dart';
@@ -24,6 +25,7 @@ import 'package:immich_mobile/presentation/actions/share.action.dart';
 import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 
 /// How many assets Control A and a long Shift click load at a time
@@ -187,10 +189,13 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
   /// The main actions for the whole selection, each absent when it does not apply (no server, nothing of this computer
   /// to send, the AI features off). Built with the context of the scope, which outlives the menu.
   static List<Widget> _menu(BuildContext context, WidgetRef ref) {
-    // The page that picks the photos of an album has its own Done
-    if (ref.watch(multiSelectProvider.select((state) => state.forceEnable))) {
+    // The page that picks the photos of an album has its own Done; the trash only restores or deletes, from its sheet
+    final origin = ref.watch(timelineServiceProvider).origin;
+    if (ref.watch(multiSelectProvider.select((state) => state.forceEnable)) || origin == TimelineOrigin.trash) {
       return const [];
     }
+    // No 3D version of the photos of the locked folder, as in the viewer
+    final make3d = origin != TimelineOrigin.lockedFolder && !ref.watch(inLockedViewProvider);
     Widget? entry(ActionBuilder action, String key) {
       final item = action.create(context, ref);
       if (item == null) {
@@ -206,7 +211,7 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
 
     return [
       ?entry(const UploadAction(source: ActionSource.timeline), 'desktop_selection_upload'),
-      const DesktopMakeImmersiveButton(source: ActionSource.timeline, menuItem: true),
+      if (make3d) const DesktopMakeImmersiveButton(source: ActionSource.timeline, menuItem: true),
       ?entry(const DownloadAction(source: ActionSource.timeline), 'desktop_selection_download'),
       // "Save to a folder" on Linux, the share sheet of the system elsewhere
       ?entry(const ShareAction(source: ActionSource.timeline), 'desktop_selection_share'),
