@@ -36,7 +36,7 @@ Every capture here is a real capture of the app, cut to the app's own window or 
 
 ## The AI creator, build 32 (desktop build 13)
 
-Every picture of this section comes from a real output of Immuch360, made from a CC0 photo of [Poly Haven](https://polyhaven.com/license). None of these files has been looked at in a headset by the author yet (29 October 2026). Composed with Python (Pillow, numpy) by a script outside the repository; the badges in the strip are the words of the app ("3D AI", "3D scene", "360° AI"), drawn by that script on a dark chip so that they read on a white wall.
+Every picture of this section comes from a real output of Immuch360, made from a CC0 photo of [Poly Haven](https://polyhaven.com/license). Composed with Python (Pillow, numpy) by a script outside the repository; the badges in the strip are the words of the app ("3D AI", "3D scene", "360° AI"), drawn by that script on a dark chip so that they read on a white wall.
 
 * `ai-one-photo-four-ways.jpg`, 1600 x 1207, JPEG quality 85: one photo and what the app made of it, in the style of the platforms montage.
   * The photo: `p01_interior.jpg`, the backplate 10 of "Christmas Photo Studio 07" by Sergej Majboroda (CC0), 5568 x 3712, MD5 419eef4b21ef186928e54ef815e3a0c2 as the Poly Haven API gives it.
