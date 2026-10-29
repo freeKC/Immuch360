@@ -42,11 +42,24 @@ enum FlatStereoFormat {
 }
 
 // The words of the file names, split on dots, underscores, dashes and spaces. "Half-SBS" splits into two words, of
-// which "half" squeezes the eyes of the other one.
+// which "half" squeezes the eyes of the other one, and so does "h" right before it ("H-OU").
 const _sideBySideWords = {'sbs', 'fsbs', 'fullsbs', 'lr', '3dsbs', 'sidebyside', '3dh'};
 const _halfSideBySideWords = {'hsbs', 'halfsbs'};
 const _topBottomWords = {'tb', 'ou', 'fou', 'ftb', 'tab', 'overunder', 'topbottom', '3dou', '3dv'};
 const _halfTopBottomWords = {'htb', 'hou', 'htab', 'halfou', 'halftb'};
+const _packingWords = {..._sideBySideWords, ..._halfSideBySideWords, ..._topBottomWords, ..._halfTopBottomWords};
+
+// Short words that are everyday words or tags of their own too: "ou" is "or" in French and Portuguese, "tab" a tab,
+// "TB" a terabyte, "LR" a low resolution proxy. They count as 3D words only at the end of a name of several words
+// (street_TB, movie OU) or next to a 3D word (Movie.3D.OU.Remux, Full-OU, H-TB); "Paris ou Lyon.mp4" and
+// "Screen recording tab 2.mp4" stay regular media.
+const _shortWords = {'ou', 'tab', 'tb', 'lr'};
+
+// "fou" ends French names ("Le fou.jpg", "Un vent fou.mp4"): it counts only next to a 3D word (Movie.3D.FOU)
+const _wordsNextToStereoOnly = {'fou'};
+
+// The words next to which a short word is a 3D word
+const _stereoContextWords = {'3d', 'half', 'full', 'h'};
 
 // Words of 360° and VR180 media, which the viewer shows on a sphere whatever their 3D words say
 const _sphereWords = {'360', '180', 'vr', 'vr180', 'vr360', '180x180', '360x180', 'equirect', 'equirectangular'};
@@ -55,24 +68,34 @@ final _wordSeparators = RegExp(r'[._\- ]+');
 
 /// Guesses how a flat 3D photo or video named [fileName] packs its eyes, null for a regular media or a 360° one:
 /// - hsbs, halfsbs, or half with sbs, for squeezed eyes side by side; htb, hou, halfou, or half with tb or ou, for
-///   squeezed eyes stacked;
+///   squeezed eyes stacked; h right before such a word squeezes them too (H-SBS, H-OU);
 /// - sbs, lr, 3dh, ... for full eyes side by side; tb, ou, tab, 3dv, ... for full eyes stacked. Many videos say sbs or
 ///   ou for squeezed eyes as well: for a video of [width] x [height], eyes narrower than square side by side
 ///   (1920x1080) or wider than 2.5:1 stacked (1920x1080) are taken as squeezed. Photos keep their eyes as they are:
 ///   a converter writes the squeezed ones with a word of their own, and two portrait photos side by side are common.
 ///
-/// The words of 360° and VR180 media (360, 180, vr, vr180, ...) make it no flat media at all.
+/// The short words ou, tab, tb and lr count at the end of a name of several words or next to 3d, half, full or h, and
+/// fou only next to one of those: "Paris ou Lyon.jpg" and "Le fou.jpg" are regular photos. The words of 360° and VR180
+/// media (360, 180, vr, vr180, ...) make it no flat media at all.
 FlatStereoFormat? guessFlatStereoFormat({required String? fileName, int? width, int? height, bool isVideo = false}) {
   if (fileName == null || fileName.isEmpty) {
     return null;
   }
   final dot = fileName.lastIndexOf('.');
   final stem = dot > 0 ? fileName.substring(0, dot) : fileName;
-  final words = stem.toLowerCase().split(_wordSeparators).where((word) => word.isNotEmpty).toSet();
+  final parts = stem.toLowerCase().split(_wordSeparators).where((word) => word.isNotEmpty).toList();
+  final words = {
+    for (final (index, word) in parts.indexed)
+      if (_countsAsStereoWord(parts, index)) word,
+  };
   if (words.any(_sphereWords.contains)) {
     return null;
   }
-  final half = words.contains('half');
+  // "Half-SBS", "H-OU": squeezed eyes
+  var half = words.contains('half');
+  for (var i = 0; i + 1 < parts.length && !half; i++) {
+    half = parts[i] == 'h' && _packingWords.contains(parts[i + 1]);
+  }
   if (words.any(_halfSideBySideWords.contains)) {
     return FlatStereoFormat.halfSbs;
   }
@@ -89,6 +112,20 @@ FlatStereoFormat? guessFlatStereoFormat({required String? fileName, int? width, 
     return squeezed ? FlatStereoFormat.halfTb : FlatStereoFormat.tb;
   }
   return null;
+}
+
+/// Whether the word at [index] of the words of a name, [parts], counts: any word but the short ones, which count at
+/// the end of a name of several words or next to a 3D word ("fou" only next to a 3D word)
+bool _countsAsStereoWord(List<String> parts, int index) {
+  final word = parts[index];
+  final short = _shortWords.contains(word);
+  if (!short && !_wordsNextToStereoOnly.contains(word)) {
+    return true;
+  }
+  final nextToStereo =
+      (index > 0 && _stereoContextWords.contains(parts[index - 1])) ||
+      (index + 1 < parts.length && _stereoContextWords.contains(parts[index + 1]));
+  return nextToStereo || (short && index > 0 && index == parts.length - 1);
 }
 
 /// [guessFlatStereoFormat] for [asset], null for anything but a photo or a video

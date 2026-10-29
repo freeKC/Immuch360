@@ -52,6 +52,47 @@ void main() {
       expect(guessFlatStereoFormat(fileName: 'portrait-SBS.png', width: 2160, height: 1920), FlatStereoFormat.sbs);
     });
 
+    test('takes the short words for 3D words only at the end of a name or next to a 3D word', () {
+      // Everyday words: "ou" is "or" in French and Portuguese, "fou" a French word, "tab" a tab
+      for (final name in [
+        'Paris ou Lyon.mp4',
+        'Le fou rire.mp4',
+        'Chat ou chien.mov',
+        'Screen recording tab 2.mp4',
+        'Un vent fou.mp4',
+      ]) {
+        expect(guessFlatStereoFormat(fileName: name, width: 1920, height: 1080, isVideo: true), isNull, reason: name);
+      }
+      for (final name in [
+        'Paris ou Lyon.jpg',
+        'chambre_ou_salon.jpg',
+        'mon-ou-ton.heic',
+        'Le fou.jpg',
+        'tab.png',
+        'TB.jpg',
+        'lr-edit.jpg',
+      ]) {
+        expect(guessFlatStereoFormat(fileName: name), isNull, reason: name);
+      }
+      // At the end of a name of several words, or next to 3d, half, full or h
+      expect(guessFlatStereoFormat(fileName: 'street_TB.jpg'), FlatStereoFormat.tb);
+      expect(guessFlatStereoFormat(fileName: 'Movie.3D.Half-OU.mkv', isVideo: true), FlatStereoFormat.halfTb);
+      expect(
+        guessFlatStereoFormat(fileName: 'Movie.3D.OU.Remux.mkv', width: 1920, height: 2160, isVideo: true),
+        FlatStereoFormat.tb,
+      );
+      expect(guessFlatStereoFormat(fileName: 'Movie.Full-OU.1080p.mkv', isVideo: true), FlatStereoFormat.tb);
+      expect(guessFlatStereoFormat(fileName: 'Movie.3D.FOU.mkv', isVideo: true), FlatStereoFormat.tb);
+      expect(guessFlatStereoFormat(fileName: 'clip.LR.3D.mp4', isVideo: true), FlatStereoFormat.sbs);
+    });
+
+    test('squeezes the eyes with h right before a 3D word', () {
+      expect(guessFlatStereoFormat(fileName: 'Movie.3D.H-OU.1080p.mkv', isVideo: true), FlatStereoFormat.halfTb);
+      expect(guessFlatStereoFormat(fileName: 'street H-TB.jpg'), FlatStereoFormat.halfTb);
+      expect(guessFlatStereoFormat(fileName: 'Movie.H-SBS.mkv', isVideo: true), FlatStereoFormat.halfSbs);
+      expect(guessFlatStereoFormat(fileName: 'h street_TB.jpg'), FlatStereoFormat.tb, reason: 'h away from TB');
+    });
+
     test('leaves out regular media, 360° and VR180 media', () {
       for (final name in ['IMG_1234.JPG', 'tablet.jpg', 'lrb.png', 'sbsx.mp4', 'PXL_20240101.mp4', '']) {
         expect(guessFlatStereoFormat(fileName: name), isNull, reason: name);
@@ -98,7 +139,16 @@ void main() {
     });
 
     test('leaves out the ordinary photos and the 360° and VR180 names', () {
-      for (final name in ['IMG_1234.JPG', 'tablet.jpg', 'pano_TB_360.jpg', 'trip_vr180_ou.jpg', 'Street_SBS_TB.jpg']) {
+      for (final name in [
+        'IMG_1234.JPG',
+        'tablet.jpg',
+        'pano_TB_360.jpg',
+        'trip_vr180_ou.jpg',
+        'Street_SBS_TB.jpg',
+        'Chambre ou salon.jpg',
+        'Le fou.jpg',
+        'tab.png',
+      ]) {
         expect(stackedPhotoFormatOf(name), isNull, reason: name);
       }
     });
