@@ -104,6 +104,8 @@ void main() {
       matching: find.byType(Scrollable),
     );
     await tester.scrollUntilVisible(find.text(chip), 100, scrollable: chips.first);
+    // The last move of scrollUntilVisible is laid out at the next frame, where the tap reads the place of the chip
+    await tester.pumpAndSettle();
     await tester.tap(find.text(chip));
     await tester.pumpAndSettle();
     // Custom range is one row that takes the tap and OK as a whole, its text under an IgnorePointer: the tap on the
