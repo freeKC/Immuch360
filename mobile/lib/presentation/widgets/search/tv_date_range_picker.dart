@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:intl/intl.dart';
 
@@ -65,7 +66,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
     };
     final selected = await showTvChoiceDialog<int>(
       context: context,
-      title: '${start ? 'Start' : 'End'} ${part.name}',
+      title: _choiceTitle(start: start, part: part),
       choices: choices,
       current: switch (part) {
         _DatePart.year => current.year,
@@ -87,38 +88,58 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
     });
   }
 
+  /// The title of the choice dialog of one part of one date, a whole text per case for the translations
+  String _choiceTitle({required bool start, required _DatePart part}) => switch ((start, part)) {
+    (true, _DatePart.year) => context.t.tv_date_range_start_year,
+    (true, _DatePart.month) => context.t.tv_date_range_start_month,
+    (true, _DatePart.day) => context.t.tv_date_range_start_day,
+    (false, _DatePart.year) => context.t.tv_date_range_end_year,
+    (false, _DatePart.month) => context.t.tv_date_range_end_month,
+    (false, _DatePart.day) => context.t.tv_date_range_end_day,
+  };
+
+  /// A button of one part of a date: the name of the part above its value, so no sentence is built from pieces
+  Widget _partButton({required bool start, required _DatePart part, required String caption, required String value}) {
+    final theme = Theme.of(context).textTheme;
+    return Expanded(
+      child: OutlinedButton(
+        key: Key('tv_date_${start ? 'start' : 'end'}_${part.name}'),
+        onPressed: () => _choose(start: start, part: part),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(caption, style: theme.labelSmall),
+              Text(value, style: theme.titleMedium),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _dateRow({required bool start}) {
     final date = start ? _start : _end;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(start ? 'Start date' : 'End date', style: Theme.of(context).textTheme.titleMedium),
+        Text(start ? context.t.start_date : context.t.end_date, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         Text(DateFormat.yMMMMd().format(date)),
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(
-              child: OutlinedButton(
-                key: Key(start ? 'tv_date_start_year' : 'tv_date_end_year'),
-                onPressed: () => _choose(start: start, part: _DatePart.year),
-                child: Text('Year: ${date.year}'),
-              ),
+            _partButton(start: start, part: _DatePart.year, caption: context.t.year, value: date.year.toString()),
+            const SizedBox(width: 8),
+            _partButton(
+              start: start,
+              part: _DatePart.month,
+              caption: context.t.month,
+              value: DateFormat.MMM().format(date),
             ),
             const SizedBox(width: 8),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => _choose(start: start, part: _DatePart.month),
-                child: Text(DateFormat.MMM().format(date)),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => _choose(start: start, part: _DatePart.day),
-                child: Text('Day: ${date.day}'),
-              ),
-            ),
+            _partButton(start: start, part: _DatePart.day, caption: context.t.day, value: date.day.toString()),
           ],
         ),
       ],
@@ -137,22 +158,22 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Date range', style: Theme.of(context).textTheme.headlineSmall),
+              Text(context.t.search_filter_date_title, style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 20),
               _dateRow(start: true),
               const SizedBox(height: 24),
               _dateRow(start: false),
-              if (!valid) ...[const SizedBox(height: 12), const Text('Start date must be on or before end date.')],
+              if (!valid) ...[const SizedBox(height: 12), Text(context.t.tv_date_range_start_after_end)],
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                  OutlinedButton(onPressed: () => Navigator.pop(context), child: Text(context.t.cancel)),
                   const SizedBox(width: 12),
                   ElevatedButton(
                     key: const Key('tv_date_range_apply'),
                     onPressed: valid ? () => Navigator.pop(context, DateTimeRange(start: _start, end: _end)) : null,
-                    child: const Text('Select'),
+                    child: Text(context.t.select),
                   ),
                 ],
               ),
