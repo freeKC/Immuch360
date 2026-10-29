@@ -10,6 +10,7 @@ import 'package:immich_mobile/presentation/widgets/kiosk/kiosk_settings.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
+import 'package:immich_mobile/widgets/settings/custom_proxy_headers_settings/custom_proxy_headers_settings.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
 
@@ -178,8 +179,10 @@ void main() {
 
   testWidgets('off Horizon OS, nothing of it', (tester) async {
     await pumpSettings(tester, horizonOs: false);
+    // The list builds its rows as they come on screen: down to the row that follows the kiosk on a Meta Quest
+    await scrollTo(tester, find.byType(CustomProxyHeaderSettings));
 
-    expect(find.byType(KioskSettings), findsNothing);
-    expect(find.text('Kiosk mode (experimental)'), findsNothing);
+    expect(find.byType(KioskSettings, skipOffstage: false), findsNothing);
+    expect(find.text('Kiosk mode (experimental)', skipOffstage: false), findsNothing);
   });
 }
