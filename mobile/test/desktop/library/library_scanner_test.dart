@@ -273,9 +273,18 @@ void main() {
     test('an index of the first version gets a key, and its files their keyed ids at the next scan', () async {
       fixture.write('Photos/a.jpg', jpegBytes(width: 10, height: 10));
       final rootId = fixture.library().addRoot(p.join(fixture.files.path, 'Photos')).id;
-      // The first schema: no key, no read_failed column, a file under the unkeyed id of that version
+      // The first schema: no key, no read_failed column nor the columns of schemas 3 and 4, a file under the unkeyed
+      // id of that version
       const oldId = 'f0123456789abcdef0123456789abcdef01234567';
       sqlite3.open(fixture.indexPath)
+        ..execute('ALTER TABLE files DROP COLUMN immersive_kind')
+        ..execute('DROP INDEX files_by_source')
+        ..execute('DROP INDEX files_generated')
+        ..execute('ALTER TABLE files DROP COLUMN stereo')
+        ..execute('ALTER TABLE files DROP COLUMN origin')
+        ..execute('ALTER TABLE files DROP COLUMN source_sha1')
+        ..execute('ALTER TABLE files DROP COLUMN derivative_id')
+        ..execute('ALTER TABLE files DROP COLUMN derived_settings')
         ..execute('ALTER TABLE files DROP COLUMN read_failed')
         ..execute("DELETE FROM meta WHERE key = 'id_key'")
         ..execute(

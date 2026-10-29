@@ -9,6 +9,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -193,6 +194,38 @@ class FolderLibrary {
     final ids = index.ids;
     return (name) => ids.file(rootId, rules.key(name));
   }
+
+  /// Whether a file written into the folder at [path] would come into the library: the folder is one of its roots or
+  /// lies under one, by volume as the ids are (a drive back under another letter is still the same). A folder whose
+  /// volume cannot be read counts as in the library while it has roots, since it cannot be told apart.
+  bool holdsFolder(String path) {
+    final roots = index.roots(withCounts: false);
+    if (roots.isEmpty) {
+      return false;
+    }
+    final identity = _volumes.identify(rules.context.normalize(rules.context.absolute(path)));
+    if (identity == null) {
+      return true;
+    }
+    final id = identity.rootId(caseFold: rules.caseFold);
+    return roots.any((root) => root.id == id || rootContains(root.id, id));
+  }
+
+  /// [holdsFolder] in an isolate of its own, on its own connection to the index at [indexPath]: identifying a volume
+  /// may wait as long as a network drive that does not answer, which the window must never do
+  static Future<bool> holdsFolderOffWindow(
+    String indexPath,
+    String path, {
+    VolumeProbe? probe,
+    LibraryPathRules? rules,
+  }) => Isolate.run(() {
+    final library = FolderLibrary(indexPath, probe: probe, rules: rules);
+    try {
+      return library.holdsFolder(path);
+    } finally {
+      library.close();
+    }
+  });
 
   /// The file behind the local asset [assetId], null when the library does not have it
   LibraryFile? file(String assetId) {

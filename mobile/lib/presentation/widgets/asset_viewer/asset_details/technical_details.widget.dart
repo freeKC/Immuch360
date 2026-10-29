@@ -1,18 +1,23 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
@@ -40,6 +45,13 @@ class TechnicalDetails extends ConsumerWidget {
         _buildFileInfoTile(context, ref, asset, exifInfo),
         // Only a HEIF photo may hold a stereo pair: no other photo is read for one
         if (asset.isImage && isHeifName(asset.name)) _SpatialPhotoTile(asset: asset),
+        // A photo that carries a 3D scene, on a phone, a tablet or a TV: where to explore it (design-final 2026-10-27,
+        // section 9.3). The Quest has its "Explore the 3D scene" button, the computers their versions; only a photo
+        // named like a scene is read
+        if (!CurrentPlatform.isDesktop && ScenePhotoService.isCandidate(asset)) _ScenePhotoTile(asset: asset),
+        // Immuch360 Desktop: the 3D versions of a photo of the folder library, or the photo a version was made from
+        // (lib/desktop/ai/library/versions_section.dart)
+        if (CurrentPlatform.isDesktop && asset.isImage) DesktopVersionsTiles(asset: asset),
         if (asset.isVideo) _VideoDecodeTiles(asset: asset),
         if (cameraTitle != null) ...[
           const SizedBox(height: 16),
@@ -255,6 +267,39 @@ class _SpatialPhotoTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final info = ref.watch(appleSpatialInfoProvider(asset)).valueOrNull;
     return info == null ? const SizedBox.shrink() : _AppleSpatialTile(info: info);
+  }
+}
+
+/// The row of a photo that carries a 3D scene a computer made from it, off the Quest: "3D scene, reconstructed from one
+/// photo", "Open it on a Meta Quest to explore it". Nothing for any other photo, nor on the headset, nor until it is
+/// known not to be one.
+class _ScenePhotoTile extends ConsumerWidget {
+  const _ScenePhotoTile({required this.asset});
+
+  final BaseAsset asset;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(isHorizonOsProvider).valueOrNull != false) {
+      return const SizedBox.shrink();
+    }
+    if (ref.watch(scenePhotoProvider(asset)).valueOrNull == null) {
+      return const SizedBox.shrink();
+    }
+    final titleStyle = context.textTheme.labelLarge;
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        SheetTile(
+          key: const Key('ai_immersive_scene_details'),
+          title: context.t.ai_immersive_version_scene,
+          titleStyle: titleStyle,
+          leading: Icon(Icons.threed_rotation_rounded, size: 24, color: titleStyle?.color),
+          subtitle: context.t.ai_immersive_open_on_quest,
+          subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
+        ),
+      ],
+    );
   }
 }
 

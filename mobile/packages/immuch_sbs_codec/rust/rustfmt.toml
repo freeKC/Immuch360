@@ -1,0 +1,2 @@
+# The width of the Dart code of mobile/ (dart format at 120 columns)
+max_width = 120

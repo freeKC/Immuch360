@@ -39,6 +39,8 @@ FORBIDDEN = (
     # The fork's own desktop packages
     'immuch_head_tracker',
     'immuch_desktop_video',
+    # The Rust JPEG codec of the AI features, built for the computers only (its hook builds nothing for the phones)
+    'immuch_sbs_codec',
 )
 # The desktop sides of federated plugins; _darwin is left out, it serves iOS too
 DESKTOP_SIDE = re.compile(r'_(?:windows|linux|macos)$')

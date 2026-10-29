@@ -9,7 +9,8 @@
 // it. The viewers then show a file with the rules of resolveSphereView, from what it declares and its name.
 //
 // The same reads tell the Apple spatial media: a HEIF photo holding a stereo pair (see probeHeicStereoPair), a video
-// holding two MV-HEVC layers (see SphericalProbe.multiview).
+// holding two MV-HEVC layers (see SphericalProbe.multiview). And the flat photos that hold two eyes side by side, ours
+// and those of other tools, from the head the GPano tags were looked for in (see probeStereoPhotoHead).
 //
 // Reading a file costs a 128 KiB window or two for a photo, a few small reads for a video, with range reads on the
 // share or on the media bridge. The results are kept in memory per file, until it changes.
@@ -21,10 +22,14 @@ import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/exif_head.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -44,6 +49,9 @@ class NetworkMediaInfo {
     this.rawKind,
     this.cameraEquirect = false,
     this.stereoPair,
+    this.stereoPhoto,
+    this.scene,
+    this.panorama,
     this.frameWidth,
     this.frameHeight,
   });
@@ -64,6 +72,18 @@ class NetworkMediaInfo {
 
   /// The two eyes of an Apple spatial photo (a HEIF file), null for any other file
   final HeicStereoPair? stereoPair;
+
+  /// The two eyes side by side of a flat 3D photo, ours or another tool's (see decideStereoPhoto), null for any other
+  /// file. Told apart from the 360° rules, which do not change: [is360] says what they say.
+  final FlatStereoPhoto? stereoPhoto;
+
+  /// The packet of the 3D scene the photo carries after its JPEG (design-final 2026-10-27, section 8.2), null for any
+  /// other file: "Explore the 3D scene" on the Quest, the "3D scene" badge of the browser
+  final SceneXmp? scene;
+
+  /// Our packet of a 360° panorama a computer generated beyond the edges of a photo, or of the 3D version of a 360°
+  /// photo (design-final 2026-10-27, section 5), null for any other file: the "360° AI" or "3D AI" badge of the browser
+  final GeneratedPanoramaInfo? panorama;
 
   /// The size of the picture of a photo its EXIF gives (PixelXDimension and PixelYDimension), null when it gives none
   /// or the photo was told without reading it
@@ -121,7 +141,8 @@ class NetworkMediaInfo {
   @override
   String toString() =>
       'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, rawKind: $rawKind, '
-      'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair, frame: $frameWidth x $frameHeight)';
+      'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair, stereoPhoto: $stereoPhoto, '
+      'scene: ${scene != null}, panorama: $panorama, frame: $frameWidth x $frameHeight)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -257,6 +278,12 @@ class NetworkMediaService {
       if (info.isAppleSpatial) {
         _log.info('${entry.name} is an Apple spatial media: ${info.stereoPair ?? info.multiview}');
       }
+      if (info.stereoPhoto case final stereoPhoto?) {
+        _log.info('${entry.name} holds two eyes side by side: $stereoPhoto');
+      }
+      if (info.scene case final scene?) {
+        _log.info('${entry.name} carries a 3D scene: ${scene.sceneTriangles} triangles, ${scene.sceneFormat}');
+      }
       return info;
     } catch (error) {
       _log.info('Could not read what ${entry.name} declares: $error');
@@ -285,7 +312,15 @@ class NetworkMediaService {
     // A HEIF photo keeps its meta box at its head, which the GPano read just went through: the bytes are there
     final stereoPair = isHeifName(entry.name) ? await probeHeicStereoPair(remembering.read) : null;
     if (gpano != null && isEquirectangularGPano(gpano)) {
-      return NetworkMediaInfo(gpano: gpano, stereoPair: stereoPair);
+      // A 360° photo, unless our XMP says it holds two flat eyes: the head is there already, and with it our packet of
+      // a panorama generated beyond the edges of a photo
+      final stereoPhoto = probeStereoPhotoHead(remembering.head, name: entry.name, isSphere: true);
+      return NetworkMediaInfo(
+        gpano: gpano,
+        stereoPair: stereoPair,
+        stereoPhoto: stereoPhoto,
+        panorama: generatedPanoramaOfHead(remembering.head),
+      );
     }
     if (isRawPhotoName(entry.name)) {
       return NetworkMediaInfo(gpano: gpano, rawKind: RawMediaKind.insta360Photo);
@@ -311,10 +346,21 @@ class NetworkMediaService {
         hasDroneXmp: isDji && hasDroneDjiXmp(await remembering.read(0, droneXmpWindow)),
       );
     }
+    // Within the head the GPano read went through already: no read more
+    final stereoPhoto = probeStereoPhotoHead(
+      remembering.head,
+      name: entry.name,
+      width: exif?.pixelWidth,
+      height: exif?.pixelHeight,
+      isSphere: cameraEquirect,
+    );
     return NetworkMediaInfo(
       gpano: gpano,
       cameraEquirect: cameraEquirect,
       stereoPair: stereoPair,
+      stereoPhoto: stereoPhoto,
+      // Our packet within the head the GPano read went through already: no read more
+      scene: sceneXmpOfHead(remembering.head),
       frameWidth: exif?.pixelWidth,
       frameHeight: exif?.pixelHeight,
     );
@@ -371,6 +417,9 @@ class _LastReadReader {
 
   // Whether the read at the start of the file ended before the length asked, at the end of the file
   bool _headIsWhole = false;
+
+  /// The bytes read from the start of the file, none before the first read there
+  Uint8List get head => _head;
 
   Future<Uint8List> read(int offset, int length) async {
     for (final (bytes, start) in [(_last, _lastOffset), (_head, 0)]) {

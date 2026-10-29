@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -48,6 +49,10 @@ const _hashCancelledCode = 'HASH_CANCELLED';
 /// its file; the scan and the hashing run in isolates of their own. The answers follow the Android implementation
 /// (MessagesImpl30.kt): albums sorted by id, dates in seconds, the size as shown with orientation 0, a delta of the
 /// generations since the checkpoint, and the same cancel codes.
+///
+/// One album is no folder: "Immuch360 AI versions", which holds every version the app made (3D photos, 3D scenes, 360°
+/// panoramas), each also in its folder. It is declared from the first scan, empty or not, so that it can be excluded
+/// from the backup before any version is in it (generated_album.dart).
 class FolderLibrarySyncApi implements NativeSyncApi {
   FolderLibrarySyncApi({
     Future<String> Function()? indexPath,
@@ -120,7 +125,7 @@ class FolderLibrarySyncApi implements NativeSyncApi {
       updates: [for (final file in delta.updates) _asset(file)],
       deletes: delta.deletes,
       assetAlbums: {
-        for (final file in delta.updates) file.id: [file.albumId],
+        for (final file in delta.updates) file.id: [file.albumId, if (file.isGenerated) generatedAlbumId],
       },
     );
   }
@@ -139,7 +144,10 @@ class FolderLibrarySyncApi implements NativeSyncApi {
   }
 
   @override
-  Future<List<String>> getAssetIdsForAlbum(String albumId) async => (await _open()).index.fileIdsOfAlbum(albumId);
+  Future<List<String>> getAssetIdsForAlbum(String albumId) async {
+    final index = (await _open()).index;
+    return albumId == generatedAlbumId ? index.generatedFileIds() : index.fileIdsOfAlbum(albumId);
+  }
 
   @override
   Future<List<PlatformAlbum>> getAlbums() async {
@@ -152,7 +160,10 @@ class FolderLibrarySyncApi implements NativeSyncApi {
     final names = albumDisplayNames({
       for (final album in albums)
         album.id: [rootNames[album.rootId] ?? '', ...album.relativeDir.split('/').where((part) => part.isNotEmpty)],
+      // A folder named like the album of the versions gets its parent in front
+      generatedAlbumId: const [generatedAlbumName],
     });
+    final generated = index.generatedSummary();
     return [
       for (final album in albums)
         PlatformAlbum(
@@ -162,17 +173,34 @@ class FolderLibrarySyncApi implements NativeSyncApi {
           isCloud: false,
           assetCount: album.assetCount,
         ),
-    ];
+      // With the first folder, before any version exists; dated 0 while empty, so that it stays the same
+      if (index.hasRoots)
+        PlatformAlbum(
+          id: generatedAlbumId,
+          name: generatedAlbumName,
+          updatedAt: generated.updatedSeconds,
+          isCloud: false,
+          assetCount: generated.assetCount,
+        ),
+    ]..sort((a, b) => a.id.compareTo(b.id));
   }
 
   @override
-  Future<int> getAssetsCountSince(String albumId, int timestamp) async =>
-      (await _open()).index.countAddedSince(albumId, timestamp);
+  Future<int> getAssetsCountSince(String albumId, int timestamp) async {
+    final index = (await _open()).index;
+    return albumId == generatedAlbumId
+        ? index.countGeneratedAddedSince(timestamp)
+        : index.countAddedSince(albumId, timestamp);
+  }
 
   @override
-  Future<List<PlatformAsset>> getAssetsForAlbum(String albumId, {int? updatedTimeCond}) async => [
-    for (final file in (await _open()).index.filesOfAlbum(albumId, changedAfterSeconds: updatedTimeCond)) _asset(file),
-  ];
+  Future<List<PlatformAsset>> getAssetsForAlbum(String albumId, {int? updatedTimeCond}) async {
+    final index = (await _open()).index;
+    final files = albumId == generatedAlbumId
+        ? index.generatedFiles(changedAfterSeconds: updatedTimeCond)
+        : index.filesOfAlbum(albumId, changedAfterSeconds: updatedTimeCond);
+    return [for (final file in files) _asset(file)];
+  }
 
   @override
   Future<List<HashResult>> hashAssets(List<String> assetIds, {bool allowNetworkAccess = false}) async {

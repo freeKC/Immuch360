@@ -1,0 +1,33 @@
+<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:Immuch360="http://ns.aprogsys.com/immuch360/1.0/"
+    xmp:CreatorTool="Immuch360 Desktop 3.3.0 (windows)"
+    Immuch360:FormatVersion="1"
+    Immuch360:Kind="StereoPhoto"
+    Immuch360:StereoLayout="SideBySideFull"
+    Immuch360:EyeOrder="LeftRight"
+    Immuch360:EyeWidth="4000"
+    Immuch360:EyeHeight="3000"
+    Immuch360:LeftEye="Original"
+    Immuch360:Origin="EstimatedDepth"
+    Immuch360:DepthModel="depth-anything-v2-small"
+    Immuch360:DepthModelSha256="afb6a5c28f3b6bf1618c6e43f02073ef9dfdc70e937502d51603e57b0a1df10c"
+    Immuch360:Pipeline="relief-v1"
+    Immuch360:Parallax="0.02"
+    Immuch360:Convergence="0.5"
+    Immuch360:DerivativeId="urn:uuid:6f1c2e0a-0000-4000-8000-000000000000"
+    Immuch360:SourceName="salon.jpg"
+    Immuch360:SourceSize="4182311"
+    Immuch360:SourceSha1="X8tYgvibyzHDDN2yXGU/ft1XxeM&#x3D;"
+    Immuch360:SourceQuarterTurns="0"
+    Immuch360:QualityFlags=""
+    Immuch360:Created="2026-10-27T10:12:00+01:00">
+   <dc:description><rdf:Alt><rdf:li xml:lang="x-default">Stereoscopic 3D photo made by Immuch360 from a single 2D photo. The relief is estimated by AI; areas hidden in the photo are filled in.</rdf:li></rdf:Alt></dc:description>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>

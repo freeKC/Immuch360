@@ -7,11 +7,13 @@
 // foreground (app_life_cycle.provider.dart), which a computer never does: its window has no paused state. So after a
 // change the library brings the local tables up to date (syncLocal), and with a server it hashes the folders chosen
 // for backup and starts the backup, as the phones do on resume, so that backup from folders runs while the app is open.
+// In between, the album of the 3D photos the app made leaves the backup the first time it comes (generated_album.dart).
 
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_scanner.dart';
@@ -60,6 +62,7 @@ Future<void> _pushLibraryChanges(Ref ref) async {
   await ref.read(galleryPermissionNotifier.notifier).getGalleryPermissionStatus();
   if (!ref.read(hasServerProvider)) {
     await ref.read(localSessionRefreshProvider)();
+    await _excludeGeneratedAlbum(ref);
     return;
   }
   if (!ref.read(authProvider).isAuthenticated) {
@@ -68,8 +71,18 @@ Future<void> _pushLibraryChanges(Ref ref) async {
   }
   final manager = ref.read(backgroundSyncProvider);
   await manager.syncLocal();
+  // Before anything is hashed or sent
+  await _excludeGeneratedAlbum(ref);
   await manager.hashAssets();
   ref.read(_backupStarterProvider).start();
+}
+
+Future<void> _excludeGeneratedAlbum(Ref ref) async {
+  try {
+    await ref.read(generatedAlbumKeeperProvider).ensureExcluded();
+  } catch (error, stackTrace) {
+    _log.warning('Could not exclude the album of the generated photos from the backup', error, stackTrace);
+  }
 }
 
 bool _isUploading(BackupState state) => state.uploadItems.values.any((item) => item.isFailed != true);
@@ -314,7 +327,10 @@ class _FolderLibraryHostState extends ConsumerState<FolderLibraryHost> with Widg
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(folderLibraryWatcherProvider);
+    ref
+      ..watch(folderLibraryWatcherProvider)
+      // Hears every local sync end, whoever started it, for the album of the generated photos
+      ..watch(generatedAlbumKeeperProvider);
     return widget.child;
   }
 }

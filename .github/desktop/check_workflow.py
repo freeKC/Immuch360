@@ -24,6 +24,14 @@ and AZURE_CLIENT_SECRET, each as the variable of the same name in the env of a s
 a command (never a step that uses an action, which would get them too), in a job that does not write. The job that
 writes holds no secret, the job that holds the secrets cannot write, and the build it signs ran without them.
 
+stable-diffusion.cpp, the generator of the 360° panoramas (lot P2), is built by the jobs whose names start with
+"sdcpp" (sdcpp-windows, sdcpp-linux): each runs on the image of the desktop build of its system (windows-2022 with
+Visual Studio 2022, ubuntu-22.04 for its glibc), only when asked or when the lock changed (an "if:" that reads
+inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. With --release, a workflow
+with the with_sdcpp input passes it to the build and nothing else ("sdcpp: ${{ inputs.with_sdcpp == true }}"), and its
+job that writes the contents never runs with it or with sign_test (an "if:" that negates both): building and signing
+stable-diffusion.cpp never touches a release of the app.
+
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
 The Samsung TV app is held to the same: .github/workflows/immuch360-tizen.yml (its package job signs with a throwaway
@@ -56,6 +64,9 @@ RELEASE_EVENTS = ('push', 'workflow_dispatch')
 SIGNING_JOB = 'sign-windows'
 SIGNING_SECRETS = ('AZURE_TENANT_ID', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET')
 SIGNING_LINE = re.compile(r'^(\s+)(' + '|'.join(SIGNING_SECRETS) + r'):\s*\$\{\{\s*secrets\.(\w+)\s*\}\}\s*$')
+# The jobs that build stable-diffusion.cpp, by the start of their names, and the image each system builds on
+SDCPP_JOB = 'sdcpp'
+SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
 
 
 def release_triggers(workflow: str, tag_prefix: str = 'desktop-v') -> list:
@@ -132,6 +143,68 @@ def signing_job_writes(lines: list, owners: list) -> list:
             if owner == SIGNING_JOB and re.match(r'^\s*(?:[\w-]+:\s*write|permissions:\s*write-all)\s*$', line)]
 
 
+def job_lines(lines: list, owners: list) -> dict:
+    """The lines of each job, by its name"""
+    jobs = {}
+    for line, owner in zip(lines, owners):
+        if owner is not None:
+            jobs.setdefault(owner, []).append(line)
+    return jobs
+
+
+def job_if(body: list) -> str:
+    """The condition of a job (its "if:" at the level of the job), '' without one"""
+    for line in body:
+        match = re.match(r'^    if:\s*(.+?)\s*$', line)
+        if match:
+            return match.group(1)
+    return ''
+
+
+def sdcpp_jobs(lines: list, owners: list) -> list:
+    """The jobs that build stable-diffusion.cpp: on their images, when asked only, never as a package of the app"""
+    found = []
+    for job, body in job_lines(lines, owners).items():
+        if not job.startswith(SDCPP_JOB):
+            continue
+        runner = next((re.match(r'^    runs-on:\s*(\S+)', line).group(1).strip('\'"') for line in body
+                       if re.match(r'^    runs-on:', line)), None)
+        if job not in SDCPP_RUNNERS:
+            found.append(f'the job {job} builds stable-diffusion.cpp on no known system: '
+                         f'{", ".join(SDCPP_RUNNERS)} only')
+        elif runner != SDCPP_RUNNERS[job]:
+            found.append(f'the job {job} runs on {runner}: stable-diffusion.cpp builds on {SDCPP_RUNNERS[job]}, the '
+                         'image of the desktop build')
+        if 'inputs.sdcpp' not in job_if(body):
+            found.append(f'the job {job} runs on every event: its "if:" must read inputs.sdcpp (or the lock changed)')
+        for line in body:
+            name = re.match(r'^\s+name:\s*[\'"]?(Immuch360-Desktop-\S*)', line)
+            if name:
+                found.append(f'the job {job} uploads {name.group(1)}: the name of a package of the app, which a release '
+                             'attaches')
+    return found
+
+
+def release_sdcpp(workflow: str, lines: list, owners: list) -> list:
+    """A release workflow that can build stable-diffusion.cpp never gives it to a release of the app"""
+    if not re.search(r'^\s+with_sdcpp:\s*$', workflow, re.MULTILINE):
+        return []
+    found = []
+    for job, body in job_lines(lines, owners).items():
+        for line in body:
+            given = re.match(r'^\s+sdcpp:\s*(.+?)\s*$', line)
+            if given and given.group(1) != '${{ inputs.with_sdcpp == true }}':
+                found.append(f'the job {job} passes sdcpp: {given.group(1)}; only '
+                             '"${{ inputs.with_sdcpp == true }}" (never on a tag)')
+        if any(re.match(r'^\s+contents:\s*write\s*$', line) for line in body):
+            condition = job_if(body).replace(' ', '')
+            for name in ('with_sdcpp', 'sign_test'):
+                if f'!inputs.{name}' not in condition:
+                    found.append(f'the job {job} writes the contents and may run with {name}: its "if:" must hold '
+                                 f'!inputs.{name}')
+    return found
+
+
 def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 'desktop-v') -> list:
     found = []
     lines = workflow.splitlines()
@@ -186,9 +259,11 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
             if release and re.match(r'^\s*contents:\s*write\s*$', line):
                 continue
             found.append(f'line {number}: a write access ({line.strip()})')
+    found += sdcpp_jobs(lines, owners)
     if release:
         found += signing_job_writes(lines, owners)
         found += release_triggers(workflow, tag_prefix)
+        found += release_sdcpp(workflow, lines, owners)
     return found
 
 

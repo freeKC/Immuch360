@@ -1,8 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
+import 'package:immich_mobile/desktop/ai/components/disk_space.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/platform/desktop_overrides.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/services/widget.service.dart';
@@ -39,6 +42,20 @@ void main() {
 
     expect(container.read(viewIntentHandlerProvider), isA<DesktopOpenFilesHandler>());
     expect(container.read(openedFileSiblingProvider), OpenedFiles.sibling);
+  });
+
+  test('the AI components of a computer in its own folder, those of the Quest in the support folder', () {
+    final desktop = ProviderContainer(overrides: desktopOverrides());
+    final quest = ProviderContainer();
+    addTearDown(desktop.dispose);
+    addTearDown(quest.dispose);
+
+    expect(desktop.read(aiComponentsFolderProvider), desktopAiComponentsFolder);
+    expect(quest.read(aiComponentsFolderProvider), supportAiComponentsFolder);
+    // The free space of the drive is read on a computer only
+    expect(desktop.read(aiFreeSpaceProvider), systemFreeSpace);
+    expect(desktop.read(aiComponentsServiceProvider).freeSpace, systemFreeSpace);
+    expect(quest.read(aiFreeSpaceProvider), isNull);
   });
 
   test('the phones look for the other file of an X3 pair in the database only', () {

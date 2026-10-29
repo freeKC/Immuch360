@@ -4,10 +4,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
+import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -15,14 +18,20 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -108,17 +117,68 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final stereoPair = isHorizonOs && asset.isImage && isHeifName(asset.name)
         ? ref.watch(appleSpatialInfoProvider(asset)).valueOrNull?.photo
         : null;
-    final view3dButton = stereoPair != null
+    // So does a flat photo holding two eyes side by side: the 3D photos a computer makes, those of other tools. Only
+    // the photos whose name or frame says so are read (see FlatStereoService.isCandidate), only on the headset, and
+    // never a photo shown as 360°, which keeps its own viewer (a band of the sphere has the frame of two eyes). One of
+    // a newer format keeps its button, greyed with the reason.
+    final flatStereoState = isHorizonOs && asset.isImage && stereoPair == null && !hasPanoramaView
+        ? ref.watch(flatStereoProvider(asset))
+        : null;
+    final flatStereo = flatStereoState?.valueOrNull;
+    final sbsRequest = flatStereo?.request;
+    final StereoPhotoRequest? stereoRequest = stereoPair != null
+        ? StereoPhotoRequest.heic(stereoPair)
+        : sbsRequest != null
+        ? StereoPhotoRequest.sbs(sbsRequest)
+        : null;
+    final view3dButton = stereoPair != null || flatStereo != null
         ? IconButton(
             key: const Key('apple_spatial_view_3d'),
             icon: const Icon(Icons.view_in_ar_rounded),
-            tooltip: context.t.apple_spatial_view_3d,
-            onPressed: () => unawaited(_openStereoPhoto(context, ref, asset, stereoPair)),
+            tooltip: stereoRequest != null ? context.t.apple_spatial_view_3d : context.t.ai_immersive_newer_version,
+            onPressed: stereoRequest == null
+                ? null
+                : () => unawaited(_openStereoPhoto(context, ref, asset, stereoRequest)),
+          )
+        : null;
+
+    // "Explore the 3D scene" on a Meta Quest: a photo named like one that carries a 3D scene a computer made from it,
+    // told by our packet at the head of its file; greyed with the reason the gate of the headset reads there (see
+    // AiSceneButton). Nothing of the AI is needed to read a scene: the AI features off leave it.
+    final sceneState = isHorizonOs && ScenePhotoService.isCandidate(asset) && !hasPanoramaView
+        ? ref.watch(scenePhotoProvider(asset))
+        : null;
+    final sceneXmp = sceneState?.valueOrNull;
+    final sceneButton = sceneXmp != null
+        ? AiSceneButton(xmp: sceneXmp, open: (stereo) => _openStereoPhoto(context, ref, asset, stereo))
+        : null;
+
+    // "AI relief" on a Meta Quest: a flat photo once known to be one (neither 360°, VR180 nor raw, nor a spatial photo,
+    // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last), its
+    // relief estimated by the headset itself; not the preview of a 3D scene, which has its own button, nor a photo
+    // named like one while its head is read. Greyed with its reason where the gate refuses; nothing with the AI
+    // features off (see reliefGateProvider).
+    final isFlatPhoto =
+        flatStereoState != null &&
+        flatStereoState.hasValue &&
+        flatStereo == null &&
+        (sceneState == null || (sceneState.hasValue && sceneXmp == null)) &&
+        ref.watch(rotationModeProvider(asset)) != RotationMode.none;
+    final reliefGate = isFlatPhoto ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
+    final reliefButton = reliefGate.visible
+        ? AiReliefButton(
+            gate: reliefGate,
+            target: assetReliefTarget(ref, asset, open: (stereo) => _openStereoPhoto(context, ref, asset, stereo)),
+            mode: ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode)),
           )
         : null;
 
     // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
     final fullScreenButton = CurrentPlatform.isDesktop ? const DesktopFullScreenButton() : null;
+    // Immuch360 Desktop: the view modes of a photo of two eyes side by side (lib/desktop/ai/sbs_view_modes.dart)
+    final sbsViewButton = CurrentPlatform.isDesktop ? DesktopSbsViewButton(asset: asset) : null;
+    // Immuch360 Desktop: "Preview in 3D" of a photo carrying a 3D scene (lib/desktop/ai/scene_preview)
+    final scenePreviewButton = CurrentPlatform.isDesktop ? DesktopScenePreviewButton(asset: asset) : null;
 
     // The one-key rotation: here on a computer, and in the read only mode of a phone, whose bottom row is hidden. A TV
     // has it in its bottom bar, a phone otherwise in the bottom row (see RotateAction).
@@ -188,6 +248,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   panoramaButton != null ||
                                   spatialButton != null ||
                                   view3dButton != null ||
+                                  sceneButton != null ||
+                                  reliefButton != null ||
                                   rotateButton != null ||
                                   fullScreenButton != null)
                           ? ImmichColorOverride(
@@ -200,9 +262,13 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ?view3dButton,
+                                    ?sceneButton,
+                                    ?reliefButton,
                                     ?panoramaButton,
                                     ?spatialButton,
                                     ?rotateButton,
+                                    ?sbsViewButton,
+                                    ?scenePreviewButton,
                                     ?fullScreenButton,
                                     if (!isViewOnly) ...(isInLockedView ? lockedViewActions : actions),
                                   ],
@@ -225,15 +291,16 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 }
 
-/// Opens [asset], an Apple spatial photo, in 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says
-/// when it could not open
-Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, HeicStereoPair pair) async {
+/// Opens [asset], an Apple spatial photo, a side by side photo, a photo for an AI relief or a photo that carries a 3D
+/// scene as [stereo] describes it, in 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says when it
+/// could not open
+Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, StereoPhotoRequest stereo) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
   final errorMessage = context.t.immersive_viewer_open_failed;
-  final stereoLabels = sphereViewerLabels(context.t);
+  final stereoLabels = stereoPhotoViewerLabels(context.t);
   try {
-    await openStereoPhotoViewer(ref, asset, pair, stereoLabels: stereoLabels);
+    await openStereoPhotoViewer(ref, asset, stereo, stereoLabels: stereoLabels);
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

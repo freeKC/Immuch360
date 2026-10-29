@@ -30,6 +30,12 @@ internal class ImmersiveInputSystem(
   interface Listener {
     fun onButtonsPressed(controllerBits: Int, handBits: Int)
 
+    /**
+     * The buttons held now on every controller, every frame before [onFrame]: the left thumbstick held glides in a 3D
+     * scene (see SceneStick). Nothing by default.
+     */
+    fun onButtonsHeld(controllerBits: Int) = Unit
+
     fun onFrame(head: Pose?)
   }
 
@@ -42,6 +48,7 @@ internal class ImmersiveInputSystem(
   override fun execute() {
     var controllerBits = 0
     var handBits = 0
+    var heldBits = 0
     try {
       val controllers = Query.where { has(Controller.id) }.eval().filter { it.isLocal() }
       val present = HashSet<Long>()
@@ -50,6 +57,8 @@ internal class ImmersiveInputSystem(
         val type = controller.type
         val active = controller.isActive
         present.add(entity.id)
+        // Held, whatever the SDK calls the controller: the thumbsticks are a controller's even under a hand
+        heldBits = heldBits or controller.buttonState
         // Inactive controllers are polled too: a press is a press even when the SDK reports the
         // controller asleep, which it may keep doing after a wake up
         val down = edges.pressed(entity.id, active, type.name, controller.buttonState, now())
@@ -67,6 +76,12 @@ internal class ImmersiveInputSystem(
       } catch (e: Exception) {
         Log.e(TAG, "button handling failed", e)
       }
+    }
+
+    try {
+      listener.onButtonsHeld(heldBits)
+    } catch (e: Exception) {
+      Log.e(TAG, "held buttons handling failed", e)
     }
 
     val head =
@@ -210,19 +225,44 @@ internal class ControllerEdges(private val log: (String) -> Unit = {}) {
  * - the trigger plays or pauses a video while the panel is hidden (on the panel it clicks a button).
  * Bits that only a controller has (B, Y, the thumbsticks) count as controller bits even when the SDK files them under
  * a hand: after the controllers wake up, the SDK may still take them for hands for a while.
+ *
+ * A 3D scene ([actionsFor] with scene, design-final 2026-10-27, section 3.3) takes the thumbsticks for itself: the left
+ * one held glides the eye (read every frame, see [SceneStick]), the right one does nothing (a scene is frontal, turning
+ * it would show the void), neither asks for previous or next, and a click of either one is [Action.RESET]. B, Y, A,
+ * X, grip and menu do what they do everywhere; the trigger plays nothing.
  */
 internal object ImmersiveControls {
-  enum class Action { CLOSE, PREVIOUS, NEXT, TURN_LEFT, TURN_RIGHT, STICK_UP, STICK_DOWN, TOGGLE_PANEL, SHOW_PANEL, PLAY_PAUSE }
+  enum class Action {
+    CLOSE,
+    PREVIOUS,
+    NEXT,
+    TURN_LEFT,
+    TURN_RIGHT,
+    STICK_UP,
+    STICK_DOWN,
+    TOGGLE_PANEL,
+    SHOW_PANEL,
+    PLAY_PAUSE,
+    RESET,
+  }
 
-  /** The actions for [controllerBits] and [handBits] pressed on the same update, in the order to run them. */
-  fun actionsFor(controllerBits: Int, handBits: Int, panelVisible: Boolean): List<Action> {
+  /** A click of either thumbstick (ButtonBits exposes both, javap of 0.14.0: 0x10000 and 0x20000) */
+  val STICK_CLICKS = ButtonBits.ButtonThumbLClick or ButtonBits.ButtonThumbRClick
+
+  /**
+   * The actions for [controllerBits] and [handBits] pressed on the same update, in the order to run them, in a 3D
+   * [scene] or on any other media.
+   */
+  fun actionsFor(controllerBits: Int, handBits: Int, panelVisible: Boolean, scene: Boolean = false): List<Action> {
     val controllerOnly =
-      ButtonBits.ButtonB or ButtonBits.ButtonY or ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK
+      ButtonBits.ButtonB or ButtonBits.ButtonY or ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK or
+        STICK_CLICKS
     val controller = controllerBits or (handBits and controllerOnly)
     val hand = handBits and controllerOnly.inv()
     if ((controller and (ButtonBits.ButtonB or ButtonBits.ButtonY)) != 0) return listOf(Action.CLOSE)
     val actions = mutableListOf<Action>()
     when {
+      scene -> if ((controller and STICK_CLICKS) != 0) actions += Action.RESET
       (controller and ButtonBits.ButtonThumbLL) != 0 -> actions += Action.PREVIOUS
       (controller and ButtonBits.ButtonThumbLR) != 0 -> actions += Action.NEXT
       (controller and ButtonBits.ButtonThumbRL) != 0 -> actions += Action.TURN_LEFT
@@ -241,8 +281,8 @@ internal object ImmersiveControls {
       actions += Action.SHOW_PANEL
       visibleAfter = true
     }
-    // With the panel shown, the trigger clicks its buttons instead
-    if (!visibleAfter && (controller and (ButtonBits.ButtonTriggerL or ButtonBits.ButtonTriggerR)) != 0) {
+    // With the panel shown, the trigger clicks its buttons instead; a scene has nothing to play
+    if (!scene && !visibleAfter && (controller and (ButtonBits.ButtonTriggerL or ButtonBits.ButtonTriggerR)) != 0) {
       actions += Action.PLAY_PAUSE
     }
     return actions
@@ -269,5 +309,20 @@ internal object ImmersiveControls {
         else -> return 0f
       }
     return if (viewTurnsLeft != reversed) stepDegrees else -stepDegrees
+  }
+}
+
+/**
+ * The left thumbstick held in a 3D scene (design-final 2026-10-27, section 3.3): the Controller component gives its
+ * directions only, so the eye glides at one speed (SceneNavigator.GLIDE_SPEED), each axis one way, the other or not at
+ * all, a diagonal on both (the navigator keeps it no faster than a straight push).
+ */
+internal object SceneStick {
+  /** The push to the right and forward the buttons held [buttons] make, each -1, 0 or 1 */
+  fun of(buttons: Int): Pair<Double, Double> {
+    fun axis(plus: Int, minus: Int): Double =
+      (if ((buttons and plus) != 0) 1.0 else 0.0) - (if ((buttons and minus) != 0) 1.0 else 0.0)
+    return axis(ButtonBits.ButtonThumbLR, ButtonBits.ButtonThumbLL) to
+      axis(ButtonBits.ButtonThumbLU, ButtonBits.ButtonThumbLD)
   }
 }

@@ -1,0 +1,779 @@
+// The panel of the conversions and the button of the app bar, with the real queue and the fake engine: per photo its
+// name, kind, state in the words of the spec, "n of m", destination, quality flags and actions (Cancel, Retry, Open
+// folder, View by the path of the opened files, Delete this 3D photo asked first and refused for a file that is not
+// ours); at the bottom Cancel all, Retry failed, Clear finished, and Resume after a disk full; the button that shows
+// the jobs under way. Then "Delete this 3D photo" from the Versions of the details, whose row goes at once, and the
+// files it never deletes: ours without a DerivativeId, and any other. Phases 2 and 3: the two lanes in two sections,
+// the type of each job, its step in words, "step 12 of 28, about 3 min left" counted down, why a job waits, the share
+// of a scene filled in, and "Delete this version" asked as such. Phase 3: a job waiting for the memory of the graphics
+// card with what is free and Resume, the named failures of a panorama in words, and the 3D version of a generated
+// panorama under the sentence of the panorama.
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
+import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
+import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversions_bar_button.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/library/folder_library.dart';
+import 'package:immich_mobile/desktop/library/folder_roots.dart';
+import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:path/path.dart' as p;
+
+import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
+import '../fakes/fake_conversion_engines.dart';
+import '../fakes/fake_immersive_engine.dart';
+import '../fakes/fake_scene_engine.dart';
+import 'settle_still.dart';
+
+/// The engine of the test: the fake of a photo by its name, else one that ends well
+class _Engines implements ImmersiveEngine {
+  final byName = <String, FakeImmersiveEngine>{};
+  final fallback = FakeImmersiveEngine(qualityFlags: const [ReliefQualityFlag.dark]);
+
+  @override
+  Future<ImmersiveResult> run(
+    ImmersiveJob job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) => (byName[job.source.name] ?? fallback).run(job, cancel: cancel, onProgress: onProgress);
+
+  @override
+  Future<void> dispose() async {}
+}
+
+/// The writer of the test: the .part next to the target, renamed onto the final name; a disk full when asked
+class _Output implements ConversionOutput {
+  ImmersiveErrorCode? failFinish;
+
+  @override
+  Future<String> begin(ConversionJob job) async {
+    final target = job.target!;
+    final path = p.join(target.folder, '.${target.fileName}.part');
+    File(path).writeAsBytesSync(const []);
+    return path;
+  }
+
+  @override
+  Future<ConversionSaved> finish(
+    ConversionJob job,
+    String partPath, {
+    required ImmersiveSource original,
+    required AiWhenExists whenExists,
+    String? replaceName,
+  }) async {
+    final code = failFinish;
+    if (code != null) {
+      throw ConversionException(code);
+    }
+    File(partPath).renameSync(job.target!.path);
+    return ConversionSaved(path: job.target!.path, outcome: ConversionSaveOutcome.saved);
+  }
+
+  @override
+  Future<void> discard(String partPath) async {
+    final file = File(partPath);
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
+  }
+}
+
+/// A queue that shows [shown], for the words of the rows; it counts the times the graphics card is asked again
+class _ShownQueue extends ConversionQueueNotifier {
+  _ShownQueue(this.shown);
+
+  final ConversionQueueState shown;
+  var cardAsked = 0;
+
+  @override
+  ConversionQueueState build() => shown;
+
+  @override
+  void checkGraphicsCardAgain() => cardAsked++;
+}
+
+void main() {
+  late Directory root;
+  late String photos;
+  late _Engines engines;
+  late _Output output;
+  late List<String> openedFolders;
+  late List<String> viewed;
+
+  setUp(() {
+    root = Directory.systemTemp.createTempSync('conversions_panel');
+    photos = p.join(root.path, 'Photos');
+    Directory(photos).createSync();
+    engines = _Engines();
+    output = _Output();
+    openedFolders = [];
+    viewed = [];
+  });
+
+  tearDown(() => root.deleteSync(recursive: true));
+
+  List<Override> overrides({bool enabled = true}) => [
+    conversionToolsProvider.overrideWithValue(
+      ConversionTools(
+        engine: engines,
+        output: output,
+        finder: ExistingVersionFinder(),
+        creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
+      ),
+    ),
+    conversionFolderOpenerProvider.overrideWithValue((folder) async => openedFolders.add(folder)),
+    versionOpenerProvider.overrideWithValue(viewed.add),
+    conversionThumbnailProvider.overrideWithValue((asset) => const ColoredBox(color: Colors.grey)),
+    aiFeaturesEnabledProvider.overrideWith((ref) => enabled),
+  ];
+
+  ConversionRequest photo(String name) {
+    final path = p.join(photos, name);
+    File(path).writeAsBytesSync(List.generate(100, (i) => (i * 5 + name.length) & 0xff));
+    return ConversionRequest(source: LocalFileSource(path), target: ConversionTarget.nextTo(path));
+  }
+
+  /// Until the screen is still (see settleStill)
+  Future<void> settle(WidgetTester tester, {bool Function()? until}) => settleStill(tester, until: until);
+
+  Future<ProviderContainer> pumpPanel(WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpConsumerWidget(const Scaffold(body: ConversionsPanel()), overrides: overrides());
+    return ProviderScope.containerOf(tester.element(find.byType(ConversionsPanel)));
+  }
+
+  Finder inRow(String id, Finder finder) => find.descendant(of: find.byKey(ValueKey('ai_job_$id')), matching: finder);
+
+  testWidgets('each photo: its name, kind, state, place in the batch, destination and actions', (tester) async {
+    engines.byName['b.jpg'] = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    final container = await pumpPanel(tester);
+    final queue = container.read(conversionQueueProvider.notifier);
+    final ids = queue.add([photo('a.jpg'), photo('b.jpg'), photo('c.jpg')]);
+    container.read(conversionJobInfoProvider.notifier).addAll({ids[0]: const ConversionJobInfo(isNetwork: false)});
+    await settle(tester);
+
+    // The honesty label under the title
+    expect(find.text('Relief estimated by AI'), findsOneWidget);
+    // a.jpg done: its 3D photo, the quality flag, saved on this computer only, and its actions
+    final written = p.join(photos, 'a_3D_LRF_Full_SBS.jpg');
+    expect(inRow(ids[0], find.text('a.jpg')), findsOneWidget);
+    expect(inRow(ids[0], find.text('2D to 3D SBS  •  1 of 3')), findsOneWidget);
+    expect(inRow(ids[0], find.text('Done')), findsOneWidget);
+    expect(inRow(ids[0], find.text(written)), findsOneWidget);
+    expect(inRow(ids[0], find.text('Dark photo: the relief may be wrong')), findsOneWidget);
+    expect(inRow(ids[0], find.byKey(const Key('ai_job_local_only'))), findsOneWidget);
+    expect(inRow(ids[0], find.byKey(const Key('ai_job_cancel'))), findsNothing);
+    // b.jpg computing, held; c.jpg waiting
+    expect(inRow(ids[1], find.textContaining('Computing')), findsOneWidget);
+    expect(inRow(ids[1], find.byType(LinearProgressIndicator)), findsOneWidget);
+    expect(inRow(ids[1], find.text(photos)), findsOneWidget, reason: 'where its 3D photo goes');
+    expect(inRow(ids[2], find.text('Waiting')), findsOneWidget);
+
+    // Open folder and View, by the path of the opened files
+    await tester.tap(inRow(ids[0], find.byKey(const Key('ai_job_open_folder'))));
+    await tester.pump();
+    expect(openedFolders, [photos]);
+    await tester.tap(inRow(ids[0], find.byKey(const Key('ai_job_view'))));
+    await tester.pump();
+    expect(viewed, [written]);
+
+    // Cancel the one waiting, then the one under way
+    await tester.tap(inRow(ids[2], find.byKey(const Key('ai_job_cancel'))));
+    await settle(tester);
+    expect(inRow(ids[2], find.text('Cancelled')), findsOneWidget);
+    await tester.tap(inRow(ids[1], find.byKey(const Key('ai_job_cancel'))));
+    engines.byName['b.jpg']!.release();
+    await settle(tester);
+    expect(inRow(ids[1], find.text('Cancelled')), findsOneWidget);
+    expect(Directory(photos).listSync().map((entry) => p.basename(entry.path)).toSet(), {
+      'a.jpg',
+      'b.jpg',
+      'c.jpg',
+      'a_3D_LRF_Full_SBS.jpg',
+    });
+
+    // Retry runs a cancelled one again
+    engines.byName.remove('b.jpg');
+    await tester.tap(inRow(ids[1], find.byKey(const Key('ai_job_retry'))));
+    await settle(tester);
+    expect(inRow(ids[1], find.text('Done')), findsOneWidget);
+  });
+
+  testWidgets('a 3D photo on a network folder is not "saved on this computer only"; the edits of Immich are said', (
+    tester,
+  ) async {
+    final container = await pumpPanel(tester);
+    final ids = container.read(conversionQueueProvider.notifier).add([photo('nas.jpg'), photo('here.jpg')]);
+    container.read(conversionJobInfoProvider.notifier).addAll({
+      ids[0]: const ConversionJobInfo(isNetwork: true, serverEdits: true),
+      ids[1]: const ConversionJobInfo(isNetwork: false),
+    });
+    // Both done, however slow the real files of this system are
+    for (var step = 0; step < 20 && container.read(conversionQueueProvider).hasWork; step++) {
+      await settle(tester);
+    }
+
+    expect(inRow(ids[0], find.text('Done')), findsOneWidget);
+    expect(inRow(ids[1], find.text('Done')), findsOneWidget);
+    expect(inRow(ids[0], find.byKey(const Key('ai_job_local_only'))), findsNothing);
+    expect(inRow(ids[0], find.text('Edits made in Immich, except the rotation, are not applied')), findsOneWidget);
+    expect(inRow(ids[1], find.byKey(const Key('ai_job_local_only'))), findsOneWidget);
+    expect(inRow(ids[1], find.text('Edits made in Immich, except the rotation, are not applied')), findsNothing);
+  });
+
+  test('Delete never touches a file with our XMP but no DerivativeId, nor one without our XMP', () async {
+    const noId = StereoPhotoXmp(
+      eyes: StereoEyes.full,
+      eyeOrder: EyeOrder.leftRight,
+      eyeWidth: 8,
+      eyeHeight: 6,
+      origin: ImmersiveOrigin.estimatedDepth,
+      sourceName: 'salon.jpg',
+    );
+    const blankId = StereoPhotoXmp(
+      eyes: StereoEyes.full,
+      eyeOrder: EyeOrder.leftRight,
+      eyeWidth: 8,
+      eyeHeight: 6,
+      origin: ImmersiveOrigin.estimatedDepth,
+      derivativeId: '  ',
+    );
+    final withoutId = File(p.join(photos, 'a_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(fakeSbsJpeg(xmp: noId));
+    final blank = File(p.join(photos, 'b_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(fakeSbsJpeg(xmp: blankId));
+    final plain = File(p.join(photos, 'c_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(List.generate(300, (i) => i & 0xff));
+    expect(StereoPhotoXmp.findIn(withoutId.readAsBytesSync()), isNotNull, reason: 'our packet is there');
+
+    expect(await deleteOurVersion(withoutId.path), VersionDeleteOutcome.refused);
+    expect(await deleteOurVersion(blank.path), VersionDeleteOutcome.refused);
+    expect(await deleteOurVersion(plain.path), VersionDeleteOutcome.refused);
+    expect([withoutId, blank, plain].every((file) => file.existsSync()), isTrue);
+    expect(await deleteOurVersion(p.join(photos, 'gone_3D_LRF_Full_SBS.jpg')), VersionDeleteOutcome.failed);
+  });
+
+  testWidgets('a failure says why; Retry failed, Cancel all and Clear finished act on the whole queue', (tester) async {
+    engines.byName['broken.jpg'] = FakeImmersiveEngine(failAt: ImmersiveStage.decoding);
+    engines.byName['slow.jpg'] = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    final container = await pumpPanel(tester);
+    final queue = container.read(conversionQueueProvider.notifier);
+    final ids = queue.add([photo('broken.jpg'), photo('slow.jpg'), photo('next.jpg')]);
+    await settle(tester);
+
+    expect(inRow(ids[0], find.text('Failed')), findsOneWidget);
+    expect(inRow(ids[0], find.text('This photo could not be read')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('ai_conversions_cancel_all')));
+    engines.byName['slow.jpg']!.release();
+    await settle(tester);
+    expect(container.read(conversionQueueProvider).jobs.map((job) => job.state), [
+      ConversionState.failed,
+      ConversionState.cancelled,
+      ConversionState.cancelled,
+    ]);
+
+    engines.byName.remove('broken.jpg');
+    await tester.tap(find.byKey(const Key('ai_conversions_retry_failed')));
+    await settle(tester);
+    expect(inRow(ids[0], find.text('Done')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('ai_conversions_clear_finished')));
+    await tester.pump();
+    expect(container.read(conversionQueueProvider).jobs, isEmpty);
+    expect(find.byKey(const Key('ai_conversions_clear_finished')), findsNothing);
+  });
+
+  testWidgets('a disk full pauses the queue: the panel says so, and Resume runs that photo again', (tester) async {
+    output.failFinish = ImmersiveErrorCode.diskFull;
+    final container = await pumpPanel(tester);
+    final id = container.read(conversionQueueProvider.notifier).add([photo('salon.jpg')]).single;
+    await settle(tester);
+
+    expect(find.text('Disk full: free some space, then Resume'), findsOneWidget);
+    expect(inRow(id, find.text('Disk full')), findsOneWidget);
+
+    output.failFinish = null;
+    await tester.tap(find.byKey(const Key('ai_conversions_resume')));
+    await settle(tester);
+    expect(find.byKey(const Key('ai_conversions_paused')), findsNothing);
+    expect(inRow(id, find.text('Done')), findsOneWidget);
+  });
+
+  testWidgets('Delete this 3D photo asks first, deletes ours, and refuses a file that is not ours', (tester) async {
+    final container = await pumpPanel(tester);
+    final ids = container.read(conversionQueueProvider.notifier).add([photo('a.jpg'), photo('b.jpg')]);
+    await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+    final ours = File(p.join(photos, 'a_3D_LRF_Full_SBS.jpg'));
+    final foreign = File(p.join(photos, 'b_3D_LRF_Full_SBS.jpg'));
+    expect(ours.existsSync() && foreign.existsSync(), isTrue);
+    // A file of the user took the name of the second one meanwhile
+    foreign.writeAsBytesSync(List.generate(300, (i) => i & 0xff));
+
+    // Asked first: Cancel keeps it
+    await tester.tap(inRow(ids[0], find.byKey(const Key('ai_job_delete'))));
+    await tester.pumpAndSettle();
+    expect(find.text('Delete this 3D photo? The original stays as it is.\na_3D_LRF_Full_SBS.jpg'), findsOneWidget);
+    await tester.tap(find.text('Cancel').last);
+    await tester.pumpAndSettle();
+    expect(ours.existsSync(), isTrue);
+
+    await tester.tap(inRow(ids[0], find.byKey(const Key('ai_job_delete'))));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('ai_delete_confirm_yes')));
+    await settle(tester);
+    expect(ours.existsSync(), isFalse);
+    expect(File(p.join(photos, 'a.jpg')).existsSync(), isTrue, reason: 'the original stays');
+    expect(find.byKey(ValueKey('ai_job_${ids[0]}')), findsNothing, reason: 'its job is gone from the panel');
+    expect(container.read(deletedVersionsProvider), {ours.path}, reason: 'left out of the details until the next scan');
+
+    await tester.tap(inRow(ids[1], find.byKey(const Key('ai_job_delete'))));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('ai_delete_confirm_yes')));
+    await settle(tester);
+    expect(foreign.existsSync(), isTrue);
+    expect(find.text('This file was not made by Immuch360, so it is not deleted'), findsOneWidget);
+  });
+
+  testWidgets('the button of the app bar: absent with no job or with the AI features off, the jobs under way', (
+    tester,
+  ) async {
+    engines.byName['a.jpg'] = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+    await tester.pumpConsumerWidget(const Scaffold(body: DesktopConversionsBarButton()), overrides: overrides());
+    expect(find.byKey(const Key('ai_conversions_button')), findsNothing);
+
+    final container = ProviderScope.containerOf(tester.element(find.byType(DesktopConversionsBarButton)));
+    container.read(conversionQueueProvider.notifier).add([photo('a.jpg'), photo('b.jpg')]);
+    await settle(tester);
+    expect(find.byKey(const Key('ai_conversions_button')), findsOneWidget);
+    expect(find.text('2'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('ai_conversions_button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ai_conversions_panel')), findsOneWidget);
+    engines.byName['a.jpg']!.release();
+    await settle(tester);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpConsumerWidget(
+      const Scaffold(body: DesktopConversionsBarButton()),
+      overrides: overrides(enabled: false),
+    );
+    final again = ProviderScope.containerOf(tester.element(find.byType(DesktopConversionsBarButton)));
+    again.read(conversionQueueProvider.notifier).add([photo('c.jpg')]);
+    await settle(tester);
+    expect(find.byKey(const Key('ai_conversions_button')), findsNothing);
+  });
+
+  testWidgets('Delete this 3D photo from the Versions of the details: ours deleted, a foreign file kept', (
+    tester,
+  ) async {
+    final xmp = StereoPhotoXmp.estimated(
+      eyeWidth: 8,
+      eyeHeight: 6,
+      depthModelSha256: depthModelOnnxSha256,
+      sourceName: 'salon.jpg',
+      sourceSize: 100,
+      sourceSha1: 'c3VtIG9mIHNhbG9u',
+      sourceQuarterTurns: 0,
+      created: '2026-10-27T10:12:00+01:00',
+      creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
+    );
+    final ours = File(p.join(photos, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(fakeSbsJpeg(xmp: xmp));
+    final foreign = File(p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'))
+      ..writeAsBytesSync(List.generate(300, (i) => i & 0xff));
+    VersionFile version(File file) => VersionFile(
+      file: LibraryFile(
+        assetId: 'id-${p.basename(file.path)}',
+        path: file.path,
+        name: p.basename(file.path),
+        kind: LibraryMediaKind.image,
+        size: file.lengthSync(),
+        modifiedMs: 0,
+        createdSeconds: 0,
+        mimeType: 'image/jpeg',
+        cloudOnly: false,
+        available: true,
+      ),
+      origin: IndexedOrigin.estimated,
+    );
+    final original = LocalAsset(
+      id: 'id-salon',
+      name: 'salon.jpg',
+      type: AssetType.image,
+      createdAt: DateTime(2026, 10, 20),
+      updatedAt: DateTime(2026, 10, 20),
+      playbackStyle: AssetPlaybackStyle.image,
+      isEdited: false,
+    );
+    var asked = 0;
+    await tester.pumpConsumerWidget(
+      Scaffold(
+        body: SingleChildScrollView(child: DesktopVersionsTiles(asset: original)),
+      ),
+      overrides: [
+        photoVersionsProvider(original).overrideWith((ref) async {
+          asked++;
+          return PhotoVersions(versions: [version(ours), version(foreign)]);
+        }),
+        versionThumbnailProvider.overrideWithValue((file) => const ColoredBox(color: Colors.grey)),
+        versionOpenerProvider.overrideWithValue(viewed.add),
+      ],
+    );
+    await settle(tester);
+
+    await tester.tap(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS.jpg')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('ai_delete_confirm_yes')));
+    await settle(tester);
+    expect(ours.existsSync(), isFalse);
+    expect(asked, 2, reason: 'the versions are read again');
+    // The index still lists it until the next scan of its folder: its row goes all the same
+    expect(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS.jpg')), findsNothing);
+    expect(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS (1).jpg')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS (1).jpg')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('ai_delete_confirm_yes')));
+    await settle(tester);
+    expect(foreign.existsSync(), isTrue);
+    expect(find.text('This file was not made by Immuch360, so it is not deleted'), findsOneWidget);
+    expect(viewed, isEmpty, reason: 'the delete button does not open the version');
+
+    // Made again at the same place, it comes back
+    ours.writeAsBytesSync(fakeSbsJpeg(xmp: xmp));
+    ProviderScope.containerOf(
+      tester.element(find.byType(DesktopVersionsTiles)),
+    ).invalidate(photoVersionsProvider(original));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('desktop_version_delete_id-salon_3D_LRF_Full_SBS.jpg')), findsOneWidget);
+  });
+  group('the kinds of phases 2 and 3', () {
+    ConversionJob job(
+      String name,
+      ConversionKind kind,
+      ConversionState state, {
+      int? step,
+      int? steps,
+      Duration? remaining,
+      ConversionWait? waitingFor,
+      int? waitingFree,
+      String? parentId,
+      ImmersiveErrorCode? error,
+      String? message,
+    }) => ConversionJob(
+      id: name,
+      source: LocalFileSource(p.join(photos, name)),
+      parentId: parentId,
+      error: error,
+      message: message,
+      batchIndex: 1,
+      batchSize: 1,
+      kind: kind,
+      target: ConversionTarget.inFolder(photos, name, kind: kind),
+      state: state,
+      perMille: state.isActive ? 400 : 0,
+      step: step,
+      steps: steps,
+      remaining: remaining,
+      waitingFor: waitingFor,
+      waitingFree: waitingFree,
+    );
+
+    late _ShownQueue shownQueue;
+
+    Future<void> pumpShown(
+      WidgetTester tester,
+      List<ConversionJob> jobs, {
+      DateTime Function()? clock,
+      Map<String, ConversionJobInfo> infos = const {},
+    }) async {
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpConsumerWidget(
+        const Scaffold(body: ConversionsPanel()),
+        overrides: [
+          ...overrides(),
+          conversionQueueProvider.overrideWith(() => shownQueue = _ShownQueue(ConversionQueueState(jobs: jobs))),
+          if (clock != null) conversionClockProvider.overrideWithValue(clock),
+        ],
+      );
+      if (infos.isNotEmpty) {
+        ProviderScope.containerOf(
+          tester.element(find.byType(ConversionsPanel)),
+        ).read(conversionJobInfoProvider.notifier).addAll(infos);
+      }
+      await tester.pump();
+    }
+
+    double top(WidgetTester tester, Finder finder) => tester.getTopLeft(finder).dy;
+
+    testWidgets('two sections once the graphics card has a job; each job its type, its step in words, its time left', (
+      tester,
+    ) async {
+      await pumpShown(tester, [
+        job(
+          'salon.jpg',
+          ConversionKind.sceneFromPhoto,
+          ConversionState.geometry,
+          remaining: const Duration(seconds: 20),
+        ),
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.generating,
+          step: 12,
+          steps: 28,
+          remaining: const Duration(minutes: 3),
+        ),
+        job('jardin.jpg', ConversionKind.sbsFromPhoto, ConversionState.waiting, waitingFor: ConversionWait.memory),
+      ]);
+
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(find.text('Reconstructed from one photo, explore within its limits'), findsOneWidget);
+      expect(find.text("Generated by AI beyond the photo's edges"), findsOneWidget);
+      expect(find.text('Graphics card'), findsOneWidget);
+      expect(find.text('Processor'), findsOneWidget);
+      // The graphics card first, then the processor, each with its jobs
+      expect(
+        top(tester, find.text('Graphics card')),
+        lessThan(top(tester, inRow('plage.jpg', find.text('plage.jpg')))),
+      );
+      expect(top(tester, inRow('plage.jpg', find.text('plage.jpg'))), lessThan(top(tester, find.text('Processor'))));
+      expect(top(tester, find.text('Processor')), lessThan(top(tester, inRow('salon.jpg', find.text('salon.jpg')))));
+      expect(top(tester, find.text('Processor')), lessThan(top(tester, inRow('jardin.jpg', find.text('jardin.jpg')))));
+
+      expect(inRow('plage.jpg', find.text('2D to 360° panorama')), findsOneWidget);
+      expect(inRow('plage.jpg', find.text('Computing 40 %  •  Generating the surroundings')), findsOneWidget);
+      expect(inRow('plage.jpg', find.text('step 12 of 28, about 3 min left')), findsOneWidget);
+      expect(inRow('salon.jpg', find.text('2D to 3D scene')), findsOneWidget);
+      expect(inRow('salon.jpg', find.text('Computing 40 %  •  Estimating the geometry')), findsOneWidget);
+      expect(inRow('salon.jpg', find.text('About 20 s left')), findsOneWidget);
+      expect(inRow('jardin.jpg', find.text('2D to 3D SBS')), findsOneWidget);
+      expect(inRow('jardin.jpg', find.text('Waiting')), findsOneWidget);
+      expect(inRow('jardin.jpg', find.text('Waiting for enough free memory')), findsOneWidget);
+    });
+
+    testWidgets('the processor alone: no sections, the words of phase 1', (tester) async {
+      await pumpShown(tester, [
+        job('salon.jpg', ConversionKind.sbsFromPhoto, ConversionState.depth),
+        job('jardin.jpg', ConversionKind.sceneFromPhoto, ConversionState.waiting),
+      ]);
+      expect(find.text('Processor'), findsNothing);
+      expect(find.text('Graphics card'), findsNothing);
+      expect(inRow('salon.jpg', find.text('Computing 40 %')), findsOneWidget, reason: 'no words for the depth step');
+      expect(inRow('salon.jpg', find.byKey(const Key('ai_job_time_left'))), findsNothing);
+      expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_waiting'))), findsNothing);
+    });
+
+    testWidgets('the time left counts down between two progresses; the regions of the hidden areas in their words', (
+      tester,
+    ) async {
+      var now = DateTime(2026, 10, 28, 9);
+      await pumpShown(tester, [
+        job(
+          'salon.jpg',
+          ConversionKind.sceneFromPhoto,
+          ConversionState.inpaint,
+          step: 2,
+          steps: 5,
+          remaining: const Duration(seconds: 90),
+        ),
+      ], clock: () => now);
+
+      expect(inRow('salon.jpg', find.text('Computing 40 %  •  Filling hidden areas: 2 of 5')), findsOneWidget);
+      expect(inRow('salon.jpg', find.text('About 2 min left')), findsOneWidget);
+
+      now = now.add(const Duration(seconds: 60));
+      await tester.pump(const Duration(seconds: 1));
+      expect(inRow('salon.jpg', find.text('About 30 s left')), findsOneWidget);
+
+      now = now.add(const Duration(seconds: 60));
+      await tester.pump(const Duration(seconds: 1));
+      expect(inRow('salon.jpg', find.text('About 1 s left')), findsOneWidget, reason: 'never below zero');
+    });
+
+    testWidgets('a scene made: the share of it filled in, its flags, and "Delete this version" asked as such', (
+      tester,
+    ) async {
+      final scenes = FakeSceneEngine(qualityFlags: const [ReliefQualityFlag.hiddenAreas, ReliefQualityFlag.smallZone]);
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpConsumerWidget(
+        const Scaffold(body: ConversionsPanel()),
+        overrides: [
+          ...overrides(),
+          conversionToolsProvider.overrideWithValue(
+            ConversionTools(
+              engine: engines,
+              engines: fakeConversionEngines(scene: scenes),
+              output: output,
+              finder: ExistingVersionFinder(),
+              creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
+            ),
+          ),
+        ],
+      );
+      final container = ProviderScope.containerOf(tester.element(find.byType(ConversionsPanel)));
+      final path = p.join(photos, 'salon.jpg');
+      File(path).writeAsBytesSync(List.generate(100, (i) => (i * 3) & 0xff));
+      final id = container.read(conversionQueueProvider.notifier).add([
+        ConversionRequest(
+          source: LocalFileSource(path),
+          target: ConversionTarget.nextTo(path, kind: ConversionKind.sceneFromPhoto),
+        ),
+      ], kind: ConversionKind.sceneFromPhoto).single;
+      await settle(tester, until: () => container.read(conversionQueueProvider).byId(id)!.state.isEnded);
+
+      final written = p.join(photos, 'salon_scene3D.jpg');
+      final share = (FakeSceneTail.fixture.xmp.hiddenFraction! * 100).round();
+      expect(inRow(id, find.text('Done')), findsOneWidget);
+      expect(inRow(id, find.text('Hidden areas filled: $share%')), findsOneWidget);
+      expect(inRow(id, find.text('Large hidden areas were filled in')), findsNothing);
+      expect(
+        inRow(id, find.text('Barely any movement is possible here: the 3D photo may suit this picture better.')),
+        findsOneWidget,
+      );
+      expect(inRow(id, find.text('Delete this version')), findsOneWidget);
+
+      await tester.tap(inRow(id, find.byKey(const Key('ai_job_delete'))));
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(of: find.byKey(const Key('ai_delete_confirm')), matching: find.text('Delete this version')),
+        findsOneWidget,
+      );
+      expect(find.text('Delete this version? The original stays as it is.\nsalon_scene3D.jpg'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('ai_delete_confirm_yes')));
+      await settle(tester);
+      expect(File(written).existsSync(), isFalse);
+      expect(File(path).existsSync(), isTrue, reason: 'the original stays');
+      expect(find.byKey(ValueKey('ai_job_$id')), findsNothing);
+    });
+
+    testWidgets(
+      'a panorama waiting for the memory of the graphics card: what is free, and Resume asks the card again',
+      (tester) async {
+        await pumpShown(tester, [
+          job(
+            'plage.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.waiting,
+            waitingFor: ConversionWait.graphicsMemory,
+            waitingFree: 2 << 30,
+          ),
+          job('jardin.jpg', ConversionKind.sbsFromPhoto, ConversionState.waiting, waitingFor: ConversionWait.memory),
+        ]);
+
+        expect(
+          tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_waiting')))).data,
+          'Other apps use the graphics card memory (2.0 GiB free): close games or 3D apps',
+        );
+        expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_check_gpu'))), findsNothing);
+        expect(inRow('plage.jpg', find.text('Resume')), findsOneWidget);
+        await tester.tap(inRow('plage.jpg', find.byKey(const Key('ai_job_check_gpu'))));
+        await tester.pump();
+        expect(shownQueue.cardAsked, 1);
+      },
+    );
+
+    testWidgets('the named failures of a panorama, in words', (tester) async {
+      await pumpShown(tester, [
+        job(
+          'busy.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuBusy,
+          message: 'sd-cli cut the generator into 27 segments',
+        ),
+        job(
+          'silent.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuUnavailable,
+          message: AiGateReason.gpuNoAnswer.name,
+        ),
+        job(
+          'stalled.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.generatorStalled,
+        ),
+      ]);
+      expect(
+        inRow('busy.jpg', find.text('Other apps use the graphics card memory: close games or 3D apps')),
+        findsOneWidget,
+      );
+      expect(inRow('silent.jpg', find.text('The graphics card did not answer')), findsOneWidget);
+      expect(inRow('stalled.jpg', find.text('The generator stopped responding')), findsOneWidget);
+    });
+
+    test('a graphics card that cannot take the job says why when the queue named the reason of the gate', () {
+      loadEnglishTexts();
+      final t = StaticTranslations.instance;
+      String text(String? message) => conversionFailureText(t, ImmersiveErrorCode.gpuUnavailable, message);
+      expect(text(AiGateReason.gpuNoAnswer.name), 'The graphics card did not answer');
+      expect(text(AiGateReason.gpuNone.name), 'No graphics card with Vulkan found');
+      expect(
+        text(AiGateReason.gpuIntegrated.name),
+        "Integrated graphics share the computer's memory: too slow for panoramas",
+      );
+      expect(text(AiGateReason.notYetOnMac.name), 'Not yet on Mac');
+      expect(
+        text(AiGateReason.gpuTooSmall.name),
+        'No graphics card can make this panorama',
+        reason: 'its numbers are not in the job',
+      );
+      expect(text(null), 'No graphics card can make this panorama');
+      expect(text('something else'), 'No graphics card can make this panorama');
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.gpuOutOfMemory, 'need 4109.22 MB device'),
+        'The graphics card ran out of memory: close games or 3D apps and retry',
+      );
+      expect(conversionFailureText(t, ImmersiveErrorCode.outputRejected, 'grey'), 'The generated image was not usable');
+    });
+
+    testWidgets('the 3D version of a generated panorama is under the sentence of the panorama', (tester) async {
+      await pumpShown(tester, [
+        job('plage.jpg', ConversionKind.panoramaFromPhoto, ConversionState.done),
+        job('plage-3d', ConversionKind.stereoPanoramaFromPanorama, ConversionState.waiting, parentId: 'plage.jpg'),
+      ]);
+      expect(find.text("Generated by AI beyond the photo's edges"), findsOneWidget);
+      expect(find.text('Relief estimated by AI'), findsNothing);
+      expect(inRow('plage-3d', find.text('360° to 3D 360°')), findsOneWidget);
+
+      // Chosen by itself, from a panorama the app generated, as the dialog says it
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpShown(
+        tester,
+        [job('salon_360.jpg', ConversionKind.stereoPanoramaFromPanorama, ConversionState.waiting)],
+        infos: {'salon_360.jpg': const ConversionJobInfo(generatedSource: true)},
+      );
+      expect(find.text("Generated by AI beyond the photo's edges"), findsOneWidget);
+      expect(find.text('Relief estimated by AI'), findsNothing);
+
+      // A 360° photo of the user: its relief only
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpShown(tester, [job('trip.jpg', ConversionKind.stereoPanoramaFromPanorama, ConversionState.waiting)]);
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(find.text("Generated by AI beyond the photo's edges"), findsNothing);
+    });
+  });
+}

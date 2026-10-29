@@ -27,8 +27,21 @@
     android:textColor="#FFB0B8CC"
     android:textSize="17sp" />
 
-  <!-- The controller mapping. It wraps over up to four lines in the longer languages, hence a smaller text -->
+  <!-- Indeterminate bar under the status while the relief of a flat photo is made in the headset. Shown for a photo
+       only, which has no time bar, so the rows still fit -->
+  <ProgressBar
+    android:id="@+id/immersive_relief_progress"
+    style="?android:attr/progressBarStyleHorizontal"
+    android:layout_width="match_parent"
+    android:layout_height="6dp"
+    android:layout_marginTop="4dp"
+    android:indeterminate="true"
+    android:visibility="gone" />
+
+  <!-- The controller mapping. It wraps over up to four lines in the longer languages, hence a smaller text. A 3D scene
+       has its own (the left thumbstick glides, a click resets) -->
   <TextView
+    android:id="@+id/immersive_hint"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="6dp"
@@ -37,6 +50,19 @@
     android:text="@string/immersive_hint"
     android:textColor="#FF8A93A8"
     android:textSize="13sp" />
+
+  <!-- The lines of a 3D scene: its honesty sentence, the room to move, the areas filled, the flags of the file. Shown
+       for a scene only, which has neither the time bar nor previous and next, so the rows still fit -->
+  <TextView
+    android:id="@+id/immersive_scene_details"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:ellipsize="end"
+    android:maxLines="4"
+    android:textColor="#FFB0B8CC"
+    android:textSize="13sp"
+    android:visibility="gone" />
 
   <View
     android:layout_width="match_parent"
@@ -92,8 +118,10 @@
       android:tooltipText="@string/immersive_seek_forward" />
   </LinearLayout>
 
-  <!-- Previous and next media of the app (photos and videos), and play or pause for a video -->
+  <!-- Previous and next media of the app (photos and videos), and play or pause for a video. Not offered in a 3D
+       scene, where the left thumbstick glides -->
   <LinearLayout
+    android:id="@+id/immersive_navigation_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
@@ -146,8 +174,21 @@
       android:text="@string/immersive_turn"
       android:textSize="17sp" />
 
+    <!-- Reset of a 3D scene: the camera of the photo at the head again, the scene whole. Shown for a scene only -->
+    <Button
+      android:id="@+id/immersive_reset"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:textAllCaps="false"
+      android:textSize="17sp"
+      android:visibility="gone" />
+
     <!-- 3D layout of the media on screen, shown while a media is loaded. A click (controller ray or hand
-         pinch) switches to the next layout: mono, top and bottom, side by side -->
+         pinch) switches to the next layout: mono, top and bottom, side by side; on a 3D scene, the scene or its
+         photo (2D) -->
     <Button
       android:id="@+id/immersive_stereo"
       android:layout_width="0dp"

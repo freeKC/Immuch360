@@ -99,6 +99,19 @@ const _kIntParamNames = [
 
 const _kParamTypeOverrides = <String, String>{
   'advanced_settings_clear_image_cache_success.size': 'String',
+  // Sizes of the AI components and of the relief cache, which the callers write with formatBytes ("94.5 MiB"); the
+  // groups of features of the tile too ("3D scenes: 332.7 MiB")
+  'ai_immersive_components_panoramas.size': 'String',
+  'ai_immersive_components_photos.size': 'String',
+  'ai_immersive_components_scenes.size': 'String',
+  'ai_immersive_components_total.size': 'String',
+  'ai_immersive_install_prompt.size': 'String',
+  'ai_immersive_relief_cache_size.size': 'String',
+  // The room to move of a 3D scene and the most triangles a headset takes: the headset of the viewer writes them in
+  // ("18 cm", "400000"), so the labels it gets keep {size} and {max}, and the button of the 2D panel gives the digits
+  'ai_immersive_scene_too_heavy.max': 'String',
+  'ai_immersive_scene_zone.size': 'String',
+  'ai_immersive_size_on_disk.size': 'String',
   // A length in millimetres, which the caller writes with its decimals for the locale
   'apple_spatial_baseline.mm': 'String',
   // The size of each eye of a spatial photo: the digits alone, as for the frame sizes below

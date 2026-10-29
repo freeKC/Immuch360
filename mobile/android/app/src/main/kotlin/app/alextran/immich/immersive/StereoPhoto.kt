@@ -10,6 +10,9 @@ import android.media.MediaDataSource
 import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Log
+import app.alextran.immich.immersive.scene.SceneTexts
+import app.alextran.immich.relief.ReliefStage
+import app.alextran.immich.relief.ReliefStop
 import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.Vector3
 import java.nio.ByteBuffer
@@ -222,18 +225,35 @@ internal object StereoHeicDecoder {
 }
 
 /**
- * The 3D or 2D choice and the angular width of a spatial photo on the quad, with the photo they belong to: its url and
- * the opening of the viewer it was shown in. Kept over a recreation of the viewer, so that the photo comes back as the
- * user left it rather than with the defaults of a new photo.
+ * The 3D or 2D choice, the 2.5D choice of a relief and the angular width of a photo on the stereo quad, with the photo
+ * they belong to: its url and the opening of the viewer it was shown in. Kept over a recreation of the viewer, so that
+ * the photo comes back as the user left it rather than with the defaults of a new photo.
  */
-internal data class StereoPhotoChoices(val url: String, val openingId: Long, val threeD: Boolean, val angleDeg: Float) {
+internal data class StereoPhotoChoices(
+  val url: String,
+  val openingId: Long,
+  val threeD: Boolean,
+  val angleDeg: Float,
+  val mesh25d: Boolean = false,
+) {
   /**
    * These choices for the photo of [url] shown in the opening [openingId], null for any other photo or opening, which
-   * starts from the defaults. The angle stays within the bounds of the thumbstick.
+   * starts from the defaults. The angle stays within the bounds of the thumbstick, [maxAngleDeg] at most (see
+   * StereoComposer.maxAngle).
    */
-  fun forPhoto(url: String, openingId: Long): StereoPhotoChoices? =
+  fun forPhoto(url: String, openingId: Long, maxAngleDeg: Float = StereoComposer.MAX_ANGLE_DEG): StereoPhotoChoices? =
     if (url != this.url || openingId != this.openingId || angleDeg.isNaN()) null
-    else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, StereoComposer.MAX_ANGLE_DEG))
+    else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, maxAngleDeg))
+}
+
+/**
+ * What the quad shows of a photo with two eyes: both eyes (3D), the relief of the headset on its 2.5D mesh (see
+ * [ReliefMesh], experimental), or the left eye for both (2D)
+ */
+internal enum class StereoView {
+  THREE_D,
+  MESH_25D,
+  TWO_D,
 }
 
 /**
@@ -291,9 +311,16 @@ internal object StereoComposer {
     if (horizontalFovDeg == null || horizontalFovDeg <= 0f) DEFAULT_ANGLE_DEG
     else (0.8f * horizontalFovDeg).coerceIn(MIN_FILE_ANGLE_DEG, MAX_FILE_ANGLE_DEG)
 
-  /** The angular width after a push of the thumbstick, up ([step] 1) or down (-1). */
-  fun nextAngle(angleDeg: Float, step: Int): Float =
-    (angleDeg + step * ANGLE_STEP_DEG).coerceIn(MIN_ANGLE_DEG, MAX_ANGLE_DEG)
+  /**
+   * The widest the thumbstick makes the quad: an estimated relief stays within MAX_FILE_ANGLE_DEG (60 degrees), where
+   * the 2 percent of relief-v1 make 1.25 degrees rather than the 1.8 they would make at 90 (design-final 2026-10-26,
+   * section 3.3); any other photo goes up to MAX_ANGLE_DEG.
+   */
+  fun maxAngle(estimatedRelief: Boolean): Float = if (estimatedRelief) MAX_FILE_ANGLE_DEG else MAX_ANGLE_DEG
+
+  /** The angular width after a push of the thumbstick, up ([step] 1) or down (-1), [maxAngleDeg] at most. */
+  fun nextAngle(angleDeg: Float, step: Int, maxAngleDeg: Float = MAX_ANGLE_DEG): Float =
+    (angleDeg + step * ANGLE_STEP_DEG).coerceIn(MIN_ANGLE_DEG, maxAngleDeg)
 
   /**
    * Width and height in meters of the quad that shows an eye of [eyeWidth] x [eyeHeight] (gutters included, as the
@@ -358,19 +385,114 @@ internal object StereoComposer {
     return texture
   }
 
-  /** English labels of the stereo photo mode, for a key Flutter did not send. */
+  /** English labels of the stereo photo mode and of the 3D scenes (SceneTexts), for a key Flutter did not send. */
   private val defaultLabels =
-    mapOf(
-      LABEL_3D to "3D",
-      LABEL_2D to "2D (left eye)",
-      LABEL_NO_NAVIGATION to "Previous and next are not available for spatial photos yet",
-      LABEL_SECOND_EYE_FAILED to "The second eye could not be decoded: shown in 2D",
-    )
+    SceneTexts.englishLabels +
+      mapOf(
+        LABEL_3D to "3D",
+        LABEL_2D to "2D (left eye)",
+        LABEL_NO_NAVIGATION to "Previous and next are not available for spatial photos yet",
+        LABEL_SECOND_EYE_FAILED to "The second eye could not be decoded: shown in 2D",
+        LABEL_2D_ORIGINAL to "2D (original)",
+        LABEL_25D to "2.5D (experimental)",
+        LABEL_RELIEF_ESTIMATED to "Relief estimated by AI",
+        LABEL_NO_NAVIGATION_3D to "Previous and next are not available for 3D photos yet",
+        LABEL_RELIEF_PREPARING to "Preparing",
+        LABEL_RELIEF_ESTIMATING to "Estimating the relief (AI)",
+        LABEL_RELIEF_BUILDING to "Building the right eye",
+        LABEL_RELIEF_STOP to "Stop relief",
+        LABEL_RELIEF_TOO_WARM to "Headset too warm, relief stopped",
+        LABEL_RELIEF_FAILED to "The relief failed: $REASON",
+        LABEL_RELIEF_NOT_IN_VERSION to "Not in this version of the app",
+        LABEL_RELIEF_NO_MEMORY to "Not enough memory",
+        LABEL_RELIEF_MISSING to "The AI components are not installed",
+        LABEL_RELIEF_DAMAGED to "An AI component is damaged",
+      )
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"
   const val LABEL_NO_NAVIGATION = "spatialNoNavigation"
   const val LABEL_SECOND_EYE_FAILED = "spatialSecondEyeFailed"
+
+  /** The 2D button of a photo whose left eye is the original itself (see StereoPhotoKind.leftEyeIsOriginal). */
+  const val LABEL_2D_ORIGINAL = "ai2dOriginal"
+
+  /** The 3D button while a relief made in the headset shows on its 2.5D mesh (see [ReliefMesh]). */
+  const val LABEL_25D = "ai25d"
+
+  /** The honesty label of a relief estimated by AI, shown for a few seconds when the photo shows in 3D. */
+  const val LABEL_RELIEF_ESTIMATED = "aiReliefEstimated"
+
+  /** Previous and next on a flat 3D photo (side by side, or with its relief made in the headset). */
+  const val LABEL_NO_NAVIGATION_3D = "aiNoNavigation"
+
+  /**
+   * The stages of a relief made in the headset, on the status line under an indeterminate bar while the photo shows
+   * flat (design-final 2026-10-26, section 3.6), and the 3D button of the quad meanwhile.
+   */
+  const val LABEL_RELIEF_PREPARING = "aiReliefPreparing"
+  const val LABEL_RELIEF_ESTIMATING = "aiReliefEstimating"
+  const val LABEL_RELIEF_BUILDING = "aiReliefBuilding"
+  const val LABEL_RELIEF_STOP = "aiReliefStop"
+
+  /** Why a relief left its photo flat, said for a few seconds; FAILED holds [REASON], the message of the failure. */
+  const val LABEL_RELIEF_TOO_WARM = "aiReliefTooWarm"
+  const val LABEL_RELIEF_FAILED = "aiReliefFailed"
+  const val LABEL_RELIEF_NOT_IN_VERSION = "aiReliefNotInVersion"
+  const val LABEL_RELIEF_NO_MEMORY = "aiReliefNoMemory"
+  const val LABEL_RELIEF_MISSING = "aiReliefMissing"
+  const val LABEL_RELIEF_DAMAGED = "aiReliefDamaged"
+
+  /** Where the message of a failure goes in the label of [LABEL_RELIEF_FAILED], as in its translation key. */
+  const val REASON = "{reason}"
+
+  /** Key of the label of a relief at [stage]. */
+  fun reliefStageLabelKey(stage: ReliefStage): String =
+    when (stage) {
+      ReliefStage.PREPARING -> LABEL_RELIEF_PREPARING
+      ReliefStage.ESTIMATING -> LABEL_RELIEF_ESTIMATING
+      ReliefStage.BUILDING -> LABEL_RELIEF_BUILDING
+    }
+
+  /** Key of what a photo left flat for [reason] says; null for the stop of the user, which needs no word. */
+  fun reliefStopLabelKey(reason: ReliefStop): String? =
+    when (reason) {
+      ReliefStop.STOPPED -> null
+      ReliefStop.TOO_WARM -> LABEL_RELIEF_TOO_WARM
+      ReliefStop.NOT_IN_THIS_VERSION -> LABEL_RELIEF_NOT_IN_VERSION
+      ReliefStop.NOT_ENOUGH_MEMORY -> LABEL_RELIEF_NO_MEMORY
+      ReliefStop.MODEL_MISSING -> LABEL_RELIEF_MISSING
+      ReliefStop.MODEL_DAMAGED -> LABEL_RELIEF_DAMAGED
+      ReliefStop.FAILED -> LABEL_RELIEF_FAILED
+    }
+
+  /** What a photo left flat for [reason] says, with the [detail] of a failure in it; null for the stop of the user. */
+  fun reliefStopText(labels: Map<String, String>, reason: ReliefStop, detail: String): String? {
+    val key = reliefStopLabelKey(reason) ?: return null
+    return label(labels, key).replace(REASON, detail)
+  }
+
+  /**
+   * What the 3D button shows next after [view]: 3D, then 2.5D when the relief shown has its mesh ([meshAvailable]),
+   * then 2D, then 3D again. Any other stereo photo goes from 3D to 2D and back, as before.
+   */
+  fun nextView(view: StereoView, meshAvailable: Boolean): StereoView =
+    when (view) {
+      StereoView.THREE_D -> if (meshAvailable) StereoView.MESH_25D else StereoView.TWO_D
+      StereoView.MESH_25D -> StereoView.TWO_D
+      StereoView.TWO_D -> StereoView.THREE_D
+    }
+
+  /** Key of the label of the 3D button while the quad shows [view] (see [twoDLabelKey] for 2D). */
+  fun viewLabelKey(view: StereoView, leftEyeIsOriginal: Boolean): String =
+    when (view) {
+      StereoView.THREE_D -> LABEL_3D
+      StereoView.MESH_25D -> LABEL_25D
+      StereoView.TWO_D -> twoDLabelKey(leftEyeIsOriginal)
+    }
+
+  /** Key of the 2D label: "2D (original)" when the left eye is the photo itself, "2D (left eye)" otherwise. */
+  fun twoDLabelKey(leftEyeIsOriginal: Boolean): String = if (leftEyeIsOriginal) LABEL_2D_ORIGINAL else LABEL_2D
 
   /** Label of [key] from the translated [labels], the English one when it is missing or blank. */
   fun label(labels: Map<String, String>, key: String): String =

@@ -14,20 +14,61 @@
 //
 // The meta table also keeps the key of the ids of the files and albums (LibraryIds), so that every isolate builds the
 // same ids, and only this computer can.
+//
+// A file Immuch360 made from a photo (lib/desktop/ai/) says what it is in its XMP, which the scan reads with the rest:
+// its kind (a 3D photo, a 3D scene, a 360° panorama, a 360° 3D panorama), the layout of a 3D photo, where its content
+// comes from, the SHA-1 of its original and its own id. These columns let the app find the versions of an original
+// anywhere in the library, label and badge each by its kind, and put every version in the virtual album the backup
+// leaves out (generated_album.dart). Nothing is kept beside the files: a copy or a rename on any device keeps the link.
 
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
-// 1: the first schema; 2: the key of the ids, and the files whose content could not be read
-const _schemaVersion = 2;
+// 1: the first schema; 2: the key of the ids, and the files whose content could not be read; 3: what the XMP of a 3D
+// photo made by Immuch360 says; 4: the kind of every file Immuch360 makes (design-final 2026-10-27, section 8.4)
+const _schemaVersion = 4;
 
 /// The name of the index file, in the support folder of the app
 const libraryIndexFileName = 'desktop_library.sqlite';
+
+/// The layout of a side by side 3D photo, as the stereo column keeps it (design-final 2026-10-26, section 4.2)
+enum IndexedStereo {
+  /// Each eye at its full width
+  sbsFull,
+
+  /// Both eyes squeezed into the width of one
+  sbsHalf,
+}
+
+/// Where the content of a file Immuch360 made comes from, as the origin column keeps it
+enum IndexedOrigin {
+  /// A relief estimated by AI from a single photo: a 3D photo, or the 3D version of a 360° photo
+  estimated,
+
+  /// Invented by AI beyond the edges of the photo (Immuch360:Origin "GeneratedContent"): a 360° panorama, and its 3D
+  /// version
+  generated,
+
+  /// A 3D scene rebuilt from one photo, its hidden areas filled in (Immuch360:Origin "ReconstructedFromPhoto")
+  reconstructed,
+
+  /// Our XMP with an Origin this build does not know, from a later format, and the id of a file the app made: a
+  /// version all the same, linked and kept out of the backup
+  other,
+}
+
+/// What the index keeps of a file Immuch360 made, for its badge and the entries of the viewer: where its content comes
+/// from, and its kind (the immersive_kind column, by the names of ImmersiveKind), null for a kind this build does not
+/// know or a file the scan has not read again since the index learnt the kinds
+typedef IndexedVersion = ({IndexedOrigin origin, ImmersiveKind? kind});
+
+T? _byName<T extends Enum>(List<T> values, Object? name) => values.where((value) => value.name == name).firstOrNull;
 
 /// A photo or a video of the library, as the index keeps it
 class IndexedFile {
@@ -54,6 +95,12 @@ class IndexedFile {
     this.checksumSize,
     this.checksumModifiedMs,
     this.changeSeq = 0,
+    this.stereo,
+    this.origin,
+    this.sourceSha1,
+    this.derivativeId,
+    this.derivedSettings,
+    this.immersiveKind,
   });
 
   final String id;
@@ -101,6 +148,34 @@ class IndexedFile {
   final int? checksumModifiedMs;
 
   final int changeSeq;
+
+  /// A side by side 3D photo this build can show, as its Immuch360 XMP declares it; null for any other file
+  final IndexedStereo? stereo;
+
+  /// Set for a file Immuch360 made: a version of an original, which the backup leaves out unless the user chooses
+  final IndexedOrigin? origin;
+
+  /// The SHA-1 of the original of a version, in base64 like [checksum]: the link to its original, wherever both are
+  final String? sourceSha1;
+
+  /// The "urn:uuid:..." of a version, which Replace and Delete check before touching the file
+  final String? derivativeId;
+
+  /// What two versions of one original of the same kind are compared on (ImmersiveXmp.settingsKey)
+  final String? derivedSettings;
+
+  /// The kind of a file Immuch360 made, as its XMP declares it; null for any other file, and for a kind this build
+  /// does not know
+  final ImmersiveKind? immersiveKind;
+
+  /// A file Immuch360 made, which the virtual album of the versions holds
+  bool get isGenerated => origin != null;
+
+  /// What the badges and the entries of the viewer read of a file Immuch360 made, null for any other file
+  IndexedVersion? get version => switch (origin) {
+    final origin? => (origin: origin, kind: immersiveKind),
+    null => null,
+  };
 
   String get name => relativePath.substring(relativePath.lastIndexOf('/') + 1);
 
@@ -183,9 +258,42 @@ class LibraryIndex {
           ..execute('ALTER TABLE files ADD COLUMN read_failed INTEGER NOT NULL DEFAULT 0')
           ..execute('INSERT OR IGNORE INTO meta (key, value) VALUES (?, ?)', ['id_key', _newIdKey()]);
       }
+      if (version < 3) {
+        _db
+          ..execute('ALTER TABLE files ADD COLUMN stereo TEXT')
+          ..execute('ALTER TABLE files ADD COLUMN origin TEXT')
+          ..execute('ALTER TABLE files ADD COLUMN source_sha1 TEXT')
+          ..execute('ALTER TABLE files ADD COLUMN derivative_id TEXT')
+          ..execute('ALTER TABLE files ADD COLUMN derived_settings TEXT')
+          ..execute('CREATE INDEX IF NOT EXISTS files_by_source ON files (source_sha1)')
+          ..execute('CREATE INDEX IF NOT EXISTS files_generated ON files (id) WHERE origin IS NOT NULL')
+          // A 3D photo another computer wrote before this one knew the format was indexed without what its XMP says,
+          // so the backup would take it as any photo of its folder. The next scan reads again the files named like
+          // one, as it reads again a file it could not read; a renamed one waits for its next change.
+          ..execute(
+            "UPDATE files SET read_failed = 1 WHERE type = 1 AND cloud_only = 0 AND rel_path LIKE ? ESCAPE '\\'",
+            [_versionNamePattern],
+          );
+      }
+      if (version < 4) {
+        _db
+          ..execute('ALTER TABLE files ADD COLUMN immersive_kind TEXT')
+          // Every file a build of phase 1 indexed as made by the app is read again by the next scan, as a file it
+          // could not read: its kind goes into the new column, and the origin of a 3D scene, which phase 1 knew only
+          // as "other", becomes "reconstructed". The others are not read.
+          ..execute('UPDATE files SET read_failed = 1 WHERE origin IS NOT NULL AND cloud_only = 0');
+        if (version >= 1) {
+          // The album of the versions has a new name: a full sync brings it to the local tables, even when no file
+          // changed
+          _setMeta('full_sync', 1);
+        }
+      }
       _db.execute('PRAGMA user_version = $_schemaVersion');
     });
   }
+
+  // "_3D_LRF_Full_SBS" anywhere in the path, the underscores taken as themselves
+  static const _versionNamePattern = r'%\_3D\_LRF\_Full\_SBS%';
 
   // A secret, so from the random source of the system
   static Uint8List _newIdKey() {
@@ -444,14 +552,15 @@ class LibraryIndex {
       final seq = _nextSeq();
       final statement = _db.prepare('''
         INSERT INTO files (id, root_id, album_id, rel_path, type, size, modified_ms, added_s, created_s, width, height,
-          duration_ms, playback_style, latitude, longitude, projection, cloud_only, read_failed, change_seq)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          duration_ms, playback_style, latitude, longitude, projection, cloud_only, read_failed, change_seq, stereo,
+          origin, source_sha1, derivative_id, derived_settings, immersive_kind)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (id) DO UPDATE SET album_id = excluded.album_id, rel_path = excluded.rel_path, type = excluded.type,
           size = excluded.size, modified_ms = excluded.modified_ms, created_s = excluded.created_s,
           width = excluded.width, height = excluded.height, duration_ms = excluded.duration_ms,
           playback_style = excluded.playback_style, latitude = excluded.latitude, longitude = excluded.longitude,
           projection = excluded.projection, cloud_only = excluded.cloud_only, read_failed = excluded.read_failed,
-          change_seq = excluded.change_seq''');
+          change_seq = excluded.change_seq, $_keptWhenUnread''');
       // A file that comes back before the app learnt it was gone is a change, not a deletion followed by an addition
       final revive = _db.prepare('DELETE FROM tombstones WHERE id = ?');
       try {
@@ -477,6 +586,12 @@ class LibraryIndex {
             file.cloudOnly ? 1 : 0,
             file.readFailed ? 1 : 0,
             seq,
+            file.stereo?.name,
+            file.origin?.name,
+            file.sourceSha1,
+            file.derivativeId,
+            file.derivedSettings,
+            file.immersiveKind?.name,
           ]);
         }
       } finally {
@@ -485,6 +600,13 @@ class LibraryIndex {
       }
     });
   }
+
+  // What the XMP of a file said, kept when the file changed but could not be read again: a version would otherwise
+  // leave the album the backup leaves out, and its folder would send it before the next scan reads it
+  static final _keptWhenUnread = [
+    for (final column in ['stereo', 'origin', 'source_sha1', 'derivative_id', 'derived_settings', 'immersive_kind'])
+      '$column = CASE WHEN excluded.read_failed = 1 THEN files.$column ELSE excluded.$column END',
+  ].join(', ');
 
   /// Removes the files [ids] of a root, gone from its folders, as one generation
   void removeFiles(Iterable<String> ids) {
@@ -536,6 +658,12 @@ class LibraryIndex {
     checksumSize: row['checksum_size'] as int?,
     checksumModifiedMs: row['checksum_modified_ms'] as int?,
     changeSeq: row['change_seq'] as int,
+    stereo: _byName(IndexedStereo.values, row['stereo']),
+    origin: _byName(IndexedOrigin.values, row['origin']),
+    sourceSha1: row['source_sha1'] as String?,
+    derivativeId: row['derivative_id'] as String?,
+    derivedSettings: row['derived_settings'] as String?,
+    immersiveKind: _byName(ImmersiveKind.values, row['immersive_kind']),
   );
 
   /// The changes after the checkpoint [after], up to the current generation, read in one transaction
@@ -579,27 +707,80 @@ class LibraryIndex {
     return slash < 0 ? '' : relativePath.substring(0, slash);
   }
 
-  List<IndexedFile> filesOfAlbum(String albumId, {int? changedAfterSeconds}) => [
-    for (final row
-        in changedAfterSeconds == null
-            ? _db.select('SELECT * FROM files WHERE album_id = ? AND cloud_only = 0 ORDER BY id', [albumId])
-            : _db.select(
-                'SELECT * FROM files WHERE album_id = ? AND cloud_only = 0 AND (modified_ms / 1000 > ?2 OR added_s > ?2) '
-                'ORDER BY id',
-                [albumId, changedAfterSeconds],
-              ))
+  List<IndexedFile> filesOfAlbum(String albumId, {int? changedAfterSeconds}) =>
+      _shownFiles('album_id = ?', [albumId], changedAfterSeconds);
+
+  List<String> fileIdsOfAlbum(String albumId) => _shownIds('album_id = ?', [albumId]);
+
+  /// The files of [albumId] Immuch360 made; the other files of the folder are not loaded
+  List<IndexedFile> generatedFilesOfAlbum(String albumId) =>
+      _shownFiles('album_id = ? AND origin IS NOT NULL', [albumId], null);
+
+  /// Files of [albumId] the index first saw after [seconds]
+  int countAddedSince(String albumId, int seconds) => _countAddedSince('album_id = ?', [albumId], seconds);
+
+  /// The files Immuch360 made, wherever they are: the virtual album of the generated photos, which the backup leaves
+  /// out (generated_album.dart)
+  List<IndexedFile> generatedFiles({int? changedAfterSeconds}) =>
+      _shownFiles('origin IS NOT NULL', const [], changedAfterSeconds);
+
+  List<String> generatedFileIds() => _shownIds('origin IS NOT NULL', const []);
+
+  /// Files Immuch360 made that the index first saw after [seconds]
+  int countGeneratedAddedSince(int seconds) => _countAddedSince('origin IS NOT NULL', const [], seconds);
+
+  /// How many files Immuch360 made are shown, and the latest of their dates (0 when there are none), for the album
+  ({int assetCount, int updatedSeconds}) generatedSummary() {
+    final row = _db
+        .select(
+          'SELECT COUNT(*) AS assets, MAX(MAX(modified_ms / 1000, added_s)) AS updated FROM files '
+          'WHERE origin IS NOT NULL AND cloud_only = 0',
+        )
+        .first;
+    return (assetCount: row['assets'] as int, updatedSeconds: (row['updated'] as int?) ?? 0);
+  }
+
+  /// The versions of the original whose SHA-1 in base64 is [sha1], in every folder of the library
+  List<IndexedFile> filesDerivedFrom(String sha1) => _shownFiles('source_sha1 = ?', [sha1], null);
+
+  /// The files whose SHA-1 in base64, computed on them as they are now, is [sha1]: the original a version names. The
+  /// checksums are not indexed: a version's details ask it once.
+  List<IndexedFile> filesWithChecksum(String sha1) => [
+    for (final file in _shownFiles('checksum = ?', [sha1], null))
+      if (file.currentChecksum == sha1) file,
+  ];
+
+  /// Where the content of each file Immuch360 made comes from and its kind, by id: the badges of the thumbnails and
+  /// the entries of the viewer
+  Map<String, IndexedVersion> generatedVersions() => {
+    for (final row in _db.select(
+      'SELECT id, origin, immersive_kind FROM files WHERE origin IS NOT NULL AND cloud_only = 0',
+    ))
+      if (_byName(IndexedOrigin.values, row['origin']) case final origin?)
+        row['id'] as String: (origin: origin, kind: _byName(ImmersiveKind.values, row['immersive_kind'])),
+  };
+
+  // The files the app is shown (none kept online only) that match [where], those changed after a date when given
+  List<IndexedFile> _shownFiles(String where, List<Object?> arguments, int? changedAfterSeconds) => [
+    for (final row in _db.select(
+      'SELECT * FROM files WHERE $where AND cloud_only = 0'
+      '${changedAfterSeconds == null ? '' : ' AND (modified_ms / 1000 > ? OR added_s > ?)'} ORDER BY id',
+      [
+        ...arguments,
+        if (changedAfterSeconds != null) ...[changedAfterSeconds, changedAfterSeconds],
+      ],
+    ))
       _fileOf(row),
   ];
 
-  List<String> fileIdsOfAlbum(String albumId) => [
-    for (final row in _db.select('SELECT id FROM files WHERE album_id = ? AND cloud_only = 0 ORDER BY id', [albumId]))
+  List<String> _shownIds(String where, List<Object?> arguments) => [
+    for (final row in _db.select('SELECT id FROM files WHERE $where AND cloud_only = 0 ORDER BY id', arguments))
       row['id'] as String,
   ];
 
-  /// Files of [albumId] the index first saw after [seconds]
-  int countAddedSince(String albumId, int seconds) =>
-      _db.select('SELECT COUNT(*) AS n FROM files WHERE album_id = ? AND cloud_only = 0 AND added_s > ?', [
-            albumId,
+  int _countAddedSince(String where, List<Object?> arguments, int seconds) =>
+      _db.select('SELECT COUNT(*) AS n FROM files WHERE $where AND cloud_only = 0 AND added_s > ?', [
+            ...arguments,
             seconds,
           ]).first['n']
           as int;

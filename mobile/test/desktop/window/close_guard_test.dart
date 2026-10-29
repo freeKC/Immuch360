@@ -1,11 +1,13 @@
 // What closing the window of Immuch360 Desktop would stop (design 1.8): the uploads (the backup, an upload chosen by
-// hand, an upload from a network share) and the share of the computer, read only from the providers that exist, so
-// that asking creates none of them.
+// hand, an upload from a network share), the share of the computer and the 3D conversions (design-final 2026-10-26,
+// section 2.6.5), read only from the providers that exist, so that asking creates none of them.
 
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
@@ -46,6 +48,34 @@ class _SharingController extends PhoneShareController {
   PhoneShareState build() => const PhoneShareState(status: PhoneShareStatus.on);
 }
 
+/// The queue of the 3D conversions with jobs in [states], of [kind], at step [step] of [steps]
+class _Conversions extends ConversionQueueNotifier {
+  _Conversions(this.states, {this.kind = ConversionKind.sbsFromPhoto, this.step, this.steps});
+
+  final List<ConversionState> states;
+  final ConversionKind kind;
+  final int? step;
+  final int? steps;
+
+  @override
+  ConversionQueueState build() => ConversionQueueState(
+    jobs: [
+      for (final (index, state) in states.indexed)
+        ConversionJob(
+          id: 'conversion-$index',
+          source: LocalFileSource('/photos/$index.jpg'),
+          kind: kind,
+          batchIndex: index + 1,
+          batchSize: states.length,
+          target: ConversionTarget.nextTo('/photos/$index.jpg', kind: kind),
+          state: state,
+          step: step,
+          steps: steps,
+        ),
+    ],
+  );
+}
+
 void main() {
   test('nothing runs in a fresh app, and asking creates no provider', () {
     final container = ProviderContainer();
@@ -56,6 +86,7 @@ void main() {
     expect(container.exists(networkUploadProvider), isFalse);
     expect(container.exists(phoneShareProvider), isFalse);
     expect(container.exists(manualUploadCancelTokenProvider), isFalse);
+    expect(container.exists(conversionQueueProvider), isFalse);
   });
 
   test('the backup while it sends a file, not once only failures are left in its list', () {
@@ -99,5 +130,52 @@ void main() {
     container.read(phoneShareProvider);
 
     expect(container.read(desktopCloseReasonsProvider)(), {DesktopCloseReason.computerShare});
+  });
+
+  test('the 3D conversions while a photo is converted or waits, not once they all ended', () {
+    Set<DesktopCloseReason> reasonsWith(List<ConversionState> states) {
+      final container = ProviderContainer(
+        overrides: [conversionQueueProvider.overrideWith(() => _Conversions(states))],
+      );
+      addTearDown(container.dispose);
+      container.read(conversionQueueProvider);
+      return container.read(desktopCloseReasonsProvider)();
+    }
+
+    expect(reasonsWith([ConversionState.done, ConversionState.depth]), {DesktopCloseReason.conversions});
+    expect(reasonsWith([ConversionState.failed, ConversionState.waiting]), {DesktopCloseReason.conversions});
+    expect(
+      reasonsWith([ConversionState.done, ConversionState.skipped, ConversionState.cancelled, ConversionState.failed]),
+      isEmpty,
+    );
+    expect(reasonsWith([]), isEmpty);
+  });
+
+  test('a 360° panorama being generated, once its generation tells its steps', () {
+    Set<DesktopCloseReason> reasonsWith(_Conversions Function() queue) {
+      final container = ProviderContainer(overrides: [conversionQueueProvider.overrideWith(queue)]);
+      addTearDown(container.dispose);
+      container.read(conversionQueueProvider);
+      return container.read(desktopCloseReasonsProvider)();
+    }
+
+    const panorama = ConversionKind.panoramaFromPhoto;
+    expect(reasonsWith(() => _Conversions([ConversionState.generating], kind: panorama, step: 12, steps: 28)), {
+      DesktopCloseReason.conversions,
+      DesktopCloseReason.generation,
+    });
+    // Loading its models, or on another step: the line of the conversions alone
+    expect(reasonsWith(() => _Conversions([ConversionState.loadingModels], kind: panorama)), {
+      DesktopCloseReason.conversions,
+    });
+    expect(reasonsWith(() => _Conversions([ConversionState.upscale], kind: panorama, step: 2, steps: 4)), {
+      DesktopCloseReason.conversions,
+    });
+    expect(
+      reasonsWith(
+        () => _Conversions([ConversionState.inpaint], kind: ConversionKind.sceneFromPhoto, step: 1, steps: 3),
+      ),
+      {DesktopCloseReason.conversions},
+    );
   });
 }

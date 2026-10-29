@@ -3,8 +3,8 @@ name: Immuch360 Android release
 # Builds the signed Android APKs of the fork and attaches them to a GitHub Release, with the archive of the sources of
 # libsmb2 (LGPL-2.1-or-later), the SMB library inside every APK, which the APKs also carry as an asset.
 # Triggered by pushing a tag like v3.3.0-1, or manually.
-# The Kotlin unit tests of the app (phone flavour, debug) run with every build, and alone on every push of a branch
-# that changes mobile/android (the path filter does not apply to tags).
+# The Kotlin unit tests of the app (phone flavour, debug) and the compilation of the quest flavour run with every
+# build, and alone on every push of a branch that changes mobile/android (the path filter does not apply to tags).
 
 on:
   push:
@@ -70,8 +70,10 @@ jobs:
         run: |
           # The Gradle wrapper script and local.properties are written by the Flutter tool, not kept in git
           mise exec -- flutter build apk --config-only
-          # One ABI is enough to compile and run the JVM tests
-          cd android && mise exec -- ./gradlew :app:testPhoneDebugUnitTest -Ptarget-platform=android-x64 --console=plain
+          # One ABI is enough to compile and run the JVM tests. The Kotlin of the quest flavour is compiled too: its own
+          # sources (src/quest, LiteRT for the AI relief) are not in the phone tests, and the APKs are built by hand or
+          # at a tag only
+          cd android && mise exec -- ./gradlew :app:testPhoneDebugUnitTest :app:compileQuestDebugKotlin -Ptarget-platform=android-x64 --console=plain
 
       - name: Test reports
         if: always()

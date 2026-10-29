@@ -1,18 +1,24 @@
 package app.alextran.immich.immersive
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.PowerManager
 import android.util.Log
 import android.view.Surface
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.OptIn
@@ -43,6 +49,25 @@ import app.alextran.immich.core.raw.RawProjection
 import app.alextran.immich.core.raw.RawStitchException
 import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
+import app.alextran.immich.djilink.TransientText
+import app.alextran.immich.immersive.scene.SceneGate
+import app.alextran.immich.immersive.scene.SceneOpener
+import app.alextran.immich.immersive.scene.SceneOpening
+import app.alextran.immich.immersive.scene.ScenePrepared
+import app.alextran.immich.immersive.scene.SceneRefusal
+import app.alextran.immich.immersive.scene.SceneSource
+import app.alextran.immich.immersive.scene.SceneStop
+import app.alextran.immich.immersive.scene.SceneTexts
+import app.alextran.immich.immersive.scene.SceneVerdict
+import app.alextran.immich.immersive.scene.SceneView
+import app.alextran.immich.immersive.scene.SceneViewerOptions
+import app.alextran.immich.relief.ReliefJob
+import app.alextran.immich.relief.ReliefListener
+import app.alextran.immich.relief.ReliefRequest
+import app.alextran.immich.relief.ReliefResult
+import app.alextran.immich.relief.ReliefRun
+import app.alextran.immich.relief.ReliefStage
+import app.alextran.immich.relief.ReliefStop
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -61,6 +86,7 @@ import com.meta.spatial.runtime.SceneMesh
 import com.meta.spatial.runtime.SceneTexture
 import com.meta.spatial.runtime.SessionState
 import com.meta.spatial.runtime.StereoMode
+import com.meta.spatial.runtime.TriangleMesh
 import com.meta.spatial.toolkit.AppSystemActivity
 import com.meta.spatial.toolkit.DpDisplayOptions
 import com.meta.spatial.toolkit.Equirect180ShapeOptions
@@ -87,6 +113,8 @@ import com.meta.spatial.vr.LocomotionSystem
 import com.meta.spatial.vr.VRFeature
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
+import java.io.RandomAccessFile
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
@@ -100,6 +128,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -109,6 +138,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -158,6 +188,37 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * each eye its half (StereoMode.LeftRight, the mechanism of the 3D photos on the skybox). The 3D button switches to the
  * left eye for both eyes (MonoLeft), the thumbstick up or down resizes the quad and left or right brings it in front
  * of the gaze again; previous and next are not available for it yet. See [showStereoPhoto].
+ *
+ * A flat photo holding two eyes side by side comes with the sbsPhoto JSON (see [StereoPhotoKind] and [SbsPhotoSpec]):
+ * the same quad, its frame cut in two eyes ([SbsPhoto]). When the file says its relief was estimated by AI (the 3D
+ * photos the computers make), the quad says so for a few seconds when it shows in 3D, its 2D button reads "2D
+ * (original)" and it stays within 60 degrees; the file of another tool keeps the labels of any stereo photo.
+ *
+ * A flat photo whose relief the headset estimates comes with the depthRelief JSON: shown flat on the quad at once,
+ * then [ReliefJob] makes its right eye on a thread of its own, the stages on the status line under an indeterminate
+ * bar, and the 3D button reads "Stop relief" meanwhile; both eyes replace the flat photo once ready. A relief stopped,
+ * refused or failed leaves the photo flat with its reason for a few seconds. See [showReliefPhoto].
+ *
+ * Such a relief can also show in 2.5D (experimental): the photo on a mesh moved by its depth map ([ReliefMesh]), which
+ * answers the head as well as the eyes, the quad just behind it as a backdrop for the gaps of the mesh. The 3D button
+ * goes from 3D to 2.5D, then 2D; the request says which of 3D or 2.5D comes first (stereo by default, the
+ * aiReliefQuestMode setting). The relief fades as the head moves away from where the quad was placed. See
+ * [applyStereoPlacement].
+ *
+ * A photo that carries a 3D scene a computer made from it comes with the volumetricScene JSON (design-final
+ * 2026-10-27, section 3, lot S3): its file is read whole into the cache, its JPEG preview shows flat on the quad at
+ * once under "Preparing the 3D scene" and the bar, then the scene replaces it once its meshes are made (see
+ * [showScene] and [SceneView]): fixed in the world, the left thumbstick glides within the zone the file allows, a click
+ * of a thumbstick or Reset in the panel lays it at the head again, the 3D button switches to the photo (2D) and back,
+ * the right thumbstick does nothing and previous and next are not offered. A scene the gate or the file refuses leaves
+ * the preview flat with the reason for a few seconds. Nothing of the AI is needed to read a scene.
+ *
+ * A 360° panorama a computer generated beyond the edges of a photo, or its 3D version, is told by our packet at the
+ * head of its file, which the viewer reads for every photo on a sphere, the one the app opened as those previous and
+ * next reach (design-final 2026-10-27, section 5, lot P4; see [GeneratedPanorama]): the sphere opens with the photo
+ * itself where the user looks, "Generated by AI beyond the photo's edges" passes on every path of the sphere and stays
+ * in the panel with the flags of the file, and an outline of the photo ([PanoramaOutline]) shows meanwhile. Nothing of
+ * the AI is needed to read a panorama.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -194,8 +255,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val rawProjection: String? = null,
     /**
-     * The stereoPair JSON of an Apple spatial photo (see [StereoPairSpec]), shown on the stereo quad rather than on a
-     * sphere. Null for any other media, and ignored for a video.
+     * The stereoPair JSON of a photo shown on the stereo quad rather than on a sphere (see [StereoPhotoKind]): an
+     * Apple spatial photo, a side by side photo, a flat photo for an AI relief. Null for any other media, and ignored
+     * for a video.
      */
     val stereoPairJson: String? = null,
     /**
@@ -208,12 +270,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val isRawVideo: Boolean
       get() = isVideo && rawProjection != null
 
-    /** An Apple spatial photo: on the stereo quad, in 3D when its pair reads, flat otherwise. */
+    /** A photo of the stereo quad: in 3D when its JSON reads and both eyes decode, flat otherwise. */
     val isStereoPhoto: Boolean
       get() = !isVideo && stereoPairJson != null
 
-    /** The two eyes of a spatial photo, null when its JSON does not read (the photo then shows flat on the quad). */
-    val stereoPair: StereoPairSpec? by lazy { if (isStereoPhoto) StereoPairSpec.parse(stereoPairJson) else null }
+    /** What the quad shows, null when the JSON does not read (the photo then shows flat on the quad). */
+    val stereoKind: StereoPhotoKind? by lazy { if (isStereoPhoto) StereoPhotoKind.parse(stereoPairJson) else null }
+
+    /** The two eyes of an Apple spatial photo, null for any other kind. */
+    val stereoPair: StereoPairSpec?
+      get() = (stereoKind as? StereoPhotoKind.HeicPair)?.spec
+
+    /** The widest the thumbstick makes the quad of this photo, see StereoComposer.maxAngle. */
+    val stereoMaxAngleDeg: Float
+      get() = StereoComposer.maxAngle(stereoKind?.isEstimatedRelief == true)
+
+    /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
+    val isScene: Boolean
+      get() = stereoKind is StereoPhotoKind.VolumetricScene
   }
 
   /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
@@ -301,10 +375,92 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var stereoChoicesFor: Pair<String, Long>? = null
   /** The choices on the spatial photo shown before a recreation (see onCreate), taken back once by showStereoPhoto. */
   private var restoredStereoChoices: StereoPhotoChoices? = null
+  /** Where the eyes were and where they looked when the quad was last placed: the start pose of the 2.5D view. */
+  private var stereoEyes: Vector3? = null
+  private var stereoGaze: Vector3? = null
+  /** Takes "Relief estimated by AI" off the status line once it was read, see [showReliefEstimated]. */
+  private var reliefLabelJob: Job? = null
+  /** The status line of the stereo photo shown, under a passing label. */
+  private var stereoStatus = ""
+
+  // AI relief of a flat photo, see showReliefPhoto
+  /** The reliefs of this viewer, made at its first depthRelief photo and closed with it. */
+  private var reliefJob: ReliefJob? = null
+  /** The relief of the photo shown while it runs: the 3D button reads "Stop relief" meanwhile. */
+  private var reliefRun: ReliefRun? = null
+  /** Puts both eyes of a finished relief on the quad. */
+  private var reliefApplyJob: Job? = null
+  /** The heat of the headset, watched while the viewer has a relief job. */
+  private var thermalWatch: ThermalWatch? = null
+
+  // 2.5D view of a relief, see createReliefMesh and ReliefMesh
+  /** The mesh of the 2.5D view, hidden but while a relief shows in 2.5D. */
+  private var reliefMeshEntity: Entity? = null
+  /** Its material, once its scene object is there. */
+  private var reliefMeshMaterial: SceneMaterial? = null
+  /** Its triangles and the scene mesh made of them, written by the mesh creator. */
+  @Volatile private var reliefTriangles: TriangleMesh? = null
+  @Volatile private var reliefSceneMesh: SceneMesh? = null
+  /** The mesh of the relief shown, null for any other photo and before its relief is made. */
+  private var reliefMesh: ReliefMesh? = null
+  /** The texture coordinates and the triangles of [reliefMesh] are in the triangles of the scene. */
+  private var reliefMeshWritten = false
+  /** 2.5D chosen for the relief shown (its request, a recreation, the 3D button): shown once its mesh is there. */
+  private var stereo25d = false
+  /** The part of the relief the vertices were last placed for, see ReliefMesh.attenuation. */
+  private var reliefAttenuation = 1.0
+  /** The arrays handed to the triangles, made at the first 2.5D view. */
+  private var meshPositions: FloatArray? = null
+  private var meshTextureCoordinates: FloatArray? = null
+  private val mainHandler = Handler(Looper.getMainLooper())
+
+  // 3D scene of a photo, see showScene and SceneView
+  /** The scene of the photo shown, null for any other media and until its textures are decoded. */
+  private var sceneView: SceneView? = null
+  /** The file of the scene is read, its meshes being made: the bar shows under "Preparing the 3D scene". */
+  private var scenePreparing = false
+  /** The scene shown rather than its photo (false after "Photo (2D)"). */
+  private var sceneChosen = true
+  /** The lines the panel keeps for the scene: the honesty sentence, the room to move, the flags of the file. */
+  private var sceneDetails: List<String> = emptyList()
+  /** The buttons held on the controllers at the last frame, for the glide of the left thumbstick. */
+  private var heldButtons = 0
+  /** The uptime of the last frame in nanoseconds, 0 before the first one. */
+  private var lastFrameNanos = 0L
+
+  // 360° panorama generated beyond the edges of a photo, see GeneratedPanorama and PanoramaOutline
+  /** What the head of the photo on the sphere says, null for any other photo and until it is read. */
+  private var panoramaHead: PanoramaHead? = null
+  /** The head of the photo on the sphere was read (whatever it said): no second read from its downloaded copy. */
+  private var panoramaHeadRead = false
+  /** The lines the panel keeps for such a panorama: the honesty sentence and the flags of the file. */
+  private var panoramaDetails: List<String> = emptyList()
+  /** Its sentence passed and its outline showed, once per photo, when its first image was on the sphere. */
+  private var panoramaAnnounced = false
+  /** The outline of the photo, hidden but for a few seconds at the opening of such a panorama. */
+  private var outlineEntity: Entity? = null
+  /** Its triangles and the scene mesh made of them, written by the mesh creator. */
+  @Volatile private var outlineTriangles: TriangleMesh? = null
+  @Volatile private var outlineSceneMesh: SceneMesh? = null
+  /** The photo the outline is for, written once its mesh is there. */
+  private var outlineRegion: PhotoRegion? = null
+  /** The outline is written for the photo shown. */
+  private var outlineWritten = false
+  /** The white pixel its material samples: the colours of its vertices make it dark or light. */
+  private var outlineTexture: SceneTexture? = null
+  /** Hides the outline once the sentence went. */
+  private var outlineJob: Job? = null
 
   // Info panel views
   private var titleView: TextView? = null
   private var statusView: TextView? = null
+  /** Indeterminate bar under the status line while a relief is made. */
+  private var reliefProgressView: ProgressBar? = null
+  private var hintView: TextView? = null
+  /** The lines of a 3D scene under the controller mapping, see [sceneDetails]. */
+  private var sceneDetailsView: TextView? = null
+  private var navigationRow: View? = null
+  private var resetButton: Button? = null
   private var stereoView: Button? = null
   private var coverageView: Button? = null
   /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
@@ -470,6 +626,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           saved.openingId,
           threeD = savedInstanceState.getBoolean(STATE_STEREO_3D, true),
           angleDeg = savedInstanceState.getFloat(STATE_STEREO_ANGLE_DEG),
+          mesh25d = savedInstanceState.getBoolean(STATE_STEREO_25D, false),
         )
     }
     liveViewer = this
@@ -477,8 +634,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Keeps the media shown now for a recreation (see onCreate), with the 3D layout and the field of view on screen (the
-   * user's corrections), for a video the position it reached and for a spatial photo its 3D or 2D choice and the width
-   * of its quad, so that the new viewer carries on with the same opening as if nothing happened.
+   * user's corrections), for a video the position it reached and for a spatial photo its 3D, 2.5D or 2D choice and the
+   * width of its quad, so that the new viewer carries on with the same opening as if nothing happened.
    */
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -496,12 +653,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       when {
         !media.isStereoPhoto -> null
         stereoChoicesFor == media.url to media.openingId ->
-          StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg)
+          StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg, stereo25d)
         else -> restoredStereoChoices?.forPhoto(media.url, media.openingId)
       }
     if (choices != null) {
       outState.putBoolean(STATE_STEREO_3D, choices.threeD)
       outState.putFloat(STATE_STEREO_ANGLE_DEG, choices.angleDeg)
+      outState.putBoolean(STATE_STEREO_25D, choices.mesh25d)
     }
   }
 
@@ -533,6 +691,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       createSkybox()
       createHalfSphere()
       createStereoQuad()
+      createReliefMesh()
+      createSceneMeshes()
+      createPanoramaOutline()
       videoEntity = Entity.create(Panel(R.id.immersive_video_panel), Transform(), Visible(false))
       infoEntity =
         Entity.createPanelEntity(
@@ -638,6 +799,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun showRequest(revealInfo: Boolean = true) {
     val media = request
     loadJob?.cancel()
+    dropRelief()
+    dropScene()
+    dropPanorama()
+    reliefLabelJob?.cancel()
+    reliefLabelJob = null
     hideInfoJob?.cancel()
     hideInfoJob = null
     endNavigation()
@@ -668,12 +834,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
     if (media.isRawVideo) Log.i(TAG, "raw 360 video, stitched on the headset")
-    if (media.isStereoPhoto) Log.i(TAG, "spatial photo, on the stereo quad: ${media.stereoPair ?: "pair unreadable"}")
+    if (media.isStereoPhoto) Log.i(TAG, "stereo photo, on the stereo quad: ${media.stereoKind ?: "JSON unreadable"}")
     titleView?.text = media.title
     updateVideoControls()
     updateStereoView()
     updateCoverageView()
     updateTurnButton()
+    updateSceneControls()
     if (revealInfo) setInfoVisible(true, reposition = true)
     when {
       media.isVideo -> showVideo(media)
@@ -688,6 +855,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun bindInfoPanel(root: View) {
     titleView = root.findViewById(R.id.immersive_title)
     statusView = root.findViewById(R.id.immersive_status)
+    reliefProgressView = root.findViewById(R.id.immersive_relief_progress)
+    setReliefProgress(reliefRun?.running == true || scenePreparing)
+    hintView = root.findViewById(R.id.immersive_hint)
+    sceneDetailsView = root.findViewById(R.id.immersive_scene_details)
+    navigationRow = root.findViewById(R.id.immersive_navigation_row)
+    resetButton = root.findViewById(R.id.immersive_reset)
     stereoView = root.findViewById(R.id.immersive_stereo)
     coverageView = root.findViewById(R.id.immersive_coverage)
     turnButton = root.findViewById(R.id.immersive_turn)
@@ -708,6 +881,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(turnButton) { rotateSphere(YAW_STEP_DEGREES) }
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
+    onPanelClick(resetButton) { resetScene() }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -718,6 +892,32 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     updateCoverageView()
     updateTurnButton()
+    updateSceneControls()
+  }
+
+  /**
+   * The rows of a 3D scene in the info panel: its controller mapping in place of the general one, its lines (see
+   * [sceneDetails]) under it, Reset once the scene shows; previous and next are not offered there, the left thumbstick
+   * gliding instead. A panorama generated beyond the edges of a photo keeps its lines there too (see
+   * [panoramaDetails]). Any other media gets the panel as before.
+   */
+  private fun updateSceneControls() {
+    val media = request
+    val scene = media?.isScene == true
+    hintView?.text =
+      if (scene) SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
+      else getString(R.string.immersive_hint)
+    sceneDetailsView?.let { view ->
+      val details = if (scene) sceneDetails else panoramaDetails
+      view.text = details.joinToString("\n")
+      view.visibility = if (details.isNotEmpty()) View.VISIBLE else View.GONE
+    }
+    navigationRow?.visibility = if (scene) View.GONE else View.VISIBLE
+    resetButton?.let { button ->
+      button.text = SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_RESET)
+      button.visibility = if (scene) View.VISIBLE else View.GONE
+      button.isEnabled = scene && sceneView?.isReady == true && sceneChosen
+    }
   }
 
   /** The turn button is there for the media shown on a sphere only. */
@@ -778,9 +978,21 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       view.visibility = View.GONE
       return
     }
+    if (media.isScene) {
+      // What shows now, the scene or its photo; greyed while the scene is prepared, and for a scene that stays flat
+      val ready = sceneView?.isReady == true
+      val key = if (ready && sceneChosen) SceneTexts.LABEL_SCENE_3D else SceneTexts.LABEL_PHOTO_2D
+      view.text = SceneTexts.label(media.stereoLabels, if (ready) key else SceneTexts.LABEL_SCENE_3D)
+      view.isEnabled = ready
+      view.visibility = View.VISIBLE
+      return
+    }
+    view.isEnabled = true
     if (media.isStereoPhoto) {
-      // 3D or 2D (left eye): what the quad shows now
-      val key = if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D else StereoComposer.LABEL_2D
+      // 3D, 2.5D or 2D (left eye, or the original itself): what the quad shows now; "Stop relief" while a relief runs
+      val key =
+        if (reliefRun?.running == true) StereoComposer.LABEL_RELIEF_STOP
+        else StereoComposer.viewLabelKey(stereoView(), media.stereoKind?.leftEyeIsOriginal == true)
       view.text = StereoComposer.label(media.stereoLabels, key)
       view.visibility = View.VISIBLE
       return
@@ -906,25 +1118,40 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * of where the user looks now: the answer to a thumbstick action while the info panel is hidden, which it neither
    * shows nor moves. A new text restarts the delay.
    */
-  private fun showFeedback(text: String) {
+  private fun showFeedback(text: String, holdMs: Long = FEEDBACK_SHOW_MS) {
     if (text.isBlank()) return
     feedbackText = text
     feedbackView?.text = text
     val panel = feedbackEntity ?: return
     placeFeedbackInFront(panel)
+    feedbackView?.animate()?.cancel()
+    feedbackView?.alpha = 1f
     panel.setComponent(Visible(infoPlaced))
     feedbackJob?.cancel()
     feedbackJob =
       scope.launch {
-        delay(FEEDBACK_SHOW_MS)
+        delay(holdMs)
+        // A notice fades out, as the passing texts do (TransientText); the answer to a thumbstick just goes
+        if (holdMs > FEEDBACK_SHOW_MS) {
+          feedbackView?.animate()?.alpha(0f)?.setDuration(TransientText.FADE_OUT_MS)
+          delay(TransientText.FADE_OUT_MS)
+        }
         feedbackJob = null
         hideFeedback()
       }
   }
 
+  /**
+   * [text] on the feedback panel in front of the user while the info panel is hidden, held TransientText.HOLD_MS then
+   * fading out: what a 3D scene says on entering it and at the edge of its zone.
+   */
+  private fun showNotice(text: String) = showFeedback(text, TransientText.HOLD_MS)
+
   private fun hideFeedback() {
     feedbackJob?.cancel()
     feedbackJob = null
+    feedbackView?.animate()?.cancel()
+    feedbackView?.alpha = 1f
     feedbackEntity?.setComponent(Visible(false))
   }
 
@@ -942,13 +1169,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   // ---------------------------------------------------------------------------------------------
   // Frame and input
 
+  override fun onButtonsHeld(controllerBits: Int) {
+    heldButtons = controllerBits
+  }
+
   override fun onFrame(head: Pose?) {
+    val now = System.nanoTime()
+    val seconds = if (lastFrameNanos == 0L) 0.0 else (now - lastFrameNanos) / 1e9
+    lastFrameNanos = now
     if (head != null && (head.t.x != 0f || head.t.y != 0f || head.t.z != 0f)) {
       lastHeadPosition = Vector3(head.t.x, head.t.y, head.t.z)
       lastHeadForward = head.forward()
       centerSpheresOnHead(head.t)
       // A spatial photo shown before the first head pose goes in front of the user once it is known
       if (!stereoPlacedWithHead && stereoEyeSize != null && request?.isStereoPhoto == true) placeStereoQuad()
+      if (reliefMeshShown) followHeadWithRelief(head.t)
+      // A 3D scene: the glide, the edge, its root fixed in the world, laid at the head at its first frame
+      sceneView?.onFrame(head, heldButtons, seconds)
     }
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
@@ -977,6 +1214,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, photoYaw, 0f))),
     )
     videoEntity?.setComponent(Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, videoYaw, 0f))))
+    // The outline turns with the photo: its frame is the panorama with the centre column ahead (see PanoramaOutline)
+    outlineEntity?.setComponent(
+      Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, photoYaw - SKYBOX_YAW_DEGREES, 0f))),
+    )
   }
 
   /** Turns the sphere of the current media by [degrees] and logs the value to report. Returns the status shown. */
@@ -1077,7 +1318,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val panel = if (infoVisible) "shown" else "hidden"
     val controller = Integer.toHexString(controllerBits)
     Log.d(TAG, "buttons pressed: controller 0x$controller, hand 0x${Integer.toHexString(handBits)}, panel $panel")
-    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible)
+    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible, scene = request?.isScene == true)
     if (!focused) {
       Log.w(TAG, "button press while the session was not reported focused: taken as focused (resumed=$resumed)")
       focused = true
@@ -1123,6 +1364,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         ImmersiveControls.Action.SHOW_PANEL -> setInfoVisible(true, reposition = true)
         ImmersiveControls.Action.PLAY_PAUSE -> togglePlayPause()
+        ImmersiveControls.Action.RESET -> resetScene()
       }
     }
   }
@@ -1149,8 +1391,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (closing || isFinishing) return
     val shown = request
     if (shown != null && shown.isStereoPhoto) {
-      // Flutter finds no spatial photo before or after this one yet: said rather than asked
-      val text = StereoComposer.label(shown.stereoLabels, StereoComposer.LABEL_NO_NAVIGATION)
+      // Flutter finds no spatial or 3D photo before or after this one yet: said rather than asked
+      val key =
+        when (shown.stereoKind) {
+          is StereoPhotoKind.Sbs,
+          is StereoPhotoKind.DepthRelief,
+          is StereoPhotoKind.VolumetricScene -> StereoComposer.LABEL_NO_NAVIGATION_3D
+          else -> StereoComposer.LABEL_NO_NAVIGATION
+        }
+      val text = StereoComposer.label(shown.stereoLabels, key)
       Log.i(TAG, "no previous or next from a spatial photo (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
@@ -1473,6 +1722,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     closing = true
     Log.i(TAG, "immersive viewer closing")
     loadJob?.cancel()
+    releaseRelief()
+    dropScene()
+    dropPanorama()
     hideInfoJob?.cancel()
     stopProgressTicker()
     // A media Flutter sends for a request from now on is refused, and the closed event stops its search
@@ -1777,10 +2029,86 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * Shows [media], an Apple spatial photo, on the stereo quad: no sphere around (black), its file read whole (a few MB:
-   * the bridge or the server original, or the file on the headset), both eyes decoded (see [decodeStereo]) and set
-   * side by side on one texture. A pair that does not read, or a second eye that does not decode, shows the left eye
-   * in 2D.
+   * The mesh of the 2.5D view of a relief (see [ReliefMesh]): one TriangleMesh of ReliefMesh.MAX_VERTICES vertices and
+   * MAX_INDICES indices, made once as the lines of the SDK make theirs (TriangleMesh, updateGeometry, updatePrimitives,
+   * SceneMesh.fromTriangleMesh, then updateWithTriangleMesh after each change), with an unlit material made like the
+   * quad one, double sided too. Nothing drawn until a relief shows in 2.5D: every triangle has no area, and two
+   * vertices give it bounds as wide as any relief. Its texture is the one of the quad, read with the stereo mode None:
+   * the mesh itself gives each eye its view.
+   */
+  private fun createReliefMesh() {
+    registerMeshCreator(RELIEF_MESH) { entity ->
+      val material =
+        entity.getComponent<Material>().generateSceneMaterial(entity, this).apply {
+          setSidedness(MaterialSidedness.DOUBLE_SIDED)
+          setStereoMode(StereoMode.None)
+        }
+      try {
+        val triangles =
+          TriangleMesh(
+            ReliefMesh.MAX_VERTICES,
+            ReliefMesh.MAX_INDICES,
+            intArrayOf(0, ReliefMesh.MAX_INDICES),
+            arrayOf(material),
+          )
+        val bounds =
+          FloatArray(3 * ReliefMesh.MAX_VERTICES).apply {
+            floatArrayOf(-10f, -10f, ReliefMesh.MIN_DEPTH_M.toFloat()).copyInto(this, 0)
+            floatArrayOf(10f, 10f, ReliefMesh.MAX_DEPTH_M.toFloat()).copyInto(this, 3)
+          }
+        triangles.updateGeometry(
+          0,
+          bounds,
+          RELIEF_MESH_NORMALS,
+          FloatArray(2 * ReliefMesh.MAX_VERTICES),
+          IntArray(ReliefMesh.MAX_VERTICES) { WHITE },
+        )
+        triangles.updatePrimitives(0, IntArray(ReliefMesh.MAX_INDICES))
+        SceneMesh.fromTriangleMesh(triangles, false).also {
+          reliefTriangles = triangles
+          reliefSceneMesh = it
+        }
+      } catch (e: Throwable) {
+        // Without its triangles the entity stays hidden and the reliefs in 3D
+        Log.e(TAG, "relief mesh could not be made, reliefs stay in 3D", e)
+        SceneMesh.singleSidedQuad(0.5f, 0.5f, material)
+      }
+    }
+    val entity =
+      Entity.create(
+        listOf(
+          Mesh(Uri.parse(RELIEF_MESH), hittable = MeshCollision.NoCollision),
+          Material().apply { unlit = true },
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, 0f), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        ),
+      )
+    reliefMeshEntity = entity
+    systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
+      runOnUiThread {
+        val material = sceneObject.mesh?.materials?.firstOrNull()
+        if (material == null) {
+          Log.e(TAG, "relief mesh material not found, reliefs stay in 3D")
+          return@runOnUiThread
+        }
+        Log.i(TAG, "relief mesh ready, ${ReliefMesh.MAX_VERTICES} vertices")
+        reliefMeshMaterial = material
+        // A relief may wait for it in 2.5D
+        if (reliefMesh != null && stereo25d) {
+          applyStereoMode()
+          applyStereoPlacement()
+          updateStereoView()
+        }
+      }
+    } ?: Log.e(TAG, "relief mesh scene object not available")
+  }
+
+  /**
+   * Shows [media] on the stereo quad: no sphere around (black), its file read whole (a few MB: the bridge or the
+   * server original, or the file on the headset), both eyes decoded and set side by side on one texture: the two
+   * items of an Apple spatial photo (see [decodeStereo]), the two halves of a side by side photo (see [SbsPhoto]), or
+   * a flat photo and the right eye the headset makes of it (see [showReliefPhoto]). A JSON that does not read, a kind
+   * this build does not know, or a second eye that does not decode, shows the photo in 2D.
    */
   private fun showStereoPhoto(media: MediaRequest) {
     stopVideo()
@@ -1788,14 +2116,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     skyboxEntity?.setComponent(Visible(false))
     halfSphereEntity?.setComponent(Visible(false))
     hideStereoQuad()
+    val kind = media.stereoKind
     val spec = media.stereoPair
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
-    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId)
+    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.stereoMaxAngleDeg)
     restoredStereoChoices = null
     stereo3d = restored?.threeD ?: true
+    // A relief first shows as its request says, 3D or 2.5D; the photo of a recreation as the user left it
+    stereo25d =
+      restored?.mesh25d ?: ((kind as? StereoPhotoKind.DepthRelief)?.spec?.mode == ReliefViewMode.MESH_25D)
     stereoHasSecondEye = false
-    stereoAngleDeg = restored?.angleDeg ?: StereoComposer.initialAngle(spec?.horizontalFovDeg)
+    stereoAngleDeg =
+      restored?.angleDeg
+        ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceAtMost(media.stereoMaxAngleDeg)
     stereoChoicesFor = media.url to media.openingId
+    if (kind is StereoPhotoKind.VolumetricScene) {
+      showScene(media, kind.spec)
+      return
+    }
     updateStereoView()
     setStatus(getString(R.string.immersive_loading))
     loadJob =
@@ -1803,10 +2141,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         try {
           val local = ImmersiveMedia.localFileFor(media.url)
           val bytes = if (local != null) withContext(Dispatchers.IO) { local.readBytes() } else download(media.url)
-          Log.i(TAG, "spatial photo: ${bytes.size} bytes")
+          Log.i(TAG, "stereo photo: ${bytes.size} bytes")
+          if (kind is StereoPhotoKind.DepthRelief) {
+            showReliefPhoto(media, kind.spec, bytes)
+            return@launch
+          }
           val holder = AtomicReference<StereoTexture?>()
           try {
-            decodeMutex.withLock { withContext(Dispatchers.Default) { holder.set(decodeStereo(bytes, spec)) } }
+            decodeMutex.withLock {
+              withContext(Dispatchers.Default) {
+                holder.set(if (kind is StereoPhotoKind.Sbs) decodeSbs(bytes, kind.spec) else decodeStereo(bytes, spec))
+              }
+            }
             ensureActive()
             val texture = holder.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
             applyStereoTexture(texture)
@@ -1816,10 +2162,480 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         } catch (e: CancellationException) {
           throw e
         } catch (e: Throwable) {
-          Log.e(TAG, "spatial photo failed", e)
+          Log.e(TAG, "stereo photo failed", e)
           showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
         }
       }
+  }
+
+  /**
+   * A flat photo whose relief the headset makes (the depthRelief JSON, design-final 2026-10-26, section 3.4): decoded
+   * upright by [ImmersiveMedia.decodeForRelief] (EXIF orientation, the user's quarter turns, transparency on black),
+   * shown flat on the quad at once, then handed to the relief job (see [startRelief]).
+   */
+  private suspend fun showReliefPhoto(media: MediaRequest, spec: DepthReliefSpec, bytes: ByteArray) {
+    val photo = AtomicReference<Bitmap?>()
+    val flat = AtomicReference<StereoTexture?>()
+    try {
+      decodeMutex.withLock {
+        withContext(Dispatchers.Default) {
+          val decoded = ImmersiveMedia.decodeForRelief(bytes, spec.quarterTurns) ?: return@withContext
+          photo.set(decoded)
+          val crop = StereoComposer.Crop(0, 0, decoded.width)
+          val texture = StereoComposer.compose(decoded, decoded, crop)
+          flat.set(StereoTexture(texture, decoded.width, decoded.height, hasSecondEye = false))
+        }
+      }
+      coroutineContext.ensureActive()
+      val texture = flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
+      Log.i(TAG, "relief photo: ${texture.eyeWidth}x${texture.eyeHeight}, shown flat, ${spec.quarterTurns} turns")
+      applyStereoTexture(texture)
+      startRelief(media, spec, photo.getAndSet(null) ?: return)
+    } finally {
+      photo.getAndSet(null)?.recycle()
+      flat.getAndSet(null)?.bitmap?.recycle()
+    }
+  }
+
+  /**
+   * Hands [photo], shown flat, to the relief job of this viewer (made at its first relief, with the watch of the heat):
+   * the stages go to the status line under the indeterminate bar, the panel stays on screen, the 3D button reads
+   * "Stop relief". The job owns [photo] from now on.
+   */
+  private fun startRelief(media: MediaRequest, spec: DepthReliefSpec, photo: Bitmap) {
+    val job =
+      reliefJob
+        ?: run {
+          val watch = ThermalWatch(this) { status -> reliefJob?.onThermalStatus(status) }
+          thermalWatch = watch
+          watch.start()
+          ReliefHost.newJob(this, mainHandler, watch).also { reliefJob = it }
+        }
+    val request =
+      ReliefRequest(File(spec.model), spec.modelSize, spec.modelId, spec.cacheKey, spec.parallax, spec.convergence)
+    cancelInfoHide()
+    reliefRun = job.start(request, BitmapReliefPhoto(photo), ::BitmapReliefEye, ReliefViewListener(media))
+    setReliefProgress(true)
+    updateStereoView()
+  }
+
+  /** What the relief job says of the photo of [media], on the main thread; nothing once another media is shown. */
+  private inner class ReliefViewListener(private val media: MediaRequest) :
+    ReliefListener<BitmapReliefPhoto, BitmapReliefEye> {
+    private val shown: Boolean
+      get() = request === media && !closing
+
+    override fun onStage(stage: ReliefStage) {
+      if (!shown) return
+      setReliefProgress(true)
+      setStatus(StereoComposer.label(media.stereoLabels, StereoComposer.reliefStageLabelKey(stage)))
+    }
+
+    override fun onDone(result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
+      reliefRun = null
+      if (!shown) {
+        result.photo.release()
+        result.eye.release()
+        return
+      }
+      showRelief(media, result)
+    }
+
+    override fun onFlat(reason: ReliefStop, detail: String) {
+      reliefRun = null
+      if (!shown) return
+      setReliefProgress(false)
+      updateStereoView()
+      val text = StereoComposer.reliefStopText(media.stereoLabels, reason, detail)
+      Log.i(TAG, "relief: the photo stays flat ($reason)")
+      if (text == null) {
+        setStatus(stereoStatus)
+        scheduleInfoHide()
+      } else {
+        // The reason comes and goes, as the honesty label does
+        showPassing(text)
+        scheduleInfoHide(TransientText.HOLD_MS)
+      }
+    }
+  }
+
+  /**
+   * Both eyes of a finished relief on the quad in place of the flat photo, where the quad is now, and the mesh of its
+   * 2.5D view made from its depth map: shown at once when 2.5D comes first, else at the 3D button.
+   */
+  private fun showRelief(media: MediaRequest, result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
+    reliefApplyJob?.cancel()
+    reliefApplyJob =
+      scope.launch {
+        val holder = AtomicReference<StereoTexture?>()
+        var mesh: ReliefMesh? = null
+        try {
+          decodeMutex.withLock {
+            withContext(Dispatchers.Default) {
+              val left = result.photo.bitmap
+              val texture = StereoComposer.compose(left, result.eye.bitmap, StereoComposer.Crop(0, 0, left.width))
+              holder.set(StereoTexture(texture, left.width, left.height, hasSecondEye = true))
+              // The relief stays in 3D without it: the 3D button then goes to 2D as for any stereo photo
+              mesh =
+                try {
+                  ReliefMesh(result.map)
+                } catch (e: Throwable) {
+                  Log.e(TAG, "relief: no 2.5D mesh for this photo", e)
+                  null
+                }
+            }
+          }
+          ensureActive()
+          val source = if (result.fromCache) "the cache" else "the model on ${result.path}"
+          val made = mesh?.let { "${it.columns}x${it.rows} mesh" } ?: "no mesh"
+          // 2.5D only with its mesh and a scene ready for it: the quad shows the 3D otherwise
+          val shownIn = if (stereo25d && mesh != null && reliefMeshReady) "2.5D" else "3D"
+          Log.i(TAG, "relief shown in $shownIn, depth map from $source, $made")
+          reliefMesh = mesh
+          reliefMeshWritten = false
+          reliefAttenuation = 1.0
+          setReliefProgress(false)
+          applyStereoTexture(holder.getAndSet(null) ?: return@launch, place = false)
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "relief: the eyes could not be put on the quad", e)
+          setReliefProgress(false)
+          updateStereoView()
+          val reason = if (e is OutOfMemoryError) ReliefStop.NOT_ENOUGH_MEMORY else ReliefStop.FAILED
+          StereoComposer.reliefStopText(media.stereoLabels, reason, e.message ?: e.javaClass.simpleName)?.let {
+            showPassing(it)
+          }
+          scheduleInfoHide(TransientText.HOLD_MS)
+        } finally {
+          holder.getAndSet(null)?.bitmap?.recycle()
+          result.photo.release()
+          result.eye.release()
+        }
+      }
+  }
+
+  /** The indeterminate bar under the status line, while a relief or a 3D scene is made. */
+  private fun setReliefProgress(visible: Boolean) {
+    reliefProgressView?.visibility = if (visible) View.VISIBLE else View.GONE
+  }
+
+  /** Another media, or the end of the viewer: the relief of the photo shown is dropped without a word. */
+  private fun dropRelief() {
+    reliefApplyJob?.cancel()
+    reliefApplyJob = null
+    reliefRun = null
+    reliefJob?.cancel()
+    setReliefProgress(false)
+  }
+
+  /** The end of the viewer: the relief dropped, the model closed, its thread ended, the heat no longer watched. */
+  private fun releaseRelief() {
+    dropRelief()
+    thermalWatch?.stop()
+    thermalWatch = null
+    reliefJob?.close()
+    reliefJob = null
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // 3D scene of a photo, see SceneView
+
+  /**
+   * The mesh creator of the scenes (see [SceneView.createMesh]), registered once with the scene. An entity of a scene
+   * gone, or one whose mesh the SDK could not make, gets a quad too small to see, and stays hidden anyway.
+   */
+  private fun createSceneMeshes() {
+    registerMeshCreator(SceneView.MESH_URI) { entity: Entity, uri: Uri ->
+      sceneView?.createMesh(entity, uri)
+        ?: SceneMesh.singleSidedQuad(
+          0.001f,
+          0.001f,
+          entity.getComponent<Material>().generateSceneMaterial(entity, this),
+        )
+    }
+  }
+
+  /**
+   * [media], a photo that carries a 3D scene (design-final 2026-10-27, section 3.2): its file read whole into the cache
+   * (or where it is, on the headset), its preview flat on the quad at once under "Preparing the 3D scene" and the bar;
+   * then, off the main thread, the scene opened from the file (the packet at its head wins over [json]), weighed by
+   * the gate of this headset, its textures decoded in sRGB at the sizes the gate allows. [SceneView] makes its meshes
+   * and replaces the preview once they are there. A scene the gate or the file refuses leaves the preview flat with
+   * its reason for a few seconds; the panel keeps it too.
+   */
+  private fun showScene(media: MediaRequest, json: VolumetricSceneSpec) {
+    val labels = media.stereoLabels
+    stereoAngleDeg = StereoComposer.initialAngle(json.fovDegrees.toFloat())
+    sceneChosen = true
+    scenePreparing = true
+    sceneDetails = SceneTexts.detailLines(labels, json, null)
+    cancelInfoHide()
+    setReliefProgress(true)
+    setStatus(SceneTexts.label(labels, SceneTexts.LABEL_PREPARING))
+    updateStereoView()
+    updateSceneControls()
+    val options = readSceneOptions()
+    val caps = SceneGate.capsFor(Build.DEVICE)
+    loadJob =
+      scope.launch {
+        val local = ImmersiveMedia.localFileFor(media.url)
+        val file = local ?: File(cacheDir, "$ORIGINAL_PREFIX${System.nanoTime()}")
+        val flat = AtomicReference<StereoTexture?>()
+        val made = AtomicReference<Pair<ScenePrepared, List<Bitmap>>?>()
+        var previewShown = false
+        try {
+          if (local == null) Log.i(TAG, "scene: ${downloadTo(media.url, file)} bytes downloaded")
+          else Log.i(TAG, "scene: ${file.length()} bytes on the headset")
+          decodeMutex.withLock {
+            withContext(Dispatchers.Default) { ImmersiveMedia.decodeFile(file)?.let { flat.set(flatTexture(it)) } }
+          }
+          ensureActive()
+          applyStereoTexture(flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded"))
+          previewShown = true
+          val opening =
+            decodeMutex.withLock {
+              withContext(Dispatchers.Default) {
+                val opened =
+                  RandomAccessFile(file, "r").use { access ->
+                    SceneOpener.open(SceneSource.of(access), json, caps, { availableMemory() }, { thermalStatus() })
+                  }
+                if (opened is SceneOpening.Ready) {
+                  SceneView.decodeTextures(opened.scene, opened.open.sampleSizes)?.let { bitmaps ->
+                    made.set(ScenePrepared.of(opened) to bitmaps)
+                  }
+                }
+                opened
+              }
+            }
+          ensureActive()
+          when (opening) {
+            is SceneOpening.Stopped -> sceneStopped(media, opening.stop)
+            is SceneOpening.Ready -> {
+              sceneDetails = SceneTexts.detailLines(labels, opening.spec, opening.hiddenFraction)
+              updateSceneControls()
+              val (prepared, bitmaps) = made.getAndSet(null) ?: (null to null)
+              if (prepared == null || bitmaps == null) {
+                sceneStopped(media, SceneStop.Failed("a texture does not decode"))
+              } else {
+                attachScene(media, prepared, bitmaps, options)
+              }
+            }
+          }
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "scene failed", e)
+          val reason = e.message ?: e.javaClass.simpleName
+          when {
+            !previewShown -> {
+              scenePreparing = false
+              sceneDetails = emptyList()
+              setReliefProgress(false)
+              updateSceneControls()
+              showError(getString(R.string.immersive_error_photo, reason))
+            }
+            e is OutOfMemoryError ->
+              sceneStopped(media, SceneStop.Refused(SceneVerdict.Refused(SceneRefusal.NOT_ENOUGH_MEMORY)))
+            else -> sceneStopped(media, SceneStop.Failed(reason))
+          }
+        } finally {
+          flat.getAndSet(null)?.bitmap?.recycle()
+          made.getAndSet(null)?.second?.forEach { it.recycle() }
+          if (local == null) file.delete()
+        }
+      }
+  }
+
+  /** The textures of [prepared] uploaded from [bitmaps], which are recycled, and the scene handed to a [SceneView]. */
+  private fun attachScene(
+    media: MediaRequest,
+    prepared: ScenePrepared,
+    bitmaps: List<Bitmap>,
+    options: SceneViewerOptions,
+  ) {
+    val textures = mutableListOf<SceneTexture>()
+    try {
+      for (bitmap in bitmaps) {
+        textures +=
+          SceneTexture(
+            bitmap,
+            SamplerConfig(
+              Filter.LINEAR,
+              Filter.LINEAR,
+              Filter.LINEAR,
+              AddressMode.CLAMP_TO_EDGE,
+              AddressMode.CLAMP_TO_EDGE,
+              0f,
+            ),
+          )
+      }
+    } catch (e: Throwable) {
+      Log.e(TAG, "scene: a texture could not be uploaded", e)
+      textures.forEach { runCatching { it.destroy() } }
+      sceneStopped(media, SceneStop.Failed(e.message ?: e.javaClass.simpleName))
+      return
+    } finally {
+      bitmaps.forEach { it.recycle() }
+    }
+    val view = SceneView(this, systemManager, mainHandler, prepared, textures, options, SceneListener(media))
+    sceneView = view
+    view.attach()
+  }
+
+  /** What the scene of [media] says, on the main thread; nothing once another media is shown. */
+  private inner class SceneListener(private val media: MediaRequest) : SceneView.Listener {
+    private val current: Boolean
+      get() = request === media && !closing
+
+    override fun onSceneShown() {
+      if (!current) return
+      scenePreparing = false
+      setReliefProgress(false)
+      if (sceneChosen) stereoQuadEntity?.setComponent(Visible(false))
+      stereoStatus = SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_SCENE_3D)
+      updateStereoView()
+      updateSceneControls()
+      // The honesty sentence comes and goes (FreeKC's rule of 25 October), and stays written in the panel
+      val honesty = SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_HONESTY)
+      Log.i(TAG, "scene: reconstructed from one photo, said for ${TransientText.HOLD_MS} ms")
+      if (infoVisible) {
+        showPassing(honesty)
+        scheduleInfoHide(TransientText.HOLD_MS)
+      } else {
+        showNotice(honesty)
+      }
+    }
+
+    override fun onSceneFailed(reason: String) {
+      if (!current) return
+      dropScene()
+      stereoQuadEntity?.setComponent(Visible(true))
+      sceneStopped(media, SceneStop.Failed(reason))
+    }
+
+    override fun onSceneEdge() {
+      if (!current) return
+      val text = SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_EDGE)
+      if (infoVisible) showPassing(text) else showNotice(text)
+    }
+  }
+
+  /**
+   * The scene of [media] is not shown, for [stop]: its preview stays flat, the reason comes and goes on the status
+   * line and stays written in the panel, where the 3D button is greyed.
+   */
+  private fun sceneStopped(media: MediaRequest, stop: SceneStop) {
+    if (request !== media || closing) return
+    val text = SceneTexts.stopText(media.stereoLabels, stop)
+    scenePreparing = false
+    sceneDetails = listOf(text)
+    setReliefProgress(false)
+    updateStereoView()
+    updateSceneControls()
+    Log.i(TAG, "scene: the photo stays flat ($stop)")
+    showPassing(text)
+    scheduleInfoHide(TransientText.HOLD_MS)
+  }
+
+  /** Another media, or the end of the viewer: the scene shown goes, without a word. */
+  private fun dropScene() {
+    sceneView?.destroy()
+    sceneView = null
+    scenePreparing = false
+    sceneChosen = true
+    sceneDetails = emptyList()
+  }
+
+  /** Reset, from the panel or a click of a thumbstick: the camera of the photo at the head again, the scene whole. */
+  private fun resetScene() {
+    val view = sceneView ?: return
+    if (!view.isReady || !sceneChosen) return
+    view.reset()
+  }
+
+  /** The 3D button of a scene: its photo (2D) on the quad in front of the user, or the scene again. */
+  private fun toggleScenePhoto(fromPanel: Boolean) {
+    val view = sceneView ?: return
+    if (!view.isReady) return
+    sceneChosen = !sceneChosen
+    view.setVisible(sceneChosen)
+    if (sceneChosen) {
+      stereoQuadEntity?.setComponent(Visible(false))
+    } else {
+      placeStereoQuad()
+      stereoQuadEntity?.setComponent(Visible(true))
+    }
+    Log.i(TAG, "scene: ${if (sceneChosen) "the scene" else "the photo (2D)"} shows")
+    updateStereoView()
+    updateSceneControls()
+    showControlChange(fromPanel)
+  }
+
+  /** The free memory Android reports (ActivityManager.MemoryInfo.availMem), null when unknown. */
+  private fun availableMemory(): Long? {
+    val manager = getSystemService(ACTIVITY_SERVICE) as? ActivityManager ?: return null
+    return try {
+      ActivityManager.MemoryInfo().also(manager::getMemoryInfo).availMem
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  /** PowerManager.currentThermalStatus, null when unknown (before Android 10). */
+  private fun thermalStatus(): Int? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
+    val power = getSystemService(POWER_SERVICE) as? PowerManager ?: return null
+    return try {
+      power.currentThermalStatus
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  /** The options a measuring session pushed to the headset (see [SceneViewerOptions]), the defaults otherwise. */
+  private fun readSceneOptions(): SceneViewerOptions {
+    val folder = getExternalFilesDir(null) ?: return SceneViewerOptions()
+    val file = File(folder, SceneViewerOptions.FILE_NAME)
+    if (!file.isFile) return SceneViewerOptions()
+    return try {
+      SceneViewerOptions.parse(file.readText()).also { Log.i(TAG, "scene options from ${file.name}: $it") }
+    } catch (e: Exception) {
+      Log.w(TAG, "scene options unreadable: ${e.message}")
+      SceneViewerOptions()
+    }
+  }
+
+  /**
+   * [single] as the texture of a flat photo on the quad, the same picture for both eyes, within the size of an eye
+   * (StereoHeicDecoder.MAX_EYE_WIDTH x MAX_EYE_HEIGHT), off the main thread; [single] is recycled.
+   */
+  private fun flatTexture(single: Bitmap): StereoTexture {
+    val (width, height) =
+      StereoComposer.fitWithin(
+        single.width,
+        single.height,
+        StereoHeicDecoder.MAX_EYE_WIDTH,
+        StereoHeicDecoder.MAX_EYE_HEIGHT,
+      )
+    val eye =
+      if (width != single.width || height != single.height) {
+        Bitmap.createScaledBitmap(single, width, height, true).also { if (it !== single) single.recycle() }
+      } else {
+        single
+      }
+    try {
+      val crop = StereoComposer.Crop(0, 0, eye.width)
+      return StereoTexture(StereoComposer.compose(eye, eye, crop), eye.width, eye.height, hasSecondEye = false)
+    } finally {
+      eye.recycle()
+    }
+  }
+
+  /** Both eyes of the side by side photo of [bytes] on one texture, off the main thread, see [SbsPhoto.decode]. */
+  private fun decodeSbs(bytes: ByteArray, spec: SbsPhotoSpec): StereoTexture? {
+    val (texture, split) = SbsPhoto.decode(bytes, spec) ?: return null
+    return StereoTexture(texture, split.eyeWidth, split.eyeHeight, hasSecondEye = true)
   }
 
   /**
@@ -1829,28 +2645,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * item ids, the sizes, the path that gave the right eye and the difference, for the headset checks.
    */
   private fun decodeStereo(bytes: ByteArray, spec: StereoPairSpec?): StereoTexture? {
-    if (spec == null) {
-      val single = ImmersiveMedia.decodeBytes(bytes) ?: return null
-      val (width, height) =
-        StereoComposer.fitWithin(
-          single.width,
-          single.height,
-          StereoHeicDecoder.MAX_EYE_WIDTH,
-          StereoHeicDecoder.MAX_EYE_HEIGHT,
-        )
-      val eye =
-        if (width != single.width || height != single.height) {
-          Bitmap.createScaledBitmap(single, width, height, true).also { if (it !== single) single.recycle() }
-        } else {
-          single
-        }
-      try {
-        val crop = StereoComposer.Crop(0, 0, eye.width)
-        return StereoTexture(StereoComposer.compose(eye, eye, crop), eye.width, eye.height, hasSecondEye = false)
-      } finally {
-        eye.recycle()
-      }
-    }
+    if (spec == null) return flatTexture(ImmersiveMedia.decodeBytes(bytes) ?: return null)
     val left = StereoHeicDecoder.decodeEye(bytes, spec, spec.leftItemId)
     Log.i(TAG, "spatial photo: left eye item ${spec.leftItemId} decoded ${left.width}x${left.height}")
     var right: Bitmap? = null
@@ -1896,10 +2691,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Uploads [stereo] as the texture of the quad, recycles its bitmap, destroys the previous texture, then shows the
-   * quad in front of the user with the mode and the size of this photo. Kept for later while the material is not
-   * ready.
+   * quad with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of a relief
+   * replace the flat photo where the quad is). Kept for later while the material is not ready.
    */
-  private fun applyStereoTexture(stereo: StereoTexture) {
+  private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true) {
     val material = stereoQuadMaterial
     if (material == null) {
       Log.w(TAG, "stereo quad not ready yet, keeping the spatial photo for later")
@@ -1932,41 +2727,126 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     material.setAlbedoTexture(texture)
+    // The mesh of the 2.5D view reads the same texture: never the one destroyed below
+    reliefMeshMaterial?.setAlbedoTexture(texture)
     stereoTexture?.destroy()
     stereoTexture = texture
     stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
     stereoHasSecondEye = stereo.hasSecondEye
     applyStereoMode()
-    placeStereoQuad()
+    if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
     stereoQuadEntity?.setComponent(Visible(true))
     updateStereoView()
     val media = request
+    stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
     if (media?.stereoPair != null && !stereo.hasSecondEye) {
       // Shown at once and longer, as the decoder warning: the user expected 3D
       showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
       scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+    } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
+      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
+      setStatus(stereoStatus)
+    } else if (media?.isScene == true && scenePreparing) {
+      // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
+      setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
+    } else if (stereo3d) {
+      setStatus(stereoStatus)
+      showReliefEstimated()
+      scheduleInfoHide()
     } else {
-      setStatus(getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight))
+      setStatus(stereoStatus)
       scheduleInfoHide()
     }
   }
 
-  /** LeftRight in 3D, each eye its half of the texture; MonoLeft in 2D or without a second eye. */
-  private fun applyStereoMode() {
-    val mode = if (stereo3d && stereoHasSecondEye) StereoMode.LeftRight else StereoMode.MonoLeft
-    stereoQuadMaterial?.setStereoMode(mode)
-    Log.i(TAG, "stereo quad mode is now $mode")
+  /**
+   * "Relief estimated by AI" on the status line while an estimated relief shows in 3D, then the line goes back to what
+   * it said: the label comes and goes (FreeKC's rule of 25 October, djilink/TransientText.kt), at each new photo and
+   * each return to 3D. Nothing for any other photo, which makes no such claim.
+   */
+  private fun showReliefEstimated() {
+    val media = request ?: return
+    if (media.stereoKind?.isEstimatedRelief != true || stereoView() == StereoView.TWO_D) return
+    val label = StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_RELIEF_ESTIMATED)
+    Log.i(TAG, "stereo photo: relief estimated by AI, said for ${TransientText.HOLD_MS} ms")
+    showPassing(label)
   }
 
-  /** The 3D button on a spatial photo: 3D, or the left eye in 2D. Nothing to switch without a second eye. */
+  /** [text] on the status line for TransientText.HOLD_MS, then the line of the stereo photo again. */
+  private fun showPassing(text: String) {
+    setStatus(text)
+    reliefLabelJob?.cancel()
+    reliefLabelJob =
+      scope.launch {
+        delay(TransientText.HOLD_MS)
+        reliefLabelJob = null
+        if (statusView?.text?.toString() == text) showStatus(stereoStatus)
+      }
+  }
+
+  /** The label goes with the 3D it describes. */
+  private fun hideReliefEstimated() {
+    val job = reliefLabelJob ?: return
+    job.cancel()
+    reliefLabelJob = null
+    setStatus(stereoStatus)
+  }
+
+  /**
+   * What the quad shows now: 3D when the photo has both eyes and the user left it in 3D, 2.5D when a relief has its
+   * mesh and 2.5D was chosen, 2D otherwise.
+   */
+  private fun stereoView(): StereoView =
+    when {
+      reliefMeshShown -> StereoView.MESH_25D
+      stereo3d && stereoHasSecondEye -> StereoView.THREE_D
+      else -> StereoView.TWO_D
+    }
+
+  /**
+   * LeftRight in 3D, each eye its half of the texture; MonoLeft in 2D or without a second eye, and in 2.5D, where the
+   * quad is the backdrop of the mesh. The mesh shows in 2.5D only. [applyStereoPlacement] puts both where they go.
+   */
+  private fun applyStereoMode() {
+    val view = stereoView()
+    val mode = if (view == StereoView.THREE_D) StereoMode.LeftRight else StereoMode.MonoLeft
+    stereoQuadMaterial?.setStereoMode(mode)
+    if (view == StereoView.MESH_25D) showReliefMesh() else reliefMeshEntity?.setComponent(Visible(false))
+    // A mesh the SDK could not write went back to 3D, whose mode the call within writeReliefMesh set and said
+    if (stereoView() != view) return
+    val backdrop = if (view == StereoView.MESH_25D) ", backdrop of the 2.5D mesh" else ""
+    Log.i(TAG, "stereo quad mode is now $mode$backdrop")
+  }
+
+  /**
+   * The 3D button on a spatial photo: 3D, or the left eye in 2D; a relief made in the headset goes through 2.5D between
+   * them (see StereoComposer.nextView). Nothing to switch without a second eye. While a relief is made it reads "Stop
+   * relief", and stops it: the photo stays flat.
+   */
   private fun toggleStereoPhotoMode(fromPanel: Boolean) {
+    if (request?.isScene == true) {
+      toggleScenePhoto(fromPanel)
+      return
+    }
+    val run = reliefRun
+    if (run != null && run.running) {
+      Log.i(TAG, "relief: Stop relief")
+      reliefJob?.stop(run)
+      return
+    }
     if (!stereoHasSecondEye) {
       Log.i(TAG, "spatial photo without a second eye: stays in 2D")
       return
     }
-    stereo3d = !stereo3d
+    val next = StereoComposer.nextView(stereoView(), meshAvailable = reliefMesh != null && reliefMeshReady)
+    stereo3d = next != StereoView.TWO_D
+    stereo25d = next == StereoView.MESH_25D
+    // The mesh is exact from the pose the quad was placed at, not from where the head is now: showReliefMesh fades the
+    // relief with the distance of the head from that pose (ReliefMesh.attenuation), flat from FLAT_M away
     applyStereoMode()
+    applyStereoPlacement()
     updateStereoView()
+    if (next != StereoView.TWO_D) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }
 
@@ -1976,25 +2856,60 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * eye position; [onFrame] places it again once the pose is known.
    */
   private fun placeStereoQuad() {
-    val entity = stereoQuadEntity ?: return
+    if (stereoQuadEntity == null) return
     val head = lastHeadPosition
     val eyes = head ?: Vector3(0f, DEFAULT_EYE_HEIGHT, 0f)
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
     val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
     val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = eyes + (direction * StereoComposer.DISTANCE_M)
-    position.y = eyes.y
-    entity.setComponent(Transform(Pose(position, StereoComposer.quadRotation(direction))))
+    stereoEyes = Vector3(eyes.x, eyes.y, eyes.z)
+    stereoGaze = direction
     stereoPlacedWithHead = head != null
-    applyStereoScale()
+    // A 2.5D view starts again from here: the whole relief
+    if (reliefMeshShown) {
+      reliefAttenuation = 1.0
+      writeReliefMesh(withTriangles = false)
+    }
+    applyStereoPlacement()
     Log.i(
       TAG,
-      "stereo quad placed at $position, gaze $direction, head ${if (head != null) "known" else "unknown"}",
+      "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}",
     )
   }
 
-  /** The size of the quad for the angular width chosen and the eyes of the photo shown. */
+  /**
+   * The quad at the start pose [placeStereoQuad] took last: 2 m along the gaze, at the height of the eyes, as wide as
+   * its angle. In 2.5D the mesh has its eyes at that pose, and the quad goes just behind the farthest vertex of the
+   * mesh, as wide to the eyes: a backdrop that shows the photo through the gaps the breaks of the mesh leave, so that
+   * nothing is missing from the start pose, and that comes back to the plane of the quad as the relief fades.
+   */
+  private fun applyStereoPlacement() {
+    val entity = stereoQuadEntity ?: return
+    val eyes = stereoEyes ?: return
+    val gaze = stereoGaze ?: return
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    val rotation = StereoComposer.quadRotation(gaze)
+    val view = if (reliefMeshShown) reliefView() else null
+    val mesh = reliefMesh
+    val distance =
+      if (view != null && mesh != null) {
+        (mesh.farthest(view, reliefAttenuation) * (1 + BACKDROP_MARGIN) + BACKDROP_MARGIN_M).toFloat()
+      } else {
+        StereoComposer.DISTANCE_M
+      }
+    entity.setComponent(Transform(Pose(eyes + (gaze * distance), rotation)))
+    val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight, distance)
+    entity.setComponent(Scale(Vector3(width, height, 1f)))
+    if (view != null) reliefMeshEntity?.setComponent(Transform(Pose(eyes, rotation)))
+  }
+
+  /** The size of the quad for the angular width chosen and the eyes of the photo shown; the mesh too in 2.5D. */
   private fun applyStereoScale() {
+    if (reliefMeshShown) {
+      writeReliefMesh(withTriangles = false)
+      applyStereoPlacement()
+      return
+    }
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
     val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight)
     stereoQuadEntity?.setComponent(Scale(Vector3(width, height, 1f)))
@@ -2002,16 +2917,113 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** The thumbstick up ([step] 1) or down (-1) on a spatial photo: a wider or narrower quad, where it is. */
   private fun resizeStereoQuad(step: Int) {
-    stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step)
+    val maxAngleDeg = request?.stereoMaxAngleDeg ?: StereoComposer.MAX_ANGLE_DEG
+    stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step, maxAngleDeg)
     applyStereoScale()
     Log.i(TAG, "stereo quad is now $stereoAngleDeg degrees wide")
     val text = "${stereoAngleDeg.roundToInt()}°"
     if (infoVisible) setStatus(text) else showFeedback(text)
   }
 
-  /** Any other media: the quad goes away (its texture stays until the next spatial photo replaces it). */
+  /** The scene made the mesh of the 2.5D view and its material. */
+  private val reliefMeshReady: Boolean
+    get() = reliefMeshMaterial != null && reliefTriangles != null && reliefSceneMesh != null
+
+  /** The relief shown is on its mesh: 2.5D chosen, its mesh made, the scene ready, the texture of its eyes there. */
+  private val reliefMeshShown: Boolean
+    get() = stereo25d && stereoHasSecondEye && reliefMesh != null && reliefMeshReady
+
+  /** The photo of the quad as the mesh sees it, with the settings of relief-v1 of its request. */
+  private fun reliefView(): ReliefView? {
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return null
+    val spec = (request?.stereoKind as? StereoPhotoKind.DepthRelief)?.spec ?: return null
+    return ReliefView.forQuad(stereoAngleDeg, eyeWidth, eyeHeight, spec.parallax, spec.convergence)
+  }
+
+  /**
+   * The mesh of the relief shown, in 2.5D: the texture of the quad on it, its triangles and texture coordinates written
+   * once for this photo, its vertices for where the head is now (see [writeReliefMesh]), then visible.
+   */
+  private fun showReliefMesh() {
+    val material = reliefMeshMaterial ?: return
+    val texture = stereoTexture ?: return
+    material.setAlbedoTexture(texture)
+    material.setStereoMode(StereoMode.None)
+    val eyes = stereoEyes
+    val head = lastHeadPosition
+    reliefAttenuation =
+      if (eyes != null && head != null) ReliefMesh.attenuation(head.distanceTo(eyes).toDouble()) else 1.0
+    if (!writeReliefMesh(withTriangles = !reliefMeshWritten)) return
+    reliefMeshEntity?.setComponent(Visible(true))
+  }
+
+  /**
+   * Writes the vertices of the mesh for [reliefAttenuation] and the photo of the quad as it is now, and with
+   * [withTriangles] its texture coordinates and its triangles too. A failure of the SDK leaves the relief in 3D, said
+   * in the log: false then.
+   */
+  private fun writeReliefMesh(withTriangles: Boolean): Boolean {
+    val mesh = reliefMesh ?: return false
+    val triangles = reliefTriangles ?: return false
+    val sceneMesh = reliefSceneMesh ?: return false
+    val view = reliefView() ?: return false
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return false
+    return try {
+      val positions = mesh.positions(view, reliefAttenuation, meshPositions ?: FloatArray(3 * ReliefMesh.MAX_VERTICES))
+      meshPositions = positions
+      val textureCoordinates =
+        if (withTriangles) {
+          val out = meshTextureCoordinates ?: FloatArray(2 * ReliefMesh.MAX_VERTICES)
+          meshTextureCoordinates = out
+          mesh.textureCoordinates(eyeWidth, eyeHeight, out)
+        } else {
+          null
+        }
+      triangles.updateGeometry(0, positions, RELIEF_MESH_NORMALS, textureCoordinates, null)
+      if (withTriangles) triangles.updatePrimitives(0, mesh.indices())
+      sceneMesh.updateWithTriangleMesh(triangles, false)
+      if (withTriangles) {
+        reliefMeshWritten = true
+        Log.i(TAG, "relief mesh written: ${mesh.columns}x${mesh.rows} vertices, ${view.width}x${view.height} m")
+      }
+      true
+    } catch (e: Throwable) {
+      Log.e(TAG, "relief: the 2.5D mesh could not be written, shown in 3D", e)
+      reliefMesh = null
+      stereo25d = false
+      reliefMeshEntity?.setComponent(Visible(false))
+      applyStereoMode()
+      applyStereoPlacement()
+      updateStereoView()
+      false
+    }
+  }
+
+  /**
+   * In 2.5D, at each frame with a head pose: the relief fades as the head moves away from the start pose (see
+   * ReliefMesh.attenuation), the vertices and the backdrop moving again before a change could show.
+   */
+  private fun followHeadWithRelief(head: Vector3) {
+    val eyes = stereoEyes ?: return
+    val attenuation = ReliefMesh.attenuation(head.distanceTo(eyes).toDouble())
+    if (!ReliefMesh.needsUpdate(reliefAttenuation, attenuation)) return
+    if (attenuation == 0.0 || attenuation == 1.0) {
+      Log.i(TAG, "relief: the 2.5D relief is now ${if (attenuation == 0.0) "flat" else "whole"}")
+    }
+    reliefAttenuation = attenuation
+    if (writeReliefMesh(withTriangles = false)) applyStereoPlacement()
+  }
+
+  /**
+   * Any other media: the quad goes away (its texture stays until the next spatial photo replaces it), and the mesh of
+   * a relief with it.
+   */
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
+    reliefMeshEntity?.setComponent(Visible(false))
+    reliefMesh = null
+    reliefMeshWritten = false
+    stereo25d = false
     pendingStereo?.bitmap?.recycle()
     pendingStereo = null
     stereoPlacedWithHead = false
@@ -2034,6 +3046,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setStatus(getString(R.string.immersive_loading))
     loadJob =
       scope.launch {
+        // A panorama generated beyond the edges of a photo opens with the photo where the user looks: its head is read
+        // beside the preview, and waited for only before the first image goes on the sphere (P4-review, m1: any 360°
+        // photo would otherwise wait for one more request before its preview starts)
+        val headRead = async { readPanoramaHead(media) }
         var shown = false
         // A photo on the headset has no preview: the file itself is right there
         val isLocal = ImmersiveMedia.localFileFor(media.url) != null
@@ -2041,9 +3057,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         if (previewUrl != null) {
           try {
             val bytes = download(previewUrl)
+            headRead.await()
             decodeAndApply { ImmersiveMedia.decodeBytes(bytes) }?.let { (w, h) ->
               shown = true
-              setStatus(getString(R.string.immersive_preview_loading_full, w, h))
+              setPhotoStatus(getString(R.string.immersive_preview_loading_full, w, h))
+              announcePanorama(media)
             }
           } catch (e: CancellationException) {
             throw e
@@ -2052,9 +3070,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           }
         }
         try {
+          headRead.await()
           val (w, h) = loadFullResolution(media)
-          setStatus(getString(R.string.immersive_full_resolution, w, h))
-          scheduleInfoHide()
+          setPhotoStatus(getString(R.string.immersive_full_resolution, w, h))
+          announcePanorama(media)
+          scheduleInfoHide(photoHideDelayMs())
         } catch (e: CancellationException) {
           throw e
         } catch (e: Throwable) {
@@ -2062,7 +3082,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           if (shown) {
             // A failure notice shows at once, even while a previous/next request holds the other statuses back
             showStatus(getString(R.string.immersive_preview_only, e.message ?: e.javaClass.simpleName))
-            scheduleInfoHide()
+            scheduleInfoHide(photoHideDelayMs())
           } else {
             showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
           }
@@ -2081,6 +3101,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     try {
       val bytes = downloadTo(media.url, file)
       Log.i(TAG, "original downloaded: $bytes bytes")
+      // Its head could not be read before: its copy tells a generated panorama, the sphere left where it is
+      if (!panoramaHeadRead) readPanoramaHeadFrom(media, file)
       decodeAndApply { ImmersiveMedia.decodeFile(file) }?.let {
         return it
       }
@@ -2106,6 +3128,253 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     } finally {
       holder.getAndSet(null)?.recycle()
     }
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // 360° panorama generated beyond the edges of a photo, see GeneratedPanorama and PanoramaOutline
+
+  /**
+   * Reads our packet at the head of the photo of [media] before its first image (see [GeneratedPanorama]): a panorama
+   * generated beyond the edges of a photo then opens with the photo where the user looks, and its outline is written.
+   * From the file on the headset, else the first bytes of its url by a range (a server that ignores the range sends
+   * the start of the file, read no further). A read that fails or takes too long leaves the head unread: the
+   * downloaded copy is read instead (see [loadFullResolution]).
+   */
+  private suspend fun readPanoramaHead(media: MediaRequest) {
+    val bytes =
+      try {
+        withTimeoutOrNull(PANORAMA_HEAD_TIMEOUT_MS) { headBytesOf(media.url) }
+      } catch (e: CancellationException) {
+        throw e
+      } catch (e: Throwable) {
+        Log.w(TAG, "panorama: the head of the photo could not be read: ${e.message}")
+        null
+      }
+    if (bytes == null) {
+      Log.i(TAG, "panorama: the head of the photo was not read, its copy will be")
+      return
+    }
+    val head = withContext(Dispatchers.Default) { GeneratedPanorama.readHead(bytes) }
+    applyPanoramaHead(media, head, turn = true)
+  }
+
+  /** [readPanoramaHead] from the copy of the photo of [media] downloaded to [file], once its first image may show. */
+  private suspend fun readPanoramaHeadFrom(media: MediaRequest, file: File) {
+    val head =
+      try {
+        withContext(Dispatchers.IO) {
+          file.inputStream().use { GeneratedPanorama.readHead(readUpTo(it, GeneratedPanorama.HEAD_BYTES)) }
+        }
+      } catch (e: CancellationException) {
+        throw e
+      } catch (e: Throwable) {
+        Log.w(TAG, "panorama: the head of the downloaded photo could not be read: ${e.message}")
+        return
+      }
+    applyPanoramaHead(media, head, turn = false)
+  }
+
+  /** The first bytes of the file at [url], at most GeneratedPanorama.HEAD_BYTES. */
+  private suspend fun headBytesOf(url: String): ByteArray {
+    ImmersiveMedia.localFileFor(url)?.let { local ->
+      return withContext(Dispatchers.IO) { local.inputStream().use { readUpTo(it, GeneratedPanorama.HEAD_BYTES) } }
+    }
+    return fetch(httpRequest(url, range = "bytes=0-${GeneratedPanorama.HEAD_BYTES - 1}")) { response ->
+      if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+      val input = response.body?.byteStream() ?: throw IOException("empty response")
+      input.use { readUpTo(it, GeneratedPanorama.HEAD_BYTES) }
+    }
+  }
+
+  /** At most [count] bytes of [input], fewer at its end. */
+  private fun readUpTo(input: InputStream, count: Int): ByteArray {
+    val buffer = ByteArray(count)
+    var total = 0
+    while (total < count) {
+      val read = input.read(buffer, total, count - total)
+      if (read < 0) break
+      total += read
+    }
+    return if (total == count) buffer else buffer.copyOf(total)
+  }
+
+  /**
+   * What the head of the photo of [media] says ([head], null for a photo without our packet of a panorama): the lines
+   * of the panel, and for a panorama we generated whose photo this build reads, the outline, and with [turn] the yaw
+   * of the sphere that brings the photo where the user looks now. Said once an image of it is on the sphere (see
+   * [announcePanorama]), the full one when the head was read from the downloaded copy.
+   */
+  private fun applyPanoramaHead(media: MediaRequest, head: PanoramaHead?, turn: Boolean) {
+    if (request !== media || closing) return
+    panoramaHeadRead = true
+    panoramaHead = head
+    panoramaDetails = GeneratedPanorama.detailLines(head, media.stereoLabels)
+    updateSceneControls()
+    if (head == null) return
+    val region = head.readableRegion
+    Log.i(TAG, "panorama: ${head.kind}, origin ${head.origin}, photo ${region ?: "unknown"}, flags ${head.flags}")
+    if (!head.isGenerated || region == null) return
+    if (turn) {
+      val forward = lastHeadForward
+      val gaze =
+        if (forward == null) 0.0 else GeneratedPanorama.gazeYawDegrees(forward.x.toDouble(), forward.z.toDouble())
+      photoYaw = GeneratedPanorama.openingYaw(gaze, region, SKYBOX_YAW_DEGREES)
+      applySphereTransforms()
+      Log.i(TAG, "panorama: sphere at ${photoYaw.toInt()} degrees, its photo where the user looks (${gaze.toInt()})")
+    }
+    // Not on a 3D version: its relief brings things nearer than the outline, which would cut them
+    if (!head.drawsOutline) return
+    outlineRegion = region
+    writeOutline(region)
+  }
+
+  /**
+   * Once the first image of [media] is on the sphere, its sentence passes (on the status line while the panel is on
+   * screen, the panel then staying as long, on the feedback panel otherwise) and its outline shows as long: once per
+   * photo, for a panorama we generated or the 3D version of a 360° photo (see GeneratedPanorama.noticeOnSphere).
+   */
+  private fun announcePanorama(media: MediaRequest) {
+    if (request !== media || closing || panoramaAnnounced || !panoramaHeadRead) return
+    val text = GeneratedPanorama.noticeOnSphere(panoramaHead, media.stereoLabels, stereoLayout, coverage) ?: return
+    panoramaAnnounced = true
+    Log.i(TAG, "panorama: \"$text\" said for ${TransientText.HOLD_MS} ms, layout $stereoLayout, coverage $coverage")
+    if (infoVisible) {
+      // The status line comes back once the sentence went
+      stereoStatus = statusView?.text?.toString().orEmpty()
+      showPassing(text)
+      if (hideInfoJob?.isActive == true) scheduleInfoHide(TransientText.HOLD_MS)
+    } else {
+      showNotice(text)
+    }
+    if (panoramaHead?.drawsOutline == true) showOutline()
+  }
+
+  /** The status line of a photo on a sphere, held under the sentence of a generated panorama while it passes. */
+  private fun setPhotoStatus(text: String) {
+    if (reliefLabelJob?.isActive == true) stereoStatus = text else setStatus(text)
+  }
+
+  /** The panel of a photo stays as long as the sentence of a generated panorama passes, the usual delay otherwise. */
+  private fun photoHideDelayMs(): Long =
+    if (reliefLabelJob?.isActive == true) TransientText.HOLD_MS else INFO_AUTO_HIDE_MS
+
+  /**
+   * The mesh of the outline of the photo on a panorama we generated ([PanoramaOutline]): one TriangleMesh made once as
+   * the 2.5D one is, an unlit material, double sided, white (a texture of one white pixel: the colours of the vertices
+   * make the dark and the light ribbons). Nothing drawn until such a panorama: every triangle has no area, and two
+   * vertices give it bounds as wide as any outline.
+   */
+  private fun createPanoramaOutline() {
+    registerMeshCreator(OUTLINE_MESH) { entity ->
+      val material =
+        entity.getComponent<Material>().generateSceneMaterial(entity, this).apply {
+          setSidedness(MaterialSidedness.DOUBLE_SIDED)
+        }
+      try {
+        val triangles =
+          TriangleMesh(
+            PanoramaOutline.VERTICES,
+            PanoramaOutline.INDICES,
+            intArrayOf(0, PanoramaOutline.INDICES),
+            arrayOf(material),
+          )
+        val bounds =
+          FloatArray(3 * PanoramaOutline.VERTICES).apply {
+            floatArrayOf(-OUTLINE_BOUND_M, -OUTLINE_BOUND_M, -OUTLINE_BOUND_M).copyInto(this, 0)
+            floatArrayOf(OUTLINE_BOUND_M, OUTLINE_BOUND_M, OUTLINE_BOUND_M).copyInto(this, 3)
+          }
+        triangles.updateGeometry(
+          0,
+          bounds,
+          OUTLINE_NORMALS,
+          FloatArray(2 * PanoramaOutline.VERTICES),
+          IntArray(PanoramaOutline.VERTICES) { PanoramaOutline.LIGHT },
+        )
+        triangles.updatePrimitives(0, IntArray(PanoramaOutline.INDICES))
+        SceneMesh.fromTriangleMesh(triangles, false).also {
+          outlineTriangles = triangles
+          outlineSceneMesh = it
+        }
+      } catch (e: Throwable) {
+        // Without its triangles the entity stays hidden: the sentence alone tells a generated panorama
+        Log.e(TAG, "panorama outline could not be made", e)
+        SceneMesh.singleSidedQuad(0.001f, 0.001f, material)
+      }
+    }
+    val entity =
+      Entity.create(
+        listOf(
+          Mesh(Uri.parse(OUTLINE_MESH), hittable = MeshCollision.NoCollision),
+          Material().apply { unlit = true },
+          Transform(Pose(Vector3(0f, 0f, 0f), Quaternion(0f, photoYaw - SKYBOX_YAW_DEGREES, 0f))),
+          Visible(false),
+        ),
+      )
+    outlineEntity = entity
+    systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
+      runOnUiThread {
+        val material = sceneObject.mesh?.materials?.firstOrNull()
+        if (material == null) {
+          Log.e(TAG, "panorama outline material not found, the sentence alone tells a generated panorama")
+          return@runOnUiThread
+        }
+        try {
+          val white = Bitmap.createBitmap(intArrayOf(WHITE), 1, 1, Bitmap.Config.ARGB_8888)
+          outlineTexture = SceneTexture(white).also { material.setAlbedoTexture(it) }
+          white.recycle()
+        } catch (e: Throwable) {
+          Log.w(TAG, "panorama outline: no white texture, the default one stays", e)
+        }
+        Log.i(TAG, "panorama outline ready, ${PanoramaOutline.VERTICES} vertices")
+        // A panorama of ours may wait for it
+        val region = outlineRegion
+        if (region != null && !outlineWritten) writeOutline(region)
+      }
+    } ?: Log.e(TAG, "panorama outline scene object not available")
+  }
+
+  /** Writes the outline of the photo of [region] in its mesh; a failure of the SDK leaves the sentence alone. */
+  private fun writeOutline(region: PhotoRegion) {
+    val triangles = outlineTriangles ?: return
+    val sceneMesh = outlineSceneMesh ?: return
+    try {
+      val mesh = PanoramaOutline.mesh(region)
+      triangles.updateGeometry(0, mesh.positions, OUTLINE_NORMALS, null, mesh.colors)
+      triangles.updatePrimitives(0, mesh.indices)
+      sceneMesh.updateWithTriangleMesh(triangles, false)
+      outlineWritten = true
+      Log.i(TAG, "panorama outline written for $region")
+    } catch (e: Throwable) {
+      Log.e(TAG, "panorama outline could not be written, the sentence alone tells it", e)
+      outlineWritten = false
+    }
+  }
+
+  /** The outline shows while the sentence passes, then goes with it (TransientText: held, then faded out). */
+  private fun showOutline() {
+    val entity = outlineEntity ?: return
+    if (!outlineWritten) return
+    entity.setComponent(Visible(true))
+    outlineJob?.cancel()
+    outlineJob =
+      scope.launch {
+        delay(TransientText.HOLD_MS + TransientText.FADE_OUT_MS)
+        outlineJob = null
+        entity.setComponent(Visible(false))
+      }
+  }
+
+  /** Another media, or the end of the viewer: what a generated panorama said and showed goes. */
+  private fun dropPanorama() {
+    panoramaHead = null
+    panoramaHeadRead = false
+    panoramaDetails = emptyList()
+    panoramaAnnounced = false
+    outlineRegion = null
+    outlineWritten = false
+    outlineJob?.cancel()
+    outlineJob = null
+    outlineEntity?.setComponent(Visible(false))
   }
 
   private fun httpRequest(url: String, range: String? = null): Request =
@@ -2940,6 +4209,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     if (liveViewer === this) liveViewer = null
+    releaseRelief()
+    dropScene()
     scope.cancel()
     super.onDestroy()
   }
@@ -2951,6 +4222,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingRequestId = null
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
+    releaseRelief()
+    // The entities and the textures of a scene go with the scene, as the other textures do
+    sceneView?.abandon()
+    sceneView = null
     scope.cancel()
     // The player first, then the lens compositor, before the panel goes
     releasePlayer()
@@ -2966,6 +4241,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingStereo = null
     stereoTexture = null
     stereoQuadMaterial = null
+    // The triangles go with the scene, as the textures do
+    reliefMesh = null
+    reliefMeshMaterial = null
+    reliefTriangles = null
+    reliefSceneMesh = null
+    outlineTriangles = null
+    outlineSceneMesh = null
+    outlineTexture = null
     super.onSpatialShutdown()
   }
 
@@ -2989,6 +4272,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
     private const val STATE_STEREO_3D = "app.alextran.immich.immersive.STEREO_3D"
     private const val STATE_STEREO_ANGLE_DEG = "app.alextran.immich.immersive.STEREO_ANGLE_DEG"
+    private const val STATE_STEREO_25D = "app.alextran.immich.immersive.STEREO_25D"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
@@ -3043,6 +4327,43 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** Mesh of the stereo quad of the spatial photos: a unit quad, sized with its Scale component. */
     private const val STEREO_QUAD_MESH = "mesh://immuch_stereo_quad"
 
+    /** Mesh of the 2.5D view of a relief, see [ReliefMesh]. */
+    private const val RELIEF_MESH = "mesh://immuch_relief_mesh"
+
+    /** The normals of the mesh, towards the user (an unlit material does not read them), and its vertex colour. */
+    private val RELIEF_MESH_NORMALS by lazy {
+      FloatArray(3 * ReliefMesh.MAX_VERTICES).also { normals ->
+        for (k in 0 until ReliefMesh.MAX_VERTICES) normals[3 * k + 2] = -1f
+      }
+    }
+    private const val WHITE = -1
+
+    /** Mesh of the outline of the photo on a panorama we generated, see [PanoramaOutline]. */
+    private const val OUTLINE_MESH = "mesh://immuch_panorama_outline"
+
+    /** The outline lies within this distance of the eye on each axis: the bounds of its mesh. */
+    private const val OUTLINE_BOUND_M = 300f
+
+    /** The normals of the outline (an unlit material does not read them). */
+    private val OUTLINE_NORMALS by lazy {
+      FloatArray(3 * PanoramaOutline.VERTICES).also { normals ->
+        for (k in 0 until PanoramaOutline.VERTICES) normals[3 * k + 2] = -1f
+      }
+    }
+
+    /**
+     * Longest wait for the head of a photo shown on a sphere, read for our packet of a generated panorama: past it, the
+     * photo loads as any other and its downloaded copy is read instead.
+     */
+    private const val PANORAMA_HEAD_TIMEOUT_MS = 4000L
+
+    /**
+     * The backdrop of the 2.5D view, the quad, goes this much behind the farthest vertex of the mesh, in part of its
+     * distance and in meters: never in the mesh, and on the plane of the quad but 6 cm when the relief is flat.
+     */
+    private const val BACKDROP_MARGIN = 0.02
+    private const val BACKDROP_MARGIN_M = 0.02
+
     /** Eye height used to place the quad before the first head pose. */
     private const val DEFAULT_EYE_HEIGHT = 1.6f
 
@@ -3050,7 +4371,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * Starting rotation of the photo sphere and of the video sphere around the vertical axis, for every
      * new media. Not verified on a headset: turn the image with the Turn button (or the thumbstick up or
      * down on a photo) until its center faces you, then use the value logged as "photo yaw is now ..." or
-     * "video yaw is now ...".
+     * "video yaw is now ...". A panorama Immuch360 generated is turned from there so that its photo opens where the
+     * user looks (GeneratedPanorama.openingYaw), and its outline (PanoramaOutline) counts on this value too.
      */
     private const val SKYBOX_YAW_DEGREES = 0f
     private const val VIDEO_YAW_DEGREES = 0f

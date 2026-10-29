@@ -1,7 +1,11 @@
 {
   "mobile/android/app/build.gradle": {
-    "blob": "cab83818e74e24aeed52f7da9720fd8738f496f8",
-    "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services"
+    "blob": "2a1ae61499bb302359c30c2282bfc31aa2119f0a",
+    "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services; AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): LiteRT 2.3.0 and its GPU accelerator in the quest flavour only, without the Play library of its API, the Kotlin metadata check skipped for the quest compilations, the LiteRT version from the catalogue in the BuildConfig of the quest flavour and the R8 rules of LiteRT in a file of the quest flavour"
+  },
+  "mobile/android/app/proguard-quest.pro": {
+    "blob": "03dc9629780a88541c902fa4939dac9374522b1b",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the R8 rules of the quest flavour only, which keep the classes of the LiteRT API that its JNI library builds by name"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
     "blob": "13f25557c5d2ca850cc88cfba30426836e3b8d28",
@@ -291,9 +295,93 @@
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/GeneratedPanorama.kt": {
+    "blob": "4bef68b7d6a0e3a50938f6b6a85c099c4faaa102",
+    "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): no outline on the 3D version of a generated panorama, the flags on one line of the panel"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveInputSystem.kt": {
+    "blob": "25179a9b035fb587cc8944e7b3392a02501fa8b1",
+    "reason": "AI immersive phases 2 and 3, lot S3: the buttons held every frame, and the controls of a 3D scene (the left thumbstick glides, a thumbstick click resets); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveMedia.kt": {
+    "blob": "11d6ab553e0bb1adcd98f559055f4a1f9515065b",
+    "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
+    "blob": "1b135ebe90c60c26f4eb005314b35226c48e6e30",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
+    "blob": "f555b014f4298cd66b0d334b4e916324b965225b",
+    "reason": "AI immersive phases 2 and 3, lot P4: the four arcs of the outline of the photo on a generated panorama and their ribbons; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefHost.kt": {
+    "blob": "eec358898e431128aaa415bf0429ebc962ccc39f",
+    "reason": "AI immersive lot A9a: the Android side of the relief of the immersive view (HandlerThread at background priority, bitmaps, preferences, memory, thermal listener); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefMesh.kt": {
+    "blob": "d44639277f613f2aa2fff3dd65d485bd466dad9d",
+    "reason": "AI immersive lot A11: the mesh of the 2.5D view of a relief (grid from the 16 bit map, exact from the start pose, breaks left out, relief fading with the head); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/SbsPhoto.kt": {
+    "blob": "846882f23a5f24eae3d4f9ad7fb47866657890bb",
+    "reason": "AI immersive lot A7: decoding and cutting a side by side photo for the stereo quad; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
+    "blob": "26462451cfbb9dc229946d8525904906e90570b4",
+    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
+    "blob": "2a6bc8e23bd4e57b9d76c6abee2726e2fb345b14",
+    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/GlbReader.kt": {
+    "blob": "cbc5f9d1234eabfbb0848780ab87240705305a7a",
+    "reason": "AI immersive phases 2 and 3, lot S2: the reader of glb-layers-v1 in the headset (8 meshes of 65 535 vertices at most, float32 positions and uvs, uint32 indices, JPEG textures, layers told by their image); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneFile.kt": {
+    "blob": "61b9b93eb947d616d53aa7409c6d9f53a89e0d19",
+    "reason": "AI immersive phases 2 and 3, lot S2: the packet at the head of a photo that carries a 3D scene, and its tail checked by length and SHA-256 in the headset; lot S3: Immuch360:HiddenFraction for the panel; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneGate.kt": {
+    "blob": "76c25970d1f31b57842605bf863dc86bfb5a7d16",
+    "reason": "AI immersive phases 2 and 3, lot S2: the gate of the 3D scenes per headset (caps, free memory, heat, version); feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneNavigator.kt": {
+    "blob": "f9c78555d4e7bfe3c490e54f4489b2c410c1a213",
+    "reason": "AI immersive phases 2 and 3, lot S2: the edge of the zone of a 3D scene (flattening, darkening), the glide of the left thumbstick, and the passage to the left handed frame of the Spatial SDK; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/SceneView.kt": {
+    "blob": "5f53ccf384694d0d6d340adfde7c42d2b1cfeb6e",
+    "reason": "AI immersive phases 2 and 3, lot S3: the scene viewer of the Quest, from the cached file to one entity per mesh, its texts, its darkening and its options; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
     "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of the phones, ZXing with the camera permission asked first"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/DepthEstimator.kt": {
+    "blob": "be06591a8d9d1ea3992ff59398d4e90dd4eec1ae",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model of the Quest behind one interface, the failures the relief reports, and what a call into the engine may throw mapped to them"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/GpuParityCheck.kt": {
+    "blob": "8d308748e54d1cb2ad36d145d7fccee7f2067a51",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the GPU of the headset checked against its CPU at the first relief, the path kept per system build, engine and model"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefCache.kt": {
+    "blob": "1990179c06c15c8d923eb918e4f5c191aa7f67b4",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): the 16 bit depth maps of the relief cache of the Quest, 200 MB at most"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefJob.kt": {
+    "blob": "55818e799c315be70617c64f316f52dafbb58bf8",
+    "reason": "AI immersive lots A9a and A11: the relief of a flat photo in the immersive view (cache, model, right eye, stop, heat, model closed after 60 s), its depth map handed with its eyes; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefPreprocess.kt": {
+    "blob": "1f7d7b2ee557f33c766fcbf08a438724bc0362a0",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the 686 x 518 input of the depth model made from a photo, and its output cut back to the photo"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefSynthesizer.kt": {
+    "blob": "befb3bd51e398518764d46b76009f3fcc468d8b5",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): the right eye the Quest makes from a flat photo and its estimated depth, held to the golden fixture of the computers"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlaybackReport.kt": {
     "blob": "98bf447a264a700196aa94270c45916032417769",
@@ -331,6 +419,10 @@
     "blob": "b7fd38e59aec0ae4704b25eb66bb4ca104a98d53",
     "reason": "DJI link stage 2b (feat-dji-link-3): the strip under the video of the Quest flight view, which no button hides; DJI integration (feat-dji-30): the strip's warnings come and go"
   },
+  "mobile/android/app/src/main/res/layout/immersive_info_panel.xml": {
+    "blob": "d496ead5ed3cae35f81e999da23c509c1313b356",
+    "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; phases 2 and 3, lot S3: the lines and the Reset button of a 3D scene, ids to hide the mapping and previous and next in a scene; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/main/res/values-television-v31/styles.xml": {
     "blob": "439e233a038a6eb09eec03874e02a4aedff2dcfa",
     "reason": "TV lot (651962690): dark launch theme of the app on a TV, Android 12 and later"
@@ -347,9 +439,17 @@
     "blob": "46cc9494b2c2d01fcdb02c6dffd4e967dcf35e57",
     "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes; DJI accessory filter (fix-accessory-filter): any DJI accessory plus the identity string of our own capture of 23 October 2026, the two unseen model strings dropped"
   },
+  "mobile/android/app/src/phone/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
+    "blob": "0c044dba81559867bd22afe695ec7b775042bd6f",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the stub of the phone flavour, which has no depth engine and says so"
+  },
   "mobile/android/app/src/quest/AndroidManifest.xml": {
     "blob": "aa0594a5212975f49c0b582ae60ecd08f1bb730c",
     "reason": "DJI link stage 2b (feat-dji-link-3): no relay service on the headset, passthrough declared not required for the flight view"
+  },
+  "mobile/android/app/src/quest/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
+    "blob": "a23329349881097db0918c485209bb3a0b53d801",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model on LiteRT CompiledModel, the GPU in fp32 or the CPU on 4 threads, quest flavour only"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
     "blob": "18b6fbf88948bc64016d8427f23ad469a5da38a0",
@@ -619,9 +719,97 @@
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/GeneratedPanoramaTest.kt": {
+    "blob": "dd41cafe9ab601c0012ef69de03890a9779935db",
+    "reason": "AI immersive phases 2 and 3, lot P4: the packet of a generated panorama against the samples of the contract, the opening yaw, the text on every path of the sphere; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): tests of the outline of a 3D version, of the lines of the panel and of the reading of the head"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveInputTest.kt": {
+    "blob": "716f141f81a8d06bf20598f8058ec18182483efe",
+    "reason": "AI immersive phases 2 and 3, lot S3: the controls of a 3D scene and the left thumbstick held; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveMediaTest.kt": {
+    "blob": "1a45a5027dcc209679927c754476bd7e43d4f320",
+    "reason": "AI immersive lot A9a: tests of the size and the turn of the photo of a relief; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PanoramaOutlineTest.kt": {
+    "blob": "6a74cc55c58598bd0698bdd0a419b6e9c3a688f9",
+    "reason": "AI immersive phases 2 and 3, lot P4: the arcs of the outline against the golden projection of pano-v1, and the ribbons of the mesh; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): tests of the triangles of the ribbon and of its opaque colours"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ReliefMeshTest.kt": {
+    "blob": "f054903d2e647621f29134d01b02ad15f1f76b36",
+    "reason": "AI immersive lot A11: tests of the mesh of the 2.5D view, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SbsPhotoTest.kt": {
+    "blob": "09fca7bff919e58554d854fa7b2a863673fee150",
+    "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
+    "blob": "5ba5b9170dbd7225c148268b88cdf2859f3e0a58",
+    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
+    "blob": "60bf53529057dacf9460c3cd2c3a0b657da6dd23",
+    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the stereoPair contract read by the Kotlin side, the 2.5D request and the 3D scene included; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/GlbReaderTest.kt": {
+    "blob": "739c50ac3f120cb2230b7c6f772c621e22370110",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the glb-layers-v1 reader against tiny_scene3D.jpg, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneCrossContractTest.kt": {
+    "blob": "423c0b10ab5b9b7bafbb6972a0edb1ee5f645149",
+    "reason": "AI immersive phases 2 and 3, lot S1: the cross contract of the 3D scene, the file the engine of the computers writes (tiny_scene3D_dart.jpg) read by the readers of the headset; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneFileTest.kt": {
+    "blob": "6034f0624d278f89f0f4b6db602e3e46d1f02544",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the head packet and the tail of a scene, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneGateTest.kt": {
+    "blob": "2ab19e56a4cf06a546bd8a0a8ed76fe65c226a2c",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the gate of the scenes, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneNavigatorTest.kt": {
+    "blob": "4cf5010d1a0d7218644817cecf5efbf43b8bd582",
+    "reason": "AI immersive phases 2 and 3, lot S2: unit tests of the edge and the glide against scene_golden_v1.json, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneTestFiles.kt": {
+    "blob": "ac469f07990f5d2a1137ee02226e67186d5871de",
+    "reason": "AI immersive phases 2 and 3, lot S2: the scene fixture taken apart and glbs made for the scene tests; lot S3: a JPEG without our packet; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/scene/SceneViewTest.kt": {
+    "blob": "0adef74f9b71be38538acae6654f2f28e15b6505",
+    "reason": "AI immersive phases 2 and 3, lot S3: the opening of a scene file, the texts of its panel, its arrays for the SDK, its darkening and options; feat-ai-immersive, not yet on the phone branch"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",
     "reason": "Sign in with your phone (feat-qr-pairing): unit tests of the scanner result mapping, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/DepthEngineCallTest.kt": {
+    "blob": "aa1f8bd49144293ba1669d2ec88ea94b0c7d0e42",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit tests of the mapping of what the engine throws to a depth failure, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/GpuParityCheckTest.kt": {
+    "blob": "d49e8c4bf4904f0a44585b20551bb8980073210a",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit tests of the GPU parity check with fake engines, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefCacheTest.kt": {
+    "blob": "d1cfbce6db8855b6aa12b74500198b20ba4843fc",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): unit tests of the relief cache on a real folder, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefFixtures.kt": {
+    "blob": "270cf18708f9e1d2c6ef3ee1570217c249b7ca71",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the reader of the shared fixtures of mobile/test/fixtures/ai_immersive for the Kotlin unit tests"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefJobTest.kt": {
+    "blob": "e6b6111e38d40b73ecdd26bed3f5199b5b21e212",
+    "reason": "AI immersive lots A9a and A11, and their review minors: unit tests of the relief job with a fake engine and a fake thread, the map handed with the eyes included, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefPreprocessTest.kt": {
+    "blob": "1e09a27f3ae0e38a9a60642d70aba2889b96c2c2",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of the input of the depth model, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefSynthesizerTest.kt": {
+    "blob": "76b6a5ee70948d069382d4ea4f1f341dd6e11d32",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin, and its review minors in feat-ai-immersive-minors): unit tests of relief-v1 against relief_golden_v1.json, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
@@ -671,9 +859,13 @@
     "blob": "146ff2310d4b24d2e7fc51a93fcc9575e0960390",
     "reason": "DJI finalisation (feat-dji-final): bodies of our capture of 23 October, position bytes set to zero, no serial number"
   },
+  "mobile/android/app/src/testPhone/kotlin/app/alextran/immich/relief/DepthEstimatorsPhoneTest.kt": {
+    "blob": "c840226f30af332966f5a34c5d7e989ac5508739",
+    "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): unit test of the stub of the phone flavour, run by the Kotlin unit tests job"
+  },
   "mobile/android/gradle/libs.versions.toml": {
-    "blob": "b93d8883a77bc94b88382aad3f8ae9fa3e298c71",
-    "reason": "Sign in with your phone (feat-qr-pairing): the version of ZXing Android Embedded"
+    "blob": "82468379e34b6456949caa5a9da4b2018906416c",
+    "reason": "Sign in with your phone (feat-qr-pairing): the version of ZXing Android Embedded; AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the version and the two artifacts of LiteRT"
   },
   "mobile/ios/Runner/AppDelegate.swift": {
     "blob": "66372fde3853c5a8901c28ddeed003773173a549",
