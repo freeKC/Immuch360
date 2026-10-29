@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>한국어</b> · 다른 언어 (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. 당신의 미디어. 모든 화면. 모든 시점. 기기, NAS, Immich 서버, 카메라, 드론에서 오는 평면, 360°, 3D 사진과 동영상. 계정이 필요 없습니다. Android, iPhone과 iPad, Android TV, LG와 Samsung TV, Meta Quest, Windows, macOS, Linux. 해 질 녘 바다가 보이는 만 앞의 일러스트: 저장 상자, 휴대폰, 태블릿, TV, 노트북, 헤드셋, 하늘의 드론과 홈 카메라가 빛의 호로 이어져 있습니다">
+  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. New: turn your photos into 3D photos, 3D scenes and 360° panoramas. Made by AI on your own computer. Your photos never leave it. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration, not a capture: at dusk in front of a sea bay, the same room four times, as a flat photo on a phone, in floating layers in front of a white headset, as a scene on a laptop and unrolled on a curved band like a panorama, linked by arcs of light">
 </p>
 
 # Immuch360
@@ -9,6 +9,17 @@
 **당신의 미디어. 모든 화면. 모든 시점.**
 
 기기, NAS, Immich 서버, 카메라, 드론에서 오는 평면, 360°, 3D 사진과 동영상. 계정이 필요 없습니다. Immuch360은 사진과 동영상이 있는 곳에서 바로 읽어 각 파일에 맞는 뷰어에서 재생하는 무료 오픈 소스 앱입니다: 평면으로, 둘러볼 수 있는 구체로, 3D로, 또는 헤드셋에서 사방을 둘러싸게. 휴대폰, 태블릿, TV, Meta Quest 헤드셋, 컴퓨터에서 실행됩니다.
+
+**New: your flat photos, in 3D.** Pick a photo on your computer and get a 3D photo, a 3D scene to step into, or a 360° panorama that imagines the rest of the place around you. In a Meta Quest 3 or 3S, one press on "AI relief" and any flat photo stands out. The AI runs on your own computer and headset, and nothing is sent anywhere. Experimental, and not yet tried in a headset by the author (first test on 30 October). [See how](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="A 3D photo made by Immuch360 from one ordinary photo of an old hall with a gallery, pillars and a chandelier, in the Wiggle view: its left eye and its right eye in turn, about six times a second, so that the pillars stand out from the walls">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="One photo, four ways, all real outputs of Immuch360: a white room with a round table and a window, as taken; its 3D photo, showing the eye the app computes, badge 3D AI, relief estimated by AI; its 3D scene seen from the left and from the right, badge 3D scene; below, the 360° panorama generated around it, badge 360° AI, the original photo outlined in the middle and a whole studio invented around it, a few odd objects included">
+</p>
+<p align="center"><sub>Real outputs of the app from CC0 photos of Poly Haven, reduced, not retouched, with the app's badges added for this page. Above, a 3D photo, its two eyes in turn; below, one photo four ways, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
 
 <p align="center">
   <sub>Immich 모바일 앱의 비공식 포크입니다. Immich나 FUTO와는 관련이 없습니다. 이름은 "I am much 360"처럼 읽힙니다.</sub>
@@ -22,6 +33,7 @@
 - [무엇을 할 수 있나요](#what-you-can-do)
 - [기기에 설치하기](#get-it-on-your-device)
 - [사용 방법](#how-to)
+  - [Turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [서버가 있든 없든 사진과 동영상 보기](#watch-your-photos-and-videos-with-or-without-a-server)
   - [파노라마, 360°, VR180, 3D 탐색하기](#explore-panoramas-360-vr180-and-3d)
   - [리모컨으로 TV에서 보기](#watch-on-the-tv-with-the-remote): [Android TV와 Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
@@ -45,6 +57,7 @@
 <a id="who-it-is-for"></a>
 ## 누구를 위한 앱인가요
 
+- **Your photos are flat** and you want them in 3D, as a scene to lean into in a headset, or inside a 360° panorama, without a 3D camera: [turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama), new, made by AI on your own computer.
 - **360°나 3D로 촬영하고** 사진을 평면으로, 이중으로, 늘어진 채로 보는 대신 그 안을 둘러보고 싶다면: [360°, VR180, 3D](#explore-panoramas-360-vr180-and-3d).
 - **사진과 영화가 NAS, 컴퓨터, Plex, Immich에 있고** 아무것도 복사하지 않고 TV에서 보고 싶다면: [TV에서](#watch-on-the-tv-with-the-remote), [NAS, 공유, Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Meta Quest가 있고** 내 사진과 동영상 속에 들어가 보고 싶다면: [헤드셋에서](#step-inside-your-photos-and-videos-with-a-meta-quest).
@@ -52,23 +65,23 @@
 - **Tapo 카메라로 집을 지켜보고 있고** 사진 옆에서, TV에서도 카메라를 보고 싶다면(아직 실제 카메라로 확인하지 않음): [홈 카메라](#watch-your-home-cameras-on-the-big-screen).
 - **DJI 드론을 날리고** DJI Fly 없이 휴대폰에서 실시간 화면을 보고, 함께 있는 사람들을 위해 Meta Quest나 Android TV에서도 보고 싶다면(실험적): [드론](#see-what-your-drone-sees-on-your-phone).
 
-만들어야 할 Immuch360 계정은 없으며, 우리에게 오는 것도 없습니다: 앱은 사용자의 기기와 사용자가 고른 서버하고만 통신합니다.
+There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose, and downloads an AI component only when you ask for it.
 
 <a id="which-screens"></a>
 ## 어떤 화면
 
 <div align="center">
 
-| 플랫폼 | 받는 곳 | 2026년 10월 26일 기준 상태 |
+| Platform | Where to get it | Status on 29 October 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play(build 25; build 29 대신 build 31을 10월 26일 Google 심사에 보냄), GitHub에 build 31 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 32 sent for Google's review on 29 October, in place of build 31), build 32 on GitHub, which opens the [360° panoramas made on a computer](#turn-one-photo-into-3d-a-scene-a-panorama) with their AI label |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.1(build 27)은 10월 22일부터 Apple 심사 대기 중, 그다음 버전 3.3.2(build 28)는 내부 테스트용 TestFlight에 있음; 그동안은 [직접 빌드](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub에 build 31: QR 코드를 스캔해 [휴대폰으로 로그인](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), 동영상 플레이어에서 리모컨으로 쓰는 [타임 바, 오디오, 자막](#on-android-tv-and-google-tv), 휴대폰이 중계하는 [드론의 실시간 영상](#watch-it-in-a-meta-quest-or-on-an-android-tv)(실험적); TV 등록은 Google 심사 중 |
-| webOS 5.0 이상의 **LG TV** | [.ipk, 버전 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store(심사 중) | 버전 1.0.0, 10월 24일 LG Content Store에 제출되었고 10월 26일 LG 테스트 중; 게시될 때까지는 [Developer Mode](#lg-tvs-webos)로 설치. LG Cloud Test Lab의 webOS 25 TV에서 실행됨 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 32 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
+| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October, under LG's tests since 26 October; version 1.0.1, on GitHub since 27 October, zooms a photo from the arrows and says when a photo is still loading; until LG publishes the app, it installs in [Developer Mode](#lg-tvs-webos). Version 1.0.0 ran on webOS 25 TVs of LG's Cloud Test Lab |
 | Tizen 5.5 이상의 **Samsung TV** | [.wgt 테스트 build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | 같은 TV 앱의 테스트 build 0.2.0, 본인의 Samsung 인증서로 서명해 [Developer mode](#samsung-tvs-tizen)에서 설치; 0.1.0은 테스터의 Samsung TV에서 실행되었고 0.2.0에는 그때 나온 수정이 들어 있음; Samsung 스토어에는 없음 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store(build 28, 10월 25일부터 공개; build 31을 10월 26일 다음 제출로 보냄), GitHub에 build 31 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [설치 프로그램 또는 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, 서명된 미리보기: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라(아직 실제 카메라로 확인하지 않음), 휴대폰으로 로그인, 키 하나로 사진 회전, 89개 언어로 된 인터페이스 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12) | desktop build 12, 미리보기: 사진, 360° 사진, 평면 동영상(360° 동영상은 평면으로 재생), Immich 서버와 네트워크 공유; desktop build 11을 10월 26일 Ubuntu 24.04 컨테이너와 Mac에서 시험함; macOS에서는 서명되지 않음 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 31, live since 28 October; build 32 submitted on 29 October), build 32 on GitHub, with the [AI relief](#turn-one-photo-into-3d-a-scene-a-panorama) of a flat photo on Quest 3 and 3S (experimental) |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | desktop build 13, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages, and new, [3D photos, 3D scenes and 360° panoramas made from your photos](#turn-one-photo-into-3d-a-scene-a-panorama) by AI (experimental) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | desktop build 13, previews: photos, 360° photos and flat videos (360° videos play flat), an Immich server and network shares, and new, [3D photos and 3D scenes](#turn-one-photo-into-3d-a-scene-a-panorama) made by AI from your photos, with 360° panoramas on Linux on a graphics card of 8 GB; desktop build 11 tried on 26 October in an Ubuntu 24.04 container and on a Mac; unsigned on macOS |
 
 *상태는 릴리스마다 갱신되며, build별 세부 사항은 [Release status](../docs/immuch360/release-status.md)에서 확인할 수 있습니다.*
 
@@ -96,6 +109,9 @@
 | 3D와 VR180 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | 사진 한쪽 눈, 동영상 평면 | 사진 한쪽 눈, 동영상 평면 | ✅ 진짜 3D |
 | Spatial 2.5D(헤드 트래킹) | ✅ 실험적 | ✅ 실험적 | ❌ | ❌ | ❌ | ❌ |
 | Apple 공간 사진 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ❌ | ❌ | ✅ 3D |
+| 3D photo from a 2D photo (AI) | ✅ reads it, side by side | ✅ reads it, side by side | ✅ reads it, side by side | ✅ reads it, side by side | ✅ reads it, side by side | ✅ AI relief in the headset (Quest 3 and 3S), shown in 3D |
+| 3D scene from a 2D photo (AI) | ✅ reads it, as its photo | ✅ reads it, as its photo | ✅ reads it, as its photo | ✅ reads it, as its photo | ✅ reads it, as its photo | ✅ explored in 3D |
+| 360° panorama from a 2D photo (AI) | ✅ reads it, with its AI label | ✅ reads it as a 360° photo, label 🔜 | ✅ reads it, with its AI label | ✅ reads it as a 360° photo, label 🔜 | ✅ reads it as a 360° photo, label 🔜 | ✅ reads it all around you, with its AI label |
 | Insta360, GoPro, DJI 원본 파일 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | SMB, WebDAV, DLNA 공유 | ✅ | ✅ | ✅ | ✅ SMB는 webOS 22부터 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
@@ -121,6 +137,9 @@
 | 3D와 VR180 | ✅ 한쪽 눈 | 사진 한쪽 눈, 동영상 평면 | 사진 한쪽 눈, 동영상 평면 |
 | Spatial 2.5D(헤드 트래킹) | 🔜 개발 중 | ❌ | ❌ |
 | Apple 공간 사진 | ✅ 한쪽 눈 | ✅ 한쪽 눈, 서버에서 | ✅ 한쪽 눈 |
+| 3D photo from a 2D photo (AI) | ✅ | ✅ | ✅ not tried on a Mac yet |
+| 3D scene from a 2D photo (AI) | ✅ | ✅ | ✅ not tried on a Mac yet |
+| 360° panorama from a 2D photo (AI) | ✅ graphics card of 8 GB | ✅ graphics card of 8 GB, not tried with one yet | 🔜 not on Mac yet |
 | Insta360, GoPro, DJI 원본 파일 | ✅ | ✅ 사진, 동영상 평면 | ✅ 사진, 동영상 평면 |
 | SMB, WebDAV, DLNA 공유 | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
@@ -134,38 +153,41 @@
 | 입력 | 마우스, 키보드 | 마우스, 키보드 | 마우스, 키보드, 트랙패드 |
 | 받는 곳 | 설치 프로그램 또는 ZIP(서명된 미리보기) | .deb, .rpm(미리보기) | DMG 또는 ZIP(서명 없는 미리보기) |
 
-*Linux와 macOS: desktop build 11을 2026년 10월 26일 Ubuntu 24.04에서, 테스트용 Immich 서버와 테스트용 공유가 있는 컨테이너 안에서 시험했고, 작성자가 Mac에서도 시험했습니다.*
+*Linux and macOS: desktop build 11, tried on 26 October 2026 on Ubuntu 24.04, in a container with a test Immich server and test shares, and by the author on a Mac. The AI rows, with test builds of the code of desktop build 13, from 27 to 29 October 2026: 3D photos made by the Linux app in a container on a Linux PC, scenes by the Windows app on a laptop with an RTX 4060 and by the engine on that Linux PC, 360° panoramas on that laptop; not tried on a Mac yet.*
 
 ✅ 해당 플랫폼의 앱에서 지원 · ❌ 제공하지 않음 · 🔜 계획 중 · 🔧 CI 소스 코드에 있고 프로젝트 CI가 해당 시스템에서 빌드하고 실행했지만, 아직 그곳에서 실제 서버, 공유, 카메라로 확인하지 않음 · 평면만: 컴퓨터용 360° 동영상 렌더러가 Windows 전용이라 동영상이 안내 메시지와 함께 평면으로 재생됨; LG TV에서는 webOS가 동영상 프레임을 구체에 넘겨줄 수 있는지 아직 측정해야 하며, 테스터의 Samsung TV에서는 브라우저가 3D 화면에 검은 동영상 프레임을 넘겼습니다. "한쪽 눈"은 3D 파일이 평면 화면에서 왼쪽 눈만 보여준다는 뜻입니다. LG와 Samsung 열은 하나의 별도 TV 앱입니다: LG 버전 1.0.0은 공유와 Plex를 실제 서버로, 카메라를 프로젝트 빌드 호스트의 모의 카메라로 확인했지만 아직 TV에서는 확인하지 않았고, Samsung은 테스트 build 0.2.0입니다. 모든 ✅가 실제 기기에서 확인된 것은 아닙니다: 어디서 무엇을 확인했는지, 그리고 아직 확인해야 할 것은 [기능](../docs/immuch360/features.md), [플랫폼 지원](../docs/immuch360/platform-support.md), [호환성](../docs/immuch360/compatibility.md)에 있습니다.
 
-- **Android 휴대폰과 태블릿**: 모든 기능을 갖춘 앱, 터치와 자이로스코프, 모든 소스 지원.
+In the AI rows, "reads it" means that the device opens what a computer made, and makes nothing itself: a 3D photo shows its two eyes side by side, a scene shows as its photo with a small 3D SCENE mark, a panorama opens in the 360° viewer. Its AI label is the "360° AI" badge, the sentence "Generated by AI beyond the photo's edges" and the outline of the original photo, which the iPhone, iPad, LG and Samsung apps do not show yet. Only the computers and the Quest make anything. What was checked for these rows is in [the how to](#turn-one-photo-into-3d-a-scene-a-panorama), not yet in Features and Platform support.
+
+- **Android phones and tablets**: the complete app, touch and gyroscope, every source; from build 32 they open the 360° panoramas made on a computer with their AI label.
 - **iPhone과 iPad**: 모든 기능을 갖춘 앱이지만, 360° 동영상 플레이어는 재생과 일시정지만 지원하고, Tapo 실시간 화면과 휴대폰으로 로그인하기의 휴대폰 쪽 기능은 다음 iOS 릴리스에 포함되며, Apple이 멀티캐스트 권한을 허용하기 전까지 DLNA 검색은 유니캐스트 요청을 보냅니다.
 - **Android TV와 Google TV**: 리모컨으로 조작하는 같은 APK이며 기본은 어두운 테마입니다. 뷰어 역할만 합니다: 백업, 업로드, 편집기는 숨겨져 있고 세부 정보는 읽기 전용이지만, 사진은 여전히 키 하나로 회전됩니다. 모든 검색 필터가 리모컨으로 동작합니다: 위치와 카메라는 선택지를 목록으로 열고, 날짜 필터는 모든 선택지를 보여주며, 태그, 위치, 날짜, 미디어 유형, 별점, 표시 옵션 시트는 지우기와 적용 버튼을 선택지 옆, 오른쪽으로 한 번 이동한 곳에 두고 화면 높이의 대부분을 사용합니다. 사진 그리드는 이미지 메모리를 덜 사용하며, 방향키를 누르고 있으면 최대 초당 약 10줄씩 이동합니다. build 28부터는 휴대폰에서 QR 코드나 짧은 코드로 로그인할 수 있습니다(두 에뮬레이터 사이에서 코드를 입력해 시험했으며, 카메라로는 아직 시험하지 않음). build 29부터는 동영상의 타임 바가 리모컨 포커스를 받고, 영화에는 오디오와 자막 메뉴가 생기며, 공유의 다음 파일이 자체 컨트롤과 함께 열립니다. Google TV 에뮬레이터에서 확인했으며, build 28은 10월 23일 실제 Android TV에서 실행했고, 그때 발견된 동영상 문제를 build 29에서 수정했습니다. 이 수정은 에뮬레이터에서 확인했지만 아직 그 TV에서는 확인하지 않았습니다. build 30부터는 Drone 카드가 휴대폰이 중계하는 DJI 드론의 실시간 영상을 드론의 수치, 장애물 링과 함께 보여줍니다(실험적): 페어링과 화면은 10월 25일 TCL Android TV에서 시험했으며, 이전 중계 방식에서는 끊김과 초록빛이 있었습니다. 10월 26일 build 30에서는 이를 해결하는 안정 스트림 덕분에 비행 중에도 그 TV에 화면이 계속 들어왔으며, 멈춤은 7번이었습니다.
 - **webOS 5.0 이상의 LG TV**: 리모컨과 Magic Remote용 별도 앱으로, [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)를 기반으로 합니다: 360° 사진을 구체로 보여주는 Immich 뷰어, 키 하나로 사진 회전, 어두운 테마, 앱의 89개 언어(TV 앱 자체의 일부 문구는 아직 영어); TV에서 돌아가는 자체 서비스를 통한 네트워크 공유, Plex, Tapo 카메라의 실시간 화면(SMB는 webOS 22부터); 360° 동영상은 평면. 10월 24일 LG Content Store에 제출한 버전 1.0.0은 LG Cloud Test Lab에서 세 모델의 webOS 25 TV로 실행했습니다: 로그인, 휴대폰 로그인 페이지, 사진, 앨범, 동영상, 360° 화면, 슬라이드쇼, 검색, 모든 페이지에서의 뒤로가기. 버전 0.1.0은 테스터의 LG TV(webOS 22)에서 실행되었습니다. 공유와 Plex는 실제 서버로, 카메라는 프로젝트 빌드 호스트의 모의 카메라로 확인했으며, 아직 TV에서는 확인하지 않았습니다.
 - **Tizen 5.5 이상의 Samsung TV**: Samsung TV용으로 패키징한 LG TV 앱으로, 테스트 build 0.2.0을 직접 서명해 설치해야 합니다: 리모컨용 Immich 뷰어, 직접 입력하는 로그인(서버 주소, 그다음 이메일과 비밀번호 또는 API 키), 슬라이드쇼, 구체 위의 360° 사진, 키 하나로 사진 회전, TV가 지원하는 기능을 알려주는 정보 페이지를 제공합니다. 휴대폰으로 로그인, 공유, Plex, 카메라는 아직 없고, 360° 동영상은 안내와 함께 평면으로 재생됩니다. 버전 0.1.0은 테스터의 Tizen 9 Samsung TV에서 실행되었습니다: 4K까지의 사진과 동영상은 재생되었고, 4K를 넘는 것은 디코딩되지 않았으며, TV의 브라우저는 3D 화면에 검은 동영상 프레임을 넘겼습니다. 버전 0.2.0에는 그때 나온 수정(TV 디코더를 넘는 동영상이나 멈추는 동영상에 대한 메시지, 안내와 함께 평면으로 재생되는 360° 동영상)이 들어 있으며, 아직 TV에서 실행하지 않았습니다.
-- **Meta Quest 2, Pro, 3, 3S**: 창 형태의 앱과 몰입형 화면, 그리고 build 30부터 휴대폰이 중계하는 DJI 드론의 실시간 영상을 보여주는 Drone 카드(실험적)를 제공하며, 이 카드는 build 30에서 처음 테스트합니다. HEVC가 안전한 코덱이며, Quest 3에서는 H.264가 약 4096x2304에서 한계에 이릅니다. 테스트한 기기는 Quest 3뿐이며, Quest 2, Quest Pro, Quest 3S는 아직 테스트하지 못했습니다.
-- **Windows 10과 11**: 미리보기 단계이며, 갤러리 대신 폴더를 사용하고, 평면 및 360° 동영상을 위한 전용 플레이어(libmpv), 그래픽 칩에서 스티칭되는 원본 파일, 프로그램으로 열거나 창에 끌어다 놓은 파일과 폴더, APROGSYS가 서명한 설치 프로그램 또는 ZIP을 제공합니다.
-- **Linux**: 프로젝트의 CI가 빌드한 .deb와 .rpm이며, Ubuntu 22.04와 24.04, Debian 12, Fedora 40과 44에 설치해 확인했습니다. 사진, 360° 사진, 그리고 시스템의 libmpv로 재생하는 평면 동영상을 지원하며(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생), desktop build 7부터는 X11 세션에서도 하드웨어 경로로 그립니다. SMB 공유는 Ubuntu 22.04와 Debian 12부터 지원합니다. 키링(GNOME Keyring 또는 KWallet)이 없어도 첫 실행 시 더 이상 25 s 동안 멈추지 않으며, 비밀번호를 세션 동안만 보관하고 설정에서 그 사실을 알려줍니다. 아직 실제 Linux PC에서는 실행하지 못했고, WSLg와 컨테이너에서만 실행했습니다.
-- **macOS**: 프로젝트의 CI가 빌드한 DMG와 ZIP이며, 유니버설이고 서명되지 않았습니다(Gatekeeper가 한 번 묻습니다). 앱이 실행되고, Finder에서 넘긴 것을 포함해 전달받은 파일과 폴더를 열며, 비밀 정보를 로그인 키체인에 보관하고, 자체 libmpv로 평면 동영상을 재생합니다. 이는 먼저 프로젝트의 CI Mac에서 확인했고, 2026년 10월 26일 작성자가 Mac에서 desktop build 11을 시험해 보았으며 잘 동작했습니다.
+- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view and, from build 30, a Drone card that shows the live video of a DJI drone relayed by a phone (experimental), first tested with build 30; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet. From build 32, on a Quest 3 or 3S, the AI relief shows a flat photo in 3D, computed in the headset, and the 3D photos, scenes and panoramas made on a computer open in 3D (experimental; not yet tried in a headset by the author, whose first headset test is on 30 October 2026).
+- **Windows 10 and 11**: a preview, with folders instead of a gallery, a video player of its own (libmpv) for flat and 360° videos, raw files stitched on the graphics chip, files and folders opened with the program or dropped on the window, an installer or a ZIP, signed by APROGSYS; from desktop build 13, "Make 3D (AI)" turns your photos into 3D photos and 3D scenes on the processor, and into 360° panoramas on a graphics card of 8 GB.
+- **Linux**: a .deb and an .rpm built by the project's CI, installed and checked on Ubuntu 22.04 and 24.04, Debian 12 and Fedora 40 and 44; photos, 360° photos and flat videos through the system's libmpv (360°, 3D and raw videos play flat with a message), drawn on the hardware path on X11 sessions too from desktop build 7; SMB shares from Ubuntu 22.04 and Debian 12 on; without a keyring (GNOME Keyring or KWallet) the app no longer freezes for 25 s at its first start: it keeps the passwords for the session only and says so in its settings; from desktop build 13, "Make 3D (AI)" makes 3D photos and scenes on the processor, and 360° panoramas on a graphics card of 8 GB (tried only at a small size, on Intel graphics); not run on a real Linux PC yet, only under WSLg and in containers.
+- **macOS**: a DMG and a ZIP built by the project's CI, universal, unsigned (Gatekeeper asks once); it starts, opens the files and folders given to it, Finder included, keeps its secrets in the login keychain and plays flat videos with its own libmpv, first checked on the project's CI Mac; on 26 October 2026 the author tried desktop build 11 on a Mac, and it worked. From desktop build 13, 3D photos and scenes are made on the processor too (not tried on a Mac yet); no 360° panoramas on a Mac yet.
 
 <a id="what-you-can-do"></a>
 ## 무엇을 할 수 있나요
 
 아래 각 줄은 해당 사용 방법으로 이어집니다. 모든 옵션, 메시지, 제한 사항까지 담은 전체 안내서는 [사용자 가이드](../docs/immuch360/user-guide.md)에 있습니다.
 
-1. [서버가 있든 없든 사진과 동영상 보기](#watch-your-photos-and-videos-with-or-without-a-server): 기기만으로 또는 Immich 서버와 함께 쓰는 갤러리이자 플레이어.
-2. [360° 사진과 동영상, 파노라마, VR180, 3D 둘러보기](#explore-panoramas-360-vr180-and-3d): 손가락, 휴대폰, 리모컨으로 돌리는 구체.
-3. [리모컨으로 TV에서 보기](#watch-on-the-tv-with-the-remote): Android TV와 Google TV, LG TV, 그리고 테스트 build인 Samsung TV.
-4. [휴대폰으로 TV, 헤드셋, 컴퓨터에 로그인하기](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): QR 코드를 스캔하고, 확인하고, 보세요.
-5. [Meta Quest로 사진과 동영상 속에 들어가기](#step-inside-your-photos-and-videos-with-a-meta-quest): 사방을 둘러싸는 360°, 진짜 3D로 보는 3D.
-6. [NAS, 컴퓨터, 미디어 서버, Plex의 파일 재생하기](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): 그 자리에서, 아무것도 복사하지 않고.
-7. [Immich 라이브러리를 그대로, 그리고 더 많이](#keep-your-immich-library-with-more): Immich 모바일 앱에 몰입형 뷰어와 큰 화면을 더했습니다.
-8. [Tapo 카메라 보기](#watch-your-home-cameras-on-the-big-screen): 실시간 화면과 메모리 카드의 녹화 영상; 아직 실제 카메라로 확인하지 않음.
-9. [휴대폰에서 DJI 드론의 실시간 영상 보기](#see-what-your-drone-sees-on-your-phone), 그리고 [Meta Quest나 Android TV에서](#watch-it-in-a-meta-quest-or-on-an-android-tv): DJI RC-N3 조종기를 통해, 수신만 합니다. *실험적.*
-10. [드론이나 카메라 카드의 사진과 동영상을 Immich로 가져오기](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): Android 휴대폰에서 USB로. *실험적.*
-11. [360° 카메라의 원본 파일 열기](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX, DJI Osmo 360, 앱이 스티칭합니다.
-12. [키 하나로 사진 회전하기](#turn-a-photo-with-one-key): 버튼, 키보드 키, 또는 리모컨의 컬러 버튼.
-13. [컴퓨터를 미디어 플레이어로 쓰기](#use-your-computer-as-the-media-player): 내 폴더, 연결 프로그램, 창에 끌어다 놓은 파일. *미리보기.*
+1. [Turn one photo into a 3D photo, a 3D scene or a 360° panorama](#turn-one-photo-into-3d-a-scene-a-panorama): made by AI on your computer, seen in 3D in a Meta Quest, which also gives any flat photo its relief. *New, experimental.*
+2. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
+3. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
+4. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
+5. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
+6. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
+7. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
+8. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
+9. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
+10. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone), and [in a Meta Quest or on an Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): through a DJI RC-N3 remote, receive only. *Experimental.*
+11. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
+12. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
+13. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
+14. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -196,7 +218,7 @@
 
 1. 버전 1.0.0은 LG 심사 중입니다. LG Content Store에 올라오기 전까지는 Developer Mode로 설치합니다: webOS 5.0 이상의 LG TV, 같은 네트워크에 있는 컴퓨터, 무료 LG 개발자 계정이 필요합니다. TV에서 LG Content Store로 Developer Mode 앱을 설치하고 로그인한 뒤, Dev Mode Status를 켜고 TV가 다시 시작되도록 둡니다. TV의 IP 주소와 앱에 표시되는 passphrase를 적어 두세요.
 2. 컴퓨터에 webOS CLI를 설치합니다(Node.js 18 이상): `npm install -g @webos-tools/cli`. 그런 다음 `ares-setup-device`로 TV를 등록하고(IP 주소, 포트 9922, 사용자 `prisoner`), passphrase를 묻는 `ares-novacom --device <name> --getkey`를 실행합니다.
-3. [webOS 1.0.0 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0)에서 UHD TV라면 `Immuch360-webOS-1.0.0.ipk`를, LG가 1280x720 앱을 제공하는 Full HD TV라면 `Immuch360-webOS-1.0.0-1280x720.ipk`를 다운로드합니다. `SHA256SUMS.txt`로 확인한 다음 `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`를 실행합니다. webosbrew의 [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop)를 쓰면 명령줄 없이 같은 작업을 할 수 있습니다.
+3. From the [webOS 1.0.1 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1), download `Immuch360-webOS-1.0.1.ipk` for a UHD TV, or `Immuch360-webOS-1.0.1-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.1.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
 4. Developer Mode 세션은 1000시간 동안 유지되며 Developer Mode 앱의 EXTEND 버튼으로 연장할 수 있습니다. 세션이 만료되면 TV가 이렇게 설치한 앱을 삭제합니다. 자세한 내용은 [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode)에 있습니다.
 5. 앱이 LG Content Store에 올라오면 Developer Mode로 설치한 사본을 제거하고 스토어에서 설치하세요.
 
@@ -217,23 +239,72 @@
 <a id="windows"></a>
 ### Windows
 
-1. [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12)에서 `Immuch360-Desktop-3.3.0-rc.0-desktop.12-windows-x64-setup.exe`를 다운로드하고(`SHA256SUMS.txt`로 확인 가능) 실행합니다. 설치 프로그램과 ZIP은 서명되어 있으며, Windows는 게시자로 APROGSYS를 표시합니다. 이 게시자가 SmartScreen에 아직 낯선 동안에는 한 번 더 물어볼 수 있습니다: "추가 정보"를 선택한 다음 "그래도 실행"을 선택합니다.
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.13-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
 2. "현재 사용자에게만 설치"(관리자 권한 불필요) 또는 "모든 사용자에게 설치"를 선택한 다음, 이미 Windows 언어로 선택되어 있는 설치 프로그램의 언어를 선택합니다.
 3. 시작 메뉴에서 Immuch360 Desktop을 실행합니다. 사진과 동영상은 "연결 프로그램"에 나타나지만(파일을 마우스 오른쪽 버튼으로 클릭한 뒤 연결 프로그램), 기본 프로그램으로는 절대 지정되지 않습니다. 새 build를 처음 실행할 때는 Windows가 파일을 검사하는 동안 1분 정도 걸릴 수 있습니다.
 4. Windows 10 또는 11, 64비트. 업데이트하려면 다음 build의 설치 프로그램을 실행하세요: 로그인, 폴더, 설정은 그대로 유지됩니다. 같은 릴리스의 ZIP은 폴더 형태의 같은 프로그램이므로, 원하는 곳에 압축을 풀고 그 안의 `immuch360.exe`를 실행하면 됩니다. desktop build 4부터 8까지가 시작 시 "duplicate column name: group_date"에서 멈췄던 컴퓨터에서도 build 9는 그 데이터베이스를 열고 데이터를 그대로 유지합니다.
 
 ### Linux
 
-Ubuntu 22.04 이상과 Debian 12 이상에서는: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-amd64.deb`; Fedora 40 이상에서는: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.12-linux-x86_64.rpm`. 두 파일 모두 [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12)에 있습니다. 그런 다음 애플리케이션 목록에서 Immuch360 Desktop을 실행합니다. 미리보기 단계로, 컴퓨터의 폴더, 사진과 구체로 보는 360° 사진, 그리고 패키지가 설치하는 시스템의 libmpv로 재생하는 평면 동영상을 지원합니다(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생). SMB 공유는 Ubuntu 22.04와 Debian 12부터 동작합니다. Fedora에서는 카메라 동영상에 RPM Fusion의 FFmpeg가 필요합니다. GNOME Keyring이나 KWallet이 없으면 비밀번호는 세션 동안만 보관되며, 앱 설정에서 그 사실을 알려줍니다.
+On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
 
 ### macOS
 
-`Immuch360-Desktop-3.3.0-rc.0-desktop.12-macos.dmg`를 [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-12)에서 받아 열고 앱을 Applications로 드래그합니다(Apple 실리콘과 Intel, macOS 12 이상). 아직 서명도 공증도 되지 않았으므로, macOS 14 이하에서는 Control 키를 누른 채 클릭한 뒤 "열기"를 선택하고, macOS 15 이상에서는 "시스템 설정"의 "개인정보 보호 및 보안"에서 "무조건 열기"를 선택하세요. 작성자가 2026년 10월 26일 Mac에서 desktop build 11을 시험해 보았으며 잘 동작했습니다. 다른 Mac과 다른 macOS 버전은 시험하지 않았으니 제보를 환영합니다.
+Open `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. The author tried desktop build 11 on a Mac on 26 October 2026, and it worked; other Macs and macOS versions have not been tried, and reports are welcome.
 
 <a id="how-to"></a>
 ## 사용 방법
 
 각 항목은 무엇을 얻을 수 있는지, 그다음 단계, 그다음 제한 사항을 설명합니다. 모든 옵션과 메시지는 [사용자 가이드](../docs/immuch360/user-guide.md)에 있습니다.
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Turn one photo into 3D, a scene, a panorama
+
+Most of your photos are flat, and you cannot go back and take them again in 3D. Immuch360 gives them depth. On your computer, one photo becomes a **3D photo**, a **3D scene** you lean into in a headset, or a **360° panorama** that imagines the rest of the place around you. A Quest 3 or 3S does the relief itself, for any flat photo. Everything runs on your own computer and headset: no cloud, no account, your originals never changed. New in build 32 and desktop build 13, experimental and on by default. The Immich app has nothing like it.
+
+**On your computer**, with desktop build 13 on Windows, Linux or macOS:
+
+1. Select one or more photos in the library or in a folder, then "Make 3D (AI)".
+2. Pick what you want: "3D photo", "3D scene", "360° panorama", or "3D version of a 360° photo" for your own 360° shots. The box says what AI will estimate or invent ("About 96% of this panorama will be invented by AI"), about how long it takes on this computer, and where the file goes: "Next to the original" or "A folder of my choice". A type this computer cannot do stays greyed, with its reason, such as "Not yet on Mac" or "The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB".
+3. The first time, the box offers the components of that type: Download, once. They run on this computer and work offline afterwards.
+4. Convert. The jobs queue on two lanes, the processor and the graphics card, with their steps and the time left; Cancel stops one at any moment, and quitting the app asks first.
+5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation at the top of this page) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="The Make 3D (AI) box of the Windows app: 3D photo, 3D scene, 360° panorama, selected, and 3D version of a 360° photo; Generated by AI beyond the photo's edges; About 96% of this panorama will be invented by AI; A finished conversion does not guarantee a good result; About 5 min per photo on this graphics card; Also make the 3D version, ticked; Save to: Next to the original, or A folder of my choice; Cancel and Convert">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="The 360° viewer of the Windows app opening a panorama it generated from a photo of a bay seen from a mountain: the badges 360° AI and 360° at the top right, the original photo outlined in the middle under the words The original photo, and Generated by AI beyond the photo's edges at the bottom">
+</p>
+
+| | 3D photo | 3D scene | 360° panorama |
+|---|---|---|---|
+| What you get | `<name>_3D_LRF_Full_SBS.jpg`, a side by side 3D photo: your photo for the left eye, a computed right eye | `<name>_scene3D.jpg`, a photo that carries the scene, in layers | `<name>_360.jpg`, 6144 x 3072, and with "Also make the 3D version", `<name>_360_3D.jpg` |
+| What AI does | estimates the relief of the photo (Depth Anything V2 Small) | estimates the shape of the place (MoGe-2) and fills what the photo hides (LaMa), for a scene in layers | invents everything beyond the photo's edges (FLUX.2 klein 4B and a 360° LoRA); your own pixels stay where they were |
+| How long | a few seconds a photo | 15 to 45 seconds a photo | about 5 minutes on a laptop with an RTX 4060, 30 seconds more for its 3D version |
+| It runs on | the processor of a Windows, Linux or macOS computer | the processor of a Windows, Linux or macOS computer | a graphics card with Vulkan and 8 GB of its own memory, in a Windows or Linux computer with 16 GB of memory; NVIDIA tried, AMD and Intel cards not yet; not on a Mac yet |
+| Downloaded once, when you ask | about 110 MB | 349 MB more | about 5.4 GB more |
+| Where to see it | in 3D in a Meta Quest; "Wiggle" or "Red and cyan" on a computer | in a Meta Quest, where you lean into it; "Preview in 3D" on the computer | all around you in a Meta Quest, and in every 360° viewer |
+
+Every new file goes next to its original, never over it, or into a folder of your choice when the original's folder takes no new file; on a network folder, only once you say yes for that folder ("Immuch360 writes new files there, never the originals"). The library links each version to its original with its badge, "3D AI", "3D scene" or "360° AI", in the album "Immuch360 AI versions", which stays out of your Immich backup unless you turn on "Also back up AI versions"; careful, "Select all" in the backup albums picks this album too and turns that switch on. To see a file in the Quest, save it on your NAS, back it up to your Immich server or, on Windows, turn on "Share this computer".
+
+**In a Meta Quest**, with build 32:
+
+- **AI relief**: open any flat photo, from your library or a share, and press "AI relief" in the top bar: the headset estimates the relief itself and shows the photo in 3D, "Relief estimated by AI". The model, 99.5 MB, downloads the first time you press it, and the reliefs are kept in a cache. "Open AI reliefs in 2.5D (experimental)", in Settings, Advanced, "AI and 3D", makes near objects move in front of the background as you move your head. On a Quest 2 or a Quest Pro the button stays greyed, "Not tested on this headset yet", until you turn on "AI relief on Quest 2 and Quest Pro (untested)" there.
+- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room at the top of this page); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **Panoramas**: a generated panorama opens all around you, facing your photo, with "Generated by AI beyond the photo's edges" and a thin outline of the original photo, which fade after a few seconds; its 3D version is in true 3D.
+
+Not yet tried in a headset by the author: the first headset test is on 30 October 2026. The headset's code for the relief, the scenes and the panoramas passed its tests on a computer, and what you see in your own Quest is welcome in [Issues](https://github.com/freeKC/Immuch360/issues).
+
+**On phones, tablets and TVs**, the files a computer made open as they are, and nothing is generated there. A panorama opens in the 360° viewer with the "360° AI" badge, the sentence and the outline on Android phones, tablets and Android TV; on iPhone, iPad, LG and Samsung TVs it opens as a plain 360° photo for now. A scene shows as its photo, with a small 3D SCENE mark in its corner; on Android, its details add "Open it on a Meta Quest to explore it". A 3D photo shows its two eyes side by side.
+
+**What is real and what is not, always said.** It is the point, not the small print. The relief of a 3D photo is estimated from one photo, and what the photo hides is filled in and is not real. A scene is "Reconstructed from one photo, explore within its limits". A panorama keeps your real pixels where they were and invents the rest, about 90% of the sphere for a typical photo, and the box says how much before you start. The app says it where you look, with "Relief estimated by AI", "Generated by AI beyond the photo's edges" and the badges, and the files say it too: in our XMP, and for the scenes and the panoramas in the IPTC digital source type of an image made with AI, so that other apps can tell a generated panorama from a real 360° photo. Your originals are never changed, and nothing leaves your computer or your headset. As the box puts it: "A finished conversion does not guarantee a good result."
+
+**What was checked**, by 29 October 2026, with test builds of this code: 3D photos by the Linux app in a container on a Linux PC, offline too; scenes by the Windows app on a laptop with an RTX 4060 Laptop GPU (ten in 2 min 39 s) and by the engine on the Linux PC; on that laptop, four panoramas in 4 min 16 s to 4 min 44 s each, their 3D versions in about 30 s, with Cancel, a killed app, another program holding the graphics card, and no network connection of the app during the tests. The author has not judged the panoramas in a headset yet. Not tried: a Mac, a Linux PC with a dedicated graphics card, AMD and Intel graphics cards for the panoramas, a phone or a TV opening these files, and anything in a headset.
+
+Limits: no 360° panorama on a Mac yet ("Not yet on Mac"), nor without a suitable graphics card, and the box says why ("No graphics card with Vulkan found", "Integrated graphics share the computer's memory: too slow for panoramas", with "Try on integrated graphics (untested)" to try anyway); inside a panorama, the edge of your photo can show as a sharp step in tone; most scenes say "Field of view guessed: shapes may be off"; a scene needs about 2 GB of free memory ("Not enough memory" otherwise); with AI versions backed up, Immich's duplicate finder pairs each photo with its scene and often suggests keeping the scene, the heavier file: keep the original. Phones and TVs make nothing, and the headset makes reliefs only; a scene comes from one photo, not yet from several photos of the same place.
+
+**The components**: on the computer, Settings, "AI and 3D" lists the components of each feature with their size, Download and Remove, then "Remove all AI components" and "Move the AI components" to another drive; "AI features" off hides every AI button and downloads nothing. Each file is checked by its SHA-256. On Windows they sit in `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, which the uninstaller deletes (not a folder you moved them to); on Linux in `~/.local/share/immuch360/ai-components` on most systems, and on a Mac in `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. In the Quest, "AI and 3D" is in Settings, Advanced, with the relief cache.
+
+More: the notes of [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) and [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), and [the models, their licences, their sources and their sums](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). The user guide gets its AI chapter with the next pass; until then, this section is the guide.
 
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
@@ -279,8 +350,8 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 
 리모컨으로 큰 화면에서 보는 내 사진. TV 앱은 모두 같은 방식으로 동작합니다: 방향키는 선택 테두리를 움직이고, OK는 열고, 뒤로가기는 돌아가며, 360° 사진에서는 방향키로 둘러봅니다. TV에는 자체 사진이 없으므로 Immich 서버를 보여주고, Android TV와 LG TV에서는 네트워크 공유, Plex 서버, 카메라도 보여줍니다.
 
-- **Android TV와 Google TV**: Android 앱 그 자체, build 31이며, Google Play가 TV에 제공할 때까지는 GitHub에서 받습니다.
-- **webOS 5.0 이상의 LG TV**: 자체 TV 앱, 버전 1.0.0이며, LG Content Store 게시를 위해 LG 심사 중입니다.
+- **Android TV and Google TV**: the Android app itself, build 32, from GitHub until Google Play offers it on TVs.
+- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, in LG's review for the LG Content Store, and version 1.0.1 on GitHub.
 - **Tizen 5.5 이상의 Samsung TV**: LG TV와 같은 TV 앱, 테스트 build 0.2.0이며, 직접 서명해 설치합니다.
 
 <p align="center">
@@ -310,7 +381,7 @@ Immich의 공식 앱은 LG TV에 설치되지 않습니다. Immuch360에는 webO
 
 1. Developer Mode의 TV에 설치합니다. [설치](#lg-tvs-webos)를 참고하세요. 자체 앱 ID를 사용하므로 Seeky91의 Immich TV와 함께 설치할 수 있습니다.
 2. 휴대폰(QR 코드 스캔), 이메일과 비밀번호, 또는 API 키로 로그인합니다.
-3. 방향키와 OK로 둘러봅니다. 뷰어에서는 동영상 재생 중에도 왼쪽과 오른쪽으로 이전 또는 다음 사진이나 동영상으로 이동합니다. 컨트롤은 마지막 키 입력 5 s 후에 사라지고, Info는 세부 정보를 열며, 채널 버튼으로 확대/축소하고, Magic Remote의 포인터와 휠도 동작합니다.
+3. Browse with the arrows and OK. In the viewer, Left and Right go to the previous or next photo or video, also while a video plays; the controls hide 5 s after the last key; Info opens the details; the channel keys zoom; the Magic Remote pointer and wheel work. From version 1.0.1, on GitHub, Up zooms a photo in at once, the arrows then move it and Back zooms out, and a Loading pill shows while a photo is still coming.
 4. 360° 사진은 구체 위에 열립니다: 방향키를 한 번 누를 때마다 한 단계씩 돌고, 누르고 있으면 계속 돕니다. 서버가 360°로 표시하지 않은 2:1 사진에는 "360°로 보기"를 쓸 수 있습니다. VR180 사진은 반구 위에, 3D 사진은 한쪽 눈으로 표시됩니다. 노란색과 파란색 버튼은 평면 사진을 회전합니다.
 5. 로그인한 뒤 앱 사이드바의 "네트워크 공유"에서 SMB, WebDAV, DLNA 공유, Plex 서버(plex.tv/link에서 코드로 로그인) 또는 Tapo 카메라를 추가합니다. 그 사진은 같은 뷰어에서 열리며, 360° 사진은 구체 위에 열립니다.
 
@@ -403,7 +474,7 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 2. 설정의 Asset Viewer, Videos에서 "동영상 소스"는 이 기기가 디코딩할 수 있을 때는 원본을, 항상 원본을, 또는 항상 트랜스코딩된 스트림을 선택하도록 고를 수 있습니다.
 3. 앱이 없는 사람에게 360° 사진을 보여주려면 Immich 공유 링크로 공유하세요: Immich 웹 앱이 그 사람의 브라우저에서 구체로 보여줍니다.
 
-현재 build인 build 31은 build 28부터 30까지와 마찬가지로 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0)을 기반으로 합니다. build 28은 같은 Immich `main`으로 빌드한 서버에서 테스트했으며, build 27은 Immich 3.2.4 서버에서도 테스트했습니다. 문제가 있으면 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려주세요.
+The current build, build 32, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 to 31; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
 무엇이 같고 Immuch360이 무엇을 더하는지는 [Immich와 비교](#compared-with-immich)에 있습니다.
 
@@ -553,6 +624,7 @@ Immuch360은 Immich 모바일 앱 전체를 유지하면서 그 주변에 기능
 | **같은 점** | Immich 서버와 계정: 백업, 타임라인, 앨범, 검색, 인물, 추억, 공유와 파트너, 모두 서버와 동기화됩니다. 공식 앱 옆에 나란히 설치됩니다. |
 | **서버 불필요** | 서버나 계정 없이도 기기의 사진과 동영상, 컴퓨터의 폴더, 네트워크 공유로 동작합니다. Plex와 카메라는 각자의 로그인을 쓰며, Immuch360 계정은 결코 쓰지 않습니다. |
 | **360°와 몰입형** | 구체로 보는 360° 사진과 동영상, 파노라마, VR180과 3D, Meta Quest의 몰입형 화면, 360° 배지와 360° 목록. Immich 모바일 앱의 360° 보기는 2024년 1월부터 요청되어 왔지만 아직 없습니다. |
+| **3D from your photos** | on a computer, one photo becomes a 3D photo, a 3D scene or a 360° panorama, and in a Meta Quest 3 or 3S any flat photo gets its relief: made by AI on your own computer and headset, labelled as such in the app and in the files, the original never changed. The Immich app makes nothing in 3D. |
 | **TV에서** | Android TV와 Google TV에서 같은 앱, 그리고 LG TV용 TV 앱이 있으며 이 앱은 Samsung TV용 테스트 build로도 패키징됩니다. Immich의 공식 앱은 LG TV에 설치되지 않습니다. |
 | **휴대폰으로 로그인** | 휴대폰이 TV, 헤드셋, 컴퓨터의 QR 코드를 스캔하면 로그인되며, 비밀번호는 휴대폰에만 남습니다. Immich 앱에는 이런 기능이 없습니다. |
 | **공유와 Plex** | SMB, WebDAV, DLNA 공유와 Plex 서버를 그 자리에서 재생하고, 그 파일을 직접 골라 서버로 보냅니다. |
@@ -569,6 +641,8 @@ Immuch360은 Immich 모바일 앱 전체를 유지하면서 그 주변에 기능
 
 개발자에게는 아무것도 전송되지 않습니다: 계정도, 분석도, 충돌 보고 서비스도, 광고도 없습니다. 앱은 사용자가 직접 선택한 서버(Immich 서버, 공유, Plex 서버, 카메라)와만 통신하며, 서버가 없을 때는 아무와도 통신하지 않습니다. 비밀번호와 토큰은 기기의 보안 저장소에 남아 있습니다. LG와 Samsung TV에는 앱용 보안 저장소가 없으므로, 그곳에서는 앱 자체 저장소에 암호화되지 않은 상태로 저장됩니다. 카메라는 Spatial 2.5D 플레이어와, 로그인할 화면의 코드를 스캔할 때만 기기에서 사용되며, 그 이미지는 저장되거나 어디로도 전송되지 않습니다. 휴대폰으로 로그인한 화면은 비밀번호가 아니라 자체 세션을 받으며, 이 세션은 홈 네트워크에서 암호화되어 전송됩니다. LG TV는 휴대폰 브라우저의 페이지로 로그인하며, 이 페이지는 이메일과 비밀번호를 홈 네트워크에서 암호화하지 않은 채 TV로 보내고, TV는 세션만 보관합니다. 드론 페이지의 캡처와 수신 기록은 공유하지 않는 한 기기에 남습니다: 드론의 영상이 들어 있고 위치가 들어 있을 수 있으며, 캡처에는 조종기와 기체의 일련번호도 들어 있습니다. 드론의 화면과 수치는 휴대폰에서 페어링한 헤드셋과 TV로만, 로컬 네트워크에서 암호화되지 않은 채 전송되며, Wi-Fi에 공유한 휴대폰과 같은 방식입니다. DJI에도 TP-Link에도 아무것도 전송되지 않습니다. 전체 정책은 [PRIVACY.md](../PRIVACY.md)에 있으며, 소스별 세부 사항은 [사용자 가이드](../docs/immuch360/user-guide.md#privacy)에 있습니다.
 
+**The AI features** work on your devices only. The photo, its relief, its scene and its panorama are computed on your computer or in your headset and sent nowhere. The app connects only to download a component you asked for, from the releases of this project on GitHub or, failing that, from the model's official page when it has one, checks each file by its SHA-256, and then works offline. ONNX Runtime, which runs the models on a computer, sends telemetry to Microsoft in its official builds; Immuch360 turns it off. The new files go next to your originals, never over them, and reach your Immich server only if you turn on "Also back up AI versions" ("Select all" in the backup albums turns it on too).
+
 <a id="the-project"></a>
 <a id="licences-and-credits"></a>
 ## 라이선스와 크레딧
@@ -577,14 +651,23 @@ Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https:
 
 360° 사진 뷰어는 dmitry-brazhenko가 작성한 업스트림 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)를 기반으로 하며, 이는 bencefr의 프로토타입인 [#30192](https://github.com/immich-app/immich/pull/30192)를 바탕으로 만들어졌습니다. 두 분 모두에게 감사드립니다. TV에서 검색 필터의 리모컨 조작 수정과 앨범 정렬은 mlc70의 [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) 작업에서 시작되었고, 액션 레일과 화면 높이의 80퍼센트를 차지하는 필터 시트는 mlc70의 [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3)에서 왔으며 작성자 정보도 그대로 유지했습니다. mlc70에게 감사드립니다. Samsung TV용으로도 패키징되는 LG webOS 앱은 Seeky91의 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)를 기반으로 하며, MIT 라이선스로 자체 폴더에 보관되어 있습니다. Seeky91에게 감사드립니다. Tapo 카메라 기능은 [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), [python-kasa](https://github.com/python-kasa/python-kasa)가 문서화한 내용을 바탕으로 작성되었습니다. Meta Quest 화면은 오픈소스가 아닌 Meta Spatial SDK를 사용하므로 이 포크에만 남아 있습니다. SMB 공유는 LGPL 2.1 이상 라이선스의 libsmb2를 사용합니다: build 27과 desktop build 7부터 모든 build에 그 고지, 라이선스 전문, 소스 압축 파일 `Immuch360-libsmb2-sources.tar.gz`가 포함되며, 이 파일은 각 릴리스에도 첨부됩니다. Windows와 macOS build에는 프로젝트가 LGPL 라이선스로 빌드한 libmpv([mpv](https://mpv.io) 라이브러리, [FFmpeg](https://ffmpeg.org) 포함)와 그 라이선스 및 소스가 함께 들어 있으며, 앱의 라이선스 페이지(프로필 메뉴 맨 아래의 라이선스)에 나열되어 있습니다. 이 페이지에 언급된 플랫폼들의 세부 정보와 상표에 대한 내용은 [라이선스와 상표](../docs/immuch360/platform-support.md#license-and-trademarks)에 있습니다.
 
-이 페이지의 캡처는 앱의 실제 화면입니다: 휴대폰 화면은 에뮬레이터의 Android build에서, Android TV 화면은 Google TV 에뮬레이터에서, LG와 Samsung 화면은 TV를 대신하는 브라우저에서, Windows 화면은 Windows 11 PC에서, Meta Quest 창은 Quest 3에서 찍었으며, 모두 [Poly Haven](https://polyhaven.com)의 CC0 파노라마를 썼습니다. 헤드셋의 몰입형 화면은 작성자 자신의 미디어로 Quest 3에서, iPad 화면은 iPad 시뮬레이터에서 CC0 Poly Haven 파노라마로 찍었습니다. 첫 이미지와 TV, 로그인, 회전, 카메라, 드론 그림은 프로젝트를 위해 만든 일러스트입니다: 앱의 화면도, 다른 회사의 로고도, 얼굴도 담고 있지 않습니다. 각 이미지는 출처, 날짜, 라이선스와 함께 [CAPTURES.md](../.github/readme/CAPTURES.md)에 정리되어 있습니다.
+The AI features run models and engines made by others, downloaded only when you ask, from the prereleases [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1), [ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2) and [ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3) of this repository; each file, its source, its licence and its SHA-256 are in [MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Thanks to their authors:
+
+- **3D photos**: Depth Anything V2 Small (Apache 2.0), run by ONNX Runtime (MIT) on a computer and by LiteRT 2.3.0 (Apache 2.0), inside the Quest APK, in the headset.
+- **3D scenes**: MoGe-2 ViT-S (MIT), exported to ONNX by the project from its MIT weights, and LaMa (Apache 2.0).
+- **360° panoramas**: FLUX.2 klein base 4B with its VAE (Apache 2.0), Qwen3 4B (Apache 2.0), the 360° LoRA of nomadoor (Apache 2.0), MI-GAN (MIT) and Real-ESRGAN x4plus (BSD 3 Clause), run by stable-diffusion.cpp and ggml (MIT), built by the project's CI and signed on Windows.
+
+The 360° LoRA of nomadoor is Apache 2.0 on its card and was trained on CC0 and public domain images, with a part under CC BY: the attribution of that part comes in a later version of MODEL-LICENSES.md. Nothing here is under a non commercial licence, and nothing needs CUDA. ONNX Runtime and LiteRT have other libraries built in, listed in their notices, among them Eigen under the MPL 2.0, a weak copyleft licence.
+
+The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The pictures of the AI creator are real outputs of the app, made from CC0 photos of Poly Haven, with two real captures of the Windows app; none of them has been looked at in a headset by the author yet. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## 로드맵
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
-- **스토어**: Google Play(10월 26일부터 build 31 심사 중; TV 등록 심사 중), App Store(버전 3.3.1 심사 중, 그다음 build 28로 버전 3.3.2), build 31로 Meta Horizon Store(10월 25일부터 build 28 공개 중), LG Content Store(10월 24일부터 버전 1.0.0이 LG 심사 중), 그리고 나중에 Samsung 스토어.
+- **The stores**: Google Play (build 32 in review since 29 October, in place of build 31; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 32 (build 31 there since 28 October), the LG Content Store (version 1.0.0 in LG's review since 24 October, then version 1.0.1), and later the Samsung store.
+- **AI creator**: the author's first headset test on 30 October 2026, for the AI relief, the scenes, the panoramas and the comfort of their 3D versions; 360° panoramas on a Mac; a scene rebuilt from several photos of the same place; Gaussian splats (.spz, .ply) made by other tools, read in the headset; the AI labels in the iOS, LG and Samsung apps; panoramas tried on a Linux PC with a graphics card, and on AMD and Intel cards.
 - **드론**: 1.8 m와 1.5 m/s를 넘는 높이와 속도, 그리고 줄자로 잰 장애물 거리를 증명하기 위한 야외 비행, 그다음 위성과 홈까지의 거리 표시; 헤드셋에서 확인하는 중계의 안정된 화면; LG와 Samsung TV로의 중계; 아직 시작하지 않은 iPhone과 iPad의 드론 기능; 실제 DJI Neo 2로 가져오기 페이지 테스트, 그다음 휴대폰이 녹음한 소리를 클립에 합치기. 이 테스트들 전에는 드론에 명령을 보내는 어떤 기능도 계획하지 않습니다.
 - **TV**: 실제 Android TV에서 동영상 컨트롤과 휴대폰으로 로그인하기를 포함한 build 29; 실제 LG TV에서 LG 앱의 공유, Plex, 실시간 화면, 그리고 webOS 26; 실제 Samsung TV에서 Samsung 테스트 build 0.2.0, 그다음 Samsung TV에서 휴대폰으로 로그인, 공유, Plex, 카메라; 그다음 LG TV의 구체 위 360° 동영상, 카메라 소리와 녹화 영상(2026년 12월 이전에는 불가).
 - **카메라**: 실제 카메라로 Tapo 카메라 확인.
@@ -606,6 +689,7 @@ Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https:
 - [Platform support: 각 시스템이 가진 것, 설치 방법, 차이점](../docs/immuch360/platform-support.md)
 - [알려진 문제](../docs/immuch360/known-issues.md)와 [문제 해결](../docs/immuch360/troubleshooting.md), 보고에 첨부할 로그 포함
 - [기술 세부 사항: 아키텍처, Flutter와 네이티브 모듈, 미디어 브리지, 스티칭 파이프라인, 디코더](../docs/immuch360/technical-details.md)
+- [The AI components: each model, its source, its licence, its size and its sum](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)
 - [데스크톱 360° 동영상 렌더러: libmpv, 투영 패스, 그리고 그 뒤의 측정값](../docs/immuch360/desktop-360-video-renderer.md)
 - [Release status: build, 스토어, 각 스토어가 가진 것](../docs/immuch360/release-status.md)
 - [직접 빌드하기: 휴대폰, 헤드셋, TV, 컴퓨터](../docs/immuch360/build.md)
@@ -626,6 +710,7 @@ Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https:
 - **필요할 때 읽기**: 바이트 범위와 세션별 토큰으로 플레이어에 데이터를 제공하는 로컬 브리지; 큰 블록, 미리 읽기, 최대 6개의 SMB 연결 병렬 처리; 각 동영상의 한 프레임으로 만드는 썸네일; 기기에 아무것도 복사하지 않음.
 - **하드웨어**: 존재하는 모든 곳에서 측정된 한계(Quest 3의 H.264 상한, 소프트웨어 디코더에서 최대 2048x2048 렌즈 두 개)와 함께 사용되는 하드웨어 디코더; Windows에서는 디코딩된 각 프레임으로부터 그래픽 칩이 360° 화면을 그리며, 각 컴퓨터에서 프레임 크기를 측정하고 내장 또는 전용 그래픽 칩을 감지합니다.
 - **플랫폼별 세부 사항**: 휴대폰의 자이로스코프와 Spatial 2.5D 플레이어; Quest의 몰입형 화면, 컨트롤러, 손 인식; Android TV의 리모컨 배치, 키보드 대화상자, TV 배너; 컴퓨터에서는 마우스와 키보드, 전체 화면, 단일 창, 프로그램으로 열거나 그 창에 끌어다 놓은 파일과 폴더, Windows에 디코더가 있을 때 폴더의 파일처럼 읽히는 HEIC, AVIF, TIFF와 카메라 원본 사진, 그리고 비밀번호와 토큰을 위한 Windows의 데이터 보호 기능.
-- **설계부터 지켜지는 개인정보 보호**: 계정 없음, 클라우드 없음, 분석 없음; 기기의 보안 저장소에 있는 비밀번호와 토큰(앱용 보안 저장소가 없는 LG와 Samsung TV에서는 앱 자체 저장소에 암호화되지 않은 상태로 저장); 휴대폰으로 로그인한 화면은 비밀번호가 아니라 자체 세션을 받으며, 이 세션은 홈 네트워크에서 암호화되어 전송됨(LG TV는 휴대폰 브라우저의 페이지에서 홈 네트워크를 통해 암호화되지 않은 비밀번호를 받고, 세션만 보관함); 기기에서만 사용되는 Spatial 플레이어와 코드 스캐너의 카메라; 오직 사용자의 네트워크에서만 접근하는 공유, Plex, 카메라.
+- **AI creator**: 3D photos as full width side by side JPEGs, left eye first, the relief from Depth Anything V2 Small through ONNX Runtime 1.31.0 on the processor (1.23.2 on an Intel Mac); scenes as a JPEG that carries a glTF scene in layers cut where the depth breaks, from MoGe-2 ViT-S and LaMa, with a .glb export; 360° panoramas of 6144 x 3072, generated by FLUX.2 klein base 4B and a 360° LoRA through stable-diffusion.cpp on Vulkan, the seam joined by MI-GAN, the detail raised by Real-ESRGAN and the real pixels put back; 3D versions of 360° photos, top and bottom; in every file our XMP (kind, origin, the SHA-1 of the original, quality flags), and in the scenes and the panoramas the IPTC digital source type; the relief of the Quest by LiteRT, on its graphics chip or its processor, kept in a cache; on the computer, a queue on two lanes and a gate that reads the graphics card through Vulkan and waits while other programs hold its memory; each component checked by its SHA-256, the Windows generator signed.
+- **Privacy by construction**: no account, no cloud, no analytics; passwords and tokens in the device's secure storage (on LG and Samsung TVs, which have none for the app, in the app's own storage, not encrypted); a screen signed in from a phone gets a session of its own, sent encrypted on the home network, never the password (an LG TV gets the password from a page in the phone's browser, unencrypted on the home network, and keeps only the session); the camera of the Spatial player and of the code scanner used on the device only; shares, Plex and cameras reached on your network only; the AI computed on the device, its components downloaded only when you ask and checked by their SHA-256, the telemetry of ONNX Runtime turned off.
 
 </details>
