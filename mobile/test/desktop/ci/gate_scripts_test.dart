@@ -670,6 +670,55 @@ abstract class SyncEvents {
       expect(ordinary.output, contains('(+6.500 %), more than 1 %'));
     });
 
+    test('against release 31 each kind has the one-time threshold of build 32, a threshold by hand wins', () {
+      // Build 32 brings the AI immersive features: on 29 October 2026 its Quest APK was +7.94 % against release 31 and
+      // its phone packages +1.23 to +2.88 % (the AI texts in 88 languages). The sizes come from the file, --release
+      // names the release they stand for
+      const against31 = ['--release', 'v3.3.0-rc.0-31'];
+      final run = check({
+        'app-quest-release.apk': 107940,
+        'app-phone-release.aab': 154300,
+        'app-arm64-v8a-phone-release.apk': 101226,
+        'Immuch360-v3.3.0-rc.0-32-release.apk': 203850,
+      }, options: against31);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('quest: one-time threshold of 8.5 % against v3.3.0-rc.0-31'));
+      expect(run.output, contains('aab: one-time threshold of 3.5 % against v3.3.0-rc.0-31'));
+      expect(run.output, contains('(+7.940 %), ok (threshold of the quest kind: 8.5 %)'));
+      expect(run.output, contains('(+2.867 %), ok (threshold of the aab kind: 3.5 %)'));
+      expect(run.output, contains('(+1.226 %), ok (threshold of the arm64-v8a kind: 2 %)'));
+      expect(run.output, contains('(+1.925 %), ok (threshold of the universal kind: 2.5 %)'));
+
+      final over = check({
+        'app-quest-release.apk': 108600,
+        'app-arm64-v8a-phone-release.apk': 102100,
+      }, options: against31);
+      expect(over.exitCode, 1, reason: '$over');
+      expect(over.output, contains('(+8.600 %), more than 8.5 % (threshold of the quest kind: 8.5 %)'));
+      expect(over.output, contains('(+2.100 %), more than 2 % (threshold of the arm64-v8a kind: 2 %)'));
+
+      // The release after build 32 compares with build 32 and the ordinary threshold again
+      final next = check(
+        {'app-quest-release.apk': 107940, 'app-arm64-v8a-phone-release.apk': 101226},
+        options: ['--release', 'v3.3.0-rc.0-32'],
+      );
+      expect(next.exitCode, 1, reason: '$next');
+      expect(next.output, contains('(+7.940 %), more than 1 %'));
+      expect(next.output, contains('(+1.226 %), more than 1 %'));
+      expect(next.output, isNot(contains('one-time')));
+
+      // A threshold given by hand wins over the table, for its own kind only
+      final byHand = check(
+        {'app-quest-release.apk': 107940, 'app-phone-release.aab': 154300},
+        options: [...against31, '--kind-threshold', 'quest=7'],
+      );
+      expect(byHand.exitCode, 1, reason: '$byHand');
+      expect(byHand.output, contains('(+7.940 %), more than 7 % (threshold of the quest kind: 7 %)'));
+      expect(byHand.output, contains('(+2.867 %), ok (threshold of the aab kind: 3.5 %)'));
+      expect(byHand.output, isNot(contains('quest: one-time')));
+      expect(byHand.output, contains('aab: one-time threshold of 3.5 % against v3.3.0-rc.0-31'));
+    });
+
     test('--kind-threshold refuses an unknown kind or a value that is no percent', () {
       for (final value in ['watch=7', 'quest', 'quest=x', 'quest=-1']) {
         final run = check({'app-quest-release.apk': 100000}, options: ['--kind-threshold', value]);
