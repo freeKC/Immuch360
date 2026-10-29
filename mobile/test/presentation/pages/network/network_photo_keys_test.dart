@@ -1,7 +1,8 @@
 // The photo page of a share with a remote control: the Back button of its app bar leaves the page, where Back from
 // the app bar only returns to the photo, and a photo that cannot be had shows Retry, which Down and OK reach. A flat
 // photo turns with the one-key rotation (OK then OK, R, the yellow and blue keys), kept on the device for its file;
-// a 360° or 3D one, or one not read yet, never does.
+// a 360° or 3D one, or one not read yet, never does. A photo named like a 3D one (street_TB.jpg) turns as any other,
+// but on a Meta Quest with "3D by file name (experimental)" on, which offers it in 3D.
 
 import 'dart:async';
 
@@ -11,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -22,6 +25,7 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -78,9 +82,16 @@ void main() {
     await db.close();
   });
 
-  /// The page opened from a folder, so that its app bar has a Back button; [detection] tells what the file is
-  Future<void> pumpPhoto(WidgetTester tester, {NetworkMediaService? detection}) async {
-    const page = NetworkPhotoPage(sourceId: 'nas', path: '/a.jpg');
+  /// The page of [path] opened from a folder, so that its app bar has a Back button; [detection] tells what the file
+  /// is; on a Meta Quest with [horizonOs], with the settings of [appConfig] when given
+  Future<void> pumpPhoto(
+    WidgetTester tester, {
+    NetworkMediaService? detection,
+    String path = '/a.jpg',
+    bool horizonOs = false,
+    AppConfig? appConfig,
+  }) async {
+    final page = NetworkPhotoPage(sourceId: 'nas', path: path);
     final router = await pumpNetworkRouter(
       tester,
       home: const Scaffold(body: Text('folder')),
@@ -90,11 +101,12 @@ void main() {
         tvModeProvider.overrideWithValue(true),
         storeServiceProvider.overrideWithValue(store),
         overrideConnections((ref) => FakeConnections(ref, share)),
-        isHorizonOsProvider.overrideWith((ref) async => false),
+        isHorizonOsProvider.overrideWith((ref) async => horizonOs),
         networkMediaServiceProvider.overrideWith((ref) => detection ?? _NoDetection()),
+        if (appConfig != null) appConfigProvider.overrideWithValue(appConfig),
       ],
     );
-    unawaited(router.push(NetworkPhotoRoute(sourceId: 'nas', path: '/a.jpg')));
+    unawaited(router.push(NetworkPhotoRoute(sourceId: 'nas', path: path)));
     for (var i = 0; i < 10; i++) {
       await tester.pump(const Duration(milliseconds: 50));
     }
@@ -287,5 +299,50 @@ void main() {
       expect(turnsOnScreen(tester), 0, reason: '$info');
     }
     expect(store.tryGet(StoreKey.viewRotations), isNull);
+  });
+
+  testWidgets('a photo named like a 3D one turns off a Meta Quest, and on one with "3D by file name" off', (
+    tester,
+  ) async {
+    share.files['/street_TB.jpg'] = fakePhoto();
+    share.folders['/'] = [share.file('/a.jpg'), share.file('/street_TB.jpg')];
+    final rotate = find.byKey(const Key('network_photo_rotate'));
+    final view3d = find.byKey(const Key('apple_spatial_view_3d'));
+    Future<void> open({bool horizonOs = false, AppConfig? appConfig}) async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpPhoto(
+        tester,
+        path: '/street_TB.jpg',
+        horizonOs: horizonOs,
+        appConfig: appConfig,
+        detection: _Detection(const NetworkMediaInfo()),
+      );
+    }
+
+    // A phone, a TV or a computer: an ordinary photo, which turns and keeps its turn
+    await open();
+    expect(rotate, findsOneWidget);
+    expect(view3d, findsNothing);
+    await press(tester, LogicalKeyboardKey.keyR);
+    expect(turnsOnScreen(tester), 1);
+    await open();
+    expect(turnsOnScreen(tester), 1, reason: 'kept on the device for that file');
+
+    // A Meta Quest with the switch off: the same, the turn kept applies
+    const off = AppConfig(viewer: ViewerConfig(flat3dByName: false));
+    await open(horizonOs: true, appConfig: off);
+    expect(rotate, findsOneWidget);
+    expect(view3d, findsNothing);
+    expect(turnsOnScreen(tester), 1);
+    await pressColour(tester, LogicalKeyboardKey.colorF2Yellow);
+    expect(turnsOnScreen(tester), 2);
+
+    // A Meta Quest with the switch on, as it comes: "View in 3D", the eyes stay where they are
+    await open(horizonOs: true, appConfig: const AppConfig());
+    expect(view3d, findsOneWidget);
+    expect(rotate, findsNothing);
+    expect(turnsOnScreen(tester), 0);
+    await press(tester, LogicalKeyboardKey.keyR);
+    expect(turnsOnScreen(tester), 0);
   });
 }

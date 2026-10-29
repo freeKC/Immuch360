@@ -213,10 +213,14 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     return KeyEventResult.ignored;
   }
 
+  /// Whether the page offers "View in 3D" for a photo whose name says it holds two eyes one above the other: on a Meta
+  /// Quest with "3D by file name (experimental)" on, set by [build]. Anywhere else such a photo is an ordinary one.
+  bool _flat3dByName = false;
+
   /// Whether the photo turns with the one-key rotation: once its file was read, when it is neither 360° nor a stereo
-  /// pair nor two eyes side by side nor two eyes one above the other by its name (see stackedPhotoFormatOf) nor the
-  /// raw file of a 360° camera nor the preview of a 3D scene. Those keep their views, which turn the camera rather than
-  /// the picture, or hold their eyes or their scene where they are.
+  /// pair nor two eyes side by side nor two eyes one above the other by its name where the page offers them in 3D (see
+  /// [_stackedFormat]) nor the raw file of a 360° camera nor the preview of a 3D scene. Those keep their views, which
+  /// turn the camera rather than the picture, or hold their eyes or their scene where they are.
   bool get _canRotate {
     final info = _info;
     return info != null &&
@@ -226,15 +230,20 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         info.scene == null &&
         info.rawKind == null &&
         !isRawPhotoName(_name) &&
-        stackedPhotoFormatOf(_name) == null;
+        _stackedFormat == null;
   }
 
-  /// How the photo packs its eyes when its name says they are one above the other (see stackedPhotoFormatOf), once its
-  /// file was read and found neither 360° nor holding a stereo pair, two eyes side by side or a 3D scene; null
-  /// otherwise
+  /// How the photo packs its eyes when its name says they are one above the other (see stackedPhotoFormatOf), on a
+  /// Meta Quest with the switch on ([_flat3dByName]), once its file was read and found neither 360° nor holding a
+  /// stereo pair, two eyes side by side or a 3D scene; null otherwise
   FlatStereoFormat? get _stackedFormat {
     final info = _info;
-    if (info == null || info.is360 || info.stereoPair != null || info.stereoPhoto != null || info.scene != null) {
+    if (!_flat3dByName ||
+        info == null ||
+        info.is360 ||
+        info.stereoPair != null ||
+        info.stereoPhoto != null ||
+        info.scene != null) {
       return null;
     }
     return stackedPhotoFormatOf(_name);
@@ -516,6 +525,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
     // Down and Back go back to it.
     _rootFocus.skipTraversal = _appBarFocus.hasFocus;
+    // The flat 3D media told by their file name, experimental and on by default (Settings, Advanced), on a Meta Quest
+    // only: read before the rotation, which leaves such a photo alone there
+    _flat3dByName = isHorizonOs && ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     // Watched here, in the build of this page: the photo is known once the file was read, which rebuilds the page
     final current = _current;
     final turns = current == null ? 0 : _turnsOf(current);
@@ -525,8 +537,6 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final reliefMode = reliefGate.visible
         ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode))
         : ReliefViewMode.stereo;
-    // The flat 3D media told by their file name, experimental and on by default (Settings, Advanced)
-    final flat3dByName = isHorizonOs && ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -537,7 +547,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         final stereoPhoto = isHorizonOs && stereoPair == null ? _info?.stereoPhoto : null;
         final sbsRequest = stereoPhoto?.request;
         // Two eyes one above the other by the file name (_TB, _OU, _HTB...): "View in 3D" too
-        final stackedFormat = flat3dByName ? _stackedFormat : null;
+        final stackedFormat = _stackedFormat;
         // The newest 3D photo a computer saved next to this photo; the other kinds have their own entries
         final version = isHorizonOs ? _versions?.where((found) => found.photo != null).firstOrNull : null;
         final versionRequest = version?.photo?.request;

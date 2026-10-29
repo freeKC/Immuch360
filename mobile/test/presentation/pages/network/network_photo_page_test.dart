@@ -516,7 +516,9 @@ void main() {
       await endRealIo(tester);
     });
 
-    testWidgets('with the experimental switch off, a photo named top and bottom has no "View in 3D"', (tester) async {
+    testWidgets('with the experimental switch off, a photo named top and bottom has no "View in 3D", and turns', (
+      tester,
+    ) async {
       final immersiveApi = _RecordingImmersiveApi();
       share.files['/street_TB.jpg'] = jpegFile(width: 4000, height: 6000);
       await pumpPhotoPage(
@@ -528,6 +530,7 @@ void main() {
       await settleDetection(tester);
 
       expect(view3dButton, findsNothing);
+      expect(find.byKey(const Key('network_photo_rotate')), findsOneWidget, reason: 'an ordinary photo, as before');
 
       await endRealIo(tester);
     });
@@ -886,6 +889,24 @@ void main() {
       await pumpRealIo(tester, () => find.byKey(const Key('apple_spatial_view_3d')).evaluate().isNotEmpty);
 
       expect(reliefButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('for a photo named top and bottom with "3D by file name" off, as for an ordinary one', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/street_TB.jpg'] = jpegFile(width: 4000, height: 6000);
+      await pumpPhotoPage(
+        tester,
+        '/street_TB.jpg',
+        immersiveApi: immersiveApi,
+        appConfig: const AppConfig(viewer: ViewerConfig(flat3dByName: false)),
+        extraOverrides: headset(),
+      );
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      expect(reliefButton, findsOneWidget);
+      expect(find.byKey(const Key('apple_spatial_view_3d')), findsNothing);
 
       await endRealIo(tester);
     });
