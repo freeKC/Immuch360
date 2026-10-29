@@ -4,7 +4,8 @@
 // the menu of the whole selection with "Upload to Immich" first, which sends every photo of the selection; "N selected"
 // in the bar; Command on macOS. The assets an album holds already are never taken, and a right click on the page that
 // picks them adds. What the user does while Control A loads wins once it ends; a Shift click finds its anchor again
-// after photos arrived above it. A phone, and the remote control layout on a computer, keep the timeline as it was.
+// after photos arrived above it. A phone, the read only mode and the remote control layout on a computer keep the
+// timeline as it was.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -501,6 +502,22 @@ void main() {
         reason: 'as the sheet of the locked folder',
       );
       expect(find.byType(DesktopMakeImmersiveButton), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the read only mode selects nothing with the keys and the mouse', (tester) async {
+      final router = await pumpTimeline(tester, assets: photos(30), readOnly: true);
+
+      await rightClick(tester, tile(1));
+      await settle(tester);
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await settle(tester);
+      expect(selected(tester), isEmpty);
+      expect(find.byKey(const Key('desktop_selection_select_all')), findsNothing);
+
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], 1);
+      expect(router.current.name, AssetViewerRoute.name, reason: 'Control click opens, as a click');
+      expect(selected(tester), isEmpty);
       debugDefaultTargetPlatformOverride = null;
     });
 
