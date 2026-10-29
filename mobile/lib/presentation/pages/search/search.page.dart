@@ -353,7 +353,8 @@ class SearchPage extends HookConsumerWidget {
         dateRange = DateTimeRange(start: dateRange.start, end: lastDate);
       }
 
-      final date = ref.read(tvModeProvider)
+      final tv = ref.read(tvModeProvider);
+      final date = tv
           ? await showTvSearchDateRangePicker(
               context: context,
               firstDate: firstDate,
@@ -378,9 +379,12 @@ class SearchPage extends HookConsumerWidget {
               keyboardType: TextInputType.text,
             );
 
-      // Cancel/Back leaves the previous date filter intact.
       if (date != null) {
         datePicked(CustomDateFilter.fromRange(date));
+      } else if (!tv) {
+        // Cancel clears the date filter on a phone, as in Immich. On a TV, Cancel or Back keeps the one there was: a
+        // key pressed by mistake on the remote should not cost the filter
+        datePicked(null);
       }
     }
 
