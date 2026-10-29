@@ -149,6 +149,26 @@ void main() {
     expect(result, isNull);
   });
 
+  // 960 x 540 dp less the overscan margins of TvShell and the margins of a dialog: 390 dp for the content
+  for (final (locale, error) in [
+    (null, 'Start date must be on or before end date'),
+    (const Locale('fr'), 'La date de début doit être antérieure ou égale à la date de fin'),
+  ]) {
+    testWidgets('on the screen of a TV the dialog holds without scrolling, its error line shown (${locale ?? 'en'})', (
+      tester,
+    ) async {
+      await openRange(tester, locale: locale);
+      await choose(tester, 'end_year', '2023');
+      expect(find.text(error), findsOneWidget);
+
+      final body = tester.state<ScrollableState>(
+        find.descendant(of: find.byKey(const Key('tv_date_range_body')), matching: find.byType(Scrollable)),
+      );
+      expect(body.position.maxScrollExtent, 0, reason: 'Cancel and Select in view without a move');
+      expect(find.byKey(const Key('tv_date_range_apply')).hitTestable(), findsOneWidget);
+    });
+  }
+
   testWidgets('the dialog speaks the language of the app', (tester) async {
     await openRange(tester, locale: const Locale('fr'));
 
