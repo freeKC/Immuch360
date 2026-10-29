@@ -119,8 +119,9 @@ class _ImmersiveApi extends ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
-    bool reverseThumbstickTurn,
-  ) async {
+    bool reverseThumbstickTurn, {
+    String? kiosk,
+  }) async {
     openingIds.add(openingId);
     final failure = this.failure;
     if (failure != null) {

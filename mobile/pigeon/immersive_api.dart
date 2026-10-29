@@ -42,7 +42,10 @@ abstract class ImmersiveApi {
   /// 18-design-build19-sources-and-spatial.md section 5.6): the viewer then shows both eyes on a flat quad in front of
   /// the user instead of a sphere. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting: false, the right
   /// thumbstick turns the view the way it is pushed, as in most headset apps; true, the other way. Previous and next
-  /// keep the value of the opening.
+  /// keep the value of the opening. [kiosk] is null, or the JSON of the kiosk mode (Settings, Advanced, "Kiosk mode",
+  /// lot quest-kiosk): `{"endText": ..., "exitHint": ...}` in the language of the app; the viewer then plays the media
+  /// for visitors, restarting a film each time the headset is put on, with no panel, no hands and no pointer, and only
+  /// B or Y held one second leaves (see KioskSession).
   void open(
     String url,
     Map<String, String> headers,
@@ -56,8 +59,9 @@ abstract class ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
-    bool reverseThumbstickTurn,
-  );
+    bool reverseThumbstickTurn, {
+    String? kiosk,
+  });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
   /// by [requestId]. Returns false, and shows nothing, when that viewer is gone, closing, or no longer waiting for

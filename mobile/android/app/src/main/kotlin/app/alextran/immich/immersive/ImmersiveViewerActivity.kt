@@ -265,6 +265,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * the other way (see [ImmersiveControls.snapTurnDegrees]). A previous or next media keeps the value of its opening.
      */
     val reverseThumbstickTurn: Boolean = false,
+    /**
+     * The kiosk JSON of the opening (see [KioskOptions]): the media plays for the visitors of an exhibition, see
+     * [KioskSession]. Null for any other opening; a kiosk has no previous or next media.
+     */
+    val kioskJson: String? = null,
   ) {
     /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
@@ -288,6 +293,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
     val isScene: Boolean
       get() = stereoKind is StereoPhotoKind.VolumetricScene
+
+    /** The texts of a kiosk opening, null for any other opening (or a kiosk JSON that does not read). */
+    val kiosk: KioskOptions? by lazy { KioskOptions.parse(kioskJson) }
   }
 
   /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
@@ -4267,6 +4275,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The JSON of the two eyes of an Apple spatial photo, absent for any other media; put by ImmersiveApiImpl.open */
     internal const val EXTRA_STEREO_PAIR = "app.alextran.immich.immersive.STEREO_PAIR"
     private const val EXTRA_REVERSE_THUMBSTICK_TURN = "app.alextran.immich.immersive.REVERSE_THUMBSTICK_TURN"
+    /** The kiosk JSON of a kiosk opening (see [KioskOptions]), absent for any other opening */
+    private const val EXTRA_KIOSK = "app.alextran.immich.immersive.KIOSK"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
@@ -4450,6 +4460,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       fallbackUrl: String?,
       rawProjection: String?,
       reverseThumbstickTurn: Boolean,
+      kiosk: String? = null,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -4466,6 +4477,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           fallbackUrl = fallbackUrl,
           rawProjection = rawProjection,
           reverseThumbstickTurn = reverseThumbstickTurn,
+          kioskJson = kiosk,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -4491,6 +4503,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putString(EXTRA_RAW_PROJECTION, media.rawProjection)
         putString(EXTRA_STEREO_PAIR, media.stereoPairJson)
         putBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, media.reverseThumbstickTurn)
+        putString(EXTRA_KIOSK, media.kioskJson)
       }
     }
 
@@ -4522,6 +4535,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         rawProjection = extras.getString(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() },
         stereoPairJson = extras.getString(EXTRA_STEREO_PAIR)?.takeIf { it.isNotBlank() },
         reverseThumbstickTurn = extras.getBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, false),
+        kioskJson = extras.getString(EXTRA_KIOSK)?.takeIf { it.isNotBlank() },
       )
     }
 

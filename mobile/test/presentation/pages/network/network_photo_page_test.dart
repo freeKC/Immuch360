@@ -73,8 +73,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
-    bool reverseThumbstickTurn,
-  ) async {
+    bool reverseThumbstickTurn, {
+    String? kiosk,
+  }) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
     openingIds.add(openingId);
