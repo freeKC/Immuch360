@@ -89,7 +89,11 @@ void main() {
         ('Trip.Half-SBS.jpg', 1920, 1080, StereoEyes.half),
       ]) {
         expect(stackedPhotoFormatOf(name), isNull, reason: name);
-        expect(decideStereoPhoto(name: name, width: width, height: height)?.eyes, eyes, reason: name);
+        expect(
+          decideStereoPhoto(name: name, width: width, height: height)?.eyes,
+          eyes,
+          reason: name,
+        );
       }
     });
 
