@@ -363,8 +363,10 @@ void main() {
   });
 
   test('while the panoramas are held back, the card is looked at first, refused or named for the settings', () async {
-    Future<AiGateResult> held(GpuReport report) =>
-        gate(FakeGpuProbe.of(report), heldGroups: const {AiFeatureGroup.panoramas}).evaluate(feature: AiFeature.panorama);
+    Future<AiGateResult> held(GpuReport report) => gate(
+      FakeGpuProbe.of(report),
+      heldGroups: const {AiFeatureGroup.panoramas},
+    ).evaluate(feature: AiFeature.panorama);
 
     final passes = await held(FakeGpuReports.rtx4060);
     expect(passes.reason, AiGateReason.notInThisVersion);

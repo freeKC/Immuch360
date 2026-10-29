@@ -7,8 +7,8 @@
 // panorama by P1 (DesktopStereoPanoramaEngine, the depth model of phase 1 behind the gate of the feature
 // stereoPanorama), the 360° panorama by P3 (DesktopPanoramaEngine: stable-diffusion.cpp on the graphics card the gate
 // found, MoGe-2 and MI-GAN, behind the gate of the feature panorama; the dialog of lot U3 offers it since the hold of
-// the panoramas was lifted). Until a lot registers its kind, this build does not make it (ConversionTools.supports), and
-// the tests give the fakes. The times of the steps are kept in desktop_ai.json for the time left of the jobs.
+// the panoramas was lifted). Until a lot registers its kind, this build does not make it (ConversionTools.supports),
+// and the tests give the fakes. The times of the steps are kept in desktop_ai.json for the time left of the jobs.
 //
 // The programs the engines start (sd-cli) belong to one AiProcessSession of the app, opened at the first job that
 // starts one: the programs an earlier session left running are stopped then, once (managed_process.dart).

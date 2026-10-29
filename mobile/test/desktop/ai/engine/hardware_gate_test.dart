@@ -107,7 +107,7 @@ void main() {
       expect(result.files.keys, unorderedEquals([onnxRuntimeWindowsComponent.id, depthModelOnnxComponent.id]));
     });
 
-    test('a 360° panorama: not yet on Mac; offered on Windows, its engine asked for first; refused while held', () async {
+    test('a 360° panorama: not yet on Mac; offered on Windows, its engine first; refused while held', () async {
       final mac = await gate(abi: Abi.macosArm64).evaluate(feature: AiFeature.panorama);
       final windows = await gate(
         abi: Abi.windowsX64,
