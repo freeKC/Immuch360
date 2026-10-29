@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -17,6 +18,7 @@ import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -105,6 +107,8 @@ void main() {
             readonlyModeProvider.overrideWith(_NotReadOnly.new),
             localSessionProvider.overrideWith(_WithoutServer.new),
             hapticFeedbackProvider.overrideWith(_NoHaptics.new),
+            // No kiosk media chosen: the shell starts as usual (see startKiosk)
+            appConfigProvider.overrideWithValue(const AppConfig()),
           ],
           child: Builder(
             builder: (context) => MaterialApp.router(

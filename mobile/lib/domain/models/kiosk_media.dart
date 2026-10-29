@@ -24,8 +24,13 @@ sealed class KioskMedia {
   );
 
   /// [file], a 360° file of a network share the app read (see NetworkPanoramaFile)
-  factory KioskMedia.shareFile(NetworkPanoramaFile file) =>
-      KioskShareFile(sourceId: file.sourceId, path: file.path, name: file.entry.name, isVideo: file.isVideo);
+  factory KioskMedia.shareFile(NetworkPanoramaFile file) => KioskShareFile(
+    sourceId: file.sourceId,
+    path: file.path,
+    name: file.entry.name,
+    isVideo: file.isVideo,
+    size: file.size,
+  );
 
   final String name;
   final bool isVideo;
@@ -70,7 +75,14 @@ sealed class KioskMedia {
         if (sourceId is! String || sourceId.isEmpty || path is! String || !path.startsWith('/')) {
           return null;
         }
-        return KioskShareFile(sourceId: sourceId, path: path, name: name, isVideo: isVideo);
+        final size = decoded['size'];
+        return KioskShareFile(
+          sourceId: sourceId,
+          path: path,
+          name: name,
+          isVideo: isVideo,
+          size: size is int ? size : null,
+        );
       default:
         return null;
     }
@@ -108,14 +120,23 @@ final class KioskAssetMedia extends KioskMedia {
   String toString() => 'KioskAssetMedia(remote: $remoteId, local: $localId, $name, video: $isVideo)';
 }
 
-/// A file of a network share, at [path] of the share [sourceId]
+/// A file of a network share, at [path] of the share [sourceId], of [size] bytes when the listing gave it (the reading
+/// of a photo looks for its GPano tags at its end too)
 final class KioskShareFile extends KioskMedia {
-  const KioskShareFile({required this.sourceId, required this.path, required super.name, required super.isVideo});
+  const KioskShareFile({
+    required this.sourceId,
+    required this.path,
+    required super.name,
+    required super.isVideo,
+    this.size,
+  });
 
   final String sourceId;
 
   /// Absolute inside the share, "/" separated, starting with "/"
   final String path;
+
+  final int? size;
 
   @override
   Map<String, Object?> toJson() => {
@@ -124,6 +145,7 @@ final class KioskShareFile extends KioskMedia {
     'path': path,
     'name': name,
     'isVideo': isVideo,
+    'size': ?size,
   };
 
   @override
@@ -132,10 +154,11 @@ final class KioskShareFile extends KioskMedia {
       other.sourceId == sourceId &&
       other.path == path &&
       other.name == name &&
-      other.isVideo == isVideo;
+      other.isVideo == isVideo &&
+      other.size == size;
 
   @override
-  int get hashCode => Object.hash(sourceId, path, name, isVideo);
+  int get hashCode => Object.hash(sourceId, path, name, isVideo, size);
 
   @override
   String toString() => 'KioskShareFile($sourceId, $path, video: $isVideo)';

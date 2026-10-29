@@ -71,6 +71,7 @@ void main() {
       expect(share.path, '/Expo/salle 2/visite.mp4');
       expect(share.name, 'visite.mp4');
       expect(share.isVideo, isTrue);
+      expect(share.size, 42);
       expect(KioskMedia.decode(media.encode()), media);
     });
 
