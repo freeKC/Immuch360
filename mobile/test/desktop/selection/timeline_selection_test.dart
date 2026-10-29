@@ -10,6 +10,7 @@ import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -198,6 +199,23 @@ void main() {
       expect(selected(tester), {'p1'});
       await clickWith(tester, [LogicalKeyboardKey.shiftLeft], 4);
       expect(selected(tester), {'p1', 'p2', 'p3', 'p4'});
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a long press then a drag still selects the photos dragged over, beside the right click', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, assets: photos(30));
+
+      final gesture = await tester.startGesture(tester.getCenter(tile(1)), kind: PointerDeviceKind.mouse);
+      await tester.pump(kLongPressTimeout + const Duration(milliseconds: 100));
+      await gesture.moveTo(tester.getCenter(tile(2)));
+      await tester.pump();
+      await gesture.moveTo(tester.getCenter(tile(3)));
+      await tester.pump();
+      await gesture.up();
+      await settle(tester);
+      expect(selected(tester), {'p1', 'p2', 'p3'});
       debugDefaultTargetPlatformOverride = null;
     });
 
