@@ -482,6 +482,8 @@ void main() {
       await settle(tester);
       expect(selected(tester), {'p1'});
       expect(find.byKey(const Key('desktop_selection_select_all')), findsOneWidget);
+      expect(find.text(t.select_all), findsOneWidget);
+      expect(find.text(t.unselect_all), findsOneWidget, reason: '"Select all" then "Unselect all", alike');
       expect(
         find.byKey(const Key('desktop_selection_share')),
         findsNothing,
