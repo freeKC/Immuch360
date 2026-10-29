@@ -108,4 +108,12 @@ class FlatStereoTest {
     // Nothing to decode
     assertEquals(1, FlatStereoPhoto.sampleSize(FlatFormat.TB, 0, 0))
   }
+
+  @Test
+  fun `a photo halved one row or one column short of the eye it shows is decoded whole`() {
+    // Two 5120 x 2881 eyes shown 2560 x 1441: halved, 1440 rows, one short
+    assertEquals(1, FlatStereoPhoto.sampleSize(FlatFormat.SBS, 10240, 2881))
+    // Two 5119 x 8176 eyes shown 2560 x 4088: halved, 2559 columns of the eye, one short, whatever the frame width
+    assertEquals(1, FlatStereoPhoto.sampleSize(FlatFormat.SBS, 10238, 2 * StereoHeicDecoder.MAX_EYE_HEIGHT))
+  }
 }
