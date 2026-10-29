@@ -90,7 +90,6 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_component_download
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
-import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
@@ -829,12 +828,6 @@ class DesktopMakeImmersiveButton extends ConsumerWidget {
     return refusal == null ? button : Tooltip(key: const Key('ai_make_3d_refused'), message: refusal, child: button);
   }
 }
-
-/// The [actions] of the bottom sheet of a selection, with "Make 3D (AI)" on a computer
-List<Widget> withDesktopSelectionActions(List<Widget> actions) => [
-  ...actions,
-  if (CurrentPlatform.isDesktop) const DesktopMakeImmersiveButton(source: ActionSource.timeline),
-];
 
 /// Opens the conversion dialog for [assets], on the type [kind] when it takes one of them ("Make the 3D version" of a
 /// panorama); once photos were handed to the queue, the panel of the conversions shows and the selection ends

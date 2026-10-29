@@ -3,7 +3,8 @@
 // details, and the mobile data and charging options of the backup, replaced by a line saying that the backup runs
 // while the app is open. The phones keep every one of them. The settings list and the OAuth line are tested with their
 // pages (settings_page_test.dart, login_form_tv_test.dart). The other way round, "Make 3D (AI)" and the button of its
-// conversions are on the computers only, and never in the locked folder nor in the trash.
+// conversions are on the computers only, and never in the locked folder nor in the trash; "Upload to Immich" leads the
+// selection sheets there.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,12 +16,18 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_bar_button.dart';
+import 'package:immich_mobile/desktop/selection/selection_actions.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/memory.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/presentation/actions/action.widget.dart';
+import 'package:immich_mobile/presentation/actions/asset_debug.action.dart';
+import 'package:immich_mobile/presentation/actions/delete.action.dart';
+import 'package:immich_mobile/presentation/actions/share.action.dart';
+import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/pages/library.page.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
@@ -108,6 +115,30 @@ void main() {
       expect(actions, hasLength(computer ? 2 : 1), reason: platform.name);
     }
   });
+
+  test(
+    '"Upload to Immich" comes first in the selection sheets of the computers, where the phones keep their order',
+    () {
+      const actions = <ActionColumnButton>[
+        ActionColumnButton(action: AssetDebugAction(source: ActionSource.timeline)),
+        ActionColumnButton(action: ShareAction(source: ActionSource.timeline)),
+        ActionColumnButton(action: CleanupLocalAction(source: ActionSource.timeline)),
+        ActionColumnButton(action: UploadAction(source: ActionSource.timeline)),
+      ];
+      String nameOf(Widget widget) =>
+          widget is ActionColumnButton ? widget.action.runtimeType.toString() : widget.runtimeType.toString();
+      for (final platform in TargetPlatform.values) {
+        debugDefaultTargetPlatformOverride = platform;
+        expect(
+          withDesktopSelectionActions(actions).map(nameOf),
+          _desktops.contains(platform)
+              ? ['UploadAction', 'AssetDebugAction', 'ShareAction', 'CleanupLocalAction', 'DesktopMakeImmersiveButton']
+              : ['AssetDebugAction', 'ShareAction', 'CleanupLocalAction', 'UploadAction'],
+          reason: platform.name,
+        );
+      }
+    },
+  );
 
   test('"Make 3D (AI)" is never offered in the locked folder, where nothing takes a photo out, nor in the trash', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
-import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/selection/selection_actions.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
@@ -79,7 +79,7 @@ class _GeneralBottomSheetState extends ConsumerState<GeneralBottomSheet> {
       minChildSize: widget.minChildSize,
       maxChildSize: 0.85,
       shouldCloseOnMinExtent: false,
-      // Immuch360 Desktop adds "Make 3D (AI)" of the photos of the selection (lib/desktop/ai/ui)
+      // Immuch360 Desktop puts "Upload to Immich" first and adds "Make 3D (AI)" (lib/desktop/selection)
       actions: withDesktopSelectionActions(const <ActionColumnButton>[
         .new(action: AssetDebugAction(source: .timeline)),
         .new(action: ShareAction(source: .timeline)),
