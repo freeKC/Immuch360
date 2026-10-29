@@ -36,17 +36,22 @@ ALL_KINDS = KINDS + ('universal', 'aab')
 # release that adds a known weight, never for the release after it.
 ONE_TIME_KIND_THRESHOLDS = {
     # 29 October 2026, for Android build 32, the release of the AI immersive features (phases 1 to 3), compared with
-    # release 31, whose Quest APK is 144,411,843 bytes. The Quest APK of feat-ai-immersive at 8e50a3a1d measures
-    # 155,878,518 bytes, +7.94 % (CI run 40783336966, same tree). Its steps: the AI relief and the 3D scenes,
-    # 154,502,078 bytes, +6.99 %, of which LiteRT 2.3.0 is about 9.4 MB of native libraries in the Quest APK alone
-    # (design-final 2026-10-26, section 3.10, the reason for the 7 % first planned); the panoramas, 65,720 bytes
-    # more, a step of 64 KiB that phase23/lots/integration-vague-5.md puts down to an alignment boundary crossed by
-    # the small changes of the Dart code shared by the phones and the Quest (not verified there), which left the APK
-    # 47,126 bytes over 7 %; then the 257 texts of the features in 88 languages, compiled into the Dart code, 1,310,720
-    # bytes more. 8.5 % stops at 156,686,849 bytes and leaves about 0.8 MB for the fixes of the headset tests. The
-    # other kinds keep the ordinary threshold. Once build 32 is published, the next release compares with it and this
-    # entry no longer applies.
-    'v3.3.0-rc.0-31': {'quest': 8.5},
+    # release 31. The packages of feat-ai-immersive at 8e50a3a1d (CI run 40783336966, same tree; the same to the byte at
+    # 852935654, run 40788776138), against release 31:
+    #   The Quest APK, 155,878,518 bytes against 144,411,843, +7.94 %: the AI relief and the 3D scenes first, +6.99 %,
+    #   of which LiteRT 2.3.0 is about 9.4 MB of native libraries in the Quest APK alone (design-final 2026-10-26,
+    #   section 3.10, the reason for the 7 % first planned); the panoramas next, 65,720 bytes more, a step of 64 KiB
+    #   that phase23/lots/integration-vague-5.md puts down to an alignment boundary crossed by the small changes of the
+    #   Dart code shared by the phones and the Quest (not verified there), 47,126 bytes over 7 %; then the texts below,
+    #   1,310,720 bytes more.
+    #   The phone packages, each under 1 % at 0c066ba38 (+0.32 to +0.61 %), then over it: the 257 AI texts in 88
+    #   languages, compiled into libapp.so by CodegenLoader, add 1.25 MiB to the library of each ABI (1,310,720 bytes;
+    #   1,605,632 for armeabi-v7a), so the AAB 231,967,368 bytes (+2.88 %), armeabi-v7a 86,562,924 (+2.49 %), x86_64
+    #   92,618,497 (+1.95 %), the universal APK 291,538,887 (+1.93 %, its three libraries) and arm64-v8a 146,183,068
+    #   (+1.23 %).
+    # Each threshold leaves at least half a point for the fixes of the headset tests. Once build 32 is published, the
+    # next release compares with it, this entry no longer applies, and every kind is back to the ordinary threshold.
+    'v3.3.0-rc.0-31': {'quest': 8.5, 'aab': 3.5, 'armeabi-v7a': 3, 'universal': 2.5, 'x86_64': 2.5, 'arm64-v8a': 2},
 }
 
 
