@@ -503,7 +503,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var kioskOpeningId: Long? = null
   /** Hands, controllers and the pointer are hidden, see [applyKioskPresentation]. */
   private var kioskPresentation = false
-  /** The panel of the exit notice, the end card and the error card, hidden otherwise. */
+  /**
+   * The panel of the exit notice, the end card and the error card, hidden otherwise. Made at the first kiosk opening
+   * of this viewer ([ensureKioskPanel]): no panel, layout nor texture for the other openings.
+   */
   private var kioskPanelEntity: Entity? = null
   private var kioskPanelView: View? = null
   private var kioskTextView: TextView? = null
@@ -751,12 +754,6 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           Transform(Pose(Vector3(0f, 1.1f - FEEDBACK_DROP, FEEDBACK_DISTANCE), Quaternion(0f, 0f, 0f))),
           Visible(false),
         )
-      kioskPanelEntity =
-        Entity.createPanelEntity(
-          R.id.immersive_kiosk_panel,
-          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, KIOSK_DISTANCE), Quaternion(0f, 0f, 0f))),
-          Visible(false),
-        )
       systemManager.registerSystem(ImmersiveInputSystem(this))
       sceneReady = true
       showRequest()
@@ -792,7 +789,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         },
         panelSetupWithRootView = { rootView, _, _ -> bindFeedbackPanel(rootView) },
       ),
-      // The kiosk notice and cards: a few lines, at the same 1 m for 720 dp as the info panel
+      // The kiosk notice and cards: a few lines, at the same 1 m for 720 dp as the info panel. Its entity, hence its
+      // layout and its texture, comes with the first kiosk opening only (ensureKioskPanel)
       LayoutXMLPanelRegistration(
         R.id.immersive_kiosk_panel,
         layoutIdCreator = { R.layout.immersive_kiosk_panel },
@@ -1260,10 +1258,27 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val session = KioskSession(media.isVideo)
       kiosk = session
       kioskOpeningId = media.openingId
+      ensureKioskPanel()
       hideKioskPanel()
       runKiosk(session.start())
     }
     applyKioskPresentation(kiosk != null)
+  }
+
+  /**
+   * Makes the kiosk panel, hidden, at the first kiosk opening of this viewer (syncKiosk runs once the scene is ready).
+   * Its layout is inflated and bound ([bindKioskPanel]) when the panel system meets the new entity; the text asked for
+   * before that is kept in [kioskText].
+   */
+  private fun ensureKioskPanel() {
+    if (kioskPanelEntity != null) return
+    kioskPanelEntity =
+      Entity.createPanelEntity(
+        R.id.immersive_kiosk_panel,
+        Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, KIOSK_DISTANCE), Quaternion(0f, 0f, 0f))),
+        Visible(false),
+      )
+    Log.i(TAG, "kiosk: panel made")
   }
 
   /**
