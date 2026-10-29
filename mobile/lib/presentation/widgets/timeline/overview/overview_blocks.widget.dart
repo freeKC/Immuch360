@@ -326,8 +326,9 @@ class OverviewThumbnail extends StatelessWidget {
   }
 }
 
-/// Builds with the [count] assets of the timeline from [index] once [loader] has them, null until then. Nothing is
-/// asked while the timeline scrolls fast; a block that leaves the screen drops its request.
+/// Builds with the [count] assets of the timeline from [index] once [loader] has them, null until then; when the buckets
+/// change, the previous ones until the new ones come (a sync adds photos often). Nothing is asked while the timeline
+/// scrolls fast; a block that leaves the screen drops its request.
 class OverviewAssets extends ConsumerStatefulWidget {
   const OverviewAssets({
     super.key,
@@ -347,15 +348,24 @@ class OverviewAssets extends ConsumerStatefulWidget {
 }
 
 class _OverviewAssetsState extends ConsumerState<OverviewAssets> {
+  /// The assets shown, maybe of a previous read while a new one is under way
   List<BaseAsset>? _assets;
+
+  /// Whether [_assets] are those of the current range and buckets
+  bool _fresh = false;
+
   OverviewAssetRequest? _request;
   int? _generation;
 
   @override
   void didUpdateWidget(covariant OverviewAssets oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index || oldWidget.count != widget.count || oldWidget.loader != widget.loader) {
-      _forget();
+    if (oldWidget.loader != widget.loader) {
+      _stale();
+      _assets = null;
+    } else if (oldWidget.index != widget.index || oldWidget.count != widget.count) {
+      // The same month whose assets moved (a photo added above it, or to it): its pictures stay until the new ones come
+      _stale();
     }
   }
 
@@ -365,15 +375,19 @@ class _OverviewAssetsState extends ConsumerState<OverviewAssets> {
     super.dispose();
   }
 
-  void _forget() {
+  void _stale() {
     _request?.cancel();
     _request = null;
-    _assets = null;
+    _fresh = false;
   }
 
   void _onLoaded(List<BaseAsset> assets) {
     if (mounted) {
-      setState(() => _assets = assets);
+      setState(() {
+        _assets = assets;
+        _fresh = true;
+        _request = null;
+      });
     }
   }
 
@@ -381,16 +395,22 @@ class _OverviewAssetsState extends ConsumerState<OverviewAssets> {
   Widget build(BuildContext context) {
     final loader = widget.loader;
     if (_generation != loader.generation) {
-      // The buckets changed since: the indexes point at other assets
-      _forget();
+      // The buckets changed since: the indexes may point at other assets, read again
+      _stale();
       _generation = loader.generation;
     }
-    final assets = _assets ?? (widget.count <= 0 ? const <BaseAsset>[] : loader.cached(widget.index, widget.count));
-    if (assets == null &&
+    if (!_fresh) {
+      final cached = widget.count <= 0 ? const <BaseAsset>[] : loader.cached(widget.index, widget.count);
+      if (cached != null) {
+        _assets = cached;
+        _fresh = true;
+      }
+    }
+    if (!_fresh &&
         _request == null &&
         !ref.watch(timelineStateProvider.select((state) => state.recommendDeferredLoading))) {
       _request = loader.request(widget.index, widget.count, _onLoaded);
     }
-    return widget.builder(context, assets);
+    return widget.builder(context, _assets);
   }
 }
