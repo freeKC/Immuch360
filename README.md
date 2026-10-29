@@ -2,7 +2,7 @@
 <p align="center"><sub><b>Translations:</b> this English README is the reference, and the translated versions, in the <code>readme_i18n</code> folder, are regenerated from it at each release.</sub></p>
 
 <p align="center">
-  <img src=".github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. New: turn your photos into 3D photos, 3D scenes and 360° panoramas. Made by AI on your own computer. Your photos never leave it. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration, not a capture: at dusk in front of a sea bay, the same room four times, as a flat photo on a phone, in floating layers in front of a white headset, as a scene on a laptop and unrolled on a curved band like a panorama, linked by arcs of light">
+  <img src=".github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
