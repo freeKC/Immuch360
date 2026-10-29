@@ -53,6 +53,8 @@ class SearchPage extends HookConsumerWidget {
       serverFeatures.smartSearch ? context.t.sunrise_on_the_beach : context.t.file_name_or_extension,
     );
     final textSearchController = useTextEditingController();
+    // The search entry of a TV, which opens its keyboard: the text field itself never takes the focus there
+    final tvSearchEntryFocus = useFocusNode(debugLabel: 'TV search entry');
     final emptyFilter = SearchFilter(
       people: {},
       location: const SearchLocationFilter(),
@@ -109,7 +111,11 @@ class SearchPage extends HookConsumerWidget {
       displayOptionCurrentFilterWidget.value = null;
       ref.read(searchPreFilterProvider.notifier).clear();
       search(emptyFilter);
-      ref.read(searchInputFocusProvider).requestFocus();
+      if (ref.read(tvModeProvider)) {
+        tvSearchEntryFocus.requestFocus();
+      } else {
+        ref.read(searchInputFocusProvider).requestFocus();
+      }
     });
 
     void loadMoreSearchResults() {
@@ -727,6 +733,7 @@ class SearchPage extends HookConsumerWidget {
           child: SearchField(
             hintText: searchHintText.value,
             tvDialogTitle: context.t.search,
+            tvFocusNode: tvSearchEntryFocus,
             key: const Key('search_text_field'),
             controller: textSearchController,
             contentPadding: filter.value.assetId != null ? const EdgeInsets.only(left: 24) : const EdgeInsets.all(8),
