@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,9 @@ class Scrubber extends ConsumerStatefulWidget {
   /// Whether an app bar is present, affects coordinate calculations
   final bool hasAppBar;
 
+  /// The label says the year alone: the timeline shows one block a year
+  final bool yearLabels;
+
   Scrubber({
     super.key,
     required this.layoutSegments,
@@ -47,6 +51,7 @@ class Scrubber extends ConsumerStatefulWidget {
     this.monthSegmentSnappingOffset,
     this.snapToMonth = true,
     this.hasAppBar = true,
+    this.yearLabels = false,
     required this.child,
   }) : assert(child.scrollDirection == Axis.vertical);
 
@@ -54,7 +59,51 @@ class Scrubber extends ConsumerStatefulWidget {
   ConsumerState createState() => ScrubberState();
 }
 
-List<_Segment> _buildSegments({required List<Segment> layoutSegments, required double timelineHeight}) {
+/// The label under the finger: the month and the year ("Oct 2024"), the year alone when the timeline shows years
+@visibleForTesting
+DateFormat scrubberLabelFormat({required bool years}) => years ? DateFormat.y() : DateFormat.yMMM();
+
+/// The thumb slows down once the finger stays still on it ([kScrubberSlowStillDistance]) for [kScrubberSlowHold]
+const kScrubberSlowHold = Duration(milliseconds: 300);
+const kScrubberSlowStillDistance = 4.0;
+
+/// In slow mode the finger moves some [kScrubberSlowDpPerMonth] dp a month, at most [kScrubberMaxSlowFactor] times
+/// slower than the thumb; no slow mode when that is less than [kScrubberMinSlowFactor] times
+const kScrubberSlowDpPerMonth = 16.0;
+const kScrubberMaxSlowFactor = 16.0;
+const kScrubberMinSlowFactor = 2.0;
+
+/// How many times slower the thumb follows the finger in slow mode: the whole library maps to the height of the
+/// scrubber, [monthCount] months in [scrubberHeight] dp (240 months on 600 dp: 2.5 dp a month, a millimetre skips
+/// months); slow, a month takes some 16 dp of finger
+@visibleForTesting
+double scrubberSlowFactor({required int monthCount, required double scrubberHeight}) {
+  if (scrubberHeight <= 0 || monthCount <= 0) {
+    return 1;
+  }
+  return (monthCount * kScrubberSlowDpPerMonth / scrubberHeight).clamp(1.0, kScrubberMaxSlowFactor);
+}
+
+/// Whether the scrubber has a slow mode at [factor]: not for a library that already fits
+@visibleForTesting
+bool scrubberHasSlowMode(double factor) => factor >= kScrubberMinSlowFactor;
+
+/// The position of the thumb in slow mode: from where it was when the mode began ([anchor], the finger then at
+/// [anchorFinger]), the finger's move divided by [factor], kept on the scrubber
+@visibleForTesting
+double scrubberSlowPosition({
+  required double anchor,
+  required double anchorFinger,
+  required double finger,
+  required double factor,
+  required double scrubberHeight,
+}) => (anchor + (finger - anchorFinger) / math.max(1.0, factor)).clamp(0.0, math.max(0.0, scrubberHeight));
+
+List<_Segment> _buildSegments({
+  required List<Segment> layoutSegments,
+  required double timelineHeight,
+  bool yearLabels = false,
+}) {
   const double offsetThreshold = 40.0;
 
   final segments = <_Segment>[];
@@ -62,7 +111,7 @@ List<_Segment> _buildSegments({required List<Segment> layoutSegments, required d
     return [];
   }
 
-  final formatter = DateFormat.yMMM();
+  final formatter = scrubberLabelFormat(years: yearLabels);
   DateTime? lastDate;
   double lastOffset = -offsetThreshold;
   for (final layoutSegment in layoutSegments) {
@@ -98,6 +147,19 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
   late AnimationController _labelAnimationController;
   late Animation<double> _labelAnimation;
 
+  /// The label shows during a fast fling too, until it ends
+  bool _flingLabel = false;
+
+  /// The finger on the thumb, and the slow mode it may start by staying still
+  int? _thumbPointer;
+  double _fingerY = 0;
+  double _stillY = 0;
+  Timer? _slowTimer;
+  bool _slow = false;
+  double _slowAnchor = 0;
+  double _slowAnchorFinger = 0;
+  double? _lastDragPosition;
+
   double get _scrubberHeight => widget.timelineHeight - widget.topPadding - widget.bottomPadding;
 
   late ScrollController _scrollController;
@@ -114,7 +176,11 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
   void initState() {
     super.initState();
     _isDragging = false;
-    _segments = _buildSegments(layoutSegments: widget.layoutSegments, timelineHeight: _scrubberHeight);
+    _segments = _buildSegments(
+      layoutSegments: widget.layoutSegments,
+      timelineHeight: _scrubberHeight,
+      yearLabels: widget.yearLabels,
+    );
     _thumbAnimationController = AnimationController(vsync: this, duration: kTimelineScrubberFadeInDuration);
     _thumbAnimation = CurvedAnimation(parent: _thumbAnimationController, curve: Curves.fastEaseInToSlowEaseOut);
     _labelAnimationController = AnimationController(vsync: this, duration: kTimelineScrubberFadeInDuration);
@@ -133,8 +199,15 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
   void didUpdateWidget(covariant Scrubber oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.layoutSegments.lastOrNull?.endOffset != widget.layoutSegments.lastOrNull?.endOffset) {
-      _segments = _buildSegments(layoutSegments: widget.layoutSegments, timelineHeight: _scrubberHeight);
+    // The months and the years bring other segments, which may end at the same offset by chance
+    if (oldWidget.layoutSegments.lastOrNull?.endOffset != widget.layoutSegments.lastOrNull?.endOffset ||
+        oldWidget.layoutSegments.length != widget.layoutSegments.length ||
+        oldWidget.yearLabels != widget.yearLabels) {
+      _segments = _buildSegments(
+        layoutSegments: widget.layoutSegments,
+        timelineHeight: _scrubberHeight,
+        yearLabels: widget.yearLabels,
+      );
       _monthCount = getMonthCount();
     }
   }
@@ -144,6 +217,7 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
     _thumbAnimationController.dispose();
     _labelAnimationController.dispose();
     _fadeOutTimer?.cancel();
+    _slowTimer?.cancel();
     super.dispose();
   }
 
@@ -174,12 +248,26 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
     setState(() {
       if (notification is ScrollUpdateNotification) {
         _thumbTopOffset = _currentOffset;
-        if (_labelAnimation.status != AnimationStatus.reverse) {
+        // A fast fling shows the label until it ends: where the list is going; a slow scroll by the finger does not
+        final fling =
+            notification.depth == 0 &&
+            _scrollController.hasClients &&
+            _scrollController.position.recommendDeferredLoading(context);
+        if (fling) {
+          _flingLabel = true;
+          if (_labelAnimationController.status != AnimationStatus.forward &&
+              _labelAnimationController.status != AnimationStatus.completed) {
+            unawaited(_labelAnimationController.forward());
+          }
+        } else if (!_flingLabel && _labelAnimation.status != AnimationStatus.reverse) {
           unawaited(_labelAnimationController.reverse());
         }
         if (_thumbAnimationController.status != AnimationStatus.forward) {
           unawaited(_thumbAnimationController.forward());
         }
+      } else if (notification is ScrollEndNotification && _flingLabel) {
+        _flingLabel = false;
+        unawaited(_labelAnimationController.reverse());
       }
       _resetThumbTimer();
     });
@@ -190,9 +278,78 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
   void _onDragStart(DragStartDetails _) {
     setState(() {
       _isDragging = true;
+      _flingLabel = false;
       unawaited(_labelAnimationController.forward());
       _fadeOutTimer?.cancel();
       _lastLabel = null;
+    });
+  }
+
+  double get _slowFactor => scrubberSlowFactor(monthCount: _monthCount, scrubberHeight: _scrubberHeight);
+
+  void _onThumbPointerDown(PointerDownEvent event) {
+    if (_thumbPointer != null) {
+      return;
+    }
+    _thumbPointer = event.pointer;
+    _fingerY = event.position.dy;
+    _stillY = _fingerY;
+    _lastDragPosition = null;
+    _restartSlowTimer();
+  }
+
+  void _onThumbPointerMove(PointerMoveEvent event) {
+    if (event.pointer != _thumbPointer) {
+      return;
+    }
+    _fingerY = event.position.dy;
+    if (!_slow && (_fingerY - _stillY).abs() >= kScrubberSlowStillDistance) {
+      _stillY = _fingerY;
+      _restartSlowTimer();
+    }
+  }
+
+  void _onThumbPointerEnd(PointerEvent event) {
+    if (event.pointer != _thumbPointer) {
+      return;
+    }
+    _thumbPointer = null;
+    _slowTimer?.cancel();
+    final wasSlow = _slow;
+    _slow = false;
+    if (wasSlow && !_isDragging) {
+      // Held still and let go without a drag: the label the slow mode showed goes
+      unawaited(_labelAnimationController.reverse());
+      _resetThumbTimer();
+    }
+    if (wasSlow && mounted) {
+      setState(() {});
+    }
+  }
+
+  void _restartSlowTimer() {
+    _slowTimer?.cancel();
+    if (!scrubberHasSlowMode(_slowFactor)) {
+      return;
+    }
+    _slowTimer = Timer(kScrubberSlowHold, _enterSlowMode);
+  }
+
+  /// The finger stayed still on the thumb: from here the thumb follows it [_slowFactor] times slower, until it lets go
+  void _enterSlowMode() {
+    if (!mounted || _thumbPointer == null || _slow) {
+      return;
+    }
+    ref.read(hapticFeedbackProvider.notifier).mediumImpact();
+    setState(() {
+      _slow = true;
+      _slowAnchor = _lastDragPosition ?? _thumbTopOffset;
+      _slowAnchorFinger = _fingerY;
+      _fadeOutTimer?.cancel();
+      unawaited(_labelAnimationController.forward());
+      if (_thumbAnimationController.status != AnimationStatus.forward) {
+        unawaited(_thumbAnimationController.forward());
+      }
     });
   }
 
@@ -209,7 +366,16 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
       unawaited(_thumbAnimationController.forward());
     }
 
-    final dragPosition = _calculateDragPosition(details);
+    final dragPosition = _slow
+        ? scrubberSlowPosition(
+            anchor: _slowAnchor,
+            anchorFinger: _slowAnchorFinger,
+            finger: details.globalPosition.dy,
+            factor: _slowFactor,
+            scrubberHeight: _scrubberHeight,
+          )
+        : _calculateDragPosition(details);
+    _lastDragPosition = dragPosition;
     final nearestMonthSegment = _findNearestMonthSegment(dragPosition);
 
     if (nearestMonthSegment != null) {
@@ -322,6 +488,7 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
     unawaited(_labelAnimationController.reverse());
     setState(() {
       _isDragging = false;
+      _lastDragPosition = null;
     });
 
     _resetThumbTimer();
@@ -363,11 +530,23 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
               top: _thumbTopOffset + widget.topPadding,
               end: 0,
               child: RepaintBoundary(
-                child: GestureDetector(
-                  onVerticalDragStart: _onDragStart,
-                  onVerticalDragUpdate: _onDragUpdate,
-                  onVerticalDragEnd: _onDragEnd,
-                  child: _Scrubber(thumbAnimation: _thumbAnimation, labelAnimation: _labelAnimation, label: label),
+                // The finger on the thumb, held still or not, for the slow mode
+                child: Listener(
+                  onPointerDown: _onThumbPointerDown,
+                  onPointerMove: _onThumbPointerMove,
+                  onPointerUp: _onThumbPointerEnd,
+                  onPointerCancel: _onThumbPointerEnd,
+                  child: GestureDetector(
+                    onVerticalDragStart: _onDragStart,
+                    onVerticalDragUpdate: _onDragUpdate,
+                    onVerticalDragEnd: _onDragEnd,
+                    child: _Scrubber(
+                      thumbAnimation: _thumbAnimation,
+                      labelAnimation: _labelAnimation,
+                      label: label,
+                      slow: _slow,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -437,8 +616,9 @@ class _ScrollLabel extends StatelessWidget {
   final Text label;
   final Color backgroundColor;
   final Animation<double> animation;
+  final bool slow;
 
-  const _ScrollLabel({required this.label, required this.backgroundColor, required this.animation});
+  const _ScrollLabel({required this.label, required this.backgroundColor, required this.animation, this.slow = false});
 
   @override
   Widget build(BuildContext context) {
@@ -455,7 +635,22 @@ class _ScrollLabel extends StatelessWidget {
               constraints: const BoxConstraints(maxHeight: 28),
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               alignment: Alignment.center,
-              child: label,
+              child: slow
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // The thumb follows the finger slowly
+                        const Icon(
+                          Icons.slow_motion_video_rounded,
+                          key: kScrubberSlowIconKey,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 6),
+                        label,
+                      ],
+                    )
+                  : label,
             ),
           ),
         ),
@@ -464,12 +659,16 @@ class _ScrollLabel extends StatelessWidget {
   }
 }
 
+/// The icon the label shows in slow mode
+const kScrubberSlowIconKey = Key('scrubber_slow_icon');
+
 class _Scrubber extends StatelessWidget {
   final Text? label;
   final Animation<double> thumbAnimation;
   final Animation<double> labelAnimation;
+  final bool slow;
 
-  const _Scrubber({this.label, required this.thumbAnimation, required this.labelAnimation});
+  const _Scrubber({this.label, required this.thumbAnimation, required this.labelAnimation, this.slow = false});
 
   @override
   Widget build(BuildContext context) {
@@ -483,7 +682,8 @@ class _Scrubber extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          if (label != null) _ScrollLabel(label: label!, backgroundColor: backgroundColor, animation: labelAnimation),
+          if (label != null)
+            _ScrollLabel(label: label!, backgroundColor: backgroundColor, animation: labelAnimation, slow: slow),
           _CircularThumb(backgroundColor),
         ],
       ),
