@@ -740,7 +740,7 @@
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d JSON against the samples of flat3d_contract_v1.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoTest.kt": {
-    "blob": "87722c75cba1f7b3e2d601c8fbb18b1ca43091de",
+    "blob": "04740835cc21fb8e15b2e257231aef8d84cb8e52",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the eyes of a flat 3D frame and of the stereo mode of its video layer"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/GeneratedPanoramaTest.kt": {
