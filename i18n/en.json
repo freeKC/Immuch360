@@ -1263,7 +1263,7 @@
   "desktop_secrets_session_only_keyring_refused": "The keyring refused them, so the passwords and other secrets of the app are forgotten when it closes. Unlock the keyring, or install gnome-keyring or KWallet, then restart the app.",
   "desktop_secrets_session_only_no_keyring": "No keyring answered, so the passwords and other secrets of the app are forgotten when it closes. Install gnome-keyring or KWallet to keep them.",
   "desktop_secrets_session_only_title": "Secrets kept for this session only",
-  "desktop_selection_hint": "{modifier}+click adds or takes out, Shift+click adds a range, {modifier}+A selects all, Esc clears",
+  "desktop_selection_hint": "{modifier}+click adds or takes out, Shift+click adds a range, right click opens the actions, {modifier}+A selects all, Esc clears",
   "desktop_spatial_unavailable": "Spatial 2.5D comes to Immuch360 Desktop in a later version",
   "desktop_tapo_live_later": "The live view comes to Immuch360 Desktop in a later version.",
   "desktop_this_computer": "This computer",

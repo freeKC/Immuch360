@@ -294,7 +294,7 @@ abstract final class DesktopSelectionTargets {
 
 /// The grid [child] on a computer, selected in by [selectable]: what the tiles call on a click (see [maybeOf]), the
 /// target of Control A and Escape while it is shown, and the menu of a right click, with the entries of [menu] (built
-/// while the menu shows, with this scope's context, which lives as long as the grid) then Select all and Deselect all.
+/// while the menu shows, with this scope's context, which lives as long as the grid) then Select all and Unselect all.
 /// Nothing of this while not [enabled] (the read only mode, the remote control layout). Control A or a Shift click
 /// still loading after a second shows a bar at the top of the grid and the busy pointer.
 class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
@@ -472,7 +472,7 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
       DesktopSelectionMenuEntry(
         key: const Key('desktop_selection_clear'),
         icon: Icons.deselect_rounded,
-        label: t.deselect_all,
+        label: t.unselect_all,
         onPressed: clear,
       ),
     ];
