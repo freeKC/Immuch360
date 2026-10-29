@@ -41,8 +41,12 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
   }
 
   DateTime _clamp(DateTime value) {
-    if (value.isBefore(widget.firstDate)) return widget.firstDate;
-    if (value.isAfter(widget.lastDate)) return widget.lastDate;
+    if (value.isBefore(widget.firstDate)) {
+      return widget.firstDate;
+    }
+    if (value.isAfter(widget.lastDate)) {
+      return widget.lastDate;
+    }
     return value;
   }
 
@@ -74,10 +78,12 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
         _DatePart.day => current.day,
       },
     );
-    if (selected == null || !mounted) return;
+    if (selected == null || !mounted) {
+      return;
+    }
     final newYear = part == _DatePart.year ? selected : current.year;
     final newMonth = part == _DatePart.month ? selected : current.month;
-    final newDay = part == _DatePart.day ? selected : current.day.clamp(1, _daysInMonth(newYear, newMonth)).toInt();
+    final newDay = part == _DatePart.day ? selected : current.day.clamp(1, _daysInMonth(newYear, newMonth));
     final changed = _clamp(DateTime(newYear, newMonth, newDay));
     setState(() {
       if (start) {

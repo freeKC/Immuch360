@@ -98,7 +98,7 @@ class SearchPage extends HookConsumerWidget {
 
     // Back from results in the TV tab shell restores the starting Search UI
     // without switching tabs, and leaves the Search field ready for another query.
-    ref.listen<int>(tvSearchReturnToStartProvider, (_, __) {
+    ref.listen<int>(tvSearchReturnToStartProvider, (_, _) {
       textSearchController.clear();
       dateInputFilter.value = null;
       peopleCurrentFilterWidget.value = null;
