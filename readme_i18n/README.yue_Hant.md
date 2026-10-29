@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>粵語</b> · 其他語言 (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360。你嘅媒體。乜畫面都得。睇盡每個角度。新功能：將你嘅相片變成 3D 相片、3D 場景同 360° 全景圖。由 AI 喺你自己部電腦上面整。你嘅相片永遠唔會離開部電腦。Android、iPhone 同 iPad、Android TV、LG 同 Samsung 電視、Meta Quest、Windows、macOS、Linux。一幅插圖，唔係截圖：黃昏海灣前面，同一間房出現咗四次，一次係電話上面嘅平面相，一次係喺一個白色頭戴裝置前面浮起嘅一層層畫面，一次係手提電腦上面嘅場景，仲有一次好似全景圖咁攤開喺一條彎彎嘅光帶上面，由一道道光弧連埋一齊">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 平面、360° 同 3D 嘅相片同影片，嚟自你部裝置、你嘅 NAS、你嘅 Immich 伺服器、你嘅相機同你部無人機。唔使開帳戶。Immuch360 係一個免費、開放原始碼嘅 app，喺你啲相片同影片所在嘅地方直接讀取，再用最啱嘅檢視器播放每一個：平面、變成一個可以四圍睇嘅球體、3D，或者喺頭戴裝置入面包圍住你。佢可以喺電話、平板、電視、Meta Quest 頭戴裝置同電腦上面行。
 
-**新功能：你嘅平面相，變成 3D。** 喺電腦揀一張相，就可以得到一張 3D 相片、一個可以行入去嘅 3D 場景，或者一張幻想出你周圍其餘空間嘅 360° 全景圖。喺 Meta Quest 3 或者 3S 上面，㩒一下「AI 立體感」，任何平面相都會立體起嚟。AI 喺你自己部電腦同頭戴裝置上面運行，乜嘢都唔會傳去任何地方。實驗性功能。[睇吓點用](#turn-one-photo-into-3d-a-scene-a-panorama)。
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Immuch360 用一張普通相整出嚟嘅 3D 相片，相入面係一個有走廊、柱同吊燈嘅舊大堂，用左右擺動模式顯示：左眼同右眼輪流出現，大約每秒六次，令啲柱由牆身凸出嚟">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="一張相，四種樣，全部都係 Immuch360 嘅真實輸出：一間有圓枱同窗嘅白色房，照影落嘅樣；佢嘅 3D 相片，顯示 app 計出嚟嗰隻眼，有 AI 3D 標記同立體感由 AI 估算嘅說明；佢嘅 3D 場景，由左邊同右邊睇，有 3D 場景標記；下面係喺佢周圍生成嘅 360° 全景圖，有 AI 360° 標記，原相喺中間圈住，周圍虛構咗成間工作室出嚟，包括幾件古怪嘅嘢">
-</p>
-<p align="center"><sub>app 用 Poly Haven 嘅 CC0 相片整出嚟嘅真實輸出，縮細咗，冇執過，app 嘅標記係為呢頁加上去嘅。上面係一張 3D 相片，兩隻眼輪流顯示；下面係一張相嘅四種樣，兩個場景視角係由場景檔案畫出嚟。全景圖入面圈線以外嘅所有嘢都係 AI 虛構出嚟。</sub></p>
+**New: your flat photos, in 3D.** On a computer, "Make 3D (AI)" turns one photo into a 3D photo, a 3D scene or a 360° panorama; in a Meta Quest 3 or 3S, "AI relief" shows any flat photo in 3D. Experimental, and everything runs on your own machines: [see how](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Immich 手機 app 嘅非官方 fork。同 Immich 或者 FUTO 冇關係。呢個名嘅讀音好似英文「I am much 360」噉。</sub>
@@ -33,9 +24,9 @@
 - [你可以做乜](#what-you-can-do)
 - [裝落你部裝置](#get-it-on-your-device)
 - [點樣用](#how-to)
-  - [將一張相變成 3D、場景、全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [睇你嘅相片同影片，有冇伺服器都得](#watch-your-photos-and-videos-with-or-without-a-server)
   - [探索全景、360°、VR180 同 3D](#explore-panoramas-360-vr180-and-3d)
+  - [將一張相變成 3D、場景、全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [喺電視用遙控器睇](#watch-on-the-tv-with-the-remote)：[Android TV 同 Google TV](#on-android-tv-and-google-tv)、[LG](#on-an-lg-tv-webos)、[Samsung](#on-a-samsung-tv-tizen)
   - [用電話登入電視、頭戴裝置或者電腦](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [用 Meta Quest 走入你嘅相片同影片](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@
 <a id="who-it-is-for"></a>
 ## 適合邊個
 
-- **你啲相係平面嘅**，而你想冇 3D 相機都可以用 3D 睇，變成喺頭戴裝置入面可以湊近去睇嘅場景，或者置身喺 360° 全景圖入面：[將一張相變成 3D、場景、全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)，新功能，由 AI 喺你自己部電腦上面整。
 - **你影 360° 或者 3D** 想喺你影嘅嘢入面四圍睇，而唔係睇到佢哋變平、變雙或者被拉闊：[360°、VR180 同 3D](#explore-panoramas-360-vr180-and-3d)。
 - **你啲相同影片放喺 NAS、電腦、Plex 或者 Immich** 想唔使複製任何嘢就喺電視睇：[喺電視](#watch-on-the-tv-with-the-remote)、[NAS、共享同 Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
 - **你有 Meta Quest** 想走入你自己嘅相片同影片入面：[喺頭戴裝置](#step-inside-your-photos-and-videos-with-a-meta-quest)。
+- **你啲相係平面嘅**，而你想冇 3D 相機都可以用 3D 睇，變成喺頭戴裝置入面可以湊近去睇嘅場景，或者置身喺 360° 全景圖入面：[將一張相變成 3D、場景、全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)，新功能，由 AI 喺你自己部電腦上面整。
 - **你有行 Immich** 想要佢個 app，再加沉浸式檢視器，同埋用電話就登入到嘅大螢幕：[你嘅 Immich 媒體庫](#keep-your-immich-library-with-more)、[同 Immich 比較](#compared-with-immich)。
 - **你用 Tapo 相機睇住屋企** 想佢哋同你啲相放埋一齊，喺電視都睇到（仲未用真嘅相機測試過）：[家居相機](#watch-your-home-cameras-on-the-big-screen)。
 - **你飛 DJI 無人機** 想唔使 DJI Fly 就喺電話睇到佢嘅直播畫面，仲可以喺 Meta Quest 或者 Android TV 畀身邊嘅人睇（實驗性）：[你部無人機](#see-what-your-drone-sees-on-your-phone)。
@@ -174,9 +165,9 @@
 
 每一行都會打開下面對應嘅用法。完整嘅指南，連埋所有選項、訊息同限制，都喺[使用指南](../docs/immuch360/user-guide.md)。
 
-1. [將一張相變成 3D 相片、3D 場景或者 360° 全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)：由 AI 喺你部電腦上面整，喺 Meta Quest 用 3D 睇，Quest 仲可以為任何平面相加立體感。*新功能，實驗性。*
-2. [睇你嘅相片同影片，有冇伺服器都得](#watch-your-photos-and-videos-with-or-without-a-server)：一個圖庫同一個播放器，淨係用部裝置或者連埋你嘅 Immich 伺服器。
-3. [喺 360° 相片同影片、全景、VR180 同 3D 入面四圍睇](#explore-panoramas-360-vr180-and-3d)：一個用手指、電話或者遙控器轉動嘅球體。
+1. [睇你嘅相片同影片，有冇伺服器都得](#watch-your-photos-and-videos-with-or-without-a-server)：一個圖庫同一個播放器，淨係用部裝置或者連埋你嘅 Immich 伺服器。
+2. [喺 360° 相片同影片、全景、VR180 同 3D 入面四圍睇](#explore-panoramas-360-vr180-and-3d)：一個用手指、電話或者遙控器轉動嘅球體。
+3. [將一張相變成 3D 相片、3D 場景或者 360° 全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)：由 AI 喺你部電腦上面整，喺 Meta Quest 用 3D 睇，Quest 仲可以為任何平面相加立體感。*新功能，實驗性。*
 4. [喺電視用遙控器睇](#watch-on-the-tv-with-the-remote)：Android TV 同 Google TV、LG 電視，同埋 Samsung 電視嘅測試 build。
 5. [用電話登入電視、頭戴裝置或者電腦](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)：掃佢嘅 QR code，確認，睇。
 6. [用 Meta Quest 走入你嘅相片同影片](#step-inside-your-photos-and-videos-with-a-meta-quest)：360° 包圍住你，3D 就係真 3D。
@@ -257,53 +248,6 @@ Ubuntu 22.04 或以上同 Debian 12 或以上：`sudo apt install ./Immuch360-De
 
 每一項都會先講你得到乜，再講步驟，最後講限制。[使用指南](../docs/immuch360/user-guide.md)有齊所有選項同訊息。
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### 將一張相變成 3D、場景、全景圖
-
-你大部分嘅相都係平面嘅，而你冇可能返轉頭用 3D 再影過。Immuch360 幫佢哋加返深度。喺你部電腦上面，一張相可以變成一張 **3D 相片**、一個喺頭戴裝置入面可以湊近去睇嘅 **3D 場景**，或者一張幻想出你周圍其餘空間嘅 **360° 全景圖**。Quest 3 或者 3S 可以自己為任何平面相整立體感。所有嘢都喺你自己部電腦同頭戴裝置上面運行：冇雲端，冇帳戶，你嘅原相永遠唔會被改。呢個係 build 32 同桌面版 build 13 嘅新功能，屬於實驗性，預設開咗。Immich app 冇類似嘅功能。
-
-**喺你部電腦上面**，用 Windows、Linux 或者 macOS 上面嘅桌面版 build 13：
-
-1. 喺媒體庫或者資料夾入面揀一張或者幾張相，然後㩒「整 3D（AI）」。
-2. 揀你想要嘅類型：「3D 相」、「3D 場景」、「360° 全景圖」，或者為你自己嘅 360° 相揀「360° 相嘅 3D 版本」。個對話框會講明 AI 會估算或者虛構啲乜（「呢張全景圖大約 96% 會由 AI 虛構」）、喺呢部電腦大約要幾耐，同埋檔案會存去邊：「原相隔離」或者「我自己揀嘅資料夾」。呢部電腦做唔到嘅類型會變灰，並寫明原因，例如「Mac 暫時未有」或者「顯示卡得 6.0 GiB 記憶體，360° 全景圖需要 7.5 GiB」。
-3. 第一次用嗰陣，個對話框會提供嗰個類型需要嘅組件：「下載」，一次就夠。佢哋喺呢部電腦上面運行，之後離線都用得。
-4. 「轉換」。工作會喺處理器同顯示卡兩條通道上面排隊，顯示各自嘅步驟同剩餘時間；「取消」隨時可以停低其中任何一個，熄 app 之前都會先問你。
-5. 打開結果。3D 相片可以用「左眼」、「左右並排」、「左右擺動」（即係呢頁頂嘅動畫）或者配眼鏡用嘅「紅青」顯示；場景有可以用滑鼠或者觸控板轉嘅「用 3D 預覽」，同埋「匯出畀其他 3D App（.glb）」；全景圖會喺 360° 檢視器入面打開。
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windows app 嘅「整 3D（AI）」對話框：3D 相、3D 場景、揀咗嘅 360° 全景圖，同埋 360° 相嘅 3D 版本；相片邊緣以外嘅部分由 AI 生成；呢張全景圖大約 96% 會由 AI 虛構；轉換完成唔代表效果一定好；喺呢張顯示卡上面每張相大約 5 分鐘；同時整埋 3D 版本，剔咗；儲存去：原相隔離，或者我自己揀嘅資料夾；取消同轉換">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Windows app 嘅 360° 檢視器打開咗一張全景圖，係佢用一張由山上望落海灣嘅相整出嚟：右上角係 AI 360° 同 360° 標記，原相喺中間圈住，上面寫住原相，底部寫住相片邊緣以外嘅部分由 AI 生成">
-</p>
-
-| | 3D 相片 | 3D 場景 | 360° 全景圖 |
-|---|---|---|---|
-| 你會得到 | `<name>_3D_LRF_Full_SBS.jpg`，一張左右並排嘅 3D 相片：你嘅相做左眼，計出嚟嘅右眼 | `<name>_scene3D.jpg`，一張用分層方式載住場景嘅相 | `<name>_360.jpg`，6144 x 3072，剔咗「同時整埋 3D 版本」仲有 `<name>_360_3D.jpg` |
-| AI 做啲乜 | 估算相片嘅立體感（Depth Anything V2 Small） | 估算地方嘅形狀（MoGe-2），再填返相片遮住嘅部分（LaMa），整成分層場景 | 虛構相片邊緣以外嘅所有嘢（FLUX.2 klein 4B 同一個 360° LoRA）；你自己嘅像素留喺原位 |
-| 要幾耐 | 每張相幾秒 | 每張相 15 至 45 秒 | 喺有 RTX 4060 嘅手提電腦上面大約 5 分鐘，佢嘅 3D 版本再加 30 秒 |
-| 喺邊度運行 | Windows、Linux 或者 macOS 電腦嘅處理器 | Windows、Linux 或者 macOS 電腦嘅處理器 | 支援 Vulkan、自己有 8 GB 記憶體嘅顯示卡，裝喺有 16 GB 記憶體嘅 Windows 或者 Linux 電腦入面；試過 NVIDIA，AMD 同 Intel 顯示卡仲未試；Mac 暫時未有 |
-| 一次過下載，喺你要求嗰陣 | 大約 110 MB | 另外 349 MB | 另外大約 5.4 GB |
-| 喺邊度睇 | 喺 Meta Quest 用 3D 睇；喺電腦用「左右擺動」或者「紅青」 | 喺 Meta Quest 入面，你可以湊近去睇；喺電腦用「用 3D 預覽」 | 喺 Meta Quest 入面包圍住你，同埋任何 360° 檢視器 |
-
-每個新檔案都會放喺佢原相隔離，永遠唔會覆蓋原相；如果原相所在嘅資料夾唔收新檔案，就放去你揀嘅資料夾；喺網絡資料夾，要你為嗰個資料夾同意咗先會放（「Immuch360 只會喺嗰度寫新檔案，永遠唔會改原相」）。媒體庫會用「AI 3D」、「3D 場景」或者「AI 360°」標記將每個版本連去佢嘅原相，放入「Immuch360 AI 版本」相簿；除非你開咗「同時備份 AI 版本」，否則呢本相簿唔會入你嘅 Immich 備份；小心，喺備份相簿入面㩒「揀曬」都會揀埋呢本相簿，仲會開咗嗰個開關。想喺 Quest 睇一個檔案，就將佢存去你嘅 NAS、備份去你嘅 Immich 伺服器，或者喺 Windows 開「喺網絡上分享呢部電腦」。
-
-**喺 Meta Quest 入面**，用 build 32：
-
-- **AI 立體感**：打開任何平面相，媒體庫定共享入面嘅都得，然後㩒頂部欄嘅「AI 立體感」：頭戴裝置會自己估算立體感，用 3D 顯示張相，仲會寫明「立體感由 AI 估算」。個模型有 99.5 MB，第一次㩒嗰陣下載，啲立體感結果會存喺快取入面。「設定」、「進階」、「AI 同 3D」入面嘅「用 2.5D 打開 AI 立體感（實驗性）」會喺你郁個頭嗰陣，令近啲嘅物件喺背景前面郁。喺 Quest 2 或者 Quest Pro 上面，個掣會保持灰色，顯示「未喺呢部頭戴裝置測試過」，直至你喺嗰度開咗「Quest 2 同 Quest Pro 上嘅 AI 立體感（未測試）」。
-- **由電腦嚟嘅 3D 相片同場景**：「用 3D 睇」會用真 3D 顯示 3D 相片。喺原相上面㩒「睇 3D 場景」，或者喺場景上面㩒「探索 3D 場景」，就會將場景放入你間房：湊近去睇，或者用左搖桿喺重建咗嘅範圍入面滑行（呢頁頂嗰間房係「活動範圍：每個方向大約 0.5 m」）；去到範圍邊緣，啲層會變平變暗，㩒一下搖桿可以重設視角，㩒 B 或者 Y 返回。
-- **全景圖**：生成嘅全景圖會喺你四周展開，正對住你張相，仲有「相片邊緣以外嘅部分由 AI 生成」同原相嘅幼圈線，幾秒之後會淡出；佢嘅 3D 版本係真 3D。
-
-**喺電話、平板同電視上面**，電腦整好嘅檔案會照原樣打開，嗰度唔會生成任何嘢。喺 Android 電話、平板同 Android TV 上面，全景圖會喺 360° 檢視器入面打開，有「AI 360°」標記、嗰句說明同圈線；喺 iPhone、iPad、LG 同 Samsung 電視上面，暫時會當普通 360° 相打開。場景會顯示做佢嘅相，角落有個細細嘅 3D 場景記號；喺 Android 上面，佢嘅詳情會加多句「喺 Meta Quest 打開佢就可以探索」。3D 相片會將兩隻眼左右並排顯示。
-
-**乜嘢係真，乜嘢唔係，一定講清楚。** 呢個正正係重點，唔係收埋喺細字入面嘅條款。3D 相片嘅立體感係由一張相估算出嚟，相片遮住嘅部分係填返出嚟，唔係真嘅。場景會寫明「由單一張相重建，請喺佢嘅限度之內探索」。全景圖會將你真實嘅像素留喺原位，再虛構其餘部分，一張普通相大約佔個球面嘅 90%，開始之前個對話框會話你知有幾多。app 會喺你望住嘅地方講明，用「立體感由 AI 估算」、「相片邊緣以外嘅部分由 AI 生成」同各種標記，檔案入面都有講明：寫喺我哋嘅 XMP 入面，場景同全景圖仲會寫喺 IPTC 數碼來源類型，標明係 AI 生成嘅影像，等其他 app 分得出生成嘅全景圖同真嘅 360° 相。你嘅原相永遠唔會被改，亦冇任何嘢會離開你部電腦或者頭戴裝置。正如個對話框所講：「轉換完成唔代表效果一定好。」
-
-**驗證咗啲乜**，截至 2026 年 10 月 29 日，用呢啲程式碼嘅測試 build：3D 相片由 Linux app 喺一部 Linux 電腦上面嘅容器入面整，離線都得；場景由 Windows app 喺一部有 RTX 4060 Laptop GPU 嘅手提電腦上面整（十個場景用咗 2 分 39 秒），亦由引擎喺 Linux 電腦上面整；喺嗰部手提電腦上面整咗四張全景圖，每張用 4 分 16 秒至 4 分 44 秒，佢哋嘅 3D 版本大約 30 秒，仲測試咗取消、強制熄咗個 app、另一個程式霸住顯示卡嘅情況，測試期間個 app 冇任何網絡連線。
-
-限制：Mac 暫時仲未可以整 360° 全景圖（「Mac 暫時未有」），冇合適嘅顯示卡都唔得，個對話框會講原因（「搵唔到支援 Vulkan 嘅顯示卡」、「內置顯示卡同電腦共用記憶體：整全景圖太慢」，仲有「喺內置顯示卡上試吓（未測試）」畀你照試）；喺全景圖入面，你張相嘅邊緣可能會見到明顯嘅色調斷層；大部分場景都會顯示「視野係估出嚟：形狀可能有偏差」；一個場景需要大約 2 GB 空閒記憶體（唔係就會顯示「記憶體唔夠」）；如果備份咗 AI 版本，Immich 嘅重複項目搜尋會將每張相同佢嘅場景配成一對，仲成日建議保留場景呢個較大嘅檔案：請保留原相。電話同電視乜都唔整，頭戴裝置淨係整立體感；場景嚟自一張相，暫時仲未可以由同一個地方嘅幾張相整出嚟。
-
-**組件**：喺電腦上面，「設定」入面嘅「AI 同 3D」會列出每項功能嘅組件同佢哋嘅大小，仲有「下載」同「移除」，跟住係「移除所有 AI 組件」同將組件搬去另一個磁碟嘅「搬 AI 組件」；熄咗「AI 功能」就會收埋所有 AI 掣，乜都唔會下載。每個檔案都會用佢嘅 SHA-256 核對。喺 Windows 上面，佢哋放喺 `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`，解除安裝程式會刪除呢個資料夾（唔會刪除你搬組件去嘅資料夾）；喺 Linux 上面，大部分系統係 `~/.local/share/immuch360/ai-components`，喺 Mac 上面係 `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`。喺 Quest 入面，「AI 同 3D」喺「設定」、「進階」入面，隔籬係立體感快取。
-
-更多資料：[build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) 同[桌面版 build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) 嘅說明，同埋[模型、佢哋嘅授權、來源同核對值](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。使用指南會喺下次更新加入 AI 章節；喺嗰之前，呢節就係指南。
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 識得平面相片同影片、全景、360° 相片同影片、VR180�
 喺電話同平板上面，立體影片喺平面螢幕上面都可以有深度感：空間 2.5D 播放器用前置相機追蹤你嘅頭部，顯示介於兩邊眼之間嘅畫面（實驗性功能）。用 iPhone 拍嘅 Apple 空間相片會被識別出嚟，喺 Meta Quest 入面以 3D 顯示。
 
 更多資訊：[360° 相片同影片](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere)、[3D 同 VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos)、[空間 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental)、[Apple 空間相片同影片](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos)、[360° 清單](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list)。
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### 將一張相變成 3D、場景、全景圖
+
+你大部分嘅相都係平面嘅，而你冇可能返轉頭用 3D 再影過。Immuch360 幫佢哋加返深度。喺你部電腦上面，一張相可以變成一張 **3D 相片**、一個喺頭戴裝置入面可以湊近去睇嘅 **3D 場景**，或者一張幻想出你周圍其餘空間嘅 **360° 全景圖**。Quest 3 或者 3S 可以自己為任何平面相整立體感。所有嘢都喺你自己部電腦同頭戴裝置上面運行：冇雲端，冇帳戶，你嘅原相永遠唔會被改。呢個係 build 32 同桌面版 build 13 嘅新功能，屬於實驗性，預設開咗。Immich app 冇類似嘅功能。
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Immuch360 用一張普通相整出嚟嘅 3D 相片，相入面係一個有走廊、柱同吊燈嘅舊大堂，用左右擺動模式顯示：左眼同右眼輪流出現，大約每秒六次，令啲柱由牆身凸出嚟">
+</p>
+<p align="center"><sub>A real output of the app from a CC0 photo of Poly Haven, reduced, not retouched: a 3D photo, its two eyes in turn.</sub></p>
+
+**喺你部電腦上面**，用 Windows、Linux 或者 macOS 上面嘅桌面版 build 13：
+
+1. 喺媒體庫或者資料夾入面揀一張或者幾張相，然後㩒「整 3D（AI）」。
+2. 揀你想要嘅類型：「3D 相」、「3D 場景」、「360° 全景圖」，或者為你自己嘅 360° 相揀「360° 相嘅 3D 版本」。個對話框會講明 AI 會估算或者虛構啲乜（「呢張全景圖大約 96% 會由 AI 虛構」）、喺呢部電腦大約要幾耐，同埋檔案會存去邊：「原相隔離」或者「我自己揀嘅資料夾」。呢部電腦做唔到嘅類型會變灰，並寫明原因，例如「Mac 暫時未有」或者「顯示卡得 6.0 GiB 記憶體，360° 全景圖需要 7.5 GiB」。
+3. 第一次用嗰陣，個對話框會提供嗰個類型需要嘅組件：「下載」，一次就夠。佢哋喺呢部電腦上面運行，之後離線都用得。
+4. 「轉換」。工作會喺處理器同顯示卡兩條通道上面排隊，顯示各自嘅步驟同剩餘時間；「取消」隨時可以停低其中任何一個，熄 app 之前都會先問你。
+5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation above) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windows app 嘅「整 3D（AI）」對話框：3D 相、3D 場景、揀咗嘅 360° 全景圖，同埋 360° 相嘅 3D 版本；相片邊緣以外嘅部分由 AI 生成；呢張全景圖大約 96% 會由 AI 虛構；轉換完成唔代表效果一定好；喺呢張顯示卡上面每張相大約 5 分鐘；同時整埋 3D 版本，剔咗；儲存去：原相隔離，或者我自己揀嘅資料夾；取消同轉換">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Windows app 嘅 360° 檢視器打開咗一張全景圖，係佢用一張由山上望落海灣嘅相整出嚟：右上角係 AI 360° 同 360° 標記，原相喺中間圈住，上面寫住原相，底部寫住相片邊緣以外嘅部分由 AI 生成">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="一張相，四種樣，全部都係 Immuch360 嘅真實輸出：一間有圓枱同窗嘅白色房，照影落嘅樣；佢嘅 3D 相片，顯示 app 計出嚟嗰隻眼，有 AI 3D 標記同立體感由 AI 估算嘅說明；佢嘅 3D 場景，由左邊同右邊睇，有 3D 場景標記；下面係喺佢周圍生成嘅 360° 全景圖，有 AI 360° 標記，原相喺中間圈住，周圍虛構咗成間工作室出嚟，包括幾件古怪嘅嘢">
+</p>
+<p align="center"><sub>One photo, four ways: real outputs of the app from a CC0 photo of Poly Haven, reduced, not retouched, with the app's badges added for this page, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+
+| | 3D 相片 | 3D 場景 | 360° 全景圖 |
+|---|---|---|---|
+| 你會得到 | `<name>_3D_LRF_Full_SBS.jpg`，一張左右並排嘅 3D 相片：你嘅相做左眼，計出嚟嘅右眼 | `<name>_scene3D.jpg`，一張用分層方式載住場景嘅相 | `<name>_360.jpg`，6144 x 3072，剔咗「同時整埋 3D 版本」仲有 `<name>_360_3D.jpg` |
+| AI 做啲乜 | 估算相片嘅立體感（Depth Anything V2 Small） | 估算地方嘅形狀（MoGe-2），再填返相片遮住嘅部分（LaMa），整成分層場景 | 虛構相片邊緣以外嘅所有嘢（FLUX.2 klein 4B 同一個 360° LoRA）；你自己嘅像素留喺原位 |
+| 要幾耐 | 每張相幾秒 | 每張相 15 至 45 秒 | 喺有 RTX 4060 嘅手提電腦上面大約 5 分鐘，佢嘅 3D 版本再加 30 秒 |
+| 喺邊度運行 | Windows、Linux 或者 macOS 電腦嘅處理器 | Windows、Linux 或者 macOS 電腦嘅處理器 | 支援 Vulkan、自己有 8 GB 記憶體嘅顯示卡，裝喺有 16 GB 記憶體嘅 Windows 或者 Linux 電腦入面；試過 NVIDIA，AMD 同 Intel 顯示卡仲未試；Mac 暫時未有 |
+| 一次過下載，喺你要求嗰陣 | 大約 110 MB | 另外 349 MB | 另外大約 5.4 GB |
+| 喺邊度睇 | 喺 Meta Quest 用 3D 睇；喺電腦用「左右擺動」或者「紅青」 | 喺 Meta Quest 入面，你可以湊近去睇；喺電腦用「用 3D 預覽」 | 喺 Meta Quest 入面包圍住你，同埋任何 360° 檢視器 |
+
+每個新檔案都會放喺佢原相隔離，永遠唔會覆蓋原相；如果原相所在嘅資料夾唔收新檔案，就放去你揀嘅資料夾；喺網絡資料夾，要你為嗰個資料夾同意咗先會放（「Immuch360 只會喺嗰度寫新檔案，永遠唔會改原相」）。媒體庫會用「AI 3D」、「3D 場景」或者「AI 360°」標記將每個版本連去佢嘅原相，放入「Immuch360 AI 版本」相簿；除非你開咗「同時備份 AI 版本」，否則呢本相簿唔會入你嘅 Immich 備份；小心，喺備份相簿入面㩒「揀曬」都會揀埋呢本相簿，仲會開咗嗰個開關。想喺 Quest 睇一個檔案，就將佢存去你嘅 NAS、備份去你嘅 Immich 伺服器，或者喺 Windows 開「喺網絡上分享呢部電腦」。
+
+**喺 Meta Quest 入面**，用 build 32：
+
+- **AI 立體感**：打開任何平面相，媒體庫定共享入面嘅都得，然後㩒頂部欄嘅「AI 立體感」：頭戴裝置會自己估算立體感，用 3D 顯示張相，仲會寫明「立體感由 AI 估算」。個模型有 99.5 MB，第一次㩒嗰陣下載，啲立體感結果會存喺快取入面。「設定」、「進階」、「AI 同 3D」入面嘅「用 2.5D 打開 AI 立體感（實驗性）」會喺你郁個頭嗰陣，令近啲嘅物件喺背景前面郁。喺 Quest 2 或者 Quest Pro 上面，個掣會保持灰色，顯示「未喺呢部頭戴裝置測試過」，直至你喺嗰度開咗「Quest 2 同 Quest Pro 上嘅 AI 立體感（未測試）」。
+- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room shown above); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **全景圖**：生成嘅全景圖會喺你四周展開，正對住你張相，仲有「相片邊緣以外嘅部分由 AI 生成」同原相嘅幼圈線，幾秒之後會淡出；佢嘅 3D 版本係真 3D。
+
+**喺電話、平板同電視上面**，電腦整好嘅檔案會照原樣打開，嗰度唔會生成任何嘢。喺 Android 電話、平板同 Android TV 上面，全景圖會喺 360° 檢視器入面打開，有「AI 360°」標記、嗰句說明同圈線；喺 iPhone、iPad、LG 同 Samsung 電視上面，暫時會當普通 360° 相打開。場景會顯示做佢嘅相，角落有個細細嘅 3D 場景記號；喺 Android 上面，佢嘅詳情會加多句「喺 Meta Quest 打開佢就可以探索」。3D 相片會將兩隻眼左右並排顯示。
+
+**乜嘢係真，乜嘢唔係，一定講清楚。** 呢個正正係重點，唔係收埋喺細字入面嘅條款。3D 相片嘅立體感係由一張相估算出嚟，相片遮住嘅部分係填返出嚟，唔係真嘅。場景會寫明「由單一張相重建，請喺佢嘅限度之內探索」。全景圖會將你真實嘅像素留喺原位，再虛構其餘部分，一張普通相大約佔個球面嘅 90%，開始之前個對話框會話你知有幾多。app 會喺你望住嘅地方講明，用「立體感由 AI 估算」、「相片邊緣以外嘅部分由 AI 生成」同各種標記，檔案入面都有講明：寫喺我哋嘅 XMP 入面，場景同全景圖仲會寫喺 IPTC 數碼來源類型，標明係 AI 生成嘅影像，等其他 app 分得出生成嘅全景圖同真嘅 360° 相。你嘅原相永遠唔會被改，亦冇任何嘢會離開你部電腦或者頭戴裝置。正如個對話框所講：「轉換完成唔代表效果一定好。」
+
+**驗證咗啲乜**，截至 2026 年 10 月 29 日，用呢啲程式碼嘅測試 build：3D 相片由 Linux app 喺一部 Linux 電腦上面嘅容器入面整，離線都得；場景由 Windows app 喺一部有 RTX 4060 Laptop GPU 嘅手提電腦上面整（十個場景用咗 2 分 39 秒），亦由引擎喺 Linux 電腦上面整；喺嗰部手提電腦上面整咗四張全景圖，每張用 4 分 16 秒至 4 分 44 秒，佢哋嘅 3D 版本大約 30 秒，仲測試咗取消、強制熄咗個 app、另一個程式霸住顯示卡嘅情況，測試期間個 app 冇任何網絡連線。
+
+限制：Mac 暫時仲未可以整 360° 全景圖（「Mac 暫時未有」），冇合適嘅顯示卡都唔得，個對話框會講原因（「搵唔到支援 Vulkan 嘅顯示卡」、「內置顯示卡同電腦共用記憶體：整全景圖太慢」，仲有「喺內置顯示卡上試吓（未測試）」畀你照試）；喺全景圖入面，你張相嘅邊緣可能會見到明顯嘅色調斷層；大部分場景都會顯示「視野係估出嚟：形狀可能有偏差」；一個場景需要大約 2 GB 空閒記憶體（唔係就會顯示「記憶體唔夠」）；如果備份咗 AI 版本，Immich 嘅重複項目搜尋會將每張相同佢嘅場景配成一對，仲成日建議保留場景呢個較大嘅檔案：請保留原相。電話同電視乜都唔整，頭戴裝置淨係整立體感；場景嚟自一張相，暫時仲未可以由同一個地方嘅幾張相整出嚟。
+
+**組件**：喺電腦上面，「設定」入面嘅「AI 同 3D」會列出每項功能嘅組件同佢哋嘅大小，仲有「下載」同「移除」，跟住係「移除所有 AI 組件」同將組件搬去另一個磁碟嘅「搬 AI 組件」；熄咗「AI 功能」就會收埋所有 AI 掣，乜都唔會下載。每個檔案都會用佢嘅 SHA-256 核對。喺 Windows 上面，佢哋放喺 `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`，解除安裝程式會刪除呢個資料夾（唔會刪除你搬組件去嘅資料夾）；喺 Linux 上面，大部分系統係 `~/.local/share/immuch360/ai-components`，喺 Mac 上面係 `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`。喺 Quest 入面，「AI 同 3D」喺「設定」、「進階」入面，隔籬係立體感快取。
+
+更多資料：[build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) 同[桌面版 build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) 嘅說明，同埋[模型、佢哋嘅授權、來源同核對值](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。使用指南會喺下次更新加入 AI 章節；喺嗰之前，呢節就係指南。
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

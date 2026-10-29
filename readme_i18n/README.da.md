@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Dansk</b> · Andre sprog (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Dine medier. Alle skærme. Hvert synspunkt. Nyt: gør dine fotos til 3D-fotos, 3D-scener og 360°-panoramaer. Lavet af AI på din egen computer. Dine fotos forlader den aldrig. Android, iPhone og iPad, Android TV, LG- og Samsung-tv, Meta Quest, Windows, macOS, Linux. En illustration, ikke et skærmbillede: i skumringen foran en havbugt, det samme rum fire gange, som et fladt foto på en telefon, i svævende lag foran et hvidt headset, som en scene på en bærbar computer og rullet ud på et buet bånd som et panorama, forbundet af lysbuer">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Flade, 360°- og 3D-fotos og -videoer fra din enhed, dit NAS, din Immich-server, dine kameraer og din drone. Ingen konto nødvendig. Immuch360 er en gratis app med åben kildekode, der læser dine fotos og videoer, hvor de ligger, og afspiller hver enkelt i den fremviser, der passer til den: fladt, som en kugle du kigger rundt i, i 3D eller hele vejen rundt om dig i et headset. Den kører på telefoner, tablets, tv, Meta Quest-headsets og computere.
 
-**Nyt: dine flade fotos, i 3D.** Vælg et foto på din computer, og få et 3D-foto, en 3D-scene, du kan træde ind i, eller et 360°-panorama, der forestiller sig resten af stedet omkring dig. I en Meta Quest 3 eller 3S er der ét tryk på »AI-relief«, og ethvert fladt foto træder frem. AI'en kører på din egen computer og dit headset, og intet sendes nogen steder hen. Eksperimentelt. [Se hvordan](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Et 3D-foto lavet af Immuch360 ud fra ét almindeligt foto af en gammel sal med et galleri, søjler og en lysekrone, i visningen Vrik: dets venstre øje og dets højre øje på skift, cirka seks gange i sekundet, så søjlerne træder frem fra væggene">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ét foto, fire måder, alle rigtige resultater fra Immuch360: et hvidt rum med et rundt bord og et vindue, som det blev taget; dets 3D-foto, der viser det øje, appen beregner, mærket 3D AI, relief estimeret af AI; dets 3D-scene set fra venstre og fra højre, mærket 3D-scene; nedenunder 360°-panoramaet genereret omkring det, mærket 360° AI, det originale foto omkranset i midten og et helt studie opfundet omkring det, et par mærkelige genstande inklusive">
-</p>
-<p align="center"><sub>Rigtige resultater fra appen ud fra CC0-fotos fra Poly Haven, formindsket, ikke retoucheret, med appens mærker tilføjet til denne side. Øverst et 3D-foto, dets to øjne på skift; nederst ét foto på fire måder, de to scenevisninger tegnet ud fra scenefilen. Alt uden for omridset i panoramaet er opfundet af AI.</sub></p>
+**New: your flat photos, in 3D.** On a computer, "Make 3D (AI)" turns one photo into a 3D photo, a 3D scene or a 360° panorama; in a Meta Quest 3 or 3S, "AI relief" shows any flat photo in 3D. Experimental, and everything runs on your own machines: [see how](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Uofficiel fork af Immich-mobilappen. Ikke tilknyttet Immich eller FUTO. Navnet læses som »I am much 360«.</sub>
@@ -33,9 +24,9 @@ Flade, 360°- og 3D-fotos og -videoer fra din enhed, dit NAS, din Immich-server,
 - [Det kan du gøre](#what-you-can-do)
 - [Få den på din enhed](#get-it-on-your-device)
 - [Sådan gør du](#how-to)
-  - [Gør ét foto til 3D, en scene, et panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Se dine fotos og videoer, med eller uden server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Udforsk panoramaer, 360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Gør ét foto til 3D, en scene, et panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Se på tv'et med fjernbetjeningen](#watch-on-the-tv-with-the-remote): [Android TV og Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Log et tv, et headset eller en computer ind med din telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Træd ind i dine fotos og videoer med en Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Flade, 360°- og 3D-fotos og -videoer fra din enhed, dit NAS, din Immich-server,
 <a id="who-it-is-for"></a>
 ## Hvem den er til
 
-- **Dine fotos er flade**, og du vil have dem i 3D, som en scene at læne sig ind i med et headset, eller inde i et 360°-panorama, uden et 3D-kamera: [gør ét foto til 3D, en scene, et panorama](#turn-one-photo-into-3d-a-scene-a-panorama), nyt, lavet af AI på din egen computer.
 - **Du optager i 360° eller 3D** og vil kigge rundt i dine optagelser, ikke se dem flade, fordoblede eller strakte: [360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d).
 - **Dine fotos og film ligger på et NAS, en computer, Plex eller Immich**, og du vil have dem på tv'et uden at kopiere noget: [på tv'et](#watch-on-the-tv-with-the-remote), [NAS, delinger og Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Du har en Meta Quest** og vil træde ind i dine egne fotos og videoer: [i headsettet](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Dine fotos er flade**, og du vil have dem i 3D, som en scene at læne sig ind i med et headset, eller inde i et 360°-panorama, uden et 3D-kamera: [gør ét foto til 3D, en scene, et panorama](#turn-one-photo-into-3d-a-scene-a-panorama), nyt, lavet af AI på din egen computer.
 - **Du kører Immich** og vil have dens app, plus de immersive fremvisere og de store skærme, du logger ind fra din telefon: [dit Immich-bibliotek](#keep-your-immich-library-with-more), [sammenlignet med Immich](#compared-with-immich).
 - **Du holder øje med dit hjem med Tapo-kameraer** og vil have dem ved siden af dine fotos, også på tv'et (endnu ikke afprøvet med et rigtigt kamera): [hjemmekameraer](#watch-your-home-cameras-on-the-big-screen).
 - **Du flyver en DJI-drone** og vil have dens livebillede på din telefon uden DJI Fly, og i en Meta Quest eller på et Android TV til dem, der er med dig (eksperimentel): [din drone](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ I AI-rækkerne betyder »læser det«, at enheden åbner det, en computer har la
 
 Hver linje åbner sin vejledning nedenfor. Den fulde guide, med alle indstillinger, meddelelser og grænser, er i [brugervejledningen](../docs/immuch360/user-guide.md).
 
-1. [Gør ét foto til et 3D-foto, en 3D-scene eller et 360°-panorama](#turn-one-photo-into-3d-a-scene-a-panorama): lavet af AI på din computer, set i 3D i en Meta Quest, som også giver ethvert fladt foto dets relief. *Nyt, eksperimentelt.*
-2. [Se dine fotos og videoer, med eller uden server](#watch-your-photos-and-videos-with-or-without-a-server): et galleri og en afspiller, på enheden alene eller med din Immich-server.
-3. [Kig rundt i 360°-fotos og -videoer, panoramaer, VR180 og 3D](#explore-panoramas-360-vr180-and-3d): en kugle, du drejer med en finger, telefonen eller fjernbetjeningen.
+1. [Se dine fotos og videoer, med eller uden server](#watch-your-photos-and-videos-with-or-without-a-server): et galleri og en afspiller, på enheden alene eller med din Immich-server.
+2. [Kig rundt i 360°-fotos og -videoer, panoramaer, VR180 og 3D](#explore-panoramas-360-vr180-and-3d): en kugle, du drejer med en finger, telefonen eller fjernbetjeningen.
+3. [Gør ét foto til et 3D-foto, en 3D-scene eller et 360°-panorama](#turn-one-photo-into-3d-a-scene-a-panorama): lavet af AI på din computer, set i 3D i en Meta Quest, som også giver ethvert fladt foto dets relief. *Nyt, eksperimentelt.*
 4. [Se på tv'et med fjernbetjeningen](#watch-on-the-tv-with-the-remote): Android TV og Google TV, LG-tv og Samsung-tv som test-build.
 5. [Log et tv, et headset eller en computer ind med din telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan dens QR-kode, bekræft, se.
 6. [Træd ind i dine fotos og videoer med en Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° hele vejen rundt om dig, 3D i ægte 3D.
@@ -257,53 +248,6 @@ På Ubuntu 22.04 eller nyere og Debian 12 eller nyere: `sudo apt install ./Immuc
 
 Hvert afsnit siger, hvad du får, derefter trinene, derefter grænserne. [Brugervejledningen](../docs/immuch360/user-guide.md) har alle indstillinger og meddelelser.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Gør ét foto til 3D, en scene, et panorama
-
-De fleste af dine fotos er flade, og du kan ikke gå tilbage og tage dem igen i 3D. Immuch360 giver dem dybde. På din computer bliver ét foto til et **3D-foto**, en **3D-scene**, du læner dig ind i med et headset, eller et **360°-panorama**, der forestiller sig resten af stedet omkring dig. En Quest 3 eller 3S laver selv reliefen, for ethvert fladt foto. Alt kører på din egen computer og dit headset: ingen cloud, ingen konto, dine originaler ændres aldrig. Nyt i build 32 og desktop-build 13, eksperimentelt og slået til som standard. Immich-appen har intet lignende.
-
-**På din computer**, med desktop-build 13 på Windows, Linux eller macOS:
-
-1. Vælg et eller flere fotos i biblioteket eller i en mappe, derefter »Lav 3D (AI)«.
-2. Vælg, hvad du vil have: »3D-billede«, »3D-scene«, »360°-panorama« eller »3D-version af et 360°-billede« til dine egne 360°-optagelser. Dialogen siger, hvad AI vil estimere eller opfinde (»Omkring 96% af dette panorama vil være opfundet af AI«), cirka hvor lang tid det tager på denne computer, og hvor filen havner: »Ved siden af originalen« eller »En mappe efter eget valg«. En type, som denne computer ikke kan lave, forbliver nedtonet med sin begrundelse, som »Endnu ikke på Mac« eller »Grafikkortet har 6.0 GiB hukommelse, 360°-panoramaer kræver 7.5 GiB«.
-3. Første gang tilbyder dialogen komponenterne til den type: Hent, én gang. De kører på denne computer og virker offline bagefter.
-4. Konvertér. Opgaverne står i kø på to spor, processoren og grafikkortet, med deres trin og den resterende tid; Annullér stopper én når som helst, og lukker du appen, spørger den først.
-5. Åbn resultatet. Et 3D-foto vises som »Venstre øje«, »Side om side«, »Vrik« (animationen øverst på denne side) eller »Rød og cyan« til briller; en scene har »Forhåndsvis i 3D«, som drejes med musen eller touchpladen, og »Eksportér til andre 3D-apps (.glb)«; et panorama åbner i 360°-fremviseren.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Dialogen Lav 3D (AI) i Windows-appen: 3D-billede, 3D-scene, 360°-panorama, valgt, og 3D-version af et 360°-billede; Genereret af AI ud over billedets kanter; Omkring 96% af dette panorama vil være opfundet af AI; En færdig konvertering garanterer ikke et godt resultat; Cirka 5 min pr. billede på dette grafikkort; Lav også 3D-versionen, markeret; Gem i: Ved siden af originalen, eller En mappe efter eget valg; Annullér og Konvertér">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360°-fremviseren i Windows-appen, der åbner et panorama, den har genereret ud fra et foto af en bugt set fra et bjerg: mærkerne 360° AI og 360° øverst til højre, det originale foto omkranset i midten under ordene Det originale billede, og Genereret af AI ud over billedets kanter nederst">
-</p>
-
-| | 3D-foto | 3D-scene | 360°-panorama |
-|---|---|---|---|
-| Hvad du får | `<name>_3D_LRF_Full_SBS.jpg`, et side om side 3D-foto: dit foto til venstre øje, et beregnet højre øje | `<name>_scene3D.jpg`, et foto, der bærer scenen, i lag | `<name>_360.jpg`, 6144 x 3072, og med »Lav også 3D-versionen« `<name>_360_3D.jpg` |
-| Hvad AI gør | estimerer fotoets relief (Depth Anything V2 Small) | estimerer stedets form (MoGe-2) og udfylder det, fotoet skjuler (LaMa), til en scene i lag | opfinder alt uden for fotoets kanter (FLUX.2 klein 4B og en 360°-LoRA); dine egne pixels bliver, hvor de var |
-| Hvor længe | et par sekunder pr. foto | 15 til 45 sekunder pr. foto | cirka 5 minutter på en bærbar med et RTX 4060, 30 sekunder mere for dets 3D-version |
-| Det kører på | processoren i en Windows-, Linux- eller macOS-computer | processoren i en Windows-, Linux- eller macOS-computer | et grafikkort med Vulkan og 8 GB egen hukommelse, i en Windows- eller Linux-computer med 16 GB hukommelse; NVIDIA afprøvet, AMD- og Intel-kort endnu ikke; endnu ikke på en Mac |
-| Hentes én gang, når du beder om det | cirka 110 MB | 349 MB mere | cirka 5.4 GB mere |
-| Hvor du ser det | i 3D i en Meta Quest; »Vrik« eller »Rød og cyan« på en computer | i en Meta Quest, hvor du læner dig ind i den; »Forhåndsvis i 3D« på computeren | hele vejen rundt om dig i en Meta Quest, og i enhver 360°-fremviser |
-
-Hver ny fil lægges ved siden af sin original, aldrig oven i den, eller i en mappe efter dit valg, når originalens mappe ikke tager imod nye filer; i en netværksmappe kun, når du har sagt ja for den mappe (»Immuch360 skriver nye filer der, aldrig originalerne«). Biblioteket knytter hver version til sin original med sit mærke, »3D AI«, »3D-scene« eller »360° AI«, i albummet »Immuch360 AI-versioner«, som holdes uden for din Immich-sikkerhedskopi, medmindre du slår »Sikkerhedskopiér også AI-versioner« til; pas på, »Vælg alle« i sikkerhedskopiens albummer vælger også dette album og slår den kontakt til. For at se en fil i Quest skal du gemme den på dit NAS, sikkerhedskopiere den til din Immich-server eller, på Windows, slå »Del denne computer på netværket« til.
-
-**I en Meta Quest**, med build 32:
-
-- **AI-relief**: åbn et hvilket som helst fladt foto, fra dit bibliotek eller en deling, og tryk på »AI-relief« i den øverste bjælke: headsettet estimerer selv reliefen og viser fotoet i 3D, »Relief estimeret af AI«. Modellen, 99.5 MB, hentes første gang, du trykker på knappen, og reliefferne gemmes i en cache. »Åbn AI-reliefer i 2.5D (eksperimentel)«, under Indstillinger, Avanceret, »AI og 3D«, får nære genstande til at bevæge sig foran baggrunden, når du bevæger hovedet. På en Quest 2 eller en Quest Pro forbliver knappen nedtonet, »Endnu ikke testet på dette headset«, indtil du slår »AI-relief på Quest 2 og Quest Pro (ikke testet)« til samme sted.
-- **3D-fotos og scener fra computeren**: »Vis i 3D« viser et 3D-foto i ægte 3D. »Vis 3D-scenen« på originalen, eller »Udforsk 3D-scenen« på scenen, sætter scenen ind i dit rum: læn dig ind, eller glid med venstre thumbstick inden for det genopbyggede område (»Plads til at bevæge sig: cirka 0.5 m i hver retning« for rummet øverst på denne side); ved dets kant bliver lagene flade og mørkere, et klik på en thumbstick nulstiller visningen, og B eller Y går tilbage.
-- **Panoramaer**: et genereret panorama åbner hele vejen rundt om dig, vendt mod dit foto, med »Genereret af AI ud over billedets kanter« og et tyndt omrids af det originale foto, som forsvinder efter et par sekunder; dets 3D-version er i ægte 3D.
-
-**På telefoner, tablets og tv** åbner de filer, en computer har lavet, som de er, og intet genereres der. Et panorama åbner i 360°-fremviseren med mærket »360° AI«, sætningen og omridset på Android-telefoner, -tablets og Android TV; på iPhone, iPad og LG- og Samsung-tv åbner det indtil videre som et almindeligt 360°-foto. En scene vises som sit foto, med et lille 3D SCENE-mærke i hjørnet; på Android tilføjer dens detaljer »Åbn det på en Meta Quest for at udforske det«. Et 3D-foto viser sine to øjne side om side.
-
-**Hvad der er ægte, og hvad der ikke er, bliver altid sagt.** Det er hele pointen, ikke det med småt. Reliefen i et 3D-foto estimeres ud fra ét foto, og det, fotoet skjuler, er udfyldt og ikke ægte. En scene er »Rekonstrueret ud fra ét billede, udforsk inden for dets grænser«. Et panorama beholder dine ægte pixels, hvor de var, og opfinder resten, cirka 90% af kuglen for et typisk foto, og dialogen siger hvor meget, før du starter. Appen siger det, hvor du kigger, med »Relief estimeret af AI«, »Genereret af AI ud over billedets kanter« og mærkerne, og filerne siger det også: i vores XMP, og for scenerne og panoramaerne i IPTC's digitale kildetype for et billede lavet med AI, så andre apps kan skelne et genereret panorama fra et ægte 360°-foto. Dine originaler ændres aldrig, og intet forlader din computer eller dit headset. Som dialogen siger det: »En færdig konvertering garanterer ikke et godt resultat.«
-
-**Hvad der er afprøvet**, pr. 29. oktober 2026, med testbuilds af denne kode: 3D-fotos med Linux-appen i en container på en Linux-pc, også offline; scener med Windows-appen på en bærbar med en RTX 4060 Laptop GPU (ti på 2 min 39 s) og med motoren på Linux-pc'en; på den bærbare fire panoramaer på 4 min 16 s til 4 min 44 s hver, deres 3D-versioner på cirka 30 s, med Annullér, en dræbt app, et andet program, der holdt grafikkortet, og ingen netværksforbindelse fra appen under testene.
-
-Begrænsninger: endnu intet 360°-panorama på en Mac (»Endnu ikke på Mac«) og heller ikke uden et egnet grafikkort, og dialogen siger hvorfor (»Intet grafikkort med Vulkan fundet«, »Integreret grafik deler computerens hukommelse: for langsomt til panoramaer«, med »Prøv på integreret grafik (ikke testet)« for at prøve alligevel); inde i et panorama kan kanten af dit foto vise sig som et skarpt spring i tone; de fleste scener siger »Synsfeltet er gættet: formerne kan være skæve«; en scene kræver cirka 2 GB ledig hukommelse (ellers »Ikke nok hukommelse«); med AI-versioner sikkerhedskopieret parrer Immichs dubletfinder hvert foto med sin scene og foreslår ofte at beholde scenen, den tungere fil: behold originalen. Telefoner og tv laver intet, og headsettet laver kun reliefer; en scene kommer fra ét foto, endnu ikke fra flere fotos af samme sted.
-
-**Komponenterne**: på computeren viser Indstillinger, »AI og 3D« komponenterne for hver funktion med deres størrelse, Hent og Fjern, derefter »Fjern alle AI-komponenter« og »Flyt AI-komponenterne« til et andet drev; »AI-funktioner« slået fra skjuler alle AI-knapper og henter intet. Hver fil kontrolleres med sin SHA-256. På Windows ligger de i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, som afinstallationsprogrammet sletter (ikke en mappe, du har flyttet dem til); på Linux i `~/.local/share/immuch360/ai-components` på de fleste systemer, og på en Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I Quest ligger »AI og 3D« under Indstillinger, Avanceret, sammen med relief-cachen.
-
-Mere: noterne til [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) og [desktop-build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), og [modellerne, deres licenser, deres kilder og deres kontrolsummer](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Brugervejledningen får sit AI-kapitel ved næste gennemgang; indtil da er dette afsnit vejledningen.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 kender flade fotos og videoer, panoramaer, 360°-fotos og -videoer, VR
 På telefoner og tablets kan en stereoskopisk video også få dybde på den flade skærm: Spatial 2.5D-afspilleren bruger frontkameraet til at følge dit hoved og viser udsnittet midt mellem de to øjne (eksperimentel). Apple spatial-fotos taget med en iPhone genkendes og vises i 3D på en Meta Quest.
 
 Mere: [360°-fotos og -videoer](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D og VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple spatial-fotos og -videoer](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360°-listen](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Gør ét foto til 3D, en scene, et panorama
+
+De fleste af dine fotos er flade, og du kan ikke gå tilbage og tage dem igen i 3D. Immuch360 giver dem dybde. På din computer bliver ét foto til et **3D-foto**, en **3D-scene**, du læner dig ind i med et headset, eller et **360°-panorama**, der forestiller sig resten af stedet omkring dig. En Quest 3 eller 3S laver selv reliefen, for ethvert fladt foto. Alt kører på din egen computer og dit headset: ingen cloud, ingen konto, dine originaler ændres aldrig. Nyt i build 32 og desktop-build 13, eksperimentelt og slået til som standard. Immich-appen har intet lignende.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Et 3D-foto lavet af Immuch360 ud fra ét almindeligt foto af en gammel sal med et galleri, søjler og en lysekrone, i visningen Vrik: dets venstre øje og dets højre øje på skift, cirka seks gange i sekundet, så søjlerne træder frem fra væggene">
+</p>
+<p align="center"><sub>A real output of the app from a CC0 photo of Poly Haven, reduced, not retouched: a 3D photo, its two eyes in turn.</sub></p>
+
+**På din computer**, med desktop-build 13 på Windows, Linux eller macOS:
+
+1. Vælg et eller flere fotos i biblioteket eller i en mappe, derefter »Lav 3D (AI)«.
+2. Vælg, hvad du vil have: »3D-billede«, »3D-scene«, »360°-panorama« eller »3D-version af et 360°-billede« til dine egne 360°-optagelser. Dialogen siger, hvad AI vil estimere eller opfinde (»Omkring 96% af dette panorama vil være opfundet af AI«), cirka hvor lang tid det tager på denne computer, og hvor filen havner: »Ved siden af originalen« eller »En mappe efter eget valg«. En type, som denne computer ikke kan lave, forbliver nedtonet med sin begrundelse, som »Endnu ikke på Mac« eller »Grafikkortet har 6.0 GiB hukommelse, 360°-panoramaer kræver 7.5 GiB«.
+3. Første gang tilbyder dialogen komponenterne til den type: Hent, én gang. De kører på denne computer og virker offline bagefter.
+4. Konvertér. Opgaverne står i kø på to spor, processoren og grafikkortet, med deres trin og den resterende tid; Annullér stopper én når som helst, og lukker du appen, spørger den først.
+5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation above) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Dialogen Lav 3D (AI) i Windows-appen: 3D-billede, 3D-scene, 360°-panorama, valgt, og 3D-version af et 360°-billede; Genereret af AI ud over billedets kanter; Omkring 96% af dette panorama vil være opfundet af AI; En færdig konvertering garanterer ikke et godt resultat; Cirka 5 min pr. billede på dette grafikkort; Lav også 3D-versionen, markeret; Gem i: Ved siden af originalen, eller En mappe efter eget valg; Annullér og Konvertér">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360°-fremviseren i Windows-appen, der åbner et panorama, den har genereret ud fra et foto af en bugt set fra et bjerg: mærkerne 360° AI og 360° øverst til højre, det originale foto omkranset i midten under ordene Det originale billede, og Genereret af AI ud over billedets kanter nederst">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ét foto, fire måder, alle rigtige resultater fra Immuch360: et hvidt rum med et rundt bord og et vindue, som det blev taget; dets 3D-foto, der viser det øje, appen beregner, mærket 3D AI, relief estimeret af AI; dets 3D-scene set fra venstre og fra højre, mærket 3D-scene; nedenunder 360°-panoramaet genereret omkring det, mærket 360° AI, det originale foto omkranset i midten og et helt studie opfundet omkring det, et par mærkelige genstande inklusive">
+</p>
+<p align="center"><sub>One photo, four ways: real outputs of the app from a CC0 photo of Poly Haven, reduced, not retouched, with the app's badges added for this page, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+
+| | 3D-foto | 3D-scene | 360°-panorama |
+|---|---|---|---|
+| Hvad du får | `<name>_3D_LRF_Full_SBS.jpg`, et side om side 3D-foto: dit foto til venstre øje, et beregnet højre øje | `<name>_scene3D.jpg`, et foto, der bærer scenen, i lag | `<name>_360.jpg`, 6144 x 3072, og med »Lav også 3D-versionen« `<name>_360_3D.jpg` |
+| Hvad AI gør | estimerer fotoets relief (Depth Anything V2 Small) | estimerer stedets form (MoGe-2) og udfylder det, fotoet skjuler (LaMa), til en scene i lag | opfinder alt uden for fotoets kanter (FLUX.2 klein 4B og en 360°-LoRA); dine egne pixels bliver, hvor de var |
+| Hvor længe | et par sekunder pr. foto | 15 til 45 sekunder pr. foto | cirka 5 minutter på en bærbar med et RTX 4060, 30 sekunder mere for dets 3D-version |
+| Det kører på | processoren i en Windows-, Linux- eller macOS-computer | processoren i en Windows-, Linux- eller macOS-computer | et grafikkort med Vulkan og 8 GB egen hukommelse, i en Windows- eller Linux-computer med 16 GB hukommelse; NVIDIA afprøvet, AMD- og Intel-kort endnu ikke; endnu ikke på en Mac |
+| Hentes én gang, når du beder om det | cirka 110 MB | 349 MB mere | cirka 5.4 GB mere |
+| Hvor du ser det | i 3D i en Meta Quest; »Vrik« eller »Rød og cyan« på en computer | i en Meta Quest, hvor du læner dig ind i den; »Forhåndsvis i 3D« på computeren | hele vejen rundt om dig i en Meta Quest, og i enhver 360°-fremviser |
+
+Hver ny fil lægges ved siden af sin original, aldrig oven i den, eller i en mappe efter dit valg, når originalens mappe ikke tager imod nye filer; i en netværksmappe kun, når du har sagt ja for den mappe (»Immuch360 skriver nye filer der, aldrig originalerne«). Biblioteket knytter hver version til sin original med sit mærke, »3D AI«, »3D-scene« eller »360° AI«, i albummet »Immuch360 AI-versioner«, som holdes uden for din Immich-sikkerhedskopi, medmindre du slår »Sikkerhedskopiér også AI-versioner« til; pas på, »Vælg alle« i sikkerhedskopiens albummer vælger også dette album og slår den kontakt til. For at se en fil i Quest skal du gemme den på dit NAS, sikkerhedskopiere den til din Immich-server eller, på Windows, slå »Del denne computer på netværket« til.
+
+**I en Meta Quest**, med build 32:
+
+- **AI-relief**: åbn et hvilket som helst fladt foto, fra dit bibliotek eller en deling, og tryk på »AI-relief« i den øverste bjælke: headsettet estimerer selv reliefen og viser fotoet i 3D, »Relief estimeret af AI«. Modellen, 99.5 MB, hentes første gang, du trykker på knappen, og reliefferne gemmes i en cache. »Åbn AI-reliefer i 2.5D (eksperimentel)«, under Indstillinger, Avanceret, »AI og 3D«, får nære genstande til at bevæge sig foran baggrunden, når du bevæger hovedet. På en Quest 2 eller en Quest Pro forbliver knappen nedtonet, »Endnu ikke testet på dette headset«, indtil du slår »AI-relief på Quest 2 og Quest Pro (ikke testet)« til samme sted.
+- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room shown above); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **Panoramaer**: et genereret panorama åbner hele vejen rundt om dig, vendt mod dit foto, med »Genereret af AI ud over billedets kanter« og et tyndt omrids af det originale foto, som forsvinder efter et par sekunder; dets 3D-version er i ægte 3D.
+
+**På telefoner, tablets og tv** åbner de filer, en computer har lavet, som de er, og intet genereres der. Et panorama åbner i 360°-fremviseren med mærket »360° AI«, sætningen og omridset på Android-telefoner, -tablets og Android TV; på iPhone, iPad og LG- og Samsung-tv åbner det indtil videre som et almindeligt 360°-foto. En scene vises som sit foto, med et lille 3D SCENE-mærke i hjørnet; på Android tilføjer dens detaljer »Åbn det på en Meta Quest for at udforske det«. Et 3D-foto viser sine to øjne side om side.
+
+**Hvad der er ægte, og hvad der ikke er, bliver altid sagt.** Det er hele pointen, ikke det med småt. Reliefen i et 3D-foto estimeres ud fra ét foto, og det, fotoet skjuler, er udfyldt og ikke ægte. En scene er »Rekonstrueret ud fra ét billede, udforsk inden for dets grænser«. Et panorama beholder dine ægte pixels, hvor de var, og opfinder resten, cirka 90% af kuglen for et typisk foto, og dialogen siger hvor meget, før du starter. Appen siger det, hvor du kigger, med »Relief estimeret af AI«, »Genereret af AI ud over billedets kanter« og mærkerne, og filerne siger det også: i vores XMP, og for scenerne og panoramaerne i IPTC's digitale kildetype for et billede lavet med AI, så andre apps kan skelne et genereret panorama fra et ægte 360°-foto. Dine originaler ændres aldrig, og intet forlader din computer eller dit headset. Som dialogen siger det: »En færdig konvertering garanterer ikke et godt resultat.«
+
+**Hvad der er afprøvet**, pr. 29. oktober 2026, med testbuilds af denne kode: 3D-fotos med Linux-appen i en container på en Linux-pc, også offline; scener med Windows-appen på en bærbar med en RTX 4060 Laptop GPU (ti på 2 min 39 s) og med motoren på Linux-pc'en; på den bærbare fire panoramaer på 4 min 16 s til 4 min 44 s hver, deres 3D-versioner på cirka 30 s, med Annullér, en dræbt app, et andet program, der holdt grafikkortet, og ingen netværksforbindelse fra appen under testene.
+
+Begrænsninger: endnu intet 360°-panorama på en Mac (»Endnu ikke på Mac«) og heller ikke uden et egnet grafikkort, og dialogen siger hvorfor (»Intet grafikkort med Vulkan fundet«, »Integreret grafik deler computerens hukommelse: for langsomt til panoramaer«, med »Prøv på integreret grafik (ikke testet)« for at prøve alligevel); inde i et panorama kan kanten af dit foto vise sig som et skarpt spring i tone; de fleste scener siger »Synsfeltet er gættet: formerne kan være skæve«; en scene kræver cirka 2 GB ledig hukommelse (ellers »Ikke nok hukommelse«); med AI-versioner sikkerhedskopieret parrer Immichs dubletfinder hvert foto med sin scene og foreslår ofte at beholde scenen, den tungere fil: behold originalen. Telefoner og tv laver intet, og headsettet laver kun reliefer; en scene kommer fra ét foto, endnu ikke fra flere fotos af samme sted.
+
+**Komponenterne**: på computeren viser Indstillinger, »AI og 3D« komponenterne for hver funktion med deres størrelse, Hent og Fjern, derefter »Fjern alle AI-komponenter« og »Flyt AI-komponenterne« til et andet drev; »AI-funktioner« slået fra skjuler alle AI-knapper og henter intet. Hver fil kontrolleres med sin SHA-256. På Windows ligger de i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, som afinstallationsprogrammet sletter (ikke en mappe, du har flyttet dem til); på Linux i `~/.local/share/immuch360/ai-components` på de fleste systemer, og på en Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I Quest ligger »AI og 3D« under Indstillinger, Avanceret, sammen med relief-cachen.
+
+Mere: noterne til [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) og [desktop-build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), og [modellerne, deres licenser, deres kilder og deres kontrolsummer](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Brugervejledningen får sit AI-kapitel ved næste gennemgang; indtil da er dette afsnit vejledningen.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

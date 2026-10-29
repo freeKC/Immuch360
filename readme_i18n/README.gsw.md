@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Alemannisch</b> · Anderi Sprache (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Dini Medie. Jede Bildschirm. Jede Perspektive. Neu: mach us dine Fotos 3D-Fotos, 3D-Szene und 360°-Panorame. Vo de KI uf dim eigete Computer gmacht. Dini Fotos verlönd ihn nie. Android, iPhone und iPad, Android TV, LG- und Samsung-Fernseh, Meta Quest, Windows, macOS, Linux. E Illustration, kei Bildschirmufnahm: i de Dämmerig vor ere Meeresbucht, de gliich Ruum viermal, als flachs Foto uf emne Handy, i schwäbende Schichte vor emne wiisse Headset, als Szene uf emne Laptop und abgrollt uf emne gbogene Band wie es Panorama, verbunde mit Liechtböge">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Flachi, 360°- und 3D-Foto und -Video vo dim Grät, dim NAS, dim Immich-Server, dine Kameras und dinere Drohne. Kei Konto nötig. Immuch360 isch e freii Open-Source-App, wo dini Foto und Video det list, wo si sind, und jedes im passende Viewer abspielt: flach, als Kugle, i dere du di umluegsch, in 3D, oder rundume im Headset. Si lauft uf Handys, Tablets, Fernseh, Meta-Quest-Headsets und Computer.
 
-**Neu: dini flache Fotos, in 3D.** Wähl es Foto uf dim Computer us und überchum es 3D-Foto, e 3D-Szene zum drii iitauche, oder es 360°-Panorama, wo sich de Rescht vom Ort um dich ume uusdänkt. I ere Meta Quest 3 oder 3S: eimal uf «KI-Relief» drucke, und jedes flache Foto chunnt use. D KI lauft uf dim eigete Computer und Headset, und nüt wird irgendwohi gschickt. Experimentell. [So gaht's](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Es 3D-Foto, wo Immuch360 us eim gwöhnliche Foto vo ere alte Halle mit ere Galerie, Säule und emne Kronlüchter gmacht hät, i de Aasicht Wackle: sis linke und sis rächte Oug abwächsligsweis, öppe sächsmal pro Sekunde, sodass d Säule vo de Wänd abhebed">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ei Foto, vier Arte, alles echti Resultat vo Immuch360: en wiisse Ruum mit emne runde Tisch und emne Fänschter, so wie's gmacht worde isch; sis 3D-Foto, wo s Oug zeigt, wo d App berächnet, Abzeiche 3D KI, Relief vo de KI gschätzt; sini 3D-Szene vo links und vo rächts gseh, Abzeiche 3D-Szene; drunder s 360°-Panorama, wo drum ume generiert worde isch, Abzeiche 360° KI, s Originalfoto i de Mitti umrandet und es ganzes Studio drum ume erfunde, es paar komischi Gegeständ inbegriffe">
-</p>
-<p align="center"><sub>Echti Resultat vo de App us CC0-Fotos vo Poly Haven, verchlineret, nöd retuschiert, mit de Abzeiche vo de App, wo für die Siite dezuegfüegt worde sind. Obe es 3D-Foto, sini zwei Oug abwächsligsweis; unde ei Foto uf vier Arte, die zwei Aasichte vo de Szene us de Szene-Datei grenderet. Alles usserhalb vom Umriss vom Panorama isch vo de KI erfunde.</sub></p>
+**New: your flat photos, in 3D.** On a computer, "Make 3D (AI)" turns one photo into a 3D photo, a 3D scene or a 360° panorama; in a Meta Quest 3 or 3S, "AI relief" shows any flat photo in 3D. Experimental, and everything runs on your own machines: [see how](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Nöd offizielle Fork vo de Immich-Handy-App. Nöd gligt mit Immich oder FUTO. De Name wird gläse als «I am much 360».</sub>
@@ -33,9 +24,9 @@ Flachi, 360°- und 3D-Foto und -Video vo dim Grät, dim NAS, dim Immich-Server, 
 - [Was du mache chasch](#what-you-can-do)
 - [Uf dis Grät hole](#get-it-on-your-device)
 - [So gaht's](#how-to)
-  - [Us eim Foto 3D, e Szene, es Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Dini Foto und Video aaluege, mit oder ohni Server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Panorame, 360°, VR180 und 3D erkunde](#explore-panoramas-360-vr180-and-3d)
+  - [Us eim Foto 3D, e Szene, es Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Am Fernseh mit de Fernbedienig aaluege](#watch-on-the-tv-with-the-remote): [Android TV und Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [En Fernseh, es Headset oder en Computer mit em Handy aamälde](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Mit ere Meta Quest i dini Foto und Video iitauche](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Flachi, 360°- und 3D-Foto und -Video vo dim Grät, dim NAS, dim Immich-Server, 
 <a id="who-it-is-for"></a>
 ## Für wän si isch
 
-- **Dini Fotos sind flach** und du wetsch si in 3D, als Szene, i die du di im Headset ineleinsch, oder in emne 360°-Panorama, ohni 3D-Kamera: [us eim Foto 3D, e Szene, es Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama), neu, vo de KI uf dim eigete Computer gmacht.
 - **Du fotografiersch oder filmsch in 360° oder 3D** und wotsch di i dine Ufnahme umluege, statt si flach, doppelt oder verzoge z gseh: [360°, VR180 und 3D](#explore-panoramas-360-vr180-and-3d).
 - **Dini Foto und Film lieged uf emne NAS, emne Computer, i Plex oder Immich** und du wotsch si uf em Fernseh, ohni öppis z kopiere: [uf em Fernseh](#watch-on-the-tv-with-the-remote), [NAS, Freigabe und Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Du häsch e Meta Quest** und wotsch i dini eigete Foto und Video iitauche: [im Headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Dini Fotos sind flach** und du wetsch si in 3D, als Szene, i die du di im Headset ineleinsch, oder in emne 360°-Panorama, ohni 3D-Kamera: [us eim Foto 3D, e Szene, es Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama), neu, vo de KI uf dim eigete Computer gmacht.
 - **Du betriibsch Immich** und wotsch sini App, plus d immersive Viewer und di grosse Bildschirm, wo du vom Handy us aamäldsch: [dini Immich-Bibliothek](#keep-your-immich-library-with-more), [im Vergliich mit Immich](#compared-with-immich).
 - **Du überwachsch dis Dihei mit Tapo-Kameras** und wotsch si näbe dine Foto, au uf em Fernseh (na nöd mit ere echte Kamera prüeft): [Heimkameras](#watch-your-home-cameras-on-the-big-screen).
 - **Du flüügsch e DJI-Drohne** und wotsch ihres Live-Bild uf dim Handy ohni DJI Fly, und i ere Meta Quest oder uf emne Android TV für d Lüt bi dir (experimentell): [dini Drohne](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ I de KI-Ziile bedütet «liest's», dass s Grät ufmacht, was en Computer gmacht
 
 Jedi Zeile macht ihri Aaleitig unde uf. D vollständigi Aaleitig, mit jedere Option, Mäldig und Grenz, isch im [Benutzerhandbuech](../docs/immuch360/user-guide.md).
 
-1. [Us eim Foto es 3D-Foto, e 3D-Szene oder es 360°-Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama): vo de KI uf dim Computer gmacht, in 3D i ere Meta Quest aagluegt, wo au jedem flache Foto sis Relief git. *Neu, experimentell.*
-2. [Dini Foto und Video aaluege, mit oder ohni Server](#watch-your-photos-and-videos-with-or-without-a-server): e Galerie und en Player, nur uf em Grät oder mit dim Immich-Server.
-3. [Di i 360°-Foto und -Video, Panorame, VR180 und 3D umluege](#explore-panoramas-360-vr180-and-3d): e Kugle, wo du mit em Finger, em Handy oder de Fernbedienig dräisch.
+1. [Dini Foto und Video aaluege, mit oder ohni Server](#watch-your-photos-and-videos-with-or-without-a-server): e Galerie und en Player, nur uf em Grät oder mit dim Immich-Server.
+2. [Di i 360°-Foto und -Video, Panorame, VR180 und 3D umluege](#explore-panoramas-360-vr180-and-3d): e Kugle, wo du mit em Finger, em Handy oder de Fernbedienig dräisch.
+3. [Us eim Foto es 3D-Foto, e 3D-Szene oder es 360°-Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama): vo de KI uf dim Computer gmacht, in 3D i ere Meta Quest aagluegt, wo au jedem flache Foto sis Relief git. *Neu, experimentell.*
 4. [Am Fernseh mit de Fernbedienig aaluege](#watch-on-the-tv-with-the-remote): Android TV und Google TV, LG-Fernseh, und Samsung-Fernseh als Test-Build.
 5. [En Fernseh, es Headset oder en Computer mit em Handy aamälde](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): sin QR-Code scanne, bestätige, luege.
 6. [Mit ere Meta Quest i dini Foto und Video iitauche](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° rundume, 3D in echtem 3D.
@@ -257,53 +248,6 @@ Mach `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` vom [Desktop-Pre-Releas
 
 Jede Iitrag seit, was du überchunsch, dänn d Schritt, dänn d Grenze. S [Benutzerhandbuech](../docs/immuch360/user-guide.md) hät jedi Option und jedi Mäldig.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Us eim Foto 3D, e Szene, es Panorama mache
-
-Di meischte vo dine Fotos sind flach, und du chasch nöd zrugg und si nomal in 3D mache. Immuch360 git ene Tüüfi. Uf dim Computer wird us eim Foto es **3D-Foto**, e **3D-Szene**, i die du di im Headset ineleinsch, oder es **360°-Panorama**, wo sich de Rescht vom Ort um dich ume uusdänkt. E Quest 3 oder 3S macht s Relief sälber, für jedes flache Foto. Alles lauft uf dim eigete Computer und Headset: kei Cloud, kei Konto, dini Originäl wärded nie veränderet. Neu i Build 32 und Desktop-Build 13, experimentell und standardmässig iigschaltet. D Immich-App hät nüt dergliiche.
-
-**Uf dim Computer**, mit Desktop-Build 13 uf Windows, Linux oder macOS:
-
-1. Wähl eis oder mehreri Fotos i de Bibliothek oder i emne Ordner us, dänn «3D mache (KI)».
-2. Wähl, was du wetsch: «3D-Foto», «3D-Szene», «360°-Panorama» oder «3D-Version vo eme 360°-Foto» für dini eigete 360°-Ufnahme. S Fänschter seit, was d KI schätzt oder erfindet («Öppe 96 % vo däm Panorama wird vo de KI erfunde»), wie lang's uf dem Computer öppe gaht, und wo d Datei hägaht: «Näbe s Original» oder «En Ordner nach minere Wahl». E Art, wo dä Computer nöd cha, blibt grau, mit em Grund, zum Biispiel «No nöd uf Mac» oder «D Grafikcharte hät 6.0 GiB Speicher, 360°-Panoramas bruuched 7.5 GiB».
-3. S erschte Mal bietet s Fänschter d Komponente vo dere Art aa: Abelade, eimal. Si lauffed uf dem Computer und schaffed dänn offline.
-4. Umwandle. D Ufträg stönd i ere Warteschlange uf zwei Spure, em Prozessor und de Grafikcharte, mit ihrne Schritt und de Restziit; Abbräche stoppt eine jederziit, und bim Beände fragt d App zersch.
-5. Mach s Resultat uf. Es 3D-Foto zeigt sich als «Linggs Aug», «Nebedenand», «Wackle» (d Animation obe uf dere Siite) oder «Rot und Cyan» für Brülle; e Szene hät «Vorschau in 3D», wo mer mit de Muus oder em Touchpad dräit, und «Für anderi 3D-Apps exportiere (.glb)»; es Panorama gaht im 360°-Viewer uf.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="S Fänschter 3D mache (KI) vo de Windows-App: 3D-Foto, 3D-Szene, 360°-Panorama, uusgwählt, und 3D-Version vo eme 360°-Foto; Vo de KI über de Rand vom Foto use generiert; Öppe 96 % vo däm Panorama wird vo de KI erfunde; E fertigi Umwandlig garantiert kei guets Resultat; Öppe 5 min pro Foto uf dere Grafikcharte; Au d 3D-Version mache, aagchrüzlet; Speichere i: Näbe s Original, oder En Ordner nach minere Wahl; Abbräche und Umwandle">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="De 360°-Viewer vo de Windows-App macht es Panorama uf, wo si us emne Foto vo ere Bucht, vo emne Berg us gseh, generiert hät: d Abzeiche 360° KI und 360° obe rächts, s Originalfoto i de Mitti umrandet under de Wörter S Originalfoto, und Vo de KI über de Rand vom Foto use generiert unde">
-</p>
-
-| | 3D-Foto | 3D-Szene | 360°-Panorama |
-|---|---|---|---|
-| Was du überchunnsch | `<name>_3D_LRF_Full_SBS.jpg`, es 3D-Foto nebedenand: dis Foto fürs linke Oug, es berächnets rächts Oug | `<name>_scene3D.jpg`, es Foto, wo d Szene treit, i Schichte | `<name>_360.jpg`, 6144 x 3072, und mit «Au d 3D-Version mache», `<name>_360_3D.jpg` |
-| Was d KI macht | schätzt s Relief vom Foto (Depth Anything V2 Small) | schätzt d Form vom Ort (MoGe-2) und füllt, was s Foto versteckt (LaMa), für e Szene i Schichte | erfindet alles usserhalb vom Rand vom Foto (FLUX.2 klein 4B und e 360°-LoRA); dini eigete Pixel bliibed, wo si gsi sind |
-| Wie lang | es paar Sekunde pro Foto | 15 bis 45 Sekunde pro Foto | öppe 5 Minute uf emne Laptop mit ere RTX 4060, 30 Sekunde meh für d 3D-Version |
-| Lauft uf | em Prozessor vo emne Windows-, Linux- oder macOS-Computer | em Prozessor vo emne Windows-, Linux- oder macOS-Computer | ere Grafikcharte mit Vulkan und 8 GB eigetem Speicher, i emne Windows- oder Linux-Computer mit 16 GB Speicher; NVIDIA usprobiert, AMD- und Intel-Charte na nöd; na nöd uf emne Mac |
-| Eimal abeglade, wenn du's verlangsch | öppe 110 MB | 349 MB meh | öppe 5.4 GB meh |
-| Wo du's gsehsch | in 3D i ere Meta Quest; «Wackle» oder «Rot und Cyan» uf emne Computer | i ere Meta Quest, wo du di drii ineleinsch; «Vorschau in 3D» uf em Computer | rundum i ere Meta Quest, und i jedem 360°-Viewer |
-
-Jedi neui Datei chunnt näbe ihres Original, nie drüber, oder i en Ordner nach dinere Wahl, wenn de Ordner vom Original kei neui Datei aanimmt; uf emne Netzwerkordner erscht, wenn du für dä Ordner ja gseit häsch («Immuch360 schriibt det neui Dateie, nie d Originäl»). D Bibliothek verchnüpft jedi Version mit ihrem Original mit ihrem Abzeiche, «3D KI», «3D-Szene» oder «360° KI», im Album «Immuch360 KI-Versione», wo usserhalb vo dinere Immich-Sicherig blibt, usser du schaltisch «Au KI-Versione sichere» ii; Achtung, «Alles uswähle» bi de gsicherete Albene wählt au das Album us und schaltet dä Schalter ii. Zum e Datei i de Quest gseh, speicher si uf dim NAS, sicher si uf dim Immich-Server oder schalt uf Windows «Dä Computer im Netzwerk freigä» ii.
-
-**I ere Meta Quest**, mit Build 32:
-
-- **KI-Relief**: mach es flachs Foto uf, us dinere Bibliothek oder ere Freigab, und druck obe i de Leischte uf «KI-Relief»: s Headset schätzt s Relief sälber und zeigt s Foto in 3D, «Relief vo de KI gschätzt». S Modell, 99.5 MB, wird s erschte Mal abeglade, wenn du druf drucksch, und d Reliefs wärded i emne Cache bhalte. «KI-Reliefs in 2.5D ufmache (experimentell)», i de Iistellige, Erwiitert, «KI und 3D», lat nöchi Objekt vor em Hintergrund bewege, wenn du de Chopf bewegsch. Uf ere Quest 2 oder ere Quest Pro blibt de Chnopf grau, «Uf däm Headset no nöd teschtet», bis du det «KI-Relief uf Quest 2 und Quest Pro (nöd teschtet)» iischaltisch.
-- **3D-Fotos und Szene vom Computer**: «In 3D aaluege» zeigt es 3D-Foto in echtem 3D. «D 3D-Szene aaluege» uf em Original, oder «D 3D-Szene erkunde» uf de Szene, stellt d Szene i dis Zimmer: lein di ine, oder gleit mit em linke Stick im rekonstruierte Bereich ume («Platz zum Bewege: öppe 0.5 m i jedi Richtig» für de Ruum obe uf dere Siite); d Schichte wärded am Rand flach und dunkler, en Klick uf en Stick setzt d Aasicht zrugg, und B oder Y gaht zrugg.
-- **Panorame**: es generierts Panorama gaht rundum uf, mit em Blick uf dis Foto, mit «Vo de KI über de Rand vom Foto use generiert» und emne dünne Umriss vom Originalfoto, wo nach es paar Sekunde verblassed; sini 3D-Version isch in echtem 3D.
-
-**Uf Handys, Tablets und Fernseh** gönd d Dateie, wo en Computer gmacht hät, so uf, wie si sind, und det wird nüt generiert. Es Panorama gaht im 360°-Viewer mit em Abzeiche «360° KI», em Satz und em Umriss uf Android-Handys, -Tablets und Android TV uf; uf iPhone, iPad, LG- und Samsung-Fernseh gaht's vorläufig als eifachs 360°-Foto uf. E Szene erschiint als ihres Foto, mit emne chline Zeiche 3D-SZENE i de Egge; uf Android füeged ihri Detail «Mach si uf ere Meta Quest uf, zum si z erkunde» dezue. Es 3D-Foto zeigt sini zwei Oug nebedenand.
-
-**Was echt isch und was nöd, immer gseit.** Das isch de Punkt, nöd s Chliigedruckte. S Relief vo emne 3D-Foto wird us eim Foto gschätzt, und was s Foto versteckt, wird usgfüllt und isch nöd echt. E Szene isch «Us eim einzige Foto rekonstruiert, erkund si innerhalb vo ihre Gränze». Es Panorama bhaltet dini echte Pixel det, wo si gsi sind, und erfindet de Rescht, öppe 90 % vo de Kugle für es typischs Foto, und s Fänschter seit, wie vill, bevor du aafangsch. D App seit's det, wo du anelugsch, mit «Relief vo de KI gschätzt», «Vo de KI über de Rand vom Foto use generiert» und de Abzeiche, und d Dateie säged's au: i üsem XMP, und bi de Szene und de Panorame im IPTC Digital Source Type vo emne Bild, wo mit KI gmacht worde isch, damit anderi Apps es generierts Panorama vo emne echte 360°-Foto chönd unterscheide. Dini Originäl wärded nie veränderet, und nüt verlaht din Computer oder dis Headset. Wie s Fänschter seit: «E fertigi Umwandlig garantiert kei guets Resultat.»
-
-**Was prüeft worde isch**, bis am 29. Oktober 2026, mit Test-Builds vo dem Code: 3D-Fotos vo de Linux-App i emne Container uf emne Linux-PC, au offline; Szene vo de Windows-App uf emne Laptop mit ere RTX 4060 Laptop GPU (zäh i 2 min 39 s) und vo de Engine uf em Linux-PC; uf dem Laptop vier Panorame i je 4 min 16 s bis 4 min 44 s, ihri 3D-Versione i öppe 30 s, mit Abbräche, ere abgschossene App, emne andere Programm, wo d Grafikcharte bsetzt hät, und kei Netzwerkverbindig vo de App während de Tests.
-
-Gränze: na kei 360°-Panorama uf emne Mac («No nöd uf Mac»), und au nöd ohni passendi Grafikcharte, und s Fänschter seit werum («Kei Grafikcharte mit Vulkan gfunde», «Integrierti Grafik teilt de Speicher vom Computer: z langsam für Panoramas», mit «Mit integrierter Grafik probiere (nöd teschtet)», zum's trotzdem probiere); i emne Panorama cha de Rand vo dim Foto als scharfe Sprung im Farbton sichtbar sii; di meischte Szene säged «Blickfeld gschätzt: d Forme chönnted verzoge sii»; e Szene bruucht öppe 2 GB freie Speicher (susch «Nöd gnueg Speicher»); mit gsicherete KI-Versione paart d Duplikat-Suechi vo Immich jedes Foto mit sinere Szene und schlaht oft vor, d Szene z bhalte, die schwäreri Datei: bhalt s Original. Handys und Fernseh mached nüt, und s Headset macht nur Reliefs; e Szene chunnt us eim Foto, na nöd us mehrere Fotos vom gliiche Ort.
-
-**D Komponente**: uf em Computer listet Iistellige, «KI und 3D» d Komponente vo jedere Funktion mit ihrere Grössi uf, Abelade und Entferne, dänn «Alli KI-Komponente entferne» und «D KI-Komponente verschiebe» uf es anders Laufwerk; «KI-Funktione» uus versteckt jede KI-Chnopf und lädt nüt abe. Jedi Datei wird über ihre SHA-256 prüeft. Uf Windows sind si i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, wo de Deinstaller löscht (nöd en Ordner, wo du si hiigschobe häsch); uf Linux i `~/.local/share/immuch360/ai-components` uf de meischte Systeme, und uf emne Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I de Quest isch «KI und 3D» i de Iistellige, Erwiitert, mit em Relief-Cache.
-
-Meh: d Notize vo [Build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) und [Desktop-Build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), und [d Modell, ihri Lizänze, ihri Quälle und ihri Prüefsumme](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). S Benutzerhandbuech überchunnt sis KI-Kapitel mit em nächschte Durchgang; bis dänn isch dä Abschnitt s Handbuech.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 kennt flachi Foto und Video, Panorame, 360°-Foto und -Video, VR180, s
 Uf Handys und Tablets cha e stereoskopischs Video au Tiefi uf em flache Bildschirm gwünne: de Spatial-2.5D-Player bruucht d Frontkamera zum dim Chopf z folge und zeigt d Aasicht zwüsche de zwei Auge (experimentell). Apple-Spatial-Foto, wo mit emne iPhone gnoh wärded, wärded erkennt und in 3D i ere Meta Quest zeigt.
 
 Meh dezue: [360°-Foto und -Video](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D und VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple-Spatial-Foto und -Video](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [d 360°-Liste](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Us eim Foto 3D, e Szene, es Panorama mache
+
+Di meischte vo dine Fotos sind flach, und du chasch nöd zrugg und si nomal in 3D mache. Immuch360 git ene Tüüfi. Uf dim Computer wird us eim Foto es **3D-Foto**, e **3D-Szene**, i die du di im Headset ineleinsch, oder es **360°-Panorama**, wo sich de Rescht vom Ort um dich ume uusdänkt. E Quest 3 oder 3S macht s Relief sälber, für jedes flache Foto. Alles lauft uf dim eigete Computer und Headset: kei Cloud, kei Konto, dini Originäl wärded nie veränderet. Neu i Build 32 und Desktop-Build 13, experimentell und standardmässig iigschaltet. D Immich-App hät nüt dergliiche.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Es 3D-Foto, wo Immuch360 us eim gwöhnliche Foto vo ere alte Halle mit ere Galerie, Säule und emne Kronlüchter gmacht hät, i de Aasicht Wackle: sis linke und sis rächte Oug abwächsligsweis, öppe sächsmal pro Sekunde, sodass d Säule vo de Wänd abhebed">
+</p>
+<p align="center"><sub>A real output of the app from a CC0 photo of Poly Haven, reduced, not retouched: a 3D photo, its two eyes in turn.</sub></p>
+
+**Uf dim Computer**, mit Desktop-Build 13 uf Windows, Linux oder macOS:
+
+1. Wähl eis oder mehreri Fotos i de Bibliothek oder i emne Ordner us, dänn «3D mache (KI)».
+2. Wähl, was du wetsch: «3D-Foto», «3D-Szene», «360°-Panorama» oder «3D-Version vo eme 360°-Foto» für dini eigete 360°-Ufnahme. S Fänschter seit, was d KI schätzt oder erfindet («Öppe 96 % vo däm Panorama wird vo de KI erfunde»), wie lang's uf dem Computer öppe gaht, und wo d Datei hägaht: «Näbe s Original» oder «En Ordner nach minere Wahl». E Art, wo dä Computer nöd cha, blibt grau, mit em Grund, zum Biispiel «No nöd uf Mac» oder «D Grafikcharte hät 6.0 GiB Speicher, 360°-Panoramas bruuched 7.5 GiB».
+3. S erschte Mal bietet s Fänschter d Komponente vo dere Art aa: Abelade, eimal. Si lauffed uf dem Computer und schaffed dänn offline.
+4. Umwandle. D Ufträg stönd i ere Warteschlange uf zwei Spure, em Prozessor und de Grafikcharte, mit ihrne Schritt und de Restziit; Abbräche stoppt eine jederziit, und bim Beände fragt d App zersch.
+5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation above) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="S Fänschter 3D mache (KI) vo de Windows-App: 3D-Foto, 3D-Szene, 360°-Panorama, uusgwählt, und 3D-Version vo eme 360°-Foto; Vo de KI über de Rand vom Foto use generiert; Öppe 96 % vo däm Panorama wird vo de KI erfunde; E fertigi Umwandlig garantiert kei guets Resultat; Öppe 5 min pro Foto uf dere Grafikcharte; Au d 3D-Version mache, aagchrüzlet; Speichere i: Näbe s Original, oder En Ordner nach minere Wahl; Abbräche und Umwandle">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="De 360°-Viewer vo de Windows-App macht es Panorama uf, wo si us emne Foto vo ere Bucht, vo emne Berg us gseh, generiert hät: d Abzeiche 360° KI und 360° obe rächts, s Originalfoto i de Mitti umrandet under de Wörter S Originalfoto, und Vo de KI über de Rand vom Foto use generiert unde">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ei Foto, vier Arte, alles echti Resultat vo Immuch360: en wiisse Ruum mit emne runde Tisch und emne Fänschter, so wie's gmacht worde isch; sis 3D-Foto, wo s Oug zeigt, wo d App berächnet, Abzeiche 3D KI, Relief vo de KI gschätzt; sini 3D-Szene vo links und vo rächts gseh, Abzeiche 3D-Szene; drunder s 360°-Panorama, wo drum ume generiert worde isch, Abzeiche 360° KI, s Originalfoto i de Mitti umrandet und es ganzes Studio drum ume erfunde, es paar komischi Gegeständ inbegriffe">
+</p>
+<p align="center"><sub>One photo, four ways: real outputs of the app from a CC0 photo of Poly Haven, reduced, not retouched, with the app's badges added for this page, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+
+| | 3D-Foto | 3D-Szene | 360°-Panorama |
+|---|---|---|---|
+| Was du überchunnsch | `<name>_3D_LRF_Full_SBS.jpg`, es 3D-Foto nebedenand: dis Foto fürs linke Oug, es berächnets rächts Oug | `<name>_scene3D.jpg`, es Foto, wo d Szene treit, i Schichte | `<name>_360.jpg`, 6144 x 3072, und mit «Au d 3D-Version mache», `<name>_360_3D.jpg` |
+| Was d KI macht | schätzt s Relief vom Foto (Depth Anything V2 Small) | schätzt d Form vom Ort (MoGe-2) und füllt, was s Foto versteckt (LaMa), für e Szene i Schichte | erfindet alles usserhalb vom Rand vom Foto (FLUX.2 klein 4B und e 360°-LoRA); dini eigete Pixel bliibed, wo si gsi sind |
+| Wie lang | es paar Sekunde pro Foto | 15 bis 45 Sekunde pro Foto | öppe 5 Minute uf emne Laptop mit ere RTX 4060, 30 Sekunde meh für d 3D-Version |
+| Lauft uf | em Prozessor vo emne Windows-, Linux- oder macOS-Computer | em Prozessor vo emne Windows-, Linux- oder macOS-Computer | ere Grafikcharte mit Vulkan und 8 GB eigetem Speicher, i emne Windows- oder Linux-Computer mit 16 GB Speicher; NVIDIA usprobiert, AMD- und Intel-Charte na nöd; na nöd uf emne Mac |
+| Eimal abeglade, wenn du's verlangsch | öppe 110 MB | 349 MB meh | öppe 5.4 GB meh |
+| Wo du's gsehsch | in 3D i ere Meta Quest; «Wackle» oder «Rot und Cyan» uf emne Computer | i ere Meta Quest, wo du di drii ineleinsch; «Vorschau in 3D» uf em Computer | rundum i ere Meta Quest, und i jedem 360°-Viewer |
+
+Jedi neui Datei chunnt näbe ihres Original, nie drüber, oder i en Ordner nach dinere Wahl, wenn de Ordner vom Original kei neui Datei aanimmt; uf emne Netzwerkordner erscht, wenn du für dä Ordner ja gseit häsch («Immuch360 schriibt det neui Dateie, nie d Originäl»). D Bibliothek verchnüpft jedi Version mit ihrem Original mit ihrem Abzeiche, «3D KI», «3D-Szene» oder «360° KI», im Album «Immuch360 KI-Versione», wo usserhalb vo dinere Immich-Sicherig blibt, usser du schaltisch «Au KI-Versione sichere» ii; Achtung, «Alles uswähle» bi de gsicherete Albene wählt au das Album us und schaltet dä Schalter ii. Zum e Datei i de Quest gseh, speicher si uf dim NAS, sicher si uf dim Immich-Server oder schalt uf Windows «Dä Computer im Netzwerk freigä» ii.
+
+**I ere Meta Quest**, mit Build 32:
+
+- **KI-Relief**: mach es flachs Foto uf, us dinere Bibliothek oder ere Freigab, und druck obe i de Leischte uf «KI-Relief»: s Headset schätzt s Relief sälber und zeigt s Foto in 3D, «Relief vo de KI gschätzt». S Modell, 99.5 MB, wird s erschte Mal abeglade, wenn du druf drucksch, und d Reliefs wärded i emne Cache bhalte. «KI-Reliefs in 2.5D ufmache (experimentell)», i de Iistellige, Erwiitert, «KI und 3D», lat nöchi Objekt vor em Hintergrund bewege, wenn du de Chopf bewegsch. Uf ere Quest 2 oder ere Quest Pro blibt de Chnopf grau, «Uf däm Headset no nöd teschtet», bis du det «KI-Relief uf Quest 2 und Quest Pro (nöd teschtet)» iischaltisch.
+- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room shown above); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **Panorame**: es generierts Panorama gaht rundum uf, mit em Blick uf dis Foto, mit «Vo de KI über de Rand vom Foto use generiert» und emne dünne Umriss vom Originalfoto, wo nach es paar Sekunde verblassed; sini 3D-Version isch in echtem 3D.
+
+**Uf Handys, Tablets und Fernseh** gönd d Dateie, wo en Computer gmacht hät, so uf, wie si sind, und det wird nüt generiert. Es Panorama gaht im 360°-Viewer mit em Abzeiche «360° KI», em Satz und em Umriss uf Android-Handys, -Tablets und Android TV uf; uf iPhone, iPad, LG- und Samsung-Fernseh gaht's vorläufig als eifachs 360°-Foto uf. E Szene erschiint als ihres Foto, mit emne chline Zeiche 3D-SZENE i de Egge; uf Android füeged ihri Detail «Mach si uf ere Meta Quest uf, zum si z erkunde» dezue. Es 3D-Foto zeigt sini zwei Oug nebedenand.
+
+**Was echt isch und was nöd, immer gseit.** Das isch de Punkt, nöd s Chliigedruckte. S Relief vo emne 3D-Foto wird us eim Foto gschätzt, und was s Foto versteckt, wird usgfüllt und isch nöd echt. E Szene isch «Us eim einzige Foto rekonstruiert, erkund si innerhalb vo ihre Gränze». Es Panorama bhaltet dini echte Pixel det, wo si gsi sind, und erfindet de Rescht, öppe 90 % vo de Kugle für es typischs Foto, und s Fänschter seit, wie vill, bevor du aafangsch. D App seit's det, wo du anelugsch, mit «Relief vo de KI gschätzt», «Vo de KI über de Rand vom Foto use generiert» und de Abzeiche, und d Dateie säged's au: i üsem XMP, und bi de Szene und de Panorame im IPTC Digital Source Type vo emne Bild, wo mit KI gmacht worde isch, damit anderi Apps es generierts Panorama vo emne echte 360°-Foto chönd unterscheide. Dini Originäl wärded nie veränderet, und nüt verlaht din Computer oder dis Headset. Wie s Fänschter seit: «E fertigi Umwandlig garantiert kei guets Resultat.»
+
+**Was prüeft worde isch**, bis am 29. Oktober 2026, mit Test-Builds vo dem Code: 3D-Fotos vo de Linux-App i emne Container uf emne Linux-PC, au offline; Szene vo de Windows-App uf emne Laptop mit ere RTX 4060 Laptop GPU (zäh i 2 min 39 s) und vo de Engine uf em Linux-PC; uf dem Laptop vier Panorame i je 4 min 16 s bis 4 min 44 s, ihri 3D-Versione i öppe 30 s, mit Abbräche, ere abgschossene App, emne andere Programm, wo d Grafikcharte bsetzt hät, und kei Netzwerkverbindig vo de App während de Tests.
+
+Gränze: na kei 360°-Panorama uf emne Mac («No nöd uf Mac»), und au nöd ohni passendi Grafikcharte, und s Fänschter seit werum («Kei Grafikcharte mit Vulkan gfunde», «Integrierti Grafik teilt de Speicher vom Computer: z langsam für Panoramas», mit «Mit integrierter Grafik probiere (nöd teschtet)», zum's trotzdem probiere); i emne Panorama cha de Rand vo dim Foto als scharfe Sprung im Farbton sichtbar sii; di meischte Szene säged «Blickfeld gschätzt: d Forme chönnted verzoge sii»; e Szene bruucht öppe 2 GB freie Speicher (susch «Nöd gnueg Speicher»); mit gsicherete KI-Versione paart d Duplikat-Suechi vo Immich jedes Foto mit sinere Szene und schlaht oft vor, d Szene z bhalte, die schwäreri Datei: bhalt s Original. Handys und Fernseh mached nüt, und s Headset macht nur Reliefs; e Szene chunnt us eim Foto, na nöd us mehrere Fotos vom gliiche Ort.
+
+**D Komponente**: uf em Computer listet Iistellige, «KI und 3D» d Komponente vo jedere Funktion mit ihrere Grössi uf, Abelade und Entferne, dänn «Alli KI-Komponente entferne» und «D KI-Komponente verschiebe» uf es anders Laufwerk; «KI-Funktione» uus versteckt jede KI-Chnopf und lädt nüt abe. Jedi Datei wird über ihre SHA-256 prüeft. Uf Windows sind si i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, wo de Deinstaller löscht (nöd en Ordner, wo du si hiigschobe häsch); uf Linux i `~/.local/share/immuch360/ai-components` uf de meischte Systeme, und uf emne Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I de Quest isch «KI und 3D» i de Iistellige, Erwiitert, mit em Relief-Cache.
+
+Meh: d Notize vo [Build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) und [Desktop-Build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), und [d Modell, ihri Lizänze, ihri Quälle und ihri Prüefsumme](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). S Benutzerhandbuech überchunnt sis KI-Kapitel mit em nächschte Durchgang; bis dänn isch dä Abschnitt s Handbuech.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

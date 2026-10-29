@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Íslenska</b> · Önnur tungumál (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Þitt efni. Allir skjáir. Öll sjónarhorn. Nýtt: breyttu myndunum þínum í 3D myndir, 3D senur og 360° víðmyndir. Gert af gervigreind á þinni eigin tölvu. Myndirnar þínar fara aldrei þaðan. Android, iPhone og iPad, Android TV, LG og Samsung sjónvörp, Meta Quest, Windows, macOS, Linux. Teikning, ekki skjámynd: í ljósaskiptunum fyrir framan sjávarvík, sama herbergið fjórum sinnum, sem flöt mynd á síma, í fljótandi lögum fyrir framan hvítt höfuðtæki, sem sena á fartölvu og breitt út á boginn borða eins og víðmynd, tengt saman með ljósbogum">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Flatar, 360° og 3D myndir og myndskeið úr tækinu þínu, NAS-tækinu þínu, Immich vélþjóninum þínum, myndavélunum þínum og drónanum þínum. Enginn reikningur nauðsynlegur. Immuch360 er ókeypis forrit með opnum grunnkóða sem les myndirnar þínar og myndskeiðin þar sem þau eru og spilar hvert þeirra í þeim skoðara sem hentar því: flatt, sem kúlu sem þú horfir í kringum þig í, í 3D, eða allt í kringum þig í höfuðtæki. Það keyrir á símum, spjaldtölvum, sjónvörpum, Meta Quest höfuðtækjum og tölvum.
 
-**Nýtt: flötu myndirnar þínar, í 3D.** Veldu mynd á tölvunni þinni og fáðu 3D mynd, 3D senu til að stíga inn í, eða 360° víðmynd sem ímyndar sér restina af staðnum í kringum þig. Í Meta Quest 3 eða 3S: eitt ýt á „Gervigreindardýpt“ og hvaða flata mynd sem er fær dýpt. Gervigreindin keyrir á þinni eigin tölvu og höfuðtæki, og ekkert er sent neitt. Tilraun. [Sjáðu hvernig](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="3D mynd sem Immuch360 bjó til úr einni venjulegri mynd af gömlum sal með svölum, súlum og ljósakrónu, í Vagg sýn: vinstra og hægra auga hennar til skiptis, um sex sinnum á sekúndu, svo súlurnar standa út frá veggjunum">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ein mynd, fjórar leiðir, allt raunveruleg úttak Immuch360: hvítt herbergi með hringlaga borði og glugga, eins og myndin var tekin; 3D mynd hennar, sem sýnir augað sem forritið reiknar, merkið 3D AI, dýpt áætluð af gervigreind; 3D sena hennar séð frá vinstri og frá hægri, merkið 3D sena; fyrir neðan, 360° víðmyndin sem búin var til í kringum hana, merkið 360° AI, upprunalega myndin afmörkuð í miðjunni og heilt stúdíó skáldað í kringum hana, nokkrir skrýtnir hlutir meðtaldir">
-</p>
-<p align="center"><sub>Raunveruleg úttak forritsins úr CC0 myndum frá Poly Haven, minnkuð, ekki lagfærð, með merkjum forritsins bætt við fyrir þessa síðu. Að ofan, 3D mynd, bæði augu hennar til skiptis; að neðan, ein mynd á fjóra vegu, sýnirnar tvær af senunni teiknaðar úr senuskránni. Allt utan við útlínu víðmyndarinnar er skáldað af gervigreind.</sub></p>
+**New: your flat photos, in 3D.** On a computer, "Make 3D (AI)" turns one photo into a 3D photo, a 3D scene or a 360° panorama; in a Meta Quest 3 or 3S, "AI relief" shows any flat photo in 3D. Experimental, and everything runs on your own machines: [see how](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Óopinber grein af Immich farsímaforritinu. Ekki tengt Immich eða FUTO. Nafnið má lesa sem „I am much 360“.</sub>
@@ -33,9 +24,9 @@ Flatar, 360° og 3D myndir og myndskeið úr tækinu þínu, NAS-tækinu þínu,
 - [Hvað þú getur gert](#what-you-can-do)
 - [Fáðu það í tækið þitt](#get-it-on-your-device)
 - [Leiðbeiningar](#how-to)
-  - [Breyttu einni mynd í 3D, senu, víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Skoða myndir og myndskeið, með eða án vélþjóns](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Kanna víðmyndir, 360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Breyttu einni mynd í 3D, senu, víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Horfa í sjónvarpinu með fjarstýringunni](#watch-on-the-tv-with-the-remote): [Android TV og Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Skrá sjónvarp, höfuðtæki eða tölvu inn með símanum](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Stíga inn í myndirnar þínar og myndskeiðin með Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Flatar, 360° og 3D myndir og myndskeið úr tækinu þínu, NAS-tækinu þínu,
 <a id="who-it-is-for"></a>
 ## Fyrir hverja
 
-- **Myndirnar þínar eru flatar** og þú vilt sjá þær í 3D, sem senu til að halla sér inn í í höfuðtæki, eða inni í 360° víðmynd, án 3D myndavélar: [breyttu einni mynd í 3D, senu, víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama), nýtt, gert af gervigreind á þinni eigin tölvu.
 - **Þú tekur 360° eða 3D myndir** og vilt horfa í kringum þig í þeim, ekki sjá þær flatar, tvöfaldar eða teygðar: [360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d).
 - **Myndirnar þínar og kvikmyndir eru á NAS-tæki, tölvu, Plex eða Immich** og þú vilt fá þær á sjónvarpið án þess að afrita neitt: [í sjónvarpinu](#watch-on-the-tv-with-the-remote), [NAS, deildir og Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Þú átt Meta Quest** og vilt stíga inn í eigin myndir og myndskeið: [í höfuðtækinu](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Myndirnar þínar eru flatar** og þú vilt sjá þær í 3D, sem senu til að halla sér inn í í höfuðtæki, eða inni í 360° víðmynd, án 3D myndavélar: [breyttu einni mynd í 3D, senu, víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama), nýtt, gert af gervigreind á þinni eigin tölvu.
 - **Þú rekur Immich** og vilt forritið þess, auk umlykjandi skoðaranna og stóru skjánna sem þú skráir inn úr símanum: [Immich safnið þitt](#keep-your-immich-library-with-more), [í samanburði við Immich](#compared-with-immich).
 - **Þú vaktar heimilið með Tapo myndavélum** og vilt hafa þær við hlið myndanna þinna, líka í sjónvarpinu (ekki enn prófað með raunverulegri myndavél): [heimilismyndavélar](#watch-your-home-cameras-on-the-big-screen).
 - **Þú flýgur DJI dróna** og vilt beina mynd hans í símanum án DJI Fly, og í Meta Quest eða á Android TV fyrir fólkið sem er með þér (tilraun): [dróninn þinn](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ Einn kóðagrunnur fyrir síma, spjaldtölvur, Android TV, Meta Quest og tölvur
 
 Hver lína opnar leiðbeiningar sínar hér fyrir neðan. Allur leiðarvísirinn, með öllum valkostum, skilaboðum og takmörkunum, er í [notendahandbókinni](../docs/immuch360/user-guide.md).
 
-1. [Breyttu einni mynd í 3D mynd, 3D senu eða 360° víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama): gert af gervigreind á tölvunni þinni, skoðað í 3D í Meta Quest, sem gefur líka hvaða flatri mynd sem er dýpt. *Nýtt, tilraun.*
-2. [Skoða myndir og myndskeið, með eða án vélþjóns](#watch-your-photos-and-videos-with-or-without-a-server): myndasafn og spilari, á tækinu einu eða með Immich vélþjóninum þínum.
-3. [Horfa í kringum sig í 360° myndum og myndskeiðum, víðmyndum, VR180 og 3D](#explore-panoramas-360-vr180-and-3d): kúla sem þú snýrð með fingri, símanum eða fjarstýringunni.
+1. [Skoða myndir og myndskeið, með eða án vélþjóns](#watch-your-photos-and-videos-with-or-without-a-server): myndasafn og spilari, á tækinu einu eða með Immich vélþjóninum þínum.
+2. [Horfa í kringum sig í 360° myndum og myndskeiðum, víðmyndum, VR180 og 3D](#explore-panoramas-360-vr180-and-3d): kúla sem þú snýrð með fingri, símanum eða fjarstýringunni.
+3. [Breyttu einni mynd í 3D mynd, 3D senu eða 360° víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama): gert af gervigreind á tölvunni þinni, skoðað í 3D í Meta Quest, sem gefur líka hvaða flatri mynd sem er dýpt. *Nýtt, tilraun.*
 4. [Horfa í sjónvarpinu með fjarstýringunni](#watch-on-the-tv-with-the-remote): Android TV og Google TV, LG sjónvörp, og Samsung sjónvörp sem prófunarbuild.
 5. [Skrá sjónvarp, höfuðtæki eða tölvu inn með símanum](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): skannaðu QR-kóðann, staðfestu, horfðu.
 6. [Stíga inn í myndirnar þínar og myndskeiðin með Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° allt í kringum þig, 3D í sönnu 3D.
@@ -257,53 +248,6 @@ Opnaðu `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` úr [forskoðunarút
 
 Hver liður segir hvað þú færð, síðan skrefin, síðan takmarkanirnar. [Notendahandbókin](../docs/immuch360/user-guide.md) hefur alla valkosti og öll skilaboð.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Breyttu einni mynd í 3D, senu, víðmynd
-
-Flestar myndirnar þínar eru flatar, og þú getur ekki farið til baka og tekið þær aftur í 3D. Immuch360 gefur þeim dýpt. Á tölvunni þinni verður ein mynd að **3D mynd**, **3D senu** sem þú hallar þér inn í í höfuðtæki, eða **360° víðmynd** sem ímyndar sér restina af staðnum í kringum þig. Quest 3 eða 3S býr sjálft til dýptina, fyrir hvaða flata mynd sem er. Allt keyrir á þinni eigin tölvu og höfuðtæki: ekkert ský, enginn reikningur, frumritunum þínum er aldrei breytt. Nýtt í build 32 og desktop build 13, tilraun og sjálfgefið kveikt á því. Immich forritið hefur ekkert þessu líkt.
-
-**Á tölvunni þinni**, með desktop build 13 á Windows, Linux eða macOS:
-
-1. Veldu eina eða fleiri myndir í safninu eða í möppu, síðan „Búa til 3D (gervigreind)“.
-2. Veldu hvað þú vilt: „3D mynd“, „3D sena“, „360° víðmynd“ eða „3D útgáfa af 360° mynd“ fyrir þínar eigin 360° myndir. Glugginn segir hvað gervigreind mun áætla eða skálda („Gervigreind mun skálda um 96% af þessari víðmynd“), um það bil hve langan tíma þetta tekur á þessari tölvu, og hvert skráin fer: „Við hlið upprunalegu“ eða „Mappa að eigin vali“. Gerð sem þessi tölva getur ekki gert er áfram grá, með ástæðu sinni, eins og „Ekki enn á Mac“ eða „Skjákortið er með 6.0 GiB af minni, 360° víðmyndir þurfa 7.5 GiB“.
-3. Í fyrsta skipti býður glugginn íhluti þeirrar gerðar: Sækja, einu sinni. Þeir keyra á þessari tölvu og virka án nettengingar eftir það.
-4. Umbreyta. Verkin raðast á tvær brautir, örgjörvann og skjákortið, með skrefum sínum og tímanum sem eftir er; Hætta við stöðvar eitt þeirra hvenær sem er, og forritið spyr fyrst áður en því er lokað.
-5. Opnaðu niðurstöðuna. 3D mynd birtist sem „Vinstra auga“, „Hlið við hlið“, „Vagg“ (hreyfimyndin efst á þessari síðu) eða „Rautt og blágrænt“ fyrir gleraugu; sena hefur „Forskoða í 3D“, snúið með músinni eða snertifletinum, og „Flytja út fyrir önnur 3D forrit (.glb)“; víðmynd opnast í 360° skoðaranum.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Glugginn Búa til 3D (gervigreind) í Windows forritinu: 3D mynd, 3D sena, 360° víðmynd, valin, og 3D útgáfa af 360° mynd; Búið til af gervigreind handan jaðra myndarinnar; Gervigreind mun skálda um 96% af þessari víðmynd; Lokin umbreyting tryggir ekki góða niðurstöðu; Um 5 mín á mynd á þessu skjákorti; Búa einnig til 3D útgáfuna, hakað við; Vista í: Við hlið upprunalegu, eða Mappa að eigin vali; Hætta við og Umbreyta">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360° skoðari Windows forritsins opnar víðmynd sem hann bjó til úr mynd af vík séð frá fjalli: merkin 360° AI og 360° efst til hægri, upprunalega myndin afmörkuð í miðjunni undir orðunum Upprunalega myndin, og Búið til af gervigreind handan jaðra myndarinnar neðst">
-</p>
-
-| | 3D mynd | 3D sena | 360° víðmynd |
-|---|---|---|---|
-| Það sem þú færð | `<name>_3D_LRF_Full_SBS.jpg`, 3D mynd hlið við hlið: myndin þín fyrir vinstra augað, reiknað hægra auga | `<name>_scene3D.jpg`, mynd sem ber senuna, í lögum | `<name>_360.jpg`, 6144 x 3072, og með „Búa einnig til 3D útgáfuna“, `<name>_360_3D.jpg` |
-| Það sem gervigreindin gerir | áætlar dýpt myndarinnar (Depth Anything V2 Small) | áætlar lögun staðarins (MoGe-2) og fyllir upp í það sem myndin hylur (LaMa), fyrir senu í lögum | skáldar allt handan jaðra myndarinnar (FLUX.2 klein 4B og 360° LoRA); þínir eigin dílar haldast þar sem þeir voru |
-| Hve lengi | nokkrar sekúndur á mynd | 15 til 45 sekúndur á mynd | um 5 mínútur á fartölvu með RTX 4060, 30 sekúndum lengur fyrir 3D útgáfuna |
-| Keyrir á | örgjörva Windows, Linux eða macOS tölvu | örgjörva Windows, Linux eða macOS tölvu | skjákorti með Vulkan og 8 GB af eigin minni, í Windows eða Linux tölvu með 16 GB af minni; NVIDIA prófað, AMD og Intel kort ekki enn; ekki enn á Mac |
-| Sótt einu sinni, þegar þú biður um það | um 110 MB | 349 MB til viðbótar | um 5.4 GB til viðbótar |
-| Hvar á að skoða | í 3D í Meta Quest; „Vagg“ eða „Rautt og blágrænt“ á tölvu | í Meta Quest, þar sem þú hallar þér inn í hana; „Forskoða í 3D“ á tölvunni | allt í kringum þig í Meta Quest, og í öllum 360° skoðurum |
-
-Hver ný skrá fer við hlið frumritsins, aldrei yfir það, eða í möppu að þínu vali þegar mappa frumritsins tekur ekki við nýrri skrá; á netmöppu aðeins eftir að þú hefur sagt já fyrir þá möppu („Immuch360 skrifar nýjar skrár þangað, aldrei upprunalegu skrárnar.“). Safnið tengir hverja útgáfu við frumritið með merki sínu, „3D AI“, „3D sena“ eða „360° AI“, í albúminu „Gervigreindarútgáfur Immuch360“, sem stendur utan við Immich afritunina þína nema þú kveikir á „Taka einnig afrit af gervigreindarútgáfum“; varúð, „Velja allt“ í afritunaralbúmunum velur líka þetta albúm og kveikir á þeim rofa. Til að sjá skrá í Quest skaltu vista hana á NAS-tækinu þínu, taka afrit af henni á Immich vélþjóninn þinn eða, á Windows, kveikja á „Deila þessari tölvu á netinu“.
-
-**Í Meta Quest**, með build 32:
-
-- **Gervigreindardýpt**: opnaðu hvaða flata mynd sem er, úr safninu þínu eða deild, og ýttu á „Gervigreindardýpt“ í efstu stikunni: höfuðtækið áætlar dýptina sjálft og sýnir myndina í 3D, „Dýpt áætluð af gervigreind“. Líkanið, 99.5 MB, er sótt í fyrsta skipti sem þú ýtir á hnappinn, og dýptirnar eru geymdar í skyndiminni. „Opna gervigreindardýpt í 2.5D (tilraunaútgáfa)“, í Stillingar, Ítarlegt, „Gervigreind og 3D“, lætur nálæga hluti hreyfast fyrir framan bakgrunninn þegar þú hreyfir höfuðið. Á Quest 2 eða Quest Pro er hnappurinn áfram grár, „Ekki enn prófað á þessum gleraugum“, þar til þú kveikir á „Dýpt með gervigreind á Quest 2 og Quest Pro (óprófað)“ á sama stað.
-- **3D myndir og senur frá tölvunni**: „Skoða í 3D“ sýnir 3D mynd í raunverulegri 3D. „Skoða 3D senuna“ á frumritinu, eða „Kanna 3D senuna“ á senunni, setur senuna inn í herbergið þitt: hallaðu þér inn, eða renndu þér með vinstri stýripinnanum innan endurgerða svæðisins („Svigrúm til hreyfingar: um 0.5 m í hverja átt“ fyrir herbergið efst á þessari síðu); lögin fletjast út og dökkna við jaðar þess, smellur á stýripinna endurstillir sýnina, og B eða Y fer til baka.
-- **Víðmyndir**: búin til víðmynd opnast allt í kringum þig, á móti myndinni þinni, með „Búið til af gervigreind handan jaðra myndarinnar“ og þunnri útlínu upprunalegu myndarinnar, sem dofna eftir nokkrar sekúndur; 3D útgáfa hennar er í raunverulegri 3D.
-
-**Á símum, spjaldtölvum og sjónvörpum** opnast skrárnar sem tölva bjó til eins og þær eru, og ekkert er búið til þar. Víðmynd opnast í 360° skoðaranum með merkinu „360° AI“, setningunni og útlínunni á Android símum, spjaldtölvum og Android TV; á iPhone, iPad, LG og Samsung sjónvörpum opnast hún sem venjuleg 360° mynd í bili. Sena birtist sem mynd sín, með litlu 3D SCENE merki í horninu; á Android bæta upplýsingar hennar við „Opnaðu hana á Meta Quest til að kanna hana“. 3D mynd sýnir bæði augu sín hlið við hlið.
-
-**Hvað er raunverulegt og hvað ekki, alltaf sagt.** Það er aðalatriðið, ekki smáa letrið. Dýpt 3D myndar er áætluð út frá einni mynd, og það sem myndin hylur er fyllt upp í og er ekki raunverulegt. Sena er „Endurgert út frá einni mynd, kannaðu innan marka hennar“. Víðmynd heldur raunverulegu dílunum þínum þar sem þeir voru og skáldar restina, um 90% af kúlunni fyrir venjulega mynd, og glugginn segir hve mikið áður en þú byrjar. Forritið segir það þar sem þú horfir, með „Dýpt áætluð af gervigreind“, „Búið til af gervigreind handan jaðra myndarinnar“ og merkjunum, og skrárnar segja það líka: í XMP okkar, og fyrir senurnar og víðmyndirnar í IPTC stafrænni upprunagerð myndar sem gerð er með gervigreind, svo önnur forrit geti greint búna til víðmynd frá raunverulegri 360° mynd. Frumritunum þínum er aldrei breytt, og ekkert fer úr tölvunni þinni eða höfuðtækinu. Eins og glugginn orðar það: „Lokin umbreyting tryggir ekki góða niðurstöðu.“
-
-**Hvað var prófað**, til 29. október 2026, með prófunarútgáfum af þessum kóða: 3D myndir af Linux forritinu í gámi á Linux tölvu, líka án nettengingar; senur af Windows forritinu á fartölvu með RTX 4060 Laptop GPU (tíu á 2 min 39 s) og af vélinni á Linux tölvunni; á þeirri fartölvu, fjórar víðmyndir á 4 min 16 s til 4 min 44 s hver, 3D útgáfur þeirra á um 30 s, með Hætta við, forriti sem var drepið, öðru forriti sem hélt skjákortinu, og engri nettengingu forritsins meðan á prófunum stóð.
-
-Takmarkanir: engin 360° víðmynd á Mac enn („Ekki enn á Mac“), né án hentugs skjákorts, og glugginn segir af hverju („Ekkert skjákort með Vulkan fannst“, „Innbyggð skjástýring deilir minni tölvunnar: of hæg fyrir víðmyndir“, með „Prófa á innbyggðri skjástýringu (óprófað)“ til að reyna samt); inni í víðmynd getur jaðar myndarinnar þinnar sést sem skarpt þrep í litatóni; flestar senur segja „Sjónsvið ágiskað: lögun gæti skekkst“; sena þarf um 2 GB af lausu minni („Ekki nóg minni“ annars); þegar afrit er tekið af gervigreindarútgáfum parar tvítekningaleit Immich hverja mynd við senu hennar og stingur oft upp á að halda senunni, þyngri skránni: haltu frumritinu. Símar og sjónvörp búa ekkert til, og höfuðtækið býr aðeins til dýpt; sena kemur úr einni mynd, ekki enn úr mörgum myndum af sama stað.
-
-**Íhlutirnir**: á tölvunni sýnir Stillingar, „Gervigreind og 3D“ íhluti hvers eiginleika með stærð sinni, Sækja og Fjarlægja, síðan „Fjarlægja alla gervigreindaríhluti“ og „Færa gervigreindaríhlutina“ á annað drif; slökkt á „Gervigreindareiginleikar“ felur alla gervigreindarhnappa og sækir ekkert. Hver skrá er staðfest með SHA-256 gildi sínu. Á Windows eru þeir í `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, sem fjarlægingarforritið eyðir (ekki mappa sem þú færðir þá í); á Linux í `~/.local/share/immuch360/ai-components` á flestum kerfum, og á Mac í `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Í Quest er „Gervigreind og 3D“ í Stillingar, Ítarlegt, ásamt dýptarskyndiminninu.
-
-Meira: útgáfuskýringar [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) og [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), og [líkönin, leyfi þeirra, uppruni og gátsummur](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Notendahandbókin fær gervigreindarkafla sinn í næstu umferð; þangað til er þessi hluti handbókin.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 þekkir flatar myndir og myndskeið, víðmyndir, 360° myndir og mynd
 Á símum og spjaldtölvum getur stereóskópískt myndskeið líka fengið dýpt á flötum skjánum: Spatial 2.5D spilarinn notar frammyndavélina til að fylgja höfðinu þínu og sýnir sjónarhornið milli augnanna tveggja (á tilraunastigi). Rýmismyndir frá Apple, teknar með iPhone, eru greindar og sýndar í 3D í Meta Quest.
 
 Meira: [360° myndir og myndskeið](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D og VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Rýmismyndir og myndskeið frá Apple](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360° listinn](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Breyttu einni mynd í 3D, senu, víðmynd
+
+Flestar myndirnar þínar eru flatar, og þú getur ekki farið til baka og tekið þær aftur í 3D. Immuch360 gefur þeim dýpt. Á tölvunni þinni verður ein mynd að **3D mynd**, **3D senu** sem þú hallar þér inn í í höfuðtæki, eða **360° víðmynd** sem ímyndar sér restina af staðnum í kringum þig. Quest 3 eða 3S býr sjálft til dýptina, fyrir hvaða flata mynd sem er. Allt keyrir á þinni eigin tölvu og höfuðtæki: ekkert ský, enginn reikningur, frumritunum þínum er aldrei breytt. Nýtt í build 32 og desktop build 13, tilraun og sjálfgefið kveikt á því. Immich forritið hefur ekkert þessu líkt.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="3D mynd sem Immuch360 bjó til úr einni venjulegri mynd af gömlum sal með svölum, súlum og ljósakrónu, í Vagg sýn: vinstra og hægra auga hennar til skiptis, um sex sinnum á sekúndu, svo súlurnar standa út frá veggjunum">
+</p>
+<p align="center"><sub>A real output of the app from a CC0 photo of Poly Haven, reduced, not retouched: a 3D photo, its two eyes in turn.</sub></p>
+
+**Á tölvunni þinni**, með desktop build 13 á Windows, Linux eða macOS:
+
+1. Veldu eina eða fleiri myndir í safninu eða í möppu, síðan „Búa til 3D (gervigreind)“.
+2. Veldu hvað þú vilt: „3D mynd“, „3D sena“, „360° víðmynd“ eða „3D útgáfa af 360° mynd“ fyrir þínar eigin 360° myndir. Glugginn segir hvað gervigreind mun áætla eða skálda („Gervigreind mun skálda um 96% af þessari víðmynd“), um það bil hve langan tíma þetta tekur á þessari tölvu, og hvert skráin fer: „Við hlið upprunalegu“ eða „Mappa að eigin vali“. Gerð sem þessi tölva getur ekki gert er áfram grá, með ástæðu sinni, eins og „Ekki enn á Mac“ eða „Skjákortið er með 6.0 GiB af minni, 360° víðmyndir þurfa 7.5 GiB“.
+3. Í fyrsta skipti býður glugginn íhluti þeirrar gerðar: Sækja, einu sinni. Þeir keyra á þessari tölvu og virka án nettengingar eftir það.
+4. Umbreyta. Verkin raðast á tvær brautir, örgjörvann og skjákortið, með skrefum sínum og tímanum sem eftir er; Hætta við stöðvar eitt þeirra hvenær sem er, og forritið spyr fyrst áður en því er lokað.
+5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation above) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Glugginn Búa til 3D (gervigreind) í Windows forritinu: 3D mynd, 3D sena, 360° víðmynd, valin, og 3D útgáfa af 360° mynd; Búið til af gervigreind handan jaðra myndarinnar; Gervigreind mun skálda um 96% af þessari víðmynd; Lokin umbreyting tryggir ekki góða niðurstöðu; Um 5 mín á mynd á þessu skjákorti; Búa einnig til 3D útgáfuna, hakað við; Vista í: Við hlið upprunalegu, eða Mappa að eigin vali; Hætta við og Umbreyta">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360° skoðari Windows forritsins opnar víðmynd sem hann bjó til úr mynd af vík séð frá fjalli: merkin 360° AI og 360° efst til hægri, upprunalega myndin afmörkuð í miðjunni undir orðunum Upprunalega myndin, og Búið til af gervigreind handan jaðra myndarinnar neðst">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ein mynd, fjórar leiðir, allt raunveruleg úttak Immuch360: hvítt herbergi með hringlaga borði og glugga, eins og myndin var tekin; 3D mynd hennar, sem sýnir augað sem forritið reiknar, merkið 3D AI, dýpt áætluð af gervigreind; 3D sena hennar séð frá vinstri og frá hægri, merkið 3D sena; fyrir neðan, 360° víðmyndin sem búin var til í kringum hana, merkið 360° AI, upprunalega myndin afmörkuð í miðjunni og heilt stúdíó skáldað í kringum hana, nokkrir skrýtnir hlutir meðtaldir">
+</p>
+<p align="center"><sub>One photo, four ways: real outputs of the app from a CC0 photo of Poly Haven, reduced, not retouched, with the app's badges added for this page, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+
+| | 3D mynd | 3D sena | 360° víðmynd |
+|---|---|---|---|
+| Það sem þú færð | `<name>_3D_LRF_Full_SBS.jpg`, 3D mynd hlið við hlið: myndin þín fyrir vinstra augað, reiknað hægra auga | `<name>_scene3D.jpg`, mynd sem ber senuna, í lögum | `<name>_360.jpg`, 6144 x 3072, og með „Búa einnig til 3D útgáfuna“, `<name>_360_3D.jpg` |
+| Það sem gervigreindin gerir | áætlar dýpt myndarinnar (Depth Anything V2 Small) | áætlar lögun staðarins (MoGe-2) og fyllir upp í það sem myndin hylur (LaMa), fyrir senu í lögum | skáldar allt handan jaðra myndarinnar (FLUX.2 klein 4B og 360° LoRA); þínir eigin dílar haldast þar sem þeir voru |
+| Hve lengi | nokkrar sekúndur á mynd | 15 til 45 sekúndur á mynd | um 5 mínútur á fartölvu með RTX 4060, 30 sekúndum lengur fyrir 3D útgáfuna |
+| Keyrir á | örgjörva Windows, Linux eða macOS tölvu | örgjörva Windows, Linux eða macOS tölvu | skjákorti með Vulkan og 8 GB af eigin minni, í Windows eða Linux tölvu með 16 GB af minni; NVIDIA prófað, AMD og Intel kort ekki enn; ekki enn á Mac |
+| Sótt einu sinni, þegar þú biður um það | um 110 MB | 349 MB til viðbótar | um 5.4 GB til viðbótar |
+| Hvar á að skoða | í 3D í Meta Quest; „Vagg“ eða „Rautt og blágrænt“ á tölvu | í Meta Quest, þar sem þú hallar þér inn í hana; „Forskoða í 3D“ á tölvunni | allt í kringum þig í Meta Quest, og í öllum 360° skoðurum |
+
+Hver ný skrá fer við hlið frumritsins, aldrei yfir það, eða í möppu að þínu vali þegar mappa frumritsins tekur ekki við nýrri skrá; á netmöppu aðeins eftir að þú hefur sagt já fyrir þá möppu („Immuch360 skrifar nýjar skrár þangað, aldrei upprunalegu skrárnar.“). Safnið tengir hverja útgáfu við frumritið með merki sínu, „3D AI“, „3D sena“ eða „360° AI“, í albúminu „Gervigreindarútgáfur Immuch360“, sem stendur utan við Immich afritunina þína nema þú kveikir á „Taka einnig afrit af gervigreindarútgáfum“; varúð, „Velja allt“ í afritunaralbúmunum velur líka þetta albúm og kveikir á þeim rofa. Til að sjá skrá í Quest skaltu vista hana á NAS-tækinu þínu, taka afrit af henni á Immich vélþjóninn þinn eða, á Windows, kveikja á „Deila þessari tölvu á netinu“.
+
+**Í Meta Quest**, með build 32:
+
+- **Gervigreindardýpt**: opnaðu hvaða flata mynd sem er, úr safninu þínu eða deild, og ýttu á „Gervigreindardýpt“ í efstu stikunni: höfuðtækið áætlar dýptina sjálft og sýnir myndina í 3D, „Dýpt áætluð af gervigreind“. Líkanið, 99.5 MB, er sótt í fyrsta skipti sem þú ýtir á hnappinn, og dýptirnar eru geymdar í skyndiminni. „Opna gervigreindardýpt í 2.5D (tilraunaútgáfa)“, í Stillingar, Ítarlegt, „Gervigreind og 3D“, lætur nálæga hluti hreyfast fyrir framan bakgrunninn þegar þú hreyfir höfuðið. Á Quest 2 eða Quest Pro er hnappurinn áfram grár, „Ekki enn prófað á þessum gleraugum“, þar til þú kveikir á „Dýpt með gervigreind á Quest 2 og Quest Pro (óprófað)“ á sama stað.
+- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room shown above); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **Víðmyndir**: búin til víðmynd opnast allt í kringum þig, á móti myndinni þinni, með „Búið til af gervigreind handan jaðra myndarinnar“ og þunnri útlínu upprunalegu myndarinnar, sem dofna eftir nokkrar sekúndur; 3D útgáfa hennar er í raunverulegri 3D.
+
+**Á símum, spjaldtölvum og sjónvörpum** opnast skrárnar sem tölva bjó til eins og þær eru, og ekkert er búið til þar. Víðmynd opnast í 360° skoðaranum með merkinu „360° AI“, setningunni og útlínunni á Android símum, spjaldtölvum og Android TV; á iPhone, iPad, LG og Samsung sjónvörpum opnast hún sem venjuleg 360° mynd í bili. Sena birtist sem mynd sín, með litlu 3D SCENE merki í horninu; á Android bæta upplýsingar hennar við „Opnaðu hana á Meta Quest til að kanna hana“. 3D mynd sýnir bæði augu sín hlið við hlið.
+
+**Hvað er raunverulegt og hvað ekki, alltaf sagt.** Það er aðalatriðið, ekki smáa letrið. Dýpt 3D myndar er áætluð út frá einni mynd, og það sem myndin hylur er fyllt upp í og er ekki raunverulegt. Sena er „Endurgert út frá einni mynd, kannaðu innan marka hennar“. Víðmynd heldur raunverulegu dílunum þínum þar sem þeir voru og skáldar restina, um 90% af kúlunni fyrir venjulega mynd, og glugginn segir hve mikið áður en þú byrjar. Forritið segir það þar sem þú horfir, með „Dýpt áætluð af gervigreind“, „Búið til af gervigreind handan jaðra myndarinnar“ og merkjunum, og skrárnar segja það líka: í XMP okkar, og fyrir senurnar og víðmyndirnar í IPTC stafrænni upprunagerð myndar sem gerð er með gervigreind, svo önnur forrit geti greint búna til víðmynd frá raunverulegri 360° mynd. Frumritunum þínum er aldrei breytt, og ekkert fer úr tölvunni þinni eða höfuðtækinu. Eins og glugginn orðar það: „Lokin umbreyting tryggir ekki góða niðurstöðu.“
+
+**Hvað var prófað**, til 29. október 2026, með prófunarútgáfum af þessum kóða: 3D myndir af Linux forritinu í gámi á Linux tölvu, líka án nettengingar; senur af Windows forritinu á fartölvu með RTX 4060 Laptop GPU (tíu á 2 min 39 s) og af vélinni á Linux tölvunni; á þeirri fartölvu, fjórar víðmyndir á 4 min 16 s til 4 min 44 s hver, 3D útgáfur þeirra á um 30 s, með Hætta við, forriti sem var drepið, öðru forriti sem hélt skjákortinu, og engri nettengingu forritsins meðan á prófunum stóð.
+
+Takmarkanir: engin 360° víðmynd á Mac enn („Ekki enn á Mac“), né án hentugs skjákorts, og glugginn segir af hverju („Ekkert skjákort með Vulkan fannst“, „Innbyggð skjástýring deilir minni tölvunnar: of hæg fyrir víðmyndir“, með „Prófa á innbyggðri skjástýringu (óprófað)“ til að reyna samt); inni í víðmynd getur jaðar myndarinnar þinnar sést sem skarpt þrep í litatóni; flestar senur segja „Sjónsvið ágiskað: lögun gæti skekkst“; sena þarf um 2 GB af lausu minni („Ekki nóg minni“ annars); þegar afrit er tekið af gervigreindarútgáfum parar tvítekningaleit Immich hverja mynd við senu hennar og stingur oft upp á að halda senunni, þyngri skránni: haltu frumritinu. Símar og sjónvörp búa ekkert til, og höfuðtækið býr aðeins til dýpt; sena kemur úr einni mynd, ekki enn úr mörgum myndum af sama stað.
+
+**Íhlutirnir**: á tölvunni sýnir Stillingar, „Gervigreind og 3D“ íhluti hvers eiginleika með stærð sinni, Sækja og Fjarlægja, síðan „Fjarlægja alla gervigreindaríhluti“ og „Færa gervigreindaríhlutina“ á annað drif; slökkt á „Gervigreindareiginleikar“ felur alla gervigreindarhnappa og sækir ekkert. Hver skrá er staðfest með SHA-256 gildi sínu. Á Windows eru þeir í `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, sem fjarlægingarforritið eyðir (ekki mappa sem þú færðir þá í); á Linux í `~/.local/share/immuch360/ai-components` á flestum kerfum, og á Mac í `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Í Quest er „Gervigreind og 3D“ í Stillingar, Ítarlegt, ásamt dýptarskyndiminninu.
+
+Meira: útgáfuskýringar [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) og [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), og [líkönin, leyfi þeirra, uppruni og gátsummur](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Notendahandbókin fær gervigreindarkafla sinn í næstu umferð; þangað til er þessi hluti handbókin.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
