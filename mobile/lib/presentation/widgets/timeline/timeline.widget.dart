@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/selection/timeline_selection.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
@@ -645,7 +646,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                                     onKeyEvent: _throttleHeldArrows,
                                     child: Actions(actions: {DirectionalFocusIntent: _tvArrows}, child: timeline),
                                   )
-                                : timeline,
+                                // Immuch360 Desktop: the clicks and keys of a selection (lib/desktop/selection)
+                                : withDesktopTimelineSelection(timeline),
                           ),
                           if (isBottomWidgetVisible)
                             Positioned(
