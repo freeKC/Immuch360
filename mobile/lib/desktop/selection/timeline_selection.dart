@@ -5,7 +5,9 @@
 // the whole selection, "Upload to Immich" first.
 //
 // Control A loads the assets of the timeline by chunks and changes the selection once, so that thousands of photos
-// do not copy the selection thousands of times; in the search results it takes the results loaded so far.
+// do not copy the selection thousands of times; in the search results it takes the results loaded so far. A Shift
+// click looks for its anchor again first: photos arrived above it (a copy into the folder, a sync with the server)
+// have moved it down.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -53,11 +55,41 @@ class TimelineSelectable implements DesktopSelectable<BaseAsset> {
   @override
   bool get hasSelection => _state.isEnabled;
 
+  /// The page that picks the photos of an album
+  @override
+  bool get picking => _state.forceEnable;
+
   @override
   bool isSelected(BaseAsset item) => _state.selectedAssets.contains(item);
 
+  /// At [near] most of the time; else the nearest of the assets up to a chunk either side, as far as one copy or one
+  /// sync moves it
+  @override
+  Future<int?> locate(BaseAsset item, {required int near}) async {
+    final at = await _load(near, 1);
+    if (at.isNotEmpty && at.first == item) {
+      return near;
+    }
+    if (!_mounted()) {
+      return null;
+    }
+    final from = math.max(0, near - _chunk);
+    final around = await _load(from, 2 * _chunk + 1);
+    int? found;
+    for (final (offset, asset) in around.indexed) {
+      final index = from + offset;
+      if (asset == item && (found == null || (index - near).abs() < (found - near).abs())) {
+        found = index;
+      }
+    }
+    return found;
+  }
+
   @override
   Future<List<BaseAsset>> range(int from, int to) => _load(from, to + 1 - from);
+
+  @override
+  Future<List<BaseAsset>> all() => _load(0, _ref.read(timelineServiceProvider).totalAssets);
 
   /// One change of the selection, and none when every asset of [items] is selected already (the notifier would take
   /// them all out); the assets an album already holds (locked) are never taken
@@ -77,14 +109,6 @@ class TimelineSelectable implements DesktopSelectable<BaseAsset> {
       return;
     }
     _notifier.toggleAssetSelection(item);
-  }
-
-  @override
-  Future<void> selectAll() async {
-    final assets = await _load(0, _ref.read(timelineServiceProvider).totalAssets);
-    if (_mounted()) {
-      addAll(assets);
-    }
   }
 
   /// As the close button of the selection does; on the page that picks the photos of an album, the picked ones go and
@@ -178,7 +202,7 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
   Widget build(BuildContext context) {
     return DesktopSelectionScope<BaseAsset>(
       selectable: _selectable,
-      empty: multiSelectProvider.select((state) => state.selectedAssets.isEmpty),
+      selection: multiSelectProvider,
       // The read only mode and the remote control layout select nothing, as the long press there
       enabled: !ref.watch(viewOnlyProvider),
       menu: _menu,

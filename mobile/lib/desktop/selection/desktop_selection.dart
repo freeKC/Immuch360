@@ -3,7 +3,11 @@
 // actions of the whole selection, Control A selects the whole grid and Escape clears it (those two through
 // DesktopShell). The rules live here once; each grid hands over its own selection through a DesktopSelectable: the
 // timeline (timeline_selection.dart, over multiSelectProvider) and the folder of a share (network_selection.dart, over
-// networkSelectionProvider). There is no third selection state: those two are only called.
+// networkSelectionProvider). There is no third selection state: those two are only called, and a selection belongs to
+// one grid (a share folder and a folder of this computer are never selected together).
+//
+// Control A and a Shift click load the items of the grid, which takes a while on a large timeline: what the user does
+// meanwhile (Escape, a click, the close button) wins over what they load, and a second Control A waits for the first.
 //
 // A plain click stays what it was: it opens the item when nothing is selected, and adds it or takes it out while
 // something is. Touch, the TV and the remote control layout are unchanged; a long press, a drag and the circle of a
@@ -46,6 +50,9 @@ bool desktopAddKeyPressed() {
 /// The name of the key that adds to a selection, for the hint: ⌘ on macOS, Ctrl elsewhere
 String desktopAddKeyName() => CurrentPlatform.isMacOS ? '⌘' : 'Ctrl';
 
+/// How long Control A or a Shift click loads before the grid shows that it works
+const desktopSelectionBusyDelay = Duration(seconds: 1);
+
 /// What a click does with the keys held now: Shift (with Control or Command too) adds a range, Control (Command on
 /// macOS) adds or takes out, Control on macOS opens the menu as a right click would. A plain click opens the item, or
 /// adds or takes it out while [selecting]. A [secondary] click always opens the menu.
@@ -77,10 +84,21 @@ abstract interface class DesktopSelectable<T> {
   /// Whether Escape has something to clear: an item selected, or a share folder still picking
   bool get hasSelection;
 
+  /// Whether the grid only picks (the page that picks the photos of an album): a right click adds the item to the
+  /// picks, it never replaces them
+  bool get picking;
+
   bool isSelected(T item);
+
+  /// Where [item] is in the grid now: at [near], where it was, unless items came or went above it since; null once it
+  /// is gone
+  Future<int?> locate(T item, {required int near});
 
   /// The items from [from] to [to] of the grid, both included, [from] not after [to]
   Future<List<T>> range(int from, int to);
+
+  /// Every item of the grid
+  Future<List<T>> all();
 
   /// Adds [items] to the selection, never takes one out; those that cannot be selected are left out
   void addAll(List<T> items);
@@ -88,24 +106,56 @@ abstract interface class DesktopSelectable<T> {
   /// Adds [item], or takes it out when it was selected
   void toggle(T item);
 
-  /// Selects the whole grid; twice in a row, everything stays selected
-  Future<void> selectAll();
-
   /// Selects nothing
   void clear();
 }
 
-/// The anchor of a grid's selection (the item of the last click that added or took out one), and what a click does
-/// with it
+/// The anchor of a grid's selection (the item of the last click that added or took out one), what a click does with
+/// it, and the loads of Control A and of a Shift click, which may take seconds on a large timeline. A load gives its
+/// result up when the selection changed in the meantime other than by a load (Escape, a click, the close button, a
+/// long press, an action of the sheet): what the user did after Control A is never undone when it ends.
 class DesktopSelectionController<T> {
-  DesktopSelectionController(this.selectable);
+  DesktopSelectionController(this.selectable, {bool Function()? alive, this.onLoading}) : _alive = alive ?? _always;
 
   DesktopSelectable<T> selectable;
 
+  /// Whether the grid is still there once a load ends
+  final bool Function() _alive;
+
+  /// Called with true when a load starts while none runs, with false when the last one ends
+  final void Function(bool loading)? onLoading;
+
+  static bool _always() => true;
+
   ({int index, T item})? _anchor;
+
+  /// Bumped by every change of the selection but those of the loads themselves
+  int _generation = 0;
+
+  /// While a load adds what it loaded: the change that follows is its own
+  bool _adding = false;
+
+  /// Control A still loading, which a second Control A leaves alone
+  Future<void>? _selectingAll;
+
+  int _loads = 0;
 
   /// Where the next Shift click starts its range; none once the selection is empty
   ({int index, T item})? get anchor => selectable.count == 0 ? null : _anchor;
+
+  /// Whether Control A or a Shift click is still loading
+  bool get loading => _loads > 0;
+
+  /// The selection changed, here or anywhere else (the scope listens to it): a load still running gives its result
+  /// up, unless the change is a load's own; the anchor goes once the selection is empty
+  void changed() {
+    if (selectable.count == 0) {
+      _anchor = null;
+    }
+    if (!_adding) {
+      _generation++;
+    }
+  }
 
   /// Applies [click] on [item] at [index]: [DesktopClick.open] and [DesktopClick.menu] are left to the caller
   Future<void> click(DesktopClick click, int index, T item) async {
@@ -114,27 +164,58 @@ class DesktopSelectionController<T> {
       case DesktopClick.menu:
         return;
       case DesktopClick.toggle:
+        _generation++;
         selectable.toggle(item);
         _anchor = (index: index, item: item);
       case DesktopClick.range:
         final from = anchor;
         if (from == null) {
           // Nothing to start from: the item alone, which becomes the anchor
+          _generation++;
           selectable.addAll([item]);
           _anchor = (index: index, item: item);
           return;
         }
-        selectable.addAll(await selectable.range(math.min(from.index, index), math.max(from.index, index)));
+        await _load(() async {
+          final generation = _generation;
+          // Items may have come above the anchor since it was set (a copy into the folder, a sync with the server)
+          final start = await selectable.locate(from.item, near: from.index);
+          if (!_current(generation)) {
+            return;
+          }
+          if (start == null) {
+            // The anchor is gone: the item alone, which becomes the anchor
+            _add([item]);
+            _anchor = (index: index, item: item);
+            return;
+          }
+          _anchor = (index: start, item: from.item);
+          final items = await selectable.range(math.min(start, index), math.max(start, index));
+          if (_current(generation)) {
+            _add(items);
+          }
+        });
     }
   }
 
+  /// Selects the whole grid; a second call while the first loads waits for it rather than loading everything again
+  Future<void> selectAll() => _selectingAll ??= _load(() async {
+    final generation = _generation;
+    final items = await selectable.all();
+    if (_current(generation)) {
+      _add(items);
+    }
+  }).whenComplete(() => _selectingAll = null);
+
   /// Before the menu of a right click on [item]: an item outside the selection becomes the selection, as in a file
-  /// manager, or joins it when [add] (Control or Command held); an item already selected leaves it as it is
+  /// manager, or joins it when [add] (Control or Command held) or when the grid only picks; an item already selected
+  /// leaves it as it is
   void prepareMenu(int index, T item, {required bool add}) {
     if (selectable.isSelected(item)) {
       return;
     }
-    if (!add) {
+    _generation++;
+    if (!add && !selectable.picking) {
       selectable.clear();
     }
     selectable.addAll([item]);
@@ -144,7 +225,36 @@ class DesktopSelectionController<T> {
   /// [item] was selected another way (a long press): the next Shift click starts from it
   void anchorAt(int index, T item) => _anchor = (index: index, item: item);
 
-  void forget() => _anchor = null;
+  /// Selects nothing; a load still running gives its result up
+  void clear() {
+    _generation++;
+    selectable.clear();
+    _anchor = null;
+  }
+
+  bool _current(int generation) => _alive() && generation == _generation;
+
+  void _add(List<T> items) {
+    _adding = true;
+    try {
+      selectable.addAll(items);
+    } finally {
+      _adding = false;
+    }
+  }
+
+  Future<void> _load(Future<void> Function() load) async {
+    if (_loads++ == 0) {
+      onLoading?.call(true);
+    }
+    try {
+      await load();
+    } finally {
+      if (--_loads == 0) {
+        onLoading?.call(false);
+      }
+    }
+  }
 }
 
 /// A grid that Control A and Escape reach through DesktopShell
@@ -185,12 +295,13 @@ abstract final class DesktopSelectionTargets {
 /// The grid [child] on a computer, selected in by [selectable]: what the tiles call on a click (see [maybeOf]), the
 /// target of Control A and Escape while it is shown, and the menu of a right click, with the entries of [menu] (built
 /// while the menu shows, with this scope's context, which lives as long as the grid) then Select all and Deselect all.
-/// Nothing of this while not [enabled] (the read only mode, the remote control layout).
+/// Nothing of this while not [enabled] (the read only mode, the remote control layout). Control A or a Shift click
+/// still loading after a second shows a bar at the top of the grid and the busy pointer.
 class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
   const DesktopSelectionScope({
     super.key,
     required this.selectable,
-    required this.empty,
+    required this.selection,
     required this.menu,
     this.enabled = true,
     required this.child,
@@ -198,8 +309,9 @@ class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
 
   final DesktopSelectable<T> selectable;
 
-  /// Whether the selection is empty: the anchor goes with it, however it was cleared (the close button, Back)
-  final ProviderListenable<bool> empty;
+  /// The state of the selection, whose every change the scope follows, however it was made (the close button, Back,
+  /// a long press, an action of the sheet): see [DesktopSelectionController.changed]
+  final ProviderListenable<Object?> selection;
 
   final List<Widget> Function(BuildContext context, WidgetRef ref) menu;
   final bool enabled;
@@ -216,13 +328,21 @@ class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
 }
 
 class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<T>> implements DesktopSelectionTarget {
-  late final DesktopSelectionController<T> controller = DesktopSelectionController(widget.selectable);
+  late final DesktopSelectionController<T> controller = DesktopSelectionController(
+    widget.selectable,
+    alive: () => mounted,
+    onLoading: _onLoading,
+  );
 
   MenuController? _menu;
   ModalRoute<Object?>? _route;
 
   /// Where the last button went down over the grid, for a menu opened by a click that carries no position
   Offset? _lastPointerDown;
+
+  /// Shows that Control A or a Shift click is still loading, once it has taken a while
+  Timer? _busyTimer;
+  bool _busy = false;
 
   DesktopSelectable<T> get selectable => widget.selectable;
 
@@ -258,7 +378,22 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
   @override
   void dispose() {
     DesktopSelectionTargets.unregister(this);
+    _busyTimer?.cancel();
     super.dispose();
+  }
+
+  void _onLoading(bool loading) {
+    _busyTimer?.cancel();
+    _busyTimer = null;
+    if (loading) {
+      _busyTimer = Timer(desktopSelectionBusyDelay, () {
+        if (mounted) {
+          setState(() => _busy = true);
+        }
+      });
+    } else if (_busy && mounted) {
+      setState(() => _busy = false);
+    }
   }
 
   @override
@@ -271,20 +406,18 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
     return routeData?.isActive ?? true;
   }
 
+  /// A load still running counts: Escape stops it
   @override
-  bool get hasSelection => selectable.hasSelection;
+  bool get hasSelection => selectable.hasSelection || controller.loading;
 
   @override
   bool get isMenuOpen => _menu?.isOpen ?? false;
 
   @override
-  Future<void> selectAll() => selectable.selectAll();
+  Future<void> selectAll() => controller.selectAll();
 
   @override
-  void clear() {
-    selectable.clear();
-    controller.forget();
-  }
+  void clear() => controller.clear();
 
   @override
   void closeMenu() {
@@ -347,11 +480,7 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(widget.empty, (_, empty) {
-      if (empty) {
-        controller.forget();
-      }
-    });
+    ref.listen(widget.selection, (_, _) => controller.changed());
     // The menu hangs from an empty anchor at the top left corner, opened where the click was: around the whole grid,
     // the anchor would take the clicks on the grid for clicks on the menu, which then would not close
     final grid = Stack(
@@ -380,9 +509,24 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
               },
             ),
           ),
+        if (_busy)
+          const Positioned(
+            left: 0,
+            top: 0,
+            right: 0,
+            child: LinearProgressIndicator(key: Key('desktop_selection_busy')),
+          ),
       ],
     );
-    return Listener(onPointerDown: (event) => _lastPointerDown = event.position, child: grid);
+    return Listener(
+      onPointerDown: (event) => _lastPointerDown = event.position,
+      // Hit as the grid is, no more (the drag of a long press tests what lies under the pointer)
+      child: MouseRegion(
+        hitTestBehavior: HitTestBehavior.deferToChild,
+        cursor: _busy ? SystemMouseCursors.progress : MouseCursor.defer,
+        child: grid,
+      ),
+    );
   }
 }
 
