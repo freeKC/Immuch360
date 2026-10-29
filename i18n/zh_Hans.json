@@ -3604,6 +3604,8 @@
   "time_based_memories": "那年今日",
   "time_based_memories_duration": "显示每张图像的秒数。",
   "timeline": "时间线",
+  "timeline_zoom_months": "月",
+  "timeline_zoom_years": "年",
   "timezone": "时区",
   "to_archive": "归档",
   "to_change_password": "修改密码",

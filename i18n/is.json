@@ -2593,6 +2593,8 @@
   "technical_details_missing_profile": "Enginn afkóðari fyrir {profile}",
   "technical_details_picture": "Mynd",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Mánuðir",
+  "timeline_zoom_years": "Ár",
   "tv_layout": "Útlit fyrir fjarstýringu",
   "tv_layout_auto": "Sjálfvirkt",
   "tv_layout_description": "Stórir fókusrammar og fjarstýringarhnappar, án stjórntækjanna sem þurfa snertiskjá. Sjálfvirkt kveikir á því á Android TV og Google TV.",

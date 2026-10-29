@@ -3605,6 +3605,8 @@
   "time_based_memories": "Ricordi basati sul tempo",
   "time_based_memories_duration": "Numero di secondi per visualizzare ciascuna immagine.",
   "timeline": "Cronologia",
+  "timeline_zoom_months": "Mesi",
+  "timeline_zoom_years": "Anni",
   "timezone": "Fuso orario",
   "to_archive": "Archivio",
   "to_change_password": "Modifica password",

@@ -1402,6 +1402,8 @@
   "technical_details_missing_profile": "Keen Decoder fir {profile}",
   "technical_details_picture": "Bild",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Méint",
+  "timeline_zoom_years": "Joer",
   "tv_layout": "Layout fir d'Fernbedienung",
   "tv_layout_auto": "Automatesch",
   "tv_layout_description": "Grouss Fokusrumme an d'Knäppercher vun der Fernbedienung, ouni d'Bedingelementer, déi en Touchscreen brauchen. Automatesch schalt et op Android TV a Google TV un.",

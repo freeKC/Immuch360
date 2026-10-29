@@ -1653,6 +1653,8 @@
   "technical_details_missing_profile": "Kein Decoder für {profile}",
   "technical_details_picture": "Bild",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Monate",
+  "timeline_zoom_years": "Jahre",
   "tv_layout": "Layout för Fernbedienig",
   "tv_layout_auto": "Automatisch",
   "tv_layout_description": "Grossi Fokusrähme und Taste vo de Fernbedienig, ohni d Bedienelement, wo en Touchscreen bruuched. Automatisch schaltets uf Android TV und Google TV ii.",

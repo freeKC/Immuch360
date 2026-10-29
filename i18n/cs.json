@@ -3606,6 +3606,8 @@
   "time_based_memories": "Časové vzpomínky",
   "time_based_memories_duration": "Počet sekund k zobrazení každého obrázku.",
   "timeline": "Časová osa",
+  "timeline_zoom_months": "Měsíce",
+  "timeline_zoom_years": "Roky",
   "timezone": "Časové pásmo",
   "to_archive": "Archivovat",
   "to_change_password": "Změnit heslo",

@@ -3606,6 +3606,8 @@
   "time_based_memories": "Records basats en el temps",
   "time_based_memories_duration": "Nombre de segons que es mostrarà cada imatge.",
   "timeline": "Cronologia",
+  "timeline_zoom_months": "Mesos",
+  "timeline_zoom_years": "Anys",
   "timezone": "Zona horària",
   "to_archive": "Arxiva",
   "to_change_password": "Canvia la contrasenya",

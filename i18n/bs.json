@@ -1402,6 +1402,8 @@
   "technical_details_missing_profile": "Nema dekodera za {profile}",
   "technical_details_picture": "Slika",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Mjeseci",
+  "timeline_zoom_years": "Godine",
   "tv_layout": "Raspored za daljinski upravljač",
   "tv_layout_auto": "Automatski",
   "tv_layout_description": "Veliki okviri fokusa i tipke daljinskog upravljača, bez kontrola kojima treba ekran osjetljiv na dodir. Automatski ga uključuje na Android TV-u i Google TV-u.",

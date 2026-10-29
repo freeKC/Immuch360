@@ -3604,6 +3604,8 @@
   "time_based_memories": "Спомени, базирани на времето",
   "time_based_memories_duration": "Продължителност в секунди за показване на всяка картина.",
   "timeline": "Хронология",
+  "timeline_zoom_months": "Месеци",
+  "timeline_zoom_years": "Години",
   "timezone": "Часова зона",
   "to_archive": "Архивирай",
   "to_change_password": "Промяна на паролата",

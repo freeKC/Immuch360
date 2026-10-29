@@ -3518,6 +3518,8 @@
   "time_based_memories": "ذكريات استنادًا للوقت",
   "time_based_memories_duration": "عدد الثواني لاظهار كل صورة.",
   "timeline": "الخط الزمني",
+  "timeline_zoom_months": "الأشهر",
+  "timeline_zoom_years": "السنوات",
   "timezone": "المنطقة الزمنية",
   "to_archive": "أرشفة",
   "to_change_password": "تغيير كلمة المرور",

@@ -3508,6 +3508,8 @@
   "time_based_memories": "Denboran oinarritutako gogorapenak",
   "time_based_memories_duration": "Irudi bakoitza bistaratzeko segundo kopurua.",
   "timeline": "Kronologia",
+  "timeline_zoom_months": "Hilabeteak",
+  "timeline_zoom_years": "Urteak",
   "timezone": "Ordu-eremua",
   "to_archive": "Artxibatu",
   "to_change_password": "Pasahitza aldatu",

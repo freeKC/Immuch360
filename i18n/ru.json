@@ -3606,6 +3606,8 @@
   "time_based_memories": "Воспоминания, основанные на времени",
   "time_based_memories_duration": "Длительность показа слайдов в секундах",
   "timeline": "Временная шкала",
+  "timeline_zoom_months": "Месяцы",
+  "timeline_zoom_years": "Годы",
   "timezone": "Часовой пояс",
   "to_archive": "В архив",
   "to_change_password": "Изменить пароль",

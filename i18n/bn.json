@@ -3555,6 +3555,8 @@
   "time_based_memories": "সময়-ভিত্তিক স্মৃতি",
   "time_based_memories_duration": "প্রতিটি ছবি প্রদর্শনের সময়কাল (সেকেন্ডে)।",
   "timeline": "টাইমলাইন",
+  "timeline_zoom_months": "মাস",
+  "timeline_zoom_years": "বছর",
   "timezone": "টাইমজোন",
   "to_archive": "আর্কাইভ",
   "to_change_password": "পাসওয়ার্ড পরিবর্তন করুন",

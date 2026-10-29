@@ -3574,6 +3574,8 @@
   "time_based_memories": "ความทรงจําตามเวลา",
   "time_based_memories_duration": "จำนวนวินาทีที่จะแสดงแต่ละภาพ",
   "timeline": "ไทม์ไลน์",
+  "timeline_zoom_months": "เดือน",
+  "timeline_zoom_years": "ปี",
   "timezone": "เขตเวลา",
   "to_archive": "จัดเก็บถาวร",
   "to_change_password": "เปลี่ยนรหัสผ่าน",

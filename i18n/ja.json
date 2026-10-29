@@ -3603,6 +3603,8 @@
   "time_based_memories": "過去の思い出",
   "time_based_memories_duration": "各写真を表示する秒数。",
   "timeline": "タイムライン",
+  "timeline_zoom_months": "月別",
+  "timeline_zoom_years": "年別",
   "timezone": "タイムゾーン",
   "to_archive": "アーカイブ",
   "to_change_password": "パスワードを変更",

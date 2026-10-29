@@ -1822,6 +1822,8 @@
   "theme": "თემა",
   "time": "დრო",
   "timeline": "ქრონოლოგია",
+  "timeline_zoom_months": "თვეები",
+  "timeline_zoom_years": "წლები",
   "timezone": "დროის სარტყელი",
   "to_archive": "არქივი",
   "to_favorite": "რჩეული",

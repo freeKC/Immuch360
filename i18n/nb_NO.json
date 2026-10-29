@@ -3605,6 +3605,8 @@
   "time_based_memories": "Tidsbaserte minner",
   "time_based_memories_duration": "Antall sekunder å vise hvert bilde.",
   "timeline": "Tidslinje",
+  "timeline_zoom_months": "Måneder",
+  "timeline_zoom_years": "År",
   "timezone": "Tidssone",
   "to_archive": "Arkiv",
   "to_change_password": "Endre passord",

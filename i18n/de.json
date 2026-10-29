@@ -3606,6 +3606,8 @@
   "time_based_memories": "Zeitbasierte Erinnerungen",
   "time_based_memories_duration": "Anzahl der Sekunden, die jedes Bild angezeigt wird.",
   "timeline": "Zeitleiste",
+  "timeline_zoom_months": "Monate",
+  "timeline_zoom_years": "Jahre",
   "timezone": "Zeitzone",
   "to_archive": "Archivieren",
   "to_change_password": "Passwort ändern",
