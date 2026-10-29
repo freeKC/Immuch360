@@ -1,11 +1,13 @@
 // What concerns the whole window of Immuch360 Desktop, wrapped around the navigator inside MaterialApp (main.dart, through
-// desktopAppShell): the keys that work on every page, the back button of the mouse, full screen and the close guard.
+// desktopAppShell): the keys that work on every page (Control A and Escape for the selection of the grid shown among
+// them, lib/desktop/selection), the back button of the mouse, full screen and the close guard.
 // The viewers read their own keys first (remote_keys.dart): what reaches the shell is what no page handled.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
@@ -103,6 +105,16 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
         if (route is PopupRoute || (route?.barrierDismissible ?? false) || isTypingText()) {
           return KeyEventResult.ignored;
         }
+        // The grid shown: its menu closes first, then its selection clears, before full screen is left
+        final grid = DesktopSelectionTargets.active;
+        if (grid != null && grid.isMenuOpen) {
+          grid.closeMenu();
+          return KeyEventResult.handled;
+        }
+        if (grid != null && grid.hasSelection) {
+          grid.clear();
+          return KeyEventResult.handled;
+        }
         if (ref.read(desktopFullScreenProvider)) {
           unawaited(_fullScreen.leave());
           return KeyEventResult.handled;
@@ -110,6 +122,14 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
         return _closeViewer(focused);
       case DesktopWindowKey.closeViewer:
         return _closeViewer(focused);
+      case DesktopWindowKey.selectAll:
+        // Under a dialog or a menu, the grid behind it is not the one shown
+        final grid = DesktopSelectionTargets.active;
+        if (grid == null || route is PopupRoute) {
+          return KeyEventResult.ignored;
+        }
+        unawaited(grid.selectAll());
+        return KeyEventResult.handled;
     }
   }
 

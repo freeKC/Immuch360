@@ -90,11 +90,15 @@ enum DesktopWindowKey {
   /// F alone, in a viewer only, and never while typing
   toggleFullScreenInViewer,
 
-  /// Escape: leaves full screen, else closes the viewer
+  /// Escape: closes the menu of a selection, else clears the selection, else leaves full screen, else closes the
+  /// viewer
   leaveFullScreenOrViewer,
 
   /// Command W on macOS: closes the viewer
   closeViewer,
+
+  /// Control A, Command A on macOS, never while typing: selects the whole grid shown (lib/desktop/selection)
+  selectAll,
 }
 
 /// The window key [event] stands for, if any. Presses only: a held key does not toggle full screen again and again.
@@ -112,6 +116,13 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
   }
   if (key == LogicalKeyboardKey.escape) {
     return DesktopWindowKey.leaveFullScreenOrViewer;
+  }
+  if (key == LogicalKeyboardKey.keyA && !alt && !keyboard.isShiftPressed && !(typing ?? isTypingText())) {
+    // A text field keeps its own select all
+    final selectAll = CurrentPlatform.isMacOS ? meta && !control : control && !meta;
+    if (selectAll) {
+      return DesktopWindowKey.selectAll;
+    }
   }
   if (CurrentPlatform.isMacOS && meta) {
     if (key == LogicalKeyboardKey.keyF && control && !alt) {
