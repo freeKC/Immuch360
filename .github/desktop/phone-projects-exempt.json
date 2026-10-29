@@ -300,7 +300,7 @@
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatStereo.kt": {
-    "blob": "c643801f51bf89091ac3f7cfd473c9aca8aedbec",
+    "blob": "4d29bedad4e64bb304dbe85141bb9f98332b7fb6",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): where the eyes of a flat 3D frame lie, the stereo mode of the flat video screen, and FlatStereoSpec, the flat3d JSON of the stereoPair parameter"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/GeneratedPanorama.kt": {
@@ -316,7 +316,7 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "625df4fd7c855b8c756a7fafc2d4a942d839af7d",
+    "blob": "b8da4432e5779fec1c6ad5c7088423cbe9d6b526",
     "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
@@ -740,7 +740,7 @@
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d JSON against the samples of flat3d_contract_v1.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoTest.kt": {
-    "blob": "04740835cc21fb8e15b2e257231aef8d84cb8e52",
+    "blob": "bcbc38869ea4c346a9b1f7497eff15a74d59f55f",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the eyes of a flat 3D frame and of the stereo mode of its video layer"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/GeneratedPanoramaTest.kt": {
