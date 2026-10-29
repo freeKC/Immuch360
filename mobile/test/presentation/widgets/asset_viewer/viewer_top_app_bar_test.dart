@@ -27,6 +27,7 @@ import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -3251,6 +3252,23 @@ void main() {
       expect(reliefButton, findsNothing);
     });
 
+    testWidgets('is not shown for a photo of two eyes one above the other by its name, the switch on or off', (
+      tester,
+    ) async {
+      final asset = salon(name: 'salon_TB.jpg');
+      for (final flat3dByName in [true, false]) {
+        await pumpTopBar(
+          tester,
+          asset,
+          horizonOs: true,
+          appConfig: AppConfig(viewer: ViewerConfig(flat3dByName: flat3dByName)),
+          extraOverrides: headset(asset),
+        );
+
+        expect(reliefButton, findsNothing, reason: 'switch $flat3dByName');
+      }
+    });
+
     testWidgets('is not shown for a video', (tester) async {
       final asset = owned(type: AssetType.video, name: 'clip.mp4', width: 1920, height: 1080);
       await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset));
@@ -3377,6 +3395,195 @@ void main() {
       await pumpTopBar(tester, asset, extraOverrides: headset(asset, scene: sample));
 
       expect(exploreButton, findsNothing);
+    });
+  });
+
+  group('ViewerTopAppBar "View in 3D" for the flat 3D media told by their file name, on a Meta Quest', () {
+    const server = PresentationContext.serverEndpoint;
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+
+    List<dynamic> openedWith() => verify(
+      () => immersiveApi.open(
+        captureAny(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+      ),
+    ).captured;
+
+    // What the head of a photo says, without reading it: nothing side by side
+    Override flat(BaseAsset asset) => flatStereoProvider(asset).overrideWith((ref) async => null);
+
+    testWidgets('opens a video named side by side on the flat video screen, squeezed eyes told by its frame', (
+      tester,
+    ) async {
+      for (final (width, format) in [(1920, FlatStereoFormat.halfSbs), (3840, FlatStereoFormat.sbs)]) {
+        calls.clear();
+        clearInteractions(immersiveApi);
+        final asset = owned(type: .video, name: 'Movie.3D_SBS.mp4', width: width, height: 1080);
+        await pumpTopBar(tester, asset, horizonOs: true);
+
+        expect(view3dButton, findsOneWidget);
+        expect(find.byTooltip('View in 3D'), findsOneWidget);
+        await tester.tap(view3dButton);
+        await tester.pumpAndSettle();
+
+        final captured = openedWith();
+        expect(captured[0], '$server/assets/${asset.id}/original', reason: 'the original, as for the sphere');
+        expect(captured[1], isTrue, reason: 'a video');
+        final labels = captured[2] as Map<String, String>;
+        expect(labels['flat3dNotice'], '3D told by the file name (experimental)');
+        expect(labels['flat3dNoNavigation'], 'A 3D video plays on its own: B or Y goes back to the app');
+        expect(labels['spatial3d'], '3D');
+        expect(labels['spatial2d'], '2D (left eye)');
+        expect(jsonDecode(captured[4] as String), {'kind': 'flat3d', 'version': 1, 'format': format.wire});
+        expect(calls, ['suspend', 'immersive'], reason: 'width $width');
+      }
+    });
+
+    testWidgets('opens a video named top and bottom, and takes it back where the viewer stopped, paused', (
+      tester,
+    ) async {
+      final asset = owned(type: .video, name: 'Movie.Half-OU.mkv', width: 1920, height: 1080);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+      // The video viewer keeps its player alive meanwhile
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+      addTearDown(subscription.close);
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      final captured = openedWith();
+      expect(captured[3], 12000, reason: 'carries on from where the viewer played it');
+      expect(jsonDecode(captured[4] as String), {'kind': 'flat3d', 'version': 1, 'format': 'halfTb'});
+
+      await closeImmersiveViewer(tester, ImmersiveSphereCoverage.full, positionMs: 30000);
+      expect(calls, ['suspend', 'immersive', 'resume at 30000 paused']);
+    });
+
+    testWidgets('opens a photo named top and bottom on the stereo quad', (tester) async {
+      final asset = owned(name: 'street_HTB.jpg', width: 1920, height: 1080);
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [flat(asset)]);
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      final captured = openedWith();
+      expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
+      expect(captured[1], isFalse, reason: 'a photo');
+      expect(jsonDecode(captured[4] as String), {'kind': 'flat3d', 'version': 1, 'format': 'halfTb'});
+      expect((captured[2] as Map<String, String>)['flat3dNotice'], '3D told by the file name (experimental)');
+    });
+
+    testWidgets('leaves the photos named side by side to the stereo photo probe', (tester) async {
+      final asset = owned(name: 'beach-da2-SBS.png', width: 3840, height: 1080);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: [
+          flatStereoProvider(asset).overrideWith((ref) async => const FlatStereoPhoto(eyes: StereoEyes.full)),
+        ],
+      );
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      expect((jsonDecode(openedWith()[4] as String) as Map<String, dynamic>)['kind'], 'sbsPhoto');
+    });
+
+    testWidgets('is not shown with the experimental switch off', (tester) async {
+      final video = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
+      await pumpTopBar(
+        tester,
+        video,
+        horizonOs: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(flat3dByName: false)),
+      );
+      expect(view3dButton, findsNothing);
+
+      final photo = owned(name: 'street_TB.jpg', width: 4000, height: 6000);
+      await pumpTopBar(
+        tester,
+        photo,
+        horizonOs: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(flat3dByName: false)),
+        extraOverrides: [flat(photo)],
+      );
+      expect(view3dButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a 360° video, an ordinary one, nor on a phone', (tester) async {
+      final sphere = owned(type: .video, name: 'trip_SBS.mp4', width: 7680, height: 1920);
+      await pumpTopBar(tester, sphere, projectionType: .equirectangular, horizonOs: true);
+      expect(view3dButton, findsNothing);
+      expect(panoramaButton, findsOneWidget, reason: 'it keeps its 360° button');
+
+      final ordinary = owned(type: .video, name: 'clip.mp4', width: 1920, height: 1080);
+      await pumpTopBar(tester, ordinary, horizonOs: true);
+      expect(view3dButton, findsNothing);
+
+      final onPhone = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
+      await pumpTopBar(tester, onPhone);
+      expect(view3dButton, findsNothing);
+    });
+
+    testWidgets('gives the viewer its video back where and as it was when the immersive viewer cannot open', (
+      tester,
+    ) async {
+      when(
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
+      ).thenThrow(PlatformException(code: 'no-activity'));
+      final asset = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'resume at 12000 playing']);
+      expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
 }

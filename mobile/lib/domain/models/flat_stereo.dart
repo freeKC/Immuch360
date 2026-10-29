@@ -100,10 +100,10 @@ FlatStereoFormat? flatStereoFormatOf(BaseAsset asset) => asset.isImage || asset.
 /// screen of the immersive viewer
 FlatStereoFormat? flatStereoVideoFormatOf(BaseAsset asset) => asset.isVideo ? flatStereoFormatOf(asset) : null;
 
-/// The packing of a photo named [name] that the file name puts on the stereo quad: two eyes one above the other (tb, ou,
-/// htb, Half-OU, 3dv...). A photo whose name says its eyes are side by side keeps the rule of the stereo photo probe
-/// (decideStereoPhoto, which reads our XMP first, then the name and the frame, and serves the computers too): the 3D
-/// photos a computer makes (_3D_LRF_Full_SBS) and the side by side files of other tools go on the quad as before.
+/// The packing of a photo named [name] that the file name puts on the stereo quad: two eyes one above the other (tb,
+/// ou, htb, Half-OU, 3dv...). A photo whose name says its eyes are side by side keeps the rule of the stereo photo
+/// probe (decideStereoPhoto, which reads our XMP first, then the name and the frame, and serves the computers too): the
+/// 3D photos a computer makes (_3D_LRF_Full_SBS) and the side by side files of other tools go on the quad as before.
 /// Null for any other photo, and for a 360° or VR180 name.
 FlatStereoFormat? stackedPhotoFormatOf(String name) {
   final format = guessFlatStereoFormat(fileName: name);
@@ -116,8 +116,9 @@ const flat3dVersion = 1;
 
 /// What the immersive viewer of the Meta Quest is asked for a flat 3D media told by its file name: the flat3d JSON of
 /// the stereoPair parameter of ImmersiveApi.open (FlatStereoSpec on the side of the viewer), frozen in
-/// test/fixtures/ai_immersive/flat3d_contract_v1.json. A photo goes on the stereo quad, a video on the flat video screen
-/// in front of the user. A viewer that does not know the request shows the photo flat, and the video on the sphere.
+/// test/fixtures/ai_immersive/flat3d_contract_v1.json. A photo goes on the stereo quad, a video on the flat video
+/// screen in front of the user. A viewer that does not know the request shows the photo flat, and the video on the
+/// sphere.
 class Flat3dRequest {
   const Flat3dRequest(this.format);
 

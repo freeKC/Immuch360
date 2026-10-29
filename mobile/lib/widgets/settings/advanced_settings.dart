@@ -65,6 +65,11 @@ class AdvancedSettings extends HookConsumerWidget {
 
     // The AI relief, its cache and its components, on a Meta Quest (see AiReliefSettings)
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    // The flat 3D media told by their file name in the immersive viewer of a Meta Quest, experimental and on by default
+    final flat3dByName = useState(ref.watch(appConfigProvider).viewer.flat3dByName);
+    useValueChanged<bool, void>(flat3dByName.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerFlat3dByName, flat3dByName.value));
+    });
 
     final logLevel = Level.LEVELS[levelId.value].name;
 
@@ -168,6 +173,13 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: djiLink,
           title: context.t.dji_live_setting_title,
           subtitle: television ? context.t.dji_live_setting_subtitle_tv : context.t.dji_live_setting_subtitle,
+        ),
+      if (isHorizonOs)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_flat_3d'),
+          valueNotifier: flat3dByName,
+          title: context.t.setting_immersive_flat_3d_title,
+          subtitle: context.t.setting_immersive_flat_3d_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       const CustomProxyHeaderSettings(),

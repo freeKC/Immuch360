@@ -29,6 +29,8 @@ enum SettingsKey<T> {
   viewerSpatial25d<bool>(),
   // The right thumbstick of the Meta Quest immersive viewer turns the other way, see ViewerConfig.reverseThumbstickTurn
   viewerReverseThumbstickTurn<bool>(),
+  // The flat 3D media told by their file name in the Meta Quest immersive viewer, see ViewerConfig.flat3dByName
+  viewerFlat3dByName<bool>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
 

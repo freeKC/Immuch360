@@ -88,6 +88,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   /// The opening ids the viewer was given, which it sends back with its events
   final List<int> openingIds = [];
 
+  /// The stereoPair JSON of each media opened, null for none
+  final List<String?> stereoPairs = [];
+
   @override
   Future<bool> isHorizonOs() async => true;
 
@@ -110,6 +113,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
     openingIds.add(openingId);
+    stereoPairs.add(stereoPair);
   }
 
   /// What the viewer was asked to show in place, for previous and next
@@ -254,6 +258,7 @@ void main() {
     String path, {
     bool isHorizonOs = false,
     bool spatial25d = true,
+    bool flat3dByName = true,
     _RecordingSpatialVideoApi? spatial,
     NetworkFolderMedia? folder,
     VideoPlayerState? playerState,
@@ -266,7 +271,11 @@ void main() {
       overrides: [
         storeServiceProvider.overrideWithValue(store),
         overrideConnections((ref) => FakeConnections(ref, share, baseUrl: server.baseUrl)),
-        appConfigProvider.overrideWithValue(AppConfig(viewer: ViewerConfig(spatial25d: spatial25d))),
+        appConfigProvider.overrideWithValue(
+          AppConfig(
+            viewer: ViewerConfig(spatial25d: spatial25d, flat3dByName: flat3dByName),
+          ),
+        ),
         isHorizonOsProvider.overrideWith((ref) async => isHorizonOs),
         panorama360VideoSupportedProvider.overrideWithValue(true),
         sphericalVideoApiProvider.overrideWithValue(sphericalApi),
@@ -702,6 +711,104 @@ void main() {
     expect(playerCalls, ['suspend', 'resume at 30000 paused']);
 
     await endRealIo(tester);
+  });
+
+  group('flat 3D videos told by their file name, on a Meta Quest', () {
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+
+    testWidgets('"View in 3D" opens one on the flat video screen, alone, and gives the video back where it stopped', (
+      tester,
+    ) async {
+      await pumpVideoPage(
+        tester,
+        '/movie_sbs.mp4',
+        isHorizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+      await pumpUntilDetected(tester);
+
+      expect(view3dButton, findsOneWidget);
+      expect(find.byTooltip('View in 3D'), findsOneWidget);
+      expect(find.byTooltip('360°'), findsNothing, reason: 'no 360° video');
+      await tester.tap(view3dButton);
+      await tester.pump();
+      await tester.pump();
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/movie_sbs.mp4').toString());
+      expect(immersiveApi.opened.single['isVideo'], isTrue);
+      // The frame size comes from the native player, which does not run here: the eyes as the name says
+      expect(jsonDecode(immersiveApi.stereoPairs.single!), {'kind': 'flat3d', 'version': 1, 'format': 'sbs'});
+      expect(immersiveApi.startPositions, [12000]);
+      expect(playerCalls, ['suspend']);
+
+      // Previous and next find nothing from it
+      final session = ProviderScope.containerOf(
+        tester.element(find.byType(NetworkVideoPage)),
+      ).read(immersiveSessionProvider);
+      final openingId = immersiveApi.openingIds.single;
+      expect(
+        await session.requestAdjacent(openingId, 1, 1, ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full),
+        isFalse,
+      );
+
+      session.closed(
+        openingId,
+        server.urlOf('/movie_sbs.mp4').toString(),
+        ImmersiveStereoLayout.mono,
+        ImmersiveSphereCoverage.full,
+        30000,
+      );
+      expect(playerCalls, ['suspend', 'resume at 30000 paused']);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('a video named top and bottom gets it too', (tester) async {
+      share.files['/clip_OU.mp4'] = share.files['/movie_sbs.mp4']!;
+      await pumpVideoPage(tester, '/clip_OU.mp4', isHorizonOs: true);
+      await pumpUntilDetected(tester);
+
+      await tester.tap(view3dButton);
+      await tester.pump();
+      await tester.pump();
+
+      expect(jsonDecode(immersiveApi.stereoPairs.single!), {'kind': 'flat3d', 'version': 1, 'format': 'tb'});
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('none with the experimental switch off', (tester) async {
+      await pumpVideoPage(tester, '/movie_sbs.mp4', isHorizonOs: true, flat3dByName: false);
+      await pumpUntilDetected(tester);
+
+      expect(view3dButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('none on a phone, which keeps its Spatial 2.5D player', (tester) async {
+      await pumpVideoPage(tester, '/movie_sbs.mp4');
+      await pumpUntilDetected(tester);
+
+      expect(view3dButton, findsNothing);
+      expect(find.byTooltip('Spatial 2.5D'), findsOneWidget);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('none for a video named for 360°, which keeps the sphere', (tester) async {
+      share.files['/trip_360_SBS.mp4'] = share.files['/movie_sbs.mp4']!;
+      await pumpVideoPage(tester, '/trip_360_SBS.mp4', isHorizonOs: true);
+      await pumpUntilDetected(tester);
+
+      expect(view3dButton, findsNothing);
+
+      await endRealIo(tester);
+    });
   });
 
   testWidgets('tells why the video could not be opened, and tries again', (tester) async {

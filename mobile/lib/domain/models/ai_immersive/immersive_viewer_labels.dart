@@ -3,8 +3,9 @@
 // (see stereoPhotoViewerLabels): the 2D button of a photo whose left eye is the original itself, the honesty label of
 // a relief estimated by AI, what previous and next say on such a photo, and for a relief the headset makes, its
 // stages, its Stop relief button, why it left a photo flat and its 2.5D view on the 3D button; and the words of a 3D
-// scene (design-final 2026-10-27, section 3). The viewer has their English texts for a key it does not get
-// (StereoComposer.label), and puts the message of a failure where {reason} is.
+// scene (design-final 2026-10-27, section 3); and the words of a flat 3D media told by its file name (see
+// flat3dViewerLabels). The viewer has their English texts for a key it does not get (StereoComposer.label), and puts
+// the message of a failure where {reason} is.
 
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -58,11 +59,20 @@ Map<String, String> sceneViewerLabels(Translations t) => {
   'sceneFlag_smallZone': t.ai_immersive_quality_small_zone,
 };
 
-/// Translated labels of the immersive viewer for a photo of the stereo quad: those of every opening (see
-/// [sphereViewerLabels]), those of the flat 3D photos (see [aiImmersiveViewerLabels]) and those of the 3D scenes (see
-/// [sceneViewerLabels])
+/// Translated labels of a flat 3D media told by its file name (a photo of the stereo quad, a video of the flat video
+/// screen, see Flat3dRequest), under the keys StereoComposer reads: what passes once when one first shows,
+/// experimental, and what previous and next say on a video
+Map<String, String> flat3dViewerLabels(Translations t) => {
+  'flat3dNotice': t.immersive_flat_3d_notice,
+  'flat3dNoNavigation': t.immersive_flat_3d_no_navigation,
+};
+
+/// Translated labels of the immersive viewer for a photo of the stereo quad, and a flat 3D video: those of every
+/// opening (see [sphereViewerLabels]), those of the flat 3D photos (see [aiImmersiveViewerLabels]), those of the 3D
+/// scenes (see [sceneViewerLabels]) and those of the media told 3D by their file name (see [flat3dViewerLabels])
 Map<String, String> stereoPhotoViewerLabels(Translations t) => {
   ...sphereViewerLabels(t),
   ...aiImmersiveViewerLabels(t),
   ...sceneViewerLabels(t),
+  ...flat3dViewerLabels(t),
 };

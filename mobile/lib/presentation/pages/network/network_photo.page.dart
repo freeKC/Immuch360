@@ -11,6 +11,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
@@ -213,8 +214,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   /// Whether the photo turns with the one-key rotation: once its file was read, when it is neither 360° nor a stereo
-  /// pair nor two eyes side by side nor the raw file of a 360° camera nor the preview of a 3D scene. Those keep their
-  /// views, which turn the camera rather than the picture, or hold their eyes or their scene where they are.
+  /// pair nor two eyes side by side nor two eyes one above the other by its name (see stackedPhotoFormatOf) nor the
+  /// raw file of a 360° camera nor the preview of a 3D scene. Those keep their views, which turn the camera rather than
+  /// the picture, or hold their eyes or their scene where they are.
   bool get _canRotate {
     final info = _info;
     return info != null &&
@@ -223,7 +225,19 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         info.stereoPhoto == null &&
         info.scene == null &&
         info.rawKind == null &&
-        !isRawPhotoName(_name);
+        !isRawPhotoName(_name) &&
+        stackedPhotoFormatOf(_name) == null;
+  }
+
+  /// How the photo packs its eyes when its name says they are one above the other (see stackedPhotoFormatOf), once its
+  /// file was read and found neither 360° nor holding a stereo pair, two eyes side by side or a 3D scene; null
+  /// otherwise
+  FlatStereoFormat? get _stackedFormat {
+    final info = _info;
+    if (info == null || info.is360 || info.stereoPair != null || info.stereoPhoto != null || info.scene != null) {
+      return null;
+    }
+    return stackedPhotoFormatOf(_name);
   }
 
   /// The quarter turns kept on this device for [photo], 0 for a photo that does not turn
@@ -511,6 +525,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final reliefMode = reliefGate.visible
         ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode))
         : ReliefViewMode.stereo;
+    // The flat 3D media told by their file name, experimental and on by default (Settings, Advanced)
+    final flat3dByName = isHorizonOs && ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -520,6 +536,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         // Two eyes side by side: "View in 3D", greyed with its reason for a file of a newer format
         final stereoPhoto = isHorizonOs && stereoPair == null ? _info?.stereoPhoto : null;
         final sbsRequest = stereoPhoto?.request;
+        // Two eyes one above the other by the file name (_TB, _OU, _HTB...): "View in 3D" too
+        final stackedFormat = flat3dByName ? _stackedFormat : null;
         // The newest 3D photo a computer saved next to this photo; the other kinds have their own entries
         final version = isHorizonOs ? _versions?.where((found) => found.photo != null).firstOrNull : null;
         final versionRequest = version?.photo?.request;
@@ -579,6 +597,19 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                           : () => unawaited(
                               _openStereo(photo.entry.path, StereoPhotoRequest.sbs(sbsRequest), url: photo.url),
                             ),
+                    ),
+                  if (photo != null && stackedFormat != null)
+                    IconButton(
+                      key: const Key('apple_spatial_view_3d'),
+                      icon: const Icon(Icons.view_in_ar_rounded),
+                      tooltip: context.t.apple_spatial_view_3d,
+                      onPressed: () => unawaited(
+                        _openStereo(
+                          photo.entry.path,
+                          StereoPhotoRequest.flat3d(Flat3dRequest(stackedFormat)),
+                          url: photo.url,
+                        ),
+                      ),
                     ),
                   if (photo != null && version != null)
                     IconButton(

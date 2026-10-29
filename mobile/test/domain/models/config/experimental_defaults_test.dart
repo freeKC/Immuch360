@@ -32,6 +32,20 @@ void main() {
     });
   });
 
+  group('3D by file name on the Meta Quest (experimental)', () {
+    test('is on by default', () {
+      expect(const AppConfig().viewer.flat3dByName, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerFlat3dByName), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({SettingsKey.viewerFlat3dByName: false});
+
+      expect(config.viewer.flat3dByName, isFalse);
+      expect(config.write(SettingsKey.viewerFlat3dByName, true).viewer.flat3dByName, isTrue);
+    });
+  });
+
   group('Spatial 2.5D (experimental)', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.spatial25d, isTrue);

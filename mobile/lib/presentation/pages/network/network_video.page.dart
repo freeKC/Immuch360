@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -787,6 +789,47 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
+  /// How [video] packs its eyes when its name says it holds two (see guessFlatStereoFormat), its frame told by the
+  /// player once known; null for any other video
+  FlatStereoFormat? _flatFormat(_Video video) => guessFlatStereoFormat(
+    fileName: video.entry.name,
+    width: _videoSize?.width,
+    height: _videoSize?.height,
+    isVideo: true,
+  );
+
+  /// Opens [video], a flat 3D video packed as [format], on the flat video screen of the immersive viewer of a Meta
+  /// Quest, from where the page's player is unless it reached the end. It plays on its own there; once the viewer
+  /// closes, the page's player takes it back where the viewer left it (see [SingleVideoImmersiveNavigator]).
+  Future<void> _openFlat3d(_Video video, FlatStereoFormat format) async {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final errorMessage = context.t.immersive_viewer_open_failed;
+    final stereoLabels = stereoPhotoViewerLabels(context.t);
+    final request = ImmersiveRequest(
+      url: video.url.toString(),
+      isVideo: true,
+      title: video.entry.name,
+      view: stereoPhotoSphereView,
+      stereoPair: Flat3dRequest(format).toJsonString(),
+    );
+    final player = _notifier;
+    // Read right before openImmersiveUrl stops the player, nothing awaited in between
+    final playback = ref.read(videoPlayerProvider(_playerKey));
+    try {
+      await openImmersiveUrl(
+        ref,
+        request: request,
+        stereoLabels: stereoLabels,
+        startPosition: playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position,
+        player: player,
+        navigator: SingleVideoImmersiveNavigator(request: request, player: player),
+      );
+    } catch (error) {
+      _log.warning('Could not open $_name in 3D: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    }
+  }
+
   Future<void> _openSpatial(_Video video) async {
     final playback = ref.read(videoPlayerProvider(_playerKey));
     final wasPlaying =
@@ -819,6 +862,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final tvMode = ref.watch(tvModeProvider);
     final canSpatial =
         !tvMode && isHorizonOs == false && ref.watch(appConfigProvider.select((c) => c.viewer.spatial25d));
+    // The flat 3D videos told by their file name on a Meta Quest, experimental and on by default (Settings, Advanced)
+    final flat3dByName = isHorizonOs == true && ref.watch(appConfigProvider.select((c) => c.viewer.flat3dByName));
     final canUpload = !tvMode && ref.watch(hasServerProvider);
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     // The page covers the screen, under the app bar too: from the menu, Left would land on it rather than on the Back
@@ -836,6 +881,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         final isStereo = video != null && _isStereo(video);
         final menu360 = can360 && !is360;
         final menuSpatial = canSpatial && !isStereo;
+        // A video whose name says it holds two eyes (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS...) and that is not 360°:
+        // "View in 3D", on the flat video screen of the immersive viewer
+        final flatFormat = video != null && flat3dByName && !is360 ? _flatFormat(video) : null;
 
         final appBar = AppBar(
           backgroundColor: Colors.black38,
@@ -856,6 +904,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       icon: const Icon(Icons.threesixty_rounded),
                       tooltip: '360°',
                       onPressed: () => unawaited(_open360(video)),
+                    ),
+                  if (video != null && flatFormat != null)
+                    IconButton(
+                      key: const Key('apple_spatial_view_3d'),
+                      icon: const Icon(Icons.view_in_ar_rounded),
+                      tooltip: context.t.apple_spatial_view_3d,
+                      onPressed: () => unawaited(_openFlat3d(video, flatFormat)),
                     ),
                   if (video != null && canSpatial && isStereo)
                     IconButton(
