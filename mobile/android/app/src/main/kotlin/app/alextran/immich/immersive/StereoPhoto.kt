@@ -407,7 +407,16 @@ internal object StereoComposer {
         LABEL_RELIEF_NO_MEMORY to "Not enough memory",
         LABEL_RELIEF_MISSING to "The AI components are not installed",
         LABEL_RELIEF_DAMAGED to "An AI component is damaged",
+        LABEL_FLAT3D_NOTICE to "3D told by the file name (experimental)",
+        LABEL_FLAT3D_NO_NAVIGATION to "A 3D video plays on its own: B or Y goes back to the app",
       )
+
+  /**
+   * What passes once when a media told 3D by its file name first shows (a flat 3D photo or video, see FlatStereoSpec),
+   * and what previous and next say on a flat 3D video.
+   */
+  const val LABEL_FLAT3D_NOTICE = "flat3dNotice"
+  const val LABEL_FLAT3D_NO_NAVIGATION = "flat3dNoNavigation"
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"
