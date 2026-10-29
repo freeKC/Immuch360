@@ -73,7 +73,6 @@ the gate is per desktop and is noted.
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
 | `lib/presentation/pages/pairing/connect_screen.page.dart:201` | iOS local network hint of an unreachable screen (sign in with your phone, October 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider) |
-| `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:177` | the thumbstick paging of a Meta Quest asked of MainActivity on Android only | right: the computers have no such channel, their trackpad and wheel scrolls stay with the page |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:534` | iOS immersive mode with details | harmless: SystemChrome goes through an optional channel that the desktop embedders ignore |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:610` | iOS scroll physics, else clamping | right: clamping on the computers |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:619` | gradient under the status bar, not on iOS | right |

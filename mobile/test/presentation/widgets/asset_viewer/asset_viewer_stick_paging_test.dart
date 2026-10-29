@@ -1,6 +1,7 @@
 // The thumbstick of a Meta Quest controller in the 2D window: MainActivity takes its sideways scrolls while the asset
 // viewer asks for them, and sends one "page" call per push (QuestStickPaging.kt). The viewer goes to the next or the
-// previous asset on it, stays on a zoomed photo, and asks for the pushes only while it is the page on top.
+// previous asset on it, stays on a zoomed photo, and asks for the pushes only on a Meta Quest, while it is the page on
+// top and its details are hidden.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -81,7 +83,8 @@ void main() {
     tester.takeException();
   }
 
-  Future<ProviderContainer> pumpViewer(WidgetTester tester) async {
+  /// The viewer on a Meta Quest, or on another Android device with [quest] false
+  Future<ProviderContainer> pumpViewer(WidgetTester tester, {bool quest = true}) async {
     final timeline = timelineOf(photos);
     addTearDown(timeline.dispose);
     await tester.pumpWidget(
@@ -97,6 +100,7 @@ void main() {
           overrides: [
             ...context.overrides,
             tvModeProvider.overrideWithValue(false),
+            isHorizonOsProvider.overrideWith((ref) async => quest),
             assetViewerProvider.overrideWith(() => _SeededAssetViewerNotifier(photos[0])),
           ],
           child: Builder(
@@ -192,6 +196,43 @@ void main() {
 
     navigator.pop();
     await over;
+    await settle(tester);
+    expect(pagingAsked, [true, false, true]);
+    await push(tester, 1);
+    expect(jump.currentIndex, 1);
+  });
+
+  testWidgets('a phone, a tablet or a TV box never asks for the pushes: its scrolls stay as they were', (tester) async {
+    final container = await pumpViewer(tester, quest: false);
+    final jump = container.read(assetViewerJumpProvider);
+    expect(pagingAsked, isEmpty);
+
+    container.read(assetViewerProvider.notifier).setShowingDetails(true);
+    await settle(tester);
+    container.read(assetViewerProvider.notifier).setShowingDetails(false);
+    await settle(tester);
+    await push(tester, 1);
+    expect(jump.currentIndex, 0);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await settle(tester);
+    expect(pagingAsked, isEmpty);
+  });
+
+  testWidgets('the details keep the scrolls of the stick for their own lists, and the viewer takes them back after', (
+    tester,
+  ) async {
+    final container = await pumpViewer(tester);
+    final jump = container.read(assetViewerJumpProvider);
+    expect(pagingAsked, [true]);
+
+    container.read(assetViewerProvider.notifier).setShowingDetails(true);
+    await settle(tester);
+    expect(pagingAsked, [true, false]);
+    await push(tester, 1);
+    expect(jump.currentIndex, 0, reason: 'the people row of the details scrolls instead');
+
+    container.read(assetViewerProvider.notifier).setShowingDetails(false);
     await settle(tester);
     expect(pagingAsked, [true, false, true]);
     await push(tester, 1);

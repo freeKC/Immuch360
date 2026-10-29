@@ -27,6 +27,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
@@ -171,12 +172,21 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// under it takes them back once it is on top again, which may come before the one above is disposed.
   static _AssetViewerState? _stickOwner;
 
-  /// Asks MainActivity for the pushes while the route of this viewer is on top ([enabled]), and leaves them otherwise:
-  /// a page pushed over the viewer keeps the scrolls of the stick for its own scrollables
+  /// Whether the viewer runs on a Meta Quest, once the platform told (see isHorizonOsProvider)
+  bool _onQuest = false;
+
+  /// Whether the route of this viewer is the page on top, once its route is known (see [didChangeDependencies])
+  bool _onTop = false;
+
+  /// Asks for the pushes on a Meta Quest only, while the route of this viewer is on top and its details are hidden: a
+  /// phone, a tablet, a Chromebook or a TV box with an air mouse keeps its scrolls as they were, a page pushed over the
+  /// viewer keeps them for its own scrollables, and so does the row of people of the details
+  void _updateStickPaging() {
+    _setStickPaging(_onQuest && _onTop && !ref.read(assetViewerProvider).showingDetails);
+  }
+
+  /// Asks MainActivity for the pushes ([enabled]), or leaves them when this viewer has them
   void _setStickPaging(bool enabled) {
-    if (!CurrentPlatform.isAndroid) {
-      return;
-    }
     if (enabled) {
       if (identical(_stickOwner, this)) {
         return;
@@ -289,13 +299,21 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
     final assetViewer = ref.read(assetViewerProvider);
     unawaited(_setSystemUIMode(assetViewer.showingControls, assetViewer.showingDetails));
+
+    // The thumbstick paging of a Meta Quest, once the platform told, and out of the way of the details
+    ref.listenManual(isHorizonOsProvider, (_, isHorizonOs) {
+      _onQuest = isHorizonOs.valueOrNull ?? false;
+      _updateStickPaging();
+    }, fireImmediately: true);
+    ref.listenManual(assetViewerProvider.select((value) => value.showingDetails), (_, _) => _updateStickPaging());
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Once the route of the viewer is known, and again each time it comes on top or goes under another page
-    _setStickPaging(ModalRoute.isCurrentOf(context) ?? true);
+    _onTop = ModalRoute.isCurrentOf(context) ?? true;
+    _updateStickPaging();
   }
 
   @override
