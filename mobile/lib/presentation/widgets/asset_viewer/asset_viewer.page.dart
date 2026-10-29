@@ -167,8 +167,24 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// taken natively, the scrollables of the page would compete for them as pointer scrolls
   static const _stickChannel = MethodChannel('immuch360/quest_stick');
 
+  /// The viewer the pushes go to: the one whose route is on top, a viewer stacked over another one included. The one
+  /// under it takes them back once it is on top again, which may come before the one above is disposed.
+  static _AssetViewerState? _stickOwner;
+
+  /// Asks MainActivity for the pushes while the route of this viewer is on top ([enabled]), and leaves them otherwise:
+  /// a page pushed over the viewer keeps the scrolls of the stick for its own scrollables
   void _setStickPaging(bool enabled) {
     if (!CurrentPlatform.isAndroid) {
+      return;
+    }
+    if (enabled) {
+      if (identical(_stickOwner, this)) {
+        return;
+      }
+      _stickOwner = this;
+    } else if (identical(_stickOwner, this)) {
+      _stickOwner = null;
+    } else {
       return;
     }
     _stickChannel.setMethodCallHandler(enabled ? _onStickPage : null);
@@ -176,9 +192,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     _stickChannel.invokeMethod<void>('setPaging', enabled).ignore();
   }
 
-  /// A push to the right goes to the next asset, to the left to the previous one; a zoomed photo stays
+  /// A push to the right goes to the next asset, to the left to the previous one; a zoomed photo stays, and so does a
+  /// viewer under another page
   Future<void> _onStickPage(MethodCall call) async {
-    if (call.method != 'page' || !mounted || ref.read(assetViewerProvider).isZoomed) {
+    if (call.method != 'page' ||
+        !mounted ||
+        !(ModalRoute.isCurrentOf(context) ?? true) ||
+        ref.read(assetViewerProvider).isZoomed) {
       return;
     }
     final step = call.arguments;
@@ -266,10 +286,16 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     FocusManager.instance.addEarlyKeyEventHandler(_onEarlyKey);
 
     WidgetsBinding.instance.addPostFrameCallback(_onAssetInit);
-    _setStickPaging(true);
 
     final assetViewer = ref.read(assetViewerProvider);
     unawaited(_setSystemUIMode(assetViewer.showingControls, assetViewer.showingDetails));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Once the route of the viewer is known, and again each time it comes on top or goes under another page
+    _setStickPaging(ModalRoute.isCurrentOf(context) ?? true);
   }
 
   @override
