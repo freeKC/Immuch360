@@ -9,6 +9,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/kiosk_config.dart';
 import 'package:immich_mobile/domain/models/kiosk_media.dart';
@@ -20,6 +22,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/kiosk/kiosk_start.provider.dart';
 
@@ -243,7 +246,8 @@ void main() {
 
   group('kioskShareRequest', () {
     final bridgeUrl = Uri.parse('http://127.0.0.1:41234/token/nas/Expo/vr180_3d.mp4');
-    Future<Uint8List> noRead(int offset, int length) async => Uint8List(0);
+    // A file that reads, whose header declares nothing the detection needs (the detection is replaced)
+    Future<Uint8List> noRead(int offset, int length) async => Uint8List(length);
 
     test('a 3D VR180 film of a share: its bridge URL, and the layout and the coverage its file declares', () async {
       NetworkEntry? read;
@@ -287,6 +291,36 @@ void main() {
       expect(request.isVideo, isFalse);
       expect(request.view.layout, StereoLayout.mono);
       expect(request.view.coverage, SphereCoverage.full);
+    });
+
+    test('a file gone from a share that answers: an error, before any detection', () async {
+      // The media bridge answers 404 for a path the share no longer has
+      final bridge = MockClient((request) async {
+        expect(request.headers['range'], 'bytes=0-0');
+        return http.Response('Not found', 404);
+      });
+      await expectLater(
+        kioskShareRequest(
+          _shareFilm,
+          mediaUrl: (_, _) async => bridgeUrl,
+          reader: (url) => httpRangeReader(bridge, url),
+          detect: (_, _) async => fail('nothing to detect in a file that is gone'),
+        ),
+        throwsA(isA<http.ClientException>()),
+      );
+    });
+
+    test('an empty file on the share: an error', () async {
+      await expectLater(
+        kioskShareRequest(
+          _shareFilm,
+          mediaUrl: (_, _) async => bridgeUrl,
+          reader: (_) =>
+              (_, _) async => Uint8List(0),
+          detect: (_, _) async => fail('nothing to detect in an empty file'),
+        ),
+        throwsA(isA<StateError>()),
+      );
     });
 
     test('a share that cannot be reached: an error', () async {

@@ -177,7 +177,8 @@ Future<BaseAsset> findKioskAsset(
 /// What the immersive viewer opens for [media], a file of a network share: its URL on the media bridge ([mediaUrl],
 /// which opens the share), and its sphere view from what the file declares ([detect] through [reader]), as the photo
 /// and video pages of the shares do; a raw file of a 360° camera through [raw]. Throws when the share cannot be
-/// reached.
+/// reached, or when the file cannot be read on it (gone, renamed, empty): its first byte is read first, [detect]
+/// giving nothing rather than an error for a file it cannot read.
 Future<ImmersiveRequest> kioskShareRequest(
   KioskShareFile media, {
   required Future<Uri> Function(String sourceId, String path) mediaUrl,
@@ -188,6 +189,9 @@ Future<ImmersiveRequest> kioskShareRequest(
   final url = await mediaUrl(media.sourceId, media.path);
   final entry = NetworkEntry(sourceId: media.sourceId, path: media.path, isDirectory: false, size: media.size);
   final read = reader(url);
+  if ((await read(0, 1)).isEmpty) {
+    throw StateError('${media.name} is empty on the share');
+  }
   final info = await detect(entry, read);
   if (raw != null && info?.rawKind != null) {
     return raw.sharedMedia(entry, url, read: read, probe: info?.probe);
