@@ -257,6 +257,16 @@ class KioskSessionTest {
 
   // Options
 
+  // Recreation
+
+  @Test
+  fun `a recreated viewer starts a kiosk from the start, any other opening where it was`() {
+    // The headset came off at 4 min 12 s of the film, or the end card showed after its last seconds
+    assertEquals(0L, KioskSession.savedStartPositionMs(isKiosk = true, positionMs = 252_000L))
+    assertEquals(0L, KioskSession.savedStartPositionMs(isKiosk = true, positionMs = 599_400L))
+    assertEquals(252_000L, KioskSession.savedStartPositionMs(isKiosk = false, positionMs = 252_000L))
+  }
+
   @Test
   fun `the options read the end text and the exit notice`() {
     val options = KioskOptions.parse("""{"endText":"Merci pour le voyage","exitHint":"Maintenez B ou Y"}""")!!

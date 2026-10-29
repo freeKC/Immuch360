@@ -687,7 +687,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       media.copy(
         stereoLayout = shownStereoLayout(media),
         coverage = shownCoverage(media),
-        startPositionMs = currentPositionMs(media),
+        // A kiosk starts again from 0:00: the position is the previous visitor's, see KioskSession.savedStartPositionMs
+        startPositionMs = KioskSession.savedStartPositionMs(media.kiosk != null, currentPositionMs(media)),
       )
     outState.putBundle(STATE_REQUEST, extrasOf(shown))
     // The choices on screen once its showStereoPhoto ran (before, they are those of another photo or the defaults),

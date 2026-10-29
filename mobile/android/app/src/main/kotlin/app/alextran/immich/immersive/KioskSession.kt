@@ -196,5 +196,12 @@ internal class KioskSession(private val isVideo: Boolean) {
     /** Whether a failure at [positionMs] of a film of [durationMs] comes within its last [END_MARGIN_MS]. */
     fun isPracticallyFinished(positionMs: Long, durationMs: Long): Boolean =
       durationMs >= MIN_FILM_MS && positionMs >= durationMs - END_MARGIN_MS
+
+    /**
+     * Where a viewer the system recreates starts the media of an opening that was at [positionMs]: 0:00 for a kiosk
+     * ([isKiosk]), whose new session waits for the next visitor (the position kept when the headset came off, or the
+     * last seconds before the end card, belong to the previous one); [positionMs] for any other opening.
+     */
+    fun savedStartPositionMs(isKiosk: Boolean, positionMs: Long): Long = if (isKiosk) 0L else positionMs
   }
 }
