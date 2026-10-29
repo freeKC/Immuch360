@@ -671,7 +671,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     // A TV without a server has no photos of its own: the page says where they are instead of staying empty
     final tvWithoutServer = tvMode && !ref.watch(hasServerProvider);
     // The months and the years: a timeline with a scrubber whose segments all have a date, out of the remote control
-    // layout (a key of the remote in a later lot); search and lists without dates keep the grid
+    // layout; search and lists without dates keep the grid
     final loadedSegments = asyncSegments.valueOrNull;
     final overviewAvailable = widget.withScrubber && !tvMode && loadedSegments != null && _hasDates(loadedSegments);
     final level = overviewAvailable ? _level : TimelineZoomLevel.grid;
@@ -734,7 +734,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                   zoom: _zoomOf(level, tilesPerRow),
                   overviewAvailable: overviewAvailable,
                   onZoomChanged: _changeZoom,
-                  // Ctrl and the mouse wheel; the TV gets a key of the remote in a later lot
+                  // Ctrl and the mouse wheel, out of the remote control layout
                   wheelEnabled: !tvMode,
                   wheelHeld: wheelZoomHeld,
                   child: TimelineDragSelection(
