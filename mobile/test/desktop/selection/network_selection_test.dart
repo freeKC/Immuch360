@@ -2,7 +2,8 @@
 // browser under the window shell: Control click picks without opening, Shift click picks the range in the order of the
 // grid, Control A picks every photo and video, Escape stops picking, a right click opens the menu whose "Upload to
 // Immich" sends the picked files in the order of the grid, or says that a server is needed. A folder opens whatever the
-// keys. A phone, and the remote control layout on a computer, keep the browser as it was.
+// keys; a Shift click finds its anchor again after a refresh brought files above it. A phone, and the remote control
+// layout on a computer, keep the browser as it was.
 
 import 'dart:async';
 
@@ -215,6 +216,22 @@ void main() {
       await clickWith(tester, [LogicalKeyboardKey.controlLeft], find.text('Trip'));
       expect(router.current.name, NetworkBrowserRoute.name);
       expect(router.current.argsAs<NetworkBrowserRouteArgs>().path, '/Trip');
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a Shift click finds its anchor again after a refresh brought a file above it', (tester) async {
+      await pumpBrowser(tester);
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], tileOf('c.jpg'));
+
+      share.files['/0.jpg'] = fakePhoto();
+      share.folders['/'] = [share.folder('/Trip'), share.file('/0.jpg'), ...share.folders['/']!.skip(1)];
+      unawaited(tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show());
+      await tester.pumpAndSettle();
+      expect(tileOf('0.jpg'), findsOneWidget, reason: 'the new file shows first');
+      expect(picked(tester).paths, {'/c.jpg'});
+
+      await clickWith(tester, [LogicalKeyboardKey.shiftLeft], tileOf('d.jpg'));
+      expect(picked(tester).paths, {'/c.jpg', '/d.jpg'}, reason: 'from c.jpg, not from what is where it was');
       debugDefaultTargetPlatformOverride = null;
     });
 

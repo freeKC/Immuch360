@@ -1,7 +1,8 @@
 // The selection of a folder of a share on a computer (the rules are in desktop_selection.dart): Control, Shift and right
 // clicks on its photos and videos, Control A and Escape, written into networkSelectionProvider of the folder, in the
 // order of the grid. A folder ignores the keys and opens. The menu of a right click sends the selection to the Immich
-// server, as the bar at the bottom of the page does.
+// server, as the bar at the bottom of the page does. A Shift click finds its anchor again by its path: a refresh may
+// have brought files above it.
 
 import 'dart:math' as math;
 
@@ -43,7 +44,16 @@ class NetworkFolderSelectable implements DesktopSelectable<NetworkEntry> {
   bool get hasSelection => _state.isActive;
 
   @override
+  bool get picking => false;
+
+  @override
   bool isSelected(NetworkEntry item) => _state.contains(item.path);
+
+  @override
+  Future<int?> locate(NetworkEntry item, {required int near}) async {
+    final index = indexOf(item);
+    return index < 0 ? null : index;
+  }
 
   @override
   Future<List<NetworkEntry>> range(int from, int to) async {
@@ -72,7 +82,7 @@ class NetworkFolderSelectable implements DesktopSelectable<NetworkEntry> {
   }
 
   @override
-  Future<void> selectAll() async => addAll(_media());
+  Future<List<NetworkEntry>> all() async => _media();
 
   @override
   void clear() => _notifier.end();
@@ -171,7 +181,7 @@ class _NetworkSelectionState extends ConsumerState<_NetworkSelection> {
     return DesktopSelectionScope<NetworkEntry>(
       key: widget.scopeKey,
       selectable: _selectable,
-      empty: networkSelectionProvider(widget.folder).select((selection) => selection.paths.isEmpty),
+      selection: networkSelectionProvider(widget.folder),
       enabled: widget.enabled,
       menu: _menu,
       child: widget.child,

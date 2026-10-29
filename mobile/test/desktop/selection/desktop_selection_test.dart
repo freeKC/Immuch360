@@ -2,7 +2,8 @@
 // click does with the keys held on Windows, Linux and macOS, the anchor of Shift clicks, what a right click puts in the
 // selection, the menu, and the grid that Control A and Escape reach through the window shell: the page on top, the
 // active tab, never under a dialog nor while typing, the menu closed before the selection is cleared and the selection
-// cleared before full screen is left.
+// cleared before full screen is left. Control A and Shift clicks that load: what the user does meanwhile wins, a second
+// Control A waits for the first, a bar and the busy pointer after a second.
 
 import 'dart:async';
 
@@ -17,12 +18,24 @@ import 'package:immich_mobile/routing/router.dart';
 
 import 'selection_test_app.dart';
 
-/// A grid as the rules see it, in memory
+/// A grid as the rules see it, in memory; [gate], when set, holds the loads until completed
 class _ListSelection implements DesktopSelectable<String> {
-  _ListSelection(this.items);
+  _ListSelection(this.items, {this.picking = false});
 
   final List<String> items;
   final Set<String> selected = {};
+  Completer<void>? gate;
+  int loadsOfAll = 0;
+
+  @override
+  final bool picking;
+
+  Future<void> _wait() async {
+    final gate = this.gate;
+    if (gate != null) {
+      await gate.future;
+    }
+  }
 
   @override
   int get count => selected.length;
@@ -37,7 +50,23 @@ class _ListSelection implements DesktopSelectable<String> {
   bool isSelected(String item) => selected.contains(item);
 
   @override
-  Future<List<String>> range(int from, int to) async => items.sublist(from, to + 1);
+  Future<int?> locate(String item, {required int near}) async {
+    final index = items.indexOf(item);
+    return index < 0 ? null : index;
+  }
+
+  @override
+  Future<List<String>> range(int from, int to) async {
+    await _wait();
+    return items.sublist(from, to + 1);
+  }
+
+  @override
+  Future<List<String>> all() async {
+    loadsOfAll++;
+    await _wait();
+    return [...items];
+  }
 
   @override
   void addAll(List<String> items) => selected.addAll(items);
@@ -48,9 +77,6 @@ class _ListSelection implements DesktopSelectable<String> {
       selected.add(item);
     }
   }
-
-  @override
-  Future<void> selectAll() async => selected.addAll(items);
 
   @override
   void clear() => selected.clear();
@@ -65,6 +91,9 @@ class _Picked extends FamilyNotifier<Set<String>, String> {
 
 /// What each grid of these tests has selected, by its name
 final _pickedProvider = NotifierProvider.family<_Picked, Set<String>, String>(_Picked.new);
+
+/// Holds the loads of the grids of the page until completed, when set
+Completer<void>? _gridGate;
 
 /// The grid [name] of the page, whose selection is [_pickedProvider]
 class _GridSelection implements DesktopSelectable<String> {
@@ -88,19 +117,34 @@ class _GridSelection implements DesktopSelectable<String> {
   bool get hasSelection => _picked.isNotEmpty;
 
   @override
+  bool get picking => false;
+
+  @override
   bool isSelected(String item) => _picked.contains(item);
 
   @override
-  Future<List<String>> range(int from, int to) async => items.sublist(from, to + 1);
+  Future<int?> locate(String item, {required int near}) async {
+    final index = items.indexOf(item);
+    return index < 0 ? null : index;
+  }
+
+  @override
+  Future<List<String>> range(int from, int to) async {
+    await _gridGate?.future;
+    return items.sublist(from, to + 1);
+  }
+
+  @override
+  Future<List<String>> all() async {
+    await _gridGate?.future;
+    return items;
+  }
 
   @override
   void addAll(List<String> items) => _set({..._picked, ...items});
 
   @override
   void toggle(String item) => _set(_picked.contains(item) ? ({..._picked}..remove(item)) : {..._picked, item});
-
-  @override
-  Future<void> selectAll() async => addAll(items);
 
   @override
   void clear() => _set(const {});
@@ -136,7 +180,7 @@ class _GridPageState extends ConsumerState<_GridPage> {
             Expanded(
               child: DesktopSelectionScope<String>(
                 selectable: _grid,
-                empty: _pickedProvider(widget.name).select((picked) => picked.isEmpty),
+                selection: _pickedProvider(widget.name),
                 enabled: widget.enabled,
                 menu: (context, ref) => [
                   DesktopSelectionMenuEntry(
@@ -178,6 +222,7 @@ void main() {
   setUp(() {
     _opened.clear();
     _acted.clear();
+    _gridGate = null;
   });
 
   tearDown(() => debugDefaultTargetPlatformOverride = null);
@@ -286,6 +331,105 @@ void main() {
       controller.prepareMenu(2, 'c', add: true);
       expect(grid.selected, {'c', 'd'});
     });
+
+    test('a right click in a grid that only picks (the photos for an album) adds the item to the picks', () {
+      final grid = _ListSelection(['a', 'b', 'c', 'd'], picking: true);
+      final controller = DesktopSelectionController(grid);
+      grid.selected.addAll({'a', 'b'});
+
+      controller.prepareMenu(3, 'd', add: false);
+      expect(grid.selected, {'a', 'b', 'd'});
+      expect(controller.anchor, (index: 3, item: 'd'));
+    });
+
+    test('a Shift click finds its anchor again after items came above it; gone, the item alone', () async {
+      final grid = _ListSelection(['a', 'b', 'c', 'd', 'e', 'f']);
+      final controller = DesktopSelectionController(grid);
+
+      await controller.click(DesktopClick.toggle, 2, 'c');
+      grid.items.insertAll(0, ['x', 'y', 'z']);
+      await controller.click(DesktopClick.range, 6, 'd');
+      expect(grid.selected, {'c', 'd'}, reason: 'from c, now at 5, not from what is at 2 now');
+      expect(controller.anchor, (index: 5, item: 'c'));
+
+      grid.items.remove('c');
+      await controller.click(DesktopClick.range, 7, 'f');
+      expect(grid.selected, {'c', 'd', 'f'}, reason: 'no range from an item gone');
+      expect(controller.anchor, (index: 7, item: 'f'));
+    });
+  });
+
+  group('a load', () {
+    test('Escape, or a Control click, while Control A loads wins once the load ends', () async {
+      final grid = _ListSelection(['a', 'b', 'c', 'd']);
+      final controller = DesktopSelectionController(grid);
+      await controller.click(DesktopClick.toggle, 1, 'b');
+
+      grid.gate = Completer<void>();
+      var all = controller.selectAll();
+      expect(controller.loading, isTrue);
+      controller.clear();
+      grid.gate!.complete();
+      await all;
+      expect(grid.selected, isEmpty, reason: 'Escape came after Control A');
+      expect(controller.loading, isFalse);
+
+      grid.gate = Completer<void>();
+      all = controller.selectAll();
+      await controller.click(DesktopClick.toggle, 3, 'd');
+      grid.gate!.complete();
+      await all;
+      expect(grid.selected, {'d'}, reason: 'the Control click came after Control A');
+
+      grid.gate = null;
+      await controller.selectAll();
+      expect(grid.selected, {'a', 'b', 'c', 'd'});
+    });
+
+    test('a second Control A while the first loads waits for it', () async {
+      final grid = _ListSelection(['a', 'b', 'c']);
+      final loads = <bool>[];
+      final controller = DesktopSelectionController(grid, onLoading: loads.add);
+
+      grid.gate = Completer<void>();
+      final first = controller.selectAll();
+      final second = controller.selectAll();
+      expect(identical(first, second), isTrue);
+      grid.gate!.complete();
+      await second;
+      expect(grid.loadsOfAll, 1);
+      expect(grid.selected, hasLength(3));
+      expect(loads, [true, false]);
+
+      grid.gate = null;
+      await controller.selectAll();
+      expect(grid.loadsOfAll, 2, reason: 'once the first ended, Control A loads again');
+    });
+
+    test(
+      'a Shift click still loading gives its range up after Escape; one that ends after the grid went, too',
+      () async {
+        final grid = _ListSelection(['a', 'b', 'c', 'd', 'e']);
+        var alive = true;
+        final controller = DesktopSelectionController(grid, alive: () => alive);
+        await controller.click(DesktopClick.toggle, 0, 'a');
+
+        grid.gate = Completer<void>();
+        var range = controller.click(DesktopClick.range, 3, 'd');
+        controller.clear();
+        grid.gate!.complete();
+        await range;
+        expect(grid.selected, isEmpty);
+
+        await controller.click(DesktopClick.toggle, 0, 'a');
+        grid.gate = Completer<void>();
+        range = controller.click(DesktopClick.range, 4, 'e');
+        alive = false;
+        grid.gate!.complete();
+        await range;
+        expect(grid.selected, {'a'});
+      },
+    );
   });
 
   group('the window', () {
@@ -521,6 +665,96 @@ void main() {
       expect(find.text('Act on 1'), findsNothing);
       expect(picked(tester, 'a'), {'a-2'});
       expect(_opened, isEmpty);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a change from elsewhere while Control A loads wins; two Shift clicks loading at once both add', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpSelectionApp(tester, router: router());
+      await tester.pumpAndSettle();
+      await controlClick(tester, 'a-1');
+
+      _gridGate = Completer<void>();
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await tester.pump();
+      // As the close button of the bar or a long press would
+      ProviderScope.containerOf(
+        tester.element(find.byType(MaterialApp)),
+      ).read(_pickedProvider('a').notifier).set({'a-5'});
+      _gridGate!.complete();
+      await tester.pumpAndSettle();
+      expect(picked(tester, 'a'), {'a-5'});
+
+      await controlClick(tester, 'a-0');
+      _gridGate = Completer<void>();
+      for (final item in ['a-2', 'a-3']) {
+        await withKeys(tester, [LogicalKeyboardKey.shiftLeft], () async {
+          await click(tester, find.text(item));
+          await tester.pump();
+        });
+      }
+      _gridGate!.complete();
+      await tester.pumpAndSettle();
+      expect(picked(tester, 'a'), {
+        'a-0',
+        'a-1',
+        'a-2',
+        'a-3',
+        'a-5',
+      }, reason: 'the first range does not undo the second');
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Escape while Control A loads, nothing selected yet, stops it and stays in full screen', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final window = FakeSelectionWindow();
+      await pumpSelectionApp(tester, router: router(), window: window);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f11);
+      await tester.pumpAndSettle();
+
+      _gridGate = Completer<void>();
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await tester.pump();
+      expect(await tester.sendKeyEvent(LogicalKeyboardKey.escape), isTrue);
+      _gridGate!.complete();
+      await tester.pumpAndSettle();
+      expect(picked(tester, 'a'), isEmpty);
+      expect(window.fullScreen, isTrue);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Control A that loads for more than a second shows a bar and the busy pointer, until it ends', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpSelectionApp(tester, router: router());
+      await tester.pumpAndSettle();
+      MouseCursor cursor() => tester
+          .widget<MouseRegion>(
+            find.descendant(of: find.byType(DesktopSelectionScope<String>), matching: find.byType(MouseRegion)).first,
+          )
+          .cursor;
+
+      _gridGate = Completer<void>();
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await tester.pump(const Duration(milliseconds: 900));
+      expect(find.byKey(const Key('desktop_selection_busy')), findsNothing, reason: 'a short load shows nothing');
+      expect(cursor(), MouseCursor.defer);
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.byKey(const Key('desktop_selection_busy')), findsOneWidget);
+      expect(cursor(), SystemMouseCursors.progress);
+
+      _gridGate!.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const Key('desktop_selection_busy')), findsNothing);
+      expect(cursor(), MouseCursor.defer);
+      expect(picked(tester, 'a'), hasLength(6));
       debugDefaultTargetPlatformOverride = null;
     });
 

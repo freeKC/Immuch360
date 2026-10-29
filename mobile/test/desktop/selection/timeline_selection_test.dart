@@ -2,8 +2,9 @@
 // the window shell: Control click selects without opening, Shift click adds a range from the last click (or from a long
 // press), Control A selects the whole timeline in one change of the selection, Escape clears it, a right click opens
 // the menu of the whole selection with "Upload to Immich" first, which sends every photo of the selection; "N selected"
-// in the bar; Command on macOS. The assets an album holds already are never taken. A phone, and the remote control
-// layout on a computer, keep the timeline as it was.
+// in the bar; Command on macOS. The assets an album holds already are never taken, and a right click on the page that
+// picks them adds. What the user does while Control A loads wins once it ends; a Shift click finds its anchor again
+// after photos arrived above it. A phone, and the remote control layout on a computer, keep the timeline as it was.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -39,9 +40,13 @@ import '../../fixtures/asset.stub.dart';
 import '../../unit/presentation/presentation_context.dart';
 import 'selection_test_app.dart';
 
-class _NotReadOnly extends ReadOnlyModeNotifier {
+class _ReadOnly extends ReadOnlyModeNotifier {
+  _ReadOnly(this.value);
+
+  final bool value;
+
   @override
-  bool build() => false;
+  bool build() => value;
 }
 
 void main() {
@@ -58,16 +63,45 @@ void main() {
     await context.dispose();
   });
 
-  /// [count] photos of this computer, none on the server yet
-  List<BaseAsset> photos(int count) =>
-      List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'p$i', name: 'p$i.jpg'));
+  /// [count] photos of this computer, none on the server yet, named [prefix] and their number
+  List<BaseAsset> photos(int count, [String prefix = 'p']) =>
+      List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: '$prefix$i', name: '$prefix$i.jpg'));
 
-  /// The timeline of [assets] on its own page under the window shell (none on a phone), and a viewer to open
+  /// The service of a timeline over what [assets] gives, read again at each event of [changes]; while [gate] gives a
+  /// completer, the loads past the first assets wait for it
+  TimelineService serviceOf(
+    List<BaseAsset> Function() assets, {
+    Stream<void>? changes,
+    Completer<void>? Function()? gate,
+  }) {
+    List<Bucket> buckets() => [TimeBucket(date: DateTime(2026, 10, 5), assetCount: assets().length)];
+    return TimelineService((
+      assetSource: (i, n) async {
+        final wait = i > 0 ? gate?.call() : null;
+        if (wait != null) {
+          await wait.future;
+        }
+        final all = assets();
+        return all.sublist(math.min(i, all.length), math.min(i + n, all.length));
+      },
+      bucketSource: () => Stream.multi((controller) {
+        controller.add(buckets());
+        final subscription = changes?.listen((_) => controller.add(buckets()));
+        controller.onCancel = () => subscription?.cancel();
+      }),
+      origin: TimelineOrigin.main,
+    ));
+  }
+
+  /// The timeline of [assets] on its own page under the window shell (none on a phone), and a viewer to open; [assets]
+  /// read again whenever [service] says the timeline changed, when given
   Future<RootStackRouter> pumpTimeline(
     WidgetTester tester, {
-    required List<BaseAsset> assets,
+    List<BaseAsset> assets = const [],
+    TimelineService? service,
     bool shell = true,
     bool tvMode = false,
+    bool readOnly = false,
     MultiSelectState? selection,
     TimelineOrigin origin = TimelineOrigin.main,
   }) async {
@@ -76,7 +110,7 @@ void main() {
       ..devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
-    final service = TimelineService((
+    service ??= TimelineService((
       assetSource: (i, n) async => assets.sublist(i, math.min(i + n, assets.length)),
       bucketSource: () => Stream.value([TimeBucket(date: DateTime(2026, 10, 5), assetCount: assets.length)]),
       origin: origin,
@@ -111,7 +145,7 @@ void main() {
         timelineServiceProvider.overrideWithValue(service),
         appConfigProvider.overrideWithValue(const AppConfig()),
         tvModeProvider.overrideWithValue(tvMode),
-        readonlyModeProvider.overrideWith(_NotReadOnly.new),
+        readonlyModeProvider.overrideWith(() => _ReadOnly(readOnly)),
         foregroundUploadServiceProvider.overrideWithValue(context.service.upload),
         toastServiceProvider.overrideWithValue(context.service.toast),
         aiFeaturesEnabledProvider.overrideWith((ref) => false),
@@ -127,8 +161,10 @@ void main() {
     return router;
   }
 
-  Finder tile(int index) =>
-      find.byWidgetPredicate((widget) => widget is ThumbnailTile && widget.asset?.name == 'p$index.jpg');
+  Finder tileNamed(String name) =>
+      find.byWidgetPredicate((widget) => widget is ThumbnailTile && widget.asset?.name == '$name.jpg');
+
+  Finder tile(int index) => tileNamed('p$index');
 
   ProviderContainer container(WidgetTester tester) =>
       ProviderScope.containerOf(tester.element(find.byType(Timeline, skipOffstage: false)));
@@ -166,6 +202,7 @@ void main() {
       expect(selected(tester), {'p1', 'p2'});
       expect(router.current.name, 'Grid', reason: 'nothing opened');
       expect(find.text(t.selected_count(count: 2)), findsOneWidget, reason: '"2 selected" in the bar');
+      expect(find.byTooltip(t.desktop_selection_hint(modifier: 'Ctrl')), findsOneWidget, reason: 'the keys and clicks');
 
       await click(tester, tile(1));
       await settle(tester);
@@ -186,6 +223,23 @@ void main() {
       expect(selected(tester), {'p2', 'p5', 'p6', 'p7', 'p8'});
       await clickWith(tester, [LogicalKeyboardKey.shiftLeft], 3);
       expect(selected(tester), {'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'});
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a Shift click finds its anchor again after photos arrived above it', (tester) async {
+      var assets = photos(30);
+      final changes = StreamController<void>.broadcast();
+      addTearDown(changes.close);
+      await pumpTimeline(tester, service: serviceOf(() => assets, changes: changes.stream));
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], 5);
+
+      // A copy into the folder, a sync with the server
+      assets = [...photos(3, 'n'), ...assets];
+      changes.add(null);
+      await settle(tester);
+      expect(tileNamed('n0'), findsOneWidget, reason: 'the new photos show first');
+      await clickWith(tester, [LogicalKeyboardKey.shiftLeft], 8);
+      expect(selected(tester), {'p5', 'p6', 'p7', 'p8'});
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -239,6 +293,42 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await settle(tester);
       expect(selected(tester), isEmpty);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Escape, or a Control click, while Control A still loads wins once it ends', (tester) async {
+      final assets = photos(3000);
+      Completer<void>? gate;
+      await pumpTimeline(tester, service: serviceOf(() => assets, gate: () => gate));
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], 1);
+
+      gate = Completer<void>();
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await tester.pump();
+      expect(selected(tester), {'p1'}, reason: 'still loading');
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump();
+      expect(selected(tester), isEmpty);
+      gate.complete();
+      await settle(tester);
+      expect(selected(tester), isEmpty, reason: 'Escape came after Control A');
+
+      gate = Completer<void>();
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await tester.pump();
+      await withKeys(tester, [LogicalKeyboardKey.controlLeft], () async {
+        await click(tester, tile(4));
+        await tester.pump(const Duration(milliseconds: 400));
+      });
+      expect(selected(tester), {'p4'});
+      gate.complete();
+      await settle(tester);
+      expect(selected(tester), {'p4'}, reason: 'the Control click came after Control A');
+
+      gate = null;
+      await withShortcut(tester, LogicalKeyboardKey.keyA);
+      await settle(tester);
+      expect(selected(tester), hasLength(3000));
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -356,6 +446,32 @@ void main() {
       expect(selected(tester), isEmpty);
       expect(container(tester).read(multiSelectProvider).forceEnable, isTrue);
       expect(container(tester).read(multiSelectProvider).lockedSelectionAssets, {assets[2]});
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('on the page that picks the photos of an album, a right click adds to the picks; on a photo the album '
+        'holds, it does nothing', (tester) async {
+      final assets = photos(12);
+      await pumpTimeline(
+        tester,
+        assets: assets,
+        selection: MultiSelectState(selectedAssets: const {}, lockedSelectionAssets: {assets[2]}, forceEnable: true),
+      );
+      for (final index in [1, 3, 4]) {
+        await clickWith(tester, [LogicalKeyboardKey.controlLeft], index);
+      }
+
+      await rightClick(tester, tile(6));
+      await settle(tester);
+      expect(selected(tester), {'p1', 'p3', 'p4', 'p6'}, reason: 'the picks stay');
+      expect(find.byKey(const Key('desktop_selection_select_all')), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await settle(tester);
+
+      await rightClick(tester, tile(2));
+      await settle(tester);
+      expect(find.byKey(const Key('desktop_selection_select_all')), findsNothing, reason: 'no menu');
+      expect(selected(tester), {'p1', 'p3', 'p4', 'p6'});
       debugDefaultTargetPlatformOverride = null;
     });
 
