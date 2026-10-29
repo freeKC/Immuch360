@@ -39,10 +39,7 @@ void main() {
                         context: context,
                         firstDate: DateTime(2023),
                         lastDate: DateTime(2026, 10, 27),
-                        initialDateRange: DateTimeRange(
-                          start: DateTime(2026, 1, 15),
-                          end: DateTime(2026, 9, 10),
-                        ),
+                        initialDateRange: DateTimeRange(start: DateTime(2026, 1, 15), end: DateTime(2026, 9, 10)),
                       );
                     },
                   ),

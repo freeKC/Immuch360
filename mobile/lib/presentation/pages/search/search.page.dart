@@ -54,15 +54,15 @@ class SearchPage extends HookConsumerWidget {
     );
     final textSearchController = useTextEditingController();
     final emptyFilter = SearchFilter(
-        people: {},
-        location: const SearchLocationFilter(),
-        camera: const SearchCameraFilter(),
-        date: const SearchDateFilter(),
-        display: const SearchDisplayFilters(isNotInAlbum: false, isArchive: false, isFavorite: false),
-        rating: const SearchRatingFilter(),
-        mediaType: AssetType.other,
-        language: "${context.locale.languageCode}-${context.locale.countryCode}",
-        tagIds: [],
+      people: {},
+      location: const SearchLocationFilter(),
+      camera: const SearchCameraFilter(),
+      date: const SearchDateFilter(),
+      display: const SearchDisplayFilters(isNotInAlbum: false, isArchive: false, isFavorite: false),
+      rating: const SearchRatingFilter(),
+      mediaType: AssetType.other,
+      language: "${context.locale.languageCode}-${context.locale.countryCode}",
+      tagIds: [],
     );
     final filter = useState<SearchFilter>(emptyFilter);
 
@@ -361,22 +361,22 @@ class SearchPage extends HookConsumerWidget {
               initialDateRange: dateRange,
             )
           : await showDateRangePicker(
-        context: context,
-        firstDate: firstDate,
-        lastDate: lastDate,
-        currentDate: DateTime.now(),
-        initialDateRange: dateRange,
-        helpText: context.t.search_filter_date_title,
-        cancelText: context.t.cancel,
-        confirmText: context.t.select,
-        saveText: context.t.save,
-        errorFormatText: context.t.invalid_date_format,
-        errorInvalidText: context.t.invalid_date,
-        fieldStartHintText: context.t.start_date,
-        fieldEndHintText: context.t.end_date,
-        initialEntryMode: DatePickerEntryMode.calendar,
-        keyboardType: TextInputType.text,
-      );
+              context: context,
+              firstDate: firstDate,
+              lastDate: lastDate,
+              currentDate: DateTime.now(),
+              initialDateRange: dateRange,
+              helpText: context.t.search_filter_date_title,
+              cancelText: context.t.cancel,
+              confirmText: context.t.select,
+              saveText: context.t.save,
+              errorFormatText: context.t.invalid_date_format,
+              errorInvalidText: context.t.invalid_date,
+              fieldStartHintText: context.t.start_date,
+              fieldEndHintText: context.t.end_date,
+              initialEntryMode: DatePickerEntryMode.calendar,
+              keyboardType: TextInputType.text,
+            );
 
       // Cancel/Back leaves the previous date filter intact.
       if (date != null) {

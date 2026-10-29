@@ -27,6 +27,7 @@ class SearchField extends StatefulWidget {
   final void Function(PointerDownEvent)? onTapOutside;
   final TextEditingController? controller;
   final String hintText;
+
   /// Optional native TV keyboard title; the hint is often an example, not a label.
   final String? tvDialogTitle;
   final EdgeInsetsGeometry contentPadding;

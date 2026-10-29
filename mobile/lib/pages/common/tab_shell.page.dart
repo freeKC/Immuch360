@@ -67,9 +67,7 @@ class _TabShellPageState extends ConsumerState<TabShellPage> {
   /// its destination in the rail, from there to Photos, from Photos out of the app. Three presses at most from anywhere
   /// in a tab to the TV home, never a confirmation.
   void _onTvBack(TabsRouter tabsRouter) {
-    if (!_navigationHasFocus &&
-        tabsRouter.activeIndex == kSearchTabIndex &&
-        ref.read(tvSearchHasActiveQueryProvider)) {
+    if (!_navigationHasFocus && tabsRouter.activeIndex == kSearchTabIndex && ref.read(tvSearchHasActiveQueryProvider)) {
       // Search results are an in-tab state, not a route. Go back to Search
       // suggestions before moving focus to the navigation rail.
       ref.read(tvSearchReturnToStartProvider.notifier).state++;

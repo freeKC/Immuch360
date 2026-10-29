@@ -12,21 +12,13 @@ Future<DateTimeRange<DateTime>?> showTvSearchDateRangePicker({
   required DateTime lastDate,
 }) => showDialog<DateTimeRange<DateTime>>(
   context: context,
-  builder: (_) => _TvSearchDateRangeDialog(
-    initial: initialDateRange,
-    firstDate: firstDate,
-    lastDate: lastDate,
-  ),
+  builder: (_) => _TvSearchDateRangeDialog(initial: initialDateRange, firstDate: firstDate, lastDate: lastDate),
 );
 
 enum _DatePart { year, month, day }
 
 class _TvSearchDateRangeDialog extends StatefulWidget {
-  const _TvSearchDateRangeDialog({
-    required this.initial,
-    required this.firstDate,
-    required this.lastDate,
-  });
+  const _TvSearchDateRangeDialog({required this.initial, required this.firstDate, required this.lastDate});
 
   final DateTimeRange<DateTime> initial;
   final DateTime firstDate;
@@ -84,9 +76,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
     if (selected == null || !mounted) return;
     final newYear = part == _DatePart.year ? selected : current.year;
     final newMonth = part == _DatePart.month ? selected : current.month;
-    final newDay = part == _DatePart.day
-        ? selected
-        : current.day.clamp(1, _daysInMonth(newYear, newMonth)).toInt();
+    final newDay = part == _DatePart.day ? selected : current.day.clamp(1, _daysInMonth(newYear, newMonth)).toInt();
     final changed = _clamp(DateTime(newYear, newMonth, newDay));
     setState(() {
       if (start) {
@@ -152,10 +142,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
               _dateRow(start: true),
               const SizedBox(height: 24),
               _dateRow(start: false),
-              if (!valid) ...[
-                const SizedBox(height: 12),
-                const Text('Start date must be on or before end date.'),
-              ],
+              if (!valid) ...[const SizedBox(height: 12), const Text('Start date must be on or before end date.')],
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
