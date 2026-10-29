@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Eesti</b> · Teised keeled (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Sinu meedia. Igal ekraanil. Igast vaatenurgast. Uus: muuda oma fotod 3D-fotodeks, 3D-stseenideks ja 360° panoraamideks. Tehisintellekti tehtud sinu enda arvutis. Sinu fotod ei lahku sellest kunagi. Android, iPhone ja iPad, Android TV, LG ja Samsungi telerid, Meta Quest, Windows, macOS, Linux. Illustratsioon, mitte ekraanipilt: hämaruses mereranna ees sama tuba neli korda, lameda fotona telefonis, hõljuvate kihtidena valge peakomplekti ees, stseenina sülearvutis ja panoraamina kõverale ribale lahti rullitud, ühendatud valguskaartega">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Sinu meedia. Igal ekraanil. Igast vaatenurgast. Lamedad, 360° ja 3D fotod ja videod sinu seadmest, sinu NAS-ist, sinu Immich-serverist, sinu kaameratest ja sinu droonist. Kontot pole vaja. Uus: 3D-fotod, 3D-stseenid ja 360° panoraamid sinu enda fotodest, TI abil sinu arvutis. Android, iPhone ja iPad, Android TV, LG ja Samsungi telerid, Meta Quest, Windows, macOS, Linux. Illustratsioon hämaruses mereranna ees: andmehoidla, telefon, tahvelarvuti, teler, sülearvuti ja peakomplekt, droon taevas ja koduse valve kaamera, ühendatud valguskaartega">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Lamedad, 360° ja 3D fotod ja videod sinu seadmest, sinu NAS-ist, sinu Immich-serverist, sinu kaameratest ja sinu droonist. Kontot pole vaja. Immuch360 on vaba ja avatud lähtekoodiga rakendus, mis loeb sinu fotosid ja videoid seal, kus need asuvad, ja mängib igaüht sobivas vaaturis: lamedalt, kerana, mille sees ringi vaatad, 3D-s või täielikult sinu ümber peakomplektis. See töötab telefonides, tahvelarvutites, telerites, Meta Questi peakomplektides ja arvutites.
 
-**Uus: sinu lamedad fotod, 3D-s.** Vali arvutis foto ja saa 3D-foto, 3D-stseen, kuhu sisse astuda, või 360° panoraam, mis kujutab ette ülejäänud kohta sinu ümber. Meta Quest 3 või 3S peakomplektis piisab ühest vajutusest nupule "TI-reljeef" ja iga lame foto tõuseb esile. TI töötab sinu enda arvutis ja peakomplektis ning midagi ei saadeta kuhugi. Katseline. [Vaata, kuidas](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Immuch360 tehtud 3D-foto ühest tavalisest fotost vanast saalist galerii, sammaste ja lühtriga, vaates Võnkumine: selle vasak ja parem silm kordamööda, umbes kuus korda sekundis, nii et sambad eristuvad seintest">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Üks foto neljal viisil, kõik Immuch360 päris väljundid: valge tuba ümmarguse laua ja aknaga, nagu pildistatud; selle 3D-foto, mis näitab rakenduse arvutatud silma, märk 3D TI, tehisintellekti hinnatud reljeef; selle 3D-stseen vasakult ja paremalt vaadatuna, märk 3D-stseen; all selle ümber loodud 360° panoraam, märk 360° TI, algne foto keskel piirjoonega ja terve stuudio selle ümber välja mõeldud, mõne veidra esemega">
-</p>
-<p align="center"><sub>Rakenduse päris väljundid Poly Haveni CC0-fotodest, vähendatud, töötlemata, rakenduse märgid sellele lehele lisatud. Üleval 3D-foto, selle kaks silma kordamööda; all üks foto neljal viisil, stseeni kaks vaadet joonistatud stseenifailist. Kõik väljaspool panoraami piirjoont on TI välja mõelnud.</sub></p>
+**Uus: sinu lamedad fotod, 3D-s.** Arvutis teeb "Tee 3D (TI)" ühest fotost 3D-foto, 3D-stseeni või 360° panoraami; Meta Quest 3 või 3S peakomplektis näitab "TI-reljeef" iga lamedat fotot 3D-s. Katseline ja kõik töötab sinu enda seadmetes: [vaata, kuidas](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Immich'i mobiilirakenduse mitteametlik haru. Ei ole seotud Immich'i ega FUTO-ga. Nimi kõlab nagu ingliskeelne "I am much 360" ("olen palju 360").</sub>
@@ -33,9 +24,9 @@ Lamedad, 360° ja 3D fotod ja videod sinu seadmest, sinu NAS-ist, sinu Immich-se
 - [Mida saad teha](#what-you-can-do)
 - [Hangi see oma seadmesse](#get-it-on-your-device)
 - [Kuidas teha](#how-to)
-  - [Muuda üks foto 3D-ks, stseeniks, panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Vaata oma fotosid ja videoid, serveriga või ilma](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Avasta panoraame, 360°, VR180 ja 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Muuda üks foto 3D-ks, stseeniks, panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Vaata teleris puldiga](#watch-on-the-tv-with-the-remote): [Android TV ja Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Logi teleris, peakomplektis või arvutis sisse telefoniga](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Astu Meta Questiga oma fotode ja videote sisse](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Lamedad, 360° ja 3D fotod ja videod sinu seadmest, sinu NAS-ist, sinu Immich-se
 <a id="who-it-is-for"></a>
 ## Kellele see on
 
-- **Sinu fotod on lamedad** ja tahad neid 3D-s, stseenina, millesse peakomplektis sisse kummardada, või 360° panoraami sees, ilma 3D-kaamerata: [muuda üks foto 3D-ks, stseeniks, panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama), uus, tehisintellekti tehtud sinu enda arvutis.
 - **Sa pildistad 360° või 3D-s** ja tahad oma võtetes ringi vaadata, mitte näha neid lamedate, kahekordsete või väljavenitatutena: [360°, VR180 ja 3D](#explore-panoramas-360-vr180-and-3d).
 - **Sinu fotod ja filmid on NAS-is, arvutis, Plexis või Immichis** ja sa tahad neid teleris näha midagi kopeerimata: [teleris](#watch-on-the-tv-with-the-remote), [NAS, jagud ja Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Sul on Meta Quest** ja tahad astuda oma fotode ja videote sisse: [peakomplektis](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Sinu fotod on lamedad** ja tahad neid 3D-s, stseenina, millesse peakomplektis sisse kummardada, või 360° panoraami sees, ilma 3D-kaamerata: [muuda üks foto 3D-ks, stseeniks, panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama), uus, tehisintellekti tehtud sinu enda arvutis.
 - **Sa kasutad Immichit** ja tahad selle rakendust, pluss kaasahaaravaid vaatureid ja suuri ekraane, kuhu logid sisse telefonist: [sinu Immichi kogu](#keep-your-immich-library-with-more), [võrdlus Immichiga](#compared-with-immich).
 - **Sa valvad oma kodu Tapo kaameratega** ja tahad neid oma fotode kõrval, ka teleris (päris kaameraga veel kontrollimata): [kodukaamerad](#watch-your-home-cameras-on-the-big-screen).
 - **Sa lennutad DJI drooni** ja tahad selle otsepilti oma telefonis ilma DJI Flyta, ning Meta Questis või Android TV-s oma kaaslaste jaoks (katseline): [sinu droon](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ TI ridades tähendab "loeb seda", et seade avab selle, mille arvuti tegi, ega te
 
 Iga rida avab allpool oma juhendi. Täielik juhend iga valiku, teate ja piiranguga on [kasutusjuhendis](../docs/immuch360/user-guide.md).
 
-1. [Muuda üks foto 3D-fotoks, 3D-stseeniks või 360° panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama): tehisintellekti tehtud sinu arvutis, vaadatav 3D-s Meta Questis, mis annab ka igale lamedale fotole reljeefi. *Uus, katseline.*
-2. [Vaata oma fotosid ja videoid, serveriga või ilma](#watch-your-photos-and-videos-with-or-without-a-server): galerii ja mängija, ainult seadmes või koos sinu Immich-serveriga.
-3. [Vaata ringi 360° fotodes ja videotes, panoraamides, VR180 ja 3D-s](#explore-panoramas-360-vr180-and-3d): kera, mida pöörad sõrme, telefoni või puldiga.
+1. [Vaata oma fotosid ja videoid, serveriga või ilma](#watch-your-photos-and-videos-with-or-without-a-server): galerii ja mängija, ainult seadmes või koos sinu Immich-serveriga.
+2. [Vaata ringi 360° fotodes ja videotes, panoraamides, VR180 ja 3D-s](#explore-panoramas-360-vr180-and-3d): kera, mida pöörad sõrme, telefoni või puldiga.
+3. [Muuda üks foto 3D-fotoks, 3D-stseeniks või 360° panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama): tehisintellekti tehtud sinu arvutis, vaadatav 3D-s Meta Questis, mis annab ka igale lamedale fotole reljeefi. *Uus, katseline.*
 4. [Vaata teleris puldiga](#watch-on-the-tv-with-the-remote): Android TV ja Google TV, LG telerid ning Samsungi telerid testbuildina.
 5. [Logi teleris, peakomplektis või arvutis sisse telefoniga](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): skanni selle QR-kood, kinnita, vaata.
 6. [Astu Meta Questiga oma fotode ja videote sisse](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° kõikjal sinu ümber, 3D tõelises 3D-s.
@@ -257,53 +248,6 @@ Ava `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` [desktop eelväljalaskel
 
 Iga kirje ütleb, mida saad, seejärel sammud ja seejärel piirangud. [Kasutusjuhendis](../docs/immuch360/user-guide.md) on iga valik ja teade.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Muuda üks foto 3D-ks, stseeniks, panoraamiks
-
-Enamik sinu fotodest on lamedad ja sa ei saa minna tagasi, et neid uuesti 3D-s pildistada. Immuch360 annab neile sügavuse. Sinu arvutis saab ühest fotost **3D-foto**, **3D-stseen**, millesse peakomplektis sisse kummardad, või **360° panoraam**, mis kujutab ette ülejäänud kohta sinu ümber. Quest 3 või 3S teeb reljeefi ise, iga lameda foto jaoks. Kõik töötab sinu enda arvutis ja peakomplektis: pilve pole, kontot pole, sinu originaale ei muudeta kunagi. Uus build 32-s ja desktop build 13-s, katseline ja vaikimisi sees. Immichi rakendusel pole midagi sellist.
-
-**Sinu arvutis**, desktop build 13-ga Windowsis, Linuxis või macOS-is:
-
-1. Vali teegis või kaustas üks või mitu fotot, seejärel "Tee 3D (TI)".
-2. Vali, mida soovid: "3D-foto", "3D-stseen", "360° panoraam" või "360° foto 3D-versioon" oma 360° piltide jaoks. Aken ütleb, mida TI hindab või välja mõtleb ("Umbes 96% sellest panoraamist mõtleb välja tehisintellekt"), umbes kui kaua see selles arvutis aega võtab ja kuhu fail läheb: "Originaali kõrvale" või "Minu valitud kaust". Tüüp, mida see arvuti teha ei saa, jääb halliks koos põhjusega, näiteks "Macis veel mitte" või "Graafikakaardil on 6.0 GiB mälu, 360° panoraamid vajavad 7.5 GiB".
-3. Esimesel korral pakub aken selle tüübi komponente: Laadi alla, üks kord. Need töötavad selles arvutis ja pärast seda ka ilma võrguta.
-4. Teisenda. Tööd ootavad järjekorras kahel rajal, protsessoril ja graafikakaardil, koos sammude ja järelejäänud ajaga; Katkesta peatab ühe neist igal hetkel ja rakendusest väljumine küsib enne kinnitust.
-5. Ava tulemus. 3D-foto näitab vaateid "Vasak silm", "Kõrvuti", "Võnkumine" (animatsioon selle lehe ülaosas) või "Punane ja tsüaan" prillide jaoks; stseenil on "Eelvaade 3D-s", mida pööratakse hiire või puuteplaadiga, ja "Ekspordi teiste 3D-rakenduste jaoks (.glb)"; panoraam avaneb 360° vaaturis.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windowsi rakenduse aken Tee 3D (TI): 3D-foto, 3D-stseen, 360° panoraam, valitud, ja 360° foto 3D-versioon; Tehisintellekti loodud väljaspool foto servi; Umbes 96% sellest panoraamist mõtleb välja tehisintellekt; Lõpetatud teisendus ei taga head tulemust; Selle graafikakaardiga umbes 5 min foto kohta; Tee ka 3D-versioon, märgitud; Salvesta asukohta: Originaali kõrvale või Minu valitud kaust; Katkesta ja Teisenda">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Windowsi rakenduse 360° vaatur avab panoraami, mille see lõi mäelt nähtud lahe fotost: märgid 360° TI ja 360° üleval paremal, algne foto keskel piirjoonega sõnade Algne foto all ning all Tehisintellekti loodud väljaspool foto servi">
-</p>
-
-| | 3D-foto | 3D-stseen | 360° panoraam |
-|---|---|---|---|
-| Mida saad | `<name>_3D_LRF_Full_SBS.jpg`, kõrvuti 3D-foto: sinu foto vasakule silmale, arvutatud parem silm | `<name>_scene3D.jpg`, foto, mis kannab stseeni kihtidena | `<name>_360.jpg`, 6144 x 3072, ning valikuga "Tee ka 3D-versioon" ka `<name>_360_3D.jpg` |
-| Mida TI teeb | hindab foto reljeefi (Depth Anything V2 Small) | hindab koha kuju (MoGe-2) ja täidab selle, mida foto peidab (LaMa), kihilise stseeni jaoks | mõtleb välja kõik väljaspool foto servi (FLUX.2 klein 4B ja 360° LoRA); sinu enda pikslid jäävad sinna, kus need olid |
-| Kui kaua | mõni sekund foto kohta | 15 kuni 45 sekundit foto kohta | umbes 5 minutit RTX 4060-ga sülearvutis, 3D-versiooni jaoks 30 sekundit rohkem |
-| Mis seda käitab | Windowsi, Linuxi või macOS-i arvuti protsessor | Windowsi, Linuxi või macOS-i arvuti protsessor | Vulkani toega graafikakaart 8 GB oma mäluga, Windowsi või Linuxi arvutis 16 GB mäluga; NVIDIA proovitud, AMD ja Inteli kaardid veel mitte; Macil veel mitte |
-| Laaditakse alla üks kord, kui palud | umbes 110 MB | 349 MB rohkem | umbes 5.4 GB rohkem |
-| Kus seda vaadata | 3D-s Meta Questis; arvutis "Võnkumine" või "Punane ja tsüaan" | Meta Questis, kus kummardud selle sisse; arvutis "Eelvaade 3D-s" | kõikjal sinu ümber Meta Questis ja igas 360° vaaturis |
-
-Iga uus fail läheb oma originaali kõrvale, mitte kunagi selle peale, või sinu valitud kausta, kui originaali kaust uusi faile vastu ei võta; võrgukaustas alles siis, kui oled selle kausta jaoks jah öelnud ("Immuch360 kirjutab sinna uusi faile, mitte kunagi originaale"). Teek seob iga versiooni selle originaaliga oma märgiga, "3D TI", "3D-stseen" või "360° TI", albumis "Immuch360 TI-versioonid", mis jääb sinu Immichi varundusest välja, kui sa ei lülita sisse valikut "Varunda ka TI-versioonid"; ettevaatust, "Vali kõik" varundusalbumites valib ka selle albumi ja lülitab selle lüliti sisse. Faili vaatamiseks Questis salvesta see oma NAS-i, varunda see oma Immichi serverisse või lülita Windowsis sisse "Jaga seda arvutit".
-
-**Meta Questis**, build 32-ga:
-
-- **TI-reljeef**: ava mis tahes lame foto oma teegist või jagust ja vajuta ülemisel ribal "TI-reljeef": peakomplekt hindab reljeefi ise ja näitab fotot 3D-s, "Tehisintellekti hinnatud reljeef". Mudel, 99.5 MB, laaditakse alla esimesel vajutusel ja reljeefid hoitakse vahemälus. "Ava TI-reljeefid 2.5D-s (katseline)", jaotises Seaded, Täpsemad valikud, "TI ja 3D", paneb lähedased objektid pea liigutamisel tausta ees liikuma. Quest 2 või Quest Pro peal jääb nupp halliks, "Selle peakomplektiga veel testimata", kuni lülitad seal sisse "TI-reljeef Quest 2 ja Quest Pro peal (testimata)".
-- **Arvutist pärit 3D-fotod ja stseenid**: "Vaata 3D-s" näitab 3D-fotot tõelises 3D-s. "Vaata 3D-stseeni" originaalil või "Uuri 3D-stseeni" stseenil paneb stseeni sinu tuppa: kummardu sisse või libise vasaku juhtkangiga taastatud ala sees ("Liikumisruum: umbes 0.5 m igas suunas" selle lehe ülaosas oleva toa puhul); kihid lamenevad ja tumenevad selle serval, klõps juhtkangil lähtestab vaate ning B või Y viib tagasi.
-- **Panoraamid**: loodud panoraam avaneb kõikjal sinu ümber, näoga sinu foto poole, koos tekstiga "Tehisintellekti loodud väljaspool foto servi" ja algse foto õhukese piirjoonega, mis mõne sekundi pärast hääbuvad; selle 3D-versioon on tõelises 3D-s.
-
-**Telefonides, tahvelarvutites ja teleritel** avanevad arvuti tehtud failid sellisena, nagu need on, ja seal ei looda midagi. Panoraam avaneb 360° vaaturis koos märgiga "360° TI", lause ja piirjoonega Androidi telefonides, tahvelarvutites ja Android TV-s; iPhone'is, iPadis ning LG ja Samsungi teleritel avaneb see praegu tavalise 360° fotona. Stseen näidatakse selle fotona, väikese märgiga 3D-STSEEN nurgas; Androidis lisavad selle üksikasjad "Ava see Meta Questis, et seda uurida". 3D-foto näitab oma kahte silma kõrvuti.
-
-**Mis on päris ja mis mitte, alati välja öeldud.** See on põhimõte, mitte peenes kirjas märkus. 3D-foto reljeef on hinnatud ühest fotost ning see, mida foto peidab, on täidetud ega ole päris. Stseen on "Taastatud ühest fotost, uuri seda selle piirides". Panoraam hoiab sinu päris pikslid seal, kus need olid, ja mõtleb ülejäänu välja, tüüpilise foto puhul umbes 90% sfäärist, ning aken ütleb enne alustamist, kui palju. Rakendus ütleb seda seal, kuhu sa vaatad, tekstidega "Tehisintellekti hinnatud reljeef", "Tehisintellekti loodud väljaspool foto servi" ja märkidega, ning failid ütlevad seda samuti: meie XMP-s ning stseenide ja panoraamide puhul TI abil tehtud pildi IPTC digitaalse allika tüübis, et teised rakendused saaksid eristada loodud panoraami päris 360° fotost. Sinu originaale ei muudeta kunagi ja midagi ei lahku sinu arvutist ega peakomplektist. Nagu aken ütleb: "Lõpetatud teisendus ei taga head tulemust."
-
-**Mida kontrolliti** 29. oktoobriks 2026 selle koodi testbuildidega: 3D-fotod Linuxi rakendusega konteineris Linuxi arvutis, ka ilma võrguta; stseenid Windowsi rakendusega RTX 4060 Laptop GPU-ga sülearvutis (kümme 2 min 39 s jooksul) ja mootoriga Linuxi arvutis; samas sülearvutis neli panoraami, igaüks 4 min 16 s kuni 4 min 44 s, nende 3D-versioonid umbes 30 s-ga, koos nupuga Katkesta, sunniviisiliselt suletud rakenduse, graafikakaarti hõivava teise programmi ja ilma rakenduse võrguühenduseta testide ajal.
-
-Piirangud: Macil veel 360° panoraami pole ("Macis veel mitte"), ega ka ilma sobiva graafikakaardita, ja aken ütleb, miks ("Vulkani toega graafikakaarti ei leitud", "Integreeritud graafika jagab arvuti mälu: panoraamide jaoks liiga aeglane", koos valikuga "Proovi integreeritud graafikaga (testimata)", et siiski proovida); panoraami sees võib sinu foto serv paista terava toonihüppena; enamik stseene ütleb "Vaateväli on oletatud: kujud võivad olla ebatäpsed"; stseen vajab umbes 2 GB vaba mälu (muidu "Pole piisavalt mälu"); kui TI-versioonid on varundatud, paaritab Immichi duplikaatide otsija iga foto selle stseeniga ja soovitab sageli jätta alles stseeni, raskema faili: jäta alles originaal. Telefonid ja telerid ei tee midagi ning peakomplekt teeb ainult reljeefe; stseen tuleb ühest fotost, veel mitte mitmest sama koha fotost.
-
-**Komponendid**: arvutis loetleb Seaded, "TI ja 3D" iga funktsiooni komponendid koos nende suurusega, Laadi alla ja Eemalda, seejärel "Eemalda kõik TI-komponendid" ja "Teisalda TI-komponendid" teisele kettale; kui "TI-funktsioonid" on väljas, peidetakse kõik TI-nupud ja midagi ei laadita alla. Iga faili kontrollitakse selle SHA-256 järgi. Windowsis asuvad need kaustas `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, mille desinstallija kustutab (mitte kausta, kuhu sa need teisaldasid); Linuxis enamikus süsteemides kaustas `~/.local/share/immuch360/ai-components` ja Macis kaustas `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Questis on "TI ja 3D" jaotises Seaded, Täpsemad valikud, koos reljeefide vahemäluga.
-
-Rohkem: [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) ja [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) märkmed ning [mudelid, nende litsentsid, allikad ja kontrollsummad](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Kasutusjuhend saab oma TI peatüki järgmise läbivaatusega; seni on see jaotis juhend.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 tunneb lamedaid fotosid ja videoid, panoraame, 360° fotosid ja videoi
 Telefonides ja tahvelarvutites võib stereoskoopiline video saada sügavuse ka lamel ekraanil: ruumiline 2.5D pleier kasutab esikaamerat, et jälgida sinu pead, ja näitab vaadet kahe silma vahepealt (katseline). iPhone'iga tehtud Apple'i ruumilised fotod tuvastatakse ja näidatakse Meta Questis 3D-s.
 
 Rohkem: [360° fotod ja videod](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D ja VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Ruumiline 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple'i ruumilised fotod ja videod](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360° loend](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Muuda üks foto 3D-ks, stseeniks, panoraamiks
+
+Enamik sinu fotodest on lamedad ja sa ei saa minna tagasi, et neid uuesti 3D-s pildistada. Immuch360 annab neile sügavuse. Sinu arvutis saab ühest fotost **3D-foto**, **3D-stseen**, millesse peakomplektis sisse kummardad, või **360° panoraam**, mis kujutab ette ülejäänud kohta sinu ümber. Quest 3 või 3S teeb reljeefi ise, iga lameda foto jaoks. Kõik töötab sinu enda arvutis ja peakomplektis: pilve pole, kontot pole, sinu originaale ei muudeta kunagi. Uus build 32-s ja desktop build 13-s, katseline ja vaikimisi sees. Immichi rakendusel pole midagi sellist.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Immuch360 tehtud 3D-foto ühest tavalisest fotost vanast saalist galerii, sammaste ja lühtriga, vaates Võnkumine: selle vasak ja parem silm kordamööda, umbes kuus korda sekundis, nii et sambad eristuvad seintest">
+</p>
+<p align="center"><sub>Rakenduse päris väljund Poly Haveni CC0-fotost, vähendatud, töötlemata: 3D-foto, selle kaks silma kordamööda.</sub></p>
+
+**Sinu arvutis**, desktop build 13-ga Windowsis, Linuxis või macOS-is:
+
+1. Vali teegis või kaustas üks või mitu fotot, seejärel "Tee 3D (TI)".
+2. Vali, mida soovid: "3D-foto", "3D-stseen", "360° panoraam" või "360° foto 3D-versioon" oma 360° piltide jaoks. Aken ütleb, mida TI hindab või välja mõtleb ("Umbes 96% sellest panoraamist mõtleb välja tehisintellekt"), umbes kui kaua see selles arvutis aega võtab ja kuhu fail läheb: "Originaali kõrvale" või "Minu valitud kaust". Tüüp, mida see arvuti teha ei saa, jääb halliks koos põhjusega, näiteks "Macis veel mitte" või "Graafikakaardil on 6.0 GiB mälu, 360° panoraamid vajavad 7.5 GiB".
+3. Esimesel korral pakub aken selle tüübi komponente: Laadi alla, üks kord. Need töötavad selles arvutis ja pärast seda ka ilma võrguta.
+4. Teisenda. Tööd ootavad järjekorras kahel rajal, protsessoril ja graafikakaardil, koos sammude ja järelejäänud ajaga; Katkesta peatab ühe neist igal hetkel ja rakendusest väljumine küsib enne kinnitust.
+5. Ava tulemus. 3D-foto näitab vaateid "Vasak silm", "Kõrvuti", "Võnkumine" (ülal olev animatsioon) või "Punane ja tsüaan" prillide jaoks; stseenil on "Eelvaade 3D-s", mida pööratakse hiire või puuteplaadiga, ja "Ekspordi teiste 3D-rakenduste jaoks (.glb)"; panoraam avaneb 360° vaaturis.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windowsi rakenduse aken Tee 3D (TI): 3D-foto, 3D-stseen, 360° panoraam, valitud, ja 360° foto 3D-versioon; Tehisintellekti loodud väljaspool foto servi; Umbes 96% sellest panoraamist mõtleb välja tehisintellekt; Lõpetatud teisendus ei taga head tulemust; Selle graafikakaardiga umbes 5 min foto kohta; Tee ka 3D-versioon, märgitud; Salvesta asukohta: Originaali kõrvale või Minu valitud kaust; Katkesta ja Teisenda">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Windowsi rakenduse 360° vaatur avab panoraami, mille see lõi mäelt nähtud lahe fotost: märgid 360° TI ja 360° üleval paremal, algne foto keskel piirjoonega sõnade Algne foto all ning all Tehisintellekti loodud väljaspool foto servi">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Üks foto neljal viisil, kõik Immuch360 päris väljundid: valge tuba ümmarguse laua ja aknaga, nagu pildistatud; selle 3D-foto, mis näitab rakenduse arvutatud silma, märk 3D TI, tehisintellekti hinnatud reljeef; selle 3D-stseen vasakult ja paremalt vaadatuna, märk 3D-stseen; all selle ümber loodud 360° panoraam, märk 360° TI, algne foto keskel piirjoonega ja terve stuudio selle ümber välja mõeldud, mõne veidra esemega">
+</p>
+<p align="center"><sub>Üks foto neljal viisil: rakenduse päris väljundid Poly Haveni CC0-fotost, vähendatud, töötlemata, rakenduse märgid sellele lehele lisatud, stseeni kaks vaadet joonistatud stseenifailist. Kõik väljaspool panoraami piirjoont on TI välja mõelnud.</sub></p>
+
+| | 3D-foto | 3D-stseen | 360° panoraam |
+|---|---|---|---|
+| Mida saad | `<name>_3D_LRF_Full_SBS.jpg`, kõrvuti 3D-foto: sinu foto vasakule silmale, arvutatud parem silm | `<name>_scene3D.jpg`, foto, mis kannab stseeni kihtidena | `<name>_360.jpg`, 6144 x 3072, ning valikuga "Tee ka 3D-versioon" ka `<name>_360_3D.jpg` |
+| Mida TI teeb | hindab foto reljeefi (Depth Anything V2 Small) | hindab koha kuju (MoGe-2) ja täidab selle, mida foto peidab (LaMa), kihilise stseeni jaoks | mõtleb välja kõik väljaspool foto servi (FLUX.2 klein 4B ja 360° LoRA); sinu enda pikslid jäävad sinna, kus need olid |
+| Kui kaua | mõni sekund foto kohta | 15 kuni 45 sekundit foto kohta | umbes 5 minutit RTX 4060-ga sülearvutis, 3D-versiooni jaoks 30 sekundit rohkem |
+| Mis seda käitab | Windowsi, Linuxi või macOS-i arvuti protsessor | Windowsi, Linuxi või macOS-i arvuti protsessor | Vulkani toega graafikakaart 8 GB oma mäluga, Windowsi või Linuxi arvutis 16 GB mäluga; NVIDIA proovitud, AMD ja Inteli kaardid veel mitte; Macil veel mitte |
+| Laaditakse alla üks kord, kui palud | umbes 110 MB | 349 MB rohkem | umbes 5.4 GB rohkem |
+| Kus seda vaadata | 3D-s Meta Questis; arvutis "Võnkumine" või "Punane ja tsüaan" | Meta Questis, kus kummardud selle sisse; arvutis "Eelvaade 3D-s" | kõikjal sinu ümber Meta Questis ja igas 360° vaaturis |
+
+Iga uus fail läheb oma originaali kõrvale, mitte kunagi selle peale, või sinu valitud kausta, kui originaali kaust uusi faile vastu ei võta; võrgukaustas alles siis, kui oled selle kausta jaoks jah öelnud ("Immuch360 kirjutab sinna uusi faile, mitte kunagi originaale"). Teek seob iga versiooni selle originaaliga oma märgiga, "3D TI", "3D-stseen" või "360° TI", albumis "Immuch360 TI-versioonid", mis jääb sinu Immichi varundusest välja, kui sa ei lülita sisse valikut "Varunda ka TI-versioonid"; ettevaatust, "Vali kõik" varundusalbumites valib ka selle albumi ja lülitab selle lüliti sisse. Faili vaatamiseks Questis salvesta see oma NAS-i, varunda see oma Immichi serverisse või lülita Windowsis sisse "Jaga seda arvutit".
+
+**Meta Questis**, build 32-ga:
+
+- **TI-reljeef**: ava mis tahes lame foto oma teegist või jagust ja vajuta ülemisel ribal "TI-reljeef": peakomplekt hindab reljeefi ise ja näitab fotot 3D-s, "Tehisintellekti hinnatud reljeef". Mudel, 99.5 MB, laaditakse alla esimesel vajutusel ja reljeefid hoitakse vahemälus. "Ava TI-reljeefid 2.5D-s (katseline)", jaotises Seaded, Täpsemad valikud, "TI ja 3D", paneb lähedased objektid pea liigutamisel tausta ees liikuma. Quest 2 või Quest Pro peal jääb nupp halliks, "Selle peakomplektiga veel testimata", kuni lülitad seal sisse "TI-reljeef Quest 2 ja Quest Pro peal (testimata)".
+- **Arvutist pärit 3D-fotod ja stseenid**: "Vaata 3D-s" näitab 3D-fotot tõelises 3D-s. "Vaata 3D-stseeni" originaalil või "Uuri 3D-stseeni" stseenil paneb stseeni sinu tuppa: kummardu sisse või libise vasaku juhtkangiga taastatud ala sees ("Liikumisruum: umbes 0.5 m igas suunas" ülal näidatud toa puhul); kihid lamenevad ja tumenevad selle serval, klõps juhtkangil lähtestab vaate ning B või Y viib tagasi.
+- **Panoraamid**: loodud panoraam avaneb kõikjal sinu ümber, näoga sinu foto poole, koos tekstiga "Tehisintellekti loodud väljaspool foto servi" ja algse foto õhukese piirjoonega, mis mõne sekundi pärast hääbuvad; selle 3D-versioon on tõelises 3D-s.
+
+**Telefonides, tahvelarvutites ja teleritel** avanevad arvuti tehtud failid sellisena, nagu need on, ja seal ei looda midagi. Panoraam avaneb 360° vaaturis koos märgiga "360° TI", lause ja piirjoonega Androidi telefonides, tahvelarvutites ja Android TV-s; iPhone'is, iPadis ning LG ja Samsungi teleritel avaneb see praegu tavalise 360° fotona. Stseen näidatakse selle fotona, väikese märgiga 3D-STSEEN nurgas; Androidis lisavad selle üksikasjad "Ava see Meta Questis, et seda uurida". 3D-foto näitab oma kahte silma kõrvuti.
+
+**Mis on päris ja mis mitte, alati välja öeldud.** See on põhimõte, mitte peenes kirjas märkus. 3D-foto reljeef on hinnatud ühest fotost ning see, mida foto peidab, on täidetud ega ole päris. Stseen on "Taastatud ühest fotost, uuri seda selle piirides". Panoraam hoiab sinu päris pikslid seal, kus need olid, ja mõtleb ülejäänu välja, tüüpilise foto puhul umbes 90% sfäärist, ning aken ütleb enne alustamist, kui palju. Rakendus ütleb seda seal, kuhu sa vaatad, tekstidega "Tehisintellekti hinnatud reljeef", "Tehisintellekti loodud väljaspool foto servi" ja märkidega, ning failid ütlevad seda samuti: meie XMP-s ning stseenide ja panoraamide puhul TI abil tehtud pildi IPTC digitaalse allika tüübis, et teised rakendused saaksid eristada loodud panoraami päris 360° fotost. Sinu originaale ei muudeta kunagi ja midagi ei lahku sinu arvutist ega peakomplektist. Nagu aken ütleb: "Lõpetatud teisendus ei taga head tulemust."
+
+**Mida kontrolliti** 29. oktoobriks 2026 selle koodi testbuildidega: 3D-fotod Linuxi rakendusega konteineris Linuxi arvutis, ka ilma võrguta; stseenid Windowsi rakendusega RTX 4060 Laptop GPU-ga sülearvutis (kümme 2 min 39 s jooksul) ja mootoriga Linuxi arvutis; samas sülearvutis neli panoraami, igaüks 4 min 16 s kuni 4 min 44 s, nende 3D-versioonid umbes 30 s-ga, koos nupuga Katkesta, sunniviisiliselt suletud rakenduse, graafikakaarti hõivava teise programmi ja ilma rakenduse võrguühenduseta testide ajal.
+
+Piirangud: Macil veel 360° panoraami pole ("Macis veel mitte"), ega ka ilma sobiva graafikakaardita, ja aken ütleb, miks ("Vulkani toega graafikakaarti ei leitud", "Integreeritud graafika jagab arvuti mälu: panoraamide jaoks liiga aeglane", koos valikuga "Proovi integreeritud graafikaga (testimata)", et siiski proovida); panoraami sees võib sinu foto serv paista terava toonihüppena; enamik stseene ütleb "Vaateväli on oletatud: kujud võivad olla ebatäpsed"; stseen vajab umbes 2 GB vaba mälu (muidu "Pole piisavalt mälu"); kui TI-versioonid on varundatud, paaritab Immichi duplikaatide otsija iga foto selle stseeniga ja soovitab sageli jätta alles stseeni, raskema faili: jäta alles originaal. Telefonid ja telerid ei tee midagi ning peakomplekt teeb ainult reljeefe; stseen tuleb ühest fotost, veel mitte mitmest sama koha fotost.
+
+**Komponendid**: arvutis loetleb Seaded, "TI ja 3D" iga funktsiooni komponendid koos nende suurusega, Laadi alla ja Eemalda, seejärel "Eemalda kõik TI-komponendid" ja "Teisalda TI-komponendid" teisele kettale; kui "TI-funktsioonid" on väljas, peidetakse kõik TI-nupud ja midagi ei laadita alla. Iga faili kontrollitakse selle SHA-256 järgi. Windowsis asuvad need kaustas `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, mille desinstallija kustutab (mitte kausta, kuhu sa need teisaldasid); Linuxis enamikus süsteemides kaustas `~/.local/share/immuch360/ai-components` ja Macis kaustas `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Questis on "TI ja 3D" jaotises Seaded, Täpsemad valikud, koos reljeefide vahemäluga.
+
+Rohkem: [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) ja [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) märkmed ning [mudelid, nende litsentsid, allikad ja kontrollsummad](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Kasutusjuhend saab oma TI peatüki järgmise läbivaatusega; seni on see jaotis juhend.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

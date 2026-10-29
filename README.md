@@ -2,7 +2,7 @@
 <p align="center"><sub><b>Translations:</b> this English README is the reference, and the translated versions, in the <code>readme_i18n</code> folder, are regenerated from it at each release.</sub></p>
 
 <p align="center">
-  <img src=".github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. New: turn your photos into 3D photos, 3D scenes and 360° panoramas. Made by AI on your own computer. Your photos never leave it. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration, not a capture: at dusk in front of a sea bay, the same room four times, as a flat photo on a phone, in floating layers in front of a white headset, as a scene on a laptop and unrolled on a curved band like a panorama, linked by arcs of light">
+  <img src=".github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
@@ -11,16 +11,7 @@
 
 Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Immuch360 is a free and open source app that reads your photos and videos where they are and plays each one in the viewer that fits it: flat, as a sphere you look around in, in 3D, or all around you in a headset. It runs on phones, tablets, TVs, Meta Quest headsets and computers.
 
-**New: your flat photos, in 3D.** Pick a photo on your computer and get a 3D photo, a 3D scene to step into, or a 360° panorama that imagines the rest of the place around you. In a Meta Quest 3 or 3S, one press on "AI relief" and any flat photo stands out. The AI runs on your own computer and headset, and nothing is sent anywhere. Experimental. [See how](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src=".github/readme/ai-3d-photo-wiggle.webp" width="600" alt="A 3D photo made by Immuch360 from one ordinary photo of an old hall with a gallery, pillars and a chandelier, in the Wiggle view: its left eye and its right eye in turn, about six times a second, so that the pillars stand out from the walls">
-</p>
-
-<p align="center">
-  <img src=".github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="One photo, four ways, all real outputs of Immuch360: a white room with a round table and a window, as taken; its 3D photo, showing the eye the app computes, badge 3D AI, relief estimated by AI; its 3D scene seen from the left and from the right, badge 3D scene; below, the 360° panorama generated around it, badge 360° AI, the original photo outlined in the middle and a whole studio invented around it, a few odd objects included">
-</p>
-<p align="center"><sub>Real outputs of the app from CC0 photos of Poly Haven, reduced, not retouched, with the app's badges added for this page. Above, a 3D photo, its two eyes in turn; below, one photo four ways, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+**New: your flat photos, in 3D.** On a computer, "Make 3D (AI)" turns one photo into a 3D photo, a 3D scene or a 360° panorama; in a Meta Quest 3 or 3S, "AI relief" shows any flat photo in 3D. Experimental, and everything runs on your own machines: [see how](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Unofficial fork of the Immich mobile app. Not affiliated with Immich or FUTO. The name reads as "I am much 360".</sub>
@@ -34,9 +25,9 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 - [What you can do](#what-you-can-do)
 - [Get it on your device](#get-it-on-your-device)
 - [How to](#how-to)
-  - [Turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Explore panoramas, 360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 
 ## Who it is for
 
-- **Your photos are flat** and you want them in 3D, as a scene to lean into in a headset, or inside a 360° panorama, without a 3D camera: [turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama), new, made by AI on your own computer.
 - **You shoot 360° or 3D** and want to look around in your shots, not see them flat, doubled or stretched: [360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d).
 - **Your photos and films sit on a NAS, a computer, Plex or Immich** and you want them on the TV without copying anything: [on the TV](#watch-on-the-tv-with-the-remote), [NAS, shares and Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **You have a Meta Quest** and want to step inside your own photos and videos: [in the headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Your photos are flat** and you want them in 3D, as a scene to lean into in a headset, or inside a 360° panorama, without a 3D camera: [turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama), new, made by AI on your own computer.
 - **You run Immich** and want its app, plus the immersive viewers and the big screens you sign in from your phone: [your Immich library](#keep-your-immich-library-with-more), [compared with Immich](#compared-with-immich).
 - **You watch your home with Tapo cameras** and want them next to your photos, on the TV too (not yet checked with a real camera): [home cameras](#watch-your-home-cameras-on-the-big-screen).
 - **You fly a DJI drone** and want its live picture on your phone without DJI Fly, and in a Meta Quest or on an Android TV for the people with you (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
@@ -171,9 +162,9 @@ In the AI rows, "reads it" means that the device opens what a computer made, and
 
 Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](docs/immuch360/user-guide.md).
 
-1. [Turn one photo into a 3D photo, a 3D scene or a 360° panorama](#turn-one-photo-into-3d-a-scene-a-panorama): made by AI on your computer, seen in 3D in a Meta Quest, which also gives any flat photo its relief. *New, experimental.*
-2. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
-3. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
+1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
+2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
+3. [Turn one photo into a 3D photo, a 3D scene or a 360° panorama](#turn-one-photo-into-3d-a-scene-a-panorama): made by AI on your computer, seen in 3D in a Meta Quest, which also gives any flat photo its relief. *New, experimental.*
 4. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
 5. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
 6. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
@@ -247,52 +238,6 @@ Open `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` from the [desktop pre-r
 
 Each entry says what you get, then the steps, then the limits. The [user guide](docs/immuch360/user-guide.md) has every option and message.
 
-### Turn one photo into 3D, a scene, a panorama
-
-Most of your photos are flat, and you cannot go back and take them again in 3D. Immuch360 gives them depth. On your computer, one photo becomes a **3D photo**, a **3D scene** you lean into in a headset, or a **360° panorama** that imagines the rest of the place around you. A Quest 3 or 3S does the relief itself, for any flat photo. Everything runs on your own computer and headset: no cloud, no account, your originals never changed. New in build 32 and desktop build 13, experimental and on by default. The Immich app has nothing like it.
-
-**On your computer**, with desktop build 13 on Windows, Linux or macOS:
-
-1. Select one or more photos in the library or in a folder, then "Make 3D (AI)".
-2. Pick what you want: "3D photo", "3D scene", "360° panorama", or "3D version of a 360° photo" for your own 360° shots. The box says what AI will estimate or invent ("About 96% of this panorama will be invented by AI"), about how long it takes on this computer, and where the file goes: "Next to the original" or "A folder of my choice". A type this computer cannot do stays greyed, with its reason, such as "Not yet on Mac" or "The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB".
-3. The first time, the box offers the components of that type: Download, once. They run on this computer and work offline afterwards.
-4. Convert. The jobs queue on two lanes, the processor and the graphics card, with their steps and the time left; Cancel stops one at any moment, and quitting the app asks first.
-5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation at the top of this page) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
-
-<p align="center">
-  <img src=".github/readme/ai-windows-make-3d-dialog.png" width="330" alt="The Make 3D (AI) box of the Windows app: 3D photo, 3D scene, 360° panorama, selected, and 3D version of a 360° photo; Generated by AI beyond the photo's edges; About 96% of this panorama will be invented by AI; A finished conversion does not guarantee a good result; About 5 min per photo on this graphics card; Also make the 3D version, ticked; Save to: Next to the original, or A folder of my choice; Cancel and Convert">
-  <img src=".github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="The 360° viewer of the Windows app opening a panorama it generated from a photo of a bay seen from a mountain: the badges 360° AI and 360° at the top right, the original photo outlined in the middle under the words The original photo, and Generated by AI beyond the photo's edges at the bottom">
-</p>
-
-| | 3D photo | 3D scene | 360° panorama |
-|---|---|---|---|
-| What you get | `<name>_3D_LRF_Full_SBS.jpg`, a side by side 3D photo: your photo for the left eye, a computed right eye | `<name>_scene3D.jpg`, a photo that carries the scene, in layers | `<name>_360.jpg`, 6144 x 3072, and with "Also make the 3D version", `<name>_360_3D.jpg` |
-| What AI does | estimates the relief of the photo (Depth Anything V2 Small) | estimates the shape of the place (MoGe-2) and fills what the photo hides (LaMa), for a scene in layers | invents everything beyond the photo's edges (FLUX.2 klein 4B and a 360° LoRA); your own pixels stay where they were |
-| How long | a few seconds a photo | 15 to 45 seconds a photo | about 5 minutes on a laptop with an RTX 4060, 30 seconds more for its 3D version |
-| It runs on | the processor of a Windows, Linux or macOS computer | the processor of a Windows, Linux or macOS computer | a graphics card with Vulkan and 8 GB of its own memory, in a Windows or Linux computer with 16 GB of memory; NVIDIA tried, AMD and Intel cards not yet; not on a Mac yet |
-| Downloaded once, when you ask | about 110 MB | 349 MB more | about 5.4 GB more |
-| Where to see it | in 3D in a Meta Quest; "Wiggle" or "Red and cyan" on a computer | in a Meta Quest, where you lean into it; "Preview in 3D" on the computer | all around you in a Meta Quest, and in every 360° viewer |
-
-Every new file goes next to its original, never over it, or into a folder of your choice when the original's folder takes no new file; on a network folder, only once you say yes for that folder ("Immuch360 writes new files there, never the originals"). The library links each version to its original with its badge, "3D AI", "3D scene" or "360° AI", in the album "Immuch360 AI versions", which stays out of your Immich backup unless you turn on "Also back up AI versions"; careful, "Select all" in the backup albums picks this album too and turns that switch on. To see a file in the Quest, save it on your NAS, back it up to your Immich server or, on Windows, turn on "Share this computer".
-
-**In a Meta Quest**, with build 32:
-
-- **AI relief**: open any flat photo, from your library or a share, and press "AI relief" in the top bar: the headset estimates the relief itself and shows the photo in 3D, "Relief estimated by AI". The model, 99.5 MB, downloads the first time you press it, and the reliefs are kept in a cache. "Open AI reliefs in 2.5D (experimental)", in Settings, Advanced, "AI and 3D", makes near objects move in front of the background as you move your head. On a Quest 2 or a Quest Pro the button stays greyed, "Not tested on this headset yet", until you turn on "AI relief on Quest 2 and Quest Pro (untested)" there.
-- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room at the top of this page); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
-- **Panoramas**: a generated panorama opens all around you, facing your photo, with "Generated by AI beyond the photo's edges" and a thin outline of the original photo, which fade after a few seconds; its 3D version is in true 3D.
-
-**On phones, tablets and TVs**, the files a computer made open as they are, and nothing is generated there. A panorama opens in the 360° viewer with the "360° AI" badge, the sentence and the outline on Android phones, tablets and Android TV; on iPhone, iPad, LG and Samsung TVs it opens as a plain 360° photo for now. A scene shows as its photo, with a small 3D SCENE mark in its corner; on Android, its details add "Open it on a Meta Quest to explore it". A 3D photo shows its two eyes side by side.
-
-**What is real and what is not, always said.** It is the point, not the small print. The relief of a 3D photo is estimated from one photo, and what the photo hides is filled in and is not real. A scene is "Reconstructed from one photo, explore within its limits". A panorama keeps your real pixels where they were and invents the rest, about 90% of the sphere for a typical photo, and the box says how much before you start. The app says it where you look, with "Relief estimated by AI", "Generated by AI beyond the photo's edges" and the badges, and the files say it too: in our XMP, and for the scenes and the panoramas in the IPTC digital source type of an image made with AI, so that other apps can tell a generated panorama from a real 360° photo. Your originals are never changed, and nothing leaves your computer or your headset. As the box puts it: "A finished conversion does not guarantee a good result."
-
-**What was checked**, by 29 October 2026, with test builds of this code: 3D photos by the Linux app in a container on a Linux PC, offline too; scenes by the Windows app on a laptop with an RTX 4060 Laptop GPU (ten in 2 min 39 s) and by the engine on the Linux PC; on that laptop, four panoramas in 4 min 16 s to 4 min 44 s each, their 3D versions in about 30 s, with Cancel, a killed app, another program holding the graphics card, and no network connection of the app during the tests.
-
-Limits: no 360° panorama on a Mac yet ("Not yet on Mac"), nor without a suitable graphics card, and the box says why ("No graphics card with Vulkan found", "Integrated graphics share the computer's memory: too slow for panoramas", with "Try on integrated graphics (untested)" to try anyway); inside a panorama, the edge of your photo can show as a sharp step in tone; most scenes say "Field of view guessed: shapes may be off"; a scene needs about 2 GB of free memory ("Not enough memory" otherwise); with AI versions backed up, Immich's duplicate finder pairs each photo with its scene and often suggests keeping the scene, the heavier file: keep the original. Phones and TVs make nothing, and the headset makes reliefs only; a scene comes from one photo, not yet from several photos of the same place.
-
-**The components**: on the computer, Settings, "AI and 3D" lists the components of each feature with their size, Download and Remove, then "Remove all AI components" and "Move the AI components" to another drive; "AI features" off hides every AI button and downloads nothing. Each file is checked by its SHA-256. On Windows they sit in `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, which the uninstaller deletes (not a folder you moved them to); on Linux in `~/.local/share/immuch360/ai-components` on most systems, and on a Mac in `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. In the Quest, "AI and 3D" is in Settings, Advanced, with the relief cache.
-
-More: the notes of [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) and [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), and [the models, their licences, their sources and their sums](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). The user guide gets its AI chapter with the next pass; until then, this section is the guide.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 ### Watch your photos and videos, with or without a server
@@ -328,6 +273,62 @@ Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR18
 On phones and tablets, a stereoscopic video can also gain depth on the flat screen: the Spatial 2.5D player uses the front camera to follow your head and shows the view in between the two eyes (experimental). Apple spatial photos taken with an iPhone are recognised and shown in 3D in a Meta Quest.
 
 More: [360° photos and videos](docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D and VR180](docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple spatial photos and videos](docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [the 360° list](docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+### Turn one photo into 3D, a scene, a panorama
+
+Most of your photos are flat, and you cannot go back and take them again in 3D. Immuch360 gives them depth. On your computer, one photo becomes a **3D photo**, a **3D scene** you lean into in a headset, or a **360° panorama** that imagines the rest of the place around you. A Quest 3 or 3S does the relief itself, for any flat photo. Everything runs on your own computer and headset: no cloud, no account, your originals never changed. New in build 32 and desktop build 13, experimental and on by default. The Immich app has nothing like it.
+
+<p align="center">
+  <img src=".github/readme/ai-3d-photo-wiggle.webp" width="600" alt="A 3D photo made by Immuch360 from one ordinary photo of an old hall with a gallery, pillars and a chandelier, in the Wiggle view: its left eye and its right eye in turn, about six times a second, so that the pillars stand out from the walls">
+</p>
+<p align="center"><sub>A real output of the app from a CC0 photo of Poly Haven, reduced, not retouched: a 3D photo, its two eyes in turn.</sub></p>
+
+**On your computer**, with desktop build 13 on Windows, Linux or macOS:
+
+1. Select one or more photos in the library or in a folder, then "Make 3D (AI)".
+2. Pick what you want: "3D photo", "3D scene", "360° panorama", or "3D version of a 360° photo" for your own 360° shots. The box says what AI will estimate or invent ("About 96% of this panorama will be invented by AI"), about how long it takes on this computer, and where the file goes: "Next to the original" or "A folder of my choice". A type this computer cannot do stays greyed, with its reason, such as "Not yet on Mac" or "The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB".
+3. The first time, the box offers the components of that type: Download, once. They run on this computer and work offline afterwards.
+4. Convert. The jobs queue on two lanes, the processor and the graphics card, with their steps and the time left; Cancel stops one at any moment, and quitting the app asks first.
+5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation above) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+
+<p align="center">
+  <img src=".github/readme/ai-windows-make-3d-dialog.png" width="330" alt="The Make 3D (AI) box of the Windows app: 3D photo, 3D scene, 360° panorama, selected, and 3D version of a 360° photo; Generated by AI beyond the photo's edges; About 96% of this panorama will be invented by AI; A finished conversion does not guarantee a good result; About 5 min per photo on this graphics card; Also make the 3D version, ticked; Save to: Next to the original, or A folder of my choice; Cancel and Convert">
+  <img src=".github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="The 360° viewer of the Windows app opening a panorama it generated from a photo of a bay seen from a mountain: the badges 360° AI and 360° at the top right, the original photo outlined in the middle under the words The original photo, and Generated by AI beyond the photo's edges at the bottom">
+</p>
+
+<p align="center">
+  <img src=".github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="One photo, four ways, all real outputs of Immuch360: a white room with a round table and a window, as taken; its 3D photo, showing the eye the app computes, badge 3D AI, relief estimated by AI; its 3D scene seen from the left and from the right, badge 3D scene; below, the 360° panorama generated around it, badge 360° AI, the original photo outlined in the middle and a whole studio invented around it, a few odd objects included">
+</p>
+<p align="center"><sub>One photo, four ways: real outputs of the app from a CC0 photo of Poly Haven, reduced, not retouched, with the app's badges added for this page, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+
+| | 3D photo | 3D scene | 360° panorama |
+|---|---|---|---|
+| What you get | `<name>_3D_LRF_Full_SBS.jpg`, a side by side 3D photo: your photo for the left eye, a computed right eye | `<name>_scene3D.jpg`, a photo that carries the scene, in layers | `<name>_360.jpg`, 6144 x 3072, and with "Also make the 3D version", `<name>_360_3D.jpg` |
+| What AI does | estimates the relief of the photo (Depth Anything V2 Small) | estimates the shape of the place (MoGe-2) and fills what the photo hides (LaMa), for a scene in layers | invents everything beyond the photo's edges (FLUX.2 klein 4B and a 360° LoRA); your own pixels stay where they were |
+| How long | a few seconds a photo | 15 to 45 seconds a photo | about 5 minutes on a laptop with an RTX 4060, 30 seconds more for its 3D version |
+| It runs on | the processor of a Windows, Linux or macOS computer | the processor of a Windows, Linux or macOS computer | a graphics card with Vulkan and 8 GB of its own memory, in a Windows or Linux computer with 16 GB of memory; NVIDIA tried, AMD and Intel cards not yet; not on a Mac yet |
+| Downloaded once, when you ask | about 110 MB | 349 MB more | about 5.4 GB more |
+| Where to see it | in 3D in a Meta Quest; "Wiggle" or "Red and cyan" on a computer | in a Meta Quest, where you lean into it; "Preview in 3D" on the computer | all around you in a Meta Quest, and in every 360° viewer |
+
+Every new file goes next to its original, never over it, or into a folder of your choice when the original's folder takes no new file; on a network folder, only once you say yes for that folder ("Immuch360 writes new files there, never the originals"). The library links each version to its original with its badge, "3D AI", "3D scene" or "360° AI", in the album "Immuch360 AI versions", which stays out of your Immich backup unless you turn on "Also back up AI versions"; careful, "Select all" in the backup albums picks this album too and turns that switch on. To see a file in the Quest, save it on your NAS, back it up to your Immich server or, on Windows, turn on "Share this computer".
+
+**In a Meta Quest**, with build 32:
+
+- **AI relief**: open any flat photo, from your library or a share, and press "AI relief" in the top bar: the headset estimates the relief itself and shows the photo in 3D, "Relief estimated by AI". The model, 99.5 MB, downloads the first time you press it, and the reliefs are kept in a cache. "Open AI reliefs in 2.5D (experimental)", in Settings, Advanced, "AI and 3D", makes near objects move in front of the background as you move your head. On a Quest 2 or a Quest Pro the button stays greyed, "Not tested on this headset yet", until you turn on "AI relief on Quest 2 and Quest Pro (untested)" there.
+- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room shown above); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **Panoramas**: a generated panorama opens all around you, facing your photo, with "Generated by AI beyond the photo's edges" and a thin outline of the original photo, which fade after a few seconds; its 3D version is in true 3D.
+
+**On phones, tablets and TVs**, the files a computer made open as they are, and nothing is generated there. A panorama opens in the 360° viewer with the "360° AI" badge, the sentence and the outline on Android phones, tablets and Android TV; on iPhone, iPad, LG and Samsung TVs it opens as a plain 360° photo for now. A scene shows as its photo, with a small 3D SCENE mark in its corner; on Android, its details add "Open it on a Meta Quest to explore it". A 3D photo shows its two eyes side by side.
+
+**What is real and what is not, always said.** It is the point, not the small print. The relief of a 3D photo is estimated from one photo, and what the photo hides is filled in and is not real. A scene is "Reconstructed from one photo, explore within its limits". A panorama keeps your real pixels where they were and invents the rest, about 90% of the sphere for a typical photo, and the box says how much before you start. The app says it where you look, with "Relief estimated by AI", "Generated by AI beyond the photo's edges" and the badges, and the files say it too: in our XMP, and for the scenes and the panoramas in the IPTC digital source type of an image made with AI, so that other apps can tell a generated panorama from a real 360° photo. Your originals are never changed, and nothing leaves your computer or your headset. As the box puts it: "A finished conversion does not guarantee a good result."
+
+**What was checked**, by 29 October 2026, with test builds of this code: 3D photos by the Linux app in a container on a Linux PC, offline too; scenes by the Windows app on a laptop with an RTX 4060 Laptop GPU (ten in 2 min 39 s) and by the engine on the Linux PC; on that laptop, four panoramas in 4 min 16 s to 4 min 44 s each, their 3D versions in about 30 s, with Cancel, a killed app, another program holding the graphics card, and no network connection of the app during the tests.
+
+Limits: no 360° panorama on a Mac yet ("Not yet on Mac"), nor without a suitable graphics card, and the box says why ("No graphics card with Vulkan found", "Integrated graphics share the computer's memory: too slow for panoramas", with "Try on integrated graphics (untested)" to try anyway); inside a panorama, the edge of your photo can show as a sharp step in tone; most scenes say "Field of view guessed: shapes may be off"; a scene needs about 2 GB of free memory ("Not enough memory" otherwise); with AI versions backed up, Immich's duplicate finder pairs each photo with its scene and often suggests keeping the scene, the heavier file: keep the original. Phones and TVs make nothing, and the headset makes reliefs only; a scene comes from one photo, not yet from several photos of the same place.
+
+**The components**: on the computer, Settings, "AI and 3D" lists the components of each feature with their size, Download and Remove, then "Remove all AI components" and "Move the AI components" to another drive; "AI features" off hides every AI button and downloads nothing. Each file is checked by its SHA-256. On Windows they sit in `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, which the uninstaller deletes (not a folder you moved them to); on Linux in `~/.local/share/immuch360/ai-components` on most systems, and on a Mac in `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. In the Quest, "AI and 3D" is in Settings, Advanced, with the relief cache.
+
+More: the notes of [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) and [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), and [the models, their licences, their sources and their sums](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). The user guide gets its AI chapter with the next pass; until then, this section is the guide.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 ### Watch on the TV with the remote

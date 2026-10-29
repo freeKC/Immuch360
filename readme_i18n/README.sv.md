@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Svenska</b> · Andra språk (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Dina medier. Alla skärmar. Alla perspektiv. Nytt: gör om dina foton till 3D-foton, 3D-scener och 360°-panoramor. Skapat av AI på din egen dator. Dina foton lämnar den aldrig. Android, iPhone och iPad, Android TV, LG- och Samsung-TV, Meta Quest, Windows, macOS, Linux. En illustration, inte en skärmbild: i skymningen framför en havsvik, samma rum fyra gånger, som ett platt foto på en telefon, i svävande lager framför ett vitt headset, som en scen på en bärbar dator och utrullat på ett böjt band som ett panorama, förbundna av ljusbågar">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Ditt innehåll. Alla skärmar. Varje perspektiv. Platta foton och videor, 360° och 3D, från din enhet, din NAS, din Immich-server, dina kameror och din drönare. Inget konto behövs. Nytt: 3D-foton, 3D-scener och 360°-panoramor skapade av dina egna foton, med AI på din dator. Android, iPhone och iPad, Android TV, LG- och Samsung-TV, Meta Quest, Windows, macOS, Linux. En illustration i skymningen framför en havsvik: en lagringsbox, en telefon, en surfplatta, en TV, en bärbar dator och ett headset, en drönare på himlen och en hemkamera, förbundna av ljusbågar">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Platta foton och videor, 360° och 3D, från din enhet, din NAS, din Immich-server, dina kameror och din drönare. Inget konto behövs. Immuch360 är en fri app med öppen källkod som läser dina foton och videor där de ligger och spelar upp var och en i den visare som passar: platt, som en sfär du ser dig omkring i, i 3D, eller runt omkring dig i ett headset. Den körs på telefoner, surfplattor, TV-apparater, Meta Quest-headset och datorer.
 
-**Nytt: dina platta foton, i 3D.** Välj ett foto på din dator och få ett 3D-foto, en 3D-scen att kliva in i, eller ett 360°-panorama som föreställer sig resten av platsen runt dig. I en Meta Quest 3 eller 3S räcker ett tryck på "AI-djup" så får vilket platt foto som helst djup. AI körs på din egen dator och ditt eget headset, och ingenting skickas någonstans. Experimentellt. [Så här gör du](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Ett 3D-foto som Immuch360 gjort av ett enda vanligt foto av en gammal sal med ett galleri, pelare och en ljuskrona, i vyn Vickning: dess vänstra öga och dess högra öga om vartannat, ungefär sex gånger i sekunden, så att pelarna sticker ut från väggarna">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ett foto, fyra sätt, allt verkliga resultat från Immuch360: ett vitt rum med ett runt bord och ett fönster, som det togs; dess 3D-foto, som visar ögat som appen räknar fram, märket 3D AI, djup uppskattat av AI; dess 3D-scen sedd från vänster och från höger, märket 3D-scen; nedanför, 360°-panoramat genererat runt det, märket 360° AI, originalfotot inramat i mitten och en hel studio påhittad runt det, några konstiga föremål inräknade">
-</p>
-<p align="center"><sub>Verkliga resultat från appen av CC0-foton från Poly Haven, förminskade, inte retuscherade, med appens märken tillagda för den här sidan. Ovan, ett 3D-foto, dess två ögon om vartannat; nedan, ett foto på fyra sätt, de två scenvyerna ritade från scenfilen. Allt utanför panoramats ram är påhittat av AI.</sub></p>
+**Nytt: dina platta foton, i 3D.** På en dator gör "Skapa 3D (AI)" om ett foto till ett 3D-foto, en 3D-scen eller ett 360°-panorama; i en Meta Quest 3 eller 3S visar "AI-djup" vilket platt foto som helst i 3D. Experimentellt, och allt körs på dina egna enheter: [så här gör du](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Inofficiell fork av Immich-mobilappen. Inte ansluten till Immich eller FUTO. Namnet låter som "I am much 360" på engelska.</sub>
@@ -33,9 +24,9 @@ Platta foton och videor, 360° och 3D, från din enhet, din NAS, din Immich-serv
 - [Vad du kan göra](#what-you-can-do)
 - [Skaffa den till din enhet](#get-it-on-your-device)
 - [Så här gör du](#how-to)
-  - [Gör om ett foto till 3D, en scen, ett panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Titta på dina foton och videor, med eller utan server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Utforska panoramabilder, 360°, VR180 och 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Gör om ett foto till 3D, en scen, ett panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Titta på TV:n med fjärrkontrollen](#watch-on-the-tv-with-the-remote): [Android TV och Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Logga in en TV, ett headset eller en dator med telefonen](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Kliv in i dina foton och videor med en Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Platta foton och videor, 360° och 3D, från din enhet, din NAS, din Immich-serv
 <a id="who-it-is-for"></a>
 ## Vem den är till för
 
-- **Dina foton är platta** och du vill ha dem i 3D, som en scen att luta dig in i med ett headset, eller inuti ett 360°-panorama, utan en 3D-kamera: [gör om ett foto till 3D, en scen, ett panorama](#turn-one-photo-into-3d-a-scene-a-panorama), nytt, skapat av AI på din egen dator.
 - **Du fotograferar i 360° eller 3D** och vill se dig omkring i dina bilder, inte se dem platta, dubbla eller utdragna: [360°, VR180 och 3D](#explore-panoramas-360-vr180-and-3d).
 - **Dina foton och filmer ligger på en NAS, en dator, Plex eller Immich** och du vill se dem på TV:n utan att kopiera något: [på TV:n](#watch-on-the-tv-with-the-remote), [NAS, resurser och Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Du har en Meta Quest** och vill kliva in i dina egna foton och videor: [i headsetet](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Dina foton är platta** och du vill ha dem i 3D, som en scen att luta dig in i med ett headset, eller inuti ett 360°-panorama, utan en 3D-kamera: [gör om ett foto till 3D, en scen, ett panorama](#turn-one-photo-into-3d-a-scene-a-panorama), nytt, skapat av AI på din egen dator.
 - **Du kör Immich** och vill ha dess app, plus de immersiva visarna och de stora skärmarna som du loggar in från telefonen: [ditt Immich-bibliotek](#keep-your-immich-library-with-more), [jämfört med Immich](#compared-with-immich).
 - **Du bevakar hemmet med Tapo-kameror** och vill ha dem bredvid dina foton, även på TV:n (ännu inte kontrollerat med en riktig kamera): [hemkameror](#watch-your-home-cameras-on-the-big-screen).
 - **Du flyger en DJI-drönare** och vill ha dess livebild på telefonen utan DJI Fly, och i en Meta Quest eller på en Android TV för dem som är med dig (experimentell): [din drönare](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ I AI-raderna betyder "läser det" att enheten öppnar det en dator har gjort, oc
 
 Varje rad öppnar sin guide nedan. Den fullständiga guiden, med alla alternativ, meddelanden och begränsningar, finns i [användarguiden](../docs/immuch360/user-guide.md).
 
-1. [Gör om ett foto till ett 3D-foto, en 3D-scen eller ett 360°-panorama](#turn-one-photo-into-3d-a-scene-a-panorama): skapat av AI på din dator, sett i 3D i en Meta Quest, som också ger vilket platt foto som helst djup. *Nytt, experimentellt.*
-2. [Titta på dina foton och videor, med eller utan server](#watch-your-photos-and-videos-with-or-without-a-server): ett galleri och en spelare, på enheten ensam eller med din Immich-server.
-3. [Se dig omkring i 360°-foton och videor, panoramabilder, VR180 och 3D](#explore-panoramas-360-vr180-and-3d): en sfär du vrider med ett finger, telefonen eller fjärrkontrollen.
+1. [Titta på dina foton och videor, med eller utan server](#watch-your-photos-and-videos-with-or-without-a-server): ett galleri och en spelare, på enheten ensam eller med din Immich-server.
+2. [Se dig omkring i 360°-foton och videor, panoramabilder, VR180 och 3D](#explore-panoramas-360-vr180-and-3d): en sfär du vrider med ett finger, telefonen eller fjärrkontrollen.
+3. [Gör om ett foto till ett 3D-foto, en 3D-scen eller ett 360°-panorama](#turn-one-photo-into-3d-a-scene-a-panorama): skapat av AI på din dator, sett i 3D i en Meta Quest, som också ger vilket platt foto som helst djup. *Nytt, experimentellt.*
 4. [Titta på TV:n med fjärrkontrollen](#watch-on-the-tv-with-the-remote): Android TV och Google TV, LG-TV, och Samsung-TV som ett testbygge.
 5. [Logga in en TV, ett headset eller en dator med telefonen](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): skanna dess QR-kod, bekräfta, titta.
 6. [Kliv in i dina foton och videor med en Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° runt omkring dig, 3D i äkta 3D.
@@ -257,53 +248,6 @@ På Ubuntu 22.04 eller senare och Debian 12 eller senare: `sudo apt install ./Im
 
 Varje avsnitt säger vad du får, sedan stegen, sedan begränsningarna. [Användarguiden](../docs/immuch360/user-guide.md) har alla alternativ och meddelanden.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Gör om ett foto till 3D, en scen, ett panorama
-
-De flesta av dina foton är platta, och du kan inte gå tillbaka och ta om dem i 3D. Immuch360 ger dem djup. På din dator blir ett foto ett **3D-foto**, en **3D-scen** som du lutar dig in i med ett headset, eller ett **360°-panorama** som föreställer sig resten av platsen runt dig. En Quest 3 eller 3S gör djupet själv, för vilket platt foto som helst. Allt körs på din egen dator och ditt eget headset: inget moln, inget konto, dina original ändras aldrig. Nytt i build 32 och desktop build 13, experimentellt och påslaget som standard. Immich-appen har inget liknande.
-
-**På din dator**, med desktop build 13 på Windows, Linux eller macOS:
-
-1. Markera ett eller flera foton i biblioteket eller i en mapp, sedan "Skapa 3D (AI)".
-2. Välj vad du vill ha: "3D-foto", "3D-scen", "360°-panorama", eller "3D-version av ett 360°-foto" för dina egna 360°-bilder. Rutan säger vad AI kommer att uppskatta eller hitta på ("Ungefär 96 % av det här panoramat kommer att hittas på av AI"), ungefär hur lång tid det tar på den här datorn, och vart filen hamnar: "Bredvid originalet" eller "En mapp som jag väljer". En typ som den här datorn inte klarar förblir gråmarkerad, med sitt skäl, som "Inte än på Mac" eller "Grafikkortet har 6.0 GiB minne, 360°-panoramor kräver 7.5 GiB".
-3. Första gången erbjuder rutan komponenterna för den typen: Ladda ner, en gång. De körs på den här datorn och fungerar offline efteråt.
-4. Konvertera. Jobben köar på två spår, processorn och grafikkortet, med sina steg och den tid som återstår; Avbryt stoppar ett jobb när som helst, och appen frågar först innan den avslutas.
-5. Öppna resultatet. Ett 3D-foto visas som "Vänster öga", "Sida vid sida", "Vickning" (animationen högst upp på den här sidan) eller "Rött och cyan" för glasögon; en scen har "Förhandsvisa i 3D", som du vrider med musen eller styrplattan, och "Exportera för andra 3D-appar (.glb)"; ett panorama öppnas i 360°-visaren.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Rutan Skapa 3D (AI) i Windows-appen: 3D-foto, 3D-scen, 360°-panorama, valt, och 3D-version av ett 360°-foto; Genererat av AI bortom fotots kanter; Ungefär 96 % av det här panoramat kommer att hittas på av AI; En slutförd konvertering garanterar inte ett bra resultat; Ungefär 5 min per foto på det här grafikkortet; Skapa även 3D-versionen, ikryssat; Spara i: Bredvid originalet, eller En mapp som jag väljer; Avbryt och Konvertera">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360°-visaren i Windows-appen öppnar ett panorama som den genererat från ett foto av en vik sedd från ett berg: märkena 360° AI och 360° uppe till höger, originalfotot inramat i mitten under orden Originalfotot, och Genererat av AI bortom fotots kanter längst ner">
-</p>
-
-| | 3D-foto | 3D-scen | 360°-panorama |
-|---|---|---|---|
-| Vad du får | `<name>_3D_LRF_Full_SBS.jpg`, ett 3D-foto sida vid sida: ditt foto för vänster öga, ett beräknat höger öga | `<name>_scene3D.jpg`, ett foto som bär scenen, i lager | `<name>_360.jpg`, 6144 x 3072, och med "Skapa även 3D-versionen", `<name>_360_3D.jpg` |
-| Vad AI gör | uppskattar fotots djup (Depth Anything V2 Small) | uppskattar platsens form (MoGe-2) och fyller i det som fotot döljer (LaMa), för en scen i lager | hittar på allt bortom fotots kanter (FLUX.2 klein 4B och en 360°-LoRA); dina egna pixlar stannar där de var |
-| Hur lång tid | några sekunder per foto | 15 till 45 sekunder per foto | ungefär 5 minuter på en bärbar dator med ett RTX 4060, 30 sekunder till för dess 3D-version |
-| Det körs på | processorn i en Windows-, Linux- eller macOS-dator | processorn i en Windows-, Linux- eller macOS-dator | ett grafikkort med Vulkan och 8 GB eget minne, i en Windows- eller Linux-dator med 16 GB minne; NVIDIA provat, AMD- och Intel-kort inte än; inte på Mac än |
-| Laddas ner en gång, när du ber om det | ungefär 110 MB | 349 MB till | ungefär 5.4 GB till |
-| Var du ser det | i 3D i en Meta Quest; "Vickning" eller "Rött och cyan" på en dator | i en Meta Quest, där du lutar dig in i den; "Förhandsvisa i 3D" på datorn | runt omkring dig i en Meta Quest, och i alla 360°-visare |
-
-Varje ny fil hamnar bredvid sitt original, aldrig över det, eller i en mapp du väljer när originalets mapp inte tar emot nya filer; i en nätverksmapp, först när du säger ja för den mappen ("Immuch360 skriver nya filer där, aldrig originalen"). Biblioteket kopplar varje version till sitt original med sitt märke, "3D AI", "3D-scen" eller "360° AI", i albumet "Immuch360 AI-versioner", som hålls utanför din Immich-säkerhetskopia om du inte slår på "Säkerhetskopiera även AI-versioner"; se upp, "Välj alla" i säkerhetskopieringens album väljer också det här albumet och slår på den inställningen. För att se en fil i Quest, spara den på din NAS, säkerhetskopiera den till din Immich-server eller, på Windows, slå på "Dela den här datorn".
-
-**I en Meta Quest**, med build 32:
-
-- **AI-djup**: öppna vilket platt foto som helst, från ditt bibliotek eller en resurs, och tryck på "AI-djup" i det övre fältet: headsetet uppskattar djupet själv och visar fotot i 3D, "Djup uppskattat av AI". Modellen, 99.5 MB, laddas ner första gången du trycker, och djupen sparas i en cache. "Öppna AI-djup i 2.5D (experimentellt)", i Inställningar, Avancerat, "AI och 3D", får närliggande föremål att röra sig framför bakgrunden när du rör huvudet. På en Quest 2 eller en Quest Pro förblir knappen gråmarkerad, "Inte testat på det här headsetet än", tills du slår på "AI-djup på Quest 2 och Quest Pro (otestat)" där.
-- **3D-foton och scener från datorn**: "Visa i 3D" visar ett 3D-foto i äkta 3D. "Visa 3D-scenen" på originalet, eller "Utforska 3D-scenen" på scenen, placerar scenen i ditt rum: luta dig in, eller glid med vänster styrspak inuti det återskapade området ("Utrymme att röra sig: ungefär 0.5 m åt varje håll" för rummet högst upp på den här sidan); lagren planas ut och mörknar vid dess kant, ett klick på en styrspak återställer vyn, och B eller Y går tillbaka.
-- **Panoramor**: ett genererat panorama öppnas runt omkring dig, vänt mot ditt foto, med "Genererat av AI bortom fotots kanter" och en tunn ram runt originalfotot, som tonar bort efter några sekunder; dess 3D-version är i äkta 3D.
-
-**På telefoner, surfplattor och TV-apparater** öppnas filerna som en dator gjort som de är, och ingenting genereras där. Ett panorama öppnas i 360°-visaren med märket "360° AI", meningen och ramen på Android-telefoner, surfplattor och Android TV; på iPhone, iPad, LG- och Samsung-TV öppnas det tills vidare som ett vanligt 360°-foto. En scen visas som sitt foto, med ett litet 3D SCENE-märke i hörnet; på Android lägger detaljerna till "Öppna det på en Meta Quest för att utforska det". Ett 3D-foto visar sina två ögon sida vid sida.
-
-**Vad som är verkligt och vad som inte är det, alltid sagt.** Det är själva poängen, inte det finstilta. Djupet i ett 3D-foto uppskattas från ett enda foto, och det som fotot döljer fylls i och är inte verkligt. En scen är "Rekonstruerad från ett foto, utforska inom dess gränser". Ett panorama behåller dina verkliga pixlar där de var och hittar på resten, ungefär 90 % av sfären för ett typiskt foto, och rutan säger hur mycket innan du börjar. Appen säger det där du tittar, med "Djup uppskattat av AI", "Genererat av AI bortom fotots kanter" och märkena, och filerna säger det också: i vår XMP, och för scenerna och panoramorna i IPTC:s digitala källtyp för en bild gjord med AI, så att andra appar kan skilja ett genererat panorama från ett riktigt 360°-foto. Dina original ändras aldrig, och ingenting lämnar din dator eller ditt headset. Som rutan säger: "En slutförd konvertering garanterar inte ett bra resultat."
-
-**Vad som har kontrollerats**, fram till den 29 oktober 2026, med testbyggen av den här koden: 3D-foton av Linux-appen i en container på en Linux-dator, även offline; scener av Windows-appen på en bärbar dator med en RTX 4060 Laptop GPU (tio på 2 min 39 s) och av motorn på Linux-datorn; på den bärbara datorn, fyra panoramor på 4 min 16 s till 4 min 44 s vardera, deras 3D-versioner på ungefär 30 s, med Avbryt, en dödad app, ett annat program som höll grafikkortet, och ingen nätverksanslutning från appen under testerna.
-
-Begränsningar: inget 360°-panorama på en Mac än ("Inte än på Mac"), inte heller utan ett lämpligt grafikkort, och rutan säger varför ("Inget grafikkort med Vulkan hittades", "Integrerad grafik delar datorns minne: för långsamt för panoramor", med "Prova med integrerad grafik (otestat)" för att prova ändå); inuti ett panorama kan kanten på ditt foto synas som ett skarpt hopp i ton; de flesta scener säger "Synfältet gissades: formerna kan bli fel"; en scen behöver ungefär 2 GB ledigt minne ("Inte tillräckligt med minne" annars); med AI-versioner säkerhetskopierade parar Immichs dubblettsökare ihop varje foto med dess scen och föreslår ofta att behålla scenen, den tyngre filen: behåll originalet. Telefoner och TV-apparater gör ingenting, och headsetet gör bara djup; en scen kommer från ett foto, ännu inte från flera foton av samma plats.
-
-**Komponenterna**: på datorn listar Inställningar, "AI och 3D" komponenterna för varje funktion med sin storlek, Ladda ner och Ta bort, sedan "Ta bort alla AI-komponenter" och "Flytta AI-komponenterna" till en annan enhet; med "AI-funktioner" avslaget döljs alla AI-knappar och ingenting laddas ner. Varje fil kontrolleras med sin SHA-256. På Windows ligger de i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, som avinstallationsprogrammet tar bort (inte en mapp du har flyttat dem till); på Linux i `~/.local/share/immuch360/ai-components` på de flesta system, och på en Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I Quest finns "AI och 3D" i Inställningar, Avancerat, med djupcachen.
-
-Mer: anteckningarna för [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) och [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), och [modellerna, deras licenser, deras källor och deras kontrollsummor](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Användarguiden får sitt AI-kapitel i nästa omgång; fram till dess är det här avsnittet guiden.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 känner igen platta foton och videor, panoramabilder, 360°-foton och 
 På telefoner och surfplattor kan en stereoskopisk video även få djup på den platta skärmen: Spatial 2.5D-spelaren använder framkameran för att följa ditt huvud och visar vyn mitt emellan de två ögonen (experimentell). Apple-spatiala foton tagna med en iPhone känns igen och visas i 3D i en Meta Quest.
 
 Mer: [360°-foton och videor](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D och VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple-spatiala foton och videor](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360°-listan](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Gör om ett foto till 3D, en scen, ett panorama
+
+De flesta av dina foton är platta, och du kan inte gå tillbaka och ta om dem i 3D. Immuch360 ger dem djup. På din dator blir ett foto ett **3D-foto**, en **3D-scen** som du lutar dig in i med ett headset, eller ett **360°-panorama** som föreställer sig resten av platsen runt dig. En Quest 3 eller 3S gör djupet själv, för vilket platt foto som helst. Allt körs på din egen dator och ditt eget headset: inget moln, inget konto, dina original ändras aldrig. Nytt i build 32 och desktop build 13, experimentellt och påslaget som standard. Immich-appen har inget liknande.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Ett 3D-foto som Immuch360 gjort av ett enda vanligt foto av en gammal sal med ett galleri, pelare och en ljuskrona, i vyn Vickning: dess vänstra öga och dess högra öga om vartannat, ungefär sex gånger i sekunden, så att pelarna sticker ut från väggarna">
+</p>
+<p align="center"><sub>Ett verkligt resultat från appen av ett CC0-foto från Poly Haven, förminskat, inte retuscherat: ett 3D-foto, dess två ögon om vartannat.</sub></p>
+
+**På din dator**, med desktop build 13 på Windows, Linux eller macOS:
+
+1. Markera ett eller flera foton i biblioteket eller i en mapp, sedan "Skapa 3D (AI)".
+2. Välj vad du vill ha: "3D-foto", "3D-scen", "360°-panorama", eller "3D-version av ett 360°-foto" för dina egna 360°-bilder. Rutan säger vad AI kommer att uppskatta eller hitta på ("Ungefär 96 % av det här panoramat kommer att hittas på av AI"), ungefär hur lång tid det tar på den här datorn, och vart filen hamnar: "Bredvid originalet" eller "En mapp som jag väljer". En typ som den här datorn inte klarar förblir gråmarkerad, med sitt skäl, som "Inte än på Mac" eller "Grafikkortet har 6.0 GiB minne, 360°-panoramor kräver 7.5 GiB".
+3. Första gången erbjuder rutan komponenterna för den typen: Ladda ner, en gång. De körs på den här datorn och fungerar offline efteråt.
+4. Konvertera. Jobben köar på två spår, processorn och grafikkortet, med sina steg och den tid som återstår; Avbryt stoppar ett jobb när som helst, och appen frågar först innan den avslutas.
+5. Öppna resultatet. Ett 3D-foto visas som "Vänster öga", "Sida vid sida", "Vickning" (animationen ovan) eller "Rött och cyan" för glasögon; en scen har "Förhandsvisa i 3D", som du vrider med musen eller styrplattan, och "Exportera för andra 3D-appar (.glb)"; ett panorama öppnas i 360°-visaren.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Rutan Skapa 3D (AI) i Windows-appen: 3D-foto, 3D-scen, 360°-panorama, valt, och 3D-version av ett 360°-foto; Genererat av AI bortom fotots kanter; Ungefär 96 % av det här panoramat kommer att hittas på av AI; En slutförd konvertering garanterar inte ett bra resultat; Ungefär 5 min per foto på det här grafikkortet; Skapa även 3D-versionen, ikryssat; Spara i: Bredvid originalet, eller En mapp som jag väljer; Avbryt och Konvertera">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360°-visaren i Windows-appen öppnar ett panorama som den genererat från ett foto av en vik sedd från ett berg: märkena 360° AI och 360° uppe till höger, originalfotot inramat i mitten under orden Originalfotot, och Genererat av AI bortom fotots kanter längst ner">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Ett foto, fyra sätt, allt verkliga resultat från Immuch360: ett vitt rum med ett runt bord och ett fönster, som det togs; dess 3D-foto, som visar ögat som appen räknar fram, märket 3D AI, djup uppskattat av AI; dess 3D-scen sedd från vänster och från höger, märket 3D-scen; nedanför, 360°-panoramat genererat runt det, märket 360° AI, originalfotot inramat i mitten och en hel studio påhittad runt det, några konstiga föremål inräknade">
+</p>
+<p align="center"><sub>Ett foto på fyra sätt: verkliga resultat från appen av ett CC0-foto från Poly Haven, förminskade, inte retuscherade, med appens märken tillagda för den här sidan, de två scenvyerna ritade från scenfilen. Allt utanför panoramats ram är påhittat av AI.</sub></p>
+
+| | 3D-foto | 3D-scen | 360°-panorama |
+|---|---|---|---|
+| Vad du får | `<name>_3D_LRF_Full_SBS.jpg`, ett 3D-foto sida vid sida: ditt foto för vänster öga, ett beräknat höger öga | `<name>_scene3D.jpg`, ett foto som bär scenen, i lager | `<name>_360.jpg`, 6144 x 3072, och med "Skapa även 3D-versionen", `<name>_360_3D.jpg` |
+| Vad AI gör | uppskattar fotots djup (Depth Anything V2 Small) | uppskattar platsens form (MoGe-2) och fyller i det som fotot döljer (LaMa), för en scen i lager | hittar på allt bortom fotots kanter (FLUX.2 klein 4B och en 360°-LoRA); dina egna pixlar stannar där de var |
+| Hur lång tid | några sekunder per foto | 15 till 45 sekunder per foto | ungefär 5 minuter på en bärbar dator med ett RTX 4060, 30 sekunder till för dess 3D-version |
+| Det körs på | processorn i en Windows-, Linux- eller macOS-dator | processorn i en Windows-, Linux- eller macOS-dator | ett grafikkort med Vulkan och 8 GB eget minne, i en Windows- eller Linux-dator med 16 GB minne; NVIDIA provat, AMD- och Intel-kort inte än; inte på Mac än |
+| Laddas ner en gång, när du ber om det | ungefär 110 MB | 349 MB till | ungefär 5.4 GB till |
+| Var du ser det | i 3D i en Meta Quest; "Vickning" eller "Rött och cyan" på en dator | i en Meta Quest, där du lutar dig in i den; "Förhandsvisa i 3D" på datorn | runt omkring dig i en Meta Quest, och i alla 360°-visare |
+
+Varje ny fil hamnar bredvid sitt original, aldrig över det, eller i en mapp du väljer när originalets mapp inte tar emot nya filer; i en nätverksmapp, först när du säger ja för den mappen ("Immuch360 skriver nya filer där, aldrig originalen"). Biblioteket kopplar varje version till sitt original med sitt märke, "3D AI", "3D-scen" eller "360° AI", i albumet "Immuch360 AI-versioner", som hålls utanför din Immich-säkerhetskopia om du inte slår på "Säkerhetskopiera även AI-versioner"; se upp, "Välj alla" i säkerhetskopieringens album väljer också det här albumet och slår på den inställningen. För att se en fil i Quest, spara den på din NAS, säkerhetskopiera den till din Immich-server eller, på Windows, slå på "Dela den här datorn".
+
+**I en Meta Quest**, med build 32:
+
+- **AI-djup**: öppna vilket platt foto som helst, från ditt bibliotek eller en resurs, och tryck på "AI-djup" i det övre fältet: headsetet uppskattar djupet själv och visar fotot i 3D, "Djup uppskattat av AI". Modellen, 99.5 MB, laddas ner första gången du trycker, och djupen sparas i en cache. "Öppna AI-djup i 2.5D (experimentellt)", i Inställningar, Avancerat, "AI och 3D", får närliggande föremål att röra sig framför bakgrunden när du rör huvudet. På en Quest 2 eller en Quest Pro förblir knappen gråmarkerad, "Inte testat på det här headsetet än", tills du slår på "AI-djup på Quest 2 och Quest Pro (otestat)" där.
+- **3D-foton och scener från datorn**: "Visa i 3D" visar ett 3D-foto i äkta 3D. "Visa 3D-scenen" på originalet, eller "Utforska 3D-scenen" på scenen, placerar scenen i ditt rum: luta dig in, eller glid med vänster styrspak inuti det återskapade området ("Utrymme att röra sig: ungefär 0.5 m åt varje håll" för rummet som visas ovan); lagren planas ut och mörknar vid dess kant, ett klick på en styrspak återställer vyn, och B eller Y går tillbaka.
+- **Panoramor**: ett genererat panorama öppnas runt omkring dig, vänt mot ditt foto, med "Genererat av AI bortom fotots kanter" och en tunn ram runt originalfotot, som tonar bort efter några sekunder; dess 3D-version är i äkta 3D.
+
+**På telefoner, surfplattor och TV-apparater** öppnas filerna som en dator gjort som de är, och ingenting genereras där. Ett panorama öppnas i 360°-visaren med märket "360° AI", meningen och ramen på Android-telefoner, surfplattor och Android TV; på iPhone, iPad, LG- och Samsung-TV öppnas det tills vidare som ett vanligt 360°-foto. En scen visas som sitt foto, med ett litet 3D SCENE-märke i hörnet; på Android lägger detaljerna till "Öppna det på en Meta Quest för att utforska det". Ett 3D-foto visar sina två ögon sida vid sida.
+
+**Vad som är verkligt och vad som inte är det, alltid sagt.** Det är själva poängen, inte det finstilta. Djupet i ett 3D-foto uppskattas från ett enda foto, och det som fotot döljer fylls i och är inte verkligt. En scen är "Rekonstruerad från ett foto, utforska inom dess gränser". Ett panorama behåller dina verkliga pixlar där de var och hittar på resten, ungefär 90 % av sfären för ett typiskt foto, och rutan säger hur mycket innan du börjar. Appen säger det där du tittar, med "Djup uppskattat av AI", "Genererat av AI bortom fotots kanter" och märkena, och filerna säger det också: i vår XMP, och för scenerna och panoramorna i IPTC:s digitala källtyp för en bild gjord med AI, så att andra appar kan skilja ett genererat panorama från ett riktigt 360°-foto. Dina original ändras aldrig, och ingenting lämnar din dator eller ditt headset. Som rutan säger: "En slutförd konvertering garanterar inte ett bra resultat."
+
+**Vad som har kontrollerats**, fram till den 29 oktober 2026, med testbyggen av den här koden: 3D-foton av Linux-appen i en container på en Linux-dator, även offline; scener av Windows-appen på en bärbar dator med en RTX 4060 Laptop GPU (tio på 2 min 39 s) och av motorn på Linux-datorn; på den bärbara datorn, fyra panoramor på 4 min 16 s till 4 min 44 s vardera, deras 3D-versioner på ungefär 30 s, med Avbryt, en dödad app, ett annat program som höll grafikkortet, och ingen nätverksanslutning från appen under testerna.
+
+Begränsningar: inget 360°-panorama på en Mac än ("Inte än på Mac"), inte heller utan ett lämpligt grafikkort, och rutan säger varför ("Inget grafikkort med Vulkan hittades", "Integrerad grafik delar datorns minne: för långsamt för panoramor", med "Prova med integrerad grafik (otestat)" för att prova ändå); inuti ett panorama kan kanten på ditt foto synas som ett skarpt hopp i ton; de flesta scener säger "Synfältet gissades: formerna kan bli fel"; en scen behöver ungefär 2 GB ledigt minne ("Inte tillräckligt med minne" annars); med AI-versioner säkerhetskopierade parar Immichs dubblettsökare ihop varje foto med dess scen och föreslår ofta att behålla scenen, den tyngre filen: behåll originalet. Telefoner och TV-apparater gör ingenting, och headsetet gör bara djup; en scen kommer från ett foto, ännu inte från flera foton av samma plats.
+
+**Komponenterna**: på datorn listar Inställningar, "AI och 3D" komponenterna för varje funktion med sin storlek, Ladda ner och Ta bort, sedan "Ta bort alla AI-komponenter" och "Flytta AI-komponenterna" till en annan enhet; med "AI-funktioner" avslaget döljs alla AI-knappar och ingenting laddas ner. Varje fil kontrolleras med sin SHA-256. På Windows ligger de i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, som avinstallationsprogrammet tar bort (inte en mapp du har flyttat dem till); på Linux i `~/.local/share/immuch360/ai-components` på de flesta system, och på en Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I Quest finns "AI och 3D" i Inställningar, Avancerat, med djupcachen.
+
+Mer: anteckningarna för [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) och [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), och [modellerna, deras licenser, deras källor och deras kontrollsummor](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Användarguiden får sitt AI-kapitel i nästa omgång; fram till dess är det här avsnittet guiden.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Latviešu</b> · Citas valodas (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Jūsu media. Jebkurš ekrāns. Katra perspektīva. Jaunums: pārvērtiet savus foto par 3D foto, 3D ainām un 360° panorāmām. Tos veido MI jūsu pašu datorā. Jūsu foto to nekad neatstāj. Android, iPhone un iPad, Android TV, LG un Samsung televizori, Meta Quest, Windows, macOS, Linux. Ilustrācija, nevis ekrānuzņēmums: krēslā pie jūras līča viena un tā pati istaba četras reizes, kā plakans foto tālrunī, kā peldoši slāņi baltu briļļu priekšā, kā aina klēpjdatorā un kā panorāma, atritināta uz izliektas joslas, savienoti ar gaismas lokiem">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Jūsu media. Jebkurš ekrāns. Katra perspektīva. Plakani, 360° un 3D foto un video no jūsu ierīces, NAS, Immich servera, kamerām un drona. Konts nav vajadzīgs. Jaunums: 3D foto, 3D ainas un 360° panorāmas no jūsu pašu foto, ko veido MI jūsu datorā. Android, iPhone un iPad, Android TV, LG un Samsung televizori, Meta Quest, Windows, macOS, Linux. Ilustrācija krēslā pie jūras līča: datu glabātuve, tālrunis, planšete, televizors, klēpjdators un brilles, drons debesīs un mājas kamera, savienoti ar gaismas lokiem">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Plakani, 360° un 3D foto un video no jūsu ierīces, NAS, Immich servera, kamerām un drona. Konts nav vajadzīgs. Immuch360 ir bezmaksas atvērtā koda lietotne, kas lasa jūsu foto un video tur, kur tie atrodas, un katru atskaņo tam piemērotā skatītājā: plakani, kā lodi, kurā varat lūkoties apkārt, 3D vai visapkārt jums brillēs. Tā darbojas tālruņos, planšetēs, televizoros, Meta Quest brillēs un datoros.
 
-**Jaunums: jūsu plakanie foto, 3D.** Izvēlieties foto savā datorā un iegūstiet 3D foto, 3D ainu, kurā var ieiet, vai 360° panorāmu, kas iztēlojas pārējo vietu ap jums. Meta Quest 3 vai 3S brillēs viens spiediens uz "MI reljefs", un jebkurš plakans foto izceļas. MI darbojas jūsu pašu datorā un brillēs, un nekas netiek nekur sūtīts. Eksperimentāls. [Kā to izdarīt](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="3D foto, ko Immuch360 izveidojis no viena parasta foto ar vecu zāli, galeriju, kolonnām un lustru, skatā Šūpošana: tā kreisā acs un labā acs pamīšus, apmēram sešas reizes sekundē, lai kolonnas izceltos no sienām">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Viens foto, četri veidi, visi ir īsti Immuch360 rezultāti: balta istaba ar apaļu galdu un logu, kā uzņemta; tās 3D foto, kas rāda lietotnes aprēķināto aci, nozīmīte 3D MI, MI novērtēts reljefs; tās 3D aina, skatīta no kreisās un no labās puses, nozīmīte 3D aina; apakšā ap to ģenerētā 360° panorāma, nozīmīte 360° MI, oriģinālais foto iezīmēts vidū ar kontūru, un ap to izdomāta vesela studija, ieskaitot dažus dīvainus priekšmetus">
-</p>
-<p align="center"><sub>Īsti lietotnes rezultāti no Poly Haven CC0 foto, samazināti, neretušēti, ar lietotnes nozīmītēm, kas pievienotas šai lapai. Augšā 3D foto, tā divas acis pamīšus; apakšā viens foto četros veidos, abi ainas skati zīmēti no ainas faila. Visu, kas ir ārpus panorāmas kontūras, ir izdomājis MI.</sub></p>
+**Jaunums: jūsu plakanie foto, 3D.** Datorā "Izveidot 3D (MI)" pārvērš vienu foto par 3D foto, 3D ainu vai 360° panorāmu; Meta Quest 3 vai 3S brillēs "MI reljefs" parāda jebkuru plakanu foto 3D. Eksperimentāls, un viss darbojas jūsu pašu ierīcēs: [kā to izdarīt](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Neoficiāls Immich mobilās lietotnes fork. Nav saistīts ar Immich vai FUTO. Nosaukums lasās kā "I am much 360".</sub>
@@ -33,9 +24,9 @@ Plakani, 360° un 3D foto un video no jūsu ierīces, NAS, Immich servera, kamer
 - [Ko jūs varat darīt](#what-you-can-do)
 - [Iegūstiet to savā ierīcē](#get-it-on-your-device)
 - [Kā to izdarīt](#how-to)
-  - [Pārvērtiet vienu foto par 3D, ainu, panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Skatiet savus foto un video ar serveri vai bez tā](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Izziniet panorāmas, 360°, VR180 un 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Pārvērtiet vienu foto par 3D, ainu, panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Skatieties televizorā ar tālvadības pulti](#watch-on-the-tv-with-the-remote): [Android TV un Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Pieslēdziet televizoru, brilles vai datoru ar tālruni](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Ieejiet savos foto un video ar Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Plakani, 360° un 3D foto un video no jūsu ierīces, NAS, Immich servera, kamer
 <a id="who-it-is-for"></a>
 ## Kam tā domāta
 
-- **Jūsu foto ir plakani**, un jūs tos gribat 3D, kā ainu, kurā ieliekties brillēs, vai 360° panorāmas iekšienē, bez 3D kameras: [pārvērtiet vienu foto par 3D, ainu, panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama), jaunums, to veido MI jūsu pašu datorā.
 - **Jūs fotografējat 360° vai 3D** un vēlaties lūkoties apkārt savos kadros, nevis redzēt tos plakanus, dubultus vai izstieptus: [360°, VR180 un 3D](#explore-panoramas-360-vr180-and-3d).
 - **Jūsu foto un filmas ir NAS, datorā, Plex vai Immich** un vēlaties tos televizorā, neko nekopējot: [televizorā](#watch-on-the-tv-with-the-remote), [NAS, koplietojumi un Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Jums ir Meta Quest** un vēlaties ieiet savos foto un video: [brillēs](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Jūsu foto ir plakani**, un jūs tos gribat 3D, kā ainu, kurā ieliekties brillēs, vai 360° panorāmas iekšienē, bez 3D kameras: [pārvērtiet vienu foto par 3D, ainu, panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama), jaunums, to veido MI jūsu pašu datorā.
 - **Jūs uzturat Immich** un vēlaties tā lietotni, kā arī iespaidīgos skatītājus un lielos ekrānus, kurus pieslēdzat no tālruņa: [jūsu Immich bibliotēka](#keep-your-immich-library-with-more), [salīdzinājumā ar Immich](#compared-with-immich).
 - **Jūs uzraugāt mājas ar Tapo kamerām** un vēlaties tās blakus saviem foto, arī televizorā (vēl nav pārbaudīts ar īstu kameru): [mājas kameras](#watch-your-home-cameras-on-the-big-screen).
 - **Jūs lidojat ar DJI dronu** un vēlaties tā tiešraides attēlu tālrunī bez DJI Fly, kā arī Meta Quest brillēs vai Android TV cilvēkiem, kas ir kopā ar jums (eksperimentāls): [jūsu drons](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ MI rindās "atver to" nozīmē, ka ierīce atver to, ko izveidojis dators, un pa
 
 Katra rinda atver savu instrukciju zemāk. Pilnā rokasgrāmata ar visām opcijām, paziņojumiem un ierobežojumiem ir [lietotāja rokasgrāmatā](../docs/immuch360/user-guide.md).
 
-1. [Pārvērtiet vienu foto par 3D foto, 3D ainu vai 360° panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama): to veido MI jūsu datorā, un to redz 3D Meta Quest brillēs, kas arī jebkuram plakanam foto piešķir reljefu. *Jaunums, eksperimentāls.*
-2. [Skatiet savus foto un video ar serveri vai bez tā](#watch-your-photos-and-videos-with-or-without-a-server): galerija un atskaņotājs, tikai ierīcē vai ar jūsu Immich serveri.
-3. [Lūkojieties apkārt 360° foto un video, panorāmās, VR180 un 3D](#explore-panoramas-360-vr180-and-3d): lode, ko grozāt ar pirkstu, tālruni vai tālvadības pulti.
+1. [Skatiet savus foto un video ar serveri vai bez tā](#watch-your-photos-and-videos-with-or-without-a-server): galerija un atskaņotājs, tikai ierīcē vai ar jūsu Immich serveri.
+2. [Lūkojieties apkārt 360° foto un video, panorāmās, VR180 un 3D](#explore-panoramas-360-vr180-and-3d): lode, ko grozāt ar pirkstu, tālruni vai tālvadības pulti.
+3. [Pārvērtiet vienu foto par 3D foto, 3D ainu vai 360° panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama): to veido MI jūsu datorā, un to redz 3D Meta Quest brillēs, kas arī jebkuram plakanam foto piešķir reljefu. *Jaunums, eksperimentāls.*
 4. [Skatieties televizorā ar tālvadības pulti](#watch-on-the-tv-with-the-remote): Android TV un Google TV, LG televizori, un Samsung televizori kā testa build.
 5. [Pieslēdziet televizoru, brilles vai datoru ar tālruni](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): noskenējiet tā QR kodu, apstipriniet, skatieties.
 6. [Ieejiet savos foto un video ar Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° visapkārt jums, 3D patiesā 3D.
@@ -257,53 +248,6 @@ Atveriet `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` no [desktop pirmlai
 
 Katra sadaļa pasaka, ko jūs iegūstat, tad soļus, tad ierobežojumus. [Lietotāja rokasgrāmatā](../docs/immuch360/user-guide.md) ir visas opcijas un paziņojumi.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Pārvērtiet vienu foto par 3D, ainu, panorāmu
-
-Lielākā daļa jūsu foto ir plakani, un jūs nevarat atgriezties un tos uzņemt vēlreiz 3D. Immuch360 piešķir tiem dziļumu. Jūsu datorā viens foto kļūst par **3D foto**, **3D ainu**, kurā ieliecaties brillēs, vai **360° panorāmu**, kas iztēlojas pārējo vietu ap jums. Quest 3 vai 3S pats veido reljefu jebkuram plakanam foto. Viss darbojas jūsu pašu datorā un brillēs: bez mākoņa, bez konta, jūsu oriģināli nekad netiek mainīti. Jaunums build 32 un desktop build 13, eksperimentāls un ieslēgts pēc noklusējuma. Immich lietotnei nekā tamlīdzīga nav.
-
-**Jūsu datorā**, ar desktop build 13 uz Windows, Linux vai macOS:
-
-1. Atlasiet vienu vai vairākus foto bibliotēkā vai mapē, tad "Izveidot 3D (MI)".
-2. Izvēlieties, ko vēlaties: "3D fotoattēls", "3D aina", "360° panorāma" vai "360° fotoattēla 3D versija" saviem 360° uzņēmumiem. Logs pasaka, ko MI novērtēs vai izdomās ("Apmēram 96% šīs panorāmas izdomās MI"), aptuveni cik ilgi tas aizņems šajā datorā un kur nonāks fails: "Blakus oriģinālam" vai "Mape pēc manas izvēles". Veids, ko šis dators nevar izdarīt, paliek pelēks ar iemeslu, piemēram, "Mac datoros vēl nav" vai "Grafikas kartei ir 6.0 GiB atmiņas, 360° panorāmām vajag 7.5 GiB".
-3. Pirmo reizi logs piedāvā šī veida komponentus: "Lejupielādēt", vienreiz. Tie darbojas šajā datorā un pēc tam strādā bez tīkla.
-4. "Konvertēt". Darbi stājas rindā divās joslās, procesora un grafikas kartes, ar saviem soļiem un atlikušo laiku; "Atcelt" jebkurā brīdī aptur vienu no tiem, un, aizverot lietotni, tā vispirms pajautā.
-5. Atveriet rezultātu. 3D foto tiek rādīts kā "Kreisā acs", "Blakus", "Šūpošana" (animācija šīs lapas augšā) vai "Sarkans un ciāns" brillēm; ainai ir "Priekšskatīt 3D", ko groza ar peli vai skārienpaliktni, un "Eksportēt citām 3D lietotnēm (.glb)"; panorāma atveras 360° skatītājā.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windows lietotnes logs Izveidot 3D (MI): 3D fotoattēls, 3D aina, 360° panorāma, atlasīta, un 360° fotoattēla 3D versija; MI ģenerēts ārpus fotoattēla malām; Apmēram 96% šīs panorāmas izdomās MI; Pabeigta konvertēšana negarantē labu rezultātu; Apmēram 5 min vienam foto ar šo grafikas karti; Izveidot arī 3D versiju, atzīmēts; Saglabāt: Blakus oriģinālam vai Mape pēc manas izvēles; Atcelt un Konvertēt">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Windows lietotnes 360° skatītājs atver panorāmu, ko tas ģenerējis no foto ar līci, skatītu no kalna: nozīmītes 360° MI un 360° augšā pa labi, oriģinālais foto iezīmēts vidū zem vārdiem Oriģinālais fotoattēls, un apakšā MI ģenerēts ārpus fotoattēla malām">
-</p>
-
-| | 3D foto | 3D aina | 360° panorāma |
-|---|---|---|---|
-| Ko jūs iegūstat | `<name>_3D_LRF_Full_SBS.jpg`, blakus novietots 3D foto: jūsu foto kreisajai acij, aprēķināta labā acs | `<name>_scene3D.jpg`, foto, kas nes ainu slāņos | `<name>_360.jpg`, 6144 x 3072, un ar "Izveidot arī 3D versiju" arī `<name>_360_3D.jpg` |
-| Ko dara MI | novērtē foto reljefu (Depth Anything V2 Small) | novērtē vietas formu (MoGe-2) un aizpilda to, ko foto slēpj (LaMa), slāņotai ainai | izdomā visu ārpus foto malām (FLUX.2 klein 4B un 360° LoRA); jūsu pašu pikseļi paliek, kur bija |
-| Cik ilgi | dažas sekundes vienam foto | 15 līdz 45 sekundes vienam foto | apmēram 5 minūtes klēpjdatorā ar RTX 4060, vēl 30 sekundes tā 3D versijai |
-| Kur tas darbojas | Windows, Linux vai macOS datora procesorā | Windows, Linux vai macOS datora procesorā | grafikas kartē ar Vulkan un 8 GB savas atmiņas, Windows vai Linux datorā ar 16 GB atmiņas; izmēģināta NVIDIA, AMD un Intel kartes vēl ne; Mac datorā vēl ne |
-| Lejupielādē vienreiz, kad palūdzat | apmēram 110 MB | vēl 349 MB | vēl apmēram 5.4 GB |
-| Kur to skatīt | 3D Meta Quest brillēs; "Šūpošana" vai "Sarkans un ciāns" datorā | Meta Quest brillēs, kur tajā ieliecaties; "Priekšskatīt 3D" datorā | visapkārt jums Meta Quest brillēs un jebkurā 360° skatītājā |
-
-Katrs jaunais fails nonāk blakus savam oriģinālam, nekad tam virsū, vai jūsu izvēlētā mapē, ja oriģināla mape jaunus failus nepieņem; tīkla mapē tikai tad, kad šai mapei piekrītat ("Immuch360 tur raksta jaunus failus, oriģinālus nekad"). Bibliotēka sasaista katru versiju ar tās oriģinālu un nozīmīti, "3D MI", "3D aina" vai "360° MI", albumā "Immuch360 MI versijas", kas paliek ārpus jūsu Immich dublējuma, ja vien neieslēdzat "Dublēt arī MI versijas"; uzmanību, "Atlasīt visu" dublējuma albumos atlasa arī šo albumu un ieslēdz šo slēdzi. Lai redzētu failu Quest brillēs, saglabājiet to savā NAS, dublējiet to savā Immich serverī vai, Windows vidē, ieslēdziet "Koplietot šo datoru".
-
-**Meta Quest brillēs**, ar build 32:
-
-- **MI reljefs**: atveriet jebkuru plakanu foto no savas bibliotēkas vai koplietojuma un augšējā joslā nospiediet "MI reljefs": brilles pašas novērtē reljefu un parāda foto 3D, "MI novērtēts reljefs". Modelis, 99.5 MB, lejupielādējas pirmajā spiedienā, un reljefi tiek glabāti kešatmiņā. "Atvērt MI reljefus 2.5D režīmā (eksperimentāls)", sadaļā Iestatījumi, Papildu, "MI un 3D", liek tuviem objektiem kustēties fona priekšā, kad kustināt galvu. Quest 2 vai Quest Pro brillēs poga paliek pelēka, "Šajās brillēs vēl nav pārbaudīts", līdz tur ieslēdzat "MI reljefs Quest 2 un Quest Pro brillēs (nav pārbaudīts)".
-- **3D foto un ainas no datora**: "Skatīt 3D" parāda 3D foto patiesā 3D. "Skatīt 3D ainu" uz oriģināla vai "Izpētīt 3D ainu" uz ainas ievieto ainu jūsu istabā: ieliecieties vai slīdiet ar kreiso kursorsviru atjaunotajā zonā ("Vieta kustībai: apmēram 0.5 m uz katru pusi" istabai šīs lapas augšā); tās malā slāņi saplacinās un satumst, klikšķis uz kursorsviras atiestata skatu, un B vai Y iet atpakaļ.
-- **Panorāmas**: ģenerēta panorāma atveras visapkārt jums, pagriezta pret jūsu foto, ar "MI ģenerēts ārpus fotoattēla malām" un plānu oriģinālā foto kontūru, kas pēc dažām sekundēm izgaist; tās 3D versija ir patiesā 3D.
-
-**Tālruņos, planšetēs un televizoros** datora veidotie faili atveras tādi, kādi tie ir, un tur nekas netiek ģenerēts. Panorāma atveras 360° skatītājā ar nozīmīti "360° MI", teikumu un kontūru Android tālruņos, planšetēs un Android TV; iPhone, iPad, LG un Samsung televizoros tā pagaidām atveras kā parasts 360° foto. Aina tiek rādīta kā tās foto ar nelielu zīmi 3D AINA stūrī; Android vidē tās detaļās ir pievienots "Atveriet to Meta Quest brillēs, lai to izpētītu". 3D foto rāda savas divas acis blakus.
-
-**Kas ir īsts un kas nav, vienmēr pateikts.** Tā ir būtība, nevis sīkais druks. 3D foto reljefs tiek novērtēts no viena foto, un tas, ko foto slēpj, tiek aizpildīts un nav īsts. Aina ir "Rekonstruēts no viena fotoattēla, pētiet tā robežās". Panorāma patur jūsu īstos pikseļus tur, kur tie bija, un izdomā pārējo, apmēram 90% sfēras tipiskam foto, un logs pasaka, cik daudz, pirms sākat. Lietotne to pasaka tur, kur skatāties, ar "MI novērtēts reljefs", "MI ģenerēts ārpus fotoattēla malām" un nozīmītēm, un faili to arī pasaka: mūsu XMP, un ainās un panorāmās IPTC digitālā avota veidā, kas apzīmē ar MI veidotu attēlu, lai citas lietotnes varētu atšķirt ģenerētu panorāmu no īsta 360° foto. Jūsu oriģināli nekad netiek mainīti, un nekas neatstāj jūsu datoru vai brilles. Kā saka logs: "Pabeigta konvertēšana negarantē labu rezultātu."
-
-**Kas tika pārbaudīts** līdz 2026. gada 29. oktobrim, ar šī koda testa būvējumiem: 3D foto ar Linux lietotni konteinerā Linux datorā, arī bez tīkla; ainas ar Windows lietotni klēpjdatorā ar RTX 4060 Laptop GPU (desmit 2 min 39 s laikā) un ar dzinēju Linux datorā; tajā klēpjdatorā četras panorāmas, katra 4 min 16 s līdz 4 min 44 s, to 3D versijas apmēram 30 s, ar "Atcelt", nogalinātu lietotni, citu programmu, kas aizņem grafikas karti, un bez neviena lietotnes tīkla savienojuma testu laikā.
-
-Ierobežojumi: 360° panorāmu Mac datorā vēl nav ("Mac datoros vēl nav"), nedz bez piemērotas grafikas kartes, un logs pasaka, kāpēc ("Nav atrasta grafikas karte ar Vulkan", "Integrētā grafika izmanto datora atmiņu: pārāk lēna panorāmām", ar "Mēģināt ar integrēto grafiku (nav pārbaudīts)", lai tomēr mēģinātu); panorāmas iekšienē jūsu foto mala var izskatīties kā ass toņa lēciens; lielākā daļa ainu saka "Redzes lauks uzminēts: formas var būt neprecīzas"; ainai vajag apmēram 2 GB brīvas atmiņas (citādi "Nepietiek atmiņas"); ja MI versijas tiek dublētas, Immich dublikātu meklētājs sapāro katru foto ar tā ainu un bieži iesaka paturēt ainu, smagāko failu: paturiet oriģinālu. Tālruņi un televizori neko neveido, un brilles veido tikai reljefus; aina rodas no viena foto, vēl ne no vairākiem vienas vietas foto.
-
-**Komponenti**: datorā Iestatījumi, "MI un 3D" uzskaita katras funkcijas komponentus ar to izmēru, "Lejupielādēt" un "Noņemt", tad "Noņemt visus MI komponentus" un "Pārvietot MI komponentus" uz citu disku; izslēgts "MI funkcijas" paslēpj visas MI pogas un neko nelejupielādē. Katrs fails tiek pārbaudīts pēc tā SHA-256. Windows vidē tie atrodas `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, ko izdzēš atinstalētājs (ne mapi, uz kuru tos pārvietojāt); Linux vidē lielākajā daļā sistēmu `~/.local/share/immuch360/ai-components`, un Mac datorā `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Quest brillēs "MI un 3D" ir sadaļā Iestatījumi, Papildu, kopā ar reljefu kešatmiņu.
-
-Vairāk: [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) un [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) piezīmes, un [modeļi, to licences, avoti un kontrolsummas](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Lietotāja rokasgrāmata savu MI nodaļu saņems nākamajā kārtā; līdz tam šī sadaļa ir rokasgrāmata.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 atpazīst plakanus foto un video, panorāmas, 360° foto un video, VR1
 Tālruņos un planšetēs stereoskopiskam video var iegūt dziļumu arī plakanā ekrānā: Spatial 2.5D atskaņotājs izmanto priekšējo kameru, lai sekotu jūsu galvai, un parāda skatu starp abām acīm (eksperimentāls). Apple spatial foto, kas uzņemti ar iPhone, tiek atpazīti un parādīti 3D Meta Quest brillēs.
 
 Vairāk: [360° foto un video](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D un VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple spatial foto un video](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360° sarakstu](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Pārvērtiet vienu foto par 3D, ainu, panorāmu
+
+Lielākā daļa jūsu foto ir plakani, un jūs nevarat atgriezties un tos uzņemt vēlreiz 3D. Immuch360 piešķir tiem dziļumu. Jūsu datorā viens foto kļūst par **3D foto**, **3D ainu**, kurā ieliecaties brillēs, vai **360° panorāmu**, kas iztēlojas pārējo vietu ap jums. Quest 3 vai 3S pats veido reljefu jebkuram plakanam foto. Viss darbojas jūsu pašu datorā un brillēs: bez mākoņa, bez konta, jūsu oriģināli nekad netiek mainīti. Jaunums build 32 un desktop build 13, eksperimentāls un ieslēgts pēc noklusējuma. Immich lietotnei nekā tamlīdzīga nav.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="3D foto, ko Immuch360 izveidojis no viena parasta foto ar vecu zāli, galeriju, kolonnām un lustru, skatā Šūpošana: tā kreisā acs un labā acs pamīšus, apmēram sešas reizes sekundē, lai kolonnas izceltos no sienām">
+</p>
+<p align="center"><sub>Īsts lietotnes rezultāts no Poly Haven CC0 foto, samazināts, neretušēts: 3D foto, tā divas acis pamīšus.</sub></p>
+
+**Jūsu datorā**, ar desktop build 13 uz Windows, Linux vai macOS:
+
+1. Atlasiet vienu vai vairākus foto bibliotēkā vai mapē, tad "Izveidot 3D (MI)".
+2. Izvēlieties, ko vēlaties: "3D fotoattēls", "3D aina", "360° panorāma" vai "360° fotoattēla 3D versija" saviem 360° uzņēmumiem. Logs pasaka, ko MI novērtēs vai izdomās ("Apmēram 96% šīs panorāmas izdomās MI"), aptuveni cik ilgi tas aizņems šajā datorā un kur nonāks fails: "Blakus oriģinālam" vai "Mape pēc manas izvēles". Veids, ko šis dators nevar izdarīt, paliek pelēks ar iemeslu, piemēram, "Mac datoros vēl nav" vai "Grafikas kartei ir 6.0 GiB atmiņas, 360° panorāmām vajag 7.5 GiB".
+3. Pirmo reizi logs piedāvā šī veida komponentus: "Lejupielādēt", vienreiz. Tie darbojas šajā datorā un pēc tam strādā bez tīkla.
+4. "Konvertēt". Darbi stājas rindā divās joslās, procesora un grafikas kartes, ar saviem soļiem un atlikušo laiku; "Atcelt" jebkurā brīdī aptur vienu no tiem, un, aizverot lietotni, tā vispirms pajautā.
+5. Atveriet rezultātu. 3D foto tiek rādīts kā "Kreisā acs", "Blakus", "Šūpošana" (animācija augstāk) vai "Sarkans un ciāns" brillēm; ainai ir "Priekšskatīt 3D", ko groza ar peli vai skārienpaliktni, un "Eksportēt citām 3D lietotnēm (.glb)"; panorāma atveras 360° skatītājā.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windows lietotnes logs Izveidot 3D (MI): 3D fotoattēls, 3D aina, 360° panorāma, atlasīta, un 360° fotoattēla 3D versija; MI ģenerēts ārpus fotoattēla malām; Apmēram 96% šīs panorāmas izdomās MI; Pabeigta konvertēšana negarantē labu rezultātu; Apmēram 5 min vienam foto ar šo grafikas karti; Izveidot arī 3D versiju, atzīmēts; Saglabāt: Blakus oriģinālam vai Mape pēc manas izvēles; Atcelt un Konvertēt">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Windows lietotnes 360° skatītājs atver panorāmu, ko tas ģenerējis no foto ar līci, skatītu no kalna: nozīmītes 360° MI un 360° augšā pa labi, oriģinālais foto iezīmēts vidū zem vārdiem Oriģinālais fotoattēls, un apakšā MI ģenerēts ārpus fotoattēla malām">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Viens foto, četri veidi, visi ir īsti Immuch360 rezultāti: balta istaba ar apaļu galdu un logu, kā uzņemta; tās 3D foto, kas rāda lietotnes aprēķināto aci, nozīmīte 3D MI, MI novērtēts reljefs; tās 3D aina, skatīta no kreisās un no labās puses, nozīmīte 3D aina; apakšā ap to ģenerētā 360° panorāma, nozīmīte 360° MI, oriģinālais foto iezīmēts vidū ar kontūru, un ap to izdomāta vesela studija, ieskaitot dažus dīvainus priekšmetus">
+</p>
+<p align="center"><sub>Viens foto četros veidos: īsti lietotnes rezultāti no Poly Haven CC0 foto, samazināti, neretušēti, ar lietotnes nozīmītēm, kas pievienotas šai lapai, abi ainas skati zīmēti no ainas faila. Visu, kas ir ārpus panorāmas kontūras, ir izdomājis MI.</sub></p>
+
+| | 3D foto | 3D aina | 360° panorāma |
+|---|---|---|---|
+| Ko jūs iegūstat | `<name>_3D_LRF_Full_SBS.jpg`, blakus novietots 3D foto: jūsu foto kreisajai acij, aprēķināta labā acs | `<name>_scene3D.jpg`, foto, kas nes ainu slāņos | `<name>_360.jpg`, 6144 x 3072, un ar "Izveidot arī 3D versiju" arī `<name>_360_3D.jpg` |
+| Ko dara MI | novērtē foto reljefu (Depth Anything V2 Small) | novērtē vietas formu (MoGe-2) un aizpilda to, ko foto slēpj (LaMa), slāņotai ainai | izdomā visu ārpus foto malām (FLUX.2 klein 4B un 360° LoRA); jūsu pašu pikseļi paliek, kur bija |
+| Cik ilgi | dažas sekundes vienam foto | 15 līdz 45 sekundes vienam foto | apmēram 5 minūtes klēpjdatorā ar RTX 4060, vēl 30 sekundes tā 3D versijai |
+| Kur tas darbojas | Windows, Linux vai macOS datora procesorā | Windows, Linux vai macOS datora procesorā | grafikas kartē ar Vulkan un 8 GB savas atmiņas, Windows vai Linux datorā ar 16 GB atmiņas; izmēģināta NVIDIA, AMD un Intel kartes vēl ne; Mac datorā vēl ne |
+| Lejupielādē vienreiz, kad palūdzat | apmēram 110 MB | vēl 349 MB | vēl apmēram 5.4 GB |
+| Kur to skatīt | 3D Meta Quest brillēs; "Šūpošana" vai "Sarkans un ciāns" datorā | Meta Quest brillēs, kur tajā ieliecaties; "Priekšskatīt 3D" datorā | visapkārt jums Meta Quest brillēs un jebkurā 360° skatītājā |
+
+Katrs jaunais fails nonāk blakus savam oriģinālam, nekad tam virsū, vai jūsu izvēlētā mapē, ja oriģināla mape jaunus failus nepieņem; tīkla mapē tikai tad, kad šai mapei piekrītat ("Immuch360 tur raksta jaunus failus, oriģinālus nekad"). Bibliotēka sasaista katru versiju ar tās oriģinālu un nozīmīti, "3D MI", "3D aina" vai "360° MI", albumā "Immuch360 MI versijas", kas paliek ārpus jūsu Immich dublējuma, ja vien neieslēdzat "Dublēt arī MI versijas"; uzmanību, "Atlasīt visu" dublējuma albumos atlasa arī šo albumu un ieslēdz šo slēdzi. Lai redzētu failu Quest brillēs, saglabājiet to savā NAS, dublējiet to savā Immich serverī vai, Windows vidē, ieslēdziet "Koplietot šo datoru".
+
+**Meta Quest brillēs**, ar build 32:
+
+- **MI reljefs**: atveriet jebkuru plakanu foto no savas bibliotēkas vai koplietojuma un augšējā joslā nospiediet "MI reljefs": brilles pašas novērtē reljefu un parāda foto 3D, "MI novērtēts reljefs". Modelis, 99.5 MB, lejupielādējas pirmajā spiedienā, un reljefi tiek glabāti kešatmiņā. "Atvērt MI reljefus 2.5D režīmā (eksperimentāls)", sadaļā Iestatījumi, Papildu, "MI un 3D", liek tuviem objektiem kustēties fona priekšā, kad kustināt galvu. Quest 2 vai Quest Pro brillēs poga paliek pelēka, "Šajās brillēs vēl nav pārbaudīts", līdz tur ieslēdzat "MI reljefs Quest 2 un Quest Pro brillēs (nav pārbaudīts)".
+- **3D foto un ainas no datora**: "Skatīt 3D" parāda 3D foto patiesā 3D. "Skatīt 3D ainu" uz oriģināla vai "Izpētīt 3D ainu" uz ainas ievieto ainu jūsu istabā: ieliecieties vai slīdiet ar kreiso kursorsviru atjaunotajā zonā ("Vieta kustībai: apmēram 0.5 m uz katru pusi" augstāk redzamajai istabai); tās malā slāņi saplacinās un satumst, klikšķis uz kursorsviras atiestata skatu, un B vai Y iet atpakaļ.
+- **Panorāmas**: ģenerēta panorāma atveras visapkārt jums, pagriezta pret jūsu foto, ar "MI ģenerēts ārpus fotoattēla malām" un plānu oriģinālā foto kontūru, kas pēc dažām sekundēm izgaist; tās 3D versija ir patiesā 3D.
+
+**Tālruņos, planšetēs un televizoros** datora veidotie faili atveras tādi, kādi tie ir, un tur nekas netiek ģenerēts. Panorāma atveras 360° skatītājā ar nozīmīti "360° MI", teikumu un kontūru Android tālruņos, planšetēs un Android TV; iPhone, iPad, LG un Samsung televizoros tā pagaidām atveras kā parasts 360° foto. Aina tiek rādīta kā tās foto ar nelielu zīmi 3D AINA stūrī; Android vidē tās detaļās ir pievienots "Atveriet to Meta Quest brillēs, lai to izpētītu". 3D foto rāda savas divas acis blakus.
+
+**Kas ir īsts un kas nav, vienmēr pateikts.** Tā ir būtība, nevis sīkais druks. 3D foto reljefs tiek novērtēts no viena foto, un tas, ko foto slēpj, tiek aizpildīts un nav īsts. Aina ir "Rekonstruēts no viena fotoattēla, pētiet tā robežās". Panorāma patur jūsu īstos pikseļus tur, kur tie bija, un izdomā pārējo, apmēram 90% sfēras tipiskam foto, un logs pasaka, cik daudz, pirms sākat. Lietotne to pasaka tur, kur skatāties, ar "MI novērtēts reljefs", "MI ģenerēts ārpus fotoattēla malām" un nozīmītēm, un faili to arī pasaka: mūsu XMP, un ainās un panorāmās IPTC digitālā avota veidā, kas apzīmē ar MI veidotu attēlu, lai citas lietotnes varētu atšķirt ģenerētu panorāmu no īsta 360° foto. Jūsu oriģināli nekad netiek mainīti, un nekas neatstāj jūsu datoru vai brilles. Kā saka logs: "Pabeigta konvertēšana negarantē labu rezultātu."
+
+**Kas tika pārbaudīts** līdz 2026. gada 29. oktobrim, ar šī koda testa būvējumiem: 3D foto ar Linux lietotni konteinerā Linux datorā, arī bez tīkla; ainas ar Windows lietotni klēpjdatorā ar RTX 4060 Laptop GPU (desmit 2 min 39 s laikā) un ar dzinēju Linux datorā; tajā klēpjdatorā četras panorāmas, katra 4 min 16 s līdz 4 min 44 s, to 3D versijas apmēram 30 s, ar "Atcelt", nogalinātu lietotni, citu programmu, kas aizņem grafikas karti, un bez neviena lietotnes tīkla savienojuma testu laikā.
+
+Ierobežojumi: 360° panorāmu Mac datorā vēl nav ("Mac datoros vēl nav"), nedz bez piemērotas grafikas kartes, un logs pasaka, kāpēc ("Nav atrasta grafikas karte ar Vulkan", "Integrētā grafika izmanto datora atmiņu: pārāk lēna panorāmām", ar "Mēģināt ar integrēto grafiku (nav pārbaudīts)", lai tomēr mēģinātu); panorāmas iekšienē jūsu foto mala var izskatīties kā ass toņa lēciens; lielākā daļa ainu saka "Redzes lauks uzminēts: formas var būt neprecīzas"; ainai vajag apmēram 2 GB brīvas atmiņas (citādi "Nepietiek atmiņas"); ja MI versijas tiek dublētas, Immich dublikātu meklētājs sapāro katru foto ar tā ainu un bieži iesaka paturēt ainu, smagāko failu: paturiet oriģinālu. Tālruņi un televizori neko neveido, un brilles veido tikai reljefus; aina rodas no viena foto, vēl ne no vairākiem vienas vietas foto.
+
+**Komponenti**: datorā Iestatījumi, "MI un 3D" uzskaita katras funkcijas komponentus ar to izmēru, "Lejupielādēt" un "Noņemt", tad "Noņemt visus MI komponentus" un "Pārvietot MI komponentus" uz citu disku; izslēgts "MI funkcijas" paslēpj visas MI pogas un neko nelejupielādē. Katrs fails tiek pārbaudīts pēc tā SHA-256. Windows vidē tie atrodas `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, ko izdzēš atinstalētājs (ne mapi, uz kuru tos pārvietojāt); Linux vidē lielākajā daļā sistēmu `~/.local/share/immuch360/ai-components`, un Mac datorā `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Quest brillēs "MI un 3D" ir sadaļā Iestatījumi, Papildu, kopā ar reljefu kešatmiņu.
+
+Vairāk: [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) un [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) piezīmes, un [modeļi, to licences, avoti un kontrolsummas](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Lietotāja rokasgrāmata savu MI nodaļu saņems nākamajā kārtā; līdz tam šī sadaļa ir rokasgrāmata.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Bahasa Melayu Kelantan</b> · Bahaso lain (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Media demo. Mano-mano skrin. Satiap pandanga. Baru: tukar gambo demo jadi gambo 3D, adege 3D nga panorama 360°. Dibuat dek AI kat komputer demo sendiri. Gambo demo tok sekali-kali keluar dari situ. Android, iPhone nga iPad, Android TV, TV LG nga Samsung, Meta Quest, Windows, macOS, Linux. Lukisa, buke tangkapa: maso senjo depa teluk laut, bilik hok samo empat kali, sebagai gambo rato kat telefon, sebagai lapisa terapung depa headset putih, sebagai adege kat laptop nga dibentang kat jalur melengkung macam panorama, disambung nga lengkung cahayo">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Media demo. Mano-mano skrin. Satiap pandanga. Gambo nga video rato, 360° nga 3D dari peranti demo, NAS demo, server Immich demo, kamera demo nga dron demo. Tak perlu akaun. Baru: gambo 3D, adege 3D nga panorama 360° dibuat dari gambo demo sendiri, dek AI kat komputer demo. Android, iPhone nga iPad, Android TV, TV LG nga Samsung, Meta Quest, Windows, macOS, Linux. Lukisa maso senjo depa teluk laut: kotak storan, telefon, tablet, TV, laptop nga headset, dron kat langit nga kamera rumoh, disambung nga lengkung cahayo">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Gambo nga video rato, 360° nga 3D dari peranti demo, NAS demo, server Immich demo, kamera demo nga dron demo. Tak perlu akaun. Immuch360 ialah aplikasi percumo nga sumber terbuko hok baco gambo nga video demo kat tempat dio dudok nga maing tiap satu dale pemapar hok sesuai: rato, sebagai sfera hok demo leh tengok keliling, dale 3D, ke keliling demo dale headset. Dio jale kat telefon, tablet, TV, headset Meta Quest nga komputer.
 
-**Baru: gambo rato demo, dale 3D.** Pilih gambo kat komputer demo nga dapat gambo 3D, adege 3D hok demo buleh masuk, ke panorama 360° hok bayang baki tempat tu keliling demo. Dale Meta Quest 3 ke 3S, tekan sekali kat "Rupo timbul AI" nga mano-mano gambo rato terus timbul. AI jale kat komputer nga headset demo sendiri, nga takdok apo-apo dihanta ko mano-mano. Eksperimen. [Tengok macam mano](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Gambo 3D hok Immuch360 buat dari satu gambo biaso dewan lamo nga galeri, tiang nga candelier, dale pandanga Goyang: mato kiri nga mato kane dio bergilir, lebih kurang enam kali sesaat, supayo tiang timbul dari dinding">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Satu gambo, empat caro, sumo hasil sebenar Immuch360: bilik putih nga meja bulat nga tingkap, macam diambik; gambo 3D dio, tunjuk mato hok aplikasi kiro, lencana 3D AI, rupo timbul dianggar dek AI; adege 3D dio dilihat dari kiri nga dari kane, lencana Adege 3D; kat bawoh, panorama 360° hok dijano keliling dio, lencana 360° AI, gambo asal bergaris kat tengoh nga sebuah studio penuh direko keliling dio, termasuk beberapo bendo pelik">
-</p>
-<p align="center"><sub>Hasil sebenar aplikasi dari gambo CC0 Poly Haven, dikecikka, tak diubah, nga lencana aplikasi ditamboh untuk muko ni. Kat atas, gambo 3D, duo mato dio bergilir; kat bawoh, satu gambo empat caro, duo pandanga adege dilukih dari fail adege. Sumo hok luar garis panorama direko dek AI.</sub></p>
+**Baru: gambo rato demo, dale 3D.** Kat komputer, "Buat 3D (AI)" tukar satu gambo jadi gambo 3D, adege 3D ke panorama 360°; dale Meta Quest 3 ke 3S, "Rupo timbul AI" tunjuk mano-mano gambo rato dale 3D. Eksperimen, nga sumo jale kat mesin demo sendiri: [tengok macam mano](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Fork tak rasmi aplikasi mobile Immich. Takdok kaita nga Immich ke FUTO. Namo tu baco macam "I am much 360".</sub>
@@ -33,9 +24,9 @@ Gambo nga video rato, 360° nga 3D dari peranti demo, NAS demo, server Immich de
 - [Apo hok demo leh buat](#what-you-can-do)
 - [Pasang kat peranti demo](#get-it-on-your-device)
 - [Caro nok buat](#how-to)
-  - [Tukar satu gambo jadi 3D, adege, panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Tengok gambo nga video demo, nga server ke tanpo server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Jelajoh panorama, 360°, VR180 nga 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Tukar satu gambo jadi 3D, adege, panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Tengok kat TV nga remote](#watch-on-the-tv-with-the-remote): [Android TV nga Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Log masuk TV, headset ke komputer nga telefon demo](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Masuk dale gambo nga video demo nga Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Gambo nga video rato, 360° nga 3D dari peranti demo, NAS demo, server Immich de
 <a id="who-it-is-for"></a>
 ## Untuk sapo
 
-- **Gambo demo rato** nga demo nok dio dale 3D, sebagai adege nok condong masuk dale headset, ke dale panorama 360°, tanpo kamera 3D: [tukar satu gambo jadi 3D, adege, panorama](#turn-one-photo-into-3d-a-scene-a-panorama), baru, dibuat dek AI kat komputer demo sendiri.
 - **Demo ambik gambo 360° ke 3D** nga nok tengok keliling dale gambo demo, buke nampak dio rato, berganda ke tertarik: [360°, VR180 nga 3D](#explore-panoramas-360-vr180-and-3d).
 - **Gambo nga filem demo dudok kat NAS, komputer, Plex ke Immich** nga demo nok dio kat TV tanpo salin apo-apo: [kat TV](#watch-on-the-tv-with-the-remote), [NAS, kongsi nga Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Demo ado Meta Quest** nga nok masuk dale gambo nga video demo sendiri: [dale headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Gambo demo rato** nga demo nok dio dale 3D, sebagai adege nok condong masuk dale headset, ke dale panorama 360°, tanpo kamera 3D: [tukar satu gambo jadi 3D, adege, panorama](#turn-one-photo-into-3d-a-scene-a-panorama), baru, dibuat dek AI kat komputer demo sendiri.
 - **Demo jale Immich** nga nok aplikasi dio, tamboh pemapar immersif nga skrin besa hok demo log masuk dari telefon: [pustako Immich demo](#keep-your-immich-library-with-more), [bandinga nga Immich](#compared-with-immich).
 - **Demo jago rumoh nga kamera Tapo** nga nok dio sebeloh gambo demo, kat TV jugok (belum disemak nga kamera sebenar): [kamera rumoh](#watch-your-home-cameras-on-the-big-screen).
 - **Demo terbang dron DJI** nga nok gambo live dio kat telefon tanpo DJI Fly, nga dale Meta Quest ke kat Android TV untuk orang hok ado nga demo (eksperimen): [dron demo](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ Dale baris AI, "bukak dio" maksud peranti tu bukak apo hok komputer buat, nga di
 
 Tiap baris bukak caro nok buat dio kat bawoh. Panduan penoh, nga satiap pilihe, mesej nga had, ado dale [panduan pengguno](../docs/immuch360/user-guide.md).
 
-1. [Tukar satu gambo jadi gambo 3D, adege 3D ke panorama 360°](#turn-one-photo-into-3d-a-scene-a-panorama): dibuat dek AI kat komputer demo, ditengok dale 3D dale Meta Quest, hok jugok bui rupo timbul ko mano-mano gambo rato. *Baru, eksperimen.*
-2. [Tengok gambo nga video demo, nga server ke tanpo server](#watch-your-photos-and-videos-with-or-without-a-server): galeri nga pemaing, kat peranti jah ke nga server Immich demo.
-3. [Tengok keliling gambo nga video 360°, panorama, VR180 nga 3D](#explore-panoramas-360-vr180-and-3d): sfera hok demo pusing nga jari, telefon ke remote.
+1. [Tengok gambo nga video demo, nga server ke tanpo server](#watch-your-photos-and-videos-with-or-without-a-server): galeri nga pemaing, kat peranti jah ke nga server Immich demo.
+2. [Tengok keliling gambo nga video 360°, panorama, VR180 nga 3D](#explore-panoramas-360-vr180-and-3d): sfera hok demo pusing nga jari, telefon ke remote.
+3. [Tukar satu gambo jadi gambo 3D, adege 3D ke panorama 360°](#turn-one-photo-into-3d-a-scene-a-panorama): dibuat dek AI kat komputer demo, ditengok dale 3D dale Meta Quest, hok jugok bui rupo timbul ko mano-mano gambo rato. *Baru, eksperimen.*
 4. [Tengok kat TV nga remote](#watch-on-the-tv-with-the-remote): Android TV nga Google TV, TV LG, nga TV Samsung sebagai build uji.
 5. [Log masuk TV, headset ke komputer nga telefon demo](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): imbas kod QR dio, sahka, tengok.
 6. [Masuk dale gambo nga video demo nga Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° keliling demo, 3D dale 3D sebenar.
@@ -257,53 +248,6 @@ Bukak `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` dari [pra-keluara desk
 
 Tiap bahagia kato apo hok demo dapat, lepah tu langkah, lepah tu had. [Panduan pengguno](../docs/immuch360/user-guide.md) ado satiap pilihe nga mesej.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Tukar satu gambo jadi 3D, adege, panorama
-
-Kebanyaka gambo demo rato, nga demo tak buleh balik ambik dio lagi dale 3D. Immuch360 bui dio kedalama. Kat komputer demo, satu gambo jadi **gambo 3D**, **adege 3D** hok demo condong masuk dale headset, ke **panorama 360°** hok bayang baki tempat tu keliling demo. Quest 3 ke 3S buat rupo timbul tu sendiri, untuk mano-mano gambo rato. Sumo jale kat komputer nga headset demo sendiri: takdok awan, takdok akaun, gambo asal demo tok sekali-kali diubah. Baru dale build 32 nga desktop build 13, eksperimen nga hidup secaro lalai. Aplikasi Immich takdok bendo macam ni.
-
-**Kat komputer demo**, nga desktop build 13 kat Windows, Linux ke macOS:
-
-1. Pilih satu ke lebih gambo dale pustako ke dale folder, lepah tu "Buat 3D (AI)".
-2. Pilih apo demo nok: "Gambo 3D", "Adege 3D", "Panorama 360°", ke "Versi 3D gambo 360°" untuk gambo 360° demo sendiri. Kotak tu bagitahu apo hok AI akan anggar ke reko ("Lebih kurang 96% panorama ni akan direko dek AI"), lebih kurang berapo lamo dio ambik kat komputer ni, nga mano fail tu pi: "Sebelah hok asal" ke "Folder hok ambo pileh". Jenih hok komputer ni tak buleh buat kekal kelabu, nga sebab dio, macam "Belum ado lagi kat Mac" ke "Kad grafik ado 6.0 GiB memori, panorama 360° perlu 7.5 GiB".
-3. Kali pertamo, kotak tu tawar komponen jenih tu: "Muat turun", sekali jah. Dio jale kat komputer ni nga lepah tu jale tanpo internet.
-4. "Tukar". Kijo beratur kat duo lorong, pemproses nga kad grafik, nga langkah-langkah dio nga maso hok tinggal; "Cancel" henti satu bilo-bilo maso, nga keluar dari aplikasi tanyo dulu.
-5. Bukak hasil dio. Gambo 3D ditunjuk sebagai "Mato kiri", "Sebelah-menyebelah", "Goyang" (animasi kat atas muko ni) ke "Merah nga sian" untuk cermin mato; adege ado "Pratonton dale 3D", dipusing nga tetikus ke pad sentuh, nga "Eksport untuk aplikasi 3D lain (.glb)"; panorama bukak dale pemapar 360°.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Kotak Buat 3D (AI) aplikasi Windows: Gambo 3D, Adege 3D, Panorama 360°, dipilih, nga Versi 3D gambo 360°; Dijano dek AI luar tepi gambo; Lebih kurang 96% panorama ni akan direko dek AI; Penukare hok doh siap tok jamin hasil hok baguh; Lebih kurang 5 min satu gambo kat kad grafik ni; Buat versi 3D gak, ditanda; Simpang ko: Sebelah hok asal, ke Folder hok ambo pileh; Cancel nga Tukar">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Pemapar 360° aplikasi Windows bukak panorama hok dio jano dari gambo teluk dilihat dari gunung: lencana 360° AI nga 360° kat atas kane, gambo asal bergaris kat tengoh bawoh perkataa Gambo hok asal, nga Dijano dek AI luar tepi gambo kat bawoh">
-</p>
-
-| | Gambo 3D | Adege 3D | Panorama 360° |
-|---|---|---|---|
-| Apo demo dapat | `<name>_3D_LRF_Full_SBS.jpg`, gambo 3D sebelah-menyebelah: gambo demo untuk mato kiri, mato kane hok dikiro | `<name>_scene3D.jpg`, gambo hok bawok adege, dale lapisa | `<name>_360.jpg`, 6144 x 3072, nga kalu pilih "Buat versi 3D gak", `<name>_360_3D.jpg` |
-| Apo AI buat | anggar rupo timbul gambo (Depth Anything V2 Small) | anggar bentuk tempat tu (MoGe-2) nga isi apo hok gambo sorok (LaMa), untuk adege berlapis | reko sumo luar tepi gambo (FLUX.2 klein 4B nga LoRA 360°); piksel demo sendiri kekal kat tempat dio |
-| Berapo lamo | beberapo saat satu gambo | 15 sampai 45 saat satu gambo | lebih kurang 5 minit kat laptop nga RTX 4060, 30 saat lagi untuk versi 3D dio |
-| Dio jale kat | pemproses komputer Windows, Linux ke macOS | pemproses komputer Windows, Linux ke macOS | kad grafik nga Vulkan nga 8 GB memori dio sendiri, dale komputer Windows ke Linux nga 16 GB memori; NVIDIA doh dicubo, kad AMD nga Intel belum; belum ado kat Mac lagi |
-| Dimuat turun sekali, bilo demo mintak | lebih kurang 110 MB | 349 MB lagi | lebih kurang 5.4 GB lagi |
-| Mano nok tengok | dale 3D dale Meta Quest; "Goyang" ke "Merah nga sian" kat komputer | dale Meta Quest, tempat demo condong masuk; "Pratonton dale 3D" kat komputer | keliling demo dale Meta Quest, nga dale tiap pemapar 360° |
-
-Tiap fail baru pi sebelah fail asal dio, tok sekali-kali atas dio, ke dale folder pilihan demo bilo folder asal tak terimo fail baru; kat folder rangkaie, bilo demo kato yo untuk folder tu jah ("Immuch360 tulis fail baru situ, tok sekali-kali hok asal"). Pustako tu sambung tiap versi ko fail asal dio nga lencana dio, "3D AI", "Adege 3D" ke "360° AI", dale album "Versi AI Immuch360", hok tak masuk sandara Immich demo kecuali demo hidupka "Sandar versi AI gak"; hati-hati, "Select all" dale album sandara pilih album ni jugok nga hidupka suis tu. Nok tengok fail kat Quest, simpang dio kat NAS demo, sandar dio ko server Immich demo ke, kat Windows, hidupka "Kongsi komputer ni".
-
-**Dale Meta Quest**, nga build 32:
-
-- **Rupo timbul AI**: bukak mano-mano gambo rato, dari pustako demo ke kongsi, nga tekan "Rupo timbul AI" kat bar atas: headset tu anggar rupo timbul sendiri nga tunjuk gambo tu dale 3D, "Rupo timbul dianggar dek AI". Model tu, 99.5 MB, dimuat turun kali pertamo demo tekan dio, nga rupo timbul disimpang dale cache. "Bukak rupo timbul AI dale 2.5D (cubo-cubo)", dale Settings, Advanced, "AI nga 3D", buat bendo dekat gerak depa latar bilo demo gerak kepalo. Kat Quest 2 ke Quest Pro butang tu kekal kelabu, "Belum diuji lagi kat headset ni", sampai demo hidupka "Rupo timbul AI kat Quest 2 nga Quest Pro (belum diuji)" kat situ.
-- **Gambo 3D nga adege dari komputer**: "Tengok dale 3D" tunjuk gambo 3D dale 3D sebenar. "Tengok adege 3D" kat gambo asal, ke "Jelajah adege 3D" kat adege, letak adege tu dale bilik demo: condong masuk, ke meluncur nga thumbstick kiri dale kawase hok dibina balik ("Ruang nok gerak: lebih kurang 0.5 m tiap arah" untuk bilik kat atas muko ni); lapisa jadi rato nga gelap kat tepi dio, klik kat thumbstick set semulo pandanga, nga B ke Y balik.
-- **Panorama**: panorama hok dijano bukak keliling demo, menghadap gambo demo, nga "Dijano dek AI luar tepi gambo" nga garis nipih gambo asal, hok pudar lepah beberapo saat; versi 3D dio dale 3D sebenar.
-
-**Kat telefon, tablet nga TV**, fail hok komputer buat bukak macam tu jah, nga takdok apo dijano situ. Panorama bukak dale pemapar 360° nga lencana "360° AI", ayat tu nga garis tu kat telefon Android, tablet nga Android TV; kat iPhone, iPad, TV LG nga Samsung dio bukak sebagai gambo 360° biaso buat maso ni. Adege ditunjuk sebagai gambo dio, nga tando kecik ADEGE 3D kat penjuru dio; kat Android, perincia dio tamboh "Bukak dio kat Meta Quest nok jelajah dio". Gambo 3D tunjuk duo mato dio sebelah-menyebelah.
-
-**Apo hok sebenar nga apo hok buke, sentiaso dikato.** Inilah tujua dio, buke tulisa kecik. Rupo timbul gambo 3D dianggar dari satu gambo, nga apo hok gambo sorok diisi nga buke sebenar. Adege ialah "Dibina balik dari satu gambo, jelajah dale had dio". Panorama simpang piksel sebenar demo kat tempat dio nga reko baki dio, lebih kurang 90% sfera untuk gambo biaso, nga kotak tu bagitahu berapo banyok sebelum demo mulo. Aplikasi kato gitu kat tempat demo tengok, nga "Rupo timbul dianggar dek AI", "Dijano dek AI luar tepi gambo" nga lencana, nga fail pun kato gitu: dale XMP kami, nga untuk adege nga panorama dale jenih sumber digital IPTC untuk imej hok dibuat nga AI, supayo aplikasi lain buleh beza panorama hok dijano dari gambo 360° sebenar. Gambo asal demo tok sekali-kali diubah, nga takdok apo keluar dari komputer ke headset demo. Macam kotak tu kato: "Penukare hok doh siap tok jamin hasil hok baguh."
-
-**Apo hok doh disemak**, sampai 29 Oktober 2026, nga build uji kod ni: gambo 3D dek aplikasi Linux dale kontena kat PC Linux, tanpo internet jugok; adege dek aplikasi Windows kat laptop nga RTX 4060 Laptop GPU (sepuluh dale 2 min 39 s) nga dek enjin kat PC Linux; kat laptop tu, empat panorama dale 4 min 16 s sampai 4 min 44 s satu, versi 3D dio dale lebih kurang 30 s, nga Cancel, aplikasi hok dibunuh, program lain pegang kad grafik, nga takdok sambunga rangkaie aplikasi maso uji.
-
-Had: belum ado panorama 360° kat Mac ("Belum ado lagi kat Mac"), ke tanpo kad grafik hok sesuai, nga kotak tu bagitahu sebab ("Takdok kad grafik nga Vulkan jumpo", "Grafik bersepadu kongsi memori komputer: lambat sangat untuk panorama", nga "Cubo guno grafik bersepadu (belum diuji)" nok cubo jugok); dale panorama, tepi gambo demo mungki nampak macam lompata tono hok tajam; kebanyaka adege kato "Medan pandange diagak: bentuk mungki tok tepat"; adege perlu lebih kurang 2 GB memori kosong ("Memori tok cukup" kalu tak); bilo versi AI disandar, pencari pendua Immich pasang tiap gambo nga adege dio nga selalu cadang simpang adege, fail hok lagi berat: simpang hok asal. Telefon nga TV tak buat apo-apo, nga headset buat rupo timbul jah; adege datang dari satu gambo, belum dari beberapo gambo tempat hok samo.
-
-**Komponen**: kat komputer, Settings, "AI nga 3D" senaraika komponen tiap ciri nga saiz dio, "Muat turun" nga "Buang", lepah tu "Buang semuo komponen AI" nga "Pindoh komponen AI" ko pemacu lain; "Ciri AI" dimatika sorok sumo butang AI nga tak muat turun apo-apo. Tiap fail disemak nga SHA-256 dio. Kat Windows dio duduk dale `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, hok penyahpasang padam (buke folder hok demo pindoh dio ko); kat Linux dale `~/.local/share/immuch360/ai-components` kat kebanyaka sistem, nga kat Mac dale `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Dale Quest, "AI nga 3D" ado dale Settings, Advanced, nga cache rupo timbul.
-
-Lagi: nota [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) nga [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), nga [model, lesen dio, sumber dio nga jumlah semak dio](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Panduan pengguno dapat bab AI dio pado pusinga seteruh; sampai tu, bahagian ni lah panduan dio.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 kenal gambo nga video rato, panorama, gambo nga video 360°, VR180, 3D
 Kat telefon nga tablet, video stereoskopik leh juga dapat kedalama kat skrin rato: pemaing Spatial 2.5D guno kamera depa untuk ikut kepalo demo nga tunjuk pandanga antaro duo mato (eksperimen). Gambo spatial Apple hok ditangkap nga iPhone dikenali nga ditunjuk dale 3D dale Meta Quest.
 
 Lagi: [gambo nga video 360°](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D nga VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [gambo nga video spatial Apple](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [senarai 360°](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Tukar satu gambo jadi 3D, adege, panorama
+
+Kebanyaka gambo demo rato, nga demo tak buleh balik ambik dio lagi dale 3D. Immuch360 bui dio kedalama. Kat komputer demo, satu gambo jadi **gambo 3D**, **adege 3D** hok demo condong masuk dale headset, ke **panorama 360°** hok bayang baki tempat tu keliling demo. Quest 3 ke 3S buat rupo timbul tu sendiri, untuk mano-mano gambo rato. Sumo jale kat komputer nga headset demo sendiri: takdok awan, takdok akaun, gambo asal demo tok sekali-kali diubah. Baru dale build 32 nga desktop build 13, eksperimen nga hidup secaro lalai. Aplikasi Immich takdok bendo macam ni.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Gambo 3D hok Immuch360 buat dari satu gambo biaso dewan lamo nga galeri, tiang nga candelier, dale pandanga Goyang: mato kiri nga mato kane dio bergilir, lebih kurang enam kali sesaat, supayo tiang timbul dari dinding">
+</p>
+<p align="center"><sub>Hasil sebenar aplikasi dari gambo CC0 Poly Haven, dikecikka, tak diubah: gambo 3D, duo mato dio bergilir.</sub></p>
+
+**Kat komputer demo**, nga desktop build 13 kat Windows, Linux ke macOS:
+
+1. Pilih satu ke lebih gambo dale pustako ke dale folder, lepah tu "Buat 3D (AI)".
+2. Pilih apo demo nok: "Gambo 3D", "Adege 3D", "Panorama 360°", ke "Versi 3D gambo 360°" untuk gambo 360° demo sendiri. Kotak tu bagitahu apo hok AI akan anggar ke reko ("Lebih kurang 96% panorama ni akan direko dek AI"), lebih kurang berapo lamo dio ambik kat komputer ni, nga mano fail tu pi: "Sebelah hok asal" ke "Folder hok ambo pileh". Jenih hok komputer ni tak buleh buat kekal kelabu, nga sebab dio, macam "Belum ado lagi kat Mac" ke "Kad grafik ado 6.0 GiB memori, panorama 360° perlu 7.5 GiB".
+3. Kali pertamo, kotak tu tawar komponen jenih tu: "Muat turun", sekali jah. Dio jale kat komputer ni nga lepah tu jale tanpo internet.
+4. "Tukar". Kijo beratur kat duo lorong, pemproses nga kad grafik, nga langkah-langkah dio nga maso hok tinggal; "Cancel" henti satu bilo-bilo maso, nga keluar dari aplikasi tanyo dulu.
+5. Bukak hasil dio. Gambo 3D ditunjuk sebagai "Mato kiri", "Sebelah-menyebelah", "Goyang" (animasi kat atas) ke "Merah nga sian" untuk cermin mato; adege ado "Pratonton dale 3D", dipusing nga tetikus ke pad sentuh, nga "Eksport untuk aplikasi 3D lain (.glb)"; panorama bukak dale pemapar 360°.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Kotak Buat 3D (AI) aplikasi Windows: Gambo 3D, Adege 3D, Panorama 360°, dipilih, nga Versi 3D gambo 360°; Dijano dek AI luar tepi gambo; Lebih kurang 96% panorama ni akan direko dek AI; Penukare hok doh siap tok jamin hasil hok baguh; Lebih kurang 5 min satu gambo kat kad grafik ni; Buat versi 3D gak, ditanda; Simpang ko: Sebelah hok asal, ke Folder hok ambo pileh; Cancel nga Tukar">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="Pemapar 360° aplikasi Windows bukak panorama hok dio jano dari gambo teluk dilihat dari gunung: lencana 360° AI nga 360° kat atas kane, gambo asal bergaris kat tengoh bawoh perkataa Gambo hok asal, nga Dijano dek AI luar tepi gambo kat bawoh">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Satu gambo, empat caro, sumo hasil sebenar Immuch360: bilik putih nga meja bulat nga tingkap, macam diambik; gambo 3D dio, tunjuk mato hok aplikasi kiro, lencana 3D AI, rupo timbul dianggar dek AI; adege 3D dio dilihat dari kiri nga dari kane, lencana Adege 3D; kat bawoh, panorama 360° hok dijano keliling dio, lencana 360° AI, gambo asal bergaris kat tengoh nga sebuah studio penuh direko keliling dio, termasuk beberapo bendo pelik">
+</p>
+<p align="center"><sub>Satu gambo empat caro: hasil sebenar aplikasi dari gambo CC0 Poly Haven, dikecikka, tak diubah, nga lencana aplikasi ditamboh untuk muko ni, duo pandanga adege dilukih dari fail adege. Sumo hok luar garis panorama direko dek AI.</sub></p>
+
+| | Gambo 3D | Adege 3D | Panorama 360° |
+|---|---|---|---|
+| Apo demo dapat | `<name>_3D_LRF_Full_SBS.jpg`, gambo 3D sebelah-menyebelah: gambo demo untuk mato kiri, mato kane hok dikiro | `<name>_scene3D.jpg`, gambo hok bawok adege, dale lapisa | `<name>_360.jpg`, 6144 x 3072, nga kalu pilih "Buat versi 3D gak", `<name>_360_3D.jpg` |
+| Apo AI buat | anggar rupo timbul gambo (Depth Anything V2 Small) | anggar bentuk tempat tu (MoGe-2) nga isi apo hok gambo sorok (LaMa), untuk adege berlapis | reko sumo luar tepi gambo (FLUX.2 klein 4B nga LoRA 360°); piksel demo sendiri kekal kat tempat dio |
+| Berapo lamo | beberapo saat satu gambo | 15 sampai 45 saat satu gambo | lebih kurang 5 minit kat laptop nga RTX 4060, 30 saat lagi untuk versi 3D dio |
+| Dio jale kat | pemproses komputer Windows, Linux ke macOS | pemproses komputer Windows, Linux ke macOS | kad grafik nga Vulkan nga 8 GB memori dio sendiri, dale komputer Windows ke Linux nga 16 GB memori; NVIDIA doh dicubo, kad AMD nga Intel belum; belum ado kat Mac lagi |
+| Dimuat turun sekali, bilo demo mintak | lebih kurang 110 MB | 349 MB lagi | lebih kurang 5.4 GB lagi |
+| Mano nok tengok | dale 3D dale Meta Quest; "Goyang" ke "Merah nga sian" kat komputer | dale Meta Quest, tempat demo condong masuk; "Pratonton dale 3D" kat komputer | keliling demo dale Meta Quest, nga dale tiap pemapar 360° |
+
+Tiap fail baru pi sebelah fail asal dio, tok sekali-kali atas dio, ke dale folder pilihan demo bilo folder asal tak terimo fail baru; kat folder rangkaie, bilo demo kato yo untuk folder tu jah ("Immuch360 tulis fail baru situ, tok sekali-kali hok asal"). Pustako tu sambung tiap versi ko fail asal dio nga lencana dio, "3D AI", "Adege 3D" ke "360° AI", dale album "Versi AI Immuch360", hok tak masuk sandara Immich demo kecuali demo hidupka "Sandar versi AI gak"; hati-hati, "Select all" dale album sandara pilih album ni jugok nga hidupka suis tu. Nok tengok fail kat Quest, simpang dio kat NAS demo, sandar dio ko server Immich demo ke, kat Windows, hidupka "Kongsi komputer ni".
+
+**Dale Meta Quest**, nga build 32:
+
+- **Rupo timbul AI**: bukak mano-mano gambo rato, dari pustako demo ke kongsi, nga tekan "Rupo timbul AI" kat bar atas: headset tu anggar rupo timbul sendiri nga tunjuk gambo tu dale 3D, "Rupo timbul dianggar dek AI". Model tu, 99.5 MB, dimuat turun kali pertamo demo tekan dio, nga rupo timbul disimpang dale cache. "Bukak rupo timbul AI dale 2.5D (cubo-cubo)", dale Settings, Advanced, "AI nga 3D", buat bendo dekat gerak depa latar bilo demo gerak kepalo. Kat Quest 2 ke Quest Pro butang tu kekal kelabu, "Belum diuji lagi kat headset ni", sampai demo hidupka "Rupo timbul AI kat Quest 2 nga Quest Pro (belum diuji)" kat situ.
+- **Gambo 3D nga adege dari komputer**: "Tengok dale 3D" tunjuk gambo 3D dale 3D sebenar. "Tengok adege 3D" kat gambo asal, ke "Jelajah adege 3D" kat adege, letak adege tu dale bilik demo: condong masuk, ke meluncur nga thumbstick kiri dale kawase hok dibina balik ("Ruang nok gerak: lebih kurang 0.5 m tiap arah" untuk bilik hok ditunjuk kat atas); lapisa jadi rato nga gelap kat tepi dio, klik kat thumbstick set semulo pandanga, nga B ke Y balik.
+- **Panorama**: panorama hok dijano bukak keliling demo, menghadap gambo demo, nga "Dijano dek AI luar tepi gambo" nga garis nipih gambo asal, hok pudar lepah beberapo saat; versi 3D dio dale 3D sebenar.
+
+**Kat telefon, tablet nga TV**, fail hok komputer buat bukak macam tu jah, nga takdok apo dijano situ. Panorama bukak dale pemapar 360° nga lencana "360° AI", ayat tu nga garis tu kat telefon Android, tablet nga Android TV; kat iPhone, iPad, TV LG nga Samsung dio bukak sebagai gambo 360° biaso buat maso ni. Adege ditunjuk sebagai gambo dio, nga tando kecik ADEGE 3D kat penjuru dio; kat Android, perincia dio tamboh "Bukak dio kat Meta Quest nok jelajah dio". Gambo 3D tunjuk duo mato dio sebelah-menyebelah.
+
+**Apo hok sebenar nga apo hok buke, sentiaso dikato.** Inilah tujua dio, buke tulisa kecik. Rupo timbul gambo 3D dianggar dari satu gambo, nga apo hok gambo sorok diisi nga buke sebenar. Adege ialah "Dibina balik dari satu gambo, jelajah dale had dio". Panorama simpang piksel sebenar demo kat tempat dio nga reko baki dio, lebih kurang 90% sfera untuk gambo biaso, nga kotak tu bagitahu berapo banyok sebelum demo mulo. Aplikasi kato gitu kat tempat demo tengok, nga "Rupo timbul dianggar dek AI", "Dijano dek AI luar tepi gambo" nga lencana, nga fail pun kato gitu: dale XMP kami, nga untuk adege nga panorama dale jenih sumber digital IPTC untuk imej hok dibuat nga AI, supayo aplikasi lain buleh beza panorama hok dijano dari gambo 360° sebenar. Gambo asal demo tok sekali-kali diubah, nga takdok apo keluar dari komputer ke headset demo. Macam kotak tu kato: "Penukare hok doh siap tok jamin hasil hok baguh."
+
+**Apo hok doh disemak**, sampai 29 Oktober 2026, nga build uji kod ni: gambo 3D dek aplikasi Linux dale kontena kat PC Linux, tanpo internet jugok; adege dek aplikasi Windows kat laptop nga RTX 4060 Laptop GPU (sepuluh dale 2 min 39 s) nga dek enjin kat PC Linux; kat laptop tu, empat panorama dale 4 min 16 s sampai 4 min 44 s satu, versi 3D dio dale lebih kurang 30 s, nga Cancel, aplikasi hok dibunuh, program lain pegang kad grafik, nga takdok sambunga rangkaie aplikasi maso uji.
+
+Had: belum ado panorama 360° kat Mac ("Belum ado lagi kat Mac"), ke tanpo kad grafik hok sesuai, nga kotak tu bagitahu sebab ("Takdok kad grafik nga Vulkan jumpo", "Grafik bersepadu kongsi memori komputer: lambat sangat untuk panorama", nga "Cubo guno grafik bersepadu (belum diuji)" nok cubo jugok); dale panorama, tepi gambo demo mungki nampak macam lompata tono hok tajam; kebanyaka adege kato "Medan pandange diagak: bentuk mungki tok tepat"; adege perlu lebih kurang 2 GB memori kosong ("Memori tok cukup" kalu tak); bilo versi AI disandar, pencari pendua Immich pasang tiap gambo nga adege dio nga selalu cadang simpang adege, fail hok lagi berat: simpang hok asal. Telefon nga TV tak buat apo-apo, nga headset buat rupo timbul jah; adege datang dari satu gambo, belum dari beberapo gambo tempat hok samo.
+
+**Komponen**: kat komputer, Settings, "AI nga 3D" senaraika komponen tiap ciri nga saiz dio, "Muat turun" nga "Buang", lepah tu "Buang semuo komponen AI" nga "Pindoh komponen AI" ko pemacu lain; "Ciri AI" dimatika sorok sumo butang AI nga tak muat turun apo-apo. Tiap fail disemak nga SHA-256 dio. Kat Windows dio duduk dale `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, hok penyahpasang padam (buke folder hok demo pindoh dio ko); kat Linux dale `~/.local/share/immuch360/ai-components` kat kebanyaka sistem, nga kat Mac dale `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Dale Quest, "AI nga 3D" ado dale Settings, Advanced, nga cache rupo timbul.
+
+Lagi: nota [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) nga [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), nga [model, lesen dio, sumber dio nga jumlah semak dio](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Panduan pengguno dapat bab AI dio pado pusinga seteruh; sampai tu, bahagian ni lah panduan dio.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

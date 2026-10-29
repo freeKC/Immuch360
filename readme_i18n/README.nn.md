@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Norsk nynorsk</b> · Andre språk (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Dine media. Alle skjermar. Alle perspektiv. Nytt: gjer bileta dine om til 3D-bilete, 3D-scener og 360°-panorama. Laga av KI på din eigen datamaskin. Bileta dine forlèt han aldri. Android, iPhone og iPad, Android TV, LG- og Samsung-TV-ar, Meta Quest, Windows, macOS, Linux. Ein illustrasjon, ikkje eit skjermbilete: i skumringa framfor ei havbukt, det same rommet fire gonger, som eit flatt bilete på ein telefon, i svevande lag framfor eit kvitt hovudsett, som ei scene på ein berbar datamaskin og rulla ut på eit boga band som eit panorama, bundne saman av lysbogar">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Dine media. Alle skjermar. Alle perspektiv. Flate bilete og videoar, 360° og 3D, frå eininga di, NAS-en din, Immich-tenaren din, kameraa dine og dronen din. Ingen konto trengst. Nytt: 3D-bilete, 3D-scener og 360°-panorama laga av dine eigne bilete, av KI på datamaskina di. Android, iPhone og iPad, Android TV, LG- og Samsung-TV-ar, Meta Quest, Windows, macOS, Linux. Ein illustrasjon i skumringa framfor ei havbukt: ein lagringsboks, ein telefon, eit nettbrett, ein TV, ein berbar datamaskin og eit hovudsett, ein drone på himmelen og eit heimekamera, bundne saman av lysbogar">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Flate bilete og videoar, 360° og 3D, frå eininga di, NAS-en din, Immich-tenaren din, kameraa dine og dronen din. Ingen konto trengst. Immuch360 er ein gratis app med open kjeldekode som les bileta og videoane dine der dei ligg og spelar kvar av dei i visaren som passar: flatt, som ei kule du ser deg rundt i, i 3D, eller rundt deg i eit hovudsett. Han køyrer på telefonar, nettbrett, TV-ar, Meta Quest-hovudsett og datamaskiner.
 
-**Nytt: dei flate bileta dine, i 3D.** Vel eit bilete på datamaskina og få eit 3D-bilete, ei 3D-scene du kan gå inn i, eller eit 360°-panorama som tenkjer seg resten av staden rundt deg. I ein Meta Quest 3 eller 3S er eitt trykk på «KI-relieff» nok, og kva flatt bilete som helst får djupn. KI-en køyrer på din eigen datamaskin og ditt eige hovudsett, og ingenting blir sendt nokon stad. Eksperimentelt. [Sjå korleis](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Eit 3D-bilete laga av Immuch360 frå eitt vanleg bilete av ein gammal hall med galleri, søyler og lysekrone, i visinga Vipping: venstre og høgre auge etter tur, om lag seks gonger i sekundet, slik at søylene skil seg ut frå veggene">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Eitt bilete, fire måtar, alle ekte resultat frå Immuch360: eit kvitt rom med eit rundt bord og eit vindauge, slik det vart teke; 3D-biletet, som viser auget appen reknar ut, merket 3D KI, relieff estimert av KI; 3D-scena sett frå venstre og frå høgre, merket 3D-scene; nedst 360°-panoramaet generert rundt det, merket 360° KI, originalbiletet omrissa i midten og eit heilt studio dikta opp rundt det, med nokre rare ting">
-</p>
-<p align="center"><sub>Ekte resultat frå appen, laga av CC0-bilete frå Poly Haven, forminska, ikkje retusjerte, med merka til appen lagde til for denne sida. Øvst eit 3D-bilete, dei to auga etter tur; nedst eitt bilete på fire måtar, dei to scenevisingane teikna frå scenefila. Alt utanfor omrisset i panoramaet er dikta opp av KI.</sub></p>
+**Nytt: dei flate bileta dine, i 3D.** På ei datamaskin gjer «Lag 3D (KI)» eitt bilete om til eit 3D-bilete, ei 3D-scene eller eit 360°-panorama; i ein Meta Quest 3 eller 3S viser «KI-relieff» kva flatt bilete som helst i 3D. Eksperimentelt, og alt køyrer på dine eigne maskiner: [sjå korleis](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Uoffisiell fork av Immich-mobilappen. Ikkje knytt til Immich eller FUTO. Namnet kan lesast som «I am much 360».</sub>
@@ -33,9 +24,9 @@ Flate bilete og videoar, 360° og 3D, frå eininga di, NAS-en din, Immich-tenare
 - [Kva du kan gjere](#what-you-can-do)
 - [Få han på eininga di](#get-it-on-your-device)
 - [Slik gjer du](#how-to)
-  - [Gjer eitt bilete om til 3D, ei scene, eit panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Sjå bileta og videoane dine, med eller utan tenar](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Utforsk panorama, 360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Gjer eitt bilete om til 3D, ei scene, eit panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Sjå på TV-en med fjernkontrollen](#watch-on-the-tv-with-the-remote): [Android TV og Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Logg inn ein TV, eit hovudsett eller ein datamaskin med telefonen din](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Gå inn i bileta og videoane dine med ein Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Flate bilete og videoar, 360° og 3D, frå eininga di, NAS-en din, Immich-tenare
 <a id="who-it-is-for"></a>
 ## Kven han er for
 
-- **Bileta dine er flate** og du vil ha dei i 3D, som ei scene du kan lene deg inn i med eit hovudsett, eller inne i eit 360°-panorama, utan 3D-kamera: [gjer eitt bilete om til 3D, ei scene, eit panorama](#turn-one-photo-into-3d-a-scene-a-panorama), nytt, laga av KI på din eigen datamaskin.
 - **Du filmar eller fotograferer i 360° eller 3D** og vil sjå deg rundt i opptaka dine, ikkje sjå dei flate, doble eller strekte: [360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d).
 - **Bileta og filmane dine ligg på ein NAS, ein datamaskin, Plex eller Immich** og du vil sjå dei på TV-en utan å kopiere noko: [på TV-en](#watch-on-the-tv-with-the-remote), [NAS, delingar og Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Du har ein Meta Quest** og vil gå inn i dine eigne bilete og videoar: [i hovudsettet](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Bileta dine er flate** og du vil ha dei i 3D, som ei scene du kan lene deg inn i med eit hovudsett, eller inne i eit 360°-panorama, utan 3D-kamera: [gjer eitt bilete om til 3D, ei scene, eit panorama](#turn-one-photo-into-3d-a-scene-a-panorama), nytt, laga av KI på din eigen datamaskin.
 - **Du køyrer Immich** og vil ha appen, pluss dei immersive visarane og storskjermane du loggar inn frå telefonen: [Immich-biblioteket ditt](#keep-your-immich-library-with-more), [jamført med Immich](#compared-with-immich).
 - **Du overvakar heimen med Tapo-kamera** og vil ha dei ved sida av bileta dine, også på TV-en (ikkje sjekka med eit ekte kamera enno): [heimekamera](#watch-your-home-cameras-on-the-big-screen).
 - **Du flyg ein DJI-drone** og vil ha direktebiletet på telefonen utan DJI Fly, og i ein Meta Quest eller på ein Android TV for dei som er med deg (eksperimentell): [dronen din](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ I KI-radene tyder «les det» at eininga opnar det ein datamaskin har laga, og l
 
 Kvar linje opnar rettleiinga si nedanfor. Den fullstendige rettleiinga, med alle val, meldingar og grenser, er i [brukarrettleiinga](../docs/immuch360/user-guide.md).
 
-1. [Gjer eitt bilete om til eit 3D-bilete, ei 3D-scene eller eit 360°-panorama](#turn-one-photo-into-3d-a-scene-a-panorama): laga av KI på datamaskina di, sett i 3D i ein Meta Quest, som også gir kva flatt bilete som helst djupn. *Nytt, eksperimentelt.*
-2. [Sjå bileta og videoane dine, med eller utan tenar](#watch-your-photos-and-videos-with-or-without-a-server): eit galleri og ein spelar, på eininga åleine eller med Immich-tenaren din.
-3. [Sjå deg rundt i 360°-bilete og -videoar, panorama, VR180 og 3D](#explore-panoramas-360-vr180-and-3d): ei kule du snur med ein finger, telefonen eller fjernkontrollen.
+1. [Sjå bileta og videoane dine, med eller utan tenar](#watch-your-photos-and-videos-with-or-without-a-server): eit galleri og ein spelar, på eininga åleine eller med Immich-tenaren din.
+2. [Sjå deg rundt i 360°-bilete og -videoar, panorama, VR180 og 3D](#explore-panoramas-360-vr180-and-3d): ei kule du snur med ein finger, telefonen eller fjernkontrollen.
+3. [Gjer eitt bilete om til eit 3D-bilete, ei 3D-scene eller eit 360°-panorama](#turn-one-photo-into-3d-a-scene-a-panorama): laga av KI på datamaskina di, sett i 3D i ein Meta Quest, som også gir kva flatt bilete som helst djupn. *Nytt, eksperimentelt.*
 4. [Sjå på TV-en med fjernkontrollen](#watch-on-the-tv-with-the-remote): Android TV og Google TV, LG-TV-ar, og Samsung-TV-ar som test-build.
 5. [Logg inn ein TV, eit hovudsett eller ein datamaskin med telefonen](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): skann QR-koden, stadfest, sjå.
 6. [Gå inn i bileta og videoane dine med ein Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° rundt deg, 3D i ekte 3D.
@@ -257,53 +248,6 @@ Opne `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` frå [desktop pre-relea
 
 Kvar del seier kva du får, deretter stega, deretter grensene. [Brukarrettleiinga](../docs/immuch360/user-guide.md) har alle val og meldingar.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Gjer eitt bilete om til 3D, ei scene, eit panorama
-
-Dei fleste bileta dine er flate, og du kan ikkje gå tilbake og ta dei på nytt i 3D. Immuch360 gir dei djupn. På datamaskina blir eitt bilete eit **3D-bilete**, ei **3D-scene** du lener deg inn i med eit hovudsett, eller eit **360°-panorama** som tenkjer seg resten av staden rundt deg. Ein Quest 3 eller 3S lagar relieffet sjølv, for kva flatt bilete som helst. Alt køyrer på din eigen datamaskin og ditt eige hovudsett: ingen nettsky, ingen konto, originalane dine blir aldri endra. Nytt i build 32 og desktop build 13, eksperimentelt og slått på som standard. Immich-appen har ingenting liknande.
-
-**På datamaskina**, med desktop build 13 på Windows, Linux eller macOS:
-
-1. Vel eitt eller fleire bilete i biblioteket eller i ei mappe, deretter «Lag 3D (KI)».
-2. Vel kva du vil ha: «3D-bilete», «3D-scene», «360°-panorama», eller «3D-versjon av eit 360°-bilete» for dine eigne 360°-opptak. Boksen seier kva KI-en skal estimere eller dikte opp («Om lag 96 % av dette panoramaet blir dikta opp av KI»), om lag kor lang tid det tek på denne datamaskina, og kvar fila hamnar: «Ved sida av originalen» eller «Ei mappe eg vel sjølv». Ein type denne datamaskina ikkje kan lage, blir verande grå, med grunnen, til dømes «Ikkje på Mac enno» eller «Grafikkortet har 6.0 GiB minne, 360°-panorama treng 7.5 GiB».
-3. Første gongen tilbyr boksen komponentane for den typen: Last ned, éin gong. Dei køyrer på denne datamaskina og fungerer utan nett etterpå.
-4. Konverter. Jobbane står i kø i to spor, prosessoren og grafikkortet, med stega og tida som står att; Avbryt stoppar ein jobb når som helst, og appen spør før han blir avslutta.
-5. Opne resultatet. Eit 3D-bilete blir vist som «Venstre auge», «Side om side», «Vipping» (animasjonen øvst på denne sida) eller «Raud og cyan» for brillar; ei scene har «Førehandsvis i 3D», som du snur med musa eller styreflata, og «Eksporter for andre 3D-appar (.glb)»; eit panorama blir opna i 360°-visaren.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Boksen Lag 3D (KI) i Windows-appen: 3D-bilete, 3D-scene, 360°-panorama, valt, og 3D-versjon av eit 360°-bilete; Generert av KI utanfor kantane av biletet; Om lag 96 % av dette panoramaet blir dikta opp av KI; Ei fullført konvertering garanterer ikkje eit godt resultat; Om lag 5 min per bilete på dette grafikkortet; Lag òg 3D-versjonen, kryssa av; Lagre i: Ved sida av originalen, eller Ei mappe eg vel sjølv; Avbryt og Konverter">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360°-visaren i Windows-appen opnar eit panorama han har generert frå eit bilete av ei bukt sett frå eit fjell: merka 360° KI og 360° øvst til høgre, originalbiletet omrissa i midten under orda Originalbiletet, og Generert av KI utanfor kantane av biletet nedst">
-</p>
-
-| | 3D-bilete | 3D-scene | 360°-panorama |
-|---|---|---|---|
-| Kva du får | `<name>_3D_LRF_Full_SBS.jpg`, eit 3D-bilete side om side: biletet ditt for venstre auge, eit utrekna høgre auge | `<name>_scene3D.jpg`, eit bilete som ber scena, i lag | `<name>_360.jpg`, 6144 x 3072, og med «Lag òg 3D-versjonen», `<name>_360_3D.jpg` |
-| Kva KI gjer | estimerer relieffet i biletet (Depth Anything V2 Small) | estimerer forma på staden (MoGe-2) og fyller det biletet gøymer (LaMa), for ei scene i lag | diktar opp alt utanfor kantane av biletet (FLUX.2 klein 4B og ein 360°-LoRA); dine eigne pikslar blir verande der dei var |
-| Kor lang tid | nokre sekund per bilete | 15 til 45 sekund per bilete | om lag 5 minutt på ein berbar med eit RTX 4060, 30 sekund til for 3D-versjonen |
-| Det køyrer på | prosessoren i ein Windows-, Linux- eller macOS-datamaskin | prosessoren i ein Windows-, Linux- eller macOS-datamaskin | eit grafikkort med Vulkan og 8 GB eige minne, i ein Windows- eller Linux-datamaskin med 16 GB minne; NVIDIA prøvd, AMD- og Intel-kort ikkje enno; ikkje på Mac enno |
-| Lasta ned éin gong, når du ber om det | om lag 110 MB | 349 MB til | om lag 5.4 GB til |
-| Kvar du ser det | i 3D i ein Meta Quest; «Vipping» eller «Raud og cyan» på ein datamaskin | i ein Meta Quest, der du lener deg inn i ho; «Førehandsvis i 3D» på datamaskina | rundt deg i ein Meta Quest, og i alle 360°-visarar |
-
-Kvar ny fil hamnar ved sida av originalen sin, aldri over han, eller i ei mappe du vel når mappa til originalen ikkje tek imot nye filer; i ei nettverksmappe først når du har sagt ja for den mappa («Immuch360 skriv nye filer der, aldri originalane»). Biblioteket knyter kvar versjon til originalen med merket sitt, «3D KI», «3D-scene» eller «360° KI», i albumet «Immuch360 KI-versjonar», som blir halde utanfor Immich-sikkerheitskopien din med mindre du slår på «Ta òg sikkerheitskopi av KI-versjonar»; pass på, «Vel alle» i sikkerheitskopialbuma vel også dette albumet og slår på den brytaren. For å sjå ei fil i Quest, lagre ho på NAS-en din, ta sikkerheitskopi til Immich-tenaren din eller, på Windows, slå på «Del denne datamaskina på nettverket».
-
-**I ein Meta Quest**, med build 32:
-
-- **KI-relieff**: opne kva flatt bilete som helst, frå biblioteket ditt eller ei deling, og trykk på «KI-relieff» i topplinja: hovudsettet estimerer relieffet sjølv og viser biletet i 3D, «Relieff estimert av KI». Modellen, 99.5 MB, blir lasta ned første gongen du trykkjer, og relieffa blir lagra i eit mellomlager. «Opne KI-relieff i 2.5D (eksperimentell)», i Innstillingar, Avansert, «KI og 3D», får nære ting til å flytte seg framfor bakgrunnen når du rører hovudet. På ein Quest 2 eller ein Quest Pro blir knappen verande grå, «Ikkje testa på dette headsettet enno», til du slår på «KI-relieff på Quest 2 og Quest Pro (ikkje testa)» der.
-- **3D-bilete og scener frå datamaskina**: «Vis i 3D» viser eit 3D-bilete i ekte 3D. «Sjå 3D-scena» på originalen, eller «Utforsk 3D-scena» på scena, set scena inn i rommet ditt: len deg inn, eller gli med venstre styrespak inne i det gjenoppbygde området («Rom å bevege seg i: om lag 0.5 m i kvar retning» for rommet øvst på denne sida); laga blir flate og mørke ved kanten, eit klikk på ein styrespak tilbakestiller visinga, og B eller Y går tilbake.
-- **Panorama**: eit generert panorama blir opna rundt deg, vendt mot biletet ditt, med «Generert av KI utanfor kantane av biletet» og eit tynt omriss av originalbiletet, som blir borte etter nokre sekund; 3D-versjonen er i ekte 3D.
-
-**På telefonar, nettbrett og TV-ar** blir filene ein datamaskin har laga, opna slik dei er, og ingenting blir generert der. Eit panorama blir opna i 360°-visaren med merket «360° KI», setninga og omrisset på Android-telefonar, -nettbrett og Android TV; på iPhone, iPad, LG- og Samsung-TV-ar blir det førebels opna som eit vanleg 360°-bilete. Ei scene blir vist som biletet sitt, med eit lite 3D SCENE-merke i hjørnet; på Android legg detaljane til «Opne det på ein Meta Quest for å utforske det». Eit 3D-bilete viser dei to auga side om side.
-
-**Kva som er ekte og kva som ikkje er det, blir alltid sagt.** Det er sjølve poenget, ikkje det med lita skrift. Relieffet i eit 3D-bilete er estimert frå eitt bilete, og det biletet gøymer, er fylt inn og ikkje ekte. Ei scene er «Rekonstruert frå eitt bilete, utforsk innanfor grensene». Eit panorama held dei ekte pikslane dine der dei var og diktar opp resten, om lag 90 % av kula for eit typisk bilete, og boksen seier kor mykje før du startar. Appen seier det der du ser, med «Relieff estimert av KI», «Generert av KI utanfor kantane av biletet» og merka, og filene seier det òg: i vår XMP, og for scenene og panoramaa i IPTC-feltet for digital kjeldetype for eit bilete laga med KI, slik at andre appar kan skilje eit generert panorama frå eit ekte 360°-bilete. Originalane dine blir aldri endra, og ingenting forlèt datamaskina eller hovudsettet ditt. Som boksen seier: «Ei fullført konvertering garanterer ikkje eit godt resultat.»
-
-**Kva som er sjekka**, per 29. oktober 2026, med test-buildar av denne koden: 3D-bilete av Linux-appen i ein container på ein Linux-PC, også utan nett; scener av Windows-appen på ein berbar med eit RTX 4060 Laptop GPU (ti på 2 min 39 s) og av motoren på Linux-PC-en; på den berbare fire panorama på 4 min 16 s til 4 min 44 s kvar, 3D-versjonane på om lag 30 s, med Avbryt, ein drepen app, eit anna program som heldt grafikkortet, og inga nettverkstilkopling frå appen under testane.
-
-Avgrensingar: ingen 360°-panorama på Mac enno («Ikkje på Mac enno»), heller ikkje utan eit eigna grafikkort, og boksen seier kvifor («Fann ikkje noko grafikkort med Vulkan», «Integrert grafikk deler minnet til datamaskina: for sakte for panorama», med «Prøv på integrert grafikk (ikkje testa)» for å prøve likevel); inne i eit panorama kan kanten av biletet ditt synast som eit skarpt sprang i fargetone; dei fleste scener seier «Synsfeltet er gissa: formene kan vere feil»; ei scene treng om lag 2 GB ledig minne (elles «Ikkje nok minne»); med KI-versjonar i sikkerheitskopien parar duplikatsøket i Immich kvart bilete med scena si og føreslår ofte å behalde scena, den tyngste fila: behald originalen. Telefonar og TV-ar lagar ingenting, og hovudsettet lagar berre relieff; ei scene kjem frå eitt bilete, enno ikkje frå fleire bilete av same staden.
-
-**Komponentane**: på datamaskina viser Innstillingar, «KI og 3D» komponentane for kvar funksjon med storleiken, Last ned og Fjern, deretter «Fjern alle KI-komponentane» og «Flytt KI-komponentane» til ein annan disk; «KI-funksjonar» slått av gøymer alle KI-knappar og lastar ikkje ned noko. Kvar fil blir kontrollert med SHA-256. På Windows ligg dei i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, som avinstallasjonsprogrammet slettar (ikkje ei mappe du har flytta dei til); på Linux i `~/.local/share/immuch360/ai-components` på dei fleste system, og på ein Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I Quest ligg «KI og 3D» i Innstillingar, Avansert, saman med relieffbufferen.
-
-Meir: merknadene til [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) og [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), og [modellane, lisensane, kjeldene og kontrollsummane deira](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Brukarrettleiinga får KI-kapittelet sitt i neste runde; inntil då er denne delen rettleiinga.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 kjenner flate bilete og videoar, panorama, 360°-bilete og -videoar, V
 På telefonar og tablettar kan ein stereoskopisk video også få djupne på den flate skjermen: Spatial 2.5D-spelaren brukar frontkameraet til å følgje hovudet ditt og viser synsvinkelen mellom dei to augo (eksperimentelt). Romlege Apple-bilete som er tatt med ein iPhone, blir gjenkjende og vist i 3D i ein Meta Quest.
 
 Meir: [360°-bilete og -videoar](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D og VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Romlege Apple-bilete og -videoar](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360°-lista](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Gjer eitt bilete om til 3D, ei scene, eit panorama
+
+Dei fleste bileta dine er flate, og du kan ikkje gå tilbake og ta dei på nytt i 3D. Immuch360 gir dei djupn. På datamaskina blir eitt bilete eit **3D-bilete**, ei **3D-scene** du lener deg inn i med eit hovudsett, eller eit **360°-panorama** som tenkjer seg resten av staden rundt deg. Ein Quest 3 eller 3S lagar relieffet sjølv, for kva flatt bilete som helst. Alt køyrer på din eigen datamaskin og ditt eige hovudsett: ingen nettsky, ingen konto, originalane dine blir aldri endra. Nytt i build 32 og desktop build 13, eksperimentelt og slått på som standard. Immich-appen har ingenting liknande.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Eit 3D-bilete laga av Immuch360 frå eitt vanleg bilete av ein gammal hall med galleri, søyler og lysekrone, i visinga Vipping: venstre og høgre auge etter tur, om lag seks gonger i sekundet, slik at søylene skil seg ut frå veggene">
+</p>
+<p align="center"><sub>Eit ekte resultat frå appen, laga av eit CC0-bilete frå Poly Haven, forminska, ikkje retusjert: eit 3D-bilete, dei to auga etter tur.</sub></p>
+
+**På datamaskina**, med desktop build 13 på Windows, Linux eller macOS:
+
+1. Vel eitt eller fleire bilete i biblioteket eller i ei mappe, deretter «Lag 3D (KI)».
+2. Vel kva du vil ha: «3D-bilete», «3D-scene», «360°-panorama», eller «3D-versjon av eit 360°-bilete» for dine eigne 360°-opptak. Boksen seier kva KI-en skal estimere eller dikte opp («Om lag 96 % av dette panoramaet blir dikta opp av KI»), om lag kor lang tid det tek på denne datamaskina, og kvar fila hamnar: «Ved sida av originalen» eller «Ei mappe eg vel sjølv». Ein type denne datamaskina ikkje kan lage, blir verande grå, med grunnen, til dømes «Ikkje på Mac enno» eller «Grafikkortet har 6.0 GiB minne, 360°-panorama treng 7.5 GiB».
+3. Første gongen tilbyr boksen komponentane for den typen: Last ned, éin gong. Dei køyrer på denne datamaskina og fungerer utan nett etterpå.
+4. Konverter. Jobbane står i kø i to spor, prosessoren og grafikkortet, med stega og tida som står att; Avbryt stoppar ein jobb når som helst, og appen spør før han blir avslutta.
+5. Opne resultatet. Eit 3D-bilete blir vist som «Venstre auge», «Side om side», «Vipping» (animasjonen over) eller «Raud og cyan» for brillar; ei scene har «Førehandsvis i 3D», som du snur med musa eller styreflata, og «Eksporter for andre 3D-appar (.glb)»; eit panorama blir opna i 360°-visaren.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Boksen Lag 3D (KI) i Windows-appen: 3D-bilete, 3D-scene, 360°-panorama, valt, og 3D-versjon av eit 360°-bilete; Generert av KI utanfor kantane av biletet; Om lag 96 % av dette panoramaet blir dikta opp av KI; Ei fullført konvertering garanterer ikkje eit godt resultat; Om lag 5 min per bilete på dette grafikkortet; Lag òg 3D-versjonen, kryssa av; Lagre i: Ved sida av originalen, eller Ei mappe eg vel sjølv; Avbryt og Konverter">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360°-visaren i Windows-appen opnar eit panorama han har generert frå eit bilete av ei bukt sett frå eit fjell: merka 360° KI og 360° øvst til høgre, originalbiletet omrissa i midten under orda Originalbiletet, og Generert av KI utanfor kantane av biletet nedst">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Eitt bilete, fire måtar, alle ekte resultat frå Immuch360: eit kvitt rom med eit rundt bord og eit vindauge, slik det vart teke; 3D-biletet, som viser auget appen reknar ut, merket 3D KI, relieff estimert av KI; 3D-scena sett frå venstre og frå høgre, merket 3D-scene; nedst 360°-panoramaet generert rundt det, merket 360° KI, originalbiletet omrissa i midten og eit heilt studio dikta opp rundt det, med nokre rare ting">
+</p>
+<p align="center"><sub>Eitt bilete på fire måtar: ekte resultat frå appen, laga av eit CC0-bilete frå Poly Haven, forminska, ikkje retusjert, med merka til appen lagde til for denne sida, dei to scenevisingane teikna frå scenefila. Alt utanfor omrisset i panoramaet er dikta opp av KI.</sub></p>
+
+| | 3D-bilete | 3D-scene | 360°-panorama |
+|---|---|---|---|
+| Kva du får | `<name>_3D_LRF_Full_SBS.jpg`, eit 3D-bilete side om side: biletet ditt for venstre auge, eit utrekna høgre auge | `<name>_scene3D.jpg`, eit bilete som ber scena, i lag | `<name>_360.jpg`, 6144 x 3072, og med «Lag òg 3D-versjonen», `<name>_360_3D.jpg` |
+| Kva KI gjer | estimerer relieffet i biletet (Depth Anything V2 Small) | estimerer forma på staden (MoGe-2) og fyller det biletet gøymer (LaMa), for ei scene i lag | diktar opp alt utanfor kantane av biletet (FLUX.2 klein 4B og ein 360°-LoRA); dine eigne pikslar blir verande der dei var |
+| Kor lang tid | nokre sekund per bilete | 15 til 45 sekund per bilete | om lag 5 minutt på ein berbar med eit RTX 4060, 30 sekund til for 3D-versjonen |
+| Det køyrer på | prosessoren i ein Windows-, Linux- eller macOS-datamaskin | prosessoren i ein Windows-, Linux- eller macOS-datamaskin | eit grafikkort med Vulkan og 8 GB eige minne, i ein Windows- eller Linux-datamaskin med 16 GB minne; NVIDIA prøvd, AMD- og Intel-kort ikkje enno; ikkje på Mac enno |
+| Lasta ned éin gong, når du ber om det | om lag 110 MB | 349 MB til | om lag 5.4 GB til |
+| Kvar du ser det | i 3D i ein Meta Quest; «Vipping» eller «Raud og cyan» på ein datamaskin | i ein Meta Quest, der du lener deg inn i ho; «Førehandsvis i 3D» på datamaskina | rundt deg i ein Meta Quest, og i alle 360°-visarar |
+
+Kvar ny fil hamnar ved sida av originalen sin, aldri over han, eller i ei mappe du vel når mappa til originalen ikkje tek imot nye filer; i ei nettverksmappe først når du har sagt ja for den mappa («Immuch360 skriv nye filer der, aldri originalane»). Biblioteket knyter kvar versjon til originalen med merket sitt, «3D KI», «3D-scene» eller «360° KI», i albumet «Immuch360 KI-versjonar», som blir halde utanfor Immich-sikkerheitskopien din med mindre du slår på «Ta òg sikkerheitskopi av KI-versjonar»; pass på, «Vel alle» i sikkerheitskopialbuma vel også dette albumet og slår på den brytaren. For å sjå ei fil i Quest, lagre ho på NAS-en din, ta sikkerheitskopi til Immich-tenaren din eller, på Windows, slå på «Del denne datamaskina på nettverket».
+
+**I ein Meta Quest**, med build 32:
+
+- **KI-relieff**: opne kva flatt bilete som helst, frå biblioteket ditt eller ei deling, og trykk på «KI-relieff» i topplinja: hovudsettet estimerer relieffet sjølv og viser biletet i 3D, «Relieff estimert av KI». Modellen, 99.5 MB, blir lasta ned første gongen du trykkjer, og relieffa blir lagra i eit mellomlager. «Opne KI-relieff i 2.5D (eksperimentell)», i Innstillingar, Avansert, «KI og 3D», får nære ting til å flytte seg framfor bakgrunnen når du rører hovudet. På ein Quest 2 eller ein Quest Pro blir knappen verande grå, «Ikkje testa på dette headsettet enno», til du slår på «KI-relieff på Quest 2 og Quest Pro (ikkje testa)» der.
+- **3D-bilete og scener frå datamaskina**: «Vis i 3D» viser eit 3D-bilete i ekte 3D. «Sjå 3D-scena» på originalen, eller «Utforsk 3D-scena» på scena, set scena inn i rommet ditt: len deg inn, eller gli med venstre styrespak inne i det gjenoppbygde området («Rom å bevege seg i: om lag 0.5 m i kvar retning» for rommet vist over); laga blir flate og mørke ved kanten, eit klikk på ein styrespak tilbakestiller visinga, og B eller Y går tilbake.
+- **Panorama**: eit generert panorama blir opna rundt deg, vendt mot biletet ditt, med «Generert av KI utanfor kantane av biletet» og eit tynt omriss av originalbiletet, som blir borte etter nokre sekund; 3D-versjonen er i ekte 3D.
+
+**På telefonar, nettbrett og TV-ar** blir filene ein datamaskin har laga, opna slik dei er, og ingenting blir generert der. Eit panorama blir opna i 360°-visaren med merket «360° KI», setninga og omrisset på Android-telefonar, -nettbrett og Android TV; på iPhone, iPad, LG- og Samsung-TV-ar blir det førebels opna som eit vanleg 360°-bilete. Ei scene blir vist som biletet sitt, med eit lite 3D SCENE-merke i hjørnet; på Android legg detaljane til «Opne det på ein Meta Quest for å utforske det». Eit 3D-bilete viser dei to auga side om side.
+
+**Kva som er ekte og kva som ikkje er det, blir alltid sagt.** Det er sjølve poenget, ikkje det med lita skrift. Relieffet i eit 3D-bilete er estimert frå eitt bilete, og det biletet gøymer, er fylt inn og ikkje ekte. Ei scene er «Rekonstruert frå eitt bilete, utforsk innanfor grensene». Eit panorama held dei ekte pikslane dine der dei var og diktar opp resten, om lag 90 % av kula for eit typisk bilete, og boksen seier kor mykje før du startar. Appen seier det der du ser, med «Relieff estimert av KI», «Generert av KI utanfor kantane av biletet» og merka, og filene seier det òg: i vår XMP, og for scenene og panoramaa i IPTC-feltet for digital kjeldetype for eit bilete laga med KI, slik at andre appar kan skilje eit generert panorama frå eit ekte 360°-bilete. Originalane dine blir aldri endra, og ingenting forlèt datamaskina eller hovudsettet ditt. Som boksen seier: «Ei fullført konvertering garanterer ikkje eit godt resultat.»
+
+**Kva som er sjekka**, per 29. oktober 2026, med test-buildar av denne koden: 3D-bilete av Linux-appen i ein container på ein Linux-PC, også utan nett; scener av Windows-appen på ein berbar med eit RTX 4060 Laptop GPU (ti på 2 min 39 s) og av motoren på Linux-PC-en; på den berbare fire panorama på 4 min 16 s til 4 min 44 s kvar, 3D-versjonane på om lag 30 s, med Avbryt, ein drepen app, eit anna program som heldt grafikkortet, og inga nettverkstilkopling frå appen under testane.
+
+Avgrensingar: ingen 360°-panorama på Mac enno («Ikkje på Mac enno»), heller ikkje utan eit eigna grafikkort, og boksen seier kvifor («Fann ikkje noko grafikkort med Vulkan», «Integrert grafikk deler minnet til datamaskina: for sakte for panorama», med «Prøv på integrert grafikk (ikkje testa)» for å prøve likevel); inne i eit panorama kan kanten av biletet ditt synast som eit skarpt sprang i fargetone; dei fleste scener seier «Synsfeltet er gissa: formene kan vere feil»; ei scene treng om lag 2 GB ledig minne (elles «Ikkje nok minne»); med KI-versjonar i sikkerheitskopien parar duplikatsøket i Immich kvart bilete med scena si og føreslår ofte å behalde scena, den tyngste fila: behald originalen. Telefonar og TV-ar lagar ingenting, og hovudsettet lagar berre relieff; ei scene kjem frå eitt bilete, enno ikkje frå fleire bilete av same staden.
+
+**Komponentane**: på datamaskina viser Innstillingar, «KI og 3D» komponentane for kvar funksjon med storleiken, Last ned og Fjern, deretter «Fjern alle KI-komponentane» og «Flytt KI-komponentane» til ein annan disk; «KI-funksjonar» slått av gøymer alle KI-knappar og lastar ikkje ned noko. Kvar fil blir kontrollert med SHA-256. På Windows ligg dei i `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, som avinstallasjonsprogrammet slettar (ikkje ei mappe du har flytta dei til); på Linux i `~/.local/share/immuch360/ai-components` på dei fleste system, og på ein Mac i `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. I Quest ligg «KI og 3D» i Innstillingar, Avansert, saman med relieffbufferen.
+
+Meir: merknadene til [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) og [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), og [modellane, lisensane, kjeldene og kontrollsummane deira](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Brukarrettleiinga får KI-kapittelet sitt i neste runde; inntil då er denne delen rettleiinga.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>

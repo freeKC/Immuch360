@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>Slovenčina</b> · Ďalšie jazyky (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29.jpg" width="100%" alt="Immuch360. Vaše médiá. Každá obrazovka. Každý pohľad. Novinka: premeňte svoje fotky na 3D fotky, 3D scény a 360° panorámy. Vytvorí ich AI na vašom vlastnom počítači. Vaše fotky ho nikdy neopustia. Android, iPhone a iPad, Android TV, televízory LG a Samsung, Meta Quest, Windows, macOS, Linux. Ilustrácia, nie snímka obrazovky: za súmraku pred morskou zátokou tá istá izba štyrikrát, ako plochá fotka v telefóne, v plávajúcich vrstvách pred bielym headsetom, ako scéna v notebooku a rozvinutá na zakrivenom páse ako panoráma, prepojené svetelnými oblúkmi">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Vaše médiá. Každá obrazovka. Každý pohľad. Ploché, 360° a 3D fotky a videá z vášho zariadenia, vášho NAS, vášho servera Immich, vašich kamier a vášho dronu. Bez účtu. Novinka: 3D fotky, 3D scény a 360° panorámy vytvorené z vašich vlastných fotiek pomocou AI na vašom počítači. Android, iPhone a iPad, Android TV, televízory LG a Samsung, Meta Quest, Windows, macOS, Linux. Ilustrácia za súmraku pred morskou zátokou: dátové úložisko, telefón, tablet, televízor, notebook a headset, dron na oblohe a domáca kamera, prepojené svetelnými oblúkmi">
 </p>
 
 # Immuch360
@@ -10,16 +10,7 @@
 
 Ploché, 360° a 3D fotky a videá z vášho zariadenia, vášho NAS, vášho servera Immich, vašich kamier a vášho dronu. Bez účtu. Immuch360 je bezplatná aplikácia s otvoreným zdrojovým kódom, ktorá číta vaše fotky a videá tam, kde sú, a každé prehrá v prehliadači, ktorý mu sedí: ploché, ako guľu, v ktorej sa rozhliadate, v 3D alebo všade okolo vás v headsete. Beží na telefónoch, tabletoch, televízoroch, headsetoch Meta Quest a počítačoch.
 
-**Novinka: vaše ploché fotky v 3D.** Vyberte fotku v počítači a získajte 3D fotku, 3D scénu, do ktorej môžete vstúpiť, alebo 360° panorámu, ktorá si domyslí zvyšok miesta okolo vás. V Meta Quest 3 alebo 3S stačí jedno stlačenie „AI reliéf“ a každá plochá fotka vystúpi do priestoru. AI beží na vašom vlastnom počítači a headsete a nič sa nikam neposiela. Experimentálne. [Ako na to](#turn-one-photo-into-3d-a-scene-a-panorama).
-
-<p align="center">
-  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="3D fotka, ktorú Immuch360 vytvoril z jednej obyčajnej fotky starej sály s galériou, stĺpmi a lustrom, v zobrazení Kývanie: jej ľavé a pravé oko striedavo, približne šesťkrát za sekundu, takže stĺpy vystupujú zo stien">
-</p>
-
-<p align="center">
-  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Jedna fotka štyrmi spôsobmi, všetko skutočné výstupy Immuch360: biela izba s okrúhlym stolom a oknom, tak ako bola odfotená; jej 3D fotka s okom, ktoré aplikácia vypočíta, odznak 3D AI, reliéf odhadnutý pomocou AI; jej 3D scéna videná zľava a sprava, odznak 3D scéna; dole 360° panoráma vygenerovaná okolo nej, odznak 360° AI, pôvodná fotka ohraničená v strede a okolo nej vymyslené celé štúdio, vrátane niekoľkých zvláštnych predmetov">
-</p>
-<p align="center"><sub>Skutočné výstupy aplikácie z fotiek CC0 z Poly Haven, zmenšené, neretušované, s odznakmi aplikácie pridanými pre túto stránku. Hore 3D fotka, jej dve oči striedavo; dole jedna fotka štyrmi spôsobmi, dva pohľady na scénu vykreslené zo súboru scény. Všetko mimo obrysu panorámy vymyslela AI.</sub></p>
+**Novinka: vaše ploché fotky v 3D.** V počítači „Vytvoriť 3D (AI)“ premení jednu fotku na 3D fotku, 3D scénu alebo 360° panorámu; v Meta Quest 3 alebo 3S „AI reliéf“ zobrazí každú plochú fotku v 3D. Experimentálne a všetko beží na vašich vlastných zariadeniach: [ako na to](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Neoficiálny fork mobilnej aplikácie Immich. Nesúvisí s Immich ani FUTO. Názov sa číta ako „I am much 360“.</sub>
@@ -33,9 +24,9 @@ Ploché, 360° a 3D fotky a videá z vášho zariadenia, vášho NAS, vášho se
 - [Čo môžete robiť](#what-you-can-do)
 - [Inštalácia do vášho zariadenia](#get-it-on-your-device)
 - [Ako na to](#how-to)
-  - [Premeňte jednu fotku na 3D, scénu, panorámu](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Pozerajte svoje fotky a videá, so serverom aj bez neho](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Objavte panorámy, 360°, VR180 a 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Premeňte jednu fotku na 3D, scénu, panorámu](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Pozerajte na televízore s diaľkovým ovládaním](#watch-on-the-tv-with-the-remote): [Android TV a Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Prihláste televízor, headset alebo počítač telefónom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Vstúpte do svojich fotiek a videí s Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
@@ -57,10 +48,10 @@ Ploché, 360° a 3D fotky a videá z vášho zariadenia, vášho NAS, vášho se
 <a id="who-it-is-for"></a>
 ## Pre koho je
 
-- **Vaše fotky sú ploché** a chcete ich v 3D, ako scénu, do ktorej sa v headsete nakloníte, alebo vo vnútri 360° panorámy, bez 3D fotoaparátu: [premeňte jednu fotku na 3D, scénu, panorámu](#turn-one-photo-into-3d-a-scene-a-panorama), novinka, vytvára to AI na vašom vlastnom počítači.
 - **Fotíte v 360° alebo 3D** a chcete sa vo svojich záberoch rozhliadať, nie ich vidieť ploché, zdvojené alebo roztiahnuté: [360°, VR180 a 3D](#explore-panoramas-360-vr180-and-3d).
 - **Vaše fotky a filmy sú na NAS, počítači, v Plexe alebo Immich** a chcete ich na televízore bez kopírovania: [na televízore](#watch-on-the-tv-with-the-remote), [NAS, úložiská a Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Máte Meta Quest** a chcete vstúpiť do svojich vlastných fotiek a videí: [v headsete](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Vaše fotky sú ploché** a chcete ich v 3D, ako scénu, do ktorej sa v headsete nakloníte, alebo vo vnútri 360° panorámy, bez 3D fotoaparátu: [premeňte jednu fotku na 3D, scénu, panorámu](#turn-one-photo-into-3d-a-scene-a-panorama), novinka, vytvára to AI na vašom vlastnom počítači.
 - **Používate Immich** a chcete jeho aplikáciu, plus imerzívne prehliadače a veľké obrazovky prihlásené z telefónu: [vaša knižnica Immich](#keep-your-immich-library-with-more), [v porovnaní s Immich](#compared-with-immich).
 - **Strážite domov kamerami Tapo** a chcete ich mať vedľa svojich fotiek, aj na televízore (zatiaľ neoverené so skutočnou kamerou): [domáce kamery](#watch-your-home-cameras-on-the-big-screen).
 - **Lietate s dronom DJI** a chcete jeho živý obraz v telefóne bez DJI Fly a v Meta Quest alebo na Android TV pre ľudí, ktorí sú s vami (experimentálne): [váš dron](#see-what-your-drone-sees-on-your-phone).
@@ -174,9 +165,9 @@ V AI riadkoch „prečíta ju“ znamená, že zariadenie otvorí to, čo vytvor
 
 Každý riadok otvára nižšie svoj postup. Úplný návod, s každou voľbou, správou a limitom, je v [návode na používanie](../docs/immuch360/user-guide.md).
 
-1. [Premeňte jednu fotku na 3D fotku, 3D scénu alebo 360° panorámu](#turn-one-photo-into-3d-a-scene-a-panorama): vytvára to AI na vašom počítači, v 3D to uvidíte v Meta Quest, ktorý navyše dodá reliéf každej plochej fotke. *Novinka, experimentálne.*
-2. [Pozerajte svoje fotky a videá, so serverom aj bez neho](#watch-your-photos-and-videos-with-or-without-a-server): galéria a prehrávač, len v zariadení alebo s vaším serverom Immich.
-3. [Rozhliadajte sa v 360° fotkách a videách, panorámach, VR180 a 3D](#explore-panoramas-360-vr180-and-3d): guľa, ktorú otáčate prstom, telefónom alebo diaľkovým ovládaním.
+1. [Pozerajte svoje fotky a videá, so serverom aj bez neho](#watch-your-photos-and-videos-with-or-without-a-server): galéria a prehrávač, len v zariadení alebo s vaším serverom Immich.
+2. [Rozhliadajte sa v 360° fotkách a videách, panorámach, VR180 a 3D](#explore-panoramas-360-vr180-and-3d): guľa, ktorú otáčate prstom, telefónom alebo diaľkovým ovládaním.
+3. [Premeňte jednu fotku na 3D fotku, 3D scénu alebo 360° panorámu](#turn-one-photo-into-3d-a-scene-a-panorama): vytvára to AI na vašom počítači, v 3D to uvidíte v Meta Quest, ktorý navyše dodá reliéf každej plochej fotke. *Novinka, experimentálne.*
 4. [Pozerajte na televízore s diaľkovým ovládaním](#watch-on-the-tv-with-the-remote): Android TV a Google TV, televízory LG a televízory Samsung ako testovací build.
 5. [Prihláste televízor, headset alebo počítač telefónom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): naskenujte jeho QR kód, potvrďte, pozerajte.
 6. [Vstúpte do svojich fotiek a videí s Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° všade okolo vás, 3D v skutočnom 3D.
@@ -257,53 +248,6 @@ Otvorte `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` z [predbežného vyd
 
 Každá položka hovorí, čo získate, potom kroky a potom obmedzenia. [Návod na používanie](../docs/immuch360/user-guide.md) obsahuje každú voľbu a správu.
 
-<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
-### Premeňte jednu fotku na 3D, scénu, panorámu
-
-Väčšina vašich fotiek je plochých a vrátiť sa a odfotiť ich znova v 3D sa nedá. Immuch360 im dodá hĺbku. Na počítači sa z jednej fotky stane **3D fotka**, **3D scéna**, do ktorej sa v headsete nakloníte, alebo **360° panoráma**, ktorá si domyslí zvyšok miesta okolo vás. Quest 3 alebo 3S vytvorí reliéf sám, pre každú plochú fotku. Všetko beží na vašom vlastnom počítači a headsete: žiadny cloud, žiadny účet, vaše originály sa nikdy nezmenia. Novinka v builde 32 a desktop builde 13, experimentálna a predvolene zapnutá. Aplikácia Immich nič podobné nemá.
-
-**Na počítači**, s desktop buildom 13 vo Windows, Linuxe alebo macOS:
-
-1. Vyberte jednu alebo viac fotiek v knižnici alebo v priečinku, potom „Vytvoriť 3D (AI)“.
-2. Vyberte, čo chcete: „3D fotka“, „3D scéna“, „360° panoráma“ alebo „3D verzia 360° fotky“ pre vaše vlastné 360° zábery. Okno povie, čo AI odhadne alebo vymyslí („Približne 96 % tejto panorámy vymyslí AI“), približne ako dlho to na tomto počítači trvá a kam pôjde súbor: „Vedľa originálu“ alebo „Priečinok podľa môjho výberu“. Typ, ktorý tento počítač nedokáže, zostane sivý aj s dôvodom, napríklad „Zatiaľ nie na Mac“ alebo „Grafická karta má 6.0 GiB pamäte, 360° panorámy potrebujú 7.5 GiB“.
-3. Prvýkrát okno ponúkne komponenty daného typu: Stiahnuť, raz. Bežia na tomto počítači a potom fungujú offline.
-4. Konvertovať. Úlohy čakajú v rade na dvoch dráhach, procesor a grafická karta, s krokmi a zostávajúcim časom; Zrušiť kedykoľvek zastaví ktorúkoľvek z nich a pri ukončení sa aplikácia najprv opýta.
-5. Otvorte výsledok. 3D fotka sa zobrazí ako „Ľavé oko“, „Vedľa seba“, „Kývanie“ (animácia na začiatku tejto stránky) alebo „Červená a azúrová“ pre okuliare; scéna má „Náhľad v 3D“, ktorý otáčate myšou alebo touchpadom, a „Exportovať pre iné 3D aplikácie (.glb)“; panoráma sa otvorí v 360° prehliadači.
-
-<p align="center">
-  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Okno Vytvoriť 3D (AI) aplikácie pre Windows: 3D fotka, 3D scéna, 360° panoráma, vybraná, a 3D verzia 360° fotky; Vygenerované pomocou AI za okrajmi fotky; Približne 96 % tejto panorámy vymyslí AI; Dokončená konverzia nezaručuje dobrý výsledok; Približne 5 min na fotku na tejto grafickej karte; Vytvoriť aj 3D verziu, zaškrtnuté; Uložiť do: Vedľa originálu alebo Priečinok podľa môjho výberu; Zrušiť a Konvertovať">
-  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360° prehliadač aplikácie pre Windows otvára panorámu, ktorú vygeneroval z fotky zátoky videnej z hory: odznaky 360° AI a 360° vpravo hore, pôvodná fotka ohraničená v strede pod slovami Pôvodná fotka a dole Vygenerované pomocou AI za okrajmi fotky">
-</p>
-
-| | 3D fotka | 3D scéna | 360° panoráma |
-|---|---|---|---|
-| Čo získate | `<name>_3D_LRF_Full_SBS.jpg`, 3D fotka vedľa seba: vaša fotka pre ľavé oko, vypočítané pravé oko | `<name>_scene3D.jpg`, fotka, ktorá nesie scénu vo vrstvách | `<name>_360.jpg`, 6144 x 3072, a s „Vytvoriť aj 3D verziu“ aj `<name>_360_3D.jpg` |
-| Čo robí AI | odhadne reliéf fotky (Depth Anything V2 Small) | odhadne tvar miesta (MoGe-2) a doplní, čo fotka skrýva (LaMa), pre scénu vo vrstvách | vymyslí všetko za okrajmi fotky (FLUX.2 klein 4B a 360° LoRA); vaše vlastné pixely zostanú tam, kde boli |
-| Ako dlho | niekoľko sekúnd na fotku | 15 až 45 sekúnd na fotku | približne 5 minút na notebooku s RTX 4060, o 30 sekúnd viac pre jej 3D verziu |
-| Na čom beží | procesor počítača s Windows, Linuxom alebo macOS | procesor počítača s Windows, Linuxom alebo macOS | grafická karta s Vulkan a 8 GB vlastnej pamäte, v počítači s Windows alebo Linuxom so 16 GB pamäte; NVIDIA vyskúšaná, karty AMD a Intel zatiaľ nie; na Macu zatiaľ nie |
-| Stiahne sa raz, keď o to požiadate | približne 110 MB | o 349 MB viac | o približne 5.4 GB viac |
-| Kde to uvidíte | v 3D v Meta Quest; „Kývanie“ alebo „Červená a azúrová“ na počítači | v Meta Quest, kde sa do nej nakloníte; „Náhľad v 3D“ na počítači | všade okolo vás v Meta Quest a v každom 360° prehliadači |
-
-Každý nový súbor sa uloží vedľa svojho originálu, nikdy cez neho, alebo do priečinka podľa vášho výberu, keď priečinok originálu nové súbory neprijíma; v sieťovom priečinku až potom, čo pre tento priečinok poviete áno („Immuch360 tam zapisuje nové súbory, nikdy nie originály“). Knižnica prepojí každú verziu s jej originálom pomocou jej odznaku, „3D AI“, „3D scéna“ alebo „360° AI“, v albume „AI verzie Immuch360“, ktorý zostane mimo vašej zálohy Immich, kým nezapnete „Zálohovať aj AI verzie“; pozor, „Vybrať všetko“ v albumoch zálohy vyberie aj tento album a zapne tento prepínač. Ak chcete súbor vidieť v Quest, uložte ho na svoj NAS, zálohujte ho na svoj server Immich alebo vo Windows zapnite „Zdieľať tento počítač v sieti“.
-
-**V Meta Quest**, s buildom 32:
-
-- **AI reliéf**: otvorte akúkoľvek plochú fotku, z knižnice alebo z úložiska, a stlačte „AI reliéf“ v hornej lište: headset sám odhadne reliéf a zobrazí fotku v 3D, „Reliéf odhadnutý pomocou AI“. Model, 99.5 MB, sa stiahne pri prvom stlačení a reliéfy sa uchovávajú vo vyrovnávacej pamäti. „Otvárať AI reliéfy v 2.5D (experimentálne)“ v Nastavenia, Pokročilé, „AI a 3D“ spôsobí, že blízke predmety sa pri pohybe hlavy posúvajú pred pozadím. Na Quest 2 alebo Quest Pro zostane tlačidlo sivé, „Na tomto headsete zatiaľ neotestované“, kým tam nezapnete „AI reliéf na Quest 2 a Quest Pro (neotestované)“.
-- **3D fotky a scény z počítača**: „Zobraziť v 3D“ zobrazí 3D fotku v skutočnom 3D. „Zobraziť 3D scénu“ na origináli alebo „Preskúmať 3D scénu“ na scéne umiestni scénu do vašej izby: nakloňte sa alebo kĺžte ľavou páčkou vo vnútri zrekonštruovanej oblasti („Priestor na pohyb: približne 0.5 m na každú stranu“ pre izbu na začiatku tejto stránky); na jej okraji sa vrstvy splošťujú a tmavnú, kliknutie páčkou obnoví pohľad a B alebo Y vás vráti späť.
-- **Panorámy**: vygenerovaná panoráma sa otvorí všade okolo vás, čelom k vašej fotke, s „Vygenerované pomocou AI za okrajmi fotky“ a tenkým obrysom pôvodnej fotky, ktoré po niekoľkých sekundách zmiznú; jej 3D verzia je v skutočnom 3D.
-
-**Na telefónoch, tabletoch a televízoroch** sa súbory, ktoré vytvoril počítač, otvárajú tak, ako sú, a nič sa tam negeneruje. Panoráma sa otvorí v 360° prehliadači s odznakom „360° AI“, vetou a obrysom na telefónoch a tabletoch Android a na Android TV; na iPhone, iPade a televízoroch LG a Samsung sa zatiaľ otvorí ako obyčajná 360° fotka. Scéna sa zobrazí ako jej fotka s malou značkou 3D SCENE v rohu; na Androide jej podrobnosti pridávajú „Otvorte ju na Meta Quest a preskúmajte ju“. 3D fotka ukáže svoje dve oči vedľa seba.
-
-**Čo je skutočné a čo nie, vždy povedané.** To je podstata, nie drobné písmo. Reliéf 3D fotky sa odhaduje z jednej fotky a to, čo fotka skrýva, je doplnené a nie je skutočné. Pri scéne stojí „Rekonštruované z jednej fotky, skúmajte v jej medziach“. Panoráma ponechá vaše skutočné pixely tam, kde boli, a zvyšok vymyslí, približne 90 % gule pri bežnej fotke, a okno povie koľko, ešte kým začnete. Aplikácia to hovorí tam, kam sa pozeráte, cez „Reliéf odhadnutý pomocou AI“, „Vygenerované pomocou AI za okrajmi fotky“ a odznaky, a hovoria to aj súbory: v našom XMP a pri scénach a panorámach v type digitálneho zdroja IPTC pre obrázok vytvorený pomocou AI, aby iné aplikácie rozlíšili vygenerovanú panorámu od skutočnej 360° fotky. Vaše originály sa nikdy nemenia a nič neopustí váš počítač ani headset. Ako hovorí okno: „Dokončená konverzia nezaručuje dobrý výsledok.“
-
-**Čo sa overilo** do 29. októbra 2026, s testovacími buildmi tohto kódu: 3D fotky aplikáciou pre Linux v kontajneri na PC s Linuxom, aj offline; scény aplikáciou pre Windows na notebooku s RTX 4060 Laptop GPU (desať za 2 min 39 s) a jadrom na PC s Linuxom; na tom notebooku štyri panorámy, každá za 4 min 16 s až 4 min 44 s, ich 3D verzie približne za 30 s, so Zrušiť, násilne ukončenou aplikáciou, iným programom, ktorý držal grafickú kartu, a bez akéhokoľvek sieťového pripojenia aplikácie počas testov.
-
-Obmedzenia: zatiaľ žiadna 360° panoráma na Macu („Zatiaľ nie na Mac“) ani bez vhodnej grafickej karty, a okno povie prečo („Nenašla sa žiadna grafická karta s Vulkan“, „Integrovaná grafika zdieľa pamäť počítača: na panorámy je príliš pomalá“, so „Skúsiť na integrovanej grafike (neotestované)“, ak to chcete skúsiť aj tak); vo vnútri panorámy sa okraj vašej fotky môže ukázať ako ostrý skok vo farebnom tóne; väčšina scén hlási „Zorné pole odhadnuté: tvary môžu byť nepresné“; scéna potrebuje približne 2 GB voľnej pamäte (inak „Nedostatok pamäte“); keď sa AI verzie zálohujú, vyhľadávač duplikátov Immich spáruje každú fotku s jej scénou a často navrhne ponechať scénu, ťažší súbor: ponechajte originál. Telefóny a televízory nevytvárajú nič a headset vytvára len reliéfy; scéna vzniká z jednej fotky, zatiaľ nie z viacerých fotiek toho istého miesta.
-
-**Komponenty**: na počítači Nastavenia, „AI a 3D“ uvádza komponenty každej funkcie s ich veľkosťou, Stiahnuť a Odstrániť, potom „Odstrániť všetky AI komponenty“ a „Presunúť AI komponenty“ na iný disk; vypnuté „Funkcie AI“ skryje každé AI tlačidlo a nič nestiahne. Každý súbor sa overuje podľa SHA-256. Vo Windows sú v `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, ktorý odinštalátor odstráni (nie však priečinok, kam ste ich presunuli); na Linuxe vo väčšine systémov v `~/.local/share/immuch360/ai-components` a na Macu v `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. V Quest je „AI a 3D“ v Nastavenia, Pokročilé, spolu s vyrovnávacou pamäťou reliéfov.
-
-Viac: poznámky k [buildu 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) a [desktop buildu 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) a [modely, ich licencie, zdroje a kontrolné súčty](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Návod na používanie dostane kapitolu o AI pri ďalšej aktualizácii; dovtedy je návodom táto sekcia.
-
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
@@ -341,6 +285,63 @@ Immuch360 pozná ploché fotky a videá, panorámy, 360° fotky a videá, VR180,
 Na telefónoch a tabletoch môže stereoskopické video na plochej obrazovke získať aj hĺbku: prehrávač Spatial 2.5D používa prednú kameru na sledovanie vašej hlavy a zobrazuje záber uprostred medzi oboma očami (experimentálne). Priestorové fotky Apple vytvorené na iPhone sa rozpoznávajú a zobrazujú v 3D v Meta Quest.
 
 Viac: [fotky a videá 360°](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D a VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [priestorové fotky a videá Apple](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [zoznam 360°](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
+### Premeňte jednu fotku na 3D, scénu, panorámu
+
+Väčšina vašich fotiek je plochých a vrátiť sa a odfotiť ich znova v 3D sa nedá. Immuch360 im dodá hĺbku. Na počítači sa z jednej fotky stane **3D fotka**, **3D scéna**, do ktorej sa v headsete nakloníte, alebo **360° panoráma**, ktorá si domyslí zvyšok miesta okolo vás. Quest 3 alebo 3S vytvorí reliéf sám, pre každú plochú fotku. Všetko beží na vašom vlastnom počítači a headsete: žiadny cloud, žiadny účet, vaše originály sa nikdy nezmenia. Novinka v builde 32 a desktop builde 13, experimentálna a predvolene zapnutá. Aplikácia Immich nič podobné nemá.
+
+<p align="center">
+  <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="3D fotka, ktorú Immuch360 vytvoril z jednej obyčajnej fotky starej sály s galériou, stĺpmi a lustrom, v zobrazení Kývanie: jej ľavé a pravé oko striedavo, približne šesťkrát za sekundu, takže stĺpy vystupujú zo stien">
+</p>
+<p align="center"><sub>Skutočný výstup aplikácie z fotky CC0 z Poly Haven, zmenšený, neretušovaný: 3D fotka, jej dve oči striedavo.</sub></p>
+
+**Na počítači**, s desktop buildom 13 vo Windows, Linuxe alebo macOS:
+
+1. Vyberte jednu alebo viac fotiek v knižnici alebo v priečinku, potom „Vytvoriť 3D (AI)“.
+2. Vyberte, čo chcete: „3D fotka“, „3D scéna“, „360° panoráma“ alebo „3D verzia 360° fotky“ pre vaše vlastné 360° zábery. Okno povie, čo AI odhadne alebo vymyslí („Približne 96 % tejto panorámy vymyslí AI“), približne ako dlho to na tomto počítači trvá a kam pôjde súbor: „Vedľa originálu“ alebo „Priečinok podľa môjho výberu“. Typ, ktorý tento počítač nedokáže, zostane sivý aj s dôvodom, napríklad „Zatiaľ nie na Mac“ alebo „Grafická karta má 6.0 GiB pamäte, 360° panorámy potrebujú 7.5 GiB“.
+3. Prvýkrát okno ponúkne komponenty daného typu: Stiahnuť, raz. Bežia na tomto počítači a potom fungujú offline.
+4. Konvertovať. Úlohy čakajú v rade na dvoch dráhach, procesor a grafická karta, s krokmi a zostávajúcim časom; Zrušiť kedykoľvek zastaví ktorúkoľvek z nich a pri ukončení sa aplikácia najprv opýta.
+5. Otvorte výsledok. 3D fotka sa zobrazí ako „Ľavé oko“, „Vedľa seba“, „Kývanie“ (animácia vyššie) alebo „Červená a azúrová“ pre okuliare; scéna má „Náhľad v 3D“, ktorý otáčate myšou alebo touchpadom, a „Exportovať pre iné 3D aplikácie (.glb)“; panoráma sa otvorí v 360° prehliadači.
+
+<p align="center">
+  <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Okno Vytvoriť 3D (AI) aplikácie pre Windows: 3D fotka, 3D scéna, 360° panoráma, vybraná, a 3D verzia 360° fotky; Vygenerované pomocou AI za okrajmi fotky; Približne 96 % tejto panorámy vymyslí AI; Dokončená konverzia nezaručuje dobrý výsledok; Približne 5 min na fotku na tejto grafickej karte; Vytvoriť aj 3D verziu, zaškrtnuté; Uložiť do: Vedľa originálu alebo Priečinok podľa môjho výberu; Zrušiť a Konvertovať">
+  <img src="../.github/readme/ai-windows-panorama-viewer.jpg" width="500" alt="360° prehliadač aplikácie pre Windows otvára panorámu, ktorú vygeneroval z fotky zátoky videnej z hory: odznaky 360° AI a 360° vpravo hore, pôvodná fotka ohraničená v strede pod slovami Pôvodná fotka a dole Vygenerované pomocou AI za okrajmi fotky">
+</p>
+
+<p align="center">
+  <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="Jedna fotka štyrmi spôsobmi, všetko skutočné výstupy Immuch360: biela izba s okrúhlym stolom a oknom, tak ako bola odfotená; jej 3D fotka s okom, ktoré aplikácia vypočíta, odznak 3D AI, reliéf odhadnutý pomocou AI; jej 3D scéna videná zľava a sprava, odznak 3D scéna; dole 360° panoráma vygenerovaná okolo nej, odznak 360° AI, pôvodná fotka ohraničená v strede a okolo nej vymyslené celé štúdio, vrátane niekoľkých zvláštnych predmetov">
+</p>
+<p align="center"><sub>Jedna fotka štyrmi spôsobmi: skutočné výstupy aplikácie z fotky CC0 z Poly Haven, zmenšené, neretušované, s odznakmi aplikácie pridanými pre túto stránku, dva pohľady na scénu vykreslené zo súboru scény. Všetko mimo obrysu panorámy vymyslela AI.</sub></p>
+
+| | 3D fotka | 3D scéna | 360° panoráma |
+|---|---|---|---|
+| Čo získate | `<name>_3D_LRF_Full_SBS.jpg`, 3D fotka vedľa seba: vaša fotka pre ľavé oko, vypočítané pravé oko | `<name>_scene3D.jpg`, fotka, ktorá nesie scénu vo vrstvách | `<name>_360.jpg`, 6144 x 3072, a s „Vytvoriť aj 3D verziu“ aj `<name>_360_3D.jpg` |
+| Čo robí AI | odhadne reliéf fotky (Depth Anything V2 Small) | odhadne tvar miesta (MoGe-2) a doplní, čo fotka skrýva (LaMa), pre scénu vo vrstvách | vymyslí všetko za okrajmi fotky (FLUX.2 klein 4B a 360° LoRA); vaše vlastné pixely zostanú tam, kde boli |
+| Ako dlho | niekoľko sekúnd na fotku | 15 až 45 sekúnd na fotku | približne 5 minút na notebooku s RTX 4060, o 30 sekúnd viac pre jej 3D verziu |
+| Na čom beží | procesor počítača s Windows, Linuxom alebo macOS | procesor počítača s Windows, Linuxom alebo macOS | grafická karta s Vulkan a 8 GB vlastnej pamäte, v počítači s Windows alebo Linuxom so 16 GB pamäte; NVIDIA vyskúšaná, karty AMD a Intel zatiaľ nie; na Macu zatiaľ nie |
+| Stiahne sa raz, keď o to požiadate | približne 110 MB | o 349 MB viac | o približne 5.4 GB viac |
+| Kde to uvidíte | v 3D v Meta Quest; „Kývanie“ alebo „Červená a azúrová“ na počítači | v Meta Quest, kde sa do nej nakloníte; „Náhľad v 3D“ na počítači | všade okolo vás v Meta Quest a v každom 360° prehliadači |
+
+Každý nový súbor sa uloží vedľa svojho originálu, nikdy cez neho, alebo do priečinka podľa vášho výberu, keď priečinok originálu nové súbory neprijíma; v sieťovom priečinku až potom, čo pre tento priečinok poviete áno („Immuch360 tam zapisuje nové súbory, nikdy nie originály“). Knižnica prepojí každú verziu s jej originálom pomocou jej odznaku, „3D AI“, „3D scéna“ alebo „360° AI“, v albume „AI verzie Immuch360“, ktorý zostane mimo vašej zálohy Immich, kým nezapnete „Zálohovať aj AI verzie“; pozor, „Vybrať všetko“ v albumoch zálohy vyberie aj tento album a zapne tento prepínač. Ak chcete súbor vidieť v Quest, uložte ho na svoj NAS, zálohujte ho na svoj server Immich alebo vo Windows zapnite „Zdieľať tento počítač v sieti“.
+
+**V Meta Quest**, s buildom 32:
+
+- **AI reliéf**: otvorte akúkoľvek plochú fotku, z knižnice alebo z úložiska, a stlačte „AI reliéf“ v hornej lište: headset sám odhadne reliéf a zobrazí fotku v 3D, „Reliéf odhadnutý pomocou AI“. Model, 99.5 MB, sa stiahne pri prvom stlačení a reliéfy sa uchovávajú vo vyrovnávacej pamäti. „Otvárať AI reliéfy v 2.5D (experimentálne)“ v Nastavenia, Pokročilé, „AI a 3D“ spôsobí, že blízke predmety sa pri pohybe hlavy posúvajú pred pozadím. Na Quest 2 alebo Quest Pro zostane tlačidlo sivé, „Na tomto headsete zatiaľ neotestované“, kým tam nezapnete „AI reliéf na Quest 2 a Quest Pro (neotestované)“.
+- **3D fotky a scény z počítača**: „Zobraziť v 3D“ zobrazí 3D fotku v skutočnom 3D. „Zobraziť 3D scénu“ na origináli alebo „Preskúmať 3D scénu“ na scéne umiestni scénu do vašej izby: nakloňte sa alebo kĺžte ľavou páčkou vo vnútri zrekonštruovanej oblasti („Priestor na pohyb: približne 0.5 m na každú stranu“ pre izbu zobrazenú vyššie); na jej okraji sa vrstvy splošťujú a tmavnú, kliknutie páčkou obnoví pohľad a B alebo Y vás vráti späť.
+- **Panorámy**: vygenerovaná panoráma sa otvorí všade okolo vás, čelom k vašej fotke, s „Vygenerované pomocou AI za okrajmi fotky“ a tenkým obrysom pôvodnej fotky, ktoré po niekoľkých sekundách zmiznú; jej 3D verzia je v skutočnom 3D.
+
+**Na telefónoch, tabletoch a televízoroch** sa súbory, ktoré vytvoril počítač, otvárajú tak, ako sú, a nič sa tam negeneruje. Panoráma sa otvorí v 360° prehliadači s odznakom „360° AI“, vetou a obrysom na telefónoch a tabletoch Android a na Android TV; na iPhone, iPade a televízoroch LG a Samsung sa zatiaľ otvorí ako obyčajná 360° fotka. Scéna sa zobrazí ako jej fotka s malou značkou 3D SCENE v rohu; na Androide jej podrobnosti pridávajú „Otvorte ju na Meta Quest a preskúmajte ju“. 3D fotka ukáže svoje dve oči vedľa seba.
+
+**Čo je skutočné a čo nie, vždy povedané.** To je podstata, nie drobné písmo. Reliéf 3D fotky sa odhaduje z jednej fotky a to, čo fotka skrýva, je doplnené a nie je skutočné. Pri scéne stojí „Rekonštruované z jednej fotky, skúmajte v jej medziach“. Panoráma ponechá vaše skutočné pixely tam, kde boli, a zvyšok vymyslí, približne 90 % gule pri bežnej fotke, a okno povie koľko, ešte kým začnete. Aplikácia to hovorí tam, kam sa pozeráte, cez „Reliéf odhadnutý pomocou AI“, „Vygenerované pomocou AI za okrajmi fotky“ a odznaky, a hovoria to aj súbory: v našom XMP a pri scénach a panorámach v type digitálneho zdroja IPTC pre obrázok vytvorený pomocou AI, aby iné aplikácie rozlíšili vygenerovanú panorámu od skutočnej 360° fotky. Vaše originály sa nikdy nemenia a nič neopustí váš počítač ani headset. Ako hovorí okno: „Dokončená konverzia nezaručuje dobrý výsledok.“
+
+**Čo sa overilo** do 29. októbra 2026, s testovacími buildmi tohto kódu: 3D fotky aplikáciou pre Linux v kontajneri na PC s Linuxom, aj offline; scény aplikáciou pre Windows na notebooku s RTX 4060 Laptop GPU (desať za 2 min 39 s) a jadrom na PC s Linuxom; na tom notebooku štyri panorámy, každá za 4 min 16 s až 4 min 44 s, ich 3D verzie približne za 30 s, so Zrušiť, násilne ukončenou aplikáciou, iným programom, ktorý držal grafickú kartu, a bez akéhokoľvek sieťového pripojenia aplikácie počas testov.
+
+Obmedzenia: zatiaľ žiadna 360° panoráma na Macu („Zatiaľ nie na Mac“) ani bez vhodnej grafickej karty, a okno povie prečo („Nenašla sa žiadna grafická karta s Vulkan“, „Integrovaná grafika zdieľa pamäť počítača: na panorámy je príliš pomalá“, so „Skúsiť na integrovanej grafike (neotestované)“, ak to chcete skúsiť aj tak); vo vnútri panorámy sa okraj vašej fotky môže ukázať ako ostrý skok vo farebnom tóne; väčšina scén hlási „Zorné pole odhadnuté: tvary môžu byť nepresné“; scéna potrebuje približne 2 GB voľnej pamäte (inak „Nedostatok pamäte“); keď sa AI verzie zálohujú, vyhľadávač duplikátov Immich spáruje každú fotku s jej scénou a často navrhne ponechať scénu, ťažší súbor: ponechajte originál. Telefóny a televízory nevytvárajú nič a headset vytvára len reliéfy; scéna vzniká z jednej fotky, zatiaľ nie z viacerých fotiek toho istého miesta.
+
+**Komponenty**: na počítači Nastavenia, „AI a 3D“ uvádza komponenty každej funkcie s ich veľkosťou, Stiahnuť a Odstrániť, potom „Odstrániť všetky AI komponenty“ a „Presunúť AI komponenty“ na iný disk; vypnuté „Funkcie AI“ skryje každé AI tlačidlo a nič nestiahne. Každý súbor sa overuje podľa SHA-256. Vo Windows sú v `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, ktorý odinštalátor odstráni (nie však priečinok, kam ste ich presunuli); na Linuxe vo väčšine systémov v `~/.local/share/immuch360/ai-components` a na Macu v `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. V Quest je „AI a 3D“ v Nastavenia, Pokročilé, spolu s vyrovnávacou pamäťou reliéfov.
+
+Viac: poznámky k [buildu 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) a [desktop buildu 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) a [modely, ich licencie, zdroje a kontrolné súčty](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Návod na používanie dostane kapitolu o AI pri ďalšej aktualizácii; dovtedy je návodom táto sekcia.
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
