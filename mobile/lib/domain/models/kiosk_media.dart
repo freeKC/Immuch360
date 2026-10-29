@@ -16,12 +16,8 @@ sealed class KioskMedia {
 
   /// [asset] as the kiosk keeps it: its id on the server and its id on the device, whichever it has, so that it is
   /// found again at the start whether the server answers or not
-  factory KioskMedia.asset(BaseAsset asset) => KioskAssetMedia(
-    remoteId: asset.remoteId,
-    localId: asset.localId,
-    name: asset.name,
-    isVideo: asset.isVideo,
-  );
+  factory KioskMedia.asset(BaseAsset asset) =>
+      KioskAssetMedia(remoteId: asset.remoteId, localId: asset.localId, name: asset.name, isVideo: asset.isVideo);
 
   /// [file], a 360° file of a network share the app read (see NetworkPanoramaFile)
   factory KioskMedia.shareFile(NetworkPanoramaFile file) => KioskShareFile(

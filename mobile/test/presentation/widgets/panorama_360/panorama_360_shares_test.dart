@@ -178,7 +178,9 @@ void main() {
         overrides: [
           timelineArgsProvider.overrideWithValue(const TimelineArgs(maxWidth: 864, maxHeight: 400, columnCount: 6)),
         ],
-        child: Scaffold(body: CustomScrollView(slivers: [Panorama360SharesSection(onPick: picked.add)])),
+        child: Scaffold(
+          body: CustomScrollView(slivers: [Panorama360SharesSection(onPick: picked.add)]),
+        ),
       ),
       overrides: overrides(),
       pages: {NetworkPhotoRoute.name: (_) => const Text('photo page')},

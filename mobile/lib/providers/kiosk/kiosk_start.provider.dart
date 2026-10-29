@@ -211,9 +211,8 @@ KioskOpener _appKioskOpener(WidgetRef ref, KioskMedia media, KioskOptions option
     case KioskAssetMedia():
       final assets = ref.read(assetServiceProvider);
       final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
-      resolve = () async => resolver.resolve(
-        await findKioskAsset(media, remote: assets.getRemoteAsset, local: assets.getLocalAsset),
-      );
+      resolve = () async =>
+          resolver.resolve(await findKioskAsset(media, remote: assets.getRemoteAsset, local: assets.getLocalAsset));
   }
   return () async => openKioskRequest(
     api,

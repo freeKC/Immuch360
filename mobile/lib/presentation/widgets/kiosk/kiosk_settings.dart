@@ -18,7 +18,8 @@ import 'package:immich_ui/immich_ui.dart';
 /// Opens the picker of the kiosk media from [context] and gives what was picked, null when the user went back. Tests
 /// replace it.
 final kioskMediaPickerProvider = Provider<Future<KioskMedia?> Function(BuildContext context)>(
-  (_) => (context) => context.pushRoute<KioskMedia>(const KioskMediaPickerRoute()),
+  (_) =>
+      (context) => context.pushRoute<KioskMedia>(const KioskMediaPickerRoute()),
 );
 
 /// See the top of this file

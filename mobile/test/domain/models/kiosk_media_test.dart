@@ -82,10 +82,13 @@ void main() {
         'name': 'expo_360.mp4',
         'isVideo': true,
       });
-      expect(
-        jsonDecode(KioskMedia.shareFile(const NetworkPanoramaFile(sourceId: 'nas', path: '/a.jpg')).encode()),
-        {'type': 'share', 'sourceId': 'nas', 'path': '/a.jpg', 'name': 'a.jpg', 'isVideo': false},
-      );
+      expect(jsonDecode(KioskMedia.shareFile(const NetworkPanoramaFile(sourceId: 'nas', path: '/a.jpg')).encode()), {
+        'type': 'share',
+        'sourceId': 'nas',
+        'path': '/a.jpg',
+        'name': 'a.jpg',
+        'isVideo': false,
+      });
     });
 
     test('nothing stored, or a value that does not read, is no media', () {
