@@ -1,7 +1,7 @@
 <details><summary>🌐 <b>한국어</b> · 다른 언어 (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. New: 3D photos, 3D scenes and 360° panoramas made from your own photos, by AI on your computer. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
+  <img src="../.github/readme/hero-2026-10-29b.jpg" width="100%" alt="Immuch360. 당신의 미디어. 모든 화면. 모든 시점. 기기, NAS, Immich 서버, 카메라, 드론에서 오는 평면, 360°, 3D 사진과 동영상. 계정이 필요 없습니다. 새 기능: 내 사진으로 3D 사진, 3D 장면, 360° 파노라마를 내 컴퓨터에서 AI가 만듭니다. Android, iPhone과 iPad, Android TV, LG와 Samsung TV, Meta Quest, Windows, macOS, Linux. 해 질 녘 바다가 보이는 만 앞의 일러스트: 저장 상자, 휴대폰, 태블릿, TV, 노트북, 헤드셋, 하늘의 드론과 홈 카메라가 빛의 호로 이어져 있습니다">
 </p>
 
 # Immuch360
@@ -10,7 +10,7 @@
 
 기기, NAS, Immich 서버, 카메라, 드론에서 오는 평면, 360°, 3D 사진과 동영상. 계정이 필요 없습니다. Immuch360은 사진과 동영상이 있는 곳에서 바로 읽어 각 파일에 맞는 뷰어에서 재생하는 무료 오픈 소스 앱입니다: 평면으로, 둘러볼 수 있는 구체로, 3D로, 또는 헤드셋에서 사방을 둘러싸게. 휴대폰, 태블릿, TV, Meta Quest 헤드셋, 컴퓨터에서 실행됩니다.
 
-**New: your flat photos, in 3D.** On a computer, "Make 3D (AI)" turns one photo into a 3D photo, a 3D scene or a 360° panorama; in a Meta Quest 3 or 3S, "AI relief" shows any flat photo in 3D. Experimental, and everything runs on your own machines: [see how](#turn-one-photo-into-3d-a-scene-a-panorama).
+**새 기능: 평면 사진을 3D로.** 컴퓨터에서는 "3D 만들기 (AI)"가 사진 한 장을 3D 사진, 3D 장면 또는 360° 파노라마로 바꿉니다. Meta Quest 3 또는 3S에서는 "AI 입체감"이 어떤 평면 사진도 3D로 보여 줍니다. 실험적이며, 모든 것이 내 기기에서 실행됩니다: [방법 보기](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Immich 모바일 앱의 비공식 포크입니다. Immich나 FUTO와는 관련이 없습니다. 이름은 "I am much 360"처럼 읽힙니다.</sub>
@@ -294,7 +294,7 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 <p align="center">
   <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="회랑, 기둥, 샹들리에가 있는 오래된 홀의 평범한 사진 한 장으로 Immuch360이 만든 3D 사진, 흔들기 보기: 왼쪽 눈과 오른쪽 눈 이미지가 1초에 약 여섯 번 번갈아 나와 기둥이 벽에서 도드라져 보입니다">
 </p>
-<p align="center"><sub>A real output of the app from a CC0 photo of Poly Haven, reduced, not retouched: a 3D photo, its two eyes in turn.</sub></p>
+<p align="center"><sub>Poly Haven의 CC0 사진으로 만든 앱의 실제 결과물이며, 크기만 줄이고 보정하지 않았습니다: 두 눈 이미지가 번갈아 나오는 3D 사진.</sub></p>
 
 **컴퓨터에서**, Windows, Linux, macOS의 desktop build 13으로:
 
@@ -302,7 +302,7 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 2. 원하는 것을 고릅니다: "3D 사진", "3D 장면", "360° 파노라마", 또는 직접 찍은 360° 사진에는 "360° 사진의 3D 버전". 상자는 AI가 무엇을 추정하거나 지어낼지("이 파노라마의 약 96%를 AI가 새로 만들어 냅니다"), 이 컴퓨터에서 대략 얼마나 걸릴지, 파일이 어디에 저장될지 알려 줍니다: "원본 옆" 또는 "내가 선택한 폴더". 이 컴퓨터가 할 수 없는 유형은 회색으로 남고 이유가 함께 표시됩니다. 예: "Mac에서는 아직 지원되지 않음" 또는 "그래픽 카드 메모리: 6.0 GiB, 360° 파노라마에 필요한 메모리: 7.5 GiB".
 3. 처음에는 상자가 그 유형의 구성 요소를 제안합니다: 다운로드, 한 번만. 구성 요소는 이 컴퓨터에서 실행되며 그 뒤로는 오프라인에서도 동작합니다.
 4. 변환. 작업은 프로세서와 그래픽 카드라는 두 레인에 단계와 남은 시간과 함께 줄을 섭니다. 취소로 언제든 하나를 멈출 수 있고, 앱을 끝낼 때는 먼저 묻습니다.
-5. Open the result. A 3D photo shows as "Left eye", "Side by side", "Wiggle" (the animation above) or "Red and cyan" for glasses; a scene has "Preview in 3D", turned with the mouse or the touchpad, and "Export for other 3D apps (.glb)"; a panorama opens in the 360° viewer.
+5. 결과를 엽니다. 3D 사진은 "왼쪽 눈", "나란히", "흔들기"(위의 애니메이션) 또는 안경용 "빨강과 청록"으로 보입니다. 장면에는 마우스나 터치패드로 돌리는 "3D로 미리 보기"와 "다른 3D 앱용으로 내보내기 (.glb)"가 있습니다. 파노라마는 360° 뷰어에서 열립니다.
 
 <p align="center">
   <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windows 앱의 3D 만들기 (AI) 상자: 3D 사진, 3D 장면, 선택된 360° 파노라마, 360° 사진의 3D 버전; 사진 가장자리 너머는 AI가 생성함; 이 파노라마의 약 96%를 AI가 새로 만들어 냅니다; 변환이 완료되었다고 해서 결과가 좋다는 보장은 없습니다; 이 그래픽 카드에서 사진당 약 5 min; 3D 버전도 만들기, 체크됨; 저장 위치: 원본 옆 또는 내가 선택한 폴더; 취소와 변환">
@@ -312,7 +312,7 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 <p align="center">
   <img src="../.github/readme/ai-one-photo-four-ways.jpg" width="100%" alt="사진 한 장, 네 가지 방식, 모두 Immuch360의 실제 결과물: 둥근 탁자와 창이 있는 흰 방, 찍은 그대로; 그 3D 사진, 앱이 계산한 눈을 보여 주며 배지 AI 3D, AI가 추정한 입체감; 그 3D 장면을 왼쪽과 오른쪽에서 본 모습, 배지 3D 장면; 아래에는 그 주변으로 생성한 360° 파노라마, 배지 AI 360°, 가운데에 원본 사진의 윤곽이 표시되고 그 주위로 스튜디오 전체가 지어졌으며, 이상한 물건도 몇 개 있습니다">
 </p>
-<p align="center"><sub>One photo, four ways: real outputs of the app from a CC0 photo of Poly Haven, reduced, not retouched, with the app's badges added for this page, the two scene views drawn from the scene file. Everything outside the outline of the panorama is made up by AI.</sub></p>
+<p align="center"><sub>사진 한 장, 네 가지 방식: Poly Haven의 CC0 사진으로 만든 앱의 실제 결과물이며, 크기만 줄이고 보정하지 않았고, 이 페이지를 위해 앱의 배지를 덧붙였으며, 두 장면 보기는 장면 파일에서 그렸습니다. 파노라마의 윤곽 밖은 모두 AI가 지어낸 것입니다.</sub></p>
 
 | | 3D 사진 | 3D 장면 | 360° 파노라마 |
 |---|---|---|---|
@@ -328,7 +328,7 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 **Meta Quest에서**, build 32로:
 
 - **AI 입체감**: 라이브러리나 공유에서 아무 평면 사진이나 열고 위쪽 막대의 "AI 입체감"을 누르세요: 헤드셋이 입체감을 직접 추정해 사진을 3D로 보여 주며, "AI가 추정한 입체감"이라고 표시합니다. 99.5 MB 모델은 처음 누를 때 다운로드되고, 입체감은 캐시에 보관됩니다. 설정, 고급, "AI 및 3D"의 "AI 입체 사진을 2.5D로 열기 (실험적)"를 켜면 머리를 움직일 때 가까운 물체가 배경 앞에서 움직입니다. Quest 2나 Quest Pro에서는 같은 곳의 "Quest 2 및 Quest Pro에서 AI 입체감 사용 (테스트되지 않음)"을 켜기 전까지 버튼이 "이 헤드셋에서는 아직 테스트되지 않음"으로 회색 상태입니다.
-- **3D photos and scenes from the computer**: "View in 3D" shows a 3D photo in true 3D. "View the 3D scene" on the original, or "Explore the 3D scene" on the scene, puts the scene in your room: lean in, or glide with the left thumbstick inside the rebuilt area ("Room to move: about 0.5 m each way" for the room shown above); the layers flatten and darken at its edge, a click on a thumbstick resets the view, and B or Y goes back.
+- **컴퓨터에서 만든 3D 사진과 장면**: "3D로 보기"는 3D 사진을 진짜 3D로 보여 줍니다. 원본에서 "3D 장면 보기", 또는 장면에서 "3D 장면 둘러보기"를 누르면 장면이 방 안에 놓입니다: 몸을 기울여 들여다보거나, 재구성된 영역 안에서 왼쪽 썸스틱으로 미끄러지듯 이동하세요(위에 보이는 방은 "이동 가능 범위: 각 방향으로 약 0.5 m"). 영역 가장자리에서는 레이어가 평평해지고 어두워지며, 썸스틱을 누르면 시점이 초기화되고, B 또는 Y로 돌아갑니다.
 - **파노라마**: 생성된 파노라마가 내 사진을 정면에 두고 주위 전체로 열리며, "사진 가장자리 너머는 AI가 생성함" 문구와 원본 사진의 가는 윤곽이 함께 나왔다가 몇 초 뒤에 사라집니다. 3D 버전은 진짜 3D입니다.
 
 **휴대폰, 태블릿, TV에서는** 컴퓨터가 만든 파일을 그대로 열 뿐, 그곳에서 생성하는 것은 없습니다. Android 휴대폰, 태블릿, Android TV에서는 파노라마가 360° 뷰어에서 "AI 360°" 배지, 문장, 윤곽과 함께 열리고, iPhone, iPad, LG와 Samsung TV에서는 지금은 일반 360° 사진으로 열립니다. 장면은 모서리에 작은 3D 장면 표시가 붙은 사진으로 보이며, Android에서는 세부 정보에 "Meta Quest에서 열어 둘러보세요"가 추가됩니다. 3D 사진은 두 눈 이미지를 나란히 보여 줍니다.
