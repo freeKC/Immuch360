@@ -163,5 +163,15 @@ void main() {
     for (final english in ['Date range', 'Start date', 'End date', 'Cancel', 'Select']) {
       expect(find.text(english), findsNothing, reason: english);
     }
+
+    await tester.tap(find.byKey(const Key('tv_date_start_year')));
+    await tester.pumpAndSettle();
+    expect(find.text('Année de début'), findsOneWidget);
+    expect(find.text('Start year'), findsNothing);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    await choose(tester, 'end_year', '2023');
+    expect(find.text('La date de début doit être antérieure ou égale à la date de fin'), findsOneWidget);
   });
 }
