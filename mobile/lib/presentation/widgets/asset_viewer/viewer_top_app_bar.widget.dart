@@ -135,8 +135,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final flat3dByName =
         isHorizonOs && !hasPanoramaView && ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     final flatVideoFormat = flat3dByName ? flatStereoVideoFormatOf(asset) : null;
-    final stackedPhoto = asset.isImage ? stackedPhotoFormatOf(asset.name) : null;
-    final stackedPhotoFormat = flat3dByName && stereoPair == null && flatStereo == null ? stackedPhoto : null;
+    final stackedPhoto = flat3dByName && asset.isImage ? stackedPhotoFormatOf(asset.name) : null;
+    final stackedPhotoFormat = stereoPair == null && flatStereo == null ? stackedPhoto : null;
     final StereoPhotoRequest? stereoRequest = stereoPair != null
         ? StereoPhotoRequest.heic(stereoPair)
         : sbsRequest != null
@@ -172,7 +172,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     // "AI relief" on a Meta Quest: a flat photo once known to be one (neither 360°, VR180 nor raw, nor a spatial photo,
     // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last, nor two
-    // eyes one above the other by its name, whatever the switch of those), its relief estimated by the headset itself;
+    // eyes one above the other by its name while "3D by file name" is on), its relief estimated by the headset itself;
     // not the preview of a 3D scene, which has its own button, nor a photo named like one while its head is read.
     // Greyed with its reason where the gate refuses; nothing with the AI features off (see reliefGateProvider).
     final isFlatPhoto =

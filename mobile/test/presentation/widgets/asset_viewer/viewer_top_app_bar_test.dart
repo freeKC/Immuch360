@@ -3252,21 +3252,23 @@ void main() {
       expect(reliefButton, findsNothing);
     });
 
-    testWidgets('is not shown for a photo of two eyes one above the other by its name, the switch on or off', (
+    testWidgets('gives way to "View in 3D" for a photo named top and bottom, and is back with the switch off', (
       tester,
     ) async {
       final asset = salon(name: 'salon_TB.jpg');
-      for (final flat3dByName in [true, false]) {
-        await pumpTopBar(
-          tester,
-          asset,
-          horizonOs: true,
-          appConfig: AppConfig(viewer: ViewerConfig(flat3dByName: flat3dByName)),
-          extraOverrides: headset(asset),
-        );
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: headset(asset));
+      expect(reliefButton, findsNothing, reason: 'switch on: the photo has "View in 3D"');
+      expect(find.byKey(const Key('apple_spatial_view_3d')), findsOneWidget);
 
-        expect(reliefButton, findsNothing, reason: 'switch $flat3dByName');
-      }
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(flat3dByName: false)),
+        extraOverrides: headset(asset),
+      );
+      expect(reliefButton, findsOneWidget, reason: 'switch off: an ordinary photo, as before');
+      expect(find.byKey(const Key('apple_spatial_view_3d')), findsNothing);
     });
 
     testWidgets('is not shown for a video', (tester) async {
