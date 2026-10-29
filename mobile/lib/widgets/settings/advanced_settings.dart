@@ -14,6 +14,7 @@ import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_settings.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/kiosk/kiosk_settings.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
@@ -170,6 +171,8 @@ class AdvancedSettings extends HookConsumerWidget {
           subtitle: television ? context.t.dji_live_setting_subtitle_tv : context.t.dji_live_setting_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
+      // The kiosk mode, for the visitors of an exhibition: a Meta Quest only, like the immersive viewer it opens
+      if (isHorizonOs) const KioskSettings(),
       const CustomProxyHeaderSettings(),
       const SslClientCertSettings(),
       SettingsSwitchListTile(

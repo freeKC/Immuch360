@@ -169,6 +169,28 @@ void main() {
     expect(find.text('photo nas /pano.jpg among pano.jpg'), findsOneWidget);
   });
 
+  testWidgets('in the picker of the kiosk media, a tile picks its file instead of opening it', (tester) async {
+    await remember(['/pano.jpg']);
+    final picked = <NetworkPanoramaFile>[];
+    await pumpNetworkRouter(
+      tester,
+      home: ProviderScope(
+        overrides: [
+          timelineArgsProvider.overrideWithValue(const TimelineArgs(maxWidth: 864, maxHeight: 400, columnCount: 6)),
+        ],
+        child: Scaffold(body: CustomScrollView(slivers: [Panorama360SharesSection(onPick: picked.add)])),
+      ),
+      overrides: overrides(),
+      pages: {NetworkPhotoRoute.name: (_) => const Text('photo page')},
+    );
+
+    await tester.tap(tileOf('pano.jpg'));
+    await tester.pumpAndSettle();
+
+    expect(picked.map((file) => file.path), ['/pano.jpg']);
+    expect(find.text('photo page'), findsNothing);
+  });
+
   testWidgets('nothing shows while no 360° file of a share was found', (tester) async {
     await pumpSection(tester);
 

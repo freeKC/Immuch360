@@ -590,7 +590,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                         scrollCacheExtent: .pixels(maxHeight * (tvMode ? 1 : 2)),
                         slivers: [
                           if (isSelectionMode)
-                            const SelectionSliverAppBar()
+                            // A picker brings its own selection bar, with its title (the kiosk media)
+                            widget.appBar is SelectionSliverAppBar ? widget.appBar! : const SelectionSliverAppBar()
                           else if (widget.appBar != null)
                             widget.appBar!,
                           if (widget.topSliverWidget != null) widget.topSliverWidget!,

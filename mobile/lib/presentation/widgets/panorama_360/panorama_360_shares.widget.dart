@@ -19,8 +19,12 @@ import 'package:immich_mobile/routing/router.dart';
 /// found 360° when it showed their folder or opened them (it does not walk the shares on its own). One row of tiles of
 /// the size of the grid's, which a remote goes along with left and right; each opens in the photo or video page of its
 /// share, previous and next going through the 360° files of the same share. Nothing when there is none.
+///
+/// With [onPick] (the picker of the kiosk media), a tile picks its file instead of opening it.
 class Panorama360SharesSection extends ConsumerWidget {
-  const Panorama360SharesSection({super.key});
+  const Panorama360SharesSection({super.key, this.onPick});
+
+  final void Function(NetworkPanoramaFile file)? onPick;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,6 +71,7 @@ class Panorama360SharesSection extends ConsumerWidget {
                     file: files[index],
                     files: files,
                     autofocus: tvMode && index == 0,
+                    onPick: onPick,
                   ),
                 ),
               ),
@@ -79,10 +84,13 @@ class Panorama360SharesSection extends ConsumerWidget {
 }
 
 class _ShareFileTile extends ConsumerWidget {
-  const _ShareFileTile({super.key, required this.file, required this.files, this.autofocus = false});
+  const _ShareFileTile({super.key, required this.file, required this.files, this.autofocus = false, this.onPick});
 
   final NetworkPanoramaFile file;
   final bool autofocus;
+
+  /// Picks [file] instead of opening it, see Panorama360SharesSection.onPick
+  final void Function(NetworkPanoramaFile file)? onPick;
 
   /// Every file of the row, for previous and next in the page that opens
   final List<NetworkPanoramaFile> files;
@@ -114,6 +122,12 @@ class _ShareFileTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final url = ref.watch(networkFileUrlProvider((sourceId: file.sourceId, path: file.path))).valueOrNull;
-    return NetworkMediaTile(entry: file.entry, url: url, autofocus: autofocus, onTap: () => _open(context, ref));
+    final onPick = this.onPick;
+    return NetworkMediaTile(
+      entry: file.entry,
+      url: url,
+      autofocus: autofocus,
+      onTap: onPick == null ? () => _open(context, ref) : () => onPick(file),
+    );
   }
 }
