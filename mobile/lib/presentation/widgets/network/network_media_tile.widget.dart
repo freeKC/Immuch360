@@ -25,6 +25,7 @@ import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
@@ -379,8 +380,11 @@ class NetworkMediaTile extends ConsumerWidget {
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.is360 ?? false),
     );
     // Apple spatial photos and videos, and the flat photos holding two eyes side by side, told by the same read; the
-    // flat 3D media told by their file name too (experimental, on by default, Settings, Advanced)
-    final byName = ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
+    // flat 3D media told by their file name too on a Meta Quest, where they open in 3D (experimental, on by default,
+    // Settings, Advanced)
+    final byName =
+        (ref.watch(isHorizonOsProvider).valueOrNull ?? false) &&
+        ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     final stereoBadge = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select(
         (info) => networkStereoBadgeOf(info.valueOrNull, name: entry.name, isVideo: entry.isVideo, byName: byName),
