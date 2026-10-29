@@ -1124,6 +1124,7 @@
   "kiosk_mode_media": "Kiosk mediasi",
   "kiosk_mode_media_none": "Hech narsa tanlanmagan: ilova odatdagidek ishga tushadi",
   "kiosk_mode_open_failed": "Kiosk mediasi ochilmadi: {name}",
+  "kiosk_mode_opening_soon": "Kiosk rejimi: {name} bir necha soniyadan keyin ochiladi",
   "kiosk_mode_subtitle": "Ishga tushganda shlem tashrif buyuruvchilar uchun tanlangan 360° surat yoki videoni ochadi. Shlem har safar kiyilganda film boshidan qayta boshlanadi.",
   "kiosk_mode_title": "Kiosk rejimi (tajribaviy)",
   "library": "Kutubxona",

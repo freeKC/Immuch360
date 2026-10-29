@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Kioskmedia",
   "kiosk_mode_media_none": "Niets gekozen: de app start zoals gewoonlijk",
   "kiosk_mode_open_failed": "De kioskmedia is niet geopend: {name}",
+  "kiosk_mode_opening_soon": "Kioskmodus: {name} wordt over enkele seconden geopend",
   "kiosk_mode_subtitle": "Bij het starten opent de headset de gekozen 360°-foto of -video voor bezoekers. De film begint opnieuw telkens als iemand de headset opzet.",
   "kiosk_mode_title": "Kioskmodus (experimenteel)",
   "language": "Taal",

@@ -2390,6 +2390,7 @@
   "kiosk_mode_media": "Aŭdvidaĵo de la kiosko",
   "kiosk_mode_media_none": "Nenio elektita: la aplikaĵo startas kiel kutime",
   "kiosk_mode_open_failed": "La aŭdvidaĵo de la kiosko ne malfermiĝis: {name}",
+  "kiosk_mode_opening_soon": "Kioska reĝimo: {name} malfermiĝos post kelkaj sekundoj",
   "kiosk_mode_subtitle": "Ĉe la starto, la kaskaparato malfermas la elektitan 360°-foton aŭ -videon por vizitantoj. La filmo rekomenciĝas ĉiufoje kiam iu surmetas la kaskaparaton.",
   "kiosk_mode_title": "Kioska reĝimo (eksperimenta)",
   "language": "Lingvo",

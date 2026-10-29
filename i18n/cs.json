@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Média kiosku",
   "kiosk_mode_media_none": "Nic nevybráno: aplikace se spustí jako obvykle",
   "kiosk_mode_open_failed": "Média kiosku se neotevřela: {name}",
+  "kiosk_mode_opening_soon": "Režim kiosku: {name} se za několik sekund otevře",
   "kiosk_mode_subtitle": "Při spuštění headset otevře vybranou 360° fotku nebo video pro návštěvníky. Film začne znovu pokaždé, když si někdo headset nasadí.",
   "kiosk_mode_title": "Režim kiosku (experimentální)",
   "language": "Jazyk",

@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Midia ya kioski",
   "kiosk_mode_media_none": "Hakuna kilichochaguliwa: programu inaanza kama kawaida",
   "kiosk_mode_open_failed": "Midia ya kioski haikufunguka: {name}",
+  "kiosk_mode_opening_soon": "Hali ya kioski: {name} itafunguka baada ya sekunde chache",
   "kiosk_mode_subtitle": "Inapoanza, headset ya VR inafungua picha au video ya 360° iliyochaguliwa kwa ajili ya wageni. Filamu inaanza upya kila mara headset inapovaliwa.",
   "kiosk_mode_title": "Hali ya kioski (ya majaribio)",
   "library": "Maktaba",

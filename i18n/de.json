@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Kioskmedium",
   "kiosk_mode_media_none": "Nichts gewählt: Die App startet wie gewohnt",
   "kiosk_mode_open_failed": "Das Kioskmedium hat sich nicht geöffnet: {name}",
+  "kiosk_mode_opening_soon": "Kioskmodus: {name} öffnet sich in wenigen Sekunden",
   "kiosk_mode_subtitle": "Beim Start öffnet das Headset das gewählte 360°-Foto oder -Video für Besucher. Der Film beginnt jedes Mal von vorn, wenn das Headset aufgesetzt wird.",
   "kiosk_mode_title": "Kioskmodus (experimentell)",
   "language": "Sprache",

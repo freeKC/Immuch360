@@ -1125,6 +1125,7 @@
   "kiosk_mode_media": "Media blong kiosk",
   "kiosk_mode_media_none": "I no jusum wan samting: app i stat olsem oltaem",
   "kiosk_mode_open_failed": "Media blong kiosk i no openem: {name}",
+  "kiosk_mode_opening_soon": "Kiosk mod: {name} bambae i open long sam seken",
   "kiosk_mode_subtitle": "Taem app i stat, hedset i openem 360° foto o video we yu jusum, blong ol visita. Film i stat bakegen evri taem we wan man i putum hedset.",
   "kiosk_mode_title": "Kiosk mod (stil testem)",
   "library": "Laebri",

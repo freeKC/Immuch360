@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Medij kioska",
   "kiosk_mode_media_none": "Ništa nije odabrano: aplikacija se pokreće kao i obično",
   "kiosk_mode_open_failed": "Medij kioska se nije otvorio: {name}",
+  "kiosk_mode_opening_soon": "Način kioska: {name} se otvara za nekoliko sekundi",
   "kiosk_mode_subtitle": "Pri pokretanju headset otvara odabranu 360° fotografiju ili video za posjetioce. Film počinje ispočetka svaki put kada se headset stavi.",
   "kiosk_mode_title": "Način kioska (eksperimentalno)",
   "library": "Biblioteka",

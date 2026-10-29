@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Media ar c'hiosk",
   "kiosk_mode_media_none": "Netra dibabet: an arload a loc'h evel boaz",
   "kiosk_mode_open_failed": "N’eo ket bet digoret media ar c’hiosk: {name}",
+  "kiosk_mode_opening_soon": "Mod kiosk: digeriñ a raio {name} a-benn un nebeud eilennoù",
   "kiosk_mode_subtitle": "Pa loc'h, ar gasketenn a zigor al luc'hskeudenn pe ar video 360° dibabet evit ar weladennerien. Ar film a adstag bep tro ma vez lakaet ar gasketenn.",
   "kiosk_mode_title": "Mod kiosk (arnodel)",
   "library": "Levraoueg",

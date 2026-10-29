@@ -2381,6 +2381,7 @@
   "kiosk_mode_media": "Kiosko medija",
   "kiosk_mode_media_none": "Nieko nepasirinkta: programa paleidžiama kaip įprasta",
   "kiosk_mode_open_failed": "Kiosko medija neatsidarė: {name}",
+  "kiosk_mode_opening_soon": "Kiosko režimas: {name} atsidarys po kelių sekundžių",
   "kiosk_mode_subtitle": "Paleidus akiniai lankytojams atidaro pasirinktą 360° nuotrauką ar vaizdo įrašą. Filmas prasideda iš naujo kiekvieną kartą, kai užsidedami akiniai.",
   "kiosk_mode_title": "Kiosko režimas (eksperimentinis)",
   "language": "Kalba",

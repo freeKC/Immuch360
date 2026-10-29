@@ -1282,6 +1282,7 @@
   "kiosk_mode_media": "Kiosk mediası",
   "kiosk_mode_media_none": "Heç nə seçilməyib: tətbiq adi qaydada başlayır",
   "kiosk_mode_open_failed": "Kiosk mediası açılmadı: {name}",
+  "kiosk_mode_opening_soon": "Kiosk rejimi: {name} bir neçə saniyəyə açılacaq",
   "kiosk_mode_subtitle": "Başlanğıcda VR eynəyi seçilmiş 360° foto və ya videonu ziyarətçilər üçün açır. Film hər dəfə VR eynəyi taxılanda yenidən başlayır.",
   "kiosk_mode_title": "Kiosk rejimi (eksperimental)",
   "library": "Kitabxana",

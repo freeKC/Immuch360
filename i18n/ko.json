@@ -2387,6 +2387,7 @@
   "kiosk_mode_media": "키오스크 미디어",
   "kiosk_mode_media_none": "선택 안 함: 앱이 평소처럼 시작됩니다",
   "kiosk_mode_open_failed": "키오스크 미디어를 열지 못했습니다: {name}",
+  "kiosk_mode_opening_soon": "키오스크 모드: 몇 초 후에 {name}을(를) 엽니다",
   "kiosk_mode_subtitle": "시작할 때 헤드셋이 방문객을 위해 선택한 360° 사진 또는 동영상을 엽니다. 헤드셋을 쓸 때마다 영상이 처음부터 다시 시작됩니다.",
   "kiosk_mode_title": "키오스크 모드 (실험적)",
   "language": "언어",

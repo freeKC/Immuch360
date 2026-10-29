@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Contenido del quiosco",
   "kiosk_mode_media_none": "Nada elegido: la aplicación se inicia como siempre",
   "kiosk_mode_open_failed": "El contenido del quiosco no se abrió: {name}",
+  "kiosk_mode_opening_soon": "Modo quiosco: {name} se abrirá en unos segundos",
   "kiosk_mode_subtitle": "Al iniciarse, el visor abre la foto o el vídeo 360° elegido para los visitantes. La película vuelve a empezar cada vez que alguien se pone el visor.",
   "kiosk_mode_title": "Modo quiosco (experimental)",
   "language": "Idioma",

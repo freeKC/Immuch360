@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Kioskmedium",
   "kiosk_mode_media_none": "Ingenting valgt: appen starter som vanlig",
   "kiosk_mode_open_failed": "Kioskmediet ble ikke åpnet: {name}",
+  "kiosk_mode_opening_soon": "Kioskmodus: {name} åpnes om noen sekunder",
   "kiosk_mode_subtitle": "Ved oppstart åpner headsettet det valgte 360°-bildet eller den valgte 360°-videoen for besøkende. Filmen starter på nytt hver gang headsettet tas på.",
   "kiosk_mode_title": "Kioskmodus (eksperimentell)",
   "language": "Språk",

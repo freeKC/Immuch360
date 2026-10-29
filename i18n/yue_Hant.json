@@ -2380,6 +2380,7 @@
   "kiosk_mode_media": "展示台媒體",
   "kiosk_mode_media_none": "未揀任何嘢：App 會照常開啟",
   "kiosk_mode_open_failed": "展示台媒體開唔到：{name}",
+  "kiosk_mode_opening_soon": "展示台模式：{name} 幾秒後就會打開",
   "kiosk_mode_subtitle": "開啟時，頭戴裝置會為訪客打開揀咗嘅 360° 相片或者影片。每次有人戴上頭戴裝置，影片都會由頭再播。",
   "kiosk_mode_title": "展示台模式（實驗性）",
   "language": "語言",

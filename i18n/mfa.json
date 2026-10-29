@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Media kiosk",
   "kiosk_mode_media_none": "Takdok gapo dipilih: aplikasi mulo macam biaso",
   "kiosk_mode_open_failed": "Media kiosk tak buko: {name}",
+  "kiosk_mode_opening_soon": "Mod kiosk: {name} nok buko lagi sikit saat",
   "kiosk_mode_subtitle": "Maso mulo, headset buko gambo ke video 360° hok dipilih untuk pelawat. Filem mulo balik dari awal tiap kali headset dipakai.",
   "kiosk_mode_title": "Mod kiosk (cubo-cubo)",
   "library": "Pustako",

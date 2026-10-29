@@ -2390,6 +2390,7 @@
   "kiosk_mode_media": "Media kios",
   "kiosk_mode_media_none": "Belum ada yang dipilih: aplikasi dimulai seperti biasa",
   "kiosk_mode_open_failed": "Media kios tidak terbuka: {name}",
+  "kiosk_mode_opening_soon": "Mode kios: {name} akan terbuka dalam beberapa detik",
   "kiosk_mode_subtitle": "Saat dimulai, headset membuka foto atau video 360° yang dipilih untuk pengunjung. Film diputar lagi dari awal setiap kali headset dipakai.",
   "kiosk_mode_title": "Mode kios (eksperimental)",
   "language": "Bahasa",

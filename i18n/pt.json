@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Conteúdo do quiosque",
   "kiosk_mode_media_none": "Nada escolhido: a aplicação inicia como habitualmente",
   "kiosk_mode_open_failed": "O conteúdo do quiosque não abriu: {name}",
+  "kiosk_mode_opening_soon": "Modo quiosque: {name} abre dentro de alguns segundos",
   "kiosk_mode_subtitle": "Ao iniciar, o headset abre a foto ou o vídeo 360° escolhido para os visitantes. O filme recomeça do início sempre que alguém coloca o headset.",
   "kiosk_mode_title": "Modo quiosque (experimental)",
   "language": "Idioma",

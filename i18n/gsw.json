@@ -2220,6 +2220,7 @@
   "kiosk_mode_media": "Kioskmedium",
   "kiosk_mode_media_none": "Nüt usgwählt: d App startet wie immer",
   "kiosk_mode_open_failed": "S Kioskmedium isch nid ufgange: {name}",
+  "kiosk_mode_opening_soon": "Kioskmodus: {name} gaht i es paar Sekunde uf",
   "kiosk_mode_subtitle": "Bim Start macht s Headset s usgwählte 360°-Foto oder -Video für d Bsuecher uf. De Film fangt jedes Mal vo vorne aa, wenn öpper s Headset aaleit.",
   "kiosk_mode_title": "Kioskmodus (experimentell)",
   "language": "Sproch",

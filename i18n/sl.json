@@ -2391,6 +2391,7 @@
   "kiosk_mode_media": "Medij kioska",
   "kiosk_mode_media_none": "Nič ni izbrano: aplikacija se zažene kot običajno",
   "kiosk_mode_open_failed": "Medija kioska ni bilo mogoče odpreti: {name}",
+  "kiosk_mode_opening_soon": "Način kioska: {name} se odpre čez nekaj sekund",
   "kiosk_mode_subtitle": "Ob zagonu očala obiskovalcem odprejo izbrano 360° fotografijo ali video. Film se začne znova vsakič, ko si nekdo nadene očala.",
   "kiosk_mode_title": "Način kioska (preizkusno)",
   "language": "Jezik",

@@ -2304,6 +2304,7 @@
   "kiosk_mode_media": "Kioska multivide",
   "kiosk_mode_media_none": "Nekas nav izvēlēts: lietotne startē kā parasti",
   "kiosk_mode_open_failed": "Kioska multivide neatvērās: {name}",
+  "kiosk_mode_opening_soon": "Kioska režīms: {name} atvērsies pēc dažām sekundēm",
   "kiosk_mode_subtitle": "Startējot brilles apmeklētājiem atver izvēlēto 360° foto vai video. Filma sākas no sākuma katru reizi, kad brilles tiek uzliktas.",
   "kiosk_mode_title": "Kioska režīms (eksperimentāls)",
   "language": "Valoda",

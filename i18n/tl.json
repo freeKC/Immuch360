@@ -1149,6 +1149,7 @@
   "kiosk_mode_media": "Media ng kiosk",
   "kiosk_mode_media_none": "Walang napili: magsisimula ang app gaya ng dati",
   "kiosk_mode_open_failed": "Hindi nabuksan ang media ng kiosk: {name}",
+  "kiosk_mode_opening_soon": "Kiosk mode: bubukas ang {name} sa loob ng ilang segundo",
   "kiosk_mode_subtitle": "Sa pagsisimula, binubuksan ng headset ang napiling 360° na larawan o video para sa mga bisita. Nagsisimula ulit ang pelikula tuwing isusuot ang headset.",
   "kiosk_mode_title": "Kiosk mode (eksperimental)",
   "library": "Library",

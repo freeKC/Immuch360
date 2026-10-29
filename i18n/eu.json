@@ -2358,6 +2358,7 @@
   "kiosk_mode_media": "Kioskoaren multimedia",
   "kiosk_mode_media_none": "Ez da ezer aukeratu: aplikazioa ohi bezala abiarazten da",
   "kiosk_mode_open_failed": "Kioskoaren multimedia ez da ireki: {name}",
+  "kiosk_mode_opening_soon": "Kiosko modua: {name} segundo batzuk barru irekiko da",
   "kiosk_mode_subtitle": "Abiaraztean, betaurrekoek aukeratutako 360° argazkia edo bideoa irekitzen dute bisitarientzat. Filma hasieratik hasten da betaurrekoak jartzen diren bakoitzean.",
   "kiosk_mode_title": "Kiosko modua (esperimentala)",
   "language": "Hizkuntza",

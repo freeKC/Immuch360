@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Amidya n kiyusk",
   "kiosk_mode_media_none": "Ulac ayen yettwafernen: asnas ad yebdu am yal tikkelt",
   "kiosk_mode_open_failed": "Amidya n kiyusk ur yeldi ara: {name}",
+  "kiosk_mode_opening_soon": "Askar n kiyusk: {name} ad yeldi deg kra n tsinin",
   "kiosk_mode_subtitle": "Deg tazwara, tacacit ad teldi i yinebgawen tawlaft neɣ tavidyut 360° yettwafernen. Asaru ad yales seg tazwara yal tikkelt ara tettwals tacacit.",
   "kiosk_mode_title": "Askar n kiyusk (s tirmit)",
   "library": "Tamkarḍit",

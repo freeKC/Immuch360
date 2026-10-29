@@ -1910,6 +1910,7 @@
   "kiosk_mode_media": "Media kiosk",
   "kiosk_mode_media_none": "Tiada apa-apa dipilih: aplikasi bermula seperti biasa",
   "kiosk_mode_open_failed": "Media kiosk tidak dibuka: {name}",
+  "kiosk_mode_opening_soon": "Mod kiosk: {name} akan dibuka dalam beberapa saat",
   "kiosk_mode_subtitle": "Semasa bermula, set kepala membuka foto atau video 360° yang dipilih untuk pelawat. Filem bermula semula setiap kali set kepala dipakai.",
   "kiosk_mode_title": "Mod kiosk (eksperimen)",
   "language": "Bahasa",

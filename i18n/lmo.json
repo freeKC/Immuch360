@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Contegnuu del chiosch",
   "kiosk_mode_media_none": "Nagott sciernii: l'app la parte come semper",
   "kiosk_mode_open_failed": "El contegnuu del chiosch el s'è minga avert: {name}",
+  "kiosk_mode_opening_soon": "Modalità chiosch: {name} el se derviss tra on quaj second",
   "kiosk_mode_subtitle": "A l'avvi, el visor el derva per i visitador la foto o el video 360° sciernii. El film el ricomincia de capp ogni volta che vun el se mett el visor.",
   "kiosk_mode_title": "Modalità chiosch (sperimental)",
   "library": "Biblioteca",

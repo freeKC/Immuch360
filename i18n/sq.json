@@ -2376,6 +2376,7 @@
   "kiosk_mode_media": "Media e kioskut",
   "kiosk_mode_media_none": "Asgjë e zgjedhur: aplikacioni niset si zakonisht",
   "kiosk_mode_open_failed": "Media e kioskut nuk u hap: {name}",
+  "kiosk_mode_opening_soon": "Modaliteti kiosk: {name} do të hapet pas disa sekondash",
   "kiosk_mode_subtitle": "Në nisje, kufjet VR hapin për vizitorët foton ose videon 360° të zgjedhur. Filmi rifillon nga fillimi sa herë që dikush vë kufjet VR.",
   "kiosk_mode_title": "Modaliteti kiosk (eksperimentale)",
   "language": "Gjuha",

@@ -1112,6 +1112,7 @@
   "kiosk_mode_media": "Kioskmedium",
   "kiosk_mode_media_none": "Näischt gewielt: d'App start wéi gewinnt",
   "kiosk_mode_open_failed": "D'Kioskmedium ass net opgaang: {name}",
+  "kiosk_mode_opening_soon": "Kioskmodus: {name} geet an e puer Sekonnen op",
   "kiosk_mode_subtitle": "Beim Start mécht den Headset dat gewielt 360°-Foto oder -Video fir d'Visiteuren op. De Film fänkt all Kéier vu vir un, wann een den Headset opsetzt.",
   "kiosk_mode_title": "Kioskmodus (experimentell)",
   "library": "Bibliothéik",

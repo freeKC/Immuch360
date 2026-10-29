@@ -2387,6 +2387,7 @@
   "kiosk_mode_media": "Conținutul chioșcului",
   "kiosk_mode_media_none": "Nimic ales: aplicația pornește ca de obicei",
   "kiosk_mode_open_failed": "Conținutul chioșcului nu s-a deschis: {name}",
+  "kiosk_mode_opening_soon": "Mod chioșc: {name} se deschide în câteva secunde",
   "kiosk_mode_subtitle": "La pornire, casca deschide pentru vizitatori fotografia sau videoclipul 360° ales. Filmul reîncepe de la început de fiecare dată când cineva pune casca.",
   "kiosk_mode_title": "Mod chioșc (experimental)",
   "language": "Limbă",
