@@ -547,6 +547,27 @@ void main() {
       });
     });
 
+    test('right then left back to the start: the second seek goes, though the player still reports the start', () {
+      fakeAsync((async) {
+        // Paused at 1:00; each seek lands 300 ms after it left
+        final native = slowPlayer(start: const Duration(seconds: 60), seekTime: const Duration(milliseconds: 300));
+
+        player.seekBy(const Duration(seconds: 10));
+        async.elapse(const Duration(milliseconds: 200));
+        expect(native.seeks, [70000], reason: 'the seek to 1:10 is under way');
+        player.seekBy(const Duration(seconds: -10));
+        async.elapse(const Duration(milliseconds: 20));
+        // Before the first seek landed the player still tells where it was: 1:00, the target of the second press
+        native.report();
+        async.elapse(const Duration(seconds: 3));
+
+        expect(native.seeks, [70000, 60000], reason: 'both seeks reached the player');
+        expect(native.positionMs, 60000, reason: 'the player is back at the start');
+        expect(player.state.position, const Duration(seconds: 60));
+        player.dispose();
+      });
+    });
+
     test('once the seek landed, the positions of a playing video show again at once', () {
       fakeAsync((async) {
         final native = slowPlayer(start: const Duration(seconds: 30))..status = PlaybackStatus.playing;
