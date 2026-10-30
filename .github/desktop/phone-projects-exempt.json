@@ -300,12 +300,16 @@
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreen.kt": {
-    "blob": "0f1ec4ab65b1bc403491892077e9369cb1e35bb3",
+    "blob": "fcb4df1db6d9f18806a5d11a133c6733cb4f807a",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the grips of a flat screen (a short press, a hold on it, both grips), where it stands, the grab around the eyes and the stretch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreenLayer.kt": {
-    "blob": "587f5a88b7b7b800b24aa7b86f865b88df100a1c",
+    "blob": "985294addd0ec7e2c0140862fccc60a2f29017d9",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the compositor quad layer of the flat photos, its filters and its shape"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreenMedia.kt": {
+    "blob": "6a9fe0dad1347aa5c64efbe210ae606572490ab8",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): what the viewer makes of a request (the stereo quad, the flat video screen, the big screen, a movable screen, the photo layer, the widths of its screen), read by the MediaRequest of the viewer"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatStereo.kt": {
     "blob": "4d29bedad4e64bb304dbe85141bb9f98332b7fb6",
@@ -328,7 +332,7 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "ebd5343105765b8413a5aa7eb67442f76da67efc",
+    "blob": "3ed1ce1ed232ec53177f6044e513c5e7116f085d",
     "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
@@ -348,7 +352,7 @@
     "reason": "AI immersive lot A7: decoding and cutting a side by side photo for the stereo quad; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
-    "blob": "e17700266d7cb0718933df92a12c2d4af8386850",
+    "blob": "2bcd04b9d2849334eb04b0ac5250e36b98968a2a",
     "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
@@ -1108,16 +1112,20 @@
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the bigScreen request against big_screen_contract_v1.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGeometryTest.kt": {
-    "blob": "d457d8015f59305c4ecaa6959d197ec208baf6e4",
+    "blob": "c060b3365aba351b04a7194f3308b13ab56ad1c2",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of where a flat screen stands, the ray, the grab, the distance, the size and the stretch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGripTest.kt": {
-    "blob": "aea52b8bb192d8df01090e0fb94b811e25c2be85",
+    "blob": "4ae6425a6d05a58db32ccf6f079b24a93e5beb6c",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of the grip states: short press, hold, both grips, release, reset"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenLayerTest.kt": {
-    "blob": "6e82c1d4fb9f29da8ec337ebbe6eee50c091b8b2",
+    "blob": "7e2d326e6dd83bd2913677ed4c2184e240badb62",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of the parameters of the compositor layer and its filters"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenMediaTest.kt": {
+    "blob": "0881b03794ccc7cca8913cf116663afbf8d478b1",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of what the viewer makes of each request of the contracts"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoSpecTest.kt": {
     "blob": "c12470ebb72a39906cac0abf3baf073920082b2e",
@@ -1152,7 +1160,7 @@
     "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
-    "blob": "84da61961dc2a2c0451fc9816cdf5eefb706918a",
+    "blob": "21e2203097b75546ee4d9a4208bedb2c010d6864",
     "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, fix round): the English fallbacks of the flat 3D texts against en.json; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens against en.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
