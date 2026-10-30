@@ -27,6 +27,7 @@ import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
@@ -67,6 +68,24 @@ enum IndexedOrigin {
 /// from, and its kind (the immersive_kind column, by the names of ImmersiveKind), null for a kind this build does not
 /// know or a file the scan has not read again since the index learnt the kinds
 typedef IndexedVersion = ({IndexedOrigin origin, ImmersiveKind? kind});
+
+/// Where the content of a file comes from, by our XMP in it ([xmp], as the scan reads it), null for a file the app did
+/// not make: an Origin this build does not know, from a later format, still makes a version when the packet holds the
+/// id of a file the app made
+IndexedOrigin? indexedOriginOf(ImmersiveXmp? xmp) => switch (xmp?.origin) {
+  ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
+  ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
+  ImmersiveOrigin.reconstructedFromPhoto => IndexedOrigin.reconstructed,
+  _ when xmp?.derivativeId?.isNotEmpty ?? false => IndexedOrigin.other,
+  _ => null,
+};
+
+/// What the index would keep of a file whose XMP is [xmp] as a version of ours (see [indexedOriginOf]), null for a file
+/// the app did not make: the files of a share, which no index holds, are read so
+IndexedVersion? indexedVersionOf(ImmersiveXmp? xmp) => switch (indexedOriginOf(xmp)) {
+  final origin? => (origin: origin, kind: xmp?.kind),
+  null => null,
+};
 
 T? _byName<T extends Enum>(List<T> values, Object? name) => values.where((value) => value.name == name).firstOrNull;
 

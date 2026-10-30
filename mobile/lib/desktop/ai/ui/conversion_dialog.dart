@@ -73,6 +73,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -82,6 +83,7 @@ import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/scene/focal_shift.dart' show halfDiagonal35mm;
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
@@ -90,6 +92,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -637,16 +640,21 @@ class DesktopConversionAssetFiles implements ConversionAssetFiles {
 
 /// The date of a photo that is not a JPEG for its 3D photo: the engine reads the EXIF of a JPEG itself, nothing reads
 /// that of a HEIC or a PNG in phase 1
-ImmersiveExif _exifOf(BaseAsset asset) {
-  final name = asset.name.toLowerCase();
-  if (name.endsWith('.jpg') || name.endsWith('.jpeg')) {
+ImmersiveExif _exifOf(BaseAsset asset) => conversionExifOf(asset.name, asset.createdAt);
+
+/// The fields a version keeps from the photo named [name], taken at [date]: none for a JPEG, whose EXIF the engine
+/// reads itself; its date, in the time of this computer, for another format
+ImmersiveExif conversionExifOf(String name, DateTime date) {
+  final lower = name.toLowerCase();
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
     return const ImmersiveExif();
   }
-  final date = asset.createdAt.toLocal();
+  final local = date.toLocal();
   String two(int value) => value.toString().padLeft(2, '0');
   return ImmersiveExif(
     dateTimeOriginal:
-        '${date.year}:${two(date.month)}:${two(date.day)} ${two(date.hour)}:${two(date.minute)}:${two(date.second)}',
+        '${local.year}:${two(local.month)}:${two(local.day)} ${two(local.hour)}:${two(local.minute)}:'
+        '${two(local.second)}',
   );
 }
 
@@ -985,9 +993,13 @@ Future<void> openConversionDialog(
 
 /// See the top of this file
 class ConversionDialog extends ConsumerStatefulWidget {
-  const ConversionDialog({super.key, required this.assets, this.kind});
+  const ConversionDialog({super.key, this.assets = const [], this.kind, this.shareFiles = const []});
 
   final List<BaseAsset> assets;
+
+  /// The files of a share opened in the app it is opened on instead of [assets] (share_conversion.dart): each photo is
+  /// copied once through the media bridge as the dialog opens, and its facts read from that copy
+  final List<NetworkEntry> shareFiles;
 
   /// The type to start with when this build makes it and it takes a photo, before the one chosen last
   final ConversionKind? kind;
@@ -1055,6 +1067,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   var _launched = false;
   var _closed = false;
 
+  /// The copy of the photos of a share under way: which photo, of how many, and its bytes copied of their total
+  ({int index, int count, String name, int copied, int? total})? _copying;
+
+  /// The copies of the photos of a share this dialog made; those no job takes are deleted as it closes or launches
+  final _shareSources = <ShareFileSource>[];
+
+  /// The photos are being read (or copied from their share): their copies are deleted once that ends
+  var _reading = false;
+
   Iterable<ConversionCandidate> get _runs => _candidates?.where((candidate) => candidate.runs) ?? const [];
 
   @override
@@ -1078,13 +1099,49 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (session != null) {
       unawaited(session.close());
     }
+    // A copy under way stops at its next bytes, and its photos are deleted once the reading ends
+    if (!_launched && !_reading) {
+      _releaseShareSources();
+    }
   }
+
+  /// Deletes the copies of the photos of a share no job took
+  void _releaseShareSources({Set<ConversionSource> kept = const {}}) {
+    for (final source in _shareSources) {
+      if (!kept.contains(source)) {
+        unawaited(source.release());
+      }
+    }
+    _shareSources.clear();
+  }
+
+  int get _count => widget.shareFiles.isNotEmpty ? widget.shareFiles.length : widget.assets.length;
 
   Future<void> _prepare() async {
     _settings = await _store.read();
     _existing = _settings.skipExisting ? ExistingVersionChoice.skip : ExistingVersionChoice.newVersion;
     _alsoStereo = _settings.alsoStereoPanorama;
     _offered = ref.read(offeredConversionKindsProvider);
+    _reading = true;
+    List<_Photo>? photos;
+    try {
+      photos = widget.shareFiles.isEmpty ? await _readAssets() : await _readShareFiles();
+    } finally {
+      _reading = false;
+    }
+    if (!mounted || _closed || photos == null) {
+      if (!_launched) {
+        _releaseShareSources();
+      }
+      return;
+    }
+    _photos = photos;
+    _kind = _initialKind();
+    await _plan();
+  }
+
+  /// The photos of the app the dialog was opened on, as it reads them once
+  Future<List<_Photo>> _readAssets() async {
     final facts = ref.read(conversionFactsReaderProvider);
     final files = ref.read(conversionAssetFilesProvider);
     final partial = ref.read(conversionPartialSphereReaderProvider);
@@ -1108,12 +1165,74 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       }
       photos.add(_Photo(asset, known, found));
     }
-    if (!mounted || _closed) {
-      return;
+    return photos;
+  }
+
+  /// The files of a share the dialog was opened on: each photo copied once through the media bridge, its name and its
+  /// bytes shown meanwhile, then its facts read from that copy; a video is not copied, the plan skips it. A photo whose
+  /// copy fails cannot be reached. Null once the dialog closed meanwhile (Cancel): the copy under way stops.
+  Future<List<_Photo>?> _readShareFiles() async {
+    final make = ref.read(shareConversionSourceProvider);
+    final read = ref.read(shareCopyFactsReaderProvider);
+    // The turns the page of a share shows each photo with; none when they cannot be read, as in its viewer
+    var rotations = const <String, ViewRotationEntry>{};
+    try {
+      rotations = ref.read(viewRotationsProvider);
+    } catch (error) {
+      _log.fine('The turns of the photos of the share are not known: $error');
     }
-    _photos = photos;
-    _kind = _initialKind();
-    await _plan();
+    final files = widget.shareFiles;
+    final photos = <_Photo>[];
+    for (final (index, entry) in files.indexed) {
+      if (_closed) {
+        return null;
+      }
+      if (!entry.isImage) {
+        photos.add(_Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), null));
+        continue;
+      }
+      final source = make(entry);
+      _shareSources.add(source);
+      void show(int copied, int? total) {
+        if (mounted && !_closed) {
+          setState(
+            () => _copying = (index: index, count: files.length, name: entry.name, copied: copied, total: total),
+          );
+        }
+      }
+
+      show(0, entry.size);
+      try {
+        final copy = await source.copy(isCancelled: () => _closed, onProgress: show);
+        final turns = viewRotationShareTurnsOf(
+          rotations,
+          entry.sourceId,
+          entry.path,
+          size: entry.size,
+          modifiedMs: entry.modified?.millisecondsSinceEpoch,
+        );
+        final known = await read(entry, copy, quarterTurns: turns);
+        source.exif = known.exif;
+        photos.add(
+          _Photo(shareConversionAsset(entry, width: known.width, height: known.height), known.facts, (
+            location: ShareOriginal(name: entry.name),
+            source: source,
+          )),
+        );
+      } on Object catch (error) {
+        if (_closed) {
+          return null;
+        }
+        _log.warning('${entry.name} could not be copied from its share: $error');
+        _shareSources.remove(source);
+        unawaited(source.release());
+        photos.add(_Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), null));
+      }
+    }
+    if (mounted && !_closed) {
+      setState(() => _copying = null);
+    }
+    return photos;
   }
 
   /// The type asked for, then the type chosen last, when this build makes it and it takes a photo of the selection;
@@ -1379,6 +1498,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final ids = ref
         .read(conversionQueueProvider.notifier)
         .add(requests, kind: kind, existing: _existing, whenExists: settings.whenExists, alsoStereo: alsoStereo);
+    // The copies of the photos of a share go with their jobs; those of the photos skipped go now
+    _releaseShareSources(
+      kept: {
+        for (final request in requests)
+          if (request.skip == null) request.source,
+      },
+    );
     final infos = <String, ConversionJobInfo>{};
     final queue = ref.read(conversionQueueProvider);
     final requestOf = requestIndexOfJobs(ids, queue);
@@ -1392,7 +1518,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         output.adopt(id, part);
       }
       infos[id] = ConversionJobInfo(
-        asset: candidate.asset,
+        // A photo of a share is no photo of the app: its row shows no thumbnail of the timeline
+        asset: candidate.location is ShareOriginal ? null : candidate.asset,
         isNetwork: plan?.isNetwork ?? false,
         serverEdits: candidate.serverEdits,
         generatedSource: candidate.generated,
@@ -1443,7 +1570,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final moving = ref.read(aiComponentsServiceProvider).isMoving;
     final busy = _gestures > 0 || candidates == null || _asking;
     final canConvert = !busy && !moving && available && session != null && _ready(session);
-    final count = widget.assets.length;
+    final count = _count;
     // Each type with the refusal of its gate, when it refuses
     final refusals = {
       for (final offered in _offered)
@@ -1491,7 +1618,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                   onChanged: busy || _launched ? null : (on) => setState(() => _alsoStereo = on ?? false),
                 ),
               const SizedBox(height: 12),
-              if (gates.any((each) => each.isLoading) || candidates == null)
+              if (_copying case final copying?)
+                _ShareCopyLine(key: const Key('ai_conversion_share_copy'), copying: copying)
+              else if (gates.any((each) => each.isLoading) || candidates == null)
                 const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
@@ -1732,6 +1861,43 @@ class _ChosenFolderStore extends DesktopAiSettingsStore {
   @override
   Future<DesktopAiSettings> update(DesktopAiSettings Function(DesktopAiSettings settings) change) async =>
       _chosen(await _inner.update(change));
+}
+
+/// The copy of a photo of a share under way: "Copying salon.jpg from the share: 4.2 MiB of 12.0 MiB", "2 of 5" for a
+/// selection, and its bar
+class _ShareCopyLine extends StatelessWidget {
+  const _ShareCopyLine({super.key, required this.copying});
+
+  final ({int index, int count, String name, int copied, int? total}) copying;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final total = copying.total;
+    final secondary = TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            t.ai_immersive_share_copying(
+              name: copying.name,
+              done: formatBytes(copying.copied),
+              all: total == null ? '…' : formatBytes(total),
+            ),
+          ),
+          if (copying.count > 1)
+            Text(
+              t.ai_immersive_progress_count(index: copying.index + 1, total: copying.count),
+              style: secondary,
+            ),
+          const SizedBox(height: 4),
+          LinearProgressIndicator(value: total == null || total <= 0 ? null : (copying.copied / total).clamp(0, 1)),
+        ],
+      ),
+    );
+  }
 }
 
 class _Note extends StatelessWidget {
