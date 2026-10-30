@@ -6144,9 +6144,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     if (liveViewer === this) liveViewer = null
-    // A finishing viewer had its onSpatialShutdown already (the SDK runs it from onPause): the objects of the scene
-    // read null, and these drops only let the jobs and the bitmaps go. Any other viewer drops its scene here, before
-    // the shutdown that super.onDestroy runs
+    // A viewer that finished at its onPause or at its onStop had its onSpatialShutdown there (the SDK runs it from
+    // either once the viewer is finishing): the objects of the scene read null, and these drops only let the jobs and
+    // the bitmaps go. Any other viewer, destroyed without a finish or finished while already stopped, drops its scene
+    // here, before the shutdown that super.onDestroy runs
     releaseRelief()
     dropScene()
     dropPhotoLayer()
@@ -6156,9 +6157,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * The scene of the SDK goes: VrActivity.destroy runs this method, then destroys the scene and clears EntityContext,
-   * at the onPause of a finishing viewer (before its own onPause, onStop and onDestroy) or at the onDestroy of any
-   * other. First of all every object of the scene is let go (see [SpatialHold]): nothing that runs from here on, the
-   * drops of onDestroy, a coroutine, a post or a callback, reaches an entity, a panel or a texture of a scene gone.
+   * at the first of onPause, onStop or onDestroy that finds the viewer finishing, else at its onDestroy. So a viewer
+   * finishing at its onPause gets it from super.onPause, before the rest of its onPause, its onStop and its onDestroy;
+   * one finished between its onPause and its onStop, from super.onStop, at the end of its onStop; any other viewer
+   * (destroyed without a finish, or finished while already stopped), from super.onDestroy, after the body of its
+   * onDestroy. First of all every object of the scene is let go (see [SpatialHold]): nothing that runs from here on,
+   * the drops of onDestroy, a coroutine, a post or a callback, reaches an entity, a panel or a texture of a scene gone.
    */
   override fun onSpatialShutdown() {
     sceneHold.shutDown()
