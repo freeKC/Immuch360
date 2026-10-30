@@ -191,6 +191,20 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
           )
         : null;
 
+    // "View on a big screen" on a Meta Quest: an ordinary photo or video, whole on a large flat screen of the immersive
+    // viewer that the grips move and resize (an idea of Gaurav Mukherjee, gmfun/Immuch360 branch quest/flat-3d). A
+    // photo once the reads above found it flat (the AI relief may show beside it, for its 3D), a video neither 360°
+    // nor told 3D by its name; never a media shown as 360°, which keeps its own viewer
+    final isFlatVideo = isHorizonOs && asset.isVideo && !hasPanoramaView && flatVideoFormat == null;
+    final bigScreenButton = isFlatPhoto || isFlatVideo
+        ? IconButton(
+            key: const Key('immersive_big_screen'),
+            icon: const Icon(Icons.fit_screen_rounded),
+            tooltip: context.t.immersive_view_big_screen,
+            onPressed: () => unawaited(_openBigScreen(context, ref, asset)),
+          )
+        : null;
+
     // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
     final fullScreenButton = CurrentPlatform.isDesktop ? const DesktopFullScreenButton() : null;
     // Immuch360 Desktop: the view modes of a photo of two eyes side by side (lib/desktop/ai/sbs_view_modes.dart)
@@ -268,6 +282,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   view3dButton != null ||
                                   sceneButton != null ||
                                   reliefButton != null ||
+                                  bigScreenButton != null ||
                                   rotateButton != null ||
                                   fullScreenButton != null)
                           ? ImmichColorOverride(
@@ -282,6 +297,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                     ?view3dButton,
                                     ?sceneButton,
                                     ?reliefButton,
+                                    ?bigScreenButton,
                                     ?panoramaButton,
                                     ?spatialButton,
                                     ?rotateButton,
@@ -344,6 +360,33 @@ Future<void> _openFlatVideo(BuildContext context, WidgetRef ref, BaseAsset asset
     );
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
+    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+  }
+}
+
+/// Opens [asset], an ordinary photo or video, whole on the big screen of the immersive viewer of a Meta Quest (see
+/// [openBigScreenPhoto] and [openBigScreenVideo]); a message says when it could not open, or what to know about the
+/// file of a video
+Future<void> _openBigScreen(BuildContext context, WidgetRef ref, BaseAsset asset) async {
+  // Read before the first await: the viewer may be gone by then
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final errorMessage = context.t.immersive_viewer_open_failed;
+  final stereoLabels = stereoPhotoViewerLabels(context.t);
+  try {
+    if (asset.isVideo) {
+      await openBigScreenVideo(
+        ref,
+        asset,
+        stereoLabels: stereoLabels,
+        // Comes once the file is chosen, after the slow steps: the static translations do not need the viewer then
+        onSourceNotice: (notice) =>
+            messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance)))),
+      );
+    } else {
+      await openBigScreenPhoto(ref, asset, stereoLabels: stereoLabels);
+    }
+  } catch (error) {
+    _log.warning('Could not open ${asset.name} on the big screen: $error');
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 }

@@ -280,6 +280,8 @@ class StereoComposerTest {
         StereoComposer.LABEL_RELIEF_DAMAGED to "ai_immersive_unavailable_damaged",
         StereoComposer.LABEL_FLAT3D_NOTICE to "immersive_flat_3d_notice",
         StereoComposer.LABEL_FLAT3D_NO_NAVIGATION to "immersive_flat_3d_no_navigation",
+        StereoComposer.LABEL_SHARP_NOTICE to "immersive_sharp_screens_notice",
+        StereoComposer.LABEL_BIG_SCREEN_NO_NAVIGATION to "immersive_big_screen_no_navigation",
       )
     val english = Json.parseToJsonElement(englishFile().readText()).jsonObject
     for ((key, translation) in translated) {

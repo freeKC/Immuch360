@@ -3632,4 +3632,148 @@ void main() {
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
+
+  group('ViewerTopAppBar "View on a big screen" on a Meta Quest', () {
+    const server = PresentationContext.serverEndpoint;
+    final bigScreenButton = find.byKey(const Key('immersive_big_screen'));
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+    // The AI relief, which may show beside it for a flat photo, has tests of its own
+    const noRelief = AppConfig(aiImmersive: AiImmersiveConfig(enabled: false));
+
+    /// What open was given: the url, whether a video, the labels, the start, the stereoPair JSON and Sharper flat
+    /// screens
+    List<dynamic> openedWith() => verify(
+      () => immersiveApi.open(
+        captureAny(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+        captureAny(),
+        any(),
+        any(),
+        any(),
+        captureAny(),
+        any(),
+        captureAny(),
+      ),
+    ).captured;
+
+    // What the head of a photo says, without reading it: nothing side by side
+    Override flat(BaseAsset asset) => flatStereoProvider(asset).overrideWith((ref) async => null);
+
+    testWidgets('opens an ordinary photo whole on the big screen, edited as the asset viewer shows it', (tester) async {
+      final asset = owned(name: 'garden.jpg', width: 4000, height: 3000);
+      await pumpTopBar(tester, asset, horizonOs: true, appConfig: noRelief, extraOverrides: [flat(asset)]);
+
+      expect(bigScreenButton, findsOneWidget);
+      expect(find.byTooltip('View on a big screen'), findsOneWidget);
+      expect(view3dButton, findsNothing);
+      await tester.tap(bigScreenButton);
+      await tester.pumpAndSettle();
+
+      final captured = openedWith();
+      expect(captured[0], '$server/assets/${asset.id}/original?edited=true');
+      expect(captured[1], isFalse, reason: 'a photo');
+      final labels = captured[2] as Map<String, String>;
+      expect(
+        labels['bigScreenNoNavigation'],
+        'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
+      );
+      expect(labels['sharpScreensNotice'], 'Sharper flat screen (experimental)');
+      expect(jsonDecode(captured[4] as String), {'kind': 'bigScreen', 'version': 1});
+      expect(captured[5], isTrue, reason: 'Sharper flat screens is on by default');
+      expect(calls, ['immersive']);
+    });
+
+    testWidgets('opens an ordinary video on the flat video screen, and takes it back where the viewer stopped', (
+      tester,
+    ) async {
+      final asset = owned(type: .video, name: 'clip.mp4', width: 1080, height: 1920);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+      // The video viewer keeps its player alive meanwhile
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+      addTearDown(subscription.close);
+
+      await tester.tap(bigScreenButton);
+      await tester.pumpAndSettle();
+
+      final captured = openedWith();
+      expect(captured[0], '$server/assets/${asset.id}/original', reason: 'the original, as for the sphere');
+      expect(captured[1], isTrue, reason: 'a video');
+      expect(captured[3], 12000, reason: 'carries on from where the viewer played it');
+      expect(jsonDecode(captured[4] as String), {'kind': 'bigScreen', 'version': 1});
+
+      await closeImmersiveViewer(tester, ImmersiveSphereCoverage.full, positionMs: 30000);
+      expect(calls, ['suspend', 'immersive', 'resume at 30000 paused']);
+    });
+
+    testWidgets('tells the viewer when Sharper flat screens is off', (tester) async {
+      final asset = owned(name: 'garden.jpg', width: 4000, height: 3000);
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        appConfig: const AppConfig(
+          aiImmersive: AiImmersiveConfig(enabled: false),
+          viewer: ViewerConfig(sharpFlatScreens: false),
+        ),
+        extraOverrides: [flat(asset)],
+      );
+
+      await tester.tap(bigScreenButton);
+      await tester.pumpAndSettle();
+
+      expect(openedWith()[5], isFalse);
+    });
+
+    testWidgets('is not shown for a 360° media, a media told 3D by its name, nor on a phone', (tester) async {
+      final sphere = owned(type: .video, name: 'trip.mp4', width: 7680, height: 3840);
+      await pumpTopBar(tester, sphere, projectionType: .equirectangular, horizonOs: true);
+      expect(bigScreenButton, findsNothing);
+      expect(panoramaButton, findsOneWidget, reason: 'it keeps its 360° button');
+
+      final film = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
+      await pumpTopBar(tester, film, horizonOs: true);
+      expect(bigScreenButton, findsNothing);
+      expect(view3dButton, findsOneWidget, reason: 'it opens in 3D on the same screen');
+
+      final stacked = owned(name: 'street_TB.jpg', width: 4000, height: 6000);
+      await pumpTopBar(tester, stacked, horizonOs: true, appConfig: noRelief, extraOverrides: [flat(stacked)]);
+      expect(bigScreenButton, findsNothing);
+
+      final onPhone = owned(type: .video, name: 'clip.mp4', width: 1920, height: 1080);
+      await pumpTopBar(tester, onPhone);
+      expect(bigScreenButton, findsNothing);
+    });
+
+    testWidgets('is shown for a photo named top and bottom once 3D by file name is off', (tester) async {
+      final stacked = owned(name: 'street_TB.jpg', width: 4000, height: 6000);
+      await pumpTopBar(
+        tester,
+        stacked,
+        horizonOs: true,
+        appConfig: const AppConfig(
+          aiImmersive: AiImmersiveConfig(enabled: false),
+          viewer: ViewerConfig(flat3dByName: false),
+        ),
+        extraOverrides: [flat(stacked)],
+      );
+
+      expect(bigScreenButton, findsOneWidget);
+      expect(view3dButton, findsNothing);
+    });
+  });
 }

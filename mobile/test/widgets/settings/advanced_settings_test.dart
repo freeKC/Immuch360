@@ -172,6 +172,65 @@ void main() {
     });
   });
 
+  group('Sharper flat screens (experimental)', () {
+    final sharpSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_sharp_screens')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    /// The page on a Meta Quest, the only device with the immersive viewer, in the build of the phones
+    Future<void> pumpOnQuest(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          appFlavorProvider.overrideWithValue(null),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      await tester.scrollUntilVisible(sharpSwitch, 100, scrollable: find.byType(Scrollable).first);
+    }
+
+    testWidgets('reads on by default, and says what it changes', (tester) async {
+      await pumpOnQuest(tester);
+
+      expect(find.text('Sharper flat screens (experimental)'), findsOneWidget);
+      expect(
+        find.text(
+          'On a Meta Quest, the photos and videos of a flat screen go through the headset compositor, with its super '
+          'sampling and sharpening. Off, they show as before.',
+        ),
+        findsOneWidget,
+      );
+      expect(tester.widget<SwitchListTile>(sharpSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.sharpFlatScreens, isTrue);
+    });
+
+    testWidgets('turns off and on again', (tester) async {
+      await pumpOnQuest(tester);
+
+      await tester.tap(sharpSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(sharpSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.sharpFlatScreens, isFalse);
+
+      await tester.tap(sharpSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.sharpFlatScreens, isTrue);
+    });
+
+    testWidgets('is not offered on a phone, which has no immersive viewer', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_sharp_screens')), findsNothing);
+    });
+  });
+
   group('DJI live video (experimental)', () {
     final linkSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_dji_link')),
