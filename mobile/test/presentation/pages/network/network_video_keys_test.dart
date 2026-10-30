@@ -1,11 +1,12 @@
-// The video page of a share with a remote control. On a TV left and right go to the previous or next file of the
-// folder whatever the video does (they seek in a file opened on its own), OK shows the controls with play and pause
-// focused, Down from there the time bar, where left and right seek (faster while held), any key brings back the app
-// bar and the controls, which hide 5 s after the last key while the video plays, and Back hides them before it
-// leaves, while the Back button of the app bar leaves at once. Elsewhere OK pauses and plays, left and right seek by
-// 10 s while it plays and go to the previous or next file while it is paused. The media keys work from anywhere on
-// the page. A video that cannot be had shows Retry, which Down and OK reach. A phone keeps Back as before, and its
-// bars hide 5 s after they show while the video plays too.
+// The video page of a share with a remote control. On a TV left and right go to the previous or next file of the folder
+// whatever the video does (they seek in a file opened on its own), OK shows the controls with play and pause focused,
+// Down from there the time bar, where left and right seek (10 s, then 30 s, then 60 s per press of a quick series, with
+// the step in the controls, and faster while held), any key brings back the app bar and the controls, which hide 5 s
+// after the last key while the video plays, and Back hides them before it leaves, while the Back button of the app bar
+// leaves at once. Elsewhere OK pauses and plays, left and right seek by 10 s while it plays and go to the previous or
+// next file while it is paused. The media keys work from anywhere on the page. A video that cannot be had shows Retry,
+// which Down and OK reach. A phone keeps Back as before, and its bars hide 5 s after they show while the video plays
+// too.
 
 import 'dart:async';
 
@@ -28,6 +29,7 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -423,15 +425,20 @@ void main() {
     expect(find.text('photo nas /a.jpg'), findsOneWidget);
   });
 
-  testWidgets('without a folder (a camera clip) the arrows stay on the page, and seek on a TV', (tester) async {
+  testWidgets('without a folder (a camera clip) the arrows stay on the page, and seek on a TV, further at each press', (
+    tester,
+  ) async {
     await pumpVideo(tester, status: VideoPlaybackStatus.paused, inFolder: false);
 
+    // A quick series each way: 10 s, then 30 s
     await press(tester, LogicalKeyboardKey.arrowRight);
     await press(tester, LogicalKeyboardKey.arrowLeft);
     await press(tester, LogicalKeyboardKey.arrowLeft);
 
     expect(find.byType(NetworkVideoPage), findsOneWidget);
-    expect(calls, ['seek 40', 'seek 30', 'seek 20']);
+    expect(calls, ['seek 40', 'seek 30', 'seek 0']);
+    expect(find.descendant(of: find.byKey(const Key('video_seek_hint')), matching: find.text('30 s')), findsOneWidget);
+    await tester.pump(remoteSeekSeriesWindow);
   });
 
   testWidgets('Down focuses play, the arrows then move between the controls, and the play key still works', (
@@ -458,9 +465,13 @@ void main() {
     await press(tester, LogicalKeyboardKey.arrowDown);
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar');
 
+    // Presses apart, each of its own series: 10 s each
     await press(tester, LogicalKeyboardKey.arrowRight);
+    await tester.pump(remoteSeekSeriesWindow);
     await press(tester, LogicalKeyboardKey.arrowLeft);
+    await tester.pump(remoteSeekSeriesWindow);
     await press(tester, LogicalKeyboardKey.arrowLeft);
+    await tester.pump(remoteSeekSeriesWindow);
     expect(calls, ['seek 40', 'seek 30', 'seek 20']);
     expect(find.byType(NetworkVideoPage), findsOneWidget);
     expect(
@@ -480,6 +491,32 @@ void main() {
 
     await press(tester, LogicalKeyboardKey.select);
     expect(calls.last, 'pause');
+  });
+
+  testWidgets('on a TV a quick series on the time bar moves 10 s, then 30 s, then 60 s, the step in the controls', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar');
+    final hint = find.byKey(const Key('video_seek_hint'));
+    expect(hint, findsNothing);
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(find.descendant(of: hint, matching: find.text('10 s')), findsOneWidget);
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(find.descendant(of: hint, matching: find.text('30 s')), findsOneWidget);
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(find.descendant(of: hint, matching: find.text('60 s')), findsOneWidget);
+    expect(find.descendant(of: hint, matching: find.byIcon(Icons.fast_forward_rounded)), findsOneWidget);
+    expect(calls, ['seek 40', 'seek 70', 'seek 120'], reason: 'not past the end of the video, 2 min');
+
+    await tester.pump(remoteSeekSeriesWindow);
+    expect(hint, findsNothing);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    expect(calls.last, 'seek 110', reason: '1.5 s later, 10 s again');
+    await tester.pump(remoteSeekSeriesWindow);
   });
 
   testWidgets('on a TV the bars hide 5 s after the last key on the time bar, and right goes to the next file again', (
