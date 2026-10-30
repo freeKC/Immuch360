@@ -149,6 +149,15 @@ const _kParamTypeOverrides = <String, String>{
   'plex_server_found.id': 'String',
   // A date written out by the caller for the locale
   'plex_token_expires.date': 'String',
+  // Counts of gaussians of a splat file, written out by the caller with the grouping of the language ("452,451"), or
+  // left as {count} and {total} for the immersive viewer of the headset, which fills them in (lot S5)
+  'splat_count.count': 'String',
+  'splat_ply_line.count': 'String',
+  'splat_ply_tool_line.count': 'String',
+  'splat_reduced.total': 'String',
+  'splat_spz_line.count': 'String',
+  'splat_too_large.count': 'String',
+  'splat_will_reduce.count': 'String',
   // Sizes written out with their unit by the caller ("3.4 GB"), and the extension of a file name ("osv")
   'upload_mobile_data_warning.size': 'String',
   'upload_refused_reason.kind': 'String',
