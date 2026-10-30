@@ -19,6 +19,15 @@ import '../fakes/fake_immersive_engine.dart';
 import '../fakes/recording_creator_files.dart';
 import 'english_texts.dart';
 
+/// The folder 2024 of the SMB share \\nas\photos, added at its top, as the dialog sees it on Windows
+const _nasFolder = ShareFolder(
+  sourceId: 'nas',
+  path: '/2024',
+  label: r'\\nas\photos\2024',
+  rootKey: 'net-//nas/photos:/',
+  rootLabel: r'\\nas\photos',
+);
+
 /// The volumes as the tests decide them: local unless named here, every question written down
 class _Volumes implements FolderVolumes {
   final network = <String, FolderVolume>{};
@@ -240,13 +249,64 @@ void main() {
       expect(plan.reason, DestinationReason.folderMissing);
     });
 
-    test('a share opened in the app: the download folder, never the share, with the tip', () {
+    test('a share the app writes into (SMB, WebDAV): next to the original after a yes for its root', () {
+      final plan = planner().plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
+
+      expect(plan.kind, DestinationKind.nextToOriginal);
+      expect(plan.folder, r'\\nas\photos\2024');
+      expect(plan.isNetwork, isTrue);
+      expect(plan.share, _nasFolder);
+      expect(plan.consentKey, 'net-//nas/photos:/');
+      expect(plan.consentFolder, r'\\nas\photos');
+      expect(plan.rootKey, 'net-//nas/photos:/');
+      expect(plan.shareHint, isFalse);
+
+      final allowed = planner(
+        const DesktopAiSettings(networkRootsAllowed: ['net-//nas/photos:/']),
+      ).plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
+      expect(allowed.kind, DestinationKind.nextToOriginal);
+      expect(allowed.waitsForConsent, isFalse);
+
+      // The yes given for the same share mounted as a drive, or added as a folder of the library, covers it
+      for (final given in ['net-//nas/photos', 'net-//nas/photos:/']) {
+        final mounted = planner(
+          DesktopAiSettings(networkRootsAllowed: [given]),
+        ).plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
+        expect(mounted.waitsForConsent, isFalse, reason: given);
+      }
+    });
+
+    test('a media server opened in the app (DLNA, Plex): the download folder, never the share', () {
       final plan = planner().plan(const ShareOriginal(name: 'salon.jpg'));
 
       expect(plan.kind, DestinationKind.chosenFolder);
       expect(plan.folder, downloads);
       expect(plan.reason, DestinationReason.sourceReadOnly);
-      expect(plan.shareHint, isTrue);
+      expect(plan.share, isNull);
+    });
+
+    test('a share: the folder of my choice of the settings, and a refusal kept for its root', () {
+      final mine = p.join(root.path, '3D');
+      final chosen = DestinationPlanner(
+        settings: DesktopAiSettings(destination: AiDestination.folder, folder: mine),
+        chosenFolder: mine,
+        volumes: volumes,
+      ).plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
+      expect(
+        (chosen.kind, chosen.folder, chosen.reason, chosen.share),
+        (DestinationKind.chosenFolder, mine, null, null),
+      );
+
+      final kept = planner(
+        DesktopAiSettings(
+          rootFallbacks: {'net-//nas/photos:/': mine},
+          networkRootsAllowed: const ['net-//nas/photos:/'],
+        ),
+      ).plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
+      expect(
+        (kept.kind, kept.folder, kept.reason),
+        (DestinationKind.chosenFolder, mine, DestinationReason.folderReadOnly),
+      );
     });
 
     test('DLNA, Plex, the Immich server: the download folder, never the source', () {
@@ -255,7 +315,7 @@ void main() {
       expect(plan.kind, DestinationKind.chosenFolder);
       expect(plan.folder, downloads);
       expect(plan.reason, DestinationReason.sourceReadOnly);
-      expect(plan.shareHint, isFalse);
+      expect(plan.share, isNull);
     });
 
     test('the settings say a folder of my choice: every photo goes there, without a reason to show', () {
@@ -800,6 +860,106 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       expect(partsIn(mine), isEmpty);
       expect(partsIn(downloads), isEmpty);
       expect(await noted(), isEmpty);
+    });
+
+    group('a folder of a share opened in the app', () {
+      late List<String> checked;
+      late Map<String, ProbeResult> answers;
+
+      DestinationSession shareSession(List<DestinationJob> jobs) => DestinationSession(
+        jobs,
+        store: store(),
+        writer: writer,
+        volumes: volumes,
+        downloadFolder: () async => downloads,
+        shareProbe: (folder) async {
+          checked.add(folder.label);
+          return answers[folder.label] ?? const ProbeResult(ProbeStatus.ready);
+        },
+      );
+
+      setUp(() {
+        checked = [];
+        answers = {};
+      });
+
+      test('without the yes: the question for its root, and nothing tried on the share', () async {
+        final dialog = shareSession([
+          const DestinationJob(
+            id: 'j1',
+            original: ShareOriginal(name: 'salon.jpg', folder: _nasFolder),
+          ),
+        ]);
+
+        await dialog.open();
+
+        expect(dialog.pendingConsents, {'net-//nas/photos:/': r'\\nas\photos'});
+        expect(dialog.checkOf('j1'), isNull);
+        expect(checked, isEmpty);
+        expect(files.calls, isEmpty, reason: 'no partial file on this computer either');
+        await dialog.close();
+      });
+
+      test('Yes: kept, then each folder of the share checked once, and no partial file on this computer', () async {
+        final dialog = shareSession([
+          const DestinationJob(
+            id: 'j1',
+            original: ShareOriginal(name: 'salon.jpg', folder: _nasFolder),
+          ),
+          const DestinationJob(
+            id: 'j2',
+            original: ShareOriginal(name: 'cuisine.jpg', folder: _nasFolder),
+          ),
+        ]);
+        await dialog.open();
+
+        await dialog.allowNetwork('net-//nas/photos:/');
+
+        expect(checked, [r'\\nas\photos\2024']);
+        expect(dialog.checkOf('j1')!.status, ProbeStatus.ready);
+        expect(dialog.checkOf('j2')!.status, ProbeStatus.ready);
+        expect(dialog.destinations['j1']!.kind, DestinationKind.nextToOriginal);
+        expect(dialog.takePart('j1'), isNull);
+        expect(files.calls, isEmpty);
+        expect((await store().read()).networkRootsAllowed, ['net-//nas/photos:/']);
+        await dialog.close();
+      });
+
+      test('a folder of the share that refuses: the chosen folder with its reason, kept for its root', () async {
+        answers[r'\\nas\photos\2024'] = const ProbeResult(ProbeStatus.readOnly, message: 'Access denied');
+        await store().update((settings) => settings.copyWith(networkRootsAllowed: const ['net-//nas/photos:/']));
+        final dialog = shareSession([
+          const DestinationJob(
+            id: 'j1',
+            original: ShareOriginal(name: 'salon.jpg', folder: _nasFolder),
+          ),
+        ]);
+
+        await dialog.open();
+
+        final plan = dialog.destinations['j1']!;
+        expect(plan.kind, DestinationKind.chosenFolder);
+        expect(plan.folder, downloads);
+        expect(plan.reason, DestinationReason.folderReadOnly);
+        expect(dialog.checkOf('j1')!.status, ProbeStatus.ready, reason: 'the chosen folder, checked');
+        expect((await store().read()).rootFallbacks, {'net-//nas/photos:/': downloads});
+        await dialog.close();
+
+        // "Next to the original" again tries the share again
+        answers.clear();
+        final again = shareSession([
+          const DestinationJob(
+            id: 'j1',
+            original: ShareOriginal(name: 'salon.jpg', folder: _nasFolder),
+          ),
+        ]);
+        await again.open();
+        expect(again.destinations['j1']!.kind, DestinationKind.chosenFolder, reason: 'the refusal kept');
+        await again.saveTo(AiDestination.nextToOriginal);
+        expect(again.destinations['j1']!.kind, DestinationKind.nextToOriginal);
+        expect(again.checkOf('j1')!.status, ProbeStatus.ready);
+        await again.close();
+      });
     });
 
     test('a full disk next to the original: the chosen folder with "Disk full", not kept for the root', () async {

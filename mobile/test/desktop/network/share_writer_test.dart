@@ -328,4 +328,69 @@ void main() {
       expect(connection.files, isEmpty);
     });
   });
+
+  group('the folder of a share as the destination sees it', () {
+    test('SMB: its address, and its root as a share mounted as a drive names it, case folded', () {
+      const source = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.smb,
+        name: 'NAS',
+        host: 'smb://NAS.local/',
+        share: '/Photos/',
+        rootPath: '/Pictures',
+      );
+
+      final windows = shareFolderOf(source, '/Pictures/2024/salon.jpg', windows: true)!;
+      expect(windows.sourceId, 'nas');
+      expect(windows.path, '/Pictures/2024');
+      expect(windows.label, r'\\NAS.local\Photos\Pictures\2024');
+      expect(windows.rootKey, 'net-//nas.local/photos:/pictures');
+      expect(windows.rootLabel, r'\\NAS.local\Photos\Pictures');
+
+      final linux = shareFolderOf(source, '/Pictures/2024/salon.jpg', windows: false)!;
+      expect(linux.label, 'smb://NAS.local/Photos/Pictures/2024');
+      expect(linux.rootLabel, 'smb://NAS.local/Photos/Pictures');
+      expect(linux.rootKey, windows.rootKey);
+
+      const top = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'NAS', host: 'nas', share: 'photos');
+      final atTop = shareFolderOf(top, '/salon.jpg', windows: true)!;
+      expect((atTop.path, atTop.label, atTop.rootKey), ('/', r'\\nas\photos', 'net-//nas/photos:/'));
+
+      const port = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.smb,
+        name: 'NAS',
+        host: 'nas',
+        port: 1445,
+        share: 'photos',
+      );
+      expect(shareFolderOf(port, '/salon.jpg', windows: true)!.label, 'smb://nas:1445/photos');
+    });
+
+    test('WebDAV: its address with its path, and its root as the key', () {
+      const source = NetworkSource(
+        id: 'dav',
+        type: NetworkSourceType.webdav,
+        name: 'NAS',
+        host: 'NAS',
+        port: 5006,
+        share: 'dav',
+        rootPath: '/photos',
+        useTls: true,
+      );
+
+      final folder = shareFolderOf(source, '/photos/2024/salon.jpg', windows: true)!;
+
+      expect(folder.label, 'https://nas:5006/dav/photos/2024');
+      expect(folder.rootKey, 'net-//nas:5006/dav:/photos');
+      expect(folder.rootLabel, 'https://nas:5006/dav/photos');
+    });
+
+    test('a media server or a camera takes no file', () {
+      for (final type in [NetworkSourceType.dlna, NetworkSourceType.plex, NetworkSourceType.tapo]) {
+        final source = NetworkSource(id: 'x', type: type, name: 'X', host: 'x');
+        expect(shareFolderOf(source, '/salon.jpg'), isNull, reason: type.name);
+      }
+    });
+  });
 }

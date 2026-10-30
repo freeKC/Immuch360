@@ -9,9 +9,12 @@
 // - A file kept online only (OneDrive): next to the original; the dialog says that reading it downloads it.
 // - A file opened with the program: next to it when its volume is local, else as a network folder, the yes given for
 //   its volume.
-// - A share opened in the app (SMB, WebDAV), DLNA, Plex, the Immich server: a chosen folder, Downloads/Immuch360 by
-//   default. They are never written to (NetworkFileSystem has no write at all); for a share the dialog first offers to
-//   choose a folder, with the tip to add the share as a network drive.
+// - A share opened in the app that takes files (SMB, WebDAV): next to the original on the share, after the same yes as
+//   a network folder, given once for the root the share was added at (named as that share mounted as a drive would
+//   be, "net-//nas/photos:/", so that one yes covers both); the folder of the share is then checked by an empty
+//   hidden file written there and deleted (share_writer.dart). The version is made on this computer and put there by
+//   the writer of the shares, never over a file (share_publisher.dart). A refusal is kept for that root.
+// - DLNA, Plex, the Immich server: a chosen folder, Downloads/Immuch360 by default. They are never written to.
 //
 // DestinationPlanner gives the plan of one photo from the settings, without touching any file. DestinationSession
 // follows the conversion dialog from its opening to its launch or its closing: it plans every photo, checks the
@@ -96,9 +99,53 @@ final class OpenedOriginal extends OriginalLocation {
   final String path;
 }
 
-/// A file of a share opened in the app (SMB, WebDAV), read through a temporary copy
+/// A file of a share opened in the app (SMB, WebDAV, DLNA, Plex), read through a temporary copy. [folder] is where it
+/// is on its share when the app may write there (SMB, WebDAV), null for a media server, which takes no file.
 final class ShareOriginal extends OriginalLocation {
-  const ShareOriginal({required super.name});
+  const ShareOriginal({required super.name, this.folder});
+
+  final ShareFolder? folder;
+}
+
+/// A folder of a share opened in the app that takes new files, as the destination sees it
+class ShareFolder {
+  const ShareFolder({
+    required this.sourceId,
+    required this.path,
+    required this.label,
+    required this.rootKey,
+    required this.rootLabel,
+  });
+
+  /// The share, and the folder in it ("/2024", "/" for its top), "/" separated
+  final String sourceId;
+  final String path;
+
+  /// The folder as the dialog names it: "\\nas\photos\2024" on Windows, "smb://nas/photos/2024",
+  /// "https://nas:5006/dav/2024"
+  final String label;
+
+  /// What the yes for this network folder and a refusal are kept for: the root the share was added at, named as the
+  /// root of a share mounted as a drive would be ("net-//nas/photos:/pictures")
+  final String rootKey;
+
+  /// That root, as the question of the network folder names it
+  final String rootLabel;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ShareFolder &&
+      other.sourceId == sourceId &&
+      other.path == path &&
+      other.label == label &&
+      other.rootKey == rootKey &&
+      other.rootLabel == rootLabel;
+
+  @override
+  int get hashCode => Object.hash(sourceId, path, label, rootKey, rootLabel);
+
+  @override
+  String toString() => 'ShareFolder($label, root: $rootKey)';
 }
 
 /// A photo of DLNA, Plex or the Immich server, read through a temporary copy
@@ -287,6 +334,7 @@ class PlannedDestination {
     this.rootKey,
     this.cloudDownload = false,
     this.shareHint = false,
+    this.share,
   });
 
   final DestinationKind kind;
@@ -317,8 +365,12 @@ class PlannedDestination {
   /// Reading the original downloads it from OneDrive
   final bool cloudDownload;
 
-  /// A share opened in the app: "Choose a folder" first, with the tip to add the share as a network drive
+  /// "Choose a folder" first, with the tip to add the share as a network drive
   final bool shareHint;
+
+  /// The folder of a share opened in the app the version goes to, next to its original: [folder] is then its label,
+  /// checked and written through the writer of the shares, never as a folder of this computer
+  final ShareFolder? share;
 
   /// Whether nothing may be tried before the user answers the question of the network folder
   bool get waitsForConsent => consentKey != null;
@@ -366,7 +418,7 @@ class DestinationPlanner {
 
   /// Where the 3D photo of [original] goes
   PlannedDestination plan(OriginalLocation original) => switch (original) {
-    ShareOriginal() => chosen(reason: DestinationReason.sourceReadOnly, shareHint: true),
+    ShareOriginal() => _share(original),
     ServerOriginal() => chosen(reason: DestinationReason.sourceReadOnly),
     LibraryOriginal() => _library(original),
     OpenedOriginal() => _opened(original),
@@ -395,6 +447,32 @@ class DestinationPlanner {
       consentFolder: allowed ? null : original.rootPath,
       rootKey: original.rootId,
       cloudDownload: original.cloudOnly,
+    );
+  }
+
+  PlannedDestination _share(ShareOriginal original) {
+    final folder = original.folder;
+    if (folder == null) {
+      // A media server takes no file
+      return chosen(reason: DestinationReason.sourceReadOnly);
+    }
+    if (settings.destination == AiDestination.folder) {
+      return chosen();
+    }
+    final key = folder.rootKey;
+    final kept = keptFallbackFor(settings.rootFallbacks, key);
+    if (kept != null) {
+      return chosen(folder: kept, reason: DestinationReason.folderReadOnly, rootKey: key);
+    }
+    final allowed = consentGiven(settings.networkRootsAllowed, key);
+    return PlannedDestination(
+      kind: DestinationKind.nextToOriginal,
+      folder: folder.label,
+      isNetwork: true,
+      consentKey: allowed ? null : key,
+      consentFolder: allowed ? null : folder.rootLabel,
+      rootKey: key,
+      share: folder,
     );
   }
 
@@ -490,6 +568,7 @@ class DestinationSession {
     Future<String> Function()? downloadFolder,
     LibraryPathRules? rules,
     int maxCheckedFolders = 50,
+    this._shareProbe,
   }) : _store = store ?? DesktopAiSettingsStore.instance,
        _volumes = volumes ?? SystemFolderVolumes(rules: rules),
        _downloadFolder = downloadFolder ?? DownloadFolder.instance.currentPath,
@@ -502,6 +581,12 @@ class DestinationSession {
   final Future<String> Function() _downloadFolder;
   final LibraryPathRules _rules;
   final WriteProbe _probe;
+
+  /// Checks a folder of a share opened in the app (checkShareFolder through its writer); none: such a folder fails
+  final Future<ProbeResult> Function(ShareFolder folder)? _shareProbe;
+
+  /// The checks of the folders of the shares, by their label
+  final _shareChecks = <String, ProbeResult>{};
 
   var _settings = const DesktopAiSettings();
   String? _defaultFolder;
@@ -526,8 +611,12 @@ class DestinationSession {
   /// The check of the folder of [jobId]: null while it was not checked (a network folder before the yes)
   ProbeResult? checkOf(String jobId) {
     final plan = _plans[jobId];
-    return plan == null ? null : _probe.resultOf(plan.folder);
+    return plan == null ? null : _resultOf(plan);
   }
+
+  /// The check of the folder of [plan]: through the writer of its share for a folder of a share
+  ProbeResult? _resultOf(PlannedDestination plan) =>
+      plan.share != null ? _shareChecks[plan.folder] : _probe.resultOf(plan.folder);
 
   /// The dialog opens: every photo planned, and the folders that may be tried now checked
   Future<void> open() => _inTurn(() async {
@@ -572,6 +661,7 @@ class DestinationSession {
         );
       }
       _probe.forgetRefusals();
+      _shareChecks.removeWhere((_, result) => !result.accepted);
     }
     await _settle();
   });
@@ -602,13 +692,21 @@ class DestinationSession {
       _plans = _planAll();
       await _probe.keepOnly({
         for (final MapEntry(:key, :value) in _plans.entries)
-          if (!value.waitsForConsent) key: value.folder,
+          if (!value.waitsForConsent && value.share == null) key: value.folder,
       });
       final requests = _requests();
-      if (pass == 3 || requests.every((request) => _probe.resultOf(request.folder) != null)) {
+      final shares = {
+        for (final plan in _plans.values)
+          if (plan.share case final folder? when !plan.waitsForConsent && !_shareChecks.containsKey(plan.folder))
+            plan.folder: folder,
+      };
+      if (pass == 3 || (shares.isEmpty && requests.every((request) => _probe.resultOf(request.folder) != null))) {
         break;
       }
       await _probe.check(requests);
+      for (final MapEntry(key: label, value: folder) in shares.entries) {
+        _shareChecks[label] = await _checkShare(folder);
+      }
     }
     await _keepRefusals();
   }
@@ -625,13 +723,27 @@ class DestinationSession {
     return {for (final job in jobs) job.id: _refine(planner, planner.plan(job.original))};
   }
 
+  /// The check of a folder of a share; one that cannot be made fails it with its words
+  Future<ProbeResult> _checkShare(ShareFolder folder) async {
+    final probe = _shareProbe;
+    if (probe == null) {
+      return const ProbeResult(ProbeStatus.failed);
+    }
+    try {
+      return await probe(folder);
+    } catch (error) {
+      _log.warning('The folder ${folder.label} could not be checked: $error');
+      return ProbeResult(ProbeStatus.failed, message: '$error');
+    }
+  }
+
   /// [plan] after the answers and the checks of this dialog
   PlannedDestination _refine(DestinationPlanner planner, PlannedDestination plan) {
     if (plan.consentKey case final key? when _declined.contains(key)) {
       return planner.fallBack(plan, DestinationReason.networkDeclined);
     }
     if (plan.kind == DestinationKind.nextToOriginal) {
-      final result = _probe.resultOf(plan.folder);
+      final result = _resultOf(plan);
       if (result != null && !result.accepted) {
         return planner.fallBack(plan, _reasonOf(result.status), message: result.message);
       }
@@ -648,7 +760,7 @@ class DestinationSession {
 
   List<ProbeRequest> _requests() => [
     for (final job in jobs)
-      if (_plans[job.id] case final plan? when !plan.waitsForConsent)
+      if (_plans[job.id] case final plan? when !plan.waitsForConsent && plan.share == null)
         ProbeRequest(
           jobId: job.id,
           folder: plan.folder,

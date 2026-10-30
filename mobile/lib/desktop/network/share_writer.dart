@@ -19,6 +19,7 @@ import 'package:dart_smb2/dart_smb2.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
@@ -99,6 +100,30 @@ final shareWriterOpenerProvider = Provider<ShareWriterOpener>(
   },
 );
 
+/// Checks a folder of a share for the destination of the versions (DestinationSession.shareProbe), through a writer
+/// opened for the check and closed after it; replaced in tests
+final shareFolderProbeProvider = Provider<Future<ProbeResult> Function(ShareFolder folder)>(
+  (ref) => (folder) async {
+    final ShareWriter? writer;
+    try {
+      writer = await ref.read(shareWriterOpenerProvider)(folder.sourceId);
+    } on ShareWriteException catch (error) {
+      return ProbeResult(
+        error.failure == ShareWriteFailure.readOnly ? ProbeStatus.readOnly : ProbeStatus.failed,
+        message: error.message,
+      );
+    }
+    if (writer == null) {
+      return const ProbeResult(ProbeStatus.readOnly);
+    }
+    try {
+      return await checkShareFolder(writer, folder.path);
+    } finally {
+      await writer.close();
+    }
+  },
+);
+
 /// "/" separated segments of [path], without empty, "." and ".." ones
 List<String> _segmentsOf(String path) {
   final segments = <String>[];
@@ -127,6 +152,52 @@ String sharePathIn(String folder, String name) {
 String shareFolderOfPath(String path) {
   final segments = _segmentsOf(path);
   return segments.length <= 1 ? '/' : '/${segments.sublist(0, segments.length - 1).join('/')}';
+}
+
+/// Where the file at [filePath] of the share [source] is, as the destination of its versions sees it, null for a share
+/// the app never writes into: its folder in the share, its label (an address of Windows on Windows, [windows], else a
+/// URL), and the root the share was added at, named as the root of that share mounted as a drive would be
+/// (volume_id.dart: "net-//nas/photos:/pictures", case folded for SMB) so that one yes covers both
+ShareFolder? shareFolderOf(NetworkSource source, String filePath, {bool? windows}) {
+  if (!isWritableShareType(source.type)) {
+    return null;
+  }
+  final folder = shareFolderOfPath(filePath);
+  final inShare = _segmentsOf(folder);
+  final root = _segmentsOf(source.rootPath);
+  if (source.type == NetworkSourceType.smb) {
+    // The address the reads connect to, without the default port
+    // ignore: invalid_use_of_visible_for_testing_member
+    var server = SmbFileSystem.serverAddressOf(source.host, source.port);
+    const defaultPort = ':${SmbFileSystem.defaultPort}';
+    final withPort = !server.endsWith(defaultPort);
+    if (!withPort) {
+      server = server.substring(0, server.length - defaultPort.length);
+    }
+    // ignore: invalid_use_of_visible_for_testing_member
+    final share = SmbFileSystem.shareNameOf(source.share);
+    String label(List<String> inside) => (windows ?? Platform.isWindows) && !withPort
+        ? '\\\\${[server, share, ...inside].join(r'\')}'
+        : 'smb://${[server, share, ...inside].join('/')}';
+    return ShareFolder(
+      sourceId: source.id,
+      path: folder,
+      label: label(inShare),
+      rootKey: 'net-//$server/$share:/${root.join('/')}'.toLowerCase(),
+      rootLabel: label(root),
+    );
+  }
+  final base = WebDavFileSystem.baseUriOf(source);
+  final basePath = base.pathSegments.where((segment) => segment.isNotEmpty).toList();
+  String label(List<String> inside) => base.replace(pathSegments: [...basePath, ...inside]).toString();
+  final host = base.hasPort ? '${base.host}:${base.port}' : base.host;
+  return ShareFolder(
+    sourceId: source.id,
+    path: folder,
+    label: label(inShare),
+    rootKey: 'net-//${host.toLowerCase()}/${basePath.join('/')}:/${root.join('/')}',
+    rootLabel: label(root),
+  );
 }
 
 /// What an SMB writer asks of its connection, by the paths libsmb2 takes (relative to the share, "" for its root)
