@@ -45,7 +45,10 @@ abstract class ImmersiveApi {
   /// keep the value of the opening. [sharpFlatScreens] is the "Sharper flat screens" setting: true, the photos of a
   /// flat screen are drawn on a compositor quad layer, and that layer and the flat video screen get the quality super
   /// sampling and sharpening of the compositor; false, the photos go on the quad mesh and no filter applies. Previous
-  /// and next keep the value of the opening.
+  /// and next keep the value of the opening. [kiosk] is null, or the JSON of the kiosk mode (Settings, Advanced,
+  /// "Kiosk mode", lot quest-kiosk): `{"endText": ..., "exitHint": ...}` in the language of the app; the viewer then
+  /// plays the media for visitors, restarting a film each time the headset is put on, with no panel, no hands and no
+  /// pointer, and only B or Y held one second leaves (see KioskSession).
   void open(
     String url,
     Map<String, String> headers,
@@ -60,8 +63,9 @@ abstract class ImmersiveApi {
     String? rawProjection,
     String? stereoPair,
     bool reverseThumbstickTurn,
-    bool sharpFlatScreens,
-  );
+    bool sharpFlatScreens, {
+    String? kiosk,
+  });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
   /// by [requestId]. Returns false, and shows nothing, when that viewer is gone, closing, or no longer waiting for

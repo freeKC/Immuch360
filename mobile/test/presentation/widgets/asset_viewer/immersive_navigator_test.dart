@@ -80,8 +80,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? rawProjection,
     String? stereoPair,
     bool reverseThumbstickTurn,
-    bool sharpFlatScreens,
-  ) async => opened.add(url);
+    bool sharpFlatScreens, {
+    String? kiosk,
+  }) async => opened.add(url);
 
   @override
   Future<bool> showAdjacent(

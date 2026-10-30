@@ -16,6 +16,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/kiosk/kiosk_start.provider.dart';
 import 'package:immich_mobile/providers/search/search_input_focus.provider.dart';
 import 'package:immich_mobile/providers/search/tv_search_navigation.provider.dart';
 import 'package:immich_mobile/providers/tab.provider.dart';
@@ -35,6 +36,18 @@ class _TabShellPageState extends ConsumerState<TabShellPage> {
   /// whatever the orientation: turning a phone during a selection must not build it again, shown.
   final _railFocus = FocusNode(debugLabel: 'Tab rail', canRequestFocus: false, skipTraversal: true);
   final _bottomBarFocus = FocusNode(debugLabel: 'Tab bottom bar', canRequestFocus: false, skipTraversal: true);
+
+  @override
+  void initState() {
+    super.initState();
+    // The kiosk mode of the Meta Quest: once per run of the app, the media chosen in the settings opens for visitors
+    // (see startKiosk); nothing at all with nothing chosen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(startKiosk(ref, messenger: ScaffoldMessenger.maybeOf(context)));
+      }
+    });
+  }
 
   @override
   void dispose() {

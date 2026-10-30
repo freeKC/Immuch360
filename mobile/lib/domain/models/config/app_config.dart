@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/models/config/backup_config.dart';
 import 'package:immich_mobile/domain/models/config/cleanup_config.dart';
 import 'package:immich_mobile/domain/models/config/feature_message_config.dart';
 import 'package:immich_mobile/domain/models/config/image_config.dart';
+import 'package:immich_mobile/domain/models/config/kiosk_config.dart';
 import 'package:immich_mobile/domain/models/config/map_config.dart';
 import 'package:immich_mobile/domain/models/config/network_config.dart';
 import 'package:immich_mobile/domain/models/config/share_config.dart';
@@ -56,6 +57,8 @@ abstract class AppConfig with _$AppConfig {
     @Default(true) bool djiLinkEnabled,
     // The AI features, see AiImmersiveConfig: on by default like the other experimental switches
     @Default(AiImmersiveConfig()) AiImmersiveConfig aiImmersive,
+    // The kiosk mode of the Meta Quest, see KioskConfig: on by default, nothing happens until a media is chosen
+    @Default(KioskConfig()) KioskConfig kiosk,
   }) = _AppConfig;
 
   T read<T>(SettingsKey<T> key) =>
@@ -120,6 +123,9 @@ abstract class AppConfig with _$AppConfig {
             .aiImmersiveEnabled => aiImmersive.enabled,
             .aiImmersiveOlderHeadsets => aiImmersive.olderHeadsets,
             .aiReliefQuestMode => aiImmersive.questMode,
+            .kioskEnabled => kiosk.enabled,
+            .kioskMedia => kiosk.media,
+            .kioskEndText => kiosk.endText,
           })
           as T;
 
@@ -190,6 +196,9 @@ abstract class AppConfig with _$AppConfig {
       .aiImmersiveEnabled => copyWith(aiImmersive: aiImmersive.copyWith(enabled: value as bool)),
       .aiImmersiveOlderHeadsets => copyWith(aiImmersive: aiImmersive.copyWith(olderHeadsets: value as bool)),
       .aiReliefQuestMode => copyWith(aiImmersive: aiImmersive.copyWith(questMode: value as ReliefViewMode)),
+      .kioskEnabled => copyWith(kiosk: kiosk.copyWith(enabled: value as bool)),
+      .kioskMedia => copyWith(kiosk: kiosk.copyWith(media: value as String?)),
+      .kioskEndText => copyWith(kiosk: kiosk.copyWith(endText: value as String?)),
     };
   }
 }

@@ -6,7 +6,11 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 
 class SelectionSliverAppBar extends ConsumerStatefulWidget {
-  const SelectionSliverAppBar({super.key});
+  const SelectionSliverAppBar({super.key, this.pickTitle});
+
+  /// A picker of one asset (the kiosk media of the Meta Quest): this title rather than the count, and no Done, a tap
+  /// picks. The timeline shows such a bar when it is its appBar.
+  final String? pickTitle;
 
   @override
   ConsumerState<SelectionSliverAppBar> createState() => _SelectionSliverAppBarState();
@@ -43,15 +47,16 @@ class _SelectionSliverAppBarState extends ConsumerState<SelectionSliverAppBar> {
         },
       ),
       centerTitle: true,
-      title: Text(context.t.selected_count(count: filteredAssets.length)),
+      title: Text(widget.pickTitle ?? context.t.selected_count(count: filteredAssets.length)),
       actions: [
-        TextButton(
-          onPressed: () => onDone(filteredAssets),
-          child: Text(
-            context.t.done,
-            style: context.textTheme.titleSmall?.copyWith(color: context.colorScheme.primary),
+        if (widget.pickTitle == null)
+          TextButton(
+            onPressed: () => onDone(filteredAssets),
+            child: Text(
+              context.t.done,
+              style: context.textTheme.titleSmall?.copyWith(color: context.colorScheme.primary),
+            ),
           ),
-        ),
       ],
     );
   }

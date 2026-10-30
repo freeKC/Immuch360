@@ -64,6 +64,7 @@ import 'package:immich_mobile/presentation/pages/drone/drone_import.page.dart';
 import 'package:immich_mobile/presentation/pages/edit/edit.page.dart';
 import 'package:immich_mobile/presentation/pages/favorite.page.dart';
 import 'package:immich_mobile/presentation/pages/feature_message/whats_new.page.dart';
+import 'package:immich_mobile/presentation/pages/kiosk_media_picker.page.dart';
 import 'package:immich_mobile/presentation/pages/library.page.dart';
 import 'package:immich_mobile/presentation/pages/local_album.page.dart';
 import 'package:immich_mobile/presentation/pages/local_timeline.page.dart';
@@ -208,6 +209,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: LockedFolderRoute.page, guards: [_authGuard, _lockedGuard, _duplicateGuard]),
     AutoRoute(page: VideoRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: Panorama360Route.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: KioskMediaPickerRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: LibraryRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: AssetSelectionTimelineRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: PartnerDetailRoute.page, guards: [_authGuard, _duplicateGuard]),

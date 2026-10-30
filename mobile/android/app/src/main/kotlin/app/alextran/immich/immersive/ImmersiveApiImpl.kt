@@ -123,7 +123,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * of an Apple spatial photo, null for any other media; it travels as an extra of the intent so that the viewer can
    * show both eyes on a flat quad. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting of the app: the
    * right thumbstick then turns the sphere the other way. [sharpFlatScreens] is its "Sharper flat screens" setting:
-   * the photos of a flat screen on a compositor quad layer, and the compositor filters on the flat screens.
+   * the photos of a flat screen on a compositor quad layer, and the compositor filters on the flat screens. [kiosk] is
+   * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening.
    */
   override fun open(
     url: String,
@@ -140,6 +141,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     stereoPair: String?,
     reverseThumbstickTurn: Boolean,
     sharpFlatScreens: Boolean,
+    kiosk: String?,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -149,7 +151,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       "open immersive viewer, opening $openingId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
         "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
-        "sharp flat screens=$sharpFlatScreens",
+        "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -166,6 +168,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         rawProjection,
         reverseThumbstickTurn,
         sharpFlatScreens,
+        kiosk,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }

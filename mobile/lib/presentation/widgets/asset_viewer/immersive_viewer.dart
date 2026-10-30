@@ -167,6 +167,8 @@ class ImmersiveRequest {
 ///
 /// The texts of a panorama generated beyond the edges of a photo go along whatever the media (see
 /// [immersiveOpeningLabels]): the viewer finds such a panorama by itself, here or later with previous and next.
+///
+/// [kiosk] is the JSON of the kiosk mode (see KioskOptions.toJson), null for any other opening.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -175,6 +177,7 @@ Future<void> openImmersiveRequest(
   Duration startPosition = Duration.zero,
   bool reverseThumbstickTurn = false,
   bool sharpFlatScreens = true,
+  String? kiosk,
 }) => api.open(
   request.url,
   request.headers,
@@ -190,6 +193,7 @@ Future<void> openImmersiveRequest(
   request.stereoPair,
   reverseThumbstickTurn,
   sharpFlatScreens,
+  kiosk: kiosk,
 );
 
 /// The labels an opening of the immersive viewer goes with: [stereoLabels], and the translated texts of a panorama

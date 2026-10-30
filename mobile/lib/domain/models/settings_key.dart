@@ -116,7 +116,13 @@ enum SettingsKey<T> {
   aiImmersiveOlderHeadsets<bool>(),
   // How the immersive viewer of the Meta Quest first shows an AI relief: stereo by default, 2.5D (experimental) when
   // "Open AI reliefs in 2.5D" is on, see AiImmersiveConfig.questMode
-  aiReliefQuestMode<ReliefViewMode>(codec: EnumCodec(ReliefViewMode.values));
+  aiReliefQuestMode<ReliefViewMode>(codec: EnumCodec(ReliefViewMode.values)),
+
+  // Settings, Advanced, "Kiosk mode (experimental)" of the Meta Quest, see KioskConfig: the switch, on by default; the
+  // media the app opens at its start (KioskMedia.encode, none by default: the app starts as usual); the end card text
+  kioskEnabled<bool>(),
+  kioskMedia<String?>(),
+  kioskEndText<String?>();
 
   final ValueCodec<T>? _codecOverride;
 

@@ -2298,6 +2298,16 @@
   "interval": {
     "day_at_onepm": "Alla daga klukkan 13"
   },
+  "kiosk_mode_choose_title": "Veldu 360° mynd eða myndskeið fyrir söluturninn",
+  "kiosk_mode_end_text": "Texti lokaspjalds",
+  "kiosk_mode_end_text_default": "Takk fyrir ferðina",
+  "kiosk_mode_exit_hint": "Söluturnsstilling: haltu B eða Y inni í eina sekúndu til að hætta",
+  "kiosk_mode_media": "Efni söluturnsins",
+  "kiosk_mode_media_none": "Ekkert valið: forritið ræsist eins og venjulega",
+  "kiosk_mode_open_failed": "Efni söluturnsins opnaðist ekki: {name}",
+  "kiosk_mode_opening_soon": "Söluturnsstilling: {name} opnast eftir nokkrar sekúndur",
+  "kiosk_mode_subtitle": "Við ræsingu opna gleraugun valda 360° mynd eða myndskeið fyrir gesti. Myndin byrjar upp á nýtt í hvert sinn sem gleraugun eru sett upp.",
+  "kiosk_mode_title": "Söluturnsstilling (tilraunaútgáfa)",
   "library": "Safn",
   "library_360": "360°",
   "library_360_filter_3d": "3D",

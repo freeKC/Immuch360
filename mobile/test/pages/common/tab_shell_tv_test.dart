@@ -9,15 +9,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/kiosk_config.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
+import 'package:immich_mobile/domain/models/kiosk_media.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/common/tab_shell.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/kiosk/kiosk_start.provider.dart';
 import 'package:immich_mobile/providers/search/tv_search_navigation.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -43,6 +49,33 @@ class _NoHaptics extends HapticNotifier {
   @override
   void selectionClick() {}
 }
+
+/// Counts the kiosk starts the shell asks for, and what each did. The opener of the app is replaced by a count of the
+/// openings (it reads the services of the viewer, not part of this test); the notice is the one of the app.
+class _CountingKioskStart extends KioskStart {
+  final List<KioskStartOutcome> outcomes = [];
+  final List<KioskMedia> opened = [];
+
+  @override
+  Future<KioskStartOutcome> run({
+    required KioskConfig config,
+    required Future<bool> Function() isHorizonOs,
+    required KioskOpener Function(KioskMedia media) prepare,
+    required KioskCountdown countdown,
+  }) async {
+    final outcome = await super.run(
+      config: config,
+      isHorizonOs: isHorizonOs,
+      prepare: (media) =>
+          () async => opened.add(media),
+      countdown: countdown,
+    );
+    outcomes.add(outcome);
+    return outcome;
+  }
+}
+
+const _film = KioskAssetMedia(remoteId: 'remote-1', name: 'expo_360.mp4', isVideo: true);
 
 void main() {
   late int systemPops;
@@ -72,6 +105,8 @@ void main() {
     required bool tvMode,
     Size size = const Size(1920, 1080),
     bool hasServer = false,
+    KioskStart? kioskStart,
+    KioskConfig kiosk = const KioskConfig(),
   }) async {
     // A TV screen: landscape, so the tabs are a navigation rail
     tester.view.physicalSize = size;
@@ -117,6 +152,11 @@ void main() {
             readonlyModeProvider.overrideWith(_NotReadOnly.new),
             localSessionProvider.overrideWith(hasServer ? _WithServer.new : _WithoutServer.new),
             hapticFeedbackProvider.overrideWith(_NoHaptics.new),
+            // By default no kiosk media chosen: the shell starts as usual (see startKiosk)
+            appConfigProvider.overrideWithValue(AppConfig(kiosk: kiosk)),
+            // A Meta Quest, asked only when a kiosk media is chosen
+            isHorizonOsProvider.overrideWith((_) async => true),
+            if (kioskStart != null) kioskStartProvider.overrideWithValue(kioskStart),
           ],
           child: Builder(
             builder: (context) => MaterialApp.router(
@@ -148,6 +188,66 @@ void main() {
     Focus.of(tester.element(find.text('library content'))).requestFocus();
     await tester.pumpAndSettle();
   }
+
+  testWidgets('the shell asks for the kiosk start once per run of the app, which opens nothing with no media chosen', (
+    tester,
+  ) async {
+    final kiosk = _CountingKioskStart();
+    await pumpShell(tester, tvMode: true, kioskStart: kiosk);
+    expect(kiosk.outcomes, [KioskStartOutcome.off]);
+
+    // Another tab, in the same shell
+    await openLibraryAndFocusItsContent(tester);
+    expect(kiosk.outcomes, [KioskStartOutcome.off]);
+
+    // A new shell in the same run of the app (a login, a return from the welcome page): no second start
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpShell(tester, tvMode: true, kioskStart: kiosk);
+    expect(kiosk.outcomes, [KioskStartOutcome.off, KioskStartOutcome.ranBefore]);
+    expect(find.byType(SnackBar), findsNothing);
+  });
+
+  group('a kiosk media chosen on a Meta Quest', () {
+    final notice = find.text('Kiosk mode: expo_360.mp4 opens in a few seconds');
+
+    testWidgets('the shell says it opens soon, and Cancel leaves the app as it is', (tester) async {
+      final kiosk = _CountingKioskStart();
+      await pumpShell(
+        tester,
+        tvMode: false,
+        kioskStart: kiosk,
+        kiosk: KioskConfig(media: _film.encode()),
+      );
+
+      expect(notice, findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(kiosk.outcomes, [KioskStartOutcome.cancelled]);
+      expect(kiosk.opened, isEmpty);
+      expect(notice, findsNothing);
+      expect(find.text('photos content'), findsOneWidget);
+    });
+
+    testWidgets('without Cancel, the media opens once the notice is over', (tester) async {
+      final kiosk = _CountingKioskStart();
+      await pumpShell(
+        tester,
+        tvMode: false,
+        kioskStart: kiosk,
+        kiosk: KioskConfig(media: _film.encode()),
+      );
+      expect(notice, findsOneWidget);
+      expect(kiosk.opened, isEmpty);
+
+      await tester.pump(kioskCountdownDelay);
+      await tester.pumpAndSettle();
+
+      expect(kiosk.outcomes, [KioskStartOutcome.opened]);
+      expect(kiosk.opened, [_film]);
+      expect(notice, findsNothing);
+    });
+  });
 
   testWidgets('Back: the rail, then Photos, then out of the app, in three presses', (tester) async {
     await pumpShell(tester, tvMode: true);

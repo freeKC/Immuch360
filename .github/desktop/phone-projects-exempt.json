@@ -320,8 +320,8 @@
     "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): no outline on the 3D version of a generated panorama, the flags on one line of the panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveApiImpl.kt": {
-    "blob": "fd120d963b6653326e1f770af8aa843a956f63a9",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer"
+    "blob": "ccdbc0776a58454c36dd78f4e203231598b749b6",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the opening carries the kiosk JSON to the immersive viewer; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveInputSystem.kt": {
     "blob": "b7665503b3ede97ed36fc33160acf08544767e62",
@@ -332,8 +332,12 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "3ed1ce1ed232ec53177f6044e513c5e7116f085d",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel"
+    "blob": "24dfbc3624a703d3e1e8501badca1d2a3a74298d",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/KioskSession.kt": {
+    "blob": "689e79df7f4731d5f1c9ca181a3a2a061d1f014c",
+    "reason": "quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the state machine of the kiosk mode (headset on and off, end, failures, B or Y held), its options and the start position kept for a recreation; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
     "blob": "f555b014f4298cd66b0d334b4e916324b965225b",
@@ -450,6 +454,10 @@
   "mobile/android/app/src/main/res/layout/immersive_info_panel.xml": {
     "blob": "282e81d3775f328c163f0ee904bf416f4de10adc",
     "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; phases 2 and 3, lot S3: the lines and the Reset button of a 3D scene, ids to hide the mapping and previous and next in a scene; feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size and Distance rows of a flat screen in place of previous and next"
+  },
+  "mobile/android/app/src/main/res/layout/immersive_kiosk_panel.xml": {
+    "blob": "215a58c94fe5b2fb92c55b50c1894a44122d958a",
+    "reason": "quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the panel of the exit notice, the end card and the error card; not yet on the phone branch"
   },
   "mobile/android/app/src/main/res/values-af/immersive.xml": {
     "blob": "4414f928c803e47b60c1a79d21b929f992822020",
@@ -816,8 +824,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): the panel ids of the Quest flight view; DJI finalisation (feat-dji-final): the ids of the columns and of the alert panel; DJI obstacle ring (feat-dji-obstacle-ui): the ids of the halo panels in place of the alert panel; DJI integration (feat-dji-30): the ids of the circle's panels"
   },
   "mobile/android/app/src/main/res/values/immersive.xml": {
-    "blob": "174a0450609e41a1572645854940bba35256a60c",
-    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the id of the flat video panel; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the id of the photo layer panel, the Size, the Distance and the grip hints of a flat screen"
+    "blob": "12178e069fde3ec58310a4a65533cbe45800e921",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the id of the flat video panel; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the id of the photo layer panel, the Size, the Distance and the grip hints of a flat screen; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the id of the kiosk panel; not yet on the phone branch"
   },
   "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
     "blob": "46cc9494b2c2d01fcdb02c6dffd4e967dcf35e57",
@@ -1146,6 +1154,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveMediaTest.kt": {
     "blob": "1a45a5027dcc209679927c754476bd7e43d4f320",
     "reason": "AI immersive lot A9a: tests of the size and the turn of the photo of a relief; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/KioskSessionTest.kt": {
+    "blob": "797bfe2273f37a3505f6cc6426516660e6c6228a",
+    "reason": "quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): unit tests of the kiosk state machine, run by the Kotlin unit tests job; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PanoramaOutlineTest.kt": {
     "blob": "6a74cc55c58598bd0698bdd0a419b6e9c3a688f9",

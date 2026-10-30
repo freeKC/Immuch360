@@ -34,8 +34,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? rawProjection,
     String? stereoPair,
     bool reverseThumbstickTurn,
-    bool sharpFlatScreens,
-  ) async {
+    bool sharpFlatScreens, {
+    String? kiosk,
+  }) async {
     opened.add(stereoPair);
     sharp.add(sharpFlatScreens);
   }

@@ -6,6 +6,7 @@
   <item type="id" name="immersive_flat_video_panel" />
   <item type="id" name="immersive_photo_layer_panel" />
   <item type="id" name="immersive_feedback_panel" />
+  <item type="id" name="immersive_kiosk_panel" />
 
   <style name="ImmersivePanelTheme" parent="@android:style/Theme.Material.NoActionBar">
     <item name="android:windowIsTranslucent">true</item>
