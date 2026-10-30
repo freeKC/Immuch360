@@ -49,6 +49,7 @@ import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.PlaybackStatsLogger
 import app.alextran.immich.core.StreamingLoadControl
+import app.alextran.immich.core.PlaybackErrors
 import app.alextran.immich.core.VideoDecoders
 import app.alextran.immich.core.raw.RawDecoderVerdict
 import app.alextran.immich.core.raw.RawMessage
@@ -322,6 +323,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * [KioskSession]. Null for any other opening; a kiosk has no previous or next media.
      */
     val kioskJson: String? = null,
+    /**
+     * What to tell the user about the file Flutter chose for a video, decodability first (chooseVideoSource in Dart): the
+     * server's copy plays as the original is beyond the decoder of the headset, or the original as the copy is. Shown
+     * once the video plays, as the decoder warning; null for nothing.
+     */
+    val sourceNotice: String? = null,
+    /**
+     * Nothing the server has decodes on the headset: what Flutter says of it (the file, the limit, what to change in
+     * Immich), said at once instead of a player that stalls; null for a video that may play.
+     */
+    val sourceRefusal: String? = null,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -2506,6 +2518,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     fallbackUrl: String?,
     rawProjection: String?,
     stereoPair: String?,
+    sourceNotice: String? = null,
+    sourceRefusal: String? = null,
   ): Boolean {
     if (closing || isFinishing || isDestroyed || sceneHold.isDown) {
       Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
@@ -2539,6 +2553,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         stereoPairJson = stereoPair,
         reverseThumbstickTurn = current.reverseThumbstickTurn,
         sharpFlatScreens = current.sharpFlatScreens,
+        sourceNotice = sourceNotice,
+        sourceRefusal = sourceRefusal,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -5325,6 +5341,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             restartPlayback(recovered, error, durationMs)
             return
           }
+          // Beyond the decoder: a new player, or the transcoded stream of a file, would meet the same frames
+          is PlaybackRecovery.Action.Undecodable -> {
+            stopUndecodable(recovered)
+            return
+          }
           PlaybackRecovery.Action.None -> return
           else -> Unit
         }
@@ -5358,7 +5379,33 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun failVideo(error: PlaybackException) {
     reportPlayback(PlaybackDetails.errorEvent(errorText(error)))
-    showError(getString(R.string.immersive_error_video, error.errorCodeName))
+    showError(errorMessageFor(error))
+  }
+
+  /**
+   * What the viewer says of [error]: in our words for a decoder that failed, a decoder that gives no picture (the stuck
+   * checks of Media3) or a video too slow to come (see PlaybackErrors), with the codec and the size; else its own
+   * message with the name of the error. Never the text of Media3 ("Player stuck playing with no progress for 10000
+   * ms").
+   */
+  @OptIn(UnstableApi::class)
+  private fun errorMessageFor(error: PlaybackException): String {
+    val p = player
+    val format = videoFormatForReport()
+    val gotMedia = (p?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+    val kind = PlaybackErrors.kindOf(error, videoKnown = format != null, decoderGotMedia = gotMedia)
+    val labels = request?.stereoLabels.orEmpty()
+    val text =
+      kind?.let {
+        PlaybackDetails.errorText(
+          labels,
+          it,
+          VideoDecoders.codecName(format?.sampleMimeType),
+          format?.width ?: 0,
+          format?.height ?: 0,
+        )
+      }
+    return text ?: getString(R.string.immersive_error_video, error.errorCodeName)
   }
 
   /** The name of [error] and its cause, for a report. */
@@ -5510,9 +5557,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     counters?.ensureUpdated()
     watchedFrames = counters?.renderedOutputBufferCount ?: 0
     watchedDroppedFrames = counters?.droppedBufferCount ?: 0
-    when (val action = recovery.onTick(p.isPlaying, p.currentPosition, watchedFrames)) {
+    // A decoder that cannot keep up keeps Media3 ready, or waiting with its buffer full: it has data all the same
+    val fed =
+      p.playWhenReady &&
+        (p.playbackState == Player.STATE_READY ||
+          (p.playbackState == Player.STATE_BUFFERING && p.totalBufferedDuration >= OVER_LIMIT_FED_BUFFER_MS))
+    when (
+      val action = recovery.onTick(p.isPlaying, p.currentPosition, watchedFrames, SystemClock.elapsedRealtime(), fed)
+    ) {
       is PlaybackRecovery.Action.Restart -> restartPlayback(action, null, p.duration)
       is PlaybackRecovery.Action.NoPicture -> sayNoPicture(action)
+      is PlaybackRecovery.Action.Undecodable -> stopUndecodable(action)
       PlaybackRecovery.Action.PictureBack -> pictureBack(p)
       else -> Unit
     }
@@ -5637,41 +5692,80 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * A video above what the headset decodes plays at a fraction of its frame rate, with block artifacts: H.264 above 4K
-   * on the Quest 3, whatever its decoder list says, or anything the list refuses (see VideoDecoders). From the
-   * original, tries the transcoded stream Flutter sent once; otherwise tells the user what to change: the transcoding
-   * settings for a server media, a re-encode for a file of the headset or of a network share.
+   * A video above what the headset decodes plays at a fraction of its frame rate, with block artifacts, or not at all
+   * (one frame in 19.6 s for the H.264 5760 x 2880 of 30 October): H.264 above 4096 x 2304 on the Quest 3, whatever
+   * its decoder list says, or anything the list refuses (see VideoDecoders). Flutter chose the file decodability first
+   * and this checks what the player found (see [VideoStartRule.overLimit]): the transcoded stream Flutter sent, once;
+   * else a server video stops at once and says what to change in Immich; else (a file of the headset or of a network
+   * share) the warning says a re-encode plays, and the rule of [PlaybackRecovery.onOverLimit] stops a decoder that
+   * gives no frame for 3 s.
    */
   private fun checkDecoderLimit(format: Format) {
     val url = currentVideoUrl ?: return
+    val media = request ?: return
     if (decoderChecked || format.width <= 0 || format.height <= 0) return
     decoderChecked = true
     val verdict = VideoDecoders.canDecode(format)
     if (verdict.supported) return
     val codec = VideoDecoders.codecName(format.sampleMimeType)
     val size = "${format.width}x${format.height}"
-    Log.w(TAG, "$codec $size is above what the headset decodes (${verdict.reason}), expect dropped frames")
-    val fallback = request?.fallbackUrl?.takeIf { it != url }
-    if (!videoFallbackTried && fallback != null) {
-      videoFallbackTried = true
-      setStatus(getString(R.string.immersive_video_decoder_switch, "$codec $size"))
-      playUrl(fallback, resumePositionMs())
-      return
-    }
-    val message =
-      if (ImmersiveMedia.isFileMedia(url)) {
-        R.string.immersive_codec_too_large_file
-      } else {
-        R.string.immersive_codec_too_large
+    Log.w(TAG, "$codec $size is above what the headset decodes (${verdict.reason})")
+    val fallback = media.fallbackUrl?.takeIf { it != url }
+    // A server video whose original came downloaded is still a server video: its server can make a copy that plays
+    val fromServer = !ImmersiveMedia.isFileMedia(media.url)
+    when (VideoStartRule.overLimit(fallbackLeft = !videoFallbackTried && fallback != null, fromServer = fromServer)) {
+      VideoStartRule.OverLimit.SWITCH -> {
+        videoFallbackTried = true
+        setStatus(getString(R.string.immersive_video_decoder_switch, "$codec $size"))
+        playUrl(fallback ?: return, resumePositionMs())
       }
-    val warning = getString(message, codec, format.width, format.height)
-    Log.w(TAG, "shown to the user: $warning")
-    decoderWarning = warning
-    hideInfoJob?.cancel()
-    // At once, like an error: held back under a pending request, the answer would overwrite it unread
-    showStatus(warning)
-    setInfoVisible(true, reposition = true)
-    scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+      VideoStartRule.OverLimit.REFUSE -> {
+        val message =
+          if (verdict.maxWidth > 0 && verdict.maxHeight > 0) {
+            PlaybackDetails.undecodableText(
+              media.stereoLabels,
+              codec,
+              format.width,
+              format.height,
+              verdict.maxWidth,
+              verdict.maxHeight,
+            )
+          } else {
+            getString(R.string.immersive_codec_too_large, codec, format.width, format.height)
+          }
+        val event = PlaybackDetails.refusedEvent(codec, format.width, format.height, verdict.maxWidth, verdict.maxHeight)
+        refuseVideo(message, event)
+      }
+      VideoStartRule.OverLimit.WARN -> {
+        val warning = getString(R.string.immersive_codec_too_large_file, codec, format.width, format.height)
+        Log.w(TAG, "shown to the user: $warning")
+        decoderWarning = warning
+        recovery.onOverLimit(SystemClock.elapsedRealtime())
+        hideInfoJob?.cancel()
+        // At once, like an error: held back under a pending request, the answer would overwrite it unread
+        showStatus(warning)
+        setInfoVisible(true, reposition = true)
+        scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+      }
+    }
+  }
+
+  /**
+   * A decoder beyond its limit gave no frame for 3 s while it had data, or failed ([PlaybackRecovery.onOverLimit]):
+   * the video stops with the warning it got at its first tracks, rather than Media3's own check after 10 s, and no
+   * restart nor stream switch follows.
+   */
+  private fun stopUndecodable(action: PlaybackRecovery.Action.Undecodable) {
+    if (request == null) return
+    val format = videoFormatForReport()
+    val codec = VideoDecoders.codecName(format?.sampleMimeType)
+    val width = format?.width ?: 0
+    val height = format?.height ?: 0
+    val message =
+      decoderWarning ?: getString(R.string.immersive_codec_too_large_file, codec, width, height)
+    Log.w(TAG, "no frame from the decoder beyond its limit at ${action.positionMs} ms, stopped")
+    val position = ImmersiveMedia.formatTime(action.positionMs)
+    refuseVideo(message, PlaybackDetails.noPictureEvent(position, action.framesBefore) + ", beyond the decoder")
   }
 
   /**
@@ -5885,7 +5979,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     videoFallbackTried = false
     cancelRestart()
     recovery.onMedia()
-    playbackNotice = null
+    // The word of Flutter on the file it chose, said once the video plays (see the READY state)
+    playbackNotice = media.sourceNotice
     setStatus(getString(R.string.immersive_loading))
     val videoPlayer = ensurePlayer(media.url, media)
     if (videoPlayer == null) {
@@ -5899,21 +5994,120 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     loadJob =
       scope.launch {
+        // Flutter sends the copy as the fallback only when the headset decodes it (decodability first)
         val playback = fallbackFor(media.url)
         // A raw plan may start on the transcoded stream, a lens plan opens its own urls
         var url = plannedUrl(media)
+        val refusal = media.sourceRefusal
         val plain = playerPlan?.mode != RawMode.LENSES
-        if (plain && playback != null && url == media.url && StreamingLoadControl.isStreamed(media.url) &&
-          !isStreamable(media)
-        ) {
-          // No Range support on /original and the MP4 index at the end: the whole file would have to
-          // download before the first frame, the transcoded stream streams
-          Log.i(TAG, "original not streamable, using the transcoded stream")
-          videoFallbackTried = true
-          url = playback
+        val original = url == media.url
+        val streamed = StreamingLoadControl.isStreamed(media.url)
+        val fileMedia = ImmersiveMedia.isFileMedia(media.url)
+        val streamable =
+          !VideoStartRule.probes(refusal != null, plain, original, streamed, fileMedia) || isStreamable(media)
+        when (VideoStartRule.start(refusal != null, plain, original, streamed, fileMedia, playback != null, streamable)) {
+          VideoStartRule.Start.REFUSE -> {
+            refuseVideo(refusal.orEmpty(), PlaybackDetails.refusedEvent(null, 0, 0, 0, 0))
+            return@launch
+          }
+          VideoStartRule.Start.FALLBACK -> {
+            // No Range support on /original and the MP4 index at the end: the whole file would have to
+            // download before the first frame, the transcoded stream streams
+            Log.i(TAG, "original not streamable, using the transcoded stream")
+            videoFallbackTried = true
+            url = playback ?: url
+          }
+          VideoStartRule.Start.DOWNLOAD -> {
+            // The same, with a copy the headset cannot decode (or none): the original comes whole first, then plays
+            Log.i(TAG, "original not streamable and no copy to play, downloading it")
+            url = downloadOriginal(media) ?: url
+          }
+          VideoStartRule.Start.URL -> Unit
         }
+        if (request !== media) return@launch
         playUrl(url, media.startPositionMs)
       }
+  }
+
+  /**
+   * Downloads the original of [media], a server original that cannot stream and whose copy is no fallback (see
+   * [VideoStartRule]), to the cache with its progress on the status line, and gives its file url. Null when the server
+   * tells no size, when the cache has no room for it (see [VideoStartRule.fits]) or when the download fails: the
+   * original then streams as it is, Media3 reading the whole file before its first frame. Only one original is kept
+   * there (the one of the video before goes), and the viewer removes it when it finishes; a cancellation (the next
+   * media, the viewer closing) removes the partial file.
+   */
+  private suspend fun downloadOriginal(media: MediaRequest): String? {
+    val dir = File(cacheDir, DOWNLOAD_DIR).apply { mkdirs() }
+    val name = "original-${Integer.toHexString(media.url.hashCode())}.mp4"
+    val target = File(dir, name)
+    val partial = File(dir, "$name.part")
+    dir.listFiles()?.filter { it.name != name }?.forEach { it.delete() }
+    return try {
+      fetch(httpRequest(media.url)) { response ->
+        if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+        val body = response.body ?: throw IOException("empty response")
+        val total = body.contentLength()
+        if (total > 0 && target.length() == total) {
+          Log.i(TAG, "original already downloaded: $total bytes")
+          return@fetch target
+        }
+        val free = dir.usableSpace + target.length()
+        if (!VideoStartRule.fits(total, free)) {
+          Log.w(TAG, "original of $total bytes not downloaded, $free bytes free in the cache: streaming it")
+          return@fetch null
+        }
+        target.delete()
+        var done = 0L
+        var shown = -1
+        body.byteStream().use { input ->
+          partial.outputStream().use { output ->
+            val buffer = ByteArray(DOWNLOAD_BUFFER_BYTES)
+            while (true) {
+              ensureActive()
+              val read = input.read(buffer)
+              if (read < 0) break
+              output.write(buffer, 0, read)
+              done += read
+              val percent = VideoStartRule.percent(done, total) ?: 0
+              if (percent != shown) {
+                shown = percent
+                runOnUiThread { if (request === media && !isDestroyed) setStatus(downloadLine(media, percent)) }
+              }
+            }
+          }
+        }
+        if (done != total) throw IOException("the download ended at $done of $total bytes")
+        if (!partial.renameTo(target)) throw IOException("the download could not be kept")
+        Log.i(TAG, "original downloaded: $total bytes")
+        target
+      }?.let { Uri.fromFile(it).toString() }
+    } catch (e: CancellationException) {
+      partial.delete()
+      throw e
+    } catch (e: Exception) {
+      partial.delete()
+      Log.w(TAG, "the original could not be downloaded, streaming it", e)
+      null
+    }
+  }
+
+  /** The status line of a download at [percent], with the word of Flutter on the file chosen when it sent one. */
+  private fun downloadLine(media: MediaRequest, percent: Int): String {
+    val line = PlaybackDetails.downloadingText(media.stereoLabels, percent)
+    return media.sourceNotice?.let { "$line\n$it" } ?: line
+  }
+
+  /**
+   * Stops the video of the current media and says [message] instead, held on the panel as an error: a video nothing
+   * the server has decodes (the refusal of Flutter, or a format beyond the decoder at its first tracks with no copy to
+   * go to), or a decoder beyond its limit that gave no frame. The Logs page gets [event] in its report. Previous and
+   * next stay, a new media plays as any other.
+   */
+  private fun refuseVideo(message: String, event: String) {
+    reportPlayback(event)
+    stopVideo()
+    showError(message)
   }
 
   /** Shows the video panel once the current video has a frame on it, see [videoRevealed]. */
@@ -6139,7 +6333,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // A destroy that is not a finish (a recreation for a configuration change the manifest does not list, or the system
     // tearing down the stopped viewer while keeping its record) is no close: the viewer comes back from its saved
     // state under the same opening, and sends the event when it closes
-    if (isFinishing) reportClosed()
+    if (isFinishing) {
+      reportClosed()
+      // The original downloaded to play a video that cannot stream: as large as the video, kept only while it shows
+      File(cacheDir, DOWNLOAD_DIR).listFiles()?.forEach { it.delete() }
+    }
     pendingRequestId = null
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
@@ -6208,6 +6406,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_SHARP_FLAT_SCREENS = "app.alextran.immich.immersive.SHARP_FLAT_SCREENS"
     /** The kiosk JSON of a kiosk opening (see [KioskOptions]), absent for any other opening */
     private const val EXTRA_KIOSK = "app.alextran.immich.immersive.KIOSK"
+    /** What to tell of the file chosen for a video, and the refusal of a video nothing decodes, see [MediaRequest] */
+    private const val EXTRA_SOURCE_NOTICE = "app.alextran.immich.immersive.SOURCE_NOTICE"
+    private const val EXTRA_SOURCE_REFUSAL = "app.alextran.immich.immersive.SOURCE_REFUSAL"
+    /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
+    private const val DOWNLOAD_DIR = "immersive_video"
+    private const val DOWNLOAD_BUFFER_BYTES = 256 * 1024
+    /** Buffered media past which a decoder that waits counts as fed, for the rule of a video beyond the decoder */
+    private const val OVER_LIMIT_FED_BUFFER_MS = 2_000L
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
@@ -6394,6 +6600,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       fallbackUrl: String?,
       rawProjection: String?,
       stereoPair: String? = null,
+      sourceNotice: String? = null,
+      sourceRefusal: String? = null,
     ): Boolean {
       val viewer = liveViewer
       if (viewer == null) {
@@ -6410,6 +6618,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         fallbackUrl,
         rawProjection,
         stereoPair,
+        sourceNotice,
+        sourceRefusal,
       )
     }
 
@@ -6428,6 +6638,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       reverseThumbstickTurn: Boolean,
       sharpFlatScreens: Boolean = true,
       kiosk: String? = null,
+      sourceNotice: String? = null,
+      sourceRefusal: String? = null,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -6446,6 +6658,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           reverseThumbstickTurn = reverseThumbstickTurn,
           sharpFlatScreens = sharpFlatScreens,
           kioskJson = kiosk,
+          sourceNotice = sourceNotice,
+          sourceRefusal = sourceRefusal,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -6473,6 +6687,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, media.reverseThumbstickTurn)
         putBoolean(EXTRA_SHARP_FLAT_SCREENS, media.sharpFlatScreens)
         putString(EXTRA_KIOSK, media.kioskJson)
+        putString(EXTRA_SOURCE_NOTICE, media.sourceNotice)
+        putString(EXTRA_SOURCE_REFUSAL, media.sourceRefusal)
       }
     }
 
@@ -6506,6 +6722,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         reverseThumbstickTurn = extras.getBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, false),
         sharpFlatScreens = extras.getBoolean(EXTRA_SHARP_FLAT_SCREENS, true),
         kioskJson = extras.getString(EXTRA_KIOSK)?.takeIf { it.isNotBlank() },
+        sourceNotice = extras.getString(EXTRA_SOURCE_NOTICE)?.takeIf { it.isNotBlank() },
+        sourceRefusal = extras.getString(EXTRA_SOURCE_REFUSAL)?.takeIf { it.isNotBlank() },
       )
     }
 

@@ -1,5 +1,6 @@
-// The texts the immersive viewer of the Meta Quest gets for the video it plays (lot quest-playback-resilience): under
-// the keys PlaybackDetails.kt reads, their places left in braces for the viewer, with every opening.
+// The texts the immersive viewer of the Meta Quest gets for the video it plays (lots quest-playback-resilience and
+// fix-decoder-limit): under the keys PlaybackDetails.kt and PlaybackErrors.kt read, their places left in braces for the
+// viewer, with every opening.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,6 +37,14 @@ void main() {
       'playbackNoPictureSwitch': 'No picture for 3 seconds from {video}, trying the server playback stream',
       'playbackMbps': '{value} Mbit/s',
       'playbackKbps': '{value} kbit/s',
+      'playbackUndecodable':
+          'This device cannot decode this video ({codec} {width} x {height}, above {maxWidth} x {maxHeight}): in '
+          'Immich, set the video transcoding to HEVC or lower the resolution',
+      'playbackDownloading': 'Downloading the original to play it: {percent} %',
+      'errorDecoder': 'This device cannot decode this video ({codec} {width} x {height})',
+      'errorNoFrame':
+          'This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})',
+      'errorStalled': 'This video is not loading: the network or the server sends it too slowly',
     });
   });
 

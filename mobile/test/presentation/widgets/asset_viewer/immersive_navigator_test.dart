@@ -22,6 +22,7 @@ import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -62,6 +63,10 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   /// The transcoded stream given with each media shown, null for none
   final shownFallbackUrls = <String?>[];
 
+  /// The words on the file of each media shown, and the refusal of a video nothing decodes, null for none
+  final shownNotices = <String?>[];
+  final shownRefusals = <String?>[];
+
   /// What the viewer answers when asked to show a media: false once it no longer waits for the request
   bool answer = true;
 
@@ -82,6 +87,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     bool reverseThumbstickTurn,
     bool sharpFlatScreens, {
     String? kiosk,
+    String? sourceNotice,
+    String? sourceRefusal,
   }) async => opened.add(url);
 
   @override
@@ -94,9 +101,13 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
     String? rawProjection,
-    String? stereoPair,
-  ) async {
+    String? stereoPair, {
+    String? sourceNotice,
+    String? sourceRefusal,
+  }) async {
     shownFallbackUrls.add(fallbackUrl);
+    shownNotices.add(sourceNotice);
+    shownRefusals.add(sourceRefusal);
     shown.add((
       requestId: requestId,
       url: url,
@@ -141,7 +152,7 @@ class _RecordingRawVideoResolver extends RawVideoResolver {
 }
 
 class _NoProbes extends SphericalProbeService {
-  _NoProbes()
+  _NoProbes([this.result])
     : super(
         storage: MockStorageRepository(),
         client: () => throw UnimplementedError('no network in these tests'),
@@ -149,8 +160,37 @@ class _NoProbes extends SphericalProbeService {
         headers: () => const {},
       );
 
+  /// What the original of every video declares, null for nothing
+  final SphericalProbe? result;
+
   @override
-  Future<SphericalProbe?> probe(BaseAsset asset, {File? localFile}) async => null;
+  Future<SphericalProbe?> probe(BaseAsset asset, {File? localFile}) async => result;
+}
+
+/// The decoders of a Meta Quest 3: HEVC up to 8192 x 4320, H.264 up to the 4096 x 2304 measured there
+class _QuestDecoders extends VideoDecoderApi {
+  @override
+  Future<DecodeVerdict> canDecode(
+    String codec,
+    String? codecs,
+    int width,
+    int height,
+    double frameRate,
+    int bitDepth,
+    int transferCharacteristics, {
+    int instances = 1,
+  }) async {
+    final hevc = codec.startsWith('hvc') || codec.startsWith('hev');
+    final maxWidth = hevc ? 8192 : 4096;
+    final maxHeight = hevc ? 4320 : 2304;
+    return DecodeVerdict(
+      supported: width <= maxWidth && height <= maxHeight,
+      hardware: true,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+      reason: 'Quest 3',
+    );
+  }
 }
 
 /// Records where the asset viewer was asked to go, without a viewer behind it
@@ -255,6 +295,10 @@ void main() {
     late List<Set<String>> queries;
     late Set<String> flagged;
     Completer<void>? queryGate;
+    // What the original and the server's copy of every video declare, for the decoder check of the headset; null for
+    // nothing
+    SphericalProbe? originalProbe;
+    SphericalProbe? copyProbe;
 
     setUp(() {
       assets = [for (var index = 0; index < 10; index++) RemoteAssetFactory.create(id: 'a$index')];
@@ -279,6 +323,8 @@ void main() {
       queries = [];
       flagged = {};
       queryGate = null;
+      originalProbe = null;
+      copyProbe = null;
     });
 
     ImmersiveAssetResolver resolver() => ImmersiveAssetResolver(
@@ -286,10 +332,10 @@ void main() {
       stereoLabels: const {},
       coverageOverrides: container.read(sphereCoverageOverridesProvider.notifier),
       storage: storage,
-      probeService: _NoProbes(),
+      probeService: _NoProbes(originalProbe),
       gpanoClient: MockClient((_) async => http.Response('', 404)),
       // Without a probe, no decoder check: the original plays, with the transcoded stream to fall back to
-      videoSources: VideoSourceService(VideoDecoderApi()),
+      videoSources: VideoSourceService(_QuestDecoders(), probeTranscoded: (_) async => copyProbe),
     );
 
     TimelineImmersiveNavigator open(
@@ -621,6 +667,49 @@ void main() {
       expect(await request(1), isTrue);
       expect(api.shown.single.url, '$_server/assets/a4/original');
       expect(api.shownFallbackUrls, ['$_server/assets/a4/video/playback']);
+    });
+
+    test('shows the HEVC original of a video without its H.264 copy at 5760 x 2880 to fall back to, and tells the '
+        'headset why', () async {
+      // The case of 30 October: the server transcodes to H.264 at the original size, which the headset cannot decode,
+      // and the viewer switched to it because the original does not stream from that server
+      assets[4] = RemoteAssetFactory.create(id: 'a4', type: .video);
+      flagged = {'a4'};
+      originalProbe = const SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+      copyProbe = const SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+
+      final resolved = await resolver().resolve(assets[4]);
+      expect(resolved.url, '$_server/assets/a4/original');
+      expect(resolved.fallbackUrl, isNull);
+      expect(
+        resolved.sourceNotice,
+        const VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880),
+      );
+      expect(resolved.sourceRefusal, isNull);
+
+      open(1);
+      expect(await request(1), isTrue);
+      expect(api.shown.single.url, '$_server/assets/a4/original');
+      expect(api.shownFallbackUrls, [null]);
+      expect(api.shownNotices.single, isNotNull, reason: 'the words go to the headset');
+      expect(api.shownRefusals, [null]);
+    });
+
+    test('tells the headset at once that neither the original nor the copy decodes, with what to change', () async {
+      assets[4] = RemoteAssetFactory.create(id: 'a4', type: .video);
+      flagged = {'a4'};
+      originalProbe = const SphericalProbe(codec: 'avc1', codedWidth: 7680, codedHeight: 3840, frameRate: 30);
+      copyProbe = const SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+
+      final resolved = await resolver().resolve(assets[4]);
+      expect(
+        resolved.sourceRefusal,
+        const VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
+      );
+
+      open(1);
+      expect(await request(1), isTrue);
+      expect(api.shownRefusals.single, isNotNull);
     });
 
     test('attributes nothing for a media it did not show', () async {

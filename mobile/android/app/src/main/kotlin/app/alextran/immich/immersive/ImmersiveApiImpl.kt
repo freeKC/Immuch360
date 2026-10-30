@@ -124,7 +124,9 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * show both eyes on a flat quad. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting of the app: the
    * right thumbstick then turns the sphere the other way. [sharpFlatScreens] is its "Sharper flat screens" setting:
    * the photos of a flat screen on a compositor quad layer, and the compositor filters on the flat screens. [kiosk] is
-   * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening.
+   * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening. [sourceNotice] is what to tell of the
+   * file Flutter chose for a video, decodability first, and [sourceRefusal] what to say instead of playing a video
+   * nothing the server has decodes on the headset; null for nothing.
    */
   override fun open(
     url: String,
@@ -142,6 +144,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     reverseThumbstickTurn: Boolean,
     sharpFlatScreens: Boolean,
     kiosk: String?,
+    sourceNotice: String?,
+    sourceRefusal: String?,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -151,7 +155,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       "open immersive viewer, opening $openingId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
         "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
-        "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}",
+        "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}, notice=${sourceNotice != null}, " +
+        "refused=${sourceRefusal != null}",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -169,6 +174,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         reverseThumbstickTurn,
         sharpFlatScreens,
         kiosk,
+        sourceNotice,
+        sourceRefusal,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }
@@ -179,7 +186,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * Pigeon calls a host API there (no task queue), the thread the viewer lives on. Called from another thread, the
    * media is refused rather than shown from the wrong thread. [fallbackUrl] is the transcoded stream of a video,
    * [rawProjection] the calibration of a raw dual fisheye video and [stereoPair] the two eyes of an Apple spatial
-   * photo, as for [open].
+   * photo, as for [open], with [sourceNotice] and [sourceRefusal].
    */
   override fun showAdjacent(
     requestId: Long,
@@ -191,6 +198,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     fallbackUrl: String?,
     rawProjection: String?,
     stereoPair: String?,
+    sourceNotice: String?,
+    sourceRefusal: String?,
   ): Boolean {
     if (Looper.myLooper() != Looper.getMainLooper()) {
       Log.e(TAG, "showAdjacent called off the main thread, request $requestId refused")
@@ -199,7 +208,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     Log.i(
       TAG,
       "adjacent media for request $requestId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
-        "fallback=${fallbackUrl != null}, raw=${rawProjection != null}, stereo pair=${stereoPair != null}",
+        "fallback=${fallbackUrl != null}, raw=${rawProjection != null}, stereo pair=${stereoPair != null}, " +
+        "notice=${sourceNotice != null}, refused=${sourceRefusal != null}",
     )
     return ImmersiveViewerActivity.showAdjacent(
       requestId,
@@ -211,6 +221,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       fallbackUrl,
       rawProjection,
       stereoPair,
+      sourceNotice,
+      sourceRefusal,
     )
   }
 }

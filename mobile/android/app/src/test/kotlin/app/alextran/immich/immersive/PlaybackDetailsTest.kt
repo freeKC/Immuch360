@@ -1,7 +1,9 @@
 package app.alextran.immich.immersive
 
+import app.alextran.immich.core.PlaybackErrors
 import java.util.Locale
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class PlaybackDetailsTest {
@@ -226,5 +228,70 @@ class PlaybackDetailsTest {
       "stopped at 0:10 after ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, restarted at 0:10 on a new player at once",
       PlaybackDetails.restartEvent("ERROR_CODE_AUDIO_TRACK_WRITE_FAILED", "0:10", "0:10", 0L),
     )
+  }
+
+  @Test
+  fun `a video beyond the decoder says its codec, its size, the limit and what to change in Immich`() {
+    assertEquals(
+      "This device cannot decode this video (H.264 5760 x 2880, above 4096 x 2304): in Immich, set the video " +
+        "transcoding to HEVC or lower the resolution",
+      PlaybackDetails.undecodableText(english, "H.264", 5760, 2880, 4096, 2304),
+    )
+    val labels =
+      mapOf(
+        PlaybackDetails.LABEL_UNDECODABLE to
+          "Cet appareil ne décode pas cette vidéo ({codec} {width} x {height}, au delà de {maxWidth} x {maxHeight})"
+      )
+    assertEquals(
+      "Cet appareil ne décode pas cette vidéo (H.264 5760 x 2880, au delà de 4096 x 2304)",
+      PlaybackDetails.undecodableText(labels, "H.264", 5760, 2880, 4096, 2304),
+    )
+  }
+
+  @Test
+  fun `the download line says how far the original is`() {
+    assertEquals("Downloading the original to play it: 45 %", PlaybackDetails.downloadingText(english, 45))
+    assertEquals(
+      "Téléchargement de l'original : 7 %",
+      PlaybackDetails.downloadingText(
+        mapOf(PlaybackDetails.LABEL_DOWNLOADING to "Téléchargement de l'original : {percent} %"),
+        7,
+      ),
+    )
+  }
+
+  @Test
+  fun `an error of the player is told in our words, with the codec and the size when known`() {
+    // The stuck playing check of Media3 on the H.264 5760 x 2880 of 30 October
+    assertEquals(
+      "This video does not play: the decoder of this device gives no picture for it (H.264 5760 x 2880)",
+      PlaybackDetails.errorText(english, PlaybackErrors.Kind.NO_FRAME, "H.264", 5760, 2880),
+    )
+    assertEquals(
+      "This device cannot decode this video (HEVC 7680 x 3840)",
+      PlaybackDetails.errorText(english, PlaybackErrors.Kind.DECODER, "HEVC", 7680, 3840),
+    )
+    assertEquals(
+      "This video is not loading: the network or the server sends it too slowly",
+      PlaybackDetails.errorText(english, PlaybackErrors.Kind.STALLED, "H.264", 0, 0),
+    )
+    // Without the size, or for a video that stopped otherwise: the viewer's own message, with the name of the error
+    assertNull(PlaybackDetails.errorText(english, PlaybackErrors.Kind.NO_FRAME, "H.264", 0, 0))
+    assertNull(PlaybackDetails.errorText(english, PlaybackErrors.Kind.STOPPED, "H.264", 5760, 2880))
+  }
+
+  @Test
+  fun `the new keys are the ones the app sends`() {
+    assertEquals("playbackUndecodable", PlaybackDetails.LABEL_UNDECODABLE)
+    assertEquals("playbackDownloading", PlaybackDetails.LABEL_DOWNLOADING)
+  }
+
+  @Test
+  fun `a video refused before it plays goes to the report`() {
+    assertEquals(
+      "not played: H.264 5760 x 2880 is beyond the decoder (at most 4096 x 2304)",
+      PlaybackDetails.refusedEvent("H.264", 5760, 2880, 4096, 2304),
+    )
+    assertEquals("not played: refused by the app before it loaded", PlaybackDetails.refusedEvent(null, 0, 0, 0, 0))
   }
 }

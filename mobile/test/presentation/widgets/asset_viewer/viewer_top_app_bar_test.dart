@@ -288,8 +288,9 @@ void main() {
     'panoramaFlag_seam': 'The seam may be visible',
     'panoramaFlag_mostlyInvented': 'Most of this panorama is invented',
   };
-  // The notices of the video playback of the immersive viewer and the units of its details line, which every opening
-  // carries too, their places left for the viewer (immersivePlaybackLabels)
+  // The notices of the video playback of the immersive viewer, the units of its details line, the refusal of a video
+  // beyond its decoder, the line of an original it downloads and the errors of its player, which every opening carries
+  // too, their places left for the viewer (immersivePlaybackLabels)
   const englishPlaybackLabels = {
     'playbackRestarted': 'The video stopped at {position}, it plays again from there',
     'playbackRestartedLater':
@@ -299,6 +300,14 @@ void main() {
     'playbackNoPictureSwitch': 'No picture for 3 seconds from {video}, trying the server playback stream',
     'playbackMbps': '{value} Mbit/s',
     'playbackKbps': '{value} kbit/s',
+    'playbackUndecodable':
+        'This device cannot decode this video ({codec} {width} x {height}, above {maxWidth} x {maxHeight}): in '
+        'Immich, set the video transcoding to HEVC or lower the resolution',
+    'playbackDownloading': 'Downloading the original to play it: {percent} %',
+    'errorDecoder': 'This device cannot decode this video ({codec} {width} x {height})',
+    'errorNoFrame':
+        'This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})',
+    'errorStalled': 'This video is not loading: the network or the server sends it too slowly',
   };
   // The audio track control of the native video players, with the language of the app to name the track languages in
   const englishAudioTrackLabels = {
@@ -395,6 +404,9 @@ void main() {
         any(),
         any(),
         any(),
+        kiosk: any(named: 'kiosk'),
+        sourceNotice: any(named: 'sourceNotice'),
+        sourceRefusal: any(named: 'sourceRefusal'),
       ),
     ).thenAnswer(openImmersive);
     previewRequests = [];
@@ -666,6 +678,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       );
     });
@@ -989,6 +1004,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -1019,6 +1037,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       );
     });
@@ -1065,6 +1086,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1101,6 +1125,9 @@ void main() {
             any(),
             any(),
             any(),
+            kiosk: any(named: 'kiosk'),
+            sourceNotice: any(named: 'sourceNotice'),
+            sourceRefusal: any(named: 'sourceRefusal'),
           ),
         ).captured;
         expect(captured, [
@@ -1142,6 +1169,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1174,6 +1204,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
@@ -1233,6 +1266,9 @@ void main() {
             any(),
             any(),
             any(),
+            kiosk: any(named: 'kiosk'),
+            sourceNotice: any(named: 'sourceNotice'),
+            sourceRefusal: any(named: 'sourceRefusal'),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1263,6 +1299,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
@@ -1301,6 +1340,9 @@ void main() {
             any(),
             any(),
             any(),
+            kiosk: any(named: 'kiosk'),
+            sourceNotice: any(named: 'sourceNotice'),
+            sourceRefusal: any(named: 'sourceRefusal'),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1332,6 +1374,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
     });
@@ -1360,6 +1405,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
     });
@@ -1408,6 +1456,9 @@ void main() {
             any(),
             any(),
             any(),
+            kiosk: any(named: 'kiosk'),
+            sourceNotice: any(named: 'sourceNotice'),
+            sourceRefusal: any(named: 'sourceRefusal'),
           ),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
@@ -1483,6 +1534,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
@@ -1551,6 +1605,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1587,6 +1644,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
@@ -1647,6 +1707,9 @@ void main() {
             any(),
             any(),
             any(),
+            kiosk: any(named: 'kiosk'),
+            sourceNotice: any(named: 'sourceNotice'),
+            sourceRefusal: any(named: 'sourceRefusal'),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1691,6 +1754,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1738,6 +1804,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -1769,6 +1838,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
@@ -1824,6 +1896,9 @@ void main() {
           false,
           // Sharper flat screens, on by default
           true,
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
     });
@@ -1858,6 +1933,9 @@ void main() {
           true,
           // Sharper flat screens, on by default
           true,
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
     });
@@ -2006,6 +2084,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
@@ -2559,8 +2640,7 @@ void main() {
       frameRate: 30,
     );
     // The frame size without grouping separators, as the native players write it
-    const switchedMessage =
-        'Playing the transcoded stream: the original (HEVC 7680 x 3840) exceeds what this device decodes';
+    const switchedMessage = "Playing the server's copy: the original (HEVC 7680 x 3840) is above this device's decoder";
     const forcedMessage = 'Playing the original although it exceeds what this device decodes (HEVC 7680 x 3840)';
     final spatialButton = find.byTooltip('Spatial 2.5D');
 
@@ -2590,6 +2670,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2618,9 +2701,8 @@ void main() {
       expect(find.byType(SnackBar), findsNothing);
     });
 
-    testWidgets('leaves the switch to the immersive viewer when the headset cannot decode the original', (
-      tester,
-    ) async {
+    testWidgets('opens the server copy in the immersive viewer when the headset cannot decode the original, saying so '
+        'in the headset', (tester) async {
       final asset = owned(type: .video);
       probes.result = probe8k;
       cannotDecode();
@@ -2629,14 +2711,31 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      // The viewer checks its decoders at the first frames and says so in the headset, where a message of the app
-      // would stay hidden
-      expect(immersiveOpened(), ('$server/assets/${asset.id}/original', '$server/assets/${asset.id}/video/playback'));
-      verifyNever(
-        () => decoderApi.canDecode(any(), any(), any(), any(), any(), any(), any(), instances: any(named: 'instances')),
-      );
-      expect(find.byType(SnackBar), findsNothing);
-      // Only the sizes are asked, to hand out the transcoded stream when it is a file of its own
+      // Decodability first, before the viewer opens: the copy, whose probe tells nothing here, may play, the original
+      // does not; the words go to the headset, where a message of the app would stay hidden
+      final captured = verify(
+        () => immersiveApi.open(
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: captureAny(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
+        ),
+      ).captured;
+      expect(captured, ['$server/assets/${asset.id}/video/playback', null, switchedMessage]);
+      // The sizes are asked, to know that the server has a copy of its own
       expect(sizeRequests, isNotEmpty);
     });
 
@@ -2785,7 +2884,8 @@ void main() {
 
       expect(sphericalOpened(), ('$server/assets/${asset.id}/original', null));
       expect(find.text(switchedMessage), findsNothing);
-      expect(find.text(forcedMessage), findsOneWidget);
+      // The word of the dialog stands: no other one once the user asked to try
+      expect(find.text(forcedMessage), findsNothing);
     });
 
     testWidgets('opens no native 360° player when the user closes the word that the device cannot decode the video', (
@@ -2914,6 +3014,9 @@ void main() {
           captureAny(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it
@@ -2968,6 +3071,9 @@ void main() {
         captureAny(),
         any(),
         any(),
+        kiosk: any(named: 'kiosk'),
+        sourceNotice: any(named: 'sourceNotice'),
+        sourceRefusal: any(named: 'sourceRefusal'),
       ),
     ).captured;
 
@@ -3146,6 +3252,9 @@ void main() {
         captureAny(),
         any(),
         any(),
+        kiosk: any(named: 'kiosk'),
+        sourceNotice: any(named: 'sourceNotice'),
+        sourceRefusal: any(named: 'sourceRefusal'),
       ),
     ).captured;
 
@@ -3421,6 +3530,9 @@ void main() {
           captureAny(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).captured;
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
@@ -3476,6 +3588,9 @@ void main() {
         captureAny(),
         any(),
         any(),
+        kiosk: any(named: 'kiosk'),
+        sourceNotice: any(named: 'sourceNotice'),
+        sourceRefusal: any(named: 'sourceRefusal'),
       ),
     ).captured;
 
@@ -3625,6 +3740,9 @@ void main() {
           any(),
           any(),
           any(),
+          kiosk: any(named: 'kiosk'),
+          sourceNotice: any(named: 'sourceNotice'),
+          sourceRefusal: any(named: 'sourceRefusal'),
         ),
       ).thenThrow(PlatformException(code: 'no-activity'));
       final asset = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
@@ -3672,6 +3790,9 @@ void main() {
         captureAny(),
         any(),
         captureAny(),
+        kiosk: any(named: 'kiosk'),
+        sourceNotice: any(named: 'sourceNotice'),
+        sourceRefusal: any(named: 'sourceRefusal'),
       ),
     ).captured;
 

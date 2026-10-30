@@ -123,8 +123,10 @@ String _immersiveVideoId(BaseAsset asset, String remoteId) =>
 /// of the user from a return to the guess once the viewer closes.
 ///
 /// [fallbackUrl] is the server's transcoded stream of a video, which the viewer plays instead of [url] when the
-/// headset cannot decode the original or the original fails; null when there is none. [sourceNotice] is what to tell
-/// the user about the file chosen, null for nothing (see [chooseVideoSource]). [rawProjection] is the rawProjection
+/// headset cannot decode the original or the original fails; null when there is none, and when the headset cannot
+/// decode it either. [sourceNotice] is what to tell the user about the file chosen, null for nothing, and
+/// [sourceRefusal] why nothing the server has decodes on the headset, said at once instead of playing (see
+/// [chooseVideoSource]). [rawProjection] is the rawProjection
 /// JSON of a raw video (see [RawVideoPlan.toNativeJson]), null for an equirectangular media and for a raw photo, which
 /// comes stitched. [stereoPair] is the JSON of the two eyes of an Apple spatial photo, which the viewer shows on a flat
 /// quad in front of the user rather than on a sphere; null for any other media.
@@ -137,6 +139,7 @@ class ImmersiveRequest {
     required this.view,
     this.fallbackUrl,
     this.sourceNotice,
+    this.sourceRefusal,
     this.rawProjection,
     this.stereoPair,
   });
@@ -148,6 +151,7 @@ class ImmersiveRequest {
   final SphereView view;
   final String? fallbackUrl;
   final VideoSourceNotice? sourceNotice;
+  final VideoSourceRefusal? sourceRefusal;
   final String? rawProjection;
   final String? stereoPair;
 
@@ -157,7 +161,8 @@ class ImmersiveRequest {
   @override
   String toString() =>
       'ImmersiveRequest(url: $url, fallbackUrl: $fallbackUrl, isVideo: $isVideo, title: $title, view: $view, '
-      'raw: ${rawProjection != null}, stereo pair: ${stereoPair != null})';
+      'raw: ${rawProjection != null}, stereo pair: ${stereoPair != null}, notice: $sourceNotice, '
+      'refusal: $sourceRefusal)';
 }
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
@@ -195,6 +200,8 @@ Future<void> openImmersiveRequest(
   reverseThumbstickTurn,
   sharpFlatScreens,
   kiosk: kiosk,
+  sourceNotice: request.sourceNotice?.message(StaticTranslations.instance),
+  sourceRefusal: request.sourceRefusal?.message(StaticTranslations.instance),
 );
 
 /// The labels an opening of the immersive viewer goes with: [stereoLabels], the translated texts of a panorama
@@ -220,6 +227,8 @@ Future<bool> showImmersiveRequest(ImmersiveApi api, int requestId, ImmersiveRequ
   request.fallbackUrl,
   request.rawProjection,
   request.stereoPair,
+  sourceNotice: request.sourceNotice?.message(StaticTranslations.instance),
+  sourceRefusal: request.sourceRefusal?.message(StaticTranslations.instance),
 );
 
 // Decoded width of a raw photo before it is stitched: one pixel under the largest texture, as for the panorama viewer
@@ -428,6 +437,7 @@ class ImmersiveAssetResolver {
     this.sharpFlatScreens = true,
     this.raw,
     this.exifOf,
+    this.forcedSource,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
@@ -446,6 +456,7 @@ class ImmersiveAssetResolver {
       sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
+      forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
     );
   }
 
@@ -457,6 +468,10 @@ class ImmersiveAssetResolver {
 
   /// The raw dual fisheye media, stitched or with their calibration; null to take them as any other media
   final RawImmersiveMedia? raw;
+
+  /// The file the user forced for a server video in its details ("Play the original", "Play the server's copy"), by
+  /// video id, null when none; null for none at all
+  final VideoSourceKind? Function(String videoId)? forcedSource;
 
   /// Labels of the controls of the viewer, see [sphereViewerLabels]
   final Map<String, String> stereoLabels;
@@ -480,11 +495,12 @@ class ImmersiveAssetResolver {
   final VideoSourceService _videoSources;
 
   /// What the viewer opens for [asset]. A video plays from the copy on the device when there is one, like in the
-  /// in-app player, else from the server as [videoSourcePolicy] says: the server's transcoded stream when the user
-  /// chose it, else its original. Under the original within the decoders, the transcoded stream goes along as the
-  /// fallback, which the viewer switches to by itself when its decoder check at the first frames refuses the original;
-  /// under the original whatever happens, the decoder check of the app tells the user beforehand (see
-  /// [chooseVideoSource]). A photo opens from its original on the server, and an asset only on
+  /// in-app player, else from the server, decodability first (see [VideoSourceService.serverSource]): the original or
+  /// the server's transcoded stream, whichever the headset decodes, then as [videoSourcePolicy] says, or the file the
+  /// user forced for this video in its details ([forcedSource]). The transcoded stream goes along as the fallback,
+  /// which the viewer switches to by itself when its decoder check at the first frames refuses the original or the
+  /// original cannot stream, only when the headset decodes it: an original that cannot stream is otherwise downloaded
+  /// by the viewer. The notice of the choice and the refusal of a video nothing decodes are said in the headset. A photo opens from its original on the server, and an asset only on
   /// the device (no server, or not uploaded) from its file there, photo or video alike. [localPath] is the file of a
   /// media opened with "Open with" that is not in the library, which opens from there. Throws when there is no file
   /// to open.
@@ -564,17 +580,19 @@ class ImmersiveAssetResolver {
     var source = ChosenVideoSource(url: url);
     if (asset.isVideo && localFile == null && remoteId != null) {
       final videoId = _immersiveVideoId(asset, remoteId);
-      source = videoSourcePolicy == VideoSourcePolicy.preferOriginalWithinDecoder
-          // The viewer checks the decoders of the headset at the first frames and switches to the transcoded stream
-          // itself, saying so in the headset: a message of the app would stay hidden behind the viewer, and a media
-          // the viewer moves to from there comes without one. No fallback when the server has no transcoded stream
-          // (its playback stream is then the original itself): the viewer would reload the same file and say it
-          // tries the server's stream
-          ? ChosenVideoSource(
-              url: serverOriginalVideoUrl(videoId),
-              fallbackUrl: await _videoSources.transcodeIsOriginal(videoId) ? null : serverTranscodedVideoUrl(videoId),
-            )
-          : await _videoSources.serverSource(videoId: videoId, policy: videoSourcePolicy, probe: probe);
+      // The words on the choice go to the headset: a message of the app would stay hidden behind the viewer, and a
+      // media the viewer moves to from there would come without one. No fallback when the server has no transcoded
+      // stream (its playback stream is then the original itself), nor one the headset cannot decode
+      source = await _videoSources.serverSource(
+        videoId: videoId,
+        policy: videoSourcePolicy,
+        probe: probe,
+        probeOriginal: () async => probe,
+        forced: forcedSource?.call(videoId),
+        wantsFallback: true,
+        width: frame.width,
+        height: frame.height,
+      );
     }
 
     final assetInputs = raw?.assetInputs;
@@ -592,7 +610,8 @@ class ImmersiveAssetResolver {
         view: raw360SphereView,
         fallbackUrl: plan.fallbackUrl,
         // A raw video of two tracks plays its original whatever was chosen: a word about the choice would be wrong
-        sourceNotice: plan.url == source.url ? source.notice : null,
+        sourceNotice: plan.url == source.url ? source.notice ?? source.copyBeyondDecoders : null,
+        sourceRefusal: plan.url == source.url ? source.refusal : null,
         rawProjection: plan.toNativeJson(),
       );
     }
@@ -604,7 +623,8 @@ class ImmersiveAssetResolver {
       title: asset.name,
       view: view(gpanoCrop: gpanoCrop, probe: probe),
       fallbackUrl: source.fallbackUrl,
-      sourceNotice: source.notice,
+      sourceNotice: source.notice ?? source.copyBeyondDecoders,
+      sourceRefusal: source.refusal,
     );
   }
 
@@ -678,6 +698,7 @@ class ImmersiveAssetResolver {
       view: stereoPhotoSphereView,
       fallbackUrl: sphere.fallbackUrl,
       sourceNotice: sphere.sourceNotice,
+      sourceRefusal: sphere.sourceRefusal,
       stereoPair: stereoPair,
     );
   }

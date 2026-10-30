@@ -76,6 +76,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     bool reverseThumbstickTurn,
     bool sharpFlatScreens, {
     String? kiosk,
+    String? sourceNotice,
+    String? sourceRefusal,
   }) async {
     final failure = this.failure;
     if (failure != null) {

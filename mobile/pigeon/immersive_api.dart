@@ -48,7 +48,11 @@ abstract class ImmersiveApi {
   /// and next keep the value of the opening. [kiosk] is null, or the JSON of the kiosk mode (Settings, Advanced,
   /// "Kiosk mode", lot quest-kiosk): `{"endText": ..., "exitHint": ...}` in the language of the app; the viewer then
   /// plays the media for visitors, restarting a film each time the headset is put on, with no panel, no hands and no
-  /// pointer, and only B or Y held one second leaves (see KioskSession).
+  /// pointer, and only B or Y held one second leaves (see KioskSession). [sourceNotice] is what to tell of the file
+  /// chosen for a video, decodability first (the server's copy as the original is beyond the decoder of the headset, or
+  /// the original as the copy is), shown once it plays; [sourceRefusal] what to say instead of playing a video nothing
+  /// the server has decodes on the headset (its codec, its size, the limit and what to change in Immich). Both in the
+  /// language of the app, null for nothing (lot fix-decoder-limit).
   void open(
     String url,
     Map<String, String> headers,
@@ -65,12 +69,15 @@ abstract class ImmersiveApi {
     bool reverseThumbstickTurn,
     bool sharpFlatScreens, {
     String? kiosk,
+    String? sourceNotice,
+    String? sourceRefusal,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
   /// by [requestId]. Returns false, and shows nothing, when that viewer is gone, closing, or no longer waiting for
   /// this request (the user pressed Back, or the request timed out meanwhile), so that Flutter does not count the
-  /// media as shown. Never starts the viewer. [stereoPair] is the JSON of an Apple spatial photo, as for [open].
+  /// media as shown. Never starts the viewer. [stereoPair] is the JSON of an Apple spatial photo, [sourceNotice] and
+  /// [sourceRefusal] the words on the file of a video, as for [open].
   bool showAdjacent(
     int requestId,
     String url,
@@ -80,8 +87,10 @@ abstract class ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
     String? rawProjection,
-    String? stereoPair,
-  );
+    String? stereoPair, {
+    String? sourceNotice,
+    String? sourceRefusal,
+  });
 }
 
 /// Events from the immersive viewer towards Flutter, attached to the engine of the app UI (the viewer is its own

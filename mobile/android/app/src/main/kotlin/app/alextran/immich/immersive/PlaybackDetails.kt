@@ -1,5 +1,6 @@
 package app.alextran.immich.immersive
 
+import app.alextran.immich.core.PlaybackErrors
 import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.roundToLong
@@ -21,6 +22,13 @@ internal object PlaybackDetails {
   const val LABEL_MBPS = "playbackMbps"
   const val LABEL_KBPS = "playbackKbps"
 
+  /**
+   * Keys of the texts of a video beyond the decoder (lot fix-decoder-limit): the refusal with the limit and what to
+   * change in Immich, and the line of an original downloaded because it cannot stream.
+   */
+  const val LABEL_UNDECODABLE = "playbackUndecodable"
+  const val LABEL_DOWNLOADING = "playbackDownloading"
+
   /** The English texts, for a key the app did not send. */
   private val englishLabels =
     mapOf(
@@ -32,6 +40,15 @@ internal object PlaybackDetails {
       LABEL_NO_PICTURE_SWITCH to "No picture for 3 seconds from {video}, trying the server playback stream",
       LABEL_MBPS to "{value} Mbit/s",
       LABEL_KBPS to "{value} kbit/s",
+      LABEL_UNDECODABLE to
+        "This device cannot decode this video ({codec} {width} x {height}, above {maxWidth} x {maxHeight}): in " +
+          "Immich, set the video transcoding to HEVC or lower the resolution",
+      LABEL_DOWNLOADING to "Downloading the original to play it: {percent} %",
+      // The texts of the errors of the players, see videoSourceLabels in the app
+      PlaybackErrors.LABEL_DECODER to "This device cannot decode this video ({codec} {width} x {height})",
+      PlaybackErrors.LABEL_NO_FRAME to
+        "This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})",
+      PlaybackErrors.LABEL_STALLED to "This video is not loading: the network or the server sends it too slowly",
     )
 
   private const val SEPARATOR = " • "
@@ -93,6 +110,55 @@ internal object PlaybackDetails {
       text(labels, LABEL_RESTARTED, "position" to position)
     } else {
       text(labels, LABEL_RESTARTED_LATER, "position" to position, "resume" to resume)
+    }
+
+  /**
+   * The video of [codec] [width] x [height] is beyond the decoder of the headset, at most [maxWidth] x [maxHeight] for
+   * that codec, and the server has nothing better: what to change in Immich.
+   */
+  fun undecodableText(
+    labels: Map<String, String>,
+    codec: String,
+    width: Int,
+    height: Int,
+    maxWidth: Int,
+    maxHeight: Int,
+  ): String =
+    text(
+      labels,
+      LABEL_UNDECODABLE,
+      "codec" to codec,
+      "width" to "$width",
+      "height" to "$height",
+      "maxWidth" to "$maxWidth",
+      "maxHeight" to "$maxHeight",
+    )
+
+  /** The line of the original being downloaded, [percent] of it there. */
+  fun downloadingText(labels: Map<String, String>, percent: Int): String =
+    text(labels, LABEL_DOWNLOADING, "percent" to "$percent")
+
+  /**
+   * An error of the player of [kind] (see PlaybackErrors) on a video of [codec] [width] x [height], in our words; null
+   * when they need a size that is unknown, and for a video that stopped otherwise: the viewer then says its own
+   * message, with the name of the error, never the text of Media3.
+   */
+  fun errorText(labels: Map<String, String>, kind: PlaybackErrors.Kind, codec: String, width: Int, height: Int): String? {
+    val key = kind.label ?: return null
+    if (kind == PlaybackErrors.Kind.STALLED) return text(labels, key)
+    if (width <= 0 || height <= 0) return null
+    return text(labels, key, "codec" to codec, "width" to "$width", "height" to "$height")
+  }
+
+  /**
+   * A video refused before it played: of [codec] [width] x [height] beyond the decoder, at most [maxWidth] x
+   * [maxHeight], or refused by the app ([codec] null), for the report.
+   */
+  fun refusedEvent(codec: String?, width: Int, height: Int, maxWidth: Int, maxHeight: Int): String =
+    if (codec == null) {
+      "not played: refused by the app before it loaded"
+    } else {
+      "not played: $codec $width x $height is beyond the decoder (at most $maxWidth x $maxHeight)"
     }
 
   /** Where [url] comes from, in words for a report; [isFallback] for the transcoded stream Flutter sent. */

@@ -36,6 +36,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     bool reverseThumbstickTurn,
     bool sharpFlatScreens, {
     String? kiosk,
+    String? sourceNotice,
+    String? sourceRefusal,
   }) async {
     opened.add(stereoPair);
     sharp.add(sharpFlatScreens);
@@ -51,8 +53,10 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
     String? rawProjection,
-    String? stereoPair,
-  ) async {
+    String? stereoPair, {
+    String? sourceNotice,
+    String? sourceRefusal,
+  }) async {
     shown.add(stereoPair);
     return true;
   }

@@ -329,6 +329,46 @@ final videoSourceServiceProvider = Provider<VideoSourceService>(
   ),
 );
 
+/// The file the user chose for a server video in its details ("Play the original", "Play the server's copy"), by video
+/// id, for as long as the app runs: the in-app player and the immersive viewer play it over the settings and the
+/// decoder check (see [chooseVideoSource]), with a word when it is beyond the decoders
+class VideoSourceOverrides extends StateNotifier<Map<String, VideoSourceKind>> {
+  VideoSourceOverrides() : super(const {});
+
+  /// The file forced for [videoId], null when the choice is the app's
+  VideoSourceKind? of(String videoId) => state[videoId];
+
+  /// Plays [kind] for [videoId] from now on
+  void force(String videoId, VideoSourceKind kind) => state = {...state, videoId: kind};
+}
+
+final videoSourceOverridesProvider = StateNotifierProvider<VideoSourceOverrides, Map<String, VideoSourceKind>>(
+  (_) => VideoSourceOverrides(),
+);
+
+/// What the in-app player chose last for each server video it played, by video id: the details of the video tell
+/// which file plays and offer the other one
+class ChosenVideoSources extends StateNotifier<Map<String, ChosenVideoSource>> {
+  ChosenVideoSources() : super(const {});
+
+  /// Past this many videos, the ones chosen first are forgotten
+  static const maxEntries = 100;
+
+  void record(String videoId, ChosenVideoSource source) {
+    final next = {...state}
+      ..remove(videoId)
+      ..[videoId] = source;
+    while (next.length > maxEntries) {
+      next.remove(next.keys.first);
+    }
+    state = next;
+  }
+}
+
+final chosenVideoSourcesProvider = StateNotifierProvider<ChosenVideoSources, Map<String, ChosenVideoSource>>(
+  (_) => ChosenVideoSources(),
+);
+
 /// What the details of a video tell about its file: what its probe found, whether the device decodes it, and its bit
 /// rate, each null when unknown
 typedef VideoDecodeDetails = ({SphericalProbe? probe, DecodeVerdict? verdict, VideoBitRate? bitRate});
