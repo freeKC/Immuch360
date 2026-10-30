@@ -44,8 +44,10 @@ abstract class ViewerConfig with _$ViewerConfig {
     @Default(true) bool gaussianSplats,
 
     /// Meta Quest, experimental: a splat shows up to 150 000 gaussians, the advice of the Meta Spatial SDK, rather than
-    /// the 50 000 of the first measures, with a passing word that it may stutter. On by default (Settings, Advanced)
-    @Default(true) bool largeSplats,
+    /// the 50 000 of the first measures, with a passing word that it may stutter. Off by default, unlike the other
+    /// experimental settings: 50 000 until a measure in the headset says more (decision D7 of the splats, kept by
+    /// FreeKC on 30 October 2026); Settings, Advanced turns it on
+    @Default(false) bool largeSplats,
 
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)

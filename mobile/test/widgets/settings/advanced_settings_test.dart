@@ -260,20 +260,20 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('both read on by default, and say what they change', (tester) async {
+    testWidgets('Gaussian splats reads on by default, Large splats off, and they say what they change', (tester) async {
       await pumpOnQuest(tester);
 
       expect(find.text('Gaussian splats (experimental)'), findsOneWidget);
       expect(
-        find.text('Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S'),
+        find.textContaining('Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S'),
         findsOneWidget,
       );
       expect(find.text('Large splats (experimental)'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(splatSwitch).value, isTrue);
-      expect(tester.widget<SwitchListTile>(largeSwitch).value, isTrue);
+      expect(tester.widget<SwitchListTile>(largeSwitch).value, isFalse);
     });
 
-    testWidgets('turn off, Large splats going with the splats', (tester) async {
+    testWidgets('Gaussian splats turns off, Large splats going with it; Large splats turns on', (tester) async {
       await pumpOnQuest(tester);
 
       await tester.tap(splatSwitch);
@@ -288,7 +288,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(largeSwitch);
       await tester.pumpAndSettle();
-      expect(SettingsRepository.instance.appConfig.viewer.largeSplats, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.largeSplats, isTrue);
     });
 
     testWidgets('are not offered on a phone, which has no immersive viewer', (tester) async {
