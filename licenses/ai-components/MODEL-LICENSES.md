@@ -104,16 +104,6 @@ LaMa: Apache-2.0 (https://github.com/advimman/lama), trained by its authors on P
 the ONNX export of Carve (`lama_fp32.onnx`, Apache-2.0 on its card), not `lama.onnx` of the same revision,
 which ONNX Runtime 1.31.0 refuses to load.
 
-### The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)
-
-`com.meta.spatial:meta-spatial-sdk-splat` 0.14.0 shows on a Meta Quest 3 or 3S the Gaussian splat files that
-other tools make (`.spz`, `.ply`): no AI of ours, no model downloaded. It is built into the APK of the quest
-flavour only (about 1.1 MB). Licence: the Meta Platform Technologies SDK License Agreement, the very text of the
-Meta Spatial SDK the APK already ships (its `LICENSE`, SHA-256
-`bb9b12db3b92c024458df625acd6f2d8140ea805cc6814bac74613a466731368`, and its `notices.html` are byte for byte those
-of `meta-spatial-sdk`, `-toolkit` and `-vr`): no new terms. Both are in `licenses/meta-spatial-sdk/` and on the
-licence page of the app.
-
 <!-- ai-components-3 -->
 ## ai-components-3: 360° panoramas
 
@@ -220,6 +210,16 @@ miniz, stb, llamafile sgemm) are in the `licenses/` folder of each archive, from
 repository. No CUDA: the graphics card is reached through Vulkan only.
 
 <!-- end of the releases -->
+## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)
+
+`com.meta.spatial:meta-spatial-sdk-splat` 0.14.0 shows on a Meta Quest 3 or 3S the Gaussian splat files that
+other tools make (`.spz`, `.ply`): no AI of ours, no model downloaded. It is built into the APK of the quest
+flavour only (about 1.1 MB). Licence: the Meta Platform Technologies SDK License Agreement, the very text of the
+Meta Spatial SDK the APK already ships (its `LICENSE`, SHA-256
+`bb9b12db3b92c024458df625acd6f2d8140ea805cc6814bac74613a466731368`, and its `notices.html` are byte for byte those
+of `meta-spatial-sdk`, `-toolkit` and `-vr`): no new terms. Both are in `licenses/meta-spatial-sdk/` and on the
+licence page of the app.
+
 ## Not used
 
 These were looked at and left out, because of their licence:
