@@ -3540,6 +3540,8 @@
   "time_based_memories": "依時間回憶",
   "time_based_memories_duration": "顯示每張影像的秒數。",
   "timeline": "時間軸",
+  "timeline_zoom_months": "月",
+  "timeline_zoom_years": "年",
   "timezone": "時區",
   "to_archive": "封存",
   "to_change_password": "變更密碼",

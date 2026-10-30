@@ -3521,6 +3521,8 @@
   "time_based_memories": "Uspomene temeljene na vremenu",
   "time_based_memories_duration": "Broj sekundi za prikazivanje svake slike.",
   "timeline": "Vremenska crta",
+  "timeline_zoom_months": "Mjeseci",
+  "timeline_zoom_years": "Godine",
   "timezone": "Vremenska zona",
   "to_archive": "Arhivaj",
   "to_change_password": "Promjeni lozinku",

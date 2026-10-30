@@ -1402,6 +1402,8 @@
   "technical_details_missing_profile": "Nissun decoder per {profile}",
   "technical_details_picture": "Imagin",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Mes",
+  "timeline_zoom_years": "Ann",
   "tv_layout": "Disposizion per telecomand",
   "tv_layout_auto": "Automatich",
   "tv_layout_description": "Quader de focus grand e tast del telecomand, senza i comand che gh'hann bisogn de on scherm touch. Automatich el le pizza su Android TV e Google TV.",

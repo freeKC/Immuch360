@@ -1963,6 +1963,8 @@
   "technical_details_sdr": "SDR",
   "theme": "Tema",
   "timeline": "Tidslinje",
+  "timeline_zoom_months": "Månader",
+  "timeline_zoom_years": "År",
   "timezone": "Tidssone",
   "to_archive": "Arkiv",
   "to_favorite": "Favoritt",

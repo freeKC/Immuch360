@@ -1402,6 +1402,8 @@
   "technical_details_missing_profile": "Koi Decoder fir {profile}",
   "technical_details_picture": "Bild",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Monat",
+  "timeline_zoom_years": "Johr",
   "tv_layout": "Layout für d Fernbedienong",
   "tv_layout_auto": "Automatisch",
   "tv_layout_description": "Große Fokusrahma ond Tasta vo dr Fernbedienong, ohne d Bedienelement, wo an Touchscreen brauchat. Automatisch schaltet's auf Android TV ond Google TV ei.",

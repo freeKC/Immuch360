@@ -3605,6 +3605,8 @@
   "time_based_memories": "Časovni spomini",
   "time_based_memories_duration": "Število sekund za prikaz vsake slike.",
   "timeline": "Časovnica",
+  "timeline_zoom_months": "Meseci",
+  "timeline_zoom_years": "Leta",
   "timezone": "Časovni pas",
   "to_archive": "Arhiv",
   "to_change_password": "Spremeni geslo",

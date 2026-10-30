@@ -1424,6 +1424,8 @@
   "technical_details_missing_profile": "{profile} үшін декодер жоқ",
   "technical_details_picture": "Сурет",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Айлар",
+  "timeline_zoom_years": "Жылдар",
   "tv_layout": "Пультке арналған орналасу",
   "tv_layout_auto": "Автоматты",
   "tv_layout_description": "Үлкен фокус жақтаулары мен пульт пернелері, сенсорлық экранды қажет ететін басқару элементтерінсіз. Автоматты режим оны Android TV және Google TV құрылғыларында қосады.",

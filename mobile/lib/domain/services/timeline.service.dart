@@ -51,7 +51,9 @@ class TimelineFactory {
     return group == GroupAssetsBy.auto ? GroupAssetsBy.day : group;
   }
 
-  TimelineService main(List<String> timelineUsers) => TimelineService(_timelineRepository.main(timelineUsers, groupBy));
+  // Immuch360: the users go with the service, for the months and the years (mergedTimelineUsers)
+  TimelineService main(List<String> timelineUsers) =>
+      TimelineService(_timelineRepository.main(timelineUsers, groupBy))..mergedTimelineUsers = timelineUsers;
 
   TimelineService localAlbum({required String albumId}) =>
       TimelineService(_timelineRepository.localAlbum(albumId, groupBy));
@@ -241,4 +243,25 @@ class TimelineService {
     _buffer = [];
     _bufferOffset = 0;
   }
+
+  /// Immuch360: the assets of [index, index + count) without moving the buffer, from the buffer when it holds them,
+  /// from the source otherwise (fewer at the end of the timeline). The months and years of the timeline read their
+  /// thumbnails here, from all over the library, while the grid keeps its buffer where it scrolls.
+  ///
+  /// [expectedTotal] is the number of assets of the buckets the indexes come from: while new buckets reload the buffer,
+  /// the buffer and [totalAssets] are still those of the old ones, and the source answers instead. A reload that keeps
+  /// the number goes unseen here: callers read again on the [TimelineReloadEvent] that ends it.
+  Future<List<BaseAsset>> peekAssets(int index, int count, {int? expectedTotal}) {
+    if (index < 0 || count <= 0) {
+      return Future.value(const []);
+    }
+    if ((expectedTotal == null || expectedTotal == _totalAssets) && hasRange(index, count)) {
+      return Future.value(getAssets(index, count));
+    }
+    return _assetSource(index, count);
+  }
+
+  /// Immuch360: the users of the merged timeline when this is it ([TimelineFactory.main]): its months and years read
+  /// their thumbnails in one pass over it (TimelineOverviewRepository)
+  List<String>? mergedTimelineUsers;
 }

@@ -3580,6 +3580,8 @@
   "time_based_memories": "시간 기준 추억",
   "time_based_memories_duration": "각 이미지를 표시하는 데 걸리는 시간(초).",
   "timeline": "타임라인",
+  "timeline_zoom_months": "월별",
+  "timeline_zoom_years": "연도별",
   "timezone": "시간대",
   "to_archive": "보관함으로 이동",
   "to_change_password": "비밀번호 변경",

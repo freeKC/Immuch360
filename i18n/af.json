@@ -1610,6 +1610,8 @@
   "technical_details_missing_profile": "Geen dekodeerder vir {profile} nie",
   "technical_details_picture": "Beeld",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Maande",
+  "timeline_zoom_years": "Jare",
   "tv_layout": "Uitleg vir afstandbeheer",
   "tv_layout_auto": "Outomaties",
   "tv_layout_description": "Groot fokusrame en afstandbeheerknoppies, sonder die kontroles wat 'n raakskerm nodig het. Outomaties skakel dit aan op Android TV en Google TV.",

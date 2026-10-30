@@ -1402,6 +1402,8 @@
   "technical_details_missing_profile": "บ่มีตัวถอดรหัสสำหรับ {profile}",
   "technical_details_picture": "ภาพ",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "เดือน",
+  "timeline_zoom_years": "ปี",
   "tv_layout": "เค้าโครงสำหรับรีโมต",
   "tv_layout_auto": "อัตโนมัติ",
   "tv_layout_description": "กรอบโฟกัสขนาดใหญ่แล้วก็ปุ่มรีโมต โดยบ่มีตัวควบคุมที่ต้องใช้หน้าจอสัมผัส อัตโนมัติจะเปิดบน Android TV แล้วก็ Google TV",

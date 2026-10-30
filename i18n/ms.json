@@ -2240,6 +2240,8 @@
   "theme_selection_description": "Tetapkan tema terang atau gelap secara automatik berdasarkan keutamaan sistem pada pelayar anda",
   "theme_setting_asset_list_tiles_per_row_title": "Bilangan aset per lajar {count}",
   "timeline": "Garis masa",
+  "timeline_zoom_months": "Bulan",
+  "timeline_zoom_years": "Tahun",
   "total": "Jumlah",
   "tv_layout": "Susun atur alat kawalan jauh",
   "tv_layout_auto": "Automatik",

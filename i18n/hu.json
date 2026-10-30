@@ -3605,6 +3605,8 @@
   "time_based_memories": "Emlékek idő alapján",
   "time_based_memories_duration": "Az egyes képek megjelenítésének hossza másodpercben.",
   "timeline": "Idővonal",
+  "timeline_zoom_months": "Hónapok",
+  "timeline_zoom_years": "Évek",
   "timezone": "Időzóna",
   "to_archive": "Archiválás",
   "to_change_password": "Jelszó megváltoztatása",

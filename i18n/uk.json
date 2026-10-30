@@ -3566,6 +3566,8 @@
   "time_based_memories": "Спогади за датою",
   "time_based_memories_duration": "Кількість секунд для відображення кожного зображення.",
   "timeline": "Хронологія",
+  "timeline_zoom_months": "Місяці",
+  "timeline_zoom_years": "Роки",
   "timezone": "Часовий пояс",
   "to_archive": "Архів",
   "to_change_password": "Змінити пароль",

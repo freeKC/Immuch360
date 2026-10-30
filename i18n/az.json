@@ -1573,6 +1573,8 @@
   "technical_details_picture": "Təsvir",
   "technical_details_sdr": "SDR",
   "timeline": "Zaman şkalası",
+  "timeline_zoom_months": "Aylar",
+  "timeline_zoom_years": "İllər",
   "tv_layout": "Pult üçün düzən",
   "tv_layout_auto": "Avtomatik",
   "tv_layout_description": "Böyük fokus çərçivələri və pult düymələri, toxunma ekranı tələb edən idarəetmə elementləri olmadan. Avtomatik, onu Android TV və Google TV-də yandırır.",

@@ -1512,6 +1512,8 @@
   "technical_details_missing_profile": "Walang decoder para sa {profile}",
   "technical_details_picture": "Larawan",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Mga buwan",
+  "timeline_zoom_years": "Mga taon",
   "tv_layout": "Layout para sa remote control",
   "tv_layout_auto": "Awtomatiko",
   "tv_layout_description": "Malalaking focus frame at mga key ng remote control, nang wala ang mga control na nangangailangan ng touch screen. Ino-on ito ng Awtomatiko sa Android TV at Google TV.",

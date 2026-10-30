@@ -3606,6 +3606,8 @@
   "time_based_memories": "Zaman bazlı anılar",
   "time_based_memories_duration": "Her görüntünün gösterileceği saniye sayısı.",
   "timeline": "Zaman Çizelgesi",
+  "timeline_zoom_months": "Aylar",
+  "timeline_zoom_years": "Yıllar",
   "timezone": "Zaman dilimi",
   "to_archive": "Arşivle",
   "to_change_password": "Şifreyi değiştir",

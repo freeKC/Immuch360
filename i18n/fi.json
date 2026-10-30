@@ -3410,6 +3410,8 @@
   "time_based_memories": "Aikaan perustuvat muistot",
   "time_based_memories_duration": "Kuvien näyttöaika sekunteina.",
   "timeline": "Aikajana",
+  "timeline_zoom_months": "Kuukaudet",
+  "timeline_zoom_years": "Vuodet",
   "timezone": "Aikavyöhyke",
   "to_archive": "Arkistoi",
   "to_change_password": "Vaihda salasana",

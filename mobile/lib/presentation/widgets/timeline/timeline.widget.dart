@@ -4,10 +4,12 @@ import 'dart:math' as math;
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -16,6 +18,15 @@ import 'package:immich_mobile/presentation/widgets/action_buttons/download_statu
 import 'package:immich_mobile/presentation/widgets/bottom_sheet/general_bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/multi_select_status_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_asset_loader.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_blocks.widget.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_layout.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_level_chip.widget.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_model.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_segment.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_anchor.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_wheel_zoom.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_zoom.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/scrubber.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/segment.model.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/sliver_segmented_list.dart';
@@ -28,6 +39,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/timeline_overview.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
@@ -129,6 +141,10 @@ class Timeline extends ConsumerWidget {
   }
 }
 
+/// What a change of level or of tiles per row brings back to the top: [anchor], measured from the top of the list once
+/// the band above it has scrolled away ([belowBand]), or from the top of the scroll view as before
+typedef _TopAnchor = ({TimelineAnchor anchor, bool belowBand});
+
 /// The tiles per row of a timeline in the remote control layout: the setting (4 by default) is meant for a phone held
 /// upright, and gave tiles of 240 dp on a TV of 960 x 540 dp, half the height of the screen, a single row cut by its
 /// bottom. Tiles of at most [kTvTimelineTileExtent] dp instead, or more per row when the setting asks for more.
@@ -195,7 +211,37 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   late final ScrollController _scrollController;
   StreamSubscription? _eventSubscription;
 
-  int? _restoreAssetIndex;
+  /// What stays in place once the segments reload (other tiles per row, another width): the scroll view comes back and
+  /// its position attaches, see [_restoreAnchor]
+  _TopAnchor? _pendingAnchor;
+
+  /// The band between the bar and the list (the memories of the Photos tab), see [_topSliverExtent]
+  final _topSliverKey = GlobalKey();
+
+  /// The grid that a tap or Back brings back from the months and the years (overview/timeline_zoom.dart)
+  final _climb = TimelineZoomClimb();
+
+  /// The months or the years: a state of the page, never saved (overview/timeline_zoom.dart)
+  TimelineZoomLevel _level = TimelineZoomLevel.grid;
+
+  /// The level and the segments on screen, those of the last build
+  TimelineZoomLevel _shownLevel = TimelineZoomLevel.grid;
+  List<Segment> _shownSegments = const [];
+
+  /// Ctrl (Command on Apple systems) held: the mouse wheel zooms instead of scrolling
+  late final TimelineZoomModifier _zoomModifier;
+
+  // The months and the years of the grid's segments, built again when the buckets or the width change
+  List<Segment>? _datesCheckedFor;
+  bool _segmentsHaveDates = false;
+  List<Segment>? _overviewSource;
+  double? _overviewWidth;
+  List<OverviewMonth> _overviewMonths = const [];
+  int _overviewTotal = 0;
+  List<Segment>? _monthSegments;
+  List<Segment>? _yearSegments;
+  OverviewAssetLoader? _overviewLoader;
+  Object? _overviewLoaderService;
 
   final Debouncer _fastScrollDebouncer = Debouncer(interval: const Duration(milliseconds: 100));
 
@@ -206,7 +252,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _scrollController = ScrollController(onAttach: _restoreAssetPosition);
+    _scrollController = ScrollController(onAttach: _restoreAnchor);
+    _zoomModifier = TimelineZoomModifier()..addListener(_onZoomModifierChanged);
     _eventSubscription = EventStream.shared.listen(_onEvent);
     FocusManager.instance.addListener(_keepFocusInsideTvMargins);
 
@@ -218,9 +265,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     super.didUpdateWidget(oldWidget);
     if (widget.maxWidth != oldWidget.maxWidth) {
       // The updated args already regenerate the segments, only remember the scroll position to restore it afterwards
-      final segments = ref.read(timelineSegmentProvider).valueOrNull;
-      if (segments != null && _scrollController.hasClients) {
-        _restoreAssetIndex = _getCurrentAssetIndex(segments);
+      if (_shownSegments.isNotEmpty && _scrollController.hasClients) {
+        _pendingAnchor = _anchorAtTop(to: _shownLevel);
       }
     }
   }
@@ -251,56 +297,189 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
       case final ScrollToDateEvent scrollToDateEvent:
         _scrollToDate(scrollToDateEvent.date);
       case TimelineReloadEvent():
+        // The service reloaded its buffer, which the months and the years may have read while it held the assets of
+        // the buckets before: they read again, keeping their pictures until then
+        _overviewLoader?.clear();
         setState(() {});
       default:
         break;
     }
   }
 
-  void _restoreAssetPosition(_) {
-    if (_restoreAssetIndex == null) {
+  /// The scroll view came back after a reload of the segments: what was at the top goes back there
+  void _restoreAnchor(ScrollPosition _) {
+    final anchor = _pendingAnchor;
+    if (anchor == null) {
       return;
     }
+    _pendingAnchor = null;
+    _jumpToAnchorAfterFrame(anchor);
+  }
 
-    final asyncSegments = ref.read(timelineSegmentProvider);
-    asyncSegments.whenData((segments) {
-      final targetSegment = segments.lastWhereOrNull((segment) => segment.firstAssetIndex <= _restoreAssetIndex!);
-      if (targetSegment != null) {
-        final assetIndexInSegment = _restoreAssetIndex! - targetSegment.firstAssetIndex;
-        final newColumnCount = ref.read(timelineArgsProvider).columnCount;
-        final rowIndexInSegment = (assetIndexInSegment / newColumnCount).floor();
-        final targetRowIndex = targetSegment.firstIndex + 1 + rowIndexInSegment;
-        final targetOffset = targetSegment.indexToLayoutOffset(targetRowIndex);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            _scrollController.jumpTo(targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent));
-          }
-        });
+  /// Brings [target] to the top once the frame shows the segments of the level it is meant for
+  void _jumpToAnchorAfterFrame(_TopAnchor target) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) {
+        return;
+      }
+      final offset = anchorOffset(
+        target.anchor,
+        _shownSegments,
+        level: _shownLevel,
+        columnCount: ref.read(timelineArgsProvider).columnCount,
+      );
+      if (offset != null) {
+        final band = target.belowBand ? _topSliverExtent() : 0.0;
+        _scrollController.jumpTo((offset + band).clamp(0.0, _scrollController.position.maxScrollExtent));
       }
     });
-    _restoreAssetIndex = null;
+  }
+
+  /// What is at the top of the screen now, to keep there on the level [to]. Once the band above the list has scrolled
+  /// away, the top of the screen is that much less far into the list than the scroll offset.
+  _TopAnchor? _anchorAtTop({required TimelineZoomLevel to}) {
+    if (!_scrollController.hasClients) {
+      return null;
+    }
+    final offset = _scrollController.offset.clamp(0.0, _scrollController.position.maxScrollExtent);
+    final band = _topSliverExtent();
+    final belowBand = band > 0 && offset >= band;
+    final anchor = anchorAtOffset(
+      _shownSegments,
+      belowBand ? offset - band : offset,
+      from: _shownLevel,
+      to: to,
+      columnCount: ref.read(timelineArgsProvider).columnCount,
+    );
+    return anchor == null ? null : (anchor: anchor, belowBand: belowBand);
+  }
+
+  /// The scroll extent of the band between the bar and the list, 0 without one
+  double _topSliverExtent() {
+    final band = _topSliverKey.currentContext?.findRenderObject();
+    return band is RenderSliver ? band.geometry?.scrollExtent ?? 0 : 0;
+  }
+
+  static TimelineZoom _zoomOf(TimelineZoomLevel level, int tilesPerRow) => switch (level) {
+    TimelineZoomLevel.grid => TimelineZoom.grid(tilesPerRow),
+    TimelineZoomLevel.months => const TimelineZoom.months(),
+    TimelineZoomLevel.years => const TimelineZoom.years(),
+  };
+
+  /// Moves the timeline to [next] on its zoom ladder (a pinch, the wheel, a tap, Back), keeping in place what was at
+  /// the top, or bringing [anchor] (the month or the year tapped) to the top, under the bar. Other tiles per row are
+  /// the setting, as they always were: its write reloads the segments. The months and the years change nothing else,
+  /// so a pinch goes on.
+  void _changeZoom(TimelineZoom next, {TimelineAnchor? anchor}) {
+    if (!mounted) {
+      return;
+    }
+    final tilesPerRow = ref.read(appConfigProvider).timeline.tilesPerRow;
+    final current = _zoomOf(_shownLevel, tilesPerRow);
+    if (next == current) {
+      return;
+    }
+    _climb.note(current, next, DateTime.now());
+    final target = anchor != null ? (anchor: anchor, belowBand: true) : _anchorAtTop(to: next.level);
+    if (next.level == TimelineZoomLevel.grid && next.columns != tilesPerRow) {
+      setState(() {
+        _level = TimelineZoomLevel.grid;
+        _pendingAnchor = target;
+      });
+      unawaited(ref.read(settingsProvider).write(.timelineTilesPerRow, next.columns));
+      return;
+    }
+    setState(() => _level = next.level);
+    if (target != null) {
+      _jumpToAnchorAfterFrame(target);
+    }
+  }
+
+  /// A tap on a month or a year: the grid there, at the tiles per row it had before the climb to the months
+  void _openGridAt(TimelineAnchor anchor) => _changeZoom(_gridToComeBack(), anchor: anchor);
+
+  /// Back in the months or the years: the grid, at the month or the year at the top, rather than leaving the page
+  void _backToGrid() => _changeZoom(_gridToComeBack());
+
+  TimelineZoom _gridToComeBack() =>
+      TimelineZoom.grid(_climb.gridBefore ?? ref.read(appConfigProvider).timeline.tilesPerRow);
+
+  void _onZoomModifierChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  /// The screens built above and below the one shown, see the scroll view in [build]
+  static double _cacheScreens({required bool tvMode, required TimelineZoomLevel level}) {
+    if (tvMode) {
+      return 1;
+    }
+    return level == TimelineZoomLevel.grid ? 2 : 0.5;
+  }
+
+  /// Whether every segment of the grid has a date, checked once per list
+  bool _hasDates(List<Segment> segments) {
+    if (!identical(segments, _datesCheckedFor)) {
+      _datesCheckedFor = segments;
+      _segmentsHaveDates = bucketsHaveDates(segments.map((segment) => segment.bucket));
+    }
+    return _segmentsHaveDates;
+  }
+
+  /// The segments of [level]: the grid's as they are, or its months or years, built once per list and width
+  List<Segment> _segmentsOf(TimelineZoomLevel level, List<Segment> grid, double width) {
+    if (level == TimelineZoomLevel.grid) {
+      return grid;
+    }
+    final service = ref.read(timelineServiceProvider);
+    if (!identical(service, _overviewLoaderService)) {
+      _overviewLoader?.dispose();
+      _overviewLoader = _newOverviewLoader(service);
+      _overviewLoaderService = service;
+      _overviewSource = null;
+    }
+    final loader = _overviewLoader!;
+    if (!identical(grid, _overviewSource) || width != _overviewWidth) {
+      if (!identical(grid, _overviewSource)) {
+        // The buckets changed: an index may point at another asset
+        loader.clear();
+      }
+      _overviewSource = grid;
+      _overviewWidth = width;
+      _overviewMonths = overviewMonths(grid.map((segment) => segment.bucket));
+      _overviewTotal = _overviewMonths.fold(0, (total, month) => total + month.assetCount);
+      _monthSegments = null;
+      _yearSegments = null;
+    }
+    final layout = OverviewLayout.forWidth(width);
+    final host = OverviewHost(loader: loader, onOpen: _openGridAt);
+    return switch (level) {
+      TimelineZoomLevel.months => _monthSegments ??= overviewMonthSegments(_overviewMonths, layout, host),
+      TimelineZoomLevel.years => _yearSegments ??= overviewYearSegments(overviewYears(_overviewMonths), layout, host),
+      TimelineZoomLevel.grid => grid,
+    };
+  }
+
+  /// The reads behind the thumbnails of the months and the years: from the buffer of the grid or a range of the
+  /// timeline, both of the buckets the indexes come from; on the main timeline, the deep ones in one pass
+  OverviewAssetLoader _newOverviewLoader(TimelineService service) {
+    final users = service.mergedTimelineUsers;
+    final repository = users == null ? null : ref.read(timelineOverviewRepositoryProvider);
+    return OverviewAssetLoader(
+      (index, count) => service.peekAssets(index, count, expectedTotal: _overviewTotal),
+      indexedSource: repository == null
+          ? null
+          : (indexes) async {
+              final expected = _overviewTotal;
+              final read = await repository.mergedAssetsAt(users!, indexes);
+              return read.total == expected ? read.assets : null;
+            },
+    );
   }
 
   void _onMultiSelectionToggled(_, bool isEnabled) {
     EventStream.shared.emit(MultiSelectToggleEvent(isEnabled));
-  }
-
-  int? _getCurrentAssetIndex(List<Segment> segments) {
-    final currentOffset = _scrollController.offset.clamp(0.0, _scrollController.position.maxScrollExtent);
-    final segment = segments.findByOffset(currentOffset) ?? segments.lastOrNull;
-    int? targetAssetIndex;
-    if (segment != null) {
-      final rowIndex = segment.getMinChildIndexForScrollOffset(currentOffset);
-      if (rowIndex > segment.firstIndex) {
-        final rowIndexInSegment = rowIndex - (segment.firstIndex + 1);
-        final assetsPerRow = ref.read(timelineArgsProvider).columnCount;
-        final assetIndexInSegment = rowIndexInSegment * assetsPerRow;
-        targetAssetIndex = segment.firstAssetIndex + assetIndexInSegment;
-      } else {
-        targetAssetIndex = segment.firstAssetIndex;
-      }
-    }
-    return targetAssetIndex;
   }
 
   @override
@@ -309,6 +488,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     FocusManager.instance.removeListener(_keepFocusInsideTvMargins);
     _fastScrollDebouncer.dispose();
     _heldArrowCooldown?.cancel();
+    _zoomModifier.dispose();
+    _overviewLoader?.dispose();
     _scrollController.dispose();
     unawaited(_eventSubscription?.cancel());
     super.dispose();
@@ -481,6 +662,17 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   }
 
   void _scrollToDate(DateTime date) {
+    if (_shownLevel != TimelineZoomLevel.grid) {
+      // The date is a day of the grid
+      _climb.gridBefore = null;
+      setState(() => _level = TimelineZoomLevel.grid);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollToDate(date);
+        }
+      });
+      return;
+    }
     final asyncSegments = ref.read(timelineSegmentProvider);
     asyncSegments.whenData((segments) {
       // Find the segment that contains assets from the target date
@@ -520,6 +712,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   Widget build(BuildContext _) {
     final asyncSegments = ref.watch(timelineSegmentProvider);
     final maxHeight = ref.watch(timelineArgsProvider.select((args) => args.maxHeight));
+    final maxWidth = ref.watch(timelineArgsProvider.select((args) => args.maxWidth));
+    final tilesPerRow = ref.watch(appConfigProvider.select((config) => config.timeline.tilesPerRow));
     final isSelectionMode = ref.watch(multiSelectProvider.select((s) => s.forceEnable));
     final isMultiSelectEnabled = ref.watch(multiSelectProvider.select((s) => s.isEnabled));
     final isMultiSelectStatusVisible = !isSelectionMode && isMultiSelectEnabled;
@@ -528,21 +722,33 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     final tvMode = ref.watch(tvModeProvider);
     // A TV without a server has no photos of its own: the page says where they are instead of staying empty
     final tvWithoutServer = tvMode && !ref.watch(hasServerProvider);
+    // The months and the years: a timeline with a scrubber whose segments all have a date, out of the remote control
+    // layout; search and lists without dates keep the grid
+    final loadedSegments = asyncSegments.valueOrNull;
+    final overviewAvailable = widget.withScrubber && !tvMode && loadedSegments != null && _hasDates(loadedSegments);
+    final level = overviewAvailable ? _level : TimelineZoomLevel.grid;
+    final wheelZoomHeld = !tvMode && _zoomModifier.value;
 
     return PopScope(
-      canPop: !isMultiSelectEnabled,
+      canPop: !isMultiSelectEnabled && level == TimelineZoomLevel.grid,
       onPopInvokedWithResult: (_, _) {
         if (isMultiSelectEnabled) {
           ref.read(multiSelectProvider.notifier).reset();
+        } else if (level != TimelineZoomLevel.grid) {
+          _backToGrid();
         }
       },
       child: BackButtonListener(
         onBackButtonPressed: () async {
-          if (!isMultiSelectEnabled) {
-            return false;
+          if (isMultiSelectEnabled) {
+            ref.read(multiSelectProvider.notifier).reset();
+            return true;
           }
-          ref.read(multiSelectProvider.notifier).reset();
-          return true;
+          if (level != TimelineZoomLevel.grid) {
+            _backToGrid();
+            return true;
+          }
+          return false;
         },
         child: PrimaryScrollController(
           controller: _scrollController,
@@ -554,7 +760,11 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
             floatingActionButton: const DownloadStatusFloatingButton(),
             body: asyncSegments.widgetWhen(
               onLoading: widget.loadingWidget != null ? () => widget.loadingWidget! : null,
-              onData: (segments) {
+              onData: (gridSegments) {
+                // The months and the years show segments of their own, built from those of the grid (overview/)
+                final segments = _segmentsOf(level, gridSegments, maxWidth);
+                _shownLevel = level;
+                _shownSegments = segments;
                 final childCount = (segments.lastOrNull?.lastIndex ?? -1) + 1;
                 final double appBarExpandedHeight = widget.appBar != null && widget.appBar is MesmerizingSliverAppBar
                     ? 200
@@ -573,28 +783,33 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                 final scrubberBottomPadding = contentBottomPadding + kScrubberThumbHeight;
 
                 return TimelinePinchZoom(
-                  onColumnCountWillChange: () {
-                    final targetAssetIndex = _getCurrentAssetIndex(segments);
-                    setState(() {
-                      _restoreAssetIndex = targetAssetIndex;
-                    });
-                  },
+                  zoom: _zoomOf(level, tilesPerRow),
+                  overviewAvailable: overviewAvailable,
+                  onZoomChanged: _changeZoom,
+                  // Ctrl and the mouse wheel, out of the remote control layout
+                  wheelEnabled: !tvMode,
+                  wheelHeld: wheelZoomHeld,
                   child: TimelineDragSelection(
                     builder: (physics) {
                       final grid = CustomScrollView(
                         primary: true,
-                        physics: physics,
+                        // While Ctrl is held the list refuses the wheel, which zooms instead (overview/)
+                        physics: timelineWheelZoomPhysics(physics, held: wheelZoomHeld),
                         // A screen above and below the one shown on a TV, two on a phone: the tiles built there keep
                         // their pictures alive, larger on a TV (see tvPreviewDecodeSize), whose memory is smaller, and
-                        // the remote moves one row at a time
-                        scrollCacheExtent: .pixels(maxHeight * (tvMode ? 1 : 2)),
+                        // the remote moves one row at a time. Half a screen in the months and the years, whose blocks
+                        // come many to a screen.
+                        scrollCacheExtent: .pixels(maxHeight * _cacheScreens(tvMode: tvMode, level: level)),
                         slivers: [
                           if (isSelectionMode)
                             const SelectionSliverAppBar()
                           else if (widget.appBar != null)
                             widget.appBar!,
-                          if (widget.topSliverWidget != null) widget.topSliverWidget!,
+                          if (widget.topSliverWidget != null)
+                            KeyedSubtree(key: _topSliverKey, child: widget.topSliverWidget!),
                           SliverSegmentedList(
+                            // A new list for each level: the segments of another level are another layout
+                            key: ValueKey(level),
                             segments: segments,
                             delegate: SliverChildBuilderDelegate(
                               (ctx, index) {
@@ -627,6 +842,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                           bottomPadding: scrubberBottomPadding,
                           monthSegmentSnappingOffset: widget.topSliverWidgetHeight ?? 0 + appBarExpandedHeight,
                           hasAppBar: widget.appBar != null,
+                          yearLabels: level == TimelineZoomLevel.years,
                           child: grid,
                         );
                       } else {
@@ -657,6 +873,14 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                               ),
                             ),
                           if (isBottomWidgetVisible) widget.bottomSheet!,
+                          // "Months" or "Years" for a moment when the timeline enters them
+                          if (overviewAvailable)
+                            Positioned(
+                              top: MediaQuery.paddingOf(context).top + kToolbarHeight + 8,
+                              left: 0,
+                              right: 0,
+                              child: Center(child: OverviewLevelChip(level: level)),
+                            ),
                         ],
                       );
                     },

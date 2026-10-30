@@ -1414,6 +1414,8 @@
   "technical_details_missing_profile": "{profile} uchun dekoder yoʻq",
   "technical_details_picture": "Tasvir",
   "technical_details_sdr": "SDR",
+  "timeline_zoom_months": "Oylar",
+  "timeline_zoom_years": "Yillar",
   "tv_layout": "Pult uchun joylashuv",
   "tv_layout_auto": "Avtomatik",
   "tv_layout_description": "Katta fokus ramkalari va pult tugmalari, sensorli ekran talab qiladigan boshqaruv elementlarisiz. Avtomatik uni Android TV va Google TV'da yoqadi.",
