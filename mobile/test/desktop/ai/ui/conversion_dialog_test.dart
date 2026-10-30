@@ -43,8 +43,10 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -171,6 +173,7 @@ void main() {
   late _Power power;
   late Map<String, int> focals;
   late Set<String> partial;
+  late Map<String, LocalPanoramaProbe> probes;
 
   final linux = aiComponentsFor(AiPlatform.linuxX64);
   final rules = LibraryPathRules(context: p.context, caseFold: false);
@@ -205,6 +208,7 @@ void main() {
     power = _Power();
     focals = {};
     partial = {};
+    probes = {};
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -241,6 +245,7 @@ void main() {
       aiPowerProbeProvider.overrideWithValue(power),
       conversionFocalReaderProvider.overrideWithValue((source) async => focals[source.name]),
       conversionPartialSphereReaderProvider.overrideWithValue((source) async => partial.contains(source.name)),
+      conversionFileProbeProvider.overrideWithValue((source, asset) async => probes[source.name]),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
             (asset) async => facts[asset.name] ?? const ConversionPhotoFacts(),
@@ -944,6 +949,22 @@ void main() {
       expect(find.text('rooftop_night.jpg: Not a 360° photo'), findsNothing);
       expect(find.text('dawn.jpg: Not a 360° photo'), findsNothing);
       expect(find.text('salon.jpg: Not a 360° photo'), findsOneWidget, reason: 'a 4:3 photo is still no sphere');
+      // Nothing in them says 360°: the plan names them, to be checked
+      final byFrame = find.byKey(const Key('ai_conversion_by_frame'));
+      expect(
+        find.descendant(
+          of: byFrame,
+          matching: find.text('No 360° tag, 2:1 frame only: check that each is a 360° photo (2)'),
+        ),
+        findsOneWidget,
+      );
+      for (final name in ['rooftop_night.jpg', 'dawn.jpg']) {
+        expect(
+          find.descendant(of: byFrame, matching: find.text(name)),
+          findsOneWidget,
+          reason: name,
+        );
+      }
       expect(convertEnabled(tester), isTrue);
 
       await tapIn(tester, convert());
@@ -957,6 +978,63 @@ void main() {
       expect(p.equals(jobs[0].target!.folder, photos), isTrue, reason: 'next to the original of the library');
       expect(p.equals(jobs[1].target!.folder, chosen), isTrue, reason: 'the folder of my choice for the server');
       expect(File(p.join(photos, 'rooftop_night_360_3D.jpg')).existsSync(), isTrue);
+    });
+
+    testWidgets('in a selection, a 2:1 photo taken by its frame alone is named to check; two eyes and raw ones skipped', (
+      tester,
+    ) async {
+      // Two square eyes side by side under a plain name: nothing in the file tells them, the frame takes it, the plan
+      // names it (fix-stereo-360-pc review, M1). One of our 3D photos renamed: our XMP tells two eyes. An Insta360 photo
+      // the make of the server took for a raw one, whose file says the camera stitched it. A raw photo renamed .jpg in
+      // a folder the scan has not reached: its trailer says so (m3).
+      kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+      for (final name in ['IMG_0001.jpg', 'PANO_0001.jpg', 'square_3D.jpg', 'IMG_5.jpg', 'IMG_6.jpg']) {
+        original(name);
+      }
+      facts['PANO_0001.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+      facts['square_3D.jpg'] = const ConversionPhotoFacts(isStereo: true);
+      facts['IMG_5.jpg'] = const ConversionPhotoFacts(isRaw360: true);
+      probes['IMG_5.jpg'] = (isPanorama: true, halfSphere: false, raw360: false);
+      probes['IMG_6.jpg'] = (isPanorama: true, halfSphere: null, raw360: true);
+      await openDialog(tester, [
+        _photo('IMG_0001.jpg', width: 4000, height: 2000),
+        _photo('PANO_0001.jpg', width: 8000, height: 4000),
+        _photo('square_3D.jpg', width: 6000, height: 3000),
+        _photo('IMG_5.jpg', width: 6080, height: 3040),
+        _photo('IMG_6.jpg', width: 6080, height: 3040),
+      ], kind: ConversionKind.stereoPanoramaFromPanorama);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      final made = find.byKey(const Key('ai_conversion_made'));
+      expect(find.descendant(of: made, matching: find.text('3D version of a 360° photo (3)')), findsOneWidget);
+      for (final name in ['IMG_0001.jpg', 'PANO_0001.jpg', 'IMG_5.jpg']) {
+        expect(
+          find.descendant(of: made, matching: find.text(name)),
+          findsOneWidget,
+          reason: name,
+        );
+      }
+      final byFrame = find.byKey(const Key('ai_conversion_by_frame'));
+      expect(
+        find.descendant(
+          of: byFrame,
+          matching: find.text('No 360° tag, 2:1 frame only: check that each is a 360° photo (1)'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.descendant(of: byFrame, matching: find.text('IMG_0001.jpg')), findsOneWidget);
+      expect(
+        find.descendant(of: byFrame, matching: find.text('IMG_5.jpg')),
+        findsNothing,
+        reason: 'its file says 360°',
+      );
+      expect(find.text('square_3D.jpg: Already a 3D photo'), findsOneWidget);
+      expect(find.text('IMG_6.jpg: Raw 360° photo, not stitched'), findsOneWidget);
+
+      // Another type: nothing is said of the 2:1 frame
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_sbsFromPhoto')));
+      await settle(tester);
+      expect(byFrame, findsNothing);
     });
 
     testWidgets('a phone panorama of part of the sphere in a 2:1 frame is no sphere to go around: skipped', (
@@ -1648,6 +1726,31 @@ void main() {
       expect(
         conversionSkipOf(rooftop, const ConversionPhotoFacts(isSpatial: true), kind: ofPanorama),
         ConversionSkipReason.spatial,
+      );
+    });
+
+    test('the coverage the user picked in a 360° viewer wins over the guess from the name', () {
+      final rooftop = _photo('rooftop_night.jpg', width: 8192, height: 4096);
+      final trip = _photo('trip_180.jpg', width: 8000, height: 4000);
+      expect(
+        conversionSkipOf(rooftop, const ConversionPhotoFacts(coverage: SphereCoverage.half), kind: ofPanorama),
+        ConversionSkipReason.vr180,
+      );
+      expect(
+        conversionSkipOf(
+          trip,
+          const ConversionPhotoFacts(isPanorama: true, coverage: SphereCoverage.full),
+          kind: ofPanorama,
+        ),
+        isNull,
+      );
+      expect(
+        conversionSkipOf(trip, const ConversionPhotoFacts(isPanorama: true, coverage: SphereCoverage.full)),
+        ConversionSkipReason.sphere360,
+      );
+      expect(
+        conversionSkipOf(rooftop, const ConversionPhotoFacts(isPanorama: true, coverage: SphereCoverage.half)),
+        ConversionSkipReason.vr180,
       );
     });
 
