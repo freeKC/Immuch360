@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -300,6 +301,14 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Immuch360 Desktop: a version "Make 3D (AI)" put in this folder shows at once, with its badge
+    // (lib/desktop/ai/creator/share_publisher.dart)
+    if (CurrentPlatform.isDesktop) {
+      ref.listen(
+        shareFolderChangesProvider.select((changes) => changes[shareFolderChangeKey(widget.sourceId, widget.path)]),
+        (_, _) => unawaited(_refresh()),
+      );
+    }
     final source = ref.watch(networkSourceProvider(widget.sourceId));
     final selection = ref.watch(networkSelectionProvider(_folderKey));
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));

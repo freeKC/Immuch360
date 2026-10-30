@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
@@ -694,6 +695,14 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       icon: const Icon(Icons.threesixty_rounded),
                       tooltip: '360°',
                       onPressed: () => unawaited(_open360(photo)),
+                    ),
+                  // Immuch360 Desktop: the versions of the photo on its share, and its original for a version
+                  // (lib/desktop/ai/library/share_versions_button.dart)
+                  if (CurrentPlatform.isDesktop && photo != null)
+                    DesktopShareVersionsButton(
+                      key: ValueKey('versions:${photo.entry.path}'),
+                      entry: photo.entry,
+                      neighbours: widget.folder?.entries,
                     ),
                   // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
                   if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),
