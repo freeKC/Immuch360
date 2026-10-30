@@ -368,8 +368,22 @@ void main() {
     }
 
     when(
-      () =>
-          immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      () => immersiveApi.open(
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+      ),
     ).thenAnswer(openImmersive);
     previewRequests = [];
     previewXmp = null;
@@ -626,6 +640,7 @@ void main() {
       verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
       verifyNever(
         () => immersiveApi.open(
+          any(),
           any(),
           any(),
           any(),
@@ -961,6 +976,7 @@ void main() {
           captureAny(),
           any(),
           any(),
+          any(),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -977,6 +993,7 @@ void main() {
       expect(find.text(unsupportedMessage), findsOneWidget);
       verifyNever(
         () => immersiveApi.open(
+          any(),
           any(),
           any(),
           any(),
@@ -1035,6 +1052,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1064,6 +1082,7 @@ void main() {
             captureAny(),
             captureAny(),
             captureAny(),
+            any(),
             any(),
             any(),
             any(),
@@ -1110,6 +1129,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1133,6 +1153,7 @@ void main() {
           any(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1199,6 +1220,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1222,6 +1244,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1265,6 +1288,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1295,6 +1319,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
     });
@@ -1313,6 +1338,7 @@ void main() {
           any(),
           true,
           asset.name,
+          any(),
           any(),
           any(),
           any(),
@@ -1364,6 +1390,7 @@ void main() {
             any(),
             any(),
             captureAny(),
+            any(),
             any(),
             any(),
             any(),
@@ -1430,6 +1457,7 @@ void main() {
     ) async {
       when(
         () => immersiveApi.open(
+          any(),
           any(),
           any(),
           any(),
@@ -1510,6 +1538,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1539,6 +1568,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1604,6 +1634,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1638,6 +1669,7 @@ void main() {
           any(),
           false,
           transient.name,
+          any(),
           any(),
           any(),
           any(),
@@ -1693,6 +1725,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -1710,6 +1743,7 @@ void main() {
       expect(calls, ['suspend', 'resume at 0 paused']);
       verifyNever(
         () => immersiveApi.open(
+          any(),
           any(),
           any(),
           any(),
@@ -1776,6 +1810,7 @@ void main() {
           any(),
           any(),
           false,
+          any(),
         ),
       ).called(1);
     });
@@ -1808,6 +1843,7 @@ void main() {
           any(),
           any(),
           true,
+          any(),
         ),
       ).called(1);
     });
@@ -1946,6 +1982,7 @@ void main() {
           any(),
           false,
           asset.name,
+          any(),
           any(),
           any(),
           any(),
@@ -2538,6 +2575,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2861,6 +2899,7 @@ void main() {
           any(),
           captureAny(),
           any(),
+          any(),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it
@@ -2913,6 +2952,7 @@ void main() {
         any(),
         any(),
         captureAny(),
+        any(),
         any(),
       ),
     ).captured;
@@ -3090,6 +3130,7 @@ void main() {
         any(),
         any(),
         captureAny(),
+        any(),
         any(),
       ),
     ).captured;
@@ -3365,6 +3406,7 @@ void main() {
           any(),
           captureAny(),
           any(),
+          any(),
         ),
       ).captured;
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
@@ -3418,6 +3460,7 @@ void main() {
         any(),
         any(),
         captureAny(),
+        any(),
         any(),
       ),
     ).captured;
@@ -3554,6 +3597,7 @@ void main() {
     ) async {
       when(
         () => immersiveApi.open(
+          any(),
           any(),
           any(),
           any(),

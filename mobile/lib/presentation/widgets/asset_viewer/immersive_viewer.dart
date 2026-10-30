@@ -158,9 +158,9 @@ class ImmersiveRequest {
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
 /// with [stereoLabels] (see [sphereViewerLabels]), as the opening [openingId] (see [ImmersiveSession.start]), which
-/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting, which the
-/// viewer keeps for previous and next. This starts the viewer: a media found for previous or next is shown with
-/// [showImmersiveRequest] instead.
+/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting and
+/// [sharpFlatScreens] the "Sharper flat screens" one, which the viewer keeps for previous and next. This starts the
+/// viewer: a media found for previous or next is shown with [showImmersiveRequest] instead.
 ///
 /// The texts of a panorama generated beyond the edges of a photo go along whatever the media (see
 /// [immersiveOpeningLabels]): the viewer finds such a panorama by itself, here or later with previous and next.
@@ -171,6 +171,7 @@ Future<void> openImmersiveRequest(
   required int openingId,
   Duration startPosition = Duration.zero,
   bool reverseThumbstickTurn = false,
+  bool sharpFlatScreens = true,
 }) => api.open(
   request.url,
   request.headers,
@@ -185,6 +186,7 @@ Future<void> openImmersiveRequest(
   request.rawProjection,
   request.stereoPair,
   reverseThumbstickTurn,
+  sharpFlatScreens,
 );
 
 /// The labels an opening of the immersive viewer goes with: [stereoLabels], and the translated texts of a panorama
@@ -412,6 +414,7 @@ class ImmersiveAssetResolver {
     required this._videoSources,
     this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
     this.reverseThumbstickTurn = false,
+    this.sharpFlatScreens = true,
     this.raw,
     this.exifOf,
   });
@@ -429,6 +432,7 @@ class ImmersiveAssetResolver {
       videoSources: ref.read(videoSourceServiceProvider),
       videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
       reverseThumbstickTurn: ref.read(appConfigProvider).viewer.reverseThumbstickTurn,
+      sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
     );
@@ -454,6 +458,10 @@ class ImmersiveAssetResolver {
 
   /// Whether the right thumbstick of the viewer turns the other way, as the settings said when the viewer opened
   final bool reverseThumbstickTurn;
+
+  /// Whether the flat screens of the viewer are drawn on the compositor with its filters (Sharper flat screens, on by
+  /// default), as the settings said when the viewer opened
+  final bool sharpFlatScreens;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -684,6 +692,7 @@ class ImmersiveAssetResolver {
         openingId: openingId,
         startPosition: startPosition,
         reverseThumbstickTurn: reverseThumbstickTurn,
+        sharpFlatScreens: sharpFlatScreens,
       );
 }
 
@@ -966,6 +975,7 @@ Future<void> openImmersiveUrl(
   final api = ref.read(immersiveApiProvider);
   final session = ref.read(immersiveSessionProvider);
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
+  final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
   try {
@@ -976,6 +986,7 @@ Future<void> openImmersiveUrl(
       openingId: openingId,
       startPosition: startPosition,
       reverseThumbstickTurn: reverseThumbstickTurn,
+      sharpFlatScreens: sharpFlatScreens,
     );
   } catch (_) {
     session.cancel(openingId);

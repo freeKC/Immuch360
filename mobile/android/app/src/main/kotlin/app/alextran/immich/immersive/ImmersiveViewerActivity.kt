@@ -77,7 +77,6 @@ import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.AddressMode
 import com.meta.spatial.runtime.EquirectLayerConfig
 import com.meta.spatial.runtime.Filter
-import com.meta.spatial.runtime.LayerFilters
 import com.meta.spatial.runtime.MaterialSidedness
 import com.meta.spatial.runtime.PanelSceneObject
 import com.meta.spatial.runtime.PanelShapeType
@@ -276,6 +275,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * the other way (see [ImmersiveControls.snapTurnDegrees]). A previous or next media keeps the value of its opening.
      */
     val reverseThumbstickTurn: Boolean = false,
+    /**
+     * The "Sharper flat screens" setting when the app opened the viewer (experimental, on by default): the photos of a
+     * flat screen go on the compositor quad layer and the flat screens get the compositor filters (see
+     * [FlatScreenLayer]); off, the photos go on the quad mesh and no filter applies. A previous or next media keeps the
+     * value of its opening.
+     */
+    val sharpFlatScreens: Boolean = true,
   ) {
     /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
@@ -813,10 +819,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           scope.launch(Dispatchers.Main) { applyVideoShape() }
         },
       ),
-      // Flat 3D video: a quad compositor layer in front of the user, as MediaPlayerSample shows its 3D films, with the
-      // quality filters of the compositor (super sampling and sharpening, as Gaurav Mukherjee set them on his flat
-      // layers) and behind the panels, as the sphere. Created mono at 16:9; the stereo mode and the size of each video
-      // follow (applyFlatVideoShape). The frame is scaled to the surface, the quad gives each eye its shape back.
+      // Flat video screen (a flat 3D video, a video on the big screen): a quad compositor layer in front of the user, as
+      // MediaPlayerSample shows its 3D films, with the quality filters of the compositor (super sampling and sharpening,
+      // as Gaurav Mukherjee set them on his flat layers) while Sharper flat screens is on, and behind the panels, as the
+      // sphere. Created mono at 16:9; the stereo mode, the size and the filters of each video follow
+      // (applyFlatVideoShape). The frame is scaled to the surface, the quad gives each eye its shape back.
       VideoSurfacePanelRegistration(
         R.id.immersive_flat_video_panel,
         surfaceConsumer = { _, surface ->
@@ -830,7 +837,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             shape = QuadShapeOptions(width = width, height = height),
             display = PixelDisplayOptions(width = FLAT_VIDEO_PANEL_WIDTH_PX, height = FLAT_VIDEO_PANEL_HEIGHT_PX),
             rendering =
-              MediaPanelRenderOptions(stereoMode = StereoMode.None, layerFilters = FLAT_LAYER_FILTERS, zIndex = -1),
+              MediaPanelRenderOptions(
+                stereoMode = StereoMode.None,
+                layerFilters = FlatScreenLayer.filters(request?.sharpFlatScreens != false),
+                zIndex = -1,
+              ),
           )
         },
         panelSetup = { panel, _ ->
@@ -1612,6 +1623,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         rawProjection = rawProjection,
         stereoPairJson = stereoPair,
         reverseThumbstickTurn = current.reverseThumbstickTurn,
+        sharpFlatScreens = current.sharpFlatScreens,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -4144,6 +4156,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun applyFlatVideoShape() {
     val panel = flatVideoPanel ?: return
     val spec = request?.flatVideo ?: return
+    applyLayerFilters(panel)
     val config = panel.panelShapeConfig
     if (config == null) {
       Log.w(TAG, "flat video panel without a shape config, ${spec.format} not applied")
@@ -4164,6 +4177,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($format for ${spec.format}, frame $frame)")
     } catch (e: Exception) {
       Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
+    }
+  }
+
+  /**
+   * The compositor filters of the flat screen [panel] for the media shown (see [FlatScreenLayer.filters]): those of
+   * Sharper flat screens while it is on, none otherwise. Set again at each media, the opening that made the panel
+   * having possibly said otherwise.
+   */
+  private fun applyLayerFilters(panel: PanelSceneObject) {
+    val sharp = request?.sharpFlatScreens != false
+    try {
+      panel.layer?.setFilters(FlatScreenLayer.filters(sharp))
+    } catch (e: Exception) {
+      Log.w(TAG, "could not set the filters of a flat screen layer (sharp $sharp)", e)
     }
   }
 
@@ -4499,6 +4526,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The JSON of the two eyes of an Apple spatial photo, absent for any other media; put by ImmersiveApiImpl.open */
     internal const val EXTRA_STEREO_PAIR = "app.alextran.immich.immersive.STEREO_PAIR"
     private const val EXTRA_REVERSE_THUMBSTICK_TURN = "app.alextran.immich.immersive.REVERSE_THUMBSTICK_TURN"
+    private const val EXTRA_SHARP_FLAT_SCREENS = "app.alextran.immich.immersive.SHARP_FLAT_SCREENS"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
@@ -4546,11 +4574,6 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** Angular width of the flat video screen at 2 m: a large screen, still all in view. */
     private const val FLAT_SCREEN_ANGLE_DEG = 60f
 
-    /**
-     * The quality filters of the compositor on the flat video screen: super sampling for a frame larger than the area
-     * it covers, sharpening for a smaller one, the compositor picking the one that applies.
-     */
-    private val FLAT_LAYER_FILTERS = LayerFilters.HIGHEST_QUALITY or LayerFilters.AUTO_FILTER
 
     /** Refresh interval of the time bar while the panel is on screen. */
     private const val PROGRESS_INTERVAL_MS = 500L
@@ -4695,6 +4718,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       fallbackUrl: String?,
       rawProjection: String?,
       reverseThumbstickTurn: Boolean,
+      sharpFlatScreens: Boolean = true,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -4711,6 +4735,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           fallbackUrl = fallbackUrl,
           rawProjection = rawProjection,
           reverseThumbstickTurn = reverseThumbstickTurn,
+          sharpFlatScreens = sharpFlatScreens,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -4736,6 +4761,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putString(EXTRA_RAW_PROJECTION, media.rawProjection)
         putString(EXTRA_STEREO_PAIR, media.stereoPairJson)
         putBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, media.reverseThumbstickTurn)
+        putBoolean(EXTRA_SHARP_FLAT_SCREENS, media.sharpFlatScreens)
       }
     }
 
@@ -4767,6 +4793,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         rawProjection = extras.getString(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() },
         stereoPairJson = extras.getString(EXTRA_STEREO_PAIR)?.takeIf { it.isNotBlank() },
         reverseThumbstickTurn = extras.getBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, false),
+        sharpFlatScreens = extras.getBoolean(EXTRA_SHARP_FLAT_SCREENS, true),
       )
     }
 

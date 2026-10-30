@@ -30,6 +30,11 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// in 3D whatever it says (see stackedPhotoFormatOf)
     @Default(true) bool flat3dByName,
 
+    /// Meta Quest immersive viewer, experimental: the photos of a flat screen drawn by the compositor of the headset on
+    /// a quad layer, and that layer and the flat video screen sampled with its quality super sampling and sharpening.
+    /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
+    @Default(true) bool sharpFlatScreens,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,
