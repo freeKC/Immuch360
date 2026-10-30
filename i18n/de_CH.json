@@ -1358,6 +1358,7 @@
   "immersive_playback_no_picture": "Sit 3 Sekunde kei Bild, während de Ton lauft ({video}). Was s Headset gseh hät, staht i de Logs vo de App",
   "immersive_playback_no_picture_switch": "Sit 3 Sekunde kei Bild vo {video}, de Wiedergab-Stream vom Server wird probiert",
   "immersive_playback_restarted": "S Video isch bi {position} stoo blibe und lauft vo döt wiiter",
+  "immersive_playback_restarted_later": "S Video isch bi {position} stoo blibe und lauft ab {resume} wiiter, hinder de Stell, wo nöd gange isch",
   "immersive_viewer_open_failed": "Di immersivi Aasicht het nöd chönne göffnet werde",
   "kiosk_mode_choose_title": "Wähl s 360°-Foto oder -Video vom Kiosk",
   "kiosk_mode_end_text": "Text vo de Schlusscharte",

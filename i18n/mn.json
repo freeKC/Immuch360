@@ -1288,6 +1288,7 @@
   "immersive_playback_no_picture": "Дуу тоглож байхад 3 секунд зураг алга ({video}). VR шилний харсан зүйл аппын Logs хэсэгт байна",
   "immersive_playback_no_picture_switch": "{video}-ээс 3 секунд зураг алга, серверийн тоглуулах урсгалыг туршиж байна",
   "immersive_playback_restarted": "Видео {position}-д зогссон, тэндээс дахин тоглуулж байна",
+  "immersive_playback_restarted_later": "Видео {position}-д зогссон, амжилтгүй болсон хэсгийн дараах {resume}-аас дахин тоглуулж байна",
   "immersive_viewer_open_failed": "Иммерсив үзэгчийг нээж чадсангүй",
   "invite_people": "Хүмүүс урих",
   "kiosk_mode_choose_title": "Киоскийн 360° зураг эсвэл видеог сонгох",

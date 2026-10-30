@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Pilti pole olnud 3 sekundit, kuigi heli mängib ({video}). Mida peakomplekt nägi, on rakenduse Logides",
   "immersive_playback_no_picture_switch": "{video} pole 3 sekundit pilti andnud, proovitakse serveri taasesitusvoogu",
   "immersive_playback_restarted": "Video peatus kohal {position}, see mängib sealt uuesti",
+  "immersive_playback_restarted_later": "Video peatus kohal {position}, see mängib uuesti kohast {resume}, pärast osa, mis ebaõnnestus",
   "immersive_viewer_open_failed": "Immersiivset vaaturit ei õnnestunud avada",
   "immich_logo": "Immich'i logo",
   "immich_web_interface": "Immich'i veebiliides",

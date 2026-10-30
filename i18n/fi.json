@@ -2267,6 +2267,7 @@
   "immersive_playback_no_picture": "Ei kuvaa 3 sekuntiin, vaikka ääni kuuluu ({video}). Mitä VR-lasit näkivät, löytyy sovelluksen Lokeista",
   "immersive_playback_no_picture_switch": "Ei kuvaa 3 sekuntiin lähteestä {video}, kokeillaan palvelimen toistovirtaa",
   "immersive_playback_restarted": "Video pysähtyi kohdassa {position}, se toistetaan uudelleen siitä",
+  "immersive_playback_restarted_later": "Video pysähtyi kohdassa {position}, se toistetaan uudelleen kohdasta {resume}, epäonnistuneen osan jälkeen",
   "immersive_viewer_open_failed": "Immersiivistä katselinta ei voitu avata",
   "immich_logo": "Immich-logo",
   "immich_web_interface": "Immich-verkkokäyttöliittymä",

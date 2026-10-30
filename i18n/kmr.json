@@ -1227,6 +1227,7 @@
   "immersive_playback_no_picture": "3 çirke ye wêne tune ye dema deng tê lêxistin ({video}). Tiştê ku headsetê dît di Logs a sepanê de ye",
   "immersive_playback_no_picture_switch": "3 çirke ye ji {video} wêne nayê, herikîna lêxistinê ya serverê tê ceribandin",
   "immersive_playback_restarted": "Vîdyo li {position} sekinî, ji wir dîsa tê lêxistin",
+  "immersive_playback_restarted_later": "Vîdyo li {position} sekinî, piştî beşa ku bi ser neket ji {resume} dîsa tê lêxistin",
   "immersive_viewer_open_failed": "Nîşandera binavbûyî nehat vekirin",
   "in_year_selector": "Di",
   "iso": "ISO",

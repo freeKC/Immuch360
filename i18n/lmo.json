@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Nissuna imagin de 3 segond intant che el son el va ({video}). Quell che ha vist el visor el se troeuva in di Logs de l’app",
   "immersive_playback_no_picture_switch": "Nissuna imagin de 3 segond de {video}, se preuva el fluss de riproduzion del server",
   "immersive_playback_restarted": "El video el s’è fermaa a {position}, el va inanz de lì",
+  "immersive_playback_restarted_later": "El video el s’è fermaa a {position}, el va inanz de {resume}, dopo la part che l’ha minga funzionaa",
   "immersive_viewer_open_failed": "Se pò minga dervì el visor immersiv",
   "kiosk_mode_choose_title": "Sciern la foto o el video 360° del chiosch",
   "kiosk_mode_end_text": "Test de la carta finala",

@@ -2313,6 +2313,7 @@
   "immersive_playback_no_picture": "Ez dago irudirik 3 segundoz soinua entzuten den bitartean ({video}). Betaurrekoek ikusitakoa aplikazioaren Erregistroak atalean dago",
   "immersive_playback_no_picture_switch": "Ez dago irudirik 3 segundoz {video} bideotik, zerbitzariaren erreprodukzio-fluxua probatzen",
   "immersive_playback_restarted": "Bideoa {position} unean gelditu da, handik aurrera berriro erreproduzitzen da",
+  "immersive_playback_restarted_later": "Bideoa {position} unean gelditu da, {resume} unetik aurrera berriro erreproduzitzen da, huts egin duen zatiaren ondoren",
   "immersive_viewer_open_failed": "Ezin izan da ikusle murgiltzailea ireki",
   "immich_logo": "Immich-en logoa",
   "immich_web_interface": "Immich Web interfazea",

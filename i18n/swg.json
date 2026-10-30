@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Seit 3 Sekonda koi Bild, während dr Ton lauft ({video}). Was s Headset gseha hot, stoht en de Logs vo dr App",
   "immersive_playback_no_picture_switch": "Seit 3 Sekonda koi Bild vo {video}, jetzt wird dr Wiedergabestream vom Server probiert",
   "immersive_playback_restarted": "S Video isch bei {position} stehe blieba ond lauft vo dort weiter",
+  "immersive_playback_restarted_later": "S Video isch bei {position} stehe blieba ond lauft ab {resume} weiter, hinter dr Stell, wo net ganga isch",
   "immersive_viewer_open_failed": "D'immersive Aasicht hot sich ned aufmacha lassa",
   "kiosk_mode_choose_title": "Wähl des 360°-Foto oder -Video vom Kiosk",
   "kiosk_mode_end_text": "Text vo dr Schlusskart",

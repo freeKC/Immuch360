@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Нет изображения уже 3 секунды, хотя звук идёт ({video}). То, что видел шлем, записано в «Журнал событий» приложения",
   "immersive_playback_no_picture_switch": "Нет изображения уже 3 секунды от {video}, пробуем поток воспроизведения с сервера",
   "immersive_playback_restarted": "Видео остановилось на {position}, воспроизведение продолжается с этого места",
+  "immersive_playback_restarted_later": "Видео остановилось на {position}, воспроизведение продолжается с {resume}, после сбойного фрагмента",
   "immersive_viewer_open_failed": "Не удалось открыть иммерсивный просмотр",
   "immich_logo": "Лого Immich",
   "immich_web_interface": "Веб интерфейс Immich",

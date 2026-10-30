@@ -1329,6 +1329,7 @@
   "immersive_playback_no_picture": "Нема слика веќе 3 секунди додека звукот свири ({video}). Она што го виделе VR очилата е во Logs на апликацијата",
   "immersive_playback_no_picture_switch": "Нема слика веќе 3 секунди од {video}, се пробува серверскиот стрим за репродукција",
   "immersive_playback_restarted": "Видеото застана на {position}, повторно се репродуцира оттаму",
+  "immersive_playback_restarted_later": "Видеото застана на {position}, повторно се репродуцира од {resume}, по делот што не успеа",
   "immersive_viewer_open_failed": "Не може да се отвори имерзивниот прегледувач",
   "in_archive": "Во архива",
   "individual_share": "Индивидуално споделување",

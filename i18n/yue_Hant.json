@@ -2336,6 +2336,7 @@
   "immersive_playback_no_picture": "聲音照播但 3 秒冇畫面 ({video})。頭戴裝置見到嘅嘢喺 App 嘅紀錄入面",
   "immersive_playback_no_picture_switch": "{video} 3 秒冇畫面，試緊伺服器嘅播放串流",
   "immersive_playback_restarted": "影片喺 {position} 停咗，而家由嗰度再播",
+  "immersive_playback_restarted_later": "影片喺 {position} 停咗，而家跳過出錯嗰段，由 {resume} 再播",
   "immersive_viewer_open_failed": "開唔到沉浸式檢視器",
   "immich_logo": "Immich Logo",
   "immich_web_interface": "Immich 網頁介面",

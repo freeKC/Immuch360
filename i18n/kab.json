@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Ulac tugna azal n 3 tasinin mi ara d-yettwasel yimesli ({video}). Ayen i iwala headset yella deg Logs n usnas",
   "immersive_playback_no_picture_switch": "Ulac tugna azal n 3 tasinin seg {video}, aɛraḍ n tvidyut n uqeddac",
   "immersive_playback_restarted": "Tavidyut teḥbes deg {position}, ad tettwaurar tikkelt-nniḍen seg dinna",
+  "immersive_playback_restarted_later": "Tavidyut teḥbes deg {position}, ad tettwaurar tikkelt-nniḍen seg {resume}, deffir n uḥric ur neddi ara",
   "immersive_viewer_open_failed": "Ulamek ad yettwaldi umeskan immersif",
   "kiosk_mode_choose_title": "Fren tawlaft neɣ tavidyut 360° n kiyusk",
   "kiosk_mode_end_text": "Aḍris n tkarḍa taneggarut",

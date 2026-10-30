@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Brak obrazu od 3 sekund, choć dźwięk gra ({video}). To, co widział headset, jest w Logach aplikacji",
   "immersive_playback_no_picture_switch": "Brak obrazu od 3 sekund z {video}, próba odtworzenia strumienia z serwera",
   "immersive_playback_restarted": "Wideo zatrzymało się na {position}, odtwarzanie wznawia się od tego miejsca",
+  "immersive_playback_restarted_later": "Wideo zatrzymało się na {position}, odtwarzanie wznawia się od {resume}, za fragmentem, który się nie powiódł",
   "immersive_viewer_open_failed": "Nie można otworzyć przeglądarki immersyjnej",
   "immich_logo": "Logo Immich",
   "immich_web_interface": "Interfejs internetowy Immich",

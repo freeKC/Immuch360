@@ -1862,6 +1862,7 @@
   "immersive_playback_no_picture": "శబ్దం ప్లే అవుతున్నా 3 సెకన్లుగా చిత్రం లేదు ({video}). హెడ్‌సెట్ చూసినది యాప్ Logs లో ఉంది",
   "immersive_playback_no_picture_switch": "{video} నుండి 3 సెకన్లుగా చిత్రం లేదు, సర్వర్ ప్లేబ్యాక్ స్ట్రీమ్‌ను ప్రయత్నిస్తోంది",
   "immersive_playback_restarted": "వీడియో {position} వద్ద ఆగిపోయింది, అక్కడి నుండి మళ్లీ ప్లే అవుతోంది",
+  "immersive_playback_restarted_later": "వీడియో {position} వద్ద ఆగిపోయింది, విఫలమైన భాగం తర్వాత {resume} నుండి మళ్లీ ప్లే అవుతోంది",
   "immersive_viewer_open_failed": "ఇమ్మర్సివ్ వ్యూయర్ తెరవడం సాధ్యం కాలేదు",
   "immich_logo": "ఇమ్మిచ్ లోగో",
   "immich_web_interface": "ఇమ్మిచ్ వెబ్ ఇంటర్‌ఫేస్",

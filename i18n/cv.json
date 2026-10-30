@@ -1172,6 +1172,7 @@
   "immersive_playback_no_picture": "Сасӑ янӑранӑ чух 3 ҫеккунт хушши ӳкерчӗк ҫук ({video}). Шлем мӗн курни приложенин Logs пайӗнче",
   "immersive_playback_no_picture_switch": "{video} 3 ҫеккунт хушши ӳкерчӗк памасть, сервер выляну юхӑмне тӗрӗслетпӗр",
   "immersive_playback_restarted": "Видео {position} вӑхӑтра чарӑнчӗ, унтан каллех выляять",
+  "immersive_playback_restarted_later": "Видео {position} вӑхӑтра чарӑнчӗ, йӑнӑш пулнӑ пайӗ хыҫҫӑн {resume} вӑхӑтран каллех выляять",
   "immersive_viewer_open_failed": "Иммерсивлӑ пӑхавҫӑна уҫма май пулмарӗ",
   "kiosk_mode_choose_title": "Киоск валли 360° сӑнӳкерчӗк е видео суйласа илӗр",
   "kiosk_mode_end_text": "Вӗҫӗмлӗ карточка текстӗ",

@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "Intet billede i 3 sekunder, mens lyden spiller ({video}). Det, headsettet så, står i appens Log",
   "immersive_playback_no_picture_switch": "Intet billede i 3 sekunder fra {video}, prøver serverens afspilningsstream",
   "immersive_playback_restarted": "Videoen stoppede ved {position}, den afspilles igen derfra",
+  "immersive_playback_restarted_later": "Videoen stoppede ved {position}, den afspilles igen fra {resume}, efter den del der fejlede",
   "immersive_viewer_open_failed": "Kunne ikke åbne den immersive fremviser",
   "immich_logo": "Immich logo",
   "immich_web_interface": "Immich webinterface",

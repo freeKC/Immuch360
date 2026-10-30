@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "音声は再生中ですが、3 秒間映像がありません ({video})。ヘッドセットが記録した内容はアプリのログにあります",
   "immersive_playback_no_picture_switch": "{video} の映像が 3 秒間ありません。サーバーの再生用ストリームを試しています",
   "immersive_playback_restarted": "動画が {position} で止まったため、そこから再生し直しています",
+  "immersive_playback_restarted_later": "動画が {position} で止まったため、失敗した部分の後の {resume} から再生し直しています",
   "immersive_viewer_open_failed": "イマーシブビューアーを開けませんでした",
   "immich_logo": "Immichのロゴ",
   "immich_web_interface": "ImmichのWebインターフェース",

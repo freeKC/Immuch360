@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Ingen bild på 3 sekunder medan ljudet spelas ({video}). Det headsetet såg finns i appens Loggar",
   "immersive_playback_no_picture_switch": "Ingen bild på 3 sekunder från {video}, provar serverns uppspelningsström",
   "immersive_playback_restarted": "Videon stannade vid {position} och spelas upp igen därifrån",
+  "immersive_playback_restarted_later": "Videon stannade vid {position} och spelas upp igen från {resume}, efter delen som misslyckades",
   "immersive_viewer_open_failed": "Det gick inte att öppna den immersiva visaren",
   "immich_logo": "Immich-logga",
   "immich_web_interface": "Immich Web gränssnitt",

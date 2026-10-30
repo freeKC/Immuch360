@@ -2085,6 +2085,7 @@
   "immersive_playback_no_picture": "ಧ್ವನಿ ಪ್ಲೇ ಆಗುತ್ತಿರುವಾಗ 3 ಸೆಕೆಂಡುಗಳಿಂದ ಯಾವುದೇ ಚಿತ್ರವಿಲ್ಲ ({video}). ಹೆಡ್‌ಸೆಟ್ ನೋಡಿದ್ದು ಆ್ಯಪ್‌ನ Logs ನಲ್ಲಿದೆ",
   "immersive_playback_no_picture_switch": "{video} ನಿಂದ 3 ಸೆಕೆಂಡುಗಳಿಂದ ಯಾವುದೇ ಚಿತ್ರವಿಲ್ಲ, ಸರ್ವರ್‌ನ ಪ್ಲೇಬ್ಯಾಕ್ ಸ್ಟ್ರೀಮ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಲಾಗುತ್ತಿದೆ",
   "immersive_playback_restarted": "ವೀಡಿಯೊ {position} ನಲ್ಲಿ ನಿಂತಿತು, ಅಲ್ಲಿಂದ ಮತ್ತೆ ಪ್ಲೇ ಆಗುತ್ತಿದೆ",
+  "immersive_playback_restarted_later": "ವೀಡಿಯೊ {position} ನಲ್ಲಿ ನಿಂತಿತು, ವಿಫಲವಾದ ಭಾಗದ ನಂತರ {resume} ನಿಂದ ಮತ್ತೆ ಪ್ಲೇ ಆಗುತ್ತಿದೆ",
   "immersive_viewer_open_failed": "ಇಮ್ಮರ್ಸಿವ್ ವೀಕ್ಷಕವನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
   "import_from_json": "JSON ನಿಂದ ಆಮದು ಮಾಡಿ",
   "include_shared_albums": "ಹಂಚಿದ ಆಲ್ಬಮ್ ಗಳನ್ನು ಸೇರಿಸಿ",

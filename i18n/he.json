@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "אין תמונה כבר 3 שניות בזמן שהקול מתנגן ({video}). מה שמשקפי ה-VR ראו נמצא ביומן של האפליקציה",
   "immersive_playback_no_picture_switch": "אין תמונה כבר 3 שניות מ-{video}, מנסה את זרם ההפעלה של השרת",
   "immersive_playback_restarted": "הסרטון נעצר ב-{position} וממשיך להתנגן משם",
+  "immersive_playback_restarted_later": "הסרטון נעצר ב-{position} וממשיך להתנגן מ-{resume}, אחרי הקטע שנכשל",
   "immersive_viewer_open_failed": "לא ניתן לפתוח את התצוגה הסוחפת",
   "immich_logo": "הלוגו של Immich",
   "immich_web_interface": "ממשק האינטרנט של Immich",

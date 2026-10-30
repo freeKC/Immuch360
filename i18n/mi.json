@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Kāore he whakaahua mō ngā hēkona 3 i te wā e pūrei ana te oro ({video}). Kei ngā Logs o te taupānga ngā mea i kitea e te pōtae VR",
   "immersive_playback_no_picture_switch": "Kāore he whakaahua mō ngā hēkona 3 mai i {video}, e whakamātau ana i te rere pūrei a te tūmau",
   "immersive_playback_restarted": "I tū te ataata ki {position}, ka pūrei anō mai i reira",
+  "immersive_playback_restarted_later": "I tū te ataata ki {position}, ka pūrei anō mai i {resume}, i muri i te wāhanga i rahua",
   "immersive_viewer_open_failed": "Kāore i taea te whakatuwhera i te mātaki rumaki",
   "kiosk_mode_choose_title": "Kōwhiria te whakaahua, te ataata 360° rānei o te kiosk",
   "kiosk_mode_end_text": "Kuputuhi o te kāri whakamutunga",

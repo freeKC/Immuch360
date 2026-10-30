@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "Neniu bildo dum 3 sekundoj dum la sono ludas ({video}). Kion la kasko vidis, troviĝas en la Protokoloj de la aplikaĵo",
   "immersive_playback_no_picture_switch": "Neniu bildo dum 3 sekundoj de {video}, provante la ludfluon de la servilo",
   "immersive_playback_restarted": "La video haltis je {position}, ĝi denove ludas de tie",
+  "immersive_playback_restarted_later": "La video haltis je {position}, ĝi denove ludas de {resume}, post la parto kiu malsukcesis",
   "immersive_viewer_open_failed": "Ne eblis malfermi la enmergan montrilon",
   "immich_logo": "Bildsimbolo de Immich",
   "immich_web_interface": "Interfaco de Immich",

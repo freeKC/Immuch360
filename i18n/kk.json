@@ -1129,6 +1129,7 @@
   "immersive_playback_no_picture": "Дыбыс ойнап тұрғанда 3 секунд бойы сурет жоқ ({video}). Гарнитура көргені қолданбаның Logs бөлімінде",
   "immersive_playback_no_picture_switch": "{video} 3 секунд бойы сурет бермейді, сервердің ойнату ағыны сыналуда",
   "immersive_playback_restarted": "Бейне {position} сәтінде тоқтады, сол жерден қайта ойнатылады",
+  "immersive_playback_restarted_later": "Бейне {position} сәтінде тоқтады, сәтсіз бөліктен кейін {resume} сәтінен қайта ойнатылады",
   "immersive_viewer_open_failed": "Иммерсивті көру құралын ашу мүмкін болмады",
   "kiosk_mode_choose_title": "Киоскке арналған 360° фото не бейнені таңдаңыз",
   "kiosk_mode_end_text": "Соңғы карточка мәтіні",

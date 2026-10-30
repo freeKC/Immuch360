@@ -2331,6 +2331,7 @@
   "immersive_playback_no_picture": "Немає зображення вже 3 секунди, хоча звук грає ({video}). Те, що бачив шолом, є в Журналі застосунку",
   "immersive_playback_no_picture_switch": "Немає зображення вже 3 секунди від {video}, пробуємо потік відтворення з сервера",
   "immersive_playback_restarted": "Відео зупинилося на {position}, відтворення продовжується з цього місця",
+  "immersive_playback_restarted_later": "Відео зупинилося на {position}, відтворення продовжується з {resume}, після збійного фрагмента",
   "immersive_viewer_open_failed": "Не вдалося відкрити іммерсивний переглядач",
   "immich_logo": "Логотип Immich",
   "immich_web_interface": "Веб-інтерфейс Immich",

@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Gan pictiúr le 3 soicind agus an fhuaim ag seinm ({video}). Tá a bhfaca an tacar cinn i Logaí na haipe",
   "immersive_playback_no_picture_switch": "Gan pictiúr le 3 soicind ó {video}, sruth athsheinm an fhreastalaí á thriail",
   "immersive_playback_restarted": "Stop an físeán ag {position}, seinntear arís é as sin",
+  "immersive_playback_restarted_later": "Stop an físeán ag {position}, seinntear arís é ó {resume}, tar éis na coda a theip",
   "immersive_viewer_open_failed": "Níorbh fhéidir an t-amharcóir tumthach a oscailt",
   "immich_logo": "Lógó Immich",
   "immich_web_interface": "Comhéadan Gréasáin Immich",

@@ -2278,6 +2278,7 @@
   "immersive_playback_no_picture": "Engin mynd í 3 sekúndur á meðan hljóðið spilast ({video}). Það sem VR-gleraugun sáu er í Logs forritsins",
   "immersive_playback_no_picture_switch": "Engin mynd í 3 sekúndur frá {video}, reyni afspilunarstraum þjónsins",
   "immersive_playback_restarted": "Myndskeiðið stöðvaðist við {position}, það spilast aftur þaðan",
+  "immersive_playback_restarted_later": "Myndskeiðið stöðvaðist við {position}, það spilast aftur frá {resume}, fram hjá hlutanum sem mistókst",
   "immersive_viewer_open_failed": "Ekki tókst að opna sýndarveruleikaskoðarann",
   "immich_logo": "Immich merkið",
   "immich_web_interface": "Vefviðmót Immich",

@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Zënter 3 Sekonnen kee Bild, während den Toun leeft ({video}). Wat den Headset gesinn huet, steet an de Logs vun der App",
   "immersive_playback_no_picture_switch": "Zënter 3 Sekonnen kee Bild vu {video}, de Playback-Stream vum Server gëtt probéiert",
   "immersive_playback_restarted": "De Video ass bei {position} stoe bliwwen a leeft vun do aus weider",
+  "immersive_playback_restarted_later": "De Video ass bei {position} stoe bliwwen a leeft vun {resume} un weider, no der Plaz, déi net gaangen ass",
   "immersive_viewer_open_failed": "Den immersive Viewer konnt net opgemaach ginn",
   "kiosk_mode_choose_title": "Wiel dat 360°-Foto oder -Video vum Kiosk",
   "kiosk_mode_end_text": "Text vun der Schlusskaart",

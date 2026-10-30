@@ -1144,6 +1144,7 @@
   "immersive_playback_no_picture": "Walang larawan sa loob ng 3 segundo habang tumutunog ang audio ({video}). Nasa Logs ng app ang nakita ng headset",
   "immersive_playback_no_picture_switch": "Walang larawan sa loob ng 3 segundo mula sa {video}, sinusubukan ang playback stream ng server",
   "immersive_playback_restarted": "Huminto ang video sa {position}, pinapatugtog itong muli mula roon",
+  "immersive_playback_restarted_later": "Huminto ang video sa {position}, pinapatugtog itong muli mula {resume}, lampas sa bahaging pumalya",
   "immersive_viewer_open_failed": "Hindi mabuksan ang immersive viewer",
   "kiosk_mode_choose_title": "Piliin ang 360° na larawan o video ng kiosk",
   "kiosk_mode_end_text": "Teksto ng huling card",

@@ -2336,6 +2336,7 @@
   "immersive_playback_no_picture": "3 sekundes nėra vaizdo, nors garsas groja ({video}). Ką matė VR akiniai, rasite programėlės Loguose",
   "immersive_playback_no_picture_switch": "3 sekundes nėra vaizdo iš {video}, bandomas serverio atkūrimo srautas",
   "immersive_playback_restarted": "Vaizdo įrašas sustojo ties {position}, jis vėl leidžiamas nuo ten",
+  "immersive_playback_restarted_later": "Vaizdo įrašas sustojo ties {position}, jis vėl leidžiamas nuo {resume}, po nepavykusios dalies",
   "immersive_viewer_open_failed": "Nepavyko atidaryti įtraukiančios peržiūros",
   "immich_logo": "Immich logotipas",
   "immich_web_interface": "Immich Web sąsaja",

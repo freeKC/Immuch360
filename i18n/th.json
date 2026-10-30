@@ -2337,6 +2337,7 @@
   "immersive_playback_no_picture": "ไม่มีภาพมา 3 วินาทีแล้วขณะที่เสียงยังเล่นอยู่ ({video}) สิ่งที่เฮดเซ็ตเห็นอยู่ในการบันทึกของแอป",
   "immersive_playback_no_picture_switch": "ไม่มีภาพจาก {video} มา 3 วินาทีแล้ว กำลังลองสตรีมการเล่นจากเซิร์ฟเวอร์",
   "immersive_playback_restarted": "วิดีโอหยุดที่ {position} และกำลังเล่นต่อจากตรงนั้น",
+  "immersive_playback_restarted_later": "วิดีโอหยุดที่ {position} และกำลังเล่นต่อจาก {resume} ถัดจากช่วงที่เล่นไม่ได้",
   "immersive_viewer_open_failed": "ไม่สามารถเปิดตัวดูแบบสมจริงได้",
   "immich_logo": "โลโก้ Immich",
   "immich_web_interface": "หน้าตาเว็บไซต์ Immich",

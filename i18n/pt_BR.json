@@ -2340,6 +2340,7 @@
   "immersive_playback_no_picture": "Sem imagem há 3 segundos enquanto o som toca ({video}). O que o headset viu está nos Registros do app",
   "immersive_playback_no_picture_switch": "Sem imagem há 3 segundos de {video}, tentando o stream de reprodução do servidor",
   "immersive_playback_restarted": "O vídeo parou em {position} e volta a tocar a partir dali",
+  "immersive_playback_restarted_later": "O vídeo parou em {position} e volta a tocar a partir de {resume}, depois do trecho que falhou",
   "immersive_viewer_open_failed": "Não foi possível abrir o visualizador imersivo",
   "immich_logo": "Logo do Immich",
   "immich_web_interface": "Interface Web do Immich",

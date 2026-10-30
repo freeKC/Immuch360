@@ -2248,6 +2248,7 @@
   "immersive_playback_no_picture": "ஒலி இயங்கும்போது 3 வினாடிகளாகப் படம் இல்லை ({video}). ஹெட்செட் பார்த்தது ஆப்பின் பதிவுகளில் உள்ளது",
   "immersive_playback_no_picture_switch": "{video} இலிருந்து 3 வினாடிகளாகப் படம் இல்லை, சேவையகத்தின் இயக்க ஸ்ட்ரீமை முயற்சிக்கிறது",
   "immersive_playback_restarted": "வீடியோ {position} இல் நின்றது, அங்கிருந்து மீண்டும் இயங்குகிறது",
+  "immersive_playback_restarted_later": "வீடியோ {position} இல் நின்றது, தோல்வியடைந்த பகுதிக்குப் பின் {resume} இலிருந்து மீண்டும் இயங்குகிறது",
   "immersive_viewer_open_failed": "இமர்சிவ் பார்வையாளரைத் திறக்க முடியவில்லை",
   "immich_logo": "இம்மிச் லோகோ",
   "immich_web_interface": "இம்ரிச் வலை இடைமுகம்",

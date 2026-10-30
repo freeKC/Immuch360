@@ -2319,6 +2319,7 @@
   "immersive_playback_no_picture": "Няма выявы ўжо 3 секунды, хоць гук ідзе ({video}). Тое, што бачыў шлем, ёсць у Журналах праграмы",
   "immersive_playback_no_picture_switch": "Няма выявы ўжо 3 секунды ад {video}, спрабуем струмень прайгравання з сервера",
   "immersive_playback_restarted": "Відэа спынілася на {position}, яно прайграецца зноў адтуль",
+  "immersive_playback_restarted_later": "Відэа спынілася на {position}, яно прайграецца зноў з {resume}, пасля часткі, якая не прайгралася",
   "immersive_viewer_open_failed": "Не ўдалося адкрыць імерсіўны прагляд",
   "immich_logo": "Лагатып Immich",
   "immich_web_interface": "Вэб-інтэрфейс Immich",

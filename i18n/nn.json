@@ -1456,6 +1456,7 @@
   "immersive_playback_no_picture": "Ikkje noko bilete på 3 sekund medan lyden spelar ({video}). Det headsettet såg, står i Logs i appen",
   "immersive_playback_no_picture_switch": "Ikkje noko bilete på 3 sekund frå {video}, prøver avspelingsstraumen frå tenaren",
   "immersive_playback_restarted": "Videoen stoppa ved {position}, han blir spela av att derfrå",
+  "immersive_playback_restarted_later": "Videoen stoppa ved {position}, han blir spela av att frå {resume}, etter delen som feila",
   "immersive_viewer_open_failed": "Klarte ikkje å opne den immersive visinga",
   "jobs": "Oppgåver",
   "keep": "Behald",

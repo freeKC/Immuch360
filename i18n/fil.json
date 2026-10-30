@@ -1208,6 +1208,7 @@
   "immersive_playback_no_picture": "Walang larawan sa loob ng 3 segundo habang tumutugtog ang tunog ({video}). Nasa Logs ng app ang nakita ng headset",
   "immersive_playback_no_picture_switch": "Walang larawan sa loob ng 3 segundo mula sa {video}, sinusubukan ang playback stream ng server",
   "immersive_playback_restarted": "Huminto ang video sa {position}, muli itong pinapatugtog mula roon",
+  "immersive_playback_restarted_later": "Huminto ang video sa {position}, muli itong pinapatugtog mula {resume}, lampas sa bahaging pumalya",
   "immersive_viewer_open_failed": "Hindi mabuksan ang immersive viewer",
   "info": "Informasyon",
   "jobs": "Mga trabaho",

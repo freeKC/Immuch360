@@ -2331,6 +2331,7 @@
   "immersive_playback_no_picture": "Asnjë pamje prej 3 sekondash ndërkohë që zëri luhet ({video}). Çfarë panë syzet VR gjendet te Regjistrat e aplikacionit",
   "immersive_playback_no_picture_switch": "Asnjë pamje prej 3 sekondash nga {video}, po provohet transmetimi i luajtjes nga serveri",
   "immersive_playback_restarted": "Videoja ndaloi te {position} dhe po luhet sërish që andej",
+  "immersive_playback_restarted_later": "Videoja ndaloi te {position} dhe po luhet sërish nga {resume}, pas pjesës që dështoi",
   "immersive_viewer_open_failed": "Shikuesi imersiv nuk u hap dot",
   "immich_logo": "Logoja e Immich",
   "immich_web_interface": "Ndërfaqja Web e Immich",

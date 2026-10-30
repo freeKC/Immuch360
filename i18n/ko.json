@@ -2342,6 +2342,7 @@
   "immersive_playback_no_picture": "소리는 재생 중이지만 3초 동안 화면이 없습니다 ({video}). 헤드셋이 기록한 내용은 앱의 로그에 있습니다",
   "immersive_playback_no_picture_switch": "{video}에서 3초 동안 화면이 없어 서버 재생 스트림을 시도하는 중",
   "immersive_playback_restarted": "동영상이 {position}에서 멈춰 그 지점부터 다시 재생합니다",
+  "immersive_playback_restarted_later": "동영상이 {position}에서 멈춰 실패한 부분 다음인 {resume}부터 다시 재생합니다",
   "immersive_viewer_open_failed": "몰입형 뷰어를 열 수 없습니다",
   "immich_logo": "Immich 로고",
   "immich_web_interface": "Immich 웹 인터페이스",

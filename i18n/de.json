@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Seit 3 Sekunden kein Bild, während der Ton läuft ({video}). Was das Headset gesehen hat, steht in den Logs der App",
   "immersive_playback_no_picture_switch": "Seit 3 Sekunden kein Bild von {video}, Wiedergabe-Stream des Servers wird versucht",
   "immersive_playback_restarted": "Das Video ist bei {position} stehen geblieben und läuft ab dort weiter",
+  "immersive_playback_restarted_later": "Das Video ist bei {position} stehen geblieben und läuft ab {resume} weiter, hinter der fehlerhaften Stelle",
   "immersive_viewer_open_failed": "Die immersive Ansicht konnte nicht geöffnet werden",
   "immich_logo": "Immich-Logo",
   "immich_web_interface": "Immich-Web-Oberfläche",

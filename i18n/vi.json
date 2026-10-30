@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Không có hình ảnh trong 3 giây dù âm thanh vẫn phát ({video}). Những gì kính VR ghi nhận nằm trong Nhật ký của ứng dụng",
   "immersive_playback_no_picture_switch": "Không có hình ảnh trong 3 giây từ {video}, đang thử luồng phát từ máy chủ",
   "immersive_playback_restarted": "Video đã dừng ở {position}, đang phát lại từ chỗ đó",
+  "immersive_playback_restarted_later": "Video đã dừng ở {position}, đang phát lại từ {resume}, sau đoạn bị lỗi",
   "immersive_viewer_open_failed": "Không thể mở trình xem nhập vai",
   "immich_logo": "Logo Immich",
   "immich_web_interface": "Giao diện web Immich",

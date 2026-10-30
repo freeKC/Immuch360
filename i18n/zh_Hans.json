@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "声音在播放，但已有 3 秒没有画面 ({video})。头显记录的内容在应用的日志中",
   "immersive_playback_no_picture_switch": "{video} 已有 3 秒没有画面，正在尝试服务器播放流",
   "immersive_playback_restarted": "视频在 {position} 处停止，正从该处重新播放",
+  "immersive_playback_restarted_later": "视频在 {position} 处停止，正跳过出错的部分，从 {resume} 重新播放",
   "immersive_viewer_open_failed": "无法打开沉浸式查看器",
   "immich_logo": "Immich Logo",
   "immich_web_interface": "Immich网页界面",

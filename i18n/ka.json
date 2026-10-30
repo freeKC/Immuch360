@@ -1363,6 +1363,7 @@
   "immersive_playback_no_picture": "3 წამია გამოსახულება არ არის, ხმა კი ისმის ({video}). რაც VR სათვალემ დაინახა, აპის ჟურნალშია",
   "immersive_playback_no_picture_switch": "{video}-დან 3 წამია გამოსახულება არ არის, ვცდით სერვერის დაკვრის ნაკადს",
   "immersive_playback_restarted": "ვიდეო გაჩერდა {position}-ზე, იქიდან ისევ უკრავს",
+  "immersive_playback_restarted_later": "ვიდეო გაჩერდა {position}-ზე, ისევ უკრავს {resume}-დან, წარუმატებელი ნაწილის შემდეგ",
   "immersive_viewer_open_failed": "იმერსიული მნახველის გახსნა ვერ მოხერხდა",
   "info": "ინფორმაცია",
   "jobs": "დავალებები",

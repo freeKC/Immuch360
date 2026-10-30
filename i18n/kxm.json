@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "บ่มีภาพมา 3 วินาทีแล้ว ขณะที่เสียงยังเล่นอยู่ ({video}) สิ่งที่แว่น VR เห็นอยู่ใน Logs ของแอป",
   "immersive_playback_no_picture_switch": "บ่มีภาพจาก {video} มา 3 วินาทีแล้ว กำลังลองสตรีมการเล่นจากเซิร์ฟเวอร์",
   "immersive_playback_restarted": "วิดีโอหยุดอยู่ที่ {position} แล้วกำลังเล่นต่อจากตรงนั้น",
+  "immersive_playback_restarted_later": "วิดีโอหยุดอยู่ที่ {position} แล้วกำลังเล่นต่อจาก {resume} ถัดจากช่วงที่เล่นไม่ได้",
   "immersive_viewer_open_failed": "เบิกหน้าเมิลแบบอิมเมอร์ซีฟออตบาน",
   "kiosk_mode_choose_title": "เลือกฮูปหรือวิดีโอ 360° ของคีออสก์",
   "kiosk_mode_end_text": "ข้อความการ์ดตอนจบ",

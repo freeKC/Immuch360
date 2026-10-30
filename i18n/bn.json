@@ -2327,6 +2327,7 @@
   "immersive_playback_no_picture": "শব্দ চলার সময় 3 সেকেন্ড ধরে কোনো ছবি নেই ({video})। হেডসেট যা দেখেছে তা অ্যাপের লগসমূহ-এ আছে",
   "immersive_playback_no_picture_switch": "{video} থেকে 3 সেকেন্ড ধরে কোনো ছবি নেই, সার্ভারের প্লেব্যাক স্ট্রিম চেষ্টা করা হচ্ছে",
   "immersive_playback_restarted": "ভিডিওটি {position}-এ থেমে গিয়েছিল, সেখান থেকে আবার চলছে",
+  "immersive_playback_restarted_later": "ভিডিওটি {position}-এ থেমে গিয়েছিল, যে অংশে সমস্যা হয়েছিল তার পরে {resume} থেকে আবার চলছে",
   "immersive_viewer_open_failed": "ইমারসিভ ভিউয়ার খোলা যায়নি",
   "immich_logo": "ইমিচ লোগো",
   "immich_web_interface": "ইমিচ ওয়েব ইন্টারফেস",

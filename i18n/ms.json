@@ -1905,6 +1905,7 @@
   "immersive_playback_no_picture": "Tiada gambar selama 3 saat semasa bunyi dimainkan ({video}). Apa yang dilihat headset ada dalam Logs aplikasi",
   "immersive_playback_no_picture_switch": "Tiada gambar selama 3 saat daripada {video}, mencuba strim main balik pelayan",
   "immersive_playback_restarted": "Video berhenti pada {position}, ia dimainkan semula dari situ",
+  "immersive_playback_restarted_later": "Video berhenti pada {position}, ia dimainkan semula dari {resume}, melepasi bahagian yang gagal",
   "immersive_viewer_open_failed": "Tidak dapat membuka pemapar imersif",
   "kiosk_mode_choose_title": "Pilih foto atau video 360° untuk kiosk",
   "kiosk_mode_end_text": "Teks kad penutup",

@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "Tidak ada gambar selama 3 detik saat suara diputar ({video}). Apa yang dilihat headset ada di Log aplikasi",
   "immersive_playback_no_picture_switch": "Tidak ada gambar selama 3 detik dari {video}, mencoba stream pemutaran dari server",
   "immersive_playback_restarted": "Video berhenti di {position}, diputar lagi dari sana",
+  "immersive_playback_restarted_later": "Video berhenti di {position}, diputar lagi dari {resume}, melewati bagian yang gagal",
   "immersive_viewer_open_failed": "Tidak dapat membuka penampil imersif",
   "immich_logo": "Logo Immich",
   "immich_web_interface": "Antarmuka Web Immich",

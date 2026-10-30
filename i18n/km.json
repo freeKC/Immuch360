@@ -1205,6 +1205,7 @@
   "immersive_playback_no_picture": "គ្មានរូបភាពរយៈពេល 3 វិនាទី ខណៈពេលសំឡេងកំពុងលេង ({video})។ អ្វីដែលកាស VR បានឃើញ មាននៅក្នុង Logs នៃកម្មវិធី",
   "immersive_playback_no_picture_switch": "គ្មានរូបភាពរយៈពេល 3 វិនាទីពី {video} កំពុងសាកល្បងស្ទ្រីមចាក់ពីម៉ាស៊ីនមេ",
   "immersive_playback_restarted": "វីដេអូបានឈប់នៅ {position} ហើយកំពុងចាក់ម្ដងទៀតពីទីនោះ",
+  "immersive_playback_restarted_later": "វីដេអូបានឈប់នៅ {position} ហើយកំពុងចាក់ម្ដងទៀតពី {resume} ក្រោយផ្នែកដែលបរាជ័យ",
   "immersive_viewer_open_failed": "មិនអាចបើកកម្មវិធីមើលបែបជ្រមុជបានទេ",
   "kiosk_mode_choose_title": "ជ្រើសរើសរូបថត ឬវីដេអូ 360° របស់គីយ៉ូស",
   "kiosk_mode_end_text": "អត្ថបទកាតបញ្ចប់",

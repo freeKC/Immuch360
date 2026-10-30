@@ -2259,6 +2259,7 @@
   "immersive_playback_no_picture": "Nav attēla jau 3 sekundes, kamēr skan skaņa ({video}). Ko redzēja VR brilles, ir lietotnes Žurnālos",
   "immersive_playback_no_picture_switch": "Nav attēla jau 3 sekundes no {video}, mēģina servera atskaņošanas straumi",
   "immersive_playback_restarted": "Video apstājās pie {position}, tas atkal tiek atskaņots no turienes",
+  "immersive_playback_restarted_later": "Video apstājās pie {position}, tas atkal tiek atskaņots no {resume}, aiz daļas, kas neizdevās",
   "immersive_viewer_open_failed": "Neizdevās atvērt imersīvo skatītāju",
   "immich_logo": "Immich logo",
   "immich_web_interface": "Immich tīmekļa saskarne",

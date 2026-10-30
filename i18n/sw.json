@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Hakuna picha kwa sekunde 3 huku sauti ikicheza ({video}). Kile headset ilichoona kiko kwenye Logs za programu",
   "immersive_playback_no_picture_switch": "Hakuna picha kwa sekunde 3 kutoka {video}, inajaribu mtiririko wa kucheza wa seva",
   "immersive_playback_restarted": "Video ilisimama kwenye {position}, inacheza tena kuanzia hapo",
+  "immersive_playback_restarted_later": "Video ilisimama kwenye {position}, inacheza tena kuanzia {resume}, baada ya sehemu iliyoshindwa",
   "immersive_viewer_open_failed": "Imeshindwa kufungua kitazamaji cha uhalisia pepe",
   "kiosk_mode_choose_title": "Chagua picha au video ya 360° ya kioski",
   "kiosk_mode_end_text": "Maandishi ya kadi ya mwisho",

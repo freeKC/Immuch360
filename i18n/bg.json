@@ -2345,6 +2345,7 @@
   "immersive_playback_no_picture": "Няма картина от 3 секунди, докато звукът върви ({video}). Каквото е видял шлемът, е в „Дневник“ на приложението",
   "immersive_playback_no_picture_switch": "Няма картина от 3 секунди от {video}, опитваме потока за възпроизвеждане от сървъра",
   "immersive_playback_restarted": "Видеото спря на {position}, възпроизвежда се отново от там",
+  "immersive_playback_restarted_later": "Видеото спря на {position}, възпроизвежда се отново от {resume}, след частта, която се провали",
   "immersive_viewer_open_failed": "Неуспешно отваряне на имерсивния преглед",
   "immich_logo": "Immich лого",
   "immich_web_interface": "Уеб интерфейс на Immich",

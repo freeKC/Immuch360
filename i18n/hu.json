@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "3 másodperce nincs kép, miközben a hang szól ({video}). Amit a VR-szemüveg látott, az alkalmazás Naplók részében található",
   "immersive_playback_no_picture_switch": "3 másodperce nincs kép ebből: {video}, a szerver lejátszási streamjének kipróbálása",
   "immersive_playback_restarted": "A videó megállt itt: {position}, innen játszódik le újra",
+  "immersive_playback_restarted_later": "A videó megállt itt: {position}, a hibás rész után innen játszódik le újra: {resume}",
   "immersive_viewer_open_failed": "Nem sikerült megnyitni az immerzív nézegetőt",
   "immich_logo": "Immich logó",
   "immich_web_interface": "Immich webes felület",

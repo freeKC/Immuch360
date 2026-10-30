@@ -2238,6 +2238,7 @@
   "immersive_playback_no_picture": "आवाज़ चलते हुए 3 सेकंड से कोई तस्वीर नहीं ({video})। हेडसेट ने जो देखा वह ऐप के लॉग्स में है",
   "immersive_playback_no_picture_switch": "{video} से 3 सेकंड से कोई तस्वीर नहीं, सर्वर की प्लेबैक स्ट्रीम आज़माई जा रही है",
   "immersive_playback_restarted": "वीडियो {position} पर रुक गया था, वहीं से फिर चल रहा है",
+  "immersive_playback_restarted_later": "वीडियो {position} पर रुक गया था, जो हिस्सा नहीं चला उसके बाद {resume} से फिर चल रहा है",
   "immersive_viewer_open_failed": "इमर्सिव व्यूअर नहीं खोला जा सका",
   "immich_logo": "Immich लोगो",
   "immich_web_interface": "इमिच वेब इंटरफ़ेस",

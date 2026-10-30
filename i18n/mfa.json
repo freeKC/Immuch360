@@ -1107,6 +1107,7 @@
   "immersive_playback_no_picture": "Takdok gambo 3 saat maso bunyi tengoh maing ({video}). Gapo hok headset nampok ado dale Logs app",
   "immersive_playback_no_picture_switch": "Takdok gambo 3 saat dari {video}, tengoh cuba strim main dari server",
   "immersive_playback_restarted": "Video tehenti pado {position}, dio maing balik dari situ",
+  "immersive_playback_restarted_later": "Video tehenti pado {position}, dio maing balik dari {resume}, lepeh bagian hok gagal",
   "immersive_viewer_open_failed": "Tok leh bukak paparan imersif",
   "kiosk_mode_choose_title": "Pilih gambo ke video 360° untuk kiosk",
   "kiosk_mode_end_text": "Teks kad penutup",

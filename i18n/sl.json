@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Že 3 sekunde ni slike, čeprav se zvok predvaja ({video}). Kar je videl naglavni komplet, je v Dnevnikih aplikacije",
   "immersive_playback_no_picture_switch": "Že 3 sekunde ni slike iz {video}, poskus s pretokom za predvajanje s strežnika",
   "immersive_playback_restarted": "Video se je ustavil pri {position} in se od tam predvaja znova",
+  "immersive_playback_restarted_later": "Video se je ustavil pri {position} in se znova predvaja od {resume}, za delom, ki ni uspel",
   "immersive_viewer_open_failed": "Imerzivnega pregledovalnika ni bilo mogoče odpreti",
   "immich_logo": "Immich logo",
   "immich_web_interface": "Immich spletni vmesnik",

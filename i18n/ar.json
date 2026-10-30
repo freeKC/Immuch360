@@ -2317,6 +2317,7 @@
   "immersive_playback_no_picture": "لا صورة منذ 3 ثوانٍ بينما يعمل الصوت ({video}). ما رصدته النظارة موجود في السجلات داخل التطبيق",
   "immersive_playback_no_picture_switch": "لا صورة منذ 3 ثوانٍ من {video}، جارٍ تجربة بث التشغيل من الخادم",
   "immersive_playback_restarted": "توقف الفيديو عند {position}، ويُستأنف التشغيل من هناك",
+  "immersive_playback_restarted_later": "توقف الفيديو عند {position}، ويُستأنف التشغيل من {resume} بعد الجزء الذي تعذّر تشغيله",
   "immersive_viewer_open_failed": "تعذر فتح العارض الغامر",
   "immich_logo": "شعار immich",
   "immich_web_interface": "واجهة ويب immich",

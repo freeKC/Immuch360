@@ -2346,6 +2346,7 @@
   "immersive_playback_no_picture": "Sin imagen durante 3 segundos mientras suena el audio ({video}). Lo que vieron las gafas está en los Registros de la app",
   "immersive_playback_no_picture_switch": "Sin imagen durante 3 segundos de {video}, probando el flujo de reproducción del servidor",
   "immersive_playback_restarted": "El vídeo se detuvo en {position}, se reproduce de nuevo desde ahí",
+  "immersive_playback_restarted_later": "El vídeo se detuvo en {position}, se reproduce de nuevo desde {resume}, después de la parte que falló",
   "immersive_viewer_open_failed": "No se pudo abrir el visor inmersivo",
   "immich_logo": "Logo de Immich",
   "immich_web_interface": "Interfaz web de Immich",

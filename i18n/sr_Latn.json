@@ -2333,6 +2333,7 @@
   "immersive_playback_no_picture": "Nema slike već 3 sekunde dok zvuk svira ({video}). Ono što su VR naočare videle nalazi se u Evidenciji aplikacije",
   "immersive_playback_no_picture_switch": "Nema slike već 3 sekunde iz {video}, pokušava se strim za reprodukciju sa servera",
   "immersive_playback_restarted": "Video se zaustavio na {position}, ponovo se reprodukuje odatle",
+  "immersive_playback_restarted_later": "Video se zaustavio na {position}, ponovo se reprodukuje od {resume}, posle dela koji nije uspeo",
   "immersive_viewer_open_failed": "Nije moguće otvoriti imerzivni pregledač",
   "immich_logo": "Logo Immich-a",
   "immich_web_interface": "Web interfejs Immich-a",
