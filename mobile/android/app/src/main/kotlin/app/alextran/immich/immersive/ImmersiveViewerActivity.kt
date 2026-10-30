@@ -7,6 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -320,16 +323,33 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
     /** A media told 3D by its file name: a video of the flat video screen, or a photo of the stereo quad. */
     val isFlat3d: Boolean
-      get() = isFlatVideo || stereoKind is StereoPhotoKind.Flat
+      get() = flatVideo != null || stereoKind is StereoPhotoKind.Flat
+
+    /**
+     * A media on a flat screen the user may move and resize (see [ScreenPlace]): a video of the flat video screen, or a
+     * photo of the stereo quad but a relief made in the headset, whose 2.5D mesh stands on the quad where it was placed,
+     * and a 3D scene.
+     */
+    val isMovableScreen: Boolean
+      get() =
+        isFlatVideo ||
+          (isStereoPhoto &&
+            stereoKind !is StereoPhotoKind.DepthRelief &&
+            stereoKind !is StereoPhotoKind.VolumetricScene)
   }
 
-  /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
+  /**
+   * The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer, or with
+   * [single] one picture alone in its cell (an ordinary photo on the big screen).
+   */
   private class StereoTexture(
     val bitmap: Bitmap,
     val eyeWidth: Int,
     val eyeHeight: Int,
     /** Both eyes were decoded: false shows the left eye in 2D. */
     val hasSecondEye: Boolean,
+    /** One picture in one cell, no second half: the quad mesh shows it with the stereo mode None. */
+    val single: Boolean = false,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -431,6 +451,22 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefLabelJob: Job? = null
   /** The status line of the stereo photo shown, under a passing label. */
   private var stereoStatus = ""
+  /** The texture shown holds one picture alone (see StereoTexture.single). */
+  private var stereoSingle = false
+
+  // Photo layer: the photos of a flat screen on a compositor quad layer while Sharper flat screens is on, see
+  // FlatScreenLayer and drawPhotoLayer
+  /** Its entity, made at the first photo that goes on it, and its panel and Surface once the SDK made them. */
+  private var photoLayerEntity: Entity? = null
+  private var photoLayerPanel: PanelSceneObject? = null
+  private var photoLayerSurface: Surface? = null
+  /** The photo on the layer, kept to draw it again on a new Surface; null while the layer shows nothing. */
+  private var photoLayerTexture: StereoTexture? = null
+  /** [photoLayerTexture] is on the Surface. */
+  private var photoLayerDrawn = false
+
+  /** Where the flat screen shown stands (a movable photo of the stereo quad, the flat video screen), null before. */
+  private var screenPlace: ScreenPlace? = null
 
   // AI relief of a flat photo, see showReliefPhoto
   /** The reliefs of this viewer, made at its first depthRelief photo and closed with it. */
@@ -850,6 +886,45 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           scope.launch(Dispatchers.Main) { applyFlatVideoShape() }
         },
       ),
+      // Photo layer: the photos of a flat screen drawn on the Surface of a quad compositor layer (see drawPhotoLayer),
+      // which the compositor samples once, straight to the display, with its quality filters, where the quad mesh goes
+      // through the eye buffer first: a sharper photo. An idea and a first version of Gaurav Mukherjee (gmfun/Immuch360,
+      // branch quest/flat-3d). Behind the panels, as the sphere; made at the first such photo, shaped for each one
+      // (applyPhotoLayerShape).
+      VideoSurfacePanelRegistration(
+        R.id.immersive_photo_layer_panel,
+        surfaceConsumer = { _, surface ->
+          Log.i(TAG, "photo layer surface ready")
+          runOnUiThread {
+            photoLayerSurface = surface
+            // A new Surface holds nothing: the photo goes on it again
+            photoLayerDrawn = false
+            drawPhotoLayer()
+          }
+        },
+        settingsCreator = {
+          MediaPanelSettings(
+            shape = QuadShapeOptions(width = 1f, height = 0.75f),
+            display =
+              PixelDisplayOptions(width = FlatScreenLayer.SURFACE_WIDTH_PX, height = FlatScreenLayer.SURFACE_HEIGHT_PX),
+            rendering =
+              MediaPanelRenderOptions(
+                stereoMode = StereoMode.None,
+                layerFilters = FlatScreenLayer.filters(request?.sharpFlatScreens != false),
+                zIndex = -1,
+              ),
+          )
+        },
+        panelSetup = { panel, _ ->
+          Log.i(TAG, "photo layer ready")
+          photoLayerPanel = panel
+          // After the panel creation returns: the photo waits for this panel
+          scope.launch(Dispatchers.Main) {
+            applyLayerFilters(panel)
+            drawPhotoLayer()
+          }
+        },
+      ),
     )
 
   /** The media to show, or null for an intent without the launch token (not started by this app) or without url. */
@@ -897,6 +972,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingFirstFrameMessage = null
     reprepareOnReturn = false
     flat3dAnnounced = false
+    // Each media places its own flat screen
+    screenPlace = null
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
@@ -2818,17 +2895,69 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * Uploads [stereo] as the texture of the quad, recycles its bitmap, destroys the previous texture, then shows the
-   * quad with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of a relief
-   * replace the flat photo where the quad is). Kept for later while the material is not ready.
+   * Shows [stereo] with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of
+   * a relief replace the flat photo where the quad is; the full photo replaces its preview where the user left it):
+   * on the photo layer for the photos [FlatScreenLayer.showsOnLayer] takes while Sharper flat screens is on, which keeps
+   * its bitmap to draw it again on a new Surface; else as the texture of the quad mesh, its bitmap recycled and the
+   * previous texture destroyed, kept for later while the material is not ready. [preview] is the server preview of the
+   * photo while its original loads (see [showStereoPhoto]): the panel says so, and stays.
    */
-  private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true) {
+  private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true, preview: Boolean = false) {
+    val media = request
+    val onLayer =
+      media != null && media.isMovableScreen && FlatScreenLayer.showsOnLayer(media.stereoKind, media.sharpFlatScreens)
+    if (onLayer) {
+      showOnLayer(stereo)
+    } else if (!showOnMesh(stereo)) {
+      return
+    }
+    stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
+    stereoHasSecondEye = stereo.hasSecondEye
+    stereoSingle = stereo.single
+    applyStereoMode()
+    if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
+    if (onLayer) drawPhotoLayer() else stereoQuadEntity?.setComponent(Visible(true))
+    updateStereoView()
+    if (preview) {
+      // The original still loads: the panel says so and stays until it is there
+      stereoStatus = getString(R.string.immersive_preview_loading_full, stereo.eyeWidth, stereo.eyeHeight)
+      setStatus(stereoStatus)
+      return
+    }
+    stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
+    if (media?.stereoPair != null && !stereo.hasSecondEye) {
+      // Shown at once and longer, as the decoder warning: the user expected 3D
+      showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
+      scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+    } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
+      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
+      setStatus(stereoStatus)
+    } else if (media?.isScene == true && scenePreparing) {
+      // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
+      setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
+    } else if (stereo3d) {
+      setStatus(stereoStatus)
+      showReliefEstimated()
+      scheduleInfoHide()
+      if (media != null) announceFlat3d(media)
+    } else {
+      setStatus(stereoStatus)
+      scheduleInfoHide()
+    }
+  }
+
+  /**
+   * [stereo] as the texture of the quad mesh: its bitmap recycled, the previous texture destroyed, the photo layer
+   * emptied. False, [stereo] kept for later, while the material is not ready; false too when the texture cannot be
+   * made, which the panel says.
+   */
+  private fun showOnMesh(stereo: StereoTexture): Boolean {
     val material = stereoQuadMaterial
     if (material == null) {
       Log.w(TAG, "stereo quad not ready yet, keeping the spatial photo for later")
       pendingStereo?.bitmap?.recycle()
       pendingStereo = stereo
-      return
+      return false
     }
     val bitmap = stereo.bitmap
     val texture =
@@ -2852,41 +2981,128 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     if (texture == null) {
       showError(getString(R.string.immersive_error_photo, "texture"))
-      return
+      return false
     }
     material.setAlbedoTexture(texture)
     // The mesh of the 2.5D view reads the same texture: never the one destroyed below
     reliefMeshMaterial?.setAlbedoTexture(texture)
     stereoTexture?.destroy()
     stereoTexture = texture
-    stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
-    stereoHasSecondEye = stereo.hasSecondEye
-    applyStereoMode()
-    if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
-    stereoQuadEntity?.setComponent(Visible(true))
-    updateStereoView()
-    val media = request
-    stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
-    if (media?.stereoPair != null && !stereo.hasSecondEye) {
-      // Shown at once and longer, as the decoder warning: the user expected 3D
-      showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
-      scheduleInfoHide(DECODER_WARNING_HIDE_MS)
-    } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
-      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
-      setStatus(stereoStatus)
-    } else if (media?.isScene == true && scenePreparing) {
-      // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
-      setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
-    } else if (stereo3d) {
-      setStatus(stereoStatus)
-      showReliefEstimated()
-      scheduleInfoHide()
-      if (media != null) announceFlat3d(media)
-    } else {
-      setStatus(stereoStatus)
-      scheduleInfoHide()
+    dropPhotoLayer()
+    return true
+  }
+
+  /**
+   * [stereo] for the photo layer: kept there in place of the previous one (recycled) until the next photo, drawn by
+   * [drawPhotoLayer] once the layer and its Surface are there; the quad mesh hides meanwhile.
+   */
+  private fun showOnLayer(stereo: StereoTexture) {
+    photoLayerTexture?.bitmap?.takeIf { it !== stereo.bitmap }?.recycle()
+    photoLayerTexture = stereo
+    photoLayerDrawn = false
+    stereoQuadEntity?.setComponent(Visible(false))
+    if (photoLayerEntity == null) {
+      photoLayerEntity =
+        Entity.create(
+          Panel(R.id.immersive_photo_layer_panel),
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        )
+      Log.i(TAG, "photo layer created")
     }
   }
+
+  /**
+   * Draws the photo of the layer on its Surface once the photo, the layer and the Surface are all there: each eye
+   * stretched over its half, or one picture over the whole Surface (see FlatScreenLayer.eyeRegions), the quad giving it
+   * its shape back (see [applyPhotoLayerShape]); then the layer shows. A Surface that cannot be drawn on gives the photo
+   * to the quad mesh instead. True once drawn.
+   */
+  private fun drawPhotoLayer(): Boolean {
+    val texture = photoLayerTexture ?: return false
+    if (photoLayerDrawn) return true
+    val surface = photoLayerSurface ?: return false
+    if (photoLayerPanel == null || !surface.isValid || texture.bitmap.isRecycled) return false
+    val drawn =
+      try {
+        val canvas = surface.lockHardwareCanvas()
+        try {
+          canvas.drawColor(Color.BLACK)
+          val twoEyes = texture.hasSecondEye
+          val (left, right) = FlatScreenLayer.eyeRegions(twoEyes)
+          val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+          for ((eye, target) in if (twoEyes) listOf(0 to left, 1 to right) else listOf(0 to left)) {
+            val source = FlatScreenLayer.sourceRegion(eye, texture.eyeWidth, texture.eyeHeight)
+            canvas.drawBitmap(texture.bitmap, rectOf(source), rectOf(target), paint)
+          }
+        } finally {
+          surface.unlockCanvasAndPost(canvas)
+        }
+        true
+      } catch (e: Exception) {
+        Log.e(TAG, "photo layer could not be drawn, the quad mesh shows the photo", e)
+        false
+      }
+    if (!drawn) {
+      photoLayerTexture = null
+      photoLayerEntity?.setComponent(Visible(false))
+      if (showOnMesh(texture)) {
+        applyStereoMode()
+        applyStereoScale()
+        stereoQuadEntity?.setComponent(Visible(true))
+      }
+      return false
+    }
+    photoLayerDrawn = true
+    applyPhotoLayerShape()
+    applyStereoPlacement()
+    photoLayerEntity?.setComponent(Visible(true))
+    Log.i(
+      TAG,
+      "photo layer drawn: ${if (texture.hasSecondEye) "two eyes" else "one picture"} of " +
+        "${texture.eyeWidth}x${texture.eyeHeight}, sharp ${request?.sharpFlatScreens != false}",
+    )
+    return true
+  }
+
+  /**
+   * The stereo mode and the size of the photo layer for the photo on it: LeftRight in 3D, MonoLeft in 2D, the whole
+   * Surface for one picture (see FlatScreenLayer.stereoMode), as wide as [stereoAngleDeg] at the distance of the screen
+   * and as high as the picture. Nothing while the layer shows nothing.
+   */
+  private fun applyPhotoLayerShape() {
+    val texture = photoLayerTexture ?: return
+    val panel = photoLayerPanel ?: return
+    val config = panel.panelShapeConfig ?: return
+    val distance = screenPlace?.distance ?: screenDistanceM
+    val mode = FlatScreenLayer.stereoMode(texture.hasSecondEye, stereoView() == StereoView.THREE_D)
+    val (width, height) = FlatScreenLayer.quadSize(stereoAngleDeg, texture.eyeWidth, texture.eyeHeight, distance)
+    if (config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f) return
+    try {
+      config.stereoMode = mode
+      config.width = width
+      config.height = height
+      panel.reshape(config)
+      Log.i(TAG, "photo layer is now $mode, ${width}x$height m")
+    } catch (e: Exception) {
+      Log.e(TAG, "could not set the photo layer to $mode, ${width}x$height m", e)
+    }
+  }
+
+  /** The photo layer shows nothing any more: hidden, its bitmap recycled. */
+  private fun dropPhotoLayer() {
+    photoLayerEntity?.setComponent(Visible(false))
+    photoLayerTexture?.bitmap?.recycle()
+    photoLayerTexture = null
+    photoLayerDrawn = false
+  }
+
+  /** The photo is on the photo layer rather than on the quad mesh. */
+  private val photoOnLayer: Boolean
+    get() = photoLayerTexture != null
+
+  private fun rectOf(region: FlatStereo.Region): Rect =
+    Rect(region.x, region.y, region.x + region.width, region.y + region.height)
 
   /**
    * "Relief estimated by AI" on the status line while an estimated relief shows in 3D, then the line goes back to what
@@ -2958,8 +3174,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun applyStereoMode() {
     val view = stereoView()
-    val mode = if (view == StereoView.THREE_D) StereoMode.LeftRight else StereoMode.MonoLeft
+    // One picture alone in its cell (a photo on the big screen) shows whole, never its left half
+    val mode =
+      when {
+        view == StereoView.THREE_D -> StereoMode.LeftRight
+        stereoSingle -> StereoMode.None
+        else -> StereoMode.MonoLeft
+      }
     stereoQuadMaterial?.setStereoMode(mode)
+    applyPhotoLayerShape()
     if (view == StereoView.MESH_25D) showReliefMesh() else reliefMeshEntity?.setComponent(Visible(false))
     // A mesh the SDK could not write went back to 3D, whose mode the call within writeReliefMesh set and said
     if (stereoView() != view) return
@@ -3014,6 +3237,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoEyes = Vector3(eyes.x, eyes.y, eyes.z)
     stereoGaze = direction
     stereoPlacedWithHead = head != null
+    // A flat screen the user may move goes at the distance the user chose last (see ScreenPlace)
+    screenPlace = if (request?.isMovableScreen == true) ScreenPlace.inFront(eyes, forward, screenDistanceM) else null
     // A 2.5D view starts again from here: the whole relief
     if (reliefMeshShown) {
       reliefAttenuation = 1.0
@@ -3034,6 +3259,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun applyStereoPlacement() {
     val entity = stereoQuadEntity ?: return
+    val place = screenPlace
+    if (place != null && request?.isMovableScreen == true) {
+      placeScreenPhoto(place)
+      return
+    }
     val eyes = stereoEyes ?: return
     val gaze = stereoGaze ?: return
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
@@ -3052,12 +3282,36 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (view != null) reliefMeshEntity?.setComponent(Transform(Pose(eyes, rotation)))
   }
 
+  /**
+   * A photo of a flat screen at [place]: the photo layer, or the quad mesh as wide as its angle at that distance (see
+   * [ScreenPlace]), both upright and facing the eyes it was placed from.
+   */
+  private fun placeScreenPhoto(place: ScreenPlace) {
+    val pose = Pose(place.center, StereoComposer.quadRotation(place.direction))
+    if (photoOnLayer) {
+      photoLayerEntity?.setComponent(Transform(pose))
+      applyPhotoLayerShape()
+      return
+    }
+    val entity = stereoQuadEntity ?: return
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    entity.setComponent(Transform(pose))
+    val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight, place.distance)
+    entity.setComponent(Scale(Vector3(width, height, 1f)))
+  }
+
   /** The size of the quad for the angular width chosen and the eyes of the photo shown; the mesh too in 2.5D. */
   private fun applyStereoScale() {
     if (reliefMeshShown) {
       writeReliefMesh(withTriangles = false)
       applyStereoPlacement()
       return
+    }
+    screenPlace?.let { place ->
+      if (request?.isMovableScreen == true) {
+        placeScreenPhoto(place)
+        return
+      }
     }
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
     val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight)
@@ -3165,10 +3419,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Any other media: the quad goes away (its texture stays until the next spatial photo replaces it), and the mesh of
-   * a relief with it.
+   * a relief and the photo layer with it.
    */
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
+    dropPhotoLayer()
     reliefMeshEntity?.setComponent(Visible(false))
     reliefMesh = null
     reliefMeshWritten = false
@@ -4470,6 +4725,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (liveViewer === this) liveViewer = null
     releaseRelief()
     dropScene()
+    dropPhotoLayer()
     scope.cancel()
     super.onDestroy()
   }
@@ -4500,6 +4756,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingStereo = null
     stereoTexture = null
     stereoQuadMaterial = null
+    dropPhotoLayer()
+    photoLayerPanel = null
+    photoLayerSurface = null
     // The triangles go with the scene, as the textures do
     reliefMesh = null
     reliefMeshMaterial = null
@@ -4651,6 +4910,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * keep the bearings and repeated while the stick is held, so that looking behind takes one long push.
      */
     private const val SNAP_TURN_DEGREES = 30f
+
+    /**
+     * The distance of the flat screens, as the user left it last (the Distance buttons, the thumbstick while a grip
+     * holds the screen): the next flat screen opens there. Lives as long as the process, as the choices of the app do
+     * until it closes.
+     */
+    private var screenDistanceM = FlatScreenGeometry.DEFAULT_DISTANCE_M
 
     /** Token of the last intent built by [intent], checked by parse. Lives as long as the process. */
     @Volatile private var launchToken: String? = null
