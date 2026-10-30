@@ -55,6 +55,7 @@ import '../fakes/fake_scene_engine.dart';
 import '../fakes/fake_share_writer.dart';
 import '../fakes/fake_stereo_panorama_engine.dart';
 import '../fakes/recording_creator_files.dart';
+import '../scene/scene_test_support.dart' show exifWithFocal35, insertAfterSoi;
 import 'settle_still.dart';
 
 const _gib = 1 << 30;
@@ -642,5 +643,18 @@ void main() {
       expect((job.state, job.skipReason), (ConversionState.skipped, ConversionSkipReason.sameSettingsExists));
       expect(writer.calls, isEmpty, reason: 'nothing written on the share');
     });
+  });
+
+  testWidgets('the 360° panorama: the part invented from the focal length the EXIF of the copy tells', (tester) async {
+    final photo = insertAfterSoi(jpegFile(width: 4000, height: 3000), exifWithFocal35(13));
+    final salon = shared('/2024/salon.jpg', photo);
+
+    await openDialog(tester, [salon]);
+    await tapIn(tester, find.byKey(const Key('ai_conversion_type_panoramaFromPhoto')));
+    await settle(tester, until: () => find.byKey(const Key('ai_conversion_invented')).evaluate().isNotEmpty);
+
+    final percent = (panoramaInventedShare(width: 4000, height: 3000, focal35: 13) * 100).round();
+    expect(percent, isNot((panoramaInventedShare(width: 4000, height: 3000) * 100).round()), reason: 'not the default');
+    expect(find.text('About $percent% of this panorama will be invented by AI'), findsOneWidget);
   });
 }

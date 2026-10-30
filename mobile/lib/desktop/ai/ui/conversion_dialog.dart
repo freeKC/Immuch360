@@ -262,14 +262,19 @@ double panoramaInventedShare({int? width, int? height, int? focal35}) {
 /// invented; null when it does not tell it
 typedef ConversionFocalReader = Future<int?> Function(ConversionSource source);
 
-/// Reads it from the head of a JPEG of this computer; null for a photo of the server or of a share, which would have
-/// to be copied first, and for another format
+/// Reads it from the head of a JPEG of this computer, or of the copy the dialog made of a photo of a share; null for a
+/// photo of the server, which would have to be copied first, and for another format
 final conversionFocalReaderProvider = Provider<ConversionFocalReader>(
   (ref) => (source) async {
-    if (source is! LocalFileSource) {
+    final path = switch (source) {
+      LocalFileSource(:final path) => path,
+      ShareFileSource(:final copyPath) => copyPath,
+      _ => null,
+    };
+    if (path == null) {
       return null;
     }
-    final head = await readFileHead(source.path);
+    final head = await readFileHead(path);
     if (head == null) {
       return null;
     }
