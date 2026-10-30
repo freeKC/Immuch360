@@ -299,6 +299,14 @@
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreen.kt": {
+    "blob": "0f1ec4ab65b1bc403491892077e9369cb1e35bb3",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the grips of a flat screen (a short press, a hold on it, both grips), where it stands, the grab around the eyes and the stretch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreenLayer.kt": {
+    "blob": "587f5a88b7b7b800b24aa7b86f865b88df100a1c",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the compositor quad layer of the flat photos, its filters and its shape"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatStereo.kt": {
     "blob": "4d29bedad4e64bb304dbe85141bb9f98332b7fb6",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): where the eyes of a flat 3D frame lie, the stereo mode of the flat video screen, and FlatStereoSpec, the flat3d JSON of the stereoPair parameter"
@@ -307,17 +315,21 @@
     "blob": "4bef68b7d6a0e3a50938f6b6a85c099c4faaa102",
     "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): no outline on the 3D version of a generated panorama, the flags on one line of the panel"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveApiImpl.kt": {
+    "blob": "fd120d963b6653326e1f770af8aa843a956f63a9",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveInputSystem.kt": {
-    "blob": "25179a9b035fb587cc8944e7b3392a02501fa8b1",
-    "reason": "AI immersive phases 2 and 3, lot S3: the buttons held every frame, and the controls of a 3D scene (the left thumbstick glides, a thumbstick click resets); feat-ai-immersive, not yet on the phone branch"
+    "blob": "b7665503b3ede97ed36fc33160acf08544767e62",
+    "reason": "AI immersive phases 2 and 3, lot S3: the buttons held every frame, and the controls of a 3D scene (the left thumbstick glides, a thumbstick click resets); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the rays of the controllers while a flat screen shows, and the actions of a flat screen held"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveMedia.kt": {
-    "blob": "11d6ab553e0bb1adcd98f559055f4a1f9515065b",
-    "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch"
+    "blob": "68f4ea6ff9873ff2ad3d041b2c776a2936371c84",
+    "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "b8da4432e5779fec1c6ad5c7088423cbe9d6b526",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once"
+    "blob": "5e5b526de284f7b6515c4e9760cff07e39bbefcb",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
     "blob": "f555b014f4298cd66b0d334b4e916324b965225b",
@@ -336,12 +348,12 @@
     "reason": "AI immersive lot A7: decoding and cutting a side by side photo for the stereo quad; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
-    "blob": "68eba9ba0cc3e46b24fac920645878ea1220e644",
-    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media"
+    "blob": "e17700266d7cb0718933df92a12c2d4af8386850",
+    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
-    "blob": "031a250582b6cfdb623b9f764e1283bcdfc2feaf",
-    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d kind of the stereoPair JSON"
+    "blob": "36a7bc2ecc30ca921a3475ab3dfe92566d2be83c",
+    "reason": "AI immersive lots A7 and A11, and C0 of phases 2 and 3: the kinds of the stereoPair JSON, the view a relief first shows in, and the 3D scene of phase 2 (volumetricScene); feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d kind of the stereoPair JSON; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the bigScreen request and its kind"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/scene/GlbReader.kt": {
     "blob": "cbc5f9d1234eabfbb0848780ab87240705305a7a",
@@ -427,9 +439,337 @@
     "blob": "b7fd38e59aec0ae4704b25eb66bb4ca104a98d53",
     "reason": "DJI link stage 2b (feat-dji-link-3): the strip under the video of the Quest flight view, which no button hides; DJI integration (feat-dji-30): the strip's warnings come and go"
   },
+  "mobile/android/app/src/main/res/layout/immersive_feedback_panel.xml": {
+    "blob": "5e8c074e808aae9039fada574d1f6fe738c63627",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): notices on two lines"
+  },
   "mobile/android/app/src/main/res/layout/immersive_info_panel.xml": {
-    "blob": "d496ead5ed3cae35f81e999da23c509c1313b356",
-    "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; phases 2 and 3, lot S3: the lines and the Reset button of a 3D scene, ids to hide the mapping and previous and next in a scene; feat-ai-immersive, not yet on the phone branch"
+    "blob": "282e81d3775f328c163f0ee904bf416f4de10adc",
+    "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; phases 2 and 3, lot S3: the lines and the Reset button of a 3D scene, ids to hide the mapping and previous and next in a scene; feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size and Distance rows of a flat screen in place of previous and next"
+  },
+  "mobile/android/app/src/main/res/values-af/immersive.xml": {
+    "blob": "4414f928c803e47b60c1a79d21b929f992822020",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ar/immersive.xml": {
+    "blob": "1b2de5471f1e5b09ab7555372a2f8ecfe1a26737",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-az/immersive.xml": {
+    "blob": "d82eb1d778e6ca85039317bbc4e1b5b727bbc1a5",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+gsw/immersive.xml": {
+    "blob": "f1cf0df6eabb4fe23b2afe90147124bc1789c137",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+kab/immersive.xml": {
+    "blob": "2ce2e638b40fa3f66a6c16f8537a0c4074ccd002",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+kmr/immersive.xml": {
+    "blob": "0faffffee72b5621604409561d0b819accd0893c",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+kxm/immersive.xml": {
+    "blob": "d474e24fe24b6d0b64d0238f44a75155dd30c958",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+lmo/immersive.xml": {
+    "blob": "fbe649c04eed91ab2f923d6b40233f4a06fb9f81",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+mfa/immersive.xml": {
+    "blob": "c110094c680ce290142dff8b7cca4c403787dd9c",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+sr+Cyrl/immersive.xml": {
+    "blob": "9786d53feadbde71ac1543f89dd7defd474af588",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+sr+Latn/immersive.xml": {
+    "blob": "ce20d8b4ff244c7a819e067f20dabe5de45b0093",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+swg/immersive.xml": {
+    "blob": "df4707e44a22325cdabf467bc0f93bbbd702a11b",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+yue+Hant/immersive.xml": {
+    "blob": "2250e35a64577aed56dca7d4d1d3cd9b92217f8b",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+zh+Hans/immersive.xml": {
+    "blob": "2b7f82f78a7f71520e73ad3595a05c1120e0b5d5",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-b+zh+Hant/immersive.xml": {
+    "blob": "c44a01a958a47881832a4cf6e6de4087ad60da46",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-be/immersive.xml": {
+    "blob": "361ba66a3c2eba0feca7b609ebb604bb7f3b61b3",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-bg/immersive.xml": {
+    "blob": "140fc8351c4a8009ab78a6dbe9c1914f80172208",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-bi/immersive.xml": {
+    "blob": "fd6d264d9035750493dfbdd05aadb51027086ddb",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-bn/immersive.xml": {
+    "blob": "ac671c151411ae5f2a1f292daa1f1b08b69cbe27",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-br/immersive.xml": {
+    "blob": "9c7a72e7bcda3f1a53bc72eb2a4842e4a9685982",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-bs/immersive.xml": {
+    "blob": "83233fb63f36552c83f38d1f18dea72019a970c1",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ca/immersive.xml": {
+    "blob": "a58d241777e84ada462fb5610ec623aeb729c165",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-cs/immersive.xml": {
+    "blob": "aae2e13f9ac6364bb6a8b8477f8250293488ebb0",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-cv/immersive.xml": {
+    "blob": "7ac1485d1915bd8bae7577dc91e9a2235fd1e88d",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-da/immersive.xml": {
+    "blob": "038209e6ca610beec311d21857a87d51447fb9d8",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-de-rCH/immersive.xml": {
+    "blob": "5406ad41ea866af4523250672334916fadca011f",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-de/immersive.xml": {
+    "blob": "08f10550f81ad3e086bc1eb9b7c5b7795e7f326d",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-el/immersive.xml": {
+    "blob": "9a1a627b8c37bbca61e1c2d494e45677fbc08ba7",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-en-rGB/immersive.xml": {
+    "blob": "331211975ae4ce50d466976165e3e9456472c6c1",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-eo/immersive.xml": {
+    "blob": "e4e2cb712a6b59372487b642f932906ce0a00ac2",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-es/immersive.xml": {
+    "blob": "a4afd2ddc4227fa85a6e62b7d1e011137ff8a474",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-et/immersive.xml": {
+    "blob": "4dbe216ca217ddbf6b9d197e06c454d23b39fcf4",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-eu/immersive.xml": {
+    "blob": "40bb1dfd20b80458099f275d79cc85cce819da78",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-fa/immersive.xml": {
+    "blob": "68873786f6aee4dce3c354dc0ed16ddeaf1cbe04",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-fi/immersive.xml": {
+    "blob": "782213efbd3972ea6fe2a0041c9dbc5cf4d86ee7",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-fil/immersive.xml": {
+    "blob": "92c3c8a77f759e926ccc922d034d94f71f02c0b5",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-fr/immersive.xml": {
+    "blob": "780e9dfde5e8403ad57fbdfe90d592821746c6e6",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ga/immersive.xml": {
+    "blob": "fe380a01d7af545bc4dd1ec873ae0b0343203a14",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-gl/immersive.xml": {
+    "blob": "bac49efbd48d62b181861ceae4a2cebc1bf7fc25",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-gu/immersive.xml": {
+    "blob": "5672a6826da139a2a7c0092e86a99c4f776d56f5",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-hi/immersive.xml": {
+    "blob": "528b8630840df3d342da134d2eb801058ed74684",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-hr/immersive.xml": {
+    "blob": "1ba8c26009cda12b6f3cdc70319275e118d31397",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-hu/immersive.xml": {
+    "blob": "1e3165b5ee72266d20699bacb1bd343fd0d91cf3",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-hy/immersive.xml": {
+    "blob": "0cdbbd5f36a2232018d19507c2f42976355658d0",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-in/immersive.xml": {
+    "blob": "3dca832028e313e1fcb783f3913a1c746b85f1b2",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-is/immersive.xml": {
+    "blob": "a7540fac1c8726c52dda91f4ee65306cc4453a92",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-it/immersive.xml": {
+    "blob": "6754e32920a34a83e1ff07aa093bd9cbaf74a757",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-iw/immersive.xml": {
+    "blob": "2dfaab11653591e7e0905d3261f90318f0fd266b",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ja/immersive.xml": {
+    "blob": "3a0cf3e203ecf7a851a56d2e8d9df48dec881066",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ka/immersive.xml": {
+    "blob": "6ae9f4cbcd9b50c9387fd359dbde0541b951a0dc",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-kk/immersive.xml": {
+    "blob": "11026b95dc8251999bd16bea5eb15e35476f135a",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-km/immersive.xml": {
+    "blob": "f133b69c7aaaac085d369f1cddaeb2544cac6bdb",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-kn/immersive.xml": {
+    "blob": "18ad8a4538897485864f05cf6179bf5a66d79075",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ko/immersive.xml": {
+    "blob": "a3e32c8409034086317615b2e943336f36054f3c",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-lb/immersive.xml": {
+    "blob": "09251ecd10b5e8cbf580bf604a03a3c9093413b1",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-lt/immersive.xml": {
+    "blob": "fc39e5df67c1fef32f9b2dfb8c2e027d37fe668f",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-lv/immersive.xml": {
+    "blob": "3ed6944ea0c6a5e51c2cd863f5dc44d64b060ef2",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-mi/immersive.xml": {
+    "blob": "d8f71731b7527db4319f49fb084ca4d145fb4ea8",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-mk/immersive.xml": {
+    "blob": "fe2a85e66965307a87087adb0193c7afe3a47b65",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ml/immersive.xml": {
+    "blob": "a199e035735b599f39fff1c352c4754e75bd06bf",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-mn/immersive.xml": {
+    "blob": "ee531d5e832d9656682a855dd8665ac5c739b128",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-mr/immersive.xml": {
+    "blob": "c29bc07fe9660eaedaa095a74b0fb891a5095910",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ms/immersive.xml": {
+    "blob": "327e23ad169e687c8d42dcccacf586d7901c383c",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-nb-rNO/immersive.xml": {
+    "blob": "4842c49b411624c65326e2f12c25ef21a8059eaa",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ne/immersive.xml": {
+    "blob": "da5562012a9d57ae6ba964834c29e5beb6a609e2",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-nl/immersive.xml": {
+    "blob": "b0cc5352bc1c743efd0242bad054a6b8424a2587",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-nn/immersive.xml": {
+    "blob": "f45626734581f6bbc28ecaeaf3031baee1661392",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-pa/immersive.xml": {
+    "blob": "e59bdcf563b4d6be3e5e3a9aaf7424bf2f801ac4",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-pl/immersive.xml": {
+    "blob": "6dd685dbb9949beeed7967e5a7a27c133ec7e11e",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-pt-rBR/immersive.xml": {
+    "blob": "15338dbdf3ce8e23665af43114da6c0a2e26b19f",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-pt/immersive.xml": {
+    "blob": "b32e658030728c5e6884aaf78c0d6897fd284ac4",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ro/immersive.xml": {
+    "blob": "bb24e4c15baf46b9ace31978aec1341395283bca",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ru/immersive.xml": {
+    "blob": "1e361401f74809273b3f88148497fb9c2519e422",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-si/immersive.xml": {
+    "blob": "39da67e688456334bcd8ce4fdab605970e8da44a",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-sk/immersive.xml": {
+    "blob": "d4121ac1b15f1840734ddc2031b3810eff537200",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-sl/immersive.xml": {
+    "blob": "278a5b886ae0b7dff2d4b131df26087b467e4a91",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-sq/immersive.xml": {
+    "blob": "942208642bf84b0159cc6d37650c10c6ad423d85",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-sv/immersive.xml": {
+    "blob": "edb5d172c00ca07e81756c3481909eb82966aa5f",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-sw/immersive.xml": {
+    "blob": "95015745436d517b1ffc98d8f244ebe722c33eba",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ta/immersive.xml": {
+    "blob": "4edeecf99c98176f6417a46d4c0c121e1e978d03",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-te/immersive.xml": {
+    "blob": "513185f12bb1ce8deb7c535f4d2223ba39741bb9",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
   },
   "mobile/android/app/src/main/res/values-television-v31/styles.xml": {
     "blob": "439e233a038a6eb09eec03874e02a4aedff2dcfa",
@@ -439,13 +779,41 @@
     "blob": "0357130537edf1cbd07ecb03d5dda0b1a6c87264",
     "reason": "TV lot (651962690): dark launch theme of the app on a TV"
   },
+  "mobile/android/app/src/main/res/values-th/immersive.xml": {
+    "blob": "2dcb900d09c6ef379bcc2604637355ea00e8736a",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-tl/immersive.xml": {
+    "blob": "6e98c3a12846018b436f1a02efd69194750c9c12",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-tr/immersive.xml": {
+    "blob": "ea86c003666bae7e2926a5a8ac43b7891539b58a",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-uk/immersive.xml": {
+    "blob": "4510650e4b2a7f016fa396280ba65eda2e4293bb",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-ur/immersive.xml": {
+    "blob": "d6b894ad91f0527094a2829649daf4a8b35a72f2",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-uz/immersive.xml": {
+    "blob": "a7485a38636e1ab1e658b2f5fbee6c9b59dc9005",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
+  "mobile/android/app/src/main/res/values-vi/immersive.xml": {
+    "blob": "8057dab9e4d679e05c031516d0fc96501a336e88",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size, the Distance and the grip hints of a flat screen in this language"
+  },
   "mobile/android/app/src/main/res/values/dji_flight.xml": {
     "blob": "8200c08dcd29a3b11f88c38c369a5b51b890ca07",
     "reason": "DJI link stage 2b (feat-dji-link-3): the panel ids of the Quest flight view; DJI finalisation (feat-dji-final): the ids of the columns and of the alert panel; DJI obstacle ring (feat-dji-obstacle-ui): the ids of the halo panels in place of the alert panel; DJI integration (feat-dji-30): the ids of the circle's panels"
   },
   "mobile/android/app/src/main/res/values/immersive.xml": {
-    "blob": "780ae11f65ee5536b86feed939e8d8ffa968de4b",
-    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the id of the flat video panel"
+    "blob": "174a0450609e41a1572645854940bba35256a60c",
+    "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the id of the flat video panel; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the id of the photo layer panel, the Size, the Distance and the grip hints of a flat screen"
   },
   "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
     "blob": "46cc9494b2c2d01fcdb02c6dffd4e967dcf35e57",
@@ -735,6 +1103,22 @@
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/BigScreenSpecTest.kt": {
+    "blob": "5c20d462e79128259bf0e34baaa50012d49109c4",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the bigScreen request against big_screen_contract_v1.json"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGeometryTest.kt": {
+    "blob": "33dfb7e5dc90c2a296ee29a19251888d08532980",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of where a flat screen stands, the ray, the grab, the distance, the size and the stretch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGripTest.kt": {
+    "blob": "84e4cdd2c6f5b1acfcd9904a75d021f70c7bf87d",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of the grip states: short press, hold, both grips, release, reset"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenLayerTest.kt": {
+    "blob": "6e82c1d4fb9f29da8ec337ebbe6eee50c091b8b2",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of the parameters of the compositor layer and its filters"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoSpecTest.kt": {
     "blob": "c12470ebb72a39906cac0abf3baf073920082b2e",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the flat3d JSON against the samples of flat3d_contract_v1.json"
@@ -748,8 +1132,8 @@
     "reason": "AI immersive phases 2 and 3, lot P4: the packet of a generated panorama against the samples of the contract, the opening yaw, the text on every path of the sphere; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): tests of the outline of a 3D version, of the lines of the panel and of the reading of the head"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveInputTest.kt": {
-    "blob": "716f141f81a8d06bf20598f8058ec18182483efe",
-    "reason": "AI immersive phases 2 and 3, lot S3: the controls of a 3D scene and the left thumbstick held; feat-ai-immersive, not yet on the phone branch"
+    "blob": "f6f9ca785a12f6718ecdcb92108f7d0df50ff7a3",
+    "reason": "AI immersive phases 2 and 3, lot S3: the controls of a 3D scene and the left thumbstick held; feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the actions of a flat screen, held or not"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ImmersiveMediaTest.kt": {
     "blob": "1a45a5027dcc209679927c754476bd7e43d4f320",
@@ -768,8 +1152,8 @@
     "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
-    "blob": "61b313156b19384cd88f70e95fe6eeda6a37b0f9",
-    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, fix round): the English fallbacks of the flat 3D texts against en.json"
+    "blob": "84da61961dc2a2c0451fc9816cdf5eefb706918a",
+    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, fix round): the English fallbacks of the flat 3D texts against en.json; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens against en.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
     "blob": "60bf53529057dacf9460c3cd2c3a0b657da6dd23",
