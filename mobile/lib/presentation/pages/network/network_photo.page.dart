@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
@@ -531,6 +533,18 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Watched here, in the build of this page: the photo is known once the file was read, which rebuilds the page
     final current = _current;
     final turns = current == null ? 0 : _turnsOf(current);
+    // Immuch360 Desktop: "Make 3D (AI)" in the menu, as for a photo of the library
+    // (lib/desktop/ai/ui/share_conversion.dart)
+    final makeImmersive = CurrentPlatform.isDesktop && current != null && !tvMode
+        ? watchShareMakeImmersive(
+            ref,
+            context.t,
+            current.entry,
+            _info,
+            width: _info?.frameWidth ?? _imageSize?.width.round(),
+            height: _info?.frameHeight ?? _imageSize?.height.round(),
+          )
+        : null;
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
     final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
     // The view a relief first shows in, read with the gate: a page without the button reads no setting
@@ -683,9 +697,17 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       tooltip: '360°',
                       onPressed: () => unawaited(_open360(photo)),
                     ),
+                  // Immuch360 Desktop: the versions of the photo on its share, and its original for a version
+                  // (lib/desktop/ai/library/share_versions_button.dart)
+                  if (CurrentPlatform.isDesktop && photo != null)
+                    DesktopShareVersionsButton(
+                      key: ValueKey('versions:${photo.entry.path}'),
+                      entry: photo.entry,
+                      neighbours: widget.folder?.entries,
+                    ),
                   // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
                   if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),
-                  if (photo != null && (!is360 || canUpload))
+                  if (photo != null && (!is360 || canUpload || makeImmersive != null))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
@@ -709,6 +731,13 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                               title: Text(context.t.network_upload_action),
                               contentPadding: EdgeInsets.zero,
                             ),
+                          ),
+                        if (makeImmersive != null)
+                          desktopShareMakeImmersiveMenuItem(
+                            context,
+                            makeImmersive,
+                            onOpen: () =>
+                                unawaited(ref.read(shareConversionOpenerProvider)(this.context, [photo.entry])),
                           ),
                       ],
                     ),

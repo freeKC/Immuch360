@@ -8,6 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
+import 'package:immich_mobile/desktop/ai/creator/destination.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
+import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
@@ -72,6 +75,24 @@ class _Conversions extends ConversionQueueNotifier {
           step: step,
           steps: steps,
         ),
+    ],
+  );
+}
+
+/// The queue with one job done, whose version waits in the folder of the copies to go to the share of its original
+class _MadeForShare extends ConversionQueueNotifier {
+  @override
+  ConversionQueueState build() => ConversionQueueState(
+    jobs: [
+      ConversionJob(
+        id: 'conversion-0',
+        source: LocalFileSource('/tmp/copy/salon.jpg'),
+        batchIndex: 1,
+        batchSize: 1,
+        target: const ConversionTarget(folder: '/tmp/share-out-1', fileName: 'salon_3D_LRF_Full_SBS.jpg'),
+        state: ConversionState.done,
+        writtenPath: '/tmp/share-out-1/salon_3D_LRF_Full_SBS.jpg',
+      ),
     ],
   );
 }
@@ -149,6 +170,34 @@ void main() {
       isEmpty,
     );
     expect(reasonsWith([]), isEmpty);
+  });
+
+  test('a version made, on its way to the share of its original, until it is there', () {
+    final writing = Completer<ShareWriter?>();
+    final container = ProviderContainer(
+      overrides: [
+        conversionQueueProvider.overrideWith(_MadeForShare.new),
+        shareWriterOpenerProvider.overrideWithValue((sourceId) => writing.future),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.read(conversionQueueProvider);
+    expect(container.read(desktopCloseReasonsProvider)(), isEmpty, reason: 'its job is done');
+
+    container.read(sharePublisherProvider.notifier).follow({
+      'conversion-0': const ShareVersionTarget(
+        folder: ShareFolder(
+          sourceId: 'nas',
+          path: '/2024',
+          label: 'smb://nas/photos/2024',
+          rootKey: 'k',
+          rootLabel: 'r',
+        ),
+        fallbackFolder: '/tmp/chosen',
+      ),
+    });
+
+    expect(container.read(desktopCloseReasonsProvider)(), {DesktopCloseReason.conversions});
   });
 
   test('a 360° panorama being generated, once its generation tells its steps', () {

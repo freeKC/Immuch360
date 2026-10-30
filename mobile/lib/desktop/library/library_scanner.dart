@@ -650,14 +650,8 @@ class _Scan {
     };
     final xmp = metadata.immersive;
     final pair = xmp is StereoPhotoXmp && xmp.isReadableStereoPhoto ? xmp : null;
-    final origin = switch (xmp?.origin) {
-      ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
-      ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
-      ImmersiveOrigin.reconstructedFromPhoto => IndexedOrigin.reconstructed,
-      // An Origin this build does not know (a later format): the id of the file still says the app made it
-      _ when xmp?.derivativeId?.isNotEmpty ?? false => IndexedOrigin.other,
-      _ => null,
-    };
+    // An Origin this build does not know (a later format): the id of the file still says the app made it
+    final origin = indexedOriginOf(xmp);
     return IndexedFile(
       id: id,
       rootId: root.id,

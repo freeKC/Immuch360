@@ -1,10 +1,10 @@
 // The close guard of the window on a computer (design 1.8). Closing the window quits the app, which stops the uploads
 // under way (they go on at the next start), the share of the computer on the network and the 3D conversions (the
-// queue does not survive the window, design-final 2026-10-26 section 2.6.5). The window tells the app of
-// every close instead of closing (DesktopWindow.setPreventClose, set once by DesktopShell): the app asks first when
-// one of those runs, and closes at once otherwise. Deciding at the moment of the close, rather than switching the
-// prevention on and off with the uploads, keeps the providers below untouched until then: one that was never created
-// has nothing running.
+// queue does not survive the window, design-final 2026-10-26 section 2.6.5), the versions made for a share and not
+// written there yet among them. The window tells the app of every close instead of closing
+// (DesktopWindow.setPreventClose, set once by DesktopShell): the app asks first when one of those runs, and closes at
+// once otherwise. Deciding at the moment of the close, rather than switching the prevention on and off with the
+// uploads, keeps the providers below untouched until then: one that was never created has nothing running.
 //
 // A 360° panorama being generated (design-final 2026-10-27, section 4.5.7) is told with its step, "A 360° panorama is
 // being generated (step 12 of 28). Closing stops it.", which follows the generation while the dialog shows; the line
@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
@@ -53,7 +54,9 @@ final desktopCloseReasonsProvider = Provider<Set<DesktopCloseReason> Function()>
       DesktopCloseReason.uploads,
     if (ref.exists(phoneShareProvider) && runs(phoneShareProvider, (state) => state.isEnabled))
       DesktopCloseReason.computerShare,
-    if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.hasWork))
+    // A version made for a share goes there once its job is done: quitting meanwhile would leave it behind
+    if ((ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.hasWork)) ||
+        (ref.exists(sharePublisherProvider) && ref.read(sharePublisherProvider.notifier).isBusy))
       DesktopCloseReason.conversions,
     if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.generating != null))
       DesktopCloseReason.generation,

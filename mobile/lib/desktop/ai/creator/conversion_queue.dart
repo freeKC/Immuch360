@@ -985,19 +985,37 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       if (key == null || (parent != null && panoramaId == null)) {
         return null;
       }
-      return await tools.finder.withSettings(
-        DerivedRuleOriginal(name: original.name, size: original.size, folder: job.source.folder, sha1: original.sha1),
+      final rule = DerivedRuleOriginal(
+        name: original.name,
+        size: original.size,
+        folder: job.source.folder,
+        sha1: original.sha1,
+      );
+      bool Function(ExistingVersion version)? where;
+      if (parent != null) {
+        where = (version) => switch (version.xmp) {
+          StereoPanoramaXmp(:final parentDerivativeId) => parentDerivativeId == panoramaId,
+          _ => false,
+        };
+      }
+      final found = await tools.finder.withSettings(
+        rule,
         key,
         folder: target.folder,
         onlyInFolder: job.existing == ExistingVersionChoice.replace,
         kind: job.kind.output,
-        where: parent == null
-            ? null
-            : (version) => switch (version.xmp) {
-                StereoPanoramaXmp(:final parentDerivativeId) => parentDerivativeId == panoramaId,
-                _ => false,
-              },
+        where: where,
       );
+      if (found != null) {
+        return found;
+      }
+      // The folder of the original on a share, for Skip: a 3D version waiting to be made from this panorama reads its
+      // file on this computer, so a panorama followed by one is made again rather than skipped for one on the share
+      final chained = state.jobs.any((other) => other.parentId == job.id);
+      if (job.source case final RemoteVersionLookup photo when job.existing == ExistingVersionChoice.skip && !chained) {
+        return await photo.versionWithSettings(rule, key, kind: job.kind.output, where: where);
+      }
+      return null;
     } catch (error, stack) {
       _log.warning('The versions of ${job.source.name} could not be looked up', error, stack);
       return null;
