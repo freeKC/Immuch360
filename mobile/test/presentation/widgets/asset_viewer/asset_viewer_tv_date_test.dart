@@ -1,8 +1,9 @@
-// The date and time of a photo on a TV (the remote control layout): at the bottom left of the viewer, shown and hidden
-// with its controls, never over the top centre of the photo, and off with "Show photo date and time". A video on a TV
-// and every phone keep them at the top centre, as in Immich. From the TV photo date of Michael Cloutier (mlc70).
+// The date and time of a photo on a TV (the remote control layout): at the bottom left of the viewer (bottom right in a
+// right to left language), shown and hidden with its controls, never over the top centre of the photo, and off with
+// "Show photo date and time". A video on a TV and every phone keep them at the top centre, as in Immich. From the TV
+// photo date of Michael Cloutier (mlc70).
 
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -70,18 +71,26 @@ void main() {
     tester.takeException();
   }
 
-  Future<ProviderContainer> pumpViewer(WidgetTester tester, BaseAsset asset, {required bool tvMode}) async {
+  Future<ProviderContainer> pumpViewer(
+    WidgetTester tester,
+    BaseAsset asset, {
+    required bool tvMode,
+    Locale? locale,
+  }) async {
     final timeline = TimelineService((
       assetSource: (index, count) async => [asset].skip(index).take(count).toList(),
       bucketSource: () => Stream.value([const Bucket(assetCount: 1)]),
       origin: TimelineOrigin.main,
     ));
     addTearDown(timeline.dispose);
+    // After a failure flutter_test leaves the tree mounted: take it down before the settings are reset (tearDown), or
+    // the next test hangs instead of running
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: locales.values.toList(),
         path: translationsPath,
-        startLocale: locales.values.first,
+        startLocale: locale ?? locales.values.first,
         fallbackLocale: locales.values.first,
         saveLocale: false,
         useFallbackTranslations: true,
@@ -149,6 +158,18 @@ void main() {
       findsNothing,
       reason: 'it never takes the focus',
     );
+  });
+
+  testWidgets('on a TV in a right to left language they sit at the bottom right', (tester) async {
+    await pumpViewer(tester, photo, tvMode: true, locale: const Locale('ar'));
+
+    expect(tvLabel, findsOneWidget);
+    expect(Directionality.of(tester.element(tvLabel)), TextDirection.rtl);
+    final screen = tester.getSize(find.byType(AssetViewer));
+    final label = tester.getRect(tvLabel);
+    expect(label.right, greaterThan(screen.width * 3 / 4), reason: 'on the right');
+    expect(screen.width - label.right, lessThan(32), reason: 'by the side, the buttons of the row on its left');
+    expect(label.top, greaterThan(screen.height / 2), reason: 'at the bottom');
   });
 
   testWidgets('on a TV they show and hide with the controls', (tester) async {
