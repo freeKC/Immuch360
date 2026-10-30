@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -536,10 +537,16 @@ class ScrubberState extends ConsumerState<Scrubber> with TickerProviderStateMixi
                   onPointerMove: _onThumbPointerMove,
                   onPointerUp: _onThumbPointerEnd,
                   onPointerCancel: _onThumbPointerEnd,
-                  child: GestureDetector(
-                    onVerticalDragStart: _onDragStart,
-                    onVerticalDragUpdate: _onDragUpdate,
-                    onVerticalDragEnd: _onDragEnd,
+                  child: RawGestureDetector(
+                    gestures: {
+                      _ThumbDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<_ThumbDragGestureRecognizer>(
+                        _ThumbDragGestureRecognizer.new,
+                        (recognizer) => recognizer
+                          ..onStart = _onDragStart
+                          ..onUpdate = _onDragUpdate
+                          ..onEnd = _onDragEnd,
+                      ),
+                    },
                     child: _Scrubber(
                       thumbAnimation: _thumbAnimation,
                       labelAnimation: _labelAnimation,
@@ -661,6 +668,19 @@ class _ScrollLabel extends StatelessWidget {
 
 /// The icon the label shows in slow mode
 const kScrubberSlowIconKey = Key('scrubber_slow_icon');
+
+/// The drag of the thumb, which wins as soon as the finger touches it. A finger held still on the thumb waits for the
+/// slow mode ([kScrubberSlowHold]); a plain drag would win only once the finger moved, and after 500 ms the long press
+/// of the drag selection (TimelineDragRegion) won instead and the thumb stayed frozen until the finger let go.
+class _ThumbDragGestureRecognizer extends VerticalDragGestureRecognizer {
+  _ThumbDragGestureRecognizer();
+
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    super.addAllowedPointer(event);
+    resolvePointer(event.pointer, GestureDisposition.accepted);
+  }
+}
 
 class _Scrubber extends StatelessWidget {
   final Text? label;

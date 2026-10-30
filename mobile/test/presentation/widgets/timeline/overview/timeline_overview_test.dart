@@ -5,6 +5,7 @@
 // scrubber says the year and the month, the year alone on the years, and slows down under a finger held still. Search
 // and the TV keep the grid.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
@@ -24,6 +25,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/fixed/segment_builder.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_blocks.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_wheel_zoom.dart';
@@ -42,6 +44,29 @@ class _Settings extends Fake implements SettingsRepository {
 
   @override
   Future<void> write<T, U extends T>(SettingsKey<T> key, U value) async => writes.add(value);
+}
+
+/// The settings as the app keeps them: tiles per row written come back through the config, and the grid reloads
+class _LiveSettings extends _Settings {
+  _LiveSettings(int tilesPerRow) : _config = AppConfig(timeline: TimelineConfig(tilesPerRow: tilesPerRow));
+
+  AppConfig _config;
+  final _changes = StreamController<AppConfig>.broadcast();
+
+  @override
+  AppConfig get appConfig => _config;
+
+  @override
+  Stream<AppConfig> watchConfig() => _changes.stream;
+
+  @override
+  Future<void> write<T, U extends T>(SettingsKey<T> key, U value) async {
+    await super.write(key, value);
+    if (key == SettingsKey.timelineTilesPerRow) {
+      _config = AppConfig(timeline: TimelineConfig(tilesPerRow: value as int));
+      _changes.add(_config);
+    }
+  }
 }
 
 /// Two days a month of three assets each, every month from December 2026 down to January 2024
@@ -107,27 +132,38 @@ void main() {
   });
   tearDown(() => context.dispose());
 
+  /// The timeline on the phone, with [buckets] of three assets each; or [service]. [band] dp between the bar and the
+  /// list, as the memories of the Photos tab. [liveSettings] write the tiles per row back to the config.
   Future<TimelineService> pumpTimeline(
     WidgetTester tester, {
     List<Bucket>? buckets,
+    TimelineService? service,
     int tilesPerRow = 6,
     bool withScrubber = true,
     bool tvMode = false,
+    double band = 0,
+    bool liveSettings = false,
   }) async {
     tester.view
       ..physicalSize = Size(_screen.width * 3, _screen.height * 3)
       ..devicePixelRatio = 3;
     addTearDown(tester.view.reset);
 
-    final shownBuckets = buckets ?? _threeYears();
-    final total = shownBuckets.fold<int>(0, (sum, bucket) => sum + bucket.assetCount);
-    final assets = List<BaseAsset>.generate(total, (i) => LocalAssetStub.image1.copyWith(id: 'a$i'));
-    final service = TimelineService((
-      assetSource: (i, n) async => assets.sublist(math.min(i, assets.length), math.min(i + n, assets.length)),
-      bucketSource: () => Stream.value(shownBuckets),
-      origin: TimelineOrigin.main,
-    ));
-    addTearDown(service.dispose);
+    var timelineService = service;
+    if (timelineService == null) {
+      final shownBuckets = buckets ?? _threeYears();
+      final total = shownBuckets.fold<int>(0, (sum, bucket) => sum + bucket.assetCount);
+      final assets = List<BaseAsset>.generate(total, (i) => LocalAssetStub.image1.copyWith(id: 'a$i'));
+      timelineService = TimelineService((
+        assetSource: (i, n) async => assets.sublist(math.min(i, assets.length), math.min(i + n, assets.length)),
+        bucketSource: () => Stream.value(shownBuckets),
+        origin: TimelineOrigin.main,
+      ));
+      addTearDown(timelineService.dispose);
+    }
+    if (liveSettings) {
+      settings = _LiveSettings(tilesPerRow);
+    }
 
     final router = RootStackRouter.build(
       routes: [
@@ -140,6 +176,8 @@ void main() {
               readOnly: true,
               groupBy: GroupAssetsBy.day,
               appBar: const SliverToBoxAdapter(child: SizedBox(height: kToolbarHeight)),
+              topSliverWidget: band > 0 ? SliverToBoxAdapter(child: SizedBox(height: band)) : null,
+              topSliverWidgetHeight: band > 0 ? band : null,
             ),
           ),
         ),
@@ -157,8 +195,9 @@ void main() {
         assetLoader: const CodegenLoader(),
         child: ProviderScope(
           overrides: [
-            timelineServiceProvider.overrideWithValue(service),
-            appConfigProvider.overrideWithValue(AppConfig(timeline: TimelineConfig(tilesPerRow: tilesPerRow))),
+            timelineServiceProvider.overrideWithValue(timelineService),
+            if (!liveSettings)
+              appConfigProvider.overrideWithValue(AppConfig(timeline: TimelineConfig(tilesPerRow: tilesPerRow))),
             settingsProvider.overrideWithValue(settings),
             tvModeProvider.overrideWithValue(tvMode),
           ],
@@ -180,7 +219,7 @@ void main() {
     await tester.pumpAndSettle();
     // The thumbnails of the device do not load in a test
     tester.takeException();
-    return service;
+    return timelineService;
   }
 
   Finder monthBlocks() => find.byType(OverviewMonthBlock);
@@ -191,12 +230,12 @@ void main() {
       .state<ScrollableState>(find.descendant(of: find.byType(Timeline), matching: find.byType(Scrollable)).first)
       .position;
 
-  /// The scroll offset of the first day of [month] on the grid of 6 per row
-  double gridOffsetOf(DateTime month, {List<Bucket>? buckets}) {
+  /// The scroll offset of the first day of [month] on the grid of [columns] per row
+  double gridOffsetOf(DateTime month, {List<Bucket>? buckets, int columns = 6}) {
     final segments = FixedSegmentBuilder(
       buckets: buckets ?? _threeYears(),
-      tileHeight: (_screen.width - 2 * 5) / 6,
-      columnCount: 6,
+      tileHeight: (_screen.width - (columns - 1) * kTimelineSpacing) / columns,
+      columnCount: columns,
       groupBy: GroupAssetsBy.day,
     ).generate();
     return segments.firstWhere((segment) {
@@ -444,7 +483,8 @@ void main() {
       expect(find.text('Dec 2026'), findsNothing, reason: 'the label of the years says the year alone');
     });
 
-    testWidgets('a finger held still on the thumb slows it down, some 16 dp a month', (tester) async {
+    /// The finger on the thumb, still for [hold], then 100 dp down
+    Future<void> slowDrag(WidgetTester tester, Duration hold) async {
       final buckets = _twentyYears();
       await pumpTimeline(tester, buckets: buckets);
       await tester.drag(find.byType(Timeline), const Offset(0, -300));
@@ -455,7 +495,7 @@ void main() {
 
       final before = tester.getTopLeft(thumb()).dy;
       final finger = await tester.startGesture(tester.getCenter(thumb()));
-      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(hold);
       expect(find.byKey(kScrubberSlowIconKey), findsOneWidget, reason: 'the label says the thumb is slow');
 
       for (var i = 0; i < 10; i++) {
@@ -474,6 +514,15 @@ void main() {
       await tester.pump();
       expect(find.byKey(kScrubberSlowIconKey), findsNothing, reason: 'until the finger lets go');
       await settle(tester);
+    }
+
+    testWidgets('a finger held still on the thumb slows it down, some 16 dp a month', (tester) async {
+      await slowDrag(tester, const Duration(milliseconds: 350));
+    });
+
+    testWidgets('held longer than the long press of the drag selection, the thumb still follows', (tester) async {
+      // The slow mode comes at 300 ms and invites to wait; the long press that selects by dragging comes at 500 ms
+      await slowDrag(tester, const Duration(milliseconds: 650));
     });
   });
 }
