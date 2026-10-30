@@ -96,6 +96,8 @@ Map<String, String> splatViewerLabels(Translations t) => {
   'splatNewerSpz': t.splat_newer_spz,
   'splatDamaged': t.splat_damaged,
   'splatTooLarge': t.splat_too_large(count: '{count}'),
+  'splatNoSpace': t.splat_no_space,
+  'splatNotRunning': t.splat_not_running,
   'splatFailed': t.splat_failed(reason: '{reason}'),
 };
 
