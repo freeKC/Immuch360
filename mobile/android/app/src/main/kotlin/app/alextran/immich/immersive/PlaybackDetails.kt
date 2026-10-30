@@ -15,6 +15,7 @@ import kotlin.math.roundToLong
 internal object PlaybackDetails {
   /** Keys of the labels of the opening, the same as playback*LabelKey of immersive_playback_labels.dart. */
   const val LABEL_RESTARTED = "playbackRestarted"
+  const val LABEL_RESTARTED_LATER = "playbackRestartedLater"
   const val LABEL_NO_PICTURE = "playbackNoPicture"
   const val LABEL_NO_PICTURE_SWITCH = "playbackNoPictureSwitch"
   const val LABEL_MBPS = "playbackMbps"
@@ -24,6 +25,8 @@ internal object PlaybackDetails {
   private val englishLabels =
     mapOf(
       LABEL_RESTARTED to "The video stopped at {position}, it plays again from there",
+      LABEL_RESTARTED_LATER to
+        "The video stopped at {position}, it plays again from {resume}, past the part that failed",
       LABEL_NO_PICTURE to
         "No picture for 3 seconds while the sound plays ({video}). What the headset saw is in the Logs of the app",
       LABEL_NO_PICTURE_SWITCH to "No picture for 3 seconds from {video}, trying the server playback stream",
@@ -81,6 +84,17 @@ internal object PlaybackDetails {
     return text
   }
 
+  /**
+   * The notice of a restart: the video stopped at [position] and plays again from [resume], past the part that failed
+   * (a decoder failure, see PlaybackRecovery.resumeAt), or from there when both read the same.
+   */
+  fun restartNotice(labels: Map<String, String>, position: String, resume: String): String =
+    if (resume == position) {
+      text(labels, LABEL_RESTARTED, "position" to position)
+    } else {
+      text(labels, LABEL_RESTARTED_LATER, "position" to position, "resume" to resume)
+    }
+
   /** Where [url] comes from, in words for a report; [isFallback] for the transcoded stream Flutter sent. */
   fun sourceOf(url: String, isFallback: Boolean): String =
     when {
@@ -92,8 +106,19 @@ internal object PlaybackDetails {
       else -> "a file on the headset"
     }
 
-  /** A restart at [position] after [error], the name of the error and its cause. */
-  fun restartEvent(error: String, position: String): String = "restarted at $position after ${withoutUrls(error)}"
+  /**
+   * The video stopped at [position] after [error] (the name of the error and its cause), and a new player started it
+   * again from [resume] after a wait of [delayMs].
+   */
+  fun restartEvent(error: String, position: String, resume: String, delayMs: Long): String {
+    val wait =
+      when {
+        delayMs <= 0L -> "at once"
+        delayMs % 1000 == 0L -> "after ${delayMs / 1000} s"
+        else -> "after ${delayMs / 1000.0} s"
+      }
+    return "stopped at $position after ${withoutUrls(error)}, restarted at $resume on a new player $wait"
+  }
 
   /** A restart at [position] after a picture that stopped while the sound played. */
   fun stoppedEvent(position: String): String =
@@ -103,6 +128,9 @@ internal object PlaybackDetails {
   fun noPictureEvent(position: String, framesBefore: Boolean): String =
     "no picture at $position while the sound plays, " +
       if (framesBefore) "the picture stopped" else "none since the start"
+
+  /** Frames that came again at [position] after a picture said missing. */
+  fun pictureBackEvent(position: String): String = "the picture came back at $position"
 
   /** The error the viewer shows, with nothing left to try. */
   fun errorEvent(error: String): String = "cannot be played: ${withoutUrls(error)}"

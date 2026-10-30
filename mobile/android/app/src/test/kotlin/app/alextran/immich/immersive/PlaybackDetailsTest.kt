@@ -19,6 +19,9 @@ class PlaybackDetailsTest {
     assertEquals("H.264 • 3840 x 1920", PlaybackDetails.line("H.264", null, 3840, 1920, -1f, -1, english, Locale.US))
     assertEquals("HEVC • 30 fps", PlaybackDetails.line("HEVC", " ", 0, 0, 30f, 0, english, Locale.US))
     assertEquals("?", PlaybackDetails.line("?", null, -1, -1, -1f, -1, english, Locale.US))
+    // A width without a height, a frame rate of 0, a codecs string that only repeats the codec
+    assertEquals("HEVC", PlaybackDetails.line("HEVC", null, 3840, 0, 0f, 0, english, Locale.US))
+    assertEquals("H.264 • 0.5 fps", PlaybackDetails.line("H.264", "H.264", 0, 1920, 0.5f, 0, english, Locale.US))
   }
 
   @Test
@@ -37,6 +40,9 @@ class PlaybackDetailsTest {
     assertEquals("4,5 Mbit/s", PlaybackDetails.bitRate(4_520_000, english, Locale.FRANCE))
     assertEquals("10 Mbit/s", PlaybackDetails.bitRate(9_960_000, english, Locale.US))
     assertEquals("850 kbit/s", PlaybackDetails.bitRate(850_400, english, Locale.US))
+    assertEquals("851 kbit/s", PlaybackDetails.bitRate(850_600, english, Locale.US))
+    assertEquals("1 Mbit/s", PlaybackDetails.bitRate(1_000_000, english, Locale.US))
+    assertEquals("999 kbit/s", PlaybackDetails.bitRate(999_000, english, Locale.US))
   }
 
   @Test
@@ -73,6 +79,28 @@ class PlaybackDetailsTest {
   }
 
   @Test
+  fun `the restart notice says where the video plays again, past the part that failed or from there`() {
+    assertEquals(
+      "The video stopped at 7:12, it plays again from 7:20, past the part that failed",
+      PlaybackDetails.restartNotice(english, "7:12", "7:20"),
+    )
+    assertEquals(
+      "The video stopped at 7:20, it plays again from there",
+      PlaybackDetails.restartNotice(english, "7:20", "7:20"),
+    )
+    val labels =
+      mapOf(
+        PlaybackDetails.LABEL_RESTARTED to "La vidéo s'est arrêtée à {position}, elle reprend là",
+        PlaybackDetails.LABEL_RESTARTED_LATER to "Arrêt à {position}, reprise à {resume}",
+      )
+    assertEquals("Arrêt à 7:12, reprise à 7:20", PlaybackDetails.restartNotice(labels, "7:12", "7:20"))
+    assertEquals(
+      "La vidéo s'est arrêtée à 0:05, elle reprend là",
+      PlaybackDetails.restartNotice(labels, "0:05", "0:05"),
+    )
+  }
+
+  @Test
   fun `a blank label falls back to the English text`() {
     val labels = mapOf(PlaybackDetails.LABEL_RESTARTED to "  ")
 
@@ -85,6 +113,7 @@ class PlaybackDetailsTest {
   @Test
   fun `the keys are the ones the app sends, see immersive_playback_labels dart`() {
     assertEquals("playbackRestarted", PlaybackDetails.LABEL_RESTARTED)
+    assertEquals("playbackRestartedLater", PlaybackDetails.LABEL_RESTARTED_LATER)
     assertEquals("playbackNoPicture", PlaybackDetails.LABEL_NO_PICTURE)
     assertEquals("playbackNoPictureSwitch", PlaybackDetails.LABEL_NO_PICTURE_SWITCH)
     assertEquals("playbackMbps", PlaybackDetails.LABEL_MBPS)
@@ -106,6 +135,10 @@ class PlaybackDetailsTest {
       PlaybackDetails.sourceOf("http://127.0.0.1:41234/secret/1/film.mp4", isFallback = false),
     )
     assertEquals(
+      "a network share, through the media bridge",
+      PlaybackDetails.sourceOf("http://localhost:41234/secret/1/film.mp4", isFallback = false),
+    )
+    assertEquals(
       "the server original",
       PlaybackDetails.sourceOf("https://photos.example/api/assets/1/original", isFallback = false),
     )
@@ -120,7 +153,13 @@ class PlaybackDetailsTest {
   fun `the report of a restart says what failed, where, on what video, decoder and headset`() {
     val report =
       PlaybackDetails.report(
-        event = PlaybackDetails.restartEvent("ERROR_CODE_DECODING_FAILED (MediaCodecDecoderException)", "7:20"),
+        event =
+          PlaybackDetails.restartEvent(
+            "ERROR_CODE_DECODING_FAILED (MediaCodecDecoderException)",
+            position = "7:12",
+            resume = "7:20",
+            delayMs = 1_500L,
+          ),
         title = "FANTO.mp4",
         source = "a file on the headset",
         video = "HEVC (hvc1.2.4.L153) • 7680 x 3840 • 30 fps • 120 Mbit/s",
@@ -132,8 +171,8 @@ class PlaybackDetailsTest {
       )
 
     assertEquals(
-      "Immersive viewer, FANTO.mp4 from a file on the headset: restarted at 7:20 after " +
-        "ERROR_CODE_DECODING_FAILED (MediaCodecDecoderException). " +
+      "Immersive viewer, FANTO.mp4 from a file on the headset: stopped at 7:12 after " +
+        "ERROR_CODE_DECODING_FAILED (MediaCodecDecoderException), restarted at 7:20 on a new player after 1.5 s. " +
         "Video: HEVC (hvc1.2.4.L153) • 7680 x 3840 • 30 fps • 120 Mbit/s. Decoder: c2.qti.hevc.decoder. " +
         "Frames rendered: 13200, dropped: 12. Video surface: ready. " +
         "Device: Meta Quest Pro, SoC QTI SM8250, Android 12 (API 32).",
@@ -170,6 +209,7 @@ class PlaybackDetailsTest {
       "restarted at 1:03, no new picture for 3 s while the sound played",
       PlaybackDetails.stoppedEvent("1:03"),
     )
+    assertEquals("the picture came back at 0:09", PlaybackDetails.pictureBackEvent("0:09"))
   }
 
   @Test
@@ -179,8 +219,12 @@ class PlaybackDetailsTest {
 
     assertEquals("cannot be played: ERROR_CODE_IO_UNSPECIFIED (IOException: (a URL))", event)
     assertEquals(
-      "restarted at 0:00 after ERROR_CODE_DECODING_FAILED ((a URL))",
-      PlaybackDetails.restartEvent("ERROR_CODE_DECODING_FAILED (file:///sdcard/a.mp4)", "0:00"),
+      "stopped at 0:00 after ERROR_CODE_DECODING_FAILED ((a URL)), restarted at 0:00 on a new player after 2 s",
+      PlaybackDetails.restartEvent("ERROR_CODE_DECODING_FAILED (file:///sdcard/a.mp4)", "0:00", "0:00", 2_000L),
+    )
+    assertEquals(
+      "stopped at 0:10 after ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, restarted at 0:10 on a new player at once",
+      PlaybackDetails.restartEvent("ERROR_CODE_AUDIO_TRACK_WRITE_FAILED", "0:10", "0:10", 0L),
     )
   }
 }
