@@ -190,6 +190,9 @@ void main() {
         ],
       );
       await tester.scrollUntilVisible(sharpSwitch, 100, scrollable: find.byType(Scrollable).first);
+      // The whole tile on screen, its two line subtitle included, for the taps at its center
+      await tester.ensureVisible(sharpSwitch);
+      await tester.pumpAndSettle();
     }
 
     testWidgets('reads on by default, and says what it changes', (tester) async {
