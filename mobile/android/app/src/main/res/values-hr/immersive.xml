@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Ove VR naočale ne mogu istodobno dekodirati oba objektiva ovog videozapisa (%1$s %2$d x %3$d, dvaput). Prikazuje se jedan objektiv: pola sfere ostaje crno.</string>
   <string name="immersive_raw_one_lens_file">Datoteka drugog objektiva ne može se pročitati. Prikazuje se jedan objektiv: pola sfere ostaje crno.</string>
   <string name="immersive_raw_unstitched">Spajanje u 360° nije uspjelo na ovom uređaju. Videozapis se prikazuje onako kako ga je kamera snimila.</string>
+  <string name="immersive_size">Veličina %1$d°</string>
+  <string name="immersive_distance">Udaljenost %1$s m</string>
+  <string name="immersive_screen_hint">B ili Y: povratak u aplikaciju. Okidač: reprodukcija ili pauza. A, X ili kratki pritisak tipke za hvat: prikaz ili skrivanje ove ploče. Držite tipku za hvat na zaslonu da ga pomaknete, a palica ga zatim približava ili udaljava; držite obje tipke za hvat da promijenite veličinu. Desna palica lijevo ili desno: zaslon ponovno ispred vas.</string>
+  <string name="immersive_screen_hint_short">Držite tipku za hvat na zaslonu da ga pomaknete, obje za promjenu veličine</string>
 </resources>

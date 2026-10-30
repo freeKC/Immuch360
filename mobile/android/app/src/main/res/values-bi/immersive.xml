@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Hedset ia i no save ridim tu lens blong video ia long sem taem (%1$s %2$d x %3$d, tu taem). I soem wan lens nomo: haf blong sfea i stap blak.</string>
   <string name="immersive_raw_one_lens_file">Ap i no save ridim fael blong narafala lens. I soem wan lens nomo: haf blong sfea i stap blak.</string>
   <string name="immersive_raw_unstitched">Joinem 360° i no wok long divaes ia. Video i soem olsem we kamera i rekodem.</string>
+  <string name="immersive_size">Saes %1$d°</string>
+  <string name="immersive_distance">Longwe %1$s m</string>
+  <string name="immersive_screen_hint">B o Y: go bak long app. Trigger: plei o stop smol. A, X o presem grip kwiktaem: soem o haedem panel ia. Holem wan grip long skrin blong muvum, thumbstick i karem i kam kolosap o i go longwe; holem tu grip blong jenisim saes. Raet thumbstick lef o raet: skrin i kam bifo long yu bakegen.</string>
+  <string name="immersive_screen_hint_short">Holem wan grip long skrin blong muvum, tu grip blong jenisim saes</string>
 </resources>

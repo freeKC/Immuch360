@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Questo visore non riesce a decodificare contemporaneamente i due obiettivi di questo video (%1$s %2$d x %3$d, due volte). Mostra un obiettivo: metà della sfera resta nera.</string>
   <string name="immersive_raw_one_lens_file">Il file dell\'altro obiettivo non può essere letto. Viene mostrato un obiettivo: metà della sfera resta nera.</string>
   <string name="immersive_raw_unstitched">L\'unione a 360° non è riuscita su questo dispositivo. Il video viene mostrato come la fotocamera lo ha registrato.</string>
+  <string name="immersive_size">Dimensione %1$d°</string>
+  <string name="immersive_distance">Distanza %1$s m</string>
+  <string name="immersive_screen_hint">B o Y: torna all\'app. Grilletto: riproduci o metti in pausa. A, X o una pressione breve dell\'impugnatura: mostra o nascondi questo pannello. Tieni premuta un\'impugnatura sullo schermo per spostarlo, poi la levetta lo avvicina o lo allontana; tieni premute entrambe le impugnature per cambiarne la dimensione. Levetta destra a sinistra o a destra: lo schermo di nuovo davanti a te.</string>
+  <string name="immersive_screen_hint_short">Tieni un\'impugnatura sullo schermo per spostarlo, entrambe per cambiarne la dimensione</string>
 </resources>

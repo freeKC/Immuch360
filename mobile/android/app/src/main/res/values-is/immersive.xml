@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Þessi VR-gleraugu geta ekki afkóðað báðar linsur þessa myndskeiðs samtímis (%1$s %2$d x %3$d, tvisvar). Ein linsa er sýnd: helmingur kúlunnar er áfram svartur.</string>
   <string name="immersive_raw_one_lens_file">Ekki er hægt að lesa skrá hinnar linsunnar. Ein linsa er sýnd: helmingur kúlunnar er áfram svartur.</string>
   <string name="immersive_raw_unstitched">360° samskeyting mistókst í þessu tæki. Myndskeiðið er sýnt eins og myndavélin tók það upp.</string>
+  <string name="immersive_size">Stærð %1$d°</string>
+  <string name="immersive_distance">Fjarlægð %1$s m</string>
+  <string name="immersive_screen_hint">B eða Y: aftur í forritið. Gikkur: spila eða gera hlé. A, X eða stutt ýting á handfang: sýna eða fela þetta spjald. Haltu handfangi á skjánum til að færa hann, stýripinninn færir hann svo nær eða fjær; haltu báðum handföngum til að breyta stærðinni. Hægri stýripinni til vinstri eða hægri: skjárinn aftur fyrir framan þig.</string>
+  <string name="immersive_screen_hint_short">Haltu handfangi á skjánum til að færa hann, báðum til að breyta stærð</string>
 </resources>

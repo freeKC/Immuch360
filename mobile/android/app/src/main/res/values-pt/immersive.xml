@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Este headset não consegue descodificar as duas lentes deste vídeo ao mesmo tempo (%1$s %2$d x %3$d, duas vezes). Mostra uma lente: metade da esfera fica preta.</string>
   <string name="immersive_raw_one_lens_file">Não é possível ler o ficheiro da outra lente. É mostrada uma lente: metade da esfera fica preta.</string>
   <string name="immersive_raw_unstitched">A união 360° falhou neste dispositivo. O vídeo é mostrado tal como a câmara o gravou.</string>
+  <string name="immersive_size">Tamanho %1$d°</string>
+  <string name="immersive_distance">Distância %1$s m</string>
+  <string name="immersive_screen_hint">B ou Y: voltar à aplicação. Gatilho: reproduzir ou pausar. A, X ou um toque curto no botão lateral: mostrar ou ocultar este painel. Mantenha um botão lateral sobre o ecrã para o mover, e o joystick aproxima-o ou afasta-o; mantenha os dois botões laterais para mudar o tamanho. Joystick direito para a esquerda ou para a direita: o ecrã de novo à sua frente.</string>
+  <string name="immersive_screen_hint_short">Mantenha um botão lateral sobre o ecrã para o mover, os dois para mudar o tamanho</string>
 </resources>

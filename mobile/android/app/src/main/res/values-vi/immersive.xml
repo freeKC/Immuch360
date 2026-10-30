@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Kính VR này không thể giải mã cùng lúc hai ống kính của video này (%1$s %2$d x %3$d, hai lần). Chỉ hiển thị một ống kính: một nửa hình cầu vẫn màu đen.</string>
   <string name="immersive_raw_one_lens_file">Không thể đọc tệp của ống kính còn lại. Chỉ hiển thị một ống kính: một nửa hình cầu vẫn màu đen.</string>
   <string name="immersive_raw_unstitched">Ghép nối 360° thất bại trên thiết bị này. Video được hiển thị như máy ảnh đã ghi.</string>
+  <string name="immersive_size">Kích thước %1$d°</string>
+  <string name="immersive_distance">Khoảng cách %1$s m</string>
+  <string name="immersive_screen_hint">B hoặc Y: quay lại ứng dụng. Nút cò: phát hoặc tạm dừng. A, X hoặc nhấn nhanh nút nắm: hiện hoặc ẩn bảng này. Giữ nút nắm trên màn hình để di chuyển nó, rồi cần điều khiển đưa nó lại gần hoặc ra xa; giữ cả hai nút nắm để đổi kích thước. Cần điều khiển bên phải sang trái hoặc phải: màn hình lại ở trước mặt bạn.</string>
+  <string name="immersive_screen_hint_short">Giữ nút nắm trên màn hình để di chuyển, cả hai để đổi kích thước</string>
 </resources>

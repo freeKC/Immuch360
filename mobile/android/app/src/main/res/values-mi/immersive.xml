@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Kāore e taea e tēnei pōtae VR te wetewete i ngā arotahi e rua o tēnei ataata i te wā kotahi (%1$s %2$d x %3$d, e rua). Kotahi te arotahi e whakaaturia ana: ka noho pango te haurua o te pōro.</string>
   <string name="immersive_raw_one_lens_file">Kāore e taea te pānui te kōnae o tērā atu arotahi. Kotahi te arotahi e whakaaturia ana: ka noho pango te haurua o te pōro.</string>
   <string name="immersive_raw_unstitched">I rahua te tui 360° i tēnei pūrere. Ka whakaaturia te ataata pērā i tā te kāmera i hopu ai.</string>
+  <string name="immersive_size">Rahi %1$d°</string>
+  <string name="immersive_distance">Tawhiti %1$s m</string>
+  <string name="immersive_screen_hint">B, Y rānei: hoki ki te taupānga. Keu: pūrei, tatari rānei. A, X, he pēhi poto rānei i te pātene pupuri: whakaatu, huna rānei i tēnei pae. Puritia tētahi pātene pupuri ki runga i te mata kia nekehia, kātahi ka whakatata, ka whakatawhiti rānei te rākau kōnui; puritia ngā pātene pupuri e rua kia huri te rahi. Rākau kōnui matau ki mauī, ki matau rānei: ko te mata anō ki mua i a koe.</string>
+  <string name="immersive_screen_hint_short">Puritia tētahi pātene pupuri ki te mata kia nekehia, ngā mea e rua mō te rahi</string>
 </resources>

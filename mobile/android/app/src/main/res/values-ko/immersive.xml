@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">이 헤드셋은 이 동영상의 두 렌즈를 동시에 디코딩할 수 없습니다(%1$s %2$d x %3$d, 두 개). 렌즈 하나만 표시되며 구의 절반은 검은색으로 남습니다.</string>
   <string name="immersive_raw_one_lens_file">다른 렌즈의 파일을 읽을 수 없습니다. 렌즈 하나만 표시되며 구의 절반은 검은색으로 남습니다.</string>
   <string name="immersive_raw_unstitched">이 기기에서 360° 스티칭에 실패했습니다. 동영상은 카메라가 녹화한 그대로 표시됩니다.</string>
+  <string name="immersive_size">크기 %1$d°</string>
+  <string name="immersive_distance">거리 %1$s m</string>
+  <string name="immersive_screen_hint">B 또는 Y: 앱으로 돌아가기. 트리거: 재생 또는 일시 정지. A, X 또는 그립 짧게 누르기: 이 패널 표시 또는 숨기기. 화면 위에서 그립을 길게 누르면 화면을 옮길 수 있고, 썸스틱으로 가깝게 또는 멀리 둘 수 있습니다. 두 그립을 함께 길게 누르면 크기를 바꿀 수 있습니다. 오른쪽 썸스틱 왼쪽 또는 오른쪽: 화면을 다시 앞으로.</string>
+  <string name="immersive_screen_hint_short">화면 위에서 그립을 길게 눌러 옮기고, 두 그립으로 크기 변경</string>
 </resources>

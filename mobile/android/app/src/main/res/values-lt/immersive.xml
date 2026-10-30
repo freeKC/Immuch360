@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Šie VR akiniai negali vienu metu dekoduoti abiejų šio vaizdo įrašo objektyvų (%1$s %2$d x %3$d, du kartus). Rodomas vienas objektyvas: pusė sferos lieka juoda.</string>
   <string name="immersive_raw_one_lens_file">Kito objektyvo failo nepavyksta perskaityti. Rodomas vienas objektyvas: pusė sferos lieka juoda.</string>
   <string name="immersive_raw_unstitched">360° sujungimas šiame įrenginyje nepavyko. Vaizdo įrašas rodomas taip, kaip jį įrašė kamera.</string>
+  <string name="immersive_size">Dydis %1$d°</string>
+  <string name="immersive_distance">Atstumas %1$s m</string>
+  <string name="immersive_screen_hint">B arba Y: grįžti į programą. Gaidukas: paleisti arba pristabdyti. A, X arba trumpas suėmimo mygtuko paspaudimas: rodyti arba slėpti šį skydelį. Laikykite suėmimo mygtuką ant ekrano, kad jį perkeltumėte, tada valdymo svirtelė jį priartina arba nutolina; laikykite abu suėmimo mygtukus, kad pakeistumėte dydį. Dešinioji valdymo svirtelė kairėn arba dešinėn: ekranas vėl prieš jus.</string>
+  <string name="immersive_screen_hint_short">Laikykite suėmimo mygtuką ant ekrano, kad perkeltumėte, abu dydžiui keisti</string>
 </resources>

@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Bu shlem ushbu videoning ikki obyektivini bir vaqtda dekodlay olmaydi (%1$s %2$d x %3$d, ikki marta). Bitta obyektiv koʻrsatiladi: sferaning yarmi qora qoladi.</string>
   <string name="immersive_raw_one_lens_file">Boshqa obyektiv faylini oʻqib boʻlmaydi. Bitta obyektiv koʻrsatiladi: sferaning yarmi qora qoladi.</string>
   <string name="immersive_raw_unstitched">Bu qurilmada 360° tikish amalga oshmadi. Video kamera yozib olgandek koʻrsatiladi.</string>
+  <string name="immersive_size">Oʻlcham %1$d°</string>
+  <string name="immersive_distance">Masofa %1$s m</string>
+  <string name="immersive_screen_hint">B yoki Y: ilovaga qaytish. Tepki: ijro etish yoki pauza. A, X yoki ushlash tugmasini qisqa bosish: bu panelni koʻrsatish yoki yashirish. Ekranni siljitish uchun uning ustida ushlash tugmasini bosib turing, keyin joystik uni yaqinlashtiradi yoki uzoqlashtiradi; oʻlchamini oʻzgartirish uchun ikkala ushlash tugmasini bosib turing. Oʻng joystikni chapga yoki oʻngga: ekran yana oldingizda.</string>
+  <string name="immersive_screen_hint_short">Ekranni siljitish uchun ushlash tugmasini uning ustida bosib turing, oʻlcham uchun ikkalasini</string>
 </resources>

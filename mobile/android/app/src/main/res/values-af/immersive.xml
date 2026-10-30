@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Hierdie kopstuk kan nie die twee lense van hierdie video tegelyk dekodeer nie (%1$s %2$d x %3$d, twee keer). Dit wys een lens: die helfte van die sfeer bly swart.</string>
   <string name="immersive_raw_one_lens_file">Die lêer van die ander lens kan nie gelees word nie. Een lens word gewys: die helfte van die sfeer bly swart.</string>
   <string name="immersive_raw_unstitched">Die 360°-aanmekaarwerk het op hierdie toestel misluk. Die video word gewys soos die kamera dit opgeneem het.</string>
+  <string name="immersive_size">Grootte %1$d°</string>
+  <string name="immersive_distance">Afstand %1$s m</string>
+  <string name="immersive_screen_hint">B of Y: terug na die toep. Sneller: speel of pouseer. A, X of ’n kort druk op die greep: wys of versteek hierdie paneel. Hou ’n greep op die skerm om dit te skuif, die duimstok bring dit dan nader of verder; hou albei grepe om die grootte te verander. Regterduimstok links of regs: die skerm weer voor jou.</string>
+  <string name="immersive_screen_hint_short">Hou ’n greep op die skerm om dit te skuif, albei grepe om die grootte te verander</string>
 </resources>

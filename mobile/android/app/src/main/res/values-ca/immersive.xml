@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Aquestes ulleres no poden descodificar alhora els dos objectius d’aquest vídeo (%1$s %2$d x %3$d, dues vegades). Es mostra un objectiu: la meitat de l’esfera queda negra.</string>
   <string name="immersive_raw_one_lens_file">No es pot llegir el fitxer de l’altre objectiu. Es mostra un objectiu: la meitat de l’esfera queda negra.</string>
   <string name="immersive_raw_unstitched">La unió 360° ha fallat en aquest dispositiu. El vídeo es mostra tal com l’ha enregistrat la càmera.</string>
+  <string name="immersive_size">Mida %1$d°</string>
+  <string name="immersive_distance">Distància %1$s m</string>
+  <string name="immersive_screen_hint">B o Y: torna a l’aplicació. Gallet: reprodueix o posa en pausa. A, X o una pressió curta del botó lateral: mostra o amaga aquest tauler. Mantén un botó lateral sobre la pantalla per moure-la, i el joystick l’apropa o l’allunya; mantén els dos botons laterals per canviar-ne la mida. Joystick dret a l’esquerra o a la dreta: la pantalla davant teu de nou.</string>
+  <string name="immersive_screen_hint_short">Mantén un botó lateral sobre la pantalla per moure-la, els dos per canviar-ne la mida</string>
 </resources>

@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Aheadset-a ur yezmir ara ad yekkes asettengel i snat n tlentilin n tvidyut-a deg yiwet n tikkelt (%1$s %2$d x %3$d, snat n tikkal). Yettban-d yiwet n talentilt: azgen n tkurt yeqqim d aberkan.</string>
   <string name="immersive_raw_one_lens_file">Afaylu n tlentilt-nniḍen ur yettwaɣra ara. Tettban-d yiwet n talentilt: azgen n tkurt yeqqim d aberkan.</string>
   <string name="immersive_raw_unstitched">Asdukkel 360° ur yeddi ara ɣef yibenk-a. Tavidyut tettban-d akken i tt-tesekles tkamirat.</string>
+  <string name="immersive_size">Teɣzi %1$d°</string>
+  <string name="immersive_distance">Ameccaq %1$s m</string>
+  <string name="immersive_screen_hint">B neɣ Y: uɣal ɣer usnas. Trigger: urar neɣ asteɛfu. A, X neɣ asiti awezzlan ɣef grip: sken neɣ ffer agalis-a. Ṭṭef grip ɣef ugdil i wakken ad t-tesmuttiḍ, thumbstick ad t-iqareb neɣ ad t-iseggem; ṭṭef sin grip i wakken ad tbeddleḍ teɣzi-s. Thumbstick ayeffus ɣer zelmeḍ neɣ ɣer yefus: agdil zdat-k daɣen.</string>
+  <string name="immersive_screen_hint_short">Ṭṭef grip ɣef ugdil i usmutti-s, sin grip i ubeddel n teɣzi</string>
 </resources>

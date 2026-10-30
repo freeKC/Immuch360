@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Dieses Headset kann die zwei Objektive dieses Videos nicht gleichzeitig dekodieren (%1$s %2$d x %3$d, zweimal). Es zeigt ein Objektiv: Die Hälfte der Kugel bleibt schwarz.</string>
   <string name="immersive_raw_one_lens_file">Die Datei des anderen Objektivs kann nicht gelesen werden. Ein Objektiv wird gezeigt: Die Hälfte der Kugel bleibt schwarz.</string>
   <string name="immersive_raw_unstitched">Das 360°-Zusammenfügen ist auf diesem Gerät fehlgeschlagen. Das Video wird so gezeigt, wie die Kamera es aufgenommen hat.</string>
+  <string name="immersive_size">Größe %1$d°</string>
+  <string name="immersive_distance">Abstand %1$s m</string>
+  <string name="immersive_screen_hint">B oder Y: zurück zur App. Trigger: Wiedergabe oder Pause. A, X oder kurzer Druck auf eine Grifftaste: dieses Panel ein- oder ausblenden. Grifftaste auf dem Bildschirm halten, um ihn zu verschieben, der Thumbstick holt ihn dann näher oder weiter weg; beide Grifftasten halten, um die Größe zu ändern. Rechter Thumbstick nach links oder rechts: der Bildschirm wieder vor dir.</string>
+  <string name="immersive_screen_hint_short">Grifftaste auf dem Bildschirm halten zum Verschieben, beide für die Größe</string>
 </resources>

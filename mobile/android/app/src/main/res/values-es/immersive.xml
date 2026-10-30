@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Estas gafas no pueden decodificar a la vez los dos objetivos de este vídeo (%1$s %2$d x %3$d, dos veces). Se muestra un objetivo: la mitad de la esfera queda negra.</string>
   <string name="immersive_raw_one_lens_file">No se puede leer el archivo del otro objetivo. Se muestra un objetivo: la mitad de la esfera queda negra.</string>
   <string name="immersive_raw_unstitched">La unión 360° ha fallado en este dispositivo. El vídeo se muestra tal como lo grabó la cámara.</string>
+  <string name="immersive_size">Tamaño %1$d°</string>
+  <string name="immersive_distance">Distancia %1$s m</string>
+  <string name="immersive_screen_hint">B o Y: volver a la aplicación. Gatillo: reproducir o pausar. A, X o una pulsación corta del botón de agarre: mostrar u ocultar este panel. Mantén un botón de agarre sobre la pantalla para moverla, y el joystick la acerca o la aleja; mantén los dos botones de agarre para cambiar su tamaño. Joystick derecho a la izquierda o a la derecha: la pantalla de nuevo delante.</string>
+  <string name="immersive_screen_hint_short">Mantén un botón de agarre sobre la pantalla para moverla, los dos para cambiar su tamaño</string>
 </resources>

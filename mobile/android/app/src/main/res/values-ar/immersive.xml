@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">لا تستطيع هذه النظارة فك ترميز عدستي هذا الفيديو في الوقت نفسه (%1$s %2$d x %3$d، مرتين). تُعرض عدسة واحدة: يبقى نصف الكرة أسود.</string>
   <string name="immersive_raw_one_lens_file">تعذّرت قراءة ملف العدسة الأخرى. تُعرض عدسة واحدة: يبقى نصف الكرة أسود.</string>
   <string name="immersive_raw_unstitched">فشل دمج 360° على هذا الجهاز. يُعرض الفيديو كما سجّلته الكاميرا.</string>
+  <string name="immersive_size">الحجم %1$d°</string>
+  <string name="immersive_distance">المسافة %1$s م</string>
+  <string name="immersive_screen_hint">B أو Y: العودة إلى التطبيق. الزناد: تشغيل أو إيقاف مؤقت. A أو X أو ضغطة قصيرة على زر القبضة: إظهار هذه اللوحة أو إخفاؤها. اضغط مطولًا على زر القبضة فوق الشاشة لتحريكها، ثم تقرّبها عصا التحكم أو تبعدها؛ اضغط مطولًا على زرّي القبضة معًا لتغيير حجمها. عصا التحكم اليمنى يسارًا أو يمينًا: الشاشة أمامك من جديد.</string>
+  <string name="immersive_screen_hint_short">اضغط مطولًا على زر القبضة فوق الشاشة لتحريكها، وعلى الزرين معًا لتغيير حجمها</string>
 </resources>
