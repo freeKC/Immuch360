@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/app_settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
 class ImageViewerQualitySetting extends HookConsumerWidget {
@@ -16,6 +17,12 @@ class ImageViewerQualitySetting extends HookConsumerWidget {
     final isOriginal = useState(ref.watch(appConfigProvider).image.loadOriginal);
     useValueChanged<bool, void>(isOriginal.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.imageLoadOriginal, isOriginal.value));
+    });
+    // A TV: the date and time of a photo at the bottom left of the viewer, with its controls (see ViewerBottomBar)
+    final tvMode = ref.watch(tvModeProvider);
+    final tvShowDateTime = useState(ref.watch(appConfigProvider).viewer.tvShowDateTime);
+    useValueChanged<bool, void>(tvShowDateTime.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerTvShowDateTime, tvShowDateTime.value));
     });
 
     return Column(
@@ -32,6 +39,12 @@ class ImageViewerQualitySetting extends HookConsumerWidget {
           subtitle: context.t.setting_image_viewer_original_subtitle,
           onChanged: (_) => ref.invalidate(appSettingsServiceProvider),
         ),
+        if (tvMode)
+          SettingsSwitchListTile(
+            valueNotifier: tvShowDateTime,
+            title: context.t.setting_tv_photo_date_time_title,
+            subtitle: context.t.setting_tv_photo_date_time_subtitle,
+          ),
       ],
     );
   }
