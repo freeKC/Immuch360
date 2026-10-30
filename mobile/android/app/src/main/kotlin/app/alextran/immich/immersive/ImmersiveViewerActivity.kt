@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
 import android.view.View
@@ -327,8 +328,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
     /**
      * A media on a flat screen the user may move and resize (see [ScreenPlace]): a video of the flat video screen, or a
-     * photo of the stereo quad but a relief made in the headset, whose 2.5D mesh stands on the quad where it was placed,
-     * and a 3D scene.
+     * photo of the stereo quad but a relief made in the headset, whose 2.5D mesh stands on the quad where it was
+     * placed, and a 3D scene.
      */
     val isMovableScreen: Boolean
       get() =
@@ -855,10 +856,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           scope.launch(Dispatchers.Main) { applyVideoShape() }
         },
       ),
-      // Flat video screen (a flat 3D video, a video on the big screen): a quad compositor layer in front of the user, as
-      // MediaPlayerSample shows its 3D films, with the quality filters of the compositor (super sampling and sharpening,
-      // as Gaurav Mukherjee set them on his flat layers) while Sharper flat screens is on, and behind the panels, as the
-      // sphere. Created mono at 16:9; the stereo mode, the size and the filters of each video follow
+      // Flat video screen (a flat 3D video, a video on the big screen): a quad compositor layer in front of the user,
+      // as MediaPlayerSample shows its 3D films, with the quality filters of the compositor (super sampling and
+      // sharpening, as Gaurav Mukherjee set them on his flat layers) while Sharper flat screens is on, and behind the
+      // panels, as the sphere. Created mono at 16:9; the stereo mode, the size and the filters of each video follow
       // (applyFlatVideoShape). The frame is scaled to the surface, the quad gives each eye its shape back.
       VideoSurfacePanelRegistration(
         R.id.immersive_flat_video_panel,
@@ -888,9 +889,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       ),
       // Photo layer: the photos of a flat screen drawn on the Surface of a quad compositor layer (see drawPhotoLayer),
       // which the compositor samples once, straight to the display, with its quality filters, where the quad mesh goes
-      // through the eye buffer first: a sharper photo. An idea and a first version of Gaurav Mukherjee (gmfun/Immuch360,
-      // branch quest/flat-3d). Behind the panels, as the sphere; made at the first such photo, shaped for each one
-      // (applyPhotoLayerShape).
+      // through the eye buffer first: a sharper photo. An idea and a first version of Gaurav Mukherjee
+      // (gmfun/Immuch360, branch quest/flat-3d). Behind the panels, as the sphere; made at the first such photo, shaped
+      // for each one (applyPhotoLayerShape).
       VideoSurfacePanelRegistration(
         R.id.immersive_photo_layer_panel,
         surfaceConsumer = { _, surface ->
@@ -2331,40 +2332,101 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setStatus(getString(R.string.immersive_loading))
     loadJob =
       scope.launch {
+        // The server preview first, cut and shown as the original will be, while the original downloads and decodes
+        // (an idea of Gaurav Mukherjee, gmfun/Immuch360 branch quest/flat-3d): a photo of several MB, or a large PNG,
+        // takes seconds before its first pixel otherwise. Not for an Apple spatial photo, whose preview holds one eye,
+        // nor for a relief or a scene, which read the original itself; never for a photo on the headset
+        var previewShown = false
         try {
           val local = ImmersiveMedia.localFileFor(media.url)
+          val previewUrl =
+            if (local == null && showsPreviewFirst(kind)) ImmersiveMedia.previewUrlFor(media.url) else null
+          if (previewUrl != null) previewShown = showStereoPreview(previewUrl, kind, spec)
+          val started = SystemClock.elapsedRealtime()
           val bytes = if (local != null) withContext(Dispatchers.IO) { local.readBytes() } else download(media.url)
-          Log.i(TAG, "stereo photo: ${bytes.size} bytes")
+          val read = SystemClock.elapsedRealtime()
+          Log.i(TAG, "stereo photo: ${bytes.size} bytes in ${read - started} ms")
           if (kind is StereoPhotoKind.DepthRelief) {
             showReliefPhoto(media, kind.spec, bytes)
             return@launch
           }
-          val holder = AtomicReference<StereoTexture?>()
-          try {
-            decodeMutex.withLock {
-              withContext(Dispatchers.Default) {
-                holder.set(
-                  when (kind) {
-                    is StereoPhotoKind.Sbs -> decodeSbs(bytes, kind.spec)
-                    is StereoPhotoKind.Flat -> decodeFlat(bytes, kind.spec)
-                    else -> decodeStereo(bytes, spec)
-                  }
-                )
-              }
-            }
-            ensureActive()
-            val texture = holder.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
-            applyStereoTexture(texture)
-          } finally {
-            holder.getAndSet(null)?.bitmap?.recycle()
-          }
+          val texture =
+            decodeStereoPhoto(bytes, kind, spec) ?: throw IOException("this image cannot be read or decoded")
+          Log.i(TAG, "stereo photo: decoded in ${SystemClock.elapsedRealtime() - read} ms")
+          // Over the preview, where the user may have moved or resized it already
+          applyStereoTexture(texture, place = !previewShown)
         } catch (e: CancellationException) {
           throw e
         } catch (e: Throwable) {
           Log.e(TAG, "stereo photo failed", e)
-          showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
+          val reason = e.message ?: e.javaClass.simpleName
+          if (previewShown) {
+            // The preview stays, said to be one, as on the sphere
+            showStatus(getString(R.string.immersive_preview_only, reason))
+            scheduleInfoHide()
+          } else {
+            showError(getString(R.string.immersive_error_photo, reason))
+          }
         }
       }
+  }
+
+  /**
+   * Whether a photo of [kind] shows the server preview of its file first: one whose picture the preview holds whole,
+   * cut the same way (a side by side photo, a flat 3D photo).
+   */
+  private fun showsPreviewFirst(kind: StereoPhotoKind?): Boolean =
+    kind is StereoPhotoKind.Sbs || kind is StereoPhotoKind.Flat
+
+  /**
+   * Downloads the server preview at [previewUrl] and shows it as the photo of [kind] (see [applyStereoTexture]); true
+   * once it shows. A preview that fails is only logged: the original comes next.
+   */
+  private suspend fun showStereoPreview(previewUrl: String, kind: StereoPhotoKind?, spec: StereoPairSpec?): Boolean {
+    try {
+      val started = SystemClock.elapsedRealtime()
+      val texture = decodeStereoPhoto(download(previewUrl), kind, spec) ?: return false
+      val elapsed = SystemClock.elapsedRealtime() - started
+      Log.i(TAG, "stereo photo: preview ${texture.eyeWidth}x${texture.eyeHeight} in $elapsed ms")
+      applyStereoTexture(texture, preview = true)
+      return true
+    } catch (e: CancellationException) {
+      throw e
+    } catch (e: Throwable) {
+      Log.w(TAG, "stereo photo: preview failed: ${e.message}", e)
+      return false
+    }
+  }
+
+  /**
+   * Both eyes of the photo of [bytes] of [kind] on one texture, off the main thread and one decode at a time: the two
+   * halves of a side by side photo ([decodeSbs]), the eyes of a flat 3D photo ([decodeFlat]), or the eyes of an Apple
+   * spatial photo, the photo alone without [spec] ([decodeStereo]). Null when the image does not decode. The texture
+   * is the caller's; a load cancelled meanwhile recycles it.
+   */
+  private suspend fun decodeStereoPhoto(
+    bytes: ByteArray,
+    kind: StereoPhotoKind?,
+    spec: StereoPairSpec?,
+  ): StereoTexture? {
+    val holder = AtomicReference<StereoTexture?>()
+    try {
+      decodeMutex.withLock {
+        withContext(Dispatchers.Default) {
+          holder.set(
+            when (kind) {
+              is StereoPhotoKind.Sbs -> decodeSbs(bytes, kind.spec)
+              is StereoPhotoKind.Flat -> decodeFlat(bytes, kind.spec)
+              else -> decodeStereo(bytes, spec)
+            }
+          )
+        }
+      }
+      coroutineContext.ensureActive()
+      return holder.getAndSet(null)
+    } finally {
+      holder.getAndSet(null)?.bitmap?.recycle()
+    }
   }
 
   /**
@@ -2897,10 +2959,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * Shows [stereo] with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of
    * a relief replace the flat photo where the quad is; the full photo replaces its preview where the user left it):
-   * on the photo layer for the photos [FlatScreenLayer.showsOnLayer] takes while Sharper flat screens is on, which keeps
-   * its bitmap to draw it again on a new Surface; else as the texture of the quad mesh, its bitmap recycled and the
-   * previous texture destroyed, kept for later while the material is not ready. [preview] is the server preview of the
-   * photo while its original loads (see [showStereoPhoto]): the panel says so, and stays.
+   * on the photo layer for the photos [FlatScreenLayer.showsOnLayer] takes while Sharper flat screens is on, which
+   * keeps its bitmap to draw it again on a new Surface; else as the texture of the quad mesh, its bitmap recycled and
+   * the previous texture destroyed, kept for later while the material is not ready. [preview] is the server preview of
+   * the photo while its original loads (see [showStereoPhoto]): the panel says so, and stays.
    */
   private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true, preview: Boolean = false) {
     val media = request
@@ -3014,9 +3076,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Draws the photo of the layer on its Surface once the photo, the layer and the Surface are all there: each eye
-   * stretched over its half, or one picture over the whole Surface (see FlatScreenLayer.eyeRegions), the quad giving it
-   * its shape back (see [applyPhotoLayerShape]); then the layer shows. A Surface that cannot be drawn on gives the photo
-   * to the quad mesh instead. True once drawn.
+   * stretched over its half, or one picture over the whole Surface (see FlatScreenLayer.eyeRegions), the quad giving
+   * it its shape back (see [applyPhotoLayerShape]); then the layer shows. A Surface that cannot be drawn on gives the
+   * photo to the quad mesh instead. True once drawn.
    */
   private fun drawPhotoLayer(): Boolean {
     val texture = photoLayerTexture ?: return false
