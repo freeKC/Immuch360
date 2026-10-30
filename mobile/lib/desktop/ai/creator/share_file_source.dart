@@ -13,12 +13,15 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -31,15 +34,27 @@ typedef ShareFileFetcher = Future<http.StreamedResponse> Function(Uri url);
 /// The bytes of a copy written so far, and how many there are in all when the share or the bridge tells it
 typedef ShareCopyProgress = void Function(int copied, int? total);
 
+/// Looks for a version of the original among the files of its folder on the share (see RemoteVersionLookup)
+typedef ShareVersionLookup =
+    Future<ExistingVersion?> Function(
+      DerivedRuleOriginal original,
+      String settingsKey, {
+      required ImmersiveKind kind,
+      bool Function(ExistingVersion version)? where,
+    });
+
 var _copies = 0;
 
-/// A file of a share, copied once into the cache of this computer before its conversion
-class ShareFileSource implements ConversionSource {
+/// A file of a share, copied once into the cache of this computer before its conversion. Its versions are looked for
+/// in the folder of the original on the share too ([versions]), where a batch that skips a photo with a version made
+/// with the same settings finds the one a computer put there.
+class ShareFileSource implements ConversionSource, RemoteVersionLookup {
   ShareFileSource({
     required this.entry,
     required this._url,
     required this._fetch,
     this.exif = const ImmersiveExif(),
+    this._versions,
     Future<Directory> Function()? copiesFolder,
     Future<String> Function(String path, NativeCancelFlag cancel)? hash,
   }) : _copiesFolder = copiesFolder ?? aiCopiesFolder,
@@ -57,6 +72,7 @@ class ShareFileSource implements ConversionSource {
   final ShareFileFetcher _fetch;
   final Future<Directory> Function() _copiesFolder;
   final Future<String> Function(String path, NativeCancelFlag cancel) _hash;
+  final ShareVersionLookup? _versions;
 
   Directory? _folder;
   String? _copy;
@@ -182,6 +198,26 @@ class ShareFileSource implements ConversionSource {
       failure.failure == WriteFailure.diskFull ? ImmersiveErrorCode.diskFull : ImmersiveErrorCode.writeFailed,
       failure.message,
     );
+  }
+
+  @override
+  Future<ExistingVersion?> versionWithSettings(
+    DerivedRuleOriginal original,
+    String settingsKey, {
+    required ImmersiveKind kind,
+    bool Function(ExistingVersion version)? where,
+  }) async {
+    final versions = _versions;
+    if (versions == null) {
+      return null;
+    }
+    try {
+      return await versions(original, settingsKey, kind: kind, where: where);
+    } catch (error) {
+      // The share cannot be read now: the photo is converted, as for a folder that cannot be read
+      _log.warning('The versions of $name on its share could not be looked up: $error');
+      return null;
+    }
   }
 
   @override

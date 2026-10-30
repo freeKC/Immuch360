@@ -23,6 +23,8 @@ import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
+import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
@@ -30,6 +32,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -41,6 +44,7 @@ import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
+import '../../../presentation/pages/network/network_viewer_fakes.dart' show MemoryShare;
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
 import '../fakes/fake_conversion_engines.dart';
@@ -48,6 +52,7 @@ import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_panorama_engine.dart';
 import '../fakes/fake_scene_engine.dart';
+import '../fakes/fake_share_writer.dart';
 import '../fakes/fake_stereo_panorama_engine.dart';
 import '../fakes/recording_creator_files.dart';
 import 'settle_still.dart';
@@ -122,13 +127,18 @@ void main() {
   late Directory root;
   late String chosen;
   late RecordingCreatorFiles files;
-  late SafeWriter writer;
+  late SafeWriter safeWriter;
+  var staged = 0;
   late DesktopAiSettingsStore store;
   late FakeAiComponentsService service;
   late FakeImmersiveEngine engine;
   late Map<ConversionKind, ConversionEngine> kinds;
   late _Bridge bridge;
   late Map<String, ViewRotationEntry> turns;
+  late ShareFolder? Function(NetworkEntry entry) folderOf;
+  late FakeShareWriter writer;
+  late List<String> checked;
+  late ShareVersionLookup? versions;
 
   final linux = aiComponentsFor(AiPlatform.linuxX64);
   final rules = LibraryPathRules(context: p.context, caseFold: false);
@@ -139,7 +149,7 @@ void main() {
     chosen = p.join(root.path, 'Downloads', 'Immuch360');
     final support = Directory(p.join(root.path, 'support'))..createSync();
     files = RecordingCreatorFiles();
-    writer = SafeWriter(
+    safeWriter = SafeWriter(
       files: files,
       journal: InflightJournal(settingsDirectory: () async => support),
       processId: 4242,
@@ -154,6 +164,11 @@ void main() {
     );
     bridge = _Bridge();
     turns = {};
+    // A media server by default: the folder of my choice
+    folderOf = (entry) => null;
+    writer = FakeShareWriter();
+    checked = [];
+    versions = null;
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -171,7 +186,7 @@ void main() {
   }
 
   List<Override> overrides() {
-    final output = SafeWriterOutput(writer: writer);
+    final output = SafeWriterOutput(writer: safeWriter);
     return [
       aiFeaturesEnabledProvider.overrideWith((ref) => true),
       aiComponentsServiceProvider.overrideWithValue(service),
@@ -193,16 +208,26 @@ void main() {
           fetch: bridge.fetch,
           copiesFolder: () async => Directory(copiesFolder()),
           hash: (path, cancel) async => base64.encode(crypto.sha1.convert(File(path).readAsBytesSync()).bytes),
+          versions: versions,
         ),
+      ),
+      shareFolderOfProvider.overrideWithValue((entry) => folderOf(entry)),
+      shareWriterOpenerProvider.overrideWithValue((sourceId) async => writer),
+      shareStagingFolderProvider.overrideWithValue(
+        () async => (await Directory(p.join(copiesFolder(), 'share-out-${staged++}')).create(recursive: true)).path,
       ),
       destinationSessionFactoryProvider.overrideWithValue(
         (jobs, settings) => DestinationSession(
           jobs,
           store: settings,
-          writer: writer,
+          writer: safeWriter,
           volumes: _LocalVolumes(),
           downloadFolder: () async => chosen,
           rules: rules,
+          shareProbe: (folder) async {
+            checked.add(folder.label);
+            return const ProbeResult(ProbeStatus.ready);
+          },
         ),
       ),
       desktopAiSettingsStoreProvider.overrideWithValue(store),
@@ -259,6 +284,27 @@ void main() {
   }
 
   Finder convert() => find.byKey(const Key('ai_conversion_convert'));
+
+  /// desktop_ai.json once the writes of the page are done, read in the zone of the test and pumped (see the same
+  /// helper of conversion_dialog_test.dart: a read inside runAsync would wait for the writes queued before it)
+  Future<DesktopAiSettings> keptSettings(WidgetTester tester) async {
+    DesktopAiSettings? read;
+    Object? failure;
+    unawaited(store.read().then((settings) => read = settings, onError: (Object error) => failure = error));
+    for (var step = 0; step < 500 && read == null && failure == null; step++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    if (failure != null) {
+      fail('desktop_ai.json could not be read: $failure');
+    }
+    return read ?? fail('desktop_ai.json was not read in time');
+  }
+
+  /// The yes given earlier for the share "nas", before the dialog opens
+  Future<void> allowNas(WidgetTester tester) => tester.runAsync(
+    () => store.update((settings) => settings.copyWith(networkRootsAllowed: const ['net-//nas/photos:/'])),
+  );
 
   bool convertEnabled(WidgetTester tester) => tester.widget<FilledButton>(convert()).onPressed != null;
 
@@ -476,5 +522,125 @@ void main() {
       ('salon.jpg', 1, ConversionState.done),
       ('cuisine.jpg', 0, ConversionState.done),
     ]);
+  });
+
+  group('where the version goes', () {
+    const nas = ShareFolder(
+      sourceId: 'nas',
+      path: '/2024',
+      label: 'smb://nas/photos/2024',
+      rootKey: 'net-//nas/photos:/',
+      rootLabel: 'smb://nas/photos',
+    );
+
+    String? publishedPath(ProviderContainer container) =>
+        container.read(sharePublisherProvider).values.where((publish) => publish.path != null).firstOrNull?.path;
+
+    testWidgets('a photo of an SMB share: next to its original after the yes, made here, then on the share', (
+      tester,
+    ) async {
+      engine = FakeImmersiveEngine();
+      folderOf = (entry) => nas;
+      final salon = shared('/2024/salon.jpg', jpegFile(width: 4000, height: 3000));
+      final container = await openDialog(tester, [salon]);
+
+      expect(
+        find.text(
+          'Save 3D photos in the folders of this network folder? Immuch360 writes new files there, never the originals.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('smb://nas/photos'), findsOneWidget, reason: 'the root of the share it asks for');
+      expect(checked, isEmpty, reason: 'nothing tried on the share before the yes');
+      expect(convertEnabled(tester), isFalse);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_network_yes')));
+      await settle(tester, until: () => convertEnabled(tester));
+
+      expect(checked, ['smb://nas/photos/2024']);
+      expect(find.byKey(const Key('ai_conversion_next_to_original')), findsOneWidget);
+      expect(
+        tester.widget<RadioGroup<AiDestination>>(find.byType(RadioGroup<AiDestination>)).groupValue,
+        AiDestination.nextToOriginal,
+      );
+      expect(find.textContaining('smb://nas/photos/2024'), findsOneWidget, reason: 'the folder of the share');
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => publishedPath(container) != null);
+
+      expect(writer.files.keys, ['/2024/salon_3D_LRF_Full_SBS.jpg']);
+      expect(writer.files.values.single.take(2), [0xff, 0xd8]);
+      expect(copies(), isEmpty, reason: 'neither the copy nor the version stays on this computer');
+      expect(find.text('smb://nas/photos/2024/salon_3D_LRF_Full_SBS.jpg'), findsOneWidget, reason: 'the panel');
+      expect(find.byKey(const Key('ai_job_view_share')), findsOneWidget);
+      expect(find.byKey(const Key('ai_job_open_folder')), findsNothing, reason: 'nothing of it on this computer');
+      expect((await keptSettings(tester)).networkRootsAllowed, ['net-//nas/photos:/']);
+    });
+
+    testWidgets('a photo of a media server (DLNA, Plex): the folder of my choice, with the reason', (tester) async {
+      final salon = shared('/2024/salon.jpg', jpegFile(width: 4000, height: 3000));
+
+      await openDialog(tester, [salon]);
+
+      expect(find.text('This source cannot be written to: choose a folder'), findsOneWidget);
+      expect(find.textContaining(chosen), findsOneWidget);
+      expect(find.byKey(const Key('ai_conversion_next_to_original')), findsNothing);
+      expect(find.byKey(const Key('ai_conversion_network_yes')), findsNothing);
+      expect(convertEnabled(tester), isTrue);
+    });
+
+    testWidgets('the share refuses the version at the end: kept in the folder of my choice, and said', (tester) async {
+      engine = FakeImmersiveEngine();
+      folderOf = (entry) => nas;
+      writer.failUpload = ShareWriteFailure.readOnly;
+      await allowNas(tester);
+      final salon = shared('/2024/salon.jpg', jpegFile(width: 4000, height: 3000));
+      final container = await openDialog(tester, [salon]);
+
+      await tapIn(tester, convert());
+      await settle(
+        tester,
+        until: () => container.read(sharePublisherProvider).values.any((publish) => publish.state.isEnded),
+      );
+
+      expect(writer.files, isEmpty);
+      expect(File(p.join(chosen, 'salon_3D_LRF_Full_SBS.jpg')).existsSync(), isTrue);
+      expect(
+        find.text('Not saved on the share (This folder does not accept new files): kept on this computer'),
+        findsOneWidget,
+      );
+      expect(find.text(p.join(chosen, 'salon_3D_LRF_Full_SBS.jpg')), findsOneWidget);
+      expect(find.byKey(const Key('ai_job_open_folder')), findsOneWidget, reason: 'it is on this computer');
+    });
+
+    testWidgets('Skip: a version made with the same settings is next to it on the share already', (tester) async {
+      engine = FakeImmersiveEngine();
+      folderOf = (entry) => nas;
+      await allowNas(tester);
+      final bytes = jpegFile(width: 4000, height: 3000);
+      final salon = shared('/2024/salon.jpg', bytes);
+      // Ours, made from these bytes with the settings of this build, as a computer put it there earlier
+      final made = MemoryShare(
+        const NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'NAS', host: 'nas'),
+        files: {
+          '/2024/salon.jpg': bytes,
+          '/2024/salon_3D_LRF_Full_SBS.jpg': jpegFile(
+            width: 8000,
+            height: 3000,
+            xmp: ourXmp(sourceSize: bytes.length, sourceSha1: base64.encode(crypto.sha1.convert(bytes).bytes)),
+          ),
+        },
+      );
+      made.folders['/2024'] = [made.file('/2024/salon.jpg'), made.file('/2024/salon_3D_LRF_Full_SBS.jpg')];
+      versions = shareVersionLookup(() async => made, salon);
+      final container = await openDialog(tester, [salon]);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect((job.state, job.skipReason), (ConversionState.skipped, ConversionSkipReason.sameSettingsExists));
+      expect(writer.calls, isEmpty, reason: 'nothing written on the share');
+    });
   });
 }

@@ -15,10 +15,12 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
+import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
@@ -253,6 +255,19 @@ abstract interface class ConversionSource {
 
   /// Deletes what [prepare] copied; nothing for a file read in place
   Future<void> release();
+}
+
+/// A source whose versions may be where neither the index of this computer nor the folder of its job sees them: the
+/// folder of its original on a share opened in the app. The queue asks it for a version of [original] of [kind] made
+/// with [settingsKey] (for which [where] holds when given) when they have none, so that a batch that skips such photos
+/// skips it too. Null when there is none, or when it cannot be told.
+abstract interface class RemoteVersionLookup {
+  Future<ExistingVersion?> versionWithSettings(
+    DerivedRuleOriginal original,
+    String settingsKey, {
+    required ImmersiveKind kind,
+    bool Function(ExistingVersion version)? where,
+  });
 }
 
 /// A file of this computer, read in place: the folders of the library and the files opened with the program.

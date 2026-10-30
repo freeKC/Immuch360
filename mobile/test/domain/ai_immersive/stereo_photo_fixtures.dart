@@ -8,11 +8,13 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 
 /// Our packet for a photo of [eyeWidth] x [eyeHeight] pixels per eye, made from [sourceName] of [sourceSize] bytes
+/// whose sum is [sourceSha1]
 StereoPhotoXmp ourXmp({
   int eyeWidth = 4000,
   int eyeHeight = 3000,
   String sourceName = 'salon.jpg',
   int sourceSize = 4182311,
+  String sourceSha1 = 'X8tYgvibyzHDDN2yXGU/ft1XxeM=',
   StereoEyes eyes = StereoEyes.full,
   EyeOrder eyeOrder = EyeOrder.leftRight,
   int formatVersion = immersiveFormatVersion,
@@ -32,7 +34,7 @@ StereoPhotoXmp ourXmp({
   derivativeId: 'urn:uuid:6f1c2e0a-0000-4000-8000-000000000000',
   sourceName: sourceName,
   sourceSize: sourceSize,
-  sourceSha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=',
+  sourceSha1: sourceSha1,
   sourceQuarterTurns: 0,
   created: '2026-10-27T10:12:00+01:00',
   creatorTool: 'Immuch360 Desktop 3.3.0 (windows)',

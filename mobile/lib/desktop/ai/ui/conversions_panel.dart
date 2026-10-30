@@ -29,6 +29,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
@@ -36,6 +37,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/local_only_message.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
@@ -43,11 +45,13 @@ import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
+import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -493,8 +497,12 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final glb = ref.watch(sceneGlbCopiesProvider.select((copies) => copies[job.id]));
     final notifier = ref.read(conversionQueueProvider.notifier);
     final asset = info?.asset;
-    final written = job.writtenPath;
-    final folder = written != null ? p.dirname(written) : job.target?.folder;
+    // A version next to its original on a share is made here, then written there (share_publisher.dart): its folder
+    // is that of the share, and nothing of it stays here unless the share refused it
+    final publish = ref.watch(sharePublisherProvider.select((publishes) => publishes[job.id]));
+    final written = publish == null ? job.writtenPath : publish.keptPath;
+    final onShare = publish != null && publish.keptPath == null;
+    final folder = onShare ? publish.target.folder.label : (written != null ? p.dirname(written) : job.target?.folder);
     final secondary = TextStyle(color: colors.onSurfaceVariant);
     final stage = job.state.isActive ? conversionStageText(t, job) : null;
     final progress = job.state.isActive ? conversionProgressText(t, job, _left) : null;
@@ -528,11 +536,27 @@ class _JobRowState extends ConsumerState<_JobRow> {
       if (job.state == ConversionState.failed && job.error != null)
         Text(conversionFailureText(t, job.error!, job.message), style: TextStyle(color: colors.error)),
       if (folder != null && !job.state.isEnded || job.state == ConversionState.done) ...[
-        if (written != null)
+        if (publish != null && job.state == ConversionState.done && !publish.state.isEnded)
+          Text(t.ai_immersive_share_saving, key: const Key('ai_job_share_saving'), style: secondary),
+        if (publish?.shown case final shown?)
+          SelectableText(shown, key: const Key('ai_job_share_path'), style: secondary)
+        else if (written != null)
           SelectableText(written, style: secondary)
         else if (folder != null)
           SelectableText(folder, style: secondary),
       ],
+      if (publish?.state == SharePublishState.skipped)
+        Text(
+          conversionSkipText(t, ConversionSkipReason.nameTaken, name: job.target?.fileName),
+          key: const Key('ai_job_share_skipped'),
+          style: secondary,
+        ),
+      if (publish != null && publish.state == SharePublishState.keptHere)
+        Text(
+          t.ai_immersive_share_kept_here(reason: shareFailureText(t, publish.failure, publish.message)),
+          key: const Key('ai_job_share_kept'),
+          style: TextStyle(color: colors.error),
+        ),
       if (job.state == ConversionState.done) ...[
         if (job.reduced && job.eyeWidth != null) Text(t.ai_immersive_reduced(width: job.eyeWidth!), style: secondary),
         if (hidden != null) Text(t.ai_immersive_hidden_filled(percent: (hidden * 100).round()), style: secondary),
@@ -540,7 +564,8 @@ class _JobRowState extends ConsumerState<_JobRow> {
           // The share filled in says it better than the flag
           if (flag != ReliefQualityFlag.hiddenAreas || hidden == null) Text(qualityFlagText(t, flag), style: secondary),
         if (info?.serverEdits ?? false) Text(t.ai_immersive_server_edits_ignored, style: secondary),
-        if (glb?.path case final copy?) SelectableText(copy, key: const Key('ai_job_glb'), style: secondary),
+        if (publish != null ? publish.glbShown : glb?.path case final copy?)
+          SelectableText(copy, key: const Key('ai_job_glb'), style: secondary),
         if (glb?.error case final error?)
           Text(
             sceneGlbProblemText(t, error),
@@ -566,6 +591,17 @@ class _JobRowState extends ConsumerState<_JobRow> {
           key: const Key('ai_job_retry'),
           onPressed: () => notifier.retry(job.id),
           child: Text(t.ai_immersive_retry),
+        ),
+      // On the share: opened there, in the page of the photo of the share
+      if (job.state == ConversionState.done && onShare && publish.state == SharePublishState.saved)
+        TextButton(
+          key: const Key('ai_job_view_share'),
+          onPressed: () {
+            final open = ref.read(shareVersionViewerProvider);
+            unawaited(Navigator.of(context).maybePop());
+            open(context, publish.target.folder.sourceId, publish.path!);
+          },
+          child: Text(t.view),
         ),
       if (job.state == ConversionState.done && written != null) ...[
         // A scene is judged here before it goes to the NAS; the panel stays under the preview for the next one
@@ -633,6 +669,24 @@ class _JobRowState extends ConsumerState<_JobRow> {
     );
   }
 }
+
+/// Why the share refused a version, in the words of the dialog: read only, full, else the words of the share
+String shareFailureText(Translations t, ShareWriteFailure? failure, String? message) => switch (failure) {
+  ShareWriteFailure.readOnly => t.ai_immersive_failed_read_only,
+  ShareWriteFailure.diskFull => t.ai_immersive_failed_disk_full,
+  _ => message ?? '',
+};
+
+/// Opens a version written on a share in the page of the photos of the share; replaced in tests
+final shareVersionViewerProvider = Provider<void Function(BuildContext context, String sourceId, String path)>(
+  (ref) => (context, sourceId, path) {
+    try {
+      unawaited(context.router.push(NetworkPhotoRoute(sourceId: sourceId, path: path)));
+    } catch (error) {
+      _log.warning('The page of $path could not be opened: $error');
+    }
+  },
+);
 
 /// The thumbnail of the photo of a job; replaced in tests
 final conversionThumbnailProvider = Provider<Widget Function(BaseAsset asset)>(

@@ -17,8 +17,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart' show versionHeadLength;
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart' show aiCopiesFolder;
 import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
@@ -26,6 +29,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
+import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -35,17 +39,20 @@ import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart' show ByteRangeReader;
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoFile;
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 
 final _log = Logger('ShareConversion');
 
-/// Makes the source of a photo of a share: its copy through the media bridge, as the pages of the shares read it;
-/// replaced in tests
+/// Makes the source of a photo of a share: its copy through the media bridge, as the pages of the shares read it, and
+/// its versions looked for in its folder on the share; replaced in tests
 final shareConversionSourceProvider = Provider<ShareFileSource Function(NetworkEntry entry)>((ref) {
   final connections = ref.watch(networkConnectionsProvider);
   final client = ref.watch(networkBridgeClientProvider);
@@ -53,8 +60,59 @@ final shareConversionSourceProvider = Provider<ShareFileSource Function(NetworkE
     entry: entry,
     url: () => connections.mediaUrl(entry.sourceId, entry.path),
     fetch: (url) => client.send(http.Request('GET', url)),
+    versions: shareVersionLookup(() => connections.fileSystem(entry.sourceId), entry),
   );
 });
+
+/// Looks for the versions of the photo of a share at [entry] among the files of its folder, read through
+/// [fileSystem] as ExistingVersionFinder reads a folder of this computer: the names of the versions of the kind, eight
+/// at most, the head of each, kept when our XMP in it names the original by its sum
+ShareVersionLookup shareVersionLookup(Future<NetworkFileSystem> Function() fileSystem, NetworkEntry entry) =>
+    (original, settingsKey, {required kind, where}) async {
+      final share = await fileSystem();
+      final folder = shareFolderOfPath(entry.path);
+      final finder = ExistingVersionFinder(
+        listFolder: (_) async => [
+          for (final neighbour in await share.list(folder))
+            if (!neighbour.isDirectory) neighbour.name,
+        ],
+        readHead: (path) async {
+          try {
+            return await networkFileReader(share, sharePathIn(folder, p.basename(path)))(0, versionHeadLength);
+          } catch (error) {
+            _log.fine('${p.basename(path)} could not be read on its share: $error');
+            return null;
+          }
+        },
+      );
+      return finder.withSettings(original, settingsKey, folder: folder, kind: kind, where: where);
+    };
+
+/// Where the file of a share at an entry is, for the destination of its versions (shareFolderOf): null for a share the
+/// app never writes into, or one no longer known; replaced in tests
+final shareFolderOfProvider = Provider<ShareFolder? Function(NetworkEntry entry)>(
+  (ref) => (entry) {
+    final source = ref.read(networkSourceProvider(entry.sourceId));
+    return source == null ? null : shareFolderOf(source, entry.path);
+  },
+);
+
+/// Makes the folder where the version of a photo of a share is made before it goes to the share
+/// (shareVersionStagingFolder); replaced in tests
+final shareStagingFolderProvider = Provider<Future<String> Function()>((ref) => shareVersionStagingFolder);
+
+var _stagingFolders = 0;
+
+/// A new folder among the copies of the AI where the version of a photo of a share is made before it goes next to its
+/// original on the share (share_publisher.dart): one per photo, so that two photos of the same name never share it.
+/// Deleted once its version left, or at the next start (cleanUpAiCopiesAtStart).
+Future<String> shareVersionStagingFolder() async {
+  final root = await aiCopiesFolder();
+  final folder = Directory(
+    p.join(root.path, 'share-out-$pid-${++_stagingFolders}-${DateTime.now().microsecondsSinceEpoch}'),
+  );
+  return (await folder.create(recursive: true)).path;
+}
 
 /// What the dialog reads of the copy of a photo of a share: its frame as it is shown, its facts, and the fields its
 /// version keeps from it

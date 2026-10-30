@@ -74,6 +74,7 @@ import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -88,6 +89,7 @@ import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
+import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
@@ -664,10 +666,11 @@ final conversionAssetFilesProvider = Provider<ConversionAssetFiles>((ref) => con
 typedef DestinationSessionFactory =
     DestinationSession Function(List<DestinationJob> jobs, DesktopAiSettingsStore store);
 
-final destinationSessionFactoryProvider = Provider<DestinationSessionFactory>(
-  (ref) =>
-      (jobs, store) => DestinationSession(jobs, store: store),
-);
+final destinationSessionFactoryProvider = Provider<DestinationSessionFactory>((ref) {
+  // The folders of a share opened in the app are checked through its writer (share_writer.dart)
+  final shares = ref.watch(shareFolderProbeProvider);
+  return (jobs, store) => DestinationSession(jobs, store: store, shareProbe: shares);
+});
 
 /// A photo of the selection as the dialog sees it
 class ConversionCandidate {
@@ -1174,6 +1177,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   Future<List<_Photo>?> _readShareFiles() async {
     final make = ref.read(shareConversionSourceProvider);
     final read = ref.read(shareCopyFactsReaderProvider);
+    // A share that takes files has its versions next to their originals (destination.dart); a media server has not
+    final folderOf = ref.read(shareFolderOfProvider);
     // The turns the page of a share shows each photo with; none when they cannot be read, as in its viewer
     var rotations = const <String, ViewRotationEntry>{};
     try {
@@ -1215,7 +1220,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         source.exif = known.exif;
         photos.add(
           _Photo(shareConversionAsset(entry, width: known.width, height: known.height), known.facts, (
-            location: ShareOriginal(name: entry.name),
+            location: ShareOriginal(name: entry.name, folder: folderOf(entry)),
             source: source,
           )),
         );
@@ -1479,13 +1484,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final requests = <ConversionRequest>[];
     for (final candidate in candidates) {
       final plan = candidate.runs ? session.destinations[candidate.id] : null;
+      // A version next to its original on a share is made here first, in a folder of its own, then put there
+      final folder = plan?.share != null ? await ref.read(shareStagingFolderProvider)() : plan?.folder;
       requests.add(
-        plan == null
+        plan == null || folder == null
             ? ConversionRequest(source: candidate.source, skip: candidate.skip ?? ConversionSkipReason.unreachable)
             : ConversionRequest(
                 source: candidate.source,
                 target: ConversionTarget(
-                  folder: plan.folder,
+                  folder: folder,
                   fileName: versionTargetName(kind.output, candidate.location!.name),
                 ),
                 quarterTurns: candidate.quarterTurns,
@@ -1506,11 +1513,20 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       },
     );
     final infos = <String, ConversionJobInfo>{};
+    final shared = <String, ShareVersionTarget>{};
     final queue = ref.read(conversionQueueProvider);
     final requestOf = requestIndexOfJobs(ids, queue);
     for (final (index, id) in ids.indexed) {
       final candidate = candidates[requestOf[index]];
       final plan = candidate.id == null ? null : session.destinations[candidate.id];
+      if (plan?.share case final folder?) {
+        shared[id] = ShareVersionTarget(
+          folder: folder,
+          fallbackFolder: session.chosenFolder,
+          skipWhenTaken: settings.whenExists == AiWhenExists.skip,
+          withGlb: kind == ConversionKind.sceneFromPhoto && settings.exportGlb,
+        );
+      }
       // The partial file of the check goes to the job of the photo, never to a version chained after it
       final chained = queue.byId(id)?.parentId != null;
       final part = candidate.id == null || chained ? null : session.takePart(candidate.id!);
@@ -1526,6 +1542,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       );
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
+    ref.read(sharePublisherProvider.notifier).follow(shared);
     if (kind == ConversionKind.sceneFromPhoto && settings.exportGlb) {
       ref.read(sceneGlbCopiesProvider.notifier).follow(ids);
     }
@@ -1743,7 +1760,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       );
     }
     final hasLibraryOrOpened = _runs.any(
-      (candidate) => candidate.location is LibraryOriginal || candidate.location is OpenedOriginal,
+      (candidate) => switch (candidate.location) {
+        LibraryOriginal() || OpenedOriginal() => true,
+        // A share that takes files
+        ShareOriginal(:final folder) => folder != null,
+        _ => false,
+      },
     );
     return [
       Text(t.ai_immersive_save_to, style: Theme.of(context).textTheme.titleSmall),

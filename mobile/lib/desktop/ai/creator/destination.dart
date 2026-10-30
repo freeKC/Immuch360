@@ -603,6 +603,9 @@ class DestinationSession {
   /// The settings as the dialog leaves them (the yes given, the refusals kept)
   DesktopAiSettings get settings => _settings;
 
+  /// "A folder of my choice" now: the one chosen in the dialog, else that of the settings, else the download folder
+  String get chosenFolder => _folderChosenHere ?? _settings.folder ?? _defaultFolder ?? '';
+
   /// The network folders waiting for a yes or a no: the key to answer with, and the folder the question names
   Map<String, String> get pendingConsents => {
     for (final plan in _plans.values) ?plan.consentKey: plan.consentFolder ?? plan.folder,
