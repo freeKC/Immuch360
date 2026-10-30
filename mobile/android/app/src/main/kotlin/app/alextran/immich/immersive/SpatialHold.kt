@@ -31,7 +31,7 @@ internal class SpatialHold {
 
   /**
    * A reference to an object of the scene, for a property of the viewer (`var photoLayerEntity: Entity? by
-   * spatial.ref()`): what was set while the scene is up, null once it is down.
+   * sceneHold.ref()`): what was set while the scene is up, null once it is down.
    */
   fun <T : Any> ref(): ReadWriteProperty<Any?, T?> = Ref<T>().also { refs += it }
 
