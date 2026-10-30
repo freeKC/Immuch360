@@ -492,7 +492,8 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// paused or ended.
   ///
   /// On a TV OK acts on its release, and held on the viewer or on a button of the bars it opens the details (see
-  /// [_onTvOk]); Up from the top row of the bottom bar goes straight to the top bar.
+  /// [_onTvOk]); Up from the top row of the bottom bar goes straight to the top bar, and Down from the top bar
+  /// straight to the bottom one.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     final press = isRemotePress(event);
@@ -541,6 +542,14 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     if (tvMode && press && key == LogicalKeyboardKey.arrowUp && _upLeavesBottomBar()) {
       // Up from play and pause gave the focus to the viewer itself first, between the bars, with no ring to show it
       final target = _topBarTarget(withBack: true);
+      if (target != null) {
+        target.requestFocus();
+        return KeyEventResult.handled;
+      }
+    }
+    if (tvMode && press && key == LogicalKeyboardKey.arrowDown && _downLeavesTopBar()) {
+      // The same the other way: Down from the Back arrow gave the focus to the viewer, and the next OK hid the bars
+      final target = _bottomBarTarget(withRotate: true);
       if (target != null) {
         target.requestFocus();
         return KeyEventResult.handled;
@@ -705,6 +714,23 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return !_bottomBarFocus.traversalDescendants.any((node) => node != focused && node.rect.bottom <= top);
   }
 
+  /// Whether Down leaves the top bar: its focused button has nothing of the bar under it
+  bool _downLeavesTopBar() {
+    final focused = FocusManager.instance.primaryFocus;
+    if (focused == null || !_topBarFocus.hasFocus) {
+      return false;
+    }
+    final bottom = focused.rect.bottom;
+    return !_topBarFocus.traversalDescendants.any((node) => node != focused && node.rect.top >= bottom);
+  }
+
+  /// Where the focus goes in the bottom bar: its top button (play for a video), the Rotate button of a TV after any
+  /// other and only [withRotate]
+  FocusNode? _bottomBarTarget({required bool withRotate}) {
+    final items = _bottomBarFocus.traversalDescendants;
+    return items.where((node) => !isTvRotateFocus(node)).firstOrNull ?? (withRotate ? items.firstOrNull : null);
+  }
+
   /// Where Up takes the focus in the top bar: its buttons on the right (360° first), else its Back button only
   /// [withBack]
   FocusNode? _topBarTarget({required bool withBack}) =>
@@ -755,19 +781,19 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// only [withBack]. The Rotate button of a TV comes after any other button of the bottom bar, and only [withRotate].
   void _showControlsAndFocus(FocusNode bar, {bool withBack = true, bool withRotate = true}) {
     ref.read(assetViewerProvider.notifier).setControls(true);
-    // The bars take the focus once shown, from the next frame
+    // The bars take the focus once shown, from the next frame. With the controls already shown nothing else asks for
+    // that frame: the focus stayed on the photo, without a ring, until whatever drew the next one (OK, a screen
+    // reader), so Down seemed to reach Rotate without its ring, and the first Up after a photo opened to focus nothing
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
       }
       final top = _topBarTarget(withBack: withBack);
-      final bottomItems = _bottomBarFocus.traversalDescendants;
-      final bottom =
-          bottomItems.where((node) => !isTvRotateFocus(node)).firstOrNull ??
-          (withRotate ? bottomItems.firstOrNull : null);
+      final bottom = _bottomBarTarget(withRotate: withRotate);
       final target = identical(bar, _topBarFocus) ? top ?? bottom : bottom ?? top;
       target?.requestFocus();
     });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   /// Back on a TV: the details close first, then the controls that have the focus hide, then the viewer closes
