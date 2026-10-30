@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,11 +11,13 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/original_download.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:native_video_player/native_video_player.dart';
 
@@ -73,6 +76,106 @@ class _FakeVideoDecoderApi extends VideoDecoderApi {
       maxHeight: maxHeight,
     );
   }
+}
+
+/// The native player of the viewer, which the tests have no platform view for: records what it loads
+class _FakePlayerController extends Fake implements NativeVideoPlayerController {
+  @override
+  final onPlaybackReady = ChangeNotifier();
+  @override
+  final onPlaybackStatusChanged = ValueNotifier<PlaybackStatus>(PlaybackStatus.stopped);
+  @override
+  final onPlaybackPositionChanged = ValueNotifier<int>(0);
+  @override
+  final onPlaybackEnded = ChangeNotifier();
+  @override
+  final onError = ValueNotifier<String?>(null);
+  @override
+  final onTracksChanged = ChangeNotifier();
+
+  final loaded = <VideoSource>[];
+  VideoSource? _source;
+
+  @override
+  VideoSource? get videoSource => _source;
+
+  @override
+  PlaybackInfo? get playbackInfo => null;
+
+  @override
+  Future<void> loadVideoSource(VideoSource videoSource) async {
+    loaded.add(videoSource);
+    _source = videoSource;
+  }
+
+  @override
+  Future<void> play() async {}
+
+  @override
+  Future<void> pause() async {}
+
+  @override
+  Future<void> stop() async {}
+
+  @override
+  Future<bool> isPlaying() async => false;
+
+  @override
+  Future<void> setLoop(bool loop) async {}
+
+  @override
+  Future<void> setVolume(double volume) async {}
+}
+
+/// One download of [_FakeOriginalDownloads]: each [chunk] asks whether it is still wanted, as the real one does
+class _DownloadRun {
+  _DownloadRun(this.videoId, this.isWanted);
+
+  final String videoId;
+  final bool Function()? isWanted;
+  final result = Completer<File?>();
+
+  /// A chunk arrives: the download stops, with no file, when the video is no longer wanted
+  void chunk() {
+    if (!result.isCompleted && isWanted?.call() == false) {
+      result.complete(null);
+    }
+  }
+
+  void finish(File? file) => result.complete(file);
+}
+
+/// A server that cannot stream its originals ([streamsAnswer] false), whose downloads the tests drive
+class _FakeOriginalDownloads extends OriginalDownloads {
+  _FakeOriginalDownloads()
+    : super(
+        client: () => throw UnimplementedError('no network in these tests'),
+        serverEndpoint: () => null,
+        headers: () => const {},
+        directory: () async => Directory.systemTemp,
+      );
+
+  bool streamsAnswer = false;
+  final runs = <_DownloadRun>[];
+  final held = <String>[];
+  final released = <String>[];
+
+  @override
+  Future<bool> streams(String videoId) async => streamsAnswer;
+
+  @override
+  Future<File?> download(String videoId, {void Function(int percent)? onProgress, bool Function()? isWanted}) {
+    final run = _DownloadRun(videoId, isWanted);
+    runs.add(run);
+    onProgress?.call(0);
+    return run.result.future;
+  }
+
+  @override
+  void hold(String videoId) => held.add(videoId);
+
+  @override
+  Future<void> release(String videoId) async => released.add(videoId);
 }
 
 void main() {
@@ -334,6 +437,192 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('video_failure_panel')), findsNothing);
+    });
+  });
+
+  group('an original that cannot stream, downloaded before it plays', () {
+    // FreeKC's server: no Range on /original, the MP4 index at the end. The original plays (the device decodes it), so
+    // the in-app player downloads it with its progress, for the video on screen only
+    final serverOnly = RemoteAssetFactory.create(type: .video);
+    const appConfig = AppConfig(viewer: ViewerConfig(videoSource: .preferOriginalWithinDecoder));
+    final downloaded = File('/cache/video_original/original-${serverOnly.id}.mp4');
+    late _FakeOriginalDownloads downloads;
+    late _FakePlayerController controller;
+    late ValueNotifier<bool> current;
+
+    setUp(() {
+      when(() => context.service.asset.service.getAsset(serverOnly)).thenAnswer((_) async => serverOnly);
+      probes.result = const SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+      downloads = _FakeOriginalDownloads();
+      controller = _FakePlayerController();
+      current = ValueNotifier(true);
+    });
+
+    NativeVideoViewerState stateOf(WidgetTester tester) => tester.state(find.byType(NativeVideoViewer));
+
+    VideoPlayerNotifier playerOf(WidgetTester tester) => ProviderScope.containerOf(
+      tester.element(find.byType(NativeVideoViewer)),
+    ).read(videoPlayerProvider(serverOnly.id).notifier);
+
+    // The viewer on screen, its source made and its native player ready: the download starts
+    Future<void> pumpOnScreen(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        ValueListenableBuilder<bool>(
+          valueListenable: current,
+          builder: (_, isCurrent, _) =>
+              NativeVideoViewer(asset: serverOnly, image: const SizedBox(), isCurrent: isCurrent),
+        ),
+        overrides: [
+          storageRepositoryProvider.overrideWithValue(storage),
+          sphericalProbeServiceProvider.overrideWithValue(probes),
+          videoSourceServiceProvider.overrideWithValue(VideoSourceService(decoderApi)),
+          appConfigProvider.overrideWithValue(appConfig),
+          // Read from the config above: overridden with it, in the scope of the viewer
+          loopVideoProvider.overrideWithValue(false),
+          originalDownloadsProvider.overrideWithValue(downloads),
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+        ],
+        expectSettle: false,
+      );
+      final source = await stateOf(tester).videoSource;
+      expect(source?.path, endsWith('/assets/${serverOnly.id}/original'));
+      stateOf(tester).attachController(controller);
+      await tester.pump();
+      await tester.pump();
+    }
+
+    // The viewer goes, and its player with it: no timer of the player is left
+    Future<void> leave(WidgetTester tester) async {
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    }
+
+    testWidgets('loads the file once it is whole, with the progress on screen meanwhile', (tester) async {
+      await pumpOnScreen(tester);
+
+      expect(downloads.runs, hasLength(1));
+      expect(find.byKey(const Key('video_original_download')), findsOneWidget);
+      expect(controller.loaded, isEmpty, reason: 'nothing streams while the original downloads');
+
+      downloads.runs.single.finish(downloaded);
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded.single.type, VideoSourceType.file);
+      expect(controller.loaded.single.path, endsWith(downloaded.path));
+      expect(downloads.held, [serverOnly.id]);
+      expect(find.byKey(const Key('video_original_download')), findsNothing);
+
+      await leave(tester);
+    });
+
+    testWidgets('stops behind the immersive viewer, and downloads again once the page is back', (tester) async {
+      await pumpOnScreen(tester);
+
+      // The immersive button: the viewer downloads the same original on its own
+      await playerOf(tester).suspendForExternalPlayer();
+      downloads.runs.single.chunk();
+      await tester.pump();
+      await tester.pump();
+
+      expect(downloads.runs.single.result.isCompleted, isTrue, reason: 'one download at a time on the link');
+      expect(controller.loaded, isEmpty);
+      expect(find.byKey(const Key('video_original_download')), findsNothing);
+
+      // The immersive viewer closes: the app resumes
+      await stateOf(tester).didChangeAppLifecycleState(AppLifecycleState.resumed);
+      await tester.pump();
+      await tester.pump();
+
+      expect(downloads.runs, hasLength(2));
+      downloads.runs.last.finish(downloaded);
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded.single.path, endsWith(downloaded.path));
+
+      await leave(tester);
+    });
+
+    testWidgets('a swipe stops the download and loads nothing on the page left, which downloads again on its return', (
+      tester,
+    ) async {
+      await pumpOnScreen(tester);
+
+      current.value = false;
+      await tester.pump();
+      downloads.runs.single.chunk();
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded, isEmpty, reason: 'the original never streams on a page that is not on screen');
+
+      current.value = true;
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump();
+
+      expect(downloads.runs, hasLength(2));
+      downloads.runs.last.finish(downloaded);
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded.single.path, endsWith(downloaded.path));
+
+      await leave(tester);
+    });
+
+    testWidgets('a download that ends after the copy was forced does not load the original over it', (tester) async {
+      await pumpOnScreen(tester);
+      final container = ProviderScope.containerOf(tester.element(find.byType(NativeVideoViewer)));
+
+      container.read(videoSourceOverridesProvider.notifier).force(serverOnly.id, .transcoded);
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+      downloads.runs.single.finish(downloaded);
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded.single.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+
+      await leave(tester);
+    });
+
+    testWidgets('streams the original when the download fails for the video on screen', (tester) async {
+      await pumpOnScreen(tester);
+
+      downloads.runs.single.finish(null);
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded.single.type, VideoSourceType.network);
+      expect(controller.loaded.single.path, endsWith('/assets/${serverOnly.id}/original'));
+
+      await leave(tester);
+    });
+
+    testWidgets('gives back its own file only when it goes', (tester) async {
+      await pumpOnScreen(tester);
+      downloads.runs.single.finish(downloaded);
+      await tester.pump();
+      await tester.pump();
+
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+
+      expect(downloads.released, [serverOnly.id]);
+    });
+
+    testWidgets('streams an original that the server streams', (tester) async {
+      downloads.streamsAnswer = true;
+      await pumpOnScreen(tester);
+
+      expect(downloads.runs, isEmpty);
+      expect(controller.loaded.single.path, endsWith('/assets/${serverOnly.id}/original'));
+
+      await leave(tester);
     });
   });
 

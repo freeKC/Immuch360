@@ -81,11 +81,19 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   VideoSourceRefusal? _refusal;
   // The file the user forced for this server video when its source was made, see videoSourceOverridesProvider
   VideoSourceKind? _forced;
-  // The server video whose original is downloaded before it plays (see OriginalDownloads): the original chosen over a
-  // copy the device cannot decode, from a server that cannot stream it. Null for any other video
+  // The server video whose original is downloaded before it plays (see OriginalDownloads): an original from a server
+  // that cannot stream it. Null for any other video
   String? _downloadFirst;
-  // Whether this viewer downloaded an original, which goes with it
-  bool _downloaded = false;
+  // The download of that original under way, and whether it stopped because the video was no longer wanted (see
+  // _wantsDownload) rather than for a failure: a second load of the page joins it
+  Future<({File? file, bool unwanted})>? _downloadRun;
+  // Counts the sources made (see _createSource): a load that waited for a download gives up once another source took
+  // the place of its own (a file forced in the details), and a second load of the same source leaves it to the first
+  int _sourceGeneration = 0;
+  int? _waitingGeneration;
+  // The video whose downloaded original this viewer has loaded, given back when it goes (see OriginalDownloads.hold),
+  // to the downloads kept with it: no ref is read once the viewer goes
+  ({String videoId, OriginalDownloads downloads})? _heldDownload;
   // The percent of that download while it runs, null otherwise
   final _downloadPercent = ValueNotifier<int?>(null);
   // Where the video plays from, for the logs, and whether that is the server, for the failure panel
@@ -109,8 +117,17 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   /// A computer's 360° player closed: what resumed does on a phone
   Future<void> _onExternalPlayerClosed() async {
     await _notifier.resumeAfterExternalPlayer();
-    if (_notifier.takePlayOnForeground()) {
+    _downloadAgain();
+    if (mounted && _notifier.takePlayOnForeground()) {
       await _notifier.play();
+    }
+  }
+
+  /// A download of the original that an external player cut (see [_wantsDownload]) starts again once the video is
+  /// back on screen, as when the page opens
+  void _downloadAgain() {
+    if (mounted && widget.isCurrent && _downloadFirst != null) {
+      unawaited(_loadVideo());
     }
   }
 
@@ -137,8 +154,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     WidgetsBinding.instance.removeObserver(this);
     _loadTimer?.cancel();
     _removeListeners();
-    if (_downloaded) {
-      unawaited(ref.read(originalDownloadsProvider).clear());
+    final held = _heldDownload;
+    if (held != null) {
+      unawaited(held.downloads.release(held.videoId));
     }
     _downloadPercent.dispose();
     super.dispose();
@@ -153,6 +171,10 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         // (externalPlayerClosedProvider)
         if (!CurrentPlatform.isDesktop) {
           await _notifier.resumeAfterExternalPlayer();
+          _downloadAgain();
+        }
+        if (!mounted) {
+          return;
         }
         // Read first, so that it is used up even when the video plays anyway. Back from the Spatial 2.5D player,
         // a video that it left playing but that became ready in the background waits for this to play.
@@ -213,6 +235,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     if (!mounted) {
       return null;
     }
+    _sourceGeneration++;
     _sourceNotice = null;
     _refusal = null;
     _downloadFirst = null;
@@ -297,12 +320,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         return null;
       }
       ref.read(chosenVideoSourcesProvider.notifier).record(videoId, source);
-      // The original the device decodes over a copy it cannot decode, from a server that cannot stream it: downloaded
-      // once the video is on screen, rather than read to its end by the player before its first frame
-      if (source.kind == VideoSourceKind.original && source.copyBeyondDecoders != null) {
-        final streams = await ref
-            .read(originalDownloadsProvider)
-            .streams(videoId, headRead: probes.cached(remoteAsset) != null);
+      // An original from a server that cannot stream it (no Range, the MP4 index at the end), whatever chose it (the
+      // decoders, the settings, the details): downloaded once the video is on screen, rather than read to its end by
+      // the player before its first frame, as the immersive viewer does. A refused video loads nothing
+      if (source.kind == VideoSourceKind.original && source.refusal == null) {
+        final streams = await ref.read(originalDownloadsProvider).streams(videoId);
         if (!mounted) {
           return null;
         }
@@ -510,42 +532,91 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     await _apply(source);
   }
 
-  /// The original of [videoId] downloaded with its progress on screen (see OriginalDownloads), as the source of the
-  /// player; null when it was not (no size, a failure, the video no longer on screen): the original then streams
-  Future<VideoSource?> _download(String videoId) async {
+  /// Whether the original of [videoId] is still to download: the video is on screen, its source still downloads it,
+  /// and no external player took it (the immersive viewer downloads it on its own, see suspendForExternalPlayer)
+  bool _wantsDownload(String videoId, VideoPlayerNotifier notifier) =>
+      mounted && widget.isCurrent && _downloadFirst == videoId && !notifier.isSuspendedForExternalPlayer;
+
+  /// Downloads the original of [videoId] with its progress on screen (see OriginalDownloads), until it is no longer
+  /// wanted (see [_wantsDownload])
+  Future<({File? file, bool unwanted})> _startDownload(String videoId) {
     _downloadPercent.value = 0;
+    final notifier = _notifier;
+    var unwanted = false;
+    late final Future<({File? file, bool unwanted})> run;
+    run = ref
+        .read(originalDownloadsProvider)
+        .download(
+          videoId,
+          onProgress: (percent) {
+            if (mounted) {
+              _downloadPercent.value = percent;
+            }
+          },
+          isWanted: () {
+            final wanted = _wantsDownload(videoId, notifier);
+            unwanted = unwanted || !wanted;
+            return wanted;
+          },
+        )
+        .then((file) => (file: file, unwanted: unwanted))
+        .whenComplete(() {
+          if (identical(_downloadRun, run)) {
+            _downloadRun = null;
+          }
+          if (mounted) {
+            _downloadPercent.value = null;
+          }
+        });
+    return run;
+  }
+
+  /// The source of the original of [videoId], downloaded first (see [_startDownload]) for the source made at
+  /// [generation]: the file once it is whole; [remote] after a failure (no size, an HTTP error), the original then
+  /// streaming; null when nothing is to load: the video is no longer on screen or plays in an external player (the
+  /// next load of the page downloads again), another source took the place of this one, or another load of it waits
+  Future<VideoSource?> _downloaded(String videoId, int generation, VideoSource remote) async {
+    if (_waitingGeneration == generation) {
+      return null;
+    }
+    _waitingGeneration = generation;
     try {
-      final file = await ref
-          .read(originalDownloadsProvider)
-          .download(
-            videoId,
-            onProgress: (percent) {
-              if (mounted) {
-                _downloadPercent.value = percent;
-              }
-            },
-            isWanted: () => mounted && widget.isCurrent,
+      while (true) {
+        final run = await (_downloadRun ??= _startDownload(videoId));
+        if (!mounted || generation != _sourceGeneration) {
+          return null;
+        }
+        final file = run.file;
+        if (file != null) {
+          final downloads = ref.read(originalDownloadsProvider)..hold(videoId);
+          _heldDownload = (videoId: videoId, downloads: downloads);
+          _sourceLabel = 'the server original, downloaded';
+          return await VideoSource.init(
+            path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
+            type: VideoSourceType.file,
           );
-      if (file == null || !mounted) {
-        return null;
+        }
+        if (!run.unwanted) {
+          return remote;
+        }
+        // Stopped for a page that was left, and wanted again before the stop: once more
+        if (!_wantsDownload(videoId, _notifier)) {
+          return null;
+        }
       }
-      _downloaded = true;
-      _sourceLabel = 'the server original, downloaded';
-      return await VideoSource.init(
-        path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
-        type: VideoSourceType.file,
-      );
     } finally {
-      if (mounted) {
-        _downloadPercent.value = null;
+      if (_waitingGeneration == generation) {
+        _waitingGeneration = null;
       }
     }
   }
 
   /// Loads [source] in the player, playing it at once when [play] (a file the user forced): what the decoder check
   /// found is told first, once, when the video is the one on screen (the pages around it prepare their video too); a
-  /// video nothing on the server decodes fails at once instead of loading, play trying it anyway.
+  /// video nothing on the server decodes fails at once instead of loading, play trying it anyway; an original that
+  /// cannot stream is downloaded first, and loads only once it is whole, for the video still on screen.
   Future<void> _apply(VideoSource remoteSource, {bool play = false}) async {
+    final generation = _sourceGeneration;
     var source = remoteSource;
     final notice = _sourceNotice;
     _sourceNotice = null;
@@ -565,10 +636,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
     final downloadFirst = _downloadFirst;
     if (downloadFirst != null) {
-      source = await _download(downloadFirst) ?? source;
-      if (!mounted) {
+      final downloaded = await _downloaded(downloadFirst, generation, source);
+      if (downloaded == null || !mounted) {
         return;
       }
+      source = downloaded;
     }
     await localNotifier.load(source);
     await localNotifier.setLoop(!widget.asset.isMotionPhoto && loopVideo);
@@ -577,6 +649,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       await localNotifier.play();
     }
   }
+
+  /// Gives the viewer [controller] as its native player would once its view is ready: for the tests, which have no
+  /// platform view
+  @visibleForTesting
+  void attachController(NativeVideoPlayerController controller) => _initController(controller);
 
   void _initController(NativeVideoPlayerController nc) {
     if (_controller != null || !mounted) {
