@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import app.alextran.immich.immersive.SceneStick
+import app.alextran.immich.immersive.SpatialHold
 import app.alextran.immich.immersive.StereoComposer
 import app.alextran.immich.immersive.TAG
 import app.alextran.immich.immersive.VolumetricSceneSpec
@@ -400,6 +401,8 @@ internal class SceneView(
   private val context: Context,
   private val systemManager: SystemManager,
   private val main: Handler,
+  /** The scene of the SDK, down once the viewer's onSpatialShutdown ran: the textures then go with it */
+  private val sceneHold: SpatialHold,
   private val prepared: ScenePrepared,
   private val textures: List<SceneTexture>,
   private val options: SceneViewerOptions,
@@ -654,7 +657,12 @@ internal class SceneView(
       slot.sceneMesh = null
       slot.triangles = null
     }
-    main.postDelayed({ textures.forEach { runCatching { it.destroy() } } }, TEXTURE_RELEASE_DELAY_MS)
+    // Not once the scene of the SDK is down meanwhile (close() drops the scene just before the finish that shuts it
+    // down): the textures go with the scene then, as the other ones do, and no call reaches the SDK any more
+    main.postDelayed(
+      { if (!sceneHold.isDown) textures.forEach { runCatching { it.destroy() } } },
+      TEXTURE_RELEASE_DELAY_MS,
+    )
     Log.i(TAG, "scene gone")
   }
 
