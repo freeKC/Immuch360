@@ -3462,6 +3462,8 @@
   "splat_large_setting_subtitle": "Gehienez 150.000 gaussiar erakusten ditu, 50.000 beharrean: splat handi batek etenak izan ditzake",
   "splat_large_setting_title": "Splat handiak (esperimentala)",
   "splat_newer_spz": "SPZ bertsio berriago batekin egina: oraindik ez da hemen irakurtzen",
+  "splat_no_space": "Ez dago leku libre nahikorik betaurrekoetan splat honentzat",
+  "splat_not_running": "Splat modulua ez da ikusle honekin abiarazi: itxi ezazu eta ireki splata berriro",
   "splat_not_splat": "Ez da splat gaussiarra: .ply honek sare bat edo puntu hodei bat du",
   "splat_notice": "Splat gaussiarra (esperimentala)",
   "splat_older_headset": "Splat gaussiarrek Meta Quest 3 edo 3S behar dute",

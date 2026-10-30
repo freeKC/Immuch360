@@ -3006,6 +3006,8 @@
   "splat_large_setting_subtitle": "Shfaq deri në 150.000 gausiane në vend të 50.000: një splat i madh mund të ngecë",
   "splat_large_setting_title": "Splate të mëdha (eksperimentale)",
   "splat_newer_spz": "Bërë me një version më të ri SPZ: nuk lexohet ende këtu",
+  "splat_no_space": "Nuk ka hapësirë të lirë të mjaftueshme në kufje për këtë splat",
+  "splat_not_running": "Moduli i splateve nuk u nis me këtë shikues: mbylle dhe hape përsëri splatin",
   "splat_not_splat": "Nuk është splat gausian: ky .ply përmban një rrjetë ose një re pikash",
   "splat_notice": "Splat gausian (eksperimental)",
   "splat_older_headset": "Splatet gausiane kërkojnë Meta Quest 3 ose 3S",

@@ -1465,6 +1465,8 @@
   "splat_large_setting_subtitle": "Nagpapakita ng hanggang 150,000 gaussian sa halip na 50,000: maaaring mag-stutter ang malaking splat",
   "splat_large_setting_title": "Malalaking splat (eksperimental)",
   "splat_newer_spz": "Ginawa sa mas bagong bersyon ng SPZ: hindi pa nababasa rito",
+  "splat_no_space": "Kulang ang libreng espasyo sa headset para sa splat na ito",
+  "splat_not_running": "Hindi nagsimula ang splat module kasama ng viewer na ito: isara ito at buksan muli ang splat",
   "splat_not_splat": "Hindi Gaussian splat: may mesh o point cloud ang .ply na ito",
   "splat_notice": "Gaussian splat (eksperimental)",
   "splat_older_headset": "Kailangan ng Gaussian splat ang Meta Quest 3 o 3S",

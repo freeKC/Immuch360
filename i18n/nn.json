@@ -1977,6 +1977,8 @@
   "splat_large_setting_subtitle": "Viser opptil 150 000 gaussianar i staden for 50 000: ein stor splat kan hakke",
   "splat_large_setting_title": "Store splattar (eksperimentelt)",
   "splat_newer_spz": "Laga med ein nyare SPZ-versjon: blir ikkje lesen her enno",
+  "splat_no_space": "Det er ikkje nok ledig plass på headsettet til denne splatten",
+  "splat_not_running": "Splatmodulen starta ikkje med denne visinga: lukk ho og opne splatten på nytt",
   "splat_not_splat": "Ikkje ein gaussisk splat: denne .ply inneheld eit nett eller ei punktsky",
   "splat_notice": "Gaussisk splat (eksperimentelt)",
   "splat_older_headset": "Gaussiske splattar krev Meta Quest 3 eller 3S",

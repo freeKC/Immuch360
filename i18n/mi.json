@@ -1428,6 +1428,8 @@
   "splat_large_setting_subtitle": "Ka whakaatu tae atu ki te 150,000 gaussian, kaua ko te 50,000: tērā pea ka tūtatari tētahi splat nui",
   "splat_large_setting_title": "Ngā splat nui (whakamātau)",
   "splat_newer_spz": "I hangaia ki tētahi putanga SPZ hou ake: kāore anō kia pānuitia ki konei",
+  "splat_no_space": "Kāore e rawaka te wāhi wātea i te pōtae mō tēnei splat",
+  "splat_not_running": "Kāore te kōwae splat i tīmata me tēnei mātaki: katia, ka whakatuwhera anō i te splat",
   "splat_not_splat": "Ehara i te splat Gaussian: he mata, he kapua ira rānei kei roto i tēnei .ply",
   "splat_notice": "Splat Gaussian (whakamātau)",
   "splat_older_headset": "Me whai Meta Quest 3, 3S rānei ngā splat Gaussian",

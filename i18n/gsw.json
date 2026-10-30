@@ -2766,6 +2766,8 @@
   "splat_large_setting_subtitle": "Zeigt bis zu 150'000 Gauss statt 50'000: en grosse Splat cha ruckle",
   "splat_large_setting_title": "Grossi Splats (experimentell)",
   "splat_newer_spz": "Mit ere neuere SPZ-Version gmacht: wird do no nöd gläse",
+  "splat_no_space": "Nöd gnueg freie Platz uf em Headset für dä Splat",
+  "splat_not_running": "S Splat-Modul isch mit dere Aazeig nöd gstartet: Aazeig zuemache und de Splat nomol uftue",
   "splat_not_splat": "Kei Gaussian Splat: die .ply het es Mesh oder e Punktwolke",
   "splat_notice": "Gaussian Splat (experimentell)",
   "splat_older_headset": "Gaussian Splats bruuched e Meta Quest 3 oder 3S",

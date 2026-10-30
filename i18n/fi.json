@@ -3367,6 +3367,8 @@
   "splat_large_setting_subtitle": "Näyttää enintään 150 000 gaussia 50 000:n sijaan: suuri splat voi nykiä",
   "splat_large_setting_title": "Suuret splatit (kokeellinen)",
   "splat_newer_spz": "Tehty uudemmalla SPZ-versiolla: ei vielä lueta täällä",
+  "splat_no_space": "Lasissa ei ole tarpeeksi vapaata tilaa tälle splatille",
+  "splat_not_running": "Splat-moduuli ei käynnistynyt tämän katselimen kanssa: sulje se ja avaa splat uudelleen",
   "splat_not_splat": "Ei gaussista splatia: tämä .ply sisältää verkon tai pistepilven",
   "splat_notice": "Gaussinen splat (kokeellinen)",
   "splat_older_headset": "Gaussiset splatit vaativat Meta Quest 3:n tai 3S:n",

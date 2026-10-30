@@ -3554,6 +3554,8 @@
   "splat_large_setting_subtitle": "Hiển thị tối đa 150.000 gaussian thay vì 50.000: splat lớn có thể bị giật",
   "splat_large_setting_title": "Splat lớn (thử nghiệm)",
   "splat_newer_spz": "Được tạo bằng phiên bản SPZ mới hơn: chưa được đọc ở đây",
+  "splat_no_space": "Kính không đủ dung lượng trống cho splat này",
+  "splat_not_running": "Mô-đun splat không khởi động cùng trình xem này: hãy đóng trình xem rồi mở lại splat",
   "splat_not_splat": "Không phải splat Gauss: tệp .ply này chứa lưới hoặc đám mây điểm",
   "splat_notice": "Splat Gauss (thử nghiệm)",
   "splat_older_headset": "Splat Gauss cần Meta Quest 3 hoặc 3S",

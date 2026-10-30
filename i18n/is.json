@@ -2619,6 +2619,8 @@
   "splat_large_setting_subtitle": "Sýnir allt að 150.000 gáss-dreifingar í stað 50.000: stórt splat getur hikstað",
   "splat_large_setting_title": "Stór splöt (tilraun)",
   "splat_newer_spz": "Gert með nýrri SPZ-útgáfu: ekki lesið hér enn",
+  "splat_no_space": "Ekki nóg laust pláss á gleraugunum fyrir þetta splatt",
+  "splat_not_running": "Splat-einingin ræstist ekki með þessum skoðara: lokaðu honum og opnaðu splattið aftur",
   "splat_not_splat": "Ekki gáss-splat: þetta .ply inniheldur net eða punktaský",
   "splat_notice": "Gáss-splat (tilraun)",
   "splat_older_headset": "Gáss-splöt þurfa Meta Quest 3 eða 3S",

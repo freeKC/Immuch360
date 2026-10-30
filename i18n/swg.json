@@ -1428,6 +1428,8 @@
   "splat_large_setting_subtitle": "Zoigt bis zu 150.000 Gauß statt 50.000: a großer Splat ka ruckla",
   "splat_large_setting_title": "Große Splats (experimentell)",
   "splat_newer_spz": "Mit ra neiera SPZ-Version gmacht: wird do no ned gläsa",
+  "splat_no_space": "Ned gnug freier Platz uffm Headset für den Splat",
+  "splat_not_running": "S Splat-Modul isch mit dera Aasicht ned gstartet: Aasicht zumacha ond dr Splat nomol aufmacha",
   "splat_not_splat": "Koi Gaussian Splat: die .ply hot a Mesh oder a Punktwolka",
   "splat_notice": "Gaussian Splat (experimentell)",
   "splat_older_headset": "Gaussian Splats brauchad a Meta Quest 3 oder 3S",

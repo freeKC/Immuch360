@@ -3507,6 +3507,8 @@
   "splat_large_setting_subtitle": "Montras ĝis 150 000 gaŭsojn anstataŭ 50 000: granda splato povas skuetiĝi",
   "splat_large_setting_title": "Grandaj splatoj (eksperimenta)",
   "splat_newer_spz": "Farita per pli nova SPZ-versio: ankoraŭ ne legata ĉi tie",
+  "splat_no_space": "Ne estas sufiĉe da libera spaco en la kasko por ĉi tiu splato",
+  "splat_not_running": "La splat-modulo ne startis kun ĉi tiu montrilo: fermu ĝin kaj malfermu la splaton denove",
   "splat_not_splat": "Ne gaŭsa splato: ĉi tiu .ply enhavas maŝon aŭ punktonubon",
   "splat_notice": "Gaŭsa splato (eksperimenta)",
   "splat_older_headset": "Gaŭsaj splatoj bezonas Meta Quest 3 aŭ 3S",

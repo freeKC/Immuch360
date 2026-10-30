@@ -3555,6 +3555,8 @@
   "splat_large_setting_subtitle": "50.000 yerine en çok 150.000 gauss gösterir: büyük bir splat takılabilir",
   "splat_large_setting_title": "Büyük splatler (deneysel)",
   "splat_newer_spz": "Daha yeni bir SPZ sürümüyle yapılmış: burada henüz okunmuyor",
+  "splat_no_space": "Bu splat için başlıkta yeterli boş alan yok",
+  "splat_not_running": "Splat modülü bu görüntüleyiciyle başlamadı: kapatıp splatı yeniden açın",
   "splat_not_splat": "Gauss splat değil: bu .ply bir ağ ya da nokta bulutu içeriyor",
   "splat_notice": "Gauss splat (deneysel)",
   "splat_older_headset": "Gauss splatler için Meta Quest 3 ya da 3S gerekir",

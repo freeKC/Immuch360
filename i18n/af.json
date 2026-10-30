@@ -1626,6 +1626,8 @@
   "splat_large_setting_subtitle": "Wys tot 150 000 gaussiane in plaas van 50 000: 'n groot splat kan haper",
   "splat_large_setting_title": "Groot splats (eksperimenteel)",
   "splat_newer_spz": "Gemaak met 'n nuwer SPZ-weergawe: word nog nie hier gelees nie",
+  "splat_no_space": "Nie genoeg vrye spasie op die headset vir hierdie splat nie",
+  "splat_not_running": "Die splatmodule het nie saam met hierdie kyker begin nie: maak dit toe en maak die splat weer oop",
   "splat_not_splat": "Nie 'n Gauss-splat nie: hierdie .ply bevat 'n maas of 'n puntwolk",
   "splat_notice": "Gauss-splat (eksperimenteel)",
   "splat_older_headset": "Gauss-splats benodig 'n Meta Quest 3 of 3S",

@@ -3500,6 +3500,8 @@
   "splat_large_setting_subtitle": "Rodo iki 150 000 Gauso elementų vietoj 50 000: didelis splatas gali strigti",
   "splat_large_setting_title": "Dideli splatai (eksperimentinis)",
   "splat_newer_spz": "Sukurta naujesne SPZ versija: čia dar neskaitoma",
+  "splat_no_space": "Akiniuose nepakanka laisvos vietos šiam splatui",
+  "splat_not_running": "Splatų modulis nepasileido su šia peržiūra: uždarykite ją ir vėl atidarykite splatą",
   "splat_not_splat": "Ne Gauso splatas: šiame .ply yra tinklelis arba taškų debesis",
   "splat_notice": "Gauso splatas (eksperimentinis)",
   "splat_older_headset": "Gauso splatams reikia Meta Quest 3 arba 3S",

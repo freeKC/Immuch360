@@ -3554,6 +3554,8 @@
   "splat_large_setting_subtitle": "Näitab kuni 150 000 gaussiaani 50 000 asemel: suur splat võib hakkida",
   "splat_large_setting_title": "Suured splatid (katseline)",
   "splat_newer_spz": "Tehtud uuema SPZ versiooniga: siin veel ei loeta",
+  "splat_no_space": "Peakomplektis pole selle splati jaoks piisavalt vaba ruumi",
+  "splat_not_running": "Splati moodul ei käivitunud selle vaaturiga: sulge see ja ava splat uuesti",
   "splat_not_splat": "Pole Gaussi splat: see .ply sisaldab võret või punktipilve",
   "splat_notice": "Gaussi splat (katseline)",
   "splat_older_headset": "Gaussi splatid vajavad Meta Quest 3 või 3S",

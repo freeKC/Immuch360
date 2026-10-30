@@ -3555,6 +3555,8 @@
   "splat_large_setting_subtitle": "Affiche jusqu'à 150 000 gaussiennes au lieu de 50 000 : un grand splat peut saccader",
   "splat_large_setting_title": "Grands splats (expérimental)",
   "splat_newer_spz": "Fait avec une version SPZ plus récente : pas encore lue ici",
+  "splat_no_space": "Pas assez d'espace libre dans le casque pour ce splat",
+  "splat_not_running": "Le module des splats n'a pas démarré avec ce visualiseur : fermez-le et rouvrez le splat",
   "splat_not_splat": "Pas un splat gaussien : ce .ply contient un maillage ou un nuage de points",
   "splat_notice": "Splat gaussien (expérimental)",
   "splat_older_headset": "Les splats gaussiens demandent un Meta Quest 3 ou 3S",

@@ -2260,6 +2260,8 @@
   "splat_large_setting_subtitle": "Memaparkan sehingga 150,000 gaussian dan bukannya 50,000: splat besar mungkin tersekat-sekat",
   "splat_large_setting_title": "Splat besar (eksperimen)",
   "splat_newer_spz": "Dibuat dengan versi SPZ yang lebih baharu: belum dibaca di sini",
+  "splat_no_space": "Ruang kosong pada set kepala tidak mencukupi untuk splat ini",
+  "splat_not_running": "Modul splat tidak bermula dengan pemapar ini: tutupnya dan buka semula splat",
   "splat_not_splat": "Bukan splat Gaussian: .ply ini mengandungi jejaring atau awan titik",
   "splat_notice": "Splat Gaussian (eksperimen)",
   "splat_older_headset": "Splat Gaussian memerlukan Meta Quest 3 atau 3S",

@@ -3554,6 +3554,8 @@
   "splat_large_setting_subtitle": "Pokazuje do 150 000 gaussianów zamiast 50 000: duży splat może się zacinać",
   "splat_large_setting_title": "Duże splaty (eksperymentalne)",
   "splat_newer_spz": "Zrobiony w nowszej wersji SPZ: tu jeszcze nieodczytywany",
+  "splat_no_space": "Za mało wolnego miejsca w goglach na ten splat",
+  "splat_not_running": "Moduł splatów nie uruchomił się z tą przeglądarką: zamknij ją i otwórz splat ponownie",
   "splat_not_splat": "To nie jest splat gaussowski: ten .ply zawiera siatkę lub chmurę punktów",
   "splat_notice": "Splat gaussowski (eksperymentalny)",
   "splat_older_headset": "Splaty gaussowskie wymagają Meta Quest 3 lub 3S",

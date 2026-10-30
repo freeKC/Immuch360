@@ -1428,6 +1428,8 @@
   "splat_large_setting_subtitle": "Inaonyesha hadi gaussian 150,000 badala ya 50,000: splat kubwa inaweza kukwamakwama",
   "splat_large_setting_title": "Splat kubwa (ya majaribio)",
   "splat_newer_spz": "Imetengenezwa kwa toleo jipya zaidi la SPZ: bado haisomwi hapa",
+  "splat_no_space": "Hakuna nafasi ya kutosha kwenye kifaa cha kichwa kwa splat hii",
+  "splat_not_running": "Moduli ya splat haikuanza na kitazamaji hiki: kifunge kisha ufungue splat tena",
   "splat_not_splat": "Si splat ya Gaussian: .ply hii ina mesh au wingu la nukta",
   "splat_notice": "Splat ya Gaussian (ya majaribio)",
   "splat_older_headset": "Splat za Gaussian zinahitaji Meta Quest 3 au 3S",

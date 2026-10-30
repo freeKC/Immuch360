@@ -3346,6 +3346,8 @@
   "splat_large_setting_subtitle": "Rāda līdz 150 000 Gausa elementu 50 000 vietā: liels splats var raustīties",
   "splat_large_setting_title": "Lieli splati (eksperimentāli)",
   "splat_newer_spz": "Veidots ar jaunāku SPZ versiju: šeit vēl nenolasa",
+  "splat_no_space": "Brillēs nav pietiekami daudz brīvas vietas šim splatam",
+  "splat_not_running": "Splatu modulis netika palaists ar šo skatītāju: aizveriet to un atveriet splatu vēlreiz",
   "splat_not_splat": "Nav Gausa splats: šajā .ply ir tīkls vai punktu mākonis",
   "splat_notice": "Gausa splats (eksperimentāli)",
   "splat_older_headset": "Gausa splatiem vajag Meta Quest 3 vai 3S",

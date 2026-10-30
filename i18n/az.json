@@ -1598,6 +1598,8 @@
   "splat_large_setting_subtitle": "50.000 əvəzinə 150.000-ə qədər qauss göstərir: böyük splat ilişə bilər",
   "splat_large_setting_title": "Böyük splatlar (eksperimental)",
   "splat_newer_spz": "Daha yeni SPZ versiyası ilə hazırlanıb: hələ burada oxunmur",
+  "splat_no_space": "Bu splat üçün qulaqlıqda kifayət qədər boş yer yoxdur",
+  "splat_not_running": "Splat modulu bu görüntüləyici ilə başlamadı: onu bağlayın və splatı yenidən açın",
   "splat_not_splat": "Qauss splat deyil: bu .ply şəbəkə və ya nöqtə buludu saxlayır",
   "splat_notice": "Qauss splat (eksperimental)",
   "splat_older_headset": "Qauss splatları üçün Meta Quest 3 və ya 3S lazımdır",

@@ -3475,6 +3475,8 @@
   "splat_large_setting_subtitle": "Prikazuje do 150.000 gausijana umjesto 50.000: veliki splat može zapinjati",
   "splat_large_setting_title": "Veliki splatovi (eksperimentalno)",
   "splat_newer_spz": "Napravljeno novijom verzijom SPZ-a: ovdje se još ne čita",
+  "splat_no_space": "Nema dovoljno slobodnog prostora na naočalama za ovaj splat",
+  "splat_not_running": "Splat modul nije se pokrenuo s ovim preglednikom: zatvorite ga i ponovno otvorite splat",
   "splat_not_splat": "Nije Gaussov splat: ovaj .ply sadrži mrežu ili oblak točaka",
   "splat_notice": "Gaussov splat (eksperimentalno)",
   "splat_older_headset": "Gaussovi splatovi trebaju Meta Quest 3 ili 3S",

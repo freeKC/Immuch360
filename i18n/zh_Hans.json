@@ -3553,6 +3553,8 @@
   "splat_large_setting_subtitle": "最多显示 150,000 个高斯，而非 50,000 个：大型泼溅可能会卡顿",
   "splat_large_setting_title": "大型泼溅（实验性）",
   "splat_newer_spz": "使用较新的 SPZ 版本制作：此处暂不读取",
+  "splat_no_space": "头显的可用空间不足，无法放下此泼溅",
+  "splat_not_running": "泼溅模块未随此查看器启动：请关闭查看器后重新打开泼溅",
   "splat_not_splat": "不是高斯泼溅：此 .ply 包含网格或点云",
   "splat_notice": "高斯泼溅（实验性）",
   "splat_older_headset": "高斯泼溅需要 Meta Quest 3 或 3S",

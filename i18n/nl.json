@@ -3554,6 +3554,8 @@
   "splat_large_setting_subtitle": "Toont tot 150.000 gaussians in plaats van 50.000: een grote splat kan haperen",
   "splat_large_setting_title": "Grote splats (experimenteel)",
   "splat_newer_spz": "Gemaakt met een nieuwere SPZ-versie: hier nog niet gelezen",
+  "splat_no_space": "Niet genoeg vrije ruimte op de headset voor deze splat",
+  "splat_not_running": "De splatmodule is niet gestart met deze weergave: sluit die en open de splat opnieuw",
   "splat_not_splat": "Geen gaussian splat: deze .ply bevat een mesh of een puntenwolk",
   "splat_notice": "Gaussian splat (experimenteel)",
   "splat_older_headset": "Gaussian splats hebben een Meta Quest 3 of 3S nodig",

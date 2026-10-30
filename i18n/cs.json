@@ -3555,6 +3555,8 @@
   "splat_large_setting_subtitle": "Zobrazí až 150 000 gaussiánů místo 50 000: velký splat se může trhat",
   "splat_large_setting_title": "Velké splaty (experimentální)",
   "splat_newer_spz": "Vytvořeno v novější verzi SPZ: tu se zatím nečte",
+  "splat_no_space": "V headsetu není dost volného místa pro tento splat",
+  "splat_not_running": "Modul splatů se s tímto prohlížečem nespustil: zavřete ho a otevřete splat znovu",
   "splat_not_splat": "Nejde o gaussovský splat: tento .ply obsahuje síť nebo mračno bodů",
   "splat_notice": "Gaussovský splat (experimentální)",
   "splat_older_headset": "Gaussovské splaty potřebují Meta Quest 3 nebo 3S",

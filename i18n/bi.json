@@ -1445,6 +1445,8 @@
   "splat_large_setting_subtitle": "I soem kasem 150,000 gaussian i no 50,000 nomo: wan bigfala splat maet i stop smol",
   "splat_large_setting_title": "Ol bigfala splat (stil testem)",
   "splat_newer_spz": "Oli mekem wetem wan niufala vesen blong SPZ: i no stap rid long ples ia yet",
+  "splat_no_space": "I no gat inaf spes long hedset blong splat ia",
+  "splat_not_running": "Splat modul i no statem wetem viewer ia: klosem mo openem splat bakegen",
   "splat_not_splat": "I no wan Gaussian splat: .ply ia i holem wan mesh o wan klaod blong ol poen",
   "splat_notice": "Gaussian splat (stil testem)",
   "splat_older_headset": "Ol Gaussian splat oli nidim wan Meta Quest 3 o 3S",

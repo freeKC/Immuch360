@@ -3465,6 +3465,8 @@
   "splat_large_setting_subtitle": "Εμφανίζει έως 150.000 γκαουσιανές αντί για 50.000: ένα μεγάλο splat μπορεί να κολλάει",
   "splat_large_setting_title": "Μεγάλα splat (πειραματικό)",
   "splat_newer_spz": "Φτιαγμένο με νεότερη έκδοση SPZ: δεν διαβάζεται ακόμη εδώ",
+  "splat_no_space": "Δεν υπάρχει αρκετός ελεύθερος χώρος στο headset για αυτό το splat",
+  "splat_not_running": "Η μονάδα splat δεν ξεκίνησε με αυτή την προβολή: κλείστε την και ανοίξτε ξανά το splat",
   "splat_not_splat": "Δεν είναι γκαουσιανό splat: αυτό το .ply περιέχει πλέγμα ή νέφος σημείων",
   "splat_notice": "Γκαουσιανό splat (πειραματικό)",
   "splat_older_headset": "Τα γκαουσιανά splat χρειάζονται Meta Quest 3 ή 3S",

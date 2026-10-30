@@ -3554,6 +3554,8 @@
   "splat_large_setting_subtitle": "50 000 helyett legfeljebb 150 000 gauss-elemet mutat: egy nagy splat akadozhat",
   "splat_large_setting_title": "Nagy splatek (kísérleti)",
   "splat_newer_spz": "Újabb SPZ-verzióval készült: itt még nem olvassuk",
+  "splat_no_space": "Nincs elég szabad hely a headseten ehhez a splathez",
+  "splat_not_running": "A splatmodul nem indult el ezzel a nézegetővel: zárd be, és nyisd meg újra a splatet",
   "splat_not_splat": "Nem gauss-splat: ez a .ply hálót vagy pontfelhőt tartalmaz",
   "splat_notice": "Gauss-splat (kísérleti)",
   "splat_older_headset": "A gauss-splatekhez Meta Quest 3 vagy 3S kell",

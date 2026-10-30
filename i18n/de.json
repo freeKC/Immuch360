@@ -3555,6 +3555,8 @@
   "splat_large_setting_subtitle": "Zeigt bis zu 150.000 Gaußsche statt 50.000: ein großer Splat kann ruckeln",
   "splat_large_setting_title": "Große Splats (experimentell)",
   "splat_newer_spz": "Mit einer neueren SPZ-Version erstellt: hier noch nicht gelesen",
+  "splat_no_space": "Nicht genug freier Speicher auf dem Headset für diesen Splat",
+  "splat_not_running": "Das Splat-Modul ist mit dieser Ansicht nicht gestartet: Ansicht schließen und den Splat erneut öffnen",
   "splat_not_splat": "Kein Gaussian Splat: diese .ply enthält ein Mesh oder eine Punktwolke",
   "splat_notice": "Gaussian Splat (experimentell)",
   "splat_older_headset": "Gaussian Splats brauchen eine Meta Quest 3 oder 3S",

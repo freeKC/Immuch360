@@ -1440,6 +1440,8 @@
   "splat_large_setting_subtitle": "50 000 o'rniga 150 000 tagacha gauss ko'rsatadi: katta splat qotib qolishi mumkin",
   "splat_large_setting_title": "Katta splatlar (tajribaviy)",
   "splat_newer_spz": "Yangiroq SPZ versiyasida yaratilgan: hozircha bu yerda o'qilmaydi",
+  "splat_no_space": "Bu splat uchun garniturada yetarli bo'sh joy yo'q",
+  "splat_not_running": "Splat moduli bu ko'rish vositasi bilan ishga tushmadi: uni yoping va splatni qayta oching",
   "splat_not_splat": "Bu Gauss splati emas: bu .ply ichida to'r yoki nuqtalar buluti bor",
   "splat_notice": "Gauss splati (tajribaviy)",
   "splat_older_headset": "Gauss splatlari uchun Meta Quest 3 yoki 3S kerak",

@@ -3530,6 +3530,8 @@
   "splat_large_setting_subtitle": "가우시안을 50,000개 대신 최대 150,000개까지 표시합니다. 큰 스플랫은 끊길 수 있습니다",
   "splat_large_setting_title": "큰 스플랫 (실험적)",
   "splat_newer_spz": "더 새로운 SPZ 버전으로 만들어졌습니다. 아직 읽을 수 없습니다",
+  "splat_no_space": "이 스플랫을 위한 헤드셋의 여유 공간이 부족합니다",
+  "splat_not_running": "이 뷰어에서 스플랫 모듈이 시작되지 않았습니다. 뷰어를 닫고 스플랫을 다시 여세요",
   "splat_not_splat": "가우시안 스플랫이 아닙니다. 이 .ply에는 메시 또는 포인트 클라우드가 들어 있습니다",
   "splat_notice": "가우시안 스플랫 (실험적)",
   "splat_older_headset": "가우시안 스플랫에는 Meta Quest 3 또는 3S가 필요합니다",
