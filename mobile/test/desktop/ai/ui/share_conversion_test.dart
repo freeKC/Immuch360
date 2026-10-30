@@ -38,6 +38,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -47,6 +48,7 @@ import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../presentation/pages/network/network_viewer_fakes.dart' show MemoryShare;
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
 import '../fakes/fake_conversion_engines.dart';
 import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
@@ -645,6 +647,51 @@ void main() {
       );
       expect(find.text(p.join(chosen, 'salon_3D_LRF_Full_SBS.jpg')), findsOneWidget);
       expect(find.byKey(const Key('ai_job_open_folder')), findsOneWidget, reason: 'it is on this computer');
+      expect(find.byKey(const Key('ai_job_local_only')), findsOneWidget, reason: 'the folder of my choice is local');
+    });
+
+    testWidgets('the folder of my choice refuses it too: the panel says where it is, and Retry puts it on the share', (
+      tester,
+    ) async {
+      engine = FakeImmersiveEngine();
+      folderOf = (entry) => nas;
+      writer.failUpload = ShareWriteFailure.missing;
+      // The folder of my choice under a file: a drive unplugged
+      File(p.dirname(chosen)).writeAsStringSync('in the way');
+      await allowNas(tester);
+      final salon = shared('/2024/salon.jpg', jpegFile(width: 4000, height: 3000));
+      final container = await openDialog(tester, [salon]);
+
+      await tapIn(tester, convert());
+      await settle(
+        tester,
+        until: () => container.read(sharePublisherProvider).values.any((publish) => publish.state.isEnded),
+      );
+
+      final publish = container.read(sharePublisherProvider).values.single;
+      expect(publish.state, SharePublishState.notKept);
+      expect(File(publish.keptPath!).existsSync(), isTrue, reason: 'the version is still on this computer');
+      expect(
+        find.text(
+          'Not saved on the share (The original cannot be reached any more) nor in $chosen: for now it is only in a '
+          'temporary folder of this computer. Retry, or open its folder to keep it.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(publish.keptPath!), findsOneWidget, reason: 'its path');
+      expect(find.textContaining('kept on this computer'), findsNothing);
+      expect(find.textContaining('smb://nas/photos/2024'), findsNothing, reason: 'never named as a file of the share');
+      expect(find.byKey(const Key('ai_job_open_folder')), findsOneWidget);
+      expect(find.byKey(const Key('ai_job_local_only')), findsNothing);
+
+      writer.failUpload = null;
+      await tapIn(tester, find.byKey(const Key('ai_job_share_retry')));
+      await settle(tester, until: () => publishedPath(container) != null);
+
+      expect(writer.files.keys, ['/2024/salon_3D_LRF_Full_SBS.jpg']);
+      expect(find.text('smb://nas/photos/2024/salon_3D_LRF_Full_SBS.jpg'), findsOneWidget);
+      expect(find.byKey(const Key('ai_job_share_retry')), findsNothing);
+      expect(copies(), isEmpty, reason: 'nothing of it left on this computer');
     });
 
     testWidgets('Skip: a version made with the same settings is next to it on the share already', (tester) async {
@@ -675,6 +722,31 @@ void main() {
       final job = container.read(conversionQueueProvider).jobs.single;
       expect((job.state, job.skipReason), (ConversionState.skipped, ConversionSkipReason.sameSettingsExists));
       expect(writer.calls, isEmpty, reason: 'nothing written on the share');
+    });
+  });
+
+  group('the words of a refusal of the share in the panel', () {
+    setUpAll(loadEnglishTexts);
+
+    test('read only, full, a folder gone, else a write that failed with the words of the share', () {
+      final t = StaticTranslations.instance;
+      expect(
+        shareFailureText(t, ShareWriteFailure.readOnly, 'The server answered 403'),
+        'This folder does not accept new files',
+      );
+      expect(shareFailureText(t, ShareWriteFailure.diskFull, null), 'Disk full');
+      expect(
+        shareFailureText(t, ShareWriteFailure.missing, 'The server answered 404'),
+        'The original cannot be reached any more',
+      );
+      expect(
+        shareFailureText(t, ShareWriteFailure.failed, 'Broken pipe'),
+        'The 3D photo could not be written: Broken pipe',
+      );
+      expect(
+        shareFailureText(t, ShareWriteFailure.taken, 'No free name left'),
+        'The 3D photo could not be written: No free name left',
+      );
     });
   });
 

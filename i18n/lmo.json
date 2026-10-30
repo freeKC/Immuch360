@@ -196,6 +196,7 @@
   "ai_immersive_share_copying": "Se copia {name} de la condivision: {done} de {all}",
   "ai_immersive_share_hint": "Per salvà arent ai foto de ona condivision, gionta la condivision come cartella de sto computer (unità de ret).",
   "ai_immersive_share_kept_here": "Minga salvaa in su la condivision ({reason}): tegnuu in su sto computer",
+  "ai_immersive_share_not_kept": "Minga salvaa in su la condivision ({reason}) e nanca in {folder}: per adess l’è domà in d’una cartella temporanea de sto computer. Preuva anmò, o derviss la soa cartella per tegnìll.",
   "ai_immersive_share_saving": "Se salva in su la condivision",
   "ai_immersive_size_on_disk": "{size} sul disch",
   "ai_immersive_skip": "Salta",

@@ -710,6 +710,7 @@
   "ai_immersive_share_copying": "Kopiranje {name} s dijeljenog resursa: {done} od {all}",
   "ai_immersive_share_hint": "Za spremanje pored fotografija dijeljenog resursa dodajte taj resurs kao mapu ovog računala (mrežni pogon).",
   "ai_immersive_share_kept_here": "Nije spremljeno na dijeljeni resurs ({reason}): zadržano na ovom računalu",
+  "ai_immersive_share_not_kept": "Nije spremljeno na dijeljeni resurs ({reason}) ni u {folder}: zasad je samo u privremenoj mapi ovog računala. Pokušajte ponovno ili otvorite njegovu mapu da ga zadržite.",
   "ai_immersive_share_saving": "Spremanje na dijeljeni resurs",
   "ai_immersive_size_on_disk": "{size} na disku",
   "ai_immersive_skip": "Preskoči",

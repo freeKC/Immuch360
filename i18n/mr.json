@@ -669,6 +669,7 @@
   "ai_immersive_share_copying": "शेअरमधून {name} कॉपी होत आहे: {all} पैकी {done}",
   "ai_immersive_share_hint": "शेअरमधील फोटोंच्या शेजारी जतन करण्यासाठी, तो शेअर या संगणकाचा फोल्डर (नेटवर्क ड्राइव्ह) म्हणून जोडा.",
   "ai_immersive_share_kept_here": "शेअरवर जतन झाले नाही ({reason}): या संगणकावर ठेवले",
+  "ai_immersive_share_not_kept": "शेअरवर जतन झाले नाही ({reason}) आणि {folder} मध्येही नाही: सध्या ते फक्त या संगणकाच्या तात्पुरत्या फोल्डरमध्ये आहे. पुन्हा प्रयत्न करा, किंवा ते ठेवण्यासाठी त्याचे फोल्डर उघडा.",
   "ai_immersive_share_saving": "शेअरवर जतन होत आहे",
   "ai_immersive_size_on_disk": "डिस्कवर {size}",
   "ai_immersive_skip": "वगळा",

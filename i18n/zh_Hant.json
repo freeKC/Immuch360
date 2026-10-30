@@ -708,6 +708,7 @@
   "ai_immersive_share_copying": "正在從共用複製 {name}：{done} / {all}",
   "ai_immersive_share_hint": "若要儲存在共用中的相片旁邊，請將該共用新增為此電腦的資料夾（網路磁碟機）。",
   "ai_immersive_share_kept_here": "未儲存到共用（{reason}）：已保留在此電腦上",
+  "ai_immersive_share_not_kept": "未儲存到共用（{reason}），也未儲存到 {folder}：目前它只在此電腦的一個暫存資料夾中。請重試，或開啟它所在的資料夾以保留它。",
   "ai_immersive_share_saving": "正在儲存到共用",
   "ai_immersive_size_on_disk": "佔用磁碟 {size}",
   "ai_immersive_skip": "跳過",

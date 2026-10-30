@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "Copiando {name} desde el recurso compartido: {done} de {all}",
   "ai_immersive_share_hint": "Para guardar junto a las fotos de un recurso compartido, añade ese recurso como carpeta de este ordenador (unidad de red).",
   "ai_immersive_share_kept_here": "No se guardó en el recurso compartido ({reason}): se conserva en este ordenador",
+  "ai_immersive_share_not_kept": "No se guardó en el recurso compartido ({reason}) ni en {folder}: por ahora solo está en una carpeta temporal de este ordenador. Reintenta o abre su carpeta para conservarlo.",
   "ai_immersive_share_saving": "Guardando en el recurso compartido",
   "ai_immersive_size_on_disk": "{size} en disco",
   "ai_immersive_skip": "Saltar",

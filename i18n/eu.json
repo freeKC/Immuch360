@@ -706,6 +706,7 @@
   "ai_immersive_share_copying": "{name} kopiatzen partekatzetik: {done}/{all}",
   "ai_immersive_share_hint": "Partekatze bateko argazkien ondoan gordetzeko, gehitu partekatzea ordenagailu honetako karpeta gisa (sareko unitatea).",
   "ai_immersive_share_kept_here": "Ez da partekatzean gorde ({reason}): ordenagailu honetan gorde da",
+  "ai_immersive_share_not_kept": "Ez da partekatzean gorde ({reason}), ezta {folder} karpetan ere: oraingoz ordenagailu honetako aldi baterako karpeta batean baino ez dago. Saiatu berriro, edo ireki bere karpeta gordetzeko.",
   "ai_immersive_share_saving": "Partekatzean gordetzen",
   "ai_immersive_size_on_disk": "{size} diskoan",
   "ai_immersive_skip": "Saltatu",

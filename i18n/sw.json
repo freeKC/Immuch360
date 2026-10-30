@@ -196,6 +196,7 @@
   "ai_immersive_share_copying": "Inanakili {name} kutoka hifadhi ya mtandao: {done} kati ya {all}",
   "ai_immersive_share_hint": "Ili kuhifadhi kando ya picha za hifadhi ya mtandao, ongeza hifadhi hiyo kama folda ya kompyuta hii (diski ya mtandao).",
   "ai_immersive_share_kept_here": "Haikuhifadhiwa kwenye hifadhi ya mtandao ({reason}): imebaki kwenye kompyuta hii",
+  "ai_immersive_share_not_kept": "Haikuhifadhiwa kwenye hifadhi ya mtandao ({reason}) wala kwenye {folder}: kwa sasa iko tu kwenye folda ya muda ya kompyuta hii. Jaribu tena, au fungua folda yake ili kuihifadhi.",
   "ai_immersive_share_saving": "Inahifadhi kwenye hifadhi ya mtandao",
   "ai_immersive_size_on_disk": "{size} kwenye diski",
   "ai_immersive_skip": "Ruka",

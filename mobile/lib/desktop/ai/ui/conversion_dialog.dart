@@ -1561,6 +1561,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         shared[id] = ShareVersionTarget(
           folder: folder,
           fallbackFolder: session.chosenFolder,
+          fallbackIsNetwork: session.chosenFolderIsNetwork,
           skipWhenTaken: settings.whenExists == AiWhenExists.skip,
           withGlb: kind == ConversionKind.sceneFromPhoto && settings.exportGlb,
         );

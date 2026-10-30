@@ -1,7 +1,8 @@
 // The versions of the photos of a share put next to their originals: made on this computer in a folder of the copies
 // of the AI, then written on the share by its writer under their name or the first free "name (n)", and gone from this
-// computer; kept in the folder of my choice with the words of the share when it refuses them; not written when the
-// batch skips a name taken; a panorama kept here until its 3D version is made from it; nothing written for a job that
+// computer; kept in the folder of my choice with the words of the share when it refuses them; kept where they were made,
+// with that path, when the folder of my choice refuses them too, then written by Retry; not written when the batch
+// skips a name taken; a panorama kept here until its 3D version is made from it; nothing written for a job that
 // failed, its folder kept for Retry; the pages of the share told that its folder changed.
 
 import 'dart:async';
@@ -120,6 +121,7 @@ void main() {
     ConversionKind kind = ConversionKind.sbsFromPhoto,
     bool alsoStereo = false,
     bool skipWhenTaken = false,
+    String? fallback,
   }) {
     final ids = container
         .read(conversionQueueProvider.notifier)
@@ -135,7 +137,7 @@ void main() {
         );
     container.read(sharePublisherProvider.notifier).follow({
       for (final id in ids)
-        id: ShareVersionTarget(folder: _folder, fallbackFolder: chosen, skipWhenTaken: skipWhenTaken),
+        id: ShareVersionTarget(folder: _folder, fallbackFolder: fallback ?? chosen, skipWhenTaken: skipWhenTaken),
     });
     return ids;
   }
@@ -199,6 +201,51 @@ void main() {
     expect(publish.failure, ShareWriteFailure.readOnly);
     expect(share.files, isEmpty);
     expect(Directory(folder).existsSync(), isFalse);
+  });
+
+  test('the share and the folder of my choice both refuse it: kept where it was made, said with its path', () async {
+    share.failUpload = ShareWriteFailure.readOnly;
+    final folder = staging('share-out-1');
+    // The folder of my choice under a file: a drive unplugged, a folder on the same NAS that just dropped
+    final blocker = File(p.join(root.path, 'blocker'))..writeAsStringSync('in the way');
+    final fallback = p.join(blocker.path, 'Immuch360');
+
+    final id = add(folder, fallback: fallback).single;
+    await until((state) => ended(state, id));
+
+    final publish = container.read(sharePublisherProvider)[id]!;
+    expect(publish.state, SharePublishState.notKept);
+    expect(publish.state.isOnComputer, isTrue);
+    expect(publish.keptPath, p.join(folder, 'salon_3D_LRF_Full_SBS.jpg'));
+    expect(File(publish.keptPath!).readAsBytesSync().take(2), [0xff, 0xd8], reason: 'the version is still there');
+    expect(publish.shown, isNull, reason: 'never named as a file of the share');
+    expect((publish.failure, publish.message), (ShareWriteFailure.readOnly, 'Access denied'));
+    expect(share.files, isEmpty);
+
+    // Clear finished never deletes it while the app runs
+    container.read(conversionQueueProvider.notifier).clearFinished();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(File(publish.keptPath!).existsSync(), isTrue);
+  });
+
+  test('Retry of a version kept where it was made: on the share once it takes it, and gone from here', () async {
+    share.failUpload = ShareWriteFailure.diskFull;
+    final folder = staging('share-out-1');
+    final blocker = File(p.join(root.path, 'blocker'))..writeAsStringSync('in the way');
+
+    final id = add(folder, fallback: p.join(blocker.path, 'Immuch360')).single;
+    await until((state) => ended(state, id));
+    expect(container.read(sharePublisherProvider)[id]!.state, SharePublishState.notKept);
+
+    share.failUpload = null;
+    container.read(sharePublisherProvider.notifier).retry(id);
+    await until((state) => state[id]?.state == SharePublishState.saved);
+
+    final publish = container.read(sharePublisherProvider)[id]!;
+    expect(publish.path, '/2024/salon_3D_LRF_Full_SBS.jpg');
+    expect(publish.keptPath, isNull);
+    expect(share.files.keys, ['/2024/salon_3D_LRF_Full_SBS.jpg']);
+    expect(Directory(folder).existsSync(), isFalse, reason: 'nothing of it stays on this computer');
   });
 
   test('a panorama stays here until its 3D version is made from it, then both are on the share', () async {

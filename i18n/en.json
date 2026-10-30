@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "Copying {name} from the share: {done} of {all}",
   "ai_immersive_share_hint": "To save next to the photos of a share, add the share as a folder of this computer (network drive).",
   "ai_immersive_share_kept_here": "Not saved on the share ({reason}): kept on this computer",
+  "ai_immersive_share_not_kept": "Not saved on the share ({reason}) nor in {folder}: for now it is only in a temporary folder of this computer. Retry, or open its folder to keep it.",
   "ai_immersive_share_saving": "Saving on the share",
   "ai_immersive_size_on_disk": "{size} on disk",
   "ai_immersive_skip": "Skip",

@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "Kopiowanie {name} z udziału: {done} z {all}",
   "ai_immersive_share_hint": "Aby zapisywać obok zdjęć z udziału sieciowego, dodaj ten udział jako folder tego komputera (dysk sieciowy).",
   "ai_immersive_share_kept_here": "Nie zapisano w udziale ({reason}): zachowano na tym komputerze",
+  "ai_immersive_share_not_kept": "Nie zapisano w udziale ({reason}) ani w {folder}: na razie jest tylko w folderze tymczasowym tego komputera. Spróbuj ponownie lub otwórz jego folder, aby go zachować.",
   "ai_immersive_share_saving": "Zapisywanie w udziale",
   "ai_immersive_size_on_disk": "{size} na dysku",
   "ai_immersive_skip": "Pomiń",

@@ -716,6 +716,7 @@
   "ai_immersive_share_copying": "Se copiază {name} din partajare: {done} din {all}",
   "ai_immersive_share_hint": "Pentru a salva lângă fotografiile unei partajări, adăugați partajarea ca dosar al acestui computer (unitate de rețea).",
   "ai_immersive_share_kept_here": "Nu a fost salvat în partajare ({reason}): păstrat pe acest computer",
+  "ai_immersive_share_not_kept": "Nu a fost salvat în partajare ({reason}) și nici în {folder}: deocamdată se află doar într-un dosar temporar al acestui computer. Reîncercați sau deschideți-i dosarul pentru a-l păstra.",
   "ai_immersive_share_saving": "Se salvează în partajare",
   "ai_immersive_size_on_disk": "{size} pe disc",
   "ai_immersive_skip": "Omiteți",

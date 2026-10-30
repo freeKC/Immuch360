@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "מעתיק את {name} מהשיתוף: {done} מתוך {all}",
   "ai_immersive_share_hint": "כדי לשמור ליד התמונות של שיתוף, הוסיפו את השיתוף כתיקייה של המחשב הזה (כונן רשת).",
   "ai_immersive_share_kept_here": "לא נשמר בשיתוף ({reason}): נשמר במחשב הזה",
+  "ai_immersive_share_not_kept": "לא נשמר בשיתוף ({reason}) וגם לא ב־{folder}: כרגע הוא נמצא רק בתיקייה זמנית במחשב הזה. נסה שוב, או פתח את התיקייה שלו כדי לשמור אותו.",
   "ai_immersive_share_saving": "שומר בשיתוף",
   "ai_immersive_size_on_disk": "{size} בדיסק",
   "ai_immersive_skip": "דלג",

@@ -7,9 +7,12 @@
 // The file then leaves this computer, with its folder, once no job of the queue reads it any more: a panorama stays
 // until its 3D version, chained after it, was made from it. A version the share refuses at that moment (the share
 // gone, a folder that turned read only, a disk full) is kept in the folder of my choice of the dialog, with the words
-// of the share; nothing is lost. A job that failed or was cancelled writes nothing, and keeps its folder for Retry. The
-// pages of the share read the folder again once a version is there (shareFolderChangesProvider): its tile and its
-// badge show, and the Versions of its original.
+// of the share. When that folder does not take it either (a drive unplugged, a folder on the same NAS that just
+// dropped), the version stays in the folder it was made in, which nothing deletes while the app runs; the panel says
+// so with its path, and its Retry writes it to the share again, else to the folder of my choice. Nothing is lost. A
+// job that failed or was cancelled writes nothing, and keeps its folder for Retry. The pages of the share read the
+// folder again once a version is there (shareFolderChangesProvider): its tile and its badge show, and the Versions of
+// its original.
 
 import 'dart:async';
 import 'dart:io';
@@ -31,6 +34,7 @@ class ShareVersionTarget {
   const ShareVersionTarget({
     required this.folder,
     required this.fallbackFolder,
+    this.fallbackIsNetwork = false,
     this.skipWhenTaken = false,
     this.withGlb = false,
   });
@@ -40,6 +44,9 @@ class ShareVersionTarget {
 
   /// The folder of my choice of the dialog, on this computer: the version stays there when the share refuses it
   final String fallbackFolder;
+
+  /// Whether [fallbackFolder] is on the network: no "saved on this computer only" for a version kept there
+  final bool fallbackIsNetwork;
 
   /// The batch skips a name taken ("If the name is taken: Skip"): nothing is written then
   final bool skipWhenTaken;
@@ -64,10 +71,17 @@ enum SharePublishState {
   skipped,
 
   /// The share refused it: kept in the folder of my choice on this computer
-  keptHere;
+  keptHere,
 
-  /// Nothing more happens to it
-  bool get isEnded => this == saved || this == skipped || this == keptHere;
+  /// The share refused it and the folder of my choice did not take it either: it stays in the folder it was made in,
+  /// among the copies of the AI, until its Retry, or a start of the app once it is an hour old
+  notKept;
+
+  /// Nothing more happens to it by itself
+  bool get isEnded => this == saved || this == skipped || this == keptHere || this == notKept;
+
+  /// On this computer and not on the share: SharePublish.keptPath gives where
+  bool get isOnComputer => this == keptHere || this == notKept;
 }
 
 /// The version of a job and the share it goes to
@@ -88,7 +102,8 @@ class SharePublish {
   /// The file on the share once saved, a path of the share
   final String? path;
 
-  /// The file on this computer when the share refused it
+  /// The file on this computer when the share refused it: in the folder of my choice (keptHere), or in the folder it
+  /// was made in (notKept)
   final String? keptPath;
 
   /// Why the share refused it, and its words
@@ -102,7 +117,7 @@ class SharePublish {
   String? get shown => _shown(path);
 
   /// The .glb copy of a 3D scene on the share, named so
-  String? get glbShown => keptPath == null ? _shown(glbPath) : glbPath;
+  String? get glbShown => state.isOnComputer ? glbPath : _shown(glbPath);
 
   String? _shown(String? written) {
     if (written == null) {
@@ -178,6 +193,18 @@ class SharePublisher extends Notifier<Map<String, SharePublish>> {
     );
   }
 
+  /// Retry for a version neither its share nor the folder of my choice took: written to its share again, else kept
+  /// in the folder of my choice, as at the end of its job
+  void retry(String id) {
+    final publish = state[id];
+    final job = ref.read(conversionQueueProvider).byId(id);
+    if (publish == null || publish.state != SharePublishState.notKept || job == null || _writing.contains(id)) {
+      return;
+    }
+    state = {...state, id: SharePublish(publish.target)};
+    _onQueue(ref.read(conversionQueueProvider));
+  }
+
   /// Follows the jobs of [targets], each with the folder of the share its version goes to
   void follow(Map<String, ShareVersionTarget> targets) {
     if (targets.isEmpty) {
@@ -247,25 +274,23 @@ class SharePublisher extends Notifier<Map<String, SharePublish>> {
       final failure = error is ShareWriteException ? error.failure : ShareWriteFailure.failed;
       final message = error is ShareWriteException ? error.message : '$error';
       _log.warning('$name could not be written on its share, kept on this computer: $error');
-      String? kept;
-      String? keptGlb;
-      try {
-        // Copied: a 3D version chained after a panorama still reads it here
-        final folder = await Directory(target.fallbackFolder).create(recursive: true);
-        kept = (await copyIntoFolder(file, folder, name)).path;
-        if (glb != null) {
-          keptGlb = (await copyIntoFolder(File(glb), folder, p.basename(glb))).path;
-        }
-      } catch (copyError) {
-        _log.severe('$name could not be kept in ${target.fallbackFolder} either: $copyError');
-      }
-      ended = (publish) => publish._copy(
-        state: SharePublishState.keptHere,
-        keptPath: kept,
-        failure: failure,
-        message: message,
-        glbPath: keptGlb,
-      );
+      final kept = await _keep(file, glb, target.fallbackFolder);
+      ended = kept != null
+          ? (publish) => publish._copy(
+              state: SharePublishState.keptHere,
+              keptPath: kept.path,
+              failure: failure,
+              message: message,
+              glbPath: kept.glb,
+            )
+          // Where it was made: its folder stays (_cleanUp), so that the version and the panel's path stay true
+          : (publish) => publish._copy(
+              state: SharePublishState.notKept,
+              keptPath: written,
+              failure: failure,
+              message: message,
+              glbPath: glb,
+            );
     } finally {
       try {
         await writer?.close();
@@ -282,12 +307,47 @@ class SharePublisher extends Notifier<Map<String, SharePublish>> {
     }
   }
 
+  /// [file], and the .glb copy [glb] of a scene, copied into the folder of my choice [folder]: copied, since a 3D
+  /// version chained after a panorama still reads it where it was made. Null when the folder does not take them; no
+  /// copy of them is left there then.
+  Future<({String path, String? glb})?> _keep(File file, String? glb, String folder) async {
+    final name = p.basename(file.path);
+    final made = <File>[];
+    try {
+      final into = await Directory(folder).create(recursive: true);
+      final kept = await copyIntoFolder(file, into, name);
+      made.add(kept);
+      final keptGlb = glb == null ? null : await copyIntoFolder(File(glb), into, p.basename(glb));
+      return (path: kept.path, glb: keptGlb?.path);
+    } catch (error) {
+      _log.severe('$name could not be kept in $folder either, it stays where it was made: $error');
+      for (final copy in made) {
+        try {
+          await copy.delete();
+        } on FileSystemException catch (deleteError) {
+          _log.fine('${copy.path} stays: ${deleteError.message}');
+        }
+      }
+      return null;
+    }
+  }
+
+  /// Whether [folder] holds a version that neither its share nor the folder of my choice took
+  bool _holdsVersion(String folder) => state.values.any(
+    (publish) =>
+        publish.state == SharePublishState.notKept && publish.keptPath != null && p.isWithin(folder, publish.keptPath!),
+  );
+
   /// Deletes each folder a version was made in once every job that writes there or reads from it ended and its
   /// version left: written on the share, skipped, or kept in the folder of my choice. A folder of a job that failed
   /// or was cancelled stays for Retry, until the queue forgets the job (Clear finished) or the next start
-  /// (cleanUpAiCopiesAtStart).
+  /// (cleanUpAiCopiesAtStart). A folder that holds a version neither its share nor the folder of my choice took is
+  /// never deleted while the app runs.
   void _cleanUp(ConversionQueueState queue) {
     for (final folder in List.of(_staged)) {
+      if (_holdsVersion(folder)) {
+        continue;
+      }
       final jobs = [
         for (final job in queue.jobs)
           if (job.target?.folder == folder) job,

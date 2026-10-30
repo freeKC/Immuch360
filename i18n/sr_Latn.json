@@ -713,6 +713,7 @@
   "ai_immersive_share_copying": "Kopiranje {name} sa deljenog resursa: {done} od {all}",
   "ai_immersive_share_hint": "Da biste čuvali pored fotografija deljenog resursa, dodajte taj resurs kao fasciklu ovog računara (mrežni disk).",
   "ai_immersive_share_kept_here": "Nije sačuvano na deljenom resursu ({reason}): zadržano na ovom računaru",
+  "ai_immersive_share_not_kept": "Nije sačuvano na deljenom resursu ({reason}) ni u {folder}: za sada je samo u privremenoj fascikli ovog računara. Pokušajte ponovo ili otvorite njegovu fasciklu da biste ga zadržali.",
   "ai_immersive_share_saving": "Čuvanje na deljeni resurs",
   "ai_immersive_size_on_disk": "{size} na disku",
   "ai_immersive_skip": "Preskoči",

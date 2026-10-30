@@ -710,6 +710,7 @@
   "ai_immersive_share_copying": "در حال کپی {name} از اشتراک شبکه: {done} از {all}",
   "ai_immersive_share_hint": "برای ذخیره کنار عکس‌های یک اشتراک شبکه، آن اشتراک را به‌عنوان پوشه‌ای از این رایانه اضافه کنید (درایو شبکه).",
   "ai_immersive_share_kept_here": "در اشتراک شبکه ذخیره نشد ({reason}): روی این رایانه نگه داشته شد",
+  "ai_immersive_share_not_kept": "در اشتراک شبکه ذخیره نشد ({reason}) و در {folder} هم نه: فعلاً فقط در یک پوشهٔ موقت روی این رایانه است. دوباره تلاش کنید یا پوشه‌اش را باز کنید تا نگهش دارید.",
   "ai_immersive_share_saving": "در حال ذخیره در اشتراک شبکه",
   "ai_immersive_size_on_disk": "{size} روی دیسک",
   "ai_immersive_skip": "رد شدن",

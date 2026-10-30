@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "正在从共享复制 {name}：{done} / {all}",
   "ai_immersive_share_hint": "要保存到共享中的照片旁边，请将该共享添加为此电脑的文件夹（网络驱动器）。",
   "ai_immersive_share_kept_here": "未保存到共享（{reason}）：已保留在此电脑上",
+  "ai_immersive_share_not_kept": "未保存到共享（{reason}），也未保存到 {folder}：目前它只在此电脑的一个临时文件夹中。请重试，或打开它所在的文件夹以保留它。",
   "ai_immersive_share_saving": "正在保存到共享",
   "ai_immersive_size_on_disk": "占用磁盘 {size}",
   "ai_immersive_skip": "跳过",

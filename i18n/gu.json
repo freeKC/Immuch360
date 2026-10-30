@@ -287,6 +287,7 @@
   "ai_immersive_share_copying": "શેરમાંથી {name} કૉપિ થઈ રહ્યું છે: {all} માંથી {done}",
   "ai_immersive_share_hint": "શેરના ફોટાની બાજુમાં સાચવવા માટે, શેરને આ કમ્પ્યુટરના ફોલ્ડર તરીકે ઉમેરો (નેટવર્ક ડ્રાઇવ).",
   "ai_immersive_share_kept_here": "શેર પર સાચવ્યું નથી ({reason}): આ કમ્પ્યુટર પર રાખ્યું",
+  "ai_immersive_share_not_kept": "શેર પર સાચવ્યું નથી ({reason}) અને {folder} માં પણ નહીં: હમણાં તે ફક્ત આ કમ્પ્યુટરના એક કામચલાઉ ફોલ્ડરમાં છે. ફરી પ્રયાસ કરો, અથવા તેને રાખવા માટે તેનું ફોલ્ડર ખોલો.",
   "ai_immersive_share_saving": "શેર પર સાચવી રહ્યા છીએ",
   "ai_immersive_size_on_disk": "ડિસ્ક પર {size}",
   "ai_immersive_skip": "છોડો",

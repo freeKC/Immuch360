@@ -224,6 +224,7 @@
   "ai_immersive_share_copying": "ਸ਼ੇਅਰ ਤੋਂ {name} ਕਾਪੀ ਹੋ ਰਹੀ ਹੈ: {all} ਵਿੱਚੋਂ {done}",
   "ai_immersive_share_hint": "ਕਿਸੇ ਸ਼ੇਅਰ ਦੀਆਂ ਫੋਟੋਆਂ ਦੇ ਨਾਲ ਸੇਵ ਕਰਨ ਲਈ, ਉਸ ਸ਼ੇਅਰ ਨੂੰ ਇਸ ਕੰਪਿਊਟਰ ਦੇ ਫੋਲਡਰ ਵਜੋਂ ਜੋੜੋ (ਨੈੱਟਵਰਕ ਡਰਾਈਵ)।",
   "ai_immersive_share_kept_here": "ਸ਼ੇਅਰ ਉੱਤੇ ਸੇਵ ਨਹੀਂ ਹੋਇਆ ({reason}): ਇਸ ਕੰਪਿਊਟਰ ਉੱਤੇ ਰੱਖਿਆ ਗਿਆ",
+  "ai_immersive_share_not_kept": "ਸ਼ੇਅਰ ਉੱਤੇ ਸੇਵ ਨਹੀਂ ਹੋਇਆ ({reason}) ਅਤੇ {folder} ਵਿੱਚ ਵੀ ਨਹੀਂ: ਹਾਲੇ ਇਹ ਸਿਰਫ਼ ਇਸ ਕੰਪਿਊਟਰ ਦੇ ਇੱਕ ਆਰਜ਼ੀ ਫੋਲਡਰ ਵਿੱਚ ਹੈ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ, ਜਾਂ ਇਸਨੂੰ ਰੱਖਣ ਲਈ ਇਸਦਾ ਫੋਲਡਰ ਖੋਲ੍ਹੋ।",
   "ai_immersive_share_saving": "ਸ਼ੇਅਰ ਉੱਤੇ ਸੇਵ ਹੋ ਰਿਹਾ ਹੈ",
   "ai_immersive_size_on_disk": "ਡਿਸਕ 'ਤੇ {size}",
   "ai_immersive_skip": "ਛੱਡੋ",

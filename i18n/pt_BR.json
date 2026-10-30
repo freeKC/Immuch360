@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "Copiando {name} do compartilhamento: {done} de {all}",
   "ai_immersive_share_hint": "Para salvar ao lado das fotos de um compartilhamento, adicione o compartilhamento como uma pasta deste computador (unidade de rede).",
   "ai_immersive_share_kept_here": "Não salvo no compartilhamento ({reason}): mantido neste computador",
+  "ai_immersive_share_not_kept": "Não salvo no compartilhamento ({reason}) nem em {folder}: por enquanto está apenas em uma pasta temporária deste computador. Tente novamente ou abra a pasta dele para mantê-lo.",
   "ai_immersive_share_saving": "Salvando no compartilhamento",
   "ai_immersive_size_on_disk": "{size} no disco",
   "ai_immersive_skip": "Pular",

@@ -208,6 +208,7 @@
   "ai_immersive_share_copying": "{name} ulashmadan nusxalanmoqda: {done} / {all}",
   "ai_immersive_share_hint": "Ulashmadagi suratlar yoniga saqlash uchun ulashmani shu kompyuterning jildi sifatida qo'shing (tarmoq diski).",
   "ai_immersive_share_kept_here": "Ulashmaga saqlanmadi ({reason}): shu kompyuterda qoldirildi",
+  "ai_immersive_share_not_kept": "Ulashmaga saqlanmadi ({reason}), {folder} jildiga ham: hozircha u faqat shu kompyuterning vaqtinchalik jildida. Qayta urining yoki uni saqlab qolish uchun jildini oching.",
   "ai_immersive_share_saving": "Ulashmaga saqlanmoqda",
   "ai_immersive_size_on_disk": "Diskda {size}",
   "ai_immersive_skip": "O'tkazib yuborish",

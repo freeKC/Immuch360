@@ -209,6 +209,7 @@
   "ai_immersive_share_copying": "I stap kopi {name} long sea: {done} long {all}",
   "ai_immersive_share_hint": "Blong sevem klosap long ol foto blong wan sea, ademap sea olsem wan folda blong kompiuta ia (netwok draev).",
   "ai_immersive_share_kept_here": "I no sevem long sea ({reason}): i stap long kompiuta ia",
+  "ai_immersive_share_not_kept": "I no sevem long sea ({reason}) mo long {folder}: naoia i stap nomo long wan tempori folda long kompiuta ia. Traem bakegen, o openem folda blong hem blong kipim.",
   "ai_immersive_share_saving": "I stap sevem long sea",
   "ai_immersive_size_on_disk": "{size} long disk",
   "ai_immersive_skip": "Livim",

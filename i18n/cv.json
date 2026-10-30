@@ -251,6 +251,7 @@
   "ai_immersive_share_copying": "{name} тетел папкинчен копиленет: {done} / {all}",
   "ai_immersive_share_hint": "Тетел папкинчи сӑнӳкерчӗксен ҫумне упрас тесен, ҫав папкӑна ку компьютерӑн папки пек хушӑр (тетел дискӗ).",
   "ai_immersive_share_kept_here": "Тетел папкине упранмарӗ ({reason}): ку компьютерта хӑварнӑ",
+  "ai_immersive_share_not_kept": "Тетел папкине упранмарӗ ({reason}), {folder} папкине те: халлӗхе вӑл ку компьютерӑн вӑхӑтлӑх папкинче кӑна. Тепӗр хут хӑтланӑр е ӑна упрама унӑн папкине уҫӑр.",
   "ai_immersive_share_saving": "Тетел папкине упранать",
   "ai_immersive_size_on_disk": "Дискра {size}",
   "ai_immersive_skip": "Сиктер",

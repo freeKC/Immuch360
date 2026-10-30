@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "共有から{name}をコピー中: {done} / {all}",
   "ai_immersive_share_hint": "共有内の写真の隣に保存するには、その共有をこのコンピューターのフォルダー (ネットワーク ドライブ) として追加してください。",
   "ai_immersive_share_kept_here": "共有に保存できませんでした ({reason}): このコンピューターに残しました",
+  "ai_immersive_share_not_kept": "共有に保存できませんでした ({reason})。{folder} にも保存できませんでした: 今はこのコンピューターの一時フォルダーにしかありません。再試行するか、そのフォルダーを開いて保管してください。",
   "ai_immersive_share_saving": "共有に保存中",
   "ai_immersive_size_on_disk": "ディスク上 {size}",
   "ai_immersive_skip": "スキップ",

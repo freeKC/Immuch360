@@ -614,6 +614,12 @@ class DestinationSession {
   /// "A folder of my choice" now: the one chosen in the dialog, else that of the settings, else the download folder
   String get chosenFolder => _folderChosenHere ?? _settings.folder ?? _defaultFolder ?? '';
 
+  /// Whether [chosenFolder] is on the network, as the plan of a photo that goes there tells it
+  bool get chosenFolderIsNetwork {
+    final folder = chosenFolder;
+    return _volumes.of(folder)?.isNetwork ?? _volumes.isNetworkMount(folder);
+  }
+
   /// The network folders waiting for a yes or a no: the key to answer with, and the folder the question names
   Map<String, String> get pendingConsents => {
     for (final plan in _plans.values) ?plan.consentKey: plan.consentFolder ?? plan.folder,

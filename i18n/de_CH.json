@@ -447,6 +447,7 @@
   "ai_immersive_share_copying": "Kopiere {name} vo de Freigab: {done} vo {all}",
   "ai_immersive_share_hint": "Zum näbe de Fotos vo nere Freigab speichere, füeg d Freigab als Ordner vo däm Computer dezue (Netzlaufwerk).",
   "ai_immersive_share_kept_here": "Nöd uf de Freigab gspeicheret ({reason}): uf däm Computer bhalte",
+  "ai_immersive_share_not_kept": "Nöd uf de Freigab gspeicheret ({reason}) und au nöd in {folder}: vorläufig isch si nur imene temporäre Ordner vo däm Computer. Nomal probiere oder ihre Ordner öffne, zum si bhalte.",
   "ai_immersive_share_saving": "Speichere uf de Freigab",
   "ai_immersive_size_on_disk": "{size} uf em Datenträger",
   "ai_immersive_skip": "Überspringe",

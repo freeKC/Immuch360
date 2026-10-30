@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "{name} másolása a megosztásról: {done} / {all}",
   "ai_immersive_share_hint": "Ha egy megosztás fotói mellé szeretne menteni, adja hozzá a megosztást a számítógép mappájaként (hálózati meghajtó).",
   "ai_immersive_share_kept_here": "Nem került a megosztásra ({reason}): ezen a számítógépen maradt",
+  "ai_immersive_share_not_kept": "Nem került a megosztásra ({reason}), és a(z) {folder} mappába sem: egyelőre csak ennek a számítógépnek egy ideiglenes mappájában van. Próbálja újra, vagy nyissa meg a mappáját a megtartásához.",
   "ai_immersive_share_saving": "Mentés a megosztásra",
   "ai_immersive_size_on_disk": "{size} a lemezen",
   "ai_immersive_skip": "Kihagyás",

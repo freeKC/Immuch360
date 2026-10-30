@@ -196,6 +196,7 @@
   "ai_immersive_share_copying": "O eilañ {name} eus ar rannadenn: {done} diwar {all}",
   "ai_immersive_share_hint": "Evit enrollañ e-kichen luc'hskeudennoù ur rannadenn, ouzhpennit ar rannadenn evel un teuliad eus an urzhiataer-mañ (pladenn rouedad).",
   "ai_immersive_share_kept_here": "N’eo ket bet enrollet war ar rannadenn ({reason}): miret war an urzhiataer-mañ",
+  "ai_immersive_share_not_kept": "N’eo ket bet enrollet war ar rannadenn ({reason}) nag e {folder}: evit poent n’emañ nemet en un teuliad padennek eus an urzhiataer-mañ. Klaskit en-dro, pe digorit e deuliad evit e virout.",
   "ai_immersive_share_saving": "Oc’h enrollañ war ar rannadenn",
   "ai_immersive_size_on_disk": "{size} war ar bladenn",
   "ai_immersive_skip": "Lezel a-gostez",

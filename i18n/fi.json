@@ -676,6 +676,7 @@
   "ai_immersive_share_copying": "Kopioidaan {name} verkkojaosta: {done}/{all}",
   "ai_immersive_share_hint": "Jos haluat tallentaa verkkojaon kuvien viereen, lisää jako tämän tietokoneen kansioksi (verkkoasema).",
   "ai_immersive_share_kept_here": "Ei tallennettu verkkojakoon ({reason}): säilytetty tällä tietokoneella",
+  "ai_immersive_share_not_kept": "Ei tallennettu verkkojakoon ({reason}) eikä kansioon {folder}: toistaiseksi se on vain tämän tietokoneen väliaikaisessa kansiossa. Yritä uudelleen tai avaa sen kansio säilyttääksesi sen.",
   "ai_immersive_share_saving": "Tallennetaan verkkojakoon",
   "ai_immersive_size_on_disk": "{size} levyllä",
   "ai_immersive_skip": "Ohita",

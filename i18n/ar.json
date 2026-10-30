@@ -710,6 +710,7 @@
   "ai_immersive_share_copying": "جارٍ نسخ {name} من المشاركة: {done} من {all}",
   "ai_immersive_share_hint": "للحفظ بجانب صور مشاركة، أضف المشاركة كمجلد على هذا الحاسوب (محرك أقراص شبكي).",
   "ai_immersive_share_kept_here": "لم يُحفظ على المشاركة ({reason}): احتُفظ به على هذا الحاسوب",
+  "ai_immersive_share_not_kept": "لم يُحفظ على المشاركة ({reason}) ولا في {folder}: هو الآن في مجلد مؤقت على هذا الحاسوب فقط. أعد المحاولة، أو افتح مجلده للاحتفاظ به.",
   "ai_immersive_share_saving": "جارٍ الحفظ على المشاركة",
   "ai_immersive_size_on_disk": "{size} على القرص",
   "ai_immersive_skip": "تخطي",

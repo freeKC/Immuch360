@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "Kopiado de {name} el la kunhavigo: {done} el {all}",
   "ai_immersive_share_hint": "Por konservi apud la fotoj de kunhavigo, aldonu la kunhavigon kiel dosierujon de ĉi tiu komputilo (reta disko).",
   "ai_immersive_share_kept_here": "Ne konservita en la kunhavigo ({reason}): tenita en ĉi tiu komputilo",
+  "ai_immersive_share_not_kept": "Ne konservita en la kunhavigo ({reason}) nek en {folder}: nuntempe ĝi estas nur en provizora dosierujo de ĉi tiu komputilo. Reprovu, aŭ malfermu ĝian dosierujon por konservi ĝin.",
   "ai_immersive_share_saving": "Konservado en la kunhavigon",
   "ai_immersive_size_on_disk": "{size} sur la disko",
   "ai_immersive_skip": "Preterlasi",

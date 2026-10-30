@@ -196,6 +196,7 @@
   "ai_immersive_share_copying": "Tengoh salin {name} dari kongsi rangkaie: {done} dari {all}",
   "ai_immersive_share_hint": "Nok simpang sebelah gambo dale kongsi rangkaie, tambah kongsi tu sebagai folder komputer ni (pemacu rangkaie).",
   "ai_immersive_share_kept_here": "Tok simpang ko kongsi rangkaie ({reason}): simpang dale komputer ni",
+  "ai_immersive_share_not_kept": "Tok simpang ko kongsi rangkaie ({reason}) gak tok dale {folder}: buat masa ni dio ado dale folder semento komputer ni jah. Cubo lagi, atau bukak folder dio nok simpang.",
   "ai_immersive_share_saving": "Tengoh simpang ko kongsi rangkaie",
   "ai_immersive_size_on_disk": "{size} dale cakera",
   "ai_immersive_skip": "Langkau",

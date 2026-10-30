@@ -196,6 +196,7 @@
   "ai_immersive_share_copying": "Kopiranje {name} s dijeljenog resursa: {done} od {all}",
   "ai_immersive_share_hint": "Da biste sačuvali pored fotografija dijeljenog resursa, dodajte dijeljeni resurs kao folder ovog računara (mrežni disk).",
   "ai_immersive_share_kept_here": "Nije sačuvano na dijeljenom resursu ({reason}): zadržano na ovom računaru",
+  "ai_immersive_share_not_kept": "Nije sačuvano na dijeljenom resursu ({reason}) ni u {folder}: zasad je samo u privremenom folderu ovog računara. Pokušajte ponovo ili otvorite njegov folder da ga zadržite.",
   "ai_immersive_share_saving": "Spremanje na dijeljeni resurs",
   "ai_immersive_size_on_disk": "{size} na disku",
   "ai_immersive_skip": "Preskoči",

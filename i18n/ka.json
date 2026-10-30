@@ -346,6 +346,7 @@
   "ai_immersive_share_copying": "{name} კოპირდება გაზიარებიდან: {done} / {all}",
   "ai_immersive_share_hint": "გაზიარების ფოტოების გვერდით შესანახად დაამატეთ გაზიარება ამ კომპიუტერის საქაღალდედ (ქსელური დისკი).",
   "ai_immersive_share_kept_here": "გაზიარებაში არ შეინახა ({reason}): დარჩა ამ კომპიუტერზე",
+  "ai_immersive_share_not_kept": "გაზიარებაში არ შეინახა ({reason}) და არც {folder}-ში: ჯერჯერობით ის მხოლოდ ამ კომპიუტერის დროებით საქაღალდეშია. ხელახლა სცადეთ ან გახსენით მისი საქაღალდე, რომ შეინახოთ.",
   "ai_immersive_share_saving": "ინახება გაზიარებაში",
   "ai_immersive_size_on_disk": "{size} დისკზე",
   "ai_immersive_skip": "გამოტოვება",

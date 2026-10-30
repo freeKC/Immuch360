@@ -500,9 +500,19 @@ class _JobRowState extends ConsumerState<_JobRow> {
     // A version next to its original on a share is made here, then written there (share_publisher.dart): its folder
     // is that of the share, and nothing of it stays here unless the share refused it
     final publish = ref.watch(sharePublisherProvider.select((publishes) => publishes[job.id]));
-    final written = publish == null ? job.writtenPath : publish.keptPath;
-    final onShare = publish != null && publish.keptPath == null;
+    final kept = publish != null && publish.state.isOnComputer;
+    final written = publish == null ? job.writtenPath : (kept ? publish.keptPath : null);
+    final onShare = publish != null && !kept;
     final folder = onShare ? publish.target.folder.label : (written != null ? p.dirname(written) : job.target?.folder);
+    // A version kept in the folder of my choice is on the network when that folder is
+    final localOnly = publish?.state == SharePublishState.notKept
+        ? null
+        : localOnlyMessage(
+            t,
+            isNetwork: publish?.state == SharePublishState.keptHere
+                ? publish!.target.fallbackIsNetwork
+                : info?.isNetwork ?? false,
+          );
     final secondary = TextStyle(color: colors.onSurfaceVariant);
     final stage = job.state.isActive ? conversionStageText(t, job) : null;
     final progress = job.state.isActive ? conversionProgressText(t, job, _left) : null;
@@ -557,6 +567,15 @@ class _JobRowState extends ConsumerState<_JobRow> {
           key: const Key('ai_job_share_kept'),
           style: TextStyle(color: colors.error),
         ),
+      if (publish != null && publish.state == SharePublishState.notKept)
+        Text(
+          t.ai_immersive_share_not_kept(
+            reason: shareFailureText(t, publish.failure, publish.message),
+            folder: publish.target.fallbackFolder,
+          ),
+          key: const Key('ai_job_share_not_kept'),
+          style: TextStyle(color: colors.error),
+        ),
       if (job.state == ConversionState.done) ...[
         if (job.reduced && job.eyeWidth != null) Text(t.ai_immersive_reduced(width: job.eyeWidth!), style: secondary),
         if (hidden != null) Text(t.ai_immersive_hidden_filled(percent: (hidden * 100).round()), style: secondary),
@@ -572,8 +591,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
             key: const Key('ai_job_glb'),
             style: TextStyle(color: colors.error),
           ),
-        if (localOnlyMessage(t, isNetwork: info?.isNetwork ?? false) case final message?)
-          Text(message, key: const Key('ai_job_local_only'), style: secondary),
+        if (localOnly case final message?) Text(message, key: const Key('ai_job_local_only'), style: secondary),
       ],
     ];
     final actions = <Widget>[
@@ -590,6 +608,13 @@ class _JobRowState extends ConsumerState<_JobRow> {
         TextButton(
           key: const Key('ai_job_retry'),
           onPressed: () => notifier.retry(job.id),
+          child: Text(t.ai_immersive_retry),
+        ),
+      // Neither the share nor the folder of my choice took it: tried again
+      if (job.state == ConversionState.done && publish?.state == SharePublishState.notKept)
+        TextButton(
+          key: const Key('ai_job_share_retry'),
+          onPressed: () => ref.read(sharePublisherProvider.notifier).retry(job.id),
           child: Text(t.ai_immersive_retry),
         ),
       // On the share: opened there, in the page of the photo of the share
@@ -670,11 +695,13 @@ class _JobRowState extends ConsumerState<_JobRow> {
   }
 }
 
-/// Why the share refused a version, in the words of the dialog: read only, full, else the words of the share
+/// Why the share refused a version, in the words of the dialog (destinationReasonText): read only, full, a folder
+/// gone, else a write that failed with the words of the share
 String shareFailureText(Translations t, ShareWriteFailure? failure, String? message) => switch (failure) {
   ShareWriteFailure.readOnly => t.ai_immersive_failed_read_only,
   ShareWriteFailure.diskFull => t.ai_immersive_failed_disk_full,
-  _ => message ?? '',
+  ShareWriteFailure.missing => t.ai_immersive_failed_source,
+  ShareWriteFailure.taken || ShareWriteFailure.failed || null => t.ai_immersive_failed_write(message: message ?? ''),
 };
 
 /// Opens a version written on a share in the page of the photos of the share; replaced in tests

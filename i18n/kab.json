@@ -196,6 +196,7 @@
   "ai_immersive_share_copying": "Anɣal n {name} seg ufaylu yettwabḍan: {done} seg {all}",
   "ai_immersive_share_hint": "I wakken ad teskelseḍ ɣer yidis n tewlafin n ufaylu yettwabḍan, rnu afaylu yettwabḍan d akaram n uselkim-a (aḍebsi n uẓeṭṭa).",
   "ai_immersive_share_kept_here": "Ur yettwasekles ara ɣef ufaylu yettwabḍan ({reason}): yeqqim deg uselkim-a",
+  "ai_immersive_share_not_kept": "Ur yettwasekles ara ɣef ufaylu yettwabḍan ({reason}) wala deg {folder}: akka tura yella kan deg ukaram akudan n uselkim-a. Ɛreḍ tikkelt nniḍen, neɣ ldi akaram-is akken ad t-teǧǧeḍ.",
   "ai_immersive_share_saving": "Asekles ɣef ufaylu yettwabḍan",
   "ai_immersive_size_on_disk": "{size} ɣef uḍebsi",
   "ai_immersive_skip": "Zgel",

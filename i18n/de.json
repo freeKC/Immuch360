@@ -717,6 +717,7 @@
   "ai_immersive_share_copying": "Kopiere {name} von der Freigabe: {done} von {all}",
   "ai_immersive_share_hint": "Um neben den Fotos einer Freigabe zu speichern, füge die Freigabe als Ordner dieses Computers hinzu (Netzlaufwerk).",
   "ai_immersive_share_kept_here": "Nicht auf der Freigabe gespeichert ({reason}): auf diesem Computer behalten",
+  "ai_immersive_share_not_kept": "Nicht auf der Freigabe gespeichert ({reason}) und auch nicht in {folder}: vorerst liegt sie nur in einem temporären Ordner dieses Computers. Erneut versuchen oder ihren Ordner öffnen, um sie zu behalten.",
   "ai_immersive_share_saving": "Speichere auf der Freigabe",
   "ai_immersive_size_on_disk": "{size} auf dem Datenträger",
   "ai_immersive_skip": "Überspringen",
