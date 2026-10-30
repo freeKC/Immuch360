@@ -76,6 +76,7 @@ abstract class AppConfig with _$AppConfig {
             .viewerTvShowDateTime => viewer.tvShowDateTime,
             .viewerSpatial25d => viewer.spatial25d,
             .viewerReverseThumbstickTurn => viewer.reverseThumbstickTurn,
+            .viewerFlat3dByName => viewer.flat3dByName,
             .viewerVideoSource => viewer.videoSource,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
@@ -142,6 +143,7 @@ abstract class AppConfig with _$AppConfig {
       .viewerTvShowDateTime => copyWith(viewer: viewer.copyWith(tvShowDateTime: value as bool)),
       .viewerSpatial25d => copyWith(viewer: viewer.copyWith(spatial25d: value as bool)),
       .viewerReverseThumbstickTurn => copyWith(viewer: viewer.copyWith(reverseThumbstickTurn: value as bool)),
+      .viewerFlat3dByName => copyWith(viewer: viewer.copyWith(flat3dByName: value as bool)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(

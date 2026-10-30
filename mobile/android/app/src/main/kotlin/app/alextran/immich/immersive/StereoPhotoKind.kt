@@ -51,6 +51,18 @@ internal sealed interface StereoPhotoKind {
   }
 
   /**
+   * A flat 3D photo told by its file name (see [FlatStereoSpec]): its two eyes cut from the frame as it packs them. The
+   * file of another tool: the quad claims nothing about how it was made.
+   */
+  data class Flat(val spec: FlatStereoSpec) : StereoPhotoKind {
+    override val isEstimatedRelief: Boolean
+      get() = false
+
+    override val leftEyeIsOriginal: Boolean
+      get() = false
+  }
+
+  /**
    * The quad shows the preview of the file flat, as it showed an unknown kind, until the scene viewer takes this kind
    * before the quad: no relief label, no "2D (original)".
    */
@@ -83,6 +95,7 @@ internal sealed interface StereoPhotoKind {
         SbsPhotoSpec.KIND -> SbsPhotoSpec.fromJson(root)?.let(::Sbs)
         DepthReliefSpec.KIND -> DepthReliefSpec.fromJson(root)?.let(::DepthRelief)
         VolumetricSceneSpec.KIND -> VolumetricSceneSpec.fromJson(root)?.let(::VolumetricScene)
+        FlatStereoSpec.KIND -> FlatStereoSpec.fromJson(root)?.let(::Flat)
         else -> null
       }
     }

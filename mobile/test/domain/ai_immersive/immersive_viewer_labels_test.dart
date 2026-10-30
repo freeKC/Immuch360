@@ -86,6 +86,18 @@ void main() {
     expect(labels.keys, containsAll(sphereViewerLabels(StaticTranslations.instance).keys));
     expect(labels.keys, containsAll(['ai2dOriginal', 'aiReliefEstimated', 'aiNoNavigation']));
     expect(labels.keys, containsAll(sceneViewerLabels(StaticTranslations.instance).keys));
+    expect(labels.keys, containsAll(flat3dViewerLabels(StaticTranslations.instance).keys));
+  });
+
+  testWidgets('a media told 3D by its file name says so, experimental, and that a video plays on its own', (
+    tester,
+  ) async {
+    final labels = flat3dViewerLabels(await english(tester));
+
+    expect(labels, {
+      'flat3dNotice': '3D told by the file name (experimental)',
+      'flat3dNoNavigation': 'A 3D video plays on its own: B or Y goes back to the app',
+    });
   });
 
   test('a 3D scene gets its own labels, under the keys SceneTexts of the headset reads', () {

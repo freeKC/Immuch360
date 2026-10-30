@@ -6,12 +6,16 @@ import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 
 import '../../presentation/pages/drone/dji_link_fakes.dart';
+import '../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../unit/presentation/presentation_context.dart';
 
 void main() {
@@ -105,6 +109,66 @@ void main() {
       );
 
       expect(find.byKey(const Key('advanced_settings_dji_import')), findsNothing);
+    });
+  });
+
+  group('3D by file name (experimental)', () {
+    final flat3dSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_flat_3d')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    /// The page on a Meta Quest, the only device with the immersive viewer, in the build of the phones: the AI settings
+    /// of the headset show their switches only
+    Future<void> pumpOnQuest(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          appFlavorProvider.overrideWithValue(null),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      await tester.scrollUntilVisible(flat3dSwitch, 100, scrollable: find.byType(Scrollable).first);
+    }
+
+    testWidgets('reads on by default, and says which names it reads', (tester) async {
+      await pumpOnQuest(tester);
+
+      expect(find.text('3D by file name (experimental)'), findsOneWidget);
+      expect(
+        find.text(
+          'Videos named _SBS, _HSBS, _LR, _TB, _OU or Half-SBS, and photos named _TB, _OU or _HTB, open in 3D on a '
+          'flat screen with View in 3D',
+        ),
+        findsOneWidget,
+      );
+      expect(tester.widget<SwitchListTile>(flat3dSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.flat3dByName, isTrue);
+    });
+
+    testWidgets('turns off and on again', (tester) async {
+      await pumpOnQuest(tester);
+
+      await tester.tap(flat3dSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(flat3dSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.flat3dByName, isFalse);
+
+      await tester.tap(flat3dSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.flat3dByName, isTrue);
+    });
+
+    testWidgets('is not offered on a phone, which has no immersive viewer', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_flat_3d')), findsNothing);
     });
   });
 

@@ -28,6 +28,12 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// the view then turns the way the stick is pushed, as in most headset apps (Settings, Asset Viewer, Videos)
     @Default(false) bool reverseThumbstickTurn,
 
+    /// Meta Quest immersive viewer, experimental: a video whose file name says it holds two eyes (_SBS, _HSBS, _LR,
+    /// _TB, _OU, Half-SBS...) and a photo of two eyes one above the other (_TB, _OU, _HTB...) open in 3D on a flat
+    /// screen with View in 3D. On by default (Settings, Advanced turns it off); the side by side photos keep their View
+    /// in 3D whatever it says (see stackedPhotoFormatOf)
+    @Default(true) bool flat3dByName,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
@@ -57,19 +58,21 @@ void main() {
       NetworkEntry(sourceId: 'nas', path: path, isDirectory: false, size: 1000, modified: DateTime.utc(2026, 10, 1));
 
   /// The tile of [file], whose file declares [info]
-  Future<void> pumpTile(WidgetTester tester, NetworkEntry file, NetworkMediaInfo? info) => tester.pumpTestWidget(
-    context,
-    SizedBox(
-      width: 120,
-      height: 120,
-      child: NetworkMediaTile(entry: file, url: null, onTap: () {}),
-    ),
-    overrides: [
-      networkMediaInfoProvider(networkMediaKey(file)).overrideWith((ref) async => info),
-      networkUploadRecordsProvider.overrideWith(_NoRecords.new),
-      networkUploadProvider.overrideWith(_IdleUpload.new),
-    ],
-  );
+  Future<void> pumpTile(WidgetTester tester, NetworkEntry file, NetworkMediaInfo? info, {bool horizonOs = false}) =>
+      tester.pumpTestWidget(
+        context,
+        SizedBox(
+          width: 120,
+          height: 120,
+          child: NetworkMediaTile(entry: file, url: null, onTap: () {}),
+        ),
+        overrides: [
+          networkMediaInfoProvider(networkMediaKey(file)).overrideWith((ref) async => info),
+          networkUploadRecordsProvider.overrideWith(_NoRecords.new),
+          networkUploadProvider.overrideWith(_IdleUpload.new),
+          isHorizonOsProvider.overrideWith((ref) async => horizonOs),
+        ],
+      );
 
   testWidgets('a spatial photo gets a 3D badge', (tester) async {
     await pumpTile(tester, entry('/IMG_0001.HEIC'), const NetworkMediaInfo(stereoPair: pair));
@@ -214,5 +217,51 @@ void main() {
     expect(spatialBadge, findsOneWidget);
     expect(badge360, findsOneWidget);
     expect(tester.getTopRight(spatialBadge).dx, lessThan(tester.getTopLeft(badge360).dx));
+  });
+
+  group('flat 3D media told by their file name', () {
+    test('a video named as holding two eyes, or a photo of two eyes one above the other, gets the 3D badge', () {
+      const videos = ['Movie_SBS.mp4', 'Movie.3D.Half-SBS.mkv', 'clip_LR.mp4', 'Movie.Half-OU.mkv', 'clip_TB.mp4'];
+      for (final name in videos) {
+        expect(
+          networkStereoBadgeOf(null, name: name, isVideo: true, byName: true),
+          NetworkStereoBadge.stereo,
+          reason: name,
+        );
+      }
+      expect(networkStereoBadgeOf(null, name: 'street_TB.jpg', byName: true), NetworkStereoBadge.stereo);
+      expect(networkStereoBadgeOf(const NetworkMediaInfo(), name: 'street_HTB.jpg', byName: true), isNotNull);
+    });
+
+    test('nothing for an ordinary or a 360° file, with the switch off, nor by name for a side by side photo', () {
+      expect(networkStereoBadgeOf(null, name: 'clip.mp4', isVideo: true, byName: true), isNull);
+      expect(networkStereoBadgeOf(null, name: 'trip_360_SBS.mp4', isVideo: true, byName: true), isNull);
+      expect(
+        networkStereoBadgeOf(
+          const NetworkMediaInfo(probe: SphericalProbe(hasSphericalMetadata: true)),
+          name: 'trip_SBS.mp4',
+          isVideo: true,
+          byName: true,
+        ),
+        isNull,
+        reason: 'its file declares 360°',
+      );
+      expect(networkStereoBadgeOf(null, name: 'Movie_SBS.mp4', isVideo: true), isNull, reason: 'switch off');
+      // A side by side photo waits for its head, which our XMP may make "3D AI"
+      expect(networkStereoBadgeOf(null, name: 'beach-da2-SBS.png', byName: true), isNull);
+    });
+
+    testWidgets('the tile of such a video shows it on a Meta Quest before anything is read', (tester) async {
+      await pumpTile(tester, entry('/Movie.3D.Half-SBS.mkv'), null, horizonOs: true);
+
+      expect(spatialBadge, findsOneWidget);
+      expect(find.descendant(of: spatialBadge, matching: find.text('3D')), findsOneWidget);
+    });
+
+    testWidgets('not on a phone or a TV, which open such a video flat and have no switch for the rule', (tester) async {
+      await pumpTile(tester, entry('/Movie.3D.Half-SBS.mkv'), null);
+
+      expect(spatialBadge, findsNothing);
+    });
   });
 }

@@ -260,7 +260,7 @@ class StereoComposerTest {
   }
 
   @Test
-  fun `the English texts of the relief are those of en_json`() {
+  fun `the English texts of the relief and of the flat 3D media are those of en_json`() {
     // The translation keys Flutter sends them under (lib/domain/models/ai_immersive/immersive_viewer_labels.dart)
     val translated =
       mapOf(
@@ -278,6 +278,8 @@ class StereoComposerTest {
         StereoComposer.LABEL_RELIEF_NO_MEMORY to "ai_immersive_unavailable_memory",
         StereoComposer.LABEL_RELIEF_MISSING to "ai_immersive_unavailable_missing",
         StereoComposer.LABEL_RELIEF_DAMAGED to "ai_immersive_unavailable_damaged",
+        StereoComposer.LABEL_FLAT3D_NOTICE to "immersive_flat_3d_notice",
+        StereoComposer.LABEL_FLAT3D_NO_NAVIGATION to "immersive_flat_3d_no_navigation",
       )
     val english = Json.parseToJsonElement(englishFile().readText()).jsonObject
     for ((key, translation) in translated) {

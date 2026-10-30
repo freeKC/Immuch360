@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
@@ -24,6 +25,8 @@ import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -302,8 +305,28 @@ final networkMediaInfoProvider = FutureProvider.autoDispose.family<NetworkMediaI
 /// panorama a computer generated beyond the edges of a photo, or its 3D version ("360° AI", section 5)
 enum NetworkStereoBadge { stereo, estimated, scene, generatedPanorama }
 
-/// The 3D badge of a file of a share that declares [info], null for none (a flat photo, a file not read yet)
-NetworkStereoBadge? networkStereoBadgeOf(NetworkMediaInfo? info) {
+/// The 3D badge of a file of a share that declares [info], null for none (a flat photo, a file not read yet). With
+/// [byName] (the flat 3D media told by their file name, experimental, on by default), a video named [name] whose name
+/// says it holds two eyes (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS...) and a photo of two eyes one above the other (_TB,
+/// _OU, _HTB...) get the 3D badge too, read or not, unless their file declares something else.
+NetworkStereoBadge? networkStereoBadgeOf(
+  NetworkMediaInfo? info, {
+  String? name,
+  bool isVideo = false,
+  bool byName = false,
+}) {
+  final declared = _declaredStereoBadge(info);
+  // A 360° file, or the raw file of a 360° camera, is no flat 3D media whatever its name
+  final sphere = info != null && (info.is360 || info.rawKind != null);
+  if (declared != null || !byName || name == null || sphere) {
+    return declared;
+  }
+  final format = isVideo ? guessFlatStereoFormat(fileName: name, isVideo: true) : stackedPhotoFormatOf(name);
+  return format != null ? NetworkStereoBadge.stereo : null;
+}
+
+/// The 3D badge of what the file declares, see [networkStereoBadgeOf]
+NetworkStereoBadge? _declaredStereoBadge(NetworkMediaInfo? info) {
   if (info == null) {
     return null;
   }
@@ -356,9 +379,16 @@ class NetworkMediaTile extends ConsumerWidget {
     final is360 = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.is360 ?? false),
     );
-    // Apple spatial photos and videos, and the flat photos holding two eyes side by side, told by the same read
+    // Apple spatial photos and videos, and the flat photos holding two eyes side by side, told by the same read; the
+    // flat 3D media told by their file name too on a Meta Quest, where they open in 3D (experimental, on by default,
+    // Settings, Advanced)
+    final byName =
+        (ref.watch(isHorizonOsProvider).valueOrNull ?? false) &&
+        ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     final stereoBadge = ref.watch(
-      networkMediaInfoProvider(networkMediaKey(entry)).select((info) => networkStereoBadgeOf(info.valueOrNull)),
+      networkMediaInfoProvider(networkMediaKey(entry)).select(
+        (info) => networkStereoBadgeOf(info.valueOrNull, name: entry.name, isVideo: entry.isVideo, byName: byName),
+      ),
     );
     final record = ref.watch(networkUploadRecordsProvider.select((records) => records[UploadRecordStore.keyOf(entry)]));
     final wasSent = isKeptOnServer(record);

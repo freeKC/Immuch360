@@ -28,6 +28,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
@@ -164,6 +165,59 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// to the row of the details that has the focus now
   bool _dropHeldOk = false;
 
+  /// The sideways thumbstick pushes of a Meta Quest controller, one "page" call per push (see QuestStickPaging.kt):
+  /// taken natively, the scrollables of the page would compete for them as pointer scrolls
+  static const _stickChannel = MethodChannel('immuch360/quest_stick');
+
+  /// The viewer the pushes go to: the one whose route is on top, a viewer stacked over another one included. The one
+  /// under it takes them back once it is on top again, which may come before the one above is disposed.
+  static _AssetViewerState? _stickOwner;
+
+  /// Whether the viewer runs on a Meta Quest, once the platform told (see isHorizonOsProvider)
+  bool _onQuest = false;
+
+  /// Whether the route of this viewer is the page on top, once its route is known (see [didChangeDependencies])
+  bool _onTop = false;
+
+  /// Asks for the pushes on a Meta Quest only, while the route of this viewer is on top and its details are hidden: a
+  /// phone, a tablet, a Chromebook or a TV box with an air mouse keeps its scrolls as they were, a page pushed over the
+  /// viewer keeps them for its own scrollables, and so does the row of people of the details
+  void _updateStickPaging() {
+    _setStickPaging(_onQuest && _onTop && !ref.read(assetViewerProvider).showingDetails);
+  }
+
+  /// Asks MainActivity for the pushes ([enabled]), or leaves them when this viewer has them
+  void _setStickPaging(bool enabled) {
+    if (enabled) {
+      if (identical(_stickOwner, this)) {
+        return;
+      }
+      _stickOwner = this;
+    } else if (identical(_stickOwner, this)) {
+      _stickOwner = null;
+    } else {
+      return;
+    }
+    _stickChannel.setMethodCallHandler(enabled ? _onStickPage : null);
+    // An engine without MainActivity has no such channel: no thumbstick paging there
+    _stickChannel.invokeMethod<void>('setPaging', enabled).ignore();
+  }
+
+  /// A push to the right goes to the next asset, to the left to the previous one; a zoomed photo stays, and so does a
+  /// viewer under another page
+  Future<void> _onStickPage(MethodCall call) async {
+    if (call.method != 'page' ||
+        !mounted ||
+        !(ModalRoute.isCurrentOf(context) ?? true) ||
+        ref.read(assetViewerProvider).isZoomed) {
+      return;
+    }
+    final step = call.arguments;
+    if (step is int && step != 0) {
+      _onTapNavigate(step.sign);
+    }
+  }
+
   void _onTapNavigate(int direction) {
     final page = _pageController.page?.toInt();
     if (page == null) {
@@ -246,10 +300,26 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
     final assetViewer = ref.read(assetViewerProvider);
     unawaited(_setSystemUIMode(assetViewer.showingControls, assetViewer.showingDetails));
+
+    // The thumbstick paging of a Meta Quest, once the platform told, and out of the way of the details
+    ref.listenManual(isHorizonOsProvider, (_, isHorizonOs) {
+      _onQuest = isHorizonOs.valueOrNull ?? false;
+      _updateStickPaging();
+    }, fireImmediately: true);
+    ref.listenManual(assetViewerProvider.select((value) => value.showingDetails), (_, _) => _updateStickPaging());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Once the route of the viewer is known, and again each time it comes on top or goes under another page
+    _onTop = ModalRoute.isCurrentOf(context) ?? true;
+    _updateStickPaging();
   }
 
   @override
   void dispose() {
+    _setStickPaging(false);
     _jump._detach(this);
     _topBarFocus.removeListener(_onBarsFocus);
     _bottomBarFocus.removeListener(_onBarsFocus);

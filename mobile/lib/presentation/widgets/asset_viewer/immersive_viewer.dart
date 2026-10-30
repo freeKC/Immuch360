@@ -17,6 +17,10 @@
 // a 3D scene goes there too, with the volumetricScene JSON its packet makes once the gate of the headset let it through
 // (see sceneGateOf): the viewer shows its preview flat on the quad, then the scene in its place.
 //
+// A flat 3D media told by its file name (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS and the others, see Flat3dRequest) goes
+// with the flat3d JSON: a photo of two eyes one above the other to the quad, a video to the flat video screen of the
+// viewer rather than to the sphere (see openFlatVideoViewer), opened on its own.
+//
 // A panorama a computer generated beyond the edges of a photo goes to the sphere as any 360° photo: the viewer reads
 // our packet at the head of its file itself, for every photo it shows on a sphere, previous and next included, since
 // they come without labels (ImmersiveApi.showAdjacent). Every opening hands it the translated texts it says then (see
@@ -36,6 +40,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.da
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
@@ -631,6 +636,24 @@ class ImmersiveAssetResolver {
     );
   }
 
+  /// What the viewer opens for [asset], a flat 3D video packed as [format]: the file [resolve] picks for the sphere
+  /// (the copy on the headset, else the original on the server with its transcoded stream to fall back to, or the
+  /// stream the settings chose), with the flat3d JSON, which puts it on the flat video screen of the viewer instead.
+  /// [localPath] is the file of a media opened with "Open with". Throws when there is no file to open.
+  Future<ImmersiveRequest> resolveFlatVideo(BaseAsset asset, FlatStereoFormat format, {String? localPath}) async {
+    final sphere = await resolve(asset, localPath: localPath);
+    return ImmersiveRequest(
+      url: sphere.url,
+      headers: sphere.headers,
+      isVideo: true,
+      title: sphere.title,
+      view: stereoPhotoSphereView,
+      fallbackUrl: sphere.fallbackUrl,
+      sourceNotice: sphere.sourceNotice,
+      stereoPair: Flat3dRequest(format).toJsonString(),
+    );
+  }
+
   // The file of a raw photo to stitch: the one of "Open with", else the copy on the device, which saves downloading
   // the original; null to stitch the original on the server. Throws when there is neither.
   Future<File?> _rawPhotoFile(BaseAsset asset, String? localPath) async {
@@ -758,6 +781,8 @@ sealed class StereoPhotoRequest {
 
   const factory StereoPhotoRequest.scene(VolumetricSceneRequest request) = VolumetricSceneStereoPhotoRequest;
 
+  const factory StereoPhotoRequest.flat3d(Flat3dRequest request) = Flat3dStereoPhotoRequest;
+
   /// The stereoPair JSON of ImmersiveApi.open
   String toImmersiveJson();
 }
@@ -787,6 +812,16 @@ final class DepthReliefStereoPhotoRequest extends StereoPhotoRequest {
   const DepthReliefStereoPhotoRequest(this.request);
 
   final DepthReliefRequest request;
+
+  @override
+  String toImmersiveJson() => request.toJsonString();
+}
+
+/// A flat 3D photo told by its file name, its two eyes one above the other (see stackedPhotoFormatOf)
+final class Flat3dStereoPhotoRequest extends StereoPhotoRequest {
+  const Flat3dStereoPhotoRequest(this.request);
+
+  final Flat3dRequest request;
 
   @override
   String toImmersiveJson() => request.toJsonString();
@@ -831,6 +866,80 @@ Future<void> openStereoPhotoViewer(
   } catch (_) {
     session.cancel(openingId);
     rethrow;
+  }
+}
+
+/// Stops the in-app video player, then opens [asset], a flat 3D video packed as [format], on the flat video screen of
+/// the immersive viewer (see [ImmersiveAssetResolver.resolveFlatVideo]), from where the in-app player was when it
+/// stopped, the controls labelled with [stereoLabels] (see stereoPhotoViewerLabels). It plays on its own there, with no
+/// previous or next; once the viewer closes, the in-app player takes it back where the viewer left it (see
+/// [SingleVideoImmersiveNavigator]). [onSourceNotice] is given what to tell the user about the file chosen, as for
+/// [openImmersiveViewer]. Throws when there is no file to open or the viewer does not open, the in-app player then
+/// given back where and as it was.
+Future<void> openFlatVideoViewer(
+  WidgetRef ref,
+  BaseAsset asset,
+  FlatStereoFormat format, {
+  required Map<String, String> stereoLabels,
+  void Function(VideoSourceNotice notice)? onSourceNotice,
+}) async {
+  // Read before the first await: the viewer may be gone by then
+  final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
+  final session = ref.read(immersiveSessionProvider);
+  final timeline = ref.read(timelineServiceProvider);
+  final player = ref.read(videoPlayerProvider(asset.id).notifier);
+  // Opened with "Open with" and not in the library: its temporary copy (see AssetPage)
+  final viewIntentPath = timeline.origin == TimelineOrigin.deepLink ? ref.read(viewIntentFilePathProvider) : null;
+  // The viewer carries on from where the in-app player is, unless it reached the end
+  final playback = ref.read(videoPlayerProvider(asset.id));
+  final startPosition = playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position;
+
+  // Stopped before the slow steps (the copy on the device, the probe of the video), as for the sphere
+  await player.suspendForExternalPlayer();
+  int? openingId;
+  try {
+    final request = await resolver.resolveFlatVideo(asset, format, localPath: viewIntentPath);
+    final notice = request.sourceNotice;
+    if (notice != null) {
+      onSourceNotice?.call(notice);
+    }
+    openingId = session.start(SingleVideoImmersiveNavigator(request: request, player: player));
+    await resolver.open(request, openingId: openingId, startPosition: startPosition);
+  } catch (_) {
+    if (openingId != null) {
+      session.cancel(openingId);
+    }
+    final wasPlaying =
+        playback.status == VideoPlaybackStatus.playing || playback.status == VideoPlaybackStatus.buffering;
+    await player.resumeAfterExternalPlayerAt(playback.position, play: wasPlaying);
+    rethrow;
+  }
+}
+
+/// The navigator of a video the immersive viewer plays on its own (a flat 3D video, see [openFlatVideoViewer]): no
+/// previous or next, which the viewer does not ask for anyway, and once it closes on [request], [player], the page's
+/// own player of that video, takes it back where the viewer left it, paused, as after the sphere.
+class SingleVideoImmersiveNavigator implements ImmersiveNavigator {
+  SingleVideoImmersiveNavigator({required this.request, this.player});
+
+  /// What the viewer opened
+  final ImmersiveRequest request;
+
+  /// The page's own player of the video, null when there is none to give it back to
+  final VideoPlayerNotifier? player;
+
+  @override
+  Future<bool> showAdjacent(ImmersiveAdjacentRequest adjacent) async => false;
+
+  @override
+  void onClosed(String url, ImmersiveStereoLayout stereoLayout, ImmersiveSphereCoverage coverage, int positionMs) {
+    final player = this.player;
+    if (!request.isShownAt(url) || player == null || !player.mounted) {
+      _log.info('The immersive viewer closed on a media this navigator did not show');
+      return;
+    }
+    // Paused: the user is back in the app, and the video waits for them where they left it
+    unawaited(player.resumeAfterExternalPlayerAt(Duration(milliseconds: math.max(0, positionMs)), play: false));
   }
 }
 

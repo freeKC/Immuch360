@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -495,6 +496,45 @@ void main() {
       await endRealIo(tester);
     });
 
+    testWidgets('on a Meta Quest, a photo named top and bottom opens on the stereo quad, and does not turn', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/street_TB.jpg'] = jpegFile(width: 4000, height: 6000);
+      await pumpPhotoPage(tester, '/street_TB.jpg', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => view3dButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('View in 3D'), findsOneWidget);
+      expect(find.byKey(const Key('network_photo_rotate')), findsNothing, reason: 'the eyes stay where they are');
+
+      await tester.tap(view3dButton);
+      await pumpRealIo(tester, () => immersiveApi.opened.isNotEmpty);
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/street_TB.jpg').toString());
+      expect(jsonDecode(immersiveApi.stereoPairs.single!), {'kind': 'flat3d', 'version': 1, 'format': 'tb'});
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('with the experimental switch off, a photo named top and bottom has no "View in 3D", and turns', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/street_TB.jpg'] = jpegFile(width: 4000, height: 6000);
+      await pumpPhotoPage(
+        tester,
+        '/street_TB.jpg',
+        immersiveApi: immersiveApi,
+        appConfig: const AppConfig(viewer: ViewerConfig(flat3dByName: false)),
+      );
+      await settleDetection(tester);
+
+      expect(view3dButton, findsNothing);
+      expect(find.byKey(const Key('network_photo_rotate')), findsOneWidget, reason: 'an ordinary photo, as before');
+
+      await endRealIo(tester);
+    });
+
     testWidgets('on a Meta Quest, an original opens the 3D version a computer saved next to it', (tester) async {
       final immersiveApi = _RecordingImmersiveApi();
       png = await makePng(tester);
@@ -838,6 +878,35 @@ void main() {
       await pumpRealIo(tester, () => find.byKey(const Key('apple_spatial_view_3d')).evaluate().isNotEmpty);
 
       expect(reliefButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('not for two eyes one above the other by the name, which has "View in 3D"', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/street_TB.jpg'] = jpegFile(width: 4000, height: 6000);
+      await pumpPhotoPage(tester, '/street_TB.jpg', immersiveApi: immersiveApi, extraOverrides: headset());
+      await pumpRealIo(tester, () => find.byKey(const Key('apple_spatial_view_3d')).evaluate().isNotEmpty);
+
+      expect(reliefButton, findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('for a photo named top and bottom with "3D by file name" off, as for an ordinary one', (tester) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/street_TB.jpg'] = jpegFile(width: 4000, height: 6000);
+      await pumpPhotoPage(
+        tester,
+        '/street_TB.jpg',
+        immersiveApi: immersiveApi,
+        appConfig: const AppConfig(viewer: ViewerConfig(flat3dByName: false)),
+        extraOverrides: headset(),
+      );
+      await pumpRealIo(tester, () => reliefButton.evaluate().isNotEmpty);
+
+      expect(reliefButton, findsOneWidget);
+      expect(find.byKey(const Key('apple_spatial_view_3d')), findsNothing);
 
       await endRealIo(tester);
     });

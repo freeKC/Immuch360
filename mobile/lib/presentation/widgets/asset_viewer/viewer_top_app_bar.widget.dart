@@ -10,6 +10,7 @@ import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -31,6 +32,7 @@ import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -125,19 +127,34 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         : null;
     final flatStereo = flatStereoState?.valueOrNull;
     final sbsRequest = flatStereo?.request;
+    // A flat 3D media told by its file name (experimental, on by default, Settings, Advanced): a video whose name
+    // says it holds two eyes (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS...) on the flat video screen of the immersive
+    // viewer, and a photo of two eyes one above the other on the stereo quad, nothing to read for either; never a media
+    // shown as 360°, nor a photo the reads above found otherwise
+    final flat3dByName =
+        isHorizonOs && !hasPanoramaView && ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
+    final flatVideoFormat = flat3dByName ? flatStereoVideoFormatOf(asset) : null;
+    final stackedPhoto = flat3dByName && asset.isImage ? stackedPhotoFormatOf(asset.name) : null;
+    final stackedPhotoFormat = stereoPair == null && flatStereo == null ? stackedPhoto : null;
     final StereoPhotoRequest? stereoRequest = stereoPair != null
         ? StereoPhotoRequest.heic(stereoPair)
         : sbsRequest != null
         ? StereoPhotoRequest.sbs(sbsRequest)
+        : stackedPhotoFormat != null
+        ? StereoPhotoRequest.flat3d(Flat3dRequest(stackedPhotoFormat))
         : null;
-    final view3dButton = stereoPair != null || flatStereo != null
+    final VoidCallback? onView3d = stereoRequest != null
+        ? () => unawaited(_openStereoPhoto(context, ref, asset, stereoRequest))
+        : flatVideoFormat != null
+        ? () => unawaited(_openFlatVideo(context, ref, asset, flatVideoFormat))
+        : null;
+    final hasView3d = stereoPair != null || flatStereo != null || stackedPhotoFormat != null || flatVideoFormat != null;
+    final view3dButton = hasView3d
         ? IconButton(
             key: const Key('apple_spatial_view_3d'),
             icon: const Icon(Icons.view_in_ar_rounded),
-            tooltip: stereoRequest != null ? context.t.apple_spatial_view_3d : context.t.ai_immersive_newer_version,
-            onPressed: stereoRequest == null
-                ? null
-                : () => unawaited(_openStereoPhoto(context, ref, asset, stereoRequest)),
+            tooltip: onView3d != null ? context.t.apple_spatial_view_3d : context.t.ai_immersive_newer_version,
+            onPressed: onView3d,
           )
         : null;
 
@@ -153,14 +170,15 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         : null;
 
     // "AI relief" on a Meta Quest: a flat photo once known to be one (neither 360°, VR180 nor raw, nor a spatial photo,
-    // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last), its
-    // relief estimated by the headset itself; not the preview of a 3D scene, which has its own button, nor a photo
-    // named like one while its head is read. Greyed with its reason where the gate refuses; nothing with the AI
-    // features off (see reliefGateProvider).
+    // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last, nor two
+    // eyes one above the other by its name while "3D by file name" is on), its relief estimated by the headset itself;
+    // not the preview of a 3D scene, which has its own button, nor a photo named like one while its head is read.
+    // Greyed with its reason where the gate refuses; nothing with the AI features off (see reliefGateProvider).
     final isFlatPhoto =
         flatStereoState != null &&
         flatStereoState.hasValue &&
         flatStereo == null &&
+        stackedPhoto == null &&
         (sceneState == null || (sceneState.hasValue && sceneXmp == null)) &&
         ref.watch(rotationModeProvider(asset)) != RotationMode.none;
     final reliefGate = isFlatPhoto ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
@@ -301,6 +319,29 @@ Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset ass
   final stereoLabels = stereoPhotoViewerLabels(context.t);
   try {
     await openStereoPhotoViewer(ref, asset, stereo, stereoLabels: stereoLabels);
+  } catch (error) {
+    _log.warning('Could not open ${asset.name} in 3D: $error');
+    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+  }
+}
+
+/// Opens [asset], a flat 3D video packed as [format], on the flat video screen of the immersive viewer (see
+/// [openFlatVideoViewer]); a message says when it could not open, or what to know about the file chosen
+Future<void> _openFlatVideo(BuildContext context, WidgetRef ref, BaseAsset asset, FlatStereoFormat format) async {
+  // Read before the first await: the viewer may be gone by then
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final errorMessage = context.t.immersive_viewer_open_failed;
+  final stereoLabels = stereoPhotoViewerLabels(context.t);
+  try {
+    await openFlatVideoViewer(
+      ref,
+      asset,
+      format,
+      stereoLabels: stereoLabels,
+      // Comes once the file is chosen, after the slow steps: the static translations do not need the viewer then
+      onSourceNotice: (notice) =>
+          messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance)))),
+    );
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
