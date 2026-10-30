@@ -93,12 +93,17 @@ class _GateFiles implements AiComponentFiles {
   AiComponentState stateOf(AiComponent component) => service.statusOf(component).state;
 }
 
-/// The originals of the test, by name, in the folders of a library root
+/// The originals of the test, by name, in the folders of a library root, or on the server ([servers]: the file its
+/// copy would be)
 class _Originals implements ConversionAssetFiles {
   final byName = <String, LibraryOriginal>{};
+  final servers = <String, String>{};
 
   @override
   Future<({OriginalLocation location, ConversionSource source})?> locate(BaseAsset asset) async {
+    if (servers[asset.name] case final copy?) {
+      return (location: ServerOriginal(name: asset.name), source: LocalFileSource(copy));
+    }
     final original = byName[asset.name];
     return original == null ? null : (location: original, source: LocalFileSource(original.path));
   }
@@ -874,6 +879,54 @@ void main() {
       expect(convertEnabled(tester), isTrue);
     });
 
+    testWidgets('a 2:1 photo nothing flags 360°, of the library or of the server: its 3D version once chosen', (
+      tester,
+    ) async {
+      kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+      // As FreeKC's rooftop_night.jpg: no GPano tag, no 360° camera in its exif, shown flat by the viewer
+      original('rooftop_night.jpg');
+      original('salon.jpg');
+      final copy = p.join(root.path, 'server', 'dawn.jpg');
+      File(copy)
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(List.generate(200, (i) => i & 0xff));
+      originals.servers['dawn.jpg'] = copy;
+      final container = await openDialog(tester, [
+        _photo('rooftop_night.jpg', width: 8192, height: 4096),
+        _photo('dawn.jpg', width: 6000, height: 3000),
+        _photo('salon.jpg'),
+      ]);
+      expect(chosenType(tester), ConversionKind.sbsFromPhoto, reason: 'flat for the 360° rules: every type takes them');
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_type_stereoPanoramaFromPanorama')));
+      await settle(tester);
+
+      expect(find.text('Relief estimated by AI'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('ai_conversion_made')),
+          matching: find.text('3D version of a 360° photo (2)'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('rooftop_night.jpg: Not a 360° photo'), findsNothing);
+      expect(find.text('dawn.jpg: Not a 360° photo'), findsNothing);
+      expect(find.text('salon.jpg: Not a 360° photo'), findsOneWidget, reason: 'a 4:3 photo is still no sphere');
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.every((job) => job.state.isEnded));
+      final jobs = container.read(conversionQueueProvider).jobs;
+      expect(jobs.map((job) => (job.kind, job.target?.fileName, job.skipReason, job.state)), [
+        (ConversionKind.stereoPanoramaFromPanorama, 'rooftop_night_360_3D.jpg', null, ConversionState.done),
+        (ConversionKind.stereoPanoramaFromPanorama, 'dawn_360_3D.jpg', null, ConversionState.done),
+        (ConversionKind.stereoPanoramaFromPanorama, null, ConversionSkipReason.notSphere, ConversionState.skipped),
+      ]);
+      expect(p.equals(jobs[0].target!.folder, photos), isTrue, reason: 'next to the original of the library');
+      expect(p.equals(jobs[1].target!.folder, chosen), isTrue, reason: 'the folder of my choice for the server');
+      expect(File(p.join(photos, 'rooftop_night_360_3D.jpg')).existsSync(), isTrue);
+    });
+
     testWidgets('a phone panorama of part of the sphere in a 2:1 frame is no sphere to go around: skipped', (
       tester,
     ) async {
@@ -1474,6 +1527,78 @@ void main() {
         expect(conversionSkipOf(photo, const ConversionPhotoFacts(), kind: kind), isNull, reason: kind.name);
       }
       expect(conversionSkipOf(photo, const ConversionPhotoFacts(), kind: ofPanorama), ConversionSkipReason.notSphere);
+    });
+
+    test('a 2:1 photo nothing flags 360° makes the 3D version of a 360° photo too, the type chosen for it', () {
+      // rooftop_night.jpg of FreeKC on 30 October: an equirectangular JPEG of 8192 x 4096 without GPano tags nor a 360°
+      // camera in its exif, which the viewer shows flat
+      final rooftop = _photo('rooftop_night.jpg', width: 8192, height: 4096);
+      const flat = ConversionPhotoFacts();
+      expect(conversionSkipOf(rooftop, flat, kind: ofPanorama), isNull);
+      for (final kind in flatKinds) {
+        expect(conversionSkipOf(rooftop, flat, kind: kind), isNull, reason: kind.name);
+      }
+      // A stitcher writes 2:1 within a few pixels; a landscape screenshot of 19.5:9, a 16:9 photo, are no sphere
+      expect(conversionSkipOf(_photo('stitched.jpg', width: 6080, height: 3050), flat, kind: ofPanorama), isNull);
+      for (final (name, width, height) in [('Screenshot_1.png', 2340, 1080), ('wide.jpg', 4000, 2250)]) {
+        expect(
+          conversionSkipOf(
+            _photo(name, width: width, height: height),
+            flat,
+            kind: ofPanorama,
+          ),
+          ConversionSkipReason.notSphere,
+          reason: name,
+        );
+      }
+      // Its size not known: nothing tells a sphere
+      expect(
+        conversionSkipOf(
+          LocalAsset(
+            id: 'unsized',
+            name: 'rooftop_night.jpg',
+            type: AssetType.image,
+            createdAt: DateTime(2026),
+            updatedAt: DateTime(2026),
+            playbackStyle: AssetPlaybackStyle.image,
+            isEdited: false,
+          ),
+          flat,
+          kind: ofPanorama,
+        ),
+        ConversionSkipReason.notSphere,
+      );
+      // The refusals hold: a VR180 name, a raw photo, two eyes, another version of ours, a crop of part of the sphere
+      expect(
+        conversionSkipOf(_photo('trip_180.jpg', width: 8000, height: 4000), flat, kind: ofPanorama),
+        ConversionSkipReason.vr180,
+      );
+      expect(
+        conversionSkipOf(rooftop, const ConversionPhotoFacts(isRaw360: true), kind: ofPanorama),
+        ConversionSkipReason.raw360,
+      );
+      expect(
+        conversionSkipOf(rooftop, const ConversionPhotoFacts(isStereo: true), kind: ofPanorama),
+        ConversionSkipReason.alreadyStereo,
+      );
+      expect(
+        conversionSkipOf(
+          rooftop,
+          const ConversionPhotoFacts(
+            version: (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene),
+          ),
+          kind: ofPanorama,
+        ),
+        ConversionSkipReason.alreadyVersion,
+      );
+      expect(
+        conversionSkipOf(rooftop, const ConversionPhotoFacts(partialSphere: true), kind: ofPanorama),
+        ConversionSkipReason.notSphere,
+      );
+      expect(
+        conversionSkipOf(rooftop, const ConversionPhotoFacts(isSpatial: true), kind: ofPanorama),
+        ConversionSkipReason.spatial,
+      );
     });
 
     test('a 360° photo that holds one eye makes its 3D version, and nothing made from a flat photo', () {

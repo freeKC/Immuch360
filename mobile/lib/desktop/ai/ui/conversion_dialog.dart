@@ -9,7 +9,10 @@
 // point 1): a flat photo for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one
 // eye, of the user or a panorama the app generated, for its 3D version. Whether a 2:1 frame is a full sphere is told
 // by its GPano crop too, which the dialog reads from a file of this computer (a phone panorama of 180° x 90° is
-// skipped, "Not a 360° photo", before its job would refuse it).
+// skipped, "Not a 360° photo", before its job would refuse it). A photo the 360° rules leave flat (no GPano tag, no
+// 360° camera in its exif, not viewed as 360° by the user) is taken by the 3D version of a 360° photo when its frame
+// is 2:1 within 1 %: many 360° photos carry no tag, and the user chose that type for it (30 October 2026, the
+// rooftop_night.jpg of FreeKC).
 //
 // The dialog says what the conversion is ("Relief estimated by AI from a single photo") and that a finished one does
 // not guarantee a good result; installs the missing components (their name, size and licence, Download, a bar,
@@ -89,6 +92,7 @@ import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart' show isSideBySideFrame;
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -636,7 +640,9 @@ bool versionHoldsTwoEyes(IndexedVersion version) => switch (version.kind) {
 
 /// The reason to skip [asset] for a version of [kind] known before anything runs, from its [facts], null when it is
 /// converted. A 3D photo, a 3D scene and a 360° panorama are made from a flat photo; the 3D version of a 360° photo from
-/// a 360° photo of a full sphere that holds one eye, a photo of the user or a panorama the app generated. [linux]: no
+/// a 360° photo of a full sphere that holds one eye, a photo of the user or a panorama the app generated. A photo the
+/// 360° rules leave flat is one for that type when its frame is that of a whole sphere (see [isEquirectFrame]): many
+/// 360° photos carry no GPano tag (a stitcher, an editor, a download), and the user chose the type for it. [linux]: no
 /// decoder for HEIF and AVIF there.
 ConversionSkipReason? conversionSkipOf(
   BaseAsset asset,
@@ -650,7 +656,7 @@ ConversionSkipReason? conversionSkipOf(
   final halfSphere =
       guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height) == SphereCoverage.half;
   if (kind == ConversionKind.stereoPanoramaFromPanorama) {
-    if (!facts.isPanorama) {
+    if (!facts.isPanorama && !isEquirectFrame(asset.width, asset.height)) {
       return ConversionSkipReason.notSphere;
     }
     if (halfSphere) {
@@ -689,6 +695,11 @@ ConversionSkipReason? conversionSkipOf(
   }
   return null;
 }
+
+/// Whether a photo of [width] x [height] that nothing flags 360° has the frame of a whole sphere: 2:1 within 1 %, as
+/// a stitcher writes it, the rule the viewers take for the equirect photo of a 360° camera (isEquirectCameraPhoto);
+/// false when the size is not known. A landscape screenshot (19.5:9) or a 16:9 photo is none.
+bool isEquirectFrame(int? width, int? height) => isSideBySideFrame(width, height) ?? false;
 
 /// A frame of 2:1 within 10 %, an equirectangular picture of the whole sphere; true when the size is not known (the
 /// engine checks the picture it decodes)
