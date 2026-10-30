@@ -377,6 +377,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val hasSecondEye: Boolean,
     /** One picture in one cell, no second half: the quad mesh shows it with the stereo mode None. */
     val single: Boolean = false,
+    /**
+     * The pixels of each eye on [bitmap], its gutter aside: the eye size, or less for the photo layer, whose Surface
+     * holds no more (see [fitForLayer]); [eyeWidth] x [eyeHeight] still give the shape of the picture.
+     */
+    val cellWidth: Int = eyeWidth,
+    val cellHeight: Int = eyeHeight,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -2879,6 +2885,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     spec: StereoPairSpec?,
   ): StereoTexture? {
     val holder = AtomicReference<StereoTexture?>()
+    // A photo for the layer keeps no more pixels than its Surface takes
+    val forLayer = request?.photoOnLayer == true
     try {
       decodeMutex.withLock {
         withContext(Dispatchers.Default) {
@@ -2890,6 +2898,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
               else -> decodeStereo(bytes, spec)
             }
           )
+          if (forLayer) holder.get()?.let { holder.set(fitForLayer(it)) }
         }
       }
       coroutineContext.ensureActive()
@@ -3393,6 +3402,50 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
+  /**
+   * [texture] as the photo layer keeps it, off the main thread: each eye no larger than its region of the Surface
+   * (see FlatScreenLayer.keptEyeSize), so that the lines or the columns the Surface drops anyway are not kept for the
+   * life of the photo (a portrait photo of 4096 x 4088 on the big screen kept 64 MiB, 32 MiB of which never showed);
+   * [texture] recycled once copied. The eye size stays that of the picture, which gives the layer its shape and the
+   * panel its numbers; on the quad mesh, should the layer fail, the same picture shows in the same shape.
+   */
+  private fun fitForLayer(texture: StereoTexture): StereoTexture {
+    val (width, height) = FlatScreenLayer.keptEyeSize(texture.cellWidth, texture.cellHeight, texture.hasSecondEye)
+    if (width == texture.cellWidth && height == texture.cellHeight) return texture
+    val gutter = StereoComposer.GUTTER
+    val cells = if (texture.single) 1 else 2
+    var kept: Bitmap? = null
+    try {
+      val bitmap = Bitmap.createBitmap(cells * (width + 2 * gutter), height + 2 * gutter, Bitmap.Config.ARGB_8888)
+      kept = bitmap
+      bitmap.eraseColor(Color.BLACK)
+      val canvas = Canvas(bitmap)
+      val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+      for (eye in 0 until cells) {
+        val source = FlatScreenLayer.sourceRegion(eye, texture.cellWidth, texture.cellHeight)
+        val target = FlatScreenLayer.sourceRegion(eye, width, height)
+        canvas.drawBitmap(texture.bitmap, rectOf(source), rectOf(target), paint)
+      }
+    } catch (e: Throwable) {
+      // No room for the copy: the photo shows as decoded
+      Log.w(TAG, "photo layer keeps the photo as decoded, ${texture.cellWidth}x${texture.cellHeight} per eye", e)
+      kept?.recycle()
+      return texture
+    }
+    val copy = kept ?: return texture
+    Log.i(TAG, "photo layer keeps ${width}x$height of ${texture.cellWidth}x${texture.cellHeight} per eye")
+    texture.bitmap.recycle()
+    return StereoTexture(
+      copy,
+      texture.eyeWidth,
+      texture.eyeHeight,
+      texture.hasSecondEye,
+      texture.single,
+      cellWidth = width,
+      cellHeight = height,
+    )
+  }
+
   /** Both eyes of the side by side photo of [bytes] on one texture, off the main thread, see [SbsPhoto.decode]. */
   private fun decodeSbs(bytes: ByteArray, spec: SbsPhotoSpec): StereoTexture? {
     val (texture, split) = SbsPhoto.decode(bytes, spec) ?: return null
@@ -3600,7 +3653,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           val (left, right) = FlatScreenLayer.eyeRegions(twoEyes)
           val paint = Paint(Paint.FILTER_BITMAP_FLAG)
           for ((eye, target) in if (twoEyes) listOf(0 to left, 1 to right) else listOf(0 to left)) {
-            val source = FlatScreenLayer.sourceRegion(eye, texture.eyeWidth, texture.eyeHeight)
+            val source = FlatScreenLayer.sourceRegion(eye, texture.cellWidth, texture.cellHeight)
             canvas.drawBitmap(texture.bitmap, rectOf(source), rectOf(target), paint)
           }
         } finally {

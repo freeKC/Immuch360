@@ -42,6 +42,22 @@ class FlatScreenLayerTest {
   }
 
   @Test
+  fun `the layer keeps no more pixels of an eye than its region of the surface holds`() {
+    // A portrait photo on the big screen, 4096 x 4088: the surface holds 2048 lines of it
+    assertEquals(4096 to 2048, FlatScreenLayer.keptEyeSize(4096, 4088, twoEyes = false))
+    // A side by side photo of two portrait eyes of 2560 x 4088: 2048 x 2048 each
+    assertEquals(2048 to 2048, FlatScreenLayer.keptEyeSize(2560, 4088, twoEyes = true))
+    // An Apple spatial photo of 3072 x 3072, shown in 2D: one picture over the whole surface
+    assertEquals(3072 to 2048, FlatScreenLayer.keptEyeSize(3072, 3072, twoEyes = false))
+    // A smaller eye as it is
+    assertEquals(1920 to 1080, FlatScreenLayer.keptEyeSize(1920, 1080, twoEyes = true))
+    assertEquals(1440 to 1920, FlatScreenLayer.keptEyeSize(1440, 1920, twoEyes = false))
+    // What it keeps of a 4096 x 4088 picture: half of the 64 MiB of its bitmap
+    val (width, height) = FlatScreenLayer.keptEyeSize(4096, 4088, twoEyes = false)
+    assertTrue(width.toLong() * height * 4 <= 32L * 1024 * 1024)
+  }
+
+  @Test
   fun `each eye is taken from its cell of the texture, without its gutter`() {
     val gutter = StereoComposer.GUTTER
     assertEquals(FlatStereo.Region(gutter, gutter, 1600, 1200), FlatScreenLayer.sourceRegion(0, 1600, 1200))

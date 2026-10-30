@@ -39,6 +39,16 @@ internal object FlatScreenLayer {
       FlatStereo.Region(0, 0, SURFACE_WIDTH_PX, SURFACE_HEIGHT_PX).let { it to it }
     }
 
+  /**
+   * The pixels the layer keeps of an eye of [eyeWidth] x [eyeHeight]: no more than its region of the Surface (see
+   * [eyeRegions]) on each side, 2048 x 2048 for each of [twoEyes], 4096 x 2048 for one picture, since the Surface
+   * drops the rest when the eye is drawn on it; a smaller eye as it is.
+   */
+  fun keptEyeSize(eyeWidth: Int, eyeHeight: Int, twoEyes: Boolean): Pair<Int, Int> {
+    val region = eyeRegions(twoEyes).first
+    return minOf(eyeWidth, region.width) to minOf(eyeHeight, region.height)
+  }
+
   /** Where eye [eye] (0 left, 1 right) of [eyeWidth] x [eyeHeight] lies on the texture of StereoComposer.compose. */
   fun sourceRegion(eye: Int, eyeWidth: Int, eyeHeight: Int): FlatStereo.Region {
     val gutter = StereoComposer.GUTTER
