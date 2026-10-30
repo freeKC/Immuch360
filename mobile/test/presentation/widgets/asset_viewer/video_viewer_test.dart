@@ -207,10 +207,11 @@ void main() {
     BaseAsset asset, {
     AppConfig? appConfig,
     List<Override> overrides = const [],
+    bool isCurrent = false,
   }) async {
     await tester.pumpTestWidget(
       context,
-      NativeVideoViewer(asset: asset, image: const SizedBox()),
+      NativeVideoViewer(asset: asset, image: const SizedBox(), isCurrent: isCurrent),
       overrides: [
         storageRepositoryProvider.overrideWithValue(storage),
         sphericalProbeServiceProvider.overrideWithValue(probes),
@@ -314,11 +315,12 @@ void main() {
       decoderApi.quest = true;
     });
 
-    Future<VideoSource?> pumpQuest(WidgetTester tester, {required SphericalProbe original}) {
+    Future<VideoSource?> pumpQuest(WidgetTester tester, {required SphericalProbe original, bool isCurrent = false}) {
       probes.result = original;
       return pumpViewer(
         tester,
         serverOnly,
+        isCurrent: isCurrent,
         overrides: [
           videoSourceServiceProvider.overrideWithValue(
             VideoSourceService(decoderApi, probeTranscoded: (_) async => h264Copy),
@@ -364,6 +366,48 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+
+    testWidgets('on screen, tells why it plays the original, then loads it', (tester) async {
+      await pumpQuest(tester, original: hevcOriginal, isCurrent: true);
+      final controller = _FakePlayerController();
+      tester.state<NativeVideoViewerState>(find.byType(NativeVideoViewer)).attachController(controller);
+      await tester.pump();
+      await tester.pump();
+
+      expect(
+        find.text("Playing the original: the server's copy (H.264 5760 x 2880) is above this device's decoder"),
+        findsOneWidget,
+      );
+      expect(controller.loaded.single.path, endsWith('/assets/${serverOnly.id}/original'));
+
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    });
+
+    testWidgets('on screen, fails at once without loading when neither file decodes', (tester) async {
+      await pumpQuest(
+        tester,
+        original: const SphericalProbe(codec: 'avc1', codedWidth: 7680, codedHeight: 3840, frameRate: 30),
+        isCurrent: true,
+      );
+      final controller = _FakePlayerController();
+      tester.state<NativeVideoViewerState>(find.byType(NativeVideoViewer)).attachController(controller);
+      await tester.pump();
+      await tester.pump();
+
+      expect(controller.loaded, isEmpty, reason: 'no 10 s of a decoder that cannot keep up');
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      expect(
+        find.text(
+          'This device cannot decode this video (H.264 5760 x 2880, above 4096 x 2304): in Immich, set the video '
+          'transcoding to HEVC or lower the resolution',
+        ),
+        findsOneWidget,
+      );
+
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
     });
 
     testWidgets('plays the copy the user forced in the details', (tester) async {
