@@ -3501,6 +3501,7 @@
   "splat_compressed_ply": "Densigita PLY ankoraŭ ne estas legata ĉi tie: eksportu ĝin kiel .spz aŭ kiel norman .ply",
   "splat_count": "{count} gaŭsoj",
   "splat_damaged": "Ĉi tiu splat-dosiero estas difektita aŭ nekompleta",
+  "splat_disclaimer": "Gaŭsaj splatoj uzas eksperimentan API de Meta Spatial SDK, kiun Meta nek subtenas nek garantias: ĉiu difekto estas de Immuch360 mem.",
   "splat_explore": "Esplori la splat-scenon",
   "splat_failed": "Ne eblis montri la splaton: {reason}",
   "splat_large_notice": "Granda splato: ĝi povas skuetiĝi",

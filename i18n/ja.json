@@ -3546,6 +3546,7 @@
   "splat_compressed_ply": "圧縮 PLY はまだ読み込めません。.spz または標準の .ply で書き出してください",
   "splat_count": "{count} 個のガウシアン",
   "splat_damaged": "このスプラットファイルは破損しているか不完全です",
+  "splat_disclaimer": "ガウシアンスプラットは Meta Spatial SDK の試験運用版 API を使用しており、Meta はこの API をサポートも保証もしていません。不具合の責任はすべて Immuch360 にあります。",
   "splat_explore": "スプラットのシーンを探索",
   "splat_failed": "スプラットを表示できませんでした: {reason}",
   "splat_large_notice": "大きなスプラット: カクつくことがあります",

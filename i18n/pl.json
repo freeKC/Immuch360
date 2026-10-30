@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "Skompresowany PLY nie jest tu jeszcze odczytywany: wyeksportuj go jako .spz lub zwykły .ply",
   "splat_count": "Gaussianów: {count}",
   "splat_damaged": "Ten plik splatu jest uszkodzony lub niepełny",
+  "splat_disclaimer": "Splaty gaussowskie korzystają z eksperymentalnego API Meta Spatial SDK, którego Meta nie wspiera ani nie gwarantuje: za każdą wadę odpowiada wyłącznie Immuch360.",
   "splat_explore": "Odkryj scenę splatu",
   "splat_failed": "Nie udało się pokazać splatu: {reason}",
   "splat_large_notice": "Duży splat: może się zacinać",

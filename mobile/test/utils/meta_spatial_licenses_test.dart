@@ -44,14 +44,18 @@ void main() {
     expect(textOf(entries.last), contains('Apache License'));
   });
 
-  test('a GitHub build lists the splat module as what shows the Gaussian splats of other tools', () async {
+  test('a GitHub build lists the splat module as what shows the Gaussian splats of other tools, with the words '
+      'that Meta neither supports nor warrants its API', () async {
     final entries = await metaSpatialLicenses(
       android: true,
       bundle: _TextBundle(assets),
       splatsInThisBuild: () async => true,
+      disclaimer: () => 'the disclaimer in the language of the app',
     ).toList();
-    expect(textOf(entries.first), contains('-isdk, and -splat in the version for Meta Quest'));
-    expect(textOf(entries.first), contains('and the Gaussian splats of other tools'));
+    final text = textOf(entries.first);
+    expect(text, contains('-isdk, and -splat in the version for Meta Quest'));
+    expect(text, contains('and the Gaussian splats of other tools.\nthe disclaimer in the language of the app\n'));
+    expect(text.indexOf('the disclaimer'), lessThan(text.indexOf('Meta Platform Technologies SDK License Agreement')));
   });
 
   test('the build of the Meta Horizon Store does not list the splat module as active', () async {
@@ -59,8 +63,10 @@ void main() {
       android: true,
       bundle: _TextBundle(assets),
       splatsInThisBuild: () async => false,
+      disclaimer: () => 'the disclaimer in the language of the app',
     ).toList();
     final text = textOf(entries.first);
+    expect(text, isNot(contains('the disclaimer')), reason: 'no splats in this build');
     expect(text, contains('Meta Spatial SDK 0.14.0 (meta-spatial-sdk, -toolkit, -vr and -isdk)'));
     expect(text, contains('which this build never starts'));
     expect(text, isNot(contains('Gaussian splats of other tools')));

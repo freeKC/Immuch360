@@ -3456,6 +3456,7 @@
   "splat_compressed_ply": "PLY konprimitua oraindik ez da hemen irakurtzen: esportatu .spz edo .ply estandar gisa",
   "splat_count": "{count} gaussiar",
   "splat_damaged": "Splat fitxategi hau hondatuta edo osatu gabe dago",
+  "splat_disclaimer": "Splat gaussiarrek Meta Spatial SDKren API esperimental bat erabiltzen dute, Metak onartzen ez duena eta bermatzen ez duena: edozein akatsen erantzule Immuch360 bakarrik da.",
   "splat_explore": "Arakatu splat eszena",
   "splat_failed": "Ezin izan da splata erakutsi: {reason}",
   "splat_large_notice": "Splat handia: etenak izan ditzake",

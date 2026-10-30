@@ -653,7 +653,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var splatPreparing = false
   /** The lines the panel keeps for the splat: what the file is, its reduction, or why it is not shown. */
   private var splatDetails: List<String> = emptyList()
-  /** "Gaussian splat (experimental)" passed once in this viewer. */
+  /** "Gaussian splat (experimental)" and the words on the API of the splats passed once in this viewer. */
   private var splatNoticeShown = false
   /**
    * The opening asked for the splat module (the Gaussian splats setting), read in onCreate before super.onCreate
@@ -3948,10 +3948,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       stereoStatus = ""
       updateSceneControls()
       updateTurnButton()
-      // What is experimental is said once, and the words go (FreeKC's rule of 25 October)
+      // What is experimental is said once, and the words go (FreeKC's rule of 25 October), with the words that Meta
+      // neither supports nor warrants the API of the splats (his decision of 30 October)
       if (!splatNoticeShown) {
         splatNoticeShown = true
-        val notice = SplatTexts.label(media.stereoLabels, SplatTexts.LABEL_NOTICE)
+        val notice = SplatTexts.noticeText(media.stereoLabels)
         Log.i(TAG, "splat: \"$notice\" said for ${TransientText.HOLD_MS} ms")
         if (infoVisible) {
           showPassing(notice)

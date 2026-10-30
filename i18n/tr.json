@@ -3549,6 +3549,7 @@
   "splat_compressed_ply": "Sıkıştırılmış PLY burada henüz okunmuyor: .spz ya da standart .ply olarak dışa aktarın",
   "splat_count": "{count} gauss",
   "splat_damaged": "Bu splat dosyası bozuk ya da eksik",
+  "splat_disclaimer": "Gauss splatler, Meta Spatial SDK'nin Meta tarafından desteklenmeyen ve garanti edilmeyen deneysel bir API'sini kullanır: her türlü kusurun sorumlusu yalnızca Immuch360'tır.",
   "splat_explore": "Splat sahnesini keşfet",
   "splat_failed": "Splat gösterilemedi: {reason}",
   "splat_large_notice": "Büyük splat: takılabilir",

@@ -1434,6 +1434,7 @@
   "splat_compressed_ply": "Siqilgan PLY hozircha bu yerda o'qilmaydi: uni .spz yoki oddiy .ply sifatida eksport qiling",
   "splat_count": "{count} gauss",
   "splat_damaged": "Bu splat fayli shikastlangan yoki to'liq emas",
+  "splat_disclaimer": "Gauss splatlari Meta Spatial SDK ning tajribaviy API'sidan foydalanadi, Meta uni qo'llab-quvvatlamaydi va kafolatlamaydi: har qanday nuqson uchun faqat Immuch360 javob beradi.",
   "splat_explore": "Splat sahnasini o'rganish",
   "splat_failed": "Splatni ko'rsatib bo'lmadi: {reason}",
   "splat_large_notice": "Katta splat: qotib qolishi mumkin",

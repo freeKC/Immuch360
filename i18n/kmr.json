@@ -1630,6 +1630,7 @@
   "splat_compressed_ply": "PLYya pêçayî hîn li vir nayê xwendin: wê wek .spz an wek .ply ya standard derxîne",
   "splat_count": "{count} gaussî",
   "splat_damaged": "Ev pelê splatê xera ye an jî ne temam e",
+  "splat_disclaimer": "Splatên Gauss API-yeke ceribandinî ya Meta Spatial SDK bi kar tînin, ku Meta ne piştgirî dide û ne garantî dike: her kêmasî tenê berpirsiyariya Immuch360 e.",
   "splat_explore": "Sehneya splatê bigere",
   "splat_failed": "Splat nehat nîşandan: {reason}",
   "splat_large_notice": "Splata mezin: dibe ku biseke",

@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "Tihendatud PLY-d siin veel ei loeta: ekspordi see .spz-i või tavalise .ply-na",
   "splat_count": "{count} gaussiaani",
   "splat_damaged": "See splat-fail on rikutud või puudulik",
+  "splat_disclaimer": "Gaussi splatid kasutavad Meta Spatial SDK katselist API-t, mida Meta ei toeta ega garanteeri: iga vea eest vastutab ainult Immuch360.",
   "splat_explore": "Uuri splat-stseeni",
   "splat_failed": "Splatti ei saanud näidata: {reason}",
   "splat_large_notice": "Suur splat: võib hakkida",

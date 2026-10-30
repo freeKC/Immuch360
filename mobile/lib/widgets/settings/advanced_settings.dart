@@ -212,7 +212,8 @@ class AdvancedSettings extends HookConsumerWidget {
           key: const Key('advanced_settings_gaussian_splats'),
           valueNotifier: gaussianSplats,
           title: context.t.splat_setting_title,
-          subtitle: context.t.splat_setting_subtitle,
+          // What they do, then that Meta neither supports nor warrants their API (FreeKC's decision of 30 October)
+          subtitle: '${context.t.splat_setting_subtitle}\n${context.t.splat_disclaimer}',
         ),
       if (splatsInThisBuild && gaussianSplats.value)
         SettingsSwitchListTile(

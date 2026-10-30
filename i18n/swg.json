@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "Komprimierts PLY wird do no ned gläsa: als .spz oder als normals .ply exportiera",
   "splat_count": "{count} Gauß",
   "splat_damaged": "Die Splat-Datei isch kabutt oder ned vollständig",
+  "splat_disclaimer": "Gaussian Splats nutzad a experimentelle API vom Meta Spatial SDK, dia Meta weder unterstützt no garantiert: Jeder Fehler liegt bloß bei Immuch360.",
   "splat_explore": "Splat-Szene erkunda",
   "splat_failed": "Dr Splat hot ned zoigt werda kenna: {reason}",
   "splat_large_notice": "Großer Splat: der ka ruckla",

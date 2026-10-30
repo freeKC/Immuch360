@@ -3540,6 +3540,7 @@
   "splat_compressed_ply": "Komprimeret PLY læses ikke her endnu: eksportér som .spz eller som almindelig .ply",
   "splat_count": "{count} gaussianer",
   "splat_damaged": "Denne splatfil er beskadiget eller ufuldstændig",
+  "splat_disclaimer": "Gaussiske splats bruger en eksperimentel API i Meta Spatial SDK, som Meta hverken understøtter eller garanterer: enhver fejl er Immuch360s egen.",
   "splat_explore": "Udforsk splatscenen",
   "splat_failed": "Splatten kunne ikke vises: {reason}",
   "splat_large_notice": "Stor splat: den kan hakke",

@@ -1439,6 +1439,7 @@
   "splat_compressed_ply": "PLY we oli sqisim i no stap rid long ples ia yet: yu eksportem olsem .spz o olsem nomol .ply",
   "splat_count": "{count} gaussian",
   "splat_damaged": "Splat fael ia i brok o i no fulwan",
+  "splat_disclaimer": "Ol Gaussian splat oli yusum wan API blong Meta Spatial SDK we i stil testem, we Meta i no sapotem mo i no promes long hem: sapos i gat wan problem, hem i blong Immuch360 nomo.",
   "splat_explore": "Lukluk long sin blong splat",
   "splat_failed": "I no save soem splat: {reason}",
   "splat_large_notice": "Bigfala splat: maet i stop smol",

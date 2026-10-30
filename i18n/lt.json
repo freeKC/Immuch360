@@ -3494,6 +3494,7 @@
   "splat_compressed_ply": "Suspaustas PLY čia dar neskaitomas: eksportuokite kaip .spz arba kaip įprastą .ply",
   "splat_count": "Gauso elementų: {count}",
   "splat_damaged": "Šis splato failas sugadintas arba neužbaigtas",
+  "splat_disclaimer": "Gauso splatai naudoja eksperimentinę Meta Spatial SDK API, kurios Meta nepalaiko ir negarantuoja: už bet kokį defektą atsako tik Immuch360.",
   "splat_explore": "Tyrinėti splato sceną",
   "splat_failed": "Nepavyko parodyti splato: {reason}",
   "splat_large_notice": "Didelis splatas: gali strigti",

@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "PLY nén chưa được đọc ở đây: hãy xuất sang .spz hoặc .ply chuẩn",
   "splat_count": "{count} gaussian",
   "splat_damaged": "Tệp splat này bị hỏng hoặc không đầy đủ",
+  "splat_disclaimer": "Splat Gauss dùng một API thử nghiệm của Meta Spatial SDK, mà Meta không hỗ trợ cũng không bảo đảm: mọi lỗi đều thuộc trách nhiệm riêng của Immuch360.",
   "splat_explore": "Khám phá cảnh splat",
   "splat_failed": "Không thể hiển thị splat: {reason}",
   "splat_large_notice": "Splat lớn: có thể bị giật",

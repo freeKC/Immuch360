@@ -1516,6 +1516,7 @@
   "splat_compressed_ply": "کمپریسڈ PLY ابھی یہاں نہیں پڑھا جاتا: اسے .spz یا عام .ply کے طور پر ایکسپورٹ کریں",
   "splat_count": "{count} گاؤسین",
   "splat_damaged": "یہ اسپلیٹ فائل خراب یا نامکمل ہے",
+  "splat_disclaimer": "گاؤسین اسپلیٹ Meta Spatial SDK کا ایک تجرباتی API استعمال کرتے ہیں، جس کی Meta نہ معاونت کرتا ہے نہ ضمانت دیتا ہے: کسی بھی خرابی کی ذمہ داری صرف Immuch360 کی ہے۔",
   "splat_explore": "اسپلیٹ منظر دیکھیں",
   "splat_failed": "اسپلیٹ نہیں دکھایا جا سکا: {reason}",
   "splat_large_notice": "بڑا اسپلیٹ: یہ اٹک سکتا ہے",

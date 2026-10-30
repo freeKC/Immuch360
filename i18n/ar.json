@@ -3466,6 +3466,7 @@
   "splat_compressed_ply": "لا تتم قراءة ملفات PLY المضغوطة هنا بعد: صدّره بصيغة .spz أو .ply عادية",
   "splat_count": "{count} غاوسية",
   "splat_damaged": "ملف السبلات هذا تالف أو غير مكتمل",
+  "splat_disclaimer": "تستخدم سبلات غاوس واجهة API تجريبية من Meta Spatial SDK لا تدعمها Meta ولا تضمنها: أي خلل يتحمّل مسؤوليته Immuch360 وحده.",
   "splat_explore": "استكشاف مشهد السبلات",
   "splat_failed": "تعذّر عرض السبلات: {reason}",
   "splat_large_notice": "سبلات كبير: قد يتقطع",

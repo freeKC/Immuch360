@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
@@ -13,13 +14,14 @@ const metaSpatialLicenseAsset = 'assets/licenses/meta-spatial-sdk/LICENSE';
 const metaSpatialNoticeAsset = 'assets/licenses/meta-spatial-sdk/NOTICES.txt';
 
 /// What the licence page says before the text of the licence. A build that offers the Gaussian splats (the GitHub
-/// builds) lists the splat module among what shows them; the build of the Meta Horizon Store, the same APK re-signed,
-/// carries the module but never starts it (SplatBuild.kt), and says so.
-String metaSpatialLicenseHeader({required bool splats}) {
+/// builds) lists the splat module among what shows them, followed by [disclaimer], the words of splat_disclaimer in
+/// the language of the app (an experimental API of the SDK, which Meta neither supports nor warrants); the build of the
+/// Meta Horizon Store, the same APK re-signed, carries the module but never starts it (SplatBuild.kt), and says so.
+String metaSpatialLicenseHeader({required bool splats, String disclaimer = ''}) {
   final what = splats
       ? 'Meta Spatial SDK 0.14.0 (meta-spatial-sdk, -toolkit, -vr, -isdk, and -splat in the version for Meta Quest), '
             'Copyright Meta Platform Technologies, LLC and its affiliates: the immersive viewer of the Meta Quest, and '
-            'the Gaussian splats of other tools.'
+            'the Gaussian splats of other tools.${disclaimer.isEmpty ? '' : '\n\n$disclaimer'}'
       : 'Meta Spatial SDK 0.14.0 (meta-spatial-sdk, -toolkit, -vr and -isdk), Copyright Meta Platform Technologies, '
             'LLC and its affiliates: the immersive viewer of the Meta Quest. The version for Meta Quest also carries '
             'the -splat module of the SDK, under the same licence, which this build never starts.';
@@ -32,14 +34,18 @@ String metaSpatialLicenseHeader({required bool splats}) {
 /// Whether this build offers the Gaussian splats, asked to the platform (see askSplatsInThisBuild)
 Future<bool> _askSplatsInThisBuild() => askSplatsInThisBuild(ImmersiveApi(), android: true);
 
+/// splat_disclaimer in the language of the app, once the licence page opens
+String _splatDisclaimer() => StaticTranslations.instance.splat_disclaimer;
+
 /// The entries of the licence page for the Meta Spatial SDK: its licence, then its notices, under "Meta Spatial SDK".
 /// Every Android APK ships the SDK (the immersive viewer is in both flavours, the splat module in the quest one only);
-/// the other platforms list nothing. [splatsInThisBuild] says whether the splat module is listed as active (false in
-/// the build of the Meta Horizon Store, and when the answer fails).
+/// the other platforms list nothing. [splatsInThisBuild] says whether the splat module is listed as active, with the
+/// words of [disclaimer] (false in the build of the Meta Horizon Store, and when the answer fails).
 Stream<LicenseEntry> metaSpatialLicenses({
   bool? android,
   AssetBundle? bundle,
   Future<bool> Function() splatsInThisBuild = _askSplatsInThisBuild,
+  String Function() disclaimer = _splatDisclaimer,
 }) async* {
   if (!(android ?? defaultTargetPlatform == TargetPlatform.android)) {
     return;
@@ -53,7 +59,7 @@ Stream<LicenseEntry> metaSpatialLicenses({
   }
   try {
     final text = await assets.loadString(metaSpatialLicenseAsset);
-    final header = metaSpatialLicenseHeader(splats: splats);
+    final header = metaSpatialLicenseHeader(splats: splats, disclaimer: splats ? disclaimer() : '');
     yield LicenseEntryWithLineBreaks(const ['Meta Spatial SDK'], '$header\n\n$text');
   } catch (error) {
     dPrint(() => 'Meta Spatial SDK licence text: $error');

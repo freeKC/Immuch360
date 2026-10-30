@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "Il PLY compresso non è ancora letto qui: esportalo come .spz o come .ply standard",
   "splat_count": "{count} gaussiane",
   "splat_damaged": "Questo file splat è danneggiato o incompleto",
+  "splat_disclaimer": "Gli splat gaussiani usano un'API sperimentale del Meta Spatial SDK, che Meta non supporta né garantisce: ogni difetto è responsabilità esclusiva di Immuch360.",
   "splat_explore": "Esplora la scena splat",
   "splat_failed": "Impossibile mostrare lo splat: {reason}",
   "splat_large_notice": "Splat grande: può scattare",

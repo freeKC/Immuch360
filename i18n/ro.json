@@ -3538,6 +3538,7 @@
   "splat_compressed_ply": "PLY comprimat nu este încă citit aici: exportă-l ca .spz sau ca .ply standard",
   "splat_count": "{count} gaussiene",
   "splat_damaged": "Acest fișier splat este deteriorat sau incomplet",
+  "splat_disclaimer": "Splaturile gaussiene folosesc un API experimental din Meta Spatial SDK, pe care Meta nu îl susține și nu îl garantează: orice defect ține numai de Immuch360.",
   "splat_explore": "Explorează scena splat",
   "splat_failed": "Splatul nu a putut fi afișat: {reason}",
   "splat_large_notice": "Splat mare: poate sacada",

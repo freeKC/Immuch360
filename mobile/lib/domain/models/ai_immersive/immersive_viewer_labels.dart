@@ -82,6 +82,7 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
 Map<String, String> splatViewerLabels(Translations t) => {
   'splatPreparing': t.splat_preparing,
   'splatNotice': t.splat_notice,
+  'splatDisclaimer': t.splat_disclaimer,
   'splatLarge': t.splat_large_notice,
   'splatReduced': t.splat_reduced(kept: '{kept}', total: '{total}'),
   'splatUpright': t.splat_upright,

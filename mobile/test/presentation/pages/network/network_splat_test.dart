@@ -162,6 +162,16 @@ void main() {
       });
     });
 
+    testWidgets('says that Meta neither supports nor warrants the API of the splats', (tester) async {
+      await pumpPage(tester, '/cash.spz');
+
+      expect(
+        tester.widget<Text>(find.byKey(const Key('splat_page_disclaimer'))).data,
+        'Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: '
+        "any defect is Immuch360's own.",
+      );
+    });
+
     testWidgets('a PLY says the tool its comment names', (tester) async {
       await pumpPage(tester, '/axes.ply');
 

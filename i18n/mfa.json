@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "PLY hok dipadat lagi takdok baco sini: eksport jadi .spz ke .ply biaso",
   "splat_count": "{count} gaussian",
   "splat_damaged": "Fail splat ni rosak ke tak lengkap",
+  "splat_disclaimer": "Splat Gaussian guno API cubo-cubo dari Meta Spatial SDK, hok Meta tok sokong dan tok jamin: gapo-gapo rosak tu tanggung jawab Immuch360 sajo.",
   "splat_explore": "Teroka adege splat",
   "splat_failed": "Splat tok leh tunjuk: {reason}",
   "splat_large_notice": "Splat beso: buleh tesekat-sekat",

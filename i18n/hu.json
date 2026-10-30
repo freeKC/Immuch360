@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "A tömörített PLY-t itt még nem olvassuk: exportáld .spz vagy szabványos .ply formátumba",
   "splat_count": "{count} gauss-elem",
   "splat_damaged": "Ez a splatfájl sérült vagy hiányos",
+  "splat_disclaimer": "A gauss-splatek a Meta Spatial SDK egy kísérleti API-ját használják, amelyet a Meta nem támogat és nem garantál: minden hibáért kizárólag az Immuch360 felel.",
   "splat_explore": "A splat jelenet felfedezése",
   "splat_failed": "A splat nem jeleníthető meg: {reason}",
   "splat_large_notice": "Nagy splat: akadozhat",

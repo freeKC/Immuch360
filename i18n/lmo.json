@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "El PLY compress l'è minga anmò legiud chì: esportel 'me .spz o 'me .ply normal",
   "splat_count": "{count} gaussian",
   "splat_damaged": "Quell file splat chì l'è rovinaa o minga complet",
+  "splat_disclaimer": "I splat gaussian dòvren un'API sperimental del Meta Spatial SDK, che Meta la supòrta minga e la garantiss minga: ogni difett l'è domà de Immuch360.",
   "splat_explore": "Esplora la scena splat",
   "splat_failed": "El splat el s'è minga podud mostrà: {reason}",
   "splat_large_notice": "Splat grand: el pò scatà",

@@ -3527,6 +3527,7 @@
   "splat_compressed_ply": "PLY דחוס עדיין לא נקרא כאן: יש לייצא אותו כ־.spz או כ־.ply רגיל",
   "splat_count": "{count} גאוסיאנים",
   "splat_damaged": "קובץ הספלאט הזה פגום או חלקי",
+  "splat_disclaimer": "ספלאטים גאוסיאניים משתמשים ב־API ניסיוני של Meta Spatial SDK, ש־Meta אינה תומכת בו ואינה ערבה לו: כל פגם הוא באחריות Immuch360 בלבד.",
   "splat_explore": "לחקור את סצנת הספלאט",
   "splat_failed": "לא ניתן להציג את הספלאט: {reason}",
   "splat_large_notice": "ספלאט גדול: ייתכנו קפיצות",

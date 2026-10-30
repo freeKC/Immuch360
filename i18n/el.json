@@ -3459,6 +3459,7 @@
   "splat_compressed_ply": "Το συμπιεσμένο PLY δεν διαβάζεται ακόμη εδώ: εξαγάγετέ το ως .spz ή ως τυπικό .ply",
   "splat_count": "{count} γκαουσιανές",
   "splat_damaged": "Αυτό το αρχείο splat είναι κατεστραμμένο ή ελλιπές",
+  "splat_disclaimer": "Τα γκαουσιανά splat χρησιμοποιούν ένα πειραματικό API του Meta Spatial SDK, το οποίο η Meta ούτε υποστηρίζει ούτε εγγυάται: κάθε ελάττωμα βαραίνει μόνο το Immuch360.",
   "splat_explore": "Εξερεύνηση της σκηνής splat",
   "splat_failed": "Δεν ήταν δυνατή η εμφάνιση του splat: {reason}",
   "splat_large_notice": "Μεγάλο splat: μπορεί να κολλάει",

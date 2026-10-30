@@ -3547,6 +3547,7 @@
   "splat_compressed_ply": "此处暂不读取压缩的 PLY：请导出为 .spz 或标准 .ply",
   "splat_count": "{count} 个高斯",
   "splat_damaged": "此泼溅文件已损坏或不完整",
+  "splat_disclaimer": "高斯泼溅使用 Meta Spatial SDK 的实验性 API，Meta 对其既不提供支持也不作担保：任何缺陷均由 Immuch360 自行负责。",
   "splat_explore": "探索泼溅场景",
   "splat_failed": "无法显示泼溅：{reason}",
   "splat_large_notice": "大型泼溅：可能会卡顿",

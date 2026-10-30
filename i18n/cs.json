@@ -3549,6 +3549,7 @@
   "splat_compressed_ply": "Komprimovaný PLY se tu zatím nečte: exportujte ho jako .spz nebo jako běžný .ply",
   "splat_count": "Gaussiánů: {count}",
   "splat_damaged": "Tento soubor splatu je poškozený nebo neúplný",
+  "splat_disclaimer": "Gaussovské splaty používají experimentální API sady Meta Spatial SDK, které Meta nepodporuje ani nezaručuje: za jakoukoli vadu odpovídá jen Immuch360.",
   "splat_explore": "Prozkoumat scénu splatu",
   "splat_failed": "Splat nešlo zobrazit: {reason}",
   "splat_large_notice": "Velký splat: může se trhat",

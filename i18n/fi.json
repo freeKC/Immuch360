@@ -3361,6 +3361,7 @@
   "splat_compressed_ply": "Pakattua PLY:tä ei vielä lueta täällä: vie se .spz- tai tavallisena .ply-tiedostona",
   "splat_count": "{count} gaussia",
   "splat_damaged": "Tämä splat-tiedosto on vioittunut tai keskeneräinen",
+  "splat_disclaimer": "Gaussiset splatit käyttävät Meta Spatial SDK:n kokeellista API:a, jota Meta ei tue eikä takaa: jokaisesta viasta vastaa vain Immuch360.",
   "splat_explore": "Tutki splat-näkymää",
   "splat_failed": "Splatia ei voitu näyttää: {reason}",
   "splat_large_notice": "Suuri splat: se voi nykiä",

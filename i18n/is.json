@@ -2613,6 +2613,7 @@
   "splat_compressed_ply": "Þjappað PLY er ekki lesið hér enn: fluttu það út sem .spz eða sem venjulegt .ply",
   "splat_count": "{count} gáss-dreifingar",
   "splat_damaged": "Þessi splat-skrá er skemmd eða ófullgerð",
+  "splat_disclaimer": "Gáss-splöt nota tilraunaforritaskil (API) í Meta Spatial SDK, sem Meta hvorki styður né ábyrgist: Immuch360 eitt ber ábyrgð á öllum göllum.",
   "splat_explore": "Skoða splat-senuna",
   "splat_failed": "Ekki tókst að sýna splattið: {reason}",
   "splat_large_notice": "Stórt splat: það getur hikstað",

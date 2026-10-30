@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "Kompriméiert PLY gëtt hei nach net gelies: als .spz oder als normaalt .ply exportéieren",
   "splat_count": "{count} Gaussen",
   "splat_damaged": "Dëse Splat-Fichier ass beschiedegt oder onvollstänneg",
+  "splat_disclaimer": "Gaussian Splats benotzen eng experimentell API vum Meta Spatial SDK, déi Meta weder ënnerstëtzt nach garantéiert: All Feeler läit eleng bei Immuch360.",
   "splat_explore": "Splat-Zeen entdecken",
   "splat_failed": "De Splat konnt net gewise ginn: {reason}",
   "splat_large_notice": "Grousse Splat: e kann hänken",

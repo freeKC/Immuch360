@@ -3547,6 +3547,7 @@
   "splat_compressed_ply": "PLY terkompresi belum dibaca di sini: ekspor sebagai .spz atau .ply standar",
   "splat_count": "{count} gaussian",
   "splat_damaged": "File splat ini rusak atau tidak lengkap",
+  "splat_disclaimer": "Splat Gaussian memakai API eksperimental dari Meta Spatial SDK, yang tidak didukung maupun dijamin oleh Meta: setiap cacat sepenuhnya tanggung jawab Immuch360.",
   "splat_explore": "Jelajahi adegan splat",
   "splat_failed": "Splat tidak dapat ditampilkan: {reason}",
   "splat_large_notice": "Splat besar: mungkin tersendat",

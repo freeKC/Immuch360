@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "Kāore anō te PLY kōpeke kia pānuitia ki konei: kawea atu hei .spz, hei .ply noa rānei",
   "splat_count": "{count} gaussian",
   "splat_damaged": "Kua pakaru, kāore rānei i oti tēnei kōnae splat",
+  "splat_disclaimer": "Ka whakamahi ngā splat Gaussian i tētahi API whakamātau o Meta Spatial SDK, kāore nei e tautokona, e whakaūngia rānei e Meta: nā Immuch360 anake ngā hapa katoa.",
   "splat_explore": "Tūhuratia te atamira splat",
   "splat_failed": "Kāore i taea te whakaatu i te splat: {reason}",
   "splat_large_notice": "Splat nui: tērā pea ka tūtatari",

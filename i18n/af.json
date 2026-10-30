@@ -1620,6 +1620,7 @@
   "splat_compressed_ply": "Saamgeperste PLY word nog nie hier gelees nie: voer dit uit as .spz of as gewone .ply",
   "splat_count": "{count} gaussiane",
   "splat_damaged": "Hierdie splatlêer is beskadig of onvolledig",
+  "splat_disclaimer": "Gauss-splats gebruik 'n eksperimentele API van die Meta Spatial SDK, wat Meta nie ondersteun of waarborg nie: enige gebrek is Immuch360 s'n alleen.",
   "splat_explore": "Verken die splattoneel",
   "splat_failed": "Die splat kon nie gewys word nie: {reason}",
   "splat_large_notice": "Groot splat: dit kan haper",

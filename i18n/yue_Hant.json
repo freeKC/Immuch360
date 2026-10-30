@@ -3444,6 +3444,7 @@
   "splat_compressed_ply": "此處尚不讀取壓縮的 PLY：請匯出為 .spz 或標準 .ply",
   "splat_count": "{count} 個高斯",
   "splat_damaged": "此潑濺檔案已損毀或不完整",
+  "splat_disclaimer": "高斯潑濺用咗 Meta Spatial SDK 嘅實驗性 API，Meta 唔支援亦唔保證呢個 API：任何缺陷都由 Immuch360 自己負責。",
   "splat_explore": "探索潑濺場景",
   "splat_failed": "顯示唔到潑濺：{reason}",
   "splat_large_notice": "大型潑濺：可能會窒",

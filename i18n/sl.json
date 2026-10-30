@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "Stisnjenega PLY tukaj še ne beremo: izvozite ga kot .spz ali kot običajen .ply",
   "splat_count": "Gaussovk: {count}",
   "splat_damaged": "Ta datoteka splata je poškodovana ali nepopolna",
+  "splat_disclaimer": "Gaussovski splati uporabljajo preizkusni API iz Meta Spatial SDK, ki ga Meta ne podpira in zanj ne jamči: za vsako napako je odgovoren le Immuch360.",
   "splat_explore": "Raziščite sceno splata",
   "splat_failed": "Splata ni bilo mogoče prikazati: {reason}",
   "splat_large_notice": "Velik splat: lahko se zatika",

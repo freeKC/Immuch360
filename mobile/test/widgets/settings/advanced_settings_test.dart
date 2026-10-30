@@ -266,7 +266,11 @@ void main() {
 
       expect(find.text('Gaussian splats (experimental)'), findsOneWidget);
       expect(
-        find.textContaining('Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S'),
+        find.text(
+          'Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S\n'
+          'Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: '
+          "any defect is Immuch360's own.",
+        ),
         findsOneWidget,
       );
       expect(find.text('Large splats (experimental)'), findsOneWidget);

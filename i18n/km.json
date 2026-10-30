@@ -1520,6 +1520,7 @@
   "splat_compressed_ply": "PLY ដែលបានបង្ហាប់មិនទាន់អានបាននៅទីនេះនៅឡើយ៖ សូមនាំចេញជា .spz ឬជា .ply ស្តង់ដារ",
   "splat_count": "គោស្យាន {count}",
   "splat_damaged": "ឯកសារស្ពឡាតនេះខូច ឬមិនពេញលេញ",
+  "splat_disclaimer": "ស្ពឡាតគោស្យានប្រើ API សាកល្បងរបស់ Meta Spatial SDK ដែល Meta មិនគាំទ្រ និងមិនធានា៖ កំហុសណាមួយជាទំនួលខុសត្រូវរបស់ Immuch360 តែមួយគត់។",
   "splat_explore": "រុករកឈុតឆាកស្ពឡាត",
   "splat_failed": "មិនអាចបង្ហាញស្ពឡាតបានទេ៖ {reason}",
   "splat_large_notice": "ស្ពឡាតធំ៖ វាអាចគាំងៗ",

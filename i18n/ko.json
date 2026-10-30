@@ -3524,6 +3524,7 @@
   "splat_compressed_ply": "압축된 PLY는 아직 읽을 수 없습니다. .spz 또는 표준 .ply로 내보내세요",
   "splat_count": "가우시안 {count}개",
   "splat_damaged": "이 스플랫 파일이 손상되었거나 불완전합니다",
+  "splat_disclaimer": "가우시안 스플랫은 Meta Spatial SDK의 실험적 API를 사용하며, Meta는 이 API를 지원하거나 보증하지 않습니다. 모든 결함의 책임은 Immuch360에 있습니다.",
   "splat_explore": "스플랫 장면 탐색",
   "splat_failed": "스플랫을 표시할 수 없습니다: {reason}",
   "splat_large_notice": "큰 스플랫: 끊길 수 있습니다",

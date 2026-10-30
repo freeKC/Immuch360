@@ -3512,6 +3512,7 @@
   "splat_compressed_ply": "PLY فشرده هنوز اینجا خوانده نمی‌شود: آن را به‌صورت .spz یا .ply استاندارد خروجی بگیرید",
   "splat_count": "{count} گاوسی",
   "splat_damaged": "این فایل اسپلت خراب یا ناقص است",
+  "splat_disclaimer": "اسپلت‌های گاوسی از یک API آزمایشی Meta Spatial SDK استفاده می‌کنند که Meta نه از آن پشتیبانی می‌کند و نه آن را تضمین می‌کند: مسئولیت هر نقصی فقط با Immuch360 است.",
   "splat_explore": "کاوش صحنهٔ اسپلت",
   "splat_failed": "نمایش اسپلت ممکن نشد: {reason}",
   "splat_large_notice": "اسپلت بزرگ: ممکن است لگ بزند",

@@ -1592,6 +1592,7 @@
   "splat_compressed_ply": "Sıxılmış PLY hələ burada oxunmur: onu .spz və ya standart .ply kimi ixrac edin",
   "splat_count": "{count} qauss",
   "splat_damaged": "Bu splat faylı zədəlidir və ya natamamdır",
+  "splat_disclaimer": "Qauss splatları Meta Spatial SDK-nın eksperimental API-sindən istifadə edir, Meta onu nə dəstəkləyir, nə də ona zəmanət verir: istənilən qüsura yalnız Immuch360 cavabdehdir.",
   "splat_explore": "Splat səhnəsini kəşf et",
   "splat_failed": "Splat göstərilə bilmədi: {reason}",
   "splat_large_notice": "Böyük splat: ilişə bilər",

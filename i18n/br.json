@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "N'eo ket lennet c'hoazh ar PLY gwasket amañ: ezporzhiit anezhañ e .spz pe e .ply boutin",
   "splat_count": "{count} gaussian",
   "splat_damaged": "Gwastet pe diglok eo ar restr splat-mañ",
+  "splat_disclaimer": "Ar splatoù gaussian a implij un API arnodel eus Meta Spatial SDK, na vez na skoret na gwarantet gant Meta: pep diouer a zo da Immuch360 hepken.",
   "splat_explore": "Furchal al leurenn splat",
   "splat_failed": "N'haller ket diskouez ar splat: {reason}",
   "splat_large_notice": "Splat bras: gallout a ra herzel a-bennadoù",

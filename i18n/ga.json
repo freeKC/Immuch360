@@ -3548,6 +3548,7 @@
   "splat_compressed_ply": "Ní léitear PLY comhbhrúite anseo fós: easpórtáil é mar .spz nó mar .ply caighdeánach",
   "splat_count": "{count} gaussach",
   "splat_damaged": "Tá an comhad splat seo damáistithe nó neamhiomlán",
+  "splat_disclaimer": "Úsáideann splatanna Gaussacha API turgnamhach de chuid Meta Spatial SDK, nach dtacaíonn Meta leis agus nach dtugann sí barántas dó: is ar Immuch360 amháin atá aon locht.",
   "splat_explore": "Taiscéal radharc an splat",
   "splat_failed": "Níorbh fhéidir an splat a thaispeáint: {reason}",
   "splat_large_notice": "Splat mór: d'fhéadfadh sé stadach a bheith ann",

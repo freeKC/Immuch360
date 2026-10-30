@@ -21,7 +21,8 @@ final _log = Logger('SplatPage');
 /// A Gaussian splat file of another tool (lot S5): of the share [sourceId] at [path] ([size] bytes when known), or a
 /// file of the headset at [path] without a share (picked with Open a splat file). The page says what the head of the
 /// file says (its name, its size, its gaussians and format, the tool a comment of a PLY names) and offers "Explore the
-/// splat scene", which opens it in the immersive viewer of a Meta Quest 3 or 3S, or greys it with its reason. A splat
+/// splat scene", which opens it in the immersive viewer of a Meta Quest 3 or 3S, or greys it with its reason; under it,
+/// that the splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants. A splat
 /// joins no previous and next, and is never sent to the Immich server, which takes no such file.
 @RoutePage()
 class SplatPage extends ConsumerWidget {
@@ -156,6 +157,14 @@ class _SplatDetails extends ConsumerWidget {
         ],
         const SizedBox(height: 24),
         SplatButton(probe: probe, name: name, fileBytes: fileBytes, open: open),
+        // The API of the splats is an experimental one of the Meta Spatial SDK (FreeKC's decision of 30 October 2026)
+        const SizedBox(height: 24),
+        Text(
+          t.splat_disclaimer,
+          key: const Key('splat_page_disclaimer'),
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.onSurfaceVariant),
+        ),
       ],
     );
   }

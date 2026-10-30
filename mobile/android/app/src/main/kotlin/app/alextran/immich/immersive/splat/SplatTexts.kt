@@ -12,6 +12,7 @@ import java.util.Locale
 internal object SplatTexts {
   const val LABEL_PREPARING = "splatPreparing"
   const val LABEL_NOTICE = "splatNotice"
+  const val LABEL_DISCLAIMER = "splatDisclaimer"
   const val LABEL_LARGE = "splatLarge"
   const val LABEL_REDUCED = "splatReduced"
   const val LABEL_UPRIGHT = "splatUpright"
@@ -42,6 +43,9 @@ internal object SplatTexts {
     mapOf(
       LABEL_PREPARING to "Preparing the splat",
       LABEL_NOTICE to "Gaussian splat (experimental)",
+      LABEL_DISCLAIMER to
+        "Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: " +
+          "any defect is Immuch360's own.",
       LABEL_LARGE to "Large splat: it may stutter",
       LABEL_REDUCED to "Reduced to $KEPT of $TOTAL gaussians",
       LABEL_UPRIGHT to "Turn upright",
@@ -64,6 +68,14 @@ internal object SplatTexts {
   /** The text of [key] from the translated [labels], the English one when it is missing or blank */
   fun label(labels: Map<String, String>, key: String): String =
     labels[key]?.takeIf { it.isNotBlank() } ?: englishLabels[key] ?: SceneTexts.label(labels, key)
+
+  /**
+   * What the first splat of a viewer says once it shows: that it is experimental, then that its API is an experimental
+   * one of the Meta Spatial SDK, which Meta neither supports nor warrants, any defect being Immuch360's own (FreeKC's
+   * decision of 30 October 2026)
+   */
+  fun noticeText(labels: Map<String, String>): String =
+    label(labels, LABEL_NOTICE) + "\n" + label(labels, LABEL_DISCLAIMER)
 
   /** [count] with the grouping of [locale]: 452,451 in English */
   fun number(count: Long, locale: Locale = Locale.getDefault()): String = String.format(locale, "%,d", count)

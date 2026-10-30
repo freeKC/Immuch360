@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "PLY iliyobanwa bado haisomwi hapa: ihamishe kama .spz au kama .ply ya kawaida",
   "splat_count": "gaussian {count}",
   "splat_damaged": "Faili hii ya splat imeharibika au haijakamilika",
+  "splat_disclaimer": "Splat za Gaussian zinatumia API ya majaribio ya Meta Spatial SDK, ambayo Meta haiiungi mkono wala haitoi dhamana yake: kasoro yoyote ni jukumu la Immuch360 pekee.",
   "splat_explore": "Chunguza mandhari ya splat",
   "splat_failed": "Splat haikuweza kuonyeshwa: {reason}",
   "splat_large_notice": "Splat kubwa: inaweza kukwamakwama",

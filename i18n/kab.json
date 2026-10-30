@@ -1422,6 +1422,7 @@
   "splat_compressed_ply": "PLY yettwaskamen ur yettwaɣra ara da ar tura: sifeḍ-it am .spz neɣ am .ply amagnu",
   "splat_count": "{count} n gaussiyen",
   "splat_damaged": "Afaylu-a n splat yexṣer neɣ ur yemmid ara",
+  "splat_disclaimer": "Isplaten n Gauss sseqdacen API s tirmit n Meta Spatial SDK, ur t-yettɛawan ur t-yettḍemmin Meta: yal tuccḍa d tin n Immuch360 kan.",
   "splat_explore": "Snirem asayes n splat",
   "splat_failed": "Ur d-yettwaskan ara usplat: {reason}",
   "splat_large_notice": "Splat meqqren: yezmer ad iḥbes",

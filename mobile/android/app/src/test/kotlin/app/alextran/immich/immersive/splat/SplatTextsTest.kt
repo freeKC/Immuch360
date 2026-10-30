@@ -100,4 +100,28 @@ class SplatTextsTest {
       ),
     )
   }
+
+  @Test
+  fun `the notice of the first splat says it is experimental, then that Meta neither supports nor warrants its API`() {
+    assertEquals(
+      "Gaussian splat (experimental)\n" +
+        "Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: " +
+        "any defect is Immuch360's own.",
+      SplatTexts.noticeText(emptyMap()),
+    )
+    // In the language of the app, a missing line in English
+    val french =
+      mapOf(
+        SplatTexts.LABEL_NOTICE to "Splat gaussien (expérimental)",
+        SplatTexts.LABEL_DISCLAIMER to "Les splats gaussiens utilisent une API expérimentale du Meta Spatial SDK",
+      )
+    assertEquals(
+      "Splat gaussien (expérimental)\nLes splats gaussiens utilisent une API expérimentale du Meta Spatial SDK",
+      SplatTexts.noticeText(french),
+    )
+    assertEquals(
+      "Splat gaussien (expérimental)\n" + SplatTexts.englishLabels.getValue(SplatTexts.LABEL_DISCLAIMER),
+      SplatTexts.noticeText(mapOf(SplatTexts.LABEL_NOTICE to "Splat gaussien (expérimental)")),
+    )
+  }
 }

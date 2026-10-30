@@ -3340,6 +3340,7 @@
   "splat_compressed_ply": "Saspiestu PLY šeit vēl nenolasa: eksportējiet to kā .spz vai kā parastu .ply",
   "splat_count": "Gausa elementu: {count}",
   "splat_damaged": "Šis splata fails ir bojāts vai nepilnīgs",
+  "splat_disclaimer": "Gausa splati izmanto Meta Spatial SDK eksperimentālu API, ko Meta neatbalsta un negarantē: par jebkuru defektu atbild tikai Immuch360.",
   "splat_explore": "Izpētīt splata ainu",
   "splat_failed": "Splatu neizdevās parādīt: {reason}",
   "splat_large_notice": "Liels splats: var raustīties",
