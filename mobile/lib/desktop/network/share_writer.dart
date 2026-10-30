@@ -7,7 +7,10 @@
 // folder (".salon_3D.jpg.<id>.partial", a name the browser of the shares does not show), then is renamed onto its
 // name, or onto the first free "name (n)" when that is taken, a rename that the server itself refuses over an existing
 // file (SMB without ReplaceIfExists, WebDAV MOVE with "Overwrite: F"). A partial file left by a failure is deleted.
-// The check of a folder writes an empty hidden file and deletes it at once.
+// The check of a folder writes an empty hidden file and deletes it at once; a share that keeps the file but does not
+// let the app delete it (rights "without delete" of some NAS) would not let it rename a version either, so the check
+// says read only, and the hidden files of the writer an earlier session left there (a crash during an upload) are
+// deleted once an hour old.
 
 import 'dart:async';
 import 'dart:convert';
@@ -24,6 +27,7 @@ import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
+import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:logging/logging.dart';
 
@@ -117,7 +121,12 @@ final shareFolderProbeProvider = Provider<Future<ProbeResult> Function(ShareFold
       return const ProbeResult(ProbeStatus.readOnly);
     }
     try {
-      return await checkShareFolder(writer, folder.path);
+      return await checkShareFolder(
+        writer,
+        folder.path,
+        // The hidden files an earlier session left, as the reads of the share list them
+        list: (path) async => (await ref.read(networkConnectionsProvider).fileSystem(folder.sourceId)).list(path),
+      );
     } finally {
       await writer.close();
     }
@@ -340,8 +349,10 @@ class WebDavShareWriter implements ShareWriter {
   /// Longest wait for the answer of the server
   static const answerTimeout = Duration(seconds: 60);
 
-  Uri _uriOf(String path) =>
-      _base.replace(pathSegments: [..._base.pathSegments.where((segment) => segment.isNotEmpty), ..._segmentsOf(path)]);
+  /// [path] on the server; with [folder], ended by a slash, as the servers that redirect a folder without it want it
+  Uri _uriOf(String path, {bool folder = false}) => _base.replace(
+    pathSegments: [..._base.pathSegments.where((segment) => segment.isNotEmpty), ..._segmentsOf(path), if (folder) ''],
+  );
 
   Future<http.StreamedResponse> _send(
     String method,
@@ -349,8 +360,9 @@ class WebDavShareWriter implements ShareWriter {
     Map<String, String> headers = const {},
     Stream<List<int>>? body,
     int? length,
+    bool folder = false,
   }) async {
-    final request = http.StreamedRequest(method, _uriOf(path))
+    final request = http.StreamedRequest(method, _uriOf(path, folder: folder))
       ..followRedirects = false
       ..headers.addAll(headers);
     final authorization = _authorization;
@@ -360,6 +372,11 @@ class WebDavShareWriter implements ShareWriter {
     // A request without a body says so, rather than an empty chunked body some servers refuse
     request.contentLength = body == null ? 0 : length;
     final sending = _client.send(request);
+    // A server that refuses a large body at once (507, 413) and drops the connection fails the request while the body
+    // still streams: heard now, so that the failure never reaches the zone unheard, and told below. The client of
+    // dart:io reads an answer only once the whole body went, so the status of such a server is not known then; the
+    // words of the connection are given instead.
+    unawaited(sending.then((_) {}, onError: (Object _) {}));
     if (body != null) {
       await request.sink.addStream(body);
     }
@@ -407,8 +424,37 @@ class WebDavShareWriter implements ShareWriter {
       body: file.openRead(),
       length: await file.length(),
     );
-    if (!_isSuccess(response.statusCode)) {
-      throw _refusal(response.statusCode);
+    final status = response.statusCode;
+    if (_isSuccess(status)) {
+      return;
+    }
+    // A missing folder is 409 for a PUT (RFC 4918); rclone in read only, and the other servers built on the WebDAV of
+    // Go, answer 404 to a PUT they refuse in a folder that is there: the folder asked for, read only when it is there
+    if (status == HttpStatus.notFound && await _isFolder(shareFolderOfPath(path))) {
+      throw ShareWriteException(ShareWriteFailure.readOnly, 'The server answered $status');
+    }
+    throw _refusal(status);
+  }
+
+  /// Whether [folder] is there, by a PROPFIND of depth 0; false when the server does not say so
+  Future<bool> _isFolder(String folder) async {
+    const ask =
+        '<?xml version="1.0" encoding="utf-8"?>'
+        '<d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>';
+    final body = utf8.encode(ask);
+    try {
+      final response = await _send(
+        'PROPFIND',
+        folder,
+        headers: {'Depth': '0', HttpHeaders.contentTypeHeader: 'application/xml; charset=utf-8'},
+        body: Stream.value(body),
+        length: body.length,
+        folder: true,
+      );
+      return response.statusCode == 207 || response.statusCode == HttpStatus.ok;
+    } on ShareWriteException catch (error) {
+      _log.fine('The folder $folder could not be asked for: $error');
+      return false;
     }
   }
 
@@ -441,10 +487,28 @@ final _random = Random.secure();
 /// A short random id for the hidden files of the writer
 String _newId() => [for (var i = 0; i < 4; i++) _random.nextInt(1 << 16).toRadixString(16).padLeft(4, '0')].join();
 
+/// The hidden files the writer makes in a folder of a share: the partial file of a version
+/// (".salon_3D.jpg.0123456789abcdef.partial") and the file of a check (".immuch360-check-0123456789abcdef")
+final _writerFile = RegExp(r'^\.(.+\.[0-9a-f]{16}\.partial|immuch360-check-[0-9a-f]{16})$');
+
+/// How old a hidden file of the writer must be before a check deletes it: an upload of another window or computer is
+/// never that long
+const _leftoverAge = Duration(hours: 1);
+
+/// Lists a folder of a share, as its file system reads it
+typedef ShareFolderLister = Future<List<NetworkEntry>> Function(String folder);
+
 /// Checks that [folder] of the share takes new files: an empty hidden file written there and deleted at once (see
-/// WriteProbe for the folders of this computer). The words of the check: ready, read only, full, gone, or failed with
-/// the words of the server.
-Future<ProbeResult> checkShareFolder(ShareWriter writer, String folder) async {
+/// WriteProbe for the folders of this computer). A file the share keeps but does not let the app delete makes the
+/// check say read only: a version could not be renamed there either. The words of the check: ready, read only, full,
+/// gone, or failed with the words of the server. Once the folder takes files, the hidden files of the writer that
+/// [list] finds there and that are an hour old are deleted: what a crash during an upload left.
+Future<ProbeResult> checkShareFolder(
+  ShareWriter writer,
+  String folder, {
+  ShareFolderLister? list,
+  DateTime Function()? now,
+}) async {
   final path = sharePathIn(folder, '.immuch360-check-${_newId()}');
   final empty = File('${Directory.systemTemp.path}${Platform.pathSeparator}.immuch360-check-${_newId()}');
   try {
@@ -454,6 +518,12 @@ Future<ProbeResult> checkShareFolder(ShareWriter writer, String folder) async {
       await writer.delete(path);
     } on ShareWriteException catch (error) {
       _log.warning('The file of the check of $folder stays on its share: $error');
+      if (error.failure == ShareWriteFailure.readOnly) {
+        return ProbeResult(ProbeStatus.readOnly, message: error.message);
+      }
+    }
+    if (list != null) {
+      await _deleteLeftovers(writer, folder, list, (now ?? DateTime.now)());
     }
     return const ProbeResult(ProbeStatus.ready);
   } on ShareWriteException catch (error) {
@@ -473,6 +543,29 @@ Future<ProbeResult> checkShareFolder(ShareWriter writer, String folder) async {
     } on FileSystemException {
       // A file of the temporary folder of the system
     }
+  }
+}
+
+/// Deletes the hidden files of the writer in [folder] that are older than an hour; never fails
+Future<void> _deleteLeftovers(ShareWriter writer, String folder, ShareFolderLister list, DateTime now) async {
+  try {
+    for (final entry in await list(folder)) {
+      final modified = entry.modified;
+      if (entry.isDirectory || modified == null || !_writerFile.hasMatch(entry.name)) {
+        continue;
+      }
+      if (now.difference(modified) < _leftoverAge) {
+        continue;
+      }
+      try {
+        await writer.delete(sharePathIn(folder, entry.name));
+        _log.info('${entry.name}, left in $folder by an earlier session, deleted');
+      } on ShareWriteException catch (error) {
+        _log.fine('${entry.name} stays in $folder: $error');
+      }
+    }
+  } catch (error) {
+    _log.fine('The hidden files of $folder could not be listed: $error');
   }
 }
 

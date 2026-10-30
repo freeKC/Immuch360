@@ -1,9 +1,12 @@
 // Writing new files on a share opened in the app, for the versions a computer makes next to their originals: WebDAV
 // against a server of the test (PUT, MOVE without overwriting, DELETE, HEAD, Basic credentials, the refusals of the
-// server in their words), SMB against a connection of the test (the paths libsmb2 takes, its errors in their words);
-// the check of a folder, which leaves no file; and a version put under its name or the first free "name (n)", never
-// over a file, through a hidden partial file that never stays.
+// server in their words, a 404 to a PUT in a folder that is there taken as read only, a server that drops the
+// connection during a large body heard), SMB against a connection of the test (the paths libsmb2 takes, its errors in
+// their words); the check of a folder, which leaves no file, says read only when the share does not let its file be
+// deleted, and deletes the hidden files of the writer an earlier session left; and a version put under its name or
+// the first free "name (n)", never over a file, through a hidden partial file that never stays.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -31,6 +34,9 @@ class _DavServer {
   final authorizations = <String?>[];
   final refusals = <String, int>{};
 
+  /// The folders a PROPFIND finds, by their decoded path with its last slash
+  final folders = <String>{};
+
   int get port => _server.port;
 
   Future<void> close() => _server.close(force: true);
@@ -56,6 +62,11 @@ class _DavServer {
         response.statusCode = files.containsKey(path) ? HttpStatus.ok : HttpStatus.notFound;
       case 'DELETE':
         response.statusCode = files.remove(path) != null ? HttpStatus.noContent : HttpStatus.notFound;
+      case 'PROPFIND':
+        await request.drain<void>();
+        response.statusCode = folders.contains(path) && request.headers.value('depth') == '0'
+            ? 207
+            : HttpStatus.notFound;
       case 'MOVE':
         final destination = Uri.decodeComponent(Uri.parse(request.headers.value('destination')!).path);
         final overwrite = request.headers.value('overwrite');
@@ -204,6 +215,64 @@ void main() {
       }
       await dav.close();
     });
+
+    test('a 404 to a PUT in a folder that is there (rclone in read only): read only, and the check says so', () async {
+      final dav = writer();
+      server.refusals['PUT'] = HttpStatus.notFound;
+      server.folders.add('/dav/photos/2024/');
+
+      await expectLater(dav.upload('/2024/.salon.partial', version), failsWith(ShareWriteFailure.readOnly));
+      expect(server.requests.last, 'PROPFIND /dav/photos/2024/');
+      expect((await checkShareFolder(dav, '/2024')).status, ProbeStatus.readOnly);
+
+      // A folder gone: missing, as before
+      await expectLater(dav.upload('/2023/.salon.partial', version), failsWith(ShareWriteFailure.missing));
+      expect((await checkShareFolder(dav, '/2023')).status, ProbeStatus.missing);
+      await dav.close();
+    });
+  });
+
+  test('WebDAV: a server that refuses a large body at once and drops the connection fails the write, heard', () async {
+    // It answers 507 as soon as it read the head of the request, then closes without reading the body
+    final raw = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(raw.close);
+    raw.listen((socket) {
+      final head = <int>[];
+      late StreamSubscription<Uint8List> reading;
+      reading = socket.listen((data) {
+        head.addAll(data);
+        if (latin1.decode(head, allowInvalid: true).contains('\r\n\r\n')) {
+          // The body is never read
+          unawaited(reading.cancel());
+          socket.add(
+            latin1.encode('HTTP/1.1 507 Insufficient Storage\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'),
+          );
+          unawaited(socket.flush().whenComplete(socket.destroy));
+        }
+      }, onError: (Object _) {});
+    });
+    final client = http.Client();
+    addTearDown(client.close);
+    final dav = WebDavShareWriter(
+      NetworkSource(id: 'dav', type: NetworkSourceType.webdav, name: 'NAS', host: '127.0.0.1', port: raw.port),
+      null,
+      client: client,
+    );
+    final big = File(p.join(root.path, 'big.jpg'))..writeAsBytesSync(Uint8List(32 << 20));
+    final unheard = <Object>[];
+    Object? thrown;
+
+    await runZonedGuarded(() async {
+      try {
+        await dav.upload('/2024/.big.partial', big).timeout(const Duration(seconds: 20));
+      } catch (error) {
+        thrown = error;
+      }
+    }, (error, _) => unheard.add(error));
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+
+    expect(thrown, isA<ShareWriteException>());
+    expect(unheard, isEmpty, reason: 'no failure left to the zone');
   });
 
   group('SMB', () {
@@ -248,6 +317,59 @@ void main() {
       expect(connection.files, isEmpty, reason: 'no file left');
       expect(connection.calls.first, startsWith('write 2024/.immuch360-check-'));
       expect(connection.calls.last, startsWith('delete 2024/.immuch360-check-'));
+    });
+
+    test('a share that keeps the file of the check but does not let it be deleted: read only', () async {
+      final connection = _SmbConnection()
+        ..errors['delete'] = const Smb2Exception('Delete failed', 13, Smb2ErrorType.accessDenied);
+
+      final result = await checkShareFolder(SmbShareWriter(connection), '/2024');
+
+      expect(result.status, ProbeStatus.readOnly, reason: 'a version could not be renamed there either');
+      expect(result.accepted, isFalse);
+    });
+
+    test('the hidden files of the writer an earlier session left, an hour old, deleted; nothing else', () async {
+      final now = DateTime.utc(2026, 10, 30, 15);
+      final connection = _SmbConnection();
+      final names = {
+        '.salon_3D_LRF_Full_SBS.jpg.0123456789abcdef.partial': const Duration(hours: 3),
+        '.immuch360-check-fedcba9876543210': const Duration(hours: 2),
+        // Another window or computer may be writing these
+        '.cuisine_3D_LRF_Full_SBS.jpg.00112233445566ff.partial': const Duration(minutes: 10),
+        // Not ours
+        '.DS_Store': const Duration(days: 30),
+        'salon.jpg': const Duration(days: 30),
+        '.salon.jpg.zz.partial': const Duration(days: 30),
+      };
+      for (final name in names.keys) {
+        connection.files['2024/$name'] = Uint8List(1);
+      }
+
+      final result = await checkShareFolder(
+        SmbShareWriter(connection),
+        '/2024',
+        now: () => now,
+        list: (folder) async => [
+          for (final MapEntry(key: name, value: age) in names.entries)
+            NetworkEntry(
+              sourceId: 'nas',
+              path: '$folder/$name',
+              isDirectory: false,
+              size: 1,
+              modified: now.subtract(age),
+            ),
+          NetworkEntry(sourceId: 'nas', path: '$folder/.immuch360-check-0000000000000000', isDirectory: false),
+        ],
+      );
+
+      expect(result.status, ProbeStatus.ready);
+      expect(connection.files.keys.map((path) => path.substring('2024/'.length)).toSet(), {
+        '.cuisine_3D_LRF_Full_SBS.jpg.00112233445566ff.partial',
+        '.DS_Store',
+        'salon.jpg',
+        '.salon.jpg.zz.partial',
+      });
     });
 
     test('a folder that refuses, is gone or fails, in the words of the check', () async {
