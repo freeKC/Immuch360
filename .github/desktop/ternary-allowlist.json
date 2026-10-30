@@ -6,7 +6,7 @@
   "mobile/lib/presentation/actions/lock.action.dart": 1,
   "mobile/lib/presentation/actions/share.action.dart": 1,
   "mobile/lib/presentation/widgets/asset_viewer/asset_viewer.page.dart": 1,
-  "mobile/lib/presentation/widgets/asset_viewer/video_viewer.widget.dart": 2,
+  "mobile/lib/presentation/widgets/asset_viewer/video_viewer.widget.dart": 3,
   "mobile/lib/providers/asset_viewer/local_panorama.provider.dart": 1,
   "mobile/lib/providers/permission.provider.dart": 1,
   "mobile/lib/providers/raw/raw_video.provider.dart": 1,
