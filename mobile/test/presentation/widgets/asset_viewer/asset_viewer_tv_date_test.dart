@@ -181,6 +181,13 @@ void main() {
     expect(dateTime.id, isNot(rotate.id));
     expect(dateTime.label, contains(date));
     expect(dateTime.label, contains(time));
+    final dateRect = tester.getRect(tvLabel);
+    expect(dateTime.rect.width, lessThan(dateRect.width + 1), reason: 'the bounds of the date, not of the bar');
+    expect(
+      dateTime.rect.width,
+      lessThan(tester.getRect(find.byType(ViewerBottomBar)).width / 2),
+      reason: 'a node of its own, narrower than the bar',
+    );
 
     // With the focus, as Down gives it: the focused node is the button alone
     Focus.of(tester.element(find.descendant(of: rotateButton, matching: find.text('Rotate')))).requestFocus();
