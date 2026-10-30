@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360° panorámy",
   "ai_immersive_feature_photos": "3D fotky",
   "ai_immersive_feature_scenes": "3D scény",
+  "ai_immersive_frame_only_360": "Bez štítku 360°, len pomer 2:1: overte, že každá je 360° fotka",
   "ai_immersive_free_space": "{free} voľné na {drive}",
   "ai_immersive_glb_failed": "Kópiu .glb sa nepodarilo zapísať: {message}",
   "ai_immersive_glb_saved": "Uložené do {folder}: {name}",

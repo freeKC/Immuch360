@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Lánléargais 360°",
   "ai_immersive_feature_photos": "Grianghraif 3D",
   "ai_immersive_feature_scenes": "Radhairc 3D",
+  "ai_immersive_frame_only_360": "Gan chlib 360°, fráma 2:1 amháin: deimhnigh gur grianghraf 360° gach ceann",
   "ai_immersive_free_space": "{free} saor ar {drive}",
   "ai_immersive_glb_failed": "Níorbh fhéidir an chóip .glb a scríobh: {message}",
   "ai_immersive_glb_saved": "Sábháilte i {folder}: {name}",

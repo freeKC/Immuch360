@@ -592,6 +592,7 @@
   "ai_immersive_feature_panoramas": "360° panoramak",
   "ai_immersive_feature_photos": "3D argazkiak",
   "ai_immersive_feature_scenes": "3D eszenak",
+  "ai_immersive_frame_only_360": "360° etiketarik gabe, 2:1 formatua soilik: egiaztatu bakoitza 360° argazkia dela",
   "ai_immersive_free_space": "{free} libre {drive} unitatean",
   "ai_immersive_glb_failed": "Ezin izan da .glb kopia idatzi: {message}",
   "ai_immersive_glb_saved": "{folder} karpetan gordeta: {name}",

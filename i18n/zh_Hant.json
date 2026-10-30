@@ -594,6 +594,7 @@
   "ai_immersive_feature_panoramas": "360° 全景圖",
   "ai_immersive_feature_photos": "3D 相片",
   "ai_immersive_feature_scenes": "3D 場景",
+  "ai_immersive_frame_only_360": "沒有 360° 標記，僅為 2:1 比例：請逐一確認是否為 360° 相片",
   "ai_immersive_free_space": "{drive} 可用 {free}",
   "ai_immersive_glb_failed": "無法寫入 .glb 副本：{message}",
   "ai_immersive_glb_saved": "已儲存至 {folder}：{name}",

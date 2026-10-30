@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360°-os panorámák",
   "ai_immersive_feature_photos": "3D fotók",
   "ai_immersive_feature_scenes": "3D jelenetek",
+  "ai_immersive_frame_only_360": "Nincs 360°-os címke, csak 2:1-es képarány: ellenőrizze, hogy mindegyik 360°-os fotó-e",
   "ai_immersive_free_space": "{free} szabad itt: {drive}",
   "ai_immersive_glb_failed": "A .glb másolatot nem sikerült kiírni: {message}",
   "ai_immersive_glb_saved": "{name} mentve ide: {folder}",

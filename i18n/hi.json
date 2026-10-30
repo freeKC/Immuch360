@@ -546,6 +546,7 @@
   "ai_immersive_feature_panoramas": "360° पैनोरमा",
   "ai_immersive_feature_photos": "3D फ़ोटो",
   "ai_immersive_feature_scenes": "3D दृश्य",
+  "ai_immersive_frame_only_360": "कोई 360° टैग नहीं, केवल 2:1 फ़्रेम: जाँचें कि हर एक 360° फ़ोटो है",
   "ai_immersive_free_space": "{drive} पर {free} खाली",
   "ai_immersive_glb_failed": ".glb कॉपी लिखी नहीं जा सकी: {message}",
   "ai_immersive_glb_saved": "{folder} में सहेजा गया: {name}",

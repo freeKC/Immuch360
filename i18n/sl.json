@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Panorame 360°",
   "ai_immersive_feature_photos": "Fotografije 3D",
   "ai_immersive_feature_scenes": "Prizori 3D",
+  "ai_immersive_frame_only_360": "Brez oznake 360°, samo okvir 2:1: preverite, ali je vsaka fotografija 360°",
   "ai_immersive_free_space": "{free} prosto na {drive}",
   "ai_immersive_glb_failed": "Kopije .glb ni bilo mogoče zapisati: {message}",
   "ai_immersive_glb_saved": "Shranjeno v {folder}: {name}",

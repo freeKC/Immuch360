@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Panoramas 360°",
   "ai_immersive_feature_photos": "Photos 3D",
   "ai_immersive_feature_scenes": "Scènes 3D",
+  "ai_immersive_frame_only_360": "Sans balise 360°, cadre 2:1 seulement : vérifiez que chacune est une photo 360°",
   "ai_immersive_free_space": "{free} libres sur {drive}",
   "ai_immersive_glb_failed": "La copie .glb n'a pas pu être écrite : {message}",
   "ai_immersive_glb_saved": "Enregistrée dans {folder} : {name}",

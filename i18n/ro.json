@@ -602,6 +602,7 @@
   "ai_immersive_feature_panoramas": "Panorame 360°",
   "ai_immersive_feature_photos": "Fotografii 3D",
   "ai_immersive_feature_scenes": "Scene 3D",
+  "ai_immersive_frame_only_360": "Fără etichetă 360°, doar format 2:1: verificați că fiecare este o fotografie 360°",
   "ai_immersive_free_space": "{free} liber pe {drive}",
   "ai_immersive_glb_failed": "Copia .glb nu a putut fi scrisă: {message}",
   "ai_immersive_glb_saved": "Salvat în {folder}: {name}",

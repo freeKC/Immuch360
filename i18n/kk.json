@@ -104,6 +104,7 @@
   "ai_immersive_feature_panoramas": "360° панорамалар",
   "ai_immersive_feature_photos": "3D фотолар",
   "ai_immersive_feature_scenes": "3D сахналар",
+  "ai_immersive_frame_only_360": "360° белгісі жоқ, тек 2:1 кадр: әрқайсысы 360° фото екенін тексеріңіз",
   "ai_immersive_free_space": "{drive} дискісінде {free} бос",
   "ai_immersive_glb_failed": ".glb көшірмесін жазу мүмкін болмады: {message}",
   "ai_immersive_glb_saved": "{folder} қалтасына сақталды: {name}",

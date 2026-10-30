@@ -558,6 +558,7 @@
   "ai_immersive_feature_panoramas": "360° panorāmas",
   "ai_immersive_feature_photos": "3D fotoattēli",
   "ai_immersive_feature_scenes": "3D ainas",
+  "ai_immersive_frame_only_360": "Nav 360° atzīmes, tikai 2:1 kadrs: pārbaudiet, vai katrs ir 360° fotoattēls",
   "ai_immersive_free_space": "{free} brīvs diskā {drive}",
   "ai_immersive_glb_failed": ".glb kopiju neizdevās ierakstīt: {message}",
   "ai_immersive_glb_saved": "Saglabāts mapē {folder}: {name}",

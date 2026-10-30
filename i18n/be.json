@@ -595,6 +595,7 @@
   "ai_immersive_feature_panoramas": "Панарамы 360°",
   "ai_immersive_feature_photos": "3D-фота",
   "ai_immersive_feature_scenes": "3D-сцэны",
+  "ai_immersive_frame_only_360": "Няма пазнакі 360°, толькі кадр 2:1: праверце, што кожнае з іх фота 360°",
   "ai_immersive_free_space": "Вольна {free} на {drive}",
   "ai_immersive_glb_failed": "Не ўдалося запісаць копію .glb: {message}",
   "ai_immersive_glb_saved": "Захавана ў {folder}: {name}",

@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "พาโนรามา 360°",
   "ai_immersive_feature_photos": "รูป 3D",
   "ai_immersive_feature_scenes": "ฉาก 3D",
+  "ai_immersive_frame_only_360": "บ่มีป้าย 360° มีแต่กรอบ 2:1: กวดเบิ่งว่าแต่ละรูปแม่นรูป 360°",
   "ai_immersive_free_space": "ว่าง {free} ใน {drive}",
   "ai_immersive_glb_failed": "เขียนสำเนา .glb บ่ได้: {message}",
   "ai_immersive_glb_saved": "บันทึกไว้ใน {folder}: {name}",

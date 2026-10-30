@@ -160,6 +160,7 @@
   "ai_immersive_feature_panoramas": "Mga 360° na panorama",
   "ai_immersive_feature_photos": "Mga 3D na larawan",
   "ai_immersive_feature_scenes": "Mga 3D na eksena",
+  "ai_immersive_frame_only_360": "Walang 360° tag, 2:1 na frame lang: tiyaking 360° na larawan ang bawat isa",
   "ai_immersive_free_space": "{free} ang bakante sa {drive}",
   "ai_immersive_glb_failed": "Hindi maisulat ang kopyang .glb: {message}",
   "ai_immersive_glb_saved": "Na-save sa {folder}: {name}",

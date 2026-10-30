@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "Ngā tirohanga whānui 360°",
   "ai_immersive_feature_photos": "Ngā whakaahua 3D",
   "ai_immersive_feature_scenes": "Ngā atamira 3D",
+  "ai_immersive_frame_only_360": "Kāore he tohu 360°, he anga 2:1 anake: tirohia he whakaahua 360° ia mea",
   "ai_immersive_free_space": "{free} e wātea ana i {drive}",
   "ai_immersive_glb_failed": "Kāore i taea te tuhi i te tārua .glb: {message}",
   "ai_immersive_glb_saved": "Kua penapenahia ki {folder}: {name}",

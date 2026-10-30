@@ -160,6 +160,7 @@
   "ai_immersive_feature_panoramas": "360° پینوراما",
   "ai_immersive_feature_photos": "3D تصاویر",
   "ai_immersive_feature_scenes": "3D مناظر",
+  "ai_immersive_frame_only_360": "کوئی 360° ٹیگ نہیں، صرف 2:1 فریم: جانچیں کہ ہر ایک 360° تصویر ہے",
   "ai_immersive_free_space": "{drive} پر {free} خالی",
   "ai_immersive_glb_failed": ".glb نقل لکھی نہیں جا سکی: {message}",
   "ai_immersive_glb_saved": "{folder} میں محفوظ: {name}",

@@ -553,6 +553,7 @@
   "ai_immersive_feature_panoramas": "360° பனோரமாக்கள்",
   "ai_immersive_feature_photos": "3D புகைப்படங்கள்",
   "ai_immersive_feature_scenes": "3D காட்சிகள்",
+  "ai_immersive_frame_only_360": "360° குறிச்சொல் இல்லை, 2:1 சட்டகம் மட்டும்: ஒவ்வொன்றும் 360° புகைப்படமா என்று சரிபார்க்கவும்",
   "ai_immersive_free_space": "{drive} இல் {free} காலி",
   "ai_immersive_glb_failed": ".glb நகலை எழுத முடியவில்லை: {message}",
   "ai_immersive_glb_saved": "{folder} இல் சேமிக்கப்பட்டது: {name}",

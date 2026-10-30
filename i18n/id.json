@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Panorama 360°",
   "ai_immersive_feature_photos": "Foto 3D",
   "ai_immersive_feature_scenes": "Adegan 3D",
+  "ai_immersive_frame_only_360": "Tanpa tag 360°, hanya bingkai 2:1: periksa bahwa masing-masing adalah foto 360°",
   "ai_immersive_free_space": "{free} kosong di {drive}",
   "ai_immersive_glb_failed": "Salinan .glb tidak dapat ditulis: {message}",
   "ai_immersive_glb_saved": "Disimpan di {folder}: {name}",

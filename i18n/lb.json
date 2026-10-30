@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "360°-Panoramaen",
   "ai_immersive_feature_photos": "3D-Fotoen",
   "ai_immersive_feature_scenes": "3D-Zeenen",
+  "ai_immersive_frame_only_360": "Keng 360°-Markéierung, just e 2:1-Format: kontrolléiert, ob all eenzelt e 360°-Foto ass",
   "ai_immersive_free_space": "{free} fräi op {drive}",
   "ai_immersive_glb_failed": "D'.glb-Kopie konnt net geschriwwe ginn: {message}",
   "ai_immersive_glb_saved": "Gespäichert an {folder}: {name}",

@@ -9,7 +9,14 @@
 // point 1): a flat photo for a 3D photo, a 3D scene or a 360° panorama; a 360° photo of a full sphere that holds one
 // eye, of the user or a panorama the app generated, for its 3D version. Whether a 2:1 frame is a full sphere is told
 // by its GPano crop too, which the dialog reads from a file of this computer (a phone panorama of 180° x 90° is
-// skipped, "Not a 360° photo", before its job would refuse it).
+// skipped, "Not a 360° photo", before its job would refuse it). A photo the 360° rules leave flat (no GPano tag, no
+// 360° camera in its exif, not viewed as 360° by the user) is taken by the 3D version of a 360° photo when its frame
+// is 2:1 within 1 %: many 360° photos carry no tag, and the user chose that type for it (30 October 2026, the
+// rooftop_night.jpg of FreeKC). The frame alone cannot tell such a photo from an 18:9 phone photo or two square eyes
+// side by side, so the plan names each one taken so, "No 360° tag, 2:1 frame only: check that each is a 360° photo";
+// two eyes still refuse it when our XMP in its head or its name tells them (as the viewer reads them), a half sphere
+// when the user picked one for it in a 360° viewer, a raw photo when the trailer of its file, or else the make of an
+// Insta360 camera the server gives, tells one.
 //
 // The dialog says what the conversion is ("Relief estimated by AI from a single photo") and that a finished one does
 // not guarantee a good result; installs the missing components (their name, size and licence, Download, a bar,
@@ -45,8 +52,9 @@
 // before Convert. "360° 3D panorama" is the 360° panorama with that box checked: two types and a box would say the
 // same thing twice.
 // The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo, and a
-// 360° photo of a whole sphere that holds one eye for its 3D version. With "Also save a .glb copy", each scene made
-// gets its .glb next to it (scene_glb_export.dart).
+// 360° photo of a whole sphere that holds one eye for its 3D version, by the rule of the plan (conversionSkipOf), a
+// photo of 2:1 nothing flags 360° among them. With "Also save a .glb copy", each scene made gets its .glb next to it
+// (scene_glb_export.dart).
 
 import 'dart:async';
 import 'dart:io';
@@ -89,6 +97,8 @@ import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
+import 'package:immich_mobile/domain/services/local_panorama.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart' show isSideBySideFrame;
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -97,8 +107,11 @@ import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoFile;
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -284,6 +297,27 @@ final conversionPartialSphereReaderProvider = Provider<ConversionPartialSphereRe
   },
 );
 
+/// What reading the file of a photo of this computer tells of it as a 360° photo, the way the scan of the device reads
+/// it (see probeLocalPanoramaFile): its GPano projection, the trailer of an Insta360 camera that tells a raw photo
+/// renamed .jpg from one the camera stitched, the exif of a 360° camera. Null for a photo of the server or of a share,
+/// and for a file that cannot be read now. The dialog reads it for a photo taken by its 2:1 frame alone, whose file the
+/// scan may not have reached yet (fix-stereo-360-pc review, m3).
+typedef ConversionFileProbe = Future<LocalPanoramaProbe?> Function(ConversionSource source, BaseAsset asset);
+
+final conversionFileProbeProvider = Provider<ConversionFileProbe>(
+  (ref) => (source, asset) async {
+    if (source is! LocalFileSource) {
+      return null;
+    }
+    try {
+      return await probeLocalPanoramaFile(source.path, isVideo: false, width: asset.width, height: asset.height);
+    } on Object catch (error) {
+      _log.fine('${asset.name} could not be read for a 360° projection: $error');
+      return null;
+    }
+  },
+);
+
 /// The features a choice of the dialog needs: that of [kind], and that of the 3D version of a panorama chained after it
 typedef AiChoiceFeatures = ({AiFeature feature, AiFeature? chained});
 
@@ -376,8 +410,8 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
 /// camera, its lenses not stitched, among them), holds two eyes already, is one of the versions the app made and of
-/// which kind, is an Apple spatial photo, how many quarter turns the user sees it with, and whether Immich holds edits
-/// of it that its original lacks
+/// which kind, is an Apple spatial photo, how many quarter turns the user sees it with, whether Immich holds edits of
+/// it that its original lacks, and the coverage of the sphere the user picked for it in a 360° viewer
 class ConversionPhotoFacts {
   const ConversionPhotoFacts({
     this.isPanorama = false,
@@ -388,6 +422,7 @@ class ConversionPhotoFacts {
     this.quarterTurns = 0,
     this.serverEdits = false,
     this.partialSphere = false,
+    this.coverage,
   });
 
   final bool isPanorama;
@@ -396,7 +431,8 @@ class ConversionPhotoFacts {
   /// equirectangular picture for a conversion
   final bool isRaw360;
 
-  /// Two eyes: side by side by its name and frame, or a version of ours that holds two (see versionHoldsTwoEyes)
+  /// Two eyes: side by side by its name and frame, by our XMP in its head (see flatStereoProvider), or a version of
+  /// ours that holds two (see versionHoldsTwoEyes)
   final bool isStereo;
 
   /// What the library knows of it when the app made it, null for any other photo
@@ -414,16 +450,28 @@ class ConversionPhotoFacts {
   /// has no sphere to go around for its 3D version. Read by the dialog from the file, once it knows where it is.
   final bool partialSphere;
 
+  /// The coverage of the sphere the user picked for it in a 360° viewer (sphereCoverageOverrideProvider), which wins
+  /// over the guess from its name as it does in the viewers; null when the user never picked one
+  final SphereCoverage? coverage;
+
   /// The same facts, of a photo whose GPano crop leaves part of the sphere out or not
-  ConversionPhotoFacts withPartialSphere(bool partial) => ConversionPhotoFacts(
-    isPanorama: isPanorama,
-    isRaw360: isRaw360,
+  ConversionPhotoFacts withPartialSphere(bool partial) => _copy(partialSphere: partial);
+
+  /// The same facts, with what reading its file told the way the scan of the device reads it (see
+  /// conversionFileProbeProvider): a 360° projection, or the trailer of a raw Insta360 photo
+  ConversionPhotoFacts withFileRead({required bool isPanorama, required bool isRaw360}) =>
+      _copy(isPanorama: isPanorama, isRaw360: isRaw360);
+
+  ConversionPhotoFacts _copy({bool? isPanorama, bool? isRaw360, bool? partialSphere}) => ConversionPhotoFacts(
+    isPanorama: isPanorama ?? this.isPanorama,
+    isRaw360: isRaw360 ?? this.isRaw360,
     isStereo: isStereo,
     version: version,
     isSpatial: isSpatial,
     quarterTurns: quarterTurns,
     serverEdits: serverEdits,
-    partialSphere: partial,
+    partialSphere: partialSphere ?? this.partialSphere,
+    coverage: coverage,
   );
 }
 
@@ -434,9 +482,10 @@ typedef ConversionFactsReader = Future<ConversionPhotoFacts> Function(BaseAsset 
 const _factsWait = Duration(seconds: 10);
 
 /// The facts as the viewers know them: the 360° rules, the index of the library and the rule of the name and frame
-/// for two eyes side by side, the Apple spatial probe for a HEIF photo, the turns the viewer draws and the rotation of
-/// the edits of Immich. The providers that read a file are listened to while they do, so that they live until they
-/// answer. Outside the viewer nothing else keeps the turns and the 360° rules: read at once they would say "no turn"
+/// for two eyes side by side, our XMP in the head of a photo those rules leave flat (as the viewer of a computer reads
+/// it to show it in 3D), the Apple spatial probe for a HEIF photo, the turns the viewer draws and the rotation of the
+/// edits of Immich, and the coverage of the sphere the user picked. The providers that read a file are listened to
+/// while they do, so that they live until they answer. Outside the viewer nothing else keeps the turns and the 360° rules: read at once they would say "no turn"
 /// and "flat" while the exif of a photo of the server, or the stereo check of a HEIF one, still loads; so they are
 /// listened to from the start and read once those answered.
 final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
@@ -462,12 +511,13 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
         _log.fine('The versions of the library are not known: $error');
       }
       final version = localId == null ? null : versions[localId];
-      final isStereo =
+      var isStereo =
           (version != null && versionHoldsTwoEyes(version)) ||
           decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null;
+      String? make;
       if (asset.hasRemote) {
         try {
-          await answer(assetExifProvider(asset).future).timeout(_factsWait);
+          make = (await answer(assetExifProvider(asset).future).timeout(_factsWait))?.make;
         } catch (error) {
           _log.fine('The exif of ${asset.name} is not known: $error');
         }
@@ -480,6 +530,15 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
           _log.fine('${asset.name} could not be read for a spatial photo: $error');
         }
       }
+      final isPanorama = panorama.read();
+      // One of our 3D photos renamed, which only our XMP tells: its head is read as the viewer reads it
+      if (!isStereo && !isPanorama && FlatStereoService.isCandidate(asset)) {
+        try {
+          isStereo = await answer(flatStereoProvider(asset).future).timeout(_factsWait) != null;
+        } catch (error) {
+          _log.fine('${asset.name} could not be read for two eyes side by side: $error');
+        }
+      }
       final remoteId = asset.remoteId;
       final serverEdits = asset.isEdited && remoteId != null;
       var editTurns = 0;
@@ -490,14 +549,20 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
           _log.warning('The edits of ${asset.name} could not be read: $error');
         }
       }
+      final scanned = fileReadByScan(
+        asset,
+        library: ref.read(localPanoramaAssetsProvider),
+        opened: ref.read(openedFilePanoramasProvider),
+      );
       return ConversionPhotoFacts(
-        isPanorama: panorama.read(),
-        isRaw360: raw.read() != null,
+        isPanorama: isPanorama,
+        isRaw360: raw.read() != null || (!isPanorama && !scanned && mayBeRawInsta360(make)),
         isStereo: isStereo,
         version: version,
         isSpatial: isSpatial,
         quarterTurns: normalizeQuarterTurns(turns.read() + editTurns),
         serverEdits: serverEdits,
+        coverage: ref.read(sphereCoverageOverridesProvider.notifier).get(asset),
       );
     } finally {
       turns.close();
@@ -607,6 +672,7 @@ class ConversionCandidate {
     this.serverEdits = false,
     this.id,
     this.generated = false,
+    this.byFrame = false,
   });
 
   final BaseAsset asset;
@@ -617,6 +683,10 @@ class ConversionCandidate {
 
   /// A panorama the app generated: its 3D version is said as generated too
   final bool generated;
+
+  /// Taken for the 3D version of a 360° photo by its 2:1 frame alone, nothing in it flagging 360° (see
+  /// isEquirectFrame): the plan names it, to be checked
+  final bool byFrame;
 
   /// Edited in Immich: its edits, the rotation aside, are not in its 3D photo
   final bool serverEdits;
@@ -636,8 +706,12 @@ bool versionHoldsTwoEyes(IndexedVersion version) => switch (version.kind) {
 
 /// The reason to skip [asset] for a version of [kind] known before anything runs, from its [facts], null when it is
 /// converted. A 3D photo, a 3D scene and a 360° panorama are made from a flat photo; the 3D version of a 360° photo from
-/// a 360° photo of a full sphere that holds one eye, a photo of the user or a panorama the app generated. [linux]: no
-/// decoder for HEIF and AVIF there.
+/// a 360° photo of a full sphere that holds one eye, a photo of the user or a panorama the app generated. A photo the
+/// 360° rules leave flat is one for that type when its frame is that of a whole sphere (see [isEquirectFrame]): many
+/// 360° photos carry no GPano tag (a stitcher, an editor, a download), and the user chose the type for it; the plan
+/// says so under the type (see [ConversionCandidate.byFrame]). The coverage of the sphere is the one the user picked in a
+/// 360° viewer, else the guess from the name and frame, as the viewers take it. [linux]: no decoder for HEIF and AVIF
+/// there.
 ConversionSkipReason? conversionSkipOf(
   BaseAsset asset,
   ConversionPhotoFacts facts, {
@@ -648,9 +722,10 @@ ConversionSkipReason? conversionSkipOf(
     return ConversionSkipReason.video;
   }
   final halfSphere =
-      guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height) == SphereCoverage.half;
+      (facts.coverage ?? guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height)) ==
+      SphereCoverage.half;
   if (kind == ConversionKind.stereoPanoramaFromPanorama) {
-    if (!facts.isPanorama) {
+    if (!facts.isPanorama && !isEquirectFrame(asset.width, asset.height)) {
       return ConversionSkipReason.notSphere;
     }
     if (halfSphere) {
@@ -689,6 +764,32 @@ ConversionSkipReason? conversionSkipOf(
   }
   return null;
 }
+
+/// Whether a photo the 360° rules leave flat, of the camera [make] its exif names, may be the raw photo of an Insta360
+/// camera renamed .jpg: its stitched photos have the same make and the same 2:1 frame, and only the trailer of the
+/// file, which the exif of the server does not hold, tells them apart (see hasEquirectCameraExifProvider). Its 3D
+/// version is refused as a raw photo, two fisheye circles giving no relief, until the user views it as 360°. Asked
+/// only while the scan of this computer has not read its file (see [fileReadByScan]): once it has, its trailer told.
+bool mayBeRawInsta360(String? make) => make?.trim().toLowerCase() == 'arashi vision';
+
+/// Whether the scan of this computer read the file of [asset]: a file of the library ([library], the records of
+/// localPanoramaAssetsProvider) or one opened with the program ([opened]). What it found, a raw photo by the trailer
+/// of an Insta360 camera included, is then in the 360° rules.
+bool fileReadByScan(
+  BaseAsset asset, {
+  required Map<String, LocalPanoramaRecord> library,
+  required Map<String, LocalPanoramaRecord> opened,
+}) {
+  final localId = asset.localId;
+  return localId != null && (library.containsKey(localId) || opened.containsKey(localId));
+}
+
+/// Whether a photo of [width] x [height] that nothing flags 360° has the frame of a whole sphere: 2:1 within 1 %, as
+/// a stitcher writes it, the rule the viewers take for the equirect photo of a 360° camera (isEquirectCameraPhoto);
+/// false when the size is not known. A landscape screenshot of 19.5:9 or a 16:9 photo is none; an 18:9 phone photo or
+/// screenshot, or two square eyes side by side under a plain name, has that frame too: the plan names each photo taken
+/// so, to be checked (see [ConversionCandidate.byFrame]).
+bool isEquirectFrame(int? width, int? height) => isSideBySideFrame(width, height) ?? false;
 
 /// A frame of 2:1 within 10 %, an equirectangular picture of the whole sphere; true when the size is not known (the
 /// engine checks the picture it decodes)
@@ -753,6 +854,10 @@ final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, a
       decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null) {
     return false;
   }
+  // One of our 3D photos renamed, which the viewer shows in 3D by our XMP: the plan skips it too
+  if (FlatStereoService.isCandidate(asset) && ref.watch(flatStereoProvider(asset)).valueOrNull != null) {
+    return false;
+  }
   if (isHeifName(asset.name)) {
     final spatial = ref.watch(appleSpatialInfoProvider(asset));
     // A check that failed tells nothing: the entry stays
@@ -765,17 +870,33 @@ final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, a
 
 /// Whether [asset] may get its 3D version (design-final 2026-10-27, sections 4.4 and 9.1): a 360° photo of a full
 /// sphere that holds one eye, of the user or a panorama the app generated, which this system can read; never a raw
-/// photo of a 360° camera, a VR180 or 3D one, nor another version of ours
+/// photo of a 360° camera, a VR180 or 3D one, nor another version of ours. The rule of the dialog (conversionSkipOf)
+/// with the facts the dialog reads (conversionFactsReaderProvider), so that the entry and the plan agree: a photo the
+/// 360° rules leave flat whose frame is that of a whole sphere is one too, unless our XMP or its name tells two eyes,
+/// or the user picked a half sphere for it in a 360° viewer.
 final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
-  if (!asset.isImage || !ref.watch(isPanoramaProvider(asset))) {
+  if (!asset.isImage) {
     return false;
   }
   final version = _versionOf(ref, asset);
+  final isPanorama = ref.watch(isPanoramaProvider(asset));
+  final make = ref.watch(assetExifProvider(asset).select((exif) => exif.valueOrNull?.make));
+  final localId = asset.localId;
+  final scanned =
+      localId != null &&
+      (ref.watch(localPanoramaAssetsProvider.select((records) => records.containsKey(localId))) ||
+          ref.watch(openedFilePanoramasProvider.select((records) => records.containsKey(localId))));
+  final ours =
+      !isPanorama && FlatStereoService.isCandidate(asset) && ref.watch(flatStereoProvider(asset)).valueOrNull != null;
   final facts = ConversionPhotoFacts(
-    isPanorama: true,
-    isRaw360: ref.watch(rawMediaKindProvider(asset)) != null,
-    isStereo: version != null && versionHoldsTwoEyes(version),
+    isPanorama: isPanorama,
+    isRaw360: ref.watch(rawMediaKindProvider(asset)) != null || (!isPanorama && !scanned && mayBeRawInsta360(make)),
+    isStereo:
+        (version != null && versionHoldsTwoEyes(version)) ||
+        decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null ||
+        ours,
     version: version,
+    coverage: ref.watch(sphereCoverageOverrideProvider(asset)),
   );
   return conversionSkipOf(asset, facts, kind: ConversionKind.stereoPanoramaFromPanorama) == null;
 });
@@ -967,12 +1088,22 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final facts = ref.read(conversionFactsReaderProvider);
     final files = ref.read(conversionAssetFilesProvider);
     final partial = ref.read(conversionPartialSphereReaderProvider);
+    final probe = ref.read(conversionFileProbeProvider);
     final photos = <_Photo>[];
     for (final asset in widget.assets) {
       var known = await facts(asset);
       final taken = _offered.any((kind) => conversionSkipOf(asset, known, kind: kind) == null);
       final found = taken ? await files.locate(asset) : null;
-      if (known.isPanorama && found != null) {
+      final byFrame = !known.isPanorama && isEquirectFrame(asset.width, asset.height);
+      // One taken by its frame for its 3D version, which the scan may not have read yet: its file says what the scan
+      // would, a GPano projection or the trailer of a raw Insta360 photo, over the make the server gives
+      if (found != null && byFrame) {
+        if (await probe(found.source, asset) case final read?) {
+          known = known.withFileRead(isPanorama: read.isPanorama, isRaw360: read.raw360);
+        }
+      }
+      // A 360° photo, or one taken by its frame: its GPano crop may leave part of the sphere out
+      if (found != null && (known.isPanorama || byFrame)) {
         known = known.withPartialSphere(await partial(found.source));
       }
       photos.add(_Photo(asset, known, found));
@@ -1045,6 +1176,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           serverEdits: photo.facts.serverEdits,
           id: 'photo-$index',
           generated: photo.facts.version?.kind == ImmersiveKind.panorama360,
+          byFrame: kind == ConversionKind.stereoPanoramaFromPanorama && !photo.facts.isPanorama,
         ),
   ];
 
@@ -1725,7 +1857,8 @@ class _NetworkQuestion extends StatelessWidget {
 }
 
 /// What will be done with each photo of the selection: for a mixed one, the photos the type makes, under its name;
-/// then the photos skipped, each with why
+/// the photos taken for the 3D version of a 360° photo by their 2:1 frame alone, to be checked; then the photos
+/// skipped, each with why
 class _PlanList extends StatelessWidget {
   const _PlanList({required this.candidates, required this.kindName});
 
@@ -1741,6 +1874,7 @@ class _PlanList extends StatelessWidget {
     final secondary = TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant);
     final title = Theme.of(context).textTheme.titleSmall;
     final runs = candidates.where((candidate) => candidate.runs).toList();
+    final byFrame = runs.where((candidate) => candidate.byFrame).toList();
     final skipped = candidates.where((candidate) => !candidate.runs).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1754,6 +1888,17 @@ class _PlanList extends StatelessWidget {
               Text('$kindName (${runs.length})', style: title),
               for (final candidate in runs.take(_listed)) Text(candidate.asset.name, style: secondary),
               if (runs.length > _listed) Text('…', style: secondary),
+            ],
+          ),
+        if (byFrame.isNotEmpty)
+          Column(
+            key: const Key('ai_conversion_by_frame'),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8),
+              Text('${t.ai_immersive_frame_only_360} (${byFrame.length})', style: title),
+              for (final candidate in byFrame.take(_listed)) Text(candidate.asset.name, style: secondary),
+              if (byFrame.length > _listed) Text('…', style: secondary),
             ],
           ),
         if (skipped.isNotEmpty)

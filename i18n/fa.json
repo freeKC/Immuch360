@@ -596,6 +596,7 @@
   "ai_immersive_feature_panoramas": "پانوراماهای 360°",
   "ai_immersive_feature_photos": "عکس‌های 3D",
   "ai_immersive_feature_scenes": "صحنه‌های 3D",
+  "ai_immersive_frame_only_360": "بدون برچسب 360°، فقط قاب 2:1: بررسی کنید که هر کدام عکس 360° باشد",
   "ai_immersive_free_space": "{free} آزاد روی {drive}",
   "ai_immersive_glb_failed": "نسخهٔ .glb نوشته نشد: {message}",
   "ai_immersive_glb_saved": "در {folder} ذخیره شد: {name}",

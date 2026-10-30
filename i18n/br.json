@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "Panoramaoù 360°",
   "ai_immersive_feature_photos": "Luc'hskeudennoù 3D",
   "ai_immersive_feature_scenes": "Leurennoù 3D",
+  "ai_immersive_frame_only_360": "Tikedenn 360° ebet, stern 2:1 hepken: gwiriit ez eo pep hini ul luc'hskeudenn 360°",
   "ai_immersive_free_space": "{free} dieub war {drive}",
   "ai_immersive_glb_failed": "N'eus ket bet gallet skrivañ an eilskouerenn .glb: {message}",
   "ai_immersive_glb_saved": "Enrollet e {folder}: {name}",

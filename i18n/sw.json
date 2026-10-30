@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "Panorama za 360°",
   "ai_immersive_feature_photos": "Picha za 3D",
   "ai_immersive_feature_scenes": "Mandhari za 3D",
+  "ai_immersive_frame_only_360": "Hakuna lebo ya 360°, fremu ya 2:1 pekee: hakikisha kila moja ni picha ya 360°",
   "ai_immersive_free_space": "{free} ziko wazi kwenye {drive}",
   "ai_immersive_glb_failed": "Nakala ya .glb haikuweza kuandikwa: {message}",
   "ai_immersive_glb_saved": "Imehifadhiwa katika {folder}: {name}",

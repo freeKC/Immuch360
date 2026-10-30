@@ -596,6 +596,7 @@
   "ai_immersive_feature_panoramas": "พาโนรามา 360°",
   "ai_immersive_feature_photos": "ภาพ 3D",
   "ai_immersive_feature_scenes": "ฉาก 3D",
+  "ai_immersive_frame_only_360": "ไม่มีแท็ก 360° มีเพียงกรอบ 2:1: ตรวจสอบว่าแต่ละรูปเป็นรูปภาพ 360°",
   "ai_immersive_free_space": "ว่าง {free} บน {drive}",
   "ai_immersive_glb_failed": "เขียนสำเนา .glb ไม่ได้: {message}",
   "ai_immersive_glb_saved": "บันทึกไว้ใน {folder}: {name}",

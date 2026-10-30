@@ -359,6 +359,7 @@
   "ai_immersive_feature_panoramas": "360°-panorama",
   "ai_immersive_feature_photos": "3D-bilete",
   "ai_immersive_feature_scenes": "3D-scener",
+  "ai_immersive_frame_only_360": "Ingen 360°-merking, berre 2:1-format: sjekk at kvart er eit 360°-bilete",
   "ai_immersive_free_space": "{free} ledig på {drive}",
   "ai_immersive_glb_failed": ".glb-kopien kunne ikkje skrivast: {message}",
   "ai_immersive_glb_saved": "Lagra i {folder}: {name}",

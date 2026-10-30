@@ -180,6 +180,7 @@
   "ai_immersive_feature_panoramas": "ផាណូរ៉ាម៉ា 360°",
   "ai_immersive_feature_photos": "រូបថត 3D",
   "ai_immersive_feature_scenes": "ឈុតឆាក 3D",
+  "ai_immersive_frame_only_360": "គ្មានស្លាក 360° មានតែស៊ុម 2:1: ពិនិត្យថានីមួយៗជារូបថត 360°",
   "ai_immersive_free_space": "ទំនេរ {free} នៅលើ {drive}",
   "ai_immersive_glb_failed": "មិនអាចសរសេរច្បាប់ចម្លង .glb បានទេ៖ {message}",
   "ai_immersive_glb_saved": "បានរក្សាទុកក្នុង {folder}៖ {name}",

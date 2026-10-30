@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Ảnh toàn cảnh 360°",
   "ai_immersive_feature_photos": "Ảnh 3D",
   "ai_immersive_feature_scenes": "Cảnh 3D",
+  "ai_immersive_frame_only_360": "Không có thẻ 360°, chỉ có khung 2:1: hãy kiểm tra từng ảnh có phải ảnh 360° không",
   "ai_immersive_free_space": "Còn trống {free} trên {drive}",
   "ai_immersive_glb_failed": "Không thể ghi bản .glb: {message}",
   "ai_immersive_glb_saved": "Đã lưu trong {folder}: {name}",

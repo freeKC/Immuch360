@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "360°-Panoramen",
   "ai_immersive_feature_photos": "3D-Fotos",
   "ai_immersive_feature_scenes": "3D-Szena",
+  "ai_immersive_frame_only_360": "Koi 360°-Markierong, bloß a 2:1-Format: Guck, ob jeds a 360°-Foto isch",
   "ai_immersive_free_space": "{free} frei auf {drive}",
   "ai_immersive_glb_failed": "D .glb-Kopie hot ned gschrieba werra kenna: {message}",
   "ai_immersive_glb_saved": "Gspeichert en {folder}: {name}",

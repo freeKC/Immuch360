@@ -6,6 +6,8 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
@@ -26,14 +28,18 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
+import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
@@ -45,6 +51,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:openapi/api.dart' show RotateParameters;
 import 'package:path/path.dart' as p;
 
+import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
+import '../../../fixtures/raw/insta360.stub.dart';
 import '../../../service.mocks.dart';
 import '../../../unit/factories/local_asset_factory.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
@@ -65,9 +73,14 @@ class _ReadOnly extends ReadOnlyModeNotifier {
   bool build() => false;
 }
 
+/// What the scan of the device read, by id on the device
 class _Records extends LocalPanoramaAssets {
+  _Records(this.records);
+
+  final Map<String, LocalPanoramaRecord> records;
+
   @override
-  Map<String, LocalPanoramaRecord> build() => const {};
+  Map<String, LocalPanoramaRecord> build() => records;
 }
 
 class _Sources extends NetworkSourcesNotifier {
@@ -77,6 +90,9 @@ class _Sources extends NetworkSourcesNotifier {
 
 const _flatExif = ExifInfo(width: 4000, height: 3000, make: 'Canon', model: 'EOS');
 const _sphereExif = ExifInfo(width: 8000, height: 4000, projectionType: ProjectionType.equirectangular);
+
+/// The exif of a 360° photo without GPano tags nor a 360° camera, as the server gives it: no projection
+const _plainSphereExif = ExifInfo(width: 8192, height: 4096);
 
 const _pair = HeicStereoPair(
   primaryItemId: 1,
@@ -111,13 +127,18 @@ void main() {
   /// A container where the exif of each asset of [exif] comes a moment later (an asset of the server not in it has its
   /// exif still loading), the stereo check of each HEIF photo of [spatial] answers as given, the signed in user is
   /// [_userId] on a server that takes edits, [edits] are the edits of Immich by remote id, and [versions] the versions
-  /// the library knows
+  /// the library knows; [records] what the scan of the device read, by id on the device; [heads] the files of the
+  /// device and [serverHeads] the originals of the server, by remote id, whose heads the check of two eyes side by
+  /// side reads (see flatStereoProvider), nothing else being read
   ProviderContainer createContainer({
     Map<BaseAsset, ExifInfo?> exif = const {},
     Map<BaseAsset, Future<AppleSpatialInfo?>> spatial = const {},
     Map<String, List<AssetEdit>> edits = const {},
     Map<String, IndexedVersion> versions = const {},
     Set<BaseAsset> panoramas = const {},
+    Map<String, LocalPanoramaRecord> records = const {},
+    Map<String, File> heads = const {},
+    Map<String, Uint8List> serverHeads = const {},
   }) {
     final users = MockUserService();
     when(users.tryGetMyUser).thenReturn(UserFactory.createDto(id: _userId));
@@ -128,7 +149,20 @@ void main() {
         serverInfoProvider.overrideWith((ref) => _ServerInfo()),
         currentUserProvider.overrideWith((ref) => CurrentUserProvider(users)),
         readonlyModeProvider.overrideWith(_ReadOnly.new),
-        localPanoramaAssetsProvider.overrideWith(_Records.new),
+        localPanoramaAssetsProvider.overrideWith(() => _Records(records)),
+        flatStereoServiceProvider.overrideWithValue(
+          FlatStereoService(
+            localFile: (localId) async => heads[localId],
+            serverReader: (remoteId) => switch (serverHeads[remoteId]) {
+              final bytes? => (offset, length) async => Uint8List.sublistView(
+                bytes,
+                math.min(offset, bytes.length),
+                math.min(offset + length, bytes.length),
+              ),
+              null => null,
+            },
+          ),
+        ),
         networkSourcesProvider.overrideWith(_Sources.new),
         viewRotationAssetIdsProvider.overrideWithValue((_) async => null),
         viewRotationServerProvider.overrideWithValue(
@@ -366,6 +400,210 @@ void main() {
       },
     );
 
+    test('a 2:1 photo nothing flags 360°, from each source, is offered its 3D version beside the flat kinds', () async {
+      // As FreeKC's rooftop_night.jpg (8192 x 4096, no GPano tag): a file of the library, a photo of the server, the
+      // two at once, a file opened with the program whose reading found no 360° projection
+      final library = local('library', 'rooftop_night.jpg', 8192, 4096);
+      final server = RemoteAssetFactory.create(ownerId: _userId, name: 'dawn.jpg', width: 8192, height: 4096);
+      final merged = RemoteAssetFactory.create(
+        ownerId: _userId,
+        name: 'rooftop.jpg',
+        width: 8192,
+        height: 4096,
+        localId: 'local-rooftop',
+      );
+      final opened = local('opened-1', 'carte.jpg', 6080, 3040);
+      final container = createContainer(exif: {server: _plainSphereExif, merged: _plainSphereExif});
+      container.read(openedFilePanoramasProvider.notifier).addAll({
+        'opened-1': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2026, 10, 30)),
+      });
+      final read = container.read(conversionFactsReaderProvider);
+
+      for (final asset in [library, server, merged, opened]) {
+        expect(await says(container, aiMonoPanoramaProvider(asset)), isTrue, reason: asset.name);
+        for (final kind in ConversionKind.values) {
+          expect(
+            await says(container, aiSourceProvider((asset: asset, kind: kind))),
+            isTrue,
+            reason: '${asset.name} ${kind.name}',
+          );
+        }
+        // The dialog reads the same: flat for the 360° rules, taken by the type of the 3D version
+        final facts = await read(asset);
+        expect(facts.isPanorama, isFalse, reason: asset.name);
+        expect(
+          conversionSkipOf(asset, facts, kind: ConversionKind.stereoPanoramaFromPanorama),
+          isNull,
+          reason: asset.name,
+        );
+      }
+      // A 4:3 photo is still no sphere
+      final flat = local('flat', 'salon.jpg', 4000, 3000);
+      expect(await says(container, aiMonoPanoramaProvider(flat)), isFalse);
+    });
+
+    test('viewed as 360° by the user, it gets its 3D version only, and the dialog reads it so', () async {
+      final rooftop = local('library', 'rooftop_night.jpg', 8192, 4096);
+      final server = RemoteAssetFactory.create(ownerId: _userId, name: 'dawn.jpg', width: 8192, height: 4096);
+      await store.put(StoreKey.forcedPanoramaAssets, '["library","${server.id}"]');
+      final container = createContainer(exif: {server: _plainSphereExif});
+      final read = container.read(conversionFactsReaderProvider);
+
+      for (final asset in [rooftop, server]) {
+        for (final kind in ConversionKind.values) {
+          expect(
+            await says(container, aiSourceProvider((asset: asset, kind: kind))),
+            kind == ConversionKind.stereoPanoramaFromPanorama,
+            reason: '${asset.name} ${kind.name}',
+          );
+        }
+        final facts = await read(asset);
+        expect(facts.isPanorama, isTrue, reason: asset.name);
+        expect(conversionSkipOf(asset, facts), ConversionSkipReason.sphere360, reason: asset.name);
+      }
+    });
+
+    test('an Insta360 photo of the server nothing flags 360° may be a raw one renamed: refused as raw', () async {
+      // The make of the stitched photos of the camera, and their frame: only the trailer of the file, which the server
+      // does not hold, tells a raw one renamed .jpg. Viewed as 360° by the user, it is a stitched one.
+      const insta360 = ExifInfo(width: 6080, height: 3040, make: 'Arashi Vision', model: 'Insta360 X4');
+      final renamed = RemoteAssetFactory.create(ownerId: _userId, name: 'IMG_1.jpg', width: 6080, height: 3040);
+      final viewed = RemoteAssetFactory.create(ownerId: _userId, name: 'IMG_2.jpg', width: 6080, height: 3040);
+      await store.put(StoreKey.forcedPanoramaAssets, '["${viewed.id}"]');
+      final container = createContainer(exif: {renamed: insta360, viewed: insta360});
+      final read = container.read(conversionFactsReaderProvider);
+      const ofPanorama = ConversionKind.stereoPanoramaFromPanorama;
+
+      expect(await says(container, aiMonoPanoramaProvider(renamed)), isFalse);
+      final facts = await read(renamed);
+      expect((facts.isPanorama, facts.isRaw360), (false, true));
+      expect(conversionSkipOf(renamed, facts, kind: ofPanorama), ConversionSkipReason.raw360);
+
+      expect(await says(container, aiMonoPanoramaProvider(viewed)), isTrue);
+      final ofViewed = await read(viewed);
+      expect((ofViewed.isPanorama, ofViewed.isRaw360), (true, false));
+      expect(conversionSkipOf(viewed, ofViewed, kind: ofPanorama), isNull);
+    });
+
+    test(
+      'a 2:1 photo whose head holds our XMP is one of our 3D photos renamed: two eyes, as the viewer shows it',
+      () async {
+        // Our 3D photo of a square photo (two eyes of 3000 x 3000), renamed: neither its name nor the index of the library
+        // tells it, our XMP does, which the viewer of a computer reads to show it in 3D (fix-stereo-360-pc review, M1). A
+        // file of the library and an original of the server alike.
+        final directory = Directory.systemTemp.createTempSync('conversion_facts');
+        addTearDown(() => directory.deleteSync(recursive: true));
+        File write(String name, Uint8List bytes) => File(p.join(directory.path, name))..writeAsBytesSync(bytes);
+        final ours = jpegFile(width: 6000, height: 3000, xmp: ourXmp(eyeWidth: 3000, eyeHeight: 3000));
+        final library = local('square', 'square_3D.jpg', 6000, 3000);
+        final server = RemoteAssetFactory.create(ownerId: _userId, name: 'square_3D.jpg', width: 6000, height: 3000);
+        // Two square eyes side by side under a plain name, no XMP: nothing in it tells them, the plan names it to check
+        final plain = local('plain', 'IMG_0001.jpg', 4000, 2000);
+        final container = createContainer(
+          exif: {server: const ExifInfo(width: 6000, height: 3000)},
+          heads: {
+            'square': write('square_3D.jpg', ours),
+            'plain': write('IMG_0001.jpg', jpegFile(width: 4000, height: 2000)),
+          },
+          serverHeads: {server.id: ours},
+        );
+        final read = container.read(conversionFactsReaderProvider);
+
+        for (final asset in [library, server]) {
+          expect(await says(container, aiMonoPanoramaProvider(asset)), isFalse, reason: asset.name);
+          expect(
+            await says(container, aiFlatPhotoProvider(asset)),
+            isFalse,
+            reason: '${asset.name}: no 3D photo of it',
+          );
+          final facts = await read(asset);
+          expect((facts.isPanorama, facts.isStereo), (false, true), reason: asset.name);
+          for (final kind in ConversionKind.values) {
+            expect(
+              conversionSkipOf(asset, facts, kind: kind),
+              ConversionSkipReason.alreadyStereo,
+              reason: '${asset.name} ${kind.name}',
+            );
+          }
+        }
+        expect(await says(container, aiMonoPanoramaProvider(plain)), isTrue);
+        final ofPlain = await read(plain);
+        expect(ofPlain.isStereo, isFalse);
+        expect(conversionSkipOf(plain, ofPlain, kind: ConversionKind.stereoPanoramaFromPanorama), isNull);
+      },
+    );
+
+    test('a 360° photo named for two eyes side by side is refused as two eyes, by the entry as by the plan', () async {
+      final beach = RemoteAssetFactory.create(ownerId: _userId, name: 'beach_LR.jpg', width: 8000, height: 4000);
+      final container = createContainer(exif: {beach: _sphereExif});
+
+      expect(await says(container, aiMonoPanoramaProvider(beach)), isFalse);
+      final facts = await container.read(conversionFactsReaderProvider)(beach);
+      expect((facts.isPanorama, facts.isStereo), (true, true));
+      expect(
+        conversionSkipOf(beach, facts, kind: ConversionKind.stereoPanoramaFromPanorama),
+        ConversionSkipReason.alreadyStereo,
+      );
+    });
+
+    test('the coverage the user picked in a 360° viewer holds: a half sphere is VR180, a whole one is not', () async {
+      final rooftop = local('library', 'rooftop_night.jpg', 8192, 4096);
+      final trip = RemoteAssetFactory.create(ownerId: _userId, name: 'trip_180.jpg', width: 8000, height: 4000);
+      final container = createContainer(exif: {trip: _sphereExif});
+      final coverages = container.read(sphereCoverageOverridesProvider.notifier);
+      await coverages.set(rooftop, SphereCoverage.half);
+      await coverages.set(trip, SphereCoverage.full);
+      final read = container.read(conversionFactsReaderProvider);
+      const ofPanorama = ConversionKind.stereoPanoramaFromPanorama;
+
+      expect(await says(container, aiMonoPanoramaProvider(rooftop)), isFalse);
+      final ofRooftop = await read(rooftop);
+      expect(ofRooftop.coverage, SphereCoverage.half);
+      expect(conversionSkipOf(rooftop, ofRooftop, kind: ofPanorama), ConversionSkipReason.vr180);
+
+      expect(
+        await says(container, aiMonoPanoramaProvider(trip)),
+        isTrue,
+        reason: 'named VR180, a whole sphere for the user',
+      );
+      final ofTrip = await read(trip);
+      expect(ofTrip.coverage, SphereCoverage.full);
+      expect(conversionSkipOf(trip, ofTrip, kind: ofPanorama), isNull);
+    });
+
+    test('an Insta360 photo whose file the scan read is not refused for the make the server gives', () async {
+      // In a folder of the library and on the server: the scan read its file and found no trailer of a raw photo
+      const insta360 = ExifInfo(width: 6080, height: 3040, make: 'Arashi Vision', model: 'Insta360 X4');
+      final read360 = RemoteAssetFactory.create(
+        ownerId: _userId,
+        name: 'IMG_3.jpg',
+        width: 6080,
+        height: 3040,
+        localId: 'local-read',
+      );
+      final unread = RemoteAssetFactory.create(
+        ownerId: _userId,
+        name: 'IMG_4.jpg',
+        width: 6080,
+        height: 3040,
+        localId: 'local-unread',
+      );
+      final container = createContainer(
+        exif: {read360: insta360, unread: insta360},
+        records: {'local-read': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2026, 10, 30))},
+      );
+      final read = container.read(conversionFactsReaderProvider);
+      const ofPanorama = ConversionKind.stereoPanoramaFromPanorama;
+
+      expect(await says(container, aiMonoPanoramaProvider(read360)), isTrue);
+      final facts = await read(read360);
+      expect((facts.isPanorama, facts.isRaw360), (false, false));
+      expect(conversionSkipOf(read360, facts, kind: ofPanorama), isNull);
+      // Its file not read yet: the make tells, until the dialog reads the file it found
+      expect(await says(container, aiMonoPanoramaProvider(unread)), isFalse);
+      expect((await read(unread)).isRaw360, isTrue);
+    });
+
     test('never a 3D one, a VR180 one, a raw one, nor another version of ours', () async {
       final stacked = RemoteAssetFactory.create(ownerId: _userId, name: 'stacked.jpg', width: 4096, height: 4096);
       final vr180 = RemoteAssetFactory.create(ownerId: _userId, name: 'trip_180.jpg', width: 8000, height: 4000);
@@ -386,6 +624,65 @@ void main() {
       }
       expect(await says(container, aiFlatPhotoProvider(scene)), isFalse, reason: 'a version of ours');
     });
+  });
+
+  test('the file of a photo taken by its frame tells a raw Insta360 photo, a GPano projection, or nothing', () async {
+    final directory = Directory.systemTemp.createTempSync('conversion_probe');
+    addTearDown(() => directory.deleteSync(recursive: true));
+    String write(String name, Uint8List bytes) {
+      final path = p.join(directory.path, name);
+      File(path).writeAsBytesSync(bytes);
+      return path;
+    }
+
+    LocalAsset photo(String name, int width, int height) => LocalAsset(
+      id: name,
+      name: name,
+      type: AssetType.image,
+      createdAt: DateTime(2026, 10, 30),
+      updatedAt: DateTime(2026, 10, 30),
+      width: width,
+      height: height,
+      playbackStyle: AssetPlaybackStyle.image,
+      isEdited: false,
+    );
+
+    // A raw photo renamed .jpg, of a folder the scan has not reached: only the trailer of its file tells it
+    final raw = write(
+      'IMG_2.jpg',
+      insta360File([
+        insta360Record(1, x3Metadata(), format: 1),
+      ], body: jpegFile(width: 6080, height: 3040, dataLength: 200000)),
+    );
+    final tagged = write('PANO_1.jpg', jpegFile(width: 8192, height: 4096, segments: [gpanoSegment()]));
+    final plain = write('rooftop_night.jpg', jpegFile(width: 8192, height: 4096));
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final probe = container.read(conversionFileProbeProvider);
+
+    expect(await probe(LocalFileSource(raw), photo('IMG_2.jpg', 6080, 3040)), (
+      isPanorama: true,
+      halfSphere: null,
+      raw360: true,
+    ));
+    expect(await probe(LocalFileSource(tagged), photo('PANO_1.jpg', 8192, 4096)), (
+      isPanorama: true,
+      halfSphere: null,
+      raw360: false,
+    ));
+    expect(await probe(LocalFileSource(plain), photo('rooftop_night.jpg', 8192, 4096)), (
+      isPanorama: false,
+      halfSphere: null,
+      raw360: false,
+    ));
+    expect(await probe(LocalFileSource(p.join(directory.path, 'gone.jpg')), photo('gone.jpg', 8192, 4096)), isNull);
+    final server = ServerOriginalSource(
+      name: 'dawn.jpg',
+      remoteId: 'remote-dawn',
+      endpoint: 'http://nas:2283/api',
+      fetch: (_) => throw StateError('nothing is fetched'),
+    );
+    expect(await probe(server, photo('dawn.jpg', 8192, 4096)), isNull, reason: 'the engine checks the copy');
   });
 
   group('where the original of a photo is', () {

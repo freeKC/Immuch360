@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360° víðmyndir",
   "ai_immersive_feature_photos": "3D myndir",
   "ai_immersive_feature_scenes": "3D senur",
+  "ai_immersive_frame_only_360": "Ekkert 360° merki, aðeins 2:1 rammi: athugaðu að hver sé 360° mynd",
   "ai_immersive_free_space": "{free} laust á {drive}",
   "ai_immersive_glb_failed": "Ekki tókst að skrifa .glb afritið: {message}",
   "ai_immersive_glb_saved": "Vistað í {folder}: {name}",

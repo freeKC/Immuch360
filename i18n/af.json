@@ -241,6 +241,7 @@
   "ai_immersive_feature_panoramas": "360°-panoramas",
   "ai_immersive_feature_photos": "3D-foto’s",
   "ai_immersive_feature_scenes": "3D-tonele",
+  "ai_immersive_frame_only_360": "Geen 360°-merker nie, slegs ’n 2:1-raam: kontroleer dat elkeen ’n 360°-foto is",
   "ai_immersive_free_space": "{free} vry op {drive}",
   "ai_immersive_glb_failed": "Die .glb-kopie kon nie geskryf word nie: {message}",
   "ai_immersive_glb_saved": "Gestoor in {folder}: {name}",

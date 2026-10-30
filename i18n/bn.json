@@ -596,6 +596,7 @@
   "ai_immersive_feature_panoramas": "360° প্যানোরামা",
   "ai_immersive_feature_photos": "3D ছবি",
   "ai_immersive_feature_scenes": "3D দৃশ্য",
+  "ai_immersive_frame_only_360": "কোনো 360° ট্যাগ নেই, শুধু 2:1 ফ্রেম: প্রতিটি 360° ছবি কি না যাচাই করুন",
   "ai_immersive_free_space": "{drive}-এ {free} খালি",
   "ai_immersive_glb_failed": ".glb কপিটি লেখা যায়নি: {message}",
   "ai_immersive_glb_saved": "{folder}-এ সংরক্ষিত: {name}",

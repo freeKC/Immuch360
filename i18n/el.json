@@ -590,6 +590,7 @@
   "ai_immersive_feature_panoramas": "Πανοράματα 360°",
   "ai_immersive_feature_photos": "Φωτογραφίες 3D",
   "ai_immersive_feature_scenes": "Σκηνές 3D",
+  "ai_immersive_frame_only_360": "Χωρίς σήμανση 360°, μόνο καρέ 2:1: ελέγξτε ότι καθεμία είναι φωτογραφία 360°",
   "ai_immersive_free_space": "{free} ελεύθερα στο {drive}",
   "ai_immersive_glb_failed": "Δεν ήταν δυνατή η εγγραφή του αντιγράφου .glb: {message}",
   "ai_immersive_glb_saved": "Αποθηκεύτηκε στο {folder}: {name}",
