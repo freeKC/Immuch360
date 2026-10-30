@@ -6,6 +6,9 @@ import 'package:intl/intl.dart';
 /// A remote-control alternative to Flutter's month-by-month date range calendar.
 /// Start and end each have focusable Year, Month and Day controls; each opens a
 /// bounded TV choice dialog. Jumping to 2010 is one selection, not 190 key presses.
+///
+/// As Flutter's [showDateRangePicker], it works on days: the time of day of the dates it is given is dropped, and the
+/// range it gives back is made of days.
 Future<DateTimeRange<DateTime>?> showTvSearchDateRangePicker({
   required BuildContext context,
   required DateTimeRange<DateTime> initialDateRange,
@@ -13,7 +16,11 @@ Future<DateTimeRange<DateTime>?> showTvSearchDateRangePicker({
   required DateTime lastDate,
 }) => showDialog<DateTimeRange<DateTime>>(
   context: context,
-  builder: (_) => _TvSearchDateRangeDialog(initial: initialDateRange, firstDate: firstDate, lastDate: lastDate),
+  builder: (_) => _TvSearchDateRangeDialog(
+    initial: DateUtils.datesOnly(initialDateRange),
+    firstDate: DateUtils.dateOnly(firstDate),
+    lastDate: DateUtils.dateOnly(lastDate),
+  ),
 );
 
 enum _DatePart { year, month, day }
