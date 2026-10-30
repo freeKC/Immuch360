@@ -124,3 +124,38 @@ TimelineZoom stepZoom(TimelineZoom from, int steps, {required bool overviewAvail
   };
   return rungs[(start + steps).clamp(0, rungs.length - 1)];
 }
+
+/// Steps from one column to the next further apart than this are no longer one climb towards the months
+const kTimelineClimbPause = Duration(seconds: 20);
+
+/// The grid that a tap or Back brings back from the months and the years. From the 4 tiles per row of the setting, the
+/// months are three steps away (5, 6, then the months), each column written to the setting: the grid to come back to
+/// is the one before those steps when they followed each other less than [kTimelineClimbPause] apart, rather than the
+/// 6 per row passed on the way; the grid the months were entered from otherwise.
+class TimelineZoomClimb {
+  int? _from;
+  DateTime? _stepAt;
+
+  /// The tiles per row to come back to, null out of the months and the years
+  int? gridBefore;
+
+  /// The timeline goes from [current] to [next] at [now]
+  void note(TimelineZoom current, TimelineZoom next, DateTime now) {
+    final stepAt = _stepAt;
+    final climbing = _from != null && stepAt != null && now.difference(stepAt) <= kTimelineClimbPause;
+    if (!current.isOverview && !next.isOverview) {
+      if (next.columns > current.columns) {
+        _from = climbing ? _from : current.columns;
+        _stepAt = now;
+      } else {
+        _from = null;
+      }
+    } else if (!current.isOverview) {
+      gridBefore = climbing ? _from : current.columns;
+      _from = null;
+    } else if (!next.isOverview) {
+      // Out of the months: a pinch stays on the grid it reaches, a tap and Back have asked for theirs already
+      gridBefore = null;
+    }
+  }
+}

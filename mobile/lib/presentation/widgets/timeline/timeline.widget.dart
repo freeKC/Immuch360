@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
@@ -140,6 +141,10 @@ class Timeline extends ConsumerWidget {
   }
 }
 
+/// What a change of level or of tiles per row brings back to the top: [anchor], measured from the top of the list once
+/// the band above it has scrolled away ([belowBand]), or from the top of the scroll view as before
+typedef _TopAnchor = ({TimelineAnchor anchor, bool belowBand});
+
 /// The tiles per row of a timeline in the remote control layout: the setting (4 by default) is meant for a phone held
 /// upright, and gave tiles of 240 dp on a TV of 960 x 540 dp, half the height of the screen, a single row cut by its
 /// bottom. Tiles of at most [kTvTimelineTileExtent] dp instead, or more per row when the setting asks for more.
@@ -208,7 +213,13 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
 
   /// What stays in place once the segments reload (other tiles per row, another width): the scroll view comes back and
   /// its position attaches, see [_restoreAnchor]
-  TimelineAnchor? _pendingAnchor;
+  _TopAnchor? _pendingAnchor;
+
+  /// The band between the bar and the list (the memories of the Photos tab), see [_topSliverExtent]
+  final _topSliverKey = GlobalKey();
+
+  /// The grid that a tap or Back brings back from the months and the years (overview/timeline_zoom.dart)
+  final _climb = TimelineZoomClimb();
 
   /// The months or the years: a state of the page, never saved (overview/timeline_zoom.dart)
   TimelineZoomLevel _level = TimelineZoomLevel.grid;
@@ -305,37 +316,48 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     _jumpToAnchorAfterFrame(anchor);
   }
 
-  /// Brings [anchor] to the top once the frame shows the segments of the level it is meant for
-  void _jumpToAnchorAfterFrame(TimelineAnchor anchor) {
+  /// Brings [target] to the top once the frame shows the segments of the level it is meant for
+  void _jumpToAnchorAfterFrame(_TopAnchor target) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scrollController.hasClients) {
         return;
       }
       final offset = anchorOffset(
-        anchor,
+        target.anchor,
         _shownSegments,
         level: _shownLevel,
         columnCount: ref.read(timelineArgsProvider).columnCount,
       );
       if (offset != null) {
-        _scrollController.jumpTo(offset.clamp(0.0, _scrollController.position.maxScrollExtent));
+        final band = target.belowBand ? _topSliverExtent() : 0.0;
+        _scrollController.jumpTo((offset + band).clamp(0.0, _scrollController.position.maxScrollExtent));
       }
     });
   }
 
-  /// What is at the top of the screen now, to keep there on the level [to]
-  TimelineAnchor? _anchorAtTop({required TimelineZoomLevel to}) {
+  /// What is at the top of the screen now, to keep there on the level [to]. Once the band above the list has scrolled
+  /// away, the top of the screen is that much less far into the list than the scroll offset.
+  _TopAnchor? _anchorAtTop({required TimelineZoomLevel to}) {
     if (!_scrollController.hasClients) {
       return null;
     }
     final offset = _scrollController.offset.clamp(0.0, _scrollController.position.maxScrollExtent);
-    return anchorAtOffset(
+    final band = _topSliverExtent();
+    final belowBand = band > 0 && offset >= band;
+    final anchor = anchorAtOffset(
       _shownSegments,
-      offset,
+      belowBand ? offset - band : offset,
       from: _shownLevel,
       to: to,
       columnCount: ref.read(timelineArgsProvider).columnCount,
     );
+    return anchor == null ? null : (anchor: anchor, belowBand: belowBand);
+  }
+
+  /// The scroll extent of the band between the bar and the list, 0 without one
+  double _topSliverExtent() {
+    final band = _topSliverKey.currentContext?.findRenderObject();
+    return band is RenderSliver ? band.geometry?.scrollExtent ?? 0 : 0;
   }
 
   static TimelineZoom _zoomOf(TimelineZoomLevel level, int tilesPerRow) => switch (level) {
@@ -345,17 +367,20 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   };
 
   /// Moves the timeline to [next] on its zoom ladder (a pinch, the wheel, a tap, Back), keeping in place what was at
-  /// the top, or [anchor] (the month or the year tapped). Other tiles per row are the setting, as they always were:
-  /// its write reloads the segments. The months and the years change nothing else, so a pinch goes on.
+  /// the top, or bringing [anchor] (the month or the year tapped) to the top, under the bar. Other tiles per row are
+  /// the setting, as they always were: its write reloads the segments. The months and the years change nothing else,
+  /// so a pinch goes on.
   void _changeZoom(TimelineZoom next, {TimelineAnchor? anchor}) {
     if (!mounted) {
       return;
     }
     final tilesPerRow = ref.read(appConfigProvider).timeline.tilesPerRow;
-    if (next == _zoomOf(_shownLevel, tilesPerRow)) {
+    final current = _zoomOf(_shownLevel, tilesPerRow);
+    if (next == current) {
       return;
     }
-    final target = anchor ?? _anchorAtTop(to: next.level);
+    _climb.note(current, next, DateTime.now());
+    final target = anchor != null ? (anchor: anchor, belowBand: true) : _anchorAtTop(to: next.level);
     if (next.level == TimelineZoomLevel.grid && next.columns != tilesPerRow) {
       setState(() {
         _level = TimelineZoomLevel.grid;
@@ -370,12 +395,14 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     }
   }
 
-  /// A tap on a month or a year: the grid at the tiles per row of the setting, there
-  void _openGridAt(TimelineAnchor anchor) =>
-      _changeZoom(TimelineZoom.grid(ref.read(appConfigProvider).timeline.tilesPerRow), anchor: anchor);
+  /// A tap on a month or a year: the grid there, at the tiles per row it had before the climb to the months
+  void _openGridAt(TimelineAnchor anchor) => _changeZoom(_gridToComeBack(), anchor: anchor);
 
   /// Back in the months or the years: the grid, at the month or the year at the top, rather than leaving the page
-  void _backToGrid() => _changeZoom(TimelineZoom.grid(ref.read(appConfigProvider).timeline.tilesPerRow));
+  void _backToGrid() => _changeZoom(_gridToComeBack());
+
+  TimelineZoom _gridToComeBack() =>
+      TimelineZoom.grid(_climb.gridBefore ?? ref.read(appConfigProvider).timeline.tilesPerRow);
 
   void _onZoomModifierChanged() {
     if (mounted) {
@@ -637,6 +664,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   void _scrollToDate(DateTime date) {
     if (_shownLevel != TimelineZoomLevel.grid) {
       // The date is a day of the grid
+      _climb.gridBefore = null;
       setState(() => _level = TimelineZoomLevel.grid);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -777,7 +805,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                             const SelectionSliverAppBar()
                           else if (widget.appBar != null)
                             widget.appBar!,
-                          if (widget.topSliverWidget != null) widget.topSliverWidget!,
+                          if (widget.topSliverWidget != null)
+                            KeyedSubtree(key: _topSliverKey, child: widget.topSliverWidget!),
                           SliverSegmentedList(
                             // A new list for each level: the segments of another level are another layout
                             key: ValueKey(level),

@@ -52,9 +52,11 @@ class OverviewMonthBlock extends StatelessWidget {
     final side = layout.monthTileSide;
     return SizedBox(
       height: layout.monthBlockExtent,
+      // The tap goes on the node too: excludeSemantics leaves out that of the InkWell, and a screen reader's with it
       child: Semantics(
         button: true,
         label: '$title, $count',
+        onTap: () => host.onOpen(MonthAnchor(month.year, month.month)),
         excludeSemantics: true,
         child: InkWell(
           onTap: () => host.onOpen(MonthAnchor(month.year, month.month)),
@@ -134,6 +136,7 @@ class OverviewYearBlock extends StatelessWidget {
               child: Semantics(
                 button: true,
                 label: '${year.year}, $count',
+                onTap: () => host.onOpen(YearAnchor(year.year)),
                 excludeSemantics: true,
                 child: InkWell(
                   onTap: () => host.onOpen(YearAnchor(year.year)),
@@ -224,6 +227,7 @@ class OverviewYearCell extends StatelessWidget {
     return Semantics(
       button: true,
       label: '${overviewMonthTitle(date)}, ${context.t.items_count(count: content.assetCount)}',
+      onTap: () => host.onOpen(MonthAnchor(year, month)),
       excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -326,9 +330,9 @@ class OverviewThumbnail extends StatelessWidget {
   }
 }
 
-/// Builds with the [count] assets of the timeline from [index] once [loader] has them, null until then; when the buckets
-/// change, the previous ones until the new ones come (a sync adds photos often). Nothing is asked while the timeline
-/// scrolls fast; a block that leaves the screen drops its request.
+/// Builds with the [count] assets of the timeline from [index] once [loader] has them, null until then; when the
+/// buckets change, the previous ones until the new ones come (a sync adds photos often). Nothing is asked while the
+/// timeline scrolls fast; a block that leaves the screen drops its request.
 class OverviewAssets extends ConsumerStatefulWidget {
   const OverviewAssets({
     super.key,

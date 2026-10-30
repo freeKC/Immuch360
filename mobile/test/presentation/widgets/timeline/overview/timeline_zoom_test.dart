@@ -1,5 +1,6 @@
 // The zoom ladder of the timeline: the pinch scale to the tiles per row as before, then the months and the years with
 // a gap between the edges of each level, the rest a pinch starts from, and the rungs Ctrl and the mouse wheel step on.
+// A tap or Back from the months gives back the grid from before the climb to them.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_zoom.dart';
@@ -105,6 +106,53 @@ void main() {
     test('several notches at once pass several rungs', () {
       expect(stepZoom(const TimelineZoom.grid(4), 3, overviewAvailable: true), months);
       expect(stepZoom(months, -3, overviewAvailable: true), const TimelineZoom.grid(4));
+    });
+  });
+
+  group('the grid to come back to', () {
+    const grid4 = TimelineZoom.grid(4);
+    const grid5 = TimelineZoom.grid(5);
+    const grid6 = TimelineZoom.grid(6);
+    final start = DateTime(2026, 10, 30, 9);
+    DateTime at(int seconds) => start.add(Duration(seconds: seconds));
+
+    test('the tiles per row before a climb of one column at a time to the months', () {
+      final climb = TimelineZoomClimb()
+        ..note(grid4, grid5, at(0))
+        ..note(grid5, grid6, at(3))
+        ..note(grid6, months, at(5));
+      expect(climb.gridBefore, 4);
+      climb.note(months, years, at(8));
+      expect(climb.gridBefore, 4, reason: 'on to the years');
+      climb.note(years, grid4, at(12));
+      expect(climb.gridBefore, isNull, reason: 'given back');
+    });
+
+    test('a pause on the way: the grid the months were entered from', () {
+      final climb = TimelineZoomClimb()
+        ..note(grid4, grid5, at(0))
+        ..note(grid5, grid6, at(30))
+        ..note(grid6, months, at(32));
+      expect(climb.gridBefore, 5, reason: 'the climb started again at 5, 30 s later');
+      final settled = TimelineZoomClimb()
+        ..note(grid4, grid5, at(0))
+        ..note(grid5, grid6, at(1))
+        ..note(grid6, months, at(60));
+      expect(settled.gridBefore, 6, reason: 'a minute at 6 per row: that grid is the one in use');
+    });
+
+    test('a column closer ends the climb, a pinch out of the months forgets it', () {
+      final climb = TimelineZoomClimb()
+        ..note(grid4, grid5, at(0))
+        ..note(grid5, grid4, at(1))
+        ..note(grid4, grid5, at(2))
+        ..note(grid5, grid6, at(3))
+        ..note(grid6, months, at(4));
+      expect(climb.gridBefore, 4);
+      climb.note(months, grid6, at(5));
+      expect(climb.gridBefore, isNull, reason: 'the pinch stays on the grid it reaches');
+      final direct = TimelineZoomClimb()..note(grid6, months, at(0));
+      expect(direct.gridBefore, 6);
     });
   });
 

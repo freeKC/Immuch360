@@ -2,8 +2,10 @@
 // block a month without writing the setting, one gesture on shows one block a year, a pinch out comes back to the grid;
 // a tap on a month or a cell opens the grid at that month; Back from the months returns to the grid. On a computer Ctrl
 // and the mouse wheel step on the same ladder without moving the list, which scrolls again once Ctrl is released. The
-// scrubber says the year and the month, the year alone on the years, and slows down under a finger held still. Search
-// and the TV keep the grid.
+// scrubber says the year and the month, the year alone on the years, and slows down under a finger held still, even
+// held longer than the long press of the drag selection. A tapped month comes to the top below a band such as the
+// memories, a screen reader taps the blocks too, and a climb from 4 tiles per row comes back to 4. After a sync the
+// blocks show the assets now at their indexes. Search and the TV keep the grid.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -12,6 +14,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -373,6 +376,84 @@ void main() {
       final scroll = position(tester);
       expect(scroll.pixels, moreOrLessEquals(math.min(gridOffsetOf(DateTime(2026, 9)), scroll.maxScrollExtent)));
     });
+
+    /// Where the header of October 2026 lands on the grid after a tap on its month, [band] dp between bar and list
+    Future<double> tappedMonthTop(WidgetTester tester, {double band = 0}) async {
+      await pumpTimeline(tester, band: band);
+      await toMonths(tester);
+      await tester.tap(find.text('October 2026'));
+      await settle(tester);
+      expect(monthBlocks(), findsNothing);
+      // The header of the month on the grid, without the year in the current one
+      final header = find.byWidgetPredicate(
+        (widget) => widget is RichText && RegExp(r'^October( 2026)?$').hasMatch(widget.text.toPlainText()),
+      );
+      return tester.getTopLeft(header.first).dy;
+    }
+
+    testWidgets('a band above the list, as the memories: the tapped month still comes to the top', (tester) async {
+      final plain = await tappedMonthTop(tester);
+      expect(plain, lessThan(kToolbarHeight + 40), reason: 'under the bar');
+      final banded = await tappedMonthTop(tester, band: 200);
+      expect(banded, closeTo(plain, 1), reason: 'the band scrolled away, not 200 dp lower');
+    });
+
+    testWidgets('at the top of a page with a band, the months and back keep the band in view', (tester) async {
+      await pumpTimeline(tester, band: 200);
+      await toMonths(tester);
+      expect(position(tester).pixels, 0);
+      final out = await _Pinch.start(tester, 200);
+      await out.to(400, from: 200, steps: 10);
+      await out.up();
+      await settle(tester);
+      expect(tiles(), findsWidgets);
+      expect(position(tester).pixels, 0);
+    });
+
+    testWidgets('below a band, the months and back keep the month at the top', (tester) async {
+      await pumpTimeline(tester, band: 200);
+      // The band gone, September 2026 at the top
+      position(tester).jumpTo(200 + gridOffsetOf(DateTime(2026, 9)));
+      await settle(tester);
+      await toMonths(tester);
+      final september = tester.getTopLeft(find.text('September 2026').first).dy;
+      expect(september, lessThan(kToolbarHeight + 40), reason: 'the block of September at the top, under the bar');
+      final out = await _Pinch.start(tester, 200);
+      await out.to(400, from: 200, steps: 10);
+      await out.up();
+      await settle(tester);
+      expect(tiles(), findsWidgets);
+      expect(position(tester).pixels, moreOrLessEquals(200 + gridOffsetOf(DateTime(2026, 9))));
+    });
+
+    testWidgets('a screen reader taps the blocks, the cells and the years too', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await pumpTimeline(tester);
+      await toMonths(tester);
+      bool canTap(SemanticsFinder finder) => finder.evaluate().single.getSemanticsData().hasAction(SemanticsAction.tap);
+
+      final october = find.semantics.byLabel(RegExp('^October 2026, '));
+      expect(canTap(october), isTrue, reason: 'the double tap of TalkBack');
+      tester.semantics.tap(october);
+      await settle(tester);
+      expect(monthBlocks(), findsNothing);
+      expect(position(tester).pixels, moreOrLessEquals(gridOffsetOf(DateTime(2026, 10))));
+
+      final pinch = await _Pinch.start(tester, 400);
+      await pinch.to(170, from: 400);
+      await pinch.up();
+      await settle(tester);
+      expect(yearBlocks(), findsWidgets);
+      expect(canTap(find.semantics.byLabel(RegExp(r'^2025, '))), isTrue, reason: 'the header of a year');
+      final march = find.semantics.byLabel(RegExp('^March 2025, '));
+      expect(canTap(march), isTrue, reason: 'a month of a year');
+      tester.semantics.tap(march);
+      await settle(tester);
+      expect(yearBlocks(), findsNothing);
+      final scroll = position(tester);
+      expect(scroll.pixels, moreOrLessEquals(math.min(gridOffsetOf(DateTime(2025, 3)), scroll.maxScrollExtent)));
+      semantics.dispose();
+    });
   });
 
   group('Ctrl and the mouse wheel on a computer', () {
@@ -422,12 +503,51 @@ void main() {
       expect(settings.writes, isEmpty);
     }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
+    testWidgets('from 4 per row up to the months, a tap or Back gives back the 4 per row', (tester) async {
+      await pumpTimeline(tester, tilesPerRow: 4, liveSettings: true);
+      Future<void> climb() async {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        for (var i = 0; i < 3; i++) {
+          await wheel(tester, notch);
+          await settle(tester);
+        }
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        expect(monthBlocks(), findsWidgets);
+      }
+
+      double tileWidth() => tester.getSize(tiles().first).width;
+      final fourPerRow = (_screen.width - 3 * kTimelineSpacing) / 4;
+      expect(tileWidth(), closeTo(fourPerRow, 1));
+
+      await climb();
+      expect(settings.writes, [5, 6], reason: '5, 6, then the months, as on a phone');
+      await tester.tap(find.text('October 2026'));
+      await settle(tester);
+      expect(settings.writes, [5, 6, 4]);
+      expect(tileWidth(), closeTo(fourPerRow, 1), reason: 'the grid from before, not the 6 per row on the way');
+      final scroll = position(tester);
+      expect(
+        scroll.pixels,
+        moreOrLessEquals(math.min(gridOffsetOf(DateTime(2026, 10), columns: 4), scroll.maxScrollExtent)),
+        reason: 'October at the top',
+      );
+
+      await climb();
+      expect(await tester.binding.handlePopRoute(), isTrue);
+      await settle(tester);
+      expect(monthBlocks(), findsNothing);
+      expect(settings.writes, [5, 6, 4, 5, 6, 4]);
+      expect(tileWidth(), closeTo(fourPerRow, 1));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
     test('the notches of a fine wheel add up, three at most a move', () {
       final counter = WheelNotchCounter();
       expect(counter.add(10, 40), 0);
       expect(counter.add(10, 40), 0);
       expect(counter.add(25, 40), 1, reason: '45 of 40');
-      expect(counter.add(-50, 40), -1, reason: '5 - 50 = -45');
+      expect(counter.add(-50, 40), -1, reason: '5-50 = -45');
       expect(counter.add(400, 40), 3);
       counter.reset();
       expect(counter.add(39, 40), 0);
