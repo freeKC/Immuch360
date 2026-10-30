@@ -1660,9 +1660,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * Makes the kiosk panel, hidden, at the first kiosk opening of this viewer (syncKiosk runs once the scene is ready).
    * Its layout is inflated and bound ([bindKioskPanel]) when the panel system meets the new entity; the text asked for
-   * before that is kept in [kioskText].
+   * before that is kept in [kioskText]. Nothing once the scene is down, whoever calls.
    */
   private fun ensureKioskPanel() {
+    // The panel reads null from the shutdown on: Entity.create would run on the cleared EntityContext and throw
+    if (sceneHold.isDown) return
     if (kioskPanelEntity != null) return
     kioskPanelEntity =
       Entity.createPanelEntity(
@@ -3987,9 +3989,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * [stereo] for the photo layer: kept there in place of the previous one (recycled) until the next photo, drawn by
-   * [drawPhotoLayer] once the layer and its Surface are there; the quad mesh hides meanwhile.
+   * [drawPhotoLayer] once the layer and its Surface are there; the quad mesh hides meanwhile. Once the scene is down
+   * no layer is made and the bitmap of [stereo] is recycled, whoever calls.
    */
   private fun showOnLayer(stereo: StereoTexture) {
+    // The layer reads null from the shutdown on: Entity.create would run on the cleared EntityContext and throw
+    if (sceneHold.isDown) {
+      stereo.bitmap.recycle()
+      return
+    }
     photoLayerTexture?.bitmap?.takeIf { it !== stereo.bitmap }?.recycle()
     photoLayerTexture = stereo
     photoLayerDrawn = false
@@ -5726,9 +5734,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The Surface the player draws on: the flat video screen for a flat 3D video, the sphere for any other video. */
   private fun activeVideoSurface(): Surface? = if (request?.isFlatVideo == true) flatVideoSurface else videoSurface
 
-  /** The entity of the flat video screen, made at the first flat 3D video, hidden until its first frame. */
-  private fun ensureFlatVideoEntity(): Entity =
-    flatVideoEntity
+  /**
+   * The entity of the flat video screen, made at the first flat 3D video, hidden until its first frame; null once the
+   * scene is down, whoever calls.
+   */
+  private fun ensureFlatVideoEntity(): Entity? {
+    // The screen reads null from the shutdown on: Entity.create would run on the cleared EntityContext and throw
+    if (sceneHold.isDown) return null
+    return flatVideoEntity
       ?: Entity.create(
           // Never hit by the controller ray, as the photo layer (see showOnLayer)
           Panel(R.id.immersive_flat_video_panel, MeshCollision.NoCollision),
@@ -5739,6 +5752,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           flatVideoEntity = it
           Log.i(TAG, "flat video screen created")
         }
+  }
 
   /**
    * The stereo mode and the size of the flat video screen for the video shown: for a flat 3D video, each

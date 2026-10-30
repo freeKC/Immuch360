@@ -35,6 +35,14 @@ class SpatialHoldWiringTest {
     assertEquals("sceneHold.shutDown()", firstStatementOf("override fun onSpatialShutdown()"))
   }
 
+  @Test
+  fun `the lazy creators of the scene make nothing once it is down`() {
+    // Each makes its object when its reference reads null, which it always does once the scene is down: a late caller
+    // would run Entity.create on the cleared EntityContext and throw the NotImplementedError of the headset
+    val unguarded = LAZY_CREATORS.filterNot { firstStatementOf(it).startsWith("if (sceneHold.isDown)") }
+    assertTrue("return first once the scene is down in: $unguarded", unguarded.isEmpty())
+  }
+
   /** The first statement in the body of the function [declaration] begins, comments and blank lines skipped */
   private fun firstStatementOf(declaration: String): String {
     val start = source.indexOf(declaration)
@@ -65,6 +73,10 @@ class SpatialHoldWiringTest {
     /** The types of the objects of the scene: entities, panels, materials, textures, meshes, Surfaces of layers */
     val SCENE_TYPES =
       listOf("Entity", "PanelSceneObject", "SceneMaterial", "SceneTexture", "SceneMesh", "TriangleMesh", "Surface")
+
+    /** The functions that make an object of the scene at their first call: kiosk panel, photo layer, flat video */
+    val LAZY_CREATORS =
+      listOf("private fun ensureKioskPanel()", "private fun showOnLayer(", "private fun ensureFlatVideoEntity()")
 
     /** A nullable property of a scene type that starts at null and is not delegated: kept as is after the shutdown */
     val PLAIN_SCENE_FIELD =
