@@ -26,6 +26,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -36,6 +37,7 @@ import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.da
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart' show ByteRangeReader;
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoFile;
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:logging/logging.dart';
@@ -165,8 +167,8 @@ LocalAsset shareConversionAsset(NetworkEntry entry, {int? width, int? height}) {
 }
 
 /// Opens the conversion dialog on [entries], files of one share, on the type [kind] when it takes one of them; once
-/// photos were handed to the queue, the panel of the conversions shows
-Future<void> openShareConversionDialog(BuildContext context, List<NetworkEntry> entries, {ConversionKind? kind}) async {
+/// photos were handed to the queue, the panel of the conversions shows. True once they were.
+Future<bool> openShareConversionDialog(BuildContext context, List<NetworkEntry> entries, {ConversionKind? kind}) async {
   // The page that opened the dialog may be gone when it closes: the panel opens from the navigator
   final navigator = Navigator.of(context, rootNavigator: true);
   final launched = await showDialog<bool>(
@@ -174,10 +176,150 @@ Future<void> openShareConversionDialog(BuildContext context, List<NetworkEntry> 
     builder: (context) => ConversionDialog(shareFiles: entries, kind: kind),
   );
   if (launched != true) {
-    return;
+    return false;
   }
   final overlay = navigator.mounted ? navigator.overlay : null;
   if (overlay != null && overlay.mounted) {
-    await showConversionsPanel(overlay.context);
+    unawaited(showConversionsPanel(overlay.context));
+  }
+  return true;
+}
+
+/// Opens the conversion dialog on files of a share, true once they were handed to the queue; replaced in tests
+final shareConversionOpenerProvider = Provider<Future<bool> Function(BuildContext context, List<NetworkEntry> entries)>(
+  (ref) => openShareConversionDialog,
+);
+
+/// The facts of a photo of a share as its page read them ([info], see NetworkMediaService.detect; null while it was
+/// not read): what the entry of "Make 3D (AI)" asks, before the dialog reads its copy. A 360° photo (its GPano tags, a
+/// 360° camera, a raw photo), its two eyes side by side, one of our versions (a 3D photo, a 3D scene, a panorama
+/// generated or the 3D version of a 360° photo), an Apple spatial photo.
+ConversionPhotoFacts shareInfoFacts(NetworkMediaInfo? info) {
+  if (info == null) {
+    return const ConversionPhotoFacts();
+  }
+  final panorama = info.panorama;
+  final IndexedVersion? version = info.scene != null
+      ? (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene)
+      : panorama != null
+      ? (origin: panorama.isGenerated ? IndexedOrigin.generated : IndexedOrigin.estimated, kind: panorama.kind)
+      : (info.stereoPhoto?.isOurs ?? false)
+      ? (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)
+      : null;
+  return ConversionPhotoFacts(
+    isPanorama: info.is360,
+    isRaw360: info.rawKind != null,
+    isStereo: info.stereoPhoto != null || (version != null && versionHoldsTwoEyes(version)),
+    version: version,
+    isSpatial: info.stereoPair != null,
+  );
+}
+
+/// The types of [offered] that take the photo of a share at [entry], of [width] x [height] pixels when known, as its
+/// page read it ([info]): the rule of the plan (conversionSkipOf) with those facts, so that the entry and the plan
+/// agree, as they do for a photo of the library
+List<ConversionKind> shareConversionKinds(
+  NetworkEntry entry,
+  NetworkMediaInfo? info,
+  Iterable<ConversionKind> offered, {
+  int? width,
+  int? height,
+}) {
+  if (!entry.isImage) {
+    return const [];
+  }
+  final asset = shareConversionAsset(entry, width: width, height: height);
+  final facts = shareInfoFacts(info);
+  return [
+    for (final kind in offered)
+      if (conversionSkipOf(asset, facts, kind: kind) == null) kind,
+  ];
+}
+
+/// "Make 3D (AI)" for a photo of a share: offered, and greyed with [refusal] when the gate refuses every type that
+/// takes the photo
+typedef ShareMakeImmersive = ({String? refusal});
+
+/// Whether the page of the photo of a share at [entry] offers "Make 3D (AI)" (see shareConversionKinds), with the
+/// refusal of the gate when it refuses every type that takes it; null when it does not offer it: the AI features off,
+/// or no type that takes the photo. Watched in the build of the page, so that the gate is known when its menu opens.
+ShareMakeImmersive? watchShareMakeImmersive(
+  WidgetRef ref,
+  Translations t,
+  NetworkEntry entry,
+  NetworkMediaInfo? info, {
+  int? width,
+  int? height,
+}) {
+  if (!ref.watch(aiFeaturesEnabledProvider)) {
+    return null;
+  }
+  final kinds = shareConversionKinds(
+    entry,
+    info,
+    ref.watch(offeredConversionKindsProvider),
+    width: width,
+    height: height,
+  );
+  if (kinds.isEmpty) {
+    return null;
+  }
+  final gates = [for (final kind in kinds) ref.watch(aiGateResultForProvider(aiFeatureOf(kind))).valueOrNull];
+  return (refusal: gates.every(aiGateRefuses) ? aiGateReasonText(t, gates.first!) : null);
+}
+
+/// The item "Make 3D (AI)" of the menu of the page of a photo of a share, greyed with the refusal of [entry];
+/// [onOpen] opens the dialog once the menu closed
+PopupMenuItem<void> desktopShareMakeImmersiveMenuItem(
+  BuildContext context,
+  ShareMakeImmersive entry, {
+  required VoidCallback onOpen,
+}) {
+  final refusal = entry.refusal;
+  return PopupMenuItem<void>(
+    key: const Key('ai_make_3d'),
+    enabled: refusal == null,
+    onTap: onOpen,
+    child: ListTile(
+      leading: const Icon(Icons.view_in_ar_outlined),
+      title: Text(context.t.ai_immersive_make_3d),
+      subtitle: refusal == null ? null : Text(refusal),
+      contentPadding: EdgeInsets.zero,
+      enabled: refusal == null,
+    ),
+  );
+}
+
+/// "Make 3D (AI)" in the bar of a selection of the browser of a share, next to Upload to Immich: the dialog on the
+/// files picked ([entries]), each type planning them; greyed for a selection without a photo, and with its reason when
+/// the gate refuses every type. [onLaunched] once photos were handed to the queue: the selection ends.
+class DesktopShareMakeImmersiveButton extends ConsumerWidget {
+  const DesktopShareMakeImmersiveButton({super.key, required this.entries, required this.onLaunched});
+
+  final List<NetworkEntry> entries;
+  final VoidCallback onLaunched;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(aiFeaturesEnabledProvider)) {
+      return const SizedBox.shrink();
+    }
+    final kinds = ref.watch(offeredConversionKindsProvider);
+    final gates = [for (final kind in kinds) ref.watch(aiGateResultForProvider(aiFeatureOf(kind))).valueOrNull];
+    final refusal = gates.isNotEmpty && gates.every(aiGateRefuses) ? aiGateReasonText(context.t, gates.first!) : null;
+    final photos = entries.any((entry) => entry.isImage);
+    Future<void> open() async {
+      if (await ref.read(shareConversionOpenerProvider)(context, entries)) {
+        onLaunched();
+      }
+    }
+
+    final button = FilledButton.tonalIcon(
+      key: const Key('ai_make_3d'),
+      icon: const Icon(Icons.view_in_ar_outlined),
+      label: Text(context.t.ai_immersive_make_3d),
+      onPressed: photos && refusal == null ? () => unawaited(open()) : null,
+    );
+    return refusal == null ? button : Tooltip(key: const Key('ai_make_3d_refused'), message: refusal, child: button);
   }
 }

@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
@@ -320,7 +322,20 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
         bottomNavigationBar: isUploading
             ? const NetworkUploadProgressBar()
             : selection.isActive
-            ? _SelectionBar(count: selection.paths.length, onUpload: () => unawaited(_upload()))
+            ? _SelectionBar(
+                count: selection.paths.length,
+                onUpload: () => unawaited(_upload()),
+                // Immuch360 Desktop: "Make 3D (AI)" next to Upload to Immich (lib/desktop/ai/ui/share_conversion.dart)
+                desktopAction: CurrentPlatform.isDesktop
+                    ? DesktopShareMakeImmersiveButton(
+                        entries: [
+                          for (final entry in _media)
+                            if (selection.contains(entry.path)) entry,
+                        ],
+                        onLaunched: selectionNotifier.end,
+                      )
+                    : null,
+              )
             : null,
         body: _buildBody(selection, source, tvMode: tvMode),
       ),
@@ -417,12 +432,14 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   }
 }
 
-/// At the bottom of the browser while picking files: the button that sends them to the server, or why there is none
+/// At the bottom of the browser while picking files: the button that sends them to the server, or why there is none;
+/// on a computer, "Make 3D (AI)" next to it ([desktopAction])
 class _SelectionBar extends ConsumerWidget {
-  const _SelectionBar({required this.count, required this.onUpload});
+  const _SelectionBar({required this.count, required this.onUpload, this.desktopAction});
 
   final int count;
   final VoidCallback onUpload;
+  final Widget? desktopAction;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -433,22 +450,40 @@ class _SelectionBar extends ConsumerWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: hasServer
-              ? FilledButton.icon(
-                  icon: const Icon(Icons.backup_outlined),
-                  label: Text(context.t.network_upload_action),
-                  onPressed: count > 0 ? onUpload : null,
-                )
-              : Row(
-                  children: [
-                    Icon(Icons.info_outline_rounded, color: context.colorScheme.onSurfaceVariant),
-                    const SizedBox(width: 12),
-                    Expanded(child: Text(context.t.network_upload_needs_server)),
-                  ],
-                ),
+          child: _withDesktopAction(
+            hasServer
+                ? FilledButton.icon(
+                    icon: const Icon(Icons.backup_outlined),
+                    label: Text(context.t.network_upload_action),
+                    onPressed: count > 0 ? onUpload : null,
+                  )
+                : Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded, color: context.colorScheme.onSurfaceVariant),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(context.t.network_upload_needs_server)),
+                    ],
+                  ),
+          ),
         ),
       ),
     );
+  }
+}
+
+extension on _SelectionBar {
+  /// [upload] alone, or with the action of a computer after it
+  Widget _withDesktopAction(Widget upload) {
+    final action = desktopAction;
+    return action == null
+        ? upload
+        : Row(
+            children: [
+              Expanded(child: upload),
+              const SizedBox(width: 12),
+              action,
+            ],
+          );
   }
 }
 
