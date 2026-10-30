@@ -22,9 +22,9 @@ import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
-import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';

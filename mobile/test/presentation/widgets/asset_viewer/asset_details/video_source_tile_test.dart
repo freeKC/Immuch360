@@ -40,9 +40,9 @@ void main() {
   testWidgets('tells that the original plays, and why, with the server copy to force', (tester) async {
     final container = await pump(
       tester,
-      ChosenVideoSource(
+      const ChosenVideoSource(
         url: 'original',
-        notice: const VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880),
+        notice: VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880),
       ),
     );
 
@@ -62,10 +62,10 @@ void main() {
   testWidgets('tells that the copy plays, with the original to force', (tester) async {
     final container = await pump(
       tester,
-      ChosenVideoSource(
+      const ChosenVideoSource(
         url: 'playback',
         kind: VideoSourceKind.transcoded,
-        notice: const VideoSourceNotice(.switched, codec: 'H.264', width: 5760, height: 2880),
+        notice: VideoSourceNotice(.switched, codec: 'H.264', width: 5760, height: 2880),
       ),
     );
 
@@ -80,10 +80,10 @@ void main() {
   testWidgets('says what to change in Immich when nothing decodes, and lets the user try', (tester) async {
     await pump(
       tester,
-      ChosenVideoSource(
+      const ChosenVideoSource(
         url: 'playback',
         kind: VideoSourceKind.transcoded,
-        refusal: const VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
+        refusal: VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
       ),
     );
 
@@ -92,7 +92,7 @@ void main() {
   });
 
   testWidgets('offers no copy a server does not have', (tester) async {
-    await pump(tester, ChosenVideoSource(url: 'original', hasCopy: false));
+    await pump(tester, const ChosenVideoSource(url: 'original', hasCopy: false));
     expect(find.text('Video source'), findsOneWidget);
     expect(find.byType(TextButton), findsNothing);
   });
