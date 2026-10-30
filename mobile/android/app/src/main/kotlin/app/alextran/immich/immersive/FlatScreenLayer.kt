@@ -7,10 +7,10 @@ import com.meta.spatial.runtime.StereoMode
  * The compositor quad layer of the flat photos, and the filters of the flat screens: a photo of the stereo quad drawn
  * on the Surface of a quad layer is sampled once by the compositor, straight to the display, with its super sampling
  * and sharpening, where the quad mesh goes through the eye buffer first: a sharper photo. The idea and its first
- * version are Gaurav Mukherjee's (gmfun/Immuch360, branch quest/flat-3d, commit d47f56f6a), redone on our quad code: the
- * Surface holds both eyes side by side, each stretched over its half (the quad gives it its shape back), or one picture
- * over the whole Surface; the setting "Sharper flat screens (experimental)", on by default, turns the layer and the
- * filters off, the photos then going on the quad mesh as before. Pure, unit tested.
+ * version are Gaurav Mukherjee's (gmfun/Immuch360, branch quest/flat-3d, commit d47f56f6a), redone on our quad code:
+ * the Surface holds both eyes side by side, each stretched over its half (the quad gives it its shape back), or one
+ * picture over the whole Surface; the setting "Sharper flat screens (experimental)", on by default, turns the layer
+ * and the filters off, the photos then going on the quad mesh as before. Pure, unit tested.
  */
 internal object FlatScreenLayer {
   /**
@@ -64,8 +64,8 @@ internal object FlatScreenLayer {
 
   /**
    * Whether a photo of the stereo quad of [kind] shows on the layer: with [sharp], an Apple spatial photo, a side by
-   * side photo, a flat 3D photo, a photo on the big screen and one whose JSON does not read (shown flat); never a relief
-   * made in the headset, whose 2.5D mesh needs the quad behind it, nor the preview of a 3D scene.
+   * side photo, a flat 3D photo, a photo on the big screen and one whose JSON does not read (shown flat); never a
+   * relief made in the headset, whose 2.5D mesh needs the quad behind it, nor the preview of a 3D scene.
    */
   fun showsOnLayer(kind: StereoPhotoKind?, sharp: Boolean): Boolean =
     sharp &&

@@ -283,7 +283,8 @@ internal object FlatScreenGeometry {
     val along = direction.x * normal.x + direction.y * normal.y + direction.z * normal.z
     if (abs(along) < 1e-6f) return false
     val center = place.center
-    val toCenter = (center.x - origin.x) * normal.x + (center.y - origin.y) * normal.y + (center.z - origin.z) * normal.z
+    val toCenter =
+      (center.x - origin.x) * normal.x + (center.y - origin.y) * normal.y + (center.z - origin.z) * normal.z
     val t = toCenter / along
     if (t <= 0f) return false
     val hitX = origin.x + direction.x * t - center.x

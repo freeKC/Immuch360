@@ -14,11 +14,12 @@ import kotlinx.serialization.json.longOrNull
  * Apple spatial photo (two HEIF items, see [StereoPairSpec]), a flat photo holding two eyes side by side (ours, made
  * from a 2D photo by a computer, or another tool's, see [SbsPhotoSpec]), or a flat photo whose right eye the headset
  * makes from its estimated depth (see [DepthReliefSpec]), or a photo that carries a 3D scene a computer made from one
- * photo (see [VolumetricSceneSpec]); and the flat 3D photos told by their file name (see [FlatStereoSpec]) and the
- * ordinary photos opened on the big screen (see [BigScreenSpec]), each with a contract of its own. The JSON of the last three is frozen in
+ * photo (see [VolumetricSceneSpec]). The JSON of the last three is frozen in
  * mobile/test/fixtures/ai_immersive/stereo_pair_contract_v1.json, which the Dart side writes against
- * (design-final 2026-10-26, section 4.1, and design-final 2026-10-27, section 8.5). A kind or a version this build does
- * not know reads as none: the viewer then shows the photo flat, as before.
+ * (design-final 2026-10-26, section 4.1, and design-final 2026-10-27, section 8.5). The flat 3D photos told by their
+ * file name (see [FlatStereoSpec]) and the ordinary photos opened on the big screen (see [BigScreenSpec]) each have a
+ * contract of their own. A kind or a version this build does not know reads as none: the viewer then shows the photo
+ * flat, as before.
  */
 internal sealed interface StereoPhotoKind {
   /** The relief was estimated by AI: the quad says so, and stays within 60 degrees (see StereoComposer.maxAngle). */
@@ -118,10 +119,11 @@ internal sealed interface StereoPhotoKind {
 
 /**
  * The bigScreen request (the stereoPair JSON of ImmersiveApi.open for an ordinary photo or video opened with "View on
- * a big screen", see BigScreenRequest on the Dart side and mobile/test/fixtures/ai_immersive/big_screen_contract_v1.json):
- * a photo goes on the stereo quad as one picture ([StereoPhotoKind.BigScreen]), a video on the flat video screen, both
- * whole, larger than the 2D window shows them. "View on a big screen" is an idea of Gaurav Mukherjee (gmfun/Immuch360,
- * branch quest/flat-3d, commit 502779b0b), carried here by its own kind rather than a flat format.
+ * a big screen", see BigScreenRequest on the Dart side and
+ * mobile/test/fixtures/ai_immersive/big_screen_contract_v1.json): a photo goes on the stereo quad as one picture
+ * ([StereoPhotoKind.BigScreen]), a video on the flat video screen, both whole, larger than the 2D window shows them.
+ * "View on a big screen" is an idea of Gaurav Mukherjee (gmfun/Immuch360, branch quest/flat-3d, commit 502779b0b),
+ * carried here by its own kind rather than a flat format.
  */
 internal object BigScreenSpec {
   const val KIND = "bigScreen"
