@@ -285,6 +285,29 @@ void main() {
     await tester.pump(remoteSeekSeriesWindow);
   });
 
+  testWidgets('on a TV a held key ends the series of a video alone: 10 s per repeat, then 10 s at the next press', (
+    tester,
+  ) async {
+    final calls = <String>[];
+    await pumpViewer(
+      tester,
+      [video],
+      overrides: [videoPlayerProvider(video.id).overrideWith((ref) => _FakePlayer(calls))],
+    );
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    // Held within the series: its press is the second of the series (30 s), each repeat 10 s, never a press of it
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    await press(tester, LogicalKeyboardKey.arrowRight);
+
+    expect(calls, ['seek 40', 'seek 70', 'seek 80', 'seek 90', 'seek 100'], reason: 'the hold ended the series');
+    await tester.pump(remoteSeekSeriesWindow);
+  });
+
   testWidgets('on a TV OK shows the bars with play and pause focused, and a second OK pauses', (tester) async {
     final calls = <String>[];
     final container = await pumpVideo(tester, calls);

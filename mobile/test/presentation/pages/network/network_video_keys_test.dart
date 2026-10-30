@@ -441,6 +441,25 @@ void main() {
     await tester.pump(remoteSeekSeriesWindow);
   });
 
+  testWidgets('without a folder on a TV a held key ends the series: 10 s per repeat, then 10 s at the next press', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.paused, inFolder: false);
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    // Held within the series: its press is the second of the series (30 s), each repeat 10 s, never a press of it
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    await press(tester, LogicalKeyboardKey.arrowRight);
+
+    expect(calls, ['seek 40', 'seek 70', 'seek 80', 'seek 90', 'seek 100'], reason: 'the hold ended the series');
+    expect(find.byType(NetworkVideoPage), findsOneWidget);
+    await tester.pump(remoteSeekSeriesWindow);
+  });
+
   testWidgets('Down focuses play, the arrows then move between the controls, and the play key still works', (
     tester,
   ) async {
