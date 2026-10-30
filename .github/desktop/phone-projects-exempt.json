@@ -328,7 +328,7 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "5e5b526de284f7b6515c4e9760cff07e39bbefcb",
+    "blob": "ebd5343105765b8413a5aa7eb67442f76da67efc",
     "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
@@ -1108,11 +1108,11 @@
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the bigScreen request against big_screen_contract_v1.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGeometryTest.kt": {
-    "blob": "33dfb7e5dc90c2a296ee29a19251888d08532980",
+    "blob": "d457d8015f59305c4ecaa6959d197ec208baf6e4",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of where a flat screen stands, the ray, the grab, the distance, the size and the stretch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGripTest.kt": {
-    "blob": "84e4cdd2c6f5b1acfcd9904a75d021f70c7bf87d",
+    "blob": "aea52b8bb192d8df01090e0fb94b811e25c2be85",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of the grip states: short press, hold, both grips, release, reset"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenLayerTest.kt": {
