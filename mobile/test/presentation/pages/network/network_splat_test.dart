@@ -228,7 +228,7 @@ void main() {
     testWidgets('greys the button with its reason for a compressed PLY', (tester) async {
       await pumpPage(tester, '/packed.ply');
       expect(button(tester).onPressed, isNull);
-      expect(find.text('Compressed PLY is not read here yet: export it as .spz or as a standard .ply'), findsOneWidget);
+      expect(find.text('Compressed PLY: export it as .spz or as a standard .ply to open it here'), findsOneWidget);
       expect(immersiveApi.opened, isEmpty);
     });
 

@@ -69,5 +69,5 @@ What goes with it:
    `SPLATS_IN_STORE_BUILD = false` of `SplatBuild.kt`, for FreeKC to flip once Meta permits the feature in writing or
    releases it out of its experimental features. `SplatBuildTest` checks the gate with both certificates, as their APKs
    carry them, with two debug keys and with keys it does not know.
-3. **Large splats off by default.** A splat shows 50,000 gaussians at most until a measure in the headset says more;
-   Large splats (150,000) is a setting the user turns on.
+3. **Large splats off by default.** A splat shows 50,000 gaussians at most; Large splats (150,000) is a setting the
+   user turns on.
