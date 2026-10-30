@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.MediaFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -34,7 +35,9 @@ import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.MediaExtractorCompat
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.extractor.DefaultExtractorsFactory
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
 import app.alextran.immich.core.AppHealth
@@ -661,8 +664,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private val recovery = PlaybackRecovery()
   /** Reads the player every PlaybackRecovery.TICK_MS while a video is loaded, see [watchPicture]. */
   private var recoveryJob: Job? = null
-  /** A restart of the player is posted: an error that follows from the same failure does not post another. */
-  private var restartPending = false
+  /** The restart that waits for the media service, see [restartPlayback]; PlaybackRecovery.restartPending meanwhile. */
+  private var restartJob: Job? = null
+  /**
+   * The notice of a picture missing ([sayNoPicture]), shown in place of the details while this url plays, until its
+   * frames move again ([pictureBack]).
+   */
+  private var noPictureNotice: String? = null
   /**
    * A notice the first READY of the url shows in place of its details, the panel in front for a while: the restart
    * of a video, or its switch to the transcoded stream when no picture came.
@@ -830,6 +838,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           Log.i(TAG, "video surface ready")
           videoSurface = surface
           player?.let { attachVideoSurface(it, surface) }
+          // A video that played without it had its frames skipped, no proof of a decoder problem: watched again
+          if (currentVideoUrl != null) recovery.onSurface()
         },
         settingsCreator = {
           MediaPanelSettings(
@@ -1341,6 +1351,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     rememberPosition()
     stopProgressTicker()
     stopRecoveryWatch()
+    cancelRestart()
     cancelInfoHide()
     playOnReturn = false
     reprepareOnReturn = false
@@ -4140,7 +4151,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             }
             // The codec, the size, the frame rate and the bit rate, as the details of the app tell them
             val description = format?.let(::videoLine) ?: "no video track"
-            val warning = decoderWarning
+            val warning = noPictureNotice ?: decoderWarning
             // The restart of the video, or its switch for a picture that did not come, says so once it plays again
             val notice = if (firstReady) playbackNotice.also { playbackNotice = null } else null
             // A video held until the viewer is back in front (playOnReturn) starts then: its loading is over all the
@@ -4212,8 +4223,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             return
           }
         }
-        // The player being replaced by a posted restart: its errors are those of the failure it restarts from
-        if (restartPending) return
+        // The player being replaced by a restart that waits: its errors are those of the failure it restarts from
+        if (recovery.restartPending) return
+        // The notice of an earlier restart or stream switch would show over what comes now; a restart says its own
+        playbackNotice = null
         val plan = playerPlan
         if (plan?.mode == RawMode.EFFECT_SIDE_BY_SIDE && DualFisheyeEffect.isStitchingError(error) &&
           playWithoutStitching()
@@ -4222,10 +4235,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         // A decoder or the media server that fails in the middle of the video: a new player plays the same url again
         // from where it stopped, once per media, before the ladder and the transcoded stream (PlaybackRecovery)
-        val recovered = recovery.onFailure(error.errorCode, player?.currentPosition ?: 0L)
-        if (recovered is PlaybackRecovery.Action.Restart) {
-          restartPlayback(recovered, error)
-          return
+        val durationMs = player?.duration ?: C.TIME_UNSET
+        when (val recovered = recovery.onFailure(error.errorCode, player?.currentPosition ?: 0L, durationMs)) {
+          is PlaybackRecovery.Action.Restart -> {
+            restartPlayback(recovered, error, durationMs)
+            return
+          }
+          PlaybackRecovery.Action.None -> return
+          else -> Unit
         }
         if (plan?.mode == RawMode.LENSES) {
           // The ladder replaces the fallback of other videos: a lens player shows the error once it has nothing left
@@ -4265,46 +4282,112 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     error.errorCodeName + (error.cause?.let { " (${it.javaClass.simpleName}: ${it.message})" } ?: "")
 
   /**
-   * Plays the current url again on a new player from the position of [action] (see [PlaybackRecovery]): the old
-   * player and its decoders go, the panel stays shown with the last frame its surface holds until the new player
-   * draws, and the user reads a notice once the video plays again (not in a kiosk, which never shows the panel: its
-   * visitors see the film go on). The failure goes to the Logs page. Posted, not run from within the listener of the
-   * player being replaced; [error] is null for a picture that stopped.
+   * Plays the current url again on a new player (see [PlaybackRecovery]): after the wait of [action] for the media
+   * service, from its resume position, or for a decoder failure from the next sync frame of the file past it
+   * ([nextSyncFrameMs], read during the wait; PlaybackRecovery.resumeAt) in a video of [durationMs]. The old player and
+   * its decoders go just before the new one comes; the panel stays shown with the last frame its surface holds and
+   * the notice says at once where the video stopped and where it plays again (not in a kiosk, which never shows the
+   * panel: its visitors see the film go on). The failure goes to the Logs page. Never run from within the listener of
+   * the player being replaced; [error] is null for a picture that stopped.
    */
-  private fun restartPlayback(action: PlaybackRecovery.Action.Restart, error: PlaybackException?) {
-    val media = request ?: return
-    val url = currentVideoUrl ?: return
-    if (restartPending) return
-    restartPending = true
+  private fun restartPlayback(action: PlaybackRecovery.Action.Restart, error: PlaybackException?, durationMs: Long) {
+    val media = request
+    val url = currentVideoUrl
+    if (media == null || url == null) {
+      recovery.cancelRestart()
+      return
+    }
     val position = ImmersiveMedia.formatTime(action.positionMs)
-    reportPlayback(
-      if (error != null) PlaybackDetails.restartEvent(errorText(error), position)
-      else PlaybackDetails.stoppedEvent(position)
+    Log.w(
+      TAG,
+      "playback ${action.cause} at ${action.positionMs} ms: a new player from ${action.resumeMs} ms in " +
+        "${action.delayMs} ms${action.syncFromMs?.let { ", or the next sync frame from $it ms" } ?: ""}",
     )
-    Log.w(TAG, "playback ${action.cause} at ${action.positionMs} ms: a new player plays the url again from there")
-    mainHandler.post {
-      restartPending = false
-      if (isDestroyed || request !== media || currentVideoUrl != url) return@post
-      // The same url: what was checked and said of it stays
-      val checked = decoderChecked
-      val lensChecked = lensDecodersChecked
-      val warning = decoderWarning
-      releasePlayer()
-      if (ensurePlayer(media.url, media) == null) {
-        showError(getString(R.string.immersive_error_video, "player"))
-        return@post
+    // Said at once: the last frame stays on screen while the media service comes back
+    cancelInfoHide()
+    showStatus(PlaybackDetails.restartNotice(media.stereoLabels, position, ImmersiveMedia.formatTime(action.resumeMs)))
+    setInfoVisible(true, reposition = true)
+    val syncFrom = action.syncFromMs
+    val nextSync = syncFrom?.let { from -> scope.async(Dispatchers.IO) { nextSyncFrameMs(url, from) } }
+    restartJob?.cancel()
+    restartJob =
+      scope.launch(Dispatchers.Main) {
+        delay(action.delayMs)
+        val syncMs = nextSync?.let { withTimeoutOrNull(SYNC_LOOKUP_EXTRA_MS) { it.await() } }
+        nextSync?.cancel()
+        restartJob = null
+        if (isDestroyed || request !== media || currentVideoUrl != url) {
+          recovery.cancelRestart()
+          return@launch
+        }
+        val resumeMs =
+          if (syncFrom != null) PlaybackRecovery.resumeAt(action.positionMs, action.cause, durationMs, syncMs)
+          else action.resumeMs
+        val resume = ImmersiveMedia.formatTime(resumeMs)
+        reportPlayback(
+          if (error != null) PlaybackDetails.restartEvent(errorText(error), position, resume, action.delayMs)
+          else PlaybackDetails.stoppedEvent(position)
+        )
+        // The same url: what was checked and said of it stays
+        val checked = decoderChecked
+        val lensChecked = lensDecodersChecked
+        val warning = decoderWarning
+        releasePlayer()
+        if (ensurePlayer(media.url, media) == null) {
+          recovery.cancelRestart()
+          showError(getString(R.string.immersive_error_video, "player"))
+          return@launch
+        }
+        // The messages of the plan were said for this url already: not again over the notice
+        pendingRawMessage = null
+        pendingFirstFrameMessage = null
+        val notice = PlaybackDetails.restartNotice(media.stereoLabels, position, resume)
+        Log.w(TAG, "shown to the user: $notice, from $resumeMs ms")
+        playbackNotice = notice
+        playUrl(url, resumeMs)
+        decoderChecked = checked
+        lensDecodersChecked = lensChecked
+        decoderWarning = warning
+        // Until the video plays and the first READY holds it on screen for a while
+        cancelInfoHide()
+        showStatus(notice)
+        setInfoVisible(true, reposition = true)
       }
-      val notice = PlaybackDetails.text(media.stereoLabels, PlaybackDetails.LABEL_RESTARTED, "position" to position)
-      Log.w(TAG, "shown to the user: $notice")
-      playbackNotice = notice
-      playUrl(url, action.positionMs)
-      decoderChecked = checked
-      lensDecodersChecked = lensChecked
-      decoderWarning = warning
-      // At once too, until the video plays and the first READY holds it on screen for a while
-      cancelInfoHide()
-      showStatus(notice)
-      setInfoVisible(true, reposition = true)
+  }
+
+  /** Drops the restart that waits, if any: the media changed or stopped. */
+  private fun cancelRestart() {
+    restartJob?.cancel()
+    restartJob = null
+    recovery.cancelRestart()
+  }
+
+  /**
+   * The time of the first sync frame of the video track of [url] at or after [fromMs], from the index of the file read
+   * through the same data sources as the player (the session of the app for a server url): a new decoder starts on a
+   * whole picture there. Null when the file does not tell (no index, no video track, nothing after) or cannot be read.
+   * Blocking: off the main thread.
+   */
+  @OptIn(UnstableApi::class)
+  private fun nextSyncFrameMs(url: String, fromMs: Long): Long? {
+    val dataSourceFactory = DefaultDataSource.Factory(this, HttpClientManager.createDataSourceFactory(emptyMap()))
+    val extractor = MediaExtractorCompat(DefaultExtractorsFactory(), dataSourceFactory)
+    return try {
+      extractor.setDataSource(Uri.parse(url), 0L)
+      val track =
+        (0 until extractor.trackCount).firstOrNull {
+          extractor.getTrackFormat(it).getString(MediaFormat.KEY_MIME)?.startsWith("video/") == true
+        } ?: return null
+      extractor.selectTrack(track)
+      extractor.seekTo(fromMs * 1000L, MediaExtractorCompat.SEEK_TO_NEXT_SYNC)
+      val timeUs = extractor.sampleTime
+      Log.i(TAG, "next sync frame from $fromMs ms: ${if (timeUs >= 0L) "${timeUs / 1000L} ms" else "none"}")
+      if (timeUs >= 0L) timeUs / 1000L else null
+    } catch (e: Exception) {
+      Log.w(TAG, "the next sync frame from $fromMs ms could not be read", e)
+      null
+    } finally {
+      extractor.release()
     }
   }
 
@@ -4332,7 +4415,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   @OptIn(UnstableApi::class)
   private fun watchPicture() {
     val p = player ?: return
-    if (currentVideoUrl == null || restartPending || rawReplanPending) return
+    // While a restart waits, the old player has nothing to tell and the last read stays for the report
+    if (currentVideoUrl == null || recovery.restartPending || rawReplanPending) return
     // A lens player draws through its compositor, whose frames the counters of the player do not see
     if (twoLens != null) return
     if (!PlaybackRecovery.watches(p.videoFormat?.frameRate ?: Format.NO_VALUE.toFloat())) return
@@ -4341,9 +4425,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     watchedFrames = counters?.renderedOutputBufferCount ?: 0
     watchedDroppedFrames = counters?.droppedBufferCount ?: 0
     when (val action = recovery.onTick(p.isPlaying, p.currentPosition, watchedFrames)) {
-      is PlaybackRecovery.Action.Restart -> restartPlayback(action, null)
+      is PlaybackRecovery.Action.Restart -> restartPlayback(action, null, p.duration)
       is PlaybackRecovery.Action.NoPicture -> sayNoPicture(action)
+      PlaybackRecovery.Action.PictureBack -> pictureBack(p)
       else -> Unit
+    }
+  }
+
+  /**
+   * Frames came again after the notice of a picture missing (a surface given late, a decoder that caught up): the
+   * notice goes, the status line tells the video again, and the Logs page says so after its report.
+   */
+  private fun pictureBack(p: ExoPlayer) {
+    val notice = noPictureNotice ?: return
+    noPictureNotice = null
+    Log.i(TAG, "the picture came back at ${p.currentPosition} ms")
+    reportPlayback(PlaybackDetails.pictureBackEvent(ImmersiveMedia.formatTime(p.currentPosition)))
+    if (statusView?.text?.toString() == notice) {
+      setStatus(decoderWarning ?: p.videoFormat?.let(::videoLine) ?: "no video track")
     }
   }
 
@@ -4373,8 +4472,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     val notice = PlaybackDetails.text(media.stereoLabels, PlaybackDetails.LABEL_NO_PICTURE, "video" to video)
     Log.w(TAG, "shown to the user: $notice")
-    // Kept in place of the details while this url plays, like the decoder warning
-    decoderWarning = notice
+    // Kept in place of the details while this url plays, like the decoder warning, until frames move again
+    noPictureNotice = notice
     hideInfoJob?.cancel()
     showStatus(notice)
     setInfoVisible(true, reposition = true)
@@ -4562,6 +4661,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateProgress()
     applyVideoShape()
     videoFallbackTried = false
+    cancelRestart()
     recovery.onMedia()
     playbackNotice = null
     setStatus(getString(R.string.immersive_loading))
@@ -4632,6 +4732,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     lensDecodersChecked = false
     reprepareOnReturn = false
     decoderWarning = null
+    noPictureNotice = null
     notSeekableShown = false
     hideWhenReady = true
     val kind =
@@ -4676,6 +4777,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     playbackNotice = null
     stopProgressTicker()
     stopRecoveryWatch()
+    cancelRestart()
     player?.let {
       it.stop()
       it.clearMediaItems()
@@ -4878,6 +4980,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
     private const val DECODER_WARNING_HIDE_MS = 10000L
+    /**
+     * How long a restart after a decoder failure waits for the next sync frame of the file once its own wait is over
+     * (PlaybackRecovery.RESTART_DELAY_MS): past it, 3 s past the failure.
+     */
+    private const val SYNC_LOOKUP_EXTRA_MS = 1500L
 
     /**
      * Size of the info panel: its layout in dp, and its quad in meters. Both keep the 1 m for 720 dp of the first
