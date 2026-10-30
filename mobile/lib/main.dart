@@ -52,6 +52,7 @@ import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/utils/libsmb2_license.dart';
 import 'package:immich_mobile/utils/licenses.dart';
 import 'package:immich_mobile/utils/litert_licenses.dart';
+import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
@@ -167,6 +168,8 @@ Future<void> initApp() async {
   LicenseRegistry.addLicense(pairingLicenses);
   // LiteRT, the engine of the AI relief, in the quest flavour (lib/utils/litert_licenses.dart)
   LicenseRegistry.addLicense(liteRtLicenses);
+  // The Meta Spatial SDK of the Quest viewer and its splat module (lib/utils/meta_spatial_licenses.dart)
+  LicenseRegistry.addLicense(metaSpatialLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
