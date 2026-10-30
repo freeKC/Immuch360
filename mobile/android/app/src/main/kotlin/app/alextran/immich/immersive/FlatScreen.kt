@@ -224,6 +224,12 @@ internal data class ScreenPlace(val eyes: Vector3, val yawDeg: Float, val height
 }
 
 /**
+ * An upright rectangle [width] x [height] meters at [place], facing the eyes it was placed from: a flat screen, or a
+ * panel of the viewer (its Transform at the center of [place], turned by Quaternion.lookRotation of its direction).
+ */
+internal data class UprightQuad(val place: ScreenPlace, val width: Float, val height: Float)
+
+/**
  * A grab of the flat screen [start] by a ray from [origin] along [direction]: the ray meets the upright cylinder of
  * the distance of the screen around its eyes, and the screen follows that point, the offset between the point grabbed
  * and its center kept, so that the part of the screen under the ray stays under it. The height stays within
@@ -308,6 +314,13 @@ internal object FlatScreenGeometry {
   const val MAX_ELEVATION = 0.8f
 
   /**
+   * A panel of the viewer (the info panel, the feedback line) stands at least this much nearer than a flat screen that
+   * comes nearer than it, and never nearer than [PANEL_MIN_DISTANCE_M], see [panelDistance].
+   */
+  const val PANEL_GAP_M = 0.15f
+  const val PANEL_MIN_DISTANCE_M = 0.5f
+
+  /**
    * Whether the ray from [origin] along [direction] meets the screen at [place], [width] x [height] meters, within
    * [margin] of its edges, in front of the origin.
    */
@@ -333,6 +346,43 @@ internal object FlatScreenGeometry {
     // The right of a user facing the screen: Up x normal, as Quaternion.lookRotation places the local +x
     val lateral = hitX * normal.z - hitZ * normal.x
     return abs(lateral) <= width / 2 + margin && abs(hitY) <= height / 2 + margin
+  }
+
+  /**
+   * Whether the ray from [origin] along [direction] may grab [screen]: it points at the screen (see [hits]), and not
+   * at [panel], the info panel shown (null while hidden), whose buttons the trigger clicks while a finger may rest on
+   * a grip. The panel always stands nearer than the screen (see [panelDistance]): a ray on it never meant the screen.
+   */
+  fun grabs(screen: UprightQuad, origin: Vector3, direction: Vector3, panel: UprightQuad? = null): Boolean =
+    hits(screen.place, screen.width, screen.height, origin, direction) &&
+      (panel == null || !hits(panel.place, panel.width, panel.height, origin, direction, margin = 0f))
+
+  /**
+   * The distance of a panel that stands [distance] meters from the eyes while a flat screen stands [screenDistance]
+   * meters away (null without one): its own, or [PANEL_GAP_M] nearer than the screen once the screen comes that near,
+   * [PANEL_MIN_DISTANCE_M] at least. A panel behind the screen would be out of reach of the controller ray, which
+   * meets the screen first, and the compositor layer of the screen, drawn under the panels, would show farther than
+   * a panel it stands in front of.
+   */
+  fun panelDistance(distance: Float, screenDistance: Float?): Float =
+    if (screenDistance == null) distance else min(distance, max(PANEL_MIN_DISTANCE_M, screenDistance - PANEL_GAP_M))
+
+  /**
+   * Where a panel goes in front of [eyes], along the horizontal part of [forward] (the gaze), [distance] meters away
+   * and [drop] meters below the eyes, or nearer than a flat screen [screenDistance] meters away (see [panelDistance]):
+   * its place, and the scale that keeps the angles it covers, its drop included, as at its own distance.
+   */
+  fun panelInFront(
+    eyes: Vector3,
+    forward: Vector3,
+    distance: Float,
+    drop: Float,
+    screenDistance: Float?,
+  ): Pair<ScreenPlace, Float> {
+    val near = panelDistance(distance, screenDistance)
+    val scale = near / distance
+    val place = ScreenPlace.inFront(eyes, forward, near)
+    return place.copy(height = eyes.y - drop * scale) to scale
   }
 
   /**

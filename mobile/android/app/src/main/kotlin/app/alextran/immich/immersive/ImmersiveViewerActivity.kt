@@ -408,6 +408,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var pendingBitmap: Bitmap? = null
   private var infoVisible = false
   private var infoPlaced = false
+  /**
+   * The eyes and the gaze the info panel was last put in front of, so that it can come nearer than a flat screen
+   * brought near meanwhile, where it stands (see [keepPanelsBeforeScreen]).
+   */
+  private var infoAnchor: Pair<Vector3, Vector3>? = null
+  /** Where the info panel stands and its size, scale included, for the grips (see [pointsAtScreen]). */
+  private var infoQuad: UprightQuad? = null
+  /** The scale of the info panel and of the feedback line: below 1 only before a flat screen nearer than them. */
+  private var infoScale = 1f
+  private var feedbackScale = 1f
+  /** Like [infoAnchor], for the feedback line. */
+  private var feedbackAnchor: Pair<Vector3, Vector3>? = null
+  private var feedbackDistance = FEEDBACK_DISTANCE
   private var framesWithoutHead = 0
   private var lastHeadPosition: Vector3? = null
   private var lastHeadForward: Vector3? = null
@@ -1361,14 +1374,52 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** Puts the info panel in front of the user, like SplatSample.positionPanelInFrontOfUser. */
   private fun placeInfoInFront() {
-    val panel = infoEntity ?: return
+    if (infoEntity == null) return
     val head = lastHeadPosition ?: return
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
-    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
-    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = head + (direction * INFO_DISTANCE)
-    position.y = head.y - 0.3f
-    panel.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
+    infoAnchor = Vector3(head.x, head.y, head.z) to Vector3(forward.x, forward.y, forward.z)
+    placeInfo()
+  }
+
+  /**
+   * The info panel in front of the eyes and the gaze of [infoAnchor], INFO_DISTANCE away and INFO_DROP below the
+   * eyes, or nearer than a flat screen brought nearer than that and scaled down to cover the same angles (see
+   * FlatScreenGeometry.panelInFront): never behind the screen whose Size and Distance it holds.
+   */
+  private fun placeInfo() {
+    val panel = infoEntity ?: return
+    val (head, forward) = infoAnchor ?: return
+    val (place, scale) =
+      FlatScreenGeometry.panelInFront(head, forward, INFO_DISTANCE, INFO_DROP, nearScreenDistance())
+    panel.setComponent(Transform(Pose(place.center, Quaternion.lookRotation(place.direction))))
+    if (scale != infoScale) {
+      panel.setComponent(Scale(Vector3(scale, scale, 1f)))
+      infoScale = scale
+      Log.i(TAG, "info panel at ${place.distance} m, scaled $scale, before a flat screen")
+    }
+    infoQuad = UprightQuad(place, INFO_PANEL_WIDTH_M * scale, INFO_PANEL_HEIGHT_M * scale)
+  }
+
+  /** The distance of the movable flat screen of the media shown, null for any other media. */
+  private fun nearScreenDistance(): Float? = screenPlace?.distance?.takeIf { request?.isMovableScreen == true }
+
+  /**
+   * Every frame: the info panel and the feedback line shown come nearer than a flat screen brought nearer than them
+   * (the Distance buttons, a new screen at the distance kept), and go back to their distance once it is farther again,
+   * where they were put.
+   */
+  private fun keepPanelsBeforeScreen() {
+    val screen = nearScreenDistance()
+    val info = infoQuad
+    if (infoVisible && info != null && FlatScreenGeometry.panelDistance(INFO_DISTANCE, screen) != info.place.distance) {
+      placeInfo()
+    }
+    val feedback = feedbackEntity
+    if (feedbackJob != null && feedback != null &&
+      FlatScreenGeometry.panelDistance(FEEDBACK_DISTANCE, screen) != feedbackDistance
+    ) {
+      placeFeedback(feedback)
+    }
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -1443,11 +1494,21 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun placeFeedbackInFront(panel: Entity) {
     val head = lastHeadPosition ?: return
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
-    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
-    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = head + (direction * FEEDBACK_DISTANCE)
-    position.y = head.y - FEEDBACK_DROP
-    panel.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
+    feedbackAnchor = Vector3(head.x, head.y, head.z) to Vector3(forward.x, forward.y, forward.z)
+    placeFeedback(panel)
+  }
+
+  /** Like [placeInfo], for the feedback line at its [feedbackAnchor]. */
+  private fun placeFeedback(panel: Entity) {
+    val (head, forward) = feedbackAnchor ?: return
+    val (place, scale) =
+      FlatScreenGeometry.panelInFront(head, forward, FEEDBACK_DISTANCE, FEEDBACK_DROP, nearScreenDistance())
+    panel.setComponent(Transform(Pose(place.center, Quaternion.lookRotation(place.direction))))
+    if (scale != feedbackScale) {
+      panel.setComponent(Scale(Vector3(scale, scale, 1f)))
+      feedbackScale = scale
+    }
+    feedbackDistance = place.distance
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -1480,6 +1541,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       sceneView?.onFrame(head, heldButtons, seconds)
     }
     followScreenGrips()
+    keepPanelsBeforeScreen()
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
       if (lastHeadPosition == null) Log.w(TAG, "no head pose after 180 frames, default info panel position")
@@ -1721,10 +1783,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stretchWithGrips()
   }
 
-  /** Whether the ray of the controller of [side] points at the screen at [place], [size] meters. */
+  /**
+   * Whether the ray of the controller of [side] points at the screen at [place], [size] meters, and not at the info
+   * panel shown: a finger resting on the grip while the trigger clicks Size or Distance drags nothing.
+   */
   private fun pointsAtScreen(side: GripSide, place: ScreenPlace, size: Pair<Float, Float>): Boolean {
     val ray = controllerRays[side] ?: return false
-    return FlatScreenGeometry.hits(place, size.first, size.second, ray.t, ray.forward())
+    val panel = infoQuad?.takeIf { infoVisible && infoPlaced }
+    return FlatScreenGeometry.grabs(UprightQuad(place, size.first, size.second), ray.t, ray.forward(), panel)
   }
 
   private fun handleGripEvents(events: List<ScreenGrip.Event>) {
@@ -3504,7 +3570,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (photoLayerEntity == null) {
       photoLayerEntity =
         Entity.create(
-          Panel(R.id.immersive_photo_layer_panel),
+          // Never hit by the controller ray: it would stand in front of the info panel and take its clicks, and the
+          // grips find the screen by their own ray test (see pointsAtScreen)
+          Panel(R.id.immersive_photo_layer_panel, MeshCollision.NoCollision),
           Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
           Visible(false),
         )
@@ -4906,7 +4974,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun ensureFlatVideoEntity(): Entity =
     flatVideoEntity
       ?: Entity.create(
-          Panel(R.id.immersive_flat_video_panel),
+          // Never hit by the controller ray, as the photo layer (see showOnLayer)
+          Panel(R.id.immersive_flat_video_panel, MeshCollision.NoCollision),
           Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
           Visible(false),
         )
@@ -5346,6 +5415,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val STATE_STEREO_25D = "app.alextran.immich.immersive.STEREO_25D"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
+    /** The info panel stands this much below the eyes, at INFO_DISTANCE. */
+    private const val INFO_DROP = 0.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
     private const val DECODER_WARNING_HIDE_MS = 10000L
 

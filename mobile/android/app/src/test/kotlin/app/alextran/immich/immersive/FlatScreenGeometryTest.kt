@@ -91,6 +91,64 @@ class FlatScreenGeometryTest {
     assertTrue(FlatScreenGeometry.hits(right, 2f, 1f, eyes, ray(90f)))
     assertTrue(FlatScreenGeometry.hits(right, 2f, 1f, eyes, Vector3(1f, 0f, 0.45f)))
     assertFalse(FlatScreenGeometry.hits(right, 2f, 1f, eyes, ray(0f)))
+    // Its side edges, 1 m on each side of its center and the margin: just within, then just past them
+    assertTrue(FlatScreenGeometry.hits(right, 2f, 1f, eyes, Vector3(1f, 0f, 0.54f)))
+    assertTrue(FlatScreenGeometry.hits(right, 2f, 1f, eyes, Vector3(1f, 0f, -0.54f)))
+    assertFalse(FlatScreenGeometry.hits(right, 2f, 1f, eyes, Vector3(1f, 0f, 0.6f)))
+    assertFalse(FlatScreenGeometry.hits(right, 2f, 1f, eyes, Vector3(1f, 0f, -0.6f)))
+  }
+
+  // Panels
+
+  @Test
+  fun `the panels stay where they are while the screen stands farther, and come nearer than a near screen`() {
+    // The info panel at 1.3 m, the feedback line at 1 m
+    assertEquals(1.3f, FlatScreenGeometry.panelDistance(1.3f, null), 0f)
+    assertEquals(1.3f, FlatScreenGeometry.panelDistance(1.3f, 2f), 0f)
+    assertEquals(1.3f, FlatScreenGeometry.panelDistance(1.3f, 1.5f), 0f)
+    assertEquals(1.1f, FlatScreenGeometry.panelDistance(1.3f, 1.25f), 1e-6f)
+    assertEquals(0.6f, FlatScreenGeometry.panelDistance(1.3f, 0.75f), 1e-6f)
+    assertEquals(1f, FlatScreenGeometry.panelDistance(1f, 1.25f), 0f)
+    assertEquals(0.85f, FlatScreenGeometry.panelDistance(1f, 1f), 1e-6f)
+    assertEquals(FlatScreenGeometry.PANEL_MIN_DISTANCE_M, FlatScreenGeometry.panelDistance(1.3f, 0.55f), 0f)
+    // At every distance a screen takes, both panels stand nearer than it
+    for (screen in FlatScreenGeometry.DISTANCES_M) {
+      for (panel in listOf(1.3f, 1f)) {
+        assertTrue("$panel m before a screen at $screen m", FlatScreenGeometry.panelDistance(panel, screen) < screen)
+      }
+    }
+  }
+
+  @Test
+  fun `a panel brought nearer is scaled down, so that it covers the same angles, its drop included`() {
+    val (normal, normalScale) = FlatScreenGeometry.panelInFront(eyes, Vector3(0f, -0.3f, 1f), 1.3f, 0.3f, null)
+    assertVector(Vector3(0f, 1.3f, 1.3f), normal.center)
+    assertEquals(1f, normalScale, 0f)
+    assertEquals(0f, normal.yawDeg, 1e-4f)
+    val (near, scale) = FlatScreenGeometry.panelInFront(eyes, Vector3(1f, 0f, 1f), 1.3f, 0.3f, 0.75f)
+    assertEquals(0.6f, near.distance, 1e-6f)
+    assertEquals(0.6f / 1.3f, scale, 1e-6f)
+    assertEquals(45f, near.yawDeg, 1e-3f)
+    // Seen at the same angle below the eyes
+    assertEquals(0.3f / 1.3f, (eyes.y - near.height) / near.distance, 1e-5f)
+    assertVector(eyes, near.eyes)
+  }
+
+  @Test
+  fun `a ray on the info panel shown grabs nothing, the screen behind it notwithstanding`() {
+    val screen = UprightQuad(ahead, 2f, 1f)
+    val (place, scale) = FlatScreenGeometry.panelInFront(eyes, Vector3(0f, 0f, 1f), 1.3f, 0.3f, 2f)
+    val panel = UprightQuad(place, 1f * scale, 0.555f * scale)
+    // Aimed at the middle of the panel, the ray goes on to the lower part of the screen
+    val atPanel = Vector3(0f, -0.3f, 1.3f)
+    assertTrue(FlatScreenGeometry.hits(ahead, 2f, 1f, eyes, atPanel))
+    assertFalse(FlatScreenGeometry.grabs(screen, eyes, atPanel, panel))
+    // The panel hidden, the same ray grabs the screen
+    assertTrue(FlatScreenGeometry.grabs(screen, eyes, atPanel, panel = null))
+    // Above the panel, the screen still grabs
+    assertTrue(FlatScreenGeometry.grabs(screen, eyes, ray(0f), panel))
+    // Nowhere near the screen, nothing
+    assertFalse(FlatScreenGeometry.grabs(screen, eyes, ray(90f), panel))
   }
 
   // Drag
