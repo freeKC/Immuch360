@@ -72,6 +72,20 @@ class DocListing {
   final bool complete;
 }
 
+/// A file picked in the system file picker and copied into the cache of the app (see [DocumentTreeApi.pickFile])
+class PickedFile {
+  const PickedFile({required this.path, required this.name, required this.size});
+
+  /// The absolute path of the copy, which ends with the name of the file
+  final String path;
+
+  /// The name of the file, as its provider gives it
+  final String name;
+
+  /// Its size in bytes
+  final int size;
+}
+
 @HostApi()
 abstract class DocumentTreeApi {
   /// Opens the system folder picker; null when the user goes back. The read grant is persisted when the provider
@@ -131,6 +145,13 @@ abstract class DocumentTreeApi {
 
   /// Tells [DocumentTreeEvents.onUsbChanged] when a USB device or volume comes or goes, while [watch] is true
   void watchUsb(bool watch);
+
+  /// Opens the system file picker for one file of any type (ACTION_OPEN_DOCUMENT) and copies the file chosen into the
+  /// folder [folder] of the cache of the app, which holds that copy only (the one before goes); null when the user goes
+  /// back. For a file the app reads whole from a path: a Gaussian splat for the immersive viewer of a Meta Quest, which
+  /// reads no content:// URI (lot S5). Fails with the code "too_large" beyond [maxBytes], leaving no copy.
+  @async
+  PickedFile? pickFile(String folder, int maxBytes);
 }
 
 @FlutterApi()
