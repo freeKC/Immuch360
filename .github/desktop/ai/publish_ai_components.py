@@ -795,7 +795,8 @@ def family_section(tag: str, catalogue: dict, upstream: tuple = UPSTREAM) -> str
 
 
 # The splat module of the Meta Spatial SDK, which shows the Gaussian splats of other tools on a Quest 3 or 3S (lot S5):
-# no download, no model, but a licence this file had left waiting for a decision
+# no download, no model, but a licence this file had left waiting for a decision, and its article 1.6 on Experimental
+# Features, which the splat API is
 SPLAT_MODULE = [
     '## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)',
     '',
@@ -804,8 +805,11 @@ SPLAT_MODULE = [
     'flavour only (about 1.1 MB). Licence: the Meta Platform Technologies SDK License Agreement, the very text of the',
     'Meta Spatial SDK the APK already ships (its `LICENSE`, SHA-256',
     '`bb9b12db3b92c024458df625acd6f2d8140ea805cc6814bac74613a466731368`, and its `notices.html` are byte for byte those',
-    'of `meta-spatial-sdk`, `-toolkit` and `-vr`): no new terms. Both are in `licenses/meta-spatial-sdk/` and on the',
-    'licence page of the app.',
+    'of `meta-spatial-sdk`, `-toolkit` and `-vr`). Both are in `licenses/meta-spatial-sdk/` and on the licence page of',
+    'the app. The same text, but one of its clauses applies here for the first time: the splat API is an Experimental',
+    'Feature of the SDK (opt in `SpatialSDKExperimentalSplatAPI`), and article 1.6 keeps an Experimental Feature out of',
+    'a production build unless Meta released it in its own production builds or permits it in writing. How that clause',
+    'is met waits for a decision of the maintainer, written in `licenses/meta-spatial-sdk/README.md`.',
     '',
 ]
 

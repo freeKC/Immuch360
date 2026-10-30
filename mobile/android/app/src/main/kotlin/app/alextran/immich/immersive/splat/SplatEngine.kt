@@ -8,7 +8,8 @@ import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.SystemManager
 
 // The splat module of the Meta Spatial SDK (com.meta.spatial:meta-spatial-sdk-splat 0.14.0, under the Meta Platform
-// Technologies SDK License, the licence of the SDK the APK already ships) behind one interface, lot S5: the module is
+// Technologies SDK License, the licence of the SDK the APK already ships, whose article 1.6 on Experimental Features
+// applies to this module: see licenses/meta-spatial-sdk/README.md) behind one interface, lot S5: the module is
 // in the quest flavour only (questImplementation in android/app/build.gradle), so that the phone APKs keep their size.
 // src/quest/kotlin/.../immersive/splat/SplatEngines.kt holds the object of the module, src/phone/... one that has
 // none; both are named SplatEngines, so that the code of main compiles in both flavours (the pattern of

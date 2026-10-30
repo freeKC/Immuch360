@@ -24,7 +24,9 @@ import com.meta.spatial.toolkit.Visible
 // registered with the other features, an entity with the Splat component of a file URI, its Transform, Scale(1) and
 // Visible(false), shown after the load event (SplatLoadEventArgs). Hittable(NoCollision) keeps the controller rays
 // for the panels ("Hit detection can be inconsistent" on a splat). The API is marked experimental by the module: its
-// opt-in is here and nowhere else.
+// opt-in is here and nowhere else. It is an Experimental Feature in the sense of article 1.6 of the licence of the SDK,
+// which keeps such a feature out of a production build unless Meta released it or permits it in writing: see
+// licenses/meta-spatial-sdk/README.md before this module goes into a published build.
 
 /** The splat module of the Meta Spatial SDK 0.14.0 */
 @OptIn(SpatialSDKExperimentalSplatAPI::class)
