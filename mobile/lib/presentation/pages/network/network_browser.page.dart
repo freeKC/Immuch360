@@ -14,12 +14,15 @@ import 'package:immich_mobile/presentation/pages/network/network_shares.page.dar
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_selection.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
+import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
@@ -27,8 +30,14 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkBrowserPage');
 
-/// What the browser shows of a folder: its folders, then its photos and videos with their media bridge URLs
-typedef _Folder = ({List<NetworkEntry> folders, List<NetworkEntry> media, Map<String, Uri> urls});
+/// What the browser shows of a folder: its folders, then its photos and videos with their media bridge URLs, then on a
+/// Meta Quest the files that may be Gaussian splats of other tools (lot S5)
+typedef _Folder = ({
+  List<NetworkEntry> folders,
+  List<NetworkEntry> media,
+  Map<String, Uri> urls,
+  List<NetworkEntry> splats,
+});
 
 /// The photos and videos of a share folder in the order the browser shows them ([entries]), with their media bridge
 /// URLs by path ([urls]), and the one opened among them ([index]): the immersive viewer goes from it to the previous
@@ -99,8 +108,9 @@ PageRouteInfo? networkFolderNeighbourRoute(String sourceId, NetworkFolderMedia? 
 Key networkFilePageKey(String sourceId, String path) => ValueKey('network-file:$sourceId:$path');
 
 /// The folders and the photos and videos of a network share, from [path]: tap a folder to go into it, a photo or a
-/// video to open it. Files of other kinds are left out. A long press on a photo or a video, or the Select button,
-/// picks files to send to the Immich server.
+/// video to open it. On a Meta Quest with Gaussian splats on, the .spz and .ply files that are splats come after them
+/// (see SplatFileGrid): neither previous nor next of a photo, never sent to the server. Files of other kinds are left
+/// out. A long press on a photo or a video, or the Select button, picks files to send to the Immich server.
 @RoutePage()
 class NetworkBrowserPage extends ConsumerStatefulWidget {
   const NetworkBrowserPage({super.key, required this.sourceId, required this.path});
@@ -226,7 +236,24 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     if (mounted) {
       setState(() => _media = media);
     }
-    return (folders: entries.where((entry) => entry.isDirectory).toList(), media: media, urls: urls);
+    // The platform is asked whether this is a Meta Quest only for a folder that holds .spz or .ply files
+    final candidates = entries.where((entry) => entry.isSplatCandidate).toList();
+    final splats = candidates.isNotEmpty && await _splatsShown() ? candidates : const <NetworkEntry>[];
+    return (folders: entries.where((entry) => entry.isDirectory).toList(), media: media, urls: urls, splats: splats);
+  }
+
+  /// Whether the splats of other tools are listed (see networkSplatsEnabledProvider), once the platform told whether
+  /// this is a Meta Quest: the folder may be read before it did
+  Future<bool> _splatsShown() async {
+    try {
+      if (!await ref.read(isHorizonOsProvider.future)) {
+        return false;
+      }
+    } catch (error) {
+      _log.fine('Could not tell whether this is a Meta Quest: $error');
+      return false;
+    }
+    return mounted && ref.read(networkSplatsEnabledProvider);
   }
 
   /// Reads the folder again; what was shown stays until the new list comes
@@ -262,6 +289,11 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
         ? NetworkVideoRoute(sourceId: widget.sourceId, path: entry.path, folder: media)
         : NetworkPhotoRoute(sourceId: widget.sourceId, path: entry.path, folder: media);
     unawaited(context.pushRoute(route));
+  }
+
+  /// Opens the page of the splat [entry]
+  void _openSplat(NetworkEntry entry) {
+    unawaited(context.pushRoute(SplatRoute(sourceId: widget.sourceId, path: entry.path, size: entry.size)));
   }
 
   /// Picks [entry], and starts picking files when the browser was not
@@ -414,6 +446,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
                 folder: folder,
                 selection: selection,
                 onOpen: (entry) => _open(entry, folder),
+                onOpenSplat: _openSplat,
                 onSelect: tvMode ? null : _select,
                 focusFirst: tvMode,
               );
@@ -516,6 +549,7 @@ class _FolderView extends StatelessWidget {
     required this.folder,
     required this.selection,
     required this.onOpen,
+    required this.onOpenSplat,
     required this.onSelect,
     this.focusFirst = false,
   });
@@ -523,6 +557,9 @@ class _FolderView extends StatelessWidget {
   final _Folder folder;
   final NetworkSelection selection;
   final void Function(NetworkEntry entry) onOpen;
+
+  /// A tap on a splat: its page
+  final void Function(NetworkEntry entry) onOpenSplat;
 
   /// A long press on a photo or a video; null on a TV, where nothing is picked
   final void Function(NetworkEntry entry)? onSelect;
@@ -534,7 +571,7 @@ class _FolderView extends StatelessWidget {
   Widget build(BuildContext context) {
     final folders = folder.folders;
     final media = folder.media;
-    if (folders.isEmpty && media.isEmpty) {
+    if (folders.isEmpty && media.isEmpty && folder.splats.isEmpty) {
       return const _Filled(child: NetworkEmptyFolderView());
     }
     return CustomScrollView(
@@ -576,6 +613,8 @@ class _FolderView extends StatelessWidget {
               },
             ),
           ),
+        // The splats after the photos and videos, out of their order (lot S5)
+        if (folder.splats.isNotEmpty) SplatFileGrid(entries: folder.splats, onOpen: onOpenSplat),
       ],
     );
   }

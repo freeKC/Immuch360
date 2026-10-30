@@ -79,6 +79,7 @@ import 'package:immich_mobile/presentation/pages/network/network_shares.page.dar
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
 import 'package:immich_mobile/presentation/pages/network/plex_server_edit.page.dart';
+import 'package:immich_mobile/presentation/pages/network/splat.page.dart';
 import 'package:immich_mobile/presentation/pages/pairing/connect_screen.page.dart';
 import 'package:immich_mobile/presentation/pages/pairing/enter_code.page.dart';
 import 'package:immich_mobile/presentation/pages/panorama_360.page.dart';
@@ -243,6 +244,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: NetworkBrowserRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkPhotoRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkVideoRoute.page, guards: [_authGuard]),
+    // A Gaussian splat file of another tool, of a share or picked on a Meta Quest (lot S5)
+    AutoRoute(page: SplatRoute.page, guards: [_authGuard, _duplicateGuard]),
     // A Plex Media Server is a share with a page of its own to pair it; a Tapo camera has its own pages, since it is
     // not browsed as folders
     AutoRoute(page: PlexServerEditRoute.page, guards: [_authGuard, _duplicateGuard]),
