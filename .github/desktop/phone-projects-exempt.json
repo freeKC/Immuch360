@@ -408,8 +408,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the gaussianSplat request of the stereoPair JSON; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatBuild.kt": {
-    "blob": "2960a376598f3ce5ebedbb3ed7ab8e108ef640f5",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the signing certificate of the APK tells the GitHub builds, which offer the splats, from the Meta Horizon Store build, which hides them unless SPLATS_IN_STORE_BUILD; not yet on the phone branch"
+    "blob": "7dd52757a40366e1245f3e29788cd0285e9e5595",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the signing certificate of the APK tells the GitHub builds, which offer the splats, from the Meta Horizon Store build, which hides them unless SPLATS_IN_STORE_BUILD; not yet on the phone branch; the fix round of the decision: only the GitHub and Android debug certificates offer the splats, the store certificate and any other follow SPLATS_IN_STORE_BUILD"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatEngine.kt": {
     "blob": "5497b0d9e5cdda8e881ed0e322727c93ba2ac7a1",
@@ -444,8 +444,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat entity in the world, its glide, Reset and Turn upright; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatTexts.kt": {
-    "blob": "13d7e189993b6da400698755899e3c5a274b5b16",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch; the decision of 30 October: the notice of the first splat with the words that Meta neither supports nor warrants its API"
+    "blob": "0902bd13aed6df8993312fc945c956aa925d4a8a",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch; the decision of 30 October: the notice of the first splat with the words that Meta neither supports nor warrants its API; the texts of a compressed PLY and of a newer SPZ say what the headset reads"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatViewerOptions.kt": {
     "blob": "582b3dbb132a2ab2ba899e0b509dd438abe46c08",
@@ -1308,16 +1308,16 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gaussianSplat request; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatBuildTest.kt": {
-    "blob": "166b8b3dc9fb5d51199ac66f1bf00902fd7b02db",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the gate of the build with the certificates of the GitHub and the Meta Horizon Store builds; not yet on the phone branch"
+    "blob": "c15ceb8560e2542f85f1d61fa7ac54f6ba727055",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the gate of the build with the certificates of the GitHub and the Meta Horizon Store builds; not yet on the phone branch; unknown, lookalike and debug keys, debuggable builds, lineages and several signers"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatFixtures.kt": {
     "blob": "ca2aabaf7d415f350f2529acd984e04a67ddf200",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the fixtures of the splat tests, shared with the Dart tests; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatGateTest.kt": {
-    "blob": "810c2660f7edb049e01093769ce7aeb9a9accd90",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build"
+    "blob": "a0235a7e24ef27633677943fc2f5eb4a2f441323",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build; the gate of the build read through SplatBuild.kindOf"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatHeaderTest.kt": {
     "blob": "58ce37e90c354dbb13d6cf7a8193684ba2bd3c24",
