@@ -12,7 +12,6 @@ import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
-import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
@@ -24,6 +23,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_date_time.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
@@ -32,7 +32,6 @@ import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
@@ -40,7 +39,6 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
-import 'package:immich_mobile/utils/timezone.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
 
@@ -64,6 +62,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final isInLockedView = ref.watch(inLockedViewProvider);
     // The read only mode, or a TV, where the app is a viewer: the favourite and the menu (cast among others) hide
     final isViewOnly = ref.watch(viewOnlyProvider);
+    final isTv = ref.watch(tvModeProvider);
 
     final showingDetails = ref.watch(assetViewerProvider.select((state) => state.showingDetails));
 
@@ -241,7 +240,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     child: NavigationToolbar(
                       centerMiddle: true,
                       leading: const _AppBarBackButton(),
-                      middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
+                      // A TV shows the date and time of a photo at the bottom left instead (see ViewerBottomBar)
+                      middle: showingDetails || (isTv && asset.isImage) ? null : ViewerDateTime(asset: asset),
                       trailing:
                           !showingDetails &&
                               (!isViewOnly ||
@@ -327,31 +327,6 @@ class _AppBarBackButton extends ConsumerWidget {
       ),
       onPressed: tvMode ? () => Navigator.of(context).pop() : context.maybePop,
       child: const Icon(Icons.arrow_back_rounded),
-    );
-  }
-}
-
-class _AssetInfoTitle extends ConsumerWidget {
-  final BaseAsset asset;
-
-  const _AssetInfoTitle({required this.asset});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final exifInfo = ref.watch(assetExifProvider(asset)).valueOrNull;
-    final alwaysUse24HourFormat = MediaQuery.alwaysUse24HourFormatOf(context);
-
-    final (dateTime, _) = resolveAssetDateTime(asset, exifInfo);
-
-    final dateFormatted = dateTime.formatDate();
-    final timeFormatted = dateTime.formatTime(alwaysUse24HourFormat: alwaysUse24HourFormat);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(dateFormatted, style: context.textTheme.labelLarge?.copyWith(color: Colors.white)),
-        Text(timeFormatted, style: context.textTheme.labelMedium?.copyWith(color: Colors.white70)),
-      ],
     );
   }
 }

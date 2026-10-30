@@ -13,8 +13,10 @@ import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/add_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_date_time.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
@@ -30,6 +32,9 @@ List<Widget> _actionColumnButtons(BuildContext context, WidgetRef ref, List<Acti
       (item) => .new(icon: item.icon, label: item.label, onPressed: item.onAction, onLongPress: item.onSecondaryAction),
     )
     .toList(growable: false);
+
+/// The date and time of a photo on a TV stand out over the photo as the controls of a video do (see VideoControls)
+const _tvDateTimeShadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0, 1))];
 
 class ViewerBottomBar extends ConsumerWidget {
   const ViewerBottomBar({super.key});
@@ -48,9 +53,14 @@ class ViewerBottomBar extends ConsumerWidget {
     final isInTrash = ref.watch(timelineServiceProvider).origin == TimelineOrigin.trash;
 
     final originalTheme = context.themeData;
+    final tvMode = ref.watch(tvModeProvider);
     // A TV hides the row of actions: its rotation sits on the right of the OCR toggle, never where OK from the photo
     // lands (see AssetViewer), so that a double OK cannot turn a photo
-    final tvRotate = ref.watch(tvModeProvider) && !isInTrash && canRotateInViewer(ref, asset);
+    final tvRotate = tvMode && !isInTrash && canRotateInViewer(ref, asset);
+    // A TV shows the date and time of a photo on the left of that row rather than over the top centre of the photo
+    // (see ViewerTopAppBar), with "Show photo date and time" on
+    final tvDateTime =
+        tvMode && asset.isImage && ref.watch(appConfigProvider.select((config) => config.viewer.tvShowDateTime));
     // The text boxes are not drawn over a photo turned on screen (see AssetPage)
     final showOcr = asset.isImage && ref.watch(displayQuarterTurnsProvider(asset)) == 0;
 
@@ -105,14 +115,31 @@ class ViewerBottomBar extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // A TV: the OCR toggle first, then Rotate on its right, one Right away. The row spans the
-                          // bar, so that the bar and its shade span the screen as with the row of a phone.
-                          if (tvRotate)
+                          // A TV: the date and time of a photo on the left, the OCR toggle on the right, then
+                          // Rotate on its right, one Right away. The row spans the bar, so that the bar and its shade
+                          // span the screen as with the row of a phone. The date takes no focus.
+                          if (tvRotate || tvDateTime)
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
+                                if (tvDateTime)
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
+                                      child: Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child: ViewerDateTime(
+                                          key: const Key('viewer_tv_date_time'),
+                                          asset: asset,
+                                          alignLeft: true,
+                                          shadows: _tvDateTimeShadows,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  const Spacer(),
                                 if (showOcr) OcrToggleButton(asset: asset),
-                                TvRotateButton(asset: asset),
+                                if (tvRotate) TvRotateButton(asset: asset),
                               ],
                             )
                           else if (showOcr)
