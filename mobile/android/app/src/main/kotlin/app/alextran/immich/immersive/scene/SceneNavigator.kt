@@ -13,7 +13,8 @@ import kotlin.math.sqrt
  *
  * The scene is fixed to the world: [anchor] lays the camera of the photo at the head, looking where the head looks
  * (yaw only, the horizon level), when the scene opens and at Reset. Walking is never stopped. The left thumbstick
- * glides the eye in the horizontal plane, in the frame of the gaze, at [GLIDE_SPEED] eased in and out over
+ * glides the eye in the horizontal plane, in the frame of the gaze, at [GLIDE_SPEED] (or the glideSpeed given: a
+ * Gaussian splat of lot S5 glides at 0.5 m/s in a zone of 5 m, and reads the root pose only) eased in and out over
  * [GLIDE_EASE] (the Controller component gives directions only, hence one speed); the glide stops at the edge of the
  * zone. The eye, head plus glide, sits at the normalised distance rho of the ellipsoid of the safe zone; beyond 1 the
  * layers flatten towards the photo plane on the rays from the camera, flat at [FLATTEN_TO], and from [DARKEN_FROM]
@@ -32,7 +33,7 @@ import kotlin.math.sqrt
  * writes the meshes through [SdkFrame]: fed the numbers of the SDK as they are, the scene would show mirrored and the
  * stick would glide the wrong way sideways.
  */
-internal class SceneNavigator(private val safe: SafeZone) {
+internal class SceneNavigator(private val safe: SafeZone, private val glideSpeed: Double = GLIDE_SPEED) {
   companion object {
     /** The layers flatten from rho [FLATTEN_FROM] to [FLATTEN_TO] and darken from [DARKEN_FROM] up to [DARKEN_MAX] */
     const val FLATTEN_FROM = 1.0
@@ -279,10 +280,10 @@ internal class SceneNavigator(private val safe: SafeZone) {
     // Right of the gaze: (cos g, -sin g); ahead of it: (-sin g, -cos g)
     val c = cos(gaze)
     val s = sin(gaze)
-    val targetX = GLIDE_SPEED * (pushRight * c - pushForward * s)
-    val targetZ = GLIDE_SPEED * (-pushRight * s - pushForward * c)
+    val targetX = glideSpeed * (pushRight * c - pushForward * s)
+    val targetZ = glideSpeed * (-pushRight * s - pushForward * c)
     val change = hypot(targetX - speedX, targetZ - speedZ)
-    val most = GLIDE_SPEED / GLIDE_EASE * dt
+    val most = glideSpeed / GLIDE_EASE * dt
     if (change <= most) {
       speedX = targetX
       speedZ = targetZ

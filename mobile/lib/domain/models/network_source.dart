@@ -356,6 +356,14 @@ class NetworkEntry {
   bool get isVideo => !isDirectory && videoExtensions.contains(extension);
   bool get isMedia => isImage || isVideo;
 
+  /// The files a Gaussian splat of another tool may be in (lot S5): SPZ, and PLY, which holds meshes and point clouds
+  /// too, so that the head of the file decides (see probeSplatHead)
+  static const splatExtensions = {'spz', 'ply'};
+
+  /// Whether the file may be a Gaussian splat, see [splatExtensions]: never a media, never sent to the server, which
+  /// takes no such file, and listed by the browser of a Meta Quest only
+  bool get isSplatCandidate => !isDirectory && splatExtensions.contains(extension);
+
   /// The files a camera or a drone writes beside its media, which are no media of their own and which the Immich
   /// server refuses: the low resolution proxies (.lrf of DJI, .lrv of GoPro and Insta360), the flight data of a DJI
   /// video (.srt), the thumbnail of a GoPro video (.thm), the sound a DJI drone records apart from its silent video

@@ -1,0 +1,243 @@
+{
+  "about": "What the splat tests compare with, written by .github/desktop/ai/make_splat_fixtures.py",
+  "headers": {
+    "ascii.ply": {
+      "bytes": 866,
+      "sha256": "3215d0ba62c048cf1848739e3c2907776919feaaa7028c7dd19614c43ce04ca7"
+    },
+    "axes.ply": {
+      "bytes": 38819,
+      "sha256": "db2a7a9a2ce84caddd282ebea6b3867f0a12f8658b7d1b908fd741cdea019d30",
+      "format": "ply",
+      "gaussians": 686,
+      "shDegree": 0,
+      "tool": "make_splat_fixtures.py",
+      "rowBytes": 56
+    },
+    "axes_v1.spz": {
+      "bytes": 860,
+      "sha256": "569b195f82169fd607eed10128ca86ff5e1579f4b26673683a68f301bba2d4e5",
+      "format": "spz",
+      "version": 1,
+      "gaussians": 686,
+      "shDegree": 0
+    },
+    "axes_v2.spz": {
+      "bytes": 913,
+      "sha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 686,
+      "shDegree": 0
+    },
+    "axes_v3.spz": {
+      "bytes": 923,
+      "sha256": "80b0e72e41198ff51bc20d69808df3efeb0d37784e838e33280127693b17dcdb",
+      "format": "spz",
+      "version": 3,
+      "gaussians": 686,
+      "shDegree": 0
+    },
+    "axes_v4.spz": {
+      "bytes": 954,
+      "sha256": "4bacbabc03660b0a1325303aac4b8386aa9f36350fb88710f31c6384f16f169f",
+      "format": "spz",
+      "version": 4,
+      "gaussians": 686,
+      "shDegree": 0
+    },
+    "bad_magic.spz": {
+      "bytes": 35,
+      "sha256": "338146c71934334f44a9f156324b1b0f6e91d1ce6bbacbe31911f2a36a7e6e51"
+    },
+    "big_endian.ply": {
+      "bytes": 578,
+      "sha256": "9abe9337984ee48a3e921e0238cf703aa2998a0b6bce57acb43a8199b8c1780b"
+    },
+    "cash_register_head.spz": {
+      "bytes": 65536,
+      "sha256": "1ada3d901f35bf0b4e3c402952b6a01e030687370157d28c8b70e4db1ed638cd",
+      "source": "https://www.innerscene.com/samples/gsplat-cash-register.spz",
+      "fileBytes": 686150,
+      "fileSha256": "9f01f4455453aba7e4db04ef60483b3ee53d5cd687b4548770f4e793f7cd9dd8",
+      "format": "spz",
+      "version": 3,
+      "gaussians": 47819,
+      "shDegree": 0
+    },
+    "compressed.ply": {
+      "bytes": 594,
+      "sha256": "c71a4409ac3aa0a1f2054e45552de9c7117ffe7e37c89119e20da462cd7199d0"
+    },
+    "long_header.ply": {
+      "bytes": 88581,
+      "sha256": "308b987f831b6e9b3e7c1949f328e58ab70cda4e38716f7d0b08817365ae0182"
+    },
+    "measuring_tape_head.ply": {
+      "bytes": 65536,
+      "sha256": "db8eef7bb887d8a76ff2edc6585a96ed3b6854897e5567e02411d7bdf93ff3f4",
+      "source": "https://www.innerscene.com/samples/gsplat-measuring-tape.ply",
+      "fileBytes": 1324307,
+      "fileSha256": "1f6323c7ac68c8a4076789fdf0d67d6a7459412de4971c2f1e6a4b7470feff10",
+      "format": "ply",
+      "gaussians": 19469,
+      "shDegree": 0,
+      "tool": null,
+      "rowBytes": 68
+    },
+    "mesh_cube.ply": {
+      "bytes": 447,
+      "sha256": "cc67fd1fec8f77a45b911aca100725d91e87c18f0f16d3e118afaeb459cfe35f"
+    },
+    "negative_count.ply": {
+      "bytes": 582,
+      "sha256": "807639ac6995a32327a70ce25d9fc0a0f04948b9f0d2b426a148b514640ab35c"
+    },
+    "newer.spz": {
+      "bytes": 35,
+      "sha256": "9ddbc605d092550ff8b75e4e834206e2aee90ddf0b28cd1476168d79927a2d8c"
+    },
+    "point_cloud.ply": {
+      "bytes": 235,
+      "sha256": "ae63e9d0fddcd45a7706d2bcb81928e9d272a6c089c18f663d7686e6bee771ab"
+    },
+    "ranked.ply": {
+      "bytes": 1702,
+      "sha256": "21507239754d9a9d96bd1ef4e1bf464fab9a58c242636e1555dcb256ad51d846"
+    },
+    "ranked_v3.spz": {
+      "bytes": 331,
+      "sha256": "9e8bac630f63b714278390a8ef7e83bd1cccc32f6db312de9765881b0fca5e2b"
+    },
+    "reserved.spz": {
+      "bytes": 35,
+      "sha256": "47dbc94964cccf90a7f816a18a88705fd059d97df71b1abb024466dd27267ca5"
+    },
+    "sh3.ply": {
+      "bytes": 3510,
+      "sha256": "7188e03afe6fb28c241d3823d718a6743a3157567e5ba89e693470fdb3d36269",
+      "format": "ply",
+      "gaussians": 8,
+      "shDegree": 3,
+      "tool": null,
+      "rowBytes": 248
+    },
+    "truncated.spz": {
+      "bytes": 12,
+      "sha256": "2d899e9f775605deb6cdf23f2a57f6e0da44e6b7acfe59a552a2306ec47a013b"
+    }
+  },
+  "reduction": {
+    "keep": 10,
+    "ranked_v3.spz": {
+      "scores": [
+        -9.353184236235231,
+        -15.7344379124341,
+        -8.098143551314209,
+        -9.56423328123881,
+        -10.35947999486634,
+        -12.57332562376599,
+        -9.666290731874154,
+        -13.665684236235231,
+        -9.56423328123881,
+        -8.773030204872095,
+        -8.364825819001739,
+        -11.533167007136944,
+        -9.56423328123881,
+        -7.6983256237659905,
+        -14.257380461798753,
+        -11.536366191617967,
+        -10.421331416795176,
+        -8.788990117111796,
+        -15.802627175426286,
+        -10.804275756801882,
+        -8.52867738543204,
+        -9.537121122549122,
+        -8.10131418769689,
+        -16.824334457647
+      ],
+      "kept": [
+        0,
+        2,
+        3,
+        9,
+        10,
+        13,
+        17,
+        20,
+        21,
+        22
+      ]
+    },
+    "ranked.ply": {
+      "scores": [
+        -9.380239490420257,
+        -15.712630721725443,
+        -8.088011714614847,
+        -9.60137319374354,
+        -10.300984659329902,
+        -12.534576887365244,
+        -9.644205058093927,
+        -13.661588672549163,
+        -9.60137319374354,
+        -8.715491750375282,
+        -8.316755456740038,
+        -11.577464107424651,
+        -9.60137319374354,
+        -7.7062630598505955,
+        -14.27309180412656,
+        -11.51683946080709,
+        -10.389468195477523,
+        -8.775467883685886,
+        -15.822445682380083,
+        -10.775686374995592,
+        -8.545592741446738,
+        -9.586785348692931,
+        -8.111728114897385,
+        -16.862115421188037
+      ],
+      "kept": [
+        0,
+        2,
+        3,
+        9,
+        10,
+        13,
+        17,
+        20,
+        21,
+        22
+      ]
+    }
+  },
+  "percentiles": {
+    "axes_v3.spz": {
+      "x": [
+        -0.010009765625,
+        0.659912109375
+      ],
+      "y": [
+        -0.010009765625,
+        1.159912109375
+      ],
+      "z": [
+        -0.010009765625,
+        1.659912109375
+      ]
+    },
+    "axes_v1.spz": {
+      "x": [
+        -0.01000213623046875,
+        0.66015625
+      ],
+      "y": [
+        -0.01000213623046875,
+        1.16015625
+      ],
+      "z": [
+        -0.01000213623046875,
+        1.66015625
+      ]
+    }
+  }
+}

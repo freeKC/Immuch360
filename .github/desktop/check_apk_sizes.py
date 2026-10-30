@@ -52,6 +52,16 @@ ONE_TIME_KIND_THRESHOLDS = {
     # Each threshold leaves at least half a point for the fixes of the headset tests. Once build 32 is published, the
     # next release compares with it, this entry no longer applies, and every kind is back to the ordinary threshold.
     'v3.3.0-rc.0-31': {'quest': 8.5, 'aab': 3.5, 'armeabi-v7a': 3, 'universal': 2.5, 'x86_64': 2.5, 'arm64-v8a': 2},
+    # 30 October 2026, for the release that brings the Gaussian splats (lot S5, branch feat-quest-splats), compared
+    # with release 35. The Quest APK alone carries the splat module of the Meta Spatial SDK 0.14.0
+    # (questImplementation: libMetaSpatialSDKSplat.so and its classes, about 1.1 MB). The packages of the branch at
+    # 739dd6bb3 (CI job 124263073041), against release 35:
+    #   The Quest APK, 157,873,379 bytes against 156,452,346, +0.908 %: 0.09 point under the ordinary threshold, about
+    #   144 KB, so that one more step of 64 KiB of alignment, or a fix of the headset tests, would refuse it.
+    #   The phone packages, which do not carry the module, +0.243 to +0.492 %: they keep the ordinary threshold.
+    # 1.5 % leaves about half a point for the fixes of the headset tests. Should another release be published before
+    # the one with the splats, this entry moves to the tag that release becomes.
+    'v3.3.0-rc.0-35': {'quest': 1.5},
 }
 
 

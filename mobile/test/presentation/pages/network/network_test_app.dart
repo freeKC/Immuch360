@@ -44,6 +44,10 @@ Future<RootStackRouter> pumpNetworkTestApp(
         return Text('plex edit $name${args.focusToken ? ' token' : ''}');
       }),
       route('/camera', CameraRoute.name, (data) => Text('camera ${data.argsAs<CameraRouteArgs>().sourceId}')),
+      route('/splat', SplatRoute.name, (data) {
+        final args = data.argsAs<SplatRouteArgs>();
+        return Text('splat ${args.sourceId} ${args.path} ${args.size}');
+      }),
       route('/camera-edit', CameraEditRoute.name, (data) {
         final args = data.argsAs<CameraEditRouteArgs>(orElse: () => const CameraEditRouteArgs());
         return Text('camera edit ${args.source?.name ?? args.server?.host ?? 'new'}');

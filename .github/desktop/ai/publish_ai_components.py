@@ -794,12 +794,34 @@ def family_section(tag: str, catalogue: dict, upstream: tuple = UPSTREAM) -> str
     return '\n'.join(lines)
 
 
+# The splat module of the Meta Spatial SDK, which shows the Gaussian splats of other tools on a Quest 3 or 3S (lot S5):
+# no download, no model, but a licence whose article 1.6 on Experimental Features, which the splat API is, FreeKC
+# decided about on 30 October 2026 (licenses/meta-spatial-sdk/README.md)
+SPLAT_MODULE = [
+    '## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)',
+    '',
+    '`com.meta.spatial:meta-spatial-sdk-splat` 0.14.0 shows on a Meta Quest 3 or 3S the Gaussian splat files that',
+    'other tools make (`.spz`, `.ply`): no AI of ours, no model downloaded. It is built into the APK of the quest',
+    'flavour only (about 1.1 MB). Licence: the Meta Platform Technologies SDK License Agreement, the very text of the',
+    'Meta Spatial SDK the APK already ships (its `LICENSE`, SHA-256',
+    '`bb9b12db3b92c024458df625acd6f2d8140ea805cc6814bac74613a466731368`, and its `notices.html` are byte for byte those',
+    'of `meta-spatial-sdk`, `-toolkit` and `-vr`). Both are in `licenses/meta-spatial-sdk/` and on the licence page of',
+    'the app. The same text, but one of its clauses applies here for the first time: the splat API is an Experimental',
+    'Feature of the SDK (opt in `SpatialSDKExperimentalSplatAPI`), and article 1.6 keeps an Experimental Feature out of',
+    'a production build unless Meta released it in its own production builds or permits it in writing. On 30 October',
+    '2026 FreeKC, the maintainer, decided to ship it in the builds of this free hobby app, on GitHub and in the Meta',
+    'Horizon Store, labelled experimental, with the words that Meta neither supports nor warrants its API and that any',
+    'defect is Immuch360\'s own; a switch of the app hides it in the store build should Meta object. The decision, its',
+    'reading of the clause and what goes with it are in `licenses/meta-spatial-sdk/README.md`.',
+    '',
+]
+
+
 def tail_section() -> str:
-    lines = [END_MARK, '## Not used', '', 'These were looked at and left out, because of their licence:', '']
+    lines = [END_MARK, *SPLAT_MODULE, '## Not used', '', 'These were looked at and left out, because of their licence:',
+             '']
     for name, licence, url in EXCLUDED + EXCLUDED_LATER:
         lines.append(f'* {name}: {licence}, {url}')
-    lines.append('* The splat module of the Meta Spatial SDK: Meta Platform Technologies SDK License, waiting for a '
-                 'decision')
     lines.append('')
     return '\n'.join(lines)
 

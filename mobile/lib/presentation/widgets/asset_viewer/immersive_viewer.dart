@@ -162,8 +162,9 @@ class ImmersiveRequest {
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
 /// with [stereoLabels] (see [sphereViewerLabels]), as the opening [openingId] (see [ImmersiveSession.start]), which
-/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting and
-/// [sharpFlatScreens] the "Sharper flat screens" one, which the viewer keeps for previous and next. This starts the
+/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting,
+/// [sharpFlatScreens] the "Sharper flat screens" one and [gaussianSplats] the "Gaussian splats" one (off, the viewer
+/// does not start the splat module of the headset), which the viewer keeps for previous and next. This starts the
 /// viewer: a media found for previous or next is shown with [showImmersiveRequest] instead.
 ///
 /// The texts of a panorama generated beyond the edges of a photo go along whatever the media (see
@@ -178,6 +179,7 @@ Future<void> openImmersiveRequest(
   Duration startPosition = Duration.zero,
   bool reverseThumbstickTurn = false,
   bool sharpFlatScreens = true,
+  bool gaussianSplats = true,
   String? kiosk,
 }) => api.open(
   request.url,
@@ -195,6 +197,7 @@ Future<void> openImmersiveRequest(
   reverseThumbstickTurn,
   sharpFlatScreens,
   kiosk: kiosk,
+  gaussianSplats: gaussianSplats,
 );
 
 /// The labels an opening of the immersive viewer goes with: [stereoLabels], the translated texts of a panorama
@@ -426,6 +429,7 @@ class ImmersiveAssetResolver {
     this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
     this.reverseThumbstickTurn = false,
     this.sharpFlatScreens = true,
+    this.gaussianSplats = true,
     this.raw,
     this.exifOf,
   });
@@ -444,6 +448,7 @@ class ImmersiveAssetResolver {
       videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
       reverseThumbstickTurn: ref.read(appConfigProvider).viewer.reverseThumbstickTurn,
       sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
+      gaussianSplats: ref.read(appConfigProvider).viewer.gaussianSplats,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
     );
@@ -473,6 +478,10 @@ class ImmersiveAssetResolver {
   /// Whether the flat screens of the viewer are drawn on the compositor with its filters (Sharper flat screens, on by
   /// default), as the settings said when the viewer opened
   final bool sharpFlatScreens;
+
+  /// Whether the viewer starts the splat module of the headset (Gaussian splats, on by default), as the settings said
+  /// when the viewer opened
+  final bool gaussianSplats;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -713,6 +722,7 @@ class ImmersiveAssetResolver {
         startPosition: startPosition,
         reverseThumbstickTurn: reverseThumbstickTurn,
         sharpFlatScreens: sharpFlatScreens,
+        gaussianSplats: gaussianSplats,
       );
 }
 
@@ -814,8 +824,21 @@ sealed class StereoPhotoRequest {
 
   const factory StereoPhotoRequest.bigScreen() = BigScreenStereoPhotoRequest;
 
+  const factory StereoPhotoRequest.splat(GaussianSplatRequest request) = GaussianSplatStereoPhotoRequest;
+
   /// The stereoPair JSON of ImmersiveApi.open
   String toImmersiveJson();
+}
+
+/// A Gaussian splat file of another tool (lot S5): no quad, the viewer hands it to the splat module of the Meta Spatial
+/// SDK on a Quest 3 or 3S, after reading its head again and reducing it to the count of the request
+final class GaussianSplatStereoPhotoRequest extends StereoPhotoRequest {
+  const GaussianSplatStereoPhotoRequest(this.request);
+
+  final GaussianSplatRequest request;
+
+  @override
+  String toImmersiveJson() => request.toJsonString();
 }
 
 /// An Apple spatial photo, its two eyes in two items of its HEIF file
@@ -1046,6 +1069,7 @@ Future<void> openImmersiveUrl(
   final session = ref.read(immersiveSessionProvider);
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
+  final gaussianSplats = ref.read(appConfigProvider).viewer.gaussianSplats;
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
   try {
@@ -1057,6 +1081,7 @@ Future<void> openImmersiveUrl(
       startPosition: startPosition,
       reverseThumbstickTurn: reverseThumbstickTurn,
       sharpFlatScreens: sharpFlatScreens,
+      gaussianSplats: gaussianSplats,
     );
   } catch (_) {
     session.cancel(openingId);

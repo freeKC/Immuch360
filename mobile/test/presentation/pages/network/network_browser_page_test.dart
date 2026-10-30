@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:auto_route/auto_route.dart';
@@ -9,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -23,6 +26,9 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
@@ -991,6 +997,94 @@ void main() {
 
       cache.clear();
       expect(imageCache.statusForKey(images[2]).live, isFalse);
+    });
+  });
+
+  group('Gaussian splats on a Meta Quest (lot S5)', () {
+    setUp(() {
+      share.files['/cash.spz'] = File('test/fixtures/splat/cash_register_head.spz').readAsBytesSync();
+      share.files['/axes.ply'] = File('test/fixtures/splat/axes.ply').readAsBytesSync();
+      share.files['/cube.ply'] = File('test/fixtures/splat/mesh_cube.ply').readAsBytesSync();
+      share.folders['/'] = [
+        ...share.folders['/']!,
+        share.file('/axes.ply'),
+        share.file('/cash.spz'),
+        share.file('/cube.ply'),
+      ];
+    });
+
+    /// A Meta Quest with the settings of [config], in a GitHub build, or in the build of the Meta Horizon Store
+    /// ([storeBuild]), which hides the splats
+    List<Override> onQuest({AppConfig config = const AppConfig(), bool storeBuild = false}) => [
+      isHorizonOsProvider.overrideWith((ref) async => true),
+      splatsInThisBuildProvider.overrideWith((ref) async => !storeBuild),
+      appConfigProvider.overrideWithValue(config),
+    ];
+
+    Finder splatTileOf(String name) =>
+        find.byWidgetPredicate((widget) => widget is SplatTile && widget.entry.name == name);
+
+    testWidgets('lists the splats after the photos and videos, with their badge and count, never a mesh', (
+      tester,
+    ) async {
+      await pumpBrowser(tester, overrides: onQuest());
+
+      expect(find.byType(NetworkMediaTile), findsNWidgets(3), reason: 'the media as before');
+      expect(splatTileOf('cash.spz'), findsOneWidget);
+      expect(splatTileOf('axes.ply'), findsOneWidget);
+      expect(splatTileOf('cube.ply'), findsNothing, reason: 'a mesh is no splat');
+      expect(find.text('3D splat'), findsNWidgets(2));
+      expect(find.text('47,819 gaussians'), findsOneWidget);
+      expect(find.text('686 gaussians'), findsOneWidget);
+      expect(
+        tester.getTopLeft(splatTileOf('cash.spz')).dy,
+        greaterThan(tester.getTopLeft(tileOf('trip.mp4')).dy),
+        reason: 'after the photos and videos',
+      );
+    });
+
+    testWidgets('opens the page of a splat', (tester) async {
+      await pumpBrowser(tester, overrides: onQuest());
+
+      await tester.tap(splatTileOf('cash.spz'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('splat nas /cash.spz 65536'), findsOneWidget);
+    });
+
+    testWidgets('lists none on a phone', (tester) async {
+      await pumpBrowser(tester, overrides: [isHorizonOsProvider.overrideWith((ref) async => false)]);
+
+      expect(find.byType(SplatTile), findsNothing);
+      expect(find.byType(NetworkMediaTile), findsNWidgets(3));
+    });
+
+    testWidgets('lists none in the build of the Meta Horizon Store', (tester) async {
+      await pumpBrowser(tester, overrides: onQuest(storeBuild: true));
+
+      expect(find.byType(SplatTile), findsNothing);
+      expect(find.byType(NetworkMediaTile), findsNWidgets(3));
+    });
+
+    testWidgets('lists none with Gaussian splats off', (tester) async {
+      await pumpBrowser(
+        tester,
+        overrides: onQuest(config: const AppConfig(viewer: ViewerConfig(gaussianSplats: false))),
+      );
+
+      expect(find.byType(SplatTile), findsNothing);
+      expect(find.byType(NetworkMediaTile), findsNWidgets(3));
+    });
+
+    testWidgets('a splat is never picked to be sent: Select all takes the photos and videos only', (tester) async {
+      await pumpBrowser(tester, overrides: onQuest());
+
+      await tester.tap(find.byTooltip('Select'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Select every photo and video of this folder'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('3 selected'), findsOneWidget);
     });
   });
 }

@@ -24,6 +24,28 @@ final isHorizonOsProvider = FutureProvider<bool>((ref) async {
   }
 });
 
+/// Whether this build offers the Gaussian splats (lot S5, FreeKC's decision of 30 October 2026), asked to [api] on
+/// Android: the GitHub and debug builds do; the Meta Horizon Store build, and a key the app does not know, do too while
+/// SPLATS_IN_STORE_BUILD of SplatBuild.kt is true (SplatBuild.kt tells them apart by the certificates of the APK).
+/// False off Android, and false when the question fails, as in a build that hides them.
+Future<bool> askSplatsInThisBuild(ImmersiveApi api, {required bool android}) async {
+  if (!android) {
+    return false;
+  }
+  try {
+    return await api.splatsInThisBuild();
+  } catch (error) {
+    _log.warning('Could not tell whether this build offers the Gaussian splats: $error');
+    return false;
+  }
+}
+
+/// See [askSplatsInThisBuild]: false, the app shows no splat tile, no Open a splat file, no Gaussian splats setting,
+/// and its licences page does not list the splat module as active. Asked once, at the start of the app.
+final splatsInThisBuildProvider = FutureProvider<bool>(
+  (ref) => askSplatsInThisBuild(ref.read(immersiveApiProvider), android: CurrentPlatform.isAndroid),
+);
+
 /// A request of the immersive viewer for the media [step] places away from the one it shows (see
 /// [ImmersiveEvents.requestAdjacent]), which a navigator answers (see [ImmersiveNavigator.showAdjacent]).
 ///

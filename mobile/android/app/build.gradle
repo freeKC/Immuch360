@@ -69,6 +69,15 @@ android {
     }
   }
 
+  // The splat module of the Meta Spatial SDK (questImplementation below) carries the zlib of the SDK itself, the same
+  // file byte for byte (libthird-party_zlib_1_3_1_z.so, SHA-256 1bc681cf...7138 in both AARs 0.14.0): one copy goes in
+  // the APK. The phone flavour has one copy only, which this leaves as it is.
+  packagingOptions {
+    jniLibs {
+      pickFirsts += ['lib/arm64-v8a/libthird-party_zlib_1_3_1_z.so']
+    }
+  }
+
   // The Horizon Store build is 64 bit only: pass -Parm64only=true (flutter build apk --android-project-arg
   // arm64only=true) to drop the other native libraries that plugins ship. A flavour level ndk abiFilters cannot
   // be used, it conflicts with Flutter's split per ABI builds of the phone flavour.
@@ -179,6 +188,13 @@ dependencies {
   // Apache 2.0, MIT or BSD only
   questImplementation(libs.litert) { exclude group: 'com.google.android.play', module: 'ai-delivery' }
   questImplementation(libs.litert.gpu) { exclude group: 'com.google.android.play', module: 'ai-delivery' }
+
+  // The splat module of the Meta Spatial SDK, which reads the Gaussian splat files of other tools (.spz, .ply) on a Quest
+  // 3 or 3S (immersive/splat/SplatEngines.kt of src/quest, lot S5): 0.14.0 as the SDK, under the Meta Platform
+  // Technologies SDK License, the very text of the SDK already in the APK, whose article 1.6 on Experimental Features
+  // applies to this module (licenses/meta-spatial-sdk/README.md). In the quest flavour only, about 1.1 MB, so that the
+  // phone APKs keep their size.
+  questImplementation libs.meta.spatial.sdk.splat
 
   testImplementation libs.junit
 }

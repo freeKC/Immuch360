@@ -142,8 +142,8 @@ Uint8List fakePhoto([String xmp = '']) =>
 /// GPano tags of an equirectangular photo
 const equirectangularXmp = '<rdf:Description GPano:ProjectionType="equirectangular"/>';
 
-/// Pumps [home] under a real router where the network browser route renders the real page, and the photo and video
-/// routes the real page when in [pages], else a stub telling where they were opened. Returns the router. [builder]
+/// Pumps [home] under a real router where the network browser route renders the real page, and the photo, video and
+/// splat routes the real page when in [pages], else a stub telling where they were opened. Returns the router. [builder]
 /// wraps the navigator, as the TV shell does in the app.
 Future<RootStackRouter> pumpNetworkRouter(
   WidgetTester tester, {
@@ -191,6 +191,19 @@ Future<RootStackRouter> pumpNetworkRouter(
               (data) {
                 final args = data.argsAs<NetworkVideoRouteArgs>();
                 return Text('video ${args.sourceId} ${args.path}');
+              },
+        ),
+      ),
+      // The page of a Gaussian splat file (lot S5)
+      AutoRoute(
+        path: '/splat',
+        page: PageInfo(
+          SplatRoute.name,
+          builder:
+              pages[SplatRoute.name] ??
+              (data) {
+                final args = data.argsAs<SplatRouteArgs>();
+                return Text('splat ${args.sourceId} ${args.path} ${args.size}');
               },
         ),
       ),

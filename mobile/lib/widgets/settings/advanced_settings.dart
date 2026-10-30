@@ -66,6 +66,8 @@ class AdvancedSettings extends HookConsumerWidget {
 
     // The AI relief, its cache and its components, on a Meta Quest (see AiReliefSettings)
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    // The Gaussian splats are not offered in the build of the Meta Horizon Store (splatsInThisBuildProvider)
+    final splatsInThisBuild = isHorizonOs && (ref.watch(splatsInThisBuildProvider).valueOrNull ?? false);
     // The flat 3D media told by their file name in the immersive viewer of a Meta Quest, experimental and on by default
     final flat3dByName = useState(ref.watch(appConfigProvider).viewer.flat3dByName);
     useValueChanged<bool, void>(flat3dByName.value, (_, _) {
@@ -76,6 +78,16 @@ class AdvancedSettings extends HookConsumerWidget {
     final sharpFlatScreens = useState(ref.watch(appConfigProvider).viewer.sharpFlatScreens);
     useValueChanged<bool, void>(sharpFlatScreens.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSharpFlatScreens, sharpFlatScreens.value));
+    });
+    // The Gaussian splat files of other tools in the immersive viewer of a Meta Quest 3 or 3S, experimental and on by
+    // default, and the larger count of Large splats, off by default until a measure in the headset
+    final gaussianSplats = useState(ref.watch(appConfigProvider).viewer.gaussianSplats);
+    useValueChanged<bool, void>(gaussianSplats.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerGaussianSplats, gaussianSplats.value));
+    });
+    final largeSplats = useState(ref.watch(appConfigProvider).viewer.largeSplats);
+    useValueChanged<bool, void>(largeSplats.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerLargeSplats, largeSplats.value));
     });
 
     final logLevel = Level.LEVELS[levelId.value].name;
@@ -194,6 +206,21 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: sharpFlatScreens,
           title: context.t.setting_immersive_sharp_screens_title,
           subtitle: context.t.setting_immersive_sharp_screens_subtitle,
+        ),
+      if (splatsInThisBuild)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_gaussian_splats'),
+          valueNotifier: gaussianSplats,
+          title: context.t.splat_setting_title,
+          // What they do, then that Meta neither supports nor warrants their API (FreeKC's decision of 30 October)
+          subtitle: '${context.t.splat_setting_subtitle}\n${context.t.splat_disclaimer}',
+        ),
+      if (splatsInThisBuild && gaussianSplats.value)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_large_splats'),
+          valueNotifier: largeSplats,
+          title: context.t.splat_large_setting_title,
+          subtitle: context.t.splat_large_setting_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       // The kiosk mode, for the visitors of an exhibition: a Meta Quest only, like the immersive viewer it opens

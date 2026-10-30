@@ -71,6 +71,20 @@ import app.alextran.immich.immersive.scene.SceneTexts
 import app.alextran.immich.immersive.scene.SceneVerdict
 import app.alextran.immich.immersive.scene.SceneView
 import app.alextran.immich.immersive.scene.SceneViewerOptions
+import app.alextran.immich.immersive.splat.GaussianSplatSpec
+import app.alextran.immich.immersive.splat.SplatBuild
+import app.alextran.immich.immersive.splat.SplatCacheFiles
+import app.alextran.immich.immersive.splat.SplatEngines
+import app.alextran.immich.immersive.splat.SplatGate
+import app.alextran.immich.immersive.splat.SplatPreparation
+import app.alextran.immich.immersive.splat.SplatPreparer
+import app.alextran.immich.immersive.splat.SplatRefusal
+import app.alextran.immich.immersive.splat.SplatStage
+import app.alextran.immich.immersive.splat.SplatTexts
+import app.alextran.immich.immersive.splat.SplatUprightMemory
+import app.alextran.immich.immersive.splat.SplatUprightStore
+import app.alextran.immich.immersive.splat.SplatVerdict
+import app.alextran.immich.immersive.splat.SplatViewerOptions
 import app.alextran.immich.relief.ReliefJob
 import app.alextran.immich.relief.ReliefListener
 import app.alextran.immich.relief.ReliefRequest
@@ -148,6 +162,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -322,6 +337,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * [KioskSession]. Null for any other opening; a kiosk has no previous or next media.
      */
     val kioskJson: String? = null,
+    /**
+     * The "Gaussian splats" setting when the app opened the viewer (experimental, on by default; lot S5): the viewer
+     * registers the splat module as it opens only when it is on (see [SplatGate.registers]), so that the module never
+     * runs for the users who turned the splats off. A previous or next media keeps the value of its opening.
+     */
+    val gaussianSplats: Boolean = true,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -355,6 +376,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
     val isScene: Boolean
       get() = stereoKind is StereoPhotoKind.VolumetricScene
+
+    /** A Gaussian splat file of another tool, shown by [SplatStage] with the splat module (lot S5). */
+    val isSplat: Boolean
+      get() = screenMedia.isSplat
+
+    /** A 3D scene or a splat: the panel and the thumbsticks of a scene (Reset, the glide), no previous or next. */
+    val isExplorable: Boolean
+      get() = isScene || isSplat
 
     /** A flat 3D video told by its file name, on the flat video screen, see [FlatScreenMedia.flatVideo]. */
     val flatVideo: FlatStereoSpec?
@@ -612,6 +641,30 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var sceneChosen = true
   /** The lines the panel keeps for the scene: the honesty sentence, the room to move, the flags of the file. */
   private var sceneDetails: List<String> = emptyList()
+
+  // Gaussian splat of another tool, see showSplat and SplatStage (lot S5)
+  /**
+   * The splat in the world, made at onSceneReady. Not held by [sceneHold]: no object of the SDK itself, it keeps its
+   * entity in its own session, which onSpatialShutdown shuts down (no call on the entity from then on) before letting
+   * the stage go.
+   */
+  private var splatStage: SplatStage? = null
+  /** The file of the splat is read, weighed and reduced, or loading: the bar shows under "Preparing the splat". */
+  private var splatPreparing = false
+  /** The lines the panel keeps for the splat: what the file is, its reduction, or why it is not shown. */
+  private var splatDetails: List<String> = emptyList()
+  /** "Gaussian splat (experimental)" and the words on the API of the splats passed once in this viewer. */
+  private var splatNoticeShown = false
+  /**
+   * The opening asked for the splat module (the Gaussian splats setting), read in onCreate before super.onCreate
+   * registers the features; true until then.
+   */
+  private var splatModuleWanted = true
+  /**
+   * The feature of the splat module was registered with this viewer. False, a splat is refused at once with the reason
+   * (SplatGate.viewerRefusal) instead of an entity whose load event never comes.
+   */
+  private var splatModuleRunning = false
   /** The buttons held on the controllers at the last frame, for the glide of the left thumbstick. */
   private var heldButtons = 0
   /** The uptime of the last frame in nanoseconds, 0 before the first one. */
@@ -856,13 +909,45 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var watchedFrames = 0
   private var watchedDroppedFrames = 0
 
-  override fun registerFeatures(): List<SpatialFeature> = listOf(VRFeature(this))
+  override fun registerFeatures(): List<SpatialFeature> = listOfNotNull(VRFeature(this), splatFeature())
+
+  /**
+   * The feature of the splat module (lot S5), registered before any splat entity is made as Meta's SplatSample does:
+   * in the quest flavour only, never in the store build (SplatBuild, FreeKC's decision of 30 October 2026), not on a
+   * Quest 2 or Pro, which the module does not run on, and only when the opening asked for it (the Gaussian splats
+   * setting, see [SplatGate.registers]); null otherwise or when it could not be made, the splats then saying at once
+   * that the module is not running.
+   */
+  private fun splatFeature(): SpatialFeature? {
+    splatModuleRunning = false
+    val inThisBuild = SplatBuild.offersSplats(this)
+    if (!SplatGate.registers(SplatEngines.available, Build.DEVICE, splatModuleWanted, inThisBuild)) {
+      val why =
+        when {
+          !inThisBuild -> "not in this build"
+          !splatModuleWanted -> "turned off"
+          else -> "not in this APK or headset"
+        }
+      Log.i(TAG, "splat module not registered: $why")
+      return null
+    }
+    return try {
+      SplatEngines.feature(spatialContext, systemManager).also { splatModuleRunning = it != null }
+    } catch (e: Throwable) {
+      Log.e(TAG, "splat module not registered", e)
+      null
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    // super.onCreate registers the features: whether the splat module is wanted is read first, from the media of a
+    // recreation or else from the intent that opens the viewer
+    splatModuleWanted = gaussianSplatsOf(savedInstanceState?.getBundle(STATE_REQUEST) ?: intent?.extras)
     super.onCreate(savedInstanceState)
     Log.i(TAG, "immersive viewer onCreate, max heap ${Runtime.getRuntime().maxMemory() / 1048576} MB")
     HttpClientManager.initialize(applicationContext)
-    cacheDir.listFiles()?.filter { it.name.startsWith(ORIGINAL_PREFIX) }?.forEach { it.delete() }
+    cacheDir.listFiles()?.filter { it.name.startsWith(ORIGINAL_PREFIX) || it.name.startsWith(SPLAT_PREFIX) }
+      ?.forEach { it.delete() }
     // A recreation goes on with the media shown last: the system hands back the intent that first started the viewer,
     // which knows neither a previous or next media nor a fresh open received in onNewIntent
     val saved = savedInstanceState?.getBundle(STATE_REQUEST)?.let(::requestOf)
@@ -946,6 +1031,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       createReliefMesh()
       createSceneMeshes()
       createPanoramaOutline()
+      splatStage = SplatStage(SplatEngines, systemManager, mainHandler, splatUprightMemory(), SplatListener())
       videoEntity = Entity.create(Panel(R.id.immersive_video_panel), Transform(), Visible(false))
       infoEntity =
         Entity.createPanelEntity(
@@ -1151,6 +1237,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     loadJob?.cancel()
     dropRelief()
     dropScene()
+    dropSplat()
     dropPanorama()
     reliefLabelJob?.cancel()
     reliefLabelJob = null
@@ -1244,7 +1331,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(playPauseButton) { togglePlayPause() }
     onPanelClick(stereoView) { cycleStereoLayout(1, fromPanel = true) }
     onPanelClick(coverageView) { toggleCoverage() }
-    onPanelClick(turnButton) { rotateSphere(YAW_STEP_DEGREES) }
+    onPanelClick(turnButton) { if (request?.isSplat == true) turnSplatUpright() else rotateSphere(YAW_STEP_DEGREES) }
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
     onPanelClick(resetButton) { resetScene() }
@@ -1276,30 +1363,50 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun updateSceneControls() {
     val media = request
     val scene = media?.isScene == true
+    // A splat has the controls of a scene: the glide, Reset, no previous or next (lot S5)
+    val splat = media?.isSplat == true
     hintView?.text =
       when {
-        scene -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
+        scene || splat -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
         // A flat screen the grips move and resize has its own mapping
         media?.isMovableScreen == true -> getString(R.string.immersive_screen_hint)
         else -> getString(R.string.immersive_hint)
       }
     sceneDetailsView?.let { view ->
-      val details = if (scene) sceneDetails else panoramaDetails
+      val details =
+        when {
+          scene -> sceneDetails
+          splat -> splatDetails
+          else -> panoramaDetails
+        }
       view.text = details.joinToString("\n")
       view.visibility = if (details.isNotEmpty()) View.VISIBLE else View.GONE
     }
-    navigationRow?.visibility = if (scene) View.GONE else View.VISIBLE
+    navigationRow?.visibility = if (scene || splat) View.GONE else View.VISIBLE
     resetButton?.let { button ->
       button.text = SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_RESET)
-      button.visibility = if (scene) View.VISIBLE else View.GONE
-      button.isEnabled = scene && sceneView?.isReady == true && sceneChosen
+      button.visibility = if (scene || splat) View.VISIBLE else View.GONE
+      button.isEnabled = (scene && sceneView?.isReady == true && sceneChosen) || (splat && splatStage?.isShown == true)
     }
   }
 
-  /** The turn button is there for the media shown on a sphere only. */
+  /**
+   * The turn button is there for the media shown on a sphere, and for a splat, where it reads "Turn upright" (the next
+   * orientation of the file, see SplatUpright) once the splat shows.
+   */
   private fun updateTurnButton() {
-    val flat = request?.let { it.isStereoPhoto || it.isFlatVideo } == true
-    turnButton?.visibility = if (flat) View.GONE else View.VISIBLE
+    val media = request
+    val button = turnButton ?: return
+    if (media?.isSplat == true) {
+      (button as? TextView)?.text = SplatTexts.label(media.stereoLabels, SplatTexts.LABEL_UPRIGHT)
+      button.isEnabled = splatStage?.isShown == true
+      button.visibility = View.VISIBLE
+      return
+    }
+    (button as? TextView)?.text = getString(R.string.immersive_turn)
+    button.isEnabled = true
+    val flat = media?.let { it.isStereoPhoto || it.isFlatVideo } == true
+    button.visibility = if (flat) View.GONE else View.VISIBLE
   }
 
   /** Runs [action] on a click on [view], then restarts a pending auto hide (see [restartPendingHide]). */
@@ -1351,7 +1458,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val view = stereoView ?: return
     val media = request
     // A stitched frame is mono, and so is an ordinary photo or video on the big screen: the layout would change nothing
-    if (media == null || media.isRawVideo || media.isBigScreen) {
+    if (media == null || media.isRawVideo || media.isBigScreen || media.isSplat) {
       view.visibility = View.GONE
       return
     }
@@ -1891,6 +1998,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       if (reliefMeshShown) followHeadWithRelief(head.t)
       // A 3D scene: the glide, the edge, its root fixed in the world, laid at the head at its first frame
       sceneView?.onFrame(head, heldButtons, seconds)
+      // A splat: the glide, Reset and Turn upright (lot S5)
+      splatStage?.onFrame(head, heldButtons, seconds)
     }
     followScreenGrips()
     keepPanelsBeforeScreen()
@@ -2053,7 +2162,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         controllerBits,
         handBits,
         infoVisible,
-        scene = request?.isScene == true,
+        scene = request?.isExplorable == true,
         // A flat screen leaves its grips to ScreenGrip, and a hand that holds it moves it nearer or farther
         screenGrabbable = gripsFollowed,
         screenHeld = screenGrip.grabbing != null || screenGrip.stretching,
@@ -2539,6 +2648,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         stereoPairJson = stereoPair,
         reverseThumbstickTurn = current.reverseThumbstickTurn,
         sharpFlatScreens = current.sharpFlatScreens,
+        gaussianSplats = current.gaussianSplats,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -3174,6 +3284,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       showScene(media, kind.spec)
       return
     }
+    if (kind is StereoPhotoKind.GaussianSplat) {
+      showSplat(media, kind.spec)
+      return
+    }
     updateStereoView()
     setStatus(getString(R.string.immersive_loading))
     loadJob =
@@ -3661,6 +3775,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** Reset, from the panel or a click of a thumbstick: the camera of the photo at the head again, the scene whole. */
   private fun resetScene() {
+    if (request?.isSplat == true) {
+      splatStage?.reset()
+      return
+    }
     val view = sceneView ?: return
     if (!view.isReady || !sceneChosen) return
     view.reset()
@@ -3702,6 +3820,209 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       power.currentThermalStatus
     } catch (e: Exception) {
       null
+    }
+  }
+
+  /**
+   * [media], a Gaussian splat file of another tool (lot S5): its file read where it is on the headset, else downloaded
+   * into the cache, under "Preparing the splat" and the bar; then, off the main thread, its head read again (it wins
+   * over [spec]), the gate of this headset (SplatGate), the reduction to the strongest gaussians when it holds more
+   * than the request allows, and the bounds of its positions (SplatPreparer). [SplatStage] then makes its entity, which
+   * the splat module loads; it shows fixed in the world, placed in front of the user or around the user. A splat the
+   * gate refuses says why for a few seconds, and the panel keeps the reason; one that comes to a viewer the module did
+   * not start with says so at once, before anything is read or downloaded. Every file of the cache the stage did not
+   * take goes at the end (SplatCacheFiles), a cancellation after a ready preparation included.
+   */
+  private fun showSplat(media: MediaRequest, spec: GaussianSplatSpec) {
+    val labels = media.stereoLabels
+    val stage = splatStage
+    if (stage == null || !stage.prepare()) return
+    splatPreparing = true
+    splatDetails = emptyList()
+    stereoStatus = ""
+    cancelInfoHide()
+    setReliefProgress(true)
+    setStatus(SplatTexts.label(labels, SplatTexts.LABEL_PREPARING))
+    updateStereoView()
+    updateSceneControls()
+    updateTurnButton()
+    val refusal =
+      SplatGate.viewerRefusal(SplatEngines.available, Build.DEVICE, splatModuleRunning, SplatBuild.offersSplats(this))
+    if (refusal != null) {
+      splatStopped(media, SplatTexts.refusalText(labels, refusal))
+      return
+    }
+    val local = ImmersiveMedia.localFileFor(media.url)
+    if (local == null && !SplatGate.roomForDownload(spec.fileBytes, freeCacheBytes())) {
+      splatStopped(media, SplatTexts.refusalText(labels, SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE)))
+      return
+    }
+    val options = readSplatOptions()
+    val cap = spec.maxGaussians
+    loadJob =
+      scope.launch {
+        val download = if (local == null) File(cacheDir, "$SPLAT_PREFIX${System.nanoTime()}.part") else null
+        val files = SplatCacheFiles(download)
+        try {
+          val source =
+            if (local != null) {
+              Log.i(TAG, "splat: ${local.length()} bytes on the headset")
+              local
+            } else {
+              Log.i(TAG, "splat: ${downloadTo(media.url, download!!)} bytes downloaded")
+              download
+            }
+          val started = SystemClock.elapsedRealtime()
+          val preparation =
+            withContext(Dispatchers.IO) {
+              // Remembered inside the block: a cancellation as it returns would lose a ready file otherwise
+              files.prepared(
+                SplatPreparer.prepare(
+                  source,
+                  sourceOwned = local == null,
+                  cap = cap,
+                  engine = SplatEngines.available,
+                  device = Build.DEVICE,
+                  availableMemory = { availableMemory() },
+                  thermalStatus = { thermalStatus() },
+                  cacheDir = cacheDir,
+                  prefix = SPLAT_PREFIX,
+                  cancelled = { !isActive },
+                  freeCache = { freeCacheBytes() },
+                )
+              )
+            }
+          ensureActive()
+          Log.i(TAG, "splat: prepared in ${SystemClock.elapsedRealtime() - started} ms")
+          when (preparation) {
+            is SplatPreparation.Stopped -> splatStopped(media, SplatTexts.refusalText(labels, preparation.verdict))
+            is SplatPreparation.Ready -> {
+              files.handOver()
+              splatDetails = SplatTexts.detailLines(labels, preparation.head, preparation.verdict)
+              updateSceneControls()
+              stage.show(preparation, spec, options) { lastHeadPosition to lastHeadForward }
+              announceSplat(media, preparation.verdict)
+            }
+          }
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "splat failed", e)
+          // A file found damaged while it is read says so as the probe would, translated (SplatTexts.errorText)
+          splatStopped(media, SplatTexts.errorText(labels, e))
+        } finally {
+          // The download, the reduced or renamed copy: whatever the stage did not take goes
+          files.release()
+        }
+      }
+  }
+
+  /** The free space of the cache of the viewer, null when it cannot be read */
+  private fun freeCacheBytes(): Long? =
+    try {
+      cacheDir.takeIf { it.isDirectory }?.usableSpace
+    } catch (e: SecurityException) {
+      null
+    }
+
+  /** What the splat of [media] says once read: reduced, large; the words go after TransientText.HOLD_MS */
+  private fun announceSplat(media: MediaRequest, verdict: SplatVerdict.Open) {
+    if (request !== media || closing || sceneHold.isDown) return
+    val labels = media.stereoLabels
+    val lines = mutableListOf<String>()
+    verdict.keep?.let { lines += SplatTexts.reducedLine(labels, it, verdict.gaussians) }
+    if (verdict.large) lines += SplatTexts.label(labels, SplatTexts.LABEL_LARGE)
+    if (lines.isEmpty()) return
+    val text = lines.joinToString("\n")
+    Log.i(TAG, "splat: \"$text\" said for ${TransientText.HOLD_MS} ms")
+    if (infoVisible) showPassing(text) else queueNotice(text)
+  }
+
+  /** What the splat says, on the main thread; nothing once another media is shown */
+  private inner class SplatListener : SplatStage.Listener {
+    override fun onSplatShown() {
+      val media = request ?: return
+      if (!media.isSplat || closing || sceneHold.isDown) return
+      splatPreparing = false
+      setReliefProgress(false)
+      stereoStatus = ""
+      updateSceneControls()
+      updateTurnButton()
+      // What is experimental is said once, and the words go (FreeKC's rule of 25 October), with the words that Meta
+      // neither supports nor warrants the API of the splats (his decision of 30 October)
+      if (!splatNoticeShown) {
+        splatNoticeShown = true
+        val notice = SplatTexts.noticeText(media.stereoLabels)
+        Log.i(TAG, "splat: \"$notice\" said for ${TransientText.HOLD_MS} ms")
+        if (infoVisible) {
+          showPassing(notice)
+          scheduleInfoHide(TransientText.HOLD_MS)
+        } else {
+          showNotice(notice)
+        }
+      } else {
+        setStatus("")
+        scheduleInfoHide(TransientText.HOLD_MS)
+      }
+    }
+
+    override fun onSplatFailed(reason: String) {
+      val media = request ?: return
+      if (!media.isSplat || closing || sceneHold.isDown) return
+      splatStopped(media, SplatTexts.failedText(media.stereoLabels, reason))
+    }
+  }
+
+  /** The splat of [media] is not shown, for [text]: said for a few seconds, kept in the panel */
+  private fun splatStopped(media: MediaRequest, text: String) {
+    if (request !== media || closing || sceneHold.isDown) return
+    splatPreparing = false
+    splatDetails = listOf(text)
+    setReliefProgress(false)
+    updateSceneControls()
+    updateTurnButton()
+    Log.i(TAG, "splat: not shown ($text)")
+    showPassing(text)
+    scheduleInfoHide(TransientText.HOLD_MS)
+  }
+
+  /** Another media, or the end of the viewer: the splat goes, without a word */
+  private fun dropSplat() {
+    splatStage?.drop()
+    splatPreparing = false
+    splatDetails = emptyList()
+  }
+
+  /** Turn upright, from the panel: the next orientation of the splat, remembered for its file */
+  private fun turnSplatUpright() {
+    val upright = splatStage?.turnUpright() ?: return
+    Log.i(TAG, "splat: turned upright, ${upright.key}")
+  }
+
+  /** The orientation of each splat file, kept in the preferences of the viewer */
+  private fun splatUprightMemory(): SplatUprightMemory {
+    val preferences = getSharedPreferences(SPLAT_PREFERENCES, MODE_PRIVATE)
+    return SplatUprightMemory(
+      object : SplatUprightStore {
+        override fun read(key: String): String? = preferences.getString(key, null)
+
+        override fun write(key: String, value: String) {
+          preferences.edit().putString(key, value).apply()
+        }
+      }
+    )
+  }
+
+  /** The options a measuring session pushed to the headset (see [SplatViewerOptions]), the defaults otherwise */
+  private fun readSplatOptions(): SplatViewerOptions {
+    val folder = getExternalFilesDir(null) ?: return SplatViewerOptions()
+    val file = File(folder, SplatViewerOptions.FILE_NAME)
+    if (!file.isFile) return SplatViewerOptions()
+    return try {
+      SplatViewerOptions.parse(file.readText()).also { Log.i(TAG, "splat options from ${file.name}: $it") }
+    } catch (e: Exception) {
+      Log.w(TAG, "splat options unreadable: ${e.message}")
+      SplatViewerOptions()
     }
   }
 
@@ -6150,6 +6471,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // here, before the shutdown that super.onDestroy runs
     releaseRelief()
     dropScene()
+    dropSplat()
     dropPhotoLayer()
     scope.cancel()
     super.onDestroy()
@@ -6176,6 +6498,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // The entities of a scene are let go without a call to the SDK, its textures go with the scene as the others do
     sceneView?.abandon()
     sceneView = null
+    // So does the entity of a splat: no call on it from now on, whatever comes later (lot S5)
+    splatStage?.shutDown()
+    splatStage = null
     scope.cancel()
     // The player first, then the lens compositor, before the panel goes
     releasePlayer()
@@ -6206,6 +6531,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     internal const val EXTRA_STEREO_PAIR = "app.alextran.immich.immersive.STEREO_PAIR"
     private const val EXTRA_REVERSE_THUMBSTICK_TURN = "app.alextran.immich.immersive.REVERSE_THUMBSTICK_TURN"
     private const val EXTRA_SHARP_FLAT_SCREENS = "app.alextran.immich.immersive.SHARP_FLAT_SCREENS"
+    /** The Gaussian splats setting of the opening, see MediaRequest.gaussianSplats */
+    private const val EXTRA_GAUSSIAN_SPLATS = "app.alextran.immich.immersive.GAUSSIAN_SPLATS"
     /** The kiosk JSON of a kiosk opening (see [KioskOptions]), absent for any other opening */
     private const val EXTRA_KIOSK = "app.alextran.immich.immersive.KIOSK"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
@@ -6215,6 +6542,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val STATE_STEREO_ANGLE_DEG = "app.alextran.immich.immersive.STEREO_ANGLE_DEG"
     private const val STATE_STEREO_25D = "app.alextran.immich.immersive.STEREO_25D"
     private const val ORIGINAL_PREFIX = "immersive_original_"
+    /** The copies of the splat files in the cache: a download, a reduction, a file named after its format */
+    private const val SPLAT_PREFIX = "immersive_splat_"
+    /** The orientation chosen for each splat file, see SplatUprightMemory */
+    private const val SPLAT_PREFERENCES = "immersive_splat"
     private const val INFO_DISTANCE = 1.3f
     /** The info panel stands this much below the eyes, at INFO_DISTANCE. */
     private const val INFO_DROP = 0.3f
@@ -6428,6 +6759,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       reverseThumbstickTurn: Boolean,
       sharpFlatScreens: Boolean = true,
       kiosk: String? = null,
+      gaussianSplats: Boolean = true,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -6446,6 +6778,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           reverseThumbstickTurn = reverseThumbstickTurn,
           sharpFlatScreens = sharpFlatScreens,
           kioskJson = kiosk,
+          gaussianSplats = gaussianSplats,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -6473,8 +6806,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, media.reverseThumbstickTurn)
         putBoolean(EXTRA_SHARP_FLAT_SCREENS, media.sharpFlatScreens)
         putString(EXTRA_KIOSK, media.kioskJson)
+        putBoolean(EXTRA_GAUSSIAN_SPLATS, media.gaussianSplats)
       }
     }
+
+    /** The Gaussian splats setting of the extras of an opening or of a recreation; on when they do not say */
+    private fun gaussianSplatsOf(extras: Bundle?): Boolean = extras?.getBoolean(EXTRA_GAUSSIAN_SPLATS, true) ?: true
 
     /** The media [extrasOf] wrote in [extras], or null without a url. */
     private fun requestOf(extras: Bundle): MediaRequest? {
@@ -6506,6 +6843,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         reverseThumbstickTurn = extras.getBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, false),
         sharpFlatScreens = extras.getBoolean(EXTRA_SHARP_FLAT_SCREENS, true),
         kioskJson = extras.getString(EXTRA_KIOSK)?.takeIf { it.isNotBlank() },
+        gaussianSplats = gaussianSplatsOf(extras),
       )
     }
 

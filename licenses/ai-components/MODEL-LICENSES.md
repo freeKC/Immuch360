@@ -210,6 +210,22 @@ miniz, stb, llamafile sgemm) are in the `licenses/` folder of each archive, from
 repository. No CUDA: the graphics card is reached through Vulkan only.
 
 <!-- end of the releases -->
+## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)
+
+`com.meta.spatial:meta-spatial-sdk-splat` 0.14.0 shows on a Meta Quest 3 or 3S the Gaussian splat files that
+other tools make (`.spz`, `.ply`): no AI of ours, no model downloaded. It is built into the APK of the quest
+flavour only (about 1.1 MB). Licence: the Meta Platform Technologies SDK License Agreement, the very text of the
+Meta Spatial SDK the APK already ships (its `LICENSE`, SHA-256
+`bb9b12db3b92c024458df625acd6f2d8140ea805cc6814bac74613a466731368`, and its `notices.html` are byte for byte those
+of `meta-spatial-sdk`, `-toolkit` and `-vr`). Both are in `licenses/meta-spatial-sdk/` and on the licence page of
+the app. The same text, but one of its clauses applies here for the first time: the splat API is an Experimental
+Feature of the SDK (opt in `SpatialSDKExperimentalSplatAPI`), and article 1.6 keeps an Experimental Feature out of
+a production build unless Meta released it in its own production builds or permits it in writing. On 30 October
+2026 FreeKC, the maintainer, decided to ship it in the builds of this free hobby app, on GitHub and in the Meta
+Horizon Store, labelled experimental, with the words that Meta neither supports nor warrants its API and that any
+defect is Immuch360's own; a switch of the app hides it in the store build should Meta object. The decision, its
+reading of the clause and what goes with it are in `licenses/meta-spatial-sdk/README.md`.
+
 ## Not used
 
 These were looked at and left out, because of their licence:
@@ -231,4 +247,3 @@ These were looked at and left out, because of their licence:
 * HiDream, Lumina Image 2.0, Sana: their Llama 3.1 or Gemma 2 encoders, https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct
 * CUDA, cuDNN and the nvidia-* wheels: NVIDIA EULA, https://docs.nvidia.com/cuda/eula/index.html
 * ComfyUI: GPL-3.0: never shipped, only called when the user installed it, https://github.com/Comfy-Org/ComfyUI
-* The splat module of the Meta Spatial SDK: Meta Platform Technologies SDK License, waiting for a decision

@@ -203,6 +203,9 @@ flutter:
     - path: assets/licenses/litert/
       flavors:
         - quest
+    # The licence of the Meta Spatial SDK, which every Android APK ships, and the notices of its native libraries
+    # (lib/utils/meta_spatial_licenses.dart)
+    - assets/licenses/meta-spatial-sdk/
   fonts:
     - family: GoogleSans
       fonts:

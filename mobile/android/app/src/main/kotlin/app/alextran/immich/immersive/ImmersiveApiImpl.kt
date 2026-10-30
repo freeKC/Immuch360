@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import app.alextran.immich.immersive.splat.SplatBuild
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
@@ -106,6 +107,9 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
 
   override fun isHorizonOs(): Boolean = isHorizonOsDevice()
 
+  /** False in the store build, see SplatBuild: its signing certificate is read once per process */
+  override fun splatsInThisBuild(): Boolean = SplatBuild.offersSplats(appContext)
+
   /**
    * [headers] stays in the pigeon signature but is ignored: HttpClientManager already adds the user's custom
    * headers (and the session cookie) to every OkHttp and Cronet request, adding them again would duplicate them.
@@ -124,7 +128,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * show both eyes on a flat quad. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting of the app: the
    * right thumbstick then turns the sphere the other way. [sharpFlatScreens] is its "Sharper flat screens" setting:
    * the photos of a flat screen on a compositor quad layer, and the compositor filters on the flat screens. [kiosk] is
-   * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening.
+   * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening. [gaussianSplats] is the "Gaussian
+   * splats" setting (lot S5): off, the viewer does not register the splat module.
    */
   override fun open(
     url: String,
@@ -142,6 +147,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     reverseThumbstickTurn: Boolean,
     sharpFlatScreens: Boolean,
     kiosk: String?,
+    gaussianSplats: Boolean,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -151,7 +157,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       "open immersive viewer, opening $openingId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
         "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
-        "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}",
+        "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}, gaussian splats=$gaussianSplats",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -169,6 +175,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         reverseThumbstickTurn,
         sharpFlatScreens,
         kiosk,
+        gaussianSplats,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }

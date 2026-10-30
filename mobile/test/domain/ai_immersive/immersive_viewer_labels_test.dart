@@ -71,6 +71,33 @@ void main() {
     expect(labels['aiReliefDamaged'], 'An AI component is damaged');
   });
 
+  testWidgets('a splat the headset cannot take says why, under the keys SplatTexts.kt reads', (tester) async {
+    final t = await english(tester);
+    final labels = splatViewerLabels(t);
+
+    expect(labels['splatNoSpace'], 'Not enough free space on the headset for this splat');
+    expect(
+      labels['splatNotRunning'],
+      'The splat module did not start with this viewer: close it and open the splat again',
+    );
+    expect(labels['splatDamaged'], 'This splat file is damaged or incomplete');
+    expect(labels['splatFailed'], 'The splat could not be shown: {reason}');
+    expect(stereoPhotoViewerLabels(t), containsPair('splatNotRunning', labels['splatNotRunning']));
+  });
+
+  testWidgets('the first splat of a viewer says that Meta neither supports nor warrants the API, under its key', (
+    tester,
+  ) async {
+    final labels = splatViewerLabels(await english(tester));
+
+    expect(labels['splatNotice'], 'Gaussian splat (experimental)');
+    expect(
+      labels['splatDisclaimer'],
+      'Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: '
+      "any defect is Immuch360's own.",
+    );
+  });
+
   testWidgets('the 3D button names the 2.5D view of a relief, experimental', (tester) async {
     expect(aiImmersiveViewerLabels(await english(tester))['ai25d'], '2.5D (experimental)');
   });
