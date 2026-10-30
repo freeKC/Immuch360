@@ -409,6 +409,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+  /**
+   * The objects of the scene below (entities, panels, materials, textures, meshes, the Surfaces of the layers) are
+   * held through it: they read null from the start of onSpatialShutdown on, so that onPause, onStop and onDestroy,
+   * which the SDK runs after its shutdown for a finishing viewer, and whatever comes later touch nothing of a scene
+   * gone (see [SpatialHold]). Declared before them.
+   */
+  private val sceneHold = SpatialHold()
   private var request: MediaRequest? = null
   private var sceneReady = false
   private var closing = false
@@ -421,19 +428,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var lastKnownPositionMs: Long? = null
 
   // Scene
-  private var skyboxEntity: Entity? = null
-  private var videoEntity: Entity? = null
-  private var infoEntity: Entity? = null
+  private var skyboxEntity: Entity? by sceneHold.ref()
+  private var videoEntity: Entity? by sceneHold.ref()
+  private var infoEntity: Entity? by sceneHold.ref()
   /** One line panel below the line of sight for the thumbstick actions, see [showFeedback]. */
-  private var feedbackEntity: Entity? = null
-  private var skyboxMaterial: SceneMaterial? = null
+  private var feedbackEntity: Entity? by sceneHold.ref()
+  private var skyboxMaterial: SceneMaterial? by sceneHold.ref()
   /** Half sphere of 180° photos, shown instead of the skybox. Its material gets the same photo texture. */
-  private var halfSphereEntity: Entity? = null
-  private var halfSphereMaterial: SceneMaterial? = null
+  private var halfSphereEntity: Entity? by sceneHold.ref()
+  private var halfSphereMaterial: SceneMaterial? by sceneHold.ref()
   /** Our own small copy of the idle gradient. The Material component texture is cached by the SDK. */
-  private var idleTexture: SceneTexture? = null
+  private var idleTexture: SceneTexture? by sceneHold.ref()
   /** The photo texture we created and own. At most one at a time. */
-  private var photoTexture: SceneTexture? = null
+  private var photoTexture: SceneTexture? by sceneHold.ref()
   private var pendingBitmap: Bitmap? = null
   private var infoVisible = false
   private var infoPlaced = false
@@ -474,15 +481,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private var coverage = ImmersiveSphereCoverage.FULL
   /** Scene object of the video panel, to change the stereo mode and the shape of its compositor layer. */
-  private var videoPanel: PanelSceneObject? = null
+  private var videoPanel: PanelSceneObject? by sceneHold.ref()
 
   // Flat video screen of the flat 3D videos, see showVideo and applyFlatVideoShape
   /** Its entity, made at the first flat 3D video: the second video swapchain only exists once one is shown. */
-  private var flatVideoEntity: Entity? = null
+  private var flatVideoEntity: Entity? by sceneHold.ref()
   /** Its scene object, to change the stereo mode and the size of its quad layer. */
-  private var flatVideoPanel: PanelSceneObject? = null
+  private var flatVideoPanel: PanelSceneObject? by sceneHold.ref()
   /** The Surface of its swapchain, which the player draws a flat 3D video on. */
-  private var flatVideoSurface: Surface? = null
+  private var flatVideoSurface: Surface? by sceneHold.ref()
   /** Display size of the frames of the flat 3D video playing, as the player told it; null until it does. */
   private var flatVideoSize: Pair<Int, Int>? = null
   /** The screen was placed in front of a known head pose: until then the first pose places it again. */
@@ -495,10 +502,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var flat3dAnnounced = false
 
   // Stereo quad of the spatial photos, see showStereoPhoto
-  private var stereoQuadEntity: Entity? = null
-  private var stereoQuadMaterial: SceneMaterial? = null
+  private var stereoQuadEntity: Entity? by sceneHold.ref()
+  private var stereoQuadMaterial: SceneMaterial? by sceneHold.ref()
   /** The texture of the spatial photo on the quad, ours: the previous one is destroyed once a new one is set. */
-  private var stereoTexture: SceneTexture? = null
+  private var stereoTexture: SceneTexture? by sceneHold.ref()
   /** A texture decoded before the material of the quad was ready, set once it is. */
   private var pendingStereo: StereoTexture? = null
   /** Size of an eye on the texture shown, without its gutter; null before the first spatial photo. */
@@ -533,9 +540,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   // Photo layer: the photos of a flat screen on a compositor quad layer while Sharper flat screens is on, see
   // FlatScreenLayer and drawPhotoLayer
   /** Its entity, made at the first photo that goes on it, and its panel and Surface once the SDK made them. */
-  private var photoLayerEntity: Entity? = null
-  private var photoLayerPanel: PanelSceneObject? = null
-  private var photoLayerSurface: Surface? = null
+  private var photoLayerEntity: Entity? by sceneHold.ref()
+  private var photoLayerPanel: PanelSceneObject? by sceneHold.ref()
+  private var photoLayerSurface: Surface? by sceneHold.ref()
   /** The photo on the layer, kept to draw it again on a new Surface; null while the layer shows nothing. */
   private var photoLayerTexture: StereoTexture? = null
   /** [photoLayerTexture] is on the Surface. */
@@ -577,12 +584,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   // 2.5D view of a relief, see createReliefMesh and ReliefMesh
   /** The mesh of the 2.5D view, hidden but while a relief shows in 2.5D. */
-  private var reliefMeshEntity: Entity? = null
+  private var reliefMeshEntity: Entity? by sceneHold.ref()
   /** Its material, once its scene object is there. */
-  private var reliefMeshMaterial: SceneMaterial? = null
-  /** Its triangles and the scene mesh made of them, written by the mesh creator. */
-  @Volatile private var reliefTriangles: TriangleMesh? = null
-  @Volatile private var reliefSceneMesh: SceneMesh? = null
+  private var reliefMeshMaterial: SceneMaterial? by sceneHold.ref()
+  /** Its triangles and the scene mesh made of them, written by the mesh creator (volatile in [SpatialHold]). */
+  private var reliefTriangles: TriangleMesh? by sceneHold.ref()
+  private var reliefSceneMesh: SceneMesh? by sceneHold.ref()
   /** The mesh of the relief shown, null for any other photo and before its relief is made. */
   private var reliefMesh: ReliefMesh? = null
   /** The texture coordinates and the triangles of [reliefMesh] are in the triangles of the scene. */
@@ -620,16 +627,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Its sentence passed and its outline showed, once per photo, when its first image was on the sphere. */
   private var panoramaAnnounced = false
   /** The outline of the photo, hidden but for a few seconds at the opening of such a panorama. */
-  private var outlineEntity: Entity? = null
-  /** Its triangles and the scene mesh made of them, written by the mesh creator. */
-  @Volatile private var outlineTriangles: TriangleMesh? = null
-  @Volatile private var outlineSceneMesh: SceneMesh? = null
+  private var outlineEntity: Entity? by sceneHold.ref()
+  /** Its triangles and the scene mesh made of them, written by the mesh creator (volatile in [SpatialHold]). */
+  private var outlineTriangles: TriangleMesh? by sceneHold.ref()
+  private var outlineSceneMesh: SceneMesh? by sceneHold.ref()
   /** The photo the outline is for, written once its mesh is there. */
   private var outlineRegion: PhotoRegion? = null
   /** The outline is written for the photo shown. */
   private var outlineWritten = false
   /** The white pixel its material samples: the colours of its vertices make it dark or light. */
-  private var outlineTexture: SceneTexture? = null
+  private var outlineTexture: SceneTexture? by sceneHold.ref()
   /** Hides the outline once the sentence went. */
   private var outlineJob: Job? = null
 
@@ -677,7 +684,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * The panel of the exit notice, the end card and the error card, hidden otherwise. Made at the first kiosk opening
    * of this viewer ([ensureKioskPanel]): no panel, layout nor texture for the other openings.
    */
-  private var kioskPanelEntity: Entity? = null
+  private var kioskPanelEntity: Entity? by sceneHold.ref()
   private var kioskPanelView: View? = null
   private var kioskTextView: TextView? = null
   /** The text of the kiosk panel, kept for a panel bound after it was asked for. */
@@ -806,7 +813,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * the last frame of the previous video does not show up with the 3D layout or the field of view of the new one.
    */
   private var videoRevealed = false
-  private var videoSurface: Surface? = null
+  private var videoSurface: Surface? by sceneHold.ref()
   private var currentVideoUrl: String? = null
   private var videoFallbackTried = false
   /** Between onResume and onPause: the viewer is the activity in front. */
@@ -922,6 +929,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   override fun onSceneReady() {
     super.onSceneReady()
+    // Never into a scene gone: the frame loop of the SDK stops with it
+    if (sceneHold.isDown) return
     Log.i(TAG, "immersive viewer onSceneReady")
     try {
       scene.setReferenceSpace(ReferenceSpace.LOCAL_FLOOR)
@@ -1076,6 +1085,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         surfaceConsumer = { _, surface ->
           Log.i(TAG, "photo layer surface ready")
           runOnUiThread {
+            // Posted: the scene may be gone by then
+            if (sceneHold.isDown) return@runOnUiThread
             photoLayerSurface = surface
             // A new Surface holds nothing: the photo goes on it again
             photoLayerDrawn = false
@@ -1133,6 +1144,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * feedback panel announces instead.
    */
   private fun showRequest(revealInfo: Boolean = true) {
+    // Nothing once the scene is gone: a media would go into entities of no scene
+    if (sceneHold.isDown) return
     val media = request
     syncKiosk(media)
     loadJob?.cancel()
@@ -1671,6 +1684,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** Does what the kiosk decided, see [KioskSession]. */
   private fun runKiosk(commands: List<KioskSession.Command>) {
+    // A post or a headset event may come once the scene is gone: nothing left to show or to restart
+    if (sceneHold.isDown) return
     for (command in commands) {
       when (command) {
         KioskSession.Command.SHOW_EXIT_NOTICE -> {
@@ -2490,7 +2505,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     rawProjection: String?,
     stereoPair: String?,
   ): Boolean {
-    if (closing || isFinishing || isDestroyed) {
+    if (closing || isFinishing || isDestroyed || sceneHold.isDown) {
       Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
       return false
     }
@@ -2832,6 +2847,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     skyboxEntity = entity
     systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
       runOnUiThread {
+        if (sceneHold.isDown) return@runOnUiThread
         val material = sceneObject.mesh?.materials?.firstOrNull()
         if (material == null) {
           Log.e(TAG, "skybox material not found, photos cannot be displayed")
@@ -2891,6 +2907,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     halfSphereEntity = entity
     systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
       runOnUiThread {
+        if (sceneHold.isDown) return@runOnUiThread
         val material = sceneObject.mesh?.materials?.firstOrNull()
         if (material == null) {
           Log.e(TAG, "half sphere material not found, 180 degree photos stay on the full sphere")
@@ -2922,6 +2939,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** Uploads the bitmap as the skybox texture, recycles it, destroys the previous photo texture. */
   private fun applySkyboxBitmap(bitmap: Bitmap) {
+    if (sceneHold.isDown) {
+      bitmap.recycle()
+      return
+    }
     val material = skyboxMaterial
     if (material == null) {
       Log.w(TAG, "skybox not ready yet, keeping the bitmap for later")
@@ -3026,6 +3047,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoQuadEntity = entity
     systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
       runOnUiThread {
+        if (sceneHold.isDown) return@runOnUiThread
         val material = sceneObject.mesh?.materials?.firstOrNull()
         if (material == null) {
           Log.e(TAG, "stereo quad material not found, spatial photos cannot be displayed")
@@ -3100,6 +3122,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     reliefMeshEntity = entity
     systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
       runOnUiThread {
+        if (sceneHold.isDown) return@runOnUiThread
         val material = sceneObject.mesh?.materials?.firstOrNull()
         if (material == null) {
           Log.e(TAG, "relief mesh material not found, reliefs stay in 3D")
@@ -3310,7 +3333,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private inner class ReliefViewListener(private val media: MediaRequest) :
     ReliefListener<BitmapReliefPhoto, BitmapReliefEye> {
     private val shown: Boolean
-      get() = request === media && !closing
+      get() = request === media && !closing && !sceneHold.isDown
 
     override fun onStage(stage: ReliefStage) {
       if (!shown) return
@@ -3565,7 +3588,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     } finally {
       bitmaps.forEach { it.recycle() }
     }
-    val view = SceneView(this, systemManager, mainHandler, prepared, textures, options, SceneListener(media))
+    val view = SceneView(this, systemManager, mainHandler, sceneHold, prepared, textures, options, SceneListener(media))
     sceneView = view
     view.attach()
   }
@@ -3573,7 +3596,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** What the scene of [media] says, on the main thread; nothing once another media is shown. */
   private inner class SceneListener(private val media: MediaRequest) : SceneView.Listener {
     private val current: Boolean
-      get() = request === media && !closing
+      get() = request === media && !closing && !sceneHold.isDown
 
     override fun onSceneShown() {
       if (!current) return
@@ -3865,6 +3888,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * the photo while its original loads (see [showStereoPhoto]): the panel says so, and stays.
    */
   private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true, preview: Boolean = false) {
+    if (sceneHold.isDown) {
+      stereo.bitmap.recycle()
+      return
+    }
     val media = request
     val onLayer = media?.photoOnLayer == true
     if (onLayer) {
@@ -4699,6 +4726,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     outlineEntity = entity
     systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
       runOnUiThread {
+        if (sceneHold.isDown) return@runOnUiThread
         val material = sceneObject.mesh?.materials?.firstOrNull()
         if (material == null) {
           Log.e(TAG, "panorama outline material not found, the sentence alone tells a generated panorama")
@@ -4746,7 +4774,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       scope.launch {
         delay(TransientText.HOLD_MS + TransientText.FADE_OUT_MS)
         outlineJob = null
-        entity.setComponent(Visible(false))
+        // Read again rather than kept from above: null once the scene is gone
+        outlineEntity?.setComponent(Visible(false))
       }
   }
 
@@ -6090,6 +6119,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   override fun onDestroy() {
+    val sceneState = if (sceneHold.isDown) "already shut down" else "up"
+    Log.i(TAG, "immersive viewer onDestroy, finishing $isFinishing, scene $sceneState")
     // Last chance for the closed event when the viewer is finishing (onStop already sent it when it was stopped first).
     // A destroy that is not a finish (a recreation for a configuration change the manifest does not list, or the system
     // tearing down the stopped viewer while keeping its record) is no close: the viewer comes back from its saved
@@ -6099,6 +6130,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     if (liveViewer === this) liveViewer = null
+    // A finishing viewer had its onSpatialShutdown already (the SDK runs it from onPause): the objects of the scene
+    // read null, and these drops only let the jobs and the bitmaps go. Any other viewer drops its scene here, before
+    // the shutdown that super.onDestroy runs
     releaseRelief()
     dropScene()
     dropPhotoLayer()
@@ -6106,7 +6140,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     super.onDestroy()
   }
 
+  /**
+   * The scene of the SDK goes: VrActivity.destroy runs this method, then destroys the scene and clears EntityContext,
+   * at the onPause of a finishing viewer (before its own onPause, onStop and onDestroy) or at the onDestroy of any
+   * other. First of all every object of the scene is let go (see [SpatialHold]): nothing that runs from here on, the
+   * drops of onDestroy, a coroutine, a post or a callback, reaches an entity, a panel or a texture of a scene gone.
+   */
   override fun onSpatialShutdown() {
+    sceneHold.shutDown()
     Log.i(TAG, "immersive viewer shutdown")
     rememberPosition()
     stopProgressTicker()
@@ -6114,35 +6155,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     releaseRelief()
-    // The entities and the textures of a scene go with the scene, as the other textures do
+    // The entities of a scene are let go without a call to the SDK, its textures go with the scene as the others do
     sceneView?.abandon()
     sceneView = null
     scope.cancel()
     // The player first, then the lens compositor, before the panel goes
     releasePlayer()
-    videoPanel = null
     pendingBitmap?.recycle()
     pendingBitmap = null
-    // Textures still bound to the skybox material are released with the scene, as in the samples
-    photoTexture = null
-    idleTexture = null
-    skyboxMaterial = null
-    halfSphereMaterial = null
     pendingStereo?.bitmap?.recycle()
     pendingStereo = null
-    stereoTexture = null
-    stereoQuadMaterial = null
+    // The bitmap of the photo layer recycled. The layer, the textures still bound to the materials and the triangles
+    // go with the scene, as in the samples: sceneHold.shutDown let go of them
     dropPhotoLayer()
-    photoLayerPanel = null
-    photoLayerSurface = null
-    // The triangles go with the scene, as the textures do
     reliefMesh = null
-    reliefMeshMaterial = null
-    reliefTriangles = null
-    reliefSceneMesh = null
-    outlineTriangles = null
-    outlineSceneMesh = null
-    outlineTexture = null
     super.onSpatialShutdown()
   }
 
