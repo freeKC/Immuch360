@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 
 /// The time bar of a video, in the controls of the asset viewer and of the video page of a share.
 ///
 /// On a phone or a computer, the plain slider. With the remote control layout ([tvMode]) the bar is a stop of the
 /// remote of its own, under the buttons: Down from them takes the focus there, framed by the ring of the TV shell
-/// (TvFocusRing) like any other control. Left and right then move the video by [remoteSeekStep] per press, and faster
-/// while held (see [remoteSeekHoldStep]): the video waits ([onHold]) until the key is released ([onRelease]). OK plays
-/// or pauses ([onToggle]) as it goes down, like a button of the controls, and its press goes on to the page: held on
-/// the bar of the asset viewer it opens the details, as it does on any button there. Up goes back to the buttons. The
-/// slider itself never takes the focus there, since a focused slider keeps the arrows for good (Flutter issue 54984):
-/// the bar takes the keys in its place.
+/// (TvFocusRing) like any other control. Left and right then move the video at each press by the step of the quick
+/// series of presses of the player ([seekSeries]: 10 s, then 30 s, then 60 s, see RemoteSeekSeries), [remoteSeekStep]
+/// without one, and faster while held (see [remoteSeekHoldStep], which ends the series): the video waits ([onHold])
+/// until the key is released ([onRelease]). OK plays or pauses ([onToggle]) as it goes down, like a button of the
+/// controls, and its press goes on to the page: held on the bar of the asset viewer it opens the details, as it does on
+/// any button there. Up goes back to the buttons. The slider itself never takes the focus there, since a focused slider
+/// keeps the arrows for good (Flutter issue 54984): the bar takes the keys in its place.
 class VideoTimeBar extends StatefulWidget {
   const VideoTimeBar({
     super.key,
@@ -25,6 +27,7 @@ class VideoTimeBar extends StatefulWidget {
     this.onHold,
     this.onRelease,
     this.onToggle,
+    this.seekSeries,
   });
 
   final Duration position;
@@ -42,6 +45,10 @@ class VideoTimeBar extends StatefulWidget {
 
   /// OK on the bar, with the remote control layout
   final VoidCallback? onToggle;
+
+  /// The quick series of presses of the player, with the remote control layout: the step of each press, and the hint
+  /// of the controls
+  final RemoteSeekSeries? seekSeries;
 
   @override
   State<VideoTimeBar> createState() => _VideoTimeBarState();
@@ -92,11 +99,14 @@ class _VideoTimeBarState extends State<VideoTimeBar> {
     switch (event) {
       case KeyDownEvent():
         _repeats = 0;
-        final target = _target = _clamp(widget.position + remoteSeekStep * sign);
+        final move = widget.seekSeries?.press(forward: forward) ?? remoteSeekStep * sign;
+        final target = _target = _clamp(widget.position + move);
         seek(target);
       case KeyRepeatEvent():
         if (_repeats == 0) {
           widget.onHold?.call();
+          // Held, the key has its own ramp: the next press starts a new series
+          widget.seekSeries?.end();
         }
         _repeats++;
         final target = _target = _clamp(

@@ -27,6 +27,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_video_bufferi
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -337,8 +338,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       final step = key == LogicalKeyboardKey.arrowRight ? 1 : -1;
       final arrows = remoteVideoArrows(tvMode: tvMode, playing: _isPlaying, hasNeighbours: _hasNeighbours);
       if (arrows == RemoteVideoArrows.seek) {
-        // Held, it keeps seeking
-        if (event is! KeyUpEvent) {
+        // Shared with the controls, which show the step of the last press (see RemoteSeekSeries)
+        final series = tvMode ? ref.read(remoteSeekSeriesProvider(_playerKey)) : null;
+        if (series != null && press) {
+          // A TV: further at each press of a quick series
+          _seekBy(series.press(forward: step > 0));
+        } else if (event is! KeyUpEvent) {
+          // Held, it keeps seeking, 10 s per repeat; the next press starts a new series
+          series?.end();
           _seekBy(remoteSeekStep * step);
         }
       } else if (press) {

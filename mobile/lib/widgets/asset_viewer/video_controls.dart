@@ -9,6 +9,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/cast/cast_manager_state.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_time_bar.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -22,8 +23,9 @@ import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 /// On a TV (the remote control layout) they also hide while the video loads, every key of the remote starts the 5 s
 /// again wherever it goes, they show when the video ends, and -10 s and +10 s buttons follow play and pause, for the
 /// remotes without fast forward and rewind (left and right go to the previous or next asset there, see
-/// remoteVideoArrows); the time bar under them takes the remote: left and right on it seek, faster while held (see
-/// VideoTimeBar). The audio track and subtitle menus follow, for a video that has several audio tracks or subtitles
+/// remoteVideoArrows); the time bar under them takes the remote: left and right on it seek, further at each press of a
+/// quick series and faster while held (see VideoTimeBar, RemoteSeekSeries), the step of the last press beside the time
+/// (VideoSeekHint). The audio track and subtitle menus follow, for a video that has several audio tracks or subtitles
 /// (VideoTrackButtons, DesktopAudioTrackButton).
 class VideoControls extends ConsumerStatefulWidget {
   final String videoPlayerName;
@@ -163,6 +165,8 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
     final notifier = ref.watch(_provider.notifier);
     final isLoaded = duration != Duration.zero;
     final tvMode = ref.watch(tvModeProvider);
+    // The quick series of left and right of a TV, shared with the viewer, which takes them while it has the focus
+    final seekSeries = tvMode ? ref.watch(remoteSeekSeriesProvider(widget.videoPlayerName)) : null;
 
     // Every key that reaches the controls (a remote moving between them) starts the 5 s again: they hide 5 s after the
     // last key, not under a user who is still using them
@@ -222,6 +226,7 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                 if (!CurrentPlatform.isDesktop && !isCasting)
                   VideoTrackButtons(playerKey: widget.videoPlayerName, shadows: VideoControls._controlShadows),
                 const Spacer(),
+                if (seekSeries != null) VideoSeekHint(series: seekSeries, shadows: VideoControls._controlShadows),
                 IgnorePointer(
                   child: Text(
                     "${position.format()} / ${duration.format()}",
@@ -244,6 +249,7 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
               onRelease: notifier.release,
               onToggle: () => _toggle(isCasting),
               onSeek: isLoaded ? (position) => _onSeek(isCasting, position) : null,
+              seekSeries: seekSeries,
             ),
           ],
         ),

@@ -1,10 +1,11 @@
 // The asset viewer with a remote control: left and right go through the photos; on a TV through the videos too,
-// whatever they do, while a keyboard of a phone seeks through a video that plays; on a TV OK shows the controls of a
-// video with play and pause focused, any key brings them back and they hide 5 s after the last key while it plays;
-// info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release (held on play and
-// pause or on the time bar, it presses once, never once per repeat); Up from play and pause reaches the top bar at
-// once; the bars never take the focus while hidden, and the viewer takes it back when they hide; on a TV Back leaves
-// the bars before it closes the viewer, and OK on the Back arrow of the top bar closes it.
+// whatever they do (a video alone seeks, further at each press of a quick series), while a keyboard of a phone seeks
+// through a video that plays; on a TV OK shows the controls of a video with play and pause focused, any key brings them
+// back and they hide 5 s after the last key while it plays; info and Menu open the details, and on a TV so does OK held
+// 700 ms, which then acts on its release (held on play and pause or on the time bar, it presses once, never once per
+// repeat); Up from play and pause reaches the top bar at once; the bars never take the focus while hidden, and the
+// viewer takes it back when they hide; on a TV Back leaves the bars before it closes the viewer, and OK on the Back
+// arrow of the top bar closes it.
 
 import 'dart:async';
 
@@ -24,6 +25,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details.wi
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -253,7 +255,39 @@ void main() {
     expect(container.read(assetViewerJumpProvider).currentIndex, 1);
   });
 
-  testWidgets('on a TV a video alone in its timeline seeks with left and right', (tester) async {
+  testWidgets('on a TV a video alone in its timeline seeks with left and right, further at each press of a series', (
+    tester,
+  ) async {
+    final calls = <String>[];
+    await pumpViewer(
+      tester,
+      [video],
+      overrides: [videoPlayerProvider(video.id).overrideWith((ref) => _FakePlayer(calls))],
+    );
+    final hint = find.byKey(const Key('video_seek_hint'));
+
+    // 600 ms apart (see press): one series each way, 10 s then 30 s
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    expect(calls, ['seek 40', 'seek 30', 'seek 0']);
+    expect(
+      find.descendant(of: hint, matching: find.text('30 s')),
+      findsOneWidget,
+      reason: 'the step on screen',
+    );
+    expect(find.descendant(of: hint, matching: find.byIcon(Icons.fast_rewind_rounded)), findsOneWidget);
+
+    await tester.pump(remoteSeekSeriesWindow);
+    expect(hint, findsNothing);
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(calls.last, 'seek 10', reason: '1.5 s later, 10 s again');
+    await tester.pump(remoteSeekSeriesWindow);
+  });
+
+  testWidgets('on a TV a held key ends the series of a video alone: 10 s per repeat, then 10 s at the next press', (
+    tester,
+  ) async {
     final calls = <String>[];
     await pumpViewer(
       tester,
@@ -262,10 +296,16 @@ void main() {
     );
 
     await press(tester, LogicalKeyboardKey.arrowRight);
-    await press(tester, LogicalKeyboardKey.arrowLeft);
-    await press(tester, LogicalKeyboardKey.arrowLeft);
+    // Held within the series: its press is the second of the series (30 s), each repeat 10 s, never a press of it
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    await press(tester, LogicalKeyboardKey.arrowRight);
 
-    expect(calls, ['seek 40', 'seek 30', 'seek 20']);
+    expect(calls, ['seek 40', 'seek 70', 'seek 80', 'seek 90', 'seek 100'], reason: 'the hold ended the series');
+    await tester.pump(remoteSeekSeriesWindow);
   });
 
   testWidgets('on a TV OK shows the bars with play and pause focused, and a second OK pauses', (tester) async {

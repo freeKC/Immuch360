@@ -120,7 +120,8 @@ bool isRotateLetter(KeyEvent event, {required bool shift, bool? typing}) {
 }
 
 /// How far fast forward and rewind, the -10 s and +10 s buttons, and left and right where they seek (see
-/// [remoteVideoArrows]) or on the time bar of a TV (VideoTimeBar) move a video
+/// [remoteVideoArrows]) move a video. On a TV it is the first step of a quick series of left or right presses, which
+/// then moves 30 s and 60 s per press (RemoteSeekSeries), on the time bar (VideoTimeBar) and where the arrows seek.
 const remoteSeekStep = Duration(seconds: 10);
 
 /// How far one repeat of left or right held on the time bar of a TV moves a video of [duration], at the repeat

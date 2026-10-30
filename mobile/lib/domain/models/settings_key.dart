@@ -26,6 +26,8 @@ enum SettingsKey<T> {
   viewerLoadOriginalVideo<bool>(),
   viewerAutoPlayVideo<bool>(),
   viewerTapToNavigate<bool>(),
+  // The date and time of a photo at the bottom left with the controls on a TV, see ViewerConfig.tvShowDateTime
+  viewerTvShowDateTime<bool>(),
   viewerSpatial25d<bool>(),
   // The right thumbstick of the Meta Quest immersive viewer turns the other way, see ViewerConfig.reverseThumbstickTurn
   viewerReverseThumbstickTurn<bool>(),

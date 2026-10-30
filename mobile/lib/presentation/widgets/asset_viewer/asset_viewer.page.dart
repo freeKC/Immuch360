@@ -22,6 +22,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.wi
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
@@ -401,6 +402,12 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return asset != null && asset.isVideo ? videoPlayerProvider(asset.id) : null;
   }
 
+  /// The quick series of left and right of the video on screen, shared with its controls (see RemoteSeekSeries)
+  RemoteSeekSeries? get _seekSeries {
+    final asset = ref.read(assetViewerProvider).currentAsset;
+    return asset != null && asset.isVideo ? ref.read(remoteSeekSeriesProvider(asset.id)) : null;
+  }
+
   /// The keys of a remote control, a keyboard or a game pad. Next, previous, info (and Menu, see [remoteDetailsKeys])
   /// and the media keys work wherever the focus is in the viewer; the arrows and OK only while the viewer itself has
   /// it, else they belong to the focused button. A photo: left and right go to the previous or next asset, OK shows or
@@ -409,8 +416,10 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   ///
   /// A video on a TV: left and right go to the previous or next asset whatever the video does, OK shows the controls
   /// with play and pause focused, and any other key but Back, the volume, info and Menu shows them too (see
-  /// [remoteVideoArrows], [remoteKeyShowsVideoControls]). Elsewhere: OK pauses and plays, left and right seek by 10 s
-  /// while it plays and go to the previous or next asset once it is paused or ended.
+  /// [remoteVideoArrows], [remoteKeyShowsVideoControls]); a video alone in its timeline seeks with them instead, 10 s,
+  /// then 30 s, then 60 s per press of a quick series (see RemoteSeekSeries) and 10 s per repeat while held. Elsewhere:
+  /// OK pauses and plays, left and right seek by 10 s while it plays and go to the previous or next asset once it is
+  /// paused or ended.
   ///
   /// On a TV OK acts on its release, and held on the viewer or on a button of the bars it opens the details (see
   /// [_onTvOk]); Up from the top row of the bottom bar goes straight to the top bar.
@@ -492,8 +501,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
           ? RemoteVideoArrows.navigate
           : remoteVideoArrows(tvMode: tvMode, playing: playing, hasNeighbours: _totalAssets > 1);
       if (video != null && arrows == RemoteVideoArrows.seek) {
-        // Held, it keeps seeking
-        if (event is! KeyUpEvent) {
+        final series = tvMode ? _seekSeries : null;
+        if (series != null && press) {
+          // A TV: further at each press of a quick series
+          _seekBy(video, series.press(forward: step > 0));
+        } else if (event is! KeyUpEvent) {
+          // Held, it keeps seeking, 10 s per repeat; the next press starts a new series
+          series?.end();
           _seekBy(video, remoteSeekStep * step);
         }
       } else if (press) {
