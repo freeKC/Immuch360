@@ -166,6 +166,18 @@ class SharePublisher extends Notifier<Map<String, SharePublish>> {
     return const {};
   }
 
+  /// Whether a version made is still on its way to its share: being written there, or waiting for the .glb copy of its
+  /// scene. Closing the window then would leave it in the folder of the copies, deleted at the next start
+  bool get isBusy {
+    if (_writing.isNotEmpty) {
+      return true;
+    }
+    final queue = ref.read(conversionQueueProvider);
+    return state.entries.any(
+      (entry) => entry.value.state == SharePublishState.waiting && queue.byId(entry.key)?.state == ConversionState.done,
+    );
+  }
+
   /// Follows the jobs of [targets], each with the folder of the share its version goes to
   void follow(Map<String, ShareVersionTarget> targets) {
     if (targets.isEmpty) {

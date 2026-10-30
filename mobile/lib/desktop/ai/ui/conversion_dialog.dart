@@ -1490,7 +1490,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     for (final candidate in candidates) {
       final plan = candidate.runs ? session.destinations[candidate.id] : null;
       // A version next to its original on a share is made here first, in a folder of its own, then put there
-      final folder = plan?.share != null ? await ref.read(shareStagingFolderProvider)() : plan?.folder;
+      var folder = plan?.folder;
+      if (plan?.share != null) {
+        try {
+          folder = await ref.read(shareStagingFolderProvider)();
+        } catch (error) {
+          _log.warning('No folder to make the version of ${candidate.asset.name} in: $error');
+          folder = null;
+        }
+      }
       requests.add(
         plan == null || folder == null
             ? ConversionRequest(source: candidate.source, skip: candidate.skip ?? ConversionSkipReason.unreachable)

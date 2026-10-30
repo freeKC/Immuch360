@@ -533,7 +533,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Watched here, in the build of this page: the photo is known once the file was read, which rebuilds the page
     final current = _current;
     final turns = current == null ? 0 : _turnsOf(current);
-    // Immuch360 Desktop: "Make 3D (AI)" in the menu, as for a photo of the library (lib/desktop/ai/ui/share_conversion.dart)
+    // Immuch360 Desktop: "Make 3D (AI)" in the menu, as for a photo of the library
+    // (lib/desktop/ai/ui/share_conversion.dart)
     final makeImmersive = CurrentPlatform.isDesktop && current != null && !tvMode
         ? watchShareMakeImmersive(
             ref,

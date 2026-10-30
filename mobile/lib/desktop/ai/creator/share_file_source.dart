@@ -1,10 +1,10 @@
 // A photo of a share opened in the app (SMB, WebDAV, DLNA, Plex), copied for its conversion (spec 3.2: "a temporary
 // local copy" when a remote source cannot be read in place). The file is read through the media bridge, as the pages
 // of the shares read it, into <temp>/immuch360-ai/<a folder of its own>/: once, when the conversion dialog opens, with
-// the bytes copied and their total told as it goes and a cancel; the dialog reads the facts of the photo from that copy,
-// with the same probes as a file of this computer, and its job reads the same copy, no second download. The copy is
-// deleted with its folder when the job ends, whatever the end, and copied again by a Retry; one a crash left is deleted
-// at the next start once an hour old (cleanUpAiCopiesAtStart). Nothing is ever written to the original.
+// the bytes copied and their total told as it goes and a cancel; the dialog reads the facts of the photo from that
+// copy, with the same probes as a file of this computer, and its job reads the same copy, no second download. The
+// copy is deleted with its folder when the job ends, whatever the end, and copied again by a Retry; one a crash left
+// is deleted at the next start once an hour old (cleanUpAiCopiesAtStart). Nothing is ever written to the original.
 //
 // A copy that finds no room fails as a disk full, which pauses the queue as for the version itself.
 

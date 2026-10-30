@@ -93,7 +93,13 @@ ShareVersionLookup shareVersionLookup(Future<NetworkFileSystem> Function() fileS
 final shareFolderOfProvider = Provider<ShareFolder? Function(NetworkEntry entry)>(
   (ref) => (entry) {
     final source = ref.read(networkSourceProvider(entry.sourceId));
-    return source == null ? null : shareFolderOf(source, entry.path);
+    try {
+      return source == null ? null : shareFolderOf(source, entry.path);
+    } catch (error) {
+      // An address the writer cannot name: the folder of my choice, as for a share that takes no file
+      _log.warning('The folder of ${entry.name} on its share cannot be named: $error');
+      return null;
+    }
   },
 );
 
