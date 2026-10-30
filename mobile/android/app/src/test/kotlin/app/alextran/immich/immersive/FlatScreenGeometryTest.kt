@@ -163,7 +163,24 @@ class FlatScreenGeometryTest {
     assertTrue(nearer > 48f)
     assertEquals(FlatScreenGeometry.MAX_ANGLE_DEG, FlatScreenGeometry.angleAtDistance(100f, 2f, 0.75f), 0f)
     assertEquals(FlatScreenGeometry.MIN_ANGLE_DEG, FlatScreenGeometry.angleAtDistance(20f, 1f, 8f), 0f)
-    assertEquals(40f, FlatScreenGeometry.angleAtDistance(48f, 2f, 1.5f, maxAngleDeg = 40f), 0f)
+    assertEquals(40f, FlatScreenGeometry.angleAtDistance(48f, 2f, 1.5f, 15f..40f), 0f)
+    // A photo of two eyes brought from 2 m to 0.75 m stops at 90 degrees, and taken to 8 m at 30
+    val twoEyes = FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = false)
+    assertEquals(90f, FlatScreenGeometry.angleAtDistance(60f, 2f, 0.75f, twoEyes), 0f)
+    assertEquals(30f, FlatScreenGeometry.angleAtDistance(60f, 2f, 8f, twoEyes), 0f)
+  }
+
+  @Test
+  fun `a photo of two eyes keeps the 30 to 90 degrees of the quad, one picture and a video go from 15 to 110`() {
+    assertEquals(30f..90f, FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = false))
+    assertEquals(30f..60f, FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = true))
+    assertEquals(15f..110f, FlatScreenGeometry.angleBounds(twoEyes = false, estimatedRelief = false))
+    assertEquals(FlatScreenGeometry.ONE_PICTURE_ANGLES, FlatScreenGeometry.angleBounds(false, false))
+    val twoEyes = FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = false)
+    assertEquals(90f, FlatScreenGeometry.nextAngle(88f, 1, twoEyes), 0f)
+    assertEquals(30f, FlatScreenGeometry.nextAngle(33f, -1, twoEyes), 0f)
+    assertEquals(94f, FlatScreenGeometry.nextAngle(88f, 1), 0f)
+    assertEquals(27f, FlatScreenGeometry.nextAngle(33f, -1), 0f)
   }
 
   @Test
@@ -172,7 +189,7 @@ class FlatScreenGeometryTest {
     assertEquals(42f, FlatScreenGeometry.nextAngle(48f, -1), 0f)
     assertEquals(FlatScreenGeometry.MAX_ANGLE_DEG, FlatScreenGeometry.nextAngle(108f, 1), 0f)
     assertEquals(FlatScreenGeometry.MIN_ANGLE_DEG, FlatScreenGeometry.nextAngle(18f, -1), 0f)
-    assertEquals(60f, FlatScreenGeometry.nextAngle(58f, 1, maxAngleDeg = 60f), 0f)
+    assertEquals(60f, FlatScreenGeometry.nextAngle(58f, 1, 15f..60f), 0f)
   }
 
   @Test

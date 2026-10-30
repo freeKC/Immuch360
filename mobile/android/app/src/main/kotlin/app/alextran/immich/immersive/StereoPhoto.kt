@@ -238,12 +238,17 @@ internal data class StereoPhotoChoices(
 ) {
   /**
    * These choices for the photo of [url] shown in the opening [openingId], null for any other photo or opening, which
-   * starts from the defaults. The angle stays within the bounds of the thumbstick, [maxAngleDeg] at most (see
-   * StereoComposer.maxAngle).
+   * starts from the defaults. The angle stays within the [bounds] the controls give this photo (see
+   * FlatScreenGeometry.angleBounds): 30 to 90 degrees for two eyes, 60 at most for an estimated relief, 15 to 110 for
+   * one picture.
    */
-  fun forPhoto(url: String, openingId: Long, maxAngleDeg: Float = StereoComposer.MAX_ANGLE_DEG): StereoPhotoChoices? =
+  fun forPhoto(
+    url: String,
+    openingId: Long,
+    bounds: ClosedFloatingPointRange<Float> = StereoComposer.MIN_ANGLE_DEG..StereoComposer.MAX_ANGLE_DEG,
+  ): StereoPhotoChoices? =
     if (url != this.url || openingId != this.openingId || angleDeg.isNaN()) null
-    else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, maxAngleDeg))
+    else copy(angleDeg = angleDeg.coerceIn(bounds))
 }
 
 /**

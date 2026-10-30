@@ -159,6 +159,17 @@ class StereoComposerTest {
     assertNull(wide.copy(angleDeg = Float.NaN).forPhoto("u", 1L))
   }
 
+  @Test
+  fun `a restored angle of one picture keeps the wider bounds of its screen, a photo of two eyes those of the quad`() {
+    val one = FlatScreenGeometry.angleBounds(twoEyes = false, estimatedRelief = false)
+    val two = FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = false)
+    val choices = StereoPhotoChoices("u", 1L, threeD = true, angleDeg = 110f)
+    assertEquals(110f, choices.forPhoto("u", 1L, one)?.angleDeg)
+    assertEquals(20f, choices.copy(angleDeg = 20f).forPhoto("u", 1L, one)?.angleDeg)
+    assertEquals(90f, choices.forPhoto("u", 1L, two)?.angleDeg)
+    assertEquals(30f, choices.copy(angleDeg = 20f).forPhoto("u", 1L, two)?.angleDeg)
+  }
+
   private fun assertVector(message: String, expected: Vector3, actual: Vector3) {
     assertEquals("$message x", expected.x, actual.x, 1e-4f)
     assertEquals("$message y", expected.y, actual.y, 1e-4f)
@@ -177,7 +188,8 @@ class StereoComposerTest {
     assertEquals(66f, StereoComposer.nextAngle(60f, 1, StereoComposer.maxAngle(estimatedRelief = false)))
     // A choice kept over a recreation stays within the cap of its photo
     val wide = StereoPhotoChoices("u", 1L, threeD = true, angleDeg = 84f)
-    assertEquals(60f, wide.forPhoto("u", 1L, StereoComposer.maxAngle(estimatedRelief = true))?.angleDeg)
+    val relief = FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = true)
+    assertEquals(60f, wide.forPhoto("u", 1L, relief)?.angleDeg)
     assertEquals(84f, wide.forPhoto("u", 1L)?.angleDeg)
   }
 

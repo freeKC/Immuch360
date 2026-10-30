@@ -289,10 +289,13 @@ internal object FlatScreenGeometry {
   /** The distances the thumbstick and the Distance buttons step through, in meters. */
   val DISTANCES_M = floatArrayOf(0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f, 2.5f, 3f, 4f, 5f, 6f, 8f)
 
-  /** What the Size buttons change the angular width by, and its bounds. */
+  /** What the Size buttons change the angular width by, and its bounds for one picture (see [angleBounds]). */
   const val ANGLE_STEP_DEG = 6f
   const val MIN_ANGLE_DEG = 15f
   const val MAX_ANGLE_DEG = 110f
+
+  /** The bounds of one picture: an ordinary photo on the big screen, the flat video screen. */
+  val ONE_PICTURE_ANGLES: ClosedFloatingPointRange<Float> = MIN_ANGLE_DEG..MAX_ANGLE_DEG
 
   /** The box a new screen fits in, as angles from the eyes: a large screen still seen whole. */
   const val FIT_WIDTH_DEG = 60f
@@ -366,9 +369,19 @@ internal object FlatScreenGeometry {
     return DISTANCES_M[(index + step).coerceIn(0, DISTANCES_M.lastIndex)]
   }
 
-  /** The angular width after a push larger ([step] 1) or smaller (-1), within [MIN_ANGLE_DEG] and [maxAngleDeg]. */
-  fun nextAngle(angleDeg: Float, step: Int, maxAngleDeg: Float = MAX_ANGLE_DEG): Float =
-    (angleDeg + step * ANGLE_STEP_DEG).coerceIn(MIN_ANGLE_DEG, maxAngleDeg)
+  /**
+   * The angular widths a flat screen takes. A photo that holds two eyes ([twoEyes]) keeps the bounds of the stereo
+   * quad, 30 to 90 degrees, and 60 at most for an [estimatedRelief] (StereoComposer.maxAngle): its disparity grows with
+   * its width. One picture (an ordinary photo on the big screen, a photo whose JSON does not read) and the flat video
+   * screen go from 15 to 110 degrees, the bounds of Gaurav Mukherjee's Size row (gmfun/Immuch360, branch
+   * quest/flat-3d, commit d47f56f6a).
+   */
+  fun angleBounds(twoEyes: Boolean, estimatedRelief: Boolean): ClosedFloatingPointRange<Float> =
+    if (twoEyes) StereoComposer.MIN_ANGLE_DEG..StereoComposer.maxAngle(estimatedRelief) else ONE_PICTURE_ANGLES
+
+  /** The angular width after a push larger ([step] 1) or smaller (-1), within [bounds]. */
+  fun nextAngle(angleDeg: Float, step: Int, bounds: ClosedFloatingPointRange<Float> = ONE_PICTURE_ANGLES): Float =
+    (angleDeg + step * ANGLE_STEP_DEG).coerceIn(bounds)
 
   /** Width in meters of a screen [angleDeg] wide at [distance]. */
   fun width(angleDeg: Float, distance: Float): Float = 2f * distance * tan(Math.toRadians(angleDeg / 2.0)).toFloat()
@@ -379,10 +392,14 @@ internal object FlatScreenGeometry {
 
   /**
    * The angular width at [to] meters of a screen [angleDeg] wide at [from]: the same width in meters, so that it looks
-   * larger nearer and smaller farther, within [MIN_ANGLE_DEG] and [maxAngleDeg].
+   * larger nearer and smaller farther, within [bounds].
    */
-  fun angleAtDistance(angleDeg: Float, from: Float, to: Float, maxAngleDeg: Float = MAX_ANGLE_DEG): Float =
-    angleForWidth(width(angleDeg, from), to).coerceIn(MIN_ANGLE_DEG, maxAngleDeg)
+  fun angleAtDistance(
+    angleDeg: Float,
+    from: Float,
+    to: Float,
+    bounds: ClosedFloatingPointRange<Float> = ONE_PICTURE_ANGLES,
+  ): Float = angleForWidth(width(angleDeg, from), to).coerceIn(bounds)
 
   /**
    * The angular width a new screen of [aspect] (width over height; 16:9 when unknown) opens at: as wide as fits in

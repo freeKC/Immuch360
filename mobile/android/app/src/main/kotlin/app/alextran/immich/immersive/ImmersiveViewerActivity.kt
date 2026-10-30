@@ -303,68 +303,66 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val sharpFlatScreens: Boolean = true,
   ) {
+    /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
+    private val screenMedia: FlatScreenMedia by lazy {
+      FlatScreenMedia(isVideo, rawProjection, stereoPairJson, sharpFlatScreens)
+    }
+
     /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
-      get() = isVideo && rawProjection != null
+      get() = screenMedia.isRawVideo
 
     /** A photo of the stereo quad: in 3D when its JSON reads and both eyes decode, flat otherwise. */
     val isStereoPhoto: Boolean
-      get() = !isVideo && stereoPairJson != null
+      get() = screenMedia.isStereoPhoto
 
     /** What the quad shows, null when the JSON does not read (the photo then shows flat on the quad). */
-    val stereoKind: StereoPhotoKind? by lazy { if (isStereoPhoto) StereoPhotoKind.parse(stereoPairJson) else null }
+    val stereoKind: StereoPhotoKind?
+      get() = screenMedia.stereoKind
 
     /** The two eyes of an Apple spatial photo, null for any other kind. */
     val stereoPair: StereoPairSpec?
       get() = (stereoKind as? StereoPhotoKind.HeicPair)?.spec
 
-    /** The widest the thumbstick makes the quad of this photo, see StereoComposer.maxAngle. */
-    val stereoMaxAngleDeg: Float
-      get() = StereoComposer.maxAngle(stereoKind?.isEstimatedRelief == true)
+    /**
+     * The angular widths the screen of this media takes (see FlatScreenGeometry.angleBounds): those of the stereo quad
+     * for a photo of two eyes, 60 degrees at most for an estimated relief, 15 to 110 for one picture and the flat
+     * video screen.
+     */
+    val screenAngleBounds: ClosedFloatingPointRange<Float>
+      get() = screenMedia.angleBounds
 
     /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
     val isScene: Boolean
       get() = stereoKind is StereoPhotoKind.VolumetricScene
 
-    /**
-     * A flat 3D video told by its file name: the flat3d JSON of a video (see [FlatStereoSpec]), on the flat video
-     * screen in front of the user rather than on a sphere. Null for any other media, a raw 360° video included.
-     */
-    val flatVideo: FlatStereoSpec? by lazy {
-      if (isVideo && rawProjection == null) FlatStereoSpec.parse(stereoPairJson) else null
-    }
+    /** A flat 3D video told by its file name, on the flat video screen, see [FlatScreenMedia.flatVideo]. */
+    val flatVideo: FlatStereoSpec?
+      get() = screenMedia.flatVideo
 
-    /**
-     * An ordinary video opened with "View on a big screen" (the bigScreen JSON, see [BigScreenSpec]): on the flat video
-     * screen, whole, its frame for both eyes.
-     */
-    val isBigScreenVideo: Boolean by lazy {
-      isVideo && rawProjection == null && BigScreenSpec.isRequest(stereoPairJson)
-    }
+    /** An ordinary video opened with "View on a big screen", see [FlatScreenMedia.isBigScreenVideo]. */
+    val isBigScreenVideo: Boolean
+      get() = screenMedia.isBigScreenVideo
 
-    /** A video of the flat video screen: a flat 3D video (see [flatVideo]), or an ordinary one on the big screen. */
+    /** A video of the flat video screen: a flat 3D video, or an ordinary one on the big screen. */
     val isFlatVideo: Boolean
-      get() = flatVideo != null || isBigScreenVideo
+      get() = screenMedia.isFlatVideo
 
     /** A media opened with "View on a big screen": a photo of the stereo quad, or a video of the flat video screen. */
     val isBigScreen: Boolean
-      get() = isBigScreenVideo || stereoKind == StereoPhotoKind.BigScreen
+      get() = screenMedia.isBigScreen
 
     /** A media told 3D by its file name: a video of the flat video screen, or a photo of the stereo quad. */
     val isFlat3d: Boolean
-      get() = flatVideo != null || stereoKind is StereoPhotoKind.Flat
+      get() = screenMedia.isFlat3d
 
-    /**
-     * A media on a flat screen the user may move and resize (see [ScreenPlace]): a video of the flat video screen, or a
-     * photo of the stereo quad but a relief made in the headset, whose 2.5D mesh stands on the quad where it was
-     * placed, and a 3D scene.
-     */
+    /** A media on a flat screen the user may move and resize, see [FlatScreenMedia.isMovableScreen]. */
     val isMovableScreen: Boolean
-      get() =
-        isFlatVideo ||
-          (isStereoPhoto &&
-            stereoKind !is StereoPhotoKind.DepthRelief &&
-            stereoKind !is StereoPhotoKind.VolumetricScene)
+      get() = screenMedia.isMovableScreen
+
+    /** A photo drawn on the photo layer rather than on the quad mesh, see [FlatScreenMedia.photoOnLayer]. */
+    val photoOnLayer: Boolean
+      get() = screenMedia.photoOnLayer
   }
 
   /**
@@ -809,7 +807,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         !media.isStereoPhoto -> null
         stereoChoicesFor == media.url to media.openingId ->
           StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg, stereo25d)
-        else -> restoredStereoChoices?.forPhoto(media.url, media.openingId)
+        else -> restoredStereoChoices?.forPhoto(media.url, media.openingId, media.screenAngleBounds)
       }
     if (choices != null) {
       outState.putBoolean(STATE_STEREO_3D, choices.threeD)
@@ -1794,7 +1792,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val width = screenStretch.width(spread) ?: return
     val wanted =
       FlatScreenGeometry.angleForWidth(width, place.distance)
-        .coerceIn(FlatScreenGeometry.MIN_ANGLE_DEG, maxScreenAngle())
+        .coerceIn(screenAngleBounds())
         .roundToInt()
         .toFloat()
     if (abs(wanted - angle) < 1f) {
@@ -1846,10 +1844,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
-  /** The widest the screen shown goes: 60 degrees for a relief estimated by AI (see StereoComposer.maxAngle). */
-  private fun maxScreenAngle(): Float =
-    if (request?.stereoKind?.isEstimatedRelief == true) StereoComposer.MAX_FILE_ANGLE_DEG
-    else FlatScreenGeometry.MAX_ANGLE_DEG
+  /**
+   * The angular widths of the screen shown, the same for the Size buttons, the thumbstick, the stretch and a change of
+   * distance: 30 to 90 degrees for a photo of two eyes (60 at most for an estimated relief), 15 to 110 for one picture
+   * and the flat video screen (see FlatScreenGeometry.angleBounds).
+   */
+  private fun screenAngleBounds(): ClosedFloatingPointRange<Float> =
+    request?.screenAngleBounds ?: FlatScreenGeometry.ONE_PICTURE_ANGLES
 
   /** The screen shown [angleDeg] wide, where it is; said on the panel or the feedback line with [report]. */
   private fun setScreenAngle(angleDeg: Float, report: Boolean = true) {
@@ -1873,7 +1874,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The Size buttons and the thumbstick up or down on a photo: a larger ([step] 1) or smaller (-1) screen. */
   private fun changeScreenSize(step: Int) {
     val angle = currentScreenAngle() ?: return
-    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, maxScreenAngle()))
+    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, screenAngleBounds()))
   }
 
   /**
@@ -1889,7 +1890,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val moved = place.at(distance)
       screenPlace = moved
       screenDistanceM = distance
-      val kept = FlatScreenGeometry.angleAtDistance(angle, place.distance, distance, maxScreenAngle())
+      val kept = FlatScreenGeometry.angleAtDistance(angle, place.distance, distance, screenAngleBounds())
       setScreenAngle(kept, report = false)
       applyScreenPlace()
       screenDragSide?.let { side ->
@@ -1936,8 +1937,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     sizeView?.text = sizeText(angle)
     distanceView?.text = distanceText(place.distance)
-    sizeLessButton?.isEnabled = angle > FlatScreenGeometry.MIN_ANGLE_DEG + 1e-3f
-    sizeMoreButton?.isEnabled = angle < maxScreenAngle() - 1e-3f
+    val bounds = screenAngleBounds()
+    sizeLessButton?.isEnabled = angle > bounds.start + 1e-3f
+    sizeMoreButton?.isEnabled = angle < bounds.endInclusive - 1e-3f
     distanceLessButton?.isEnabled = place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f
     distanceMoreButton?.isEnabled = place.distance < FlatScreenGeometry.DISTANCES_M.last() - 1e-3f
     sizeRow?.visibility = View.VISIBLE
@@ -2712,7 +2714,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val kind = media.stereoKind
     val spec = media.stereoPair
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
-    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.stereoMaxAngleDeg)
+    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.screenAngleBounds)
     restoredStereoChoices = null
     stereo3d = restored?.threeD ?: true
     // A relief first shows as its request says, 3D or 2.5D; the photo of a recreation as the user left it
@@ -2721,7 +2723,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoHasSecondEye = false
     stereoAngleDeg =
       restored?.angleDeg
-        ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceAtMost(media.stereoMaxAngleDeg)
+        ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceIn(media.screenAngleBounds)
     stereoSizeFromPicture = kind == StereoPhotoKind.BigScreen && restored == null
     stereoChoicesFor = media.url to media.openingId
     if (kind is StereoPhotoKind.VolumetricScene) {
@@ -3398,8 +3400,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true, preview: Boolean = false) {
     val media = request
-    val onLayer =
-      media != null && media.isMovableScreen && FlatScreenLayer.showsOnLayer(media.stereoKind, media.sharpFlatScreens)
+    val onLayer = media?.photoOnLayer == true
     if (onLayer) {
       showOnLayer(stereo)
     } else if (!showOnMesh(stereo)) {
@@ -3831,7 +3832,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** The thumbstick up ([step] 1) or down (-1) on a spatial photo: a wider or narrower quad, where it is. */
   private fun resizeStereoQuad(step: Int) {
-    val maxAngleDeg = request?.stereoMaxAngleDeg ?: StereoComposer.MAX_ANGLE_DEG
+    val maxAngleDeg = request?.screenAngleBounds?.endInclusive ?: StereoComposer.MAX_ANGLE_DEG
     stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step, maxAngleDeg)
     applyStereoScale()
     Log.i(TAG, "stereo quad is now $stereoAngleDeg degrees wide")
