@@ -230,6 +230,13 @@ internal class ControllerEdges(private val log: (String) -> Unit = {}) {
  * one held glides the eye (read every frame, see [SceneStick]), the right one does nothing (a scene is frontal, turning
  * it would show the void), neither asks for previous or next, and a click of either one is [Action.RESET]. B, Y, A,
  * X, grip and menu do what they do everywhere; the trigger plays nothing.
+ *
+ * A flat screen ([actionsFor] with screenGrabbable: a photo of the stereo quad or a video of the flat video screen)
+ * leaves the grips to [ScreenGrip], which tells a short press (the info panel, as everywhere) from a hold that grabs
+ * the screen. While the screen is held (screenHeld: grabbed or stretched), either thumbstick up takes it farther
+ * ([Action.SCREEN_FARTHER]) and down nearer ([Action.SCREEN_NEARER]), and left or right do nothing: neither previous,
+ * next nor a turn comes from a hand busy with the screen. Gaurav Mukherjee's idea (gmfun/Immuch360, branch
+ * quest/flat-3d), with the mapping FreeKC chose on 29 October.
  */
 internal object ImmersiveControls {
   enum class Action {
@@ -244,16 +251,30 @@ internal object ImmersiveControls {
     SHOW_PANEL,
     PLAY_PAUSE,
     RESET,
+    SCREEN_FARTHER,
+    SCREEN_NEARER,
   }
 
   /** A click of either thumbstick (ButtonBits exposes both, javap of 0.14.0: 0x10000 and 0x20000) */
   val STICK_CLICKS = ButtonBits.ButtonThumbLClick or ButtonBits.ButtonThumbRClick
 
+  /** Either thumbstick pushed up, or down. */
+  private val STICKS_UP = ButtonBits.ButtonThumbLU or ButtonBits.ButtonThumbRU
+  private val STICKS_DOWN = ButtonBits.ButtonThumbLD or ButtonBits.ButtonThumbRD
+
   /**
    * The actions for [controllerBits] and [handBits] pressed on the same update, in the order to run them, in a 3D
-   * [scene] or on any other media.
+   * [scene] or on any other media. [screenGrabbable]: the media is on a flat screen, whose grips [ScreenGrip] reads;
+   * [screenHeld]: a grip holds that screen now.
    */
-  fun actionsFor(controllerBits: Int, handBits: Int, panelVisible: Boolean, scene: Boolean = false): List<Action> {
+  fun actionsFor(
+    controllerBits: Int,
+    handBits: Int,
+    panelVisible: Boolean,
+    scene: Boolean = false,
+    screenGrabbable: Boolean = false,
+    screenHeld: Boolean = false,
+  ): List<Action> {
     val controllerOnly =
       ButtonBits.ButtonB or ButtonBits.ButtonY or ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK or
         STICK_CLICKS
@@ -261,8 +282,14 @@ internal object ImmersiveControls {
     val hand = handBits and controllerOnly.inv()
     if ((controller and (ButtonBits.ButtonB or ButtonBits.ButtonY)) != 0) return listOf(Action.CLOSE)
     val actions = mutableListOf<Action>()
+    val flatScreen = screenGrabbable && !scene
     when {
       scene -> if ((controller and STICK_CLICKS) != 0) actions += Action.RESET
+      flatScreen && screenHeld ->
+        when {
+          (controller and STICKS_UP) != 0 -> actions += Action.SCREEN_FARTHER
+          (controller and STICKS_DOWN) != 0 -> actions += Action.SCREEN_NEARER
+        }
       (controller and ButtonBits.ButtonThumbLL) != 0 -> actions += Action.PREVIOUS
       (controller and ButtonBits.ButtonThumbLR) != 0 -> actions += Action.NEXT
       (controller and ButtonBits.ButtonThumbRL) != 0 -> actions += Action.TURN_LEFT
@@ -270,9 +297,9 @@ internal object ImmersiveControls {
       (controller and (ButtonBits.ButtonThumbLU or ButtonBits.ButtonThumbRU)) != 0 -> actions += Action.STICK_UP
       (controller and (ButtonBits.ButtonThumbLD or ButtonBits.ButtonThumbRD)) != 0 -> actions += Action.STICK_DOWN
     }
-    val panelToggle =
-      ButtonBits.ButtonA or ButtonBits.ButtonX or ButtonBits.ButtonMenu or ButtonBits.ButtonSqueezeL or
-        ButtonBits.ButtonSqueezeR
+    // On a flat screen a grip is a short press or a hold, which ScreenGrip tells apart once it is released or held
+    val grips = if (flatScreen) 0 else ButtonBits.ButtonSqueezeL or ButtonBits.ButtonSqueezeR
+    val panelToggle = ButtonBits.ButtonA or ButtonBits.ButtonX or ButtonBits.ButtonMenu or grips
     var visibleAfter = panelVisible
     if ((controller and panelToggle) != 0 || (hand and ButtonBits.ButtonMenu) != 0) {
       actions += Action.TOGGLE_PANEL
