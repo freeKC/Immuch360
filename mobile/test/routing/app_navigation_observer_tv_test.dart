@@ -102,14 +102,16 @@ class _BarelessLoadingPage extends StatelessWidget {
   );
 }
 
-/// A page like an album of the server on a TV: a header of 400 dp over its grid, whose first tile is under the bottom
-/// of the screen of a TV. Once [content] completes it shows, with the header when [headerFirst] is false (the album
-/// page shows nothing until its album and its first tiles are read), else under the header shown from the start.
+/// A page like an album of the server on a TV: a header of [headerHeight] dp (400 by default) over its grid, whose
+/// first tile is then under the bottom of the screen of a TV. Once [content] completes it shows, with the header when
+/// [headerFirst] is false (the album page shows nothing until its album and its first tiles are read), else under the
+/// header shown from the start.
 class _TallHeaderPage extends StatelessWidget {
-  const _TallHeaderPage({required this.content, this.headerFirst = false});
+  const _TallHeaderPage({required this.content, this.headerFirst = false, this.headerHeight = 400});
 
   final Future<void> content;
   final bool headerFirst;
+  final double headerHeight;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -123,7 +125,7 @@ class _TallHeaderPage extends StatelessWidget {
         return CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 400,
+              expandedHeight: headerHeight,
               pinned: true,
               leading: IconButton(icon: const Icon(Icons.arrow_back), tooltip: 'Back', onPressed: () {}),
               actions: [IconButton(icon: const Icon(Icons.slideshow_outlined), tooltip: 'Slideshow', onPressed: () {})],
@@ -401,6 +403,24 @@ void main() {
 
         expect(hasFocus(tester, find.text('tile 0')), isTrue);
         expect(whollyOnScreen(tester, firstTile), isTrue);
+      });
+
+      testWidgets('a first tile already on the screen takes the focus where it is: the page does not scroll', (
+        tester,
+      ) async {
+        tvScreen(tester);
+        // Under a header of 300 dp the first tile shows its upper half at the bottom of the screen
+        await open(tester, _TallHeaderPage(content: Future<void>.value(), headerHeight: 300));
+        await tester.pumpAndSettle();
+
+        expect(hasFocus(tester, find.text('tile 0')), isTrue);
+        expect(tester.getRect(firstTile).center.dy, lessThan(540), reason: 'the tile shows');
+        final scrollable = find.descendant(of: find.byType(CustomScrollView), matching: find.byType(Scrollable));
+        expect(
+          tester.state<ScrollableState>(scrollable).position.pixels,
+          0,
+          reason: 'the header stays whole, with the name of the album',
+        );
       });
     });
 
