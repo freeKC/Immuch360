@@ -79,8 +79,8 @@ SplatRefusal splatRefusalOf(SplatFileProblem problem) => switch (problem) {
 
 /// The gate of the splat [probe] says, the file [name] of [fileBytes], with Large splats on or not ([largeSplats]),
 /// in the APK of [flavor] on the headset [device] (null when it could not be read: offered, the viewer checking
-/// again), in a build that offers the splats or not ([inThisBuild], false in the store build). In the order of
-/// SplatGate.kt: the flavour and the build, the headset, the file, the count.
+/// again), in a build that offers the splats or not ([inThisBuild], false where SplatBuild.kt hides them). In the order
+/// of SplatGate.kt: the flavour and the build, the headset, the file, the count.
 SplatGateVerdict splatGateOf({
   required SplatProbe probe,
   required String name,

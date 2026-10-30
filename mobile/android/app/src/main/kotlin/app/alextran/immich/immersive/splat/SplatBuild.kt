@@ -15,9 +15,10 @@ import javax.security.auth.x500.X500Principal
 /**
  * Whether this build of the app offers the Gaussian splats: FreeKC's decision of 30 October 2026 on article 1.6 of
  * the licence of the Meta Spatial SDK (licenses/meta-spatial-sdk/README.md, "Decision of 30 October 2026"). The splat
- * API of the SDK is one of its Experimental Features. The GitHub builds of Immuch360, a free hobby app, offer the
- * splats, labelled experimental, with the words that Meta neither supports nor warrants that API and that any defect is
- * Immuch360's own (splat_disclaimer); the build of the Meta Horizon Store hides them.
+ * API of the SDK is one of its Experimental Features. The builds of Immuch360, a free hobby app, offer the splats,
+ * labelled experimental, with the words that Meta neither supports nor warrants that API and that any defect is
+ * Immuch360's own (splat_disclaimer): the GitHub builds, and by FreeKC's choice the Meta Horizon Store build too, where
+ * [SPLATS_IN_STORE_BUILD] set to false hides them should Meta object.
  *
  * The store build is the quest APK of a GitHub release re-signed with the key the store app is bound to: the same
  * bytes otherwise, so the app tells the builds apart by its own signing certificates, read once per process. The gate
@@ -32,12 +33,11 @@ import javax.security.auth.x500.X500Principal
  */
 internal object SplatBuild {
   /**
-   * The one switch of the store build, flipped by FreeKC only: false, the store build hides the Gaussian splats; true,
-   * it offers them as the GitHub builds do (once Meta permits the feature in writing, or releases it out of its
-   * experimental features). The GitHub builds offer them whatever it says. A certificate the app does not know, or none
-   * that could be read, follows it too.
+   * The one switch of the store build, flipped by FreeKC only: true (his choice of 30 October 2026), the store build
+   * offers the Gaussian splats as the GitHub builds do; false, it hides them, should Meta object. The GitHub builds
+   * offer them whatever it says. A certificate the app does not know, or none that could be read, follows it too.
    */
-  const val SPLATS_IN_STORE_BUILD = false
+  const val SPLATS_IN_STORE_BUILD = true
 
   /**
    * SHA-256 of the certificate of the key the Meta Horizon Store app is bound to (C=FR, O=aprogsys, OU=FreeKC,

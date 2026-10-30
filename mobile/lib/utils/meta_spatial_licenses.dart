@@ -15,8 +15,8 @@ const metaSpatialNoticeAsset = 'assets/licenses/meta-spatial-sdk/NOTICES.txt';
 
 /// What the licence page says before the text of the licence. A build that offers the Gaussian splats (the GitHub
 /// builds) lists the splat module among what shows them, followed by [disclaimer], the words of splat_disclaimer in
-/// the language of the app (an experimental API of the SDK, which Meta neither supports nor warrants); the build of the
-/// Meta Horizon Store, the same APK re-signed, carries the module but never starts it (SplatBuild.kt), and says so.
+/// the language of the app (an experimental API of the SDK, which Meta neither supports nor warrants); a build that
+/// hides them (the Meta Horizon Store build with the switch of SplatBuild.kt off) carries the module, never started.
 String metaSpatialLicenseHeader({required bool splats, String disclaimer = ''}) {
   final what = splats
       ? 'Meta Spatial SDK 0.14.0 (meta-spatial-sdk, -toolkit, -vr, -isdk, and -splat in the version for Meta Quest), '
@@ -40,7 +40,7 @@ String _splatDisclaimer() => StaticTranslations.instance.splat_disclaimer;
 /// The entries of the licence page for the Meta Spatial SDK: its licence, then its notices, under "Meta Spatial SDK".
 /// Every Android APK ships the SDK (the immersive viewer is in both flavours, the splat module in the quest one only);
 /// the other platforms list nothing. [splatsInThisBuild] says whether the splat module is listed as active, with the
-/// words of [disclaimer] (false in the build of the Meta Horizon Store, and when the answer fails).
+/// words of [disclaimer] (false in a build that hides the splats, and when the answer fails).
 Stream<LicenseEntry> metaSpatialLicenses({
   bool? android,
   AssetBundle? bundle,

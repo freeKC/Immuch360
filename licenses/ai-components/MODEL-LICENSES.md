@@ -221,10 +221,10 @@ of `meta-spatial-sdk`, `-toolkit` and `-vr`). Both are in `licenses/meta-spatial
 the app. The same text, but one of its clauses applies here for the first time: the splat API is an Experimental
 Feature of the SDK (opt in `SpatialSDKExperimentalSplatAPI`), and article 1.6 keeps an Experimental Feature out of
 a production build unless Meta released it in its own production builds or permits it in writing. On 30 October
-2026 FreeKC, the maintainer, decided to ship it in the GitHub builds of this free hobby app, labelled experimental,
-with the words that Meta neither supports nor warrants its API and that any defect is Immuch360's own; the build
-of the Meta Horizon Store never starts it. The decision, its reading of the clause and what goes with it are in
-`licenses/meta-spatial-sdk/README.md`.
+2026 FreeKC, the maintainer, decided to ship it in the builds of this free hobby app, on GitHub and in the Meta
+Horizon Store, labelled experimental, with the words that Meta neither supports nor warrants its API and that any
+defect is Immuch360's own; a switch of the app hides it in the store build should Meta object. The decision, its
+reading of the clause and what goes with it are in `licenses/meta-spatial-sdk/README.md`.
 
 ## Not used
 

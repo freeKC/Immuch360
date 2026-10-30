@@ -23,9 +23,9 @@ abstract class ImmersiveApi {
   bool isHorizonOs();
 
   /// Whether this build offers the Gaussian splats (lot S5, FreeKC's decision of 30 October 2026): true in the GitHub
-  /// builds and in the debug builds of a developer's machine, false in the build of the Meta Horizon Store and with a
-  /// certificate the app does not know or cannot read, told apart by the certificates the APK is signed with
-  /// (SplatBuild.kt, whose SPLATS_IN_STORE_BUILD alone can make it true there). False, the app shows no splat tile, no
+  /// builds and in the debug builds of a developer's machine; in the build of the Meta Horizon Store and with a
+  /// certificate the app does not know or cannot read, what SPLATS_IN_STORE_BUILD of SplatBuild.kt says (true since 30
+  /// October 2026), told apart by the certificates the APK is signed with. False, the app shows no splat tile, no
   /// Open a splat file and no Gaussian splats setting, and its licences page does not list the splat module as active;
   /// the viewer never registers the module either.
   bool splatsInThisBuild();

@@ -11,8 +11,8 @@ import org.junit.Test
 /**
  * The gate of the build of the Gaussian splats (FreeKC's decision of 30 October 2026): a list of the certificates that
  * offer them. The GitHub builds and the debug builds of a developer's machine offer them; the build of the Meta Horizon
- * Store, the same APK re-signed with the key its store app is bound to, hides them unless
- * [SplatBuild.SPLATS_IN_STORE_BUILD] is flipped, and so does a certificate the app does not know or cannot read. The
+ * Store, the same APK re-signed with the key its store app is bound to, follows [SplatBuild.SPLATS_IN_STORE_BUILD]
+ * (true: offered, false: hidden), and so does a certificate the app does not know or cannot read. The
  * two release certificates are those of the quest APK of release 35 (GitHub) and of the quest APK of release 32
  * re-signed for the store (builds/meta_sign_upload.sh), as their APK signature blocks carry them: what PackageManager
  * hands the app. The debug and lookalike certificates were made by keytool for these tests.
@@ -53,16 +53,16 @@ class SplatBuildTest {
   }
 
   @Test
-  fun `the switch is off in this source, and it is the default of the gate`() {
-    // Flipped, the same change rewrites what says the store build hides the splats: point 2 and the table row of
+  fun `the switch is on in this source, and it is the default of the gate`() {
+    // Turned off, the same change rewrites what says the store build offers the splats: point 2 and the table row of
     // licenses/meta-spatial-sdk/README.md, SPLAT_MODULE of publish_ai_components.py then MODEL-LICENSES.md, and the
     // comments of SplatBuild, SplatEngines (quest), immersive_api.dart, immersive.provider.dart and splat_gate.dart
-    assertFalse(
-      "SPLATS_IN_STORE_BUILD flipped: rewrite the licence note and the comments that say the store build hides them",
+    assertTrue(
+      "SPLATS_IN_STORE_BUILD turned off: rewrite the licence note and the comments saying the store build offers them",
       SplatBuild.SPLATS_IN_STORE_BUILD,
     )
-    assertFalse(SplatBuild.offersSplats(Kind.STORE))
-    assertFalse(SplatBuild.offersSplats(Kind.UNKNOWN))
+    assertTrue(SplatBuild.offersSplats(Kind.STORE))
+    assertTrue(SplatBuild.offersSplats(Kind.UNKNOWN))
     assertTrue(SplatBuild.offersSplats(Kind.GITHUB))
     assertTrue(SplatBuild.offersSplats(Kind.DEBUG))
   }

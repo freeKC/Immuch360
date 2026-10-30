@@ -408,8 +408,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the gaussianSplat request of the stereoPair JSON; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatBuild.kt": {
-    "blob": "7dd52757a40366e1245f3e29788cd0285e9e5595",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the signing certificate of the APK tells the GitHub builds, which offer the splats, from the Meta Horizon Store build, which hides them unless SPLATS_IN_STORE_BUILD; not yet on the phone branch; the fix round of the decision: only the GitHub and Android debug certificates offer the splats, the store certificate and any other follow SPLATS_IN_STORE_BUILD"
+    "blob": "766dd87a3c9ca05c7136556bd1dd294c01089058",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the signing certificate of the APK tells the GitHub builds, which offer the splats, from the Meta Horizon Store build, which hides them unless SPLATS_IN_STORE_BUILD; not yet on the phone branch; the fix round of the decision: only the GitHub and Android debug certificates offer the splats, the store certificate and any other follow SPLATS_IN_STORE_BUILD; SPLATS_IN_STORE_BUILD true, FreeKC's choice of 30 October 2026: the store build offers the splats too"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatEngine.kt": {
     "blob": "5497b0d9e5cdda8e881ed0e322727c93ba2ac7a1",
@@ -912,8 +912,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): no relay service on the headset, passthrough declared not required for the flight view"
   },
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/immersive/splat/SplatEngines.kt": {
-    "blob": "8e34e38913ceb318ab9b638e166da8cc068eb02f",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat module of the Meta Spatial SDK in the quest flavour; not yet on the phone branch; the decision of 30 October on article 1.6, named in the comment of the module"
+    "blob": "867358acde7345daabf6200c8e3d0f70142ff4b4",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat module of the Meta Spatial SDK in the quest flavour; not yet on the phone branch; the decision of 30 October on article 1.6, named in the comment of the module; the store build registers the module too while its switch is on"
   },
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
     "blob": "a23329349881097db0918c485209bb3a0b53d801",
@@ -1308,8 +1308,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gaussianSplat request; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatBuildTest.kt": {
-    "blob": "c15ceb8560e2542f85f1d61fa7ac54f6ba727055",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the gate of the build with the certificates of the GitHub and the Meta Horizon Store builds; not yet on the phone branch; unknown, lookalike and debug keys, debuggable builds, lineages and several signers"
+    "blob": "24d685e133aa7803abf6d29ac2a1101bfbd45151",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the gate of the build with the certificates of the GitHub and the Meta Horizon Store builds; not yet on the phone branch; unknown, lookalike and debug keys, debuggable builds, lineages and several signers; the switch on in this source"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatFixtures.kt": {
     "blob": "ca2aabaf7d415f350f2529acd984e04a67ddf200",
