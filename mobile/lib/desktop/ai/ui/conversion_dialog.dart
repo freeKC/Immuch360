@@ -48,8 +48,9 @@
 // before Convert. "360° 3D panorama" is the 360° panorama with that box checked: two types and a box would say the
 // same thing twice.
 // The entry of the viewer is offered when one of the types takes the photo (aiSourceProvider): a flat photo, and a
-// 360° photo of a whole sphere that holds one eye for its 3D version. With "Also save a .glb copy", each scene made
-// gets its .glb next to it (scene_glb_export.dart).
+// 360° photo of a whole sphere that holds one eye for its 3D version, by the rule of the plan (conversionSkipOf), a
+// photo of 2:1 nothing flags 360° among them. With "Also save a .glb copy", each scene made gets its .glb next to it
+// (scene_glb_export.dart).
 
 import 'dart:async';
 import 'dart:io';
@@ -776,16 +777,20 @@ final aiFlatPhotoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, a
 
 /// Whether [asset] may get its 3D version (design-final 2026-10-27, sections 4.4 and 9.1): a 360° photo of a full
 /// sphere that holds one eye, of the user or a panorama the app generated, which this system can read; never a raw
-/// photo of a 360° camera, a VR180 or 3D one, nor another version of ours
+/// photo of a 360° camera, a VR180 or 3D one, nor another version of ours. The rule of the dialog (conversionSkipOf),
+/// so that the entry and the plan agree: a photo the 360° rules leave flat whose frame is that of a whole sphere is
+/// one too.
 final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
-  if (!asset.isImage || !ref.watch(isPanoramaProvider(asset))) {
+  if (!asset.isImage) {
     return false;
   }
   final version = _versionOf(ref, asset);
   final facts = ConversionPhotoFacts(
-    isPanorama: true,
+    isPanorama: ref.watch(isPanoramaProvider(asset)),
     isRaw360: ref.watch(rawMediaKindProvider(asset)) != null,
-    isStereo: version != null && versionHoldsTwoEyes(version),
+    isStereo:
+        (version != null && versionHoldsTwoEyes(version)) ||
+        decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null,
     version: version,
   );
   return conversionSkipOf(asset, facts, kind: ConversionKind.stereoPanoramaFromPanorama) == null;

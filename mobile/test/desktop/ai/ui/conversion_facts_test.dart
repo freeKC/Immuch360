@@ -78,6 +78,9 @@ class _Sources extends NetworkSourcesNotifier {
 const _flatExif = ExifInfo(width: 4000, height: 3000, make: 'Canon', model: 'EOS');
 const _sphereExif = ExifInfo(width: 8000, height: 4000, projectionType: ProjectionType.equirectangular);
 
+/// The exif of a 360° photo without GPano tags nor a 360° camera, as the server gives it: no projection
+const _plainSphereExif = ExifInfo(width: 8192, height: 4096);
+
 const _pair = HeicStereoPair(
   primaryItemId: 1,
   leftItemId: 1,
@@ -365,6 +368,69 @@ void main() {
         }
       },
     );
+
+    test('a 2:1 photo nothing flags 360°, from each source, is offered its 3D version beside the flat kinds', () async {
+      // As FreeKC's rooftop_night.jpg (8192 x 4096, no GPano tag): a file of the library, a photo of the server, the
+      // two at once, a file opened with the program whose reading found no 360° projection
+      final library = local('library', 'rooftop_night.jpg', 8192, 4096);
+      final server = RemoteAssetFactory.create(ownerId: _userId, name: 'dawn.jpg', width: 8192, height: 4096);
+      final merged = RemoteAssetFactory.create(
+        ownerId: _userId,
+        name: 'rooftop.jpg',
+        width: 8192,
+        height: 4096,
+        localId: 'local-rooftop',
+      );
+      final opened = local('opened-1', 'carte.jpg', 6080, 3040);
+      final container = createContainer(exif: {server: _plainSphereExif, merged: _plainSphereExif});
+      container.read(openedFilePanoramasProvider.notifier).addAll({
+        'opened-1': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2026, 10, 30)),
+      });
+      final read = container.read(conversionFactsReaderProvider);
+
+      for (final asset in [library, server, merged, opened]) {
+        expect(await says(container, aiMonoPanoramaProvider(asset)), isTrue, reason: asset.name);
+        for (final kind in ConversionKind.values) {
+          expect(
+            await says(container, aiSourceProvider((asset: asset, kind: kind))),
+            isTrue,
+            reason: '${asset.name} ${kind.name}',
+          );
+        }
+        // The dialog reads the same: flat for the 360° rules, taken by the type of the 3D version
+        final facts = await read(asset);
+        expect(facts.isPanorama, isFalse, reason: asset.name);
+        expect(
+          conversionSkipOf(asset, facts, kind: ConversionKind.stereoPanoramaFromPanorama),
+          isNull,
+          reason: asset.name,
+        );
+      }
+      // A 4:3 photo is still no sphere
+      final flat = local('flat', 'salon.jpg', 4000, 3000);
+      expect(await says(container, aiMonoPanoramaProvider(flat)), isFalse);
+    });
+
+    test('viewed as 360° by the user, it gets its 3D version only, and the dialog reads it so', () async {
+      final rooftop = local('library', 'rooftop_night.jpg', 8192, 4096);
+      final server = RemoteAssetFactory.create(ownerId: _userId, name: 'dawn.jpg', width: 8192, height: 4096);
+      await store.put(StoreKey.forcedPanoramaAssets, '["library","${server.id}"]');
+      final container = createContainer(exif: {server: _plainSphereExif});
+      final read = container.read(conversionFactsReaderProvider);
+
+      for (final asset in [rooftop, server]) {
+        for (final kind in ConversionKind.values) {
+          expect(
+            await says(container, aiSourceProvider((asset: asset, kind: kind))),
+            kind == ConversionKind.stereoPanoramaFromPanorama,
+            reason: '${asset.name} ${kind.name}',
+          );
+        }
+        final facts = await read(asset);
+        expect(facts.isPanorama, isTrue, reason: asset.name);
+        expect(conversionSkipOf(asset, facts), ConversionSkipReason.sphere360, reason: asset.name);
+      }
+    });
 
     test('never a 3D one, a VR180 one, a raw one, nor another version of ours', () async {
       final stacked = RemoteAssetFactory.create(ownerId: _userId, name: 'stacked.jpg', width: 4096, height: 4096);

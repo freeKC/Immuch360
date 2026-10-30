@@ -32,6 +32,7 @@ import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
+import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
@@ -47,6 +48,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/utils/asset_filter.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:path/path.dart' as p;
@@ -421,6 +423,34 @@ void main() {
     await settle(tester);
     expect(find.text('Make 3D (AI)'), findsOneWidget);
     expect(tester.widget<MenuItemButton>(find.byType(MenuItemButton)).onPressed, isNotNull);
+  });
+
+  testWidgets('in the viewer, a 2:1 photo nothing flags 360° has the entry for the 3D version of a 360° photo', (
+    tester,
+  ) async {
+    kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+    Future<void> pumpViewer(BaseAsset shown) => tester.pumpConsumerWidget(
+      const Scaffold(body: DesktopMakeImmersiveButton(source: ActionSource.viewer, menuItem: true)),
+      overrides: [
+        ...overrides(selected: [shown]),
+        // The type of the 3D version alone is asked here: the other types leave the photo
+        aiFlatPhotoProvider.overrideWith((ref, asset) => false),
+        // Flat for the 360° rules: no GPano tag, no 360° camera, not viewed as 360°
+        isPanoramaProvider.overrideWith((ref, asset) => false),
+        rawMediaKindProvider.overrideWith((ref, asset) => null),
+        generatedVersionsProvider.overrideWith((ref) async => const {}),
+      ],
+    );
+
+    await pumpViewer(_photo('rooftop_night.jpg', width: 8192, height: 4096));
+    await settle(tester);
+    expect(find.text('Make 3D (AI)'), findsOneWidget);
+    expect(tester.widget<MenuItemButton>(find.byType(MenuItemButton)).onPressed, isNotNull);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpViewer(_photo('salon.jpg'));
+    await settle(tester);
+    expect(find.byKey(const Key('ai_make_3d')), findsNothing, reason: 'a 4:3 photo is no sphere');
   });
 
   testWidgets('with components missing, the dialog shows them and Convert waits until they are installed', (
