@@ -190,6 +190,42 @@ void main() {
     expect(systemPops, 0);
   });
 
+  testWidgets('Back on the rail goes to Photos, even with Search results', (tester) async {
+    await pumpShell(tester, tvMode: true, hasServer: true);
+    await tester.tap(find.text('Search'));
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(tester.element(find.text('search content')));
+    container.read(tvSearchHasActiveQueryProvider.notifier).state = true;
+    final before = container.read(tvSearchReturnToStartProvider);
+    Focus.of(tester.element(find.text('Search'))).requestFocus();
+    await tester.pumpAndSettle();
+
+    await back(tester);
+    expect(find.text('photos content'), findsOneWidget, reason: 'the rail step of the left navigation');
+    expect(hasFocus(tester, 'Photos'), isTrue);
+    expect(container.read(tvSearchReturnToStartProvider), before, reason: 'Search is not reset from the rail');
+    expect(systemPops, 0);
+  });
+
+  testWidgets('Back in Photos goes to the rail, Search left with its results', (tester) async {
+    await pumpShell(tester, tvMode: true, hasServer: true);
+    await tester.tap(find.text('Search'));
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(tester.element(find.text('search content')));
+    // Search keeps its results out of view: the flag stays set while another tab shows
+    container.read(tvSearchHasActiveQueryProvider.notifier).state = true;
+    final before = container.read(tvSearchReturnToStartProvider);
+    await tester.tap(find.text('Photos'));
+    await tester.pumpAndSettle();
+    Focus.of(tester.element(find.text('photos content'))).requestFocus();
+    await tester.pumpAndSettle();
+
+    await back(tester);
+    expect(hasFocus(tester, 'Photos'), isTrue, reason: 'the destination of the tab in the rail');
+    expect(container.read(tvSearchReturnToStartProvider), before, reason: 'the Search out of view is not reset');
+    expect(systemPops, 0);
+  });
+
   testWidgets('Back from the content of Photos goes to the rail first', (tester) async {
     await pumpShell(tester, tvMode: true);
     Focus.of(tester.element(find.text('photos content'))).requestFocus();

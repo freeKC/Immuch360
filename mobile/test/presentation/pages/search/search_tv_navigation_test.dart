@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/search_result.model.dart';
 import 'package:immich_mobile/domain/services/search.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -209,6 +210,47 @@ void main() {
       expect(find.text('beach'), findsNothing);
       expect(find.text(suggestions), findsOneWidget);
       expect(containerOf(tester).read(tvSearchHasActiveQueryProvider), isFalse);
+    });
+
+    testWidgets('leaves no date choice marked in the date sheet', (tester) async {
+      await pumpSearch(tester, tvMode: true);
+      await pickDate(tester, chip: 'Date', choice: 'Last month');
+      expect(find.text(noResults), findsOneWidget);
+
+      await backFromResults(tester);
+      await tester.tap(find.text('Date'));
+      await tester.pumpAndSettle();
+      final choices = tester.widget<RadioGroup<Object?>>(find.byWidgetPredicate((widget) => widget is RadioGroup));
+      expect(choices.groupValue, isNull, reason: 'Last month is not marked any more');
+    });
+
+    testWidgets('clears the filter of similar photos, which can then search again', (tester) async {
+      await pumpSearch(tester, tvMode: true);
+      const similar = SearchFilter(
+        assetId: 'asset-1',
+        people: {},
+        location: SearchLocationFilter(),
+        camera: SearchCameraFilter(),
+        date: SearchDateFilter(),
+        display: SearchDisplayFilters(isNotInAlbum: false, isArchive: false, isFavorite: false),
+        rating: SearchRatingFilter(),
+        mediaType: AssetType.other,
+      );
+      containerOf(tester).read(searchPreFilterProvider.notifier).setFilter(similar);
+      await tester.pumpAndSettle();
+      expect(asked.last.assetId, 'asset-1');
+      expect(find.text(noResults), findsOneWidget);
+
+      await backFromResults(tester);
+      expect(containerOf(tester).read(searchPreFilterProvider), isNull);
+      expect(find.text(suggestions), findsOneWidget);
+
+      // Similar photos of the same photo again: the page searches again
+      asked.clear();
+      containerOf(tester).read(searchPreFilterProvider.notifier).setFilter(similar);
+      await tester.pumpAndSettle();
+      expect(asked.map((filter) => filter.assetId), ['asset-1']);
+      expect(find.text(noResults), findsOneWidget);
     });
   });
 
