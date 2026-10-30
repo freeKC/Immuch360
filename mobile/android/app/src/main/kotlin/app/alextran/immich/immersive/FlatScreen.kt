@@ -18,7 +18,7 @@ import kotlin.math.tan
  * The grip of one hand, and its bit in the buttons a controller holds: the left controller holds ButtonSqueezeL, the
  * right one ButtonSqueezeR.
  */
-internal enum class GripSide(val bit: Int) {
+enum class GripSide(val bit: Int) {
   LEFT(ButtonBits.ButtonSqueezeL),
   RIGHT(ButtonBits.ButtonSqueezeR),
 }
