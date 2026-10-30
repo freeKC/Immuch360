@@ -151,4 +151,41 @@ class SplatSessionTest {
     session.timedOut(session.handle ?: Entity("none"))
     assertFalse(started)
   }
+
+  @Test
+  fun `a splat that waited and never starts lets its file go, by a drop, another splat or the shutdown`() {
+    // B waits for the end of A, then another media comes: B never starts, its abandon runs once (its file goes)
+    val a = open("a")
+    session.drop()
+    session.prepare()
+    val events = mutableListOf<String>()
+    session.whenFree(start = { events += "start b" }, abandon = { events += "abandon b" })
+    session.drop()
+    assertEquals(listOf("abandon b"), events)
+    assertEquals(SplatSession.Loaded.DROPPED, session.loaded(a, success = true))
+    assertEquals(listOf("abandon b"), events)
+    // C waits for D, then E takes its place before D ends: C is abandoned, E starts once D is gone
+    val d = open("d")
+    session.drop()
+    session.prepare()
+    session.whenFree(start = { events += "start c" }, abandon = { events += "abandon c" })
+    session.whenFree(start = { events += "start e" }, abandon = { events += "abandon e" })
+    assertEquals(listOf("abandon b", "abandon c"), events)
+    session.loaded(d, success = false)
+    assertEquals(listOf("abandon b", "abandon c", "start e"), events)
+    // F waits for G, then the scene goes down: F is abandoned, and nothing reaches the SDK
+    val g = open("g")
+    session.drop()
+    session.prepare()
+    calls.clear()
+    session.whenFree(start = { events += "start f" }, abandon = { events += "abandon f" })
+    session.shutDown()
+    assertEquals("abandon f", events.last())
+    assertEquals(SplatSession.Loaded.IGNORED, session.loaded(g, success = true))
+    assertEquals(emptyList<String>(), calls)
+    // After the shutdown a start is abandoned at once
+    session.whenFree(start = { events += "start h" }, abandon = { events += "abandon h" })
+    assertEquals("abandon h", events.last())
+    assertFalse("start f" in events || "start h" in events)
+  }
 }

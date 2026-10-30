@@ -9,7 +9,8 @@ package app.alextran.immich.immersive.splat
  * made, until the module says the file loaded (SplatLoadEventArgs, success or not); SHOWN or FAILED then. Another media
  * or the end of the viewer drops it: a shown or failed splat is destroyed at once, one still loading only once its
  * load ends (the module may still be reading the file for it), or after [LOAD_TIMEOUT_MS]. A splat asked
- * for while another is being dropped waits for it ([whenFree]).
+ * for while another is being dropped waits for it ([whenFree]); dropped while it waits, it never starts, and what it
+ * leaves (its file in the cache) goes through its abandon.
  *
  * At the shutdown of the scene (onSpatialShutdown, before onDestroy) the SDK takes the entities with it: [shutDown]
  * forgets every handle and from then on nothing reaches [Effects], whatever comes later (a load event, a drop of
@@ -56,7 +57,11 @@ internal class SplatSession<H : Any>(private val effects: Effects<H>) {
 
   /** An entity dropped while it loaded, destroyed at its load event */
   private var dropping: H? = null
-  private var waiting: (() -> Unit)? = null
+
+  /** A start that waits for [dropping] to go, and what lets its files go when it never starts */
+  private class Waiting(val start: () -> Unit, val abandon: () -> Unit)
+
+  private var waiting: Waiting? = null
 
   val isDown: Boolean
     get() = state == State.DOWN
@@ -71,11 +76,22 @@ internal class SplatSession<H : Any>(private val effects: Effects<H>) {
 
   /**
    * Runs [start] (which makes the entity) now when no dropped splat is still loading, else once it is gone; never
-   * once the scene is down
+   * once the scene is down. [abandon] runs instead when that start never comes: the scene is down already or goes
+   * meanwhile, another splat or media drops it while it waits, or another start takes its place. It touches no object
+   * of the SDK (a file of the cache at most), so it may run after the shutdown
    */
-  fun whenFree(start: () -> Unit) {
-    if (state == State.DOWN) return
-    if (dropping == null) start() else waiting = start
+  fun whenFree(abandon: () -> Unit = {}, start: () -> Unit) {
+    if (state == State.DOWN) {
+      abandon()
+      return
+    }
+    if (dropping == null) {
+      start()
+    } else {
+      val replaced = waiting
+      waiting = Waiting(start, abandon)
+      replaced?.abandon?.invoke()
+    }
   }
 
   /** The entity [made] for the splat being prepared: false when it must not be kept (no splat prepared, or down) */
@@ -114,7 +130,7 @@ internal class SplatSession<H : Any>(private val effects: Effects<H>) {
     if (state == State.DOWN) return
     val current = handle
     handle = null
-    waiting = null
+    abandonWaiting()
     when (state) {
       State.LOADING ->
         if (current != null) {
@@ -127,12 +143,18 @@ internal class SplatSession<H : Any>(private val effects: Effects<H>) {
     state = State.IDLE
   }
 
-  /** The scene of the SDK goes down with its entities: no call on them from now on */
+  /** The scene of the SDK goes down with its entities: no call on them from now on (a start that waits is abandoned) */
   fun shutDown() {
     state = State.DOWN
     handle = null
     dropping = null
+    abandonWaiting()
+  }
+
+  private fun abandonWaiting() {
+    val gone = waiting ?: return
     waiting = null
+    gone.abandon()
   }
 
   private fun release() {
@@ -141,7 +163,7 @@ internal class SplatSession<H : Any>(private val effects: Effects<H>) {
     effects.destroy(gone)
     waiting?.let {
       waiting = null
-      it()
+      it.start()
     }
   }
 
