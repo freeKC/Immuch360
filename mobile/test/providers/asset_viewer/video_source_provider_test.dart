@@ -622,6 +622,34 @@ void main() {
       expect(source.url, transcoded);
       expect(copyProbes, isEmpty);
       expect(sizeRequests, isEmpty);
+      expect(source.hasCopy, isNull, reason: 'not asked: the details ask it when they show');
+    });
+
+    test('tells whether the server has a copy only when it asked, or knows from the fallback', () async {
+      // A decodable original under "Always the original": the copy plays no part, nothing is asked
+      final untold = await service.serverSource(videoId: 'video-1', policy: .alwaysOriginal, probe: hevcOriginal);
+      expect(untold.hasCopy, isNull);
+      expect(sizeRequests, isEmpty);
+
+      // The server transcoded nothing: its playback stream is the original
+      respond = (request) async => sized(request, original: 1000, transcoded: 1000);
+      final none = await service.serverSource(videoId: 'video-1', policy: .alwaysTranscoded, probe: hevcOriginal);
+      expect(none.hasCopy, isFalse);
+
+      // Known from then on, without a new question
+      sizeRequests.clear();
+      final known = await service.serverSource(videoId: 'video-1', policy: .alwaysOriginal, probe: hevcOriginal);
+      expect(known.hasCopy, isFalse);
+      expect(sizeRequests, isEmpty);
+    });
+
+    test('serverHasCopyProvider asks the sizes for the details, once', () async {
+      final container = ProviderContainer(overrides: [videoSourceServiceProvider.overrideWithValue(service)]);
+      addTearDown(container.dispose);
+
+      expect(await container.read(serverHasCopyProvider('video-1').future), isTrue);
+      respond = (request) async => sized(request, original: 1000, transcoded: 1000);
+      expect(await container.read(serverHasCopyProvider('video-2').future), isFalse);
     });
   });
 

@@ -14,7 +14,7 @@ import '../../../../widget_tester_extensions.dart';
 void main() {
   final video = RemoteAssetFactory.create(type: .video);
 
-  Future<ProviderContainer> pump(WidgetTester tester, ChosenVideoSource? chosen) async {
+  Future<ProviderContainer> pump(WidgetTester tester, ChosenVideoSource? chosen, {bool? serverHasCopy}) async {
     late ProviderContainer container;
     await tester.pumpConsumerWidget(
       Consumer(
@@ -24,6 +24,7 @@ void main() {
         },
       ),
       overrides: [
+        if (serverHasCopy != null) serverHasCopyProvider.overrideWith((ref, videoId) async => serverHasCopy),
         chosenVideoSourcesProvider.overrideWith((ref) {
           final sources = ChosenVideoSources();
           if (chosen != null) {
@@ -43,6 +44,7 @@ void main() {
       const ChosenVideoSource(
         url: 'original',
         notice: VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880),
+        hasCopy: true,
       ),
     );
 
@@ -66,6 +68,7 @@ void main() {
         url: 'playback',
         kind: VideoSourceKind.transcoded,
         notice: VideoSourceNotice(.switched, codec: 'H.264', width: 5760, height: 2880),
+        hasCopy: true,
       ),
     );
 
@@ -84,6 +87,7 @@ void main() {
         url: 'playback',
         kind: VideoSourceKind.transcoded,
         refusal: VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
+        hasCopy: true,
       ),
     );
 
@@ -94,6 +98,31 @@ void main() {
   testWidgets('offers no copy a server does not have', (tester) async {
     await pump(tester, const ChosenVideoSource(url: 'original', hasCopy: false));
     expect(find.text('Video source'), findsOneWidget);
+    expect(find.byType(TextButton), findsNothing);
+  });
+
+  testWidgets('asks the server when the player chose without knowing, and offers the copy it has', (tester) async {
+    await pump(tester, const ChosenVideoSource(url: 'original'), serverHasCopy: true);
+    expect(find.widgetWithText(TextButton, "Play the server's copy"), findsOneWidget);
+  });
+
+  testWidgets('asks the server when the player chose without knowing, and offers no copy it does not have', (
+    tester,
+  ) async {
+    await pump(tester, const ChosenVideoSource(url: 'original'), serverHasCopy: false);
+    expect(find.text('Video source'), findsOneWidget);
+    expect(find.byType(TextButton), findsNothing);
+  });
+
+  testWidgets('calls the playback stream of a server that transcoded nothing the original', (tester) async {
+    await pump(
+      tester,
+      const ChosenVideoSource(url: 'playback', kind: VideoSourceKind.transcoded),
+      serverHasCopy: false,
+    );
+
+    expect(find.textContaining('The original'), findsOneWidget);
+    expect(find.textContaining("The server's copy"), findsNothing);
     expect(find.byType(TextButton), findsNothing);
   });
 

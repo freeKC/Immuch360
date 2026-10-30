@@ -38,7 +38,8 @@ String serverTranscodedVideoUrl(String videoId) =>
 /// load [url], which it tries only when the user asks to play anyway. [copyBeyondDecoders] tells, while the original
 /// plays, that the server's copy is beyond the decoders (the immersive viewer says it when it has to download the
 /// original rather than stream the copy); null otherwise. [kind] is the file [url] is, and [hasCopy] whether the
-/// server has a copy of its own to choose (false when its playback stream is the original itself).
+/// server has a copy of its own to choose (false when its playback stream is the original itself), null when the choice
+/// did not need to know (see [serverHasCopyProvider]).
 class ChosenVideoSource {
   const ChosenVideoSource({
     required this.url,
@@ -47,7 +48,7 @@ class ChosenVideoSource {
     this.refusal,
     this.copyBeyondDecoders,
     this.kind = VideoSourceKind.original,
-    this.hasCopy = true,
+    this.hasCopy,
   });
 
   final String url;
@@ -56,7 +57,7 @@ class ChosenVideoSource {
   final VideoSourceRefusal? refusal;
   final VideoSourceNotice? copyBeyondDecoders;
   final VideoSourceKind kind;
-  final bool hasCopy;
+  final bool? hasCopy;
 
   @override
   String toString() =>
@@ -278,7 +279,8 @@ class VideoSourceService {
         math.max(width, height) <= smallLongSide &&
         math.min(width, height) <= smallShortSide;
     VideoCandidate? copy = VideoCandidate.unknown;
-    if (copyMatters && !(small && !original.undecodable)) {
+    final copyAsked = copyMatters && !(small && !original.undecodable);
+    if (copyAsked) {
       copy = await transcodeIsOriginal(videoId) ? null : await _copyCandidate(videoId);
     }
     // The original read late, under "Always the transcoded stream", once the choice depends on it
@@ -303,9 +305,16 @@ class VideoSourceService {
       refusal: choice.refusal,
       copyBeyondDecoders: playsOriginal && copy != null && copy.undecodable ? copy.notice(.originalOverCopy) : null,
       kind: choice.kind,
-      hasCopy: copy != null,
+      // Not asked when the choice did not depend on it: what the fallback asked, if anything, else unknown
+      hasCopy: copyAsked ? copy != null : _knownHasCopy(videoId),
     );
   }
+
+  // Whether the server has a copy of [videoId] of its own, when its sizes were compared already; null otherwise
+  bool? _knownHasCopy(String videoId) => switch (_transcodeIsOriginal[videoId]) {
+    null => null,
+    final same => !same,
+  };
 
   // What the server's transcoded stream of [videoId] declares, with the verdict of the decoder check on it
   Future<VideoCandidate> _copyCandidate(String videoId) async {
@@ -317,6 +326,13 @@ class VideoSourceService {
     return VideoCandidate.of(probe, await verdict(probe));
   }
 }
+
+/// Whether the server has a copy of its own of the video [videoId] (see [VideoSourceService.transcodeIsOriginal]):
+/// asked by the details of a video whose player chose without knowing, so that they never offer a copy the server does
+/// not have, nor call its original the server's copy. True when the sizes cannot be compared, as for the players.
+final serverHasCopyProvider = FutureProvider.autoDispose.family<bool, String>(
+  (ref, videoId) async => !await ref.watch(videoSourceServiceProvider).transcodeIsOriginal(videoId),
+);
 
 /// Client of the requests for the sizes of a video and of its transcoded stream: the app's shared client, with its
 /// native SSL setup and the headers of the server. Tests replace it.

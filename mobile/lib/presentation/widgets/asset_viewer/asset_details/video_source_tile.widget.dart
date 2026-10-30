@@ -12,7 +12,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart'
 /// check chose it (see chooseVideoSource), with the other file to play instead: the user can still force it, for this
 /// video and as long as the app runs (videoSourceOverridesProvider), the immersive viewer of the Meta Quest included.
 /// Nothing before the player chose, nor for a file only on the device; no other file when the server has no copy of
-/// its own.
+/// its own, asked here when the player did not need to know (see serverHasCopyProvider).
 class VideoSourceTile extends ConsumerWidget {
   const VideoSourceTile({super.key, required this.asset});
 
@@ -30,7 +30,10 @@ class VideoSourceTile extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     final t = context.t;
-    final playsOriginal = chosen.kind == VideoSourceKind.original;
+    // Asked here when the player chose without knowing: no copy to offer while the answer comes
+    final hasCopy = chosen.hasCopy ?? ref.watch(serverHasCopyProvider(videoId)).value;
+    // The server's playback stream of a video it did not transcode is its original
+    final playsOriginal = chosen.kind == VideoSourceKind.original || hasCopy == false;
     final why = chosen.refusal?.message(t) ?? chosen.notice?.message(t);
     final titleStyle = context.textTheme.labelLarge;
     final subtitleStyle = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary);
@@ -44,7 +47,7 @@ class VideoSourceTile extends ConsumerWidget {
           leading: Icon(Icons.swap_horiz_rounded, size: 24, color: titleStyle?.color),
           subtitle: [playsOriginal ? t.video_source_the_original : t.video_source_the_copy, ?why].join('\n'),
           subtitleStyle: subtitleStyle,
-          trailing: chosen.hasCopy
+          trailing: hasCopy == true
               ? TextButton(
                   onPressed: () => ref.read(videoSourceOverridesProvider.notifier).force(videoId, other),
                   child: Text(playsOriginal ? t.video_source_play_copy : t.video_source_play_original),
