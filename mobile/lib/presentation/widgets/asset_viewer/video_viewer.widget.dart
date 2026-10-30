@@ -16,6 +16,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_pa
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/original_download.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -80,6 +81,13 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   VideoSourceRefusal? _refusal;
   // The file the user forced for this server video when its source was made, see videoSourceOverridesProvider
   VideoSourceKind? _forced;
+  // The server video whose original is downloaded before it plays (see OriginalDownloads): the original chosen over a
+  // copy the device cannot decode, from a server that cannot stream it. Null for any other video
+  String? _downloadFirst;
+  // Whether this viewer downloaded an original, which goes with it
+  bool _downloaded = false;
+  // The percent of that download while it runs, null otherwise
+  final _downloadPercent = ValueNotifier<int?>(null);
   // Where the video plays from, for the logs, and whether that is the server, for the failure panel
   String _sourceLabel = 'no source yet';
   bool _fromServer = false;
@@ -129,6 +137,10 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     WidgetsBinding.instance.removeObserver(this);
     _loadTimer?.cancel();
     _removeListeners();
+    if (_downloaded) {
+      unawaited(ref.read(originalDownloadsProvider).clear());
+    }
+    _downloadPercent.dispose();
     super.dispose();
   }
 
@@ -203,6 +215,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
     _sourceNotice = null;
     _refusal = null;
+    _downloadFirst = null;
 
     final videoAsset = await ref.read(assetServiceProvider).getAsset(widget.asset) ?? widget.asset;
     if (!mounted) {
@@ -284,6 +297,17 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         return null;
       }
       ref.read(chosenVideoSourcesProvider.notifier).record(videoId, source);
+      // The original the device decodes over a copy it cannot decode, from a server that cannot stream it: downloaded
+      // once the video is on screen, rather than read to its end by the player before its first frame
+      if (source.kind == VideoSourceKind.original && source.copyBeyondDecoders != null) {
+        final streams = await ref
+            .read(originalDownloadsProvider)
+            .streams(videoId, headRead: probes.cached(remoteAsset) != null);
+        if (!mounted) {
+          return null;
+        }
+        _downloadFirst = streams ? null : videoId;
+      }
       _sourceNotice = source.notice;
       _refusal = source.refusal;
       _fromServer = true;
@@ -486,10 +510,43 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     await _apply(source);
   }
 
+  /// The original of [videoId] downloaded with its progress on screen (see OriginalDownloads), as the source of the
+  /// player; null when it was not (no size, a failure, the video no longer on screen): the original then streams
+  Future<VideoSource?> _download(String videoId) async {
+    _downloadPercent.value = 0;
+    try {
+      final file = await ref
+          .read(originalDownloadsProvider)
+          .download(
+            videoId,
+            onProgress: (percent) {
+              if (mounted) {
+                _downloadPercent.value = percent;
+              }
+            },
+            isWanted: () => mounted && widget.isCurrent,
+          );
+      if (file == null || !mounted) {
+        return null;
+      }
+      _downloaded = true;
+      _sourceLabel = 'the server original, downloaded';
+      return await VideoSource.init(
+        path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
+        type: VideoSourceType.file,
+      );
+    } finally {
+      if (mounted) {
+        _downloadPercent.value = null;
+      }
+    }
+  }
+
   /// Loads [source] in the player, playing it at once when [play] (a file the user forced): what the decoder check
   /// found is told first, once, when the video is the one on screen (the pages around it prepare their video too); a
   /// video nothing on the server decodes fails at once instead of loading, play trying it anyway.
-  Future<void> _apply(VideoSource source, {bool play = false}) async {
+  Future<void> _apply(VideoSource remoteSource, {bool play = false}) async {
+    var source = remoteSource;
     final notice = _sourceNotice;
     _sourceNotice = null;
     if (notice != null) {
@@ -505,6 +562,13 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     if (refusal != null) {
       localNotifier.refuse(source, refusal);
       return;
+    }
+    final downloadFirst = _downloadFirst;
+    if (downloadFirst != null) {
+      source = await _download(downloadFirst) ?? source;
+      if (!mounted) {
+        return;
+      }
     }
     await localNotifier.load(source);
     await localNotifier.setLoop(!widget.asset.isMotionPhoto && loopVideo);
@@ -571,6 +635,27 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
                 duration: const Duration(milliseconds: 400),
                 child: const CircularProgressIndicator(),
               ),
+            ),
+            // The original downloaded before it plays, see _download
+            ValueListenableBuilder<int?>(
+              valueListenable: _downloadPercent,
+              builder: (context, percent, _) => percent == null
+                  ? const SizedBox.shrink()
+                  : Center(
+                      child: Column(
+                        key: const Key('video_original_download'),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(value: percent / 100),
+                          const SizedBox(height: 12),
+                          Text(
+                            context.t.immersive_downloading_original(percent: percent),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
             ),
             if (status == VideoPlaybackStatus.failed && failure != null)
               Positioned.fill(
