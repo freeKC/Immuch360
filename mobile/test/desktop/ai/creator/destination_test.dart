@@ -258,7 +258,7 @@ void main() {
       expect(plan.share, _nasFolder);
       expect(plan.consentKey, 'net-//nas/photos:/');
       expect(plan.consentFolder, r'\\nas\photos');
-      expect(plan.rootKey, 'net-//nas/photos:/');
+      expect(plan.rootKey, 'share-nas|net-//nas/photos:/', reason: 'a refusal kept for this share alone');
       expect(plan.shareHint, isFalse);
 
       final allowed = planner(
@@ -299,7 +299,7 @@ void main() {
 
       final kept = planner(
         DesktopAiSettings(
-          rootFallbacks: {'net-//nas/photos:/': mine},
+          rootFallbacks: {'share-nas|net-//nas/photos:/': mine},
           networkRootsAllowed: const ['net-//nas/photos:/'],
         ),
       ).plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
@@ -307,6 +307,30 @@ void main() {
         (kept.kind, kept.folder, kept.reason),
         (DestinationKind.chosenFolder, mine, DestinationReason.folderReadOnly),
       );
+    });
+
+    test('a refusal of a share opened in the app never sends the folders of the library on that NAS elsewhere', () {
+      final mine = p.join(root.path, '3D');
+      // The app share refused with its own account (a guest); \\nas\photos\2024 is a folder of the library, written with
+      // the account of the system; the yes covers both
+      final settings = DesktopAiSettings(
+        rootFallbacks: {'share-nas|net-//nas/photos:/': mine},
+        networkRootsAllowed: const ['net-//nas/photos:/'],
+      );
+      final plan = planner(settings).plan(onNas(Directory(p.join(root.path, 'nas', '2024')), 'salon.jpg'));
+
+      expect(plan.kind, DestinationKind.nextToOriginal);
+      expect(plan.waitsForConsent, isFalse);
+      expect(plan.reason, isNull);
+
+      // And the other way round: a refusal of the folder of the library leaves the share of the app to its own check
+      final share = planner(
+        DesktopAiSettings(
+          rootFallbacks: {'net-//nas/photos:/2024': mine},
+          networkRootsAllowed: const ['net-//nas/photos:/'],
+        ),
+      ).plan(const ShareOriginal(name: 'salon.jpg', folder: _nasFolder));
+      expect(share.kind, DestinationKind.nextToOriginal);
     });
 
     test('DLNA, Plex, the Immich server: the download folder, never the source', () {
@@ -942,7 +966,7 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
         expect(plan.folder, downloads);
         expect(plan.reason, DestinationReason.folderReadOnly);
         expect(dialog.checkOf('j1')!.status, ProbeStatus.ready, reason: 'the chosen folder, checked');
-        expect((await store().read()).rootFallbacks, {'net-//nas/photos:/': downloads});
+        expect((await store().read()).rootFallbacks, {'share-nas|net-//nas/photos:/': downloads});
         await dialog.close();
 
         // "Next to the original" again tries the share again
@@ -960,6 +984,38 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
         expect(again.checkOf('j1')!.status, ProbeStatus.ready);
         await again.close();
       });
+
+      test(
+        'a refusal of the share of the app leaves the folders of the library on the same NAS to their own check',
+        () async {
+          answers[r'\\nas\photos\2024'] = const ProbeResult(ProbeStatus.readOnly, message: 'Access denied');
+          await store().update((settings) => settings.copyWith(networkRootsAllowed: const ['net-//nas/photos:/']));
+          final refused = shareSession([
+            const DestinationJob(
+              id: 'j1',
+              original: ShareOriginal(name: 'salon.jpg', folder: _nasFolder),
+            ),
+          ]);
+          await refused.open();
+          expect(refused.destinations['j1']!.reason, DestinationReason.folderReadOnly);
+          await refused.close();
+
+          // The same folder, a root of the library written with the account of the system
+          final nas = folder('nas2024');
+          final library = shareSession([DestinationJob(id: 'j2', original: onNas(nas, 'salon.jpg'))]);
+          await library.open();
+
+          final plan = library.destinations['j2']!;
+          expect(plan.kind, DestinationKind.nextToOriginal);
+          expect(plan.reason, isNull);
+          expect(
+            library.checkOf('j2')!.status,
+            ProbeStatus.ready,
+            reason: 'tried, not sent to the folder of my choice',
+          );
+          await library.close();
+        },
+      );
     });
 
     test('a full disk next to the original: the chosen folder with "Disk full", not kept for the root', () async {

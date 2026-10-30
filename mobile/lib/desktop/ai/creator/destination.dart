@@ -13,7 +13,8 @@
 //   a network folder, given once for the root the share was added at (named as that share mounted as a drive would
 //   be, "net-//nas/photos:/", so that one yes covers both); the folder of the share is then checked by an empty
 //   hidden file written there and deleted (share_writer.dart). The version is made on this computer and put there by
-//   the writer of the shares, never over a file (share_publisher.dart). A refusal is kept for that root.
+//   the writer of the shares, never over a file (share_publisher.dart). A refusal is kept for that share alone: the
+//   app writes there with the account of the share, a folder of the library on the same NAS with the one of the system.
 // - DLNA, Plex, the Immich server: a chosen folder, Downloads/Immuch360 by default. They are never written to.
 //
 // DestinationPlanner gives the plan of one photo from the settings, without touching any file. DestinationSession
@@ -125,12 +126,17 @@ class ShareFolder {
   /// "https://nas:5006/dav/2024"
   final String label;
 
-  /// What the yes for this network folder and a refusal are kept for: the root the share was added at, named as the
-  /// root of a share mounted as a drive would be ("net-//nas/photos:/pictures")
+  /// What the yes for this network folder is kept for: the root the share was added at, named as the root of a share
+  /// mounted as a drive would be ("net-//nas/photos:/pictures")
   final String rootKey;
 
   /// That root, as the question of the network folder names it
   final String rootLabel;
+
+  /// What a refusal of its folders is kept for: the root with the id of the share, so that a refusal met with the
+  /// account of the share never sends a folder of the library on the same NAS, written with the account of the system,
+  /// to the folder of my choice (the yes, [rootKey], stays common)
+  String get refusalKey => 'share-$sourceId|$rootKey';
 
   @override
   bool operator ==(Object other) =>
@@ -359,7 +365,8 @@ class PlannedDestination {
   /// The folder the question names: the root of the library, or the volume of an opened file
   final String? consentFolder;
 
-  /// What a refusal of the folder of the original is kept for: the id of its root, or the folder of an opened file
+  /// What a refusal of the folder of the original is kept for: the id of its root, the folder of an opened file, or the
+  /// share opened in the app (ShareFolder.refusalKey)
   final String? rootKey;
 
   /// Reading the original downloads it from OneDrive
@@ -459,11 +466,12 @@ class DestinationPlanner {
     if (settings.destination == AiDestination.folder) {
       return chosen();
     }
-    final key = folder.rootKey;
-    final kept = keptFallbackFor(settings.rootFallbacks, key);
+    final refusal = folder.refusalKey;
+    final kept = keptFallbackFor(settings.rootFallbacks, refusal);
     if (kept != null) {
-      return chosen(folder: kept, reason: DestinationReason.folderReadOnly, rootKey: key);
+      return chosen(folder: kept, reason: DestinationReason.folderReadOnly, rootKey: refusal);
     }
+    final key = folder.rootKey;
     final allowed = consentGiven(settings.networkRootsAllowed, key);
     return PlannedDestination(
       kind: DestinationKind.nextToOriginal,
@@ -471,7 +479,7 @@ class DestinationPlanner {
       isNetwork: true,
       consentKey: allowed ? null : key,
       consentFolder: allowed ? null : folder.rootLabel,
-      rootKey: key,
+      rootKey: refusal,
       share: folder,
     );
   }
