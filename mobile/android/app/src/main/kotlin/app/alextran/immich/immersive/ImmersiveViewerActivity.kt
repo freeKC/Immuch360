@@ -954,7 +954,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         panelSetup = { panel, _ ->
           flatVideoPanel = panel
           // After the panel creation returns: the flat 3D video waits for this panel
-          scope.launch(Dispatchers.Main) { applyFlatVideoShape() }
+          scope.launch(Dispatchers.Main) {
+            applyLayerFilters(panel)
+            applyFlatVideoShape()
+          }
         },
       ),
       // Photo layer: the photos of a flat screen drawn on the Surface of a quad compositor layer (see drawPhotoLayer),
@@ -3939,6 +3942,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingStereo?.bitmap?.recycle()
     pendingStereo = null
     stereoPlacedWithHead = false
+    // The eyes of the next photo are not known yet: until then nothing places the quad, and no grip finds a screen
+    stereoEyeSize = null
   }
 
   private fun showPhoto(media: MediaRequest) {
@@ -4910,7 +4915,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
 
   /**
-   * The stereo mode, the size and the filters of the flat video screen for the video shown: for a flat 3D video, each
+   * The stereo mode and the size of the flat video screen for the video shown: for a flat 3D video, each
    * eye its half of the frame in 3D, the first eye for both in 2D (see [FlatStereo.stereoModeFor]); for an ordinary
    * video on the big screen, its whole frame for both eyes. As wide as [flatVideoAngle] at the distance of the screen,
    * as high as one eye once the player told the frame size, 16:9 until then. Like the sphere (see [applyVideoShape]),
@@ -4921,7 +4926,6 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val panel = flatVideoPanel ?: return
     val media = request ?: return
     if (!media.isFlatVideo) return
-    applyLayerFilters(panel)
     val config = panel.panelShapeConfig
     if (config == null) {
       Log.w(TAG, "flat video panel without a shape config, ${media.flatVideo ?: "big screen"} not applied")
@@ -4975,7 +4979,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * The compositor filters of the flat screen [panel] for the media shown (see [FlatScreenLayer.filters]): those of
    * Sharper flat screens while it is on, none otherwise. Set again at each media, the opening that made the panel
-   * having possibly said otherwise.
+   * having possibly said otherwise, and never at each frame of a grab.
    */
   private fun applyLayerFilters(panel: PanelSceneObject) {
     val sharp = request?.sharpFlatScreens != false
@@ -5025,6 +5029,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       flatVideoSize = null
       flatVideoAngleDeg = null
       flatPlacedWithHead = false
+      // The filters of this opening, once per video: a reshape keeps them
+      flatVideoPanel?.let(::applyLayerFilters)
       applyFlatVideoShape()
       placeFlatVideo()
       updateStereoView()
