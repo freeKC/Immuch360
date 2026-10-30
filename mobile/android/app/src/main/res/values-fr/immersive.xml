@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Ce casque ne peut pas décoder les deux objectifs de cette vidéo en même temps (%1$s %2$d x %3$d, deux fois). Un seul objectif est affiché : la moitié de la sphère reste noire.</string>
   <string name="immersive_raw_one_lens_file">Le fichier de l\'autre objectif est illisible. Un seul objectif est affiché : la moitié de la sphère reste noire.</string>
   <string name="immersive_raw_unstitched">L\'assemblage 360° a échoué sur cet appareil. La vidéo s\'affiche telle que la caméra l\'a enregistrée.</string>
+  <string name="immersive_size">Taille %1$d°</string>
+  <string name="immersive_distance">Distance %1$s m</string>
+  <string name="immersive_screen_hint">B ou Y : retour à l\'application. Gâchette : lecture ou pause. A, X ou appui court sur un bouton de préhension : afficher ou masquer ce panneau. Maintenez un bouton de préhension sur l\'écran pour le déplacer, le joystick le rapproche ou l\'éloigne alors ; maintenez les deux boutons de préhension pour changer sa taille. Joystick droit à gauche ou à droite : l\'écran de nouveau devant vous.</string>
+  <string name="immersive_screen_hint_short">Maintenez un bouton de préhension sur l\'écran pour le déplacer, les deux pour sa taille</string>
 </resources>

@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">កាស VR នេះមិនអាចឌិកូដកញ្ចក់ទាំងពីររបស់វីដេអូនេះក្នុងពេលតែមួយបានទេ (%1$s %2$d x %3$d ពីរដង)។ វាបង្ហាញកញ្ចក់មួយ៖ ពាក់កណ្ដាលនៃស្វ៊ែរនៅតែខ្មៅ។</string>
   <string name="immersive_raw_one_lens_file">មិនអាចអានឯកសាររបស់កញ្ចក់មួយទៀតបានទេ។ កញ្ចក់មួយត្រូវបានបង្ហាញ៖ ពាក់កណ្ដាលនៃស្វ៊ែរនៅតែខ្មៅ។</string>
   <string name="immersive_raw_unstitched">ការតភ្ជាប់ 360° បានបរាជ័យនៅលើឧបករណ៍នេះ។ វីដេអូបង្ហាញដូចដែលកាមេរ៉ាបានថត។</string>
+  <string name="immersive_size">ទំហំ %1$d°</string>
+  <string name="immersive_distance">ចម្ងាយ %1$s ម</string>
+  <string name="immersive_screen_hint">B ឬ Y៖ ត្រឡប់ទៅកម្មវិធីវិញ។ Trigger៖ ចាក់ ឬផ្អាក។ A, X ឬចុច Grip ខ្លី៖ បង្ហាញ ឬលាក់ផ្ទាំងនេះ។ ចុច Grip ឱ្យជាប់លើអេក្រង់ ដើម្បីផ្លាស់ទីវា បន្ទាប់មក thumbstick នាំវាមកជិត ឬទៅឆ្ងាយ។ ចុច Grip ទាំងពីរឱ្យជាប់ ដើម្បីប្ដូរទំហំ។ Thumbstick ស្ដាំទៅឆ្វេង ឬស្ដាំ៖ អេក្រង់នៅមុខអ្នកម្ដងទៀត។</string>
+  <string name="immersive_screen_hint_short">ចុច Grip ឱ្យជាប់លើអេក្រង់ដើម្បីផ្លាស់ទី ទាំងពីរដើម្បីប្ដូរទំហំ</string>
 </resources>

@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Acest headset nu poate decoda simultan cele două obiective ale acestui videoclip (%1$s %2$d x %3$d, de două ori). Afișează un obiectiv: jumătate din sferă rămâne neagră.</string>
   <string name="immersive_raw_one_lens_file">Fișierul celuilalt obiectiv nu poate fi citit. Se afișează un obiectiv: jumătate din sferă rămâne neagră.</string>
   <string name="immersive_raw_unstitched">Îmbinarea 360° a eșuat pe acest dispozitiv. Videoclipul este afișat așa cum l-a înregistrat camera.</string>
+  <string name="immersive_size">Mărime %1$d°</string>
+  <string name="immersive_distance">Distanță %1$s m</string>
+  <string name="immersive_screen_hint">B sau Y: înapoi la aplicație. Trăgaci: redare sau pauză. A, X sau o apăsare scurtă pe butonul de prindere: afișați sau ascundeți acest panou. Țineți apăsat un buton de prindere pe ecran pentru a-l muta, apoi joystickul îl apropie sau îl depărtează; țineți apăsate ambele butoane de prindere pentru a-i schimba mărimea. Joystick drept la stânga sau la dreapta: ecranul din nou în fața dvs.</string>
+  <string name="immersive_screen_hint_short">Țineți un buton de prindere pe ecran pentru a-l muta, ambele pentru mărime</string>
 </resources>

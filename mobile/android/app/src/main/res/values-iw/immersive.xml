@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">משקפי ה-VR האלה לא יכולים לפענח בו-זמנית את שתי העדשות של הסרטון הזה (%1$s %2$d x %3$d, פעמיים). מוצגת עדשה אחת: חצי מהכדור נשאר שחור.</string>
   <string name="immersive_raw_one_lens_file">לא ניתן לקרוא את הקובץ של העדשה השנייה. מוצגת עדשה אחת: חצי מהכדור נשאר שחור.</string>
   <string name="immersive_raw_unstitched">חיבור ה-360° נכשל במכשיר הזה. הסרטון מוצג כפי שהמצלמה הקליטה אותו.</string>
+  <string name="immersive_size">גודל %1$d°</string>
+  <string name="immersive_distance">מרחק %1$s מטר</string>
+  <string name="immersive_screen_hint">B או Y: חזרה לאפליקציה. הדק: הפעלה או השהיה. A, X או לחיצה קצרה על לחצן האחיזה: הצגה או הסתרה של החלונית. החזק לחצן אחיזה על המסך כדי להזיז אותו, ואז הג\'ויסטיק מקרב או מרחיק אותו; החזק את שני לחצני האחיזה כדי לשנות את גודלו. ג\'ויסטיק ימני שמאלה או ימינה: המסך שוב מולך.</string>
+  <string name="immersive_screen_hint_short">החזק לחצן אחיזה על המסך כדי להזיז אותו, את שניהם כדי לשנות את גודלו</string>
 </resources>

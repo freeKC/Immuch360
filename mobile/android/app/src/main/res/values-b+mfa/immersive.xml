@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Headset ni tak leh nyahkod duo lensa video ni samo gak (%1$s %2$d x %3$d, duo kali). Dio tunjuk satu lensa jah: separuh sfera kekal hitam.</string>
   <string name="immersive_raw_one_lens_file">Fail lensa satu lagi tak leh baco. Satu lensa jah ditunjuk: separuh sfera kekal hitam.</string>
   <string name="immersive_raw_unstitched">Cantuma 360° gagal dale peranti ni. Video ditunjuk macam kamera rakam.</string>
+  <string name="immersive_size">Saiz %1$d°</string>
+  <string name="immersive_distance">Jarak %1$s m</string>
+  <string name="immersive_screen_hint">B atau Y: balik ko aplikasi. Picu: main atau henti sekejap. A, X atau tekan grip sekejap: tunjuk atau sorok panel ni. Tahe grip atas skrin nok alih dio, kayu kawalan pulok bawok dio dekat atau jauh; tahe keduo-duo grip nok tukar saiz dio. Kayu kawalan kanan ke kiri atau kanan: skrin depe mu balik.</string>
+  <string name="immersive_screen_hint_short">Tahe grip atas skrin nok alih dio, keduo-duo grip nok tukar saiz</string>
 </resources>

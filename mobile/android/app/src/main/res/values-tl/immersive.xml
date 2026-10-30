@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Hindi kayang i-decode ng headset na ito nang sabay ang dalawang lens ng video na ito (%1$s %2$d x %3$d, dalawang beses). Isang lens ang ipinapakita: nananatiling itim ang kalahati ng sphere.</string>
   <string name="immersive_raw_one_lens_file">Hindi mabasa ang file ng kabilang lens. Isang lens ang ipinapakita: nananatiling itim ang kalahati ng sphere.</string>
   <string name="immersive_raw_unstitched">Nabigo ang 360° na pagdugtong sa device na ito. Ipinapakita ang video kung paano ito ni-record ng camera.</string>
+  <string name="immersive_size">Laki %1$d°</string>
+  <string name="immersive_distance">Layo %1$s m</string>
+  <string name="immersive_screen_hint">B o Y: bumalik sa app. Trigger: i-play o i-pause. A, X o maikling pindot sa grip: ipakita o itago ang panel na ito. Pindutin nang matagal ang grip sa screen para ilipat ito, at ilalapit o ilalayo ito ng thumbstick; pindutin nang matagal ang dalawang grip para baguhin ang laki. Kanang thumbstick pakaliwa o pakanan: muling nasa harap mo ang screen.</string>
+  <string name="immersive_screen_hint_short">Pindutin nang matagal ang grip sa screen para ilipat ito, ang dalawa para sa laki</string>
 </resources>

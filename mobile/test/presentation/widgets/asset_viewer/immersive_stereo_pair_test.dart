@@ -16,6 +16,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   /// The stereoPair given with each media shown in place, null for none
   final shown = <String?>[];
 
+  /// The Sharper flat screens setting given with each media opened
+  final sharp = <bool>[];
+
   @override
   Future<void> open(
     String url,
@@ -31,7 +34,11 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? rawProjection,
     String? stereoPair,
     bool reverseThumbstickTurn,
-  ) async => opened.add(stereoPair);
+    bool sharpFlatScreens,
+  ) async {
+    opened.add(stereoPair);
+    sharp.add(sharpFlatScreens);
+  }
 
   @override
   Future<bool> showAdjacent(
@@ -89,6 +96,15 @@ void main() {
     await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 1);
 
     expect(api.opened, [_pair]);
+  });
+
+  test('open hands the Sharper flat screens setting to the viewer, on unless said otherwise', () async {
+    const request = ImmersiveRequest(url: 'file:///photo.jpg', isVideo: false, title: 'photo.jpg', view: _flat);
+
+    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 1);
+    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 2, sharpFlatScreens: false);
+
+    expect(api.sharp, [true, false]);
   });
 
   test('showAdjacent hands the stereo pair over too, and null for any other media', () async {

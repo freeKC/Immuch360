@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Ta naglavni komplet ne more hkrati dekodirati obeh objektivov tega videoposnetka (%1$s %2$d x %3$d, dvakrat). Prikazan je en objektiv: polovica krogle ostane črna.</string>
   <string name="immersive_raw_one_lens_file">Datoteke drugega objektiva ni mogoče prebrati. Prikazan je en objektiv: polovica krogle ostane črna.</string>
   <string name="immersive_raw_unstitched">Sestavljanje v 360° na tej napravi ni uspelo. Videoposnetek je prikazan tako, kot ga je posnela kamera.</string>
+  <string name="immersive_size">Velikost %1$d°</string>
+  <string name="immersive_distance">Razdalja %1$s m</string>
+  <string name="immersive_screen_hint">B ali Y: nazaj v aplikacijo. Sprožilec: predvajaj ali premor. A, X ali kratek pritisk gumba za oprijem: prikaži ali skrij to ploščo. Pridržite gumb za oprijem na zaslonu, da ga premaknete, palčka ga nato približa ali oddalji; pridržite oba gumba za oprijem, da spremenite velikost. Desna palčka levo ali desno: zaslon spet pred vami.</string>
+  <string name="immersive_screen_hint_short">Pridržite gumb za oprijem na zaslonu, da ga premaknete, oba za velikost</string>
 </resources>

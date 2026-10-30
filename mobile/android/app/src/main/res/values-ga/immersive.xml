@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Ní féidir leis an tacar cinn seo dhá lionsa an fhíseáin seo a dhíchódú ag an am céanna (%1$s %2$d x %3$d, faoi dhó). Taispeántar lionsa amháin: fanann leath den sféar dubh.</string>
   <string name="immersive_raw_one_lens_file">Ní féidir comhad an lionsa eile a léamh. Taispeántar lionsa amháin: fanann leath den sféar dubh.</string>
   <string name="immersive_raw_unstitched">Theip ar fhuáil 360° ar an ngléas seo. Taispeántar an físeán mar a thaifead an ceamara é.</string>
+  <string name="immersive_size">Méid %1$d°</string>
+  <string name="immersive_distance">Fad %1$s m</string>
+  <string name="immersive_screen_hint">B nó Y: ar ais chuig an aip. Truicear: seinn nó sos. A, X nó brú gearr ar chnaipe greama: taispeáin nó folaigh an painéal seo. Coinnigh cnaipe greama ar an scáileán chun é a bhogadh, ansin tugann an maide ordóige níos gaire nó níos faide é; coinnigh an dá chnaipe greama chun a mhéid a athrú. Maide ordóige deas ar chlé nó ar dheis: an scáileán os do chomhair arís.</string>
+  <string name="immersive_screen_hint_short">Coinnigh cnaipe greama ar an scáileán chun é a bhogadh, an dá cheann chun an méid a athrú</string>
 </resources>

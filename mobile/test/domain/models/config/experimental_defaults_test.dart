@@ -46,6 +46,20 @@ void main() {
     });
   });
 
+  group('Sharper flat screens on the Meta Quest (experimental)', () {
+    test('is on by default', () {
+      expect(const AppConfig().viewer.sharpFlatScreens, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerSharpFlatScreens), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({SettingsKey.viewerSharpFlatScreens: false});
+
+      expect(config.viewer.sharpFlatScreens, isFalse);
+      expect(config.write(SettingsKey.viewerSharpFlatScreens, true).viewer.sharpFlatScreens, isTrue);
+    });
+  });
+
   group('Spatial 2.5D (experimental)', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.spatial25d, isTrue);

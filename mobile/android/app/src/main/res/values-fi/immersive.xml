@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Nämä VR-lasit eivät pysty purkamaan tämän videon kahta objektiivia yhtä aikaa (%1$s %2$d x %3$d, kahdesti). Näytetään yksi objektiivi: puolet pallosta jää mustaksi.</string>
   <string name="immersive_raw_one_lens_file">Toisen objektiivin tiedostoa ei voi lukea. Näytetään yksi objektiivi: puolet pallosta jää mustaksi.</string>
   <string name="immersive_raw_unstitched">360°-yhdistäminen epäonnistui tällä laitteella. Video näytetään sellaisena kuin kamera sen tallensi.</string>
+  <string name="immersive_size">Koko %1$d°</string>
+  <string name="immersive_distance">Etäisyys %1$s m</string>
+  <string name="immersive_screen_hint">B tai Y: takaisin sovellukseen. Liipaisin: toista tai tauko. A, X tai lyhyt painallus sivupainikkeesta: näytä tai piilota tämä paneeli. Pidä sivupainiketta näytön päällä siirtääksesi sitä, ohjainsauva tuo sen sitten lähemmäs tai vie kauemmas; pidä kumpaakin sivupainiketta muuttaaksesi kokoa. Oikea ohjainsauva vasemmalle tai oikealle: näyttö taas edessäsi.</string>
+  <string name="immersive_screen_hint_short">Pidä sivupainiketta näytön päällä siirtääksesi sitä, kumpaakin koon muuttamiseen</string>
 </resources>

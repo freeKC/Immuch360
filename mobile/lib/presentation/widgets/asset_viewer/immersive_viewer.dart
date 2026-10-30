@@ -19,7 +19,9 @@
 //
 // A flat 3D media told by its file name (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS and the others, see Flat3dRequest) goes
 // with the flat3d JSON: a photo of two eyes one above the other to the quad, a video to the flat video screen of the
-// viewer rather than to the sphere (see openFlatVideoViewer), opened on its own.
+// viewer rather than to the sphere (see openFlatVideoViewer), opened on its own. An ordinary photo or video opened with
+// View on a big screen goes with the bigScreen JSON (see BigScreenRequest): the photo to the quad as one picture, the
+// video to the flat video screen, each on its own too (see openBigScreenPhoto and openBigScreenVideo).
 //
 // A panorama a computer generated beyond the edges of a photo goes to the sphere as any 360° photo: the viewer reads
 // our packet at the head of its file itself, for every photo it shows on a sphere, previous and next included, since
@@ -39,6 +41,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/big_screen.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -158,9 +161,9 @@ class ImmersiveRequest {
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
 /// with [stereoLabels] (see [sphereViewerLabels]), as the opening [openingId] (see [ImmersiveSession.start]), which
-/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting, which the
-/// viewer keeps for previous and next. This starts the viewer: a media found for previous or next is shown with
-/// [showImmersiveRequest] instead.
+/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting and
+/// [sharpFlatScreens] the "Sharper flat screens" one, which the viewer keeps for previous and next. This starts the
+/// viewer: a media found for previous or next is shown with [showImmersiveRequest] instead.
 ///
 /// The texts of a panorama generated beyond the edges of a photo go along whatever the media (see
 /// [immersiveOpeningLabels]): the viewer finds such a panorama by itself, here or later with previous and next.
@@ -171,6 +174,7 @@ Future<void> openImmersiveRequest(
   required int openingId,
   Duration startPosition = Duration.zero,
   bool reverseThumbstickTurn = false,
+  bool sharpFlatScreens = true,
 }) => api.open(
   request.url,
   request.headers,
@@ -185,6 +189,7 @@ Future<void> openImmersiveRequest(
   request.rawProjection,
   request.stereoPair,
   reverseThumbstickTurn,
+  sharpFlatScreens,
 );
 
 /// The labels an opening of the immersive viewer goes with: [stereoLabels], and the translated texts of a panorama
@@ -412,6 +417,7 @@ class ImmersiveAssetResolver {
     required this._videoSources,
     this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
     this.reverseThumbstickTurn = false,
+    this.sharpFlatScreens = true,
     this.raw,
     this.exifOf,
   });
@@ -429,6 +435,7 @@ class ImmersiveAssetResolver {
       videoSources: ref.read(videoSourceServiceProvider),
       videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
       reverseThumbstickTurn: ref.read(appConfigProvider).viewer.reverseThumbstickTurn,
+      sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
     );
@@ -454,6 +461,10 @@ class ImmersiveAssetResolver {
 
   /// Whether the right thumbstick of the viewer turns the other way, as the settings said when the viewer opened
   final bool reverseThumbstickTurn;
+
+  /// Whether the flat screens of the viewer are drawn on the compositor with its filters (Sharper flat screens, on by
+  /// default), as the settings said when the viewer opened
+  final bool sharpFlatScreens;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -603,10 +614,10 @@ class ImmersiveAssetResolver {
   }
 
   /// What the viewer opens for [asset], a photo of the stereo quad that [stereo] describes (an Apple spatial photo, a
-  /// side by side photo, a photo for an AI relief): its copy on the device when there is one, which saves downloading
-  /// the original, else the original on the server with the headers of the session, and the stereoPair JSON, from
-  /// which the viewer decodes both eyes and shows them on a flat quad. The sphere view is a plain mono one: the viewer
-  /// shows no sphere for it. Throws when there is no file to open.
+  /// side by side photo, a photo for an AI relief, an ordinary photo on the big screen): its copy on the device when
+  /// there is one, which saves downloading the original, else the original on the server with the headers of the
+  /// session, and the stereoPair JSON, from which the viewer decodes both eyes and shows them on a flat quad. The
+  /// sphere view is a plain mono one: the viewer shows no sphere for it. Throws when there is no file to open.
   Future<ImmersiveRequest> resolveStereoPhoto(BaseAsset asset, StereoPhotoRequest stereo) async {
     File? localFile;
     final localId = asset.localId;
@@ -621,8 +632,10 @@ class ImmersiveAssetResolver {
     // The original as it was read for the pair, never an edit the server made of it: the offset of pitm is the one of
     // that file, an edited picture holds one view only, and the eyes of a side by side photo lie where the file put
     // them
+    // An ordinary photo on the big screen shows as the asset viewer shows it, edited
+    final edited = stereo is BigScreenStereoPhotoRequest;
     final url =
-        localFile?.uri.toString() ?? (remoteId == null ? null : getOriginalUrlForRemoteId(remoteId, edited: false));
+        localFile?.uri.toString() ?? (remoteId == null ? null : getOriginalUrlForRemoteId(remoteId, edited: edited));
     if (url == null) {
       throw StateError('No file to open for ${asset.name}');
     }
@@ -640,7 +653,14 @@ class ImmersiveAssetResolver {
   /// (the copy on the headset, else the original on the server with its transcoded stream to fall back to, or the
   /// stream the settings chose), with the flat3d JSON, which puts it on the flat video screen of the viewer instead.
   /// [localPath] is the file of a media opened with "Open with". Throws when there is no file to open.
-  Future<ImmersiveRequest> resolveFlatVideo(BaseAsset asset, FlatStereoFormat format, {String? localPath}) async {
+  Future<ImmersiveRequest> resolveFlatVideo(BaseAsset asset, FlatStereoFormat format, {String? localPath}) =>
+      resolveFlatScreenVideo(asset, Flat3dRequest(format).toJsonString(), localPath: localPath);
+
+  /// What the viewer opens for [asset], a video of its flat video screen that [stereoPair] describes (the flat3d JSON
+  /// of a flat 3D video, the bigScreen JSON of an ordinary one on the big screen): the file [resolve] picks for the
+  /// sphere, with that JSON. [localPath] is the file of a media opened with "Open with". Throws when there is no file
+  /// to open.
+  Future<ImmersiveRequest> resolveFlatScreenVideo(BaseAsset asset, String stereoPair, {String? localPath}) async {
     final sphere = await resolve(asset, localPath: localPath);
     return ImmersiveRequest(
       url: sphere.url,
@@ -650,7 +670,7 @@ class ImmersiveAssetResolver {
       view: stereoPhotoSphereView,
       fallbackUrl: sphere.fallbackUrl,
       sourceNotice: sphere.sourceNotice,
-      stereoPair: Flat3dRequest(format).toJsonString(),
+      stereoPair: stereoPair,
     );
   }
 
@@ -684,6 +704,7 @@ class ImmersiveAssetResolver {
         openingId: openingId,
         startPosition: startPosition,
         reverseThumbstickTurn: reverseThumbstickTurn,
+        sharpFlatScreens: sharpFlatScreens,
       );
 }
 
@@ -783,6 +804,8 @@ sealed class StereoPhotoRequest {
 
   const factory StereoPhotoRequest.flat3d(Flat3dRequest request) = Flat3dStereoPhotoRequest;
 
+  const factory StereoPhotoRequest.bigScreen() = BigScreenStereoPhotoRequest;
+
   /// The stereoPair JSON of ImmersiveApi.open
   String toImmersiveJson();
 }
@@ -825,6 +848,14 @@ final class Flat3dStereoPhotoRequest extends StereoPhotoRequest {
 
   @override
   String toImmersiveJson() => request.toJsonString();
+}
+
+/// An ordinary photo opened with View on a big screen: one picture, whole, on the quad (see BigScreenRequest)
+final class BigScreenStereoPhotoRequest extends StereoPhotoRequest {
+  const BigScreenStereoPhotoRequest();
+
+  @override
+  String toImmersiveJson() => const BigScreenRequest().toJsonString();
 }
 
 /// A photo that carries a 3D scene, as the packet at the head of its file asks for it (SceneXmp.request): the viewer
@@ -882,6 +913,46 @@ Future<void> openFlatVideoViewer(
   FlatStereoFormat format, {
   required Map<String, String> stereoLabels,
   void Function(VideoSourceNotice notice)? onSourceNotice,
+}) => _openFlatScreenVideo(
+  ref,
+  asset,
+  Flat3dRequest(format).toJsonString(),
+  stereoLabels: stereoLabels,
+  onSourceNotice: onSourceNotice,
+);
+
+/// Opens [asset], an ordinary photo, whole on the big screen of the immersive viewer of a Meta Quest (see
+/// BigScreenRequest), as the asset viewer shows it: its copy on the device, else its original on the server, edited
+/// (see [ImmersiveAssetResolver.resolveStereoPhoto]). It shows on its own, without previous or next, the controls
+/// labelled with [stereoLabels] (see stereoPhotoViewerLabels). Throws when there is no file to open or the viewer does
+/// not open.
+Future<void> openBigScreenPhoto(WidgetRef ref, BaseAsset asset, {required Map<String, String> stereoLabels}) =>
+    openStereoPhotoViewer(ref, asset, const StereoPhotoRequest.bigScreen(), stereoLabels: stereoLabels);
+
+/// Stops the in-app video player, then opens [asset], an ordinary video, whole on the big screen of the immersive
+/// viewer of a Meta Quest (see BigScreenRequest), from where the in-app player was when it stopped, as for
+/// [openFlatVideoViewer]: it plays on its own there, and once the viewer closes the in-app player takes it back where
+/// the viewer left it.
+Future<void> openBigScreenVideo(
+  WidgetRef ref,
+  BaseAsset asset, {
+  required Map<String, String> stereoLabels,
+  void Function(VideoSourceNotice notice)? onSourceNotice,
+}) => _openFlatScreenVideo(
+  ref,
+  asset,
+  const BigScreenRequest().toJsonString(),
+  stereoLabels: stereoLabels,
+  onSourceNotice: onSourceNotice,
+);
+
+/// [openFlatVideoViewer] and [openBigScreenVideo]: [asset] on the flat video screen with [stereoPair]
+Future<void> _openFlatScreenVideo(
+  WidgetRef ref,
+  BaseAsset asset,
+  String stereoPair, {
+  required Map<String, String> stereoLabels,
+  void Function(VideoSourceNotice notice)? onSourceNotice,
 }) async {
   // Read before the first await: the viewer may be gone by then
   final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
@@ -898,7 +969,7 @@ Future<void> openFlatVideoViewer(
   await player.suspendForExternalPlayer();
   int? openingId;
   try {
-    final request = await resolver.resolveFlatVideo(asset, format, localPath: viewIntentPath);
+    final request = await resolver.resolveFlatScreenVideo(asset, stereoPair, localPath: viewIntentPath);
     final notice = request.sourceNotice;
     if (notice != null) {
       onSourceNotice?.call(notice);
@@ -966,6 +1037,7 @@ Future<void> openImmersiveUrl(
   final api = ref.read(immersiveApiProvider);
   final session = ref.read(immersiveSessionProvider);
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
+  final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
   try {
@@ -976,6 +1048,7 @@ Future<void> openImmersiveUrl(
       openingId: openingId,
       startPosition: startPosition,
       reverseThumbstickTurn: reverseThumbstickTurn,
+      sharpFlatScreens: sharpFlatScreens,
     );
   } catch (_) {
     session.cancel(openingId);

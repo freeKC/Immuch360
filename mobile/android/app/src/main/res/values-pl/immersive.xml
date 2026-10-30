@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Ten headset nie może jednocześnie dekodować obu obiektywów tego filmu (%1$s %2$d x %3$d, dwa razy). Wyświetla jeden obiektyw: połowa sfery pozostaje czarna.</string>
   <string name="immersive_raw_one_lens_file">Nie można odczytać pliku drugiego obiektywu. Wyświetlany jest jeden obiektyw: połowa sfery pozostaje czarna.</string>
   <string name="immersive_raw_unstitched">Łączenie w 360° nie powiodło się na tym urządzeniu. Film jest wyświetlany tak, jak nagrała go kamera.</string>
+  <string name="immersive_size">Rozmiar %1$d°</string>
+  <string name="immersive_distance">Odległość %1$s m</string>
+  <string name="immersive_screen_hint">B lub Y: powrót do aplikacji. Spust: odtwórz lub wstrzymaj. A, X lub krótkie naciśnięcie przycisku chwytu: pokaż lub ukryj ten panel. Przytrzymaj przycisk chwytu na ekranie, aby go przesunąć, a drążek przybliża go lub oddala; przytrzymaj oba przyciski chwytu, aby zmienić rozmiar. Prawy drążek w lewo lub w prawo: ekran znów przed tobą.</string>
+  <string name="immersive_screen_hint_short">Przytrzymaj przycisk chwytu na ekranie, aby go przesunąć, oba, aby zmienić rozmiar</string>
 </resources>

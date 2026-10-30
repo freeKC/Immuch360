@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Este casco non pode descodificar á vez as dúas lentes deste vídeo (%1$s %2$d x %3$d, dúas veces). Móstrase unha lente: a metade da esfera queda negra.</string>
   <string name="immersive_raw_one_lens_file">Non se pode ler o ficheiro da outra lente. Móstrase unha lente: a metade da esfera queda negra.</string>
   <string name="immersive_raw_unstitched">A unión 360° fallou neste dispositivo. O vídeo móstrase tal como o gravou a cámara.</string>
+  <string name="immersive_size">Tamaño %1$d°</string>
+  <string name="immersive_distance">Distancia %1$s m</string>
+  <string name="immersive_screen_hint">B ou Y: volver á aplicación. Gatillo: reproducir ou pausar. A, X ou unha pulsación curta do botón de agarre: mostrar ou ocultar este panel. Mantén un botón de agarre sobre a pantalla para movela, e o joystick achégaa ou afástaa; mantén os dous botóns de agarre para cambiar o seu tamaño. Joystick dereito á esquerda ou á dereita: a pantalla de novo diante.</string>
+  <string name="immersive_screen_hint_short">Mantén un botón de agarre sobre a pantalla para movela, os dous para cambiar o tamaño</string>
 </resources>

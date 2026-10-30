@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Deze headset kan de twee lenzen van deze video niet tegelijk decoderen (%1$s %2$d x %3$d, twee keer). Hij toont één lens: de helft van de bol blijft zwart.</string>
   <string name="immersive_raw_one_lens_file">Het bestand van de andere lens kan niet worden gelezen. Eén lens wordt getoond: de helft van de bol blijft zwart.</string>
   <string name="immersive_raw_unstitched">Het samenvoegen in 360° is mislukt op dit apparaat. De video wordt getoond zoals de camera hem heeft opgenomen.</string>
+  <string name="immersive_size">Grootte %1$d°</string>
+  <string name="immersive_distance">Afstand %1$s m</string>
+  <string name="immersive_screen_hint">B of Y: terug naar de app. Trigger: afspelen of pauzeren. A, X of kort drukken op een grip: dit paneel tonen of verbergen. Houd een grip op het scherm om het te verplaatsen, de thumbstick brengt het dan dichterbij of verder weg; houd beide grips vast om de grootte te wijzigen. Rechter thumbstick naar links of rechts: het scherm weer voor je.</string>
+  <string name="immersive_screen_hint_short">Houd een grip op het scherm om het te verplaatsen, beide voor de grootte</string>
 </resources>

@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Bu gözlük bu videonun iki merceğini aynı anda çözemiyor (%1$s %2$d x %3$d, iki kez). Tek mercek gösteriliyor: kürenin yarısı siyah kalıyor.</string>
   <string name="immersive_raw_one_lens_file">Diğer merceğin dosyası okunamıyor. Tek mercek gösteriliyor: kürenin yarısı siyah kalıyor.</string>
   <string name="immersive_raw_unstitched">360° birleştirme bu cihazda başarısız oldu. Video, kameranın kaydettiği gibi gösteriliyor.</string>
+  <string name="immersive_size">Boyut %1$d°</string>
+  <string name="immersive_distance">Mesafe %1$s m</string>
+  <string name="immersive_screen_hint">B veya Y: uygulamaya dön. Tetik: oynat veya duraklat. A, X veya kavrama tuşuna kısa basma: bu paneli göster veya gizle. Ekranı taşımak için üzerinde bir kavrama tuşunu basılı tut, analog çubuk onu yaklaştırır veya uzaklaştırır; boyutunu değiştirmek için iki kavrama tuşunu da basılı tut. Sağ analog çubuğu sola veya sağa: ekran yeniden önünde.</string>
+  <string name="immersive_screen_hint_short">Taşımak için ekranda bir kavrama tuşunu basılı tut, boyut için ikisini</string>
 </resources>

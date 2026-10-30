@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Ĉi tiu kasko ne povas samtempe malkodi la du objektivojn de ĉi tiu video (%1$s %2$d x %3$d, dufoje). Ĝi montras unu objektivon: duono de la sfero restas nigra.</string>
   <string name="immersive_raw_one_lens_file">La dosiero de la alia objektivo ne legeblas. Unu objektivo montriĝas: duono de la sfero restas nigra.</string>
   <string name="immersive_raw_unstitched">La 360°-kunkudrado malsukcesis en ĉi tiu aparato. La video montriĝas tiel, kiel la fotilo registris ĝin.</string>
+  <string name="immersive_size">Grando %1$d°</string>
+  <string name="immersive_distance">Distanco %1$s m</string>
+  <string name="immersive_screen_hint">B aŭ Y: reen al la aplikaĵo. Ĉano: ludi aŭ paŭzi. A, X aŭ mallonga premo de tenbutono: montri aŭ kaŝi ĉi tiun panelon. Tenu tenbutonon sur la ekrano por movi ĝin, la stirstangeto tiam proksimigas aŭ malproksimigas ĝin; tenu ambaŭ tenbutonojn por ŝanĝi ĝian grandon. Dekstra stirstangeto maldekstren aŭ dekstren: la ekrano denove antaŭ vi.</string>
+  <string name="immersive_screen_hint_short">Tenu tenbutonon sur la ekrano por movi ĝin, ambaŭ por ŝanĝi la grandon</string>
 </resources>

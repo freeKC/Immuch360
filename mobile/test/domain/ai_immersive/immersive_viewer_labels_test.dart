@@ -87,6 +87,19 @@ void main() {
     expect(labels.keys, containsAll(['ai2dOriginal', 'aiReliefEstimated', 'aiNoNavigation']));
     expect(labels.keys, containsAll(sceneViewerLabels(StaticTranslations.instance).keys));
     expect(labels.keys, containsAll(flat3dViewerLabels(StaticTranslations.instance).keys));
+    expect(labels.keys, containsAll(flatScreenViewerLabels(StaticTranslations.instance).keys));
+  });
+
+  testWidgets('a flat screen says once that it is sharper, experimental, and that the big screen shows on its own', (
+    tester,
+  ) async {
+    final labels = flatScreenViewerLabels(await english(tester));
+
+    // The English texts of StereoComposer.defaultLabels in StereoPhoto.kt
+    expect(labels, {
+      'sharpScreensNotice': 'Sharper flat screen (experimental)',
+      'bigScreenNoNavigation': 'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
+    });
   });
 
   testWidgets('a media told 3D by its file name says so, experimental, and that a video plays on its own', (

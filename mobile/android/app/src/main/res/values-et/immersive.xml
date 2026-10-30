@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">See peakomplekt ei suuda selle video kahte objektiivi korraga dekodeerida (%1$s %2$d x %3$d, kaks korda). Näidatakse ühte objektiivi: pool sfäärist jääb mustaks.</string>
   <string name="immersive_raw_one_lens_file">Teise objektiivi faili ei saa lugeda. Näidatakse ühte objektiivi: pool sfäärist jääb mustaks.</string>
   <string name="immersive_raw_unstitched">360° kokkuõmblemine ebaõnnestus selles seadmes. Video kuvatakse nii, nagu kaamera selle salvestas.</string>
+  <string name="immersive_size">Suurus %1$d°</string>
+  <string name="immersive_distance">Kaugus %1$s m</string>
+  <string name="immersive_screen_hint">B või Y: tagasi rakendusse. Päästik: esita või peata. A, X või lühike vajutus haardenupule: näita või peida see paneel. Hoia haardenuppu ekraanil, et seda liigutada, juhtkang toob selle siis lähemale või viib kaugemale; hoia mõlemat haardenuppu, et suurust muuta. Parem juhtkang vasakule või paremale: ekraan jälle sinu ees.</string>
+  <string name="immersive_screen_hint_short">Hoia haardenuppu ekraanil, et seda liigutada, mõlemat suuruse muutmiseks</string>
 </resources>

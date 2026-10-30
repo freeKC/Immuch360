@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Headset ini tidak dapat mendekode dua lensa video ini sekaligus (%1$s %2$d x %3$d, dua kali). Satu lensa ditampilkan: separuh bola tetap hitam.</string>
   <string name="immersive_raw_one_lens_file">File lensa lainnya tidak dapat dibaca. Satu lensa ditampilkan: separuh bola tetap hitam.</string>
   <string name="immersive_raw_unstitched">Penggabungan 360° gagal di perangkat ini. Video ditampilkan seperti yang direkam kamera.</string>
+  <string name="immersive_size">Ukuran %1$d°</string>
+  <string name="immersive_distance">Jarak %1$s m</string>
+  <string name="immersive_screen_hint">B atau Y: kembali ke aplikasi. Pelatuk: putar atau jeda. A, X atau tekan grip sebentar: tampilkan atau sembunyikan panel ini. Tahan grip di atas layar untuk memindahkannya, lalu thumbstick mendekatkan atau menjauhkannya; tahan kedua grip untuk mengubah ukurannya. Thumbstick kanan ke kiri atau kanan: layar kembali di depan Anda.</string>
+  <string name="immersive_screen_hint_short">Tahan grip di atas layar untuk memindahkannya, kedua grip untuk mengubah ukuran</string>
 </resources>

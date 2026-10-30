@@ -69,6 +69,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? rawProjection,
     String? stereoPair,
     bool reverseThumbstickTurn,
+    bool sharpFlatScreens,
   ) async => opened.add((url: url, isVideo: isVideo, rawProjection: rawProjection, layout: stereoLayout));
 
   @override

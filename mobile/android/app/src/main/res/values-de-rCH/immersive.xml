@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">S Headset cha di zwei Objektiv vo dem Video nid gliichziitig dekodiere (%1$s %2$d x %3$d, zweimal). Es zeigt eis Objektiv: d Hälfti vo de Chugle bliibt schwarz.</string>
   <string name="immersive_raw_one_lens_file">D Datei vom andere Objektiv cha nid gläse werde. Eis Objektiv wird zeigt: d Hälfti vo de Chugle bliibt schwarz.</string>
   <string name="immersive_raw_unstitched">S 360°-Zämesetze isch uf dem Gerät fehlgschlage. S Video wird so zeigt, wie d Kamera s ufgnoh het.</string>
+  <string name="immersive_size">Grössi %1$d°</string>
+  <string name="immersive_distance">Abstand %1$s m</string>
+  <string name="immersive_screen_hint">B oder Y: zrugg zur App. Trigger: abspiele oder pausiere. A, X oder churz uf d Grifftaschte drücke: das Panel aazeige oder verstecke. Hebe e Grifftaschte uf em Bildschirm, zum ne verschiebe, de Thumbstick bringt ne dänn nöcher oder wiiter weg; hebe beidi Grifftaschte, zum d Grössi ändere. Rächte Thumbstick nach links oder rächts: de Bildschirm wieder vor dir.</string>
+  <string name="immersive_screen_hint_short">Grifftaschte uf em Bildschirm hebe zum Verschiebe, beidi zum d Grössi ändere</string>
 </resources>

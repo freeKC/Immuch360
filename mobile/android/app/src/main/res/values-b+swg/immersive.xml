@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Des Headset ka die zwoi Objektiv vo dem Video ned gleichzeitig dekodiera (%1$s %2$d x %3$d, zwoimol). Es zeigt oi Objektiv: d\'Hälfte vo dr Kugel bleibt schwarz.</string>
   <string name="immersive_raw_one_lens_file">D\'Datei vom andra Objektiv ka ned gleasa werra. Oi Objektiv wird zeigt: d\'Hälfte vo dr Kugel bleibt schwarz.</string>
   <string name="immersive_raw_unstitched">S 360°-Zammasetza isch uff dem Gerät schiefganga. S Video wird so zeigt, wie\'s d\'Kamera aufgnomma hot.</string>
+  <string name="immersive_size">Grieße %1$d°</string>
+  <string name="immersive_distance">Abstand %1$s m</string>
+  <string name="immersive_screen_hint">B oder Y: zrück zur App. Abzug: abspiela oder aahalta. A, X oder kurz auf da Griff drucka: des Feld zeiga oder verstecka. An Griff auf em Bildschirm fescht hebba, om en zom verschieba, dr Stick holt en no näher oder weiter weg; beide Griff hebba, om d Grieße z ändra. Rechtr Stick links oder rechts: dr Bildschirm wieder vor dir.</string>
+  <string name="immersive_screen_hint_short">An Griff auf em Bildschirm hebba zom Verschieba, beide zom d Grieße ändra</string>
 </resources>

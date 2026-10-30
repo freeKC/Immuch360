@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Betaurreko hauek ezin dituzte bideo honen bi objektiboak aldi berean deskodetu (%1$s %2$d x %3$d, bi aldiz). Objektibo bat erakusten da: esferaren erdia beltz geratzen da.</string>
   <string name="immersive_raw_one_lens_file">Ezin da beste objektiboaren fitxategia irakurri. Objektibo bat erakusten da: esferaren erdia beltz geratzen da.</string>
   <string name="immersive_raw_unstitched">360° josketak huts egin du gailu honetan. Bideoa kamerak grabatu zuen bezala erakusten da.</string>
+  <string name="immersive_size">Tamaina %1$d°</string>
+  <string name="immersive_distance">Distantzia %1$s m</string>
+  <string name="immersive_screen_hint">B edo Y: itzuli aplikaziora. Katua: erreproduzitu edo pausatu. A, X edo heltzeko botoiaren sakatze labur bat: erakutsi edo ezkutatu panel hau. Eutsi heltzeko botoi bati pantailaren gainean hura mugitzeko, eta joystick-ak hurbildu edo urrundu egiten du; eutsi bi heltzeko botoiei tamaina aldatzeko. Eskuineko joystick-a ezkerrera edo eskuinera: pantaila berriro zure aurrean.</string>
+  <string name="immersive_screen_hint_short">Eutsi heltzeko botoi bati pantailaren gainean mugitzeko, biei tamaina aldatzeko</string>
 </resources>

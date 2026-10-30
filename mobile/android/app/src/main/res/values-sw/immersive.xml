@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Headset hii haiwezi kusimbua lenzi mbili za video hii kwa wakati mmoja (%1$s %2$d x %3$d, mara mbili). Inaonyesha lenzi moja: nusu ya tufe inabaki nyeusi.</string>
   <string name="immersive_raw_one_lens_file">Faili ya lenzi nyingine haiwezi kusomwa. Lenzi moja inaonyeshwa: nusu ya tufe inabaki nyeusi.</string>
   <string name="immersive_raw_unstitched">Uunganishaji wa 360° umeshindwa kwenye kifaa hiki. Video inaonyeshwa kama kamera ilivyoirekodi.</string>
+  <string name="immersive_size">Ukubwa %1$d°</string>
+  <string name="immersive_distance">Umbali %1$s m</string>
+  <string name="immersive_screen_hint">B au Y: rudi kwenye programu. Kifyatulio: cheza au sitisha. A, X au mbonyezo mfupi wa kitufe cha kushika: onyesha au ficha paneli hii. Shikilia kitufe cha kushika juu ya skrini ili kuisogeza, kisha kijiti huileta karibu au kuipeleka mbali; shikilia vitufe vyote viwili vya kushika ili kubadilisha ukubwa. Kijiti cha kulia kushoto au kulia: skrini mbele yako tena.</string>
+  <string name="immersive_screen_hint_short">Shikilia kitufe cha kushika juu ya skrini ili kuisogeza, vyote viwili kwa ukubwa</string>
 </resources>

@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">此頭戴裝置無法同時解碼此影片的兩個鏡頭（%1$s %2$d x %3$d，兩路）。僅顯示一個鏡頭：球面的一半保持黑色。</string>
   <string name="immersive_raw_one_lens_file">無法讀取另一個鏡頭的檔案。僅顯示一個鏡頭：球面的一半保持黑色。</string>
   <string name="immersive_raw_unstitched">此裝置上的 360° 拼接失敗。影片按相機錄製的原樣顯示。</string>
+  <string name="immersive_size">大小 %1$d°</string>
+  <string name="immersive_distance">距離 %1$s 公尺</string>
+  <string name="immersive_screen_hint">B 或 Y：返回應用程式。扳機鍵：播放或暫停。A、X 或短按握把鍵：顯示或隱藏此面板。在螢幕上按住握把鍵可移動它，接著用搖桿將它拉近或推遠；同時按住兩個握把鍵可調整大小。右搖桿向左或向右：讓螢幕重新回到前方。</string>
+  <string name="immersive_screen_hint_short">在螢幕上按住握把鍵可移動，按住兩個可調整大小</string>
 </resources>

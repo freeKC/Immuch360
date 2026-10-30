@@ -7,6 +7,7 @@ import com.meta.spatial.runtime.ButtonBits
 import kotlin.math.cos
 import kotlin.math.sin
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -259,6 +260,61 @@ class ImmersiveInputTest {
     val step = Math.toRadians(STEP.toDouble())
     val onTheRight = Vector3(sin(step).toFloat(), 0f, cos(step).toFloat())
     assertDirection("what was ${STEP.toInt()} degrees on the right", Vector3(0f, 0f, 1f), sphere * onTheRight)
+  }
+
+  // A flat screen (FreeKC's mapping of 29 October, on an idea of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d)
+
+  private fun screenActions(controller: Int = 0, panelVisible: Boolean = false, held: Boolean = false): List<Action> =
+    ImmersiveControls.actionsFor(controller, 0, panelVisible, screenGrabbable = true, screenHeld = held)
+
+  @Test
+  fun `on a flat screen the grips are left to ScreenGrip, A, X and menu still show or hide the panel`() {
+    for (bit in listOf(ButtonBits.ButtonSqueezeL, ButtonBits.ButtonSqueezeR)) {
+      assertEquals(emptyList<Action>(), screenActions(controller = bit))
+      assertEquals(emptyList<Action>(), screenActions(controller = bit, panelVisible = true))
+    }
+    for (bit in listOf(ButtonBits.ButtonA, ButtonBits.ButtonX, ButtonBits.ButtonMenu)) {
+      assertEquals(listOf(Action.TOGGLE_PANEL), screenActions(controller = bit))
+    }
+    // The trigger, with a grip pressed on the same update, still plays or pauses
+    assertEquals(
+      listOf(Action.PLAY_PAUSE),
+      screenActions(controller = ButtonBits.ButtonSqueezeR or ButtonBits.ButtonTriggerR),
+    )
+  }
+
+  @Test
+  fun `a flat screen held goes farther with either thumbstick up, nearer with it down, and nothing else`() {
+    for (up in listOf(ButtonBits.ButtonThumbLU, ButtonBits.ButtonThumbRU)) {
+      assertEquals(listOf(Action.SCREEN_FARTHER), screenActions(controller = up, held = true))
+    }
+    for (down in listOf(ButtonBits.ButtonThumbLD, ButtonBits.ButtonThumbRD)) {
+      assertEquals(listOf(Action.SCREEN_NEARER), screenActions(controller = down, held = true))
+    }
+    // Neither previous, next nor a turn while the hand holds the screen
+    for (side in
+      listOf(ButtonBits.ButtonThumbLL, ButtonBits.ButtonThumbLR, ButtonBits.ButtonThumbRL, ButtonBits.ButtonThumbRR)) {
+      assertEquals(emptyList<Action>(), screenActions(controller = side, held = true))
+    }
+    // B or Y still go back
+    assertEquals(listOf(Action.CLOSE), screenActions(controller = ButtonBits.ButtonB, held = true))
+  }
+
+  @Test
+  fun `a flat screen not held takes the thumbsticks as before`() {
+    assertEquals(listOf(Action.STICK_UP), screenActions(controller = ButtonBits.ButtonThumbRU))
+    assertEquals(listOf(Action.STICK_DOWN), screenActions(controller = ButtonBits.ButtonThumbLD))
+    assertEquals(listOf(Action.PREVIOUS), screenActions(controller = ButtonBits.ButtonThumbLL))
+    assertEquals(listOf(Action.TURN_RIGHT), screenActions(controller = ButtonBits.ButtonThumbRR))
+  }
+
+  @Test
+  fun `the screen actions never come out of a sphere media or a scene`() {
+    val sticks = ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK
+    for (bit in (0 until 32).map { 1 shl it }.filter { sticks and it != 0 }) {
+      val plain = ImmersiveControls.actionsFor(bit, 0, false, screenHeld = true)
+      assertFalse(Action.SCREEN_FARTHER in plain || Action.SCREEN_NEARER in plain)
+    }
   }
 
   // A 3D scene (design-final 2026-10-27, section 3.3)

@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Dette headsettet kan ikke dekode de to objektivene i denne videoen samtidig (%1$s %2$d x %3$d, to ganger). Det viser ett objektiv: halvparten av kulen forblir svart.</string>
   <string name="immersive_raw_one_lens_file">Filen til det andre objektivet kan ikke leses. Ett objektiv vises: halvparten av kulen forblir svart.</string>
   <string name="immersive_raw_unstitched">360°-sammensettingen mislyktes på denne enheten. Videoen vises slik kameraet tok den opp.</string>
+  <string name="immersive_size">Størrelse %1$d°</string>
+  <string name="immersive_distance">Avstand %1$s m</string>
+  <string name="immersive_screen_hint">B eller Y: tilbake til appen. Avtrekker: spill av eller pause. A, X eller et kort trykk på grepknappen: vis eller skjul dette panelet. Hold en grepknapp på skjermen for å flytte den, styrespaken bringer den så nærmere eller lenger unna; hold begge grepknappene for å endre størrelsen. Høyre styrespak til venstre eller høyre: skjermen foran deg igjen.</string>
+  <string name="immersive_screen_hint_short">Hold en grepknapp på skjermen for å flytte den, begge for å endre størrelsen</string>
 </resources>

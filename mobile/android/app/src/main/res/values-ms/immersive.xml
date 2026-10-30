@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">Headset ini tidak dapat menyahkod dua lensa video ini serentak (%1$s %2$d x %3$d, dua kali). Satu lensa dipaparkan: separuh sfera kekal hitam.</string>
   <string name="immersive_raw_one_lens_file">Fail lensa yang satu lagi tidak dapat dibaca. Satu lensa dipaparkan: separuh sfera kekal hitam.</string>
   <string name="immersive_raw_unstitched">Pencantuman 360° gagal pada peranti ini. Video dipaparkan seperti yang dirakam oleh kamera.</string>
+  <string name="immersive_size">Saiz %1$d°</string>
+  <string name="immersive_distance">Jarak %1$s m</string>
+  <string name="immersive_screen_hint">B atau Y: kembali ke aplikasi. Pemicu: main atau jeda. A, X atau tekan butang genggam sekejap: tunjukkan atau sembunyikan panel ini. Tahan butang genggam di atas skrin untuk mengalihkannya, kemudian joystick mendekatkan atau menjauhkannya; tahan kedua-dua butang genggam untuk menukar saiznya. Joystick kanan ke kiri atau kanan: skrin di hadapan anda semula.</string>
+  <string name="immersive_screen_hint_short">Tahan butang genggam di atas skrin untuk mengalihkannya, kedua-duanya untuk saiz</string>
 </resources>

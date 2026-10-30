@@ -325,6 +325,22 @@ internal object ImmersiveMedia {
     }
   }
 
+  /**
+   * An ordinary photo for the big screen (see BigScreenSpec): decoded by ImageDecoder, which applies its EXIF
+   * orientation, in sRGB, within [maxWidth] x [maxHeight] with its aspect kept. An ARGB_8888 software bitmap, upright;
+   * its transparency, if any, is left to the caller. Null before Android 9; throws when the image does not decode.
+   */
+  fun decodeUpright(bytes: ByteArray, maxWidth: Int, maxHeight: Int): Bitmap? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
+    return ImageDecoder.decodeBitmap(ImageDecoder.createSource(ByteBuffer.wrap(bytes))) { decoder, info, _ ->
+      decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+      decoder.setTargetColorSpace(ColorSpace.get(ColorSpace.Named.SRGB))
+      val (width, height) = StereoComposer.fitWithin(info.size.width, info.size.height, maxWidth, maxHeight)
+      if (width != info.size.width || height != info.size.height) decoder.setTargetSize(width, height)
+      Log.d(TAG, "big screen photo ${info.mimeType} ${info.size.width}x${info.size.height} at ${width}x$height")
+    }
+  }
+
   /** Safety net when the decoder rounds up: scales down so both sides fit. Recycles the input. */
   private fun fitWithin(bitmap: Bitmap): Bitmap {
     if (bitmap.width <= MAX_TEXTURE_WIDTH && bitmap.height <= MAX_TEXTURE_HEIGHT) return bitmap

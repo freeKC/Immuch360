@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">N\'hall ket ar c\'hask-mañ diskodañ div lunedenn ar video-mañ war un dro (%1$s %2$d x %3$d, div wech). Ul lunedenn a vez diskouezet: an hanter eus ar sferenn a chom du.</string>
   <string name="immersive_raw_one_lens_file">N\'haller ket lenn restr al lunedenn all. Ul lunedenn a vez diskouezet: an hanter eus ar sferenn a chom du.</string>
   <string name="immersive_raw_unstitched">C\'hwitet eo ar gwriañ 360° war ar benveg-mañ. Diskouezet eo ar video evel m\'en deus enrollet anezhañ ar c\'hamera.</string>
+  <string name="immersive_size">Ment %1$d°</string>
+  <string name="immersive_distance">Pellder %1$s m</string>
+  <string name="immersive_screen_hint">B pe Y: distreiñ d\'an arload. Dic\'her: lenn pe ehan. A, X pe ur pouezadenn verr war ar bouton kregiñ: diskouez pe kuzhat ar banell-mañ. Dalc\'hit ur bouton kregiñ war ar skramm evit e zilec\'hiañ, ar joystick a dosta pe a bellaa anezhañ neuze; dalc\'hit an daou vouton kregiñ evit cheñch e vent. Joystick dehou a-gleiz pe a-zehou: ar skramm dirazoc\'h en-dro.</string>
+  <string name="immersive_screen_hint_short">Dalc\'hit ur bouton kregiñ war ar skramm evit e zilec\'hiañ, an daou evit e vent</string>
 </resources>

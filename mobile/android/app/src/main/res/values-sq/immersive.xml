@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Këto syze VR nuk mund të dekodojnë njëkohësisht dy objektivat e kësaj videoje (%1$s %2$d x %3$d, dy herë). Shfaqet një objektiv: gjysma e sferës mbetet e zezë.</string>
   <string name="immersive_raw_one_lens_file">Skedari i objektivit tjetër nuk mund të lexohet. Shfaqet një objektiv: gjysma e sferës mbetet e zezë.</string>
   <string name="immersive_raw_unstitched">Bashkimi 360° dështoi në këtë pajisje. Videoja shfaqet ashtu siç e regjistroi kamera.</string>
+  <string name="immersive_size">Madhësia %1$d°</string>
+  <string name="immersive_distance">Largësia %1$s m</string>
+  <string name="immersive_screen_hint">B ose Y: kthim te aplikacioni. Këmbëza: luaj ose pauzë. A, X ose një shtypje e shkurtër e butonit të kapjes: shfaq ose fshih këtë panel. Mbaj një buton kapjeje mbi ekran për ta lëvizur, pastaj leva e afron ose e largon; mbaj të dy butonat e kapjes për t\'i ndryshuar madhësinë. Leva e djathtë majtas ose djathtas: ekrani përsëri para teje.</string>
+  <string name="immersive_screen_hint_short">Mbaj një buton kapjeje mbi ekran për ta lëvizur, të dy për madhësinë</string>
 </resources>

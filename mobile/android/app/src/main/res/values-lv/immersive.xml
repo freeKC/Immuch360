@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Šīs VR brilles nevar vienlaikus dekodēt abus šī video objektīvus (%1$s %2$d x %3$d, divreiz). Tiek rādīts viens objektīvs: puse sfēras paliek melna.</string>
   <string name="immersive_raw_one_lens_file">Otra objektīva failu nevar nolasīt. Tiek rādīts viens objektīvs: puse sfēras paliek melna.</string>
   <string name="immersive_raw_unstitched">360° sašūšana šajā ierīcē neizdevās. Video tiek rādīts tā, kā kamera to ierakstīja.</string>
+  <string name="immersive_size">Izmērs %1$d°</string>
+  <string name="immersive_distance">Attālums %1$s m</string>
+  <string name="immersive_screen_hint">B vai Y: atpakaļ uz lietotni. Mēlīte: atskaņot vai pauzēt. A, X vai īss satveršanas pogas spiediens: rādīt vai paslēpt šo paneli. Turiet satveršanas pogu uz ekrāna, lai to pārvietotu, un vadības svira to tuvina vai attālina; turiet abas satveršanas pogas, lai mainītu izmēru. Labā vadības svira pa kreisi vai pa labi: ekrāns atkal jūsu priekšā.</string>
+  <string name="immersive_screen_hint_short">Turiet satveršanas pogu uz ekrāna, lai to pārvietotu, abas izmēra maiņai</string>
 </resources>

@@ -70,6 +70,12 @@ class AdvancedSettings extends HookConsumerWidget {
     useValueChanged<bool, void>(flat3dByName.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerFlat3dByName, flat3dByName.value));
     });
+    // The compositor and its filters on the flat screens of the immersive viewer of a Meta Quest, experimental and on
+    // by default
+    final sharpFlatScreens = useState(ref.watch(appConfigProvider).viewer.sharpFlatScreens);
+    useValueChanged<bool, void>(sharpFlatScreens.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerSharpFlatScreens, sharpFlatScreens.value));
+    });
 
     final logLevel = Level.LEVELS[levelId.value].name;
 
@@ -180,6 +186,13 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: flat3dByName,
           title: context.t.setting_immersive_flat_3d_title,
           subtitle: context.t.setting_immersive_flat_3d_subtitle,
+        ),
+      if (isHorizonOs)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_sharp_screens'),
+          valueNotifier: sharpFlatScreens,
+          title: context.t.setting_immersive_sharp_screens_title,
+          subtitle: context.t.setting_immersive_sharp_screens_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       const CustomProxyHeaderSettings(),

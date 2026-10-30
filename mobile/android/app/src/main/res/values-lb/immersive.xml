@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">Dësen Headset kann déi zwee Objektiver vun dësem Video net gläichzäiteg dekodéieren (%1$s %2$d x %3$d, zweemol). En weist een Objektiv: d\'Halschent vun der Kugel bleift schwaarz.</string>
   <string name="immersive_raw_one_lens_file">De Fichier vum aneren Objektiv kann net gelies ginn. Een Objektiv gëtt gewisen: d\'Halschent vun der Kugel bleift schwaarz.</string>
   <string name="immersive_raw_unstitched">D\'360°-Zesummesetzen ass op dësem Apparat feelgeschloen. De Video gëtt esou gewisen, wéi d\'Kamera en opgeholl huet.</string>
+  <string name="immersive_size">Gréisst %1$d°</string>
+  <string name="immersive_distance">Distanz %1$s m</string>
+  <string name="immersive_screen_hint">B oder Y: zréck an d\'App. Trigger: ofspillen oder pauséieren. A, X oder kuerzen Drock op de Grip: dëse Panel weisen oder verstoppen. Halt e Grip um Bildschierm fir en ze réckelen, de Joystick bréngt en dann méi no oder méi wäit ewech; halt béid Grips fir seng Gréisst z\'änneren. Rietse Joystick lénks oder riets: de Bildschierm erëm virun dir.</string>
+  <string name="immersive_screen_hint_short">Halt e Grip um Bildschierm fir en ze réckelen, béid fir d\'Gréisst</string>
 </resources>

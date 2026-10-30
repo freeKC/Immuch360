@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">此头显无法同时解码此视频的两个镜头（%1$s %2$d x %3$d，两路）。仅显示一个镜头：球面的一半保持黑色。</string>
   <string name="immersive_raw_one_lens_file">无法读取另一个镜头的文件。仅显示一个镜头：球面的一半保持黑色。</string>
   <string name="immersive_raw_unstitched">此设备上的 360° 拼接失败。视频按相机录制的原样显示。</string>
+  <string name="immersive_size">大小 %1$d°</string>
+  <string name="immersive_distance">距离 %1$s 米</string>
+  <string name="immersive_screen_hint">B 或 Y：返回应用。扳机键：播放或暂停。A、X 或短按握把键：显示或隐藏此面板。在屏幕上按住握把键可移动它，随后用摇杆将它拉近或推远；同时按住两个握把键可调整大小。右摇杆向左或向右：让屏幕重新回到前方。</string>
+  <string name="immersive_screen_hint_short">在屏幕上按住握把键可移动，按住两个可调整大小</string>
 </resources>

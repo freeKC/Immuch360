@@ -119,7 +119,9 @@
   </LinearLayout>
 
   <!-- Previous and next media of the app (photos and videos), and play or pause for a video. Not offered in a 3D
-       scene, where the left thumbstick glides -->
+       scene, where the left thumbstick glides. A flat screen the grips move and resize (a photo of the stereo quad, a
+       video of the flat video screen) has its Size and its Distance here instead of previous and next, each with its
+       minus and plus buttons -->
   <LinearLayout
     android:id="@+id/immersive_navigation_row"
     android:layout_width="match_parent"
@@ -137,6 +139,43 @@
       android:text="@string/immersive_previous"
       android:textSize="18sp" />
 
+    <LinearLayout
+      android:id="@+id/immersive_size_row"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"
+      android:layout_weight="1"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:visibility="gone">
+
+      <Button
+        android:id="@+id/immersive_size_less"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:text="@string/immersive_minus"
+        android:textSize="20sp" />
+
+      <TextView
+        android:id="@+id/immersive_size"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFeatureSettings="tnum"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="#FFE8EEFF"
+        android:textSize="16sp" />
+
+      <Button
+        android:id="@+id/immersive_size_more"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:text="@string/immersive_plus"
+        android:textSize="20sp" />
+    </LinearLayout>
+
     <Button
       android:id="@+id/immersive_play_pause"
       android:layout_width="wrap_content"
@@ -146,6 +185,42 @@
       android:text="@string/immersive_pause"
       android:textSize="18sp"
       android:visibility="gone" />
+
+    <LinearLayout
+      android:id="@+id/immersive_distance_row"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:visibility="gone">
+
+      <Button
+        android:id="@+id/immersive_distance_less"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:text="@string/immersive_minus"
+        android:textSize="20sp" />
+
+      <TextView
+        android:id="@+id/immersive_distance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFeatureSettings="tnum"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="#FFE8EEFF"
+        android:textSize="16sp" />
+
+      <Button
+        android:id="@+id/immersive_distance_more"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:text="@string/immersive_plus"
+        android:textSize="20sp" />
+    </LinearLayout>
 
     <Button
       android:id="@+id/immersive_next"

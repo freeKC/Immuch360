@@ -1,0 +1,28 @@
+{
+  "about": "The stereoPair JSON of ImmersiveApi.open for an ordinary photo or video opened with View on a big screen, version 1: the viewer of the Meta Quest shows it whole on a large flat screen in front of the user, a photo on the stereo quad (its compositor layer with Sharper flat screens on), a video on the flat video screen, both movable and resizable with the grips. The request holds nothing else: the picture is the file itself, upright as its EXIF says. The Dart tests write the request and compare it with this file; the Kotlin tests read it. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat on the quad, and the video on the sphere as before.",
+  "bigScreen": {
+    "kind": "bigScreen",
+    "version": 1
+  },
+  "unknown": [
+    {
+      "kind": "bigScreen",
+      "version": 2
+    },
+    {
+      "kind": "bigScreen",
+      "version": "1"
+    },
+    {
+      "kind": "bigScreen"
+    },
+    {
+      "kind": "flat3d",
+      "version": 1
+    },
+    {
+      "kind": "bigscreen",
+      "version": 1
+    }
+  ]
+}

@@ -7,12 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
 import android.view.View
@@ -77,7 +82,6 @@ import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.AddressMode
 import com.meta.spatial.runtime.EquirectLayerConfig
 import com.meta.spatial.runtime.Filter
-import com.meta.spatial.runtime.LayerFilters
 import com.meta.spatial.runtime.MaterialSidedness
 import com.meta.spatial.runtime.PanelSceneObject
 import com.meta.spatial.runtime.PanelShapeType
@@ -117,6 +121,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.RandomAccessFile
+import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
@@ -219,10 +224,24 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * version of Gaurav Mukherjee, gmfun/Immuch360 branch quest/flat-3d) comes with the flat3d JSON (see [FlatStereoSpec]):
  * a photo goes on the stereo quad, its two eyes cut from the frame as it packs them ([FlatStereoPhoto]); a video plays
  * on the flat video screen, a quad compositor layer 2 m in front of the user whose stereo mode gives each eye its half
- * of the frame (LeftRight or UpDown, see [applyFlatVideoShape]), as wide as FLAT_SCREEN_ANGLE_DEG and as high as one
+ * of the frame (LeftRight or UpDown, see [applyFlatVideoShape]), as wide as fits its shape and as high as one
  * eye once the player told the frame size. The 3D button switches it to the first eye for both, the right thumbstick
  * left or right brings it in front of the gaze again, up or down seeks as for any video; previous and next are not
  * offered from it. "3D told by the file name (experimental)" passes once when such a media first shows.
+ *
+ * An ordinary photo or video opened with "View on a big screen" (an idea of Gaurav Mukherjee, gmfun/Immuch360 branch
+ * quest/flat-3d) comes with the bigScreen JSON (see [BigScreenSpec]): the photo goes on the stereo quad as one
+ * picture, upright as its EXIF says, the video on the flat video screen, its whole frame for both eyes; each opens as
+ * wide as fits its shape in 60 by 40 degrees and plays on its own, without previous or next.
+ *
+ * A flat screen (a photo of the stereo quad but a relief made in the headset and a 3D scene, a video of the flat video
+ * screen) moves and resizes with the grips, as FreeKC chose on 29 October on an idea and a first version of Gaurav
+ * Mukherjee (gmfun/Immuch360 branch quest/flat-3d), see [ScreenGrip]: a short grip press still shows or hides the info
+ * panel, a grip held 300 ms on the screen grabs it and the screen follows its ray around the eyes, the thumbstick up or
+ * down meanwhile takes it farther or nearer, and both grips held resize it with the spread of the hands. Its Size and
+ * Distance, each with minus and plus buttons, take the place of previous and next in the info panel; the distance
+ * chosen last is kept for the next flat screens. With Sharper flat screens on (experimental, on by default), its
+ * photos are drawn on a compositor quad layer with the quality filters of the compositor, see [FlatScreenLayer].
  *
  * A 360° panorama a computer generated beyond the edges of a photo, or its 3D version, is told by our packet at the
  * head of its file, which the viewer reads for every photo on a sphere, the one the app opened as those previous and
@@ -276,54 +295,94 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * the other way (see [ImmersiveControls.snapTurnDegrees]). A previous or next media keeps the value of its opening.
      */
     val reverseThumbstickTurn: Boolean = false,
+    /**
+     * The "Sharper flat screens" setting when the app opened the viewer (experimental, on by default): the photos of a
+     * flat screen go on the compositor quad layer and the flat screens get the compositor filters (see
+     * [FlatScreenLayer]); off, the photos go on the quad mesh and no filter applies. A previous or next media keeps the
+     * value of its opening.
+     */
+    val sharpFlatScreens: Boolean = true,
   ) {
+    /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
+    private val screenMedia: FlatScreenMedia by lazy {
+      FlatScreenMedia(isVideo, rawProjection, stereoPairJson, sharpFlatScreens)
+    }
+
     /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
-      get() = isVideo && rawProjection != null
+      get() = screenMedia.isRawVideo
 
     /** A photo of the stereo quad: in 3D when its JSON reads and both eyes decode, flat otherwise. */
     val isStereoPhoto: Boolean
-      get() = !isVideo && stereoPairJson != null
+      get() = screenMedia.isStereoPhoto
 
     /** What the quad shows, null when the JSON does not read (the photo then shows flat on the quad). */
-    val stereoKind: StereoPhotoKind? by lazy { if (isStereoPhoto) StereoPhotoKind.parse(stereoPairJson) else null }
+    val stereoKind: StereoPhotoKind?
+      get() = screenMedia.stereoKind
 
     /** The two eyes of an Apple spatial photo, null for any other kind. */
     val stereoPair: StereoPairSpec?
       get() = (stereoKind as? StereoPhotoKind.HeicPair)?.spec
 
-    /** The widest the thumbstick makes the quad of this photo, see StereoComposer.maxAngle. */
-    val stereoMaxAngleDeg: Float
-      get() = StereoComposer.maxAngle(stereoKind?.isEstimatedRelief == true)
+    /**
+     * The angular widths the screen of this media takes (see FlatScreenGeometry.angleBounds): those of the stereo quad
+     * for a photo of two eyes, 60 degrees at most for an estimated relief, 15 to 110 for one picture and the flat
+     * video screen.
+     */
+    val screenAngleBounds: ClosedFloatingPointRange<Float>
+      get() = screenMedia.angleBounds
 
     /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
     val isScene: Boolean
       get() = stereoKind is StereoPhotoKind.VolumetricScene
 
-    /**
-     * A flat 3D video told by its file name: the flat3d JSON of a video (see [FlatStereoSpec]), on the flat video
-     * screen in front of the user rather than on a sphere. Null for any other media, a raw 360° video included.
-     */
-    val flatVideo: FlatStereoSpec? by lazy {
-      if (isVideo && rawProjection == null) FlatStereoSpec.parse(stereoPairJson) else null
-    }
+    /** A flat 3D video told by its file name, on the flat video screen, see [FlatScreenMedia.flatVideo]. */
+    val flatVideo: FlatStereoSpec?
+      get() = screenMedia.flatVideo
 
-    /** A video of the flat video screen, see [flatVideo]. */
+    /** An ordinary video opened with "View on a big screen", see [FlatScreenMedia.isBigScreenVideo]. */
+    val isBigScreenVideo: Boolean
+      get() = screenMedia.isBigScreenVideo
+
+    /** A video of the flat video screen: a flat 3D video, or an ordinary one on the big screen. */
     val isFlatVideo: Boolean
-      get() = flatVideo != null
+      get() = screenMedia.isFlatVideo
+
+    /** A media opened with "View on a big screen": a photo of the stereo quad, or a video of the flat video screen. */
+    val isBigScreen: Boolean
+      get() = screenMedia.isBigScreen
 
     /** A media told 3D by its file name: a video of the flat video screen, or a photo of the stereo quad. */
     val isFlat3d: Boolean
-      get() = isFlatVideo || stereoKind is StereoPhotoKind.Flat
+      get() = screenMedia.isFlat3d
+
+    /** A media on a flat screen the user may move and resize, see [FlatScreenMedia.isMovableScreen]. */
+    val isMovableScreen: Boolean
+      get() = screenMedia.isMovableScreen
+
+    /** A photo drawn on the photo layer rather than on the quad mesh, see [FlatScreenMedia.photoOnLayer]. */
+    val photoOnLayer: Boolean
+      get() = screenMedia.photoOnLayer
   }
 
-  /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
+  /**
+   * The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer, or with
+   * [single] one picture alone in its cell (an ordinary photo on the big screen).
+   */
   private class StereoTexture(
     val bitmap: Bitmap,
     val eyeWidth: Int,
     val eyeHeight: Int,
     /** Both eyes were decoded: false shows the left eye in 2D. */
     val hasSecondEye: Boolean,
+    /** One picture in one cell, no second half: the quad mesh shows it with the stereo mode None. */
+    val single: Boolean = false,
+    /**
+     * The pixels of each eye on [bitmap], its gutter aside: the eye size, or less for the photo layer, whose Surface
+     * holds no more (see [fitForLayer]); [eyeWidth] x [eyeHeight] still give the shape of the picture.
+     */
+    val cellWidth: Int = eyeWidth,
+    val cellHeight: Int = eyeHeight,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -355,6 +414,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var pendingBitmap: Bitmap? = null
   private var infoVisible = false
   private var infoPlaced = false
+  /**
+   * The eyes and the gaze the info panel was last put in front of, so that it can come nearer than a flat screen
+   * brought near meanwhile, where it stands (see [keepPanelsBeforeScreen]).
+   */
+  private var infoAnchor: Pair<Vector3, Vector3>? = null
+  /** Where the info panel stands and its size, scale included, for the grips (see [pointsAtScreen]). */
+  private var infoQuad: UprightQuad? = null
+  /** The scale of the info panel and of the feedback line: below 1 only before a flat screen nearer than them. */
+  private var infoScale = 1f
+  private var feedbackScale = 1f
+  /** Like [infoAnchor], for the feedback line. */
+  private var feedbackAnchor: Pair<Vector3, Vector3>? = null
+  private var feedbackDistance = FEEDBACK_DISTANCE
   private var framesWithoutHead = 0
   private var lastHeadPosition: Vector3? = null
   private var lastHeadForward: Vector3? = null
@@ -394,6 +466,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var flatPlacedWithHead = false
   /** The player draws on the flat video screen rather than on the sphere. */
   private var playerOnFlatScreen = false
+  /** The angular width the user gave the flat video screen of the video shown, null for as wide as fits its shape. */
+  private var flatVideoAngleDeg: Float? = null
   /** "3D told by the file name (experimental)" passed for the media shown, see [announceFlat3d]. */
   private var flat3dAnnounced = false
 
@@ -425,6 +499,48 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefLabelJob: Job? = null
   /** The status line of the stereo photo shown, under a passing label. */
   private var stereoStatus = ""
+  /** The texture shown holds one picture alone (see StereoTexture.single). */
+  private var stereoSingle = false
+  /**
+   * The angular width of the photo shown comes from its first picture, preview or original: an ordinary photo on the
+   * big screen opens as wide as fits its shape (see FlatScreenGeometry.fittingAngle), unless a recreation restored it.
+   */
+  private var stereoSizeFromPicture = false
+
+  // Photo layer: the photos of a flat screen on a compositor quad layer while Sharper flat screens is on, see
+  // FlatScreenLayer and drawPhotoLayer
+  /** Its entity, made at the first photo that goes on it, and its panel and Surface once the SDK made them. */
+  private var photoLayerEntity: Entity? = null
+  private var photoLayerPanel: PanelSceneObject? = null
+  private var photoLayerSurface: Surface? = null
+  /** The photo on the layer, kept to draw it again on a new Surface; null while the layer shows nothing. */
+  private var photoLayerTexture: StereoTexture? = null
+  /** [photoLayerTexture] is on the Surface. */
+  private var photoLayerDrawn = false
+
+  /** Where the flat screen shown stands (a movable photo of the stereo quad, the flat video screen), null before. */
+  private var screenPlace: ScreenPlace? = null
+
+  // The grips on a flat screen: a short press shows or hides the info panel, a hold on the screen moves it, both grips
+  // resize it (see ScreenGrip; FreeKC's mapping of 29 October on an idea of Gaurav Mukherjee, gmfun/Immuch360 branch
+  // quest/flat-3d)
+  private val screenGrip = ScreenGrip()
+  /** The viewer follows the grips: a movable flat screen shows, see [followScreenGrips]. */
+  private var gripsFollowed = false
+  /** The grab in progress and the side of its grip, null while no grip holds the screen. */
+  private var screenDrag: ScreenDrag? = null
+  private var screenDragSide: GripSide? = null
+  /** The stretch of both grips, started once both rays are known. */
+  private val screenStretch = ScreenStretch()
+  private var stretchStarted = false
+  /** When the stretch last resized the screen (uptime ms), and the size it still has to take. */
+  private var stretchAppliedAt = 0L
+  private var stretchPendingAngle: Float? = null
+  /** The pose of each controller on this frame, see ImmersiveInputSystem.Listener.onControllerRays. */
+  private var controllerRays: Map<GripSide, Pose> = emptyMap()
+  /** The hint of the grips, and the word on Sharper flat screens, passed once in this viewer. */
+  private var screenHintShown = false
+  private var sharpNoticeShown = false
 
   // AI relief of a flat photo, see showReliefPhoto
   /** The reliefs of this viewer, made at its first depthRelief photo and closed with it. */
@@ -517,6 +633,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var seekForwardButton: ImageButton? = null
   private var previousButton: Button? = null
   private var nextButton: Button? = null
+  /** The Size and the Distance of a movable flat screen, in place of previous and next, see [updateScreenControls]. */
+  private var sizeRow: View? = null
+  private var sizeView: TextView? = null
+  private var sizeLessButton: Button? = null
+  private var sizeMoreButton: Button? = null
+  private var distanceRow: View? = null
+  private var distanceView: TextView? = null
+  private var distanceLessButton: Button? = null
+  private var distanceMoreButton: Button? = null
 
   // Feedback panel
   private var feedbackView: TextView? = null
@@ -524,6 +649,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var feedbackText = ""
   /** Hides the feedback panel FEEDBACK_SHOW_MS after its last text. */
   private var feedbackJob: Job? = null
+  /** The feedback line shows a notice (see [showNotice]) rather than the answer to a thumbstick. */
+  private var noticeShowing = false
+  /** Notices waiting for the one on the feedback line to go and the panel to hide, see [queueNotice]. */
+  private val pendingNotices = ArrayDeque<String>()
 
   // Time bar
   /** Refreshes the time bar while the panel is on screen with a video, see [updateProgressTicker]. */
@@ -697,7 +826,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         !media.isStereoPhoto -> null
         stereoChoicesFor == media.url to media.openingId ->
           StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg, stereo25d)
-        else -> restoredStereoChoices?.forPhoto(media.url, media.openingId)
+        else -> restoredStereoChoices?.forPhoto(media.url, media.openingId, media.screenAngleBounds)
       }
     if (choices != null) {
       outState.putBoolean(STATE_STEREO_3D, choices.threeD)
@@ -813,10 +942,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           scope.launch(Dispatchers.Main) { applyVideoShape() }
         },
       ),
-      // Flat 3D video: a quad compositor layer in front of the user, as MediaPlayerSample shows its 3D films, with the
-      // quality filters of the compositor (super sampling and sharpening, as Gaurav Mukherjee set them on his flat
-      // layers) and behind the panels, as the sphere. Created mono at 16:9; the stereo mode and the size of each video
-      // follow (applyFlatVideoShape). The frame is scaled to the surface, the quad gives each eye its shape back.
+      // Flat video screen (a flat 3D video, a video on the big screen): a quad compositor layer in front of the user,
+      // as MediaPlayerSample shows its 3D films, with the quality filters of the compositor (super sampling and
+      // sharpening, as Gaurav Mukherjee set them on his flat layers) while Sharper flat screens is on, and behind the
+      // panels, as the sphere. Created mono at 16:9; the stereo mode, the size and the filters of each video follow
+      // (applyFlatVideoShape). The frame is scaled to the surface, the quad gives each eye its shape back.
       VideoSurfacePanelRegistration(
         R.id.immersive_flat_video_panel,
         surfaceConsumer = { _, surface ->
@@ -825,18 +955,65 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           player?.let { if (request?.isFlatVideo == true) attachVideoSurface(it, surface) }
         },
         settingsCreator = {
-          val (width, height) = FlatStereo.screenSize(16f / 9f, FLAT_SCREEN_ANGLE_DEG, StereoComposer.DISTANCE_M)
+          val (width, height) =
+            FlatStereo.screenSize(16f / 9f, FlatScreenGeometry.FIT_WIDTH_DEG, FlatScreenGeometry.DEFAULT_DISTANCE_M)
           MediaPanelSettings(
             shape = QuadShapeOptions(width = width, height = height),
             display = PixelDisplayOptions(width = FLAT_VIDEO_PANEL_WIDTH_PX, height = FLAT_VIDEO_PANEL_HEIGHT_PX),
             rendering =
-              MediaPanelRenderOptions(stereoMode = StereoMode.None, layerFilters = FLAT_LAYER_FILTERS, zIndex = -1),
+              MediaPanelRenderOptions(
+                stereoMode = StereoMode.None,
+                layerFilters = FlatScreenLayer.filters(request?.sharpFlatScreens != false),
+                zIndex = -1,
+              ),
           )
         },
         panelSetup = { panel, _ ->
           flatVideoPanel = panel
           // After the panel creation returns: the flat 3D video waits for this panel
-          scope.launch(Dispatchers.Main) { applyFlatVideoShape() }
+          scope.launch(Dispatchers.Main) {
+            applyLayerFilters(panel)
+            applyFlatVideoShape()
+          }
+        },
+      ),
+      // Photo layer: the photos of a flat screen drawn on the Surface of a quad compositor layer (see drawPhotoLayer),
+      // which the compositor samples once, straight to the display, with its quality filters, where the quad mesh goes
+      // through the eye buffer first: a sharper photo. An idea and a first version of Gaurav Mukherjee
+      // (gmfun/Immuch360, branch quest/flat-3d). Behind the panels, as the sphere; made at the first such photo, shaped
+      // for each one (applyPhotoLayerShape).
+      VideoSurfacePanelRegistration(
+        R.id.immersive_photo_layer_panel,
+        surfaceConsumer = { _, surface ->
+          Log.i(TAG, "photo layer surface ready")
+          runOnUiThread {
+            photoLayerSurface = surface
+            // A new Surface holds nothing: the photo goes on it again
+            photoLayerDrawn = false
+            drawPhotoLayer()
+          }
+        },
+        settingsCreator = {
+          MediaPanelSettings(
+            shape = QuadShapeOptions(width = 1f, height = 0.75f),
+            display =
+              PixelDisplayOptions(width = FlatScreenLayer.SURFACE_WIDTH_PX, height = FlatScreenLayer.SURFACE_HEIGHT_PX),
+            rendering =
+              MediaPanelRenderOptions(
+                stereoMode = StereoMode.None,
+                layerFilters = FlatScreenLayer.filters(request?.sharpFlatScreens != false),
+                zIndex = -1,
+              ),
+          )
+        },
+        panelSetup = { panel, _ ->
+          Log.i(TAG, "photo layer ready")
+          photoLayerPanel = panel
+          // After the panel creation returns: the photo waits for this panel
+          scope.launch(Dispatchers.Main) {
+            applyLayerFilters(panel)
+            drawPhotoLayer()
+          }
         },
       ),
     )
@@ -886,6 +1063,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingFirstFrameMessage = null
     reprepareOnReturn = false
     flat3dAnnounced = false
+    // Each media places its own flat screen
+    screenPlace = null
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
@@ -906,13 +1085,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     if (media.isRawVideo) Log.i(TAG, "raw 360 video, stitched on the headset")
     if (media.isStereoPhoto) Log.i(TAG, "stereo photo, on the stereo quad: ${media.stereoKind ?: "JSON unreadable"}")
-    if (media.isFlatVideo) Log.i(TAG, "flat 3D video, ${media.flatVideo} on the flat video screen")
+    if (media.isFlatVideo) {
+      val what = if (media.isBigScreenVideo) "video on the big screen" else "flat 3D video, ${media.flatVideo}"
+      Log.i(TAG, "$what, on the flat video screen")
+    }
     titleView?.text = media.title
     updateVideoControls()
     updateStereoView()
     updateCoverageView()
     updateTurnButton()
     updateSceneControls()
+    updateScreenControls()
     if (revealInfo) setInfoVisible(true, reposition = true)
     when {
       media.isVideo -> showVideo(media)
@@ -944,6 +1127,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     seekForwardButton = root.findViewById(R.id.immersive_seek_forward)
     previousButton = root.findViewById(R.id.immersive_previous)
     nextButton = root.findViewById(R.id.immersive_next)
+    sizeRow = root.findViewById(R.id.immersive_size_row)
+    sizeView = root.findViewById(R.id.immersive_size)
+    sizeLessButton = root.findViewById(R.id.immersive_size_less)
+    sizeMoreButton = root.findViewById(R.id.immersive_size_more)
+    distanceRow = root.findViewById(R.id.immersive_distance_row)
+    distanceView = root.findViewById(R.id.immersive_distance)
+    distanceLessButton = root.findViewById(R.id.immersive_distance_less)
+    distanceMoreButton = root.findViewById(R.id.immersive_distance_more)
     root.findViewById<Button>(R.id.immersive_back)?.setOnClickListener { close() }
     // A click from the controller ray or a hand pinch: the panel is on screen, it stays where it is, and a pending
     // auto hide starts again so that the panel does not vanish while the user is using it
@@ -954,6 +1145,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
     onPanelClick(resetButton) { resetScene() }
+    onPanelClick(sizeLessButton) { changeScreenSize(-1) }
+    onPanelClick(sizeMoreButton) { changeScreenSize(1) }
+    onPanelClick(distanceLessButton) { changeScreenDistance(-1) }
+    onPanelClick(distanceMoreButton) { changeScreenDistance(1) }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -965,20 +1160,26 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateCoverageView()
     updateTurnButton()
     updateSceneControls()
+    updateScreenControls()
   }
 
   /**
    * The rows of a 3D scene in the info panel: its controller mapping in place of the general one, its lines (see
    * [sceneDetails]) under it, Reset once the scene shows; previous and next are not offered there, the left thumbstick
    * gliding instead. A panorama generated beyond the edges of a photo keeps its lines there too (see
-   * [panoramaDetails]). Any other media gets the panel as before.
+   * [panoramaDetails]). A flat screen the grips move and resize gets its own controller mapping; any other media the
+   * panel as before.
    */
   private fun updateSceneControls() {
     val media = request
     val scene = media?.isScene == true
     hintView?.text =
-      if (scene) SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
-      else getString(R.string.immersive_hint)
+      when {
+        scene -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
+        // A flat screen the grips move and resize has its own mapping
+        media?.isMovableScreen == true -> getString(R.string.immersive_screen_hint)
+        else -> getString(R.string.immersive_hint)
+      }
     sceneDetailsView?.let { view ->
       val details = if (scene) sceneDetails else panoramaDetails
       view.text = details.joinToString("\n")
@@ -1046,8 +1247,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun updateStereoView() {
     val view = stereoView ?: return
     val media = request
-    // A stitched frame is mono: the layout would change nothing
-    if (media == null || media.isRawVideo) {
+    // A stitched frame is mono, and so is an ordinary photo or video on the big screen: the layout would change nothing
+    if (media == null || media.isRawVideo || media.isBigScreen) {
       view.visibility = View.GONE
       return
     }
@@ -1171,18 +1372,60 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     panel.setComponent(Visible(visible && infoPlaced))
     infoVisible = visible
     updateProgressTicker()
+    if (!visible) {
+      showScreenHintOnce()
+      flushNotices()
+    }
   }
 
   /** Puts the info panel in front of the user, like SplatSample.positionPanelInFrontOfUser. */
   private fun placeInfoInFront() {
-    val panel = infoEntity ?: return
+    if (infoEntity == null) return
     val head = lastHeadPosition ?: return
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
-    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
-    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = head + (direction * INFO_DISTANCE)
-    position.y = head.y - 0.3f
-    panel.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
+    infoAnchor = Vector3(head.x, head.y, head.z) to Vector3(forward.x, forward.y, forward.z)
+    placeInfo()
+  }
+
+  /**
+   * The info panel in front of the eyes and the gaze of [infoAnchor], INFO_DISTANCE away and INFO_DROP below the
+   * eyes, or nearer than a flat screen brought nearer than that and scaled down to cover the same angles (see
+   * FlatScreenGeometry.panelInFront): never behind the screen whose Size and Distance it holds.
+   */
+  private fun placeInfo() {
+    val panel = infoEntity ?: return
+    val (head, forward) = infoAnchor ?: return
+    val (place, scale) =
+      FlatScreenGeometry.panelInFront(head, forward, INFO_DISTANCE, INFO_DROP, nearScreenDistance())
+    panel.setComponent(Transform(Pose(place.center, Quaternion.lookRotation(place.direction))))
+    if (scale != infoScale) {
+      panel.setComponent(Scale(Vector3(scale, scale, 1f)))
+      infoScale = scale
+      Log.i(TAG, "info panel at ${place.distance} m, scaled $scale, before a flat screen")
+    }
+    infoQuad = UprightQuad(place, INFO_PANEL_WIDTH_M * scale, INFO_PANEL_HEIGHT_M * scale)
+  }
+
+  /** The distance of the movable flat screen of the media shown, null for any other media. */
+  private fun nearScreenDistance(): Float? = screenPlace?.distance?.takeIf { request?.isMovableScreen == true }
+
+  /**
+   * Every frame: the info panel and the feedback line shown come nearer than a flat screen brought nearer than them
+   * (the Distance buttons, a new screen at the distance kept), and go back to their distance once it is farther again,
+   * where they were put.
+   */
+  private fun keepPanelsBeforeScreen() {
+    val screen = nearScreenDistance()
+    val info = infoQuad
+    if (infoVisible && info != null && FlatScreenGeometry.panelDistance(INFO_DISTANCE, screen) != info.place.distance) {
+      placeInfo()
+    }
+    val feedback = feedbackEntity
+    if (feedbackJob != null && feedback != null &&
+      FlatScreenGeometry.panelDistance(FEEDBACK_DISTANCE, screen) != feedbackDistance
+    ) {
+      placeFeedback(feedback)
+    }
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -1208,6 +1451,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     feedbackView?.alpha = 1f
     panel.setComponent(Visible(infoPlaced))
     feedbackJob?.cancel()
+    noticeShowing = holdMs > FEEDBACK_SHOW_MS
     feedbackJob =
       scope.launch {
         delay(holdMs)
@@ -1218,7 +1462,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         feedbackJob = null
         hideFeedback()
+        flushNotices()
       }
+  }
+
+  /**
+   * [text] as a notice on the feedback line, after the one it shows now if any: notices come one after the other, each
+   * for TransientText.HOLD_MS, while the info panel is hidden (see [flushNotices]).
+   */
+  private fun queueNotice(text: String) {
+    pendingNotices.addLast(text)
+    flushNotices()
+  }
+
+  /** The next notice waiting, once the feedback line shows none and the info panel is hidden. */
+  private fun flushNotices() {
+    if (noticeShowing || infoVisible || closing) return
+    pendingNotices.removeFirstOrNull()?.let(::showNotice)
   }
 
   /**
@@ -1230,6 +1490,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun hideFeedback() {
     feedbackJob?.cancel()
     feedbackJob = null
+    noticeShowing = false
     feedbackView?.animate()?.cancel()
     feedbackView?.alpha = 1f
     feedbackEntity?.setComponent(Visible(false))
@@ -1239,11 +1500,21 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun placeFeedbackInFront(panel: Entity) {
     val head = lastHeadPosition ?: return
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
-    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
-    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = head + (direction * FEEDBACK_DISTANCE)
-    position.y = head.y - FEEDBACK_DROP
-    panel.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
+    feedbackAnchor = Vector3(head.x, head.y, head.z) to Vector3(forward.x, forward.y, forward.z)
+    placeFeedback(panel)
+  }
+
+  /** Like [placeInfo], for the feedback line at its [feedbackAnchor]. */
+  private fun placeFeedback(panel: Entity) {
+    val (head, forward) = feedbackAnchor ?: return
+    val (place, scale) =
+      FlatScreenGeometry.panelInFront(head, forward, FEEDBACK_DISTANCE, FEEDBACK_DROP, nearScreenDistance())
+    panel.setComponent(Transform(Pose(place.center, Quaternion.lookRotation(place.direction))))
+    if (scale != feedbackScale) {
+      panel.setComponent(Scale(Vector3(scale, scale, 1f)))
+      feedbackScale = scale
+    }
+    feedbackDistance = place.distance
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -1251,6 +1522,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   override fun onButtonsHeld(controllerBits: Int) {
     heldButtons = controllerBits
+  }
+
+  override fun wantsControllerRays(): Boolean = gripsFollowed
+
+  override fun onControllerRays(rays: Map<GripSide, Pose>) {
+    controllerRays = rays
   }
 
   override fun onFrame(head: Pose?) {
@@ -1269,6 +1546,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       // A 3D scene: the glide, the edge, its root fixed in the world, laid at the head at its first frame
       sceneView?.onFrame(head, heldButtons, seconds)
     }
+    followScreenGrips()
+    keepPanelsBeforeScreen()
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
       if (lastHeadPosition == null) Log.w(TAG, "no head pose after 180 frames, default info panel position")
@@ -1332,7 +1611,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun cycleStereoLayout(step: Int, fromPanel: Boolean = false) {
     val media = request ?: return
-    if (media.isRawVideo) return
+    if (media.isRawVideo || media.isBigScreen) return
     if (media.isStereoPhoto) {
       toggleStereoPhotoMode(fromPanel)
       return
@@ -1409,7 +1688,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val panel = if (infoVisible) "shown" else "hidden"
     val controller = Integer.toHexString(controllerBits)
     Log.d(TAG, "buttons pressed: controller 0x$controller, hand 0x${Integer.toHexString(handBits)}, panel $panel")
-    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible, scene = request?.isScene == true)
+    val actions =
+      ImmersiveControls.actionsFor(
+        controllerBits,
+        handBits,
+        infoVisible,
+        scene = request?.isScene == true,
+        // A flat screen leaves its grips to ScreenGrip, and a hand that holds it moves it nearer or farther
+        screenGrabbable = gripsFollowed,
+        screenHeld = screenGrip.grabbing != null || screenGrip.stretching,
+      )
     if (!focused) {
       Log.w(TAG, "button press while the session was not reported focused: taken as focused (resumed=$resumed)")
       focused = true
@@ -1444,15 +1732,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveControls.Action.STICK_UP ->
           when {
             isVideo -> seekFromThumbstick(1)
-            isStereoPhoto -> resizeStereoQuad(1)
+            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(1) else resizeStereoQuad(1)
             else -> turnFromThumbstick(YAW_STEP_DEGREES)
           }
         ImmersiveControls.Action.STICK_DOWN ->
           when {
             isVideo -> seekFromThumbstick(-1)
-            isStereoPhoto -> resizeStereoQuad(-1)
+            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(-1) else resizeStereoQuad(-1)
             else -> turnFromThumbstick(-YAW_STEP_DEGREES)
           }
+        ImmersiveControls.Action.SCREEN_FARTHER -> changeScreenDistance(1)
+        ImmersiveControls.Action.SCREEN_NEARER -> changeScreenDistance(-1)
         ImmersiveControls.Action.TOGGLE_PANEL -> {
           // A panel opened by the user stays until the user hides it
           cancelInfoHide()
@@ -1471,6 +1761,275 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   // ---------------------------------------------------------------------------------------------
+  // Flat screens: moved with a grip held on them, resized with both grips or the Size buttons, brought nearer or
+  // farther with the thumbstick while held or the Distance buttons (FreeKC's mapping of 29 October, on an idea and a
+  // first version of Gaurav Mukherjee, gmfun/Immuch360 branch quest/flat-3d)
+
+  /**
+   * Every frame: the grips of the movable flat screen shown (see [ScreenGrip]), what they start or end, the screen
+   * following the ray of the grip that holds it, or the spread of both hands. The grips start again from what they
+   * hold when such a screen comes or goes, so that a press made elsewhere does nothing here.
+   */
+  private fun followScreenGrips() {
+    val place = screenPlace
+    val size = screenSize()
+    val follow = place != null && size != null
+    if (follow != gripsFollowed) {
+      gripsFollowed = follow
+      handleGripEvents(screenGrip.reset(heldButtons))
+      if (!follow) controllerRays = emptyMap()
+      Log.i(TAG, if (follow) "flat screen shown, the grips move it" else "no flat screen to move")
+      if (follow) showScreenHintOnce()
+    }
+    if (place == null || size == null) return
+    val now = SystemClock.uptimeMillis()
+    val events = screenGrip.update(now, heldButtons) { side -> pointsAtScreen(side, place, size) }
+    handleGripEvents(events)
+    moveWithGrip()
+    stretchWithGrips()
+  }
+
+  /**
+   * Whether the ray of the controller of [side] points at the screen at [place], [size] meters, and not at the info
+   * panel shown: a finger resting on the grip while the trigger clicks Size or Distance drags nothing.
+   */
+  private fun pointsAtScreen(side: GripSide, place: ScreenPlace, size: Pair<Float, Float>): Boolean {
+    val ray = controllerRays[side] ?: return false
+    val panel = infoQuad?.takeIf { infoVisible && infoPlaced }
+    return FlatScreenGeometry.grabs(UprightQuad(place, size.first, size.second), ray.t, ray.forward(), panel)
+  }
+
+  private fun handleGripEvents(events: List<ScreenGrip.Event>) {
+    for (event in events) {
+      when (event) {
+        ScreenGrip.Event.TogglePanel -> {
+          // As A or X: a panel opened by the user stays until the user hides it
+          cancelInfoHide()
+          setInfoVisible(!infoVisible, reposition = true)
+        }
+        is ScreenGrip.Event.GrabStart -> startDrag(event.side)
+        is ScreenGrip.Event.GrabEnd -> endDrag()
+        ScreenGrip.Event.StretchStart -> {
+          // Started once both rays are known, see stretchWithGrips
+          stretchStarted = false
+          stretchPendingAngle = null
+        }
+        ScreenGrip.Event.StretchEnd -> endStretch()
+      }
+    }
+  }
+
+  /** The grip of [side] holds the screen: it follows that ray from now on, see [ScreenDrag]. */
+  private fun startDrag(side: GripSide) {
+    val place = screenPlace ?: return
+    val ray = controllerRays[side] ?: return
+    screenDrag = ScreenDrag(place, ray.t, ray.forward())
+    screenDragSide = side
+    Log.i(TAG, "flat screen grabbed with the ${side.name.lowercase()} grip at $place")
+  }
+
+  private fun endDrag() {
+    if (screenDrag == null) return
+    screenDrag = null
+    screenDragSide = null
+    Log.i(TAG, "flat screen let go at $screenPlace")
+  }
+
+  /** While a grip holds the screen, the screen where its ray points now. */
+  private fun moveWithGrip() {
+    val drag = screenDrag ?: return
+    val ray = controllerRays[screenDragSide ?: return] ?: return
+    screenPlace = drag.place(ray.t, ray.forward()) ?: return
+    applyScreenPlace()
+  }
+
+  /**
+   * While both grips are held: the width of the screen follows the spread of the hands (see [ScreenStretch]), to the
+   * degree. Each new width reshapes a compositor layer, so one at most every STRETCH_INTERVAL_MS; the last one waits
+   * for the release of a grip if need be.
+   */
+  private fun stretchWithGrips() {
+    if (!screenGrip.stretching) return
+    val left = controllerRays[GripSide.LEFT] ?: return
+    val right = controllerRays[GripSide.RIGHT] ?: return
+    val place = screenPlace ?: return
+    val angle = currentScreenAngle() ?: return
+    val spread = left.t.distanceTo(right.t)
+    if (!stretchStarted) {
+      screenStretch.start(spread, FlatScreenGeometry.width(angle, place.distance))
+      stretchStarted = true
+      Log.i(TAG, "flat screen stretched, hands $spread m apart")
+      return
+    }
+    val width = screenStretch.width(spread) ?: return
+    val wanted =
+      FlatScreenGeometry.angleForWidth(width, place.distance)
+        .coerceIn(screenAngleBounds())
+        .roundToInt()
+        .toFloat()
+    if (abs(wanted - angle) < 1f) {
+      stretchPendingAngle = null
+      return
+    }
+    val now = SystemClock.uptimeMillis()
+    if (now - stretchAppliedAt < STRETCH_INTERVAL_MS) {
+      stretchPendingAngle = wanted
+      return
+    }
+    stretchAppliedAt = now
+    stretchPendingAngle = null
+    setScreenAngle(wanted)
+  }
+
+  private fun endStretch() {
+    screenStretch.end()
+    stretchStarted = false
+    stretchPendingAngle?.let { setScreenAngle(it) }
+    stretchPendingAngle = null
+  }
+
+  /**
+   * Width and height in meters of the movable flat screen shown, null when none shows: a photo once decoded, a video
+   * once its first frame is on the screen.
+   */
+  private fun screenSize(): Pair<Float, Float>? {
+    val media = request ?: return null
+    val place = screenPlace ?: return null
+    if (!media.isMovableScreen) return null
+    if (media.isFlatVideo) {
+      if (!videoRevealed) return null
+      val aspect = flatVideoLook()?.second ?: return null
+      return FlatStereo.screenSize(aspect, flatVideoAngle(aspect), place.distance)
+    }
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return null
+    return FlatScreenLayer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight, place.distance)
+  }
+
+  /** The angular width of the movable flat screen shown ("Size 48°"), null when none shows. */
+  private fun currentScreenAngle(): Float? {
+    val media = request ?: return null
+    if (!media.isMovableScreen || screenPlace == null) return null
+    return when {
+      media.isFlatVideo -> flatVideoLook()?.let { flatVideoAngle(it.second) }
+      stereoEyeSize != null -> stereoAngleDeg
+      else -> null
+    }
+  }
+
+  /**
+   * The angular widths of the screen shown, the same for the Size buttons, the thumbstick, the stretch and a change of
+   * distance: 30 to 90 degrees for a photo of two eyes (60 at most for an estimated relief), 15 to 110 for one picture
+   * and the flat video screen (see FlatScreenGeometry.angleBounds).
+   */
+  private fun screenAngleBounds(): ClosedFloatingPointRange<Float> =
+    request?.screenAngleBounds ?: FlatScreenGeometry.ONE_PICTURE_ANGLES
+
+  /** The screen shown [angleDeg] wide, where it is; said on the panel or the feedback line with [report]. */
+  private fun setScreenAngle(angleDeg: Float, report: Boolean = true) {
+    val media = request ?: return
+    when {
+      media.isFlatVideo -> {
+        flatVideoAngleDeg = angleDeg
+        applyFlatVideoShape()
+      }
+      stereoEyeSize != null -> {
+        stereoAngleDeg = angleDeg
+        applyStereoScale()
+      }
+      else -> return
+    }
+    Log.i(TAG, "flat screen is now $angleDeg degrees wide")
+    updateScreenControls()
+    if (report) reportScreenChange(sizeText(angleDeg))
+  }
+
+  /** The Size buttons and the thumbstick up or down on a photo: a larger ([step] 1) or smaller (-1) screen. */
+  private fun changeScreenSize(step: Int) {
+    val angle = currentScreenAngle() ?: return
+    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, screenAngleBounds()))
+  }
+
+  /**
+   * The Distance buttons and the thumbstick up or down while a grip holds the screen: the screen farther ([step] 1) or
+   * nearer (-1) on the line it stands on, the same width in meters, so that it looks larger nearer. The distance is
+   * kept for the next flat screens, and a grab in progress goes on from there.
+   */
+  private fun changeScreenDistance(step: Int) {
+    val place = screenPlace ?: return
+    val angle = currentScreenAngle() ?: return
+    val distance = FlatScreenGeometry.nextDistance(place.distance, step)
+    if (distance != place.distance) {
+      val moved = place.at(distance)
+      screenPlace = moved
+      screenDistanceM = distance
+      val kept = FlatScreenGeometry.angleAtDistance(angle, place.distance, distance, screenAngleBounds())
+      setScreenAngle(kept, report = false)
+      applyScreenPlace()
+      screenDragSide?.let { side ->
+        controllerRays[side]?.let { ray -> screenDrag = ScreenDrag(moved, ray.t, ray.forward()) }
+      }
+      Log.i(TAG, "flat screen is now $distance m away")
+    }
+    updateScreenControls()
+    reportScreenChange(distanceText(distance))
+  }
+
+  /** The screen shown at [screenPlace]: the flat video screen, or the photo layer or the quad mesh. */
+  private fun applyScreenPlace() {
+    val place = screenPlace ?: return
+    if (request?.isFlatVideo == true) placeFlatScreen(place) else applyStereoPlacement()
+  }
+
+  /** A change of the flat screen on the status line of the panel, or on the feedback line when the panel is hidden. */
+  private fun reportScreenChange(text: String) {
+    if (infoVisible) setStatus(text) else showFeedback(text)
+  }
+
+  /** "Size 48°". */
+  private fun sizeText(angleDeg: Float): String = getString(R.string.immersive_size, angleDeg.roundToInt())
+
+  /** "Distance 1.5 m", the number as the language of the headset writes it. */
+  private fun distanceText(distance: Float): String =
+    getString(R.string.immersive_distance, FlatScreenGeometry.meters(distance, Locale.getDefault()))
+
+  /**
+   * The Size and Distance rows take the place of previous and next for a movable flat screen (which plays on its own,
+   * the thumbstick still saying so), once it shows; a minus or plus button at its bound is disabled.
+   */
+  private fun updateScreenControls() {
+    val movable = request?.isMovableScreen == true
+    previousButton?.visibility = if (movable) View.GONE else View.VISIBLE
+    nextButton?.visibility = if (movable) View.GONE else View.VISIBLE
+    val angle = currentScreenAngle()
+    val place = screenPlace
+    if (angle == null || place == null) {
+      sizeRow?.visibility = View.GONE
+      distanceRow?.visibility = View.GONE
+      return
+    }
+    sizeView?.text = sizeText(angle)
+    distanceView?.text = distanceText(place.distance)
+    val bounds = screenAngleBounds()
+    sizeLessButton?.isEnabled = angle > bounds.start + 1e-3f
+    sizeMoreButton?.isEnabled = angle < bounds.endInclusive - 1e-3f
+    distanceLessButton?.isEnabled = place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f
+    distanceMoreButton?.isEnabled = place.distance < FlatScreenGeometry.DISTANCES_M.last() - 1e-3f
+    sizeRow?.visibility = View.VISIBLE
+    distanceRow?.visibility = View.VISIBLE
+  }
+
+  /**
+   * "Hold a grip on the screen to move it, both grips to resize it" once in this viewer, on the feedback line for
+   * TransientText.HOLD_MS, the first time a movable flat screen shows with the panel hidden (the panel says the whole
+   * mapping meanwhile).
+   */
+  private fun showScreenHintOnce() {
+    if (screenHintShown || infoVisible || closing || !gripsFollowed) return
+    screenHintShown = true
+    queueNotice(getString(R.string.immersive_screen_hint_short))
+  }
+
+  // ---------------------------------------------------------------------------------------------
   // Previous and next media
 
   /**
@@ -1486,10 +2045,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun navigate(step: Int, fromThumbstick: Boolean = false) {
     if (closing || isFinishing) return
     val shown = request
-    if (shown != null && shown.isFlatVideo) {
+    if (shown != null && (shown.isFlatVideo || shown.isBigScreen)) {
       // Opened alone from the app: said rather than asked
-      val text = StereoComposer.label(shown.stereoLabels, StereoComposer.LABEL_FLAT3D_NO_NAVIGATION)
-      Log.i(TAG, "no previous or next from a flat 3D video (step $step)")
+      val key =
+        if (shown.isBigScreen) StereoComposer.LABEL_BIG_SCREEN_NO_NAVIGATION
+        else StereoComposer.LABEL_FLAT3D_NO_NAVIGATION
+      val text = StereoComposer.label(shown.stereoLabels, key)
+      Log.i(TAG, "no previous or next from a flat video or the big screen (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
     }
@@ -1612,6 +2174,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         rawProjection = rawProjection,
         stereoPairJson = stereoPair,
         reverseThumbstickTurn = current.reverseThumbstickTurn,
+        sharpFlatScreens = current.sharpFlatScreens,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -2223,7 +2786,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val kind = media.stereoKind
     val spec = media.stereoPair
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
-    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.stereoMaxAngleDeg)
+    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.screenAngleBounds)
     restoredStereoChoices = null
     stereo3d = restored?.threeD ?: true
     // A relief first shows as its request says, 3D or 2.5D; the photo of a recreation as the user left it
@@ -2232,7 +2795,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoHasSecondEye = false
     stereoAngleDeg =
       restored?.angleDeg
-        ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceAtMost(media.stereoMaxAngleDeg)
+        ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceIn(media.screenAngleBounds)
+    stereoSizeFromPicture = kind == StereoPhotoKind.BigScreen && restored == null
     stereoChoicesFor = media.url to media.openingId
     if (kind is StereoPhotoKind.VolumetricScene) {
       showScene(media, kind.spec)
@@ -2242,40 +2806,106 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setStatus(getString(R.string.immersive_loading))
     loadJob =
       scope.launch {
+        // The server preview first, cut and shown as the original will be, while the original downloads and decodes
+        // (an idea of Gaurav Mukherjee, gmfun/Immuch360 branch quest/flat-3d): a photo of several MB, or a large PNG,
+        // takes seconds before its first pixel otherwise. Not for an Apple spatial photo, whose preview holds one eye,
+        // nor for a relief or a scene, which read the original itself; never for a photo on the headset
+        var previewShown = false
         try {
           val local = ImmersiveMedia.localFileFor(media.url)
+          val previewUrl =
+            if (local == null && showsPreviewFirst(kind)) ImmersiveMedia.previewUrlFor(media.url) else null
+          if (previewUrl != null) previewShown = showStereoPreview(previewUrl, kind, spec)
+          val started = SystemClock.elapsedRealtime()
           val bytes = if (local != null) withContext(Dispatchers.IO) { local.readBytes() } else download(media.url)
-          Log.i(TAG, "stereo photo: ${bytes.size} bytes")
+          val read = SystemClock.elapsedRealtime()
+          Log.i(TAG, "stereo photo: ${bytes.size} bytes in ${read - started} ms")
           if (kind is StereoPhotoKind.DepthRelief) {
             showReliefPhoto(media, kind.spec, bytes)
             return@launch
           }
-          val holder = AtomicReference<StereoTexture?>()
-          try {
-            decodeMutex.withLock {
-              withContext(Dispatchers.Default) {
-                holder.set(
-                  when (kind) {
-                    is StereoPhotoKind.Sbs -> decodeSbs(bytes, kind.spec)
-                    is StereoPhotoKind.Flat -> decodeFlat(bytes, kind.spec)
-                    else -> decodeStereo(bytes, spec)
-                  }
-                )
-              }
-            }
-            ensureActive()
-            val texture = holder.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
-            applyStereoTexture(texture)
-          } finally {
-            holder.getAndSet(null)?.bitmap?.recycle()
-          }
+          val texture =
+            decodeStereoPhoto(bytes, kind, spec) ?: throw IOException("this image cannot be read or decoded")
+          Log.i(TAG, "stereo photo: decoded in ${SystemClock.elapsedRealtime() - read} ms")
+          // Over the preview, where the user may have moved or resized it already
+          applyStereoTexture(texture, place = !previewShown)
         } catch (e: CancellationException) {
           throw e
         } catch (e: Throwable) {
           Log.e(TAG, "stereo photo failed", e)
-          showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
+          val reason = e.message ?: e.javaClass.simpleName
+          if (previewShown) {
+            // The preview stays, said to be one, as on the sphere
+            showStatus(getString(R.string.immersive_preview_only, reason))
+            scheduleInfoHide()
+          } else {
+            showError(getString(R.string.immersive_error_photo, reason))
+          }
         }
       }
+  }
+
+  /**
+   * Whether a photo of [kind] shows the server preview of its file first: one whose picture the preview holds whole,
+   * cut the same way (a side by side photo, a flat 3D photo), and an ordinary photo on the big screen.
+   */
+  private fun showsPreviewFirst(kind: StereoPhotoKind?): Boolean =
+    kind is StereoPhotoKind.Sbs || kind is StereoPhotoKind.Flat || kind == StereoPhotoKind.BigScreen
+
+  /**
+   * Downloads the server preview at [previewUrl] and shows it as the photo of [kind] (see [applyStereoTexture]); true
+   * once it shows. A preview that fails is only logged: the original comes next.
+   */
+  private suspend fun showStereoPreview(previewUrl: String, kind: StereoPhotoKind?, spec: StereoPairSpec?): Boolean {
+    try {
+      val started = SystemClock.elapsedRealtime()
+      val texture = decodeStereoPhoto(download(previewUrl), kind, spec) ?: return false
+      val elapsed = SystemClock.elapsedRealtime() - started
+      Log.i(TAG, "stereo photo: preview ${texture.eyeWidth}x${texture.eyeHeight} in $elapsed ms")
+      applyStereoTexture(texture, preview = true)
+      return true
+    } catch (e: CancellationException) {
+      throw e
+    } catch (e: Throwable) {
+      Log.w(TAG, "stereo photo: preview failed: ${e.message}", e)
+      return false
+    }
+  }
+
+  /**
+   * Both eyes of the photo of [bytes] of [kind] on one texture, off the main thread and one decode at a time: the two
+   * halves of a side by side photo ([decodeSbs]), the eyes of a flat 3D photo ([decodeFlat]), an ordinary photo alone
+   * for the big screen ([decodeBigScreen]), or the eyes of an Apple spatial photo, the photo alone without [spec]
+   * ([decodeStereo]). Null when the image does not decode. The texture is the caller's; a load cancelled meanwhile
+   * recycles it.
+   */
+  private suspend fun decodeStereoPhoto(
+    bytes: ByteArray,
+    kind: StereoPhotoKind?,
+    spec: StereoPairSpec?,
+  ): StereoTexture? {
+    val holder = AtomicReference<StereoTexture?>()
+    // A photo for the layer keeps no more pixels than its Surface takes
+    val forLayer = request?.photoOnLayer == true
+    try {
+      decodeMutex.withLock {
+        withContext(Dispatchers.Default) {
+          holder.set(
+            when (kind) {
+              is StereoPhotoKind.Sbs -> decodeSbs(bytes, kind.spec)
+              is StereoPhotoKind.Flat -> decodeFlat(bytes, kind.spec)
+              is StereoPhotoKind.BigScreen -> decodeBigScreen(bytes)
+              else -> decodeStereo(bytes, spec)
+            }
+          )
+          if (forLayer) holder.get()?.let { holder.set(fitForLayer(it)) }
+        }
+      }
+      coroutineContext.ensureActive()
+      return holder.getAndSet(null)
+    } finally {
+      holder.getAndSet(null)?.bitmap?.recycle()
+    }
   }
 
   /**
@@ -2742,6 +3372,80 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
+  /**
+   * An ordinary photo of [bytes] for the big screen, off the main thread: upright as its EXIF says (see
+   * ImmersiveMedia.decodeUpright), as wide as the Surface of the photo layer at most, alone in its cell on black (its
+   * transparency on black), one picture for both eyes. Null when it does not decode.
+   */
+  private fun decodeBigScreen(bytes: ByteArray): StereoTexture? {
+    val photo =
+      ImmersiveMedia.decodeUpright(bytes, FlatScreenLayer.SURFACE_WIDTH_PX, StereoHeicDecoder.MAX_EYE_HEIGHT)
+        ?: ImmersiveMedia.decodeBytes(bytes)
+        ?: return null
+    try {
+      val (width, height) =
+        StereoComposer.fitWithin(
+          photo.width,
+          photo.height,
+          FlatScreenLayer.SURFACE_WIDTH_PX,
+          StereoHeicDecoder.MAX_EYE_HEIGHT,
+        )
+      val gutter = StereoComposer.GUTTER
+      val cell = Bitmap.createBitmap(width + 2 * gutter, height + 2 * gutter, Bitmap.Config.ARGB_8888)
+      cell.eraseColor(Color.BLACK)
+      val target = Rect(gutter, gutter, gutter + width, gutter + height)
+      Canvas(cell).drawBitmap(photo, null, target, Paint(Paint.FILTER_BITMAP_FLAG))
+      Log.i(TAG, "big screen photo: ${photo.width}x${photo.height}, shown ${width}x$height")
+      return StereoTexture(cell, width, height, hasSecondEye = false, single = true)
+    } finally {
+      photo.recycle()
+    }
+  }
+
+  /**
+   * [texture] as the photo layer keeps it, off the main thread: each eye no larger than its region of the Surface
+   * (see FlatScreenLayer.keptEyeSize), so that the lines or the columns the Surface drops anyway are not kept for the
+   * life of the photo (a portrait photo of 4096 x 4088 on the big screen kept 64 MiB, 32 MiB of which never showed);
+   * [texture] recycled once copied. The eye size stays that of the picture, which gives the layer its shape and the
+   * panel its numbers; on the quad mesh, should the layer fail, the same picture shows in the same shape.
+   */
+  private fun fitForLayer(texture: StereoTexture): StereoTexture {
+    val (width, height) = FlatScreenLayer.keptEyeSize(texture.cellWidth, texture.cellHeight, texture.hasSecondEye)
+    if (width == texture.cellWidth && height == texture.cellHeight) return texture
+    val gutter = StereoComposer.GUTTER
+    val cells = if (texture.single) 1 else 2
+    var kept: Bitmap? = null
+    try {
+      val bitmap = Bitmap.createBitmap(cells * (width + 2 * gutter), height + 2 * gutter, Bitmap.Config.ARGB_8888)
+      kept = bitmap
+      bitmap.eraseColor(Color.BLACK)
+      val canvas = Canvas(bitmap)
+      val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+      for (eye in 0 until cells) {
+        val source = FlatScreenLayer.sourceRegion(eye, texture.cellWidth, texture.cellHeight)
+        val target = FlatScreenLayer.sourceRegion(eye, width, height)
+        canvas.drawBitmap(texture.bitmap, rectOf(source), rectOf(target), paint)
+      }
+    } catch (e: Throwable) {
+      // No room for the copy: the photo shows as decoded
+      Log.w(TAG, "photo layer keeps the photo as decoded, ${texture.cellWidth}x${texture.cellHeight} per eye", e)
+      kept?.recycle()
+      return texture
+    }
+    val copy = kept ?: return texture
+    Log.i(TAG, "photo layer keeps ${width}x$height of ${texture.cellWidth}x${texture.cellHeight} per eye")
+    texture.bitmap.recycle()
+    return StereoTexture(
+      copy,
+      texture.eyeWidth,
+      texture.eyeHeight,
+      texture.hasSecondEye,
+      texture.single,
+      cellWidth = width,
+      cellHeight = height,
+    )
+  }
+
   /** Both eyes of the side by side photo of [bytes] on one texture, off the main thread, see [SbsPhoto.decode]. */
   private fun decodeSbs(bytes: ByteArray, spec: SbsPhotoSpec): StereoTexture? {
     val (texture, split) = SbsPhoto.decode(bytes, spec) ?: return null
@@ -2806,17 +3510,73 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * Uploads [stereo] as the texture of the quad, recycles its bitmap, destroys the previous texture, then shows the
-   * quad with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of a relief
-   * replace the flat photo where the quad is). Kept for later while the material is not ready.
+   * Shows [stereo] with the mode and the size of this photo, in front of the user unless [place] is false (the eyes of
+   * a relief replace the flat photo where the quad is; the full photo replaces its preview where the user left it):
+   * on the photo layer for the photos [FlatScreenLayer.showsOnLayer] takes while Sharper flat screens is on, which
+   * keeps its bitmap to draw it again on a new Surface; else as the texture of the quad mesh, its bitmap recycled and
+   * the previous texture destroyed, kept for later while the material is not ready. [preview] is the server preview of
+   * the photo while its original loads (see [showStereoPhoto]): the panel says so, and stays.
    */
-  private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true) {
+  private fun applyStereoTexture(stereo: StereoTexture, place: Boolean = true, preview: Boolean = false) {
+    val media = request
+    val onLayer = media?.photoOnLayer == true
+    if (onLayer) {
+      showOnLayer(stereo)
+    } else if (!showOnMesh(stereo)) {
+      return
+    }
+    stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
+    stereoHasSecondEye = stereo.hasSecondEye
+    stereoSingle = stereo.single
+    if (stereoSizeFromPicture) {
+      stereoSizeFromPicture = false
+      stereoAngleDeg = FlatScreenGeometry.fittingAngle(stereo.eyeWidth.toFloat() / stereo.eyeHeight.coerceAtLeast(1))
+    }
+    applyStereoMode()
+    if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
+    if (onLayer) drawPhotoLayer() else stereoQuadEntity?.setComponent(Visible(true))
+    updateStereoView()
+    updateScreenControls()
+    if (preview) {
+      // The original still loads: the panel says so and stays until it is there
+      stereoStatus = getString(R.string.immersive_preview_loading_full, stereo.eyeWidth, stereo.eyeHeight)
+      setStatus(stereoStatus)
+      return
+    }
+    stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
+    if (media?.stereoPair != null && !stereo.hasSecondEye) {
+      // Shown at once and longer, as the decoder warning: the user expected 3D
+      showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
+      scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+    } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
+      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
+      setStatus(stereoStatus)
+    } else if (media?.isScene == true && scenePreparing) {
+      // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
+      setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
+    } else if (stereo3d) {
+      setStatus(stereoStatus)
+      showReliefEstimated()
+      scheduleInfoHide()
+      if (media != null) announceFlat3d(media)
+    } else {
+      setStatus(stereoStatus)
+      scheduleInfoHide()
+    }
+  }
+
+  /**
+   * [stereo] as the texture of the quad mesh: its bitmap recycled, the previous texture destroyed, the photo layer
+   * emptied. False, [stereo] kept for later, while the material is not ready; false too when the texture cannot be
+   * made, which the panel says.
+   */
+  private fun showOnMesh(stereo: StereoTexture): Boolean {
     val material = stereoQuadMaterial
     if (material == null) {
       Log.w(TAG, "stereo quad not ready yet, keeping the spatial photo for later")
       pendingStereo?.bitmap?.recycle()
       pendingStereo = stereo
-      return
+      return false
     }
     val bitmap = stereo.bitmap
     val texture =
@@ -2840,41 +3600,130 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     if (texture == null) {
       showError(getString(R.string.immersive_error_photo, "texture"))
-      return
+      return false
     }
     material.setAlbedoTexture(texture)
     // The mesh of the 2.5D view reads the same texture: never the one destroyed below
     reliefMeshMaterial?.setAlbedoTexture(texture)
     stereoTexture?.destroy()
     stereoTexture = texture
-    stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
-    stereoHasSecondEye = stereo.hasSecondEye
-    applyStereoMode()
-    if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
-    stereoQuadEntity?.setComponent(Visible(true))
-    updateStereoView()
-    val media = request
-    stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
-    if (media?.stereoPair != null && !stereo.hasSecondEye) {
-      // Shown at once and longer, as the decoder warning: the user expected 3D
-      showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
-      scheduleInfoHide(DECODER_WARNING_HIDE_MS)
-    } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
-      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
-      setStatus(stereoStatus)
-    } else if (media?.isScene == true && scenePreparing) {
-      // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
-      setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
-    } else if (stereo3d) {
-      setStatus(stereoStatus)
-      showReliefEstimated()
-      scheduleInfoHide()
-      if (media != null) announceFlat3d(media)
-    } else {
-      setStatus(stereoStatus)
-      scheduleInfoHide()
+    dropPhotoLayer()
+    return true
+  }
+
+  /**
+   * [stereo] for the photo layer: kept there in place of the previous one (recycled) until the next photo, drawn by
+   * [drawPhotoLayer] once the layer and its Surface are there; the quad mesh hides meanwhile.
+   */
+  private fun showOnLayer(stereo: StereoTexture) {
+    photoLayerTexture?.bitmap?.takeIf { it !== stereo.bitmap }?.recycle()
+    photoLayerTexture = stereo
+    photoLayerDrawn = false
+    stereoQuadEntity?.setComponent(Visible(false))
+    if (photoLayerEntity == null) {
+      photoLayerEntity =
+        Entity.create(
+          // Never hit by the controller ray: it would stand in front of the info panel and take its clicks, and the
+          // grips find the screen by their own ray test (see pointsAtScreen)
+          Panel(R.id.immersive_photo_layer_panel, MeshCollision.NoCollision),
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        )
+      Log.i(TAG, "photo layer created")
     }
   }
+
+  /**
+   * Draws the photo of the layer on its Surface once the photo, the layer and the Surface are all there: each eye
+   * stretched over its half, or one picture over the whole Surface (see FlatScreenLayer.eyeRegions), the quad giving
+   * it its shape back (see [applyPhotoLayerShape]); then the layer shows. A Surface that cannot be drawn on gives the
+   * photo to the quad mesh instead. True once drawn.
+   */
+  private fun drawPhotoLayer(): Boolean {
+    val texture = photoLayerTexture ?: return false
+    if (photoLayerDrawn) return true
+    val surface = photoLayerSurface ?: return false
+    if (photoLayerPanel == null || !surface.isValid || texture.bitmap.isRecycled) return false
+    val drawn =
+      try {
+        val canvas = surface.lockHardwareCanvas()
+        try {
+          canvas.drawColor(Color.BLACK)
+          val twoEyes = texture.hasSecondEye
+          val (left, right) = FlatScreenLayer.eyeRegions(twoEyes)
+          val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+          for ((eye, target) in if (twoEyes) listOf(0 to left, 1 to right) else listOf(0 to left)) {
+            val source = FlatScreenLayer.sourceRegion(eye, texture.cellWidth, texture.cellHeight)
+            canvas.drawBitmap(texture.bitmap, rectOf(source), rectOf(target), paint)
+          }
+        } finally {
+          surface.unlockCanvasAndPost(canvas)
+        }
+        true
+      } catch (e: Exception) {
+        Log.e(TAG, "photo layer could not be drawn, the quad mesh shows the photo", e)
+        false
+      }
+    if (!drawn) {
+      photoLayerTexture = null
+      photoLayerEntity?.setComponent(Visible(false))
+      if (showOnMesh(texture)) {
+        applyStereoMode()
+        applyStereoScale()
+        stereoQuadEntity?.setComponent(Visible(true))
+      }
+      return false
+    }
+    photoLayerDrawn = true
+    applyPhotoLayerShape()
+    applyStereoPlacement()
+    photoLayerEntity?.setComponent(Visible(true))
+    Log.i(
+      TAG,
+      "photo layer drawn: ${if (texture.hasSecondEye) "two eyes" else "one picture"} of " +
+        "${texture.eyeWidth}x${texture.eyeHeight}, sharp ${request?.sharpFlatScreens != false}",
+    )
+    return true
+  }
+
+  /**
+   * The stereo mode and the size of the photo layer for the photo on it: LeftRight in 3D, MonoLeft in 2D, the whole
+   * Surface for one picture (see FlatScreenLayer.stereoMode), as wide as [stereoAngleDeg] at the distance of the screen
+   * and as high as the picture. Nothing while the layer shows nothing.
+   */
+  private fun applyPhotoLayerShape() {
+    val texture = photoLayerTexture ?: return
+    val panel = photoLayerPanel ?: return
+    val config = panel.panelShapeConfig ?: return
+    val distance = screenPlace?.distance ?: screenDistanceM
+    val mode = FlatScreenLayer.stereoMode(texture.hasSecondEye, stereoView() == StereoView.THREE_D)
+    val (width, height) = FlatScreenLayer.quadSize(stereoAngleDeg, texture.eyeWidth, texture.eyeHeight, distance)
+    if (config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f) return
+    try {
+      config.stereoMode = mode
+      config.width = width
+      config.height = height
+      panel.reshape(config)
+      Log.i(TAG, "photo layer is now $mode, ${width}x$height m")
+    } catch (e: Exception) {
+      Log.e(TAG, "could not set the photo layer to $mode, ${width}x$height m", e)
+    }
+  }
+
+  /** The photo layer shows nothing any more: hidden, its bitmap recycled. */
+  private fun dropPhotoLayer() {
+    photoLayerEntity?.setComponent(Visible(false))
+    photoLayerTexture?.bitmap?.recycle()
+    photoLayerTexture = null
+    photoLayerDrawn = false
+  }
+
+  /** The photo is on the photo layer rather than on the quad mesh. */
+  private val photoOnLayer: Boolean
+    get() = photoLayerTexture != null
+
+  private fun rectOf(region: FlatStereo.Region): Rect =
+    Rect(region.x, region.y, region.x + region.width, region.y + region.height)
 
   /**
    * "Relief estimated by AI" on the status line while an estimated relief shows in 3D, then the line goes back to what
@@ -2910,22 +3759,33 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * "3D told by the file name (experimental)" once for [media] when it first shows, a media told 3D by its file name:
-   * on the status line while the panel is up, which then stays as long, else on the feedback line, for
-   * TransientText.HOLD_MS (FreeKC's rule of 25 October: what is experimental is said, and the words go).
+   * What is experimental about [media] when it first shows, said once (FreeKC's rule of 25 October: what is
+   * experimental is said, and the words go): "3D told by the file name (experimental)" for a media told 3D by its file
+   * name, at each such media; "Sharper flat screen (experimental)" for the first flat screen of this viewer the
+   * compositor filters (see FlatScreenLayer). On the status line while the panel is up, which then stays as long, else
+   * on the feedback line, for TransientText.HOLD_MS.
    */
   private fun announceFlat3d(media: MediaRequest) {
-    if (request !== media || closing || flat3dAnnounced || !media.isFlat3d) return
-    flat3dAnnounced = true
-    val text = StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FLAT3D_NOTICE)
-    Log.i(TAG, "flat 3D: \"$text\" said for ${TransientText.HOLD_MS} ms")
+    if (request !== media || closing) return
+    val lines = mutableListOf<String>()
+    if (!flat3dAnnounced && media.isFlat3d) {
+      flat3dAnnounced = true
+      lines += StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FLAT3D_NOTICE)
+    }
+    if (!sharpNoticeShown && media.sharpFlatScreens && (photoOnLayer || media.isFlatVideo)) {
+      sharpNoticeShown = true
+      lines += StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SHARP_NOTICE)
+    }
+    if (lines.isEmpty()) return
+    val text = lines.joinToString("\n")
+    Log.i(TAG, "experimental: \"$text\" said for ${TransientText.HOLD_MS} ms")
     if (infoVisible) {
       // The status line comes back once the words went
       stereoStatus = statusView?.text?.toString().orEmpty()
       showPassing(text)
       if (hideInfoJob?.isActive == true) scheduleInfoHide(TransientText.HOLD_MS)
     } else {
-      showNotice(text)
+      queueNotice(text)
     }
   }
 
@@ -2946,8 +3806,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun applyStereoMode() {
     val view = stereoView()
-    val mode = if (view == StereoView.THREE_D) StereoMode.LeftRight else StereoMode.MonoLeft
+    // One picture alone in its cell (a photo on the big screen) shows whole, never its left half
+    val mode =
+      when {
+        view == StereoView.THREE_D -> StereoMode.LeftRight
+        stereoSingle -> StereoMode.None
+        else -> StereoMode.MonoLeft
+      }
     stereoQuadMaterial?.setStereoMode(mode)
+    applyPhotoLayerShape()
     if (view == StereoView.MESH_25D) showReliefMesh() else reliefMeshEntity?.setComponent(Visible(false))
     // A mesh the SDK could not write went back to 3D, whose mode the call within writeReliefMesh set and said
     if (stereoView() != view) return
@@ -3002,12 +3869,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoEyes = Vector3(eyes.x, eyes.y, eyes.z)
     stereoGaze = direction
     stereoPlacedWithHead = head != null
+    // A flat screen the user may move goes at the distance the user chose last (see ScreenPlace)
+    screenPlace = if (request?.isMovableScreen == true) ScreenPlace.inFront(eyes, forward, screenDistanceM) else null
     // A 2.5D view starts again from here: the whole relief
     if (reliefMeshShown) {
       reliefAttenuation = 1.0
       writeReliefMesh(withTriangles = false)
     }
     applyStereoPlacement()
+    updateScreenControls()
     Log.i(
       TAG,
       "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}",
@@ -3022,6 +3892,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun applyStereoPlacement() {
     val entity = stereoQuadEntity ?: return
+    val place = screenPlace
+    if (place != null && request?.isMovableScreen == true) {
+      placeScreenPhoto(place)
+      return
+    }
     val eyes = stereoEyes ?: return
     val gaze = stereoGaze ?: return
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
@@ -3040,12 +3915,36 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (view != null) reliefMeshEntity?.setComponent(Transform(Pose(eyes, rotation)))
   }
 
+  /**
+   * A photo of a flat screen at [place]: the photo layer, or the quad mesh as wide as its angle at that distance (see
+   * [ScreenPlace]), both upright and facing the eyes it was placed from.
+   */
+  private fun placeScreenPhoto(place: ScreenPlace) {
+    val pose = Pose(place.center, StereoComposer.quadRotation(place.direction))
+    if (photoOnLayer) {
+      photoLayerEntity?.setComponent(Transform(pose))
+      applyPhotoLayerShape()
+      return
+    }
+    val entity = stereoQuadEntity ?: return
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    entity.setComponent(Transform(pose))
+    val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight, place.distance)
+    entity.setComponent(Scale(Vector3(width, height, 1f)))
+  }
+
   /** The size of the quad for the angular width chosen and the eyes of the photo shown; the mesh too in 2.5D. */
   private fun applyStereoScale() {
     if (reliefMeshShown) {
       writeReliefMesh(withTriangles = false)
       applyStereoPlacement()
       return
+    }
+    screenPlace?.let { place ->
+      if (request?.isMovableScreen == true) {
+        placeScreenPhoto(place)
+        return
+      }
     }
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
     val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight)
@@ -3054,7 +3953,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** The thumbstick up ([step] 1) or down (-1) on a spatial photo: a wider or narrower quad, where it is. */
   private fun resizeStereoQuad(step: Int) {
-    val maxAngleDeg = request?.stereoMaxAngleDeg ?: StereoComposer.MAX_ANGLE_DEG
+    val maxAngleDeg = request?.screenAngleBounds?.endInclusive ?: StereoComposer.MAX_ANGLE_DEG
     stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step, maxAngleDeg)
     applyStereoScale()
     Log.i(TAG, "stereo quad is now $stereoAngleDeg degrees wide")
@@ -3153,10 +4052,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Any other media: the quad goes away (its texture stays until the next spatial photo replaces it), and the mesh of
-   * a relief with it.
+   * a relief and the photo layer with it.
    */
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
+    dropPhotoLayer()
     reliefMeshEntity?.setComponent(Visible(false))
     reliefMesh = null
     reliefMeshWritten = false
@@ -3164,6 +4064,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingStereo?.bitmap?.recycle()
     pendingStereo = null
     stereoPlacedWithHead = false
+    // The eyes of the next photo are not known yet: until then nothing places the quad, and no grip finds a screen
+    stereoEyeSize = null
   }
 
   private fun showPhoto(media: MediaRequest) {
@@ -4125,7 +5027,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun ensureFlatVideoEntity(): Entity =
     flatVideoEntity
       ?: Entity.create(
-          Panel(R.id.immersive_flat_video_panel),
+          // Never hit by the controller ray, as the photo layer (see showOnLayer)
+          Panel(R.id.immersive_flat_video_panel, MeshCollision.NoCollision),
           Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
           Visible(false),
         )
@@ -4135,53 +5038,102 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
 
   /**
-   * The stereo mode and the size of the flat video screen for the flat 3D video shown: each eye its half of the frame
-   * in 3D, the first eye for both in 2D (see [FlatStereo.stereoModeFor]), FLAT_SCREEN_ANGLE_DEG wide and as high as
-   * one eye once the player told the frame size, 16:9 until then. Like the sphere (see [applyVideoShape]), the layer is
-   * made again by PanelSceneObject.reshape on the same swapchain while the video plays. Nothing for any other media,
-   * nor before the panel exists (its setup calls this again).
+   * The stereo mode and the size of the flat video screen for the video shown: for a flat 3D video, each
+   * eye its half of the frame in 3D, the first eye for both in 2D (see [FlatStereo.stereoModeFor]); for an ordinary
+   * video on the big screen, its whole frame for both eyes. As wide as [flatVideoAngle] at the distance of the screen,
+   * as high as one eye once the player told the frame size, 16:9 until then. Like the sphere (see [applyVideoShape]),
+   * the layer is made again by PanelSceneObject.reshape on the same swapchain while the video plays. Nothing for any
+   * other media, nor before the panel exists (its setup calls this again).
    */
   private fun applyFlatVideoShape() {
     val panel = flatVideoPanel ?: return
-    val spec = request?.flatVideo ?: return
+    val media = request ?: return
+    if (!media.isFlatVideo) return
     val config = panel.panelShapeConfig
     if (config == null) {
-      Log.w(TAG, "flat video panel without a shape config, ${spec.format} not applied")
+      Log.w(TAG, "flat video panel without a shape config, ${media.flatVideo ?: "big screen"} not applied")
       return
     }
-    // Eyes the name alone said full, squeezed when the frame says so (a share page asks before its player knows it)
-    val frame = flatVideoSize
-    val format = if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second)
-    val mode = FlatStereo.stereoModeFor(format, stereo3d)
-    val aspect = if (frame == null) 0f else FlatStereo.eyeAspect(format, frame.first, frame.second)
-    val (width, height) = FlatStereo.screenSize(aspect, FLAT_SCREEN_ANGLE_DEG, StereoComposer.DISTANCE_M)
-    if (config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f) return
+    val (mode, aspect) = flatVideoLook() ?: return
+    val distance = screenPlace?.distance ?: screenDistanceM
+    val (width, height) = FlatStereo.screenSize(aspect, flatVideoAngle(aspect), distance)
+    val same = config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f
+    // A grab calls this at every frame: the shape, and the Size and Distance rows of the panel, only once changed
+    if (same) return
     try {
       config.stereoMode = mode
       config.width = width
       config.height = height
       panel.reshape(config)
-      Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($format for ${spec.format}, frame $frame)")
+      val what = media.flatVideo ?: "big screen"
+      Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($what, frame $flatVideoSize)")
     } catch (e: Exception) {
       Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
+    }
+    updateScreenControls()
+  }
+
+  /**
+   * The stereo mode of the flat video screen and the aspect of an eye (width over height, 0 until the player told the
+   * frame size) for the video shown: a flat 3D video, each eye its half of the frame in 3D, the first eye for both in
+   * 2D, its eyes said full by the name alone squeezed when the frame says so (a share page asks before its player knows
+   * the size); an ordinary video on the big screen, its whole frame for both eyes. Null for any other media.
+   */
+  private fun flatVideoLook(): Pair<StereoMode, Float>? {
+    val media = request ?: return null
+    if (!media.isFlatVideo) return null
+    val frame = flatVideoSize
+    val spec = media.flatVideo
+    if (spec == null) {
+      val aspect = if (frame == null) 0f else frame.first.toFloat() / frame.second
+      return StereoMode.None to aspect
+    }
+    val format = if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second)
+    val aspect = if (frame == null) 0f else FlatStereo.eyeAspect(format, frame.first, frame.second)
+    return FlatStereo.stereoModeFor(format, stereo3d) to aspect
+  }
+
+  /**
+   * The angular width of the flat video screen for an eye of [aspect] (width over height, 0 while unknown): the one
+   * the user gave this video, else as wide as fits its shape (see FlatScreenGeometry.fittingAngle).
+   */
+  private fun flatVideoAngle(aspect: Float): Float = flatVideoAngleDeg ?: FlatScreenGeometry.fittingAngle(aspect)
+
+  /**
+   * The compositor filters of the flat screen [panel] for the media shown (see [FlatScreenLayer.filters]): those of
+   * Sharper flat screens while it is on, none otherwise. Set again at each media, the opening that made the panel
+   * having possibly said otherwise, and never at each frame of a grab.
+   */
+  private fun applyLayerFilters(panel: PanelSceneObject) {
+    val sharp = request?.sharpFlatScreens != false
+    try {
+      panel.layer?.setFilters(FlatScreenLayer.filters(sharp))
+    } catch (e: Exception) {
+      Log.w(TAG, "could not set the filters of a flat screen layer (sharp $sharp)", e)
     }
   }
 
   /**
-   * Puts the flat video screen 2 m in front of where the user looks, at the height of the eyes, facing them, as the
-   * stereo quad (see [placeStereoQuad]). Before the first head pose, in front of the default eye position; [onFrame]
-   * places it again once the pose is known. The right thumbstick left or right calls it too.
+   * Puts the flat video screen in front of where the user looks, at the distance the user chose last for a flat screen
+   * (2 m until then, see [ScreenPlace]), at the height of the eyes, facing them, as the stereo quad (see
+   * [placeStereoQuad]). Before the first head pose, in front of the default eye position; [onFrame] places it again
+   * once the pose is known. The right thumbstick left or right calls it too.
    */
   private fun placeFlatVideo() {
-    val entity = flatVideoEntity ?: return
+    if (flatVideoEntity == null) return
     val head = lastHeadPosition
     val eyes = head ?: Vector3(0f, DEFAULT_EYE_HEIGHT, 0f)
     val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
-    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
-    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
-    val position = eyes + (direction * StereoComposer.DISTANCE_M)
-    entity.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
+    val place = ScreenPlace.inFront(eyes, forward, screenDistanceM)
+    screenPlace = place
+    placeFlatScreen(place)
     flatPlacedWithHead = head != null
+  }
+
+  /** The flat video screen at [place], as wide as its angle at that distance. */
+  private fun placeFlatScreen(place: ScreenPlace) {
+    flatVideoEntity?.setComponent(Transform(Pose(place.center, Quaternion.lookRotation(place.direction))))
+    applyFlatVideoShape()
   }
 
   private fun showVideo(media: MediaRequest) {
@@ -4198,7 +5150,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       ensureFlatVideoEntity()
       stereo3d = true
       flatVideoSize = null
+      flatVideoAngleDeg = null
       flatPlacedWithHead = false
+      // The filters of this opening, once per video: a reshape keeps them
+      flatVideoPanel?.let(::applyLayerFilters)
       applyFlatVideoShape()
       placeFlatVideo()
       updateStereoView()
@@ -4247,6 +5202,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (videoRevealed || media?.isVideo != true || currentVideoUrl == null) return
     videoRevealed = true
     (if (media.isFlatVideo) flatVideoEntity else videoEntity)?.setComponent(Visible(true))
+    updateScreenControls()
     announceFlat3d(media)
   }
 
@@ -4443,6 +5399,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (liveViewer === this) liveViewer = null
     releaseRelief()
     dropScene()
+    dropPhotoLayer()
     scope.cancel()
     super.onDestroy()
   }
@@ -4473,6 +5430,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingStereo = null
     stereoTexture = null
     stereoQuadMaterial = null
+    dropPhotoLayer()
+    photoLayerPanel = null
+    photoLayerSurface = null
     // The triangles go with the scene, as the textures do
     reliefMesh = null
     reliefMeshMaterial = null
@@ -4499,6 +5459,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The JSON of the two eyes of an Apple spatial photo, absent for any other media; put by ImmersiveApiImpl.open */
     internal const val EXTRA_STEREO_PAIR = "app.alextran.immich.immersive.STEREO_PAIR"
     private const val EXTRA_REVERSE_THUMBSTICK_TURN = "app.alextran.immich.immersive.REVERSE_THUMBSTICK_TURN"
+    private const val EXTRA_SHARP_FLAT_SCREENS = "app.alextran.immich.immersive.SHARP_FLAT_SCREENS"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
@@ -4507,8 +5468,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val STATE_STEREO_25D = "app.alextran.immich.immersive.STEREO_25D"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
+    /** The info panel stands this much below the eyes, at INFO_DISTANCE. */
+    private const val INFO_DROP = 0.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
     private const val DECODER_WARNING_HIDE_MS = 10000L
+
+    /** The stretch of both grips resizes the flat screen at most this often: each new size reshapes a layer. */
+    private const val STRETCH_INTERVAL_MS = 100L
 
     /**
      * Size of the info panel: its layout in dp, and its quad in meters. Both keep the 1 m for 720 dp of the first
@@ -4542,15 +5508,6 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** Swapchain of the flat video screen: a flat 3D frame is scaled to it, the quad gives it its shape back. */
     private const val FLAT_VIDEO_PANEL_WIDTH_PX = 3840
     private const val FLAT_VIDEO_PANEL_HEIGHT_PX = 2160
-
-    /** Angular width of the flat video screen at 2 m: a large screen, still all in view. */
-    private const val FLAT_SCREEN_ANGLE_DEG = 60f
-
-    /**
-     * The quality filters of the compositor on the flat video screen: super sampling for a frame larger than the area
-     * it covers, sharpening for a smaller one, the compositor picking the one that applies.
-     */
-    private val FLAT_LAYER_FILTERS = LayerFilters.HIGHEST_QUALITY or LayerFilters.AUTO_FILTER
 
     /** Refresh interval of the time bar while the panel is on screen. */
     private const val PROGRESS_INTERVAL_MS = 500L
@@ -4629,6 +5586,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     private const val SNAP_TURN_DEGREES = 30f
 
+    /**
+     * The distance of the flat screens, as the user left it last (the Distance buttons, the thumbstick while a grip
+     * holds the screen): the next flat screen opens there. Lives as long as the process, as the choices of the app do
+     * until it closes.
+     */
+    private var screenDistanceM = FlatScreenGeometry.DEFAULT_DISTANCE_M
+
     /** Token of the last intent built by [intent], checked by parse. Lives as long as the process. */
     @Volatile private var launchToken: String? = null
 
@@ -4695,6 +5659,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       fallbackUrl: String?,
       rawProjection: String?,
       reverseThumbstickTurn: Boolean,
+      sharpFlatScreens: Boolean = true,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -4711,6 +5676,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           fallbackUrl = fallbackUrl,
           rawProjection = rawProjection,
           reverseThumbstickTurn = reverseThumbstickTurn,
+          sharpFlatScreens = sharpFlatScreens,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -4736,6 +5702,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putString(EXTRA_RAW_PROJECTION, media.rawProjection)
         putString(EXTRA_STEREO_PAIR, media.stereoPairJson)
         putBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, media.reverseThumbstickTurn)
+        putBoolean(EXTRA_SHARP_FLAT_SCREENS, media.sharpFlatScreens)
       }
     }
 
@@ -4767,6 +5734,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         rawProjection = extras.getString(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() },
         stereoPairJson = extras.getString(EXTRA_STEREO_PAIR)?.takeIf { it.isNotBlank() },
         reverseThumbstickTurn = extras.getBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, false),
+        sharpFlatScreens = extras.getBoolean(EXTRA_SHARP_FLAT_SCREENS, true),
       )
     }
 

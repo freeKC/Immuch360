@@ -238,12 +238,17 @@ internal data class StereoPhotoChoices(
 ) {
   /**
    * These choices for the photo of [url] shown in the opening [openingId], null for any other photo or opening, which
-   * starts from the defaults. The angle stays within the bounds of the thumbstick, [maxAngleDeg] at most (see
-   * StereoComposer.maxAngle).
+   * starts from the defaults. The angle stays within the [bounds] the controls give this photo (see
+   * FlatScreenGeometry.angleBounds): 30 to 90 degrees for two eyes, 60 at most for an estimated relief, 15 to 110 for
+   * one picture.
    */
-  fun forPhoto(url: String, openingId: Long, maxAngleDeg: Float = StereoComposer.MAX_ANGLE_DEG): StereoPhotoChoices? =
+  fun forPhoto(
+    url: String,
+    openingId: Long,
+    bounds: ClosedFloatingPointRange<Float> = StereoComposer.MIN_ANGLE_DEG..StereoComposer.MAX_ANGLE_DEG,
+  ): StereoPhotoChoices? =
     if (url != this.url || openingId != this.openingId || angleDeg.isNaN()) null
-    else copy(angleDeg = angleDeg.coerceIn(StereoComposer.MIN_ANGLE_DEG, maxAngleDeg))
+    else copy(angleDeg = angleDeg.coerceIn(bounds))
 }
 
 /**
@@ -409,6 +414,9 @@ internal object StereoComposer {
         LABEL_RELIEF_DAMAGED to "An AI component is damaged",
         LABEL_FLAT3D_NOTICE to "3D told by the file name (experimental)",
         LABEL_FLAT3D_NO_NAVIGATION to "A 3D video plays on its own: B or Y goes back to the app",
+        LABEL_BIG_SCREEN_NO_NAVIGATION to
+          "On the big screen, a photo or video shows on its own: B or Y goes back to the app",
+        LABEL_SHARP_NOTICE to "Sharper flat screen (experimental)",
       )
 
   /**
@@ -417,6 +425,12 @@ internal object StereoComposer {
    */
   const val LABEL_FLAT3D_NOTICE = "flat3dNotice"
   const val LABEL_FLAT3D_NO_NAVIGATION = "flat3dNoNavigation"
+
+  /** What previous and next say on a photo or a video opened with "View on a big screen" (see BigScreenSpec). */
+  const val LABEL_BIG_SCREEN_NO_NAVIGATION = "bigScreenNoNavigation"
+
+  /** What passes once when a flat screen first shows with Sharper flat screens on (see FlatScreenLayer). */
+  const val LABEL_SHARP_NOTICE = "sharpScreensNotice"
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"

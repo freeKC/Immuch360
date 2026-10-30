@@ -34,4 +34,8 @@
   <string name="immersive_raw_one_lens_decoder">આ હેડસેટ આ વીડિયોના બે લેન્સ એકસાથે ડીકોડ કરી શકતો નથી (%1$s %2$d x %3$d, બે વાર). એક લેન્સ બતાવાય છે: ગોળાનો અડધો ભાગ કાળો રહે છે.</string>
   <string name="immersive_raw_one_lens_file">બીજા લેન્સની ફાઇલ વાંચી શકાતી નથી. એક લેન્સ બતાવાય છે: ગોળાનો અડધો ભાગ કાળો રહે છે.</string>
   <string name="immersive_raw_unstitched">આ ડિવાઇસ પર 360° જોડાણ નિષ્ફળ ગયું. વીડિયો કેમેરાએ રેકોર્ડ કર્યો હતો તે રીતે બતાવાય છે.</string>
+  <string name="immersive_size">કદ %1$d°</string>
+  <string name="immersive_distance">અંતર %1$s મી</string>
+  <string name="immersive_screen_hint">B અથવા Y: ઍપ પર પાછા જાઓ. ટ્રિગર: ચલાવો અથવા થોભાવો. A, X અથવા ગ્રિપ પર ટૂંકું દબાણ: આ પૅનલ બતાવો અથવા છુપાવો. સ્ક્રીન ખસેડવા તેના પર ગ્રિપ દબાવી રાખો, પછી થમ્બસ્ટિક તેને નજીક કે દૂર લઈ જાય છે; કદ બદલવા બંને ગ્રિપ દબાવી રાખો. જમણી થમ્બસ્ટિક ડાબે કે જમણે: સ્ક્રીન ફરીથી સામે.</string>
+  <string name="immersive_screen_hint_short">સ્ક્રીન ખસેડવા તેના પર ગ્રિપ દબાવી રાખો, કદ બદલવા બંને</string>
 </resources>

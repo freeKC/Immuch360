@@ -33,4 +33,8 @@
   <string name="immersive_raw_one_lens_decoder">This headset cannot decode the two lenses of this video at once (%1$s %2$d x %3$d, twice). It shows one lens: half of the sphere stays black.</string>
   <string name="immersive_raw_one_lens_file">The file of the other lens cannot be read. One lens shows: half of the sphere stays black.</string>
   <string name="immersive_raw_unstitched">The 360° stitching failed on this device. The video shows as the camera recorded it.</string>
+  <string name="immersive_size">Size %1$d°</string>
+  <string name="immersive_distance">Distance %1$s m</string>
+  <string name="immersive_screen_hint">B or Y: back to the app. Trigger: play or pause. A, X or a short grip press: show or hide this panel. Hold a grip on the screen to move it, the thumbstick then brings it nearer or farther; hold both grips to resize it. Right thumbstick left or right: the screen in front again.</string>
+  <string name="immersive_screen_hint_short">Hold a grip on the screen to move it, both grips to resize it</string>
 </resources>
