@@ -978,6 +978,24 @@ void main() {
       expect(checked().single, startsWith('.beach_360_3D.jpg.'));
     });
 
+    testWidgets('a 2:1 photo nothing flags 360° whose GPano crop leaves part of the sphere out: skipped too', (
+      tester,
+    ) async {
+      // The 360° rules have not read it yet (a file the scan did not reach): its crop is read as for a 360° photo
+      kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+      original('rooftop_night.jpg');
+      original('PANO_0003.jpg');
+      partial.add('PANO_0003.jpg');
+      await openDialog(tester, [
+        _photo('rooftop_night.jpg', width: 8192, height: 4096),
+        _photo('PANO_0003.jpg', width: 8000, height: 4000),
+      ], kind: ConversionKind.stereoPanoramaFromPanorama);
+
+      expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+      expect(find.text('PANO_0003.jpg: Not a 360° photo'), findsOneWidget);
+      expect(checked().single, startsWith('.rooftop_night_360_3D.jpg.'));
+    });
+
     testWidgets('while the AI components are moved, Convert waits and says why; the gate is read again after', (
       tester,
     ) async {

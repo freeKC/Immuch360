@@ -998,7 +998,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       var known = await facts(asset);
       final taken = _offered.any((kind) => conversionSkipOf(asset, known, kind: kind) == null);
       final found = taken ? await files.locate(asset) : null;
-      if (known.isPanorama && found != null) {
+      // A 360° photo, or one taken by its frame for its 3D version: its GPano crop may leave part of the sphere out
+      if (found != null && (known.isPanorama || isEquirectFrame(asset.width, asset.height))) {
         known = known.withPartialSphere(await partial(found.source));
       }
       photos.add(_Photo(asset, known, found));
