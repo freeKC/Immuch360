@@ -4370,9 +4370,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   @OptIn(UnstableApi::class)
   private fun nextSyncFrameMs(url: String, fromMs: Long): Long? {
-    val dataSourceFactory = DefaultDataSource.Factory(this, HttpClientManager.createDataSourceFactory(emptyMap()))
-    val extractor = MediaExtractorCompat(DefaultExtractorsFactory(), dataSourceFactory)
+    var opened: MediaExtractorCompat? = null
     return try {
+      val dataSourceFactory = DefaultDataSource.Factory(this, HttpClientManager.createDataSourceFactory(emptyMap()))
+      val extractor = MediaExtractorCompat(DefaultExtractorsFactory(), dataSourceFactory).also { opened = it }
       extractor.setDataSource(Uri.parse(url), 0L)
       val track =
         (0 until extractor.trackCount).firstOrNull {
@@ -4383,11 +4384,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val timeUs = extractor.sampleTime
       Log.i(TAG, "next sync frame from $fromMs ms: ${if (timeUs >= 0L) "${timeUs / 1000L} ms" else "none"}")
       if (timeUs >= 0L) timeUs / 1000L else null
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
+      // Never a crash of the restart that waits for it: it starts 3 s past the failure instead
       Log.w(TAG, "the next sync frame from $fromMs ms could not be read", e)
       null
     } finally {
-      extractor.release()
+      opened?.release()
     }
   }
 
