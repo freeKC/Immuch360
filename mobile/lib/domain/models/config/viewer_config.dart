@@ -16,6 +16,10 @@ abstract class ViewerConfig with _$ViewerConfig {
     @Default(true) bool autoPlayVideo,
     @Default(false) bool tapToNavigate,
 
+    /// With the remote control layout (a TV), the date and time of a photo at the bottom left of the viewer, shown with
+    /// its controls, rather than over the top centre of the photo; on by default (Settings, Asset Viewer, Photos)
+    @Default(true) bool tvShowDateTime,
+
     /// Experimental Spatial 2.5D player for stereoscopic videos on phones, on by default (Settings, Asset Viewer,
     /// Videos turns it off)
     @Default(true) bool spatial25d,
