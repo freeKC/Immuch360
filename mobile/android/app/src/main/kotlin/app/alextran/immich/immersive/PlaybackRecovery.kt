@@ -141,6 +141,15 @@ internal class PlaybackRecovery {
     /** How often the viewer reads the player while a video plays. */
     const val TICK_MS = 500L
 
+    /** Frames per second below which a video is not watched for a missing picture, see [watches]. */
+    const val MIN_WATCHED_FRAME_RATE = 1f
+
+    /**
+     * Whether a video of [frameRate] frames per second (0 or less when unknown) is watched for a missing picture: not
+     * a slide show made into a video, whose frames come seconds apart while its music plays.
+     */
+    fun watches(frameRate: Float): Boolean = frameRate <= 0f || frameRate >= MIN_WATCHED_FRAME_RATE
+
     /**
      * The failures a new player may get around: the decoder that failed or was taken back, the audio output that
      * went away with the media server. Not a format the headset cannot decode, nor a source that cannot be read:

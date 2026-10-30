@@ -4335,6 +4335,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (currentVideoUrl == null || restartPending || rawReplanPending) return
     // A lens player draws through its compositor, whose frames the counters of the player do not see
     if (twoLens != null) return
+    if (!PlaybackRecovery.watches(p.videoFormat?.frameRate ?: Format.NO_VALUE.toFloat())) return
     val counters = p.videoDecoderCounters
     counters?.ensureUpdated()
     watchedFrames = counters?.renderedOutputBufferCount ?: 0

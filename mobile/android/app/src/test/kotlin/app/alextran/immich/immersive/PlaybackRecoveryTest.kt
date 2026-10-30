@@ -268,6 +268,16 @@ class PlaybackRecoveryTest {
   }
 
   @Test
+  fun `a slide show made into a video is not watched, any other video is, its rate known or not`() {
+    assertFalse(PlaybackRecovery.watches(0.2f))
+    assertFalse(PlaybackRecovery.watches(0.99f))
+    assertTrue(PlaybackRecovery.watches(1f))
+    assertTrue(PlaybackRecovery.watches(29.97f))
+    assertTrue(PlaybackRecovery.watches(-1f))
+    assertTrue(PlaybackRecovery.watches(0f))
+  }
+
+  @Test
   fun `nothing is seen before the first frame of the url`() {
     val recovery = PlaybackRecovery().apply {
       onMedia()
