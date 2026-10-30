@@ -34,6 +34,13 @@ class FlatScreenGripTest {
   }
 
   @Test
+  fun `a press released after exactly the hold time is a hold, not a short press`() {
+    step(0, left, pointing = emptySet())
+    assertEquals(emptyList<Event>(), step(ScreenGrip.HOLD_MS - 1, left, pointing = emptySet()))
+    assertEquals(emptyList<Event>(), step(ScreenGrip.HOLD_MS, 0, pointing = emptySet()))
+  }
+
+  @Test
   fun `a short press away from the screen shows or hides the panel too`() {
     assertEquals(emptyList<Event>(), step(0, right, pointing = emptySet()))
     assertEquals(listOf(Event.TogglePanel), step(120, 0, pointing = emptySet()))

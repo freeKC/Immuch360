@@ -107,6 +107,16 @@ class FlatScreenGeometryTest {
   }
 
   @Test
+  fun `a screen grabbed near its top edge keeps its center where it was, the point grabbed under the ray`() {
+    // Grabbed 0.4 m above its center, then the ray only turns
+    val pitch = Math.toDegrees(atan(0.4 / 2.0)).toFloat()
+    val drag = ScreenDrag(ahead, eyes, ray(0f, pitch))
+    val moved = drag.place(eyes, ray(20f, pitch))!!
+    assertEquals(1.6f, moved.height, 1e-4f)
+    assertEquals(20f, moved.yawDeg, 1e-3f)
+  }
+
+  @Test
   fun `a grab raises or lowers the screen with the ray`() {
     val drag = ScreenDrag(ahead, eyes, ray(0f))
     val pitch = Math.toDegrees(atan(0.5 / 2.0)).toFloat()
