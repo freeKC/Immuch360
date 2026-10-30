@@ -265,6 +265,8 @@ internal object SplatHeader {
           val count =
             words.getOrNull(2)?.toLongOrNull()
               ?: return SplatProbe.Refused(SplatFileProblem.DAMAGED, "element $name without count")
+          // A count below 0 is no count: damaged, rather than a splat of -5 gaussians or a mesh of -12 faces
+          if (count < 0) return SplatProbe.Refused(SplatFileProblem.DAMAGED, "element $name of $count")
           inVertex = name == "vertex"
           if (inVertex) vertexCount = count else others[name] = (others[name] ?: 0L) + count
         }

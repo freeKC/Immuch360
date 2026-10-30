@@ -150,6 +150,26 @@ class SplatHeaderTest {
   }
 
   @Test
+  fun `a negative count is a damaged file, never a splat of -5 gaussians`() {
+    // The header of negative_count.ply says element vertex -5 over four rows of the axes
+    assertEquals(SplatFileProblem.DAMAGED, refusal("negative_count.ply"))
+    val probe = probe("negative_count.ply")
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.DAMAGED),
+      SplatGate.check(true, "eureka", probe, 1_000, SplatGate.SAFE_GAUSSIANS, null, null),
+    )
+    // Nor does a negative count of faces make a mesh pass for a splat
+    val mesh =
+      ("ply\nformat binary_little_endian 1.0\n" + splatProperties(1) + "element face -12\n" +
+          "property list uchar int vertex_indices\nend_header\n")
+        .toByteArray(Charsets.US_ASCII)
+    assertEquals(
+      SplatFileProblem.DAMAGED,
+      (SplatHeader.probe(mesh + ByteArray(68), mesh.size + 68L) as SplatProbe.Refused).problem,
+    )
+  }
+
+  @Test
   fun `the probe reads no more than its head`() {
     val bytes = SplatFixtures.bytes("long_header.ply")
     assertTrue(bytes.size > SplatHeader.HEAD_BYTES)

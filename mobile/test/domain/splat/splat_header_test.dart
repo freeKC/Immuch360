@@ -71,6 +71,17 @@ void main() {
     expect(refusal('long_header.ply'), SplatFileProblem.damaged);
   });
 
+  test('a negative count is a damaged file, never a splat of -5 gaussians', () {
+    // The header of negative_count.ply says element vertex -5 over four rows of the axes
+    expect(refusal('negative_count.ply'), SplatFileProblem.damaged);
+    // Nor does a negative count of faces make a mesh pass for a splat
+    final mesh = utf8.encode(
+      'ply\nformat binary_little_endian 1.0\nelement vertex 1\nproperty float x\nelement face -12\n'
+      'property list uchar int vertex_indices\nend_header\n',
+    );
+    expect(probeSplatHead(Uint8List.fromList(mesh), mesh.length), const SplatRefused(SplatFileProblem.damaged, ''));
+  });
+
   test('wrong SPZ heads are refused, a newer version said apart', () {
     expect(refusal('bad_magic.spz'), SplatFileProblem.damaged);
     expect(refusal('reserved.spz'), SplatFileProblem.damaged);

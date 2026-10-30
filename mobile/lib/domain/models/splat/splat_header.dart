@@ -301,6 +301,10 @@ SplatProbe _probePly(Uint8List bytes, int fileLength) {
         if (count == null) {
           return SplatRefused(SplatFileProblem.damaged, 'element ${words[1]} without count');
         }
+        // A count below 0 is no count: damaged, rather than a splat of -5 gaussians or a mesh of -12 faces
+        if (count < 0) {
+          return SplatRefused(SplatFileProblem.damaged, 'element ${words[1]} of $count');
+        }
         inVertex = words[1] == 'vertex';
         if (inVertex) {
           vertexCount = count;

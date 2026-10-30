@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
@@ -65,5 +67,12 @@ void main() {
     const v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 60000, shDegree: 0);
     expect(gate(probe: v4).refusal, SplatRefusal.tooLarge);
     expect(gate(probe: v4, large: true).isOpen, isTrue);
+  });
+
+  test('a file whose header gives a negative count is refused as damaged, never sent to the viewer', () {
+    final bytes = File('test/fixtures/splat/negative_count.ply').readAsBytesSync();
+    final verdict = gate(probe: probeSplatHead(bytes, bytes.length), fileBytes: bytes.length);
+    expect(verdict.isOpen, isFalse);
+    expect(verdict.refusal, SplatRefusal.damaged);
   });
 }

@@ -37,6 +37,7 @@ The fixtures:
   compressed.ply             the head of a compressed PLY (element chunk, packed_position): refused
   ascii.ply, big_endian.ply  a splat written in ASCII, and in big endian: refused
   long_header.ply            a splat whose header ends past 64 KiB: refused
+  negative_count.ply         a splat whose header says element vertex -5: damaged, never a count
   bad_magic.spz, reserved.spz, newer.spz, truncated.spz   SPZ heads that are refused
   cash_register_head.spz, measuring_tape_head.ply   the first 65 536 bytes of two CC0 files of InnerScene
       (https://www.innerscene.com/tools/gaussian-splat-viewer, "public domain (CC0)"): heads of files of another
@@ -248,6 +249,13 @@ def point_cloud() -> bytes:
     return bytes(out)
 
 
+def negative_count_ply() -> bytes:
+    """Four gaussians of the axes under a header that says -5 of them: no count, a damaged file"""
+    data = write_ply(axes()[:4])
+    assert data.count(b"element vertex 4\n") == 1
+    return data.replace(b"element vertex 4\n", b"element vertex -5\n")
+
+
 def compressed_ply() -> bytes:
     """The layout of the compressed PLY of SuperSplat and PlayCanvas: a chunk of bounds, then packed vertices"""
     chunk_props = ["min_x", "min_y", "min_z", "max_x", "max_y", "max_z", "min_scale_x", "min_scale_y", "min_scale_z",
@@ -447,6 +455,7 @@ def fixtures(cache: pathlib.Path) -> dict:
         "ascii.ply": write_ply_ascii(gaussians[:4]),
         "big_endian.ply": write_ply(gaussians[:4], big_endian=True),
         "long_header.ply": write_ply(gaussians[:4], comments=long_comments),
+        "negative_count.ply": negative_count_ply(),
         "bad_magic.spz": gzip.compress(spz_header(3, 1, 0, magic=0x12345678) + bytes(20), mtime=0),
         "reserved.spz": gzip.compress(spz_header(3, 1, 0, reserved=1) + bytes(20), mtime=0),
         "newer.spz": gzip.compress(spz_header(5, 1, 0) + bytes(20), mtime=0),

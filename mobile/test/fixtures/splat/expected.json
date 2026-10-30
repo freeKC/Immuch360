@@ -89,6 +89,10 @@
       "bytes": 447,
       "sha256": "cc67fd1fec8f77a45b911aca100725d91e87c18f0f16d3e118afaeb459cfe35f"
     },
+    "negative_count.ply": {
+      "bytes": 582,
+      "sha256": "807639ac6995a32327a70ce25d9fc0a0f04948b9f0d2b426a148b514640ab35c"
+    },
     "newer.spz": {
       "bytes": 35,
       "sha256": "9ddbc605d092550ff8b75e4e834206e2aee90ddf0b28cd1476168d79927a2d8c"
