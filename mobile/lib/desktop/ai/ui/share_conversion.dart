@@ -59,7 +59,8 @@ final shareConversionSourceProvider = Provider<ShareFileSource Function(NetworkE
   return (entry) => ShareFileSource(
     entry: entry,
     url: () => connections.mediaUrl(entry.sourceId, entry.path),
-    fetch: (url) => client.send(http.Request('GET', url)),
+    // Aborted by a cancel, even while the share sends nothing
+    fetch: (url, {abort}) => client.send(http.AbortableRequest('GET', url, abortTrigger: abort)),
     versions: shareVersionLookup(() => connections.fileSystem(entry.sourceId), entry),
   );
 });

@@ -93,7 +93,7 @@ class _Bridge {
   final held = <String, Completer<void>>{};
   final refused = <String>{};
 
-  Future<http.StreamedResponse> fetch(Uri url) async {
+  Future<http.StreamedResponse> fetch(Uri url, {Future<void>? abort}) async {
     asked.add(Uri.decodeComponent(url.path));
     // The bridge serves the files of a share under its token and the id of the share
     final path = Uri.decodeComponent(url.path).replaceFirst(RegExp('^/token/[^/]+'), '');

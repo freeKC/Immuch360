@@ -1,9 +1,11 @@
 // A photo of a share opened in the app, copied for its conversion through the media bridge: once, into a folder of its
 // own among the copies of the AI, with the bytes copied and their total told as it goes; read by the job from that same
 // copy (no second download), with the sum and the size of its bytes; copied again only once released; a cancel during
-// the copy told as a cancel, and a bridge that answers otherwise, or gives fewer bytes than the share listed, as a
-// source that cannot be reached; no copy left behind in any case.
+// the copy told as a cancel, at once even when the share sends nothing more; a bridge that answers otherwise, or gives
+// fewer bytes than it announced, or than the share listed when it announces none, as a source that cannot be reached;
+// the size the bridge announces taken over the one listed (a photo edited since); no copy left behind in any case.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -26,6 +28,13 @@ void main() {
   late int status;
   late bool slow;
   late int? sent;
+  // The length the bridge announces: that of the bytes sent by default, none (chunked) when null
+  late int? Function(int sending)? announced;
+  // The bridge stops sending after its first chunk, or before any answer, until the test ends
+  late bool stallAfterFirst;
+  late bool stallBeforeAnswer;
+  late Completer<void> stalled;
+  late List<Object> serverErrors;
   final client = http.Client();
 
   setUp(() async {
@@ -35,26 +44,52 @@ void main() {
     status = HttpStatus.ok;
     slow = false;
     sent = null;
+    announced = (sending) => sending;
+    stallAfterFirst = false;
+    stallBeforeAnswer = false;
+    stalled = Completer<void>();
+    serverErrors = [];
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen((request) async {
       asked.add(Uri.decodeFull(request.uri.path));
-      request.response.statusCode = status;
-      if (status == HttpStatus.ok) {
-        final body = sent == null ? bytes : bytes.sublist(0, sent);
-        request.response.contentLength = body.length;
-        for (var start = 0; start < body.length; start += 50000) {
-          request.response.add(body.sublist(start, (start + 50000).clamp(0, body.length)));
-          await request.response.flush();
-          if (slow) {
-            await Future<void>.delayed(const Duration(milliseconds: 30));
+      try {
+        if (stallBeforeAnswer) {
+          await stalled.future;
+          return;
+        }
+        request.response.statusCode = status;
+        if (status == HttpStatus.ok) {
+          final body = sent == null ? bytes : bytes.sublist(0, sent);
+          final length = announced?.call(body.length);
+          if (length == null) {
+            request.response.headers.chunkedTransferEncoding = true;
+          } else {
+            request.response.contentLength = length;
+          }
+          for (var start = 0; start < body.length; start += 50000) {
+            request.response.add(body.sublist(start, (start + 50000).clamp(0, body.length)));
+            await request.response.flush();
+            if (stallAfterFirst) {
+              await stalled.future;
+              return;
+            }
+            if (slow) {
+              await Future<void>.delayed(const Duration(milliseconds: 30));
+            }
           }
         }
+        await request.response.close();
+      } catch (error) {
+        // A bridge that cuts its answer short, or a client gone: the connection is dropped
+        serverErrors.add(error);
       }
-      await request.response.close();
     });
   });
 
   tearDown(() async {
+    if (!stalled.isCompleted) {
+      stalled.complete();
+    }
     await server.close(force: true);
     root.deleteSync(recursive: true);
   });
@@ -72,7 +107,7 @@ void main() {
   ShareFileSource source(NetworkEntry entry) => ShareFileSource(
     entry: entry,
     url: () async => Uri.parse('http://127.0.0.1:${server.port}/token/nas${entry.path}'),
-    fetch: (url) => client.send(http.Request('GET', url)),
+    fetch: (url, {abort}) => client.send(http.AbortableRequest('GET', url, abortTrigger: abort)),
     copiesFolder: () async => Directory(p.join(root.path, 'immuch360-ai')),
     hash: (path, cancel) async => base64.encode(crypto.sha1.convert(File(path).readAsBytesSync()).bytes),
   );
@@ -173,17 +208,73 @@ void main() {
     expect(copies(), isEmpty);
   });
 
-  test('a bridge that answers otherwise, or fewer bytes than the share listed: the source cannot be reached', () async {
+  test('a cancel while the share sends nothing more stops the copy at once, and no copy stays', () async {
+    // The bridge gives its first bytes of the photo, then the NAS stops answering
+    stallAfterFirst = true;
+    final photo = source(entry());
+    var cancelled = false;
+    final progress = <int>[];
+
+    final copying = photo.copy(isCancelled: () => cancelled, onProgress: (copied, _) => progress.add(copied));
+    while (progress.lastOrNull != 50000) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+    final at = DateTime.now();
+    cancelled = true;
+
+    await expectLater(copying.timeout(const Duration(seconds: 2)), failsWith(ImmersiveErrorCode.cancelled));
+    expect(DateTime.now().difference(at), lessThan(const Duration(seconds: 1)), reason: 'not the timeout of the share');
+    expect(copies(), isEmpty, reason: 'the partial copy deleted');
+    expect(photo.copyPath, isNull);
+  });
+
+  test('a cancel before the bridge answers at all, as a job of the queue cancels it', () async {
+    stallBeforeAnswer = true;
+    final photo = source(entry());
+    final flag = NativeCancelFlag();
+    addTearDown(flag.free);
+
+    final job = photo.prepare(flag);
+    while (asked.isEmpty) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+    flag.cancel();
+
+    await expectLater(job.timeout(const Duration(seconds: 2)), failsWith(ImmersiveErrorCode.cancelled));
+    expect(copies(), isEmpty);
+  });
+
+  test('a bridge that answers otherwise, or gives fewer bytes than it said: the source cannot be reached', () async {
     status = HttpStatus.notFound;
     final missing = source(entry());
     await expectLater(missing.copy(), failsWith(ImmersiveErrorCode.sourceLost));
     expect(copies(), isEmpty);
 
+    // The whole photo announced, the answer cut short
     status = HttpStatus.ok;
     sent = 1000;
+    announced = (_) => bytes.length;
     final cut = source(entry());
     await expectLater(cut.copy(), failsWith(ImmersiveErrorCode.sourceLost));
     expect(copies(), isEmpty);
+
+    // No length announced: the size the share listed
+    announced = null;
+    final unsized = source(entry());
+    await expectLater(unsized.copy(), failsWith(ImmersiveErrorCode.sourceLost));
+    expect(copies(), isEmpty);
+  });
+
+  test('a photo edited on the NAS since its folder was listed: copied at the size the bridge reads now', () async {
+    final photo = source(entry(size: 1000));
+    sent = 1200;
+    final totals = <int?>{};
+
+    final path = await photo.copy(onProgress: (_, total) => totals.add(total));
+
+    expect(File(path).readAsBytesSync(), bytes.sublist(0, 1200));
+    expect(totals, {1200});
+    await photo.release();
   });
 
   test('a name Windows refuses gets a safe name for its copy, the original name kept for its versions', () async {

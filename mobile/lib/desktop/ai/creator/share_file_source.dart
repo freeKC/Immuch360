@@ -6,7 +6,9 @@
 // copy is deleted with its folder when the job ends, whatever the end, and copied again by a Retry; one a crash left
 // is deleted at the next start once an hour old (cleanUpAiCopiesAtStart). Nothing is ever written to the original.
 //
-// A copy that finds no room fails as a disk full, which pauses the queue as for the version itself.
+// A copy that finds no room fails as a disk full, which pauses the queue as for the version itself. A cancel stops the
+// copy within a tenth of a second even when the share sends nothing more (a NAS that stopped answering): the request
+// to the bridge is aborted and its partial copy deleted, without waiting for the share to time out.
 
 import 'dart:async';
 import 'dart:io';
@@ -28,8 +30,11 @@ import 'package:path/path.dart' as p;
 
 final _log = Logger('ShareFileSource');
 
-/// Asks the media bridge for the bytes of a file of a share at [url]
-typedef ShareFileFetcher = Future<http.StreamedResponse> Function(Uri url);
+/// Asks the media bridge for the bytes of a file of a share at [url]; the request is aborted once [abort] completes
+typedef ShareFileFetcher = Future<http.StreamedResponse> Function(Uri url, {Future<void>? abort});
+
+/// How often a copy under way looks whether it was cancelled, chunk or no chunk
+const _cancelCheck = Duration(milliseconds: 100);
 
 /// The bytes of a copy written so far, and how many there are in all when the share or the bridge tells it
 typedef ShareCopyProgress = void Function(int copied, int? total);
@@ -131,9 +136,41 @@ class ShareFileSource implements ConversionSource, RemoteVersionLookup {
       throw _writeError(error);
     }
 
+    // Cancelled: the request aborted and the bytes no longer awaited, whether the share sends some or not
+    final abort = Completer<void>();
+    final watch = Timer.periodic(_cancelCheck, (_) {
+      if (!abort.isCompleted && isCancelled()) {
+        abort.complete();
+      }
+    });
+    try {
+      return await _receive(file, abort, isCancelled, onProgress);
+    } finally {
+      watch.cancel();
+    }
+  }
+
+  Future<String> _receive(
+    File file,
+    Completer<void> abort,
+    bool Function() isCancelled,
+    ShareCopyProgress? onProgress,
+  ) async {
+    const cancelled = ConversionException(ImmersiveErrorCode.cancelled);
     final http.StreamedResponse response;
     try {
-      response = await _fetch(await _url());
+      // The bridge opens the share first: a share that does not answer is not waited for either
+      final url = await Future.any([_url(), abort.future.then<Uri>((_) => throw cancelled)]);
+      final fetching = _fetch(url, abort: abort.future);
+      response = await Future.any([fetching, abort.future.then<http.StreamedResponse>((_) => throw cancelled)]);
+      if (abort.isCompleted) {
+        // A bridge that answered all the same: its bytes are not read
+        unawaited(fetching.then((late) => late.stream.listen(null).cancel(), onError: (Object _) {}));
+      }
+    } on ConversionException {
+      rethrow;
+    } on http.RequestAbortedException {
+      throw cancelled;
     } on Exception catch (error) {
       throw ConversionException(ImmersiveErrorCode.sourceLost, '$error');
     }
@@ -141,25 +178,55 @@ class ShareFileSource implements ConversionSource, RemoteVersionLookup {
       unawaited(response.stream.drain<void>().catchError((_) {}));
       throw ConversionException(ImmersiveErrorCode.sourceLost, 'The share answered ${response.statusCode}');
     }
-    final expected = entry.size ?? response.contentLength;
+    // The size the bridge reads from the share now, else the one the share listed: a photo edited on the NAS since its
+    // folder was shown is copied as it is now
+    final expected = response.contentLength ?? entry.size;
     var copied = 0;
     onProgress?.call(0, expected);
 
     final sink = file.openWrite();
     try {
-      await for (final chunk in response.stream) {
-        if (isCancelled()) {
-          throw const ConversionException(ImmersiveErrorCode.cancelled);
-        }
-        sink.add(chunk);
-        copied += chunk.length;
-        onProgress?.call(copied, expected);
-      }
+      final received = Completer<void>();
+      final subscription = response.stream.listen(
+        (chunk) {
+          if (isCancelled()) {
+            if (!abort.isCompleted) {
+              abort.complete();
+            }
+            return;
+          }
+          sink.add(chunk);
+          copied += chunk.length;
+          onProgress?.call(copied, expected);
+        },
+        onError: (Object error, StackTrace stack) {
+          if (!received.isCompleted) {
+            received.completeError(error, stack);
+          }
+        },
+        onDone: () {
+          if (!received.isCompleted) {
+            received.complete();
+          }
+        },
+        cancelOnError: true,
+      );
+      unawaited(
+        abort.future.then((_) {
+          if (!received.isCompleted) {
+            received.completeError(cancelled);
+            unawaited(subscription.cancel());
+          }
+        }),
+      );
+      await received.future;
       await sink.flush();
     } on FileSystemException catch (error) {
       throw _writeError(error);
     } on ConversionException {
       rethrow;
+    } on http.RequestAbortedException {
+      throw cancelled;
     } on Exception catch (error) {
       throw ConversionException(ImmersiveErrorCode.sourceLost, '$error');
     } finally {
@@ -170,7 +237,7 @@ class ShareFileSource implements ConversionSource, RemoteVersionLookup {
       }
     }
     if (isCancelled()) {
-      throw const ConversionException(ImmersiveErrorCode.cancelled);
+      throw cancelled;
     }
     if (expected != null && copied != expected) {
       throw ConversionException(ImmersiveErrorCode.sourceLost, 'The share gave $copied bytes of $expected');
