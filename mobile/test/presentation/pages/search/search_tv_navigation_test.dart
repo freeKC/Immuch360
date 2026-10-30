@@ -24,10 +24,17 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
 
-/// A server that finds nothing: the results show "No results found"
+/// A server that finds nothing: the results show "No results found". [asked] keeps the filters it was asked
 class _NoResults extends Fake implements SearchService {
+  _NoResults(this.asked);
+
+  final List<SearchFilter> asked;
+
   @override
-  Future<SearchResult?> search(SearchFilter filter, int page) async => null;
+  Future<SearchResult?> search(SearchFilter filter, int page) async {
+    asked.add(filter);
+    return null;
+  }
 }
 
 class _MockTvApi extends Mock implements TvApi {}
@@ -42,6 +49,7 @@ class _ServerInfo extends ServerInfoNotifier {
 void main() {
   late PresentationContext context;
   late _MockTvApi tvApi;
+  late List<SearchFilter> asked;
 
   setUpAll(() {
     registerFallbackValue(TvTextRequest(title: '', text: '', kind: TvTextKind.text, okLabel: '', cancelLabel: ''));
@@ -50,6 +58,7 @@ void main() {
   setUp(() async {
     context = await PresentationContext.create();
     tvApi = _MockTvApi();
+    asked = [];
   });
 
   tearDown(() async {
@@ -77,7 +86,7 @@ void main() {
             tvModeProvider.overrideWithValue(tvMode),
             tvApiProvider.overrideWithValue(tvApi),
             serverInfoProvider.overrideWith((ref) => _ServerInfo(context.service.serverInfo, features)),
-            paginatedSearchProvider.overrideWith((ref) => PaginatedSearchNotifier(_NoResults())),
+            paginatedSearchProvider.overrideWith((ref) => PaginatedSearchNotifier(_NoResults(asked))),
           ],
           child: Builder(
             builder: (context) => MaterialApp(
@@ -140,8 +149,25 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// A part of a date in the year first dialog of a TV, and its value in the choice dialog that opens
+  Future<void> choose(WidgetTester tester, String part, String choice) async {
+    await tester.tap(find.byKey(Key('tv_date_$part')));
+    await tester.pumpAndSettle();
+    final tile = find.widgetWithText(ListTile, choice);
+    await tester.ensureVisible(tile);
+    await tester.pumpAndSettle();
+    await tester.tap(tile);
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> selectRange(WidgetTester tester) async {
+    await tester.tap(find.byKey(const Key('tv_date_range_apply')));
+    await tester.pumpAndSettle();
+  }
+
   const noResults = 'No results found, try a different search term or combination';
   const suggestions = 'Search for your photos and videos';
+  const endOfDay = Duration(hours: 23, minutes: 59, seconds: 59);
 
   group('Back from the results on a TV', () {
     testWidgets('puts Search back to its start, the focus on the search entry', (tester) async {
@@ -207,6 +233,42 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('tv_date_start_year')), findsNothing);
       expect(find.text('Last month'), findsOneWidget, reason: 'the filter is kept');
+    });
+
+    testWidgets('on a TV a range opened again and selected keeps the end of its chip', (tester) async {
+      await pumpSearch(tester, tvMode: true);
+      await pickDate(tester, chip: 'Date', choice: 'Custom range');
+      await choose(tester, 'start_year', '2024');
+      await choose(tester, 'start_month', 'October');
+      await choose(tester, 'start_day', '1');
+      await choose(tester, 'end_year', '2025');
+      await choose(tester, 'end_month', 'March');
+      await choose(tester, 'end_day', '10');
+      await selectRange(tester);
+      expect(asked.last.date.takenAfter, DateTime(2024, 10, 1));
+      expect(asked.last.date.takenBefore, DateTime(2025, 3, 10).add(endOfDay));
+      expect(find.text('Oct 1, 2024 to Mar 10, 2025'), findsOneWidget);
+
+      // Opened again twice, only the start year changed each time
+      for (final year in [2023, 2022]) {
+        await pickDate(tester, chip: 'Oct 1, ${year + 1} to Mar 10, 2025', choice: 'Custom range');
+        expect(find.text('March 10, 2025'), findsOneWidget, reason: 'the end of the chip, not a day later');
+        await choose(tester, 'start_year', '$year');
+        await selectRange(tester);
+        expect(asked.last.date.takenAfter, DateTime(year, 10, 1));
+        expect(asked.last.date.takenBefore, DateTime(2025, 3, 10).add(endOfDay), reason: 'the end did not move');
+        expect(find.text('Oct 1, $year to Mar 10, 2025'), findsOneWidget);
+      }
+    });
+
+    testWidgets('on a TV Select at once searches the whole of today, as on a phone', (tester) async {
+      await pumpSearch(tester, tvMode: true);
+      await pickDate(tester, chip: 'Date', choice: 'Custom range');
+      await selectRange(tester);
+
+      final today = DateUtils.dateOnly(DateTime.now());
+      expect(asked.last.date.takenAfter, today, reason: 'the photos of earlier today are in');
+      expect(asked.last.date.takenBefore, today.add(endOfDay));
     });
 
     testWidgets('on a phone it opens the calendar, and Cancel clears the date filter as in Immich', (tester) async {

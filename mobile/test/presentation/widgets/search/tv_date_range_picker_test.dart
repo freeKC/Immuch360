@@ -11,8 +11,15 @@ void main() {
   late DateTimeRange? result;
   late bool closed;
 
-  /// The app in [locale] on a TV screen, the date range dialog open on 15 January to 10 September 2026
-  Future<void> openRange(WidgetTester tester, {Locale? locale}) async {
+  /// The app in [locale] on a TV screen, the date range dialog open on 15 January to 10 September 2026, or on
+  /// [initial] from [firstDate] to [lastDate]
+  Future<void> openRange(
+    WidgetTester tester, {
+    Locale? locale,
+    DateTimeRange? initial,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
     tester.view.physicalSize = const Size(1920, 1080);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -42,9 +49,10 @@ void main() {
                     onPressed: () async {
                       result = await showTvSearchDateRangePicker(
                         context: context,
-                        firstDate: DateTime(2023),
-                        lastDate: DateTime(2026, 10, 27),
-                        initialDateRange: DateTimeRange(start: DateTime(2026, 1, 15), end: DateTime(2026, 9, 10)),
+                        firstDate: firstDate ?? DateTime(2023),
+                        lastDate: lastDate ?? DateTime(2026, 10, 27),
+                        initialDateRange:
+                            initial ?? DateTimeRange(start: DateTime(2026, 1, 15), end: DateTime(2026, 9, 10)),
                       );
                       closed = true;
                     },
@@ -130,6 +138,52 @@ void main() {
     await tester.tap(find.byKey(const Key('tv_date_range_apply')));
     await tester.pumpAndSettle();
     expect(result, DateTimeRange(start: DateTime(2023, 1, 15), end: DateTime(2023, 9, 10)));
+  });
+
+  // The Search page gives the time of now and the end of the day of its filter, as Flutter's range picker gets them
+  group('dates given with a time of day', () {
+    final initial = DateTimeRange(start: DateTime(2026, 3, 10, 15, 30), end: DateTime(2026, 3, 12, 23, 59, 59));
+    final firstDate = DateTime(2023, 1, 1, 12);
+    final lastDate = DateTime(2026, 10, 27, 18, 45);
+
+    testWidgets('Select gives the days of the range, without their time', (tester) async {
+      await openRange(tester, initial: initial, lastDate: lastDate);
+      await tester.tap(find.byKey(const Key('tv_date_range_apply')));
+      await tester.pumpAndSettle();
+      expect(result, DateTimeRange(start: DateTime(2026, 3, 10), end: DateTime(2026, 3, 12)));
+    });
+
+    testWidgets('the end on the day of the start is a range of one day', (tester) async {
+      await openRange(tester, initial: initial, lastDate: lastDate);
+      await choose(tester, 'end_day', '10');
+      expect(find.text('Start date must be on or before end date'), findsNothing);
+      await tester.tap(find.byKey(const Key('tv_date_range_apply')));
+      await tester.pumpAndSettle();
+      expect(result, DateTimeRange(start: DateTime(2026, 3, 10), end: DateTime(2026, 3, 10)));
+    });
+
+    testWidgets('a day after the last one comes down to the last day, without its time', (tester) async {
+      await openRange(tester, initial: initial, lastDate: lastDate);
+      await choose(tester, 'end_month', 'October');
+      await choose(tester, 'end_day', '31');
+      expect(value('end_day', '27'), findsOneWidget);
+      await choose(tester, 'start_month', 'October');
+      await choose(tester, 'start_day', '27');
+      expect(find.text('Start date must be on or before end date'), findsNothing);
+      await tester.tap(find.byKey(const Key('tv_date_range_apply')));
+      await tester.pumpAndSettle();
+      expect(result, DateTimeRange(start: DateTime(2026, 10, 27), end: DateTime(2026, 10, 27)));
+    });
+
+    testWidgets('the first day is a whole day, whatever the time of the first date', (tester) async {
+      await openRange(tester, initial: initial, firstDate: firstDate, lastDate: lastDate);
+      await choose(tester, 'start_year', '2023');
+      await choose(tester, 'start_month', 'January');
+      await choose(tester, 'start_day', '1');
+      await tester.tap(find.byKey(const Key('tv_date_range_apply')));
+      await tester.pumpAndSettle();
+      expect(result?.start, DateTime(2023));
+    });
   });
 
   testWidgets('Cancel and Back close the dialog without a range', (tester) async {
