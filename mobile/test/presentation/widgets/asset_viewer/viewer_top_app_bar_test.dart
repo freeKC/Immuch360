@@ -1810,7 +1810,8 @@ void main() {
           any(),
           any(),
           false,
-          any(),
+          // Sharper flat screens, on by default
+          true,
         ),
       ).called(1);
     });
@@ -1843,7 +1844,8 @@ void main() {
           any(),
           any(),
           true,
-          any(),
+          // Sharper flat screens, on by default
+          true,
         ),
       ).called(1);
     });
