@@ -541,6 +541,7 @@
   "ai_immersive_feature_panoramas": "360°-Panoramas",
   "ai_immersive_feature_photos": "3D-Fotos",
   "ai_immersive_feature_scenes": "3D-Szene",
+  "ai_immersive_frame_only_360": "Kei 360°-Markierig, nume es 2:1-Format: prüef, öb jedes es 360°-Foto isch",
   "ai_immersive_free_space": "{free} frei uf {drive}",
   "ai_immersive_glb_failed": "D .glb-Kopie het nöd chönne gschribe wärde: {message}",
   "ai_immersive_glb_saved": "Gspeicheret i {folder}: {name}",

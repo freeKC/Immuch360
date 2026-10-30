@@ -589,6 +589,7 @@
   "ai_immersive_feature_panoramas": "360° പനോരമകൾ",
   "ai_immersive_feature_photos": "3D ഫോട്ടോകൾ",
   "ai_immersive_feature_scenes": "3D ദൃശ്യങ്ങൾ",
+  "ai_immersive_frame_only_360": "360° ടാഗ് ഇല്ല, 2:1 ഫ്രെയിം മാത്രം: ഓരോന്നും 360° ഫോട്ടോ ആണോ എന്ന് പരിശോധിക്കുക",
   "ai_immersive_free_space": "{drive}-ൽ {free} ഒഴിവുണ്ട്",
   "ai_immersive_glb_failed": ".glb പകർപ്പ് എഴുതാനായില്ല: {message}",
   "ai_immersive_glb_saved": "{folder}-ൽ സേവ് ചെയ്തു: {name}",

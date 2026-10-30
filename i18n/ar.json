@@ -596,6 +596,7 @@
   "ai_immersive_feature_panoramas": "بانوراما 360°",
   "ai_immersive_feature_photos": "صور 3D",
   "ai_immersive_feature_scenes": "مشاهد 3D",
+  "ai_immersive_frame_only_360": "لا توجد علامة 360°، إطار 2:1 فقط: تحقق من أن كل صورة هي صورة 360°",
   "ai_immersive_free_space": "{free} متاح على {drive}",
   "ai_immersive_glb_failed": "تعذّرت كتابة نسخة .glb: {message}",
   "ai_immersive_glb_saved": "حُفظ في {folder}: {name}",

@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "Timuɣliwin 360°",
   "ai_immersive_feature_photos": "Tiwlafin 3D",
   "ai_immersive_feature_scenes": "Isuyas 3D",
+  "ai_immersive_frame_only_360": "Ulac tacreḍt 360°, d akatar 2:1 kan: senqed ma yal yiwet d tawlaft 360°",
   "ai_immersive_free_space": "{free} tilellit deg {drive}",
   "ai_immersive_glb_failed": "Anɣel .glb ur yezmir ara ad yettwaru: {message}",
   "ai_immersive_glb_saved": "Yettwasekles deg {folder}: {name}",

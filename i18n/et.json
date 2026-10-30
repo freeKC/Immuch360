@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360° panoraamid",
   "ai_immersive_feature_photos": "3D-fotod",
   "ai_immersive_feature_scenes": "3D-stseenid",
+  "ai_immersive_frame_only_360": "360° silt puudub, ainult 2:1 kaader: kontrolli, et iga on 360° foto",
   "ai_immersive_free_space": "Kettal {drive} on {free} vaba",
   "ai_immersive_glb_failed": ".glb-koopiat ei õnnestunud kirjutada: {message}",
   "ai_immersive_glb_saved": "Salvestatud kausta {folder}: {name}",

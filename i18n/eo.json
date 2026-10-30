@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360°-panoramoj",
   "ai_immersive_feature_photos": "3D-fotoj",
   "ai_immersive_feature_scenes": "3D-scenoj",
+  "ai_immersive_frame_only_360": "Neniu 360°-etikedo, nur 2:1-kadro: kontrolu, ke ĉiu estas 360°-foto",
   "ai_immersive_free_space": "{free} libera sur {drive}",
   "ai_immersive_glb_failed": "La .glb-kopio ne povis esti skribita: {message}",
   "ai_immersive_glb_saved": "Konservita en {folder}: {name}",

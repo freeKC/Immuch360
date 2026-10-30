@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Панорамы 360°",
   "ai_immersive_feature_photos": "3D-фото",
   "ai_immersive_feature_scenes": "3D-сцены",
+  "ai_immersive_frame_only_360": "Нет метки 360°, только кадр 2:1: проверьте, что каждое из них фото 360°",
   "ai_immersive_free_space": "Свободно {free} на {drive}",
   "ai_immersive_glb_failed": "Не удалось записать копию .glb: {message}",
   "ai_immersive_glb_saved": "Сохранено в {folder}: {name}",

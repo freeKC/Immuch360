@@ -131,6 +131,7 @@
   "ai_immersive_feature_panoramas": "Panoramayên 360°",
   "ai_immersive_feature_photos": "Wêneyên 3D",
   "ai_immersive_feature_scenes": "Sehneyên 3D",
+  "ai_immersive_frame_only_360": "Etîketa 360° tune, tenê çarçoveya 2:1: kontrol bike ku her yek wêneyê 360° ye",
   "ai_immersive_free_space": "{free} vala li ser {drive}",
   "ai_immersive_glb_failed": "Kopiya .glb nehat nivîsandin: {message}",
   "ai_immersive_glb_saved": "Di {folder} de hat tomarkirin: {name}",

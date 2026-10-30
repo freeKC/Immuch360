@@ -137,6 +137,7 @@
   "ai_immersive_feature_panoramas": "360° панорамӑсем",
   "ai_immersive_feature_photos": "3D сӑнӳкерчӗксем",
   "ai_immersive_feature_scenes": "3D сценӑсем",
+  "ai_immersive_frame_only_360": "360° паллӑ ҫук, 2:1 кадр ҫеҫ: кашни 360° сӑнӳкерчӗк пулнине тӗрӗслӗр",
   "ai_immersive_free_space": "{drive} ҫинче {free} пушӑ",
   "ai_immersive_glb_failed": ".glb копине ҫырма май килмерӗ: {message}",
   "ai_immersive_glb_saved": "{folder} ӑшне упранӑ: {name}",

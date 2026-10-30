@@ -232,6 +232,7 @@
   "ai_immersive_feature_panoramas": "360° პანორამები",
   "ai_immersive_feature_photos": "3D ფოტოები",
   "ai_immersive_feature_scenes": "3D სცენები",
+  "ai_immersive_frame_only_360": "360° ჭდე არ არის, მხოლოდ 2:1 კადრი: შეამოწმეთ, რომ თითოეული 360° ფოტოა",
   "ai_immersive_free_space": "{free} თავისუფალია {drive}-ზე",
   "ai_immersive_glb_failed": ".glb ასლის ჩაწერა ვერ მოხერხდა: {message}",
   "ai_immersive_glb_saved": "შენახულია {folder}-ში: {name}",

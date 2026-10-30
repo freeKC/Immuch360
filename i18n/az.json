@@ -251,6 +251,7 @@
   "ai_immersive_feature_panoramas": "360° panoramalar",
   "ai_immersive_feature_photos": "3D fotolar",
   "ai_immersive_feature_scenes": "3D səhnələr",
+  "ai_immersive_frame_only_360": "360° etiketi yoxdur, yalnız 2:1 çərçivə: hər birinin 360° foto olduğunu yoxlayın",
   "ai_immersive_free_space": "{drive} diskində {free} boşdur",
   "ai_immersive_glb_failed": ".glb nüsxəsi yazıla bilmədi: {message}",
   "ai_immersive_glb_saved": "{folder} qovluğunda saxlanıldı: {name}",

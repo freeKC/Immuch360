@@ -562,6 +562,7 @@
   "ai_immersive_feature_panoramas": "360°-panoraamat",
   "ai_immersive_feature_photos": "3D-kuvat",
   "ai_immersive_feature_scenes": "3D-ympäristöt",
+  "ai_immersive_frame_only_360": "Ei 360°-merkintää, vain 2:1-kuvasuhde: tarkista, että jokainen on 360°-kuva",
   "ai_immersive_free_space": "{free} vapaana asemalla {drive}",
   "ai_immersive_glb_failed": ".glb-kopiota ei voitu kirjoittaa: {message}",
   "ai_immersive_glb_saved": "Tallennettu kansioon {folder}: {name}",

@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "Panorama 360°",
   "ai_immersive_feature_photos": "Gambo 3D",
   "ai_immersive_feature_scenes": "Adege 3D",
+  "ai_immersive_frame_only_360": "Takdok tande 360°, bingkai 2:1 jah: perikso tiap-tiap satu tu gambo 360°",
   "ai_immersive_free_space": "{free} kosong kat {drive}",
   "ai_immersive_glb_failed": "Salinan .glb tok leh ditulis: {message}",
   "ai_immersive_glb_saved": "Doh simpang dale {folder}: {name}",

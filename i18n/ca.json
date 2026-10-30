@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "Panorames 360°",
   "ai_immersive_feature_photos": "Fotos 3D",
   "ai_immersive_feature_scenes": "Escenes 3D",
+  "ai_immersive_frame_only_360": "Sense etiqueta 360°, només el format 2:1: comproveu que cadascuna sigui una foto 360°",
   "ai_immersive_free_space": "{free} lliures a {drive}",
   "ai_immersive_glb_failed": "No s’ha pogut escriure la còpia .glb: {message}",
   "ai_immersive_glb_saved": "Desat a {folder}: {name}",

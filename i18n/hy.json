@@ -115,6 +115,7 @@
   "ai_immersive_feature_panoramas": "360° համայնապատկերներ",
   "ai_immersive_feature_photos": "3D լուսանկարներ",
   "ai_immersive_feature_scenes": "3D տեսարաններ",
+  "ai_immersive_frame_only_360": "360° պիտակ չկա, միայն 2:1 կադր. ստուգեք, որ յուրաքանչյուրը 360° լուսանկար է",
   "ai_immersive_free_space": "{drive}-ում ազատ է {free}",
   "ai_immersive_glb_failed": ".glb պատճենը հնարավոր չեղավ գրել. {message}",
   "ai_immersive_glb_saved": "Պահվեց {folder}-ում. {name}",

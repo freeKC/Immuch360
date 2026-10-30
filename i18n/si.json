@@ -82,6 +82,7 @@
   "ai_immersive_feature_panoramas": "360° පැනරාමා",
   "ai_immersive_feature_photos": "3D ඡායාරූප",
   "ai_immersive_feature_scenes": "3D දෘශ්‍ය",
+  "ai_immersive_frame_only_360": "360° ටැගයක් නැත, 2:1 රාමුව පමණි: එක් එක් එක 360° ඡායාරූපයක් දැයි පරීක්ෂා කරන්න",
   "ai_immersive_free_space": "{drive} හි {free} නිදහස්",
   "ai_immersive_glb_failed": ".glb පිටපත ලිවිය නොහැකි විය: {message}",
   "ai_immersive_glb_saved": "{folder} හි සුරකින ලදී: {name}",

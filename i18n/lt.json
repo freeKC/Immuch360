@@ -602,6 +602,7 @@
   "ai_immersive_feature_panoramas": "360° panoramos",
   "ai_immersive_feature_photos": "3D nuotraukos",
   "ai_immersive_feature_scenes": "3D scenos",
+  "ai_immersive_frame_only_360": "Nėra 360° žymos, tik 2:1 kadras: patikrinkite, ar kiekviena yra 360° nuotrauka",
   "ai_immersive_free_space": "Diske {drive} laisva {free}",
   "ai_immersive_glb_failed": ".glb kopijos nepavyko įrašyti: {message}",
   "ai_immersive_glb_saved": "Išsaugota aplanke {folder}: {name}",

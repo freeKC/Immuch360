@@ -95,6 +95,7 @@
   "ai_immersive_feature_panoramas": "Ol 360° panorama",
   "ai_immersive_feature_photos": "Ol 3D foto",
   "ai_immersive_feature_scenes": "Ol 3D sin",
+  "ai_immersive_frame_only_360": "I no gat 360° tag, frem 2:1 nomo: jekem se evriwan i 360° foto",
   "ai_immersive_free_space": "{free} i fri long {drive}",
   "ai_immersive_glb_failed": "App i no save raetem .glb kopi: {message}",
   "ai_immersive_glb_saved": "I sevem long {folder}: {name}",

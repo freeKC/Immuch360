@@ -173,6 +173,7 @@
   "ai_immersive_feature_panoramas": "360° પેનોરમા",
   "ai_immersive_feature_photos": "3D ફોટા",
   "ai_immersive_feature_scenes": "3D દૃશ્યો",
+  "ai_immersive_frame_only_360": "કોઈ 360° ટેગ નથી, માત્ર 2:1 ફ્રેમ: દરેક 360° ફોટો છે કે નહીં તે તપાસો",
   "ai_immersive_free_space": "{drive} પર {free} ખાલી",
   "ai_immersive_glb_failed": ".glb નકલ લખી શકાઈ નહીં: {message}",
   "ai_immersive_glb_saved": "{folder} માં સાચવ્યું: {name}",

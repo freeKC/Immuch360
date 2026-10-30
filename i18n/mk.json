@@ -198,6 +198,7 @@
   "ai_immersive_feature_panoramas": "360° панорами",
   "ai_immersive_feature_photos": "3D фотографии",
   "ai_immersive_feature_scenes": "3D сцени",
+  "ai_immersive_frame_only_360": "Нема ознака 360°, само кадар 2:1: проверете дали секоја е 360° фотографија",
   "ai_immersive_free_space": "{free} слободно на {drive}",
   "ai_immersive_glb_failed": ".glb копијата не можеше да се запише: {message}",
   "ai_immersive_glb_saved": "Зачувано во {folder}: {name}",

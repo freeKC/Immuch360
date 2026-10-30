@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "פנורמות 360°",
   "ai_immersive_feature_photos": "תמונות 3D",
   "ai_immersive_feature_scenes": "סצנות 3D",
+  "ai_immersive_frame_only_360": "אין תג 360°, רק מסגרת 2:1: ודאו שכל אחת היא תמונת 360°",
   "ai_immersive_free_space": "{free} פנויים ב-{drive}",
   "ai_immersive_glb_failed": "לא ניתן היה לכתוב את עותק ה-.glb: {message}",
   "ai_immersive_glb_saved": "נשמר ב-{folder}: {name}",

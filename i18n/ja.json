@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360° パノラマ",
   "ai_immersive_feature_photos": "3D 写真",
   "ai_immersive_feature_scenes": "3D シーン",
+  "ai_immersive_frame_only_360": "360° タグなし、2:1 の比率のみ: それぞれが 360° 写真か確認してください",
   "ai_immersive_free_space": "{drive} の空き {free}",
   "ai_immersive_glb_failed": ".glb のコピーを書き込めませんでした: {message}",
   "ai_immersive_glb_saved": "{folder} に保存しました: {name}",

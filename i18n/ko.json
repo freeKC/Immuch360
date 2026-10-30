@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360° 파노라마",
   "ai_immersive_feature_photos": "3D 사진",
   "ai_immersive_feature_scenes": "3D 장면",
+  "ai_immersive_frame_only_360": "360° 태그 없음, 2:1 비율만 해당: 각 사진이 360° 사진인지 확인하세요",
   "ai_immersive_free_space": "{drive}에 {free} 남음",
   "ai_immersive_glb_failed": ".glb 사본을 쓸 수 없습니다: {message}",
   "ai_immersive_glb_saved": "{folder}에 저장됨: {name}",

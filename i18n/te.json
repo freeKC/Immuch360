@@ -452,6 +452,7 @@
   "ai_immersive_feature_panoramas": "360° పనోరమాలు",
   "ai_immersive_feature_photos": "3D ఫోటోలు",
   "ai_immersive_feature_scenes": "3D దృశ్యాలు",
+  "ai_immersive_frame_only_360": "360° ట్యాగ్ లేదు, 2:1 ఫ్రేమ్ మాత్రమే: ప్రతి ఒక్కటి 360° ఫోటో అని తనిఖీ చేయండి",
   "ai_immersive_free_space": "{drive}లో {free} ఖాళీ",
   "ai_immersive_glb_failed": ".glb కాపీని రాయలేకపోయాము: {message}",
   "ai_immersive_glb_saved": "{folder} లో సేవ్ చేయబడింది: {name}",

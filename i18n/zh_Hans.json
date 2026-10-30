@@ -603,6 +603,7 @@
   "ai_immersive_feature_panoramas": "360° 全景图",
   "ai_immersive_feature_photos": "3D 照片",
   "ai_immersive_feature_scenes": "3D 场景",
+  "ai_immersive_frame_only_360": "没有 360° 标记，仅为 2:1 比例：请逐一确认是否为 360° 照片",
   "ai_immersive_free_space": "{drive} 可用 {free}",
   "ai_immersive_glb_failed": "无法写入 .glb 副本：{message}",
   "ai_immersive_glb_saved": "已保存到 {folder}：{name}",
