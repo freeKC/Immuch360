@@ -2,6 +2,8 @@
 // of its file found (see SphericalProbeService), and which file of a server video the players load: the original or
 // the server's transcoded stream, see chooseVideoSource.
 
+import 'dart:math' as math;
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
@@ -31,33 +33,58 @@ String serverTranscodedVideoUrl(String videoId) =>
 
 /// Where a video plays from: [url], and [fallbackUrl], the server's transcoded stream that a native player switches
 /// to by itself when it cannot play the original, null when there is none to switch to (a file on the device plays as
-/// it is). [notice] is what to tell the user about the file chosen, null for nothing.
+/// it is, and a copy beyond the decoders is never one). [notice] is what to tell the user about the file chosen, null
+/// for nothing. With a [refusal], nothing the server has decodes on the device: the player says so at once rather than
+/// load [url], which it tries only when the user asks to play anyway. [copyBeyondDecoders] tells, while the original
+/// plays, that the server's copy is beyond the decoders (the immersive viewer says it when it has to download the
+/// original rather than stream the copy); null otherwise. [kind] is the file [url] is.
 class ChosenVideoSource {
-  const ChosenVideoSource({required this.url, this.fallbackUrl, this.notice});
+  const ChosenVideoSource({
+    required this.url,
+    this.fallbackUrl,
+    this.notice,
+    this.refusal,
+    this.copyBeyondDecoders,
+    this.kind = VideoSourceKind.original,
+  });
 
   final String url;
   final String? fallbackUrl;
   final VideoSourceNotice? notice;
+  final VideoSourceRefusal? refusal;
+  final VideoSourceNotice? copyBeyondDecoders;
+  final VideoSourceKind kind;
 
   @override
-  String toString() => 'ChosenVideoSource(url: $url, fallbackUrl: $fallbackUrl, notice: $notice)';
+  String toString() =>
+      'ChosenVideoSource(url: $url, fallbackUrl: $fallbackUrl, notice: $notice, refusal: $refusal, '
+      'copyBeyondDecoders: $copyBeyondDecoders)';
 }
 
 /// Asks the native decoder check whether the device decodes the video a probe describes, and keeps the answers in
 /// memory: the decoders do not change while the app runs, and the videos of a library come in a few formats only.
 ///
 /// [client] gives the client that asks the server for the size of a video and of its transcoded stream, see
-/// [transcodeIsOriginal]; without one, the transcoded stream is taken for a file of its own.
+/// [transcodeIsOriginal]; without one, the transcoded stream is taken for a file of its own. [probeTranscoded] reads
+/// what the server's transcoded stream of a video declares (see SphericalProbeService.probeTranscoded); without it,
+/// nothing is known of that stream, which then counts as one that may play.
 class VideoSourceService {
   VideoSourceService(
     this._api, {
     this._client,
+    this._probeTranscoded,
     this.timeout = const Duration(seconds: 2),
     this.sizeTimeout = const Duration(seconds: 5),
   });
 
   final VideoDecoderApi _api;
   final http.Client Function()? _client;
+  final Future<SphericalProbe?> Function(String videoId)? _probeTranscoded;
+
+  /// The largest frame, long side by short side, that every decoder takes whatever its codec: the server's copy of a
+  /// video no larger than that, never larger than its original, plays without a look at it
+  static const smallLongSide = 1920;
+  static const smallShortSide = 1088;
 
   /// Longest wait for the decoder check
   final Duration timeout;
@@ -215,32 +242,75 @@ class VideoSourceService {
     return playsOriginal ? verdict : null;
   }
 
-  /// Which file of the server video [videoId] plays under [policy] (see [chooseVideoSource]), with [probe], what its
-  /// file declares, checked against the decoders of the device. Before it switches to the transcoded stream, it makes
-  /// sure the server has one (see [transcodeIsOriginal]): otherwise the original plays, with a word that the device
-  /// may not decode it rather than one of a switch that would not happen.
+  /// Which file of the server video [videoId] plays under [policy], decodability first (see [chooseVideoSource]):
+  /// the original, of which [probe] tells what its file declares (or [probeOriginal] reads it, only once its verdict
+  /// matters: the policy did not read the file and the copy does not decode), against the server's transcoded stream,
+  /// which the server may not have (see [transcodeIsOriginal]) and of which [probeTranscoded] tells, each checked
+  /// against the decoders of the device. [forced] is the file the user chose for this video in its details.
+  /// [wantsFallback]: the player switches to the copy by itself when the original fails (the immersive viewer), so the
+  /// copy is looked at even when the original plays, never to be a fallback that does not decode. [width] x [height]
+  /// is the frame of the video as the server records it: within [smallLongSide] x [smallShortSide], the copy is not
+  /// looked at, every decoder taking it.
   Future<ChosenVideoSource> serverSource({
     required String videoId,
     required VideoSourcePolicy policy,
     SphericalProbe? probe,
+    Future<SphericalProbe?> Function()? probeOriginal,
+    VideoSourceKind? forced,
+    bool wantsFallback = false,
+    int? width,
+    int? height,
   }) async {
-    final verdict = policy.readsTheFile ? await this.verdict(probe) : null;
-    // Only a switch away from the original asks the server: the other choices play the same whatever its stream is
-    final switches = policy == VideoSourcePolicy.preferOriginalWithinDecoder && verdict?.supported == false;
-    final hasTranscode = !switches || !await transcodeIsOriginal(videoId);
-    final choice = chooseVideoSource(policy: policy, probe: probe, verdict: verdict, hasTranscode: hasTranscode);
-    if (verdict != null) {
-      _log.info('$videoId under $policy: $choice, ${verdict.reason ?? 'no reason given'}');
+    var original = VideoCandidate.of(probe, policy.readsTheFile ? await verdict(probe) : null);
+    final forcedKind = forced ?? (policy == VideoSourcePolicy.alwaysOriginal ? VideoSourceKind.original : null);
+    // The copy matters when it may play or be the fallback; under the original forced it plays no part
+    final copyMatters = switch (forcedKind) {
+      VideoSourceKind.original => false,
+      VideoSourceKind.transcoded => true,
+      null => policy == VideoSourcePolicy.alwaysTranscoded || wantsFallback || original.undecodable,
+    };
+    final small =
+        width != null &&
+        height != null &&
+        math.max(width, height) <= smallLongSide &&
+        math.min(width, height) <= smallShortSide;
+    VideoCandidate? copy = VideoCandidate.unknown;
+    if (copyMatters && !(small && !original.undecodable)) {
+      copy = await transcodeIsOriginal(videoId) ? null : await _copyCandidate(videoId);
+    }
+    // The original read late, under "Always the transcoded stream", once the choice depends on it
+    if (original.verdict == null && forcedKind == null && (copy == null || copy.undecodable)) {
+      final late = probe ?? await probeOriginal?.call();
+      original = VideoCandidate.of(late, await verdict(late));
+    }
+    final choice = chooseVideoSource(policy: policy, original: original, copy: copy, forced: forced);
+    if (original.verdict != null || copy?.verdict != null) {
+      _log.info(
+        '$videoId under $policy${forced != null ? ', $forced forced' : ''}: $choice; original $original, copy $copy',
+      );
     }
     final transcoded = serverTranscodedVideoUrl(videoId);
-    // A fallback only when the server has a transcoded stream: otherwise a native player would reload the same
-    // original on an error and say it switched
-    final allowFallback = choice.allowFallback && !await transcodeIsOriginal(videoId);
+    final playsOriginal = choice.kind == VideoSourceKind.original;
     return ChosenVideoSource(
-      url: choice.kind == VideoSourceKind.original ? serverOriginalVideoUrl(videoId) : transcoded,
-      fallbackUrl: allowFallback ? transcoded : null,
+      url: playsOriginal ? serverOriginalVideoUrl(videoId) : transcoded,
+      // A fallback only when the server has a transcoded stream: otherwise a native player would reload the same
+      // original on an error and say it switched
+      fallbackUrl: choice.allowFallback && copy != null && !await transcodeIsOriginal(videoId) ? transcoded : null,
       notice: choice.notice,
+      refusal: choice.refusal,
+      copyBeyondDecoders: playsOriginal && copy != null && copy.undecodable ? copy.notice(.originalOverCopy) : null,
+      kind: choice.kind,
     );
+  }
+
+  // What the server's transcoded stream of [videoId] declares, with the verdict of the decoder check on it
+  Future<VideoCandidate> _copyCandidate(String videoId) async {
+    final read = _probeTranscoded;
+    if (read == null) {
+      return VideoCandidate.unknown;
+    }
+    final probe = await read(videoId);
+    return VideoCandidate.of(probe, await verdict(probe));
   }
 }
 
@@ -252,9 +322,10 @@ final videoSourceClientProvider = Provider<http.Client>((_) => NetworkRepository
 final videoSourceServiceProvider = Provider<VideoSourceService>(
   (ref) => VideoSourceService(
     ref.watch(videoDecoderApiProvider),
-    // Read when a size is asked, which only a switch to the transcoded stream does: the shared client exists once
-    // the app has a server
+    // Read when a size is asked, which only a look at the transcoded stream does: the shared client exists once the
+    // app has a server
     client: () => ref.read(videoSourceClientProvider),
+    probeTranscoded: (videoId) => ref.read(sphericalProbeServiceProvider).probeTranscoded(videoId),
   ),
 );
 
@@ -316,12 +387,29 @@ Map<String, String> videoSourceLabels(Translations t) => {
 
 extension VideoSourceNoticeMessage on VideoSourceNotice {
   /// The message that tells the user about the file chosen, in the words of [t]
-  String message(Translations t) => switch (kind) {
-    VideoSourceNoticeKind.switched => t.video_source_switched(codec: codec, width: '$width', height: '$height'),
-    VideoSourceNoticeKind.originalForced => t.video_source_original_forced(
-      codec: codec,
-      width: '$width',
-      height: '$height',
-    ),
-  };
+  String message(Translations t) {
+    final w = '$width';
+    final h = '$height';
+    return switch (kind) {
+      VideoSourceNoticeKind.switched => t.video_source_copy_plays(codec: codec, width: w, height: h),
+      VideoSourceNoticeKind.originalForced => t.video_source_original_forced(codec: codec, width: w, height: h),
+      VideoSourceNoticeKind.originalOverCopy => t.video_source_original_plays(codec: codec, width: w, height: h),
+      VideoSourceNoticeKind.copyForced => t.video_source_copy_forced(codec: codec, width: w, height: h),
+      VideoSourceNoticeKind.beyondDecoders => t.video_source_undecodable(codec: codec, width: w, height: h),
+    };
+  }
+}
+
+extension VideoSourceRefusalMessage on VideoSourceRefusal {
+  /// Why the video does not play and what to change in Immich, in the words of [t]: the frame beyond the largest one
+  /// the device decodes in that codec, or no decoder at all for the codec
+  String message(Translations t) => hasDecoder
+      ? t.video_cannot_decode(
+          codec: codec,
+          width: '$width',
+          height: '$height',
+          maxWidth: '$maxWidth',
+          maxHeight: '$maxHeight',
+        )
+      : '${t.video_failed_no_decoder(codec: codec)}\n${t.video_failed_server_hint}';
 }

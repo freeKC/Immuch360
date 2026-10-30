@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,6 +50,23 @@ ByteRangeReader httpRangeReader(http.Client client, Uri url, {Map<String, String
       final bytes = builder.takeBytes();
       return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
     };
+
+/// [read], with the first [headLength] bytes of the file read once and every read within them served from there: a
+/// server that ignores the range still gives the head of its file, where the transcoded stream of Immich keeps its moov
+/// box (faststart), however long the video. A read past the head goes to [read].
+ByteRangeReader headPrefetchReader(ByteRangeReader read, {int headLength = 1 << 20}) {
+  Future<Uint8List>? head;
+  return (offset, length) async {
+    if (offset + length > headLength) {
+      return read(offset, length);
+    }
+    final bytes = await (head ??= read(0, headLength));
+    if (offset >= bytes.length) {
+      return Uint8List(0);
+    }
+    return Uint8List.sublistView(bytes, offset, math.min(offset + length, bytes.length));
+  };
+}
 
 /// Probes a file on the device, see [probeSphericalMetadata]
 Future<SphericalProbe> probeSphericalFile(File file) async {
@@ -114,6 +132,47 @@ class SphericalProbeService {
         _results
           ..remove(key)
           ..[key] = result;
+        while (_results.length > maxEntries) {
+          _results.remove(_results.keys.first);
+        }
+      }
+      return result;
+    } finally {
+      unawaited(_pending.remove(key));
+    }
+  }
+
+  /// What the server's transcoded stream of the video [videoId] declares (its codec and frame size, which the server's
+  /// transcoding settings decide: H.264 at the original 5760 x 2880 for one), read from the head of the stream (see
+  /// [headPrefetchReader]); null without a server, and when the probe fails or times out. Kept per video, apart from
+  /// the probes of the assets.
+  Future<SphericalProbe?> probeTranscoded(String videoId) async {
+    final key = 'playback:$videoId';
+    final known = _results[key];
+    if (known != null) {
+      return known;
+    }
+    final endpoint = _serverEndpoint();
+    if (endpoint == null) {
+      return null;
+    }
+    final pending = _pending[key] ??= () async {
+      try {
+        final url = Uri.parse('$endpoint/assets/$videoId/video/playback');
+        final probe = await probeSphericalMetadata(
+          headPrefetchReader(httpRangeReader(_client(), url, headers: _headers())),
+        ).timeout(timeout);
+        _log.fine('Transcoded stream of $videoId: $probe');
+        return probe;
+      } catch (error) {
+        _log.info('Could not read the transcoded stream of $videoId: $error');
+        return null;
+      }
+    }();
+    try {
+      final result = await pending;
+      if (result != null) {
+        _results[key] = result;
         while (_results.length > maxEntries) {
           _results.remove(_results.keys.first);
         }

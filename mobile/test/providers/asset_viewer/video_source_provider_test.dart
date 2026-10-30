@@ -45,6 +45,9 @@ class _FakeVideoDecoderApi extends VideoDecoderApi {
   bool supported = true;
   Exception? failure;
   bool hangs = false;
+
+  /// Answers as a Meta Quest 3 does when set: HEVC up to 8192 x 4320, H.264 up to 4096 x 2304, whatever [supported]
+  bool quest = false;
   final questions = <(String, String?, int, int, double)>[];
 
   /// The bit depth, the transfer and the number of streams of each question, in the order of [questions]
@@ -69,6 +72,18 @@ class _FakeVideoDecoderApi extends VideoDecoderApi {
     final failure = this.failure;
     if (failure != null) {
       throw failure;
+    }
+    if (quest) {
+      final hevc = codec.startsWith('hvc') || codec.startsWith('hev');
+      final maxWidth = hevc ? 8192 : 4096;
+      final maxHeight = hevc ? 4320 : 2304;
+      return DecodeVerdict(
+        supported: width <= maxWidth && height <= maxHeight,
+        hardware: true,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        reason: 'Quest 3',
+      );
     }
     return DecodeVerdict(supported: supported, hardware: true, maxWidth: 4096, maxHeight: 4096, reason: 'test');
   }
@@ -289,7 +304,7 @@ void main() {
       ], unorderedEquals([('HEAD', original), ('HEAD', transcoded)]));
     });
 
-    test('keeps the original when the server transcoded nothing, and says it may not play', () async {
+    test('refuses at once the original the device cannot decode when the server transcoded nothing', () async {
       api.supported = false;
       respond = (request) async => sized(request, original: 1000, transcoded: 1000);
 
@@ -297,7 +312,11 @@ void main() {
 
       expect(source.url, original);
       expect(source.fallbackUrl, isNull, reason: 'the transcoded stream is the same file');
-      expect(source.notice, const VideoSourceNotice(.originalForced, codec: 'HEVC', width: 7680, height: 3840));
+      expect(source.notice, isNull);
+      expect(
+        source.refusal,
+        const VideoSourceRefusal(codec: 'HEVC', width: 7680, height: 3840, maxWidth: 4096, maxHeight: 4096),
+      );
     });
 
     test('asks the server for the sizes once per video', () async {
@@ -344,14 +363,17 @@ void main() {
       expect(await service.transcodeIsOriginal('video-1'), isFalse);
     });
 
-    test('asks the server for the sizes only when it hands out a fallback', () async {
-      for (final (policy, supported) in [
-        (VideoSourcePolicy.alwaysOriginal, false),
-        (VideoSourcePolicy.alwaysTranscoded, false),
-      ]) {
-        api.supported = supported;
-        await service.serverSource(videoId: 'video-1', policy: policy, probe: probe);
-      }
+    test('asks the server for the sizes only when the copy may play or be the fallback', () async {
+      api.supported = false;
+      await service.serverSource(videoId: 'video-1', policy: .alwaysOriginal, probe: probe);
+      // A frame every decoder takes: the copy, no larger, plays without a look at it
+      await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probe: probe,
+        width: 1920,
+        height: 1080,
+      );
       expect(sizeRequests, isEmpty);
 
       // The original with the transcoded stream at hand: the fallback is only handed out when it is a file of its own
@@ -389,6 +411,217 @@ void main() {
       expect(source.fallbackUrl, isNull);
       expect(source.notice, isNull);
       expect(api.questions, isEmpty);
+    });
+  });
+
+  group('VideoSourceService.serverSource, decodability first', () {
+    const original = '$server/assets/video-1/original';
+    const transcoded = '$server/assets/video-1/video/playback';
+    const hevcOriginal = SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+    const h264Original = SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+    const h264FullSizeCopy = SphericalProbe(
+      codec: 'avc1',
+      codecs: 'avc1.42C03C',
+      codedWidth: 5760,
+      codedHeight: 2880,
+      frameRate: 29.97,
+    );
+    const h264SmallCopy = SphericalProbe(codec: 'avc1', codedWidth: 1920, codedHeight: 960, frameRate: 29.97);
+
+    late SphericalProbe? copyProbe;
+    late SphericalProbe? lateOriginal;
+    late List<String> copyProbes;
+    late int originalProbes;
+    late VideoSourceService service;
+
+    setUp(() {
+      api.quest = true;
+      copyProbe = h264FullSizeCopy;
+      lateOriginal = null;
+      copyProbes = [];
+      originalProbes = 0;
+      service = VideoSourceService(
+        api,
+        client: () => MockClient((request) {
+          sizeRequests.add(request);
+          return respond(request);
+        }),
+        probeTranscoded: (videoId) async {
+          copyProbes.add(videoId);
+          return copyProbe;
+        },
+        timeout: const Duration(milliseconds: 100),
+        sizeTimeout: const Duration(milliseconds: 100),
+      );
+    });
+
+    Future<SphericalProbe?> probeOriginal() async {
+      originalProbes++;
+      return lateOriginal;
+    }
+
+    test(
+      'the headset plays the HEVC original rather than the H.264 copy at its size, never falling back to it',
+      () async {
+        // The immersive viewer of 30 October: the server transcodes to H.264 at the original 5760 x 2880
+        final source = await service.serverSource(
+          videoId: 'video-1',
+          policy: .preferOriginalWithinDecoder,
+          probe: hevcOriginal,
+          wantsFallback: true,
+        );
+
+        expect(source.url, original);
+        expect(source.fallbackUrl, isNull, reason: 'the copy does not decode on the headset');
+        expect(source.notice, isNull, reason: 'the original plays, as the setting asked');
+        expect(
+          source.copyBeyondDecoders,
+          const VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880),
+        );
+        expect(copyProbes, ['video-1']);
+      },
+    );
+
+    test('the in-app player plays the HEVC original under "Always the transcoded stream", and says why', () async {
+      // The in-app player of 30 October: the setting asks for the copy, which stalls after 10 s
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probeOriginal: () async {
+          originalProbes++;
+          return hevcOriginal;
+        },
+      );
+
+      expect(source.url, original);
+      expect(source.fallbackUrl, isNull);
+      expect(source.notice, const VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880));
+      expect(source.refusal, isNull);
+      expect(originalProbes, 1, reason: 'the original is only read once the copy does not decode');
+    });
+
+    test('plays the original of a server without Range whose probe found nothing, rather than the copy', () async {
+      // The original of FreeKC's server cannot be probed (no Range, its moov at the end): unknown beats undecodable
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probeOriginal: probeOriginal,
+      );
+
+      expect(source.url, original);
+      expect(source.notice?.kind, VideoSourceNoticeKind.originalOverCopy);
+    });
+
+    test('plays a smaller copy rather than an H.264 original above 4096 x 2304', () async {
+      copyProbe = h264SmallCopy;
+
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: h264Original,
+      );
+
+      expect(source.url, transcoded);
+      expect(source.notice, const VideoSourceNotice(.switched, codec: 'H.264', width: 5760, height: 2880));
+      expect(source.refusal, isNull);
+    });
+
+    test('refuses at once when neither the original nor the copy decodes', () async {
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: h264Original,
+      );
+
+      expect(
+        source.refusal,
+        const VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
+      );
+      expect(source.url, transcoded, reason: 'what plays when the user asks to play anyway');
+    });
+
+    test(
+      'refuses at once the undecodable original of a server that has no copy, under every policy but the forced one',
+      () async {
+        respond = (request) async => sized(request, original: 1000, transcoded: 1000);
+        lateOriginal = h264Original;
+
+        for (final policy in [VideoSourcePolicy.preferOriginalWithinDecoder, VideoSourcePolicy.alwaysTranscoded]) {
+          final source = await service.serverSource(
+            videoId: 'video-1',
+            policy: policy,
+            probe: policy.readsTheFile ? h264Original : null,
+            probeOriginal: probeOriginal,
+          );
+          expect(source.refusal?.codec, 'H.264', reason: '$policy');
+          expect(source.url, original, reason: '$policy');
+        }
+        expect(copyProbes, isEmpty, reason: 'no copy to read');
+
+        final forced = await service.serverSource(videoId: 'video-1', policy: .alwaysOriginal, probe: h264Original);
+        expect(forced.refusal, isNull);
+        expect(forced.notice?.kind, VideoSourceNoticeKind.originalForced);
+      },
+    );
+
+    test('plays what the user forced from the details', () async {
+      final copy = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+        forced: .transcoded,
+      );
+      expect(copy.url, transcoded);
+      expect(copy.notice, const VideoSourceNotice(.copyForced, codec: 'H.264', width: 5760, height: 2880));
+
+      copyProbes.clear();
+      sizeRequests.clear();
+      final originalSource = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probe: h264Original,
+        forced: .original,
+      );
+      expect(originalSource.url, original);
+      expect(copyProbes, isEmpty, reason: 'the copy plays no part');
+      expect(sizeRequests, isEmpty);
+    });
+
+    test('keeps the old choice when the device measured nothing', () async {
+      api.quest = false;
+      api.failure = PlatformException(code: 'no-check');
+
+      final immersive = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: h264Original,
+        wantsFallback: true,
+      );
+      expect(immersive.url, original);
+      expect(immersive.fallbackUrl, transcoded);
+
+      final inApp = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probeOriginal: probeOriginal,
+      );
+      expect(inApp.url, transcoded);
+      expect(inApp.notice, isNull);
+      expect(originalProbes, 0);
+    });
+
+    test('does not read the copy of a video whose frame every decoder takes', () async {
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probeOriginal: probeOriginal,
+        width: 1080,
+        height: 1920,
+      );
+
+      expect(source.url, transcoded);
+      expect(copyProbes, isEmpty);
+      expect(sizeRequests, isEmpty);
     });
   });
 

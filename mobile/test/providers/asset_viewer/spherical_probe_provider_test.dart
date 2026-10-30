@@ -223,6 +223,71 @@ void main() {
     });
   });
 
+  group('SphericalProbeService.probeTranscoded', () {
+    // The server's transcoded stream, as Immich writes it: its moov box first (faststart), larger than the first read
+    // of the probe for a long video, then the media data
+    final copy = mp4File(
+      mp4Moov([
+        mp4VideoTrack(
+          const [],
+          codec: 'avc1',
+          config: mp4AvcC(profile: 0x42, level: 0x3c),
+          width: 5760,
+          height: 2880,
+          stsz: mp4Stsz(sizes: List.filled(30000, 12000)),
+        ),
+      ]),
+      mdat: mp4Box('mdat', mp4Zeros(2 << 20)),
+    );
+
+    test('reads the head of the stream once, on a server that ignores the range', () async {
+      final probe = await service(_server(copy, requests, ignoresRange: true)).probeTranscoded('video-1');
+
+      expect(probe?.codec, 'avc1');
+      expect(probe?.codedWidth, 5760);
+      expect(probe?.codedHeight, 2880);
+      expect(requests, hasLength(1), reason: 'the moov box lies in the head read once');
+      expect(requests.single.url.toString(), '$_endpoint/assets/video-1/video/playback');
+      expect(requests.single.headers['x-custom'], 'yes');
+    });
+
+    test('reads it with range requests too, and keeps it apart from the original of the same video', () async {
+      final probes = service(_server(copy, requests));
+
+      expect((await probes.probeTranscoded('video-1'))?.codedWidth, 5760);
+      final count = requests.length;
+      expect((await probes.probeTranscoded('video-1'))?.codedWidth, 5760);
+      expect(requests, hasLength(count), reason: 'kept in memory');
+      expect(probes.cached(RemoteAssetFactory.create(type: .video).copyWith(id: 'video-1')), isNull);
+    });
+
+    test('gives null without a server, and on a server error', () async {
+      final none = SphericalProbeService(
+        storage: storage,
+        client: () => _server(copy, requests),
+        serverEndpoint: () => null,
+        headers: () => const {},
+      );
+      expect(await none.probeTranscoded('video-1'), isNull);
+      expect(await service(MockClient((_) async => http.Response('', 500))).probeTranscoded('video-1'), isNull);
+    });
+  });
+
+  test('headPrefetchReader serves the reads within the head from one read', () async {
+    final asked = <(int, int)>[];
+    final file = Uint8List.fromList(List.generate(100, (i) => i));
+    final read = headPrefetchReader((offset, length) async {
+      asked.add((offset, length));
+      return Uint8List.sublistView(file, offset, math.min(offset + length, file.length));
+    }, headLength: 40);
+
+    expect(await read(0, 8), [0, 1, 2, 3, 4, 5, 6, 7]);
+    expect(await read(30, 10), List.generate(10, (i) => 30 + i));
+    expect(asked, [(0, 40)]);
+    expect(await read(35, 10), List.generate(10, (i) => 35 + i), reason: 'past the head: a read of its own');
+    expect(asked, [(0, 40), (35, 10)]);
+  });
+
   test('httpRangeReader reads nothing past the end of the file', () async {
     final read = httpRangeReader(_server(Uint8List.fromList([1, 2, 3]), requests), Uri.parse('$_endpoint/file'));
 
