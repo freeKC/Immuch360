@@ -437,18 +437,39 @@ class _SearchBar extends StatelessWidget {
               transform: const GradientRotation(0.5 * pi),
             ),
           ),
-          child: SearchField(
-            autofocus: false,
-            contentPadding: const EdgeInsets.all(16),
-            hintText: context.t.search_albums,
-            prefixIcon: const Icon(Icons.search_rounded),
-            suffixIcon: searchController.text.isNotEmpty
-                ? IconButton(icon: const Icon(Icons.clear_rounded), onPressed: onClearSearch)
-                : null,
-            controller: searchController,
-            onChanged: (_) => onSearch(searchController.text, filterMode),
-            focusNode: searchFocusNode,
-            onTapOutside: (_) => searchFocusNode.unfocus(),
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: searchController,
+            builder: (context, value, _) {
+              final isTv = MediaQuery.navigationModeOf(context) == NavigationMode.directional;
+              return Row(
+                children: [
+                  Expanded(
+                    child: SearchField(
+                      autofocus: false,
+                      contentPadding: const EdgeInsets.all(16),
+                      hintText: context.t.search_albums,
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      // The native TV text-entry wrapper excludes its child from
+                      // focus. Put the Clear button OUTSIDE that wrapper.
+                      suffixIcon: !isTv && value.text.isNotEmpty
+                          ? IconButton(icon: const Icon(Icons.clear_rounded), onPressed: onClearSearch)
+                          : null,
+                      controller: searchController,
+                      onChanged: (_) => onSearch(searchController.text, filterMode),
+                      focusNode: searchFocusNode,
+                      onTapOutside: (_) => searchFocusNode.unfocus(),
+                    ),
+                  ),
+                  if (isTv && value.text.isNotEmpty)
+                    IconButton(
+                      key: const Key('tv_album_search_clear'),
+                      tooltip: context.t.clear,
+                      icon: const Icon(Icons.clear_rounded),
+                      onPressed: onClearSearch,
+                    ),
+                ],
+              );
+            },
           ),
         ),
       ),

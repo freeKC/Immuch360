@@ -17,10 +17,13 @@ import 'package:immich_mobile/models/search/search_filter.model.dart';
 import 'package:immich_mobile/presentation/pages/search/paginated_search.provider.dart';
 import 'package:immich_mobile/presentation/widgets/bottom_sheet/general_bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/search/quick_date_picker.dart';
+import 'package:immich_mobile/presentation/widgets/search/tv_date_range_picker.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/search/search_input_focus.provider.dart';
+import 'package:immich_mobile/providers/search/tv_search_navigation.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/feature_check.dart';
@@ -50,19 +53,20 @@ class SearchPage extends HookConsumerWidget {
       serverFeatures.smartSearch ? context.t.sunrise_on_the_beach : context.t.file_name_or_extension,
     );
     final textSearchController = useTextEditingController();
-    final filter = useState<SearchFilter>(
-      SearchFilter(
-        people: {},
-        location: const SearchLocationFilter(),
-        camera: const SearchCameraFilter(),
-        date: const SearchDateFilter(),
-        display: const SearchDisplayFilters(isNotInAlbum: false, isArchive: false, isFavorite: false),
-        rating: const SearchRatingFilter(),
-        mediaType: AssetType.other,
-        language: "${context.locale.languageCode}-${context.locale.countryCode}",
-        tagIds: [],
-      ),
+    // The search entry of a TV, which opens its keyboard: the text field itself never takes the focus there
+    final tvSearchEntryFocus = useFocusNode(debugLabel: 'TV search entry');
+    final emptyFilter = SearchFilter(
+      people: {},
+      location: const SearchLocationFilter(),
+      camera: const SearchCameraFilter(),
+      date: const SearchDateFilter(),
+      display: const SearchDisplayFilters(isNotInAlbum: false, isArchive: false, isFavorite: false),
+      rating: const SearchRatingFilter(),
+      mediaType: AssetType.other,
+      language: "${context.locale.languageCode}-${context.locale.countryCode}",
+      tagIds: [],
     );
+    final filter = useState<SearchFilter>(emptyFilter);
 
     final dateInputFilter = useState<DateFilterInputModel?>(null);
 
@@ -78,6 +82,7 @@ class SearchPage extends HookConsumerWidget {
     final userPreferences = ref.watch(Store.userMetadata.preferences()).valueOrNull;
 
     void search(SearchFilter f) {
+      ref.read(tvSearchHasActiveQueryProvider.notifier).state = !f.isEmpty;
       if (f == filter.value) {
         return;
       }
@@ -90,6 +95,28 @@ class SearchPage extends HookConsumerWidget {
         unawaited(ref.read(paginatedSearchProvider.notifier).search(f));
       }
     }
+
+    // Back from results in the TV tab shell restores the starting Search UI
+    // without switching tabs, and leaves the Search field ready for another query.
+    ref.listen<int>(tvSearchReturnToStartProvider, (_, _) {
+      textSearchController.clear();
+      dateInputFilter.value = null;
+      peopleCurrentFilterWidget.value = null;
+      dateRangeCurrentFilterWidget.value = null;
+      cameraCurrentFilterWidget.value = null;
+      locationCurrentFilterWidget.value = null;
+      tagCurrentFilterWidget.value = null;
+      mediaTypeCurrentFilterWidget.value = null;
+      ratingCurrentFilterWidget.value = null;
+      displayOptionCurrentFilterWidget.value = null;
+      ref.read(searchPreFilterProvider.notifier).clear();
+      search(emptyFilter);
+      if (ref.read(tvModeProvider)) {
+        tvSearchEntryFocus.requestFocus();
+      } else {
+        ref.read(searchInputFocusProvider).requestFocus();
+      }
+    });
 
     void loadMoreSearchResults() {
       unawaited(ref.read(paginatedSearchProvider.notifier).search(filter.value));
@@ -332,28 +359,38 @@ class SearchPage extends HookConsumerWidget {
         dateRange = DateTimeRange(start: dateRange.start, end: lastDate);
       }
 
-      final date = await showDateRangePicker(
-        context: context,
-        firstDate: firstDate,
-        lastDate: lastDate,
-        currentDate: DateTime.now(),
-        initialDateRange: dateRange,
-        helpText: context.t.search_filter_date_title,
-        cancelText: context.t.cancel,
-        confirmText: context.t.select,
-        saveText: context.t.save,
-        errorFormatText: context.t.invalid_date_format,
-        errorInvalidText: context.t.invalid_date,
-        fieldStartHintText: context.t.start_date,
-        fieldEndHintText: context.t.end_date,
-        initialEntryMode: DatePickerEntryMode.calendar,
-        keyboardType: TextInputType.text,
-      );
+      final tv = ref.read(tvModeProvider);
+      final date = tv
+          ? await showTvSearchDateRangePicker(
+              context: context,
+              firstDate: firstDate,
+              lastDate: lastDate,
+              initialDateRange: dateRange,
+            )
+          : await showDateRangePicker(
+              context: context,
+              firstDate: firstDate,
+              lastDate: lastDate,
+              currentDate: DateTime.now(),
+              initialDateRange: dateRange,
+              helpText: context.t.search_filter_date_title,
+              cancelText: context.t.cancel,
+              confirmText: context.t.select,
+              saveText: context.t.save,
+              errorFormatText: context.t.invalid_date_format,
+              errorInvalidText: context.t.invalid_date,
+              fieldStartHintText: context.t.start_date,
+              fieldEndHintText: context.t.end_date,
+              initialEntryMode: DatePickerEntryMode.calendar,
+              keyboardType: TextInputType.text,
+            );
 
-      if (date == null) {
-        datePicked(null);
-      } else {
+      if (date != null) {
         datePicked(CustomDateFilter.fromRange(date));
+      } else if (!tv) {
+        // Cancel clears the date filter on a phone, as in Immich. On a TV, Cancel or Back keeps the one there was: a
+        // key pressed by mistake on the remote should not cost the filter
+        datePicked(null);
       }
     }
 
@@ -564,6 +601,9 @@ class SearchPage extends HookConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        // The TV entry includes a focus ring and a helper line under the field.
+        // A normal 56dp toolbar clips the helper text below its bounds.
+        toolbarHeight: ref.watch(tvModeProvider) ? 104 : kToolbarHeight,
         automaticallyImplyLeading: true,
         actions: [
           Padding(
@@ -692,6 +732,8 @@ class SearchPage extends HookConsumerWidget {
           ),
           child: SearchField(
             hintText: searchHintText.value,
+            tvDialogTitle: context.t.search,
+            tvFocusNode: tvSearchEntryFocus,
             key: const Key('search_text_field'),
             controller: textSearchController,
             contentPadding: filter.value.assetId != null ? const EdgeInsets.only(left: 24) : const EdgeInsets.all(8),

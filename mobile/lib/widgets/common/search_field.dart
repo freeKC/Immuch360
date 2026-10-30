@@ -8,6 +8,8 @@ class SearchField extends StatefulWidget {
   const SearchField({
     super.key,
     required this.hintText,
+    this.tvDialogTitle,
+    this.tvFocusNode,
     this.autofocus = false,
     this.controller,
     this.focusNode,
@@ -26,6 +28,13 @@ class SearchField extends StatefulWidget {
   final void Function(PointerDownEvent)? onTapOutside;
   final TextEditingController? controller;
   final String hintText;
+
+  /// Optional native TV keyboard title; the hint is often an example, not a label.
+  final String? tvDialogTitle;
+
+  /// In TV mode only: the focus of the entry that opens the keyboard of the TV. [focusNode] is the one of the text
+  /// field, which never takes the focus there
+  final FocusNode? tvFocusNode;
   final EdgeInsetsGeometry contentPadding;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -58,9 +67,10 @@ class _SearchFieldState extends State<SearchField> {
   Widget build(BuildContext context) {
     return TvTextEntry(
       controller: _controller,
-      label: widget.hintText,
+      label: widget.tvDialogTitle ?? widget.hintText,
       kind: TvTextKind.text,
       autofocus: widget.autofocus,
+      focusNode: widget.tvFocusNode,
       onSubmitted: _onTyped,
       child: TextField(
         controller: _controller,
