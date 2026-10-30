@@ -21,10 +21,10 @@ Duration remoteSeekSeriesStep(int count) =>
 typedef RemoteSeekHint = ({bool forward, Duration step});
 
 /// The quick series of left or right presses on a video with the remote control layout: where left and right seek (the
-/// time bar of the controls, a video alone in the viewer), each press moves the video by [press]. The first press
-/// moves 10 s, the next ones of the series 30 s then 60 s (see [remoteSeekSeriesSteps]); the series ends
-/// [remoteSeekSeriesWindow] after its last press, at a press the other way, or when a key is held (which has its own
-/// ramp, remoteSeekHoldStep). Listeners hear each press and the end, for the hint ([hint]).
+/// time bar of the controls, a video alone in the viewer, a file of a share opened without its folder), each press
+/// moves the video by [press]. The first press moves 10 s, the next ones of the series 30 s then 60 s (see
+/// [remoteSeekSeriesSteps]); the series ends [remoteSeekSeriesWindow] after its last press, at a press the other way,
+/// or when a key is held (which has its own ramp). Listeners hear each press and the end, for the hint ([hint]).
 class RemoteSeekSeries extends ChangeNotifier {
   /// The presses of the series under way, 0 between series
   int _count = 0;
@@ -127,6 +127,8 @@ class VideoSeekHint extends StatelessWidget {
                   shadows: shadows,
                 ),
               ),
+              // Room before the time of the video, which follows it
+              const SizedBox(width: 12),
             ],
           ),
         );

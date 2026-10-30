@@ -6,6 +6,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_time_bar.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -16,8 +17,10 @@ const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0,
 /// Play, pause and seek for the player of a video of a network share, the one of [videoPlayerProvider] under
 /// [playerKey]. On a TV -10 s and +10 s buttons follow play and pause, for the remotes without fast forward and rewind
 /// (left and right go to the previous or next file there, see remoteVideoArrows), and the time bar under them takes
-/// the remote: left and right on it seek, faster while held (see VideoTimeBar). The audio track and subtitle menus
-/// follow, for a video that has several audio tracks or subtitles (VideoTrackButtons, DesktopAudioTrackButton).
+/// the remote: left and right on it seek, further at each press of a quick series and faster while held (see
+/// VideoTimeBar, RemoteSeekSeries), the step of the last press beside the time (VideoSeekHint). The audio track and
+/// subtitle menus follow, for a video that has several audio tracks or subtitles (VideoTrackButtons,
+/// DesktopAudioTrackButton).
 class NetworkVideoControls extends ConsumerWidget {
   const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode});
 
@@ -35,6 +38,8 @@ class NetworkVideoControls extends ConsumerWidget {
     final isFinished = status == VideoPlaybackStatus.completed;
     final isLoaded = duration != Duration.zero;
     final tvMode = ref.watch(tvModeProvider);
+    // The quick series of left and right of a TV, shared with the page, which takes them while it has the focus
+    final seekSeries = tvMode ? ref.watch(remoteSeekSeriesProvider(playerKey)) : null;
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
@@ -81,6 +86,7 @@ class NetworkVideoControls extends ConsumerWidget {
               // The audio tracks and the subtitles of the player of the phones, TVs and headsets
               if (!CurrentPlatform.isDesktop) VideoTrackButtons(playerKey: playerKey, shadows: _shadows),
               const Spacer(),
+              if (seekSeries != null) VideoSeekHint(series: seekSeries, shadows: _shadows),
               IgnorePointer(
                 child: Text(
                   '${position.format()} / ${duration.format()}',
@@ -103,6 +109,7 @@ class NetworkVideoControls extends ConsumerWidget {
             onRelease: notifier.release,
             onToggle: notifier.toggle,
             onSeek: isLoaded ? notifier.seekTo : null,
+            seekSeries: seekSeries,
           ),
         ],
       ),
