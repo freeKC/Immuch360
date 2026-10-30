@@ -814,8 +814,21 @@ sealed class StereoPhotoRequest {
 
   const factory StereoPhotoRequest.bigScreen() = BigScreenStereoPhotoRequest;
 
+  const factory StereoPhotoRequest.splat(GaussianSplatRequest request) = GaussianSplatStereoPhotoRequest;
+
   /// The stereoPair JSON of ImmersiveApi.open
   String toImmersiveJson();
+}
+
+/// A Gaussian splat file of another tool (lot S5): no quad, the viewer hands it to the splat module of the Meta Spatial
+/// SDK on a Quest 3 or 3S, after reading its head again and reducing it to the count of the request
+final class GaussianSplatStereoPhotoRequest extends StereoPhotoRequest {
+  const GaussianSplatStereoPhotoRequest(this.request);
+
+  final GaussianSplatRequest request;
+
+  @override
+  String toImmersiveJson() => request.toJsonString();
 }
 
 /// An Apple spatial photo, its two eyes in two items of its HEIF file
