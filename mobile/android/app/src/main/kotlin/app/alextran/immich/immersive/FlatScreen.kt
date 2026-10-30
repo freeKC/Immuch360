@@ -34,7 +34,9 @@ enum class GripSide(val bit: Int) {
  *   the ray reaches the screen, and its release does nothing either;
  * - both grips held stretch the screen ([Event.StretchStart]), its width following the spread of the hands (see
  *   [ScreenStretch]), until either is released ([Event.StretchEnd]); a grab in progress becomes the stretch;
- * - a grip that took part in a grab or a stretch does nothing more until it is released.
+ * - a grip that took part in a grab or a stretch does nothing more until it is released;
+ * - a grip held over a [reset] or a [cancel] (pressed before the screen showed, or still held when it went away)
+ *   starts nothing until it is released: no grab, no short press, and no stretch with the other grip either.
  * Pure: the viewer gives the time, the buttons held and which ray points at the screen. Unit tested.
  */
 internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
@@ -56,6 +58,12 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
 
     /** The press went into a grab or a stretch, or was cut by [cancel]: its release does nothing. */
     var spent = false
+
+    /**
+     * Held over a [reset] or a [cancel]: its press went elsewhere, so that it takes part in no stretch until its
+     * release. A grip spent by a grab is not held over: the other grip turns that grab into a stretch.
+     */
+    var heldOver = false
   }
 
   private val grips = GripSide.entries.associateWith { Grip() }
@@ -80,11 +88,12 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
       if (held && downAt == null) {
         grip.downAt = nowMs
         grip.spent = false
+        grip.heldOver = false
       } else if (!held && downAt != null) {
         events += release(side, grip, nowMs - downAt)
       }
     }
-    val bothDown = grips.values.all { it.downAt != null }
+    val bothDown = grips.values.all { it.downAt != null && !it.heldOver }
     if (bothDown && !stretching) {
       grabbing?.let { events += Event.GrabEnd(it) }
       grabbing = null
@@ -110,6 +119,7 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
     val spent = grip.spent
     grip.downAt = null
     grip.spent = false
+    grip.heldOver = false
     return when {
       stretching -> {
         stretching = false
@@ -126,7 +136,7 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
 
   /**
    * The flat screen went away (another media, the viewer closing): a grab or a stretch ends, and the grips still held
-   * do nothing until they are released.
+   * do nothing until they are released, a stretch with both of them included.
    */
   fun cancel(): List<Event> {
     val events = mutableListOf<Event>()
@@ -134,14 +144,20 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
     if (stretching) events += Event.StretchEnd
     grabbing = null
     stretching = false
-    grips.values.forEach { if (it.downAt != null) it.spent = true }
+    grips.values.forEach {
+      if (it.downAt != null) {
+        it.spent = true
+        it.heldOver = true
+      }
+    }
     return events
   }
 
   /**
    * Starts again from the grips held now, [heldBits], when the viewer starts or stops following a flat screen: a grab
-   * or a stretch ends, a grip held stays spent until its release (its press went elsewhere: on a sphere the grip shows
-   * or hides the panel as it goes down), and a grip up is forgotten.
+   * or a stretch ends, a grip held is held over until its release (its press went elsewhere: on a sphere the grip shows
+   * or hides the panel as it goes down), so that it neither grabs nor stretches with the other one, and a grip up is
+   * forgotten.
    */
   fun reset(heldBits: Int): List<Event> {
     val events = cancel()
@@ -149,9 +165,11 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
       if ((heldBits and side.bit) != 0) {
         if (grip.downAt == null) grip.downAt = 0L
         grip.spent = true
+        grip.heldOver = true
       } else {
         grip.downAt = null
         grip.spent = false
+        grip.heldOver = false
       }
     }
     return events

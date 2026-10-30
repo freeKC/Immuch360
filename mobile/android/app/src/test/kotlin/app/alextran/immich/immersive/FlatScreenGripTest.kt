@@ -178,6 +178,53 @@ class FlatScreenGripTest {
   }
 
   @Test
+  fun `both grips held over a reset stretch nothing until they are released`() {
+    // A screen shows while both grips are held (a stretch of the screen before, or pressed on a sphere)
+    assertEquals(emptyList<Event>(), grip.reset(left or right))
+    assertEquals(emptyList<Event>(), step(100, left or right))
+    assertEquals(emptyList<Event>(), step(1000, left or right))
+    assertFalse(grip.stretching)
+    assertNull(grip.grabbing)
+    assertEquals(emptyList<Event>(), step(1100, 0))
+    // Pressed again, both stretch as usual
+    assertEquals(listOf(Event.StretchStart), step(1200, left or right))
+  }
+
+  @Test
+  fun `a stretch cancelled with both grips still held does not start again on the next frame`() {
+    assertEquals(listOf(Event.StretchStart), step(0, left or right))
+    assertEquals(listOf(Event.StretchEnd), grip.cancel())
+    assertEquals(emptyList<Event>(), step(100, left or right))
+    assertFalse(grip.stretching)
+    // One released and pressed again: the other one still held over, still no stretch
+    assertEquals(emptyList<Event>(), step(200, left))
+    assertEquals(emptyList<Event>(), step(300, left or right))
+    assertFalse(grip.stretching)
+  }
+
+  @Test
+  fun `a grip held over a reset joined by the other one stretches nothing, the other one may still grab`() {
+    assertEquals(emptyList<Event>(), grip.reset(left))
+    assertEquals(emptyList<Event>(), step(100, left or right))
+    assertFalse(grip.stretching)
+    // The right grip, pressed after the reset, grabs once held long enough on the screen
+    assertEquals(listOf(Event.GrabStart(GripSide.RIGHT)), step(100 + ScreenGrip.HOLD_MS, left or right))
+    assertFalse(grip.stretching)
+    assertEquals(listOf(Event.GrabEnd(GripSide.RIGHT)), step(800, left))
+    assertEquals(emptyList<Event>(), step(900, 0))
+  }
+
+  @Test
+  fun `a grab still turns into a stretch after a reset, once its grip was pressed again`() {
+    grip.reset(left)
+    step(100, 0)
+    step(200, right)
+    assertEquals(listOf(Event.GrabStart(GripSide.RIGHT)), step(200 + ScreenGrip.HOLD_MS, right))
+    assertEquals(listOf(Event.GrabEnd(GripSide.RIGHT), Event.StretchStart), step(600, left or right))
+    assertTrue(grip.stretching)
+  }
+
+  @Test
   fun `the other buttons change nothing`() {
     val others = ButtonBits.ButtonA or ButtonBits.ButtonTriggerR or ButtonBits.ButtonThumbRU
     assertEquals(emptyList<Event>(), step(0, others))
