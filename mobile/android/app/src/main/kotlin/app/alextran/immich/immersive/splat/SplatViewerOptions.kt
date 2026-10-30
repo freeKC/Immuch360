@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonObject
  * how the glide, Reset and Turn upright move the splat once it is made: through its Transform (the documented way),
  * through the system of the module (SplatSystem.updateSplatTransform, public in the module), or both, should the
  * splat not follow its Transform in the headset. [revealDelayMs] is the pause between the load event and the splat
- * shown (500 ms in Meta's SplatSample). Pure JVM, tested by SplatStageTest.
+ * shown (500 ms in Meta's SplatSample). Pure JVM, tested by SplatViewerOptionsTest.
  */
 internal data class SplatViewerOptions(val move: Move = Move.TRANSFORM, val revealDelayMs: Long = 500) {
   enum class Move(val key: String) {
