@@ -23,6 +23,10 @@
     "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
     "reason": "TV lot (c05b57812, e66574872): main thread stalls and why the phone app ended, written to the Logs page"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/core/PlaybackStatsLogger.kt": {
+    "blob": "4bb14a3f7c5440b52eb80ce980ce672e235fa8e7",
+    "reason": "quest playback resilience (feat-quest-playback-resilience, from the Quest Pro signal of the exhibition builds of ppawelstachh-sys/Immuch360): the logger keeps the name of the video decoder Media3 started, for the report of a playback problem; not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/StreamingLoadControl.kt": {
     "blob": "3c4323c73e77d28f0e8f39f4d072e189aae224d9",
     "reason": "TV lot (5e7bf8e27): buffering of the 360 video player of the phone app"
@@ -332,8 +336,8 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "24dfbc3624a703d3e1e8501badca1d2a3a74298d",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only"
+    "blob": "a3d8a28081c19efa9c1a5d49b0b4a6862b95fcc2",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only; AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only; quest playback resilience: a video whose decoder or media server fails after its first frame plays again from where it stopped on a new player, once, the last frame kept; no picture for 3 s while the sound plays switches to the transcoded stream or says so with the details of the video; reports to the Logs page; the details line in the info panel; fix round: the restart waits for the media service and starts past a decoder failure, notices that go when the picture comes back"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/KioskSession.kt": {
     "blob": "689e79df7f4731d5f1c9ca181a3a2a061d1f014c",
@@ -342,6 +346,14 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PanoramaOutline.kt": {
     "blob": "f555b014f4298cd66b0d334b4e916324b965225b",
     "reason": "AI immersive phases 2 and 3, lot P4: the four arcs of the outline of the photo on a generated panorama and their ribbons; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PlaybackDetails.kt": {
+    "blob": "5921823c57e1b672b54f3c04445448426ef434ae",
+    "reason": "quest playback resilience (feat-quest-playback-resilience, from the Quest Pro signal of the exhibition builds of ppawelstachh-sys/Immuch360): the details line of a video (codec, size, frame rate, bit rate), the notices of a restart and of a picture missing, and the report for the Logs page; not yet on the phone branch; fix round: the restart notice names where the video plays again"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/PlaybackRecovery.kt": {
+    "blob": "104f986e976f49734c1751261ac437b6dda1b206",
+    "reason": "quest playback resilience (feat-quest-playback-resilience, from the Quest Pro signal of the exhibition builds of ppawelstachh-sys/Immuch360): the state machine of one restart where a video stopped and of the picture that does not come; not yet on the phone branch; fix round: the wait and the place to resume of a restart, the picture back, the surface given late"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ReliefHost.kt": {
     "blob": "eec358898e431128aaa415bf0429ebc962ccc39f",
@@ -1162,6 +1174,14 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PanoramaOutlineTest.kt": {
     "blob": "6a74cc55c58598bd0698bdd0a419b6e9c3a688f9",
     "reason": "AI immersive phases 2 and 3, lot P4: the arcs of the outline against the golden projection of pano-v1, and the ribbons of the mesh; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): tests of the triangles of the ribbon and of its opaque colours"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PlaybackDetailsTest.kt": {
+    "blob": "5f28dbc5265f3610130f02dbb066fe5cb9890805",
+    "reason": "quest playback resilience (feat-quest-playback-resilience, from the Quest Pro signal of the exhibition builds of ppawelstachh-sys/Immuch360): unit tests of the details line, the notices and the report, run by the Kotlin unit tests job; not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PlaybackRecoveryTest.kt": {
+    "blob": "e0c88795a1f754dfb7fcd5f6394c60674005cbdf",
+    "reason": "quest playback resilience (feat-quest-playback-resilience, from the Quest Pro signal of the exhibition builds of ppawelstachh-sys/Immuch360): unit tests of the recovery state machine (one retry, resume position, no loop of retries, picture missing), run by the Kotlin unit tests job; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ReliefMeshTest.kt": {
     "blob": "f054903d2e647621f29134d01b02ad15f1f76b36",

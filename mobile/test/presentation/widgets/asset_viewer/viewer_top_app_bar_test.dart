@@ -288,6 +288,18 @@ void main() {
     'panoramaFlag_seam': 'The seam may be visible',
     'panoramaFlag_mostlyInvented': 'Most of this panorama is invented',
   };
+  // The notices of the video playback of the immersive viewer and the units of its details line, which every opening
+  // carries too, their places left for the viewer (immersivePlaybackLabels)
+  const englishPlaybackLabels = {
+    'playbackRestarted': 'The video stopped at {position}, it plays again from there',
+    'playbackRestartedLater':
+        'The video stopped at {position}, it plays again from {resume}, past the part that failed',
+    'playbackNoPicture':
+        'No picture for 3 seconds while the sound plays ({video}). What the headset saw is in the Logs of the app',
+    'playbackNoPictureSwitch': 'No picture for 3 seconds from {video}, trying the server playback stream',
+    'playbackMbps': '{value} Mbit/s',
+    'playbackKbps': '{value} kbit/s',
+  };
   // The audio track control of the native video players, with the language of the app to name the track languages in
   const englishAudioTrackLabels = {
     'audioTrack': 'Audio track',
@@ -1093,7 +1105,7 @@ void main() {
         ).captured;
         expect(captured, [
           expected,
-          {...englishGeneratedPanoramaLabels, ...englishViewerLabels},
+          {...englishGeneratedPanoramaLabels, ...englishPlaybackLabels, ...englishViewerLabels},
           ImmersiveSphereCoverage.full,
         ], reason: '$type $width x $height');
         // Only a photo that looks 3D is checked for a partial panorama
