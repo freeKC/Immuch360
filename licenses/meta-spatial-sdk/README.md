@@ -56,15 +56,18 @@ What goes with it:
    API of the Meta Spatial SDK, which Meta neither supports nor warrants: any defect is Immuch360's own." (key
    `splat_disclaimer` of `i18n/en.json`, in the 88 other languages of the app).
 2. **The Horizon Store build without the feature.** The store build is told from the GitHub builds by its signing
-   certificate, which the app reads once at start (`immersive/splat/SplatBuild.kt`): SHA-256
-   `ecc6b085c727f003cd71ae45927be08800a7fd84b61a5a5634b3d3d70b4adb9b` for the store key, against
-   `aa7aab33987b1a02d3d2892e60038fb4d8ea8ea6b8aa968a570fcda7558367be` for the GitHub builds. With the store
-   certificate the viewer never registers `SplatFeature`, the shares list no splat, the Add menu has no Open a splat
-   file, the Advanced settings have no Gaussian splats switch, and the licence page lists the splat module as carried
-   but never started. The bytes of the module stay in the store APK, which is the GitHub APK re-signed; nothing calls
-   them. A certificate that cannot be read counts as the store's. The one switch is the constant
+   certificates, which the app reads once at start (`immersive/splat/SplatBuild.kt`). Only the certificates it knows
+   offer the splats: the GitHub builds, SHA-256 `aa7aab33987b1a02d3d2892e60038fb4d8ea8ea6b8aa968a570fcda7558367be`, and
+   the debug key Android tools make on a developer's machine (subject C=US, O=Android, CN=Android Debug, or a debuggable
+   build). The store key, SHA-256 `ecc6b085c727f003cd71ae45927be08800a7fd84b61a5a5634b3d3d70b4adb9b`, is looked for
+   first: an APK that carries it is the store build, whatever else signs it. A certificate that cannot be read or that
+   the app does not know counts as the store's. A new key of a rotation keeps the older certificate in the lineage the
+   app reads, so it never moves an APK out of its build. With the store certificate the viewer never registers
+   `SplatFeature`, the shares list no splat, the Add menu has no Open a splat file, the Advanced settings have no
+   Gaussian splats switch, and the licence page lists the splat module as carried but never started. The bytes of the
+   module stay in the store APK, which is the GitHub APK re-signed; nothing calls them. The one switch is the constant
    `SPLATS_IN_STORE_BUILD = false` of `SplatBuild.kt`, for FreeKC to flip once Meta permits the feature in writing or
-   releases it out of its experimental features. `SplatBuildTest` checks the gate with both certificates, as their
-   APKs carry them.
+   releases it out of its experimental features. `SplatBuildTest` checks the gate with both certificates, as their APKs
+   carry them, with two debug keys and with keys it does not know.
 3. **Large splats off by default.** A splat shows 50,000 gaussians at most until a measure in the headset says more;
    Large splats (150,000) is a setting the user turns on.

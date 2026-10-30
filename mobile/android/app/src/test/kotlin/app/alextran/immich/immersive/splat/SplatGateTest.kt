@@ -167,8 +167,10 @@ class SplatGateTest {
 
   @Test
   fun `the store build registers no splat module, whatever the setting says`() {
-    val store = SplatBuild.offersSplats(listOf(SplatBuild.STORE_CERTIFICATE_SHA256), inStoreBuild = false)
-    val github = SplatBuild.offersSplats(listOf(SplatBuild.GITHUB_CERTIFICATE_SHA256), inStoreBuild = false)
+    fun offers(digest: String) =
+      SplatBuild.offersSplats(SplatBuild.kindOf(listOf(SplatBuild.Signer(digest))), inStoreBuild = false)
+    val store = offers(SplatBuild.STORE_CERTIFICATE_SHA256)
+    val github = offers(SplatBuild.GITHUB_CERTIFICATE_SHA256)
     assertFalse(SplatGate.registers(engine = true, device = "eureka", wanted = true, inThisBuild = store))
     assertFalse(SplatGate.registers(engine = true, device = "panther", wanted = true, inThisBuild = store))
     assertTrue(SplatGate.registers(engine = true, device = "eureka", wanted = true, inThisBuild = github))

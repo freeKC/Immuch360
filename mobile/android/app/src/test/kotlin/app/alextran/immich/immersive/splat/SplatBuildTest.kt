@@ -1,5 +1,7 @@
 package app.alextran.immich.immersive.splat
 
+import app.alextran.immich.immersive.splat.SplatBuild.Kind
+import app.alextran.immich.immersive.splat.SplatBuild.Signer
 import java.util.Base64
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -7,15 +9,23 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The gate of the build of the Gaussian splats (FreeKC's decision of 30 October 2026): the GitHub builds offer them,
- * the build of the Meta Horizon Store, the same APK re-signed with the key its store app is bound to, hides them unless
- * [SplatBuild.SPLATS_IN_STORE_BUILD] is flipped. The two certificates are those of the quest APK of release 35 (GitHub)
- * and of the quest APK of release 32 re-signed for the store (builds/meta_sign_upload.sh), as their APK signature
- * blocks carry them: what PackageManager hands the app.
+ * The gate of the build of the Gaussian splats (FreeKC's decision of 30 October 2026): a list of the certificates that
+ * offer them. The GitHub builds and the debug builds of a developer's machine offer them; the build of the Meta Horizon
+ * Store, the same APK re-signed with the key its store app is bound to, hides them unless
+ * [SplatBuild.SPLATS_IN_STORE_BUILD] is flipped, and so does a certificate the app does not know or cannot read. The
+ * two release certificates are those of the quest APK of release 35 (GitHub) and of the quest APK of release 32
+ * re-signed for the store (builds/meta_sign_upload.sh), as their APK signature blocks carry them: what PackageManager
+ * hands the app. The debug and lookalike certificates were made by keytool for these tests.
  */
 class SplatBuildTest {
-  private val github = Base64.getDecoder().decode(GITHUB_CERTIFICATE)
-  private val store = Base64.getDecoder().decode(STORE_CERTIFICATE)
+  private val github = decode(GITHUB_CERTIFICATE)
+  private val store = decode(STORE_CERTIFICATE)
+  private val debug = decode(DEBUG_CERTIFICATE)
+  private val debugKeytool = decode(DEBUG_CERTIFICATE_KEYTOOL)
+  private val lookalike = decode(LOOKALIKE_CERTIFICATE)
+
+  /** A release key the app does not know, a newer key of a rotation for one */
+  private val newKey = Signer("0".repeat(64))
 
   @Test
   fun `the SHA-256 of each certificate is the digest apksigner prints for its APK`() {
@@ -26,35 +36,80 @@ class SplatBuildTest {
   }
 
   @Test
-  fun `the GitHub build offers the splats`() {
-    val certificates = listOf(SplatBuild.sha256Hex(github))
-    assertFalse(SplatBuild.isStoreBuild(certificates))
-    assertTrue(SplatBuild.offersSplats(certificates, inStoreBuild = false))
-    assertTrue(SplatBuild.offersSplats(certificates, inStoreBuild = true))
+  fun `the GitHub build offers the splats, whatever the switch`() {
+    val kind = SplatBuild.kindOf(listOf(SplatBuild.signer(github)))
+    assertEquals(Kind.GITHUB, kind)
+    assertTrue(SplatBuild.offersSplats(kind, inStoreBuild = false))
+    assertTrue(SplatBuild.offersSplats(kind, inStoreBuild = true))
   }
 
   @Test
   fun `the store build hides the splats while SPLATS_IN_STORE_BUILD is false`() {
-    val certificates = listOf(SplatBuild.sha256Hex(store))
-    assertTrue(SplatBuild.isStoreBuild(certificates))
-    assertFalse(SplatBuild.offersSplats(certificates, inStoreBuild = false))
+    val kind = SplatBuild.kindOf(listOf(SplatBuild.signer(store)))
+    assertEquals(Kind.STORE, kind)
+    assertFalse(SplatBuild.offersSplats(kind, inStoreBuild = false))
     // Flipped (Meta's written permission, or the API out of its experimental features), the store build offers them
-    assertTrue(SplatBuild.offersSplats(certificates, inStoreBuild = true))
+    assertTrue(SplatBuild.offersSplats(kind, inStoreBuild = true))
   }
 
   @Test
   fun `the switch is off in this source, and it is the default of the gate`() {
     assertFalse(SplatBuild.SPLATS_IN_STORE_BUILD)
-    assertFalse(SplatBuild.offersSplats(listOf(SplatBuild.STORE_CERTIFICATE_SHA256)))
-    assertTrue(SplatBuild.offersSplats(listOf(SplatBuild.GITHUB_CERTIFICATE_SHA256)))
+    assertFalse(SplatBuild.offersSplats(Kind.STORE))
+    assertFalse(SplatBuild.offersSplats(Kind.UNKNOWN))
+    assertTrue(SplatBuild.offersSplats(Kind.GITHUB))
+    assertTrue(SplatBuild.offersSplats(Kind.DEBUG))
   }
 
   @Test
-  fun `a debug key or any other key offers the splats, a store certificate among several hides them`() {
-    assertTrue(SplatBuild.offersSplats(listOf("0".repeat(64)), inStoreBuild = false))
+  fun `a release key the app does not know hides the splats, as the store build does`() {
+    for (signers in listOf(listOf(newKey), listOf(SplatBuild.signer(lookalike)))) {
+      val kind = SplatBuild.kindOf(signers)
+      assertEquals(Kind.UNKNOWN, kind)
+      assertFalse(SplatBuild.offersSplats(kind, inStoreBuild = false))
+      assertTrue(SplatBuild.offersSplats(kind, inStoreBuild = true))
+    }
+  }
+
+  @Test
+  fun `a build signed with an Android debug key offers the splats, its subject in either order`() {
+    assertTrue(SplatBuild.isAndroidDebug(debug))
+    assertTrue(SplatBuild.isAndroidDebug(debugKeytool))
+    assertFalse(SplatBuild.isAndroidDebug(github))
+    assertFalse(SplatBuild.isAndroidDebug(store))
+    assertFalse(SplatBuild.isAndroidDebug(lookalike))
+    assertFalse(SplatBuild.isAndroidDebug(byteArrayOf(0x30, 0x03, 0x02, 0x01)))
+    assertFalse(SplatBuild.isAndroidDebug(ByteArray(0)))
+    for (der in listOf(debug, debugKeytool)) {
+      val kind = SplatBuild.kindOf(listOf(SplatBuild.signer(der)))
+      assertEquals(Kind.DEBUG, kind)
+      assertTrue(SplatBuild.offersSplats(kind, inStoreBuild = false))
+    }
+  }
+
+  @Test
+  fun `a debuggable build offers the splats whatever its key, unless it carries the store certificate`() {
+    assertEquals(Kind.DEBUG, SplatBuild.kindOf(listOf(newKey), debuggable = true))
+    assertTrue(SplatBuild.offersSplats(SplatBuild.kindOf(listOf(newKey), debuggable = true), inStoreBuild = false))
+    assertEquals(Kind.STORE, SplatBuild.kindOf(listOf(SplatBuild.signer(store)), debuggable = true))
+    assertEquals(Kind.GITHUB, SplatBuild.kindOf(listOf(SplatBuild.signer(github)), debuggable = true))
+  }
+
+  @Test
+  fun `in a lineage or among several signers the store certificate wins, then the GitHub one`() {
+    // A rotation of the GitHub key: the older certificate stays in signingCertificateHistory, the build stays GitHub's
+    assertEquals(Kind.GITHUB, SplatBuild.kindOf(listOf(SplatBuild.signer(github), newKey)))
+    assertEquals(Kind.GITHUB, SplatBuild.kindOf(listOf(newKey, SplatBuild.signer(github))))
+    // A rotation of the store key, or the store certificate beside any other: the store build
+    assertEquals(Kind.STORE, SplatBuild.kindOf(listOf(SplatBuild.signer(store), newKey)))
+    assertEquals(Kind.STORE, SplatBuild.kindOf(listOf(SplatBuild.signer(github), SplatBuild.signer(store))))
+    assertEquals(Kind.STORE, SplatBuild.kindOf(listOf(SplatBuild.signer(debug), SplatBuild.signer(store))))
+    // A debug key beside the GitHub one is the GitHub build, and beside an unknown key a debug build
+    assertEquals(Kind.GITHUB, SplatBuild.kindOf(listOf(SplatBuild.signer(debug), SplatBuild.signer(github))))
+    assertEquals(Kind.DEBUG, SplatBuild.kindOf(listOf(newKey, SplatBuild.signer(debug))))
     assertFalse(
       SplatBuild.offersSplats(
-        listOf(SplatBuild.GITHUB_CERTIFICATE_SHA256, SplatBuild.STORE_CERTIFICATE_SHA256),
+        SplatBuild.kindOf(listOf(SplatBuild.signer(github), SplatBuild.signer(store))),
         inStoreBuild = false,
       )
     )
@@ -63,16 +118,22 @@ class SplatBuildTest {
   @Test
   fun `the digest is compared whatever its case and its colons, as keytool and apksigner write it`() {
     val keytool = SplatBuild.STORE_CERTIFICATE_SHA256.uppercase().chunked(2).joinToString(":")
-    assertTrue(SplatBuild.isStoreBuild(listOf(keytool)))
+    assertEquals(Kind.STORE, SplatBuild.kindOf(listOf(Signer(keytool))))
+    val githubKeytool = SplatBuild.GITHUB_CERTIFICATE_SHA256.uppercase().chunked(2).joinToString(":")
+    assertEquals(Kind.GITHUB, SplatBuild.kindOf(listOf(Signer(githubKeytool))))
   }
 
   @Test
-  fun `certificates that could not be read hide the splats`() {
-    assertFalse(SplatBuild.offersSplats(null, inStoreBuild = false))
-    assertFalse(SplatBuild.offersSplats(emptyList(), inStoreBuild = false))
+  fun `certificates that could not be read count as the store's`() {
+    assertEquals(Kind.UNKNOWN, SplatBuild.kindOf(null))
+    assertEquals(Kind.UNKNOWN, SplatBuild.kindOf(emptyList(), debuggable = true))
+    assertFalse(SplatBuild.offersSplats(SplatBuild.kindOf(null), inStoreBuild = false))
+    assertFalse(SplatBuild.offersSplats(SplatBuild.kindOf(emptyList()), inStoreBuild = false))
   }
 
   private companion object {
+    fun decode(base64: String): ByteArray = Base64.getDecoder().decode(base64)
+
     /** The certificate of the GitHub release builds (C=FR, O=aprogsys, OU=FreeKC, CN=Immuch360), DER in Base64 */
     const val GITHUB_CERTIFICATE =
         "MIIFLzCCAxegAwIBAgIIQgZs8y4eND8wDQYJKoZIhvcNAQEMBQAwRTELMAkGA1UEBhMCRlIxETAPBgNVBAoTCGFwcm9nc3lzMQ8w" +
@@ -114,5 +175,32 @@ class SplatBuildTest {
         "Ge5g/sxf6tolG1G+fAzSDxwla+VYe/kpqf1WCkIVjYuzwyHAb4G0xAvcP41kIz/4NbKZxzFqyfStaEOUGWphpm2odyzMYiL6A7Tu" +
         "EXxu7Dy8cHX/NLJWKUhB3JUbGaFymH1iN1hk+gfooLEUR5xzzvP48SnZPO7rCx8lVygnWwwDZ95WvIlaqPBi45q5XiSFl2sv8fbi" +
         "JmAWVuOgwLous/mI7LW1pDQZ+8GZXnpTsq3Fu4UnVQ4Yh1h+wqcPkdyPzomM0pD1sOPKlLSWtUIfhHVtUMWtjauH"
+
+    /** A debug key as the Android Gradle plugin makes it (C=US, O=Android, CN=Android Debug), DER in Base64 */
+    const val DEBUG_CERTIFICATE =
+        "MIIBhzCCAS2gAwIBAgIIE9v2FYk5wZMwCgYIKoZIzj0EAwIwNzEWMBQGA1UEAxMNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UEChMHQW5k" +
+        "cm9pZDELMAkGA1UEBhMCVVMwIBcNMjYxMDMwMjAyMzM5WhgPMjA1NjEwMjIyMDIzMzlaMDcxFjAUBgNVBAMTDUFuZHJvaWQgRGVi" +
+        "dWcxEDAOBgNVBAoTB0FuZHJvaWQxCzAJBgNVBAYTAlVTMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEaLKRMcoms1PnLrlZqRBM" +
+        "EUXZozVCvlqh4ofqxKpsYsyg0Oh23EUyNFlkQnniQwxiojB5pkNp/8NmfvwBRTNTjKMhMB8wHQYDVR0OBBYEFIKtPWXMmoVN+tqz" +
+        "4DTAjvbYLi/0MAoGCCqGSM49BAMCA0gAMEUCIHYNZQrfdXbr+0moHBhYljBA/h7EA2KKuMOrpuuMU37LAiEA0hpOR3I1fCORFWOu" +
+        "jSQLmwLj36Pcj20HBVGt5aWlaLg="
+
+    /** A debug key made by keytool with the names the other way round (CN=Android Debug, O=Android, C=US) */
+    const val DEBUG_CERTIFICATE_KEYTOOL =
+        "MIIBiDCCAS2gAwIBAgIIFuw2FsRTdxYwCgYIKoZIzj0EAwIwNzELMAkGA1UEBhMCVVMxEDAOBgNVBAoTB0FuZHJvaWQxFjAUBgNV" +
+        "BAMTDUFuZHJvaWQgRGVidWcwIBcNMjYxMDMwMjAyMzQwWhgPMjA1NjEwMjIyMDIzNDBaMDcxCzAJBgNVBAYTAlVTMRAwDgYDVQQK" +
+        "EwdBbmRyb2lkMRYwFAYDVQQDEw1BbmRyb2lkIERlYnVnMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEJ/hBXvR9rg41l8J8BaDD" +
+        "Azc+VuQbs1o6iVZQkG7djm1uirgrhXUn3pkN4VUTKc5kiKHLkb+WhKXwdxa3GcXPRKMhMB8wHQYDVR0OBBYEFNGPNDJAu9S2rUdI" +
+        "pZqSgqya2UfhMAoGCCqGSM49BAMCA0kAMEYCIQCRDsiSwuCswHrrRPtK6yA3KCZvgj5P/rbZ27T6WdlMvwIhALEZr5cZ72VZzXB/" +
+        "GI+haBfYmSOm8LZkEiiHzP7czdO3"
+
+    /** A release key of someone else whose common name says Android Debug (C=US, O=Example, CN=Android Debug) */
+    const val LOOKALIKE_CERTIFICATE =
+        "MIIBhzCCAS2gAwIBAgIINVsyZ+tibPswCgYIKoZIzj0EAwIwNzEWMBQGA1UEAxMNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UEChMHRXhh" +
+        "bXBsZTELMAkGA1UEBhMCVVMwIBcNMjYxMDMwMjAyNDU0WhgPMjA1NjEwMjIyMDI0NTRaMDcxFjAUBgNVBAMTDUFuZHJvaWQgRGVi" +
+        "dWcxEDAOBgNVBAoTB0V4YW1wbGUxCzAJBgNVBAYTAlVTMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVCkmfiJqlQpLhIRXK4kp" +
+        "ox2RwqKLZgxZNhqn0eK9QhoEk+CGhxnBrpadcrZhS7sl8D1YoAU6HBFTrTGIV8yp06MhMB8wHQYDVR0OBBYEFN88rN4mxacWLg9r" +
+        "UNd6n3uJJzcFMAoGCCqGSM49BAMCA0gAMEUCIQCLRYjYQSMuL9UMyRHy1bq/6AqSqgl5IhoGkLtj4hpb3QIgQqX1twDJDWBrrE57" +
+        "lywdhyFYMFHURqfdjT9q/4yqYnE="
   }
 }
