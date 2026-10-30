@@ -3653,6 +3653,7 @@
   "tv_open_elsewhere_title": "Open on another device",
   "tv_text_entry_hint": "Press OK to type",
   "tv_video_360_hint": "Arrows to look around, OK to pause and show the controls, Back to close",
+  "tv_video_seek_step": "{seconds} s",
   "tv_zoom_in": "Zoom in",
   "tv_zoom_out": "Zoom out",
   "type": "Type",
