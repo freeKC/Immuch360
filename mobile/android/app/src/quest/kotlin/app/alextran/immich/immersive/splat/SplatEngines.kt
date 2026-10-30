@@ -25,8 +25,9 @@ import com.meta.spatial.toolkit.Visible
 // Visible(false), shown after the load event (SplatLoadEventArgs). Hittable(NoCollision) keeps the controller rays
 // for the panels ("Hit detection can be inconsistent" on a splat). The API is marked experimental by the module: its
 // opt-in is here and nowhere else. It is an Experimental Feature in the sense of article 1.6 of the licence of the SDK,
-// which keeps such a feature out of a production build unless Meta released it or permits it in writing: see
-// licenses/meta-spatial-sdk/README.md before this module goes into a published build.
+// which keeps such a feature out of a production build unless Meta released it or permits it in writing: FreeKC's
+// decision of 30 October 2026 (licenses/meta-spatial-sdk/README.md) ships it in the GitHub builds, labelled
+// experimental, and the build of the Meta Horizon Store never registers it (SplatBuild).
 
 /** The splat module of the Meta Spatial SDK 0.14.0 */
 @OptIn(SpatialSDKExperimentalSplatAPI::class)
