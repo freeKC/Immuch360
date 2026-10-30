@@ -81,6 +81,8 @@ abstract class AppConfig with _$AppConfig {
             .viewerReverseThumbstickTurn => viewer.reverseThumbstickTurn,
             .viewerFlat3dByName => viewer.flat3dByName,
             .viewerSharpFlatScreens => viewer.sharpFlatScreens,
+            .viewerGaussianSplats => viewer.gaussianSplats,
+            .viewerLargeSplats => viewer.largeSplats,
             .viewerVideoSource => viewer.videoSource,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
@@ -152,6 +154,8 @@ abstract class AppConfig with _$AppConfig {
       .viewerReverseThumbstickTurn => copyWith(viewer: viewer.copyWith(reverseThumbstickTurn: value as bool)),
       .viewerFlat3dByName => copyWith(viewer: viewer.copyWith(flat3dByName: value as bool)),
       .viewerSharpFlatScreens => copyWith(viewer: viewer.copyWith(sharpFlatScreens: value as bool)),
+      .viewerGaussianSplats => copyWith(viewer: viewer.copyWith(gaussianSplats: value as bool)),
+      .viewerLargeSplats => copyWith(viewer: viewer.copyWith(largeSplats: value as bool)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(

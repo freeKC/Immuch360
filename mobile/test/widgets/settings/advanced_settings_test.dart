@@ -234,6 +234,75 @@ void main() {
     });
   });
 
+  group('Gaussian splats (experimental)', () {
+    final splatSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_gaussian_splats')),
+      matching: find.byType(SwitchListTile),
+    );
+    final largeSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_large_splats')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    /// The page on a Meta Quest, the only device with the immersive viewer
+    Future<void> pumpOnQuest(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          appFlavorProvider.overrideWithValue('quest'),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      await tester.scrollUntilVisible(largeSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(splatSwitch);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('both read on by default, and say what they change', (tester) async {
+      await pumpOnQuest(tester);
+
+      expect(find.text('Gaussian splats (experimental)'), findsOneWidget);
+      expect(
+        find.text('Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S'),
+        findsOneWidget,
+      );
+      expect(find.text('Large splats (experimental)'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(splatSwitch).value, isTrue);
+      expect(tester.widget<SwitchListTile>(largeSwitch).value, isTrue);
+    });
+
+    testWidgets('turn off, Large splats going with the splats', (tester) async {
+      await pumpOnQuest(tester);
+
+      await tester.tap(splatSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.gaussianSplats, isFalse);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+
+      await tester.tap(splatSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.gaussianSplats, isTrue);
+      await tester.ensureVisible(largeSwitch);
+      await tester.pumpAndSettle();
+      await tester.tap(largeSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.largeSplats, isFalse);
+    });
+
+    testWidgets('are not offered on a phone, which has no immersive viewer', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+    });
+  });
+
   group('DJI live video (experimental)', () {
     final linkSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_dji_link')),

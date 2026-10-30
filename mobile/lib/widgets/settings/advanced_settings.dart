@@ -77,6 +77,16 @@ class AdvancedSettings extends HookConsumerWidget {
     useValueChanged<bool, void>(sharpFlatScreens.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSharpFlatScreens, sharpFlatScreens.value));
     });
+    // The Gaussian splat files of other tools in the immersive viewer of a Meta Quest 3 or 3S, experimental and on by
+    // default, and the larger count of Large splats
+    final gaussianSplats = useState(ref.watch(appConfigProvider).viewer.gaussianSplats);
+    useValueChanged<bool, void>(gaussianSplats.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerGaussianSplats, gaussianSplats.value));
+    });
+    final largeSplats = useState(ref.watch(appConfigProvider).viewer.largeSplats);
+    useValueChanged<bool, void>(largeSplats.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerLargeSplats, largeSplats.value));
+    });
 
     final logLevel = Level.LEVELS[levelId.value].name;
 
@@ -194,6 +204,20 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: sharpFlatScreens,
           title: context.t.setting_immersive_sharp_screens_title,
           subtitle: context.t.setting_immersive_sharp_screens_subtitle,
+        ),
+      if (isHorizonOs)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_gaussian_splats'),
+          valueNotifier: gaussianSplats,
+          title: context.t.splat_setting_title,
+          subtitle: context.t.splat_setting_subtitle,
+        ),
+      if (isHorizonOs && gaussianSplats.value)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_large_splats'),
+          valueNotifier: largeSplats,
+          title: context.t.splat_large_setting_title,
+          subtitle: context.t.splat_large_setting_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       // The kiosk mode, for the visitors of an exhibition: a Meta Quest only, like the immersive viewer it opens

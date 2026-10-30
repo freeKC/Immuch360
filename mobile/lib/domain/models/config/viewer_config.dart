@@ -39,6 +39,14 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
     @Default(true) bool sharpFlatScreens,
 
+    /// Meta Quest, experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open
+    /// in the immersive viewer of a Quest 3 or 3S (lot S5). On by default (Settings, Advanced turns it off)
+    @Default(true) bool gaussianSplats,
+
+    /// Meta Quest, experimental: a splat shows up to 150 000 gaussians, the advice of the Meta Spatial SDK, rather than
+    /// the 50 000 of the first measures, with a passing word that it may stutter. On by default (Settings, Advanced)
+    @Default(true) bool largeSplats,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

@@ -60,6 +60,27 @@ void main() {
     });
   });
 
+  group('Gaussian splats on the Meta Quest (experimental)', () {
+    test('are on by default, Large splats too', () {
+      expect(const AppConfig().viewer.gaussianSplats, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerGaussianSplats), isTrue);
+      expect(const AppConfig().viewer.largeSplats, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerLargeSplats), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({
+        SettingsKey.viewerGaussianSplats: false,
+        SettingsKey.viewerLargeSplats: false,
+      });
+
+      expect(config.viewer.gaussianSplats, isFalse);
+      expect(config.viewer.largeSplats, isFalse);
+      expect(config.write(SettingsKey.viewerGaussianSplats, true).viewer.gaussianSplats, isTrue);
+      expect(config.write(SettingsKey.viewerLargeSplats, true).viewer.largeSplats, isTrue);
+    });
+  });
+
   group('Spatial 2.5D (experimental)', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.spatial25d, isTrue);
