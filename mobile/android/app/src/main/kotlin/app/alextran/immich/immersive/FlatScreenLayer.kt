@@ -75,13 +75,15 @@ internal object FlatScreenLayer {
   /**
    * Whether a photo of the stereo quad of [kind] shows on the layer: with [sharp], an Apple spatial photo, a side by
    * side photo, a flat 3D photo, a photo on the big screen and one whose JSON does not read (shown flat); never a
-   * relief made in the headset, whose 2.5D mesh needs the quad behind it, nor the preview of a 3D scene.
+   * relief made in the headset, whose 2.5D mesh needs the quad behind it, nor the preview of a 3D scene, nor a
+   * Gaussian splat, which has no picture.
    */
   fun showsOnLayer(kind: StereoPhotoKind?, sharp: Boolean): Boolean =
     sharp &&
       when (kind) {
         is StereoPhotoKind.DepthRelief,
-        is StereoPhotoKind.VolumetricScene -> false
+        is StereoPhotoKind.VolumetricScene,
+        is StereoPhotoKind.GaussianSplat -> false
         else -> true
       }
 }
