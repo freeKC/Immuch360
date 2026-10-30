@@ -25,9 +25,9 @@ final isHorizonOsProvider = FutureProvider<bool>((ref) async {
 });
 
 /// Whether this build offers the Gaussian splats (lot S5, FreeKC's decision of 30 October 2026), asked to [api] on
-/// Android: the GitHub builds do, the build of the Meta Horizon Store does not (SplatBuild.kt tells them apart by the
-/// certificate of the APK, and its SPLATS_IN_STORE_BUILD alone can make the store build offer them). False off Android,
-/// and false when the question fails, so that no failure ever shows the splats in the store build.
+/// Android: the GitHub and debug builds do; the Meta Horizon Store build, and a key the app does not know, do not
+/// (SplatBuild.kt tells them apart by the certificates of the APK, and its SPLATS_IN_STORE_BUILD alone can make the
+/// store build offer them). False off Android, and false when the question fails, as in the store build.
 Future<bool> askSplatsInThisBuild(ImmersiveApi api, {required bool android}) async {
   if (!android) {
     return false;

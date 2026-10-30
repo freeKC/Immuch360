@@ -54,7 +54,13 @@ class SplatBuildTest {
 
   @Test
   fun `the switch is off in this source, and it is the default of the gate`() {
-    assertFalse(SplatBuild.SPLATS_IN_STORE_BUILD)
+    // Flipped, the same change rewrites what says the store build hides the splats: point 2 and the table row of
+    // licenses/meta-spatial-sdk/README.md, SPLAT_MODULE of publish_ai_components.py then MODEL-LICENSES.md, and the
+    // comments of SplatBuild, SplatEngines (quest), immersive_api.dart, immersive.provider.dart and splat_gate.dart
+    assertFalse(
+      "SPLATS_IN_STORE_BUILD flipped: rewrite the licence note and the comments that say the store build hides them",
+      SplatBuild.SPLATS_IN_STORE_BUILD,
+    )
     assertFalse(SplatBuild.offersSplats(Kind.STORE))
     assertFalse(SplatBuild.offersSplats(Kind.UNKNOWN))
     assertTrue(SplatBuild.offersSplats(Kind.GITHUB))
