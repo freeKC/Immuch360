@@ -5058,17 +5058,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val distance = screenPlace?.distance ?: screenDistanceM
     val (width, height) = FlatStereo.screenSize(aspect, flatVideoAngle(aspect), distance)
     val same = config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f
-    if (!same) {
-      try {
-        config.stereoMode = mode
-        config.width = width
-        config.height = height
-        panel.reshape(config)
-        val what = media.flatVideo ?: "big screen"
-        Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($what, frame $flatVideoSize)")
-      } catch (e: Exception) {
-        Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
-      }
+    // A grab calls this at every frame: the shape, and the Size and Distance rows of the panel, only once changed
+    if (same) return
+    try {
+      config.stereoMode = mode
+      config.width = width
+      config.height = height
+      panel.reshape(config)
+      val what = media.flatVideo ?: "big screen"
+      Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($what, frame $flatVideoSize)")
+    } catch (e: Exception) {
+      Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
     }
     updateScreenControls()
   }

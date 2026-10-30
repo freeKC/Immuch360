@@ -4,8 +4,8 @@
 // a relief estimated by AI, what previous and next say on such a photo, and for a relief the headset makes, its
 // stages, its Stop relief button, why it left a photo flat and its 2.5D view on the 3D button; and the words of a 3D
 // scene (design-final 2026-10-27, section 3); and the words of a flat 3D media told by its file name (see
-// flat3dViewerLabels) and of the flat screens (see flatScreenViewerLabels). The viewer has their English texts for a key it does not get (StereoComposer.label), and puts
-// the message of a failure where {reason} is.
+// flat3dViewerLabels) and of the flat screens (see flatScreenViewerLabels). The viewer has their English texts for a
+// key it does not get (StereoComposer.label), and puts the message of a failure where {reason} is.
 
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/generated/translations.g.dart';

@@ -658,8 +658,8 @@ class ImmersiveAssetResolver {
 
   /// What the viewer opens for [asset], a video of its flat video screen that [stereoPair] describes (the flat3d JSON
   /// of a flat 3D video, the bigScreen JSON of an ordinary one on the big screen): the file [resolve] picks for the
-  /// sphere, with that JSON. [localPath] is the file of a media opened with "Open with". Throws when there is no file to
-  /// open.
+  /// sphere, with that JSON. [localPath] is the file of a media opened with "Open with". Throws when there is no file
+  /// to open.
   Future<ImmersiveRequest> resolveFlatScreenVideo(BaseAsset asset, String stereoPair, {String? localPath}) async {
     final sphere = await resolve(asset, localPath: localPath);
     return ImmersiveRequest(
