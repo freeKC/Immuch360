@@ -828,6 +828,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var videoSurface: Surface? by sceneHold.ref()
   private var currentVideoUrl: String? = null
   private var videoFallbackTried = false
+  /**
+   * The copy plays because the original of this media could not stream (VideoStartRule.Start.FALLBACK) and the
+   * original was not tried: beyond the decoder, the copy gives way to it once (VideoStartRule.OverLimit.ORIGINAL).
+   */
+  private var originalLeftForCopy = false
   /** Between onResume and onPause: the viewer is the activity in front. */
   private var resumed = false
   /**
@@ -5557,11 +5562,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     counters?.ensureUpdated()
     watchedFrames = counters?.renderedOutputBufferCount ?: 0
     watchedDroppedFrames = counters?.droppedBufferCount ?: 0
-    // A decoder that cannot keep up keeps Media3 ready, or waiting with its buffer full: it has data all the same
+    // A decoder that cannot keep up keeps Media3 ready, or waiting with more buffered than its load control asks: it
+    // has data all the same. Less than that, still loading, is a wait for the network (the share bridge included)
     val fed =
-      p.playWhenReady &&
-        (p.playbackState == Player.STATE_READY ||
-          (p.playbackState == Player.STATE_BUFFERING && p.totalBufferedDuration >= OVER_LIMIT_FED_BUFFER_MS))
+      PlaybackRecovery.decoderFed(
+        p.playWhenReady,
+        p.playbackState,
+        p.totalBufferedDuration,
+        p.isLoading,
+        StreamingLoadControl.playbackBufferMs(playerStreamed, rebuffering = true).toLong(),
+      )
     when (
       val action = recovery.onTick(p.isPlaying, p.currentPosition, watchedFrames, SystemClock.elapsedRealtime(), fed)
     ) {
@@ -5713,12 +5723,21 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val fallback = media.fallbackUrl?.takeIf { it != url }
     // A server video whose original came downloaded is still a server video: its server can make a copy that plays
     val fromServer = !ImmersiveMedia.isFileMedia(media.url)
-    when (VideoStartRule.overLimit(fallbackLeft = !videoFallbackTried && fallback != null, fromServer = fromServer)) {
+    val originalLeft = originalLeftForCopy && url == media.fallbackUrl
+    originalLeftForCopy = false
+    when (
+      VideoStartRule.overLimit(
+        fallbackLeft = !videoFallbackTried && fallback != null,
+        fromServer = fromServer,
+        originalLeft = originalLeft,
+      )
+    ) {
       VideoStartRule.OverLimit.SWITCH -> {
         videoFallbackTried = true
         setStatus(getString(R.string.immersive_video_decoder_switch, "$codec $size"))
         playUrl(fallback ?: return, resumePositionMs())
       }
+      VideoStartRule.OverLimit.ORIGINAL -> playOriginalOverCopy(media, "$codec $size")
       VideoStartRule.OverLimit.REFUSE -> {
         val message =
           if (verdict.maxWidth > 0 && verdict.maxHeight > 0) {
@@ -5748,6 +5767,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         scheduleInfoHide(DECODER_WARNING_HIDE_MS)
       }
     }
+  }
+
+  /**
+   * The copy of [media] that played because its original could not stream is beyond the decoder ([copy], its codec and
+   * size): the original, which Flutter could not compare with it (the head of the copy unread), is downloaded with its
+   * progress on the status line and played instead, once; streamed as it is when it cannot be downloaded. Beyond the
+   * decoder too, it stops at its own first tracks with what to change in Immich (no fallback left).
+   */
+  private fun playOriginalOverCopy(media: MediaRequest, copy: String) {
+    Log.w(TAG, "the copy $copy is beyond the decoder, downloading the original")
+    stopVideo()
+    loadJob?.cancel()
+    loadJob =
+      scope.launch {
+        val url = downloadOriginal(media) ?: media.url
+        if (request !== media) return@launch
+        playUrl(url, media.startPositionMs)
+      }
   }
 
   /**
@@ -5977,6 +6014,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateProgress()
     applyVideoShape()
     videoFallbackTried = false
+    originalLeftForCopy = false
     cancelRestart()
     recovery.onMedia()
     // The word of Flutter on the file it chose, said once the video plays (see the READY state)
@@ -6015,6 +6053,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             // download before the first frame, the transcoded stream streams
             Log.i(TAG, "original not streamable, using the transcoded stream")
             videoFallbackTried = true
+            originalLeftForCopy = playback != null
             url = playback ?: url
           }
           VideoStartRule.Start.DOWNLOAD -> {
@@ -6412,8 +6451,6 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
     private const val DOWNLOAD_DIR = "immersive_video"
     private const val DOWNLOAD_BUFFER_BYTES = 256 * 1024
-    /** Buffered media past which a decoder that waits counts as fed, for the rule of a video beyond the decoder */
-    private const val OVER_LIMIT_FED_BUFFER_MS = 2_000L
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */

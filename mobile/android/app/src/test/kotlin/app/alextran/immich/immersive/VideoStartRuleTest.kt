@@ -70,6 +70,19 @@ class VideoStartRuleTest {
   }
 
   @Test
+  fun `a copy played because the original could not stream gives way to the original once, beyond the decoder`() {
+    // The head of the copy could not be read (a probe timeout, a moov past the first MiB): Flutter sent it as the
+    // fallback, Start.FALLBACK played it, and at its first tracks it is H.264 5760 x 2880. The original, never tried,
+    // may be the HEVC file the headset decodes: downloaded, not refused
+    assertEquals(Start.FALLBACK, start(hasFallback = true, streamable = false))
+    assertEquals(OverLimit.ORIGINAL, VideoStartRule.overLimit(fallbackLeft = false, fromServer = true, originalLeft = true))
+    // Once: the original beyond the decoder too is refused with what to change in Immich
+    assertEquals(OverLimit.REFUSE, VideoStartRule.overLimit(fallbackLeft = false, fromServer = true, originalLeft = false))
+    // A copy left to try still comes first, and a file of a share has no original of a server
+    assertEquals(OverLimit.SWITCH, VideoStartRule.overLimit(fallbackLeft = true, fromServer = true, originalLeft = true))
+  }
+
+  @Test
   fun `the download line says how far it is`() {
     assertEquals(0, VideoStartRule.percent(0L, 1000L))
     assertEquals(45, VideoStartRule.percent(450L, 1000L))

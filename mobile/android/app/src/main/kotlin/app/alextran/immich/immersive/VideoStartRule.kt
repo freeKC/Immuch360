@@ -9,9 +9,11 @@ package app.alextran.immich.immersive
  * - [start]: a refusal Flutter sent is said at once; a server original that cannot stream (no Range, the MP4 index at
  *   the end, the rule of 30 September) goes to the copy when there is one to go to, else it is downloaded to the cache
  *   with a progress line, rather than streamed from the start to the end before its first frame.
- * - [overLimit]: at the first tracks, a video beyond the decoder switches to the copy once; a server video with nothing
- *   left stops at once with what to change in Immich; a file of the headset or of a share warns and plays, watched by
- *   the rule of PlaybackRecovery.onOverLimit (no frame for 3 s stops it).
+ * - [overLimit]: at the first tracks, a video beyond the decoder switches to the copy once; a copy played because the
+ *   original could not stream (sent as the fallback while its head could not be read) gives way to the original,
+ *   downloaded, once; a server video with nothing left stops at once with what to change in Immich; a file of the
+ *   headset or of a share warns and plays, watched by the rule of PlaybackRecovery.onOverLimit (no frame for 3 s stops
+ *   it).
  *
  * Pure, so that every rule is unit tested.
  */
@@ -33,6 +35,9 @@ internal object VideoStartRule {
   enum class OverLimit {
     /** Play the server's copy instead, once. */
     SWITCH,
+
+    /** Download the original and play it instead of the copy, once. */
+    ORIGINAL,
 
     /** Stop at once and say what to change in Immich. */
     REFUSE,
@@ -72,12 +77,15 @@ internal object VideoStartRule {
 
   /**
    * What a video beyond the decoder does at its first tracks: [fallbackLeft], a copy the headset decodes was not tried
-   * yet; [fromServer], the media is a server video (not a file of the headset or of a share), whose server can make a
-   * copy that plays.
+   * yet; [originalLeft], the url is the copy [start] chose ([Start.FALLBACK]) because the original could not stream,
+   * whose original was not tried (Flutter sends a copy whose head it could not read as one that may decode, and the
+   * original may be the file the headset decodes); [fromServer], the media is a server video (not a file of the headset
+   * or of a share), whose server can make a copy that plays.
    */
-  fun overLimit(fallbackLeft: Boolean, fromServer: Boolean): OverLimit =
+  fun overLimit(fallbackLeft: Boolean, fromServer: Boolean, originalLeft: Boolean = false): OverLimit =
     when {
       fallbackLeft -> OverLimit.SWITCH
+      originalLeft -> OverLimit.ORIGINAL
       fromServer -> OverLimit.REFUSE
       else -> OverLimit.WARN
     }

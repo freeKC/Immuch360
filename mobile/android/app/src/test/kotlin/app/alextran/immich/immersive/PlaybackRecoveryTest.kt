@@ -1,6 +1,7 @@
 package app.alextran.immich.immersive
 
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import app.alextran.immich.immersive.PlaybackRecovery.Action
 import app.alextran.immich.immersive.PlaybackRecovery.Cause
 import org.junit.Assert.assertEquals
@@ -538,6 +539,61 @@ class PlaybackRecoveryTest {
     }
     assertEquals(Action.None, recovery.onTick(true, 0L, 1, nowMs = 12_500L))
     assertEquals(Action.Undecodable(0L, true), recovery.onTick(true, 0L, 1, nowMs = 13_000L))
+  }
+
+  @Test
+  fun `a streamed player waiting with less than its load control asks is waiting for the network, not the decoder`() {
+    // A file of a network share over the media bridge (http://127.0.0.1): the streaming load control waits for 2.5 s
+    // at the start and 5 s after a stall
+    val streamed = 5_000L
+    assertFalse(PlaybackRecovery.decoderFed(true, Player.STATE_BUFFERING, 3_000L, loading = true, rebufferMs = streamed))
+    assertTrue(PlaybackRecovery.decoderFed(true, Player.STATE_BUFFERING, 6_000L, loading = true, rebufferMs = streamed))
+    // Nothing more to load (the buffer full, the whole file in): only the decoder keeps it waiting
+    assertTrue(PlaybackRecovery.decoderFed(true, Player.STATE_BUFFERING, 1_000L, loading = false, rebufferMs = streamed))
+    // A file of the headset waits for the 2 s of Media3
+    assertTrue(PlaybackRecovery.decoderFed(true, Player.STATE_BUFFERING, 3_000L, loading = true, rebufferMs = 2_000L))
+    assertTrue(PlaybackRecovery.decoderFed(true, Player.STATE_READY, 0L, loading = true, rebufferMs = streamed))
+    // Paused, ended or idle: nothing asked of the decoder
+    assertFalse(PlaybackRecovery.decoderFed(false, Player.STATE_READY, 10_000L, loading = false, rebufferMs = streamed))
+    assertFalse(PlaybackRecovery.decoderFed(true, Player.STATE_ENDED, 0L, loading = false, rebufferMs = streamed))
+    assertFalse(PlaybackRecovery.decoderFed(true, Player.STATE_IDLE, 0L, loading = false, rebufferMs = streamed))
+  }
+
+  @Test
+  fun `a share slower than the bit rate never stops a video beyond the decoder as undecodable`() {
+    // Buffering with 2 to 4.5 s ahead for 10 s, the frames standing: Media3 waits for the 5 s of the load control
+    val recovery = overLimit(nowMs = 0L)
+    var now = 1_000L
+    var buffered = 2_000L
+    while (now <= 11_000L) {
+      val fed = PlaybackRecovery.decoderFed(true, Player.STATE_BUFFERING, buffered, loading = true, rebufferMs = 5_000L)
+      assertEquals("at $now", Action.None, recovery.onTick(false, 0L, 1, nowMs = now, decoderFed = fed))
+      now += 500L
+      buffered = (buffered + 125L).coerceAtMost(4_500L)
+    }
+    // With the buffer full, the decoder that gives nothing is stopped 3 s after the last wait for the network
+    val full = PlaybackRecovery.decoderFed(true, Player.STATE_BUFFERING, 6_000L, loading = true, rebufferMs = 5_000L)
+    assertEquals(Action.None, recovery.onTick(false, 0L, 1, nowMs = 11_500L, decoderFed = full))
+    assertEquals(Action.None, recovery.onTick(false, 0L, 1, nowMs = 13_500L, decoderFed = full))
+    assertEquals(Action.Undecodable(0L, true), recovery.onTick(false, 0L, 1, nowMs = 14_000L, decoderFed = full))
+  }
+
+  @Test
+  fun `a seek or a surface given late starts the count of a video beyond the decoder again`() {
+    val recovery = overLimit(nowMs = 0L)
+    assertEquals(Action.None, recovery.onTick(true, 0L, 1, nowMs = 2_500L))
+    // A seek at 2.6 s: the catch up from the key frame takes a moment
+    recovery.onSeek()
+    assertEquals(Action.None, recovery.onTick(true, 20_000L, 1, nowMs = 3_000L))
+    assertEquals(Action.None, recovery.onTick(true, 20_000L, 1, nowMs = 5_500L))
+    assertEquals(Action.Undecodable(20_000L, true), recovery.onTick(true, 20_000L, 1, nowMs = 6_000L))
+
+    val late = overLimit(nowMs = 0L)
+    assertEquals(Action.None, late.onTick(true, 0L, 1, nowMs = 2_500L))
+    late.onSurface()
+    assertEquals(Action.None, late.onTick(true, 0L, 1, nowMs = 3_000L))
+    assertEquals(Action.None, late.onTick(true, 0L, 1, nowMs = 5_500L))
+    assertEquals(Action.Undecodable(0L, true), late.onTick(true, 0L, 1, nowMs = 6_000L))
   }
 
   @Test

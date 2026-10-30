@@ -1,6 +1,7 @@
 package app.alextran.immich.immersive
 
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 
 /**
  * What the immersive viewer does when the video of a 360° media stops in the middle (lot quest-playback-resilience,
@@ -29,10 +30,11 @@ import androidx.media3.common.PlaybackException
  *
  * - A url beyond what the headset decodes, which plays anyway (a file of the headset or of a share, see
  *   VideoStartRule.overLimit), is watched by its own rule, first ([onOverLimit], lot fix-decoder-limit): a decoder that
- *   gives no new frame for [OVER_LIMIT_NO_FRAME_MS] of the clock while it has data stops the video
+ *   gives no new frame for [OVER_LIMIT_NO_FRAME_MS] of the clock while it has data ([decoderFed]) stops the video
  *   ([Action.Undecodable]), the media time standing still or not (Media3 stays ready while the decoder cannot keep up,
  *   so the watch above sees nothing to count), and no failure of it restarts nor goes to the transcoded stream: a new
- *   decoder would meet the same frames, and the retries would loop.
+ *   decoder would meet the same frames, and the retries would loop. A wait for the network (a share over the media
+ *   bridge slower than the bit rate), a pause, a seek and a surface given late start the count again.
  *
  * Each media (and each visitor of a kiosk, whose film starts over on a new player) gets its retry: [onMedia].
  */
@@ -114,8 +116,11 @@ internal class PlaybackRecovery {
   var overLimit = false
     private set
 
-  /** The clock when the decoder of a url beyond its limit last gave a frame, or last waited for data. */
-  private var overLimitAnchorMs = 0L
+  /**
+   * The clock when the decoder of a url beyond its limit last gave a frame, or last waited for data; null after a seek
+   * or a surface given, until the next read.
+   */
+  private var overLimitAnchorMs: Long? = null
 
   /** [Action.Undecodable] was said for the current url. */
   private var undecodableSaid = false
@@ -154,6 +159,7 @@ internal class PlaybackRecovery {
   fun onSurface() {
     noPictureSaid = false
     anchorMs = null
+    overLimitAnchorMs = null
   }
 
   /**
@@ -174,13 +180,14 @@ internal class PlaybackRecovery {
   /** The position jumped (a seek): the frames after it take a moment, the count starts again from the next read. */
   fun onSeek() {
     anchorMs = null
+    overLimitAnchorMs = null
   }
 
   /**
    * A read of the player every so often: whether it [playing] (ready and asked to play), its [positionMs], the frames
    * its video renderer [renderedFrames] (0 without a video renderer), the clock [nowMs] (elapsed realtime) and whether
-   * its decoder has data while asked to play ([decoderFed]: ready, or waiting with a buffer full enough), which the
-   * rule of a url beyond the decoder counts.
+   * its decoder has data while asked to play ([decoderFed], see the function of that name), which the rule of a url
+   * beyond the decoder counts.
    */
   fun onTick(
     playing: Boolean,
@@ -248,11 +255,12 @@ internal class PlaybackRecovery {
       }
       lastFrames = renderedFrames
     }
-    if (!decoderFed) {
+    val anchor = overLimitAnchorMs
+    if (!decoderFed || anchor == null) {
       overLimitAnchorMs = nowMs
       return Action.None
     }
-    if (undecodableSaid || nowMs - overLimitAnchorMs < OVER_LIMIT_NO_FRAME_MS) return Action.None
+    if (undecodableSaid || nowMs - anchor < OVER_LIMIT_NO_FRAME_MS) return Action.None
     undecodableSaid = true
     return Action.Undecodable(positionMs.coerceAtLeast(0L), framesSeen)
   }
@@ -269,6 +277,19 @@ internal class PlaybackRecovery {
 
     /** How often the viewer reads the player while a video plays. */
     const val TICK_MS = 500L
+
+    /**
+     * Whether the decoder of a url has data while its player is asked to play ([playWhenReady]), for the rule of a url
+     * beyond the decoder: Media3 ready ([state] Player.STATE_READY), or waiting (Player.STATE_BUFFERING) with at least
+     * [rebufferMs] buffered ahead ([bufferedMs]; what the load control of that player waits for after a stall, see
+     * StreamingLoadControl.playbackBufferMs, past which only the decoder keeps it waiting) or with nothing more loading
+     * ([loading] false: the load control holds what it wants, or the whole file is in). A wait below that, still
+     * loading, is the network's (a share over the media bridge slower than the bit rate): no decoder that cannot keep
+     * up.
+     */
+    fun decoderFed(playWhenReady: Boolean, state: Int, bufferedMs: Long, loading: Boolean, rebufferMs: Long): Boolean =
+      playWhenReady &&
+        (state == Player.STATE_READY || (state == Player.STATE_BUFFERING && (bufferedMs >= rebufferMs || !loading)))
 
     /**
      * Clock time a decoder beyond its limit may go without a new frame while it has data, before the video stops: 3 s,
