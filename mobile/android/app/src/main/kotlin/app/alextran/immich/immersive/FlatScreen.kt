@@ -2,6 +2,7 @@ package app.alextran.immich.immersive
 
 import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.ButtonBits
+import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.atan
@@ -9,7 +10,6 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tan
@@ -135,6 +135,25 @@ internal class ScreenGrip(private val holdMs: Long = HOLD_MS) {
     grabbing = null
     stretching = false
     grips.values.forEach { if (it.downAt != null) it.spent = true }
+    return events
+  }
+
+  /**
+   * Starts again from the grips held now, [heldBits], when the viewer starts or stops following a flat screen: a grab
+   * or a stretch ends, a grip held stays spent until its release (its press went elsewhere: on a sphere the grip shows
+   * or hides the panel as it goes down), and a grip up is forgotten.
+   */
+  fun reset(heldBits: Int): List<Event> {
+    val events = cancel()
+    for ((side, grip) in grips) {
+      if ((heldBits and side.bit) != 0) {
+        if (grip.downAt == null) grip.downAt = 0L
+        grip.spent = true
+      } else {
+        grip.downAt = null
+        grip.spent = false
+      }
+    }
     return events
   }
 
@@ -358,10 +377,12 @@ internal object FlatScreenGeometry {
     return min(FIT_WIDTH_DEG, heightBound)
   }
 
-  /** A distance as the Distance label shows it: "2", "1.5", "0.75". */
-  fun meters(distance: Float): String {
-    val whole = distance.roundToInt()
-    if (abs(distance - whole) < 1e-3f) return whole.toString()
-    return String.format(Locale.ROOT, "%.2f", distance).trimEnd('0')
+  /** A distance as the Distance label shows it, in the numbers of [locale]: "2", "1.5", "0.75" ("1,5" in French). */
+  fun meters(distance: Float, locale: Locale = Locale.ROOT): String {
+    val format = NumberFormat.getNumberInstance(locale)
+    format.maximumFractionDigits = 2
+    format.minimumFractionDigits = 0
+    format.isGroupingUsed = false
+    return format.format(distance.toDouble())
   }
 }

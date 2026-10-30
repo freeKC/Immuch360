@@ -1,6 +1,7 @@
 package app.alextran.immich.immersive
 
 import com.meta.spatial.core.Vector3
+import java.util.Locale
 import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.sin
@@ -188,6 +189,9 @@ class FlatScreenGeometryTest {
     assertEquals("1.5", FlatScreenGeometry.meters(1.5f))
     assertEquals("0.75", FlatScreenGeometry.meters(0.75f))
     assertEquals("1.25", FlatScreenGeometry.meters(1.25f))
+    // In the numbers of the language of the headset
+    assertEquals("1,5", FlatScreenGeometry.meters(1.5f, Locale.FRENCH))
+    assertEquals("8", FlatScreenGeometry.meters(8f, Locale.GERMAN))
   }
 
   // Stretch

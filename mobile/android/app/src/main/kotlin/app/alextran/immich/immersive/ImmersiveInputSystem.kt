@@ -36,12 +36,23 @@ internal class ImmersiveInputSystem(
      */
     fun onButtonsHeld(controllerBits: Int) = Unit
 
+    /** Whether [onControllerRays] is wanted on this frame: while a flat screen shows. False by default. */
+    fun wantsControllerRays(): Boolean = false
+
+    /**
+     * The pose of each controller found on this frame, its forward being its ray (the grips move and resize a flat
+     * screen with it, see ScreenGrip), every frame [wantsControllerRays] says so, before [onFrame]. Nothing by default.
+     */
+    fun onControllerRays(rays: Map<GripSide, Pose>) = Unit
+
     fun onFrame(head: Pose?)
   }
 
-  private val headQuery =
-    Query.where { has(AvatarAttachment.id) }
-      .filter { isLocal() and by(AvatarAttachment.typeData).isEqualTo("head") }
+  private val headQuery = attachmentQuery("head")
+
+  /** The controllers, by the side of their grip: the attachments of the avatar the SDK names after each hand. */
+  private val controllerQueries =
+    mapOf(GripSide.LEFT to attachmentQuery("left_controller"), GripSide.RIGHT to attachmentQuery("right_controller"))
 
   private val edges = ControllerEdges { message -> Log.i(TAG, message) }
 
@@ -84,6 +95,18 @@ internal class ImmersiveInputSystem(
       Log.e(TAG, "held buttons handling failed", e)
     }
 
+    try {
+      if (listener.wantsControllerRays()) {
+        val rays = HashMap<GripSide, Pose>(2)
+        for ((side, query) in controllerQueries) {
+          query.eval().firstOrNull()?.getComponent<Transform>()?.transform?.let { rays[side] = it }
+        }
+        listener.onControllerRays(rays)
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "controller rays failed", e)
+    }
+
     val head =
       try {
         headQuery.eval().firstOrNull()?.getComponent<Transform>()?.transform
@@ -97,6 +120,10 @@ internal class ImmersiveInputSystem(
       Log.e(TAG, "frame handling failed", e)
     }
   }
+
+  /** The local attachment of the avatar of [type] ("head", "left_controller", "right_controller"). */
+  private fun attachmentQuery(type: String) =
+    Query.where { has(AvatarAttachment.id) }.filter { isLocal() and by(AvatarAttachment.typeData).isEqualTo(type) }
 }
 
 /**

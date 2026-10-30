@@ -145,6 +145,32 @@ class FlatScreenGripTest {
   }
 
   @Test
+  fun `a grip already held when a flat screen shows does nothing until it is released`() {
+    // Pressed while a sphere showed, where it toggled the panel on its press: no second toggle on its release
+    assertEquals(emptyList<Event>(), grip.reset(right))
+    assertEquals(emptyList<Event>(), step(100, right))
+    assertEquals(emptyList<Event>(), step(500, right))
+    assertNull(grip.grabbing)
+    assertEquals(emptyList<Event>(), step(600, 0))
+    step(700, right)
+    assertEquals(listOf(Event.TogglePanel), step(800, 0))
+  }
+
+  @Test
+  fun `reset ends a grab or a stretch, and forgets a grip released meanwhile`() {
+    step(0, right)
+    step(ScreenGrip.HOLD_MS, right)
+    assertEquals(listOf(Event.GrabEnd(GripSide.RIGHT)), grip.reset(0))
+    assertNull(grip.grabbing)
+    // Pressed again later: a short press as any other
+    step(1000, left)
+    assertEquals(listOf(Event.TogglePanel), step(1100, 0))
+    step(1200, left or right)
+    assertEquals(listOf(Event.StretchEnd), grip.reset(left or right))
+    assertEquals(emptyList<Event>(), step(1300, 0))
+  }
+
+  @Test
   fun `the other buttons change nothing`() {
     val others = ButtonBits.ButtonA or ButtonBits.ButtonTriggerR or ButtonBits.ButtonThumbRU
     assertEquals(emptyList<Event>(), step(0, others))

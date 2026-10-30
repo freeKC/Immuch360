@@ -121,6 +121,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.RandomAccessFile
+import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
@@ -232,6 +233,15 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * quest/flat-3d) comes with the bigScreen JSON (see [BigScreenSpec]): the photo goes on the stereo quad as one
  * picture, upright as its EXIF says, the video on the flat video screen, its whole frame for both eyes; each opens as
  * wide as fits its shape in 60 by 40 degrees and plays on its own, without previous or next.
+ *
+ * A flat screen (a photo of the stereo quad but a relief made in the headset and a 3D scene, a video of the flat video
+ * screen) moves and resizes with the grips, as FreeKC chose on 29 October on an idea and a first version of Gaurav
+ * Mukherjee (gmfun/Immuch360 branch quest/flat-3d), see [ScreenGrip]: a short grip press still shows or hides the info
+ * panel, a grip held 300 ms on the screen grabs it and the screen follows its ray around the eyes, the thumbstick up or
+ * down meanwhile takes it farther or nearer, and both grips held resize it with the spread of the hands. Its Size and
+ * Distance, each with minus and plus buttons, take the place of previous and next in the info panel; the distance
+ * chosen last is kept for the next flat screens. With Sharper flat screens on (experimental, on by default), its
+ * photos are drawn on a compositor quad layer with the quality filters of the compositor, see [FlatScreenLayer].
  *
  * A 360° panorama a computer generated beyond the edges of a photo, or its 3D version, is told by our packet at the
  * head of its file, which the viewer reads for every photo on a sphere, the one the app opened as those previous and
@@ -494,6 +504,27 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Where the flat screen shown stands (a movable photo of the stereo quad, the flat video screen), null before. */
   private var screenPlace: ScreenPlace? = null
 
+  // The grips on a flat screen: a short press shows or hides the info panel, a hold on the screen moves it, both grips
+  // resize it (see ScreenGrip; FreeKC's mapping of 29 October on an idea of Gaurav Mukherjee, gmfun/Immuch360 branch
+  // quest/flat-3d)
+  private val screenGrip = ScreenGrip()
+  /** The viewer follows the grips: a movable flat screen shows, see [followScreenGrips]. */
+  private var gripsFollowed = false
+  /** The grab in progress and the side of its grip, null while no grip holds the screen. */
+  private var screenDrag: ScreenDrag? = null
+  private var screenDragSide: GripSide? = null
+  /** The stretch of both grips, started once both rays are known. */
+  private val screenStretch = ScreenStretch()
+  private var stretchStarted = false
+  /** When the stretch last resized the screen (uptime ms), and the size it still has to take. */
+  private var stretchAppliedAt = 0L
+  private var stretchPendingAngle: Float? = null
+  /** The pose of each controller on this frame, see ImmersiveInputSystem.Listener.onControllerRays. */
+  private var controllerRays: Map<GripSide, Pose> = emptyMap()
+  /** The hint of the grips, and the word on Sharper flat screens, passed once in this viewer. */
+  private var screenHintShown = false
+  private var sharpNoticeShown = false
+
   // AI relief of a flat photo, see showReliefPhoto
   /** The reliefs of this viewer, made at its first depthRelief photo and closed with it. */
   private var reliefJob: ReliefJob? = null
@@ -585,6 +616,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var seekForwardButton: ImageButton? = null
   private var previousButton: Button? = null
   private var nextButton: Button? = null
+  /** The Size and the Distance of a movable flat screen, in place of previous and next, see [updateScreenControls]. */
+  private var sizeRow: View? = null
+  private var sizeView: TextView? = null
+  private var sizeLessButton: Button? = null
+  private var sizeMoreButton: Button? = null
+  private var distanceRow: View? = null
+  private var distanceView: TextView? = null
+  private var distanceLessButton: Button? = null
+  private var distanceMoreButton: Button? = null
 
   // Feedback panel
   private var feedbackView: TextView? = null
@@ -592,6 +632,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var feedbackText = ""
   /** Hides the feedback panel FEEDBACK_SHOW_MS after its last text. */
   private var feedbackJob: Job? = null
+  /** The feedback line shows a notice (see [showNotice]) rather than the answer to a thumbstick. */
+  private var noticeShowing = false
+  /** Notices waiting for the one on the feedback line to go and the panel to hide, see [queueNotice]. */
+  private val pendingNotices = ArrayDeque<String>()
 
   // Time bar
   /** Refreshes the time bar while the panel is on screen with a video, see [updateProgressTicker]. */
@@ -1031,6 +1075,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateCoverageView()
     updateTurnButton()
     updateSceneControls()
+    updateScreenControls()
     if (revealInfo) setInfoVisible(true, reposition = true)
     when {
       media.isVideo -> showVideo(media)
@@ -1062,6 +1107,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     seekForwardButton = root.findViewById(R.id.immersive_seek_forward)
     previousButton = root.findViewById(R.id.immersive_previous)
     nextButton = root.findViewById(R.id.immersive_next)
+    sizeRow = root.findViewById(R.id.immersive_size_row)
+    sizeView = root.findViewById(R.id.immersive_size)
+    sizeLessButton = root.findViewById(R.id.immersive_size_less)
+    sizeMoreButton = root.findViewById(R.id.immersive_size_more)
+    distanceRow = root.findViewById(R.id.immersive_distance_row)
+    distanceView = root.findViewById(R.id.immersive_distance)
+    distanceLessButton = root.findViewById(R.id.immersive_distance_less)
+    distanceMoreButton = root.findViewById(R.id.immersive_distance_more)
     root.findViewById<Button>(R.id.immersive_back)?.setOnClickListener { close() }
     // A click from the controller ray or a hand pinch: the panel is on screen, it stays where it is, and a pending
     // auto hide starts again so that the panel does not vanish while the user is using it
@@ -1072,6 +1125,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
     onPanelClick(resetButton) { resetScene() }
+    onPanelClick(sizeLessButton) { changeScreenSize(-1) }
+    onPanelClick(sizeMoreButton) { changeScreenSize(1) }
+    onPanelClick(distanceLessButton) { changeScreenDistance(-1) }
+    onPanelClick(distanceMoreButton) { changeScreenDistance(1) }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -1083,20 +1140,26 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateCoverageView()
     updateTurnButton()
     updateSceneControls()
+    updateScreenControls()
   }
 
   /**
    * The rows of a 3D scene in the info panel: its controller mapping in place of the general one, its lines (see
    * [sceneDetails]) under it, Reset once the scene shows; previous and next are not offered there, the left thumbstick
    * gliding instead. A panorama generated beyond the edges of a photo keeps its lines there too (see
-   * [panoramaDetails]). Any other media gets the panel as before.
+   * [panoramaDetails]). A flat screen the grips move and resize gets its own controller mapping; any other media the
+   * panel as before.
    */
   private fun updateSceneControls() {
     val media = request
     val scene = media?.isScene == true
     hintView?.text =
-      if (scene) SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
-      else getString(R.string.immersive_hint)
+      when {
+        scene -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
+        // A flat screen the grips move and resize has its own mapping
+        media?.isMovableScreen == true -> getString(R.string.immersive_screen_hint)
+        else -> getString(R.string.immersive_hint)
+      }
     sceneDetailsView?.let { view ->
       val details = if (scene) sceneDetails else panoramaDetails
       view.text = details.joinToString("\n")
@@ -1289,6 +1352,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     panel.setComponent(Visible(visible && infoPlaced))
     infoVisible = visible
     updateProgressTicker()
+    if (!visible) {
+      showScreenHintOnce()
+      flushNotices()
+    }
   }
 
   /** Puts the info panel in front of the user, like SplatSample.positionPanelInFrontOfUser. */
@@ -1326,6 +1393,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     feedbackView?.alpha = 1f
     panel.setComponent(Visible(infoPlaced))
     feedbackJob?.cancel()
+    noticeShowing = holdMs > FEEDBACK_SHOW_MS
     feedbackJob =
       scope.launch {
         delay(holdMs)
@@ -1336,7 +1404,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         feedbackJob = null
         hideFeedback()
+        flushNotices()
       }
+  }
+
+  /**
+   * [text] as a notice on the feedback line, after the one it shows now if any: notices come one after the other, each
+   * for TransientText.HOLD_MS, while the info panel is hidden (see [flushNotices]).
+   */
+  private fun queueNotice(text: String) {
+    pendingNotices.addLast(text)
+    flushNotices()
+  }
+
+  /** The next notice waiting, once the feedback line shows none and the info panel is hidden. */
+  private fun flushNotices() {
+    if (noticeShowing || infoVisible || closing) return
+    pendingNotices.removeFirstOrNull()?.let(::showNotice)
   }
 
   /**
@@ -1348,6 +1432,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun hideFeedback() {
     feedbackJob?.cancel()
     feedbackJob = null
+    noticeShowing = false
     feedbackView?.animate()?.cancel()
     feedbackView?.alpha = 1f
     feedbackEntity?.setComponent(Visible(false))
@@ -1371,6 +1456,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     heldButtons = controllerBits
   }
 
+  override fun wantsControllerRays(): Boolean = gripsFollowed
+
+  override fun onControllerRays(rays: Map<GripSide, Pose>) {
+    controllerRays = rays
+  }
+
   override fun onFrame(head: Pose?) {
     val now = System.nanoTime()
     val seconds = if (lastFrameNanos == 0L) 0.0 else (now - lastFrameNanos) / 1e9
@@ -1387,6 +1478,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       // A 3D scene: the glide, the edge, its root fixed in the world, laid at the head at its first frame
       sceneView?.onFrame(head, heldButtons, seconds)
     }
+    followScreenGrips()
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
       if (lastHeadPosition == null) Log.w(TAG, "no head pose after 180 frames, default info panel position")
@@ -1527,7 +1619,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val panel = if (infoVisible) "shown" else "hidden"
     val controller = Integer.toHexString(controllerBits)
     Log.d(TAG, "buttons pressed: controller 0x$controller, hand 0x${Integer.toHexString(handBits)}, panel $panel")
-    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible, scene = request?.isScene == true)
+    val actions =
+      ImmersiveControls.actionsFor(
+        controllerBits,
+        handBits,
+        infoVisible,
+        scene = request?.isScene == true,
+        // A flat screen leaves its grips to ScreenGrip, and a hand that holds it moves it nearer or farther
+        screenGrabbable = gripsFollowed,
+        screenHeld = screenGrip.grabbing != null || screenGrip.stretching,
+      )
     if (!focused) {
       Log.w(TAG, "button press while the session was not reported focused: taken as focused (resumed=$resumed)")
       focused = true
@@ -1562,15 +1663,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveControls.Action.STICK_UP ->
           when {
             isVideo -> seekFromThumbstick(1)
-            isStereoPhoto -> resizeStereoQuad(1)
+            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(1) else resizeStereoQuad(1)
             else -> turnFromThumbstick(YAW_STEP_DEGREES)
           }
         ImmersiveControls.Action.STICK_DOWN ->
           when {
             isVideo -> seekFromThumbstick(-1)
-            isStereoPhoto -> resizeStereoQuad(-1)
+            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(-1) else resizeStereoQuad(-1)
             else -> turnFromThumbstick(-YAW_STEP_DEGREES)
           }
+        ImmersiveControls.Action.SCREEN_FARTHER -> changeScreenDistance(1)
+        ImmersiveControls.Action.SCREEN_NEARER -> changeScreenDistance(-1)
         ImmersiveControls.Action.TOGGLE_PANEL -> {
           // A panel opened by the user stays until the user hides it
           cancelInfoHide()
@@ -1586,6 +1689,267 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   @Deprecated("Deprecated in Java")
   override fun onBackPressed() {
     close()
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // Flat screens: moved with a grip held on them, resized with both grips or the Size buttons, brought nearer or
+  // farther with the thumbstick while held or the Distance buttons (FreeKC's mapping of 29 October, on an idea and a
+  // first version of Gaurav Mukherjee, gmfun/Immuch360 branch quest/flat-3d)
+
+  /**
+   * Every frame: the grips of the movable flat screen shown (see [ScreenGrip]), what they start or end, the screen
+   * following the ray of the grip that holds it, or the spread of both hands. The grips start again from what they
+   * hold when such a screen comes or goes, so that a press made elsewhere does nothing here.
+   */
+  private fun followScreenGrips() {
+    val place = screenPlace
+    val size = screenSize()
+    val follow = place != null && size != null
+    if (follow != gripsFollowed) {
+      gripsFollowed = follow
+      handleGripEvents(screenGrip.reset(heldButtons))
+      if (!follow) controllerRays = emptyMap()
+      Log.i(TAG, if (follow) "flat screen shown, the grips move it" else "no flat screen to move")
+      if (follow) showScreenHintOnce()
+    }
+    if (place == null || size == null) return
+    val now = SystemClock.uptimeMillis()
+    val events = screenGrip.update(now, heldButtons) { side -> pointsAtScreen(side, place, size) }
+    handleGripEvents(events)
+    moveWithGrip()
+    stretchWithGrips()
+  }
+
+  /** Whether the ray of the controller of [side] points at the screen at [place], [size] meters. */
+  private fun pointsAtScreen(side: GripSide, place: ScreenPlace, size: Pair<Float, Float>): Boolean {
+    val ray = controllerRays[side] ?: return false
+    return FlatScreenGeometry.hits(place, size.first, size.second, ray.t, ray.forward())
+  }
+
+  private fun handleGripEvents(events: List<ScreenGrip.Event>) {
+    for (event in events) {
+      when (event) {
+        ScreenGrip.Event.TogglePanel -> {
+          // As A or X: a panel opened by the user stays until the user hides it
+          cancelInfoHide()
+          setInfoVisible(!infoVisible, reposition = true)
+        }
+        is ScreenGrip.Event.GrabStart -> startDrag(event.side)
+        is ScreenGrip.Event.GrabEnd -> endDrag()
+        ScreenGrip.Event.StretchStart -> {
+          // Started once both rays are known, see stretchWithGrips
+          stretchStarted = false
+          stretchPendingAngle = null
+        }
+        ScreenGrip.Event.StretchEnd -> endStretch()
+      }
+    }
+  }
+
+  /** The grip of [side] holds the screen: it follows that ray from now on, see [ScreenDrag]. */
+  private fun startDrag(side: GripSide) {
+    val place = screenPlace ?: return
+    val ray = controllerRays[side] ?: return
+    screenDrag = ScreenDrag(place, ray.t, ray.forward())
+    screenDragSide = side
+    Log.i(TAG, "flat screen grabbed with the ${side.name.lowercase()} grip at $place")
+  }
+
+  private fun endDrag() {
+    if (screenDrag == null) return
+    screenDrag = null
+    screenDragSide = null
+    Log.i(TAG, "flat screen let go at $screenPlace")
+  }
+
+  /** While a grip holds the screen, the screen where its ray points now. */
+  private fun moveWithGrip() {
+    val drag = screenDrag ?: return
+    val ray = controllerRays[screenDragSide ?: return] ?: return
+    screenPlace = drag.place(ray.t, ray.forward()) ?: return
+    applyScreenPlace()
+  }
+
+  /**
+   * While both grips are held: the width of the screen follows the spread of the hands (see [ScreenStretch]), to the
+   * degree. Each new width reshapes a compositor layer, so one at most every STRETCH_INTERVAL_MS; the last one waits
+   * for the release of a grip if need be.
+   */
+  private fun stretchWithGrips() {
+    if (!screenGrip.stretching) return
+    val left = controllerRays[GripSide.LEFT] ?: return
+    val right = controllerRays[GripSide.RIGHT] ?: return
+    val place = screenPlace ?: return
+    val angle = currentScreenAngle() ?: return
+    val spread = left.t.distanceTo(right.t)
+    if (!stretchStarted) {
+      screenStretch.start(spread, FlatScreenGeometry.width(angle, place.distance))
+      stretchStarted = true
+      Log.i(TAG, "flat screen stretched, hands $spread m apart")
+      return
+    }
+    val width = screenStretch.width(spread) ?: return
+    val wanted =
+      FlatScreenGeometry.angleForWidth(width, place.distance)
+        .coerceIn(FlatScreenGeometry.MIN_ANGLE_DEG, maxScreenAngle())
+        .roundToInt()
+        .toFloat()
+    if (abs(wanted - angle) < 1f) {
+      stretchPendingAngle = null
+      return
+    }
+    val now = SystemClock.uptimeMillis()
+    if (now - stretchAppliedAt < STRETCH_INTERVAL_MS) {
+      stretchPendingAngle = wanted
+      return
+    }
+    stretchAppliedAt = now
+    stretchPendingAngle = null
+    setScreenAngle(wanted)
+  }
+
+  private fun endStretch() {
+    screenStretch.end()
+    stretchStarted = false
+    stretchPendingAngle?.let { setScreenAngle(it) }
+    stretchPendingAngle = null
+  }
+
+  /**
+   * Width and height in meters of the movable flat screen shown, null when none shows: a photo once decoded, a video
+   * once its first frame is on the screen.
+   */
+  private fun screenSize(): Pair<Float, Float>? {
+    val media = request ?: return null
+    val place = screenPlace ?: return null
+    if (!media.isMovableScreen) return null
+    if (media.isFlatVideo) {
+      if (!videoRevealed) return null
+      val aspect = flatVideoLook()?.second ?: return null
+      return FlatStereo.screenSize(aspect, flatVideoAngle(aspect), place.distance)
+    }
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return null
+    return FlatScreenLayer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight, place.distance)
+  }
+
+  /** The angular width of the movable flat screen shown ("Size 48°"), null when none shows. */
+  private fun currentScreenAngle(): Float? {
+    val media = request ?: return null
+    if (!media.isMovableScreen || screenPlace == null) return null
+    return when {
+      media.isFlatVideo -> flatVideoLook()?.let { flatVideoAngle(it.second) }
+      stereoEyeSize != null -> stereoAngleDeg
+      else -> null
+    }
+  }
+
+  /** The widest the screen shown goes: 60 degrees for a relief estimated by AI (see StereoComposer.maxAngle). */
+  private fun maxScreenAngle(): Float =
+    if (request?.stereoKind?.isEstimatedRelief == true) StereoComposer.MAX_FILE_ANGLE_DEG
+    else FlatScreenGeometry.MAX_ANGLE_DEG
+
+  /** The screen shown [angleDeg] wide, where it is; said on the panel or the feedback line with [report]. */
+  private fun setScreenAngle(angleDeg: Float, report: Boolean = true) {
+    val media = request ?: return
+    when {
+      media.isFlatVideo -> {
+        flatVideoAngleDeg = angleDeg
+        applyFlatVideoShape()
+      }
+      stereoEyeSize != null -> {
+        stereoAngleDeg = angleDeg
+        applyStereoScale()
+      }
+      else -> return
+    }
+    Log.i(TAG, "flat screen is now $angleDeg degrees wide")
+    updateScreenControls()
+    if (report) reportScreenChange(sizeText(angleDeg))
+  }
+
+  /** The Size buttons and the thumbstick up or down on a photo: a larger ([step] 1) or smaller (-1) screen. */
+  private fun changeScreenSize(step: Int) {
+    val angle = currentScreenAngle() ?: return
+    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, maxScreenAngle()))
+  }
+
+  /**
+   * The Distance buttons and the thumbstick up or down while a grip holds the screen: the screen farther ([step] 1) or
+   * nearer (-1) on the line it stands on, the same width in meters, so that it looks larger nearer. The distance is
+   * kept for the next flat screens, and a grab in progress goes on from there.
+   */
+  private fun changeScreenDistance(step: Int) {
+    val place = screenPlace ?: return
+    val angle = currentScreenAngle() ?: return
+    val distance = FlatScreenGeometry.nextDistance(place.distance, step)
+    if (distance != place.distance) {
+      val moved = place.at(distance)
+      screenPlace = moved
+      screenDistanceM = distance
+      val kept = FlatScreenGeometry.angleAtDistance(angle, place.distance, distance, maxScreenAngle())
+      setScreenAngle(kept, report = false)
+      applyScreenPlace()
+      screenDragSide?.let { side ->
+        controllerRays[side]?.let { ray -> screenDrag = ScreenDrag(moved, ray.t, ray.forward()) }
+      }
+      Log.i(TAG, "flat screen is now $distance m away")
+    }
+    updateScreenControls()
+    reportScreenChange(distanceText(distance))
+  }
+
+  /** The screen shown at [screenPlace]: the flat video screen, or the photo layer or the quad mesh. */
+  private fun applyScreenPlace() {
+    val place = screenPlace ?: return
+    if (request?.isFlatVideo == true) placeFlatScreen(place) else applyStereoPlacement()
+  }
+
+  /** A change of the flat screen on the status line of the panel, or on the feedback line when the panel is hidden. */
+  private fun reportScreenChange(text: String) {
+    if (infoVisible) setStatus(text) else showFeedback(text)
+  }
+
+  /** "Size 48°". */
+  private fun sizeText(angleDeg: Float): String = getString(R.string.immersive_size, angleDeg.roundToInt())
+
+  /** "Distance 1.5 m", the number as the language of the headset writes it. */
+  private fun distanceText(distance: Float): String =
+    getString(R.string.immersive_distance, FlatScreenGeometry.meters(distance, Locale.getDefault()))
+
+  /**
+   * The Size and Distance rows take the place of previous and next for a movable flat screen (which plays on its own,
+   * the thumbstick still saying so), once it shows; a minus or plus button at its bound is disabled.
+   */
+  private fun updateScreenControls() {
+    val movable = request?.isMovableScreen == true
+    previousButton?.visibility = if (movable) View.GONE else View.VISIBLE
+    nextButton?.visibility = if (movable) View.GONE else View.VISIBLE
+    val angle = currentScreenAngle()
+    val place = screenPlace
+    if (angle == null || place == null) {
+      sizeRow?.visibility = View.GONE
+      distanceRow?.visibility = View.GONE
+      return
+    }
+    sizeView?.text = sizeText(angle)
+    distanceView?.text = distanceText(place.distance)
+    sizeLessButton?.isEnabled = angle > FlatScreenGeometry.MIN_ANGLE_DEG + 1e-3f
+    sizeMoreButton?.isEnabled = angle < maxScreenAngle() - 1e-3f
+    distanceLessButton?.isEnabled = place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f
+    distanceMoreButton?.isEnabled = place.distance < FlatScreenGeometry.DISTANCES_M.last() - 1e-3f
+    sizeRow?.visibility = View.VISIBLE
+    distanceRow?.visibility = View.VISIBLE
+  }
+
+  /**
+   * "Hold a grip on the screen to move it, both grips to resize it" once in this viewer, on the feedback line for
+   * TransientText.HOLD_MS, the first time a movable flat screen shows with the panel hidden (the panel says the whole
+   * mapping meanwhile).
+   */
+  private fun showScreenHintOnce() {
+    if (screenHintShown || infoVisible || closing || !gripsFollowed) return
+    screenHintShown = true
+    queueNotice(getString(R.string.immersive_screen_hint_short))
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -3049,6 +3413,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (place || !stereoPlacedWithHead) placeStereoQuad() else applyStereoScale()
     if (onLayer) drawPhotoLayer() else stereoQuadEntity?.setComponent(Visible(true))
     updateStereoView()
+    updateScreenControls()
     if (preview) {
       // The original still loads: the panel says so and stays until it is there
       stereoStatus = getString(R.string.immersive_preview_loading_full, stereo.eyeWidth, stereo.eyeHeight)
@@ -3269,22 +3634,33 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * "3D told by the file name (experimental)" once for [media] when it first shows, a media told 3D by its file name:
-   * on the status line while the panel is up, which then stays as long, else on the feedback line, for
-   * TransientText.HOLD_MS (FreeKC's rule of 25 October: what is experimental is said, and the words go).
+   * What is experimental about [media] when it first shows, said once (FreeKC's rule of 25 October: what is
+   * experimental is said, and the words go): "3D told by the file name (experimental)" for a media told 3D by its file
+   * name, at each such media; "Sharper flat screen (experimental)" for the first flat screen of this viewer the
+   * compositor filters (see FlatScreenLayer). On the status line while the panel is up, which then stays as long, else
+   * on the feedback line, for TransientText.HOLD_MS.
    */
   private fun announceFlat3d(media: MediaRequest) {
-    if (request !== media || closing || flat3dAnnounced || !media.isFlat3d) return
-    flat3dAnnounced = true
-    val text = StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FLAT3D_NOTICE)
-    Log.i(TAG, "flat 3D: \"$text\" said for ${TransientText.HOLD_MS} ms")
+    if (request !== media || closing) return
+    val lines = mutableListOf<String>()
+    if (!flat3dAnnounced && media.isFlat3d) {
+      flat3dAnnounced = true
+      lines += StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FLAT3D_NOTICE)
+    }
+    if (!sharpNoticeShown && media.sharpFlatScreens && (photoOnLayer || media.isFlatVideo)) {
+      sharpNoticeShown = true
+      lines += StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SHARP_NOTICE)
+    }
+    if (lines.isEmpty()) return
+    val text = lines.joinToString("\n")
+    Log.i(TAG, "experimental: \"$text\" said for ${TransientText.HOLD_MS} ms")
     if (infoVisible) {
       // The status line comes back once the words went
       stereoStatus = statusView?.text?.toString().orEmpty()
       showPassing(text)
       if (hideInfoJob?.isActive == true) scheduleInfoHide(TransientText.HOLD_MS)
     } else {
-      showNotice(text)
+      queueNotice(text)
     }
   }
 
@@ -3376,6 +3752,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       writeReliefMesh(withTriangles = false)
     }
     applyStereoPlacement()
+    updateScreenControls()
     Log.i(
       TAG,
       "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}",
@@ -4550,32 +4927,43 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.w(TAG, "flat video panel without a shape config, ${media.flatVideo ?: "big screen"} not applied")
       return
     }
-    val frame = flatVideoSize
-    val spec = media.flatVideo
-    val mode: StereoMode
-    val aspect: Float
-    if (spec == null) {
-      // An ordinary video on the big screen: its whole frame, for both eyes
-      mode = StereoMode.None
-      aspect = if (frame == null) 0f else frame.first.toFloat() / frame.second
-    } else {
-      // Eyes the name alone said full, squeezed when the frame says so (a share page asks before its player knows it)
-      val format = if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second)
-      mode = FlatStereo.stereoModeFor(format, stereo3d)
-      aspect = if (frame == null) 0f else FlatStereo.eyeAspect(format, frame.first, frame.second)
-    }
+    val (mode, aspect) = flatVideoLook() ?: return
     val distance = screenPlace?.distance ?: screenDistanceM
     val (width, height) = FlatStereo.screenSize(aspect, flatVideoAngle(aspect), distance)
-    if (config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f) return
-    try {
-      config.stereoMode = mode
-      config.width = width
-      config.height = height
-      panel.reshape(config)
-      Log.i(TAG, "flat video screen is now $mode, ${width}x$height m (${spec ?: "big screen"}, frame $frame)")
-    } catch (e: Exception) {
-      Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
+    val same = config.stereoMode == mode && abs(config.width - width) < 1e-3f && abs(config.height - height) < 1e-3f
+    if (!same) {
+      try {
+        config.stereoMode = mode
+        config.width = width
+        config.height = height
+        panel.reshape(config)
+        val what = media.flatVideo ?: "big screen"
+        Log.i(TAG, "flat video screen is now $mode, ${width}x$height m ($what, frame $flatVideoSize)")
+      } catch (e: Exception) {
+        Log.e(TAG, "could not set the flat video screen to $mode, ${width}x$height m", e)
+      }
     }
+    updateScreenControls()
+  }
+
+  /**
+   * The stereo mode of the flat video screen and the aspect of an eye (width over height, 0 until the player told the
+   * frame size) for the video shown: a flat 3D video, each eye its half of the frame in 3D, the first eye for both in
+   * 2D, its eyes said full by the name alone squeezed when the frame says so (a share page asks before its player knows
+   * the size); an ordinary video on the big screen, its whole frame for both eyes. Null for any other media.
+   */
+  private fun flatVideoLook(): Pair<StereoMode, Float>? {
+    val media = request ?: return null
+    if (!media.isFlatVideo) return null
+    val frame = flatVideoSize
+    val spec = media.flatVideo
+    if (spec == null) {
+      val aspect = if (frame == null) 0f else frame.first.toFloat() / frame.second
+      return StereoMode.None to aspect
+    }
+    val format = if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second)
+    val aspect = if (frame == null) 0f else FlatStereo.eyeAspect(format, frame.first, frame.second)
+    return FlatStereo.stereoModeFor(format, stereo3d) to aspect
   }
 
   /**
@@ -4685,6 +5073,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (videoRevealed || media?.isVideo != true || currentVideoUrl == null) return
     videoRevealed = true
     (if (media.isFlatVideo) flatVideoEntity else videoEntity)?.setComponent(Visible(true))
+    updateScreenControls()
     announceFlat3d(media)
   }
 
@@ -4952,6 +5341,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
     private const val DECODER_WARNING_HIDE_MS = 10000L
+
+    /** The stretch of both grips resizes the flat screen at most this often: each new size reshapes a layer. */
+    private const val STRETCH_INTERVAL_MS = 100L
 
     /**
      * Size of the info panel: its layout in dp, and its quad in meters. Both keep the 1 m for 720 dp of the first
