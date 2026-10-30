@@ -37,6 +37,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
+import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.PlaybackStatsLogger
@@ -120,6 +121,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.RandomAccessFile
+import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
@@ -652,6 +654,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var decoderChecked = false
   /** Shown instead of the video format while a video above the decoder limit plays. */
   private var decoderWarning: String? = null
+  /**
+   * What the viewer does when the video stops in the middle, see [PlaybackRecovery]: one restart where it stopped,
+   * the picture that does not come said with the details of the video.
+   */
+  private val recovery = PlaybackRecovery()
+  /** Reads the player every PlaybackRecovery.TICK_MS while a video is loaded, see [watchPicture]. */
+  private var recoveryJob: Job? = null
+  /** A restart of the player is posted: an error that follows from the same failure does not post another. */
+  private var restartPending = false
+  /**
+   * A notice the first READY of the url shows in place of its details, the panel in front for a while: the restart
+   * of a video, or its switch to the transcoded stream when no picture came.
+   */
+  private var playbackNotice: String? = null
+  /** The frames the video renderer of the current player rendered and dropped at the last read of [watchPicture]. */
+  private var watchedFrames = 0
+  private var watchedDroppedFrames = 0
 
   override fun registerFeatures(): List<SpatialFeature> = listOf(VRFeature(this))
 
@@ -1321,6 +1340,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     loadJob?.cancel()
     rememberPosition()
     stopProgressTicker()
+    stopRecoveryWatch()
     cancelInfoHide()
     playOnReturn = false
     reprepareOnReturn = false
@@ -3866,6 +3886,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
     override fun onFirstFrameDrawn() {
       if (playback == null || playback !== twoLens) return
+      recovery.onFrame()
       // A lens renderer's first frame is not on the panel yet: the compositor's is
       revealVideo()
       // The lens tried against the decoder list plays: the viewer reads why half of the sphere stays black, once
@@ -4108,17 +4129,29 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             val firstReady = hideWhenReady
             hideWhenReady = false
             val format = player?.videoFormat
-            val description =
-              if (format != null) "${format.sampleMimeType} ${format.codecs ?: ""} ${format.width}x${format.height}"
-              else "no video track"
-            Log.i(TAG, "video format: $description")
+            if (format != null) {
+              Log.i(
+                TAG,
+                "video format: ${format.sampleMimeType} ${format.codecs ?: ""} ${format.width}x${format.height}, " +
+                  "${format.frameRate} fps, ${format.bitrate} bit/s",
+              )
+            } else {
+              Log.i(TAG, "video format: no video track")
+            }
+            // The codec, the size, the frame rate and the bit rate, as the details of the app tell them
+            val description = format?.let(::videoLine) ?: "no video track"
             val warning = decoderWarning
+            // The restart of the video, or its switch for a picture that did not come, says so once it plays again
+            val notice = if (firstReady) playbackNotice.also { playbackNotice = null } else null
             // A video held until the viewer is back in front (playOnReturn) starts then: its loading is over all the
             // same. A video the user paused keeps the panel
             val starting = player?.playWhenReady == true || playOnReturn
             // During a drag or a pending previous or next request scheduleInfoHide holds the hide back, and setStatus
             // keeps "Looking for the next media" on screen
-            if (warning != null) {
+            if (notice != null) {
+              setStatus(notice)
+              if (starting) scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+            } else if (warning != null) {
               // Keeps the warning on screen for its own, longer delay, counted from the moment the video plays
               setStatus(warning)
               if (firstReady && starting) scheduleInfoHide(DECODER_WARNING_HIDE_MS)
@@ -4135,7 +4168,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
       override fun onRenderedFirstFrame() {
         // A lens renderer's first frame is still to be stitched: the compositor reveals the panel, see LensListener
-        if (twoLens == null) revealVideo()
+        if (twoLens == null) {
+          recovery.onFrame()
+          revealVideo()
+        }
+      }
+
+      override fun onPositionDiscontinuity(
+        oldPosition: Player.PositionInfo,
+        newPosition: Player.PositionInfo,
+        reason: Int,
+      ) {
+        // A seek or a loop: the frames after the jump take a moment, the wait for a picture starts again
+        recovery.onSeek()
       }
 
       override fun onTracksChanged(tracks: Tracks) {
@@ -4167,16 +4212,25 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             return
           }
         }
+        // The player being replaced by a posted restart: its errors are those of the failure it restarts from
+        if (restartPending) return
         val plan = playerPlan
         if (plan?.mode == RawMode.EFFECT_SIDE_BY_SIDE && DualFisheyeEffect.isStitchingError(error) &&
           playWithoutStitching()
         ) {
           return
         }
+        // A decoder or the media server that fails in the middle of the video: a new player plays the same url again
+        // from where it stopped, once per media, before the ladder and the transcoded stream (PlaybackRecovery)
+        val recovered = recovery.onFailure(error.errorCode, player?.currentPosition ?: 0L)
+        if (recovered is PlaybackRecovery.Action.Restart) {
+          restartPlayback(recovered, error)
+          return
+        }
         if (plan?.mode == RawMode.LENSES) {
           // The ladder replaces the fallback of other videos: a lens player shows the error once it has nothing left
           val next = if (isDecoderError(error)) rawDecoderFailurePlan() else rawSourceFailurePlan(plan, error)
-          if (!replanRaw(next)) showError(getString(R.string.immersive_error_video, error.errorCodeName))
+          if (!replanRaw(next)) failVideo(error)
           return
         }
         val fallback = currentVideoUrl?.let(::fallbackFor)
@@ -4185,7 +4239,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           setStatus(getString(R.string.immersive_video_fallback, error.errorCodeName))
           playUrl(fallback, resumePositionMs())
         } else {
-          showError(getString(R.string.immersive_error_video, error.errorCodeName))
+          failVideo(error)
         }
       }
     }
@@ -4196,6 +4250,193 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       error.errorCode == PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES ||
       error.errorCode == PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED ||
       error.errorCode == PlaybackException.ERROR_CODE_DECODING_RESOURCES_RECLAIMED
+
+  /**
+   * The error the viewer shows for the current video, written to the Logs page of the app too with what the player
+   * saw of it: nothing is left to try.
+   */
+  private fun failVideo(error: PlaybackException) {
+    reportPlayback(PlaybackDetails.errorEvent(errorText(error)))
+    showError(getString(R.string.immersive_error_video, error.errorCodeName))
+  }
+
+  /** The name of [error] and its cause, for a report. */
+  private fun errorText(error: PlaybackException): String =
+    error.errorCodeName + (error.cause?.let { " (${it.javaClass.simpleName}: ${it.message})" } ?: "")
+
+  /**
+   * Plays the current url again on a new player from the position of [action] (see [PlaybackRecovery]): the old
+   * player and its decoders go, the panel stays shown with the last frame its surface holds until the new player
+   * draws, and the user reads a notice once the video plays again (not in a kiosk, which never shows the panel: its
+   * visitors see the film go on). The failure goes to the Logs page. Posted, not run from within the listener of the
+   * player being replaced; [error] is null for a picture that stopped.
+   */
+  private fun restartPlayback(action: PlaybackRecovery.Action.Restart, error: PlaybackException?) {
+    val media = request ?: return
+    val url = currentVideoUrl ?: return
+    if (restartPending) return
+    restartPending = true
+    val position = ImmersiveMedia.formatTime(action.positionMs)
+    reportPlayback(
+      if (error != null) PlaybackDetails.restartEvent(errorText(error), position)
+      else PlaybackDetails.stoppedEvent(position)
+    )
+    Log.w(TAG, "playback ${action.cause} at ${action.positionMs} ms: a new player plays the url again from there")
+    mainHandler.post {
+      restartPending = false
+      if (isDestroyed || request !== media || currentVideoUrl != url) return@post
+      // The same url: what was checked and said of it stays
+      val checked = decoderChecked
+      val lensChecked = lensDecodersChecked
+      val warning = decoderWarning
+      releasePlayer()
+      if (ensurePlayer(media.url, media) == null) {
+        showError(getString(R.string.immersive_error_video, "player"))
+        return@post
+      }
+      val notice = PlaybackDetails.text(media.stereoLabels, PlaybackDetails.LABEL_RESTARTED, "position" to position)
+      Log.w(TAG, "shown to the user: $notice")
+      playbackNotice = notice
+      playUrl(url, action.positionMs)
+      decoderChecked = checked
+      lensDecodersChecked = lensChecked
+      decoderWarning = warning
+      // At once too, until the video plays and the first READY holds it on screen for a while
+      cancelInfoHide()
+      showStatus(notice)
+      setInfoVisible(true, reposition = true)
+    }
+  }
+
+  /**
+   * Reads the player every PlaybackRecovery.TICK_MS while a video is loaded: its position, and the frames its video
+   * renderer rendered, so that a video whose sound plays without picture is caught (see [PlaybackRecovery.onTick]).
+   */
+  private fun startRecoveryWatch() {
+    if (recoveryJob?.isActive == true) return
+    recoveryJob =
+      scope.launch {
+        while (true) {
+          delay(PlaybackRecovery.TICK_MS)
+          watchPicture()
+        }
+      }
+  }
+
+  private fun stopRecoveryWatch() {
+    recoveryJob?.cancel()
+    recoveryJob = null
+  }
+
+  /** One read of the player for [PlaybackRecovery.onTick], and what it decides. */
+  @OptIn(UnstableApi::class)
+  private fun watchPicture() {
+    val p = player ?: return
+    if (currentVideoUrl == null || restartPending || rawReplanPending) return
+    // A lens player draws through its compositor, whose frames the counters of the player do not see
+    if (twoLens != null) return
+    val counters = p.videoDecoderCounters
+    counters?.ensureUpdated()
+    watchedFrames = counters?.renderedOutputBufferCount ?: 0
+    watchedDroppedFrames = counters?.droppedBufferCount ?: 0
+    when (val action = recovery.onTick(p.isPlaying, p.currentPosition, watchedFrames)) {
+      is PlaybackRecovery.Action.Restart -> restartPlayback(action, null)
+      is PlaybackRecovery.Action.NoPicture -> sayNoPicture(action)
+      else -> Unit
+    }
+  }
+
+  /**
+   * No picture came for PlaybackRecovery.NO_PICTURE_MS while the sound played: the transcoded stream once when there
+   * is one (from where the video is), otherwise the notice with the codec, the size, the frame rate and the bit rate
+   * of the video, held on the panel like the decoder warning. Either way the Logs page gets the report, which is what
+   * a user of a headset we do not have can send.
+   */
+  private fun sayNoPicture(action: PlaybackRecovery.Action.NoPicture) {
+    val media = request ?: return
+    val url = currentVideoUrl ?: return
+    reportPlayback(PlaybackDetails.noPictureEvent(ImmersiveMedia.formatTime(action.positionMs), action.framesBefore))
+    val video = videoFormatForReport()?.let(::videoLine) ?: "no video track"
+    val fallback = fallbackFor(url)
+    if (!videoFallbackTried && fallback != null) {
+      videoFallbackTried = true
+      val notice = PlaybackDetails.text(media.stereoLabels, PlaybackDetails.LABEL_NO_PICTURE_SWITCH, "video" to video)
+      Log.w(TAG, "shown to the user: $notice")
+      playbackNotice = notice
+      playUrl(fallback, resumePositionMs())
+      cancelInfoHide()
+      showStatus(notice)
+      setInfoVisible(true, reposition = true)
+      return
+    }
+    val notice = PlaybackDetails.text(media.stereoLabels, PlaybackDetails.LABEL_NO_PICTURE, "video" to video)
+    Log.w(TAG, "shown to the user: $notice")
+    // Kept in place of the details while this url plays, like the decoder warning
+    decoderWarning = notice
+    hideInfoJob?.cancel()
+    showStatus(notice)
+    setInfoVisible(true, reposition = true)
+    scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+  }
+
+  /** "HEVC (hvc1.2.4.L153) • 7680 x 3840 • 29.97 fps • 120 Mbit/s", see [PlaybackDetails.line]. */
+  private fun videoLine(format: Format): String =
+    PlaybackDetails.line(
+      VideoDecoders.codecName(format.sampleMimeType),
+      format.codecs,
+      format.width,
+      format.height,
+      format.frameRate,
+      format.bitrate,
+      request?.stereoLabels.orEmpty(),
+      Locale.getDefault(),
+    )
+
+  /**
+   * The video format a report tells: the one the player decodes, else the first video track of the file, which the
+   * player left aside when no decoder of the headset takes it.
+   */
+  private fun videoFormatForReport(): Format? {
+    val p = player ?: return null
+    p.videoFormat?.let {
+      return it
+    }
+    for (group in p.currentTracks.groups) {
+      if (group.type == C.TRACK_TYPE_VIDEO && group.length > 0) return group.getTrackFormat(0)
+    }
+    return null
+  }
+
+  /**
+   * Writes [event] of the current video to the Logs page of the app (AppHealth), with the video, the decoder, the
+   * frames, the video surface and the headset (see [PlaybackDetails.report]). Not the URL, which may hold a token.
+   */
+  @OptIn(UnstableApi::class)
+  private fun reportPlayback(event: String) {
+    val url = currentVideoUrl
+    val counters = player?.videoDecoderCounters
+    counters?.ensureUpdated()
+    val soc =
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ", SoC ${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}" else ""
+    val device =
+      "${Build.MANUFACTURER} ${Build.MODEL}$soc, Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT}), " +
+        "build ${Build.DISPLAY}"
+    AppHealth.report(
+      "video",
+      PlaybackDetails.report(
+        event = event,
+        title = request?.title,
+        source = url?.let { PlaybackDetails.sourceOf(it, isFallback = it == request?.fallbackUrl) } ?: "no URL",
+        video = videoFormatForReport()?.let(::videoLine),
+        decoder = playbackStats?.decoderName,
+        // The counters go with the renderer, which a failure disables: the last read then tells
+        renderedFrames = counters?.renderedOutputBufferCount ?: watchedFrames,
+        droppedFrames = counters?.droppedBufferCount ?: watchedDroppedFrames,
+        surfaceReady = videoSurface != null,
+        device = device,
+      ),
+    )
+  }
 
   /** Format of the video track the player selected, or null without one. */
   private fun selectedVideoFormat(tracks: Tracks): Format? {
@@ -4319,6 +4560,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateProgress()
     applyVideoShape()
     videoFallbackTried = false
+    recovery.onMedia()
+    playbackNotice = null
     setStatus(getString(R.string.immersive_loading))
     if (ensurePlayer(media.url, media) == null) {
       showError(getString(R.string.immersive_error_video, "player"))
@@ -4396,6 +4639,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         else -> "original"
       }
     Log.i(TAG, "play $kind from $startPositionMs ms")
+    recovery.onPlay()
+    watchedFrames = 0
+    watchedDroppedFrames = 0
+    startRecoveryWatch()
     // The same player may serve a kiosk opening after another one
     p.repeatMode = repeatModeFor(request)
     val lens = twoLens
@@ -4424,7 +4671,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun stopVideo() {
     currentVideoUrl = null
     playOnReturn = false
+    playbackNotice = null
     stopProgressTicker()
+    stopRecoveryWatch()
     player?.let {
       it.stop()
       it.clearMediaItems()

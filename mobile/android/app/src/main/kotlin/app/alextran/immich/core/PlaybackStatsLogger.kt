@@ -25,6 +25,10 @@ class PlaybackStatsLogger(private val tag: String, streams: List<Int> = emptyLis
   private val stats = DecoderStats(streams)
   private var frameRate = Format.NO_VALUE.toFloat()
 
+  /** The video decoder Media3 started last for this player, null before the first: for the report of a failure. */
+  var decoderName: String? = null
+    private set
+
   override fun onVideoEnabled(eventTime: EventTime, decoderCounters: DecoderCounters) {
     stats.enabled(decoderCounters, eventTime.realtimeMs)
   }
@@ -35,6 +39,7 @@ class PlaybackStatsLogger(private val tag: String, streams: List<Int> = emptyLis
     initializedTimestampMs: Long,
     initializationDurationMs: Long,
   ) {
+    this.decoderName = decoderName
     Log.i(tag, "video decoder $decoderName initialized in $initializationDurationMs ms")
   }
 
