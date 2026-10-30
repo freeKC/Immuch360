@@ -415,6 +415,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
   ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
   ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
   ConversionSkipReason.unreachable => t.ai_immersive_failed_source,
+  ConversionSkipReason.diskFull => t.ai_immersive_failed_disk_full,
   ConversionSkipReason.parentNotMade => t.ai_immersive_skipped_parent,
 };
 
@@ -1019,11 +1020,14 @@ class ConversionDialog extends ConsumerStatefulWidget {
 /// A photo of the selection as the dialog read it once: what it is, and where its original is (null when this computer
 /// cannot reach it, or when no type takes it)
 class _Photo {
-  const _Photo(this.asset, this.facts, this.found);
+  const _Photo(this.asset, this.facts, this.found, {this.missing = ConversionSkipReason.unreachable});
 
   final BaseAsset asset;
   final ConversionPhotoFacts facts;
   final ({OriginalLocation location, ConversionSource source})? found;
+
+  /// Why it is skipped when [found] is null: its original cannot be reached, or there was no room for its copy
+  final ConversionSkipReason missing;
 }
 
 /// For each job of [ids], the index of the request it came from: a panorama is followed by the 3D version chained
@@ -1178,7 +1182,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
 
   /// The files of a share the dialog was opened on: each photo copied once through the media bridge, its name and its
   /// bytes shown meanwhile, then its facts read from that copy; a video is not copied, the plan skips it. A photo whose
-  /// copy fails cannot be reached. Null once the dialog closed meanwhile (Cancel): the copy under way stops.
+  /// copy fails cannot be reached; once a copy finds no room on this computer, that photo and the ones after it are
+  /// skipped with "Disk full", without trying their copies. Null once the dialog closed meanwhile (Cancel): the copy
+  /// under way stops.
   Future<List<_Photo>?> _readShareFiles() async {
     final make = ref.read(shareConversionSourceProvider);
     final read = ref.read(shareCopyFactsReaderProvider);
@@ -1193,12 +1199,24 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
     final files = widget.shareFiles;
     final photos = <_Photo>[];
+    var full = false;
     for (final (index, entry) in files.indexed) {
       if (_closed) {
         return null;
       }
       if (!entry.isImage) {
         photos.add(_Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), null));
+        continue;
+      }
+      if (full) {
+        photos.add(
+          _Photo(
+            shareConversionAsset(entry),
+            const ConversionPhotoFacts(),
+            null,
+            missing: ConversionSkipReason.diskFull,
+          ),
+        );
         continue;
       }
       final source = make(entry);
@@ -1236,7 +1254,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         _log.warning('${entry.name} could not be copied from its share: $error');
         _shareSources.remove(source);
         unawaited(source.release());
-        photos.add(_Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), null));
+        full = error is ConversionException && error.code == ImmersiveErrorCode.diskFull;
+        photos.add(
+          _Photo(
+            shareConversionAsset(entry),
+            const ConversionPhotoFacts(),
+            null,
+            missing: full ? ConversionSkipReason.diskFull : ConversionSkipReason.unreachable,
+          ),
+        );
       }
     }
     if (mounted && !_closed) {
@@ -1289,8 +1315,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
 
   /// Why [photo] is skipped for a version of [kind], null when it runs
   ConversionSkipReason? _skipOf(_Photo photo, ConversionKind kind) =>
-      conversionSkipOf(photo.asset, photo.facts, kind: kind) ??
-      (photo.found == null ? ConversionSkipReason.unreachable : null);
+      conversionSkipOf(photo.asset, photo.facts, kind: kind) ?? (photo.found == null ? photo.missing : null);
 
   List<ConversionCandidate> _candidatesFor(ConversionKind kind) => [
     for (final (index, photo) in _photos!.indexed)

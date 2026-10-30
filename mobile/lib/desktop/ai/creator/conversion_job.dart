@@ -207,6 +207,9 @@ enum ConversionSkipReason {
   /// is not signed in to
   unreachable,
 
+  /// No room left on this computer for the copy of a photo of a share
+  diskFull,
+
   /// A 360° 3D panorama chained after a panorama that was not made: failed, cancelled, or skipped without a file
   parentNotMade,
 }

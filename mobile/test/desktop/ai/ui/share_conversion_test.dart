@@ -140,6 +140,9 @@ void main() {
   late FakeShareWriter writer;
   late List<String> checked;
   late ShareVersionLookup? versions;
+  // The folder of the copies, asked once per copy; no room left there when [noRoom] is set
+  late int copyFolders;
+  late FileSystemException? noRoom;
 
   final linux = aiComponentsFor(AiPlatform.linuxX64);
   final rules = LibraryPathRules(context: p.context, caseFold: false);
@@ -170,6 +173,8 @@ void main() {
     writer = FakeShareWriter();
     checked = [];
     versions = null;
+    copyFolders = 0;
+    noRoom = null;
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -207,7 +212,14 @@ void main() {
           entry: entry,
           url: () async => Uri(scheme: 'http', host: '127.0.0.1', path: '/token/${entry.sourceId}${entry.path}'),
           fetch: bridge.fetch,
-          copiesFolder: () async => Directory(copiesFolder()),
+          copiesFolder: () async {
+            copyFolders++;
+            final full = noRoom;
+            if (full != null) {
+              throw full;
+            }
+            return Directory(copiesFolder());
+          },
           hash: (path, cancel) async => base64.encode(crypto.sha1.convert(File(path).readAsBytesSync()).bytes),
           versions: versions,
         ),
@@ -471,6 +483,27 @@ void main() {
     expect(find.text('gone.jpg: The original cannot be reached any more'), findsOneWidget);
     expect(copies(), hasLength(1));
     expect(convertEnabled(tester), isTrue);
+  });
+
+  testWidgets('no room left on this computer for a copy: "Disk full", and no copy tried for the photos after it', (
+    tester,
+  ) async {
+    final salon = shared('/2024/salon.jpg', jpegFile(width: 4000, height: 3000));
+    final cuisine = shared('/2024/cuisine.jpg', jpegFile(width: 4000, height: 3000));
+    noRoom = FileSystemException(
+      'Creation failed',
+      copiesFolder(),
+      OSError('No space left', Platform.isWindows ? 112 : 28),
+    );
+
+    await openDialog(tester, [salon, cuisine]);
+
+    expect(find.text('salon.jpg: Disk full'), findsOneWidget);
+    expect(find.text('cuisine.jpg: Disk full'), findsOneWidget);
+    expect(find.textContaining('cannot be reached'), findsNothing);
+    expect(copyFolders, 1, reason: 'the copies after the first that found no room are not tried');
+    expect(bridge.asked, isEmpty);
+    expect(copies(), isEmpty);
   });
 
   testWidgets('Convert: the job reads the copy the dialog made, no second download, and the copies go with the jobs', (
