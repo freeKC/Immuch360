@@ -49,30 +49,36 @@ class TvRotateButton extends ConsumerWidget {
     // The right margin of the OCR toggle, whose row ends with this button
     return Padding(
       padding: const EdgeInsets.only(right: 32, bottom: 8),
-      child: RemoteFocusable(
-        key: const Key('tv_rotate_button'),
-        onTap: () => rotateAssetFromWidget(ref, asset, 1),
-        onLongPress: () => rotateAssetFromWidget(ref, asset, -1),
-        child: Semantics(
-          button: true,
-          label: context.t.editor_rotate_right,
-          excludeSemantics: true,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.4),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.rotate_90_degrees_cw_rounded, size: 22, color: Colors.white),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-                ),
-              ],
+      // A node of its own for TalkBack, around the focus too: its label, its tap and its focus, never merged with the
+      // date and time on the left of the row (the node of the whole bar read "May 3, 2025, 9:20 AM, Rotate 90°
+      // clockwise" as it took the focus)
+      child: Semantics(
+        container: true,
+        child: RemoteFocusable(
+          key: const Key('tv_rotate_button'),
+          onTap: () => rotateAssetFromWidget(ref, asset, 1),
+          onLongPress: () => rotateAssetFromWidget(ref, asset, -1),
+          child: Semantics(
+            button: true,
+            label: context.t.editor_rotate_right,
+            excludeSemantics: true,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.4),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.rotate_90_degrees_cw_rounded, size: 22, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

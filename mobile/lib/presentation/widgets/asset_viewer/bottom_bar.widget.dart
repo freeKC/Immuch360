@@ -117,7 +117,8 @@ class ViewerBottomBar extends ConsumerWidget {
                         children: [
                           // A TV: the date and time of a photo on the left, the OCR toggle on the right, then
                           // Rotate on its right, one Right away. The row spans the bar, so that the bar and its shade
-                          // span the screen as with the row of a phone. The date takes no focus.
+                          // span the screen as with the row of a phone. The date takes no focus, and TalkBack reads it
+                          // on its own, not as a part of the label of Rotate.
                           if (tvRotate || tvDateTime)
                             Row(
                               children: [
@@ -127,11 +128,14 @@ class ViewerBottomBar extends ConsumerWidget {
                                       padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
                                       child: Align(
                                         alignment: AlignmentDirectional.centerStart,
-                                        child: ViewerDateTime(
-                                          key: const Key('viewer_tv_date_time'),
-                                          asset: asset,
-                                          alignLeft: true,
-                                          shadows: _tvDateTimeShadows,
+                                        child: Semantics(
+                                          container: true,
+                                          child: ViewerDateTime(
+                                            key: const Key('viewer_tv_date_time'),
+                                            asset: asset,
+                                            alignLeft: true,
+                                            shadows: _tvDateTimeShadows,
+                                          ),
                                         ),
                                       ),
                                     ),
