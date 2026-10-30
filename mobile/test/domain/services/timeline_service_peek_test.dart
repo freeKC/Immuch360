@@ -1,6 +1,8 @@
 // peekAssets: the months and years of the timeline read their thumbnails from all over the library without moving
-// the buffer of the grid. A range the buffer holds needs no query; any other is one query and the buffer stays.
+// the buffer of the grid. A range the buffer holds needs no query; any other is one query and the buffer stays. While
+// new buckets reload the buffer, it holds the assets of the old ones: indexes of the new buckets go to the source.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
@@ -50,6 +52,42 @@ void main() {
     expect(service.hasRange(0, 1024), isTrue, reason: 'the grid keeps its buffer');
     expect(service.hasRange(3000, 6), isFalse);
     expect(idOf(service.getAssets(0, 1).single), 'a0');
+  });
+
+  test('while new buckets reload the buffer, their indexes read the source', () async {
+    // A sync adds one asset at the top: index 5 holds the old a4 now
+    var library = List<BaseAsset>.generate(2000, (i) => LocalAssetStub.image1.copyWith(id: 'b$i'));
+    final buckets = StreamController<List<Bucket>>.broadcast();
+    addTearDown(buckets.close);
+    Completer<void>? reload;
+    final syncing = TimelineService((
+      assetSource: (index, count) async {
+        final gate = reload;
+        if (gate != null && count >= 1024) {
+          await gate.future;
+        }
+        return library.sublist(index, math.min(index + count, library.length));
+      },
+      bucketSource: () => buckets.stream,
+      origin: TimelineOrigin.main,
+    ));
+    addTearDown(syncing.dispose);
+    buckets.add([TimeBucket(date: DateTime(2025), assetCount: library.length)]);
+    await pumpEventQueue();
+    expect(syncing.hasRange(0, 1024), isTrue);
+
+    library = [LocalAssetStub.image1.copyWith(id: 'new'), ...library];
+    reload = Completer<void>();
+    buckets.add([TimeBucket(date: DateTime(2025), assetCount: library.length)]);
+    await pumpEventQueue();
+    expect(syncing.totalAssets, 2000, reason: 'the buffer of the old buckets, still reloading');
+
+    final peeked = await syncing.peekAssets(5, 1, expectedTotal: library.length);
+    expect(idOf(peeked.single), 'b4');
+    expect(idOf((await syncing.peekAssets(5, 1)).single), 'b5', reason: 'without the total, the buffer as it is');
+    reload.complete();
+    await pumpEventQueue();
+    expect(idOf((await syncing.peekAssets(5, 1, expectedTotal: library.length)).single), 'b4');
   });
 
   test('the end of the timeline gives fewer, nothing asked gives nothing', () async {

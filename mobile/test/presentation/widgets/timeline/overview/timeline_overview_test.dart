@@ -525,4 +525,84 @@ void main() {
       await slowDrag(tester, const Duration(milliseconds: 650));
     });
   });
+
+  group('a sync', () {
+    /// The months of [_threeYears], then a sync gives the library [library] and the buckets [buckets]; the service
+    /// reloads its buffer for six frames. The first thumbnail of November 2026 once all is done.
+    Future<String> novemberAfterSync(
+      WidgetTester tester, {
+      required List<BaseAsset> Function(List<BaseAsset> before) library,
+      required List<Bucket> Function(List<Bucket> before) buckets,
+    }) async {
+      var shownBuckets = _threeYears();
+      var assets = List<BaseAsset>.generate(216, (i) => LocalAssetStub.image1.copyWith(id: 'a$i'));
+      final bucketStream = StreamController<List<Bucket>>.broadcast();
+      addTearDown(bucketStream.close);
+      Completer<void>? reload;
+      final service = TimelineService((
+        assetSource: (i, n) async {
+          final gate = reload;
+          // The service asks its whole buffer back after new buckets; the blocks ask for a few
+          if (gate != null && n >= 216) {
+            await gate.future;
+          }
+          return assets.sublist(math.min(i, assets.length), math.min(i + n, assets.length));
+        },
+        bucketSource: () => Stream.multi((controller) {
+          controller.add(shownBuckets);
+          final subscription = bucketStream.stream.listen(controller.add);
+          controller.onCancel = subscription.cancel;
+        }),
+        origin: TimelineOrigin.main,
+      ));
+      addTearDown(service.dispose);
+      await pumpTimeline(tester, service: service);
+      final pinch = await _Pinch.start(tester, 400);
+      await pinch.to(280, from: 400);
+      await pinch.up();
+      await settle(tester);
+
+      String firstOf(String month) {
+        final block = find.ancestor(of: find.text(month), matching: find.byType(OverviewMonthBlock));
+        final thumbnails = find.descendant(of: block, matching: find.byType(OverviewThumbnail));
+        return (tester.widget<OverviewThumbnail>(thumbnails.first).asset as LocalAsset).id;
+      }
+
+      expect(firstOf('November 2026'), 'a6');
+      assets = library(assets);
+      shownBuckets = buckets(shownBuckets);
+      reload = Completer<void>();
+      bucketStream.add(shownBuckets);
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      reload.complete();
+      await settle(tester);
+      return firstOf('November 2026');
+    }
+
+    testWidgets('one asset more at the top: November starts one further', (tester) async {
+      final first = await novemberAfterSync(
+        tester,
+        library: (before) => [LocalAssetStub.image1.copyWith(id: 'new'), ...before],
+        buckets: (before) => [TimeBucket(date: DateTime(2026, 12, 20), assetCount: 4), ...before.skip(1)],
+      );
+      expect(first, 'a6', reason: 'at index 7 now');
+    });
+
+    testWidgets('one asset less in December and one more in October: as many, November one closer', (tester) async {
+      final first = await novemberAfterSync(
+        tester,
+        // December 20 loses a0; October 5 (indexes 15 to 17 before) gains one at its start
+        library: (before) => [...before.sublist(1, 15), LocalAssetStub.image1.copyWith(id: 'new'), ...before.skip(15)],
+        buckets: (before) => [
+          TimeBucket(date: DateTime(2026, 12, 20), assetCount: 2),
+          ...before.sublist(1, 5),
+          TimeBucket(date: DateTime(2026, 10, 5), assetCount: 4),
+          ...before.skip(6),
+        ],
+      );
+      expect(first, 'a6', reason: 'at index 5 now, which the buffer being reloaded still gave as a5');
+    });
+  });
 }

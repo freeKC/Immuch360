@@ -1,6 +1,7 @@
 // The reads behind the thumbnails of the months and the years: the requests of one frame merged into one read when
-// they are close, the most recent first, two reads at a time, a block that leaves the screen dropped, a cache by index
-// that a change of the buckets clears.
+// they are close, over a wider span deeper in the timeline, the most recent first, two reads at a time, a block that
+// leaves the screen dropped, a cache by index of the assets asked for that a change of the buckets clears. On the main
+// timeline the deep requests go out together in one pass, and as ranges when the pass finds the timeline changed.
 
 import 'dart:async';
 
@@ -133,6 +134,105 @@ void main() {
     expect(loader.cached(50, 8), isNotNull);
     expect(loader.cached(0, 1), isNull);
     expect(loader.cached(6, 2), isNotNull);
+  });
+
+  test('the cache keeps the assets asked for, not those read on the way between two requests', () async {
+    final source = _Source(5000);
+    final loader = OverviewAssetLoader(source.read);
+    loader.request(0, 1, (_) {});
+    loader.request(300, 1, (_) {});
+    await pumpEventQueue();
+    expect(source.reads, [(0, 301)]);
+    await source.release();
+    expect(loader.cached(300, 1), isNotNull);
+    expect(loader.cached(150, 1), isNull, reason: 'read on the way, asked for by no block');
+  });
+
+  test('deeper in the timeline one read covers a wider span', () async {
+    final source = _Source(60000);
+    final loader = OverviewAssetLoader(source.read);
+    for (final index in [0, 1000, 40000, 43000]) {
+      loader.request(index, 1, (_) {});
+    }
+    await pumpEventQueue();
+    // At 40,000 a read of its own steps through as many assets as the 3,000 read for nothing in between
+    expect(source.reads, [(40000, 3001), (1000, 1)], reason: '1,000 apart near the top: two reads');
+    await source.release();
+    expect(source.reads.last, (0, 1));
+    await source.release();
+  });
+
+  group('the main timeline', () {
+    String idOf(BaseAsset asset) => (asset as LocalAsset).id;
+
+    test('the deep requests go out together in one pass, those near the top as ranges', () async {
+      final source = _Source(60000);
+      final passes = <List<int>>[];
+      final loader = OverviewAssetLoader(
+        source.read,
+        indexedSource: (indexes) async {
+          passes.add(indexes);
+          return {
+            for (final index in indexes)
+              if (index < source.assets.length) index: source.assets[index],
+          };
+        },
+      );
+      final got = <int, List<String>>{};
+      for (final index in [0, 300, 20000, 40000, 40300, 59998]) {
+        loader.request(index, 3, (assets) => got[index] = assets.map(idOf).toList());
+      }
+      await pumpEventQueue();
+      expect(passes, hasLength(1));
+      expect(passes.single, [20000, 20001, 20002, 40000, 40001, 40002, 40300, 40301, 40302, 59998, 59999, 60000]);
+      expect(source.reads, [(0, 303)]);
+      await source.release();
+      expect(got[40300], ['a40300', 'a40301', 'a40302']);
+      expect(got[59998], ['a59998', 'a59999'], reason: 'fewer at the end of the timeline');
+      expect(got[300], ['a300', 'a301', 'a302']);
+      expect(loader.cached(40000, 3), isNotNull);
+      expect(loader.indexedReads, 1);
+    });
+
+    test('a pass that finds the timeline changed gives way to a read of the range', () async {
+      final source = _Source(60000);
+      var passes = 0;
+      final loader = OverviewAssetLoader(
+        source.read,
+        indexedSource: (_) async {
+          passes++;
+          return null;
+        },
+      );
+      List<String>? got;
+      loader.request(40000, 2, (assets) => got = assets.map(idOf).toList());
+      await pumpEventQueue();
+      expect(passes, 1);
+      expect(source.reads, [(40000, 2)]);
+      await source.release();
+      expect(got, ['a40000', 'a40001']);
+      expect(passes, 1, reason: 'no second pass for the same request');
+    });
+
+    test('a pass under way when the buckets change does not answer', () async {
+      final source = _Source(60000);
+      final gate = Completer<void>();
+      final loader = OverviewAssetLoader(
+        source.read,
+        indexedSource: (indexes) async {
+          await gate.future;
+          return {for (final index in indexes) index: source.assets[index]};
+        },
+      );
+      var heard = false;
+      loader.request(40000, 1, (_) => heard = true);
+      await pumpEventQueue();
+      loader.clear();
+      gate.complete();
+      await pumpEventQueue();
+      expect(heard, isFalse);
+      expect(loader.cached(40000, 1), isNull);
+    });
   });
 
   test('a disposed loader reads nothing', () async {

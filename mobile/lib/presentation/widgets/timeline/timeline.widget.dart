@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -37,6 +38,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/timeline_overview.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
@@ -224,6 +226,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   List<Segment>? _overviewSource;
   double? _overviewWidth;
   List<OverviewMonth> _overviewMonths = const [];
+  int _overviewTotal = 0;
   List<Segment>? _monthSegments;
   List<Segment>? _yearSegments;
   OverviewAssetLoader? _overviewLoader;
@@ -283,6 +286,9 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
       case final ScrollToDateEvent scrollToDateEvent:
         _scrollToDate(scrollToDateEvent.date);
       case TimelineReloadEvent():
+        // The service reloaded its buffer, which the months and the years may have read while it held the assets of
+        // the buckets before: they read again, keeping their pictures until then
+        _overviewLoader?.clear();
         setState(() {});
       default:
         break;
@@ -402,7 +408,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     final service = ref.read(timelineServiceProvider);
     if (!identical(service, _overviewLoaderService)) {
       _overviewLoader?.dispose();
-      _overviewLoader = OverviewAssetLoader(service.peekAssets);
+      _overviewLoader = _newOverviewLoader(service);
       _overviewLoaderService = service;
       _overviewSource = null;
     }
@@ -415,6 +421,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
       _overviewSource = grid;
       _overviewWidth = width;
       _overviewMonths = overviewMonths(grid.map((segment) => segment.bucket));
+      _overviewTotal = _overviewMonths.fold(0, (total, month) => total + month.assetCount);
       _monthSegments = null;
       _yearSegments = null;
     }
@@ -425,6 +432,23 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
       TimelineZoomLevel.years => _yearSegments ??= overviewYearSegments(overviewYears(_overviewMonths), layout, host),
       TimelineZoomLevel.grid => grid,
     };
+  }
+
+  /// The reads behind the thumbnails of the months and the years: from the buffer of the grid or a range of the
+  /// timeline, both of the buckets the indexes come from; on the main timeline, the deep ones in one pass
+  OverviewAssetLoader _newOverviewLoader(TimelineService service) {
+    final users = service.mergedTimelineUsers;
+    final repository = users == null ? null : ref.read(timelineOverviewRepositoryProvider);
+    return OverviewAssetLoader(
+      (index, count) => service.peekAssets(index, count, expectedTotal: _overviewTotal),
+      indexedSource: repository == null
+          ? null
+          : (indexes) async {
+              final expected = _overviewTotal;
+              final read = await repository.mergedAssetsAt(users!, indexes);
+              return read.total == expected ? read.assets : null;
+            },
+    );
   }
 
   void _onMultiSelectionToggled(_, bool isEnabled) {
