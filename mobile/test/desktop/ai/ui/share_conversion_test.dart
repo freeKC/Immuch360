@@ -451,6 +451,33 @@ void main() {
     expect(bridge.asked, hasLength(2), reason: 'another type plans the copies again, no new download');
   });
 
+  testWidgets('a 2:1 photo of a share without a 360° tag: the 3D version of a 360° photo names it to be checked', (
+    tester,
+  ) async {
+    final rooftop = shared('/2024/rooftop_night.jpg', jpegFile(width: 8192, height: 4096));
+    final beach = shared('/2024/beach.jpg', jpegFile(width: 6000, height: 3000, segments: [gpanoSegment()]));
+
+    await openDialog(tester, [rooftop, beach]);
+    await tapIn(tester, find.byKey(const Key('ai_conversion_type_stereoPanoramaFromPanorama')));
+    await settle(tester);
+
+    expect(chosenType(tester), ConversionKind.stereoPanoramaFromPanorama);
+    final byFrame = find.byKey(const Key('ai_conversion_by_frame'));
+    expect(
+      find.descendant(
+        of: byFrame,
+        matching: find.text('No 360° tag, 2:1 frame only: check that each is a 360° photo (1)'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.descendant(of: byFrame, matching: find.text('rooftop_night.jpg')), findsOneWidget);
+    expect(
+      find.descendant(of: byFrame, matching: find.text('beach.jpg')),
+      findsNothing,
+      reason: 'its GPano tags say',
+    );
+  });
+
   testWidgets('the copy shows the name of the photo and its size, and Cancel stops it, leaving no copy', (
     tester,
   ) async {
