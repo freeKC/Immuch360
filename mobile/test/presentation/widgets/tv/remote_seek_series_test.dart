@@ -2,9 +2,13 @@
 // press, and the next press moves 10 s again once 1.5 s went by without a press. From the design note of Michael
 // Cloutier (mlc70) on the Android TV viewer controls.
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 
 void main() {
@@ -140,5 +144,40 @@ void main() {
       container.dispose();
       async.flushTimers();
     });
+  });
+
+  testWidgets('the hint, in the words of the language of the app', (tester) async {
+    final series = RemoteSeekSeries();
+    addTearDown(series.dispose);
+    await tester.pumpWidget(
+      EasyLocalization(
+        supportedLocales: locales.values.toList(),
+        path: translationsPath,
+        startLocale: const Locale('ja'),
+        fallbackLocale: locales.values.first,
+        saveLocale: false,
+        useFallbackTranslations: true,
+        assetLoader: const CodegenLoader(),
+        child: Builder(
+          builder: (context) => MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            home: Scaffold(body: VideoSeekHint(series: series)),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('video_seek_hint')), findsNothing, reason: 'nothing between series');
+
+    series.press(forward: false);
+    series.press(forward: false);
+    await tester.pump();
+    expect(find.text('30 秒'), findsOneWidget);
+    expect(find.byIcon(Icons.fast_rewind_rounded), findsOneWidget);
+
+    await tester.pump(remoteSeekSeriesWindow);
+    expect(find.byKey(const Key('video_seek_hint')), findsNothing);
   });
 }

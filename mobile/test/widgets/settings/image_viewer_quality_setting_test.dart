@@ -2,8 +2,12 @@
 // time", on by default: the date and time of a photo at the bottom left of the viewer, with its controls. A phone keeps
 // the group as it was.
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/settings/asset_viewer_settings/image_viewer_quality_setting.dart';
@@ -51,6 +55,35 @@ void main() {
     await tester.tap(dateSwitch);
     await tester.pumpAndSettle();
     expect(SettingsRepository.instance.appConfig.viewer.tvShowDateTime, isTrue);
+  });
+
+  testWidgets('on a TV in French', (tester) async {
+    await tester.pumpWidget(
+      EasyLocalization(
+        supportedLocales: locales.values.toList(),
+        path: translationsPath,
+        startLocale: const Locale('fr'),
+        fallbackLocale: locales.values.first,
+        saveLocale: false,
+        useFallbackTranslations: true,
+        assetLoader: const CodegenLoader(),
+        child: ProviderScope(
+          overrides: [...context.overrides, tvModeProvider.overrideWithValue(true)],
+          child: Builder(
+            builder: (context) => MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              home: const Scaffold(body: ImageViewerQualitySetting()),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text("Afficher la date et l'heure de la photo"), findsOneWidget);
+    expect(find.text('En bas à gauche de la photo, quand les commandes sont affichées'), findsOneWidget);
   });
 
   testWidgets('a phone keeps the Photos group as it was', (tester) async {
