@@ -60,4 +60,44 @@ class SplatTextsTest {
     assertEquals("Reset", SplatTexts.label(emptyMap(), "sceneReset"))
     assertEquals("The splat could not be shown: out of memory", SplatTexts.failedText(emptyMap(), "out of memory"))
   }
+
+  @Test
+  fun `a file found damaged while it is read says so as the probe would, in the language of the app`() {
+    val cut = SplatReadException(SplatFileProblem.DAMAGED, "the file ends too early")
+    assertEquals("This splat file is damaged or incomplete", SplatTexts.errorText(emptyMap(), cut, Locale.US))
+    assertEquals(
+      "Ce fichier splat est endommagé ou incomplet",
+      SplatTexts.errorText(mapOf(SplatTexts.LABEL_DAMAGED to "Ce fichier splat est endommagé ou incomplet"), cut),
+    )
+    val noRows = SplatReadException(SplatFileProblem.NOT_A_SPLAT, "no opacity")
+    assertEquals(
+      "Not a Gaussian splat: this .ply holds a mesh or a point cloud",
+      SplatTexts.errorText(emptyMap(), noRows, Locale.US),
+    )
+    assertEquals("Not enough free memory", SplatTexts.errorText(emptyMap(), OutOfMemoryError(), Locale.US))
+    // Anything else keeps its message after "The splat could not be shown"
+    assertEquals(
+      "The splat could not be shown: connection reset",
+      SplatTexts.errorText(emptyMap(), java.io.IOException("connection reset"), Locale.US),
+    )
+  }
+
+  @Test
+  fun `a cache without room and a module that did not start say so`() {
+    assertEquals(
+      "Not enough free space on the headset for this splat",
+      SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE), Locale.US),
+    )
+    assertEquals(
+      "The splat module did not start with this viewer: close it and open the splat again",
+      SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.MODULE_NOT_RUNNING), Locale.US),
+    )
+    assertEquals(
+      "Le module des splats n'a pas démarré",
+      SplatTexts.refusalText(
+        mapOf(SplatTexts.LABEL_NOT_RUNNING to "Le module des splats n'a pas démarré"),
+        SplatVerdict.Refused(SplatRefusal.MODULE_NOT_RUNNING),
+      ),
+    )
+  }
 }

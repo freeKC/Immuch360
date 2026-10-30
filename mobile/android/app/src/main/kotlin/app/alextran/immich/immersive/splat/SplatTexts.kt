@@ -26,6 +26,8 @@ internal object SplatTexts {
   const val LABEL_NEWER_SPZ = "splatNewerSpz"
   const val LABEL_DAMAGED = "splatDamaged"
   const val LABEL_TOO_LARGE = "splatTooLarge"
+  const val LABEL_NO_SPACE = "splatNoSpace"
+  const val LABEL_NOT_RUNNING = "splatNotRunning"
   const val LABEL_FAILED = "splatFailed"
 
   const val COUNT = "{count}"
@@ -54,6 +56,8 @@ internal object SplatTexts {
       LABEL_NEWER_SPZ to "Made with a newer SPZ version: not read here yet",
       LABEL_DAMAGED to "This splat file is damaged or incomplete",
       LABEL_TOO_LARGE to "Too large for this headset ($COUNT gaussians)",
+      LABEL_NO_SPACE to "Not enough free space on the headset for this splat",
+      LABEL_NOT_RUNNING to "The splat module did not start with this viewer: close it and open the splat again",
       LABEL_FAILED to "The splat could not be shown: $REASON",
     )
 
@@ -104,9 +108,23 @@ internal object SplatTexts {
       SplatRefusal.DAMAGED -> label(labels, LABEL_DAMAGED)
       SplatRefusal.TOO_LARGE -> label(labels, LABEL_TOO_LARGE).replace(COUNT, number(verdict.gaussians ?: 0, locale))
       SplatRefusal.NOT_ENOUGH_MEMORY -> SceneTexts.label(labels, SceneTexts.LABEL_NO_MEMORY)
+      SplatRefusal.NOT_ENOUGH_SPACE -> label(labels, LABEL_NO_SPACE)
       SplatRefusal.TOO_WARM -> SceneTexts.label(labels, SceneTexts.LABEL_TOO_WARM)
+      SplatRefusal.MODULE_NOT_RUNNING -> label(labels, LABEL_NOT_RUNNING)
     }
 
   /** "The splat could not be shown: [reason]" */
   fun failedText(labels: Map<String, String>, reason: String): String = label(labels, LABEL_FAILED).replace(REASON, reason)
+
+  /**
+   * What the user reads when the preparation of a splat failed with [error]: a file that turns out damaged or
+   * unsupported while it is read says so as the probe would ([refusalText], translated), a lack of memory as the
+   * scenes say it; anything else is "The splat could not be shown" with its message
+   */
+  fun errorText(labels: Map<String, String>, error: Throwable, locale: Locale = Locale.getDefault()): String =
+    when (error) {
+      is SplatReadException -> refusalText(labels, SplatVerdict.Refused(SplatGate.refusalOf(error.problem)), locale)
+      is OutOfMemoryError -> refusalText(labels, SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_MEMORY), locale)
+      else -> failedText(labels, error.message ?: error.javaClass.simpleName)
+    }
 }

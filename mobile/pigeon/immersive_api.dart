@@ -48,7 +48,10 @@ abstract class ImmersiveApi {
   /// and next keep the value of the opening. [kiosk] is null, or the JSON of the kiosk mode (Settings, Advanced,
   /// "Kiosk mode", lot quest-kiosk): `{"endText": ..., "exitHint": ...}` in the language of the app; the viewer then
   /// plays the media for visitors, restarting a film each time the headset is put on, with no panel, no hands and no
-  /// pointer, and only B or Y held one second leaves (see KioskSession).
+  /// pointer, and only B or Y held one second leaves (see KioskSession). [gaussianSplats] is the "Gaussian splats"
+  /// setting (experimental, on by default; lot S5): the viewer registers the splat module of the Meta Spatial SDK as it
+  /// opens only when it is true, so that the module never runs for a user who turned the splats off; previous and next
+  /// keep the value of the opening.
   void open(
     String url,
     Map<String, String> headers,
@@ -65,6 +68,7 @@ abstract class ImmersiveApi {
     bool reverseThumbstickTurn,
     bool sharpFlatScreens, {
     String? kiosk,
+    bool gaussianSplats = true,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified

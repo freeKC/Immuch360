@@ -91,29 +91,34 @@ internal class SplatStage(
   }
 
   /**
-   * Shows the splat [prepared] for [spec], placed from the head at [headPosition] looking along [headForward] (null
-   * before the first head pose: placed from a head 1.6 m above the origin, then again at the first head pose), once
-   * no splat dropped before is still loading
+   * Shows the splat [prepared] for [spec] once no splat dropped before is still loading, placed from the head [head]
+   * gives at that moment: its position and the direction it looks along (null before the first head pose: placed from
+   * a head 1.6 m above the origin, then again at the first head pose). A splat that never starts (the scene goes, or
+   * another media comes while it waits) lets its file of the cache go
    */
   fun show(
     prepared: SplatPreparation.Ready,
     spec: GaussianSplatSpec,
     options: SplatViewerOptions,
-    headPosition: Vector3?,
-    headForward: Vector3?,
+    head: () -> Pair<Vector3?, Vector3?>,
   ) {
-    if (session.isDown) return
-    val upright = memory.read(spec.name, spec.fileBytes)
+    val upright = memory.read(spec.name, prepared.sourceBytes)
     val splat = Current(prepared, spec, options, upright)
-    current = splat
-    session.whenFree { start(splat, headPosition, headForward) }
+    if (!session.isDown) current = splat
+    session.whenFree(start = { start(splat, head()) }, abandon = { forget(splat) })
   }
 
-  private fun start(splat: Current, headPosition: Vector3?, headForward: Vector3?) {
+  /** The file of the cache of a splat that will not show */
+  private fun forget(splat: Current) {
+    if (splat.prepared.owned) splat.prepared.file.delete()
+  }
+
+  private fun start(splat: Current, head: Pair<Vector3?, Vector3?>) {
     if (current !== splat) {
-      if (splat.prepared.owned) splat.prepared.file.delete()
+      forget(splat)
       return
     }
+    val (headPosition, headForward) = head
     val pose = anchorAndPlace(splat, headPosition ?: DEFAULT_POSITION, headForward ?: DEFAULT_FORWARD)
     // Without a head pose yet, placed again at the first one
     if (headPosition == null) splat.reanchor = true
@@ -206,7 +211,7 @@ internal class SplatStage(
     splat.upright = splat.upright.next()
     splat.local = null
     splat.reanchor = true
-    memory.write(splat.spec.name, splat.spec.fileBytes, splat.upright)
+    memory.write(splat.spec.name, splat.prepared.sourceBytes, splat.upright)
     Log.i(TAG, "splat: upright ${splat.upright.key}")
     return splat.upright
   }

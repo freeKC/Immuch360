@@ -48,6 +48,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     bool reverseThumbstickTurn,
     bool sharpFlatScreens, {
     String? kiosk,
+    bool gaussianSplats = true,
   }) async {
     opened.add((url: url, title: title, stereoPair: stereoPair, isVideo: isVideo));
   }
