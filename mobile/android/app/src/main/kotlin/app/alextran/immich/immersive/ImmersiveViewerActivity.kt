@@ -317,6 +317,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * value of its opening.
      */
     val sharpFlatScreens: Boolean = true,
+    /**
      * The kiosk JSON of the opening (see [KioskOptions]): the media plays for the visitors of an exhibition, see
      * [KioskSession]. Null for any other opening; a kiosk has no previous or next media.
      */
@@ -382,6 +383,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** A photo drawn on the photo layer rather than on the quad mesh, see [FlatScreenMedia.photoOnLayer]. */
     val photoOnLayer: Boolean
       get() = screenMedia.photoOnLayer
+
     /** The texts of a kiosk opening, null for any other opening (or a kiosk JSON that does not read). */
     val kiosk: KioskOptions? by lazy { KioskOptions.parse(kioskJson) }
   }
