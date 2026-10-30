@@ -1,6 +1,11 @@
 package app.alextran.immich
 
+import io.flutter.plugin.common.BinaryMessenger
+import java.nio.ByteBuffer
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -9,6 +14,33 @@ import org.junit.Test
  */
 class QuestStickPagingTest {
   private val rearm = StickPushDetector.REARM_MS
+
+  /** Keeps the handler set for each channel, as the messenger of the Flutter engine does */
+  private class RecordingMessenger : BinaryMessenger {
+    val handlers = mutableMapOf<String, BinaryMessenger.BinaryMessageHandler?>()
+
+    override fun send(channel: String, message: ByteBuffer?) {}
+
+    override fun send(channel: String, message: ByteBuffer?, callback: BinaryMessenger.BinaryReply?) {}
+
+    override fun setMessageHandler(channel: String, handler: BinaryMessenger.BinaryMessageHandler?) {
+      handlers[channel] = handler
+    }
+  }
+
+  @Test
+  fun `the paging channel is made on a Meta Quest only, never on a phone or a TV`() {
+    val elsewhere = RecordingMessenger()
+    assertNull(QuestStickPaging.attach(elsewhere, horizonOs = false))
+    assertTrue(elsewhere.handlers.isEmpty())
+
+    val quest = RecordingMessenger()
+    val paging = QuestStickPaging.attach(quest, horizonOs = true)
+    assertNotNull(paging)
+    assertNotNull(quest.handlers["immuch360/quest_stick"])
+    paging!!.dispose()
+    assertNull(quest.handlers["immuch360/quest_stick"])
+  }
 
   /** The scrolls of one push held [durationMs] from [startMs], one every 16 ms as a frame would send them */
   private fun StickPushDetector.hold(horizontal: Float, startMs: Long, durationMs: Long): List<StickPush> =

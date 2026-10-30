@@ -28,6 +28,7 @@ import me.albemala.native_video_player.NativeVideoPlayerPlugin
 import app.alextran.immich.images.LocalImageApi
 import app.alextran.immich.immersive.ImmersiveApi
 import app.alextran.immich.immersive.ImmersiveApiImpl
+import app.alextran.immich.immersive.isHorizonOsDevice
 import app.alextran.immich.pairing.QrScanApi
 import app.alextran.immich.pairing.QrScanApiImpl
 import app.alextran.immich.images.LocalImagesImpl
@@ -56,7 +57,7 @@ import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 
 class MainActivity : FlutterFragmentActivity() {
-  // Previous and next of the asset viewer by the thumbstick of a Meta Quest controller
+  // Previous and next of the asset viewer by the thumbstick of a Meta Quest controller, null on any other device
   private var stickPaging: QuestStickPaging? = null
 
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -76,7 +77,8 @@ class MainActivity : FlutterFragmentActivity() {
     TvApi.setUp(messenger, TvApiImpl(this))
     // The scanner of "Connect a TV or computer": it opens activities, so it needs this one
     QrScanApi.setUp(messenger, QrScanApiImpl(this))
-    stickPaging = QuestStickPaging(messenger)
+    // The thumbstick paging of the asset viewer, on a Meta Quest only: a phone or a TV keeps its scroll events
+    stickPaging = QuestStickPaging.attach(messenger, isHorizonOsDevice())
     // Live view of the Tapo cameras: a platform view and the API that feeds it
     val cameraLiveViews = CameraLiveViewFactory(messenger)
     flutterEngine.platformViewsController.registry.registerViewFactory(CameraLiveViewFactory.VIEW_TYPE, cameraLiveViews)
@@ -133,7 +135,8 @@ class MainActivity : FlutterFragmentActivity() {
   /**
    * A gamepad moved: the DJI link page draws the sticks it reads. The event is only looked at, never consumed, and
    * nothing leaves the device because of it (see DjiLinkController.onMotionEvent). A sideways push of the thumbstick of
-   * a Meta Quest controller pages the asset viewer while it asks for it (see QuestStickPaging), which then takes it.
+   * a Meta Quest controller pages the asset viewer while it asks for it (see QuestStickPaging, made on a Meta Quest
+   * only), which then takes it.
    */
   override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
     // Only a page that is open reads the sticks; no event ever creates the link's owner

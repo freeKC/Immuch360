@@ -12,7 +12,7 @@ import kotlin.math.abs
  * AXIS_VSCROLL) while the ray points at its window. Flutter turns them into pointer scrolls that the scrollables of the
  * page compete for, and the asset viewer does not reliably get them: a sideways push reaches it from here instead.
  * While the viewer asks for it ("setPaging"), a mostly horizontal scroll is taken from Flutter and a push sends one
- * "page" call, 1 for right and -1 for left (see [StickPushDetector]).
+ * "page" call, 1 for right and -1 for left (see [StickPushDetector]). Made on a Meta Quest only (see [attach]).
  */
 internal class QuestStickPaging(messenger: BinaryMessenger) : MethodChannel.MethodCallHandler {
   private val channel = MethodChannel(messenger, CHANNEL)
@@ -51,9 +51,17 @@ internal class QuestStickPaging(messenger: BinaryMessenger) : MethodChannel.Meth
     return push != StickPush.IGNORE
   }
 
-  private companion object {
-    const val CHANNEL = "immuch360/quest_stick"
-    const val TAG = "Immuch360"
+  companion object {
+    private const val CHANNEL = "immuch360/quest_stick"
+    private const val TAG = "Immuch360"
+
+    /**
+     * The paging channel of [messenger] on a Meta Quest ([horizonOs], see isHorizonOsDevice), null on any other
+     * device: a phone, a tablet or a TV keeps every scroll event as it comes, and nothing there answers "setPaging",
+     * which the asset viewer only sends on Horizon OS.
+     */
+    fun attach(messenger: BinaryMessenger, horizonOs: Boolean): QuestStickPaging? =
+      if (horizonOs) QuestStickPaging(messenger) else null
   }
 }
 
