@@ -29,6 +29,8 @@ void main() {
 
     expect(labels, {
       'playbackRestarted': 'The video stopped at {position}, it plays again from there',
+      'playbackRestartedLater':
+          'The video stopped at {position}, it plays again from {resume}, past the part that failed',
       'playbackNoPicture':
           'No picture for 3 seconds while the sound plays ({video}). What the headset saw is in the Logs of the app',
       'playbackNoPictureSwitch': 'No picture for 3 seconds from {video}, trying the server playback stream',
@@ -44,6 +46,7 @@ void main() {
     expect(labels['stereo'], '3D');
     expect(labels[playbackKbpsLabelKey], '{value} kb/s');
     expect(labels[playbackRestartedLabelKey], 'The video stopped at {position}, it plays again from there');
+    expect(labels[playbackRestartedLaterLabelKey], allOf(contains('{position}'), contains('{resume}')));
     expect(labels[playbackNoPictureSwitchLabelKey], contains('{video}'));
     expect(labels[playbackMbpsLabelKey], '{value} Mbit/s');
   });

@@ -291,6 +291,8 @@ void main() {
   // carries too, their places left for the viewer (immersivePlaybackLabels)
   const englishPlaybackLabels = {
     'playbackRestarted': 'The video stopped at {position}, it plays again from there',
+    'playbackRestartedLater':
+        'The video stopped at {position}, it plays again from {resume}, past the part that failed',
     'playbackNoPicture':
         'No picture for 3 seconds while the sound plays ({video}). What the headset saw is in the Logs of the app',
     'playbackNoPictureSwitch': 'No picture for 3 seconds from {video}, trying the server playback stream',
