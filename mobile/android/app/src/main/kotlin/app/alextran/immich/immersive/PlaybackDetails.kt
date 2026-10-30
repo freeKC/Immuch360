@@ -25,7 +25,7 @@ internal object PlaybackDetails {
     mapOf(
       LABEL_RESTARTED to "The video stopped at {position}, it plays again from there",
       LABEL_NO_PICTURE to
-        "No picture for 3 seconds while the sound plays ({video}). What the headset saw is written to the app's Logs",
+        "No picture for 3 seconds while the sound plays ({video}). What the headset saw is in the Logs of the app",
       LABEL_NO_PICTURE_SWITCH to "No picture for 3 seconds from {video}, trying the server playback stream",
       LABEL_MBPS to "{value} Mbit/s",
       LABEL_KBPS to "{value} kbit/s",

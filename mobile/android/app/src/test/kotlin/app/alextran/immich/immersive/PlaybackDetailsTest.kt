@@ -66,8 +66,8 @@ class PlaybackDetailsTest {
     )
     val notice = PlaybackDetails.text(english, PlaybackDetails.LABEL_NO_PICTURE, "video" to "HEVC • 7680 x 3840")
     assertEquals(
-      "No picture for 3 seconds while the sound plays (HEVC • 7680 x 3840). What the headset saw is written to the " +
-        "app's Logs",
+      "No picture for 3 seconds while the sound plays (HEVC • 7680 x 3840). What the headset saw is in the Logs of " +
+        "the app",
       notice,
     )
   }
