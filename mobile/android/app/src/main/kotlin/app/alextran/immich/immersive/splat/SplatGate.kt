@@ -4,7 +4,10 @@ import kotlin.math.ceil
 
 /** Why a splat is not shown in this headset */
 internal enum class SplatRefusal {
-  /** The APK of the phone flavour, without the splat module: "Not in this version of the app" */
+  /**
+   * The APK of the phone flavour, without the splat module, or the store build, which never starts it (SplatBuild):
+   * "Not in this version of the app"
+   */
   NOT_IN_THIS_VERSION,
 
   /** A Quest 2 or a Quest Pro: "Gaussian splats need a Meta Quest 3 or 3S" */
@@ -65,7 +68,8 @@ internal sealed interface SplatVerdict {
  *    ([roomForDownload]).
  *
  * The module itself runs only when [registers] said so as the viewer opened: on the Quest 3 and 3S, in the quest
- * flavour, with Gaussian splats on. A splat that comes to a viewer without it is refused at once ([viewerRefusal]).
+ * flavour, in a build that offers the splats (not the store build, [SplatBuild]), with Gaussian splats on. A splat that
+ * comes to a viewer without it is refused at once ([viewerRefusal]).
  *
  * Pure JVM, tested by SplatGateTest. The Dart side greys the button for the reasons it can know first (splat_gate.dart).
  */
@@ -105,19 +109,21 @@ internal object SplatGate {
 
   /**
    * Whether the viewer registers the feature of the splat module as it opens: the module is in this APK ([engine]),
-   * the headset [device] runs it, and the opening asked for it ([wanted], the Gaussian splats setting). Off, the
-   * module never runs, whatever the viewer shows
+   * this build offers the splats ([inThisBuild], false in the store build, see [SplatBuild]), the headset [device]
+   * runs it, and the opening asked for it ([wanted], the Gaussian splats setting). Off, the module never runs,
+   * whatever the viewer shows
    */
-  fun registers(engine: Boolean, device: String?, wanted: Boolean): Boolean =
-    engine && wanted && device !in OLDER_DEVICES
+  fun registers(engine: Boolean, device: String?, wanted: Boolean, inThisBuild: Boolean): Boolean =
+    engine && inThisBuild && wanted && device !in OLDER_DEVICES
 
   /**
-   * Why a viewer refuses a splat before reading anything, null when it may go on: no module in this APK, an older
-   * headset, or a module that is not [running] in this viewer
+   * Why a viewer refuses a splat before reading anything, null when it may go on: no module in this APK or a build
+   * that does not offer the splats ([inThisBuild], see [SplatBuild]), an older headset, or a module that is not
+   * [running] in this viewer
    */
-  fun viewerRefusal(engine: Boolean, device: String?, running: Boolean): SplatVerdict.Refused? =
+  fun viewerRefusal(engine: Boolean, device: String?, running: Boolean, inThisBuild: Boolean): SplatVerdict.Refused? =
     when {
-      !engine -> SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION)
+      !engine || !inThisBuild -> SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION)
       device in OLDER_DEVICES -> SplatVerdict.Refused(SplatRefusal.OLDER_HEADSET)
       !running -> SplatVerdict.Refused(SplatRefusal.MODULE_NOT_RUNNING)
       else -> null

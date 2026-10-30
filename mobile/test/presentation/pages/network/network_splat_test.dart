@@ -109,10 +109,12 @@ void main() {
     AppConfig config = const AppConfig(),
     String? flavor = 'quest',
     String device = 'eureka',
+    bool storeBuild = false,
   }) => [
     storeServiceProvider.overrideWithValue(store),
     overrideConnections((ref) => FakeConnections(ref, share)),
     isHorizonOsProvider.overrideWith((ref) async => true),
+    splatsInThisBuildProvider.overrideWith((ref) async => !storeBuild),
     immersiveApiProvider.overrideWithValue(immersiveApi),
     appConfigProvider.overrideWithValue(config),
     appFlavorProvider.overrideWithValue(flavor),
@@ -197,6 +199,14 @@ void main() {
       await pumpPage(tester, '/cash.spz', with_: overrides(device: 'hollywood'));
       expect(button(tester).onPressed, isNull);
       expect(find.text('Gaussian splats need a Meta Quest 3 or 3S'), findsOneWidget);
+    });
+
+    testWidgets('greys the button in the build of the Meta Horizon Store, which never reaches this page', (
+      tester,
+    ) async {
+      await pumpPage(tester, '/cash.spz', with_: overrides(storeBuild: true));
+      expect(button(tester).onPressed, isNull);
+      expect(find.text('Not in this version of the app'), findsOneWidget);
     });
 
     testWidgets('greys the button with its reason in the phone APK', (tester) async {

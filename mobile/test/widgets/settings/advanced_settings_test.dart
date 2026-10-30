@@ -244,13 +244,14 @@ void main() {
       matching: find.byType(SwitchListTile),
     );
 
-    /// The page on a Meta Quest, the only device with the immersive viewer
+    /// The page on a Meta Quest, the only device with the immersive viewer, in a GitHub build
     Future<void> pumpOnQuest(WidgetTester tester) async {
       await tester.pumpTestWidget(
         context,
         const AdvancedSettings(),
         overrides: [
           isHorizonOsProvider.overrideWith((ref) => true),
+          splatsInThisBuildProvider.overrideWith((ref) => true),
           appFlavorProvider.overrideWithValue('quest'),
           aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
         ],
@@ -289,6 +290,37 @@ void main() {
       await tester.tap(largeSwitch);
       await tester.pumpAndSettle();
       expect(SettingsRepository.instance.appConfig.viewer.largeSplats, isTrue);
+    });
+
+    testWidgets('are not offered in the build of the Meta Horizon Store', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          splatsInThisBuildProvider.overrideWith((ref) => false),
+          appFlavorProvider.overrideWithValue('quest'),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      final scrollable = find.byType(Scrollable).first;
+      // Sharper flat screens, the setting right before the splats, stays
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('advanced_settings_sharp_screens')),
+        100,
+        scrollable: scrollable,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
+      // Then the settings of the AI relief, which come right after the splats: none on the way
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('advanced_settings_ai_enabled')),
+        50,
+        scrollable: scrollable,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
     });
 
     testWidgets('are not offered on a phone, which has no immersive viewer', (tester) async {

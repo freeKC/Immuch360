@@ -11,11 +11,13 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 
-/// Whether the splats are listed in the shares and offered in the Add menu: on a Meta Quest, with Gaussian splats on
+/// Whether the splats are listed in the shares and offered in the Add menu: on a Meta Quest, in a build that offers
+/// them (not the build of the Meta Horizon Store, see splatsInThisBuildProvider), with Gaussian splats on
 /// (experimental, on by default). The splat page itself says whether this headset and this APK can show one.
 final networkSplatsEnabledProvider = Provider<bool>((ref) {
   final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-  return horizonOs && ref.watch(appConfigProvider.select((config) => config.viewer.gaussianSplats));
+  final inThisBuild = ref.watch(splatsInThisBuildProvider).valueOrNull ?? false;
+  return horizonOs && inThisBuild && ref.watch(appConfigProvider.select((config) => config.viewer.gaussianSplats));
 });
 
 /// A splat file: a file of the share [sourceId] at [path] of [size] bytes when known, or a file of the headset at

@@ -22,6 +22,13 @@ abstract class ImmersiveApi {
   /// True on a Meta Quest headset (Horizon OS).
   bool isHorizonOs();
 
+  /// Whether this build offers the Gaussian splats (lot S5, FreeKC's decision of 30 October 2026): true in the GitHub
+  /// builds, false in the build of the Meta Horizon Store, told apart by the certificate the APK is signed with
+  /// (SplatBuild.kt, whose SPLATS_IN_STORE_BUILD alone can make it true there), and false when that certificate cannot
+  /// be read. False, the app shows no splat tile, no Open a splat file and no Gaussian splats setting, and its licences
+  /// page does not list the splat module as active; the viewer never registers the module either.
+  bool splatsInThisBuild();
+
   /// Opens the immersive head tracked viewer for an equirectangular photo or video. [stereoLayout] is the layout
   /// Flutter guessed from the media dimensions; the headset shows each eye its own half of a stereoscopic media,
   /// and the user can change the layout in the viewer. [stereoLabels] are the translated labels of the 3D control,

@@ -294,6 +294,7 @@ void main() {
         sources: const [smbSource],
         moreOverrides: [
           isHorizonOsProvider.overrideWith((ref) async => true),
+          splatsInThisBuildProvider.overrideWith((ref) async => true),
           documentTreeApiProvider.overrideWithValue(api),
         ],
       );
@@ -305,6 +306,21 @@ void main() {
 
       expect(api.picks, [('picked-splat', 1 << 30)]);
       expect(find.text('splat null /cache/picked-splat/gsplat-cactus.spz 6824362'), findsOneWidget);
+    });
+
+    testWidgets('a splat file is not offered in the build of the Meta Horizon Store', (tester) async {
+      await pumpSharesPage(
+        tester,
+        sources: const [smbSource],
+        moreOverrides: [
+          isHorizonOsProvider.overrideWith((ref) async => true),
+          splatsInThisBuildProvider.overrideWith((ref) async => false),
+        ],
+      );
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+      expect(find.text('A network share (NAS, computer, media server)'), findsOneWidget);
+      expect(find.byKey(const Key('network_add_open_splat')), findsNothing);
     });
 
     testWidgets('a splat file is not offered on a phone', (tester) async {

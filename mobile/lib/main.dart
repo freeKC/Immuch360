@@ -168,7 +168,8 @@ Future<void> initApp() async {
   LicenseRegistry.addLicense(pairingLicenses);
   // LiteRT, the engine of the AI relief, in the quest flavour (lib/utils/litert_licenses.dart)
   LicenseRegistry.addLicense(liteRtLicenses);
-  // The Meta Spatial SDK of the Quest viewer and its splat module (lib/utils/meta_spatial_licenses.dart)
+  // The Meta Spatial SDK of the Quest viewer and its splat module, listed as active in the builds that offer the
+  // Gaussian splats (lib/utils/meta_spatial_licenses.dart)
   LicenseRegistry.addLicense(metaSpatialLicenses);
 }
 
@@ -320,6 +321,8 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     unawaited(djiForgetRetiredSettings(ref.read(storeServiceProvider)));
     // Meta Quest detection, asked once: 360 media open in the immersive viewer there
     unawaited(ref.read(isHorizonOsProvider.future));
+    // Whether this build offers the Gaussian splats, from the certificate of the APK: not the Meta Horizon Store build
+    unawaited(ref.read(splatsInThisBuildProvider.future));
   }
 
   @override

@@ -72,6 +72,7 @@ import app.alextran.immich.immersive.scene.SceneVerdict
 import app.alextran.immich.immersive.scene.SceneView
 import app.alextran.immich.immersive.scene.SceneViewerOptions
 import app.alextran.immich.immersive.splat.GaussianSplatSpec
+import app.alextran.immich.immersive.splat.SplatBuild
 import app.alextran.immich.immersive.splat.SplatCacheFiles
 import app.alextran.immich.immersive.splat.SplatEngines
 import app.alextran.immich.immersive.splat.SplatGate
@@ -912,14 +913,22 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * The feature of the splat module (lot S5), registered before any splat entity is made as Meta's SplatSample does:
-   * in the quest flavour only, not on a Quest 2 or Pro, which the module does not run on, and only when the opening
-   * asked for it (the Gaussian splats setting, see [SplatGate.registers]); null otherwise or when it could not be made,
-   * the splats then saying at once that the module is not running.
+   * in the quest flavour only, never in the store build (SplatBuild, FreeKC's decision of 30 October 2026), not on a
+   * Quest 2 or Pro, which the module does not run on, and only when the opening asked for it (the Gaussian splats
+   * setting, see [SplatGate.registers]); null otherwise or when it could not be made, the splats then saying at once
+   * that the module is not running.
    */
   private fun splatFeature(): SpatialFeature? {
     splatModuleRunning = false
-    if (!SplatGate.registers(SplatEngines.available, Build.DEVICE, splatModuleWanted)) {
-      Log.i(TAG, "splat module not registered: ${if (splatModuleWanted) "not in this APK or headset" else "turned off"}")
+    val inThisBuild = SplatBuild.offersSplats(this)
+    if (!SplatGate.registers(SplatEngines.available, Build.DEVICE, splatModuleWanted, inThisBuild)) {
+      val why =
+        when {
+          !inThisBuild -> "not in this build"
+          !splatModuleWanted -> "turned off"
+          else -> "not in this APK or headset"
+        }
+      Log.i(TAG, "splat module not registered: $why")
       return null
     }
     return try {
@@ -3837,7 +3846,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     updateSceneControls()
     updateTurnButton()
-    val refusal = SplatGate.viewerRefusal(SplatEngines.available, Build.DEVICE, splatModuleRunning)
+    val refusal =
+      SplatGate.viewerRefusal(SplatEngines.available, Build.DEVICE, splatModuleRunning, SplatBuild.offersSplats(this))
     if (refusal != null) {
       splatStopped(media, SplatTexts.refusalText(labels, refusal))
       return

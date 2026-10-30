@@ -31,13 +31,49 @@ void main() {
   String textOf(LicenseEntry entry) => entry.paragraphs.map((paragraph) => paragraph.text).join('\n');
 
   test('Android lists the Meta Spatial SDK with its licence, then its notices', () async {
-    final entries = await metaSpatialLicenses(android: true, bundle: _TextBundle(assets)).toList();
+    final entries = await metaSpatialLicenses(
+      android: true,
+      bundle: _TextBundle(assets),
+      splatsInThisBuild: () async => true,
+    ).toList();
     expect(entries, hasLength(2));
     expect(entries.map((entry) => entry.packages), everyElement(['Meta Spatial SDK']));
     expect(textOf(entries.first), contains('Meta Platform Technologies SDK License Agreement'));
     expect(textOf(entries.first), contains('Meta Spatial SDK 0.14.0'));
     expect(textOf(entries.last), contains('Third Party Notices'));
     expect(textOf(entries.last), contains('Apache License'));
+  });
+
+  test('a GitHub build lists the splat module as what shows the Gaussian splats of other tools', () async {
+    final entries = await metaSpatialLicenses(
+      android: true,
+      bundle: _TextBundle(assets),
+      splatsInThisBuild: () async => true,
+    ).toList();
+    expect(textOf(entries.first), contains('-isdk, and -splat in the version for Meta Quest'));
+    expect(textOf(entries.first), contains('and the Gaussian splats of other tools'));
+  });
+
+  test('the build of the Meta Horizon Store does not list the splat module as active', () async {
+    final entries = await metaSpatialLicenses(
+      android: true,
+      bundle: _TextBundle(assets),
+      splatsInThisBuild: () async => false,
+    ).toList();
+    final text = textOf(entries.first);
+    expect(text, contains('Meta Spatial SDK 0.14.0 (meta-spatial-sdk, -toolkit, -vr and -isdk)'));
+    expect(text, contains('which this build never starts'));
+    expect(text, isNot(contains('Gaussian splats of other tools')));
+    expect(text, contains('Meta Platform Technologies SDK License Agreement'), reason: 'the licence of the package');
+  });
+
+  test('a build whose answer fails is read as the store build', () async {
+    final entries = await metaSpatialLicenses(
+      android: true,
+      bundle: _TextBundle(assets),
+      splatsInThisBuild: () async => throw StateError('no answer'),
+    ).toList();
+    expect(textOf(entries.first), contains('which this build never starts'));
   });
 
   test('the other platforms list nothing', () async {

@@ -1013,9 +1013,11 @@ void main() {
       ];
     });
 
-    /// A Meta Quest with the settings of [config]
-    List<Override> onQuest({AppConfig config = const AppConfig()}) => [
+    /// A Meta Quest with the settings of [config], in a GitHub build, or in the build of the Meta Horizon Store
+    /// ([storeBuild]), which hides the splats
+    List<Override> onQuest({AppConfig config = const AppConfig(), bool storeBuild = false}) => [
       isHorizonOsProvider.overrideWith((ref) async => true),
+      splatsInThisBuildProvider.overrideWith((ref) async => !storeBuild),
       appConfigProvider.overrideWithValue(config),
     ];
 
@@ -1052,6 +1054,13 @@ void main() {
 
     testWidgets('lists none on a phone', (tester) async {
       await pumpBrowser(tester, overrides: [isHorizonOsProvider.overrideWith((ref) async => false)]);
+
+      expect(find.byType(SplatTile), findsNothing);
+      expect(find.byType(NetworkMediaTile), findsNWidgets(3));
+    });
+
+    testWidgets('lists none in the build of the Meta Horizon Store', (tester) async {
+      await pumpBrowser(tester, overrides: onQuest(storeBuild: true));
 
       expect(find.byType(SplatTile), findsNothing);
       expect(find.byType(NetworkMediaTile), findsNWidgets(3));

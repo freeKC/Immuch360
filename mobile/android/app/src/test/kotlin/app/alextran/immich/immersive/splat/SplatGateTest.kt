@@ -154,31 +154,53 @@ class SplatGateTest {
 
   @Test
   fun `Gaussian splats off, the viewer registers no splat module`() {
-    assertTrue(SplatGate.registers(engine = true, device = "eureka", wanted = true))
-    assertTrue(SplatGate.registers(engine = true, device = null, wanted = true))
+    assertTrue(SplatGate.registers(engine = true, device = "eureka", wanted = true, inThisBuild = true))
+    assertTrue(SplatGate.registers(engine = true, device = null, wanted = true, inThisBuild = true))
     // The setting off: no feature, whatever the headset
-    assertFalse(SplatGate.registers(engine = true, device = "eureka", wanted = false))
-    assertFalse(SplatGate.registers(engine = true, device = "panther", wanted = false))
+    assertFalse(SplatGate.registers(engine = true, device = "eureka", wanted = false, inThisBuild = true))
+    assertFalse(SplatGate.registers(engine = true, device = "panther", wanted = false, inThisBuild = true))
     // Nor in the phone flavour, nor on a Quest 2 or Pro
-    assertFalse(SplatGate.registers(engine = false, device = "eureka", wanted = true))
-    assertFalse(SplatGate.registers(engine = true, device = "hollywood", wanted = true))
-    assertFalse(SplatGate.registers(engine = true, device = "seacliff", wanted = true))
+    assertFalse(SplatGate.registers(engine = false, device = "eureka", wanted = true, inThisBuild = true))
+    assertFalse(SplatGate.registers(engine = true, device = "hollywood", wanted = true, inThisBuild = true))
+    assertFalse(SplatGate.registers(engine = true, device = "seacliff", wanted = true, inThisBuild = true))
+  }
+
+  @Test
+  fun `the store build registers no splat module, whatever the setting says`() {
+    val store = SplatBuild.offersSplats(listOf(SplatBuild.STORE_CERTIFICATE_SHA256), inStoreBuild = false)
+    val github = SplatBuild.offersSplats(listOf(SplatBuild.GITHUB_CERTIFICATE_SHA256), inStoreBuild = false)
+    assertFalse(SplatGate.registers(engine = true, device = "eureka", wanted = true, inThisBuild = store))
+    assertFalse(SplatGate.registers(engine = true, device = "panther", wanted = true, inThisBuild = store))
+    assertTrue(SplatGate.registers(engine = true, device = "eureka", wanted = true, inThisBuild = github))
   }
 
   @Test
   fun `a viewer the module did not start with refuses a splat at once, after the flavour and the headset`() {
-    assertNull(SplatGate.viewerRefusal(engine = true, device = "eureka", running = true))
+    assertNull(SplatGate.viewerRefusal(engine = true, device = "eureka", running = true, inThisBuild = true))
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.MODULE_NOT_RUNNING),
-      SplatGate.viewerRefusal(engine = true, device = "eureka", running = false),
+      SplatGate.viewerRefusal(engine = true, device = "eureka", running = false, inThisBuild = true),
     )
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.OLDER_HEADSET),
-      SplatGate.viewerRefusal(engine = true, device = "hollywood", running = false),
+      SplatGate.viewerRefusal(engine = true, device = "hollywood", running = false, inThisBuild = true),
     )
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION),
-      SplatGate.viewerRefusal(engine = false, device = "eureka", running = false),
+      SplatGate.viewerRefusal(engine = false, device = "eureka", running = false, inThisBuild = true),
+    )
+  }
+
+  @Test
+  fun `a splat that reaches the viewer of the store build is not in this version of the app`() {
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION),
+      SplatGate.viewerRefusal(engine = true, device = "eureka", running = false, inThisBuild = false),
+    )
+    // Even with a module running, which the store build never registers
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION),
+      SplatGate.viewerRefusal(engine = true, device = "eureka", running = true, inThisBuild = false),
     )
   }
 

@@ -16,6 +16,7 @@ void main() {
     String? device = 'eureka',
     bool large = false,
     int fileBytes = 6824362,
+    bool inThisBuild = true,
   }) => splatGateOf(
     probe: probe,
     name: 'gsplat-cactus.spz',
@@ -23,6 +24,7 @@ void main() {
     largeSplats: large,
     flavor: flavor,
     device: device,
+    inThisBuild: inThisBuild,
   );
 
   test('a Quest 3, a 3S and an unknown headset open a splat with the count of the setting', () {
@@ -44,6 +46,21 @@ void main() {
     }
     expect(gate(large: true).request!.maxGaussians, 150000);
   });
+
+  test(
+    'the store build, which hides the splats, says they are not in this version of the app, before anything else',
+    () {
+      expect(gate(inThisBuild: false), const SplatGateVerdict.refused(SplatRefusal.notInThisVersion));
+      expect(
+        gate(inThisBuild: false, device: 'hollywood'),
+        const SplatGateVerdict.refused(SplatRefusal.notInThisVersion),
+      );
+      expect(
+        gate(inThisBuild: false, probe: const SplatRefused(SplatFileProblem.damaged, '')).refusal,
+        SplatRefusal.notInThisVersion,
+      );
+    },
+  );
 
   test('the phone flavour first, then the Quest 2 and Pro', () {
     expect(gate(flavor: null, device: 'hollywood'), const SplatGateVerdict.refused(SplatRefusal.notInThisVersion));

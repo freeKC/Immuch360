@@ -66,6 +66,8 @@ class AdvancedSettings extends HookConsumerWidget {
 
     // The AI relief, its cache and its components, on a Meta Quest (see AiReliefSettings)
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    // The Gaussian splats are not offered in the build of the Meta Horizon Store (splatsInThisBuildProvider)
+    final splatsInThisBuild = isHorizonOs && (ref.watch(splatsInThisBuildProvider).valueOrNull ?? false);
     // The flat 3D media told by their file name in the immersive viewer of a Meta Quest, experimental and on by default
     final flat3dByName = useState(ref.watch(appConfigProvider).viewer.flat3dByName);
     useValueChanged<bool, void>(flat3dByName.value, (_, _) {
@@ -205,14 +207,14 @@ class AdvancedSettings extends HookConsumerWidget {
           title: context.t.setting_immersive_sharp_screens_title,
           subtitle: context.t.setting_immersive_sharp_screens_subtitle,
         ),
-      if (isHorizonOs)
+      if (splatsInThisBuild)
         SettingsSwitchListTile(
           key: const Key('advanced_settings_gaussian_splats'),
           valueNotifier: gaussianSplats,
           title: context.t.splat_setting_title,
           subtitle: context.t.splat_setting_subtitle,
         ),
-      if (isHorizonOs && gaussianSplats.value)
+      if (splatsInThisBuild && gaussianSplats.value)
         SettingsSwitchListTile(
           key: const Key('advanced_settings_large_splats'),
           valueNotifier: largeSplats,

@@ -243,14 +243,14 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   }
 
   /// Whether the splats of other tools are listed (see networkSplatsEnabledProvider), once the platform told whether
-  /// this is a Meta Quest: the folder may be read before it did
+  /// this is a Meta Quest and whether this build offers them: the folder may be read before it did
   Future<bool> _splatsShown() async {
     try {
-      if (!await ref.read(isHorizonOsProvider.future)) {
+      if (!await ref.read(isHorizonOsProvider.future) || !await ref.read(splatsInThisBuildProvider.future)) {
         return false;
       }
     } catch (error) {
-      _log.fine('Could not tell whether this is a Meta Quest: $error');
+      _log.fine('Could not tell whether this Meta Quest build shows the splats: $error');
       return false;
     }
     return mounted && ref.read(networkSplatsEnabledProvider);

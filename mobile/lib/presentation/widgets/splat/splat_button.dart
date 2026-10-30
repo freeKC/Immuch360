@@ -14,6 +14,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 
 /// The key of "Explore the splat scene"
@@ -47,10 +48,11 @@ String splatFileLine(Translations t, SplatHead head, String locale) {
 }
 
 /// The gate of the splat [probe] says, the file [name] of [fileBytes], on this headset with the settings of now; null
-/// until the headset is read
+/// until the headset is read and the platform told whether this build offers the splats
 SplatGateVerdict? splatVerdictOf(WidgetRef ref, SplatProbe probe, {required String name, required int fileBytes}) {
   final facts = ref.watch(reliefDeviceFactsProvider);
-  if (facts.isLoading && !facts.hasValue && !facts.hasError) {
+  final inThisBuild = ref.watch(splatsInThisBuildProvider);
+  if ((facts.isLoading && !facts.hasValue && !facts.hasError) || (inThisBuild.isLoading && !inThisBuild.hasValue)) {
     return null;
   }
   return splatGateOf(
@@ -60,6 +62,7 @@ SplatGateVerdict? splatVerdictOf(WidgetRef ref, SplatProbe probe, {required Stri
     largeSplats: ref.watch(appConfigProvider.select((config) => config.viewer.largeSplats)),
     flavor: ref.watch(appFlavorProvider),
     device: facts.valueOrNull?.device,
+    inThisBuild: inThisBuild.valueOrNull ?? false,
   );
 }
 

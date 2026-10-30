@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import app.alextran.immich.immersive.splat.SplatBuild
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
@@ -105,6 +106,9 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
   }
 
   override fun isHorizonOs(): Boolean = isHorizonOsDevice()
+
+  /** False in the store build, see SplatBuild: its signing certificate is read once per process */
+  override fun splatsInThisBuild(): Boolean = SplatBuild.offersSplats(appContext)
 
   /**
    * [headers] stays in the pigeon signature but is ignored: HttpClientManager already adds the user's custom
