@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
@@ -42,9 +43,11 @@ class _FakeSphericalProbes extends SphericalProbeService {
   }
 }
 
-/// Answers the decoder check with [supported]
+/// Answers the decoder check with [supported], or as a Meta Quest 3 when [quest] (HEVC up to 8192 x 4320, H.264 up to
+/// the 4096 x 2304 measured there)
 class _FakeVideoDecoderApi extends VideoDecoderApi {
   bool supported = true;
+  bool quest = false;
 
   @override
   Future<DecodeVerdict> canDecode(
@@ -56,7 +59,20 @@ class _FakeVideoDecoderApi extends VideoDecoderApi {
     int bitDepth,
     int transferCharacteristics, {
     int instances = 1,
-  }) async => DecodeVerdict(supported: supported, hardware: true, maxWidth: 4096, maxHeight: 4096);
+  }) async {
+    if (!quest) {
+      return DecodeVerdict(supported: supported, hardware: true, maxWidth: 4096, maxHeight: 4096);
+    }
+    final hevc = codec.startsWith('hvc') || codec.startsWith('hev');
+    final maxWidth = hevc ? 8192 : 4096;
+    final maxHeight = hevc ? 4320 : 2304;
+    return DecodeVerdict(
+      supported: width <= maxWidth && height <= maxHeight,
+      hardware: true,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+    );
+  }
 }
 
 void main() {
@@ -177,6 +193,87 @@ void main() {
         tester,
         serverOnly,
         appConfig: const AppConfig(viewer: ViewerConfig(loadOriginalVideo: true)),
+      );
+
+      expect(source?.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+    });
+  });
+
+  group('the in-app player of 30 October on a Meta Quest 3', () {
+    // The server transcodes to H.264 at the original 5760 x 2880, the original is HEVC, the setting is the default one
+    // (the transcoded stream), and the player stalled 10 s on the copy before Media3 gave up
+    final serverOnly = RemoteAssetFactory.create(type: .video);
+    const hevcOriginal = SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+    const h264Copy = SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+
+    setUp(() {
+      when(() => context.service.asset.service.getAsset(serverOnly)).thenAnswer((_) async => serverOnly);
+      decoderApi.quest = true;
+    });
+
+    Future<VideoSource?> pumpQuest(WidgetTester tester, {required SphericalProbe original}) {
+      probes.result = original;
+      return pumpViewer(
+        tester,
+        serverOnly,
+        overrides: [
+          videoSourceServiceProvider.overrideWithValue(
+            VideoSourceService(decoderApi, probeTranscoded: (_) async => h264Copy),
+          ),
+          // The details the failure panel reads, overridden in the scope of the viewer
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+        ],
+      );
+    }
+
+    testWidgets('plays the HEVC original rather than the copy it cannot decode, and keeps why for the details', (
+      tester,
+    ) async {
+      final source = await pumpQuest(tester, original: hevcOriginal);
+
+      expect(source?.path, endsWith('/assets/${serverOnly.id}/original'));
+      final chosen = ProviderScope.containerOf(
+        tester.element(find.byType(NativeVideoViewer)),
+      ).read(chosenVideoSourcesProvider)[serverOnly.id];
+      expect(chosen?.notice, const VideoSourceNotice(.originalOverCopy, codec: 'H.264', width: 5760, height: 2880));
+    });
+
+    testWidgets('says at once what to change in Immich when neither file decodes', (tester) async {
+      final source = await pumpQuest(
+        tester,
+        original: const SphericalProbe(codec: 'avc1', codedWidth: 7680, codedHeight: 3840, frameRate: 30),
+      );
+      final container = ProviderScope.containerOf(tester.element(find.byType(NativeVideoViewer)));
+      final refusal = container.read(chosenVideoSourcesProvider)[serverOnly.id]?.refusal;
+      expect(refusal, isNotNull);
+
+      // What the viewer does with it once its native player is there: no load, the panel at once
+      container.read(videoPlayerProvider(serverOnly.id).notifier).refuse(source!, refusal!);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      expect(find.text('This video cannot be played'), findsOneWidget);
+      expect(
+        find.text(
+          'This device cannot decode this video (H.264 5760 x 2880, above 4096 x 2304): in Immich, set the video '
+          'transcoding to HEVC or lower the resolution',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('plays the copy the user forced in the details', (tester) async {
+      probes.result = hevcOriginal;
+      final source = await pumpViewer(
+        tester,
+        serverOnly,
+        overrides: [
+          videoSourceServiceProvider.overrideWithValue(
+            VideoSourceService(decoderApi, probeTranscoded: (_) async => h264Copy),
+          ),
+          videoSourceOverridesProvider.overrideWith((ref) => VideoSourceOverrides()..force(serverOnly.id, .transcoded)),
+        ],
       );
 
       expect(source?.path, endsWith('/assets/${serverOnly.id}/video/playback'));

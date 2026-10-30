@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show ValueListenable, ValueNotifier;
 import 'package:flutter/widgets.dart' show AppLifecycleState, WidgetsBinding;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/services/native_playback_error.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -30,24 +32,34 @@ enum VideoFailureKind {
   /// Nothing played for [VideoPlayerNotifier.stallTimeout] while the video loaded: a network or a server too slow for
   /// its bit rate, or a decoder that never gave a frame. It clears by itself when the video plays after all.
   stalled,
+
+  /// Nothing the server has decodes on the device (see chooseVideoSource): said before anything loads, play tries
+  /// anyway (see [VideoPlayerNotifier.refuse])
+  refused,
 }
 
-/// Why a video does not play: its [kind], and the native player's own [message] for an error (technical, not
-/// translated: for the logs and as the last resort of the failure panel)
+/// Why a video does not play: its [kind], the native player's own [message] for an error (technical, not translated:
+/// for the logs and as the last resort of the failure panel), and the [refusal] of a video nothing decodes
 class VideoPlaybackFailure {
-  const VideoPlaybackFailure(this.kind, [this.message]);
+  const VideoPlaybackFailure(this.kind, [this.message, this.refusal]);
 
   final VideoFailureKind kind;
   final String? message;
+  final VideoSourceRefusal? refusal;
+
+  /// The error in the words of the app, when the native player sent its token (see [NativePlaybackError]); null for
+  /// any other message
+  NativePlaybackError? get native => NativePlaybackError.parse(message);
 
   @override
-  bool operator ==(Object other) => other is VideoPlaybackFailure && other.kind == kind && other.message == message;
+  bool operator ==(Object other) =>
+      other is VideoPlaybackFailure && other.kind == kind && other.message == message && other.refusal == refusal;
 
   @override
-  int get hashCode => Object.hash(kind, message);
+  int get hashCode => Object.hash(kind, message, refusal);
 
   @override
-  String toString() => 'VideoPlaybackFailure($kind, $message)';
+  String toString() => 'VideoPlaybackFailure($kind, $message${refusal != null ? ', $refusal' : ''})';
 }
 
 @freezed
@@ -116,6 +128,9 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   // Set while the video plays in an external player (the native 360° player): see [suspendForExternalPlayer]
   bool _suspended = false;
+
+  // The video refused before it loaded, which play loads anyway: see [refuse]
+  VideoSource? _refusedSource;
   VideoSource? _sourceAfterSuspension;
 
   // Whether the native player reported the video ready since it was last loaded
@@ -226,6 +241,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       _sourceAfterSuspension = source;
       return;
     }
+    _refusedSource = null;
 
     _ready = false;
     _playOnForeground = false;
@@ -243,14 +259,25 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
   }
 
-  /// Loads the video again and plays it: what play does on a video that failed
+  /// Loads the video again and plays it: what play does on a video that failed, a refused one included (see [refuse])
   Future<void> retry() async {
-    final source = _controller?.videoSource;
+    final source = _controller?.videoSource ?? _refusedSource;
     if (source == null || _suspended) {
       return;
     }
     await load(source);
     await play();
+  }
+
+  /// Nothing the server has decodes on the device ([refusal], see chooseVideoSource): the video fails at once without
+  /// loading [source], which play loads anyway (see [retry])
+  void refuse(VideoSource source, VideoSourceRefusal refusal) {
+    if (!mounted) {
+      return;
+    }
+    _refusedSource = source;
+    _log.info('Refused before loading: $refusal');
+    _fail(VideoPlaybackFailure(VideoFailureKind.refused, null, refusal));
   }
 
   /// The native player reported an error ([message]): the video fails until it is loaded again

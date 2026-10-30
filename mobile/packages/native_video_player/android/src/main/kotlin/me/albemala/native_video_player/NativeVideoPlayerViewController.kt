@@ -205,6 +205,12 @@ class NativeVideoPlayerViewController(
     }
 
     override fun onPlayerError(error: PlaybackException) {
+        // Immuch360: an error the app puts in its own words goes to Flutter as its token
+        val token = NativeVideoPlayerPlugin.errorToken?.invoke(error, player)
+        if (token != null) {
+            api.onError(Error(token))
+            return
+        }
         if (error.cause == null) {
             api.onError(Error("Unknown playback error occurred"))
         } else {

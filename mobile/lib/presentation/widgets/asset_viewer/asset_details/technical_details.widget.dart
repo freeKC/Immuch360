@@ -13,6 +13,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/video_source_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
@@ -53,6 +54,8 @@ class TechnicalDetails extends ConsumerWidget {
         // (lib/desktop/ai/library/versions_section.dart)
         if (CurrentPlatform.isDesktop && asset.isImage) DesktopVersionsTiles(asset: asset),
         if (asset.isVideo) _VideoDecodeTiles(asset: asset),
+        // Which file plays, the original or the server's copy, and the other one to play instead
+        if (asset.isVideo) VideoSourceTile(asset: asset),
         if (cameraTitle != null) ...[
           const SizedBox(height: 16),
           SheetTile(

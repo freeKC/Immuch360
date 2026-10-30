@@ -35,3 +35,10 @@ What differs from upstream, to apply again when a newer commit is copied here (e
      `NativeVideoPlayerApi` and `NativeVideoPlayerController`: `getTracks`, `selectTrack`, `disableTracks`,
      `onTracksChanged`. Where the platform has no such methods (iOS answers "not implemented"), the controller lists
      no track and selects nothing.
+
+2. The errors in the words of the app on Android (30 October 2026). The text of a Media3 error reached the screen
+   as it was ("Player stuck playing with no progress for 10000 ms", the stuck check of Media3 1.10 on a video beyond
+   the decoder of a Meta Quest 3).
+   - `NativeVideoPlayerPlugin.kt`: the hook `errorToken`, set by the app (`MainActivity.registerPlugins`, with
+     `FlatPlayerErrors.token`), which gives what to send Flutter for an error, null to send the text as before.
+   - `NativeVideoPlayerViewController.kt`: `onPlayerError` sends that token when there is one.

@@ -37,7 +37,8 @@ String serverTranscodedVideoUrl(String videoId) =>
 /// for nothing. With a [refusal], nothing the server has decodes on the device: the player says so at once rather than
 /// load [url], which it tries only when the user asks to play anyway. [copyBeyondDecoders] tells, while the original
 /// plays, that the server's copy is beyond the decoders (the immersive viewer says it when it has to download the
-/// original rather than stream the copy); null otherwise. [kind] is the file [url] is.
+/// original rather than stream the copy); null otherwise. [kind] is the file [url] is, and [hasCopy] whether the
+/// server has a copy of its own to choose (false when its playback stream is the original itself).
 class ChosenVideoSource {
   const ChosenVideoSource({
     required this.url,
@@ -46,6 +47,7 @@ class ChosenVideoSource {
     this.refusal,
     this.copyBeyondDecoders,
     this.kind = VideoSourceKind.original,
+    this.hasCopy = true,
   });
 
   final String url;
@@ -54,6 +56,7 @@ class ChosenVideoSource {
   final VideoSourceRefusal? refusal;
   final VideoSourceNotice? copyBeyondDecoders;
   final VideoSourceKind kind;
+  final bool hasCopy;
 
   @override
   String toString() =>
@@ -300,6 +303,7 @@ class VideoSourceService {
       refusal: choice.refusal,
       copyBeyondDecoders: playsOriginal && copy != null && copy.undecodable ? copy.notice(.originalOverCopy) : null,
       kind: choice.kind,
+      hasCopy: copy != null,
     );
   }
 

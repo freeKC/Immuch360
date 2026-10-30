@@ -67,13 +67,19 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   static final _log = Logger('NativeVideoViewer');
 
   NativeVideoPlayerController? _controller;
+
+  /// The source of the video: made again when the user forces another file of it in its details
   @visibleForTesting
-  late final Future<VideoSource?> videoSource;
+  late Future<VideoSource?> videoSource;
   Timer? _loadTimer;
   bool _isVideoReady = false;
   bool _shouldPlayOnForeground = true;
   // What to tell the user about the file chosen for a server video, once the video is the one on screen
   VideoSourceNotice? _sourceNotice;
+  // Why nothing the server has decodes on the device: the video fails at once, play tries it anyway
+  VideoSourceRefusal? _refusal;
+  // The file the user forced for this server video when its source was made, see videoSourceOverridesProvider
+  VideoSourceKind? _forced;
   // Where the video plays from, for the logs, and whether that is the server, for the failure panel
   String _sourceLabel = 'no source yet';
   bool _fromServer = false;
@@ -86,6 +92,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     WidgetsBinding.instance.addObserver(this);
     videoSource = _createSource();
     ref.listenManual(videoPlayerProvider(widget.asset.id).select((s) => s.status), _onStatus);
+    ref.listenManual(videoSourceOverridesProvider, (_, overrides) => _onForced(overrides));
     if (CurrentPlatform.isDesktop) {
       ref.listenManual(externalPlayerClosedProvider, (_, _) => unawaited(_onExternalPlayerClosed()));
     }
@@ -152,10 +159,50 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
   }
 
+  /// The video id of the asset on the server, the motion part of a live photo included; null for a file only on the
+  /// device
+  String? get _serverVideoId {
+    final asset = widget.asset;
+    return (asset is RemoteAsset ? asset.livePhotoVideoId : null) ?? asset.remoteId;
+  }
+
+  /// The user forced another file of this video in its details: its source is made again and plays from the start
+  Future<void> _onForced(Map<String, VideoSourceKind> overrides) async {
+    final videoId = _serverVideoId;
+    if (videoId == null || overrides[videoId] == _forced || !mounted) {
+      return;
+    }
+    _log.info('${widget.asset.name}: ${overrides[videoId]} forced, its source made again');
+    videoSource = _createSource();
+    final source = await videoSource;
+    if (source == null || !mounted || _controller == null) {
+      return;
+    }
+    await _apply(source, play: true);
+  }
+
+  /// Plays a video from the device as it is, with a word before it plays when the device cannot decode it ([file]
+  /// beyond its decoders, see chooseVideoSource): it may still play
+  Future<void> _noticeLocalFile(BaseAsset asset, File file) async {
+    try {
+      final probe = await ref.read(sphericalProbeServiceProvider).probe(asset, localFile: file);
+      final verdict = await ref.read(videoSourceServiceProvider).verdict(probe);
+      _sourceNotice = chooseVideoSource(
+        policy: ref.read(appConfigProvider).viewer.videoSourcePolicy,
+        original: VideoCandidate.of(probe, verdict),
+        fromServer: false,
+      ).notice;
+    } catch (error) {
+      _log.info('No decoder check for ${asset.name}: $error');
+    }
+  }
+
   Future<VideoSource?> _createSource() async {
     if (!mounted) {
       return null;
     }
+    _sourceNotice = null;
+    _refusal = null;
 
     final videoAsset = await ref.read(assetServiceProvider).getAsset(widget.asset) ?? widget.asset;
     if (!mounted) {
@@ -173,6 +220,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         }
 
         _sourceLabel = 'the file given to the viewer';
+        await _noticeLocalFile(videoAsset, file);
         return await VideoSource.init(
           path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
           type: VideoSourceType.file,
@@ -195,6 +243,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         // interpret characters like '#' as fragment identifiers.
         if (file != null) {
           _sourceLabel = 'the copy on the device';
+          await _noticeLocalFile(localAsset, file);
           return await VideoSource.init(
             path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
             type: VideoSourceType.file,
@@ -213,24 +262,36 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         return null;
       }
 
-      // The original or the server's transcoded stream, as the settings and the decoders of the device say. This
-      // player has no stream to fall back to: when the device cannot decode the original, the choice is made here.
+      // The original or the server's transcoded stream, decodability first, then as the settings say, or the file the
+      // user forced in the details. This player has no stream to fall back to: the choice is made here, before it
+      // loads (the H.264 copy at 5760 x 2880 of 30 October, which a Quest 3 cannot decode, would stall for 10 s)
       final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
       final probes = ref.read(sphericalProbeServiceProvider);
       final videoSources = ref.read(videoSourceServiceProvider);
+      final videoId = remoteAsset.livePhotoVideoId ?? remoteAsset.id;
+      _forced = ref.read(videoSourceOverridesProvider)[videoId];
       final probe = policy.readsTheFile ? await probes.probe(remoteAsset) : null;
       final source = await videoSources.serverSource(
-        videoId: remoteAsset.livePhotoVideoId ?? remoteAsset.id,
+        videoId: videoId,
         policy: policy,
         probe: probe,
+        probeOriginal: () => probes.probe(remoteAsset),
+        forced: _forced,
+        width: remoteAsset.livePhotoVideoId == null ? remoteAsset.width : null,
+        height: remoteAsset.livePhotoVideoId == null ? remoteAsset.height : null,
       );
       if (!mounted) {
         return null;
       }
+      ref.read(chosenVideoSourcesProvider.notifier).record(videoId, source);
       _sourceNotice = source.notice;
+      _refusal = source.refusal;
       _fromServer = true;
       _sourceLabel = source.url.endsWith('/original') ? 'the server original' : 'the server transcoded stream';
-      _log.info('${videoAsset.name} plays from $_sourceLabel under $policy');
+      _log.info(
+        '${videoAsset.name} plays from $_sourceLabel under $policy'
+        '${_forced != null ? ', $_forced forced' : ''}${_refusal != null ? ', refused: $_refusal' : ''}',
+      );
 
       return await VideoSource.init(
         path: source.url,
@@ -422,10 +483,17 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     if (source == null || !mounted) {
       return;
     }
-    // Told once, when the video is the one on screen: the pages around it prepare their video too
+    await _apply(source);
+  }
+
+  /// Loads [source] in the player, playing it at once when [play] (a file the user forced): what the decoder check
+  /// found is told first, once, when the video is the one on screen (the pages around it prepare their video too); a
+  /// video nothing on the server decodes fails at once instead of loading, play trying it anyway.
+  Future<void> _apply(VideoSource source, {bool play = false}) async {
     final notice = _sourceNotice;
     _sourceNotice = null;
     if (notice != null) {
+      // A transient word: the player keeps the screen
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(notice.message(context.t))));
     }
 
@@ -433,9 +501,17 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     final loopVideo = widget.loopOverride ?? ref.read<bool>(loopVideoProvider);
     final localNotifier = _notifier;
 
+    final refusal = _refusal;
+    if (refusal != null) {
+      localNotifier.refuse(source, refusal);
+      return;
+    }
     await localNotifier.load(source);
     await localNotifier.setLoop(!widget.asset.isMotionPhoto && loopVideo);
     await localNotifier.setVolume(1);
+    if (play) {
+      await localNotifier.play();
+    }
   }
 
   void _initController(NativeVideoPlayerController nc) {

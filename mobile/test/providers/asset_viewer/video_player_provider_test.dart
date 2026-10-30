@@ -5,6 +5,8 @@ import 'package:fake_async/fake_async.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/services/native_playback_error.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -335,6 +337,32 @@ void main() {
       await player.load(serverSource);
       expect(player.state.status, VideoPlaybackStatus.buffering, reason: 'the spinner while it loads again');
       expect(player.failure, isNull);
+    });
+
+    test('a video nothing decodes fails at once, without loading, and play loads it anyway', () async {
+      const refusal = VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304);
+      when(() => controller.videoSource).thenReturn(null);
+
+      player.refuse(serverSource, refusal);
+
+      expect(player.state.status, VideoPlaybackStatus.failed);
+      expect(player.failure, const VideoPlaybackFailure(VideoFailureKind.refused, null, refusal));
+      verifyNever(() => controller.loadVideoSource(any()));
+
+      await player.play();
+
+      verifyInOrder([() => controller.loadVideoSource(serverSource), controller.play]);
+      expect(player.state.status, isNot(VideoPlaybackStatus.failed));
+    });
+
+    test('an error the app put in its words carries the kind, the codec and the frame of the video', () async {
+      await player.load(serverSource);
+
+      player.onNativeError('immuch360-playback-error:noFrame:video/avc:5760:2880');
+
+      expect(player.failure?.native?.kind, NativePlaybackErrorKind.noFrame);
+      expect(player.failure?.native?.codec, 'H.264');
+      expect(const VideoPlaybackFailure(VideoFailureKind.error, 'Source error').native, isNull);
     });
 
     test('play loads the video again and plays it', () async {
