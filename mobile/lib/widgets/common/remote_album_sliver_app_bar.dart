@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/sliver_app_bar/item_count_text.widget.dart';
@@ -12,6 +13,7 @@ import 'package:immich_mobile/presentation/widgets/sliver_app_bar/random_asset_b
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/remote_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/album/remote_album_shared_user_icons.dart';
@@ -43,15 +45,51 @@ class _MesmerizingSliverAppBarState extends ConsumerState<RemoteAlbumSliverAppBa
     return (1.0 - (settings.currentExtent - settings.minExtent) / deltaExtent).clamp(0.0, 1.0);
   }
 
+  /// The remote control layout: the focus that comes up into the bar (Up from the first tile to Back) brings the page
+  /// back to its top, where the header shows the name, the dates and the count of the album whole
+  void _scrollToTopOnFocus(bool hasFocus) {
+    if (!hasFocus || !mounted) {
+      return;
+    }
+    final position = context.findAncestorStateOfType<ScrollableState>()?.position;
+    if (position == null || position.pixels <= position.minScrollExtent) {
+      return;
+    }
+    unawaited(
+      position.animateTo(
+        position.minScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMultiSelectEnabled = ref.watch(multiSelectProvider.select((s) => s.isEnabled));
+    final tvMode = ref.watch(tvModeProvider);
 
     final currentAlbum = ref.watch(currentRemoteAlbumProvider);
     if (currentAlbum == null) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
+    // Around the items of the bar, focusable themselves: it hears the focus come into the bar and leave it
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      includeSemantics: false,
+      onFocusChange: tvMode ? _scrollToTopOnFocus : null,
+      child: _buildBar(context, currentAlbum, isMultiSelectEnabled: isMultiSelectEnabled, tvMode: tvMode),
+    );
+  }
+
+  Widget _buildBar(
+    BuildContext context,
+    RemoteAlbum currentAlbum, {
+    required bool isMultiSelectEnabled,
+    required bool tvMode,
+  }) {
     final Color? actionIconColor = Color.lerp(Colors.white, context.primaryColor, _scrollProgress);
 
     final List<Shadow> actionIconShadows = [
@@ -93,13 +131,22 @@ class _MesmerizingSliverAppBarState extends ConsumerState<RemoteAlbumSliverAppBa
         builder: (context) {
           final settings = context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
           final scrollProgress = _calculateScrollProgress(settings);
+          // A phone shows the name once the header is folded. A TV shows it whenever the header is cut: the first
+          // tile of the album comes into view under a header of 400 dp, which then hides the name at its bottom
+          final showName = tvMode ? scrollProgress > 0 : scrollProgress > 0.95;
 
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            child: scrollProgress > 0.95
+            child: showName
                 ? Text(
                     currentAlbum.name,
-                    style: TextStyle(color: context.primaryColor, fontWeight: FontWeight.w600, fontSize: 18),
+                    style: TextStyle(
+                      // Over the picture of the header, as its buttons
+                      color: tvMode ? actionIconColor : context.primaryColor,
+                      shadows: tvMode ? actionIconShadows : null,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                    ),
                   )
                 : null,
           );

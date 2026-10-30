@@ -92,11 +92,22 @@ void focusFirstItemIfNone(ModalRoute route) {
   }
   final body = _bodyItem(scope);
   if (body != null) {
-    body.requestFocus();
+    _focusBodyItem(body);
     return;
   }
   first?.requestFocus();
   _handOverToBody(route, first);
+}
+
+/// Focuses the item of a page [_bodyItem] found. One on the screen takes the focus where it is: the page keeps its
+/// header whole (the name of an album of the server at its bottom). One under the bottom of the screen comes up into
+/// view.
+void _focusBodyItem(({FocusNode item, bool below}) body) {
+  body.item.requestFocus();
+  final context = body.item.context;
+  if (body.below && context != null && context.mounted) {
+    unawaited(Scrollable.ensureVisible(context, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd));
+  }
 }
 
 /// Gives the focus to the page of [route] once it shows an item, as long as the focus stays where
@@ -124,19 +135,30 @@ void _handOverToBody(ModalRoute route, FocusNode? given) {
         _handOverToBody(route, given);
         return;
       }
-      body.requestFocus();
+      _focusBodyItem(body);
     });
   });
 }
 
-/// The item of the page in [scope] that asked for the focus, else its first one on screen; null while the page shows
-/// none (only its app bar has items)
-FocusNode? _bodyItem(FocusScopeNode scope) {
+/// The item of the page in [scope] that asked for the focus, else its first one on screen, else its first one under
+/// the bottom of the screen ([below]: the grid of an album of the server, under a header of 400 dp, starts below a TV
+/// screen of 540 dp; the page opened with the focus nowhere, OK did nothing and Down went to the Back button); null
+/// while the page shows none (only its app bar has items)
+({FocusNode item, bool below})? _bodyItem(FocusScopeNode scope) {
   final screen = scope.rect;
-  final items = scope.traversalDescendants
-      .where((node) => _laidOut(node) && !_inAppBar(node) && screen.contains(node.rect.center))
-      .toList();
-  return items.where(_asksForFocus).firstOrNull ?? topLeftFocusNode(items);
+  final items = scope.traversalDescendants.where((node) => _laidOut(node) && !_inAppBar(node)).toList();
+  final onScreen = items.where((node) => screen.contains(node.rect.center)).toList();
+  final shown = onScreen.where(_asksForFocus).firstOrNull ?? topLeftFocusNode(onScreen);
+  if (shown != null) {
+    return (item: shown, below: false);
+  }
+  final below = topLeftFocusNode(
+    items.where((node) {
+      final center = node.rect.center;
+      return center.dy >= screen.bottom && center.dx >= screen.left && center.dx <= screen.right;
+    }),
+  );
+  return below == null ? null : (item: below, below: true);
 }
 
 /// Whether [node] has a place on screen to compare: its rect needs a laid out box

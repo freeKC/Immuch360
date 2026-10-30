@@ -102,6 +102,55 @@ class _BarelessLoadingPage extends StatelessWidget {
   );
 }
 
+/// A page like an album of the server on a TV: a header of [headerHeight] dp (400 by default) over its grid, whose
+/// first tile is then under the bottom of the screen of a TV. Once [content] completes it shows, with the header when
+/// [headerFirst] is false (the album page shows nothing until its album and its first tiles are read), else under the
+/// header shown from the start.
+class _TallHeaderPage extends StatelessWidget {
+  const _TallHeaderPage({required this.content, this.headerFirst = false, this.headerHeight = 400});
+
+  final Future<void> content;
+  final bool headerFirst;
+  final double headerHeight;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: FutureBuilder<void>(
+      future: content,
+      builder: (context, snapshot) {
+        final loaded = snapshot.connectionState == ConnectionState.done;
+        if (!loaded && !headerFirst) {
+          return const SizedBox.shrink();
+        }
+        return CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: headerHeight,
+              pinned: true,
+              leading: IconButton(icon: const Icon(Icons.arrow_back), tooltip: 'Back', onPressed: () {}),
+              actions: [IconButton(icon: const Icon(Icons.slideshow_outlined), tooltip: 'Slideshow', onPressed: () {})],
+              flexibleSpace: const FlexibleSpaceBar(background: ColoredBox(color: Colors.blueGrey)),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 60, child: Text('November 2024'))),
+            if (loaded)
+              SliverGrid.count(
+                crossAxisCount: 4,
+                children: [
+                  for (var i = 0; i < 8; i++)
+                    InkWell(
+                      key: ValueKey('tile $i'),
+                      onTap: () {},
+                      child: Center(child: Text('tile $i')),
+                    ),
+                ],
+              ),
+          ],
+        );
+      },
+    ),
+  );
+}
+
 /// The app with the real navigation observer: "open" has the focus and pushes [page], "below" is under it. Each tap is
 /// noted in [taps], and each key that reaches the first page in [keys].
 class _OpenerApp extends ConsumerStatefulWidget {
@@ -312,6 +361,67 @@ void main() {
 
       expect(hasFocus(tester, refresh), isTrue);
       expect(hasFocus(tester, find.text('first folder')), isFalse);
+    });
+
+    group('a page whose first item comes under the bottom of the screen (an album of the server)', () {
+      final firstTile = find.byKey(const ValueKey('tile 0'));
+
+      /// The screen of a TV, 960 x 540 dp
+      void tvScreen(WidgetTester tester) {
+        tester.view.physicalSize = const Size(1920, 1080);
+        tester.view.devicePixelRatio = 2;
+        addTearDown(tester.view.reset);
+      }
+
+      bool whollyOnScreen(WidgetTester tester, Finder finder) {
+        final rect = tester.getRect(finder);
+        return rect.top >= 0 && rect.bottom <= 540;
+      }
+
+      for (final headerFirst in [false, true]) {
+        testWidgets(
+          'its first tile takes the focus and comes into view (header ${headerFirst ? 'first' : 'with it'})',
+          (tester) async {
+            tvScreen(tester);
+            final content = Completer<void>();
+            await open(tester, _TallHeaderPage(content: content.future, headerFirst: headerFirst));
+            content.complete();
+            await tester.pump();
+            await tester.pump();
+            await tester.pumpAndSettle();
+
+            expect(hasFocus(tester, find.text('tile 0')), isTrue, reason: 'OK opens it, Down goes on in the grid');
+            expect(whollyOnScreen(tester, firstTile), isTrue, reason: 'scrolled up from under the screen');
+          },
+        );
+      }
+
+      testWidgets('read at once, it gets the focus too', (tester) async {
+        tvScreen(tester);
+        await open(tester, _TallHeaderPage(content: Future<void>.value()));
+        await tester.pumpAndSettle();
+
+        expect(hasFocus(tester, find.text('tile 0')), isTrue);
+        expect(whollyOnScreen(tester, firstTile), isTrue);
+      });
+
+      testWidgets('a first tile already on the screen takes the focus where it is: the page does not scroll', (
+        tester,
+      ) async {
+        tvScreen(tester);
+        // Under a header of 300 dp the first tile shows its upper half at the bottom of the screen
+        await open(tester, _TallHeaderPage(content: Future<void>.value(), headerHeight: 300));
+        await tester.pumpAndSettle();
+
+        expect(hasFocus(tester, find.text('tile 0')), isTrue);
+        expect(tester.getRect(firstTile).center.dy, lessThan(540), reason: 'the tile shows');
+        final scrollable = find.descendant(of: find.byType(CustomScrollView), matching: find.byType(Scrollable));
+        expect(
+          tester.state<ScrollableState>(scrollable).position.pixels,
+          0,
+          reason: 'the header stays whole, with the name of the album',
+        );
+      });
     });
 
     testWidgets('a list that comes while a dialog is open takes the focus once it closes', (tester) async {

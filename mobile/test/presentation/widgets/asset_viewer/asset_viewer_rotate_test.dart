@@ -26,6 +26,8 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.pag
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
@@ -100,6 +102,9 @@ void main() {
     BaseAsset asset, {
     bool tvMode = false,
     List<Override> overrides = const [],
+    // The remote control layout around the app, as main.dart has it, with its focus ring, and nothing that moves: the
+    // photo of the device loaded, no spinner asking for frames (they cannot load here)
+    bool shell = false,
   }) async {
     final timeline = TimelineService((
       assetSource: (index, count) async => [asset].skip(index).take(count).toList(),
@@ -130,6 +135,12 @@ void main() {
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,
+              builder: shell
+                  ? (context, child) => TickerMode(
+                      enabled: false,
+                      child: TvShell(enabled: tvMode, child: child!),
+                    )
+                  : null,
               home: Material(child: AssetViewerPage(initialIndex: 0, timelineService: timeline)),
             ),
           ),
@@ -257,6 +268,37 @@ void main() {
     // The colour keys from there too
     await press(tester, LogicalKeyboardKey.colorF3Blue);
     expect(turnsOf(container, photo), 1);
+  });
+
+  testWidgets('on a TV Down with the controls already shown focuses Rotate at once, its ring with it', (tester) async {
+    final container = await pumpViewer(tester, photo, tvMode: true, shell: true);
+    Rect? ring() => tester.state<TvFocusRingState>(find.byType(TvFocusRing)).ringRect;
+
+    // OK shows the controls and leaves the focus on the photo, which has no ring
+    await press(tester, LogicalKeyboardKey.select);
+    expect(container.read(assetViewerProvider).showingControls, isTrue);
+    expect(rotateHasFocus(), isFalse);
+    expect(ring(), isNull);
+
+    // Down from there changes nothing on screen but the focus: the frame that moves it must come all the same
+    await sendKey(tester, LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    await tester.pump();
+    expect(rotateHasFocus(), isTrue, reason: 'at once, not at the next key');
+    final rotate = tester.getRect(find.byKey(const Key('tv_rotate_button')));
+    expect(ring(), isNotNull, reason: 'the ring shows where the focus is');
+    expect(ring()!.overlaps(rotate), isTrue);
+
+    // OK on it turns the photo; Up goes to the Back arrow, and Down from there to Rotate again, its ring with it
+    await press(tester, LogicalKeyboardKey.select);
+    expect(turnsOf(container, photo), 1);
+    await press(tester, LogicalKeyboardKey.arrowUp);
+    expect(rotateHasFocus(), isFalse);
+    await sendKey(tester, LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    await tester.pump();
+    expect(rotateHasFocus(), isTrue, reason: 'Down from the Back arrow goes to the bottom bar, not to the photo');
+    expect(ring()!.overlaps(tester.getRect(find.byKey(const Key('tv_rotate_button')))), isTrue);
   });
 
   testWidgets('on a TV OK turns the photo as it is released from Rotate, and held it opens the details, no turn', (

@@ -1,6 +1,7 @@
 // The dialog of choices of the remote control layout: it keeps the focus whatever the arrows, the current choice is
-// marked and has the focus first, OK gives back the choice and Back gives back nothing. A long list (the cities of a
-// library) is built lazily and opens on the current choice.
+// marked and has the focus first, in view, OK gives back the choice and Back gives back nothing. A long list (the
+// cities of a library) is built lazily and opens on the current choice; a shorter one that still runs past the screen
+// (the months and the days of the TV date range) opens scrolled to it.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -245,6 +246,44 @@ void main() {
     testWidgets('with no current choice, the list opens at the top on the first one', (tester) async {
       await pumpNumbers(tester, current: null);
       expect(visible(tester, 0), isTrue);
+      expect(focusedIn(find.byKey(const ValueKey(0))), isTrue);
+    });
+
+    /// Whether the tile of [number] is whole inside the scrolling part of the plain dialog
+    bool visibleInPlainDialog(WidgetTester tester, int number) {
+      final area = tester.getRect(find.descendant(of: find.byType(SimpleDialog), matching: find.byType(Scrollable)));
+      final rect = tester.getRect(find.byKey(ValueKey(number)));
+      return rect.top >= area.top && rect.bottom <= area.bottom;
+    }
+
+    // The months and the days of the year first date range of a TV: more than the screen holds, fewer than a lazy list
+    for (final (count, current) in [(12, 9), (31, 29), (31, 30)]) {
+      testWidgets('a plain dialog of $count choices that runs past the screen opens with choice $current in view', (
+        tester,
+      ) async {
+        await pumpNumbers(tester, count: count, current: current);
+
+        expect(find.byType(SimpleDialog), findsOneWidget);
+        final scrollable = find.descendant(of: find.byType(SimpleDialog), matching: find.byType(Scrollable));
+        expect(
+          tester.state<ScrollableState>(scrollable).position.maxScrollExtent,
+          greaterThan(0),
+          reason: 'it scrolls',
+        );
+        expect(visibleInPlainDialog(tester, current), isTrue, reason: 'the focus can be seen');
+        expect(focusedIn(find.byKey(ValueKey(current))), isTrue);
+
+        // The first Down goes to the next one, in view too
+        await press(tester, LogicalKeyboardKey.arrowDown);
+        final next = current + 1 < count ? current + 1 : current;
+        expect(focusedIn(find.byKey(ValueKey(next))), isTrue);
+        expect(visibleInPlainDialog(tester, next), isTrue);
+      });
+    }
+
+    testWidgets('a plain dialog opened on its first choice stays at the top', (tester) async {
+      await pumpNumbers(tester, count: 31, current: 0);
+      expect(visibleInPlainDialog(tester, 0), isTrue);
       expect(focusedIn(find.byKey(const ValueKey(0))), isTrue);
     });
 

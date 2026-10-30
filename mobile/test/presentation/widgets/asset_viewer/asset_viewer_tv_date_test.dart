@@ -3,6 +3,8 @@
 // "Show photo date and time". A video on a TV and every phone keep them at the top centre, as in Immich. From the TV
 // photo date of Michael Cloutier (mlc70).
 
+import 'dart:ui' show Tristate;
+
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -158,6 +160,42 @@ void main() {
       findsNothing,
       reason: 'it never takes the focus',
     );
+  });
+
+  testWidgets('on a TV the date and time are a node of their own for TalkBack, and Rotate reads only its label', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await pumpViewer(tester, photo, tvMode: true);
+    final (date, time) = dateAndTimeOf(photo);
+    final rotateButton = find.byKey(const Key('tv_rotate_button'));
+    expect(rotateButton, findsOneWidget);
+
+    final rotate = tester.getSemantics(rotateButton);
+    expect(rotate.label, 'Rotate 90° clockwise', reason: 'its own label, without the date: ${rotate.label}');
+    expect(rotate.flagsCollection.isButton, isTrue);
+    final rotateRect = tester.getRect(rotateButton);
+    expect(rotate.rect.width, lessThan(rotateRect.width + 1), reason: 'the bounds of the button, not of the bar');
+
+    final dateTime = tester.getSemantics(tvLabel);
+    expect(dateTime.id, isNot(rotate.id));
+    expect(dateTime.label, contains(date));
+    expect(dateTime.label, contains(time));
+    final dateRect = tester.getRect(tvLabel);
+    expect(dateTime.rect.width, lessThan(dateRect.width + 1), reason: 'the bounds of the date, not of the bar');
+    expect(
+      dateTime.rect.width,
+      lessThan(tester.getRect(find.byType(ViewerBottomBar)).width / 2),
+      reason: 'a node of its own, narrower than the bar',
+    );
+
+    // With the focus, as Down gives it: the focused node is the button alone
+    Focus.of(tester.element(find.descendant(of: rotateButton, matching: find.text('Rotate')))).requestFocus();
+    await settle(tester);
+    final focused = tester.getSemantics(rotateButton);
+    expect(focused.flagsCollection.isFocused, Tristate.isTrue);
+    expect(focused.label, 'Rotate 90° clockwise');
+    semantics.dispose();
   });
 
   testWidgets('on a TV in a right to left language they sit at the bottom right', (tester) async {

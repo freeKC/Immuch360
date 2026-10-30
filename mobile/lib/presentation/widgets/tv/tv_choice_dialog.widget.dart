@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -73,7 +74,10 @@ int _focusIndex<T>(List<TvChoice<T>> choices, T current) {
   return index < 0 ? 0 : index;
 }
 
-class _TvChoiceDialog<T> extends StatelessWidget {
+/// The dialog of up to [tvChoiceDialogLazyAbove] choices. Its list may still run past the screen of a TV (the months
+/// and the days of the TV date range): it opens scrolled to the choice that has the focus, which the autofocus alone
+/// leaves where it is, out of sight, so that the first Down went past it.
+class _TvChoiceDialog<T> extends StatefulWidget {
   const _TvChoiceDialog({required this.title, required this.choices, required this.current});
 
   final String title;
@@ -81,13 +85,41 @@ class _TvChoiceDialog<T> extends StatelessWidget {
   final T current;
 
   @override
+  State<_TvChoiceDialog<T>> createState() => _TvChoiceDialogState<T>();
+}
+
+class _TvChoiceDialogState<T> extends State<_TvChoiceDialog<T>> {
+  final _focusTile = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // Once the list is laid out: the focused choice in the middle of the list, or as near as its ends allow
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final tile = _focusTile.currentContext;
+      if (mounted && tile != null) {
+        unawaited(Scrollable.ensureVisible(tile, alignment: 0.5));
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final focusIndex = _focusIndex(choices, current);
+    final focusIndex = _focusIndex(widget.choices, widget.current);
     return SimpleDialog(
-      title: Text(title),
+      title: Text(widget.title),
       children: [
-        for (var index = 0; index < choices.length; index++)
-          _choiceTile(context, choices: choices, index: index, focusIndex: focusIndex, current: current),
+        for (var index = 0; index < widget.choices.length; index++)
+          KeyedSubtree(
+            key: index == focusIndex ? _focusTile : null,
+            child: _choiceTile(
+              context,
+              choices: widget.choices,
+              index: index,
+              focusIndex: focusIndex,
+              current: widget.current,
+            ),
+          ),
       ],
     );
   }

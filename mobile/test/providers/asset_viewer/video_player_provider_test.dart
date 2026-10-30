@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -12,6 +14,59 @@ class _MockNativeVideoPlayerController extends Mock implements NativeVideoPlayer
 class _MockPlaybackInfo extends Mock implements PlaybackInfo {}
 
 class _MockVideoInfo extends Mock implements VideoInfo {}
+
+/// The native player of Android as the notifier hears it: a seek reaches it at once but lands [seekTime] later (about
+/// 0.5 s on the TV emulator under load). Until then it goes on telling where it was ([report], its position loop, and
+/// the ready and position of the seek before), then reports where it landed, never past its real [endMs], and that it
+/// is ready again, as Media3 does after each seek.
+class _SlowNativePlayer {
+  _SlowNativePlayer(
+    this.controller,
+    this.notifier, {
+    required this.positionMs,
+    required this.endMs,
+    int? durationMs,
+    this.seekTime = const Duration(milliseconds: 500),
+  }) {
+    final playbackInfo = _MockPlaybackInfo();
+    when(() => playbackInfo.position).thenAnswer((_) => positionMs);
+    when(() => playbackInfo.status).thenAnswer((_) => status);
+    when(() => controller.playbackInfo).thenReturn(playbackInfo);
+    final videoInfo = _MockVideoInfo();
+    when(() => videoInfo.duration).thenReturn(durationMs ?? endMs);
+    when(() => controller.videoInfo).thenReturn(videoInfo);
+    when(() => controller.seekTo(any())).thenAnswer((invocation) async {
+      final target = invocation.positionalArguments.first as int;
+      seeks.add(target);
+      await Future<void>.delayed(seekTime);
+      positionMs = min(target, endMs);
+      notifier.onNativePositionChanged();
+      notifier.onNativePlaybackReady();
+    });
+    notifier.onNativePlaybackReady();
+  }
+
+  final _MockNativeVideoPlayerController controller;
+  final VideoPlayerNotifier notifier;
+  final int endMs;
+  final Duration seekTime;
+  PlaybackStatus status = PlaybackStatus.paused;
+  int positionMs;
+
+  /// The positions the native player was asked to seek to, in order
+  final seeks = <int>[];
+
+  /// The player tells where it is, [positionMs] (moved on by [play] while it plays), whatever seek is under way
+  void report({int? positionMs, bool ready = false}) {
+    if (positionMs != null) {
+      this.positionMs = positionMs;
+    }
+    notifier.onNativePositionChanged();
+    if (ready) {
+      notifier.onNativePlaybackReady();
+    }
+  }
+}
 
 void main() {
   // The restore reads the app lifecycle, like the viewer's autoplay
@@ -370,6 +425,233 @@ void main() {
         async.elapse(VideoPlayerNotifier.stallTimeout * 2);
 
         expect(player.state.status, VideoPlaybackStatus.paused);
+        player.dispose();
+      });
+    });
+  });
+
+  // A quick series of presses on a TV (10 s, 30 s, 60 s, each 390 ms after the last, as on the TV emulator), the time
+  // bar and the fast forward keys: each seek goes from where the one before takes the video, whatever the native player
+  // still reports of the seeks on their way
+  group('a series of seeks', () {
+    const press = Duration(milliseconds: 390);
+
+    /// The player of a 6 min video paused at [start], with seeks that land in [seekTime]
+    _SlowNativePlayer slowPlayer({
+      Duration start = const Duration(seconds: 3),
+      Duration end = const Duration(minutes: 6),
+      Duration? duration,
+      Duration seekTime = const Duration(milliseconds: 500),
+    }) => _SlowNativePlayer(
+      controller,
+      player,
+      positionMs: start.inMilliseconds,
+      endMs: end.inMilliseconds,
+      durationMs: duration?.inMilliseconds,
+      seekTime: seekTime,
+    );
+
+    void pressAll(FakeAsync async, List<int> seconds) {
+      for (final step in seconds) {
+        player.seekBy(Duration(seconds: step));
+        async.elapse(press);
+      }
+    }
+
+    test('presses add up from the target of the one before, never from a seek still on its way', () {
+      fakeAsync((async) {
+        final native = slowPlayer();
+        final shown = <Duration>[];
+        player.addListener((state) => shown.add(state.position), fireImmediately: false);
+
+        pressAll(async, [10, 30, 60]);
+        async.elapse(const Duration(seconds: 3));
+
+        expect(player.state.position, const Duration(seconds: 103));
+        expect(native.seeks.last, 103000, reason: 'the player goes where the last press asked');
+        expect(native.positionMs, 103000);
+        for (var i = 1; i < shown.length; i++) {
+          expect(shown[i], greaterThanOrEqualTo(shown[i - 1]), reason: 'the time never goes back meanwhile: $shown');
+        }
+        player.dispose();
+      });
+    });
+
+    test('a press the other way goes back from the target of the series: right three times then left', () {
+      fakeAsync((async) {
+        final native = slowPlayer();
+
+        pressAll(async, [10, 30, 60, -10]);
+        async.elapse(const Duration(seconds: 3));
+
+        expect(player.state.position, const Duration(seconds: 93));
+        expect(native.positionMs, 93000);
+        expect(native.seeks.last, 93000);
+        player.dispose();
+      });
+    });
+
+    test('left three times then right, and right twice then left', () {
+      fakeAsync((async) {
+        final native = slowPlayer(start: const Duration(minutes: 3));
+
+        pressAll(async, [-10, -30, -60, 10]);
+        async.elapse(const Duration(seconds: 3));
+        expect(player.state.position, const Duration(seconds: 90));
+        expect(native.positionMs, 90000);
+
+        pressAll(async, [10, 30, -10]);
+        async.elapse(const Duration(seconds: 3));
+        expect(player.state.position, const Duration(seconds: 120));
+        expect(native.positionMs, 120000);
+        player.dispose();
+      });
+    });
+
+    test('the fast forward keys, 10 s per press: the ready of a seek within the 150 ms of the next press', () {
+      fakeAsync((async) {
+        // Each seek lands 300 ms after it left, while the next press waits its 150 ms
+        final native = slowPlayer(
+          start: const Duration(minutes: 2, seconds: 13),
+          seekTime: const Duration(milliseconds: 300),
+        );
+
+        pressAll(async, [10, 10, 10]);
+        async.elapse(const Duration(seconds: 4));
+
+        expect(player.state.position, const Duration(minutes: 2, seconds: 43));
+        expect(native.positionMs, 163000);
+        player.dispose();
+      });
+    });
+
+    test('a position of the player from before the seek, during it, changes neither the time nor the next press', () {
+      fakeAsync((async) {
+        final native = slowPlayer(start: const Duration(seconds: 30));
+
+        player.seekTo(const Duration(seconds: 60));
+        async.elapse(const Duration(milliseconds: 200));
+        expect(native.seeks, [60000], reason: 'the seek reached the player');
+        // Its position loop and the ready of the seek before, still under way
+        native.report(positionMs: 30000, ready: true);
+        expect(player.state.position, const Duration(seconds: 60));
+        native.report(positionMs: 30200);
+        expect(player.state.position, const Duration(seconds: 60));
+
+        player.seekBy(const Duration(seconds: 10));
+        expect(player.state.position, const Duration(seconds: 70), reason: 'from the target, not from 30 s');
+        async.elapse(const Duration(seconds: 2));
+        expect(native.seeks.last, 70000);
+        expect(player.state.position, const Duration(seconds: 70));
+        player.dispose();
+      });
+    });
+
+    test('right then left back to the start: the second seek goes, though the player still reports the start', () {
+      fakeAsync((async) {
+        // Paused at 1:00; each seek lands 300 ms after it left
+        final native = slowPlayer(start: const Duration(seconds: 60), seekTime: const Duration(milliseconds: 300));
+
+        player.seekBy(const Duration(seconds: 10));
+        async.elapse(const Duration(milliseconds: 200));
+        expect(native.seeks, [70000], reason: 'the seek to 1:10 is under way');
+        player.seekBy(const Duration(seconds: -10));
+        async.elapse(const Duration(milliseconds: 20));
+        // Before the first seek landed the player still tells where it was: 1:00, the target of the second press
+        native.report();
+        async.elapse(const Duration(seconds: 3));
+
+        expect(native.seeks, [70000, 60000], reason: 'both seeks reached the player');
+        expect(native.positionMs, 60000, reason: 'the player is back at the start');
+        expect(player.state.position, const Duration(seconds: 60));
+        player.dispose();
+      });
+    });
+
+    test('once the seek landed, the positions of a playing video show again at once', () {
+      fakeAsync((async) {
+        final native = slowPlayer(start: const Duration(seconds: 30))..status = PlaybackStatus.playing;
+        native.report(positionMs: 30100);
+        expect(player.state.position, const Duration(milliseconds: 30100));
+
+        player.seekTo(const Duration(seconds: 60));
+        async.elapse(const Duration(milliseconds: 700));
+        expect(player.state.position, const Duration(seconds: 60));
+        native.report(positionMs: 60300);
+        expect(player.state.position, const Duration(milliseconds: 60300), reason: 'the video plays on from there');
+        native.report(positionMs: 60500);
+        expect(player.state.position, const Duration(milliseconds: 60500));
+        player.dispose();
+      });
+    });
+
+    test('a seek the player stops short of, at its real end, shows where it stopped', () {
+      fakeAsync((async) {
+        // The file says 6:00, the player ends at 5:55
+        final native = slowPlayer(
+          start: const Duration(minutes: 5, seconds: 20),
+          end: const Duration(minutes: 5, seconds: 55),
+          duration: const Duration(minutes: 6),
+        );
+
+        pressAll(async, [10, 30]);
+        async.elapse(const Duration(seconds: 3));
+
+        expect(native.seeks.last, 360000, reason: 'the series asked for 6:00');
+        expect(player.state.position, const Duration(minutes: 5, seconds: 55), reason: 'where the player is');
+        player.seekBy(const Duration(seconds: -10));
+        async.elapse(const Duration(seconds: 3));
+        expect(player.state.position, const Duration(minutes: 5, seconds: 45));
+        expect(native.positionMs, 345000);
+        player.dispose();
+      });
+    });
+
+    test('a seek whose call fails leaves the time where the player is', () {
+      fakeAsync((async) {
+        final native = slowPlayer(start: const Duration(seconds: 30));
+        when(() => controller.seekTo(any())).thenAnswer((_) async => throw PlatformException(code: 'seek'));
+
+        player.seekTo(const Duration(seconds: 60));
+        async.elapse(const Duration(seconds: 3));
+
+        expect(player.state.position, Duration(milliseconds: native.positionMs));
+        native.report(positionMs: 31000);
+        expect(player.state.position, const Duration(seconds: 31));
+        player.dispose();
+      });
+    });
+
+    test('pause sends the seek waiting for its 150 ms at once, and the series goes on from it', () {
+      fakeAsync((async) {
+        final native = slowPlayer(start: const Duration(seconds: 30));
+
+        player.seekBy(const Duration(seconds: 10));
+        unawaited(player.pause());
+        async.flushMicrotasks();
+        expect(native.seeks, [40000]);
+        native.report(positionMs: 30000, ready: true);
+        player.seekBy(const Duration(seconds: 30));
+        async.elapse(const Duration(seconds: 3));
+
+        expect(player.state.position, const Duration(seconds: 70));
+        expect(native.positionMs, 70000);
+        player.dispose();
+      });
+    });
+
+    test('a video loaded again forgets the seek under way', () {
+      fakeAsync((async) {
+        final native = slowPlayer(start: const Duration(seconds: 30));
+        when(() => controller.videoSource).thenReturn(fileSource);
+        player.seekTo(const Duration(seconds: 60));
+        async.elapse(const Duration(milliseconds: 200));
+
+        unawaited(player.load(fileSource));
+        native.report(positionMs: 0, ready: true);
+
+        expect(player.state.position, Duration.zero);
+        async.elapse(const Duration(seconds: 2));
         player.dispose();
       });
     });

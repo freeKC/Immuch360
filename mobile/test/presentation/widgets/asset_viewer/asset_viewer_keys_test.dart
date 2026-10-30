@@ -17,7 +17,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -26,6 +28,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.pag
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -38,14 +41,15 @@ import '../../../fixtures/asset.stub.dart';
 import '../../../unit/presentation/presentation_context.dart';
 
 class _SeededAssetViewerNotifier extends AssetViewerStateNotifier {
-  _SeededAssetViewerNotifier(this._asset);
+  _SeededAssetViewerNotifier(this._asset, {this.controls = false});
 
   final BaseAsset _asset;
+  final bool controls;
 
   @override
   AssetViewerState build() {
     super.build();
-    return AssetViewerState(currentAsset: _asset, showingControls: false);
+    return AssetViewerState(currentAsset: _asset, showingControls: controls);
   }
 }
 
@@ -133,6 +137,11 @@ void main() {
     // The remote control layout around the app, as main.dart has it: directional navigation, where every row of the
     // details takes the focus
     bool shell = false,
+    // Nothing that moves on screen, as once the photo of a TV loaded: no spinner asking for frames (they cannot load
+    // here)
+    bool still = false,
+    // The controls shown as the viewer opens, as it opens from a timeline
+    bool controls = false,
   }) async {
     final timeline = timelineOf(assets);
     addTearDown(timeline.dispose);
@@ -150,7 +159,7 @@ void main() {
             ...context.overrides,
             ...overrides,
             tvModeProvider.overrideWithValue(tvMode),
-            assetViewerProvider.overrideWith(() => _SeededAssetViewerNotifier(assets[0])),
+            assetViewerProvider.overrideWith(() => _SeededAssetViewerNotifier(assets[0], controls: controls)),
           ],
           child: Builder(
             builder: (context) => MaterialApp(
@@ -158,7 +167,12 @@ void main() {
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,
-              builder: shell ? (context, child) => TvShell(enabled: tvMode, child: child!) : null,
+              builder: shell || still
+                  ? (context, child) => TickerMode(
+                      enabled: !still,
+                      child: shell ? TvShell(enabled: tvMode, child: child!) : child!,
+                    )
+                  : null,
               home: pushed
                   ? Builder(
                       builder: (context) => Scaffold(
@@ -651,6 +665,33 @@ void main() {
 
     await press(tester, LogicalKeyboardKey.arrowUp);
     expect(focusIn<ViewerTopAppBar>(), isTrue);
+  });
+
+  testWidgets('on a TV the first Up on a 360° photo opened with its controls focuses 360° at once, with its ring', (
+    tester,
+  ) async {
+    final sphere = LocalAssetStub.image2;
+    await StoreService.I.put(StoreKey.forcedPanoramaAssets, '["${sphere.id}"]');
+    addTearDown(() => StoreService.I.delete(StoreKey.forcedPanoramaAssets));
+    final container = await pumpViewer(tester, [sphere, ...photos], shell: true, still: true, controls: true);
+    final panoramaButton = find.byTooltip('360°');
+    expect(showing(container), isTrue);
+    expect(panoramaButton, findsOneWidget);
+    expect(focusIn<ViewerTopAppBar>(), isFalse);
+
+    // Up changes nothing on screen but the focus: the frame that moves it must come all the same
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    await tester.pump();
+    expect(
+      Focus.of(tester.element(find.descendant(of: panoramaButton, matching: find.byType(Icon)))).hasPrimaryFocus,
+      isTrue,
+      reason: 'the first Up, not the second',
+    );
+    final ring = tester.state<TvFocusRingState>(find.byType(TvFocusRing)).ringRect;
+    expect(ring, isNotNull);
+    expect(ring!.overlaps(tester.getRect(panoramaButton)), isTrue);
+    expect(showing(container), isTrue, reason: 'nothing hid the controls');
   });
 
   testWidgets('while the bars are hidden their buttons cannot take the focus, so no arrow lands there', (tester) async {

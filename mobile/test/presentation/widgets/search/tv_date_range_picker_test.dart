@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
@@ -123,6 +124,35 @@ void main() {
     await choose(tester, 'start_month', 'February');
     expect(value('start_day', '28'), findsOneWidget);
     expect(value('start_month', 'Feb'), findsOneWidget);
+  });
+
+  testWidgets('the month and the day lists open with the current one in view and focused (October, the 30th)', (
+    tester,
+  ) async {
+    await openRange(
+      tester,
+      initial: DateTimeRange(start: DateTime(2025, 10, 30), end: DateTime(2026, 10, 30)),
+      lastDate: DateTime(2026, 10, 30),
+    );
+
+    /// Whether [label], the current choice of the open list, has the focus and shows whole in the list
+    void expectFocusedInView(String label) {
+      final tile = find.widgetWithText(ListTile, label);
+      final area = tester.getRect(find.descendant(of: find.byType(SimpleDialog), matching: find.byType(Scrollable)));
+      final rect = tester.getRect(tile);
+      expect(rect.top >= area.top && rect.bottom <= area.bottom, isTrue, reason: '$label in view: $rect in $area');
+      expect(Focus.of(tester.element(find.descendant(of: tile, matching: find.text(label)))).hasPrimaryFocus, isTrue);
+    }
+
+    await tester.tap(find.byKey(const Key('tv_date_start_month')));
+    await tester.pumpAndSettle();
+    expectFocusedInView('October');
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('tv_date_start_day')));
+    await tester.pumpAndSettle();
+    expectFocusedInView('30');
   });
 
   testWidgets('a start after the end is said and cannot be selected', (tester) async {

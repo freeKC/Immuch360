@@ -79,11 +79,36 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   /// gives up later (30 s, with Media3's own stuck buffering check), the flat players had no limit at all
   static const stallTimeout = Duration(seconds: 20);
 
+  /// How long a seek waits before it goes to the native player: the moves of a slider drag in between go with it
+  static const seekDelay = Duration(milliseconds: 150);
+
+  /// How near the target of a seek a position of the native player must be to count as the seek's own, once the seek
+  /// landed (see [seekTo]): a seek lands on its target, and a video that plays moves on from there
+  static const seekTolerance = Duration(seconds: 1);
+
+  /// How long after a seek landed a position of the native player far from its target is held back (a report of the
+  /// player from before it, late): past it, the player's position stands, where the player stopped short of the target
+  /// (its real end) or put the video elsewhere
+  static const seekSettle = Duration(seconds: 2);
+
   VideoPlayerNotifier() : super(_defaultState);
 
   NativeVideoPlayerController? _controller;
   Timer? _bufferingTimer;
   Timer? _seekTimer;
+
+  /// Where the last seek asked takes the video, from [seekTo] until the native player reports a position there after
+  /// that seek landed: [state] shows it meanwhile, and the next seek of a series goes from it (see [seekBy])
+  Duration? _seekTarget;
+
+  /// The number of the last seek sent to the native player: a seek that lands after another was sent says nothing
+  int _seekGeneration = 0;
+
+  /// Whether the last seek sent landed (its call to the native player returned) and no other was asked since
+  bool _seekLanded = false;
+
+  /// Runs from the landing of the last seek for [seekSettle]
+  Timer? _seekSettleTimer;
   // Runs while the status is buffering, see [stallTimeout]
   Timer? _stallTimer;
   VideoPlaybackFailure? _failure;
@@ -139,6 +164,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   void dispose() {
     _bufferingTimer?.cancel();
     _seekTimer?.cancel();
+    _seekSettleTimer?.cancel();
     _stallTimer?.cancel();
     unawaited(_keepScreenOn(false));
     _controller = null;
@@ -204,6 +230,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _ready = false;
     _playOnForeground = false;
     _lastTracks = const [];
+    _forgetSeek();
     if (state.status == VideoPlaybackStatus.failed) {
       // Loading again: the spinner, and a new stall check, from now on
       state = state.copyWith(status: VideoPlaybackStatus.buffering);
@@ -299,7 +326,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _pendingRestore = null;
     _playOnForeground = false;
     _bufferingTimer?.cancel();
-    _seekTimer?.cancel();
+    _forgetSeek();
 
     final controller = _controller;
     _sourceAfterSuspension = controller?.videoSource;
@@ -357,12 +384,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
     // Straight to the native player: the video came back at its start, whatever the state still says
     _seekTimer?.cancel();
-    state = state.copyWith(position: restore.position);
-    try {
-      await controller.seekTo(restore.position.inMilliseconds);
-    } catch (e) {
-      _log.severe('Error seeking video: $e');
-    }
+    _askSeek(restore.position);
+    await _sendSeek();
 
     if (restore.play) {
       // Same rule as the viewer's autoplay: nothing plays behind another app. The viewer plays it once the app is
@@ -385,6 +408,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     return play;
   }
 
+  /// Sends the seek waiting for its [seekDelay] at once: before the video plays or pauses
   Future<void> _flushSeek() async {
     final timer = _seekTimer;
     if (timer == null || !timer.isActive) {
@@ -392,28 +416,113 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
 
     timer.cancel();
-    await _controller?.seekTo(state.position.inMilliseconds);
+    await _sendSeek();
   }
 
+  /// Takes the video to [position]. The time shows it at once; the native player gets it [seekDelay] later, with the
+  /// moves of a slider drag made meanwhile.
+  ///
+  /// A seek takes a while in the native player (half a second on a TV emulator, longer for a stream), which goes on
+  /// reporting where the video was, the seeks before under way: the reports of a quick series of presses came back
+  /// in the middle of it, took the time back, and the next press went from there, so presses were lost. So until the
+  /// player reports a position near the target ([seekTolerance]) after the last seek landed, the time stays on the
+  /// target and each seek of a series goes from the one before (see [seekBy]); a player that stops short of the
+  /// target is believed [seekSettle] after the landing.
   void seekTo(Duration position) {
     if (_controller == null || state.position == position) {
       return;
     }
 
-    state = state.copyWith(position: position);
+    _askSeek(position);
 
     if (_seekTimer?.isActive ?? false) {
       return;
     }
 
-    _seekTimer = Timer(const Duration(milliseconds: 150), () {
-      unawaited(_controller?.seekTo(state.position.inMilliseconds));
-    });
+    _seekTimer = Timer(seekDelay, () => unawaited(_sendSeek()));
   }
 
-  /// Seeks [delta] from where the video is: not before its start, nor past its end once its duration is known
+  /// [position] becomes the target of the seek under way, shown at once
+  void _askSeek(Duration position) {
+    _seekTarget = position;
+    _seekLanded = false;
+    _seekSettleTimer?.cancel();
+    _seekSettleTimer = null;
+    state = state.copyWith(position: position);
+  }
+
+  /// Sends the target of the seek under way to the native player, and waits for it to land there
+  Future<void> _sendSeek() async {
+    final controller = _controller;
+    final target = _seekTarget;
+    if (controller == null || target == null) {
+      return;
+    }
+
+    final generation = ++_seekGeneration;
+    try {
+      await controller.seekTo(target.inMilliseconds);
+    } catch (e) {
+      _log.severe('Error seeking video: $e');
+    }
+
+    // Another seek was asked or sent meanwhile: its own landing counts
+    if (!mounted || generation != _seekGeneration || _seekTarget != target || (_seekTimer?.isActive ?? false)) {
+      return;
+    }
+
+    _seekLanded = true;
+    _seekSettleTimer = Timer(seekSettle, _onSeekSettled);
+    // The player may already be there: a paused video tells it no more
+    final position = _controller?.playbackInfo?.position;
+    if (position != null) {
+      _takesPlayerPosition(Duration(milliseconds: position));
+    }
+  }
+
+  /// Whether the native player's [position] may be shown: always without a seek under way; with one, only once it
+  /// landed and near its target, which ends it
+  bool _takesPlayerPosition(Duration position) {
+    final target = _seekTarget;
+    if (target == null) {
+      return true;
+    }
+    if (!_seekLanded || (position - target).abs() > seekTolerance) {
+      return false;
+    }
+
+    _forgetSeek();
+    return true;
+  }
+
+  /// [seekSettle] after the landing, the player never came near the target: where it is stands
+  void _onSeekSettled() {
+    _seekSettleTimer = null;
+    if (!mounted || _seekTarget == null || !_seekLanded) {
+      return;
+    }
+
+    _forgetSeek();
+    final position = _controller?.playbackInfo?.position;
+    if (position != null) {
+      state = state.copyWith(position: Duration(milliseconds: position));
+    }
+  }
+
+  /// No seek under way any more: a new video, the player handed to another one, or the player got there
+  void _forgetSeek() {
+    _seekTimer?.cancel();
+    _seekSettleTimer?.cancel();
+    _seekSettleTimer = null;
+    _seekTarget = null;
+    _seekLanded = false;
+    _seekGeneration++;
+  }
+
+  /// Seeks [delta] from where the video is, or from where the seek under way takes it: not before its start, nor past
+  /// its end once its duration is known
   void seekBy(Duration delta) {
-    var target = state.position + delta;
+    var target = (_seekTarget ?? state.position) + delta;
     if (target < Duration.zero) {
       target = Duration.zero;
     }
@@ -494,8 +603,10 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       return;
     }
 
+    final position = Duration(milliseconds: playbackInfo.position);
     state = state.copyWith(
-      position: Duration(milliseconds: playbackInfo.position),
+      // Media3 is ready again after each seek: the ready of a seek before the last one tells an old position
+      position: _takesPlayerPosition(position) ? position : state.position,
       duration: Duration(milliseconds: videoInfo.duration),
       // A player in error stays failed until it is loaded again; a stall ends here
       status: _failedOnError ? VideoPlaybackStatus.failed : _mapStatus(playbackInfo.status),
@@ -510,7 +621,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   }
 
   void onNativePositionChanged() {
-    if (!mounted || (_seekTimer?.isActive ?? false)) {
+    if (!mounted) {
       return;
     }
 
@@ -520,7 +631,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
 
     final position = Duration(milliseconds: playbackInfo.position);
-    if (state.position == position) {
+    // A seek under way: where the video was, or a seek before it (see [seekTo])
+    if (!_takesPlayerPosition(position) || state.position == position) {
       return;
     }
 
