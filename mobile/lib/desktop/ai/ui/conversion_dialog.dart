@@ -470,9 +470,10 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
       final isStereo =
           (version != null && versionHoldsTwoEyes(version)) ||
           decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null;
+      String? make;
       if (asset.hasRemote) {
         try {
-          await answer(assetExifProvider(asset).future).timeout(_factsWait);
+          make = (await answer(assetExifProvider(asset).future).timeout(_factsWait))?.make;
         } catch (error) {
           _log.fine('The exif of ${asset.name} is not known: $error');
         }
@@ -495,9 +496,10 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
           _log.warning('The edits of ${asset.name} could not be read: $error');
         }
       }
+      final isPanorama = panorama.read();
       return ConversionPhotoFacts(
-        isPanorama: panorama.read(),
-        isRaw360: raw.read() != null,
+        isPanorama: isPanorama,
+        isRaw360: raw.read() != null || (!isPanorama && mayBeRawInsta360(make)),
         isStereo: isStereo,
         version: version,
         isSpatial: isSpatial,
@@ -697,6 +699,12 @@ ConversionSkipReason? conversionSkipOf(
   return null;
 }
 
+/// Whether a photo the 360° rules leave flat, of the camera [make] its exif names, may be the raw photo of an Insta360
+/// camera renamed .jpg: its stitched photos have the same make and the same 2:1 frame, and only the trailer of the
+/// file, which the exif of the server does not hold, tells them apart (see hasEquirectCameraExifProvider). Its 3D
+/// version is refused as a raw photo, two fisheye circles giving no relief, until the user views it as 360°.
+bool mayBeRawInsta360(String? make) => make?.trim().toLowerCase() == 'arashi vision';
+
 /// Whether a photo of [width] x [height] that nothing flags 360° has the frame of a whole sphere: 2:1 within 1 %, as
 /// a stitcher writes it, the rule the viewers take for the equirect photo of a 360° camera (isEquirectCameraPhoto);
 /// false when the size is not known. A landscape screenshot (19.5:9) or a 16:9 photo is none.
@@ -785,9 +793,11 @@ final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref
     return false;
   }
   final version = _versionOf(ref, asset);
+  final isPanorama = ref.watch(isPanoramaProvider(asset));
+  final make = ref.watch(assetExifProvider(asset).select((exif) => exif.valueOrNull?.make));
   final facts = ConversionPhotoFacts(
-    isPanorama: ref.watch(isPanoramaProvider(asset)),
-    isRaw360: ref.watch(rawMediaKindProvider(asset)) != null,
+    isPanorama: isPanorama,
+    isRaw360: ref.watch(rawMediaKindProvider(asset)) != null || (!isPanorama && mayBeRawInsta360(make)),
     isStereo:
         (version != null && versionHoldsTwoEyes(version)) ||
         decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null,

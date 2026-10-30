@@ -432,6 +432,28 @@ void main() {
       }
     });
 
+    test('an Insta360 photo of the server nothing flags 360° may be a raw one renamed: refused as raw', () async {
+      // The make of the stitched photos of the camera, and their frame: only the trailer of the file, which the server
+      // does not hold, tells a raw one renamed .jpg. Viewed as 360° by the user, it is a stitched one.
+      const insta360 = ExifInfo(width: 6080, height: 3040, make: 'Arashi Vision', model: 'Insta360 X4');
+      final renamed = RemoteAssetFactory.create(ownerId: _userId, name: 'IMG_1.jpg', width: 6080, height: 3040);
+      final viewed = RemoteAssetFactory.create(ownerId: _userId, name: 'IMG_2.jpg', width: 6080, height: 3040);
+      await store.put(StoreKey.forcedPanoramaAssets, '["${viewed.id}"]');
+      final container = createContainer(exif: {renamed: insta360, viewed: insta360});
+      final read = container.read(conversionFactsReaderProvider);
+      const ofPanorama = ConversionKind.stereoPanoramaFromPanorama;
+
+      expect(await says(container, aiMonoPanoramaProvider(renamed)), isFalse);
+      final facts = await read(renamed);
+      expect((facts.isPanorama, facts.isRaw360), (false, true));
+      expect(conversionSkipOf(renamed, facts, kind: ofPanorama), ConversionSkipReason.raw360);
+
+      expect(await says(container, aiMonoPanoramaProvider(viewed)), isTrue);
+      final ofViewed = await read(viewed);
+      expect((ofViewed.isPanorama, ofViewed.isRaw360), (true, false));
+      expect(conversionSkipOf(viewed, ofViewed, kind: ofPanorama), isNull);
+    });
+
     test('never a 3D one, a VR180 one, a raw one, nor another version of ours', () async {
       final stacked = RemoteAssetFactory.create(ownerId: _userId, name: 'stacked.jpg', width: 4096, height: 4096);
       final vr180 = RemoteAssetFactory.create(ownerId: _userId, name: 'trip_180.jpg', width: 8000, height: 4000);

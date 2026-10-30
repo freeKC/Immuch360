@@ -49,6 +49,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/utils/asset_filter.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:path/path.dart' as p;
@@ -438,6 +439,7 @@ void main() {
         // Flat for the 360° rules: no GPano tag, no 360° camera, not viewed as 360°
         isPanoramaProvider.overrideWith((ref, asset) => false),
         rawMediaKindProvider.overrideWith((ref, asset) => null),
+        assetExifProvider.overrideWith((ref, asset) => Stream.value(null)),
         generatedVersionsProvider.overrideWith((ref) async => const {}),
       ],
     );
