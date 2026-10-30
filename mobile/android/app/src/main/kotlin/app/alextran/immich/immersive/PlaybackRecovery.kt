@@ -27,6 +27,13 @@ import androidx.media3.common.PlaybackException
  *   given late watches the url again ([onSurface]). A pause, a wait for data and a seek never count: the position
  *   stands still, or the count starts again.
  *
+ * - A url beyond what the headset decodes, which plays anyway (a file of the headset or of a share, see
+ *   VideoStartRule.overLimit), is watched by its own rule, first ([onOverLimit], lot fix-decoder-limit): a decoder that
+ *   gives no new frame for [OVER_LIMIT_NO_FRAME_MS] of the clock while it has data stops the video
+ *   ([Action.Undecodable]), the media time standing still or not (Media3 stays ready while the decoder cannot keep up,
+ *   so the watch above sees nothing to count), and no failure of it restarts nor goes to the transcoded stream: a new
+ *   decoder would meet the same frames, and the retries would loop.
+ *
  * Each media (and each visitor of a kiosk, whose film starts over on a new player) gets its retry: [onMedia].
  */
 internal class PlaybackRecovery {
@@ -69,6 +76,12 @@ internal class PlaybackRecovery {
 
     /** Frames move again after [NoPicture]: the notice goes, the details of the video come back. */
     data object PictureBack : Action
+
+    /**
+     * A url beyond the decoder ([onOverLimit]) gave no frame for [OVER_LIMIT_NO_FRAME_MS] while it had data, or
+     * failed, at [positionMs]: the viewer stops it and says why. [framesBefore]: frames had shown before.
+     */
+    data class Undecodable(val positionMs: Long, val framesBefore: Boolean) : Action
   }
 
   /** The current url showed a frame: its first frame callback, or a count of rendered frames that went up. */
@@ -97,6 +110,16 @@ internal class PlaybackRecovery {
   /** The last position read, for a failure that reports none. */
   private var lastPositionMs = 0L
 
+  /** The current url is beyond the decoder and plays anyway, see [onOverLimit]. */
+  var overLimit = false
+    private set
+
+  /** The clock when the decoder of a url beyond its limit last gave a frame, or last waited for data. */
+  private var overLimitAnchorMs = 0L
+
+  /** [Action.Undecodable] was said for the current url. */
+  private var undecodableSaid = false
+
   /** A new media, or the next visitor of a kiosk: one retry again, nothing seen. */
   fun onMedia() {
     retryLeft = true
@@ -110,6 +133,8 @@ internal class PlaybackRecovery {
    */
   fun onPlay() {
     restartPending = false
+    overLimit = false
+    undecodableSaid = false
     framesSeen = false
     noPictureSaid = false
     pictureMissing = false
@@ -131,6 +156,16 @@ internal class PlaybackRecovery {
     anchorMs = null
   }
 
+  /**
+   * The current url is beyond what the headset decodes and plays anyway, from [nowMs] of the clock (elapsed realtime):
+   * its own rule watches it, before the others (see the class).
+   */
+  fun onOverLimit(nowMs: Long) {
+    overLimit = true
+    undecodableSaid = false
+    overLimitAnchorMs = nowMs
+  }
+
   /** The current url rendered a frame (onRenderedFirstFrame, or the first frame of the lens compositor). */
   fun onFrame() {
     framesSeen = true
@@ -142,12 +177,21 @@ internal class PlaybackRecovery {
   }
 
   /**
-   * A read of the player every so often: whether it [playing] (ready and asked to play), its [positionMs], and the
-   * frames its video renderer [renderedFrames] (0 without a video renderer).
+   * A read of the player every so often: whether it [playing] (ready and asked to play), its [positionMs], the frames
+   * its video renderer [renderedFrames] (0 without a video renderer), the clock [nowMs] (elapsed realtime) and whether
+   * its decoder has data while asked to play ([decoderFed]: ready, or waiting with a buffer full enough), which the
+   * rule of a url beyond the decoder counts.
    */
-  fun onTick(playing: Boolean, positionMs: Long, renderedFrames: Int): Action {
+  fun onTick(
+    playing: Boolean,
+    positionMs: Long,
+    renderedFrames: Int,
+    nowMs: Long = 0L,
+    decoderFed: Boolean = playing,
+  ): Action {
     if (restartPending) return Action.None
     lastPositionMs = positionMs.coerceAtLeast(0L)
+    if (overLimit) return overLimitTick(positionMs, renderedFrames, nowMs, decoderFed)
     if (renderedFrames != lastFrames) {
       // A count that went up between two reads is a frame on screen. A count that changes otherwise is a renderer
       // enabled again (the counters of the previous url, then new ones from 0): it only starts the wait again
@@ -184,10 +228,33 @@ internal class PlaybackRecovery {
    */
   fun onFailure(errorCode: Int, positionMs: Long, durationMs: Long = 0L): Action {
     if (restartPending) return Action.None
+    // Beyond the decoder: a new player would meet the same frames
+    if (overLimit) {
+      undecodableSaid = true
+      return Action.Undecodable(if (positionMs > 0) positionMs else lastPositionMs, framesSeen)
+    }
     val cause = causeOf(errorCode) ?: return Action.PassOn
     if (!framesSeen || !retryLeft) return Action.PassOn
     retryLeft = false
     return restart(if (positionMs > 0) positionMs else lastPositionMs, cause, durationMs)
+  }
+
+  // The rule of a url beyond the decoder, see onOverLimit: frames that move put the wait off, a wait for data too
+  private fun overLimitTick(positionMs: Long, renderedFrames: Int, nowMs: Long, decoderFed: Boolean): Action {
+    if (renderedFrames != lastFrames) {
+      if (lastFrames >= 0 && renderedFrames > lastFrames) {
+        framesSeen = true
+        overLimitAnchorMs = nowMs
+      }
+      lastFrames = renderedFrames
+    }
+    if (!decoderFed) {
+      overLimitAnchorMs = nowMs
+      return Action.None
+    }
+    if (undecodableSaid || nowMs - overLimitAnchorMs < OVER_LIMIT_NO_FRAME_MS) return Action.None
+    undecodableSaid = true
+    return Action.Undecodable(positionMs.coerceAtLeast(0L), framesSeen)
   }
 
   private fun restart(positionMs: Long, cause: Cause, durationMs: Long): Action.Restart {
@@ -202,6 +269,12 @@ internal class PlaybackRecovery {
 
     /** How often the viewer reads the player while a video plays. */
     const val TICK_MS = 500L
+
+    /**
+     * Clock time a decoder beyond its limit may go without a new frame while it has data, before the video stops: 3 s,
+     * where Media3's own check waits 10 s and then says "Player stuck playing with no progress".
+     */
+    const val OVER_LIMIT_NO_FRAME_MS = 3_000L
 
     /**
      * The wait before the new player of a decoder or media server failure: the codec service, or the audio server,

@@ -494,4 +494,94 @@ class PlaybackRecoveryTest {
       position += 500
     }
   }
+
+  /** A url beyond the decoder, started at [nowMs] of the clock, its first frame drawn. */
+  private fun overLimit(nowMs: Long = 1_000L): PlaybackRecovery =
+    PlaybackRecovery().apply {
+      onMedia()
+      onPlay()
+      onOverLimit(nowMs)
+      assertEquals(Action.None, onTick(playing = true, positionMs = 0L, renderedFrames = 0, nowMs = nowMs))
+      onFrame()
+      assertEquals(Action.None, onTick(playing = true, positionMs = 0L, renderedFrames = 1, nowMs = nowMs + 500L))
+    }
+
+  @Test
+  fun `a decoder beyond its limit that gives no frame for 3 s of the clock stops the video, its position standing`() {
+    // The immersive viewer of 30 October: H.264 5760 x 2880, one frame in 19.6 s, Media3 READY, the position at 0
+    val recovery = overLimit(nowMs = 1_000L)
+    var now = 2_000L
+    while (now < 4_500L) {
+      assertEquals("at $now", Action.None, recovery.onTick(true, 0L, 1, nowMs = now))
+      now += 500L
+    }
+    assertEquals(Action.Undecodable(positionMs = 0L, framesBefore = true), recovery.onTick(true, 0L, 1, nowMs = 4_500L))
+    // Said once: the viewer stops the player
+    assertEquals(Action.None, recovery.onTick(true, 0L, 1, nowMs = 5_000L))
+  }
+
+  @Test
+  fun `a decoder beyond its limit that gave no frame at all stops after 3 s of data too`() {
+    val recovery = PlaybackRecovery().apply { onMedia(); onPlay(); onOverLimit(nowMs = 0L) }
+    assertEquals(Action.None, recovery.onTick(true, 0L, 0, nowMs = 2_500L))
+    assertEquals(Action.Undecodable(positionMs = 0L, framesBefore = false), recovery.onTick(true, 0L, 0, nowMs = 3_000L))
+  }
+
+  @Test
+  fun `a wait for data or a pause does not count for a decoder beyond its limit`() {
+    val recovery = overLimit(nowMs = 0L)
+    // Nothing to decode from 0.5 s to 10 s: the network, or the user paused
+    var now = 1_000L
+    while (now <= 10_000L) {
+      assertEquals(Action.None, recovery.onTick(playing = false, positionMs = 0L, renderedFrames = 1, nowMs = now))
+      now += 500L
+    }
+    assertEquals(Action.None, recovery.onTick(true, 0L, 1, nowMs = 12_500L))
+    assertEquals(Action.Undecodable(0L, true), recovery.onTick(true, 0L, 1, nowMs = 13_000L))
+  }
+
+  @Test
+  fun `frames that come, however slowly, keep a video beyond the decoder going`() {
+    // 17 frames a second of 30, the H.264 5760 x 2880 of 30 September: it stutters, the warning said so, it plays
+    val recovery = overLimit(nowMs = 0L)
+    var frames = 1
+    var now = 1_000L
+    while (now <= 60_000L) {
+      frames += 8
+      assertEquals(Action.None, recovery.onTick(true, now, frames, nowMs = now))
+      now += 500L
+    }
+  }
+
+  @Test
+  fun `a failure of a decoder beyond its limit never restarts the video, nor goes to the transcoded stream`() {
+    val recovery = overLimit(nowMs = 0L)
+    assertEquals(Action.Undecodable(0L, true), recovery.onFailure(decoderFailed, 0L, durationMs = 60_000L))
+    assertFalse(recovery.restartPending)
+    // A stuck check of Media3 (ERROR_CODE_TIMEOUT) goes the same way
+    val other = overLimit(nowMs = 0L)
+    assertEquals(
+      Action.Undecodable(0L, true),
+      other.onFailure(PlaybackException.ERROR_CODE_TIMEOUT, 0L, durationMs = 60_000L),
+    )
+  }
+
+  @Test
+  fun `the limit belongs to its url, the next one is watched as any other`() {
+    val recovery = overLimit(nowMs = 0L)
+    recovery.onPlay()
+    assertFalse(recovery.overLimit)
+    assertEquals(Action.PassOn, recovery.onFailure(decoderFailed, 0L))
+  }
+
+  @Test
+  fun `without the limit, a position that stands still is never a picture missing`() {
+    // What the rule above is for: Media3 READY, nothing moves, the watch of the media time sees nothing to count
+    val recovery = playing(untilMs = 5_000L)
+    var now = 0L
+    while (now <= 20_000L) {
+      assertEquals(Action.None, recovery.onTick(true, 5_000L, 165, nowMs = now))
+      now += 500L
+    }
+  }
 }
