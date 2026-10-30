@@ -4351,7 +4351,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * No picture came for PlaybackRecovery.NO_PICTURE_MS while the sound played: the transcoded stream once when there
    * is one (from where the video is), otherwise the notice with the codec, the size, the frame rate and the bit rate
    * of the video, held on the panel like the decoder warning. Either way the Logs page gets the report, which is what
-   * a user of a headset we do not have can send.
+   * a user of a headset we do not have can send. Without the surface of the video panel no stream would show either:
+   * the notice and the report then, which say so.
    */
   private fun sayNoPicture(action: PlaybackRecovery.Action.NoPicture) {
     val media = request ?: return
@@ -4359,7 +4360,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     reportPlayback(PlaybackDetails.noPictureEvent(ImmersiveMedia.formatTime(action.positionMs), action.framesBefore))
     val video = videoFormatForReport()?.let(::videoLine) ?: "no video track"
     val fallback = fallbackFor(url)
-    if (!videoFallbackTried && fallback != null) {
+    if (videoSurface != null && !videoFallbackTried && fallback != null) {
       videoFallbackTried = true
       val notice = PlaybackDetails.text(media.stereoLabels, PlaybackDetails.LABEL_NO_PICTURE_SWITCH, "video" to video)
       Log.w(TAG, "shown to the user: $notice")
