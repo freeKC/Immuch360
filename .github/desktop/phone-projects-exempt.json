@@ -444,7 +444,7 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatViewerOptions.kt": {
-    "blob": "717e5e95da88f72c176727009cd02dd284e4a7c5",
+    "blob": "582b3dbb132a2ab2ba899e0b509dd438abe46c08",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the options a measuring session may push to the headset; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
