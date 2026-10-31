@@ -22,34 +22,45 @@ import 'package:logging/logging.dart';
 final _log = Logger('SphericalProbe');
 
 /// Reads [url] with HTTP range requests through [client], with [headers] on top of the range. A server that ignores
-/// the range is read from the start only, and the transfer stops once the bytes asked for arrived.
-ByteRangeReader httpRangeReader(http.Client client, Uri url, {Map<String, String> headers = const {}}) =>
-    (offset, length) async {
-      final request = http.Request('GET', url)
-        ..headers.addAll(headers)
-        ..headers['range'] = 'bytes=$offset-${offset + length - 1}';
-      final response = await client.send(request);
-      final status = response.statusCode;
-      // Past the end of the file
-      if (status == 416) {
-        await response.stream.listen(null).cancel();
-        return Uint8List(0);
-      }
-      if (status != 206 && !(status == 200 && offset == 0)) {
-        await response.stream.listen(null).cancel();
-        throw http.ClientException('HTTP $status for the bytes $offset to ${offset + length - 1}', url);
-      }
-      final builder = BytesBuilder(copy: false);
-      // Leaving the loop cancels the transfer
-      await for (final bytes in response.stream) {
-        builder.add(bytes);
-        if (builder.length >= length) {
-          break;
-        }
-      }
-      final bytes = builder.takeBytes();
-      return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
-    };
+/// the range is read from the start only, and the transfer stops once the bytes asked for arrived, or as soon as
+/// [cancelled] says so (a probe past its time: its reads no longer take the link from the player).
+ByteRangeReader httpRangeReader(
+  http.Client client,
+  Uri url, {
+  Map<String, String> headers = const {},
+  bool Function()? cancelled,
+}) => (offset, length) async {
+  if (cancelled?.call() ?? false) {
+    throw http.ClientException('Cancelled', url);
+  }
+  final request = http.Request('GET', url)
+    ..headers.addAll(headers)
+    ..headers['range'] = 'bytes=$offset-${offset + length - 1}';
+  final response = await client.send(request);
+  final status = response.statusCode;
+  // Past the end of the file
+  if (status == 416) {
+    await response.stream.listen(null).cancel();
+    return Uint8List(0);
+  }
+  if (status != 206 && !(status == 200 && offset == 0)) {
+    await response.stream.listen(null).cancel();
+    throw http.ClientException('HTTP $status for the bytes $offset to ${offset + length - 1}', url);
+  }
+  final builder = BytesBuilder(copy: false);
+  // Leaving the loop cancels the transfer
+  await for (final bytes in response.stream) {
+    builder.add(bytes);
+    if (builder.length >= length) {
+      break;
+    }
+    if (cancelled?.call() ?? false) {
+      throw http.ClientException('Cancelled', url);
+    }
+  }
+  final bytes = builder.takeBytes();
+  return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
+};
 
 /// [read], with the first [headLength] bytes of the file read once and every read within them served from there: a
 /// server that ignores the range still gives the head of its file, where the transcoded stream of Immich keeps its moov
@@ -83,7 +94,10 @@ Future<SphericalProbe> probeSphericalFile(File file) async {
 
 /// Runs the probe of 360° videos (see [probeSphericalMetadata]) and keeps its results in memory, per asset.
 ///
-/// A probe that fails or takes longer than [timeout] gives null, and is tried again next time.
+/// A probe that fails gives null, and is tried again next time. One that takes longer than [timeout] gives null and
+/// stops its reads there (on 31 October 2026 a probe past its 5 s went on reading the 3.6 MB index of a film for 39 s,
+/// beside the player); it is not tried again for [retryAfterTimeout]: the link is slow, and every page of that video
+/// would read the index again.
 class SphericalProbeService {
   SphericalProbeService({
     required this._storage,
@@ -92,7 +106,16 @@ class SphericalProbeService {
     required this._headers,
     this.timeout = const Duration(seconds: 5),
     this.maxEntries = 200,
-  });
+    this.retryAfterTimeout = const Duration(minutes: 10),
+    DateTime Function()? clock,
+  }) : _clock = clock ?? DateTime.now;
+
+  /// How long a probe that timed out is not tried again, see the class
+  final Duration retryAfterTimeout;
+  final DateTime Function() _clock;
+
+  // When the probe of each asset key last timed out
+  final _timedOut = <String, DateTime>{};
 
   final StorageRepository _storage;
   final http.Client Function() _client;
@@ -125,7 +148,11 @@ class SphericalProbeService {
     if (known != null) {
       return known;
     }
-    final pending = _pending[key] ??= _probeWithin(asset, localFile);
+    final timedOut = _timedOut[key];
+    if (timedOut != null && _clock().difference(timedOut) < retryAfterTimeout) {
+      return null;
+    }
+    final pending = _pending[key] ??= _probeWithin(asset, localFile, key);
     try {
       final result = await pending;
       if (result != null) {
@@ -157,16 +184,19 @@ class SphericalProbeService {
       return null;
     }
     final pending = _pending[key] ??= () async {
+      var cancelled = false;
       try {
         final url = Uri.parse('$endpoint/assets/$videoId/video/playback');
         final probe = await probeSphericalMetadata(
-          headPrefetchReader(httpRangeReader(_client(), url, headers: _headers())),
+          headPrefetchReader(httpRangeReader(_client(), url, headers: _headers(), cancelled: () => cancelled)),
         ).timeout(timeout);
         _log.fine('Transcoded stream of $videoId: $probe');
         return probe;
       } catch (error) {
         _log.info('Could not read the transcoded stream of $videoId: $error');
         return null;
+      } finally {
+        cancelled = true;
       }
     }();
     try {
@@ -183,18 +213,28 @@ class SphericalProbeService {
     }
   }
 
-  Future<SphericalProbe?> _probeWithin(BaseAsset asset, File? localFile) async {
+  Future<SphericalProbe?> _probeWithin(BaseAsset asset, File? localFile, String key) async {
+    var cancelled = false;
     try {
-      final probe = await _probe(asset, localFile).timeout(timeout);
+      final probe = await _probe(asset, localFile, () => cancelled).timeout(timeout);
       _log.fine('${asset.name}: $probe');
       return probe;
+    } on TimeoutException {
+      _timedOut[key] = _clock();
+      _log.info(
+        'The spherical metadata of ${asset.name} took longer than ${timeout.inSeconds} s: not read again for now',
+      );
+      return null;
     } catch (error) {
       _log.info('Could not read the spherical metadata of ${asset.name}: $error');
       return null;
+    } finally {
+      // Its reads stop where they are
+      cancelled = true;
     }
   }
 
-  Future<SphericalProbe?> _probe(BaseAsset asset, File? localFile) async {
+  Future<SphericalProbe?> _probe(BaseAsset asset, File? localFile, bool Function() cancelled) async {
     var file = localFile;
     final localId = asset.localId;
     if (file == null && localId != null) {
@@ -218,7 +258,7 @@ class SphericalProbeService {
       return null;
     }
     final url = Uri.parse('$endpoint/assets/$remoteId/original');
-    return probeSphericalMetadata(httpRangeReader(_client(), url, headers: _headers()));
+    return probeSphericalMetadata(httpRangeReader(_client(), url, headers: _headers(), cancelled: cancelled));
   }
 }
 

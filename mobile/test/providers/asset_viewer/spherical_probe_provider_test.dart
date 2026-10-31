@@ -202,6 +202,57 @@ void main() {
       expect(probe, isNull);
     });
 
+    test('past its time limit, its reads stop, and it is not tried again for a while', () async {
+      // The index at the end of a long film over a slow link: 64 KiB every 20 ms, 100 ms for the probe
+      final longFilm = mp4File(
+        mp4Moov([
+          mp4VideoTrack([mp4St3d(2), mp4Sv3dProjection(mp4Mshp())], stsz: mp4Stsz(sizes: List.filled(400000, 9000))),
+        ]),
+        moovAtEnd: true,
+        mdat: mp4Box('mdat', mp4Zeros(300000)),
+      );
+      var sent = 0;
+      var requestsMade = 0;
+      final client = MockClient.streaming((request, _) async {
+        requestsMade++;
+        final answer = _respond(longFilm, request as http.Request);
+        Stream<List<int>> slowly() async* {
+          final bytes = answer.bodyBytes;
+          for (var at = 0; at < bytes.length; at += 65536) {
+            await Future<void>.delayed(const Duration(milliseconds: 20));
+            sent++;
+            yield Uint8List.sublistView(bytes, at, math.min(at + 65536, bytes.length));
+          }
+        }
+
+        return http.StreamedResponse(slowly(), answer.statusCode);
+      });
+      var now = DateTime(2026, 10, 31, 18);
+      final probes = SphericalProbeService(
+        storage: storage,
+        client: () => client,
+        serverEndpoint: () => _endpoint,
+        headers: () => const {},
+        timeout: const Duration(milliseconds: 100),
+        clock: () => now,
+      );
+      final asset = RemoteAssetFactory.create(type: .video);
+
+      expect(await probes.probe(asset), isNull);
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      final sentThen = sent;
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      expect(sent, sentThen, reason: 'the transfer stopped once the probe gave up');
+
+      final requestsThen = requestsMade;
+      expect(await probes.probe(asset), isNull);
+      expect(requestsMade, requestsThen, reason: 'not tried again: the link is slow');
+
+      now = now.add(probes.retryAfterTimeout);
+      expect(await probes.probe(asset), isNull);
+      expect(requestsMade, greaterThan(requestsThen), reason: 'tried again later');
+    });
+
     test('copes with a server that ignores the range, from the head of the file only', () async {
       final atHead = mp4File(
         mp4Moov([
