@@ -116,13 +116,8 @@ const tiffMaxConcurrentDecodes = 2;
 var _decoding = 0;
 final _waitingDecodes = Queue<Completer<void>>();
 
-/// [bytes], a TIFF, decoded in a background isolate and scaled down to at most [maxSide] pixels on its long side,
-/// upright as its orientation tag says, [tiffMaxConcurrentDecodes] at most at once. Throws [TiffDecodeException] when
-/// it does not decode.
-Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) async {
-  if (bytes.length > tiffMaxFileBytes) {
-    throw TiffDecodeException('${bytes.length} bytes is more than this device reads for a TIFF');
-  }
+/// [job] in a background isolate, [tiffMaxConcurrentDecodes] at most at once
+Future<T> _inDecoderTurn<T>(T Function() job) async {
   if (_decoding >= tiffMaxConcurrentDecodes) {
     final turn = Completer<void>();
     _waitingDecodes.add(turn);
@@ -132,8 +127,7 @@ Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) async {
     _decoding++;
   }
   try {
-    final job = (bytes: TransferableTypedData.fromList([bytes]), maxSide: maxSide);
-    return await Isolate.run(() => _decodeTiffJob(job), debugName: 'TIFF decoder');
+    return await Isolate.run(job, debugName: 'TIFF decoder');
   } finally {
     if (_waitingDecodes.isNotEmpty) {
       _waitingDecodes.removeFirst().complete();
@@ -143,12 +137,55 @@ Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) async {
   }
 }
 
+/// [bytes], a TIFF, decoded in a background isolate and scaled down to at most [maxSide] pixels on its long side,
+/// upright as its orientation tag says, [tiffMaxConcurrentDecodes] at most at once. Throws [TiffDecodeException] when
+/// it does not decode.
+Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) {
+  if (bytes.length > tiffMaxFileBytes) {
+    return Future.error(TiffDecodeException('${bytes.length} bytes is more than this device reads for a TIFF'));
+  }
+  final job = (bytes: TransferableTypedData.fromList([bytes]), maxSide: maxSide);
+  return _inDecoderTurn(() => _decodeTiffJob(job));
+}
+
 TiffPixels _decodeTiffJob(({TransferableTypedData bytes, int maxSide}) job) =>
     decodeTiffSync(job.bytes.materialize().asUint8List(), maxSide: job.maxSide);
+
+/// The long side of the JPEG the immersive viewer reads of a TIFF (see [tiffAsJpeg]): the texture width of a 360
+/// photo on the headset
+const tiffJpegMaxSide = 8192;
+
+/// [bytes], a TIFF, as a JPEG of [quality] at most [maxSide] pixels on its long side, upright, made in a background
+/// isolate: what the immersive viewer of the Meta Quest reads of a TIFF of the headset or of a share, its decoders
+/// refusing TIFF. Throws [TiffDecodeException] when the TIFF does not decode.
+Future<Uint8List> tiffAsJpeg(Uint8List bytes, {int maxSide = tiffJpegMaxSide, int quality = 90}) {
+  if (bytes.length > tiffMaxFileBytes) {
+    return Future.error(TiffDecodeException('${bytes.length} bytes is more than this device reads for a TIFF'));
+  }
+  final job = (bytes: TransferableTypedData.fromList([bytes]), maxSide: maxSide, quality: quality);
+  return _inDecoderTurn(() => _tiffAsJpegJob(job));
+}
+
+Uint8List _tiffAsJpegJob(({TransferableTypedData bytes, int maxSide, int quality}) job) {
+  final image = _decodeTiffImage(job.bytes.materialize().asUint8List(), job.maxSide);
+  final rgb = image.format == img.Format.uint8 && image.numChannels == 3 && !image.hasPalette
+      ? image
+      : image.convert(format: img.Format.uint8, numChannels: 3);
+  return img.encodeJpg(rgb, quality: job.quality);
+}
 
 /// [decodeTiff] on the calling isolate
 @visibleForTesting
 TiffPixels decodeTiffSync(Uint8List bytes, {required int maxSide}) {
+  final image = _decodeTiffImage(bytes, maxSide);
+  final rgba = image.format == img.Format.uint8 && image.numChannels == 4 && !image.hasPalette
+      ? image
+      : image.convert(format: img.Format.uint8, numChannels: 4, alpha: 255);
+  return TiffPixels(rgba.getBytes(order: img.ChannelOrder.rgba), rgba.width, rgba.height);
+}
+
+/// The first image of the TIFF [bytes], upright, at most [maxSide] pixels on its long side
+img.Image _decodeTiffImage(Uint8List bytes, int maxSide) {
   final decoder = img.TiffDecoder();
   final img.TiffInfo? info;
   try {
@@ -189,10 +226,7 @@ TiffPixels decodeTiffSync(Uint8List bytes, {required int maxSide}) {
       interpolation: img.Interpolation.average,
     );
   }
-  final rgba = image.format == img.Format.uint8 && image.numChannels == 4 && !image.hasPalette
-      ? image
-      : image.convert(format: img.Format.uint8, numChannels: 4, alpha: 255);
-  return TiffPixels(rgba.getBytes(order: img.ChannelOrder.rgba), rgba.width, rgba.height);
+  return image;
 }
 
 /// The photos that did not decode in this session, by a key of their own (their URL, their asset), with the error

@@ -27,6 +27,7 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -35,8 +36,33 @@ import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'network_viewer_fakes.dart';
 
 class _QuestApi extends ImmersiveApi {
+  /// The URLs the immersive viewer was asked to open
+  final List<String> opened = [];
+
   @override
   Future<bool> isHorizonOs() async => true;
+
+  @override
+  Future<void> open(
+    String url,
+    Map<String, String> headers,
+    bool isVideo,
+    String title,
+    ImmersiveStereoLayout stereoLayout,
+    Map<String, String> stereoLabels,
+    ImmersiveSphereCoverage coverage,
+    int startPositionMs,
+    int openingId,
+    String? fallbackUrl,
+    String? rawProjection,
+    String? stereoPair,
+    bool reverseThumbstickTurn,
+    bool sharpFlatScreens, {
+    String? kiosk,
+    String? sourceNotice,
+    String? sourceRefusal,
+    bool gaussianSplats = true,
+  }) async => opened.add(url);
 }
 
 class _NoRecords extends UploadRecordStore {
@@ -62,6 +88,8 @@ void main() {
   late StoreService store;
   late MemoryShare share;
   late TestMediaServer server;
+  late _QuestApi quest;
+  late Directory jpegs;
   HttpOverrides? previousOverrides;
 
   setUpAll(() async {
@@ -85,6 +113,8 @@ void main() {
     server.share = share;
     server.requests.clear();
     server.gate = null;
+    quest = _QuestApi();
+    jpegs = Directory.systemTemp.createTempSync('share_tiff_jpeg_');
     UndecodablePhotos.instance.clear();
     PaintingBinding.instance.imageCache
       ..clear()
@@ -94,6 +124,7 @@ void main() {
   tearDown(() async {
     await store.dispose();
     await db.close();
+    jpegs.deleteSync(recursive: true);
   });
 
   /// The requests of the whole file at [path], not its ranges (the GPano tags, the versions)
@@ -104,7 +135,8 @@ void main() {
     storeServiceProvider.overrideWithValue(store),
     overrideConnections((ref) => FakeConnections(ref, share, baseUrl: server.baseUrl)),
     isHorizonOsProvider.overrideWith((ref) async => true),
-    immersiveApiProvider.overrideWithValue(_QuestApi()),
+    immersiveApiProvider.overrideWithValue(quest),
+    tiffJpegCacheProvider.overrideWithValue(TiffJpegCache(() async => jpegs)),
     networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
     appConfigProvider.overrideWithValue(const AppConfig()),
     uploadRecordStoreProvider.overrideWithValue(_NoRecords()),
@@ -243,5 +275,52 @@ void main() {
     expect(networkPhotoImage(server.urlOf('/plan.TIFF')), isNot(isA<ResizeImage>()));
 
     await endRealIo(tester);
+  });
+
+  group('on a Meta Quest, whose immersive viewer decodes no TIFF', () {
+    Future<void> openAs360(WidgetTester tester) async {
+      await tester.tap(find.byTooltip('More'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(find.text('View as 360°'));
+      await tester.pump();
+    }
+
+    testWidgets('opens a TIFF of a share from a JPEG of the cache, made once, said while it is made', (tester) async {
+      share.files['/pano.tif'] = _tiff(128, 64);
+      await pumpPhotoPage(tester, '/pano.tif');
+      await pumpRealIo(tester, showsDecodedPhoto);
+
+      await openAs360(tester);
+      await pumpRealIo(tester, () => quest.opened.isNotEmpty);
+      expect(find.text('Decoding the TIFF on this device'), findsOneWidget);
+      expect(quest.opened.single, startsWith('file://'));
+      final jpeg = File.fromUri(Uri.parse(quest.opened.single)).readAsBytesSync();
+      expect(jpeg.sublist(0, 3), [0xFF, 0xD8, 0xFF]);
+
+      // Opened again: the same JPEG, the file not read again for it
+      final reads = wholeReads('/pano.tif');
+      await tester.pump(const Duration(seconds: 6));
+      await openAs360(tester);
+      await pumpRealIo(tester, () => quest.opened.length == 2);
+      expect(quest.opened.last, quest.opened.first);
+      expect(wholeReads('/pano.tif'), reads);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('a TIFF that does not decode says so instead of opening the viewer', (tester) async {
+      share.files['/broken.tif'] = _brokenTiff;
+      await pumpPhotoPage(tester, '/broken.tif');
+      await pumpRealIo(tester, () => find.text('This device cannot decode this TIFF').evaluate().isNotEmpty);
+
+      await openAs360(tester);
+      await run(tester);
+      expect(quest.opened, isEmpty);
+      expect(find.text('This device cannot decode this TIFF'), findsWidgets);
+      expect(wholeReads('/broken.tif'), 1, reason: 'known not to decode: not read again for the viewer');
+
+      await endRealIo(tester);
+    });
   });
 }

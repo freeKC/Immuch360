@@ -68,7 +68,9 @@ import 'package:immich_mobile/infrastructure/repositories/network.repository.dar
 import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
 import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
@@ -453,6 +455,7 @@ class ImmersiveAssetResolver {
     this.raw,
     this.exifOf,
     this.forcedSource,
+    this.tiffJpegs,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
@@ -473,10 +476,39 @@ class ImmersiveAssetResolver {
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
+      tiffJpegs: ref.read(tiffJpegCacheProvider),
     );
   }
 
   final ImmersiveApi api;
+
+  /// The JPEGs of the TIFF photos of the headset, which the viewer reads instead of their files (see
+  /// [TiffJpegCache]); null for those of the temporary folder
+  final TiffJpegCache? tiffJpegs;
+
+  /// The URL of the JPEG of the TIFF [file] of [asset] when this device decodes no TIFF, null for any other photo
+  Future<String?> _tiffJpegUrl(BaseAsset asset, File file) async {
+    if (asset.isVideo || photoDecodePath(asset.name, fromServer: false) != PhotoDecodePath.dartTiff) {
+      return null;
+    }
+    // A TIFF that did not decode in this session, in the viewer or its tile, is not read again
+    final localId = asset.localId;
+    final undecodable = localId != null
+        ? LocalTiffImageRequest.undecodableKey(localId)
+        : FileTiffImage.undecodableKey(file.path);
+    final failure = UndecodablePhotos.instance.failureOf(undecodable);
+    if (failure != null) {
+      throw failure;
+    }
+    final jpegs = tiffJpegs ?? TiffJpegCache.temporary();
+    final key = 'local:${localId ?? file.path}:${asset.checksum ?? await file.length()}';
+    try {
+      return (await jpegs.jpegOf(key, file.readAsBytes)).uri.toString();
+    } on TiffDecodeException catch (error) {
+      UndecodablePhotos.instance.remember(undecodable, error);
+      rethrow;
+    }
+  }
 
   /// The exif of an asset as the database holds it, for the size of its file once the server edited it (see
   /// [uneditedFrameOf]); null to guess an edited asset from its name and its GPano crop only
@@ -569,8 +601,9 @@ class ImmersiveAssetResolver {
         _log.warning('Copy on the device of ${asset.name} unreadable: $error');
       }
     }
-    // The immersive viewer reads file:// URIs too
-    final url = localFile?.uri.toString() ?? remoteUrl;
+    // The immersive viewer reads file:// URIs too; a TIFF of the headset as a JPEG of it
+    final url =
+        (localFile == null ? null : await _tiffJpegUrl(asset, localFile)) ?? localFile?.uri.toString() ?? remoteUrl;
     if (url == null) {
       throw StateError('No file to open for ${asset.name}');
     }
@@ -686,7 +719,9 @@ class ImmersiveAssetResolver {
     // An ordinary photo on the big screen shows as the asset viewer shows it, edited
     final edited = stereo is BigScreenStereoPhotoRequest;
     final url =
-        localFile?.uri.toString() ?? (remoteId == null ? null : serverPhotoUrl(asset, remoteId, edited: edited));
+        (localFile == null ? null : await _tiffJpegUrl(asset, localFile)) ??
+        localFile?.uri.toString() ??
+        (remoteId == null ? null : serverPhotoUrl(asset, remoteId, edited: edited));
     if (url == null) {
       throw StateError('No file to open for ${asset.name}');
     }

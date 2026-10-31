@@ -24,11 +24,13 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
@@ -453,22 +455,60 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
+    final tiffMessage = context.t.tiff_cannot_decode;
     final stereoLabels = stereoPhotoViewerLabels(context.t);
     final connections = ref.read(networkConnectionsProvider);
+    final tiffJpeg = _tiffJpegReader(messenger);
     final name = path.split('/').last;
     try {
+      final shared = url ?? await connections.mediaUrl(widget.sourceId, path);
       final request = ImmersiveRequest(
-        url: (url ?? await connections.mediaUrl(widget.sourceId, path)).toString(),
+        url: await tiffJpeg(shared) ?? shared.toString(),
         isVideo: false,
         title: name,
         view: stereoPhotoSphereView,
         stereoPair: stereo.toImmersiveJson(),
       );
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels);
+    } on TiffDecodeException catch (error) {
+      _log.warning('Could not decode the TIFF $name: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(tiffMessage)));
     } catch (error) {
       _log.warning('Could not open $name in 3D: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
+  }
+
+  /// For the immersive viewer of a device that decodes no TIFF (a Meta Quest), whose decoders refuse TIFF: the URL of
+  /// a JPEG in the cache of the TIFF of the media bridge at its URL, made from the whole file the first time, while
+  /// the line "Decoding the TIFF on this device" shows; null for any other photo. Read before the first await.
+  Future<String?> Function(Uri url) _tiffJpegReader(ScaffoldMessengerState? messenger) {
+    final jpegs = ref.read(tiffJpegCacheProvider);
+    final client = ref.read(networkBridgeClientProvider);
+    final decoding = context.t.tiff_decoding;
+    final entry = _current?.entry;
+    return (url) async {
+      if (!isDartTiffUrl(url)) {
+        return null;
+      }
+      // A TIFF that did not decode in this session, in the page or its tile, is not read again
+      final undecodable = undecodableShareKey(url);
+      final failure = UndecodablePhotos.instance.failureOf(undecodable);
+      if (failure != null) {
+        throw failure;
+      }
+      final key = 'share:${widget.sourceId}:${url.pathSegments.skip(2).join('/')}:${entry?.size}:${entry?.modified}';
+      try {
+        final jpeg = await jpegs.jpegOf(key, () {
+          messenger?.showSnackBar(SnackBar(content: Text(decoding)));
+          return client.readBytes(url);
+        });
+        return jpeg.uri.toString();
+      } on TiffDecodeException catch (error) {
+        UndecodablePhotos.instance.remember(undecodable, error);
+        rethrow;
+      }
+    };
   }
 
   /// Opens [version], a 360° panorama a computer generated beyond the edges of this photo, on the sphere of the
@@ -505,15 +545,22 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
+    final tiffMessage = context.t.tiff_cannot_decode;
     final stereoLabels = sphereViewerLabels(context.t);
     final isRaw = _info?.rawKind == RawMediaKind.insta360Photo || isRawPhotoName(photo.entry.name);
     final raw = isRaw ? RawImmersiveMedia.read(ref, forAssets: false) : null;
     final read = _shareReader ?? httpRangeReader(ref.read(networkBridgeClientProvider), photo.url);
+    final tiffJpeg = _tiffJpegReader(messenger);
     try {
-      // The viewer opens a raw photo stitched, from a picture of the cache
+      // The viewer opens a raw photo stitched, from a picture of the cache, and a TIFF from a JPEG of the cache
       final request = raw != null
           ? await raw.sharedMedia(photo.entry, photo.url, read: read)
-          : ImmersiveRequest(url: photo.url.toString(), isVideo: false, title: photo.entry.name, view: view);
+          : ImmersiveRequest(
+              url: await tiffJpeg(photo.url) ?? photo.url.toString(),
+              isVideo: false,
+              title: photo.entry.name,
+              view: view,
+            );
       if (!mounted) {
         return;
       }
@@ -521,6 +568,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       // Given the request too: the photo shows again as it opens now, whatever its file declares
       final navigator = FolderImmersiveNavigator.read(ref, items: around.items, index: around.index, request: request);
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels, navigator: navigator);
+    } on TiffDecodeException catch (error) {
+      _log.warning('Could not decode the TIFF ${photo.entry.name}: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(tiffMessage)));
     } catch (error) {
       _log.warning('Could not open the immersive viewer: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
