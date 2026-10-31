@@ -140,6 +140,28 @@ void main() {
     });
   });
 
+  group('a large folder', () {
+    test('5000 photos list in one go, in order, the hidden entries left out', () async {
+      final files = {
+        for (var i = 0; i < 5000; i++) '/DCIM/Camera/IMG_${i.toString().padLeft(5, '0')}.jpg': Uint8List(1),
+        '/DCIM/Camera/.thumbnails/IMG_00000.jpg': Uint8List(1),
+        '/DCIM/Camera/.trashed-1761900000-IMG_09999.jpg': Uint8List(1),
+      };
+      final camera = DocumentTreeFileSystem.deviceFolder(source, FakeDocumentTreeApi(files, treeUri: _treeUri));
+      final watch = Stopwatch()..start();
+
+      final contents = FolderContents.of(await camera.list('/DCIM/Camera'));
+
+      watch.stop();
+      expect(contents.media, hasLength(5000));
+      expect(contents.folders, isEmpty);
+      expect(contents.media.first.path, '/DCIM/Camera/IMG_00000.jpg');
+      expect(contents.media.last.path, '/DCIM/Camera/IMG_04999.jpg');
+      // 37 ms on the build host; the bound only catches a listing that grows with the square of the folder
+      expect(watch.elapsed, lessThan(const Duration(seconds: 3)));
+    });
+  });
+
   group('its files', () {
     test('are known by their name and size, as those of a drone or a card, and read by ranges', () async {
       final beach = (await sut.list('/')).firstWhere((entry) => entry.name == 'beach.jpg');

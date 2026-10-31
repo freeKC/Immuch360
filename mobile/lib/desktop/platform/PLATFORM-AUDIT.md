@@ -92,7 +92,7 @@ the gate is per desktop and is noted.
 | `lib/providers/infrastructure/immersive.provider.dart:16` | Quest only | right |
 | `lib/providers/infrastructure/immersive.provider.dart:46` | whether this build offers the Gaussian splats, asked on Android only (30 October 2026) | right: the computers answer false without asking |
 | `lib/providers/infrastructure/tv.provider.dart:26` | Android TV only | right |
-| `lib/providers/network/device_folders.provider.dart:31` | Browse a folder of the device on Android phones, tablets and the headset only (31 October 2026, not in build 20) | hidden: the computers take the not Android branch, so neither the section of On this device (whose desktop side is the FoldersEntry branch) nor the Add menu entry shows, and DocumentTreeApi is never called |
+| `lib/providers/network/device_folders.provider.dart:36` | Browse a folder of the device on Android phones, tablets and the headset only (31 October 2026, not in build 20) | hidden: the computers take the not Android branch, so neither the section of On this device (whose desktop side is the FoldersEntry branch) nor the Add menu entry shows, and DocumentTreeApi is never called |
 | `lib/providers/network/phone_share.provider.dart:256` | Android device name | wired (G1): desktopShareDeviceName |
 | `lib/providers/network/phone_share.provider.dart:260` | iOS device name | wired (G1) |
 | `lib/providers/network/phone_share.provider.dart:390` | iOS pause in background | right: a computer keeps sharing |
