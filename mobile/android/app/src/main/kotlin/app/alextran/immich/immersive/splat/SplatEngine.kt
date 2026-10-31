@@ -27,7 +27,8 @@ internal interface SplatEngine {
   fun feature(context: SpatialContext, systems: SystemManager): SpatialFeature?
 
   /**
-   * The entity of the splat of [uri] (a file:// URI whose name ends with .spz or .ply) at [pose], hidden, its scale 1,
+   * The entity of the splat of [uri] (a file:// URI whose name ends with .spz or .ply, in a form the module reads,
+   * SplatModuleFormat) at [pose] (given in the frame of the module, SplatModuleFrame), hidden, its scale 1,
    * out of the reach of the controller rays; [onLoaded] comes once its load ended, [success] or not, with the message
    * of the module, on whichever thread the module calls it
    */
@@ -38,4 +39,11 @@ internal interface SplatEngine {
    * of SplatViewerOptions.move); false when the module or its system is not there
    */
   fun moveBySystem(systems: SystemManager, entity: Entity, pose: Pose): Boolean
+
+  /**
+   * Whether the renderer of the module runs (SplatSystem.isSplatRendererInitialized: false until it draws its first
+   * splat, true from then on, as measured on a Quest 3 on 31 October 2026); null when the module or its system is not
+   * there, or does not answer
+   */
+  fun rendererReady(systems: SystemManager): Boolean?
 }

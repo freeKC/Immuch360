@@ -3995,7 +3995,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           ensureActive()
           Log.i(TAG, "splat: prepared in ${SystemClock.elapsedRealtime() - started} ms")
           when (preparation) {
-            is SplatPreparation.Stopped -> splatStopped(media, SplatTexts.refusalText(labels, preparation.verdict))
+            is SplatPreparation.Stopped -> {
+              preparation.detail?.let { Log.w(TAG, "splat: stopped, ${preparation.verdict.refusal}: $it") }
+              splatStopped(media, SplatTexts.refusalText(labels, preparation.verdict))
+            }
             is SplatPreparation.Ready -> {
               files.handOver()
               splatDetails = SplatTexts.detailLines(labels, preparation.head, preparation.verdict)
@@ -4040,6 +4043,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** What the splat says, on the main thread; nothing once another media is shown */
   private inner class SplatListener : SplatStage.Listener {
+    /**
+     * The module loads the file: "Loading the splat" under the bar, the panel kept in sight until the splat shows, so
+     * that the user is never left in the dark without a word
+     */
+    override fun onSplatLoading() {
+      val media = request ?: return
+      if (!media.isSplat || closing || sceneHold.isDown) return
+      cancelInfoHide()
+      setStatus(SplatTexts.label(media.stereoLabels, SplatTexts.LABEL_LOADING))
+    }
+
     override fun onSplatShown() {
       val media = request ?: return
       if (!media.isSplat || closing || sceneHold.isDown) return
@@ -4071,9 +4085,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       if (!media.isSplat || closing || sceneHold.isDown) return
       splatStopped(media, SplatTexts.failedText(media.stereoLabels, reason))
     }
+
+    /** "This device cannot show this splat" with its reason, kept in the panel, which stays in sight with its Back */
+    override fun onSplatRefused(refusal: SplatRefusal, detail: String) {
+      val media = request ?: return
+      if (!media.isSplat || closing || sceneHold.isDown) return
+      Log.w(TAG, "splat: cannot show, $refusal: $detail")
+      splatStopped(media, SplatTexts.refusalText(media.stereoLabels, SplatVerdict.Refused(refusal)))
+    }
   }
 
-  /** The splat of [media] is not shown, for [text]: said for a few seconds, kept in the panel */
+  /**
+   * The splat of [media] is not shown, for [text]: said on the status line for a few seconds and kept in the lines of
+   * the panel, which stays in sight with its Back (nothing else is: the viewer would be dark otherwise)
+   */
   private fun splatStopped(media: MediaRequest, text: String) {
     if (request !== media || closing || sceneHold.isDown) return
     splatPreparing = false
@@ -4083,7 +4108,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateTurnButton()
     Log.i(TAG, "splat: not shown ($text)")
     showPassing(text)
-    scheduleInfoHide(TransientText.HOLD_MS)
+    cancelInfoHide()
+    if (!infoVisible) setInfoVisible(true, reposition = true)
   }
 
   /** Another media, or the end of the viewer: the splat goes, without a word */

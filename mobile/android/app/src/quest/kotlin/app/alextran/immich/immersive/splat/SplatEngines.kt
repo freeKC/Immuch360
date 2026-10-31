@@ -22,7 +22,9 @@ import com.meta.spatial.toolkit.Visible
 // Meta-Spatial-SDK-Samples/SplatSample) and the documentation of the splats
 // (https://developers.meta.com/horizon/documentation/spatial-sdk/spatial-sdk-splats/) show it: SplatFeature
 // registered with the other features, an entity with the Splat component of a file URI, its Transform, Scale(1) and
-// Visible(false), shown after the load event (SplatLoadEventArgs). Hittable(NoCollision) keeps the controller rays
+// Visible(false), shown after the load event (SplatLoadEventArgs). The file and the pose come ready for the module
+// (SplatModuleFormat: SPZ version 2 or PLY only, anything else aborts the process; SplatModuleFrame: the pose in the
+// frame the module draws in), as measured on a Quest 3 on 31 October 2026. Hittable(NoCollision) keeps the controller rays
 // for the panels ("Hit detection can be inconsistent" on a splat). The API is marked experimental by the module: its
 // opt-in is here and nowhere else. It is an Experimental Feature in the sense of article 1.6 of the licence of the SDK,
 // which keeps such a feature out of a production build unless Meta released it or permits it in writing: FreeKC's
@@ -58,4 +60,11 @@ internal object SplatEngines : SplatEngine {
     system.updateSplatTransform(entity.id, pose, Vector3(1f))
     return true
   }
+
+  override fun rendererReady(systems: SystemManager): Boolean? =
+    try {
+      systems.tryFindSystem<SplatSystem>()?.isSplatRendererInitialized()
+    } catch (e: Exception) {
+      null
+    }
 }

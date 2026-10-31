@@ -11,7 +11,8 @@ import org.junit.Test
 
 /**
  * Where a splat goes (lot S5): an object in front of the user, a scene around the user, a splat without positions
- * ahead; the orientations of Turn upright and their memory.
+ * ahead, the centre taken as the splat module shows the file (z mirrored); the orientations of Turn upright, as
+ * measured on a Quest 3 on 31 October 2026, and their memory.
  */
 class SplatPlacementTest {
   /** Quaternion(pitch, 0, 0) applied to a vector by the usual formula (v' = q v q*): what the SDK is taken to do */
@@ -23,15 +24,16 @@ class SplatPlacementTest {
   private fun bounds(low: DoubleArray, high: DoubleArray) = SplatBounds(low, high)
 
   @Test
-  fun `an object has its centre in front, at 0_6 m plus half its size, under the eyes`() {
+  fun `an object has its centre in front, at 0_6 m plus half its size, at the height of the eyes`() {
     // The axes: 1 m, 1.5 m and 2 m long
     val axes = bounds(doubleArrayOf(-0.01, -0.01, -0.01), doubleArrayOf(0.66, 1.16, 1.66))
     assertTrue(SplatPlacement.isObject(axes))
-    assertArrayEquals(doubleArrayOf(0.0, -0.2, 0.6 + 1.67 / 2), SplatPlacement.target(axes), 1e-9)
-    // Upright with Z up, its centre comes where the target is
+    // At the height of the eyes: the info panel, 0.3 m under them, would cover an object placed lower
+    assertArrayEquals(doubleArrayOf(0.0, 0.0, 0.6 + 1.67 / 2), SplatPlacement.target(axes), 1e-9)
+    // Whatever the orientation, the centre of the file as the module shows it (z mirrored) comes where the target is
     for (upright in SplatUpright.entries) {
-      val local = SplatPlacement.localPosition(axes, rotate(upright, axes.center))
-      val centre = rotate(upright, axes.center)
+      val centre = rotate(upright, SplatModuleFrame.filePoint(axes.center))
+      val local = SplatPlacement.localPosition(axes, centre)
       assertArrayEquals(
         upright.name,
         SplatPlacement.target(axes),
@@ -39,6 +41,21 @@ class SplatPlacementTest {
         1e-9,
       )
     }
+  }
+
+  @Test
+  fun `the measuring tape of the kit stands upright in front, its centre at the height of the eyes`() {
+    // Its bounds in the log of 31 October; upright with Y down (a 3D Gaussian Splatting training)
+    val tape = bounds(doubleArrayOf(-0.068, -0.092, -0.274), doubleArrayOf(0.046, 0.115, 0.201))
+    assertEquals(SplatUpright.Y_DOWN, SplatUpright.DEFAULT)
+    val centre = rotate(SplatUpright.DEFAULT, SplatModuleFrame.filePoint(tape.center))
+    val local = SplatPlacement.localPosition(tape, centre)
+    // Its top (y = -0.092 in the file) above its bottom (y = 0.115), both around the eyes, 0.84 m ahead
+    val top = rotate(SplatUpright.DEFAULT, SplatModuleFrame.filePoint(doubleArrayOf(-0.011, -0.092, -0.0365)))
+    val bottom = rotate(SplatUpright.DEFAULT, SplatModuleFrame.filePoint(doubleArrayOf(-0.011, 0.115, -0.0365)))
+    assertTrue(local[1] + top[1] > local[1] + bottom[1])
+    assertEquals(0.0, local[1] + (top[1] + bottom[1]) / 2, 1e-6)
+    assertEquals(0.6 + 0.475 / 2, local[2] + centre[2], 1e-6)
   }
 
   @Test
@@ -80,15 +97,20 @@ class SplatPlacementTest {
   }
 
   @Test
-  fun `turn upright goes Y up, Z up, Y down and back, from Z up as Meta's sample`() {
-    assertEquals(SplatUpright.Z_UP, SplatUpright.DEFAULT)
-    assertEquals(-90f, SplatUpright.Z_UP.pitchDegrees)
+  fun `turn upright goes Y up, Z up, Y down and back, from Y down as the captures of a training`() {
+    // Measured on a Quest 3 on 31 October 2026, the poses handed to the module converted: 0, +90 and 180 degrees
+    assertEquals(SplatUpright.Y_DOWN, SplatUpright.DEFAULT)
+    assertEquals(0f, SplatUpright.Y_UP.pitchDegrees)
+    assertEquals(90f, SplatUpright.Z_UP.pitchDegrees)
+    assertEquals(180f, SplatUpright.Y_DOWN.pitchDegrees)
     assertEquals(SplatUpright.Y_DOWN, SplatUpright.Z_UP.next())
     assertEquals(SplatUpright.Y_UP, SplatUpright.Y_DOWN.next())
     assertEquals(SplatUpright.Z_UP, SplatUpright.Y_UP.next())
-    // With the usual formula, Z up takes +z of the file up, Y down takes +y down
-    assertArrayEquals(doubleArrayOf(0.0, 1.0, 0.0), rotate(SplatUpright.Z_UP, doubleArrayOf(0.0, 0.0, 1.0)), 1e-9)
-    assertArrayEquals(doubleArrayOf(0.0, -1.0, 0.0), rotate(SplatUpright.Y_DOWN, doubleArrayOf(0.0, 1.0, 0.0)), 1e-9)
+    // On the file as the module shows it (z mirrored): Z up takes +z of the file up, Y down takes +y down, Y up keeps it
+    fun up(upright: SplatUpright, axis: DoubleArray) = rotate(upright, SplatModuleFrame.filePoint(axis))
+    assertArrayEquals(doubleArrayOf(0.0, 1.0, 0.0), up(SplatUpright.Z_UP, doubleArrayOf(0.0, 0.0, 1.0)), 1e-9)
+    assertArrayEquals(doubleArrayOf(0.0, -1.0, 0.0), up(SplatUpright.Y_DOWN, doubleArrayOf(0.0, 1.0, 0.0)), 1e-9)
+    assertArrayEquals(doubleArrayOf(0.0, 1.0, 0.0), up(SplatUpright.Y_UP, doubleArrayOf(0.0, 1.0, 0.0)), 1e-9)
   }
 
   @Test
@@ -111,5 +133,9 @@ class SplatPlacementTest {
     assertEquals(SplatUpright.DEFAULT, memory.read("room.ply", 1001))
     values[memory.keyOf("room.ply", 1001)] = "sideways"
     assertEquals(SplatUpright.DEFAULT, memory.read("room.ply", 1001))
+    // The choices of build 38, made on splats that did not show where they were placed, are not read
+    values["upright:2000:tape.ply"] = "zUp"
+    assertEquals(SplatUpright.DEFAULT, memory.read("tape.ply", 2000))
+    assertTrue(memory.keyOf("tape.ply", 2000).startsWith(SplatUprightMemory.PREFIX))
   }
 }

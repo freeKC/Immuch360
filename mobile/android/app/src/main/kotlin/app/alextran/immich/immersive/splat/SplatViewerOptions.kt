@@ -11,13 +11,25 @@ import kotlinx.serialization.json.JsonObject
  * how the glide, Reset and Turn upright move the splat once it is made: through its Transform (the documented way),
  * through the system of the module (SplatSystem.updateSplatTransform, public in the module), or both, should the
  * splat not follow its Transform in the headset. [revealDelayMs] is the pause between the load event and the splat
- * shown (500 ms in Meta's SplatSample). Pure JVM, tested by SplatViewerOptionsTest.
+ * shown (500 ms in Meta's SplatSample). [frame] says in which frame the poses reach the module: converted to the
+ * frame the module draws in ([Frame.MODULE], SplatModuleFrame, measured on a Quest 3 on 31 October 2026), or as the
+ * viewer computes them in the frame of the SDK ([Frame.SDK], what build 38 did: the splat at the mirror image of its
+ * place), for a session that compares the two. Pure JVM, tested by SplatViewerOptionsTest.
  */
-internal data class SplatViewerOptions(val move: Move = Move.TRANSFORM, val revealDelayMs: Long = 500) {
+internal data class SplatViewerOptions(
+  val move: Move = Move.TRANSFORM,
+  val revealDelayMs: Long = 500,
+  val frame: Frame = Frame.MODULE,
+) {
   enum class Move(val key: String) {
     TRANSFORM("transform"),
     SYSTEM("system"),
     BOTH("both"),
+  }
+
+  enum class Frame(val key: String) {
+    MODULE("module"),
+    SDK("sdk"),
   }
 
   companion object {
@@ -37,6 +49,7 @@ internal data class SplatViewerOptions(val move: Move = Move.TRANSFORM, val reve
       return SplatViewerOptions(
         move = Move.entries.firstOrNull { it.key == root.string("move") } ?: defaults.move,
         revealDelayMs = root.integer("revealDelayMs")?.takeIf { it in 0..10_000 }?.toLong() ?: defaults.revealDelayMs,
+        frame = Frame.entries.firstOrNull { it.key == root.string("frame") } ?: defaults.frame,
       )
     }
   }

@@ -25,24 +25,27 @@ internal class SplatBounds(val low: DoubleArray, val high: DoubleArray) {
 
 /**
  * Which axis of the file is up in the world, the rotation of the splat about the x axis of the Spatial SDK by
- * [pitchDegrees]: Quaternion(pitchDegrees, 0f, 0f). Turn upright goes to the [next] one, and the choice is remembered
- * for the file ([SplatUprightMemory]).
+ * [pitchDegrees]: Quaternion(pitchDegrees, 0f, 0f), applied to the file as the splat module shows it (z mirrored,
+ * SplatModuleFrame) and handed to the module converted. Turn upright goes to the [next] one, and the choice is
+ * remembered for the file ([SplatUprightMemory]).
  *
- * [Z_UP] is the rotation of Meta's SplatSample (MIT, Meta-Spatial-SDK-Samples, SplatSampleActivity: "-90 degrees on X
- * axis converts from original Splat coordinate space to Spatial SDK space"), so the first one a file shows in. How
- * the module maps the axes of an SPZ (right, up, back, by its specification) and of a PLY (often right, down,
- * forward, as the captures of COLMAP) is not documented: the axes of make_splat_fixtures.py tell it in the headset.
+ * Measured on a Quest 3 on 31 October 2026 with the axes of make_splat_fixtures.py and the captures of InnerScene, the
+ * same for a PLY and an SPZ: a file whose y is up shows upright at 0 degrees, one whose z is up at +90 (Meta's
+ * SplatSample turns its own files by -90 degrees without the conversion, which is +90 with it), one whose y is down
+ * at 180. [DEFAULT] is [Y_DOWN], the axes of a 3D Gaussian Splatting training (those of COLMAP, right, down, forward),
+ * which every real capture of the owner's kit has, in PLY and in SPZ alike; the synthetic files of
+ * make_splat_fixtures.py have y up, one Turn upright away.
  */
 internal enum class SplatUpright(val key: String, val pitchDegrees: Float) {
   Y_UP("yUp", 0f),
-  Z_UP("zUp", -90f),
+  Z_UP("zUp", 90f),
   Y_DOWN("yDown", 180f);
 
   /** The orientation after this one: Y up, Z up, Y down, then Y up again */
   fun next(): SplatUpright = entries[(ordinal + 1) % entries.size]
 
   companion object {
-    val DEFAULT = Z_UP
+    val DEFAULT = Y_DOWN
 
     fun of(key: String?): SplatUpright? = entries.firstOrNull { it.key == key }
   }
@@ -50,21 +53,24 @@ internal enum class SplatUpright(val key: String, val pitchDegrees: Float) {
 
 /**
  * Where a splat goes when it opens, at Reset and at Turn upright (lot S5): from its bounds, an object (under
- * [OBJECT_LIMIT] on its largest side) has its centre in front of the user, [OBJECT_GAP] plus half its size away and
- * [OBJECT_DROP] under the eyes; a scene (a room, a street) has its centre right where the user stands, [SCENE_DROP]
- * under the eyes, so that the user is inside it. A splat without positions read (a version 4 SPZ) has the origin of
- * its file [UNKNOWN_DISTANCE] ahead, [SCENE_DROP] under the eyes.
+ * [OBJECT_LIMIT] on its largest side) has its centre in front of the user, [OBJECT_GAP] plus half its size away, at
+ * the height of the eyes less [OBJECT_DROP] (none: the info panel, 0.3 m under the eyes, would cover it otherwise); a
+ * scene (a room, a street) has its centre right where the user stands, [SCENE_DROP] under the eyes, so that the user
+ * is inside it. A splat without positions read has the origin of its file [UNKNOWN_DISTANCE] ahead, [SCENE_DROP]
+ * under the eyes.
  *
  * The frame is that of the anchor of the splat (SceneNavigator.anchorInSdk at the head, its yaw only): the numbers of
- * the Spatial SDK, x to the right, y up, z ahead. The viewer rotates the centre of the bounds by the orientation with
- * the quaternion of the SDK itself (Quaternion(pitchDegrees, 0f, 0f) times the centre), then [localPosition] gives the
- * position of the entity in that frame, and the root of the navigator, which carries the glide, puts it in the world.
- * Pure JVM, tested by SplatPlacementTest.
+ * the Spatial SDK, x to the right, y up, z ahead. The viewer takes the centre of the bounds as the splat module shows
+ * the file (z mirrored, SplatModuleFrame.filePoint), rotates it by the orientation with the quaternion of the SDK
+ * itself (Quaternion(pitchDegrees, 0f, 0f) times that centre), then [localPosition] gives the position of the entity
+ * in that frame, and the root of the navigator, which carries the glide, puts it in the world. The pose goes to the
+ * module converted, once (SplatStage). Checked on a Quest 3 on 31 October 2026: the measuring tape and the cactus
+ * upright in the middle of the gaze, the room around the user. Pure JVM, tested by SplatPlacementTest.
  */
 internal object SplatPlacement {
   const val OBJECT_LIMIT = 2.5
   const val OBJECT_GAP = 0.6
-  const val OBJECT_DROP = 0.2
+  const val OBJECT_DROP = 0.0
   const val SCENE_DROP = 0.3
   const val UNKNOWN_DISTANCE = 2.0
   const val LOW_PERCENTILE = 5
@@ -123,10 +129,16 @@ internal interface SplatUprightStore {
 
 /**
  * The orientation the user chose for a file with Turn upright, by its name and its size (lot S5): the same file found
- * again, on a share or picked from the headset, opens upright at once
+ * again, on a share or picked from the headset, opens upright at once. The keys start with [PREFIX]: the choices of
+ * the builds before 39 ("upright:") were made on splats that did not show where they were placed, and are left
+ * unread
  */
 internal class SplatUprightMemory(private val store: SplatUprightStore) {
-  fun keyOf(name: String, fileBytes: Long): String = "upright:$fileBytes:$name"
+  fun keyOf(name: String, fileBytes: Long): String = "$PREFIX$fileBytes:$name"
+
+  companion object {
+    const val PREFIX = "splatUp:"
+  }
 
   fun read(name: String, fileBytes: Long): SplatUpright = SplatUpright.of(store.read(keyOf(name, fileBytes))) ?: SplatUpright.DEFAULT
 
