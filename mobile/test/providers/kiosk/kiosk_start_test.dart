@@ -80,6 +80,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async {
     final failure = this.failure;
     if (failure != null) {

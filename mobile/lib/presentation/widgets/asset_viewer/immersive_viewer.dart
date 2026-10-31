@@ -52,7 +52,9 @@ import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/unedited_frame.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
+import 'package:immich_mobile/domain/services/immersive_watch.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
@@ -61,6 +63,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
@@ -84,6 +87,7 @@ import 'package:immich_mobile/providers/network/network_connections.provider.dar
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
+import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
 import 'package:logging/logging.dart';
@@ -176,6 +180,10 @@ class ImmersiveRequest {
 /// [immersiveOpeningLabels]): the viewer finds such a panorama by itself, here or later with previous and next.
 ///
 /// [kiosk] is the JSON of the kiosk mode (see KioskOptions.toJson), null for any other opening.
+///
+/// [watchMinDurationMs] is the threshold of "Remember where I stopped" (see ImmersiveWatch), -1 off and for the kiosk:
+/// a film plays once and the viewer reports where it is. [startNotice] is said once the video plays ("Resumed at
+/// 42:10"), null for nothing.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -186,6 +194,8 @@ Future<void> openImmersiveRequest(
   bool sharpFlatScreens = true,
   bool gaussianSplats = true,
   String? kiosk,
+  int watchMinDurationMs = -1,
+  String? startNotice,
 }) => api.open(
   request.url,
   request.headers,
@@ -205,6 +215,16 @@ Future<void> openImmersiveRequest(
   sourceNotice: request.sourceNotice?.message(StaticTranslations.instance),
   sourceRefusal: request.sourceRefusal?.message(StaticTranslations.instance),
   gaussianSplats: gaussianSplats,
+  watchMinDurationMs: watchMinDurationMs,
+  startNotice: startNotice,
+);
+
+/// The watch progress of the films of the immersive viewer, read from the providers (see ImmersiveWatch): before the
+/// first await of an opener
+ImmersiveWatch readImmersiveWatch(WidgetRef ref) => ImmersiveWatch(
+  store: ref.read(watchProgressProvider.notifier),
+  rule: ref.read(watchRuleProvider),
+  noticeText: (position) => StaticTranslations.instance.video_resumed_at(position: position.format()),
 );
 
 /// The labels an opening of the immersive viewer goes with: [stereoLabels], the translated texts of a panorama
@@ -219,8 +239,15 @@ Map<String, String> immersiveOpeningLabels(Map<String, String> stereoLabels) => 
 };
 
 /// Shows [request] in place of the media of the immersive viewer that asked for another one with [requestId] (see
-/// [ImmersiveAdjacentRequest.show]), through [api]. True when the viewer shows it; never starts the viewer.
-Future<bool> showImmersiveRequest(ImmersiveApi api, int requestId, ImmersiveRequest request) => api.showAdjacent(
+/// [ImmersiveAdjacentRequest.show]), through [api]. True when the viewer shows it; never starts the viewer. A video
+/// starts at [startPosition], where a film was left, with [startNotice] said once it plays.
+Future<bool> showImmersiveRequest(
+  ImmersiveApi api,
+  int requestId,
+  ImmersiveRequest request, {
+  Duration startPosition = Duration.zero,
+  String? startNotice,
+}) => api.showAdjacent(
   requestId,
   request.url,
   request.isVideo,
@@ -232,6 +259,8 @@ Future<bool> showImmersiveRequest(ImmersiveApi api, int requestId, ImmersiveRequ
   request.stereoPair,
   sourceNotice: request.sourceNotice?.message(StaticTranslations.instance),
   sourceRefusal: request.sourceRefusal?.message(StaticTranslations.instance),
+  startPositionMs: math.max(0, startPosition.inMilliseconds),
+  startNotice: startNotice,
 );
 
 // Decoded width of a raw photo before it is stitched: one pixel under the largest texture, as for the panorama viewer
@@ -442,6 +471,7 @@ class ImmersiveAssetResolver {
     this.raw,
     this.exifOf,
     this.forcedSource,
+    this.watch,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
@@ -462,10 +492,14 @@ class ImmersiveAssetResolver {
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
+      watch: readImmersiveWatch(ref),
     );
   }
 
   final ImmersiveApi api;
+
+  /// Where the films resume and where the viewer's progress goes (see ImmersiveWatch); null to keep nothing
+  final ImmersiveWatch? watch;
 
   /// The exif of an asset as the database holds it, for the size of its file once the server edited it (see
   /// [uneditedFrameOf]); null to guess an edited asset from its name and its GPano crop only
@@ -733,18 +767,25 @@ class ImmersiveAssetResolver {
     return file;
   }
 
-  /// Opens [request] in the viewer as the opening [openingId], see [openImmersiveRequest]
-  Future<void> open(ImmersiveRequest request, {required int openingId, Duration startPosition = Duration.zero}) =>
-      openImmersiveRequest(
-        api,
-        request,
-        stereoLabels: stereoLabels,
-        openingId: openingId,
-        startPosition: startPosition,
-        reverseThumbstickTurn: reverseThumbstickTurn,
-        sharpFlatScreens: sharpFlatScreens,
-        gaussianSplats: gaussianSplats,
-      );
+  /// Opens [request] in the viewer as the opening [openingId], see [openImmersiveRequest]: a video from
+  /// [startPosition], with [startNotice] once it plays
+  Future<void> open(
+    ImmersiveRequest request, {
+    required int openingId,
+    Duration startPosition = Duration.zero,
+    String? startNotice,
+  }) => openImmersiveRequest(
+    api,
+    request,
+    stereoLabels: stereoLabels,
+    openingId: openingId,
+    startPosition: startPosition,
+    reverseThumbstickTurn: reverseThumbstickTurn,
+    sharpFlatScreens: sharpFlatScreens,
+    gaussianSplats: gaussianSplats,
+    watchMinDurationMs: watch?.minDurationMs ?? -1,
+    startNotice: startNotice,
+  );
 }
 
 /// Stops the in-app video player, then opens the asset in the immersive viewer (see [ImmersiveAssetResolver.resolve]),
@@ -781,9 +822,16 @@ Future<void> openImmersiveViewer(
   // The viewer carries on from where the in-app player is, unless it reached the end: read right before the player
   // stops, the video playing on until then
   final playback = asset.isVideo ? ref.read(videoPlayerProvider(asset.id)) : null;
-  final startPosition = playback == null || playback.status == VideoPlaybackStatus.completed
+  final inAppPosition = playback == null || playback.status == VideoPlaybackStatus.completed
       ? Duration.zero
       : playback.position;
+  // A film the in-app player did not play yet starts where it was left, and says so (see ImmersiveWatch)
+  final start = resolver.watch?.startFrom(
+    inAppPosition,
+    key: asset.isVideo ? WatchKey.ofAsset(asset) : null,
+    duration: asset.durationMs == null ? null : asset.duration,
+  );
+  final startPosition = start?.position ?? inAppPosition;
 
   // Stopped before the slow steps (the copy on the device, the GPano tags, the probe of a video) rather than once the
   // viewer opens: the video would play on meanwhile, past where the viewer starts. Nothing plays or buffers behind the
@@ -809,7 +857,7 @@ Future<void> openImmersiveViewer(
       player: player,
     );
     openingId = session.start(navigator);
-    await resolver.open(request, openingId: openingId, startPosition: startPosition);
+    await resolver.open(request, openingId: openingId, startPosition: startPosition, startNotice: start?.notice);
   } catch (_) {
     if (openingId != null) {
       session.cancel(openingId);
@@ -1013,9 +1061,16 @@ Future<void> _openFlatScreenVideo(
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
   // Opened with "Open with" and not in the library: its temporary copy (see AssetPage)
   final viewIntentPath = timeline.origin == TimelineOrigin.deepLink ? ref.read(viewIntentFilePathProvider) : null;
-  // The viewer carries on from where the in-app player is, unless it reached the end
+  // The viewer carries on from where the in-app player is, unless it reached the end; a film the in-app player did not
+  // play yet starts where it was left
   final playback = ref.read(videoPlayerProvider(asset.id));
   final startPosition = playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position;
+  final watchKey = WatchKey.ofAsset(asset);
+  final start = resolver.watch?.startFrom(
+    startPosition,
+    key: watchKey,
+    duration: asset.durationMs == null ? null : asset.duration,
+  );
 
   // Stopped before the slow steps (the copy on the device, the probe of the video), as for the sphere
   await player.suspendForExternalPlayer();
@@ -1026,8 +1081,15 @@ Future<void> _openFlatScreenVideo(
     if (notice != null) {
       onSourceNotice?.call(notice);
     }
-    openingId = session.start(SingleVideoImmersiveNavigator(request: request, player: player));
-    await resolver.open(request, openingId: openingId, startPosition: startPosition);
+    openingId = session.start(
+      SingleVideoImmersiveNavigator(request: request, player: player, watch: resolver.watch, watchKey: watchKey),
+    );
+    await resolver.open(
+      request,
+      openingId: openingId,
+      startPosition: start?.position ?? startPosition,
+      startNotice: start?.notice,
+    );
   } catch (_) {
     if (openingId != null) {
       session.cancel(openingId);
@@ -1043,7 +1105,7 @@ Future<void> _openFlatScreenVideo(
 /// previous or next, which the viewer does not ask for anyway, and once it closes on [request], [player], the page's
 /// own player of that video, takes it back where the viewer left it, paused, as after the sphere.
 class SingleVideoImmersiveNavigator implements ImmersiveNavigator {
-  SingleVideoImmersiveNavigator({required this.request, this.player});
+  SingleVideoImmersiveNavigator({required this.request, this.player, this.watch, this.watchKey});
 
   /// What the viewer opened
   final ImmersiveRequest request;
@@ -1051,8 +1113,19 @@ class SingleVideoImmersiveNavigator implements ImmersiveNavigator {
   /// The page's own player of the video, null when there is none to give it back to
   final VideoPlayerNotifier? player;
 
+  /// Where the progress of the film goes, under [watchKey] (see ImmersiveWatch); null to keep nothing
+  final ImmersiveWatch? watch;
+  final WatchKey? watchKey;
+
   @override
   Future<bool> showAdjacent(ImmersiveAdjacentRequest adjacent) async => false;
+
+  @override
+  void onProgress(String url, int positionMs, int durationMs) {
+    if (request.isShownAt(url)) {
+      watch?.record(watchKey, positionMs, durationMs);
+    }
+  }
 
   @override
   void onClosed(String url, ImmersiveStereoLayout stereoLayout, ImmersiveSphereCoverage coverage, int positionMs) {
@@ -1082,12 +1155,14 @@ Future<void> openImmersiveUrl(
   required ImmersiveRequest request,
   required Map<String, String> stereoLabels,
   Duration startPosition = Duration.zero,
+  String? startNotice,
   VideoPlayerNotifier? player,
   ImmersiveNavigator? navigator,
 }) async {
   // Read before the first await: the page may be gone by then
   final api = ref.read(immersiveApiProvider);
   final session = ref.read(immersiveSessionProvider);
+  final watchMinDurationMs = ref.read(watchRuleProvider).minDurationMs;
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   final gaussianSplats = ref.read(appConfigProvider).viewer.gaussianSplats;
@@ -1103,6 +1178,8 @@ Future<void> openImmersiveUrl(
       reverseThumbstickTurn: reverseThumbstickTurn,
       sharpFlatScreens: sharpFlatScreens,
       gaussianSplats: gaussianSplats,
+      watchMinDurationMs: watchMinDurationMs,
+      startNotice: startNotice,
     );
   } catch (_) {
     session.cancel(openingId);
@@ -1224,7 +1301,21 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
         _log.warning('Skipping ${found.item.name} in the immersive viewer: $error');
         continue;
       }
-      final shown = await request.show((requestId) => showImmersiveRequest(_resolver.api, requestId, resolved));
+      // A film starts where it was left (see ImmersiveWatch)
+      final watch = _resolver.watch;
+      final item = found.item;
+      final start = item.isVideo
+          ? watch?.startOf(WatchKey.ofAsset(item), duration: item.durationMs == null ? null : item.duration)
+          : null;
+      final shown = await request.show(
+        (requestId) => showImmersiveRequest(
+          _resolver.api,
+          requestId,
+          resolved,
+          startPosition: start ?? Duration.zero,
+          startNotice: start == null ? null : watch?.noticeOf(start),
+        ),
+      );
       if (shown) {
         // Only once the viewer said it shows it: what it reports on closing goes to the asset it shows
         _previous = _current;
@@ -1305,6 +1396,14 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
       }
     }
     return [for (final asset in assets) isCapable(asset, flagged)];
+  }
+
+  @override
+  void onProgress(String url, int positionMs, int durationMs) {
+    final shown = _shownAt(url);
+    if (shown != null && shown.asset.isVideo) {
+      _resolver.watch?.record(WatchKey.ofAsset(shown.asset), positionMs, durationMs);
+    }
   }
 
   @override
@@ -1417,6 +1516,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
     this.fileTimeout = immersiveFolderFileTimeout,
     this._raw,
     this._connections,
+    this._watch,
   }) : _items = List.unmodifiable(items),
        _start = index,
        _startRequest = request,
@@ -1439,6 +1539,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
     player: player,
     raw: RawImmersiveMedia.read(ref, forAssets: false),
     connections: ref.read(networkConnectionsProvider),
+    watch: readImmersiveWatch(ref),
   );
 
   /// Longest wait for what a file declares, see [immersiveFolderFileTimeout]
@@ -1453,6 +1554,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
   final VideoPlayerNotifier? _player;
   final RawImmersiveMedia? _raw;
   final NetworkConnections? _connections;
+  final ImmersiveWatch? _watch;
   int _index;
   // The file shown before the current one, see [_indexAt]
   int? _previous;
@@ -1512,7 +1614,18 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
         _log.warning('Could not prepare ${_items[found.index].entry.name} for the immersive viewer', error, stackTrace);
         return false;
       }
-      final shown = await request.show((requestId) => showImmersiveRequest(_api, requestId, shownRequest));
+      // A film starts where it was left (see ImmersiveWatch)
+      final entry = _items[found.index].entry;
+      final start = entry.isVideo ? _watch?.startOf(WatchKey.ofEntry(entry), duration: _durationOf(entry)) : null;
+      final shown = await request.show(
+        (requestId) => showImmersiveRequest(
+          _api,
+          requestId,
+          shownRequest,
+          startPosition: start ?? Duration.zero,
+          startNotice: start == null ? null : _watch?.noticeOf(start),
+        ),
+      );
       if (shown) {
         // Only once the viewer said it shows it: what it reports on closing goes to the file it shows
         _previous = _index;
@@ -1585,6 +1698,21 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
       // Skipped: the read goes on, and what it finds is kept for the next search
       _log.info('${item.entry.name} took too long to read, skipped');
       return null;
+    }
+  }
+
+  /// The duration a media server tells for [entry], null when it tells none
+  static Duration? _durationOf(NetworkEntry entry) {
+    final durationMs = entry.durationMs;
+    return durationMs == null ? null : Duration(milliseconds: durationMs);
+  }
+
+  @override
+  void onProgress(String url, int positionMs, int durationMs) {
+    final index = _indexAt(url);
+    final entry = index == null ? null : _items[index].entry;
+    if (entry != null && entry.isVideo) {
+      _watch?.record(WatchKey.ofEntry(entry), positionMs, durationMs);
     }
   }
 

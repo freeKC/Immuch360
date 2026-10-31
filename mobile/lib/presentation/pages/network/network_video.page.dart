@@ -781,15 +781,16 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         request: request,
         player: player,
       );
-      // The viewer carries on from where the page's player is, unless it reached the end: read right before
-      // openImmersiveUrl stops the player, nothing awaited in between
-      final playback = ref.read(videoPlayerProvider(_playerKey));
+      // The viewer carries on from where the page's player is, unless it reached the end, and a film the page did not
+      // play yet from where it was left: read right before openImmersiveUrl stops the player, nothing awaited in between
+      final start = _immersiveStart(video);
       try {
         await openImmersiveUrl(
           ref,
           request: request,
           stereoLabels: stereoLabels,
-          startPosition: playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position,
+          startPosition: start.position,
+          startNotice: start.notice,
           player: player,
           navigator: navigator,
         );
@@ -863,6 +864,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
+  /// Where the immersive viewer starts [video]: where the page's player is, unless it reached the end, else where a film
+  /// was left, with its notice (see ImmersiveWatch)
+  ({Duration position, String? notice}) _immersiveStart(_Video video) {
+    final playback = ref.read(videoPlayerProvider(_playerKey));
+    final durationMs = video.entry.durationMs;
+    return readImmersiveWatch(ref).startFrom(
+      playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position,
+      key: WatchKey.ofEntry(video.entry),
+      duration: durationMs == null ? null : Duration(milliseconds: durationMs),
+    );
+  }
+
   /// How [video] packs its eyes when its name says it holds two (see guessFlatStereoFormat), its frame told by the
   /// player once known; null for any other video
   FlatStereoFormat? _flatFormat(_Video video) => guessFlatStereoFormat(
@@ -888,15 +901,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     );
     final player = _notifier;
     // Read right before openImmersiveUrl stops the player, nothing awaited in between
-    final playback = ref.read(videoPlayerProvider(_playerKey));
+    final start = _immersiveStart(video);
     try {
       await openImmersiveUrl(
         ref,
         request: request,
         stereoLabels: stereoLabels,
-        startPosition: playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position,
+        startPosition: start.position,
+        startNotice: start.notice,
         player: player,
-        navigator: SingleVideoImmersiveNavigator(request: request, player: player),
+        navigator: SingleVideoImmersiveNavigator(
+          request: request,
+          player: player,
+          watch: readImmersiveWatch(ref),
+          watchKey: WatchKey.ofEntry(video.entry),
+        ),
       );
     } catch (error) {
       _log.warning('Could not open $_name in 3D: $error');

@@ -99,6 +99,10 @@ abstract interface class ImmersiveNavigator {
   /// The viewer closed on the media at [url], the one it showed last, with [stereoLayout] and [coverage] (the user may
   /// have corrected them there), a video at [positionMs] (0 for a photo)
   void onClosed(String url, ImmersiveStereoLayout stereoLayout, ImmersiveSphereCoverage coverage, int positionMs);
+
+  /// The film at [url] is at [positionMs] of [durationMs] in the viewer (see ImmersiveEvents.progress): kept for the
+  /// media shown there, as the in-app player keeps it (see ImmersiveWatch)
+  void onProgress(String url, int positionMs, int durationMs);
 }
 
 /// Takes the events of the immersive viewer (see [ImmersiveEvents]) and hands them to the navigator of the media it
@@ -241,6 +245,20 @@ class ImmersiveSession implements ImmersiveEvents {
       navigator.onClosed(url, stereoLayout, coverage, positionMs);
     } catch (error, stackTrace) {
       _log.warning('Could not follow the closing of the immersive viewer', error, stackTrace);
+    }
+  }
+
+  @override
+  void progress(int openingId, String url, int positionMs, int durationMs) {
+    if (!isCurrent(openingId)) {
+      // A viewer gone already: what it played was told before its closing
+      _log.fine('The immersive viewer of opening $openingId told where its film is, but it is no longer followed');
+      return;
+    }
+    try {
+      _opening?.navigator?.onProgress(url, positionMs, durationMs);
+    } catch (error, stackTrace) {
+      _log.warning('Could not keep where the film of the immersive viewer is', error, stackTrace);
     }
   }
 }

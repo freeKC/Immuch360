@@ -74,6 +74,24 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     }
 
     /**
+     * Tells Flutter where the film at [url] is in the viewer of [openingId]: [positionMs] of [durationMs] (see
+     * [WatchReport]), so that the app keeps it as its own player does, and the film resumes there next time. Flutter
+     * drops the event of an opening it no longer follows; without an engine for the app UI the event is dropped.
+     */
+    fun notifyProgress(openingId: Long, url: String, positionMs: Long, durationMs: Long) {
+      onMainThread {
+        val current = events
+        if (current == null) {
+          Log.i(TAG, "no Flutter engine to tell where the film is")
+          return@onMainThread
+        }
+        current.progress(openingId, url, positionMs, durationMs) { result ->
+          result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the progress event", it) }
+        }
+      }
+    }
+
+    /**
      * Asks Flutter, under [requestId], for the media [step] places away from the one shown (+1 next, -1 previous) in
      * the viewer of [openingId]. [stereoLayout] and [coverage] are what the viewer shows now, which the app keeps for
      * that media before moving on. [callback] runs on the main thread with true once Flutter found one and showed it
@@ -131,7 +149,9 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening. [sourceNotice] is what to tell of the
    * file Flutter chose for a video, decodability first, and [sourceRefusal] what to say instead of playing a video
    * nothing the server has decodes on the headset; null for nothing. [gaussianSplats] is the "Gaussian splats" setting
-   * (lot S5): off, the viewer does not register the splat module.
+   * (lot S5): off, the viewer does not register the splat module. [watchMinDurationMs] is the threshold of "Remember
+   * where I stopped", -1 off (see [WatchReport]), and [startNotice] what to say once the video plays ("Resumed at
+   * 42:10"), null for nothing.
    */
   override fun open(
     url: String,
@@ -152,6 +172,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     sourceNotice: String?,
     sourceRefusal: String?,
     gaussianSplats: Boolean,
+    watchMinDurationMs: Long,
+    startNotice: String?,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -162,7 +184,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
         "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}, notice=${sourceNotice != null}, " +
-        "refused=${sourceRefusal != null}, gaussian splats=$gaussianSplats",
+        "refused=${sourceRefusal != null}, gaussian splats=$gaussianSplats, films from $watchMinDurationMs ms, " +
+        "start notice=${startNotice != null}",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -183,6 +206,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         sourceNotice,
         sourceRefusal,
         gaussianSplats,
+        watchMinDurationMs,
+        startNotice,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }
@@ -193,7 +218,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * Pigeon calls a host API there (no task queue), the thread the viewer lives on. Called from another thread, the
    * media is refused rather than shown from the wrong thread. [fallbackUrl] is the transcoded stream of a video,
    * [rawProjection] the calibration of a raw dual fisheye video and [stereoPair] the two eyes of an Apple spatial
-   * photo, as for [open], with [sourceNotice] and [sourceRefusal].
+   * photo, as for [open], with [sourceNotice] and [sourceRefusal]; a video starts at [startPositionMs], where a film
+   * was left, with [startNotice] said once it plays.
    */
   override fun showAdjacent(
     requestId: Long,
@@ -207,6 +233,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     stereoPair: String?,
     sourceNotice: String?,
     sourceRefusal: String?,
+    startPositionMs: Long,
+    startNotice: String?,
   ): Boolean {
     if (Looper.myLooper() != Looper.getMainLooper()) {
       Log.e(TAG, "showAdjacent called off the main thread, request $requestId refused")
@@ -216,7 +244,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       TAG,
       "adjacent media for request $requestId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
         "fallback=${fallbackUrl != null}, raw=${rawProjection != null}, stereo pair=${stereoPair != null}, " +
-        "notice=${sourceNotice != null}, refused=${sourceRefusal != null}",
+        "notice=${sourceNotice != null}, refused=${sourceRefusal != null}, start=$startPositionMs ms",
     )
     return ImmersiveViewerActivity.showAdjacent(
       requestId,
@@ -230,6 +258,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       stereoPair,
       sourceNotice,
       sourceRefusal,
+      startPositionMs,
+      startNotice,
     )
   }
 }

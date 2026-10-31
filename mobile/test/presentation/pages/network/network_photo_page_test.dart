@@ -80,6 +80,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -103,6 +105,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? stereoPair, {
     String? sourceNotice,
     String? sourceRefusal,
+    int startPositionMs = 0,
+    String? startNotice,
   }) async {
     shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     return true;
