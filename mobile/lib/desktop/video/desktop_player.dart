@@ -138,6 +138,9 @@ abstract class PlaybackEngine {
   /// mpv waits for its cache (paused-for-cache)
   ValueListenable<bool> get buffering;
 
+  /// How far the file is loaded in mpv's cache, a position in the file (demuxer-cache-time)
+  ValueListenable<Duration> get buffered;
+
   /// The end of the file was reached (and the file does not loop)
   ValueListenable<bool> get completed;
 
@@ -165,6 +168,10 @@ abstract class PlaybackEngine {
   Future<void> stop();
   Future<void> seek(Duration position);
   Future<void> setRate(double rate);
+
+  /// After a stall, mpv waits for [wait] of media in its cache before it plays on (cache-pause-wait): what the link of
+  /// the video asks (see linkTargetMs)
+  Future<void> setResumeWait(Duration wait);
 
   /// From 0 to 1
   Future<void> setVolume(double volume);
@@ -439,6 +446,7 @@ class DesktopPlayer implements PlaybackEngine {
   final _duration = ValueNotifier(Duration.zero);
   final _playing = ValueNotifier(false);
   final _buffering = ValueNotifier(false);
+  final _buffered = ValueNotifier(Duration.zero);
   final _completed = ValueNotifier(false);
   final _textureLost = ValueNotifier(false);
   final _videoSize = ValueNotifier<VideoFrameSize?>(null);
@@ -465,6 +473,9 @@ class DesktopPlayer implements PlaybackEngine {
   ValueListenable<bool> get playing => _playing;
   @override
   ValueListenable<bool> get buffering => _buffering;
+
+  @override
+  ValueListenable<Duration> get buffered => _buffered;
   @override
   ValueListenable<bool> get completed => _completed;
   @override
@@ -487,6 +498,7 @@ class DesktopPlayer implements PlaybackEngine {
       stream.duration.listen((value) => _duration.value = value),
       stream.playing.listen((value) => _playing.value = value),
       stream.buffering.listen((value) => _buffering.value = value),
+      stream.buffer.listen((value) => _buffered.value = value),
       stream.completed.listen((value) => _completed.value = value),
       stream.videoParams.listen((params) {
         final rotated = params.rotate == 90 || params.rotate == 270;
@@ -629,6 +641,10 @@ class DesktopPlayer implements PlaybackEngine {
 
   @override
   Future<void> setRate(double rate) => _player.setRate(rate);
+
+  @override
+  Future<void> setResumeWait(Duration wait) =>
+      _set('cache-pause-wait', (wait.inMilliseconds / 1000).toStringAsFixed(1));
 
   @override
   Future<void> setVolume(double volume) => _player.setVolume((volume.clamp(0, 1) * 100).toDouble());

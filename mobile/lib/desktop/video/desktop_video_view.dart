@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/video/desktop_video_sources.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
@@ -54,6 +55,7 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
       pool: widget.pool ?? desktopPlayerPool,
       label: 'video view',
       resolve: widget.resolve ?? (_playable ? desktopAppVideoResolver(ref) : _unavailable),
+      linkOf: widget.resolve == null ? desktopAppVideoLink(ref) : null,
     );
     // After the first frame, as the platform view calls back once it exists
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -98,6 +100,15 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
       ),
     );
   }
+}
+
+/// What the app's media bridge measures of the reads of a video it serves (see LocalMediaBridge.trafficOf)
+DesktopVideoLinkOf desktopAppVideoLink(WidgetRef ref) {
+  final bridge = ref.read(mediaBridgeProvider);
+  return (resource) {
+    final url = Uri.tryParse(resource);
+    return bridge is LocalMediaBridge && url != null ? bridge.trafficOf(url) : null;
+  };
 }
 
 /// What the app's players are given for a source: through the app's media bridge and the server the app uses (see
