@@ -125,6 +125,47 @@ class SplatHeaderTest {
   }
 
   @Test
+  fun `a PLY the module was never seen to read is refused, harmonics past degree 3, or values not stored as floats`() {
+    // Measured on the Quest 3 (31 October 2026): degrees 0 to 3, floats or doubles. Anything else could abort it
+    for ((rest, degree) in listOf(0 to 0, 9 to 1, 24 to 2, 45 to 3)) {
+      assertEquals("$rest", degree, (probePly(rest = rest) as SplatProbe.Ply).shDegree)
+    }
+    val doubles = mapOf("x" to "double", "rot_0" to "double", "f_rest_7" to "double")
+    assertEquals(3, (probePly(rest = 45, types = doubles) as SplatProbe.Ply).shDegree)
+    // Degree 4 (72 coefficients), and counts that are no degree
+    for (rest in listOf(72, 12, 3, 46)) {
+      assertEquals("$rest", SplatFileProblem.UNSUPPORTED_PLY, (probePly(rest = rest) as SplatProbe.Refused).problem)
+    }
+    // Rotations, colours or harmonics as bytes or integers
+    val types = listOf("rot_0" to "uchar", "rot_3" to "ushort", "f_dc_1" to "uchar", "f_rest_4" to "uchar", "f_dc_0" to "int")
+    for ((name, type) in types) {
+      assertEquals(
+        "$name $type",
+        SplatFileProblem.UNSUPPORTED_PLY,
+        (probePly(rest = 9, types = mapOf(name to type)) as SplatProbe.Refused).problem,
+      )
+    }
+  }
+
+  @Test
+  fun `an SPZ whose fixed point positions cannot be read is damaged`() {
+    // 1 to 23 fractional bits fit a 24 bit position; 1 shl 32 is 1 on the JVM, which put a splat 4 096 times too far
+    for (bits in listOf(1, 12, 23)) {
+      val head = SplatHeader.probe(gzip(spzHeader(2, fractional = bits)), 100) as SplatProbe.Spz
+      assertEquals("$bits", bits, head.fractionalBits)
+    }
+    for ((version, bits) in listOf(2 to 0, 2 to 24, 2 to 32, 3 to 0, 3 to 40)) {
+      assertEquals(
+        "version $version, $bits bits",
+        SplatFileProblem.DAMAGED,
+        (SplatHeader.probe(gzip(spzHeader(version, fractional = bits)), 100) as SplatProbe.Refused).problem,
+      )
+    }
+    // Version 1 stores its positions as float16: its header may say anything, the rewrite gives 12
+    assertEquals(0, (SplatHeader.probe(gzip(spzHeader(1, fractional = 0)), 100) as SplatProbe.Spz).fractionalBits)
+  }
+
+  @Test
   fun `anything else is no splat`() {
     for (bytes in listOf(ByteArray(0), "hello".toByteArray(), ByteArray(100) { it.toByte() })) {
       assertEquals(SplatFileProblem.NOT_A_SPLAT, (SplatHeader.probe(bytes, 100) as SplatProbe.Refused).problem)
@@ -188,10 +229,24 @@ class SplatHeaderTest {
       (0 until 4).joinToString("") { "property float rot_$it\n" } +
       "property float nx\nproperty float ny\nproperty float nz\n"
 
-  private fun spzHeader(version: Int, count: Int = 10): ByteArray {
+  private fun spzHeader(version: Int, count: Int = 10, fractional: Int = 12): ByteArray {
     val buffer = ByteBuffer.allocate(16 + 64).order(ByteOrder.LITTLE_ENDIAN)
-    buffer.putInt(SplatHeader.SPZ_MAGIC).putInt(version).putInt(count).put(0).put(12).put(0).put(0)
+    buffer.putInt(SplatHeader.SPZ_MAGIC).putInt(version).putInt(count).put(0).put(fractional.toByte()).put(0).put(0)
     return buffer.array()
+  }
+
+  /** The probe of a PLY of 2 gaussians with [rest] f_rest_*, every property a float but those [types] names */
+  private fun probePly(rest: Int, types: Map<String, String> = emptyMap()): SplatProbe {
+    val names =
+      listOf("x", "y", "z", "nx", "ny", "nz", "f_dc_0", "f_dc_1", "f_dc_2") + (0 until rest).map { "f_rest_$it" } +
+        listOf("opacity", "scale_0", "scale_1", "scale_2", "rot_0", "rot_1", "rot_2", "rot_3")
+    val sizes = mapOf("float" to 4, "double" to 8, "uchar" to 1, "ushort" to 2, "int" to 4)
+    val header =
+      "ply\nformat binary_little_endian 1.0\nelement vertex 2\n" +
+        names.joinToString("") { "property ${types[it] ?: "float"} $it\n" } + "end_header\n"
+    val row = names.sumOf { sizes.getValue(types[it] ?: "float") }
+    val bytes = header.toByteArray(Charsets.US_ASCII) + ByteArray(2 * row)
+    return SplatHeader.probe(bytes, bytes.size.toLong())
   }
 
   private fun gzip(bytes: ByteArray): ByteArray {
