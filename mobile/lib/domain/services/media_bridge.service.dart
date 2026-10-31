@@ -2,9 +2,12 @@
 // the players of the app, so that the image widgets, Media3, AVPlayer, the Spatial player and the Quest viewer stream
 // straight from the share with ordinary http URLs and Range requests.
 //
-// Nothing is copied to the device: a body is read from the share in chunks of 1 to 4 MiB, up to 16 MiB ahead of the
-// client so that a share that answers in bursts (SMB on a Freebox Server) does not starve the player, and the reading
-// stops as soon as the client goes away or asks for another part of the file. What is read ahead is bounded for the
+// Nothing is copied to the device: a body is read from the share in chunks of 256 KiB to 4 MiB, each about two seconds
+// of what the share brings (so that a slow share never leaves the player's socket silent for longer than its read
+// timeout, 8 s for Cronet), up to 16 MiB ahead of the client so that a share that answers in bursts (SMB on a Freebox
+// Server) does not starve the player, and the reading stops as soon as the client goes away or asks for another part
+// of the file. What each file's reads bring is measured (see [LocalMediaBridge.trafficOf]): the players of the
+// computers tell their link from it. What is read ahead is bounded for the
 // whole bridge. Only the stat results are kept, for a minute, so that a HEAD followed by a GET, or several players
 // opening the same file, do not ask the share twice.
 //
@@ -25,6 +28,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/http_byte_range.dart';
 import 'package:immich_mobile/domain/services/m2ts.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('MediaBridge');
@@ -46,8 +50,34 @@ class LocalMediaBridge implements MediaBridge {
        _budget = _ReadAheadBudget(maxBufferedSize),
        _stats = _StatCache(ttl: statCacheTtl, maxEntries: statCacheSize, clock: clock ?? DateTime.now);
 
-  static const defaultMinChunkSize = 1024 * 1024;
+  static const defaultMinChunkSize = 256 * 1024;
   static const defaultMaxChunkSize = 4 * 1024 * 1024;
+
+  /// The smallest read of a share that is slow to answer, see [nextChunkSize]
+  static const slowestChunkSize = 128 * 1024;
+
+  /// The time of the share's answers a read is sized for, see [nextChunkSize]
+  static const chunkTime = Duration(seconds: 2);
+
+  /// The size of the read after one of [previous] bytes that brought [read] bytes in [elapsed]: about [chunkTime] of
+  /// what the share brings, between [slowestChunkSize] and [maxChunk], and never more than twice [previous]. A read
+  /// too quick to measure doubles, as the reads of a fast share always did. On 31 October 2026 the bridge read 4 MiB
+  /// at a time from a share at 2 Mbit/s: 17 s of silence for the player, which gave up after 8 s and asked again.
+  static int nextChunkSize({
+    required int previous,
+    required int read,
+    required Duration elapsed,
+    required int maxChunk,
+  }) {
+    final doubled = min(previous * 2, maxChunk);
+    if (read <= 0 || elapsed < const Duration(milliseconds: 50)) {
+      return doubled;
+    }
+    final bytesPerSecond = read * Duration.microsecondsPerSecond / elapsed.inMicroseconds;
+    final sized = (bytesPerSecond * chunkTime.inMicroseconds / Duration.microsecondsPerSecond).round();
+    return sized.clamp(min(slowestChunkSize, doubled), doubled);
+  }
+
   static const defaultReadAheadSize = 16 * 1024 * 1024;
   static const defaultMaxBufferedSize = 32 * 1024 * 1024;
 
@@ -79,6 +109,29 @@ class LocalMediaBridge implements MediaBridge {
   /// The open bodies that stream each file, by source id and path, oldest first: only the latest one reads ahead, and
   /// when it closes the one before it reads ahead again
   final Map<(String, String), List<_BodyReader>> _streams = {};
+
+  /// What the reads of each file brought lately, by source id and path, the files read last at the end
+  final _traffic = <(String, String), ({VideoLinkMeter meter, int? size})>{};
+
+  /// What the reads of the share brought lately for the file of [url], a URL of this bridge, and its size (null when
+  /// the share does not tell it); null for a file not read since the bridge started, or another URL. The players of
+  /// the computers measure their link with it (MediaKitVideoPlayerController).
+  ({VideoLinkMeter meter, int? size})? trafficOf(Uri url) {
+    final target = _target(url);
+    return target == null ? null : _traffic[(target.$1.source.id, target.$2)];
+  }
+
+  /// The meter of the file at [path] of [sourceId], made at its first body
+  VideoLinkMeter _meterOf(String sourceId, String path, int? size) {
+    final key = (sourceId, path);
+    final known = _traffic.remove(key);
+    final meter = known?.meter ?? VideoLinkMeter();
+    _traffic[key] = (meter: meter, size: size ?? known?.size);
+    if (_traffic.length > 32) {
+      _traffic.remove(_traffic.keys.first);
+    }
+    return meter;
+  }
 
   final String _token;
   final _StatCache _stats;
@@ -276,7 +329,14 @@ class LocalMediaBridge implements MediaBridge {
     if (request.method == 'GET' && (end == null || start < end)) {
       // The whole packets of the file that hold the bytes asked of an M2TS file's TS
       final read = m2ts ? m2tsFileRange(start, end!, fileSize!) : (start: start, end: end);
-      final body = reader = _BodyReader(this, fileSystem, path, read.start, read.end);
+      final body = reader = _BodyReader(
+        this,
+        fileSystem,
+        path,
+        read.start,
+        read.end,
+        _meterOf(fileSystem.source.id, path, size),
+      );
       // A client that goes away stops the reading at once, rather than at the next chunk sent
       unawaited(response.done.then<void>((_) => body.close(), onError: (Object _) => body.close()));
       try {
@@ -661,7 +721,7 @@ class _ReadAheadBudget {
 /// ahead from the other streams of its file, and gives it back to the latest one still open when it closes. A shorter
 /// body (a probe of the metadata, a look at a box) reads ahead its own few chunks and leaves the streams alone.
 class _BodyReader {
-  _BodyReader(this._bridge, this._fileSystem, this.path, int start, this.end)
+  _BodyReader(this._bridge, this._fileSystem, this.path, int start, this.end, this._meter)
     : _position = start,
       _next = start,
       _chunkSize = _bridge.minChunkSize,
@@ -674,6 +734,9 @@ class _BodyReader {
   final NetworkFileSystem _fileSystem;
   final String path;
   final int? end;
+
+  /// What the reads of this file bring, see [LocalMediaBridge.trafficOf]
+  final VideoLinkMeter _meter;
 
   String get sourceId => _fileSystem.source.id;
 
@@ -777,12 +840,26 @@ class _BodyReader {
     final offset = _next;
     final generation = _generation;
     _next += size;
+    // The next read doubles until this one says how fast the share brings it (see nextChunkSize)
     _chunkSize = min(_chunkSize * 2, _bridge.maxChunkSize);
+    _meter
+      ..start()
+      ..setWanted(true);
+    final watch = Stopwatch()..start();
     _reading = () async {
       try {
         var bytes = await _fileSystem.readRange(path, offset, size);
         if (bytes.length > size) {
           bytes = Uint8List.sublistView(bytes, 0, size);
+        }
+        _meter.add(bytes.length);
+        if (generation == _generation) {
+          _chunkSize = LocalMediaBridge.nextChunkSize(
+            previous: size,
+            read: bytes.length,
+            elapsed: watch.elapsed,
+            maxChunk: _bridge.maxChunkSize,
+          );
         }
         if (_closed || generation != _generation) {
           _bridge._budget.giveBack(size);
@@ -810,6 +887,10 @@ class _BodyReader {
         }
       }
       _fill();
+      if (_reading == null) {
+        // Nothing asked of the share until the client takes more: no time of a slow link
+        _meter.setWanted(false);
+      }
     }();
   }
 

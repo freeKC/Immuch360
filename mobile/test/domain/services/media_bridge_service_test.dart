@@ -91,6 +91,9 @@ class _MemoryShare implements NetworkFileSystem {
 
   Duration readDelay = Duration.zero;
 
+  // The share brings this many bytes per second, null for at once
+  int? bytesPerSecond;
+
   // Called before each read, may hold it
   Future<void> Function(String path)? beforeRead;
 
@@ -136,6 +139,10 @@ class _MemoryShare implements NetworkFileSystem {
     await beforeRead?.call(path);
     if (readDelay > Duration.zero) {
       await Future<void>.delayed(readDelay);
+    }
+    final rate = bytesPerSecond;
+    if (rate != null) {
+      await Future<void>.delayed(Duration(microseconds: length * Duration.microsecondsPerSecond ~/ rate));
     }
     final failFrom = failReadsFrom[path];
     if (failFrom != null && offset + length > failFrom) {
@@ -834,8 +841,8 @@ void main() {
       const failFrom = 5 * _mib;
       share.failReadsFrom['/big.mp4'] = failFrom;
       await expectLater(_send(bridge.urlFor('nas1', '/big.mp4')), throwsA(isA<HttpException>()));
-      // 1 MiB, then 2 MiB sent, the read of the next 4 MiB failed and none was asked after it
-      expect(share.reads.map((read) => read.length), [_minChunk, 2 * _mib, _maxChunk]);
+      // 256 KiB, then twice as much each time sent, the read of the next 4 MiB failed and none was asked after it
+      expect(share.reads.map((read) => read.length), [_minChunk, 2 * _minChunk, _mib, 2 * _mib, _maxChunk]);
       expect(share.reads.last.offset + share.reads.last.length, greaterThan(failFrom));
       expect(await _released(bridge), 0);
 
@@ -845,14 +852,21 @@ void main() {
   });
 
   group('streaming', () {
-    test('a 10 MB file read whole and by ranges, in chunks of 1 MiB growing to 4 MiB', () async {
+    test('a 10 MB file read whole and by ranges, in chunks of 256 KiB growing to 4 MiB', () async {
       final url = bridge.urlFor('nas1', '/big.mp4');
       final whole = await _send(url);
       expect(whole.status, HttpStatus.ok);
       expect(whole.body.length, big.length);
       expect(whole.body, big);
       expect(share.reads.map((read) => read.length), _chunksOf(big.length));
-      expect(share.reads.map((read) => read.length), [_mib, 2 * _mib, 4 * _mib, 3 * _mib]);
+      expect(share.reads.map((read) => read.length), [
+        256 * 1024,
+        512 * 1024,
+        _mib,
+        2 * _mib,
+        4 * _mib,
+        2 * _mib + 256 * 1024,
+      ]);
 
       final client = HttpClient();
       try {
@@ -1055,6 +1069,91 @@ void main() {
 
       share.readDelay = Duration.zero;
       expect((await _send(bridge.urlFor('nas1', '/photo.jpg'))).body, photo);
+    });
+
+    test(
+      'a slow share is read about two seconds at a time, and the player gets bytes before the first 4 MiB',
+      () async {
+        // 2 Mbit/s: 4 MiB read at once took 17 s, more than the 8 s a player waits for a byte (31 October 2026)
+        share.bytesPerSecond = 250 * 1000;
+        final client = HttpClient();
+        try {
+          final request = await client.getUrl(bridge.urlFor('nas1', '/big.mp4'));
+          final watch = Stopwatch()..start();
+          final response = await request.close();
+          final gaps = <Duration>[];
+          var last = Duration.zero;
+          var received = 0;
+          await for (final chunk in response) {
+            gaps.add(watch.elapsed - last);
+            last = watch.elapsed;
+            received += chunk.length;
+            if (received >= 3 * _mib) {
+              break;
+            }
+          }
+          expect(gaps.reduce((a, b) => a > b ? a : b), lessThan(const Duration(milliseconds: 3500)));
+        } finally {
+          client.close(force: true);
+        }
+        final sizes = share.reads.map((read) => read.length).toList();
+        expect(sizes.first, 256 * 1024);
+        expect(sizes.reduce((a, b) => a > b ? a : b), lessThanOrEqualTo(640 * 1024), reason: '$sizes');
+      },
+      timeout: const Timeout(Duration(seconds: 60)),
+    );
+
+    test('what the reads of a file bring is measured for the players of the computers', () async {
+      final url = bridge.urlFor('nas1', '/big.mp4');
+      expect(bridge.trafficOf(url), isNull);
+      await _send(url, range: 'bytes=0-${2 * _mib - 1}');
+      final traffic = bridge.trafficOf(url);
+      expect(traffic?.size, big.length);
+      expect(traffic?.meter.receivedBytes, greaterThanOrEqualTo(2 * _mib));
+      expect(traffic?.meter.sinceProgress(), lessThan(const Duration(seconds: 5)));
+      expect(bridge.trafficOf(bridge.urlFor('nas1', '/photo.jpg')), isNull);
+    });
+
+    test('the size of the next read follows what the share brings', () {
+      const max = LocalMediaBridge.defaultMaxChunkSize;
+      // Too quick to measure: twice as much, as before
+      expect(
+        LocalMediaBridge.nextChunkSize(previous: _mib, read: _mib, elapsed: Duration.zero, maxChunk: max),
+        2 * _mib,
+      );
+      // 250 kB/s: two seconds of it
+      expect(
+        LocalMediaBridge.nextChunkSize(
+          previous: 256 * 1024,
+          read: 256 * 1024,
+          elapsed: const Duration(microseconds: 1048576),
+          maxChunk: max,
+        ),
+        500 * 1000,
+      );
+      // Never below 128 KiB, never more than twice the read before, never above the largest
+      expect(
+        LocalMediaBridge.nextChunkSize(previous: _mib, read: 1000, elapsed: const Duration(seconds: 1), maxChunk: max),
+        128 * 1024,
+      );
+      expect(
+        LocalMediaBridge.nextChunkSize(
+          previous: _mib,
+          read: _mib,
+          elapsed: const Duration(milliseconds: 100),
+          maxChunk: max,
+        ),
+        2 * _mib,
+      );
+      expect(
+        LocalMediaBridge.nextChunkSize(
+          previous: max,
+          read: max,
+          elapsed: const Duration(milliseconds: 100),
+          maxChunk: max,
+        ),
+        max,
+      );
     });
 
     test('two readers are served at the same time', () async {
