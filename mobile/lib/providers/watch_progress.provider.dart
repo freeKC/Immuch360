@@ -1,19 +1,32 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/data/db/watch/database.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/infrastructure/repositories/watch_progress.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 
-/// The film rule of the settings ("Remember where I stopped", see WatchRule)
-final watchRuleProvider = Provider.autoDispose<WatchRule>(
-  (ref) => WatchRule.of(ref.watch(appConfigProvider.select((config) => config.viewer))),
-);
+/// The film rule of the settings ("Remember where I stopped", see WatchRule). Declares its dependency, so that a scope
+/// that overrides the settings (the tests, a viewer) gets its own
+final watchRuleProvider = Provider.autoDispose<WatchRule>((ref) {
+  try {
+    return ref.watch(appConfigProvider.select((config) => WatchRule.of(config.viewer)));
+  } on StateError {
+    // The settings are not read yet (a test without them): the defaults
+    return const WatchRule();
+  }
+}, dependencies: [appConfigProvider]);
+
+/// Opens the database of the watch progress (see openWatchDatabase); the tests open none (flutter_test_config.dart),
+/// the rows then live in memory
+@visibleForTesting
+Future<DriftWatch> Function() watchDatabaseOpener = openWatchDatabase;
 
 /// The database of the watch progress, opened at the first read of a row
 final watchProgressRepositoryProvider = Provider<WatchProgressRepository>((ref) {
-  final repository = WatchProgressRepository(openWatchDatabase);
+  final repository = WatchProgressRepository(watchDatabaseOpener);
   ref.onDispose(() => unawaited(repository.close()));
   return repository;
 });
@@ -179,4 +192,9 @@ class WatchProgressStore extends Notifier<WatchProgressRows> {
   }
 }
 
-final watchProgressProvider = NotifierProvider<WatchProgressStore, WatchProgressRows>(WatchProgressStore.new);
+/// The rows of the watch progress, see [WatchProgressStore]. Declares its dependencies, so that a scope that gives its
+/// own database (the tests) gets its own store
+final watchProgressProvider = NotifierProvider<WatchProgressStore, WatchProgressRows>(
+  WatchProgressStore.new,
+  dependencies: [watchProgressRepositoryProvider, watchProgressClockProvider],
+);
