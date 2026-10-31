@@ -51,9 +51,12 @@ class _FolderPickingDocumentTreeApi extends Fake implements DocumentTreeApi {
   final TreePick picked;
   int pickCalls = 0;
 
+  final starts = <String?>[];
+
   @override
-  Future<TreePick?> pickTree() async {
+  Future<TreePick?> pickTree(String? startFolder) async {
     pickCalls++;
+    starts.add(startFolder);
     return picked;
   }
 
@@ -384,6 +387,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(api.pickCalls, 1);
+      expect(api.starts, ['Download'], reason: 'the picker opens in Download');
       const treeUri = 'content://com.android.externalstorage.documents/tree/primary%3ADownload%2FImmuch360-splats';
       expect(find.text('browse ${deviceFolderSourceId(treeUri)} /'), findsOneWidget);
       expect(folders.trees.map((tree) => tree.folderName), ['Immuch360-splats'], reason: 'kept in On this device');

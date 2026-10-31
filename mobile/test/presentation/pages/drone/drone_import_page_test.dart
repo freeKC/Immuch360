@@ -197,6 +197,7 @@ void main() {
 
     await chooseDrone(tester);
 
+    expect(api.pickStarts, [null], reason: 'the picker opens where it opens by itself, the drone in its side menu');
     expect(find.byKey(const Key('drone_import_tree')), findsOneWidget);
     for (final path in [_sphere, _photo, _video]) {
       expect(tileOf(path), findsOneWidget, reason: path);

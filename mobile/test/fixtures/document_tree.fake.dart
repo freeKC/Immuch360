@@ -61,8 +61,14 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
 
   PlatformException get _unplugged => PlatformException(code: 'unplugged', message: 'gone');
 
+  /// The folder each pick was asked to open in
+  final pickStarts = <String?>[];
+
   @override
-  Future<TreePick?> pickTree() async => pickGivesFolder ? pick : null;
+  Future<TreePick?> pickTree(String? startFolder) async {
+    pickStarts.add(startFolder);
+    return pickGivesFolder ? pick : null;
+  }
 
   @override
   Future<TreePick?> reopen(String treeUri) async => unplugged || treeUri != this.treeUri ? null : pick;

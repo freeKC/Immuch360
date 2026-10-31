@@ -334,7 +334,8 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
   Future<void> choose() async {
     final TreePick? pick;
     try {
-      pick = await _api.pickTree();
+      // Where the picker opens by itself: the drone or the card is chosen in its side menu
+      pick = await _api.pickTree(null);
     } catch (error, stackTrace) {
       _log.warning('Could not open the folder picker', error, stackTrace);
       state = state.copyWith(error: error);

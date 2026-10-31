@@ -1,10 +1,11 @@
 import 'package:pigeon/pigeon.dart';
 
-// Android phones only: a folder picked in the system picker (ACTION_OPEN_DOCUMENT_TREE), read through the Storage
-// Access Framework. It reaches a DJI drone or a card reader plugged in over USB (a USB drive, served by
-// ExternalStorageProvider) and a DJI RC 2 or another phone set to "File transfer" (MTP, served by MtpDocumentsProvider),
-// with no permission: the picker grants access to the folder chosen. The DJI drone page of the Network shares reads it
-// as a share (see DocumentTreeFileSystem). Not on iOS nor the computers: the page is not offered there.
+// Android phones, tablets and the Meta Quest: a folder picked in the system picker (ACTION_OPEN_DOCUMENT_TREE), read
+// through the Storage Access Framework. It reaches a DJI drone or a card reader plugged in over USB (a USB drive, served
+// by ExternalStorageProvider), a DJI RC 2 or another phone set to "File transfer" (MTP, served by MtpDocumentsProvider),
+// and the folders of the device itself, with no permission: the picker grants access to the folder chosen. The DJI
+// drone page and Browse a folder of On this device read it as a share (see DocumentTreeFileSystem). Not on iOS nor the
+// computers: neither is offered there.
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/platform/document_tree_api.g.dart',
@@ -89,9 +90,10 @@ class PickedFile {
 @HostApi()
 abstract class DocumentTreeApi {
   /// Opens the system folder picker; null when the user goes back. The read grant is persisted when the provider
-  /// allows it, so that the folder can be opened again after a restart while it stays plugged in.
+  /// allows it, so that the folder can be opened again after a restart while it stays plugged in. [startFolder] is a
+  /// folder of the storage of the device the picker opens in ("Download"), null to let it open where it opens by itself.
   @async
-  TreePick? pickTree();
+  TreePick? pickTree(String? startFolder);
 
   /// The folder [treeUri] picked before, when it can still be read (still plugged in, grant kept); null otherwise
   @async

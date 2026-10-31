@@ -24,6 +24,11 @@ import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('DeviceFolders');
 
+/// Where the system picker opens for Browse a folder: the Download folder of the storage of the device, where the
+/// files from a browser, a computer or a transfer land. From Android 11 on, the picker offers every folder in it but
+/// not Download itself.
+const deviceFolderPickerStart = 'Download';
+
 /// Whether "Browse a folder" is offered here: Android phones and tablets and the Meta Quest, not the TV layout, and
 /// never a television, whatever its layout setting. Not iOS nor the computers, which have no DocumentTreeApi. Tests
 /// replace it.
@@ -119,11 +124,11 @@ class DeviceFoldersNotifier extends Notifier<DeviceFoldersState> {
     await _check();
   }
 
-  /// Opens the system folder picker and keeps the folder chosen at the end of the list (once: a folder chosen again
+  /// Opens the system folder picker in [deviceFolderPickerStart] and keeps the folder chosen at the end of the list (once: a folder chosen again
   /// keeps its place, under the names the picker gives now); gives the id of its source, which the browser opens, or
   /// null when the user goes back. Throws when the picker cannot open.
   Future<String?> browse() async {
-    final pick = await _api.pickTree();
+    final pick = await _api.pickTree(deviceFolderPickerStart);
     if (pick == null) {
       return null;
     }

@@ -47,8 +47,9 @@ class _PickerApi extends FakeDocumentTreeApi {
   final known = <String, TreePick>{};
 
   @override
-  Future<TreePick?> pickTree() async {
+  Future<TreePick?> pickTree(String? startFolder) async {
     pickCalls++;
+    pickStarts.add(startFolder);
     final error = pickError;
     if (error != null) {
       throw error;

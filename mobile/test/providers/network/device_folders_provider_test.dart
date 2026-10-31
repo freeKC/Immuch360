@@ -42,8 +42,9 @@ class _PickerApi extends FakeDocumentTreeApi {
   final known = <String, TreePick>{};
 
   @override
-  Future<TreePick?> pickTree() async {
+  Future<TreePick?> pickTree(String? startFolder) async {
     pickCalls++;
+    pickStarts.add(startFolder);
     final error = pickError;
     if (error != null) {
       throw error;
@@ -158,6 +159,7 @@ void main() {
       final sourceId = await c.read(deviceFoldersProvider.notifier).browse();
 
       expect(sourceId, deviceFolderSourceId(_splats));
+      expect(api.pickStarts, ['Download'], reason: 'the picker opens in the Download folder of the device');
       final state = c.read(deviceFoldersProvider);
       expect(state.folders.map((folder) => folder.folderName), ['Quest', 'Immuch360-splats']);
       expect(folders.trees.map((folder) => folder.treeUri), [_download, _splats], reason: 'kept for the next start');
