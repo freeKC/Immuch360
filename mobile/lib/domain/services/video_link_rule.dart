@@ -42,6 +42,9 @@ abstract final class VideoLinkRule {
   /// A link below this ratio for [slowAfter] is said to be too slow for the video
   static const slowRatio = 0.9;
   static const slowAfter = Duration(seconds: 5);
+
+  /// A link that brought nothing for this long, the window of the rate, is silent rather than slow
+  static const silentAfter = Duration(seconds: 4);
 }
 
 /// The least media there is before a video plays: [VideoLinkRule.startMs], [VideoLinkRule.rebufferMs] after a stall

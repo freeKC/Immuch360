@@ -718,6 +718,21 @@ void main() {
         });
       });
 
+      test('a server that stopped sending is not a slow one', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
+          // A server silent from 25 s (R8 of 31 October): the rate of the last seconds falls to nothing, the player
+          // plays from its buffer, then waits; it was said to send at 0 kbit/s, "it will pause now and then"
+          for (var s = 1; s <= 40; s++) {
+            now = now.add(const Duration(seconds: 1));
+            tell(waiting: s > 20, rate: s < 4 ? 500000 ~/ s : 0, need: 1000000, sinceProgressMs: s * 1000, aheadMs: 0);
+            expect(player.link.value!.slow, isFalse, reason: '$s s after the last byte');
+          }
+          player.dispose();
+        });
+      });
+
       test('the native player waiting while it plays shows the spinner at once', () async {
         await player.load(serverSource);
         reportStatus(PlaybackStatus.playing, position: 1000);

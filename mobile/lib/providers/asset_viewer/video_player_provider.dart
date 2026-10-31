@@ -452,7 +452,12 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _stallTimer = null;
     final now = clock();
     final ratio = link.ratio;
-    if (ratio == null) {
+    // A link that sends nothing is not a slow one, the dead link is said for it (a server silent for a minute was said
+    // to send at 0 kbit/s, "it will pause now and then", 31 October 2026)
+    final silent = (link.sinceProgressMs ?? 0) >= VideoLinkRule.silentAfter.inMilliseconds;
+    if (silent) {
+      _slowSince = null;
+    } else if (ratio == null) {
       // Not measured: as it was
     } else if (ratio < VideoLinkRule.slowRatio) {
       _slowSince ??= now;
