@@ -625,6 +625,7 @@
   "device_folder_not_answering": "საქაღალდემ პასუხი შეწყვიტა. სცადეთ ცოტა ხანში.",
   "device_folder_picker_failed": "საქაღალდის ამრჩევი ვერ გაიხსნა",
   "device_folder_picker_hint": "Android აპებს არ აძლევს უფლებას, გახსნან თავად Download საქაღალდე ან მთელი მეხსიერება: აირჩიეთ საქაღალდე მათ შიგნით.",
+  "device_folder_removed": "{name} აღარ არის ამ სიაში. მისი ფაილები მოწყობილობაზე რჩება.",
   "device_folder_unavailable": "ახლა ვერ იკითხება: გადატანილი, წაშლილი ან გამორთული",
   "direction": "მიმართულება",
   "disabled": "გათიშულია",

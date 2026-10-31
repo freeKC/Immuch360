@@ -1301,6 +1301,7 @@
   "device_folder_not_answering": "Aplankas nustojo atsakyti. Bandykite dar kartą po akimirkos.",
   "device_folder_picker_failed": "Nepavyko atidaryti aplanko parinkiklio",
   "device_folder_picker_hint": "Android neleidžia programoms atidaryti paties Download aplanko ar visos saugyklos: pasirinkite aplanką jų viduje.",
+  "device_folder_removed": "{name} nebėra šiame sąraše. Jo failai lieka įrenginyje.",
   "device_folder_unavailable": "Dabar neįmanoma perskaityti: perkeltas, ištrintas arba atjungtas",
   "direction": "Kryptis",
   "disable": "Išjungti",

@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Klasör yanıt vermeyi bıraktı. Birazdan yeniden deneyin.",
   "device_folder_picker_failed": "Klasör seçici açılamadı",
   "device_folder_picker_hint": "Android, uygulamaların Download klasörünün kendisini veya tüm depolamayı açmasına izin vermez: bunların içindeki bir klasörü seçin.",
+  "device_folder_removed": "{name} artık bu listede değil. Dosyaları cihazda kalır.",
   "device_folder_unavailable": "Şu an okunamıyor: taşındı, silindi veya çıkarıldı",
   "direction": "Yön",
   "disable": "Devre dışı bırak",

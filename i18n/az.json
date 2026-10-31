@@ -588,6 +588,7 @@
   "device_folder_not_answering": "Qovluq cavab vermir. Bir azdan yenidən cəhd edin.",
   "device_folder_picker_failed": "Qovluq seçicisi açıla bilmədi",
   "device_folder_picker_hint": "Android tətbiqlərə Download qovluğunun özünü və ya bütün yaddaşı açmağa icazə vermir: onların içindəki qovluğu seçin.",
+  "device_folder_removed": "{name} artıq bu siyahıda deyil. Faylları cihazda qalır.",
   "device_folder_unavailable": "İndi oxuna bilmir: köçürülüb, silinib və ya ayrılıb",
   "discord": "Discord",
   "dji_import_choose": "Dronu və ya kartı seçin",

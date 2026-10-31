@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "A pasta deixou de responder. Tente novamente daqui a pouco.",
   "device_folder_picker_failed": "Não foi possível abrir o seletor de pastas",
   "device_folder_picker_hint": "O Android não permite que as aplicações abram a própria pasta Download nem todo o armazenamento: escolha uma pasta dentro deles.",
+  "device_folder_removed": "{name} já não está nesta lista. Os seus ficheiros ficam no dispositivo.",
   "device_folder_unavailable": "Não é possível ler agora: movida, eliminada ou desligada",
   "direction": "Direção",
   "disable": "Desativar",

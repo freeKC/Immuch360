@@ -1291,6 +1291,7 @@
   "device_folder_not_answering": "پوشه دیگر پاسخ نمی‌دهد. کمی بعد دوباره امتحان کنید.",
   "device_folder_picker_failed": "انتخابگر پوشه باز نشد",
   "device_folder_picker_hint": "Android به برنامه‌ها اجازه نمی‌دهد خود پوشه Download یا کل حافظه را باز کنند: پوشه‌ای درون آن‌ها انتخاب کنید.",
+  "device_folder_removed": "{name} دیگر در این فهرست نیست. فایل‌های آن روی دستگاه می‌مانند.",
   "device_folder_unavailable": "اکنون خوانده نمی‌شود: جابه‌جا، حذف یا جدا شده",
   "direction": "جهت",
   "disable": "غیرفعال‌سازی",

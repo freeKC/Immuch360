@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Mappen sluttet å svare. Prøv igjen om et øyeblikk.",
   "device_folder_picker_failed": "Mappevelgeren kunne ikke åpnes",
   "device_folder_picker_hint": "Android lar ikke apper åpne selve Download-mappen eller hele lagringen: velg en mappe inni dem.",
+  "device_folder_removed": "{name} er ikke lenger i denne listen. Filene blir værende på enheten.",
   "device_folder_unavailable": "Kan ikke leses nå: flyttet, slettet eller koblet fra",
   "direction": "Retning",
   "disable": "Deaktiver",

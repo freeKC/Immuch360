@@ -419,6 +419,7 @@
   "device_folder_not_answering": "Folder je prestao odgovarati. Pokušajte ponovo za trenutak.",
   "device_folder_picker_failed": "Birač foldera se nije mogao otvoriti",
   "device_folder_picker_hint": "Android ne dozvoljava aplikacijama da otvore sam folder Download ili cijelu pohranu: odaberite folder unutar njih.",
+  "device_folder_removed": "{name} više nije na ovoj listi. Datoteke ostaju na uređaju.",
   "device_folder_unavailable": "Trenutno se ne može pročitati: premješten, izbrisan ili isključen",
   "dji_import_choose": "Odaberite dron ili karticu",
   "dji_import_choose_help": "U biraču otvorite bočni meni, odaberite dron ili karticu, zatim njen folder DCIM ili cijeli disk.",

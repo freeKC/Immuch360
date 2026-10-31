@@ -1291,6 +1291,7 @@
   "device_folder_not_answering": "Dosja ndaloi së përgjigjuri. Provo përsëri pas pak.",
   "device_folder_picker_failed": "Zgjedhësi i dosjeve nuk mund të hapej",
   "device_folder_picker_hint": "Android nuk i lejon aplikacionet të hapin vetë dosjen Download ose gjithë hapësirën ruajtëse: zgjidh një dosje brenda tyre.",
+  "device_folder_removed": "{name} nuk është më në këtë listë. Skedarët mbeten në pajisje.",
   "device_folder_unavailable": "Nuk mund të lexohet tani: e zhvendosur, e fshirë ose e shkëputur",
   "direction": "Drejtimi",
   "disable": "Çaktivizo",

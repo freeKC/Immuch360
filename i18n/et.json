@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Kaust lakkas vastamast. Proovi hetke pärast uuesti.",
   "device_folder_picker_failed": "Kausta valijat ei saanud avada",
   "device_folder_picker_hint": "Android ei luba rakendustel avada Download kausta ennast ega kogu salvestusruumi: vali kaust nende sees.",
+  "device_folder_removed": "{name} pole enam selles loendis. Selle failid jäävad seadmesse.",
   "device_folder_unavailable": "Praegu ei saa lugeda: teisaldatud, kustutatud või lahti ühendatud",
   "direction": "Suund",
   "disable": "Peata",

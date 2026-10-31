@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Thư mục đã ngừng phản hồi. Hãy thử lại sau giây lát.",
   "device_folder_picker_failed": "Không thể mở trình chọn thư mục",
   "device_folder_picker_hint": "Android không cho phép ứng dụng mở chính thư mục Download hoặc toàn bộ bộ nhớ: hãy chọn một thư mục bên trong.",
+  "device_folder_removed": "{name} không còn trong danh sách này. Các tệp vẫn ở trên thiết bị.",
   "device_folder_unavailable": "Hiện không đọc được: đã di chuyển, xóa hoặc rút ra",
   "direction": "Điều hướng",
   "disable": "Vô hiệu hóa",

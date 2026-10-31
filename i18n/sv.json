@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Mappen slutade svara. Försök igen om en stund.",
   "device_folder_picker_failed": "Mappväljaren kunde inte öppnas",
   "device_folder_picker_hint": "Android låter inte appar öppna själva mappen Download eller hela lagringen: välj en mapp inuti dem.",
+  "device_folder_removed": "{name} finns inte längre i den här listan. Filerna finns kvar på enheten.",
   "device_folder_unavailable": "Kan inte läsas nu: flyttad, raderad eller frånkopplad",
   "direction": "Riktning",
   "disable": "inaktivera",

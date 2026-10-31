@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Priečinok prestal odpovedať. Skúste to znova o chvíľu.",
   "device_folder_picker_failed": "Výber priečinka sa nepodarilo otvoriť",
   "device_folder_picker_hint": "Android nedovolí aplikáciám otvoriť samotný priečinok Download ani celé úložisko: vyberte priečinok v nich.",
+  "device_folder_removed": "{name} už nie je v tomto zozname. Súbory zostávajú v zariadení.",
   "device_folder_unavailable": "Teraz sa nedá prečítať: presunutý, odstránený alebo odpojený",
   "direction": "Smer",
   "disable": "Vypnúť",

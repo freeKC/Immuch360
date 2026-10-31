@@ -1288,6 +1288,7 @@
   "device_folder_not_answering": "Mapa je prestala odgovarati. Pokušajte ponovno za trenutak.",
   "device_folder_picker_failed": "Birač mapa nije se mogao otvoriti",
   "device_folder_picker_hint": "Android ne dopušta aplikacijama da otvore samu mapu Download ni cijelu pohranu: odaberite mapu unutar njih.",
+  "device_folder_removed": "{name} više nije na ovom popisu. Datoteke ostaju na uređaju.",
   "device_folder_unavailable": "Trenutačno se ne može pročitati: premještena, izbrisana ili isključena",
   "direction": "Smjer",
   "disable": "Onesposobi",

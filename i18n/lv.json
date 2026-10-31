@@ -1233,6 +1233,7 @@
   "device_folder_not_answering": "Mape pārstāja atbildēt. Mēģiniet vēlreiz pēc brīža.",
   "device_folder_picker_failed": "Mapju atlasītāju nevarēja atvērt",
   "device_folder_picker_hint": "Android neļauj lietotnēm atvērt pašu Download mapi vai visu krātuvi: izvēlieties mapi to iekšpusē.",
+  "device_folder_removed": "{name} vairs nav šajā sarakstā. Tās faili paliek ierīcē.",
   "device_folder_unavailable": "Pašlaik nevar nolasīt: pārvietota, izdzēsta vai atvienota",
   "direction": "Secība",
   "disable": "Atspējot",

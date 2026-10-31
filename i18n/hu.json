@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "A mappa nem válaszol. Próbálja újra egy pillanat múlva.",
   "device_folder_picker_failed": "A mappaválasztót nem sikerült megnyitni",
   "device_folder_picker_hint": "Az Android nem engedi, hogy az alkalmazások magát a Download mappát vagy a teljes tárhelyet megnyissák: válasszon egy mappát bennük.",
+  "device_folder_removed": "{name} már nincs ebben a listában. A fájljai az eszközön maradnak.",
   "device_folder_unavailable": "Most nem olvasható: áthelyezve, törölve vagy leválasztva",
   "direction": "Irány",
   "disable": "Letiltás",

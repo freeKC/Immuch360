@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Stop an fillteán ag freagairt. Bain triail eile as i gceann nóiméid.",
   "device_folder_picker_failed": "Níorbh fhéidir roghnóir na bhfillteán a oscailt",
   "device_folder_picker_hint": "Ní ligeann Android d'aipeanna an fillteán Download féin ná an stóras ar fad a oscailt: roghnaigh fillteán istigh iontu.",
+  "device_folder_removed": "Níl {name} sa liosta seo a thuilleadh. Fanann a chuid comhad ar an ngléas.",
   "device_folder_unavailable": "Ní féidir é a léamh anois: bogtha, scriosta nó dínasctha",
   "direction": "Treo",
   "disable": "Díchumasaigh",

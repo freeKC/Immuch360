@@ -431,6 +431,7 @@
   "device_folder_not_answering": "Jild javob berishni to'xtatdi. Birozdan keyin qayta urinib ko'ring.",
   "device_folder_picker_failed": "Jild tanlagichini ochib bo'lmadi",
   "device_folder_picker_hint": "Android ilovalarga Download jildining o'zini yoki butun xotirani ochishga ruxsat bermaydi: ularning ichidagi jildni tanlang.",
+  "device_folder_removed": "{name} endi bu ro'yxatda emas. Uning fayllari qurilmada qoladi.",
   "device_folder_unavailable": "Hozir o'qib bo'lmaydi: ko'chirilgan, o'chirilgan yoki uzilgan",
   "dji_import_choose": "Dron yoki kartani tanlang",
   "dji_import_choose_help": "Tanlash oynasida yon menyuni oching, dron yoki kartani tanlang, so'ng uning DCIM jildini yoki butun diskni.",

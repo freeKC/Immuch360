@@ -606,6 +606,7 @@
   "device_folder_not_answering": "Die gids het opgehou antwoord. Probeer oor 'n oomblik weer.",
   "device_folder_picker_failed": "Die gidskieser kon nie oopgemaak word nie",
   "device_folder_picker_hint": "Android laat programme nie toe om die Download-gids self of die hele berging oop te maak nie: kies 'n gids daarbinne.",
+  "device_folder_removed": "{name} is nie meer in hierdie lys nie. Die lêers bly op die toestel.",
   "device_folder_unavailable": "Kan nie nou gelees word nie: geskuif, geskrap of ontkoppel",
   "direction": "Rigting",
   "discover": "Ontdek",

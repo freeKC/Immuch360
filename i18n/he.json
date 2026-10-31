@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "התיקייה הפסיקה להגיב. נסו שוב בעוד רגע.",
   "device_folder_picker_failed": "לא ניתן היה לפתוח את בורר התיקיות",
   "device_folder_picker_hint": "Android לא מאפשר לאפליקציות לפתוח את תיקיית Download עצמה או את כל האחסון: בחרו תיקייה בתוכם.",
+  "device_folder_removed": "{name} כבר לא ברשימה הזו. הקבצים נשארים במכשיר.",
   "device_folder_unavailable": "אי אפשר לקרוא כרגע: הועברה, נמחקה או נותקה",
   "direction": "כיוון",
   "disable": "השבת",

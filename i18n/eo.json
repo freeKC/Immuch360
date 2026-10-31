@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "La dosierujo ĉesis respondi. Reprovu post momento.",
   "device_folder_picker_failed": "La dosierujo-elektilo ne povis malfermiĝi",
   "device_folder_picker_hint": "Android ne permesas al aplikaĵoj malfermi la dosierujon Download mem nek la tutan konservejon: elektu dosierujon en ili.",
+  "device_folder_removed": "{name} ne plu estas en ĉi tiu listo. Ĝiaj dosieroj restas en la aparato.",
   "device_folder_unavailable": "Nun ne legebla: movita, forigita aŭ malkonektita",
   "direction": "Direkto",
   "disable": "Malebligi",

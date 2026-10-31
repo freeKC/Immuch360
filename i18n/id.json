@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "Folder berhenti merespons. Coba lagi sebentar lagi.",
   "device_folder_picker_failed": "Pemilih folder tidak dapat dibuka",
   "device_folder_picker_hint": "Android tidak mengizinkan aplikasi membuka folder Download itu sendiri atau seluruh penyimpanan: pilih folder di dalamnya.",
+  "device_folder_removed": "{name} tidak lagi ada di daftar ini. Filenya tetap ada di perangkat.",
   "device_folder_unavailable": "Tidak bisa dibaca sekarang: dipindahkan, dihapus, atau dicabut",
   "direction": "Arah",
   "disable": "Nonaktifkan",

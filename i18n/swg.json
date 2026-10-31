@@ -419,6 +419,7 @@
   "device_folder_not_answering": "Der Ordner gibt koi Antwort meh. Probier s glei nomol.",
   "device_folder_picker_failed": "D Ordnerauswahl hot ned aufgmacht werda kenna",
   "device_folder_picker_hint": "Android lässt Apps weder da Ordner Download selber no da ganza Speicher aufmacha: wähl en Ordner drin.",
+  "device_folder_removed": "{name} isch nemme en dera Lischt. Seine Dateia bleibet auf em Gerät.",
   "device_folder_unavailable": "Grad ned lesbar: verschoba, glöscht oder rausgzoga",
   "dji_import_choose": "D Drohne oder d Kart auswähla",
   "dji_import_choose_help": "Mach em Auswahlfenster s Seitamenü auf, wähl d Drohne oder d Kart, no ihren DCIM-Ordner oder s ganze Laufwerk.",

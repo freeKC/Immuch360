@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "文件夹已停止响应。请稍后重试。",
   "device_folder_picker_failed": "无法打开文件夹选择器",
   "device_folder_picker_hint": "Android 不允许应用打开 Download 文件夹本身或整个存储空间：请选择其中的文件夹。",
+  "device_folder_removed": "{name} 已不在此列表中。其文件仍保留在设备上。",
   "device_folder_unavailable": "当前无法读取：已移动、删除或拔出",
   "direction": "方向",
   "disable": "禁用",

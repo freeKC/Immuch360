@@ -1300,6 +1300,7 @@
   "device_folder_not_answering": "Dosarul nu mai răspunde. Încearcă din nou peste câteva clipe.",
   "device_folder_picker_failed": "Selectorul de dosare nu a putut fi deschis",
   "device_folder_picker_hint": "Android nu le permite aplicațiilor să deschidă chiar dosarul Download sau toată memoria: alege un dosar din interiorul lor.",
+  "device_folder_removed": "{name} nu mai este în această listă. Fișierele rămân pe dispozitiv.",
   "device_folder_unavailable": "Nu poate fi citit acum: mutat, șters sau deconectat",
   "direction": "Direcție",
   "disable": "Dezactivare",

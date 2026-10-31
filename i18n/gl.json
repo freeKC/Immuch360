@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "O cartafol deixou de responder. Téntao de novo nun momento.",
   "device_folder_picker_failed": "Non se puido abrir o selector de cartafoles",
   "device_folder_picker_hint": "Android non permite ás aplicacións abrir o propio cartafol Download nin todo o almacenamento: escolle un cartafol dentro deles.",
+  "device_folder_removed": "{name} xa non está nesta lista. Os seus ficheiros quedan no dispositivo.",
   "device_folder_unavailable": "Non se pode ler agora: movido, eliminado ou desconectado",
   "direction": "Dirección",
   "disable": "Desactivar",

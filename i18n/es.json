@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "La carpeta dejó de responder. Vuelve a intentarlo en un momento.",
   "device_folder_picker_failed": "No se pudo abrir el selector de carpetas",
   "device_folder_picker_hint": "Android no permite a las aplicaciones abrir la propia carpeta Download ni todo el almacenamiento: elige una carpeta dentro de ellos.",
+  "device_folder_removed": "{name} ya no está en esta lista. Sus archivos siguen en el dispositivo.",
   "device_folder_unavailable": "No se puede leer ahora: movida, eliminada o desconectada",
   "direction": "Dirección",
   "disable": "Desactivar",

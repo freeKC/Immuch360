@@ -419,6 +419,7 @@
   "device_folder_not_answering": "Folda imeacha kujibu. Jaribu tena baada ya muda mfupi.",
   "device_folder_picker_failed": "Kichagua folda hakikuweza kufunguliwa",
   "device_folder_picker_hint": "Android hairuhusu programu kufungua folda ya Download yenyewe au hifadhi yote: chagua folda iliyo ndani yake.",
+  "device_folder_removed": "{name} haimo tena kwenye orodha hii. Faili zake zinabaki kwenye kifaa.",
   "device_folder_unavailable": "Haiwezi kusomwa sasa: imehamishwa, imefutwa au imechomolewa",
   "dji_import_choose": "Chagua droni au kadi",
   "dji_import_choose_help": "Katika kichaguzi, fungua menyu ya pembeni, chagua droni au kadi, kisha folda yake ya DCIM au hifadhi nzima.",

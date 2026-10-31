@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "Mappen holdt op med at svare. Prøv igen om et øjeblik.",
   "device_folder_picker_failed": "Mappevælgeren kunne ikke åbnes",
   "device_folder_picker_hint": "Android lader ikke apps åbne selve mappen Download eller hele lageret: vælg en mappe inden i dem.",
+  "device_folder_removed": "{name} er ikke længere på denne liste. Filerne bliver på enheden.",
   "device_folder_unavailable": "Kan ikke læses nu: flyttet, slettet eller frakoblet",
   "direction": "Retning",
   "disable": "Deaktiver",

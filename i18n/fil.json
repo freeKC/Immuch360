@@ -507,6 +507,7 @@
   "device_folder_not_answering": "Tumigil sa pagsagot ang folder. Subukang muli maya-maya.",
   "device_folder_picker_failed": "Hindi mabuksan ang tagapili ng folder",
   "device_folder_picker_hint": "Hindi pinapayagan ng Android ang mga app na buksan ang mismong folder na Download o ang buong storage: pumili ng folder sa loob ng mga ito.",
+  "device_folder_removed": "Wala na ang {name} sa listahang ito. Nananatili sa device ang mga file nito.",
   "device_folder_unavailable": "Hindi mabasa ngayon: inilipat, binura o tinanggal",
   "dji_import_choose": "Piliin ang drone o ang card",
   "dji_import_choose_help": "Sa picker, buksan ang side menu, piliin ang drone o ang card, pagkatapos ay ang DCIM folder nito o ang buong drive.",

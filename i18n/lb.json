@@ -419,6 +419,7 @@
   "device_folder_not_answering": "Den Dossier äntwert net méi. Probéiert et an engem Moment nach eng Kéier.",
   "device_folder_picker_failed": "D'Dossierauswiel konnt net opgemaach ginn",
   "device_folder_picker_hint": "Android léisst Appen weder den Dossier Download selwer nach de ganze Späicher opmaachen: wielt en Dossier dobannen.",
+  "device_folder_removed": "{name} ass net méi an dëser Lëscht. Seng Fichieren bleiwen um Apparat.",
   "device_folder_unavailable": "Elo net liesbar: geréckelt, geläscht oder ofgekoppelt",
   "dji_import_choose": "D'Dron oder d'Kaart wielen",
   "dji_import_choose_help": "Maach am Auswielfenster d'Säitemenü op, wiel d'Dron oder d'Kaart, dann hiren DCIM-Dossier oder dat ganzt Laufwierk.",

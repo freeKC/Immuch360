@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Složka přestala odpovídat. Zkuste to za chvíli znovu.",
   "device_folder_picker_failed": "Výběr složky se nepodařilo otevřít",
   "device_folder_picker_hint": "Android nedovolí aplikacím otevřít samotnou složku Download ani celé úložiště: vyberte složku uvnitř.",
+  "device_folder_removed": "{name} už není v tomto seznamu. Soubory zůstávají v zařízení.",
   "device_folder_unavailable": "Nyní ji nelze přečíst: přesunuta, smazána nebo odpojena",
   "direction": "Směr",
   "disable": "Zakázat",

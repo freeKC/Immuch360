@@ -749,6 +749,7 @@
   "device_folder_not_answering": "Mappa slutta å svare. Prøv igjen om eit augeblikk.",
   "device_folder_picker_failed": "Mappeveljaren kunne ikkje opnast",
   "device_folder_picker_hint": "Android lèt ikkje appar opne sjølve Download-mappa eller heile lagringa: vel ei mappe inni dei.",
+  "device_folder_removed": "{name} er ikkje lenger i denne lista. Filene blir verande på eininga.",
   "device_folder_unavailable": "Kan ikkje lesast no: flytta, sletta eller kopla frå",
   "direction": "Retning",
   "discover": "Oppdag",

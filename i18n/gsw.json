@@ -1194,6 +1194,7 @@
   "device_folder_not_answering": "Dä Ordner git kei Antwort meh. Probier s grad nomal.",
   "device_folder_picker_failed": "D Ordneruswahl het nöd chöne ufgmacht werde",
   "device_folder_picker_hint": "Android laht Apps wäder de Ordner Download sälber no de ganz Speicher uftue: wähl en Ordner drin.",
+  "device_folder_removed": "{name} isch nüm i dere Liste. Sini Dateie bliibe uf em Grät.",
   "device_folder_unavailable": "Grad nöd lesbar: verschobe, glöscht oder uszoge",
   "direction": "Richtig",
   "disable": "Deaktiviere",

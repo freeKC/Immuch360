@@ -1281,6 +1281,7 @@
   "device_folder_not_answering": "Karpetak erantzuteari utzi dio. Saiatu berriro une batean.",
   "device_folder_picker_failed": "Ezin izan da karpeta-hautatzailea ireki",
   "device_folder_picker_hint": "Android-ek ez die aplikazioei Download karpeta bera edo biltegiratze osoa irekitzen uzten: aukeratu horien barruko karpeta bat.",
+  "device_folder_removed": "{name} ez dago jada zerrenda honetan. Bere fitxategiak gailuan geratzen dira.",
   "device_folder_unavailable": "Ezin da orain irakurri: lekuz aldatua, ezabatua edo deskonektatua",
   "direction": "Norabidea",
   "disable": "Desgaitu",

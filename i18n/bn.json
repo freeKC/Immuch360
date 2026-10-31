@@ -1288,6 +1288,7 @@
   "device_folder_not_answering": "ফোল্ডারটি সাড়া দেওয়া বন্ধ করেছে। একটু পরে আবার চেষ্টা করুন।",
   "device_folder_picker_failed": "ফোল্ডার নির্বাচক খোলা যায়নি",
   "device_folder_picker_hint": "Android অ্যাপগুলোকে Download ফোল্ডার নিজে বা পুরো স্টোরেজ খুলতে দেয় না: এগুলোর ভেতরের একটি ফোল্ডার বেছে নিন।",
+  "device_folder_removed": "{name} আর এই তালিকায় নেই। এর ফাইলগুলো ডিভাইসেই থাকবে।",
   "device_folder_unavailable": "এখন পড়া যাচ্ছে না: সরানো, মুছে ফেলা বা বিচ্ছিন্ন",
   "direction": "দিকনির্দেশনা",
   "disable": "নিষ্ক্রিয় করুন",

@@ -419,6 +419,7 @@
   "device_folder_not_answering": "Kua mutu te whakautu a te kōpaki. Ngana anō ā tōna wā.",
   "device_folder_picker_failed": "Kāore i taea te huaki i te kaikōwhiri kōpaki",
   "device_folder_picker_hint": "Kāore a Android e tuku i ngā taupānga kia huaki i te kōpaki Download tonu, i te rokiroki katoa rānei: kōwhiria he kōpaki kei roto.",
+  "device_folder_removed": "Kua kore a {name} i tēnei rārangi. Ka noho tonu ōna kōnae ki te pūrere.",
   "device_folder_unavailable": "Kāore e taea te pānui ināianei: kua nekehia, kua mukua, kua wetekina rānei",
   "dji_import_choose": "Kōwhiria te tarona, te kāri rānei",
   "dji_import_choose_help": "I te kōwhiri, whakatuwherahia te tahua taha, kōwhiria te tarona, te kāri rānei, kātahi ko tōna kōpaki DCIM, ko te puku katoa rānei.",

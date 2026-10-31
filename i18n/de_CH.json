@@ -670,6 +670,7 @@
   "device_folder_not_answering": "Dä Ordner antwortet nümme. Probier s grad nomal.",
   "device_folder_picker_failed": "D Ordneruswahl het nöd chöne ufgmacht werde",
   "device_folder_picker_hint": "Android laht Apps wäder de Ordner Download sälber no de ganz Speicher uftue: wähl en Ordner dinne.",
+  "device_folder_removed": "{name} isch nümme i dere Liste. Sini Dateie bliibed uf em Gerät.",
   "device_folder_unavailable": "Momentan nöd lesbar: verschobe, glöscht oder usgsteckt",
   "dji_import_choose": "D Drohne oder d Charte uswähle",
   "dji_import_choose_help": "Mach im Uswahlfänschter s Siitemenü uf, wähl d Drohne oder d Charte und dänn ihre DCIM-Ordner oder s ganze Laufwerk.",

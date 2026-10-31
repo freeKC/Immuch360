@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Mapa se je nehala odzivati. Poskusite znova čez trenutek.",
   "device_folder_picker_failed": "Izbirnika map ni bilo mogoče odpreti",
   "device_folder_picker_hint": "Android aplikacijam ne dovoli odpreti same mape Download ali celotne shrambe: izberite mapo v njih.",
+  "device_folder_removed": "{name} ni več na tem seznamu. Datoteke ostanejo v napravi.",
   "device_folder_unavailable": "Zdaj je ni mogoče prebrati: premaknjena, izbrisana ali odklopljena",
   "direction": "Usmeritev",
   "disable": "Onemogoči",

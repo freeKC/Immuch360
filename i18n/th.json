@@ -1295,6 +1295,7 @@
   "device_folder_not_answering": "โฟลเดอร์หยุดตอบสนอง โปรดลองอีกครั้งในอีกสักครู่",
   "device_folder_picker_failed": "ไม่สามารถเปิดตัวเลือกโฟลเดอร์ได้",
   "device_folder_picker_hint": "Android ไม่อนุญาตให้แอปเปิดโฟลเดอร์ Download เองหรือพื้นที่เก็บข้อมูลทั้งหมด: โปรดเลือกโฟลเดอร์ที่อยู่ข้างใน",
+  "device_folder_removed": "{name} ไม่อยู่ในรายการนี้แล้ว ไฟล์ยังคงอยู่ในอุปกรณ์",
   "device_folder_unavailable": "อ่านไม่ได้ในขณะนี้: ถูกย้าย ลบ หรือถอดออก",
   "direction": "ทิศทาง",
   "disable": "ปิดใช้งาน",

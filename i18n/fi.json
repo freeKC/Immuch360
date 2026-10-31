@@ -1243,6 +1243,7 @@
   "device_folder_not_answering": "Kansio lakkasi vastaamasta. Yritä hetken kuluttua uudelleen.",
   "device_folder_picker_failed": "Kansion valitsinta ei voitu avata",
   "device_folder_picker_hint": "Android ei anna sovellusten avata itse Download-kansiota eikä koko tallennustilaa: valitse kansio niiden sisältä.",
+  "device_folder_removed": "{name} ei ole enää tässä luettelossa. Sen tiedostot jäävät laitteeseen.",
   "device_folder_unavailable": "Ei luettavissa nyt: siirretty, poistettu tai irrotettu",
   "direction": "Suunta",
   "disable": "Poista käytöstä",

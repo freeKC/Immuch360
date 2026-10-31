@@ -1243,6 +1243,7 @@
   "device_folder_not_answering": "फोल्डरने प्रतिसाद देणे थांबवले. थोड्या वेळाने पुन्हा प्रयत्न करा.",
   "device_folder_picker_failed": "फोल्डर निवडक उघडता आला नाही",
   "device_folder_picker_hint": "Android अ‍ॅप्सना Download फोल्डर स्वतः किंवा संपूर्ण स्टोरेज उघडू देत नाही: त्यांच्या आतील फोल्डर निवडा.",
+  "device_folder_removed": "{name} आता या सूचीत नाही. त्यातील फायली डिव्हाइसवरच राहतात.",
   "device_folder_unavailable": "आता वाचता येत नाही: हलवले, हटवले किंवा अनप्लग केले",
   "direction": "दिशा",
   "disable": "अक्षम करा",

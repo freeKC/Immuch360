@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "La cartella ha smesso di rispondere. Riprova tra un momento.",
   "device_folder_picker_failed": "Impossibile aprire il selettore delle cartelle",
   "device_folder_picker_hint": "Android non permette alle app di aprire la cartella Download stessa né l'intera memoria: scegli una cartella al loro interno.",
+  "device_folder_removed": "{name} non è più in questo elenco. I suoi file restano sul dispositivo.",
   "device_folder_unavailable": "Non leggibile ora: spostata, eliminata o scollegata",
   "direction": "Direzione",
   "disable": "Disabilita",

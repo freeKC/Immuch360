@@ -419,6 +419,7 @@
   "device_folder_not_answering": "Folder doh tok jawab. Cubo lagi sekejap lagi.",
   "device_folder_picker_failed": "Pemileh folder tok leh buko",
   "device_folder_picker_hint": "Android tok bui app buko folder Download sendiri atau gapo storan: pileh folder dale dio.",
+  "device_folder_removed": "{name} tok dok dale senarai ni doh. Fail dio kekal dale peranti.",
   "device_folder_unavailable": "Tok leh baco loni: doh dipindoh, dibuang atau dicabut",
   "dji_import_choose": "Pileh dron atau kad",
   "dji_import_choose_help": "Dale pemileh, bukak menu tepi, pileh dron atau kad, lepah tu folder DCIM dio atau seluruh pemacu.",

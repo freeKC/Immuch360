@@ -1303,6 +1303,7 @@
   "device_folder_not_answering": "フォルダが応答しなくなりました。しばらくしてからもう一度お試しください。",
   "device_folder_picker_failed": "フォルダの選択画面を開けませんでした",
   "device_folder_picker_hint": "Android では、アプリが Download フォルダそのものやストレージ全体を開くことはできません。その中のフォルダを選んでください。",
+  "device_folder_removed": "{name} はこの一覧から外れました。ファイルはデバイスに残ります。",
   "device_folder_unavailable": "現在読み取れません。移動、削除、または取り外されています",
   "direction": "方向",
   "disable": "無効化",

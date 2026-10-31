@@ -419,6 +419,7 @@
   "device_folder_not_answering": "La cartella la respond pù. Preuva anmò tra on moment.",
   "device_folder_picker_failed": "El seletor di cartell el s'è minga podud dervì",
   "device_folder_picker_hint": "Android el lassa minga che i app derven la cartella Download istessa o tutta la memoria: serna ona cartella denter.",
+  "device_folder_removed": "{name} l'è pù in quella lista chì. I sò file resten in sul dispositiv.",
   "device_folder_unavailable": "Se po minga legg adess: spostada, scancelada o destacada",
   "dji_import_choose": "Scerniss el dron o la scheda",
   "dji_import_choose_help": "In del selettor, derviss el menù de fianch, scerniss el dron o la scheda, poeu la soa cartella DCIM o tutta l'unità.",

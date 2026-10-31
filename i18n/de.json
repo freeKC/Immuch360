@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "Der Ordner antwortet nicht mehr. Versuche es gleich noch einmal.",
   "device_folder_picker_failed": "Die Ordnerauswahl konnte nicht geöffnet werden",
   "device_folder_picker_hint": "Android lässt Apps weder den Ordner Download selbst noch den gesamten Speicher öffnen: Wähle einen Ordner darin.",
+  "device_folder_removed": "{name} ist nicht mehr in dieser Liste. Seine Dateien bleiben auf dem Gerät.",
   "device_folder_unavailable": "Derzeit nicht lesbar: verschoben, gelöscht oder getrennt",
   "direction": "Richtung",
   "disable": "Deaktivieren",

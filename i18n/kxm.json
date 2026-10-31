@@ -419,6 +419,7 @@
   "device_folder_not_answering": "โฟลเดอร์หยุดตอบสนอง ลองใหม่อีกสักครู่",
   "device_folder_picker_failed": "เปิดตัวเลือกโฟลเดอร์บ่ได้",
   "device_folder_picker_hint": "Android บ่ให้แอปเปิดโฟลเดอร์ Download เองหรือที่เก็บข้อมูลทั้งหมด: เลือกโฟลเดอร์ข้างในแทน",
+  "device_folder_removed": "{name} บ่อยู่ในรายการนี้แล้ว ไฟล์ยังอยู่ในอุปกรณ์",
   "device_folder_unavailable": "อ่านบ่ได้ตอนนี้: ถูกย้าย ลบ หรือถอดออก",
   "dji_import_choose": "เลือกโดรนหรือการ์ด",
   "dji_import_choose_help": "ในหน้าต่างเลือกไฟล์ เปิดเมนูด้านข้าง เลือกโดรนหรือการ์ด แล้วเลือกโฟลเดอร์ DCIM หรือทั้งไดรฟ์",

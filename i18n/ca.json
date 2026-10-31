@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "La carpeta ha deixat de respondre. Torneu-ho a provar d'aquí a un moment.",
   "device_folder_picker_failed": "No s'ha pogut obrir el selector de carpetes",
   "device_folder_picker_hint": "Android no permet a les aplicacions obrir la mateixa carpeta Download ni tot l'emmagatzematge: trieu una carpeta que hi hagi a dins.",
+  "device_folder_removed": "{name} ja no és en aquesta llista. Els seus fitxers es queden al dispositiu.",
   "device_folder_unavailable": "No es pot llegir ara: moguda, suprimida o desconnectada",
   "direction": "Direcció",
   "disable": "Desactiva",

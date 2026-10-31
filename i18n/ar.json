@@ -1285,6 +1285,7 @@
   "device_folder_not_answering": "توقف المجلد عن الاستجابة. حاول مرة أخرى بعد لحظة.",
   "device_folder_picker_failed": "تعذر فتح منتقي المجلدات",
   "device_folder_picker_hint": "لا يسمح Android للتطبيقات بفتح مجلد Download نفسه أو وحدة التخزين كلها: اختر مجلدًا بداخلهما.",
+  "device_folder_removed": "لم يعد {name} في هذه القائمة. تبقى ملفاته على الجهاز.",
   "device_folder_unavailable": "تتعذر قراءته الآن: نُقل أو حُذف أو فُصل",
   "direction": "الإتجاه",
   "disable": "ابطال",
