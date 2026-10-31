@@ -313,6 +313,16 @@ void main() {
 
   /// Waits until what the video declares was read through the server
   Future<void> pumpUntilDetected(WidgetTester tester) async {
+    // What the file declares is read once the native player is ready, or a second after the load without one, as here
+    bool pending() {
+      final pages = find.byType(NetworkVideoPage).evaluate();
+      return pages.isNotEmpty &&
+          (pages.single as StatefulElement).state is NetworkVideoPageState &&
+          ((pages.single as StatefulElement).state as NetworkVideoPageState).detectPending;
+    }
+
+    await pumpRealIo(tester, pending);
+    await tester.pump(NetworkVideoPageState.detectWithoutPlayer);
     await pumpRealIo(tester, () => server.requests.any((request) => request.range != null));
     // The probe reads a few ranges, then the page follows
     for (var i = 0; i < 10; i++) {
@@ -893,17 +903,16 @@ void main() {
 
     testWidgets('resumes where it was left once ready, plays on, and says so for a few seconds', (tester) async {
       await pumpFilm(tester, [row(42)]);
-      // A share that tells no duration: Looping holds until the player tells it
-      expect(native.calls, ['load', 'loop true']);
+      // A share that tells no duration: Looping holds until the player tells it. The film loads at its place
+      expect(native.calls, ['load at ${42 * minute}', 'loop true']);
 
       native.ready();
       await tester.pump();
       await tester.pump();
       expect(native.calls.sublist(2), [
         'loop false',
-        'seek ${42 * minute}',
         'play',
-      ], reason: 'a film plays once whatever Looping says, from where it was left');
+      ], reason: 'a film plays once whatever Looping says, from where it was left, with no seek');
 
       native.moveTo(42 * minute + 400);
       await tester.pump(const Duration(milliseconds: 300));
@@ -914,6 +923,100 @@ void main() {
       expect(find.text('Resumed at 42:00'), findsNothing);
 
       await endRealIo(tester);
+    });
+
+    group('its link (31 October 2026)', () {
+      const deadLink = NativeVideoLink(waiting: true, sinceProgressMs: 30000, network: true);
+
+      testWidgets('a share that stops sending is said where Buffering is, and goes once the share answers', (
+        tester,
+      ) async {
+        await pumpFilm(tester, []);
+        native.ready();
+        await tester.pump();
+        await tester.pump();
+        native.moveTo(60000);
+        await tester.pump();
+        // Media3 waits for media as the share falls silent
+        native.onLinkChanged.value = const NativeVideoLink(waiting: true, sinceProgressMs: 500, network: true);
+        await tester.pump();
+        native.onLinkChanged.value = deadLink;
+        await tester.pump();
+
+        expect(find.text('The share stopped sending this video'), findsOneWidget);
+        expect(find.text('It plays on as soon as the share answers'), findsOneWidget);
+        expect(
+          find.textContaining('Could not open this file'),
+          findsNothing,
+          reason: 'no error: it plays on by itself',
+        );
+
+        // S2 of 31 October: the film played on under a sticky error until Retry. Here the bytes come back and it moves
+        native.onLinkChanged.value = const NativeVideoLink(waiting: true, sinceProgressMs: 100, network: true);
+        await tester.pump();
+        native.moveTo(61000);
+        await tester.pump();
+        expect(find.text('The share stopped sending this video'), findsNothing);
+        expect(find.byKey(const Key('network_video_buffering')), findsNothing);
+        expect(native.calls.where((call) => call.startsWith('load')), hasLength(1), reason: 'nothing loaded again');
+
+        await endRealIo(tester);
+      });
+
+      testWidgets('a slow share is never an error, and the buffering says what it brings', (tester) async {
+        var now = DateTime(2026, 10, 31, 18);
+        final clock = VideoPlayerNotifier.clock;
+        VideoPlayerNotifier.clock = () => now;
+        addTearDown(() => VideoPlayerNotifier.clock = clock);
+        await pumpFilm(tester, []);
+        // A film of 3 Mbit/s over a share at 1.2 Mbit/s, for a minute, before its first frame
+        for (var i = 0; i < 120; i++) {
+          now = now.add(const Duration(milliseconds: 500));
+          native.onLinkChanged.value = NativeVideoLink(
+            waiting: true,
+            bytesPerSecond: 150000,
+            neededBytesPerSecond: 375000,
+            sinceProgressMs: 200 + i % 2,
+            aheadMs: 3000,
+            targetMs: 15000,
+            loading: true,
+            network: true,
+          );
+          await tester.pump(const Duration(milliseconds: 500));
+        }
+
+        expect(find.textContaining('Could not open this file'), findsNothing);
+        expect(find.textContaining('Loading: 1.2 Mbit/s of the 3 Mbit/s this video needs'), findsOneWidget);
+        expect(
+          find.text('The share sends this video at 1.2 Mbit/s, it needs 3 Mbit/s: it will pause now and then'),
+          findsOneWidget,
+        );
+
+        await endRealIo(tester);
+      });
+
+      testWidgets('an error the player put in the words of the app is said in ours, never as its token', (
+        tester,
+      ) async {
+        await pumpFilm(tester, []);
+        // S1 of 31 October showed "Could not open this file: immuch360-playback-error:stalled::0:0"
+        native.onError.value = 'immuch360-playback-error:stalled::0:0';
+        await tester.pump();
+        expect(find.textContaining('immuch360-playback-error'), findsNothing);
+        expect(find.text('Could not open this file: The share stopped sending this video'), findsOneWidget);
+
+        native.onError.value = 'immuch360-playback-error:noFrame:video/avc:5760:2880';
+        await tester.pump();
+        expect(
+          find.text(
+            'Could not open this file: This video does not play: the decoder of this device gives no picture for it '
+            '(H.264 5760 x 2880)',
+          ),
+          findsOneWidget,
+        );
+
+        await endRealIo(tester);
+      });
     });
 
     testWidgets('saves where the film is as the page goes', (tester) async {

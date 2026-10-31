@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,10 +14,12 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
+import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -25,6 +28,7 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
@@ -195,6 +199,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     WidgetsBinding.instance.removeObserver(this);
     HardwareKeyboard.instance.removeHandler(_onAnyKey);
     _hideTimer.cancel();
+    _detectTimer?.cancel();
     // Where the film is, as the page goes: Back, or the previous or next file in its place
     _recorder?.dispose();
     _recorder = null;
@@ -444,8 +449,49 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
     _shareReader = networkFileReader(fileSystem, widget.path);
-    unawaited(_detect(service, entry, httpRangeReader(client, url)));
+    // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
+    // share the two read the index of the file at once (3.6 MB for a two hour film), and the film started later. A
+    // page whose native player is not there a second later reads it at once
+    _detectLater = () => _detect(service, entry, httpRangeReader(client, url));
+    _detectTimer?.cancel();
+    _detectTimer = Timer(detectWithoutPlayer, () {
+      _detectTimer = null;
+      _detectWhenIdle(now: _controller == null);
+    });
     return (entry: entry, url: url);
+  }
+
+  /// Reads what the file declares (see [_detect]), set by [_load] and run once by [_detectWhenIdle]
+  Future<void> Function()? _detectLater;
+
+  /// Whether what the file declares waits to be read, see [_detectWhenIdle]: for the tests
+  @visibleForTesting
+  bool get detectPending => _detectLater != null;
+  Timer? _detectTimer;
+
+  /// Longest wait for the player before what the file declares is read anyway
+  static const detectWait = Duration(seconds: 15);
+
+  /// How long the page waits for its native player before it reads what the file declares without it
+  static const detectWithoutPlayer = Duration(seconds: 1);
+
+  /// Runs [_detectLater] once the player is ready and its link no longer loads, or [detectWait] after the load,
+  /// whichever comes first
+  void _detectWhenIdle({bool now = false}) {
+    final detect = _detectLater;
+    if (detect == null || !mounted) {
+      return;
+    }
+    final link = _controller?.onLinkChanged.value;
+    final idle = _isVideoReady && (link == null || !link.loading);
+    if (!now && !idle) {
+      _detectTimer ??= Timer(detectWait, () => _detectWhenIdle(now: true));
+      return;
+    }
+    _detectLater = null;
+    _detectTimer?.cancel();
+    _detectTimer = null;
+    unawaited(detect());
   }
 
   /// Logs what the player got of a file it did not recognize as a video (see [unrecognizedVideoReport])
@@ -496,6 +542,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (_errorFocus.hasFocus) {
       _rootFocus.requestFocus();
     }
+    _detectTimer?.cancel();
+    _detectTimer = null;
     setState(() {
       _video = _load();
       videoSource = _sourceOf(_video);
@@ -549,9 +597,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller.onPlaybackEnded.addListener(_onPlaybackEnded);
     controller.onError.addListener(_onPlayerError);
     controller.onTracksChanged.addListener(_onTracksChanged);
+    controller.onLinkChanged.addListener(_onLinkChanged);
     _controller = controller;
     ref.listenManual(videoPlayerProvider(_playerKey).select((v) => v.status), _onFailure);
     unawaited(_loadVideo());
+  }
+
+  void _onLinkChanged() {
+    final link = _controller?.onLinkChanged.value;
+    if (mounted && link != null) {
+      _notifier.onNativeLinkChanged(link);
+      _detectWhenIdle();
+    }
   }
 
   void _removeListeners() {
@@ -562,6 +619,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller?.onPlaybackEnded.removeListener(_onPlaybackEnded);
     controller?.onError.removeListener(_onPlayerError);
     controller?.onTracksChanged.removeListener(_onTracksChanged);
+    controller?.onLinkChanged.removeListener(_onLinkChanged);
   }
 
   Future<void> _loadVideo() async {
@@ -639,6 +697,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       return;
     }
     setState(() => _isVideoReady = true);
+    _detectWhenIdle();
     // A video that becomes ready behind another app or an external player would play there unseen
     final lifecycleState = WidgetsBinding.instance.lifecycleState;
     if (lifecycleState == AppLifecycleState.paused || lifecycleState == AppLifecycleState.hidden) {
@@ -678,9 +737,15 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final error = controller?.onError.value;
     if (controller != null && error != null && mounted) {
       _log.warning('Could not play $_name: $error');
-      // The extractor list of Media3 tells the user nothing: a sentence, and what the player got in the logs
+      // The extractor list of Media3 tells the user nothing: a sentence, and what the player got in the logs. An error
+      // the native player put in the words of the app (NativePlaybackError) is said in ours, never as its token
       final unrecognized = isUnrecognizedVideoError(error);
-      setState(() => _playerError = unrecognized ? context.t.network_video_unrecognized : error);
+      final shown = unrecognized
+          ? context.t.network_video_unrecognized
+          : NativePlaybackError.parse(error) != null
+          ? _nativeErrorText(error)
+          : error;
+      setState(() => _playerError = shown);
       if (unrecognized) {
         unawaited(_logUnrecognized());
       }
@@ -691,13 +756,32 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
-  /// Nothing played for [VideoPlayerNotifier.stallTimeout]: the page says so, with Retry, instead of "Buffering"
+  /// An error of the native player in the words of the failure panel of the viewer: the cause, else its title
+  String _nativeErrorText(String error) {
+    final text = describeVideoFailure(
+      VideoPlaybackFailure(VideoFailureKind.error, error),
+      null,
+      context.t,
+      fromServer: false,
+      locale: context.locale.toLanguageTag(),
+    );
+    return text.cause ?? text.title;
+  }
+
+  /// A wait that is no error: the share stopped sending (the page says so where it says "Buffering", and the video
+  /// plays on by itself once the share answers), or, where the player tells nothing of its link, nothing played for
+  /// [VideoPlayerNotifier.fallbackStallTimeout]. Neither stays once the video moves.
   void _onFailure(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
-    if (status != VideoPlaybackStatus.failed || _notifier.failure?.kind != VideoFailureKind.stalled || !mounted) {
+    if (status != VideoPlaybackStatus.failed || previous == VideoPlaybackStatus.failed || !mounted) {
       return;
     }
-    _log.warning('Nothing of $_name played for ${VideoPlayerNotifier.stallTimeout.inSeconds} s');
-    setState(() => _playerError = context.t.video_error_stalled);
+    switch (_notifier.failure?.kind) {
+      case VideoFailureKind.dead:
+        _log.warning('$_name: nothing arrived for ${VideoLinkRule.deadAfter.inSeconds} s, the player keeps trying');
+      case VideoFailureKind.stalled:
+        _log.warning('Nothing of $_name played for ${VideoPlayerNotifier.fallbackStallTimeout.inSeconds} s');
+      default:
+    }
   }
 
   /// How the 360° viewers show the video: what it declares, else guesses from its frame size and its name
@@ -1163,10 +1247,15 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
               ),
             )
           else
-            // "Buffering…" while the video loads, and while it stalls (its position stands still as it plays)
+            // "Buffering…" while the video loads, and while it stalls (its position stands still as it plays), with
+            // what the link brings against what the video needs, and a share that stopped sending
             Positioned.fill(
               child: IgnorePointer(
-                child: NetworkVideoBufferingIndicator(playerKey: _playerKey, loading: !_isVideoReady),
+                child: NetworkVideoBufferingIndicator(
+                  playerKey: _playerKey,
+                  loading: !_isVideoReady,
+                  link: _notifier.link,
+                ),
               ),
             ),
           // Where a film resumed, for a few seconds (see ResumeNotice): it takes no touch nor key
