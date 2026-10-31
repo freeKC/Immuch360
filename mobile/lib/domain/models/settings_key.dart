@@ -23,6 +23,9 @@ enum SettingsKey<T> {
   viewerLoopVideo<bool>(),
   // The Looping setting of a TV, see ViewerConfig.loopVideoOnTv
   viewerLoopVideoOnTv<bool>(),
+  // "Remember where I stopped" and its threshold in minutes, see ViewerConfig.resumeVideos and WatchRule
+  viewerResumeVideos<bool>(),
+  viewerResumeMinMinutes<int>(),
   viewerLoadOriginalVideo<bool>(),
   viewerAutoPlayVideo<bool>(),
   viewerTapToNavigate<bool>(),

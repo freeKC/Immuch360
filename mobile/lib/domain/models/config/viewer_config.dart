@@ -12,6 +12,14 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// The Looping setting of a TV (Android TV, Google TV), off by default: a film ends there, and left and right go to
     /// the next item. Its own key, so that the default of the phones stays on (see loopVideoProvider).
     @Default(false) bool loopVideoOnTv,
+
+    /// "Remember where I stopped": a video of at least [resumeMinMinutes] minutes, a film, starts where it was left, its
+    /// tile shows how much of it was watched, and it plays once whatever Looping says; a shorter one always starts from
+    /// the beginning (see WatchRule). On by default, the lab rule (Settings, Asset Viewer, Videos turns it off)
+    @Default(true) bool resumeVideos,
+
+    /// The shortest film of [resumeVideos], in minutes: 10 by default, 0 for every video
+    @Default(10) int resumeMinMinutes,
     @Default(false) bool loadOriginalVideo,
     @Default(true) bool autoPlayVideo,
     @Default(false) bool tapToNavigate,
