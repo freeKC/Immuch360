@@ -1,18 +1,23 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/original_download.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
@@ -23,8 +28,9 @@ import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
 
-class _NoProbes extends SphericalProbeService {
-  _NoProbes()
+/// What the file of every video declares: [result], nothing by default
+class _Probes extends SphericalProbeService {
+  _Probes([this.result])
     : super(
         storage: MockStorageRepository(),
         client: () => throw UnimplementedError('no network in these tests'),
@@ -32,8 +38,40 @@ class _NoProbes extends SphericalProbeService {
         headers: () => const {},
       );
 
+  final SphericalProbe? result;
+
   @override
-  Future<SphericalProbe?> probe(BaseAsset asset, {File? localFile}) async => null;
+  Future<SphericalProbe?> probe(BaseAsset asset, {File? localFile}) async => result;
+}
+
+/// A server that cannot stream its originals (FreeKC's: no Range on /original): each download waits for the test
+class _Downloads extends OriginalDownloads {
+  _Downloads()
+    : super(
+        client: () => throw UnimplementedError('no network in these tests'),
+        serverEndpoint: () => null,
+        headers: () => const {},
+        directory: () async => Directory.systemTemp,
+      );
+
+  final runs = <({Completer<File?> file, bool Function()? isWanted})>[];
+
+  @override
+  Future<bool> streams(String videoId) async => false;
+
+  @override
+  Future<File?> download(String videoId, {void Function(int percent)? onProgress, bool Function()? isWanted}) {
+    final file = Completer<File?>();
+    runs.add((file: file, isWanted: isWanted));
+    onProgress?.call(0);
+    return file.future;
+  }
+
+  @override
+  void hold(String videoId) {}
+
+  @override
+  Future<void> release(String videoId) async {}
 }
 
 class _Decodes extends VideoDecoderApi {
@@ -80,8 +118,14 @@ void main() {
     updatedAt: now,
   );
 
-  /// The viewer of [video], with the notice of the asset viewer next to it, and its native player attached
-  Future<void> pumpViewer(WidgetTester tester, {List<WatchProgress> rows = const [], bool watchProgress = true}) async {
+  /// The viewer of [video], with the notice of the asset viewer next to it, and its native player attached. With
+  /// [downloads], the original plays, from a server that cannot stream it: downloaded first
+  Future<void> pumpViewer(
+    WidgetTester tester, {
+    List<WatchProgress> rows = const [],
+    bool watchProgress = true,
+    _Downloads? downloads,
+  }) async {
     database = MemoryWatchRows(rows);
     await tester.pumpTestWidget(
       context,
@@ -101,11 +145,24 @@ void main() {
       ),
       overrides: [
         storageRepositoryProvider.overrideWithValue(MockStorageRepository()),
-        sphericalProbeServiceProvider.overrideWithValue(_NoProbes()),
+        sphericalProbeServiceProvider.overrideWithValue(
+          _Probes(
+            downloads == null
+                ? null
+                : const SphericalProbe(codec: 'hvc1', codedWidth: 3840, codedHeight: 2160, frameRate: 25),
+          ),
+        ),
         videoSourceServiceProvider.overrideWithValue(VideoSourceService(_Decodes())),
         watchProgressRepositoryProvider.overrideWithValue(database),
         loopVideoProvider.overrideWithValue(true),
         tvModeProvider.overrideWithValue(false),
+        if (downloads != null) ...[
+          appConfigProvider.overrideWithValue(
+            const AppConfig(viewer: ViewerConfig(videoSource: .preferOriginalWithinDecoder)),
+          ),
+          originalDownloadsProvider.overrideWithValue(downloads),
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+        ],
       ],
       expectSettle: false,
     );
@@ -227,6 +284,55 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(native.calls.last, 'seek ${50 * minute}');
+      native.moveTo(51 * minute);
+      await tester.pump();
+
+      await leave(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 51));
+    });
+
+    testWidgets('an original downloaded again once the external player handed the film back goes there, silently', (
+      tester,
+    ) async {
+      final downloads = _Downloads();
+      await pumpViewer(tester, rows: [row(42)], downloads: downloads);
+      expect(native.calls, isEmpty, reason: 'nothing streams while the original downloads');
+      final first = downloads.runs.single;
+
+      // The immersive viewer takes the film before its original is whole (it downloads it on its own), plays it to
+      // 50:00, reporting where it is (ImmersiveWatch), and hands it back there as it closes
+      final player = playerOf(tester);
+      await player.suspendForExternalPlayer();
+      expect(first.isWanted?.call(), isFalse);
+      first.file.complete(null);
+      await tester.pump();
+      ProviderScope.containerOf(
+        tester.element(find.byType(NativeVideoViewer)),
+      ).read(watchProgressProvider.notifier).record(key, position: const Duration(minutes: 50), duration: film);
+      await player.resumeAfterExternalPlayerAt(const Duration(minutes: 50), play: false);
+      await tester.pump();
+      expect(native.calls, isEmpty, reason: 'nothing was loaded to load again');
+
+      // Back in the app: the page downloads the original again (_downloadAgain), then loads it
+      await tester.state<NativeVideoViewerState>(find.byType(NativeVideoViewer)).didChangeAppLifecycleState(.resumed);
+      await tester.pump();
+      await tester.pump();
+      expect(downloads.runs, hasLength(2));
+      downloads.runs.last.file.complete(File('/cache/video_original/original-${video.id}.mp4'));
+      await tester.pump();
+      await tester.pump();
+      expect(native.calls.where((call) => call == 'load'), hasLength(1));
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      expect(native.calls, contains('seek ${50 * minute}'));
+      native.moveTo(50 * minute + 500);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byType(ResumeNotice), findsOneWidget);
+      expect(find.textContaining('Resumed at'), findsNothing, reason: 'the film goes on where it was');
       native.moveTo(51 * minute);
       await tester.pump();
 
