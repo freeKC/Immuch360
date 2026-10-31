@@ -62,6 +62,22 @@ ONE_TIME_KIND_THRESHOLDS = {
     # 1.5 % leaves about half a point for the fixes of the headset tests. Should another release be published before
     # the one with the splats, this entry moves to the tag that release becomes.
     'v3.3.0-rc.0-35': {'quest': 1.5},
+    # 31 October 2026, for Android build 38 (Browse a folder, TIFF photos on Android, the watch progress of films),
+    # compared with release 37. The packages of integration-38, signed by the release workflow, against release 37:
+    #   At 2bcdb08a5, the device folders and the TIFF lots merged (CI run 41201507326): armeabi-v7a 88,656,204 bytes
+    #   against 87,738,576, +1.046 %; the AAB 237,196,192 against 235,114,588, +0.885 %; x86_64 94,466,017 against
+    #   93,679,465, +0.840 %; the universal APK 296,974,503 against 294,549,551, +0.823 %; arm64-v8a +0.490 % and the
+    #   Quest APK +0.456 %.
+    #   The watch progress alone, at 407ced352 (CI run 41198434328): +0.125 % (Quest) to +0.187 % (armeabi-v7a).
+    #   Their sum, the estimate at the release head: armeabi-v7a +1.233 %, the AAB +1.058 %, universal +0.990 %,
+    #   x86_64 +0.980 %, arm64-v8a +0.623 %, the Quest APK +0.581 %.
+    # The growth is the Dart code linked into libapp.so: the TIFF decoder of the app and the code of the image package
+    # it now uses, the device folders, the watch progress, and the 22 new texts in 89 languages. The TIFF fixtures stay
+    # under mobile/test, in no package. 1.5 % for the four kinds near or over 1 % leaves at least a quarter of a point
+    # over the estimate; arm64-v8a and the Quest keep the ordinary 1 %. The release after build 38 compares with build
+    # 38 and the ordinary threshold again. Should another release be published before build 38, this entry moves to
+    # the tag that release becomes.
+    'v3.3.0-rc.0-37': {'armeabi-v7a': 1.5, 'aab': 1.5, 'universal': 1.5, 'x86_64': 1.5},
 }
 
 
