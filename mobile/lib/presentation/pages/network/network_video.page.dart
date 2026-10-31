@@ -977,12 +977,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         // A video whose name says it holds two eyes (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS...) and that is not 360°:
         // "View in 3D", on the flat video screen of the immersive viewer
         final flatFormat = video != null && flat3dByName && !is360 ? _flatFormat(video) : null;
-        // Play from the start and Mark as not watched, for a film (see watchActionsFor)
+        // Play from the start and Mark as not watched, for a film (see watchActionsFor). The entries only, which a record
+        // compares by value: the save of the film every 5 s while it plays rebuilds nothing here
         final watchKey = video == null ? null : WatchKey.ofEntry(video.entry);
-        final watchActions = watchActionsFor(
-          watchKey == null ? null : ref.watch(watchProgressProvider.select((rows) => rows.find(watchKey))),
-          ref.watch(watchRuleProvider),
-        );
+        final watchRule = ref.watch(watchRuleProvider);
+        final watchActions = watchKey == null
+            ? (restart: false, unwatch: false)
+            : ref.watch(watchProgressProvider.select((rows) => watchActionsFor(rows.find(watchKey), watchRule)));
 
         final appBar = AppBar(
           backgroundColor: Colors.black38,

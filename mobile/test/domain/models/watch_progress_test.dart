@@ -182,9 +182,32 @@ void main() {
       expect(resumeAt(row, rule: const WatchRule(enabled: false)), Duration.zero);
     });
 
-    test('from 0 when the duration known now differs by more than 2 s: the file was replaced', () {
-      expect(resumeAt(row, rule: rule, duration: film + const Duration(seconds: 3)), Duration.zero);
+    test('from 0 when the duration known now differs by more than 1 %: the file was replaced', () {
+      // 1 % of 98 minutes: 58.8 s
+      expect(resumeAt(row, rule: rule, duration: film + const Duration(seconds: 59)), Duration.zero);
+      expect(resumeAt(row, rule: rule, duration: film - const Duration(seconds: 59)), Duration.zero);
       expect(resumeAt(row, rule: rule, duration: minute * 30), Duration.zero);
+    });
+
+    test('a copy of the film a few seconds longer or shorter (the transcode, a media server) still resumes', () {
+      // Within 1 % of 98 minutes: a longer audio or subtitle stream, another probe of the same file
+      expect(resumeAt(row, rule: rule, duration: film + const Duration(seconds: 5)), minute * 42);
+      expect(resumeAt(row, rule: rule, duration: film - const Duration(seconds: 58)), minute * 42);
+    });
+
+    test('2 s at least for a short film', () {
+      // A threshold of 0 makes a 3 minute clip a film: 1 % of it is under 2 s
+      const every = WatchRule(minMinutes: 0);
+      final clip = row.copyWith(position: minute, duration: minute * 3);
+
+      expect(resumeAt(clip, rule: every, duration: minute * 3 + const Duration(seconds: 2)), minute);
+      expect(resumeAt(clip, rule: every, duration: minute * 3 + const Duration(seconds: 3)), Duration.zero);
+    });
+
+    test('the tolerance between two durations of one file', () {
+      expect(watchDurationTolerance(minute * 100), const Duration(minutes: 1));
+      expect(watchDurationTolerance(minute * 3), const Duration(seconds: 2));
+      expect(watchDurationTolerance(Duration.zero), const Duration(seconds: 2));
     });
 
     test('the duration known now decides whether it is a film', () {

@@ -42,8 +42,9 @@ class PlayFromStartAction extends AssetActionBuilder {
       return null;
     }
     final key = WatchKey.ofAsset(asset);
-    final row = ref.watch(watchProgressProvider.select((rows) => rows.find(key)));
-    if (!watchActionsFor(row, ref.watch(watchRuleProvider)).restart) {
+    final rule = ref.watch(watchRuleProvider);
+    // Whether it applies only: the saves of the film while it plays change its row, not this
+    if (!ref.watch(watchProgressProvider.select((rows) => watchActionsFor(rows.find(key), rule).restart))) {
       return null;
     }
     return .new(
@@ -69,8 +70,8 @@ class MarkUnwatchedAction extends AssetActionBuilder {
       return null;
     }
     final key = WatchKey.ofAsset(asset);
-    final row = ref.watch(watchProgressProvider.select((rows) => rows.find(key)));
-    if (!watchActionsFor(row, ref.watch(watchRuleProvider)).unwatch) {
+    final rule = ref.watch(watchRuleProvider);
+    if (!ref.watch(watchProgressProvider.select((rows) => watchActionsFor(rows.find(key), rule).unwatch))) {
       return null;
     }
     return .new(

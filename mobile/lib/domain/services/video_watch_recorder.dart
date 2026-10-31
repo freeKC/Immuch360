@@ -17,6 +17,11 @@ import 'package:immich_mobile/providers/watch_progress.provider.dart';
 /// before the video played in this page: the pages around it and the end the player reports at load never overwrite
 /// a position with 0. A video that is no film keeps nothing. A film plays once whatever Looping says ([loopsWith]).
 ///
+/// The state of the player says nothing of where the film is while an external player has it, nor once it handed it
+/// back, until the player is ready again: the in-app player loads it again at 0 (Media3's setMediaItem) and goes to
+/// the position handed back only then. A save meanwhile keeps that position (see [_save]). Nor before the rows of
+/// the database are in memory: nothing is saved before, and a film that did not really start resumes then.
+///
 /// It holds the store object and the player, never a ref, so that it still saves as the page goes.
 class VideoWatchRecorder implements VideoPositionWatcher {
   VideoWatchRecorder({
@@ -28,8 +33,13 @@ class VideoWatchRecorder implements VideoPositionWatcher {
     this.onResumed,
   }) : _knownDuration = duration != null && duration > Duration.zero ? duration : null {
     _row = _store.find(key);
-    final at = resumeAt(_row, rule: rule, duration: _knownDuration);
+    // The duration of the row is the player's of the viewing before: the one the page knew (the server's probe of the
+    // original, a media server's listing) may differ from it, the player's is compared once it tells it (_onDuration)
+    final at = resumeAt(_row, rule: rule);
     _target = at > Duration.zero ? at : null;
+    if (!_store.isLoaded) {
+      unawaited(_store.loaded.then((_) => _onRowsLoaded()));
+    }
   }
 
   /// How often a film that plays is saved: a crash or a kill loses this much at most
@@ -41,8 +51,9 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   /// Longest a page waits for the rows of the database before it loads a video (see [storeReady])
   static const storeWait = Duration(seconds: 2);
 
-  /// Completes once [store] holds the rows of its database, [storeWait] at most: a recorder made before would find no
-  /// row, and the film would start from the beginning. Read once at the start of the app, so at once ever after.
+  /// Completes once [store] holds the rows of its database, [storeWait] at most: a recorder made before finds no row,
+  /// saves nothing until they come and takes the film where it was left then (see [_onRowsLoaded]). Read once at the
+  /// start of the app, so at once ever after.
   static Future<void> storeReady(WatchProgressStore store) => store.loaded.timeout(storeWait, onTimeout: () {});
 
   final WatchProgressStore _store;
@@ -58,8 +69,9 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   WatchProgress? _row;
   Duration? _target;
 
-  /// Whether the page set the player to loop, see [loopsWith]
+  /// Whether the page set the player to loop, see [loopsWith], and what the Looping setting said
   bool _loops = false;
+  bool _loopSetting = false;
 
   VideoPlayerState? _last;
   bool _played = false;
@@ -74,15 +86,25 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   Duration? get startAt => _target;
 
   /// Whether the page sets the player to loop with the Looping setting at [setting]: never a film whose duration is
-  /// known; one whose duration only the player tells stops looping once it does
-  bool loopsWith(bool setting) => _loops = setting && !rule.isFilm(_knownDuration);
+  /// known; the duration the player tells, once it does, decides (see [_onDuration])
+  bool loopsWith(bool setting) {
+    _loopSetting = setting;
+    return _loops = setting && !rule.isFilm(_playerDuration ?? _knownDuration);
+  }
 
-  /// Follows the player from now on, and takes a film to where it was left once ready: right before the page loads
+  /// The duration of the video as the player tells it, null before
+  Duration? get _playerDuration {
+    final duration = _last?.duration;
+    return duration != null && duration > Duration.zero ? duration : null;
+  }
+
+  /// Follows the player from now on, and takes a film to where it was left once ready: right before the page loads.
+  /// The restore of an external player waiting wins: the film goes where that player left it, with no notice.
   void start() {
     _player.watcher = this;
     final target = _target;
-    if (target != null) {
-      _player.seekWhenReady(target);
+    if (target != null && !_player.seekWhenReady(target)) {
+      _target = null;
     }
     _removeListener = _player.addListener(_onState);
   }
@@ -123,52 +145,95 @@ class VideoWatchRecorder implements VideoPositionWatcher {
     }
   }
 
-  /// The player told the duration: a film stops looping; a file whose duration differs from the one kept, which only
-  /// a page that knew none could not tell at load, starts from the beginning
+  /// The player told the duration: a film stops looping (a video the page took for one loops as set); a file whose
+  /// duration differs from the one kept (see resumeAt: the row has the player's own duration) starts from the
+  /// beginning. Heard as the player becomes ready, before the seek to where the film was left goes: taken back then.
   void _onDuration(Duration duration) {
-    if (_loops && rule.isFilm(duration)) {
-      _loops = false;
-      unawaited(_player.setLoop(false));
+    final loops = _loopSetting && !rule.isFilm(duration);
+    if (loops != _loops) {
+      _loops = loops;
+      unawaited(_player.setLoop(loops));
     }
     final row = _row;
-    final resumes = _target != null && _knownDuration == null && row != null;
-    if (resumes && resumeAt(row, rule: rule, duration: duration) == Duration.zero) {
+    if (_target != null && row != null && resumeAt(row, rule: rule, duration: duration) == Duration.zero) {
       _target = null;
-      _player.seekTo(Duration.zero);
+      if (!_player.cancelSeekWhenReady()) {
+        // The seek went already: back to the start
+        _player.seekTo(Duration.zero);
+      }
     }
   }
 
   void _noticeResume(Duration position) {
     final target = _target;
-    if (target == null || _noticed || (position - target).abs() > resumeTolerance) {
+    if (target == null || _noticed) {
       return;
     }
-    _noticed = true;
-    onResumed?.call(target);
+    if ((position - target).abs() <= resumeTolerance) {
+      _noticed = true;
+      onResumed?.call(target);
+    } else if (_player.isReady && _player.pendingRestorePosition == null) {
+      // It plays elsewhere ("Play from the start" before it played, the user's seek): no notice when it passes there
+      _target = null;
+    }
   }
 
-  /// Saves where the video is, or [at]: a film only, once it played. [ended]: the player reached the end, which some
-  /// players report at 0; the last position it played at tells. [later]: right after the current frame, for a page
-  /// that goes, which may not change a provider while the widget tree is being taken down.
-  void _save({Duration? at, bool ended = false, bool later = false}) {
-    final state = _last;
-    if (!_played) {
+  /// The rows of the database came after this recorder started (a slow start of the app, see [storeReady]): a film
+  /// that did not really start here yet goes where it was left, with its notice
+  void _onRowsLoaded() {
+    if (_disposed) {
       return;
     }
-    final duration = state != null && state.duration > Duration.zero ? state.duration : _knownDuration;
+    _row = _store.find(key);
+    final at = resumeAt(_row, rule: rule, duration: _playerDuration);
+    if (at <= Duration.zero || _player.isSuspendedForExternalPlayer || _player.pendingRestorePosition != null) {
+      return;
+    }
+    if (!_player.isReady) {
+      if (_player.seekWhenReady(at)) {
+        _target = at;
+      }
+      return;
+    }
+    final position = _last?.position ?? Duration.zero;
+    if (position < watchStartMargin(_playerDuration ?? _row!.duration)) {
+      _target = at;
+      _player.seekTo(at);
+    }
+  }
+
+  /// Saves where the video is, or [at]: a film only, once it played, and once the rows of the database are in memory
+  /// (a save before would be kept over the row of the film). [ended]: the player reached the end, which some players
+  /// report at 0; the last position it played at tells. [later]: right after the current frame, for a page that goes,
+  /// which may not change a provider while the widget tree is being taken down.
+  ///
+  /// While an external player has the video, nothing: that player tells where it is ([onHandBack], the reports of the
+  /// immersive viewer). Once it handed the video back, the player goes there only once ready again, at 0 until then:
+  /// the position it goes to is where the film is.
+  void _save({Duration? at, bool ended = false, bool later = false}) {
+    if (!_played || !_store.isLoaded) {
+      return;
+    }
+    final duration = _playerDuration ?? _knownDuration;
     if (duration == null || !rule.isFilm(duration)) {
       return;
     }
-    var position = at ?? state?.position ?? Duration.zero;
-    if (ended && _lastPlayedPosition > position) {
-      position = _lastPlayedPosition;
+    if (at == null && _player.isSuspendedForExternalPlayer) {
+      return;
     }
+    final position = at ?? _player.pendingRestorePosition ?? _stopPosition(ended: ended);
     final store = _store;
     if (later) {
       scheduleMicrotask(() => store.record(key, position: position, duration: duration));
     } else {
       store.record(key, position: position, duration: duration);
     }
+  }
+
+  /// Where the player stopped: the last position it played at for an end reported at 0
+  Duration _stopPosition({required bool ended}) {
+    final position = _last?.position ?? Duration.zero;
+    return ended && _lastPlayedPosition > position ? _lastPlayedPosition : position;
   }
 
   @override
@@ -185,12 +250,13 @@ class VideoWatchRecorder implements VideoPositionWatcher {
     }
     // The external player played it: what it hands back is where the film is
     _played = true;
+    _lastPlayedPosition = position;
     _save(at: position);
   }
 
   @override
   Duration resumePositionAfterExternalPlayer() =>
-      _disposed ? Duration.zero : resumeAt(_store.find(key), rule: rule, duration: _knownDuration ?? _last?.duration);
+      _disposed ? Duration.zero : resumeAt(_store.find(key), rule: rule, duration: _playerDuration);
 
   /// The page goes, or loads another video: saves where it is, right after the current frame, and follows the player
   /// no more

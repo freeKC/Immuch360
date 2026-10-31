@@ -48,8 +48,13 @@ Duration watchStartMargin(Duration duration) => _shorter(const Duration(seconds:
 
 Duration _shorter(Duration a, Duration b) => a < b ? a : b;
 
-/// How far a duration known now may differ from the one of a row before it counts as another file (see [resumeAt])
-const watchDurationTolerance = Duration(seconds: 2);
+/// How far a duration known now may differ from [duration], the one of a row, before it counts as another file (see
+/// [resumeAt]): 1 % of it, 2 s at least. Two durations of one film differ by more than a few seconds: the transcode and
+/// the original, a media server's own probe, an audio or subtitle stream longer than the video.
+Duration watchDurationTolerance(Duration duration) {
+  final relative = duration * 0.01;
+  return relative > const Duration(seconds: 2) ? relative : const Duration(seconds: 2);
+}
 
 /// Where the video of [key] was left: [position] in its [duration], 0 for a film to start from the beginning;
 /// [watched] once it was stopped in its end tail (see [watchEndTail]), which the next viewings keep. [fingerprint] finds
@@ -157,7 +162,7 @@ Duration resumeAt(WatchProgress? row, {required WatchRule rule, Duration? durati
   if (!rule.isFilm(known ?? row.duration)) {
     return Duration.zero;
   }
-  if (known != null && (known - row.duration).abs() > watchDurationTolerance) {
+  if (known != null && (known - row.duration).abs() > watchDurationTolerance(row.duration)) {
     return Duration.zero;
   }
   return row.position;

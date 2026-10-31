@@ -56,10 +56,18 @@ class FakeNativePlayer extends Fake implements NativeVideoPlayerController {
     return info;
   }
 
+  /// Loads [videoSource] at its start, as Media3's setMediaItem does: the position goes back to 0, and the position loop
+  /// of the plugin, running since the first ready, reports it before the player is ready again
   @override
   Future<void> loadVideoSource(VideoSource videoSource) async {
     calls.add('load');
     _source = videoSource;
+    positionMs = 0;
+    if (onPlaybackPositionChanged.value == 0) {
+      onPlaybackPositionChanged.notifyListeners();
+    } else {
+      onPlaybackPositionChanged.value = 0;
+    }
   }
 
   /// The player is ready, at its start

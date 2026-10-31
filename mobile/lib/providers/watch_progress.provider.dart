@@ -90,6 +90,10 @@ class WatchProgressStore extends Notifier<WatchProgressRows> {
   /// Completes once the rows of the database are in memory
   Future<void> get loaded => _loaded;
 
+  /// Whether the rows of the database are in memory (see [loaded]): a player saves nothing before, which would be kept
+  /// over the row of the database (see VideoWatchRecorder)
+  bool get isLoaded => _isLoaded;
+
   /// Completes once every change made so far is written
   Future<void> get flushed => _writes;
 

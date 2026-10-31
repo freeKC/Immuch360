@@ -954,6 +954,49 @@ void main() {
       await endRealIo(tester);
     });
 
+    VideoPlayerNotifier playerOf(WidgetTester tester) => ProviderScope.containerOf(
+      tester.element(find.byType(NetworkVideoPage)),
+    ).read(videoPlayerProvider('network:nas:/holiday.mp4').notifier);
+
+    testWidgets('Back right after an external player handed the film back keeps where it left it', (tester) async {
+      await pumpFilm(tester, [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(45 * minute);
+      await tester.pump();
+
+      // The immersive viewer plays it to 50:00; the page's player loads it again, at its start until it is ready
+      final player = playerOf(tester);
+      await player.suspendForExternalPlayer();
+      await tester.pump();
+      await player.resumeAfterExternalPlayerAt(const Duration(minutes: 50), play: false);
+      await tester.pump();
+      expect(player.state.position, Duration.zero);
+
+      await endRealIo(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+    });
+
+    testWidgets('a save of the film while it plays rebuilds nothing of the page', (tester) async {
+      await pumpFilm(tester, [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      final page = tester.element(find.byType(NetworkVideoPage));
+      expect(page.dirty, isFalse);
+
+      // What the recorder does every 5 s: the same entries in the menu, another row
+      ProviderScope.containerOf(
+        page,
+      ).read(watchProgressProvider.notifier).record(key, position: const Duration(minutes: 43), duration: film);
+
+      expect(page.dirty, isFalse);
+      await endRealIo(tester);
+    });
+
     testWidgets('no such entries for a video without a row', (tester) async {
       await pumpFilm(tester, []);
 

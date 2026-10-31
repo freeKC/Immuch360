@@ -11,6 +11,7 @@ import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -172,6 +173,88 @@ void main() {
     await leave(tester);
 
     expect(database.saved[key.key]?.position, const Duration(minutes: 20));
+  });
+
+  group('a film an external player hands back (the immersive viewer of the Quest, Spatial 2.5D)', () {
+    VideoPlayerNotifier playerOf(WidgetTester tester) => ProviderScope.containerOf(
+      tester.element(find.byType(NativeVideoViewer)),
+    ).read(videoPlayerProvider(video.id).notifier);
+
+    /// The film plays here to 45:00, then an external player takes it and hands it back at 50:00: the in-app player
+    /// loads it again, at its start until it is ready
+    Future<void> handBack(WidgetTester tester) async {
+      await pumpViewer(tester, rows: [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(45 * minute);
+      await tester.pump();
+
+      final player = playerOf(tester);
+      await player.suspendForExternalPlayer();
+      await tester.pump();
+      await player.resumeAfterExternalPlayerAt(const Duration(minutes: 50), play: false);
+      await tester.pump();
+      expect(native.calls.where((call) => call == 'load'), hasLength(2), reason: 'loaded again');
+      expect(player.state.position, Duration.zero, reason: 'at its start until it is ready, as Media3 reports it');
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+    }
+
+    testWidgets('Back before the player is ready again keeps where the external player left it', (tester) async {
+      await handBack(tester);
+
+      await leave(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+    });
+
+    testWidgets('a swipe before the player is ready again keeps it too', (tester) async {
+      await handBack(tester);
+
+      current.value = false;
+      await tester.pump();
+      await tester.pump();
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+      await leave(tester);
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+    });
+
+    testWidgets('once ready, the film is where it was handed back, and saves from there', (tester) async {
+      await handBack(tester);
+
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      expect(native.calls.last, 'seek ${50 * minute}');
+      native.moveTo(51 * minute);
+      await tester.pump();
+
+      await leave(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 51));
+    });
+
+    testWidgets('the viewer going while the external player has the film saves nothing over it', (tester) async {
+      await pumpViewer(tester, rows: [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(45 * minute);
+      await tester.pump();
+      await playerOf(tester).suspendForExternalPlayer();
+      await tester.pump();
+      expect(database.saved[key.key]?.position, const Duration(minutes: 45));
+      // The immersive viewer reports where the film is on its own (see ImmersiveWatch)
+      final store = ProviderScope.containerOf(
+        tester.element(find.byType(NativeVideoViewer)),
+      ).read(watchProgressProvider.notifier);
+      store.record(key, position: const Duration(minutes: 60), duration: film);
+
+      await leave(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 60));
+    });
   });
 
   testWidgets('a page next to the one on screen loads nothing and keeps the position as it was', (tester) async {

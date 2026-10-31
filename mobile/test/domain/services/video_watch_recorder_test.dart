@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,6 +9,9 @@ import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/infrastructure/repositories/watch_progress.repository.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
+import 'package:native_video_player/native_video_player.dart';
+
+import '../../fixtures/watch_progress.fake.dart';
 
 /// The rows given, kept in memory
 class _Rows implements WatchProgressRepository {
@@ -19,6 +24,32 @@ class _Rows implements WatchProgressRepository {
 
   @override
   Future<void> upsert(WatchProgress row) async {}
+
+  @override
+  Future<void> delete(String key) async {}
+
+  @override
+  Future<void> close() async {}
+}
+
+/// The rows of a database slow to open (a cold start on a TV): they come when the test says
+class _LateRows implements WatchProgressRepository {
+  _LateRows(this.rows);
+
+  final List<WatchProgress> rows;
+  final _opened = Completer<void>();
+  final written = <WatchProgress>[];
+
+  void open() => _opened.complete();
+
+  @override
+  Future<List<WatchProgress>> load({int maxRows = watchProgressMaxRows}) async {
+    await _opened.future;
+    return rows;
+  }
+
+  @override
+  Future<void> upsert(WatchProgress row) async => written.add(row);
 
   @override
   Future<void> delete(String key) async {}
@@ -46,7 +77,10 @@ class _Player extends VideoPlayerNotifier {
   bool get isSuspendedForExternalPlayer => suspended;
 
   @override
-  void seekWhenReady(Duration position) => startsAt.add(position);
+  bool seekWhenReady(Duration position) {
+    startsAt.add(position);
+    return true;
+  }
 
   @override
   void seekTo(Duration position) => seeks.add(position);
@@ -336,18 +370,297 @@ void main() {
     });
   });
 
-  test('a file whose duration differs from the one kept starts from the beginning', () {
+  test('a file whose duration differs from the one kept goes back to its start once the resume went', () {
     fakeAsync((async) {
       setUpWith(async, [row()]);
       final notices = <Duration>[];
-      // A share that tells no duration: the row decides at load, the player once ready
       recorderFor(duration: null, onResumed: notices.add);
       expect(player.startsAt, [minute * 42]);
 
+      // A player that tells the duration only after the seek to where the film was left
       player.emit(position: minute * 42, duration: film + minute * 5, status: VideoPlaybackStatus.playing);
 
       expect(player.seeks, [Duration.zero]);
       expect(notices, isEmpty);
+    });
+  });
+
+  group('with the player of the app, whose native player loads a video again at 0 (Media3)', () {
+    const ms = 60000;
+    final source = VideoSource(path: 'https://server/assets/a/video/playback', type: .network, headers: const {});
+    final wakelock = VideoPlayerNotifier.toggleWakelock;
+    late VideoPlayerNotifier inApp;
+    late FakeNativePlayer native;
+
+    setUp(() => VideoPlayerNotifier.toggleWakelock = (_) async {});
+    tearDown(() => VideoPlayerNotifier.toggleWakelock = wakelock);
+
+    /// The player of a page and its native player of [duration], told of each other as the viewer does
+    void attach({Duration duration = film}) {
+      native = FakeNativePlayer(durationMs: duration.inMilliseconds);
+      inApp = VideoPlayerNotifier()..attachController(native);
+      native.onPlaybackReady.addListener(inApp.onNativePlaybackReady);
+      native.onPlaybackPositionChanged.addListener(inApp.onNativePositionChanged);
+      native.onPlaybackStatusChanged.addListener(inApp.onNativeStatusChanged);
+    }
+
+    VideoWatchRecorder recorderOn({Duration? duration = film, void Function(Duration position)? onResumed}) =>
+        VideoWatchRecorder(
+          store: store,
+          player: inApp,
+          key: key,
+          rule: const WatchRule(),
+          duration: duration,
+          onResumed: onResumed,
+        )..start();
+
+    List<String> seeks() => native.calls.where((call) => call.startsWith('seek')).toList();
+
+    /// The film loads, resumes at 42:00, plays to 45:00, goes to an external player and comes back at 50:00: loaded
+    /// again, at 0 until the player is ready
+    VideoWatchRecorder handedBack(FakeAsync async) {
+      setUpWith(async, [row()]);
+      attach();
+      final recorder = recorderOn();
+      unawaited(inApp.load(source));
+      async.flushMicrotasks();
+      native.ready();
+      async.flushMicrotasks();
+      unawaited(inApp.play());
+      async.flushMicrotasks();
+      native.moveTo(45 * ms);
+      async.flushMicrotasks();
+
+      unawaited(inApp.suspendForExternalPlayer());
+      async.flushMicrotasks();
+      expect(saved(), minute * 45);
+      unawaited(inApp.resumeAfterExternalPlayerAt(minute * 50, play: false));
+      async.flushMicrotasks();
+      expect(native.calls.where((call) => call == 'load'), hasLength(2));
+      expect(inApp.state.position, Duration.zero, reason: 'at its start until it is ready again');
+      expect(saved(), minute * 50);
+      return recorder;
+    }
+
+    test('the page going before the player is ready again keeps where the external player left the film', () {
+      fakeAsync((async) {
+        final recorder = handedBack(async);
+        async.elapse(const Duration(seconds: 10));
+
+        recorder.dispose();
+        async.flushMicrotasks();
+
+        expect(saved(), minute * 50);
+      });
+    });
+
+    test('a new load of the page in between (the original downloaded again) keeps it too, and resumes there', () {
+      fakeAsync((async) {
+        final first = handedBack(async);
+
+        // What _startRecorder does: the recorder of the load before goes, then the one of the new load starts
+        first.dispose();
+        async.flushMicrotasks();
+        expect(saved(), minute * 50);
+        final notices = <Duration>[];
+        final second = recorderOn(onResumed: notices.add);
+        expect(second.startAt, isNull, reason: 'the position handed back wins, with no notice');
+
+        native.ready();
+        async.flushMicrotasks();
+        expect(seeks().last, 'seek ${50 * ms}');
+        unawaited(inApp.play());
+        async.flushMicrotasks();
+        native.moveTo(50 * ms + 500);
+        async.flushMicrotasks();
+        expect(notices, isEmpty);
+
+        second.dispose();
+        async.flushMicrotasks();
+        expect(saved(), minute * 50 + const Duration(milliseconds: 500));
+      });
+    });
+
+    test('taken again by an external player before it is ready, the film goes there where it was handed back', () {
+      fakeAsync((async) {
+        handedBack(async);
+
+        unawaited(inApp.suspendForExternalPlayer());
+        async.flushMicrotasks();
+
+        expect(saved(), minute * 50);
+      });
+    });
+
+    test('a file whose duration differs from the one kept starts from the beginning, and says nothing', () {
+      fakeAsync((async) {
+        setUpWith(async, [row()]);
+        // Another file at the same place of a share, which tells no duration: 5 minutes longer
+        attach(duration: film + minute * 5);
+        final notices = <Duration>[];
+        recorderOn(duration: null, onResumed: notices.add);
+        unawaited(inApp.load(source));
+        async.flushMicrotasks();
+
+        native.ready();
+        async.flushMicrotasks();
+        async.elapse(const Duration(seconds: 1));
+
+        expect(seeks(), isEmpty);
+        expect(inApp.state.position, Duration.zero);
+        unawaited(inApp.play());
+        async.flushMicrotasks();
+        native.moveTo(1000);
+        async.flushMicrotasks();
+        expect(notices, isEmpty);
+      });
+    });
+
+    test("a duration of the page a few seconds off the player's still resumes", () {
+      fakeAsync((async) {
+        setUpWith(async, [row()]);
+        attach();
+        // The server's probe of the original, 5 s longer than the stream the player plays
+        recorderOn(duration: film + const Duration(seconds: 5));
+        unawaited(inApp.load(source));
+        async.flushMicrotasks();
+
+        native.ready();
+        async.flushMicrotasks();
+
+        expect(seeks(), ['seek ${42 * ms}']);
+      });
+    });
+
+    test('at the threshold, the duration of the player decides, the one the row was saved with', () {
+      fakeAsync((async) {
+        const player = Duration(minutes: 10, milliseconds: 100);
+        setUpWith(async, [row(minutes: 5, duration: player)]);
+        attach(duration: player);
+        // 9:59.8 for the server, no film by it: loops as set until the player says otherwise
+        final recorder = recorderOn(duration: const Duration(minutes: 9, seconds: 59, milliseconds: 800));
+        expect(recorder.loopsWith(true), isTrue);
+        unawaited(inApp.load(source));
+        async.flushMicrotasks();
+
+        native.ready();
+        async.flushMicrotasks();
+
+        expect(native.calls, contains('loop false'));
+        expect(seeks(), ['seek ${5 * ms}']);
+      });
+    });
+
+    test('"Play from the start" before the film played: no notice when it passes where it was left', () {
+      fakeAsync((async) {
+        setUpWith(async, [row(minutes: 1)]);
+        attach();
+        final notices = <Duration>[];
+        recorderOn(onResumed: notices.add);
+        unawaited(inApp.load(source));
+        async.flushMicrotasks();
+        native.ready();
+        async.flushMicrotasks();
+
+        unawaited(inApp.restart());
+        async.elapse(const Duration(milliseconds: 200));
+        native.moveTo(1000);
+        async.flushMicrotasks();
+        native.moveTo(60 * 1000 + 500);
+        async.flushMicrotasks();
+
+        expect(notices, isEmpty);
+      });
+    });
+
+    group('a database slower to open than the page waits (storeWait)', () {
+      late _LateRows rows;
+
+      void setUpLate(FakeAsync async) {
+        rows = _LateRows([row()]);
+        container = ProviderContainer(
+          overrides: [
+            watchProgressRepositoryProvider.overrideWithValue(rows),
+            watchProgressClockProvider.overrideWithValue(() => now),
+          ],
+        );
+        store = container.read(watchProgressProvider.notifier);
+        async.flushMicrotasks();
+        attach();
+      }
+
+      test('saves nothing before its rows come, then takes a film that barely started where it was left', () {
+        fakeAsync((async) {
+          setUpLate(async);
+          final notices = <Duration>[];
+          final recorder = recorderOn(onResumed: notices.add);
+          unawaited(inApp.load(source));
+          async.flushMicrotasks();
+          native.ready();
+          async.flushMicrotasks();
+          unawaited(inApp.play());
+          async.flushMicrotasks();
+          native.moveTo(3000);
+          async.elapse(const Duration(seconds: 6));
+          native.moveTo(9000);
+          async.flushMicrotasks();
+          expect(rows.written, isEmpty, reason: 'nothing over the row the database holds');
+
+          rows.open();
+          async.flushMicrotasks();
+          expect(saved(), minute * 42);
+          async.elapse(const Duration(milliseconds: 200));
+          expect(seeks(), ['seek ${42 * ms}']);
+          native.moveTo(42 * ms + 500);
+          async.flushMicrotasks();
+          expect(notices, [minute * 42]);
+
+          native.moveTo(43 * ms);
+          recorder.dispose();
+          async.flushMicrotasks();
+          expect(saved(), minute * 43);
+        });
+      });
+
+      test('rows that come before the player is ready resume at the ready', () {
+        fakeAsync((async) {
+          setUpLate(async);
+          recorderOn();
+          unawaited(inApp.load(source));
+          async.flushMicrotasks();
+
+          rows.open();
+          async.flushMicrotasks();
+          native.ready();
+          async.flushMicrotasks();
+
+          expect(seeks(), ['seek ${42 * ms}']);
+        });
+      });
+
+      test('a film watched past its start meanwhile stays where it is', () {
+        fakeAsync((async) {
+          setUpLate(async);
+          final recorder = recorderOn();
+          unawaited(inApp.load(source));
+          async.flushMicrotasks();
+          native.ready();
+          async.flushMicrotasks();
+          unawaited(inApp.play());
+          async.flushMicrotasks();
+          native.moveTo(40 * 1000);
+          async.flushMicrotasks();
+
+          rows.open();
+          async.flushMicrotasks();
+          async.elapse(const Duration(milliseconds: 200));
+
+          expect(seeks(), isEmpty);
+          recorder.dispose();
+          async.flushMicrotasks();
+          expect(saved(), const Duration(seconds: 40));
+        });
+      });
     });
   });
 }
