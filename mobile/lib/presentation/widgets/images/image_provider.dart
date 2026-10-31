@@ -186,7 +186,7 @@ ImageProvider getFullImageProvider(
     provider = photoDecodePath(localFilePath, fromServer: false) == PhotoDecodePath.dartTiff
         ? FileTiffImage(localFilePath)
         : FileImage(File(localFilePath));
-  } else if (_shouldUseLocalAsset(asset)) {
+  } else if (_showsFromDevice(asset)) {
     final id = asset is LocalAsset ? asset.id : (asset as RemoteAsset).localId!;
     provider = LocalFullImageProvider(
       id: id,
@@ -227,8 +227,17 @@ ImageProvider getFullImageProvider(
 /// How the viewers decode the photo [asset] (see photoDecodePath): from the server when they show its server side,
 /// as [getFullImageProvider] chooses; a video, a photo this device decodes, keep the platform's decoders
 PhotoDecodePath photoDecodePathOfAsset(BaseAsset asset) => asset.isImage
-    ? photoDecodePath(asset.name, fromServer: !_shouldUseLocalAsset(asset) && asset.hasRemote)
+    ? photoDecodePath(asset.name, fromServer: !_showsFromDevice(asset) && asset.hasRemote)
     : PhotoDecodePath.platform;
+
+/// Whether the viewers and the tiles show [asset] from its file on the device ([_shouldUseLocalAsset]), but for a TIFF
+/// the server has too on a device without TIFF decoder: the JPEG the server made of it shows then, rather than its file
+/// decoded on the device
+bool _showsFromDevice(BaseAsset asset) =>
+    _shouldUseLocalAsset(asset) &&
+    !(asset.isImage &&
+        asset.hasRemote &&
+        photoDecodePath(asset.name, fromServer: true) == PhotoDecodePath.serverPreview);
 
 ImageProvider? getThumbnailImageProvider(
   BaseAsset asset, {
@@ -241,7 +250,7 @@ ImageProvider? getThumbnailImageProvider(
   AssetMediaSize remoteType = AssetMediaSize.thumbnail,
   bool edited = true,
 }) {
-  if (_shouldUseLocalAsset(asset)) {
+  if (_showsFromDevice(asset)) {
     final id = asset is LocalAsset ? asset.id : (asset as RemoteAsset).localId!;
     return LocalThumbProvider(
       id: id,

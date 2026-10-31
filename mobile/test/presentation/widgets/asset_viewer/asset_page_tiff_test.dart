@@ -96,7 +96,7 @@ void main() {
     context = await PresentationContext.create();
     await SettingsRepository.instance.write(SettingsKey.imageLoadOriginal, true);
     UndecodablePhotos.instance.clear();
-    serverJpegNoticesShown.clear();
+    serverJpegNoticeShown = false;
     requested = [];
   });
 
@@ -198,7 +198,10 @@ void main() {
     expect(find.text(_notice), findsNothing);
     await pumpPage(tester, tiff);
     expect(find.text(_notice), findsNothing);
-    expect(serverJpegNoticesShown, {'tiff1'});
+    // Nor for another TIFF: once in the session, not a line per photo queued behind the one shown
+    await pumpPage(tester, _serverPhoto('tiff3', 'other.tif'));
+    expect(find.text(_notice), findsNothing);
+    expect(serverJpegNoticeShown, isTrue);
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 5));
   });

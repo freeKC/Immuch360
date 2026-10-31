@@ -37,9 +37,10 @@ import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
 enum _DragIntent { none, scroll, dismiss }
 
-/// The TIFF photos of the server whose notice was shown in this session (see photoDecodePath), by their remote id
+/// Whether the line "Shown as the server's preview: this device does not decode TIFF" was said in this session (see
+/// photoDecodePath): once, whatever the number of TIFFs shown after; the details say it for each
 @visibleForTesting
-final serverJpegNoticesShown = <String>{};
+var serverJpegNoticeShown = false;
 
 class AssetPage extends ConsumerStatefulWidget {
   final int index;
@@ -367,12 +368,12 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     return math.min(maxWidth / r, maxHeight);
   }
 
-  /// Tells once in the session, in a line that goes away by itself, that the TIFF [asset] shows as the server's JPEG
+  /// Tells once in the session, in a line that goes away by itself, that a TIFF ([asset]) shows as the server's JPEG
   void _noticeServerJpeg(BaseAsset asset) {
-    final remoteId = asset.remoteId;
-    if (remoteId == null || !serverJpegNoticesShown.add(remoteId)) {
+    if (asset.remoteId == null || serverJpegNoticeShown) {
       return;
     }
+    serverJpegNoticeShown = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.tiff_server_preview_notice)));
