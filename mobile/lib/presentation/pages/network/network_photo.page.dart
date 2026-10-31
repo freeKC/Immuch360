@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,18 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
@@ -51,19 +56,30 @@ final _log = Logger('NetworkPhotoPage');
 /// Largest side the flat view decodes a photo at: a large panorama would not fit in memory at its full size
 const _maxFlatSize = 4096;
 
-/// The image of a photo of a share for the flat view, through the media bridge at [url]
-ImageProvider networkPhotoImage(Uri url) =>
-    ResizeImage(NetworkImage(url.toString()), width: _maxFlatSize, height: _maxFlatSize, policy: ResizeImagePolicy.fit);
+/// The image of a photo of a share for the flat view, through the media bridge at [url]. A TIFF on a device without
+/// TIFF decoder, by its name or the type its share gives ([mimeType]), is decoded in Dart (see NetworkTiffImage), unless
+/// its file ([size] bytes) is larger than the device reads.
+ImageProvider networkPhotoImage(Uri url, {String? mimeType, int? size}) => isDartTiffUrl(url, mimeType: mimeType)
+    ? NetworkTiffImage(url, maxSide: math.min(_maxFlatSize, TiffBudget.current.maxViewerSide), size: size)
+    : ResizeImage(
+        NetworkImage(url.toString()),
+        width: _maxFlatSize,
+        height: _maxFlatSize,
+        policy: ResizeImagePolicy.fit,
+      );
 
 /// The image of a photo of a share for the 360° viewer, through the media bridge at [url]: at most 8192 x 4096 pixels,
 /// the largest texture most phones take (see textureDecodeSize), or 4096 x 2048 on a TV that Android calls a low RAM
-/// device ([lowRam]: 32 MB instead of 128)
-ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false}) => ResizeImage(
-  NetworkImage(url.toString()),
-  width: (lowRam ? lowRamTextureSize.width : 8192).toInt() - 1,
-  height: (lowRam ? lowRamTextureSize.height : 4096).toInt() - 1,
-  policy: ResizeImagePolicy.fit,
-);
+/// device ([lowRam]: 32 MB instead of 128). A TIFF on a device without TIFF decoder is decoded in Dart, its long side
+/// at most the width of that texture and what the device decodes (see TiffBudget).
+ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false, String? mimeType, int? size}) {
+  final width = (lowRam ? lowRamTextureSize.width : 8192).toInt() - 1;
+  final height = (lowRam ? lowRamTextureSize.height : 4096).toInt() - 1;
+  if (isDartTiffUrl(url, mimeType: mimeType)) {
+    return NetworkTiffImage(url, maxSide: math.min(width, TiffBudget.current.maxViewerSide), size: size);
+  }
+  return ResizeImage(NetworkImage(url.toString()), width: width, height: height, policy: ResizeImagePolicy.fit);
+}
 
 /// A photo of a share and its media bridge URL
 typedef _Photo = ({NetworkEntry entry, Uri url});
@@ -423,7 +439,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     }
     final device = ref.read(tvDeviceProvider);
     final PanoramaSource source = (
-      image: networkPanoramaImage(photo.url, lowRam: device.isTelevision && device.isLowRamDevice),
+      image: networkPanoramaImage(
+        photo.url,
+        lowRam: device.isTelevision && device.isLowRamDevice,
+        mimeType: photo.entry.mimeType,
+        size: photo.entry.size,
+      ),
       name: photo.entry.name,
       length: photo.entry.size,
       read: httpRangeReader(client, photo.url),
@@ -441,22 +462,46 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
+    final tiffMessage = context.t.tiff_cannot_decode;
     final stereoLabels = stereoPhotoViewerLabels(context.t);
     final connections = ref.read(networkConnectionsProvider);
+    final tiffJpeg = _tiffJpegReader(messenger);
     final name = path.split('/').last;
     try {
+      final shared = url ?? await connections.mediaUrl(widget.sourceId, path);
       final request = ImmersiveRequest(
-        url: (url ?? await connections.mediaUrl(widget.sourceId, path)).toString(),
+        url: await tiffJpeg(shared) ?? shared.toString(),
         isVideo: false,
         title: name,
         view: stereoPhotoSphereView,
         stereoPair: stereo.toImmersiveJson(),
       );
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels);
+    } on TiffDecodeException catch (error) {
+      _log.warning('Could not decode the TIFF $name: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(tiffMessage)));
     } catch (error) {
       _log.warning('Could not open $name in 3D: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
+  }
+
+  /// For the immersive viewer of a device that decodes no TIFF (a Meta Quest), whose decoders refuse TIFF: the URL of
+  /// a JPEG in the cache of the TIFF of the media bridge at its URL (see shareTiffJpegUrl), made from the whole file
+  /// the first time, while the line "Decoding the TIFF on this device" stays; null for any other photo. Read before the
+  /// first await.
+  Future<String?> Function(Uri url) _tiffJpegReader(ScaffoldMessengerState? messenger) {
+    final jpegs = ref.read(tiffJpegCacheProvider);
+    final client = ref.read(networkBridgeClientProvider);
+    final decoding = context.t.tiff_decoding;
+    final entry = _current?.entry;
+    return (url) => shareTiffJpegUrl(
+      jpegs,
+      client,
+      url: url,
+      entry: entry,
+      onDecoding: (done) => showTiffDecodingLine(messenger, decoding, done),
+    );
   }
 
   /// Opens [version], a 360° panorama a computer generated beyond the edges of this photo, on the sphere of the
@@ -493,15 +538,22 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
+    final tiffMessage = context.t.tiff_cannot_decode;
     final stereoLabels = sphereViewerLabels(context.t);
     final isRaw = _info?.rawKind == RawMediaKind.insta360Photo || isRawPhotoName(photo.entry.name);
     final raw = isRaw ? RawImmersiveMedia.read(ref, forAssets: false) : null;
     final read = _shareReader ?? httpRangeReader(ref.read(networkBridgeClientProvider), photo.url);
+    final tiffJpeg = _tiffJpegReader(messenger);
     try {
-      // The viewer opens a raw photo stitched, from a picture of the cache
+      // The viewer opens a raw photo stitched, from a picture of the cache, and a TIFF from a JPEG of the cache
       final request = raw != null
           ? await raw.sharedMedia(photo.entry, photo.url, read: read)
-          : ImmersiveRequest(url: photo.url.toString(), isVideo: false, title: photo.entry.name, view: view);
+          : ImmersiveRequest(
+              url: await tiffJpeg(photo.url) ?? photo.url.toString(),
+              isVideo: false,
+              title: photo.entry.name,
+              view: view,
+            );
       if (!mounted) {
         return;
       }
@@ -509,6 +561,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       // Given the request too: the photo shows again as it opens now, whatever its file declares
       final navigator = FolderImmersiveNavigator.read(ref, items: around.items, index: around.index, request: request);
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels, navigator: navigator);
+    } on TiffDecodeException catch (error) {
+      _log.warning('Could not decode the TIFF ${photo.entry.name}: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(tiffMessage)));
     } catch (error) {
       _log.warning('Could not open the immersive viewer: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
@@ -790,7 +845,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   Widget _buildPhoto(_Photo photo, int turns) {
-    final image = networkPhotoImage(photo.url);
+    final image = networkPhotoImage(photo.url, mimeType: photo.entry.mimeType, size: photo.entry.size);
     _listenToImage(image);
     return GestureDetector(
       onDoubleTapDown: (details) => _doubleTapPosition = details.localPosition,
@@ -807,8 +862,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               image: image,
               fit: BoxFit.contain,
               gaplessPlayback: true,
-              loadingBuilder: (context, child, progress) =>
-                  progress == null ? child : const NetworkLoadingView(color: Colors.white70),
+              // A TIFF decoded on the device says so while its file comes and decodes
+              loadingBuilder: (context, child, progress) => progress == null
+                  ? child
+                  : image is NetworkTiffImage
+                  ? TiffDecodingView(progress: progress, color: Colors.white70)
+                  : const NetworkLoadingView(color: Colors.white70),
               errorBuilder: (context, error, _) => NetworkErrorView(error: error, color: Colors.white70),
             ),
           ),

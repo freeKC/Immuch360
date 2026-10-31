@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/animated_image_stream_completer.dart';
@@ -21,11 +22,16 @@ class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
   // an edit on the device keeps the id and changes the bytes, so the checksum is what separates two renders
   final String? checksum;
 
+  /// A TIFF on a device without TIFF decoder (see photoDecodePath): decoded in Dart from its file, the platform's
+  /// thumbnails being made by the decoder that refuses it
+  final bool decodeInDart;
+
   const LocalThumbProvider({
     required this.id,
     required this.assetType,
     this.checksum,
     this.size = kThumbnailResolution,
+    this.decodeInDart = false,
   });
 
   @override
@@ -47,7 +53,10 @@ class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
   }
 
   Stream<ImageInfo> _codec(ImageLoader loader, LocalThumbProvider key, ImageDecoderCallback decode) {
-    final request = loader.request = LocalImageRequest(localId: key.id, size: key.size, assetType: key.assetType);
+    // Twice the side of the tile: a photo of any shape still covers it
+    final request = loader.request = key.decodeInDart
+        ? LocalTiffImageRequest(localId: key.id, maxSide: (key.size.longestSide * 2).round(), work: TiffWork.tile)
+        : LocalImageRequest(localId: key.id, size: key.size, assetType: key.assetType);
     return loader.loadRequest(request, decode, isFinal: true);
   }
 
@@ -57,13 +66,13 @@ class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
       return true;
     }
     if (other is LocalThumbProvider) {
-      return id == other.id && checksum == other.checksum;
+      return id == other.id && checksum == other.checksum && decodeInDart == other.decodeInDart;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hash(id, checksum);
+  int get hashCode => Object.hash(id, checksum, decodeInDart);
 }
 
 class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
@@ -75,6 +84,9 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
   final int? height;
   final String? checksum;
 
+  /// A TIFF on a device without TIFF decoder (see photoDecodePath): decoded in Dart from its file
+  final bool decodeInDart;
+
   const LocalFullImageProvider({
     required this.id,
     required this.assetType,
@@ -83,6 +95,7 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
     this.width,
     this.height,
     this.checksum,
+    this.decodeInDart = false,
   });
 
   Size _previewTarget(double dpr, bool previewIsFinal) =>
@@ -129,11 +142,18 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
       );
     }
 
+    final thumbnail = LocalThumbProvider(
+      id: key.id,
+      assetType: key.assetType,
+      checksum: key.checksum,
+      decodeInDart: key.decodeInDart,
+    );
     return OneFramePlaceholderImageStreamCompleter(
       _codec(loader, key, decode),
-      initialImage: loader.getInitialImage(
-        LocalThumbProvider(id: key.id, assetType: key.assetType, checksum: key.checksum),
-      ),
+      // A TIFF decoded in Dart starts from its tile when it is in memory, rather than decoding its file twice
+      initialImage: key.decodeInDart && !PaintingBinding.instance.imageCache.containsKey(thumbnail)
+          ? null
+          : loader.getInitialImage(thumbnail),
       informationCollector: () => <DiagnosticsNode>[
         DiagnosticsProperty<ImageProvider>('Image provider', this),
         DiagnosticsProperty<String>('Id', key.id),
@@ -153,6 +173,18 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
 
     final loadOriginal = SettingsRepository.instance.appConfig.image.loadOriginal;
     final devicePixelRatio = PlatformDispatcher.instance.views.first.devicePixelRatio;
+    if (key.decodeInDart) {
+      // One decode of the file, at the size of the screen, or at the largest picture of a viewer on this device (see
+      // TiffBudget) for "load original"
+      final target = _previewTarget(devicePixelRatio, true);
+      final maxTiffSide = TiffBudget.current.maxViewerSide;
+      final request = loader.request = LocalTiffImageRequest(
+        localId: key.id,
+        maxSide: loadOriginal ? maxTiffSide : math.min(maxTiffSide, target.longestSide.ceil()),
+      );
+      yield* loader.loadRequest(request, decode, isFinal: true);
+      return;
+    }
     var request = loader.request = LocalImageRequest(
       localId: key.id,
       size: _previewTarget(devicePixelRatio, !loadOriginal),
@@ -219,11 +251,12 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
           isAnimated == other.isAnimated &&
           width == other.width &&
           height == other.height &&
-          checksum == other.checksum;
+          checksum == other.checksum &&
+          decodeInDart == other.decodeInDart;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hash(id, size, isAnimated, width, height, checksum);
+  int get hashCode => Object.hash(id, size, isAnimated, width, height, checksum, decodeInDart);
 }

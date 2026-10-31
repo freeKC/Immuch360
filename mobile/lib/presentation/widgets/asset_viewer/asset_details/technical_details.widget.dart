@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -15,6 +16,7 @@ import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/video_source_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -44,6 +46,15 @@ class TechnicalDetails extends ConsumerWidget {
           titleStyle: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceSecondary),
         ),
         _buildFileInfoTile(context, ref, asset, exifInfo),
+        // A TIFF on Android shows as the JPEG the server made of it: said under its name, the original being what a
+        // download sends
+        if (photoDecodePathOfAsset(asset) == PhotoDecodePath.serverPreview)
+          SheetTile(
+            key: const Key('asset_details_tiff_server_preview'),
+            title: context.t.tiff_server_preview_notice,
+            titleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
+            leading: Icon(Icons.info_outline_rounded, size: 24, color: context.textTheme.labelLarge?.color),
+          ),
         // Only a HEIF photo may hold a stereo pair: no other photo is read for one
         if (asset.isImage && isHeifName(asset.name)) _SpatialPhotoTile(asset: asset),
         // A photo that carries a 3D scene, on a phone, a tablet or a TV: where to explore it (design-final 2026-10-27,

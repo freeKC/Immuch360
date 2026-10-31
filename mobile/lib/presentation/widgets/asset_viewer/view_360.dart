@@ -9,7 +9,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -70,6 +72,8 @@ Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset
       // Comes once the file is chosen, after the slow steps: the static translations do not need the viewer then
       onSourceNotice: (notice) =>
           messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance)))),
+      // A TIFF of the headset: its JPEG is made first, said until the viewer has it
+      onTiffDecoding: (done) => showTiffDecodingLine(messenger, t.tiff_decoding, done),
     );
   } on RawVideoUnsupportedException catch (error) {
     // Found out from the tracks the file declares, when the viewer was about to open it
@@ -77,6 +81,9 @@ Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset
     showRawVideoUnsupported(messenger, t, error);
   } catch (error) {
     _log.warning('Could not open the immersive viewer: $error');
-    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    // A TIFF of the headset that does not decode says so (see ImmersiveAssetResolver.resolve)
+    messenger?.showSnackBar(
+      SnackBar(content: Text(error is TiffDecodeException ? t.tiff_cannot_decode : errorMessage)),
+    );
   }
 }

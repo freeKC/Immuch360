@@ -5,8 +5,10 @@ import 'dart:ui' as ui;
 import 'package:async/async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -55,7 +57,14 @@ class ImageLoader {
     return null;
   }
 
-  Stream<ImageInfo> loadRequest(ImageRequest request, ImageDecoderCallback decode, {required bool isFinal}) async* {
+  /// Loads [request] and yields its image. [onDecodeFailure] is told when its bytes came and did not decode (see
+  /// [ImageDecodeException]): the image shown before it, a preview, then stays the last one, without an error.
+  Stream<ImageInfo> loadRequest(
+    ImageRequest request,
+    ImageDecoderCallback decode, {
+    required bool isFinal,
+    void Function(Exception error)? onDecodeFailure,
+  }) async* {
     if (isCancelled) {
       this.request = null;
       return;
@@ -71,6 +80,12 @@ class ImageLoader {
       yield image;
     } catch (e, stack) {
       if (isCancelled) {
+        return;
+      }
+      if (onDecodeFailure != null && e is Exception && (e is ImageDecodeException || e is TiffDecodeException)) {
+        _log.warning('Image not decoded on this device, the previous one stays', e);
+        isFinished = isFinished || isFinal;
+        onDecodeFailure(e);
         return;
       }
       if (isFinal) {
@@ -167,8 +182,11 @@ ImageProvider getFullImageProvider(
   // Create new provider and cache it
   final ImageProvider provider;
   if (localFilePath != null) {
-    provider = FileImage(File(localFilePath));
-  } else if (_shouldUseLocalAsset(asset)) {
+    // A TIFF opened with "Open with" on a device without TIFF decoder: decoded in Dart (see photoDecodePath)
+    provider = photoDecodePath(localFilePath, fromServer: false) == PhotoDecodePath.dartTiff
+        ? FileTiffImage(localFilePath)
+        : FileImage(File(localFilePath));
+  } else if (_showsFromDevice(asset)) {
     final id = asset is LocalAsset ? asset.id : (asset as RemoteAsset).localId!;
     provider = LocalFullImageProvider(
       id: id,
@@ -178,6 +196,7 @@ ImageProvider getFullImageProvider(
       width: asset.width,
       height: asset.height,
       checksum: asset.checksum,
+      decodeInDart: photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
     );
   } else {
     final String assetId;
@@ -198,11 +217,27 @@ ImageProvider getFullImageProvider(
       isAnimated: asset.isAnimatedImage,
       edited: edited,
       thumbnailSize: remoteThumbnailSize,
+      serverJpegForOriginal: photoDecodePathOfAsset(asset) == PhotoDecodePath.serverPreview,
     );
   }
 
   return provider;
 }
+
+/// How the viewers decode the photo [asset] (see photoDecodePath): from the server when they show its server side,
+/// as [getFullImageProvider] chooses; a video, a photo this device decodes, keep the platform's decoders
+PhotoDecodePath photoDecodePathOfAsset(BaseAsset asset) => asset.isImage
+    ? photoDecodePath(asset.name, fromServer: !_showsFromDevice(asset) && asset.hasRemote)
+    : PhotoDecodePath.platform;
+
+/// Whether the viewers and the tiles show [asset] from its file on the device ([_shouldUseLocalAsset]), but for a TIFF
+/// the server has too on a device without TIFF decoder: the JPEG the server made of it shows then, rather than its file
+/// decoded on the device
+bool _showsFromDevice(BaseAsset asset) =>
+    _shouldUseLocalAsset(asset) &&
+    !(asset.isImage &&
+        asset.hasRemote &&
+        photoDecodePath(asset.name, fromServer: true) == PhotoDecodePath.serverPreview);
 
 ImageProvider? getThumbnailImageProvider(
   BaseAsset asset, {
@@ -215,9 +250,15 @@ ImageProvider? getThumbnailImageProvider(
   AssetMediaSize remoteType = AssetMediaSize.thumbnail,
   bool edited = true,
 }) {
-  if (_shouldUseLocalAsset(asset)) {
+  if (_showsFromDevice(asset)) {
     final id = asset is LocalAsset ? asset.id : (asset as RemoteAsset).localId!;
-    return LocalThumbProvider(id: id, size: size, assetType: asset.type, checksum: asset.checksum);
+    return LocalThumbProvider(
+      id: id,
+      size: size,
+      assetType: asset.type,
+      checksum: asset.checksum,
+      decodeInDart: photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
+    );
   }
 
   final assetId = asset is RemoteAsset ? asset.id : (asset as LocalAsset).remoteId;

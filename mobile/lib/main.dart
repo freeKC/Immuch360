@@ -18,6 +18,7 @@ import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/desktop/platform/desktop_overrides.dart';
 import 'package:immich_mobile/domain/services/background_worker.service.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -91,6 +92,12 @@ Future<void> runImmich({Future<void> Function()? beforeStart}) async {
     await migrateDatabaseIfNeeded(dataController.db, PlatformApis.nativeSync(), PlatformApis.permission());
     // Before the first frame, so that the first screen is already laid out for the remote on a TV
     final tvDevice = await readTvDeviceInfo();
+    // What the Dart TIFF decoder of Android may take of this device: less on a TV and a device of little memory
+    TiffBudget.current = TiffBudget.forDevice(
+      isTelevision: tvDevice.isTelevision,
+      isLowRamDevice: tvDevice.isLowRamDevice,
+      totalMemoryBytes: await readTotalMemoryBytes(),
+    );
     final imageCache = PaintingBinding.instance.imageCache;
     if (tvDevice.isTelevision && imageCache is CustomImageCache) {
       imageCache.limitForTelevision();

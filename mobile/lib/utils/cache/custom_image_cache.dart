@@ -1,7 +1,9 @@
 import 'package:flutter/painting.dart';
+import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumb_hash_provider.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 
 /// [ImageCache] that uses two caches for small and large images
 /// so that a single large image does not evict all small images
@@ -49,7 +51,8 @@ final class CustomImageCache implements ImageCache {
   /// Gets the cache for the given key
   ImageCache _cacheForKey(Object key) {
     return switch (key) {
-      LocalFullImageProvider() || RemoteFullImageProvider() => _large,
+      // The full images of the viewers, TIFFs decoded in Dart included
+      LocalFullImageProvider() || RemoteFullImageProvider() || NetworkTiffImage() || FileTiffImage() => _large,
       ThumbHashProvider() => _thumbhash,
       _ => _small,
     };

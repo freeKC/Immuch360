@@ -8,19 +8,24 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/scroll_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.provider.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_overlay.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/progressive_image.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
@@ -31,6 +36,11 @@ import 'package:immich_mobile/widgets/common/immich_loading_indicator.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
 enum _DragIntent { none, scroll, dismiss }
+
+/// Whether the line "Shown as the server's preview: this device does not decode TIFF" was said in this session (see
+/// photoDecodePath): once, whatever the number of TIFFs shown after; the details say it for each
+@visibleForTesting
+var serverJpegNoticeShown = false;
 
 class AssetPage extends ConsumerStatefulWidget {
   final int index;
@@ -358,6 +368,19 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     return math.min(maxWidth / r, maxHeight);
   }
 
+  /// Tells once in the session, in a line that goes away by itself, that a TIFF ([asset]) shows as the server's JPEG
+  void _noticeServerJpeg(BaseAsset asset) {
+    if (asset.remoteId == null || serverJpegNoticeShown) {
+      return;
+    }
+    serverJpegNoticeShown = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.tiff_server_preview_notice)));
+      }
+    });
+  }
+
   void _onPageBuild(PhotoViewControllerBase controller) {
     _viewController = controller;
     _listenForScaleBoundaries(controller);
@@ -420,6 +443,9 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     }
 
     if (asset.isImage && !isPlayingMotionVideo) {
+      // A TIFF of the device decoded in Dart says so while it decodes, and in its place when it does not decode
+      final decodedInDart =
+          (imageProvider is LocalFullImageProvider && imageProvider.decodeInDart) || imageProvider is FileTiffImage;
       return ProgressiveImage(
         provider: imageProvider,
         builder: (context, provider) => PhotoView(
@@ -428,7 +454,9 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           imageProvider: provider,
           quarterTurns: quarterTurns,
           heroAttributes: heroAttributes,
-          loadingBuilder: (context, progress, index) => const Center(child: ImmichLoadingIndicator()),
+          loadingBuilder: (context, progress, index) => decodedInDart
+              ? const TiffDecodingView(color: Colors.white70)
+              : const Center(child: ImmichLoadingIndicator()),
           gaplessPlayback: true,
           filterQuality: FilterQuality.high,
           tightMode: true,
@@ -443,10 +471,12 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           onDragCancel: _onDragCancel,
           onTapUp: _onTapUp,
           onLongPressStart: asset.isMotionPhoto ? _onLongPress : null,
-          errorBuilder: (_, _, _) => SizedBox(
+          errorBuilder: (_, error, _) => SizedBox(
             width: size.width,
             height: size.height,
-            child: Thumbnail.fromAsset(asset: asset, fit: BoxFit.contain),
+            child: error is TiffDecodeException
+                ? const TiffUndecodedView(color: Colors.white70)
+                : Thumbnail.fromAsset(asset: asset, fit: BoxFit.contain),
           ),
         ),
       );
@@ -512,6 +542,10 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     }
 
     final isCurrent = currentAsset != null && currentAsset.refersToSameAsset(displayAsset);
+    // A TIFF of the server on Android shows as the JPEG the server made of it: told once in the session, as it shows
+    if (isCurrent && photoDecodePathOfAsset(displayAsset) == PhotoDecodePath.serverPreview) {
+      _noticeServerJpeg(displayAsset);
+    }
 
     // The one-key rotation (view_rotation.provider.dart): none for anything but a flat photo, whatever is kept for it
     final quarterTurns = ref.watch(displayQuarterTurnsProvider(displayAsset));

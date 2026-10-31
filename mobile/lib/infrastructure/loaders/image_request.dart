@@ -7,11 +7,38 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 
 part 'local_image_request.dart';
 part 'remote_image_request.dart';
 part 'thumbhash_image_request.dart';
+part 'tiff_image_request.dart';
+
+/// An image whose bytes were read and that the engine did not decode ([cause]): reading them again would give the same,
+/// so its viewers remember it for the session (see UndecodablePhotos)
+class ImageDecodeException implements Exception {
+  const ImageDecodeException(this.cause);
+
+  final Object cause;
+
+  @override
+  String toString() => 'ImageDecodeException: $cause';
+}
+
+/// A codec of one frame holding [pixels], a TIFF decoded in Dart (see decodeTiff)
+Future<ui.Codec> codecOfTiffPixels(TiffPixels pixels) async {
+  final buffer = await ui.ImmutableBuffer.fromUint8List(pixels.rgba);
+  final descriptor = ui.ImageDescriptor.raw(
+    buffer,
+    width: pixels.width,
+    height: pixels.height,
+    pixelFormat: ui.PixelFormat.rgba8888,
+  );
+  buffer.dispose();
+  // The codec reads the pixels of the descriptor when its frame is asked for, later: the descriptor goes with it
+  return descriptor.instantiateCodec();
+}
 
 abstract class ImageRequest {
   static int _nextRequestId = 0;
@@ -62,8 +89,15 @@ abstract class ImageRequest {
       return null;
     }
 
-    final descriptor = await ui.ImageDescriptor.encoded(buffer);
-    buffer.dispose();
+    final ui.ImageDescriptor descriptor;
+    try {
+      descriptor = await ui.ImageDescriptor.encoded(buffer);
+    } catch (error) {
+      // The bytes came, the engine does not read them (a format it has no decoder for, a damaged file)
+      throw ImageDecodeException(error);
+    } finally {
+      buffer.dispose();
+    }
     if (_isCancelled) {
       descriptor.dispose();
       return null;
@@ -108,9 +142,15 @@ abstract class ImageRequest {
       return null;
     }
 
-    final frame = await codec.getNextFrame();
-    descriptor.dispose();
-    codec.dispose();
+    final ui.FrameInfo frame;
+    try {
+      frame = await codec.getNextFrame();
+    } catch (error) {
+      throw ImageDecodeException(error);
+    } finally {
+      descriptor.dispose();
+      codec.dispose();
+    }
     if (_isCancelled) {
       frame.image.dispose();
       return null;
