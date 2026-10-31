@@ -73,6 +73,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? kiosk,
     String? sourceNotice,
     String? sourceRefusal,
+    bool gaussianSplats = true,
   }) async => opened.add((url: url, isVideo: isVideo, rawProjection: rawProjection, layout: stereoLayout));
 
   @override

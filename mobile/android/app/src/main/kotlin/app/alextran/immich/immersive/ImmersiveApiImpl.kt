@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import app.alextran.immich.immersive.splat.SplatBuild
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
@@ -106,6 +107,9 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
 
   override fun isHorizonOs(): Boolean = isHorizonOsDevice()
 
+  /** False in the store build, see SplatBuild: its signing certificate is read once per process */
+  override fun splatsInThisBuild(): Boolean = SplatBuild.offersSplats(appContext)
+
   /**
    * [headers] stays in the pigeon signature but is ignored: HttpClientManager already adds the user's custom
    * headers (and the session cookie) to every OkHttp and Cronet request, adding them again would duplicate them.
@@ -126,7 +130,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * the photos of a flat screen on a compositor quad layer, and the compositor filters on the flat screens. [kiosk] is
    * the JSON of the kiosk mode (see [KioskOptions]), null for any other opening. [sourceNotice] is what to tell of the
    * file Flutter chose for a video, decodability first, and [sourceRefusal] what to say instead of playing a video
-   * nothing the server has decodes on the headset; null for nothing.
+   * nothing the server has decodes on the headset; null for nothing. [gaussianSplats] is the "Gaussian splats" setting
+   * (lot S5): off, the viewer does not register the splat module.
    */
   override fun open(
     url: String,
@@ -146,6 +151,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     kiosk: String?,
     sourceNotice: String?,
     sourceRefusal: String?,
+    gaussianSplats: Boolean,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -156,7 +162,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
         "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}, notice=${sourceNotice != null}, " +
-        "refused=${sourceRefusal != null}",
+        "refused=${sourceRefusal != null}, gaussian splats=$gaussianSplats",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -176,6 +182,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         kiosk,
         sourceNotice,
         sourceRefusal,
+        gaussianSplats,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }

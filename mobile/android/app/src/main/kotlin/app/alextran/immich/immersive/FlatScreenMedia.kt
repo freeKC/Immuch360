@@ -51,17 +51,22 @@ internal class FlatScreenMedia(
   val isFlat3d: Boolean
     get() = flatVideo != null || stereoKind is StereoPhotoKind.Flat
 
+  /** A Gaussian splat file of another tool (lot S5): on no screen, fixed in the world by the splat module of the SDK. */
+  val isSplat: Boolean
+    get() = stereoKind is StereoPhotoKind.GaussianSplat
+
   /**
    * A media on a flat screen the user may move and resize (see [ScreenPlace]): a video of the flat video screen, or a
    * photo of the stereo quad but a relief made in the headset, whose 2.5D mesh stands on the quad where it was placed,
-   * and a 3D scene.
+   * a 3D scene, and a Gaussian splat, which has no screen.
    */
   val isMovableScreen: Boolean
     get() =
       isFlatVideo ||
         (isStereoPhoto &&
           stereoKind !is StereoPhotoKind.DepthRelief &&
-          stereoKind !is StereoPhotoKind.VolumetricScene)
+          stereoKind !is StereoPhotoKind.VolumetricScene &&
+          stereoKind !is StereoPhotoKind.GaussianSplat)
 
   /** A photo of a movable flat screen drawn on the photo layer, see [FlatScreenLayer.showsOnLayer]; else the mesh. */
   val photoOnLayer: Boolean
@@ -73,7 +78,7 @@ internal class FlatScreenMedia(
    * one whose JSON does not read, which are one picture.
    */
   val holdsTwoEyes: Boolean
-    get() = isStereoPhoto && stereoKind != null && stereoKind != StereoPhotoKind.BigScreen
+    get() = isStereoPhoto && stereoKind != null && stereoKind != StereoPhotoKind.BigScreen && !isSplat
 
   /**
    * The angular widths the screen of this media takes, for the Size buttons, the thumbstick, the stretch of both grips,

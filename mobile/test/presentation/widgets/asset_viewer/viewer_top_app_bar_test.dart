@@ -407,6 +407,7 @@ void main() {
         kiosk: any(named: 'kiosk'),
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
+        gaussianSplats: any(named: 'gaussianSplats'),
       ),
     ).thenAnswer(openImmersive);
     previewRequests = [];
@@ -681,6 +682,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       );
     });
@@ -1007,6 +1009,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -1040,6 +1043,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       );
     });
@@ -1089,6 +1093,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1128,6 +1133,7 @@ void main() {
             kiosk: any(named: 'kiosk'),
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
+            gaussianSplats: any(named: 'gaussianSplats'),
           ),
         ).captured;
         expect(captured, [
@@ -1172,6 +1178,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1207,6 +1214,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
@@ -1269,6 +1277,7 @@ void main() {
             kiosk: any(named: 'kiosk'),
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
+            gaussianSplats: any(named: 'gaussianSplats'),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1302,6 +1311,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
@@ -1343,6 +1353,7 @@ void main() {
             kiosk: any(named: 'kiosk'),
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
+            gaussianSplats: any(named: 'gaussianSplats'),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1377,6 +1388,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
     });
@@ -1408,6 +1420,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
     });
@@ -1459,6 +1472,7 @@ void main() {
             kiosk: any(named: 'kiosk'),
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
+            gaussianSplats: any(named: 'gaussianSplats'),
           ),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
@@ -1537,6 +1551,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
@@ -1608,6 +1623,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1647,6 +1663,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
@@ -1710,6 +1727,7 @@ void main() {
             kiosk: any(named: 'kiosk'),
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
+            gaussianSplats: any(named: 'gaussianSplats'),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1757,6 +1775,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1807,6 +1826,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -1841,6 +1861,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
@@ -1899,6 +1920,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
     });
@@ -1936,6 +1958,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
     });
@@ -2087,6 +2110,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
@@ -2673,6 +2697,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2732,6 +2757,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: captureAny(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       expect(captured, ['$server/assets/${asset.id}/video/playback', null, switchedMessage]);
@@ -3017,6 +3043,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it
@@ -3074,6 +3101,7 @@ void main() {
         kiosk: any(named: 'kiosk'),
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
+        gaussianSplats: any(named: 'gaussianSplats'),
       ),
     ).captured;
 
@@ -3255,6 +3283,7 @@ void main() {
         kiosk: any(named: 'kiosk'),
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
+        gaussianSplats: any(named: 'gaussianSplats'),
       ),
     ).captured;
 
@@ -3533,6 +3562,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).captured;
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
@@ -3591,6 +3621,7 @@ void main() {
         kiosk: any(named: 'kiosk'),
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
+        gaussianSplats: any(named: 'gaussianSplats'),
       ),
     ).captured;
 
@@ -3743,6 +3774,7 @@ void main() {
           kiosk: any(named: 'kiosk'),
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
+          gaussianSplats: any(named: 'gaussianSplats'),
         ),
       ).thenThrow(PlatformException(code: 'no-activity'));
       final asset = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
@@ -3793,6 +3825,7 @@ void main() {
         kiosk: any(named: 'kiosk'),
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
+        gaussianSplats: any(named: 'gaussianSplats'),
       ),
     ).captured;
 

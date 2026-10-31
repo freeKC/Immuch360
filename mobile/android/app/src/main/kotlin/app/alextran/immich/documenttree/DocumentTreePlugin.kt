@@ -63,6 +63,9 @@ private const val TAG = "DocumentTreePlugin"
 // Request code of the folder picker, "DT"
 private const val PICK_REQUEST = 0x4454
 
+// Request code of the file picker (pickFile), "DU"
+private const val PICK_FILE_REQUEST = 0x4455
+
 // A provider that lists a folder in batches (MTP) is waited for while new files keep coming: until none came for
 // LOADING_QUIET_MS, at most LOADING_CAP_MS in all; LOADING_LOOK_MS between two looks at it
 private const val LOADING_QUIET_MS = 10_000L
@@ -120,6 +123,10 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
   private val readDispatcher = readExecutor.asCoroutineDispatcher()
   private val mainHandler = Handler(Looper.getMainLooper())
   private var pendingPick: ((Result<TreePick?>) -> Unit)? = null
+  private var pendingFilePick: PendingFilePick? = null
+
+  /// A file picker open: where its copy goes, how large it may be, and who waits for it
+  private class PendingFilePick(val folder: String, val maxBytes: Long, val callback: (Result<PickedFile?>) -> Unit)
 
   // The files open for reading, the least recently used first; the closer of the idle ones runs while one is open
   private val openFiles = LinkedHashMap<String, OpenFile>(4, 0.75f, true)
@@ -226,6 +233,10 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    if (requestCode == PICK_FILE_REQUEST) {
+      onFilePicked(resultCode, data)
+      return true
+    }
     if (requestCode != PICK_REQUEST) {
       return false
     }
@@ -247,6 +258,91 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
       callback(runCatching { describe(ctx, uri) })
     }
     return true
+  }
+
+  override fun pickFile(folder: String, maxBytes: Long, callback: (Result<PickedFile?>) -> Unit) {
+    val current = activity
+    if (current == null) {
+      callback(Result.failure(FlutterError("no_activity", "The file picker needs the app on screen", null)))
+      return
+    }
+    if (pendingFilePick != null) {
+      callback(Result.failure(FlutterError("busy", "The file picker is open already", null)))
+      return
+    }
+    // Any type: a .spz or a .ply has no type most providers know
+    val intent =
+      Intent(Intent.ACTION_OPEN_DOCUMENT)
+        .addCategory(Intent.CATEGORY_OPENABLE)
+        .setType("*/*")
+        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    pendingFilePick = PendingFilePick(folder, maxBytes, callback)
+    try {
+      current.startActivityForResult(intent, PICK_FILE_REQUEST)
+    } catch (e: ActivityNotFoundException) {
+      pendingFilePick = null
+      callback(Result.failure(FlutterError("no_picker", "This device has no file picker", null)))
+    }
+  }
+
+  /** The file the picker gave, copied into the cache off the main thread */
+  private fun onFilePicked(resultCode: Int, data: Intent?) {
+    val pending = pendingFilePick ?: return
+    pendingFilePick = null
+    val uri = data?.data
+    val ctx = context
+    if (resultCode != Activity.RESULT_OK || uri == null || ctx == null) {
+      pending.callback(Result.success(null))
+      return
+    }
+    ioScope.launch {
+      pending.callback(
+        try {
+          Result.success(copyPicked(ctx, uri, pending.folder, pending.maxBytes))
+        } catch (e: FlutterError) {
+          Result.failure(e)
+        } catch (e: Exception) {
+          Log.w(TAG, "The file picked could not be copied: ${e.message}")
+          Result.failure(FlutterError("copy_failed", e.message ?: e.javaClass.simpleName, null))
+        }
+      )
+    }
+  }
+
+  /** Copies the document [uri] into the folder [folder] of the cache, which it empties first */
+  private fun copyPicked(ctx: Context, uri: Uri, folder: String, maxBytes: Long): PickedFile {
+    val resolver = ctx.contentResolver
+    var name: String? = null
+    var size: Long? = null
+    resolver.query(uri, arrayOf(Document.COLUMN_DISPLAY_NAME, Document.COLUMN_SIZE), null, null, null)?.use { cursor ->
+      if (cursor.moveToFirst()) {
+        name = cursor.getString(0)
+        size = if (cursor.isNull(1)) null else cursor.getLong(1)
+      }
+    }
+    if ((size ?: 0L) > maxBytes) throw FlutterError("too_large", "The file is larger than $maxBytes bytes", null)
+    val target = PickedFileCopy.targetFor(ctx.cacheDir, folder, name)
+    var copied = 0L
+    try {
+      val input = resolver.openInputStream(uri) ?: throw IOException("the provider gave no stream")
+      input.use { source ->
+        FileOutputStream(target).use { sink ->
+          val buffer = ByteArray(COPY_BUFFER)
+          while (true) {
+            val read = source.read(buffer)
+            if (read < 0) break
+            copied += read
+            if (copied > maxBytes) throw FlutterError("too_large", "The file is larger than $maxBytes bytes", null)
+            sink.write(buffer, 0, read)
+          }
+        }
+      }
+    } catch (e: Throwable) {
+      target.delete()
+      throw e
+    }
+    Log.i(TAG, "Picked file copied: ${target.name}, $copied bytes")
+    return PickedFile(target.absolutePath, target.name, copied)
   }
 
   override fun reopen(treeUri: String, callback: (Result<TreePick?>) -> Unit) {

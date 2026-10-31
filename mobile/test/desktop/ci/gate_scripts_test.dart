@@ -719,6 +719,39 @@ abstract class SyncEvents {
       expect(byHand.output, contains('aab: one-time threshold of 3.5 % against v3.3.0-rc.0-31'));
     });
 
+    test('against release 35 the Quest APK has the one-time threshold of the splats, the phone packages keep 1 %', () {
+      // The release of the Gaussian splats: the splat module is in the Quest APK alone, +0.908 % against release 35 on
+      // 30 October 2026, 0.09 point under 1 %. The sizes come from the file, --release names the release they stand for
+      const against35 = ['--release', 'v3.3.0-rc.0-35'];
+      final run = check({
+        'app-quest-release.apk': 101400,
+        'app-arm64-v8a-phone-release.apk': 100492,
+        'app-phone-release.aab': 150700,
+      }, options: against35);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('quest: one-time threshold of 1.5 % against v3.3.0-rc.0-35'));
+      expect(run.output, contains('(+1.400 %), ok (threshold of the quest kind: 1.5 %)'));
+      expect(
+        LineSplitter.split(run.output),
+        contains('app-arm64-v8a-phone-release.apk: arm64-v8a, 100492 bytes against 100000 (+0.492 %), ok'),
+      );
+      expect(run.output, isNot(contains('aab: one-time')));
+
+      final over = check({
+        'app-quest-release.apk': 101600,
+        'app-arm64-v8a-phone-release.apk': 101100,
+      }, options: against35);
+      expect(over.exitCode, 1, reason: '$over');
+      expect(over.output, contains('(+1.600 %), more than 1.5 % (threshold of the quest kind: 1.5 %)'));
+      expect(over.output, contains('(+1.100 %), more than 1 %'));
+
+      // The release after it compares with it and the ordinary threshold again
+      final next = check({'app-quest-release.apk': 101400}, options: ['--release', 'v3.3.0-rc.0-36']);
+      expect(next.exitCode, 1, reason: '$next');
+      expect(next.output, contains('(+1.400 %), more than 1 %'));
+      expect(next.output, isNot(contains('one-time')));
+    });
+
     test('--kind-threshold refuses an unknown kind or a value that is no percent', () {
       for (final value in ['watch=7', 'quest', 'quest=x', 'quest=-1']) {
         final run = check({'app-quest-release.apk': 100000}, options: ['--kind-threshold', value]);

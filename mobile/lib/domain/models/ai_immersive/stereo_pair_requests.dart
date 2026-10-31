@@ -417,3 +417,110 @@ String reliefCacheKey({
       ),
     )
     .toString();
+
+/// The kind and version of the request of a Gaussian splat file of another tool (lot S5)
+const gaussianSplatKind = 'gaussianSplat';
+const gaussianSplatVersion = 1;
+
+/// A Gaussian splat file of another tool (.spz or .ply) for the immersive viewer of a Meta Quest 3 or 3S (lot S5,
+/// GaussianSplatSpec on the Kotlin side): what the head of the file said (its [format] as SplatFormat names it, its
+/// [formatVersion], [gaussians] and [shDegree]), its size in [fileBytes], the most gaussians the headset shows
+/// ([maxGaussians], 50 000, or 150 000 with Large splats), the [tool] a comment of a PLY names, and the file [name],
+/// under which the headset remembers the orientation the user chose. The viewer reads the head of the file again,
+/// which wins over this JSON; frozen in test/fixtures/ai_immersive/gaussian_splat_contract_v1.json.
+class GaussianSplatRequest {
+  const GaussianSplatRequest({
+    required this.format,
+    required this.formatVersion,
+    required this.gaussians,
+    required this.shDegree,
+    required this.fileBytes,
+    required this.maxGaussians,
+    required this.name,
+    this.tool,
+  });
+
+  /// spz or ply
+  final String format;
+  final int formatVersion;
+  final int gaussians;
+  final int shDegree;
+  final int fileBytes;
+  final int maxGaussians;
+  final String? tool;
+  final String name;
+
+  Map<String, Object?> toJson() => {
+    'kind': gaussianSplatKind,
+    'version': gaussianSplatVersion,
+    'format': format,
+    'formatVersion': formatVersion,
+    'gaussians': gaussians,
+    'shDegree': shDegree,
+    'fileBytes': fileBytes,
+    'maxGaussians': maxGaussians,
+    'tool': tool,
+    'name': name,
+  };
+
+  /// The stereoPair JSON of ImmersiveApi.open
+  String toJsonString() => jsonEncode(toJson());
+
+  /// The request [json] holds, null for another kind, version or format, a missing field or a value that cannot be
+  /// right, as the Kotlin side reads it
+  static GaussianSplatRequest? fromJson(Object? json) {
+    if (json is! Map || json['kind'] != gaussianSplatKind || json['version'] != gaussianSplatVersion) {
+      return null;
+    }
+    final format = json['format'];
+    final formatVersion = json['formatVersion'];
+    final gaussians = json['gaussians'];
+    final shDegree = json['shDegree'];
+    final fileBytes = json['fileBytes'];
+    final maxGaussians = json['maxGaussians'];
+    final tool = json['tool'];
+    final name = json['name'];
+    if ((format != 'spz' && format != 'ply') ||
+        formatVersion is! int ||
+        formatVersion < 1 ||
+        gaussians is! int ||
+        gaussians <= 0 ||
+        shDegree is! int ||
+        shDegree < 0 ||
+        shDegree > 4 ||
+        fileBytes is! int ||
+        fileBytes <= 0 ||
+        maxGaussians is! int ||
+        maxGaussians <= 0 ||
+        (tool != null && tool is! String) ||
+        name is! String ||
+        name.trim().isEmpty) {
+      return null;
+    }
+    return GaussianSplatRequest(
+      format: format as String,
+      formatVersion: formatVersion,
+      gaussians: gaussians,
+      shDegree: shDegree,
+      fileBytes: fileBytes,
+      maxGaussians: maxGaussians,
+      tool: tool as String?,
+      name: name,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is GaussianSplatRequest &&
+      other.format == format &&
+      other.formatVersion == formatVersion &&
+      other.gaussians == gaussians &&
+      other.shDegree == shDegree &&
+      other.fileBytes == fileBytes &&
+      other.maxGaussians == maxGaussians &&
+      other.tool == tool &&
+      other.name == name;
+
+  @override
+  int get hashCode => Object.hash(format, formatVersion, gaussians, shDegree, fileBytes, maxGaussians, tool, name);
+}

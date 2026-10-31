@@ -205,7 +205,8 @@ Future<ImmersiveRequest> kioskShareRequest(
 }
 
 /// Opens [request] in the immersive viewer as a kiosk with [options], as an opening of its own in [session] without a
-/// navigator: no previous or next, and nothing to follow once it closes. A film starts at 0:00.
+/// navigator: no previous or next, and nothing to follow once it closes. A film starts at 0:00. A kiosk shows no splat:
+/// the viewer does not start the splat module of the headset for it.
 Future<void> openKioskRequest(
   ImmersiveApi api,
   ImmersiveSession session,
@@ -222,6 +223,8 @@ Future<void> openKioskRequest(
       stereoLabels: stereoLabels,
       openingId: openingId,
       reverseThumbstickTurn: reverseThumbstickTurn,
+      // A kiosk never shows a splat: the viewer does not start the splat module for it
+      gaussianSplats: false,
       kiosk: options.toJson(),
     );
   } catch (_) {

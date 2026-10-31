@@ -13,8 +13,11 @@ import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/platform/document_tree_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -24,6 +27,20 @@ import 'package:immich_mobile/services/secure_storage.service.dart';
 
 import '../../../providers/network/fakes.dart';
 import 'network_test_app.dart';
+
+/// The system file picker: gives [picked] (null: the user went back), and remembers what it was asked
+class _PickingDocumentTreeApi extends Fake implements DocumentTreeApi {
+  _PickingDocumentTreeApi(this.picked);
+
+  final PickedFile? picked;
+  final List<(String, int)> picks = [];
+
+  @override
+  Future<PickedFile?> pickFile(String folder, int maxBytes) async {
+    picks.add((folder, maxBytes));
+    return picked;
+  }
+}
 
 const _plexServer = NetworkSource(
   id: 'plex-1',
@@ -66,6 +83,7 @@ void main() {
     WidgetTester tester, {
     List<NetworkSource> sources = const [],
     bool tvMode = false,
+    List<Override> moreOverrides = const [],
   }) async {
     if (tvMode) {
       // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
@@ -93,6 +111,7 @@ void main() {
         // tests never initialise the settings repository
         appConfigProvider.overrideWithValue(const AppConfig()),
         if (tvMode) tvModeProvider.overrideWithValue(true),
+        ...moreOverrides,
       ],
     );
   }
@@ -264,6 +283,51 @@ void main() {
       await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();
       expect(find.text('NAS'), findsOneWidget);
+    });
+
+    testWidgets('on a Meta Quest the add button also opens a splat file of the headset, then its page', (tester) async {
+      final api = _PickingDocumentTreeApi(
+        PickedFile(path: '/cache/picked-splat/gsplat-cactus.spz', name: 'gsplat-cactus.spz', size: 6824362),
+      );
+      await pumpSharesPage(
+        tester,
+        sources: const [smbSource],
+        moreOverrides: [
+          isHorizonOsProvider.overrideWith((ref) async => true),
+          splatsInThisBuildProvider.overrideWith((ref) async => true),
+          documentTreeApiProvider.overrideWithValue(api),
+        ],
+      );
+
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('network_add_open_splat')));
+      await tester.pumpAndSettle();
+
+      expect(api.picks, [('picked-splat', 1 << 30)]);
+      expect(find.text('splat null /cache/picked-splat/gsplat-cactus.spz 6824362'), findsOneWidget);
+    });
+
+    testWidgets('a splat file is not offered in the build of the Meta Horizon Store', (tester) async {
+      await pumpSharesPage(
+        tester,
+        sources: const [smbSource],
+        moreOverrides: [
+          isHorizonOsProvider.overrideWith((ref) async => true),
+          splatsInThisBuildProvider.overrideWith((ref) async => false),
+        ],
+      );
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+      expect(find.text('A network share (NAS, computer, media server)'), findsOneWidget);
+      expect(find.byKey(const Key('network_add_open_splat')), findsNothing);
+    });
+
+    testWidgets('a splat file is not offered on a phone', (tester) async {
+      await pumpSharesPage(tester, sources: const [smbSource]);
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+      expect(find.text('Open a splat file'), findsNothing);
     });
 
     testWidgets('lists the Plex servers with the shares and the cameras under their own header', (tester) async {

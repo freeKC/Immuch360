@@ -19,6 +19,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   /// The Sharper flat screens setting given with each media opened
   final sharp = <bool>[];
 
+  /// The Gaussian splats setting given with each media opened
+  final splats = <bool>[];
+
   @override
   Future<void> open(
     String url,
@@ -38,9 +41,11 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? kiosk,
     String? sourceNotice,
     String? sourceRefusal,
+    bool gaussianSplats = true,
   }) async {
     opened.add(stereoPair);
     sharp.add(sharpFlatScreens);
+    splats.add(gaussianSplats);
   }
 
   @override
@@ -110,6 +115,15 @@ void main() {
     await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 2, sharpFlatScreens: false);
 
     expect(api.sharp, [true, false]);
+  });
+
+  test('open hands the Gaussian splats setting to the viewer, on unless said otherwise', () async {
+    const request = ImmersiveRequest(url: 'file:///photo.jpg', isVideo: false, title: 'photo.jpg', view: _flat);
+
+    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 1);
+    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 2, gaussianSplats: false);
+
+    expect(api.splats, [true, false]);
   });
 
   test('showAdjacent hands the stereo pair over too, and null for any other media', () async {

@@ -234,6 +234,111 @@ void main() {
     });
   });
 
+  group('Gaussian splats (experimental)', () {
+    final splatSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_gaussian_splats')),
+      matching: find.byType(SwitchListTile),
+    );
+    final largeSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_large_splats')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    /// The page on a Meta Quest, the only device with the immersive viewer, in a GitHub build
+    Future<void> pumpOnQuest(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          splatsInThisBuildProvider.overrideWith((ref) => true),
+          appFlavorProvider.overrideWithValue('quest'),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      await tester.scrollUntilVisible(largeSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(splatSwitch);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Gaussian splats reads on by default, Large splats off, and they say what they change', (tester) async {
+      await pumpOnQuest(tester);
+
+      expect(find.text('Gaussian splats (experimental)'), findsOneWidget);
+      expect(
+        find.text(
+          'Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S\n'
+          'Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: '
+          "any defect is Immuch360's own.",
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Large splats (experimental)'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(splatSwitch).value, isTrue);
+      expect(tester.widget<SwitchListTile>(largeSwitch).value, isFalse);
+    });
+
+    testWidgets('Gaussian splats turns off, Large splats going with it; Large splats turns on', (tester) async {
+      await pumpOnQuest(tester);
+
+      await tester.tap(splatSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.gaussianSplats, isFalse);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+
+      await tester.tap(splatSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.gaussianSplats, isTrue);
+      await tester.ensureVisible(largeSwitch);
+      await tester.pumpAndSettle();
+      await tester.tap(largeSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.largeSplats, isTrue);
+    });
+
+    testWidgets('are not offered in the build of the Meta Horizon Store', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          splatsInThisBuildProvider.overrideWith((ref) => false),
+          appFlavorProvider.overrideWithValue('quest'),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      final scrollable = find.byType(Scrollable).first;
+      // Sharper flat screens, the setting right before the splats, stays
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('advanced_settings_sharp_screens')),
+        100,
+        scrollable: scrollable,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
+      // Then the settings of the AI relief, which come right after the splats: none on the way
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('advanced_settings_ai_enabled')),
+        50,
+        scrollable: scrollable,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+    });
+
+    testWidgets('are not offered on a phone, which has no immersive viewer', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+    });
+  });
+
   group('DJI live video (experimental)', () {
     final linkSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_dji_link')),

@@ -103,6 +103,9 @@ class _ImmersiveApi extends ImmersiveApi {
 
   /// The Reverse thumbstick turn setting given with each media opened
   final List<bool> reverseThumbstickTurns = [];
+
+  /// The Gaussian splats setting given with each media opened
+  final List<bool> gaussianSplats = [];
   Exception? failure;
 
   @override
@@ -124,6 +127,7 @@ class _ImmersiveApi extends ImmersiveApi {
     String? kiosk,
     String? sourceNotice,
     String? sourceRefusal,
+    bool gaussianSplats = true,
   }) async {
     openingIds.add(openingId);
     final failure = this.failure;
@@ -134,6 +138,7 @@ class _ImmersiveApi extends ImmersiveApi {
     startPositions.add(startPositionMs);
     fallbackUrls.add(fallbackUrl);
     reverseThumbstickTurns.add(reverseThumbstickTurn);
+    this.gaussianSplats.add(gaussianSplats);
   }
 }
 
@@ -433,6 +438,7 @@ void main() {
       });
       expect(immersiveApi.fallbackUrls, [null], reason: 'a file of a share has nothing to fall back to');
       expect(immersiveApi.reverseThumbstickTurns, [false], reason: 'the thumbstick turns the usual way by default');
+      expect(immersiveApi.gaussianSplats, [true], reason: 'Gaussian splats is on by default: the module starts');
       expect(player.calls, ['suspend']);
       // The session follows this opening: the viewer sends its id back with its events
       expect(ref.read(immersiveSessionProvider).isCurrent(immersiveApi.openingIds.single), isTrue);
@@ -453,6 +459,24 @@ void main() {
       );
 
       expect(immersiveApi.reverseThumbstickTurns, [true]);
+    });
+
+    testWidgets('tells the viewer not to start the splat module when Gaussian splats is off', (tester) async {
+      // The setting off hides the splats in the app, and the module of the headset does not run either (lot S5)
+      await pump(tester, config: const AppConfig(viewer: ViewerConfig(gaussianSplats: false)));
+
+      await openImmersiveUrl(
+        ref,
+        request: const ImmersiveRequest(
+          url: _url,
+          isVideo: false,
+          title: 'trip.jpg',
+          view: (layout: StereoLayout.mono, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full),
+        ),
+        stereoLabels: const {},
+      );
+
+      expect(immersiveApi.gaussianSplats, [false]);
     });
 
     testWidgets('opens each time as a new opening, the session following the last one only', (tester) async {

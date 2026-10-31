@@ -1,0 +1,112 @@
+{
+  "about": "The stereoPair JSON of ImmersiveApi.open for a Gaussian splat file of another tool (.spz or .ply), version 1: the viewer of a Meta Quest 3 or 3S reads the file again (its head wins over this JSON), reduces it to maxGaussians when it holds more, and shows it with the splat module of the Meta Spatial SDK. format is spz or ply, formatVersion the SPZ version (1 to 4) or 1 for a PLY, gaussians and shDegree as the head of the file says, fileBytes the size of the file, maxGaussians 50000 or 150000 (Large splats), tool what a comment of a PLY names, null otherwise, name the file name, for the orientation the user chose. The Dart tests write the requests and compare them with this file; the Kotlin tests read it. unknown holds requests a reader of version 1 refuses: the viewer then says the splat could not be shown.",
+  "gaussianSplat": {
+    "kind": "gaussianSplat",
+    "version": 1,
+    "format": "spz",
+    "formatVersion": 3,
+    "gaussians": 452451,
+    "shDegree": 0,
+    "fileBytes": 6824362,
+    "maxGaussians": 50000,
+    "tool": null,
+    "name": "gsplat-cactus.spz"
+  },
+  "ply": {
+    "kind": "gaussianSplat",
+    "version": 1,
+    "format": "ply",
+    "formatVersion": 1,
+    "gaussians": 686,
+    "shDegree": 0,
+    "fileBytes": 38819,
+    "maxGaussians": 150000,
+    "tool": "make_splat_fixtures.py",
+    "name": "axes.ply"
+  },
+  "unknown": [
+    {
+      "kind": "gaussianSplat",
+      "version": 2,
+      "format": "spz",
+      "formatVersion": 3,
+      "gaussians": 47819,
+      "shDegree": 0,
+      "fileBytes": 686150,
+      "maxGaussians": 50000,
+      "tool": null,
+      "name": "a.spz"
+    },
+    {
+      "kind": "gaussianSplat",
+      "version": "1",
+      "format": "spz",
+      "formatVersion": 3,
+      "gaussians": 47819,
+      "shDegree": 0,
+      "fileBytes": 686150,
+      "maxGaussians": 50000,
+      "tool": null,
+      "name": "a.spz"
+    },
+    {
+      "kind": "gaussianSplat",
+      "version": 1,
+      "format": "splat",
+      "formatVersion": 1,
+      "gaussians": 47819,
+      "shDegree": 0,
+      "fileBytes": 686150,
+      "maxGaussians": 50000,
+      "tool": null,
+      "name": "a.splat"
+    },
+    {
+      "kind": "gaussianSplat",
+      "version": 1,
+      "format": "spz",
+      "formatVersion": 3,
+      "gaussians": 0,
+      "shDegree": 0,
+      "fileBytes": 686150,
+      "maxGaussians": 50000,
+      "tool": null,
+      "name": "a.spz"
+    },
+    {
+      "kind": "gaussianSplat",
+      "version": 1,
+      "format": "spz",
+      "formatVersion": 3,
+      "gaussians": 47819,
+      "shDegree": 0,
+      "maxGaussians": 50000,
+      "tool": null,
+      "name": "a.spz"
+    },
+    {
+      "kind": "gaussianSplat",
+      "version": 1,
+      "format": "spz",
+      "formatVersion": 3,
+      "gaussians": 47819,
+      "shDegree": 0,
+      "fileBytes": 686150,
+      "maxGaussians": 0,
+      "tool": null,
+      "name": "a.spz"
+    },
+    {
+      "kind": "gaussiansplat",
+      "version": 1,
+      "format": "spz",
+      "formatVersion": 3,
+      "gaussians": 47819,
+      "shDegree": 0,
+      "fileBytes": 686150,
+      "maxGaussians": 50000,
+      "tool": null,
+      "name": "a.spz"
+    }
+  ]
+}

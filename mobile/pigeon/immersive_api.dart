@@ -22,6 +22,14 @@ abstract class ImmersiveApi {
   /// True on a Meta Quest headset (Horizon OS).
   bool isHorizonOs();
 
+  /// Whether this build offers the Gaussian splats (lot S5, FreeKC's decision of 30 October 2026): true in the GitHub
+  /// builds and in the debug builds of a developer's machine; in the build of the Meta Horizon Store and with a
+  /// certificate the app does not know or cannot read, what SPLATS_IN_STORE_BUILD of SplatBuild.kt says (true since 30
+  /// October 2026), told apart by the certificates the APK is signed with. False, the app shows no splat tile, no
+  /// Open a splat file and no Gaussian splats setting, and its licences page does not list the splat module as active;
+  /// the viewer never registers the module either.
+  bool splatsInThisBuild();
+
   /// Opens the immersive head tracked viewer for an equirectangular photo or video. [stereoLayout] is the layout
   /// Flutter guessed from the media dimensions; the headset shows each eye its own half of a stereoscopic media,
   /// and the user can change the layout in the viewer. [stereoLabels] are the translated labels of the 3D control,
@@ -52,7 +60,10 @@ abstract class ImmersiveApi {
   /// chosen for a video, decodability first (the server's copy as the original is beyond the decoder of the headset, or
   /// the original as the copy is), shown once it plays; [sourceRefusal] what to say instead of playing a video nothing
   /// the server has decodes on the headset (its codec, its size, the limit and what to change in Immich). Both in the
-  /// language of the app, null for nothing (lot fix-decoder-limit).
+  /// language of the app, null for nothing (lot fix-decoder-limit). [gaussianSplats] is the "Gaussian splats" setting
+  /// (experimental, on by default; lot S5): the viewer registers the splat module of the Meta Spatial SDK as it opens
+  /// only when it is true, so that the module never runs for a user who turned the splats off; previous and next keep
+  /// the value of the opening.
   void open(
     String url,
     Map<String, String> headers,
@@ -71,6 +82,7 @@ abstract class ImmersiveApi {
     String? kiosk,
     String? sourceNotice,
     String? sourceRefusal,
+    bool gaussianSplats = true,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified

@@ -1,5 +1,6 @@
 package app.alextran.immich.immersive
 
+import app.alextran.immich.immersive.splat.GaussianSplatSpec
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
@@ -19,7 +20,8 @@ import kotlinx.serialization.json.longOrNull
  * (design-final 2026-10-26, section 4.1, and design-final 2026-10-27, section 8.5). The flat 3D photos told by their
  * file name (see [FlatStereoSpec]) and the ordinary photos opened on the big screen (see [BigScreenSpec]) each have a
  * contract of their own. A kind or a version this build does not know reads as none: the viewer then shows the photo
- * flat, as before.
+ * flat, as before. A Gaussian splat file of another tool (see [GaussianSplatSpec]) comes the same way, though it shows
+ * on no quad: the viewer hands it to the splat module of the Meta Spatial SDK.
  */
 internal sealed interface StereoPhotoKind {
   /** The relief was estimated by AI: the quad says so, and stays within 60 degrees (see StereoComposer.maxAngle). */
@@ -88,6 +90,18 @@ internal sealed interface StereoPhotoKind {
       get() = false
   }
 
+  /**
+   * A Gaussian splat file of another tool, .spz or .ply (lot S5): no quad, no relief, no original eye; the viewer shows
+   * it fixed in the world with the splat module of the Meta Spatial SDK on a Quest 3 or 3S, or says why it does not.
+   */
+  data class GaussianSplat(val spec: GaussianSplatSpec) : StereoPhotoKind {
+    override val isEstimatedRelief: Boolean
+      get() = false
+
+    override val leftEyeIsOriginal: Boolean
+      get() = false
+  }
+
   companion object {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -111,6 +125,7 @@ internal sealed interface StereoPhotoKind {
         VolumetricSceneSpec.KIND -> VolumetricSceneSpec.fromJson(root)?.let(::VolumetricScene)
         FlatStereoSpec.KIND -> FlatStereoSpec.fromJson(root)?.let(::Flat)
         BigScreenSpec.KIND -> if (BigScreenSpec.fromJson(root)) BigScreen else null
+        GaussianSplatSpec.KIND -> GaussianSplatSpec.fromJson(root)?.let(::GaussianSplat)
         else -> null
       }
     }

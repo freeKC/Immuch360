@@ -56,7 +56,8 @@ LocalAsset _local() => LocalAsset(
 
 /// Records what the immersive viewer is asked to open, the kiosk JSON included
 class _RecordingImmersiveApi extends ImmersiveApi {
-  final List<({String url, bool isVideo, int startPositionMs, int openingId, String? kiosk})> opened = [];
+  final List<({String url, bool isVideo, int startPositionMs, int openingId, String? kiosk, bool gaussianSplats})>
+  opened = [];
   Exception? failure;
 
   @override
@@ -78,12 +79,20 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? kiosk,
     String? sourceNotice,
     String? sourceRefusal,
+    bool gaussianSplats = true,
   }) async {
     final failure = this.failure;
     if (failure != null) {
       throw failure;
     }
-    opened.add((url: url, isVideo: isVideo, startPositionMs: startPositionMs, openingId: openingId, kiosk: kiosk));
+    opened.add((
+      url: url,
+      isVideo: isVideo,
+      startPositionMs: startPositionMs,
+      openingId: openingId,
+      kiosk: kiosk,
+      gaussianSplats: gaussianSplats,
+    ));
   }
 }
 
@@ -363,6 +372,7 @@ void main() {
         'exitHint': 'Maintenez B ou Y une seconde',
       });
       expect(session.isCurrent(opened.openingId), isTrue);
+      expect(opened.gaussianSplats, isFalse, reason: 'a kiosk shows no splat: the viewer does not start the module');
       expect(
         await session.requestAdjacent(opened.openingId, 1, 1, ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full),
         isFalse,

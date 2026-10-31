@@ -248,6 +248,19 @@ class SceneNavigatorTest {
   }
 
   @Test
+  fun `a splat glides at its own speed, eased the same, within its own zone`() {
+    // Lot S5: 0.5 m per second in a zone of 5 m each way, the ease of the scenes
+    val navigator = SceneNavigator(SafeZone(5.0, 5.0, 5.0, 5.0), glideSpeed = 0.5).apply { anchor(0.0, 1.6, 0.0, 0.0) }
+    val ramp = navigator.hold(SceneNavigator.GLIDE_EASE, 0.0, 1.0)
+    assertEquals(-0.05, ramp.eyeZ, 0.008)
+    val cruising = navigator.hold(0.8, 0.0, 1.0)
+    assertEquals(-0.45, cruising.eyeZ, 0.008)
+    // It stops at the edge of the zone, 5 m away
+    val far = navigator.hold(20.0, 0.0, 1.0)
+    assertEquals(-5.0, far.eyeZ, 1e-6)
+  }
+
+  @Test
   fun `the glide goes where the gaze looks, the scene moving the other way in the world`() {
     val navigator = navigator(SafeZone(5.0, 5.0, 5.0, 5.0))
     navigator.anchor(0.0, 1.6, 0.0, PI / 2)

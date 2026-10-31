@@ -76,14 +76,42 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
   'bigScreenNoNavigation': t.immersive_big_screen_no_navigation,
 };
 
+/// Translated labels of a Gaussian splat file of another tool in the immersive viewer (lot S5), under the keys
+/// SplatTexts.kt reads; Reset, the controller hint, the memory and the heat are those of the 3D scenes
+/// ([sceneViewerLabels])
+Map<String, String> splatViewerLabels(Translations t) => {
+  'splatPreparing': t.splat_preparing,
+  'splatNotice': t.splat_notice,
+  'splatDisclaimer': t.splat_disclaimer,
+  'splatLarge': t.splat_large_notice,
+  'splatReduced': t.splat_reduced(kept: '{kept}', total: '{total}'),
+  'splatUpright': t.splat_upright,
+  'splatSpz': t.splat_spz_line(count: '{count}', version: '{version}'),
+  'splatPly': t.splat_ply_line(count: '{count}'),
+  'splatPlyTool': t.splat_ply_tool_line(count: '{count}', tool: '{tool}'),
+  'splatOlderHeadset': t.splat_older_headset,
+  'splatNotInVersion': t.ai_immersive_unavailable_build,
+  'splatNotSplat': t.splat_not_splat,
+  'splatCompressedPly': t.splat_compressed_ply,
+  'splatUnsupportedPly': t.splat_unsupported_ply,
+  'splatNewerSpz': t.splat_newer_spz,
+  'splatDamaged': t.splat_damaged,
+  'splatTooLarge': t.splat_too_large(count: '{count}'),
+  'splatNoSpace': t.splat_no_space,
+  'splatNotRunning': t.splat_not_running,
+  'splatFailed': t.splat_failed(reason: '{reason}'),
+};
+
 /// Translated labels of the immersive viewer for a photo of the stereo quad, and a video of the flat video screen:
 /// those of every opening (see [sphereViewerLabels]), those of the flat 3D photos (see [aiImmersiveViewerLabels]),
 /// those of the 3D scenes (see [sceneViewerLabels]), those of the media told 3D by their file name (see
-/// [flat3dViewerLabels]) and those of the flat screens (see [flatScreenViewerLabels])
+/// [flat3dViewerLabels]), those of the flat screens (see [flatScreenViewerLabels]) and those of the splats (see
+/// [splatViewerLabels])
 Map<String, String> stereoPhotoViewerLabels(Translations t) => {
   ...sphereViewerLabels(t),
   ...aiImmersiveViewerLabels(t),
   ...sceneViewerLabels(t),
   ...flat3dViewerLabels(t),
   ...flatScreenViewerLabels(t),
+  ...splatViewerLabels(t),
 };
