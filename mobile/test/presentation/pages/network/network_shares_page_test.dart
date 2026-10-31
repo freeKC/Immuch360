@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/device_folder.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -21,6 +22,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/device_folders.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/secure_storage.service.dart';
@@ -40,6 +42,36 @@ class _PickingDocumentTreeApi extends Fake implements DocumentTreeApi {
     picks.add((folder, maxBytes));
     return picked;
   }
+}
+
+/// The system folder picker: gives [picked] once, and counts the picks
+class _FolderPickingDocumentTreeApi extends Fake implements DocumentTreeApi {
+  _FolderPickingDocumentTreeApi(this.picked);
+
+  final TreePick picked;
+  int pickCalls = 0;
+
+  @override
+  Future<TreePick?> pickTree() async {
+    pickCalls++;
+    return picked;
+  }
+
+  @override
+  Future<TreePick?> reopen(String treeUri) async => treeUri == picked.treeUri ? picked : null;
+}
+
+/// A list of picked folders in memory
+class _MemoryTrees extends DroneRecentStore {
+  _MemoryTrees() : super(() async => null);
+
+  List<RecentTree> trees = [];
+
+  @override
+  Future<List<RecentTree>> load() async => trees;
+
+  @override
+  Future<void> save(List<RecentTree> trees) async => this.trees = trees;
 }
 
 const _plexServer = NetworkSource(
@@ -321,6 +353,49 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('A network share (NAS, computer, media server)'), findsOneWidget);
       expect(find.byKey(const Key('network_add_open_splat')), findsNothing);
+    });
+
+    testWidgets('on Android the add button also browses a folder of this device, then opens it in the browser', (
+      tester,
+    ) async {
+      final api = _FolderPickingDocumentTreeApi(
+        TreePick(
+          treeUri: 'content://com.android.externalstorage.documents/tree/primary%3ADownload%2FImmuch360-splats',
+          title: 'Internal shared storage',
+          folderName: 'Immuch360-splats',
+          kind: 'internal',
+        ),
+      );
+      final folders = _MemoryTrees();
+      await pumpSharesPage(
+        tester,
+        sources: const [smbSource],
+        moreOverrides: [
+          documentTreeApiProvider.overrideWithValue(api),
+          deviceFolderStoreProvider.overrideWithValue(folders),
+          droneRecentStoreProvider.overrideWithValue(_MemoryTrees()),
+        ],
+      );
+
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+      expect(find.text('Browse a folder of this device'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('network_add_browse_folder')));
+      await tester.pumpAndSettle();
+
+      expect(api.pickCalls, 1);
+      const treeUri = 'content://com.android.externalstorage.documents/tree/primary%3ADownload%2FImmuch360-splats';
+      expect(find.text('browse ${deviceFolderSourceId(treeUri)} /'), findsOneWidget);
+      expect(folders.trees.map((tree) => tree.folderName), ['Immuch360-splats'], reason: 'kept in On this device');
+    });
+
+    testWidgets('a folder of the device is not offered in the TV layout', (tester) async {
+      await pumpSharesPage(tester, sources: const [smbSource], tvMode: true);
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('A network share (NAS, computer, media server)'), findsOneWidget);
+      expect(find.byKey(const Key('network_add_browse_folder')), findsNothing);
     });
 
     testWidgets('a splat file is not offered on a phone', (tester) async {

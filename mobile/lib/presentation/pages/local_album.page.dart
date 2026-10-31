@@ -7,6 +7,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/pages/common/large_leading_tile.dart';
+import 'package:immich_mobile/presentation/widgets/device_folders/device_folders_section.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -22,8 +23,12 @@ class LocalAlbumsPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           const LocalAlbumsSliverAppBar(),
-          // Immuch360 Desktop: the albums are the folders the user chose (lib/desktop/library)
-          if (CurrentPlatform.isDesktop) const SliverToBoxAdapter(child: FoldersEntry()),
+          // Immuch360 Desktop: the albums are the folders the user chose (lib/desktop/library). On Android, the folders
+          // of the device chosen in the system picker, browsed with their subfolders
+          if (CurrentPlatform.isDesktop)
+            const SliverToBoxAdapter(child: FoldersEntry())
+          else
+            const SliverToBoxAdapter(child: DeviceFoldersSection()),
           const _AlbumList(),
         ],
       ),
