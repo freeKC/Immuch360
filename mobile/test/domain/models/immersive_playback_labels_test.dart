@@ -45,6 +45,10 @@ void main() {
       'errorNoFrame':
           'This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})',
       'errorStalled': 'This video is not loading: the network or the server sends it too slowly',
+      // What the link brings while the viewer waits (31 October 2026), as the other native players say it
+      'loadingRate': 'Loading: {got} of the {need} this video needs',
+      'deadServer': 'The server stopped sending this video. It plays on as soon as the server answers',
+      'deadShare': 'The share stopped sending this video. It plays on as soon as the share answers',
     });
   });
 

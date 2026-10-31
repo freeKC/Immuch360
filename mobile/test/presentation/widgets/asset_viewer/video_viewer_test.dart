@@ -92,19 +92,46 @@ class _FakePlayerController extends Fake implements NativeVideoPlayerController 
   final onError = ValueNotifier<String?>(null);
   @override
   final onTracksChanged = ChangeNotifier();
+  @override
+  final onLinkChanged = ValueNotifier<NativeVideoLink?>(null);
 
   final loaded = <VideoSource>[];
+
+  /// Where each load of [loaded] started, null for the start
+  final loadedAt = <Duration?>[];
   VideoSource? _source;
 
   @override
   VideoSource? get videoSource => _source;
 
-  @override
-  PlaybackInfo? get playbackInfo => null;
+  /// What the native player tells of the playback, null until the test sets it
+  PlaybackInfo? info;
+  VideoInfo? video;
 
   @override
-  Future<void> loadVideoSource(VideoSource videoSource) async {
+  PlaybackInfo? get playbackInfo => info;
+
+  @override
+  VideoInfo? get videoInfo => video;
+
+  /// The native player is ready, paused at [positionMs] of a video of [durationMs]
+  void ready({int positionMs = 0, int durationMs = 600000}) {
+    info = PlaybackInfo(
+      status: PlaybackStatus.paused,
+      position: positionMs,
+      positionFraction: positionMs / durationMs,
+      speed: 1,
+      volume: 1,
+      error: null,
+    );
+    video = VideoInfo.fromJson({'width': 1920, 'height': 1080, 'duration': durationMs});
+    onPlaybackReady.notifyListeners();
+  }
+
+  @override
+  Future<void> loadVideoSource(VideoSource videoSource, {Duration? startAt}) async {
     loaded.add(videoSource);
+    loadedAt.add(startAt);
     _source = videoSource;
   }
 
@@ -481,6 +508,110 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('video_failure_panel')), findsNothing);
+    });
+  });
+
+  group('the link of a server video (31 October 2026)', () {
+    final serverOnly = RemoteAssetFactory.create(type: .video);
+
+    setUp(() {
+      when(() => context.service.asset.service.getAsset(serverOnly)).thenAnswer((_) async => serverOnly);
+    });
+
+    NativeVideoViewerState stateOf(WidgetTester tester) => tester.state(find.byType(NativeVideoViewer));
+
+    VideoPlayerNotifier playerOf(WidgetTester tester) => ProviderScope.containerOf(
+      tester.element(find.byType(NativeVideoViewer)),
+    ).read(videoPlayerProvider(serverOnly.id).notifier);
+
+    Future<_FakePlayerController> pumpLoaded(WidgetTester tester) async {
+      await pumpViewer(
+        tester,
+        serverOnly,
+        isCurrent: true,
+        overrides: [
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+        ],
+      );
+      await stateOf(tester).videoSource;
+      final controller = _FakePlayerController();
+      stateOf(tester).attachController(controller);
+      await tester.pump();
+      await tester.pump();
+      expect(controller.loaded, hasLength(1));
+      // The spinner, a second after the load
+      await tester.pump(const Duration(milliseconds: 1100));
+      return controller;
+    }
+
+    Future<void> leave(WidgetTester tester) async {
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    }
+
+    testWidgets('the player view stays when the poster and the failure panel leave in the same frame', (tester) async {
+      final controller = await pumpLoaded(tester);
+      // R6 and R7 of 31 October: nothing arrived for 30 s before the first frame, the panel over the poster
+      playerOf(tester).onNativeLinkChanged(const NativeVideoLink(waiting: true, sinceProgressMs: 30000, network: true));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      final view = tester.element(find.byType(NativeVideoPlayerView));
+
+      // The bytes come back and the player gets ready: the poster and the panel go together
+      playerOf(tester).onNativeLinkChanged(const NativeVideoLink(waiting: true, sinceProgressMs: 100, network: true));
+      controller.ready();
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byKey(const Key('video_failure_panel')), findsNothing);
+      expect(identical(tester.element(find.byType(NativeVideoPlayerView)), view), isTrue, reason: 'not made again');
+      expect(controller.loaded, hasLength(1), reason: 'the same native player, which has the video');
+      await leave(tester);
+    });
+
+    testWidgets('a player view made again gets the video, where the one before was', (tester) async {
+      final first = await pumpLoaded(tester);
+      first.ready(positionMs: 61000);
+      await tester.pump();
+      await tester.pump();
+
+      final second = _FakePlayerController();
+      stateOf(tester).attachController(second);
+      await tester.pump();
+      await tester.pump();
+
+      expect(second.loaded.single.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+      expect(second.loadedAt.single, const Duration(seconds: 61));
+      // The first one is no longer heard
+      first.onError.value = 'Source error';
+      await tester.pump();
+      expect(find.byKey(const Key('video_failure_panel')), findsNothing);
+      await leave(tester);
+    });
+
+    testWidgets('while it waits, the spinner says what the link brings against what the video needs', (tester) async {
+      await pumpLoaded(tester);
+
+      // 1.2 of the 3 Mbit/s the video needs, the player waiting for 15 s of media with 3 s there
+      playerOf(tester).onNativeLinkChanged(
+        const NativeVideoLink(
+          waiting: true,
+          bytesPerSecond: 150000,
+          neededBytesPerSecond: 375000,
+          sinceProgressMs: 200,
+          aheadMs: 3000,
+          targetMs: 15000,
+          loading: true,
+          network: true,
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('video_loading_line')), findsOneWidget);
+      expect(find.text('Loading: 1.2 Mbit/s of the 3 Mbit/s this video needs\nStarts in about 10 s'), findsOneWidget);
+      expect(find.byKey(const Key('video_failure_panel')), findsNothing, reason: 'a slow link is no failure');
+      await leave(tester);
     });
   });
 

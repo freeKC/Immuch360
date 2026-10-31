@@ -51,4 +51,8 @@ Map<String, String> immersivePlaybackLabels(Translations t) => {
   'errorDecoder': t.video_error_decoder(codec: '{codec}', width: '{width}', height: '{height}'),
   'errorNoFrame': t.video_error_no_frame(codec: '{codec}', width: '{width}', height: '{height}'),
   'errorStalled': t.video_error_stalled,
+  // What its link brings while it waits, as the other native players say it (BufferingIndicator.describe)
+  'loadingRate': t.video_loading_rate(got: '{got}', need: '{need}'),
+  'deadServer': '${t.video_link_stopped_server}. ${t.video_link_resumes_server}',
+  'deadShare': '${t.video_link_stopped_share}. ${t.video_link_resumes_share}',
 };

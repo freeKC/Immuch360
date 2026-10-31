@@ -180,13 +180,14 @@ void main() {
 
   testWidgets('a film resumes where it was left once ready, then plays, with a notice and no button', (tester) async {
     await pumpViewer(tester, rows: [row(42)]);
-    expect(native.calls, ['load', 'loop false'], reason: 'a film plays once whatever Looping says');
+    // Loaded at its place, rather than at its start and then seeking there
+    expect(native.calls, ['load at ${42 * minute}', 'loop false'], reason: 'a film plays once whatever Looping says');
 
     native.ready();
     await tester.pump();
     await tester.pump();
 
-    expect(native.calls.sublist(2), ['seek ${42 * minute}', 'play']);
+    expect(native.calls.sublist(2), ['play'], reason: 'the player started there: no seek');
 
     native.moveTo(42 * minute + 500);
     await tester.pump(const Duration(milliseconds: 300));
@@ -197,6 +198,27 @@ void main() {
     await tester.pump(const Duration(seconds: 6));
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Resumed at 42:00'), findsNothing, reason: 'it fades');
+
+    await leave(tester);
+  });
+
+  testWidgets('a player that starts at its start whatever it is asked (iOS) is taken where the film was left', (
+    tester,
+  ) async {
+    await pumpViewer(tester, rows: [row(42)]);
+    native.startsWhereLoaded = false;
+    // The fake took the load already: as iOS, it is at 0
+    native.positionMs = 0;
+
+    native.ready();
+    await tester.pump();
+    await tester.pump();
+
+    expect(native.calls.sublist(2), ['seek ${42 * minute}', 'play']);
+    native.moveTo(42 * minute + 500);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Resumed at 42:00'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 7));
 
     await leave(tester);
   });
@@ -252,7 +274,7 @@ void main() {
       await tester.pump();
       await player.resumeAfterExternalPlayerAt(const Duration(minutes: 50), play: false);
       await tester.pump();
-      expect(native.calls.where((call) => call == 'load'), hasLength(2), reason: 'loaded again');
+      expect(native.calls.where((call) => call.startsWith('load')), hasLength(2), reason: 'loaded again');
       expect(player.state.position, Duration.zero, reason: 'at its start until it is ready, as Media3 reports it');
       expect(database.saved[key.key]?.position, const Duration(minutes: 50));
     }

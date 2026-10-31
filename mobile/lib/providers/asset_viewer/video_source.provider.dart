@@ -443,6 +443,18 @@ Map<String, String> videoSourceLabels(Translations t) => {
   'errorDecoder': t.video_error_decoder(codec: '{codec}', width: '{width}', height: '{height}'),
   'errorNoFrame': t.video_error_no_frame(codec: '{codec}', width: '{width}', height: '{height}'),
   'errorStalled': t.video_error_stalled,
+  ...videoLinkLabels(t),
+};
+
+/// The words of the native players about their link while they wait (BufferingIndicator.kt): what it brings against
+/// what the video needs, a server or a share that stopped sending, and the units of the rates. "{got}" and "{need}"
+/// stay as they are: the players fill them in as they measure.
+Map<String, String> videoLinkLabels(Translations t) => {
+  'loadingRate': t.video_loading_rate(got: '{got}', need: '{need}'),
+  'deadServer': '${t.video_link_stopped_server}. ${t.video_link_resumes_server}',
+  'deadShare': '${t.video_link_stopped_share}. ${t.video_link_resumes_share}',
+  'playbackMbps': t.technical_details_bit_rate_mbps(value: '{value}'),
+  'playbackKbps': t.technical_details_bit_rate_kbps(value: '{value}'),
 };
 
 extension VideoSourceNoticeMessage on VideoSourceNotice {

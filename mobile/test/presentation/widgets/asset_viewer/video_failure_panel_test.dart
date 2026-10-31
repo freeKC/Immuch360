@@ -97,9 +97,10 @@ void main() {
     expect(text.cause, 'No video decoder of this device plays AV1');
   });
 
-  testWidgets('a stall of a decodable file gives its bit rate', (tester) async {
+  testWidgets('a stall says what was measured only: never the bit rate of the file as a cause', (tester) async {
     final t = await translations(tester);
 
+    // A player that tells nothing of its link (iOS), after a minute without a frame: the file of 104 Mbit/s is no cause
     final text = describe(
       t,
       stalled,
@@ -109,16 +110,41 @@ void main() {
     );
 
     expect(text.title, 'This video is not loading');
-    expect(text.cause, 'Its bit rate, 104 Mbit/s, may be more than the network or the server delivers');
+    expect(text.cause, 'Nothing of it played for a minute. It plays on as soon as it loads');
     expect(text.advice, [t.video_failed_retry_hint]);
+    expect(text.cause, isNot(contains('104')));
   });
 
-  testWidgets('a stall without a known bit rate blames the network or the server', (tester) async {
+  testWidgets('a link that stopped sending says so, and that the video plays on by itself', (tester) async {
     final t = await translations(tester);
+    const dead = VideoPlaybackFailure(VideoFailureKind.dead);
 
-    final text = describe(t, stalled);
+    final server = describe(t, dead, bitRate: (bitsPerSecond: 8000000, source: VideoBitRateSource.videoTracks));
+    expect(server.title, 'This video is not loading');
+    expect(server.cause, 'The server stopped sending this video');
+    expect(server.advice, ['It plays on as soon as the server answers']);
 
-    expect(text.cause, 'The network or the server sends it too slowly');
+    final share = describe(t, dead, fromServer: false);
+    expect(share.cause, 'The share stopped sending this video');
+    expect(share.advice, ['It plays on as soon as the share answers']);
+  });
+
+  testWidgets('the panel of a dead link has the hourglass, and no word of the network being too slow', (tester) async {
+    await tester.pumpConsumerWidget(
+      VideoFailurePanel(
+        asset: RemoteAssetFactory.create(type: .video),
+        failure: const VideoPlaybackFailure(VideoFailureKind.dead),
+        fromServer: true,
+      ),
+      overrides: [
+        videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.hourglass_empty_rounded), findsOneWidget);
+    expect(find.text('The server stopped sending this video'), findsOneWidget);
+    expect(find.textContaining('too slowly'), findsNothing);
   });
 
   testWidgets('an error of a decodable file, or of an unknown one, gives the message of the player', (tester) async {
@@ -185,9 +211,10 @@ void main() {
         describe(t, const VideoPlaybackFailure(.error, 'immuch360-playback-error:decoder:video/hevc:7680:3840')).cause,
         'This device cannot decode this video (HEVC 7680 x 3840)',
       );
+      // The player tried for as long as its link brought nothing (10 minutes), then stopped
       final slow = describe(t, const VideoPlaybackFailure(.error, 'immuch360-playback-error:stalled::0:0'));
       expect(slow.title, 'This video is not loading');
-      expect(slow.cause, 'The network or the server sends it too slowly');
+      expect(slow.cause, 'The server stopped sending this video');
       final stopped = describe(t, const VideoPlaybackFailure(.error, 'immuch360-playback-error:stopped::0:0'));
       expect(stopped.title, 'This video cannot be played');
       expect(stopped.cause, isNull);
