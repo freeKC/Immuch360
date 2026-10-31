@@ -31,7 +31,9 @@ import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.da
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
@@ -51,19 +53,29 @@ final _log = Logger('NetworkPhotoPage');
 /// Largest side the flat view decodes a photo at: a large panorama would not fit in memory at its full size
 const _maxFlatSize = 4096;
 
-/// The image of a photo of a share for the flat view, through the media bridge at [url]
-ImageProvider networkPhotoImage(Uri url) =>
-    ResizeImage(NetworkImage(url.toString()), width: _maxFlatSize, height: _maxFlatSize, policy: ResizeImagePolicy.fit);
+/// The image of a photo of a share for the flat view, through the media bridge at [url]. A TIFF on a device without
+/// TIFF decoder is decoded in Dart (see NetworkTiffImage).
+ImageProvider networkPhotoImage(Uri url) => isDartTiffUrl(url)
+    ? NetworkTiffImage(url, maxSide: _maxFlatSize)
+    : ResizeImage(
+        NetworkImage(url.toString()),
+        width: _maxFlatSize,
+        height: _maxFlatSize,
+        policy: ResizeImagePolicy.fit,
+      );
 
 /// The image of a photo of a share for the 360° viewer, through the media bridge at [url]: at most 8192 x 4096 pixels,
 /// the largest texture most phones take (see textureDecodeSize), or 4096 x 2048 on a TV that Android calls a low RAM
-/// device ([lowRam]: 32 MB instead of 128)
-ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false}) => ResizeImage(
-  NetworkImage(url.toString()),
-  width: (lowRam ? lowRamTextureSize.width : 8192).toInt() - 1,
-  height: (lowRam ? lowRamTextureSize.height : 4096).toInt() - 1,
-  policy: ResizeImagePolicy.fit,
-);
+/// device ([lowRam]: 32 MB instead of 128). A TIFF on a device without TIFF decoder is decoded in Dart, its long side
+/// at most the width of that texture.
+ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false}) {
+  final width = (lowRam ? lowRamTextureSize.width : 8192).toInt() - 1;
+  final height = (lowRam ? lowRamTextureSize.height : 4096).toInt() - 1;
+  if (isDartTiffUrl(url)) {
+    return NetworkTiffImage(url, maxSide: width);
+  }
+  return ResizeImage(NetworkImage(url.toString()), width: width, height: height, policy: ResizeImagePolicy.fit);
+}
 
 /// A photo of a share and its media bridge URL
 typedef _Photo = ({NetworkEntry entry, Uri url});
@@ -807,8 +819,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               image: image,
               fit: BoxFit.contain,
               gaplessPlayback: true,
-              loadingBuilder: (context, child, progress) =>
-                  progress == null ? child : const NetworkLoadingView(color: Colors.white70),
+              // A TIFF decoded on the device says so while its file comes and decodes
+              loadingBuilder: (context, child, progress) => progress == null
+                  ? child
+                  : image is NetworkTiffImage
+                  ? TiffDecodingView(progress: progress, color: Colors.white70)
+                  : const NetworkLoadingView(color: Colors.white70),
               errorBuilder: (context, error, _) => NetworkErrorView(error: error, color: Colors.white70),
             ),
           ),

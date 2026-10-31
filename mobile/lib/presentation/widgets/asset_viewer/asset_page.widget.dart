@@ -20,9 +20,12 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.prov
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_overlay.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/progressive_image.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
@@ -439,6 +442,9 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     }
 
     if (asset.isImage && !isPlayingMotionVideo) {
+      // A TIFF of the device decoded in Dart says so while it decodes, and in its place when it does not decode
+      final decodedInDart =
+          (imageProvider is LocalFullImageProvider && imageProvider.decodeInDart) || imageProvider is FileTiffImage;
       return ProgressiveImage(
         provider: imageProvider,
         builder: (context, provider) => PhotoView(
@@ -447,7 +453,9 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           imageProvider: provider,
           quarterTurns: quarterTurns,
           heroAttributes: heroAttributes,
-          loadingBuilder: (context, progress, index) => const Center(child: ImmichLoadingIndicator()),
+          loadingBuilder: (context, progress, index) => decodedInDart
+              ? const TiffDecodingView(color: Colors.white70)
+              : const Center(child: ImmichLoadingIndicator()),
           gaplessPlayback: true,
           filterQuality: FilterQuality.high,
           tightMode: true,
@@ -462,10 +470,12 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           onDragCancel: _onDragCancel,
           onTapUp: _onTapUp,
           onLongPressStart: asset.isMotionPhoto ? _onLongPress : null,
-          errorBuilder: (_, _, _) => SizedBox(
+          errorBuilder: (_, error, _) => SizedBox(
             width: size.width,
             height: size.height,
-            child: Thumbnail.fromAsset(asset: asset, fit: BoxFit.contain),
+            child: error is TiffDecodeException
+                ? const TiffUndecodedView(color: Colors.white70)
+                : Thumbnail.fromAsset(asset: asset, fit: BoxFit.contain),
           ),
         ),
       );

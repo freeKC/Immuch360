@@ -1,6 +1,8 @@
 // The viewer on a TIFF on Android (fix-tiff-android): a TIFF of the server shows as the JPEG the server made of it,
-// with no error and a notice once in the session, and a line in the details; a JPEG says nothing.
+// with no error and a notice once in the session, and a line in the details; a JPEG says nothing. A TIFF of the device
+// is decoded in Dart, said while it decodes, and "This device cannot decode this TIFF" in its place when it does not.
 
+import 'dart:async';
 import 'dart:ffi';
 import 'dart:ui' as ui;
 
@@ -20,6 +22,7 @@ import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/platform/local_image_api.g.dart';
 import 'package:immich_mobile/platform/remote_image_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/technical_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_page.widget.dart';
@@ -222,5 +225,79 @@ void main() {
       expect(find.byKey(const Key('asset_details_tiff_server_preview')), said ? findsOneWidget : findsNothing);
       expect(find.text(_notice), said ? findsOneWidget : findsNothing, reason: asset.name);
     }
+  });
+
+  group('a TIFF of the device', () {
+    const localRequest = BasicMessageChannel<Object?>(
+      'dev.flutter.pigeon.immich_mobile.LocalImageApi.requestImage',
+      LocalImageApi.pigeonChannelCodec,
+    );
+    const localCancel = BasicMessageChannel<Object?>(
+      'dev.flutter.pigeon.immich_mobile.LocalImageApi.cancelRequest',
+      LocalImageApi.pigeonChannelCodec,
+    );
+    final scan = LocalAsset(
+      id: '51',
+      name: 'scan.tif',
+      type: AssetType.image,
+      createdAt: DateTime(2026, 10, 31),
+      updatedAt: DateTime(2026, 10, 31),
+      width: 64,
+      height: 32,
+      playbackStyle: AssetPlaybackStyle.image,
+      isEdited: false,
+    );
+
+    tearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        ..setMockDecodedMessageHandler(localRequest, null)
+        ..setMockDecodedMessageHandler(localCancel, null);
+    });
+
+    /// The platform gives [file] when asked for the encoded file, after [held] when given, and refuses to decode it
+    void serveFile(WidgetTester tester, Uint8List file, {Completer<void>? held}) {
+      tester.binding.defaultBinaryMessenger
+        ..setMockDecodedMessageHandler<Object?>(localRequest, (message) async {
+          final [_, _, _, _, _, encoded, ...] = message! as List<Object?>;
+          if (encoded != true) {
+            return <Object?>['DecodeException', 'Failed to create image decoder', null];
+          }
+          await held?.future;
+          final pointer = malloc<Uint8>(file.length)..asTypedList(file.length).setAll(0, file);
+          return <Object?>[
+            <Object?, Object?>{'pointer': pointer.address, 'length': file.length},
+          ];
+        })
+        ..setMockDecodedMessageHandler<Object?>(localCancel, (_) async => const <Object?>[null]);
+    }
+
+    testWidgets('shows decoded on the device, said while it decodes', (tester) async {
+      final held = Completer<void>();
+      serveFile(tester, Uint8List.fromList(img.encodeTiff(img.Image(width: 64, height: 32))), held: held);
+      await pumpPage(tester, scan);
+
+      expect(find.text('Decoding the TIFF on this device'), findsOneWidget);
+
+      held.complete();
+      for (var turn = 0; turn < 20 && !showsDecodedPhoto(); turn++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(showsDecodedPhoto(), isTrue);
+      expect(find.text('Decoding the TIFF on this device'), findsNothing);
+      expect(find.text(_notice), findsNothing, reason: 'a TIFF of the device is shown itself');
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('one that does not decode says so in its place, not an error of the engine', (tester) async {
+      serveFile(tester, Uint8List.fromList([0x49, 0x49, 0x2A, 0x00, ...List.filled(100, 0x41)]));
+      await pumpPage(tester, scan);
+
+      expect(find.text('This device cannot decode this TIFF'), findsOneWidget);
+      expect(find.byType(Thumbnail), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(seconds: 5));
+    });
   });
 }

@@ -7,11 +7,13 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 
 part 'local_image_request.dart';
 part 'remote_image_request.dart';
 part 'thumbhash_image_request.dart';
+part 'tiff_image_request.dart';
 
 /// An image whose bytes were read and that the engine did not decode ([cause]): reading them again would give the same,
 /// so its viewers remember it for the session (see UndecodablePhotos)
@@ -22,6 +24,20 @@ class ImageDecodeException implements Exception {
 
   @override
   String toString() => 'ImageDecodeException: $cause';
+}
+
+/// A codec of one frame holding [pixels], a TIFF decoded in Dart (see decodeTiff)
+Future<ui.Codec> codecOfTiffPixels(TiffPixels pixels) async {
+  final buffer = await ui.ImmutableBuffer.fromUint8List(pixels.rgba);
+  final descriptor = ui.ImageDescriptor.raw(
+    buffer,
+    width: pixels.width,
+    height: pixels.height,
+    pixelFormat: ui.PixelFormat.rgba8888,
+  );
+  buffer.dispose();
+  // The codec reads the pixels of the descriptor when its frame is asked for, later: the descriptor goes with it
+  return descriptor.instantiateCodec();
 }
 
 abstract class ImageRequest {

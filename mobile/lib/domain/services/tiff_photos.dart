@@ -15,6 +15,8 @@
 // iOS, macOS and Windows keep their decoders, which read TIFF: Core Graphics (ImageIO) and WIC, through the engine and
 // the native image pipelines alike. Linux keeps its folder library tile for the formats its engine does not read.
 
+import 'dart:async';
+import 'dart:collection';
 import 'dart:isolate';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -108,14 +110,37 @@ const tiffMaxDecodedBytes = 384 * 1024 * 1024;
 /// Most bytes of a TIFF file read for the Dart decoder, which holds the whole file in memory
 const tiffMaxFileBytes = 512 * 1024 * 1024;
 
+/// Most TIFFs decoded at once (the tiles of a folder of scans): each decoder holds its whole file and image
+const tiffMaxConcurrentDecodes = 2;
+
+var _decoding = 0;
+final _waitingDecodes = Queue<Completer<void>>();
+
 /// [bytes], a TIFF, decoded in a background isolate and scaled down to at most [maxSide] pixels on its long side,
-/// upright as its orientation tag says. Throws [TiffDecodeException] when it does not decode.
-Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) {
+/// upright as its orientation tag says, [tiffMaxConcurrentDecodes] at most at once. Throws [TiffDecodeException] when
+/// it does not decode.
+Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) async {
   if (bytes.length > tiffMaxFileBytes) {
-    return Future.error(TiffDecodeException('${bytes.length} bytes is more than this device reads for a TIFF'));
+    throw TiffDecodeException('${bytes.length} bytes is more than this device reads for a TIFF');
   }
-  final job = (bytes: TransferableTypedData.fromList([bytes]), maxSide: maxSide);
-  return Isolate.run(() => _decodeTiffJob(job), debugName: 'TIFF decoder');
+  if (_decoding >= tiffMaxConcurrentDecodes) {
+    final turn = Completer<void>();
+    _waitingDecodes.add(turn);
+    // Handed over by the decode that ends, the count staying the same
+    await turn.future;
+  } else {
+    _decoding++;
+  }
+  try {
+    final job = (bytes: TransferableTypedData.fromList([bytes]), maxSide: maxSide);
+    return await Isolate.run(() => _decodeTiffJob(job), debugName: 'TIFF decoder');
+  } finally {
+    if (_waitingDecodes.isNotEmpty) {
+      _waitingDecodes.removeFirst().complete();
+    } else {
+      _decoding--;
+    }
+  }
 }
 
 TiffPixels _decodeTiffJob(({TransferableTypedData bytes, int maxSide}) job) =>
@@ -181,13 +206,13 @@ class UndecodablePhotos {
   /// Most failures kept, the oldest dropped first
   static const maxEntries = 1000;
 
-  final _failures = <String, Object>{};
+  final _failures = <String, Exception>{};
 
   /// The error the photo [key] gave in this session, null when it was not tried or decoded
-  Object? failureOf(String key) => _failures[key];
+  Exception? failureOf(String key) => _failures[key];
 
   /// Remembers that the photo [key] did not decode, with [error]
-  void remember(String key, Object error) {
+  void remember(String key, Exception error) {
     _failures.remove(key);
     _failures[key] = error;
     while (_failures.length > maxEntries) {

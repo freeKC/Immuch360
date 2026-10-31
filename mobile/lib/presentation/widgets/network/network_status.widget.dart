@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
@@ -76,7 +77,10 @@ class NetworkErrorView extends StatelessWidget {
             Icon(Icons.error_outline_rounded, size: 48, color: color ?? context.colorScheme.error),
             const SizedBox(height: 16),
             Text(
-              context.t.network_share_open_error(error: networkErrorMessage(error)),
+              // A TIFF this device could not decode says so, rather than the words of the decoder
+              error is TiffDecodeException
+                  ? context.t.tiff_cannot_decode
+                  : context.t.network_share_open_error(error: networkErrorMessage(error)),
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(color: color),
             ),

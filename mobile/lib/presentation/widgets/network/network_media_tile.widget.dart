@@ -18,11 +18,14 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -79,9 +82,18 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
       MultiFrameImageStreamCompleter(codec: _load(key, decode), scale: 1, debugLabel: url.path);
 
   Future<ui.Codec> _load(NetworkThumbnailImage key, ImageDecoderCallback decode) async {
+    // A photo whose file did not decode in this session, here or in its page, is not read again
+    final failure = UndecodablePhotos.instance.failureOf(undecodableShareKey(url));
+    if (failure != null) {
+      throw failure;
+    }
     await _takeTurn();
     try {
       final client = _client ??= HttpClient()..autoUncompress = false;
+      // A TIFF on a device without TIFF decoder: decoded in Dart (see photoDecodePath)
+      if (isDartTiffUrl(url)) {
+        return await loadDartTiff(url, maxSide: width, client: client);
+      }
       final response = await (await client.getUrl(url)).close();
       if (response.statusCode != HttpStatus.ok) {
         await response.drain<void>();
@@ -92,13 +104,19 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
         throw NetworkImageLoadException(statusCode: response.statusCode, uri: url);
       }
       final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
-      return await decode(
-        buffer,
-        getTargetSize: (intrinsicWidth, _) =>
-            intrinsicWidth > width ? ui.TargetImageSize(width: width) : const ui.TargetImageSize(),
-      );
+      try {
+        return await decode(
+          buffer,
+          getTargetSize: (intrinsicWidth, _) =>
+              intrinsicWidth > width ? ui.TargetImageSize(width: width) : const ui.TargetImageSize(),
+        );
+      } catch (error) {
+        // Read whole and not decoded by the engine: the same next time, so once per session
+        UndecodablePhotos.instance.remember(undecodableShareKey(url), ImageDecodeException(error));
+        rethrow;
+      }
     } catch (_) {
-      // Loaded again the next time it is shown
+      // Loaded again the next time it is shown, unless it did not decode (see above)
       scheduleMicrotask(() => PaintingBinding.instance.imageCache.evict(key));
       rethrow;
     } finally {
