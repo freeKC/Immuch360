@@ -11,6 +11,7 @@ import java.util.Locale
  */
 internal object SplatTexts {
   const val LABEL_PREPARING = "splatPreparing"
+  const val LABEL_LOADING = "splatLoading"
   const val LABEL_NOTICE = "splatNotice"
   const val LABEL_DISCLAIMER = "splatDisclaimer"
   const val LABEL_LARGE = "splatLarge"
@@ -30,6 +31,9 @@ internal object SplatTexts {
   const val LABEL_NO_SPACE = "splatNoSpace"
   const val LABEL_NOT_RUNNING = "splatNotRunning"
   const val LABEL_FAILED = "splatFailed"
+  const val LABEL_SPZ_V4 = "splatSpzV4"
+  const val LABEL_MODULE_CANNOT_READ = "splatModuleCannotRead"
+  const val LABEL_NO_RENDERER = "splatNoRenderer"
 
   const val COUNT = "{count}"
   const val VERSION = "{version}"
@@ -42,6 +46,7 @@ internal object SplatTexts {
   val englishLabels: Map<String, String> =
     mapOf(
       LABEL_PREPARING to "Preparing the splat",
+      LABEL_LOADING to "Loading the splat",
       LABEL_NOTICE to "Gaussian splat (experimental)",
       LABEL_DISCLAIMER to
         "Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: " +
@@ -63,6 +68,11 @@ internal object SplatTexts {
       LABEL_NO_SPACE to "Not enough free space on the headset for this splat",
       LABEL_NOT_RUNNING to "The splat module did not start with this viewer: close it and open the splat again",
       LABEL_FAILED to "The splat could not be shown: $REASON",
+      LABEL_SPZ_V4 to
+        "This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier",
+      LABEL_MODULE_CANNOT_READ to
+        "This device cannot show this splat: its copy for the headset is not in a form the splat module reads",
+      LABEL_NO_RENDERER to "This device cannot show this splat: the splat renderer did not start",
     )
 
   /** The text of [key] from the translated [labels], the English one when it is missing or blank */
@@ -123,6 +133,9 @@ internal object SplatTexts {
       SplatRefusal.NOT_ENOUGH_SPACE -> label(labels, LABEL_NO_SPACE)
       SplatRefusal.TOO_WARM -> SceneTexts.label(labels, SceneTexts.LABEL_TOO_WARM)
       SplatRefusal.MODULE_NOT_RUNNING -> label(labels, LABEL_NOT_RUNNING)
+      SplatRefusal.SPZ_V4 -> label(labels, LABEL_SPZ_V4)
+      SplatRefusal.MODULE_CANNOT_READ -> label(labels, LABEL_MODULE_CANNOT_READ)
+      SplatRefusal.NO_RENDERER -> label(labels, LABEL_NO_RENDERER)
     }
 
   /** "The splat could not be shown: [reason]" */

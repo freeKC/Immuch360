@@ -1,8 +1,13 @@
 package app.alextran.immich.immersive.splat
 
+import java.io.File
 import java.util.Locale
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** The texts of a splat in the headset (lot S5): the translations Flutter sends, English otherwise, with the numbers */
@@ -99,6 +104,63 @@ class SplatTextsTest {
         SplatVerdict.Refused(SplatRefusal.MODULE_NOT_RUNNING),
       ),
     )
+  }
+
+  @Test
+  fun `a splat this headset cannot show says why, and the loading of the module has its line`() {
+    assertEquals("Loading the splat", SplatTexts.label(emptyMap(), SplatTexts.LABEL_LOADING))
+    assertEquals(
+      "This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier",
+      SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.SPZ_V4), Locale.US),
+    )
+    assertEquals(
+      "This device cannot show this splat: its copy for the headset is not in a form the splat module reads",
+      SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.MODULE_CANNOT_READ), Locale.US),
+    )
+    assertEquals(
+      "This device cannot show this splat: the splat renderer did not start",
+      SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.NO_RENDERER), Locale.US),
+    )
+    // In the language of the app when Flutter sent it
+    assertEquals(
+      "Chargement du splat",
+      SplatTexts.label(mapOf(SplatTexts.LABEL_LOADING to "Chargement du splat"), SplatTexts.LABEL_LOADING),
+    )
+    for (key in listOf(SplatTexts.LABEL_SPZ_V4, SplatTexts.LABEL_MODULE_CANNOT_READ, SplatTexts.LABEL_NO_RENDERER)) {
+      assertTrue(key, SplatTexts.englishLabels.getValue(key).startsWith("This device cannot show this splat: "))
+    }
+  }
+
+  @Test
+  fun `the English texts of the splats are those of en_json`() {
+    // The translation keys Flutter sends them under (splatViewerLabels of immersive_viewer_labels.dart)
+    val translated =
+      mapOf(
+        SplatTexts.LABEL_PREPARING to "splat_preparing",
+        SplatTexts.LABEL_LOADING to "splat_loading",
+        SplatTexts.LABEL_FAILED to "splat_failed",
+        SplatTexts.LABEL_SPZ_V4 to "splat_spz_v4",
+        SplatTexts.LABEL_MODULE_CANNOT_READ to "splat_module_cannot_read",
+        SplatTexts.LABEL_NO_RENDERER to "splat_no_renderer",
+        SplatTexts.LABEL_NEWER_SPZ to "splat_newer_spz",
+        SplatTexts.LABEL_DAMAGED to "splat_damaged",
+        SplatTexts.LABEL_UPRIGHT to "splat_upright",
+      )
+    val english = Json.parseToJsonElement(englishFile().readText()).jsonObject
+    for ((key, translation) in translated) {
+      assertEquals(key, english.getValue(translation).jsonPrimitive.content, SplatTexts.label(emptyMap(), key))
+    }
+  }
+
+  /** i18n/en.json of the repository, found by walking up from the working directory */
+  private fun englishFile(): File {
+    var dir: File? = File(requireNotNull(System.getProperty("user.dir"))).absoluteFile
+    while (dir != null) {
+      val candidate = File(dir, "i18n/en.json")
+      if (candidate.isFile) return candidate
+      dir = dir.parentFile
+    }
+    error("i18n/en.json not found")
   }
 
   @Test

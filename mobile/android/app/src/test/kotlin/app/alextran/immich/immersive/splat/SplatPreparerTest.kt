@@ -12,7 +12,8 @@ import org.junit.Test
 
 /**
  * The reading of a splat file before the module gets it (lot S5): whole, reduced, refused, renamed after its format,
- * and the files of the viewer that go with it.
+ * an SPZ of version 1 or 3 rewritten as version 2, the last check of what the module gets, and the files of the
+ * viewer that go with it.
  */
 class SplatPreparerTest {
   private val folder: File = Files.createTempDirectory("splat-prepare").toFile()
@@ -48,13 +49,55 @@ class SplatPreparerTest {
 
   @Test
   fun `a splat within the count is read where it is, its bounds from all its points`() {
-    val source = copy("axes_v3.spz")
-    val ready = prepare(source) as SplatPreparation.Ready
-    assertEquals(source, ready.file)
-    assertFalse(ready.owned)
-    assertNull(ready.verdict.keep)
-    assertNotNull(ready.bounds)
-    assertTrue(SplatPlacement.isObject(ready.bounds))
+    for (name in listOf("axes_v2.spz", "axes.ply")) {
+      val source = copy(name)
+      val ready = prepare(source) as SplatPreparation.Ready
+      assertEquals(source, ready.file)
+      assertFalse(ready.owned)
+      assertNull(ready.verdict.keep)
+      assertNotNull(ready.bounds)
+      assertTrue(SplatPlacement.isObject(ready.bounds))
+    }
+  }
+
+  @Test
+  fun `an SPZ of version 1 or 3 within the count is rewritten whole as version 2, never handed over as it is`() {
+    // The splat module reads version 2 only and aborts the process on version 3 (Quest 3, 31 October 2026)
+    for (name in listOf("axes_v3.spz", "axes_v1.spz", "turns_v3.spz")) {
+      val mine = copy(name)
+      val ready = prepare(mine) as SplatPreparation.Ready
+      assertTrue(name, ready.owned)
+      assertTrue(name, ready.file != mine && ready.file.name.startsWith("splat-") && ready.file.name.endsWith(".spz"))
+      val written = SplatHeader.read(ready.file) as SplatProbe.Spz
+      assertEquals(name, 2, written.version)
+      assertEquals(name, (SplatHeader.read(mine) as SplatHead).gaussians, written.gaussians)
+      assertNull(ready.verdict.keep)
+      // The head of the source still names the file in the panel and in the memory of its orientation
+      assertEquals(mine.length(), ready.sourceBytes)
+      assertTrue(mine.exists())
+    }
+    // A download of the viewer goes once rewritten
+    val download = copy("axes_v3.spz", "download.part")
+    val ready = prepare(download, owned = true) as SplatPreparation.Ready
+    assertFalse(download.exists())
+    assertEquals(2, (SplatHeader.read(ready.file) as SplatProbe.Spz).version)
+  }
+
+  @Test
+  fun `whatever the path, the file handed to the module is one it reads, with the count expected`() {
+    val splats =
+      listOf("axes.ply", "axes_v1.spz", "axes_v2.spz", "axes_v3.spz", "ranked.ply", "ranked_v3.spz", "sh3.ply", "turns_v3.spz")
+    for (name in splats) {
+      for (cap in listOf(SplatGate.SAFE_GAUSSIANS, 10)) {
+        for (owned in listOf(false, true)) {
+          val source = copy(name, if (owned) "download-$cap.part" else "$cap-$name")
+          val ready = prepare(source, owned = owned, cap = cap) as SplatPreparation.Ready
+          val expected = ready.verdict.keep?.toLong() ?: ready.head.gaussians
+          assertNull("$name $cap $owned", SplatModuleFormat.check(ready.file, expected))
+          if (ready.owned) ready.file.delete()
+        }
+      }
+    }
   }
 
   @Test
@@ -149,14 +192,16 @@ class SplatPreparerTest {
   }
 
   @Test
-  fun `a refused file says why, and a version 4 SPZ shows whole without positions`() {
+  fun `a refused file says why, and a version 4 SPZ is refused before anything is written`() {
     val mesh = prepare(copy("mesh_cube.ply")) as SplatPreparation.Stopped
     assertEquals(SplatRefusal.NOT_A_SPLAT, mesh.verdict.refusal)
     assertNull(mesh.head)
     val older = prepare(copy("axes_v3.spz"), device = "hollywood") as SplatPreparation.Stopped
     assertEquals(SplatRefusal.OLDER_HEADSET, older.verdict.refusal)
-    val v4 = prepare(copy("axes_v4.spz")) as SplatPreparation.Ready
-    assertNull(v4.bounds)
+    // The module aborts the process on version 4: it never gets it, whole or not
+    val v4 = prepare(copy("axes_v4.spz")) as SplatPreparation.Stopped
+    assertEquals(SplatRefusal.SPZ_V4, v4.verdict.refusal)
     assertEquals(4, (v4.head as SplatProbe.Spz).version)
+    assertEquals(emptyList<String>(), cacheCopies())
   }
 }
