@@ -27,6 +27,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/device_folders.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 
@@ -159,6 +160,8 @@ void main() {
         documentTreeApiProvider.overrideWithValue(api),
         documentTreeEventsSetUpProvider.overrideWithValue((listener) => events = listener),
         droneRecentStoreProvider.overrideWithValue(_MemoryRecents(recents)),
+        // The folders of the device chosen in On this device, which keep the grants they share with this page
+        deviceFolderStoreProvider.overrideWithValue(_MemoryRecents()),
         remoteTrashStatesProvider.overrideWithValue((_) async => const {}),
         networkFileSystemOpenersProvider.overrideWithValue({
           NetworkSourceType.documentTree: (source, _) async =>
@@ -194,6 +197,7 @@ void main() {
 
     await chooseDrone(tester);
 
+    expect(api.pickStarts, [null], reason: 'the picker opens where it opens by itself, the drone in its side menu');
     expect(find.byKey(const Key('drone_import_tree')), findsOneWidget);
     for (final path in [_sphere, _photo, _video]) {
       expect(tileOf(path), findsOneWidget, reason: path);

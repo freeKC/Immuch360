@@ -192,8 +192,8 @@ final networkSourcesProvider = NotifierProvider<NetworkSourcesNotifier, List<Net
   NetworkSourcesNotifier.new,
 );
 
-/// The source with this id, null once it is removed. A folder picked on the DJI drone page is found among the import
-/// sources (see [importSourcesProvider]).
+/// The source with this id, null once it is removed. A folder picked on the DJI drone page, or a folder of the device
+/// chosen in On this device, is found among the import sources (see [importSourcesProvider]).
 final networkSourceProvider = Provider.family<NetworkSource?, String>((ref, id) {
   if (id.startsWith(NetworkEntry.importSourcePrefix)) {
     return ref.watch(importSourcesProvider)[id];
@@ -202,7 +202,8 @@ final networkSourceProvider = Provider.family<NetworkSource?, String>((ref, id) 
 });
 
 /// The folders picked on the DJI drone page (a drone, a controller or a card plugged in), as sources of type
-/// [NetworkSourceType.documentTree]: in memory only, by id, never stored and never listed with the shares. Their
+/// [NetworkSourceType.documentTree], and the folders of the device chosen in On this device, of type
+/// [NetworkSourceType.deviceFolder]: in memory only, by id, never stored and never listed with the shares. Their
 /// connections open, register on the media bridge and close like those of the shares (see NetworkConnections).
 class ImportSourcesNotifier extends Notifier<Map<String, NetworkSource>> {
   @override
@@ -214,7 +215,10 @@ class ImportSourcesNotifier extends Notifier<Map<String, NetworkSource>> {
 
   /// Adds [source], or replaces the one with its id
   void put(NetworkSource source) {
-    assert(source.type == NetworkSourceType.documentTree && source.id.startsWith(NetworkEntry.importSourcePrefix));
+    assert(
+      (source.type == NetworkSourceType.documentTree || source.type == NetworkSourceType.deviceFolder) &&
+          source.id.startsWith(NetworkEntry.importSourcePrefix),
+    );
     state = Map.unmodifiable({...state, source.id: source});
   }
 

@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/device_folder.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
+import 'package:immich_mobile/presentation/widgets/device_folders/device_folders_section.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/device_folders.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -38,6 +41,8 @@ String networkSourceAddress(NetworkSource source) {
     NetworkSourceType.tapo => 'tapo://${source.host}',
     // A folder picked on the DJI drone page: the volume or the device it is on
     NetworkSourceType.documentTree => 'usb://${source.name}',
+    // A folder of the device: where it is on its volume
+    NetworkSourceType.deviceFolder => deviceFolderPath(source.share) ?? source.name,
   };
 }
 
@@ -49,6 +54,7 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.plex => Icons.video_library_outlined,
   NetworkSourceType.tapo => Icons.videocam_outlined,
   NetworkSourceType.documentTree => Icons.usb_rounded,
+  NetworkSourceType.deviceFolder => Icons.folder_outlined,
 };
 
 /// The page that opens a source: its own pages for a camera, which is not browsed as folders; the browser at the start
@@ -59,7 +65,8 @@ PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.typ
   NetworkSourceType.smb ||
   NetworkSourceType.webdav ||
   NetworkSourceType.dlna ||
-  NetworkSourceType.plex => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
+  NetworkSourceType.plex ||
+  NetworkSourceType.deviceFolder => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
 };
 
 /// The page that edits a source; [focusCredentials] opens it on its password or token, after the server refused them
@@ -69,25 +76,30 @@ PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredential
   NetworkSourceType.tapo => CameraEditRoute(source: source),
   // Nothing to edit: the page picks another folder
   NetworkSourceType.documentTree => const DroneImportRoute(),
+  // Nothing to edit: On this device lists it, and removes it
+  NetworkSourceType.deviceFolder => const LocalAlbumsRoute(),
 };
 
-/// What the add sheet gives back for "Open a splat file", which picks a file rather than opening a page
-const _pickSplat = Object();
+/// What the add sheet gives back for the choices that open a system picker first rather than a page: "Open a splat
+/// file" and "Browse a folder of this device". An enum: two const Object() are one and the same object.
+enum _AddPick { splatFile, deviceFolder }
 
 /// The folder of the cache the picked splat is copied to (see DocumentTreeApi.pickFile), and the largest file taken:
 /// the headset reduces a splat up to 1 GiB (SplatGate)
 const splatPickFolder = 'picked-splat';
 const splatPickMaxBytes = 1 << 30;
 
-/// Asks what to add (a network share, a Plex Media Server, a Tapo camera, on a Meta Quest a splat file) and opens its
-/// page
+/// Asks what to add (a network share, a Plex Media Server, a Tapo camera, on Android a folder of the device, on a Meta
+/// Quest a splat file) and opens its page
 Future<void> _add(BuildContext context, WidgetRef ref) async {
   final choice = await showModalBottomSheet<Object>(context: context, builder: (context) => const _AddChoices());
   if (!context.mounted) {
     return;
   }
-  if (identical(choice, _pickSplat)) {
+  if (choice == _AddPick.splatFile) {
     await pickSplatFile(context, ref);
+  } else if (choice == _AddPick.deviceFolder) {
+    await browseDeviceFolder(context, ref);
   } else if (choice is PageRouteInfo) {
     await context.pushRoute(choice);
   }
@@ -273,7 +285,8 @@ class _CameraTile extends StatelessWidget {
   }
 }
 
-/// What the add button offers, in a bottom sheet that gives back the route of the page to open, or [_pickSplat]
+/// What the add button offers, in a bottom sheet that gives back the route of the page to open, or the picker to open
+/// first (see [_AddPick])
 class _AddChoices extends ConsumerWidget {
   const _AddChoices();
 
@@ -281,6 +294,8 @@ class _AddChoices extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // On a Meta Quest with Gaussian splats on: a splat file of the headset (lot S5)
     final splats = ref.watch(networkSplatsEnabledProvider);
+    // On Android phones, tablets and the Meta Quest, not on a TV: a folder of the device, browsed as a share
+    final folders = ref.watch(deviceFoldersSupportedProvider);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -305,12 +320,19 @@ class _AddChoices extends ConsumerWidget {
               title: Text(context.t.network_add_choose_camera),
               onTap: () => Navigator.of(context).pop(CameraEditRoute()),
             ),
+            if (folders)
+              ListTile(
+                key: const Key('network_add_browse_folder'),
+                leading: const Icon(Icons.folder_open_outlined),
+                title: Text(context.t.device_folder_browse_device),
+                onTap: () => Navigator.of(context).pop(_AddPick.deviceFolder),
+              ),
             if (splats)
               ListTile(
                 key: const Key('network_add_open_splat'),
                 leading: const Icon(Icons.blur_on_rounded),
                 title: Text(context.t.splat_open_file),
-                onTap: () => Navigator.of(context).pop(_pickSplat),
+                onTap: () => Navigator.of(context).pop(_AddPick.splatFile),
               ),
           ],
         ),

@@ -53,6 +53,6 @@ class NetworkSourceRelocator {
     NetworkSourceType.plex => 32400,
     NetworkSourceType.tapo => 443,
     // Never found on the network: a folder picked on the device
-    NetworkSourceType.documentTree => 0,
+    NetworkSourceType.documentTree || NetworkSourceType.deviceFolder => 0,
   };
 }

@@ -15,6 +15,7 @@ import 'package:immich_mobile/domain/services/drone_import_grouping.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/document_tree_file_system.dart';
 import 'package:immich_mobile/platform/document_tree_api.g.dart';
+import 'package:immich_mobile/providers/network/device_folders.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
@@ -333,7 +334,8 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
   Future<void> choose() async {
     final TreePick? pick;
     try {
-      pick = await _api.pickTree();
+      // Where the picker opens by itself: the drone or the card is chosen in its side menu
+      pick = await _api.pickTree(null);
     } catch (error, stackTrace) {
       _log.warning('Could not open the folder picker', error, stackTrace);
       state = state.copyWith(error: error);
@@ -354,12 +356,13 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
     await _open(pick);
   }
 
-  /// Forgets a folder picked before, and gives its grant back
+  /// Forgets a folder picked before, and gives its grant back unless it is a folder of the device too (see
+  /// releasePickedFolder)
   Future<void> forget(RecentTree recent) async {
     final recents = state.recents.where((tree) => tree.treeUri != recent.treeUri).toList();
     state = state.copyWith(recents: recents);
     await ref.read(droneRecentStoreProvider).save(recents);
-    await _quietly(() => _api.release(recent.treeUri));
+    await releasePickedFolder(ref, recent.treeUri);
   }
 
   /// Reads the folder open again
@@ -609,9 +612,10 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
     final recents = all.take(droneRecentLimit).toList();
     state = state.copyWith(recents: recents);
     await ref.read(droneRecentStoreProvider).save(recents);
-    // The grants of the folders dropped from the list are given back: Android keeps a limited number per app
+    // The grants of the folders dropped from the list are given back: Android keeps a limited number per app. Not
+    // those of the folders of the device chosen in On this device, which share them.
     for (final dropped in all.skip(droneRecentLimit)) {
-      await _quietly(() => _api.release(dropped.treeUri));
+      await releasePickedFolder(ref, dropped.treeUri);
     }
   }
 

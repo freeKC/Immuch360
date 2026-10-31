@@ -210,7 +210,7 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
 
   // Picking
 
-  override fun pickTree(callback: (Result<TreePick?>) -> Unit) {
+  override fun pickTree(startFolder: String?, callback: (Result<TreePick?>) -> Unit) {
     val current = activity
     if (current == null) {
       callback(Result.failure(FlutterError("no_activity", "The folder picker needs the app on screen", null)))
@@ -223,6 +223,11 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
       Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
     )
+    // Browse a folder opens in Download, whose folders are offered even where Download itself is not (Android 11 on)
+    PickTreeStart.documentId(startFolder)?.let { documentId ->
+      val start = DocumentsContract.buildDocumentUri(EXTERNAL_STORAGE, documentId)
+      intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, start)
+    }
     pendingPick = callback
     try {
       current.startActivityForResult(intent, PICK_REQUEST)

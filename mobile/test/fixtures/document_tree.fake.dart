@@ -1,5 +1,6 @@
-// A folder picked in the system picker, in memory, for the tests of DocumentTreeFileSystem and of the DJI drone page:
-// the files by path from the folder picked ("/DCIM/DJI_001/DJI_0001.JPG"), each document id being its path.
+// A folder picked in the system picker, in memory, for the tests of DocumentTreeFileSystem, of the DJI drone page and of
+// the folders of the device: the files by path from the folder picked ("/DCIM/DJI_001/DJI_0001.JPG"), each document id
+// being its path.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -16,6 +17,7 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
     this.kind = 'usb',
     this.dates = const {},
     this.thumbnailPaths = const {},
+    this.emptyFolders = const {},
   });
 
   /// The files of the folder, by path
@@ -29,6 +31,9 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
 
   /// The files the provider makes a thumbnail of
   final Set<String> thumbnailPaths;
+
+  /// The folders that hold nothing, by path ("/Empty"): listed in their parent all the same
+  final Set<String> emptyFolders;
 
   /// The answer of the next pick: the folder, or null when the user goes back
   bool pickGivesFolder = true;
@@ -56,8 +61,14 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
 
   PlatformException get _unplugged => PlatformException(code: 'unplugged', message: 'gone');
 
+  /// The folder each pick was asked to open in
+  final pickStarts = <String?>[];
+
   @override
-  Future<TreePick?> pickTree() async => pickGivesFolder ? pick : null;
+  Future<TreePick?> pickTree(String? startFolder) async {
+    pickStarts.add(startFolder);
+    return pickGivesFolder ? pick : null;
+  }
 
   @override
   Future<TreePick?> reopen(String treeUri) async => unplugged || treeUri != this.treeUri ? null : pick;
@@ -70,13 +81,16 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
     }
     final folder = documentId ?? '';
     final children = <String, DocEntry>{};
-    for (final path in files.keys) {
-      if (!path.startsWith('$folder/')) {
+    for (final path in [...files.keys, ...emptyFolders.map((empty) => '$empty/')]) {
+      if (!path.startsWith('$folder/') || path == '$folder/') {
         continue;
       }
       final rest = path.substring(folder.length + 1);
       final slash = rest.indexOf('/');
       final name = slash < 0 ? rest : rest.substring(0, slash);
+      if (name.isEmpty) {
+        continue;
+      }
       final id = '$folder/$name';
       children[name] = slash < 0
           ? _file(id)

@@ -19,17 +19,23 @@ enum NetworkSourceType {
   /// A folder picked in the system picker on Android: a drone, a controller or a card plugged into the phone (see
   /// DocumentTreeFileSystem). Lives in memory only, never stored (see ImportSourcesNotifier): its id starts with
   /// NetworkEntry.importSourcePrefix.
-  documentTree;
+  documentTree,
+
+  /// A folder of this device chosen in the system picker on Android ("Browse a folder" of On this device), browsed as
+  /// a share: every subfolder, the photos and videos, the splats on a Meta Quest (see DeviceFoldersNotifier). Read as
+  /// [documentTree] is, under an id of its own that starts with NetworkEntry.importSourcePrefix; its source lives in
+  /// memory only, the folders chosen being kept in a list of their own.
+  deviceFolder;
 
   /// Stored in StoreKey.networkSources, the list that builds 19 and older read and write back
   bool get inLegacyList => this == smb || this == webdav || this == dlna;
 
-  /// Whether a source of this type is ever stored
-  bool get isStored => this != documentTree;
+  /// Whether a source of this type is ever stored with the shares
+  bool get isStored => this != documentTree && this != deviceFolder;
 
   /// Whether its folders hold the files as a camera or a drone wrote them, side files included (the .SRT of a video):
   /// a file share or a picked folder, not a media server, which lists media only
-  bool get keepsSideFiles => this == smb || this == webdav || this == documentTree;
+  bool get keepsSideFiles => this == smb || this == webdav || this == documentTree || this == deviceFolder;
 }
 
 /// A stored list: the sources this build reads, and the entries of a type it does not know, kept as they are so that
@@ -300,12 +306,14 @@ class NetworkEntry {
   String get name =>
       path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1).split('/').last : path.split('/').last;
 
-  /// Whether the entry comes from a drone, a controller or a card plugged into the device (a folder picked in the
-  /// system picker, see NetworkSourceType.documentTree): the same file is found again through another cable or reader
-  /// by its name, its size and its date, not by its place
+  /// Whether the entry comes from a folder picked in the system picker: a drone, a controller or a card plugged into
+  /// the device (see NetworkSourceType.documentTree), or a folder of the device (NetworkSourceType.deviceFolder). The
+  /// same file is found again through another cable, reader or folder by its name, its size and its date, not by its
+  /// place
   bool get isImported => sourceId.startsWith(importSourcePrefix);
 
-  /// The start of the id of every source of a folder picked in the system picker: such a source is never stored
+  /// The start of the id of every source of a folder picked in the system picker: such a source is never stored with
+  /// the shares
   static const importSourcePrefix = 'tree:';
 
   String get extension {
