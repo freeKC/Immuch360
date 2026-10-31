@@ -2,6 +2,7 @@
 // through the open connection of the share, never from a URL holding a credential. Without one, or when it fails, the
 // tile shows its own picture; the URL a DLNA media server gives keeps its way.
 
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -50,6 +51,34 @@ class _PictureShare extends FakeFileSystem implements NetworkThumbnailSource {
       throw error;
     }
     return answer;
+  }
+}
+
+/// A share whose server answers each picture only when told: [release] answers those asked so far, with none
+class _SlowPictureShare extends FakeFileSystem implements NetworkThumbnailSource {
+  _SlowPictureShare() : super(_source);
+
+  final List<String> asked = [];
+  final List<Completer<Uint8List?>> _pending = [];
+
+  @override
+  Future<Uint8List?> thumbnail(NetworkEntry entry, int size) {
+    asked.add(entry.path);
+    final answer = Completer<Uint8List?>();
+    _pending.add(answer);
+    return answer.future;
+  }
+
+  /// Answers every picture asked, and those asked next as the turns are handed over, until none waits
+  Future<void> release() async {
+    while (_pending.isNotEmpty) {
+      final pending = [..._pending];
+      _pending.clear();
+      for (final answer in pending) {
+        answer.complete(null);
+      }
+      await pumpEventQueue();
+    }
   }
 }
 
@@ -170,6 +199,66 @@ void main() {
     expect(image.width, 256);
     expect((image.imageProvider as NetworkImage).url, 'http://192.0.2.10:8200/AlbumArt/22-1.jpg');
     expect(share.asked, isEmpty);
+  });
+
+  group('pictures waiting for their turn', () {
+    late _SlowPictureShare slow;
+    late List<(ImageStream, ImageStreamListener)> shown;
+
+    setUp(() => slow = _SlowPictureShare());
+
+    /// Asks for the pictures of [count] files at once, as a folder shown or scrolled through does, each listened to as
+    /// an image widget does
+    Future<void> ask(int count) async {
+      shown = [];
+      for (var i = 0; i < count; i++) {
+        final stream = NetworkServerThumbnailImage(slow, entry('/Camera/$i.jpg')).resolve(ImageConfiguration.empty);
+        final listener = ImageStreamListener((_, _) {}, onError: (_, _) {});
+        stream.addListener(listener);
+        shown.add((stream, listener));
+      }
+      await pumpEventQueue();
+    }
+
+    void scrollAway(Iterable<int> indexes) {
+      for (final index in indexes) {
+        final (stream, listener) = shown[index];
+        stream.removeListener(listener);
+      }
+    }
+
+    test('those whose tile went away before their turn are not asked of the server', () async {
+      await ask(8);
+      expect(slow.asked, ['/Camera/0.jpg', '/Camera/1.jpg', '/Camera/2.jpg'], reason: 'three at a time');
+
+      scrollAway([1, 3, 4, 5]);
+      await slow.release();
+
+      expect(slow.asked, ['/Camera/0.jpg', '/Camera/1.jpg', '/Camera/2.jpg', '/Camera/6.jpg', '/Camera/7.jpg']);
+    });
+
+    test('those still shown are asked, the image cache emptied meanwhile', () async {
+      await ask(6);
+      PaintingBinding.instance.imageCache.clear();
+
+      await slow.release();
+
+      expect(slow.asked, [for (var i = 0; i < 6; i++) '/Camera/$i.jpg']);
+    });
+
+    test('a tile that comes back asks for its picture again', () async {
+      await ask(4);
+      scrollAway([3]);
+      await slow.release();
+      expect(slow.asked, hasLength(3));
+
+      final stream = NetworkServerThumbnailImage(slow, entry('/Camera/3.jpg')).resolve(ImageConfiguration.empty);
+      stream.addListener(ImageStreamListener((_, _) {}, onError: (_, _) {}));
+      await pumpEventQueue();
+      await slow.release();
+
+      expect(slow.asked.last, '/Camera/3.jpg');
+    });
   });
 
   test('a server picture is known to the image cache by its file and size, not by its connection', () {

@@ -33,12 +33,27 @@ class NetworkServerThumbnailImage extends ImageProvider<NetworkServerThumbnailIm
   Future<NetworkServerThumbnailImage> obtainKey(ImageConfiguration configuration) => SynchronousFuture(this);
 
   @override
-  ImageStreamCompleter loadImage(NetworkServerThumbnailImage key, ImageDecoderCallback decode) =>
-      MultiFrameImageStreamCompleter(codec: _load(key, decode), scale: 1, debugLabel: entry.path);
+  ImageStreamCompleter loadImage(NetworkServerThumbnailImage key, ImageDecoderCallback decode) {
+    late final _ThumbnailCompleter completer;
+    completer = _ThumbnailCompleter(
+      codec: _load(key, decode, isWanted: () => completer.isWanted(key)),
+      debugLabel: entry.path,
+    );
+    return completer;
+  }
 
-  Future<ui.Codec> _load(NetworkServerThumbnailImage key, ImageDecoderCallback decode) async {
-    await _takeTurn();
+  Future<ui.Codec> _load(
+    NetworkServerThumbnailImage key,
+    ImageDecoderCallback decode, {
+    required bool Function() isWanted,
+  }) async {
+    final waited = await _takeTurn();
     try {
+      if (waited && !isWanted()) {
+        // Its tile scrolled away while it waited behind others (a fling through a folder of thousands of photos):
+        // not read at all, and asked for again if the tile comes back
+        throw StateError('${entry.path} is no longer shown');
+      }
       final bytes = await source.thumbnail(entry, size);
       if (bytes == null || bytes.isEmpty) {
         // Fails the load, so that the tile shows its own picture instead
@@ -60,15 +75,17 @@ class NetworkServerThumbnailImage extends ImageProvider<NetworkServerThumbnailIm
     }
   }
 
-  static Future<void> _takeTurn() async {
+  /// Waits for one of the [maxConcurrent] turns; true when it had to wait behind other pictures
+  static Future<bool> _takeTurn() async {
     if (_loading < maxConcurrent) {
       _loading++;
-      return;
+      return false;
     }
     final turn = Completer<void>();
     _waiting.add(turn);
     // Handed over by _endTurn, the count of loads under way staying the same
     await turn.future;
+    return true;
   }
 
   static void _endTurn() {
@@ -92,4 +109,30 @@ class NetworkServerThumbnailImage extends ImageProvider<NetworkServerThumbnailIm
 
   @override
   String toString() => 'NetworkServerThumbnailImage(${entry.path}, size: $size)';
+}
+
+/// The stream of one server picture, which tells whether anything still shows it. The image cache listens to every
+/// picture that is loading, to keep it once loaded: that listener alone does not make the picture wanted.
+class _ThumbnailCompleter extends MultiFrameImageStreamCompleter {
+  _ThumbnailCompleter({required super.codec, super.debugLabel}) : super(scale: 1);
+
+  final _listeners = <ImageStreamListener>[];
+
+  /// Whether an image widget, or anything but the image cache, listens to the picture of [key]
+  bool isWanted(NetworkServerThumbnailImage key) {
+    final cacheListens = PaintingBinding.instance.imageCache.statusForKey(key).pending;
+    return _listeners.length > (cacheListens ? 1 : 0);
+  }
+
+  @override
+  void addListener(ImageStreamListener listener) {
+    _listeners.add(listener);
+    super.addListener(listener);
+  }
+
+  @override
+  void removeListener(ImageStreamListener listener) {
+    _listeners.remove(listener);
+    super.removeListener(listener);
+  }
 }
