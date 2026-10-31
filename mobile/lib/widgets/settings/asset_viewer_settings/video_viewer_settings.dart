@@ -12,6 +12,9 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
+/// The longest threshold of "Remember where I stopped" offered, in minutes, by steps of 5
+const _resumeMaxMinutes = 60;
+
 class VideoViewerSettings extends HookConsumerWidget {
   const VideoViewerSettings({super.key});
 
@@ -24,6 +27,9 @@ class VideoViewerSettings extends HookConsumerWidget {
     final useLoopVideo = useState(isTelevision ? viewer.loopVideoOnTv : viewer.loopVideo);
     // The source picked, null until the user picks one
     final usePickedVideoSource = useState(viewer.videoSource);
+    // "Remember where I stopped" and its threshold, see WatchRule
+    final useResumeVideos = useState(viewer.resumeVideos);
+    final useResumeMinMinutes = useState(viewer.resumeMinMinutes.clamp(0, _resumeMaxMinutes));
     final useSpatial25d = useState(viewer.spatial25d);
     final useReverseThumbstickTurn = useState(viewer.reverseThumbstickTurn);
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
@@ -43,6 +49,12 @@ class VideoViewerSettings extends HookConsumerWidget {
       unawaited(
         ref.read(settingsProvider).write(isTelevision ? .viewerLoopVideoOnTv : .viewerLoopVideo, useLoopVideo.value),
       );
+    });
+    useValueChanged<bool, void>(useResumeVideos.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerResumeVideos, useResumeVideos.value));
+    });
+    useValueChanged<int, void>(useResumeMinMinutes.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerResumeMinMinutes, useResumeMinMinutes.value));
     });
     useValueChanged<bool, void>(useSpatial25d.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSpatial25d, useSpatial25d.value));
@@ -65,6 +77,23 @@ class VideoViewerSettings extends HookConsumerWidget {
           title: context.t.setting_video_viewer_looping_title,
           subtitle: context.t.loop_videos_description,
         ),
+        // A long video, a film, resumes where it was left and its tile shows how much was watched; a shorter one
+        // always starts from the beginning
+        SettingsSwitchListTile(
+          valueNotifier: useResumeVideos,
+          title: context.t.setting_video_viewer_resume_title,
+          subtitle: context.t.setting_video_viewer_resume_subtitle,
+        ),
+        if (useResumeVideos.value)
+          SettingsSliderListTile(
+            key: const Key('resume_min_minutes'),
+            valueNotifier: useResumeMinMinutes,
+            text: useResumeMinMinutes.value == 0
+                ? context.t.setting_video_viewer_resume_every_video
+                : context.t.setting_video_viewer_resume_threshold(minutes: useResumeMinMinutes.value),
+            maxValue: _resumeMaxMinutes.toDouble(),
+            noDivisons: _resumeMaxMinutes ~/ 5,
+          ),
         if (isPhone)
           SettingsSwitchListTile(
             valueNotifier: useSpatial25d,
