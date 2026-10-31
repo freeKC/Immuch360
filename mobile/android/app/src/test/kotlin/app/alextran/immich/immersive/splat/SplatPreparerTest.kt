@@ -57,6 +57,8 @@ class SplatPreparerTest {
       assertNull(ready.verdict.keep)
       assertNotNull(ready.bounds)
       assertTrue(SplatPlacement.isObject(ready.bounds))
+      // An object: no orientation said by its gaussians, the default holds
+      assertNull(ready.upright)
     }
   }
 

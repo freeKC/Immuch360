@@ -113,6 +113,47 @@ class SplatPlacementTest {
     assertArrayEquals(doubleArrayOf(0.0, 1.0, 0.0), up(SplatUpright.Y_UP, doubleArrayOf(0.0, 1.0, 0.0)), 1e-9)
   }
 
+  /** A room as make_splat_fixtures.py writes one: a floor at y = 0, walls of 2.4 m, boxes; [down] its y axis turned */
+  private fun room(down: Boolean = false, ceiling: Boolean = false): SplatScan {
+    val points = mutableListOf<DoubleArray>()
+    var state = 7L
+    fun rnd(): Double {
+      state = (state * 1103515245 + 12345) % (1L shl 31)
+      return state.toDouble() / (1L shl 31)
+    }
+    repeat(500) { points += doubleArrayOf(rnd() * 4 - 2, 0.0, rnd() * 4 - 2) }
+    repeat(400) { points += doubleArrayOf(2.0, rnd() * 2.4, rnd() * 4 - 2) }
+    repeat(100) { points += doubleArrayOf(rnd() - 0.5, rnd() * 0.5, rnd() - 0.5) }
+    if (ceiling) repeat(500) { points += doubleArrayOf(rnd() * 4 - 2, 2.4, rnd() * 4 - 2) }
+    val positions = FloatArray(3 * points.size) { i ->
+      val v = points[i / 3][i % 3]
+      (if (down && i % 3 == 1) -v else v).toFloat()
+    }
+    return SplatScan(FloatArray(points.size), IntArray(points.size) { it }, positions)
+  }
+
+  @Test
+  fun `a place whose floor lies at the bottom of y opens with Y up, anything else with the default`() {
+    // The synthetic rooms of the kit: y up, their floor the densest layer at the bottom
+    val up = room()
+    val upBounds = SplatPlacement.boundsOf(up, null)!!
+    assertFalse(SplatPlacement.isObject(upBounds))
+    assertEquals(SplatUpright.Y_UP, SplatPlacement.uprightOf(up, null, upBounds))
+    // The same room as a training writes it (y down): the default, which is right for it
+    val down = room(down = true)
+    assertNull(SplatPlacement.uprightOf(down, null, SplatPlacement.boundsOf(down, null)))
+    // A floor and a ceiling as dense: nothing said, the default holds
+    val box = room(ceiling = true)
+    assertNull(SplatPlacement.uprightOf(box, null, SplatPlacement.boundsOf(box, null)))
+    // Only the kept gaussians count: the walls alone say nothing
+    val walls = java.util.BitSet().apply { set(500, 900) }
+    assertNull(SplatPlacement.uprightOf(up, walls, SplatPlacement.boundsOf(up, walls)))
+    // Never an object, whatever its shape (the axes have most of their points at y = 0)
+    val axes = bounds(doubleArrayOf(-0.01, -0.01, -0.01), doubleArrayOf(0.66, 1.16, 1.66))
+    assertNull(SplatPlacement.uprightOf(up, null, axes))
+    assertNull(SplatPlacement.uprightOf(up, null, null))
+  }
+
   @Test
   fun `the orientation chosen is remembered by the name and the size of the file`() {
     val values = mutableMapOf<String, String>()
@@ -127,7 +168,9 @@ class SplatPlacementTest {
         }
       )
     assertEquals(SplatUpright.DEFAULT, memory.read("room.ply", 1000))
+    assertNull(memory.chosen("room.ply", 1000))
     memory.write("room.ply", 1000, SplatUpright.Y_DOWN)
+    assertEquals(SplatUpright.Y_DOWN, memory.chosen("room.ply", 1000))
     assertEquals(SplatUpright.Y_DOWN, memory.read("room.ply", 1000))
     // Another file of the same name is another file
     assertEquals(SplatUpright.DEFAULT, memory.read("room.ply", 1001))

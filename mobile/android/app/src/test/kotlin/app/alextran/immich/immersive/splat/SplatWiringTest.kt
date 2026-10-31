@@ -44,6 +44,15 @@ class SplatWiringTest {
   }
 
   @Test
+  fun `a splat opens in the orientation chosen for its file, else the one its gaussians say, else the default`() {
+    assertInOrder(
+      bodyOf(stage, "fun show(\n    prepared: SplatPreparation.Ready"),
+      "val upright = memory.chosen(spec.name, prepared.sourceBytes) ?: prepared.upright ?: SplatUpright.DEFAULT",
+      "Current(prepared, spec, options, upright)",
+    )
+  }
+
+  @Test
   fun `the centre of the file is taken as the module shows it before it is turned`() {
     val local = bodyOf(stage, "private fun localOf(")
     assertInOrder(local, "SplatModuleFrame.filePoint(bounds.center)", "rotation.times(", "SplatPlacement.localPosition(")

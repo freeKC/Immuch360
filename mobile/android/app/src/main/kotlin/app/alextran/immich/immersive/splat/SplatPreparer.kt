@@ -18,6 +18,8 @@ internal sealed interface SplatPreparation {
     val verdict: SplatVerdict.Open,
     val bounds: SplatBounds?,
     val sourceBytes: Long = file.length(),
+    /** The orientation its gaussians say a place opens in (SplatPlacement.uprightOf), null for the default */
+    val upright: SplatUpright? = null,
   ) : SplatPreparation
 
   /** Not shown, for [verdict]; [head] when the file was read; [detail] for the log */
@@ -95,24 +97,20 @@ internal object SplatPreparer {
         throw e
       }
       if (sourceOwned) source.delete()
-      val ready =
-        SplatPreparation.Ready(
-          written,
-          owned = true,
-          head,
-          verdict,
-          SplatPlacement.boundsOf(scan, if (keep != null) kept else null),
-          sourceBytes,
-        )
+      val keptSet = if (keep != null) kept else null
+      val bounds = SplatPlacement.boundsOf(scan, keptSet)
+      val upright = SplatPlacement.uprightOf(scan, keptSet, bounds)
+      val ready = SplatPreparation.Ready(written, owned = true, head, verdict, bounds, sourceBytes, upright)
       return guarded(ready, shown)
     }
     val bounds = SplatPlacement.boundsOf(scan, null)
+    val upright = SplatPlacement.uprightOf(scan, null, bounds)
     if (source.name.endsWith(extension)) {
-      return guarded(SplatPreparation.Ready(source, sourceOwned, head, verdict, bounds, sourceBytes), shown)
+      return guarded(SplatPreparation.Ready(source, sourceOwned, head, verdict, bounds, sourceBytes, upright), shown)
     }
     val named = File(cacheDir, "$prefix${System.nanoTime()}$extension")
     if (sourceOwned && source.renameTo(named)) {
-      return guarded(SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes), shown)
+      return guarded(SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes, upright), shown)
     }
     try {
       source.copyTo(named, overwrite = true)
@@ -121,7 +119,7 @@ internal object SplatPreparer {
       throw e
     }
     if (sourceOwned) source.delete()
-    return guarded(SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes), shown)
+    return guarded(SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes, upright), shown)
   }
 
   /**

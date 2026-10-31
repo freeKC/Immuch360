@@ -120,7 +120,9 @@ internal class SplatStage(
     options: SplatViewerOptions,
     head: () -> Pair<Vector3?, Vector3?>,
   ) {
-    val upright = memory.read(spec.name, prepared.sourceBytes)
+    // The orientation the user chose for the file, else the one its gaussians say (a place with its floor at the
+    // bottom of y), else the measured default
+    val upright = memory.chosen(spec.name, prepared.sourceBytes) ?: prepared.upright ?: SplatUpright.DEFAULT
     val splat = Current(prepared, spec, options, upright)
     if (!session.isDown) current = splat
     session.whenFree(start = { start(splat, head()) }, abandon = { forget(splat) })

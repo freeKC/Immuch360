@@ -33,8 +33,9 @@ internal class SplatBounds(val low: DoubleArray, val high: DoubleArray) {
  * same for a PLY and an SPZ: a file whose y is up shows upright at 0 degrees, one whose z is up at +90 (Meta's
  * SplatSample turns its own files by -90 degrees without the conversion, which is +90 with it), one whose y is down
  * at 180. [DEFAULT] is [Y_DOWN], the axes of a 3D Gaussian Splatting training (those of COLMAP, right, down, forward),
- * which every real capture of the owner's kit has, in PLY and in SPZ alike; the synthetic files of
- * make_splat_fixtures.py have y up, one Turn upright away.
+ * which every real capture of the owner's kit has, in PLY and in SPZ alike. A place whose floor lies at the bottom of
+ * its y axis opens with Y up instead ([SplatPlacement.uprightOf]); an object with y up (the axes of
+ * make_splat_fixtures.py) is one Turn upright away.
  */
 internal enum class SplatUpright(val key: String, val pitchDegrees: Float) {
   Y_UP("yUp", 0f),
@@ -98,6 +99,45 @@ internal object SplatPlacement {
     return sorted[rank - 1]
   }
 
+  /** The share of the height of a place, at its bottom and at its top, where its floor is looked for */
+  const val FLOOR_BAND = 0.1
+
+  /** How many times more gaussians the bottom band must hold than the top band to be taken as the floor */
+  const val FLOOR_RATIO = 3.0
+
+  /** The least share of the gaussians the floor band must hold */
+  const val FLOOR_SHARE = 0.15
+
+  /**
+   * The orientation a place (not an object, see [isObject]) opens in when its gaussians say which way is up: a room or
+   * a street has its floor as a dense layer at one end of its vertical axis, few gaussians at the other (a ceiling is
+   * seldom captured as well, the sky not at all). When the bottom band of y ([FLOOR_BAND] of the height between the
+   * bounds) holds at least [FLOOR_SHARE] of the sampled gaussians and [FLOOR_RATIO] times those of the top band, the
+   * floor is at the bottom of y: [SplatUpright.Y_UP]. Otherwise null, and the measured default holds
+   * ([SplatUpright.DEFAULT], the floor of a training at the top of y). An object never: an object with a flat top
+   * would read as upside down. The kept gaussians only when [kept] is given
+   */
+  fun uprightOf(scan: SplatScan, kept: BitSet?, bounds: SplatBounds?): SplatUpright? {
+    if (bounds == null || isObject(bounds)) return null
+    val low = bounds.low[1]
+    val high = bounds.high[1]
+    val band = (high - low) * FLOOR_BAND
+    if (!(band > 0)) return null
+    var total = 0
+    var bottom = 0
+    var top = 0
+    for (k in 0 until scan.sampleCount) {
+      if (kept != null && !kept[scan.sampleIndices[k]]) continue
+      val y = scan.samplePositions[3 * k + 1].toDouble()
+      if (!y.isFinite()) continue
+      total++
+      if (y <= low + band) bottom++
+      if (y >= high - band) top++
+    }
+    if (total == 0) return null
+    return if (bottom >= FLOOR_SHARE * total && bottom >= FLOOR_RATIO * top) SplatUpright.Y_UP else null
+  }
+
   /** Whether the splat of [bounds] is an object to look at, rather than a place to stand in */
   fun isObject(bounds: SplatBounds?): Boolean = bounds != null && bounds.size < OBJECT_LIMIT
 
@@ -140,7 +180,10 @@ internal class SplatUprightMemory(private val store: SplatUprightStore) {
     const val PREFIX = "splatUp:"
   }
 
-  fun read(name: String, fileBytes: Long): SplatUpright = SplatUpright.of(store.read(keyOf(name, fileBytes))) ?: SplatUpright.DEFAULT
+  /** The orientation the user chose for the file, null when none */
+  fun chosen(name: String, fileBytes: Long): SplatUpright? = SplatUpright.of(store.read(keyOf(name, fileBytes)))
+
+  fun read(name: String, fileBytes: Long): SplatUpright = chosen(name, fileBytes) ?: SplatUpright.DEFAULT
 
   fun write(name: String, fileBytes: Long, upright: SplatUpright) = store.write(keyOf(name, fileBytes), upright.key)
 }
