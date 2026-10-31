@@ -62,6 +62,20 @@ class VideoPlaybackFailure {
   String toString() => 'VideoPlaybackFailure($kind, $message${refusal != null ? ', $refusal' : ''})';
 }
 
+/// What follows where a video is for the watch progress (see VideoWatchRecorder), told by [VideoPlayerNotifier] of the
+/// moves of an external player, which the state of the in-app player does not show
+abstract interface class VideoPositionWatcher {
+  /// An external player takes the video, which was at [position] here (see [VideoPlayerNotifier.suspendForExternalPlayer])
+  void onSuspend(Duration position);
+
+  /// An external player gave the video back at [position] (see [VideoPlayerNotifier.resumeAfterExternalPlayerAt])
+  void onHandBack(Duration position);
+
+  /// Where the video starts when it loads again after an external player that tells no position (the 360° players of
+  /// the phones and of the computers): where the film was saved, 0 for the beginning
+  Duration resumePositionAfterExternalPlayer();
+}
+
 @freezed
 abstract class VideoPlayerState with _$VideoPlayerState {
   const factory VideoPlayerState({
@@ -142,6 +156,9 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   /// Whether [suspendForExternalPlayer] stopped this player
   bool get isSuspendedForExternalPlayer => _suspended;
+
+  /// Follows where the video is for the watch progress, see [VideoPositionWatcher]; null when nothing does
+  VideoPositionWatcher? watcher;
 
   final _tracksChanged = ValueNotifier(0);
 
@@ -348,6 +365,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       return;
     }
 
+    // Before the stop, which takes the video back to its start
+    watcher?.onSuspend(state.position);
     _suspended = true;
     _ready = false;
     _pendingRestore = null;
@@ -377,6 +396,13 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _suspended = false;
     final source = _sourceAfterSuspension;
     _sourceAfterSuspension = null;
+    // An external player that told no position: a film loads again where it was saved
+    if (_pendingRestore == null) {
+      final at = watcher?.resumePositionAfterExternalPlayer() ?? Duration.zero;
+      if (at > Duration.zero) {
+        _pendingRestore = (position: at, play: false);
+      }
+    }
     if (source != null) {
       await load(source);
     }
@@ -389,6 +415,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   /// or after the external player reports where it stopped: either way, the video goes to [position] as soon as the
   /// native player reports it ready, or right away when it already did.
   Future<void> resumeAfterExternalPlayerAt(Duration position, {required bool play}) async {
+    watcher?.onHandBack(position);
     final restore = (position: position, play: play);
     if (_suspended) {
       _pendingRestore = restore;
@@ -401,6 +428,16 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     } else {
       _pendingRestore = restore;
     }
+  }
+
+  /// Takes the video to [position] the next time the native player reports it ready, without playing it (the viewer's
+  /// autoplay decides): where a film was left (see VideoWatchRecorder). Call it right before [load], whose first ready
+  /// uses it up; nothing for 0. A restore already waiting, the one of an external player, wins.
+  void seekWhenReady(Duration position) {
+    if (_pendingRestore != null || position <= Duration.zero) {
+      return;
+    }
+    _pendingRestore = (position: position, play: false);
   }
 
   Future<void> _restore(({Duration position, bool play}) restore) async {
