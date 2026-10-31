@@ -355,6 +355,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * runs for the users who turned the splats off. A previous or next media keeps the value of its opening.
      */
     val gaussianSplats: Boolean = true,
+    /**
+     * The threshold of "Remember where I stopped" when the app opened the viewer, in milliseconds, [WatchReport.OFF]
+     * with it off: a video of at least that long is a film, which plays once and whose position goes to the app (see
+     * [reportProgress]). A previous or next media keeps the value of its opening; a kiosk ignores it.
+     */
+    val watchMinDurationMs: Long = WatchReport.OFF,
+    /** What to say once the video plays, in the language of the app ("Resumed at 42:10"); null for nothing. */
+    val startNotice: String? = null,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -467,6 +475,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * gone (the system closing the viewer). Null for a photo and for a video that has not played yet.
    */
   private var lastKnownPositionMs: Long? = null
+  /** The duration of the current video once its player knew it, for a report sent once the player is gone. */
+  private var watchDurationMs = 0L
+  /** The current video played in this opening: nothing is reported before (see [WatchReport.reports]). */
+  private var watchPlayed = false
+  /** When the position of the current film last went to the app, see [reportProgress] */
+  private var lastWatchReportAt = 0L
+  /** Reports a film that plays every [WatchReport.INTERVAL_MS], see [startWatchTicker] */
+  private var watchJob: Job? = null
+  /** The start notice of the current video ("Resumed at 42:10"), said once it plays */
+  private var pendingStartNotice: String? = null
 
   // Scene
   private var skyboxEntity: Entity? by sceneHold.ref()
@@ -997,6 +1015,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         coverage = shownCoverage(media),
         // A kiosk starts again from 0:00: the position is the previous visitor's, see KioskSession.savedStartPositionMs
         startPositionMs = KioskSession.savedStartPositionMs(media.kiosk != null, currentPositionMs(media)),
+        // Said once: a recreation carries on where the video was, without it
+        startNotice = null,
       )
     outState.putBundle(STATE_REQUEST, extrasOf(shown))
     // The choices on screen once its showStereoPhoto ran (before, they are those of another photo or the defaults),
@@ -1264,6 +1284,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     userSeeking = false
     deferredHideMs = null
     lastKnownPositionMs = null
+    watchPlayed = false
+    watchDurationMs = 0L
+    pendingStartNotice = null
     rawEffectFailed = false
     rawPlanOverride = null
     pendingRawMessage = null
@@ -1980,9 +2003,50 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     Log.i(TAG, "kiosk: hands, controllers and pointer ${if (on) "hidden" else "shown"}")
   }
 
-  /** A kiosk plays its film once (its end shows the card), any other video loops as before. */
+  /**
+   * A kiosk plays its film once (its end shows the card), any other video loops as before until its player knows its
+   * duration: a film then plays once too (see [WatchReport.loops] and the READY state).
+   */
   private fun repeatModeFor(media: MediaRequest?): Int =
     if (media?.kiosk != null) Player.REPEAT_MODE_OFF else Player.REPEAT_MODE_ONE
+
+  /**
+   * The position of the current film goes to the app (ImmersiveEvents.progress), which keeps it as its own player does:
+   * a film it played only, never in the kiosk (see [WatchReport.reports]). [ended]: at its end, reported at its
+   * duration. Once the player is gone (the system closing the viewer), the position and the duration it last had.
+   */
+  private fun reportProgress(ended: Boolean = false) {
+    // After the closed event: the player stopped, and the app follows the closing
+    if (closedSent) return
+    val media = request ?: return
+    val p = player?.takeIf { currentVideoUrl != null }
+    val duration = p?.duration?.takeIf { it > 0 } ?: watchDurationMs
+    if (!WatchReport.reports(media.isVideo, media.kiosk != null, watchPlayed, duration, media.watchMinDurationMs)) {
+      return
+    }
+    val position = p?.currentPosition ?: lastKnownPositionMs ?: return
+    lastWatchReportAt = SystemClock.uptimeMillis()
+    ImmersiveApiImpl.notifyProgress(
+      media.openingId,
+      media.url,
+      WatchReport.reportedPositionMs(position, duration, ended),
+      duration,
+    )
+  }
+
+  /** Reports the film that plays every [WatchReport.INTERVAL_MS] since the report before, whatever sent it */
+  private fun startWatchTicker() {
+    watchJob?.cancel()
+    watchJob =
+      scope.launch {
+        while (true) {
+          delay(1_000L)
+          if (player?.isPlaying == true && WatchReport.due(SystemClock.uptimeMillis() - lastWatchReportAt)) {
+            reportProgress()
+          }
+        }
+      }
+  }
 
   // ---------------------------------------------------------------------------------------------
   // Frame and input
@@ -2596,6 +2660,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         timeoutNavigation(id, step)
       }
     Log.i(TAG, "asking the app for the media at step $step, opening $openingId, request $id")
+    // Where the film is goes first: the app keeps it before it moves on
+    reportProgress()
     ImmersiveApiImpl.requestAdjacent(openingId, id, step, stereoLayout, coverage) { found ->
       val noneStatus = getString(if (step < 0) R.string.immersive_no_previous else R.string.immersive_no_next)
       when (found) {
@@ -2634,6 +2700,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoPair: String?,
     sourceNotice: String? = null,
     sourceRefusal: String? = null,
+    startPositionMs: Long = 0L,
+    startNotice: String? = null,
   ): Boolean {
     if (closing || isFinishing || isDestroyed || sceneHold.isDown) {
       Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
@@ -2660,7 +2728,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         stereoLayout = mediaLayout,
         stereoLabels = current.stereoLabels,
         coverage = mediaCoverage,
-        startPositionMs = 0L,
+        // Where a film was left, else from its start
+        startPositionMs = startPositionMs.coerceAtLeast(0L),
         openingId = current.openingId,
         fallbackUrl = fallbackUrl,
         rawProjection = rawProjection,
@@ -2670,6 +2739,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         sourceNotice = sourceNotice,
         sourceRefusal = sourceRefusal,
         gaussianSplats = current.gaussianSplats,
+        watchMinDurationMs = current.watchMinDurationMs,
+        startNotice = startNotice,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -2892,6 +2963,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // A media Flutter sends for a request from now on is refused, and the closed event stops its search
     endNavigation()
     reportClosed()
+    watchJob?.cancel()
+    watchJob = null
     player?.stop()
     if (isHorizonOsDevice()) {
       try {
@@ -2929,6 +3002,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun reportClosed() {
     if (closedSent) return
     val media = request ?: return
+    // The film the viewer closes on, a previous or next one too, is kept before the app follows the closing: the last
+    // report, none comes after the closed event
+    reportProgress()
     closedSent = true
     val shownLayout = shownStereoLayout(media)
     val shownCoverage = shownCoverage(media)
@@ -2958,7 +3034,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Keeps the position of the video that plays, for a closed event sent after the player is gone. */
   private fun rememberPosition() {
     val p = player ?: return
-    if (request?.isVideo == true && currentVideoUrl != null) lastKnownPositionMs = p.currentPosition.coerceAtLeast(0L)
+    if (request?.isVideo == true && currentVideoUrl != null) {
+      lastKnownPositionMs = p.currentPosition.coerceAtLeast(0L)
+      p.duration.takeIf { it > 0 }?.let { watchDurationMs = it }
+    }
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -5547,8 +5626,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         Log.i(TAG, "video state $playbackState")
         when (playbackState) {
           Player.STATE_BUFFERING -> setStatus(getString(R.string.immersive_buffering))
-          // Only a kiosk plays a video once, the others loop. Its player goes then: out of this callback of its own
-          Player.STATE_ENDED -> kiosk?.let { kiosk -> runKioskLater(kiosk.onEnded()) }
+          // A kiosk and a film play once, the others loop. The kiosk's player goes then: out of this callback of its
+          // own; a film is watched, which the app keeps
+          Player.STATE_ENDED -> {
+            val kiosk = kiosk
+            if (kiosk != null) runKioskLater(kiosk.onEnded()) else reportProgress(ended = true)
+          }
           Player.STATE_READY -> {
             // Normally the first frame did it already; a video that renders no frame still shows its panel. A lens
             // player's panel waits for the compositor's first frame, see LensListener
@@ -5589,6 +5672,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
               setPhotoStatus(description.trim())
               if (firstReady && starting) scheduleInfoHide(photoHideDelayMs())
             }
+            // A film plays once whatever the loop of the other videos (see WatchReport.loops), and says where it starts
+            val media = request
+            player?.let { p ->
+              if (p.duration > 0) watchDurationMs = p.duration
+              val minMs = media?.watchMinDurationMs ?: WatchReport.OFF
+              val loops = WatchReport.loops(media?.kiosk != null, p.duration, minMs)
+              if (!loops && p.repeatMode != Player.REPEAT_MODE_OFF) p.repeatMode = Player.REPEAT_MODE_OFF
+            }
+            if (firstReady && starting) pendingStartNotice?.let {
+              pendingStartNotice = null
+              queueNotice(it)
+            }
             // A seek during a drag also ends with READY: the bar stays under the pointer until the drag ends
             if (!userSeeking) updateProgress()
           }
@@ -5626,6 +5721,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
       override fun onIsPlayingChanged(isPlaying: Boolean) {
         playPauseButton?.setText(if (isPlaying) R.string.immersive_pause else R.string.immersive_play)
+        // The film played in this opening: from now on the app hears where it is
+        if (isPlaying && !watchPlayed) {
+          watchPlayed = true
+          lastWatchReportAt = SystemClock.uptimeMillis()
+        }
       }
 
       override fun onPlayerError(error: PlaybackException) {
@@ -6340,6 +6440,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     recovery.onMedia()
     // The word of Flutter on the file it chose, said once the video plays (see the READY state)
     playbackNotice = media.sourceNotice
+    // "Resumed at 42:10" of a film that starts where it was left, on the notice line once it plays
+    pendingStartNotice = media.startNotice
     setStatus(getString(R.string.immersive_loading))
     val videoPlayer = ensurePlayer(media.url, media)
     if (videoPlayer == null) {
@@ -6528,6 +6630,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     Log.i(TAG, "play $kind from $startPositionMs ms")
     recovery.onPlay()
+    // A film reports once it plays again from here
+    watchPlayed = false
+    startWatchTicker()
     watchedFrames = 0
     watchedDroppedFrames = 0
     startRecoveryWatch()
@@ -6578,7 +6683,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (currentVideoUrl == null) return
     when {
       p.isPlaying -> p.pause()
-      playbackAllowed() -> p.play()
+      playbackAllowed() -> {
+        // A film plays once (see WatchReport.loops): at its end Media3 ignores play, and Play starts it again from its
+        // beginning, as the player's own controls do (Util.handlePlayButtonAction). A kiosk shows its end card instead
+        if (p.playbackState == Player.STATE_ENDED && kiosk == null) p.seekTo(0L)
+        p.play()
+      }
       // Not in front: the press decides whether the video starts once the viewer is back, it never plays behind the
       // menu or in a headset nobody wears
       else -> playOnReturn = !playOnReturn
@@ -6674,6 +6784,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     resumed = false
     // The system may close the viewer from here on without close(): the closed event then reports this position
     rememberPosition()
+    // The headset off, the system menu: the app keeps where the film is
+    reportProgress()
     holdPlayback()
   }
 
@@ -6775,6 +6887,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** What to tell of the file chosen for a video, and the refusal of a video nothing decodes, see [MediaRequest] */
     private const val EXTRA_SOURCE_NOTICE = "app.alextran.immich.immersive.SOURCE_NOTICE"
     private const val EXTRA_SOURCE_REFUSAL = "app.alextran.immich.immersive.SOURCE_REFUSAL"
+    /** The threshold of the films and the start notice of a media, see [MediaRequest] */
+    private const val EXTRA_WATCH_MIN_DURATION_MS = "app.alextran.immich.immersive.WATCH_MIN_DURATION_MS"
+    private const val EXTRA_START_NOTICE = "app.alextran.immich.immersive.START_NOTICE"
     /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
     private const val DOWNLOAD_DIR = "immersive_video"
     private const val DOWNLOAD_BUFFER_BYTES = 256 * 1024
@@ -6970,6 +7085,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       stereoPair: String? = null,
       sourceNotice: String? = null,
       sourceRefusal: String? = null,
+      startPositionMs: Long = 0L,
+      startNotice: String? = null,
     ): Boolean {
       val viewer = liveViewer
       if (viewer == null) {
@@ -6988,6 +7105,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         stereoPair,
         sourceNotice,
         sourceRefusal,
+        startPositionMs,
+        startNotice,
       )
     }
 
@@ -7009,6 +7128,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       sourceNotice: String? = null,
       sourceRefusal: String? = null,
       gaussianSplats: Boolean = true,
+      watchMinDurationMs: Long = WatchReport.OFF,
+      startNotice: String? = null,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -7030,6 +7151,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           sourceNotice = sourceNotice,
           sourceRefusal = sourceRefusal,
           gaussianSplats = gaussianSplats,
+          watchMinDurationMs = watchMinDurationMs,
+          startNotice = startNotice,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -7060,6 +7183,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putString(EXTRA_SOURCE_NOTICE, media.sourceNotice)
         putString(EXTRA_SOURCE_REFUSAL, media.sourceRefusal)
         putBoolean(EXTRA_GAUSSIAN_SPLATS, media.gaussianSplats)
+        putLong(EXTRA_WATCH_MIN_DURATION_MS, media.watchMinDurationMs)
+        putString(EXTRA_START_NOTICE, media.startNotice)
       }
     }
 
@@ -7099,6 +7224,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         sourceNotice = extras.getString(EXTRA_SOURCE_NOTICE)?.takeIf { it.isNotBlank() },
         sourceRefusal = extras.getString(EXTRA_SOURCE_REFUSAL)?.takeIf { it.isNotBlank() },
         gaussianSplats = gaussianSplatsOf(extras),
+        watchMinDurationMs = extras.getLong(EXTRA_WATCH_MIN_DURATION_MS, WatchReport.OFF),
+        startNotice = extras.getString(EXTRA_START_NOTICE)?.takeIf { it.isNotBlank() },
       )
     }
 

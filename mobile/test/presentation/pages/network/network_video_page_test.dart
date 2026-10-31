@@ -16,6 +16,8 @@ import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
+import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
@@ -34,11 +36,13 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
+import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
 import '../../../fixtures/raw/insta360.stub.dart';
+import '../../../fixtures/watch_progress.fake.dart';
 import 'network_viewer_fakes.dart';
 
 class _RecordingSphericalVideoApi extends SphericalVideoApi {
@@ -114,6 +118,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -137,6 +143,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? stereoPair, {
     String? sourceNotice,
     String? sourceRefusal,
+    int startPositionMs = 0,
+    String? startNotice,
   }) async {
     shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     return true;
@@ -270,6 +278,8 @@ void main() {
     NetworkFolderMedia? folder,
     VideoPlayerState? playerState,
     bool twoStreams = true,
+    bool recordPlayer = true,
+    List<Override> extra = const [],
   }) async {
     await pumpNetworkRouter(
       tester,
@@ -288,9 +298,11 @@ void main() {
         sphericalVideoApiProvider.overrideWithValue(sphericalApi),
         spatialVideoApiProvider.overrideWithValue(spatial ?? spatialApi),
         immersiveApiProvider.overrideWithValue(immersiveApi),
-        videoPlayerProvider(
-          'network:nas:$path',
-        ).overrideWith((ref) => _RecordingVideoPlayer(playerCalls, initial: playerState)),
+        if (recordPlayer)
+          videoPlayerProvider(
+            'network:nas:$path',
+          ).overrideWith((ref) => _RecordingVideoPlayer(playerCalls, initial: playerState)),
+        ...extra,
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
         // The players of the phones and the headset play two streams; the test runs on neither
@@ -835,5 +847,164 @@ void main() {
     expect((await page.videoSource)?.path, server.urlOf('/holiday.mp4').toString());
 
     await endRealIo(tester);
+  });
+
+  group('the watch progress of a film of a share', () {
+    const minute = 60000;
+    const film = Duration(minutes: 100);
+    late MemoryWatchRows database;
+    late FakeNativePlayer native;
+    // The key the page keeps the film under: its share and its path
+    const key = WatchKey('share:nas:/holiday.mp4');
+
+    setUp(() {
+      // No platform view is ever made, so that no native controller of the plugin takes the page: the fake of the test
+      // does (see pumpFilm)
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        (call) => call.method == 'create' ? Completer<Object?>().future : Future<Object?>.value(),
+      );
+    });
+
+    WatchProgress row(int minutes, {bool watched = false}) => WatchProgress(
+      key: key.key,
+      position: Duration(minutes: minutes),
+      duration: film,
+      watched: watched,
+      updatedAt: DateTime.utc(2026, 10, 31, 9),
+    );
+
+    /// The page of the film with [rows], its native player attached once the video is had
+    Future<void> pumpFilm(WidgetTester tester, List<WatchProgress> rows) async {
+      database = MemoryWatchRows(rows);
+      native = FakeNativePlayer(durationMs: film.inMilliseconds);
+      await pumpVideoPage(
+        tester,
+        '/holiday.mp4',
+        recordPlayer: false,
+        extra: [watchProgressRepositoryProvider.overrideWithValue(database)],
+      );
+      await pumpUntilDetected(tester);
+      final page = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+      await page.videoSource;
+      page.attachController(native);
+      await pumpRealIo(tester, () => native.calls.contains('load'));
+    }
+
+    testWidgets('resumes where it was left once ready, plays on, and says so for a few seconds', (tester) async {
+      await pumpFilm(tester, [row(42)]);
+      // A share that tells no duration: Looping holds until the player tells it
+      expect(native.calls, ['load', 'loop true']);
+
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      expect(native.calls.sublist(2), [
+        'loop false',
+        'seek ${42 * minute}',
+        'play',
+      ], reason: 'a film plays once whatever Looping says, from where it was left');
+
+      native.moveTo(42 * minute + 400);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('Resumed at 42:00'), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Resumed at 42:00'), findsNothing);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('saves where the film is as the page goes', (tester) async {
+      await pumpFilm(tester, []);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(50 * minute);
+      await tester.pump();
+
+      await endRealIo(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+    });
+
+    testWidgets('the menu plays a watched film from the start and marks it not watched', (tester) async {
+      await pumpFilm(tester, [row(20, watched: true)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+
+      await openMenu(tester);
+      expect(find.text('Play from the start'), findsOneWidget);
+      expect(find.text('Mark as not watched'), findsOneWidget);
+      await tester.tap(find.text('Play from the start'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(native.calls, contains('seek 0'));
+      await tester.pump();
+      expect(database.saved[key.key]?.watched, isTrue, reason: 'the check stays');
+      expect(database.saved[key.key]?.position, Duration.zero);
+
+      await openMenuItem(tester, 'Mark as not watched');
+      await tester.pump();
+      expect(database.saved[key.key], isNull);
+
+      await endRealIo(tester);
+    });
+
+    VideoPlayerNotifier playerOf(WidgetTester tester) => ProviderScope.containerOf(
+      tester.element(find.byType(NetworkVideoPage)),
+    ).read(videoPlayerProvider('network:nas:/holiday.mp4').notifier);
+
+    testWidgets('Back right after an external player handed the film back keeps where it left it', (tester) async {
+      await pumpFilm(tester, [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(45 * minute);
+      await tester.pump();
+
+      // The immersive viewer plays it to 50:00; the page's player loads it again, at its start until it is ready
+      final player = playerOf(tester);
+      await player.suspendForExternalPlayer();
+      await tester.pump();
+      await player.resumeAfterExternalPlayerAt(const Duration(minutes: 50), play: false);
+      await tester.pump();
+      expect(player.state.position, Duration.zero);
+
+      await endRealIo(tester);
+
+      expect(database.saved[key.key]?.position, const Duration(minutes: 50));
+    });
+
+    testWidgets('a save of the film while it plays rebuilds nothing of the page', (tester) async {
+      await pumpFilm(tester, [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      final page = tester.element(find.byType(NetworkVideoPage));
+      expect(page.dirty, isFalse);
+
+      // What the recorder does every 5 s: the same entries in the menu, another row
+      ProviderScope.containerOf(
+        page,
+      ).read(watchProgressProvider.notifier).record(key, position: const Duration(minutes: 43), duration: film);
+
+      expect(page.dirty, isFalse);
+      await endRealIo(tester);
+    });
+
+    testWidgets('no such entries for a video without a row', (tester) async {
+      await pumpFilm(tester, []);
+
+      await openMenu(tester);
+      expect(find.text('Play from the start'), findsNothing);
+      expect(find.text('Mark as not watched'), findsNothing);
+
+      await endRealIo(tester);
+    });
   });
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -10,6 +11,7 @@ import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
+import 'package:immich_mobile/presentation/widgets/watch_progress/watch_progress_overlay.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -211,6 +213,13 @@ class _ThumbnailTileState extends ConsumerState<ThumbnailTile> {
                         child: _TileOverlayIcon(Icons.favorite_rounded),
                       ),
                     ),
+                  ),
+                // How much of a film was watched, along the bottom edge (see WatchProgressOverlay)
+                if (asset != null && asset.isVideo)
+                  AnimatedOpacity(
+                    opacity: _hideIndicators ? 0.0 : 1.0,
+                    duration: Durations.short4,
+                    child: WatchProgressOverlay(watchKey: WatchKey.ofAsset(asset)),
                   ),
                 if (uploadProgress != null) _UploadProgressOverlay(progress: uploadProgress),
               ],

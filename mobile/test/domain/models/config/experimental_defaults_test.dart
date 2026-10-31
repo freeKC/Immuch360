@@ -105,4 +105,24 @@ void main() {
       expect(config.write(SettingsKey.viewerSpatial25d, true).viewer.spatial25d, isTrue);
     });
   });
+
+  group('Remember where I stopped (the lab rule)', () {
+    test('is on by default, for videos of 10 minutes or more', () {
+      expect(const AppConfig().viewer.resumeVideos, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerResumeVideos), isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerResumeMinMinutes), 10);
+    });
+
+    test('a stored off and a stored threshold win over the defaults', () {
+      final config = AppConfig.fromEntries({
+        SettingsKey.viewerResumeVideos: false,
+        SettingsKey.viewerResumeMinMinutes: 0,
+      });
+
+      expect(config.viewer.resumeVideos, isFalse);
+      expect(config.viewer.resumeMinMinutes, 0);
+      expect(config.write(SettingsKey.viewerResumeVideos, true).viewer.resumeVideos, isTrue);
+      expect(config.write(SettingsKey.viewerResumeMinMinutes, 25).viewer.resumeMinMinutes, 25);
+    });
+  });
 }

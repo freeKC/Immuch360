@@ -17,6 +17,9 @@ import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
+import 'package:immich_mobile/domain/models/watch_progress.dart';
+import 'package:immich_mobile/domain/services/immersive_watch.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
@@ -37,9 +40,11 @@ import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart'
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
+import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
+import '../../../fixtures/watch_progress.fake.dart';
 import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
@@ -67,6 +72,10 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   final shownNotices = <String?>[];
   final shownRefusals = <String?>[];
 
+  /// Where each media shown starts, and what it says once it plays ("Resumed at 42:10"), null for nothing
+  final shownStarts = <int>[];
+  final shownStartNotices = <String?>[];
+
   /// What the viewer answers when asked to show a media: false once it no longer waits for the request
   bool answer = true;
 
@@ -90,6 +99,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async => opened.add(url);
 
   @override
@@ -105,10 +116,14 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? stereoPair, {
     String? sourceNotice,
     String? sourceRefusal,
+    int startPositionMs = 0,
+    String? startNotice,
   }) async {
     shownFallbackUrls.add(fallbackUrl);
     shownNotices.add(sourceNotice);
     shownRefusals.add(sourceRefusal);
+    shownStarts.add(startPositionMs);
+    shownStartNotices.add(startNotice);
     shown.add((
       requestId: requestId,
       url: url,
@@ -235,6 +250,9 @@ void main() {
   late ProviderContainer container;
   late _RecordingImmersiveApi api;
   late ImmersiveSession session;
+  late WatchProgressStore watchStore;
+  late MemoryWatchRows watchRows;
+  const film = Duration(minutes: 100);
   var requestId = 0;
   // The opening the session follows, as the viewer sends it back with its events
   var openingId = 0;
@@ -242,10 +260,22 @@ void main() {
   setUp(() async {
     // The store and the settings, which the URLs and the headers of the server come from
     await PresentationContext.create();
-    container = ProviderContainer(overrides: [storeServiceProvider.overrideWithValue(StoreService.I)]);
+    watchRows = MemoryWatchRows(const []);
+    container = ProviderContainer(
+      overrides: [
+        storeServiceProvider.overrideWithValue(StoreService.I),
+        watchProgressRepositoryProvider.overrideWithValue(watchRows),
+      ],
+    );
     api = _RecordingImmersiveApi();
     session = ImmersiveSession();
+    watchStore = container.read(watchProgressProvider.notifier);
+    await watchStore.loaded;
   });
+
+  /// Where the films of these tests resume, and where the progress of the viewer goes
+  ImmersiveWatch watch() =>
+      ImmersiveWatch(store: watchStore, rule: const WatchRule(), noticeText: (p) => 'Resumed at ${p.inMinutes} min');
 
   tearDown(() async {
     container.dispose();
@@ -330,6 +360,7 @@ void main() {
 
     ImmersiveAssetResolver resolver() => ImmersiveAssetResolver(
       api: api,
+      watch: watch(),
       stereoLabels: const {},
       coverageOverrides: container.read(sphereCoverageOverridesProvider.notifier),
       storage: storage,
@@ -660,6 +691,68 @@ void main() {
       expect(jump.calls, ['jump 2']);
     });
 
+    group('the watch progress of the films', () {
+      BaseAsset videoOf(String id, Duration duration) =>
+          RemoteAssetFactory.create(id: id, type: .video).copyWith(durationMs: duration.inMilliseconds);
+
+      test('a film shown next starts where it was left, and says so once it plays', () async {
+        assets[4] = videoOf('a4', film);
+        flagged = {'a4'};
+        watchStore.record(WatchKey.ofAsset(assets[4]), position: const Duration(minutes: 42), duration: film);
+        open(1);
+
+        expect(await request(1), isTrue);
+        expect(api.shownStarts, [42 * 60000]);
+        expect(api.shownStartNotices, ['Resumed at 42 min']);
+      });
+
+      test('a photo, a film never started and a shorter video start from the beginning, with nothing to say', () async {
+        assets[3] = videoOf('a3', film);
+        assets[5] = videoOf('a5', const Duration(minutes: 3));
+        flagged = {'a3', 'a4', 'a5'};
+        watchStore.record(WatchKey.ofAsset(assets[5]), position: const Duration(minutes: 1), duration: film);
+        open(1);
+
+        for (var i = 0; i < 3; i++) {
+          expect(await request(1), isTrue);
+        }
+        expect(api.shownStarts, [0, 0, 0]);
+        expect(api.shownStartNotices, [null, null, null]);
+      });
+
+      test('keeps where the viewer says the film it shows is, the one it opened on and those shown next', () async {
+        assets[2] = videoOf('a2', film);
+        assets[4] = videoOf('a4', film);
+        flagged = {'a4'};
+        open(2);
+
+        session.progress(openingId, 'start', 20 * 60000, film.inMilliseconds);
+        expect(watchStore.find(WatchKey.ofAsset(assets[2]))?.position, const Duration(minutes: 20));
+
+        expect(await request(1), isTrue);
+        session.progress(openingId, api.shown.single.url, 30 * 60000, film.inMilliseconds);
+        expect(watchStore.find(WatchKey.ofAsset(assets[4]))?.position, const Duration(minutes: 30));
+
+        // Its end: watched, from 0 next time
+        session.progress(openingId, api.shown.single.url, film.inMilliseconds, film.inMilliseconds);
+        expect(watchStore.find(WatchKey.ofAsset(assets[4]))?.watched, isTrue);
+      });
+
+      test('keeps nothing for a video that is no film, for a media it did not show, nor for another opening', () async {
+        assets[2] = videoOf('a2', const Duration(minutes: 3));
+        open(2);
+        final first = openingId;
+
+        session.progress(openingId, 'start', 60000, 3 * 60000);
+        session.progress(openingId, 'elsewhere', 20 * 60000, film.inMilliseconds);
+        open(2);
+        session.progress(first, 'start', 20 * 60000, film.inMilliseconds);
+
+        expect(watchRows.saved, isEmpty);
+        expect(watchStore.find(WatchKey.ofAsset(assets[2])), isNull);
+      });
+    });
+
     test('shows a video found with the transcoded stream of the server to fall back to', () async {
       assets[4] = RemoteAssetFactory.create(id: 'a4', type: .video);
       flagged = {'a4'};
@@ -877,6 +970,7 @@ void main() {
       SphereView view = _fullSphere,
       Duration fileTimeout = const Duration(seconds: 5),
       RawImmersiveMedia? raw,
+      ImmersiveWatch? watch,
     }) {
       final all = items();
       final item = all[index];
@@ -895,10 +989,28 @@ void main() {
         player: player,
         fileTimeout: fileTimeout,
         raw: raw,
+        watch: watch,
       );
       openingId = session.start(navigator);
       return navigator;
     }
+
+    test('keeps where the viewer says the film of a share is, and the film shown again starts there', () async {
+      final entry = items()[2].entry;
+      expect(entry.name, 'c.mp4');
+      open(2, watch: watch());
+
+      session.progress(openingId, urlOf('/c.mp4'), 42 * 60000, film.inMilliseconds);
+      expect(watchStore.find(WatchKey.ofEntry(entry))?.position, const Duration(minutes: 42));
+
+      expect(await request(1), isTrue);
+      expect(api.shown.last.url, urlOf('/d.jpg'));
+      expect(api.shownStarts.last, 0, reason: 'a photo');
+      expect(await request(-1), isTrue);
+      expect(api.shown.last.url, urlOf('/c.mp4'));
+      expect(api.shownStarts.last, 42 * 60000);
+      expect(api.shownStartNotices.last, 'Resumed at 42 min');
+    });
 
     test('shows the nearest file that declares a 360° projection each way, through the media bridge', () async {
       final navigator = open(0);

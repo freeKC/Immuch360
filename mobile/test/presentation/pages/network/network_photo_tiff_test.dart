@@ -63,6 +63,8 @@ class _QuestApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async => opened.add(url);
 }
 

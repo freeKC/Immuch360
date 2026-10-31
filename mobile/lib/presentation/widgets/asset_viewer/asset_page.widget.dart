@@ -509,6 +509,8 @@ class _AssetPageState extends ConsumerState<AssetPage> {
         localFilePath: localFilePath,
         isCurrent: isCurrent,
         image: Image(image: imageProvider, fit: BoxFit.contain, alignment: Alignment.center),
+        // A film resumes where it was left (see VideoWatchRecorder)
+        watchProgress: true,
       ),
     );
   }

@@ -63,7 +63,11 @@ abstract class ImmersiveApi {
   /// language of the app, null for nothing (lot fix-decoder-limit). [gaussianSplats] is the "Gaussian splats" setting
   /// (experimental, on by default; lot S5): the viewer registers the splat module of the Meta Spatial SDK as it opens
   /// only when it is true, so that the module never runs for a user who turned the splats off; previous and next keep
-  /// the value of the opening.
+  /// the value of the opening. [watchMinDurationMs] is the threshold of "Remember where I stopped" in milliseconds, -1
+  /// with it off (FreeKC's rule of 31 October 2026, see WatchReport): a video of at least that long is a film, which
+  /// plays once, and whose position the viewer reports with [ImmersiveEvents.progress]; previous and next keep the value
+  /// of the opening, the kiosk ignores it. [startNotice] is what to say once the video plays, in the language of the app
+  /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing.
   void open(
     String url,
     Map<String, String> headers,
@@ -83,13 +87,16 @@ abstract class ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
   /// by [requestId]. Returns false, and shows nothing, when that viewer is gone, closing, or no longer waiting for
   /// this request (the user pressed Back, or the request timed out meanwhile), so that Flutter does not count the
   /// media as shown. Never starts the viewer. [stereoPair] is the JSON of an Apple spatial photo, [sourceNotice] and
-  /// [sourceRefusal] the words on the file of a video, as for [open].
+  /// [sourceRefusal] the words on the file of a video, as for [open]. [startPositionMs] is where a video starts, where a
+  /// film was left (0 from the beginning), with [startNotice] said once it plays.
   bool showAdjacent(
     int requestId,
     String url,
@@ -102,6 +109,8 @@ abstract class ImmersiveApi {
     String? stereoPair, {
     String? sourceNotice,
     String? sourceRefusal,
+    int startPositionMs = 0,
+    String? startNotice,
   });
 }
 
@@ -136,4 +145,10 @@ abstract class ImmersiveEvents {
     ImmersiveSphereCoverage coverage,
     int positionMs,
   );
+
+  /// The film at [url] in the viewer of [openingId] is at [positionMs] of [durationMs] (its duration once it ended):
+  /// every 5 s while it plays, when the viewer goes behind the system, before a request for another media, at its end
+  /// and as the viewer closes, for a film only (see open's watchMinDurationMs), never in the kiosk. The app keeps it as
+  /// the in-app player does (see WatchProgressStore): the film resumes there next time, in the headset or in the app.
+  void progress(int openingId, String url, int positionMs, int durationMs);
 }

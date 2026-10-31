@@ -51,6 +51,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async {
     opened.add((url: url, title: title, stereoPair: stereoPair, isVideo: isVideo));
   }

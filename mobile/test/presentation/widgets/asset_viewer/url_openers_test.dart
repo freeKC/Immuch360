@@ -128,6 +128,8 @@ class _ImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async {
     openingIds.add(openingId);
     final failure = this.failure;

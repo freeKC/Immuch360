@@ -17,6 +17,23 @@ class _MockPlaybackInfo extends Mock implements PlaybackInfo {}
 
 class _MockVideoInfo extends Mock implements VideoInfo {}
 
+/// What the watch progress hears of the external players, in minutes
+class _RecordingWatcher implements VideoPositionWatcher {
+  _RecordingWatcher({this.resumeAt = Duration.zero});
+
+  final Duration resumeAt;
+  final events = <String>[];
+
+  @override
+  void onSuspend(Duration position) => events.add('suspend ${position.inMinutes}');
+
+  @override
+  void onHandBack(Duration position) => events.add('hand back ${position.inMinutes}');
+
+  @override
+  Duration resumePositionAfterExternalPlayer() => resumeAt;
+}
+
 /// The native player of Android as the notifier hears it: a seek reaches it at once but lands [seekTime] later (about
 /// 0.5 s on the TV emulator under load). Until then it goes on telling where it was ([report], its position loop, and
 /// the ready and position of the seek before), then reports where it landed, never past its real [endMs], and that it
@@ -290,6 +307,64 @@ void main() {
 
       verifyNever(() => controller.seekTo(any()));
       verifyNever(controller.play);
+    });
+
+    group('the watch progress (a film resumed where it was left)', () {
+      test('seekWhenReady goes there at the first ready after the load, without playing', () async {
+        player.seekWhenReady(const Duration(minutes: 42));
+        await player.load(serverSource);
+        verifyNever(() => controller.seekTo(any()));
+
+        reportReady();
+        await pumpEventQueue();
+
+        verify(() => controller.seekTo(42 * 60000)).called(1);
+        verifyNever(controller.play);
+
+        reportReady();
+        await pumpEventQueue();
+        verifyNever(() => controller.seekTo(any()));
+      });
+
+      test('the position of an external player wins over it', () async {
+        await player.suspendForExternalPlayer();
+        await player.resumeAfterExternalPlayerAt(const Duration(seconds: 7), play: false);
+        player.seekWhenReady(const Duration(minutes: 42));
+
+        reportReady();
+        await pumpEventQueue();
+
+        verify(() => controller.seekTo(7000)).called(1);
+        verifyNever(() => controller.seekTo(42 * 60000));
+      });
+
+      test(
+        'the watcher hears the position before an external player takes the video, and the one it hands back',
+        () async {
+          final watcher = _RecordingWatcher();
+          player.watcher = watcher;
+          reportReady();
+          player.seekTo(const Duration(minutes: 30));
+          await Future<void>.delayed(VideoPlayerNotifier.seekDelay * 2);
+
+          await player.suspendForExternalPlayer();
+          await player.resumeAfterExternalPlayerAt(const Duration(minutes: 31), play: false);
+
+          expect(watcher.events, ['suspend 30', 'hand back 31']);
+        },
+      );
+
+      test('a video back from an external player that told no position loads where the watcher says', () async {
+        player.watcher = _RecordingWatcher(resumeAt: const Duration(minutes: 42));
+        await player.suspendForExternalPlayer();
+
+        await player.resumeAfterExternalPlayer();
+        reportReady();
+        await pumpEventQueue();
+
+        verify(() => controller.seekTo(42 * 60000)).called(1);
+        verifyNever(controller.play);
+      });
     });
   });
 

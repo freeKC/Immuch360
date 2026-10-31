@@ -23,6 +23,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_ap
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
+import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
@@ -900,6 +901,14 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
               child: IgnorePointer(
                 child: RotationProgressBar(asset: ref.watch(assetViewerProvider.select((s) => s.currentAsset))),
               ),
+            ),
+            // Where a film resumed, for a few seconds (see ResumeNotice): over the pages, not inside PhotoView, which
+            // scales its child; it takes no touch, the swipes go to the pages under it
+            Positioned(
+              top: context.padding.top + kToolbarHeight + 12,
+              left: 0,
+              right: 0,
+              child: Center(child: ResumeNotice(notice: ref.watch(resumeNoticeProvider))),
             ),
             // Immuch360 Desktop: previous and next for the mouse, which cannot swipe (desktop/window/hover_chevrons.dart)
             if (CurrentPlatform.isDesktop && !showingDetails)

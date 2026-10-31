@@ -8,11 +8,14 @@ import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.service.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
+import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
+import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
@@ -25,6 +28,7 @@ import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -51,6 +55,10 @@ class NativeVideoViewer extends ConsumerStatefulWidget {
   /// Overrides the user's configured loop video setting
   final bool? loopOverride;
 
+  /// Whether a film resumes where it was left and keeps where it is (see VideoWatchRecorder): the asset viewer only;
+  /// the memories, the slideshow and the motion photos play from the start as before
+  final bool watchProgress;
+
   const NativeVideoViewer({
     super.key,
     required this.asset,
@@ -58,6 +66,7 @@ class NativeVideoViewer extends ConsumerStatefulWidget {
     required this.image,
     this.isCurrent = false,
     this.loopOverride,
+    this.watchProgress = false,
   });
 
   @override
@@ -99,6 +108,8 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   // Where the video plays from, for the logs, and whether that is the server, for the failure panel
   String _sourceLabel = 'no source yet';
   bool _fromServer = false;
+  // Resumes a film and saves where it is, for the video loaded (see widget.watchProgress)
+  VideoWatchRecorder? _recorder;
 
   VideoPlayerNotifier get _notifier => ref.read(videoPlayerProvider(widget.asset.id).notifier);
 
@@ -153,6 +164,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _loadTimer?.cancel();
+    // Where the film is, as the viewer closes
+    _recorder?.dispose();
+    _recorder = null;
     _removeListeners();
     final held = _heldDownload;
     if (held != null) {
@@ -642,11 +656,50 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       }
       source = downloaded;
     }
+    // A film resumes where it was left, once ready, and plays once whatever Looping says
+    final recorder = await _startRecorder(localNotifier);
+    if (!mounted) {
+      return;
+    }
     await localNotifier.load(source);
-    await localNotifier.setLoop(!widget.asset.isMotionPhoto && loopVideo);
+    await localNotifier.setLoop(!widget.asset.isMotionPhoto && (recorder?.loopsWith(loopVideo) ?? loopVideo));
     await localNotifier.setVolume(1);
     if (play) {
       await localNotifier.play();
+    }
+  }
+
+  /// The recorder of the video about to load in [notifier], in place of the one of the video before: none outside the
+  /// asset viewer, nor for a motion photo
+  Future<VideoWatchRecorder?> _startRecorder(VideoPlayerNotifier notifier) async {
+    _recorder?.dispose();
+    _recorder = null;
+    final asset = widget.asset;
+    if (!widget.watchProgress || !asset.isVideo || asset.isMotionPhoto) {
+      return null;
+    }
+    final store = ref.read(watchProgressProvider.notifier);
+    final rule = ref.read(watchRuleProvider);
+    await VideoWatchRecorder.storeReady(store);
+    if (!mounted) {
+      return null;
+    }
+    // Another load may have started its own meanwhile (a file forced in the details)
+    _recorder?.dispose();
+    return _recorder = VideoWatchRecorder(
+      store: store,
+      player: notifier,
+      key: WatchKey.ofAsset(asset),
+      rule: rule,
+      duration: asset.durationMs == null ? null : asset.duration,
+      onResumed: _onResumed,
+    )..start();
+  }
+
+  /// The film plays from where it was left: the viewer says so for a few seconds (see ResumeNotice)
+  void _onResumed(Duration position) {
+    if (mounted && widget.isCurrent) {
+      ref.read(resumeNoticeProvider.notifier).show(position);
     }
   }
 

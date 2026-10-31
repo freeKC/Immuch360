@@ -408,6 +408,8 @@ void main() {
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
         gaussianSplats: any(named: 'gaussianSplats'),
+        watchMinDurationMs: any(named: 'watchMinDurationMs'),
+        startNotice: any(named: 'startNotice'),
       ),
     ).thenAnswer(openImmersive);
     previewRequests = [];
@@ -683,6 +685,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       );
     });
@@ -1010,6 +1014,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -1044,6 +1050,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       );
     });
@@ -1094,6 +1102,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1134,6 +1144,8 @@ void main() {
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
             gaussianSplats: any(named: 'gaussianSplats'),
+            watchMinDurationMs: any(named: 'watchMinDurationMs'),
+            startNotice: any(named: 'startNotice'),
           ),
         ).captured;
         expect(captured, [
@@ -1179,6 +1191,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1215,6 +1229,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
@@ -1278,6 +1294,8 @@ void main() {
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
             gaussianSplats: any(named: 'gaussianSplats'),
+            watchMinDurationMs: any(named: 'watchMinDurationMs'),
+            startNotice: any(named: 'startNotice'),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1312,6 +1330,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
@@ -1354,6 +1374,8 @@ void main() {
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
             gaussianSplats: any(named: 'gaussianSplats'),
+            watchMinDurationMs: any(named: 'watchMinDurationMs'),
+            startNotice: any(named: 'startNotice'),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1389,6 +1411,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
     });
@@ -1421,6 +1445,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
     });
@@ -1473,6 +1499,8 @@ void main() {
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
             gaussianSplats: any(named: 'gaussianSplats'),
+            watchMinDurationMs: any(named: 'watchMinDurationMs'),
+            startNotice: any(named: 'startNotice'),
           ),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
@@ -1552,6 +1580,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
@@ -1624,6 +1654,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1664,6 +1696,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
@@ -1728,6 +1762,8 @@ void main() {
             sourceNotice: any(named: 'sourceNotice'),
             sourceRefusal: any(named: 'sourceRefusal'),
             gaussianSplats: any(named: 'gaussianSplats'),
+            watchMinDurationMs: any(named: 'watchMinDurationMs'),
+            startNotice: any(named: 'startNotice'),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1776,6 +1812,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1827,6 +1865,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -1862,6 +1902,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
@@ -1921,6 +1963,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
     });
@@ -1959,6 +2003,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
     });
@@ -2111,6 +2157,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
@@ -2698,6 +2746,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2758,6 +2808,8 @@ void main() {
           sourceNotice: captureAny(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       expect(captured, ['$server/assets/${asset.id}/video/playback', null, switchedMessage]);
@@ -3044,6 +3096,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it
@@ -3102,6 +3156,8 @@ void main() {
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
         gaussianSplats: any(named: 'gaussianSplats'),
+        watchMinDurationMs: any(named: 'watchMinDurationMs'),
+        startNotice: any(named: 'startNotice'),
       ),
     ).captured;
 
@@ -3284,6 +3340,8 @@ void main() {
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
         gaussianSplats: any(named: 'gaussianSplats'),
+        watchMinDurationMs: any(named: 'watchMinDurationMs'),
+        startNotice: any(named: 'startNotice'),
       ),
     ).captured;
 
@@ -3563,6 +3621,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).captured;
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
@@ -3622,6 +3682,8 @@ void main() {
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
         gaussianSplats: any(named: 'gaussianSplats'),
+        watchMinDurationMs: any(named: 'watchMinDurationMs'),
+        startNotice: any(named: 'startNotice'),
       ),
     ).captured;
 
@@ -3775,6 +3837,8 @@ void main() {
           sourceNotice: any(named: 'sourceNotice'),
           sourceRefusal: any(named: 'sourceRefusal'),
           gaussianSplats: any(named: 'gaussianSplats'),
+          watchMinDurationMs: any(named: 'watchMinDurationMs'),
+          startNotice: any(named: 'startNotice'),
         ),
       ).thenThrow(PlatformException(code: 'no-activity'));
       final asset = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
@@ -3826,6 +3890,8 @@ void main() {
         sourceNotice: any(named: 'sourceNotice'),
         sourceRefusal: any(named: 'sourceRefusal'),
         gaussianSplats: any(named: 'gaussianSplats'),
+        watchMinDurationMs: any(named: 'watchMinDurationMs'),
+        startNotice: any(named: 'startNotice'),
       ),
     ).captured;
 

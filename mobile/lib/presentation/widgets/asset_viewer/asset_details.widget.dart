@@ -11,6 +11,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/lo
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/people_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/rating_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/technical_details.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/watch_progress_details.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 
@@ -83,6 +84,8 @@ class _AssetDetailsState extends ConsumerState<AssetDetails> {
               PeopleDetails(asset: asset),
               LocationDetails(asset: asset, exifInfo: exifInfo),
               TechnicalDetails(asset: asset, exifInfo: exifInfo),
+              // How much of a film was watched, and Play from the start: the only menu on a TV
+              WatchProgressDetails(asset: asset),
               RatingDetails(exifInfo: exifInfo),
               AppearsInDetails(asset: asset),
               SizedBox(height: context.padding.bottom + 48),

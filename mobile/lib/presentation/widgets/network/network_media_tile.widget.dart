@@ -15,6 +15,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
@@ -29,6 +30,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_server_thumbn
 import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/watch_progress/watch_progress_overlay.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -536,6 +538,8 @@ class NetworkMediaTile extends ConsumerWidget {
                     child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 18, shadows: _shadows),
                   ),
                 ),
+              // How much of a film was watched, along the bottom edge (see WatchProgressOverlay)
+              if (entry.isVideo) WatchProgressOverlay(watchKey: WatchKey.ofEntry(entry)),
               if (uploadProgress != null)
                 Positioned.fill(child: NetworkUploadProgressOverlay(progress: uploadProgress)),
               if (isSelected != null) _SelectionMark(isSelected: isSelected),

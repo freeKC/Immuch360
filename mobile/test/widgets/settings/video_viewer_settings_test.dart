@@ -27,7 +27,8 @@ void main() {
   testWidgets('offers the Spatial 2.5D player on a phone, off by default', (tester) async {
     await tester.pumpTestWidget(
       context,
-      const VideoViewerSettings(),
+      // Scrolled as on the settings page: the group is taller than the test screen
+      const SingleChildScrollView(child: VideoViewerSettings()),
       overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
     );
 
@@ -47,7 +48,8 @@ void main() {
   testWidgets('turns the Spatial 2.5D player on and off', (tester) async {
     await tester.pumpTestWidget(
       context,
-      const VideoViewerSettings(),
+      // Scrolled as on the settings page: the group is taller than the test screen
+      const SingleChildScrollView(child: VideoViewerSettings()),
       overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
     );
 
@@ -63,12 +65,13 @@ void main() {
   testWidgets('leaves the Spatial 2.5D player out on a Meta Quest', (tester) async {
     await tester.pumpTestWidget(
       context,
-      const VideoViewerSettings(),
+      // Scrolled as on the settings page: the group is taller than the test screen
+      const SingleChildScrollView(child: VideoViewerSettings()),
       overrides: [isHorizonOsProvider.overrideWith((ref) => true)],
     );
 
     expect(spatialSwitch, findsNothing);
-    expect(find.byType(SwitchListTile), findsNWidgets(3), reason: 'the other video settings stay');
+    expect(find.byType(SwitchListTile), findsNWidgets(4), reason: 'the other video settings stay');
     expect(find.text('Video source'), findsOneWidget);
   });
 
@@ -78,7 +81,8 @@ void main() {
     testWidgets('offered on a Meta Quest, off by default', (tester) async {
       await tester.pumpTestWidget(
         context,
-        const VideoViewerSettings(),
+        // Scrolled as on the settings page: the group is taller than the test screen
+        const SingleChildScrollView(child: VideoViewerSettings()),
         overrides: [isHorizonOsProvider.overrideWith((ref) => true)],
       );
 
@@ -94,7 +98,8 @@ void main() {
     testWidgets('turned on and off', (tester) async {
       await tester.pumpTestWidget(
         context,
-        const VideoViewerSettings(),
+        // Scrolled as on the settings page: the group is taller than the test screen
+        const SingleChildScrollView(child: VideoViewerSettings()),
         overrides: [isHorizonOsProvider.overrideWith((ref) => true)],
       );
 
@@ -110,7 +115,8 @@ void main() {
     testWidgets('left out on a phone, which has no thumbstick', (tester) async {
       await tester.pumpTestWidget(
         context,
-        const VideoViewerSettings(),
+        // Scrolled as on the settings page: the group is taller than the test screen
+        const SingleChildScrollView(child: VideoViewerSettings()),
         overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
       );
 
@@ -122,7 +128,7 @@ void main() {
     final loopSwitch = find.widgetWithText(SwitchListTile, 'Looping');
 
     testWidgets('on by default on a phone, and stored as the phone setting', (tester) async {
-      await tester.pumpTestWidget(context, const VideoViewerSettings());
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: VideoViewerSettings()));
       expect(tester.widget<SwitchListTile>(loopSwitch).value, isTrue);
 
       await tester.tap(loopSwitch);
@@ -134,7 +140,7 @@ void main() {
 
     testWidgets('off by default on a TV, and stored as the TV setting', (tester) async {
       final tv = [tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false))];
-      await tester.pumpTestWidget(context, const VideoViewerSettings(), overrides: tv);
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: VideoViewerSettings()), overrides: tv);
       expect(tester.widget<SwitchListTile>(loopSwitch).value, isFalse);
 
       await tester.tap(loopSwitch);
@@ -155,7 +161,7 @@ void main() {
         tester.widget<RadioGroup<VideoSourcePolicy>>(find.byType(RadioGroup<VideoSourcePolicy>)).groupValue;
 
     testWidgets('offers the three sources, the original within the decoders described', (tester) async {
-      await tester.pumpTestWidget(context, const VideoViewerSettings());
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: VideoViewerSettings()));
 
       expect(find.text('Video source'), findsOneWidget);
       expect(find.text('Which file plays when the server has a transcoded copy'), findsOneWidget);
@@ -174,12 +180,12 @@ void main() {
 
     testWidgets('selects the source the former switch stands for on a phone until one is picked', (tester) async {
       final phone = [isHorizonOsProvider.overrideWith((ref) => false)];
-      await tester.pumpTestWidget(context, const VideoViewerSettings(), overrides: phone);
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: VideoViewerSettings()), overrides: phone);
       expect(selected(tester), VideoSourcePolicy.alwaysTranscoded);
 
       await SettingsRepository.instance.write(SettingsKey.viewerLoadOriginalVideo, true);
       await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pumpTestWidget(context, const VideoViewerSettings(), overrides: phone);
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: VideoViewerSettings()), overrides: phone);
       expect(selected(tester), VideoSourcePolicy.preferOriginalWithinDecoder);
     });
 
@@ -188,7 +194,11 @@ void main() {
       for (final loadOriginalVideo in [false, true]) {
         await SettingsRepository.instance.write(SettingsKey.viewerLoadOriginalVideo, loadOriginalVideo);
         await tester.pumpWidget(const SizedBox.shrink());
-        await tester.pumpTestWidget(context, const VideoViewerSettings(), overrides: quest);
+        await tester.pumpTestWidget(
+          context,
+          const SingleChildScrollView(child: VideoViewerSettings()),
+          overrides: quest,
+        );
 
         expect(selected(tester), VideoSourcePolicy.preferOriginalWithinDecoder, reason: 'switch $loadOriginalVideo');
       }
@@ -204,7 +214,8 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpTestWidget(
           context,
-          const VideoViewerSettings(),
+          // Scrolled as on the settings page: the group is taller than the test screen
+          const SingleChildScrollView(child: VideoViewerSettings()),
           overrides: [isHorizonOsProvider.overrideWith((ref) => isHorizonOs)],
         );
         expect(selected(tester), policy);
@@ -228,7 +239,7 @@ void main() {
     });
 
     testWidgets('keeps the source picked', (tester) async {
-      await tester.pumpTestWidget(context, const VideoViewerSettings());
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: VideoViewerSettings()));
 
       for (final (tile, policy) in [
         (original, VideoSourcePolicy.alwaysOriginal),
@@ -243,6 +254,61 @@ void main() {
         expect(SettingsRepository.instance.appConfig.viewer.videoSource, policy);
         expect(SettingsRepository.instance.appConfig.viewer.videoSourcePolicy, policy);
       }
+    });
+  });
+
+  group('Remember where I stopped', () {
+    final resumeSwitch = find.widgetWithText(SwitchListTile, 'Remember where I stopped');
+    final threshold = find.byKey(const Key('resume_min_minutes'));
+
+    Future<void> pumpSettings(WidgetTester tester) => tester.pumpTestWidget(
+      context,
+      const SingleChildScrollView(child: VideoViewerSettings()),
+      overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+    );
+
+    testWidgets('on by default, for videos longer than 10 minutes', (tester) async {
+      await pumpSettings(tester);
+
+      expect(tester.widget<SwitchListTile>(resumeSwitch).value, isTrue);
+      expect(
+        find.text(
+          'Long videos, such as films, resume where you left them and show how much you watched. Shorter ones always '
+          'start from the beginning.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('In videos longer than 10 min'), findsOneWidget);
+      expect(tester.widget<Slider>(find.descendant(of: threshold, matching: find.byType(Slider))).value, 10);
+    });
+
+    testWidgets('the threshold goes from 0, every video, to 60 minutes by steps of 5', (tester) async {
+      await pumpSettings(tester);
+      final slider = tester.widget<Slider>(find.descendant(of: threshold, matching: find.byType(Slider)));
+
+      expect(slider.min, 0);
+      expect(slider.max, 60);
+      expect(slider.divisions, 12);
+
+      slider.onChanged!(0);
+      await tester.pumpAndSettle();
+      expect(find.text('In every video'), findsOneWidget);
+      expect(SettingsRepository.instance.appConfig.viewer.resumeMinMinutes, 0);
+
+      tester.widget<Slider>(find.descendant(of: threshold, matching: find.byType(Slider))).onChanged!(25);
+      await tester.pumpAndSettle();
+      expect(find.text('In videos longer than 25 min'), findsOneWidget);
+      expect(SettingsRepository.instance.appConfig.viewer.resumeMinMinutes, 25);
+    });
+
+    testWidgets('off, the threshold goes and nothing is remembered', (tester) async {
+      await pumpSettings(tester);
+
+      await tester.tap(resumeSwitch);
+      await tester.pumpAndSettle();
+
+      expect(SettingsRepository.instance.appConfig.viewer.resumeVideos, isFalse);
+      expect(threshold, findsNothing);
     });
   });
 }

@@ -42,6 +42,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? sourceNotice,
     String? sourceRefusal,
     bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
   }) async {
     opened.add(stereoPair);
     sharp.add(sharpFlatScreens);
@@ -61,6 +63,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? stereoPair, {
     String? sourceNotice,
     String? sourceRefusal,
+    int startPositionMs = 0,
+    String? startNotice,
   }) async {
     shown.add(stereoPair);
     return true;
