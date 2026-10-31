@@ -20,8 +20,8 @@
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the channel the asset viewer asks the thumbstick pushes on, and StickPushDetector, one page per push with a deadzone; integration of 30 October: the channel and its hook on a Meta Quest only (QuestStickPaging.attach)"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
-    "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
-    "reason": "TV lot (c05b57812, e66574872): main thread stalls and why the phone app ended, written to the Logs page"
+    "blob": "732645ac722c6945c17a71dec539327b24d0118d",
+    "reason": "TV lot (c05b57812, e66574872): main thread stalls and why the phone app ended, written to the Logs page; the splats on the Quest 3 (fix-quest-splats-device): an end by signal 6 named as a native abort, not the low memory killer"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/FlatPlayerErrors.kt": {
     "blob": "947459848a2f9fa547762fd97e10dca991eb779c",
@@ -360,8 +360,8 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "6b983ba8f1eff5107323481d39661db65520d93f",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only; quest playback resilience: a video whose decoder or media server fails after its first frame plays again from where it stopped on a new player, once, the last frame kept; no picture for 3 s while the sound plays switches to the transcoded stream or says so with the details of the video; reports to the Logs page; the details line in the info panel; fix round: the restart waits for the media service and starts past a decoder failure, notices that go when the picture comes back; integration of 30 October: the kiosk and the flat screens in one opening, the watch and the report of the playback lot on the surface the video plays on (activeVideoSurface); quest shutdown fix (fix-quest-shutdown): every object of the scene held through SpatialHold, let go at the start of onSpatialShutdown, so that onDestroy and the late posts touch no entity once the SDK cleared EntityContext; hardening of the quest shutdown (hardening-quest-shutdown): the kiosk panel, the photo layer and the flat video screen never made once the scene is down, the comments of the shutdown for every order of the SDK; decoder limit (fix-decoder-limit): the start rule of a video (a refusal at once, an original that cannot stream downloaded to the cache with a progress line when its copy is no fallback), a video beyond the decoder at its first tracks switched once, stopped at once for a server video or warned for a file, the 3 s rule before any restart, the errors of the player in our words; fix round: a wait for the network on the share bridge no longer counts for the 3 s rule, and a copy beyond the decoder played because the original could not stream gives way to the original, downloaded, once; Gaussian splats (feat-quest-splats, lot S5): the splat module registered beside VRFeature, a gaussianSplat request prepared, shown fixed in the world with the glide, Reset and Turn upright, its passing texts, and nothing done once the scene is down; fix round of the splats: the splat module registered only with Gaussian splats on, a splat refused at once without it, the room of the cache, nothing left in the cache; rebase of the splats on the shutdown hardening; the decision of 30 October: the splat module never registered in the Meta Horizon Store build, and the notice of the first splat with the words that Meta neither supports nor warrants its API; integration of 31 October: the notice and the refusal of a video and the Gaussian splats setting in one request, for the opening and for previous and next; watch progress (feat-watch-progress): a film plays once and its position goes to Flutter every 5 s while it plays, at onPause, before a request for another media, at its end and as the viewer closes, with the start notice of a film resumed where it was left; the kiosk neither reports nor resumes; fix round of the watch progress: Play at the end of a film starts it again from its beginning; the decision of 31 October on the watch progress: the threshold of the films said as the setting says it, a film is longer than it"
+    "blob": "abeee3245696a2dad26515006b0392e6d0c5a3e7",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only; quest playback resilience: a video whose decoder or media server fails after its first frame plays again from where it stopped on a new player, once, the last frame kept; no picture for 3 s while the sound plays switches to the transcoded stream or says so with the details of the video; reports to the Logs page; the details line in the info panel; fix round: the restart waits for the media service and starts past a decoder failure, notices that go when the picture comes back; integration of 30 October: the kiosk and the flat screens in one opening, the watch and the report of the playback lot on the surface the video plays on (activeVideoSurface); quest shutdown fix (fix-quest-shutdown): every object of the scene held through SpatialHold, let go at the start of onSpatialShutdown, so that onDestroy and the late posts touch no entity once the SDK cleared EntityContext; hardening of the quest shutdown (hardening-quest-shutdown): the kiosk panel, the photo layer and the flat video screen never made once the scene is down, the comments of the shutdown for every order of the SDK; decoder limit (fix-decoder-limit): the start rule of a video (a refusal at once, an original that cannot stream downloaded to the cache with a progress line when its copy is no fallback), a video beyond the decoder at its first tracks switched once, stopped at once for a server video or warned for a file, the 3 s rule before any restart, the errors of the player in our words; fix round: a wait for the network on the share bridge no longer counts for the 3 s rule, and a copy beyond the decoder played because the original could not stream gives way to the original, downloaded, once; Gaussian splats (feat-quest-splats, lot S5): the splat module registered beside VRFeature, a gaussianSplat request prepared, shown fixed in the world with the glide, Reset and Turn upright, its passing texts, and nothing done once the scene is down; fix round of the splats: the splat module registered only with Gaussian splats on, a splat refused at once without it, the room of the cache, nothing left in the cache; rebase of the splats on the shutdown hardening; the decision of 30 October: the splat module never registered in the Meta Horizon Store build, and the notice of the first splat with the words that Meta neither supports nor warrants its API; integration of 31 October: the notice and the refusal of a video and the Gaussian splats setting in one request, for the opening and for previous and next; watch progress (feat-watch-progress): a film plays once and its position goes to Flutter every 5 s while it plays, at onPause, before a request for another media, at its end and as the viewer closes, with the start notice of a film resumed where it was left; the kiosk neither reports nor resumes; fix round of the watch progress: Play at the end of a film starts it again from its beginning; the decision of 31 October on the watch progress: the threshold of the films said as the setting says it, a film is longer than it; the splats on the Quest 3 (fix-quest-splats-device): Loading the splat while the module loads, a splat that cannot show says why and keeps the panel and its Back in sight"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/KioskSession.kt": {
     "blob": "689e79df7f4731d5f1c9ca181a3a2a061d1f014c",
@@ -440,44 +440,52 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5), FreeKC's decision of 30 October 2026: the signing certificate of the APK tells the GitHub builds, which offer the splats, from the Meta Horizon Store build, which hides them unless SPLATS_IN_STORE_BUILD; not yet on the phone branch; the fix round of the decision: only the GitHub and Android debug certificates offer the splats, the store certificate and any other follow SPLATS_IN_STORE_BUILD; SPLATS_IN_STORE_BUILD true, FreeKC's choice of 30 October 2026: the store build offers the splats too"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatEngine.kt": {
-    "blob": "5497b0d9e5cdda8e881ed0e322727c93ba2ac7a1",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): what the viewer needs of the splat module, real in the quest flavour only; not yet on the phone branch"
+    "blob": "5fa44bc1d9e3cc717b75c31e3cacefa4bd3073f8",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): what the viewer needs of the splat module, real in the quest flavour only; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): whether the renderer of the module runs, the pose given in the frame of the module"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatGate.kt": {
-    "blob": "3b083efe86f6e6fae430e21f314ae3ec05763356",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): whether this headset shows a splat file and how many gaussians it keeps; not yet on the phone branch; the decision of 30 October: no splat module in the Meta Horizon Store build, a splat there not in this version"
+    "blob": "4e9f7697395e1b86f588167d494aaaa4588ebee6",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): whether this headset shows a splat file and how many gaussians it keeps; not yet on the phone branch; the decision of 30 October: no splat module in the Meta Horizon Store build, a splat there not in this version; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused whatever its count, the copy rewritten as version 2 counted in the cache, the refusals of the last check and of the renderer"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatHeader.kt": {
     "blob": "1c79875dd6e1a5f6992e216c90db280b77a71e99",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the head of a .spz or .ply file read in the headset; not yet on the phone branch"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatModuleFormat.kt": {
+    "blob": "5b5c3da44d5e27c8fce1939cb74a4846ec939e5e",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): what the splat module reads (SPZ version 2, the PLY of the probe) and the last check of the file it gets; not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatModuleFrame.kt": {
+    "blob": "4011eb723f780db7754ddc82c130b96adde20a75",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): the frame the splat module draws in, z mirrored, and the conversion of the poses handed to it; not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatPlacement.kt": {
-    "blob": "d0de674c89be9a13fcc3e55856a8319b333995b0",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the robust bounds of a splat, where it goes, and its orientation remembered per file; not yet on the phone branch"
+    "blob": "aacd52519ccb61fd9a384daabc6a328cf8ebaa7c",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the robust bounds of a splat, where it goes, and its orientation remembered per file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the orientations in the frame of the module (Y up 0, Z up +90, Y down 180, Y down first), an object at the height of the eyes, the choices of build 38 no longer read"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatPreparer.kt": {
-    "blob": "a16fc4c9067b9c7f6153a7c27e7b7814e667d24b",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the file of a splat read, weighed, reduced and bounded off the main thread; not yet on the phone branch"
+    "blob": "c4252e95915142281f0e256d14a7bddea3f58ff4",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the file of a splat read, weighed, reduced and bounded off the main thread; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ of version 1 or 3 always rewritten as version 2, and the file handed to the module checked once more"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatReducer.kt": {
-    "blob": "37c162df9a9d512403529b05ff6cf9e4b25bf5c6",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the reduction of a splat file to its strongest gaussians, in its own format; not yet on the phone branch"
+    "blob": "6bdae873433235ce15affd4235fb9b958abf0dc4",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the reduction of a splat file to its strongest gaussians, in its own format; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ always written as version 2, the rotations of version 3 and the positions of version 1 recoded"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatSession.kt": {
     "blob": "c11fd4c05d6575e6b263356139bb287675665fc6",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the life of the splat entity, and no call on it once the scene is down; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatStage.kt": {
-    "blob": "4ec79e8001d7fea6ab368844e474a9ac21ee8a20",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat entity in the world, its glide, Reset and Turn upright; not yet on the phone branch"
+    "blob": "dac4bee96babd0d5d48fa2a26267da2458b96023",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat entity in the world, its glide, Reset and Turn upright; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): every pose handed to the module converted to its frame at one place, the centre of the file mirrored, the last check before the entity, Loading the splat and the check of the renderer"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatTexts.kt": {
-    "blob": "0902bd13aed6df8993312fc945c956aa925d4a8a",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch; the decision of 30 October: the notice of the first splat with the words that Meta neither supports nor warrants its API; the texts of a compressed PLY and of a newer SPZ say what the headset reads"
+    "blob": "b0423dbbe333c6f352e04c06dcb528bcb09fdae5",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch; the decision of 30 October: the notice of the first splat with the words that Meta neither supports nor warrants its API; the texts of a compressed PLY and of a newer SPZ say what the headset reads; the splats on the Quest 3 (fix-quest-splats-device): Loading the splat and the sentences of a splat this device cannot show"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatViewerOptions.kt": {
-    "blob": "582b3dbb132a2ab2ba899e0b509dd438abe46c08",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the options a measuring session may push to the headset; not yet on the phone branch"
+    "blob": "982ea77a3d097ba97c0bb331074d651d1d3261ef",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the options a measuring session may push to the headset; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the frame option, the frame of the SDK kept for a session of measures"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
@@ -928,8 +936,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes; DJI accessory filter (fix-accessory-filter): any DJI accessory plus the identity string of our own capture of 23 October 2026, the two unseen model strings dropped"
   },
   "mobile/android/app/src/phone/kotlin/app/alextran/immich/immersive/splat/SplatEngines.kt": {
-    "blob": "fb34bd7005941dbe4b31439076d6fe758bfc2d9d",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): no splat module in the phone flavour; not yet on the phone branch"
+    "blob": "a4218026da1f0f9738108c5345a06fa53c10fe3e",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): no splat module in the phone flavour; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): no renderer to ask about"
   },
   "mobile/android/app/src/phone/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
     "blob": "0c044dba81559867bd22afe695ec7b775042bd6f",
@@ -940,8 +948,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): no relay service on the headset, passthrough declared not required for the flight view"
   },
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/immersive/splat/SplatEngines.kt": {
-    "blob": "867358acde7345daabf6200c8e3d0f70142ff4b4",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat module of the Meta Spatial SDK in the quest flavour; not yet on the phone branch; the decision of 30 October on article 1.6, named in the comment of the module; the store build registers the module too while its switch is on"
+    "blob": "4249273200296f9e0df7873aba8c720620d22d35",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat module of the Meta Spatial SDK in the quest flavour; not yet on the phone branch; the decision of 30 October on article 1.6, named in the comment of the module; the store build registers the module too while its switch is on; the splats on the Quest 3 (fix-quest-splats-device): the renderer of the module asked whether it runs, the file and the pose come ready for the module"
   },
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
     "blob": "a23329349881097db0918c485209bb3a0b53d801",
@@ -952,8 +960,8 @@
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the push detection (direction, deadzone, one page per push); integration of 30 October: the channel made on a Meta Quest only"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
-    "blob": "18b6fbf88948bc64016d8427f23ad469a5da38a0",
-    "reason": "TV lot (c05b57812): unit tests of AppHealth, run by the Kotlin unit tests job"
+    "blob": "a02bf3dc511b7a31b43fa6fe345496b3f49fe96b",
+    "reason": "TV lot (c05b57812): unit tests of AppHealth, run by the Kotlin unit tests job; the splats on the Quest 3 (fix-quest-splats-device): the names of the signals"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/PlaybackErrorsTest.kt": {
     "blob": "8777f1bda2efb165d20e55ceacb5c56c27ba4485",
@@ -1368,36 +1376,48 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the fixtures of the splat tests, shared with the Dart tests; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatGateTest.kt": {
-    "blob": "a0235a7e24ef27633677943fc2f5eb4a2f441323",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build; the gate of the build read through SplatBuild.kindOf"
+    "blob": "0570c048a8c4161969c228960557851b418b93bb",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build; the gate of the build read through SplatBuild.kindOf; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused, versions 1 and 3 rewritten and counted in the cache"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatHeaderTest.kt": {
     "blob": "58ce37e90c354dbb13d6cf7a8193684ba2bd3c24",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the head of a splat file; not yet on the phone branch"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatModuleFormatTest.kt": {
+    "blob": "f62453b7e3b863a220f60c2a28a413fbef461713",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): unit tests of SplatModuleFormat; not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatModuleFrameTest.kt": {
+    "blob": "af36613d9365fe27db1647d203997c2ddf9b769f",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): unit tests of SplatModuleFrame; not yet on the phone branch"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPlacementTest.kt": {
-    "blob": "482c5aa77224c72262922976c243db6b813884dc",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the bounds and the placement; not yet on the phone branch"
+    "blob": "c02206f3e8227cb64516cdbddf5beb0e8844f97a",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the bounds and the placement; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the orientations as measured, the measuring tape upright at the height of the eyes, the new memory keys"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPreparerTest.kt": {
-    "blob": "cf80aed1fa39c017edbd94301944fbbc85e37b67",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the preparation of a splat file; not yet on the phone branch"
+    "blob": "0fcafc9ce2d2e255b3e8e80c12b8ab6706668af3",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the preparation of a splat file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 and the last check of every path"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatReducerTest.kt": {
-    "blob": "5c13eb4140367d885ad96d3b29f0cdfa5fb1fd78",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the reduction; not yet on the phone branch"
+    "blob": "05c184f8c334e7498f9112a18c21bc9b8d52d1e8",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the reduction; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 against the reference of make_splat_fixtures.py"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatSessionTest.kt": {
     "blob": "74bd219d9f241dacbba02958bd8dc3281ae7f24c",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the life of the splat entity; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatTextsTest.kt": {
-    "blob": "9d0d222051377f59d597d0625e7b1ccf03e2f275",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the texts, against en.json; not yet on the phone branch; the decision of 30 October: the notice of the first splat and its words on the API"
+    "blob": "80dba54f938f7ba3bf3fe1e18a219d2629501925",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the texts, against en.json; not yet on the phone branch; the decision of 30 October: the notice of the first splat and its words on the API; the splats on the Quest 3 (fix-quest-splats-device): the new sentences, the English texts against en.json"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatViewerOptionsTest.kt": {
-    "blob": "8c25e5210a44e686812a12781302468669b487b3",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the options; not yet on the phone branch"
+    "blob": "0ad13a51ec6bf7f00a9ba34d73c75d346a6ae183",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the options; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the frame option"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatWiringTest.kt": {
+    "blob": "95891cf9cd6ee2ce42586d7d7092bb28ad8bb0d5",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): the wiring of the stage and the viewer read from their sources; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",
