@@ -12,12 +12,15 @@ import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
@@ -30,6 +33,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_video_control
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
+import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -40,6 +44,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
+import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 
@@ -133,6 +138,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// The frame size, once the native player read it: the 3D layout is guessed from it
   ({int width, int height})? _videoSize;
 
+  /// Resumes a film and saves where it is, for the video loaded (see VideoWatchRecorder)
+  VideoWatchRecorder? _recorder;
+
+  /// The film resumed where it was left, said for a few seconds (see ResumeNotice)
+  ResumeNoticeEvent? _resumeNotice;
+
   /// The page itself, which takes the keys of a remote while no button has the focus
   final _rootFocus = FocusNode(debugLabel: 'Network video');
 
@@ -184,6 +195,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     WidgetsBinding.instance.removeObserver(this);
     HardwareKeyboard.instance.removeHandler(_onAnyKey);
     _hideTimer.cancel();
+    // Where the film is, as the page goes: Back, or the previous or next file in its place
+    _recorder?.dispose();
+    _recorder = null;
     _removeListeners();
     _appBarFocus.removeListener(_onAppBarFocus);
     _rootFocus.dispose();
@@ -519,6 +533,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
+  /// Gives the page [controller] as its native player would once its view is ready: for the tests, which have no
+  /// platform view
+  @visibleForTesting
+  void attachController(NativeVideoPlayerController controller) => _initController(controller);
+
   void _initController(NativeVideoPlayerController controller) {
     if (_controller != null || !mounted) {
       return;
@@ -550,12 +569,60 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (source == null || !mounted) {
       return;
     }
+    // Known already: the source was made from it
+    final NetworkEntry entry;
+    try {
+      entry = (await _video).entry;
+    } catch (_) {
+      // A Retry made the source again meanwhile, and the page shows why it failed
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
     // Read before the first await: the page may be gone by then
     final loop = ref.read(loopVideoProvider);
     final notifier = _notifier;
+    // A film resumes where it was left, once ready, and plays once whatever Looping says
+    final recorder = await _startRecorder(notifier, entry);
+    if (recorder == null) {
+      return;
+    }
     await notifier.load(source);
-    await notifier.setLoop(loop);
+    await notifier.setLoop(recorder.loopsWith(loop));
     await notifier.setVolume(1);
+  }
+
+  /// The recorder of [entry], about to load in [notifier], in place of the one of a load before (Retry); null once the
+  /// page is gone
+  Future<VideoWatchRecorder?> _startRecorder(VideoPlayerNotifier notifier, NetworkEntry entry) async {
+    _recorder?.dispose();
+    _recorder = null;
+    final store = ref.read(watchProgressProvider.notifier);
+    final rule = ref.read(watchRuleProvider);
+    await VideoWatchRecorder.storeReady(store);
+    if (!mounted) {
+      return null;
+    }
+    // Another load may have started its own meanwhile
+    _recorder?.dispose();
+    final durationMs = entry.durationMs;
+    return _recorder = VideoWatchRecorder(
+      store: store,
+      player: notifier,
+      key: WatchKey.ofEntry(entry),
+      rule: rule,
+      // What a media server tells (DLNA, Plex); else the player tells it once ready
+      duration: durationMs == null ? null : Duration(milliseconds: durationMs),
+      onResumed: _onResumed,
+    )..start();
+  }
+
+  /// The film plays from where it was left: the page says so for a few seconds
+  void _onResumed(Duration position) {
+    if (mounted) {
+      setState(() => _resumeNotice = ResumeNoticeEvent(position, (_resumeNotice?.serial ?? 0) + 1));
+    }
   }
 
   Future<void> _onPlaybackReady() async {
@@ -891,6 +958,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         // A video whose name says it holds two eyes (_SBS, _HSBS, _LR, _TB, _OU, Half-SBS...) and that is not 360°:
         // "View in 3D", on the flat video screen of the immersive viewer
         final flatFormat = video != null && flat3dByName && !is360 ? _flatFormat(video) : null;
+        // Play from the start and Mark as not watched, for a film (see watchActionsFor)
+        final watchKey = video == null ? null : WatchKey.ofEntry(video.entry);
+        final watchActions = watchActionsFor(
+          watchKey == null ? null : ref.watch(watchProgressProvider.select((rows) => rows.find(watchKey))),
+          ref.watch(watchRuleProvider),
+        );
 
         final appBar = AppBar(
           backgroundColor: Colors.black38,
@@ -925,10 +998,31 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       tooltip: context.t.spatial_2_5d,
                       onPressed: () => unawaited(_openSpatial(video)),
                     ),
-                  if (video != null && (menu360 || menuSpatial || canUpload))
+                  if (video != null &&
+                      (menu360 || menuSpatial || canUpload || watchActions.restart || watchActions.unwatch))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
+                        if (watchActions.restart && watchKey != null)
+                          PopupMenuItem<void>(
+                            key: const Key('network_video_play_from_start'),
+                            onTap: () => playFromStart(ref.read(watchProgressProvider.notifier), watchKey, _notifier),
+                            child: ListTile(
+                              leading: const Icon(Icons.replay_rounded),
+                              title: Text(context.t.video_play_from_start),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        if (watchActions.unwatch && watchKey != null)
+                          PopupMenuItem<void>(
+                            key: const Key('network_video_mark_unwatched'),
+                            onTap: () => ref.read(watchProgressProvider.notifier).markUnwatched(watchKey),
+                            child: ListTile(
+                              leading: const Icon(Icons.remove_done_rounded),
+                              title: Text(context.t.video_mark_unwatched),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
                         if (menu360)
                           PopupMenuItem<void>(
                             onTap: () => unawaited(_open360(video)),
@@ -1055,6 +1149,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                 child: NetworkVideoBufferingIndicator(playerKey: _playerKey, loading: !_isVideoReady),
               ),
             ),
+          // Where a film resumed, for a few seconds (see ResumeNotice): it takes no touch nor key
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + kToolbarHeight + 12,
+            left: 0,
+            right: 0,
+            child: Center(child: ResumeNotice(notice: _resumeNotice)),
+          ),
           if (_showControls && error == null)
             Positioned(
               left: 0,
