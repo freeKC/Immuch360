@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -56,9 +57,10 @@ final _log = Logger('NetworkPhotoPage');
 const _maxFlatSize = 4096;
 
 /// The image of a photo of a share for the flat view, through the media bridge at [url]. A TIFF on a device without
-/// TIFF decoder is decoded in Dart (see NetworkTiffImage).
-ImageProvider networkPhotoImage(Uri url) => isDartTiffUrl(url)
-    ? NetworkTiffImage(url, maxSide: _maxFlatSize)
+/// TIFF decoder, by its name or the type its share gives ([mimeType]), is decoded in Dart (see NetworkTiffImage), unless
+/// its file ([size] bytes) is larger than the device reads.
+ImageProvider networkPhotoImage(Uri url, {String? mimeType, int? size}) => isDartTiffUrl(url, mimeType: mimeType)
+    ? NetworkTiffImage(url, maxSide: math.min(_maxFlatSize, TiffBudget.current.maxViewerSide), size: size)
     : ResizeImage(
         NetworkImage(url.toString()),
         width: _maxFlatSize,
@@ -69,12 +71,12 @@ ImageProvider networkPhotoImage(Uri url) => isDartTiffUrl(url)
 /// The image of a photo of a share for the 360° viewer, through the media bridge at [url]: at most 8192 x 4096 pixels,
 /// the largest texture most phones take (see textureDecodeSize), or 4096 x 2048 on a TV that Android calls a low RAM
 /// device ([lowRam]: 32 MB instead of 128). A TIFF on a device without TIFF decoder is decoded in Dart, its long side
-/// at most the width of that texture.
-ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false}) {
+/// at most the width of that texture and what the device decodes (see TiffBudget).
+ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false, String? mimeType, int? size}) {
   final width = (lowRam ? lowRamTextureSize.width : 8192).toInt() - 1;
   final height = (lowRam ? lowRamTextureSize.height : 4096).toInt() - 1;
-  if (isDartTiffUrl(url)) {
-    return NetworkTiffImage(url, maxSide: width);
+  if (isDartTiffUrl(url, mimeType: mimeType)) {
+    return NetworkTiffImage(url, maxSide: math.min(width, TiffBudget.current.maxViewerSide), size: size);
   }
   return ResizeImage(NetworkImage(url.toString()), width: width, height: height, policy: ResizeImagePolicy.fit);
 }
@@ -437,7 +439,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     }
     final device = ref.read(tvDeviceProvider);
     final PanoramaSource source = (
-      image: networkPanoramaImage(photo.url, lowRam: device.isTelevision && device.isLowRamDevice),
+      image: networkPanoramaImage(
+        photo.url,
+        lowRam: device.isTelevision && device.isLowRamDevice,
+        mimeType: photo.entry.mimeType,
+        size: photo.entry.size,
+      ),
       name: photo.entry.name,
       length: photo.entry.size,
       read: httpRangeReader(client, photo.url),
@@ -480,35 +487,21 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   /// For the immersive viewer of a device that decodes no TIFF (a Meta Quest), whose decoders refuse TIFF: the URL of
-  /// a JPEG in the cache of the TIFF of the media bridge at its URL, made from the whole file the first time, while
-  /// the line "Decoding the TIFF on this device" shows; null for any other photo. Read before the first await.
+  /// a JPEG in the cache of the TIFF of the media bridge at its URL (see shareTiffJpegUrl), made from the whole file
+  /// the first time, while the line "Decoding the TIFF on this device" stays; null for any other photo. Read before the
+  /// first await.
   Future<String?> Function(Uri url) _tiffJpegReader(ScaffoldMessengerState? messenger) {
     final jpegs = ref.read(tiffJpegCacheProvider);
     final client = ref.read(networkBridgeClientProvider);
     final decoding = context.t.tiff_decoding;
     final entry = _current?.entry;
-    return (url) async {
-      if (!isDartTiffUrl(url)) {
-        return null;
-      }
-      // A TIFF that did not decode in this session, in the page or its tile, is not read again
-      final undecodable = undecodableShareKey(url);
-      final failure = UndecodablePhotos.instance.failureOf(undecodable);
-      if (failure != null) {
-        throw failure;
-      }
-      final key = 'share:${widget.sourceId}:${url.pathSegments.skip(2).join('/')}:${entry?.size}:${entry?.modified}';
-      try {
-        final jpeg = await jpegs.jpegOf(key, () {
-          messenger?.showSnackBar(SnackBar(content: Text(decoding)));
-          return client.readBytes(url);
-        });
-        return jpeg.uri.toString();
-      } on TiffDecodeException catch (error) {
-        UndecodablePhotos.instance.remember(undecodable, error);
-        rethrow;
-      }
-    };
+    return (url) => shareTiffJpegUrl(
+      jpegs,
+      client,
+      url: url,
+      entry: entry,
+      onDecoding: (done) => showTiffDecodingLine(messenger, decoding, done),
+    );
   }
 
   /// Opens [version], a 360° panorama a computer generated beyond the edges of this photo, on the sphere of the
@@ -852,7 +845,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   }
 
   Widget _buildPhoto(_Photo photo, int turns) {
-    final image = networkPhotoImage(photo.url);
+    final image = networkPhotoImage(photo.url, mimeType: photo.entry.mimeType, size: photo.entry.size);
     _listenToImage(image);
     return GestureDetector(
       onDoubleTapDown: (details) => _doubleTapPosition = details.localPosition,

@@ -315,6 +315,14 @@
     "blob": "8a66f98b2515c4b93ab6c78a891ad8550bbea7a4",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): where a file picked for Open a splat file is copied, its name made safe; not yet on the phone branch"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/images/EncodedImageReads.kt": {
+    "blob": "ade5087f3bd5489beaba707324fab87f1e9562c9",
+    "reason": "TIFF on Android (fix-tiff-android, fix round): the limit of a file read whole and the read into a buffer, pure; not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/images/LocalImagesImpl.kt": {
+    "blob": "d401a475929dd27fdc98351877d162d31fb57925",
+    "reason": "TIFF on Android (fix-tiff-android, fix round): the encoded file of a device photo read for the Dart TIFF decoder is refused before it is read when it is larger than the device holds (a sixteenth of its memory), read straight into the native buffer Dart takes, and a request always ends, an OutOfMemoryError included; not yet on the phone branch"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreen.kt": {
     "blob": "fcb4df1db6d9f18806a5d11a133c6733cb4f807a",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the grips of a flat screen (a short press, a hold on it, both grips), where it stands, the grab around the eyes and the stretch"
@@ -1210,6 +1218,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/PickedFileCopyTest.kt": {
     "blob": "04a59f92bd81be2d07982f04d6d38804edd3f0e8",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of PickedFileCopy; not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/images/EncodedImageReadsTest.kt": {
+    "blob": "2634065df9484a2de8325cfe54058f8370163ef0",
+    "reason": "TIFF on Android (fix-tiff-android, fix round): the tests of EncodedImageReads; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/BigScreenSpecTest.kt": {
     "blob": "5c20d462e79128259bf0e34baaa50012d49109c4",

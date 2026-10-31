@@ -28,6 +28,7 @@ import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -265,15 +266,70 @@ void main() {
     await endRealIo(tester);
   });
 
-  testWidgets('a JPEG of a share keeps the decoder of the engine', (tester) async {
+  testWidgets('a JPEG of a share keeps the decoder of the engine; a file typed image/tiff by its share does not', (
+    tester,
+  ) async {
     share.files['/beach.jpg'] = Uint8List.fromList(img.encodeJpg(img.Image(width: 64, height: 32)));
     await pumpPhotoPage(tester, '/beach.jpg');
     await pumpRealIo(tester, showsDecodedPhoto);
 
     expect(showsDecodedPhoto(), isTrue);
     expect(networkPhotoImage(server.urlOf('/beach.jpg')), isA<ResizeImage>());
-    expect(networkPhotoImage(server.urlOf('/plan.TIFF')), isNot(isA<ResizeImage>()));
+    expect(networkPhotoImage(server.urlOf('/plan.TIFF')), isA<NetworkTiffImage>());
+    // The name tells nothing, the type of the share (DLNA, Plex, WebDAV) does
+    expect(networkPhotoImage(server.urlOf('/scan_0001'), mimeType: 'image/tiff'), isA<NetworkTiffImage>());
+    expect(networkPhotoImage(server.urlOf('/scan_0001')), isA<ResizeImage>());
 
+    await endRealIo(tester);
+  });
+
+  testWidgets('a network error is not remembered: the TIFF is read again the next time it shows', (tester) async {
+    // Not on the share yet: the bridge answers 404
+    await pumpPhotoPage(tester, '/later.tif');
+    await pumpRealIo(tester, () => find.textContaining('Could not open').evaluate().isNotEmpty);
+    expect(find.text('This device cannot decode this TIFF'), findsNothing);
+    expect(UndecodablePhotos.instance.failureOf(undecodableShareKey(server.urlOf('/later.tif'))), isNull);
+
+    share.files['/later.tif'] = _tiff(64, 32);
+    await tester.pumpWidget(const SizedBox());
+    await pumpPhotoPage(tester, '/later.tif');
+    await pumpRealIo(tester, showsDecodedPhoto);
+    expect(showsDecodedPhoto(), isTrue);
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('a TIFF larger than the device reads is refused before it is read', (tester) async {
+    addTearDown(() => TiffBudget.current = TiffBudget.large);
+    TiffBudget.current = const TiffBudget(
+      maxFileBytes: 1000,
+      maxDecodedBytes: 96 << 20,
+      maxConcurrentDecodes: 1,
+      maxViewerSide: 4096,
+    );
+    share.files['/big.tif'] = _tiff(64, 32);
+    await pumpPhotoPage(tester, '/big.tif');
+    await pumpRealIo(tester, () => find.text('This device cannot decode this TIFF').evaluate().isNotEmpty);
+
+    expect(find.text('This device cannot decode this TIFF'), findsOneWidget);
+    expect(wholeReads('/big.tif'), 0, reason: 'its size in the listing is enough');
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('a page left before its TIFF came stops the download and lets the decoder go', (tester) async {
+    share.files['/slow.tif'] = _tiff(64, 32);
+    final gate = server.gate = Completer<void>();
+    await pumpPhotoPage(tester, '/slow.tif');
+    await pumpRealIo(tester, () => wholeReads('/slow.tif') == 1);
+    expect(tiffTurns.running, 1);
+
+    // The next photo, or Back: the page goes
+    await tester.pumpWidget(const SizedBox());
+    await pumpRealIo(tester, () => tiffTurns.running == 0);
+    expect(tiffTurns, (running: 0, waiting: 0));
+
+    gate.complete();
     await endRealIo(tester);
   });
 
@@ -286,14 +342,25 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('opens a TIFF of a share from a JPEG of the cache, made once, said while it is made', (tester) async {
+    testWidgets('opens a TIFF of a share from a JPEG of the cache, made once, said until it is made', (tester) async {
       share.files['/pano.tif'] = _tiff(128, 64);
       await pumpPhotoPage(tester, '/pano.tif');
       await pumpRealIo(tester, showsDecodedPhoto);
 
+      // The file held by the bridge: the line stays while the JPEG waits for it
+      final gate = server.gate = Completer<void>();
       await openAs360(tester);
-      await pumpRealIo(tester, () => quest.opened.isNotEmpty);
+      await pumpRealIo(tester, () => wholeReads('/pano.tif') == 2);
+      await run(tester, turns: 10);
       expect(find.text('Decoding the TIFF on this device'), findsOneWidget);
+      expect(quest.opened, isEmpty);
+      gate.complete();
+      server.gate = null;
+      await pumpRealIo(tester, () => quest.opened.isNotEmpty);
+      // Gone once the viewer has its JPEG
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Decoding the TIFF on this device'), findsNothing);
       expect(quest.opened.single, startsWith('file://'));
       final jpeg = File.fromUri(Uri.parse(quest.opened.single)).readAsBytesSync();
       expect(jpeg.sublist(0, 3), [0xFF, 0xD8, 0xFF]);

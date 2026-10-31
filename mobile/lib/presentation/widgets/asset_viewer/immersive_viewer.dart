@@ -31,6 +31,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart';
@@ -456,10 +457,15 @@ class ImmersiveAssetResolver {
     this.exifOf,
     this.forcedSource,
     this.tiffJpegs,
+    this.onTiffDecoding,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
-  factory ImmersiveAssetResolver.read(WidgetRef ref, {required Map<String, String> stereoLabels}) {
+  factory ImmersiveAssetResolver.read(
+    WidgetRef ref, {
+    required Map<String, String> stereoLabels,
+    void Function(Future<void> done)? onTiffDecoding,
+  }) {
     final assets = ref.read(assetServiceProvider);
     return ImmersiveAssetResolver(
       api: ref.read(immersiveApiProvider),
@@ -477,6 +483,7 @@ class ImmersiveAssetResolver {
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
       tiffJpegs: ref.read(tiffJpegCacheProvider),
+      onTiffDecoding: onTiffDecoding,
     );
   }
 
@@ -485,6 +492,10 @@ class ImmersiveAssetResolver {
   /// The JPEGs of the TIFF photos of the headset, which the viewer reads instead of their files (see
   /// [TiffJpegCache]); null for those of the temporary folder
   final TiffJpegCache? tiffJpegs;
+
+  /// Told while the JPEG of a TIFF of the headset is made, with what completes then (see [TiffJpegCache.jpegOf]): the
+  /// line "Decoding the TIFF on this device" of the opener; null for none
+  final void Function(Future<void> done)? onTiffDecoding;
 
   /// The URL of the JPEG of the TIFF [file] of [asset] when this device decodes no TIFF, null for any other photo
   Future<String?> _tiffJpegUrl(BaseAsset asset, File file) async {
@@ -502,8 +513,14 @@ class ImmersiveAssetResolver {
     }
     final jpegs = tiffJpegs ?? TiffJpegCache.temporary();
     final key = 'local:${localId ?? file.path}:${asset.checksum ?? await file.length()}';
+    // When the JPEG is to be made: a file larger than the device reads is refused before it is read
+    Future<Uint8List> read() async {
+      checkTiffFileLength(await file.length());
+      return file.readAsBytes();
+    }
+
     try {
-      return (await jpegs.jpegOf(key, file.readAsBytes)).uri.toString();
+      return (await jpegs.jpegOf(key, read, onDecoding: onTiffDecoding)).uri.toString();
     } on TiffDecodeException catch (error) {
       UndecodablePhotos.instance.remember(undecodable, error);
       rethrow;
@@ -813,9 +830,10 @@ Future<void> openImmersiveViewer(
   BaseAsset asset, {
   required Map<String, String> stereoLabels,
   void Function(VideoSourceNotice notice)? onSourceNotice,
+  void Function(Future<void> done)? onTiffDecoding,
 }) async {
   // Read before the first await: the viewer may be gone by then
-  final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
+  final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels, onTiffDecoding: onTiffDecoding);
   final session = ref.read(immersiveSessionProvider);
   final timeline = ref.read(timelineServiceProvider);
   // The asset viewer of this route, which follows the immersive viewer once it closes
@@ -1466,6 +1484,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
     this.fileTimeout = immersiveFolderFileTimeout,
     this._raw,
     this._connections,
+    this._tiffJpegs,
   }) : _items = List.unmodifiable(items),
        _start = index,
        _startRequest = request,
@@ -1488,6 +1507,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
     player: player,
     raw: RawImmersiveMedia.read(ref, forAssets: false),
     connections: ref.read(networkConnectionsProvider),
+    tiffJpegs: ref.read(tiffJpegCacheProvider),
   );
 
   /// Longest wait for what a file declares, see [immersiveFolderFileTimeout]
@@ -1502,6 +1522,10 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
   final VideoPlayerNotifier? _player;
   final RawImmersiveMedia? _raw;
   final NetworkConnections? _connections;
+
+  /// Where the JPEGs of the TIFFs of the folder are made, on a device whose viewer decodes no TIFF (see
+  /// shareTiffJpegUrl); null to open them as they are
+  final TiffJpegCache? _tiffJpegs;
   int _index;
   // The file shown before the current one, see [_indexAt]
   int? _previous;
@@ -1557,6 +1581,11 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
         _log.info('Skipping ${_items[found.index].entry.name} in the immersive viewer: $error');
         _unplayable.add(found.index);
         continue;
+      } on TiffDecodeException catch (error) {
+        // A TIFF this device cannot decode: passed over as a raw video that would not open
+        _log.info('Skipping the TIFF ${_items[found.index].entry.name} in the immersive viewer: $error');
+        _unplayable.add(found.index);
+        continue;
       } catch (error, stackTrace) {
         _log.warning('Could not prepare ${_items[found.index].entry.name} for the immersive viewer', error, stackTrace);
         return false;
@@ -1599,7 +1628,15 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
   Future<ImmersiveRequest> _requestFor(ImmersiveFolderItem item, NetworkMediaInfo info) async {
     final raw = _raw;
     if (raw == null || info.rawKind == null) {
-      return folderImmersiveRequest(item, info);
+      // A TIFF of the folder, on a viewer that decodes none, from a JPEG of it made in the cache, as the first photo
+      final jpegs = _tiffJpegs;
+      final jpeg = jpegs == null || item.entry.isVideo
+          ? null
+          : await shareTiffJpegUrl(jpegs, _client, url: item.url, entry: item.entry);
+      final request = folderImmersiveRequest(item, info);
+      return jpeg == null
+          ? request
+          : ImmersiveRequest(url: jpeg, isVideo: false, title: request.title, view: request.view);
     }
     return raw.sharedMedia(
       item.entry,

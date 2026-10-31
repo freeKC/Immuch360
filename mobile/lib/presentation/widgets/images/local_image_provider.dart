@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/animated_image_stream_completer.dart';
@@ -12,10 +13,6 @@ import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 
 // iOS GPU textures max out at 16384px; larger images squish.
 const _kMaxPixelSize = 16384;
-
-// The long side of a TIFF decoded in Dart for "load original": a texture every device takes, a third of the memory of
-// the largest
-const _kMaxTiffSide = 8192;
 
 class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
   final String id;
@@ -58,7 +55,7 @@ class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
   Stream<ImageInfo> _codec(ImageLoader loader, LocalThumbProvider key, ImageDecoderCallback decode) {
     // Twice the side of the tile: a photo of any shape still covers it
     final request = loader.request = key.decodeInDart
-        ? LocalTiffImageRequest(localId: key.id, maxSide: (key.size.longestSide * 2).round())
+        ? LocalTiffImageRequest(localId: key.id, maxSide: (key.size.longestSide * 2).round(), work: TiffWork.tile)
         : LocalImageRequest(localId: key.id, size: key.size, assetType: key.assetType);
     return loader.loadRequest(request, decode, isFinal: true);
   }
@@ -177,11 +174,13 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
     final loadOriginal = SettingsRepository.instance.appConfig.image.loadOriginal;
     final devicePixelRatio = PlatformDispatcher.instance.views.first.devicePixelRatio;
     if (key.decodeInDart) {
-      // One decode of the file, at the size of the screen, or at the largest texture for "load original"
+      // One decode of the file, at the size of the screen, or at the largest picture of a viewer on this device (see
+      // TiffBudget) for "load original"
       final target = _previewTarget(devicePixelRatio, true);
+      final maxTiffSide = TiffBudget.current.maxViewerSide;
       final request = loader.request = LocalTiffImageRequest(
         localId: key.id,
-        maxSide: loadOriginal ? _kMaxTiffSide : math.min(_kMaxTiffSide, target.longestSide.ceil()),
+        maxSide: loadOriginal ? maxTiffSide : math.min(maxTiffSide, target.longestSide.ceil()),
       );
       yield* loader.loadRequest(request, decode, isFinal: true);
       return;

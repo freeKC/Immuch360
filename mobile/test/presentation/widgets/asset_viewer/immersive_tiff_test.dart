@@ -11,6 +11,7 @@ import 'package:http/testing.dart';
 // ignore: depend_on_referenced_packages
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -61,7 +62,7 @@ void main() {
     await context.dispose();
   });
 
-  ImmersiveAssetResolver resolver() => ImmersiveAssetResolver(
+  ImmersiveAssetResolver resolver({void Function(Future<void> done)? onTiffDecoding}) => ImmersiveAssetResolver(
     api: ImmersiveApi(),
     stereoLabels: const {},
     coverageOverrides: container.read(sphereCoverageOverridesProvider.notifier),
@@ -70,6 +71,7 @@ void main() {
     gpanoClient: MockClient((_) async => http.Response('', 404)),
     videoSources: VideoSourceService(VideoDecoderApi()),
     tiffJpegs: TiffJpegCache(() async => cache),
+    onTiffDecoding: onTiffDecoding,
   );
 
   LocalAsset headsetPhoto(String name) => LocalAsset(
@@ -92,7 +94,11 @@ void main() {
     final file = fileOf('scan.tif', img.encodeTiff(img.Image(width: 64, height: 32)));
     when(() => storage.getFileForAsset('61')).thenAnswer((_) async => file);
 
-    final quad = await resolver().resolveStereoPhoto(tiff, const BigScreenStereoPhotoRequest());
+    // The opener is told while the JPEG is made, and when it is done
+    final told = <Future<void>>[];
+    final quad = await resolver(onTiffDecoding: told.add).resolveStereoPhoto(tiff, const BigScreenStereoPhotoRequest());
+    expect(told, hasLength(1));
+    await told.single;
     expect(quad.url, startsWith('file://'));
     expect(quad.url, endsWith('.jpg'));
     final jpeg = File.fromUri(Uri.parse(quad.url)).readAsBytesSync();
@@ -101,7 +107,8 @@ void main() {
 
     // The sphere reads the same JPEG, not made again even with the TIFF gone
     file.deleteSync();
-    final sphere = await resolver().resolve(tiff, localPath: file.path);
+    final sphere = await resolver(onTiffDecoding: told.add).resolve(tiff, localPath: file.path);
+    expect(told, hasLength(1), reason: 'nothing to decode the second time');
     expect(sphere.url, quad.url);
     expect(cache.listSync().whereType<File>().where((entry) => entry.path.endsWith('.jpg')), hasLength(1));
   });
@@ -127,10 +134,12 @@ void main() {
 
   test('the JPEG of a TIFF keeps its orientation and is at most the width of a 360 texture', () async {
     final source = img.Image(width: 64, height: 32)..exif.imageIfd.orientation = 6;
-    final jpeg = await tiffAsJpeg(img.encodeTiff(source));
+    final jpeg = await tiffAsJpeg(() async => img.encodeTiff(source));
     final decoded = img.decodeJpg(jpeg)!;
     expect((decoded.width, decoded.height), (32, 64));
-    final small = img.decodeJpg(await tiffAsJpeg(img.encodeTiff(img.Image(width: 400, height: 100)), maxSide: 100))!;
+    final small = img.decodeJpg(
+      await tiffAsJpeg(() async => img.encodeTiff(img.Image(width: 400, height: 100)), maxSide: 100),
+    )!;
     expect((small.width, small.height), (100, 25));
     expect(tiffJpegMaxSide, 8192);
     expect(defaultTargetPlatform, TargetPlatform.android, reason: 'the tests run as Android');
@@ -145,4 +154,70 @@ void main() {
     final kept = cache.listSync().whereType<File>().where((file) => file.path.endsWith('.jpg'));
     expect(kept, hasLength(TiffJpegCache.maxFiles));
   });
+
+  test('a TIFF of the headset larger than the device reads is refused before it is read', () async {
+    addTearDown(() => TiffBudget.current = TiffBudget.large);
+    TiffBudget.current = const TiffBudget(
+      maxFileBytes: 1000,
+      maxDecodedBytes: 96 << 20,
+      maxConcurrentDecodes: 1,
+      maxViewerSide: 4096,
+    );
+    final file = fileOf('big.tif', img.encodeTiff(img.Image(width: 64, height: 32)));
+    when(() => storage.getFileForAsset('61')).thenAnswer((_) async => file);
+    await expectLater(
+      resolver().resolveStereoPhoto(headsetPhoto('big.tif'), const BigScreenStereoPhotoRequest()),
+      throwsA(isA<TiffDecodeException>()),
+    );
+    expect(cache.listSync(), isEmpty);
+  });
+
+  test('the same TIFF opened twice at once is made once', () async {
+    final jpegs = TiffJpegCache(() async => cache);
+    final tiff = Uint8List.fromList(img.encodeTiff(img.Image(width: 16, height: 16)));
+    var reads = 0;
+    Future<Uint8List> read() async {
+      reads++;
+      return tiff;
+    }
+
+    final both = await Future.wait([jpegs.jpegOf('local:1:a', read), jpegs.jpegOf('local:1:a', read)]);
+    expect(both.first.path, both.last.path);
+    expect(reads, 1);
+    expect(cache.listSync().whereType<File>().where((file) => file.path.endsWith('.part')), isEmpty);
+  });
+
+  test(
+    'previous and next in a share folder reach a TIFF from a JPEG of it, a TIFF that does not decode is passed',
+    () async {
+      final tiff = Uint8List.fromList(img.encodeTiff(img.Image(width: 32, height: 16)));
+      final client = MockClient((request) async {
+        final name = request.url.pathSegments.last;
+        return name == 'broken.tif'
+            ? http.Response.bytes(const [0x49, 0x49, 0x2A, 0x00, 0x41, 0x41, 0x41, 0x41], 200)
+            : http.Response.bytes(tiff, 200);
+      });
+      final jpegs = TiffJpegCache(() async => cache);
+      Uri urlOf(String name) => Uri.parse('http://127.0.0.1:1/token/nas/Pano/$name');
+      NetworkEntry entryOf(String name) =>
+          NetworkEntry(sourceId: 'nas', path: '/Pano/$name', isDirectory: false, size: tiff.length);
+
+      final url = await shareTiffJpegUrl(jpegs, client, url: urlOf('pano.tif'), entry: entryOf('pano.tif'));
+      expect(url, startsWith('file://'));
+      expect(await shareTiffJpegUrl(jpegs, client, url: urlOf('beach.jpg'), entry: entryOf('beach.jpg')), isNull);
+      await expectLater(
+        shareTiffJpegUrl(jpegs, client, url: urlOf('broken.tif'), entry: entryOf('broken.tif')),
+        throwsA(isA<TiffDecodeException>()),
+      );
+      // A type given by the share, without the name of a TIFF
+      final typed = NetworkEntry(
+        sourceId: 'nas',
+        path: '/Pano/scan',
+        isDirectory: false,
+        size: tiff.length,
+        mimeType: 'image/tiff',
+      );
+      expect(await shareTiffJpegUrl(jpegs, client, url: urlOf('scan'), entry: typed), startsWith('file://'));
+    },
+  );
 }

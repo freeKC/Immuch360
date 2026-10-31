@@ -9,14 +9,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
+import 'package:immich_mobile/presentation/widgets/images/tiff_image_completer.dart';
 
-/// The TIFF at [path] decoded in Dart at most [maxSide] pixels on its long side; one that does not decode fails at
-/// once the next times in the session, without reading its file again
+/// The TIFF at [path] decoded in Dart at most [maxSide] pixels on its long side (the largest picture of a viewer on this
+/// device by default, see TiffBudget); a file larger than the device reads is refused before it is read; one that
+/// does not decode fails at once the next times in the session, without reading its file again
 class FileTiffImage extends ImageProvider<FileTiffImage> {
-  const FileTiffImage(this.path, {this.maxSide = 8192});
+  const FileTiffImage(this.path, {this.maxSide});
 
   final String path;
-  final int maxSide;
+  final int? maxSide;
 
   /// The key of the TIFF at [path] among the photos that did not decode in the session (see UndecodablePhotos)
   static String undecodableKey(String path) => 'file:$path';
@@ -26,18 +28,24 @@ class FileTiffImage extends ImageProvider<FileTiffImage> {
 
   @override
   ImageStreamCompleter loadImage(FileTiffImage key, ImageDecoderCallback decode) =>
-      MultiFrameImageStreamCompleter(codec: _load(key), scale: 1, debugLabel: path);
+      TiffImageStreamCompleter.load(key, (cancel) => _load(key, cancel), debugLabel: path);
 
-  Future<ui.Codec> _load(FileTiffImage key) async {
+  Future<ui.Codec> _load(FileTiffImage key, TiffCancel cancel) async {
     final undecodable = undecodableKey(path);
     try {
       final failure = UndecodablePhotos.instance.failureOf(undecodable);
       if (failure != null) {
         throw failure;
       }
-      final bytes = await File(path).readAsBytes();
+      final file = File(path);
       try {
-        return await codecOfTiffPixels(await decodeTiff(bytes, maxSide: maxSide));
+        checkTiffFileLength(await file.length());
+        final pixels = await decodeTiff(
+          file.readAsBytes,
+          maxSide: maxSide ?? TiffBudget.current.maxViewerSide,
+          cancel: cancel,
+        );
+        return await codecOfTiffPixels(pixels);
       } on TiffDecodeException catch (error) {
         UndecodablePhotos.instance.remember(undecodable, error);
         rethrow;

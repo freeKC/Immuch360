@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
@@ -22,7 +25,7 @@ Uint8List tiffOf(int width, int height, {int? orientation}) {
 void main() {
   group('the choice of the decoder on a device without TIFF decoder', () {
     PhotoDecodePath pathOf(String name, {String? mimeType, required bool fromServer}) =>
-        photoDecodePath(name, mimeType: mimeType, fromServer: fromServer, deviceDecodesTiff: false);
+        photoDecodePath(name, mimeType: mimeType, fromServer: fromServer, platformKeepsTiffPath: false);
 
     test('a TIFF of the server shows as the server makes it, not from its original', () {
       expect(pathOf('scan.tif', fromServer: true), PhotoDecodePath.serverPreview);
@@ -51,19 +54,19 @@ void main() {
       }
     });
 
-    test('a device that decodes TIFF itself keeps its decoder', () {
-      expect(photoDecodePath('scan.tif', fromServer: true, deviceDecodesTiff: true), PhotoDecodePath.platform);
-      expect(photoDecodePath('scan.tif', fromServer: false, deviceDecodesTiff: true), PhotoDecodePath.platform);
+    test('a platform that keeps its own TIFF path keeps it', () {
+      expect(photoDecodePath('scan.tif', fromServer: true, platformKeepsTiffPath: true), PhotoDecodePath.platform);
+      expect(photoDecodePath('scan.tif', fromServer: false, platformKeepsTiffPath: true), PhotoDecodePath.platform);
     });
 
-    test('Android has no TIFF decoder, iOS and the computers have theirs', () {
+    test('Android has no TIFF decoder; iOS and the computers keep their path', () {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      expect(thisDeviceDecodesTiff, isFalse);
+      expect(thisPlatformKeepsItsTiffPath, isFalse);
       expect(photoDecodePath('scan.tif', fromServer: true), PhotoDecodePath.serverPreview);
       for (final platform in [TargetPlatform.iOS, TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.linux]) {
         debugDefaultTargetPlatformOverride = platform;
-        expect(thisDeviceDecodesTiff, isTrue, reason: '$platform');
+        expect(thisPlatformKeepsItsTiffPath, isTrue, reason: '$platform');
         expect(photoDecodePath('scan.tif', fromServer: false), PhotoDecodePath.platform, reason: '$platform');
       }
     });
@@ -94,7 +97,7 @@ void main() {
       expect(small.rgba.sublist(0, 4), [255, 0, 0, 255]);
       expect(small.rgba.sublist(63 * 4, 64 * 4), [0, 0, 255, 255]);
 
-      final scaled = await decodeTiff(tiffOf(400, 100), maxSide: 100);
+      final scaled = await decodeTiff(() async => tiffOf(400, 100), maxSide: 100);
       expect((scaled.width, scaled.height), (100, 25));
     });
 
@@ -137,7 +140,130 @@ void main() {
         () => decodeTiffSync(bytes, maxSide: 100),
         throwsA(isA<TiffDecodeException>().having((error) => error.reason, 'reason', contains('20000 x 20000'))),
       );
-      await expectLater(decodeTiff(bytes, maxSide: 100), throwsA(isA<TiffDecodeException>()));
+      await expectLater(decodeTiff(() async => bytes, maxSide: 100), throwsA(isA<TiffDecodeException>()));
+    });
+  });
+
+  group('what the decoder takes of the device', () {
+    tearDown(() => TiffBudget.current = TiffBudget.large);
+
+    test('a TV, a device low on memory or of less than 3 GB get the small budget, 6 GB the large one', () {
+      const gigabyte = 1 << 30;
+      TiffBudget of({bool tv = false, bool lowRam = false, int? memory}) =>
+          TiffBudget.forDevice(isTelevision: tv, isLowRamDevice: lowRam, totalMemoryBytes: memory);
+      expect(of(tv: true, memory: 8 * gigabyte), TiffBudget.small);
+      expect(of(lowRam: true, memory: 4 * gigabyte), TiffBudget.small);
+      expect(of(memory: 2 * gigabyte), TiffBudget.small);
+      expect(of(memory: 4 * gigabyte), TiffBudget.medium);
+      expect(of(), TiffBudget.medium, reason: 'unknown memory');
+      // A Meta Quest 3 tells about 7.3 GB, a phone of 6 GB about 5.6
+      expect(of(memory: (7.3 * gigabyte).round()), TiffBudget.large);
+      expect(of(memory: (5.6 * gigabyte).round()), TiffBudget.large);
+      expect(TiffBudget.small.maxConcurrentDecodes, 1);
+      expect(TiffBudget.small.maxDecodedBytes, 96 << 20);
+      expect(TiffBudget.large.maxConcurrentDecodes, 2);
+    });
+
+    test('reads the memory of the device as Linux and Android tell it', () async {
+      final folder = Directory.systemTemp.createTempSync('meminfo_');
+      addTearDown(() => folder.deleteSync(recursive: true));
+      final meminfo = File('${folder.path}/meminfo')
+        ..writeAsStringSync('MemTotal:        7652684 kB\nMemFree:          212844 kB\n');
+      expect(await readTotalMemoryBytes(path: meminfo.path), 7652684 * 1024);
+      expect(await readTotalMemoryBytes(path: '${folder.path}/none'), isNull);
+    });
+
+    test('a file larger than the budget is refused, and less on a small device', () async {
+      TiffBudget.current = TiffBudget.small;
+      expect(() => checkTiffFileLength(129 << 20), throwsA(isA<TiffDecodeException>()));
+      checkTiffFileLength(128 << 20);
+      // A small TIFF still decodes, at most the side of a viewer of the device
+      final pixels = await decodeTiff(() async => tiffOf(5000, 10), maxSide: TiffBudget.current.maxViewerSide);
+      expect(pixels.width, 4096);
+    });
+  });
+
+  group('the turns of the decoder', () {
+    tearDown(() => TiffBudget.current = TiffBudget.large);
+
+    /// A job that says when it starts and ends when [release] completes
+    Future<String> job(String name, List<String> started, Completer<void> release) async {
+      started.add(name);
+      await release.future;
+      return name;
+    }
+
+    test(
+      'three queued, the first two cancelled: the third starts at once when a turn comes, the two never run',
+      () async {
+        TiffBudget.current = TiffBudget.small;
+        final started = <String>[];
+        final running = Completer<void>();
+        final first = inTiffTurn(() => job('running', started, running));
+        final cancels = [TiffCancel(), TiffCancel(), TiffCancel()];
+        final releases = [Completer<void>(), Completer<void>(), Completer<void>()];
+        final queued = [
+          for (var index = 0; index < 3; index++)
+            inTiffTurn(() => job('queued $index', started, releases[index]), cancel: cancels[index]),
+        ];
+        await Future<void>.delayed(Duration.zero);
+        expect(started, ['running']);
+        expect(tiffTurns, (running: 1, waiting: 3));
+
+        cancels[0].cancel();
+        cancels[1].cancel();
+        // Out of the queue at once, with the error that tells it was given up
+        await expectLater(queued[0], throwsA(isA<TiffDecodeCancelled>()));
+        await expectLater(queued[1], throwsA(isA<TiffDecodeCancelled>()));
+        expect(tiffTurns, (running: 1, waiting: 1));
+
+        running.complete();
+        expect(await first, 'running');
+        await Future<void>.delayed(Duration.zero);
+        expect(started, ['running', 'queued 2']);
+        releases[2].complete();
+        expect(await queued[2], 'queued 2');
+        expect(tiffTurns, (running: 0, waiting: 0));
+      },
+    );
+
+    test('the photo on screen goes before the tiles, and a waiting job reads nothing until its turn', () async {
+      TiffBudget.current = TiffBudget.small;
+      final started = <String>[];
+      final running = Completer<void>();
+      final first = inTiffTurn(() => job('tile 0', started, running), work: TiffWork.tile);
+      var reads = 0;
+      final tile = decodeTiff(
+        () async {
+          reads++;
+          started.add('tile 1');
+          return tiffOf(8, 8);
+        },
+        maxSide: 8,
+        work: TiffWork.tile,
+      );
+      final viewer = decodeTiff(() async {
+        reads++;
+        started.add('viewer');
+        return tiffOf(8, 8);
+      }, maxSide: 8);
+      await Future<void>.delayed(Duration.zero);
+      expect(reads, 0, reason: 'their files are read when their turn comes');
+
+      running.complete();
+      await first;
+      await viewer;
+      await tile;
+      expect(started, ['tile 0', 'viewer', 'tile 1']);
+    });
+
+    test('a decode that fails ends its turn, and the next one runs', () async {
+      TiffBudget.current = TiffBudget.small;
+      final broken = decodeTiff(() async => Uint8List.fromList(List.filled(64, 7)), maxSide: 8);
+      final good = decodeTiff(() async => tiffOf(8, 8), maxSide: 8);
+      await expectLater(broken, throwsA(isA<TiffDecodeException>()));
+      expect((await good).width, 8);
+      expect(tiffTurns, (running: 0, waiting: 0));
     });
   });
 

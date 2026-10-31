@@ -1,8 +1,10 @@
 package app.alextran.immich.images
 
+import android.app.ActivityManager
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
@@ -164,7 +166,8 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
         } else {
           getThumbnailBufferInternal(assetId, width, height, isVideo, callback, signal)
         }
-      } catch (e: Exception) {
+      } catch (e: Throwable) {
+        // An OutOfMemoryError included: the request always ends, never left waiting in Dart
         when (e) {
           is OperationCanceledException -> callback(CANCELLED)
           is CancellationException -> callback(CANCELLED)
@@ -202,8 +205,50 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
     val uri = ContentUris.withAppendedId(Images.Media.EXTERNAL_CONTENT_URI, id)
 
     signal.throwIfCanceled()
+    // Its length first: a file larger than the device holds is refused before it is read (a TIFF of a scanner for the
+    // Dart decoder), and the others go straight into the native buffer Dart takes, not through the Java heap
+    val length = try {
+      resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: AssetFileDescriptor.UNKNOWN_LENGTH
+    } catch (e: Exception) {
+      AssetFileDescriptor.UNKNOWN_LENGTH
+    }
+    if (length < 0 || length > Int.MAX_VALUE) {
+      getEncodedImageOfUnknownLength(assetId, uri, callback, signal)
+      return
+    }
+    EncodedImageReads.checkLength(length, encodedImageLimit)
+    if (length == 0L) {
+      throw IOException("The file of $assetId is empty")
+    }
+
+    signal.throwIfCanceled()
+    val pointer = NativeBuffer.allocate(length.toInt())
+    try {
+      val buffer = NativeBuffer.wrap(pointer, length.toInt())
+      val read = resolver.openInputStream(uri)?.use { input ->
+        EncodedImageReads.readFully(input, buffer) { signal.throwIfCanceled() }
+      } ?: throw IOException("Could not read image data for $assetId")
+      signal.throwIfCanceled()
+      callback(Result.success(mapOf(
+        "pointer" to pointer,
+        "length" to read.toLong()
+      )))
+    } catch (e: Throwable) {
+      NativeBuffer.free(pointer)
+      throw e
+    }
+  }
+
+  // A provider that does not tell the length of the file: read whole into the Java heap, then the native buffer
+  private fun getEncodedImageOfUnknownLength(
+    assetId: String,
+    uri: Uri,
+    callback: (Result<Map<String, Long>?>) -> Unit,
+    signal: CancellationSignal
+  ) {
     val bytes = resolver.openInputStream(uri)?.use { it.readBytes() }
       ?: throw IOException("Could not read image data for $assetId")
+    EncodedImageReads.checkLength(bytes.size.toLong(), encodedImageLimit)
 
     signal.throwIfCanceled()
     val pointer = NativeBuffer.allocate(bytes.size)
@@ -215,10 +260,17 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
         "pointer" to pointer,
         "length" to bytes.size.toLong()
       )))
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
       NativeBuffer.free(pointer)
       throw e
     }
+  }
+
+  // Most bytes of a file read whole at once on this device (see EncodedImageReads.limitFor)
+  private val encodedImageLimit: Long by lazy {
+    val memory = ActivityManager.MemoryInfo()
+    (ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(memory)
+    EncodedImageReads.limitFor(memory.totalMem)
   }
 
   private fun getThumbnailBufferInternal(
