@@ -39,6 +39,13 @@ The fixtures:
   long_header.ply            a splat whose header ends past 64 KiB: refused
   negative_count.ply         a splat whose header says element vertex -5: damaged, never a count
   bad_magic.spz, reserved.spz, newer.spz, truncated.spz   SPZ heads that are refused
+  turns_v3.spz, turns_v2.spz, axes_v1_v2.spz   the SPZ the splat module of the headset reads is version 2 only
+      (measured on a Quest 3 on 31 October 2026: version 3 and 4 abort the process, version 1 loads but its points
+      are not where they should be). turns_v3.spz holds 40 gaussians of degree 1 with rotations of every kind
+      (each component the largest, a negative w, ties), turns_v2.spz is the same file rewritten as version 2 by
+      [as_v2] below (rotations decoded from their smallest three, normalised, w made positive and stored as
+      floor(q * 127.5 + 128)), axes_v1_v2.spz is axes_v1.spz rewritten as version 2 (its float16 positions as 24 bit
+      fixed point with the fractional bits of its header, floor(v * 2^bits + 0.5)); every other array is copied
   cash_register_head.spz, measuring_tape_head.ply   the first 65 536 bytes of two CC0 files of InnerScene
       (https://www.innerscene.com/tools/gaussian-splat-viewer, "public domain (CC0)"): heads of files of another
       writer, read with the length of the whole file; --kit downloads the whole files
@@ -339,6 +346,116 @@ def v4_content(data: bytes) -> bytes:
     return bytes(out)
 
 
+def pack_smallest_three(q) -> bytes:
+    """A unit quaternion (x, y, z, w) as version 3 stores it: the index of its largest component in the top 2 bits,
+    then the three others (in the order x, y, z, w, the last in the low bits), each a sign bit and 9 bits of its
+    magnitude over 1/sqrt(2), of the quaternion made positive on its largest component"""
+    largest = max(range(4), key=lambda i: abs(q[i]))
+    negate = q[largest] < 0
+    comp = largest
+    for i in range(4):
+        if i != largest:
+            negbit = (q[i] < 0) != negate
+            mag = int(math.floor(511 * (abs(q[i]) / math.sqrt(0.5)) + 0.5))
+            comp = (comp << 10) | (int(negbit) << 9) | min(mag, 511)
+    return struct.pack("<I", comp)
+
+
+def unpack_smallest_three(data: bytes) -> list:
+    """The quaternion (x, y, z, w) of 4 bytes of version 3, read as load-spz.cc of Niantic reads it"""
+    comp = struct.unpack("<I", data)[0]
+    largest = comp >> 30
+    q = [0.0] * 4
+    squares = 0.0
+    for i in (3, 2, 1, 0):
+        if i != largest:
+            mag = comp & 511
+            negative = (comp >> 9) & 1
+            comp >>= 10
+            q[i] = math.sqrt(0.5) * mag / 511
+            if negative:
+                q[i] = -q[i]
+            squares += q[i] * q[i]
+    q[largest] = math.sqrt(max(0.0, 1.0 - squares))
+    return q
+
+
+def pack_first_three(q) -> bytes:
+    """A quaternion (x, y, z, w) as versions 1 and 2 store it: normalised, w made positive, x, y, z as bytes"""
+    norm = math.sqrt(sum(c * c for c in q))
+    q = [c / norm for c in q]
+    if q[3] < 0:
+        q = [-c for c in q]
+    return bytes(int(min(max(math.floor(c * 127.5 + 127.5 + 0.5), 0), 255)) for c in q[:3])
+
+
+def turn_quaternions(count: int) -> list:
+    """Rotations of every kind: the identity, each component the largest with either sign, ties, then a fixed
+    pseudo random set"""
+    h = math.sqrt(0.5)
+    fixed = [(0, 0, 0, 1), (1, 0, 0, 0), (0, -1, 0, 0), (0, 0, 1, 0), (0, 0, 0, -1), (0.5, 0.5, 0.5, -0.5),
+             (h, 0, 0, -h), (-0.1, 0.2, -0.9, 0.3), (0.6, -0.6, 0.3, 0.2), (0.01, 0.02, 0.03, -0.99)]
+    out = []
+    state = 3
+
+    def rnd():
+        nonlocal state
+        state = (state * 1103515245 + 12345) % (1 << 31)
+        return state / (1 << 31)
+
+    while len(out) < count:
+        q = fixed[len(out)] if len(out) < len(fixed) else (rnd() - 0.5, rnd() - 0.5, rnd() - 0.5, rnd() - 0.5)
+        norm = math.sqrt(sum(c * c for c in q))
+        out.append([c / norm for c in q])
+    return out
+
+
+def turns_v3(count: int = 40, sh_degree: int = 1) -> bytes:
+    """40 gaussians of degree 1, version 3: rotations of every kind, positions on both sides of each axis, the
+    other arrays bytes that differ from one gaussian to the next (so that a mix-up shows)"""
+    positions = bytearray()
+    for i in range(count):
+        for v in ((i - 20) * 0.037, ((i * 7) % 11 - 5) * 0.051, ((i * 3) % 13 - 6) * -0.043):
+            positions += struct.pack("<i", int(round(v * (1 << FRACTIONAL_BITS))))[:3]
+    alphas = bytes((i * 37 + 11) % 256 for i in range(count))
+    colors = bytes((i * 3 + k) * 29 % 256 for i in range(count) for k in range(3))
+    scales = bytes((i * 13 + k * 5 + 60) % 256 for i in range(count) for k in range(3))
+    rotations = b"".join(pack_smallest_three(q) for q in turn_quaternions(count))
+    rest = sh_rest(sh_degree)
+    sh = bytes((i * rest + k) * 11 % 256 for i in range(count) for k in range(rest))
+    payload = spz_header(3, count, sh_degree) + bytes(positions) + alphas + colors + scales + rotations + sh
+    return gzip.compress(payload, compresslevel=9, mtime=0)
+
+
+def as_v2(data: bytes) -> bytes:
+    """An SPZ of version 1 or 3 rewritten as version 2, the one the splat module of the headset reads, from the
+    public description of the format: the header with version 2 and the flag of extensions cleared, the positions of
+    version 1 as 24 bit fixed point, the rotations of version 3 as three bytes, everything else copied"""
+    raw = gzip.decompress(data)
+    magic, version, count, sh_degree, fractional, flags, reserved = struct.unpack_from("<IIIBBBB", raw, 0)
+    assert magic == SPZ_MAGIC and version in (1, 2, 3) and reserved == 0
+    sizes = [count * (6 if version == 1 else 9), count, 3 * count, 3 * count, count * (4 if version >= 3 else 3),
+             count * sh_rest(sh_degree)]
+    parts = []
+    at = 16
+    for size in sizes:
+        parts.append(raw[at:at + size])
+        at += size
+    positions, alphas, colors, scales, rotations, sh = parts
+    if version == 1:
+        fixed = bytearray()
+        for k in range(3 * count):
+            value = struct.unpack_from("<e", positions, 2 * k)[0]
+            n = int(math.floor(value * (1 << fractional) + 0.5))
+            n = min(max(n, -(1 << 23)), (1 << 23) - 1)
+            fixed += struct.pack("<i", n)[:3]
+        positions = bytes(fixed)
+    if version == 3:
+        rotations = b"".join(pack_first_three(unpack_smallest_three(rotations[4 * k:4 * k + 4])) for k in range(count))
+    header = spz_header(2, count, sh_degree, fractional, flags & ~0x2)
+    return gzip.compress(header + positions + alphas + colors + scales + rotations + sh, compresslevel=9, mtime=0)
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # What the tests compare with
 
@@ -391,6 +508,9 @@ def expected(files: dict) -> dict:
     out["headers"]["axes_v2.spz"].update(format="spz", version=2, gaussians=len(gaussians), shDegree=0)
     out["headers"]["axes_v1.spz"].update(format="spz", version=1, gaussians=len(gaussians), shDegree=0)
     out["headers"]["axes_v4.spz"].update(format="spz", version=4, gaussians=len(gaussians), shDegree=0)
+    out["headers"]["turns_v3.spz"].update(format="spz", version=3, gaussians=40, shDegree=1)
+    out["headers"]["turns_v2.spz"].update(format="spz", version=2, gaussians=40, shDegree=1)
+    out["headers"]["axes_v1_v2.spz"].update(format="spz", version=2, gaussians=len(gaussians), shDegree=0)
     out["headers"]["axes.ply"].update(format="ply", gaussians=len(gaussians), shDegree=0,
                                       tool="make_splat_fixtures.py", rowBytes=14 * 4)
     out["headers"]["sh3.ply"].update(format="ply", gaussians=8, shDegree=3, tool=None, rowBytes=(17 + 45) * 4)
@@ -408,6 +528,18 @@ def expected(files: dict) -> dict:
         "ranked_v3.spz": {"scores": spz_scores, "kept": top(spz_scores, 10)},
         "ranked.ply": {"scores": ply_scores, "kept": top(ply_scores, 10)},
     }
+    # The rewrite as version 2: each rotation of turns_v3.spz and what it became, as 1 - |q3 . q2| (0 the same)
+    v3 = gzip.decompress(files["turns_v3.spz"])
+    v2 = gzip.decompress(files["turns_v2.spz"])
+    rot3 = 16 + 40 * (9 + 1 + 3 + 3)
+    worst = 0.0
+    for k in range(40):
+        a = unpack_smallest_three(v3[rot3 + 4 * k:rot3 + 4 * k + 4])
+        xyz = [b / 127.5 - 1.0 for b in v2[rot3 + 3 * k:rot3 + 3 * k + 3]]
+        b = xyz + [math.sqrt(max(0.0, 1.0 - sum(c * c for c in xyz)))]
+        worst = max(worst, 1 - min(1.0, abs(sum(x * y for x, y in zip(a, b)))))
+    out["moduleSpz"] = {"version": 2, "rewrites": {"turns_v3.spz": "turns_v2.spz", "axes_v1.spz": "axes_v1_v2.spz"},
+                        "worstRotation": round(worst, 6)}
     for version in (3, 1):
         positions = quantized_positions(gaussians, version)
         out["percentiles"][f"axes_v{version}.spz"] = {
@@ -461,6 +593,9 @@ def fixtures(cache: pathlib.Path) -> dict:
         "newer.spz": gzip.compress(spz_header(5, 1, 0) + bytes(20), mtime=0),
         "truncated.spz": valid[:12],
     }
+    files["turns_v3.spz"] = turns_v3()
+    files["turns_v2.spz"] = as_v2(files["turns_v3.spz"])
+    files["axes_v1_v2.spz"] = as_v2(files["axes_v1.spz"])
     for name in INNERSCENE:
         files[name] = innerscene_head(name, cache)
     return files
