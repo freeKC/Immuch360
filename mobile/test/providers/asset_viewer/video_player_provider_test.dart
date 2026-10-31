@@ -698,17 +698,17 @@ void main() {
         fakeAsync((async) {
           unawaited(player.load(serverSource));
           async.elapse(const Duration(seconds: 1));
-          // 1.2 of the 3 Mbit/s the video needs: 0.4, the player waits for 15 s of media
-          tell(rate: 150000, need: 375000, aheadMs: 3000, targetMs: 15000);
+          // 2.4 of the 3 Mbit/s the video needs: 0.8, the player waits for 6 s of media
+          tell(rate: 300000, need: 375000, aheadMs: 3000, targetMs: 6000);
           final view = player.link.value!;
-          expect(view.bitsPerSecond, 1200000);
+          expect(view.bitsPerSecond, 2400000);
           expect(view.neededBitsPerSecond, 3000000);
           expect(view.showsRates, isTrue);
           expect(view.startsIn, isNotNull);
           expect(view.slow, isFalse, reason: 'measured for less than 5 s');
 
           now = now.add(const Duration(seconds: 5));
-          tell(rate: 150000, need: 375000, aheadMs: 5000, targetMs: 15000);
+          tell(rate: 300000, need: 375000, aheadMs: 5000, targetMs: 6000);
           expect(player.link.value!.slow, isTrue);
 
           // The link keeps up: not slow, and the rates wait for a wait long enough to be noticed

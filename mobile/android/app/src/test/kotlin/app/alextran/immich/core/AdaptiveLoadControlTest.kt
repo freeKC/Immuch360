@@ -48,17 +48,13 @@ class AdaptiveLoadControlTest {
       )
     )
 
-  /** [ms] of a link at a quarter of the film, 250 kB/s, in 50 ms steps */
-  private fun quarterLink(ms: Long) {
-    var left = ms
-    while (left > 0) {
-      now += 50
-      left -= 50
-      meter.onBytes(12_500L)
-    }
-  }
+  /** What the link brings, in tenths of the film: 1 MB/s is 10 */
+  private var tenths = 0L
 
-  /** A wait the player keeps asking about every 10 ms, the buffer growing at a quarter of real time, for [ms] */
+  /**
+   * A wait the player keeps asking about every 10 ms for [ms], the buffer growing with what the link brings (a tenth
+   * of the film's rate is a tenth of a second of media per second)
+   */
   private fun waitFor(positionMs: Long, fromMs: Long, rebuffering: Boolean, ms: Long): Boolean {
     var buffered = fromMs
     var elapsed = 0L
@@ -66,17 +62,24 @@ class AdaptiveLoadControlTest {
       if (ask(positionMs, buffered, rebuffering)) return true
       now += 10
       elapsed += 10
-      meter.onBytes(2_500L)
-      if (elapsed % 40 == 0L) buffered += 10
+      meter.onBytes(tenths * 1_000L)
+      buffered += tenths
     }
     return false
   }
 
-  private fun slowLinkMeasured() {
+  /** A link at [tenthsOfTheFilm] tenths of the film, measured for 4 s */
+  private fun linkMeasured(tenthsOfTheFilm: Long) {
+    tenths = tenthsOfTheFilm
     meter.onStart()
     meter.onFileSize("film", 720_000_000L)
-    quarterLink(4_000L)
+    repeat(400) {
+      now += 10
+      meter.onBytes(tenths * 1_000L)
+    }
   }
+
+  private fun slowLinkMeasured() = linkMeasured(tenthsOfTheFilm = 2L)
 
   @Test
   fun `a stall of the link waits for the link, then plays what came meanwhile`() {
@@ -84,8 +87,8 @@ class AdaptiveLoadControlTest {
     // The buffer ran out: the first ask of the wait finds a tenth of a second
     assertFalse(waitFor(positionMs = 60_000L, fromMs = 100L, rebuffering = true, ms = 20_000L))
     assertEquals(30_000L, control.targetMs)
-    // The 2 s Media3 asks came after 8 s; 30 s more at most
-    assertTrue(waitFor(positionMs = 60_000L, fromMs = 5_100L, rebuffering = true, ms = 20_000L))
+    // The 2 s Media3 asks came after 9.5 s; 30 s more at most
+    assertTrue(waitFor(positionMs = 60_000L, fromMs = 4_100L, rebuffering = true, ms = 20_000L))
     assertEquals(0L, control.targetMs)
   }
 
@@ -105,11 +108,21 @@ class AdaptiveLoadControlTest {
   }
 
   @Test
-  fun `the start waits for the link once a second is there, four seconds at most`() {
+  fun `the start over a link short of the film waits once a second is there, four seconds at most`() {
+    linkMeasured(tenthsOfTheFilm = 8L)
+    assertFalse(ask(positionMs = 0L, bufferedMs = 100L, rebuffering = false))
+    assertEquals(6_000L, control.targetMs)
+    // 1 s after 1.1 s, 4 s more: 4.3 s ahead at 5.1 s
+    assertFalse(waitFor(positionMs = 0L, fromMs = 100L, rebuffering = false, ms = 5_000L))
+    assertTrue(waitFor(positionMs = 0L, fromMs = 4_100L, rebuffering = false, ms = 300L))
+  }
+
+  @Test
+  fun `the start over a link under half the film plays once its first second is there`() {
     slowLinkMeasured()
     assertFalse(ask(positionMs = 0L, bufferedMs = 100L, rebuffering = false))
-    assertTrue(control.targetMs > 1_000L)
-    assertFalse(waitFor(positionMs = 0L, fromMs = 100L, rebuffering = false, ms = 7_000L))
-    assertTrue(waitFor(positionMs = 0L, fromMs = 1_850L, rebuffering = false, ms = 2_000L))
+    assertEquals(1_000L, control.targetMs)
+    assertFalse(waitFor(positionMs = 0L, fromMs = 100L, rebuffering = false, ms = 4_000L))
+    assertTrue(waitFor(positionMs = 0L, fromMs = 900L, rebuffering = false, ms = 1_000L))
   }
 }

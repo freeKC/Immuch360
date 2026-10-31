@@ -593,15 +593,15 @@ void main() {
     testWidgets('while it waits, the spinner says what the link brings against what the video needs', (tester) async {
       await pumpLoaded(tester);
 
-      // 1.2 of the 3 Mbit/s the video needs, the player waiting for 15 s of media with 3 s there
+      // 2.4 of the 3 Mbit/s the video needs, the player waiting for 6 s of media with 3 s there
       playerOf(tester).onNativeLinkChanged(
         const NativeVideoLink(
           waiting: true,
-          bytesPerSecond: 150000,
+          bytesPerSecond: 300000,
           neededBytesPerSecond: 375000,
           sinceProgressMs: 200,
           aheadMs: 3000,
-          targetMs: 15000,
+          targetMs: 6000,
           loading: true,
           network: true,
         ),
@@ -609,7 +609,7 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('video_loading_line')), findsOneWidget);
-      expect(find.text('Loading: 1.2 Mbit/s of the 3 Mbit/s this video needs\nStarts in about 4 s'), findsOneWidget);
+      expect(find.text('Loading: 2.4 Mbit/s of the 3 Mbit/s this video needs\nStarts in about 4 s'), findsOneWidget);
       expect(find.byKey(const Key('video_failure_panel')), findsNothing, reason: 'a slow link is no failure');
       await leave(tester);
     });

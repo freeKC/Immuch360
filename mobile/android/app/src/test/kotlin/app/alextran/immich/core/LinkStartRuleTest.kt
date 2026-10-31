@@ -81,10 +81,14 @@ class LinkStartRuleTest {
   fun `a link that keeps up starts at one second, as Media3 does, and never waits longer than the caps`() {
     // An 8 Mbit/s film over 12 Mbit/s: it plays as soon as its index and a second are in
     assertEquals(1_000L, LinkStartRule.targetMs(1.5, rebuffering = false))
-    // 30 Mbit/s over 2 Mbit/s: the most it waits for, never more than 4 s once a second is there; after a stall, 30 s
-    assertEquals(15_000L, LinkStartRule.targetMs(0.067, rebuffering = false))
-    assertFalse(LinkStartRule.shouldStart(2_000L, 0.067, rebuffering = false, minimumHeldMs = 3_900L))
-    assertTrue(LinkStartRule.shouldStart(2_000L, 0.067, rebuffering = false, minimumHeldMs = 4_000L))
+    // 8 Mbit/s over 4 Mbit/s: the most it waits for, never more than 4 s once a second is there
+    assertEquals(15_000L, LinkStartRule.targetMs(0.5, rebuffering = false))
+    assertFalse(LinkStartRule.shouldStart(2_000L, 0.5, rebuffering = false, minimumHeldMs = 3_900L))
+    assertTrue(LinkStartRule.shouldStart(2_000L, 0.5, rebuffering = false, minimumHeldMs = 4_000L))
+    // 30 Mbit/s over 2 Mbit/s: a wait at the start would give less play than it costs, it starts at one second;
+    // after a stall, 30 s at most
+    assertEquals(1_000L, LinkStartRule.targetMs(0.067, rebuffering = false))
+    assertTrue(LinkStartRule.shouldStart(1_000L, 0.067, rebuffering = false, minimumHeldMs = 0L))
     assertFalse(LinkStartRule.shouldStart(3_000L, 0.067, rebuffering = true, minimumHeldMs = 29_000L))
     assertTrue(LinkStartRule.shouldStart(3_000L, 0.067, rebuffering = true, minimumHeldMs = 30_000L))
   }

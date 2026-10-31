@@ -12,11 +12,13 @@ import kotlin.math.roundToLong
  * |---------------------|----------------------------------------------|--------------------------------|
  * | unknown, or >= 1.25 | 1 s                                          | 2 s                            |
  * | 1 to 1.25           | 2 s                                          | 4 s                            |
- * | below 1             | 30 s x (1 - ratio), 1 to 15 s                | 60 s x (1 - ratio), 2 to 30 s  |
+ * | 0.5 to 1            | 30 s x (1 - ratio), 1 to 15 s                | 60 s x (1 - ratio), 2 to 30 s  |
+ * | below 0.5           | 1 s                                          | 30 s                           |
  *
  * Below 1, what is waited for gives about 30 s of play before the next pause (60 s after a stall). Never longer than
  * 4 s once [START_MS] is there ([START_LONGEST_WAIT_MS]), 30 s once [REBUFFER_MS] is there after a stall
- * ([REBUFFER_LONGEST_WAIT_MS]). A wait is never a failure: a video is dead only when nothing arrives ([isDead]).
+ * ([REBUFFER_LONGEST_WAIT_MS]). At the start, a link under half the video ([START_WAIT_RATIO]) does not wait past
+ * [START_MS]. A wait is never a failure: a video is dead only when nothing arrives ([isDead]).
  *
  * The same rule in Dart (video_link_rule.dart, for the players of the computers and the texts), checked against the
  * same cases (src/test/resources/video_link_rule_cases.json). Pure, so that it is tested.
@@ -43,6 +45,14 @@ object LinkStartRule {
    * a stall, where a longer wait gives a longer play
    */
   const val START_LONGEST_WAIT_MS = 4_000L
+
+  /**
+   * Under this ratio the start waits for [START_MS] only, as Media3 does: a second of wait gives [ratio] / (1 - ratio)
+   * seconds of play, less than a second here (over a link at a quarter of the film, 4 s of wait put the first frame
+   * 2 to 4 s later than before for one second more of play, 31 October 2026). After a stall the wait stays: the link
+   * makes it whatever it is cut into, fewer and longer pauses are better.
+   */
+  const val START_WAIT_RATIO = 0.5
   const val REBUFFER_LONGEST_WAIT_MS = 30_000L
 
   /** Bytes that count as progress: a trickle of a few bytes is none */
@@ -68,6 +78,9 @@ object LinkStartRule {
     }
     if (ratio >= 1.0) {
       return if (rebuffering) NEAR_REBUFFER_MS else NEAR_START_MS
+    }
+    if (!rebuffering && ratio < START_WAIT_RATIO) {
+      return START_MS
     }
     val short = 1.0 - ratio.coerceAtLeast(0.0)
     return if (rebuffering) {

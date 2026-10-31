@@ -27,6 +27,10 @@ abstract final class VideoLinkRule {
   /// The longest wait once [startMs] (or [rebufferMs]) is buffered: short at the start, where the user waits for the
   /// first frame, longer after a stall, where a longer wait gives a longer play
   static const startLongestWaitMs = 4000;
+
+  /// Under this ratio the start waits for [startMs] only, as Media3 does: a second of wait gives ratio / (1 - ratio)
+  /// seconds of play, less than a second here. After a stall the wait stays: fewer and longer pauses are better.
+  static const startWaitRatio = 0.5;
   static const rebufferLongestWaitMs = 30000;
 
   /// Bytes that count as progress: a trickle of a few bytes is none
@@ -53,13 +57,17 @@ int _longestWaitMs({required bool rebuffering}) =>
 /// |---------------------|----------------------------------------------|-------------------------------|
 /// | unknown, or >= 1.25 | 1 s                                          | 2 s                           |
 /// | 1 to 1.25           | 2 s                                          | 4 s                           |
-/// | below 1             | 30 s x (1 - ratio), 1 to 15 s                | 60 s x (1 - ratio), 2 to 30 s |
+/// | 0.5 to 1            | 30 s x (1 - ratio), 1 to 15 s                | 60 s x (1 - ratio), 2 to 30 s |
+/// | below 0.5           | 1 s                                          | 30 s                          |
 int linkTargetMs(double? ratio, {required bool rebuffering}) {
   if (ratio == null || ratio.isNaN || ratio >= VideoLinkRule.fastRatio) {
     return linkMinimumMs(rebuffering: rebuffering);
   }
   if (ratio >= 1) {
     return rebuffering ? VideoLinkRule.nearRebufferMs : VideoLinkRule.nearStartMs;
+  }
+  if (!rebuffering && ratio < VideoLinkRule.startWaitRatio) {
+    return VideoLinkRule.startMs;
   }
   final short = 1 - math.max(ratio, 0.0);
   return rebuffering
