@@ -109,6 +109,17 @@ class NetworkConnections {
     await _closeQuietly(fileSystem);
   }
 
+  /// Closes the connection of the source with [sourceId] when it found its folder gone (a folder of the device or one
+  /// picked on the DJI drone page, see [DocumentTreeFileSystem.isUnplugged]): such a connection fails every call from
+  /// then on, so the next use reads the folder through a new one. Any other connection stays open, an upload under way
+  /// included.
+  Future<void> closeIfUnplugged(String sourceId) async {
+    final open = _open[sourceId];
+    if (open is DocumentTreeFileSystem && open.isUnplugged) {
+      await close(sourceId);
+    }
+  }
+
   Future<void> closeAll() async {
     final ids = {..._open.keys, ..._opening.keys};
     await Future.wait(ids.map(close));

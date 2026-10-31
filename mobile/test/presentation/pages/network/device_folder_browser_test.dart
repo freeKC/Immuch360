@@ -239,6 +239,23 @@ void main() {
     expect(find.text('Quest'), findsOneWidget);
   });
 
+  testWidgets('a folder found gone reads again on Retry once it is back, through a new connection', (tester) async {
+    api.unplugged = true;
+    await pumpBrowser(tester);
+
+    expect(find.textContaining(t.device_folder_gone), findsOneWidget);
+    expect(folderTileOf('Holidays'), findsNothing);
+
+    api.unplugged = false;
+    await tester.tap(find.widgetWithText(OutlinedButton, t.retry));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining(t.device_folder_gone), findsNothing);
+    expect(folderTileOf('Holidays'), findsOneWidget);
+    expect(tileOf('beach.jpg'), findsOneWidget);
+    expect(api.closed, [_treeUri], reason: 'the connection that found it gone was closed');
+  });
+
   testWidgets('an empty folder says so', (tester) async {
     await pumpBrowser(tester, path: '/Empty');
 

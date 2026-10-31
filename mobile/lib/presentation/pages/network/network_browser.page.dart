@@ -226,6 +226,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
 
   Future<_Folder> _read() async {
     final connections = ref.read(networkConnectionsProvider);
+    // A folder of the device found gone keeps failing through the connection that found it gone: Retry, a refresh or
+    // a new visit read it through a new one, which answers once the folder is back
+    await connections.closeIfUnplugged(widget.sourceId);
     final fileSystem = await connections.fileSystem(widget.sourceId);
     // Hidden entries (".DS_Store", "._IMG.JPG" resource forks, ".thumbnails") and files of other kinds are left out, the
     // same for every folder source (see FolderContents)
