@@ -308,8 +308,12 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): what a video payload looks like, with no codec named; DJI link stage 2 (feat-dji-link-2): codec detection: H.265 decoded, H.264 recognised"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/documenttree/DocumentTreePlugin.kt": {
-    "blob": "66577f783114b7f57acbd4ef5eb29a6419a3df24",
-    "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app; Gaussian splats (feat-quest-splats, lot S5): pickFile, one file picked in the system picker and copied to the cache, for Open a splat file on the headset"
+    "blob": "4244b234b6c616ae11b79cc5ede7718c21dd5856",
+    "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app; Gaussian splats (feat-quest-splats, lot S5): pickFile, one file picked in the system picker and copied to the cache, for Open a splat file on the headset; device folders (feat-device-folders): pickTree opens the folder picker in the folder of the storage it is given, Download for Browse a folder of On this device"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/documenttree/PickTreeStart.kt": {
+    "blob": "65cc6e261d91efe5097e8650eb359d0d95dddeea",
+    "reason": "Device folders (feat-device-folders): the document id of the folder the folder picker opens in (primary:Download for Browse a folder); not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/documenttree/PickedFileCopy.kt": {
     "blob": "8a66f98b2515c4b93ab6c78a891ad8550bbea7a4",
@@ -1206,6 +1210,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/DocumentTreeReadsTest.kt": {
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/PickTreeStartTest.kt": {
+    "blob": "c4f559786c5a63e7b302328f266dfc045dfe9124",
+    "reason": "Device folders (feat-device-folders): unit tests of PickTreeStart, run by the Kotlin unit tests job; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/PickedFileCopyTest.kt": {
     "blob": "04a59f92bd81be2d07982f04d6d38804edd3f0e8",
