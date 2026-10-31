@@ -444,16 +444,16 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): what the viewer needs of the splat module, real in the quest flavour only; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): whether the renderer of the module runs, the pose given in the frame of the module"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatGate.kt": {
-    "blob": "4e9f7697395e1b86f588167d494aaaa4588ebee6",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): whether this headset shows a splat file and how many gaussians it keeps; not yet on the phone branch; the decision of 30 October: no splat module in the Meta Horizon Store build, a splat there not in this version; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused whatever its count, the copy rewritten as version 2 counted in the cache, the refusals of the last check and of the renderer"
+    "blob": "2e79f3c59320d4e65d8605b4767b850395b87a49",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): whether this headset shows a splat file and how many gaussians it keeps; not yet on the phone branch; the decision of 30 October: no splat module in the Meta Horizon Store build, a splat there not in this version; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused whatever its count, the copy rewritten as version 2 counted in the cache, the refusals of the last check and of the renderer; every SPZ of versions 1 to 3 rewritten, version 2 included, the cache holding its copy"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatHeader.kt": {
-    "blob": "1c79875dd6e1a5f6992e216c90db280b77a71e99",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the head of a .spz or .ply file read in the headset; not yet on the phone branch"
+    "blob": "7418b3d6ce6d5152504db5d525dee132ede47161",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the head of a .spz or .ply file read in the headset; a PLY of degree 4 or with values not stored as floats, and an SPZ whose fixed point bits cannot be read, refused; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatModuleFormat.kt": {
-    "blob": "5b5c3da44d5e27c8fce1939cb74a4846ec939e5e",
-    "reason": "The splats on the Quest 3 (fix-quest-splats-device): what the splat module reads (SPZ version 2, the PLY of the probe) and the last check of the file it gets; not yet on the phone branch"
+    "blob": "0d28205e825b75c8d259a37f207dbcce6b7a8d43",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): what the splat module reads (SPZ version 2, the PLY of the probe) and the last check of the file it gets; every gzip SPZ rewritten, the whole of the file checked off the main thread; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatModuleFrame.kt": {
     "blob": "4011eb723f780db7754ddc82c130b96adde20a75",
@@ -464,12 +464,12 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the robust bounds of a splat, where it goes, and its orientation remembered per file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the orientations in the frame of the module (Y up 0, Z up +90, Y down 180, Y down first), an object at the height of the eyes, the choices of build 38 no longer read; a place whose floor lies at the bottom of y opens with Y up"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatPreparer.kt": {
-    "blob": "400df81a744f1904f868cb7560bc65edfb58ea8b",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the file of a splat read, weighed, reduced and bounded off the main thread; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ of version 1 or 3 always rewritten as version 2, and the file handed to the module checked once more; the orientation a place opens in, from its gaussians"
+    "blob": "13645599b25a80d517db6e62db1d5e01cd2a7da4",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the file of a splat read, weighed, reduced and bounded off the main thread; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ of version 1 or 3 always rewritten as version 2, and the file handed to the module checked once more; the orientation a place opens in, from its gaussians; a version 2 SPZ rewritten too, a damaged one refused, the whole file checked"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatReducer.kt": {
-    "blob": "6bdae873433235ce15affd4235fb9b958abf0dc4",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the reduction of a splat file to its strongest gaussians, in its own format; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ always written as version 2, the rotations of version 3 and the positions of version 1 recoded"
+    "blob": "49d7b42423464e1e6502f276863a63c551164214",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the reduction of a splat file to its strongest gaussians, in its own format; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ always written as version 2, the rotations of version 3 and the positions of version 1 recoded; the source of a rewrite read to the end of its gzip stream"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatSession.kt": {
     "blob": "c11fd4c05d6575e6b263356139bb287675665fc6",
@@ -1376,16 +1376,16 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the fixtures of the splat tests, shared with the Dart tests; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatGateTest.kt": {
-    "blob": "0570c048a8c4161969c228960557851b418b93bb",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build; the gate of the build read through SplatBuild.kindOf; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused, versions 1 and 3 rewritten and counted in the cache"
+    "blob": "97ecc4faea0da22806352437f8359efe359e405e",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build; the gate of the build read through SplatBuild.kindOf; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused, versions 1 and 3 rewritten and counted in the cache; the cache of a version 2 rewritten"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatHeaderTest.kt": {
-    "blob": "58ce37e90c354dbb13d6cf7a8193684ba2bd3c24",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the head of a splat file; not yet on the phone branch"
+    "blob": "40a3058d35b49a2afbb9b7d4ef5ca5698ec93835",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the head of a splat file; the degrees and float types of a PLY, the fixed point bits of an SPZ; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatModuleFormatTest.kt": {
-    "blob": "f62453b7e3b863a220f60c2a28a413fbef461713",
-    "reason": "The splats on the Quest 3 (fix-quest-splats-device): unit tests of SplatModuleFormat; not yet on the phone branch"
+    "blob": "52b9a24e077985a522fd3aad648ea2185bfc0741",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): unit tests of SplatModuleFormat; the whole check of an SPZ; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatModuleFrameTest.kt": {
     "blob": "af36613d9365fe27db1647d203997c2ddf9b769f",
@@ -1396,12 +1396,12 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the bounds and the placement; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the orientations as measured, the measuring tape upright at the height of the eyes, the new memory keys; the floor of a place"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPreparerTest.kt": {
-    "blob": "7fcd422e1e0fc5d4ea6fd3585504a76ba5ae937c",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the preparation of a splat file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 and the last check of every path; no orientation said for an object"
+    "blob": "520d5084a739ef8bd6d16819e2e955c2417ac67b",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the preparation of a splat file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 and the last check of every path; no orientation said for an object; a version 2 cut, short, in two members or flagged"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatReducerTest.kt": {
-    "blob": "05c184f8c334e7498f9112a18c21bc9b8d52d1e8",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the reduction; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 against the reference of make_splat_fixtures.py"
+    "blob": "206c01a766b376dc6e90f0eacf36fec512f66560",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the reduction; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 against the reference of make_splat_fixtures.py; a rewrite read to its end"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatSessionTest.kt": {
     "blob": "74bd219d9f241dacbba02958bd8dc3281ae7f24c",
@@ -1416,8 +1416,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the options; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the frame option"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatWiringTest.kt": {
-    "blob": "9dd783570968a95f4ed8df1b7abdd5db398c664d",
-    "reason": "The splats on the Quest 3 (fix-quest-splats-device): the wiring of the stage and the viewer read from their sources; the orientation a splat opens in; not yet on the phone branch"
+    "blob": "f4b1668f6919412dc62d1ed7f1399d8d3816a09c",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): the wiring of the stage and the viewer read from their sources; the orientation a splat opens in; the whole check in the preparation; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",
