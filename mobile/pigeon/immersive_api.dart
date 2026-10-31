@@ -64,7 +64,7 @@ abstract class ImmersiveApi {
   /// (experimental, on by default; lot S5): the viewer registers the splat module of the Meta Spatial SDK as it opens
   /// only when it is true, so that the module never runs for a user who turned the splats off; previous and next keep
   /// the value of the opening. [watchMinDurationMs] is the threshold of "Remember where I stopped" in milliseconds, -1
-  /// with it off (FreeKC's rule of 31 October 2026, see WatchReport): a video of at least that long is a film, which
+  /// with it off (FreeKC's rule of 31 October 2026, see WatchReport): a video longer than that is a film, which
   /// plays once, and whose position the viewer reports with [ImmersiveEvents.progress]; previous and next keep the value
   /// of the opening, the kiosk ignores it. [startNotice] is what to say once the video plays, in the language of the app
   /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing.

@@ -2,7 +2,7 @@ package app.alextran.immich.immersive
 
 /**
  * The film rule in the immersive viewer (FreeKC's request of 31 October 2026, WatchRule on the Dart side, which keeps
- * the watch progress for the whole app): a video of at least the threshold Flutter gives (ImmersiveApi.open's
+ * the watch progress for the whole app): a video longer than the threshold Flutter gives (ImmersiveApi.open's
  * watchMinDurationMs, -1 with "Remember where I stopped" off) is a film. A film plays once, and the viewer reports
  * where it is to the app every [INTERVAL_MS] while it plays, when the viewer goes behind the system, before it asks for
  * the previous or next media, at its end and as it closes (ImmersiveEvents.progress). Any other video loops as before;
@@ -15,9 +15,9 @@ object WatchReport {
   /** How often a film that plays is reported: a crash or a kill of the headset loses this much at most */
   const val INTERVAL_MS = 5_000L
 
-  /** Whether a video of [durationMs] (unknown below 1) is a film for the threshold [minDurationMs] */
+  /** Whether a video of [durationMs] (unknown below 1) is a film, longer than the threshold [minDurationMs] */
   fun isFilm(durationMs: Long, minDurationMs: Long): Boolean =
-    minDurationMs >= 0 && durationMs > 0 && durationMs >= minDurationMs
+    minDurationMs >= 0 && durationMs > 0 && durationMs > minDurationMs
 
   /** Whether the player loops the video: never the kiosk (its end shows the card), never a film, any other video. */
   fun loops(kiosk: Boolean, durationMs: Long, minDurationMs: Long): Boolean =

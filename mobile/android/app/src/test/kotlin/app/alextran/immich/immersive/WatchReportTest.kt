@@ -6,7 +6,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The film rule of the immersive viewer (FreeKC's request of 31 October 2026, WatchRule in Dart): a video of at least
+ * The film rule of the immersive viewer (FreeKC's request of 31 October 2026, WatchRule in Dart): a video longer than
  * the threshold is a film, which plays once and whose position the viewer reports to the app every 5 s; any other
  * video loops as before, and the kiosk neither reports nor loops.
  */
@@ -16,9 +16,10 @@ class WatchReportTest {
   private val unset = Long.MIN_VALUE + 1 // C.TIME_UNSET of Media3, before the player knows the duration
 
   @Test
-  fun `a video of at least the threshold is a film`() {
+  fun `a video longer than the threshold is a film, one of exactly the threshold is not`() {
     assertTrue(WatchReport.isFilm(film, tenMinutes))
-    assertTrue(WatchReport.isFilm(tenMinutes, tenMinutes))
+    assertTrue(WatchReport.isFilm(tenMinutes + 1, tenMinutes))
+    assertFalse(WatchReport.isFilm(tenMinutes, tenMinutes))
     assertFalse(WatchReport.isFilm(tenMinutes - 1, tenMinutes))
     assertFalse(WatchReport.isFilm(40_000L, tenMinutes))
   }
@@ -26,6 +27,7 @@ class WatchReportTest {
   @Test
   fun `a threshold of 0 makes every video a film, -1 none`() {
     assertTrue(WatchReport.isFilm(3_000L, 0L))
+    assertTrue(WatchReport.isFilm(1L, 0L))
     assertFalse(WatchReport.isFilm(film, WatchReport.OFF))
     assertFalse(WatchReport.isFilm(film, -5L))
   }

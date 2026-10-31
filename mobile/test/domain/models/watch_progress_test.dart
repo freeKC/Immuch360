@@ -10,11 +10,12 @@ void main() {
   const film = Duration(minutes: 98);
 
   group('WatchRule', () {
-    test('a video of at least the threshold is a film, by default 10 minutes', () {
+    test('a video longer than the threshold is a film, by default 10 minutes, as the setting says', () {
       const rule = WatchRule();
 
-      expect(rule.isFilm(minute * 10), isTrue);
+      expect(rule.isFilm(minute * 10 + const Duration(milliseconds: 1)), isTrue);
       expect(rule.isFilm(film), isTrue);
+      expect(rule.isFilm(minute * 10), isFalse);
       expect(rule.isFilm(minute * 10 - const Duration(milliseconds: 1)), isFalse);
       expect(rule.isFilm(const Duration(seconds: 40)), isFalse);
     });
@@ -30,6 +31,7 @@ void main() {
       const rule = WatchRule(minMinutes: 0);
 
       expect(rule.isFilm(const Duration(seconds: 3)), isTrue);
+      expect(rule.isFilm(const Duration(milliseconds: 1)), isTrue);
       expect(rule.isFilm(film), isTrue);
     });
 
@@ -66,7 +68,12 @@ void main() {
 
   group('the end tail and the start margin', () {
     test('two minutes and thirty seconds for every film at the default threshold', () {
-      for (final duration in [minute * 10, minute * 25, film, const Duration(hours: 3)]) {
+      for (final duration in [
+        minute * 10 + const Duration(milliseconds: 1),
+        minute * 25,
+        film,
+        const Duration(hours: 3),
+      ]) {
         expect(watchEndTail(duration), minute * 2, reason: '$duration');
         expect(watchStartMargin(duration), const Duration(seconds: 30), reason: '$duration');
       }

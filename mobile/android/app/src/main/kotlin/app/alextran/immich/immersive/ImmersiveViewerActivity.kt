@@ -357,7 +357,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val gaussianSplats: Boolean = true,
     /**
      * The threshold of "Remember where I stopped" when the app opened the viewer, in milliseconds, [WatchReport.OFF]
-     * with it off: a video of at least that long is a film, which plays once and whose position goes to the app (see
+     * with it off: a video longer than that is a film, which plays once and whose position goes to the app (see
      * [reportProgress]). A previous or next media keeps the value of its opening; a kiosk ignores it.
      */
     val watchMinDurationMs: Long = WatchReport.OFF,

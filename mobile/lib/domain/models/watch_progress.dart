@@ -7,7 +7,8 @@ import 'dart:math' as math;
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 
 /// Which videos are films (see [isFilm]): the "Remember where I stopped" setting ([enabled], on by default) and its
-/// threshold in minutes ([minMinutes], 10 by default; 0 makes every video whose duration is known a film)
+/// threshold in minutes ([minMinutes], 10 by default): a film is longer than it, as the setting says ("In videos longer
+/// than N min"); 0 makes every video whose duration is known a film
 class WatchRule {
   const WatchRule({this.enabled = true, this.minMinutes = 10});
 
@@ -18,12 +19,13 @@ class WatchRule {
   final bool enabled;
   final int minMinutes;
 
-  /// The shortest film
+  /// The threshold: a film is longer than this, a video of exactly this long is not
   Duration get minDuration => Duration(minutes: math.max(0, minMinutes));
 
-  /// Whether a video of [duration] is a film: its position is remembered and resumed, its tile shows how much of it was
-  /// watched, and it plays once whatever Looping says. Never with the setting off, nor without a duration.
-  bool isFilm(Duration? duration) => enabled && duration != null && duration > Duration.zero && duration >= minDuration;
+  /// Whether a video of [duration] is a film, longer than [minDuration]: its position is remembered and resumed, its
+  /// tile shows how much of it was watched, and it plays once whatever Looping says. Never with the setting off, nor
+  /// without a duration.
+  bool isFilm(Duration? duration) => enabled && duration != null && duration > Duration.zero && duration > minDuration;
 
   /// [minDuration] in milliseconds, -1 with the setting off: what the immersive viewer of the Meta Quest is given
   int get minDurationMs => enabled ? minDuration.inMilliseconds : -1;
