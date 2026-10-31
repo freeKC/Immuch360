@@ -45,6 +45,10 @@ class ImmersiveWatch {
     if (!rule.isFilm(duration)) {
       return;
     }
-    store.record(key, position: Duration(milliseconds: positionMs), duration: duration);
+    store.record(
+      key,
+      position: Duration(milliseconds: positionMs),
+      duration: duration,
+    );
   }
 }
