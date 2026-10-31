@@ -24,8 +24,9 @@ abstract final class VideoLinkRule {
   static const startMaxMs = 15000;
   static const rebufferMaxMs = 30000;
 
-  /// The longest wait once [startMs] (or [rebufferMs]) is buffered
-  static const startLongestWaitMs = 10000;
+  /// The longest wait once [startMs] (or [rebufferMs]) is buffered: short at the start, where the user waits for the
+  /// first frame, longer after a stall, where a longer wait gives a longer play
+  static const startLongestWaitMs = 4000;
   static const rebufferLongestWaitMs = 30000;
 
   /// Bytes that count as progress: a trickle of a few bytes is none

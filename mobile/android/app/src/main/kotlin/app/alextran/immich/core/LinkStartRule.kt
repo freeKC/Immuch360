@@ -15,8 +15,8 @@ import kotlin.math.roundToLong
  * | below 1             | 30 s x (1 - ratio), 1 to 15 s                | 60 s x (1 - ratio), 2 to 30 s  |
  *
  * Below 1, what is waited for gives about 30 s of play before the next pause (60 s after a stall). Never longer than
- * [START_LONGEST_WAIT_MS] once [START_MS] is there ([REBUFFER_LONGEST_WAIT_MS] once [REBUFFER_MS] is there after a
- * stall). A wait is never a failure: a video is dead only when nothing arrives ([isDead]).
+ * 4 s once [START_MS] is there ([START_LONGEST_WAIT_MS]), 30 s once [REBUFFER_MS] is there after a stall
+ * ([REBUFFER_LONGEST_WAIT_MS]). A wait is never a failure: a video is dead only when nothing arrives ([isDead]).
  *
  * The same rule in Dart (video_link_rule.dart, for the players of the computers and the texts), checked against the
  * same cases (src/test/resources/video_link_rule_cases.json). Pure, so that it is tested.
@@ -37,8 +37,12 @@ object LinkStartRule {
   const val START_MAX_MS = 15_000L
   const val REBUFFER_MAX_MS = 30_000L
 
-  /** The longest wait once [START_MS] (or [REBUFFER_MS]) is buffered */
-  const val START_LONGEST_WAIT_MS = 10_000L
+  /**
+   * The longest wait once [START_MS] (or [REBUFFER_MS]) is buffered: short at the start, where the user waits for the
+   * first frame (10 s put it 8 s later than before over a link at a quarter of the film, 31 October 2026), longer after
+   * a stall, where a longer wait gives a longer play
+   */
+  const val START_LONGEST_WAIT_MS = 4_000L
   const val REBUFFER_LONGEST_WAIT_MS = 30_000L
 
   /** Bytes that count as progress: a trickle of a few bytes is none */

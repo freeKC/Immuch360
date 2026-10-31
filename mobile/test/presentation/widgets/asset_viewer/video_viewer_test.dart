@@ -609,7 +609,7 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('video_loading_line')), findsOneWidget);
-      expect(find.text('Loading: 1.2 Mbit/s of the 3 Mbit/s this video needs\nStarts in about 10 s'), findsOneWidget);
+      expect(find.text('Loading: 1.2 Mbit/s of the 3 Mbit/s this video needs\nStarts in about 4 s'), findsOneWidget);
       expect(find.byKey(const Key('video_failure_panel')), findsNothing, reason: 'a slow link is no failure');
       await leave(tester);
     });
