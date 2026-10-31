@@ -135,4 +135,14 @@ void main() {
     expect(tiffJpegMaxSide, 8192);
     expect(defaultTargetPlatform, TargetPlatform.android, reason: 'the tests run as Android');
   });
+
+  test('the cache keeps the latest JPEGs only', () async {
+    final jpegs = TiffJpegCache(() async => cache);
+    final tiff = Uint8List.fromList(img.encodeTiff(img.Image(width: 4, height: 4)));
+    for (var index = 0; index < TiffJpegCache.maxFiles + 3; index++) {
+      await jpegs.jpegOf('share:nas:/Scans/$index.tif', () async => tiff);
+    }
+    final kept = cache.listSync().whereType<File>().where((file) => file.path.endsWith('.jpg'));
+    expect(kept, hasLength(TiffJpegCache.maxFiles));
+  });
 }

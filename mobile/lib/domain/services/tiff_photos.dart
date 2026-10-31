@@ -138,8 +138,8 @@ Future<T> _inDecoderTurn<T>(T Function() job) async {
 }
 
 /// [bytes], a TIFF, decoded in a background isolate and scaled down to at most [maxSide] pixels on its long side,
-/// upright as its orientation tag says, [tiffMaxConcurrentDecodes] at most at once. Throws [TiffDecodeException] when
-/// it does not decode.
+/// upright as its orientation tag says, [tiffMaxConcurrentDecodes] at most at once. [bytes] are copied for the isolate
+/// before this returns: the caller may free them then. Throws [TiffDecodeException] when it does not decode.
 Future<TiffPixels> decodeTiff(Uint8List bytes, {required int maxSide}) {
   if (bytes.length > tiffMaxFileBytes) {
     return Future.error(TiffDecodeException('${bytes.length} bytes is more than this device reads for a TIFF'));

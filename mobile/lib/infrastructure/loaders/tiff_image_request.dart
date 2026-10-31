@@ -35,19 +35,21 @@ class LocalTiffImageRequest extends ImageRequest {
       return null;
     }
     final pointer = Pointer<Uint8>.fromAddress(info['pointer']!);
-    final Uint8List bytes;
+    if (_isCancelled) {
+      malloc.free(pointer);
+      return null;
+    }
+    final Future<TiffPixels> decoding;
     try {
-      bytes = Uint8List.fromList(pointer.asTypedList(info['length']!));
+      // decodeTiff copies the file for its isolate before it returns: the platform's buffer goes at once
+      decoding = decodeTiff(pointer.asTypedList(info['length']!), maxSide: maxSide);
     } finally {
       malloc.free(pointer);
-    }
-    if (_isCancelled) {
-      return null;
     }
 
     final TiffPixels pixels;
     try {
-      pixels = await decodeTiff(bytes, maxSide: maxSide);
+      pixels = await decoding;
     } on TiffDecodeException catch (error) {
       UndecodablePhotos.instance.remember(key, error);
       rethrow;

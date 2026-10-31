@@ -92,7 +92,8 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
       final client = _client ??= HttpClient()..autoUncompress = false;
       // A TIFF on a device without TIFF decoder: decoded in Dart (see photoDecodePath)
       if (isDartTiffUrl(url)) {
-        return await loadDartTiff(url, maxSide: width, client: client);
+        // Twice the width on the long side: a photo of any shape still covers its tile
+        return await loadDartTiff(url, maxSide: width * 2, client: client);
       }
       final response = await (await client.getUrl(url)).close();
       if (response.statusCode != HttpStatus.ok) {

@@ -42,7 +42,26 @@ class TiffJpegCache {
     await partial.writeAsBytes(jpeg, flush: true);
     await partial.rename(file.path);
     _log.info('JPEG of a TIFF for the immersive viewer: ${jpeg.length} bytes');
+    _keepLatest(folder, file);
     return file;
+  }
+
+  /// Most JPEGs kept, the oldest deleted first
+  static const maxFiles = 20;
+
+  // Deletes the oldest JPEGs beyond [maxFiles], never [kept]
+  static void _keepLatest(Directory folder, File kept) {
+    try {
+      final files = folder.listSync().whereType<File>().where((file) => file.path.endsWith('.jpg')).toList()
+        ..sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+      for (final old in files.skip(maxFiles)) {
+        if (old.path != kept.path) {
+          old.deleteSync();
+        }
+      }
+    } on FileSystemException catch (error) {
+      _log.fine('Could not tidy the JPEGs of TIFFs: $error');
+    }
   }
 }
 
