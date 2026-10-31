@@ -18,7 +18,7 @@ object FlatPlayerErrors {
   @OptIn(UnstableApi::class)
   fun token(error: PlaybackException, player: ExoPlayer): String? {
     val format = videoFormatOf(error, player)
-    val gotMedia = player.totalBufferedDuration >= StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+    val gotMedia = player.totalBufferedDuration >= StreamingLoadControl.DECODER_FED_MS
     val kind = PlaybackErrors.kindOf(error, videoKnown = format != null, decoderGotMedia = gotMedia) ?: return null
     return PlaybackErrors.token(kind, format?.sampleMimeType, format?.width ?: 0, format?.height ?: 0)
   }

@@ -3,7 +3,9 @@ package me.albemala.native_video_player.platform_interface
 data class VideoSource(
     val path: String,
     val type: VideoSourceType,
-    val headers: Map<String, String>
+    val headers: Map<String, String>,
+    // Immuch360: where the video starts, in ms, null for its start
+    val startPositionMs: Long? = null,
 ) {
     companion object {
         fun from(map: Map<*, *>): VideoSource? {
@@ -22,10 +24,12 @@ data class VideoSource(
                     it.value == typeValue
                 }
                 ?: return null
+            val start = (map["startPositionMs"] as? Number)?.toLong()?.takeIf { it > 0 }
             return VideoSource(
                 path,
                 type,
-                headers
+                headers,
+                start,
             )
         }
     }

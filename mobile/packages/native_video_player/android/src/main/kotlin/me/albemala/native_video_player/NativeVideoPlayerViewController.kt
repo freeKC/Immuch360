@@ -48,9 +48,16 @@ class NativeVideoPlayerViewController(
     private var positionUpdateRunnable: Runnable? = null
     private var lastPosition = -1L
 
+    // Immuch360: the player as the app makes it, and what Flutter is told of its link twice a second while it loads
+    private val setup: PlayerSetup? = NativeVideoPlayerPlugin.playerSetup?.invoke(context)
+    private val linkHandler = Handler(Looper.getMainLooper())
+    private var linkRunnable: Runnable? = null
+    private var lastLink: Map<String, Any?>? = null
+    private var stuckSent = false
+
     init {
         api.delegate = this
-        player = ExoPlayer.Builder(context).build()
+        player = setup?.player ?: ExoPlayer.Builder(context).build()
         player.addListener(this)
         // Immuch360: the audio language the user picked last, for every video, and no subtitles until asked for
         player.trackSelectionParameters = VideoTracks.initialParameters(
@@ -100,22 +107,33 @@ class NativeVideoPlayerViewController(
     override fun dispose() {
         player.removeListener(this)
         stopPositionUpdates()
+        stopLinkUpdates()
         api.dispose()
         player.release()
+        setup?.release()
     }
 
     override fun loadVideoSource(videoSource: VideoSource) {
         val mediaItem = MediaItem.fromUri(videoSource.path)
+        // Immuch360: a film that resumes loads at its place, rather than at its start and then seeks there
+        val start = videoSource.startPositionMs?.takeIf { it > 0 }
+        setup?.onLoad()
+        stuckSent = false
+        lastLink = null
         when (videoSource.type) {
-            VideoSourceType.Asset, VideoSourceType.File -> player.setMediaItem(mediaItem)
+            VideoSourceType.Asset, VideoSourceType.File ->
+                if (start != null) player.setMediaItem(mediaItem, start) else player.setMediaItem(mediaItem)
             VideoSourceType.Network -> {
                 val dataSource = dataSourceFactory?.invoke(videoSource.headers)
                     ?: DefaultHttpDataSource.Factory().setDefaultRequestProperties(videoSource.headers)
-                val mediaSource = ProgressiveMediaSource.Factory(dataSource).createMediaSource(mediaItem)
-                player.setMediaSource(mediaSource)
+                val factory = ProgressiveMediaSource.Factory(dataSource)
+                setup?.loadErrorPolicy?.let { factory.setLoadErrorHandlingPolicy(it) }
+                val mediaSource = factory.createMediaSource(mediaItem)
+                if (start != null) player.setMediaSource(mediaSource, start) else player.setMediaSource(mediaSource)
             }
         }
         player.prepare()
+        startLinkUpdates()
     }
 
     override fun getVideoInfo(): VideoInfo {
@@ -137,6 +155,7 @@ class NativeVideoPlayerViewController(
 
     override fun stop() {
         player.stop()
+        stopLinkUpdates()
     }
 
     override fun isPlaying(): Boolean {
@@ -231,6 +250,37 @@ class NativeVideoPlayerViewController(
             }
         }
         positionUpdateHandler.post(positionUpdateRunnable!!)
+    }
+
+    // Immuch360: the link of the player, twice a second while a video is loaded (see PlayerSetup); the same value is not
+    // sent again
+    private fun startLinkUpdates() {
+        val current = setup ?: return
+        stopLinkUpdates()
+        linkRunnable = object : Runnable {
+            override fun run() {
+                val link = current.link()
+                if (link != null && link != lastLink) {
+                    lastLink = link
+                    api.onLinkChanged(link)
+                }
+                if (!stuckSent) {
+                    current.stuckError()?.let {
+                        stuckSent = true
+                        api.onError(Error(it))
+                    }
+                }
+                linkHandler.postDelayed(this, 500L)
+            }
+        }
+        linkHandler.post(linkRunnable!!)
+    }
+
+    private fun stopLinkUpdates() {
+        linkRunnable?.let {
+            linkHandler.removeCallbacks(it)
+            linkRunnable = null
+        }
     }
 
     private fun stopPositionUpdates() {

@@ -66,6 +66,11 @@ class NativeVideoPlayerApi(
         channel.invokeMethod("onTracksChanged", null)
     }
 
+    // Immuch360: what the player measures of its link while it loads (see PlayerSetup)
+    fun onLinkChanged(link: Map<String, Any?>) {
+        channel.invokeMethod("onLinkChanged", link)
+    }
+
     override fun onMethodCall(methodCall: MethodCall, result: MethodChannel.Result) {
         when (methodCall.method) {
             "loadVideoSource" -> {
