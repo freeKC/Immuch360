@@ -213,7 +213,7 @@ void main() {
       expect(find.textContaining('browse'), findsNothing);
     });
 
-    testWidgets('the cross takes a folder out of the list and gives its grant back, nothing else', (tester) async {
+    testWidgets('the cross takes a folder out of the list, offers Undo, then gives its grant back', (tester) async {
       folders.trees = [tree(_pick(_download, 'Quest')), tree(_pick(_splats, 'Immuch360-splats'))];
       api.reachable.addAll([_download, _splats]);
       await pumpPage(tester);
@@ -224,8 +224,36 @@ void main() {
       expect(rowOf(_download), findsNothing);
       expect(rowOf(_splats), findsOneWidget);
       expect(folders.trees.map((folder) => folder.treeUri), [_splats]);
-      expect(api.released, [_download]);
+      expect(find.text(t.device_folder_removed(name: 'Quest')), findsOneWidget);
+      expect(find.widgetWithText(SnackBarAction, t.undo), findsOneWidget);
+      expect(api.released, isEmpty, reason: 'while Undo is offered');
       expect(find.textContaining('browse'), findsNothing, reason: 'nothing opened');
+
+      // The snack bar fades by itself, an action in it or not
+      await tester.pump(deviceFolderUndoDuration);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.device_folder_removed(name: 'Quest')), findsNothing);
+      expect(api.released, [_download]);
+      expect(rowOf(_download), findsNothing);
+    });
+
+    testWidgets('Undo puts the folder back at its place, its grant kept', (tester) async {
+      folders.trees = [tree(_pick(_download, 'Quest')), tree(_pick(_splats, 'Immuch360-splats'))];
+      api.reachable.addAll([_download, _splats]);
+      await pumpPage(tester);
+
+      await tester.tap(find.descendant(of: rowOf(_download), matching: find.byTooltip(t.remove)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(SnackBarAction, t.undo));
+      await tester.pumpAndSettle();
+      await tester.pump(deviceFolderUndoDuration);
+      await tester.pumpAndSettle();
+
+      expect(rowOf(_download), findsOneWidget);
+      expect(tester.getTopLeft(rowOf(_download)).dy, lessThan(tester.getTopLeft(rowOf(_splats)).dy));
+      expect(folders.trees.map((folder) => folder.treeUri), [_download, _splats]);
+      expect(api.released, isEmpty);
     });
 
     testWidgets('no word on the Download folder before Android 11, whose picker offers it', (tester) async {

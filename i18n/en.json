@@ -1304,6 +1304,7 @@
   "device_folder_not_answering": "The folder stopped answering. Try again in a moment.",
   "device_folder_picker_failed": "The folder picker could not be opened",
   "device_folder_picker_hint": "Android does not let apps open the Download folder itself or the whole storage: choose a folder inside them.",
+  "device_folder_removed": "{name} is no longer in this list. Its files stay on the device.",
   "device_folder_unavailable": "Cannot be read now: moved, deleted or unplugged",
   "direction": "Direction",
   "disable": "Disable",

@@ -40,19 +40,63 @@ Future<void> browseDeviceFolder(BuildContext context, WidgetRef ref) async {
   await context.pushRoute(NetworkBrowserRoute(sourceId: sourceId, path: '/'));
 }
 
-/// Opens the share browser on [folder], a folder chosen before; says so in a snack bar when it cannot be read now
+/// Opens the share browser on [folder], a folder chosen before; says so in a snack bar when it cannot be read now.
+/// Nothing when it was taken out of the list while Android answered.
 Future<void> openDeviceFolder(BuildContext context, WidgetRef ref, RecentTree folder) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
   final gone = context.t.device_folder_gone;
-  final sourceId = await ref.read(deviceFoldersProvider.notifier).open(folder);
+  // Read before the await: the row is gone once its cross was tapped meanwhile
+  final notifier = ref.read(deviceFoldersProvider.notifier);
+  final sourceId = await notifier.open(folder);
   if (sourceId == null) {
-    messenger?.showSnackBar(SnackBar(content: Text(gone)));
+    if (notifier.holds(folder.treeUri)) {
+      messenger?.showSnackBar(SnackBar(content: Text(gone)));
+    }
     return;
   }
   if (!context.mounted) {
     return;
   }
   await context.pushRoute(NetworkBrowserRoute(sourceId: sourceId, path: '/'));
+}
+
+/// How long the snack bar of a folder taken out of the list stays, with its Undo
+const deviceFolderUndoDuration = Duration(seconds: 6);
+
+/// Takes [folder] out of the list, and offers Undo in a snack bar that fades after [deviceFolderUndoDuration]: the
+/// folder comes back at its place; its grant is given back once the snack bar went without Undo (see
+/// DeviceFoldersNotifier.finishRemove). A stray click of the ray of a Meta Quest costs no new pick in the system
+/// picker.
+Future<void> removeDeviceFolder(BuildContext context, WidgetRef ref, RecentTree folder) async {
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final text = context.t.device_folder_removed(name: folder.folderName);
+  final undo = context.t.undo;
+  // Read before the await: the row goes with the folder
+  final notifier = ref.read(deviceFoldersProvider.notifier);
+  final removed = await notifier.remove(folder);
+  if (removed == null) {
+    return;
+  }
+  if (messenger == null) {
+    await notifier.finishRemove(folder);
+    return;
+  }
+  final notice = messenger.showSnackBar(
+    SnackBar(
+      key: ValueKey('device_folder_removed:${folder.treeUri}'),
+      content: Text(text),
+      duration: deviceFolderUndoDuration,
+      // A snack bar with an action stays until it is closed, unless told otherwise: this one fades
+      persist: false,
+      action: SnackBarAction(label: undo, onPressed: () {}),
+    ),
+  );
+  final reason = await notice.closed;
+  if (reason == SnackBarClosedReason.action) {
+    await notifier.restore(removed);
+  } else {
+    await notifier.finishRemove(folder);
+  }
 }
 
 /// Where [folder] is, as its line under its name shows it: its place on its volume and the volume ("Download/Quest ·
@@ -132,7 +176,7 @@ class _DeviceFoldersSectionState extends ConsumerState<DeviceFoldersSection> {
 }
 
 /// A folder chosen before: its name and where it is, or that it cannot be read now; a tap opens it, the cross takes it
-/// out of the list (nothing on the device changes)
+/// out of the list with an Undo (nothing on the device changes)
 class _FolderRow extends ConsumerWidget {
   const _FolderRow({required this.folder, required this.missing});
 
@@ -164,7 +208,7 @@ class _FolderRow extends ConsumerWidget {
       trailing: IconButton(
         icon: const Icon(Icons.close_rounded),
         tooltip: context.t.remove,
-        onPressed: () => unawaited(ref.read(deviceFoldersProvider.notifier).remove(folder)),
+        onPressed: () => unawaited(removeDeviceFolder(context, ref, folder)),
       ),
       onTap: () => unawaited(openDeviceFolder(context, ref, folder)),
     );
