@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -32,6 +33,63 @@ http.Response _respond(Uint8List file, http.Request request, {bool ignoresRange 
 }
 
 /// Serves [file], and records the requests
+/// A client that reads bodies as the one of Android does (package:ok_http): 64 KiB every 20 ms whether anyone listens or
+/// not, until the end of the body or an abort of the request; [received] counts the chunks
+///
+/// An abort before the answer is a crash of the app there (ok_http completes its response twice): [abortedEarly]
+class _ReadsOnClient extends http.BaseClient {
+  _ReadsOnClient(this.file, {this.answerAfter = Duration.zero});
+
+  final Uint8List file;
+  final Duration answerAfter;
+  var received = 0;
+  var requests = 0;
+  var abortedEarly = false;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    requests++;
+    var answered = false;
+    if (request case http.Abortable(:final abortTrigger?)) {
+      unawaited(
+        abortTrigger.whenComplete(() {
+          if (!answered) {
+            abortedEarly = true;
+          }
+        }),
+      );
+    }
+    await Future<void>.delayed(answerAfter);
+    answered = true;
+    final answer = _respond(file, request as http.Request);
+    final bytes = answer.bodyBytes;
+    final body = StreamController<List<int>>();
+    var at = 0;
+    final timer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
+      if (at >= bytes.length) {
+        timer.cancel();
+        unawaited(body.close());
+        return;
+      }
+      received++;
+      body.add(Uint8List.sublistView(bytes, at, math.min(at + 65536, bytes.length)));
+      at += 65536;
+    });
+    if (request case http.Abortable(:final abortTrigger?)) {
+      unawaited(
+        abortTrigger.whenComplete(() {
+          timer.cancel();
+          if (!body.isClosed) {
+            body.addError(http.RequestAbortedException(request.url));
+            unawaited(body.close());
+          }
+        }),
+      );
+    }
+    return http.StreamedResponse(body.stream, answer.statusCode);
+  }
+}
+
 MockClient _server(Uint8List file, List<http.Request> requests, {bool ignoresRange = false}) =>
     MockClient((request) async {
       requests.add(request);
@@ -251,6 +309,50 @@ void main() {
       now = now.add(probes.retryAfterTimeout);
       expect(await probes.probe(asset), isNull);
       expect(requestsMade, greaterThan(requestsThen), reason: 'tried again later');
+    });
+
+    test('past its time limit, its transfer is aborted, the client of Android reading on otherwise', () async {
+      // The index of a two hour film over 1.5 Mbit/s: read to its end beside the player for 40 s after the probe gave
+      // up (emulator, 31 October 2026)
+      final longFilm = mp4File(
+        mp4Moov([
+          mp4VideoTrack([mp4St3d(2), mp4Sv3dProjection(mp4Mshp())], stsz: mp4Stsz(sizes: List.filled(400000, 9000))),
+        ]),
+        moovAtEnd: true,
+        mdat: mp4Box('mdat', mp4Zeros(300000)),
+      );
+      final client = _ReadsOnClient(longFilm);
+      final probes = SphericalProbeService(
+        storage: storage,
+        client: () => client,
+        serverEndpoint: () => _endpoint,
+        headers: () => const {},
+        timeout: const Duration(milliseconds: 100),
+      );
+
+      expect(await probes.probe(RemoteAssetFactory.create(type: .video)), isNull);
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      final receivedThen = client.received;
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      expect(client.requests, greaterThan(0));
+      expect(client.received, receivedThen, reason: 'nothing arrives once the probe gave up');
+    });
+
+    test('never aborts a request before its answer, which crashes the client of Android', () async {
+      // The probe gives up while a range request waits for its answer (emulator, 31 October 2026)
+      final client = _ReadsOnClient(vr180, answerAfter: const Duration(milliseconds: 400));
+      final probes = SphericalProbeService(
+        storage: storage,
+        client: () => client,
+        serverEndpoint: () => _endpoint,
+        headers: () => const {},
+        timeout: const Duration(milliseconds: 100),
+      );
+
+      expect(await probes.probe(RemoteAssetFactory.create(type: .video)), isNull);
+      await Future<void>.delayed(const Duration(milliseconds: 800));
+      expect(client.requests, greaterThan(0));
+      expect(client.abortedEarly, isFalse);
     });
 
     test('copes with a server that ignores the range, from the head of the file only', () async {

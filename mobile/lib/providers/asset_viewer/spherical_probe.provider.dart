@@ -24,6 +24,11 @@ final _log = Logger('SphericalProbe');
 /// Reads [url] with HTTP range requests through [client], with [headers] on top of the range. A server that ignores
 /// the range is read from the start only, and the transfer stops once the bytes asked for arrived, or as soon as
 /// [cancelled] says so (a probe past its time: its reads no longer take the link from the player).
+///
+/// The transfer is stopped by an abort of its request: the client of Android (package:ok_http) goes on reading a body
+/// whose stream nobody listens to any more until its end (the 3.6 MB index of a two hour film, read for 40 s beside
+/// the player over 1.5 Mbit/s after the probe had given up, 31 October 2026). Never before the answer came: that
+/// client then completes its response twice, from a thread of OkHttp, and the app crashes.
 ByteRangeReader httpRangeReader(
   http.Client client,
   Uri url, {
@@ -33,33 +38,58 @@ ByteRangeReader httpRangeReader(
   if (cancelled?.call() ?? false) {
     throw http.ClientException('Cancelled', url);
   }
-  final request = http.Request('GET', url)
-    ..headers.addAll(headers)
-    ..headers['range'] = 'bytes=$offset-${offset + length - 1}';
-  final response = await client.send(request);
-  final status = response.statusCode;
-  // Past the end of the file
-  if (status == 416) {
-    await response.stream.listen(null).cancel();
-    return Uint8List(0);
-  }
-  if (status != 206 && !(status == 200 && offset == 0)) {
-    await response.stream.listen(null).cancel();
-    throw http.ClientException('HTTP $status for the bytes $offset to ${offset + length - 1}', url);
-  }
-  final builder = BytesBuilder(copy: false);
-  // Leaving the loop cancels the transfer
-  await for (final bytes in response.stream) {
-    builder.add(bytes);
-    if (builder.length >= length) {
-      break;
+  final abort = Completer<void>();
+  var answered = false;
+  void stop() {
+    if (answered && !abort.isCompleted) {
+      abort.complete();
     }
+  }
+
+  // A read that waits for its next bytes hears of a cancel from here
+  final watch = cancelled == null
+      ? null
+      : Timer.periodic(const Duration(milliseconds: 250), (_) {
+          if (cancelled()) {
+            stop();
+          }
+        });
+  try {
+    final request = http.AbortableRequest('GET', url, abortTrigger: abort.future)
+      ..headers.addAll(headers)
+      ..headers['range'] = 'bytes=$offset-${offset + length - 1}';
+    final response = await client.send(request);
+    answered = true;
     if (cancelled?.call() ?? false) {
       throw http.ClientException('Cancelled', url);
     }
+    final status = response.statusCode;
+    // Past the end of the file
+    if (status == 416) {
+      return Uint8List(0);
+    }
+    if (status != 206 && !(status == 200 && offset == 0)) {
+      throw http.ClientException('HTTP $status for the bytes $offset to ${offset + length - 1}', url);
+    }
+    final builder = BytesBuilder(copy: false);
+    await for (final bytes in response.stream) {
+      builder.add(bytes);
+      if (builder.length >= length) {
+        break;
+      }
+      if (cancelled?.call() ?? false) {
+        throw http.ClientException('Cancelled', url);
+      }
+    }
+    final bytes = builder.takeBytes();
+    return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
+  } on http.RequestAbortedException {
+    throw http.ClientException('Cancelled', url);
+  } finally {
+    watch?.cancel();
+    // Whatever is left of the body, a server that ignored the range or a probe that gave up, is not read
+    stop();
   }
-  final bytes = builder.takeBytes();
-  return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
 };
 
 /// [read], with the first [headLength] bytes of the file read once and every read within them served from there: a
