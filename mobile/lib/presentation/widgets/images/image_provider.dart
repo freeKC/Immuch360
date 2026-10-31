@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:async/async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
@@ -55,7 +56,14 @@ class ImageLoader {
     return null;
   }
 
-  Stream<ImageInfo> loadRequest(ImageRequest request, ImageDecoderCallback decode, {required bool isFinal}) async* {
+  /// Loads [request] and yields its image. [onDecodeFailure] is told when its bytes came and did not decode (see
+  /// [ImageDecodeException]): the image shown before it, a preview, then stays the last one, without an error.
+  Stream<ImageInfo> loadRequest(
+    ImageRequest request,
+    ImageDecoderCallback decode, {
+    required bool isFinal,
+    void Function(Object error)? onDecodeFailure,
+  }) async* {
     if (isCancelled) {
       this.request = null;
       return;
@@ -71,6 +79,12 @@ class ImageLoader {
       yield image;
     } catch (e, stack) {
       if (isCancelled) {
+        return;
+      }
+      if (onDecodeFailure != null && (e is ImageDecodeException || e is TiffDecodeException)) {
+        _log.warning('Image not decoded on this device, the previous one stays', e);
+        isFinished = isFinished || isFinal;
+        onDecodeFailure(e);
         return;
       }
       if (isFinal) {
@@ -198,11 +212,18 @@ ImageProvider getFullImageProvider(
       isAnimated: asset.isAnimatedImage,
       edited: edited,
       thumbnailSize: remoteThumbnailSize,
+      serverJpegForOriginal: photoDecodePathOfAsset(asset) == PhotoDecodePath.serverPreview,
     );
   }
 
   return provider;
 }
+
+/// How the viewers decode the photo [asset] (see photoDecodePath): from the server when they show its server side,
+/// as [getFullImageProvider] chooses; a video, a photo this device decodes, keep the platform's decoders
+PhotoDecodePath photoDecodePathOfAsset(BaseAsset asset) => asset.isImage
+    ? photoDecodePath(asset.name, fromServer: !_shouldUseLocalAsset(asset) && asset.hasRemote)
+    : PhotoDecodePath.platform;
 
 ImageProvider? getThumbnailImageProvider(
   BaseAsset asset, {

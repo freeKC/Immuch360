@@ -8,11 +8,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/scroll_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.provider.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.widget.dart';
@@ -31,6 +33,10 @@ import 'package:immich_mobile/widgets/common/immich_loading_indicator.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
 enum _DragIntent { none, scroll, dismiss }
+
+/// The TIFF photos of the server whose notice was shown in this session (see photoDecodePath), by their remote id
+@visibleForTesting
+final serverJpegNoticesShown = <String>{};
 
 class AssetPage extends ConsumerStatefulWidget {
   final int index;
@@ -358,6 +364,19 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     return math.min(maxWidth / r, maxHeight);
   }
 
+  /// Tells once in the session, in a line that goes away by itself, that the TIFF [asset] shows as the server's JPEG
+  void _noticeServerJpeg(BaseAsset asset) {
+    final remoteId = asset.remoteId;
+    if (remoteId == null || !serverJpegNoticesShown.add(remoteId)) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.tiff_server_preview_notice)));
+      }
+    });
+  }
+
   void _onPageBuild(PhotoViewControllerBase controller) {
     _viewController = controller;
     _listenForScaleBoundaries(controller);
@@ -512,6 +531,10 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     }
 
     final isCurrent = currentAsset != null && currentAsset.refersToSameAsset(displayAsset);
+    // A TIFF of the server on Android shows as the JPEG the server made of it: told once in the session, as it shows
+    if (isCurrent && photoDecodePathOfAsset(displayAsset) == PhotoDecodePath.serverPreview) {
+      _noticeServerJpeg(displayAsset);
+    }
 
     // The one-key rotation (view_rotation.provider.dart): none for anything but a flat photo, whatever is kept for it
     final quarterTurns = ref.watch(displayQuarterTurnsProvider(displayAsset));

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/animated_image_stream_completer.dart';
@@ -76,6 +77,11 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
   /// Physical size of the thumbnail shown before the preview.
   final Size? thumbnailSize;
 
+  /// Whether this device does not decode the original (a TIFF on Android, see photoDecodePath): with "load original",
+  /// the largest JPEG the server makes of it replaces the preview instead (its full size conversion, or the preview
+  /// itself while that conversion is off), as browsers show a HEIF or a raw file
+  final bool serverJpegForOriginal;
+
   const RemoteFullImageProvider({
     required this.assetId,
     required this.thumbhash,
@@ -83,7 +89,11 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     required this.isAnimated,
     this.edited = true,
     this.thumbnailSize,
+    this.serverJpegForOriginal = false,
   });
+
+  /// The key of the original of [assetId] among the photos that did not decode in the session (see UndecodablePhotos)
+  static String undecodableKey(String assetId, {required bool edited}) => 'remote:$assetId:$edited';
 
   @override
   Future<RemoteFullImageProvider> obtainKey(ImageConfiguration configuration) {
@@ -143,8 +153,17 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
         edited: key.edited,
       ),
     );
-    final loadOriginal = assetType == AssetType.image && SettingsRepository.instance.appConfig.image.loadOriginal;
-    yield* loader.loadRequest(previewRequest, decode, isFinal: !loadOriginal);
+    // An original that did not decode in this session is not read again: the preview is the last image then
+    final undecodable = undecodableKey(key.assetId, edited: key.edited);
+    final loadOriginal =
+        assetType == AssetType.image &&
+        SettingsRepository.instance.appConfig.image.loadOriginal &&
+        UndecodablePhotos.instance.failureOf(undecodable) == null;
+    var previewShown = false;
+    await for (final preview in loader.loadRequest(previewRequest, decode, isFinal: !loadOriginal)) {
+      previewShown = true;
+      yield preview;
+    }
 
     if (!loadOriginal) {
       return;
@@ -155,9 +174,22 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     }
 
     final originalRequest = loader.request = RemoteImageRequest(
-      uri: getOriginalUrlForRemoteId(key.assetId, edited: key.edited),
+      uri: key.serverJpegForOriginal
+          ? getThumbnailUrlForRemoteId(
+              key.assetId,
+              type: AssetMediaSize.fullsize,
+              thumbhash: key.thumbhash,
+              edited: key.edited,
+            )
+          : getOriginalUrlForRemoteId(key.assetId, edited: key.edited),
     );
-    yield* loader.loadRequest(originalRequest, decode, isFinal: true);
+    // Over a preview, an original that does not decode leaves the preview on screen, and is not tried again
+    yield* loader.loadRequest(
+      originalRequest,
+      decode,
+      isFinal: true,
+      onDecodeFailure: previewShown ? (error) => UndecodablePhotos.instance.remember(undecodable, error) : null,
+    );
   }
 
   Stream<Object> _animatedCodec(ImageLoader loader, RemoteFullImageProvider key, ImageDecoderCallback decode) async* {
@@ -204,12 +236,14 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
       return assetId == other.assetId &&
           thumbhash == other.thumbhash &&
           isAnimated == other.isAnimated &&
-          edited == other.edited;
+          edited == other.edited &&
+          serverJpegForOriginal == other.serverJpegForOriginal;
     }
 
     return false;
   }
 
   @override
-  int get hashCode => assetId.hashCode ^ thumbhash.hashCode ^ isAnimated.hashCode ^ edited.hashCode;
+  int get hashCode =>
+      assetId.hashCode ^ thumbhash.hashCode ^ isAnimated.hashCode ^ edited.hashCode ^ serverJpegForOriginal.hashCode;
 }

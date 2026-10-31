@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
@@ -54,14 +52,8 @@ void main() {
     });
 
     test('a device that decodes TIFF itself keeps its decoder', () {
-      expect(
-        photoDecodePath('scan.tif', fromServer: true, deviceDecodesTiff: true),
-        PhotoDecodePath.platform,
-      );
-      expect(
-        photoDecodePath('scan.tif', fromServer: false, deviceDecodesTiff: true),
-        PhotoDecodePath.platform,
-      );
+      expect(photoDecodePath('scan.tif', fromServer: true, deviceDecodesTiff: true), PhotoDecodePath.platform);
+      expect(photoDecodePath('scan.tif', fromServer: false, deviceDecodesTiff: true), PhotoDecodePath.platform);
     });
 
     test('Android has no TIFF decoder, iOS and the computers have theirs', () {
@@ -69,12 +61,7 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       expect(thisDeviceDecodesTiff, isFalse);
       expect(photoDecodePath('scan.tif', fromServer: true), PhotoDecodePath.serverPreview);
-      for (final platform in [
-        TargetPlatform.iOS,
-        TargetPlatform.windows,
-        TargetPlatform.macOS,
-        TargetPlatform.linux,
-      ]) {
+      for (final platform in [TargetPlatform.iOS, TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.linux]) {
         debugDefaultTargetPlatformOverride = platform;
         expect(thisDeviceDecodesTiff, isTrue, reason: '$platform');
         expect(photoDecodePath('scan.tif', fromServer: false), PhotoDecodePath.platform, reason: '$platform');
@@ -105,7 +92,7 @@ void main() {
       expect(small.rgba.length, 64 * 32 * 4);
       // Red on the left, blue on the right, opaque
       expect(small.rgba.sublist(0, 4), [255, 0, 0, 255]);
-      expect(small.rgba.sublist((63) * 4, 64 * 4), [0, 0, 255, 255]);
+      expect(small.rgba.sublist(63 * 4, 64 * 4), [0, 0, 255, 255]);
 
       final scaled = await decodeTiff(tiffOf(400, 100), maxSide: 100);
       expect((scaled.width, scaled.height), (100, 25));

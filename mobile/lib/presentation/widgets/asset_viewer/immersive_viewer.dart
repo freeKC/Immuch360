@@ -58,6 +58,7 @@ import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
@@ -99,6 +100,8 @@ final immersiveGPanoClientProvider = Provider<http.Client>((_) => NetworkReposit
 /// Photos: the original (the viewer shows the preview first and keeps it if the original fails), unedited, and so is
 /// the preview the viewer derives from it: a sphere is not turned, cropped or mirrored, whatever was edited on the
 /// server while the photo was viewed flat (the one-key rotation, the editor).
+/// A photo the headset does not decode (a TIFF, see photoDecodePath): the largest JPEG the server makes of it, unedited
+/// too, as the flat viewer shows it (see [serverPhotoUrl]).
 /// Videos: the original, the server transcode defaulting to 720p H.264, too blurry for 360°; the resolver plays the
 /// transcoded stream instead when the user chose it (see [ImmersiveAssetResolver.resolve]). The viewer falls back to
 /// the transcoded stream by itself when the headset cannot decode the original, or when the original cannot stream or
@@ -109,10 +112,18 @@ String? immersiveMediaUrl(BaseAsset asset) {
     return null;
   }
   if (!asset.isVideo) {
-    return getOriginalUrlForRemoteId(remoteId, edited: false);
+    return serverPhotoUrl(asset, remoteId, edited: false);
   }
   return '${Store.get(StoreKey.serverEndpoint)}/assets/${_immersiveVideoId(asset, remoteId)}/original';
 }
+
+/// The file of the photo [asset] on the server ([remoteId]) that the immersive viewer reads: its original, or for a
+/// photo the headset does not decode (a TIFF on Android, see photoDecodePath) the largest JPEG the server makes of it,
+/// its full size conversion or its preview while that conversion is off, which the headset decodes
+String serverPhotoUrl(BaseAsset asset, String remoteId, {required bool edited}) =>
+    photoDecodePath(asset.name, fromServer: true) == PhotoDecodePath.serverPreview
+    ? getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.fullsize, edited: edited)
+    : getOriginalUrlForRemoteId(remoteId, edited: edited);
 
 // The video of an asset on the server: the motion part of a live photo has an id of its own
 String _immersiveVideoId(BaseAsset asset, String remoteId) =>
@@ -657,7 +668,11 @@ class ImmersiveAssetResolver {
   /// sphere view is a plain mono one: the viewer shows no sphere for it. Throws when there is no file to open.
   Future<ImmersiveRequest> resolveStereoPhoto(BaseAsset asset, StereoPhotoRequest stereo) async {
     File? localFile;
-    final localId = asset.localId;
+    final remoteId = asset.remoteId;
+    // A TIFF on Android: the headset decodes the JPEG of the server, not the file on the device
+    final serverJpeg =
+        remoteId != null && photoDecodePath(asset.name, fromServer: true) == PhotoDecodePath.serverPreview;
+    final localId = serverJpeg ? null : asset.localId;
     if (localId != null) {
       try {
         localFile = await _storage.getFileForAsset(localId);
@@ -665,14 +680,13 @@ class ImmersiveAssetResolver {
         _log.warning('Copy on the device of ${asset.name} unreadable: $error');
       }
     }
-    final remoteId = asset.remoteId;
     // The original as it was read for the pair, never an edit the server made of it: the offset of pitm is the one of
     // that file, an edited picture holds one view only, and the eyes of a side by side photo lie where the file put
     // them
     // An ordinary photo on the big screen shows as the asset viewer shows it, edited
     final edited = stereo is BigScreenStereoPhotoRequest;
     final url =
-        localFile?.uri.toString() ?? (remoteId == null ? null : getOriginalUrlForRemoteId(remoteId, edited: edited));
+        localFile?.uri.toString() ?? (remoteId == null ? null : serverPhotoUrl(asset, remoteId, edited: edited));
     if (url == null) {
       throw StateError('No file to open for ${asset.name}');
     }
