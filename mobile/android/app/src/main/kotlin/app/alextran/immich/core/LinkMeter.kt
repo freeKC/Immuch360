@@ -55,6 +55,9 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
   private var durationMs = -1L
   private var bufferedPositionMs = -1L
 
+  /** Where the media of this load begins: the place a film resumed at is not media it loaded */
+  private var loadedFromMs = -1L
+
   /** A new video loads: everything measured so far goes */
   fun reset() {
     synchronized(lock) {
@@ -72,6 +75,7 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
       fileSizes.clear()
       durationMs = -1L
       bufferedPositionMs = -1L
+      loadedFromMs = -1L
     }
   }
 
@@ -126,11 +130,15 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     synchronized(lock) { fileSizes[key] = size }
   }
 
-  /** The duration of the video and how far it is loaded, from the load control, in ms (negative when unknown) */
-  fun onTimeline(durationMs: Long, bufferedPositionMs: Long) {
+  /**
+   * The duration of the video and how far it is loaded, from the load control, in ms (negative when unknown);
+   * [positionMs] is the playback position, the first one after [reset] being where the load began
+   */
+  fun onTimeline(durationMs: Long, bufferedPositionMs: Long, positionMs: Long = 0L) {
     synchronized(lock) {
       this.durationMs = durationMs
       this.bufferedPositionMs = bufferedPositionMs
+      if (loadedFromMs < 0 && positionMs >= 0) loadedFromMs = positionMs
     }
   }
 
@@ -172,13 +180,15 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
 
   /**
    * Bytes per second the video consumes at normal speed: the size of its files over its duration, else the bytes
-   * received per second of media loaded once [NEED_FROM_BUFFER_MS] is; null when neither is known
+   * received per second of media loaded once [NEED_FROM_BUFFER_MS] is, counted from where the load began (a film
+   * resumed at 2 minutes said it needed 20 kbit/s while its index arrived, 31 October 2026); null when neither is known
    */
   fun need(): Long? {
     synchronized(lock) {
       val sizes = fileSizes.values.sum()
       if (sizes > 0 && durationMs > 0) return sizes * 1000L / durationMs
-      if (bufferedPositionMs >= NEED_FROM_BUFFER_MS && total > 0) return total * 1000L / bufferedPositionMs
+      val loadedMs = bufferedPositionMs - loadedFromMs.coerceAtLeast(0L)
+      if (loadedMs >= NEED_FROM_BUFFER_MS && total > 0) return total * 1000L / loadedMs
       return null
     }
   }

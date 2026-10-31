@@ -73,6 +73,19 @@ class LinkMeterTest {
   }
 
   @Test
+  fun `a film loaded at its place counts the media loaded from there, not from its start`() {
+    // A two hour film resumed at 2:09: its index of 3 MB arrives before its media, the position already at 2:09
+    meter.onStart()
+    meter.onTimeline(durationMs = -1L, bufferedPositionMs = 129_000L, positionMs = 129_000L)
+    meter.onBytes(3_000_000L)
+    meter.onTimeline(durationMs = -1L, bufferedPositionMs = 129_000L, positionMs = 129_000L)
+    assertNull(meter.need())
+    meter.onBytes(1_000_000L)
+    meter.onTimeline(durationMs = -1L, bufferedPositionMs = 133_000L, positionMs = 129_000L)
+    assertEquals(1_000_000L, meter.need())
+  }
+
+  @Test
   fun `progress is every 16 KiB, counted from the first read`() {
     assertNull(meter.sinceProgressMs())
     meter.onStart()

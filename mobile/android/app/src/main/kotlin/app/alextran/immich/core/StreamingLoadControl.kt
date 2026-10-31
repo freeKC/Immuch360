@@ -244,6 +244,6 @@ class AdaptiveLoadControl(
       }
     }
     val bufferedPositionMs = (parameters.playbackPositionUs + parameters.bufferedDurationUs) / 1000L
-    meter.onTimeline(durationMs, bufferedPositionMs)
+    meter.onTimeline(durationMs, bufferedPositionMs, parameters.playbackPositionUs / 1000L)
   }
 }
