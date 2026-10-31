@@ -81,6 +81,7 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
 /// ([sceneViewerLabels])
 Map<String, String> splatViewerLabels(Translations t) => {
   'splatPreparing': t.splat_preparing,
+  'splatLoading': t.splat_loading,
   'splatNotice': t.splat_notice,
   'splatDisclaimer': t.splat_disclaimer,
   'splatLarge': t.splat_large_notice,
@@ -100,6 +101,9 @@ Map<String, String> splatViewerLabels(Translations t) => {
   'splatNoSpace': t.splat_no_space,
   'splatNotRunning': t.splat_not_running,
   'splatFailed': t.splat_failed(reason: '{reason}'),
+  'splatSpzV4': t.splat_spz_v4,
+  'splatModuleCannotRead': t.splat_module_cannot_read,
+  'splatNoRenderer': t.splat_no_renderer,
 };
 
 /// Translated labels of the immersive viewer for a photo of the stereo quad, and a video of the flat video screen:

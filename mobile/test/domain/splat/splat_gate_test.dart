@@ -80,10 +80,26 @@ void main() {
     const huge = SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: 4000001, shDegree: 0);
     expect(gate(probe: huge), const SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: 4000001));
     expect(gate(fileBytes: (1 << 30) + 1), const SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: 452451));
-    // A version 4 SPZ is not reduced: whole within the count, too large beyond
-    const v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 60000, shDegree: 0);
-    expect(gate(probe: v4).refusal, SplatRefusal.tooLarge);
-    expect(gate(probe: v4, large: true).isOpen, isTrue);
+  });
+
+  test('a version 4 SPZ is refused whatever its count: the splat module of the headset reads version 2 only', () {
+    // Measured on a Quest 3 on 31 October 2026: version 4 aborts the app; versions 1 and 3 are rewritten as version 2
+    for (final count in [686, 60000, 9000000]) {
+      final v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: count, shDegree: 0);
+      expect(gate(probe: v4), const SplatGateVerdict.refused(SplatRefusal.spzV4), reason: '$count');
+      expect(gate(probe: v4, large: true), const SplatGateVerdict.refused(SplatRefusal.spzV4), reason: '$count');
+    }
+    // The fixture of the kit, read from its head
+    final bytes = File('test/fixtures/splat/axes_v4.spz').readAsBytesSync();
+    expect(gate(probe: probeSplatHead(bytes, bytes.length), fileBytes: bytes.length).refusal, SplatRefusal.spzV4);
+    // After the flavour and the headset
+    const small = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 686, shDegree: 0);
+    expect(gate(probe: small, device: 'hollywood').refusal, SplatRefusal.olderHeadset);
+    // Versions 1 to 3 open
+    for (final version in [1, 2, 3]) {
+      final head = SplatHead(format: SplatFormat.spz, formatVersion: version, gaussians: 47819, shDegree: 0);
+      expect(gate(probe: head).isOpen, isTrue, reason: 'version $version');
+    }
   });
 
   test('a file whose header gives a negative count is refused as damaged, never sent to the viewer', () {

@@ -3,7 +3,9 @@
 // button stays visible, greyed with its reason). The splat module of the Meta Spatial SDK runs on the Quest 3 and 3S
 // only and is in the APK of the quest flavour only; the count the headset shows is 50 000 gaussians until a measure
 // in the headset, 150 000 with Large splats (the advice of the SDK), and a splat that holds more is reduced in the
-// headset up to 4 million gaussians and 1 GiB, a version 4 SPZ excepted. The immersive viewer checks again
+// headset up to 4 million gaussians and 1 GiB. The splat module reads SPZ version 2 only and aborts the app on any
+// other (measured on a Quest 3 on 31 October 2026): the headset rewrites versions 1 and 3 as version 2, and a version
+// 4 SPZ (ZSTD, which the app does not read) is refused whatever its count. The immersive viewer checks again
 // (SplatGate.kt), with the free memory and the heat of the headset.
 
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
@@ -41,6 +43,9 @@ enum SplatRefusal {
 
   /// Beyond what the headset reduces: "Too large for this headset (N gaussians)"
   tooLarge,
+
+  /// A version 4 SPZ, whatever its count: "This device cannot show this splat: it is in SPZ version 4. ..."
+  spzV4,
 }
 
 /// What the gate says of a splat: open with the [request] for the viewer, or refused with its [refusal] (and the
@@ -80,7 +85,7 @@ SplatRefusal splatRefusalOf(SplatFileProblem problem) => switch (problem) {
 /// The gate of the splat [probe] says, the file [name] of [fileBytes], with Large splats on or not ([largeSplats]),
 /// in the APK of [flavor] on the headset [device] (null when it could not be read: offered, the viewer checking
 /// again), in a build that offers the splats or not ([inThisBuild], false where SplatBuild.kt hides them). In the order
-/// of SplatGate.kt: the flavour and the build, the headset, the file, the count.
+/// of SplatGate.kt: the flavour and the build, the headset, the file, the version of an SPZ, the count.
 SplatGateVerdict splatGateOf({
   required SplatProbe probe,
   required String name,
@@ -103,9 +108,12 @@ SplatGateVerdict splatGateOf({
     case final SplatHead read:
       head = read;
   }
+  // The splat module reads SPZ version 2 only: versions 1 and 3 are rewritten in the headset, ZSTD is not read
+  if (head.isZstd) {
+    return const SplatGateVerdict.refused(SplatRefusal.spzV4);
+  }
   final most = largeSplats ? splatLargeGaussians : splatSafeGaussians;
-  if (head.gaussians > most &&
-      (head.isZstd || head.gaussians > splatMaxReducibleGaussians || fileBytes > splatMaxReducibleBytes)) {
+  if (head.gaussians > most && (head.gaussians > splatMaxReducibleGaussians || fileBytes > splatMaxReducibleBytes)) {
     return SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: head.gaussians);
   }
   return SplatGateVerdict.open(

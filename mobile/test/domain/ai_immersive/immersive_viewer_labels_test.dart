@@ -85,6 +85,26 @@ void main() {
     expect(stereoPhotoViewerLabels(t), containsPair('splatNotRunning', labels['splatNotRunning']));
   });
 
+  testWidgets(
+    'a splat this headset cannot show says why, and the loading has its line, under the keys of SplatTexts.kt',
+    (tester) async {
+      final t = await english(tester);
+      final labels = splatViewerLabels(t);
+
+      expect(labels['splatLoading'], 'Loading the splat');
+      expect(
+        labels['splatSpzV4'],
+        'This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier',
+      );
+      expect(
+        labels['splatModuleCannotRead'],
+        'This device cannot show this splat: its copy for the headset is not in a form the splat module reads',
+      );
+      expect(labels['splatNoRenderer'], 'This device cannot show this splat: the splat renderer did not start');
+      expect(stereoPhotoViewerLabels(t), containsPair('splatLoading', 'Loading the splat'));
+    },
+  );
+
   testWidgets('the first splat of a viewer says that Meta neither supports nor warrants the API, under its key', (
     tester,
   ) async {

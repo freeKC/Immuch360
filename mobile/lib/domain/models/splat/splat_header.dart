@@ -66,7 +66,7 @@ final class SplatHead extends SplatProbe {
   /// What a comment of a PLY names as the tool that made it, null when none does
   final String? tool;
 
-  /// A version 4 SPZ, compressed with ZSTD: the headset shows it whole or not at all
+  /// A version 4 SPZ, compressed with ZSTD: the headset does not read it (splatGateOf refuses it)
   bool get isZstd => format == SplatFormat.spz && formatVersion >= 4;
 
   @override
