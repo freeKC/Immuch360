@@ -110,6 +110,9 @@ object StreamingLoadControl {
  *
  * Also plays at once:
  * - a video whose link is not measured (a file of the device): [delegate] decides, as before;
+ * - a wait that begins with what [delegate] asks already buffered: the link did not run out, a decoder fell behind,
+ *   the picture got a new surface, or a seek landed inside the buffer (measured on an emulator, 31 October 2026: a
+ *   decoder that fell behind with 6.6 s buffered waited 30 s for the link each time, for 3 s of play);
  * - a buffer that holds all [delegate] lets it load (its bytes cap): nothing more would come;
  * - a play asked during a wait at the start, more than a second after it began: the user decides.
  */
@@ -190,20 +193,22 @@ class AdaptiveLoadControl(
     val now = clock()
     val samePosition =
       waitPositionUs != C.TIME_UNSET && abs(parameters.playbackPositionUs - waitPositionUs) < 1_000_000L
+    val delegateStarts = delegate.shouldStartPlayback(parameters)
     if (lastCallAt < 0 || now - lastCallAt > NEW_WAIT_GAP_MS || parameters.rebuffering != rebuffering || !samePosition) {
       waitStartedAt = now
       waitPositionUs = parameters.playbackPositionUs
       playAtWaitStart = parameters.playWhenReady
       rebuffering = parameters.rebuffering
       minimumAt = -1L
-      started = false
+      // Media3 asks only once its renderers are ready: a wait whose first ask finds what the delegate wants is not
+      // the link's, it plays as soon as the player can
+      started = delegateStarts
     }
     lastCallAt = now
     val bufferedMs = parameters.bufferedDurationUs / 1000L
     if (minimumAt < 0 && bufferedMs >= LinkStartRule.minimumMs(parameters.rebuffering)) {
       minimumAt = now
     }
-    val delegateStarts = delegate.shouldStartPlayback(parameters)
     if (!meter.isNetwork) {
       targetMs = 0L
       return delegateStarts
