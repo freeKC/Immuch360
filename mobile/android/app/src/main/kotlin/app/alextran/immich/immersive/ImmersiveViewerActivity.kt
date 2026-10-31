@@ -6683,7 +6683,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (currentVideoUrl == null) return
     when {
       p.isPlaying -> p.pause()
-      playbackAllowed() -> p.play()
+      playbackAllowed() -> {
+        // A film plays once (see WatchReport.loops): at its end Media3 ignores play, and Play starts it again from its
+        // beginning, as the player's own controls do (Util.handlePlayButtonAction). A kiosk shows its end card instead
+        if (p.playbackState == Player.STATE_ENDED && kiosk == null) p.seekTo(0L)
+        p.play()
+      }
       // Not in front: the press decides whether the video starts once the viewer is back, it never plays behind the
       // menu or in a headset nobody wears
       else -> playOnReturn = !playOnReturn
