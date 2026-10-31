@@ -20,16 +20,14 @@ import 'package:immich_mobile/providers/watch_progress.provider.dart';
 /// It holds the store object and the player, never a ref, so that it still saves as the page goes.
 class VideoWatchRecorder implements VideoPositionWatcher {
   VideoWatchRecorder({
-    required WatchProgressStore store,
-    required VideoPlayerNotifier player,
+    required this._store,
+    required this._player,
     required this.key,
     required this.rule,
     Duration? duration,
     this.onResumed,
-  }) : _store = store,
-       _player = player,
-       _knownDuration = duration != null && duration > Duration.zero ? duration : null {
-    _row = store.find(key);
+  }) : _knownDuration = duration != null && duration > Duration.zero ? duration : null {
+    _row = _store.find(key);
     final at = resumeAt(_row, rule: rule, duration: _knownDuration);
     _target = at > Duration.zero ? at : null;
   }
@@ -39,6 +37,13 @@ class VideoWatchRecorder implements VideoPositionWatcher {
 
   /// How near its target the position must be once it plays for the resume to have landed, see [onResumed]
   static const resumeTolerance = Duration(seconds: 3);
+
+  /// Longest a page waits for the rows of the database before it loads a video (see [storeReady])
+  static const storeWait = Duration(seconds: 2);
+
+  /// Completes once [store] holds the rows of its database, [storeWait] at most: a recorder made before would find no
+  /// row, and the film would start from the beginning. Read once at the start of the app, so at once ever after.
+  static Future<void> storeReady(WatchProgressStore store) => store.loaded.timeout(storeWait, onTimeout: () {});
 
   final WatchProgressStore _store;
   final VideoPlayerNotifier _player;
@@ -143,8 +148,9 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   }
 
   /// Saves where the video is, or [at]: a film only, once it played. [ended]: the player reached the end, which some
-  /// players report at 0; the last position it played at tells.
-  void _save({Duration? at, bool ended = false}) {
+  /// players report at 0; the last position it played at tells. [later]: right after the current frame, for a page
+  /// that goes, which may not change a provider while the widget tree is being taken down.
+  void _save({Duration? at, bool ended = false, bool later = false}) {
     final state = _last;
     if (!_played) {
       return;
@@ -157,7 +163,12 @@ class VideoWatchRecorder implements VideoPositionWatcher {
     if (ended && _lastPlayedPosition > position) {
       position = _lastPlayedPosition;
     }
-    _store.record(key, position: position, duration: duration);
+    final store = _store;
+    if (later) {
+      scheduleMicrotask(() => store.record(key, position: position, duration: duration));
+    } else {
+      store.record(key, position: position, duration: duration);
+    }
   }
 
   @override
@@ -181,12 +192,13 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   Duration resumePositionAfterExternalPlayer() =>
       _disposed ? Duration.zero : resumeAt(_store.find(key), rule: rule, duration: _knownDuration ?? _last?.duration);
 
-  /// The page goes, or loads another video: saves where it is, and follows the player no more
+  /// The page goes, or loads another video: saves where it is, right after the current frame, and follows the player
+  /// no more
   void dispose() {
     if (_disposed) {
       return;
     }
-    _save();
+    _save(later: true);
     _disposed = true;
     _timer?.cancel();
     _timer = null;

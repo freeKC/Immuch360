@@ -225,6 +225,8 @@ void main() {
       async.elapse(const Duration(seconds: 2));
       player.emit(position: minute * 31);
       recorder.dispose();
+      expect(saved(), isNull, reason: 'right after the frame the page goes in, not during it');
+      async.flushMicrotasks();
 
       expect(saved(), minute * 31);
       async.elapse(const Duration(seconds: 10));
