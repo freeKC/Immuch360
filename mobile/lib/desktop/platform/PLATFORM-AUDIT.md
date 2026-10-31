@@ -46,6 +46,7 @@ the gate is per desktop and is noted.
 | `lib/domain/services/sync_stream.service.dart:210` | Android media management | right |
 | `lib/domain/services/sync_stream.service.dart:217` | Android media management | right |
 | `lib/domain/services/sync_stream.service.dart:223` | Android media management | right |
+| `lib/domain/services/tiff_photos.dart:60` | Android has no TIFF decoder: the server's JPEG of a TIFF, the Dart decoder for the device and the shares (fix-tiff-android, 31 October 2026) | right: the computers keep their decoders (WIC on Windows, Core Graphics on macOS read TIFF; Linux keeps its folder library tile) |
 | `lib/domain/utils/cloud_id_resolver.dart:20` | iOS cloud ids | right |
 | `lib/domain/utils/migrate_cloud_ids.dart:32` | iOS cloud ids | right |
 | `lib/infrastructure/network/plex/plex_client.dart:184` | Plex platform header, else Platform.operatingSystem | right: "windows", "linux", "macos" |
