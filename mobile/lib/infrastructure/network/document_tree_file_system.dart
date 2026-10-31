@@ -1,5 +1,6 @@
 // A folder picked in the system picker of Android, read as a share: a DJI drone or a card reader plugged in over USB
-// (a USB drive), a DJI RC 2 or another phone in File transfer mode (MTP). The Kotlin side (DocumentTreePlugin) lists a
+// (a USB drive), a DJI RC 2 or another phone in File transfer mode (MTP), or a folder of the device itself chosen with
+// "Browse a folder" of On this device (NetworkSourceType.deviceFolder). The Kotlin side (DocumentTreePlugin) lists a
 // folder in one query and reads files at a position when they allow it; this side turns its document ids into the paths
 // of the shares, so that the browser tiles, the viewers, the media bridge and "Upload to Immich" work on it as they are.
 //
@@ -34,6 +35,24 @@ class DocumentTreeFileSystem implements NetworkFileSystem, NetworkThumbnailSourc
   /// Opens the folder of [source], a source of type [NetworkSourceType.documentTree]; no password
   static Future<NetworkFileSystem> open(NetworkSource source, String? password) async =>
       DocumentTreeFileSystem(source, DocumentTreeApi());
+
+  /// The folder of [source], a folder of this device (a source of type [NetworkSourceType.deviceFolder]): the same
+  /// reads, with the words of a folder rather than those of a drone when it goes or stops answering
+  factory DocumentTreeFileSystem.deviceFolder(
+    NetworkSource source,
+    DocumentTreeApi api, {
+    Duration readTimeout = const Duration(seconds: 90),
+  }) => DocumentTreeFileSystem(
+    source,
+    api,
+    unpluggedMessage: () => StaticTranslations.instance.device_folder_gone,
+    stalledMessage: () => StaticTranslations.instance.device_folder_not_answering,
+    readTimeout: readTimeout,
+  );
+
+  /// Opens the folder of [source], a source of type [NetworkSourceType.deviceFolder]; no password
+  static Future<NetworkFileSystem> openDeviceFolder(NetworkSource source, String? password) async =>
+      DocumentTreeFileSystem.deviceFolder(source, DocumentTreeApi());
 
   @override
   final NetworkSource source;

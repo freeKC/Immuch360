@@ -165,14 +165,30 @@ void main() {
         'plex',
         'tapo',
         'documentTree',
+        'deviceFolder',
       ]);
       expect(NetworkSourceType.values.where((type) => type.inLegacyList), [
         NetworkSourceType.smb,
         NetworkSourceType.webdav,
         NetworkSourceType.dlna,
       ]);
-      // A folder picked on the DJI drone page lives in memory only
-      expect(NetworkSourceType.values.where((type) => !type.isStored), [NetworkSourceType.documentTree]);
+      // A folder picked on the DJI drone page, and a folder of the device, live in memory only
+      expect(NetworkSourceType.values.where((type) => !type.isStored), [
+        NetworkSourceType.documentTree,
+        NetworkSourceType.deviceFolder,
+      ]);
+    });
+
+    test('a folder of the device found in a stored list is dropped, never read back', () {
+      final dropped = <Object?>[];
+      final stored = NetworkSource.decodeStored(
+        '[{"id":"tree:folder-0123","type":"deviceFolder","name":"Quest","host":"internal","share":"content://tree"}]',
+        onDropped: dropped.add,
+      );
+
+      expect(stored.sources, isEmpty);
+      expect(stored.unknown, isEmpty);
+      expect(dropped, hasLength(1));
     });
 
     test('a picked folder found in a stored list is dropped, never read back', () {

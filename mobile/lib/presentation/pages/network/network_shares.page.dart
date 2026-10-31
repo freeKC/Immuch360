@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/device_folder.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -38,6 +39,8 @@ String networkSourceAddress(NetworkSource source) {
     NetworkSourceType.tapo => 'tapo://${source.host}',
     // A folder picked on the DJI drone page: the volume or the device it is on
     NetworkSourceType.documentTree => 'usb://${source.name}',
+    // A folder of the device: where it is on its volume
+    NetworkSourceType.deviceFolder => deviceFolderPath(source.share) ?? source.name,
   };
 }
 
@@ -49,6 +52,7 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.plex => Icons.video_library_outlined,
   NetworkSourceType.tapo => Icons.videocam_outlined,
   NetworkSourceType.documentTree => Icons.usb_rounded,
+  NetworkSourceType.deviceFolder => Icons.folder_outlined,
 };
 
 /// The page that opens a source: its own pages for a camera, which is not browsed as folders; the browser at the start
@@ -59,7 +63,8 @@ PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.typ
   NetworkSourceType.smb ||
   NetworkSourceType.webdav ||
   NetworkSourceType.dlna ||
-  NetworkSourceType.plex => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
+  NetworkSourceType.plex ||
+  NetworkSourceType.deviceFolder => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
 };
 
 /// The page that edits a source; [focusCredentials] opens it on its password or token, after the server refused them
@@ -69,6 +74,8 @@ PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredential
   NetworkSourceType.tapo => CameraEditRoute(source: source),
   // Nothing to edit: the page picks another folder
   NetworkSourceType.documentTree => const DroneImportRoute(),
+  // Nothing to edit: On this device lists it, and removes it
+  NetworkSourceType.deviceFolder => const LocalAlbumsRoute(),
 };
 
 /// What the add sheet gives back for "Open a splat file", which picks a file rather than opening a page

@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/folder_contents.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -107,8 +108,8 @@ PageRouteInfo? networkFolderNeighbourRoute(String sourceId, NetworkFolderMedia? 
 /// The key of the page of a photo or a video of a share: one page, and one player, per file
 Key networkFilePageKey(String sourceId, String path) => ValueKey('network-file:$sourceId:$path');
 
-/// The folders and the photos and videos of a network share, from [path]: tap a folder to go into it, a photo or a
-/// video to open it. On a Meta Quest with Gaussian splats on, the .spz and .ply files that are splats come after them
+/// The folders and the photos and videos of a network share, or of a folder of this device chosen in On this device
+/// (NetworkSourceType.deviceFolder), from [path]: tap a folder to go into it, a photo or a video to open it. On a Meta Quest with Gaussian splats on, the .spz and .ply files that are splats come after them
 /// (see SplatFileGrid): neither previous nor next of a photo, never sent to the server. Files of other kinds are left
 /// out. A long press on a photo or a video, or the Select button, picks files to send to the Immich server.
 @RoutePage()
@@ -226,9 +227,10 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   Future<_Folder> _read() async {
     final connections = ref.read(networkConnectionsProvider);
     final fileSystem = await connections.fileSystem(widget.sourceId);
-    // Hidden entries (".DS_Store", "._IMG.JPG" resource forks, ".thumbnails") are not media of the share
-    final entries = (await fileSystem.list(widget.path)).where((entry) => !entry.name.startsWith('.')).toList();
-    final media = entries.where((entry) => entry.isMedia).toList();
+    // Hidden entries (".DS_Store", "._IMG.JPG" resource forks, ".thumbnails") and files of other kinds are left out, the
+    // same for every folder source (see FolderContents)
+    final contents = FolderContents.of(await fileSystem.list(widget.path));
+    final media = contents.media;
     final urls = <String, Uri>{};
     for (final entry in media) {
       urls[entry.path] = await connections.mediaUrl(widget.sourceId, entry.path);
@@ -237,9 +239,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       setState(() => _media = media);
     }
     // The platform is asked whether this is a Meta Quest only for a folder that holds .spz or .ply files
-    final candidates = entries.where((entry) => entry.isSplatCandidate).toList();
+    final candidates = contents.splatCandidates;
     final splats = candidates.isNotEmpty && await _splatsShown() ? candidates : const <NetworkEntry>[];
-    return (folders: entries.where((entry) => entry.isDirectory).toList(), media: media, urls: urls, splats: splats);
+    return (folders: contents.folders, media: media, urls: urls, splats: splats);
   }
 
   /// Whether the splats of other tools are listed (see networkSplatsEnabledProvider), once the platform told whether

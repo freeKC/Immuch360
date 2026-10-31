@@ -96,6 +96,7 @@ class FoundServersList extends StatelessWidget {
                         NetworkSourceType.tapo => context.t.network_share_scan_type_tapo,
                         // Never found on the network
                         NetworkSourceType.documentTree => context.t.dji_import_title,
+                        NetworkSourceType.deviceFolder => context.t.folders,
                       },
                 style: context.textTheme.labelMedium?.copyWith(
                   color: context.primaryColor,

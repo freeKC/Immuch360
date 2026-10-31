@@ -103,7 +103,8 @@ class DiscoveredServer {
       NetworkSourceType.smb ||
       NetworkSourceType.webdav ||
       NetworkSourceType.tapo ||
-      NetworkSourceType.documentTree => '',
+      NetworkSourceType.documentTree ||
+      NetworkSourceType.deviceFolder => '',
     },
   );
 

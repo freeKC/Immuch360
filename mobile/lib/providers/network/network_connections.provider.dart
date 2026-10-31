@@ -27,6 +27,7 @@ final networkFileSystemOpenersProvider = Provider<Map<NetworkSourceType, Network
     NetworkSourceType.plex: PlexFileSystem.open,
     NetworkSourceType.tapo: TapoFileSystem.open,
     NetworkSourceType.documentTree: DocumentTreeFileSystem.open,
+    NetworkSourceType.deviceFolder: DocumentTreeFileSystem.openDeviceFolder,
   };
 });
 
@@ -142,7 +143,8 @@ class NetworkConnections {
     bool isCurrent() => !_disposed && (_generations[sourceId] ?? 0) == generation;
 
     final sources = _ref.read(networkSourcesProvider.notifier);
-    // A folder picked on the DJI drone page lives among the import sources, without a password
+    // A folder picked on the DJI drone page, or a folder of the device, lives among the import sources, without a
+    // password
     final isImport = sourceId.startsWith(NetworkEntry.importSourcePrefix);
     final source = isImport ? _ref.read(importSourcesProvider)[sourceId] : sources.byId(sourceId);
     if (source == null) {
