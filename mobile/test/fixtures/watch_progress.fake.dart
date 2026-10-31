@@ -35,6 +35,11 @@ class FakeNativePlayer extends Fake implements NativeVideoPlayerController {
   final onError = ValueNotifier<String?>(null);
   @override
   final onTracksChanged = ChangeNotifier();
+  @override
+  final onLinkChanged = ValueNotifier<NativeVideoLink?>(null);
+
+  /// Whether the player starts where it is loaded, as Media3 does; iOS starts at 0 whatever it is asked
+  bool startsWhereLoaded = true;
 
   @override
   VideoSource? get videoSource => _source;
@@ -56,17 +61,19 @@ class FakeNativePlayer extends Fake implements NativeVideoPlayerController {
     return info;
   }
 
-  /// Loads [videoSource] at its start, as Media3's setMediaItem does: the position goes back to 0, and the position loop
-  /// of the plugin, running since the first ready, reports it before the player is ready again
+  /// Loads [videoSource] at its start, or at [startAt] (see [startsWhereLoaded]), as Media3's setMediaItem does: the
+  /// position goes there, and the position loop of the plugin, running since the first ready, reports it before the
+  /// player is ready again
   @override
-  Future<void> loadVideoSource(VideoSource videoSource) async {
-    calls.add('load');
+  Future<void> loadVideoSource(VideoSource videoSource, {Duration? startAt}) async {
+    calls.add(startAt == null ? 'load' : 'load at ${startAt.inMilliseconds}');
     _source = videoSource;
-    positionMs = 0;
-    if (onPlaybackPositionChanged.value == 0) {
+    final at = startsWhereLoaded ? startAt?.inMilliseconds ?? 0 : 0;
+    positionMs = at;
+    if (onPlaybackPositionChanged.value == at) {
       onPlaybackPositionChanged.notifyListeners();
     } else {
-      onPlaybackPositionChanged.value = 0;
+      onPlaybackPositionChanged.value = at;
     }
   }
 

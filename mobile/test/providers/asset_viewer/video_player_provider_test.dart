@@ -104,7 +104,7 @@ void main() {
     when(controller.play).thenAnswer((_) async {});
     when(controller.pause).thenAnswer((_) async {});
     when(controller.stop).thenAnswer((_) async {});
-    when(() => controller.loadVideoSource(any())).thenAnswer((_) async {});
+    when(() => controller.loadVideoSource(any(), startAt: any(named: 'startAt'))).thenAnswer((_) async {});
     when(() => controller.seekTo(any())).thenAnswer((_) async {});
     player = VideoPlayerNotifier()..attachController(controller);
   });
@@ -310,10 +310,36 @@ void main() {
     });
 
     group('the watch progress (a film resumed where it was left)', () {
-      test('seekWhenReady goes there at the first ready after the load, without playing', () async {
+      /// The native player reports the video ready at [ms], paused
+      void reportReadyAt(int ms) {
+        final playbackInfo = _MockPlaybackInfo();
+        when(() => playbackInfo.position).thenReturn(ms);
+        when(() => playbackInfo.status).thenReturn(PlaybackStatus.paused);
+        final videoInfo = _MockVideoInfo();
+        when(() => videoInfo.duration).thenReturn(120 * 60000);
+        when(() => controller.playbackInfo).thenReturn(playbackInfo);
+        when(() => controller.videoInfo).thenReturn(videoInfo);
+        player.onNativePlaybackReady();
+      }
+
+      test('seekWhenReady loads the film at its place, rather than at its start and then seeking there', () async {
         player.seekWhenReady(const Duration(minutes: 42));
         await player.load(serverSource);
+        verify(() => controller.loadVideoSource(serverSource, startAt: const Duration(minutes: 42))).called(1);
+
+        // Media3 starts there: the first ready is at the place already, no seek follows
+        reportReadyAt(42 * 60000);
+        await pumpEventQueue();
+
         verifyNever(() => controller.seekTo(any()));
+        verifyNever(controller.play);
+        expect(player.state.position, const Duration(minutes: 42));
+        expect(player.pendingRestorePosition, isNull);
+      });
+
+      test('a player that starts at its start anyway (iOS) is taken there once ready, once', () async {
+        player.seekWhenReady(const Duration(minutes: 42));
+        await player.load(serverSource);
 
         reportReady();
         await pumpEventQueue();
@@ -324,6 +350,24 @@ void main() {
         reportReady();
         await pumpEventQueue();
         verifyNever(() => controller.seekTo(any()));
+      });
+
+      test('taken back once loaded at its place, the caller takes the film back to its start', () async {
+        player.seekWhenReady(const Duration(minutes: 42));
+        await player.load(serverSource);
+
+        expect(player.cancelSeekWhenReady(), isFalse, reason: 'the player started at 42 min already');
+        reportReadyAt(42 * 60000);
+        await pumpEventQueue();
+        verifyNever(() => controller.seekTo(42 * 60000));
+      });
+
+      test('taken back before the load, the film loads at its start', () async {
+        player.seekWhenReady(const Duration(minutes: 42));
+        expect(player.cancelSeekWhenReady(), isTrue);
+        await player.load(serverSource);
+        verify(() => controller.loadVideoSource(serverSource)).called(1);
+        verifyNever(() => controller.loadVideoSource(any(), startAt: const Duration(minutes: 42)));
       });
 
       test('the position of an external player wins over it', () async {
@@ -470,65 +514,218 @@ void main() {
       expect(player.state.status, isNot(VideoPlaybackStatus.failed));
     });
 
-    test('fails when nothing played for the stall timeout while it loads', () {
-      fakeAsync((async) {
-        unawaited(player.load(serverSource));
-        async.elapse(const Duration(seconds: 1));
-        expect(player.state.status, VideoPlaybackStatus.buffering);
-
-        async.elapse(VideoPlayerNotifier.stallTimeout - const Duration(milliseconds: 100));
-        expect(player.state.status, VideoPlaybackStatus.buffering);
-
-        async.elapse(const Duration(milliseconds: 200));
-        expect(player.state.status, VideoPlaybackStatus.failed);
-        expect(player.failure, const VideoPlaybackFailure(VideoFailureKind.stalled));
-        player.dispose();
-      });
-    });
-
-    test('a stall ends by itself when the video plays after all', () {
-      fakeAsync((async) {
-        unawaited(player.load(serverSource));
-        async.elapse(const Duration(seconds: 1) + VideoPlayerNotifier.stallTimeout + const Duration(seconds: 1));
-        expect(player.state.status, VideoPlaybackStatus.failed);
-
-        reportPosition(500);
-
-        expect(player.state.status, VideoPlaybackStatus.playing);
-        expect(player.failure, isNull);
-        player.dispose();
-      });
-    });
-
-    test('a video that buffers a while and then plays again does not fail', () {
-      fakeAsync((async) {
-        unawaited(player.load(serverSource));
-        async.elapse(const Duration(seconds: 1));
-        for (var i = 1; i <= 6; i++) {
-          async.elapse(const Duration(seconds: 10));
-          // The native player reports its position every few milliseconds while it plays
-          reportPosition(i * 1000);
-          reportPosition(i * 1000 + 10);
-          expect(player.state.status, VideoPlaybackStatus.playing);
-          // The position stands still again: buffering after 1 s
-          async.elapse(const Duration(seconds: 2));
+    group('without anything told of the link (iOS)', () {
+      test('fails when nothing played for a minute while it loads', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
           expect(player.state.status, VideoPlaybackStatus.buffering);
-        }
-        player.dispose();
+
+          async.elapse(VideoPlayerNotifier.fallbackStallTimeout - const Duration(milliseconds: 100));
+          expect(player.state.status, VideoPlaybackStatus.buffering, reason: 'never at 20 s any more');
+
+          async.elapse(const Duration(milliseconds: 200));
+          expect(player.state.status, VideoPlaybackStatus.failed);
+          expect(player.failure, const VideoPlaybackFailure(VideoFailureKind.stalled));
+          player.dispose();
+        });
+      });
+
+      test('a stall ends by itself when the video plays after all', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(
+            const Duration(seconds: 1) + VideoPlayerNotifier.fallbackStallTimeout + const Duration(seconds: 1),
+          );
+          expect(player.state.status, VideoPlaybackStatus.failed);
+
+          reportPosition(500);
+
+          expect(player.state.status, VideoPlaybackStatus.playing);
+          expect(player.failure, isNull);
+          player.dispose();
+        });
+      });
+
+      test('a video that buffers a while and then plays again does not fail', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
+          for (var i = 1; i <= 6; i++) {
+            async.elapse(const Duration(seconds: 10));
+            // The native player reports its position every few milliseconds while it plays
+            reportPosition(i * 1000);
+            reportPosition(i * 1000 + 10);
+            expect(player.state.status, VideoPlaybackStatus.playing);
+            // The position stands still again: buffering after 1 s
+            async.elapse(const Duration(seconds: 2));
+            expect(player.state.status, VideoPlaybackStatus.buffering);
+          }
+          player.dispose();
+        });
+      });
+
+      test('a paused video never stalls', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 2));
+          unawaited(player.pause());
+          reportStatus(PlaybackStatus.paused);
+
+          async.elapse(VideoPlayerNotifier.fallbackStallTimeout * 2);
+
+          expect(player.state.status, VideoPlaybackStatus.paused);
+          player.dispose();
+        });
       });
     });
 
-    test('a paused video never stalls', () {
-      fakeAsync((async) {
-        unawaited(player.load(serverSource));
-        async.elapse(const Duration(seconds: 2));
-        unawaited(player.pause());
-        reportStatus(PlaybackStatus.paused);
+    group('with its link told (Android, the computers)', () {
+      late DateTime now;
+      final clock = VideoPlayerNotifier.clock;
 
-        async.elapse(VideoPlayerNotifier.stallTimeout * 2);
+      setUp(() {
+        now = DateTime(2026, 10, 31, 18);
+        VideoPlayerNotifier.clock = () => now;
+      });
 
-        expect(player.state.status, VideoPlaybackStatus.paused);
-        player.dispose();
+      tearDown(() => VideoPlayerNotifier.clock = clock);
+
+      /// What the native player tells of its link, twice a second
+      void tell({
+        bool waiting = true,
+        int? rate,
+        int? need,
+        int sinceProgressMs = 0,
+        int aheadMs = 0,
+        int targetMs = 1000,
+        bool rebuffering = false,
+      }) {
+        player.onNativeLinkChanged(
+          NativeVideoLink(
+            waiting: waiting,
+            rebuffering: rebuffering,
+            aheadMs: aheadMs,
+            bytesPerSecond: rate,
+            neededBytesPerSecond: need,
+            sinceProgressMs: sinceProgressMs,
+            targetMs: targetMs,
+            loading: true,
+            network: true,
+          ),
+        );
+      }
+
+      test('a slow link that keeps sending never fails, however long the wait (the 20 s rule of release 27)', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          // A 4K film at 30 Mbit/s over 2 Mbit/s (R4 of 31 October): the first frame comes after 27 s
+          for (var s = 0; s < 120; s++) {
+            async.elapse(const Duration(seconds: 1));
+            now = now.add(const Duration(seconds: 1));
+            tell(rate: 250000, need: 3750000, sinceProgressMs: 300, targetMs: 15000, aheadMs: s * 60);
+          }
+          expect(player.state.status, VideoPlaybackStatus.buffering);
+          expect(player.failure, isNull);
+          player.dispose();
+        });
+      });
+
+      test('thirty seconds without a byte while it waits is a link that stopped, cleared when bytes come back', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 2));
+          clearInteractions(controller);
+          tell(rate: 0, need: 1000000, sinceProgressMs: 29000);
+          expect(player.state.status, VideoPlaybackStatus.buffering);
+
+          tell(rate: 0, need: 1000000, sinceProgressMs: 30000);
+          expect(player.state.status, VideoPlaybackStatus.failed);
+          expect(player.failure, const VideoPlaybackFailure(VideoFailureKind.dead));
+          expect(player.link.value?.dead, isTrue);
+          verifyNever(controller.stop);
+
+          // The server answers again: the native player, which kept trying, plays on by itself
+          tell(rate: 2000000, need: 1000000, sinceProgressMs: 100);
+          expect(player.state.status, VideoPlaybackStatus.buffering);
+          expect(player.failure, isNull);
+          reportPosition(61000);
+          expect(player.state.status, VideoPlaybackStatus.playing);
+          verifyNever(() => controller.loadVideoSource(any(), startAt: any(named: 'startAt')));
+          player.dispose();
+        });
+      });
+
+      test('a video that plays from its buffer while the server is silent is not dead', () async {
+        await player.load(serverSource);
+        reportStatus(PlaybackStatus.playing, position: 1000);
+        tell(waiting: false, rate: 0, need: 1000000, sinceProgressMs: 45000);
+        expect(player.state.status, VideoPlaybackStatus.playing);
+      });
+
+      test('play on a dead video loads it again where it stopped', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
+          reportPosition(61000);
+          expect(player.state.status, VideoPlaybackStatus.playing);
+          tell(sinceProgressMs: 100, rebuffering: true);
+          tell(rate: 0, need: 1000000, sinceProgressMs: 30000, rebuffering: true);
+          expect(player.failure?.kind, VideoFailureKind.dead);
+          clearInteractions(controller);
+
+          unawaited(player.play());
+          async.flushMicrotasks();
+
+          verify(() => controller.loadVideoSource(serverSource, startAt: const Duration(seconds: 61))).called(1);
+          verify(controller.play).called(1);
+          player.dispose();
+        });
+      });
+
+      test('the clock of the fallback stays off once the link was told', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
+          tell(rate: 100000, need: 1000000, sinceProgressMs: 500);
+          async.elapse(VideoPlayerNotifier.fallbackStallTimeout * 2);
+          expect(player.state.status, VideoPlaybackStatus.buffering);
+          player.dispose();
+        });
+      });
+
+      test('the page reads the rates, the wait left, and a link too slow for the video once it was for 5 s', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
+          // 1.2 of the 3 Mbit/s the video needs: 0.4, the player waits for 15 s of media
+          tell(rate: 150000, need: 375000, aheadMs: 3000, targetMs: 15000);
+          final view = player.link.value!;
+          expect(view.bitsPerSecond, 1200000);
+          expect(view.neededBitsPerSecond, 3000000);
+          expect(view.showsRates, isTrue);
+          expect(view.startsIn, isNotNull);
+          expect(view.slow, isFalse, reason: 'measured for less than 5 s');
+
+          now = now.add(const Duration(seconds: 5));
+          tell(rate: 150000, need: 375000, aheadMs: 5000, targetMs: 15000);
+          expect(player.link.value!.slow, isTrue);
+
+          // The link keeps up: not slow, and the rates wait for a wait long enough to be noticed
+          tell(rate: 750000, need: 375000, aheadMs: 500, targetMs: 1000);
+          expect(player.link.value!.slow, isFalse);
+          player.dispose();
+        });
+      });
+
+      test('the native player waiting while it plays shows the spinner at once', () async {
+        await player.load(serverSource);
+        reportStatus(PlaybackStatus.playing, position: 1000);
+        expect(player.state.status, VideoPlaybackStatus.playing);
+
+        tell(rate: 100000, need: 1000000, rebuffering: true, targetMs: 30000);
+
+        expect(player.state.status, VideoPlaybackStatus.buffering);
       });
     });
   });
