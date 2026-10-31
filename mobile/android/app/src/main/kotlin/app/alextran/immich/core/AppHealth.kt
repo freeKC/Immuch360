@@ -133,7 +133,7 @@ object AppHealth {
         report(
           "exit",
           describeExit(
-            reason = reasonName(exit.reason),
+            reason = reasonName(exit.reason, exit.status),
             timestamp = exit.timestamp,
             description = exit.description,
             pssKb = exit.pss,
@@ -158,18 +158,37 @@ object AppHealth {
       reason == ApplicationExitInfo.REASON_INITIALIZATION_FAILURE ||
       reason == ApplicationExitInfo.REASON_DEPENDENCY_DIED
 
-  private fun reasonName(reason: Int): String =
+  /**
+   * The words for an end of [reason], with its [status] (ApplicationExitInfo.getStatus: the signal of an end by a
+   * signal). A signal 6 is an abort the process asked for itself (SIGABRT, a native library giving up, as the splat
+   * module does on a file it cannot read), not the low memory killer, whose signal is 9 (SIGKILL)
+   */
+  fun reasonName(reason: Int, status: Int = 0): String =
     when (reason) {
       ApplicationExitInfo.REASON_ANR -> "not responding (ANR)"
       ApplicationExitInfo.REASON_CRASH -> "crash"
       ApplicationExitInfo.REASON_CRASH_NATIVE -> "native crash"
       ApplicationExitInfo.REASON_LOW_MEMORY -> "killed for low memory"
-      ApplicationExitInfo.REASON_SIGNALED -> "killed by a signal (often the low memory killer)"
+      ApplicationExitInfo.REASON_SIGNALED -> signalName(status)
       ApplicationExitInfo.REASON_EXCESSIVE_RESOURCE_USAGE -> "killed for excessive resource use"
       ApplicationExitInfo.REASON_INITIALIZATION_FAILURE -> "failed to start"
       ApplicationExitInfo.REASON_DEPENDENCY_DIED -> "a process it depends on died"
       else -> "reason $reason"
     }
+
+  /** An end by the signal [signal] */
+  fun signalName(signal: Int): String =
+    when (signal) {
+      SIGABRT -> "a native abort (signal 6, SIGABRT): a native library stopped the app"
+      SIGKILL -> "killed by signal 9 (SIGKILL, often the low memory killer)"
+      SIGSEGV -> "a native crash (signal 11, SIGSEGV)"
+      0 -> "killed by a signal"
+      else -> "killed by signal $signal"
+    }
+
+  private const val SIGABRT = 6
+  private const val SIGKILL = 9
+  private const val SIGSEGV = 11
 
   /** The text of an end of the process, sizes in kB as ApplicationExitInfo gives them */
   fun describeExit(
