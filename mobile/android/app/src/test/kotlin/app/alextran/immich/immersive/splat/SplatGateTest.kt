@@ -9,8 +9,8 @@ import org.junit.Test
 /**
  * The gate of the splats in the headset (lot S5): Quest 3 and 3S only, the flavour with the splat module, the count
  * the headset takes (50 000 until measured, 150 000 with Large splats), the reduction beyond it within its limits,
- * the free memory and the heat; the version 4 of SPZ, which the module does not read, refused, versions 1 and 3
- * rewritten as version 2.
+ * the free memory and the heat; the version 4 of SPZ, which the module does not read, refused, every SPZ of versions 1
+ * to 3 rewritten as version 2.
  */
 class SplatGateTest {
   private val spz = SplatProbe.Spz(version = 3, gaussians = 47_819, shDegree = 0, fractionalBits = 12, flags = 0)
@@ -28,6 +28,8 @@ class SplatGateTest {
   ): SplatVerdict = SplatGate.check(engine, device, probe, fileBytes, cap, memory, thermal, freeSpace, copiesWhole)
 
   private fun spz(count: Long, version: Int = 3) = spz.copy(version = version, gaussians = count)
+
+  private fun ply(count: Long) = SplatProbe.Ply(count, 0, null, 400, 56, emptyList())
 
   @Test
   fun `a splat within the count opens whole on a Quest 3, a 3S and a headset this build does not know`() {
@@ -103,7 +105,7 @@ class SplatGateTest {
   }
 
   @Test
-  fun `an SPZ of version 1 or 3 shown whole is rewritten as version 2, and the cache must hold the copy`() {
+  fun `an SPZ of version 1, 2 or 3 shown whole is rewritten as version 2, and the cache must hold the copy`() {
     val reserve = SplatGate.CACHE_RESERVE_BYTES
     // Version 3: the copy is about the size of the file (a byte less a rotation), with the slack of a header
     val v3 = SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = false, rewrites = true)
@@ -117,8 +119,13 @@ class SplatGateTest {
       SplatGate.cacheBytesWritten(860, 686, null, copiesWhole = false, rewrites = true, growth = 1.5),
       1_290L + SplatGate.REDUCED_SLACK_BYTES,
     )
-    // Version 2 is read where it is: nothing written, no space asked
-    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = spz(47_819, version = 2), freeSpace = 0))
+    // Version 2 too, since a version 2 cut or short of its data aborts the module: the copy is about its size
+    val v2 = spz(47_819, version = 2)
+    assertEquals(1.0, SplatGate.rewriteGrowth(v2), 0.0)
+    assertEquals(SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE), check(probe = v2, freeSpace = v3 + reserve - 1))
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = v2, freeSpace = v3 + reserve))
+    // Only a PLY is read where it is: nothing written, no space asked
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = ply(47_819), freeSpace = 0))
     assertEquals(0L, SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = false, rewrites = false))
   }
 
@@ -169,14 +176,14 @@ class SplatGateTest {
       SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE),
       check(probe = big, fileBytes = 6_824_362, freeSpace = reduced + reserve - 1),
     )
-    // Shown whole where it is (an SPZ of version 2, which is not rewritten), nothing is written: no space asked
-    val v2 = spz(47_819, version = 2)
-    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = v2, freeSpace = 0))
+    // Shown whole where it is (a PLY, which is not rewritten), nothing is written: no space asked
+    val whole = ply(47_819)
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = whole, freeSpace = 0))
     // Copied whole under the name of its format: the file itself
     assertEquals(686_150L, SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = true))
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE),
-      check(probe = v2, freeSpace = 686_150 + reserve - 1, copiesWhole = true),
+      check(probe = whole, freeSpace = 686_150 + reserve - 1, copiesWhole = true),
     )
     assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(freeSpace = null, copiesWhole = true))
     // A download is weighed before it starts, unless its size is not known

@@ -33,11 +33,13 @@ internal sealed interface SplatPreparation {
  * (".spz", ".ply"), whatever the source was named ("SCENE.SPZ" too): a download of the viewer is renamed, a copy of the
  * cache is made of any other file.
  *
- * The module reads SPZ version 2 only and aborts the process on any other (SplatModuleFormat): an SPZ of version 1 or
- * 3 is always written again as version 2, reduced or whole, never handed over as it is. Whatever the preparation
- * gives the module, the source read where it is, a copy, a reduction or a rewrite, its head is read once more and must
- * be one the module reads, with the count expected ([SplatModuleFormat.check]): otherwise the splat stops with
- * [SplatRefusal.MODULE_CANNOT_READ] and the copy goes. Pure JVM, tested by SplatPreparerTest on the fixtures.
+ * The module reads SPZ version 2 only, and aborts the process on any other and on a version 2 cut or short of its data
+ * (SplatModuleFormat): every SPZ of versions 1 to 3 is always written again as version 2, reduced or whole, never
+ * handed over as it is; its source is read to its end, and a damaged one stops with SplatReadException (DAMAGED, "This
+ * splat file is damaged or incomplete"). Whatever the preparation gives the module, a PLY read where it is, a copy, a
+ * reduction or a rewrite, the whole of it is read once more and must be one the module reads, with the count expected
+ * ([SplatModuleFormat.checkWhole]): otherwise the splat stops with [SplatRefusal.MODULE_CANNOT_READ] and the copy
+ * goes. Pure JVM, tested by SplatPreparerTest on the fixtures.
  */
 internal object SplatPreparer {
   /**
@@ -85,7 +87,7 @@ internal object SplatPreparer {
     val keep = verdict.keep
     val shown = keep?.toLong() ?: head.gaussians
     if (keep != null || SplatModuleFormat.needsRewrite(head)) {
-      // Reduced, or an SPZ of version 1 or 3 rewritten whole as version 2
+      // Reduced, or an SPZ rewritten whole as version 2 (versions 1 to 3)
       val kept =
         if (keep != null) SplatReducer.select(scan.scores, keep)
         else BitSet(head.gaussians.toInt()).apply { set(0, head.gaussians.toInt()) }
@@ -123,11 +125,11 @@ internal object SplatPreparer {
   }
 
   /**
-   * [ready] when the file it gives the module is one the module reads, with [gaussians] in it; otherwise stopped with
-   * [SplatRefusal.MODULE_CANNOT_READ], its copy of the cache deleted (a file of the user stays)
+   * [ready] when the file it gives the module is one the module reads, the whole of it, with [gaussians] in it;
+   * otherwise stopped with [SplatRefusal.MODULE_CANNOT_READ], its copy of the cache deleted (a file of the user stays)
    */
   private fun guarded(ready: SplatPreparation.Ready, gaussians: Long): SplatPreparation {
-    val why = SplatModuleFormat.check(ready.file, gaussians) ?: return ready
+    val why = SplatModuleFormat.checkWhole(ready.file, gaussians) ?: return ready
     if (ready.owned) ready.file.delete()
     return SplatPreparation.Stopped(SplatVerdict.Refused(SplatRefusal.MODULE_CANNOT_READ), ready.head, why)
   }

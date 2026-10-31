@@ -83,7 +83,7 @@ void main() {
   });
 
   test('a version 4 SPZ is refused whatever its count: the splat module of the headset reads version 2 only', () {
-    // Measured on a Quest 3 on 31 October 2026: version 4 aborts the app; versions 1 and 3 are rewritten as version 2
+    // Measured on a Quest 3 on 31 October 2026: version 4 aborts the app; versions 1 to 3 are rewritten as version 2
     for (final count in [686, 60000, 9000000]) {
       final v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: count, shDegree: 0);
       expect(gate(probe: v4), const SplatGateVerdict.refused(SplatRefusal.spzV4), reason: '$count');

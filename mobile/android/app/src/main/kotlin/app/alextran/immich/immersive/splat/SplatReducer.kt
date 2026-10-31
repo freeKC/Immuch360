@@ -50,7 +50,10 @@ internal class SplatScan(val scores: FloatArray, val sampleIndices: IntArray, va
  *    format gives them (nianticlabs/spz, MIT): the float16 positions of version 1 as 24 bit fixed point with the
  *    fractional bits of its header, floor(v * 2^bits + 0.5); the rotations of version 3, 4 bytes of "smallest three",
  *    as the 3 bytes of version 2 (the quaternion normalised, w made positive, x, y, z as floor(q * 127.5 + 128)).
- *    Everything else is copied byte for byte. A version 4 SPZ (ZSTD) is not read here: the gate refuses it.
+ *    Everything else is copied byte for byte. The source is then read to the end of its gzip stream, so that the CRC
+ *    and the length of each member are checked: a source cut, short of its data or damaged stops with
+ *    [SplatFileProblem.DAMAGED], and the module only ever gets one clean member written here. A version 4 SPZ (ZSTD)
+ *    is not read here: the gate refuses it.
  *
  * Two readings of the file in streams, never the file in memory: the scores (4 bytes a gaussian) and, for an SPZ, its
  * opacities (1 byte a gaussian) are what stays. The heuristic is a first one, to be judged in the headset; it is the
@@ -205,7 +208,7 @@ internal object SplatReducer {
   /**
    * Writes the gaussians of [input] (a file whose head is [head]) that [kept] holds into [out], in the same format
    * (an SPZ as version 2, see the top of this object); [out] is flushed, not closed. [kept] may hold every gaussian:
-   * an SPZ of version 1 or 3 is rewritten whole so
+   * every SPZ of versions 1 to 3 is rewritten whole so, its source read to its end
    */
   fun write(
     input: InputStream,
@@ -249,6 +252,9 @@ internal object SplatReducer {
             copyKept(reader, gzip, count, 3, kept, cancelled)
           }
           if (head.shBytes > 0) copyKept(reader, gzip, count, head.shBytes, kept, cancelled)
+          // The rest of the source, to the end of its gzip stream: extensions or bytes past the data are not copied,
+          // but a cut trailer or a wrong CRC means the points read may not be those that were written
+          reader.drain(cancelled)
           gzip.finish()
           gzip.flush()
         }
@@ -411,7 +417,7 @@ internal object SplatReducer {
           try {
             input.read(buffer, read, count - read)
           } catch (e: IOException) {
-            throw SplatReadException(SplatFileProblem.DAMAGED, "stream damaged: ${e.message}")
+            throw SplatReadException(SplatFileProblem.DAMAGED, "stream damaged: ${e.message ?: e.javaClass.simpleName}")
           }
         if (n < 0) throw SplatReadException(SplatFileProblem.DAMAGED, "the file ends too early")
         read += n
@@ -425,6 +431,22 @@ internal object SplatReducer {
         val n = minOf(left, scratch.size.toLong()).toInt()
         read(scratch, n)
         left -= n
+      }
+    }
+
+    /** Reads what is left to the end of the stream; damaged as [read] is when the stream fails before its end */
+    fun drain(cancelled: () -> Boolean) {
+      val scratch = ByteArray(1 shl 16)
+      while (true) {
+        if (cancelled()) throw SplatCancelledException()
+        val n =
+          try {
+            input.read(scratch, 0, scratch.size)
+          } catch (e: IOException) {
+            val why = e.message ?: e.javaClass.simpleName
+            throw SplatReadException(SplatFileProblem.DAMAGED, "stream damaged after the data: $why")
+          }
+        if (n < 0) return
       }
     }
   }

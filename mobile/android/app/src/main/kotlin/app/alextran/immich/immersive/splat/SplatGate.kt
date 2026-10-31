@@ -23,8 +23,8 @@ internal enum class SplatRefusal {
 
   /**
    * A version 4 SPZ (ZSTD streams), whatever its count: the splat module of the headset reads version 2 only and
-   * aborts the process on any other (measured on a Quest 3 on 31 October 2026); the viewer rewrites versions 1 and 3
-   * as version 2, but does not read ZSTD
+   * aborts the process on any other (measured on a Quest 3 on 31 October 2026); the viewer rewrites every SPZ of
+   * versions 1 to 3 as version 2, but does not read ZSTD
    */
   SPZ_V4,
 
@@ -72,8 +72,8 @@ internal sealed interface SplatVerdict {
  *    the Quest 3S panther, and a headset this build does not know, as the scenes take it).
  * 3. The file: what the probe refused keeps its reason ([SplatHeader]).
  * 4. The version of an SPZ: a version 4 (ZSTD, which this build does not decompress) is refused whatever its count,
- *    since the module reads version 2 only and aborts the process on any other; versions 1 and 3 are rewritten as
- *    version 2 by the preparation ([SplatModuleFormat], [SplatReducer]).
+ *    since the module reads version 2 only and aborts the process on any other; every SPZ of versions 1 to 3 is
+ *    rewritten as version 2 by the preparation, version 2 included ([SplatModuleFormat], [SplatReducer]).
  * 5. The heat: THERMAL_STATUS_SEVERE or worse refused, as for the scenes.
  * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] until a measure in the headset, [LARGE_GAUSSIANS]
  *    with Large splats, never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to
@@ -165,7 +165,7 @@ internal object SplatGate {
   /**
    * How much larger a copy of [head] rewritten as version 2 may be than its source: the positions of version 1 take
    * 9 bytes instead of 6 (at most 19 bytes instead of 16 a point, compressed alike, taken as 1.5); version 3 loses a
-   * byte of each rotation (1); anything else is not rewritten (1)
+   * byte of each rotation (1); version 2 is the same data again (1); a PLY is not rewritten (1)
    */
   fun rewriteGrowth(head: SplatHead): Double =
     if (head is SplatProbe.Spz && head.version == 1) 1.5 else 1.0
@@ -185,7 +185,7 @@ internal object SplatGate {
 
   /**
    * The bytes the preparation writes into the cache: the reduced copy, else the whole file rewritten as version 2
-   * ([rewrites], an SPZ of version 1 or 3, larger by [growth]), else the whole file when it is copied under the name
+   * ([rewrites], an SPZ of versions 1 to 3, larger by [growth]), else the whole file when it is copied under the name
    * of its format ([copiesWhole]), else nothing
    */
   fun cacheBytesWritten(
@@ -211,8 +211,8 @@ internal object SplatGate {
    * The verdict for [probe], a file of [fileBytes], on the headset [device] with the splat module when [engine], at
    * most [cap] gaussians (the maxGaussians of the request); [availableMemory], [thermalStatus] and [freeCache] (the
    * free space of the cache) null when unknown; [copiesWhole] when the file is copied whole under the name of its
-   * format before the module reads it. An SPZ of version 1 or 3 is always written again as version 2, reduced or
-   * whole (SplatModuleFormat.needsRewrite), and the cache must hold that copy
+   * format before the module reads it. Every SPZ of versions 1 to 3 is written again as version 2, reduced or whole
+   * (SplatModuleFormat.needsRewrite), and the cache must hold that copy
    */
   fun check(
     engine: Boolean,
@@ -232,7 +232,7 @@ internal object SplatGate {
         is SplatProbe.Refused -> return SplatVerdict.Refused(refusalOf(probe.problem))
         is SplatHead -> probe
       }
-    // The module reads SPZ version 2 only and aborts on any other: versions 1 and 3 are rewritten, ZSTD is not read
+    // The module reads SPZ version 2 only and aborts on any other: versions 1 to 3 are rewritten, ZSTD is not read
     if (head is SplatProbe.Spz && head.isZstd) return SplatVerdict.Refused(SplatRefusal.SPZ_V4)
     if (thermalStatus != null && thermalStatus >= THERMAL_STATUS_SEVERE) {
       return SplatVerdict.Refused(SplatRefusal.TOO_WARM)

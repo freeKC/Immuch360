@@ -18,6 +18,7 @@ class SplatWiringTest {
   private val stage by lazy { source("src/main/kotlin/app/alextran/immich/immersive/splat/SplatStage.kt") }
   private val quest by lazy { source("src/quest/kotlin/app/alextran/immich/immersive/splat/SplatEngines.kt") }
   private val activity by lazy { source("src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt") }
+  private val preparer by lazy { source("src/main/kotlin/app/alextran/immich/immersive/splat/SplatPreparer.kt") }
 
   @Test
   fun `every pose reaches the module through modulePose, once`() {
@@ -70,6 +71,16 @@ class SplatWiringTest {
       "return",
       "engine.create(",
     )
+  }
+
+  @Test
+  fun `the preparation checks the whole of the file it gives, off the main thread, and the stage its head`() {
+    // SplatPreparer runs on Dispatchers.IO: it reads the whole file (SplatModuleFormat.checkWhole); the stage, on the
+    // main thread just before the entity, reads its head again
+    assertTrue(bodyOf(preparer, "private fun guarded(").contains("SplatModuleFormat.checkWhole(ready.file, gaussians)"))
+    assertFalse(preparer.contains("SplatModuleFormat.check("))
+    assertTrue(bodyOf(stage, "private fun start(").contains("SplatModuleFormat.check(splat.prepared.file, expected)"))
+    assertFalse(stage.contains("checkWhole"))
   }
 
   @Test

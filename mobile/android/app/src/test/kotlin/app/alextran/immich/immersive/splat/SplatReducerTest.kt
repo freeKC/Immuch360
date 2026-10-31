@@ -231,6 +231,31 @@ class SplatReducerTest {
   }
 
   @Test
+  fun `a rewrite reads its source to the end of its gzip stream, a trailer cut or a wrong CRC is damaged`() {
+    // The module would read the copy written by the viewer, whole and clean; the source, though, is damaged, and its
+    // points may not be what was written: said as such rather than shown
+    val source = SplatFixtures.bytes("turns_v2.spz")
+    val head = head("turns_v2.spz")
+    val cut = source.copyOf(source.size - 4)
+    val crc = source.copyOf().also { it[it.size - 8] = (it[it.size - 8].toInt() xor 0xff).toByte() }
+    for ((what, bytes) in listOf("trailer cut" to cut, "wrong CRC" to crc)) {
+      try {
+        SplatReducer.write(ByteArrayInputStream(bytes), head, all(40), ByteArrayOutputStream())
+        fail(what)
+      } catch (e: SplatReadException) {
+        assertEquals(what, SplatFileProblem.DAMAGED, e.problem)
+      }
+    }
+    // A reduction reads it to its end too
+    try {
+      SplatReducer.write(ByteArrayInputStream(crc), head, java.util.BitSet().apply { set(0, 10) }, ByteArrayOutputStream())
+      fail("reduced")
+    } catch (e: SplatReadException) {
+      assertEquals(SplatFileProblem.DAMAGED, e.problem)
+    }
+  }
+
+  @Test
   fun `a stream cut short or a cancelled reading stops with its reason`() {
     val bytes = SplatFixtures.bytes("axes.ply")
     val source = head("axes.ply")

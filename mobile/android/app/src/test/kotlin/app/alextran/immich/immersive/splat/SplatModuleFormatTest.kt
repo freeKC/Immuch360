@@ -1,7 +1,10 @@
 package app.alextran.immich.immersive.splat
 
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -12,7 +15,8 @@ import org.junit.Test
 
 /**
  * What the splat module reads, as measured on a Quest 3 on 31 October 2026: SPZ version 2 and the PLY the probe takes;
- * versions 1 and 3 rewritten first, version 4 never handed over, and the last check of the file the module gets.
+ * every SPZ of versions 1 to 3 rewritten first, version 4 never handed over, and the last checks of the file the
+ * module gets, its head and, off the main thread, the whole of it.
  */
 class SplatModuleFormatTest {
   private val folder: File = Files.createTempDirectory("splat-module").toFile()
@@ -41,13 +45,49 @@ class SplatModuleFormatTest {
   }
 
   @Test
-  fun `versions 1 and 3 are rewritten, version 2 and PLY read as they are, version 4 not at all`() {
+  fun `every SPZ of versions 1 to 3 is rewritten, version 2 too, a PLY read as it is, version 4 not at all`() {
     assertTrue(SplatModuleFormat.needsRewrite(probe("axes_v1.spz") as SplatHead))
     assertTrue(SplatModuleFormat.needsRewrite(probe("axes_v3.spz") as SplatHead))
-    assertFalse(SplatModuleFormat.needsRewrite(probe("axes_v2.spz") as SplatHead))
+    // A version 2 cut or short of its data aborts the module as surely as a version 3: it is written again too
+    assertTrue(SplatModuleFormat.needsRewrite(probe("axes_v2.spz") as SplatHead))
+    assertTrue(SplatModuleFormat.needsRewrite(probe("turns_v2.spz") as SplatHead))
     assertFalse(SplatModuleFormat.needsRewrite(probe("axes.ply") as SplatHead))
     assertFalse(SplatModuleFormat.needsRewrite(probe("axes_v4.spz") as SplatHead))
   }
+
+  @Test
+  fun `the whole check reads an SPZ to its end, one gzip member holding the data of version 2, nothing more or less`() {
+    fun write(name: String, bytes: ByteArray): File = File(folder, name).apply { writeBytes(bytes) }
+    val payload = GZIPInputStream(SplatFixtures.file("turns_v2.spz").inputStream()).use { it.readBytes() }
+    val whole = gzip(payload)
+    assertNull(SplatModuleFormat.checkWhole(write("a.spz", whole), 40))
+    assertNull(SplatModuleFormat.checkWhole(SplatFixtures.file("axes_v2.spz").copyTo(File(folder, "b.spz")), 686))
+    // A PLY: its head, its rows within the file
+    assertNull(SplatModuleFormat.checkWhole(SplatFixtures.file("axes.ply").copyTo(File(folder, "c.ply")), 686))
+    val refused =
+      mapOf(
+        "a stream cut" to whole.copyOf(whole.size - 30),
+        "the trailer cut" to whole.copyOf(whole.size - 4),
+        "a wrong CRC" to whole.copyOf().also { it[it.size - 8] = (it[it.size - 8].toInt() xor 0xff).toByte() },
+        "a wrong length in the trailer" to whole.copyOf().also { it[it.size - 4] = (it[it.size - 4] + 1).toByte() },
+        "short of its data" to gzip(payload.copyOf(payload.size - 10)),
+        "more data than its head says" to gzip(payload + ByteArray(9)),
+        "two members" to gzip(payload.copyOf(16)) + gzip(payload.copyOfRange(16, payload.size)),
+        "bytes after the member" to whole + ByteArray(20),
+        "the flag of extensions" to gzip(payload.copyOf().also { it[14] = 2 }),
+        "version 3" to SplatFixtures.bytes("turns_v3.spz"),
+      )
+    for ((what, bytes) in refused) {
+      assertNotNull(what, SplatModuleFormat.checkWhole(write("d.spz", bytes), 40))
+    }
+    // And all that the head check refuses
+    assertNotNull(SplatModuleFormat.checkWhole(write("e.spz", whole), 41))
+    assertNotNull(SplatModuleFormat.checkWhole(write("f.ply", whole), 40))
+    assertEquals("no file", SplatModuleFormat.checkWhole(File(folder, "gone.spz"), 40))
+  }
+
+  private fun gzip(payload: ByteArray): ByteArray =
+    ByteArrayOutputStream().also { out -> GZIPOutputStream(out).use { it.write(payload) } }.toByteArray()
 
   @Test
   fun `the last check refuses what the module would abort on, and a file that is not what was prepared`() {

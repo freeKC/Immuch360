@@ -4,9 +4,10 @@
 // only and is in the APK of the quest flavour only; the count the headset shows is 50 000 gaussians until a measure
 // in the headset, 150 000 with Large splats (the advice of the SDK), and a splat that holds more is reduced in the
 // headset up to 4 million gaussians and 1 GiB. The splat module reads SPZ version 2 only and aborts the app on any
-// other (measured on a Quest 3 on 31 October 2026): the headset rewrites versions 1 and 3 as version 2, and a version
-// 4 SPZ (ZSTD, which the app does not read) is refused whatever its count. The immersive viewer checks again
-// (SplatGate.kt), with the free memory and the heat of the headset.
+// other (measured on a Quest 3 on 31 October 2026): the headset writes every SPZ of versions 1 to 3 again as version 2
+// (a version 2 cut or short of its data aborts it too), and a version 4 SPZ (ZSTD, which the app does not read) is
+// refused whatever its count. The immersive viewer checks again (SplatGate.kt), with the free memory and the heat of
+// the headset.
 
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
@@ -108,7 +109,7 @@ SplatGateVerdict splatGateOf({
     case final SplatHead read:
       head = read;
   }
-  // The splat module reads SPZ version 2 only: versions 1 and 3 are rewritten in the headset, ZSTD is not read
+  // The splat module reads SPZ version 2 only: versions 1 to 3 are rewritten in the headset, ZSTD is not read
   if (head.isZstd) {
     return const SplatGateVerdict.refused(SplatRefusal.spzV4);
   }
