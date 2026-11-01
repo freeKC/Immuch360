@@ -14,9 +14,20 @@ const _wakelockChannel = 'dev.flutter.pigeon.wakelock_plus_platform_interface.Wa
 
 /// The page player, moved by the test as the native player would
 class _ScriptedPlayer extends VideoPlayerNotifier {
+  VideoPlaybackFailure? _scriptedFailure;
+
   void set({Duration? position, VideoPlaybackStatus? status}) {
     state = state.copyWith(position: position ?? state.position, status: status ?? state.status);
   }
+
+  /// The video fails for [failure], as the notifier does
+  void fail(VideoPlaybackFailure failure) {
+    _scriptedFailure = failure;
+    set(status: VideoPlaybackStatus.failed);
+  }
+
+  @override
+  VideoPlaybackFailure? get failure => state.status == VideoPlaybackStatus.failed ? _scriptedFailure : null;
 }
 
 void main() {
@@ -124,6 +135,27 @@ void main() {
     player.set(status: VideoPlaybackStatus.completed);
     await tester.pump(const Duration(seconds: 2));
     expect(indicator, findsNothing);
+  });
+
+  testWidgets('says the video is not loading after a minute without a frame where no link is told (iOS)', (
+    tester,
+  ) async {
+    await pumpIndicator(tester);
+    player.set(status: VideoPlaybackStatus.buffering);
+    await tester.pump();
+    // The fallback of a player that tells nothing of its link (review of 1 November 2026: the box hid, and the page
+    // showed a still picture with no word)
+    player.fail(const VideoPlaybackFailure(VideoFailureKind.stalled));
+    await tester.pump();
+    expect(find.text('This video is not loading'), findsOneWidget);
+    expect(find.text('Nothing of it played for a minute. It plays on as soon as it loads'), findsOneWidget);
+
+    // It plays after all: the words go
+    player.set(position: const Duration(milliseconds: 100), status: VideoPlaybackStatus.playing);
+    await tester.pump();
+    expect(find.text('This video is not loading'), findsNothing);
+
+    await pauseAtEnd(tester);
   });
 
   testWidgets('shows while the page player reports buffering', (tester) async {

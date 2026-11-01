@@ -14,7 +14,8 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 /// plays, or the native player waiting; the indicator hides as soon as the position moves again, or when the video
 /// pauses or ends. [loading] shows it too, before the native player is ready. With the [link] of the player (see
 /// VideoLinkView): what the share brings against what the video needs, that it will pause now and then when the share
-/// is too slow for it, and that the share stopped sending, the video playing on by itself once it answers.
+/// is too slow for it, and that the share stopped sending, the video playing on by itself once it answers. Where the
+/// player tells nothing of its link (iOS), that nothing played for a minute.
 class NetworkVideoBufferingIndicator extends ConsumerStatefulWidget {
   const NetworkVideoBufferingIndicator({super.key, required this.playerKey, this.loading = false, this.link});
 
@@ -120,18 +121,40 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
   }
 
   Widget _box(BuildContext context, VideoPlaybackStatus status, VideoLinkView? view) {
-    final dead = status == VideoPlaybackStatus.failed && (view?.dead ?? false);
+    final failure = status == VideoPlaybackStatus.failed
+        ? ref.read(videoPlayerProvider(widget.playerKey).notifier).failure?.kind
+        : null;
+    final dead = failure == VideoFailureKind.dead || (status == VideoPlaybackStatus.failed && (view?.dead ?? false));
+    // Nothing played for a minute where the player tells nothing of its link (iOS): said here too, the page has no
+    // other word for it (review of 1 November 2026: a still picture with no word)
+    final stalled = failure == VideoFailureKind.stalled;
     final visible =
-        dead || widget.loading || status == VideoPlaybackStatus.buffering || (_stalled && _isPlaying(status));
+        dead ||
+        stalled ||
+        widget.loading ||
+        status == VideoPlaybackStatus.buffering ||
+        (_stalled && _isPlaying(status));
     if (!visible) {
       return const SizedBox.shrink();
     }
     final t = context.t;
     final locale = context.locale.toLanguageTag();
     final lines = <String>[
-      if (dead) ...[t.video_link_stopped_share, t.video_link_resumes_share] else '${t.video_buffering_simple}…',
-      if (!dead) ?videoLoadingText(view, t, locale: locale),
-      if (!dead && view != null && view.slow && view.bitsPerSecond != null && view.neededBitsPerSecond != null)
+      if (dead) ...[
+        t.video_link_stopped_share,
+        t.video_link_resumes_share,
+      ] else if (stalled) ...[
+        t.video_stalled_title,
+        t.video_stalled_no_progress,
+      ] else
+        '${t.video_buffering_simple}…',
+      if (!dead && !stalled) ?videoLoadingText(view, t, locale: locale),
+      if (!dead &&
+          !stalled &&
+          view != null &&
+          view.slow &&
+          view.bitsPerSecond != null &&
+          view.neededBitsPerSecond != null)
         t.video_slow_share(
           got: formatBitRate(view.bitsPerSecond!, t, locale: locale),
           need: formatBitRate(view.neededBitsPerSecond!, t, locale: locale),
