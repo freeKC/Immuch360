@@ -20,7 +20,7 @@ Lamedad, 360° ja 3D fotod ja videod sinu seadmest, sinu NAS-ist, sinu Immich-se
 <summary><b>Sisukord</b></summary>
 
 - [Kellele see on](#who-it-is-for)
-- [Millised ekraanid](#which-screens) ja [mida iga ekraan teeb](#what-each-screen-does)
+- [Millised ekraanid](#which-screens), [mida need koos teevad](#use-cases) ja [mida iga ekraan teeb](#what-each-screen-does)
 - [Mida saad teha](#what-you-can-do)
 - [Hangi see oma seadmesse](#get-it-on-your-device)
 - [Kuidas teha](#how-to)
@@ -60,6 +60,7 @@ Lamedad, 360° ja 3D fotod ja videod sinu seadmest, sinu NAS-ist, sinu Immich-se
 - **Sa kasutad Immichit** ja tahad selle rakendust, pluss kaasahaaravaid vaatureid ja suuri ekraane, kuhu logid sisse telefonist: [sinu Immichi kogu](#keep-your-immich-library-with-more), [võrdlus Immichiga](#compared-with-immich).
 - **Sa valvad oma kodu Tapo kaameratega** ja tahad neid oma fotode kõrval, ka teleris (kontrollitud simuleeritud kaamera vastu): [kodukaamerad](#watch-your-home-cameras-on-the-big-screen).
 - **Sa lennutad DJI drooni** ja tahad selle otsepilti oma telefonis ilma DJI Flyta, ning Meta Questis või Android TV-s oma kaaslaste jaoks (katseline): [sinu droon](#see-what-your-drone-sees-on-your-phone).
+- **Sul on kodus mitu ekraani** ja tahad, et need töötaksid koos: [mida sinu ekraanid koos teevad](#use-cases).
 
 Immuch360 kontot pole vaja luua ja meile ei lähe midagi: rakendus suhtleb ainult sinu seadmete ja sinu valitud serveritega ning laadib TI-komponendi alla ainult siis, kui sa seda palud.
 
@@ -86,6 +87,111 @@ Immuch360 kontot pole vaja luua ja meile ei lähe midagi: rakendus suhtleb ainul
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seitse päris Immuch360 ekraanipilti kahes reas: keravaatur Androidi telefonis, 360° foto iPadis, 360° foto Google TV-s ja LG teleris, seejärel fotode ajajoon Samsungi teleris, rakenduse aken Meta Quest 3-s ja videopleier Windowsis. LG ja Samsungi ekraanipildid tehti brauseris, mis asendab telerit">
 </p>
+
+<a id="use-cases"></a>
+### Mida sinu ekraanid koos teevad
+
+Paigalda Immuch360 igale ekraanile, millelt vaatad: igaüks loeb sinu allikaid ise ja mõni annab pildi, faili või sisselogimise teisele edasi. Igal pildil märgib Immuch360 ikoon seadmeid, milles rakendus töötab.
+
+#### Sinu NAS igal ekraanil
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Illustratsioon rakenduse päris ekraanipiltidega: NAS riiulil elutoas hämaruses, ühendatud telefoni, tahvelarvuti, teleri, peakomplekti ja sülearvutiga; NAS toidab iga ekraani ja igaühes töötab Immuch360">
+</p>
+
+**Sul on vaja:** NAS-i SMB- või WebDAV-jagamisega ja Immuch360 igal ekraanil, millelt vaatad.
+
+Lisa jagamine igal ekraanil ja igaüks mängib fotosid ja videoid sealt, kus need asuvad, midagi kopeerimata: telefonid, tahvelarvutid, Android TV, Meta Quest, Windowsi, Linuxi ja macOS-i arvutid ning sinu Immichi serverisse sisse logitud LG telerid (SMB alates webOS 22-st). 360° foto pöörleb telefonis ja teleris kerana ning ümbritseb sind peakomplektis. Kuidas teha: [Mängi NAS-i, arvuti, meediaserveri või Plexi faile](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Sinu Immichi server igal ekraanil, sisse logitud sinu telefonist
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: koduserver, mis on ühendatud käes hoitava telefoni, teleri, peakomplekti ja sülearvutiga, igaühes töötab Immuch360; katkendjoon näitab, kuidas Android-telefon logib ülejäänud kolm sisse">
+</p>
+
+**Sul on vaja:** Immichi serverit, Immuch360 oma Android-telefonis ja Immuch360 ekraanidel, mida sisse logid: Android TV, Meta Quest, Windowsi, Linuxi või macOS-i arvuti.
+
+Telefonis säilitab Immuch360 kogu Immichi mobiilirakenduse, lisab oma 360°, VR180 ja 3D vaaturid ning paigaldub ametliku rakenduse kõrvale. Sinu serverisse sisse logituna logib see suured ekraanid sisse: see skannib teleri või arvuti QR-koodi või sisestad sa sellesse koodi, mida peakomplekt näitab, ja sinu parool jääb telefoni. Kuidas teha: [Logi teleris, peakomplektis või arvutis sisse telefoniga](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Sinu tavalised fotod 3D-s, arvutist peakomplekti (katseline)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustratsioon rakenduse päris ekraanipildiga: sülearvuti, milles töötab Immuch360, prinditud fotode ja NAS-i kõrval, ning tagantvaates inimene peakomplektiga, milles töötab Immuch360, ühe neist maastikest ees, mis seisab reljeefselt">
+</p>
+
+**Sul on vaja:** Immuch360 Windowsi, Linuxi või macOS-i arvutis ja Meta Questis, nende vahel sinu NAS või sinu Immichi server, kus on sisse lülitatud "Varunda ka TI-versioonid".
+
+Arvuti ise muudab sinu fotod 3D fotodeks ja 3D stseenideks ning Windowsis või Linuxis 8 GB graafikakaardiga 360° panoraamideks ja salvestab need originaalide kõrvale. Peakomplekt näitab 3D fotot tõelises 3D-s, paneb stseeni sinu tuppa ja panoraami kõikjale sinu ümber; telefonid ja telerid avavad panoraamid oma 360° vaaturis. Kuidas teha: [Muuda üks foto 3D-ks, stseeniks, panoraamiks](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Sinu drooni otsepilt peakomplektis või teleris (katseline)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: terrassil hämaruses lennutab tagantvaates piloot drooni, telefon puldil; telefon edastab otsepilti, ainult ühes suunas, peakomplekti ja telerisse">
+</p>
+
+**Sul on vaja:** DJI drooni ja selle DJI RC-N3 pulti, Immuch360 puldiga ühendatud Android-telefonis ning Immuch360 Meta Questis või Android TV-s.
+
+Telefon näitab drooni otsevideot ja edastab seda sinu Wi-Fi või oma kuumkoha kaudu, nii et sinu kaaslased vaatavad lendu peakomplektis või teleris. Ainult vastuvõtt: puldile ega droonile ei saadeta kunagi ühtegi käsku ja pult jääb täielikult juhtima. Kuidas teha: [Vaata seda Meta Questis või Android TV-s](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Sinu 360° kaamera toorfailid, kokku õmmeldud seal, kus neid vaatad
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: 360° kaamera, selle mälukaart ja NAS terrassilaual; failid lähevad NAS-i, seejärel tahvelarvutisse, telerisse ja peakomplekti, milles töötab Immuch360 ja mis need kokku õmblevad">
+</p>
+
+**Sul on vaja:** Insta360, GoPro MAX või DJI Osmo 360 kaamerat, oma NAS-i ja Immuch360 ekraanidel: telefonid, tahvelarvutid, Android TV, Meta Quest, Windows.
+
+Kopeeri .insp-, .insv-, .360- või .osv-failid kaamera kaardilt oma NAS-i SMB- või WebDAV-jagamisse nii, nagu need on; Immichi server võtab vastu ka Insta360 omad. Iga ekraan õmbleb need esitamise ajal kokku iga faili sisse kirjutatud kalibreerimisega ja kaamera rakenduses ei ekspordita enne midagi. Kuidas teha: [Ava 360° kaamerate toorfailid](#open-the-raw-files-of-360-cameras).
+
+#### Sinu Plexi ja DLNA serverid teleris ja peakomplektis
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: meediaserver kodukino teleri all, ühendatud teleri, diivanil kantava peakomplekti, telefoni ja sülearvutiga, igaühes töötab Immuch360">
+</p>
+
+**Sul on vaja:** Plex Media Serverit või DLNA serverit nagu Jellyfin, Emby või minidlna ja Immuch360 igal ekraanil: Android TV, Meta Quest, telefonid, tahvelarvutid, Windows.
+
+Plex annab sinu teekide originaalfailid, nii et 360° video jääb 360° videoks, kõikjal sinu ümber peakomplektis, kodus ja kodust eemal sinu pordisuunamise kaudu; DLNA serverid leitakse sinu koduvõrgust. Ka sinu Immichi serverisse sisse logitud LG telerid mängivad neid. Kuidas teha: [Mängi NAS-i, arvuti, meediaserveri või Plexi faile](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Sinu telefon või Windowsi arvuti, avatud peakomplektis
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: tagantvaates inimene kannab diivanil peakomplekti, 360° foto tema ümber; telefon ja sülearvuti, milles töötab Immuch360, jagavad sellega oma fotosid üle Wi-Fi">
+</p>
+
+**Sul on vaja:** Immuch360 Android-telefonis, iPhone'is või Windowsi arvutis ja Meta Questis, samas kodu Wi-Fi võrgus.
+
+Lülita telefonis sisse "Jaga seda telefoni võrgus" või arvutis "Jaga seda arvutit võrgus" ja peakomplekt mängib selle fotosid ja videoid, 360° omad kõikjal sinu ümber: ilma serverita, ilma NAS-ita, ilma üleslaadimiseta. iPhone'is töötab jagamine seni, kuni rakendus on ekraanil. Kuidas teha: [Jaga seda telefoni võrgus](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Sinu Tapo kaamerad teleris ja peakomplektis
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: akna juures olev kodukaamera filmib aeda ning teler, telefon, toas kantav peakomplekt ja sülearvuti, igaühes töötab Immuch360, näitavad seda üht vaadet">
+</p>
+
+**Sul on vaja:** Tapo kaameraid sinu koduvõrgus ja Immuch360 Android-telefonis, Android TV-s, Meta Questis või Windowsi arvutis.
+
+Iga ekraan näitab kaamerat otse ja mängib selle mälukaardi salvestisi päevade kaupa sinu fotode kõrval ning telefon saadab klipi sinu Immichi serverisse. Rakendus suhtleb kaameratega ainult sinu võrgus, mitte kunagi TP-Linki serverite kaudu. Kontrollitud simuleeritud kaamera vastu. Kuidas teha: [Vaata oma kodukaameraid suurel ekraanil](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaussi splatid sinu toas, Meta Quest 3 või 3S peakomplektis (katseline)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: elutoas seisab tagantvaates inimene peakomplektiga, milles töötab Immuch360, elusuuruses hõõguvast valgusest purskkaevu ees, mis on avatud riiulil olevast NAS-ist">
+</p>
+
+**Sul on vaja:** splatti, mis on tehtud Polycami, Scaniverse'i, Luma või mõne muu tööriistaga, .spz või binaarse .ply failina sinu NAS-is või peakomplektis, ja Immuch360 Meta Quest 3 või 3S peakomplektis.
+
+Peakomplekt paneb koha või objekti selle tegelikus suuruses sinu ette või kõikjale sinu ümber: kõnni selle ümber, libise sellest läbi vasaku juhtkangiga, pööra parempoolsega. Gaussi splatid kasutavad Meta Spatial SDK katselist API-t, mida Meta ei toeta ega garanteeri: iga vea eest vastutab ainult Immuch360. Kuidas teha: [Uuri Gaussi splatte Meta Quest 3 või 3S peakomplektis](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest sinu külastajatele (katseline)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Illustratsioon, mitte ekraanipilt: väikeses näitusesaalis istub tagantvaates külastaja peakomplektiga, milles töötab Immuch360 kioskirežiimis, samal ajal kui kaks teist ootavad oma järjekorda">
+</p>
+
+**Sul on vaja:** Meta Questi koos Immuch360-ga ja 360° fotot või videot peakomplektis, sinu NAS-is või sinu Immichi serveris.
+
+Kioskirežiimis avab peakomplekt sinu 360° foto või video ise, algusest, iga kord, kui külastaja selle pähe paneb, ja film lõpeb kaardiga sinu tekstiga. Külastajad ei vajuta midagi; väljumiseks hoiad sa B või Y nuppu üks sekund all. Kuidas teha: [Kioskirežiim näituse või poe jaoks](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ TI-funktsioonid käitavad teiste tehtud mudeleid ja mootoreid, mis laaditakse al
 
 Nomadoori 360° LoRA on oma kaardi järgi Apache 2.0 ja see on treenitud CC0 ja avaliku omandi piltidega, millest osa on CC BY all: selle osa omistamine tuleb MODEL-LICENSES.md hilisemas versioonis. Miski siin ei ole mitteärilise litsentsi all ja miski ei vaja CUDA-t. ONNX Runtime ja LiteRT sisaldavad teisi teeke, mis on loetletud nende teadetes, nende seas Eigen MPL 2.0 all, mis on nõrk copyleft-litsents.
 
-Selle lehe ekraanipildid on rakenduse päris ekraanipildid: telefoni omad Androidi buildist emulaatoris, Android TV omad Google TV emulaatoris, LG ja Samsungi omad brauseris, mis asendab telerit, Windowsi omad Windows 11 arvutis ja Meta Questi aken Quest 3-s, kõik [Poly Haveni](https://polyhaven.com) CC0 panoraamidega; peakomplekti kaasahaaravad ekraanipildid tehti Quest 3-s autori enda meediaga ja iPadi oma iPadi simulaatoris, Poly Haveni CC0 panoraamiga. TI-looja pildid on rakenduse päris väljundid, tehtud Poly Haveni CC0-fotodest, koos kahe Windowsi rakenduse päris ekraanipildiga. Avapilt ning teleri, sisselogimise, pööramise, kaamerate ja drooni pildid on projekti jaoks tehtud illustratsioonid: need ei näita ühtki rakenduse ekraani, ühegi teise ettevõtte logo ega ühtki nägu. Iga pilt koos allika, kuupäeva ja litsentsiga on loetletud failis [CAPTURES.md](../.github/readme/CAPTURES.md).
+Selle lehe ekraanipildid on rakenduse päris ekraanipildid: telefoni omad Androidi buildist emulaatoris, Android TV omad Google TV emulaatoris, LG ja Samsungi omad brauseris, mis asendab telerit, Windowsi omad Windows 11 arvutis ja Meta Questi aken Quest 3-s, kõik [Poly Haveni](https://polyhaven.com) CC0 panoraamidega; peakomplekti kaasahaaravad ekraanipildid tehti Quest 3-s autori enda meediaga ja iPadi oma iPadi simulaatoris, Poly Haveni CC0 panoraamiga. TI-looja pildid on rakenduse päris väljundid, tehtud Poly Haveni CC0-fotodest, koos kahe Windowsi rakenduse päris ekraanipildiga. Avapilt ning teleri, sisselogimise, pööramise, kaamerate ja drooni pildid on projekti jaoks tehtud illustratsioonid: need ei näita ühtki rakenduse ekraani, ühegi teise ettevõtte logo ega ühtki nägu. Kasutusjuhtude kaardid paigutavad sellise illustratsiooni projekti jaoks joonistatud rea kohale, millel on platvormide logod, rakenduse ikoon, kahel kaardil rakenduse päris ekraanipildid ja kahel Poly Haveni CC0-fotod; peale platvormide logode ei näita need ühegi teise ettevõtte logo ega ühtki nägu. Iga pilt koos allika, kuupäeva ja litsentsiga on loetletud failis [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Teekaart

@@ -20,7 +20,7 @@ Cihazınızdan, NAS-ınızdan, Immich serverinizdən, kameralarınızdan və dro
 <summary><b>Mündəricat</b></summary>
 
 - [Kimin üçündür](#who-it-is-for)
-- [Hansı ekranlar](#which-screens) və [hər ekran nə edir](#what-each-screen-does)
+- [Hansı ekranlar](#which-screens), [birlikdə nə edirlər](#use-cases) və [hər ekran nə edir](#what-each-screen-does)
 - [Nə edə bilərsiniz](#what-you-can-do)
 - [Cihazınıza əldə edin](#get-it-on-your-device)
 - [Necə etməli](#how-to)
@@ -60,6 +60,7 @@ Cihazınızdan, NAS-ınızdan, Immich serverinizdən, kameralarınızdan və dro
 - **Immich istifadə edirsiniz** və onun tətbiqini, üstəlik immersiv görüntüləyiciləri və telefonunuzdan daxil etdiyiniz böyük ekranları istəyirsiniz: [Immich kitabxananız](#keep-your-immich-library-with-more), [Immich ilə müqayisə](#compared-with-immich).
 - **Evinizi Tapo kameraları ilə izləyirsiniz** və onları fotolarınızın yanında, televizorda da görmək istəyirsiniz (simulyasiya edilmiş kameraya qarşı yoxlanılıb): [ev kameraları](#watch-your-home-cameras-on-the-big-screen).
 - **DJI dronu uçurursunuz** və onun canlı görüntüsünü DJI Fly olmadan telefonunuzda, yanınızdakı insanlar üçün isə Meta Quest-də və ya Android TV-də görmək istəyirsiniz (eksperimental): [dronunuz](#see-what-your-drone-sees-on-your-phone).
+- **Evdə bir neçə ekranınız var** və onların birlikdə işləməsini istəyirsiniz: [ekranlarınız birlikdə nə edir](#use-cases).
 
 Yaradılacaq Immuch360 hesabı yoxdur və bizə heç nə getmir: tətbiq yalnız cihazlarınızla və seçdiyiniz serverlərlə danışır və Sİ komponentini yalnız siz istədikdə endirir.
 
@@ -86,6 +87,111 @@ Yaradılacaq Immuch360 hesabı yoxdur və bizə heç nə getmir: tətbiq yalnız
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Immuch360-ın iki sırada yeddi real ekran görüntüsü: Android telefonda kürə görüntüləyicisi, iPad-də 360° foto, Google TV-də və LG televizorunda 360° foto, sonra Samsung televizorunda foto lenti, Meta Quest 3-də tətbiq pəncərəsi və Windows-da video pleyer. LG və Samsung görüntüləri televizoru əvəz edən brauzerdə çəkilib">
 </p>
+
+<a id="use-cases"></a>
+### Ekranlarınız birlikdə nə edir
+
+Immuch360-ı baxdığınız hər ekrana quraşdırın: hər biri mənbələrinizi özü oxuyur, bəziləri isə digərinə şəkil, fayl və ya giriş ötürür. Hər şəkildə Immuch360 nişanı tətbiqi işlədən cihazları göstərir.
+
+#### NAS-ınız hər ekranda
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="İllüstrasiya, tətbiqin real ekran görüntüləri ilə: alaqaranlıqda qonaq otağında rəfdə duran NAS telefona, planşetə, televizora, başlığa və noutbuka bağlıdır; NAS hər ekranı qidalandırır, hər birində Immuch360 işləyir">
+</p>
+
+**Sizə lazımdır:** SMB və ya WebDAV paylaşımı olan NAS və baxdığınız hər ekranda Immuch360.
+
+Paylaşımı hər ekrana əlavə edin, hər biri fotoları və videoları olduqları yerdə oxuyur, heç nə kopyalanmır: telefonlar, planşetlər, Android TV, Meta Quest, Windows, Linux və macOS kompüterləri və Immich serverinizə daxil olmuş LG televizorları (webOS 22-dən etibarən SMB). 360° foto telefonda və televizorda kürə kimi fırlanır, başlıqda isə sizi əhatə edir. Necə etməli: [NAS-ın, kompüterin, media serverinin və ya Plex-in fayllarını oxudun](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Immich serveriniz hər ekranda, girişi telefonunuzdan
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: ev serveri əldə tutulan telefona, televizora, başlığa və noutbuka bağlıdır, hər birində Immuch360 işləyir; qırıq xətt Android telefonun digər üçünü daxil etdiyini göstərir">
+</p>
+
+**Sizə lazımdır:** Immich serveri, Android telefonunuzda Immuch360 və daxil etdiyiniz ekranlarda Immuch360: Android TV, Meta Quest, Windows, Linux və ya macOS kompüteri.
+
+Telefonda Immuch360 Immich mobil tətbiqinin hamısını saxlayır, ona 360°, VR180 və 3D görüntüləyicilərini əlavə edir və rəsmi tətbiqin yanında quraşdırılır. Serverinizə daxil olduqdan sonra böyük ekranları daxil edir: televizorun və ya kompüterin QR kodunu skan edir, ya da başlığın göstərdiyi kodu siz onda yazırsınız, parolunuz isə telefonda qalır. Necə etməli: [Televizora, başlığa və ya kompüterə telefonunuzla daxil olun](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Düz fotolarınız 3D-də, kompüterinizdən başlığa (eksperimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="İllüstrasiya, tətbiqin real ekran görüntüsü ilə: çap olunmuş fotoların və NAS-ın yanında Immuch360 işlədən noutbuk və Immuch360 işləyən başlıqda arxadan görünən bir nəfər, relyefdə dayanan həmin mənzərələrdən birinin qarşısında">
+</p>
+
+**Sizə lazımdır:** Windows, Linux və ya macOS kompüterində və Meta Quest-də Immuch360, aralarında NAS-ınız, ya da "Sİ versiyalarının da ehtiyat nüsxəsini çıxar" açıq olan Immich serveriniz.
+
+Kompüter özü fotolarınızı 3D fotolara və 3D səhnələrə, Windows və ya Linux-da 8 GB qrafik kartla isə 360° panoramalara çevirir və onları orijinalların yanında saxlayır. Başlıq 3D fotonu əsl 3D-də göstərir, səhnəni otağınıza, panoramanı isə ətrafınıza yerləşdirir; telefonlar və televizorlar panoramaları öz 360° görüntüləyicilərində açır. Necə etməli: [Bir fotonu 3D-yə, səhnəyə, panoramaya çevirin](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Dronunuzun canlı görüntüsü başlıqda və ya televizorda (eksperimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: alaqaranlıqda terrasda arxadan görünən pilot pultunda telefon olan dronu uçurur; telefon canlı görüntünü yalnız bir istiqamətdə başlığa və televizora ötürür">
+</p>
+
+**Sizə lazımdır:** DJI dronu və onun DJI RC-N3 pultu, pulta qoşulmuş Android telefonda Immuch360 və Meta Quest-də və ya Android TV-də Immuch360.
+
+Telefon dronun canlı videosunu göstərir və onu Wi-Fi-ınız və ya öz giriş nöqtəsi üzərindən ötürür ki, yanınızdakı insanlar uçuşa başlıqda və ya televizorda baxsınlar. Yalnız qəbul: pulta və ya drona heç vaxt heç bir komanda göndərilmir, pult isə tam nəzarəti saxlayır. Necə etməli: [Ona Meta Quest-də və ya Android TV-də baxın](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### 360° kameranızın RAW faylları, baxdığınız yerdə birləşdirilir
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: terras masasında 360° kamera, onun yaddaş kartı və NAS; fayllar NAS-a, sonra Immuch360 işlədən planşetə, televizora və başlığa gedir, onlar da faylları birləşdirir">
+</p>
+
+**Sizə lazımdır:** Insta360, GoPro MAX və ya DJI Osmo 360 kamerası, NAS-ınız və ekranlarda Immuch360: telefonlar, planşetlər, Android TV, Meta Quest, Windows.
+
+.insp, .insv, .360 və ya .osv fayllarını kameranın kartından NAS-ınızın SMB və ya WebDAV paylaşımına olduğu kimi kopyalayın; Immich serveri Insta360 fayllarını da qəbul edir. Hər ekran onları oxudarkən hər faylda yazılmış kalibrləmə ilə birləşdirir və əvvəlcə kameranın tətbiqində heç nə ixrac edilmir. Necə etməli: [360° kameralarının RAW fayllarını açın](#open-the-raw-files-of-360-cameras).
+
+#### Plex və DLNA serverləriniz televizorda və başlıqda
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: ev kinoteatrında televizorun altındakı media serveri televizora, divanda taxılan başlığa, telefona və noutbuka bağlıdır, hər birində Immuch360 işləyir">
+</p>
+
+**Sizə lazımdır:** Plex Media Server və ya Jellyfin, Emby, minidlna kimi DLNA serveri və hər ekranda Immuch360: Android TV, Meta Quest, telefonlar, planşetlər, Windows.
+
+Plex kitabxanalarınızın orijinal fayllarını verir, buna görə 360° video 360° olaraq qalır, başlıqda ətrafınızda, evdə və port yönləndirməniz vasitəsilə evdən kənarda; DLNA serverləri ev şəbəkənizdə tapılır. Immich serverinizə daxil olmuş LG televizorları da onları oxudur. Necə etməli: [NAS-ın, kompüterin, media serverinin və ya Plex-in fayllarını oxudun](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Telefonunuz və ya Windows kompüteriniz, başlıqda açılmış
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: arxadan görünən bir nəfər divanda başlıq taxıb, ətrafında 360° foto var; Immuch360 işlədən telefon və noutbuk fotolarını Wi-Fi üzərindən onunla paylaşır">
+</p>
+
+**Sizə lazımdır:** Android telefonda, iPhone-da və ya Windows kompüterində və Meta Quest-də Immuch360, eyni ev Wi-Fi şəbəkəsində.
+
+Telefonda "Bu telefonu şəbəkədə paylaş", ya da kompüterdə "Bu kompüteri şəbəkədə paylaş" seçimini açın, başlıq onun fotolarını və videolarını, 360° olanları ətrafınızda oxudur: server yox, NAS yox, yükləmə yox. iPhone-da paylaşım tətbiq ekranda olduqca işləyir. Necə etməli: [Bu telefonu şəbəkədə paylaş](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Tapo kameralarınız televizorda və başlıqda
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: pəncərənin yanındakı ev kamerası bağı çəkir, Immuch360 işlədən televizor, telefon, otaqda taxılan başlıq və noutbuk isə həmin bir görüntünü göstərir">
+</p>
+
+**Sizə lazımdır:** ev şəbəkənizdə Tapo kameraları və Android telefonda, Android TV-də, Meta Quest-də və ya Windows kompüterində Immuch360.
+
+Hər ekran kameranı canlı göstərir və onun yaddaş kartındakı qeydləri gün-gün, fotolarınızın yanında oxudur, telefon isə klipi Immich serverinizə göndərir. Tətbiq kameralarla yalnız sizin şəbəkənizdə danışır, heç vaxt TP-Link-in serverləri üzərindən yox. Simulyasiya edilmiş kameraya qarşı yoxlanılıb. Necə etməli: [Ev kameralarınıza böyük ekranda baxın](#watch-your-home-cameras-on-the-big-screen).
+
+#### Otağınızda Qauss splatları, Meta Quest 3 və ya 3S-də (eksperimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: qonaq otağında Immuch360 işlədən başlıqda arxadan görünən bir nəfər parlayan işıqdan ibarət, rəfdəki NAS-dan açılmış təbii ölçülü fəvvarənin qarşısında durur">
+</p>
+
+**Sizə lazımdır:** Polycam, Scaniverse, Luma və ya başqa alətlə hazırlanmış, NAS-ınızda və ya başlıqda .spz və ya binar .ply faylı kimi olan splat və Meta Quest 3 və ya 3S-də Immuch360.
+
+Başlıq yeri və ya obyekti öz ölçüsündə, qarşınızda və ya ətrafınızda yerləşdirir: onun ətrafında gəzin, sol çubuqla içindən sürüşün, sağ çubuqla dönün. Qauss splatları Meta Spatial SDK-nın eksperimental API-sindən istifadə edir, Meta onu nə dəstəkləyir, nə də ona zəmanət verir: istənilən qüsura yalnız Immuch360 cavabdehdir. Necə etməli: [Meta Quest 3 və ya 3S-də Qauss splatlarını kəşf edin](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Ziyarətçiləriniz üçün Meta Quest (eksperimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="İllüstrasiya, ekran görüntüsü deyil: kiçik sərgi zalında arxadan görünən bir ziyarətçi kiosk rejimində Immuch360 işlədən başlıqla oturur, digər ikisi isə növbəsini gözləyir">
+</p>
+
+**Sizə lazımdır:** Immuch360 olan Meta Quest və başlıqda, NAS-ınızda və ya Immich serverinizdə 360° foto və ya video.
+
+Kiosk rejimində başlıq 360° fotonuzu və ya videonuzu hər dəfə ziyarətçi onu taxanda özü, əvvəldən açır, film isə sizin mətninizlə son kartda bitir. Ziyarətçilər heç nə basmır; çıxmaq üçün siz B və ya Y düyməsini bir saniyə basılı saxlayırsınız. Necə etməli: [Kiosk rejimi, sərgi və ya mağaza üçün](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Sİ funksiyaları başqalarının hazırladığı modelləri və mühərrikləri
 
 nomadoor-un 360° LoRA-sı öz kartında Apache 2.0-dır və CC0 və ictimai domen təsvirləri üzərində öyrədilib, bir hissəsi CC BY altındadır: həmin hissənin atributu MODEL-LICENSES.md-nin sonrakı versiyasında gələcək. Burada heç nə qeyri-kommersiya lisenziyası altında deyil və heç nəyə CUDA lazım deyil. ONNX Runtime və LiteRT daxilində başqa kitabxanalar var, onların bildirişlərində sadalanıb, o cümlədən MPL 2.0 altında olan Eigen, zəif copyleft lisenziyası.
 
-Bu səhifənin ekran görüntüləri tətbiqin real görüntüləridir: telefon görüntüləri emulyatordakı Android build-də, Android TV görüntüləri Google TV emulyatorunda, LG və Samsung görüntüləri televizoru əvəz edən brauzerdə, Windows görüntüləri Windows 11 PC-də və Meta Quest pəncərəsi Quest 3-də, hamısı [Poly Haven](https://polyhaven.com)-dən CC0 panoramalarla; başlığın immersiv görüntüləri müəllifin öz mediası ilə Quest 3-də, iPad görüntüsü isə iPad simulyatorunda, Poly Haven-in CC0 panoraması ilə çəkilib. Sİ yaradıcısının şəkilləri tətbiqin real nəticələridir, Poly Haven-in CC0 fotolarından hazırlanıb, Windows tətbiqinin iki real ekran görüntüsü ilə. Açılış şəkli və televizor, giriş, döndərmə, kameralar və dron şəkilləri layihə üçün hazırlanmış illüstrasiyalardır: onlar tətbiqin heç bir ekranını, başqa şirkətin heç bir loqosunu və heç bir üzü göstərmir. Hər şəkil, mənbəyi, tarixi və lisenziyası ilə, [CAPTURES.md](../.github/readme/CAPTURES.md) faylında sadalanıb.
+Bu səhifənin ekran görüntüləri tətbiqin real görüntüləridir: telefon görüntüləri emulyatordakı Android build-də, Android TV görüntüləri Google TV emulyatorunda, LG və Samsung görüntüləri televizoru əvəz edən brauzerdə, Windows görüntüləri Windows 11 PC-də və Meta Quest pəncərəsi Quest 3-də, hamısı [Poly Haven](https://polyhaven.com)-dən CC0 panoramalarla; başlığın immersiv görüntüləri müəllifin öz mediası ilə Quest 3-də, iPad görüntüsü isə iPad simulyatorunda, Poly Haven-in CC0 panoraması ilə çəkilib. Sİ yaradıcısının şəkilləri tətbiqin real nəticələridir, Poly Haven-in CC0 fotolarından hazırlanıb, Windows tətbiqinin iki real ekran görüntüsü ilə. Açılış şəkli və televizor, giriş, döndərmə, kameralar və dron şəkilləri layihə üçün hazırlanmış illüstrasiyalardır: onlar tətbiqin heç bir ekranını, başqa şirkətin heç bir loqosunu və heç bir üzü göstərmir. İstifadə ssenarisi kartları belə bir illüstrasiyanı layihə üçün çəkilmiş, platforma loqoları, tətbiqin nişanı, iki kartda tətbiqin real ekran görüntüləri və iki kartda Poly Haven-in CC0 fotoları olan sıranın üstünə qoyur; platforma loqolarından başqa, onlar başqa şirkətin heç bir loqosunu və heç bir üzü göstərmir. Hər şəkil, mənbəyi, tarixi və lisenziyası ilə, [CAPTURES.md](../.github/readme/CAPTURES.md) faylında sadalanıb.
 
 <a id="roadmap"></a>
 ## Yol xəritəsi

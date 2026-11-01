@@ -20,7 +20,7 @@ Zdjęcia i filmy płaskie, 360° i 3D z Twojego urządzenia, NAS-a, serwera Immi
 <summary><b>Spis treści</b></summary>
 
 - [Dla kogo](#who-it-is-for)
-- [Które ekrany](#which-screens) i [co robi każdy ekran](#what-each-screen-does)
+- [Które ekrany](#which-screens), [co robią razem](#use-cases) i [co robi każdy ekran](#what-each-screen-does)
 - [Co możesz robić](#what-you-can-do)
 - [Zainstaluj na swoim urządzeniu](#get-it-on-your-device)
 - [Jak to zrobić](#how-to)
@@ -60,6 +60,7 @@ Zdjęcia i filmy płaskie, 360° i 3D z Twojego urządzenia, NAS-a, serwera Immi
 - **Używasz Immich** i chcesz jego aplikację, a do tego przeglądarki immersyjne i duże ekrany logowane z telefonu: [Twoja biblioteka Immich](#keep-your-immich-library-with-more), [w porównaniu z Immich](#compared-with-immich).
 - **Pilnujesz domu kamerami Tapo** i chcesz je mieć obok swoich zdjęć, także na telewizorze (sprawdzone z symulowaną kamerą): [kamery domowe](#watch-your-home-cameras-on-the-big-screen).
 - **Latasz dronem DJI** i chcesz widzieć jego obraz na żywo na telefonie bez DJI Fly, a w Meta Quest lub na Android TV dla osób, które są z Tobą (eksperymentalnie): [Twój dron](#see-what-your-drone-sees-on-your-phone).
+- **Masz w domu kilka ekranów** i chcesz, by działały razem: [co Twoje ekrany robią razem](#use-cases).
 
 Nie ma konta Immuch360 do zakładania i nic nie trafia do nas: aplikacja komunikuje się tylko z Twoimi urządzeniami i z wybranymi przez Ciebie serwerami, a komponent AI pobiera tylko wtedy, gdy o to poprosisz.
 
@@ -86,6 +87,111 @@ Nie ma konta Immuch360 do zakładania i nic nie trafia do nas: aplikacja komunik
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Siedem prawdziwych zrzutów ekranu Immuch360 w dwóch rzędach: przeglądarka sferyczna na telefonie z Androidem, zdjęcie 360° na iPadzie, zdjęcie 360° na Google TV i na telewizorze LG, potem oś czasu zdjęć na telewizorze Samsung, okno aplikacji w Meta Quest 3 i odtwarzacz wideo na Windows. Zrzuty LG i Samsung wykonano w przeglądarce, która zastępuje telewizor">
 </p>
+
+<a id="use-cases"></a>
+### Co Twoje ekrany robią razem
+
+Zainstaluj Immuch360 na każdym ekranie, na którym oglądasz: każdy sam odczytuje Twoje źródła, a niektóre przekazują innemu obraz, plik lub logowanie. Na każdym obrazku ikona Immuch360 oznacza urządzenia, na których działa aplikacja.
+
+#### Twój NAS na każdym ekranie
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustracja z prawdziwymi zrzutami aplikacji: NAS na półce w salonie o zmierzchu, połączony z telefonem, tabletem, telewizorem, zestawem i laptopem; NAS zasila każdy ekran, na każdym działa Immuch360">
+</p>
+
+**Potrzebujesz:** NAS-a z udziałem SMB lub WebDAV i Immuch360 na każdym ekranie, na którym oglądasz.
+
+Dodaj udział na każdym ekranie, a każdy odtwarza zdjęcia i filmy tam, gdzie leżą, bez kopiowania: telefony, tablety, Android TV, Meta Quest, komputery z Windows, Linux i macOS oraz telewizory LG zalogowane do Twojego serwera Immich (SMB od webOS 22). Zdjęcie 360° obraca się jako sfera na telefonie i telewizorze, a w zestawie Cię otacza. Jak to zrobić: [Odtwarzaj pliki z NAS-a, komputera, serwera multimediów lub Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Twój serwer Immich na każdym ekranie, zalogowany z telefonu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: domowy serwer połączony z telefonem trzymanym w dłoni, telewizorem, zestawem i laptopem, na każdym działa Immuch360; przerywana linia pokazuje, jak telefon z Androidem loguje pozostałe trzy">
+</p>
+
+**Potrzebujesz:** serwera Immich, Immuch360 na telefonie z Androidem i Immuch360 na ekranach, które logujesz: Android TV, Meta Quest, komputer z Windows, Linux lub macOS.
+
+Na telefonie Immuch360 zachowuje całą aplikację mobilną Immich, dodaje swoje przeglądarki 360°, VR180 i 3D i instaluje się obok oficjalnej aplikacji. Zalogowany do Twojego serwera, loguje duże ekrany: skanuje kod QR telewizora lub komputera albo wpisujesz na nim kod, który pokazuje zestaw, a Twoje hasło zostaje na telefonie. Jak to zrobić: [Zaloguj telewizor, zestaw lub komputer telefonem](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Twoje płaskie zdjęcia w 3D, od komputera do zestawu (eksperymentalnie)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustracja z prawdziwym zrzutem aplikacji: laptop z Immuch360 obok wydrukowanych zdjęć i NAS-a oraz osoba widziana od tyłu w zestawie z Immuch360, przed jednym z tych krajobrazów w reliefie">
+</p>
+
+**Potrzebujesz:** Immuch360 na komputerze z Windows, Linux lub macOS i w Meta Quest, z Twoim NAS-em pomiędzy nimi lub z serwerem Immich z włączoną opcją „Twórz też kopie zapasowe wersji AI”.
+
+Sam komputer zamienia Twoje zdjęcia w zdjęcia 3D i sceny 3D, a z kartą graficzną 8 GB na Windows lub Linux w panoramy 360°, i zapisuje je obok oryginałów. Zestaw pokazuje zdjęcie 3D w prawdziwym 3D, umieszcza scenę w Twoim pokoju, a panoramę wokół Ciebie; telefony i telewizory otwierają panoramy w swojej przeglądarce 360°. Jak to zrobić: [Zamień jedno zdjęcie w 3D, scenę, panoramę](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Obraz na żywo z Twojego drona w zestawie lub na telewizorze (eksperymentalnie)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: na tarasie o zmierzchu pilot widziany od tyłu steruje dronem z telefonem na kontrolerze; telefon przekazuje obraz na żywo, tylko w jedną stronę, do zestawu i telewizora">
+</p>
+
+**Potrzebujesz:** drona DJI i jego kontrolera DJI RC-N3, Immuch360 na telefonie z Androidem podłączonym do kontrolera oraz Immuch360 w Meta Quest lub na Android TV.
+
+Telefon pokazuje wideo na żywo z drona i przekazuje je przez Twoje Wi-Fi lub własny hotspot, aby osoby, które są z Tobą, oglądały lot w zestawie lub na telewizorze. Tylko odbiór: do kontrolera ani drona nigdy nie jest wysyłane żadne polecenie, a kontroler zachowuje pełną kontrolę. Jak to zrobić: [Oglądaj to w Meta Quest lub na Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Surowe pliki Twojej kamery 360°, zszywane tam, gdzie je oglądasz
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: kamera 360°, jej karta pamięci i NAS na stole na tarasie; pliki trafiają na NAS-a, a potem na tablet, telewizor i zestaw z Immuch360, które je zszywają">
+</p>
+
+**Potrzebujesz:** kamery Insta360, GoPro MAX lub DJI Osmo 360, Twojego NAS-a i Immuch360 na ekranach: telefony, tablety, Android TV, Meta Quest, Windows.
+
+Skopiuj pliki .insp, .insv, .360 lub .osv z karty kamery do udziału SMB lub WebDAV na Twoim NAS-ie, takie, jakie są; serwer Immich przyjmuje także pliki Insta360. Każdy ekran zszywa je podczas odtwarzania, z kalibracją zapisaną w każdym pliku, i nic nie jest wcześniej eksportowane w aplikacji kamery. Jak to zrobić: [Otwieraj surowe pliki kamer 360°](#open-the-raw-files-of-360-cameras).
+
+#### Twoje serwery Plex i DLNA na telewizorze i w zestawie
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: serwer multimediów pod telewizorem kina domowego, połączony z telewizorem, zestawem noszonym na kanapie, telefonem i laptopem, na każdym działa Immuch360">
+</p>
+
+**Potrzebujesz:** serwera Plex Media Server lub serwera DLNA, takiego jak Jellyfin, Emby czy minidlna, i Immuch360 na każdym ekranie: Android TV, Meta Quest, telefony, tablety, Windows.
+
+Plex udostępnia oryginalne pliki Twoich bibliotek, więc film 360° pozostaje filmem 360°, wokół Ciebie w zestawie, w domu i poza domem przez Twoje przekierowanie portów; serwery DLNA są wykrywane w Twojej sieci domowej. Telewizory LG zalogowane do Twojego serwera Immich też je odtwarzają. Jak to zrobić: [Odtwarzaj pliki z NAS-a, komputera, serwera multimediów lub Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Twój telefon lub komputer z Windows, otwarty w zestawie
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: osoba widziana od tyłu nosi zestaw na kanapie, wokół niej zdjęcie 360°; telefon i laptop z Immuch360 udostępniają mu swoje zdjęcia przez Wi-Fi">
+</p>
+
+**Potrzebujesz:** Immuch360 na telefonie z Androidem, iPhonie lub komputerze z Windows oraz w Meta Quest, w tej samej domowej sieci Wi-Fi.
+
+Włącz „Udostępnij ten telefon w sieci” na telefonie lub „Udostępnij ten komputer w sieci” na komputerze, a zestaw odtwarza jego zdjęcia i filmy, te 360° wokół Ciebie: bez serwera, bez NAS-a, bez przesyłania. Na iPhonie udostępnianie działa, gdy aplikacja jest na ekranie. Jak to zrobić: [Udostępnij ten telefon w sieci](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Twoje kamery Tapo na telewizorze i w zestawie
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: kamera domowa przy oknie filmuje ogród, a telewizor, telefon, zestaw noszony w pokoju i laptop, na każdym działa Immuch360, pokazują ten jeden widok">
+</p>
+
+**Potrzebujesz:** kamer Tapo w Twojej sieci domowej i Immuch360 na telefonie z Androidem, Android TV, Meta Quest lub komputerze z Windows.
+
+Każdy ekran pokazuje kamerę na żywo i odtwarza nagrania z jej karty pamięci dzień po dniu, obok Twoich zdjęć, a telefon wysyła klip na Twój serwer Immich. Aplikacja łączy się z kamerami tylko w Twojej sieci, nigdy przez serwery TP-Link. Sprawdzone z symulowaną kamerą. Jak to zrobić: [Oglądaj swoje kamery domowe na dużym ekranie](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splaty gaussowskie w Twoim pokoju, w Meta Quest 3 lub 3S (eksperymentalnie)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: w salonie osoba widziana od tyłu w zestawie z Immuch360 stoi przed fontanną naturalnej wielkości ze świecącego światła, otwartą z NAS-a na półce">
+</p>
+
+**Potrzebujesz:** splatu wykonanego w Polycam, Scaniverse, Luma lub innym narzędziu, jako pliku .spz lub binarnego .ply na Twoim NAS-ie lub w zestawie, i Immuch360 w Meta Quest 3 lub 3S.
+
+Zestaw ustawia miejsce lub obiekt w jego naturalnej wielkości, przed Tobą lub wokół Ciebie: obejdź go, przesuwaj się przez niego lewą gałką, obracaj się prawą. Splaty gaussowskie korzystają z eksperymentalnego API Meta Spatial SDK, którego Meta nie wspiera ani nie gwarantuje: za każdą wadę odpowiada wyłącznie Immuch360. Jak to zrobić: [Odkrywaj splaty gaussowskie w Meta Quest 3 lub 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest dla Twoich odwiedzających (eksperymentalnie)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: w małej sali wystawowej odwiedzający widziany od tyłu siedzi w zestawie z Immuch360 w trybie kiosku, a dwie inne osoby czekają na swoją kolej">
+</p>
+
+**Potrzebujesz:** Meta Quest z Immuch360 oraz zdjęcia lub filmu 360° w zestawie, na Twoim NAS-ie lub na Twoim serwerze Immich.
+
+W trybie kiosku zestaw sam otwiera Twoje zdjęcie lub film 360°, od początku, za każdym razem, gdy odwiedzający go zakłada, a film kończy się na karcie z Twoim tekstem. Odwiedzający niczego nie naciskają; Ty przytrzymujesz B lub Y przez sekundę, by wyjść. Jak to zrobić: [Tryb kiosku, na wystawę lub do sklepu](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Funkcje AI uruchamiają modele i silniki stworzone przez innych, pobierane tylko
 
 LoRA 360° autorstwa nomadoor ma według swojej karty licencję Apache 2.0 i była trenowana na obrazach CC0 i z domeny publicznej, z częścią na licencji CC BY: uznanie autorstwa tej części pojawi się w późniejszej wersji MODEL-LICENSES.md. Nic tutaj nie jest na licencji niekomercyjnej i nic nie wymaga CUDA. ONNX Runtime i LiteRT zawierają inne wbudowane biblioteki, wymienione w ich informacjach, wśród nich Eigen na licencji MPL 2.0, słabej licencji copyleft.
 
-Zrzuty ekranu na tej stronie są prawdziwymi zrzutami aplikacji: te z telefonu z kompilacji Android w emulatorze, te z Android TV w emulatorze Google TV, te z LG i Samsung w przeglądarce, która zastępuje telewizor, te z Windows na komputerze z Windows 11, a okno Meta Quest w Quest 3, wszystkie z panoramami CC0 z [Poly Haven](https://polyhaven.com); immersyjne zrzuty z zestawu wykonano na Quest 3 z własnymi mediami autora, a zrzut z iPada w symulatorze iPada, z panoramą CC0 z Poly Haven. Obrazy kreatora AI to prawdziwe wyniki aplikacji, utworzone ze zdjęć CC0 z Poly Haven, z dwoma prawdziwymi zrzutami aplikacji na Windows. Obraz otwierający oraz obrazy telewizora, logowania, obrotu, kamer i drona to ilustracje wykonane dla projektu: nie pokazują żadnego ekranu aplikacji, żadnego logo innej firmy ani żadnej twarzy. Każdy obraz, z jego źródłem, datą i licencją, jest wymieniony w [CAPTURES.md](../.github/readme/CAPTURES.md).
+Zrzuty ekranu na tej stronie są prawdziwymi zrzutami aplikacji: te z telefonu z kompilacji Android w emulatorze, te z Android TV w emulatorze Google TV, te z LG i Samsung w przeglądarce, która zastępuje telewizor, te z Windows na komputerze z Windows 11, a okno Meta Quest w Quest 3, wszystkie z panoramami CC0 z [Poly Haven](https://polyhaven.com); immersyjne zrzuty z zestawu wykonano na Quest 3 z własnymi mediami autora, a zrzut z iPada w symulatorze iPada, z panoramą CC0 z Poly Haven. Obrazy kreatora AI to prawdziwe wyniki aplikacji, utworzone ze zdjęć CC0 z Poly Haven, z dwoma prawdziwymi zrzutami aplikacji na Windows. Obraz otwierający oraz obrazy telewizora, logowania, obrotu, kamer i drona to ilustracje wykonane dla projektu: nie pokazują żadnego ekranu aplikacji, żadnego logo innej firmy ani żadnej twarzy. Karty zastosowań umieszczają taką ilustrację nad paskiem narysowanym dla projektu, z logo platform, ikoną aplikacji, prawdziwymi zrzutami aplikacji w dwóch kartach i zdjęciami CC0 z Poly Haven w dwóch; poza logo platform nie pokazują żadnego logo innej firmy ani żadnej twarzy. Każdy obraz, z jego źródłem, datą i licencją, jest wymieniony w [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plan rozwoju

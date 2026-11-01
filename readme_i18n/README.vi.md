@@ -20,7 +20,7 @@
 <summary><b>Mục lục</b></summary>
 
 - [Dành cho ai](#who-it-is-for)
-- [Những màn hình nào](#which-screens), và [mỗi màn hình làm được gì](#what-each-screen-does)
+- [Những màn hình nào](#which-screens), [chúng làm gì cùng nhau](#use-cases) và [mỗi màn hình làm được gì](#what-each-screen-does)
 - [Những gì bạn có thể làm](#what-you-can-do)
 - [Cài đặt trên thiết bị của bạn](#get-it-on-your-device)
 - [Hướng dẫn](#how-to)
@@ -60,6 +60,7 @@
 - **Bạn dùng Immich** và muốn có ứng dụng của nó, cộng thêm các trình xem đắm chìm và những màn hình lớn mà bạn đăng nhập từ điện thoại: [thư viện Immich của bạn](#keep-your-immich-library-with-more), [so sánh với Immich](#compared-with-immich).
 - **Bạn trông nhà bằng camera Tapo** và muốn xem chúng bên cạnh ảnh của mình, cả trên TV (đã kiểm tra với một camera mô phỏng): [camera gia đình](#watch-your-home-cameras-on-the-big-screen).
 - **Bạn bay drone DJI** và muốn xem hình ảnh trực tiếp của nó trên điện thoại mà không cần DJI Fly, và trong Meta Quest hoặc trên Android TV cho những người đi cùng (thử nghiệm): [drone của bạn](#see-what-your-drone-sees-on-your-phone).
+- **Bạn có nhiều màn hình ở nhà** và muốn chúng hoạt động cùng nhau: [các màn hình của bạn làm gì cùng nhau](#use-cases).
 
 Không cần tạo tài khoản Immuch360, và không có gì được gửi cho chúng tôi: ứng dụng chỉ giao tiếp với các thiết bị của bạn và các máy chủ bạn chọn, và chỉ tải xuống một thành phần AI khi bạn yêu cầu.
 
@@ -86,6 +87,111 @@ Không cần tạo tài khoản Immuch360, và không có gì được gửi cho
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Bảy ảnh chụp thực tế của Immuch360 xếp thành hai hàng: trình xem hình cầu trên điện thoại Android, một ảnh 360° trên iPad, một ảnh 360° trên Google TV và trên TV LG, rồi dòng thời gian ảnh trên TV Samsung, cửa sổ ứng dụng trong Meta Quest 3 và trình phát video trên Windows. Các ảnh chụp LG và Samsung được chụp trong một trình duyệt thay thế cho TV">
 </p>
+
+<a id="use-cases"></a>
+### Các màn hình của bạn làm gì cùng nhau
+
+Cài Immuch360 trên mỗi màn hình bạn xem: mỗi màn hình tự đọc các nguồn của bạn, và một số màn hình chuyển một hình ảnh, một tệp hoặc một lần đăng nhập sang màn hình khác. Trong mỗi hình, biểu tượng Immuch360 đánh dấu các thiết bị chạy ứng dụng.
+
+#### NAS của bạn trên mọi màn hình
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Hình minh họa có ảnh chụp màn hình thật của ứng dụng: một NAS trên kệ trong phòng khách lúc hoàng hôn, kết nối với một điện thoại, một máy tính bảng, một TV, một kính và một máy tính xách tay; NAS cung cấp cho mọi màn hình, mỗi màn hình đều chạy Immuch360">
+</p>
+
+**Bạn cần:** một NAS có thư mục chia sẻ SMB hoặc WebDAV, và Immuch360 trên mỗi màn hình bạn xem.
+
+Thêm thư mục chia sẻ trên mỗi màn hình, và mỗi màn hình phát ảnh và video ngay tại nơi chúng nằm, không sao chép gì: điện thoại, máy tính bảng, Android TV, Meta Quest, máy tính Windows, Linux và macOS, và TV LG đã đăng nhập vào máy chủ Immich của bạn (SMB từ webOS 22). Một ảnh 360° xoay như một quả cầu trên điện thoại và TV, và bao quanh bạn trong kính. Hướng dẫn: [Phát tệp từ NAS, máy tính, máy chủ đa phương tiện hoặc Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Máy chủ Immich của bạn trên mọi màn hình, đăng nhập từ điện thoại của bạn
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một máy chủ gia đình kết nối với một điện thoại cầm trên tay, một TV, một kính và một máy tính xách tay, mỗi thiết bị đều chạy Immuch360; một đường nét đứt cho thấy điện thoại Android đăng nhập cho ba thiết bị còn lại">
+</p>
+
+**Bạn cần:** một máy chủ Immich, Immuch360 trên điện thoại Android của bạn, và Immuch360 trên các màn hình bạn đăng nhập: Android TV, Meta Quest, máy tính Windows, Linux hoặc macOS.
+
+Trên điện thoại, Immuch360 giữ nguyên toàn bộ ứng dụng di động Immich, thêm các trình xem 360°, VR180 và 3D của mình, và cài đặt bên cạnh ứng dụng chính thức. Khi đã đăng nhập vào máy chủ của bạn, nó đăng nhập cho các màn hình lớn: nó quét mã QR của TV hoặc máy tính, hoặc bạn nhập vào nó mã mà kính hiển thị, và mật khẩu của bạn vẫn ở trên điện thoại. Hướng dẫn: [Đăng nhập trên TV, kính hoặc máy tính bằng điện thoại của bạn](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Ảnh phẳng của bạn thành 3D, từ máy tính đến kính (thử nghiệm)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Hình minh họa có một ảnh chụp màn hình thật của ứng dụng: một máy tính xách tay chạy Immuch360 bên cạnh các ảnh in và một NAS, và một người nhìn từ phía sau đeo kính chạy Immuch360, trước một trong những phong cảnh đó nổi khối">
+</p>
+
+**Bạn cần:** Immuch360 trên một máy tính Windows, Linux hoặc macOS và trong một Meta Quest, với NAS của bạn ở giữa, hoặc máy chủ Immich của bạn với "Sao lưu cả các phiên bản AI" được bật.
+
+Chính máy tính biến ảnh của bạn thành ảnh 3D và cảnh 3D, và thành ảnh toàn cảnh 360° với card đồ họa 8 GB trên Windows hoặc Linux, rồi lưu chúng bên cạnh bản gốc. Kính hiển thị một ảnh 3D ở dạng 3D thật, đặt một cảnh vào phòng của bạn và một ảnh toàn cảnh bao quanh bạn; điện thoại và TV mở ảnh toàn cảnh trong trình xem 360° của chúng. Hướng dẫn: [Biến một ảnh thành 3D, một cảnh, một ảnh toàn cảnh](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Hình ảnh trực tiếp từ drone của bạn trong kính hoặc trên TV (thử nghiệm)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: trên sân thượng lúc hoàng hôn, một phi công nhìn từ phía sau điều khiển drone với một điện thoại gắn trên bộ điều khiển; điện thoại chuyển tiếp hình ảnh trực tiếp, chỉ theo một chiều, đến một kính và một TV">
+</p>
+
+**Bạn cần:** một drone DJI và bộ điều khiển DJI RC-N3 của nó, Immuch360 trên điện thoại Android cắm vào bộ điều khiển, và Immuch360 trong Meta Quest hoặc trên Android TV.
+
+Điện thoại hiển thị video trực tiếp của drone và chuyển tiếp nó, qua Wi-Fi của bạn hoặc điểm phát sóng của chính nó, để những người đi cùng xem chuyến bay trong kính hoặc trên TV. Chỉ nhận: không có lệnh nào được gửi đến bộ điều khiển hay drone, và bộ điều khiển giữ toàn quyền điều khiển. Hướng dẫn: [Xem trong Meta Quest hoặc trên Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Tệp thô từ máy ảnh 360° của bạn, được ghép ngay nơi bạn xem
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một máy ảnh 360°, thẻ nhớ của nó và một NAS trên bàn ngoài sân thượng; các tệp đi đến NAS, rồi đến một máy tính bảng, một TV và một kính chạy Immuch360, và chúng ghép các tệp đó">
+</p>
+
+**Bạn cần:** một máy ảnh Insta360, GoPro MAX hoặc DJI Osmo 360, NAS của bạn, và Immuch360 trên các màn hình: điện thoại, máy tính bảng, Android TV, Meta Quest, Windows.
+
+Sao chép nguyên trạng các tệp .insp, .insv, .360 hoặc .osv từ thẻ của máy ảnh sang một thư mục chia sẻ SMB hoặc WebDAV trên NAS của bạn; máy chủ Immich cũng nhận tệp của Insta360. Mỗi màn hình ghép chúng trong lúc phát, với thông số hiệu chỉnh ghi trong từng tệp, và không cần xuất gì trước trong ứng dụng của máy ảnh. Hướng dẫn: [Mở tệp thô của máy ảnh 360°](#open-the-raw-files-of-360-cameras).
+
+#### Máy chủ Plex và DLNA của bạn trên TV và trong kính
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một máy chủ đa phương tiện dưới TV của một rạp hát tại gia, kết nối với TV, một kính đang được đeo trên ghế sofa, một điện thoại và một máy tính xách tay, mỗi thiết bị đều chạy Immuch360">
+</p>
+
+**Bạn cần:** một Plex Media Server hoặc một máy chủ DLNA như Jellyfin, Emby hoặc minidlna, và Immuch360 trên mỗi màn hình: Android TV, Meta Quest, điện thoại, máy tính bảng, Windows.
+
+Plex cung cấp tệp gốc trong thư viện của bạn, nên video 360° vẫn là 360°, bao quanh bạn trong kính, ở nhà và khi xa nhà qua chuyển tiếp cổng của bạn; máy chủ DLNA được tìm thấy trên mạng gia đình của bạn. TV LG đã đăng nhập vào máy chủ Immich của bạn cũng phát được chúng. Hướng dẫn: [Phát tệp từ NAS, máy tính, máy chủ đa phương tiện hoặc Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Điện thoại hoặc máy tính Windows của bạn, mở trong kính
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một người nhìn từ phía sau đeo kính trên ghế sofa, xung quanh là một ảnh 360°; một điện thoại và một máy tính xách tay chạy Immuch360 chia sẻ ảnh của chúng với kính qua Wi-Fi">
+</p>
+
+**Bạn cần:** Immuch360 trên một điện thoại Android, một iPhone hoặc một máy tính Windows, và trong một Meta Quest, trên cùng một mạng Wi-Fi gia đình.
+
+Bật "Chia sẻ điện thoại này trên mạng" trên điện thoại, hoặc "Chia sẻ máy tính này trên mạng" trên máy tính, và kính phát ảnh và video của thiết bị đó, ảnh và video 360° bao quanh bạn: không máy chủ, không NAS, không tải lên. Trên iPhone, việc chia sẻ chạy trong khi ứng dụng đang hiển thị trên màn hình. Hướng dẫn: [Chia sẻ điện thoại này trên mạng](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Camera Tapo của bạn trên TV và trong kính
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một camera gia đình bên cửa sổ quay khu vườn, và một TV, một điện thoại, một kính đang được đeo trong phòng và một máy tính xách tay, mỗi thiết bị đều chạy Immuch360, hiển thị cùng một hình ảnh đó">
+</p>
+
+**Bạn cần:** camera Tapo trên mạng gia đình của bạn, và Immuch360 trên một điện thoại Android, một Android TV, một Meta Quest hoặc một máy tính Windows.
+
+Mỗi màn hình hiển thị trực tiếp một camera và phát các bản ghi trên thẻ nhớ của nó theo từng ngày, bên cạnh ảnh của bạn, và điện thoại gửi một đoạn clip đến máy chủ Immich của bạn. Ứng dụng chỉ trò chuyện với camera trên mạng của bạn, không bao giờ qua máy chủ của TP-Link. Đã kiểm tra với một camera mô phỏng. Hướng dẫn: [Xem camera gia đình trên màn hình lớn](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splat Gauss trong phòng của bạn, trên Meta Quest 3 hoặc 3S (thử nghiệm)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: trong phòng khách, một người nhìn từ phía sau đeo kính chạy Immuch360 đứng trước một đài phun nước kích thước thật làm bằng ánh sáng rực rỡ, được mở từ một NAS trên kệ">
+</p>
+
+**Bạn cần:** một splat tạo bằng Polycam, Scaniverse, Luma hoặc công cụ khác, dưới dạng tệp .spz hoặc .ply nhị phân trên NAS của bạn hoặc trong kính, và Immuch360 trên Meta Quest 3 hoặc 3S.
+
+Kính đặt địa điểm hoặc đồ vật theo đúng kích thước của nó, trước mặt bạn hoặc bao quanh bạn: đi vòng quanh nó, lướt xuyên qua nó bằng cần điều khiển bên trái, xoay bằng cần bên phải. Splat Gauss dùng một API thử nghiệm của Meta Spatial SDK, mà Meta không hỗ trợ cũng không bảo đảm: mọi lỗi đều thuộc trách nhiệm riêng của Immuch360. Hướng dẫn: [Khám phá splat Gauss trên Meta Quest 3 hoặc 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Một Meta Quest cho khách tham quan của bạn (thử nghiệm)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: trong một phòng triển lãm nhỏ, một khách tham quan nhìn từ phía sau ngồi đeo kính chạy Immuch360 ở chế độ kiosk trong khi hai người khác chờ đến lượt">
+</p>
+
+**Bạn cần:** một Meta Quest có Immuch360, và một ảnh hoặc video 360° trong kính, trên NAS hoặc trên máy chủ Immich của bạn.
+
+Ở chế độ kiosk, kính tự mở ảnh hoặc video 360° của bạn, từ đầu, mỗi lần một khách tham quan đeo vào, và một đoạn phim kết thúc bằng một thẻ có nội dung của bạn. Khách tham quan không cần bấm gì; bạn giữ B hoặc Y trong một giây để thoát. Hướng dẫn: [Chế độ kiosk, cho một triển lãm hoặc một cửa hàng](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Các tính năng AI chạy các mô hình và engine do người khác tạo ra,
 
 LoRA 360° của nomadoor có giấy phép Apache 2.0 trên thẻ của nó và được huấn luyện trên ảnh CC0 và ảnh thuộc phạm vi công cộng, với một phần theo CC BY: ghi công cho phần đó sẽ có trong một phiên bản sau của MODEL-LICENSES.md. Không có gì ở đây theo giấy phép phi thương mại, và không có gì cần CUDA. ONNX Runtime và LiteRT có tích hợp các thư viện khác, được liệt kê trong thông báo của chúng, trong đó có Eigen theo MPL 2.0, một giấy phép copyleft yếu.
 
-Các ảnh chụp màn hình trên trang này là ảnh chụp thực tế của ứng dụng: ảnh điện thoại chụp trên bản dựng Android trong trình giả lập, ảnh Android TV trên trình giả lập Google TV, ảnh LG và Samsung trong một trình duyệt thay thế cho TV, ảnh Windows trên một PC Windows 11 và cửa sổ Meta Quest trong một Quest 3, tất cả đều dùng ảnh toàn cảnh CC0 từ [Poly Haven](https://polyhaven.com); các ảnh chụp đắm chìm của kính được chụp trên Quest 3 với nội dung riêng của tác giả, và ảnh iPad trong trình mô phỏng iPad, với một ảnh toàn cảnh CC0 của Poly Haven. Các hình của trình tạo AI là kết quả thật của ứng dụng, tạo từ ảnh CC0 của Poly Haven, cùng hai ảnh chụp màn hình thật của ứng dụng Windows. Ảnh mở đầu và các hình về TV, đăng nhập, xoay ảnh, camera và drone là hình minh họa được làm cho dự án: chúng không hiển thị màn hình nào của ứng dụng, logo nào của công ty khác hay khuôn mặt nào. Mỗi hình ảnh, kèm nguồn, ngày và giấy phép, được liệt kê trong [CAPTURES.md](../.github/readme/CAPTURES.md).
+Các ảnh chụp màn hình trên trang này là ảnh chụp thực tế của ứng dụng: ảnh điện thoại chụp trên bản dựng Android trong trình giả lập, ảnh Android TV trên trình giả lập Google TV, ảnh LG và Samsung trong một trình duyệt thay thế cho TV, ảnh Windows trên một PC Windows 11 và cửa sổ Meta Quest trong một Quest 3, tất cả đều dùng ảnh toàn cảnh CC0 từ [Poly Haven](https://polyhaven.com); các ảnh chụp đắm chìm của kính được chụp trên Quest 3 với nội dung riêng của tác giả, và ảnh iPad trong trình mô phỏng iPad, với một ảnh toàn cảnh CC0 của Poly Haven. Các hình của trình tạo AI là kết quả thật của ứng dụng, tạo từ ảnh CC0 của Poly Haven, cùng hai ảnh chụp màn hình thật của ứng dụng Windows. Ảnh mở đầu và các hình về TV, đăng nhập, xoay ảnh, camera và drone là hình minh họa được làm cho dự án: chúng không hiển thị màn hình nào của ứng dụng, logo nào của công ty khác hay khuôn mặt nào. Các thẻ tình huống sử dụng đặt một hình minh họa như vậy phía trên một dải được vẽ cho dự án, với logo của các nền tảng, biểu tượng của ứng dụng, ảnh chụp màn hình thật của ứng dụng trên hai thẻ và ảnh CC0 của Poly Haven trên hai thẻ; ngoài logo của các nền tảng, chúng không hiển thị logo nào của công ty khác hay khuôn mặt nào. Mỗi hình ảnh, kèm nguồn, ngày và giấy phép, được liệt kê trong [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Lộ trình

@@ -20,7 +20,7 @@ Skeudennoù ha videoioù plat, 360° ha 3D diwar ho trevnad, ho NAS, ho servijer
 <summary><b>Taolenn</b></summary>
 
 - [Evit piv eo](#who-it-is-for)
-- [Peseurt skrammoù](#which-screens), ha [petra a ra pep skramm](#what-each-screen-does)
+- [Peseurt skrammoù](#which-screens), [petra a reont asambles](#use-cases) ha [petra a ra pep skramm](#what-each-screen-does)
 - [Petra a c'hallit ober](#what-you-can-do)
 - [Kaout anezhañ war ho trevnad](#get-it-on-your-device)
 - [Penaos ober](#how-to)
@@ -60,6 +60,7 @@ Skeudennoù ha videoioù plat, 360° ha 3D diwar ho trevnad, ho NAS, ho servijer
 - **Implijout a rit Immich** ha c'hoant hoc'h eus d'e arload, gant ar gwelerioù immersiv hag ar skrammoù bras a gevreit diwar ho pellgomzer: [ho levraoueg Immich](#keep-your-immich-library-with-more), [keñveriet gant Immich](#compared-with-immich).
 - **Evezhiañ a rit ho ti gant kameraoù Tapo** ha c'hoant hoc'h eus d'o c'haout e-kichen ho skeudennoù, war ar skinwel ivez (gwiriet ouzh ur c'hamera simulet): [kameraoù ti](#watch-your-home-cameras-on-the-big-screen).
 - **Nijal a rit gant un dron DJI** ha c'hoant hoc'h eus d'e skeudenn war-eeun war ho pellgomzer hep DJI Fly, hag en ur Meta Quest pe war un Android TV evit an dud ganeoc'h (arnodel): [ho tron](#see-what-your-drone-sees-on-your-phone).
+- **Meur a skramm hoc'h eus er gêr** ha c'hoant hoc'h eus e labourfent asambles: [petra a ra ho skrammoù asambles](#use-cases).
 
 N'eus kont Immuch360 ebet da grouiñ, ha netra ne zeu davedomp: an arload ne gomz nemet gant ho trevnadoù ha gant ar servijerioù a choazit, ha ne bellgarg un elfenn IA nemet pa c'houlennit.
 
@@ -86,6 +87,111 @@ N'eus kont Immuch360 ebet da grouiñ, ha netra ne zeu davedomp: an arload ne gom
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seizh tapadenn wirion eus Immuch360 e div renkennad: ar gweler sferenn war ur pellgomzer Android, ur skeudenn 360° war un iPad, ur skeudenn 360° war ur Google TV ha war ur skinwel LG, ha neuze linenn-amzer ar skeudennoù war ur skinwel Samsung, prenestr an arload en ur Meta Quest 3 hag ar c'hoarier video war Windows. Tapadennoù LG ha Samsung a zo bet tapet en ur merdeer a ra evel ar skinwel">
 </p>
+
+<a id="use-cases"></a>
+### Petra a ra ho skrammoù asambles
+
+Staliit Immuch360 war pep skramm ma sellit outañ: pep hini a lenn ho mammennoù e-unan, ha lod a ro ur skeudenn, ur restr pe ur c'hevreañ d'unan all. E pep skeudenn, arlun Immuch360 a verk an ardivinkoù ma ya an arload en-dro warno.
+
+#### Ho NAS war pep skramm
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Skeudennadur gant tapadennoù gwirion eus an arload: un NAS war un estajerenn en ur sal da serr-noz, liammet ouzh ur pellgomzer, un dablezenn, ur skinwel, ur c'hasked hag un urzhiataer hezoug; an NAS a vag pep skramm, gant Immuch360 war pep hini">
+</p>
+
+**Ezhomm hoc'h eus:** un NAS gant ur rannadenn SMB pe WebDAV, hag Immuch360 war pep skramm ma sellit outañ.
+
+Ouzhpennit ar rannadenn war pep skramm, ha pep hini a c'hoari ar skeudennoù hag ar videoioù el lec'h m'emaint, hep eilañ netra: pellgomzerioù, tablezennoù, Android TV, ur Meta Quest, urzhiataerioù Windows, Linux ha macOS, ha skinwelioù LG kevreet ouzh ho servijer Immich (SMB adalek webOS 22). Ur skeudenn 360° a dro evel ur sferenn war ar pellgomzer hag ar skinwel, hag a ya tro-dro deoc'h er c'hasked. Penaos ober: [C'hoari restroù un NAS, un urzhiataer, ur servijer media pe Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Ho servijer Immich war pep skramm, kevreet diwar ho pellgomzer
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: ur servijer ti liammet ouzh ur pellgomzer dalc'het en un dorn, ur skinwel, ur c'hasked hag un urzhiataer hezoug, gant Immuch360 war pep hini; ul linenn pikennet a ziskouez ar pellgomzer Android o kevreañ an tri all">
+</p>
+
+**Ezhomm hoc'h eus:** ur servijer Immich, Immuch360 war ho pellgomzer Android, hag Immuch360 war ar skrammoù a gevreit: Android TV, ur Meta Quest, un urzhiataer Windows, Linux pe macOS.
+
+War ar pellgomzer, Immuch360 a vir an arload hezoug Immich a-bezh, a ouzhpenn dezhañ e welerioù 360°, VR180 ha 3D, hag a vez staliet e-kichen an arload ofisiel. Kevreet ouzh ho servijer, e kevre ar skrammoù bras: skaniñ a ra kod QR ar skinwel pe an urzhiataer, pe e skrivit warnañ ar c'hod a ziskouez ar c'hasked, hag ho ker-tremen a chom war ar pellgomzer. Penaos ober: [Kevreañ ur skinwel, ur c'hasked pe un urzhiataer gant ho pellgomzer](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Ho skeudennoù plat e 3D, eus hoc'h urzhiataer d'ar c'hasked (arnodel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Skeudennadur gant un dapadenn wirion eus an arload: un urzhiataer hezoug gant Immuch360 e-kichen skeudennoù moullet hag un NAS, hag un den gwelet a-dreñv en ur c'hasked gant Immuch360, dirak unan eus ar gweledvaoù-se savet e relief">
+</p>
+
+**Ezhomm hoc'h eus:** Immuch360 war un urzhiataer Windows, Linux pe macOS hag en ur Meta Quest, gant ho NAS etrezo, pe ho servijer Immich gant "Gwarediñ ar stummoù IA ivez" gweredekaet.
+
+An urzhiataer e-unan a dro ho skeudennoù e skeudennoù 3D hag e leurennoù 3D, hag e panoramaoù 360° gant ur gartenn c'hrafek a 8 GB war Windows pe Linux, hag o enroll e-kichen an orinoù. Ar c'hasked a ziskouez ur skeudenn 3D e gwir 3D, a lak ul leurenn en ho kambr hag ur panorama tro-dro deoc'h; ar pellgomzerioù hag ar skinwelioù a zigor ar panoramaoù en o gweler 360°. Penaos ober: [Treiñ ur skeudenn e 3D, ul leurenn, ur panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Gwel war-eeun ho tron en ur c'hasked pe war ar skinwel (arnodel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: war un terras da serr-noz, ul loman gwelet a-dreñv a lak un dron da nijal gant ur pellgomzer war ar pellrener; ar pellgomzer a adkas ar skeudenn war-eeun, en un tu hepken, d'ur c'hasked ha d'ur skinwel">
+</p>
+
+**Ezhomm hoc'h eus:** un dron DJI hag e bellrener DJI RC-N3, Immuch360 war ar pellgomzer Android kennasket ouzh ar pellrener, hag Immuch360 en ur Meta Quest pe war un Android TV.
+
+Ar pellgomzer a ziskouez video war-eeun an dron hag e adkas, dre ho Wi-Fi pe dre e boent haeziñ dezhañ e-unan, evit ma sellfe an dud ganeoc'h ouzh an nij er c'hasked pe war ar skinwel. Degemer hepken: urzh ebet ne vez kaset biskoazh d'ar pellrener pe d'an dron, hag ar pellrener a vir ar c'hontrol klok. Penaos ober: [Sellet outañ en ur Meta Quest pe war un Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Restroù brut ho kamera 360°, gwriet el lec'h ma sellit outo
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: ur c'hamera 360°, e gartenn memor hag un NAS war un daol terras; ar restroù a ya d'an NAS, ha neuze d'un dablezenn, d'ur skinwel ha d'ur c'hasked gant Immuch360, a wri anezho">
+</p>
+
+**Ezhomm hoc'h eus:** ur c'hamera Insta360, GoPro MAX pe DJI Osmo 360, ho NAS, hag Immuch360 war ar skrammoù: pellgomzerioù, tablezennoù, Android TV, ur Meta Quest, Windows.
+
+Eilit ar restroù .insp, .insv, .360 pe .osv eus kartenn ar c'hamera war-zu ur rannadenn SMB pe WebDAV eus ho NAS, evel m'emaint; ur servijer Immich a gemer re Insta360 ivez. Pep skramm a wri anezho e-pad ma c'hoariont, gant ar c'halibradur skrivet e pep restr, ha netra ne vez ezporzhiet en arload ar c'hamera da gentañ. Penaos ober: [Digeriñ restroù brut ar c'hameraoù 360°](#open-the-raw-files-of-360-cameras).
+
+#### Ho servijerioù Plex ha DLNA war ar skinwel hag er c'hasked
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: ur servijer media dindan skinwel ur sinema ti, liammet ouzh ar skinwel, ur c'hasked gwisket war ar c'hanab, ur pellgomzer hag un urzhiataer hezoug, gant Immuch360 war pep hini">
+</p>
+
+**Ezhomm hoc'h eus:** ur Plex Media Server pe ur servijer DLNA evel Jellyfin, Emby pe minidlna, hag Immuch360 war pep skramm: Android TV, ur Meta Quest, pellgomzerioù, tablezennoù, Windows.
+
+Plex a ro restroù orin ho levraouegoù, evel-se e chom ur video 360° e 360°, tro-dro deoc'h er c'hasked, er gêr ha, dre dreuzkas ho porzhioù, er-maez ar gêr; ar servijerioù DLNA a vez kavet war rouedad ho ti. Ar skinwelioù LG kevreet ouzh ho servijer Immich a c'hoari anezho ivez. Penaos ober: [C'hoari restroù un NAS, un urzhiataer, ur servijer media pe Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Ho pellgomzer pe hoc'h urzhiataer Windows, digoret er c'hasked
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: un den gwelet a-dreñv a wisk ur c'hasked war ur c'hanab, ur skeudenn 360° en-dro dezhañ; ur pellgomzer hag un urzhiataer hezoug gant Immuch360 a rann o skeudennoù gantañ dre ar Wi-Fi">
+</p>
+
+**Ezhomm hoc'h eus:** Immuch360 war ur pellgomzer Android, un iPhone pe un urzhiataer Windows, hag en ur Meta Quest, war ar memes Wi-Fi ti.
+
+Gweredekait "Rannañ ar pellgomzer-mañ war ar rouedad" war ar pellgomzer, pe "Rannañ an urzhiataer-mañ war ar rouedad" war an urzhiataer, hag ar c'hasked a c'hoari e skeudennoù hag e videoioù, ar re 360° tro-dro deoc'h: servijer ebet, NAS ebet, pellgas ebet. War un iPhone, ar rannañ a ya en-dro e-pad ma vez an arload war ar skramm. Penaos ober: [Rannañ ar pellgomzer-mañ war ar rouedad](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Ho kameraoù Tapo war ar skinwel hag er c'hasked
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: ur c'hamera ti e-kichen ar prenestr a filmañ al liorzh, hag ur skinwel, ur pellgomzer, ur c'hasked gwisket er pezh hag un urzhiataer hezoug, gant Immuch360 war pep hini, a ziskouez ar gwel nemetañ-se">
+</p>
+
+**Ezhomm hoc'h eus:** kameraoù Tapo war rouedad ho ti, hag Immuch360 war ur pellgomzer Android, un Android TV, ur Meta Quest pe un urzhiataer Windows.
+
+Pep skramm a ziskouez ur c'hamera war-eeun hag a c'hoari enrolladennoù e gartenn memor deiz ha deiz, e-kichen ho skeudennoù, hag ar pellgomzer a gas un tamm video d'ho servijer Immich. An arload a gomz gant ar c'hameraoù war ho rouedad hepken, biskoazh dre servijerioù TP-Link. Gwiriet ouzh ur c'hamera simulet. Penaos ober: [Sellet ouzh kameraoù ho ti war ar skramm bras](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splatoù gaussian en ho kambr, en ur Meta Quest 3 pe 3S (arnodel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: en ur sal, un den gwelet a-dreñv en ur c'hasked gant Immuch360 a zo en e sav dirak ur feunteun en he ment gwir, graet gant gouloù o lugerniñ, digoret diwar un NAS war un estajerenn">
+</p>
+
+**Ezhomm hoc'h eus:** ur splat graet gant Polycam, Scaniverse, Luma pe ur benveg all, evel ur restr .spz pe .ply binarel war ho NAS pe er c'hasked, hag Immuch360 en ur Meta Quest 3 pe 3S.
+
+Ar c'hasked a lak al lec'h pe an objed en e vent, dirazoc'h pe tro-dro deoc'h: kerzhit en-dro dezhañ, riklit drezañ gant ar joystick kleiz, troit gant an hini dehou. Ar splatoù gaussian a implij un API arnodel eus Meta Spatial SDK, na vez na skoret na gwarantet gant Meta: pep diouer a zo da Immuch360 hepken. Penaos ober: [Furchal splatoù gaussian en ur Meta Quest 3 pe 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Ur Meta Quest evit ho kweladennerien (arnodel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: en ur sal diskouezadeg vihan, ur gweladenner gwelet a-dreñv a zo azezet gant ur c'hasked ma ya Immuch360 en-dro e mod kiosk, tra ma c'hortoz daou all o zro">
+</p>
+
+**Ezhomm hoc'h eus:** ur Meta Quest gant Immuch360, hag ur skeudenn pe ur video 360° er c'hasked, war ho NAS pe war ho servijer Immich.
+
+E mod kiosk, ar c'hasked a zigor ho skeudenn pe ho video 360° anezhañ e-unan, adalek ar penn kentañ, bep tro ma vez lakaet gant ur gweladenner, hag ur film a echu war ar gartenn diwezh gant ho testenn. Ar weladennerien ne bouezont war netra; derc'hel a rit B pe Y e-pad un eilenn evit kuitaat. Penaos ober: [Mod kiosk, evit un diskouezadeg pe ur stal](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Arc'hweladurioù an IA a lak da vont en-dro patromoù ha luskerioù graet gant r
 
 LoRA 360° nomadoor a zo dindan Apache 2.0 war e gartenn hag a zo bet desket war skeudennoù CC0 hag en domani foran, gant ul lodenn dindan CC BY: deveradur al lodenn-se a zeuio en ur stumm diwezhatoc'h eus MODEL-LICENSES.md. Netra amañ n'eo dindan ul lañvaz ankenwerzhel, ha netra n'en deus ezhomm eus CUDA. ONNX Runtime ha LiteRT o deus levraouegoù all e-barzh, rollet en o c'hemennoù, en o zouez Eigen dindan ar MPL 2.0, ul lañvaz copyleft gwan.
 
-Tapadennoù ar bajenn-mañ a zo tapadennoù gwirion eus an arload: re ar pellgomzer war ar savadur Android en un emulatour, re Android TV war emulatour Google TV, re LG ha Samsung en ur merdeer a ra evel ar skinwel, re Windows war ur PC Windows 11 ha prenestr ar Meta Quest en ur Quest 3, holl gant panoramaoù CC0 eus [Poly Haven](https://polyhaven.com); tapadennoù immersiv ar c'hasked a zo bet tapet war ur Quest 3 gant mediaoù an aozer e-unan, hag hini an iPad e simulatour an iPad, gant ur panorama CC0 eus Poly Haven. Skeudennoù krouer an IA a zo disoc'hoù gwirion eus an arload, graet diwar skeudennoù CC0 eus Poly Haven, gant div dapadenn wirion eus an arload Windows. Ar skeudenn digeriñ ha skeudennoù ar skinwel, ar c'hevreañ, an treiñ, ar c'hameraoù hag an dron a zo skeudennadurioù graet evit ar raktres: ne ziskouezont skramm ebet eus an arload, logo ebet eus un embregerezh all ha dremm ebet. Pep skeudenn, gant he mammenn, he deiziad hag he lañvaz, a zo e roll [CAPTURES.md](../.github/readme/CAPTURES.md).
+Tapadennoù ar bajenn-mañ a zo tapadennoù gwirion eus an arload: re ar pellgomzer war ar savadur Android en un emulatour, re Android TV war emulatour Google TV, re LG ha Samsung en ur merdeer a ra evel ar skinwel, re Windows war ur PC Windows 11 ha prenestr ar Meta Quest en ur Quest 3, holl gant panoramaoù CC0 eus [Poly Haven](https://polyhaven.com); tapadennoù immersiv ar c'hasked a zo bet tapet war ur Quest 3 gant mediaoù an aozer e-unan, hag hini an iPad e simulatour an iPad, gant ur panorama CC0 eus Poly Haven. Skeudennoù krouer an IA a zo disoc'hoù gwirion eus an arload, graet diwar skeudennoù CC0 eus Poly Haven, gant div dapadenn wirion eus an arload Windows. Ar skeudenn digeriñ ha skeudennoù ar skinwel, ar c'hevreañ, an treiñ, ar c'hameraoù hag an dron a zo skeudennadurioù graet evit ar raktres: ne ziskouezont skramm ebet eus an arload, logo ebet eus un embregerezh all ha dremm ebet. Kartennoù an degouezhioù implij a lak ur skeudennadur a seurt-se a-us d'ur renkennad treset evit ar raktres, gant logoioù ar savennoù, arlun an arload, tapadennoù gwirion eus an arload e div gartenn ha skeudennoù CC0 eus Poly Haven e div all; en tu all da logoioù ar savennoù, ne ziskouezont logo ebet eus un embregerezh all ha dremm ebet. Pep skeudenn, gant he mammenn, he deiziad hag he lañvaz, a zo e roll [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Steuñv-labour

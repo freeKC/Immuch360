@@ -20,7 +20,7 @@ Litteät, 360°- ja 3D-kuvat ja -videot laitteeltasi, NAS-palvelimeltasi, Immich
 <summary><b>Sisältö</b></summary>
 
 - [Kenelle se on](#who-it-is-for)
-- [Mitkä näytöt](#which-screens) ja [mitä kukin näyttö tekee](#what-each-screen-does)
+- [Mitkä näytöt](#which-screens), [mitä ne tekevät yhdessä](#use-cases) ja [mitä kukin näyttö tekee](#what-each-screen-does)
 - [Mitä voit tehdä](#what-you-can-do)
 - [Hanki se laitteellesi](#get-it-on-your-device)
 - [Näin teet sen](#how-to)
@@ -60,6 +60,7 @@ Litteät, 360°- ja 3D-kuvat ja -videot laitteeltasi, NAS-palvelimeltasi, Immich
 - **Käytät Immichiä** ja haluat sen sovelluksen sekä immersiiviset katselimet ja isot näytöt, joihin kirjaudut puhelimestasi: [Immich-kirjastosi](#keep-your-immich-library-with-more), [verrattuna Immichiin](#compared-with-immich).
 - **Valvot kotiasi Tapo-kameroilla** ja haluat ne kuviesi viereen, myös televisioon (tarkistettu simuloitua kameraa vasten): [kotikamerat](#watch-your-home-cameras-on-the-big-screen).
 - **Lennätät DJI-droonia** ja haluat sen suoran kuvan puhelimeesi ilman DJI Flyta, sekä Meta Questiin tai Android TV:hen seurassasi oleville (kokeellinen): [droonisi](#see-what-your-drone-sees-on-your-phone).
+- **Sinulla on kotona useita näyttöjä** ja haluat niiden toimivan yhdessä: [mitä näyttösi tekevät yhdessä](#use-cases).
 
 Immuch360-tiliä ei tarvitse luoda, eikä meille välity mitään: sovellus keskustelee vain laitteidesi ja valitsemiesi palvelimien kanssa ja lataa tekoälykomponentin vain, kun pyydät sitä.
 
@@ -86,6 +87,111 @@ Immuch360-tiliä ei tarvitse luoda, eikä meille välity mitään: sovellus kesk
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seitsemän oikeaa Immuch360-kuvakaappausta kahdessa rivissä: pallokatselin Android-puhelimessa, 360°-kuva iPadissa, 360°-kuva Google TV:ssä ja LG-televisiossa, sitten kuvien aikajana Samsung-televisiossa, sovelluksen ikkuna Meta Quest 3:ssa ja videosoitin Windowsissa. LG- ja Samsung-kaappaukset otettiin selaimessa, joka toimii television sijaisena">
 </p>
+
+<a id="use-cases"></a>
+### Mitä näyttösi tekevät yhdessä
+
+Asenna Immuch360 jokaiseen näyttöön, jolta katsot: kukin lukee lähteesi itse, ja jotkin antavat kuvan, tiedoston tai kirjautumisen toiselle. Jokaisessa kuvassa Immuch360-kuvake merkitsee laitteet, joissa sovellus toimii.
+
+#### NAS-palvelimesi jokaisella näytöllä
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Kuvitus, jossa on sovelluksen oikeita kuvakaappauksia: NAS hyllyllä olohuoneessa hämärässä, yhdistettynä puhelimeen, tablettiin, televisioon, laseihin ja kannettavaan; NAS syöttää jokaista näyttöä, joista jokaisessa toimii Immuch360">
+</p>
+
+**Tarvitset:** NAS-palvelimen, jossa on SMB- tai WebDAV-jako, ja Immuch360:n jokaiseen näyttöön, jolta katsot.
+
+Lisää jako jokaiseen näyttöön, ja kukin toistaa kuvat ja videot siellä, missä ne ovat, mitään kopioimatta: puhelimet, tabletit, Android TV, Meta Quest, Windows-, Linux- ja macOS-tietokoneet sekä Immich-palvelimeesi kirjautuneet LG-televisiot (SMB webOS 22:sta alkaen). 360°-kuva kääntyy pallona puhelimessa ja televisiossa ja ympäröi sinut laseissa. Näin teet sen: [Toista NAS-palvelimen, tietokoneen, mediapalvelimen tai Plexin tiedostoja](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Immich-palvelimesi jokaisella näytöllä, kirjautuneena puhelimestasi
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: kotipalvelin yhdistettynä kädessä pidettävään puhelimeen, televisioon, laseihin ja kannettavaan, joista jokaisessa toimii Immuch360; katkoviiva näyttää, kuinka Android-puhelin kirjaa kolme muuta sisään">
+</p>
+
+**Tarvitset:** Immich-palvelimen, Immuch360:n Android-puhelimeesi ja Immuch360:n näyttöihin, jotka kirjaat sisään: Android TV, Meta Quest, Windows-, Linux- tai macOS-tietokone.
+
+Puhelimessa Immuch360 säilyttää koko Immichin mobiilisovelluksen, lisää omat 360°-, VR180- ja 3D-katselimensa ja asentuu virallisen sovelluksen rinnalle. Kun se on kirjautunut palvelimeesi, se kirjaa isot näytöt sisään: se skannaa television tai tietokoneen QR-koodin, tai kirjoitat siihen lasien näyttämän koodin, ja salasanasi pysyy puhelimessa. Näin teet sen: [Kirjaudu televisioon, laseihin tai tietokoneeseen puhelimellasi](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Tavalliset kuvasi 3D:nä, tietokoneeltasi laseihin (kokeellinen)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Kuvitus, jossa on sovelluksen oikea kuvakaappaus: kannettava, jossa toimii Immuch360, tulostettujen kuvien ja NAS-palvelimen vieressä, ja takaapäin nähty henkilö laseissa, joissa toimii Immuch360, yhden noista maisemista edessä, joka kohoaa reliefinä">
+</p>
+
+**Tarvitset:** Immuch360:n Windows-, Linux- tai macOS-tietokoneeseen ja Meta Questiin, ja niiden välissä NAS-palvelimesi tai Immich-palvelimesi, jossa "Varmuuskopioi myös tekoälyversiot" on käytössä.
+
+Tietokone itse muuttaa kuvasi 3D-kuviksi ja 3D-ympäristöiksi, sekä 360°-panoraamoiksi 8 Gt:n näytönohjaimella Windowsissa tai Linuxissa, ja tallentaa ne alkuperäisten viereen. Lasit näyttävät 3D-kuvan aidossa 3D:ssä, tuovat ympäristön huoneeseesi ja panoraaman kaikkialle ympärillesi; puhelimet ja televisiot avaavat panoraamat 360°-katselimessaan. Näin teet sen: [Muuta yksi kuva 3D:ksi, ympäristöksi, panoraamaksi](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Droonisi suora kuva laseissa tai televisiossa (kokeellinen)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: terassilla hämärässä takaapäin nähty lentäjä lennättää droonia puhelin ohjaimessa; puhelin välittää suoran kuvan, vain yhteen suuntaan, laseihin ja televisioon">
+</p>
+
+**Tarvitset:** DJI-droonin ja sen DJI RC-N3 -ohjaimen, Immuch360:n ohjaimeen kytkettyyn Android-puhelimeen ja Immuch360:n Meta Questiin tai Android TV:hen.
+
+Puhelin näyttää droonin suoran videon ja välittää sen Wi-Fi-verkkosi tai oman yhteyspisteensä kautta, jotta seurassasi olevat katsovat lentoa laseissa tai televisiossa. Vain vastaanotto: ohjaimelle tai droonille ei koskaan lähetetä komentoja, ja ohjain säilyttää täyden hallinnan. Näin teet sen: [Katso sitä Meta Questissa tai Android TV:ssä](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### 360°-kamerasi raakatiedostot, yhdistettyinä siellä, missä katsot niitä
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: 360°-kamera, sen muistikortti ja NAS terassin pöydällä; tiedostot menevät NAS-palvelimelle, sitten tablettiin, televisioon ja laseihin, joissa toimii Immuch360 ja jotka yhdistävät ne">
+</p>
+
+**Tarvitset:** Insta360-, GoPro MAX- tai DJI Osmo 360 -kameran, NAS-palvelimesi ja Immuch360:n näyttöihin: puhelimet, tabletit, Android TV, Meta Quest, Windows.
+
+Kopioi .insp-, .insv-, .360- tai .osv-tiedostot kameran kortilta NAS-palvelimesi SMB- tai WebDAV-jakoon sellaisinaan; Immich-palvelin ottaa vastaan myös Insta360:n tiedostot. Jokainen näyttö yhdistää ne toiston aikana kuhunkin tiedostoon kirjoitetulla kalibroinnilla, eikä mitään viedä ensin kameran sovelluksessa. Näin teet sen: [Avaa 360°-kameroiden raakatiedostot](#open-the-raw-files-of-360-cameras).
+
+#### Plex- ja DLNA-palvelimesi televisiossa ja laseissa
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: mediapalvelin kotiteatterin television alla, yhdistettynä televisioon, sohvalla käytettäviin laseihin, puhelimeen ja kannettavaan, joista jokaisessa toimii Immuch360">
+</p>
+
+**Tarvitset:** Plex Media Serverin tai DLNA-palvelimen, kuten Jellyfin, Emby tai minidlna, ja Immuch360:n jokaiseen näyttöön: Android TV, Meta Quest, puhelimet, tabletit, Windows.
+
+Plex antaa kirjastojesi alkuperäiset tiedostot, joten 360°-video pysyy 360°:na, kaikkialla ympärilläsi laseissa, kotona ja porttiohjauksesi kautta kodin ulkopuolella; DLNA-palvelimet löytyvät kotiverkostasi. Immich-palvelimeesi kirjautuneet LG-televisiot toistavat niitä myös. Näin teet sen: [Toista NAS-palvelimen, tietokoneen, mediapalvelimen tai Plexin tiedostoja](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Puhelimesi tai Windows-tietokoneesi avattuna laseissa
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: takaapäin nähty henkilö käyttää laseja sohvalla 360°-kuva ympärillään; puhelin ja kannettava, joissa toimii Immuch360, jakavat kuvansa laseille Wi-Fin kautta">
+</p>
+
+**Tarvitset:** Immuch360:n Android-puhelimeen, iPhoneen tai Windows-tietokoneeseen ja Meta Questiin, samassa kodin Wi-Fi-verkossa.
+
+Ota käyttöön "Jaa tämä puhelin verkossa" puhelimessa tai "Jaa tämä tietokone verkossa" tietokoneessa, niin lasit toistavat sen kuvat ja videot, 360°-tallenteet kaikkialla ympärilläsi: ei palvelinta, ei NAS-palvelinta, ei latausta. iPhonessa jako toimii, kun sovellus on näytöllä. Näin teet sen: [Jaa tämä puhelin verkossa](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Tapo-kamerasi televisiossa ja laseissa
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: kotikamera ikkunan vieressä kuvaa puutarhaa, ja televisio, puhelin, huoneessa käytettävät lasit ja kannettava, joista jokaisessa toimii Immuch360, näyttävät sen yhden kuvan">
+</p>
+
+**Tarvitset:** Tapo-kamerat kotiverkossasi ja Immuch360:n Android-puhelimeen, Android TV:hen, Meta Questiin tai Windows-tietokoneeseen.
+
+Jokainen näyttö näyttää kameran suorana ja toistaa sen muistikortin tallenteet päivä kerrallaan kuviesi vieressä, ja puhelin lähettää leikkeen Immich-palvelimeesi. Sovellus keskustelee kameroiden kanssa vain verkossasi, ei koskaan TP-Linkin palvelinten kautta. Tarkistettu simuloitua kameraa vasten. Näin teet sen: [Katso kotisi kameroita isolta näytöltä](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaussiset splatit huoneessasi, Meta Quest 3:ssa tai 3S:ssä (kokeellinen)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: olohuoneessa takaapäin nähty henkilö laseissa, joissa toimii Immuch360, seisoo luonnollisen kokoisen, hehkuvasta valosta tehdyn suihkulähteen edessä, joka on avattu hyllyn NAS-palvelimelta">
+</p>
+
+**Tarvitset:** splatin, joka on tehty Polycamilla, Scaniversella, Lumalla tai muulla työkalulla, .spz-tiedostona tai binäärisenä .ply-tiedostona NAS-palvelimellasi tai laseissa, ja Immuch360:n Meta Quest 3:een tai 3S:ään.
+
+Lasit asettavat paikan tai esineen sen omassa koossa eteesi tai kaikkialle ympärillesi: kävele sen ympäri, liu'u sen läpi vasemmalla tikulla, käänny oikealla. Gaussiset splatit käyttävät Meta Spatial SDK:n kokeellista API:a, jota Meta ei tue eikä takaa: jokaisesta viasta vastaa vain Immuch360. Näin teet sen: [Tutki gaussisia splatteja Meta Quest 3:ssa tai 3S:ssä](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest vierailijoillesi (kokeellinen)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Kuvitus, ei kuvakaappaus: pienessä näyttelyhuoneessa takaapäin nähty vierailija istuu laseissa, joissa Immuch360 toimii kioskitilassa, kun kaksi muuta odottaa vuoroaan">
+</p>
+
+**Tarvitset:** Meta Questin, jossa on Immuch360, ja 360°-kuvan tai -videon laseissa, NAS-palvelimellasi tai Immich-palvelimellasi.
+
+Kioskitilassa lasit avaavat 360°-kuvasi tai -videosi itsestään, alusta alkaen, aina kun vierailija laittaa ne päähänsä, ja elokuva päättyy korttiin, jossa on tekstisi. Vierailijat eivät paina mitään; poistut pitämällä B:tä tai Y:tä painettuna sekunnin ajan. Näin teet sen: [Kioskitila näyttelyyn tai kauppaan](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Tekoälytoiminnot ajavat muiden tekemiä malleja ja moottoreita, jotka ladataan 
 
 Nomadoorin 360°-LoRA on korttinsa mukaan Apache 2.0 ja koulutettu CC0- ja public domain -kuvilla, joista osa on CC BY -lisenssin alainen: sen osan nimeäminen tulee MODEL-LICENSES.md:n myöhempään versioon. Mikään täällä ei ole ei-kaupallisen lisenssin alainen, eikä mikään tarvitse CUDAa. ONNX Runtime ja LiteRT sisältävät muita kirjastoja, jotka on lueteltu niiden ilmoituksissa, muun muassa Eigen MPL 2.0 -lisenssillä, joka on heikko copyleft-lisenssi.
 
-Tämän sivun kuvakaappaukset ovat sovelluksen oikeita kuvakaappauksia: puhelimen kaappaukset Android-buildista emulaattorissa, Android TV:n kaappaukset Google TV -emulaattorissa, LG:n ja Samsungin kaappaukset television sijaisena toimivassa selaimessa, Windowsin kaappaukset Windows 11 -tietokoneella ja Meta Questin ikkuna Quest 3:ssa, kaikki [Poly Havenin](https://polyhaven.com) CC0-panoraamoilla; lasien immersiiviset kaappaukset otettiin Quest 3:ssa tekijän omalla medialla ja iPadin kaappaus iPad-simulaattorissa Poly Havenin CC0-panoraamalla. Tekoälyluojan kuvat ovat sovelluksen oikeita tuloksia, tehty Poly Havenin CC0-kuvista, ja mukana on kaksi oikeaa Windows-sovelluksen kuvakaappausta. Avauskuva sekä television, kirjautumisen, kääntämisen, kameroiden ja droonin kuvat ovat projektia varten tehtyjä kuvituksia: niissä ei ole yhtään sovelluksen näkymää, muiden yritysten logoja eikä kasvoja. Jokainen kuva lähteineen, päivämäärineen ja lisensseineen on lueteltu tiedostossa [CAPTURES.md](../.github/readme/CAPTURES.md).
+Tämän sivun kuvakaappaukset ovat sovelluksen oikeita kuvakaappauksia: puhelimen kaappaukset Android-buildista emulaattorissa, Android TV:n kaappaukset Google TV -emulaattorissa, LG:n ja Samsungin kaappaukset television sijaisena toimivassa selaimessa, Windowsin kaappaukset Windows 11 -tietokoneella ja Meta Questin ikkuna Quest 3:ssa, kaikki [Poly Havenin](https://polyhaven.com) CC0-panoraamoilla; lasien immersiiviset kaappaukset otettiin Quest 3:ssa tekijän omalla medialla ja iPadin kaappaus iPad-simulaattorissa Poly Havenin CC0-panoraamalla. Tekoälyluojan kuvat ovat sovelluksen oikeita tuloksia, tehty Poly Havenin CC0-kuvista, ja mukana on kaksi oikeaa Windows-sovelluksen kuvakaappausta. Avauskuva sekä television, kirjautumisen, kääntämisen, kameroiden ja droonin kuvat ovat projektia varten tehtyjä kuvituksia: niissä ei ole yhtään sovelluksen näkymää, muiden yritysten logoja eikä kasvoja. Käyttötapakorteissa tällainen kuvitus on projektia varten piirretyn rivin yläpuolella, ja rivillä ovat alustojen logot, sovelluksen kuvake, kahdessa kortissa sovelluksen oikeita kuvakaappauksia ja kahdessa Poly Havenin CC0-kuvia; alustojen logojen lisäksi niissä ei ole muiden yritysten logoja eikä kasvoja. Jokainen kuva lähteineen, päivämäärineen ja lisensseineen on lueteltu tiedostossa [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Tiekartta

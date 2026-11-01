@@ -20,7 +20,7 @@ Cihazınızdan, NAS'ınızdan, Immich sunucunuzdan, kameralarınızdan ve dronun
 <summary><b>İçindekiler</b></summary>
 
 - [Kimler için](#who-it-is-for)
-- [Hangi ekranlar](#which-screens) ve [her ekranın yaptıkları](#what-each-screen-does)
+- [Hangi ekranlar](#which-screens), [birlikte yaptıkları](#use-cases) ve [her ekranın yaptıkları](#what-each-screen-does)
 - [Ne yapabilirsiniz](#what-you-can-do)
 - [Cihazınıza kurun](#get-it-on-your-device)
 - [Nasıl yapılır](#how-to)
@@ -60,6 +60,7 @@ Cihazınızdan, NAS'ınızdan, Immich sunucunuzdan, kameralarınızdan ve dronun
 - **Immich kullanıyorsunuz** ve onun uygulamasını, artı sürükleyici görüntüleyicileri ve telefonunuzdan giriş yaptırdığınız büyük ekranları istiyorsunuz: [Immich kitaplığınız](#keep-your-immich-library-with-more), [Immich ile karşılaştırma](#compared-with-immich).
 - **Evinizi Tapo kameralarıyla izliyorsunuz** ve onları fotoğraflarınızın yanında, TV'de de görmek istiyorsunuz (simüle edilmiş bir kameraya karşı denendi): [ev kameraları](#watch-your-home-cameras-on-the-big-screen).
 - **Bir DJI dronu uçuruyorsunuz** ve canlı görüntüsünü DJI Fly olmadan telefonunuzda, yanınızdaki kişiler için de bir Meta Quest'te veya bir Android TV'de görmek istiyorsunuz (deneysel): [dronunuz](#see-what-your-drone-sees-on-your-phone).
+- **Evde birkaç ekranınız var** ve birlikte çalışmalarını istiyorsunuz: [ekranlarınızın birlikte yaptıkları](#use-cases).
 
 Oluşturulacak bir Immuch360 hesabı yoktur ve bize hiçbir şey gelmez: uygulama yalnızca cihazlarınızla ve seçtiğiniz sunucularla konuşur ve bir yapay zeka bileşenini yalnızca siz istediğinizde indirir.
 
@@ -86,6 +87,111 @@ Oluşturulacak bir Immuch360 hesabı yoktur ve bize hiçbir şey gelmez: uygulam
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="İki sıra halinde Immuch360'ın yedi gerçek ekran görüntüsü: bir Android telefonda küre görüntüleyici, bir iPad'de bir 360° fotoğraf, bir Google TV'de ve bir LG TV'de bir 360° fotoğraf, ardından bir Samsung TV'de fotoğraf zaman çizelgesi, bir Meta Quest 3'te uygulamanın penceresi ve Windows'ta video oynatıcı. LG ve Samsung görüntüleri TV'nin yerine geçen bir tarayıcıda alındı">
 </p>
+
+<a id="use-cases"></a>
+### Ekranlarınızın birlikte yaptıkları
+
+Immuch360'ı izlediğiniz her ekrana kurun: her biri kaynaklarınızı kendisi okur, bazıları da bir görseli, bir dosyayı veya bir girişi bir diğerine aktarır. Her resimde Immuch360 simgesi, uygulamayı çalıştıran cihazları işaretler.
+
+#### NAS'ınız her ekranda
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Çizim, uygulamanın gerçek ekran görüntüleriyle: alacakaranlıkta bir oturma odasında bir rafta duran, bir telefona, bir tablete, bir TV'ye, bir başlığa ve bir dizüstü bilgisayara bağlı bir NAS; NAS her ekranı besliyor, her birinde Immuch360 çalışıyor">
+</p>
+
+**Gerekenler:** SMB veya WebDAV paylaşımı olan bir NAS ve izlediğiniz her ekranda Immuch360.
+
+Paylaşımı her ekrana ekleyin, her biri fotoğrafları ve videoları bulundukları yerde oynatır, hiçbir şey kopyalanmaz: telefonlar, tabletler, Android TV, bir Meta Quest, Windows, Linux ve macOS bilgisayarlar ve Immich sunucunuzda oturum açmış LG TV'ler (webOS 22'den itibaren SMB). 360° bir fotoğraf telefonda ve TV'de bir küre gibi döner, başlıkta ise sizi sarar. Nasıl yapılır: [Bir NAS'ın, bilgisayarın, medya sunucusunun veya Plex'in dosyalarını oynatın](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Immich sunucunuz her ekranda, girişi telefonunuzdan yapılmış
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Çizim, ekran görüntüsü değil: elde tutulan bir telefona, bir TV'ye, bir başlığa ve bir dizüstü bilgisayara bağlı bir ev sunucusu, her birinde Immuch360 çalışıyor; kesikli bir çizgi, Android telefonun diğer üçünde giriş yaptığını gösteriyor">
+</p>
+
+**Gerekenler:** bir Immich sunucusu, Android telefonunuzda Immuch360 ve giriş yaptığınız ekranlarda Immuch360: Android TV, bir Meta Quest, Windows, Linux veya macOS bir bilgisayar.
+
+Telefonda Immuch360, Immich mobil uygulamasının tamamını korur, kendi 360°, VR180 ve 3D görüntüleyicilerini ekler ve resmi uygulamanın yanına kurulur. Sunucunuzda oturum açtığında büyük ekranlarda da giriş yapar: TV'nin veya bilgisayarın QR kodunu tarar ya da başlığın gösterdiği kodu siz ona yazarsınız, şifreniz de telefonda kalır. Nasıl yapılır: [Bir TV'de, başlıkta veya bilgisayarda telefonunuzla giriş yapın](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Düz fotoğraflarınız 3D olarak, bilgisayarınızdan başlığa (deneysel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Çizim, uygulamanın gerçek bir ekran görüntüsüyle: basılı fotoğrafların ve bir NAS'ın yanında Immuch360 çalıştıran bir dizüstü bilgisayar ve Immuch360 çalıştıran bir başlık takmış, arkadan görülen bir kişi, o manzaralardan birinin önünde, manzara kabartma gibi duruyor">
+</p>
+
+**Gerekenler:** Windows, Linux veya macOS bir bilgisayarda ve bir Meta Quest'te Immuch360, aralarında da NAS'ınız ya da "Yapay zeka sürümlerini de yedekle" açık olan Immich sunucunuz.
+
+Fotoğraflarınızı bilgisayarın kendisi 3D fotoğraflara ve 3D sahnelere, Windows veya Linux'ta 8 GB'lık bir ekran kartıyla da 360° panoramalara dönüştürür ve bunları orijinallerin yanına kaydeder. Başlık bir 3D fotoğrafı gerçek 3D olarak gösterir, bir sahneyi odanıza, bir panoramayı da çevrenize yerleştirir; telefonlar ve TV'ler panoramaları kendi 360° görüntüleyicilerinde açar. Nasıl yapılır: [Tek bir fotoğrafı 3D'ye, bir sahneye, bir panoramaya dönüştürün](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Dronunuzun canlı görüntüsü bir başlıkta veya TV'de (deneysel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Çizim, ekran görüntüsü değil: alacakaranlıkta bir terasta, arkadan görülen bir pilot, kumandasında bir telefon olan bir dronu uçuruyor; telefon canlı görüntüyü, yalnızca tek yönde, bir başlığa ve bir TV'ye aktarıyor">
+</p>
+
+**Gerekenler:** bir DJI dron ve onun DJI RC-N3 kumandası, kumandaya takılı Android telefonda Immuch360 ve bir Meta Quest'te veya bir Android TV'de Immuch360.
+
+Telefon dronun canlı videosunu gösterir ve Wi-Fi'nizden veya kendi hotspot'undan aktarır, böylece yanınızdaki kişiler uçuşu başlıkta veya TV'de izler. Yalnızca alır: kumandaya veya drona hiçbir zaman komut gönderilmez ve kumanda tam kontrolü elinde tutar. Nasıl yapılır: [Bir Meta Quest'te veya bir Android TV'de izleyin](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### 360° kameranızın ham dosyaları, izlediğiniz yerde birleştirilir
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Çizim, ekran görüntüsü değil: bir teras masasında bir 360° kamera, hafıza kartı ve bir NAS; dosyalar NAS'a, sonra Immuch360 çalıştıran bir tablete, bir TV'ye ve bir başlığa gidiyor, bunlar dosyaları birleştiriyor">
+</p>
+
+**Gerekenler:** bir Insta360, GoPro MAX veya DJI Osmo 360 kamera, NAS'ınız ve ekranlarda Immuch360: telefonlar, tabletler, Android TV, bir Meta Quest, Windows.
+
+.insp, .insv, .360 veya .osv dosyalarını kameranın kartından NAS'ınızın bir SMB veya WebDAV paylaşımına olduğu gibi kopyalayın; bir Immich sunucusu Insta360 dosyalarını da alır. Her ekran onları oynatırken, her dosyada yazılı kalibrasyonla birleştirir ve önceden kameranın uygulamasında hiçbir şey dışa aktarılmaz. Nasıl yapılır: [360° kameraların ham dosyalarını açın](#open-the-raw-files-of-360-cameras).
+
+#### Plex ve DLNA sunucularınız TV'de ve başlıkta
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Çizim, ekran görüntüsü değil: bir ev sinemasının TV'sinin altında, TV'ye, kanepede takılan bir başlığa, bir telefona ve bir dizüstü bilgisayara bağlı bir medya sunucusu, her birinde Immuch360 çalışıyor">
+</p>
+
+**Gerekenler:** bir Plex Media Server veya Jellyfin, Emby ya da minidlna gibi bir DLNA sunucusu ve her ekranda Immuch360: Android TV, bir Meta Quest, telefonlar, tabletler, Windows.
+
+Plex kitaplıklarınızın orijinal dosyalarını verir, böylece 360° bir video 360° kalır, başlıkta çevrenizi sarar, evde ve port yönlendirmeniz sayesinde evden uzakta da; DLNA sunucuları ev ağınızda bulunur. Immich sunucunuzda oturum açmış LG TV'ler de onları oynatır. Nasıl yapılır: [Bir NAS'ın, bilgisayarın, medya sunucusunun veya Plex'in dosyalarını oynatın](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Telefonunuz veya Windows bilgisayarınız, başlıkta açılmış
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Çizim, ekran görüntüsü değil: arkadan görülen bir kişi bir kanepede başlık takıyor, çevresinde 360° bir fotoğraf; Immuch360 çalıştıran bir telefon ve bir dizüstü bilgisayar fotoğraflarını Wi-Fi üzerinden onunla paylaşıyor">
+</p>
+
+**Gerekenler:** bir Android telefonda, bir iPhone'da veya bir Windows bilgisayarda ve bir Meta Quest'te Immuch360, aynı ev Wi-Fi'sinde.
+
+Telefonda "Bu telefonu ağda paylaş" seçeneğini ya da bilgisayarda "Bu bilgisayarı ağda paylaş" seçeneğini açın, başlık onun fotoğraflarını ve videolarını oynatır, 360° olanları çevrenizde: sunucu yok, NAS yok, yükleme yok. Bir iPhone'da paylaşım, uygulama ekrandayken çalışır. Nasıl yapılır: [Bu telefonu ağda paylaş](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Tapo kameralarınız TV'de ve başlıkta
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Çizim, ekran görüntüsü değil: pencerenin yanındaki bir ev kamerası bahçeyi çekiyor; her birinde Immuch360 çalışan bir TV, bir telefon, odada takılan bir başlık ve bir dizüstü bilgisayar o tek görüntüyü gösteriyor">
+</p>
+
+**Gerekenler:** ev ağınızda Tapo kameralar ve bir Android telefonda, bir Android TV'de, bir Meta Quest'te veya bir Windows bilgisayarda Immuch360.
+
+Her ekran bir kamerayı canlı gösterir ve hafıza kartındaki kayıtları gün gün, fotoğraflarınızın yanında oynatır; telefon da bir klibi Immich sunucunuza gönderir. Uygulama kameralarla yalnızca ağınızda konuşur, hiçbir zaman TP-Link'in sunucuları üzerinden değil. Simüle edilmiş bir kameraya karşı denendi. Nasıl yapılır: [Ev kameralarınızı büyük ekranda izleyin](#watch-your-home-cameras-on-the-big-screen).
+
+#### Odanızda Gauss splatler, bir Meta Quest 3 ya da 3S'te (deneysel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Çizim, ekran görüntüsü değil: bir oturma odasında, Immuch360 çalıştıran bir başlık takmış, arkadan görülen bir kişi, bir raftaki NAS'tan açılan, parlayan ışıktan gerçek boyutlu bir çeşmenin önünde duruyor">
+</p>
+
+**Gerekenler:** Polycam, Scaniverse, Luma veya başka bir araçla yapılmış, NAS'ınızda veya başlıkta .spz ya da ikili .ply dosyası olarak duran bir splat ve bir Meta Quest 3 ya da 3S'te Immuch360.
+
+Başlık, yeri veya nesneyi kendi boyutunda önünüze ya da çevrenize yerleştirir: etrafında yürüyün, sol thumbstick ile içinden kayarak geçin, sağdakiyle dönün. Gauss splatler, Meta Spatial SDK'nin Meta tarafından desteklenmeyen ve garanti edilmeyen deneysel bir API'sini kullanır: her türlü kusurun sorumlusu yalnızca Immuch360'tır. Nasıl yapılır: [Bir Meta Quest 3 ya da 3S'te Gauss splatleri keşfedin](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Ziyaretçileriniz için bir Meta Quest (deneysel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Çizim, ekran görüntüsü değil: küçük bir sergi odasında, arkadan görülen bir ziyaretçi kiosk modunda Immuch360 çalıştıran bir başlıkla oturuyor, iki kişi de sırasını bekliyor">
+</p>
+
+**Gerekenler:** Immuch360 yüklü bir Meta Quest ve başlıkta, NAS'ınızda veya Immich sunucunuzda 360° bir fotoğraf ya da video.
+
+Kiosk modunda başlık, bir ziyaretçi onu her taktığında 360° fotoğrafınızı veya videonuzu kendiliğinden, baştan açar ve bir film sizin metninizin olduğu bir kartla biter. Ziyaretçiler hiçbir şeye basmaz; çıkmak için siz B veya Y'yi bir saniye basılı tutarsınız. Nasıl yapılır: [Kiosk modu, bir sergi ya da mağaza için](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Yapay zeka özellikleri başkalarının yaptığı modelleri ve motorları çal�
 
 nomadoor'un 360° LoRA'sı kartında Apache 2.0'dır ve CC0 ve kamu malı görüntülerle, bir kısmı CC BY altında olmak üzere eğitildi: o kısmın atfı MODEL-LICENSES.md'nin sonraki bir sürümünde gelecek. Burada hiçbir şey ticari olmayan bir lisans altında değildir ve hiçbir şey CUDA gerektirmez. ONNX Runtime ve LiteRT'nin içinde, bildirimlerinde listelenen başka kütüphaneler de vardır; bunlar arasında zayıf bir copyleft lisansı olan MPL 2.0 altındaki Eigen bulunur.
 
-Bu sayfadaki ekran görüntüleri uygulamanın gerçek ekran görüntüleridir: telefon görüntüleri bir emülatördeki Android build'inde, Android TV görüntüleri Google TV emülatöründe, LG ve Samsung görüntüleri TV'nin yerine geçen bir tarayıcıda, Windows görüntüleri bir Windows 11 PC'de ve Meta Quest penceresi bir Quest 3'te alındı, hepsi [Poly Haven](https://polyhaven.com)'dan CC0 panoramalarla; başlığın sürükleyici görüntüleri bir Quest 3'te yazarın kendi medyasıyla, iPad görüntüsü ise iPad simülatöründe, CC0 bir Poly Haven panoramasıyla alındı. Yapay zeka oluşturucusunun resimleri, Poly Haven'ın CC0 fotoğraflarından yapılmış uygulamanın gerçek çıktılarıdır, Windows uygulamasının iki gerçek ekran görüntüsüyle birlikte. Açılış görseli ve TV, giriş, döndürme, kameralar ve dron resimleri proje için yapılmış çizimlerdir: uygulamanın hiçbir ekranını, başka bir şirketin hiçbir logosunu ve hiçbir yüzü göstermezler. Her görsel, kaynağı, tarihi ve lisansıyla [CAPTURES.md](../.github/readme/CAPTURES.md) dosyasında listelenir.
+Bu sayfadaki ekran görüntüleri uygulamanın gerçek ekran görüntüleridir: telefon görüntüleri bir emülatördeki Android build'inde, Android TV görüntüleri Google TV emülatöründe, LG ve Samsung görüntüleri TV'nin yerine geçen bir tarayıcıda, Windows görüntüleri bir Windows 11 PC'de ve Meta Quest penceresi bir Quest 3'te alındı, hepsi [Poly Haven](https://polyhaven.com)'dan CC0 panoramalarla; başlığın sürükleyici görüntüleri bir Quest 3'te yazarın kendi medyasıyla, iPad görüntüsü ise iPad simülatöründe, CC0 bir Poly Haven panoramasıyla alındı. Yapay zeka oluşturucusunun resimleri, Poly Haven'ın CC0 fotoğraflarından yapılmış uygulamanın gerçek çıktılarıdır, Windows uygulamasının iki gerçek ekran görüntüsüyle birlikte. Açılış görseli ve TV, giriş, döndürme, kameralar ve dron resimleri proje için yapılmış çizimlerdir: uygulamanın hiçbir ekranını, başka bir şirketin hiçbir logosunu ve hiçbir yüzü göstermezler. Kullanım senaryosu kartları böyle bir çizimi, platform logolarını, uygulamanın simgesini, iki kartta uygulamanın gerçek ekran görüntülerini ve ikisinde Poly Haven'ın CC0 fotoğraflarını içeren, proje için çizilmiş bir şeridin üstüne yerleştirir; platform logoları dışında başka bir şirketin hiçbir logosunu ve hiçbir yüzü göstermezler. Her görsel, kaynağı, tarihi ve lisansıyla [CAPTURES.md](../.github/readme/CAPTURES.md) dosyasında listelenir.
 
 <a id="roadmap"></a>
 ## Yol haritası

@@ -20,7 +20,7 @@ Wêne û vîdyoyên sade, 360° û 3D ji cîhaza te, NAS-a te, servera te ya Imm
 <summary><b>Naverok</b></summary>
 
 - [Ji bo kê ye](#who-it-is-for)
-- [Kîjan ekran](#which-screens), û [her ekran çi dike](#what-each-screen-does)
+- [Kîjan ekran](#which-screens), [bi hev re çi dikin](#use-cases) û [her ekran çi dike](#what-each-screen-does)
 - [Tu çi dikarî bikî](#what-you-can-do)
 - [Li ser cîhaza xwe saz bike](#get-it-on-your-device)
 - [Çawa](#how-to)
@@ -60,6 +60,7 @@ Wêne û vîdyoyên sade, 360° û 3D ji cîhaza te, NAS-a te, servera te ya Imm
 - **Tu Immich bi rê ve dibî** û sepana wê dixwazî, ligel dîtinvanên dorhêlî û ekranên mezin ên ku tu ji têlefonê dixî hundir: [kitêbxaneya te ya Immich](#keep-your-immich-library-with-more), [li gorî Immich](#compared-with-immich).
 - **Tu bi kameraên Tapo çavdêriya mala xwe dikî** û dixwazî wan li kêleka wêneyên xwe, li ser televizyonê jî bibînî (li hember kamerayeke simulekirî hatiye kontrolkirin): [kameraên malê](#watch-your-home-cameras-on-the-big-screen).
 - **Tu droneke DJI difirînî** û dixwazî wêneya wê ya zindî bêyî DJI Fly li ser têlefona xwe bibînî, û di Meta Questê de an li ser Android TV ji bo kesên ku bi te re ne (ceribandinî): [drona te](#see-what-your-drone-sees-on-your-phone).
+- **Li malê çend ekranên te hene** û dixwazî ew bi hev re bixebitin: [ekranên te bi hev re çi dikin](#use-cases).
 
 Hesabekî Immuch360 tune ku were çêkirin, û tiştek nagihîje me: sepan tenê bi cîhazên te û serverên ku tu hilbijêrî re diaxive, û pêkhateyeke ZÇ tenê dema ku tu bixwazî dadixîne.
 
@@ -86,6 +87,111 @@ Hesabekî Immuch360 tune ku were çêkirin, û tiştek nagihîje me: sepan tenê
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Heft dîmenên rastîn ên Immuch360 di du rêzan de: dîtinvanê gogê li ser têlefoneke Android, wêneyeke 360° li ser iPad, wêneyeke 360° li ser Google TV û li ser televizyoneke LG, paşê xeta demê ya wêneyan li ser televizyoneke Samsung, pencereya sepanê di Meta Quest 3 de û lîstikvanê vîdyoyê li ser Windows. Dîmenên LG û Samsung di gerokeke ku şûna televizyonê digire de hatine kişandin">
 </p>
+
+<a id="use-cases"></a>
+### Ekranên te bi hev re çi dikin
+
+Immuch360 li ser her ekrana ku tu lê temaşe dikî saz bike: her yek çavkaniyên te bi xwe dixwîne, û hin ji wan wêneyek, pelek an têketinek didin yekî din. Di her wêneyî de, îkona Immuch360 cîhazên ku sepanê dixebitînin nîşan dide.
+
+#### NAS-a te li ser her ekranê
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Wêneyek bi dîmenên rastîn ên sepanê: NAS-ek li ser refikekê di odeya rûniştinê de di êvarê de, bi têlefonek, tabletek, televizyonek, kaskek û laptopekê ve girêdayî; NAS her ekranê xwedî dike, li ser her yekê Immuch360 dixebite">
+</p>
+
+**Pêdiviyên te:** NAS-ek bi parvekirineke SMB an WebDAV, û Immuch360 li ser her ekrana ku tu lê temaşe dikî.
+
+Parvekirinê li ser her ekranê lê zêde bike, û her yek wêne û vîdyoyan li cihê ku ew lê ne dilîze, tiştek nayê kopîkirin: têlefon, tablet, Android TV, Meta Quest, komputerên Windows, Linux û macOS, û televizyonên LG yên ku li servera te ya Immich ketine (SMB ji webOS 22 ve). Wêneyeke 360° li ser têlefon û televizyonê wekî gogekê dizivire, û di kaskê de te dorpêç dike. Çawa: [Pelên NAS, komputer, serverê medyayê an Plex bilîze](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Servera te ya Immich li ser her ekranê, bi têlefona te têketî
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Wêneyek, ne dîmenek: serverekî malê bi têlefoneke di destekî de, televizyonek, kaskek û laptopekê ve girêdayî, li ser her yekê Immuch360 dixebite; xêzeke qutqutî nîşan dide ku têlefona Android sêyên din tîne têketinê">
+</p>
+
+**Pêdiviyên te:** serverekî Immich, Immuch360 li ser têlefona te ya Android, û Immuch360 li ser ekranên ku tu wan têxî: Android TV, Meta Quest, komputereke Windows, Linux an macOS.
+
+Li ser têlefonê, Immuch360 tevahiya sepana mobîl a Immich diparêze, dîtinvanên xwe yên 360°, VR180 û 3D lê zêde dike, û li kêleka sepana fermî saz dibe. Dema ku li servera te ketiye, ew ekranên mezin dixe têketinê: koda QR ya televizyonê an komputerê dixwîne, an tu koda ku kask nîşan dide li ser wê dinivîsî, û şîfreya te li ser têlefonê dimîne. Çawa: [Bi têlefona xwe li ser televizyonek, kaskek an komputerekê têkeve](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Wêneyên te yên dûz bi 3D, ji komputera te heta kaskê (ceribandinî)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Wêneyek bi dîmenekî rastîn ê sepanê: laptopeke ku Immuch360 dixebitîne li kêleka wêneyên çapkirî û NAS-ekê, û kesek ku ji paş ve tê dîtin di kaskeke bi Immuch360 de, li ber yek ji wan dîmenên xwezayê ku bi rolyef radiwestin">
+</p>
+
+**Pêdiviyên te:** Immuch360 li ser komputereke Windows, Linux an macOS û di Meta Questê de, bi NAS-a te di navbera wan de, an servera te ya Immich bi "Guhertoyên ZÇ jî paşkeft bike" vekirî.
+
+Komputer bi xwe wêneyên te dike wêneyên 3D û sehneyên 3D, û bi karta grafîkê ya 8 GB li ser Windows an Linux dike panoramayên 360°, û wan li kêleka orîjînalan tomar dike. Kask wêneyeke 3D bi 3D-ya rastîn nîşan dide, sehneyekê di odeya te de datîne û panoramayekê li dora te; têlefon û televizyon panoramayan di dîtinvanê xwe yê 360° de vedikin. Çawa: [Yek wêneyî bike 3D, sehne, panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Dîmena zindî ya drona te di kaskê de an li ser televizyonê (ceribandinî)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Wêneyek, ne dîmenek: li ser terasekê di êvarê de, pîlotek ku ji paş ve tê dîtin droneke bi têlefonekê li ser kontrolkerê difirîne; têlefon wêneya zindî, tenê bi yek alî, ji kaskek û televizyonekê re dişîne">
+</p>
+
+**Pêdiviyên te:** droneke DJI û kontrolkera wê ya DJI RC-N3, Immuch360 li ser têlefona Android a ku bi kontrolkerê ve girêdayî ye, û Immuch360 di Meta Questê de an li ser Android TV.
+
+Têlefon vîdyoya zindî ya dronê nîşan dide û wê dişîne, bi Wi-Fi-ya te an bi hotspota xwe, da ku kesên ku bi te re ne firînê di kaskê de an li ser televizyonê temaşe bikin. Tenê wergirtin: tu ferman çu carî ji kontrolker an dronê re nayê şandin, û kontrolker kontrola tevahî diparêze. Çawa: [Di Meta Questê de an li ser Android TV temaşe bike](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Pelên xav ên kameraya te ya 360°, li cihê ku tu lê temaşe dikî tên dirûtin
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Wêneyek, ne dîmenek: kamerayeke 360°, karta wê ya bîrê û NAS-ek li ser maseyeke terasê; pel diçin NAS-ê, paşê diçin tabletek, televizyonek û kaskeke bi Immuch360, ku wan didirûn">
+</p>
+
+**Pêdiviyên te:** kamerayeke Insta360, GoPro MAX an DJI Osmo 360, NAS-a te, û Immuch360 li ser ekranan: têlefon, tablet, Android TV, Meta Quest, Windows.
+
+Pelên .insp, .insv, .360 an .osv ji karta kamerayê wekî xwe kopî bike bo parvekirineke SMB an WebDAV ya NAS-a te; serverekî Immich yên Insta360 jî digire. Her ekran wan dema ku dilîzin didirû, bi kalibrasyona ku di her pelê de hatiye nivîsandin, û berê tiştek di sepana kamerayê de nayê hinardekirin. Çawa: [Pelên xav ên kameraên 360° veke](#open-the-raw-files-of-360-cameras).
+
+#### Serverên te yên Plex û DLNA li ser televizyonê û di kaskê de
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Wêneyek, ne dîmenek: serverekî medyayê di bin televizyona sînemayeke malê de, bi televizyonê, kaskeke ku li ser qenepeyê tê lixwekirin, têlefonek û laptopekê ve girêdayî, li ser her yekê Immuch360 dixebite">
+</p>
+
+**Pêdiviyên te:** Plex Media Server an serverekî DLNA wekî Jellyfin, Emby an minidlna, û Immuch360 li ser her ekranê: Android TV, Meta Quest, têlefon, tablet, Windows.
+
+Plex pelên orîjînal ên kitêbxaneyên te dide, ji ber vê yekê vîdyoyeke 360° dimîne 360°, di kaskê de li dora te, li malê û, bi riya rêberkirina porta te, dûrî malê jî; serverên DLNA li ser tora malê ya te tên dîtin. Televizyonên LG yên ku li servera te ya Immich ketine wan jî dilîzin. Çawa: [Pelên NAS, komputer, serverê medyayê an Plex bilîze](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Têlefona te an komputera te ya Windows, di kaskê de vekirî
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Wêneyek, ne dîmenek: kesek ku ji paş ve tê dîtin li ser qenepeyekê kaskekê li xwe dike, wêneyeke 360° li dora wî; têlefonek û laptopeke bi Immuch360 wêneyên xwe bi Wi-Fi bi wî re parve dikin">
+</p>
+
+**Pêdiviyên te:** Immuch360 li ser têlefoneke Android, iPhone an komputereke Windows, û di Meta Questê de, li ser heman Wi-Fi ya malê.
+
+Li ser têlefonê "Vê telefonê li ser torê parve bike" vêxe, an li ser komputerê "Vê komputerê li ser torê parve bike", û kask wêne û vîdyoyên wê dilîze, yên 360° li dora te: ne server, ne NAS, ne barkirin. Li ser iPhone, parvekirin heta ku sepan li ser ekranê be dixebite. Çawa: [Vê telefonê li ser torê parve bike](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Kameraên te yên Tapo li ser televizyonê û di kaskê de
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Wêneyek, ne dîmenek: kamerayeke malê li kêleka pencereyê baxçe dikişîne, û televizyonek, têlefonek, kaskeke ku di odeyê de tê lixwekirin û laptopek, li ser her yekê Immuch360 dixebite, wê dîmena yekane nîşan didin">
+</p>
+
+**Pêdiviyên te:** kameraên Tapo li ser tora malê ya te, û Immuch360 li ser têlefoneke Android, Android TV, Meta Quest an komputereke Windows.
+
+Her ekran kamerayekê bi zindî nîşan dide û tomarên karta wê ya bîrê roj bi roj dilîze, li kêleka wêneyên te, û têlefon klîpekê ji servera te ya Immich re dişîne. Sepan tenê li ser tora te bi kameraan re diaxive, qet ne bi riya serverên TP-Link. Li hember kamerayeke simulekirî hatiye kontrolkirin. Çawa: [Li ser ekrana mezin li kameraên malê binêre](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splatên Gauss di odeya te de, di Meta Quest 3 an 3S de (ceribandinî)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Wêneyek, ne dîmenek: di odeya rûniştinê de, kesek ku ji paş ve tê dîtin di kaskeke bi Immuch360 de li ber kaniyeke bi mezinahiya rastîn a ji ronahiya biriqok radiweste, ku ji NAS-ekê li ser refikekê hatiye vekirin">
+</p>
+
+**Pêdiviyên te:** splatek ku bi Polycam, Scaniverse, Luma an amûreke din hatiye çêkirin, wekî pelek .spz an .ply ya bînarî li ser NAS-a te an di kaskê de, û Immuch360 di Meta Quest 3 an 3S de.
+
+Kask cih an tiştê bi mezinahiya wî datîne, li ber te an li dora te: li dora wî bimeşe, bi joysticka çepê di nav wî re bişemite, bi ya rastê bizivire. Splatên Gauss API-yeke ceribandinî ya Meta Spatial SDK bi kar tînin, ku Meta ne piştgirî dide û ne garantî dike: her kêmasî tenê berpirsiyariya Immuch360 e. Çawa: [Splatên Gauss di Meta Quest 3 an 3S de bigere](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Questek ji bo mêvanên te (ceribandinî)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Wêneyek, ne dîmenek: di odeyeke pêşangehê ya biçûk de, mêvanek ku ji paş ve tê dîtin bi kaskeke ku Immuch360 di moda kioskê de dixebitîne rûniştiye, dema ku du kesên din li benda dora xwe ne">
+</p>
+
+**Pêdiviyên te:** Meta Questek bi Immuch360, û wêneyek an vîdyoyek 360° di kaskê de, li ser NAS-a te an li ser servera te ya Immich.
+
+Di moda kioskê de, kask wêne an vîdyoya te ya 360° bi xwe vedike, ji destpêkê, her carê ku mêvanek wê li xwe dike, û fîlmek li ser karta dawiyê bi nivîsa te diqede. Mêvan li tu tiştî naxin; tu B an Y yek saniyeyê digirî da ku derkevî. Çawa: [Moda kioskê, ji bo pêşangehekê an dikanekê](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Taybetmendiyên ZÇ model û motorên ku yên din çêkirine dixebitînin, ku te
 
 LoRA ya 360° ya nomadoor li ser karta xwe Apache 2.0 ye û li ser wêneyên CC0 û qada giştî hatiye perwerdekirin, bi beşekê di bin CC BY de: navlêkirina wê beşê di guhertoyeke paşîn a MODEL-LICENSES.md de tê. Tiştek li vir ne di bin lîsanseke ne-bazirganî de ye, û tiştek CUDA naxwaze. ONNX Runtime û LiteRT pirtûkxaneyên din di xwe de hene, ku di agahdariyên wan de hatine rêzkirin, di nav wan de Eigen di bin MPL 2.0 de, lîsanseke copyleft a qels.
 
-Dîmenên vê rûpelê dîmenên rastîn ên sepanê ne: yên têlefonê li ser çêkirina Android di emulatorekê de, yên Android TV li ser emulatorê Google TV, yên LG û Samsung di gerokeke ku şûna televizyonê digire de, yên Windows li ser komputereke Windows 11 û pencereya Meta Quest di Quest 3 de, hemû bi panoramayên CC0 ji [Poly Haven](https://polyhaven.com); dîmenên dorhêlî yên kaskê li ser Quest 3 bi medyaya nivîskar bi xwe hatine kişandin, û ya iPad di simulatora iPad de, bi panoramayeke CC0 ya Poly Haven. Wêneyên afirînerê ZÇ derketinên rastîn ên sepanê ne, ji wêneyên CC0 yên Poly Haven hatine çêkirin, bi du dîmenên rastîn ên sepana Windows. Wêneya destpêkê û wêneyên televizyonê, têketinê, zivirandinê, kameraan û dronê wêneyên ku ji bo projeyê hatine çêkirin in: ew tu ekrana sepanê, tu logoya şirketeke din û tu rû nîşan nadin. Her wêne, bi çavkanî, dîrok û lîsansa xwe, di [CAPTURES.md](../.github/readme/CAPTURES.md) de hatiye rêzkirin.
+Dîmenên vê rûpelê dîmenên rastîn ên sepanê ne: yên têlefonê li ser çêkirina Android di emulatorekê de, yên Android TV li ser emulatorê Google TV, yên LG û Samsung di gerokeke ku şûna televizyonê digire de, yên Windows li ser komputereke Windows 11 û pencereya Meta Quest di Quest 3 de, hemû bi panoramayên CC0 ji [Poly Haven](https://polyhaven.com); dîmenên dorhêlî yên kaskê li ser Quest 3 bi medyaya nivîskar bi xwe hatine kişandin, û ya iPad di simulatora iPad de, bi panoramayeke CC0 ya Poly Haven. Wêneyên afirînerê ZÇ derketinên rastîn ên sepanê ne, ji wêneyên CC0 yên Poly Haven hatine çêkirin, bi du dîmenên rastîn ên sepana Windows. Wêneya destpêkê û wêneyên televizyonê, têketinê, zivirandinê, kameraan û dronê wêneyên ku ji bo projeyê hatine çêkirin in: ew tu ekrana sepanê, tu logoya şirketeke din û tu rû nîşan nadin. Kartên rewşên bikaranînê wêneyekî wisa datînin li ser rêzeke ku ji bo projeyê hatiye xêzkirin, bi logoyên platforman, îkona sepanê, dîmenên rastîn ên sepanê di du kartan de û wêneyên CC0 yên Poly Haven di du kartên din de; ji bilî logoyên platforman, ew tu logoya şirketeke din û tu rû nîşan nadin. Her wêne, bi çavkanî, dîrok û lîsansa xwe, di [CAPTURES.md](../.github/readme/CAPTURES.md) de hatiye rêzkirin.
 
 <a id="roadmap"></a>
 ## Nexşeya rê

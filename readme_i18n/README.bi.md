@@ -20,7 +20,7 @@ Flat, 360° mo 3D foto mo video from divaes blong yu, NAS blong yu, Immich serve
 <summary><b>Ol samting insaed</b></summary>
 
 - [Hem i blong hu](#who-it-is-for)
-- [Wanem skrin](#which-screens), mo [wanem evri skrin i mekem](#what-each-screen-does)
+- [Wanem skrin](#which-screens), [wanem oli mekem tugeta](#use-cases) mo [wanem evri skrin i mekem](#what-each-screen-does)
 - [Wanem yu save mekem](#what-you-can-do)
 - [Kasem long divaes blong yu](#get-it-on-your-device)
 - [Olsem wanem blong mekem](#how-to)
@@ -60,6 +60,7 @@ Flat, 360° mo 3D foto mo video from divaes blong yu, NAS blong yu, Immich serve
 - **Yu ronem Immich** mo yu wantem app blong hem, wetem ol imesiv vyua mo ol big skrin we yu log in from fon blong yu: [Immich laebri blong yu](#keep-your-immich-library-with-more), [bitwin wetem Immich](#compared-with-immich).
 - **Yu lukaot long haos blong yu wetem Tapo kamera** mo yu wantem olgeta klosap long ol foto blong yu, long TV tu (oli jekem agensem wan simuletem kamera): [kamera blong haos](#watch-your-home-cameras-on-the-big-screen).
 - **Yu flaem wan DJI dron** mo yu wantem laef pikja blong hem long fon blong yu wetaot DJI Fly, mo long wan Meta Quest o long wan Android TV blong ol man we oli stap wetem yu (eksperimentol): [dron blong yu](#see-what-your-drone-sees-on-your-phone).
+- **Yu gat plante skrin long haos** mo yu wantem olgeta oli wok tugeta: [wanem ol skrin blong yu oli mekem tugeta](#use-cases).
 
 I no gat Immuch360 akaon blong mekem, mo i no gat samting i kam long mifala: app i tok nomo wetem ol divaes blong yu mo ol server we yu jusum, mo i daonlodem wan AI kompanen nomo taem yu askem.
 
@@ -86,6 +87,111 @@ I no gat Immuch360 akaon blong mekem, mo i no gat samting i kam long mifala: app
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven trufala skrinsot blong Immuch360 long tu laen: sfia vyua long wan Android fon, wan 360° foto long wan iPad, wan 360° foto long wan Google TV mo long wan LG TV, afta foto taemlaen long wan Samsung TV, window blong app long wan Meta Quest 3 mo video pleia long Windows. Oli tekem ol skrinsot blong LG mo Samsung long wan braosa we i tekem ples blong TV">
 </p>
+
+<a id="use-cases"></a>
+### Wanem ol skrin blong yu oli mekem tugeta
+
+Instolem Immuch360 long evri skrin we yu lukluk long hem: evriwan i ridim ol sos blong yu hemwan, mo samfala oli givim wan pikja, wan fael o wan log in long narafala. Long evri pikja, aekon blong Immuch360 i soem ol masin we oli ranem app.
+
+#### NAS blong yu long evri skrin
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Pikja we oli droem, wetem trufala skrinsot blong app: wan NAS long wan sefol long wan rum long sanset, we i konek long wan fon, wan tablet, wan TV, wan hedset mo wan laptop; NAS i fidim evri skrin, mo evriwan i ranem Immuch360">
+</p>
+
+**Yu nidim:** wan NAS wetem wan fola we oli serem long SMB o WebDAV, mo Immuch360 long evri skrin we yu lukluk long hem.
+
+Ademap fola ia long evri skrin, mo evriwan i pleiem ol foto mo video long ples we oli stap, oli no kopiem eni samting: ol fon, ol tablet, Android TV, wan Meta Quest, ol kompiuta Windows, Linux mo macOS, mo ol LG TV we oli log in long Immich server blong yu (SMB from webOS 22). Wan 360° foto i tanem olsem wan bol long fon mo long TV, mo i raonem yu long hedset. Olsem wanem blong mekem: [Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Immich server blong yu long evri skrin, wetem log in from fon blong yu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan server blong haos we i konek long wan fon long han, wan TV, wan hedset mo wan laptop, evriwan i ranem Immuch360; wan laen we i brokbrok i soem Android fon i log in ol tri narafala">
+</p>
+
+**Yu nidim:** wan Immich server, Immuch360 long Android fon blong yu, mo Immuch360 long ol skrin we yu log in: Android TV, wan Meta Quest, wan kompiuta Windows, Linux o macOS.
+
+Long fon, Immuch360 i kipim fulwan Immich mobael app, i ademap ol 360°, VR180 mo 3D viuwa blong hem, mo i instol klosap long ofisol app. Taem i log in long server blong yu, i log in ol big skrin: i skanem QR kod blong TV o kompiuta, o yu taepem long hem kod we hedset i soem, mo pasword blong yu i stap long fon. Olsem wanem blong mekem: [Log in long wan TV, wan hedset o wan kompiuta wetem fon blong yu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Ol flat foto blong yu long 3D, from kompiuta blong yu i go long hedset (eksperimentol)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Pikja we oli droem, wetem wan trufala skrinsot blong app: wan laptop we i ranem Immuch360 klosap long ol foto we oli prinim mo wan NAS, mo wan man we yu luk baksaed blong hem long wan hedset we i ranem Immuch360, fored long wan long ol lanskep ia we i stanap long relif">
+</p>
+
+**Yu nidim:** Immuch360 long wan kompiuta Windows, Linux o macOS mo long wan Meta Quest, wetem NAS blong yu long medel blong tufala, o Immich server blong yu wetem "Bakap ol AI vesen tu" i on.
+
+Kompiuta hemwan i tanem ol foto blong yu i kam 3D foto mo 3D sin, mo i kam 360° panorama wetem wan grafik kad blong 8 GB long Windows o Linux, mo i sevem olgeta klosap long ol orijinol. Hedset i soem wan 3D foto long trufala 3D, i putum wan sin long rum blong yu mo wan panorama raon long yu; ol fon mo TV oli openem ol panorama long 360° viuwa blong olgeta. Olsem wanem blong mekem: [Tanem wan foto i kam 3D, wan sin, wan panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Laef vyu blong dron blong yu long wan hedset o long TV (eksperimentol)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: long wan teres long sanset, wan paelot we yu luk baksaed blong hem i flaem wan dron wetem wan fon long rimot; fon i pasem laef pikja, long wan saed nomo, i go long wan hedset mo wan TV">
+</p>
+
+**Yu nidim:** wan DJI dron mo DJI RC-N3 rimot blong hem, Immuch360 long Android fon we i plag long rimot, mo Immuch360 long wan Meta Quest o long wan Android TV.
+
+Fon i soem laef video blong dron mo i pasem, tru long Wi-Fi blong yu o hotspot blong hem, blong ol man we oli stap wetem yu oli lukluk flae long hedset o long TV. Hem i risivim nomo: neva wan oda i go long rimot o dron, mo rimot i kipim ful kontrol. Olsem wanem blong mekem: [Lukluk long wan Meta Quest o long wan Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Ol rao fael blong 360° kamera blong yu, oli joenem long ples we yu lukluk olgeta
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan 360° kamera, memori kad blong hem mo wan NAS long wan tebol long teres; ol fael oli go long NAS, afta long wan tablet, wan TV mo wan hedset we oli ranem Immuch360, we oli joenem olgeta">
+</p>
+
+**Yu nidim:** wan Insta360, GoPro MAX o DJI Osmo 360 kamera, NAS blong yu, mo Immuch360 long ol skrin: ol fon, ol tablet, Android TV, wan Meta Quest, Windows.
+
+Kopiem ol fael .insp, .insv, .360 o .osv from kad blong kamera i go long wan fola blong NAS blong yu we oli serem long SMB o WebDAV, olsem we oli stap; wan Immich server i tekem olgeta blong Insta360 tu. Evri skrin i joenem olgeta taem oli plei, wetem kalibresen we i stap raet long evri fael, mo oli no eksportem eni samting fastaem long app blong kamera. Olsem wanem blong mekem: [Openem ol rao fael blong 360° kamera](#open-the-raw-files-of-360-cameras).
+
+#### Ol Plex mo DLNA server blong yu long TV mo long hedset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan media server aninit long TV blong wan hom sinema, we i konek long TV, wan hedset we wan man i werem long sofa, wan fon mo wan laptop, evriwan i ranem Immuch360">
+</p>
+
+**Yu nidim:** wan Plex Media Server o wan DLNA server olsem Jellyfin, Emby o minidlna, mo Immuch360 long evri skrin: Android TV, wan Meta Quest, ol fon, ol tablet, Windows.
+
+Plex i givim ol orijinol fael blong ol laebri blong yu, ale wan 360° video i stap 360°, raon long yu long hedset, long haos mo, tru long port forwading blong yu, taem yu no stap long haos; ol DLNA server oli faenem long netwok blong haos blong yu. Ol LG TV we oli log in long Immich server blong yu oli pleiem olgeta tu. Olsem wanem blong mekem: [Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Fon blong yu o Windows kompiuta blong yu, we i open long hedset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan man we yu luk baksaed blong hem i werem wan hedset long wan sofa, wan 360° foto i raonem hem; wan fon mo wan laptop we oli ranem Immuch360 oli serem ol foto blong olgeta wetem hedset tru long Wi-Fi">
+</p>
+
+**Yu nidim:** Immuch360 long wan Android fon, wan iPhone o wan Windows kompiuta, mo long wan Meta Quest, long sem Wi-Fi blong haos.
+
+Tanem on "Serem fon ia long netwok" long fon, o "Serem kompiuta ia long netwok" long kompiuta, mo hedset i pleiem ol foto mo video blong hem, olgeta blong 360° raon long yu: i no gat server, i no gat NAS, i no gat aplod. Long wan iPhone, fon i serem taem app i stap long skrin. Olsem wanem blong mekem: [Serem fon ia long netwok](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Ol Tapo kamera blong yu long TV mo long hedset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan kamera blong haos klosap long windo i filmem garen, mo wan TV, wan fon, wan hedset we wan man i werem long rum mo wan laptop, evriwan i ranem Immuch360, oli soem sem vyu ia">
+</p>
+
+**Yu nidim:** ol Tapo kamera long netwok blong haos blong yu, mo Immuch360 long wan Android fon, wan Android TV, wan Meta Quest o wan Windows kompiuta.
+
+Evri skrin i soem wan kamera laef mo i pleiem ol rikod blong memori kad blong hem dei afta dei, klosap long ol foto blong yu, mo fon i sendem wan klip i go long Immich server blong yu. App i toktok long ol kamera long netwok blong yu nomo, neva tru long ol server blong TP-Link. Oli jekem agensem wan simuletem kamera. Olsem wanem blong mekem: [Lukluk ol kamera blong haos long big skrin](#watch-your-home-cameras-on-the-big-screen).
+
+#### Ol Gaussian splat long rum blong yu, long wan Meta Quest 3 o 3S (eksperimentol)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: long wan rum, wan man we yu luk baksaed blong hem long wan hedset we i ranem Immuch360 i stanap fored long wan fontin long trufala saes we oli mekem long laet we i saen, we oli openem from wan NAS long wan selef">
+</p>
+
+**Yu nidim:** wan splat we oli mekem wetem Polycam, Scaniverse, Luma o narafala tul, olsem wan .spz o binari .ply fael long NAS blong yu o long hedset, mo Immuch360 long wan Meta Quest 3 o 3S.
+
+Hedset i putum ples o samting long trufala saes blong hem, fored long yu o raon long yu: wokbaot raon long hem, slaed tru long hem wetem lef tamstik, tanem wetem raet wan. Ol Gaussian splat oli yusum wan API blong Meta Spatial SDK we i stil testem, we Meta i no sapotem mo i no promes long hem: sapos i gat wan problem, hem i blong Immuch360 nomo. Olsem wanem blong mekem: [Lukluk ol Gaussian splat long wan Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Wan Meta Quest blong ol visita blong yu (eksperimentol)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: long wan smol rum blong eksibisen, wan visita we yu luk baksaed blong hem i sidaon wetem wan hedset we i ranem Immuch360 long kiosk mod, mo tu narafala oli wet tan blong olgeta">
+</p>
+
+**Yu nidim:** wan Meta Quest wetem Immuch360, mo wan 360° foto o video long hedset, long NAS blong yu o long Immich server blong yu.
+
+Long kiosk mod, hedset i openem 360° foto o video blong yu hemwan, from stat, evri taem we wan visita i putum hem, mo wan film i finis long wan kad wetem tekst blong yu. Ol visita oli no presem eni samting; yu holem B o Y wan seken blong aot. Olsem wanem blong mekem: [Kiosk mod, blong wan eksibisen o wan stoa](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Ol AI fija oli ronem ol model mo enjin we ol narafala oli mekem, we oli daonlod 
 
 360° LoRA blong nomadoor i Apache 2.0 long kad blong hem mo oli trenem long ol CC0 mo pablik domen pikja, wetem wan haf aninit long CC BY: atribusen blong haf ia i kam long wan nekis vesen blong MODEL-LICENSES.md. I no gat samting long ples ia we i gat wan laesens blong no mekem mane, mo i no gat samting we i nidim CUDA. ONNX Runtime mo LiteRT oli gat ol narafala laebri insaed, we oli stap long lis long ol notis blong olgeta, wetem Eigen aninit long MPL 2.0, wan wik copyleft laesens.
 
-Ol skrinsot blong pej ia oli trufala skrinsot blong app: olgeta blong fon long Android build long wan emiuleta, olgeta blong Android TV long Google TV emiuleta, olgeta blong LG mo Samsung long wan braosa we i tekem ples blong TV, olgeta blong Windows long wan Windows 11 PC mo Meta Quest window long wan Quest 3, evriwan wetem CC0 panorama from [Poly Haven](https://polyhaven.com); ol imesiv skrinsot blong hedset oli tekem long wan Quest 3 wetem media blong man we i raetem, mo hemia blong iPad long iPad simuleta, wetem wan CC0 panorama blong Poly Haven. Ol pikja blong AI meka oli trufala risal blong app, we oli mekem from ol CC0 foto blong Poly Haven, wetem tu trufala skrinsot blong Windows app. Fas pikja mo ol pikja blong TV, log in, tanem, kamera mo dron oli pikja we oli droem blong projek: oli no soem eni skrin blong app, eni logo blong narafala kampani mo eni fes. Evri pikja, wetem sos, deit mo laesens blong hem, i stap long lis long [CAPTURES.md](../.github/readme/CAPTURES.md).
+Ol skrinsot blong pej ia oli trufala skrinsot blong app: olgeta blong fon long Android build long wan emiuleta, olgeta blong Android TV long Google TV emiuleta, olgeta blong LG mo Samsung long wan braosa we i tekem ples blong TV, olgeta blong Windows long wan Windows 11 PC mo Meta Quest window long wan Quest 3, evriwan wetem CC0 panorama from [Poly Haven](https://polyhaven.com); ol imesiv skrinsot blong hedset oli tekem long wan Quest 3 wetem media blong man we i raetem, mo hemia blong iPad long iPad simuleta, wetem wan CC0 panorama blong Poly Haven. Ol pikja blong AI meka oli trufala risal blong app, we oli mekem from ol CC0 foto blong Poly Haven, wetem tu trufala skrinsot blong Windows app. Fas pikja mo ol pikja blong TV, log in, tanem, kamera mo dron oli pikja we oli droem blong projek: oli no soem eni skrin blong app, eni logo blong narafala kampani mo eni fes. Ol kad we oli soem wanem ol skrin oli mekem tugeta oli putum wan pikja olsem antap long wan laen we oli droem blong projek, wetem ol logo blong ol platfom, aekon blong app, trufala skrinsot blong app long tu kad mo ol CC0 foto blong Poly Haven long tu; aotsaed long ol logo blong platfom, oli no soem eni logo blong narafala kampani mo eni fes. Evri pikja, wetem sos, deit mo laesens blong hem, i stap long lis long [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plan blong fiuja

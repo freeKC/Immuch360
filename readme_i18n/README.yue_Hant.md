@@ -20,7 +20,7 @@
 <summary><b>目錄</b></summary>
 
 - [適合邊個](#who-it-is-for)
-- [邊啲螢幕](#which-screens)，同埋[每種螢幕做到乜](#what-each-screen-does)
+- [邊啲螢幕](#which-screens)，[佢哋一齊做到乜](#use-cases)同埋[每種螢幕做到乜](#what-each-screen-does)
 - [你可以做乜](#what-you-can-do)
 - [裝落你部裝置](#get-it-on-your-device)
 - [點樣用](#how-to)
@@ -60,6 +60,7 @@
 - **你有行 Immich** 想要佢個 app，再加沉浸式檢視器，同埋用電話就登入到嘅大螢幕：[你嘅 Immich 媒體庫](#keep-your-immich-library-with-more)、[同 Immich 比較](#compared-with-immich)。
 - **你用 Tapo 相機睇住屋企** 想佢哋同你啲相放埋一齊，喺電視都睇到（已經對住一部模擬相機測試過）：[家居相機](#watch-your-home-cameras-on-the-big-screen)。
 - **你飛 DJI 無人機** 想唔使 DJI Fly 就喺電話睇到佢嘅直播畫面，仲可以喺 Meta Quest 或者 Android TV 畀身邊嘅人睇（實驗性）：[你部無人機](#see-what-your-drone-sees-on-your-phone)。
+- **你屋企有幾部螢幕** 想佢哋一齊運作：[你啲螢幕一齊做到乜](#use-cases)。
 
 唔使開任何 Immuch360 帳戶，亦冇任何嘢會傳去我哋度：個 app 淨係同你嘅裝置同你揀嘅伺服器溝通，而且淨係喺你要求嗰陣先會下載 AI 組件。
 
@@ -86,6 +87,111 @@
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Immuch360 嘅七張真實截圖，分兩行：Android 電話上面嘅球體檢視器、iPad 上面嘅 360° 相片、Google TV 同 LG 電視上面嘅 360° 相片，跟住係 Samsung 電視上面嘅相片時間線、Meta Quest 3 入面嘅 app 視窗同 Windows 上面嘅影片播放器。LG 同 Samsung 嘅截圖係喺一個代替電視嘅瀏覽器入面影嘅">
 </p>
+
+<a id="use-cases"></a>
+### 你啲螢幕一齊做到乜
+
+喺你用嚟睇嘅每部螢幕都裝 Immuch360：每部都會自己讀你嘅來源，有啲會將一張圖、一個檔案或者登入交畀另一部。每張圖入面，Immuch360 圖示標示住行緊呢個 app 嘅裝置。
+
+#### 你部 NAS 喺每部螢幕上
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="插圖，有 app 嘅真實截圖：黃昏時客廳架上面有部 NAS，連住一部電話、一部平板、一部電視、一個頭戴裝置同一部手提電腦；NAS 供應每部螢幕，每部都行緊 Immuch360">
+</p>
+
+**你需要：** 一部有 SMB 或者 WebDAV 共享嘅 NAS，同埋喺你用嚟睇嘅每部螢幕裝 Immuch360。
+
+喺每部螢幕加入呢個共享，每部都會喺相片同影片原本嘅位置直接播放，乜都唔使複製：電話、平板、Android TV、Meta Quest、Windows、Linux 同 macOS 電腦，仲有登入咗你 Immich 伺服器嘅 LG 電視（webOS 22 起用 SMB）。360° 相片喺電話同電視上面會好似球體咁轉，喺頭戴裝置就會包圍住你。點樣用：[播放 NAS、電腦、媒體伺服器或者 Plex 嘅檔案](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
+
+#### 你嘅 Immich 伺服器喺每部螢幕上，用電話登入
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="插圖，唔係截圖：一部家用伺服器連住一部拎喺手上嘅電話、一部電視、一個頭戴裝置同一部手提電腦，每部都行緊 Immuch360；一條虛線顯示 Android 電話幫另外三部登入">
+</p>
+
+**你需要：** 一部 Immich 伺服器、喺你部 Android 電話裝 Immuch360，同埋喺你要登入嘅螢幕裝 Immuch360：Android TV、Meta Quest、Windows、Linux 或者 macOS 電腦。
+
+喺電話上面，Immuch360 保留成個 Immich 手機 app，加埋佢自己嘅 360°、VR180 同 3D 檢視器，而且可以同官方 app 並排安裝。登入咗你嘅伺服器之後，佢就幫大螢幕登入：佢會掃描電視或者電腦嘅 QR 碼，或者你喺電話輸入頭戴裝置顯示嘅代碼，你嘅密碼會留喺電話入面。點樣用：[用電話登入電視、頭戴裝置或者電腦](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)。
+
+#### 你啲平面相變成 3D，由電腦去到頭戴裝置（實驗性）
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="插圖，有一張 app 嘅真實截圖：一部行緊 Immuch360 嘅手提電腦擺喺啲印出嚟嘅相同一部 NAS 隔籬，仲有一個從背後見到、戴住行緊 Immuch360 嘅頭戴裝置嘅人，企喺其中一幅以浮雕形式立起嘅風景前面">
+</p>
+
+**你需要：** 喺 Windows、Linux 或者 macOS 電腦同 Meta Quest 裝 Immuch360，兩者之間用你部 NAS，或者開咗「同時備份 AI 版本」嘅 Immich 伺服器。
+
+電腦自己會將你啲相變成 3D 相同 3D 場景，喺 Windows 或者 Linux 配 8 GB 顯示卡仲可以變成 360° 全景圖，然後儲存喺原檔隔籬。頭戴裝置會用真正嘅 3D 顯示 3D 相，將場景擺喺你間房入面，將全景圖圍住你；電話同電視會喺佢哋嘅 360° 檢視器打開全景圖。點樣用：[將一張相變成 3D、場景、全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)。
+
+#### 你部無人機嘅直播畫面，喺頭戴裝置或者電視上（實驗性）
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="插圖，唔係截圖：黃昏時喺露台上，一個從背後見到嘅機師用裝咗電話嘅遙控器飛無人機；電話將直播畫面單向轉送去一個頭戴裝置同一部電視">
+</p>
+
+**你需要：** 一部 DJI 無人機同佢嘅 DJI RC-N3 遙控器、喺插住遙控器嘅 Android 電話裝 Immuch360，同埋喺 Meta Quest 或者 Android TV 裝 Immuch360。
+
+電話會顯示無人機嘅直播影片，再經你嘅 Wi-Fi 或者佢自己嘅熱點轉送出去，等身邊嘅人可以喺頭戴裝置或者電視睇住飛行。只係接收：永遠唔會有任何指令送去遙控器或者無人機，遙控器保留全部控制權。點樣用：[喺 Meta Quest 或者 Android TV 睇](#watch-it-in-a-meta-quest-or-on-an-android-tv)。
+
+#### 你部 360° 相機嘅原始檔案，喺你睇嘅地方拼接
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="插圖，唔係截圖：露台枱面上有一部 360° 相機、佢嘅記憶卡同一部 NAS；檔案去到 NAS，再去到行緊 Immuch360 嘅平板、電視同頭戴裝置，由佢哋拼接">
+</p>
+
+**你需要：** 一部 Insta360、GoPro MAX 或者 DJI Osmo 360 相機、你部 NAS，同埋喺各部螢幕裝 Immuch360：電話、平板、Android TV、Meta Quest、Windows。
+
+將相機記憶卡入面嘅 .insp、.insv、.360 或者 .osv 檔案原封不動咁複製去你 NAS 嘅 SMB 或者 WebDAV 共享；Immich 伺服器都收 Insta360 嘅檔案。每部螢幕會一路播放一路用每個檔案入面寫住嘅校準資料拼接，唔會預先喺相機 app 匯出任何嘢。點樣用：[打開 360° 相機嘅原始檔案](#open-the-raw-files-of-360-cameras)。
+
+#### 你嘅 Plex 同 DLNA 伺服器，喺電視同頭戴裝置上
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="插圖，唔係截圖：家庭影院電視下面有一部媒體伺服器，連住電視、一個喺梳化上戴住嘅頭戴裝置、一部電話同一部手提電腦，每部都行緊 Immuch360">
+</p>
+
+**你需要：** 一部 Plex Media Server，或者一部 DLNA 伺服器，例如 Jellyfin、Emby 或者 minidlna，同埋喺每部螢幕裝 Immuch360：Android TV、Meta Quest、電話、平板、Windows。
+
+Plex 會提供你媒體庫嘅原始檔案，所以 360° 影片會保持 360°，喺頭戴裝置圍住你，喺屋企得，經你嘅連接埠轉送喺出面都得；DLNA 伺服器喺你屋企網絡上就搵到。登入咗你 Immich 伺服器嘅 LG 電視都可以播放。點樣用：[播放 NAS、電腦、媒體伺服器或者 Plex 嘅檔案](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
+
+#### 你部電話或者 Windows 電腦，喺頭戴裝置打開
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="插圖，唔係截圖：一個從背後見到嘅人喺梳化上戴住頭戴裝置，周圍係一張 360° 相；行緊 Immuch360 嘅電話同手提電腦經 Wi-Fi 將佢哋啲相分享畀頭戴裝置">
+</p>
+
+**你需要：** 喺 Android 電話、iPhone 或者 Windows 電腦，同埋 Meta Quest 裝 Immuch360，連住同一個屋企 Wi-Fi。
+
+喺電話開啟「喺網絡上分享呢部電話」，或者喺電腦開啟「喺網絡上分享呢部電腦」，頭戴裝置就會播放佢嘅相片同影片，360° 嘅就圍住你：唔使伺服器、唔使 NAS、唔使上載。喺 iPhone 上面，app 喺螢幕上面顯示緊期間，分享會運作。點樣用：[喺網絡上分享呢部電話](../docs/immuch360/user-guide.md#share-this-phone-on-the-network)。
+
+#### 你啲 Tapo 相機，喺電視同頭戴裝置上
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="插圖，唔係截圖：窗邊一部家居相機拍住花園，一部電視、一部電話、一個喺房入面戴住嘅頭戴裝置同一部手提電腦，每部都行緊 Immuch360，顯示緊同一個畫面">
+</p>
+
+**你需要：** 你屋企網絡上嘅 Tapo 相機，同埋喺 Android 電話、Android TV、Meta Quest 或者 Windows 電腦裝 Immuch360。
+
+每部螢幕都可以直播一部相機，並且逐日播放佢記憶卡入面嘅錄影，就喺你啲相隔籬；電話仲可以將一段片段送去你嘅 Immich 伺服器。app 只會喺你嘅網絡入面同相機溝通，永遠唔經 TP-Link 嘅伺服器。已經對住一部模擬相機測試過。點樣用：[喺大螢幕睇你屋企嘅相機](#watch-your-home-cameras-on-the-big-screen)。
+
+#### 你房入面嘅高斯潑濺，喺 Meta Quest 3 或者 3S（實驗性）
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="插圖，唔係截圖：客廳入面，一個從背後見到、戴住行緊 Immuch360 嘅頭戴裝置嘅人，企喺一個真實大小嘅噴水池前面，呢個噴水池由發光嘅光整成，由層架上面嘅 NAS 打開">
+</p>
+
+**你需要：** 一個用 Polycam、Scaniverse、Luma 或者其他工具整嘅潑濺，以 .spz 或者二進位 .ply 檔案擺喺你部 NAS 或者頭戴裝置入面，同埋喺 Meta Quest 3 或者 3S 裝 Immuch360。
+
+頭戴裝置會按原本大小，將嗰個地方或者物件擺喺你面前或者你周圍：你可以圍住佢行，用左邊搖桿穿過佢滑行，用右邊搖桿轉身。高斯潑濺用咗 Meta Spatial SDK 嘅實驗性 API，Meta 唔支援亦唔保證呢個 API：任何缺陷都由 Immuch360 自己負責。點樣用：[喺 Meta Quest 3 或者 3S 探索高斯潑濺](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)。
+
+#### 畀你啲訪客用嘅 Meta Quest（實驗性）
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="插圖，唔係截圖：一間細細嘅展覽室入面，一個從背後見到嘅訪客坐低戴住以展示台模式行緊 Immuch360 嘅頭戴裝置，另外兩個人等緊輪到佢哋">
+</p>
+
+**你需要：** 一部裝咗 Immuch360 嘅 Meta Quest，同埋一張 360° 相片或者影片，擺喺頭戴裝置、你部 NAS 或者你嘅 Immich 伺服器。
+
+喺展示台模式，每次有訪客戴上頭戴裝置，佢都會自動由頭打開你嘅 360° 相片或者影片，而影片會喺一張有你文字嘅結尾卡完結。訪客乜都唔使撳；你撳住 B 或者 Y 一秒就可以離開。點樣用：[展示台模式，畀展覽或者店舖用](#kiosk-mode-for-an-exhibition-or-a-shop)。
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ AI 功能運行嘅係其他人整嘅模型同引擎，淨係喺你要求嗰陣�
 
 nomadoor 嘅 360° LoRA 喺佢嘅模型卡上面標明係 Apache 2.0，用 CC0 同公有領域嘅影像訓練，其中一部分係 CC BY：嗰部分嘅署名會喺 MODEL-LICENSES.md 之後嘅版本補返。呢度冇任何嘢用非商業授權，亦冇任何嘢需要 CUDA。ONNX Runtime 同 LiteRT 內置咗其他程式庫，列喺佢哋嘅聲明入面，其中包括用弱 copyleft 授權 MPL 2.0 嘅 Eigen。
 
-呢頁嘅截圖係 app 嘅真實截圖：電話嘅喺模擬器入面嘅 Android build 影，Android TV 嘅喺 Google TV 模擬器影，LG 同 Samsung 嘅喺一個代替電視嘅瀏覽器入面影，Windows 嘅喺一部 Windows 11 PC 影，Meta Quest 視窗就喺 Quest 3 入面影，全部都用 [Poly Haven](https://polyhaven.com) 嘅 CC0 全景相；頭戴裝置嘅沉浸式截圖係喺 Quest 3 上面用作者自己嘅媒體影，iPad 嗰張就喺 iPad 模擬器入面用 Poly Haven 嘅 CC0 全景相影。AI 創作功能嘅圖係 app 嘅真實輸出，用 Poly Haven 嘅 CC0 相片整，另外有兩張 Windows app 嘅真實截圖。開頭嘅圖同電視、登入、旋轉、相機同無人機嘅圖，係為呢個專案整嘅插圖：入面冇 app 嘅畫面、冇其他公司嘅標誌，亦冇人樣。每張圖連埋佢嘅來源、日期同授權，都列喺 [CAPTURES.md](../.github/readme/CAPTURES.md)。
+呢頁嘅截圖係 app 嘅真實截圖：電話嘅喺模擬器入面嘅 Android build 影，Android TV 嘅喺 Google TV 模擬器影，LG 同 Samsung 嘅喺一個代替電視嘅瀏覽器入面影，Windows 嘅喺一部 Windows 11 PC 影，Meta Quest 視窗就喺 Quest 3 入面影，全部都用 [Poly Haven](https://polyhaven.com) 嘅 CC0 全景相；頭戴裝置嘅沉浸式截圖係喺 Quest 3 上面用作者自己嘅媒體影，iPad 嗰張就喺 iPad 模擬器入面用 Poly Haven 嘅 CC0 全景相影。AI 創作功能嘅圖係 app 嘅真實輸出，用 Poly Haven 嘅 CC0 相片整，另外有兩張 Windows app 嘅真實截圖。開頭嘅圖同電視、登入、旋轉、相機同無人機嘅圖，係為呢個專案整嘅插圖：入面冇 app 嘅畫面、冇其他公司嘅標誌，亦冇人樣。用例卡片將呢類插圖擺喺一排為呢個專案畫嘅圖上面，入面有各平台嘅標誌、app 嘅圖示，兩張卡片有 app 嘅真實截圖，另外兩張有 Poly Haven 嘅 CC0 相片；除咗平台標誌之外，入面冇其他公司嘅標誌，亦冇人樣。每張圖連埋佢嘅來源、日期同授權，都列喺 [CAPTURES.md](../.github/readme/CAPTURES.md)。
 
 <a id="roadmap"></a>
 ## 路線圖
