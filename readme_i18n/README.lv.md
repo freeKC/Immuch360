@@ -101,7 +101,7 @@ Instalējiet Immuch360 katrā ekrānā, kurā skatāties: katrs pats lasa jūsu 
 
 **Nepieciešams:** NAS ar SMB vai WebDAV koplietojumu un Immuch360 katrā ekrānā, kurā skatāties.
 
-Pievienojiet koplietojumu katrā ekrānā, un katrs atskaņo foto un video tur, kur tie atrodas, neko nekopējot: tālruņi, planšetdatori, Android TV, Meta Quest brilles, Windows, Linux un macOS datori, kā arī LG televizori, kas pieslēgti jūsu Immich serverim. 360° foto griežas kā sfēra tālrunī un televizorā un ieskauj jūs brillēs. Kā to izdarīt: [Atskaņojiet NAS, datora, media servera vai Plex failus](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Pievienojiet koplietojumu katrā ekrānā, un katrs atskaņo foto un video tur, kur tie atrodas, neko nekopējot: tālruņi, planšetdatori, Android TV, Meta Quest brilles, Windows, Linux un macOS datori, kā arī LG televizori, kas pieslēgti jūsu Immich serverim (SMB no webOS 22). 360° foto griežas kā sfēra tālrunī un televizorā un ieskauj jūs brillēs. Kā to izdarīt: [Atskaņojiet NAS, datora, media servera vai Plex failus](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Jūsu Immich serveris katrā ekrānā, pieslēgts no tālruņa
 
@@ -119,7 +119,7 @@ Tālrunī Immuch360 saglabā visu Immich mobilo lietotni, pievieno savus 360°, 
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrācija ar īstu lietotnes ekrānuzņēmumu: klēpjdators, kurā darbojas Immuch360, blakus izdrukātiem foto un NAS, un cilvēks, redzams no mugurpuses, brillēs, kurās darbojas Immuch360, pie kādas no šīm ainavām, kas izceļas reljefā">
 </p>
 
-**Nepieciešams:** Immuch360 Windows, Linux vai macOS datorā un Meta Quest brillēs, ar jūsu NAS vai Immich serveri starp tiem.
+**Nepieciešams:** Immuch360 Windows, Linux vai macOS datorā un Meta Quest brillēs, ar jūsu NAS starp tiem vai Immich serveri, kurā ieslēgts „Dublēt arī MI versijas”.
 
 Dators pats pārvērš jūsu foto par 3D foto un 3D ainām, bet ar 8 GB grafikas karti Windows vai Linux sistēmā arī par 360° panorāmām, un saglabā tos blakus oriģināliem. Brilles rāda 3D foto īstā 3D, novieto ainu jūsu istabā un panorāmu visapkārt jums; tālruņi un televizori atver panorāmas savā 360° skatītājā. Kā to izdarīt: [Pārvērtiet vienu foto par 3D, ainu, panorāmu](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Tālrunis rāda drona tiešraides video un pārraida to tālāk, caur jūsu Wi-F
 
 **Nepieciešams:** Insta360, GoPro MAX vai DJI Osmo 360 kamera, jūsu NAS un Immuch360 ekrānos: tālruņos, planšetdatoros, Android TV, Meta Quest brillēs, Windows.
 
-Nokopējiet oriģinālos failus no kameras kartes uz jūsu NAS SMB vai WebDAV koplietojumu tādus, kādi tie ir; Immich serveris pieņem arī Insta360 failus. Katrs ekrāns tos sašuj atskaņošanas laikā, ar kalibrāciju, kas ierakstīta katrā failā, un nekas iepriekš netiek eksportēts kameras lietotnē. Kā to izdarīt: [Atveriet 360° kameru oriģinālos failus](#open-the-raw-files-of-360-cameras).
+Nokopējiet .insp, .insv, .360 vai .osv failus no kameras kartes uz jūsu NAS SMB vai WebDAV koplietojumu tādus, kādi tie ir; Immich serveris pieņem arī Insta360 failus. Katrs ekrāns tos sašuj atskaņošanas laikā, ar kalibrāciju, kas ierakstīta katrā failā, un nekas iepriekš netiek eksportēts kameras lietotnē. Kā to izdarīt: [Atveriet 360° kameru oriģinālos failus](#open-the-raw-files-of-360-cameras).
 
 #### Jūsu Plex un DLNA serveri televizorā un brillēs
 
@@ -161,12 +161,12 @@ Plex dod jūsu bibliotēku oriģinālos failus, tāpēc 360° video paliek 360°
 
 **Nepieciešams:** Immuch360 Android tālrunī, iPhone vai Windows datorā un Meta Quest brillēs, vienā mājas Wi-Fi tīklā.
 
-Ieslēdziet „Koplietot šo tālruni tīklā” tālrunī vai „Koplietot šo datoru tīklā” datorā, un brilles atskaņo tā foto un video, 360° failus visapkārt jums: bez servera, bez NAS, bez augšupielādes. iPhone ierīcē koplietošana darbojas, kamēr lietotne ir atvērta. Kā to izdarīt: [Koplietot šo tālruni tīklā](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Ieslēdziet „Koplietot šo tālruni tīklā” tālrunī vai „Koplietot šo datoru tīklā” datorā, un brilles atskaņo tā foto un video, 360° failus visapkārt jums: bez servera, bez NAS, bez augšupielādes. iPhone ierīcē koplietošana darbojas, kamēr lietotne ir ekrānā. Kā to izdarīt: [Koplietot šo tālruni tīklā](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Jūsu Tapo kameras televizorā un brillēs
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrācija, nevis ekrānuzņēmums: mājas kamera pie loga filmē dārzu, un televizors, tālrunis, brilles, ko kāds valkā uz dīvāna, un klēpjdators, katrā darbojas Immuch360, rāda šo pašu skatu">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrācija, nevis ekrānuzņēmums: mājas kamera pie loga filmē dārzu, un televizors, tālrunis, brilles, ko kāds valkā istabā, un klēpjdators, katrā darbojas Immuch360, rāda šo pašu skatu">
 </p>
 
 **Nepieciešams:** Tapo kameras jūsu mājas tīklā un Immuch360 Android tālrunī, Android TV, Meta Quest brillēs vai Windows datorā.
@@ -176,10 +176,10 @@ Katrs ekrāns rāda kameru tiešraidē un atskaņo tās atmiņas kartes ierakstu
 #### Gausa splati jūsu istabā, Meta Quest 3 vai 3S brillēs (eksperimentāls)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrācija, nevis ekrānuzņēmums: dzīvojamā istabā cilvēks, redzams no mugurpuses, brillēs, kurās darbojas Immuch360, stāv pie dabiska izmēra strūklakas, ko kā splatu uzņēmusi cita lietotne un kas atvērta no NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrācija, nevis ekrānuzņēmums: dzīvojamā istabā cilvēks, redzams no mugurpuses, brillēs, kurās darbojas Immuch360, stāv pie dabiska izmēra strūklakas no mirdzošas gaismas, kas atvērta no NAS plauktā">
 </p>
 
-**Nepieciešams:** splats, kas izveidots ar Polycam, Scaniverse, Luma vai citu rīku, kā .spz vai .ply fails jūsu NAS vai brillēs, un Immuch360 Meta Quest 3 vai 3S brillēs.
+**Nepieciešams:** splats, kas izveidots ar Polycam, Scaniverse, Luma vai citu rīku, kā .spz vai binārs .ply fails jūsu NAS vai brillēs, un Immuch360 Meta Quest 3 vai 3S brillēs.
 
 Brilles novieto vietu vai objektu tā īstajā izmērā, jūsu priekšā vai visapkārt jums: ejiet tam apkārt, slīdiet tam cauri ar kreiso kursorsviru, pagriezieties ar labo. Gausa splati izmanto Meta Spatial SDK eksperimentālu API, ko Meta neatbalsta un negarantē: par jebkuru defektu atbild tikai Immuch360. Kā to izdarīt: [Izpētiet Gausa splatus Meta Quest 3 vai 3S brillēs](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ MI funkcijas darbina citu veidotus modeļus un dzinējus, kas tiek lejupielādē
 
 nomadoor 360° LoRA tās kartītē ir Apache 2.0 un tika apmācīta ar CC0 un publiskā domēna attēliem, ar daļu ar CC BY licenci: šīs daļas atsauce būs nākamajā MODEL-LICENSES.md versijā. Nekas šeit nav ar nekomerciālu licenci, un nekam nav vajadzīgs CUDA. ONNX Runtime un LiteRT ietver citas bibliotēkas, uzskaitītas to paziņojumos, starp tām Eigen ar MPL 2.0, vāju copyleft licenci.
 
-Šīs lapas ekrānuzņēmumi ir reāli lietotnes ekrānuzņēmumi: tālruņa ekrānuzņēmumi no Android build emulatorā, Android TV ekrānuzņēmumi no Google TV emulatora, LG un Samsung ekrānuzņēmumi pārlūkā, kas aizstāj televizoru, Windows ekrānuzņēmumi no Windows 11 datora un Meta Quest logs no Quest 3, visi ar CC0 panorāmām no [Poly Haven](https://polyhaven.com); briļļu iespaidīgie ekrānuzņēmumi veikti Quest 3 ar autora paša media, bet iPad ekrānuzņēmums iPad simulatorā, ar CC0 Poly Haven panorāmu. MI veidotāja attēli ir īsti lietotnes rezultāti, veidoti no Poly Haven CC0 foto, ar diviem īstiem Windows lietotnes ekrānuzņēmumiem. Sākuma attēls un televizora, pieteikšanās, pagriešanas, kameru un drona attēli ir projektam veidotas ilustrācijas: tajos nav lietotnes ekrāna, citas kompānijas logotipa un sejas. Lietošanas piemēru kartītes novieto šādu ilustrāciju virs projektam zīmētas rindas ar platformu logotipiem, lietotnes ikonu un, divās kartītēs, īstiem lietotnes ekrānuzņēmumiem; bez platformu logotipiem tajās nav citas kompānijas logotipa un sejas. Katrs attēls ar avotu, datumu un licenci ir uzskaitīts [CAPTURES.md](../.github/readme/CAPTURES.md).
+Šīs lapas ekrānuzņēmumi ir reāli lietotnes ekrānuzņēmumi: tālruņa ekrānuzņēmumi no Android build emulatorā, Android TV ekrānuzņēmumi no Google TV emulatora, LG un Samsung ekrānuzņēmumi pārlūkā, kas aizstāj televizoru, Windows ekrānuzņēmumi no Windows 11 datora un Meta Quest logs no Quest 3, visi ar CC0 panorāmām no [Poly Haven](https://polyhaven.com); briļļu iespaidīgie ekrānuzņēmumi veikti Quest 3 ar autora paša media, bet iPad ekrānuzņēmums iPad simulatorā, ar CC0 Poly Haven panorāmu. MI veidotāja attēli ir īsti lietotnes rezultāti, veidoti no Poly Haven CC0 foto, ar diviem īstiem Windows lietotnes ekrānuzņēmumiem. Sākuma attēls un televizora, pieteikšanās, pagriešanas, kameru un drona attēli ir projektam veidotas ilustrācijas: tajos nav lietotnes ekrāna, citas kompānijas logotipa un sejas. Lietošanas piemēru kartītes novieto šādu ilustrāciju virs projektam zīmētas rindas ar platformu logotipiem, lietotnes ikonu, īstiem lietotnes ekrānuzņēmumiem divās kartītēs un Poly Haven CC0 foto divās; bez platformu logotipiem tajās nav citas kompānijas logotipa un sejas. Katrs attēls ar avotu, datumu un licenci ir uzskaitīts [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Ceļvedis

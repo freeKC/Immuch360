@@ -101,7 +101,7 @@ Pasang Immuch360 kat tiap skrin hok demo tengok: tiap satu baco sumber demo send
 
 **Demo perlu:** NAS nga kongsi SMB ke WebDAV, nga Immuch360 kat tiap skrin hok demo tengok.
 
-Tamboh kongsi tu kat tiap skrin, nga tiap satu maing gambo nga video kat tempat dio duduk, takdok apo disalin: telefon, tablet, Android TV, Meta Quest, komputer Windows, Linux nga macOS, nga TV LG hok doh log masuk ko server Immich demo. Gambo 360° pusing macam sfera kat telefon nga TV, nga keliling demo dale headset. Caro nok buat: [Maing fail NAS, komputer, server media ke Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Tamboh kongsi tu kat tiap skrin, nga tiap satu maing gambo nga video kat tempat dio duduk, takdok apo disalin: telefon, tablet, Android TV, Meta Quest, komputer Windows, Linux nga macOS, nga TV LG hok doh log masuk ko server Immich demo (SMB dari webOS 22). Gambo 360° pusing macam sfera kat telefon nga TV, nga keliling demo dale headset. Caro nok buat: [Maing fail NAS, komputer, server media ke Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Server Immich demo kat tiap skrin, log masuk dari telefon demo
 
@@ -119,7 +119,7 @@ Kat telefon, Immuch360 simpang sumo aplikasi mudoh alih Immich, tamboh pemapar 3
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Lukisa nga satu tangkapa sebenar aplikasi: laptop hok jale Immuch360 sebeloh gambo hok dicetak nga NAS, nga ore hok nampok dari belakang pakai headset hok jale Immuch360, depan salah satu pemandanga tu hok timbul">
 </p>
 
-**Demo perlu:** Immuch360 kat komputer Windows, Linux ke macOS nga dale Meta Quest, nga NAS ke server Immich demo kat tengoh-tengoh.
+**Demo perlu:** Immuch360 kat komputer Windows, Linux ke macOS nga dale Meta Quest, nga NAS demo kat tengoh-tengoh, ke server Immich demo nga "Sandar versi AI gak" hidup.
 
 Komputer tu sendiri tukar gambo demo jadi gambo 3D nga adege 3D, nga jadi panorama 360° nga kad grafik 8 GB kat Windows ke Linux, nga simpang dio sebeloh fail asal. Headset tunjuk gambo 3D dale 3D betul, letak adege dale bilik demo nga panorama keliling demo; telefon nga TV bukak panorama dale pemapar 360° dio. Caro nok buat: [Tukar satu gambo jadi 3D, adege, panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Telefon tunjuk video live dron nga hanta dio, lalu Wi-Fi demo ke hotspot dio sen
 
 **Demo perlu:** kamera Insta360, GoPro MAX ke DJI Osmo 360, NAS demo, nga Immuch360 kat skrin: telefon, tablet, Android TV, Meta Quest, Windows.
 
-Salin fail mentah dari kad kamera ko kongsi SMB ke WebDAV NAS demo, macam tu jah; server Immich terimo hok Insta360 jugok. Tiap skrin cantum dio maso dio maing, nga kalibrasi hok ditulih dale tiap fail, nga takdok apo dieksport dale aplikasi kamera dulu. Caro nok buat: [Bukak fail mentah kamera 360°](#open-the-raw-files-of-360-cameras).
+Salin fail .insp, .insv, .360 ke .osv dari kad kamera ko kongsi SMB ke WebDAV NAS demo, macam tu jah; server Immich terimo hok Insta360 jugok. Tiap skrin cantum dio maso dio maing, nga kalibrasi hok ditulih dale tiap fail, nga takdok apo dieksport dale aplikasi kamera dulu. Caro nok buat: [Bukak fail mentah kamera 360°](#open-the-raw-files-of-360-cameras).
 
 #### Server Plex nga DLNA demo kat TV nga dale headset
 
@@ -161,12 +161,12 @@ Plex bagi fail asal pustako demo, supayo video 360° kekal 360°, keliling demo 
 
 **Demo perlu:** Immuch360 kat telefon Android, iPhone ke komputer Windows, nga dale Meta Quest, kat Wi-Fi rumoh hok samo.
 
-Hidupke "Kongsi fon ni dale rangkaie" kat telefon, ke "Kongsi komputer ni dale rangkaie" kat komputer, nga headset maing gambo nga video dio, hok 360° keliling demo: takdok server, takdok NAS, takdok muat naik. Kat iPhone, kongsi jale maso aplikasi bukak. Caro nok buat: [Kongsi fon ni dale rangkaie](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Hidupke "Kongsi fon ni dale rangkaie" kat telefon, ke "Kongsi komputer ni dale rangkaie" kat komputer, nga headset maing gambo nga video dio, hok 360° keliling demo: takdok server, takdok NAS, takdok muat naik. Kat iPhone, kongsi jale maso aplikasi ado kat skrin. Caro nok buat: [Kongsi fon ni dale rangkaie](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Kamera Tapo demo kat TV nga dale headset
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Lukisa, buke tangkapa: kamera rumoh tepi tingkap rakam taman, nga TV, telefon, headset hok dipakai atas sofa nga laptop, tiap satu jale Immuch360, tunjuk satu pandanga tu">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Lukisa, buke tangkapa: kamera rumoh tepi tingkap rakam taman, nga TV, telefon, headset hok dipakai dale bilik nga laptop, tiap satu jale Immuch360, tunjuk satu pandanga tu">
 </p>
 
 **Demo perlu:** kamera Tapo dale rangkaie rumoh demo, nga Immuch360 kat telefon Android, Android TV, Meta Quest ke komputer Windows.
@@ -176,10 +176,10 @@ Tiap skrin tunjuk kamera live nga maing rekoda kad memori dio hari demi hari, se
 #### Gaussian splats dale bilik demo, dale Meta Quest 3 ke 3S (eksperimen)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Lukisa, buke tangkapa: dale bilik dudok, ore hok nampok dari belakang pakai headset hok jale Immuch360 berdiri depan pancuta air saiz sebenar, hok ditangkap jadi splat dek aplikasi lain nga dibukak dari NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Lukisa, buke tangkapa: dale bilik dudok, ore hok nampok dari belakang pakai headset hok jale Immuch360 berdiri depan pancuta air saiz sebenar dari caho hok bersinar, hok dibukak dari NAS atas rak">
 </p>
 
-**Demo perlu:** splat hok dibuat nga Polycam, Scaniverse, Luma ke alat lain, jadi fail .spz ke .ply kat NAS demo ke dale headset, nga Immuch360 dale Meta Quest 3 ke 3S.
+**Demo perlu:** splat hok dibuat nga Polycam, Scaniverse, Luma ke alat lain, jadi fail .spz ke .ply binari kat NAS demo ke dale headset, nga Immuch360 dale Meta Quest 3 ke 3S.
 
 Headset letak tempat ke bendo tu ikut saiz dio, depan demo ke keliling demo: jale keliling dio, melunsur lalu dio nga kayu bedik kiri, pusing nga hok kana. Gaussian splats guno API eksperimen Meta Spatial SDK, hok Meta tok sokong nga tok jamin: apo-apo kecacata tanggungjawab Immuch360 jah. Caro nok buat: [Teroka Gaussian splats dale Meta Quest 3 ke 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Ciri AI jale model nga enjin hok orang lain buat, dimuat turun bilo demo mintak 
 
 LoRA 360° dari nomadoor ialah Apache 2.0 kat kad dio nga dilatih nga imej CC0 nga domain awam, nga sebahagian bawoh CC BY: atribusi bahagian tu datang dale versi MODEL-LICENSES.md kemudia. Takdok apo-apo kat sini bawoh lesen buke komersial, nga takdok apo perlu CUDA. ONNX Runtime nga LiteRT ado perpustakaa lain di dale, disenaraika dale notis dio, antaro dio Eigen bawoh MPL 2.0, lesen copyleft lemoh.
 
-Tangkapa kat muko ni ialah tangkapa sebenar aplikasi: hok telefon kat build Android dale emulator, hok Android TV kat emulator Google TV, hok LG nga Samsung dale pelayar hok ganti TV, hok Windows kat PC Windows 11 nga tetingkap Meta Quest dale Quest 3, sumo nga panorama CC0 dari [Poly Haven](https://polyhaven.com); tangkapa immersif headset diambik kat Quest 3 nga media penulih sendiri, nga hok iPad dale simulator iPad, nga panorama CC0 Poly Haven. Gambo pencipta AI ialah hasil sebenar aplikasi, dibuat dari gambo CC0 Poly Haven, nga duo tangkapa sebenar aplikasi Windows. Gambo pembukaa nga gambo TV, log masuk, pusinga, kamera nga dron ialah lukisa hok dibuat untuk projek: dio takdok skrin aplikasi, takdok logo syarikat lain nga takdok muko. Kad kes guno letak lukisa macam tu atas satu baris hok dilukis untuk projek, nga logo platform, ikon aplikasi nga, dale duo kad, tangkapa sebenar aplikasi; selain logo platform, dio takdok logo syarikat lain nga takdok muko. Tiap gambo, nga sumber, tarikh nga lesen dio, disenaraika dale [CAPTURES.md](../.github/readme/CAPTURES.md).
+Tangkapa kat muko ni ialah tangkapa sebenar aplikasi: hok telefon kat build Android dale emulator, hok Android TV kat emulator Google TV, hok LG nga Samsung dale pelayar hok ganti TV, hok Windows kat PC Windows 11 nga tetingkap Meta Quest dale Quest 3, sumo nga panorama CC0 dari [Poly Haven](https://polyhaven.com); tangkapa immersif headset diambik kat Quest 3 nga media penulih sendiri, nga hok iPad dale simulator iPad, nga panorama CC0 Poly Haven. Gambo pencipta AI ialah hasil sebenar aplikasi, dibuat dari gambo CC0 Poly Haven, nga duo tangkapa sebenar aplikasi Windows. Gambo pembukaa nga gambo TV, log masuk, pusinga, kamera nga dron ialah lukisa hok dibuat untuk projek: dio takdok skrin aplikasi, takdok logo syarikat lain nga takdok muko. Kad kes guno letak lukisa macam tu atas satu baris hok dilukis untuk projek, nga logo platform, ikon aplikasi, tangkapa sebenar aplikasi dale duo kad nga gambo CC0 Poly Haven dale duo kad lain; selain logo platform, dio takdok logo syarikat lain nga takdok muko. Tiap gambo, nga sumber, tarikh nga lesen dio, disenaraika dale [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Pelan jale

@@ -101,7 +101,7 @@ Installera Immuch360 på varje skärm du tittar på: var och en läser dina käl
 
 **Du behöver:** en NAS med en SMB- eller WebDAV-delning, och Immuch360 på varje skärm du tittar på.
 
-Lägg till delningen på varje skärm, så spelar var och en upp foton och videor där de ligger, utan att något kopieras: telefoner, surfplattor, Android TV, en Meta Quest, Windows-, Linux- och macOS-datorer, och LG-TV-apparater inloggade på din Immich-server. Ett 360°-foto vrids som en sfär på telefonen och TV:n, och omger dig i headsetet. Så här gör du: [Spela upp filerna på en NAS, en dator, en mediaserver eller Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Lägg till delningen på varje skärm, så spelar var och en upp foton och videor där de ligger, utan att något kopieras: telefoner, surfplattor, Android TV, en Meta Quest, Windows-, Linux- och macOS-datorer, och LG-TV-apparater inloggade på din Immich-server (SMB från webOS 22). Ett 360°-foto vrids som en sfär på telefonen och TV:n, och omger dig i headsetet. Så här gör du: [Spela upp filerna på en NAS, en dator, en mediaserver eller Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Din Immich-server på varje skärm, inloggad från telefonen
 
@@ -119,7 +119,7 @@ På telefonen behåller Immuch360 hela Immichs mobilapp, lägger till sina 360°
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustration med en riktig skärmbild av appen: en bärbar dator som kör Immuch360 bredvid utskrivna foton och en NAS, och en person sedd bakifrån i ett headset som kör Immuch360, framför ett av de landskapen i relief">
 </p>
 
-**Du behöver:** Immuch360 på en Windows-, Linux- eller macOS-dator och i en Meta Quest, med din NAS eller din Immich-server mellan dem.
+**Du behöver:** Immuch360 på en Windows-, Linux- eller macOS-dator och i en Meta Quest, med din NAS mellan dem, eller din Immich-server med "Säkerhetskopiera även AI-versioner" påslaget.
 
 Datorn själv gör om dina foton till 3D-foton och 3D-scener, och till 360°-panoramor med ett grafikkort på 8 GB på Windows eller Linux, och sparar dem bredvid originalen. Headsetet visar ett 3D-foto i äkta 3D, placerar en scen i ditt rum och ett panorama runt omkring dig; telefoner och TV-apparater öppnar panoramorna i sin 360°-visare. Så här gör du: [Gör om ett foto till 3D, en scen, ett panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Telefonen visar drönarens livevideo och vidarebefordrar den, via ditt Wi-Fi ell
 
 **Du behöver:** en Insta360-, GoPro MAX- eller DJI Osmo 360-kamera, din NAS, och Immuch360 på skärmarna: telefoner, surfplattor, Android TV, en Meta Quest, Windows.
 
-Kopiera råfilerna från kamerans kort till en SMB- eller WebDAV-delning på din NAS, som de är; en Immich-server tar även Insta360-filerna. Varje skärm syr ihop dem medan de spelas upp, med kalibreringen som står i varje fil, och inget exporteras först i kamerans app. Så här gör du: [Öppna råfilerna från 360°-kameror](#open-the-raw-files-of-360-cameras).
+Kopiera .insp-, .insv-, .360- eller .osv-filerna från kamerans kort till en SMB- eller WebDAV-delning på din NAS, som de är; en Immich-server tar även Insta360-filerna. Varje skärm syr ihop dem medan de spelas upp, med kalibreringen som står i varje fil, och inget exporteras först i kamerans app. Så här gör du: [Öppna råfilerna från 360°-kameror](#open-the-raw-files-of-360-cameras).
 
 #### Dina Plex- och DLNA-servrar på TV:n och i headsetet
 
@@ -161,12 +161,12 @@ Plex ger originalfilerna i dina bibliotek, så en 360°-video förblir 360°, ru
 
 **Du behöver:** Immuch360 på en Android-telefon, en iPhone eller en Windows-dator, och i en Meta Quest, på samma Wi-Fi hemma.
 
-Slå på "Dela den här telefonen i nätverket" på telefonen, eller "Dela den här datorn i nätverket" på datorn, så spelar headsetet upp dess foton och videor, 360°-filerna runt omkring dig: ingen server, ingen NAS, ingen uppladdning. På en iPhone körs delningen medan appen är öppen. Så här gör du: [Dela den här telefonen i nätverket](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Slå på "Dela den här telefonen i nätverket" på telefonen, eller "Dela den här datorn i nätverket" på datorn, så spelar headsetet upp dess foton och videor, 360°-filerna runt omkring dig: ingen server, ingen NAS, ingen uppladdning. På en iPhone körs delningen medan appen är på skärmen. Så här gör du: [Dela den här telefonen i nätverket](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Dina Tapo-kameror på TV:n och i headsetet
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustration, inte en skärmbild: en hemkamera vid fönstret filmar trädgården, och en TV, en telefon, ett headset som bärs i soffan och en bärbar dator, som var och en kör Immuch360, visar samma bild">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustration, inte en skärmbild: en hemkamera vid fönstret filmar trädgården, och en TV, en telefon, ett headset som bärs i rummet och en bärbar dator, som var och en kör Immuch360, visar samma bild">
 </p>
 
 **Du behöver:** Tapo-kameror på ditt hemnätverk, och Immuch360 på en Android-telefon, en Android TV, en Meta Quest eller en Windows-dator.
@@ -176,10 +176,10 @@ Varje skärm visar en kamera live och spelar upp inspelningarna på dess minnesk
 #### Gaussiska splattar i ditt rum, i en Meta Quest 3 eller 3S (experimentell)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustration, inte en skärmbild: i ett vardagsrum står en person sedd bakifrån, i ett headset som kör Immuch360, framför en fontän i naturlig storlek som fångats som en splat av en annan app och öppnats från en NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustration, inte en skärmbild: i ett vardagsrum står en person sedd bakifrån, i ett headset som kör Immuch360, framför en fontän av glödande ljus i naturlig storlek, öppnad från en NAS på en hylla">
 </p>
 
-**Du behöver:** en splat gjord med Polycam, Scaniverse, Luma eller ett annat verktyg, som en .spz- eller .ply-fil på din NAS eller i headsetet, och Immuch360 i en Meta Quest 3 eller 3S.
+**Du behöver:** en splat gjord med Polycam, Scaniverse, Luma eller ett annat verktyg, som en .spz- eller binär .ply-fil på din NAS eller i headsetet, och Immuch360 i en Meta Quest 3 eller 3S.
 
 Headsetet placerar platsen eller objektet i dess storlek, framför dig eller runt omkring dig: gå runt det, glid genom det med vänster styrspak, vrid med den högra. Gaussiska splattar använder ett experimentellt API i Meta Spatial SDK, som Meta varken stöder eller garanterar: varje fel är Immuch360s eget. Så här gör du: [Utforska gaussiska splattar i en Meta Quest 3 eller 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ AI-funktionerna kör modeller och motorer gjorda av andra, nedladdade bara när 
 
 360°-LoRA:n av nomadoor är Apache 2.0 enligt sitt modellkort och tränades på CC0-bilder och bilder i public domain, med en del under CC BY: attributionen för den delen kommer i en senare version av MODEL-LICENSES.md. Ingenting här har en icke-kommersiell licens, och ingenting kräver CUDA. ONNX Runtime och LiteRT har andra bibliotek inbyggda, listade i deras meddelanden, bland dem Eigen under MPL 2.0, en svag copyleft-licens.
 
-Skärmbilderna på den här sidan är riktiga skärmbilder av appen: telefonbilderna från Android-bygget i en emulator, Android TV-bilderna från Google TV-emulatorn, LG- och Samsung-bilderna i en webbläsare som står i för TV:n, Windows-bilderna på en Windows 11-dator och Meta Quest-fönstret i en Quest 3, alla med CC0-panoramabilder från [Poly Haven](https://polyhaven.com); headsetets immersiva bilder togs på en Quest 3 med upphovspersonens egna medier, och iPad-bilden i iPad-simulatorn, med ett CC0-panorama från Poly Haven. Bilderna av AI-skaparen är verkliga resultat från appen, gjorda av CC0-foton från Poly Haven, med två riktiga skärmbilder av Windows-appen. Öppningsbilden och bilderna av TV:n, inloggningen, vridningen, kamerorna och drönaren är illustrationer gjorda för projektet: de visar ingen skärm från appen, ingen logotyp från ett annat företag och inget ansikte. Användningsfallskorten placerar en sådan illustration ovanför en rad som ritats för projektet, med plattformarnas logotyper, appens ikon och, i två kort, riktiga skärmbilder av appen; förutom plattformarnas logotyper visar de ingen logotyp från ett annat företag och inget ansikte. Varje bild, med sin källa, sitt datum och sin licens, listas i [CAPTURES.md](../.github/readme/CAPTURES.md).
+Skärmbilderna på den här sidan är riktiga skärmbilder av appen: telefonbilderna från Android-bygget i en emulator, Android TV-bilderna från Google TV-emulatorn, LG- och Samsung-bilderna i en webbläsare som står i för TV:n, Windows-bilderna på en Windows 11-dator och Meta Quest-fönstret i en Quest 3, alla med CC0-panoramabilder från [Poly Haven](https://polyhaven.com); headsetets immersiva bilder togs på en Quest 3 med upphovspersonens egna medier, och iPad-bilden i iPad-simulatorn, med ett CC0-panorama från Poly Haven. Bilderna av AI-skaparen är verkliga resultat från appen, gjorda av CC0-foton från Poly Haven, med två riktiga skärmbilder av Windows-appen. Öppningsbilden och bilderna av TV:n, inloggningen, vridningen, kamerorna och drönaren är illustrationer gjorda för projektet: de visar ingen skärm från appen, ingen logotyp från ett annat företag och inget ansikte. Användningsfallskorten placerar en sådan illustration ovanför en rad som ritats för projektet, med plattformarnas logotyper, appens ikon, riktiga skärmbilder av appen i två kort och CC0-foton från Poly Haven i två; förutom plattformarnas logotyper visar de ingen logotyp från ett annat företag och inget ansikte. Varje bild, med sin källa, sitt datum och sin licens, listas i [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Färdplan

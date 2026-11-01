@@ -101,7 +101,7 @@ Staliit Immuch360 war pep skramm ma sellit outañ: pep hini a lenn ho mammennoù
 
 **Ezhomm hoc'h eus:** un NAS gant ur rannadenn SMB pe WebDAV, hag Immuch360 war pep skramm ma sellit outañ.
 
-Ouzhpennit ar rannadenn war pep skramm, ha pep hini a c'hoari ar skeudennoù hag ar videoioù el lec'h m'emaint, hep eilañ netra: pellgomzerioù, tablezennoù, Android TV, ur Meta Quest, urzhiataerioù Windows, Linux ha macOS, ha skinwelioù LG kevreet ouzh ho servijer Immich. Ur skeudenn 360° a dro evel ur sferenn war ar pellgomzer hag ar skinwel, hag a ya tro-dro deoc'h er c'hasked. Penaos ober: [C'hoari restroù un NAS, un urzhiataer, ur servijer media pe Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Ouzhpennit ar rannadenn war pep skramm, ha pep hini a c'hoari ar skeudennoù hag ar videoioù el lec'h m'emaint, hep eilañ netra: pellgomzerioù, tablezennoù, Android TV, ur Meta Quest, urzhiataerioù Windows, Linux ha macOS, ha skinwelioù LG kevreet ouzh ho servijer Immich (SMB adalek webOS 22). Ur skeudenn 360° a dro evel ur sferenn war ar pellgomzer hag ar skinwel, hag a ya tro-dro deoc'h er c'hasked. Penaos ober: [C'hoari restroù un NAS, un urzhiataer, ur servijer media pe Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Ho servijer Immich war pep skramm, kevreet diwar ho pellgomzer
 
@@ -119,7 +119,7 @@ War ar pellgomzer, Immuch360 a vir an arload hezoug Immich a-bezh, a ouzhpenn de
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Skeudennadur gant un dapadenn wirion eus an arload: un urzhiataer hezoug gant Immuch360 e-kichen skeudennoù moullet hag un NAS, hag un den gwelet a-dreñv en ur c'hasked gant Immuch360, dirak unan eus ar gweledvaoù-se savet e relief">
 </p>
 
-**Ezhomm hoc'h eus:** Immuch360 war un urzhiataer Windows, Linux pe macOS hag en ur Meta Quest, gant ho NAS pe ho servijer Immich etrezo.
+**Ezhomm hoc'h eus:** Immuch360 war un urzhiataer Windows, Linux pe macOS hag en ur Meta Quest, gant ho NAS etrezo, pe ho servijer Immich gant "Gwarediñ ar stummoù IA ivez" gweredekaet.
 
 An urzhiataer e-unan a dro ho skeudennoù e skeudennoù 3D hag e leurennoù 3D, hag e panoramaoù 360° gant ur gartenn c'hrafek a 8 GB war Windows pe Linux, hag o enroll e-kichen an orinoù. Ar c'hasked a ziskouez ur skeudenn 3D e gwir 3D, a lak ul leurenn en ho kambr hag ur panorama tro-dro deoc'h; ar pellgomzerioù hag ar skinwelioù a zigor ar panoramaoù en o gweler 360°. Penaos ober: [Treiñ ur skeudenn e 3D, ul leurenn, ur panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Ar pellgomzer a ziskouez video war-eeun an dron hag e adkas, dre ho Wi-Fi pe dre
 
 **Ezhomm hoc'h eus:** ur c'hamera Insta360, GoPro MAX pe DJI Osmo 360, ho NAS, hag Immuch360 war ar skrammoù: pellgomzerioù, tablezennoù, Android TV, ur Meta Quest, Windows.
 
-Eilit ar restroù brut eus kartenn ar c'hamera war-zu ur rannadenn SMB pe WebDAV eus ho NAS, evel m'emaint; ur servijer Immich a gemer re Insta360 ivez. Pep skramm a wri anezho e-pad ma c'hoariont, gant ar c'halibradur skrivet e pep restr, ha netra ne vez ezporzhiet en arload ar c'hamera da gentañ. Penaos ober: [Digeriñ restroù brut ar c'hameraoù 360°](#open-the-raw-files-of-360-cameras).
+Eilit ar restroù .insp, .insv, .360 pe .osv eus kartenn ar c'hamera war-zu ur rannadenn SMB pe WebDAV eus ho NAS, evel m'emaint; ur servijer Immich a gemer re Insta360 ivez. Pep skramm a wri anezho e-pad ma c'hoariont, gant ar c'halibradur skrivet e pep restr, ha netra ne vez ezporzhiet en arload ar c'hamera da gentañ. Penaos ober: [Digeriñ restroù brut ar c'hameraoù 360°](#open-the-raw-files-of-360-cameras).
 
 #### Ho servijerioù Plex ha DLNA war ar skinwel hag er c'hasked
 
@@ -161,12 +161,12 @@ Plex a ro restroù orin ho levraouegoù, evel-se e chom ur video 360° e 360°, 
 
 **Ezhomm hoc'h eus:** Immuch360 war ur pellgomzer Android, un iPhone pe un urzhiataer Windows, hag en ur Meta Quest, war ar memes Wi-Fi ti.
 
-Gweredekait "Rannañ ar pellgomzer-mañ war ar rouedad" war ar pellgomzer, pe "Rannañ an urzhiataer-mañ war ar rouedad" war an urzhiataer, hag ar c'hasked a c'hoari e skeudennoù hag e videoioù, ar re 360° tro-dro deoc'h: servijer ebet, NAS ebet, pellgas ebet. War un iPhone, ar rannañ a ya en-dro e-pad ma vez digor an arload. Penaos ober: [Rannañ ar pellgomzer-mañ war ar rouedad](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Gweredekait "Rannañ ar pellgomzer-mañ war ar rouedad" war ar pellgomzer, pe "Rannañ an urzhiataer-mañ war ar rouedad" war an urzhiataer, hag ar c'hasked a c'hoari e skeudennoù hag e videoioù, ar re 360° tro-dro deoc'h: servijer ebet, NAS ebet, pellgas ebet. War un iPhone, ar rannañ a ya en-dro e-pad ma vez an arload war ar skramm. Penaos ober: [Rannañ ar pellgomzer-mañ war ar rouedad](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Ho kameraoù Tapo war ar skinwel hag er c'hasked
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: ur c'hamera ti e-kichen ar prenestr a filmañ al liorzh, hag ur skinwel, ur pellgomzer, ur c'hasked gwisket war ar c'hanab hag un urzhiataer hezoug, gant Immuch360 war pep hini, a ziskouez ar gwel nemetañ-se">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: ur c'hamera ti e-kichen ar prenestr a filmañ al liorzh, hag ur skinwel, ur pellgomzer, ur c'hasked gwisket er pezh hag un urzhiataer hezoug, gant Immuch360 war pep hini, a ziskouez ar gwel nemetañ-se">
 </p>
 
 **Ezhomm hoc'h eus:** kameraoù Tapo war rouedad ho ti, hag Immuch360 war ur pellgomzer Android, un Android TV, ur Meta Quest pe un urzhiataer Windows.
@@ -176,10 +176,10 @@ Pep skramm a ziskouez ur c'hamera war-eeun hag a c'hoari enrolladennoù e garten
 #### Splatoù gaussian en ho kambr, en ur Meta Quest 3 pe 3S (arnodel)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: en ur sal, un den gwelet a-dreñv en ur c'hasked gant Immuch360 a zo en e sav dirak ur feunteun en he ment gwir, tapet evel ur splat gant un arload all ha digoret diwar un NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Skeudennadur, n'eo ket un dapadenn: en ur sal, un den gwelet a-dreñv en ur c'hasked gant Immuch360 a zo en e sav dirak ur feunteun en he ment gwir, graet gant gouloù o lugerniñ, digoret diwar un NAS war un estajerenn">
 </p>
 
-**Ezhomm hoc'h eus:** ur splat graet gant Polycam, Scaniverse, Luma pe ur benveg all, evel ur restr .spz pe .ply war ho NAS pe er c'hasked, hag Immuch360 en ur Meta Quest 3 pe 3S.
+**Ezhomm hoc'h eus:** ur splat graet gant Polycam, Scaniverse, Luma pe ur benveg all, evel ur restr .spz pe .ply binarel war ho NAS pe er c'hasked, hag Immuch360 en ur Meta Quest 3 pe 3S.
 
 Ar c'hasked a lak al lec'h pe an objed en e vent, dirazoc'h pe tro-dro deoc'h: kerzhit en-dro dezhañ, riklit drezañ gant ar joystick kleiz, troit gant an hini dehou. Ar splatoù gaussian a implij un API arnodel eus Meta Spatial SDK, na vez na skoret na gwarantet gant Meta: pep diouer a zo da Immuch360 hepken. Penaos ober: [Furchal splatoù gaussian en ur Meta Quest 3 pe 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Arc'hweladurioù an IA a lak da vont en-dro patromoù ha luskerioù graet gant r
 
 LoRA 360° nomadoor a zo dindan Apache 2.0 war e gartenn hag a zo bet desket war skeudennoù CC0 hag en domani foran, gant ul lodenn dindan CC BY: deveradur al lodenn-se a zeuio en ur stumm diwezhatoc'h eus MODEL-LICENSES.md. Netra amañ n'eo dindan ul lañvaz ankenwerzhel, ha netra n'en deus ezhomm eus CUDA. ONNX Runtime ha LiteRT o deus levraouegoù all e-barzh, rollet en o c'hemennoù, en o zouez Eigen dindan ar MPL 2.0, ul lañvaz copyleft gwan.
 
-Tapadennoù ar bajenn-mañ a zo tapadennoù gwirion eus an arload: re ar pellgomzer war ar savadur Android en un emulatour, re Android TV war emulatour Google TV, re LG ha Samsung en ur merdeer a ra evel ar skinwel, re Windows war ur PC Windows 11 ha prenestr ar Meta Quest en ur Quest 3, holl gant panoramaoù CC0 eus [Poly Haven](https://polyhaven.com); tapadennoù immersiv ar c'hasked a zo bet tapet war ur Quest 3 gant mediaoù an aozer e-unan, hag hini an iPad e simulatour an iPad, gant ur panorama CC0 eus Poly Haven. Skeudennoù krouer an IA a zo disoc'hoù gwirion eus an arload, graet diwar skeudennoù CC0 eus Poly Haven, gant div dapadenn wirion eus an arload Windows. Ar skeudenn digeriñ ha skeudennoù ar skinwel, ar c'hevreañ, an treiñ, ar c'hameraoù hag an dron a zo skeudennadurioù graet evit ar raktres: ne ziskouezont skramm ebet eus an arload, logo ebet eus un embregerezh all ha dremm ebet. Kartennoù an degouezhioù implij a lak ur skeudennadur a seurt-se a-us d'ur renkennad treset evit ar raktres, gant logoioù ar savennoù, arlun an arload ha, e div gartenn, tapadennoù gwirion eus an arload; en tu all da logoioù ar savennoù, ne ziskouezont logo ebet eus un embregerezh all ha dremm ebet. Pep skeudenn, gant he mammenn, he deiziad hag he lañvaz, a zo e roll [CAPTURES.md](../.github/readme/CAPTURES.md).
+Tapadennoù ar bajenn-mañ a zo tapadennoù gwirion eus an arload: re ar pellgomzer war ar savadur Android en un emulatour, re Android TV war emulatour Google TV, re LG ha Samsung en ur merdeer a ra evel ar skinwel, re Windows war ur PC Windows 11 ha prenestr ar Meta Quest en ur Quest 3, holl gant panoramaoù CC0 eus [Poly Haven](https://polyhaven.com); tapadennoù immersiv ar c'hasked a zo bet tapet war ur Quest 3 gant mediaoù an aozer e-unan, hag hini an iPad e simulatour an iPad, gant ur panorama CC0 eus Poly Haven. Skeudennoù krouer an IA a zo disoc'hoù gwirion eus an arload, graet diwar skeudennoù CC0 eus Poly Haven, gant div dapadenn wirion eus an arload Windows. Ar skeudenn digeriñ ha skeudennoù ar skinwel, ar c'hevreañ, an treiñ, ar c'hameraoù hag an dron a zo skeudennadurioù graet evit ar raktres: ne ziskouezont skramm ebet eus an arload, logo ebet eus un embregerezh all ha dremm ebet. Kartennoù an degouezhioù implij a lak ur skeudennadur a seurt-se a-us d'ur renkennad treset evit ar raktres, gant logoioù ar savennoù, arlun an arload, tapadennoù gwirion eus an arload e div gartenn ha skeudennoù CC0 eus Poly Haven e div all; en tu all da logoioù ar savennoù, ne ziskouezont logo ebet eus un embregerezh all ha dremm ebet. Pep skeudenn, gant he mammenn, he deiziad hag he lañvaz, a zo e roll [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Steuñv-labour

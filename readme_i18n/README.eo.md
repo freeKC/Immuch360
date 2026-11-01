@@ -101,7 +101,7 @@ Instalu Immuch360 sur ĉiu ekrano, sur kiu vi spektas: ĉiu legas viajn fontojn 
 
 **Vi bezonas:** NAS kun SMB- aŭ WebDAV-kunhavigo, kaj Immuch360 sur ĉiu ekrano, sur kiu vi spektas.
 
-Aldonu la kunhavigon sur ĉiu ekrano, kaj ĉiu ludas la fotojn kaj videojn tie, kie ili estas, nenio kopiita: telefonoj, tabulkomputiloj, Android TV, Meta Quest, Windows-, Linux- kaj macOS-komputiloj, kaj LG-televidiloj ensalutintaj al via Immich-servilo. 360°-foto turniĝas kiel sfero sur la telefono kaj la televidilo, kaj ĉirkaŭas vin en la kasko. Kiel fari: [Ludi la dosierojn de NAS, komputilo, aŭdvida servilo aŭ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Aldonu la kunhavigon sur ĉiu ekrano, kaj ĉiu ludas la fotojn kaj videojn tie, kie ili estas, nenio kopiita: telefonoj, tabulkomputiloj, Android TV, Meta Quest, Windows-, Linux- kaj macOS-komputiloj, kaj LG-televidiloj ensalutintaj al via Immich-servilo (SMB ekde webOS 22). 360°-foto turniĝas kiel sfero sur la telefono kaj la televidilo, kaj ĉirkaŭas vin en la kasko. Kiel fari: [Ludi la dosierojn de NAS, komputilo, aŭdvida servilo aŭ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Via Immich-servilo sur ĉiu ekrano, ensalutigita el via telefono
 
@@ -119,7 +119,7 @@ Sur la telefono, Immuch360 konservas la tutan poŝaparatan apon de Immich, aldon
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustraĵo kun reala ekrankopio de la apo: tekkomputilo kun Immuch360 apud presitaj fotoj kaj NAS, kaj persono vidata de malantaŭe en kasko kun Immuch360, antaŭ unu el tiuj pejzaĝoj starantaj en reliefo">
 </p>
 
-**Vi bezonas:** Immuch360 sur Windows-, Linux- aŭ macOS-komputilo kaj en Meta Quest, kun via NAS aŭ via Immich-servilo inter ili.
+**Vi bezonas:** Immuch360 sur Windows-, Linux- aŭ macOS-komputilo kaj en Meta Quest, kun via NAS inter ili, aŭ via Immich-servilo kun "Savkopii ankaŭ AI-versiojn" ŝaltita.
 
 La komputilo mem transformas viajn fotojn en 3D-fotojn kaj 3D-scenojn, kaj en 360°-panoramojn per grafika karto de 8 GB sur Windows aŭ Linux, kaj konservas ilin apud la originaloj. La kasko montras 3D-foton en vera 3D, metas scenon en vian ĉambron kaj panoramon ĉirkaŭ vi; telefonoj kaj televidiloj malfermas la panoramojn en sia 360°-spektilo. Kiel fari: [Transformi unu foton en 3D, scenon, panoramon](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ La telefono montras la vivan videon de la drono kaj relajas ĝin, per via Wi-Fi 
 
 **Vi bezonas:** kameraon Insta360, GoPro MAX aŭ DJI Osmo 360, vian NAS, kaj Immuch360 sur la ekranoj: telefonoj, tabulkomputiloj, Android TV, Meta Quest, Windows.
 
-Kopiu la krudajn dosierojn de la karto de la kamerao al SMB- aŭ WebDAV-kunhavigo de via NAS, tiaj, kiaj ili estas; Immich-servilo akceptas ankaŭ tiujn de Insta360. Ĉiu ekrano kunkudras ilin dum ili ludas, kun la kalibrado skribita en ĉiu dosiero, kaj nenio estas unue eksportita en la apo de la kamerao. Kiel fari: [Malfermi la krudajn dosierojn de 360°-kameraoj](#open-the-raw-files-of-360-cameras).
+Kopiu la dosierojn .insp, .insv, .360 aŭ .osv de la karto de la kamerao al SMB- aŭ WebDAV-kunhavigo de via NAS, tiaj, kiaj ili estas; Immich-servilo akceptas ankaŭ tiujn de Insta360. Ĉiu ekrano kunkudras ilin dum ili ludas, kun la kalibrado skribita en ĉiu dosiero, kaj nenio estas unue eksportita en la apo de la kamerao. Kiel fari: [Malfermi la krudajn dosierojn de 360°-kameraoj](#open-the-raw-files-of-360-cameras).
 
 #### Viaj Plex- kaj DLNA-serviloj sur la televidilo kaj en la kasko
 
@@ -161,12 +161,12 @@ Plex donas la originalajn dosierojn de viaj bibliotekoj, do 360°-video restas 3
 
 **Vi bezonas:** Immuch360 sur Android-telefono, iPhone aŭ Windows-komputilo, kaj en Meta Quest, en la sama hejma Wi-Fi.
 
-Ŝaltu "Kunhavigi ĉi tiun telefonon en la reto" sur la telefono, aŭ "Kunhavigi ĉi tiun komputilon en la reto" sur la komputilo, kaj la kasko ludas ĝiajn fotojn kaj videojn, la 360°-ajn ĉirkaŭ vi: neniu servilo, neniu NAS, neniu alŝuto. Sur iPhone, la kunhavigo funkcias dum la apo estas malfermita. Kiel fari: [Kunhavigi ĉi tiun telefonon en la reto](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Ŝaltu "Kunhavigi ĉi tiun telefonon en la reto" sur la telefono, aŭ "Kunhavigi ĉi tiun komputilon en la reto" sur la komputilo, kaj la kasko ludas ĝiajn fotojn kaj videojn, la 360°-ajn ĉirkaŭ vi: neniu servilo, neniu NAS, neniu alŝuto. Sur iPhone, la kunhavigo funkcias dum la apo estas sur la ekrano. Kiel fari: [Kunhavigi ĉi tiun telefonon en la reto](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Viaj Tapo-kameraoj sur la televidilo kaj en la kasko
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: hejma kamerao apud la fenestro filmas la ĝardenon, kaj televidilo, telefono, kasko portata sur la sofo kaj tekkomputilo, ĉiu kun Immuch360, montras tiun unu vidon">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: hejma kamerao apud la fenestro filmas la ĝardenon, kaj televidilo, telefono, kasko portata en la ĉambro kaj tekkomputilo, ĉiu kun Immuch360, montras tiun unu vidon">
 </p>
 
 **Vi bezonas:** Tapo-kameraojn en via hejma reto, kaj Immuch360 sur Android-telefono, Android TV, Meta Quest aŭ Windows-komputilo.
@@ -176,10 +176,10 @@ Plex donas la originalajn dosierojn de viaj bibliotekoj, do 360°-video restas 3
 #### Gaŭsaj splatoj en via ĉambro, en Meta Quest 3 aŭ 3S (eksperimenta)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: en salono, persono vidata de malantaŭe en kasko kun Immuch360 staras antaŭ vivgranda fontano kaptita kiel splato de alia apo kaj malfermita el NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: en salono, persono vidata de malantaŭe en kasko kun Immuch360 staras antaŭ vivgranda fontano el brila lumo, malfermita el NAS sur breto">
 </p>
 
-**Vi bezonas:** splaton faritan per Polycam, Scaniverse, Luma aŭ alia ilo, kiel .spz- aŭ .ply-dosieron sur via NAS aŭ en la kasko, kaj Immuch360 en Meta Quest 3 aŭ 3S.
+**Vi bezonas:** splaton faritan per Polycam, Scaniverse, Luma aŭ alia ilo, kiel .spz- aŭ binaran .ply-dosieron sur via NAS aŭ en la kasko, kaj Immuch360 en Meta Quest 3 aŭ 3S.
 
 La kasko metas la lokon aŭ la objekton en ĝia grandeco, antaŭ vi aŭ ĉirkaŭ vi: piediru ĉirkaŭ ĝi, glitu tra ĝi per la maldekstra stirstangeto, turniĝu per la dekstra. Gaŭsaj splatoj uzas eksperimentan API de Meta Spatial SDK, kiun Meta nek subtenas nek garantias: ĉiu difekto estas de Immuch360 mem. Kiel fari: [Esplori gaŭsajn splatojn en Meta Quest 3 aŭ 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ La AI-funkcioj rulas modelojn kaj motorojn faritajn de aliaj, elŝutatajn nur ki
 
 La 360°-LoRA de nomadoor estas Apache 2.0 laŭ sia karto kaj estis trejnita per CC0- kaj publikdomajnaj bildoj, kun parto sub CC BY: la atribuo de tiu parto venos en posta versio de MODEL-LICENSES.md. Nenio ĉi tie estas sub nekomerca permesilo, kaj nenio bezonas CUDA. ONNX Runtime kaj LiteRT enhavas aliajn bibliotekojn, listigitajn en iliaj avizoj, inter ili Eigen sub la MPL 2.0, malforta kopimaldekstra permesilo.
 
-La ekrankopioj de ĉi tiu paĝo estas realaj ekrankopioj de la apo: la telefonaj sur la Android-konstruo en emulilo, la Android TV-aj sur la Google TV-emulilo, la LG- kaj Samsung-aj en retumilo, kiu anstataŭas la televidilon, la Windows-aj sur Windows 11-komputilo kaj la Meta Quest-fenestro en Quest 3, ĉiuj kun CC0-panoramoj de [Poly Haven](https://polyhaven.com); la mergaj ekrankopioj de la kasko estis faritaj sur Quest 3 kun la propraj memeaĵoj de la aŭtoro, kaj la iPad-a en la iPad-simulilo, kun CC0-panoramo de Poly Haven. La bildoj de la AI-kreilo estas realaj rezultoj de la apo, faritaj el CC0-fotoj de Poly Haven, kun du realaj ekrankopioj de la Windows-apo. La komenca bildo kaj la bildoj de la televidilo, la ensaluto, la turnado, la kameraoj kaj la drono estas ilustraĵoj faritaj por la projekto: ili montras neniun ekranon de la apo, neniun emblemon de alia firmao kaj neniun vizaĝon. La kartoj de la uzokazoj metas tian ilustraĵon super vico desegnita por la projekto, kun la emblemoj de la platformoj, la piktogramo de la apo kaj, en du kartoj, realaj ekrankopioj de la apo; krom la emblemoj de la platformoj, ili montras neniun emblemon de alia firmao kaj neniun vizaĝon. Ĉiu bildo, kun sia fonto, dato kaj permesilo, estas listigita en [CAPTURES.md](../.github/readme/CAPTURES.md).
+La ekrankopioj de ĉi tiu paĝo estas realaj ekrankopioj de la apo: la telefonaj sur la Android-konstruo en emulilo, la Android TV-aj sur la Google TV-emulilo, la LG- kaj Samsung-aj en retumilo, kiu anstataŭas la televidilon, la Windows-aj sur Windows 11-komputilo kaj la Meta Quest-fenestro en Quest 3, ĉiuj kun CC0-panoramoj de [Poly Haven](https://polyhaven.com); la mergaj ekrankopioj de la kasko estis faritaj sur Quest 3 kun la propraj memeaĵoj de la aŭtoro, kaj la iPad-a en la iPad-simulilo, kun CC0-panoramo de Poly Haven. La bildoj de la AI-kreilo estas realaj rezultoj de la apo, faritaj el CC0-fotoj de Poly Haven, kun du realaj ekrankopioj de la Windows-apo. La komenca bildo kaj la bildoj de la televidilo, la ensaluto, la turnado, la kameraoj kaj la drono estas ilustraĵoj faritaj por la projekto: ili montras neniun ekranon de la apo, neniun emblemon de alia firmao kaj neniun vizaĝon. La kartoj de la uzokazoj metas tian ilustraĵon super vico desegnita por la projekto, kun la emblemoj de la platformoj, la piktogramo de la apo, realaj ekrankopioj de la apo en du kartoj kaj CC0-fotoj de Poly Haven en du aliaj; krom la emblemoj de la platformoj, ili montras neniun emblemon de alia firmao kaj neniun vizaĝon. Ĉiu bildo, kun sia fonto, dato kaj permesilo, estas listigita en [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Vojmapo

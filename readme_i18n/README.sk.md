@@ -101,7 +101,7 @@ Nainštalujte Immuch360 na každú obrazovku, na ktorej pozeráte: každá čít
 
 **Potrebujete:** NAS so zdieľaným priečinkom SMB alebo WebDAV a Immuch360 na každej obrazovke, na ktorej pozeráte.
 
-Pridajte zdieľaný priečinok na každej obrazovke a každá prehráva fotky a videá tam, kde sú, nič sa nekopíruje: telefóny, tablety, Android TV, Meta Quest, počítače s Windows, Linuxom a macOS a televízory LG prihlásené k vášmu serveru Immich. 360° fotka sa otáča ako guľa v telefóne a na televízore a v headsete vás obklopí. Ako na to: [Prehrávajte súbory z NAS, počítača, mediálneho servera alebo Plexu](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Pridajte zdieľaný priečinok na každej obrazovke a každá prehráva fotky a videá tam, kde sú, nič sa nekopíruje: telefóny, tablety, Android TV, Meta Quest, počítače s Windows, Linuxom a macOS a televízory LG prihlásené k vášmu serveru Immich (SMB od webOS 22). 360° fotka sa otáča ako guľa v telefóne a na televízore a v headsete vás obklopí. Ako na to: [Prehrávajte súbory z NAS, počítača, mediálneho servera alebo Plexu](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Váš server Immich na každej obrazovke, prihlásený z vášho telefónu
 
@@ -119,7 +119,7 @@ V telefóne Immuch360 zachováva celú mobilnú aplikáciu Immich, pridáva svoj
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrácia so skutočnou snímkou aplikácie: notebook s Immuch360 vedľa vytlačených fotiek a NAS a osoba videná zozadu v headsete s Immuch360 pred jednou z tých krajín, ktorá stojí v reliéfe">
 </p>
 
-**Potrebujete:** Immuch360 na počítači s Windows, Linuxom alebo macOS a v Meta Quest, s vaším NAS alebo vaším serverom Immich medzi nimi.
+**Potrebujete:** Immuch360 na počítači s Windows, Linuxom alebo macOS a v Meta Quest, s vaším NAS medzi nimi alebo s vaším serverom Immich so zapnutým „Zálohovať aj AI verzie“.
 
 Samotný počítač premieňa vaše fotky na 3D fotky a 3D scény a s grafickou kartou s 8 GB vo Windows alebo Linuxe aj na 360° panorámy a ukladá ich vedľa originálov. Headset ukáže 3D fotku v skutočnom 3D, umiestni scénu do vašej izby a panorámu všade okolo vás; telefóny a televízory otvárajú panorámy vo svojom prehliadači 360°. Ako na to: [Premeňte jednu fotku na 3D, scénu, panorámu](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Telefón ukazuje živé video z dronu a preposiela ho cez vašu Wi-Fi alebo cez 
 
 **Potrebujete:** kameru Insta360, GoPro MAX alebo DJI Osmo 360, váš NAS a Immuch360 na obrazovkách: telefóny, tablety, Android TV, Meta Quest, Windows.
 
-Skopírujte RAW súbory z karty kamery do zdieľaného priečinka SMB alebo WebDAV na vašom NAS tak, ako sú; server Immich prijíma aj tie z Insta360. Každá obrazovka ich zošíva počas prehrávania s kalibráciou zapísanou v každom súbore a v aplikácii kamery sa predtým nič neexportuje. Ako na to: [Otvárajte RAW súbory z 360° kamier](#open-the-raw-files-of-360-cameras).
+Skopírujte súbory .insp, .insv, .360 alebo .osv z karty kamery do zdieľaného priečinka SMB alebo WebDAV na vašom NAS tak, ako sú; server Immich prijíma aj tie z Insta360. Každá obrazovka ich zošíva počas prehrávania s kalibráciou zapísanou v každom súbore a v aplikácii kamery sa predtým nič neexportuje. Ako na to: [Otvárajte RAW súbory z 360° kamier](#open-the-raw-files-of-360-cameras).
 
 #### Vaše servery Plex a DLNA na televízore a v headsete
 
@@ -161,12 +161,12 @@ Plex poskytuje originálne súbory vašich knižníc, takže 360° video zostáv
 
 **Potrebujete:** Immuch360 v telefóne s Androidom, v iPhone alebo na počítači s Windows a v Meta Quest, v rovnakej domácej Wi-Fi.
 
-Zapnite „Zdieľať tento telefón v sieti“ v telefóne alebo „Zdieľať tento počítač v sieti“ na počítači a headset prehráva jeho fotky a videá, tie 360° všade okolo vás: bez servera, bez NAS, bez nahrávania. V iPhone zdieľanie beží, kým je aplikácia otvorená. Ako na to: [Zdieľať tento telefón v sieti](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Zapnite „Zdieľať tento telefón v sieti“ v telefóne alebo „Zdieľať tento počítač v sieti“ na počítači a headset prehráva jeho fotky a videá, tie 360° všade okolo vás: bez servera, bez NAS, bez nahrávania. V iPhone zdieľanie beží, kým je aplikácia na obrazovke. Ako na to: [Zdieľať tento telefón v sieti](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Vaše kamery Tapo na televízore a v headsete
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrácia, nie snímka: domáca kamera pri okne sníma záhradu a televízor, telefón, headset nasadený na pohovke a notebook, na každom beží Immuch360, ukazujú ten istý obraz">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrácia, nie snímka: domáca kamera pri okne sníma záhradu a televízor, telefón, headset nasadený v izbe a notebook, na každom beží Immuch360, ukazujú ten istý obraz">
 </p>
 
 **Potrebujete:** kamery Tapo vo vašej domácej sieti a Immuch360 v telefóne s Androidom, na Android TV, v Meta Quest alebo na počítači s Windows.
@@ -176,10 +176,10 @@ Každá obrazovka ukazuje kameru naživo a prehráva záznamy z jej pamäťovej 
 #### Gaussovské splaty vo vašej izbe, v Meta Quest 3 alebo 3S (experimentálne)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrácia, nie snímka: v obývačke stojí osoba videná zozadu v headsete s Immuch360 pred fontánou v skutočnej veľkosti, zachytenou ako splat inou aplikáciou a otvorenou z NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrácia, nie snímka: v obývačke stojí osoba videná zozadu v headsete s Immuch360 pred fontánou v skutočnej veľkosti zo žiariaceho svetla, otvorenou z NAS na polici">
 </p>
 
-**Potrebujete:** splat vytvorený v Polycam, Scaniverse, Luma alebo inom nástroji, ako súbor .spz alebo .ply na vašom NAS alebo v headsete, a Immuch360 v Meta Quest 3 alebo 3S.
+**Potrebujete:** splat vytvorený v Polycam, Scaniverse, Luma alebo inom nástroji, ako súbor .spz alebo binárny .ply na vašom NAS alebo v headsete, a Immuch360 v Meta Quest 3 alebo 3S.
 
 Headset umiestni miesto alebo predmet v jeho veľkosti, pred vás alebo všade okolo vás: obíďte ho, preleťte ním ľavou páčkou, otáčajte sa pravou. Gaussovské splaty používajú experimentálne API súpravy Meta Spatial SDK, ktoré Meta nepodporuje ani nezaručuje: za akúkoľvek chybu zodpovedá len Immuch360. Ako na to: [Preskúmajte gaussovské splaty v Meta Quest 3 alebo 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Funkcie AI spúšťajú modely a enginy, ktoré vytvorili iní, stiahnuté len v
 
 360° LoRA od nomadoor má podľa svojej karty licenciu Apache 2.0 a bola trénovaná na obrázkoch CC0 a vo verejnej doméne, s časťou pod CC BY: uvedenie autorstva tejto časti príde v neskoršej verzii MODEL-LICENSES.md. Nič tu nie je pod nekomerčnou licenciou a nič nepotrebuje CUDA. ONNX Runtime a LiteRT obsahujú ďalšie knižnice, uvedené v ich oznámeniach, medzi nimi Eigen pod MPL 2.0, slabou copyleft licenciou.
 
-Snímky na tejto stránke sú skutočné snímky aplikácie: tie z telefónu z buildu pre Android v emulátore, tie z Android TV v emulátore Google TV, tie z LG a Samsung vo webovom prehliadači, ktorý zastupuje televízor, tie z Windows na PC s Windows 11 a okno Meta Quest v Quest 3, všetky s panorámami CC0 z [Poly Haven](https://polyhaven.com); imerzívne snímky z headsetu vznikli na Quest 3 s vlastnými médiami autora a snímka z iPadu v simulátore iPadu, s panorámou CC0 z Poly Haven. Obrázky AI tvorcu sú skutočné výstupy aplikácie, vytvorené z fotiek CC0 z Poly Haven, s dvoma skutočnými snímkami aplikácie pre Windows. Úvodný obrázok a obrázky televízora, prihlásenia, otočenia, kamier a dronu sú ilustrácie vytvorené pre projekt: neukazujú žiadnu obrazovku aplikácie, žiadne logo inej spoločnosti ani žiadnu tvár. Karty prípadov použitia umiestňujú takúto ilustráciu nad pás nakreslený pre projekt, s logami platforiem, ikonou aplikácie a na dvoch kartách so skutočnými snímkami aplikácie; okrem lôg platforiem neukazujú žiadne logo inej spoločnosti ani žiadnu tvár. Každý obrázok, s jeho zdrojom, dátumom a licenciou, je uvedený v [CAPTURES.md](../.github/readme/CAPTURES.md).
+Snímky na tejto stránke sú skutočné snímky aplikácie: tie z telefónu z buildu pre Android v emulátore, tie z Android TV v emulátore Google TV, tie z LG a Samsung vo webovom prehliadači, ktorý zastupuje televízor, tie z Windows na PC s Windows 11 a okno Meta Quest v Quest 3, všetky s panorámami CC0 z [Poly Haven](https://polyhaven.com); imerzívne snímky z headsetu vznikli na Quest 3 s vlastnými médiami autora a snímka z iPadu v simulátore iPadu, s panorámou CC0 z Poly Haven. Obrázky AI tvorcu sú skutočné výstupy aplikácie, vytvorené z fotiek CC0 z Poly Haven, s dvoma skutočnými snímkami aplikácie pre Windows. Úvodný obrázok a obrázky televízora, prihlásenia, otočenia, kamier a dronu sú ilustrácie vytvorené pre projekt: neukazujú žiadnu obrazovku aplikácie, žiadne logo inej spoločnosti ani žiadnu tvár. Karty prípadov použitia umiestňujú takúto ilustráciu nad pás nakreslený pre projekt, s logami platforiem, ikonou aplikácie, skutočnými snímkami aplikácie na dvoch kartách a fotkami CC0 z Poly Haven na dvoch; okrem lôg platforiem neukazujú žiadne logo inej spoločnosti ani žiadnu tvár. Každý obrázok, s jeho zdrojom, dátumom a licenciou, je uvedený v [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plán

@@ -101,7 +101,7 @@ Sakinisha Immuch360 kwenye kila skrini unayotazamia: kila moja inasoma vyanzo vy
 
 **Unahitaji:** NAS yenye hifadhi ya SMB au WebDAV, na Immuch360 kwenye kila skrini unayotazamia.
 
-Ongeza hifadhi kwenye kila skrini, na kila moja inacheza picha na video pale zilipo, bila kunakili chochote: simu, kompyuta kibao, Android TV, Meta Quest, kompyuta za Windows, Linux na macOS, na televisheni za LG zilizoingia kwenye seva yako ya Immich. Picha ya 360° inazunguka kama tufe kwenye simu na televisheni, na inakuzunguka ndani ya kifaa cha kichwa. Jinsi ya: [Cheza faili za NAS, kompyuta, seva ya midia au Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Ongeza hifadhi kwenye kila skrini, na kila moja inacheza picha na video pale zilipo, bila kunakili chochote: simu, kompyuta kibao, Android TV, Meta Quest, kompyuta za Windows, Linux na macOS, na televisheni za LG zilizoingia kwenye seva yako ya Immich (SMB kuanzia webOS 22). Picha ya 360° inazunguka kama tufe kwenye simu na televisheni, na inakuzunguka ndani ya kifaa cha kichwa. Jinsi ya: [Cheza faili za NAS, kompyuta, seva ya midia au Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Seva yako ya Immich kwenye kila skrini, imeingizwa kutoka kwa simu yako
 
@@ -119,7 +119,7 @@ Kwenye simu, Immuch360 inahifadhi programu nzima ya simu ya Immich, inaongeza vi
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Mchoro wenye picha halisi ya skrini ya programu: kompyuta mpakato inayoendesha Immuch360 kando ya picha zilizochapishwa na NAS, na mtu anayeonekana kwa nyuma akiwa na kifaa cha kichwa kinachoendesha Immuch360, mbele ya mojawapo ya mandhari hizo iliyosimama kwa umbo la kina">
 </p>
 
-**Unahitaji:** Immuch360 kwenye kompyuta ya Windows, Linux au macOS na kwenye Meta Quest, pamoja na NAS yako au seva yako ya Immich kati yao.
+**Unahitaji:** Immuch360 kwenye kompyuta ya Windows, Linux au macOS na kwenye Meta Quest, pamoja na NAS yako kati yao, au seva yako ya Immich ikiwa "Hifadhi nakala ya matoleo ya AI pia" imewashwa.
 
 Kompyuta yenyewe inageuza picha zako kuwa picha za 3D na mandhari za 3D, na kuwa panorama za 360° kwa kadi ya michoro ya 8 GB kwenye Windows au Linux, na inazihifadhi kando ya picha asili. Kifaa cha kichwa kinaonyesha picha ya 3D katika 3D halisi, kinaweka mandhari ndani ya chumba chako na panorama kukuzunguka pande zote; simu na televisheni zinafungua panorama kwenye kitazamaji chao cha 360°. Jinsi ya: [Geuza picha moja kuwa 3D, mandhari, panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Simu inaonyesha video ya moja kwa moja ya droni na kuipeleka, kupitia Wi-Fi yako
 
 **Unahitaji:** kamera ya Insta360, GoPro MAX au DJI Osmo 360, NAS yako, na Immuch360 kwenye skrini: simu, kompyuta kibao, Android TV, Meta Quest, Windows.
 
-Nakili faili ghafi kutoka kwa kadi ya kamera hadi hifadhi ya SMB au WebDAV ya NAS yako, kama zilivyo; seva ya Immich inapokea zile za Insta360 pia. Kila skrini inazishona wakati zinachezwa, kwa urekebishaji ulioandikwa ndani ya kila faili, na hakuna kinachohamishwa kwanza kwenye programu ya kamera. Jinsi ya: [Fungua faili ghafi za kamera za 360°](#open-the-raw-files-of-360-cameras).
+Nakili faili za .insp, .insv, .360 au .osv kutoka kwa kadi ya kamera hadi hifadhi ya SMB au WebDAV ya NAS yako, kama zilivyo; seva ya Immich inapokea zile za Insta360 pia. Kila skrini inazishona wakati zinachezwa, kwa urekebishaji ulioandikwa ndani ya kila faili, na hakuna kinachohamishwa kwanza kwenye programu ya kamera. Jinsi ya: [Fungua faili ghafi za kamera za 360°](#open-the-raw-files-of-360-cameras).
 
 #### Seva zako za Plex na DLNA kwenye televisheni na ndani ya kifaa cha kichwa
 
@@ -161,12 +161,12 @@ Plex inatoa faili asili za maktaba zako, hivyo video ya 360° inabaki 360°, iki
 
 **Unahitaji:** Immuch360 kwenye simu ya Android, iPhone au kompyuta ya Windows, na kwenye Meta Quest, kwenye Wi-Fi ileile ya nyumbani.
 
-Washa "Shiriki simu hii kwenye mtandao" kwenye simu, au "Shiriki kompyuta hii kwenye mtandao" kwenye kompyuta, na kifaa cha kichwa kinacheza picha na video zake, zile za 360° zikikuzunguka: bila seva, bila NAS, bila kupakia. Kwenye iPhone, kushiriki kunafanya kazi wakati programu iko wazi. Jinsi ya: [Shiriki simu hii kwenye mtandao](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Washa "Shiriki simu hii kwenye mtandao" kwenye simu, au "Shiriki kompyuta hii kwenye mtandao" kwenye kompyuta, na kifaa cha kichwa kinacheza picha na video zake, zile za 360° zikikuzunguka: bila seva, bila NAS, bila kupakia. Kwenye iPhone, kushiriki kunafanya kazi wakati programu iko kwenye skrini. Jinsi ya: [Shiriki simu hii kwenye mtandao](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Kamera zako za Tapo kwenye televisheni na ndani ya kifaa cha kichwa
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Mchoro, si picha ya skrini: kamera ya nyumbani karibu na dirisha inarekodi bustani, na televisheni, simu, kifaa cha kichwa kinachovaliwa kwenye sofa na kompyuta mpakato, kila kimoja kikiendesha Immuch360, vinaonyesha mtazamo huo mmoja">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Mchoro, si picha ya skrini: kamera ya nyumbani karibu na dirisha inarekodi bustani, na televisheni, simu, kifaa cha kichwa kinachovaliwa chumbani na kompyuta mpakato, kila kimoja kikiendesha Immuch360, vinaonyesha mtazamo huo mmoja">
 </p>
 
 **Unahitaji:** kamera za Tapo kwenye mtandao wako wa nyumbani, na Immuch360 kwenye simu ya Android, Android TV, Meta Quest au kompyuta ya Windows.
@@ -176,10 +176,10 @@ Kila skrini inaonyesha kamera moja kwa moja na inacheza rekodi za kadi yake ya k
 #### Splat za Gaussian ndani ya chumba chako, kwenye Meta Quest 3 au 3S (ya majaribio)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Mchoro, si picha ya skrini: sebuleni, mtu anayeonekana kwa nyuma akiwa na kifaa cha kichwa kinachoendesha Immuch360 amesimama mbele ya chemchemi ya ukubwa halisi, iliyonaswa kama splat na programu nyingine na kufunguliwa kutoka kwa NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Mchoro, si picha ya skrini: sebuleni, mtu anayeonekana kwa nyuma akiwa na kifaa cha kichwa kinachoendesha Immuch360 amesimama mbele ya chemchemi ya ukubwa halisi ya mwanga unaong'aa, iliyofunguliwa kutoka kwa NAS iliyo kwenye rafu">
 </p>
 
-**Unahitaji:** splat iliyotengenezwa kwa Polycam, Scaniverse, Luma au zana nyingine, kama faili ya .spz au .ply kwenye NAS yako au ndani ya kifaa cha kichwa, na Immuch360 kwenye Meta Quest 3 au 3S.
+**Unahitaji:** splat iliyotengenezwa kwa Polycam, Scaniverse, Luma au zana nyingine, kama faili ya .spz au .ply ya binari kwenye NAS yako au ndani ya kifaa cha kichwa, na Immuch360 kwenye Meta Quest 3 au 3S.
 
 Kifaa cha kichwa kinaweka mahali au kitu kwa ukubwa wake, mbele yako au kukuzunguka pande zote: tembea kukizunguka, teleza ndani yake kwa kijiti cha kidole gumba cha kushoto, geuka kwa cha kulia. Splat za Gaussian zinatumia API ya majaribio ya Meta Spatial SDK, ambayo Meta haiiungi mkono wala haitoi dhamana yake: kasoro yoyote ni jukumu la Immuch360 pekee. Jinsi ya: [Chunguza splat za Gaussian kwenye Meta Quest 3 au 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Huduma za AI zinaendesha modeli na injini zilizotengenezwa na wengine, zinazopak
 
 LoRA ya 360° ya nomadoor ni Apache 2.0 kwenye kadi yake na ilifunzwa kwa picha za CC0 na za kikoa cha umma, pamoja na sehemu iliyo chini ya CC BY: utambuzi wa sehemu hiyo utakuja katika toleo la baadaye la MODEL-LICENSES.md. Hakuna kitu hapa kilicho chini ya leseni isiyo ya kibiashara, na hakuna kinachohitaji CUDA. ONNX Runtime na LiteRT zina maktaba nyingine zilizojengwa ndani, zilizoorodheshwa katika ilani zao, miongoni mwake Eigen chini ya MPL 2.0, leseni dhaifu ya copyleft.
 
-Picha za skrini za ukurasa huu ni picha halisi za programu: za simu kwenye build ya Android ndani ya kiigaji, za Android TV kwenye kiigaji cha Google TV, za LG na Samsung kwenye kivinjari kinachochukua nafasi ya televisheni, za Windows kwenye PC ya Windows 11 na dirisha la Meta Quest ndani ya Quest 3, zote zikiwa na panorama za CC0 kutoka [Poly Haven](https://polyhaven.com); picha za kuzamisha za kifaa cha kichwa zilipigwa kwenye Quest 3 kwa midia ya mwandishi mwenyewe, na ile ya iPad kwenye kiigaji cha iPad, pamoja na panorama ya CC0 ya Poly Haven. Picha za kiunda AI ni matokeo halisi ya programu, yaliyotengenezwa kutoka kwa picha za CC0 za Poly Haven, pamoja na picha mbili halisi za skrini za programu ya Windows. Picha ya ufunguzi na picha za televisheni, kuingia, kuzungusha, kamera na droni ni michoro iliyotengenezwa kwa ajili ya mradi: haionyeshi skrini yoyote ya programu, nembo yoyote ya kampuni nyingine wala uso wowote. Kadi za matumizi zinaweka mchoro wa aina hiyo juu ya safu iliyochorwa kwa ajili ya mradi, yenye nembo za majukwaa, ikoni ya programu na, katika kadi mbili, picha halisi za skrini za programu; mbali na nembo za majukwaa, hazionyeshi nembo yoyote ya kampuni nyingine wala uso wowote. Kila picha, pamoja na chanzo chake, tarehe na leseni, imeorodheshwa kwenye [CAPTURES.md](../.github/readme/CAPTURES.md).
+Picha za skrini za ukurasa huu ni picha halisi za programu: za simu kwenye build ya Android ndani ya kiigaji, za Android TV kwenye kiigaji cha Google TV, za LG na Samsung kwenye kivinjari kinachochukua nafasi ya televisheni, za Windows kwenye PC ya Windows 11 na dirisha la Meta Quest ndani ya Quest 3, zote zikiwa na panorama za CC0 kutoka [Poly Haven](https://polyhaven.com); picha za kuzamisha za kifaa cha kichwa zilipigwa kwenye Quest 3 kwa midia ya mwandishi mwenyewe, na ile ya iPad kwenye kiigaji cha iPad, pamoja na panorama ya CC0 ya Poly Haven. Picha za kiunda AI ni matokeo halisi ya programu, yaliyotengenezwa kutoka kwa picha za CC0 za Poly Haven, pamoja na picha mbili halisi za skrini za programu ya Windows. Picha ya ufunguzi na picha za televisheni, kuingia, kuzungusha, kamera na droni ni michoro iliyotengenezwa kwa ajili ya mradi: haionyeshi skrini yoyote ya programu, nembo yoyote ya kampuni nyingine wala uso wowote. Kadi za matumizi zinaweka mchoro wa aina hiyo juu ya safu iliyochorwa kwa ajili ya mradi, yenye nembo za majukwaa, ikoni ya programu, picha halisi za skrini za programu katika kadi mbili na picha za CC0 za Poly Haven katika kadi mbili nyingine; mbali na nembo za majukwaa, hazionyeshi nembo yoyote ya kampuni nyingine wala uso wowote. Kila picha, pamoja na chanzo chake, tarehe na leseni, imeorodheshwa kwenye [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Mpango wa kazi

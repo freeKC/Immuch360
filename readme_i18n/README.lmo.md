@@ -101,7 +101,7 @@ Installa Immuch360 su ogni schermo dove te vardet: ognun el lensg de per lu i t�
 
 **Te ghe bisogn de:** on NAS con ona condivision SMB o WebDAV, e Immuch360 su ogni schermo dove te vardet.
 
-Giunta la condivision su ogni schermo, e ognun el fa andà i foto e i video lì dove hinn, senza copià nagott: telefon, tablet, Android TV, on Meta Quest, computer Windows, Linux e macOS, e i TV LG col login sul tò server Immich. Ona foto a 360° la gira come ona sfera sul telefon e sul TV, e la te circonda in del visor. Come se fa: [Fa andà i file d'on NAS, d'on computer, d'on server multimedial o de Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Giunta la condivision su ogni schermo, e ognun el fa andà i foto e i video lì dove hinn, senza copià nagott: telefon, tablet, Android TV, on Meta Quest, computer Windows, Linux e macOS, e i TV LG col login sul tò server Immich (SMB de webOS 22). Ona foto a 360° la gira come ona sfera sul telefon e sul TV, e la te circonda in del visor. Come se fa: [Fa andà i file d'on NAS, d'on computer, d'on server multimedial o de Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### El tò server Immich su ogni schermo, col login faa del tò telefon
 
@@ -119,7 +119,7 @@ Sul telefon, Immuch360 el tegn tutta l'app mobil de Immich, el giunta i sò visu
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustrazion con ona cattura vera de l'app: on portatil che el fa andà Immuch360 a fianch de foto stampaa e d'on NAS, e ona persona vista de drèe in d'on visor che el fa andà Immuch360, denanz a vun de quij paesagg che el ven foeura in rilev">
 </p>
 
-**Te ghe bisogn de:** Immuch360 su on computer Windows, Linux o macOS e in d'on Meta Quest, col tò NAS o el tò server Immich in mezz.
+**Te ghe bisogn de:** Immuch360 su on computer Windows, Linux o macOS e in d'on Meta Quest, col tò NAS in mezz, o el tò server Immich con «Fà el backup anca di version IA» pizzaa.
 
 L'è el computer stess che el trasforma i tò foto in foto 3D e scen 3D, e in panoramà a 360° con ona scheda grafica de 8 GB su Windows o Linux, e el i salva a fianch di original. El visor el fa vedè ona foto 3D in 3D vera, el mett ona scena in la tò stanza e on panoramà tutt intorna a ti; i telefon e i TV deren i panoramà in del sò visualizador 360°. Come se fa: [Trasforma ona foto in 3D, in scena, in panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ El telefon el fa vedè el video in diretta del dron e el le passa, sul tò Wi-Fi
 
 **Te ghe bisogn de:** ona camera Insta360, GoPro MAX o DJI Osmo 360, el tò NAS, e Immuch360 sui schermi: telefon, tablet, Android TV, on Meta Quest, Windows.
 
-Copia i file original de la scheda de la camera in d'ona condivision SMB o WebDAV del tò NAS, inscì come hinn; on server Immich el ciapa anca quij de Insta360. Ogni schermo el i cusiss intant che i fa andà, con la calibrazion scritta in ogni file, e nagott el ven esportaa prima in l'app de la camera. Come se fa: [Derv i file original di camere a 360°](#open-the-raw-files-of-360-cameras).
+Copia i file .insp, .insv, .360 o .osv de la scheda de la camera in d'ona condivision SMB o WebDAV del tò NAS, inscì come hinn; on server Immich el ciapa anca quij de Insta360. Ogni schermo el i cusiss intant che i fa andà, con la calibrazion scritta in ogni file, e nagott el ven esportaa prima in l'app de la camera. Come se fa: [Derv i file original di camere a 360°](#open-the-raw-files-of-360-cameras).
 
 #### I tò server Plex e DLNA sul TV e in del visor
 
@@ -161,12 +161,12 @@ Plex el dà i file original di tò librerie, inscì on video a 360° el resta a 
 
 **Te ghe bisogn de:** Immuch360 su on telefon Android, on iPhone o on computer Windows, e in d'on Meta Quest, sul medemm Wi-Fi de cà.
 
-Pizza «Condivid quell telefon chì in la ret» sul telefon, o «Condivid sto computer in la ret» sul computer, e el visor el fa andà i sò foto e i sò video, quij a 360° tutt intorna a ti: nissun server, nissun NAS, nissun caricament. Su on iPhone, la condivision la va intant che l'app l'è dervida. Come se fa: [Condivid quell telefon chì in la ret](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Pizza «Condivid quell telefon chì in la ret» sul telefon, o «Condivid sto computer in la ret» sul computer, e el visor el fa andà i sò foto e i sò video, quij a 360° tutt intorna a ti: nissun server, nissun NAS, nissun caricament. Su on iPhone, la condivision la va intant che l'app l'è sul schermo. Come se fa: [Condivid quell telefon chì in la ret](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### I tò camere Tapo sul TV e in del visor
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustrazion, minga ona cattura: ona camera de cà visin a la finestra la filma el giardin, e on TV, on telefon, on visor portaa sul divan e on portatil, e ognun el fa andà Immuch360, fann vedè quella vista lì">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustrazion, minga ona cattura: ona camera de cà visin a la finestra la filma el giardin, e on TV, on telefon, on visor portaa in la stanza e on portatil, e ognun el fa andà Immuch360, fann vedè quella vista lì">
 </p>
 
 **Te ghe bisogn de:** camere Tapo in su la tò ret de cà, e Immuch360 su on telefon Android, on Android TV, on Meta Quest o on computer Windows.
@@ -176,10 +176,10 @@ Ogni schermo el fa vedè ona camera in diretta e el fa andà i registrazion de l
 #### I Gaussian splat in la tò stanza, in d'on Meta Quest 3 o 3S (esperimental)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustrazion, minga ona cattura: in d'on salòtt, ona persona vista de drèe in d'on visor che el fa andà Immuch360 la sta denanz a ona fontana a grandezza natural, catturada come splat de on'altra app e dervida de on NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustrazion, minga ona cattura: in d'on salòtt, ona persona vista de drèe in d'on visor che el fa andà Immuch360 la sta denanz a ona fontana de lus che la brilla a grandezza natural, dervida de on NAS sora ona scansia">
 </p>
 
-**Te ghe bisogn de:** on splat faa con Polycam, Scaniverse, Luma o on alter strument, come file .spz o .ply sul tò NAS o in del visor, e Immuch360 in d'on Meta Quest 3 o 3S.
+**Te ghe bisogn de:** on splat faa con Polycam, Scaniverse, Luma o on alter strument, come file .spz o .ply binari sul tò NAS o in del visor, e Immuch360 in d'on Meta Quest 3 o 3S.
 
 El visor el mett el post o l'oggett a la soa grandezza, denanz a ti o tutt intorna a ti: giregh intorna, sbrisa denter con la levetta de sinistra, gira con quella de destra. I Gaussian splat dopren ona API esperimental del Meta Spatial SDK, che Meta la suporta minga e la garantiss minga: ogni difett l'è responsabilità domà de Immuch360. Come se fa: [Esplora i Gaussian splat in d'on Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ I funzion IA fann girà modei e motor faa de alter, descaregaa domà quand te le
 
 La LoRA 360° de nomadoor l'è Apache 2.0 su la soa scheda e l'è stada allenada su imagin CC0 e de domini public, cont ona part sota CC BY: l'attribuzion de quella part la vegnarà in d'ona version pussee innanz de MODEL-LICENSES.md. Nagott chì l'è sota ona licenza minga commercial, e nagott el gh'ha de besogn de CUDA. ONNX Runtime e LiteRT gh'hann dent alter librarie, listaa in di sò avvis, tra quej Eigen sota la MPL 2.0, ona licenza copyleft debola.
 
-I cattur de sta pagina hinn cattur vere de l'app: quij del telefon su la compilazion Android in d'on emulador, quij de Android TV sul emulador Google TV, quij LG e Samsung in d'on navigador che el fa la part del TV, quij de Windows su on PC Windows 11 e la fenestra Meta Quest in d'on Quest 3, tucc con panoramà CC0 de [Poly Haven](https://polyhaven.com); i cattur immersiv del visor hinn staa faa su on Quest 3 cont i media de l'autor, e quella de l'iPad in del simulador iPad, con on panoramà CC0 de Poly Haven. I imagin del creador IA hinn resultaa vere de l'app, faa de foto CC0 de Poly Haven, con dò cattur vere de l'app Windows. L'imagin de apertura e i imagin del TV, del login, de la rotazion, di camere e del dron hinn illustrazion faa per el progett: fann vedè nissun schermo de l'app, nissun logo d'ona altra ditta e nissuna faccia. I schede di cas d'uso metten ona illustrazion de sta sort sora ona riga disegnada per el progett, cont i logo di piattaform, l'icona de l'app e, in dò schede, cattur vere de l'app; a part i logo di piattaform, fann vedè nissun logo d'ona altra ditta e nissuna faccia. Ogni imagin, con la soa sorgent, data e licenza, l'è in la lista de [CAPTURES.md](../.github/readme/CAPTURES.md).
+I cattur de sta pagina hinn cattur vere de l'app: quij del telefon su la compilazion Android in d'on emulador, quij de Android TV sul emulador Google TV, quij LG e Samsung in d'on navigador che el fa la part del TV, quij de Windows su on PC Windows 11 e la fenestra Meta Quest in d'on Quest 3, tucc con panoramà CC0 de [Poly Haven](https://polyhaven.com); i cattur immersiv del visor hinn staa faa su on Quest 3 cont i media de l'autor, e quella de l'iPad in del simulador iPad, con on panoramà CC0 de Poly Haven. I imagin del creador IA hinn resultaa vere de l'app, faa de foto CC0 de Poly Haven, con dò cattur vere de l'app Windows. L'imagin de apertura e i imagin del TV, del login, de la rotazion, di camere e del dron hinn illustrazion faa per el progett: fann vedè nissun schermo de l'app, nissun logo d'ona altra ditta e nissuna faccia. I schede di cas d'uso metten ona illustrazion de sta sort sora ona riga disegnada per el progett, cont i logo di piattaform, l'icona de l'app, cattur vere de l'app in dò schede e foto CC0 de Poly Haven in dò; a part i logo di piattaform, fann vedè nissun logo d'ona altra ditta e nissuna faccia. Ogni imagin, con la soa sorgent, data e licenza, l'è in la lista de [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Roadmap

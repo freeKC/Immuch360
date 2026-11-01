@@ -101,7 +101,7 @@ Instolem Immuch360 long evri skrin we yu lukluk long hem: evriwan i ridim ol sos
 
 **Yu nidim:** wan NAS wetem wan fola we oli serem long SMB o WebDAV, mo Immuch360 long evri skrin we yu lukluk long hem.
 
-Ademap fola ia long evri skrin, mo evriwan i pleiem ol foto mo video long ples we oli stap, oli no kopiem eni samting: ol fon, ol tablet, Android TV, wan Meta Quest, ol kompiuta Windows, Linux mo macOS, mo ol LG TV we oli log in long Immich server blong yu. Wan 360° foto i tanem olsem wan bol long fon mo long TV, mo i raonem yu long hedset. Olsem wanem blong mekem: [Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Ademap fola ia long evri skrin, mo evriwan i pleiem ol foto mo video long ples we oli stap, oli no kopiem eni samting: ol fon, ol tablet, Android TV, wan Meta Quest, ol kompiuta Windows, Linux mo macOS, mo ol LG TV we oli log in long Immich server blong yu (SMB from webOS 22). Wan 360° foto i tanem olsem wan bol long fon mo long TV, mo i raonem yu long hedset. Olsem wanem blong mekem: [Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Immich server blong yu long evri skrin, wetem log in from fon blong yu
 
@@ -119,7 +119,7 @@ Long fon, Immuch360 i kipim fulwan Immich mobael app, i ademap ol 360°, VR180 m
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Pikja we oli droem, wetem wan trufala skrinsot blong app: wan laptop we i ranem Immuch360 klosap long ol foto we oli prinim mo wan NAS, mo wan man we yu luk baksaed blong hem long wan hedset we i ranem Immuch360, fored long wan long ol lanskep ia we i stanap long relif">
 </p>
 
-**Yu nidim:** Immuch360 long wan kompiuta Windows, Linux o macOS mo long wan Meta Quest, wetem NAS o Immich server blong yu long medel blong tufala.
+**Yu nidim:** Immuch360 long wan kompiuta Windows, Linux o macOS mo long wan Meta Quest, wetem NAS blong yu long medel blong tufala, o Immich server blong yu wetem "Bakap ol AI vesen tu" i on.
 
 Kompiuta hemwan i tanem ol foto blong yu i kam 3D foto mo 3D sin, mo i kam 360° panorama wetem wan grafik kad blong 8 GB long Windows o Linux, mo i sevem olgeta klosap long ol orijinol. Hedset i soem wan 3D foto long trufala 3D, i putum wan sin long rum blong yu mo wan panorama raon long yu; ol fon mo TV oli openem ol panorama long 360° viuwa blong olgeta. Olsem wanem blong mekem: [Tanem wan foto i kam 3D, wan sin, wan panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Fon i soem laef video blong dron mo i pasem, tru long Wi-Fi blong yu o hotspot b
 
 **Yu nidim:** wan Insta360, GoPro MAX o DJI Osmo 360 kamera, NAS blong yu, mo Immuch360 long ol skrin: ol fon, ol tablet, Android TV, wan Meta Quest, Windows.
 
-Kopiem ol rao fael from kad blong kamera i go long wan fola blong NAS blong yu we oli serem long SMB o WebDAV, olsem we oli stap; wan Immich server i tekem olgeta blong Insta360 tu. Evri skrin i joenem olgeta taem oli plei, wetem kalibresen we i stap raet long evri fael, mo oli no eksportem eni samting fastaem long app blong kamera. Olsem wanem blong mekem: [Openem ol rao fael blong 360° kamera](#open-the-raw-files-of-360-cameras).
+Kopiem ol fael .insp, .insv, .360 o .osv from kad blong kamera i go long wan fola blong NAS blong yu we oli serem long SMB o WebDAV, olsem we oli stap; wan Immich server i tekem olgeta blong Insta360 tu. Evri skrin i joenem olgeta taem oli plei, wetem kalibresen we i stap raet long evri fael, mo oli no eksportem eni samting fastaem long app blong kamera. Olsem wanem blong mekem: [Openem ol rao fael blong 360° kamera](#open-the-raw-files-of-360-cameras).
 
 #### Ol Plex mo DLNA server blong yu long TV mo long hedset
 
@@ -161,12 +161,12 @@ Plex i givim ol orijinol fael blong ol laebri blong yu, ale wan 360° video i st
 
 **Yu nidim:** Immuch360 long wan Android fon, wan iPhone o wan Windows kompiuta, mo long wan Meta Quest, long sem Wi-Fi blong haos.
 
-Tanem on "Serem fon ia long netwok" long fon, o "Serem kompiuta ia long netwok" long kompiuta, mo hedset i pleiem ol foto mo video blong hem, olgeta blong 360° raon long yu: i no gat server, i no gat NAS, i no gat aplod. Long wan iPhone, fon i serem taem app i open. Olsem wanem blong mekem: [Serem fon ia long netwok](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Tanem on "Serem fon ia long netwok" long fon, o "Serem kompiuta ia long netwok" long kompiuta, mo hedset i pleiem ol foto mo video blong hem, olgeta blong 360° raon long yu: i no gat server, i no gat NAS, i no gat aplod. Long wan iPhone, fon i serem taem app i stap long skrin. Olsem wanem blong mekem: [Serem fon ia long netwok](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Ol Tapo kamera blong yu long TV mo long hedset
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan kamera blong haos klosap long windo i filmem garen, mo wan TV, wan fon, wan hedset we wan man i werem long sofa mo wan laptop, evriwan i ranem Immuch360, oli soem sem vyu ia">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan kamera blong haos klosap long windo i filmem garen, mo wan TV, wan fon, wan hedset we wan man i werem long rum mo wan laptop, evriwan i ranem Immuch360, oli soem sem vyu ia">
 </p>
 
 **Yu nidim:** ol Tapo kamera long netwok blong haos blong yu, mo Immuch360 long wan Android fon, wan Android TV, wan Meta Quest o wan Windows kompiuta.
@@ -176,10 +176,10 @@ Evri skrin i soem wan kamera laef mo i pleiem ol rikod blong memori kad blong he
 #### Ol Gaussian splat long rum blong yu, long wan Meta Quest 3 o 3S (eksperimentol)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: long wan rum, wan man we yu luk baksaed blong hem long wan hedset we i ranem Immuch360 i stanap fored long wan fontin long trufala saes, we narafala app i kasem olsem wan splat mo we oli openem from wan NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Pikja we oli droem, i no wan skrinsot: long wan rum, wan man we yu luk baksaed blong hem long wan hedset we i ranem Immuch360 i stanap fored long wan fontin long trufala saes we oli mekem long laet we i saen, we oli openem from wan NAS long wan selef">
 </p>
 
-**Yu nidim:** wan splat we oli mekem wetem Polycam, Scaniverse, Luma o narafala tul, olsem wan .spz o .ply fael long NAS blong yu o long hedset, mo Immuch360 long wan Meta Quest 3 o 3S.
+**Yu nidim:** wan splat we oli mekem wetem Polycam, Scaniverse, Luma o narafala tul, olsem wan .spz o binari .ply fael long NAS blong yu o long hedset, mo Immuch360 long wan Meta Quest 3 o 3S.
 
 Hedset i putum ples o samting long trufala saes blong hem, fored long yu o raon long yu: wokbaot raon long hem, slaed tru long hem wetem lef tamstik, tanem wetem raet wan. Ol Gaussian splat oli yusum wan API blong Meta Spatial SDK we i stil testem, we Meta i no sapotem mo i no promes long hem: sapos i gat wan problem, hem i blong Immuch360 nomo. Olsem wanem blong mekem: [Lukluk ol Gaussian splat long wan Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Ol AI fija oli ronem ol model mo enjin we ol narafala oli mekem, we oli daonlod 
 
 360° LoRA blong nomadoor i Apache 2.0 long kad blong hem mo oli trenem long ol CC0 mo pablik domen pikja, wetem wan haf aninit long CC BY: atribusen blong haf ia i kam long wan nekis vesen blong MODEL-LICENSES.md. I no gat samting long ples ia we i gat wan laesens blong no mekem mane, mo i no gat samting we i nidim CUDA. ONNX Runtime mo LiteRT oli gat ol narafala laebri insaed, we oli stap long lis long ol notis blong olgeta, wetem Eigen aninit long MPL 2.0, wan wik copyleft laesens.
 
-Ol skrinsot blong pej ia oli trufala skrinsot blong app: olgeta blong fon long Android build long wan emiuleta, olgeta blong Android TV long Google TV emiuleta, olgeta blong LG mo Samsung long wan braosa we i tekem ples blong TV, olgeta blong Windows long wan Windows 11 PC mo Meta Quest window long wan Quest 3, evriwan wetem CC0 panorama from [Poly Haven](https://polyhaven.com); ol imesiv skrinsot blong hedset oli tekem long wan Quest 3 wetem media blong man we i raetem, mo hemia blong iPad long iPad simuleta, wetem wan CC0 panorama blong Poly Haven. Ol pikja blong AI meka oli trufala risal blong app, we oli mekem from ol CC0 foto blong Poly Haven, wetem tu trufala skrinsot blong Windows app. Fas pikja mo ol pikja blong TV, log in, tanem, kamera mo dron oli pikja we oli droem blong projek: oli no soem eni skrin blong app, eni logo blong narafala kampani mo eni fes. Ol kad we oli soem wanem ol skrin oli mekem tugeta oli putum wan pikja olsem antap long wan laen we oli droem blong projek, wetem ol logo blong ol platfom, aekon blong app mo, long tu kad, trufala skrinsot blong app; aotsaed long ol logo blong platfom, oli no soem eni logo blong narafala kampani mo eni fes. Evri pikja, wetem sos, deit mo laesens blong hem, i stap long lis long [CAPTURES.md](../.github/readme/CAPTURES.md).
+Ol skrinsot blong pej ia oli trufala skrinsot blong app: olgeta blong fon long Android build long wan emiuleta, olgeta blong Android TV long Google TV emiuleta, olgeta blong LG mo Samsung long wan braosa we i tekem ples blong TV, olgeta blong Windows long wan Windows 11 PC mo Meta Quest window long wan Quest 3, evriwan wetem CC0 panorama from [Poly Haven](https://polyhaven.com); ol imesiv skrinsot blong hedset oli tekem long wan Quest 3 wetem media blong man we i raetem, mo hemia blong iPad long iPad simuleta, wetem wan CC0 panorama blong Poly Haven. Ol pikja blong AI meka oli trufala risal blong app, we oli mekem from ol CC0 foto blong Poly Haven, wetem tu trufala skrinsot blong Windows app. Fas pikja mo ol pikja blong TV, log in, tanem, kamera mo dron oli pikja we oli droem blong projek: oli no soem eni skrin blong app, eni logo blong narafala kampani mo eni fes. Ol kad we oli soem wanem ol skrin oli mekem tugeta oli putum wan pikja olsem antap long wan laen we oli droem blong projek, wetem ol logo blong ol platfom, aekon blong app, trufala skrinsot blong app long tu kad mo ol CC0 foto blong Poly Haven long tu; aotsaed long ol logo blong platfom, oli no soem eni logo blong narafala kampani mo eni fes. Evri pikja, wetem sos, deit mo laesens blong hem, i stap long lis long [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plan blong fiuja

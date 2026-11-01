@@ -101,7 +101,7 @@ Settu Immuch360 upp á hverjum skjá sem þú horfir á: hver þeirra les sjálf
 
 **Þú þarft:** NAS-tæki með SMB- eða WebDAV-deilingu, og Immuch360 á hverjum skjá sem þú horfir á.
 
-Bættu deilingunni við á hverjum skjá, og hver þeirra spilar myndirnar og myndskeiðin þar sem þau eru, ekkert er afritað: símar, spjaldtölvur, Android TV, Meta Quest, Windows-, Linux- og macOS-tölvur, og LG sjónvörp sem eru skráð inn á Immich vélþjóninn þinn. 360° mynd snýst sem kúla í símanum og sjónvarpinu, og umlykur þig í höfuðtækinu. Leiðbeiningar: [Spila skrár af NAS-tæki, tölvu, miðlaþjóni eða Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Bættu deilingunni við á hverjum skjá, og hver þeirra spilar myndirnar og myndskeiðin þar sem þau eru, ekkert er afritað: símar, spjaldtölvur, Android TV, Meta Quest, Windows-, Linux- og macOS-tölvur, og LG sjónvörp sem eru skráð inn á Immich vélþjóninn þinn (SMB frá webOS 22). 360° mynd snýst sem kúla í símanum og sjónvarpinu, og umlykur þig í höfuðtækinu. Leiðbeiningar: [Spila skrár af NAS-tæki, tölvu, miðlaþjóni eða Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Immich vélþjónninn þinn á hverjum skjá, skráður inn úr símanum þínum
 
@@ -119,7 +119,7 @@ Bættu deilingunni við á hverjum skjá, og hver þeirra spilar myndirnar og my
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Teikning með raunverulegri skjámynd af forritinu: fartölva sem keyrir Immuch360 við hlið prentaðra mynda og NAS-tækis, og manneskja séð aftan frá með höfuðtæki sem keyrir Immuch360, frammi fyrir einu þessara landslaga sem stendur upphleypt">
 </p>
 
-**Þú þarft:** Immuch360 á Windows-, Linux- eða macOS-tölvu og í Meta Quest, með NAS-tækið þitt eða Immich vélþjóninn þinn á milli þeirra.
+**Þú þarft:** Immuch360 á Windows-, Linux- eða macOS-tölvu og í Meta Quest, með NAS-tækið þitt á milli þeirra, eða Immich vélþjóninn þinn með kveikt á „Taka einnig afrit af gervigreindarútgáfum“.
 
 Tölvan sjálf breytir myndunum þínum í 3D myndir og 3D senur, og í 360° víðmyndir með 8 GB skjákorti á Windows eða Linux, og vistar þær við hlið frumritanna. Höfuðtækið sýnir 3D mynd í raunverulegri 3D, setur senu inn í herbergið þitt og víðmynd allt í kringum þig; símar og sjónvörp opna víðmyndirnar í 360° skoðaranum sínum. Leiðbeiningar: [Breyttu einni mynd í 3D, senu, víðmynd](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Síminn sýnir beint myndskeið drónans og sendir það áfram, um Wi-Fi netið
 
 **Þú þarft:** Insta360, GoPro MAX eða DJI Osmo 360 myndavél, NAS-tækið þitt, og Immuch360 á skjánum: símum, spjaldtölvum, Android TV, Meta Quest, Windows.
 
-Afritaðu óunnu skrárnar af korti myndavélarinnar á SMB- eða WebDAV-deilingu NAS-tækisins þíns, eins og þær eru; Immich vélþjónn tekur líka við Insta360 skránum. Hver skjár saumar þær saman meðan þær spilast, með kvörðuninni sem skráð er í hverja skrá, og ekkert er flutt út fyrst í forriti myndavélarinnar. Leiðbeiningar: [Opna óunnar skrár 360° myndavéla](#open-the-raw-files-of-360-cameras).
+Afritaðu .insp, .insv, .360 eða .osv skrárnar af korti myndavélarinnar á SMB- eða WebDAV-deilingu NAS-tækisins þíns, eins og þær eru; Immich vélþjónn tekur líka við Insta360 skránum. Hver skjár saumar þær saman meðan þær spilast, með kvörðuninni sem skráð er í hverja skrá, og ekkert er flutt út fyrst í forriti myndavélarinnar. Leiðbeiningar: [Opna óunnar skrár 360° myndavéla](#open-the-raw-files-of-360-cameras).
 
 #### Plex og DLNA þjónarnir þínir í sjónvarpinu og í höfuðtækinu
 
@@ -161,12 +161,12 @@ Plex gefur upprunalegu skrár safnanna þinna, svo 360° myndskeið er áfram 36
 
 **Þú þarft:** Immuch360 á Android síma, iPhone eða Windows tölvu, og í Meta Quest, á sama Wi-Fi neti heima.
 
-Kveiktu á „Deila þessum síma á netinu“ í símanum, eða „Deila þessari tölvu á netinu“ í tölvunni, og höfuðtækið spilar myndirnar og myndskeiðin á því tæki, 360° efnið allt í kringum þig: enginn vélþjónn, ekkert NAS-tæki, engin upphleðsla. Á iPhone er deilingin virk meðan forritið er opið. Leiðbeiningar: [Deila þessum síma á netinu](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Kveiktu á „Deila þessum síma á netinu“ í símanum, eða „Deila þessari tölvu á netinu“ í tölvunni, og höfuðtækið spilar myndirnar og myndskeiðin á því tæki, 360° efnið allt í kringum þig: enginn vélþjónn, ekkert NAS-tæki, engin upphleðsla. Á iPhone er deilingin virk meðan forritið er á skjánum. Leiðbeiningar: [Deila þessum síma á netinu](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Tapo myndavélarnar þínar í sjónvarpinu og í höfuðtækinu
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Teikning, ekki skjámynd: heimilismyndavél við gluggann tekur upp garðinn, og sjónvarp, sími, höfuðtæki sem borið er í sófanum og fartölva, sem hvert keyrir Immuch360, sýna þessa einu mynd">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Teikning, ekki skjámynd: heimilismyndavél við gluggann tekur upp garðinn, og sjónvarp, sími, höfuðtæki sem borið er í stofunni og fartölva, sem hvert keyrir Immuch360, sýna þessa einu mynd">
 </p>
 
 **Þú þarft:** Tapo myndavélar á heimanetinu þínu, og Immuch360 á Android síma, Android TV, Meta Quest eða Windows tölvu.
@@ -176,10 +176,10 @@ Hver skjár sýnir myndavél í beinni og spilar upptökur minniskorts hennar da
 #### Gáss-splöt í herberginu þínu, á Meta Quest 3 eða 3S (tilraun)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Teikning, ekki skjámynd: í stofu stendur manneskja séð aftan frá, með höfuðtæki sem keyrir Immuch360, frammi fyrir gosbrunni í raunstærð sem annað forrit fangaði sem splat og var opnaður af NAS-tæki">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Teikning, ekki skjámynd: í stofu stendur manneskja séð aftan frá, með höfuðtæki sem keyrir Immuch360, frammi fyrir gosbrunni í raunstærð úr glóandi ljósi, sem var opnaður af NAS-tæki á hillu">
 </p>
 
-**Þú þarft:** splat gert með Polycam, Scaniverse, Luma eða öðru tóli, sem .spz eða .ply skrá á NAS-tækinu þínu eða í höfuðtækinu, og Immuch360 á Meta Quest 3 eða 3S.
+**Þú þarft:** splat gert með Polycam, Scaniverse, Luma eða öðru tóli, sem .spz eða tvíundar .ply skrá á NAS-tækinu þínu eða í höfuðtækinu, og Immuch360 á Meta Quest 3 eða 3S.
 
 Höfuðtækið setur staðinn eða hlutinn í sinni stærð, fyrir framan þig eða allt í kringum þig: gakktu í kringum hann, renndu þér í gegnum hann með vinstri stýripinnanum, snúðu með þeim hægri. Gáss-splöt nota tilraunaforritaskil (API) í Meta Spatial SDK, sem Meta hvorki styður né ábyrgist: Immuch360 eitt ber ábyrgð á öllum göllum. Leiðbeiningar: [Skoðaðu gáss-splöt á Meta Quest 3 eða 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Gervigreindareiginleikarnir keyra líkön og vélar sem aðrir hafa gert, sótt 
 
 360° LoRA frá nomadoor er Apache 2.0 samkvæmt korti sínu og var þjálfað á CC0 myndum og myndum í almenningseigu, með hluta undir CC BY: tilvísun þess hluta kemur í síðari útgáfu af MODEL-LICENSES.md. Ekkert hér er undir leyfi sem bannar viðskiptanot, og ekkert þarf CUDA. ONNX Runtime og LiteRT innihalda önnur söfn, talin upp í tilkynningum þeirra, þar á meðal Eigen undir MPL 2.0, veiku copyleft leyfi.
 
-Skjámyndirnar á þessari síðu eru raunverulegar skjámyndir af forritinu: símamyndirnar af Android útgáfunni í eftirgervli, Android TV myndirnar á Google TV eftirgervlinum, LG og Samsung myndirnar í vafra sem kemur í stað sjónvarpsins, Windows myndirnar á Windows 11 tölvu og Meta Quest glugginn í Quest 3, allar með CC0 víðmyndum frá [Poly Haven](https://polyhaven.com); umlykjandi skjámyndir höfuðtækisins voru teknar á Quest 3 með eigin efni höfundarins, og iPad myndin í iPad hermi, með CC0 víðmynd frá Poly Haven. Myndirnar af gervigreindarsmiðnum eru raunveruleg úttak forritsins, gerð úr CC0 myndum frá Poly Haven, með tveimur raunverulegum skjámyndum af Windows forritinu. Upphafsmyndin og myndirnar af sjónvarpinu, innskráningunni, snúningnum, myndavélunum og drónanum eru teikningar gerðar fyrir verkefnið: þær sýna engan skjá forritsins, ekkert merki annars fyrirtækis og ekkert andlit. Notkunardæmaspjöldin setja slíka teikningu fyrir ofan röð sem teiknuð var fyrir verkefnið, með merkjum verkvanganna, tákni forritsins og, á tveimur spjöldum, raunverulegum skjámyndum af forritinu; fyrir utan merki verkvanganna sýna þau ekkert merki annars fyrirtækis og ekkert andlit. Hver mynd, með uppruna, dagsetningu og leyfi, er skráð í [CAPTURES.md](../.github/readme/CAPTURES.md).
+Skjámyndirnar á þessari síðu eru raunverulegar skjámyndir af forritinu: símamyndirnar af Android útgáfunni í eftirgervli, Android TV myndirnar á Google TV eftirgervlinum, LG og Samsung myndirnar í vafra sem kemur í stað sjónvarpsins, Windows myndirnar á Windows 11 tölvu og Meta Quest glugginn í Quest 3, allar með CC0 víðmyndum frá [Poly Haven](https://polyhaven.com); umlykjandi skjámyndir höfuðtækisins voru teknar á Quest 3 með eigin efni höfundarins, og iPad myndin í iPad hermi, með CC0 víðmynd frá Poly Haven. Myndirnar af gervigreindarsmiðnum eru raunveruleg úttak forritsins, gerð úr CC0 myndum frá Poly Haven, með tveimur raunverulegum skjámyndum af Windows forritinu. Upphafsmyndin og myndirnar af sjónvarpinu, innskráningunni, snúningnum, myndavélunum og drónanum eru teikningar gerðar fyrir verkefnið: þær sýna engan skjá forritsins, ekkert merki annars fyrirtækis og ekkert andlit. Notkunardæmaspjöldin setja slíka teikningu fyrir ofan röð sem teiknuð var fyrir verkefnið, með merkjum verkvanganna, tákni forritsins, raunverulegum skjámyndum af forritinu á tveimur spjöldum og CC0 myndum frá Poly Haven á tveimur; fyrir utan merki verkvanganna sýna þau ekkert merki annars fyrirtækis og ekkert andlit. Hver mynd, með uppruna, dagsetningu og leyfi, er skráð í [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Áætlun

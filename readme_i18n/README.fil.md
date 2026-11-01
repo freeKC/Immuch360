@@ -101,7 +101,7 @@ I-install ang Immuch360 sa bawat screen na pinapanood mo: bawat isa ay mismong n
 
 **Kailangan mo:** isang NAS na may SMB o WebDAV share, at Immuch360 sa bawat screen na pinapanood mo.
 
-Idagdag ang share sa bawat screen, at bawat isa ay nagpe-play ng mga larawan at video kung nasaan sila, walang kinokopya: mga telepono, tablet, Android TV, isang Meta Quest, mga computer na Windows, Linux at macOS, at mga LG TV na naka-sign in sa iyong Immich server. Umiikot bilang isang globo ang isang 360° na larawan sa telepono at sa TV, at pinapalibutan ka nito sa headset. Paano gawin: [I-play ang mga file ng isang NAS, computer, media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Idagdag ang share sa bawat screen, at bawat isa ay nagpe-play ng mga larawan at video kung nasaan sila, walang kinokopya: mga telepono, tablet, Android TV, isang Meta Quest, mga computer na Windows, Linux at macOS, at mga LG TV na naka-sign in sa iyong Immich server (SMB mula webOS 22). Umiikot bilang isang globo ang isang 360° na larawan sa telepono at sa TV, at pinapalibutan ka nito sa headset. Paano gawin: [I-play ang mga file ng isang NAS, computer, media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Ang iyong Immich server sa bawat screen, naka-sign in mula sa iyong telepono
 
@@ -119,7 +119,7 @@ Sa telepono, buo ang Immich mobile app na pinapanatili ng Immuch360, idinadagdag
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrasyon na may isang tunay na capture ng app: isang laptop na nagpapatakbo ng Immuch360 sa tabi ng mga naka-print na larawan at isang NAS, at isang taong nakikita mula sa likod na nakasuot ng headset na nagpapatakbo ng Immuch360, sa harap ng isa sa mga tanawing iyon na nakatayo nang may lalim">
 </p>
 
-**Kailangan mo:** Immuch360 sa isang computer na Windows, Linux o macOS at sa isang Meta Quest, kasama ang iyong NAS o iyong Immich server sa pagitan nila.
+**Kailangan mo:** Immuch360 sa isang computer na Windows, Linux o macOS at sa isang Meta Quest, kasama ang iyong NAS sa pagitan nila, o ang iyong Immich server na naka-on ang "I-back up din ang mga AI na bersyon".
 
 Ang computer mismo ang gumagawa ng iyong mga larawan na 3D na larawan at 3D na eksena, at 360° na panorama gamit ang graphics card na 8 GB sa Windows o Linux, at sine-save ang mga ito katabi ng mga orihinal. Ipinapakita ng headset ang isang 3D na larawan sa tunay na 3D, inilalagay ang isang eksena sa iyong silid at ang isang panorama sa paligid mo; binubuksan ng mga telepono at TV ang mga panorama sa kanilang 360° viewer. Paano gawin: [Gawing 3D, eksena o panorama ang isang larawan](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Ipinapakita ng telepono ang live na video ng drone at ipinapasa ito, sa iyong Wi
 
 **Kailangan mo:** isang Insta360, GoPro MAX o DJI Osmo 360 camera, ang iyong NAS, at Immuch360 sa mga screen: mga telepono, tablet, Android TV, isang Meta Quest, Windows.
 
-Kopyahin ang mga raw file mula sa card ng camera papunta sa isang SMB o WebDAV share ng iyong NAS, nang walang binabago; tinatanggap din ng Immich server ang mga galing sa Insta360. Pinagdudugtong ng bawat screen ang mga ito habang nagpe-play, gamit ang calibration na nakasulat sa bawat file, at walang ine-export muna sa app ng camera. Paano gawin: [Buksan ang mga raw file ng mga 360° camera](#open-the-raw-files-of-360-cameras).
+Kopyahin ang mga .insp, .insv, .360 o .osv na file mula sa card ng camera papunta sa isang SMB o WebDAV share ng iyong NAS, nang walang binabago; tinatanggap din ng Immich server ang mga galing sa Insta360. Pinagdudugtong ng bawat screen ang mga ito habang nagpe-play, gamit ang calibration na nakasulat sa bawat file, at walang ine-export muna sa app ng camera. Paano gawin: [Buksan ang mga raw file ng mga 360° camera](#open-the-raw-files-of-360-cameras).
 
 #### Ang iyong mga Plex at DLNA server sa TV at sa headset
 
@@ -161,12 +161,12 @@ Ibinibigay ng Plex ang mga orihinal na file ng iyong mga library, kaya nananatil
 
 **Kailangan mo:** Immuch360 sa isang Android na telepono, isang iPhone o isang Windows na computer, at sa isang Meta Quest, sa iisang Wi-Fi ng bahay.
 
-I-on ang "Ibahagi ang teleponong ito sa network" sa telepono, o ang "Ibahagi ang computer na ito sa network" sa computer, at ipe-play ng headset ang mga larawan at video nito, ang mga 360° sa paligid mo: walang server, walang NAS, walang upload. Sa iPhone, tumatakbo ang share habang bukas ang app. Paano gawin: [Ibahagi ang teleponong ito sa network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+I-on ang "Ibahagi ang teleponong ito sa network" sa telepono, o ang "Ibahagi ang computer na ito sa network" sa computer, at ipe-play ng headset ang mga larawan at video nito, ang mga 360° sa paligid mo: walang server, walang NAS, walang upload. Sa iPhone, tumatakbo ang share habang nasa screen ang app. Paano gawin: [Ibahagi ang teleponong ito sa network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Ang iyong mga Tapo camera sa TV at sa headset
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrasyon, hindi capture: kinukunan ng isang camera sa bahay na nasa tabi ng bintana ang hardin, at ipinapakita ng isang TV, isang telepono, isang headset na suot sa sofa at isang laptop, bawat isa ay nagpapatakbo ng Immuch360, ang iisang view na iyon">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrasyon, hindi capture: kinukunan ng isang camera sa bahay na nasa tabi ng bintana ang hardin, at ipinapakita ng isang TV, isang telepono, isang headset na suot sa kuwarto at isang laptop, bawat isa ay nagpapatakbo ng Immuch360, ang iisang view na iyon">
 </p>
 
 **Kailangan mo:** mga Tapo camera sa network ng iyong bahay, at Immuch360 sa isang Android na telepono, isang Android TV, isang Meta Quest o isang Windows na computer.
@@ -176,10 +176,10 @@ Ipinapakita ng bawat screen ang isang camera nang live at pine-play ang mga reco
 #### Mga Gaussian splat sa iyong silid, sa isang Meta Quest 3 o 3S (eksperimental)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrasyon, hindi capture: sa isang sala, isang taong nakikita mula sa likod na nakasuot ng headset na nagpapatakbo ng Immuch360 ay nakatayo sa harap ng isang fountain na kasinlaki ng totoo, na kinuha bilang splat ng ibang app at binuksan mula sa isang NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrasyon, hindi capture: sa isang sala, isang taong nakikita mula sa likod na nakasuot ng headset na nagpapatakbo ng Immuch360 ay nakatayo sa harap ng isang fountain na kasinlaki ng totoo na gawa sa kumikinang na liwanag, na binuksan mula sa isang NAS na nasa istante">
 </p>
 
-**Kailangan mo:** isang splat na ginawa gamit ang Polycam, Scaniverse, Luma o ibang tool, bilang .spz o .ply na file sa iyong NAS o sa headset, at Immuch360 sa isang Meta Quest 3 o 3S.
+**Kailangan mo:** isang splat na ginawa gamit ang Polycam, Scaniverse, Luma o ibang tool, bilang .spz o binary na .ply na file sa iyong NAS o sa headset, at Immuch360 sa isang Meta Quest 3 o 3S.
 
 Inilalagay ng headset ang lugar o ang bagay sa tunay nitong laki, sa harap mo o sa paligid mo: lakarin ang paligid nito, dumausdos dito gamit ang kaliwang thumbstick, umikot gamit ang kanan. Gumagamit ang mga Gaussian splat ng eksperimental na API ng Meta Spatial SDK, na hindi sinusuportahan o ginagarantiyahan ng Meta: anumang depekto ay pananagutan ng Immuch360 lamang. Paano gawin: [Galugarin ang mga Gaussian splat sa isang Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Nagpapatakbo ang mga AI feature ng mga model at engine na gawa ng iba, na dina-d
 
 Apache 2.0 ang 360° LoRA ng nomadoor ayon sa card nito at sinanay ito sa mga CC0 at public domain na larawan, na may bahaging nasa ilalim ng CC BY: darating ang attribution ng bahaging iyon sa susunod na bersyon ng MODEL-LICENSES.md. Walang anumang narito na nasa ilalim ng non commercial na lisensya, at walang nangangailangan ng CUDA. May iba pang library sa loob ng ONNX Runtime at LiteRT, nakalista sa mga notice nila, kabilang ang Eigen sa ilalim ng MPL 2.0, isang mahinang copyleft na lisensya.
 
-Mga tunay na capture ng app ang mga capture sa page na ito: ang sa telepono ay sa Android build sa isang emulator, ang sa Android TV ay sa Google TV emulator, ang sa LG at Samsung ay sa isang browser na pumapalit sa TV, ang sa Windows ay sa isang Windows 11 PC at ang Meta Quest window ay sa isang Quest 3, lahat gamit ang mga CC0 panorama mula sa [Poly Haven](https://polyhaven.com); kinuha ang mga immersive capture ng headset sa isang Quest 3 gamit ang sariling media ng may-akda, at ang sa iPad ay sa iPad simulator, gamit ang isang CC0 panorama ng Poly Haven. Ang mga larawan ng AI creator ay mga tunay na output ng app, ginawa mula sa mga CC0 na larawan ng Poly Haven, kasama ang dalawang tunay na capture ng Windows app. Ang opening image at ang mga larawan ng TV, ng pag-sign in, ng pag-ikot, ng mga camera at ng drone ay mga ilustrasyong ginawa para sa proyekto: walang ipinapakitang screen ng app, logo ng ibang kumpanya o mukha. Inilalagay ng mga card ng mga halimbawang gamit ang ganitong ilustrasyon sa ibabaw ng isang hilerang iginuhit para sa proyekto, kasama ang mga logo ng mga platform, ang icon ng app at, sa dalawang card, mga tunay na capture ng app; bukod sa mga logo ng mga platform, walang ipinapakitang logo ng ibang kumpanya o mukha. Nakalista ang bawat larawan, kasama ang pinagmulan, petsa at lisensya nito, sa [CAPTURES.md](../.github/readme/CAPTURES.md).
+Mga tunay na capture ng app ang mga capture sa page na ito: ang sa telepono ay sa Android build sa isang emulator, ang sa Android TV ay sa Google TV emulator, ang sa LG at Samsung ay sa isang browser na pumapalit sa TV, ang sa Windows ay sa isang Windows 11 PC at ang Meta Quest window ay sa isang Quest 3, lahat gamit ang mga CC0 panorama mula sa [Poly Haven](https://polyhaven.com); kinuha ang mga immersive capture ng headset sa isang Quest 3 gamit ang sariling media ng may-akda, at ang sa iPad ay sa iPad simulator, gamit ang isang CC0 panorama ng Poly Haven. Ang mga larawan ng AI creator ay mga tunay na output ng app, ginawa mula sa mga CC0 na larawan ng Poly Haven, kasama ang dalawang tunay na capture ng Windows app. Ang opening image at ang mga larawan ng TV, ng pag-sign in, ng pag-ikot, ng mga camera at ng drone ay mga ilustrasyong ginawa para sa proyekto: walang ipinapakitang screen ng app, logo ng ibang kumpanya o mukha. Inilalagay ng mga card ng mga halimbawang gamit ang ganitong ilustrasyon sa ibabaw ng isang hilerang iginuhit para sa proyekto, kasama ang mga logo ng mga platform, ang icon ng app, mga tunay na capture ng app sa dalawang card at mga CC0 na larawan ng Poly Haven sa dalawa; bukod sa mga logo ng mga platform, walang ipinapakitang logo ng ibang kumpanya o mukha. Nakalista ang bawat larawan, kasama ang pinagmulan, petsa at lisensya nito, sa [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Mga susunod na plano

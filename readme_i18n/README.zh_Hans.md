@@ -101,7 +101,7 @@
 
 **您需要：**一台带 SMB 或 WebDAV 共享的 NAS，以及您用来观看的每块屏幕上的 Immuch360。
 
-在每块屏幕上添加该共享，每块屏幕都会在原处播放照片和视频，不复制任何文件：手机、平板、Android TV、Meta Quest、Windows、Linux 和 macOS 电脑，以及登录到您 Immich 服务器的 LG 电视。360° 照片在手机和电视上以球面转动，在头显中则环绕着您。操作指南：[播放 NAS、电脑、媒体服务器或 Plex 上的文件](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
+在每块屏幕上添加该共享，每块屏幕都会在原处播放照片和视频，不复制任何文件：手机、平板、Android TV、Meta Quest、Windows、Linux 和 macOS 电脑，以及登录到您 Immich 服务器的 LG 电视（从 webOS 22 起支持 SMB）。360° 照片在手机和电视上以球面转动，在头显中则环绕着您。操作指南：[播放 NAS、电脑、媒体服务器或 Plex 上的文件](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
 
 #### 您的 Immich 服务器，在每块屏幕上，用手机登录
 
@@ -119,7 +119,7 @@
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="插画，含一张应用的真实截图：一台运行 Immuch360 的笔记本电脑，旁边是冲印的照片和一台 NAS；一个背对画面的人戴着运行 Immuch360 的头显，面前是其中一处风景，以立体浮雕的形式立起">
 </p>
 
-**您需要：**Windows、Linux 或 macOS 电脑上的 Immuch360 和 Meta Quest 中的 Immuch360，两者之间是您的 NAS 或 Immich 服务器。
+**您需要：**Windows、Linux 或 macOS 电脑上的 Immuch360 和 Meta Quest 中的 Immuch360，两者之间是您的 NAS，或开启了“同时备份 AI 版本”的 Immich 服务器。
 
 电脑自己就能把您的照片变成 3D 照片和 3D 场景，在 Windows 或 Linux 上配备 8 GB 显卡时还能变成 360° 全景图，并保存在原图旁边。头显以真正的 3D 显示 3D 照片，把场景放进您的房间，把全景图展开在您四周；手机和电视用它们的 360° 查看器打开全景图。操作指南：[把一张照片变成 3D、场景、全景图](#turn-one-photo-into-3d-a-scene-a-panorama)。
 
@@ -141,7 +141,7 @@
 
 **您需要：**一台 Insta360、GoPro MAX 或 DJI Osmo 360 相机、您的 NAS，以及这些屏幕上的 Immuch360：手机、平板、Android TV、Meta Quest、Windows。
 
-把原始文件从相机的存储卡原样复制到您 NAS 的 SMB 或 WebDAV 共享；Immich 服务器也接收 Insta360 的文件。每块屏幕都在播放时拼接它们，使用每个文件中写入的校准数据，无需先在相机的应用中导出任何内容。操作指南：[打开 360° 相机的原始文件](#open-the-raw-files-of-360-cameras)。
+把 .insp、.insv、.360 或 .osv 文件从相机的存储卡原样复制到您 NAS 的 SMB 或 WebDAV 共享；Immich 服务器也接收 Insta360 的文件。每块屏幕都在播放时拼接它们，使用每个文件中写入的校准数据，无需先在相机的应用中导出任何内容。操作指南：[打开 360° 相机的原始文件](#open-the-raw-files-of-360-cameras)。
 
 #### 您的 Plex 和 DLNA 服务器，在电视上和头显中
 
@@ -161,12 +161,12 @@ Plex 提供您媒体库的原始文件，因此 360° 视频依然是 360°，�
 
 **您需要：**Android 手机、iPhone 或 Windows 电脑上的 Immuch360，以及 Meta Quest 中的 Immuch360，连在同一个家庭 Wi-Fi 上。
 
-在手机上打开“在网络上共享此手机”，或在电脑上打开“在网络上共享此电脑”，头显就能播放其中的照片和视频，360° 的那些环绕着您：无需服务器，无需 NAS，无需上传。在 iPhone 上，共享在应用打开期间运行。操作指南：[在网络上共享此手机](../docs/immuch360/user-guide.md#share-this-phone-on-the-network)。
+在手机上打开“在网络上共享此手机”，或在电脑上打开“在网络上共享此电脑”，头显就能播放其中的照片和视频，360° 的那些环绕着您：无需服务器，无需 NAS，无需上传。在 iPhone 上，共享仅在应用显示在屏幕上时运行。操作指南：[在网络上共享此手机](../docs/immuch360/user-guide.md#share-this-phone-on-the-network)。
 
 #### 您的 Tapo 摄像头，在电视上和头显中
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="插画，非截图：窗边的一台家用摄像头拍着花园，一台电视、一部手机、一个在沙发上佩戴的头显和一台笔记本电脑都运行着 Immuch360，显示着这同一个画面">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="插画，非截图：窗边的一台家用摄像头拍着花园，一台电视、一部手机、一个在房间里佩戴的头显和一台笔记本电脑都运行着 Immuch360，显示着这同一个画面">
 </p>
 
 **您需要：**家庭网络中的 Tapo 摄像头，以及 Android 手机、Android TV、Meta Quest 或 Windows 电脑上的 Immuch360。
@@ -176,10 +176,10 @@ Plex 提供您媒体库的原始文件，因此 360° 视频依然是 360°，�
 #### 您房间里的高斯泼溅，在 Meta Quest 3 或 3S 中（实验性）
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="插画，非截图：客厅里，一个背对画面的人戴着运行 Immuch360 的头显，站在一座等身大小的喷泉前，这座喷泉由另一款应用捕捉为泼溅，并从 NAS 打开">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="插画，非截图：客厅里，一个背对画面的人戴着运行 Immuch360 的头显，站在一座由发光的光构成的等身大小的喷泉前，这座喷泉从架子上的 NAS 打开">
 </p>
 
-**您需要：**一个用 Polycam、Scaniverse、Luma 或其他工具制作的泼溅，以 .spz 或 .ply 文件存放在您的 NAS 上或头显中，以及 Meta Quest 3 或 3S 中的 Immuch360。
+**您需要：**一个用 Polycam、Scaniverse、Luma 或其他工具制作的泼溅，以 .spz 或二进制 .ply 文件存放在您的 NAS 上或头显中，以及 Meta Quest 3 或 3S 中的 Immuch360。
 
 头显按实际大小呈现地点或物体，在您面前或在您四周：绕着它走，用左摇杆在其中滑行，用右摇杆转动。高斯泼溅使用 Meta Spatial SDK 的实验性 API，Meta 对其既不提供支持也不作担保：任何缺陷均由 Immuch360 自行负责。操作指南：[在 Meta Quest 3 或 3S 中探索高斯泼溅](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)。
 
@@ -898,7 +898,7 @@ AI 功能运行的是他人制作的模型和引擎，只在您要求时从本�
 
 nomadoor 的 360° LoRA 在其模型卡上标注为 Apache 2.0，训练数据为 CC0 和公有领域图像，其中一部分采用 CC BY：这部分的署名将在 MODEL-LICENSES.md 的后续版本中补上。这里没有任何内容采用非商业许可，也没有任何内容需要 CUDA。ONNX Runtime 和 LiteRT 内置了其他库，列在它们的声明中，其中包括采用弱 copyleft 许可 MPL 2.0 的 Eigen。
 
-本页面中的截图都是应用的真实截图：手机截图来自模拟器中的 Android build，Android TV 截图来自 Google TV 模拟器，LG 和 Samsung 截图来自模拟电视的浏览器，Windows 截图来自一台 Windows 11 电脑，Meta Quest 窗口截图来自一台 Quest 3，均使用 [Poly Haven](https://polyhaven.com) 的 CC0 全景图；头显的沉浸式截图是在 Quest 3 上用作者自己的媒体拍摄的，iPad 截图则来自 iPad 模拟器，使用一张 CC0 的 Poly Haven 全景图。AI 创作功能的图片是应用的真实输出，由 Poly Haven 的 CC0 照片生成，另有两张 Windows 应用的真实截图。开篇图片以及电视、登录、旋转、摄像头和无人机的图片都是为本项目制作的插画：其中没有应用的任何界面、其他公司的任何标志，也没有任何人脸。用例卡片把这样一张插画放在一行为本项目绘制的图示上方，这一行包含各平台标志、应用图标，在两张卡片中还有应用的真实截图；除平台标志外，其中没有其他公司的任何标志，也没有任何人脸。每张图片及其来源、日期和许可都列在 [CAPTURES.md](../.github/readme/CAPTURES.md) 中。
+本页面中的截图都是应用的真实截图：手机截图来自模拟器中的 Android build，Android TV 截图来自 Google TV 模拟器，LG 和 Samsung 截图来自模拟电视的浏览器，Windows 截图来自一台 Windows 11 电脑，Meta Quest 窗口截图来自一台 Quest 3，均使用 [Poly Haven](https://polyhaven.com) 的 CC0 全景图；头显的沉浸式截图是在 Quest 3 上用作者自己的媒体拍摄的，iPad 截图则来自 iPad 模拟器，使用一张 CC0 的 Poly Haven 全景图。AI 创作功能的图片是应用的真实输出，由 Poly Haven 的 CC0 照片生成，另有两张 Windows 应用的真实截图。开篇图片以及电视、登录、旋转、摄像头和无人机的图片都是为本项目制作的插画：其中没有应用的任何界面、其他公司的任何标志，也没有任何人脸。用例卡片把这样一张插画放在一行为本项目绘制的图示上方，这一行包含各平台标志、应用图标，两张卡片中有应用的真实截图，另两张中有 Poly Haven 的 CC0 照片；除平台标志外，其中没有其他公司的任何标志，也没有任何人脸。每张图片及其来源、日期和许可都列在 [CAPTURES.md](../.github/readme/CAPTURES.md) 中。
 
 <a id="roadmap"></a>
 ## 路线图

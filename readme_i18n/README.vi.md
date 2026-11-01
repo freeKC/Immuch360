@@ -101,7 +101,7 @@ Cài Immuch360 trên mỗi màn hình bạn xem: mỗi màn hình tự đọc c�
 
 **Bạn cần:** một NAS có thư mục chia sẻ SMB hoặc WebDAV, và Immuch360 trên mỗi màn hình bạn xem.
 
-Thêm thư mục chia sẻ trên mỗi màn hình, và mỗi màn hình phát ảnh và video ngay tại nơi chúng nằm, không sao chép gì: điện thoại, máy tính bảng, Android TV, Meta Quest, máy tính Windows, Linux và macOS, và TV LG đã đăng nhập vào máy chủ Immich của bạn. Một ảnh 360° xoay như một quả cầu trên điện thoại và TV, và bao quanh bạn trong kính. Hướng dẫn: [Phát tệp từ NAS, máy tính, máy chủ đa phương tiện hoặc Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Thêm thư mục chia sẻ trên mỗi màn hình, và mỗi màn hình phát ảnh và video ngay tại nơi chúng nằm, không sao chép gì: điện thoại, máy tính bảng, Android TV, Meta Quest, máy tính Windows, Linux và macOS, và TV LG đã đăng nhập vào máy chủ Immich của bạn (SMB từ webOS 22). Một ảnh 360° xoay như một quả cầu trên điện thoại và TV, và bao quanh bạn trong kính. Hướng dẫn: [Phát tệp từ NAS, máy tính, máy chủ đa phương tiện hoặc Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Máy chủ Immich của bạn trên mọi màn hình, đăng nhập từ điện thoại của bạn
 
@@ -119,7 +119,7 @@ Trên điện thoại, Immuch360 giữ nguyên toàn bộ ứng dụng di độn
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Hình minh họa có một ảnh chụp màn hình thật của ứng dụng: một máy tính xách tay chạy Immuch360 bên cạnh các ảnh in và một NAS, và một người nhìn từ phía sau đeo kính chạy Immuch360, trước một trong những phong cảnh đó nổi khối">
 </p>
 
-**Bạn cần:** Immuch360 trên một máy tính Windows, Linux hoặc macOS và trong một Meta Quest, với NAS hoặc máy chủ Immich của bạn ở giữa.
+**Bạn cần:** Immuch360 trên một máy tính Windows, Linux hoặc macOS và trong một Meta Quest, với NAS của bạn ở giữa, hoặc máy chủ Immich của bạn với "Sao lưu cả các phiên bản AI" được bật.
 
 Chính máy tính biến ảnh của bạn thành ảnh 3D và cảnh 3D, và thành ảnh toàn cảnh 360° với card đồ họa 8 GB trên Windows hoặc Linux, rồi lưu chúng bên cạnh bản gốc. Kính hiển thị một ảnh 3D ở dạng 3D thật, đặt một cảnh vào phòng của bạn và một ảnh toàn cảnh bao quanh bạn; điện thoại và TV mở ảnh toàn cảnh trong trình xem 360° của chúng. Hướng dẫn: [Biến một ảnh thành 3D, một cảnh, một ảnh toàn cảnh](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Chính máy tính biến ảnh của bạn thành ảnh 3D và cảnh 3D, và th
 
 **Bạn cần:** một máy ảnh Insta360, GoPro MAX hoặc DJI Osmo 360, NAS của bạn, và Immuch360 trên các màn hình: điện thoại, máy tính bảng, Android TV, Meta Quest, Windows.
 
-Sao chép nguyên trạng các tệp thô từ thẻ của máy ảnh sang một thư mục chia sẻ SMB hoặc WebDAV trên NAS của bạn; máy chủ Immich cũng nhận tệp của Insta360. Mỗi màn hình ghép chúng trong lúc phát, với thông số hiệu chỉnh ghi trong từng tệp, và không cần xuất gì trước trong ứng dụng của máy ảnh. Hướng dẫn: [Mở tệp thô của máy ảnh 360°](#open-the-raw-files-of-360-cameras).
+Sao chép nguyên trạng các tệp .insp, .insv, .360 hoặc .osv từ thẻ của máy ảnh sang một thư mục chia sẻ SMB hoặc WebDAV trên NAS của bạn; máy chủ Immich cũng nhận tệp của Insta360. Mỗi màn hình ghép chúng trong lúc phát, với thông số hiệu chỉnh ghi trong từng tệp, và không cần xuất gì trước trong ứng dụng của máy ảnh. Hướng dẫn: [Mở tệp thô của máy ảnh 360°](#open-the-raw-files-of-360-cameras).
 
 #### Máy chủ Plex và DLNA của bạn trên TV và trong kính
 
@@ -161,12 +161,12 @@ Plex cung cấp tệp gốc trong thư viện của bạn, nên video 360° vẫ
 
 **Bạn cần:** Immuch360 trên một điện thoại Android, một iPhone hoặc một máy tính Windows, và trong một Meta Quest, trên cùng một mạng Wi-Fi gia đình.
 
-Bật "Chia sẻ điện thoại này trên mạng" trên điện thoại, hoặc "Chia sẻ máy tính này trên mạng" trên máy tính, và kính phát ảnh và video của thiết bị đó, ảnh và video 360° bao quanh bạn: không máy chủ, không NAS, không tải lên. Trên iPhone, việc chia sẻ chạy trong khi ứng dụng đang mở. Hướng dẫn: [Chia sẻ điện thoại này trên mạng](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Bật "Chia sẻ điện thoại này trên mạng" trên điện thoại, hoặc "Chia sẻ máy tính này trên mạng" trên máy tính, và kính phát ảnh và video của thiết bị đó, ảnh và video 360° bao quanh bạn: không máy chủ, không NAS, không tải lên. Trên iPhone, việc chia sẻ chạy trong khi ứng dụng đang hiển thị trên màn hình. Hướng dẫn: [Chia sẻ điện thoại này trên mạng](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Camera Tapo của bạn trên TV và trong kính
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một camera gia đình bên cửa sổ quay khu vườn, và một TV, một điện thoại, một kính đang được đeo trên ghế sofa và một máy tính xách tay, mỗi thiết bị đều chạy Immuch360, hiển thị cùng một hình ảnh đó">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: một camera gia đình bên cửa sổ quay khu vườn, và một TV, một điện thoại, một kính đang được đeo trong phòng và một máy tính xách tay, mỗi thiết bị đều chạy Immuch360, hiển thị cùng một hình ảnh đó">
 </p>
 
 **Bạn cần:** camera Tapo trên mạng gia đình của bạn, và Immuch360 trên một điện thoại Android, một Android TV, một Meta Quest hoặc một máy tính Windows.
@@ -176,10 +176,10 @@ Mỗi màn hình hiển thị trực tiếp một camera và phát các bản gh
 #### Splat Gauss trong phòng của bạn, trên Meta Quest 3 hoặc 3S (thử nghiệm)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: trong phòng khách, một người nhìn từ phía sau đeo kính chạy Immuch360 đứng trước một đài phun nước kích thước thật, được ghi lại dưới dạng splat bằng một ứng dụng khác và mở từ một NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Hình minh họa, không phải ảnh chụp màn hình: trong phòng khách, một người nhìn từ phía sau đeo kính chạy Immuch360 đứng trước một đài phun nước kích thước thật làm bằng ánh sáng rực rỡ, được mở từ một NAS trên kệ">
 </p>
 
-**Bạn cần:** một splat tạo bằng Polycam, Scaniverse, Luma hoặc công cụ khác, dưới dạng tệp .spz hoặc .ply trên NAS của bạn hoặc trong kính, và Immuch360 trên Meta Quest 3 hoặc 3S.
+**Bạn cần:** một splat tạo bằng Polycam, Scaniverse, Luma hoặc công cụ khác, dưới dạng tệp .spz hoặc .ply nhị phân trên NAS của bạn hoặc trong kính, và Immuch360 trên Meta Quest 3 hoặc 3S.
 
 Kính đặt địa điểm hoặc đồ vật theo đúng kích thước của nó, trước mặt bạn hoặc bao quanh bạn: đi vòng quanh nó, lướt xuyên qua nó bằng cần điều khiển bên trái, xoay bằng cần bên phải. Splat Gauss dùng một API thử nghiệm của Meta Spatial SDK, mà Meta không hỗ trợ cũng không bảo đảm: mọi lỗi đều thuộc trách nhiệm riêng của Immuch360. Hướng dẫn: [Khám phá splat Gauss trên Meta Quest 3 hoặc 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Các tính năng AI chạy các mô hình và engine do người khác tạo ra,
 
 LoRA 360° của nomadoor có giấy phép Apache 2.0 trên thẻ của nó và được huấn luyện trên ảnh CC0 và ảnh thuộc phạm vi công cộng, với một phần theo CC BY: ghi công cho phần đó sẽ có trong một phiên bản sau của MODEL-LICENSES.md. Không có gì ở đây theo giấy phép phi thương mại, và không có gì cần CUDA. ONNX Runtime và LiteRT có tích hợp các thư viện khác, được liệt kê trong thông báo của chúng, trong đó có Eigen theo MPL 2.0, một giấy phép copyleft yếu.
 
-Các ảnh chụp màn hình trên trang này là ảnh chụp thực tế của ứng dụng: ảnh điện thoại chụp trên bản dựng Android trong trình giả lập, ảnh Android TV trên trình giả lập Google TV, ảnh LG và Samsung trong một trình duyệt thay thế cho TV, ảnh Windows trên một PC Windows 11 và cửa sổ Meta Quest trong một Quest 3, tất cả đều dùng ảnh toàn cảnh CC0 từ [Poly Haven](https://polyhaven.com); các ảnh chụp đắm chìm của kính được chụp trên Quest 3 với nội dung riêng của tác giả, và ảnh iPad trong trình mô phỏng iPad, với một ảnh toàn cảnh CC0 của Poly Haven. Các hình của trình tạo AI là kết quả thật của ứng dụng, tạo từ ảnh CC0 của Poly Haven, cùng hai ảnh chụp màn hình thật của ứng dụng Windows. Ảnh mở đầu và các hình về TV, đăng nhập, xoay ảnh, camera và drone là hình minh họa được làm cho dự án: chúng không hiển thị màn hình nào của ứng dụng, logo nào của công ty khác hay khuôn mặt nào. Các thẻ tình huống sử dụng đặt một hình minh họa như vậy phía trên một dải được vẽ cho dự án, với logo của các nền tảng, biểu tượng của ứng dụng và, trên hai thẻ, ảnh chụp màn hình thật của ứng dụng; ngoài logo của các nền tảng, chúng không hiển thị logo nào của công ty khác hay khuôn mặt nào. Mỗi hình ảnh, kèm nguồn, ngày và giấy phép, được liệt kê trong [CAPTURES.md](../.github/readme/CAPTURES.md).
+Các ảnh chụp màn hình trên trang này là ảnh chụp thực tế của ứng dụng: ảnh điện thoại chụp trên bản dựng Android trong trình giả lập, ảnh Android TV trên trình giả lập Google TV, ảnh LG và Samsung trong một trình duyệt thay thế cho TV, ảnh Windows trên một PC Windows 11 và cửa sổ Meta Quest trong một Quest 3, tất cả đều dùng ảnh toàn cảnh CC0 từ [Poly Haven](https://polyhaven.com); các ảnh chụp đắm chìm của kính được chụp trên Quest 3 với nội dung riêng của tác giả, và ảnh iPad trong trình mô phỏng iPad, với một ảnh toàn cảnh CC0 của Poly Haven. Các hình của trình tạo AI là kết quả thật của ứng dụng, tạo từ ảnh CC0 của Poly Haven, cùng hai ảnh chụp màn hình thật của ứng dụng Windows. Ảnh mở đầu và các hình về TV, đăng nhập, xoay ảnh, camera và drone là hình minh họa được làm cho dự án: chúng không hiển thị màn hình nào của ứng dụng, logo nào của công ty khác hay khuôn mặt nào. Các thẻ tình huống sử dụng đặt một hình minh họa như vậy phía trên một dải được vẽ cho dự án, với logo của các nền tảng, biểu tượng của ứng dụng, ảnh chụp màn hình thật của ứng dụng trên hai thẻ và ảnh CC0 của Poly Haven trên hai thẻ; ngoài logo của các nền tảng, chúng không hiển thị logo nào của công ty khác hay khuôn mặt nào. Mỗi hình ảnh, kèm nguồn, ngày và giấy phép, được liệt kê trong [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Lộ trình

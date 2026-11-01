@@ -101,7 +101,7 @@ Immuch360'ni tomosha qiladigan har bir ekraningizga o‘rnating: har biri manbal
 
 **Sizga kerak:** SMB yoki WebDAV ulashmasi bor NAS va tomosha qiladigan har bir ekraningizda Immuch360.
 
-Ulashmani har bir ekranga qo‘shing, shunda har biri fotosurat va videolarni ular turgan joyidan ijro etadi, hech narsa nusxalanmaydi: telefonlar, planshetlar, Android TV, Meta Quest, Windows, Linux va macOS kompyuterlari hamda Immich serveringizga kirgan LG televizorlari. 360° fotosurat telefon va televizorda sfera sifatida aylanadi, shlemda esa atrofingizni o‘raydi. Qanday qilinadi: [NAS, kompyuter, media server yoki Plex fayllarini ijro eting](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Ulashmani har bir ekranga qo‘shing, shunda har biri fotosurat va videolarni ular turgan joyidan ijro etadi, hech narsa nusxalanmaydi: telefonlar, planshetlar, Android TV, Meta Quest, Windows, Linux va macOS kompyuterlari hamda Immich serveringizga kirgan LG televizorlari (webOS 22 dan SMB). 360° fotosurat telefon va televizorda sfera sifatida aylanadi, shlemda esa atrofingizni o‘raydi. Qanday qilinadi: [NAS, kompyuter, media server yoki Plex fayllarini ijro eting](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Immich serveringiz har bir ekranda, telefoningizdan kirilgan
 
@@ -119,7 +119,7 @@ Telefonda Immuch360 Immich mobil ilovasini to‘liq saqlaydi, o‘zining 360°, 
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilovaning haqiqiy surati bilan rasm: bosma fotosuratlar va NAS yonida Immuch360 ishlayotgan noutbuk, hamda Immuch360 ishlayotgan shlem kiygan, orqadan ko‘ringan odam bo‘rtma holda turgan o‘sha manzaralardan biri oldida">
 </p>
 
-**Sizga kerak:** Windows, Linux yoki macOS kompyuterda va Meta Quest'da Immuch360, ular orasida NAS'ingiz yoki Immich serveringiz.
+**Sizga kerak:** Windows, Linux yoki macOS kompyuterda va Meta Quest'da Immuch360, ular orasida NAS'ingiz, yoki "SI versiyalarining ham zaxira nusxasini olish" yoqilgan Immich serveringiz.
 
 Kompyuterning o‘zi fotosuratlaringizni 3D fotosuratlar va 3D sahnalarga, Windows yoki Linux'da 8 GB videokarta bilan esa 360° panoramalarga aylantiradi va ularni asl fayllar yoniga saqlaydi. Shlem 3D fotosuratni haqiqiy 3D'da ko‘rsatadi, sahnani xonangizga, panoramani esa atrofingizga joylaydi; telefonlar va televizorlar panoramalarni o‘zlarining 360° ko‘ruvchisida ochadi. Qanday qilinadi: [Bitta fotosuratni 3D, sahna, panoramaga aylantiring](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Telefon dronning jonli videosini ko‘rsatadi va uni Wi-Fi'ingiz yoki o‘z hots
 
 **Sizga kerak:** Insta360, GoPro MAX yoki DJI Osmo 360 kamerasi, NAS'ingiz va ekranlarda Immuch360: telefonlar, planshetlar, Android TV, Meta Quest, Windows.
 
-Xom fayllarni kamera kartasidan NAS'ingizning SMB yoki WebDAV ulashmasiga qanday bo‘lsa shundayligicha nusxalang; Immich server Insta360 fayllarini ham qabul qiladi. Har bir ekran ularni ijro etayotganda har bir faylga yozilgan kalibrlash bilan birlashtiradi, kamera ilovasida oldindan hech narsa eksport qilinmaydi. Qanday qilinadi: [360° kameralarning xom fayllarini oching](#open-the-raw-files-of-360-cameras).
+.insp, .insv, .360 yoki .osv fayllarni kamera kartasidan NAS'ingizning SMB yoki WebDAV ulashmasiga qanday bo‘lsa shundayligicha nusxalang; Immich server Insta360 fayllarini ham qabul qiladi. Har bir ekran ularni ijro etayotganda har bir faylga yozilgan kalibrlash bilan birlashtiradi, kamera ilovasida oldindan hech narsa eksport qilinmaydi. Qanday qilinadi: [360° kameralarning xom fayllarini oching](#open-the-raw-files-of-360-cameras).
 
 #### Plex va DLNA serverlaringiz televizorda va shlemda
 
@@ -161,12 +161,12 @@ Plex kutubxonalaringizning asl fayllarini beradi, shunday qilib 360° video 360�
 
 **Sizga kerak:** Android telefon, iPhone yoki Windows kompyuterda va Meta Quest'da Immuch360, bitta uy Wi-Fi tarmog‘ida.
 
-Telefonda "Bu telefonni tarmoqda ulashish" yoki kompyuterda "Bu kompyuterni tarmoqda ulashish" ni yoqing, shlem esa uning fotosurat va videolarini ijro etadi, 360° larini atrofingizda: server yo‘q, NAS yo‘q, yuklash yo‘q. iPhone'da ulashish ilova ochiq turganda ishlaydi. Qanday qilinadi: [Bu telefonni tarmoqda ulashish](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Telefonda "Bu telefonni tarmoqda ulashish" yoki kompyuterda "Bu kompyuterni tarmoqda ulashish" ni yoqing, shlem esa uning fotosurat va videolarini ijro etadi, 360° larini atrofingizda: server yo‘q, NAS yo‘q, yuklash yo‘q. iPhone'da ulashish ilova ekranda turganda ishlaydi. Qanday qilinadi: [Bu telefonni tarmoqda ulashish](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Tapo kameralaringiz televizorda va shlemda
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Rasm, surat emas: deraza yonidagi uy kamerasi bog‘ni suratga oladi, har birida Immuch360 ishlayotgan televizor, telefon, divanda kiyilgan shlem va noutbuk esa o‘sha bitta ko‘rinishni ko‘rsatadi">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Rasm, surat emas: deraza yonidagi uy kamerasi bog‘ni suratga oladi, har birida Immuch360 ishlayotgan televizor, telefon, xonada kiyilgan shlem va noutbuk esa o‘sha bitta ko‘rinishni ko‘rsatadi">
 </p>
 
 **Sizga kerak:** uy tarmog‘ingizdagi Tapo kameralari va Android telefon, Android TV, Meta Quest yoki Windows kompyuterda Immuch360.
@@ -176,10 +176,10 @@ Har bir ekran kamerani jonli ko‘rsatadi va uning xotira kartasidagi yozuvlarni
 #### Xonangizdagi Gauss splatlari, Meta Quest 3 yoki 3S'da (tajribaviy)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Rasm, surat emas: mehmonxonada Immuch360 ishlayotgan shlem kiygan, orqadan ko‘ringan odam boshqa ilova splat sifatida suratga olgan va NAS'dan ochilgan haqiqiy o‘lchamdagi favvora oldida turibdi">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Rasm, surat emas: mehmonxonada Immuch360 ishlayotgan shlem kiygan, orqadan ko‘ringan odam javondagi NAS'dan ochilgan, yorqin nurdan iborat haqiqiy o‘lchamdagi favvora oldida turibdi">
 </p>
 
-**Sizga kerak:** Polycam, Scaniverse, Luma yoki boshqa vosita bilan yaratilgan splat, NAS'ingizda yoki shlemda .spz yoki .ply fayl sifatida, va Meta Quest 3 yoki 3S'da Immuch360.
+**Sizga kerak:** Polycam, Scaniverse, Luma yoki boshqa vosita bilan yaratilgan splat, NAS'ingizda yoki shlemda .spz yoki binar .ply fayl sifatida, va Meta Quest 3 yoki 3S'da Immuch360.
 
 Shlem joy yoki obyektni o‘z o‘lchamida, oldingizga yoki atrofingizga joylaydi: uning atrofida yuring, chap joystik bilan uning ichidan suzib o‘ting, o‘ng joystik bilan buriling. Gauss splatlari Meta Spatial SDK ning tajribaviy API'sidan foydalanadi, Meta uni qo'llab-quvvatlamaydi va kafolatlamaydi: har qanday nuqson uchun faqat Immuch360 javob beradi. Qanday qilinadi: [Meta Quest 3 yoki 3S'da Gauss splatlarini o‘rganing](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ SI funksiyalari boshqalar yaratgan modellar va dvigatellarni ishga tushiradi, ul
 
 nomadoor'ning 360° LoRA'si o‘z kartasida Apache 2.0 va CC0 hamda jamoat mulki tasvirlarida o‘qitilgan, ularning bir qismi CC BY ostida: o‘sha qismning mualliflik ko‘rsatmasi MODEL-LICENSES.md'ning keyingi versiyasida keladi. Bu yerda hech narsa notijorat litsenziya ostida emas va hech narsa CUDA talab qilmaydi. ONNX Runtime va LiteRT ichida ularning bildirishnomalarida sanab o‘tilgan boshqa kutubxonalar ham bor, jumladan zaif copyleft litsenziyasi bo‘lgan MPL 2.0 ostidagi Eigen.
 
-Bu sahifadagi suratlar ilovaning haqiqiy suratlari: telefon suratlari emulyatordagi Android build'ida, Android TV suratlari Google TV emulyatorida, LG va Samsung suratlari televizor o‘rnini bosuvchi brauzerda, Windows suratlari Windows 11 kompyuterida, Meta Quest oynasi esa Quest 3'da olingan, hammasi [Poly Haven](https://polyhaven.com)dan olingan CC0 panoramalar bilan; shlemning immersiv suratlari Quest 3'da muallifning o‘z mediasi bilan, iPad surati esa iPad simulyatorida, CC0 Poly Haven panoramasi bilan olingan. SI yaratuvchisining rasmlari Poly Haven'ning CC0 fotosuratlaridan yaratilgan ilovaning haqiqiy natijalari, Windows ilovasining ikkita haqiqiy surati bilan. Ochilish tasviri va televizor, kirish, burish, kameralar va dron rasmlari loyiha uchun chizilgan rasmlar: ularda ilovaning hech bir ekrani, boshqa kompaniyaning hech bir logotipi va hech bir yuz yo‘q. Foydalanish holatlari kartalari shunday rasmni loyiha uchun chizilgan qator ustiga joylaydi, platforma logotiplari, ilova belgisi va ikkita kartada ilovaning haqiqiy suratlari bilan; platforma logotiplaridan tashqari ularda boshqa kompaniyaning hech bir logotipi va hech bir yuz yo‘q. Har bir tasvir manbai, sanasi va litsenziyasi bilan [CAPTURES.md](../.github/readme/CAPTURES.md) faylida keltirilgan.
+Bu sahifadagi suratlar ilovaning haqiqiy suratlari: telefon suratlari emulyatordagi Android build'ida, Android TV suratlari Google TV emulyatorida, LG va Samsung suratlari televizor o‘rnini bosuvchi brauzerda, Windows suratlari Windows 11 kompyuterida, Meta Quest oynasi esa Quest 3'da olingan, hammasi [Poly Haven](https://polyhaven.com)dan olingan CC0 panoramalar bilan; shlemning immersiv suratlari Quest 3'da muallifning o‘z mediasi bilan, iPad surati esa iPad simulyatorida, CC0 Poly Haven panoramasi bilan olingan. SI yaratuvchisining rasmlari Poly Haven'ning CC0 fotosuratlaridan yaratilgan ilovaning haqiqiy natijalari, Windows ilovasining ikkita haqiqiy surati bilan. Ochilish tasviri va televizor, kirish, burish, kameralar va dron rasmlari loyiha uchun chizilgan rasmlar: ularda ilovaning hech bir ekrani, boshqa kompaniyaning hech bir logotipi va hech bir yuz yo‘q. Foydalanish holatlari kartalari shunday rasmni loyiha uchun chizilgan qator ustiga joylaydi, platforma logotiplari, ilova belgisi, ikkita kartada ilovaning haqiqiy suratlari va ikkitasida Poly Haven'ning CC0 fotosuratlari bilan; platforma logotiplaridan tashqari ularda boshqa kompaniyaning hech bir logotipi va hech bir yuz yo‘q. Har bir tasvir manbai, sanasi va litsenziyasi bilan [CAPTURES.md](../.github/readme/CAPTURES.md) faylida keltirilgan.
 
 <a id="roadmap"></a>
 ## Yoʻl xaritasi

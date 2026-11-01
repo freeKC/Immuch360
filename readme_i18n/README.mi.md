@@ -101,7 +101,7 @@ Whakaurua a Immuch360 ki ia mata e mātakitaki ana koe: ka pānui ia mata i ō p
 
 **Ngā mea e hiahiatia ana:** he NAS me tētahi tiritiri SMB, WebDAV rānei, me Immuch360 i ia mata e mātakitaki ana koe.
 
-Tāpirihia te tiritiri i ia mata, ā, ka whakatangi ia mata i ngā whakaahua me ngā ataata i te wāhi e noho ana rātou, kāore he mea e tāruatia: ngā waea pūkoro, ngā papahiko, Android TV, tētahi Meta Quest, ngā rorohiko Windows, Linux me macOS, me ngā pouaka whakaata LG kua takiuru ki tō tūmau Immich. Ka huri tētahi whakaahua 360° hei porotaka i te waea pūkoro me te pouaka whakaata, ā, ka karapoti i a koe i te taputapu mahunga. Me pēhea: [Whakatangi i ngā kōnae o tētahi NAS, rorohiko, tūmau pāpāho, Plex rānei](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Tāpirihia te tiritiri i ia mata, ā, ka whakatangi ia mata i ngā whakaahua me ngā ataata i te wāhi e noho ana rātou, kāore he mea e tāruatia: ngā waea pūkoro, ngā papahiko, Android TV, tētahi Meta Quest, ngā rorohiko Windows, Linux me macOS, me ngā pouaka whakaata LG kua takiuru ki tō tūmau Immich (SMB mai i webOS 22). Ka huri tētahi whakaahua 360° hei porotaka i te waea pūkoro me te pouaka whakaata, ā, ka karapoti i a koe i te taputapu mahunga. Me pēhea: [Whakatangi i ngā kōnae o tētahi NAS, rorohiko, tūmau pāpāho, Plex rānei](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Tō tūmau Immich i ia mata, kua takiuru mai i tō waea pūkoro
 
@@ -119,7 +119,7 @@ I te waea pūkoro, ka pupuri a Immuch360 i te katoa o te taupānga pūkoro Immic
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="He whakaahua whakaari me tētahi hopunga pono o te taupānga: he rorohiko pōnaho e rere ana a Immuch360 i te taha o ētahi whakaahua tā me tētahi NAS, me tētahi tangata e kitea ana mai i muri i roto i tētahi taputapu mahunga e rere ana a Immuch360, i mua i tētahi o aua horanuku e tū ake ana hei whakairo">
 </p>
 
-**Ngā mea e hiahiatia ana:** Immuch360 i tētahi rorohiko Windows, Linux, macOS rānei, i tētahi Meta Quest hoki, me tō NAS, tō tūmau Immich rānei i waenga i a rāua.
+**Ngā mea e hiahiatia ana:** Immuch360 i tētahi rorohiko Windows, Linux, macOS rānei, i tētahi Meta Quest hoki, me tō NAS i waenga i a rāua, tō tūmau Immich rānei me "Taurua hoki i ngā putanga AI" kua whakakāngia.
 
 Ko te rorohiko anō e huri ana i ō whakaahua hei whakaahua 3D, hei atamira 3D, hei whakaahua whānui 360° hoki me tētahi kāri whakairoiro 8 GB i runga i Windows, Linux rānei, ā, ka tiaki i a rātou ki te taha o ngā taketake. Ka whakaatu te taputapu mahunga i tētahi whakaahua 3D i te 3D pono, ka whakanoho i tētahi atamira ki tō rūma me tētahi whakaahua whānui huri noa i a koe; ka whakatuwhera ngā waea pūkoro me ngā pouaka whakaata i ngā whakaahua whānui i tō rātou kaimātakitaki 360°. Me pēhea: [Hurihia tētahi whakaahua hei 3D, hei atamira, hei whakaahua whānui](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Ka whakaatu te waea pūkoro i te ataata ora o te wakarererangi, ā, ka tuku tonu
 
 **Ngā mea e hiahiatia ana:** he kāmera Insta360, GoPro MAX, DJI Osmo 360 rānei, tō NAS, me Immuch360 i ngā mata: ngā waea pūkoro, ngā papahiko, Android TV, tētahi Meta Quest, Windows.
 
-Tāruatia ngā kōnae mata mai i te kāri o te kāmera ki tētahi tiritiri SMB, WebDAV rānei o tō NAS, kia pērā tonu; ka whakaae hoki tētahi tūmau Immich ki ērā o Insta360. Ka tuitui ia mata i a rātou i te wā e whakatangi ana, me te whakataurite kua tuhia ki ia kōnae, ā, kāore he mea e kaweake tuatahi i te taupānga o te kāmera. Me pēhea: [Whakatuwhera i ngā kōnae mata o ngā kāmera 360°](#open-the-raw-files-of-360-cameras).
+Tāruatia ngā kōnae .insp, .insv, .360, .osv rānei mai i te kāri o te kāmera ki tētahi tiritiri SMB, WebDAV rānei o tō NAS, kia pērā tonu; ka whakaae hoki tētahi tūmau Immich ki ērā o Insta360. Ka tuitui ia mata i a rātou i te wā e whakatangi ana, me te whakataurite kua tuhia ki ia kōnae, ā, kāore he mea e kaweake tuatahi i te taupānga o te kāmera. Me pēhea: [Whakatuwhera i ngā kōnae mata o ngā kāmera 360°](#open-the-raw-files-of-360-cameras).
 
 #### Ō tūmau Plex me DLNA i te pouaka whakaata, i te taputapu mahunga hoki
 
@@ -161,12 +161,12 @@ Ka tuku a Plex i ngā kōnae taketake o āu kohinga, nō reira ka noho tētahi a
 
 **Ngā mea e hiahiatia ana:** Immuch360 i tētahi waea pūkoro Android, i tētahi iPhone, i tētahi rorohiko Windows rānei, i tētahi Meta Quest hoki, i te Wi-Fi kāinga kotahi.
 
-Whakakāngia "Tiritiri i tēnei waea i te whatunga" i te waea pūkoro, "Tiritiri i tēnei rorohiko i te whatunga" rānei i te rorohiko, ā, ka whakatangi te taputapu mahunga i ōna whakaahua me ōna ataata, ko ērā 360° huri noa i a koe: kāore he tūmau, kāore he NAS, kāore he tuku ake. I tētahi iPhone, ka rere te tiritiri i te wā e tuwhera ana te taupānga. Me pēhea: [Tiritiri i tēnei waea i te whatunga](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Whakakāngia "Tiritiri i tēnei waea i te whatunga" i te waea pūkoro, "Tiritiri i tēnei rorohiko i te whatunga" rānei i te rorohiko, ā, ka whakatangi te taputapu mahunga i ōna whakaahua me ōna ataata, ko ērā 360° huri noa i a koe: kāore he tūmau, kāore he NAS, kāore he tuku ake. I tētahi iPhone, ka rere te tiritiri i te wā e kitea ana te taupānga i te mata. Me pēhea: [Tiritiri i tēnei waea i te whatunga](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Ō kāmera Tapo i te pouaka whakaata, i te taputapu mahunga hoki
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="He whakaahua whakaari, ehara i te hopunga mata: ka kiriata tētahi kāmera kāinga i te taha o te matapihi i te māra, ā, ka whakaatu tētahi pouaka whakaata, tētahi waea pūkoro, tētahi taputapu mahunga e mau ana i runga i te hōpa me tētahi rorohiko pōnaho, e rere ana a Immuch360 i ia mea, i taua tirohanga kotahi">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="He whakaahua whakaari, ehara i te hopunga mata: ka kiriata tētahi kāmera kāinga i te taha o te matapihi i te māra, ā, ka whakaatu tētahi pouaka whakaata, tētahi waea pūkoro, tētahi taputapu mahunga e mau ana i roto i te rūma me tētahi rorohiko pōnaho, e rere ana a Immuch360 i ia mea, i taua tirohanga kotahi">
 </p>
 
 **Ngā mea e hiahiatia ana:** ngā kāmera Tapo i tō whatunga kāinga, me Immuch360 i tētahi waea pūkoro Android, i tētahi Android TV, i tētahi Meta Quest, i tētahi rorohiko Windows rānei.
@@ -176,10 +176,10 @@ Ka whakaatu ia mata i tētahi kāmera ora, ā, ka whakatangi i ngā hopunga o t�
 #### Ngā Gaussian splats i tō rūma, i tētahi Meta Quest 3, 3S rānei (whakamātautau)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="He whakaahua whakaari, ehara i te hopunga mata: i tētahi rūma noho, e tū ana tētahi tangata e kitea ana mai i muri, i roto i tētahi taputapu mahunga e rere ana a Immuch360, i mua i tētahi puna wai rite te rahi ki te tūturu, i hopukina hei splat e tētahi atu taupānga, ā, i whakatuwheratia mai i tētahi NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="He whakaahua whakaari, ehara i te hopunga mata: i tētahi rūma noho, e tū ana tētahi tangata e kitea ana mai i muri, i roto i tētahi taputapu mahunga e rere ana a Immuch360, i mua i tētahi puna wai rite te rahi ki te tūturu, he mea hanga ki te mārama kanapa, i whakatuwheratia mai i tētahi NAS i runga i tētahi whata">
 </p>
 
-**Ngā mea e hiahiatia ana:** he splat i hangaia ki Polycam, Scaniverse, Luma, ki tētahi atu taputapu rānei, hei kōnae .spz, .ply rānei i tō NAS, i te taputapu mahunga rānei, me Immuch360 i tētahi Meta Quest 3, 3S rānei.
+**Ngā mea e hiahiatia ana:** he splat i hangaia ki Polycam, Scaniverse, Luma, ki tētahi atu taputapu rānei, hei kōnae .spz, .ply pūrua rānei i tō NAS, i te taputapu mahunga rānei, me Immuch360 i tētahi Meta Quest 3, 3S rānei.
 
 Ka whakanoho te taputapu mahunga i te wāhi, i te mea rānei ki tōna rahi, ki mua i a koe, huri noa rānei i a koe: hīkoi huri noa, kōneke mā roto mā te thumbstick mauī, huri mā te mea matau. Ka whakamahi ngā Gaussian splats i tētahi API whakamātautau o Meta Spatial SDK, kāore nei a Meta e tautoko, e kī taurangi rānei: ko Immuch360 anake te kawenga mō ngā hapa katoa. Me pēhea: [Tūhurahia ngā Gaussian splats i tētahi Meta Quest 3, 3S rānei](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Ka whakahaere ngā āhuatanga AI i ngā tauira me ngā pūkaha i hangaia e ētah
 
 Ko te LoRA 360° a nomadoor he Apache 2.0 i runga i tōna kāri, ā, i whakangungua ki ngā atahanga CC0 me te rohe tūmatanui, me tētahi wāhanga i raro i te CC BY: ka puta te whakahua o taua wāhanga i tētahi putanga ā muri ake o MODEL-LICENSES.md. Kāore he mea i konei i raro i tētahi raihana kore arumoni, ā, kāore he mea e hiahia ana ki te CUDA. Kei roto i a ONNX Runtime me LiteRT ētahi atu whare pukapuka, kua whakarārangitia i ō rātou pānui, tae atu ki a Eigen i raro i te MPL 2.0, he raihana copyleft ngoikore.
 
-Ko ngā hopunga o tēnei whārangi he hopunga pono o te taupānga: ko ērā o te waea pūkoro i te hanganga Android i tētahi whakatinana, ko ērā o Android TV i te whakatinana Google TV, ko ērā o LG me Samsung i tētahi pūtirotiro e tū ana hei pouaka whakaata, ko ērā o Windows i tētahi PC Windows 11, ā, ko te matapihi Meta Quest i tētahi Quest 3, me ngā whakaahua whānui CC0 katoa mai i [Poly Haven](https://polyhaven.com); i tangohia ngā hopunga rukuhanga o te taputapu mahunga i tētahi Quest 3 me ngā pāpāho ake a te kaituhi, ā, ko tērā o te iPad i te whakatinana iPad, me tētahi whakaahua whānui CC0 a Poly Haven. Ko ngā pikitia o te kaihanga AI he otinga pono o te taupānga, i hangaia mai i ngā whakaahua CC0 a Poly Haven, me ngā hopunga pono e rua o te taupānga Windows. Ko te whakaahua whakatuwhera me ngā pikitia o te pouaka whakaata, o te takiuru, o te hurihanga, o ngā kāmera me te wakarererangi he whakaahua whakaari i hangaia mō te kaupapa: kāore he mata o te taupānga, kāore he waitohu o tētahi atu kamupene, kāore he kanohi e whakaaturia ana. Ka whakanoho ngā kāri tauira whakamahinga i tētahi whakaahua whakaari pērā ki runga ake i tētahi rārangi i tuhia mō te kaupapa, me ngā waitohu o ngā pūhara, te tohu o te taupānga, ā, i ngā kāri e rua, ngā hopunga pono o te taupānga; hāunga ngā waitohu o ngā pūhara, kāore he waitohu o tētahi atu kamupene, kāore he kanohi e whakaaturia ana. Kua whakarārangitia ia whakaahua, me tōna puna, tōna rā me tōna raihana, i [CAPTURES.md](../.github/readme/CAPTURES.md).
+Ko ngā hopunga o tēnei whārangi he hopunga pono o te taupānga: ko ērā o te waea pūkoro i te hanganga Android i tētahi whakatinana, ko ērā o Android TV i te whakatinana Google TV, ko ērā o LG me Samsung i tētahi pūtirotiro e tū ana hei pouaka whakaata, ko ērā o Windows i tētahi PC Windows 11, ā, ko te matapihi Meta Quest i tētahi Quest 3, me ngā whakaahua whānui CC0 katoa mai i [Poly Haven](https://polyhaven.com); i tangohia ngā hopunga rukuhanga o te taputapu mahunga i tētahi Quest 3 me ngā pāpāho ake a te kaituhi, ā, ko tērā o te iPad i te whakatinana iPad, me tētahi whakaahua whānui CC0 a Poly Haven. Ko ngā pikitia o te kaihanga AI he otinga pono o te taupānga, i hangaia mai i ngā whakaahua CC0 a Poly Haven, me ngā hopunga pono e rua o te taupānga Windows. Ko te whakaahua whakatuwhera me ngā pikitia o te pouaka whakaata, o te takiuru, o te hurihanga, o ngā kāmera me te wakarererangi he whakaahua whakaari i hangaia mō te kaupapa: kāore he mata o te taupānga, kāore he waitohu o tētahi atu kamupene, kāore he kanohi e whakaaturia ana. Ka whakanoho ngā kāri tauira whakamahinga i tētahi whakaahua whakaari pērā ki runga ake i tētahi rārangi i tuhia mō te kaupapa, me ngā waitohu o ngā pūhara, te tohu o te taupānga, ngā hopunga pono o te taupānga i ngā kāri e rua, me ngā whakaahua CC0 a Poly Haven i ētahi e rua; hāunga ngā waitohu o ngā pūhara, kāore he waitohu o tētahi atu kamupene, kāore he kanohi e whakaaturia ana. Kua whakarārangitia ia whakaahua, me tōna puna, tōna rā me tōna raihana, i [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Mahere ara

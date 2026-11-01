@@ -101,7 +101,7 @@ Installeer Immuch360 op elk scherm waarop je kijkt: elk scherm leest zelf je bro
 
 **Wat je nodig hebt:** een NAS met een SMB- of WebDAV-share, en Immuch360 op elk scherm waarop je kijkt.
 
-Voeg de share toe op elk scherm, en elk scherm speelt de foto's en video's af waar ze staan, zonder iets te kopiëren: telefoons, tablets, Android TV, een Meta Quest, computers met Windows, Linux en macOS, en LG-tv's die zijn ingelogd op je Immich-server. Een 360°-foto draait als een bol op de telefoon en de tv, en omringt je in de headset. Zo doe je het: [De bestanden van een NAS, een computer, een mediaserver of Plex afspelen](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Voeg de share toe op elk scherm, en elk scherm speelt de foto's en video's af waar ze staan, zonder iets te kopiëren: telefoons, tablets, Android TV, een Meta Quest, computers met Windows, Linux en macOS, en LG-tv's die zijn ingelogd op je Immich-server (SMB vanaf webOS 22). Een 360°-foto draait als een bol op de telefoon en de tv, en omringt je in de headset. Zo doe je het: [De bestanden van een NAS, een computer, een mediaserver of Plex afspelen](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Je Immich-server op elk scherm, ingelogd vanaf je telefoon
 
@@ -119,7 +119,7 @@ Op de telefoon behoudt Immuch360 de hele mobiele Immich-app, voegt zijn 360°-, 
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustratie met een echte schermafbeelding van de app: een laptop met Immuch360 naast afgedrukte foto's en een NAS, en een persoon van achteren gezien in een headset met Immuch360, voor een van die landschappen dat in reliëf staat">
 </p>
 
-**Wat je nodig hebt:** Immuch360 op een computer met Windows, Linux of macOS en in een Meta Quest, met je NAS of je Immich-server ertussen.
+**Wat je nodig hebt:** Immuch360 op een computer met Windows, Linux of macOS en in een Meta Quest, met je NAS ertussen, of je Immich-server met "Ook back-up maken van AI-versies" aan.
 
 De computer zelf maakt van je foto's 3D-foto's en 3D-scènes, en 360°-panorama's met een videokaart van 8 GB op Windows of Linux, en slaat ze op naast de originelen. De headset toont een 3D-foto in echt 3D, zet een scène in je kamer en een panorama helemaal om je heen; telefoons en tv's openen de panorama's in hun 360°-viewer. Zo doe je het: [Eén foto omzetten in 3D, een scène, een panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ De telefoon toont de livevideo van de drone en stuurt die door, via je Wi-Fi of 
 
 **Wat je nodig hebt:** een Insta360-, GoPro MAX- of DJI Osmo 360-camera, je NAS, en Immuch360 op de schermen: telefoons, tablets, Android TV, een Meta Quest, Windows.
 
-Kopieer de ruwe bestanden van de kaart van de camera naar een SMB- of WebDAV-share van je NAS, zoals ze zijn; een Immich-server neemt die van Insta360 ook aan. Elk scherm zet ze tijdens het afspelen aan elkaar, met de kalibratie die in elk bestand staat, en er wordt vooraf niets geëxporteerd in de app van de camera. Zo doe je het: [De ruwe bestanden van 360°-camera's openen](#open-the-raw-files-of-360-cameras).
+Kopieer de .insp-, .insv-, .360- of .osv-bestanden van de kaart van de camera naar een SMB- of WebDAV-share van je NAS, zoals ze zijn; een Immich-server neemt die van Insta360 ook aan. Elk scherm zet ze tijdens het afspelen aan elkaar, met de kalibratie die in elk bestand staat, en er wordt vooraf niets geëxporteerd in de app van de camera. Zo doe je het: [De ruwe bestanden van 360°-camera's openen](#open-the-raw-files-of-360-cameras).
 
 #### Je Plex- en DLNA-servers op de tv en in de headset
 
@@ -161,12 +161,12 @@ Plex geeft de originele bestanden van je bibliotheken, zodat een 360°-video 360
 
 **Wat je nodig hebt:** Immuch360 op een Android-telefoon, een iPhone of een Windows-computer, en in een Meta Quest, op dezelfde Wi-Fi thuis.
 
-Zet "Deze telefoon delen op het netwerk" aan op de telefoon, of "Deze computer delen op het netwerk" op de computer, en de headset speelt de foto's en video's ervan af, de 360°-exemplaren helemaal om je heen: geen server, geen NAS, geen upload. Op een iPhone loopt het delen zolang de app open is. Zo doe je het: [Deze telefoon delen op het netwerk](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Zet "Deze telefoon delen op het netwerk" aan op de telefoon, of "Deze computer delen op het netwerk" op de computer, en de headset speelt de foto's en video's ervan af, de 360°-exemplaren helemaal om je heen: geen server, geen NAS, geen upload. Op een iPhone loopt het delen zolang de app op het scherm staat. Zo doe je het: [Deze telefoon delen op het netwerk](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Je Tapo-camera's op de tv en in de headset
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustratie, geen schermafbeelding: een thuiscamera bij het raam filmt de tuin, en een tv, een telefoon, een headset die op de bank wordt gedragen en een laptop, op elk draait Immuch360, tonen dat ene beeld">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustratie, geen schermafbeelding: een thuiscamera bij het raam filmt de tuin, en een tv, een telefoon, een headset die in de kamer wordt gedragen en een laptop, op elk draait Immuch360, tonen dat ene beeld">
 </p>
 
 **Wat je nodig hebt:** Tapo-camera's op je thuisnetwerk, en Immuch360 op een Android-telefoon, een Android TV, een Meta Quest of een Windows-computer.
@@ -176,10 +176,10 @@ Elk scherm toont een camera live en speelt de opnamen op zijn geheugenkaart dag 
 #### Gaussian splats in je kamer, in een Meta Quest 3 of 3S (experimenteel)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustratie, geen schermafbeelding: in een woonkamer staat een persoon, van achteren gezien, in een headset met Immuch360 voor een fontein op ware grootte, door een andere app als splat vastgelegd en geopend vanaf een NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustratie, geen schermafbeelding: in een woonkamer staat een persoon, van achteren gezien, in een headset met Immuch360 voor een fontein op ware grootte van gloeiend licht, geopend vanaf een NAS op een plank">
 </p>
 
-**Wat je nodig hebt:** een splat gemaakt met Polycam, Scaniverse, Luma of een ander programma, als .spz- of .ply-bestand op je NAS of in de headset, en Immuch360 in een Meta Quest 3 of 3S.
+**Wat je nodig hebt:** een splat gemaakt met Polycam, Scaniverse, Luma of een ander programma, als .spz- of binair .ply-bestand op je NAS of in de headset, en Immuch360 in een Meta Quest 3 of 3S.
 
 De headset zet de plek of het object op zijn eigen grootte neer, voor je of helemaal om je heen: loop eromheen, glijd erdoorheen met de linker thumbstick, draai met de rechter. Gaussian splats gebruiken een experimentele API van de Meta Spatial SDK, die Meta niet ondersteunt en niet garandeert: elk gebrek komt voor rekening van Immuch360 zelf. Zo doe je het: [Gaussian splats verkennen in een Meta Quest 3 of 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ De AI-functies draaien modellen en engines die door anderen zijn gemaakt, alleen
 
 De 360°-LoRA van nomadoor is Apache 2.0 volgens zijn modelkaart en is getraind op CC0-afbeeldingen en afbeeldingen uit het publieke domein, met een deel onder CC BY: de naamsvermelding voor dat deel komt in een latere versie van MODEL-LICENSES.md. Niets hier valt onder een niet-commerciële licentie, en niets heeft CUDA nodig. ONNX Runtime en LiteRT bevatten andere bibliotheken, vermeld in hun notices, waaronder Eigen onder de MPL 2.0, een zwakke copyleftlicentie.
 
-De schermafbeeldingen op deze pagina zijn echte schermafbeeldingen van de app: die van de telefoon op de Android-build in een emulator, die van Android TV op de Google TV-emulator, die van LG en Samsung in een browser die de tv vervangt, die van Windows op een Windows 11-pc en het Meta Quest-venster in een Quest 3, allemaal met CC0-panorama's van [Poly Haven](https://polyhaven.com); de immersieve afbeeldingen van de headset zijn gemaakt op een Quest 3 met de eigen media van de auteur, en die van de iPad in de iPad-simulator, met een CC0-panorama van Poly Haven. De afbeeldingen van de AI-maker zijn echte resultaten van de app, gemaakt van CC0-foto's van Poly Haven, met twee echte schermafbeeldingen van de Windows-app. De openingsafbeelding en de afbeeldingen van de tv, het inloggen, het draaien, de camera's en de drone zijn illustraties die voor het project zijn gemaakt: ze tonen geen scherm van de app, geen logo van een ander bedrijf en geen gezicht. De kaarten met toepassingen zetten zo'n illustratie boven een rij die voor het project is getekend, met de logo's van de platforms, het pictogram van de app en, op twee kaarten, echte schermafbeeldingen van de app; behalve de logo's van de platforms tonen ze geen logo van een ander bedrijf en geen gezicht. Elke afbeelding staat, met bron, datum en licentie, in [CAPTURES.md](../.github/readme/CAPTURES.md).
+De schermafbeeldingen op deze pagina zijn echte schermafbeeldingen van de app: die van de telefoon op de Android-build in een emulator, die van Android TV op de Google TV-emulator, die van LG en Samsung in een browser die de tv vervangt, die van Windows op een Windows 11-pc en het Meta Quest-venster in een Quest 3, allemaal met CC0-panorama's van [Poly Haven](https://polyhaven.com); de immersieve afbeeldingen van de headset zijn gemaakt op een Quest 3 met de eigen media van de auteur, en die van de iPad in de iPad-simulator, met een CC0-panorama van Poly Haven. De afbeeldingen van de AI-maker zijn echte resultaten van de app, gemaakt van CC0-foto's van Poly Haven, met twee echte schermafbeeldingen van de Windows-app. De openingsafbeelding en de afbeeldingen van de tv, het inloggen, het draaien, de camera's en de drone zijn illustraties die voor het project zijn gemaakt: ze tonen geen scherm van de app, geen logo van een ander bedrijf en geen gezicht. De kaarten met toepassingen zetten zo'n illustratie boven een rij die voor het project is getekend, met de logo's van de platforms, het pictogram van de app, echte schermafbeeldingen van de app op twee kaarten en CC0-foto's van Poly Haven op twee; behalve de logo's van de platforms tonen ze geen logo van een ander bedrijf en geen gezicht. Elke afbeelding staat, met bron, datum en licentie, in [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Planning

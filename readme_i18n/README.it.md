@@ -101,7 +101,7 @@ Installa Immuch360 su ogni schermo su cui guardi: ognuno legge da sé le tue sor
 
 **Ti serve:** un NAS con una condivisione SMB o WebDAV, e Immuch360 su ogni schermo su cui guardi.
 
-Aggiungi la condivisione su ogni schermo, e ognuno riproduce le foto e i video dove si trovano, senza copiare nulla: telefoni, tablet, Android TV, un Meta Quest, computer Windows, Linux e macOS, e TV LG collegate al tuo server Immich. Una foto 360° ruota come una sfera sul telefono e sulla TV, e ti circonda nel visore. Come fare: [Riproduci i file di un NAS, di un computer, di un media server o di Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Aggiungi la condivisione su ogni schermo, e ognuno riproduce le foto e i video dove si trovano, senza copiare nulla: telefoni, tablet, Android TV, un Meta Quest, computer Windows, Linux e macOS, e TV LG collegate al tuo server Immich (SMB da webOS 22). Una foto 360° ruota come una sfera sul telefono e sulla TV, e ti circonda nel visore. Come fare: [Riproduci i file di un NAS, di un computer, di un media server o di Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Il tuo server Immich su ogni schermo, con l'accesso dal tuo telefono
 
@@ -119,7 +119,7 @@ Sul telefono, Immuch360 mantiene tutta l'app mobile di Immich, aggiunge i suoi v
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustrazione con una cattura reale dell'app: un portatile con Immuch360 accanto a foto stampate e a un NAS, e una persona vista di spalle in un visore con Immuch360, davanti a uno di quei paesaggi in rilievo">
 </p>
 
-**Ti serve:** Immuch360 su un computer Windows, Linux o macOS e in un Meta Quest, con il tuo NAS o il tuo server Immich tra i due.
+**Ti serve:** Immuch360 su un computer Windows, Linux o macOS e in un Meta Quest, con il tuo NAS tra i due, o il tuo server Immich con "Esegui il backup anche delle versioni IA" attivo.
 
 È il computer stesso a trasformare le tue foto in foto 3D e scene 3D, e in panorami 360° con una scheda grafica da 8 GB su Windows o Linux, e a salvarle accanto agli originali. Il visore mostra una foto 3D in vero 3D, mette una scena nella tua stanza e un panorama tutto intorno a te; telefoni e TV aprono i panorami nel loro visualizzatore 360°. Come fare: [Trasforma una foto in 3D, in una scena, in un panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Il telefono mostra il video in diretta del drone e lo ritrasmette, tramite il tu
 
 **Ti serve:** una fotocamera Insta360, GoPro MAX o DJI Osmo 360, il tuo NAS, e Immuch360 sugli schermi: telefoni, tablet, Android TV, un Meta Quest, Windows.
 
-Copia i file raw dalla scheda della fotocamera a una condivisione SMB o WebDAV del tuo NAS, così come sono; un server Immich accetta anche quelli Insta360. Ogni schermo li unisce durante la riproduzione, con la calibrazione scritta in ogni file, e non si esporta prima nulla nell'app della fotocamera. Come fare: [Apri i file raw delle fotocamere 360°](#open-the-raw-files-of-360-cameras).
+Copia i file .insp, .insv, .360 o .osv dalla scheda della fotocamera a una condivisione SMB o WebDAV del tuo NAS, così come sono; un server Immich accetta anche quelli Insta360. Ogni schermo li unisce durante la riproduzione, con la calibrazione scritta in ogni file, e non si esporta prima nulla nell'app della fotocamera. Come fare: [Apri i file raw delle fotocamere 360°](#open-the-raw-files-of-360-cameras).
 
 #### I tuoi server Plex e DLNA sulla TV e nel visore
 
@@ -161,12 +161,12 @@ Plex fornisce i file originali delle tue librerie, così un video 360° resta 36
 
 **Ti serve:** Immuch360 su un telefono Android, un iPhone o un computer Windows, e in un Meta Quest, sullo stesso Wi-Fi di casa.
 
-Attiva "Condividi questo telefono in rete" sul telefono, o "Condividi questo computer in rete" sul computer, e il visore ne riproduce le foto e i video, quelli 360° tutto intorno a te: niente server, niente NAS, niente caricamento. Su un iPhone, la condivisione funziona finché l'app è aperta. Come fare: [Condividi questo telefono in rete](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Attiva "Condividi questo telefono in rete" sul telefono, o "Condividi questo computer in rete" sul computer, e il visore ne riproduce le foto e i video, quelli 360° tutto intorno a te: niente server, niente NAS, niente caricamento. Su un iPhone, la condivisione funziona finché l'app è sullo schermo. Come fare: [Condividi questo telefono in rete](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Le tue fotocamere Tapo sulla TV e nel visore
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustrazione, non una cattura: una fotocamera domestica vicino alla finestra riprende il giardino, e una TV, un telefono, un visore indossato sul divano e un portatile, su ognuno dei quali gira Immuch360, mostrano quella stessa vista">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustrazione, non una cattura: una fotocamera domestica vicino alla finestra riprende il giardino, e una TV, un telefono, un visore indossato nella stanza e un portatile, su ognuno dei quali gira Immuch360, mostrano quella stessa vista">
 </p>
 
 **Ti serve:** fotocamere Tapo sulla tua rete domestica, e Immuch360 su un telefono Android, una Android TV, un Meta Quest o un computer Windows.
@@ -176,10 +176,10 @@ Ogni schermo mostra una fotocamera in diretta e riproduce le registrazioni della
 #### Splat gaussiani nella tua stanza, in un Meta Quest 3 o 3S (sperimentale)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustrazione, non una cattura: in un soggiorno, una persona vista di spalle in un visore con Immuch360 sta davanti a una fontana a grandezza naturale catturata come splat da un'altra app e aperta da un NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustrazione, non una cattura: in un soggiorno, una persona vista di spalle in un visore con Immuch360 sta davanti a una fontana a grandezza naturale fatta di luce brillante, aperta da un NAS su una mensola">
 </p>
 
-**Ti serve:** uno splat fatto con Polycam, Scaniverse, Luma o un altro strumento, come file .spz o .ply sul tuo NAS o nel visore, e Immuch360 in un Meta Quest 3 o 3S.
+**Ti serve:** uno splat fatto con Polycam, Scaniverse, Luma o un altro strumento, come file .spz o .ply binario sul tuo NAS o nel visore, e Immuch360 in un Meta Quest 3 o 3S.
 
 Il visore colloca il luogo o l'oggetto alla sua grandezza, davanti a te o tutto intorno a te: ci giri intorno, ci scivoli attraverso con la levetta sinistra, ruoti con quella destra. Gli splat gaussiani usano un'API sperimentale del Meta Spatial SDK, che Meta non supporta né garantisce: ogni difetto è responsabilità esclusiva di Immuch360. Come fare: [Esplora gli splat gaussiani in un Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Le funzioni IA eseguono modelli e motori realizzati da altri, scaricati solo qua
 
 La LoRA 360° di nomadoor è Apache 2.0 secondo la sua scheda ed è stata addestrata su immagini CC0 e di pubblico dominio, con una parte sotto CC BY: l'attribuzione di quella parte arriverà in una versione successiva di MODEL-LICENSES.md. Niente qui è sotto una licenza non commerciale, e niente richiede CUDA. ONNX Runtime e LiteRT includono altre librerie, elencate nelle loro note, tra cui Eigen sotto la MPL 2.0, una licenza copyleft debole.
 
-Le catture di questa pagina sono catture reali dell'app: quelle del telefono sulla build Android in un emulatore, quelle di Android TV sull'emulatore Google TV, quelle LG e Samsung in un browser che fa le veci della TV, quelle Windows su un PC Windows 11 e la finestra del Meta Quest in un Quest 3, tutte con panorami CC0 di [Poly Haven](https://polyhaven.com); le catture immersive del visore sono state fatte su un Quest 3 con contenuti propri dell'autore, e quella dell'iPad nel simulatore iPad, con un panorama CC0 di Poly Haven. Le immagini del creatore IA sono risultati reali dell'app, creati da foto CC0 di Poly Haven, con due catture reali dell'app Windows. L'immagine di apertura e le immagini della TV, dell'accesso, della rotazione, delle fotocamere e del drone sono illustrazioni realizzate per il progetto: non mostrano nessuna schermata dell'app, nessun logo di un'altra azienda e nessun volto. Le schede dei casi d'uso collocano un'illustrazione di questo tipo sopra una fascia disegnata per il progetto, con i loghi delle piattaforme, l'icona dell'app e, in due schede, catture reali dell'app; a parte i loghi delle piattaforme, non mostrano nessun logo di un'altra azienda e nessun volto. Ogni immagine, con la sua fonte, la data e la licenza, è elencata in [CAPTURES.md](../.github/readme/CAPTURES.md).
+Le catture di questa pagina sono catture reali dell'app: quelle del telefono sulla build Android in un emulatore, quelle di Android TV sull'emulatore Google TV, quelle LG e Samsung in un browser che fa le veci della TV, quelle Windows su un PC Windows 11 e la finestra del Meta Quest in un Quest 3, tutte con panorami CC0 di [Poly Haven](https://polyhaven.com); le catture immersive del visore sono state fatte su un Quest 3 con contenuti propri dell'autore, e quella dell'iPad nel simulatore iPad, con un panorama CC0 di Poly Haven. Le immagini del creatore IA sono risultati reali dell'app, creati da foto CC0 di Poly Haven, con due catture reali dell'app Windows. L'immagine di apertura e le immagini della TV, dell'accesso, della rotazione, delle fotocamere e del drone sono illustrazioni realizzate per il progetto: non mostrano nessuna schermata dell'app, nessun logo di un'altra azienda e nessun volto. Le schede dei casi d'uso collocano un'illustrazione di questo tipo sopra una fascia disegnata per il progetto, con i loghi delle piattaforme, l'icona dell'app, catture reali dell'app in due schede e foto CC0 di Poly Haven in due; a parte i loghi delle piattaforme, non mostrano nessun logo di un'altra azienda e nessun volto. Ogni immagine, con la sua fonte, la data e la licenza, è elencata in [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Tabella di marcia

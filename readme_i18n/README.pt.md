@@ -101,7 +101,7 @@ Instale o Immuch360 em cada ecrã onde vê: cada um lê as suas fontes por si pr
 
 **Precisa de:** um NAS com uma partilha SMB ou WebDAV, e o Immuch360 em cada ecrã onde vê.
 
-Adicione a partilha em cada ecrã, e cada um reproduz as fotos e os vídeos onde estão, sem copiar nada: telemóveis, tablets, Android TV, um Meta Quest, computadores Windows, Linux e macOS, e TVs LG com sessão iniciada no seu servidor Immich. Uma foto 360° roda como uma esfera no telemóvel e na TV, e envolve-o no headset. Como fazer: [Reproduzir os ficheiros de um NAS, de um computador, de um servidor multimédia ou do Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Adicione a partilha em cada ecrã, e cada um reproduz as fotos e os vídeos onde estão, sem copiar nada: telemóveis, tablets, Android TV, um Meta Quest, computadores Windows, Linux e macOS, e TVs LG com sessão iniciada no seu servidor Immich (SMB a partir do webOS 22). Uma foto 360° roda como uma esfera no telemóvel e na TV, e envolve-o no headset. Como fazer: [Reproduzir os ficheiros de um NAS, de um computador, de um servidor multimédia ou do Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### O seu servidor Immich em todos os ecrãs, com sessão iniciada a partir do telemóvel
 
@@ -119,7 +119,7 @@ No telemóvel, o Immuch360 mantém toda a aplicação móvel do Immich, acrescen
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustração com uma captura real da aplicação: um portátil a executar o Immuch360 ao lado de fotos impressas e de um NAS, e uma pessoa vista de costas num headset a executar o Immuch360, diante de uma dessas paisagens em relevo">
 </p>
 
-**Precisa de:** o Immuch360 num computador Windows, Linux ou macOS e num Meta Quest, com o seu NAS ou o seu servidor Immich entre eles.
+**Precisa de:** o Immuch360 num computador Windows, Linux ou macOS e num Meta Quest, com o seu NAS entre eles, ou o seu servidor Immich com "Fazer também cópia de segurança das versões IA" ativado.
 
 O próprio computador transforma as suas fotos em fotos 3D e cenas 3D, e em panoramas 360° com uma placa gráfica de 8 GB no Windows ou no Linux, e guarda-os ao lado dos originais. O headset mostra uma foto 3D em verdadeiro 3D, coloca uma cena na sua sala e um panorama à sua volta; telemóveis e TVs abrem os panoramas no seu visualizador 360°. Como fazer: [Transformar uma foto em 3D, numa cena, num panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ O telemóvel mostra o vídeo em direto do drone e retransmite-o, pelo seu Wi-Fi 
 
 **Precisa de:** uma câmara Insta360, GoPro MAX ou DJI Osmo 360, o seu NAS, e o Immuch360 nos ecrãs: telemóveis, tablets, Android TV, um Meta Quest, Windows.
 
-Copie os ficheiros brutos do cartão da câmara para uma partilha SMB ou WebDAV do seu NAS, tal como estão; um servidor Immich aceita também os da Insta360. Cada ecrã une-os enquanto os reproduz, com a calibração escrita em cada ficheiro, e nada é exportado antes na aplicação da câmara. Como fazer: [Abrir os ficheiros brutos de câmaras 360°](#open-the-raw-files-of-360-cameras).
+Copie os ficheiros .insp, .insv, .360 ou .osv do cartão da câmara para uma partilha SMB ou WebDAV do seu NAS, tal como estão; um servidor Immich aceita também os da Insta360. Cada ecrã une-os enquanto os reproduz, com a calibração escrita em cada ficheiro, e nada é exportado antes na aplicação da câmara. Como fazer: [Abrir os ficheiros brutos de câmaras 360°](#open-the-raw-files-of-360-cameras).
 
 #### Os seus servidores Plex e DLNA na TV e no headset
 
@@ -161,12 +161,12 @@ O Plex dá os ficheiros originais das suas bibliotecas, por isso um vídeo 360°
 
 **Precisa de:** o Immuch360 num telemóvel Android, num iPhone ou num computador Windows, e num Meta Quest, no mesmo Wi-Fi de casa.
 
-Ative "Partilhar este telefone na rede" no telemóvel, ou "Partilhar este computador na rede" no computador, e o headset reproduz as fotos e os vídeos dele, os 360° à sua volta: sem servidor, sem NAS, sem carregamento. Num iPhone, a partilha funciona enquanto a aplicação está aberta. Como fazer: [Partilhar este telefone na rede](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Ative "Partilhar este telefone na rede" no telemóvel, ou "Partilhar este computador na rede" no computador, e o headset reproduz as fotos e os vídeos dele, os 360° à sua volta: sem servidor, sem NAS, sem carregamento. Num iPhone, a partilha funciona enquanto a aplicação está no ecrã. Como fazer: [Partilhar este telefone na rede](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### As suas câmaras Tapo na TV e no headset
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustração, não uma captura: uma câmara doméstica junto à janela filma o jardim, e uma TV, um telemóvel, um headset usado no sofá e um portátil, cada um a executar o Immuch360, mostram essa mesma vista">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustração, não uma captura: uma câmara doméstica junto à janela filma o jardim, e uma TV, um telemóvel, um headset usado na sala e um portátil, cada um a executar o Immuch360, mostram essa mesma vista">
 </p>
 
 **Precisa de:** câmaras Tapo na sua rede doméstica, e o Immuch360 num telemóvel Android, numa Android TV, num Meta Quest ou num computador Windows.
@@ -176,10 +176,10 @@ Cada ecrã mostra uma câmara em direto e reproduz as gravações do seu cartão
 #### Splats gaussianos na sua sala, num Meta Quest 3 ou 3S (experimental)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustração, não uma captura: numa sala de estar, uma pessoa vista de costas num headset a executar o Immuch360 está diante de uma fonte em tamanho real, captada como splat por outra aplicação e aberta a partir de um NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustração, não uma captura: numa sala de estar, uma pessoa vista de costas num headset a executar o Immuch360 está diante de uma fonte de luz brilhante em tamanho real, aberta a partir de um NAS numa prateleira">
 </p>
 
-**Precisa de:** um splat feito com o Polycam, o Scaniverse, o Luma ou outra ferramenta, como ficheiro .spz ou .ply no seu NAS ou no headset, e o Immuch360 num Meta Quest 3 ou 3S.
+**Precisa de:** um splat feito com o Polycam, o Scaniverse, o Luma ou outra ferramenta, como ficheiro .spz ou .ply binário no seu NAS ou no headset, e o Immuch360 num Meta Quest 3 ou 3S.
 
 O headset coloca o lugar ou o objeto no seu tamanho, à sua frente ou à sua volta: ande à volta dele, deslize através dele com o manípulo esquerdo, rode com o direito. Os splats gaussianos usam uma API experimental do Meta Spatial SDK, sem suporte nem garantia da Meta: qualquer defeito é da exclusiva responsabilidade do Immuch360. Como fazer: [Explorar splats gaussianos num Meta Quest 3 ou 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ As funcionalidades de IA executam modelos e motores feitos por outros, transferi
 
 A LoRA 360° de nomadoor é Apache 2.0 segundo o seu cartão e foi treinada com imagens CC0 e do domínio público, com uma parte sob CC BY: a atribuição dessa parte chega numa versão posterior do MODEL-LICENSES.md. Nada aqui está sob uma licença não comercial, e nada precisa de CUDA. O ONNX Runtime e o LiteRT incluem outras bibliotecas, listadas nos seus avisos, entre elas o Eigen sob a MPL 2.0, uma licença copyleft fraca.
 
-As capturas desta página são capturas reais da aplicação: as do telemóvel na compilação Android num emulador, as da Android TV no emulador do Google TV, as da LG e da Samsung num navegador que faz as vezes da TV, as do Windows num PC com Windows 11 e a janela do Meta Quest num Quest 3, todas com panoramas CC0 do [Poly Haven](https://polyhaven.com); as capturas imersivas do headset foram feitas num Quest 3 com a multimédia do próprio autor, e a do iPad no simulador do iPad, com um panorama CC0 do Poly Haven. As imagens do criador IA são resultados reais da aplicação, feitos a partir de fotos CC0 do Poly Haven, com duas capturas reais da aplicação Windows. A imagem de abertura e as imagens da TV, do início de sessão, da rotação, das câmaras e do drone são ilustrações feitas para o projeto: não mostram nenhum ecrã da aplicação, nenhum logótipo de outra empresa e nenhum rosto. Os cartões de casos de utilização colocam uma dessas ilustrações por cima de uma faixa desenhada para o projeto, com os logótipos das plataformas, o ícone da aplicação e, em dois cartões, capturas reais da aplicação; além dos logótipos das plataformas, não mostram nenhum logótipo de outra empresa e nenhum rosto. Cada imagem, com a sua fonte, data e licença, está listada em [CAPTURES.md](../.github/readme/CAPTURES.md).
+As capturas desta página são capturas reais da aplicação: as do telemóvel na compilação Android num emulador, as da Android TV no emulador do Google TV, as da LG e da Samsung num navegador que faz as vezes da TV, as do Windows num PC com Windows 11 e a janela do Meta Quest num Quest 3, todas com panoramas CC0 do [Poly Haven](https://polyhaven.com); as capturas imersivas do headset foram feitas num Quest 3 com a multimédia do próprio autor, e a do iPad no simulador do iPad, com um panorama CC0 do Poly Haven. As imagens do criador IA são resultados reais da aplicação, feitos a partir de fotos CC0 do Poly Haven, com duas capturas reais da aplicação Windows. A imagem de abertura e as imagens da TV, do início de sessão, da rotação, das câmaras e do drone são ilustrações feitas para o projeto: não mostram nenhum ecrã da aplicação, nenhum logótipo de outra empresa e nenhum rosto. Os cartões de casos de utilização colocam uma dessas ilustrações por cima de uma faixa desenhada para o projeto, com os logótipos das plataformas, o ícone da aplicação, capturas reais da aplicação em dois cartões e fotos CC0 do Poly Haven em dois; além dos logótipos das plataformas, não mostram nenhum logótipo de outra empresa e nenhum rosto. Cada imagem, com a sua fonte, data e licença, está listada em [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Planeamento

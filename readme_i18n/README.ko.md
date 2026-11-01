@@ -101,7 +101,7 @@
 
 **필요한 것:** SMB 또는 WebDAV 공유가 있는 NAS, 그리고 보는 화면마다 Immuch360.
 
-각 화면에 공유를 추가하면 각 화면이 사진과 동영상을 있는 자리에서 그대로, 아무것도 복사하지 않고 재생합니다: 휴대폰, 태블릿, Android TV, Meta Quest, Windows, Linux, macOS 컴퓨터, 그리고 Immich 서버에 로그인한 LG TV. 360° 사진은 휴대폰과 TV에서 구처럼 회전하고, 헤드셋에서는 사용자를 둘러쌉니다. 사용 방법: [NAS, 컴퓨터, 미디어 서버, Plex의 파일 재생하기](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+각 화면에 공유를 추가하면 각 화면이 사진과 동영상을 있는 자리에서 그대로, 아무것도 복사하지 않고 재생합니다: 휴대폰, 태블릿, Android TV, Meta Quest, Windows, Linux, macOS 컴퓨터, 그리고 Immich 서버에 로그인한 LG TV(webOS 22부터 SMB). 360° 사진은 휴대폰과 TV에서 구처럼 회전하고, 헤드셋에서는 사용자를 둘러쌉니다. 사용 방법: [NAS, 컴퓨터, 미디어 서버, Plex의 파일 재생하기](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### 모든 화면에서 내 Immich 서버, 휴대폰으로 로그인
 
@@ -119,7 +119,7 @@
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="앱의 실제 화면 한 장이 담긴 일러스트: 인쇄된 사진들과 NAS 옆에서 Immuch360을 실행하는 노트북, 그리고 Immuch360을 실행하는 헤드셋을 쓴 뒷모습의 사람이 입체로 솟은 그 풍경 중 하나 앞에 있습니다">
 </p>
 
-**필요한 것:** Windows, Linux 또는 macOS 컴퓨터와 Meta Quest의 Immuch360, 그리고 그 사이에 있는 NAS나 Immich 서버.
+**필요한 것:** Windows, Linux 또는 macOS 컴퓨터와 Meta Quest의 Immuch360, 그리고 그 사이에 있는 NAS, 또는 "AI 버전도 백업"을 켠 Immich 서버.
 
 컴퓨터가 직접 사진을 3D 사진과 3D 장면으로 바꾸고, Windows나 Linux에서 8 GB 그래픽 카드가 있으면 360° 파노라마로도 바꾼 뒤 원본 옆에 저장합니다. 헤드셋은 3D 사진을 진짜 3D로 보여주고, 장면을 방 안에, 파노라마를 사용자 주위 전체에 펼칩니다. 휴대폰과 TV는 파노라마를 자체 360° 뷰어로 엽니다. 사용 방법: [사진 한 장을 3D, 장면, 파노라마로 바꾸기](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@
 
 **필요한 것:** Insta360, GoPro MAX 또는 DJI Osmo 360 카메라, NAS, 그리고 화면들의 Immuch360: 휴대폰, 태블릿, Android TV, Meta Quest, Windows.
 
-카메라 카드의 원본 파일을 그대로 NAS의 SMB 또는 WebDAV 공유에 복사하세요. Immich 서버도 Insta360 파일을 받습니다. 각 화면은 파일마다 기록된 보정값으로 재생하면서 스티칭하며, 카메라 앱에서 먼저 내보낼 것은 없습니다. 사용 방법: [360° 카메라의 원본 파일 열기](#open-the-raw-files-of-360-cameras).
+카메라 카드의 .insp, .insv, .360 또는 .osv 파일을 그대로 NAS의 SMB 또는 WebDAV 공유에 복사하세요. Immich 서버도 Insta360 파일을 받습니다. 각 화면은 파일마다 기록된 보정값으로 재생하면서 스티칭하며, 카메라 앱에서 먼저 내보낼 것은 없습니다. 사용 방법: [360° 카메라의 원본 파일 열기](#open-the-raw-files-of-360-cameras).
 
 #### TV와 헤드셋에서 내 Plex 및 DLNA 서버
 
@@ -161,12 +161,12 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 
 **필요한 것:** Android 휴대폰, iPhone 또는 Windows 컴퓨터와 Meta Quest의 Immuch360, 같은 집 Wi-Fi.
 
-휴대폰에서 "이 휴대폰을 네트워크에서 공유"를, 또는 컴퓨터에서 "이 컴퓨터를 네트워크에서 공유"를 켜면 헤드셋이 그 기기의 사진과 동영상을 재생하고, 360° 사진과 동영상은 사용자 주위 전체에 펼칩니다: 서버도, NAS도, 업로드도 필요 없습니다. iPhone에서는 앱이 열려 있는 동안 공유가 작동합니다. 사용 방법: [이 휴대폰을 네트워크에서 공유](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+휴대폰에서 "이 휴대폰을 네트워크에서 공유"를, 또는 컴퓨터에서 "이 컴퓨터를 네트워크에서 공유"를 켜면 헤드셋이 그 기기의 사진과 동영상을 재생하고, 360° 사진과 동영상은 사용자 주위 전체에 펼칩니다: 서버도, NAS도, 업로드도 필요 없습니다. iPhone에서는 앱이 화면에 떠 있는 동안 공유가 작동합니다. 사용 방법: [이 휴대폰을 네트워크에서 공유](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### TV와 헤드셋에서 내 Tapo 카메라
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="실제 화면이 아닌 일러스트: 창가의 홈 카메라가 정원을 촬영하고, 각각 Immuch360을 실행하는 TV, 휴대폰, 소파에서 쓴 헤드셋, 노트북이 그 같은 화면을 보여줍니다">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="실제 화면이 아닌 일러스트: 창가의 홈 카메라가 정원을 촬영하고, 각각 Immuch360을 실행하는 TV, 휴대폰, 방 안에서 쓴 헤드셋, 노트북이 그 같은 화면을 보여줍니다">
 </p>
 
 **필요한 것:** 홈 네트워크의 Tapo 카메라, 그리고 Android 휴대폰, Android TV, Meta Quest 또는 Windows 컴퓨터의 Immuch360.
@@ -176,10 +176,10 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 #### 내 방 안의 가우시안 스플랫, Meta Quest 3 또는 3S에서(실험적)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="실제 화면이 아닌 일러스트: 거실에서 Immuch360을 실행하는 헤드셋을 쓴 뒷모습의 사람이, 다른 앱으로 스플랫으로 캡처해 NAS에서 연 실물 크기의 분수 앞에 서 있습니다">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="실제 화면이 아닌 일러스트: 거실에서 Immuch360을 실행하는 헤드셋을 쓴 뒷모습의 사람이, 선반 위 NAS에서 연, 빛나는 빛으로 이루어진 실물 크기의 분수 앞에 서 있습니다">
 </p>
 
-**필요한 것:** Polycam, Scaniverse, Luma 또는 다른 도구로 만든 스플랫(NAS나 헤드셋에 있는 .spz 또는 .ply 파일), 그리고 Meta Quest 3 또는 3S의 Immuch360.
+**필요한 것:** Polycam, Scaniverse, Luma 또는 다른 도구로 만든 스플랫(NAS나 헤드셋에 있는 .spz 또는 바이너리 .ply 파일), 그리고 Meta Quest 3 또는 3S의 Immuch360.
 
 헤드셋은 장소나 물체를 실제 크기로 눈앞에, 또는 사용자 주위 전체에 놓습니다: 그 주위를 걷고, 왼쪽 썸스틱으로 그 사이를 미끄러지듯 지나가고, 오른쪽 썸스틱으로 회전하세요. 가우시안 스플랫은 Meta Spatial SDK의 실험적 API를 사용하며, Meta는 이를 지원하거나 보증하지 않습니다. 모든 결함의 책임은 Immuch360에만 있습니다. 사용 방법: [Meta Quest 3 또는 3S에서 가우시안 스플랫 탐색하기](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ AI 기능은 다른 사람들이 만든 모델과 엔진을 실행하며, 이들
 
 nomadoor의 360° LoRA는 모델 카드상 Apache 2.0이며 CC0와 퍼블릭 도메인 이미지로 학습했고, 일부는 CC BY입니다: 그 부분의 저작자 표시는 MODEL-LICENSES.md의 다음 버전에 들어갑니다. 여기에는 비상업용 라이선스가 하나도 없고, CUDA가 필요한 것도 없습니다. ONNX Runtime과 LiteRT에는 다른 라이브러리가 들어 있으며 각 고지문에 나열되어 있고, 그중에는 약한 카피레프트 라이선스인 MPL 2.0의 Eigen이 있습니다.
 
-이 페이지의 캡처는 앱의 실제 화면입니다: 휴대폰 화면은 에뮬레이터의 Android build에서, Android TV 화면은 Google TV 에뮬레이터에서, LG와 Samsung 화면은 TV를 대신하는 브라우저에서, Windows 화면은 Windows 11 PC에서, Meta Quest 창은 Quest 3에서 찍었으며, 모두 [Poly Haven](https://polyhaven.com)의 CC0 파노라마를 썼습니다. 헤드셋의 몰입형 화면은 작성자 자신의 미디어로 Quest 3에서, iPad 화면은 iPad 시뮬레이터에서 CC0 Poly Haven 파노라마로 찍었습니다. AI 생성 기능의 그림은 Poly Haven의 CC0 사진으로 만든 앱의 실제 결과물이며, Windows 앱의 실제 캡처 두 장이 함께 있습니다. 첫 이미지와 TV, 로그인, 회전, 카메라, 드론 그림은 프로젝트를 위해 만든 일러스트입니다: 앱의 화면도, 다른 회사의 로고도, 얼굴도 담고 있지 않습니다. 사용 사례 카드는 이런 일러스트를 프로젝트를 위해 그린 띠 위에 놓으며, 이 띠에는 플랫폼 로고, 앱 아이콘, 그리고 두 카드에는 앱의 실제 캡처가 있습니다. 플랫폼 로고 외에는 다른 회사의 로고도, 얼굴도 담고 있지 않습니다. 각 이미지는 출처, 날짜, 라이선스와 함께 [CAPTURES.md](../.github/readme/CAPTURES.md)에 정리되어 있습니다.
+이 페이지의 캡처는 앱의 실제 화면입니다: 휴대폰 화면은 에뮬레이터의 Android build에서, Android TV 화면은 Google TV 에뮬레이터에서, LG와 Samsung 화면은 TV를 대신하는 브라우저에서, Windows 화면은 Windows 11 PC에서, Meta Quest 창은 Quest 3에서 찍었으며, 모두 [Poly Haven](https://polyhaven.com)의 CC0 파노라마를 썼습니다. 헤드셋의 몰입형 화면은 작성자 자신의 미디어로 Quest 3에서, iPad 화면은 iPad 시뮬레이터에서 CC0 Poly Haven 파노라마로 찍었습니다. AI 생성 기능의 그림은 Poly Haven의 CC0 사진으로 만든 앱의 실제 결과물이며, Windows 앱의 실제 캡처 두 장이 함께 있습니다. 첫 이미지와 TV, 로그인, 회전, 카메라, 드론 그림은 프로젝트를 위해 만든 일러스트입니다: 앱의 화면도, 다른 회사의 로고도, 얼굴도 담고 있지 않습니다. 사용 사례 카드는 이런 일러스트를 프로젝트를 위해 그린 띠 위에 놓으며, 이 띠에는 플랫폼 로고, 앱 아이콘, 두 카드에는 앱의 실제 캡처, 그리고 두 카드에는 Poly Haven의 CC0 사진이 있습니다. 플랫폼 로고 외에는 다른 회사의 로고도, 얼굴도 담고 있지 않습니다. 각 이미지는 출처, 날짜, 라이선스와 함께 [CAPTURES.md](../.github/readme/CAPTURES.md)에 정리되어 있습니다.
 
 <a id="roadmap"></a>
 ## 로드맵

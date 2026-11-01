@@ -101,7 +101,7 @@ Zainstaluj Immuch360 na każdym ekranie, na którym oglądasz: każdy sam odczyt
 
 **Potrzebujesz:** NAS-a z udziałem SMB lub WebDAV i Immuch360 na każdym ekranie, na którym oglądasz.
 
-Dodaj udział na każdym ekranie, a każdy odtwarza zdjęcia i filmy tam, gdzie leżą, bez kopiowania: telefony, tablety, Android TV, Meta Quest, komputery z Windows, Linux i macOS oraz telewizory LG zalogowane do Twojego serwera Immich. Zdjęcie 360° obraca się jako sfera na telefonie i telewizorze, a w zestawie Cię otacza. Jak to zrobić: [Odtwarzaj pliki z NAS-a, komputera, serwera multimediów lub Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Dodaj udział na każdym ekranie, a każdy odtwarza zdjęcia i filmy tam, gdzie leżą, bez kopiowania: telefony, tablety, Android TV, Meta Quest, komputery z Windows, Linux i macOS oraz telewizory LG zalogowane do Twojego serwera Immich (SMB od webOS 22). Zdjęcie 360° obraca się jako sfera na telefonie i telewizorze, a w zestawie Cię otacza. Jak to zrobić: [Odtwarzaj pliki z NAS-a, komputera, serwera multimediów lub Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Twój serwer Immich na każdym ekranie, zalogowany z telefonu
 
@@ -119,7 +119,7 @@ Na telefonie Immuch360 zachowuje całą aplikację mobilną Immich, dodaje swoje
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustracja z prawdziwym zrzutem aplikacji: laptop z Immuch360 obok wydrukowanych zdjęć i NAS-a oraz osoba widziana od tyłu w zestawie z Immuch360, przed jednym z tych krajobrazów w reliefie">
 </p>
 
-**Potrzebujesz:** Immuch360 na komputerze z Windows, Linux lub macOS i w Meta Quest, z Twoim NAS-em lub serwerem Immich pomiędzy nimi.
+**Potrzebujesz:** Immuch360 na komputerze z Windows, Linux lub macOS i w Meta Quest, z Twoim NAS-em pomiędzy nimi lub z serwerem Immich z włączoną opcją „Twórz też kopie zapasowe wersji AI”.
 
 Sam komputer zamienia Twoje zdjęcia w zdjęcia 3D i sceny 3D, a z kartą graficzną 8 GB na Windows lub Linux w panoramy 360°, i zapisuje je obok oryginałów. Zestaw pokazuje zdjęcie 3D w prawdziwym 3D, umieszcza scenę w Twoim pokoju, a panoramę wokół Ciebie; telefony i telewizory otwierają panoramy w swojej przeglądarce 360°. Jak to zrobić: [Zamień jedno zdjęcie w 3D, scenę, panoramę](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Telefon pokazuje wideo na żywo z drona i przekazuje je przez Twoje Wi-Fi lub w�
 
 **Potrzebujesz:** kamery Insta360, GoPro MAX lub DJI Osmo 360, Twojego NAS-a i Immuch360 na ekranach: telefony, tablety, Android TV, Meta Quest, Windows.
 
-Skopiuj surowe pliki z karty kamery do udziału SMB lub WebDAV na Twoim NAS-ie, takie, jakie są; serwer Immich przyjmuje także pliki Insta360. Każdy ekran zszywa je podczas odtwarzania, z kalibracją zapisaną w każdym pliku, i nic nie jest wcześniej eksportowane w aplikacji kamery. Jak to zrobić: [Otwieraj surowe pliki kamer 360°](#open-the-raw-files-of-360-cameras).
+Skopiuj pliki .insp, .insv, .360 lub .osv z karty kamery do udziału SMB lub WebDAV na Twoim NAS-ie, takie, jakie są; serwer Immich przyjmuje także pliki Insta360. Każdy ekran zszywa je podczas odtwarzania, z kalibracją zapisaną w każdym pliku, i nic nie jest wcześniej eksportowane w aplikacji kamery. Jak to zrobić: [Otwieraj surowe pliki kamer 360°](#open-the-raw-files-of-360-cameras).
 
 #### Twoje serwery Plex i DLNA na telewizorze i w zestawie
 
@@ -161,12 +161,12 @@ Plex udostępnia oryginalne pliki Twoich bibliotek, więc film 360° pozostaje f
 
 **Potrzebujesz:** Immuch360 na telefonie z Androidem, iPhonie lub komputerze z Windows oraz w Meta Quest, w tej samej domowej sieci Wi-Fi.
 
-Włącz „Udostępnij ten telefon w sieci” na telefonie lub „Udostępnij ten komputer w sieci” na komputerze, a zestaw odtwarza jego zdjęcia i filmy, te 360° wokół Ciebie: bez serwera, bez NAS-a, bez przesyłania. Na iPhonie udostępnianie działa, gdy aplikacja jest otwarta. Jak to zrobić: [Udostępnij ten telefon w sieci](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Włącz „Udostępnij ten telefon w sieci” na telefonie lub „Udostępnij ten komputer w sieci” na komputerze, a zestaw odtwarza jego zdjęcia i filmy, te 360° wokół Ciebie: bez serwera, bez NAS-a, bez przesyłania. Na iPhonie udostępnianie działa, gdy aplikacja jest na ekranie. Jak to zrobić: [Udostępnij ten telefon w sieci](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Twoje kamery Tapo na telewizorze i w zestawie
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: kamera domowa przy oknie filmuje ogród, a telewizor, telefon, zestaw noszony na kanapie i laptop, na każdym działa Immuch360, pokazują ten jeden widok">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: kamera domowa przy oknie filmuje ogród, a telewizor, telefon, zestaw noszony w pokoju i laptop, na każdym działa Immuch360, pokazują ten jeden widok">
 </p>
 
 **Potrzebujesz:** kamer Tapo w Twojej sieci domowej i Immuch360 na telefonie z Androidem, Android TV, Meta Quest lub komputerze z Windows.
@@ -176,10 +176,10 @@ Każdy ekran pokazuje kamerę na żywo i odtwarza nagrania z jej karty pamięci 
 #### Splaty gaussowskie w Twoim pokoju, w Meta Quest 3 lub 3S (eksperymentalnie)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: w salonie osoba widziana od tyłu w zestawie z Immuch360 stoi przed fontanną naturalnej wielkości, uchwyconą jako splat przez inną aplikację i otwartą z NAS-a">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustracja, nie zrzut ekranu: w salonie osoba widziana od tyłu w zestawie z Immuch360 stoi przed fontanną naturalnej wielkości ze świecącego światła, otwartą z NAS-a na półce">
 </p>
 
-**Potrzebujesz:** splatu wykonanego w Polycam, Scaniverse, Luma lub innym narzędziu, jako pliku .spz lub .ply na Twoim NAS-ie lub w zestawie, i Immuch360 w Meta Quest 3 lub 3S.
+**Potrzebujesz:** splatu wykonanego w Polycam, Scaniverse, Luma lub innym narzędziu, jako pliku .spz lub binarnego .ply na Twoim NAS-ie lub w zestawie, i Immuch360 w Meta Quest 3 lub 3S.
 
 Zestaw ustawia miejsce lub obiekt w jego naturalnej wielkości, przed Tobą lub wokół Ciebie: obejdź go, przesuwaj się przez niego lewą gałką, obracaj się prawą. Splaty gaussowskie korzystają z eksperymentalnego API Meta Spatial SDK, którego Meta nie wspiera ani nie gwarantuje: za każdą wadę odpowiada wyłącznie Immuch360. Jak to zrobić: [Odkrywaj splaty gaussowskie w Meta Quest 3 lub 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Funkcje AI uruchamiają modele i silniki stworzone przez innych, pobierane tylko
 
 LoRA 360° autorstwa nomadoor ma według swojej karty licencję Apache 2.0 i była trenowana na obrazach CC0 i z domeny publicznej, z częścią na licencji CC BY: uznanie autorstwa tej części pojawi się w późniejszej wersji MODEL-LICENSES.md. Nic tutaj nie jest na licencji niekomercyjnej i nic nie wymaga CUDA. ONNX Runtime i LiteRT zawierają inne wbudowane biblioteki, wymienione w ich informacjach, wśród nich Eigen na licencji MPL 2.0, słabej licencji copyleft.
 
-Zrzuty ekranu na tej stronie są prawdziwymi zrzutami aplikacji: te z telefonu z kompilacji Android w emulatorze, te z Android TV w emulatorze Google TV, te z LG i Samsung w przeglądarce, która zastępuje telewizor, te z Windows na komputerze z Windows 11, a okno Meta Quest w Quest 3, wszystkie z panoramami CC0 z [Poly Haven](https://polyhaven.com); immersyjne zrzuty z zestawu wykonano na Quest 3 z własnymi mediami autora, a zrzut z iPada w symulatorze iPada, z panoramą CC0 z Poly Haven. Obrazy kreatora AI to prawdziwe wyniki aplikacji, utworzone ze zdjęć CC0 z Poly Haven, z dwoma prawdziwymi zrzutami aplikacji na Windows. Obraz otwierający oraz obrazy telewizora, logowania, obrotu, kamer i drona to ilustracje wykonane dla projektu: nie pokazują żadnego ekranu aplikacji, żadnego logo innej firmy ani żadnej twarzy. Karty zastosowań umieszczają taką ilustrację nad paskiem narysowanym dla projektu, z logo platform, ikoną aplikacji i, w dwóch kartach, prawdziwymi zrzutami aplikacji; poza logo platform nie pokazują żadnego logo innej firmy ani żadnej twarzy. Każdy obraz, z jego źródłem, datą i licencją, jest wymieniony w [CAPTURES.md](../.github/readme/CAPTURES.md).
+Zrzuty ekranu na tej stronie są prawdziwymi zrzutami aplikacji: te z telefonu z kompilacji Android w emulatorze, te z Android TV w emulatorze Google TV, te z LG i Samsung w przeglądarce, która zastępuje telewizor, te z Windows na komputerze z Windows 11, a okno Meta Quest w Quest 3, wszystkie z panoramami CC0 z [Poly Haven](https://polyhaven.com); immersyjne zrzuty z zestawu wykonano na Quest 3 z własnymi mediami autora, a zrzut z iPada w symulatorze iPada, z panoramą CC0 z Poly Haven. Obrazy kreatora AI to prawdziwe wyniki aplikacji, utworzone ze zdjęć CC0 z Poly Haven, z dwoma prawdziwymi zrzutami aplikacji na Windows. Obraz otwierający oraz obrazy telewizora, logowania, obrotu, kamer i drona to ilustracje wykonane dla projektu: nie pokazują żadnego ekranu aplikacji, żadnego logo innej firmy ani żadnej twarzy. Karty zastosowań umieszczają taką ilustrację nad paskiem narysowanym dla projektu, z logo platform, ikoną aplikacji, prawdziwymi zrzutami aplikacji w dwóch kartach i zdjęciami CC0 z Poly Haven w dwóch; poza logo platform nie pokazują żadnego logo innej firmy ani żadnej twarzy. Każdy obraz, z jego źródłem, datą i licencją, jest wymieniony w [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plan rozwoju

@@ -101,7 +101,7 @@ Instalatu Immuch360 ikusteko erabiltzen duzun pantaila bakoitzean: bakoitzak zur
 
 **Behar duzuna:** SMB edo WebDAV partekatze bat duen NAS bat, eta Immuch360 ikusteko erabiltzen duzun pantaila bakoitzean.
 
-Gehitu partekatzea pantaila bakoitzean, eta bakoitzak argazkiak eta bideoak dauden lekuan erreproduzitzen ditu, ezer kopiatu gabe: telefonoak, tabletak, Android TV, Meta Quest bat, Windows, Linux eta macOS ordenagailuak, eta zure Immich zerbitzarian saioa hasita duten LG telebistak. 360° argazki bat esfera gisa biratzen da telefonoan eta telebistan, eta kaskoan inguratu egiten zaitu. Nola egin: [Erreproduzitu NAS, ordenagailu, multimedia-zerbitzari edo Plex baten fitxategiak](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Gehitu partekatzea pantaila bakoitzean, eta bakoitzak argazkiak eta bideoak dauden lekuan erreproduzitzen ditu, ezer kopiatu gabe: telefonoak, tabletak, Android TV, Meta Quest bat, Windows, Linux eta macOS ordenagailuak, eta zure Immich zerbitzarian saioa hasita duten LG telebistak (SMB webOS 22tik aurrera). 360° argazki bat esfera gisa biratzen da telefonoan eta telebistan, eta kaskoan inguratu egiten zaitu. Nola egin: [Erreproduzitu NAS, ordenagailu, multimedia-zerbitzari edo Plex baten fitxategiak](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Zure Immich zerbitzaria pantaila guztietan, saioa zure telefonotik hasita
 
@@ -119,7 +119,7 @@ Telefonoan, Immuch360k Immich aplikazio mugikor osoa gordetzen du, bere 360°, V
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrazioa, aplikazioaren benetako pantaila-argazki batekin: Immuch360 exekutatzen duen eramangarri bat inprimatutako argazkien eta NAS baten ondoan, eta atzetik ikusitako pertsona bat Immuch360 exekutatzen duen kasko batekin, erliebean altxatzen den paisaia horietako baten aurrean">
 </p>
 
-**Behar duzuna:** Immuch360 Windows, Linux edo macOS ordenagailu batean eta Meta Quest batean, zure NASa edo zure Immich zerbitzaria haien artean.
+**Behar duzuna:** Immuch360 Windows, Linux edo macOS ordenagailu batean eta Meta Quest batean, zure NASa haien artean, edo zure Immich zerbitzaria "Egin AA bertsioen babes-kopia ere" aktibatuta duela.
 
 Ordenagailuak berak bihurtzen ditu zure argazkiak 3D argazki eta 3D eszena, eta 360° panorama Windows edo Linuxen 8 GBko txartel grafiko batekin, eta jatorrizkoen ondoan gordetzen ditu. Kaskoak 3D argazki bat benetako 3Dn erakusten du, eszena bat zure gelan jartzen du eta panorama bat zure inguru osoan; telefonoek eta telebistek panoramak beren 360° ikuslean irekitzen dituzte. Nola egin: [Bihurtu argazki bat 3D argazki, eszena edo panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Telefonoak dronearen zuzeneko bideoa erakusten du eta igortzen du, zure Wi-Fiare
 
 **Behar duzuna:** Insta360, GoPro MAX edo DJI Osmo 360 kamera bat, zure NASa, eta Immuch360 pantailetan: telefonoak, tabletak, Android TV, Meta Quest bat, Windows.
 
-Kopiatu fitxategi gordinak kameraren txarteletik zure NASaren SMB edo WebDAV partekatze batera, dauden bezala; Immich zerbitzari batek Insta360koak ere onartzen ditu. Pantaila bakoitzak erreproduzitu ahala josten ditu, fitxategi bakoitzean idatzitako kalibrazioarekin, eta ez da ezer esportatzen aurretik kameraren aplikazioan. Nola egin: [Ireki 360° kameren fitxategi gordinak](#open-the-raw-files-of-360-cameras).
+Kopiatu .insp, .insv, .360 edo .osv fitxategiak kameraren txarteletik zure NASaren SMB edo WebDAV partekatze batera, dauden bezala; Immich zerbitzari batek Insta360koak ere onartzen ditu. Pantaila bakoitzak erreproduzitu ahala josten ditu, fitxategi bakoitzean idatzitako kalibrazioarekin, eta ez da ezer esportatzen aurretik kameraren aplikazioan. Nola egin: [Ireki 360° kameren fitxategi gordinak](#open-the-raw-files-of-360-cameras).
 
 #### Zure Plex eta DLNA zerbitzariak telebistan eta kaskoan
 
@@ -161,12 +161,12 @@ Plexek zure liburutegien jatorrizko fitxategiak ematen ditu, beraz 360° bideo b
 
 **Behar duzuna:** Immuch360 Android telefono, iPhone edo Windows ordenagailu batean, eta Meta Quest batean, etxeko Wi-Fi berean.
 
-Aktibatu "Partekatu telefono hau sarean" telefonoan, edo "Partekatu ordenagailu hau sarean" ordenagailuan, eta kaskoak haren argazkiak eta bideoak erreproduzitzen ditu, 360°koak zure inguru osoan: zerbitzaririk ez, NASik ez, igoerarik ez. iPhone batean, partekatzeak aplikazioa irekita dagoen bitartean funtzionatzen du. Nola egin: [Partekatu telefono hau sarean](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Aktibatu "Partekatu telefono hau sarean" telefonoan, edo "Partekatu ordenagailu hau sarean" ordenagailuan, eta kaskoak haren argazkiak eta bideoak erreproduzitzen ditu, 360°koak zure inguru osoan: zerbitzaririk ez, NASik ez, igoerarik ez. iPhone batean, partekatzeak aplikazioa pantailan dagoen bitartean funtzionatzen du. Nola egin: [Partekatu telefono hau sarean](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Zure Tapo kamerak telebistan eta kaskoan
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrazioa, ez pantaila-argazkia: leiho ondoko etxeko kamera batek lorategia grabatzen du, eta telebista batek, telefono batek, sofan jarritako kasko batek eta eramangarri batek, bakoitzak Immuch360 exekutatzen duela, ikuspegi bakar hori erakusten dute">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrazioa, ez pantaila-argazkia: leiho ondoko etxeko kamera batek lorategia grabatzen du, eta telebista batek, telefono batek, gelan jarritako kasko batek eta eramangarri batek, bakoitzak Immuch360 exekutatzen duela, ikuspegi bakar hori erakusten dute">
 </p>
 
 **Behar duzuna:** Tapo kamerak zure etxeko sarean, eta Immuch360 Android telefono batean, Android TV batean, Meta Quest batean edo Windows ordenagailu batean.
@@ -176,10 +176,10 @@ Pantaila bakoitzak kamera bat zuzenean erakusten du eta bere memoria-txarteleko 
 #### Splat gaussiarrak zure gelan, Meta Quest 3 edo 3S batean (esperimentala)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrazioa, ez pantaila-argazkia: egongela batean, atzetik ikusitako pertsona bat, Immuch360 exekutatzen duen kasko batekin, beste aplikazio batek splat gisa harrapatutako eta NAS batetik irekitako tamaina naturaleko iturri baten aurrean dago">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrazioa, ez pantaila-argazkia: egongela batean, atzetik ikusitako pertsona bat, Immuch360 exekutatzen duen kasko batekin, argi distiratsuz egindako eta apal bateko NAS batetik irekitako tamaina naturaleko iturri baten aurrean dago">
 </p>
 
-**Behar duzuna:** Polycam, Scaniverse, Luma edo beste tresna batekin egindako splat bat, .spz edo .ply fitxategi gisa zure NASean edo kaskoan, eta Immuch360 Meta Quest 3 edo 3S batean.
+**Behar duzuna:** Polycam, Scaniverse, Luma edo beste tresna batekin egindako splat bat, .spz fitxategi edo .ply fitxategi bitar gisa zure NASean edo kaskoan, eta Immuch360 Meta Quest 3 edo 3S batean.
 
 Kaskoak lekua edo objektua bere tamainan jartzen du, zure aurrean edo zure inguru osoan: ibili haren inguruan, irristatu haren barnetik ezkerreko joystickarekin, biratu eskuinekoarekin. Splat gaussiarrek Meta Spatial SDKren API esperimental bat erabiltzen dute, Metak onartzen ez duena eta bermatzen ez duena: edozein akatsen erantzule Immuch360 bakarrik da. Nola egin: [Arakatu splat gaussiarrak Meta Quest 3 edo 3S batean](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ AA funtzioek besteek egindako ereduak eta motorrak exekutatzen dituzte, eskatzen
 
 360° LoRA, nomadoor-ena, Apache 2.0 da bere txartelaren arabera eta CC0 eta jabari publikoko irudiekin entrenatu zen, zati bat CC BY lizentziapean: zati horren aitortza MODEL-LICENSES.md fitxategiaren geroko bertsio batean etorriko da. Hemen ezer ez dago lizentzia ez-komertzial baten pean, eta ezerk ez du CUDA behar. ONNX Runtime-k eta LiteRT-k beste liburutegi batzuk dituzte barnean, beren oharretan zerrendatuta, horien artean Eigen MPL 2.0 lizentziapean, copyleft ahuleko lizentzia bat.
 
-Orri honetako pantaila-argazkiak aplikazioaren benetako pantaila-argazkiak dira: telefonokoak Android eraikuntzan emuladore batean, Android TVkoak Google TV emuladorean, LG eta Samsungekoak telebistaren ordez dagoen nabigatzaile batean, Windowsekoak Windows 11 PC batean eta Meta Quest leihoa Quest 3 batean, guztiak [Poly Haven](https://polyhaven.com)-eko CC0 panoramikekin; kaskoaren murgiltze-argazkiak Quest 3 batean atera ziren egilearen edukiekin, eta iPadekoa iPad simulagailuan, Poly Haven-eko CC0 panoramika batekin. AA sortzailearen irudiak aplikazioaren benetako emaitzak dira, Poly Haven-eko CC0 argazkietatik eginak, Windows aplikazioaren bi benetako pantaila-argazkirekin. Hasierako irudia eta telebistaren, saio-hasieraren, biraketaren, kameren eta dronearen irudiak proiekturako egindako ilustrazioak dira: ez dute aplikazioaren pantailarik, beste enpresa baten logotiporik ez aurpegirik erakusten. Erabilera-kasuen txartelek horrelako ilustrazio bat jartzen dute proiekturako marraztutako errenkada baten gainean, plataformen logotipoekin, aplikazioaren ikonoarekin eta, bi txarteletan, aplikazioaren benetako pantaila-argazkiekin; plataformen logotipoez gain, ez dute beste enpresa baten logotiporik ez aurpegirik erakusten. Irudi bakoitza, bere iturri, data eta lizentziarekin, [CAPTURES.md](../.github/readme/CAPTURES.md) fitxategian zerrendatuta dago.
+Orri honetako pantaila-argazkiak aplikazioaren benetako pantaila-argazkiak dira: telefonokoak Android eraikuntzan emuladore batean, Android TVkoak Google TV emuladorean, LG eta Samsungekoak telebistaren ordez dagoen nabigatzaile batean, Windowsekoak Windows 11 PC batean eta Meta Quest leihoa Quest 3 batean, guztiak [Poly Haven](https://polyhaven.com)-eko CC0 panoramikekin; kaskoaren murgiltze-argazkiak Quest 3 batean atera ziren egilearen edukiekin, eta iPadekoa iPad simulagailuan, Poly Haven-eko CC0 panoramika batekin. AA sortzailearen irudiak aplikazioaren benetako emaitzak dira, Poly Haven-eko CC0 argazkietatik eginak, Windows aplikazioaren bi benetako pantaila-argazkirekin. Hasierako irudia eta telebistaren, saio-hasieraren, biraketaren, kameren eta dronearen irudiak proiekturako egindako ilustrazioak dira: ez dute aplikazioaren pantailarik, beste enpresa baten logotiporik ez aurpegirik erakusten. Erabilera-kasuen txartelek horrelako ilustrazio bat jartzen dute proiekturako marraztutako errenkada baten gainean, plataformen logotipoekin, aplikazioaren ikonoarekin, bi txarteletan aplikazioaren benetako pantaila-argazkiekin eta beste bitan Poly Haven-eko CC0 argazkiekin; plataformen logotipoez gain, ez dute beste enpresa baten logotiporik ez aurpegirik erakusten. Irudi bakoitza, bere iturri, data eta lizentziarekin, [CAPTURES.md](../.github/readme/CAPTURES.md) fitxategian zerrendatuta dago.
 
 <a id="roadmap"></a>
 ## Bide-orria

@@ -101,7 +101,7 @@ Suiteáil Immuch360 ar gach scáileán a bhféachann tú air: léann gach ceann 
 
 **Teastaíonn uait:** NAS le comhroinnt SMB nó WebDAV, agus Immuch360 ar gach scáileán a bhféachann tú air.
 
-Cuir an chomhroinnt leis ar gach scáileán, agus seinneann gach ceann acu na grianghraif agus na físeáin san áit a bhfuil siad, gan aon rud a chóipeáil: fóin, táibléid, Android TV, Meta Quest, ríomhairí Windows, Linux agus macOS, agus teilifíseáin LG atá logáilte isteach ar do fhreastalaí Immich. Casann grianghraf 360° mar sféar ar an bhfón agus ar an teilifís, agus timpeallaíonn sé thú sa chluasán. Conas a dhéanamh: [Seinn comhaid NAS, ríomhaire, freastalaí meán nó Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Cuir an chomhroinnt leis ar gach scáileán, agus seinneann gach ceann acu na grianghraif agus na físeáin san áit a bhfuil siad, gan aon rud a chóipeáil: fóin, táibléid, Android TV, Meta Quest, ríomhairí Windows, Linux agus macOS, agus teilifíseáin LG atá logáilte isteach ar do fhreastalaí Immich (SMB ó webOS 22). Casann grianghraf 360° mar sféar ar an bhfón agus ar an teilifís, agus timpeallaíonn sé thú sa chluasán. Conas a dhéanamh: [Seinn comhaid NAS, ríomhaire, freastalaí meán nó Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Do fhreastalaí Immich ar gach scáileán, logáilte isteach ó d'fhón
 
@@ -119,7 +119,7 @@ Ar an bhfón, coinníonn Immuch360 aip mhóibíleach Immich ina hiomláine, cuir
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Léaráid le gabháil fhíor den aip: ríomhaire glúine ag rith Immuch360 in aice le grianghraif chlóite agus NAS, agus duine a fheictear ón gcúl i gcluasán ag rith Immuch360, os comhair ceann de na tírdhreacha sin ina sheasamh i bhfaoiseamh">
 </p>
 
-**Teastaíonn uait:** Immuch360 ar ríomhaire Windows, Linux nó macOS agus i Meta Quest, le do NAS nó do fhreastalaí Immich eatarthu.
+**Teastaíonn uait:** Immuch360 ar ríomhaire Windows, Linux nó macOS agus i Meta Quest, le do NAS eatarthu, nó do fhreastalaí Immich le “Déan cúltaca de leaganacha IS freisin” casta air.
 
 Déanann an ríomhaire féin grianghraif 3D agus radhairc 3D de do ghrianghraif, agus pánorámaí 360° le cárta grafaice 8 GB ar Windows nó Linux, agus sábhálann sé iad in aice leis na bunchóipeanna. Taispeánann an cluasán grianghraf 3D i bhfíor-3D, cuireann sé radharc i do sheomra agus pánoráma timpeall ort; osclaíonn fóin agus teilifíseáin na pánorámaí ina n-amharcóir 360°. Conas a dhéanamh: [Déan 3D, radharc nó pánoráma de ghrianghraf amháin](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Taispeánann an fón físeán beo an dróin agus seachadann sé é, thar do Wi-F
 
 **Teastaíonn uait:** ceamara Insta360, GoPro MAX nó DJI Osmo 360, do NAS, agus Immuch360 ar na scáileáin: fóin, táibléid, Android TV, Meta Quest, Windows.
 
-Cóipeáil na comhaid amha ó chárta an cheamara chuig comhroinnt SMB nó WebDAV ar do NAS, mar atá siad; glacann freastalaí Immich le comhaid Insta360 freisin. Fuaigheann gach scáileán le chéile iad agus iad á seinm, leis an gcalabrú atá scríofa i ngach comhad, agus ní easpórtáiltear aon rud in aip an cheamara ar dtús. Conas a dhéanamh: [Oscail comhaid amha ceamaraí 360°](#open-the-raw-files-of-360-cameras).
+Cóipeáil na comhaid .insp, .insv, .360 nó .osv ó chárta an cheamara chuig comhroinnt SMB nó WebDAV ar do NAS, mar atá siad; glacann freastalaí Immich le comhaid Insta360 freisin. Fuaigheann gach scáileán le chéile iad agus iad á seinm, leis an gcalabrú atá scríofa i ngach comhad, agus ní easpórtáiltear aon rud in aip an cheamara ar dtús. Conas a dhéanamh: [Oscail comhaid amha ceamaraí 360°](#open-the-raw-files-of-360-cameras).
 
 #### Do fhreastalaithe Plex agus DLNA ar an teilifís agus sa chluasán
 
@@ -161,12 +161,12 @@ Tugann Plex bunchomhaid do leabharlann, mar sin fanann físeán 360° ina 360°,
 
 **Teastaíonn uait:** Immuch360 ar fhón Android, ar iPhone nó ar ríomhaire Windows, agus i Meta Quest, ar an Wi-Fi baile céanna.
 
-Cas air “Comhroinn an fón seo ar an líonra” ar an bhfón, nó “Comhroinn an ríomhaire seo ar an líonra” ar an ríomhaire, agus seinneann an cluasán a chuid grianghraf agus físeán, na cinn 360° timpeall ort: gan freastalaí, gan NAS, gan uaslódáil. Ar iPhone, ritheann an chomhroinnt fad atá an aip oscailte. Conas a dhéanamh: [Comhroinn an fón seo ar an líonra](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Cas air “Comhroinn an fón seo ar an líonra” ar an bhfón, nó “Comhroinn an ríomhaire seo ar an líonra” ar an ríomhaire, agus seinneann an cluasán a chuid grianghraf agus físeán, na cinn 360° timpeall ort: gan freastalaí, gan NAS, gan uaslódáil. Ar iPhone, ritheann an chomhroinnt fad atá an aip ar an scáileán. Conas a dhéanamh: [Comhroinn an fón seo ar an líonra](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Do cheamaraí Tapo ar an teilifís agus sa chluasán
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Léaráid, ní gabháil: déanann ceamara baile in aice leis an bhfuinneog scannán den ghairdín, agus taispeánann teilifís, fón, cluasán á chaitheamh ar an tolg agus ríomhaire glúine, gach ceann acu ag rith Immuch360, an t-amharc aonair sin">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Léaráid, ní gabháil: déanann ceamara baile in aice leis an bhfuinneog scannán den ghairdín, agus taispeánann teilifís, fón, cluasán á chaitheamh sa seomra agus ríomhaire glúine, gach ceann acu ag rith Immuch360, an t-amharc aonair sin">
 </p>
 
 **Teastaíonn uait:** ceamaraí Tapo ar do líonra baile, agus Immuch360 ar fhón Android, ar Android TV, ar Meta Quest nó ar ríomhaire Windows.
@@ -176,10 +176,10 @@ Taispeánann gach scáileán ceamara beo agus seinneann sé taifeadtaí a chárt
 #### Splatanna Gaussacha i do sheomra, ar Meta Quest 3 nó 3S (turgnamhach)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Léaráid, ní gabháil: i seomra suí, seasann duine a fheictear ón gcúl, i gcluasán ag rith Immuch360, os comhair tobair i lánmhéid a gabhadh mar splat le haip eile agus a osclaíodh ó NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Léaráid, ní gabháil: i seomra suí, seasann duine a fheictear ón gcúl, i gcluasán ag rith Immuch360, os comhair tobair solais lonrúil i lánmhéid a osclaíodh ó NAS ar sheilf">
 </p>
 
-**Teastaíonn uait:** splat a rinneadh le Polycam, Scaniverse, Luma nó uirlis eile, mar chomhad .spz nó .ply ar do NAS nó sa chluasán, agus Immuch360 ar Meta Quest 3 nó 3S.
+**Teastaíonn uait:** splat a rinneadh le Polycam, Scaniverse, Luma nó uirlis eile, mar chomhad .spz nó .ply dénártha ar do NAS nó sa chluasán, agus Immuch360 ar Meta Quest 3 nó 3S.
 
 Cuireann an cluasán an áit nó an réad ina mhéid féin, os do chomhair nó timpeall ort: siúil timpeall air, sleamhnaigh tríd leis an maide stiúrtha clé, cas leis an gceann deas. Úsáideann splatanna Gaussacha API turgnamhach de chuid Meta Spatial SDK, nach dtacaíonn Meta leis agus nach dtugann sí barántas dó: is ar Immuch360 amháin atá aon locht. Conas a dhéanamh: [Taiscéal splatanna Gaussacha ar Meta Quest 3 nó 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Ritheann na gnéithe IS samhlacha agus innill a rinne daoine eile, íoslódáilt
 
 Tá LoRA 360° nomadoor faoi Apache 2.0 ar a cárta agus traenáladh é ar íomhánna CC0 agus fearann poiblí, le cuid faoi CC BY: tiocfaidh sannadh na coda sin i leagan níos déanaí de MODEL-LICENSES.md. Níl rud ar bith anseo faoi cheadúnas neamhthráchtála, agus ní theastaíonn CUDA ó rud ar bith. Tá leabharlanna eile ionsuite in ONNX Runtime agus LiteRT, liostaithe ina bhfógraí, ina measc Eigen faoin MPL 2.0, ceadúnas copyleft lag.
 
-Is gabhálacha fíor den aip iad gabhálacha an leathanaigh seo: na cinn fóin ar an tógáil Android in aithriseoir, na cinn Android TV ar aithriseoir Google TV, na cinn LG agus Samsung i mbrabhsálaí a sheasann in áit na teilifíse, na cinn Windows ar ríomhaire Windows 11 agus fuinneog Meta Quest i Quest 3, iad go léir le pánorámaí CC0 ó [Poly Haven](https://polyhaven.com); glacadh gabhálacha tumthacha an chluasáin ar Quest 3 le meáin an údair féin, agus an ceann iPad san insamhlóir iPad, le pánoráma CC0 Poly Haven. Is torthaí fíor den aip iad pictiúir chruthaitheoir IS, déanta ó ghrianghraif CC0 de Poly Haven, le dhá ghabháil fhíor den aip Windows. Is léaráidí a rinneadh don tionscadal iad an íomhá oscailte agus pictiúir na teilifíse, na logála isteach, an rothlaithe, na gceamaraí agus an dróin: ní thaispeánann siad scáileán ar bith den aip, lógó ar bith de chuideachta eile ná aghaidh ar bith. Cuireann cártaí na gcásanna úsáide léaráid den sórt sin os cionn sraithe a tarraingíodh don tionscadal, le lógónna na n-ardán, deilbhín na haipe agus, i dhá chárta, gabhálacha fíor den aip; seachas lógónna na n-ardán, ní thaispeánann siad lógó ar bith de chuideachta eile ná aghaidh ar bith. Tá gach íomhá, lena foinse, a dáta agus a ceadúnas, liostaithe in [CAPTURES.md](../.github/readme/CAPTURES.md).
+Is gabhálacha fíor den aip iad gabhálacha an leathanaigh seo: na cinn fóin ar an tógáil Android in aithriseoir, na cinn Android TV ar aithriseoir Google TV, na cinn LG agus Samsung i mbrabhsálaí a sheasann in áit na teilifíse, na cinn Windows ar ríomhaire Windows 11 agus fuinneog Meta Quest i Quest 3, iad go léir le pánorámaí CC0 ó [Poly Haven](https://polyhaven.com); glacadh gabhálacha tumthacha an chluasáin ar Quest 3 le meáin an údair féin, agus an ceann iPad san insamhlóir iPad, le pánoráma CC0 Poly Haven. Is torthaí fíor den aip iad pictiúir chruthaitheoir IS, déanta ó ghrianghraif CC0 de Poly Haven, le dhá ghabháil fhíor den aip Windows. Is léaráidí a rinneadh don tionscadal iad an íomhá oscailte agus pictiúir na teilifíse, na logála isteach, an rothlaithe, na gceamaraí agus an dróin: ní thaispeánann siad scáileán ar bith den aip, lógó ar bith de chuideachta eile ná aghaidh ar bith. Cuireann cártaí na gcásanna úsáide léaráid den sórt sin os cionn sraithe a tarraingíodh don tionscadal, le lógónna na n-ardán, deilbhín na haipe, gabhálacha fíor den aip i dhá chárta agus grianghraif CC0 de Poly Haven i dhá cheann; seachas lógónna na n-ardán, ní thaispeánann siad lógó ar bith de chuideachta eile ná aghaidh ar bith. Tá gach íomhá, lena foinse, a dáta agus a ceadúnas, liostaithe in [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Treochlár

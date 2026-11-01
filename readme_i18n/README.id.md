@@ -101,7 +101,7 @@ Pasang Immuch360 di setiap layar tempat Anda menonton: setiap layar membaca sumb
 
 **Yang Anda perlukan:** NAS dengan berbagi SMB atau WebDAV, dan Immuch360 di setiap layar tempat Anda menonton.
 
-Tambahkan berbagi tersebut di setiap layar, dan setiap layar memutar foto dan video di tempatnya, tanpa menyalin apa pun: ponsel, tablet, Android TV, Meta Quest, komputer Windows, Linux, dan macOS, serta TV LG yang masuk ke server Immich Anda. Foto 360° berputar sebagai bola di ponsel dan TV, dan mengelilingi Anda di headset. Cara melakukannya: [Memutar berkas dari NAS, komputer, server media, atau Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Tambahkan berbagi tersebut di setiap layar, dan setiap layar memutar foto dan video di tempatnya, tanpa menyalin apa pun: ponsel, tablet, Android TV, Meta Quest, komputer Windows, Linux, dan macOS, serta TV LG yang masuk ke server Immich Anda (SMB sejak webOS 22). Foto 360° berputar sebagai bola di ponsel dan TV, dan mengelilingi Anda di headset. Cara melakukannya: [Memutar berkas dari NAS, komputer, server media, atau Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Server Immich Anda di setiap layar, masuk dari ponsel Anda
 
@@ -119,7 +119,7 @@ Di ponsel, Immuch360 mempertahankan seluruh aplikasi seluler Immich, menambahkan
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrasi dengan satu tangkapan layar nyata dari aplikasi: laptop yang menjalankan Immuch360 di samping foto cetak dan NAS, dan seseorang yang terlihat dari belakang memakai headset yang menjalankan Immuch360, di depan salah satu pemandangan itu yang tampil timbul">
 </p>
 
-**Yang Anda perlukan:** Immuch360 di komputer Windows, Linux, atau macOS dan di Meta Quest, dengan NAS atau server Immich Anda di antara keduanya.
+**Yang Anda perlukan:** Immuch360 di komputer Windows, Linux, atau macOS dan di Meta Quest, dengan NAS Anda di antara keduanya, atau server Immich Anda dengan "Cadangkan juga versi AI" aktif.
 
 Komputer itu sendiri mengubah foto Anda menjadi foto 3D dan adegan 3D, serta menjadi panorama 360° dengan kartu grafis 8 GB di Windows atau Linux, dan menyimpannya di samping berkas aslinya. Headset menampilkan foto 3D dalam 3D sungguhan, menempatkan adegan di ruangan Anda dan panorama di sekeliling Anda; ponsel dan TV membuka panorama di penampil 360° mereka. Cara melakukannya: [Ubah satu foto menjadi 3D, adegan, panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -141,7 +141,7 @@ Ponsel menampilkan video langsung drone dan meneruskannya, lewat Wi-Fi Anda atau
 
 **Yang Anda perlukan:** kamera Insta360, GoPro MAX, atau DJI Osmo 360, NAS Anda, dan Immuch360 di layar: ponsel, tablet, Android TV, Meta Quest, Windows.
 
-Salin berkas mentah dari kartu kamera ke berbagi SMB atau WebDAV di NAS Anda, apa adanya; server Immich juga menerima berkas Insta360. Setiap layar menggabungkannya saat diputar, dengan kalibrasi yang tertulis di setiap berkas, dan tidak ada yang diekspor lebih dulu di aplikasi kamera. Cara melakukannya: [Membuka berkas mentah kamera 360°](#open-the-raw-files-of-360-cameras).
+Salin berkas .insp, .insv, .360, atau .osv dari kartu kamera ke berbagi SMB atau WebDAV di NAS Anda, apa adanya; server Immich juga menerima berkas Insta360. Setiap layar menggabungkannya saat diputar, dengan kalibrasi yang tertulis di setiap berkas, dan tidak ada yang diekspor lebih dulu di aplikasi kamera. Cara melakukannya: [Membuka berkas mentah kamera 360°](#open-the-raw-files-of-360-cameras).
 
 #### Server Plex dan DLNA Anda di TV dan di headset
 
@@ -161,12 +161,12 @@ Plex memberikan berkas asli pustaka Anda, sehingga video 360° tetap 360°, di s
 
 **Yang Anda perlukan:** Immuch360 di ponsel Android, iPhone, atau komputer Windows, dan di Meta Quest, di Wi-Fi rumah yang sama.
 
-Aktifkan "Bagikan ponsel ini di jaringan" di ponsel, atau "Bagikan komputer ini di jaringan" di komputer, dan headset memutar foto dan videonya, yang 360° di sekeliling Anda: tanpa server, tanpa NAS, tanpa unggahan. Di iPhone, berbagi berjalan selama aplikasi terbuka. Cara melakukannya: [Bagikan ponsel ini di jaringan](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Aktifkan "Bagikan ponsel ini di jaringan" di ponsel, atau "Bagikan komputer ini di jaringan" di komputer, dan headset memutar foto dan videonya, yang 360° di sekeliling Anda: tanpa server, tanpa NAS, tanpa unggahan. Di iPhone, berbagi berjalan selama aplikasi tampil di layar. Cara melakukannya: [Bagikan ponsel ini di jaringan](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Kamera Tapo Anda di TV dan di headset
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrasi, bukan tangkapan layar: kamera rumah di dekat jendela merekam taman, dan TV, ponsel, headset yang dipakai di sofa, dan laptop, masing-masing menjalankan Immuch360, menampilkan satu tampilan itu">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrasi, bukan tangkapan layar: kamera rumah di dekat jendela merekam taman, dan TV, ponsel, headset yang dipakai di dalam ruangan, dan laptop, masing-masing menjalankan Immuch360, menampilkan satu tampilan itu">
 </p>
 
 **Yang Anda perlukan:** kamera Tapo di jaringan rumah Anda, dan Immuch360 di ponsel Android, Android TV, Meta Quest, atau komputer Windows.
@@ -176,10 +176,10 @@ Setiap layar menampilkan kamera secara langsung dan memutar rekaman kartu memori
 #### Splat Gaussian di ruangan Anda, di Meta Quest 3 atau 3S (eksperimental)
 
 <p align="center">
-  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrasi, bukan tangkapan layar: di ruang keluarga, seseorang yang terlihat dari belakang memakai headset yang menjalankan Immuch360 berdiri di depan air mancur seukuran aslinya, yang ditangkap sebagai splat oleh aplikasi lain dan dibuka dari NAS">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrasi, bukan tangkapan layar: di ruang keluarga, seseorang yang terlihat dari belakang memakai headset yang menjalankan Immuch360 berdiri di depan air mancur seukuran aslinya yang terbuat dari cahaya berpendar, dibuka dari NAS di atas rak">
 </p>
 
-**Yang Anda perlukan:** splat yang dibuat dengan Polycam, Scaniverse, Luma, atau alat lain, sebagai berkas .spz atau .ply di NAS Anda atau di headset, dan Immuch360 di Meta Quest 3 atau 3S.
+**Yang Anda perlukan:** splat yang dibuat dengan Polycam, Scaniverse, Luma, atau alat lain, sebagai berkas .spz atau .ply biner di NAS Anda atau di headset, dan Immuch360 di Meta Quest 3 atau 3S.
 
 Headset menempatkan tempat atau objek itu seukuran aslinya, di depan Anda atau di sekeliling Anda: berjalanlah mengelilinginya, meluncurlah menembusnya dengan thumbstick kiri, berputarlah dengan yang kanan. Splat Gaussian memakai API eksperimental dari Meta Spatial SDK, yang tidak didukung maupun dijamin oleh Meta: setiap cacat sepenuhnya tanggung jawab Immuch360. Cara melakukannya: [Jelajahi splat Gaussian di Meta Quest 3 atau 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -898,7 +898,7 @@ Fitur AI menjalankan model dan mesin yang dibuat oleh pihak lain, yang diunduh h
 
 LoRA 360° dari nomadoor berlisensi Apache 2.0 menurut kartunya dan dilatih dengan gambar CC0 dan domain publik, dengan sebagian di bawah CC BY: atribusi bagian itu akan hadir di versi MODEL-LICENSES.md yang lebih baru. Tidak ada di sini yang berada di bawah lisensi nonkomersial, dan tidak ada yang memerlukan CUDA. ONNX Runtime dan LiteRT menyertakan pustaka lain, yang tercantum dalam pemberitahuannya, di antaranya Eigen di bawah MPL 2.0, lisensi copyleft lemah.
 
-Tangkapan layar di halaman ini adalah tangkapan nyata dari aplikasi: yang dari ponsel pada build Android di emulator, yang dari Android TV pada emulator Google TV, yang dari LG dan Samsung di browser yang berperan sebagai TV, yang dari Windows di PC Windows 11, dan jendela Meta Quest di Quest 3, semuanya dengan panorama CC0 dari [Poly Haven](https://polyhaven.com); tangkapan imersif headset diambil di Quest 3 dengan media milik penulis sendiri, dan yang dari iPad di simulator iPad, dengan panorama CC0 Poly Haven. Gambar-gambar pembuat AI adalah keluaran nyata aplikasi, dibuat dari foto CC0 Poly Haven, dengan dua tangkapan nyata dari aplikasi Windows. Gambar pembuka dan gambar TV, masuk dengan ponsel, rotasi, kamera, dan drone adalah ilustrasi yang dibuat untuk proyek ini: tidak menampilkan layar aplikasi, logo perusahaan lain, maupun wajah. Kartu kasus penggunaan menempatkan ilustrasi seperti itu di atas sebuah baris yang digambar untuk proyek ini, dengan logo platform, ikon aplikasi, dan, di dua kartu, tangkapan nyata dari aplikasi; selain logo platform, kartu-kartu itu tidak menampilkan logo perusahaan lain maupun wajah. Setiap gambar, dengan sumber, tanggal, dan lisensinya, tercantum di [CAPTURES.md](../.github/readme/CAPTURES.md).
+Tangkapan layar di halaman ini adalah tangkapan nyata dari aplikasi: yang dari ponsel pada build Android di emulator, yang dari Android TV pada emulator Google TV, yang dari LG dan Samsung di browser yang berperan sebagai TV, yang dari Windows di PC Windows 11, dan jendela Meta Quest di Quest 3, semuanya dengan panorama CC0 dari [Poly Haven](https://polyhaven.com); tangkapan imersif headset diambil di Quest 3 dengan media milik penulis sendiri, dan yang dari iPad di simulator iPad, dengan panorama CC0 Poly Haven. Gambar-gambar pembuat AI adalah keluaran nyata aplikasi, dibuat dari foto CC0 Poly Haven, dengan dua tangkapan nyata dari aplikasi Windows. Gambar pembuka dan gambar TV, masuk dengan ponsel, rotasi, kamera, dan drone adalah ilustrasi yang dibuat untuk proyek ini: tidak menampilkan layar aplikasi, logo perusahaan lain, maupun wajah. Kartu kasus penggunaan menempatkan ilustrasi seperti itu di atas sebuah baris yang digambar untuk proyek ini, dengan logo platform, ikon aplikasi, tangkapan nyata dari aplikasi di dua kartu, dan foto CC0 Poly Haven di dua kartu lainnya; selain logo platform, kartu-kartu itu tidak menampilkan logo perusahaan lain maupun wajah. Setiap gambar, dengan sumber, tanggal, dan lisensinya, tercantum di [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Peta jalan
