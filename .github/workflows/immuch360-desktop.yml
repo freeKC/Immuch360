@@ -35,6 +35,11 @@ name: Immuch360 Desktop
 #                  stable-diffusion.cpp on Vulkan, the generator of the 360° panoramas, built from the commits of
 #                  .github/desktop/ai/sd_cpp.lock.json: only when asked (the sdcpp input) or when the lock changed,
 #                  as artifacts Immuch360-AI-sdcpp-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
+#   brush-windows, brush-linux
+#                  Brush, the trainer of the splat scenes, built from the tag of .github/desktop/ai/brush.lock.json with
+#                  the patch of licenses/brush/patches (no window, network client, rerun or LPIPS weights): only when
+#                  asked (the brush input) or when the lock, its script or licenses/brush changed, as artifacts
+#                  Immuch360-AI-brush-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
 #
 # Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
 # from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
@@ -56,11 +61,19 @@ on:
         description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
         type: boolean
         default: false
+      brush:
+        description: Also build Brush (the brush jobs), as when brush.lock.json changes
+        type: boolean
+        default: false
   # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
   workflow_call:
     inputs:
       sdcpp:
         description: Also build stable-diffusion.cpp, for the release workflow to sign it (never for a release)
+        type: boolean
+        default: false
+      brush:
+        description: Also build Brush (never for a release)
         type: boolean
         default: false
     outputs:
@@ -89,6 +102,7 @@ jobs:
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
+      brush_lock_changed: ${{ steps.brush.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,6 +137,30 @@ jobs:
             changed=true
           fi
           echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      # The same for the brush jobs: the lock of Brush, its build script or licenses/brush (the patch, the lists of
+      # cargo deny and cargo about)
+      - name: Did the Brush lock, its script or its licences change
+        id: brush
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=
+          if [ "$EVENT" = pull_request ]; then
+            base=$(git merge-base HEAD "origin/$BASE_REF")
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          fi
+          changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/brush.lock.json \
+            .github/desktop/ai/brush_build.py licenses/brush; then
+            changed=true
+          fi
+          echo "brush.lock.json, brush_build.py or licenses/brush changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Install mise
@@ -1446,6 +1484,248 @@ jobs:
           python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
           chmod +x "$RUNNER_TEMP/unpacked/sd-cli"
           LD_LIBRARY_PATH= "$RUNNER_TEMP/unpacked/sd-cli" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  # Brush, the trainer of the splat scenes (lot SP2; plan of 01/11/2026, sections 2.3 and 3), built from the tag of
+  # .github/desktop/ai/brush.lock.json at its commit with the toolchain of Brush's own CI at that tag, cargo build
+  # --locked (the Cargo.lock of the tag), after licenses/brush/patches: brush_app without window, network client, rerun
+  # or the LPIPS weights, whose provenance is not written. The jobs check that the crates compiled in hold none of them
+  # (cargo tree, and cargo deny with licenses/brush/deny.toml, our licence list), that none of five 64 byte probes of
+  # the weights is in the program, and that --help is the fixture the runner is frozen by; THIRD-PARTY.md is written by
+  # cargo about. cargo-deny and cargo-about come from their releases, checked by the SHA-256 of the lock. Only when
+  # asked (the brush input) or when the lock, its script or licenses/brush changed. The cargo registry, the git
+  # dependencies and the target folder are cached by the id of the lock. The archive is
+  # Immuch360-AI-brush-<lock>-<system>.zip, not Immuch360-Desktop-*, so neither the packages job nor a release takes it
+  # (.github/desktop/ai/brush_build.py)
+  brush-windows:
+    name: Brush for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}
+    timeout-minutes: 150
+    defaults:
+      run:
+        shell: bash
+    env:
+      CARGO_TERM_COLOR: never
+      CARGO_INCREMENTAL: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/brush_build.py lock --system windows-x64 --github-output
+
+      - name: Sources of Brush at the commit of the tag, without the LPIPS weights, patched
+        run: python .github/desktop/ai/brush_build.py sources --dir "$RUNNER_TEMP/brush"
+
+      - name: cargo-deny and cargo-about of the lock
+        id: tools
+        run: python .github/desktop/ai/brush_build.py tools --system windows-x64 --dir "$RUNNER_TEMP/brush-tools" --github-output
+
+      - name: Rust of the lock
+        env:
+          TOOLCHAIN: ${{ steps.lock.outputs.toolchain }}
+        run: |
+          rustup toolchain install "$TOOLCHAIN" --profile minimal --no-self-update
+          rustup run "$TOOLCHAIN" rustc --version --verbose
+
+      - name: Restore the cargo cache
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-windows-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+          restore-keys: |
+            brush-windows-x64-${{ steps.lock.outputs.id }}-
+
+      - name: Build
+        id: build
+        run: python .github/desktop/ai/brush_build.py build --system windows-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: Save the cargo cache
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-windows-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+
+      - name: No LPIPS, rerun, network, TLS, window or file dialog crate in brush_app
+        run: python .github/desktop/ai/brush_build.py graph --system windows-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: cargo deny with our licence list
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: python .github/desktop/ai/brush_build.py deny --system windows-x64 --source "$RUNNER_TEMP/brush" --cargo-deny "$CARGO_DENY"
+
+      - name: THIRD-PARTY.md by cargo about
+        env:
+          CARGO_ABOUT: ${{ steps.tools.outputs.cargo_about }}
+        run: |
+          python .github/desktop/ai/brush_build.py about --system windows-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-about "$CARGO_ABOUT" --out "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md"
+
+      - name: None of the LPIPS weights in brush_app
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: python .github/desktop/ai/brush_build.py lpips --binary "$PROGRAM"
+
+      - name: brush_app --help as the fixture says, and no viewer
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: |
+          "$PROGRAM" --help > "$RUNNER_TEMP/brush-help.txt"
+          "$PROGRAM" --version > "$RUNNER_TEMP/brush-version.txt"
+          python .github/desktop/ai/brush_build.py help --output "$RUNNER_TEMP/brush-help.txt" \
+            --version-output "$RUNNER_TEMP/brush-version.txt"
+          if "$PROGRAM" > "$RUNNER_TEMP/brush-viewer.txt" 2>&1; then
+            echo "::error::brush_app without a source started (a viewer?)"; exit 1
+          fi
+          grep -q "no viewer" "$RUNNER_TEMP/brush-viewer.txt" || { cat "$RUNNER_TEMP/brush-viewer.txt"; exit 1; }
+          echo "brush_app without a source: $(cat "$RUNNER_TEMP/brush-viewer.txt")"
+
+      - name: The archive
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: |
+          python .github/desktop/ai/brush_build.py pack --system windows-x64 --source "$RUNNER_TEMP/brush" \
+            --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" --out dist
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  brush-linux:
+    name: Brush for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}
+    timeout-minutes: 150
+    env:
+      CARGO_TERM_COLOR: never
+      CARGO_INCREMENTAL: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/brush_build.py lock --system linux-x64 --github-output
+
+      - name: Sources of Brush at the commit of the tag, without the LPIPS weights, patched
+        run: python3 .github/desktop/ai/brush_build.py sources --dir "$RUNNER_TEMP/brush"
+
+      - name: cargo-deny and cargo-about of the lock
+        id: tools
+        run: python3 .github/desktop/ai/brush_build.py tools --system linux-x64 --dir "$RUNNER_TEMP/brush-tools" --github-output
+
+      - name: Rust of the lock
+        env:
+          TOOLCHAIN: ${{ steps.lock.outputs.toolchain }}
+        run: |
+          rustup toolchain install "$TOOLCHAIN" --profile minimal --no-self-update
+          rustup run "$TOOLCHAIN" rustc --version --verbose
+
+      - name: Restore the cargo cache
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-linux-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+          restore-keys: |
+            brush-linux-x64-${{ steps.lock.outputs.id }}-
+
+      - name: Build
+        id: build
+        run: python3 .github/desktop/ai/brush_build.py build --system linux-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: Save the cargo cache
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-linux-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+
+      - name: No LPIPS, rerun, network, TLS, window or file dialog crate in brush_app
+        run: python3 .github/desktop/ai/brush_build.py graph --system linux-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: cargo deny with our licence list
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: python3 .github/desktop/ai/brush_build.py deny --system linux-x64 --source "$RUNNER_TEMP/brush" --cargo-deny "$CARGO_DENY"
+
+      - name: THIRD-PARTY.md by cargo about
+        env:
+          CARGO_ABOUT: ${{ steps.tools.outputs.cargo_about }}
+        run: |
+          python3 .github/desktop/ai/brush_build.py about --system linux-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-about "$CARGO_ABOUT" --out "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md"
+
+      - name: None of the LPIPS weights in brush_app
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: python3 .github/desktop/ai/brush_build.py lpips --binary "$PROGRAM"
+
+      - name: brush_app --help as the fixture says, and no viewer
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: |
+          "$PROGRAM" --help > "$RUNNER_TEMP/brush-help.txt"
+          "$PROGRAM" --version > "$RUNNER_TEMP/brush-version.txt"
+          python3 .github/desktop/ai/brush_build.py help --output "$RUNNER_TEMP/brush-help.txt" \
+            --version-output "$RUNNER_TEMP/brush-version.txt"
+          if "$PROGRAM" > "$RUNNER_TEMP/brush-viewer.txt" 2>&1; then
+            echo "::error::brush_app without a source started (a viewer?)"; exit 1
+          fi
+          grep -q "no viewer" "$RUNNER_TEMP/brush-viewer.txt" || { cat "$RUNNER_TEMP/brush-viewer.txt"; exit 1; }
+          echo "brush_app without a source: $(cat "$RUNNER_TEMP/brush-viewer.txt")"
+
+      # The launcher that makes brush_app die with the app (PR_SET_PDEATHSIG), as in the archive of stable-diffusion.cpp
+      - name: immuch360-run
+        run: gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+
+      - name: The archive
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+          ARTIFACT: ${{ steps.lock.outputs.artifact }}
+        run: |
+          python3 .github/desktop/ai/brush_build.py pack --system linux-x64 --source "$RUNNER_TEMP/brush" \
+            --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" \
+            --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/$ARTIFACT" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/brush_app" "$RUNNER_TEMP/unpacked/immuch360-run"
+          "$RUNNER_TEMP/unpacked/immuch360-run" --parent $$ -- "$RUNNER_TEMP/unpacked/brush_app" --version
 
       - name: Upload the archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

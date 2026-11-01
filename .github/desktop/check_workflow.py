@@ -27,7 +27,9 @@ writes holds no secret, the job that holds the secrets cannot write, and the bui
 stable-diffusion.cpp, the generator of the 360° panoramas (lot P2), is built by the jobs whose names start with
 "sdcpp" (sdcpp-windows, sdcpp-linux): each runs on the image of the desktop build of its system (windows-2022 with
 Visual Studio 2022, ubuntu-22.04 for its glibc), only when asked or when the lock changed (an "if:" that reads
-inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. With --release, a workflow
+inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. Brush, the trainer of the
+splat scenes (lot SP2), is held to the same by the jobs whose names start with "brush" (brush-windows, brush-linux, an
+"if:" that reads inputs.brush). With --release, a workflow
 with the with_sdcpp input passes it to the build and nothing else ("sdcpp: ${{ inputs.with_sdcpp == true }}"), and its
 job that writes the contents never runs with it or with sign_test (an "if:" that negates both): building and signing
 stable-diffusion.cpp never touches a release of the app.
@@ -64,9 +66,12 @@ RELEASE_EVENTS = ('push', 'workflow_dispatch')
 SIGNING_JOB = 'sign-windows'
 SIGNING_SECRETS = ('AZURE_TENANT_ID', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET')
 SIGNING_LINE = re.compile(r'^(\s+)(' + '|'.join(SIGNING_SECRETS) + r'):\s*\$\{\{\s*secrets\.(\w+)\s*\}\}\s*$')
-# The jobs that build stable-diffusion.cpp, by the start of their names, and the image each system builds on
-SDCPP_JOB = 'sdcpp'
-SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
+# The jobs that build an engine of the AI features from its sources, by the start of their names: what they build,
+# the input that asks for them, and the image each system builds on
+ENGINE_JOBS = {
+    'sdcpp': ('stable-diffusion.cpp', 'inputs.sdcpp', {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}),
+    'brush': ('Brush', 'inputs.brush', {'brush-windows': 'windows-2022', 'brush-linux': 'ubuntu-22.04'}),
+}
 
 
 def release_triggers(workflow: str, tag_prefix: str = 'desktop-v') -> list:
@@ -161,22 +166,24 @@ def job_if(body: list) -> str:
     return ''
 
 
-def sdcpp_jobs(lines: list, owners: list) -> list:
-    """The jobs that build stable-diffusion.cpp: on their images, when asked only, never as a package of the app"""
+def engine_jobs(lines: list, owners: list) -> list:
+    """The jobs that build stable-diffusion.cpp or Brush: on their images, when asked only, never as a package of the
+    app"""
     found = []
     for job, body in job_lines(lines, owners).items():
-        if not job.startswith(SDCPP_JOB):
+        family = next((name for name in ENGINE_JOBS if job.startswith(name)), None)
+        if family is None:
             continue
+        engine, given, runners = ENGINE_JOBS[family]
         runner = next((re.match(r'^    runs-on:\s*(\S+)', line).group(1).strip('\'"') for line in body
                        if re.match(r'^    runs-on:', line)), None)
-        if job not in SDCPP_RUNNERS:
-            found.append(f'the job {job} builds stable-diffusion.cpp on no known system: '
-                         f'{", ".join(SDCPP_RUNNERS)} only')
-        elif runner != SDCPP_RUNNERS[job]:
-            found.append(f'the job {job} runs on {runner}: stable-diffusion.cpp builds on {SDCPP_RUNNERS[job]}, the '
-                         'image of the desktop build')
-        if 'inputs.sdcpp' not in job_if(body):
-            found.append(f'the job {job} runs on every event: its "if:" must read inputs.sdcpp (or the lock changed)')
+        if job not in runners:
+            found.append(f'the job {job} builds {engine} on no known system: {", ".join(runners)} only')
+        elif runner != runners[job]:
+            found.append(f'the job {job} runs on {runner}: {engine} builds on {runners[job]}, the image of the '
+                         'desktop build')
+        if given not in job_if(body):
+            found.append(f'the job {job} runs on every event: its "if:" must read {given} (or the lock changed)')
         for line in body:
             name = re.match(r'^\s+name:\s*[\'"]?(Immuch360-Desktop-\S*)', line)
             if name:
@@ -259,7 +266,7 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
             if release and re.match(r'^\s*contents:\s*write\s*$', line):
                 continue
             found.append(f'line {number}: a write access ({line.strip()})')
-    found += sdcpp_jobs(lines, owners)
+    found += engine_jobs(lines, owners)
     if release:
         found += signing_job_writes(lines, owners)
         found += release_triggers(workflow, tag_prefix)
