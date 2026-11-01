@@ -492,8 +492,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the file of a splat read, weighed, reduced and bounded off the main thread; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ of version 1 or 3 always rewritten as version 2, and the file handed to the module checked once more; the orientation a place opens in, from its gaussians; a version 2 SPZ rewritten too, a damaged one refused, the whole file checked; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the ZSTD decoder passed to the reading"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatReducer.kt": {
-    "blob": "eb353f166d3046a6aaccac7375eb36a9ca4189f9",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the reduction of a splat file to its strongest gaussians, in its own format; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ always written as version 2, the rotations of version 3 and the positions of version 1 recoded; the source of a rewrite read to the end of its gzip stream; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the streams of version 4 read and written as version 2"
+    "blob": "7a68529e3e57ffbab9e9e4d0ef162df524da7e20",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the reduction of a splat file to its strongest gaussians, in its own format; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): an SPZ always written as version 2, the rotations of version 3 and the positions of version 1 recoded; the source of a rewrite read to the end of its gzip stream; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the streams of version 4 read and written as version 2; fix round of the splat turn: the comments say a ZSTD stream of an SPZ carries no checksum"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatSession.kt": {
     "blob": "c11fd4c05d6575e6b263356139bb287675665fc6",
@@ -512,8 +512,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the options a measuring session may push to the headset; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the frame option, the frame of the SDK kept for a session of measures"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatZstd.kt": {
-    "blob": "7e29ae2cfa5bff0a1b9ba5d20acae93955d2382a",
-    "reason": "The splat turn and SPZ version 4 (fix-quest-splat-navigation): the ZSTD decoder of the version 4 splats behind one interface; not yet on the phone branch"
+    "blob": "80c6a49d749c261ad2494ddda394631bfbe29cb0",
+    "reason": "The splat turn and SPZ version 4 (fix-quest-splat-navigation): the ZSTD decoder of the version 4 splats behind one interface; not yet on the phone branch; fix round of the splat turn: the comment says a ZSTD frame of an SPZ carries no checksum"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
