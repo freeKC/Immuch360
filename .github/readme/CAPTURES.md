@@ -26,6 +26,21 @@ Every capture here is a real capture of the app, cut to the app's own window or 
 * Date: 5 October 2026.
 * Media: the same three panoramas and the same 360° video (CC0), on the device and on the test share NAS.
 
+## Android TV and Google TV, build 33
+
+* Files: `tv-b33-date-range.jpg` and `tv-b33-photo-date.jpg`, 1280 x 720, JPEG quality 85, reduced from 1920 x 1080 captures.
+* Build: release build 33 (the universal APK `Immuch360-v3.3.0-rc.0-33-release.apk`, versionCode 3030031), Google TV emulator (Android 16 Google TV image, 1920 x 1080), English interface, driven by the keys of the remote sent with adb.
+* Date: 30 October 2026.
+* `tv-b33-date-range.jpg`: Search, Date, "Custom range": the "Select a date range" dialog, the start year in focus, with no media on screen.
+* `tv-b33-photo-date.jpg`: the backplate DSC_4349 of "Wide Street 01" by Sergej Majboroda (CC0), on the device, its date set to 3 May 2025 for the tests, in the viewer with its controls shown.
+
+## Android phone, build 38
+
+* Files: `b38-on-this-device.png` and `b38-folder-browser.jpg` (JPEG quality 85), 540 x 960, cut below the status bar of 1080 x 2400 captures, then reduced.
+* Build: a debug build of the branch that brought "Browse a folder" to build 38, the texts on screen the same as in build 38; phone emulator (Android 16), English interface. The cut leaves out the status bar and the DEBUG ribbon of the debug build.
+* Date: 31 October 2026.
+* Media: in `b38-folder-browser.jpg`, the panorama "Canary Wharf" by Andreas Mischok, the backplate IMG_0809 of "The Sky Is On Fire" by Greg Zaal and Rico Cilliers and a test video of the backplate DSC_4349 of "Wide Street 01" by Sergej Majboroda (CC0), in a test folder Download/Quest; in `b38-on-this-device.png`, the albums of the emulator: that street and test videos of colour bars made with ffmpeg.
+
 ## Meta Quest 3, build 11
 
 * Files: `quest-*.jpg`, 1280 x 720.
