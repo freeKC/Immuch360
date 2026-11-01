@@ -56,6 +56,7 @@ import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
+import 'package:immich_mobile/utils/zstd_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -175,6 +176,8 @@ Future<void> initApp() async {
   LicenseRegistry.addLicense(pairingLicenses);
   // LiteRT, the engine of the AI relief, in the quest flavour (lib/utils/litert_licenses.dart)
   LicenseRegistry.addLicense(liteRtLicenses);
+  // zstd-jni, which reads the splats of SPZ version 4, in the quest flavour (lib/utils/zstd_licenses.dart)
+  LicenseRegistry.addLicense(zstdLicenses);
   // The Meta Spatial SDK of the Quest viewer and its splat module, listed as active in the builds that offer the
   // Gaussian splats (lib/utils/meta_spatial_licenses.dart)
   LicenseRegistry.addLicense(metaSpatialLicenses);
