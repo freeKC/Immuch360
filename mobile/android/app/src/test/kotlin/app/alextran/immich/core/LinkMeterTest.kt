@@ -1,7 +1,10 @@
 package app.alextran.immich.core
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LinkMeterTest {
@@ -116,5 +119,114 @@ class LinkMeterTest {
     assertNull(meter.rate())
     assertNull(meter.sinceProgressMs())
     assertEquals(0L, meter.receivedBytes)
+  }
+
+  // The "no progress" clock counts only the time the player asks for bytes (review of 1 November 2026, run A2: a film
+  // paused for a while with its buffer full, a seek while paused, a server that answers 2.5 s later, and the app said
+  // "The server stopped sending this video" at once)
+
+  @Test
+  fun `a pause with the buffer full, then a seek that waits for its first byte, is no dead link`() {
+    meter.onStart()
+    receive(1_000_000L, 4_000)
+    // The buffer is full: Media3 asks for nothing while the film is paused
+    meter.setLoadingWanted(false)
+    now += 40_000
+    // The seek: Media3 wants media again, the server answers 2 s later
+    meter.setLoadingWanted(true)
+    meter.onStart()
+    now += 2_000
+    assertEquals(2_000L, meter.sinceProgressMs())
+    assertFalse(LinkStartRule.isDead(waiting = true, sinceProgressMs = meter.sinceProgressMs()))
+  }
+
+  @Test
+  fun `a clip loaded to its end, seeked back after a while, is no dead link`() {
+    meter.onStart()
+    receive(1_000_000L, 2_000)
+    // The whole file is in: its read ends, Media3 asks nothing more (it stops calling the load control)
+    meter.onEnd()
+    now += 40_000
+    // A seek back: the back buffer is 0, a new read starts and waits for the server
+    meter.onInitializing()
+    now += 2_000
+    assertEquals(2_000L, meter.sinceProgressMs())
+  }
+
+  @Test
+  fun `a load error after a pause of eleven minutes is tried again`() {
+    meter.onStart()
+    receive(1_000_000L, 4_000)
+    meter.setLoadingWanted(false)
+    now += 11L * 60_000L
+    // Played on: the server closed the idle connection meanwhile, the first read fails at once
+    meter.setLoadingWanted(true)
+    now += 50
+    meter.onLoadError()
+    assertNotNull(StreamRetry.delayMs(1, meter.sinceProgressMs(), fatal = false))
+  }
+
+  @Test
+  fun `a server that takes the request and never answers is a network link, dead after 30 s`() {
+    // Media3 opens the read: no header comes, ever
+    meter.onInitializing()
+    assertTrue(meter.isNetwork)
+    now += 30_000
+    assertEquals(30_000L, meter.sinceProgressMs())
+    assertTrue(LinkStartRule.isDead(waiting = true, sinceProgressMs = meter.sinceProgressMs()))
+  }
+
+  @Test
+  fun `the tries of a link that sends nothing keep the clock, dead 30 s after the last byte`() {
+    meter.onStart()
+    receive(1_000_000L, 2_000)
+    // Each try waits 8 s for a byte (Cronet's read timeout), fails, and Media3 tries again after 1, 2, 4 s
+    for (delay in longArrayOf(1_000L, 2_000L, 4_000L)) {
+      now += 8_000
+      meter.onEnd()
+      meter.onLoadError()
+      now += delay
+      meter.onInitializing()
+    }
+    assertEquals(31_000L, meter.sinceProgressMs())
+    assertTrue(LinkStartRule.isDead(waiting = true, sinceProgressMs = meter.sinceProgressMs()))
+    assertNotNull(StreamRetry.delayMs(4, meter.sinceProgressMs(), fatal = false))
+  }
+
+  // The rate counts the time the player asked for bytes to the millisecond (review of 1 November 2026: with the
+  // buffer at its bytes cap, Media3 loads 1 MiB each time the film frees room, every slot of 250 ms counted as asked,
+  // and the meter measured what the film consumes: "it will pause now and then" over a link four times faster)
+
+  /**
+   * A film that needs [needBps] played from a buffer at its cap over a link of [linkBps] for [ms]: Media3 asks for
+   * 1 MiB, the link brings it, Media3 asks nothing until the film consumed 1 MiB at [consumedBps]
+   */
+  private fun playAtTheCap(linkBps: Long, consumedBps: Long, ms: Long) {
+    val chunk = 1L shl 20
+    val end = now + ms
+    while (now < end) {
+      meter.setLoadingWanted(true)
+      var left = chunk
+      while (left > 0) {
+        now += 10
+        val bytes = minOf(left, linkBps / 100)
+        meter.onBytes(bytes)
+        left -= bytes
+      }
+      meter.setLoadingWanted(false)
+      now += chunk * 1000L / consumedBps
+    }
+  }
+
+  @Test
+  fun `a buffer at its cap fed 1 MiB at a time measures the link, not what the film consumes`() {
+    // A 4K film of 48 Mbit/s over a link of 200 Mbit/s, a calmer scene that consumes 15 % less than the average
+    meter.onStart()
+    meter.onFileSize("film", 6_000_000L * 3_600L)
+    meter.onTimeline(durationMs = 3_600_000L, bufferedPositionMs = 50_000L)
+    playAtTheCap(linkBps = 25_000_000L, consumedBps = 5_100_000L, ms = 20_000)
+    val ratio = meter.ratio()!!
+    assertTrue("ratio $ratio", ratio >= LinkStartRule.FAST_RATIO)
+    assertFalse(LinkStartRule.isSlow(ratio, slowForMs = 20_000L))
   }
 }

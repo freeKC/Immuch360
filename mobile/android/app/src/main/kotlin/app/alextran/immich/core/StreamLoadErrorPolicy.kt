@@ -62,6 +62,8 @@ class StreamLoadErrorPolicy(private val meter: LinkMeter) : LoadErrorHandlingPol
     val delay = default.getRetryDelayMsFor(loadErrorInfo)
     // A file of the device keeps Media3's rule
     if (!meter.isNetwork) return delay
+    // Tried again: the bytes are still asked, and the time without progress goes on across the tries
+    meter.onLoadError()
     val fatal = delay == C.TIME_UNSET
     val status = (loadErrorInfo.exception as? HttpDataSource.InvalidResponseCodeException)?.responseCode
     return StreamRetry.delayMs(loadErrorInfo.errorCount, meter.sinceProgressMs(), fatal, status) ?: C.TIME_UNSET

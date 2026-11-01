@@ -8,14 +8,23 @@ import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.TransferListener
 
 /**
- * What the link of one player brings: the bytes per second received over the last [WINDOW_MS] while the player wanted
- * more (the time its load control stopped loading because the buffer was full does not count), the bytes per second
- * the video consumes (the size of its files over its duration), and the time since the last progress (each
- * [LinkStartRule.PROGRESS_BYTES] that arrive). Fed by Media3 as the transfer listener of the player's network reads
- * (see [PlayerLink]), read by its load control on the playback thread and by the app on the main thread.
+ * What the link of one player brings: the bytes per second received over the last [WINDOW_MS] while the player asked
+ * for bytes, the bytes per second the video consumes (the size of its files over its duration), and the time the
+ * player asked for bytes since the last progress (each [LinkStartRule.PROGRESS_BYTES] that arrive). Fed by Media3 as
+ * the transfer listener of the player's network reads (see [PlayerLink]), read by its load control on the playback
+ * thread and by the app on the main thread.
  *
- * The clock is a parameter so that the tests drive it; [onBytes], [onFileSize] and [setLoadingWanted] are the pure
- * part the transfer callbacks and the load control call.
+ * The player asks for bytes while its load control wants more media ([setLoadingWanted]) and a read of it is open
+ * ([onInitializing] to [onEnd]), or a load failed and Media3 tries again ([onLoadError]). Both measures count that
+ * time only, to the millisecond (review of 1 November 2026): a film paused with its buffer full, a clip loaded to its
+ * end, asks for nothing, and the next request (a seek, a play) was taken for a dead server at once; a buffer at its
+ * bytes cap, which Media3 tops up 1 MiB at a time as the film frees room, measured what the film consumes rather than
+ * what the link brings. A new ask after a time without one starts the clock of progress again; the tries after an
+ * error keep it, so that a link that sends nothing is still dead [LinkStartRule.DEAD_AFTER_MS] after its last bytes.
+ *
+ * The clock is a parameter so that the tests drive it; [onInitializing], [onStart], [onBytes], [onEnd],
+ * [onLoadError], [onFileSize] and [setLoadingWanted] are the pure part the transfer callbacks, the load control and
+ * the load error policy call.
  */
 @OptIn(UnstableApi::class)
 class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() }) : TransferListener {
@@ -24,6 +33,9 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     const val SLOT_MS = 250L
     /** The slots of the window, and the slot under way */
     private const val SLOTS = (WINDOW_MS / SLOT_MS).toInt() + 1
+
+    /** The read of the pure calls that name none */
+    private val ONE_READ = Any()
 
     /** A first rate is told once this much arrived, or after [FIRST_VALUE_MS] of loading */
     const val FIRST_VALUE_BYTES = 256L * 1024L
@@ -42,12 +54,26 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
   private val lock = Any()
   private val slotBytes = LongArray(SLOTS)
   private val slotNumber = LongArray(SLOTS) { -1L }
-  private val slotWanted = BooleanArray(SLOTS)
+
+  /** The ms of each slot the player asked for bytes */
+  private val slotAskedMs = LongArray(SLOTS)
   private var lastSlot = -1L
+
+  /** The last answer of the load control: it wants more media */
   private var wanted = true
-  private var startedAt = -1L
+
+  /** The network reads open, by their data source: from their request to their end */
+  private val reads = HashSet<Any>()
+
+  /** A load failed since the last progress: Media3 tries it again, the bytes are still asked */
+  private var failing = false
+
+  /** Where the asked time accounted so far ends, in [clock] time; -1 while the player asks for nothing */
+  private var askedFrom = -1L
+
+  /** The time the player asked for bytes since the last progress, or since it asked again after a time without */
+  private var askedSinceProgress = 0L
   private var total = 0L
-  private var progressAt = -1L
   private var bytesAtProgress = 0L
   private var lastRate: Long? = null
   private var network = false
@@ -63,12 +89,14 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     synchronized(lock) {
       slotBytes.fill(0L)
       slotNumber.fill(-1L)
-      slotWanted.fill(false)
+      slotAskedMs.fill(0L)
       lastSlot = -1L
       wanted = true
-      startedAt = -1L
+      reads.clear()
+      failing = false
+      askedFrom = -1L
+      askedSinceProgress = 0L
       total = 0L
-      progressAt = -1L
       bytesAtProgress = 0L
       lastRate = null
       network = false
@@ -79,32 +107,54 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     }
   }
 
+  /** Whether the player asks for bytes now, see the class */
+  private val asked: Boolean get() = wanted && (reads.isNotEmpty() || failing)
+
+  /**
+   * Applies [block] to the state at [now], the asked time accounted to it first: an ask that begins after a time
+   * without one starts the clock of progress again (unless a load failed: its tries keep it), an ask that ends
+   * keeps the rate it measured
+   */
+  private inline fun change(now: Long, block: () -> Unit) {
+    account(now)
+    val before = asked
+    block()
+    val after = asked
+    if (!before && after) {
+      askedFrom = now
+      if (!failing) askedSinceProgress = 0L
+    } else if (before && !after) {
+      askedFrom = -1L
+      computeRate(now)
+    }
+  }
+
   /** The load control wants more media ([wanted]) or holds what it wants */
   fun setLoadingWanted(wanted: Boolean) {
+    synchronized(lock) { change(clock()) { this.wanted = wanted } }
+  }
+
+  /** A network read of the player ([read], its data source) is asked of the server: no answer yet */
+  fun onInitializing(read: Any = ONE_READ) {
     synchronized(lock) {
-      val now = clock()
-      fill(now)
-      if (this.wanted && !wanted) {
-        // The rate as the loading stops: what the link brought while it was asked
-        computeRate(now)
-      }
-      this.wanted = wanted
-      if (wanted) {
-        slotWanted[index(now / SLOT_MS)] = true
+      change(clock()) {
+        network = true
+        reads.add(read)
       }
     }
   }
 
-  /** A network read of the player started: the time since progress counts from the first one */
-  fun onStart() {
-    synchronized(lock) {
-      network = true
-      if (startedAt < 0) {
-        val now = clock()
-        fill(now)
-        startedAt = now
-      }
-    }
+  /** The server answered a network read of the player ([read]): its bytes come */
+  fun onStart(read: Any = ONE_READ) = onInitializing(read)
+
+  /** A network read of the player ([read]) ended: the file read to its end, a seek, an error */
+  fun onEnd(read: Any = ONE_READ) {
+    synchronized(lock) { change(clock()) { reads.remove(read) } }
+  }
+
+  /** A load of the player failed: Media3 tries it again (see StreamLoadErrorPolicy), the bytes are still asked */
+  fun onLoadError() {
+    synchronized(lock) { change(clock()) { failing = true } }
   }
 
   /** [count] bytes arrived over the network */
@@ -112,14 +162,17 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     if (count <= 0) return
     synchronized(lock) {
       val now = clock()
-      fill(now)
-      network = true
-      if (startedAt < 0) startedAt = now
+      change(now) {
+        network = true
+        // Bytes come from an open read, whatever was said of it
+        if (reads.isEmpty()) reads.add(ONE_READ)
+      }
       slotBytes[index(now / SLOT_MS)] += count
       total += count
       if (total - bytesAtProgress >= LinkStartRule.PROGRESS_BYTES) {
-        progressAt = now
+        askedSinceProgress = 0L
         bytesAtProgress = total
+        failing = false
       }
     }
   }
@@ -142,26 +195,26 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     }
   }
 
-  /** Whether any of the player's reads went over the network since [reset] */
+  /** Whether any of the player's reads went over the network since [reset], from its request on */
   val isNetwork: Boolean get() = synchronized(lock) { network }
 
   /** Bytes received since [reset] */
   val receivedBytes: Long get() = synchronized(lock) { total }
 
   /**
-   * Bytes per second received over the last [WINDOW_MS] while the player wanted more; the last value while it wanted
-   * none in that window; null before [FIRST_VALUE_BYTES] arrived or [FIRST_VALUE_MS] of wanting passed.
+   * Bytes received per second the player asked for bytes, over the last [WINDOW_MS]; the last value while it asked
+   * for none in that window; null before [FIRST_VALUE_BYTES] arrived or [FIRST_VALUE_MS] of asking passed.
    */
   fun rate(): Long? {
     synchronized(lock) {
       if (!network) return null
       val now = clock()
-      fill(now)
+      account(now)
       return computeRate(now)
     }
   }
 
-  /** [rate], the slots filled to [now] already */
+  /** [rate], the asked time accounted to [now] already */
   private fun computeRate(now: Long): Long? {
     val current = now / SLOT_MS
     var bytes = 0L
@@ -169,9 +222,9 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     for (k in 0 until SLOTS) {
       val slot = current - k
       val i = index(slot)
-      if (slotNumber[i] != slot || !slotWanted[i]) continue
+      if (slotNumber[i] != slot) continue
       bytes += slotBytes[i]
-      time += if (slot == current) (now - slot * SLOT_MS) else SLOT_MS
+      time += slotAskedMs[i]
     }
     if (time <= 0L) return lastRate
     if (lastRate == null && time < FIRST_VALUE_MS && bytes < FIRST_VALUE_BYTES) return null
@@ -200,20 +253,37 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     return rate.toDouble() / (need.toDouble() * speed.coerceAtLeast(0.1f))
   }
 
-  /** Time since the last progress, or since the first read for a server that never sent; null before any read */
+  /**
+   * The time the player asked for bytes since the last progress, or since it asked again after a time without (the
+   * request of a seek, of a play after a pause), a server that never sent included; null before any network read
+   */
   fun sinceProgressMs(): Long? {
     synchronized(lock) {
-      val from = if (progressAt >= 0) progressAt else startedAt
-      return if (from < 0) null else (clock() - from).coerceAtLeast(0L)
+      if (!network) return null
+      account(clock())
+      return askedSinceProgress
     }
   }
 
-  private fun index(slot: Long): Int = (slot % SLOTS).toInt()
+  private fun index(slot: Long): Int = Math.floorMod(slot, SLOTS.toLong()).toInt()
 
-  /**
-   * The slots from the last one touched to [now] get no bytes and the wanted state that held meanwhile; the first
-   * call fills the slot under way only (nothing was asked before it)
-   */
+  /** The time asked from [askedFrom] to [now] goes to the clock of progress and to the slots of the window */
+  private fun account(now: Long) {
+    fill(now)
+    val from = askedFrom
+    if (from < 0 || now <= from) return
+    askedSinceProgress += now - from
+    var t = maxOf(from, (now / SLOT_MS - SLOTS + 1) * SLOT_MS)
+    while (t < now) {
+      val slot = t / SLOT_MS
+      val end = minOf(now, (slot + 1) * SLOT_MS)
+      slotAskedMs[index(slot)] += end - t
+      t = end
+    }
+    askedFrom = now
+  }
+
+  /** The slots from the last one touched to [now] start empty; the first call starts the slot under way only */
   private fun fill(now: Long) {
     val current = now / SLOT_MS
     if (lastSlot >= 0 && current <= lastSlot) return
@@ -226,18 +296,22 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
       val i = index(slot)
       slotNumber[i] = slot
       slotBytes[i] = 0L
-      slotWanted[i] = wanted
+      slotAskedMs[i] = 0L
     }
     lastSlot = current
   }
 
-  // The transfer callbacks of Media3, on its loading threads: only the reads over the network count
+  // The transfer callbacks of Media3, on its loading threads: only the reads over the network count. A read is asked
+  // from its request: a server that takes the request and never answers is a network link with no progress (review
+  // of 1 November 2026: it kept Media3's rule, a few tries and a fatal error, and was never said to be dead)
 
-  override fun onTransferInitializing(source: DataSource, dataSpec: DataSpec, isNetwork: Boolean) {}
+  override fun onTransferInitializing(source: DataSource, dataSpec: DataSpec, isNetwork: Boolean) {
+    if (isNetwork) onInitializing(source)
+  }
 
   override fun onTransferStart(source: DataSource, dataSpec: DataSpec, isNetwork: Boolean) {
     if (!isNetwork) return
-    onStart()
+    onStart(source)
     val headers = try {
       source.responseHeaders
     } catch (e: Exception) {
@@ -251,7 +325,9 @@ class LinkMeter(private val clock: () -> Long = { SystemClock.elapsedRealtime() 
     if (isNetwork) onBytes(bytesTransferred.toLong())
   }
 
-  override fun onTransferEnd(source: DataSource, dataSpec: DataSpec, isNetwork: Boolean) {}
+  override fun onTransferEnd(source: DataSource, dataSpec: DataSpec, isNetwork: Boolean) {
+    if (isNetwork) onEnd(source)
+  }
 
   /** The whole size of the file a response is part of: its Content-Range total, else its length read from the start */
   private fun sizeOf(headers: Map<String, List<String>>, dataSpec: DataSpec): Long? {
