@@ -170,8 +170,12 @@ class FakePlaybackEngine implements PlaybackEngine {
     silenced = true;
   }
 
+  /// How many times [dispose] was called: a player is disposed once
+  int disposeCalls = 0;
+
   @override
   Future<void> dispose() async {
+    disposeCalls++;
     final hold = holdDispose;
     if (hold != null) {
       await hold.future;
