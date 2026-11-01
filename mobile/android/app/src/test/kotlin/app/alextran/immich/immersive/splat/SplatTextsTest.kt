@@ -135,6 +135,7 @@ class SplatTextsTest {
         SplatTexts.LABEL_PREPARING to "splat_preparing",
         SplatTexts.LABEL_LOADING to "splat_loading",
         SplatTexts.LABEL_FAILED to "splat_failed",
+        SplatTexts.LABEL_HINT to "splat_hint",
         SplatTexts.LABEL_MODULE_CANNOT_READ to "splat_module_cannot_read",
         SplatTexts.LABEL_NO_RENDERER to "splat_no_renderer",
         SplatTexts.LABEL_NEWER_SPZ to "splat_newer_spz",

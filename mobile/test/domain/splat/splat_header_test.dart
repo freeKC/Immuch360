@@ -68,6 +68,47 @@ void main() {
     }
   });
 
+  test('the SPZ of version 4 as Niantic writes them, up to degree 4, give their count and degree', () {
+    for (final name in ['axes_v4_niantic.spz', 'turns_v4.spz', 'sh4_v4.spz']) {
+      final header = headers[name] as Map<String, dynamic>;
+      final head = probe(name) as SplatHead;
+      expect(head.formatVersion, 4, reason: name);
+      expect(head.gaussians, header['gaussians'], reason: name);
+      expect(head.shDegree, header['shDegree'], reason: name);
+    }
+    expect(splatV4StreamSizes(686, 0, 5), [6174, 686, 2058, 2058, 2744]);
+    expect(splatV4StreamSizes(686, 0, 6), [6174, 686, 2058, 2058, 2744, 0]);
+    expect(splatV4StreamSizes(8, 4, 6)!.last, 8 * 72);
+    expect(splatV4StreamSizes(8, 1, 5), isNull);
+  });
+
+  test('a version 4 SPZ whose table of contents does not match its arrays is damaged, as in SplatHeaderTest.kt', () {
+    final good = bytesOf('axes_v4_niantic.spz');
+    SplatFileProblem? refusalOf(Uint8List bytes, [int? length]) => switch (probeSplatHead(bytes, length ?? bytes.length)) {
+      SplatRefused(:final problem) => problem,
+      _ => null,
+    };
+    Uint8List withLong(Uint8List source, int at, int value) {
+      final copy = Uint8List.fromList(source);
+      ByteData.sublistView(copy).setInt64(at, value, Endian.little);
+      return copy;
+    }
+
+    expect(refusalOf(good), isNull);
+    // A decompressed size that is not the one of its array
+    expect(refusalOf(withLong(good, 32 + 8, 686 * 9 + 1)), SplatFileProblem.damaged);
+    // A compressed size past the end of the file, streams that end before it, a file cut
+    expect(refusalOf(withLong(good, 32, 100000)), SplatFileProblem.damaged);
+    expect(refusalOf(good, good.length + 1), SplatFileProblem.damaged);
+    expect(refusalOf(Uint8List.sublistView(good, 0, good.length - 1)), SplatFileProblem.damaged);
+    // Fewer streams than arrays, or a sixth stream of harmonics of degree 0 that is not empty
+    expect(refusalOf(Uint8List.fromList(good)..[15] = 4), SplatFileProblem.damaged);
+    expect(refusalOf(withLong(bytesOf('axes_v4.spz'), 32 + 5 * 16 + 8, 1)), SplatFileProblem.damaged);
+    // Positions a fixed point of 24 bits cannot hold, harmonics past degree 4
+    expect(refusalOf(Uint8List.fromList(good)..[13] = 0), SplatFileProblem.damaged);
+    expect(refusalOf(Uint8List.fromList(good)..[12] = 5), SplatFileProblem.damaged);
+  });
+
   test('a PLY of gaussians gives its count, its degree and the tool its comment names', () {
     expect(
       probe('axes.ply'),

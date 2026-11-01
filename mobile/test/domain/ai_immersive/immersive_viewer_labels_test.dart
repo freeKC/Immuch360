@@ -92,10 +92,8 @@ void main() {
       final labels = splatViewerLabels(t);
 
       expect(labels['splatLoading'], 'Loading the splat');
-      expect(
-        labels['splatSpzV4'],
-        'This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier',
-      );
+      // The headset reads every version of SPZ (FreeKC's report of 1 November 2026): no text refuses version 4
+      expect(labels.containsKey('splatSpzV4'), isFalse);
       expect(
         labels['splatModuleCannotRead'],
         'This device cannot show this splat: its copy for the headset is not in a form the splat module reads',
@@ -201,10 +199,12 @@ void main() {
     expect(labels['sceneReset'], 'Reset');
     expect(labels['scenePhoto2d'], 'Photo (2D)');
     expect(labels['scene3d'], '3D scene');
+    // A click of a thumbstick no longer resets a scene (FreeKC's report of 1 November 2026): Reset is in the panel
+    expect(labels['sceneHint'], 'Left thumbstick: glide. A, X or grip: show or hide this panel. B or Y: back to the app.');
+    // A splat has its own hint: its right thumbstick turns it (SplatTexts.kt)
     expect(
-      labels['sceneHint'],
-      'Left thumbstick: glide. Click a thumbstick: Reset. A, X or grip: show or hide this panel. B or Y: back to the '
-      'app.',
+      splatViewerLabels(await english(tester))['splatHint'],
+      'Left thumbstick: glide. Right thumbstick: turn. A, X or grip: show or hide this panel. B or Y: back to the app.',
     );
     expect(labels['sceneZone'], 'Room to move: about {size} each way');
     expect(labels['sceneHidden'], 'Hidden areas filled: {percent}%');
