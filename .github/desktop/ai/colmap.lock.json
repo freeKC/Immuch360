@@ -10,7 +10,7 @@
   "patches": [
     "0001-without-cholmod.patch",
     "0002-vcpkg-without-suitesparse.patch",
-    "0003-faiss-avx2-without-blas.patch"
+    "0003-faiss-without-blas.patch"
   ],
   "vcpkg": {
     "repository": "https://github.com/microsoft/vcpkg",
@@ -43,7 +43,7 @@
       "Ninja",
       "-DCMAKE_C_COMPILER=cl.exe",
       "-DCMAKE_CXX_COMPILER=cl.exe",
-      "-DFAISS_AVX2_ENABLED=ON"
+      "-DFAISS_WITHOUT_BLAS=ON"
     ],
     "linux-x64": [
       "-G",

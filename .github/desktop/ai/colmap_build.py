@@ -456,9 +456,9 @@ def cmake_options(lock: dict, system: str, vcpkg: pathlib.Path, installed: pathl
 def configure_problems(log: str, options: list = (), cache: str = '') -> list:
     problems = [f'the configure step does not say "{line}"' for line in CONFIGURE_SAYS if line not in log]
     problems += [f'the configure step says "{line}"' for line in CONFIGURE_NEVER if line in log]
-    # The AVX2 build of faiss, when asked (Windows), must be the one COLMAP links
-    if '-DFAISS_AVX2_ENABLED=ON' in options and 'Enabling the AVX2 build of faiss' not in log:
-        problems.append('the configure step does not say "Enabling the AVX2 build of faiss"')
+    # faiss without BLAS in the feature index, when asked (Windows), must be on
+    if '-DFAISS_WITHOUT_BLAS=ON' in options and 'Using the distances of faiss instead of BLAS' not in log:
+        problems.append('the configure step does not say "Using the distances of faiss instead of BLAS"')
     # A flag given to start the flags of a language must be in the flags CMake kept
     for option in options:
         match = re.fullmatch(r'-DCMAKE_(C|CXX)_FLAGS_INIT=(.+)', option)
@@ -660,9 +660,8 @@ def build_info(lock: dict, system: str, ports: int) -> bytes:
         'CMake options: ' + ' '.join([*lock['cmake']['common'], *lock['cmake'][system]]),
         'Left out: the graphical interface (Qt), OpenGL and SiftGPU, CUDA, LSD, CGAL, CHOLMOD and SuiteSparse, ONNX '
         'Runtime, the dense reconstruction (MVS), the downloads (curl, OpenSSL), the tests',
-        *(['Processor: x86-64 with AVX2 (faiss built for AVX2, its own distances instead of BLAS: '
-           'licenses/patches/0003-faiss-avx2-without-blas.patch)'] if '-DFAISS_AVX2_ENABLED=ON' in lock['cmake'][system]
-          else ['Processor: x86-64 (faiss chooses its SIMD code at run time)']),
+        *(['Feature index: the distances of faiss instead of BLAS (licenses/patches/0003-faiss-without-blas.patch)']
+          if '-DFAISS_WITHOUT_BLAS=ON' in lock['cmake'][system] else []),
         *([f'Built by {run_url}'] if run_url else []),
         '',
     ]).encode()
