@@ -231,7 +231,7 @@ class _MpvFrame implements SplatFrame {
   double get sharpness => _grab.sharpness;
 
   @override
-  Future<void> writeJpeg(String path) {
+  Future<({int width, int height})> writeJpeg(String path) {
     final request = _EncodeRequest(
       _grab.pixels,
       _grab.width,
@@ -258,10 +258,11 @@ class _EncodeRequest {
 }
 
 /// [_encode] in another isolate, the closure holding the request only
-Future<void> _encodeInBackground(_EncodeRequest request) => Isolate.run(() => _encode(request));
+Future<({int width, int height})> _encodeInBackground(_EncodeRequest request) => Isolate.run(() => _encode(request));
 
-/// The frame as RGBA, reduced to [_EncodeRequest.longSide], encoded and written; in an isolate of its own
-void _encode(_EncodeRequest request) {
+/// The frame as RGBA, reduced to [_EncodeRequest.longSide], encoded and written, its size given back; in an isolate of
+/// its own
+({int width, int height}) _encode(_EncodeRequest request) {
   final rgba = request.pixels.materialize().asUint8List();
   for (var at = 0; at < rgba.length; at += 4) {
     final blue = rgba[at];
@@ -282,7 +283,7 @@ void _encode(_EncodeRequest request) {
         SbsEncodeOptions(quality: request.quality, subsampling: ChromaSubsampling.s420),
       );
       File(request.path).writeAsBytesSync(jpeg);
-      return;
+      return (width: fitted.width, height: fitted.height);
     } on SbsCodecException catch (error) {
       refusal = error;
     }

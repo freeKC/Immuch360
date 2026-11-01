@@ -30,12 +30,12 @@ class _Frame implements SplatFrame {
   final _Source _source;
 
   @override
-  int get width => 1600;
+  int get width => 1920;
   @override
-  int get height => 900;
+  int get height => 1080;
 
   @override
-  Future<void> writeJpeg(String path) async {
+  Future<({int width, int height})> writeJpeg(String path) async {
     _source.written.add(time);
     if (_source.writeFails) {
       // ENOSPC, ERROR_DISK_FULL on Windows
@@ -46,6 +46,7 @@ class _Frame implements SplatFrame {
       );
     }
     await File(path).writeAsBytes(_jpeg);
+    return (width: 1600, height: 900);
   }
 }
 
@@ -197,6 +198,7 @@ void main() {
         ).listSync(recursive: true).whereType<File>().map((file) => p.basename(file.path));
         expect(files.toSet(), {for (var i = 0; i < 147; i++) splatImageName(i)});
         expect(inputs.cameras.keys, [splatVideoFolder]);
+        expect(inputs.images.map((image) => (image.width, image.height)).toSet(), {(1600, 900)}, reason: 'as written');
       },
     );
 

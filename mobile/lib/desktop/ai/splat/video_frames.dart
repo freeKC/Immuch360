@@ -105,12 +105,15 @@ class SplatVideoFacts {
 abstract interface class SplatFrame {
   /// Where it is in the video
   Duration get time;
+
+  /// Its size as decoded, upright
   int get width;
   int get height;
   double get sharpness;
 
-  /// Writes it to [path] as a JPEG of SplatV1.photoQuality, reduced to SplatV1.photoLongSide on its longest side
-  Future<void> writeJpeg(String path);
+  /// Writes it to [path] as a JPEG of SplatV1.photoQuality, reduced to SplatV1.photoLongSide on its longest side; the
+  /// size written
+  Future<({int width, int height})> writeJpeg(String path);
 }
 
 /// The frames of one video
@@ -154,6 +157,7 @@ Future<SplatInputs> takeVideoFrames(
   final folder = await Directory(p.join(imagesFolder, splatVideoFolder)).create(recursive: true);
   final watch = Stopwatch()..start();
   final best = <int, SplatFrame>{};
+  final written = <int, ({int width, int height})>{};
   final leftOut = <int, SplatLeftOut>{};
   final writing = <Future<void>>[];
   Object? writeFailure;
@@ -186,9 +190,14 @@ Future<SplatInputs> takeVideoFrames(
           await writing.removeAt(0);
         }
         writing.add(
-          sharpest.writeJpeg(p.join(folder.path, 'w${splatImageName(index)}')).catchError((Object error) {
-            writeFailure ??= error;
-          }),
+          sharpest
+              .writeJpeg(p.join(folder.path, 'w${splatImageName(index)}'))
+              .then((size) {
+                written[index] = size;
+              })
+              .catchError((Object error) {
+                writeFailure ??= error;
+              }),
         );
       }
       onProgress?.call(index + 1, windows.length);
@@ -217,8 +226,8 @@ Future<SplatInputs> takeVideoFrames(
         SplatImage(
           folder: splatVideoFolder,
           name: name,
-          width: frame.width,
-          height: frame.height,
+          width: written[index]!.width,
+          height: written[index]!.height,
           sharpness: frame.sharpness,
           source: splatMomentName(frame.time),
         ),

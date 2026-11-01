@@ -129,7 +129,7 @@ void main() {
         'firstWindowMs': progress.isEmpty ? null : progress.first,
         'seeks': source.seeks,
         'steps': source.steps,
-        'size': inputs.images.isEmpty ? null : '${inputs.images.first.width}x${inputs.images.first.height}',
+        'written': inputs.images.isEmpty ? null : '${inputs.images.first.width}x${inputs.images.first.height}',
         'frames': [
           for (final image in inputs.images)
             {'name': image.relativePath, 'at': image.source, 'sharpness': image.sharpness},
