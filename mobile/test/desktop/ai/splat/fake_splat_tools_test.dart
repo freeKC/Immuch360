@@ -14,6 +14,7 @@ import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_colmap_model.dart';
+import '../fakes/fake_colmap_options.dart';
 
 final _colmap = Platform.environment['IMMUCH360_FAKE_COLMAP'];
 final _brush = Platform.environment['IMMUCH360_FAKE_BRUSH'];
@@ -27,6 +28,9 @@ Object _skipHost(Object skip) => skip != false
     : (!Platform.isWindows && _launcher == null ? 'IMMUCH360_RUN_LAUNCHER names no immuch360-run' : false);
 
 const _rustLog = 'brush_cli=info,brush_process=info,cubecl_wgpu=info';
+
+/// The help of the six commands of our COLMAP, frozen by lot SP1
+final _colmapHelp = p.join('test', 'fixtures', 'ai_immersive', 'colmap_help');
 
 void main() {
   late Directory folder;
@@ -67,15 +71,19 @@ void main() {
     '$threads',
   ];
 
-  List<String> map() => [
-    'mapper',
-    '--database_path',
-    path('database.db'),
-    '--image_path',
-    path('images'),
-    '--output_path',
-    path('sparse'),
-  ];
+  /// The mapper into sparse/, which the runner makes first: the real one refuses an output folder that is not there
+  List<String> map() {
+    Directory(path('sparse')).createSync(recursive: true);
+    return [
+      'mapper',
+      '--database_path',
+      path('database.db'),
+      '--image_path',
+      path('images'),
+      '--output_path',
+      path('sparse'),
+    ];
+  }
 
   group('the fake COLMAP', () {
     test('finds the points of each image, matches them in blocks, places them, aligns and analyses the model', () {
@@ -107,7 +115,11 @@ void main() {
       final mapped = colmap(map());
       expect(mapped.exitCode, 0, reason: '${mapped.stderr}');
       expect('${mapped.stderr}', contains('Registering initial image pair #1 and #2'));
-      expect('${mapped.stderr}', contains('Registering image #60 (num_reg_frames=60)'));
+      // num_reg_frames counts the images placed before this one, as the real one logs it (logs/c2-map.err of the
+      // measure: the third image at 2, the 150th at 149)
+      expect('${mapped.stderr}', contains('Registering image #3 (num_reg_frames=2)'));
+      expect('${mapped.stderr}', contains('Registering image #60 (num_reg_frames=59)'));
+      expect('${mapped.stderr}', isNot(contains('(num_reg_frames=60)')));
       expect('${mapped.stderr}', contains('Keeping successful reconstruction'));
       final model = FakeColmapModel.readFrom(Directory(path('sparse/0')))!;
       expect(model.images, hasLength(60));
@@ -116,6 +128,7 @@ void main() {
       expect(model.points, isNotEmpty);
       expect(Directory(path('sparse/1')).existsSync(), isFalse);
 
+      Directory(path('dataset/sparse/0')).createSync(recursive: true);
       final aligned = colmap([
         'model_orientation_aligner',
         '--image_path',
@@ -134,6 +147,130 @@ void main() {
       final analysed = colmap(['model_analyzer', '--path', path('dataset/sparse/0')]);
       expect('${analysed.stderr}', contains('model.cc:440] Registered images: 60'));
       expect('${analysed.stderr}', contains('Mean reprojection error: 0.662430px'));
+    }, skip: _skipColmap);
+
+    test('the names of the images are written in UTF-8 in images.bin, as COLMAP writes them', () {
+      final picture = img.encodeJpg(img.Image(width: 64, height: 48)..clear(img.ColorRgb8(120, 90, 70)));
+      const names = ['Łódź/photo é 1.jpg', 'Łódź/photo é 2.jpg', 'Łódź/photo é 3.jpg'];
+      for (final name in names) {
+        File(p.join(folder.path, 'images', name))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(picture);
+      }
+      expect(colmap(extract()).exitCode, 0);
+      expect(colmap(['exhaustive_matcher', '--database_path', path('database.db')]).exitCode, 0);
+      expect(colmap(map()).exitCode, 0);
+
+      final model = FakeColmapModel.readFrom(Directory(path('sparse/0')))!;
+      expect(model.images.map((image) => image.name).toSet(), names.toSet());
+      final bytes = File(path('sparse/0/images.bin')).readAsBytesSync();
+      final encoded = [...utf8.encode(names.first), 0];
+      final at = [for (var k = 0; k + encoded.length <= bytes.length; k++) k].where((k) {
+        for (var j = 0; j < encoded.length; j++) {
+          if (bytes[k + j] != encoded[j]) {
+            return false;
+          }
+        }
+        return true;
+      });
+      expect(at, hasLength(1), reason: 'the UTF-8 bytes of the name, then its 0');
+    }, skip: _skipColmap);
+
+    test('an option COLMAP 4.2.1 does not have, a missing value or a missing option: refused, exit code 1', () {
+      photos(3);
+      // The name of COLMAP 3, renamed FeatureExtraction.use_gpu in 4
+      final old = colmap([...extract(), '--SiftExtraction.use_gpu', '0']);
+      expect(old.exitCode, 1);
+      expect(
+        '${old.stderr}',
+        contains(
+          RegExp(
+            r"^E\d{8} [\d:.]+ +\d+ base_option_manager\.cc:265\] Failed to parse options - unrecognised option "
+            r"'--SiftExtraction\.use_gpu'\.$",
+            multiLine: true,
+          ),
+        ),
+      );
+      expect('${old.stderr}', isNot(contains('Processed file')));
+      expect(File(path('database.db')).existsSync(), isFalse);
+      // An option of another command
+      final other = colmap([...map(), '--FeatureExtraction.num_threads', '2']);
+      expect(other.exitCode, 1);
+      expect('${other.stderr}', contains("unrecognised option '--FeatureExtraction.num_threads'"));
+      // A value that is not there, an option the command needs
+      final cut = colmap([...extract(), '--FeatureExtraction.max_image_size']);
+      expect(cut.exitCode, 1);
+      expect(
+        '${cut.stderr}',
+        contains("the required argument for option '--FeatureExtraction.max_image_size' is missing"),
+      );
+      final none = colmap(['exhaustive_matcher']);
+      expect(none.exitCode, 1);
+      expect(
+        '${none.stderr}',
+        contains("Failed to parse options - the option '--database_path' is required but missing."),
+      );
+      // The form --name=value is read as well, and the size of the blocks of the exhaustive matching
+      expect(colmap([...extract(), '--FeatureExtraction.max_image_size=1024']).exitCode, 0);
+      final blocks = colmap([
+        'exhaustive_matcher',
+        '--database_path',
+        path('database.db'),
+        '--ExhaustiveMatching.block_size',
+        '2',
+      ]);
+      expect(blocks.exitCode, 0);
+      expect('${blocks.stderr}', contains('Processing block [2/2, 2/2]'));
+    }, skip: _skipColmap);
+
+    test('the options it takes are those of the help of our build (lot SP1), once it is in the tree', () {
+      for (final command in fakeColmapOptions.keys) {
+        final help = File(p.join(_colmapHelp, '$command.txt')).readAsLinesSync();
+        final options = {
+          for (final line in help)
+            if (RegExp(r'^\s+--([A-Za-z0-9_.]+)\s+arg\b').firstMatch(line) case final match?) match.group(1)!,
+        };
+        expect(fakeColmapOptions[command], options, reason: command);
+        expect(options, containsAll(fakeColmapRequired[command]!), reason: command);
+      }
+    }, skip: Directory(_colmapHelp).existsSync() ? false : 'the help of COLMAP of lot SP1 is not in this tree yet');
+
+    test('the mapper refuses an output folder that is not there; the aligner stops on it', () {
+      photos(3);
+      expect(colmap(extract()).exitCode, 0);
+      final mapped = colmap([
+        'mapper',
+        '--database_path',
+        path('database.db'),
+        '--image_path',
+        path('images'),
+        '--output_path',
+        path('missing'),
+      ]);
+      expect(mapped.exitCode, 1);
+      expect(
+        '${mapped.stderr}',
+        contains(RegExp(r'^E\d{8} .* sfm\.cc:363\] `output_path` is not a directory\.$', multiLine: true)),
+      );
+      expect('${mapped.stderr}', isNot(contains('Loading database')));
+      expect(Directory(path('missing')).existsSync(), isFalse);
+
+      expect(colmap(map()).exitCode, 0);
+      final aligned = colmap([
+        'model_orientation_aligner',
+        '--image_path',
+        path('images'),
+        '--input_path',
+        path('sparse/0'),
+        '--output_path',
+        path('dataset/sparse/0'),
+        '--method',
+        'IMAGE-ORIENTATION',
+      ]);
+      expect(aligned.exitCode, Platform.isWindows ? 3 : -ProcessSignal.sigabrt.signalNumber);
+      expect('${aligned.stderr}', contains('Writing aligned reconstruction...'));
+      expect('${aligned.stderr}', contains('does not exist.'));
+      expect(Directory(path('dataset/sparse/0')).existsSync(), isFalse);
     }, skip: _skipColmap);
 
     test('a video is matched image after image', () {

@@ -5,14 +5,20 @@
 // file [87/150]", "Processing block [4/9, 2/9]", "Processing image [120/150]", "Registering image #66
 // (num_reg_frames=120)", "Elapsed time: 1.559 [minutes]"), and it writes what the real one writes: a database (here a
 // small JSON file, which only this fake reads), then a model in sparse/<n> as COLMAP writes it (cameras.bin, images.bin,
-// points3D.bin), aligned and analysed. Its commands, with the options of COLMAP 4.2.1:
+// points3D.bin, the names of the images in UTF-8), aligned and analysed. Its commands, with the options of COLMAP 4.2.1:
 //   feature_extractor --database_path D --image_path I [--ImageReader.single_camera 1]
 //       [--ImageReader.single_camera_per_folder 1] [--FeatureExtraction.num_threads N] ...
-//   exhaustive_matcher --database_path D ...    blocks of 50 images
+//   exhaustive_matcher --database_path D ...    blocks of --ExhaustiveMatching.block_size images (50)
 //   sequential_matcher --database_path D ...    image after image
-//   mapper --database_path D --image_path I --output_path S ...
+//   mapper --database_path D --image_path I --output_path S ...    S must be there, as for the real one
 //   model_orientation_aligner --image_path I --input_path M --output_path O --method IMAGE-ORIENTATION
 //   model_analyzer --path M
+// As the real one, it takes only the options of each command (those of the help of our build, frozen by lot SP1:
+// fake_colmap_options.dart), "--name value" or "--name=value", and refuses any other with exit code 1 ("Failed to
+// parse options - unrecognised option '--SiftExtraction.use_gpu'.", base_option_manager.cc:265), as it refuses a
+// value or an option the command needs that is missing. The mapper refuses an output folder that is not there
+// ("`output_path` is not a directory.", sfm.cc:363); the aligner stops on it when it writes, as the real one throws
+// there (Reconstruction::WriteBinary, read in the sources, not measured).
 // IMMUCH360_FAKE_COLMAP_MODE says how it goes:
 //   ok        every image placed, in sparse/0 (the default)
 //   split     two models, as the measure saw once: sparse/0 with the 4 last images, sparse/1 with the others
@@ -46,6 +52,7 @@ import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 
 import 'fake_colmap_model.dart';
+import 'fake_colmap_options.dart';
 
 late final String _mode;
 late final int _stepMs;
@@ -68,8 +75,14 @@ Future<void> main(List<String> arguments) async {
   }
   final command = arguments.first;
   final options = <String, String>{};
-  for (var i = 1; i < arguments.length - 1; i += 2) {
-    options[arguments[i].replaceFirst(RegExp('^--'), '')] = arguments[i + 1];
+  final known = fakeColmapOptions[command];
+  if (known != null) {
+    final problem = _parse(arguments.sublist(1), known, fakeColmapRequired[command]!, options);
+    if (problem != null) {
+      _log('base_option_manager.cc:265', 'Failed to parse options - $problem.', severity: 'E');
+      await _flush();
+      exit(1);
+    }
   }
   final started = DateTime.now();
   final code = switch (command) {
@@ -91,6 +104,35 @@ Future<void> main(List<String> arguments) async {
   }
   await _flush();
   exit(code);
+}
+
+/// Reads [arguments] into [options] as boost::program_options does for COLMAP: the words of what is wrong, null when
+/// nothing is
+String? _parse(List<String> arguments, Set<String> known, List<String> required, Map<String, String> options) {
+  for (var i = 0; i < arguments.length; i++) {
+    final argument = arguments[i];
+    if (!argument.startsWith('--')) {
+      return "too many positional options have been specified on the command line";
+    }
+    final equals = argument.indexOf('=');
+    final name = argument.substring(2, equals < 0 ? argument.length : equals);
+    if (!known.contains(name)) {
+      return "unrecognised option '--$name'";
+    }
+    if (equals >= 0) {
+      options[name] = argument.substring(equals + 1);
+    } else if (i + 1 < arguments.length && !arguments[i + 1].startsWith('--')) {
+      options[name] = arguments[++i];
+    } else {
+      return "the required argument for option '--$name' is missing";
+    }
+  }
+  for (final name in required) {
+    if (!options.containsKey(name)) {
+      return "the option '--$name' is required but missing";
+    }
+  }
+  return null;
 }
 
 /// A line of glog as COLMAP writes it on its error output: "I20261101 12:36:09.514663 24228 file.cc:270] message"
@@ -135,16 +177,8 @@ List<String> _images(Directory folder) {
 }
 
 Future<int> _extract(Map<String, String> options) async {
-  final database = options['database_path'];
-  final images = options['image_path'];
-  if (database == null || images == null) {
-    _log(
-      'option_manager.cc:1209',
-      'Failed to parse options: --database_path and --image_path are needed',
-      severity: 'E',
-    );
-    return 1;
-  }
+  final database = options['database_path']!;
+  final images = options['image_path']!;
   if (!Directory(images).existsSync()) {
     _log('feature_extraction.cc:520', 'Image path does not exist', severity: 'E');
     return 1;
@@ -249,7 +283,8 @@ Future<int> _match(Map<String, String> options, {required bool sequential}) asyn
   if (_mode == 'silent') {
     return _silent();
   }
-  final blocks = (count + 49) ~/ 50;
+  final size = int.tryParse(options['ExhaustiveMatching.block_size'] ?? '') ?? 50;
+  final blocks = (count + size - 1) ~/ (size < 2 ? 2 : size);
   for (var a = 1; a <= blocks; a++) {
     for (var b = 1; b <= blocks; b++) {
       _log('pairing.cc:214', 'Processing block [$a/$blocks, $b/$blocks]', thread: 18264);
@@ -261,10 +296,14 @@ Future<int> _match(Map<String, String> options, {required bool sequential}) asyn
 }
 
 Future<int> _map(Map<String, String> options) async {
+  final output = options['output_path']!;
+  if (!Directory(output).existsSync()) {
+    _log('sfm.cc:363', '`output_path` is not a directory.', severity: 'E', thread: 31136);
+    return 1;
+  }
   _log('incremental_pipeline.cc:353', 'Loading database', thread: 31136);
   final database = _database(options);
-  final output = options['output_path'];
-  if (database == null || output == null) {
+  if (database == null) {
     _log('database.cc:300', 'Failed to open the database', severity: 'E');
     return 1;
   }
@@ -326,7 +365,8 @@ Future<int> _map(Map<String, String> options) async {
     for (var k = 2; k < model.length; k++) {
       _log(
         'incremental_pipeline.cc:620',
-        'Registering image #${model[k] + 1} (num_reg_frames=${k + 1})',
+        // The images placed before this one: the third is logged at 2 (logs/c2-map.err of the measure)
+        'Registering image #${model[k] + 1} (num_reg_frames=$k)',
         thread: 31136,
       );
       _log('incremental_pipeline.cc:623', '=> Image sees ${300 + k * 7} / ${900 + k * 11} points', thread: 31136);
@@ -359,12 +399,12 @@ Future<int> _map(Map<String, String> options) async {
 }
 
 Future<int> _align(Map<String, String> options) async {
-  final input = options['input_path'];
-  final output = options['output_path'];
+  final input = options['input_path']!;
+  final output = options['output_path']!;
   _log('model.cc:847', '=== Aligning Reconstruction ===', thread: 24084);
-  final model = input == null ? null : FakeColmapModel.readFrom(Directory(input));
-  if (model == null || output == null) {
-    _log('reconstruction.cc:910', 'Failed to read the model in ${input ?? '(none)'}', severity: 'E', thread: 24084);
+  final model = FakeColmapModel.readFrom(Directory(input));
+  if (model == null) {
+    _log('reconstruction.cc:910', 'Failed to read the model in $input', severity: 'E', thread: 24084);
     return 1;
   }
   if (_mode == 'fail') {
@@ -373,15 +413,30 @@ Future<int> _align(Map<String, String> options) async {
   _log('model.cc:881', 'Using the rotation matrix:', thread: 24084);
   _log('model.cc:882', ' 0.990996  0.123359 0.0520441\n-0.123359  0.690162  0.713063\n0.0520441 -0.713063  0.699166');
   _log('model.cc:886', 'Writing aligned reconstruction...', thread: 24084);
-  model.writeTo(Directory(output));
+  if (!Directory(output).existsSync()) {
+    // THROW_CHECK_DIR_EXISTS of Reconstruction::WriteBinary, an exception nothing catches: abort()
+    _log(
+      'reconstruction.cc:1053',
+      'Check failed: colmap::ExistsDir(path_val) Directory "$output" does not exist.',
+      severity: 'E',
+      thread: 24084,
+    );
+    await _flush();
+    if (Platform.isWindows) {
+      exit(3);
+    }
+    Process.killPid(pid, ProcessSignal.sigabrt);
+    return _silent();
+  }
+  model.writeTo(Directory(output), create: false);
   return 0;
 }
 
 Future<int> _analyze(Map<String, String> options) async {
-  final path = options['path'];
-  final model = path == null ? null : FakeColmapModel.readFrom(Directory(path));
+  final path = options['path']!;
+  final model = FakeColmapModel.readFrom(Directory(path));
   if (model == null) {
-    _log('reconstruction.cc:910', 'Failed to read the model in ${path ?? '(none)'}', severity: 'E', thread: 29976);
+    _log('reconstruction.cc:910', 'Failed to read the model in $path', severity: 'E', thread: 29976);
     return 1;
   }
   final observations = model.points.fold<int>(0, (sum, point) => sum + point.track.length);

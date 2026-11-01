@@ -1,9 +1,10 @@
 // The files a COLMAP model is made of, as COLMAP 4.2.1 writes them in a sparse/<n> folder (cameras.bin, images.bin,
-// points3D.bin, little endian; read in the models of the measure of 1 November 2026, which keep this layout of COLMAP 3
-// beside their new rigs.bin and frames.bin), for the fake COLMAP and the fake Brush of the splat scenes (lot SP0), and
-// read back by their tests. Pure Dart, with no Flutter: compiled into the fakes by `dart compile exe`. The model of the
-// app itself is read by its own code (lot SP4), never by this one.
+// points3D.bin, little endian, the names of the images in UTF-8; read in the models of the measure of 1 November 2026,
+// which keep this layout of COLMAP 3 beside their new rigs.bin and frames.bin), for the fake COLMAP and the fake Brush
+// of the splat scenes (lot SP0), and read back by their tests. Pure Dart, with no Flutter: compiled into the fakes by
+// `dart compile exe`. The model of the app itself is read by its own code (lot SP4), never by this one.
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -117,9 +118,12 @@ class FakeColmapModel {
     return FakeColmapModel(cameras: cameras, images: images, points: points);
   }
 
-  /// Writes cameras.bin, images.bin and points3D.bin into [folder]
-  void writeTo(Directory folder) {
-    folder.createSync(recursive: true);
+  /// Writes cameras.bin, images.bin and points3D.bin into [folder], made first unless [create] is false (the aligner of
+  /// the fake COLMAP, which refuses a folder that is not there)
+  void writeTo(Directory folder, {bool create = true}) {
+    if (create) {
+      folder.createSync(recursive: true);
+    }
     final cameraBytes = BytesBuilder()..add(_u64(cameras.length));
     for (final camera in cameras) {
       cameraBytes
@@ -140,7 +144,7 @@ class FakeColmapModel {
       }
       imageBytes
         ..add(_u32(image.cameraId))
-        ..add([...image.name.codeUnits, 0])
+        ..add([...utf8.encode(image.name), 0])
         ..add(_u64(image.points.length));
       for (final (x, y, point) in image.points) {
         imageBytes
@@ -248,7 +252,7 @@ class _Reader {
 
   String text() {
     final end = _bytes.indexOf(0, _at);
-    final value = String.fromCharCodes(_bytes.sublist(_at, end));
+    final value = utf8.decode(_bytes.sublist(_at, end));
     _at = end + 1;
     return value;
   }
