@@ -31,7 +31,8 @@ file says so in its first line, as the Apache License 2.0 asks in section 4 b):
   off. Its weights (`crates/lpips/burn_mapped.bin`, a VGG network of 29,433,386 bytes whose provenance is not written
   in the repository of Brush) are therefore not in our binary; the build removes the file from the sources before it
   compiles, and checks that none of five 64 byte pieces of it, the first 64 bytes among them, is in the program. The
-  LPIPS loss weighs 0 by default; a weight above 0 is refused.
+  LPIPS loss weighs 0 by default; a weight above 0 is refused by `brush_app` before it reads the data or sets up a
+  graphics card (`crates/brush-app/Cargo.toml` and `src/bin.rs`), the trainer keeping its own refusal.
 * `crates/brush-process/Cargo.toml`, `crates/brush-process/src/visualize_tools.rs`: logging to a rerun.io viewer
   (a network client and server) behind a feature, `rerun`, left off.
 * `crates/brush-vfs/Cargo.toml`, `crates/brush-vfs/src/data_source.rs`: the file dialogs and the sources given by a URL

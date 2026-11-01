@@ -8,9 +8,10 @@ cargo build --locked: no dependency is added or removed, so Cargo.lock of the ta
 Four parts of Brush become cargo features, all off unless asked for:
   - brush-app "viewer" (on by default, as upstream): the window (egui, eframe, winit, brush-ui). Built without it,
     brush_app only trains from a path given on the command line and refuses --with-viewer.
-  - brush-train "lpips": the LPIPS loss and its VGG weights (crates/lpips/burn_mapped.bin, 29,433,386 bytes, whose
-    provenance is not written in the repository). Without it, a --lpips-loss-weight above 0 is refused at the start
-    (its default is 0, which Immuch360 never changes).
+  - brush-train "lpips", which brush-app "lpips" asks for: the LPIPS loss and its VGG weights
+    (crates/lpips/burn_mapped.bin, 29,433,386 bytes, whose provenance is not written in the repository). Without it,
+    a --lpips-loss-weight above 0 is refused by brush_app before it reads the data or sets up a graphics card, the
+    trainer keeping an assert as a second guard (its default is 0, which Immuch360 never changes).
   - brush-process "rerun": logging to a rerun.io viewer (a gRPC client and server). Without it, --rerun-enabled only
     logs a warning.
   - brush-vfs "pick" and "url": the file dialogs (rfd) and the sources given by a URL (reqwest). Without them, such a
@@ -18,11 +19,11 @@ Four parts of Brush become cargo features, all off unless asked for:
 brush-ui asks for "pick", "url" and "rerun", so a build with the viewer keeps what upstream has, the LPIPS loss apart.
 
 diff --git a/crates/brush-app/Cargo.toml b/crates/brush-app/Cargo.toml
-index 2c85817..65b1380 100644
+index 2c85817..587564e 100644
 --- a/crates/brush-app/Cargo.toml
 +++ b/crates/brush-app/Cargo.toml
 @@ -1,3 +1,4 @@
-+# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature
++# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature, the LPIPS loss behind the lpips feature
  [package]
  name = "brush-app"
  edition.workspace = true
@@ -66,21 +67,23 @@ index 2c85817..65b1380 100644
  clap.workspace = true
  env_logger.workspace = true
  brush-cli.path = "../brush-cli"
-@@ -74,5 +75,8 @@ ignored = ["wgpu", "brush-train"] # Need manual backend selection.
+@@ -74,5 +75,10 @@ ignored = ["wgpu", "brush-train"] # Need manual backend selection.
  workspace = true
  
  [features]
 +# The window of Brush (egui, eframe, winit): without it brush_app only trains, from a path given on the command line
 +default = ["viewer"]
 +viewer = ["dep:brush-ui", "dep:egui", "dep:eframe", "dep:winit"]
++# The LPIPS loss and its VGG weights, off unless asked for: without it a --lpips-loss-weight above 0 is refused
++lpips = ["brush-train/lpips"]
  tracy = ["dep:tracing-subscriber", "dep:tracing-tracy"]
  debug-validation = ["brush-render/debug-validation", "brush-train/debug-validation"]
 diff --git a/crates/brush-app/src/bin.rs b/crates/brush-app/src/bin.rs
-index c316ed3..243d271 100644
+index c316ed3..a747abb 100644
 --- a/crates/brush-app/src/bin.rs
 +++ b/crates/brush-app/src/bin.rs
 @@ -1,12 +1,14 @@
-+// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature
++// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature, a LPIPS weight refused without the lpips feature
  #![recursion_limit = "256"]
  
  use brush_process::process::process_stream;
@@ -95,7 +98,7 @@ index c316ed3..243d271 100644
  fn is_console() -> bool {
      let mut buffer = [0u32; 1];
  
-@@ -22,7 +24,12 @@ fn is_console() -> bool {
+@@ -22,7 +24,18 @@ fn is_console() -> bool {
  fn main() -> Result<(), anyhow::Error> {
      let args = Cli::parse().validate()?;
  
@@ -105,11 +108,17 @@ index c316ed3..243d271 100644
 +        anyhow::bail!("this build of Brush has no viewer: give the path of the data to train on");
 +    }
 +
++    // Before the data is read or a graphics card is set up: the trainer would otherwise only refuse it once both are
++    #[cfg(not(feature = "lpips"))]
++    if args.process.train_config.lpips_loss_weight > 0.0 {
++        anyhow::bail!("this build of Brush has no LPIPS weights: --lpips-loss-weight must stay 0");
++    }
++
 +    #[cfg(all(target_family = "windows", feature = "viewer"))]
      if args.with_viewer && !is_console() {
          // Hide the console window on windows when running as a GUI.
          // SAFETY: FFI.
-@@ -46,8 +53,6 @@ fn main() -> Result<(), anyhow::Error> {
+@@ -46,8 +59,6 @@ fn main() -> Result<(), anyhow::Error> {
          .build()
          .expect("Failed to initialize tokio runtime")
          .block_on(async move {
@@ -118,7 +127,7 @@ index c316ed3..243d271 100644
              env_logger::builder()
                  .target(env_logger::Target::Stdout)
                  .init();
-@@ -55,7 +60,9 @@ fn main() -> Result<(), anyhow::Error> {
+@@ -55,7 +66,9 @@ fn main() -> Result<(), anyhow::Error> {
              let (sender, args_receiver) = tokio::sync::oneshot::channel();
              let _ = sender.send(args.process.clone());
  
@@ -128,7 +137,7 @@ index c316ed3..243d271 100644
                  let icon = eframe::icon_data::from_png_bytes(
                      &include_bytes!("../assets/icon-256.png")[..],
                  )
-@@ -86,15 +93,16 @@ fn main() -> Result<(), anyhow::Error> {
+@@ -86,15 +99,16 @@ fn main() -> Result<(), anyhow::Error> {
                      native_options,
                      Box::new(move |cc| Ok(Box::new(App::new(cc, context)))),
                  )?;

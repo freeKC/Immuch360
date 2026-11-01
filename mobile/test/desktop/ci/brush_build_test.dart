@@ -372,6 +372,32 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
         expect(patch, isNot(contains('GIT binary patch')));
       }
     });
+
+    test('a LPIPS weight above 0 is refused by brush_app right after its arguments, before any card is used', () {
+      final patch = File(
+        p.join(_licences, 'patches', '0001-immuch360-headless-trainer.patch'),
+      ).readAsStringSync().replaceAll('\r\n', '\n');
+      String section(String file) {
+        final start = patch.indexOf('diff --git a/$file ');
+        final end = patch.indexOf('diff --git a/', start + 1);
+        return patch.substring(start, end < 0 ? patch.length : end);
+      }
+
+      expect(section('crates/brush-app/Cargo.toml'), contains('+lpips = ["brush-train/lpips"]'));
+      final bin = section('crates/brush-app/src/bin.rs');
+      const refusal = 'anyhow::bail!("this build of Brush has no LPIPS weights: --lpips-loss-weight must stay 0");';
+      expect(
+        bin,
+        contains('+    #[cfg(not(feature = "lpips"))]\n+    if args.process.train_config.lpips_loss_weight > 0.0 {'),
+      );
+      expect(bin, contains('+        $refusal'));
+      expect(bin.indexOf(refusal), lessThan(bin.indexOf('burn_init_setup')));
+      // The trainer keeps its own guard
+      expect(section('crates/brush-train/src/train.rs'), contains('+            config.lpips_loss_weight <= 0.0,'));
+      // And the texts say what the program does
+      expect(patch, isNot(contains('refused at the start')));
+      expect(patch, contains('refused by brush_app before it reads the data'));
+    });
   }, skip: skip);
 
   group('help', () {
@@ -960,6 +986,27 @@ out.write_text((here / 'generated.md').read_text(encoding='utf-8'), encoding='ut
           'line; their copyright notices are in EXTRA-NOTICES.md, next to this file.\n\n````text\n',
         ),
       );
+    });
+  }, skip: skip);
+
+  // The brush jobs of the desktop workflow: what they ask of the program they build (lot SP2, fix round of the review)
+  group('the brush jobs', () {
+    String job(String name) {
+      final workflow = File(
+        p.join(repositoryRoot, '.github', 'workflows', 'immuch360-desktop.yml'),
+      ).readAsStringSync().replaceAll('\r\n', '\n');
+      final start = workflow.indexOf('\n  $name:\n');
+      expect(start, isNot(-1), reason: name);
+      final end = RegExp(r'\n  [\w-]+:\n').firstMatch(workflow.substring(start + 1))!.start;
+      return workflow.substring(start, start + 1 + end);
+    }
+
+    test('both jobs check that a LPIPS weight above 0 is refused with its message', () {
+      for (final name in ['brush-windows', 'brush-linux']) {
+        final steps = job(name);
+        expect(steps, contains('"\$PROGRAM" . --lpips-loss-weight 0.5'), reason: name);
+        expect(steps, contains('grep -q "no LPIPS weights"'), reason: name);
+      }
     });
   }, skip: skip);
 }

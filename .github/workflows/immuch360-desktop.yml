@@ -1587,7 +1587,7 @@ jobs:
           PROGRAM: ${{ steps.build.outputs.program }}
         run: python .github/desktop/ai/brush_build.py lpips --binary "$PROGRAM"
 
-      - name: brush_app --help as the fixture says, and no viewer
+      - name: brush_app --help as the fixture says, no viewer, no LPIPS loss
         env:
           PROGRAM: ${{ steps.build.outputs.program }}
         run: |
@@ -1600,6 +1600,12 @@ jobs:
           fi
           grep -q "no viewer" "$RUNNER_TEMP/brush-viewer.txt" || { cat "$RUNNER_TEMP/brush-viewer.txt"; exit 1; }
           echo "brush_app without a source: $(cat "$RUNNER_TEMP/brush-viewer.txt")"
+          # A LPIPS weight is refused before the data is read or a card is set up, so at once even on a runner
+          if timeout 120 "$PROGRAM" . --lpips-loss-weight 0.5 > "$RUNNER_TEMP/brush-lpips.txt" 2>&1; then
+            echo "::error::brush_app took a LPIPS weight above 0"; exit 1
+          fi
+          grep -q "no LPIPS weights" "$RUNNER_TEMP/brush-lpips.txt" || { cat "$RUNNER_TEMP/brush-lpips.txt"; exit 1; }
+          echo "brush_app --lpips-loss-weight 0.5: $(cat "$RUNNER_TEMP/brush-lpips.txt")"
 
       - name: The archive
         env:
@@ -1696,7 +1702,7 @@ jobs:
           PROGRAM: ${{ steps.build.outputs.program }}
         run: python3 .github/desktop/ai/brush_build.py lpips --binary "$PROGRAM"
 
-      - name: brush_app --help as the fixture says, and no viewer
+      - name: brush_app --help as the fixture says, no viewer, no LPIPS loss
         env:
           PROGRAM: ${{ steps.build.outputs.program }}
         run: |
@@ -1709,6 +1715,12 @@ jobs:
           fi
           grep -q "no viewer" "$RUNNER_TEMP/brush-viewer.txt" || { cat "$RUNNER_TEMP/brush-viewer.txt"; exit 1; }
           echo "brush_app without a source: $(cat "$RUNNER_TEMP/brush-viewer.txt")"
+          # A LPIPS weight is refused before the data is read or a card is set up, so at once even on a runner
+          if timeout 120 "$PROGRAM" . --lpips-loss-weight 0.5 > "$RUNNER_TEMP/brush-lpips.txt" 2>&1; then
+            echo "::error::brush_app took a LPIPS weight above 0"; exit 1
+          fi
+          grep -q "no LPIPS weights" "$RUNNER_TEMP/brush-lpips.txt" || { cat "$RUNNER_TEMP/brush-lpips.txt"; exit 1; }
+          echo "brush_app --lpips-loss-weight 0.5: $(cat "$RUNNER_TEMP/brush-lpips.txt")"
 
       # The launcher that makes brush_app die with the app (PR_SET_PDEATHSIG), as in the archive of stable-diffusion.cpp
       - name: immuch360-run
