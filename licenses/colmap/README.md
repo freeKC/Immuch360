@@ -15,6 +15,13 @@ the user installs the components of the splat scenes, as an archive our CI built
   that neither bzip2, LZMA, zstd nor OpenSSL comes into the program. Eigen's sparse Cholesky and AMD ordering, which take over, are under the MPL 2.0 like the rest of Eigen
   (their headers say that Timothy A. Davis, author of the LDL and CSparse code they come from, licensed it to Google
   LLC for Eigen under the MPL 2.0; read in Eigen 3.4.1 on 2026-11-01).
+* `0003-faiss-avx2-without-blas.patch`, for the Windows build only (`FAISS_AVX2_ENABLED`): built with MSVC, faiss has
+  no choice of SIMD code at run time (it has one elsewhere) and OpenBLAS has its generic kernels only; without this
+  patch the matching of the photos took 1.6 to 2.3 times as long as with the official binary on the PC of the measure,
+  in the feature index of faiss. The Windows program links the AVX2 build of faiss and lets its own AVX2 distances
+  replace BLAS in that index: it needs a processor with AVX2 (Intel since 2013, AMD since 2015, but some Pentium and
+  Celeron), which the gate of the splat scenes is to check. The Linux program is not changed: faiss chooses its SIMD
+  code at run time there.
 * Left out of our build, where the official binaries of COLMAP have them: the graphical interface (Qt, LGPL 3),
   OpenGL and SiftGPU (educational, research and non-profit use only), LSD (AGPL 3), CGAL (GPL 3 parts) with GMP and
   MPFR, CHOLMOD and SPQR of SuiteSparse (GPL 2 parts), CUDA, ONNX Runtime and the learned features, the dense
