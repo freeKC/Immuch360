@@ -56,6 +56,33 @@ String _git(String dir, List<String> arguments) {
   return '${result.stdout}'.trim();
 }
 
+/// The interpreter of the Python that runs the scripts, by its full path
+String get _pythonExecutable {
+  final command = python!;
+  final result = Process.runSync(command.first, [...command.skip(1), '-c', 'import sys; print(sys.executable)']);
+  return '${result.stdout}'.trim();
+}
+
+/// A command [name] in [bin] that runs the Python [script] with its arguments, found on the PATH as cargo would be:
+/// an executable file on Linux and macOS, a .cmd on Windows. Returns its path.
+String _fakeCommand(Directory bin, String name, String script) {
+  if (Platform.isWindows) {
+    final source = File(p.join(bin.path, '$name.py'))..writeAsStringSync(script);
+    final command = File(p.join(bin.path, '$name.cmd'))
+      ..writeAsStringSync('@"$_pythonExecutable" "${source.path}" %*\r\n');
+    return command.path;
+  }
+  final file = File(p.join(bin.path, name))..writeAsStringSync('#!$_pythonExecutable\n$script');
+  Process.runSync('chmod', ['+x', file.path]);
+  return file.path;
+}
+
+/// The variables that put [bin] first on the PATH, under the name the system gives it (Path on Windows)
+Map<String, String> _pathFirst(Directory bin) {
+  final key = Platform.environment.keys.firstWhere((name) => name.toUpperCase() == 'PATH', orElse: () => 'PATH');
+  return {key: '${bin.path}${Platform.isWindows ? ';' : ':'}${Platform.environment[key] ?? ''}'};
+}
+
 void main() {
   // Skipped without Python or without the scripts (the Windows mirror of the owner's PC), never because a file of the
   // lot is missing: then the tests fail
@@ -532,6 +559,204 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
       final licence = pack(program());
       expect(licence.exitCode, 1, reason: '$licence');
       expect(licence.output, contains('brush-LICENSE.txt'));
+    });
+  }, skip: skip);
+
+  // THIRD-PARTY.md of the archives (lot SP2, fix round of the review): cargo and cargo about are fakes found on the PATH
+  // that print a fixture tree and metadata and write a fixture output; the git dependencies sit in a fake cargo home as
+  // cargo leaves them, the whole repository checked out under git/checkouts/<name>-<hash>/<short commit>/ with
+  // .cargo-ok at its root and each crate in a folder of it
+  group('about', () {
+    late Directory root;
+    late Directory bin;
+    late String generated;
+    late List<Map<String, Object?>> packages;
+    late List<String> tree;
+    String path(String relative) => p.joinAll([root.path, ...relative.split('/')]);
+    const cubecl = 'https://github.com/ArthurBrussee/cubecl?branch=sg-size';
+    const cubeclCommit = '43580a8c294f3a8140921c26f6378a12aef82881';
+    const tracel = 'https://github.com/tracel-ai/cubecl?rev=d6b53441c0578287212ad8cb4b816253c42bc46e';
+    const tracelCommit = 'd6b53441c0578287212ad8cb4b816253c42bc46e';
+    const burn = 'https://github.com/tracel-ai/burn';
+    const burnCommit = 'dd2a02903f8c1e9a1a4b3c4c3a3b9b0a6b8e2f4d';
+    const registry = 'registry+https://github.com/rust-lang/crates.io-index';
+    const checkouts = 'home/git/checkouts';
+    const crates = 'home/registry/src/index.crates.io-1949cf8c6b5b557f';
+    const peterHall = 'Copyright (c) 2021 Peter Hall';
+
+    /// A crate of the fixture: its manifest written under [folder], its package in the metadata, its line in the tree
+    void crate(String name, String version, String folder, {String? source, String? treeSource, bool inTree = true}) {
+      writeFiles(root, {'$folder/Cargo.toml': '[package]\nname = "$name"\nversion = "$version"\n'});
+      final id = source == null
+          ? 'path+${Uri.directory(path(folder))}#$version'
+          : '${source.split('#').first}#$name@$version';
+      packages.add({
+        'name': name,
+        'version': version,
+        'id': id,
+        'source': source,
+        'manifest_path': path('$folder/Cargo.toml'),
+      });
+      if (inTree) {
+        tree.add('$name v$version${treeSource == null ? '' : ' ($treeSource)'}');
+      }
+    }
+
+    setUp(() {
+      root = Directory.systemTemp.createTempSync('immuch360_brush_about_');
+      bin = Directory(path('bin'))..createSync();
+      packages = [];
+      tree = [];
+      generated =
+          '# The code built into Brush\n\n'
+          '`brush_app` of Brush is built by the CI of Immuch360.\n\n'
+          '## Licences\n\n* MIT License (MIT): 1 crates\n\n'
+          '## Crates, by licence\n\n'
+          '### MIT License (MIT), text 0\n\n* anyhow 1.0.99, https://github.com/dtolnay/anyhow\n\n'
+          '````text\nMIT License\n\nCopyright (c) David Tolnay\n\n````\n\n';
+      writeFiles(root, {
+        'src/Cargo.toml': '[workspace]\n',
+        '$checkouts/cubecl-01990d4f7f2c358d/43580a8/.cargo-ok': '{"v":1}',
+        '$checkouts/cubecl-01990d4f7f2c358d/43580a8/NOTICE.md':
+            '# NOTICES\n\n## type_hash\n\nMIT License\n\n$peterHall\n',
+        '$checkouts/cubecl-01990d4f7f2c358d/43580a8/crates/cubecl-quant/NOTICE': 'the copy of cubecl not compiled in\n',
+        '$checkouts/cubecl-058c47895211d464/d6b5344/.cargo-ok': '{"v":1}',
+        '$checkouts/cubecl-058c47895211d464/d6b5344/NOTICE.md': 'The notices of tracel-ai/cubecl\n',
+        '$checkouts/burn-6c277d792b0d5d7a/dd2a029/.cargo-ok': '{"v":1}',
+        '$checkouts/burn-6c277d792b0d5d7a/dd2a029/NOTICES.md': 'Code from num-traits, MIT\n',
+        '$crates/noticed-1.0.0/NOTICE': 'noticed: a notice next to the manifest\n',
+        '$crates/cfg_aliases-0.2.1/NOTICE': 'cfg_aliases: a build dependency\n',
+      });
+      crate('brush-app', '0.3.0', 'src/crates/brush-app', treeSource: path('src/crates/brush-app'));
+      crate('anyhow', '1.0.99', '$crates/anyhow-1.0.99', source: registry);
+      crate('noticed', '1.0.0', '$crates/noticed-1.0.0', source: registry);
+      crate('cfg_aliases', '0.2.1', '$crates/cfg_aliases-0.2.1', source: registry, inTree: false);
+      crate(
+        'burn-tensor',
+        '0.19.0',
+        '$checkouts/burn-6c277d792b0d5d7a/dd2a029/crates/burn-tensor',
+        source: 'git+$burn#$burnCommit',
+        treeSource: '$burn#${burnCommit.substring(0, 8)}',
+      );
+      for (final name in ['cubecl-ir', 'cubecl-core']) {
+        crate(
+          name,
+          '0.7.0',
+          '$checkouts/cubecl-01990d4f7f2c358d/43580a8/crates/$name',
+          source: 'git+$cubecl#$cubeclCommit',
+          treeSource: '$cubecl#${cubeclCommit.substring(0, 8)}',
+        );
+      }
+      crate(
+        'cubecl-quant',
+        '0.7.0',
+        '$checkouts/cubecl-058c47895211d464/d6b5344/crates/cubecl-quant',
+        source: 'git+$tracel#$tracelCommit',
+        treeSource: '$tracel#${tracelCommit.substring(0, 8)}',
+      );
+      // The same name and version from the other copy of cubecl, last in the metadata, not compiled in
+      crate(
+        'cubecl-quant',
+        '0.7.0',
+        '$checkouts/cubecl-01990d4f7f2c358d/43580a8/crates/cubecl-quant',
+        source: 'git+$cubecl#$cubeclCommit',
+        inTree: false,
+      );
+      _fakeCommand(bin, 'cargo', '''
+import pathlib, sys
+here = pathlib.Path(__file__).resolve().parent
+with open(here / 'calls.txt', 'a', encoding='utf-8') as calls:
+    calls.write(' '.join(sys.argv[1:]) + '\\n')
+if sys.argv[1] == 'tree':
+    sys.stdout.write((here / 'tree.txt').read_text(encoding='utf-8'))
+elif sys.argv[1] == 'metadata':
+    sys.stdout.write((here / 'metadata.json').read_text(encoding='utf-8'))
+else:
+    sys.exit('fake cargo: no ' + sys.argv[1])
+''');
+    });
+    tearDown(() => root.deleteSync(recursive: true));
+
+    ScriptRun about() {
+      File(p.join(bin.path, 'tree.txt')).writeAsStringSync('${tree.join('\n')}\n');
+      File(
+        p.join(bin.path, 'metadata.json'),
+      ).writeAsStringSync(jsonEncode({'packages': packages, 'workspace_root': path('src'), 'version': 1}));
+      File(p.join(bin.path, 'generated.md')).writeAsStringSync(generated);
+      final cargoAbout = _fakeCommand(bin, 'cargo-about', '''
+import pathlib, sys
+here = pathlib.Path(__file__).resolve().parent
+out = pathlib.Path(sys.argv[sys.argv.index('-o') + 1])
+out.write_text((here / 'generated.md').read_text(encoding='utf-8'), encoding='utf-8')
+''');
+      return runCiScript(_script, [
+        'about',
+        '--system',
+        'linux-x64',
+        '--source',
+        path('src'),
+        '--cargo-about',
+        cargoAbout,
+        '--out',
+        path('out/THIRD-PARTY.md'),
+      ], environment: _pathFirst(bin));
+    }
+
+    String written() => File(path('out/THIRD-PARTY.md')).readAsStringSync();
+
+    test('the NOTICE files at the root of the git copies, once per repository and commit, and next to the crates', () {
+      final run = about();
+      expect(run.exitCode, 0, reason: '$run');
+      final text = written();
+      expect(text, isNot(contains('\r')));
+      expect(peterHall.allMatches(text), hasLength(1), reason: text);
+      expect(text, contains('$cubecl at $cubeclCommit, NOTICE.md'));
+      expect(text, contains('cubecl-core 0.7.0, cubecl-ir 0.7.0'));
+      expect(text, contains('Code from num-traits, MIT'));
+      expect(text, contains('$burn at $burnCommit, NOTICES.md'));
+      expect(text, contains('The notices of tracel-ai/cubecl'));
+      expect(text, contains('noticed: a notice next to the manifest'));
+      expect(text, isNot(contains('cfg_aliases: a build dependency')));
+      expect(text, isNot(contains('the copy of cubecl not compiled in')));
+      expect(text, isNot(contains('No crate compiled into brush_app carries a NOTICE file')));
+      // The head of the file says what was built, after its title
+      expect(
+        text,
+        startsWith(
+          '# The code built into Brush\n\nBrush v0.3.0 (3edecbb2fe79d3e2c87eeab85b15e0b1dd10d486), '
+          'https://github.com/ArthurBrussee/brush, lock ${_lock()['id']}, x86_64-unknown-linux-gnu, toolchain 1.89.0\n',
+        ),
+      );
+      final calls = File(p.join(bin.path, 'calls.txt')).readAsStringSync();
+      expect(calls, contains('tree --frozen -p brush-app --no-default-features --target x86_64-unknown-linux-gnu'));
+      expect(calls, contains('-e normal --prefix none'));
+    });
+
+    test('without a NOTICE file anywhere, THIRD-PARTY.md says so', () {
+      for (final notice in [
+        '$checkouts/cubecl-01990d4f7f2c358d/43580a8/NOTICE.md',
+        '$checkouts/cubecl-058c47895211d464/d6b5344/NOTICE.md',
+        '$checkouts/burn-6c277d792b0d5d7a/dd2a029/NOTICES.md',
+        '$crates/noticed-1.0.0/NOTICE',
+      ]) {
+        File(path(notice)).deleteSync();
+      }
+      final run = about();
+      expect(run.exitCode, 0, reason: '$run');
+      expect(written(), contains('No crate compiled into brush_app carries a NOTICE file'));
+    });
+
+    test('a git copy without its root, or a crate of the tree that cargo metadata does not know, fails the job', () {
+      File(path('$checkouts/burn-6c277d792b0d5d7a/dd2a029/.cargo-ok')).deleteSync();
+      final rootless = about();
+      expect(rootless.exitCode, 1, reason: '$rootless');
+      expect(rootless.output, contains('burn-tensor 0.19.0'));
+      File(path('$checkouts/burn-6c277d792b0d5d7a/dd2a029/.cargo-ok')).writeAsStringSync('{"v":1}');
+
+      tree.add('ghost v9.9.9');
+      final unknown = about();
+      expect(unknown.exitCode, 1, reason: '$unknown');
+      expect(unknown.output, contains('ghost v9.9.9'));
     });
   }, skip: skip);
 }

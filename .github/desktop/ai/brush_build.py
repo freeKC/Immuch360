@@ -29,7 +29,8 @@ start with Immuch360-Desktop-, so no release of the app ever attaches it.
       cargo deny check licenses bans sources with licenses/brush/deny.toml, our list (not Brush's)
   brush_build.py about --system SYSTEM --source DIR --cargo-about FILE --out FILE
       THIRD-PARTY.md by cargo about (licenses/brush/about.toml and about.hbs, offline), with the NOTICE files of the
-      crates compiled in
+      code compiled in: next to each crate, at the root of each git repository a crate comes from (cargo checks those
+      out whole), at the root of Brush
   brush_build.py lpips --binary FILE
       none of the probes of the LPIPS weights (64 bytes each, the first 64 bytes of the file among them) in FILE
   brush_build.py help --output FILE --version-output FILE [--fixture FILE]
@@ -159,6 +160,11 @@ def output(command: list, cwd: pathlib.Path | None = None, env: dict | None = No
     """The standard output of a command, read as UTF-8 whatever the code page of the system (cargo writes UTF-8)"""
     return subprocess.run([str(part) for part in command], cwd=cwd, check=True, capture_output=True,
                           encoding='utf-8', errors='replace', env=env).stdout.strip()
+
+
+def cargo() -> str:
+    """cargo as the PATH gives it (the proxy of rustup, cargo.exe on Windows)"""
+    return shutil.which('cargo') or 'cargo'
 
 
 def cargo_env(lock: dict) -> dict:
@@ -323,9 +329,9 @@ def command_build(args) -> int:
     lock = load_lock(args.lock)
     env = cargo_env(lock)
     run(['rustc', '--version'], env=env)
-    run(['cargo', '--version'], env=env)
-    run(['cargo', 'fetch', '--locked'], cwd=args.source, env=env)
-    run(['cargo', 'build', '--locked', '--profile', lock['cargo']['profile'], *cargo_selection(lock), '--bin',
+    run([cargo(), '--version'], env=env)
+    run([cargo(), 'fetch', '--locked'], cwd=args.source, env=env)
+    run([cargo(), 'build', '--locked', '--profile', lock['cargo']['profile'], *cargo_selection(lock), '--bin',
          lock['cargo']['bin'], '--target', TARGETS[args.system]], cwd=args.source, env=env)
     program = (args.source / 'target' / TARGETS[args.system] / lock['cargo']['profile']
                / (lock['cargo']['bin'] + ('.exe' if args.system == 'windows-x64' else '')))
@@ -363,7 +369,7 @@ def command_graph(args) -> int:
     if args.tree:
         tree = args.tree.read_text(encoding='utf-8')
     else:
-        tree = output(['cargo', 'tree', '--locked', *cargo_selection(lock), '--target', TARGETS[args.system], '-e',
+        tree = output([cargo(), 'tree', '--locked', *cargo_selection(lock), '--target', TARGETS[args.system], '-e',
                        'normal', '--prefix', 'none'], cwd=args.source, env=cargo_env(lock))
     crates = crates_of(tree)
     found = banned_in(crates)
@@ -394,6 +400,106 @@ def command_deny(args) -> int:
 
 # --- about -----------------------------------------------------------------------------------------------------------
 
+def tree_source(rest: str) -> tuple:
+    """The version and the source of a line of cargo tree after the name of the crate: None for crates.io, the address
+    and short commit of a git dependency (https://github.com/tracel-ai/burn#dd2a0290), the folder of a path one"""
+    version, _, tail = rest.partition(' ')
+    sources = [group for group in re.findall(r'\(([^()]*)\)', tail) if group not in ('proc-macro', '*')]
+    return version.lstrip('v'), (sources[0] if sources else None)
+
+
+def same_folder(one, other) -> bool:
+    return os.path.normcase(os.path.normpath(str(one))) == os.path.normcase(os.path.normpath(str(other)))
+
+
+def named_by(package: dict, source: str | None) -> bool:
+    """Whether a package of cargo metadata is the one cargo tree names with this source"""
+    origin = package.get('source')
+    if source is None:
+        return bool(origin) and origin.startswith('registry+')
+    if origin is None:
+        return same_folder(pathlib.Path(package['manifest_path']).parent, source)
+    if origin.startswith('git+'):
+        address, _, commit = origin[len('git+'):].partition('#')
+        named, _, short = source.partition('#')
+        return address == named and bool(short) and commit.startswith(short)
+    return False
+
+
+def compiled_packages(tree: str, metadata: dict) -> list:
+    """The packages of cargo metadata that a cargo tree listing names, each once, by their id: two sources may give a
+    crate of the same name and version (cubecl-quant 0.7.0 of the two copies of cubecl that Cargo.lock of Brush pins)"""
+    by_id = {package['id']: package for package in metadata['packages']}
+    by_name = {}
+    for package in metadata['packages']:
+        by_name.setdefault((package['name'], package['version']), []).append(package['id'])
+    found = {}
+    for name, rest in crates_of(tree):
+        version, source = tree_source(rest)
+        ids = by_name.get((name, version), [])
+        if len(ids) > 1:
+            ids = [package_id for package_id in ids if named_by(by_id[package_id], source)]
+        if len(ids) != 1:
+            raise Failure(f'{name} {rest}: {len(ids)} packages of cargo metadata are this crate')
+        found.setdefault(ids[0], by_id[ids[0]])
+    return list(found.values())
+
+
+def copy_root(package: dict) -> pathlib.Path:
+    """The root of the copy of the repository a git dependency comes from: cargo checks the whole repository out under
+    CARGO_HOME/git/checkouts/<name>-<hash>/<short commit>/, marked by .cargo-ok, and the crate is a folder of it"""
+    folder = pathlib.Path(package['manifest_path']).parent
+    for candidate in (folder, *folder.parents):
+        if candidate.name == 'checkouts':
+            break
+        if (candidate / '.cargo-ok').exists() or (candidate / '.git').exists():
+            return candidate
+    raise Failure(f'{package["name"]} {package["version"]} ({package["source"]}): no root of its git copy (.cargo-ok '
+                  f'or .git) above {folder}')
+
+
+def notice_files(folder: pathlib.Path) -> list:
+    """The NOTICE files of a folder (NOTICE, NOTICE.md, NOTICES.md...)"""
+    if not folder.is_dir():
+        return []
+    return sorted(path for path in folder.iterdir() if path.is_file() and path.name.upper().startswith('NOTICE'))
+
+
+def notices_of(packages: list, metadata: dict, brush: dict) -> list:
+    """The NOTICE files of the code compiled into brush_app (Apache-2.0, section 4 d), each once: those next to the
+    manifest of each crate, those at the root of each git repository a crate comes from (one copy per repository and
+    commit, whose crates are folders of it), and those at the root of Brush"""
+    places = {}
+
+    def add(folder: pathlib.Path, title: str, crate: str):
+        key = os.path.normcase(os.path.normpath(str(folder)))
+        places.setdefault(key, (folder, title, set()))[2].add(crate)
+
+    workspace = pathlib.Path(metadata['workspace_root'])
+    for package in packages:
+        crate = f'{package["name"]} {package["version"]}'
+        folder = pathlib.Path(package['manifest_path']).parent
+        origin = package.get('source') or ''
+        if origin.startswith('git+'):
+            address, _, commit = origin[len('git+'):].partition('#')
+            root = copy_root(package)
+            add(root, f'{address} at {commit}', crate)
+            if not same_folder(root, folder):
+                add(folder, crate, crate)
+        elif not origin:
+            add(workspace, f'Brush {brush["tag"]} ({brush["repository"]} at {brush["commit"]})', crate)
+            if not same_folder(workspace, folder):
+                add(folder, crate, crate)
+        else:
+            add(folder, crate, crate)
+    sections = []
+    for folder, title, crates in sorted(places.values(), key=lambda place: place[1]):
+        for path in notice_files(folder):
+            text = path.read_text(encoding='utf-8', errors='replace').replace('\r\n', '\n').strip()
+            sections.append(f'### {title}, {path.name}\n\nFor {", ".join(sorted(crates))}.\n\n````text\n{text}\n````\n')
+    return sections
+
+
 def command_about(args) -> int:
     lock = load_lock(args.lock)
     env = cargo_env(lock)
@@ -403,30 +509,20 @@ def command_about(args) -> int:
     run([args.cargo_about, 'generate', '--manifest-path', manifest, *lock['cargo']['arguments'], '--target',
          TARGETS[args.system], '--frozen', '--fail', '-c', LICENCES / 'about.toml', '-o', generated,
          LICENCES / 'about.hbs'], env=env)
-    # The NOTICE files of the crates compiled in (Apache-2.0, section 4 d), found next to their manifests
-    tree = output(['cargo', 'tree', '--frozen', *cargo_selection(lock), '--target', TARGETS[args.system], '-e',
+    # The crates compiled in, matched with their packages in cargo metadata, and their NOTICE files
+    tree = output([cargo(), 'tree', '--frozen', *cargo_selection(lock), '--target', TARGETS[args.system], '-e',
                    'normal', '--prefix', 'none'], cwd=args.source, env=env)
-    metadata = json.loads(output(['cargo', 'metadata', '--frozen', '--format-version', '1'], cwd=args.source, env=env))
-    by_id = {(package['name'], package['version']): package for package in metadata['packages']}
-    notices = []
-    for name, rest in crates_of(tree):
-        version = rest.split(' ', 1)[0].lstrip('v')
-        package = by_id.get((name, version))
-        if package is None:
-            continue
-        folder = pathlib.Path(package['manifest_path']).parent
-        for path in sorted(folder.iterdir()):
-            if path.is_file() and path.name.upper().startswith('NOTICE'):
-                notices.append(f'### {name} {version}, {path.name}\n\n````text\n'
-                               f'{path.read_text(encoding="utf-8", errors="replace").strip()}\n````\n')
+    metadata = json.loads(output([cargo(), 'metadata', '--frozen', '--format-version', '1'], cwd=args.source,
+                                 env=env))
     brush = lock['brush']
+    notices = notices_of(compiled_packages(tree, metadata), metadata, brush)
     head = (f'Brush {brush["tag"]} ({brush["commit"]}), {brush["repository"]}, lock {lock["id"]}, '
             f'{TARGETS[args.system]}, toolchain {lock["rust"]["toolchain"]}\n\n')
-    text = generated.read_text(encoding='utf-8')
+    text = generated.read_text(encoding='utf-8').replace('\r\n', '\n')
     text = text.replace('\n\n', '\n\n' + head, 1)
     text += '\n## Notices\n\n' + ('\n'.join(notices) if notices else 'No crate compiled into brush_app carries a '
                                   'NOTICE file.\n')
-    args.out.write_bytes(text.replace('\r\n', '\n').encode('utf-8'))
+    args.out.write_bytes(text.encode('utf-8'))
     generated.unlink()
     print(f'{args.out}: {len(text.encode())} bytes, {len(notices)} notices')
     return 0
