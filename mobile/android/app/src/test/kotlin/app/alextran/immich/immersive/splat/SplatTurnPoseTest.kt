@@ -17,8 +17,8 @@ import org.junit.Test
  * The pose the splat module gets after a glide and a turn of the right thumbstick (FreeKC's report of 1 November 2026:
  * a turn after a glide put him back in the middle of the scene). The pose of the splat is the root of its navigator
  * then its place in that frame (SplatPose, as SplatStage.poseOf takes it), converted once for the module
- * (SplatModuleFrame.toModule); the module shows a point p of the file at M (t + q p), M = diag(1, 1, -1), as measured on
- * a Quest 3 on 31 October 2026. After a turn the point of the file under the user is the one the glide took him to,
+ * (SplatModuleFrame.toModule); the module shows a point p of the file at M (t + q p), M = diag(1, 1, -1), as
+ * measured on a Quest 3 on 31 October 2026. After a turn the point of the file under the user is the one the glide took him to,
  * and the splat turned about him by the step; Reset alone puts him back where the splat opened.
  */
 class SplatTurnPoseTest {
