@@ -50,10 +50,19 @@ std::string WithFullPath(const std::string& argument) {
   return Utf8FromUtf16(full.c_str());
 }
 
+// The longest a later start waits for a copy that is closing to end: that
+// copy ends within 6 s of its close (flutter_window.cpp, close_watchdog.h)
+constexpr DWORD kClosingCopyWaitMs = 10000;
+
 // A second start of the app (a file opened with it while it runs) gives its
 // command line to the running one, brings that window to the front and
-// quits: one copy of the database and of the network share per user.
-void HandOverToRunningInstance(const std::vector<std::string>& arguments) {
+// quits: one copy of the database and of the network share per user. False
+// when the running copy did not take it: it is closing (it refuses then,
+// flutter_window.cpp), it does not answer, or its window is gone already;
+// |running_process| tells which process it was, 0 when no window was found.
+bool HandOverToRunningInstance(const std::vector<std::string>& arguments,
+                               DWORD* running_process) {
+  *running_process = 0;
   HWND running = nullptr;
   // The first copy may still be creating its window
   for (int attempt = 0; attempt < 25 && running == nullptr; attempt++) {
@@ -63,11 +72,10 @@ void HandOverToRunningInstance(const std::vector<std::string>& arguments) {
     }
   }
   if (running == nullptr) {
-    return;
+    return false;
   }
-  DWORD running_process = 0;
-  ::GetWindowThreadProcessId(running, &running_process);
-  ::AllowSetForegroundWindow(running_process);
+  ::GetWindowThreadProcessId(running, running_process);
+  ::AllowSetForegroundWindow(*running_process);
 
   // The arguments, UTF-8, each ended by a zero byte
   std::string payload;
@@ -80,9 +88,46 @@ void HandOverToRunningInstance(const std::vector<std::string>& arguments) {
   data.cbData = static_cast<DWORD>(payload.size());
   data.lpData = payload.empty() ? nullptr : payload.data();
   DWORD_PTR result = 0;
-  ::SendMessageTimeoutW(running, WM_COPYDATA, 0,
-                        reinterpret_cast<LPARAM>(&data), SMTO_ABORTIFHUNG,
-                        5000, &result);
+  const LRESULT sent = ::SendMessageTimeoutW(
+      running, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&data),
+      SMTO_ABORTIFHUNG, 5000, &result);
+  return sent != 0 && result == TRUE;
+}
+
+// The running copy did not take the command line of this start: it is
+// closing, or ending. Waits for its process to end (|running_process|, 0 when
+// unknown), then for the instance mutex to go, and makes it this start's.
+// True when this start is the only copy now, its mutex in |instance_mutex|;
+// false when another copy still runs.
+bool TakeOverFromClosingInstance(DWORD running_process,
+                                 HANDLE* instance_mutex) {
+  // This handle would keep the mutex alive
+  ::CloseHandle(*instance_mutex);
+  *instance_mutex = nullptr;
+  const ULONGLONG until = ::GetTickCount64() + kClosingCopyWaitMs;
+  if (running_process != 0) {
+    HANDLE process = ::OpenProcess(SYNCHRONIZE, FALSE, running_process);
+    if (process != nullptr) {
+      ::WaitForSingleObject(process, kClosingCopyWaitMs);
+      ::CloseHandle(process);
+    }
+  }
+  for (;;) {
+    *instance_mutex =
+        ::CreateMutexW(nullptr, FALSE, IMMUCH360_INSTANCE_MUTEX_W);
+    if (*instance_mutex == nullptr) {
+      return false;
+    }
+    if (::GetLastError() != ERROR_ALREADY_EXISTS) {
+      return true;
+    }
+    if (::GetTickCount64() >= until) {
+      return false;
+    }
+    ::CloseHandle(*instance_mutex);
+    *instance_mutex = nullptr;
+    ::Sleep(200);
+  }
 }
 
 }  // namespace
@@ -108,9 +153,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   HANDLE instance_mutex =
       ::CreateMutexW(nullptr, FALSE, IMMUCH360_INSTANCE_MUTEX_W);
   if (instance_mutex != nullptr && ::GetLastError() == ERROR_ALREADY_EXISTS) {
-    HandOverToRunningInstance(command_line_arguments);
-    ::CloseHandle(instance_mutex);
-    return EXIT_SUCCESS;
+    DWORD running_process = 0;
+    if (HandOverToRunningInstance(command_line_arguments, &running_process)) {
+      ::CloseHandle(instance_mutex);
+      return EXIT_SUCCESS;
+    }
+    // A start right after a close: the closing copy does not take the files,
+    // this start opens them once that copy has ended
+    if (!TakeOverFromClosingInstance(running_process, &instance_mutex)) {
+      // Another start came first meanwhile, or the running copy does not
+      // answer: the files go to it, as before
+      HandOverToRunningInstance(command_line_arguments, &running_process);
+      if (instance_mutex != nullptr) {
+        ::CloseHandle(instance_mutex);
+      }
+      return EXIT_SUCCESS;
+    }
   }
 
   // Ends the process a few seconds after its window closes, whatever still

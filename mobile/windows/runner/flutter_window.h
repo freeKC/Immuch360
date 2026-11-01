@@ -41,6 +41,10 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       window_channel_;
 
+  // The window closes: a later start of the app is not handed over to this
+  // copy, which waits for its end instead (main.cpp).
+  bool closing_ = false;
+
   // The files of later starts handled before that channel was made, sent on
   // it once it is (OnCreate).
   flutter::EncodableList early_hand_overs_;

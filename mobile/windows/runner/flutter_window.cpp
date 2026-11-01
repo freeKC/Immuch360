@@ -116,6 +116,7 @@ void FlutterWindow::OnDestroy() {
     // would say it does not answer), and the wait gets a bound. Here after
     // window_manager's destroy() (the close guard), and in WM_DESTROY for a
     // window closed before Dart set the guard, whose window is already gone.
+    closing_ = true;
     HWND window = GetHandle();
     if (window != nullptr) {
       ::ShowWindow(window, SW_HIDE);
@@ -132,6 +133,7 @@ void FlutterWindow::OnDestroy() {
 }
 
 void FlutterWindow::OnClosing() {
+  closing_ = true;
   ::ShowWindow(GetHandle(), SW_HIDE);
   EndProcessWithin(kClosingMs);
 }
@@ -157,6 +159,11 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     case WM_COPYDATA: {
       const auto* data = reinterpret_cast<const COPYDATASTRUCT*>(lparam);
       if (data != nullptr && data->dwData == IMMUCH360_HAND_OVER_TAG) {
+        if (closing_) {
+          // Refused: the later start waits for this copy to end, and opens
+          // its files itself (main.cpp)
+          return FALSE;
+        }
         OnHandOver(*data);
         return TRUE;
       }
