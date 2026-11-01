@@ -100,7 +100,7 @@ Install Immuch360 on each screen you watch on: each one reads your sources itsel
 
 **You need:** a NAS with an SMB or WebDAV share, and Immuch360 on each screen you watch on.
 
-Add the share on each screen, and each one plays the photos and videos where they sit, nothing copied: phones, tablets, Android TV, a Meta Quest, Windows, Linux and macOS computers, and LG TVs signed in to your Immich server. A 360° photo turns as a sphere on the phone and the TV, and surrounds you in the headset. How to: [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+Add the share on each screen, and each one plays the photos and videos where they sit, nothing copied: phones, tablets, Android TV, a Meta Quest, Windows, Linux and macOS computers, and LG TVs signed in to your Immich server (SMB from webOS 22). A 360° photo turns as a sphere on the phone and the TV, and surrounds you in the headset. How to: [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 
 #### Your Immich server on every screen, signed in from your phone
 
@@ -118,7 +118,7 @@ On the phone, Immuch360 keeps the whole Immich mobile app, adds its 360°, VR180
   <img src=".github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustration with a real capture of the app: a laptop running Immuch360 beside printed photos and a NAS, and a person seen from behind in a headset running Immuch360, before one of those landscapes standing in relief">
 </p>
 
-**You need:** Immuch360 on a Windows, Linux or macOS computer and in a Meta Quest, with your NAS or your Immich server between them.
+**You need:** Immuch360 on a Windows, Linux or macOS computer and in a Meta Quest, with your NAS between them, or your Immich server with "Also back up AI versions" on.
 
 The computer itself turns your photos into 3D photos and 3D scenes, and into 360° panoramas with a graphics card of 8 GB on Windows or Linux, and saves them next to the originals. The headset shows a 3D photo in true 3D, puts a scene in your room and a panorama all around you; phones and TVs open the panoramas in their 360° viewer. How to: [Turn one photo into 3D, a scene, a panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
 
@@ -140,7 +140,7 @@ The phone shows the drone's live video and relays it, over your Wi-Fi or its own
 
 **You need:** an Insta360, GoPro MAX or DJI Osmo 360 camera, your NAS, and Immuch360 on the screens: phones, tablets, Android TV, a Meta Quest, Windows.
 
-Copy the raw files from the camera's card to an SMB or WebDAV share of your NAS, as they are; an Immich server takes the Insta360 ones too. Each screen stitches them as they play, with the calibration written in each file, and nothing is exported in the camera's app first. How to: [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras).
+Copy the .insp, .insv, .360 or .osv files from the camera's card to an SMB or WebDAV share of your NAS, as they are; an Immich server takes the Insta360 ones too. Each screen stitches them as they play, with the calibration written in each file, and nothing is exported in the camera's app first. How to: [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras).
 
 #### Your Plex and DLNA servers on the TV and in the headset
 
@@ -160,12 +160,12 @@ Plex gives the original files of your libraries, so a 360° video stays 360°, a
 
 **You need:** Immuch360 on an Android phone, an iPhone or a Windows computer, and in a Meta Quest, on the same home Wi-Fi.
 
-Turn on "Share this phone on the network" on the phone, or "Share this computer on the network" on the computer, and the headset plays its photos and videos, the 360° ones all around you: no server, no NAS, no upload. On an iPhone, the share runs while the app is open. How to: [Share this phone on the network](docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+Turn on "Share this phone on the network" on the phone, or "Share this computer on the network" on the computer, and the headset plays its photos and videos, the 360° ones all around you: no server, no NAS, no upload. On an iPhone, the share runs while the app is on screen. How to: [Share this phone on the network](docs/immuch360/user-guide.md#share-this-phone-on-the-network).
 
 #### Your Tapo cameras on the TV and in the headset
 
 <p align="center">
-  <img src=".github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustration, not a capture: a home camera by the window films the garden, and a TV, a phone, a headset worn on the sofa and a laptop, each running Immuch360, show that one view">
+  <img src=".github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustration, not a capture: a home camera by the window films the garden, and a TV, a phone, a headset worn in the room and a laptop, each running Immuch360, show that one view">
 </p>
 
 **You need:** Tapo cameras on your home network, and Immuch360 on an Android phone, an Android TV, a Meta Quest or a Windows computer.
@@ -175,10 +175,10 @@ Each screen shows a camera live and plays the recordings of its memory card day 
 #### Gaussian splats in your room, in a Meta Quest 3 or 3S (experimental)
 
 <p align="center">
-  <img src=".github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustration, not a capture: in a living room, a person seen from behind in a headset running Immuch360 stands before a life size fountain captured as a splat by another app and opened from a NAS">
+  <img src=".github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustration, not a capture: in a living room, a person seen from behind in a headset running Immuch360 stands before a life size fountain of glowing light, opened from a NAS on a shelf">
 </p>
 
-**You need:** a splat made with Polycam, Scaniverse, Luma or another tool, as a .spz or .ply file on your NAS or in the headset, and Immuch360 in a Meta Quest 3 or 3S.
+**You need:** a splat made with Polycam, Scaniverse, Luma or another tool, as a .spz or binary .ply file on your NAS or in the headset, and Immuch360 in a Meta Quest 3 or 3S.
 
 The headset sets the place or the object at its size, in front of you or all around you: walk around it, glide through it with the left thumbstick, turn with the right one. Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: any defect is Immuch360's own. How to: [Explore Gaussian splats in a Meta Quest 3 or 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
 
@@ -860,7 +860,7 @@ The AI features run models and engines made by others, downloaded only when you 
 
 The 360° LoRA of nomadoor is Apache 2.0 on its card and was trained on CC0 and public domain images, with a part under CC BY: the attribution of that part comes in a later version of MODEL-LICENSES.md. Nothing here is under a non commercial licence, and nothing needs CUDA. ONNX Runtime and LiteRT have other libraries built in, listed in their notices, among them Eigen under the MPL 2.0, a weak copyleft licence.
 
-The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The pictures of the AI creator are real outputs of the app, made from CC0 photos of Poly Haven, with two real captures of the Windows app. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. The use case cards set such an illustration above a row drawn for the project, with the platform logos, the app's icon and, in two cards, real captures of the app; besides the platform logos, they show no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](.github/readme/CAPTURES.md).
+The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The pictures of the AI creator are real outputs of the app, made from CC0 photos of Poly Haven, with two real captures of the Windows app. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. The use case cards set such an illustration above a row drawn for the project, with the platform logos, the app's icon, real captures of the app in two cards and CC0 photos of Poly Haven in two; besides the platform logos, they show no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](.github/readme/CAPTURES.md).
 
 ## Roadmap
 
