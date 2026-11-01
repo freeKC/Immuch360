@@ -1,7 +1,8 @@
 // The window of Immuch360 Desktop (design 1.8, 4.2 and 4.4): F11 anywhere and F in a viewer toggle full screen,
 // Escape and the back button of a mouse leave it first, then close the viewer, a dialog keeps its own Escape, a letter
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
-// first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step.
+// first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step,
+// then the app ends its own work, each step bounded, before the window goes.
 
 import 'dart:async';
 
@@ -16,6 +17,7 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
+import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -38,6 +40,9 @@ class FakeDesktopWindow extends DesktopWindow {
 
   @override
   Future<void> setPreventClose(bool preventClose) async => calls.add('preventClose $preventClose');
+
+  @override
+  Future<void> prepareClose() async => calls.add('prepareClose');
 
   @override
   Future<void> destroy() async => calls.add('destroy');
@@ -403,6 +408,39 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
       expect(window.calls, contains('destroy'));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the app ends its own work before the window goes, and the window goes even when a step hangs', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final steps = <String>[];
+      await pumpShell(
+        tester,
+        overrides: [
+          desktopCloseStepsProvider.overrideWithValue(
+            () => [
+              DesktopCloseStep('the players', const Duration(milliseconds: 500), () {
+                steps.add('players');
+                window.calls.add('players');
+                // A libmpv that does not answer
+                return Completer<void>().future;
+              }),
+              DesktopCloseStep('the logs', const Duration(milliseconds: 300), () => window.calls.add('logs')),
+            ],
+          ),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pump();
+      expect(window.calls, ['preventClose true', 'prepareClose', 'players']);
+      await tester.pump(const Duration(milliseconds: 499));
+      expect(window.calls, isNot(contains('destroy')));
+      await tester.pump(const Duration(milliseconds: 2));
+      expect(window.calls, ['preventClose true', 'prepareClose', 'players', 'logs', 'destroy']);
+      expect(steps, ['players']);
       debugDefaultTargetPlatformOverride = null;
     });
 

@@ -11,7 +11,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -19,6 +21,9 @@ import 'package:logging/logging.dart';
 import 'package:window_manager/window_manager.dart';
 
 final _log = Logger('DesktopFullScreen');
+
+/// What the app tells the runner of its window (windows/runner/flutter_window.cpp)
+const _windowChannel = MethodChannel('immuch360/window');
 
 /// The window of the app, behind a class of its own so that the tests replace window_manager, which needs the runner
 class DesktopWindow {
@@ -28,6 +33,21 @@ class DesktopWindow {
 
   /// While true, the close button of the window only tells the listeners (onWindowClose), see close_guard.dart
   Future<void> setPreventClose(bool preventClose) => windowManager.setPreventClose(preventClose);
+
+  /// Tells the runner that the window closes, before the app ends its own work (close_sequence.dart): on Windows the
+  /// window hides at once, and the process ends a few seconds later if it has not ended by then
+  /// (windows/runner/close_watchdog.cpp). Nothing elsewhere.
+  Future<void> prepareClose() async {
+    if (!CurrentPlatform.isWindows) {
+      return;
+    }
+    try {
+      await _windowChannel.invokeMethod<void>('closing').timeout(const Duration(milliseconds: 500));
+    } catch (error) {
+      // An older runner, or one that does not answer: the window closes as it did
+      _log.warning('The runner was not told of the close: $error');
+    }
+  }
 
   /// Closes the window and ends the app, once the close guard let it go
   Future<void> destroy() => windowManager.destroy();
