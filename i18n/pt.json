@@ -3395,7 +3395,7 @@
   "setting_image_viewer_preview_title": "Carregar imagem de pré-visualização",
   "setting_immersive_flat_3d_subtitle": "Os vídeos com _SBS, _HSBS, _LR, _TB, _OU ou Half-SBS no nome, e as fotos com _TB, _OU ou _HTB, abrem em 3D num ecrã plano com Ver em 3D",
   "setting_immersive_flat_3d_title": "3D pelo nome do ficheiro (experimental)",
-  "setting_immersive_reverse_turn_subtitle": "O manípulo direito do visualizador imersivo roda as fotos e os vídeos no sentido contrário",
+  "setting_immersive_reverse_turn_subtitle": "O manípulo direito do visualizador imersivo roda as fotos, os vídeos e os splats no sentido contrário",
   "setting_immersive_reverse_turn_title": "Inverter a rotação do manípulo",
   "setting_immersive_sharp_screens_subtitle": "Num Meta Quest, as fotos e os vídeos de um ecrã plano passam pelo compositor dos óculos, com a sua sobreamostragem e nitidez. Desativado, são mostrados como antes.",
   "setting_immersive_sharp_screens_title": "Ecrãs planos mais nítidos (experimental)",

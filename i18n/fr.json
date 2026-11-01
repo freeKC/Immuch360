@@ -3395,7 +3395,7 @@
   "setting_image_viewer_preview_title": "Charger l'image d'aperçu",
   "setting_immersive_flat_3d_subtitle": "Les vidéos dont le nom contient _SBS, _HSBS, _LR, _TB, _OU ou Half-SBS, et les photos dont le nom contient _TB, _OU ou _HTB, s'ouvrent en 3D sur un écran plat avec Voir en 3D",
   "setting_immersive_flat_3d_title": "3D d'après le nom du fichier (expérimental)",
-  "setting_immersive_reverse_turn_subtitle": "Le joystick droit du visualiseur immersif fait tourner les photos et vidéos dans l'autre sens",
+  "setting_immersive_reverse_turn_subtitle": "Le joystick droit du visualiseur immersif fait tourner les photos, vidéos et splats dans l'autre sens",
   "setting_immersive_reverse_turn_title": "Inverser la rotation au joystick",
   "setting_immersive_sharp_screens_subtitle": "Sur un Meta Quest, les photos et vidéos d'un écran plat passent par le compositeur du casque, avec son suréchantillonnage et son renforcement de la netteté. Désactivé, elles s'affichent comme avant.",
   "setting_immersive_sharp_screens_title": "Écrans plats plus nets (expérimental)",

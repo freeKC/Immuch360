@@ -1426,7 +1426,7 @@
   "rotate_saving_wait": "Бұру сақталуда, күте тұрыңыз ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "Атауында _SBS, _HSBS, _LR, _TB, _OU немесе Half-SBS бар бейнелер мен _TB, _OU немесе _HTB бар фотолар «3D түрінде көру» арқылы жалпақ экранда 3D түрінде ашылады",
   "setting_immersive_flat_3d_title": "Файл атауы бойынша 3D (тәжірибелік)",
-  "setting_immersive_reverse_turn_subtitle": "Иммерсивті көру құралының оң таяқшасы фото мен бейнелерді кері бағытта бұрады",
+  "setting_immersive_reverse_turn_subtitle": "Иммерсивті көру құралының оң таяқшасы фото, бейнелер мен сплаттарды кері бағытта бұрады",
   "setting_immersive_reverse_turn_title": "Таяқшамен бұруды кері ету",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest құрылғысында жазық экранның фотолары мен бейнелері гарнитура композиторы арқылы, оның суперсемплингі мен айқындауымен өтеді. Өшірулі болса, бұрынғыдай көрсетіледі.",
   "setting_immersive_sharp_screens_title": "Анығырақ жазық экрандар (тәжірибелік)",

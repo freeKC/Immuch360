@@ -3393,7 +3393,7 @@
   "setting_image_viewer_preview_title": "プレビューを読み込む",
   "setting_immersive_flat_3d_subtitle": "名前に _SBS、_HSBS、_LR、_TB、_OU、Half-SBS を含む動画と、_TB、_OU、_HTB を含む写真は、「3D で表示」で平面スクリーン上に 3D で開きます",
   "setting_immersive_flat_3d_title": "ファイル名による 3D (試験運用)",
-  "setting_immersive_reverse_turn_subtitle": "イマーシブビューアーの右サムスティックで、写真や動画を逆方向に回転させます",
+  "setting_immersive_reverse_turn_subtitle": "イマーシブビューアーの右サムスティックで、写真、動画、スプラットを逆方向に回転させます",
   "setting_immersive_reverse_turn_title": "サムスティックの回転を反転",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest では、平面スクリーンの写真と動画がヘッドセットのコンポジターを通り、そのスーパーサンプリングとシャープ化が適用されます。オフにすると、以前と同じように表示されます。",
   "setting_immersive_sharp_screens_title": "よりシャープな平面スクリーン (試験運用)",

@@ -1425,7 +1425,7 @@
   "rotate_saving_wait": "घुमाइ सुरक्षित गरिँदै, कृपया पर्खनुहोस् ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "नाममा _SBS, _HSBS, _LR, _TB, _OU वा Half-SBS भएका भिडियो र _TB, _OU वा _HTB भएका फोटोहरू 3D मा हेर्नुहोस् बाट समतल स्क्रिनमा 3D मा खुल्छन्",
   "setting_immersive_flat_3d_title": "फाइलको नामअनुसार 3D (प्रयोगात्मक)",
-  "setting_immersive_reverse_turn_subtitle": "इमर्सिभ भ्युअरको दायाँ थम्बस्टिकले फोटो र भिडियोलाई उल्टो दिशामा घुमाउँछ",
+  "setting_immersive_reverse_turn_subtitle": "इमर्सिभ भ्युअरको दायाँ थम्बस्टिकले फोटो, भिडियो र स्प्ल्याटलाई उल्टो दिशामा घुमाउँछ",
   "setting_immersive_reverse_turn_title": "थम्बस्टिकको घुमाइ उल्टाउनुहोस्",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest मा, समतल स्क्रिनका फोटो र भिडियोहरू हेडसेटको कम्पोजिटरबाट, यसको सुपर स्याम्पलिङ र शार्पनिङसहित जान्छन्। बन्द हुँदा, पहिलेजस्तै देखिन्छन्।",
   "setting_immersive_sharp_screens_title": "अझ स्पष्ट समतल स्क्रिनहरू (प्रयोगात्मक)",

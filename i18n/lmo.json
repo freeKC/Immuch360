@@ -1404,7 +1404,7 @@
   "rotate_saving_wait": "Se salva la rotazion, speta ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "I video cont _SBS, _HSBS, _LR, _TB, _OU o Half-SBS in del nom, e i foto cont _TB, _OU o _HTB, se derven in 3D sura un schermo piatt cont Varda in 3D",
   "setting_immersive_flat_3d_title": "3D segond el nom del file (sperimental)",
-  "setting_immersive_reverse_turn_subtitle": "La levetta de destra del visor immersiv la gira i foto e i video in l'alter sens",
+  "setting_immersive_reverse_turn_subtitle": "La levetta de destra del visor immersiv la gira i foto, i video e i splat in l'alter sens",
   "setting_immersive_reverse_turn_title": "Invertì el gir de la levetta",
   "setting_immersive_sharp_screens_subtitle": "Sun un Meta Quest, i fòto e i video de un scherm piatt passen per el compositor del visor, cunt el sò supercampionament e la soa nettezza. Smorzaa, se mostren come prima.",
   "setting_immersive_sharp_screens_title": "Scherm piatt pussee nett (sperimental)",

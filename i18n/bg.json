@@ -3393,7 +3393,7 @@
   "setting_image_viewer_preview_title": "Зареждане на миниатюра",
   "setting_immersive_flat_3d_subtitle": "Видеоклипове с _SBS, _HSBS, _LR, _TB, _OU или Half-SBS в името и снимки с _TB, _OU или _HTB се отварят в 3D на плосък екран с „Преглед в 3D“",
   "setting_immersive_flat_3d_title": "3D по името на файла (експериментално)",
-  "setting_immersive_reverse_turn_subtitle": "Десният джойстик на потапящия преглед завърта снимките и видеоклиповете в обратна посока",
+  "setting_immersive_reverse_turn_subtitle": "Десният джойстик на потапящия преглед завърта снимките, видеоклиповете и сплатовете в обратна посока",
   "setting_immersive_reverse_turn_title": "Обратно завъртане с джойстика",
   "setting_immersive_sharp_screens_subtitle": "На Meta Quest снимките и видеоклиповете на плосък екран минават през композитора на шлема, с неговото суперсемплиране и изостряне. Изключено, те се показват както преди.",
   "setting_immersive_sharp_screens_title": "По-резки плоски екрани (експериментално)",

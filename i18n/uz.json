@@ -1416,7 +1416,7 @@
   "rotate_saving_wait": "Burish saqlanmoqda, iltimos kuting ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "Nomida _SBS, _HSBS, _LR, _TB, _OU yoki Half-SBS bo‘lgan videolar va _TB, _OU yoki _HTB bo‘lgan suratlar 3D ko‘rinishida ko‘rish orqali tekis ekranda 3D ochiladi",
   "setting_immersive_flat_3d_title": "Fayl nomiga ko‘ra 3D (tajribaviy)",
-  "setting_immersive_reverse_turn_subtitle": "Immersiv ko'rish vositasining o'ng stiki surat va videolarni teskari tomonga buradi",
+  "setting_immersive_reverse_turn_subtitle": "Immersiv ko'rish vositasining o'ng stiki surat, video va splatlarni teskari tomonga buradi",
   "setting_immersive_reverse_turn_title": "Stik burilishini teskari qilish",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest’da tekis ekranning suratlari va videolari shlem kompozitoridan uning supersempling va keskinlashtirishi bilan o‘tadi. O‘chirilganda avvalgidek ko‘rsatiladi.",
   "setting_immersive_sharp_screens_title": "Aniqroq tekis ekranlar (tajribaviy)",

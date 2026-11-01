@@ -3364,7 +3364,7 @@
   "setting_image_viewer_preview_title": "Load preview image",
   "setting_immersive_flat_3d_subtitle": "Videos named _SBS, _HSBS, _LR, _TB, _OU or Half-SBS, and photos named _TB, _OU or _HTB, open in 3D on a flat screen with View in 3D",
   "setting_immersive_flat_3d_title": "3D by file name (experimental)",
-  "setting_immersive_reverse_turn_subtitle": "The right thumbstick of the immersive viewer turns photos and videos the other way",
+  "setting_immersive_reverse_turn_subtitle": "The right thumbstick of the immersive viewer turns photos, videos and splats the other way",
   "setting_immersive_reverse_turn_title": "Reverse thumbstick turn",
   "setting_immersive_sharp_screens_subtitle": "On a Meta Quest, the photos and videos of a flat screen go through the headset compositor, with its super sampling and sharpening. Off, they show as before.",
   "setting_immersive_sharp_screens_title": "Sharper flat screens (experimental)",

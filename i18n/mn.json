@@ -1600,7 +1600,7 @@
   "server_online": "Сервер Асаалттай",
   "setting_immersive_flat_3d_subtitle": "Нэрэндээ _SBS, _HSBS, _LR, _TB, _OU эсвэл Half-SBS агуулсан видео, _TB, _OU эсвэл _HTB агуулсан зураг 3D-ээр харах товчоор хавтгай дэлгэц дээр 3D-ээр нээгдэнэ",
   "setting_immersive_flat_3d_title": "Файлын нэрээр 3D (туршилтын)",
-  "setting_immersive_reverse_turn_subtitle": "Иммерсив үзэгчийн баруун жойстик зураг, видеог эсрэг чиглэлд эргүүлнэ",
+  "setting_immersive_reverse_turn_subtitle": "Иммерсив үзэгчийн баруун жойстик зураг, видео, сплатыг эсрэг чиглэлд эргүүлнэ",
   "setting_immersive_reverse_turn_title": "Жойстикийн эргэлтийг урвуулах",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest дээр хавтгай дэлгэцийн зураг, видео нь шлемийн композитороор түүний супер түүвэрлэлт, тодруулгатай дамжина. Унтраасан үед өмнөх шигээ харагдана.",
   "setting_immersive_sharp_screens_title": "Илүү тод хавтгай дэлгэцүүд (туршилтын)",

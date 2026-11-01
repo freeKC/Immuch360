@@ -1404,7 +1404,7 @@
   "rotate_saving_wait": "Čuvanje rotacije, sačekajte ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "Videozapisi s _SBS, _HSBS, _LR, _TB, _OU ili Half-SBS u nazivu i fotografije s _TB, _OU ili _HTB otvaraju se u 3D na ravnom ekranu pomoću Prikaži u 3D",
   "setting_immersive_flat_3d_title": "3D prema nazivu datoteke (eksperimentalno)",
-  "setting_immersive_reverse_turn_subtitle": "Desna palica imerzivnog preglednika okreće fotografije i videozapise u suprotnom smjeru",
+  "setting_immersive_reverse_turn_subtitle": "Desna palica imerzivnog preglednika okreće fotografije, videozapise i splatove u suprotnom smjeru",
   "setting_immersive_reverse_turn_title": "Obrnuto okretanje palicom",
   "setting_immersive_sharp_screens_subtitle": "Na Meta Questu fotografije i videozapisi ravnog ekrana prolaze kroz kompozitor naočala, s njegovim superuzorkovanjem i izoštravanjem. Kad je isključeno, prikazuju se kao ranije.",
   "setting_immersive_sharp_screens_title": "Oštriji ravni ekrani (eksperimentalno)",

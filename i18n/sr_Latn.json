@@ -3149,7 +3149,7 @@
   "setting_image_viewer_preview_title": "Pregledaj sliku",
   "setting_immersive_flat_3d_subtitle": "Video snimci sa _SBS, _HSBS, _LR, _TB, _OU ili Half-SBS u imenu i fotografije sa _TB, _OU ili _HTB otvaraju se u 3D na ravnom ekranu pomoću Prikaži u 3D",
   "setting_immersive_flat_3d_title": "3D prema imenu datoteke (eksperimentalno)",
-  "setting_immersive_reverse_turn_subtitle": "Desna palica imerzivnog prikazivača okreće fotografije i video zapise u suprotnom smeru",
+  "setting_immersive_reverse_turn_subtitle": "Desna palica imerzivnog prikazivača okreće fotografije, video zapise i splatove u suprotnom smeru",
   "setting_immersive_reverse_turn_title": "Obrnuto okretanje palicom",
   "setting_immersive_sharp_screens_subtitle": "Na Meta Quest-u fotografije i video snimci ravnog ekrana prolaze kroz kompozitor naočara, uz njegovo naduzorkovanje i izoštravanje. Kada je isključeno, prikazuju se kao ranije.",
   "setting_immersive_sharp_screens_title": "Oštriji ravni ekrani (eksperimentalno)",

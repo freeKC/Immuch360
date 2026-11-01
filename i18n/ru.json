@@ -3395,7 +3395,7 @@
   "setting_image_viewer_preview_title": "Загружать уменьшенное изображение",
   "setting_immersive_flat_3d_subtitle": "Видео с _SBS, _HSBS, _LR, _TB, _OU или Half-SBS в имени и фото с _TB, _OU или _HTB открываются в 3D на плоском экране кнопкой «Смотреть в 3D»",
   "setting_immersive_flat_3d_title": "3D по имени файла (экспериментально)",
-  "setting_immersive_reverse_turn_subtitle": "Правый стик иммерсивного просмотра поворачивает фото и видео в обратную сторону",
+  "setting_immersive_reverse_turn_subtitle": "Правый стик иммерсивного просмотра поворачивает фото, видео и сплаты в обратную сторону",
   "setting_immersive_reverse_turn_title": "Обратный поворот стиком",
   "setting_immersive_sharp_screens_subtitle": "На Meta Quest фото и видео плоского экрана проходят через компоновщик шлема, с его суперсэмплингом и повышением резкости. Если выключено, они показываются как раньше.",
   "setting_immersive_sharp_screens_title": "Более чёткие плоские экраны (экспериментально)",

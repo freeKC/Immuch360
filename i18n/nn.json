@@ -1942,7 +1942,7 @@
   "set": "Sett",
   "setting_immersive_flat_3d_subtitle": "Videoar med _SBS, _HSBS, _LR, _TB, _OU eller Half-SBS i namnet og bilete med _TB, _OU eller _HTB opnar seg i 3D på ein flat skjerm med Vis i 3D",
   "setting_immersive_flat_3d_title": "3D ut frå filnamn (eksperimentell)",
-  "setting_immersive_reverse_turn_subtitle": "Den høgre styrespaken i den immersive visinga dreiar bilete og videoar den andre vegen",
+  "setting_immersive_reverse_turn_subtitle": "Den høgre styrespaken i den immersive visinga dreiar bilete, videoar og splattar den andre vegen",
   "setting_immersive_reverse_turn_title": "Snu dreiinga på styrespaken",
   "setting_immersive_sharp_screens_subtitle": "På ein Meta Quest går bileta og videoane på ein flat skjerm gjennom compositoren til headsettet, med supersamplinga og skjerpinga hans. Av, blir dei viste som før.",
   "setting_immersive_sharp_screens_title": "Skarpare flate skjermar (eksperimentell)",

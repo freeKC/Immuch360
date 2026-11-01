@@ -3394,7 +3394,7 @@
   "setting_image_viewer_preview_title": "Carica immagine di anteprima",
   "setting_immersive_flat_3d_subtitle": "I video con _SBS, _HSBS, _LR, _TB, _OU o Half-SBS nel nome, e le foto con _TB, _OU o _HTB, si aprono in 3D su uno schermo piatto con Visualizza in 3D",
   "setting_immersive_flat_3d_title": "3D in base al nome del file (sperimentale)",
-  "setting_immersive_reverse_turn_subtitle": "La levetta destra del visualizzatore immersivo ruota foto e video nel verso opposto",
+  "setting_immersive_reverse_turn_subtitle": "La levetta destra del visualizzatore immersivo ruota foto, video e splat nel verso opposto",
   "setting_immersive_reverse_turn_title": "Inverti la rotazione con la levetta",
   "setting_immersive_sharp_screens_subtitle": "Su un Meta Quest, le foto e i video di uno schermo piatto passano dal compositore del visore, con il suo supercampionamento e la sua nitidezza. Disattivato, si mostrano come prima.",
   "setting_immersive_sharp_screens_title": "Schermi piatti più nitidi (sperimentale)",

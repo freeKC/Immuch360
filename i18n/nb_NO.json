@@ -3394,7 +3394,7 @@
   "setting_image_viewer_preview_title": "Last forhåndsvisningsbilde",
   "setting_immersive_flat_3d_subtitle": "Videoer med _SBS, _HSBS, _LR, _TB, _OU eller Half-SBS i navnet og bilder med _TB, _OU eller _HTB åpnes i 3D på en flat skjerm med Vis i 3D",
   "setting_immersive_flat_3d_title": "3D ut fra filnavn (eksperimentell)",
-  "setting_immersive_reverse_turn_subtitle": "Den høyre styrespaken i den immersive visningen dreier bilder og videoer den andre veien",
+  "setting_immersive_reverse_turn_subtitle": "Den høyre styrespaken i den immersive visningen dreier bilder, videoer og splatter den andre veien",
   "setting_immersive_reverse_turn_title": "Omvendt dreining med styrespaken",
   "setting_immersive_sharp_screens_subtitle": "På en Meta Quest går bildene og videoene på en flat skjerm gjennom headsettets compositor, med dens supersampling og skjerping. Av, vises de som før.",
   "setting_immersive_sharp_screens_title": "Skarpere flate skjermer (eksperimentell)",

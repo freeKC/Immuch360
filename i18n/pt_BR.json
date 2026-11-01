@@ -3373,7 +3373,7 @@
   "setting_image_viewer_preview_title": "Carregar imagem de pré-visualização",
   "setting_immersive_flat_3d_subtitle": "Vídeos com _SBS, _HSBS, _LR, _TB, _OU ou Half-SBS no nome, e fotos com _TB, _OU ou _HTB, abrem em 3D em uma tela plana com Ver em 3D",
   "setting_immersive_flat_3d_title": "3D pelo nome do arquivo (experimental)",
-  "setting_immersive_reverse_turn_subtitle": "O analógico direito do visualizador imersivo gira fotos e vídeos no sentido contrário",
+  "setting_immersive_reverse_turn_subtitle": "O analógico direito do visualizador imersivo gira fotos, vídeos e splats no sentido contrário",
   "setting_immersive_reverse_turn_title": "Inverter o giro do analógico",
   "setting_immersive_sharp_screens_subtitle": "Em um Meta Quest, as fotos e os vídeos de uma tela plana passam pelo compositor do headset, com sua superamostragem e nitidez. Desativado, eles aparecem como antes.",
   "setting_immersive_sharp_screens_title": "Telas planas mais nítidas (experimental)",

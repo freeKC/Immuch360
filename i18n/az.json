@@ -1574,7 +1574,7 @@
   "rotate_saving_wait": "Döndərmə saxlanılır, gözləyin ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "Adında _SBS, _HSBS, _LR, _TB, _OU və ya Half-SBS olan videolar və adında _TB, _OU və ya _HTB olan fotolar 3D-də bax ilə düz ekranda 3D açılır",
   "setting_immersive_flat_3d_title": "Fayl adına görə 3D (eksperimental)",
-  "setting_immersive_reverse_turn_subtitle": "İmmersiv görüntüləyicinin sağ çubuğu foto və videoları əks istiqamətdə döndərir",
+  "setting_immersive_reverse_turn_subtitle": "İmmersiv görüntüləyicinin sağ çubuğu foto, video və splatları əks istiqamətdə döndərir",
   "setting_immersive_reverse_turn_title": "Çubuqla dönməni tərsinə çevir",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest-də düz ekranın foto və videoları başlığın kompozitorundan, onun superseçmə və kəskinləşdirməsi ilə keçir. Söndürüləndə əvvəlki kimi göstərilir.",
   "setting_immersive_sharp_screens_title": "Daha kəskin düz ekranlar (eksperimental)",

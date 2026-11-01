@@ -1510,7 +1510,7 @@
   "rotate_saving_wait": "Sine-save ang pag-rotate, maghintay ({seconds} s)",
   "setting_immersive_flat_3d_subtitle": "Ang mga video na may _SBS, _HSBS, _LR, _TB, _OU o Half-SBS sa pangalan, at ang mga larawang may _TB, _OU o _HTB, ay bumubukas sa 3D sa isang patag na screen gamit ang Tingnan sa 3D",
   "setting_immersive_flat_3d_title": "3D ayon sa pangalan ng file (eksperimental)",
-  "setting_immersive_reverse_turn_subtitle": "Pinapaikot ng kanang thumbstick ng immersive viewer ang mga larawan at video sa kabilang direksyon",
+  "setting_immersive_reverse_turn_subtitle": "Pinapaikot ng kanang thumbstick ng immersive viewer ang mga larawan, video at splat sa kabilang direksyon",
   "setting_immersive_reverse_turn_title": "Baligtarin ang ikot ng thumbstick",
   "setting_immersive_sharp_screens_subtitle": "Sa isang Meta Quest, dumadaan sa compositor ng headset ang mga larawan at video ng isang patag na screen, kasama ang super sampling at sharpening nito. Kapag naka-off, ipinapakita ang mga ito gaya ng dati.",
   "setting_immersive_sharp_screens_title": "Mas matatalas na patag na screen (eksperimental)",

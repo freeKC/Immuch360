@@ -3231,7 +3231,7 @@
   "setting_image_viewer_preview_title": "Lataa esikatselukuva",
   "setting_immersive_flat_3d_subtitle": "Videot, joiden nimessä on _SBS, _HSBS, _LR, _TB, _OU tai Half-SBS, ja kuvat, joiden nimessä on _TB, _OU tai _HTB, avautuvat 3D:nä tasaiselle näytölle painikkeella Näytä 3D:nä",
   "setting_immersive_flat_3d_title": "3D tiedostonimen mukaan (kokeellinen)",
-  "setting_immersive_reverse_turn_subtitle": "Immersiivisen katselimen oikea peukalosauva kääntää kuvia ja videoita toiseen suuntaan",
+  "setting_immersive_reverse_turn_subtitle": "Immersiivisen katselimen oikea peukalosauva kääntää kuvia, videoita ja splatteja toiseen suuntaan",
   "setting_immersive_reverse_turn_title": "Käänteinen peukalosauvan kääntö",
   "setting_immersive_sharp_screens_subtitle": "Meta Questissa tasaisen näytön kuvat ja videot kulkevat lasien kompositorin kautta sen ylinäytteistyksen ja terävöinnin kanssa. Pois päältä ne näkyvät kuten ennen.",
   "setting_immersive_sharp_screens_title": "Terävämmät tasaiset näytöt (kokeellinen)",

@@ -3373,7 +3373,7 @@
   "setting_image_viewer_preview_title": "โหลดรูปภาพตัวอย่าง",
   "setting_immersive_flat_3d_subtitle": "วิดีโอที่ชื่อมี _SBS, _HSBS, _LR, _TB, _OU หรือ Half-SBS และรูปภาพที่มี _TB, _OU หรือ _HTB จะเปิดแบบ 3D บนจอแบนด้วย ดูแบบ 3D",
   "setting_immersive_flat_3d_title": "3D ตามชื่อไฟล์ (ทดลอง)",
-  "setting_immersive_reverse_turn_subtitle": "คันโยกขวาของตัวดูแบบสมจริงจะหมุนรูปภาพและวิดีโอไปในทิศทางตรงกันข้าม",
+  "setting_immersive_reverse_turn_subtitle": "คันโยกขวาของตัวดูแบบสมจริงจะหมุนรูปภาพ วิดีโอ และสแปลตไปในทิศทางตรงกันข้าม",
   "setting_immersive_reverse_turn_title": "กลับทิศการหมุนด้วยคันโยก",
   "setting_immersive_sharp_screens_subtitle": "บน Meta Quest รูปภาพและวิดีโอของจอแบนจะผ่านตัวประกอบภาพของแว่น พร้อมการสุ่มตัวอย่างเกินและการเพิ่มความคมชัด เมื่อปิด จะแสดงเหมือนเดิม",
   "setting_immersive_sharp_screens_title": "จอแบนที่คมชัดกว่า (ทดลอง)",

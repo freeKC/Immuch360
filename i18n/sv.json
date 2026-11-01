@@ -3394,7 +3394,7 @@
   "setting_image_viewer_preview_title": "Ladda förhandsgranskning av bild",
   "setting_immersive_flat_3d_subtitle": "Videor med _SBS, _HSBS, _LR, _TB, _OU eller Half-SBS i namnet och bilder med _TB, _OU eller _HTB öppnas i 3D på en platt skärm med Visa i 3D",
   "setting_immersive_flat_3d_title": "3D enligt filnamn (experimentell)",
-  "setting_immersive_reverse_turn_subtitle": "Den högra styrspaken i den uppslukande visaren vrider foton och videor åt andra hållet",
+  "setting_immersive_reverse_turn_subtitle": "Den högra styrspaken i den uppslukande visaren vrider foton, videor och splattar åt andra hållet",
   "setting_immersive_reverse_turn_title": "Omvänd vridning med styrspaken",
   "setting_immersive_sharp_screens_subtitle": "På en Meta Quest går fotona och videorna på en platt skärm genom headsetets compositor, med dess supersampling och skärpning. Avstängt visas de som tidigare.",
   "setting_immersive_sharp_screens_title": "Skarpare platta skärmar (experimentell)",

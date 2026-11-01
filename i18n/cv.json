@@ -1487,7 +1487,7 @@
   "select_photos": "Сӑнӳкерчӗксем суйлӑр",
   "setting_immersive_flat_3d_subtitle": "Ятӗнче _SBS, _HSBS, _LR, _TB, _OU е Half-SBS пур видеосем тата _TB, _OU е _HTB пур сӑнӳкерчӗксем «3D-ра пӑх» урлӑ тикӗс экран ҫинче 3D-ра уҫӑлаҫҫӗ",
   "setting_immersive_flat_3d_title": "Файл ятӗпе 3D (экспериментлӑ)",
-  "setting_immersive_reverse_turn_subtitle": "Иммерсивлӑ пӑхавҫӑн сылтӑм стикӗ сӑнӳкерчӗксемпе видеосене тепӗр еннелле ҫавӑрать",
+  "setting_immersive_reverse_turn_subtitle": "Иммерсивлӑ пӑхавҫӑн сылтӑм стикӗ сӑнӳкерчӗксене, видеосене тата сплачӗсене тепӗр еннелле ҫавӑрать",
   "setting_immersive_reverse_turn_title": "Стик ҫаврӑнӑвӗ тепӗр еннелле",
   "setting_immersive_sharp_screens_subtitle": "Meta Quest ҫинче тикӗс экранӑн сӑнӳкерчӗкӗсемпе видеосем шлем компоситорӗ урлӑ иртеҫҫӗ, унӑн суперсэмплингӗпе уҫӑмлӑхӗпе. Сӳнтерсен, малтанхи пекех кӑтартӑнаҫҫӗ.",
   "setting_immersive_sharp_screens_title": "Уҫӑмлӑрах тикӗс экрансем (экспериментлӑ)",

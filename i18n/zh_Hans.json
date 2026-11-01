@@ -3393,7 +3393,7 @@
   "setting_image_viewer_preview_title": "加载预览图",
   "setting_immersive_flat_3d_subtitle": "名称中含 _SBS、_HSBS、_LR、_TB、_OU 或 Half-SBS 的视频，以及含 _TB、_OU 或 _HTB 的照片，通过“以 3D 查看”在平面屏幕上以 3D 打开",
   "setting_immersive_flat_3d_title": "按文件名识别 3D（实验性）",
-  "setting_immersive_reverse_turn_subtitle": "沉浸式查看器的右摇杆以相反方向转动照片和视频",
+  "setting_immersive_reverse_turn_subtitle": "沉浸式查看器的右摇杆以相反方向转动照片、视频和泼溅",
   "setting_immersive_reverse_turn_title": "反转摇杆转动方向",
   "setting_immersive_sharp_screens_subtitle": "在 Meta Quest 上，平面屏幕的照片和视频会经过头显的合成器，使用其超采样和锐化。关闭时，按以前的方式显示。",
   "setting_immersive_sharp_screens_title": "更清晰的平面屏幕（实验性）",

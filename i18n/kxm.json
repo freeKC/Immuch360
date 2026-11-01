@@ -1404,7 +1404,7 @@
   "rotate_saving_wait": "กำลังบันทึกการหมุน กรุณารอ ({seconds} วินาที)",
   "setting_immersive_flat_3d_subtitle": "วิดีโอที่ชื่อมี _SBS, _HSBS, _LR, _TB, _OU หรือ Half-SBS และรูปที่มี _TB, _OU หรือ _HTB สิเปิดแบบ 3D บนจอแบน ด้วยเบิ่งแบบ 3D",
   "setting_immersive_flat_3d_title": "3D ตามชื่อไฟล์ (ทดลอง)",
-  "setting_immersive_reverse_turn_subtitle": "ก้านโยกขวาของตัวเบิ่งแบบอิมเมอร์ซีฟจะหมุนรูปภาพแล้วก็วิดีโอไปอีกทาง",
+  "setting_immersive_reverse_turn_subtitle": "ก้านโยกขวาของตัวเบิ่งแบบอิมเมอร์ซีฟจะหมุนรูปภาพ วิดีโอ แล้วก็สแปลตไปอีกทาง",
   "setting_immersive_reverse_turn_title": "กลับทิศการหมุนของก้านโยก",
   "setting_immersive_sharp_screens_subtitle": "ใน Meta Quest ฮูบและวิดีโอของจอแบนสิผ่านตัวประกอบภาพของแว่น พร้อมการสุ่มตัวอย่างเกินและการเพิ่มความคมชัด ถ้าปิดไว้ สิสะแดงคือเก่า",
   "setting_immersive_sharp_screens_title": "จอแบนที่คมชัดกว่า (ทดลอง)",
