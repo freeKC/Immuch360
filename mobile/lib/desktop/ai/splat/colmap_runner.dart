@@ -14,14 +14,24 @@
 //  - model_orientation_aligner by IMAGE-ORIENTATION into dataset/sparse/0, the model upright (+y down), which Brush and
 //    the headset read; then the model read whole, its floor found.
 // Every argument is one the help of our build lists (the fixtures colmap_help/ of lot SP1), with --log_target stderr:
-// the default, stderr_and_file, leaves a glog file per run in %TEMP% (112 of them after the measure of 1 November). A
-// command that crashes for want of memory (0xC0000005 and the other NTSTATUS of a crash on Windows, SIGSEGV, SIGABRT,
-// SIGBUS or SIGKILL elsewhere) starts again with half of its threads, 2 at least; one that crashes at 2 is outOfMemory.
-// The extraction and the matching start again where they stopped (COLMAP skips what its database already holds); the
-// mapper starts again from an empty sparse/. Its progress, read from glog on its error output as the measure logged it,
-// never goes back: "Processed file [87/150]" (features), "Processing block [4/9, 2/9]" (blocks of the exhaustive
-// matching), "Processing image [120/150]" (the sequential matching), "Registering image #66 (num_reg_frames=120)" (the
-// image is the 121st placed; a second model starts again from 2, the count kept is the largest).
+// the default, stderr_and_file, leaves a glog file per run in %TEMP% (112 of them after the measure of 1 November).
+// How a command that did not end with 0 ended ([colmapEndOf]):
+//  - a crash for want of memory (an access violation, measured at 24 threads, or a memory refused on Windows; SIGSEGV,
+//    SIGBUS, or SIGKILL from the OOM killer elsewhere) starts again with half of its threads, 2 at least; one that
+//    crashes at 2 is outOfMemory;
+//  - an exception nothing caught: COLMAP throws on a check that fails (THROW_CHECK and its kin: a folder missing, a
+//    database it cannot read), and on a memory refused (std::bad_alloc). Our build then ends with 0xC0000409 and not a
+//    word on Windows (measured on 1 November: the aligner writing into a folder that is not there, 4.1 s), with
+//    SIGABRT after "terminate called after throwing an instance of '...'" of libstdc++ elsewhere. It counts as a want
+//    of memory only after a line said std::bad_alloc; otherwise it is posesFailed with the end of the output, after one
+//    more try with half the threads on Windows alone, where a std::bad_alloc says nothing either;
+//  - anything else is posesFailed with the end of the output, at once.
+// The alignment, on one thread, is never started again. The extraction and the matching start again where they
+// stopped (COLMAP skips what its database already holds); the mapper starts again from an empty sparse/. The progress,
+// read from glog on the error output as the measure logged it, never goes back: "Processed file [87/150]" (features),
+// "Processing block [4/9, 2/9]" (blocks of the exhaustive matching), "Processing image [120/150]" (the sequential
+// matching), "Registering image #66 (num_reg_frames=120)" (the image is the 121st placed; a second model starts again
+// from 2, the count kept is the largest).
 
 import 'dart:io';
 import 'dart:math' as math;
@@ -54,15 +64,39 @@ const colmapProgram = SidecarProgram(
 );
 
 /// The exit codes of a crash for want of memory: on Windows the NTSTATUS of an access violation (0xC0000005, seen in
-/// the measure), of a memory refused (0xC0000017, 0xC000012D), of a fail fast (0xC0000409, abort after an exception
-/// nothing caught) and of a stack overflow (0xC00000FD); elsewhere SIGSEGV, SIGABRT, SIGBUS, and SIGKILL (the OOM
-/// killer of Linux), as Dart gives a signal: negative
-const colmapWindowsCrashCodes = {-1073741819, -1073741801, -1073741523, -1073740791, -1073741571};
-const colmapPosixCrashCodes = {-11, -6, -7, -9};
+/// the measure at 24 threads) and of a memory refused (0xC0000017, 0xC000012D); elsewhere SIGSEGV, SIGBUS and SIGKILL
+/// (the OOM killer of Linux), as Dart gives a signal: negative
+const colmapWindowsMemoryCodes = {-1073741819, -1073741801, -1073741523};
+const colmapPosixMemoryCodes = {-11, -7, -9};
 
-/// Whether COLMAP ending with [code] crashed for want of memory
-bool colmapCrashed(int code, {bool? windows}) =>
-    ((windows ?? Platform.isWindows) ? colmapWindowsCrashCodes : colmapPosixCrashCodes).contains(code);
+/// The exit codes of an exception nothing caught: the fail fast of the runtime of Visual C++ after abort()
+/// (0xC0000409, our build on a check that failed, measured on 1 November), SIGABRT elsewhere
+const colmapWindowsAbortCodes = {-1073740791};
+const colmapPosixAbortCodes = {-6};
+
+/// How a run of COLMAP that did not end with 0 ended (see the top of this file)
+enum ColmapEnd {
+  /// An error of its own, or one that is no want of memory: posesFailed
+  failed,
+
+  /// A crash for want of memory: again with half the threads
+  memory,
+
+  /// An exception nothing caught, with no word of memory
+  abort,
+}
+
+/// How COLMAP ending with [code] ended; [saidOutOfMemory] when a line of its output said std::bad_alloc
+ColmapEnd colmapEndOf(int code, {required bool saidOutOfMemory, bool? windows}) {
+  final onWindows = windows ?? Platform.isWindows;
+  if ((onWindows ? colmapWindowsMemoryCodes : colmapPosixMemoryCodes).contains(code)) {
+    return ColmapEnd.memory;
+  }
+  if ((onWindows ? colmapWindowsAbortCodes : colmapPosixAbortCodes).contains(code)) {
+    return saidOutOfMemory ? ColmapEnd.memory : ColmapEnd.abort;
+  }
+  return ColmapEnd.failed;
+}
 
 /// The threads of the extraction: (memory free - SplatV1.colmapMemoryReserve) / SplatV1.colmapMemoryPerThread, from
 /// SplatV1.colmapMinThreads to the processors less two; the processors less two when the free memory is not known
@@ -406,6 +440,7 @@ class ColmapRunner {
       images: images,
       cancel: cancel,
       times: times,
+      again: false,
     );
     final ColmapModel model;
     try {
@@ -426,7 +461,8 @@ class ColmapRunner {
     );
   }
 
-  /// Runs one command to its end, again with fewer threads after a crash; returns the threads it ended with
+  /// Runs one command to its end, again with fewer threads after a crash for want of memory unless [again] is false
+  /// (see the top of this file); returns the threads it ended with
   Future<int> _command(
     ImmersiveStage? stage,
     String name,
@@ -437,10 +473,12 @@ class ColmapRunner {
     required NativeCancelFlag cancel,
     required Map<String, Duration> times,
     void Function(ColmapProgress progress)? onProgress,
+    bool again = true,
   }) async {
     final started = _elapsed();
     final log = stage == null ? null : ColmapLog(stage, images: images);
     var count = threads;
+    var abortedOnce = false;
     while (true) {
       final run = SidecarRun(
         runner: runner,
@@ -470,15 +508,30 @@ class ColmapRunner {
         return count;
       } on SidecarFailure catch (failure) {
         final code = failure.exitCode;
-        if (code == null || !colmapCrashed(code, windows: _windows)) {
+        if (code == null) {
           rethrow;
         }
-        final fewer = colmapFewerThreads(count);
-        if (fewer == null) {
-          throw BackendException(
-            ImmersiveErrorCode.outOfMemory,
-            'COLMAP ($name) crashed with $code at $count threads: ${run.tail}',
-          );
+        final end = colmapEndOf(
+          code,
+          saidOutOfMemory: failure.code == ImmersiveErrorCode.outOfMemory,
+          windows: _windows,
+        );
+        final fewer = again ? colmapFewerThreads(count) : null;
+        switch (end) {
+          case ColmapEnd.failed:
+            rethrow;
+          case ColmapEnd.memory:
+            if (fewer == null) {
+              throw BackendException(
+                ImmersiveErrorCode.outOfMemory,
+                'COLMAP ($name) crashed with $code at $count thread${count == 1 ? '' : 's'}: ${run.tail}',
+              );
+            }
+          case ColmapEnd.abort:
+            if (fewer == null || abortedOnce || !_windows) {
+              throw BackendException(ImmersiveErrorCode.posesFailed, 'COLMAP ($name) aborted with $code: ${run.tail}');
+            }
+            abortedOnce = true;
         }
         count = fewer;
       }

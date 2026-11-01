@@ -200,6 +200,30 @@ void main() {
       );
     }, skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'));
 
+    test(
+      'a check of COLMAP that fails is posesFailed, never outOfMemory: once more on Windows, at once elsewhere',
+      () async {
+        photos(30);
+        // 0xC0000409 and not a word on Windows, as our build was measured on 1 November; elsewhere SIGABRT after the
+        // words of libstdc++
+        final code = Platform.isWindows ? -1073740791 : -ProcessSignal.sigabrt.signalNumber;
+        await expectLater(
+          colmap('abort', available: 4 * _gib + _gib ~/ 2).poses(work, images: 30, video: false, cancel: cancel),
+          throwsA(
+            isA<BackendException>()
+                .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+                .having((e) => e.message, 'message', startsWith('COLMAP (features) aborted with $code: ')),
+          ),
+        );
+        // Started again once with half the threads on Windows, where a std::bad_alloc says nothing either
+        expect(
+          RegExp('=== Feature extraction ===').allMatches(work.logOf('colmap-features').readAsStringSync()),
+          hasLength(Platform.isWindows ? 2 : 1),
+        );
+      },
+      skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'),
+    );
+
     test('a failure is posesFailed with the line of COLMAP; silent, it is stopped as posesStalled', () async {
       photos(30);
       await expectLater(

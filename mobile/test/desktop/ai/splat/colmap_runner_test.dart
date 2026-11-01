@@ -1,9 +1,11 @@
 // The runner of COLMAP (lib/desktop/ai/splat/colmap_runner.dart, lot SP4) with the fake runner: its frozen arguments
 // against the help of our build (fixtures colmap_help/ of lot SP1), the threads chosen from the memory free, the crash
-// for want of memory and the start again with half the threads, the progress read from the logs of the measure of
-// 1 November (fixtures splat/logs/), the five commands of a job in order, the largest model, the thresholds of the
-// poses, the failures, the silence of 600 s, the cancel flag, and a work folder whose path is not ASCII. The same runner
-// against the compiled fake COLMAP is splat_runners_real_test.dart.
+// for want of memory and the start again with half the threads, a check of COLMAP that fails (an exception nothing
+// caught: 0xC0000409 with no word on Windows, SIGABRT after the words of libstdc++ elsewhere) told from a crash for want
+// of memory, the alignment never started again, the progress read from the logs of the measure of 1 November (fixtures
+// splat/logs/), the five commands of a job in order, the largest model, the thresholds of the poses, the failures, the
+// silence of 600 s, the cancel flag, and a work folder whose path is not ASCII. The same runner against the compiled
+// fake COLMAP is splat_runners_real_test.dart.
 
 import 'dart:async';
 import 'dart:io';
@@ -45,6 +47,18 @@ Set<String> _helpOptions(String command) {
 /// A log of the measure, its lines on the error output as glog writes them
 List<(String, {bool isError})> _measured(String name) => [
   for (final line in File(p.join('test', 'fixtures', 'splat', 'logs', name)).readAsLinesSync()) (line, isError: true),
+];
+
+/// What libstdc++ writes when an exception of [type] that nothing caught ends a program, before its SIGABRT
+List<(String, {bool isError})> _terminate(String type, String what) => [
+  ("terminate called after throwing an instance of '$type'", isError: true),
+  ('  what():  $what', isError: true),
+];
+
+/// The threads each launch of [command] was given
+List<String> _threadsOf(List<ProcessLaunch> launches, String command, String option) => [
+  for (final launch in launches.where((l) => l.arguments.first == command))
+    launch.arguments[launch.arguments.indexOf(option) + 1],
 ];
 
 /// glog lines of the mapper placing [placed] images, its first pair then one by one
@@ -133,13 +147,14 @@ void main() {
     ProcessRunner runner, {
     int? available = 4 * _gib,
     int processors = 16,
+    bool windows = false,
     Duration Function()? elapsed,
   }) => ColmapRunner(
     runner: runner,
     colmap: '/engines/colmap-cpu-linux-x64/colmap',
     memory: _Memory(available),
     processors: processors,
-    windows: false,
+    windows: windows,
     elapsed: elapsed,
   );
 
@@ -217,16 +232,25 @@ void main() {
       expect(colmapCommonThreadsFor(3), 2);
     });
 
-    test('a crash for want of memory is known by its code; the threads halve down to 2, then no more', () {
-      for (final code in [-1073741819, -1073741801, -1073741523, -1073740791, -1073741571]) {
-        expect(colmapCrashed(code, windows: true), isTrue, reason: '$code');
-        expect(colmapCrashed(code, windows: false), isFalse, reason: '$code');
+    test('a crash for want of memory is known by its code, an abort only by a word of memory; the threads halve', () {
+      // An access violation (measured at 24 threads), a memory refused; SIGSEGV, SIGBUS, the OOM killer of Linux
+      for (final code in [-1073741819, -1073741801, -1073741523]) {
+        expect(colmapEndOf(code, saidOutOfMemory: false, windows: true), ColmapEnd.memory, reason: '$code');
+        expect(colmapEndOf(code, saidOutOfMemory: false, windows: false), ColmapEnd.failed, reason: '$code');
       }
-      for (final code in [-11, -6, -7, -9]) {
-        expect(colmapCrashed(code, windows: false), isTrue, reason: '$code');
+      for (final code in [-11, -7, -9]) {
+        expect(colmapEndOf(code, saidOutOfMemory: false, windows: false), ColmapEnd.memory, reason: '$code');
       }
-      for (final code in [0, 1, 2, 3, 127]) {
-        expect(colmapCrashed(code, windows: true) || colmapCrashed(code, windows: false), isFalse, reason: '$code');
+      // An exception nothing caught: 0xC0000409 on Windows (a check of our build that failed, measured 1 November: no
+      // word), SIGABRT elsewhere; memory only when a line said std::bad_alloc
+      expect(colmapEndOf(-1073740791, saidOutOfMemory: false, windows: true), ColmapEnd.abort);
+      expect(colmapEndOf(-1073740791, saidOutOfMemory: true, windows: true), ColmapEnd.memory);
+      expect(colmapEndOf(-6, saidOutOfMemory: false, windows: false), ColmapEnd.abort);
+      expect(colmapEndOf(-6, saidOutOfMemory: true, windows: false), ColmapEnd.memory);
+      // A stack overflow, and the codes COLMAP ends with itself, are its failures
+      for (final code in [-1073741571, 0, 1, 2, 3, 127]) {
+        expect(colmapEndOf(code, saidOutOfMemory: false, windows: true), ColmapEnd.failed, reason: '$code');
+        expect(colmapEndOf(code, saidOutOfMemory: false, windows: false), ColmapEnd.failed, reason: '$code');
       }
       final steps = [24];
       for (var next = colmapFewerThreads(24); next != null; next = colmapFewerThreads(next)) {
@@ -339,8 +363,11 @@ void main() {
     });
 
     test('the extraction crashed at 10 threads starts again at 5, then 2; at 2 it is outOfMemory', () async {
-      // 4.5 GiB free: 10 threads
-      final crash = FakeProcessScript(lines: _measured('c2s-extract.err').take(20).toList(), exitCode: -6);
+      // 4.5 GiB free: 10 threads; a std::bad_alloc nothing caught, which libstdc++ names before its SIGABRT
+      final crash = FakeProcessScript(
+        lines: [..._measured('c2s-extract.err').take(20), ..._terminate('std::bad_alloc', 'std::bad_alloc')],
+        exitCode: -6,
+      );
       final runner = _ColmapRunner({
         ...scripts(),
         'feature_extractor': [crash, crash, FakeProcessScript(lines: _measured('c2s-extract.err'))],
@@ -375,6 +402,111 @@ void main() {
       );
       expect(always.launches.map((l) => l.arguments.first), everyElement('feature_extractor'));
       expect(always.launches, hasLength(3));
+    });
+
+    test('a check of COLMAP that fails is posesFailed with the end of its output, never outOfMemory', () async {
+      // Windows: 0xC0000409 and not a word, as our build ended on a check that failed (measured 1 November); once more
+      // with half the threads, since a std::bad_alloc nothing caught says nothing there either, then posesFailed
+      final check = FakeProcessScript(lines: _measured('c2s-extract.err').take(20).toList(), exitCode: -1073740791);
+      final windows = _ColmapRunner({
+        ...scripts(),
+        'feature_extractor': [check],
+      });
+      await expectLater(
+        colmap(
+          windows,
+          available: 4 * _gib + _gib ~/ 2,
+          windows: true,
+        ).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+              .having((e) => e.message, 'message', startsWith('COLMAP (features) aborted with -1073740791: '))
+              .having((e) => e.message, 'message', contains('Processed file [2/150]')),
+        ),
+      );
+      expect(_threadsOf(windows.launches, 'feature_extractor', '--FeatureExtraction.num_threads'), ['10', '5']);
+      expect(windows.launches.map((l) => l.arguments.first), everyElement('feature_extractor'));
+
+      // Elsewhere libstdc++ names the exception before its SIGABRT: a check that failed fails again, no second try
+      final linux = _ColmapRunner({
+        ...scripts(),
+        'exhaustive_matcher': [
+          FakeProcessScript(
+            lines: [
+              ..._measured('c2s-match.err').take(4),
+              ..._terminate('std::invalid_argument', '[database.cc:1530] Check failed: ExistsImage(image_id)'),
+            ],
+            exitCode: -6,
+          ),
+        ],
+      });
+      await expectLater(
+        colmap(linux).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+              .having((e) => e.message, 'message', startsWith('COLMAP (matching) aborted with -6: '))
+              .having((e) => e.message, 'message', contains('Check failed: ExistsImage(image_id)')),
+        ),
+      );
+      expect(linux.launches.map((l) => l.arguments.first), ['feature_extractor', 'exhaustive_matcher']);
+
+      // The mapper aborted before any model: an error of COLMAP, not photos that do not overlap
+      final mapper = _ColmapRunner({
+        ...scripts(),
+        'mapper': [
+          FakeProcessScript(
+            lines: [..._mapping(12), ..._terminate('std::invalid_argument', '[mapper.cc:80] Check failed: x')],
+            exitCode: -6,
+          ),
+        ],
+      }, models: const []);
+      await expectLater(
+        colmap(mapper).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+              .having((e) => e.message, 'message', startsWith('COLMAP (mapping) aborted with -6: ')),
+        ),
+      );
+      expect(mapper.launches.where((l) => l.arguments.first == 'mapper'), hasLength(1));
+    });
+
+    test('the alignment is never started again: an abort is posesFailed, a crash outOfMemory, each at once', () async {
+      // The case measured on 1 November: the aligner writing into a folder that is not there
+      const writing = 'I20261101 23:33:12.402114 24084 model.cc:886] Writing aligned reconstruction...';
+      final aborted = _ColmapRunner({
+        ...scripts(),
+        'model_orientation_aligner': [
+          const FakeProcessScript(lines: [(writing, isError: true)], exitCode: -1073740791),
+        ],
+      });
+      await expectLater(
+        colmap(aborted, windows: true).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+              .having((e) => e.message, 'message', 'COLMAP (align) aborted with -1073740791: $writing'),
+        ),
+      );
+      expect(aborted.launches.where((l) => l.arguments.first == 'model_orientation_aligner'), hasLength(1));
+
+      final crashed = _ColmapRunner({
+        ...scripts(),
+        'model_orientation_aligner': [
+          const FakeProcessScript(lines: [(writing, isError: true)], exitCode: -1073741819),
+        ],
+      });
+      await expectLater(
+        colmap(crashed, windows: true).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.outOfMemory)
+              .having((e) => e.message, 'message', startsWith('COLMAP (align) crashed with -1073741819 at 1 thread: ')),
+        ),
+      );
+      expect(crashed.launches.where((l) => l.arguments.first == 'model_orientation_aligner'), hasLength(1));
     });
 
     test('the mapper crashed starts again from an empty sparse folder, with half its threads', () async {
