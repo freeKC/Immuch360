@@ -5,7 +5,9 @@
 // own work first, and what it kept in memory was lost: the logs of the session, where the film was.
 //
 // So the app ends its own work first, one step after the other, each with a bound of its own: none of them can hold
-// the close, which lasts their sum at most (1.5 s) and a few milliseconds when nothing waits.
+// the close, which lasts their sum at most (1.5 s) and a few milliseconds when nothing waits. Before the steps, the
+// line of the close is written at once, without waiting (beginDesktopClose): a step that blocks the app in native
+// code cannot be cut by any bound, and the logs written last would then be lost with the session's last lines.
 // - The films open in a page save where they are (VideoWatchRecorder.closeAll), and stop following their players,
 //   whose teardown says nothing of where the film was.
 // - The players are disposed, all at once: libmpv stops reading and calling Dart. One that does not answer is told to
@@ -77,6 +79,20 @@ Future<Map<String, DesktopCloseStepEnd>> runDesktopClose(List<DesktopCloseStep> 
     }
   }
   return ends;
+}
+
+/// The close is decided: its line goes to the log, and the logs held in memory are written at once without waiting for
+/// them. Each write takes the lines it finds, so the logs step still writes those of the steps last. A step that blocks
+/// the root isolate (an FFI call into a libmpv that waits for its core, a plugin that blocks the platform thread) is
+/// cut by no bound, and on Windows the runner then ends the process: the session's lines up to the close are written.
+void beginDesktopClose(Future<void> Function() flushLogs) {
+  _log.info('The window closes');
+  unawaited(
+    Future.sync(flushLogs).catchError(
+      (Object error, StackTrace stackTrace) =>
+          _log.warning('Closing: the logs could not be written', error, stackTrace),
+    ),
+  );
 }
 
 /// Writes the logs the log service holds in memory; nothing when it was never started

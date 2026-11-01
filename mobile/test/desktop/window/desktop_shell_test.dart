@@ -2,7 +2,8 @@
 // Escape and the back button of a mouse leave it first, then close the viewer, a dialog keeps its own Escape, a letter
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
 // first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step,
-// then the window hides and the app ends its own work, each step bounded, before the window goes.
+// then the window hides, the line of the close is written, and the app ends its own work, each step bounded, before the
+// window goes.
 
 import 'dart:async';
 
@@ -22,6 +23,7 @@ import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:logging/logging.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// window_manager needs the runner: this one records what the app asks of the window
@@ -520,6 +522,37 @@ void main() {
         expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide', 'players', 'destroy']);
         debugDefaultTargetPlatformOverride = null;
       });
+    });
+
+    testWidgets('the line of the close is written at once, without waiting for it, before any step can block the app; '
+        'the logs are written again last', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final lines = Logger.root.onRecord
+          .where((record) => record.message == 'The window closes')
+          .listen((record) => window.calls.add('line'));
+      addTearDown(() {
+        Logger.root.level = level;
+        unawaited(lines.cancel());
+      });
+      await pumpShell(
+        tester,
+        overrides: [
+          // A database of the logs that does not answer: the first write is not waited for
+          desktopCloseLogsProvider.overrideWithValue(() {
+            window.calls.add('logs');
+            return Completer<void>().future;
+          }),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pump();
+      expect(window.calls, ['preventClose true', 'line', 'logs', 'prepareClose', 'logs']);
+      await tester.pump(DesktopCloseBounds.logs);
+      expect(window.calls, ['preventClose true', 'line', 'logs', 'prepareClose', 'logs', 'destroy']);
+      debugDefaultTargetPlatformOverride = null;
     });
 
     testWidgets('asks while uploads and the share run; Cancel keeps the app, Quit closes it', (tester) async {

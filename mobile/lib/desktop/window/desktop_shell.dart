@@ -74,7 +74,7 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
       if (reasons.isNotEmpty && navigator != null && !await confirmDesktopClose(navigator, reasons)) {
         return;
       }
-      _log.info('The window closes');
+      beginDesktopClose(ref.read(desktopCloseLogsProvider));
       await _window.prepareClose();
       // Each step bounded: whatever plays, and whatever the share or the server does, the window goes
       await runDesktopClose(ref.read(desktopCloseStepsProvider)());
