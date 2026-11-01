@@ -512,7 +512,7 @@ def command_advisories(args) -> int:
                 f'maintainer\'s decision): {kinds or "none"}')
     text = '\n'.join([head, *(f'  {line}' for line in lines)]) + '\n'
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(text, encoding='utf-8')
+    args.out.write_text(text, encoding='utf-8', newline='\n')
     print(text, end='')
     for line in lines:
         print(f'::warning::brush_app: {line}')
