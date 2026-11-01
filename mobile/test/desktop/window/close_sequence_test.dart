@@ -161,6 +161,31 @@ void main() {
     });
   });
 
+  test('the writes of the logs at a close end in order; one that fails fails only its own caller', () async {
+    final writes = <Completer<void>>[];
+    final write = chainDesktopLogWrites(() {
+      final database = Completer<void>();
+      writes.add(database);
+      return database.future;
+    });
+    final ends = <String>[];
+    void follow(String name, Future<void> future) =>
+        unawaited(future.then((_) => ends.add('$name written'), onError: (Object _) => ends.add('$name failed')));
+
+    follow('the line of the close', write());
+    follow('the steps', write());
+    follow('one more', write());
+    expect(writes, hasLength(3), reason: 'each write starts at once, with the lines it takes');
+    writes[1].complete();
+    await pumpEventQueue();
+    expect(ends, isEmpty, reason: 'the line of the close is not written yet');
+
+    writes[0].completeError(StateError('disk full'));
+    writes[2].complete();
+    await pumpEventQueue();
+    expect(ends, unorderedEquals(['the line of the close failed', 'the steps written', 'one more written']));
+  });
+
   group('the steps of the app', () {
     test('nothing that was never made is made for a close', () async {
       var flushed = 0;

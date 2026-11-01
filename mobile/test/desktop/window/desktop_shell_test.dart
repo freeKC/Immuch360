@@ -555,6 +555,48 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('the window goes once the line of the close is written: the log service writes the lines it takes, and '
+        'the last write, which finds none, waits for it', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      // The lines the log service holds in memory
+      final held = <String>[];
+      final lines = Logger.root.onRecord.listen((record) => held.add(record.message));
+      addTearDown(() {
+        Logger.root.level = level;
+        unawaited(lines.cancel());
+      });
+      final writing = <Completer<void>>[];
+      await pumpShell(
+        tester,
+        overrides: [
+          // As LogService.flush: takes the lines it holds and waits for the database to write those only
+          desktopCloseLogsProvider.overrideWithValue(() {
+            if (held.isEmpty) {
+              window.calls.add('logs: none');
+              return Future.value();
+            }
+            window.calls.add('logs: ${held.join(', ')}');
+            held.clear();
+            final write = Completer<void>();
+            writing.add(write);
+            return write.future;
+          }),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pump();
+      expect(window.calls, ['preventClose true', 'logs: The window closes', 'prepareClose', 'logs: none']);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(window.calls, isNot(contains('destroy')), reason: 'the line of the close is not written yet');
+      writing.single.complete();
+      await tester.pump();
+      expect(window.calls.last, 'destroy');
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('asks while uploads and the share run; Cancel keeps the app, Quit closes it', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       reasons = {DesktopCloseReason.uploads, DesktopCloseReason.computerShare};

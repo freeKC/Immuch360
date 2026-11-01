@@ -82,17 +82,28 @@ Future<Map<String, DesktopCloseStepEnd>> runDesktopClose(List<DesktopCloseStep> 
 }
 
 /// The close is decided: its line goes to the log, and the logs held in memory are written at once without waiting for
-/// them. Each write takes the lines it finds, so the logs step still writes those of the steps last. A step that blocks
-/// the root isolate (an FFI call into a libmpv that waits for its core, a plugin that blocks the platform thread) is
-/// cut by no bound, and on Windows the runner then ends the process: the session's lines up to the close are written.
-void beginDesktopClose(Future<void> Function() flushLogs) {
+/// them. A step that blocks the root isolate (an FFI call into a libmpv that waits for its core, a plugin that blocks
+/// the platform thread) is cut by no bound, and on Windows the runner then ends the process: the session's lines up to
+/// the close are written. [writeLogs] is that of [desktopCloseLogWritesProvider], so that the logs step waits for this
+/// write too.
+void beginDesktopClose(Future<void> Function() writeLogs) {
   _log.info('The window closes');
   unawaited(
-    Future.sync(flushLogs).catchError(
+    Future.sync(writeLogs).catchError(
       (Object error, StackTrace stackTrace) =>
           _log.warning('Closing: the logs could not be written', error, stackTrace),
     ),
   );
+}
+
+/// [write] made to end once the writes asked before it ended too; one that failed fails only its own caller
+Future<void> Function() chainDesktopLogWrites(Future<void> Function() write) {
+  var before = Future<void>.value();
+  return () {
+    final mine = Future.wait([before, Future.sync(write)]).then<void>((_) {});
+    before = mine.then<void>((_) {}, onError: (Object _) {});
+    return mine;
+  };
 }
 
 /// Writes the logs the log service holds in memory; nothing when it was never started
@@ -109,6 +120,14 @@ Future<void> flushDesktopLogs() {
 /// How the logs are written at a close, replaced by the tests
 final desktopCloseLogsProvider = Provider<Future<void> Function()>((ref) => flushDesktopLogs);
 
+/// The writes of the logs at a close, the line of the close first (beginDesktopClose), then the logs step: each ends
+/// once those asked before it are written too. The log service's write takes the lines it holds and waits for those
+/// only, so the logs step, which finds none left but its own, would end at once and the window would go before the
+/// line of the close is written, as the replay of 1 November 2026 showed on an idle close.
+final desktopCloseLogWritesProvider = Provider<Future<void> Function()>(
+  (ref) => chainDesktopLogWrites(ref.read(desktopCloseLogsProvider)),
+);
+
 /// The steps of a close of the window, made when the close is decided from what runs then: what was never made is not
 /// made for a close (ref.exists), as for the close guard
 final desktopCloseStepsProvider = Provider<List<DesktopCloseStep> Function()>((ref) {
@@ -121,6 +140,6 @@ final desktopCloseStepsProvider = Provider<List<DesktopCloseStep> Function()>((r
     ),
     if (ref.exists(mediaBridgeProvider))
       DesktopCloseStep('the media bridge', DesktopCloseBounds.mediaBridge, () => ref.read(mediaBridgeProvider).stop()),
-    DesktopCloseStep('the logs', DesktopCloseBounds.logs, ref.read(desktopCloseLogsProvider)),
+    DesktopCloseStep('the logs', DesktopCloseBounds.logs, ref.read(desktopCloseLogWritesProvider)),
   ];
 });
