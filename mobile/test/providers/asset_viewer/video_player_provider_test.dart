@@ -718,6 +718,25 @@ void main() {
         });
       });
 
+      test('a film that plays on is never said to be on a slow link: only a wait is', () {
+        fakeAsync((async) {
+          unawaited(player.load(serverSource));
+          async.elapse(const Duration(seconds: 1));
+          reportPosition(1000);
+          // A 4K film from a full buffer: the link measured below the film for 10 s while it plays (review of
+          // 1 November 2026: "it will pause now and then" over a link four times faster)
+          for (var s = 1; s <= 10; s++) {
+            now = now.add(const Duration(seconds: 1));
+            tell(waiting: false, rate: 5100000, need: 6000000, aheadMs: 50000);
+            expect(player.link.value!.slow, isFalse, reason: '$s s of play');
+          }
+          // It waits, and the link is still short: now it is said
+          tell(rate: 5100000, need: 6000000, aheadMs: 0, rebuffering: true, targetMs: 9000);
+          expect(player.link.value!.slow, isTrue);
+          player.dispose();
+        });
+      });
+
       test('a server that stopped sending is not a slow one', () {
         fakeAsync((async) {
           unawaited(player.load(serverSource));

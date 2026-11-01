@@ -49,7 +49,7 @@ enum VideoFailureKind {
 /// What a page tells of the link of its video while it loads or waits (see [VideoPlayerNotifier.link]): what the link
 /// brings ([bitsPerSecond]) against what the video needs ([neededBitsPerSecond]), both null until measured, about how
 /// long the wait still lasts ([startsIn], null when it cannot be told), whether the link has brought less than the
-/// video needs for a while ([slow], see [linkIsSlow]), and whether it stopped sending ([dead])
+/// video needs for a while as it waits ([slow], see [linkIsSlow]), and whether it stopped sending ([dead])
 class VideoLinkView {
   const VideoLinkView({
     required this.waiting,
@@ -495,7 +495,9 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       bitsPerSecond: rate == null ? null : rate * 8,
       neededBitsPerSecond: need == null ? null : need * 8,
       startsIn: remaining != null && remaining >= 1000 && link.targetMs > 0 ? Duration(milliseconds: remaining) : null,
-      slow: linkIsSlow(ratio, _slowSince == null ? Duration.zero : now.difference(_slowSince!)),
+      // Said only while the video waits: a film that plays from its buffer is not paused by its link, whatever the
+      // meter reads (review of 1 November 2026: a 4K film playing from a full buffer was said to "pause now and then")
+      slow: link.waiting && linkIsSlow(ratio, _slowSince == null ? Duration.zero : now.difference(_slowSince!)),
       dead: dead,
       waitedFor: waitedFor,
       loading: link.loading,
