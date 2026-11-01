@@ -9,5 +9,5 @@
   --image_path arg
   --input_path arg
   --output_path arg
-  --method arg (=MANHATTAN-WORLD)     {MANHATTAN-WORLD, IMAGE-ORIENTATION}
+  --method arg (=IMAGE-ORIENTATION)   {IMAGE-ORIENTATION}
   --max_image_size arg (=1024)

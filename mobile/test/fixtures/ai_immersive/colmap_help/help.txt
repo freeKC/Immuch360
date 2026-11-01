@@ -23,8 +23,6 @@ Available commands:
   database_cleaner
   database_creator
   database_merger
-  advancing_front_mesher
-  delaunay_mesher
   exhaustive_matcher
   feature_extractor
   feature_importer
@@ -40,8 +38,6 @@ Available commands:
   image_undistorter_standalone
   mapper
   matches_importer
-  mesh_simplifier
-  mesh_texturer
   model_aligner
   model_analyzer
   model_clusterer
@@ -52,17 +48,14 @@ Available commands:
   model_orientation_aligner
   model_splitter
   model_transformer
-  patch_match_stereo
   point_filtering
   point_triangulator
   pose_prior_mapper
-  poisson_mesher
   project_generator
   rig_configurator
   rotation_averager
   sequential_matcher
   spatial_matcher
-  stereo_fusion
   transitive_matcher
   view_graph_calibrator
   vocab_tree_builder
