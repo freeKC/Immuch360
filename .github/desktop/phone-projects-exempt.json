@@ -36,7 +36,7 @@
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player with its link: the start from the measured link, the retries, what Flutter is told of the link, no picture with a fed decoder; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/LinkMeter.kt": {
-    "blob": "670c6d210fb78aec81ef7140a90f04d14a45b6db",
+    "blob": "cd406ccc98eb57a908aad5be9c6e468556d5ade7",
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): what the link of one player brings, from Media3's transfer listener; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/LinkStartRule.kt": {
@@ -56,11 +56,11 @@
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): the link of one player: its meter, its load control, its retry policy, what Flutter reads of it; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/StreamLoadErrorPolicy.kt": {
-    "blob": "deaff1183816f1ddcc56e24a38d5ec0bdc9f6536",
+    "blob": "8b5e690d26dbd0e20807d8684b60a24711d27e40",
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): a streamed load tried again until it answers, 10 minutes without a byte at most; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/StreamingLoadControl.kt": {
-    "blob": "cc70244dac9da7686eb95d1bbf22cc4d53422861",
+    "blob": "91a829ffd3a5481c20d4f42dda616b193cd69518",
     "reason": "TV lot (5e7bf8e27): buffering of the 360 video player of the phone app; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the start of a streamed video from its measured link (AdaptiveLoadControl), and no more 30 s stuck check"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/VideoDecoders.kt": {
@@ -980,7 +980,7 @@
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the push detection (direction, deadzone, one page per push); integration of 30 October: the channel made on a Meta Quest only"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AdaptiveLoadControlTest.kt": {
-    "blob": "876c07a1418a7d3bc82a1661e3b37490ffbe2dce",
+    "blob": "e0793d569df01f45c7e03ce11c8d742d46ed5db7",
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): unit tests of AdaptiveLoadControl, a stall of the link against a stall with media buffered; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
@@ -992,7 +992,7 @@
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): unit tests of the buffering line of the link; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/LinkMeterTest.kt": {
-    "blob": "9aebb79bd04b552e6e900fba0843bd7d6bba0b99",
+    "blob": "406fc7aaa7c268280603bc2e13f7566bc9f37a57",
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): unit tests of LinkMeter; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/LinkStartRuleTest.kt": {
