@@ -60,6 +60,7 @@ import app.alextran.immich.R
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.PlayerLink
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
 import java.util.Locale
@@ -737,7 +738,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     bufferingView = findViewById(R.id.spatial_video_buffering)
     bufferingLabel = findViewById(R.id.spatial_video_buffering_label)
     val streamed = StreamingLoadControl.isStreamed(playbackUrl().orEmpty())
-    bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
+    bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed, BufferingIndicator.isShare(playbackUrl()))
   }
 
   private fun setUpControls() {
@@ -910,9 +911,11 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
       .build()
 
-    // Larger buffers for a video read over HTTP (the media bridge of a network share, a server); local files as before
-    player = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
-      .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+    // Larger buffers for a video read over HTTP (the media bridge of a network share, a server), started from the
+    // measured link, and a link that sends nothing tried again until it answers; local files as before
+    val link = PlayerLink(this)
+    player = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url, link)
+      .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory).setLoadErrorHandlingPolicy(link.errorPolicy))
       .setAudioAttributes(audioAttributes, /* handleAudioFocus= */ true)
       .setHandleAudioBecomingNoisy(true)
       .build()
@@ -920,7 +923,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         it.addListener(playerListener)
         // The language picked last, and the track picked for this video before a recreation
         audioTracks.attach(it)
-        bufferingIndicator.attach(it)
+        bufferingIndicator.attach(it, link)
         videoSurface?.let { surface -> it.setVideoSurface(surface) }
         it.setMediaItem(MediaItem.fromUri(url), startPosition)
         it.playWhenReady = playWhenReady

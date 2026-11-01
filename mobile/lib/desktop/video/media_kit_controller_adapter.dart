@@ -16,6 +16,10 @@
 //   replaces it, and the video opens again where it was in the new one;
 // - buffering: the position stands still while mpv waits for its cache, which is how the existing controls tell a
 //   stall (VideoPlayerNotifier, NetworkVideoBufferingIndicator); [buffering] gives mpv's own state as well;
+// - the link: what the media bridge reads of the file (every streamed video goes through it here) and mpv's wait are
+//   told as the Android player tells its own (onLinkChanged, NativeVideoLink), twice a second, so that a slow share
+//   or server is never taken for a dead one while bytes arrive, and mpv's wait after a stall follows the link (the
+//   rule of video_link_rule.dart);
 // - audio tracks, which the phones' flat players do not offer: listed here for the audio track button of the
 //   controls (desktop_audio_track_button.dart).
 
@@ -25,6 +29,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -34,6 +39,10 @@ final _log = Logger('DesktopVideoController');
 /// What a player of the computers is given for a [VideoSource]: a path of this computer or a media bridge URL (see
 /// desktop_video_sources.dart). Throws when the source cannot be played here.
 typedef DesktopVideoSourceResolver = Future<String> Function(VideoSource source);
+
+/// What the media bridge measures of the reads of [resource] (a bridge URL) and the size of its file, null for a file
+/// of this computer or one the bridge does not read (see LocalMediaBridge.trafficOf)
+typedef DesktopVideoLinkOf = ({VideoLinkMeter meter, int? size})? Function(String resource);
 
 /// The player that played or loaded last: the audio track button of the controls follows it. One video plays at a
 /// time on the computers, the viewer loading only the page on screen.
@@ -47,9 +56,20 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     this.positionInterval = const Duration(milliseconds: 200),
     this._prepare,
     this._unprepare,
+    this._linkOf,
   }) {
     _lease = pool.lease(PlayerKind.playback, label: label, onSuspend: _onSuspend);
   }
+
+  /// How often the link is told while a streamed video is open
+  static const linkInterval = Duration(milliseconds: 500);
+
+  final DesktopVideoLinkOf? _linkOf;
+  Timer? _linkTimer;
+  int? _resumeWaitMs;
+
+  /// Whether the meter of the video opened last still has to start its clock of progress from the open, see [_tellLink]
+  bool _linkOpened = false;
 
   /// How often the position is passed on while the video plays: the slider and the stall detection of the controls
   /// (700 ms) need a few a second, not mpv's one per frame
@@ -98,6 +118,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   /// (DesktopAudioTrackButton)
   @override
   final onTracksChanged = ChangeNotifier();
+
+  @override
+  final onLinkChanged = ValueNotifier<NativeVideoLink?>(null);
 
   final _videoController = ValueNotifier<VideoController?>(null);
   final _buffering = ValueNotifier(false);
@@ -199,6 +222,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _resumeAt = null;
     _audioChosen = false;
     _pausedWhenReady = start > Duration.zero;
+    onLinkChanged.value = null;
+    _resumeWaitMs = null;
     // A load that fails the same way twice is still told to the page
     onError.value = null;
     final String resource;
@@ -251,6 +276,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _generation++;
     _ready = false;
     _restarted = false;
+    _linkTimer?.cancel();
+    _linkTimer = null;
     _readyTimer?.cancel();
     _positionTimer?.cancel();
     _positionTimer = null;
@@ -347,6 +374,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _generation++;
     _readyTimer?.cancel();
     _positionTimer?.cancel();
+    _linkTimer?.cancel();
     final engine = _engine;
     _unbind();
     if (identical(activeDesktopVideo.value, this)) {
@@ -434,6 +462,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
           return _openDropped(engine, generation, start);
         }
         await engine.open(resource, start: start, streamed: resource.startsWith('http'));
+        _startLink();
         return true;
       } catch (error) {
         _fail(generation, 'The video could not be opened: ${redactPlayerText('$error')}');
@@ -672,11 +701,71 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   void _onAudioTrack() => _audioTrack.value = _engine?.audioTrack.value;
 
+  /// Tells the link of the streamed video open, every [linkInterval] until it is stopped (see [_tellLink])
+  void _startLink() {
+    _linkTimer?.cancel();
+    _linkTimer = null;
+    final resource = _resource;
+    if (_linkOf == null || resource == null || !resource.startsWith('http')) {
+      return;
+    }
+    _linkOpened = true;
+    _linkTimer = Timer.periodic(linkInterval, (_) => _tellLink());
+  }
+
+  /// What the bridge brought of the file against what the video needs, and whether mpv waits: before the first frame,
+  /// or for its cache after a stall. mpv's wait after a stall follows the link (see linkTargetMs).
+  void _tellLink() {
+    final engine = _engine;
+    final resource = _resource;
+    if (_disposed || _unloaded || engine == null || resource == null) {
+      return;
+    }
+    final traffic = _linkOf?.call(resource);
+    if (traffic == null) {
+      return;
+    }
+    final meter = traffic.meter;
+    if (_linkOpened) {
+      // The bridge keeps one meter per file across the opens: what it counted before this one is not this open's wait
+      _linkOpened = false;
+      meter.restart();
+    }
+    final stalled = _ready && engine.buffering.value;
+    final waiting = !_ready || stalled;
+    final rate = meter.rate();
+    final durationMs = engine.duration.value.inMilliseconds;
+    final size = traffic.size;
+    final need = size != null && durationMs > 0 ? size * 1000 ~/ durationMs : null;
+    final ratio = rate != null && need != null && need > 0 ? rate / (need * _speed) : null;
+    final ahead = engine.buffered.value - engine.position.value;
+    final aheadMs = ahead > Duration.zero ? ahead.inMilliseconds : 0;
+    onLinkChanged.value = NativeVideoLink(
+      waiting: waiting,
+      rebuffering: stalled,
+      aheadMs: aheadMs,
+      bytesPerSecond: rate,
+      neededBytesPerSecond: need,
+      sinceProgressMs: meter.sinceProgress()?.inMilliseconds,
+      targetMs: waiting ? linkTargetMs(ratio, rebuffering: stalled) : 0,
+      loading: waiting || aheadMs < (DesktopPlayerOptions.streamedCacheSeconds - 5) * 1000,
+      receivedBytes: meter.receivedBytes,
+      network: meter.started,
+    );
+    final resumeMs = linkTargetMs(ratio, rebuffering: true);
+    if (ratio != null && resumeMs != _resumeWaitMs) {
+      _resumeWaitMs = resumeMs;
+      unawaited(_onEngine(engine, () => engine.setResumeWait(Duration(milliseconds: resumeMs))));
+    }
+  }
+
   void _fail(int generation, String message) {
     if (_disposed || generation != _generation) {
       return;
     }
     _log.warning(message);
+    _linkTimer?.cancel();
+    _linkTimer = null;
     _unloaded = true;
     onPlaybackStatusChanged.value = PlaybackStatus.stopped;
     onError.value = message;

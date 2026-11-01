@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
@@ -10,11 +12,14 @@ import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.service.dart';
+import 'package:immich_mobile/domain/services/video_details.dart';
+import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_loading_line.widget.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
@@ -110,6 +115,12 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   bool _fromServer = false;
   // Resumes a film and saves where it is, for the video loaded (see widget.watchProgress)
   VideoWatchRecorder? _recorder;
+  // The link of the video, followed for the slow link word (see _onLink): held, so that dispose reads no ref
+  ValueListenable<VideoLinkView?>? _linkView;
+  // Where the video loads once the player view was made again (see _initController), null otherwise
+  Duration? _reloadAt;
+  // Whether the slow link of the video loaded was told (see _onLink)
+  bool _slowSaid = false;
 
   VideoPlayerNotifier get _notifier => ref.read(videoPlayerProvider(widget.asset.id).notifier);
 
@@ -119,6 +130,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     WidgetsBinding.instance.addObserver(this);
     videoSource = _createSource();
     ref.listenManual(videoPlayerProvider(widget.asset.id).select((s) => s.status), _onStatus);
+    _linkView = _notifier.link..addListener(_onLink);
     ref.listenManual(videoSourceOverridesProvider, (_, overrides) => _onForced(overrides));
     if (CurrentPlatform.isDesktop) {
       ref.listenManual(externalPlayerClosedProvider, (_, _) => unawaited(_onExternalPlayerClosed()));
@@ -168,6 +180,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     _recorder?.dispose();
     _recorder = null;
     _removeListeners();
+    try {
+      _linkView?.removeListener(_onLink);
+    } catch (_) {
+      // The player went first: nothing to stop listening to
+    }
     final held = _heldDownload;
     if (held != null) {
       unawaited(held.downloads.release(held.videoId));
@@ -416,7 +433,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
 
     setState(() => _isVideoReady = true);
-    unawaited(_noticeSpatialVideo());
+    unawaited(_whenLinkIdle(_noticeSpatialVideo));
 
     if (ref.read(assetViewerProvider).showingDetails) {
       return;
@@ -431,6 +448,24 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     final autoPlayVideo = ref.read(appConfigProvider).viewer.autoPlayVideo;
     if (autoPlayVideo || widget.asset.isMotionPhoto) {
       await _notifier.play();
+    }
+  }
+
+  /// Longest wait of [_whenLinkIdle], in seconds
+  static const _idleWaitSeconds = 15;
+
+  /// Runs [run] once the native player no longer loads media, [_idleWaitSeconds] at most: what reads the file beside
+  /// the player (the index of a film, 3.6 MB for two hours) slowed its start on a slow link (31 October 2026)
+  Future<void> _whenLinkIdle(Future<void> Function() run) async {
+    for (var second = 0; second < _idleWaitSeconds && mounted; second++) {
+      final link = _notifier.link.value;
+      if (link == null || !link.loading) {
+        break;
+      }
+      await Future<void>.delayed(const Duration(seconds: 1));
+    }
+    if (mounted) {
+      await run();
     }
   }
 
@@ -494,11 +529,60 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       return;
     }
     final failure = _notifier.failure;
-    final why = failure?.kind == VideoFailureKind.stalled
-        ? 'nothing played for ${VideoPlayerNotifier.stallTimeout.inSeconds} s'
-        : failure?.message;
+    final why = switch (failure?.kind) {
+      VideoFailureKind.stalled => 'nothing played for ${VideoPlayerNotifier.fallbackStallTimeout.inSeconds} s',
+      VideoFailureKind.dead => 'nothing arrived for ${VideoLinkRule.deadAfter.inSeconds} s, the player keeps trying',
+      _ => failure?.message,
+    };
     _log.warning('${widget.asset.name} does not play from $_sourceLabel: $why');
-    unawaited(_logFile());
+    // A link that stopped sending says nothing of the file
+    if (failure?.kind != VideoFailureKind.dead) {
+      unawaited(_logFile());
+    }
+  }
+
+  /// The link of a server video measured too short for it for a while (see VideoLinkView.slow): the user reads it once
+  /// per load, with "Play the server's copy" when the server has a copy of its own that the device decodes and the
+  /// original plays, else what the server can do. A transient word: the player keeps the screen.
+  void _onLink() {
+    final link = _notifier.link.value;
+    if (!mounted || !widget.isCurrent || link == null || !link.slow || _slowSaid || !_fromServer) {
+      return;
+    }
+    final got = link.bitsPerSecond;
+    final need = link.neededBitsPerSecond;
+    if (got == null || need == null) {
+      return;
+    }
+    _slowSaid = true;
+    final t = context.t;
+    final locale = context.locale.toLanguageTag();
+    final videoId = _serverVideoId;
+    final chosen = videoId == null ? null : ref.read(chosenVideoSourcesProvider)[videoId];
+    final copyPlays =
+        chosen != null &&
+        chosen.kind == VideoSourceKind.original &&
+        chosen.hasCopy != false &&
+        chosen.copyBeyondDecoders == null &&
+        _forced != VideoSourceKind.original;
+    final message = t.video_slow_server(
+      got: formatBitRate(got, t, locale: locale),
+      need: formatBitRate(need, t, locale: locale),
+    );
+    _log.info('${widget.asset.name}: $message${copyPlays ? ', the server copy offered' : ''}');
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        content: Text(copyPlays ? message : '$message. ${t.video_slow_lighter_copy_hint}'),
+        duration: const Duration(seconds: 8),
+        action: copyPlays && videoId != null
+            ? SnackBarAction(
+                label: t.video_source_play_copy,
+                onPressed: () =>
+                    ref.read(videoSourceOverridesProvider.notifier).force(videoId, VideoSourceKind.transcoded),
+              )
+            : null,
+      ),
+    );
   }
 
   /// What the file of a video that does not play is, and what the decoders of the device say of it, for the Logs page:
@@ -524,7 +608,15 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
   }
 
+  void _onLinkChanged() {
+    final link = _controller?.onLinkChanged.value;
+    if (mounted && link != null) {
+      _notifier.onNativeLinkChanged(link);
+    }
+  }
+
   void _removeListeners() {
+    _controller?.onLinkChanged.removeListener(_onLinkChanged);
     _controller?.onError.removeListener(_onPlaybackError);
     _controller?.onPlaybackPositionChanged.removeListener(_onPlaybackPositionChanged);
     _controller?.onPlaybackStatusChanged.removeListener(_onPlaybackStatusChanged);
@@ -661,7 +753,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     if (!mounted) {
       return;
     }
-    await localNotifier.load(source);
+    _slowSaid = false;
+    // A player view made again loads the video where the one before was
+    final reloadAt = _reloadAt;
+    _reloadAt = null;
+    await localNotifier.load(source, at: reloadAt != null && reloadAt > Duration.zero ? reloadAt : null);
     await localNotifier.setLoop(!widget.asset.isMotionPhoto && (recorder?.loopsWith(loopVideo) ?? loopVideo));
     await localNotifier.setVolume(1);
     if (play) {
@@ -709,12 +805,24 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   void attachController(NativeVideoPlayerController controller) => _initController(controller);
 
   void _initController(NativeVideoPlayerController nc) {
-    if (_controller != null || !mounted) {
+    if (!mounted || identical(_controller, nc)) {
       return;
+    }
+    if (_controller != null) {
+      // The platform view was made again (its element replaced): the new native player has nothing loaded, and the old
+      // one is gone. The video loads in the new one where it was, behind its poster until it is ready again
+      _log.info('${widget.asset.name}: the player view was made again, the video loads in it again');
+      _removeListeners();
+      _controller = null;
+      _reloadAt = ref.read(videoPlayerProvider(widget.asset.id)).position;
+      if (_isVideoReady) {
+        setState(() => _isVideoReady = false);
+      }
     }
 
     _notifier.attachController(nc);
 
+    nc.onLinkChanged.addListener(_onLinkChanged);
     nc.onPlaybackPositionChanged.addListener(_onPlaybackPositionChanged);
     nc.onPlaybackStatusChanged.addListener(_onPlaybackStatusChanged);
     nc.onPlaybackReady.addListener(_onPlaybackReady);
@@ -750,6 +858,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
             const Positioned.fill(child: DesktopVideoPlaceholder())
           else if (showPlayer) ...[
             Visibility.maintain(
+              // Kept when the poster and the failure panel leave the stack in the same frame: without a key, Flutter
+              // made the platform view again then, and the new native player never got the video (31 October 2026)
+              key: const ValueKey('video_player_view'),
               visible: _isVideoReady,
               // A platform view must never take the focus: the keys of a remote would go to the native view
               child: ExcludeFocus(
@@ -763,7 +874,14 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
               child: AnimatedOpacity(
                 opacity: status == VideoPlaybackStatus.buffering ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 400),
-                child: const CircularProgressIndicator(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    // What the link brings against what the video needs, while it waits (see VideoLoadingLine)
+                    VideoLoadingLine(link: _notifier.link),
+                  ],
+                ),
               ),
             ),
             // The original downloaded before it plays, see _download

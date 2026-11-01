@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
-import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -16,12 +15,13 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 typedef VideoFailureText = ({String title, String? cause, List<String> advice});
 
 /// Words for [failure], from [details], what the probe of the file and the decoder check found (null while they are
-/// not known). A video nothing on the server decodes says so with what to change in Immich; a file beyond the decoders
-/// of the device is the cause whatever the player said; an error the native player put in the words of the app (see
-/// NativePlaybackError) is said in ours, with the codec and the size of what played; a stall without a cause is the
-/// network or the server. The text of Media3 never shows. [fromServer]: the video came from the server, which can
-/// make a copy the device plays. [remote]: the remote control layout of a TV, where the viewer has no menu at the top
-/// (Info is a key of the remote).
+/// not known). A video nothing on the server decodes says so with what to change in Immich; a link that stopped
+/// sending says so, and that the video plays on by itself; a file beyond the decoders of the device is the cause
+/// whatever the player said; an error the native player put in the words of the app (see NativePlaybackError) is said
+/// in ours, with the codec and the size of what played. Only what was measured is said: a slow link is never a
+/// failure, and the bit rate of the file is no cause. The text of Media3 never shows. [fromServer]: the video came from
+/// the server, which can make a copy the device plays. [remote]: the remote control layout of a TV, where the viewer
+/// has no menu at the top (Info is a key of the remote).
 VideoFailureText describeVideoFailure(
   VideoPlaybackFailure failure,
   VideoDecodeDetails? details,
@@ -39,6 +39,13 @@ VideoFailureText describeVideoFailure(
   final refusal = failure.refusal;
   if (failure.kind == VideoFailureKind.refused && refusal != null) {
     return (title: t.video_failed_title, cause: refusal.message(t), advice: [retry]);
+  }
+  if (failure.kind == VideoFailureKind.dead) {
+    return (
+      title: t.video_stalled_title,
+      cause: fromServer ? t.video_link_stopped_server : t.video_link_stopped_share,
+      advice: [fromServer ? t.video_link_resumes_server : t.video_link_resumes_share],
+    );
   }
   if (verdict != null && !verdict.supported && codec != null && width != null && height != null) {
     final name = videoCodecName(codec);
@@ -77,12 +84,16 @@ VideoFailureText describeVideoFailure(
         return (title: t.video_failed_title, cause: null, advice: [retry]);
     }
   }
-  if (failure.kind == VideoFailureKind.stalled || native?.kind == NativePlaybackErrorKind.stalled) {
-    final bitRate = details?.bitRate;
-    final cause = bitRate != null
-        ? t.video_stalled_bit_rate(rate: formatBitRate(bitRate.bitsPerSecond, t, locale: locale))
-        : t.video_stalled_slow;
-    return (title: t.video_stalled_title, cause: cause, advice: [retry]);
+  if (failure.kind == VideoFailureKind.stalled) {
+    return (title: t.video_stalled_title, cause: t.video_stalled_no_progress, advice: [retry]);
+  }
+  if (native?.kind == NativePlaybackErrorKind.stalled) {
+    // The native player tried for as long as its link brought nothing (StreamRetry.GIVE_UP_MS), then stopped
+    return (
+      title: t.video_stalled_title,
+      cause: fromServer ? t.video_link_stopped_server : t.video_link_stopped_share,
+      advice: [retry],
+    );
   }
   final message = failure.message?.trim();
   final shown = message == null || message.isEmpty || isMedia3StuckText(message) ? null : message;
@@ -126,7 +137,9 @@ class VideoFailurePanel extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              failure.kind == VideoFailureKind.stalled ? Icons.hourglass_empty_rounded : Icons.error_outline_rounded,
+              failure.kind == VideoFailureKind.stalled || failure.kind == VideoFailureKind.dead
+                  ? Icons.hourglass_empty_rounded
+                  : Icons.error_outline_rounded,
               color: Colors.white,
               size: 40,
             ),

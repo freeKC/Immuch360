@@ -10,6 +10,7 @@ import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
+import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 import 'fake_playback_engine.dart';
@@ -48,6 +49,90 @@ void main() {
     expect(video.videoInfo?.toJson(), {'height': 1080, 'width': 1920, 'duration': 10000});
     expect(video.videoSource?.path, _bridgeUrl);
     expect(video.onPlaybackStatusChanged.value, PlaybackStatus.stopped, reason: 'as the native players after a load');
+  });
+
+  test('the link of a streamed video is told from what the bridge reads, and the wait after a stall follows it', () {
+    fakeAsync((async) {
+      players = FakePlayers();
+      var now = DateTime(2026, 10, 31, 18);
+      final meter = VideoLinkMeter(clock: () => now);
+      final video = MediaKitVideoPlayerController(
+        pool: players.pool,
+        resolve: _asIs,
+        positionInterval: Duration.zero,
+        // A film of 600 MB for 10 minutes: 1 MB a second
+        linkOf: (resource) => resource == _bridgeUrl ? (meter: meter, size: 600000000) : null,
+      );
+      unawaited(_network(_bridgeUrl).then(video.loadVideoSource));
+      async.flushMicrotasks();
+      final engine = players.made.single;
+      engine.duration.value = const Duration(minutes: 10);
+      // The share brings 500 kB a second while nothing shows yet
+      meter.start();
+      for (var i = 0; i < 40; i++) {
+        now = now.add(const Duration(milliseconds: 100));
+        meter.add(50000);
+        async.elapse(const Duration(milliseconds: 100));
+      }
+
+      final link = video.onLinkChanged.value!;
+      expect(link.waiting, isTrue, reason: 'no frame yet');
+      expect(link.bytesPerSecond, closeTo(500000, 30000));
+      expect(link.neededBytesPerSecond, 1000000);
+      expect(link.sinceProgressMs, lessThan(1000));
+      expect(link.network, isTrue);
+      // Half of what the film needs: mpv waits for 30 s of it after a stall (60 s x (1 - 0.5))
+      expect(engine.resumeWaits.last, const Duration(seconds: 30));
+
+      // The share falls silent: no progress for as long as it lasts
+      now = now.add(const Duration(seconds: 31));
+      async.elapse(const Duration(seconds: 1));
+      expect(video.onLinkChanged.value!.sinceProgressMs, greaterThanOrEqualTo(30000));
+
+      unawaited(video.stop());
+      async.flushMicrotasks();
+      video.dispose();
+      async.flushMicrotasks();
+    });
+  });
+
+  test('a film opened again a while after its share failed is no dead link while its first bytes come', () {
+    fakeAsync((async) {
+      players = FakePlayers();
+      var now = DateTime(2026, 11, 1, 2);
+      // The share failed a read of this file 40 s ago, and the video stopped (review of 1 November 2026: the meter is
+      // kept per file, and the reopened film was said to be on a share that stopped sending at once)
+      final meter = VideoLinkMeter(clock: () => now)
+        ..start()
+        ..add(300000)
+        ..start()
+        ..end(failed: true);
+      now = now.add(const Duration(seconds: 40));
+      final video = MediaKitVideoPlayerController(
+        pool: players.pool,
+        resolve: _asIs,
+        positionInterval: Duration.zero,
+        linkOf: (resource) => resource == _bridgeUrl ? (meter: meter, size: 600000000) : null,
+      );
+      unawaited(_network(_bridgeUrl).then(video.loadVideoSource));
+      async.flushMicrotasks();
+      players.made.single.duration.value = const Duration(minutes: 10);
+      // The bridge reads for the new open, the share answers 2 s later
+      meter.start();
+      for (var i = 0; i < 4; i++) {
+        now = now.add(const Duration(milliseconds: 500));
+        async.elapse(const Duration(milliseconds: 500));
+      }
+      final link = video.onLinkChanged.value!;
+      expect(link.waiting, isTrue);
+      expect(link.sinceProgressMs, lessThanOrEqualTo(2000));
+      expect(linkIsDead(waiting: true, sinceProgressMs: link.sinceProgressMs), isFalse);
+
+      unawaited(video.stop());
+      async.flushMicrotasks();
+      video.dispose();
+      async.flushMicrotasks();
+    });
   });
 
   test('a file of this computer opens as a path, without the streaming cache', () async {

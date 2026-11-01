@@ -29,6 +29,8 @@ class FakePlaybackEngine implements PlaybackEngine {
   @override
   final ValueNotifier<bool> buffering = ValueNotifier(false);
   @override
+  final ValueNotifier<Duration> buffered = ValueNotifier(Duration.zero);
+  @override
   final ValueNotifier<bool> completed = ValueNotifier(false);
   @override
   final ValueNotifier<bool> textureLost = ValueNotifier(false);
@@ -137,6 +139,12 @@ class FakePlaybackEngine implements PlaybackEngine {
 
   @override
   Future<void> setLoop(bool loop) async => this.loop = loop;
+
+  /// What [setResumeWait] was asked, in order (not in [calls]: the link sets it as it measures)
+  final resumeWaits = <Duration>[];
+
+  @override
+  Future<void> setResumeWait(Duration wait) async => resumeWaits.add(wait);
 
   @override
   Future<void> setAudioTrack(String id) async {

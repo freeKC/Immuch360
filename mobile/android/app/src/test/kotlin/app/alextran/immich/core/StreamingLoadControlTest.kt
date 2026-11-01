@@ -22,4 +22,18 @@ class StreamingLoadControlTest {
   fun `never takes more than the maximum`() {
     assertEquals(StreamingLoadControl.MAX_TARGET_BUFFER_BYTES, StreamingLoadControl.targetBufferBytes(4096 * mib))
   }
+
+  @Test
+  fun `the least media before playing is the link rule's, which decides above it`() {
+    assertEquals(1_000, StreamingLoadControl.BUFFER_FOR_PLAYBACK_MS)
+    assertEquals(2_000, StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+  }
+
+  @Test
+  fun `a player that waits for what its link asks is fed only past it`() {
+    assertEquals(5_000L, StreamingLoadControl.decoderFedMs(0L))
+    assertEquals(5_000L, StreamingLoadControl.decoderFedMs(2_000L))
+    // A link at 0.8 of the video after a stall waits for 12 s: 6 s buffered is the network, not the decoder
+    assertEquals(12_000L, StreamingLoadControl.decoderFedMs(12_000L))
+  }
 }

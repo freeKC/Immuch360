@@ -308,6 +308,10 @@ void main() {
     'errorNoFrame':
         'This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})',
     'errorStalled': 'This video is not loading: the network or the server sends it too slowly',
+    // What the link brings while the viewer waits (31 October 2026)
+    'loadingRate': 'Loading: {got} of the {need} this video needs',
+    'deadServer': 'The server stopped sending this video. It plays on as soon as the server answers',
+    'deadShare': 'The share stopped sending this video. It plays on as soon as the share answers',
   };
   // The audio track control of the native video players, with the language of the app to name the track languages in
   const englishAudioTrackLabels = {
@@ -333,6 +337,12 @@ void main() {
     'errorNoFrame':
         'This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})',
     'errorStalled': 'This video is not loading: the network or the server sends it too slowly',
+    // What the link brings while the player waits, in the units of the details of a video (31 October 2026)
+    'loadingRate': 'Loading: {got} of the {need} this video needs',
+    'deadServer': 'The server stopped sending this video. It plays on as soon as the server answers',
+    'deadShare': 'The share stopped sending this video. It plays on as soon as the share answers',
+    'playbackMbps': '{value} Mbit/s',
+    'playbackKbps': '{value} kbit/s',
   };
   // The messages of the native 360° players about raw videos: the decoders may not keep up with the two streams, then
   // what the player shows when it falls back, the codec and the frame size of a lens left for it to fill in

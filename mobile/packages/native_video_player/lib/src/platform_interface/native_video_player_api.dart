@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:native_video_player/src/link_state.dart';
 import 'package:native_video_player/src/video_info.dart';
 import 'package:native_video_player/src/video_source.dart';
 import 'package:native_video_player/src/video_track.dart';
@@ -12,6 +13,9 @@ class NativeVideoPlayerApi {
 
   /// Immuch360: the tracks of the video changed
   final void Function()? onTracksChanged;
+
+  /// Immuch360: what the player measures of its link while it loads (Android)
+  final void Function(NativeVideoLink)? onLinkChanged;
   late final MethodChannel _channel;
 
   NativeVideoPlayerApi({
@@ -21,6 +25,7 @@ class NativeVideoPlayerApi {
     required this.onPlaybackPositionChanged,
     required this.onError,
     this.onTracksChanged,
+    this.onLinkChanged,
   }) {
     final name = 'me.albemala.native_video_player.api.$viewId';
     _channel = MethodChannel(name);
@@ -47,14 +52,23 @@ class NativeVideoPlayerApi {
         onError(message);
       case 'onTracksChanged':
         onTracksChanged?.call();
+      case 'onLinkChanged':
+        final arguments = call.arguments;
+        if (arguments is Map<Object?, Object?>) {
+          onLinkChanged?.call(NativeVideoLink.fromMap(arguments));
+        }
     }
     throw UnsupportedError('Unrecognized method ${call.method}');
   }
 
-  Future<void> loadVideoSource(VideoSource videoSource) async {
+  /// Loads [videoSource], at [startPositionMs] when given (Immuch360: Android starts there; iOS at its start)
+  Future<void> loadVideoSource(VideoSource videoSource, {int? startPositionMs}) async {
     await _channel.invokeMethod<void>(
       'loadVideoSource',
-      videoSource.toJson(),
+      {
+        ...videoSource.toJson(),
+        if (startPositionMs != null && startPositionMs > 0) 'startPositionMs': startPositionMs,
+      },
     );
   }
 

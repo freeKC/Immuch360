@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:native_video_player/src/link_state.dart';
 import 'package:native_video_player/src/platform_interface/native_video_player_api.dart';
 import 'package:native_video_player/src/playback_info.dart';
 import 'package:native_video_player/src/playback_status.dart';
@@ -56,6 +57,10 @@ class NativeVideoPlayerController with ChangeNotifier {
   /// Immuch360: emitted when the audio or subtitle tracks change (a video loaded, a track picked), on Android
   final onTracksChanged = ChangeNotifier();
 
+  /// Immuch360: what the player measures of its link while it loads (see [NativeVideoLink]), on Android and on the
+  /// computers; null until the first measure after a load, and where the platform tells nothing (iOS)
+  final onLinkChanged = ValueNotifier<NativeVideoLink?>(null);
+
   /// The video source that is currently loaded.
   VideoSource? get videoSource => _videoSource;
 
@@ -84,6 +89,7 @@ class NativeVideoPlayerController with ChangeNotifier {
       onError: _onError,
       // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       onTracksChanged: onTracksChanged.notifyListeners,
+      onLinkChanged: (link) => onLinkChanged.value = link,
     );
   }
 
@@ -113,10 +119,14 @@ class NativeVideoPlayerController with ChangeNotifier {
 
   /// Loads a new video source.
   ///
+  /// Immuch360: at [startAt] when given, so that a film that resumes loads at its place rather than at its start (the
+  /// computers and Android start there; iOS starts at 0, and the caller seeks once it is ready).
+  ///
   /// NOTE: This method might throw an exception if the video source is invalid.
-  Future<void> loadVideoSource(VideoSource videoSource) async {
+  Future<void> loadVideoSource(VideoSource videoSource, {Duration? startAt}) async {
     await stop();
-    await _api.loadVideoSource(videoSource);
+    onLinkChanged.value = null;
+    await _api.loadVideoSource(videoSource, startPositionMs: startAt?.inMilliseconds);
     _videoSource = videoSource;
   }
 

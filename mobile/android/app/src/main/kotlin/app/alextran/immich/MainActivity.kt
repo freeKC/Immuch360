@@ -17,6 +17,7 @@ import app.alextran.immich.connectivity.ConnectivityApiImpl
 import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.FlatPlayerErrors
+import app.alextran.immich.core.FlatPlayerSetup
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.ImmichPlugin
 import app.alextran.immich.core.NetworkApiPlugin
@@ -162,6 +163,8 @@ class MainActivity : FlutterFragmentActivity() {
       NativeVideoPlayerPlugin.onAudioLanguageChosen = { language -> AudioTrackChooser.rememberLanguage(app, language) }
       // Its errors in the words of the app: Flutter gets the kind, the codec and the size, never the text of Media3
       NativeVideoPlayerPlugin.errorToken = FlatPlayerErrors::token
+      // Its player starts a streamed video from the measured link, and tells Flutter what that link brings
+      NativeVideoPlayerPlugin.playerSetup = { context -> FlatPlayerSetup(context) }
       flutterEngine.plugins.add(NetworkApiPlugin())
 
       val messenger = flutterEngine.dartExecutor.binaryMessenger

@@ -1,0 +1,59 @@
+{
+  "comment": "The cases of the start rule of a streamed video, read by LinkStartRuleTest (Kotlin) and video_link_rule_test.dart (Dart): both rules give the same answers. ratio: what the link brings per second against what the video consumes per second, null when unknown.",
+  "target": [
+    { "ratio": null, "rebuffering": false, "targetMs": 1000 },
+    { "ratio": null, "rebuffering": true, "targetMs": 2000 },
+    { "ratio": 3.0, "rebuffering": false, "targetMs": 1000 },
+    { "ratio": 1.25, "rebuffering": false, "targetMs": 1000 },
+    { "ratio": 1.25, "rebuffering": true, "targetMs": 2000 },
+    { "ratio": 1.2, "rebuffering": false, "targetMs": 2000 },
+    { "ratio": 1.0, "rebuffering": false, "targetMs": 2000 },
+    { "ratio": 1.0, "rebuffering": true, "targetMs": 4000 },
+    { "ratio": 0.99, "rebuffering": false, "targetMs": 1000 },
+    { "ratio": 0.8, "rebuffering": false, "targetMs": 6000 },
+    { "ratio": 0.8, "rebuffering": true, "targetMs": 12000 },
+    { "ratio": 0.5, "rebuffering": false, "targetMs": 15000 },
+    { "ratio": 0.5, "rebuffering": true, "targetMs": 30000 },
+    { "ratio": 0.49, "rebuffering": false, "targetMs": 1000 },
+    { "ratio": 0.25, "rebuffering": false, "targetMs": 1000 },
+    { "ratio": 0.25, "rebuffering": true, "targetMs": 30000 },
+    { "ratio": 0.0, "rebuffering": true, "targetMs": 30000 },
+    { "ratio": 0.95, "rebuffering": true, "targetMs": 3000 }
+  ],
+  "start": [
+    { "bufferedMs": 1000, "ratio": null, "rebuffering": false, "minimumHeldMs": 0, "start": true },
+    { "bufferedMs": 999, "ratio": null, "rebuffering": false, "minimumHeldMs": null, "start": false },
+    { "bufferedMs": 1500, "ratio": null, "rebuffering": true, "minimumHeldMs": null, "start": false },
+    { "bufferedMs": 2000, "ratio": 2.0, "rebuffering": true, "minimumHeldMs": 0, "start": true },
+    { "bufferedMs": 5000, "ratio": 0.8, "rebuffering": false, "minimumHeldMs": 3000, "start": false },
+    { "bufferedMs": 6000, "ratio": 0.8, "rebuffering": false, "minimumHeldMs": 5000, "start": true },
+    { "bufferedMs": 3000, "ratio": 0.5, "rebuffering": false, "minimumHeldMs": 3999, "start": false },
+    { "bufferedMs": 3000, "ratio": 0.5, "rebuffering": false, "minimumHeldMs": 4000, "start": true },
+    { "bufferedMs": 1000, "ratio": 0.25, "rebuffering": false, "minimumHeldMs": 0, "start": true },
+    { "bufferedMs": 900, "ratio": 0.25, "rebuffering": false, "minimumHeldMs": 60000, "start": false },
+    { "bufferedMs": 5000, "ratio": 0.5, "rebuffering": true, "minimumHeldMs": 29999, "start": false },
+    { "bufferedMs": 5000, "ratio": 0.5, "rebuffering": true, "minimumHeldMs": 30000, "start": true },
+    { "bufferedMs": 30000, "ratio": 0.0, "rebuffering": true, "minimumHeldMs": 0, "start": true }
+  ],
+  "remaining": [
+    { "bufferedMs": 0, "ratio": null, "rebuffering": false, "minimumHeldMs": null, "remainingMs": null },
+    { "bufferedMs": 0, "ratio": 0.0, "rebuffering": false, "minimumHeldMs": null, "remainingMs": null },
+    { "bufferedMs": 2000, "ratio": 0.8, "rebuffering": false, "minimumHeldMs": 0, "remainingMs": 4000 },
+    { "bufferedMs": 1000, "ratio": 0.5, "rebuffering": false, "minimumHeldMs": 1000, "remainingMs": 3000 },
+    { "bufferedMs": 500, "ratio": 0.25, "rebuffering": false, "minimumHeldMs": null, "remainingMs": 2000 },
+    { "bufferedMs": 0, "ratio": 0.5, "rebuffering": false, "minimumHeldMs": null, "remainingMs": 6000 },
+    { "bufferedMs": 6000, "ratio": 0.8, "rebuffering": false, "minimumHeldMs": 3000, "remainingMs": 0 }
+  ],
+  "dead": [
+    { "waiting": true, "sinceProgressMs": 29999, "dead": false },
+    { "waiting": true, "sinceProgressMs": 30000, "dead": true },
+    { "waiting": false, "sinceProgressMs": 120000, "dead": false },
+    { "waiting": true, "sinceProgressMs": null, "dead": false }
+  ],
+  "slow": [
+    { "ratio": 0.5, "slowForMs": 4999, "slow": false },
+    { "ratio": 0.5, "slowForMs": 5000, "slow": true },
+    { "ratio": 0.9, "slowForMs": 60000, "slow": false },
+    { "ratio": null, "slowForMs": 60000, "slow": false }
+  ]
+}

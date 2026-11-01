@@ -436,7 +436,7 @@ void main() {
       expect(saved(), minute * 45);
       unawaited(inApp.resumeAfterExternalPlayerAt(minute * 50, play: false));
       async.flushMicrotasks();
-      expect(native.calls.where((call) => call == 'load'), hasLength(2));
+      expect(native.calls.where((call) => call.startsWith('load')), hasLength(2));
       expect(inApp.state.position, Duration.zero, reason: 'at its start until it is ready again');
       expect(saved(), minute * 50);
       return recorder;
@@ -506,7 +506,9 @@ void main() {
         async.flushMicrotasks();
         async.elapse(const Duration(seconds: 1));
 
-        expect(seeks(), isEmpty);
+        // Loaded where the film was left, before its duration said it was another file: back to its start
+        expect(native.calls.first, 'load at ${42 * ms}');
+        expect(seeks(), ['seek 0']);
         expect(inApp.state.position, Duration.zero);
         unawaited(inApp.play());
         async.flushMicrotasks();
@@ -521,6 +523,25 @@ void main() {
         setUpWith(async, [row()]);
         attach();
         // The server's probe of the original, 5 s longer than the stream the player plays
+        recorderOn(duration: film + const Duration(seconds: 5));
+        unawaited(inApp.load(source));
+        async.flushMicrotasks();
+
+        native.ready();
+        async.flushMicrotasks();
+
+        // Loaded there: no seek
+        expect(native.calls.first, 'load at ${42 * ms}');
+        expect(seeks(), isEmpty);
+        expect(inApp.state.position, minute * 42);
+      });
+    });
+
+    test('a player that starts at its start whatever it is asked (iOS) is taken there once ready', () {
+      fakeAsync((async) {
+        setUpWith(async, [row()]);
+        attach();
+        native.startsWhereLoaded = false;
         recorderOn(duration: film + const Duration(seconds: 5));
         unawaited(inApp.load(source));
         async.flushMicrotasks();
@@ -547,7 +568,8 @@ void main() {
         async.flushMicrotasks();
 
         expect(native.calls, contains('loop false'));
-        expect(seeks(), ['seek ${5 * ms}']);
+        expect(native.calls.first, 'load at ${5 * ms}');
+        expect(seeks(), isEmpty);
       });
     });
 

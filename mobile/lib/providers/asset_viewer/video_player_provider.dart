@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart' show AppLifecycleState, WidgetsBinding;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
+import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -18,9 +19,10 @@ enum VideoPlaybackStatus {
   buffering,
   completed,
 
-  /// The video does not play: the native player reported an error, or nothing played for
-  /// [VideoPlayerNotifier.stallTimeout] while it loaded (see [VideoPlayerNotifier.failure]). Not playing: the remote
-  /// goes to the next item, play tries again (see [VideoPlayerNotifier.retry]).
+  /// The video does not play: the native player reported an error, nothing arrived for [VideoLinkRule.deadAfter]
+  /// while it waited, or, where the player tells nothing of its link, nothing played for
+  /// [VideoPlayerNotifier.fallbackStallTimeout] (see [VideoPlayerNotifier.failure]). Not playing: the remote goes to the
+  /// next item, play tries again (see [VideoPlayerNotifier.retry]).
   failed,
 }
 
@@ -29,13 +31,84 @@ enum VideoFailureKind {
   /// The native player reported an error: a decoder that refused the video, a file it could not read
   error,
 
-  /// Nothing played for [VideoPlayerNotifier.stallTimeout] while the video loaded: a network or a server too slow for
-  /// its bit rate, or a decoder that never gave a frame. It clears by itself when the video plays after all.
+  /// Nothing played for [VideoPlayerNotifier.fallbackStallTimeout] while the video loaded, on a player that tells
+  /// nothing of its link (iOS): the network, the server or the decoder. It clears by itself when the video plays after
+  /// all.
   stalled,
 
   /// Nothing the server has decodes on the device (see chooseVideoSource): said before anything loads, play tries
   /// anyway (see [VideoPlayerNotifier.refuse])
   refused,
+
+  /// The server or the share stopped sending: nothing arrived for [VideoLinkRule.deadAfter] while the video waited
+  /// (see [VideoPlayerNotifier.onNativeLinkChanged]). The native player keeps trying: the bytes back clear it, and the
+  /// video plays on by itself. A link that is merely slow never gets here.
+  dead,
+}
+
+/// What a page tells of the link of its video while it loads or waits (see [VideoPlayerNotifier.link]): what the link
+/// brings ([bitsPerSecond]) against what the video needs ([neededBitsPerSecond]), both null until measured, about how
+/// long the wait still lasts ([startsIn], null when it cannot be told), whether the link has brought less than the
+/// video needs for a while as it waits ([slow], see [linkIsSlow]), and whether it stopped sending ([dead])
+class VideoLinkView {
+  const VideoLinkView({
+    required this.waiting,
+    this.bitsPerSecond,
+    this.neededBitsPerSecond,
+    this.startsIn,
+    this.slow = false,
+    this.dead = false,
+    this.waitedFor = Duration.zero,
+    this.loading = false,
+  });
+
+  final bool waiting;
+
+  /// Whether the native player still loads media (its buffer is not full)
+  final bool loading;
+  final int? bitsPerSecond;
+  final int? neededBitsPerSecond;
+  final Duration? startsIn;
+  final bool slow;
+  final bool dead;
+
+  /// How long the wait under way lasts, zero while it does not wait
+  final Duration waitedFor;
+
+  /// What the link brings per second against what the video consumes, null until both are measured
+  double? get ratio {
+    final got = bitsPerSecond;
+    final need = neededBitsPerSecond;
+    return got == null || need == null || need <= 0 ? null : got / need;
+  }
+
+  /// Whether the loading line says the rates: both measured, while the video waits, once the wait is long enough to
+  /// be noticed or the link is short
+  bool get showsRates =>
+      waiting &&
+      ratio != null &&
+      (waitedFor >= VideoPlayerNotifier.ratesAfter || ratio! < VideoLinkRule.fastRatio || dead);
+
+  @override
+  bool operator ==(Object other) =>
+      other is VideoLinkView &&
+      other.waiting == waiting &&
+      other.bitsPerSecond == bitsPerSecond &&
+      other.neededBitsPerSecond == neededBitsPerSecond &&
+      other.startsIn == startsIn &&
+      other.slow == slow &&
+      other.dead == dead &&
+      other.waitedFor == waitedFor &&
+      other.loading == loading;
+
+  @override
+  int get hashCode =>
+      Object.hash(waiting, bitsPerSecond, neededBitsPerSecond, startsIn, slow, dead, waitedFor, loading);
+
+  @override
+  String toString() =>
+      'VideoLinkView(waiting: $waiting, $bitsPerSecond of $neededBitsPerSecond bit/s, starts in $startsIn'
+      '${slow ? ', slow' : ''}${dead ? ', dead' : ''})';
 }
 
 /// Why a video does not play: its [kind], the native player's own [message] for an error (technical, not translated:
@@ -101,9 +174,17 @@ final videoPlayerProvider = StateNotifierProvider.autoDispose.family<VideoPlayer
 class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   static final _log = Logger('VideoPlayerNotifier');
 
-  /// How long a video may load, or stall once it played, before it counts as failed: the 360° player of Android
-  /// gives up later (30 s, with Media3's own stuck buffering check), the flat players had no limit at all
-  static const stallTimeout = Duration(seconds: 20);
+  /// Where the native player tells nothing of its link (iOS): how long a video may wait with its position still before
+  /// it counts as failed. Elsewhere a wait is never a failure while bytes arrive: the link tells when nothing does
+  /// (see [onNativeLinkChanged]).
+  static const fallbackStallTimeout = Duration(seconds: 60);
+
+  /// How long a wait lasts before the loading line says the rates of a link that keeps up (at once for a short one)
+  static const ratesAfter = Duration(milliseconds: 1500);
+
+  /// The clock of the link's times (how long it waited, how long it was slow), replaced by the tests
+  @visibleForTesting
+  static DateTime Function() clock = DateTime.now;
 
   /// How long a seek waits before it goes to the native player: the moves of a slider drag in between go with it
   static const seekDelay = Duration(milliseconds: 150);
@@ -135,8 +216,18 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   /// Runs from the landing of the last seek for [seekSettle]
   Timer? _seekSettleTimer;
-  // Runs while the status is buffering, see [stallTimeout]
+  // Runs while the status is buffering on a player that tells nothing of its link, see [fallbackStallTimeout]
   Timer? _stallTimer;
+
+  // What the native player measured of its link since the video loaded: once it told anything, its link decides
+  // whether a wait is dead, and the clock of [fallbackStallTimeout] stays off (see [onNativeLinkChanged])
+  bool _linkSeen = false;
+  DateTime? _slowSince;
+  DateTime? _waitingSince;
+  final _link = ValueNotifier<VideoLinkView?>(null);
+
+  // Where the video loaded with [load] starts in the native player (the place a film resumes at), see [seekWhenReady]
+  Duration? _loadedAt;
   VideoPlaybackFailure? _failure;
   VideoPlaybackStatus? _holdStatus;
 
@@ -185,6 +276,10 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   /// Why the video does not play while the status is [VideoPlaybackStatus.failed], null otherwise
   VideoPlaybackFailure? get failure => _failure;
 
+  /// What the page tells of the link of the video, see [VideoLinkView]; null where the native player tells nothing of
+  /// it, and until it does after a load
+  ValueListenable<VideoLinkView?> get link => _link;
+
   /// Every status change goes through here: the stall check runs while the status is buffering, and a failure lasts
   /// only as long as the failed status
   @override
@@ -194,11 +289,11 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     if (value.status != VideoPlaybackStatus.failed) {
       _failure = null;
     }
-    if (value.status != VideoPlaybackStatus.buffering) {
+    if (value.status != VideoPlaybackStatus.buffering || _linkSeen) {
       _stallTimer?.cancel();
       _stallTimer = null;
     } else {
-      _stallTimer ??= Timer(stallTimeout, _onStalled);
+      _stallTimer ??= Timer(fallbackStallTimeout, _onStalled);
     }
   }
 
@@ -211,6 +306,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     unawaited(_keepScreenOn(false));
     _controller = null;
     _tracksChanged.dispose();
+    _link.dispose();
 
     super.dispose();
   }
@@ -263,7 +359,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
   }
 
-  Future<void> load(VideoSource source) async {
+  /// Loads [source] in the native player, at [at] when given
+  Future<void> load(VideoSource source, {Duration? at}) async {
     if (_suspended) {
       _sourceAfterSuspension = source;
       return;
@@ -274,25 +371,41 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _playOnForeground = false;
     _lastTracks = const [];
     _forgetSeek();
+    _linkSeen = false;
+    _slowSince = null;
+    _waitingSince = null;
+    _link.value = null;
     if (state.status == VideoPlaybackStatus.failed) {
       // Loading again: the spinner, and a new stall check, from now on
       state = state.copyWith(status: VideoPlaybackStatus.buffering);
     }
     _startBufferingTimer();
+    // A film that resumes loads at its place, rather than at its start and then seeks there: what the start of the film
+    // took to load (its index and a second of it, 7.5 s over 2 Mbit/s) is saved. [at] wins (a retry where it stopped)
+    final restore = _pendingRestore;
+    final startAt = at ?? (restore != null && _pendingResume && !restore.play ? restore.position : null);
+    _loadedAt = startAt != null && startAt > Duration.zero ? startAt : null;
     try {
-      await _controller?.loadVideoSource(source);
+      final controller = _controller;
+      if (_loadedAt != null) {
+        await controller?.loadVideoSource(source, startAt: _loadedAt);
+      } else {
+        await controller?.loadVideoSource(source);
+      }
     } catch (e) {
       _log.severe('Error loading video source: $e');
     }
   }
 
-  /// Loads the video again and plays it: what play does on a video that failed, a refused one included (see [refuse])
+  /// Loads the video again and plays it: what play does on a video that failed, a refused one included (see [refuse]).
+  /// A video that stopped on its way (a dead link, a decoder that failed) loads again where it was.
   Future<void> retry() async {
     final source = _controller?.videoSource ?? _refusedSource;
     if (source == null || _suspended) {
       return;
     }
-    await load(source);
+    final position = _refusedSource == null ? state.position : Duration.zero;
+    await load(source, at: position > Duration.zero ? position : null);
     await play();
   }
 
@@ -317,11 +430,78 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   void _onStalled() {
     _stallTimer = null;
-    if (!mounted || state.status != VideoPlaybackStatus.buffering) {
+    if (!mounted || state.status != VideoPlaybackStatus.buffering || _linkSeen) {
       return;
     }
-    _log.warning('Nothing played for ${stallTimeout.inSeconds} s: ${_controller?.videoSource?.path ?? 'no source'}');
+    _log.warning(
+      'Nothing played for ${fallbackStallTimeout.inSeconds} s: ${_controller?.videoSource?.path ?? 'no source'}',
+    );
     _fail(const VideoPlaybackFailure(VideoFailureKind.stalled));
+  }
+
+  /// The native player measured its [link] (twice a second while it loads, see NativeVideoLink): a wait with progress
+  /// is never a failure, whatever its length; a wait without progress for [VideoLinkRule.deadAfter] is a link that
+  /// stopped sending ([VideoFailureKind.dead]), which bytes back clear, the native player playing on by itself; and
+  /// what the page tells of the link (see [link]) follows.
+  void onNativeLinkChanged(NativeVideoLink link) {
+    if (!mounted || _suspended) {
+      return;
+    }
+    _linkSeen = true;
+    _stallTimer?.cancel();
+    _stallTimer = null;
+    final now = clock();
+    final ratio = link.ratio;
+    // A link that sends nothing is not a slow one, the dead link is said for it (a server silent for a minute was said
+    // to send at 0 kbit/s, "it will pause now and then", 31 October 2026)
+    final silent = (link.sinceProgressMs ?? 0) >= VideoLinkRule.silentAfter.inMilliseconds;
+    if (silent) {
+      _slowSince = null;
+    } else if (ratio == null) {
+      // Not measured: as it was
+    } else if (ratio < VideoLinkRule.slowRatio) {
+      _slowSince ??= now;
+    } else {
+      _slowSince = null;
+    }
+    if (link.waiting) {
+      _waitingSince ??= now;
+    } else {
+      _waitingSince = null;
+    }
+    final dead = link.network && linkIsDead(waiting: link.waiting, sinceProgressMs: link.sinceProgressMs);
+    final status = state.status;
+    if (dead && status == VideoPlaybackStatus.buffering) {
+      _log.warning(
+        'Nothing arrived for ${VideoLinkRule.deadAfter.inSeconds} s: ${_controller?.videoSource?.path ?? 'no source'}',
+      );
+      _fail(const VideoPlaybackFailure(VideoFailureKind.dead));
+    } else if (!dead && status == VideoPlaybackStatus.failed && _failure?.kind == VideoFailureKind.dead) {
+      // The bytes are back: it waits for the native player, which plays on by itself
+      _log.info('The link sends again: ${_controller?.videoSource?.path ?? 'no source'}');
+      state = state.copyWith(status: link.waiting ? VideoPlaybackStatus.buffering : VideoPlaybackStatus.playing);
+    } else if (link.waiting && status == VideoPlaybackStatus.playing) {
+      // The native player waits for media: the spinner now, rather than after a second without a move
+      state = state.copyWith(status: VideoPlaybackStatus.buffering);
+    }
+    final waitedFor = _waitingSince == null ? Duration.zero : now.difference(_waitingSince!);
+    final remaining = link.waiting
+        ? linkRemainingWaitMs(link.aheadMs, ratio, rebuffering: link.rebuffering, minimumHeldMs: link.minimumHeldMs)
+        : null;
+    final rate = link.bytesPerSecond;
+    final need = link.neededBytesPerSecond;
+    _link.value = VideoLinkView(
+      waiting: link.waiting,
+      bitsPerSecond: rate == null ? null : rate * 8,
+      neededBitsPerSecond: need == null ? null : need * 8,
+      startsIn: remaining != null && remaining >= 1000 && link.targetMs > 0 ? Duration(milliseconds: remaining) : null,
+      // Said only while the video waits: a film that plays from its buffer is not paused by its link, whatever the
+      // meter reads (review of 1 November 2026: a 4K film playing from a full buffer was said to "pause now and then")
+      slow: link.waiting && linkIsSlow(ratio, _slowSince == null ? Duration.zero : now.difference(_slowSince!)),
+      dead: dead,
+      waitedFor: waitedFor,
+      loading: link.loading,
+    );
   }
 
   void _fail(VideoPlaybackFailure failure) {
@@ -466,7 +646,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
     _pendingRestore = null;
     _pendingResume = false;
-    return true;
+    // Loaded there already (see [load]): it is not at its start, the caller takes it there
+    return _loadedAt == null;
   }
 
   Future<void> _restore(({Duration position, bool play}) restore) async {
@@ -710,7 +891,11 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     if (restore != null) {
       _pendingRestore = null;
       _pendingResume = false;
-      unawaited(_restore(restore));
+      final loadedAt = _loadedAt;
+      // Loaded at its place (see [load]): no seek, unless the platform started it elsewhere (iOS starts at 0)
+      if (loadedAt == null || loadedAt != restore.position || (position - loadedAt).abs() > seekTolerance) {
+        unawaited(_restore(restore));
+      }
     }
   }
 

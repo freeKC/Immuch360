@@ -63,7 +63,7 @@ class _FakePlayer extends VideoPlayerNotifier {
 
   // Nothing native loads it: the status stays the one of the test, never "buffering" a second later
   @override
-  Future<void> load(VideoSource source) async {}
+  Future<void> load(VideoSource source, {Duration? at}) async {}
 
   @override
   Future<void> setLoop(bool loop) async => _loops.add(loop);

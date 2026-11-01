@@ -54,6 +54,7 @@ import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.PlayerLink
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
 import app.alextran.immich.core.raw.RawDecoderVerdict
@@ -591,7 +592,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
     bufferingLabel = findViewById(R.id.spherical_video_buffering_label)
     val streamed = StreamingLoadControl.isStreamed(playbackUrl().orEmpty())
-    bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
+    bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed, BufferingIndicator.isShare(playbackUrl()))
 
     enterFullScreen(topBar)
     // The first plan of this opening may already be a fallback: the user reads why (a recreation said it already)
@@ -745,14 +746,17 @@ class SphericalVideoActivity : ComponentActivity() {
         dataSpec.withAdditionalHeaders(headers)
       }
     val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
-    val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+    // The link of this player: when it starts, and a link that sends nothing tried again until it answers
+    val link = PlayerLink(this)
+    val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory).setLoadErrorHandlingPolicy(link.errorPolicy)
     val audioAttributes = AudioAttributes.Builder()
       .setUsage(C.USAGE_MEDIA)
       .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
       .build()
 
-    // Larger buffers for a video read over HTTP (the media bridge of a network share, a server); local files as before
-    val builder = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
+    // Larger buffers for a video read over HTTP (the media bridge of a network share, a server), started from the
+    // measured link; local files as before
+    val builder = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url, link)
       .setMediaSourceFactory(mediaSourceFactory)
       .setAudioAttributes(audioAttributes, /* handleAudioFocus= */ true)
       .setHandleAudioBecomingNoisy(true)
@@ -771,7 +775,7 @@ class SphericalVideoActivity : ComponentActivity() {
         it.addAnalyticsListener(PlaybackStats().also { stats -> playbackStats = stats })
         // The language picked last, and the track picked for this video before a stop
         audioTracks.attach(it)
-        bufferingIndicator.attach(it)
+        bufferingIndicator.attach(it, link)
         // Before the surface and before prepare, which sets up the effect pipeline. Once the stitching failed, the
         // player is built without any effect: an empty list would still route the frames through the GL pipeline
         if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE && projection != null) {
@@ -1203,7 +1207,7 @@ class SphericalVideoActivity : ComponentActivity() {
    */
   private fun decoderGotMedia(stuck: StuckPlayerException): Boolean =
     stuck.stuckType == StuckPlayerException.STUCK_BUFFERING_NOT_LOADING ||
-      (player?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+      (player?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.DECODER_FED_MS
 
   /**
    * Plays the transcoded stream in place of the original, from where it stopped, once. False when there is none, when

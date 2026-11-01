@@ -1,3 +1,4 @@
+export 'src/link_state.dart';
 export 'src/native_video_player_controller.dart';
 export 'src/native_video_player_view.dart';
 export 'src/playback_info.dart';

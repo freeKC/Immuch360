@@ -48,6 +48,8 @@ import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.PlaybackStatsLogger
+import app.alextran.immich.core.BufferingIndicator
+import app.alextran.immich.core.PlayerLink
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.PlaybackErrors
 import app.alextran.immich.core.VideoDecoders
@@ -849,6 +851,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   // Video
   private var player: ExoPlayer? = null
+
+  // The link of [player] (see PlayerLink): when it starts, what it waits for, and what its loading line says
+  private var playerLink: PlayerLink? = null
   /**
    * The current player was built with the streaming buffers (a video read over HTTP). The buffers are fixed when the
    * player is built, so a local video after a streamed one, or the other way round, gets a new player.
@@ -1486,6 +1491,35 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     showStatus(text)
+  }
+
+  /**
+   * While the player waits, twice a second, the status line says what its link brings against what the video needs,
+   * or that the server (the share) stopped sending it (see BufferingIndicator.describe); "Buffering" until it knows.
+   */
+  private val bufferingLine =
+    object : Runnable {
+      override fun run() {
+        val p = player ?: return
+        val link = playerLink ?: return
+        if (p.playbackState != Player.STATE_BUFFERING) return
+        val labels = request?.stereoLabels.orEmpty()
+        val said =
+          BufferingIndicator.describe(
+            labels,
+            link.meter.rate(),
+            link.meter.need(),
+            link.meter.sinceProgressMs(),
+            BufferingIndicator.isShare(currentVideoUrl),
+          )
+        if (said != null) setStatus(said)
+        mainHandler.postDelayed(this, 500L)
+      }
+    }
+
+  private fun startBufferingLine() {
+    mainHandler.removeCallbacks(bufferingLine)
+    mainHandler.postDelayed(bufferingLine, 500L)
   }
 
   /** Writes the status line whatever is pending: the request itself and its answer. */
@@ -5339,10 +5373,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       // Server: the app session (cookie, custom headers, client certificate), same as the in-app player.
       // file:// and content:// (the copy on the headset) are read locally by DefaultDataSource.
       val dataSourceFactory = DefaultDataSource.Factory(this, HttpClientManager.createDataSourceFactory(emptyMap()))
-      val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+      // The link of this player: when it starts, and a link that sends nothing tried again until it answers
+      val link = PlayerLink(this)
+      val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory).setLoadErrorHandlingPolicy(link.errorPolicy)
       val audio = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build()
       val builder =
-        StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
+        StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url, link)
           .setMediaSourceFactory(mediaSourceFactory)
           .setAudioAttributes(audio, true)
           // The 10 second buttons and the thumbstick up and down
@@ -5363,6 +5399,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       pendingFirstFrameMessage = plan.firstFrameMessage
       (lens?.player ?: builder.build()).also {
         player = it
+        playerLink = link
         twoLens = lens
         playerStreamed = streamed
         playerPlanKey = playerKeyOf(plan, media)
@@ -5454,6 +5491,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     twoLens = null
     if (lens != null) lens.release() else current.release()
     player = null
+    playerLink = null
     playerPlanKey = null
     playerPlan = null
   }
@@ -5651,7 +5689,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       override fun onPlaybackStateChanged(playbackState: Int) {
         Log.i(TAG, "video state $playbackState")
         when (playbackState) {
-          Player.STATE_BUFFERING -> setStatus(getString(R.string.immersive_buffering))
+          Player.STATE_BUFFERING -> {
+            setStatus(getString(R.string.immersive_buffering))
+            startBufferingLine()
+          }
           // A kiosk and a film play once, the others loop. The kiosk's player goes then: out of this callback of its
           // own; a film is watched, which the app keeps
           Player.STATE_ENDED -> {
@@ -5844,7 +5885,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun errorMessageFor(error: PlaybackException): String {
     val p = player
     val format = videoFormatForReport()
-    val gotMedia = (p?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+    val gotMedia = (p?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.DECODER_FED_MS
     val kind = PlaybackErrors.kindOf(error, videoKnown = format != null, decoderGotMedia = gotMedia)
     val labels = request?.stereoLabels.orEmpty()
     val text =
@@ -6017,7 +6058,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         p.playbackState,
         p.totalBufferedDuration,
         p.isLoading,
-        StreamingLoadControl.playbackBufferMs(playerStreamed, rebuffering = true).toLong(),
+        // What its link waits for, at least: a player that waits for the media its link asks is fed only past it
+        StreamingLoadControl.decoderFedMs(if (playerStreamed) playerLink?.targetMs ?: 0L else 0L),
       )
     when (
       val action = recovery.onTick(p.isPlaying, p.currentPosition, watchedFrames, SystemClock.elapsedRealtime(), fed)
@@ -6666,6 +6708,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     p.repeatMode = repeatModeFor(request)
     val lens = twoLens
     val plan = playerPlan
+    // What the link of the video before brought says nothing of this one
+    playerLink?.reset()
     if (lens != null && plan != null) {
       lens.setMedia(plan.urls, startPositionMs.coerceAtLeast(0L))
     } else {
@@ -6839,6 +6883,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     pendingRequestId = null
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
+    mainHandler.removeCallbacks(bufferingLine)
     if (liveViewer === this) liveViewer = null
     // A viewer that finished at its onPause or at its onStop had its onSpatialShutdown there (the SDK runs it from
     // either once the viewer is finishing): the objects of the scene read null, and these drops only let the jobs and
