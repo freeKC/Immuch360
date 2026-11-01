@@ -33,7 +33,6 @@ String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale)
   SplatRefusal.newerSpz => t.splat_newer_spz,
   SplatRefusal.damaged => t.splat_damaged,
   SplatRefusal.tooLarge => t.splat_too_large(count: splatCountText(verdict.gaussians ?? 0, locale)),
-  SplatRefusal.spzV4 => t.splat_spz_v4,
   null => '',
 };
 

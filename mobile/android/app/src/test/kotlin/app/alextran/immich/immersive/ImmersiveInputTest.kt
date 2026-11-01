@@ -317,36 +317,125 @@ class ImmersiveInputTest {
     }
   }
 
-  // A 3D scene (design-final 2026-10-27, section 3.3)
+  // A 3D scene (design-final 2026-10-27, section 3.3) and a splat (FreeKC's report of 1 November 2026)
 
-  private fun sceneActions(controller: Int = 0, hand: Int = 0, panelVisible: Boolean = false): List<Action> =
-    ImmersiveControls.actionsFor(controller, hand, panelVisible, scene = true)
+  private fun sceneActions(
+    controller: Int = 0,
+    hand: Int = 0,
+    panelVisible: Boolean = false,
+    turns: Boolean = false,
+  ): List<Action> = ImmersiveControls.actionsFor(controller, hand, panelVisible, scene = true, sceneTurns = turns)
 
   @Test
-  fun `in a scene the thumbsticks glide and reset, neither previous, next, turn nor resize`() {
+  fun `in a 3D scene the thumbsticks glide only, neither previous, next, turn, resize nor Reset`() {
     val directions = ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK
     for (bit in (0 until 32).map { 1 shl it }.filter { directions and it != 0 }) {
       assertEquals("direction 0x${Integer.toHexString(bit)}", emptyList<Action>(), sceneActions(controller = bit))
     }
-    assertEquals(listOf(Action.RESET), sceneActions(controller = ButtonBits.ButtonThumbLClick))
-    assertEquals(listOf(Action.RESET), sceneActions(controller = ButtonBits.ButtonThumbRClick))
-    // Filed under a hand after a wake up, a click is still a controller's
-    assertEquals(listOf(Action.RESET), sceneActions(hand = ButtonBits.ButtonThumbRClick))
+    // A click comes with most pushes (79 of the 81 clicks of the log of 1 November): it no longer puts the scene back
+    // at its start, Reset is in the panel
+    assertEquals(emptyList<Action>(), sceneActions(controller = ButtonBits.ButtonThumbLClick))
+    assertEquals(emptyList<Action>(), sceneActions(controller = ButtonBits.ButtonThumbRClick))
+    assertEquals(emptyList<Action>(), sceneActions(hand = ButtonBits.ButtonThumbRClick))
     // Out of a scene a click does nothing, as before
     assertEquals(emptyList<Action>(), actions(controller = ButtonBits.ButtonThumbLClick))
   }
 
   @Test
+  fun `in a splat the right thumbstick left or right turns, whatever click comes with the push`() {
+    assertEquals(listOf(Action.TURN_LEFT), sceneActions(controller = ButtonBits.ButtonThumbRL, turns = true))
+    assertEquals(listOf(Action.TURN_RIGHT), sceneActions(controller = ButtonBits.ButtonThumbRR, turns = true))
+    // The push and its click on the same frame, as the log shows them (0x20800): one turn, nothing else
+    val pushAndClick = ButtonBits.ButtonThumbRR or ButtonBits.ButtonThumbRClick
+    assertEquals(listOf(Action.TURN_RIGHT), sceneActions(controller = pushAndClick, turns = true))
+    // Filed under a hand after a wake up, the push is still a controller's
+    assertEquals(listOf(Action.TURN_LEFT), sceneActions(hand = ButtonBits.ButtonThumbRL, turns = true))
+    // Up and down of the right stick, the left stick (it glides, read every frame) and the clicks do nothing
+    val others =
+      listOf(
+        ButtonBits.ButtonThumbRU,
+        ButtonBits.ButtonThumbRD,
+        ButtonBits.ButtonThumbLL,
+        ButtonBits.ButtonThumbLR,
+        ButtonBits.ButtonThumbLU,
+        ButtonBits.ButtonThumbLD,
+        ButtonBits.ButtonThumbLClick,
+        ButtonBits.ButtonThumbRClick,
+      )
+    for (bit in others) {
+      assertEquals("0x${Integer.toHexString(bit)}", emptyList<Action>(), sceneActions(controller = bit, turns = true))
+    }
+  }
+
+  @Test
+  fun `no stick and no button gives Reset any more, in a scene, a splat or any other media`() {
+    for (bit in (0 until 32).map { 1 shl it }) {
+      for (scene in listOf(false, true)) {
+        for (turns in listOf(false, true)) {
+          val all = ImmersiveControls.actionsFor(bit, 0, false, scene = scene, sceneTurns = turns)
+          assertFalse("0x${Integer.toHexString(bit)}", all.any { it.name == "RESET" })
+        }
+      }
+    }
+  }
+
+  @Test
   fun `in a scene B or Y go back, A, X, grip and menu keep the panel, the trigger plays nothing`() {
-    assertEquals(listOf(Action.CLOSE), sceneActions(controller = ButtonBits.ButtonB or ButtonBits.ButtonThumbLClick))
-    assertEquals(listOf(Action.TOGGLE_PANEL), sceneActions(controller = ButtonBits.ButtonA))
-    assertEquals(listOf(Action.TOGGLE_PANEL), sceneActions(controller = ButtonBits.ButtonSqueezeL, panelVisible = true))
-    assertEquals(listOf(Action.SHOW_PANEL), sceneActions(hand = ButtonBits.ButtonX))
-    assertEquals(emptyList<Action>(), sceneActions(controller = ButtonBits.ButtonTriggerR))
+    for (turns in listOf(false, true)) {
+      assertEquals(
+        listOf(Action.CLOSE),
+        sceneActions(controller = ButtonBits.ButtonB or ButtonBits.ButtonThumbLClick, turns = turns),
+      )
+      assertEquals(listOf(Action.TOGGLE_PANEL), sceneActions(controller = ButtonBits.ButtonA, turns = turns))
+      assertEquals(
+        listOf(Action.TOGGLE_PANEL),
+        sceneActions(controller = ButtonBits.ButtonSqueezeL, panelVisible = true, turns = turns),
+      )
+      assertEquals(listOf(Action.SHOW_PANEL), sceneActions(hand = ButtonBits.ButtonX, turns = turns))
+      assertEquals(emptyList<Action>(), sceneActions(controller = ButtonBits.ButtonTriggerR, turns = turns))
+      assertEquals(
+        listOf(Action.TOGGLE_PANEL),
+        sceneActions(controller = ButtonBits.ButtonThumbRClick or ButtonBits.ButtonA, turns = turns),
+      )
+    }
     assertEquals(
-      listOf(Action.RESET, Action.TOGGLE_PANEL),
-      sceneActions(controller = ButtonBits.ButtonThumbRClick or ButtonBits.ButtonA),
+      listOf(Action.TURN_RIGHT, Action.TOGGLE_PANEL),
+      sceneActions(controller = ButtonBits.ButtonThumbRR or ButtonBits.ButtonA, turns = true),
     )
+  }
+
+  // The right thumbstick of a splat: it only turns, so up and down never hide a turn
+
+  @Test
+  fun `a push of the right thumbstick that crosses up or down first still turns once the right stick only turns`() {
+    val diagonal = ButtonBits.ButtonThumbRD or ButtonBits.ButtonThumbRR
+    // Everywhere else the first direction of a push wins: down, then no turn
+    val plain = ControllerEdges()
+    plain.pressed(1, true, "CONTROLLER", 0, nowMs = 0)
+    assertEquals(ButtonBits.ButtonThumbRD, plain.pressed(1, true, "CONTROLLER", ButtonBits.ButtonThumbRD, nowMs = 11))
+    assertEquals(0, plain.pressed(1, true, "CONTROLLER", diagonal, nowMs = 22))
+    // In a splat, where up and down of the right stick mean nothing, the turn comes as the push crosses left or right
+    val splat = ControllerEdges().apply { rightStickTurnsOnly = true }
+    splat.pressed(1, true, "CONTROLLER", 0, nowMs = 0)
+    assertEquals(0, splat.pressed(1, true, "CONTROLLER", ButtonBits.ButtonThumbRD, nowMs = 11))
+    assertEquals(ButtonBits.ButtonThumbRR, splat.pressed(1, true, "CONTROLLER", diagonal, nowMs = 22))
+    // Held, it repeats as any turn does
+    val repeat = 22 + ControllerEdges.TURN_REPEAT_DELAY_MS
+    assertEquals(ButtonBits.ButtonThumbRR, splat.pressed(1, true, "CONTROLLER", diagonal, nowMs = repeat))
+    // The left stick keeps its first direction rule, and the buttons their edges
+    val up = ButtonBits.ButtonThumbLU
+    assertEquals(up, splat.pressed(1, true, "CONTROLLER", up, nowMs = 900))
+    assertEquals(ButtonBits.ButtonA, splat.pressed(1, true, "CONTROLLER", up or ButtonBits.ButtonA, nowMs = 911))
+  }
+
+  @Test
+  fun `leaving a splat with the right stick held down gives no stray edge`() {
+    val edges = ControllerEdges().apply { rightStickTurnsOnly = true }
+    edges.pressed(1, true, "CONTROLLER", 0, nowMs = 0)
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", ButtonBits.ButtonThumbRD, nowMs = 11))
+    edges.rightStickTurnsOnly = false
+    // Still held: not a new press
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", ButtonBits.ButtonThumbRD, nowMs = 22))
   }
 
   @Test

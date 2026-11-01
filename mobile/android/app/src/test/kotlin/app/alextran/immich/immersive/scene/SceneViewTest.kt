@@ -240,7 +240,11 @@ class SceneViewTest {
       "Edge of the reconstructed area. Reset is in the panel.",
       SceneTexts.label(english, SceneTexts.LABEL_EDGE),
     )
-    assertTrue(SceneTexts.label(english, SceneTexts.LABEL_HINT).startsWith("Left thumbstick: glide"))
+    // A click of a thumbstick no longer resets a scene (FreeKC's report of 1 November 2026): Reset is in the panel
+    assertEquals(
+      "Left thumbstick: glide. A, X or grip: show or hide this panel. B or Y: back to the app.",
+      SceneTexts.label(english, SceneTexts.LABEL_HINT),
+    )
     assertEquals("Explore", SceneTexts.label(mapOf(SceneTexts.LABEL_RESET to "Explore"), SceneTexts.LABEL_RESET))
   }
 

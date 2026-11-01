@@ -92,6 +92,7 @@ void main() {
         '/cube.ply': _fixture('mesh_cube.ply'),
         '/packed.ply': _fixture('compressed.ply'),
         '/cactus.spz': _spzHead(452451),
+        '/axes_v4.spz': _fixture('axes_v4.spz'),
         '/notes.txt': fakePhoto(),
       },
     );
@@ -174,6 +175,37 @@ void main() {
         'Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: '
         "any defect is Immuch360's own.",
       );
+    });
+
+    testWidgets('a version 4 SPZ says its version and opens like the others', (tester) async {
+      // FreeKC's report of 1 November 2026: this file of his kit said the headset does not read version 4
+      await pumpPage(tester, '/axes_v4.spz');
+
+      expect(find.text('686 gaussians, SPZ version 4'), findsOneWidget);
+      expect(find.byKey(splatRefusalKey), findsNothing);
+      await tester.tap(find.byKey(exploreSplatButtonKey));
+      await tester.pumpAndSettle();
+      final request = jsonDecode(immersiveApi.opened.single.stereoPair!) as Map<String, dynamic>;
+      expect(request['formatVersion'], 4);
+      expect(request['gaussians'], 686);
+    });
+
+    testWidgets('a version 4 SPZ of a share that does not give its size opens too', (tester) async {
+      // A WebDAV server without getcontentlength (review of 1 November 2026): the page has no size for the file
+      await pumpNetworkRouter(
+        tester,
+        home: SplatPage(sourceId: _source.id, path: '/axes_v4.spz'),
+        overrides: overrides(),
+      );
+
+      expect(find.text('686 gaussians, SPZ version 4'), findsOneWidget);
+      expect(find.byKey(splatRefusalKey), findsNothing);
+      await tester.tap(find.byKey(exploreSplatButtonKey));
+      await tester.pumpAndSettle();
+      final request = jsonDecode(immersiveApi.opened.single.stereoPair!) as Map<String, dynamic>;
+      expect(request['formatVersion'], 4);
+      // The headset reads the file again with its real length
+      expect(request['fileBytes'], 1);
     });
 
     testWidgets('a PLY says the tool its comment names', (tester) async {
