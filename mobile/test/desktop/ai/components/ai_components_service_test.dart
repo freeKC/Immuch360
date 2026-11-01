@@ -919,6 +919,46 @@ void main() {
       expect((installedJson()['components'] as Map).keys, ['future-model']);
     });
 
+    test('an entry the catalogue holds without its sums keeps what a build with the sums installed', () async {
+      // The splat scenes (plan 2026-11-01): the test build installs COLMAP and Brush with their sums from the branch of
+      // the test, while every other build names them without sums; started on the same folder, it must not delete
+      // them as an older version (review of lot SP0)
+      final zip = _zipOf(_engineFiles);
+      final engine = _engineComponent(zip, _engineFiles, id: 'test-splat-engine');
+      File(p.join(mirror.path, engine.assetName)).writeAsBytesSync(zip);
+      await service(catalogue: [engine]).install(engine);
+      final held = AiComponent(
+        id: engine.id,
+        version: engine.version,
+        kind: AiComponentKind.archive,
+        platforms: engine.platforms,
+        assetName: engine.assetName,
+        installPath: engine.installPath,
+        size: null,
+        sha256: null,
+        compression: AiCompression.none,
+        licence: engine.licence,
+        licenceUrl: engine.licenceUrl,
+        features: engine.features,
+      );
+      expect(held.sha256, isNull);
+
+      await service(catalogue: [held]).load();
+
+      expect(Directory(p.join(root.path, 'engines', engine.id)).existsSync(), isTrue);
+      expect((installedJson()['components'] as Map).keys, [engine.id]);
+      // The build with the sums finds it whole
+      final again = service(catalogue: [engine]);
+      await again.load();
+      expect(again.statusOf(engine).state, AiComponentState.installed);
+      // Another sum in the catalogue is still a newer version: the old one goes
+      final newer = _engineComponent(_zipOf({'sd-cli': utf8.encode('a newer program')}), {
+        'sd-cli': utf8.encode('a newer program'),
+      }, id: 'test-splat-engine');
+      await service(catalogue: [newer]).load();
+      expect(Directory(p.join(root.path, 'engines', engine.id)).existsSync(), isFalse);
+    });
+
     test('a load that failed is tried again at the next call', () async {
       await service().install(_modelComponent);
       var calls = 0;
