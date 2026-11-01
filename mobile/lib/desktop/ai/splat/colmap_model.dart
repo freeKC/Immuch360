@@ -8,16 +8,9 @@
 //    lighthouse;
 //  - the whole model once aligned upright by model_orientation_aligner (+y then points down, as COLMAP and the headset
 //    take it): the centres of the cameras, the points, the mean reprojection error COLMAP's model_analyzer gives
-//    (0.66 px for the room of the measure), and the floor under the cameras, from which the copy for the headset gets
-//    its scale when a place was filmed (SplatV1.placeCameraHeight above it).
-// The floor: the lowest layer of the scene under the cameras, the 95th percentile of the heights of the points below the
-// median height of the cameras (the 5 % below it are floaters and reflections), when those points are at least
-// [ColmapModel.floorMinShare] of all and [ColmapModel.floorMinPoints]; otherwise there is no floor to trust (an object
-// seen from below or from its height, the skull of the measure: no point under its cameras), and the scale comes from
-// the size of the scene (lot SP3). A plane found in a histogram was tried first on the models of the measure: their
-// floors are no peak (the room of Mip-NeRF 360 spreads its points over the whole height below its cameras, its floor
-// smeared by a tilt of a few degrees), so the peak fell on the furniture. The rule is not measured against a true floor:
-// the copies of the first test T1, in the headset, say whether a room stands at the right height.
+//    (0.66 px for the room of the measure). The centres, x y z of each ([ColmapModel.centres]), go to the scale of the
+//    copy for the headset (splat_scale.dart, lot SP3), which finds the floor under them as a plane: the floor of the
+//    room of M1 stands 19.9 degrees off level after IMAGE-ORIENTATION, so no rule here that takes the model as upright.
 
 import 'dart:convert';
 import 'dart:io';
@@ -97,19 +90,6 @@ class ColmapPoint {
   final int track;
 }
 
-/// The floor found under the cameras of an upright model: its height ([y], +y down) and the median height of the
-/// cameras above it ([cameraHeight], in the units of the model), from the [support] points below the cameras
-class ColmapFloor {
-  const ColmapFloor({required this.y, required this.cameraHeight, required this.support});
-
-  final double y;
-  final double cameraHeight;
-  final int support;
-
-  @override
-  String toString() => 'ColmapFloor(y: $y, cameraHeight: $cameraHeight, support: $support)';
-}
-
 /// The centre of a camera from its pose, the world to the camera: -Rᵀ t, R the rotation of the quaternion [q] (w, x,
 /// y, z)
 List<double> colmapCenterOf(List<double> q, List<double> t) {
@@ -170,13 +150,6 @@ class ColmapModel {
   final Map<int, ColmapCamera> cameras;
   final List<ColmapImage> images;
   final List<ColmapPoint> points;
-
-  /// The floor needs this share of the points, and this many, below the median height of the cameras
-  static const floorMinShare = 0.1;
-  static const floorMinPoints = 30;
-
-  /// The percentile of the heights of the points below the cameras taken as the floor
-  static const floorPercentile = 0.95;
 
   /// Reads the model in [folder]; throws a FormatException when a file is missing or does not read
   static ColmapModel read(Directory folder) {
@@ -257,29 +230,14 @@ class ColmapModel {
     return count == 0 ? null : sum / count;
   }
 
-  /// The floor under the cameras, the model being upright (+y down); null when there is none to trust (see the top of
-  /// this file)
-  ColmapFloor? floor() {
-    if (images.isEmpty || points.isEmpty) {
-      return null;
+  /// The centres of the cameras, x y z of each in the order of [images]: what the scale of lot SP3 reads
+  Float64List get centres {
+    final centres = Float64List(3 * images.length);
+    for (var k = 0; k < images.length; k++) {
+      centres.setRange(3 * k, 3 * k + 3, images[k].center);
     }
-    final cameraY = _median([for (final image in images) image.center[1]]);
-    final below = [
-      for (final point in points)
-        if (point.xyz[1] > cameraY) point.xyz[1],
-    ]..sort();
-    if (below.length < floorMinPoints || below.length < points.length * floorMinShare) {
-      return null;
-    }
-    final floorY = below[((below.length - 1) * floorPercentile).round()];
-    return ColmapFloor(y: floorY, cameraHeight: floorY - cameraY, support: below.length);
+    return centres;
   }
-}
-
-double _median(List<double> values) {
-  final sorted = [...values]..sort();
-  final middle = sorted.length ~/ 2;
-  return sorted.length.isOdd ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
 class _Reader {

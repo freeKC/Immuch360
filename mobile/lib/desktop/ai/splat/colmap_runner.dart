@@ -12,7 +12,8 @@
 //    (colmap_model.dart), refused under SplatV1.minPlaced images or SplatV1.minPlacedShare of them (notEnoughOverlap,
 //    "placed/all"), said partial under SplatV1.partialShare;
 //  - model_orientation_aligner by IMAGE-ORIENTATION into dataset/sparse/0, the model upright (+y down), which Brush and
-//    the headset read; then the model read whole, its floor found.
+//    the headset read; then the model read whole, the centres of its cameras for the scale (splat_scale.dart, lot SP3,
+//    which finds the floor).
 // Every argument is one the help of our build lists (the fixtures colmap_help/ of lot SP1), with --log_target stderr:
 // the default, stderr_and_file, leaves a glog file per run in %TEMP% (112 of them after the measure of 1 November).
 // How a command that did not end with 0 ended ([colmapEndOf]):
@@ -272,13 +273,12 @@ class ColmapLog {
   }
 }
 
-/// What COLMAP found: the images placed of those given, the model upright, its floor, and the time of each step
+/// What COLMAP found: the images placed of those given, the model upright, and the time of each step
 class ColmapPoses {
   const ColmapPoses({
     required this.images,
     required this.placed,
     required this.model,
-    required this.floor,
     required this.times,
     required this.threads,
   });
@@ -286,9 +286,9 @@ class ColmapPoses {
   final int images;
   final int placed;
 
-  /// The largest model, upright (dataset/sparse/0)
+  /// The largest model, upright (dataset/sparse/0): the centres of its cameras ([ColmapModel.centres]) go to the scale
+  /// of lot SP3 (splatScaleOf), which finds the floor
   final ColmapModel model;
-  final ColmapFloor? floor;
 
   /// The time of each command: features, matching, mapping, align (restarts included)
   final Map<String, Duration> times;
@@ -456,14 +456,7 @@ class ColmapRunner {
         'The model COLMAP aligned does not read: ${error.message}',
       );
     }
-    return ColmapPoses(
-      images: images,
-      placed: model.images.length,
-      model: model,
-      floor: model.floor(),
-      times: times,
-      threads: threads,
-    );
+    return ColmapPoses(images: images, placed: model.images.length, model: model, times: times, threads: threads);
   }
 
   /// [action] on the files of the work folder; a file that cannot be made, read or removed is posesFailed, or diskFull

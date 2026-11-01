@@ -1,12 +1,13 @@
 // The model of COLMAP read by the app (lib/desktop/ai/splat/colmap_model.dart, lot SP4), on models written as COLMAP
 // 4.2.1 writes them by the writer of the fakes (test/desktop/ai/fakes/fake_colmap_model.dart): the count of an
-// images.bin from its first bytes, the largest of several models, the cameras, the names in UTF-8, the centres, the
-// mean reprojection error, a file cut short, and the floor under the cameras of a synthetic room. The same reader on
-// the models of the measure of 1 November gave what model_analyzer gave (150 images, 29 818 points, 0.662430 px for
+// images.bin from its first bytes, the largest of several models, the cameras, the names in UTF-8, the centres (one
+// list for the scale of lot SP3, which finds the floor), the mean reprojection error, a file cut short. The same reader
+// on the models of the measure of 1 November gave what model_analyzer gave (150 images, 29 818 points, 0.662430 px for
 // the room; 144, 11 296, 0.623272 px for the video): lot SP4, report.
 
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/splat/colmap_model.dart';
@@ -17,33 +18,12 @@ import '../fakes/fake_colmap_model.dart';
 const _camera = FakeColmapCamera(id: 1, width: 1600, height: 1200, params: [1920, 800, 600, 0.01]);
 
 /// [count] images on a circle of 1.3 m around the origin, at the height 0, named in [folder]
-FakeColmapModel _circle(int count, {String folder = 'cam0', List<FakeColmapPoint>? points}) {
-  final model = FakeColmapModel.circle(
-    names: [for (var k = 1; k <= count; k++) '$folder/${'$k'.padLeft(6, '0')}.jpg'],
-    ids: [for (var k = 1; k <= count; k++) k],
-    cameras: const [_camera],
-    cameraOf: (_) => 1,
-  );
-  return points == null ? model : FakeColmapModel(cameras: model.cameras, images: model.images, points: points);
-}
-
-/// [count] points at the height [y] (+y down), spread over a square of [side] metres
-List<FakeColmapPoint> _layer(int count, double y, {double side = 4, int firstId = 1, int seed = 1}) {
-  final random = math.Random(seed);
-  return [
-    for (var k = 0; k < count; k++)
-      FakeColmapPoint(
-        id: firstId + k,
-        xyz: [
-          random.nextDouble() * side - side / 2,
-          y + random.nextDouble() * 0.02 - 0.01,
-          random.nextDouble() * side - side / 2,
-        ],
-        rgb: const [128, 128, 128],
-        track: const [(1, 0), (2, 0)],
-      ),
-  ];
-}
+FakeColmapModel _circle(int count, {String folder = 'cam0'}) => FakeColmapModel.circle(
+  names: [for (var k = 1; k <= count; k++) '$folder/${'$k'.padLeft(6, '0')}.jpg'],
+  ids: [for (var k = 1; k <= count; k++) k],
+  cameras: const [_camera],
+  cameraOf: (_) => 1,
+);
 
 void main() {
   late Directory folder;
@@ -140,34 +120,16 @@ void main() {
     expect(() => ColmapModel.read(at('2')), throwsFormatException);
   });
 
-  test('the floor of a room: the lowest layer under the cameras, its floaters left out', () {
-    // Cameras at the height 0, a floor 1.5 m below them, a table at 0.75, the ceiling 1.2 m above, a few floaters under
-    // the floor
-    final points = [
-      ..._layer(600, 1.5, side: 5),
-      ..._layer(150, 0.75, side: 1, firstId: 1000, seed: 2),
-      ..._layer(400, -1.2, side: 5, firstId: 2000, seed: 3),
-      ..._layer(8, 2.6, side: 5, firstId: 3000, seed: 4),
-    ];
-    _circle(40, points: points).writeTo(at('0'));
-    final floor = ColmapModel.read(at('0')).floor()!;
-    expect(floor.y, closeTo(1.5, 0.011));
-    expect(floor.cameraHeight, closeTo(1.5, 0.011));
-    expect(floor.support, 758);
-  });
-
-  test('no floor without points under the cameras, or with too few of them', () {
-    // An object seen from below: every point above the cameras
-    _circle(30, points: _layer(500, -0.8)).writeTo(at('0'));
-    expect(ColmapModel.read(at('0')).floor(), isNull);
-    // Under a tenth of the points below
-    _circle(30, points: [..._layer(500, -0.8), ..._layer(40, 1.2, firstId: 1000)]).writeTo(at('1'));
-    expect(ColmapModel.read(at('1')).floor(), isNull);
-    // Fewer than 30 below, whatever their share
-    _circle(30, points: [..._layer(20, -0.8), ..._layer(29, 1.2, firstId: 1000)]).writeTo(at('2'));
-    expect(ColmapModel.read(at('2')).floor(), isNull);
-    _circle(30, points: [..._layer(20, -0.8), ..._layer(30, 1.2, firstId: 1000)]).writeTo(at('3'));
-    expect(ColmapModel.read(at('3')).floor()!.y, closeTo(1.2, 0.011));
+  test('the centres of the cameras, x y z of each in the order of the images: what the scale of lot SP3 reads', () {
+    _circle(6).writeTo(at('0'));
+    final model = ColmapModel.read(at('0'));
+    final centres = model.centres;
+    expect(centres, isA<Float64List>());
+    expect(centres, hasLength(18));
+    for (var k = 0; k < model.images.length; k++) {
+      expect(centres.sublist(3 * k, 3 * k + 3), model.images[k].center);
+    }
+    expect(const ColmapModel(cameras: {}, images: [], points: []).centres, isEmpty);
   });
 
   test('the centre of a camera is -Rᵀ t', () {

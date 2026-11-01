@@ -18,7 +18,7 @@
 //       the progress a log of the measure gives, read as the runners read it: its count of lines, its first and last
 //   splat_runner_probe model FOLDER...
 //       a model of COLMAP read as the app reads it (the largest when FOLDER holds the models 0, 1...): its images,
-//       points, cameras, mean reprojection error and floor
+//       points, cameras and mean reprojection error
 //
 // Exit codes: 0 done, 1 a failure of the runner (its code and message in the last JSON line), 2 bad arguments.
 
@@ -122,7 +122,6 @@ Future<void> _colmap(Map<String, String> options, NativeCancelFlag cancel) async
     onProgress: (progress) =>
         _emit({'event': 'progress', 'stage': progress.stage.name, 'done': progress.done, 'total': progress.total}),
   );
-  final floor = poses.floor;
   _emit({
     'event': 'poses',
     'images': poses.images,
@@ -132,7 +131,6 @@ Future<void> _colmap(Map<String, String> options, NativeCancelFlag cancel) async
     'cameras': poses.model.cameras.length,
     'points': poses.model.points.length,
     'meanReprojectionError': poses.model.meanReprojectionError,
-    'floor': floor == null ? null : {'y': floor.y, 'cameraHeight': floor.cameraHeight, 'support': floor.support},
     'seconds': {for (final MapEntry(:key, :value) in poses.times.entries) key: value.inMilliseconds / 1000},
   });
 }
@@ -341,7 +339,6 @@ void _model(Map<String, String> options) {
     final largest = largestColmapModel(Directory(value));
     final folder = largest?.folder ?? Directory(value);
     final model = ColmapModel.read(folder);
-    final floor = model.floor();
     _emit({
       'model': folder.path,
       'placed': colmapPlacedIn(folder),
@@ -349,7 +346,6 @@ void _model(Map<String, String> options) {
       'points': model.points.length,
       'cameras': model.cameras.length,
       'meanReprojectionError': model.meanReprojectionError,
-      'floor': floor == null ? null : {'y': floor.y, 'cameraHeight': floor.cameraHeight, 'support': floor.support},
     });
   }
 }
