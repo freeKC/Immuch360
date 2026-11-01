@@ -1114,6 +1114,30 @@ void main() {
       expect(bridge.trafficOf(bridge.urlFor('nas1', '/photo.jpg')), isNull);
     });
 
+    test('a film opened again a while after its last read is no dead link while its first bytes come', () async {
+      // Read, then left alone for 40 s (review of 1 November 2026: reopened, a share film read more than 30 s earlier
+      // was said to be on a share that stopped sending until its first bytes came)
+      final url = bridge.urlFor('nas1', '/big.mp4');
+      await _send(url, range: 'bytes=0-${_mib - 1}');
+      now = now.add(const Duration(seconds: 40));
+      final reading = Completer<void>();
+      final answer = Completer<void>();
+      share.beforeRead = (path) async {
+        if (!reading.isCompleted) {
+          reading.complete();
+        }
+        await answer.future;
+      };
+      final reopened = _send(url, range: 'bytes=${4 * _mib}-${5 * _mib - 1}');
+      await reading.future;
+      // The share takes 2 s to answer
+      now = now.add(const Duration(seconds: 2));
+      final meter = bridge.trafficOf(url)!.meter;
+      expect(meter.sinceProgress(), const Duration(seconds: 2));
+      answer.complete();
+      expect((await reopened).status, HttpStatus.partialContent);
+    });
+
     test('the size of the next read follows what the share brings', () {
       const max = LocalMediaBridge.defaultMaxChunkSize;
       // Too quick to measure: twice as much, as before

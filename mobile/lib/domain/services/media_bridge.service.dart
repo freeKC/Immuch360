@@ -48,7 +48,11 @@ class LocalMediaBridge implements MediaBridge {
   }) : assert(minChunkSize > 0 && maxChunkSize >= minChunkSize),
        _token = _randomToken(),
        _budget = _ReadAheadBudget(maxBufferedSize),
+       _clock = clock ?? DateTime.now,
        _stats = _StatCache(ttl: statCacheTtl, maxEntries: statCacheSize, clock: clock ?? DateTime.now);
+
+  /// The clock of the stat cache and of the meters of the reads, replaced by the tests
+  final DateTime Function() _clock;
 
   static const defaultMinChunkSize = 256 * 1024;
   static const defaultMaxChunkSize = 4 * 1024 * 1024;
@@ -125,7 +129,7 @@ class LocalMediaBridge implements MediaBridge {
   VideoLinkMeter _meterOf(String sourceId, String path, int? size) {
     final key = (sourceId, path);
     final known = _traffic.remove(key);
-    final meter = known?.meter ?? VideoLinkMeter();
+    final meter = known?.meter ?? VideoLinkMeter(clock: _clock);
     _traffic[key] = (meter: meter, size: size ?? known?.size);
     if (_traffic.length > 32) {
       _traffic.remove(_traffic.keys.first);
@@ -842,9 +846,9 @@ class _BodyReader {
     _next += size;
     // The next read doubles until this one says how fast the share brings it (see nextChunkSize)
     _chunkSize = min(_chunkSize * 2, _bridge.maxChunkSize);
-    _meter
-      ..start()
-      ..setWanted(true);
+    // The time of this read is the link's: the meter counts it, and only it (see VideoLinkMeter)
+    _meter.start();
+    var failed = true;
     final watch = Stopwatch()..start();
     _reading = () async {
       try {
@@ -852,7 +856,10 @@ class _BodyReader {
         if (bytes.length > size) {
           bytes = Uint8List.sublistView(bytes, 0, size);
         }
-        _meter.add(bytes.length);
+        failed = false;
+        _meter
+          ..add(bytes.length)
+          ..end();
         if (generation == _generation) {
           _chunkSize = LocalMediaBridge.nextChunkSize(
             previous: size,
@@ -882,15 +889,14 @@ class _BodyReader {
           _errorStackTrace = stackTrace;
         }
       } finally {
+        if (failed) {
+          _meter.end(failed: true);
+        }
         if (generation == _generation) {
           _reading = null;
         }
       }
       _fill();
-      if (_reading == null) {
-        // Nothing asked of the share until the client takes more: no time of a slow link
-        _meter.setWanted(false);
-      }
     }();
   }
 

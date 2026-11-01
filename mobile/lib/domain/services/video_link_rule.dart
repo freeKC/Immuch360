@@ -113,10 +113,15 @@ bool linkIsDead({required bool waiting, int? sinceProgressMs}) =>
 bool linkIsSlow(double? ratio, Duration slowFor) =>
     ratio != null && !ratio.isNaN && ratio < VideoLinkRule.slowRatio && slowFor >= VideoLinkRule.slowAfter;
 
-/// What a link brings, as LinkMeter.kt measures it: the bytes per second over the last [window] while the player
-/// wanted more ([wanted]), and the time since the last progress (each [VideoLinkRule.progressBytes] that arrive). The
-/// computers feed it with the bytes the media bridge sends their player. [clock] is a parameter so that the tests
-/// drive it.
+/// What a link brings, as LinkMeter.kt measures it: the bytes received per second the player asked for bytes over the
+/// last [window], and the time it asked for bytes since the last progress (each [VideoLinkRule.progressBytes] that
+/// arrive). The player asks for bytes while it wants more ([setWanted]) and a read of it is under way ([start] to
+/// [end]), or a read failed and the player tries again ([end] with failed). Both measures count that time only, to
+/// the millisecond (review of 1 November 2026): a film read a while ago and opened again was said to be on a link
+/// that stopped sending until its first bytes came, and a buffer topped up a chunk at a time measured what the film
+/// consumes rather than what the link brings. A new ask after a time without one starts the clock of progress again;
+/// the tries after a failed read keep it. The computers feed it with the reads of the share the media bridge makes
+/// for their player. [clock] is a parameter so that the tests drive it.
 class VideoLinkMeter {
   VideoLinkMeter({DateTime Function()? clock}) : _clock = clock ?? DateTime.now;
 
@@ -124,49 +129,71 @@ class VideoLinkMeter {
   static const _slotMs = 250;
   static final _slots = window.inMilliseconds ~/ _slotMs + 1;
 
-  /// A first rate is told once this much arrived, or after [firstValueTime] of loading
+  /// A first rate is told once this much arrived, or after [firstValueTime] of asking
   static const firstValueBytes = 256 * 1024;
   static const firstValueTime = Duration(seconds: 1);
 
   final DateTime Function() _clock;
   late final _slotBytes = List<int>.filled(_slots, 0);
   late final _slotNumber = List<int>.filled(_slots, -1);
-  late final _slotWanted = List<bool>.filled(_slots, false);
+
+  /// The ms of each slot the player asked for bytes
+  late final _slotAskedMs = List<int>.filled(_slots, 0);
   int _lastSlot = -1;
   bool _wanted = true;
-  int _startedAt = -1;
+
+  /// The reads under way
+  int _reads = 0;
+
+  /// A read failed since the last progress: the player tries again, the bytes are still asked
+  bool _failing = false;
+
+  /// Where the asked time accounted so far ends, -1 while nothing is asked
+  int _askedFrom = -1;
+
+  /// The time bytes were asked since the last progress, or since they were asked again after a time without
+  int _askedSinceProgress = 0;
+  bool _started = false;
   int _total = 0;
-  int _progressAt = -1;
   int _bytesAtProgress = 0;
   int? _lastRate;
 
   int get _now => _clock().millisecondsSinceEpoch;
 
+  bool get _asked => _wanted && (_reads > 0 || _failing);
+
   /// Bytes received since the meter started
   int get receivedBytes => _total;
 
   /// Whether a read started
-  bool get started => _startedAt >= 0;
+  bool get started => _started;
 
-  /// The first read of the video started: the time since progress counts from it
-  void start() {
-    if (_startedAt < 0) {
-      final now = _now;
-      _fill(now);
-      _startedAt = now;
+  /// A read of the video starts
+  void start() => _change(() {
+    _started = true;
+    _reads++;
+  });
+
+  /// A read of the video ends, [failed] when it threw: the player tries again
+  void end({bool failed = false}) => _change(() {
+    _reads = math.max(_reads - 1, 0);
+    if (failed) {
+      _failing = true;
     }
-  }
+  });
 
   /// The player wants more media ([wanted]), or holds what it wants
-  void setWanted(bool wanted) {
+  void setWanted(bool wanted) => _change(() => _wanted = wanted);
+
+  /// The player opened the video again: the clock of progress starts from now, a read that failed before included (a
+  /// meter kept for a file outlives the opens of its player)
+  void restart() {
     final now = _now;
-    _fill(now);
-    if (_wanted && !wanted) {
-      _computeRate(now);
-    }
-    _wanted = wanted;
-    if (wanted) {
-      _slotWanted[(now ~/ _slotMs) % _slots] = true;
+    _account(now);
+    _failing = false;
+    _askedSinceProgress = 0;
+    if (!_asked) {
+      _askedFrom = -1;
     }
   }
 
@@ -176,33 +203,78 @@ class VideoLinkMeter {
       return;
     }
     final now = _now;
-    _fill(now);
-    if (_startedAt < 0) {
-      _startedAt = now;
-    }
+    _change(() {
+      _started = true;
+      // Bytes come from a read under way, whatever was said of it
+      if (_reads == 0) {
+        _reads = 1;
+      }
+    }, now: now);
     _slotBytes[(now ~/ _slotMs) % _slots] += count;
     _total += count;
     if (_total - _bytesAtProgress >= VideoLinkRule.progressBytes) {
-      _progressAt = now;
+      _askedSinceProgress = 0;
       _bytesAtProgress = _total;
+      _failing = false;
     }
   }
 
-  /// Bytes per second over the last [window] while the player wanted more; the last value while it wanted none in that
-  /// window; null before [firstValueBytes] arrived or [firstValueTime] of wanting passed
+  /// Bytes received per second bytes were asked, over the last [window]; the last value while none were asked in that
+  /// window; null before [firstValueBytes] arrived or [firstValueTime] of asking passed
   int? rate() {
-    if (_startedAt < 0) {
+    if (!_started) {
       return null;
     }
     final now = _now;
-    _fill(now);
+    _account(now);
     return _computeRate(now);
   }
 
-  /// Time since the last progress, or since the first read for a link that never sent; null before any read
+  /// The time bytes were asked since the last progress, or since they were asked again after a time without (a new
+  /// open, a seek), a link that never sent included; null before any read
   Duration? sinceProgress() {
-    final from = _progressAt >= 0 ? _progressAt : _startedAt;
-    return from < 0 ? null : Duration(milliseconds: math.max(_now - from, 0));
+    if (!_started) {
+      return null;
+    }
+    _account(_now);
+    return Duration(milliseconds: _askedSinceProgress);
+  }
+
+  /// Applies [change] at [now], the asked time accounted to it first: an ask that begins after a time without one
+  /// starts the clock of progress again (unless a read failed: its tries keep it)
+  void _change(void Function() change, {int? now}) {
+    final at = now ?? _now;
+    _account(at);
+    final before = _asked;
+    change();
+    final after = _asked;
+    if (!before && after) {
+      _askedFrom = at;
+      if (!_failing) {
+        _askedSinceProgress = 0;
+      }
+    } else if (before && !after) {
+      _askedFrom = -1;
+      _computeRate(at);
+    }
+  }
+
+  /// The time asked from [_askedFrom] to [now] goes to the clock of progress and to the slots of the window
+  void _account(int now) {
+    _fill(now);
+    final from = _askedFrom;
+    if (from < 0 || now <= from) {
+      return;
+    }
+    _askedSinceProgress += now - from;
+    var t = math.max(from, (now ~/ _slotMs - _slots + 1) * _slotMs);
+    while (t < now) {
+      final slot = t ~/ _slotMs;
+      final end = math.min(now, (slot + 1) * _slotMs);
+      _slotAskedMs[slot % _slots] += end - t;
+      t = end;
+    }
+    _askedFrom = now;
   }
 
   int? _computeRate(int now) {
@@ -212,11 +284,11 @@ class VideoLinkMeter {
     for (var k = 0; k < _slots; k++) {
       final slot = current - k;
       final i = slot % _slots;
-      if (_slotNumber[i] != slot || !_slotWanted[i]) {
+      if (_slotNumber[i] != slot) {
         continue;
       }
       bytes += _slotBytes[i];
-      time += slot == current ? now - slot * _slotMs : _slotMs;
+      time += _slotAskedMs[i];
     }
     if (time <= 0) {
       return _lastRate;
@@ -244,7 +316,7 @@ class VideoLinkMeter {
       final i = slot % _slots;
       _slotNumber[i] = slot;
       _slotBytes[i] = 0;
-      _slotWanted[i] = _wanted;
+      _slotAskedMs[i] = 0;
     }
     _lastSlot = current;
   }

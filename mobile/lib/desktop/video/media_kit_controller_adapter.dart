@@ -68,6 +68,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   Timer? _linkTimer;
   int? _resumeWaitMs;
 
+  /// Whether the meter of the video opened last still has to start its clock of progress from the open, see [_tellLink]
+  bool _linkOpened = false;
+
   /// How often the position is passed on while the video plays: the slider and the stall detection of the controls
   /// (700 ms) need a few a second, not mpv's one per frame
   final Duration positionInterval;
@@ -706,6 +709,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     if (_linkOf == null || resource == null || !resource.startsWith('http')) {
       return;
     }
+    _linkOpened = true;
     _linkTimer = Timer.periodic(linkInterval, (_) => _tellLink());
   }
 
@@ -722,6 +726,11 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       return;
     }
     final meter = traffic.meter;
+    if (_linkOpened) {
+      // The bridge keeps one meter per file across the opens: what it counted before this one is not this open's wait
+      _linkOpened = false;
+      meter.restart();
+    }
     final stalled = _ready && engine.buffering.value;
     final waiting = !_ready || stalled;
     final rate = meter.rate();

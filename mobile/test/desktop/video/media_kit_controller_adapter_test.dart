@@ -96,6 +96,45 @@ void main() {
     });
   });
 
+  test('a film opened again a while after its share failed is no dead link while its first bytes come', () {
+    fakeAsync((async) {
+      players = FakePlayers();
+      var now = DateTime(2026, 11, 1, 2);
+      // The share failed a read of this file 40 s ago, and the video stopped (review of 1 November 2026: the meter is
+      // kept per file, and the reopened film was said to be on a share that stopped sending at once)
+      final meter = VideoLinkMeter(clock: () => now)
+        ..start()
+        ..add(300000)
+        ..start()
+        ..end(failed: true);
+      now = now.add(const Duration(seconds: 40));
+      final video = MediaKitVideoPlayerController(
+        pool: players.pool,
+        resolve: _asIs,
+        positionInterval: Duration.zero,
+        linkOf: (resource) => resource == _bridgeUrl ? (meter: meter, size: 600000000) : null,
+      );
+      unawaited(_network(_bridgeUrl).then(video.loadVideoSource));
+      async.flushMicrotasks();
+      players.made.single.duration.value = const Duration(minutes: 10);
+      // The bridge reads for the new open, the share answers 2 s later
+      meter.start();
+      for (var i = 0; i < 4; i++) {
+        now = now.add(const Duration(milliseconds: 500));
+        async.elapse(const Duration(milliseconds: 500));
+      }
+      final link = video.onLinkChanged.value!;
+      expect(link.waiting, isTrue);
+      expect(link.sinceProgressMs, lessThanOrEqualTo(2000));
+      expect(linkIsDead(waiting: true, sinceProgressMs: link.sinceProgressMs), isFalse);
+
+      unawaited(video.stop());
+      async.flushMicrotasks();
+      video.dispose();
+      async.flushMicrotasks();
+    });
+  });
+
   test('a file of this computer opens as a path, without the streaming cache', () async {
     final video = controller();
     await video.loadVideoSource(await _file(r'C:\Videos\a.mp4'));

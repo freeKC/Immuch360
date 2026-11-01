@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/services/video_link_rule.dart';
@@ -108,6 +109,74 @@ void main() {
       expect(meter.sinceProgress(), const Duration(seconds: 6));
       meter.add(10000);
       expect(meter.sinceProgress(), Duration.zero);
+    });
+
+    // The clock of progress counts only the time bytes are asked (review of 1 November 2026: a film paused with its
+    // buffer full, then a seek to a server that answers 2.5 s later, was said dead at once)
+
+    test('a time with nothing asked, then an ask that waits 2 s for its first byte, is no dead link', () {
+      meter.start();
+      receive(1000000, 4000);
+      meter.setWanted(false);
+      now = now.add(const Duration(seconds: 40));
+      meter.setWanted(true);
+      now = now.add(const Duration(seconds: 2));
+      expect(meter.sinceProgress(), const Duration(seconds: 2));
+      expect(linkIsDead(waiting: true, sinceProgressMs: meter.sinceProgress()!.inMilliseconds), isFalse);
+    });
+
+    test('a read that ended, then a new one a while later that waits for its first byte, is no dead link', () {
+      meter.start();
+      receive(1000000, 2000);
+      meter.end();
+      now = now.add(const Duration(seconds: 40));
+      meter.start();
+      now = now.add(const Duration(seconds: 2));
+      expect(meter.sinceProgress(), const Duration(seconds: 2));
+    });
+
+    test('reads that fail keep the clock: dead 30 s after the last byte', () {
+      meter.start();
+      receive(1000000, 2000);
+      for (final retry in const [Duration(seconds: 1), Duration(seconds: 2), Duration(seconds: 4)]) {
+        now = now.add(const Duration(seconds: 8));
+        meter.end(failed: true);
+        now = now.add(retry);
+        meter.start();
+      }
+      expect(meter.sinceProgress(), const Duration(seconds: 31));
+    });
+
+    test('of two reads at once, the one that ends does not stop the clock of the other', () {
+      meter
+        ..start()
+        ..start();
+      receive(1000000, 2000);
+      meter.end();
+      // The other read waits for a share that no longer answers
+      now = now.add(const Duration(seconds: 31));
+      expect(meter.sinceProgress(), const Duration(seconds: 31));
+    });
+
+    test('a buffer topped up 1 MiB at a time measures the link, not what the film consumes', () {
+      // A 4K film of 6 MB/s over a link of 25 MB/s, from a full buffer: 1 MiB asked each time the film consumed one,
+      // at 5.1 MB/s in a calmer scene (it measured 0.7 of the film, "it will pause now and then", review of 1 November)
+      meter.start();
+      const chunk = 1 << 20;
+      final end = now.add(const Duration(seconds: 20));
+      while (now.isBefore(end)) {
+        meter.setWanted(true);
+        for (var left = chunk; left > 0;) {
+          now = now.add(const Duration(milliseconds: 10));
+          final bytes = math.min(left, 250000);
+          meter.add(bytes);
+          left -= bytes;
+        }
+        meter.setWanted(false);
+        now = now.add(const Duration(microseconds: chunk * 1000000 ~/ 5100000));
+      }
+      final ratio = meter.rate()! / 6000000;
+      expect(ratio, greaterThanOrEqualTo(VideoLinkRule.fastRatio));
     });
   });
 }
