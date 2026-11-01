@@ -284,7 +284,8 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
     }
 
     test('the help of Windows, with its .exe and CRLF, is the fixture the runner is frozen by', () {
-      final fixture = File(_helpFixture).readAsStringSync();
+      // The checkout of a Windows runner may have made the fixture CRLF already
+      final fixture = File(_helpFixture).readAsStringSync().replaceAll('\r\n', '\n');
       expect(fixture, contains('Usage: brush_app [OPTIONS] [PATH_OR_URL]'));
       expect(fixture, contains('--max-splats <MAX_SPLATS>'));
       final windows = fixture.replaceFirst('Usage: brush_app ', 'Usage: brush_app.exe ').replaceAll('\n', '\r\n');

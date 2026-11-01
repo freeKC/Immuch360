@@ -20,7 +20,8 @@ start with Immuch360-Desktop-, so no release of the app ever attaches it.
   brush_build.py tools --system SYSTEM --dir DIR [--github-output]
       cargo-deny and cargo-about of the lock, their archives checked by SHA-256
   brush_build.py build --system SYSTEM --source DIR
-      cargo build --locked of brush_app with the profile and arguments of the lock, under the toolchain of the lock
+      cargo fetch --locked of every crate of Cargo.lock (cargo about reads the metadata of the whole workspace, offline),
+      then cargo build --locked of brush_app with the profile and arguments of the lock, under its toolchain
   brush_build.py graph --system SYSTEM (--source DIR | --tree FILE)
       the crates compiled into brush_app (cargo tree, normal dependencies, for the target of SYSTEM): none may be the
       LPIPS crate, rerun, a network client or server, TLS, a window or a file dialog
@@ -53,6 +54,7 @@ import os
 import pathlib
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tarfile
@@ -203,6 +205,18 @@ def sha256_of(path: pathlib.Path) -> str:
     return digest.hexdigest()
 
 
+def remove_tree(path: pathlib.Path):
+    """shutil.rmtree, which also removes the read-only files git leaves on Windows (.git/objects)"""
+    def writable(function, name, _):
+        os.chmod(name, stat.S_IWRITE)
+        function(name)
+
+    if sys.version_info >= (3, 12):
+        shutil.rmtree(path, onexc=writable)
+    else:
+        shutil.rmtree(path, onerror=writable)
+
+
 def tag_commit(repository: str, tag: str) -> str | None:
     """The commit the tag names in the repository (peeled when the tag is annotated), None without such a tag"""
     lines = output(['git', 'ls-remote', repository, f'refs/tags/{tag}']).splitlines()
@@ -215,7 +229,7 @@ def command_sources(args) -> int:
     brush = lock['brush']
     source = args.dir
     if source.exists():
-        shutil.rmtree(source)
+        remove_tree(source)
     named = tag_commit(brush['repository'], brush['tag'])
     if named != brush['commit']:
         raise Failure(f'{brush["repository"]}: the tag {brush["tag"]} names {named or "nothing"}, the lock says '
@@ -309,6 +323,7 @@ def command_build(args) -> int:
     env = cargo_env(lock)
     run(['rustc', '--version'], env=env)
     run(['cargo', '--version'], env=env)
+    run(['cargo', 'fetch', '--locked'], cwd=args.source, env=env)
     run(['cargo', 'build', '--locked', '--profile', lock['cargo']['profile'], *cargo_selection(lock), '--bin',
          lock['cargo']['bin'], '--target', TARGETS[args.system]], cwd=args.source, env=env)
     program = (args.source / 'target' / TARGETS[args.system] / lock['cargo']['profile']
@@ -444,8 +459,14 @@ def command_lpips(args) -> int:
 
 # --- help ------------------------------------------------------------------------------------------------------------
 
+def read_text(path: pathlib.Path) -> str:
+    """The text of a file as written, its line ends untouched (read_text would turn a lone CR into a line end)"""
+    return path.read_bytes().decode('utf-8', errors='replace')
+
+
 def normalized_help(text: str) -> list:
-    """The lines of brush_app --help without trailing blanks, with the program named brush_app on every system"""
+    """The lines of brush_app --help without trailing blanks (CR included), with the program named brush_app on every
+    system"""
     lines = [line.rstrip() for line in text.replace('\r\n', '\n').split('\n')]
     while lines and not lines[-1]:
         lines.pop()
@@ -454,13 +475,13 @@ def normalized_help(text: str) -> list:
 
 def command_help(args) -> int:
     lock = load_lock(args.lock)
-    version = args.version_output.read_text(encoding='utf-8', errors='replace').strip()
+    version = read_text(args.version_output).strip()
     problems = 0
     if version != lock['brush']['versionLine']:
         print(f'::error::brush_app --version says {version!r}, the lock says {lock["brush"]["versionLine"]!r}')
         problems += 1
-    built = normalized_help(args.output.read_text(encoding='utf-8', errors='replace'))
-    frozen = normalized_help(args.fixture.read_text(encoding='utf-8'))
+    built = normalized_help(read_text(args.output))
+    frozen = normalized_help(read_text(args.fixture))
     if built != frozen:
         print('::error::brush_app --help differs from the fixture the arguments of the runner are frozen by:')
         sys.stdout.writelines(line + '\n' for line in difflib.unified_diff(frozen, built, 'fixture', 'built', lineterm=''))
