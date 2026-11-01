@@ -1,11 +1,13 @@
 // The pool of the desktop players (plan 2.5): players reused rather than made per page, bounded per kind, a player that
 // does not play taken first, else the one of the lease used longest ago, handed over with its owner told first and
-// after what the owner started on it, disposed only beyond the idle limit or when its picture is lost.
+// after what the owner started on it, disposed only beyond the idle limit or when its picture is lost. At the close of
+// the window every player is disposed at once, none of them waited for longer than its bound.
 
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
+import 'package:immich_mobile/desktop/video/player_pool.dart';
 
 import 'fake_playback_engine.dart';
 
@@ -279,5 +281,50 @@ void main() {
 
     await players.pool.dispose();
     expect(engine.disposed, isTrue);
+  });
+
+  group('the close of the window', () {
+    test('every player is disposed at once; one that does not answer is told to stop calling Dart and left', () async {
+      final players = FakePlayers();
+      final viewer = players.pool.lease(PlayerKind.playback, label: 'viewer');
+      final grabber = players.pool.lease(PlayerKind.thumbnail, label: 'thumbnails');
+      final spare = players.pool.lease(PlayerKind.playback, label: 'network video');
+      final stuck = await viewer.acquire() as FakePlaybackEngine;
+      await stuck.play();
+      final grab = await grabber.acquire() as FakePlaybackEngine;
+      final idle = await spare.acquire() as FakePlaybackEngine;
+      await spare.release();
+      expect(players.pool.idleCount(PlayerKind.playback), 1);
+      // A libmpv that does not answer (a film of a share that stopped answering, a texture being made)
+      stuck.holdDispose = Completer<void>();
+
+      final watch = Stopwatch()..start();
+      await players.pool.close(timeout: const Duration(milliseconds: 200));
+      expect(watch.elapsed, lessThan(const Duration(seconds: 2)));
+      expect([grab.disposed, idle.disposed], [true, true]);
+      expect(stuck.disposed, isFalse);
+      expect(stuck.silenced, isTrue);
+      expect([grab.silenced, idle.silenced], [false, false], reason: 'a disposed player calls nothing any more');
+      expect(viewer.engine, isNull);
+      await expectLater(viewer.acquire(), throwsStateError);
+    });
+
+    test('the close does not wait for a player being made, which is disposed once made', () async {
+      final made = Completer<PlaybackEngine>();
+      final pool = PlayerPool(create: (kind) => made.future);
+      final lease = pool.lease(PlayerKind.playback, label: 'viewer');
+      final acquiring = lease.acquire();
+      final failed = expectLater(acquiring, throwsStateError);
+      // libmpv's render context took 71 s to be made on 1 November 2026 (the CUDA start of a laptop's second GPU)
+      await Future<void>.delayed(Duration.zero);
+      await pool.close(timeout: const Duration(milliseconds: 200)).timeout(const Duration(seconds: 2));
+
+      final madeLate = FakePlaybackEngine(PlayerKind.playback, 1);
+      made.complete(madeLate);
+      await failed;
+      await Future<void>.delayed(Duration.zero);
+      expect(madeLate.disposed, isTrue);
+      expect(lease.engine, isNull);
+    });
   });
 }

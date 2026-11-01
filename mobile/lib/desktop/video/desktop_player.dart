@@ -182,6 +182,11 @@ abstract class PlaybackEngine {
   Future<Uint8List?> grabFrame(FrameBox box);
 
   Future<void> dispose();
+
+  /// At the close of the window, for a player whose [dispose] did not end in time: libmpv stops calling Dart, whose
+  /// isolate is about to end (a call after that would end the app on a crash). Nothing else changes: the player is
+  /// left as it is to the end of the process.
+  void silence();
 }
 
 /// The mpv options of the app's players, and why (design 2.2 and 2.7, plan 2.7)
@@ -682,6 +687,20 @@ class DesktopPlayer implements PlaybackEngine {
     }
     await _events.close();
     await _player.dispose();
+  }
+
+  @override
+  void silence() {
+    // What media_kit's dispose does before it lets go of its callback (Initializer.dispose), which a dispose waiting
+    // for libmpv never reaches: with no callback, libmpv wakes nothing of Dart
+    try {
+      final native = _native;
+      if (native.ctx != nullptr) {
+        native.mpv.mpv_set_wakeup_callback(native.ctx, nullptr, nullptr);
+      }
+    } catch (error) {
+      _log.fine('Could not silence a player: $error');
+    }
   }
 }
 

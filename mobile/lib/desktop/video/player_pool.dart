@@ -76,6 +76,32 @@ class PlayerPool {
   /// Stopped players of [kind] waiting for a lease
   int idleCount(PlayerKind kind) => _idle[kind]?.length ?? 0;
 
+  /// The window closes: every player is disposed at once, each given [timeout], without waiting for the turn of the
+  /// pool (a hand over may wait for a player being made, which libmpv held for 71 s on 1 November 2026). A player that
+  /// has not ended by then is told to stop calling Dart ([PlaybackEngine.silence]) and left to the end of the process.
+  /// The leases get no player any more; one made after this is disposed at once.
+  Future<void> close({required Duration timeout}) {
+    _disposed = true;
+    final engines = [for (final lease in _leases) ?lease._engine, for (final idle in _idle.values) ...idle];
+    for (final lease in _leases) {
+      lease._engine = null;
+    }
+    _idle.clear();
+    return Future.wait([for (final engine in engines) _disposeWithin(engine, timeout)]);
+  }
+
+  Future<void> _disposeWithin(PlaybackEngine engine, Duration timeout) => _disposeEngine(engine).timeout(
+    timeout,
+    onTimeout: () {
+      _log.warning('A ${engine.kind.name} player did not end within ${timeout.inMilliseconds} ms: left as it is');
+      try {
+        engine.silence();
+      } catch (error, stackTrace) {
+        _log.warning('Could not silence a player', error, stackTrace);
+      }
+    },
+  );
+
   /// Disposes every player; the leases get none any more
   Future<void> dispose() => _serial(() async {
     _disposed = true;
@@ -105,6 +131,11 @@ class PlayerPool {
     }
     // Cleared here, in the turn: a lease that a later turn suspends again stays suspended
     PlaybackEngine give(PlaybackEngine engine) {
+      // The pool closed while the player was made or taken from another lease (see [close])
+      if (_disposed) {
+        unawaited(_disposeEngine(engine));
+        throw StateError('The player pool closed meanwhile');
+      }
       lease._suspended = false;
       return lease._engine = engine;
     }
@@ -318,6 +349,9 @@ PlayerPool? _shared;
 
 /// The pool of the app's players, made on first use
 PlayerPool get desktopPlayerPool => _shared ??= PlayerPool(create: DesktopPlayer.create);
+
+/// Closes the app's pool when it was made (see [PlayerPool.close]): the window closes
+Future<void> closeDesktopPlayerPool({required Duration timeout}) => _shared?.close(timeout: timeout) ?? Future.value();
 
 /// Replaces the app's pool (null: made again on first use), for the tests of the pages that build their own view
 @visibleForTesting
