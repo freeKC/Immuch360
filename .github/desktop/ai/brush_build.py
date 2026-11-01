@@ -73,7 +73,18 @@ ARTIFACT_PREFIX = 'Immuch360-AI-brush-'
 TOOLS = ('cargo-deny', 'cargo-about')
 PROBE_SIZE = 64
 # The files of licenses/brush that go into the archive; the configurations of cargo deny and cargo about stay here
-SHIPPED_LICENCES = ('README.md', 'brush-LICENSE.txt')
+SHIPPED_LICENCES = ('README.md', 'brush-LICENSE.txt', 'EXTRA-NOTICES.md')
+# The copyright notices of the crates that carry no licence file, kept by hand, each checked by the SHA-256 of the file
+# it was copied from
+EXTRA_NOTICES = LICENCES / 'EXTRA-NOTICES.md'
+# What the template of a licence holds where a copyright line should be: cargo about gives it for a crate without a
+# licence file
+TEMPLATE_HOLDERS = ('<year>', '<copyright holders>')
+# A licence of THIRD-PARTY.md as licenses/brush/about.hbs writes it: its title, the crates under it, its text
+LICENCE_SECTION = re.compile(r'^### [^\n]+, text \d+\n\n(?P<crates>(?:\* [^\n]+\n)+)\n````text\n(?P<text>.*?)\n````\n',
+                             re.M | re.S)
+TEMPLATE_NOTE = ('These crates carry no licence file: cargo about gives the template of their licence, without its '
+                 'copyright line; their copyright notices are in EXTRA-NOTICES.md, next to this file.\n')
 # Crates brush_app must not hold, by name (and every crate of rerun, re_*): the LPIPS weights, rerun, a network client
 # or server, TLS, a window or a file dialog. licenses/brush/deny.toml bans the same.
 BANNED = {
@@ -500,6 +511,45 @@ def notices_of(packages: list, metadata: dict, brush: dict) -> list:
     return sections
 
 
+def extra_notices(path: pathlib.Path = EXTRA_NOTICES) -> dict:
+    """The notices of EXTRA-NOTICES.md, {'name version': text}, each text checked against the SHA-256 of the licence
+    file it was copied from"""
+    text = path.read_text(encoding='utf-8').replace('\r\n', '\n')
+    notices = {}
+    entry = re.compile(r'^## (?P<crate>\S+ \S+)\n\n[^\n]*, SHA-256 (?P<sum>[0-9a-f]{64})\n\n'
+                       r'````text\n(?P<text>.*?\n)````$', re.M | re.S)
+    for match in entry.finditer(text):
+        if hashlib.sha256(match['text'].encode('utf-8')).hexdigest() != match['sum']:
+            raise Failure(f'{path.name}: the text for {match["crate"]} is not the licence file of SHA-256 '
+                          f'{match["sum"]}')
+        notices[match['crate']] = match['text']
+    return notices
+
+
+def with_template_notes(text: str, notices: dict) -> str:
+    """THIRD-PARTY.md with a note above each licence that cargo about gave as its template, every crate under it found
+    in EXTRA-NOTICES.md; a template anywhere else, or a crate without its notices there, fails the job"""
+    if any(holder in LICENCE_SECTION.sub('', text) for holder in TEMPLATE_HOLDERS):
+        raise Failure(f'THIRD-PARTY.md holds {" or ".join(TEMPLATE_HOLDERS)} outside of the licences about.hbs writes')
+    missing = []
+
+    def note(match) -> str:
+        if not any(holder in match['text'] for holder in TEMPLATE_HOLDERS):
+            return match[0]
+        for line in match['crates'].splitlines():
+            crate = ' '.join(line[2:].split(',')[0].split()[:2])
+            if crate not in notices:
+                missing.append(crate)
+        return match[0].replace(match['crates'], match['crates'] + '\n' + TEMPLATE_NOTE, 1)
+
+    text = LICENCE_SECTION.sub(note, text)
+    if missing:
+        raise Failure(f'cargo about gives the template of a licence, without its copyright line, for '
+                      f'{", ".join(missing)}: add their notices to {EXTRA_NOTICES.name}, from the licence file of '
+                      f'their repository at the commit they were published from, or clarify them in about.toml')
+    return text
+
+
 def command_about(args) -> int:
     lock = load_lock(args.lock)
     env = cargo_env(lock)
@@ -519,6 +569,7 @@ def command_about(args) -> int:
     head = (f'Brush {brush["tag"]} ({brush["commit"]}), {brush["repository"]}, lock {lock["id"]}, '
             f'{TARGETS[args.system]}, toolchain {lock["rust"]["toolchain"]}\n\n')
     text = generated.read_text(encoding='utf-8').replace('\r\n', '\n')
+    text = with_template_notes(text, extra_notices())
     text = text.replace('\n\n', '\n\n' + head, 1)
     text += '\n## Notices\n\n' + ('\n'.join(notices) if notices else 'No crate compiled into brush_app carries a '
                                   'NOTICE file.\n')

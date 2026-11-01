@@ -276,6 +276,34 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
       expect(text, isNot(contains('[[licenses.clarify]]')));
       expect(text, contains('unknown-git = "deny"'));
     });
+
+    test('EXTRA-NOTICES.md: each text is the licence file of its SHA-256, with the copyright line of its crate', () {
+      final text = File(p.join(_licences, 'EXTRA-NOTICES.md')).readAsStringSync().replaceAll('\r\n', '\n');
+      final entries = RegExp(
+        r'^## (\S+ \S+)\n\n[^\n]* at ([0-9a-f]{40}), file `[^`]+`, SHA-256 ([0-9a-f]{64})\n\n````text\n(.*?\n)````$',
+        multiLine: true,
+        dotAll: true,
+      ).allMatches(text).toList();
+      expect(entries.map((entry) => entry.group(1)), [
+        'ball-tree 0.5.1',
+        'number_prefix 0.4.0',
+        'tokio_with_wasm 0.8.7',
+        'tokio_with_wasm_proc 0.8.7',
+      ]);
+      for (final entry in entries) {
+        final licence = entry.group(4)!;
+        expect('${sha256.convert(utf8.encode(licence))}', entry.group(3), reason: entry.group(1));
+        expect(licence, startsWith('MIT License\n\nCopyright (c) 20'), reason: entry.group(1));
+        expect(licence, isNot(contains('<year>')), reason: entry.group(1));
+      }
+    });
+
+    test('cargo about takes the licence of libm from its LICENSE.txt, with the notices of musl and of its sources', () {
+      final about = File(p.join(_licences, 'about.toml')).readAsStringSync();
+      expect(about, contains('[libm.clarify]'));
+      expect(about, contains('path = "LICENSE.txt"'));
+      expect(about, contains('checksum = "3823dda7cf046602f4b4e77ec8e227863dc4736037cc85bb33d9f19febe16bb7"'));
+    });
   }, skip: skip);
 
   group('the patch', () {
@@ -531,6 +559,7 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
         'BUILD-INFO.txt',
         'licenses/README.md',
         'licenses/brush-LICENSE.txt',
+        'licenses/EXTRA-NOTICES.md',
         'licenses/THIRD-PARTY.md',
         'licenses/patches/0001-immuch360-headless-trainer.patch',
       ]) {
@@ -757,6 +786,39 @@ out.write_text((here / 'generated.md').read_text(encoding='utf-8'), encoding='ut
       final unknown = about();
       expect(unknown.exitCode, 1, reason: '$unknown');
       expect(unknown.output, contains('ghost v9.9.9'));
+    });
+
+    test('a licence given as its template is refused, unless EXTRA-NOTICES.md holds the notices of its crates', () {
+      String template(List<String> crates) =>
+          '### MIT License (MIT), text 1\n\n${crates.map((crate) => '* $crate\n').join()}\n'
+          '````text\nMIT License\n\nCopyright (c) <year> <copyright holders>\n\nPermission is hereby granted\n\n````\n\n';
+      final base = generated;
+      generated = base + template(['mystery 1.0.0, https://example.invalid/mystery', 'ball-tree 0.5.1']);
+      final unknown = about();
+      expect(unknown.exitCode, 1, reason: '$unknown');
+      expect(unknown.output, contains('mystery 1.0.0'));
+      expect(unknown.output, isNot(contains('ball-tree 0.5.1,')));
+
+      generated = '${base}Copyright (c) <year> <copyright holders> outside of a licence\n';
+      final loose = about();
+      expect(loose.exitCode, 1, reason: '$loose');
+
+      generated =
+          base +
+          template([
+            'ball-tree 0.5.1, https://github.com/grantslatton/ball-tree',
+            'tokio_with_wasm 0.8.7, https://github.com/cunarist/tokio-with-wasm',
+          ]);
+      final covered = about();
+      expect(covered.exitCode, 0, reason: '$covered');
+      expect(
+        written(),
+        contains(
+          '* tokio_with_wasm 0.8.7, https://github.com/cunarist/tokio-with-wasm\n\n'
+          'These crates carry no licence file: cargo about gives the template of their licence, without its copyright '
+          'line; their copyright notices are in EXTRA-NOTICES.md, next to this file.\n\n````text\n',
+        ),
+      );
     });
   }, skip: skip);
 }

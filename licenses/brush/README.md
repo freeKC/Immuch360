@@ -9,9 +9,15 @@ the splat scene components, as an archive our CI built from the sources (`.githu
   `.github/desktop/ai/brush.lock.json` (v0.3.0, `3edecbb2fe79d3e2c87eeab85b15e0b1dd10d486`), its licence in
   `brush-LICENSE.txt`. Brush has no NOTICE file.
 * The crates compiled into it, each with its licence and the text of that licence: `THIRD-PARTY.md`, written by cargo
-  about at each build, with the NOTICE files of those crates. Every licence there is on the list of `deny.toml` (Apache
-  2.0, MIT, BSD, ISC, Zlib, BSL 1.0, CC0, Unicode 3.0, and MPL 2.0 for crates compiled unmodified); the build fails
-  otherwise.
+  about at each build, with the NOTICE files of that code, found next to each crate, at the root of each git
+  repository a crate comes from (burn and cubecl keep theirs there) and at the root of Brush. Every licence there is on
+  the list of `deny.toml` (Apache 2.0, MIT, BSD, ISC, Zlib, BSL 1.0, CC0, Unicode 3.0, and MPL 2.0 for crates compiled
+  unmodified); the build fails otherwise.
+* `EXTRA-NOTICES.md`: the copyright notices of the crates that carry no licence file (cargo about only has the template
+  of their MIT licence, and `THIRD-PARTY.md` says so above it), copied from the licence file of their repository at the
+  commit each was published from, with its SHA-256. The build fails when another crate comes with a template and no
+  entry there. `about.toml` points cargo about at the `LICENSE.txt` of libm, which it does not recognise as a whole,
+  so that the notices of musl and of the sources of its mathematics are kept.
 
 ## Modified files
 
