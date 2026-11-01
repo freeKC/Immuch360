@@ -16,7 +16,7 @@ start with Immuch360-Desktop-, so no release of the app ever attaches it.
       Brush at the commit of the lock, the tag checked to be still there; its LICENSE, Cargo.lock and LPIPS weights
       checked by their SHA-256 (the probes of the lock read in the weights); the weights moved out of the tree (to FILE,
       or deleted), so that a build that would still compile them fails; then the patches, which must leave Cargo.lock
-      as it is
+      as it is. DIR must be new, empty or a checkout an earlier run made (marked by .immuch360-brush-sources)
   brush_build.py tools --system SYSTEM --dir DIR [--github-output]
       cargo-deny and cargo-about of the lock, their archives checked by SHA-256
   brush_build.py build --system SYSTEM --source DIR
@@ -72,6 +72,8 @@ TARGETS = {'windows-x64': 'x86_64-pc-windows-msvc', 'linux-x64': 'x86_64-unknown
 ARTIFACT_PREFIX = 'Immuch360-AI-brush-'
 TOOLS = ('cargo-deny', 'cargo-about')
 PROBE_SIZE = 64
+# The file that marks a checkout of Brush made by `sources`, which a later run may remove
+SOURCES_MARKER = '.immuch360-brush-sources'
 # The files of licenses/brush that go into the archive; the configurations of cargo deny and cargo about stay here
 SHIPPED_LICENCES = ('README.md', 'brush-LICENSE.txt', 'EXTRA-NOTICES.md')
 # The copyright notices of the crates that carry no licence file, kept by hand, each checked by the SHA-256 of the file
@@ -242,17 +244,34 @@ def tag_commit(repository: str, tag: str) -> str | None:
     return found.get(f'refs/tags/{tag}^{{}}') or found.get(f'refs/tags/{tag}')
 
 
+def earlier_checkout(source: pathlib.Path, commit: str) -> bool:
+    """Whether a folder is a checkout of Brush this script made: its marker, or (before the marker) a git repository
+    at the commit of the lock"""
+    if (source / SOURCES_MARKER).is_file():
+        return True
+    if not (source / '.git').exists():
+        return False
+    found = subprocess.run(['git', '-C', str(source), 'rev-parse', 'HEAD'], capture_output=True, text=True)
+    return found.returncode == 0 and found.stdout.strip() == commit
+
+
 def command_sources(args) -> int:
     lock = load_lock(args.lock)
     brush = lock['brush']
     source = args.dir
     if source.exists():
+        # Only an empty folder or an earlier checkout is removed: never what a mistaken --dir (., ~) names
+        if not source.is_dir() or (any(source.iterdir()) and not earlier_checkout(source, brush['commit'])):
+            raise Failure(f'{source} is not a checkout of Brush made by brush_build.py sources (no {SOURCES_MARKER}): '
+                          'give a new or empty folder')
         remove_tree(source)
     named = tag_commit(brush['repository'], brush['tag'])
     if named != brush['commit']:
         raise Failure(f'{brush["repository"]}: the tag {brush["tag"]} names {named or "nothing"}, the lock says '
                       f'{brush["commit"]}')
     source.mkdir(parents=True)
+    (source / SOURCES_MARKER).write_text(f'Brush {brush["tag"]} {brush["commit"]}, by brush_build.py sources\n',
+                                         encoding='utf-8')
     # The files as the repository holds them, whatever core.autocrlf the runner has (Windows images set it): the
     # checksums of the lock and the patches are those of the LF files
     git = ['git', '-c', 'core.autocrlf=false', '-c', 'core.eol=lf', '-C', source]

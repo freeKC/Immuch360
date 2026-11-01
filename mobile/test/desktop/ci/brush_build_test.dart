@@ -505,6 +505,33 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
       expect(licenceRun.exitCode, 1, reason: '$licenceRun');
       expect(licenceRun.output, contains('LICENSE'));
     });
+
+    test('an empty folder, or the checkout of an earlier run, is used again', () {
+      Directory(path('src')).createSync();
+      final first = sources();
+      expect(first.exitCode, 0, reason: '$first');
+      final again = sources();
+      expect(again.exitCode, 0, reason: '$again');
+      expect(File(path('src/crates/brush-app/src/bin.rs')).readAsStringSync(), contains('Modified for Immuch360'));
+    });
+
+    test('a folder that is not a checkout of Brush made by this script is never removed (--dir . or ~ by mistake)', () {
+      writeFiles(Directory(path('src')), {'notes.txt': 'keep me\n'});
+      final mine = sources();
+      expect(mine.exitCode, 1, reason: '$mine');
+      expect(mine.output, contains('not a checkout of Brush'));
+      expect(File(path('src/notes.txt')).readAsStringSync(), 'keep me\n');
+
+      // Another repository, even with files of the same names, is not one either
+      File(path('src/notes.txt')).deleteSync();
+      writeFiles(Directory(path('src')), {'LICENSE': licence, 'Cargo.lock': '# a fixture lock\n'});
+      _git(path('src'), ['init', '-q']);
+      _git(path('src'), ['add', '-A']);
+      _git(path('src'), ['commit', '-q', '-m', 'another project']);
+      final other = sources();
+      expect(other.exitCode, 1, reason: '$other');
+      expect(File(path('src/LICENSE')).existsSync(), isTrue);
+    });
   }, skip: skip != false ? skip : (_runs('git', ['--version']) ? false : 'needs git'));
 
   group('pack', () {
