@@ -426,7 +426,7 @@ def command_about(args) -> int:
     text = text.replace('\n\n', '\n\n' + head, 1)
     text += '\n## Notices\n\n' + ('\n'.join(notices) if notices else 'No crate compiled into brush_app carries a '
                                   'NOTICE file.\n')
-    args.out.write_text(text, encoding='utf-8')
+    args.out.write_bytes(text.replace('\r\n', '\n').encode('utf-8'))
     generated.unlink()
     print(f'{args.out}: {len(text.encode())} bytes, {len(notices)} notices')
     return 0
@@ -556,11 +556,17 @@ def command_pack(args) -> int:
         programs = {'brush_app', 'immuch360-run'}
     problems += found
     print(f'brush_app imports: {", ".join(imports) or "nothing"}')
+
+    # The texts with LF line ends, as in the repository, whatever the checkout of the runner made of them: the two
+    # archives carry the same licences, the patch byte for byte the one of the repository
+    def text(path: pathlib.Path) -> bytes:
+        return path.read_bytes().replace(b'\r\n', b'\n')
+
     for name in SHIPPED_LICENCES:
-        files[f'licenses/{name}'] = (LICENCES / name).read_bytes()
-    files['licenses/THIRD-PARTY.md'] = args.third_party.read_bytes()
+        files[f'licenses/{name}'] = text(LICENCES / name)
+    files['licenses/THIRD-PARTY.md'] = text(args.third_party)
     for name in lock['patches']:
-        files[f'licenses/patches/{name}'] = (LICENCES / 'patches' / name).read_bytes()
+        files[f'licenses/patches/{name}'] = text(LICENCES / 'patches' / name)
     run_url = ''
     if os.environ.get('GITHUB_RUN_ID'):
         run_url = (f'{os.environ.get("GITHUB_SERVER_URL", "https://github.com")}/{os.environ.get("GITHUB_REPOSITORY")}'

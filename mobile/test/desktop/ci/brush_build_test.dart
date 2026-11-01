@@ -479,6 +479,11 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
       }
       expect(run.output, isNot(contains('deny.toml')));
 
+      // The patch as in the repository, LF, even from a checkout that made it CRLF (Windows runners)
+      final patch = File(p.join(_licences, 'patches', '0001-immuch360-headless-trainer.patch')).readAsStringSync();
+      final lf = sha256.convert(utf8.encode(patch.replaceAll('\r\n', '\n')));
+      expect(run.output, contains('$lf  licenses/patches/0001-immuch360-headless-trainer.patch'));
+
       // The same files give the same bytes
       final again = pack(program(), out: 'again');
       expect(again.exitCode, 0, reason: '$again');
