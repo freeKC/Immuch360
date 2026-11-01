@@ -304,6 +304,38 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
     });
   }, skip: skip);
 
+  // What our build of Brush says on the Intel UHD of the owner's PC (lot SP2, 01/11/2026), for the gate and the runner
+  // (lots SP4 and SP6): it trains there when the autotune cache of cubecl (target/autotune under its working folder,
+  // keyed by "default device", not by card) is its own, and fails at its first kernel with the cache the NVIDIA card
+  // left in the same folder, as the official v0.3.0 did in the measurement of that morning
+  group('the outputs of brush_app on an integrated card', () {
+    String fixture(String name) =>
+        File(p.join(repositoryRoot, 'mobile', 'test', 'fixtures', 'ai_immersive', name)).readAsStringSync();
+
+    test('with the cache of the NVIDIA card: the adapter, then the plane instructions panic', () {
+      final stdout = fixture('brush_igpu_plane_failure_stdout.txt');
+      final stderr = fixture('brush_igpu_plane_failure_stderr.txt');
+      expect(stdout, contains('Using adapter AdapterInfo { name: "Intel(R) RaptorLake-S Mobile Graphics Controller"'));
+      expect(stdout, contains('device_type: IntegratedGpu'));
+      expect(stdout, isNot(contains('Refine iter')));
+      expect(stderr, contains('Should run when selected by autotune.'));
+      expect(
+        stderr,
+        contains(
+          'Trying to launch a kernel using plane instructions, but the min and max plane dimensions are different.',
+        ),
+      );
+    });
+
+    test('with its own cache: 1,000 steps trained and evaluated', () {
+      final stdout = fixture('brush_igpu_fresh_cache_stdout.txt');
+      expect(stdout, contains('device_type: IntegratedGpu'));
+      expect(stdout, contains('Refine iter 801, '));
+      expect(stdout, contains('Eval iter 1000: PSNR '));
+      expect(stdout, contains('Done training! Took FormattedDuration('));
+    });
+  });
+
   group('sources', () {
     late Directory root;
     late String commit;
