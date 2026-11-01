@@ -75,6 +75,81 @@ void main() {
     }
   });
 
+  test('the SPZ of version 4 as Niantic writes them, up to degree 4, give their count and degree', () {
+    for (final name in ['axes_v4_niantic.spz', 'turns_v4.spz', 'sh4_v4.spz']) {
+      final header = headers[name] as Map<String, dynamic>;
+      final head = probe(name) as SplatHead;
+      expect(head.formatVersion, 4, reason: name);
+      expect(head.gaussians, header['gaussians'], reason: name);
+      expect(head.shDegree, header['shDegree'], reason: name);
+    }
+    expect(splatV4StreamSizes(686, 0, 5), [6174, 686, 2058, 2058, 2744]);
+    expect(splatV4StreamSizes(686, 0, 6), [6174, 686, 2058, 2058, 2744, 0]);
+    expect(splatV4StreamSizes(8, 4, 6)!.last, 8 * 72);
+    expect(splatV4StreamSizes(8, 1, 5), isNull);
+  });
+
+  test('a version 4 SPZ whose table of contents does not match its arrays is damaged, as in SplatHeaderTest.kt', () {
+    final good = bytesOf('axes_v4_niantic.spz');
+    SplatFileProblem? refusalOf(Uint8List bytes, [int? length]) =>
+        switch (probeSplatHead(bytes, length ?? bytes.length)) {
+          SplatRefused(:final problem) => problem,
+          _ => null,
+        };
+    Uint8List withLong(Uint8List source, int at, int value) {
+      final copy = Uint8List.fromList(source);
+      ByteData.sublistView(copy).setInt64(at, value, Endian.little);
+      return copy;
+    }
+
+    expect(refusalOf(good), isNull);
+    // A decompressed size that is not the one of its array
+    expect(refusalOf(withLong(good, 32 + 8, 686 * 9 + 1)), SplatFileProblem.damaged);
+    // A compressed size past the end of the file, streams that end before it, a file cut
+    expect(refusalOf(withLong(good, 32, 100000)), SplatFileProblem.damaged);
+    expect(refusalOf(good, good.length + 1), SplatFileProblem.damaged);
+    expect(refusalOf(Uint8List.sublistView(good, 0, good.length - 1)), SplatFileProblem.damaged);
+    // Fewer streams than arrays, or a sixth stream of harmonics of degree 0 that is not empty
+    expect(refusalOf(Uint8List.fromList(good)..[15] = 4), SplatFileProblem.damaged);
+    expect(refusalOf(withLong(bytesOf('axes_v4.spz'), 32 + 5 * 16 + 8, 1)), SplatFileProblem.damaged);
+    // Positions a fixed point of 24 bits cannot hold, harmonics past degree 4
+    expect(refusalOf(Uint8List.fromList(good)..[13] = 0), SplatFileProblem.damaged);
+    expect(refusalOf(Uint8List.fromList(good)..[12] = 5), SplatFileProblem.damaged);
+  });
+
+  test(
+    'a version 4 SPZ of a share that does not give its size is read, the end of its streams left to the headset',
+    () {
+      // A WebDAV server without getcontentlength (review of 1 November 2026): the probe has no length to end the
+      // streams at, and every version 4 file was refused as damaged
+      for (final name in ['axes_v4.spz', 'axes_v4_niantic.spz', 'turns_v4.spz', 'sh4_v4.spz']) {
+        final header = headers[name] as Map<String, dynamic>;
+        final head = probeSplatHead(bytesOf(name), null);
+        expect(head, isA<SplatHead>(), reason: '$name: $head');
+        expect((head as SplatHead).formatVersion, 4, reason: name);
+        expect(head.gaussians, header['gaussians'], reason: name);
+        expect(head.shDegree, header['shDegree'], reason: name);
+      }
+      // What needs no length is still checked: a decompressed size that is not the one of its array, a size below 0
+      final good = bytesOf('axes_v4_niantic.spz');
+      Uint8List withLong(int at, int value) {
+        final copy = Uint8List.fromList(good);
+        ByteData.sublistView(copy).setInt64(at, value, Endian.little);
+        return copy;
+      }
+
+      expect(probeSplatHead(withLong(32 + 8, 686 * 9 + 1), null), const SplatRefused(SplatFileProblem.damaged, ''));
+      expect(probeSplatHead(withLong(32, -1), null), const SplatRefused(SplatFileProblem.damaged, ''));
+      expect(
+        probeSplatHead(Uint8List.fromList(good)..[15] = 4, null),
+        const SplatRefused(SplatFileProblem.damaged, ''),
+      );
+      // The other formats as before
+      expect(probeSplatHead(bytesOf('axes_v3.spz'), null), isA<SplatHead>());
+      expect(probeSplatHead(bytesOf('axes.ply'), null), isA<SplatHead>());
+    },
+  );
+
   test('a PLY of gaussians gives its count, its degree and the tool its comment names', () {
     expect(
       probe('axes.ply'),

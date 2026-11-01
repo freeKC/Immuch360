@@ -27,7 +27,7 @@ class SplatReducerTest {
   private fun head(name: String): SplatHead = SplatHeader.probe(SplatFixtures.bytes(name), SplatFixtures.file(name).length()) as SplatHead
 
   private fun scan(name: String, sampleLimit: Int = SplatReducer.SAMPLE_LIMIT): SplatScan =
-    SplatReducer.scan(SplatFixtures.file(name).inputStream(), head(name), sampleLimit)
+    SplatReducer.scan(SplatFixtures.file(name).inputStream(), head(name), sampleLimit, zstd = JvmZstd)
 
   private fun expectedKept(name: String): List<Int> =
     reduction.getValue(name).jsonObject.getValue("kept").jsonArray.map { it.jsonPrimitive.int }
@@ -65,7 +65,7 @@ class SplatReducerTest {
 
   private fun written(name: String, kept: java.util.BitSet): ByteArray {
     val out = ByteArrayOutputStream()
-    SplatReducer.write(SplatFixtures.file(name).inputStream(), head(name), kept, out)
+    SplatReducer.write(SplatFixtures.file(name).inputStream(), head(name), kept, out, zstd = JvmZstd)
     return out.toByteArray()
   }
 
@@ -271,12 +271,89 @@ class SplatReducerTest {
     } catch (e: SplatCancelledException) {
       // Stopped at its first check
     }
+  }
+
+  // Version 4 (ZSTD), FreeKC's report of 1 November 2026: axes_v4.spz said the headset does not read version 4
+
+  private val moduleSpz = SplatFixtures.expected.getValue("moduleSpz").jsonObject
+
+  @Test
+  fun `a version 4 SPZ is written again as version 2, its data that of the same splat in version 2`() {
+    // The arrays of version 4, once decompressed, are those of version 3: the same rewrite as version 2, byte for
+    // byte what make_splat_fixtures.py writes from the public description of the format
+    for (name in listOf("axes_v4.spz", "axes_v4_niantic.spz", "turns_v4.spz", "sh4_v4.spz")) {
+      val target = moduleSpz.getValue("rewrites").jsonObject.getValue(name).jsonPrimitive.content
+      val count = head(name).gaussians.toInt()
+      val written = written(name, all(count))
+      val probe = SplatHeader.probe(written, written.size.toLong()) as SplatProbe.Spz
+      assertEquals(name, 2, probe.version)
+      assertEquals(name, count.toLong(), probe.gaussians)
+      assertArrayEquals(name, gunzip(SplatFixtures.bytes(target)), gunzip(written))
+    }
+    // Degree 4 kept as degree 3, the first 15 coefficients of each point: the module reads degrees 0 to 3
+    val sh4 = SplatHeader.probe(written("sh4_v4.spz", all(8)), 1_000) as SplatProbe.Spz
+    assertEquals(3, sh4.shDegree)
+  }
+
+  @Test
+  fun `a version 4 SPZ is scored, sampled and reduced as the same splat in version 3`() {
+    val v4 = scan("turns_v4.spz")
+    val v3 = scan("turns_v3.spz")
+    assertArrayEquals(v3.scores, v4.scores, 0f)
+    assertArrayEquals(v3.samplePositions, v4.samplePositions, 0f)
+    val kept = SplatReducer.select(v4.scores, 10)
+    assertArrayEquals(gunzip(written("turns_v3.spz", kept)), gunzip(written("turns_v4.spz", kept)))
+    // The axes: the same bounds from the version 4 file as from version 3
+    val bounds4 = SplatPlacement.boundsOf(scan("axes_v4_niantic.spz"), null)!!
+    val bounds3 = SplatPlacement.boundsOf(scan("axes_v3.spz"), null)!!
+    for (k in 0 until 3) {
+      assertEquals(bounds3.low[k], bounds4.low[k], 0.0)
+      assertEquals(bounds3.high[k], bounds4.high[k], 0.0)
+    }
+  }
+
+  /** What writing the version 4 file [bytes] gives: the problem it stops on, null when it is written */
+  private fun problemOf(bytes: ByteArray, name: String = "turns_v4.spz"): SplatFileProblem? =
     try {
-      SplatReducer.scan(SplatFixtures.file("axes_v4.spz").inputStream(), head("axes_v4.spz"))
-      fail()
+      val count = head(name).gaussians.toInt()
+      SplatReducer.write(ByteArrayInputStream(bytes), head(name), all(count), ByteArrayOutputStream(), zstd = JvmZstd)
+      null
     } catch (e: SplatReadException) {
-      // ZSTD is not read here
-      assertEquals(SplatFileProblem.NEWER_SPZ, e.problem)
+      e.problem
+    }
+
+  @Test
+  fun `a version 4 SPZ cut, with a stream damaged, too short or too long, or bytes after its streams is damaged`() {
+    val good = SplatFixtures.bytes("turns_v4.spz")
+    assertEquals(null, problemOf(good))
+    // Cut in its last stream
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(good.copyOf(good.size - 3)))
+    // A byte after the last stream
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(good + byteArrayOf(0)))
+    // The magic number of the first ZSTD frame changed
+    val first = 32 + 6 * 16
+    val damaged = good.copyOf().also { for (k in first until first + 4) it[k] = (it[k].toInt() xor 0x5a).toByte() }
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(damaged))
+    // A table that says more or fewer bytes than the array of the header
+    fun withLong(at: Int, value: Long) =
+      good.copyOf().also { java.nio.ByteBuffer.wrap(it).order(java.nio.ByteOrder.LITTLE_ENDIAN).putLong(at, value) }
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(withLong(32 + 8, 40L * 9 - 1)))
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(withLong(32 + 8, 40L * 9 + 1)))
+    // A stream whose compressed size takes bytes of the next one
+    val firstSize = java.nio.ByteBuffer.wrap(good).order(java.nio.ByteOrder.LITTLE_ENDIAN).getLong(32)
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(withLong(32, firstSize + 2)))
+    // Fewer streams than arrays
+    assertEquals(SplatFileProblem.DAMAGED, problemOf(good.copyOf().also { it[15] = 5 }))
+  }
+
+  @Test
+  fun `a cancelled reading of a version 4 SPZ stops at its first check`() {
+    try {
+      val source = SplatFixtures.file("turns_v4.spz").inputStream()
+      SplatReducer.scan(source, head("turns_v4.spz"), cancelled = { true }, zstd = JvmZstd)
+      fail()
+    } catch (e: SplatCancelledException) {
+      // Stopped
     }
   }
 }

@@ -110,10 +110,6 @@ class SplatTextsTest {
   fun `a splat this headset cannot show says why, and the loading of the module has its line`() {
     assertEquals("Loading the splat", SplatTexts.label(emptyMap(), SplatTexts.LABEL_LOADING))
     assertEquals(
-      "This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier",
-      SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.SPZ_V4), Locale.US),
-    )
-    assertEquals(
       "This device cannot show this splat: its copy for the headset is not in a form the splat module reads",
       SplatTexts.refusalText(emptyMap(), SplatVerdict.Refused(SplatRefusal.MODULE_CANNOT_READ), Locale.US),
     )
@@ -126,7 +122,7 @@ class SplatTextsTest {
       "Chargement du splat",
       SplatTexts.label(mapOf(SplatTexts.LABEL_LOADING to "Chargement du splat"), SplatTexts.LABEL_LOADING),
     )
-    for (key in listOf(SplatTexts.LABEL_SPZ_V4, SplatTexts.LABEL_MODULE_CANNOT_READ, SplatTexts.LABEL_NO_RENDERER)) {
+    for (key in listOf(SplatTexts.LABEL_MODULE_CANNOT_READ, SplatTexts.LABEL_NO_RENDERER)) {
       assertTrue(key, SplatTexts.englishLabels.getValue(key).startsWith("This device cannot show this splat: "))
     }
   }
@@ -139,7 +135,7 @@ class SplatTextsTest {
         SplatTexts.LABEL_PREPARING to "splat_preparing",
         SplatTexts.LABEL_LOADING to "splat_loading",
         SplatTexts.LABEL_FAILED to "splat_failed",
-        SplatTexts.LABEL_SPZ_V4 to "splat_spz_v4",
+        SplatTexts.LABEL_HINT to "splat_hint",
         SplatTexts.LABEL_MODULE_CANNOT_READ to "splat_module_cannot_read",
         SplatTexts.LABEL_NO_RENDERER to "splat_no_renderer",
         SplatTexts.LABEL_NEWER_SPZ to "splat_newer_spz",

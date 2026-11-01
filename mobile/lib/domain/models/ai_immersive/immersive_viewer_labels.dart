@@ -77,8 +77,8 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
 };
 
 /// Translated labels of a Gaussian splat file of another tool in the immersive viewer (lot S5), under the keys
-/// SplatTexts.kt reads; Reset, the controller hint, the memory and the heat are those of the 3D scenes
-/// ([sceneViewerLabels])
+/// SplatTexts.kt reads, its controller hint among them (its right thumbstick turns it); Reset, the memory and the heat
+/// are those of the 3D scenes ([sceneViewerLabels])
 Map<String, String> splatViewerLabels(Translations t) => {
   'splatPreparing': t.splat_preparing,
   'splatLoading': t.splat_loading,
@@ -87,6 +87,7 @@ Map<String, String> splatViewerLabels(Translations t) => {
   'splatLarge': t.splat_large_notice,
   'splatReduced': t.splat_reduced(kept: '{kept}', total: '{total}'),
   'splatUpright': t.splat_upright,
+  'splatHint': t.splat_hint,
   'splatSpz': t.splat_spz_line(count: '{count}', version: '{version}'),
   'splatPly': t.splat_ply_line(count: '{count}'),
   'splatPlyTool': t.splat_ply_tool_line(count: '{count}', tool: '{tool}'),
@@ -101,7 +102,6 @@ Map<String, String> splatViewerLabels(Translations t) => {
   'splatNoSpace': t.splat_no_space,
   'splatNotRunning': t.splat_not_running,
   'splatFailed': t.splat_failed(reason: '{reason}'),
-  'splatSpzV4': t.splat_spz_v4,
   'splatModuleCannotRead': t.splat_module_cannot_read,
   'splatNoRenderer': t.splat_no_renderer,
 };

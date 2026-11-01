@@ -87,8 +87,9 @@ void main() {
       );
 
       expect(reverseSwitch, findsOneWidget);
+      // The right thumbstick turns a splat too (FreeKC's report of 1 November 2026), the other way with this setting
       expect(
-        find.text('The right thumbstick of the immersive viewer turns photos and videos the other way'),
+        find.text('The right thumbstick of the immersive viewer turns photos, videos and splats the other way'),
         findsOneWidget,
       );
       expect(tester.widget<SwitchListTile>(reverseSwitch).value, isFalse);

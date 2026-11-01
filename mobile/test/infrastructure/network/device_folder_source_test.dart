@@ -132,7 +132,7 @@ void main() {
       expect(contents.isEmpty, isFalse, reason: 'a folder of splats is not empty');
 
       Future<SplatProbe> probe(NetworkEntry entry) async =>
-          probeSplatHead(await sut.readRange(entry.path, 0, splatHeadBytes), entry.size!);
+          probeSplatHead(await sut.readRange(entry.path, 0, splatHeadBytes), entry.size);
       final byName = {for (final entry in contents.splatCandidates) entry.name: await probe(entry)};
       expect(byName['cash.spz'], isA<SplatHead>().having((head) => head.gaussians, 'gaussians', 47819));
       expect(byName['axes.ply'], isA<SplatHead>().having((head) => head.gaussians, 'gaussians', 686));

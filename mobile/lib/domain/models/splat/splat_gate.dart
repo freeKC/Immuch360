@@ -4,10 +4,10 @@
 // only and is in the APK of the quest flavour only; the count the headset shows is 50 000 gaussians until a measure
 // in the headset, 150 000 with Large splats (the advice of the SDK), and a splat that holds more is reduced in the
 // headset up to 4 million gaussians and 1 GiB. The splat module reads SPZ version 2 only and aborts the app on any
-// other (measured on a Quest 3 on 31 October 2026): the headset writes every SPZ of versions 1 to 3 again as version 2
-// (a version 2 cut or short of its data aborts it too), and a version 4 SPZ (ZSTD, which the app does not read) is
-// refused whatever its count. The immersive viewer checks again (SplatGate.kt), with the free memory and the heat of
-// the headset.
+// other (measured on a Quest 3 on 31 October 2026): the headset writes every SPZ again as version 2, versions 2 and 4
+// included (a version 2 cut or short of its data aborts it too; version 4 is ZSTD, which the quest flavour
+// decompresses, FreeKC's report of 1 November 2026). The immersive viewer checks again (SplatGate.kt), with the free
+// memory and the heat of the headset.
 
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
@@ -44,9 +44,6 @@ enum SplatRefusal {
 
   /// Beyond what the headset reduces: "Too large for this headset (N gaussians)"
   tooLarge,
-
-  /// A version 4 SPZ, whatever its count: "This device cannot show this splat: it is in SPZ version 4. ..."
-  spzV4,
 }
 
 /// What the gate says of a splat: open with the [request] for the viewer, or refused with its [refusal] (and the
@@ -86,7 +83,8 @@ SplatRefusal splatRefusalOf(SplatFileProblem problem) => switch (problem) {
 /// The gate of the splat [probe] says, the file [name] of [fileBytes], with Large splats on or not ([largeSplats]),
 /// in the APK of [flavor] on the headset [device] (null when it could not be read: offered, the viewer checking
 /// again), in a build that offers the splats or not ([inThisBuild], false where SplatBuild.kt hides them). In the order
-/// of SplatGate.kt: the flavour and the build, the headset, the file, the version of an SPZ, the count.
+/// of SplatGate.kt: the flavour and the build, the headset, the file, the count. Every version of SPZ opens: the
+/// headset writes it again as version 2.
 SplatGateVerdict splatGateOf({
   required SplatProbe probe,
   required String name,
@@ -108,10 +106,6 @@ SplatGateVerdict splatGateOf({
       return SplatGateVerdict.refused(splatRefusalOf(problem));
     case final SplatHead read:
       head = read;
-  }
-  // The splat module reads SPZ version 2 only: versions 1 to 3 are rewritten in the headset, ZSTD is not read
-  if (head.isZstd) {
-    return const SplatGateVerdict.refused(SplatRefusal.spzV4);
   }
   final most = largeSplats ? splatLargeGaussians : splatSafeGaussians;
   if (head.gaussians > most && (head.gaussians > splatMaxReducibleGaussians || fileBytes > splatMaxReducibleBytes)) {

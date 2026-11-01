@@ -54,6 +54,14 @@ class PlayerPool {
   /// Players being made, per kind, so that two pages asking at once do not pass the limit
   final _creating = <PlayerKind, int>{};
 
+  /// Players a turn of the pool holds on their way out of a lease or out of the idle list (a hand over, a release, a
+  /// replacement after a lost picture), until they land in a lease, in the idle list or in their dispose: a close
+  /// takes them as well (see [close]), and the turn then leaves them alone (see [_land])
+  final _inTransit = <PlaybackEngine>{};
+
+  /// The disposes under way, so that a close bounds them as well and a player is disposed once
+  final _disposing = <PlaybackEngine, Future<void>>{};
+
   /// One change of the pool at a time: a hand over awaits the suspended owner and the player
   Future<void> _turn = Future.value();
   int _clock = 0;
@@ -75,6 +83,39 @@ class PlayerPool {
 
   /// Stopped players of [kind] waiting for a lease
   int idleCount(PlayerKind kind) => _idle[kind]?.length ?? 0;
+
+  /// The window closes: every player is disposed at once, each given [timeout], without waiting for the turn of the
+  /// pool (a hand over may wait for a player being made, which libmpv held for 71 s on 1 November 2026): those of the
+  /// leases, the idle ones, those a turn holds on their way and those a turn is disposing. A player that has not ended
+  /// by then is told to stop calling Dart ([PlaybackEngine.silence]) and left to the end of the process. The leases
+  /// get no player any more; one made after this is disposed at once.
+  Future<void> close({required Duration timeout}) {
+    _disposed = true;
+    final engines = {
+      for (final lease in _leases) ?lease._engine,
+      for (final idle in _idle.values) ...idle,
+      ..._inTransit,
+      ..._disposing.keys,
+    };
+    for (final lease in _leases) {
+      lease._engine = null;
+    }
+    _idle.clear();
+    _inTransit.clear();
+    return Future.wait([for (final engine in engines) _disposeWithin(engine, timeout)]);
+  }
+
+  Future<void> _disposeWithin(PlaybackEngine engine, Duration timeout) => _disposeEngine(engine).timeout(
+    timeout,
+    onTimeout: () {
+      _log.warning('A ${engine.kind.name} player did not end within ${timeout.inMilliseconds} ms: left as it is');
+      try {
+        engine.silence();
+      } catch (error, stackTrace) {
+        _log.warning('Could not silence a player', error, stackTrace);
+      }
+    },
+  );
 
   /// Disposes every player; the leases get none any more
   Future<void> dispose() => _serial(() async {
@@ -104,7 +145,16 @@ class PlayerPool {
       return held;
     }
     // Cleared here, in the turn: a lease that a later turn suspends again stays suspended
-    PlaybackEngine give(PlaybackEngine engine) {
+    PlaybackEngine give(PlaybackEngine engine, {bool taken = false}) {
+      // A player taken from another lease, which a close took on its way and disposes
+      if (taken && !_land(engine)) {
+        throw StateError('The player pool closed meanwhile');
+      }
+      // The pool closed while the player was made (see [close])
+      if (_disposed) {
+        unawaited(_disposeEngine(engine));
+        throw StateError('The player pool closed meanwhile');
+      }
       lease._suspended = false;
       return lease._engine = engine;
     }
@@ -117,7 +167,7 @@ class PlayerPool {
         ? _leastRecentlyUsed(lease, (engine) => !spared(engine) && !engine.playing.value)
         : null;
     if (resting != null) {
-      return give(await _takeFrom(resting, lease));
+      return give(await _takeFrom(resting, lease), taken: true);
     }
     final idle = _idle[kind];
     while (idle != null && idle.isNotEmpty) {
@@ -148,7 +198,7 @@ class PlayerPool {
     if (victim == null) {
       throw StateError('No ${kind.name} player is free');
     }
-    return give(await _takeFrom(victim, lease));
+    return give(await _takeFrom(victim, lease), taken: true);
   });
 
   /// The other lease of [lease]'s kind used longest ago whose player passes [test], null when there is none
@@ -158,35 +208,50 @@ class PlayerPool {
         return other.kind == lease.kind && engine != null && !identical(other, lease) && test(engine);
       }).toList()..sort((a, b) => a._lastUsed.compareTo(b._lastUsed))).firstOrNull;
 
-  /// Suspends [victim] and gives its player, stopped, to [lease]
+  /// Suspends [victim] and gives its player, stopped, to [lease]; the player is on its way until the caller lands it
   Future<PlaybackEngine> _takeFrom(PlayerLease victim, PlayerLease lease) async {
     final engine = victim._engine!;
     _log.fine('${victim.label} gives its player to ${lease.label}');
     // Taken first, so that the owner starts nothing new on it, then what it started ends before the stop
     victim._engine = null;
     victim._suspended = true;
+    _inTransit.add(engine);
     await victim._settled();
     try {
       await victim._onSuspend?.call();
     } catch (error, stackTrace) {
       _log.warning('${victim.label} could not note where its video was', error, stackTrace);
     }
-    await _stop(engine);
+    // Not stopped once a close took it: it is being disposed
+    if (_inTransit.contains(engine)) {
+      await _stop(engine);
+    }
     return engine;
   }
+
+  /// [engine] ends its way: false when a close took it meanwhile and disposes it, which the turn then leaves alone
+  bool _land(PlaybackEngine engine) => _inTransit.remove(engine);
 
   Future<void> _release(PlayerLease lease) => _serial(() async {
     lease._closed = true;
     _leases.remove(lease);
     final engine = lease._engine;
     lease._engine = null;
+    if (engine != null) {
+      _inTransit.add(engine);
+    }
     // An open still running would load its file after the stop, into a parked player that would hold it
     await lease._settled();
     if (engine == null) {
       return;
     }
-    await _stop(engine);
-    _park(engine);
+    // Not stopped nor parked once a close took it: it is being disposed
+    if (_inTransit.contains(engine)) {
+      await _stop(engine);
+    }
+    if (_land(engine)) {
+      _park(engine);
+    }
   });
 
   /// Disposes the player of [lease], which can no longer show a picture (its graphics device was lost), with the idle
@@ -200,6 +265,7 @@ class PlayerPool {
     _log.warning('${lease.label} lost the picture of its player: a new player replaces it');
     lease._engine = null;
     lease._suspended = true;
+    _inTransit.add(engine);
     await lease._settled();
     try {
       await lease._onSuspend?.call();
@@ -207,8 +273,11 @@ class PlayerPool {
       _log.warning('${lease.label} could not note where its video was', error, stackTrace);
     }
     final idle = _idle.remove(engine.kind) ?? const [];
+    _inTransit.addAll(idle);
     for (final other in [engine, ...idle]) {
-      await _disposeEngine(other);
+      if (_land(other)) {
+        await _disposeEngine(other);
+      }
     }
   });
 
@@ -235,7 +304,19 @@ class PlayerPool {
     }
   }
 
-  Future<void> _disposeEngine(PlaybackEngine engine) async {
+  /// Disposes [engine] once: a second call while the first runs waits for it (see [close])
+  Future<void> _disposeEngine(PlaybackEngine engine) {
+    final running = _disposing[engine];
+    if (running != null) {
+      return running;
+    }
+    final ending = _endEngine(engine);
+    _disposing[engine] = ending;
+    unawaited(ending.whenComplete(() => _disposing.remove(engine)));
+    return ending;
+  }
+
+  Future<void> _endEngine(PlaybackEngine engine) async {
     try {
       await engine.dispose();
       disposed++;
@@ -318,6 +399,9 @@ PlayerPool? _shared;
 
 /// The pool of the app's players, made on first use
 PlayerPool get desktopPlayerPool => _shared ??= PlayerPool(create: DesktopPlayer.create);
+
+/// Closes the app's pool when it was made (see [PlayerPool.close]): the window closes
+Future<void> closeDesktopPlayerPool({required Duration timeout}) => _shared?.close(timeout: timeout) ?? Future.value();
 
 /// Replaces the app's pool (null: made again on first use), for the tests of the pages that build their own view
 @visibleForTesting

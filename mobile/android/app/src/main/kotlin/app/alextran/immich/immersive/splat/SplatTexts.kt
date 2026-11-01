@@ -6,8 +6,9 @@ import java.util.Locale
 /**
  * The texts of a splat in the headset (lot S5), translated by Flutter in stereoLabels under these keys
  * (splatViewerLabels of immersive_viewer_labels.dart), each with its English text for a key Flutter did not send. The
- * numbers go where the translations put {count}, {version}, {tool}, {kept}, {total} and {reason}. Reset, the
- * controller hint, the free memory and the heat say what they say for the 3D scenes (SceneTexts).
+ * numbers go where the translations put {count}, {version}, {tool}, {kept}, {total} and {reason}. Reset, the free
+ * memory and the heat say what they say for the 3D scenes (SceneTexts); the controller hint of a splat is its own,
+ * its right thumbstick turning it.
  */
 internal object SplatTexts {
   const val LABEL_PREPARING = "splatPreparing"
@@ -17,6 +18,7 @@ internal object SplatTexts {
   const val LABEL_LARGE = "splatLarge"
   const val LABEL_REDUCED = "splatReduced"
   const val LABEL_UPRIGHT = "splatUpright"
+  const val LABEL_HINT = "splatHint"
   const val LABEL_SPZ = "splatSpz"
   const val LABEL_PLY = "splatPly"
   const val LABEL_PLY_TOOL = "splatPlyTool"
@@ -31,7 +33,6 @@ internal object SplatTexts {
   const val LABEL_NO_SPACE = "splatNoSpace"
   const val LABEL_NOT_RUNNING = "splatNotRunning"
   const val LABEL_FAILED = "splatFailed"
-  const val LABEL_SPZ_V4 = "splatSpzV4"
   const val LABEL_MODULE_CANNOT_READ = "splatModuleCannotRead"
   const val LABEL_NO_RENDERER = "splatNoRenderer"
 
@@ -54,6 +55,9 @@ internal object SplatTexts {
       LABEL_LARGE to "Large splat: it may stutter",
       LABEL_REDUCED to "Reduced to $KEPT of $TOTAL gaussians",
       LABEL_UPRIGHT to "Turn upright",
+      LABEL_HINT to
+        "Left thumbstick: glide. Right thumbstick: turn. A, X or grip: show or hide this panel. B or Y: back to the " +
+          "app.",
       LABEL_SPZ to "$COUNT gaussians, SPZ version $VERSION",
       LABEL_PLY to "$COUNT gaussians, PLY",
       LABEL_PLY_TOOL to "$COUNT gaussians, PLY, made with $TOOL",
@@ -68,8 +72,6 @@ internal object SplatTexts {
       LABEL_NO_SPACE to "Not enough free space on the headset for this splat",
       LABEL_NOT_RUNNING to "The splat module did not start with this viewer: close it and open the splat again",
       LABEL_FAILED to "The splat could not be shown: $REASON",
-      LABEL_SPZ_V4 to
-        "This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier",
       LABEL_MODULE_CANNOT_READ to
         "This device cannot show this splat: its copy for the headset is not in a form the splat module reads",
       LABEL_NO_RENDERER to "This device cannot show this splat: the splat renderer did not start",
@@ -133,7 +135,6 @@ internal object SplatTexts {
       SplatRefusal.NOT_ENOUGH_SPACE -> label(labels, LABEL_NO_SPACE)
       SplatRefusal.TOO_WARM -> SceneTexts.label(labels, SceneTexts.LABEL_TOO_WARM)
       SplatRefusal.MODULE_NOT_RUNNING -> label(labels, LABEL_NOT_RUNNING)
-      SplatRefusal.SPZ_V4 -> label(labels, LABEL_SPZ_V4)
       SplatRefusal.MODULE_CANNOT_READ -> label(labels, LABEL_MODULE_CANNOT_READ)
       SplatRefusal.NO_RENDERER -> label(labels, LABEL_NO_RENDERER)
     }

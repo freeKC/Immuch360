@@ -45,14 +45,18 @@ class SplatModuleFormatTest {
   }
 
   @Test
-  fun `every SPZ of versions 1 to 3 is rewritten, version 2 too, a PLY read as it is, version 4 not at all`() {
+  fun `every SPZ is rewritten, versions 2 and 4 too, a PLY read as it is`() {
     assertTrue(SplatModuleFormat.needsRewrite(probe("axes_v1.spz") as SplatHead))
     assertTrue(SplatModuleFormat.needsRewrite(probe("axes_v3.spz") as SplatHead))
     // A version 2 cut or short of its data aborts the module as surely as a version 3: it is written again too
     assertTrue(SplatModuleFormat.needsRewrite(probe("axes_v2.spz") as SplatHead))
     assertTrue(SplatModuleFormat.needsRewrite(probe("turns_v2.spz") as SplatHead))
     assertFalse(SplatModuleFormat.needsRewrite(probe("axes.ply") as SplatHead))
-    assertFalse(SplatModuleFormat.needsRewrite(probe("axes_v4.spz") as SplatHead))
+    // Version 4 (ZSTD), which the module aborts on, as its copy in version 2 (FreeKC's report of 1 November 2026)
+    for (name in listOf("axes_v4.spz", "axes_v4_niantic.spz", "turns_v4.spz", "sh4_v4.spz")) {
+      assertTrue(name, SplatModuleFormat.needsRewrite(probe(name) as SplatHead))
+      assertFalse(name, SplatModuleFormat.reads(probe(name)))
+    }
   }
 
   @Test

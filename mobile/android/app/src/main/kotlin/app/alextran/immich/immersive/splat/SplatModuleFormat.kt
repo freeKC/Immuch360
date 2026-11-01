@@ -16,9 +16,9 @@ import java.util.zip.Inflater
  * - SPZ of version 2 only, one gzip stream holding exactly the data its header announces. Version 3 ("version not
  *   supported: 3") and version 4 (its ZSTD streams) abort, and so does a version 2 cut or short of its data
  *   ("decompressGzipped: failed", "deserializePackedGaussians: read error"); version 1 loads, but its points are not
- *   where they should be. The viewer writes every SPZ of versions 1 to 3 again as version 2 ([needsRewrite],
- *   SplatReducer.write, which reads the source to its end and stops on a damaged one), and refuses version 4, whose
- *   ZSTD this build does not read.
+ *   where they should be. The viewer writes every SPZ again as version 2 ([needsRewrite], SplatReducer.write, which
+ *   reads the source to its end and stops on a damaged one), version 4 included: its ZSTD streams are read in the
+ *   quest flavour (SplatZstd, FreeKC's report of 1 November 2026).
  * - PLY of 3D Gaussian Splatting: the module reads it by the names of its properties, in any order, float or double,
  *   SH 0 to 3, with normals or other properties; it aborts without x y z, opacity or scale_*. The probe of the viewer
  *   asks for more ([SplatHeader.REQUIRED_PLY] as floats, degrees 0 to 3, binary little endian), so every PLY it takes
@@ -44,11 +44,10 @@ internal object SplatModuleFormat {
     }
 
   /**
-   * Whether a splat of [head] must be written again before the module reads it: every SPZ of versions 1 to 3, version
-   * 2 included, since one cut or short of its data aborts the module as surely as a version 3, and only a full reading
-   * finds it out
+   * Whether a splat of [head] must be written again before the module reads it: every SPZ, version 2 included, since
+   * one cut or short of its data aborts the module as surely as a version 3 or 4, and only a full reading finds it out
    */
-  fun needsRewrite(head: SplatHead): Boolean = head is SplatProbe.Spz && !head.isZstd
+  fun needsRewrite(head: SplatHead): Boolean = head is SplatProbe.Spz
 
   /** The bytes of the data of a version 2 SPZ of [head] once inflated: its header, then 19 bytes a point and its SH */
   fun payloadBytes(head: SplatProbe.Spz): Long = 16L + head.gaussians * (9 + 1 + 3 + 3 + 3 + head.shBytes)

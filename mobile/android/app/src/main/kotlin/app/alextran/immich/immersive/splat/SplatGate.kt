@@ -22,13 +22,6 @@ internal enum class SplatRefusal {
   TOO_LARGE,
 
   /**
-   * A version 4 SPZ (ZSTD streams), whatever its count: the splat module of the headset reads version 2 only and
-   * aborts the process on any other (measured on a Quest 3 on 31 October 2026); the viewer rewrites every SPZ of
-   * versions 1 to 3 as version 2, but does not read ZSTD
-   */
-  SPZ_V4,
-
-  /**
    * The last guard before the entity (SplatModuleFormat.check): the file prepared for the module is not one it was
    * seen to read. Said rather than handed over, since the module would abort the process
    */
@@ -71,9 +64,9 @@ internal sealed interface SplatVerdict {
  * 2. The headset: the Quest 2 (hollywood) and the Quest Pro (seacliff) refused, any other taken (the Quest 3 eureka,
  *    the Quest 3S panther, and a headset this build does not know, as the scenes take it).
  * 3. The file: what the probe refused keeps its reason ([SplatHeader]).
- * 4. The version of an SPZ: a version 4 (ZSTD, which this build does not decompress) is refused whatever its count,
- *    since the module reads version 2 only and aborts the process on any other; every SPZ of versions 1 to 3 is
- *    rewritten as version 2 by the preparation, version 2 included ([SplatModuleFormat], [SplatReducer]).
+ * 4. The version of an SPZ: the module reads version 2 only and aborts the process on any other, so every SPZ is
+ *    rewritten as version 2 by the preparation, version 2 included ([SplatModuleFormat], [SplatReducer]); a version 4
+ *    (ZSTD) needs the decoder of the quest flavour ([SplatZstd]), without which it is not in this version.
  * 5. The heat: THERMAL_STATUS_SEVERE or worse refused, as for the scenes.
  * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] until a measure in the headset, [LARGE_GAUSSIANS]
  *    with Large splats, never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to
@@ -118,6 +111,12 @@ internal object SplatGate {
 
   /** A header written again with a reduced copy, and the slack of its compression */
   const val REDUCED_SLACK_BYTES = 64L shl 10
+
+  /**
+   * What the decoder of a version 4 SPZ holds while it reads a stream: its window, 8 MiB at the level of compression
+   * Niantic's writer takes (12)
+   */
+  const val ZSTD_DECODER_BYTES = 8L shl 20
 
   /** PowerManager.THERMAL_STATUS_SEVERE: from this status on no splat opens */
   const val THERMAL_STATUS_SEVERE = 3
@@ -165,10 +164,16 @@ internal object SplatGate {
   /**
    * How much larger a copy of [head] rewritten as version 2 may be than its source: the positions of version 1 take
    * 9 bytes instead of 6 (at most 19 bytes instead of 16 a point, compressed alike, taken as 1.5); version 3 loses a
-   * byte of each rotation (1); version 2 is the same data again (1); a PLY is not rewritten (1)
+   * byte of each rotation (1); version 2 is the same data again (1); version 4 goes from ZSTD to gzip (from 0.91 to
+   * 1.03 times the file on four splats, taken as 1.25); a PLY is not rewritten (1)
    */
   fun rewriteGrowth(head: SplatHead): Double =
-    if (head is SplatProbe.Spz && head.version == 1) 1.5 else 1.0
+    when {
+      head !is SplatProbe.Spz -> 1.0
+      head.version == 1 -> 1.5
+      head.isZstd -> 1.25
+      else -> 1.0
+    }
 
   /**
    * The free memory a splat of [head] needs, a file of [fileBytes] shown whole or reduced to [keep]: [MEMORY_FACTOR]
@@ -180,12 +185,13 @@ internal object SplatGate {
     val file = loadedFileBytes(fileBytes, head.gaussians, keep, rewriteGrowth(head))
     val loaded = maxOf(file, shown * decodedBytesPerGaussian(head.shDegree))
     val reducer = if (keep == null) 0L else REDUCER_BYTES_PER_GAUSSIAN * head.gaussians + REDUCER_OVERHEAD_BYTES
-    return MEMORY_FACTOR * loaded + reducer
+    val decoder = if (head is SplatProbe.Spz && head.isZstd) ZSTD_DECODER_BYTES else 0L
+    return MEMORY_FACTOR * loaded + reducer + decoder
   }
 
   /**
    * The bytes the preparation writes into the cache: the reduced copy, else the whole file rewritten as version 2
-   * ([rewrites], an SPZ of versions 1 to 3, larger by [growth]), else the whole file when it is copied under the name
+   * ([rewrites], any SPZ, larger by [growth]), else the whole file when it is copied under the name
    * of its format ([copiesWhole]), else nothing
    */
   fun cacheBytesWritten(
@@ -211,7 +217,8 @@ internal object SplatGate {
    * The verdict for [probe], a file of [fileBytes], on the headset [device] with the splat module when [engine], at
    * most [cap] gaussians (the maxGaussians of the request); [availableMemory], [thermalStatus] and [freeCache] (the
    * free space of the cache) null when unknown; [copiesWhole] when the file is copied whole under the name of its
-   * format before the module reads it. Every SPZ of versions 1 to 3 is written again as version 2, reduced or whole
+   * format before the module reads it; [readsZstd] when this APK has the decoder of a version 4 SPZ (the quest
+   * flavour). Every SPZ is written again as version 2, reduced or whole
    * (SplatModuleFormat.needsRewrite), and the cache must hold that copy
    */
   fun check(
@@ -224,6 +231,7 @@ internal object SplatGate {
     thermalStatus: Int?,
     freeCache: Long? = null,
     copiesWhole: Boolean = false,
+    readsZstd: Boolean = SplatZstds.available,
   ): SplatVerdict {
     if (!engine) return SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION)
     if (device in OLDER_DEVICES) return SplatVerdict.Refused(SplatRefusal.OLDER_HEADSET)
@@ -232,8 +240,11 @@ internal object SplatGate {
         is SplatProbe.Refused -> return SplatVerdict.Refused(refusalOf(probe.problem))
         is SplatHead -> probe
       }
-    // The module reads SPZ version 2 only and aborts on any other: versions 1 to 3 are rewritten, ZSTD is not read
-    if (head is SplatProbe.Spz && head.isZstd) return SplatVerdict.Refused(SplatRefusal.SPZ_V4)
+    // The module reads SPZ version 2 only and aborts on any other: every SPZ is rewritten, version 4 through the ZSTD
+    // decoder of the quest flavour
+    if (head is SplatProbe.Spz && head.isZstd && !readsZstd) {
+      return SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION)
+    }
     if (thermalStatus != null && thermalStatus >= THERMAL_STATUS_SEVERE) {
       return SplatVerdict.Refused(SplatRefusal.TOO_WARM)
     }

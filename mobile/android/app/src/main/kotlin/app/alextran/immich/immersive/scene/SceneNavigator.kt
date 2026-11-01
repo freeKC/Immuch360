@@ -185,6 +185,38 @@ internal class SceneNavigator(private val safe: SafeZone, private val glideSpeed
     anchor(x, y, -z, SdkFrame.yawOfGaze(gazeX, gazeZ))
 
   /**
+   * Turns the scene by [angle] (radians, counter clockwise seen from above, as the yaws here) about the vertical
+   * through [pivotX], [pivotZ] in the world: the snap turn of a splat about the head of the user (FreeKC's report of
+   * 1 November 2026). The anchor turns about the pivot and its yaw by [angle], origin' = pivot + R(angle) (origin -
+   * pivot), so that the root does the same, root' = pivot + R(angle) (root - pivot): for a head at the pivot the eye
+   * in the scene, R(-originYaw) (head - origin) + glide, does not move, and neither do rho, the flattening and the
+   * edge. The glide is kept, the place it reached with it, and its speed is turned the other way in the frame of the
+   * scene, so that a glide under way keeps its course in the world and then eases towards the new gaze. Nothing
+   * before the first anchor.
+   */
+  fun turn(pivotX: Double, pivotZ: Double, angle: Double) {
+    if (!anchored) return
+    val c = cos(angle)
+    val s = sin(angle)
+    val dx = originX - pivotX
+    val dz = originZ - pivotZ
+    originX = pivotX + dx * c + dz * s
+    originZ = pivotZ - dx * s + dz * c
+    originYaw = Math.IEEEremainder(originYaw + angle, 2 * Math.PI)
+    val vx = speedX
+    val vz = speedZ
+    speedX = vx * c - vz * s
+    speedZ = vx * s + vz * c
+  }
+
+  /**
+   * [turn] about a head at [x], [z] in the world of the Spatial SDK, by [sdkYawDegrees] as Quaternion(0f,
+   * sdkYawDegrees, 0f) of the SDK turns (a positive yaw takes +z towards +x, ImmersiveControls.snapTurnDegrees): the
+   * root of the scene turns about the head that way in the SDK
+   */
+  fun turnInSdk(x: Double, z: Double, sdkYawDegrees: Double) = turn(x, -z, -Math.toRadians(sdkYawDegrees))
+
+  /**
    * [update] for a head at [x], [y], [z] in the world of the Spatial SDK whose horizontal gaze is [gazeX], [gazeZ]
    * there; the root of the scene goes to SceneNavigation.sdkRootX, sdkRootY, sdkRootZ, turned by
    * Quaternion(0f, sdkRootYawDegrees, 0f)

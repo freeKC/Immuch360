@@ -52,7 +52,17 @@
       "format": "spz",
       "version": 4,
       "gaussians": 686,
-      "shDegree": 0
+      "shDegree": 0,
+      "streams": 6
+    },
+    "axes_v4_niantic.spz": {
+      "bytes": 929,
+      "sha256": "f32291d7d90544abd2cbf4ef5ea161466357e300195148fa5f499c53ed1262f3",
+      "format": "spz",
+      "version": 4,
+      "gaussians": 686,
+      "shDegree": 0,
+      "streams": 5
     },
     "bad_magic.spz": {
       "bytes": 35,
@@ -157,6 +167,23 @@
       "shDegree": 3,
       "ply": "sh3.ply"
     },
+    "sh4_v2.spz": {
+      "bytes": 413,
+      "sha256": "7d562a6097d5ee3815f9657272f243e8ee370f72b10f4d171243bb0ea7a2af33",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 8,
+      "shDegree": 3
+    },
+    "sh4_v4.spz": {
+      "bytes": 564,
+      "sha256": "f468e6c7549d6debc1b7342a0750233033de70ca250c81d301c37190dccd2b4b",
+      "format": "spz",
+      "version": 4,
+      "gaussians": 8,
+      "shDegree": 4,
+      "streams": 6
+    },
     "truncated.spz": {
       "bytes": 12,
       "sha256": "2d899e9f775605deb6cdf23f2a57f6e0da44e6b7acfe59a552a2306ec47a013b"
@@ -176,6 +203,15 @@
       "version": 3,
       "gaussians": 40,
       "shDegree": 1
+    },
+    "turns_v4.spz": {
+      "bytes": 1157,
+      "sha256": "bafa42224a58d7282498db28c6b4100c2c614bf4cf4f9846cb40be6f912ee1d9",
+      "format": "spz",
+      "version": 4,
+      "gaussians": 40,
+      "shDegree": 1,
+      "streams": 6
     }
   },
   "reduction": {
@@ -295,7 +331,11 @@
     "version": 2,
     "rewrites": {
       "turns_v3.spz": "turns_v2.spz",
-      "axes_v1.spz": "axes_v1_v2.spz"
+      "axes_v1.spz": "axes_v1_v2.spz",
+      "axes_v4.spz": "axes_v2.spz",
+      "axes_v4_niantic.spz": "axes_v2.spz",
+      "turns_v4.spz": "turns_v2.spz",
+      "sh4_v4.spz": "sh4_v2.spz"
     },
     "worstRotation": 0.001617
   }

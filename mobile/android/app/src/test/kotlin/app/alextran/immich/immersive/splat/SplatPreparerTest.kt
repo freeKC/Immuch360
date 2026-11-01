@@ -8,6 +8,7 @@ import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import java.util.zip.Inflater
 import org.junit.After
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -37,6 +38,7 @@ class SplatPreparerTest {
     cap: Int = SplatGate.SAFE_GAUSSIANS,
     device: String? = "eureka",
     freeCache: Long? = null,
+    zstd: SplatZstd = JvmZstd,
   ): SplatPreparation =
     SplatPreparer.prepare(
       source,
@@ -49,6 +51,7 @@ class SplatPreparerTest {
       folder,
       "splat-",
       freeCache = { freeCache },
+      zstd = zstd,
     )
 
   private fun cacheCopies(): List<String> = folder.list().orEmpty().filter { it.startsWith("splat-") }.sorted()
@@ -315,16 +318,50 @@ class SplatPreparerTest {
   }
 
   @Test
-  fun `a refused file says why, and a version 4 SPZ is refused before anything is written`() {
+  fun `a refused file says why before anything is written`() {
     val mesh = prepare(copy("mesh_cube.ply")) as SplatPreparation.Stopped
     assertEquals(SplatRefusal.NOT_A_SPLAT, mesh.verdict.refusal)
     assertNull(mesh.head)
     val older = prepare(copy("axes_v3.spz"), device = "hollywood") as SplatPreparation.Stopped
     assertEquals(SplatRefusal.OLDER_HEADSET, older.verdict.refusal)
-    // The module aborts the process on version 4: it never gets it, whole or not
-    val v4 = prepare(copy("axes_v4.spz")) as SplatPreparation.Stopped
-    assertEquals(SplatRefusal.SPZ_V4, v4.verdict.refusal)
-    assertEquals(4, (v4.head as SplatProbe.Spz).version)
+    assertEquals(emptyList<String>(), cacheCopies())
+  }
+
+  @Test
+  fun `a version 4 SPZ is read and handed to the module as version 2, whole or reduced`() {
+    // FreeKC's report of 1 November 2026: axes_v4.spz, from his kit, was refused. The module aborts the process on
+    // version 4 (Quest 3, 31 October 2026), so it only ever gets the copy rewritten as version 2
+    for (name in listOf("axes_v4.spz", "axes_v4_niantic.spz")) {
+      val ready = prepare(copy(name)) as SplatPreparation.Ready
+      assertTrue(name, ready.owned)
+      assertTrue(name, ready.file.name.endsWith(".spz"))
+      assertEquals(name, 4, (ready.head as SplatProbe.Spz).version)
+      val module = SplatHeader.read(ready.file) as SplatProbe.Spz
+      assertEquals(name, 2, module.version)
+      assertNull(name, SplatModuleFormat.checkWhole(ready.file, 686))
+      assertArrayEquals(name, payloadOf("axes_v2.spz"), GZIPInputStream(ready.file.inputStream()).use { it.readBytes() })
+      // Placed as the same splat in version 3
+      val v3 = prepare(copy("axes_v3.spz", "v3-$name")) as SplatPreparation.Ready
+      for (k in 0 until 3) assertEquals(v3.bounds!!.high[k], ready.bounds!!.high[k], 0.0)
+    }
+    val reduced = prepare(copy("turns_v4.spz"), cap = 10) as SplatPreparation.Ready
+    assertEquals(10, reduced.verdict.keep)
+    assertEquals(10L, (SplatHeader.read(reduced.file) as SplatProbe.Spz).gaussians)
+    assertNull(SplatModuleFormat.checkWhole(reduced.file, 10))
+  }
+
+  @Test
+  fun `a damaged version 4 SPZ is refused and its copy goes`() {
+    val good = SplatFixtures.bytes("turns_v4.spz")
+    // The magic number of its first ZSTD frame, right after the table of its 6 streams
+    val first = 32 + 6 * 16
+    val damaged = good.copyOf().also { for (k in first until first + 4) it[k] = (it[k].toInt() xor 0x5a).toByte() }
+    try {
+      val stopped = prepare(write("damaged.spz", damaged))
+      fail("prepared: $stopped")
+    } catch (e: SplatReadException) {
+      assertEquals(SplatFileProblem.DAMAGED, e.problem)
+    }
     assertEquals(emptyList<String>(), cacheCopies())
   }
 }

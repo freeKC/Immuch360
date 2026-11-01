@@ -52,8 +52,12 @@ internal class SplatScan(val scores: FloatArray, val sampleIndices: IntArray, va
  *    as the 3 bytes of version 2 (the quaternion normalised, w made positive, x, y, z as floor(q * 127.5 + 128)).
  *    Everything else is copied byte for byte. The source is then read to the end of its gzip stream, so that the CRC
  *    and the length of each member are checked: a source cut, short of its data or damaged stops with
- *    [SplatFileProblem.DAMAGED], and the module only ever gets one clean member written here. A version 4 SPZ (ZSTD)
- *    is not read here: the gate refuses it.
+ *    [SplatFileProblem.DAMAGED], and the module only ever gets one clean member written here. A version 4 SPZ (ZSTD,
+ *    FreeKC's report of 1 November 2026) holds the arrays of version 3, one ZSTD stream each: it is read through
+ *    [SplatZstd] as the same data ([V4Payload], every stream checked against the size of its array and the streams
+ *    against the end of the file) and written as version 2 like version 3; its harmonics of degree 4 are kept to
+ *    degree 3, the first 15 coefficients of each point (the coefficient is the slow axis of the array), the module
+ *    reading degrees 0 to 3.
  *
  * Two readings of the file in streams, never the file in memory: the scores (4 bytes a gaussian) and, for an SPZ, its
  * opacities (1 byte a gaussian) are what stays. The heuristic is a first one, to be judged in the headset; it is the
@@ -69,17 +73,24 @@ internal object SplatReducer {
   /** The fractional bits of the positions Niantic's writer gives, for a version 1 header that says none */
   const val DEFAULT_FRACTIONAL_BITS = 12
 
+  /** The highest degree of the harmonics the splat module reads (SplatHeader.PLY_REST_DEGREES) */
+  const val MAX_MODULE_SH_DEGREE = 3
+
   private val SQRT_HALF = Math.sqrt(0.5)
 
   private const val MIN_OPACITY = 1e-6
   private val LOG_MIN_OPACITY = ln(MIN_OPACITY)
 
-  /** Reads [input], a file whose head is [head], from its start: the scores and the sample of the positions */
+  /**
+   * Reads [input], a file whose head is [head], from its start: the scores and the sample of the positions. A version
+   * 4 SPZ is decompressed by [zstd]
+   */
   fun scan(
     input: InputStream,
     head: SplatHead,
     sampleLimit: Int = SAMPLE_LIMIT,
     cancelled: () -> Boolean = { false },
+    zstd: SplatZstd = SplatZstds,
   ): SplatScan {
     val count = countOf(head)
     val stride = maxOf(1, (count + sampleLimit - 1) / sampleLimit)
@@ -89,47 +100,9 @@ internal object SplatReducer {
     val scores = FloatArray(count)
     when (head) {
       is SplatProbe.Spz -> {
-        if (head.isZstd) throw SplatReadException(SplatFileProblem.NEWER_SPZ, "ZSTD is not read here")
         input.use { raw ->
-          val reader = Reader(GZIPInputStream(BufferedInputStream(raw, 1 shl 16), 1 shl 16))
-          reader.skip(16)
-          // Positions: float16 in version 1, 24 bit fixed point after
-          val positionBytes = head.positionBytes
-          val scale = 1.0 / (1 shl head.fractionalBits)
-          val chunk = ByteArray(CHUNK * positionBytes)
-          var i = 0
-          while (i < count) {
-            if (cancelled()) throw SplatCancelledException()
-            val n = minOf(CHUNK, count - i)
-            reader.read(chunk, n * positionBytes)
-            for (k in 0 until n) {
-              val index = i + k
-              if (index % stride != 0) continue
-              val s = 3 * (index / stride)
-              for (axis in 0 until 3) {
-                val at = k * positionBytes + axis * (positionBytes / 3)
-                samplePositions[s + axis] =
-                  if (head.version == 1) halfToFloat(chunk, at) else (fixed24(chunk, at) * scale).toFloat()
-              }
-            }
-            i += n
-          }
-          val alphas = ByteArray(count)
-          reader.read(alphas, count)
-          reader.skip(3L * count)
-          val scales = ByteArray(CHUNK * 3)
-          i = 0
-          while (i < count) {
-            if (cancelled()) throw SplatCancelledException()
-            val n = minOf(CHUNK, count - i)
-            reader.read(scales, 3 * n)
-            for (k in 0 until n) {
-              val alpha = (alphas[i + k].toInt() and 0xff) / 255.0
-              var score = ln(max(alpha, MIN_OPACITY))
-              for (axis in 0 until 3) score += (scales[3 * k + axis].toInt() and 0xff) / 16.0 - 10.0
-              scores[i + k] = clean(score)
-            }
-            i += n
+          payloadOf(raw, head, zstd).use { payload ->
+            scanSpz(Reader(payload), head, count, stride, samplePositions, scores, cancelled)
           }
         }
       }
@@ -174,6 +147,57 @@ internal object SplatReducer {
     return SplatScan(scores, sampleIndices, samplePositions)
   }
 
+  /** The scores and the sample of the positions of the data of an SPZ [reader] gives, from its header of 16 bytes on */
+  private fun scanSpz(
+    reader: Reader,
+    head: SplatProbe.Spz,
+    count: Int,
+    stride: Int,
+    samplePositions: FloatArray,
+    scores: FloatArray,
+    cancelled: () -> Boolean,
+  ) {
+    reader.skip(16)
+    // Positions: float16 in version 1, 24 bit fixed point after
+    val positionBytes = head.positionBytes
+    val scale = 1.0 / (1 shl head.fractionalBits)
+    val chunk = ByteArray(CHUNK * positionBytes)
+    var i = 0
+    while (i < count) {
+      if (cancelled()) throw SplatCancelledException()
+      val n = minOf(CHUNK, count - i)
+      reader.read(chunk, n * positionBytes)
+      for (k in 0 until n) {
+        val index = i + k
+        if (index % stride != 0) continue
+        val s = 3 * (index / stride)
+        for (axis in 0 until 3) {
+          val at = k * positionBytes + axis * (positionBytes / 3)
+          samplePositions[s + axis] =
+            if (head.version == 1) halfToFloat(chunk, at) else (fixed24(chunk, at) * scale).toFloat()
+        }
+      }
+      i += n
+    }
+    val alphas = ByteArray(count)
+    reader.read(alphas, count)
+    reader.skip(3L * count)
+    val scales = ByteArray(CHUNK * 3)
+    i = 0
+    while (i < count) {
+      if (cancelled()) throw SplatCancelledException()
+      val n = minOf(CHUNK, count - i)
+      reader.read(scales, 3 * n)
+      for (k in 0 until n) {
+        val alpha = (alphas[i + k].toInt() and 0xff) / 255.0
+        var score = ln(max(alpha, MIN_OPACITY))
+        for (axis in 0 until 3) score += (scales[3 * k + axis].toInt() and 0xff) / 16.0 - 10.0
+        scores[i + k] = clean(score)
+      }
+      i += n
+    }
+  }
+
   /** The indices of the [keep] largest [scores], a tie going to the lower index; all of them when [keep] is more */
   fun select(scores: FloatArray, keep: Int): BitSet {
     val n = scores.size
@@ -208,7 +232,7 @@ internal object SplatReducer {
   /**
    * Writes the gaussians of [input] (a file whose head is [head]) that [kept] holds into [out], in the same format
    * (an SPZ as version 2, see the top of this object); [out] is flushed, not closed. [kept] may hold every gaussian:
-   * every SPZ of versions 1 to 3 is rewritten whole so, its source read to its end
+   * every SPZ is rewritten whole so, its source read to its end. A version 4 SPZ is decompressed by [zstd]
    */
   fun write(
     input: InputStream,
@@ -216,49 +240,15 @@ internal object SplatReducer {
     kept: BitSet,
     out: OutputStream,
     cancelled: () -> Boolean = { false },
+    zstd: SplatZstd = SplatZstds,
   ) {
     val count = countOf(head)
     val keep = kept.cardinality()
     when (head) {
-      is SplatProbe.Spz -> {
-        if (head.isZstd) throw SplatReadException(SplatFileProblem.NEWER_SPZ, "ZSTD is not read here")
+      is SplatProbe.Spz ->
         input.use { raw ->
-          val reader = Reader(GZIPInputStream(BufferedInputStream(raw, 1 shl 16), 1 shl 16))
-          val header = ByteArray(16)
-          reader.read(header, 16)
-          val fractional = fractionalBitsOf(head)
-          ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).putInt(4, SplatModuleFormat.SPZ_VERSION).putInt(8, keep)
-          header[13] = fractional.toByte()
-          header[14] = (header[14].toInt() and 0x2.inv()).toByte()
-          val gzip = GZIPOutputStream(BufferedOutputStream(NoClose(out), 1 shl 16), 1 shl 16)
-          gzip.write(header)
-          // Positions: float16 in version 1, recoded; 24 bit fixed point in versions 2 and 3, copied
-          if (head.version == 1) {
-            val scale = (1 shl fractional).toDouble()
-            recodeKept(reader, gzip, count, 6, 9, kept, cancelled) { from, at, to, into ->
-              for (axis in 0 until 3) putFixed24(into, to + 3 * axis, halfToFloat(from, at + 2 * axis) * scale)
-            }
-          } else {
-            copyKept(reader, gzip, count, 9, kept, cancelled)
-          }
-          // Alphas, colours, scales: the same in every version
-          for (size in listOf(1, 3, 3)) copyKept(reader, gzip, count, size, kept, cancelled)
-          // Rotations: the smallest three of version 3 recoded, the 3 bytes of versions 1 and 2 copied
-          if (head.rotationBytes == 4) {
-            recodeKept(reader, gzip, count, 4, 3, kept, cancelled) { from, at, to, into ->
-              firstThreeOfSmallestThree(from, at, into, to)
-            }
-          } else {
-            copyKept(reader, gzip, count, 3, kept, cancelled)
-          }
-          if (head.shBytes > 0) copyKept(reader, gzip, count, head.shBytes, kept, cancelled)
-          // The rest of the source, to the end of its gzip stream: extensions or bytes past the data are not copied,
-          // but a cut trailer or a wrong CRC means the points read may not be those that were written
-          reader.drain(cancelled)
-          gzip.finish()
-          gzip.flush()
+          payloadOf(raw, head, zstd).use { payload -> writeSpz(Reader(payload), head, kept, out, cancelled) }
         }
-      }
       is SplatProbe.Ply ->
         input.use { raw ->
           val reader = Reader(BufferedInputStream(raw, 1 shl 16))
@@ -272,6 +262,73 @@ internal object SplatReducer {
           buffered.flush()
         }
     }
+  }
+
+  /** Writes the [kept] points of the data of an SPZ [reader] gives, from its header on, as version 2 into [out] */
+  private fun writeSpz(
+    reader: Reader,
+    head: SplatProbe.Spz,
+    kept: BitSet,
+    out: OutputStream,
+    cancelled: () -> Boolean,
+  ) {
+    val count = countOf(head)
+    val header = ByteArray(16)
+    reader.read(header, 16)
+    val fractional = fractionalBitsOf(head)
+    ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN)
+      .putInt(4, SplatModuleFormat.SPZ_VERSION)
+      .putInt(8, kept.cardinality())
+    // Degree 4 of version 4 is written as degree 3, the most the module reads
+    header[12] = minOf(head.shDegree, MAX_MODULE_SH_DEGREE).toByte()
+    header[13] = fractional.toByte()
+    header[14] = (header[14].toInt() and 0x2.inv()).toByte()
+    header[15] = 0
+    val gzip = GZIPOutputStream(BufferedOutputStream(NoClose(out), 1 shl 16), 1 shl 16)
+    gzip.write(header)
+    // Positions: float16 in version 1, recoded; 24 bit fixed point in versions 2 to 4, copied
+    if (head.version == 1) {
+      val scale = (1 shl fractional).toDouble()
+      recodeKept(reader, gzip, count, 6, 9, kept, cancelled) { from, at, to, into ->
+        for (axis in 0 until 3) putFixed24(into, to + 3 * axis, halfToFloat(from, at + 2 * axis) * scale)
+      }
+    } else {
+      copyKept(reader, gzip, count, 9, kept, cancelled)
+    }
+    // Alphas, colours, scales: the same in every version
+    for (size in listOf(1, 3, 3)) copyKept(reader, gzip, count, size, kept, cancelled)
+    // Rotations: the smallest three of versions 3 and 4 recoded, the 3 bytes of versions 1 and 2 copied
+    if (head.rotationBytes == 4) {
+      recodeKept(reader, gzip, count, 4, 3, kept, cancelled) { from, at, to, into ->
+        firstThreeOfSmallestThree(from, at, into, to)
+      }
+    } else {
+      copyKept(reader, gzip, count, 3, kept, cancelled)
+    }
+    // Harmonics: copied, the first 15 coefficients of a point of degree 4 (the coefficient is the slow axis)
+    val written = 3 * SplatHeader.shCoefficients(minOf(head.shDegree, MAX_MODULE_SH_DEGREE))
+    if (written == head.shBytes) {
+      if (head.shBytes > 0) copyKept(reader, gzip, count, head.shBytes, kept, cancelled)
+    } else {
+      recodeKept(reader, gzip, count, head.shBytes, written, kept, cancelled) { from, at, to, into ->
+        System.arraycopy(from, at, into, to, written)
+      }
+    }
+    // The rest of the source, to the end of its gzip stream or of its last ZSTD stream: extensions or bytes past the
+    // data are not copied, but a cut trailer, a wrong CRC or a stream that does not end where it should means the
+    // points read may not be those that were written
+    reader.drain(cancelled)
+    gzip.finish()
+    gzip.flush()
+  }
+
+  /**
+   * The data of the SPZ [head] read from its file [raw] as versions 1 to 3 hold it: their gzip stream inflated, or for
+   * version 4 its streams decompressed by [zstd] one after the other behind a header of 16 bytes ([V4Payload])
+   */
+  private fun payloadOf(raw: InputStream, head: SplatProbe.Spz, zstd: SplatZstd): InputStream {
+    val buffered = BufferedInputStream(raw, 1 shl 16)
+    return if (head.isZstd) V4Payload(buffered, head, zstd) else GZIPInputStream(buffered, 1 shl 16)
   }
 
   private fun copyKept(
@@ -449,6 +506,177 @@ internal object SplatReducer {
         if (n < 0) return
       }
     }
+  }
+
+  /**
+   * The data of the version 4 SPZ [head] read from its file [input] as versions 1 to 3 hold it in their gzip stream: a
+   * header of 16 bytes made from its clear one (magic, version, points, degree, fractional bits, flags, 0), then its
+   * arrays, each the stream of its table of contents decompressed by [zstd] within its own bytes of the file. Its
+   * extensions are skipped (they are not copied). Stops with [SplatFileProblem.DAMAGED] on a clear header that is not
+   * the one probed, a table that does not match the arrays (SplatHeader.v4StreamSizes), a stream the decoder rejects
+   * or that gives more or fewer bytes than its array, or that leaves some of its bytes unread, and bytes after the last
+   * stream (Niantic's reader asks the same). Niantic's writer gives its ZSTD frames no checksum: a byte changed inside
+   * the data of a stream may go through unseen, as it would in Niantic's reader, harmless to the module (every field
+   * of the arrays is a byte, so no size and no number goes wrong). Closing it closes the decoder of the stream being
+   * read and the file
+   */
+  private class V4Payload(private val input: InputStream, head: SplatProbe.Spz, private val zstd: SplatZstd) :
+    InputStream() {
+    private val header = ByteArray(16)
+    private var headerLeft = 16
+    private val compressed: LongArray
+    private val sizes: LongArray
+    private var stream = -1
+    private var slice: Bounded? = null
+    private var current: InputStream? = null
+    private var left = 0L
+    private var ended = false
+
+    init {
+      val clear = readFully(32)
+      val fields = ByteBuffer.wrap(clear).order(ByteOrder.LITTLE_ENDIAN)
+      val count = fields.getInt(8).toLong() and 0xffffffffL
+      val degree = clear[12].toInt() and 0xff
+      val streams = clear[15].toInt() and 0xff
+      val toc = fields.getInt(16).toLong() and 0xffffffffL
+      if (fields.getInt(0) != SplatHeader.SPZ_MAGIC || fields.getInt(4) != 4) damaged("not a version 4 SPZ")
+      if (count != head.gaussians || degree != head.shDegree || toc != head.tocOffset) {
+        damaged("a header of $count points of degree $degree, not the one probed")
+      }
+      sizes = SplatHeader.v4StreamSizes(count, degree, streams) ?: damaged("$streams streams for degree $degree")
+      if (toc < 32) damaged("table of contents at $toc")
+      skipFully(toc - 32)
+      val table = ByteBuffer.wrap(readFully(16 * streams)).order(ByteOrder.LITTLE_ENDIAN)
+      compressed = LongArray(streams)
+      for (i in 0 until streams) {
+        compressed[i] = table.long
+        val decompressed = table.long
+        if (compressed[i] < 0) damaged("stream $i of ${compressed[i]} compressed bytes")
+        if (decompressed != sizes[i]) damaged("stream $i of $decompressed bytes, ${sizes[i]} expected")
+      }
+      ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).putInt(SplatHeader.SPZ_MAGIC).putInt(4)
+        .putInt(count.toInt())
+      header[12] = clear[12]
+      header[13] = clear[13]
+      header[14] = clear[14]
+    }
+
+    override fun read(): Int {
+      val one = ByteArray(1)
+      return if (read(one, 0, 1) < 0) -1 else one[0].toInt() and 0xff
+    }
+
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
+      if (len == 0) return 0
+      if (headerLeft > 0) {
+        val n = minOf(len, headerLeft)
+        System.arraycopy(header, 16 - headerLeft, b, off, n)
+        headerLeft -= n
+        return n
+      }
+      while (true) {
+        val source = current ?: if (next()) continue else return -1
+        if (left == 0L) {
+          endStream(source)
+          continue
+        }
+        val n =
+          try {
+            source.read(b, off, minOf(len.toLong(), left).toInt())
+          } catch (e: IOException) {
+            damaged("stream $stream: ${e.message ?: e.javaClass.simpleName}")
+          } catch (e: RuntimeException) {
+            damaged("stream $stream: ${e.message ?: e.javaClass.simpleName}")
+          }
+        if (n < 0) damaged("stream $stream ends after ${sizes[stream] - left} of its ${sizes[stream]} bytes")
+        left -= n
+        if (n > 0) return n
+      }
+    }
+
+    /** The stream read to its end: nothing more than its array, every byte of its slice of the file used */
+    private fun endStream(source: InputStream) {
+      val more =
+        try {
+          source.read()
+        } catch (e: IOException) {
+          damaged("stream $stream after its data: ${e.message ?: e.javaClass.simpleName}")
+        } catch (e: RuntimeException) {
+          damaged("stream $stream after its data: ${e.message ?: e.javaClass.simpleName}")
+        }
+      if (more >= 0) damaged("stream $stream holds more than its ${sizes[stream]} bytes")
+      if ((slice?.remaining ?: 0L) > 0) damaged("stream $stream leaves ${slice?.remaining} of its bytes unread")
+      source.close()
+      current = null
+    }
+
+    /** Opens the next stream; false after the last one, once the file is checked to end there */
+    private fun next(): Boolean {
+      if (stream + 1 >= sizes.size) {
+        if (!ended) {
+          ended = true
+          if (input.read() >= 0) damaged("bytes after the last stream")
+        }
+        return false
+      }
+      stream++
+      val bounded = Bounded(input, compressed[stream])
+      slice = bounded
+      current = zstd.open(bounded)
+      left = sizes[stream]
+      return true
+    }
+
+    override fun close() {
+      try {
+        current?.close()
+      } finally {
+        current = null
+        input.close()
+      }
+    }
+
+    private fun readFully(count: Int): ByteArray {
+      val bytes = ByteArray(count)
+      var read = 0
+      while (read < count) {
+        val n = input.read(bytes, read, count - read)
+        if (n < 0) damaged("the file ends in its header or its table of contents")
+        read += n
+      }
+      return bytes
+    }
+
+    private fun skipFully(count: Long) {
+      var left = count
+      val scratch = ByteArray(8192)
+      while (left > 0) {
+        val n = input.read(scratch, 0, minOf(left, scratch.size.toLong()).toInt())
+        if (n < 0) damaged("the file ends in its extensions")
+        left -= n
+      }
+    }
+
+    private fun damaged(why: String): Nothing = throw SplatReadException(SplatFileProblem.DAMAGED, why)
+  }
+
+  /** At most [remaining] bytes of [input], one stream of a version 4 file; its close leaves [input] open */
+  private class Bounded(private val input: InputStream, var remaining: Long) : InputStream() {
+    override fun read(): Int {
+      if (remaining <= 0) return -1
+      val c = input.read()
+      if (c >= 0) remaining--
+      return c
+    }
+
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
+      if (remaining <= 0) return -1
+      val n = input.read(b, off, minOf(len.toLong(), remaining).toInt())
+      if (n > 0) remaining -= n
+      return n
+    }
+
+    override fun close() = Unit
   }
 
   /** [out] whose close does nothing: the caller owns it */

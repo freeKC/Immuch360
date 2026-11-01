@@ -11,7 +11,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -19,6 +21,9 @@ import 'package:logging/logging.dart';
 import 'package:window_manager/window_manager.dart';
 
 final _log = Logger('DesktopFullScreen');
+
+/// What the app tells the runner of its window (windows/runner/flutter_window.cpp)
+const _windowChannel = MethodChannel('immuch360/window');
 
 /// The window of the app, behind a class of its own so that the tests replace window_manager, which needs the runner
 class DesktopWindow {
@@ -28,6 +33,27 @@ class DesktopWindow {
 
   /// While true, the close button of the window only tells the listeners (onWindowClose), see close_guard.dart
   Future<void> setPreventClose(bool preventClose) => windowManager.setPreventClose(preventClose);
+
+  /// The window hides as soon as the close is decided, before the app ends its own work (close_sequence.dart): the
+  /// end of the process may still wait for a native call (an SMB share that stopped answering holds a libsmb2 call up
+  /// to 30 s, which the end of the Dart VM waits for), and a window left on screen meanwhile would freeze.
+  /// - Windows: the runner is told, hides the window and ends the process a few seconds later if it has not ended by
+  ///   then (windows/runner/close_watchdog.cpp).
+  /// - Linux and macOS: window_manager hides it. The process may linger without a window while such a call returns.
+  Future<void> prepareClose() async {
+    try {
+      if (CurrentPlatform.isWindows) {
+        await _windowChannel.invokeMethod<void>('closing').timeout(_prepareCloseBound);
+      } else if (CurrentPlatform.isDesktop) {
+        await windowManager.hide().timeout(_prepareCloseBound);
+      }
+    } catch (error) {
+      // An older runner, or a window that does not answer: the window closes as it did
+      _log.warning('The window was not hidden at the close: $error');
+    }
+  }
+
+  static const _prepareCloseBound = Duration(milliseconds: 500);
 
   /// Closes the window and ends the app, once the close guard let it go
   Future<void> destroy() => windowManager.destroy();

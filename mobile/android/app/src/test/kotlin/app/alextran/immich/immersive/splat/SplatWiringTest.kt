@@ -127,6 +127,68 @@ class SplatWiringTest {
     assertFalse(bodyOf(activity, "private fun showSplat(").contains("scheduleInfoHide"))
   }
 
+  @Test
+  fun `a turn of the right thumbstick turns the navigator about the head, never through a new anchor`() {
+    // FreeKC's report of 1 November 2026: a turn after a glide put him back in the middle of the scene. The turn is
+    // composed in the navigator with the place the glide reached, before the one conversion of the pose (modulePose)
+    val turn = bodyOf(stage, "fun turn(sdkDegrees: Float)")
+    assertFalse(turn.contains("anchor"))
+    assertInOrder(turn, "if (!splat.shown) return", "splat.pendingTurn += sdkDegrees")
+    val frame = bodyOf(stage, "fun onFrame(head: Pose, held: Int, seconds: Double)")
+    assertInOrder(
+      frame,
+      "if (splat.reanchor)",
+      "splat.pendingTurn = 0f",
+      "anchorAndPlace(splat, head.t, head.forward())",
+      "return",
+      "splat.navigator.turnInSdk(head.t.x.toDouble(), head.t.z.toDouble(), turned.toDouble())",
+      "update(splat, head.t, head.forward(), right, forward, seconds)",
+      "move(splat, entity, poseOf(splat, navigation))",
+    )
+    assertEquals(1, Regex("turnInSdk\\(").findAll(stage).count())
+    // Reset and Turn upright place the splat again from the head: a turn not made yet goes with them
+    assertInOrder(bodyOf(stage, "fun reset()"), "splat.pendingTurn = 0f", "splat.reanchor = true")
+    assertInOrder(bodyOf(stage, "fun turnUpright()"), "splat.pendingTurn = 0f", "splat.reanchor = true")
+    // The pose of the root and the place in its frame, through one pure function (SplatTurnPoseTest)
+    assertTrue(bodyOf(stage, "private fun poseOf(").contains("SplatPose.of(frame, position, rotation)"))
+  }
+
+  @Test
+  fun `the viewer gives the right thumbstick of a splat to the stage, and Reset to the panel only`() {
+    val pressed = bodyOf(activity, "override fun onButtonsPressed(controllerBits: Int, handBits: Int)")
+    assertTrue(pressed.contains("sceneTurns = request?.isSplat == true"))
+    assertInOrder(
+      pressed,
+      "ImmersiveControls.Action.TURN_RIGHT ->",
+      "val reversed = request?.reverseThumbstickTurn == true",
+      "val degrees = ImmersiveControls.snapTurnDegrees(action, SNAP_TURN_DEGREES, reversed)",
+      "if (request?.isSplat == true) {",
+      "splatStage?.turn(degrees)",
+      "} else if (isStereoPhoto) {",
+    )
+    // No stick click puts a scene or a splat back at its start: Reset is a button of the panel
+    assertFalse(pressed.contains("RESET"))
+    assertFalse(pressed.contains("resetScene()"))
+    assertTrue(activity.contains("onPanelClick(resetButton) { resetScene() }"))
+    // While a splat shows the right thumbstick only turns: up and down never hide the turn of a push (ControllerEdges)
+    assertTrue(activity.contains("override fun rightStickTurnsOnly(): Boolean = request?.isSplat == true"))
+    // The panel of a splat says that the right thumbstick turns
+    assertTrue(
+      bodyOf(activity, "private fun updateSceneControls()")
+        .contains("splat -> SplatTexts.label(media?.stereoLabels.orEmpty(), SplatTexts.LABEL_HINT)")
+    )
+  }
+
+  @Test
+  fun `the input system asks the viewer at every frame whether the right thumbstick only turns`() {
+    val input = source("src/main/kotlin/app/alextran/immich/immersive/ImmersiveInputSystem.kt")
+    assertInOrder(
+      bodyOf(input, "override fun execute()"),
+      "edges.rightStickTurnsOnly = listener.rightStickTurnsOnly()",
+      "edges.pressed(entity.id, active, type.name, controller.buttonState, now())",
+    )
+  }
+
   /** [parts] in [text], each after the one before */
   private fun assertInOrder(text: String, vararg parts: String) {
     var from = 0

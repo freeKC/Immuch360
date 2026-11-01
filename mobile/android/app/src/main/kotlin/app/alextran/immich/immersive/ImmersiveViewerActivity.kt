@@ -1408,11 +1408,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun updateSceneControls() {
     val media = request
     val scene = media?.isScene == true
-    // A splat has the controls of a scene: the glide, Reset, no previous or next (lot S5)
+    // A splat has the controls of a scene: the glide, Reset, no previous or next (lot S5), and its right thumbstick
+    // turns it
     val splat = media?.isSplat == true
     hintView?.text =
       when {
-        scene || splat -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
+        splat -> SplatTexts.label(media?.stereoLabels.orEmpty(), SplatTexts.LABEL_HINT)
+        scene -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
         // A flat screen the grips move and resize has its own mapping
         media?.isMovableScreen == true -> getString(R.string.immersive_screen_hint)
         else -> getString(R.string.immersive_hint)
@@ -2094,6 +2096,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   override fun wantsControllerRays(): Boolean = gripsFollowed
 
+  /** While a splat shows, its right thumbstick only turns: a push that crosses down or up first still turns */
+  override fun rightStickTurnsOnly(): Boolean = request?.isSplat == true
+
   override fun onControllerRays(rays: Map<GripSide, Pose>) {
     controllerRays = rays
   }
@@ -2281,6 +2286,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         // A flat screen leaves its grips to ScreenGrip, and a hand that holds it moves it nearer or farther
         screenGrabbable = gripsFollowed,
         screenHeld = screenGrip.grabbing != null || screenGrip.stretching,
+        // A splat surrounds the user: the right thumbstick turns it (FreeKC's report of 1 November 2026)
+        sceneTurns = request?.isSplat == true,
       )
     if (!focused) {
       Log.w(TAG, "button press while the session was not reported focused: taken as focused (resumed=$resumed)")
@@ -2304,15 +2311,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveControls.Action.PREVIOUS -> navigate(-1, fromThumbstick = true)
         ImmersiveControls.Action.NEXT -> navigate(1, fromThumbstick = true)
         ImmersiveControls.Action.TURN_LEFT,
-        ImmersiveControls.Action.TURN_RIGHT ->
-          if (isStereoPhoto) {
+        ImmersiveControls.Action.TURN_RIGHT -> {
+          val reversed = request?.reverseThumbstickTurn == true
+          val degrees = ImmersiveControls.snapTurnDegrees(action, SNAP_TURN_DEGREES, reversed)
+          if (request?.isSplat == true) {
+            // A splat turns about the user by the step of the spheres, the place the glide reached kept
+            splatStage?.turn(degrees)
+          } else if (isStereoPhoto) {
             placeStereoQuad()
           } else if (isFlatVideo) {
             placeFlatVideo()
           } else {
-            val reversed = request?.reverseThumbstickTurn == true
-            turnFromThumbstick(ImmersiveControls.snapTurnDegrees(action, SNAP_TURN_DEGREES, reversed))
+            turnFromThumbstick(degrees)
           }
+        }
         ImmersiveControls.Action.STICK_UP ->
           when {
             isVideo -> seekFromThumbstick(1)
@@ -2334,7 +2346,6 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         ImmersiveControls.Action.SHOW_PANEL -> setInfoVisible(true, reposition = true)
         ImmersiveControls.Action.PLAY_PAUSE -> togglePlayPause()
-        ImmersiveControls.Action.RESET -> resetScene()
       }
     }
   }
@@ -3907,7 +3918,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     sceneDetails = emptyList()
   }
 
-  /** Reset, from the panel or a click of a thumbstick: the camera of the photo at the head again, the scene whole. */
+  /** Reset, from the panel: the camera of the photo at the head again, the scene whole. */
   private fun resetScene() {
     if (request?.isSplat == true) {
       splatStage?.reset()

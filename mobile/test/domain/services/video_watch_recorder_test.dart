@@ -58,6 +58,51 @@ class _LateRows implements WatchProgressRepository {
   Future<void> close() async {}
 }
 
+/// A database whose writes end when the test says (a disk busy at the close of the window)
+class _HeldWrites implements WatchProgressRepository {
+  final written = <WatchProgress>[];
+  final hold = Completer<void>();
+
+  @override
+  Future<List<WatchProgress>> load({int maxRows = watchProgressMaxRows}) async => const [];
+
+  @override
+  Future<void> upsert(WatchProgress row) async {
+    await hold.future;
+    written.add(row);
+  }
+
+  @override
+  Future<void> delete(String key) async {}
+
+  @override
+  Future<void> close() async {}
+}
+
+/// A database that refuses its first write (a disk full for a moment), then writes
+class _RefusesFirstWrite implements WatchProgressRepository {
+  final written = <WatchProgress>[];
+  var refused = false;
+
+  @override
+  Future<List<WatchProgress>> load({int maxRows = watchProgressMaxRows}) async => const [];
+
+  @override
+  Future<void> upsert(WatchProgress row) async {
+    if (!refused) {
+      refused = true;
+      throw StateError('disk full');
+    }
+    written.add(row);
+  }
+
+  @override
+  Future<void> delete(String key) async {}
+
+  @override
+  Future<void> close() async {}
+}
+
 /// The player of a page as the recorder hears it: the test tells its state, and it records what it was asked
 class _Player extends VideoPlayerNotifier {
   final startsAt = <Duration>[];
@@ -125,6 +170,7 @@ void main() {
 
   Duration? saved() => store.find(key)?.position;
 
+  setUp(VideoWatchRecorder.forgetOpen);
   tearDown(() => container.dispose());
 
   test('a film resumes where it was left, once the player is ready', () {
@@ -266,6 +312,91 @@ void main() {
       async.elapse(const Duration(seconds: 10));
       player.emit(position: minute * 35);
       expect(saved(), minute * 31, reason: 'nothing once it is gone');
+    });
+  });
+
+  group('the close of the window', () {
+    test('a film that plays saves where it is at once, then hears nothing of its player', () {
+      fakeAsync((async) {
+        setUpWith(async, []);
+        final recorder = recorderFor();
+        player.emit(position: minute * 30, duration: film, status: VideoPlaybackStatus.playing);
+        async.elapse(const Duration(seconds: 2));
+        player.emit(position: minute * 31);
+
+        var ended = false;
+        unawaited(VideoWatchRecorder.closeAll().then((_) => ended = true));
+        expect(saved(), minute * 31, reason: 'at once: no frame comes after a close');
+        async.flushMicrotasks();
+        expect(ended, isTrue);
+
+        // The players are disposed next: what their teardown says is not where the film was
+        player.emit(position: Duration.zero, status: VideoPlaybackStatus.paused);
+        async.elapse(const Duration(seconds: 10));
+        expect(saved(), minute * 31);
+        recorder.dispose();
+        async.flushMicrotasks();
+        expect(saved(), minute * 31);
+      });
+    });
+
+    test('it ends once the saves are written, and saves nothing of a page that went before', () {
+      fakeAsync((async) {
+        final writes = _HeldWrites();
+        container = ProviderContainer(
+          overrides: [
+            watchProgressRepositoryProvider.overrideWithValue(writes),
+            watchProgressClockProvider.overrideWithValue(() => now),
+          ],
+        );
+        store = container.read(watchProgressProvider.notifier);
+        async.flushMicrotasks();
+        player = _Player();
+        final gone = recorderFor();
+        gone.dispose();
+        recorderFor();
+        player.emit(position: minute * 50, duration: film, status: VideoPlaybackStatus.playing);
+
+        var ended = false;
+        unawaited(VideoWatchRecorder.closeAll().then((_) => ended = true));
+        async.elapse(const Duration(seconds: 1));
+        expect(ended, isFalse, reason: 'the save is not written yet');
+
+        writes.hold.complete();
+        async.flushMicrotasks();
+        expect(ended, isTrue);
+        expect(writes.written.map((row) => row.position), [minute * 50]);
+      });
+    });
+
+    test('a write that failed earlier in the session does not cost the save of the close', () {
+      fakeAsync((async) {
+        final writes = _RefusesFirstWrite();
+        container = ProviderContainer(
+          overrides: [
+            watchProgressRepositoryProvider.overrideWithValue(writes),
+            watchProgressClockProvider.overrideWithValue(() => now),
+          ],
+        );
+        store = container.read(watchProgressProvider.notifier);
+        async.flushMicrotasks();
+        // A film seen earlier, whose save the database refused
+        store.record(const WatchKey('asset:earlier'), position: minute * 20, duration: film);
+        async.flushMicrotasks();
+        expect(writes.refused, isTrue);
+
+        player = _Player();
+        recorderFor();
+        player.emit(position: minute * 50, duration: film, status: VideoPlaybackStatus.playing);
+        var ended = false;
+        Object? failed;
+        unawaited(VideoWatchRecorder.closeAll().then((_) => ended = true, onError: (Object error) => failed = error));
+        async.flushMicrotasks();
+
+        expect(failed, isNull);
+        expect(ended, isTrue);
+        expect(writes.written.map((row) => (row.key, row.position)), [(key.key, minute * 50)]);
+      });
     });
   });
 

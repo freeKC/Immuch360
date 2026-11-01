@@ -158,8 +158,28 @@ class FakePlaybackEngine implements PlaybackEngine {
     return frame;
   }
 
+  /// While set, [dispose] waits for it: a libmpv that does not answer at the close of the window
+  Completer<void>? holdDispose;
+
+  /// Whether [silence] was called
+  bool silenced = false;
+
+  @override
+  void silence() {
+    calls.add('silence');
+    silenced = true;
+  }
+
+  /// How many times [dispose] was called: a player is disposed once
+  int disposeCalls = 0;
+
   @override
   Future<void> dispose() async {
+    disposeCalls++;
+    final hold = holdDispose;
+    if (hold != null) {
+      await hold.future;
+    }
     disposed = true;
     await _events.close();
   }
