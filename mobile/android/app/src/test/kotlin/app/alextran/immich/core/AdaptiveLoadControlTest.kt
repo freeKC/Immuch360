@@ -32,21 +32,27 @@ class AdaptiveLoadControlTest {
   private val timeline = SinglePeriodTimeline(720_000_000L, true, false, false, null, MediaItem.EMPTY)
   private val periodId = MediaSource.MediaPeriodId(timeline.getUidOfPeriod(0))
 
-  private fun ask(positionMs: Long, bufferedMs: Long, rebuffering: Boolean): Boolean =
-    control.shouldStartPlayback(
-      LoadControl.Parameters(
-        PlayerId.UNSET,
-        timeline,
-        periodId,
-        positionMs * 1000L,
-        bufferedMs * 1000L,
-        1f,
-        true,
-        rebuffering,
-        C.TIME_UNSET,
-        C.TIME_UNSET,
-      )
+  private fun parameters(positionMs: Long, bufferedMs: Long, rebuffering: Boolean) =
+    LoadControl.Parameters(
+      PlayerId.UNSET,
+      timeline,
+      periodId,
+      positionMs * 1000L,
+      bufferedMs * 1000L,
+      1f,
+      true,
+      rebuffering,
+      C.TIME_UNSET,
+      C.TIME_UNSET,
     )
+
+  private fun ask(positionMs: Long, bufferedMs: Long, rebuffering: Boolean): Boolean =
+    control.shouldStartPlayback(parameters(positionMs, bufferedMs, rebuffering))
+
+  /** What Media3 asks the load control while the video plays (not after a stall), with [bufferedMs] ahead */
+  private fun playing(positionMs: Long, bufferedMs: Long) {
+    control.shouldContinueLoading(parameters(positionMs, bufferedMs, rebuffering = false))
+  }
 
   /** What the link brings, in tenths of the film: 1 MB/s is 10 */
   private var tenths = 0L
@@ -95,10 +101,23 @@ class AdaptiveLoadControlTest {
   @Test
   fun `a stall with the media Media3 asks already there plays at once, as Media3 would`() {
     slowLinkMeasured()
-    // A decoder that fell behind, a new surface: the player waits with 6.6 s ahead (measured on an emulator over a
+    // A decoder that fell behind, a new surface: the player stopped with 6.6 s ahead (measured on an emulator over a
     // link at a quarter of the film: 30 s of wait for that each time, for 3 s of play)
+    playing(positionMs = 59_900L, bufferedMs = 6_700L)
     assertTrue(ask(positionMs = 60_000L, bufferedMs = 6_600L, rebuffering = true))
     assertEquals(0L, control.targetMs)
+  }
+
+  @Test
+  fun `a stall whose buffer ran out waits for the link, even when its renderers get ready late`() {
+    slowLinkMeasured()
+    // The buffer runs out as the film plays
+    playing(positionMs = 59_000L, bufferedMs = 900L)
+    playing(positionMs = 59_800L, bufferedMs = 150L)
+    // Audio and video interleaved by 2 s: the renderers are ready, and Media3 asks, only once 2.2 s are in (review of
+    // 1 November 2026: taken for a decoder that fell behind, it played at once, and stalled again 2 s later)
+    assertFalse(ask(positionMs = 60_000L, bufferedMs = 2_200L, rebuffering = true))
+    assertEquals(30_000L, control.targetMs)
   }
 
   @Test

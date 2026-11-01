@@ -110,9 +110,13 @@ object StreamingLoadControl {
  *
  * Also plays at once:
  * - a video whose link is not measured (a file of the device): [delegate] decides, as before;
- * - a wait that begins with what [delegate] asks already buffered: the link did not run out, a decoder fell behind,
- *   the picture got a new surface, or a seek landed inside the buffer (measured on an emulator, 31 October 2026: a
- *   decoder that fell behind with 6.6 s buffered waited 30 s for the link each time, for 3 s of play);
+ * - a stall that began with what [delegate] asks after a stall already buffered: the link did not run out, a decoder
+ *   fell behind or the picture got a new surface (measured on an emulator, 31 October 2026: a decoder that fell behind
+ *   with 6.6 s buffered waited 30 s for the link each time, for 3 s of play). What was buffered is the last measure
+ *   while the video played, not the first ask of the wait: Media3 asks only once its renderers are ready, which a
+ *   file whose audio and video are interleaved by 2 s reaches only with 2 s in, every stall then taken for a decoder
+ *   (review of 1 November 2026);
+ * - a wait at the start or after a seek whose first ask finds what [delegate] asks: a seek inside the buffer;
  * - a buffer that holds all [delegate] lets it load (its bytes cap): nothing more would come;
  * - a play asked during a wait at the start, more than a second after it began: the user decides.
  */
@@ -143,6 +147,10 @@ class AdaptiveLoadControl(
   @Volatile
   var minimumAt: Long = -1L
     private set
+
+  /** The buffered position of the last measure while the video played (not after a stall), in us, and its period */
+  private var playingBufferedUs = C.TIME_UNSET
+  private var playingPeriodUid: Any? = null
 
   private var lastCallAt = -1L
   private var waitStartedAt = -1L
@@ -200,9 +208,9 @@ class AdaptiveLoadControl(
       playAtWaitStart = parameters.playWhenReady
       rebuffering = parameters.rebuffering
       minimumAt = -1L
-      // Media3 asks only once its renderers are ready: a wait whose first ask finds what the delegate wants is not
-      // the link's, it plays as soon as the player can
-      started = delegateStarts
+      // A wait that is not the link's plays as soon as the player can: a stall that began with media enough for it,
+      // a start or a seek that finds it at the first ask
+      started = delegateStarts && (!parameters.rebuffering || bufferedWhenStalledMs(parameters) >= LinkStartRule.REBUFFER_MS)
     }
     lastCallAt = now
     val bufferedMs = parameters.bufferedDurationUs / 1000L
@@ -232,7 +240,17 @@ class AdaptiveLoadControl(
     return started
   }
 
+  /** The media ahead of the position of a stall when the video stopped: the last measure while it played */
+  private fun bufferedWhenStalledMs(parameters: LoadControl.Parameters): Long {
+    if (playingBufferedUs == C.TIME_UNSET || playingPeriodUid != parameters.mediaPeriodId.periodUid) return 0L
+    return ((playingBufferedUs - parameters.playbackPositionUs) / 1000L).coerceAtLeast(0L)
+  }
+
   private fun noteTimeline(parameters: LoadControl.Parameters) {
+    if (!parameters.rebuffering) {
+      playingBufferedUs = parameters.playbackPositionUs + parameters.bufferedDurationUs
+      playingPeriodUid = parameters.mediaPeriodId.periodUid
+    }
     val timeline = parameters.timeline
     var durationMs = -1L
     if (!timeline.isEmpty) {
