@@ -1,0 +1,1 @@
+[2026-11-01T10:55:38Z INFO  cubecl_wgpu::runtime] Using adapter AdapterInfo { name: "NVIDIA GeForce RTX 4060 Laptop GPU", vendor: 4318, device: 10400, device_type: DiscreteGpu, driver: "NVIDIA", driver_info: "616.56", backend: Vulkan }
