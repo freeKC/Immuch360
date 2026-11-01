@@ -41,7 +41,9 @@
       "-G",
       "Ninja",
       "-DCMAKE_C_COMPILER=cl.exe",
-      "-DCMAKE_CXX_COMPILER=cl.exe"
+      "-DCMAKE_CXX_COMPILER=cl.exe",
+      "-DCMAKE_C_FLAGS_INIT=/arch:AVX2",
+      "-DCMAKE_CXX_FLAGS_INIT=/arch:AVX2"
     ],
     "linux-x64": [
       "-G",

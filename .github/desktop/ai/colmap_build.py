@@ -453,9 +453,17 @@ def cmake_options(lock: dict, system: str, vcpkg: pathlib.Path, installed: pathl
             f'-DGIT_COMMIT_ID={lock["colmap"]["commit"][:7]}', f'-DGIT_COMMIT_DATE={lock["colmap"]["date"]}']
 
 
-def configure_problems(log: str) -> list:
+def configure_problems(log: str, options: list = (), cache: str = '') -> list:
     problems = [f'the configure step does not say "{line}"' for line in CONFIGURE_SAYS if line not in log]
     problems += [f'the configure step says "{line}"' for line in CONFIGURE_NEVER if line in log]
+    # A flag given to start the flags of a language (/arch:AVX2 on Windows) must be in the flags CMake kept
+    for option in options:
+        match = re.fullmatch(r'-DCMAKE_(C|CXX)_FLAGS_INIT=(.+)', option)
+        if not match:
+            continue
+        kept = re.search(rf'^CMAKE_{match.group(1)}_FLAGS:STRING=(.*)$', cache, re.MULTILINE)
+        if not kept or match.group(2) not in kept.group(1).split():
+            problems.append(f'CMAKE_{match.group(1)}_FLAGS of the build does not hold {match.group(2)}')
     return problems
 
 
@@ -492,7 +500,12 @@ def command_build(args) -> int:
         ]), encoding='utf-8', newline='')
         print(f'Visual Studio: {studio}')
         run(['cmd.exe', '/d', '/c', str(script)])
-    problems = configure_problems(log.read_text(encoding='utf-8', errors='replace'))
+    cache = args.build / 'CMakeCache.txt'
+    problems = configure_problems(log.read_text(encoding='utf-8', errors='replace'), configure,
+                                  cache.read_text(encoding='utf-8', errors='replace') if cache.is_file() else '')
+    for line in re.findall(r'^CMAKE_(?:C|CXX)_FLAGS:STRING=.*$', cache.read_text(encoding='utf-8', errors='replace')
+                           if cache.is_file() else '', re.MULTILINE):
+        print(line)
     for problem in problems:
         print(f'::error::{problem}')
     if problems:
@@ -644,6 +657,8 @@ def build_info(lock: dict, system: str, ports: int) -> bytes:
         'CMake options: ' + ' '.join([*lock['cmake']['common'], *lock['cmake'][system]]),
         'Left out: the graphical interface (Qt), OpenGL and SiftGPU, CUDA, LSD, CGAL, CHOLMOD and SuiteSparse, ONNX '
         'Runtime, the dense reconstruction (MVS), the downloads (curl, OpenSSL), the tests',
+        *(['Processor: x86-64 with AVX2 (COLMAP and faiss built with /arch:AVX2)'] if system == 'windows-x64' else
+          ['Processor: x86-64 (faiss chooses its SIMD code at run time)']),
         *([f'Built by {run_url}'] if run_url else []),
         '',
     ]).encode()
