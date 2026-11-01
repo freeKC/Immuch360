@@ -24,9 +24,6 @@ final networkSplatsEnabledProvider = Provider<bool>((ref) {
 /// [path] without a share
 typedef SplatFileKey = ({String? sourceId, String path, int? size});
 
-/// The length the probe takes for a file of a share whose size is unknown: its rows are then not checked
-const _unknownLength = 1 << 50;
-
 /// What the head of the splat file of [key] says (see probeSplatHead). Tests replace it.
 final splatProbeProvider = FutureProvider.autoDispose.family<SplatProbe, SplatFileKey>((ref, key) async {
   final sourceId = key.sourceId;
@@ -41,5 +38,6 @@ final splatProbeProvider = FutureProvider.autoDispose.family<SplatProbe, SplatFi
   }
   final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(sourceId);
   final head = await fileSystem.readRange(key.path, 0, splatHeadBytes);
-  return probeSplatHead(head, key.size ?? _unknownLength);
+  // A size the share did not give leaves the end of the file to the headset (see probeSplatHead)
+  return probeSplatHead(head, key.size);
 });

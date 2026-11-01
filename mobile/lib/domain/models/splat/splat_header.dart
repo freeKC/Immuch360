@@ -195,8 +195,11 @@ String? splatToolOf(String comment) {
   return (name.length > splatMaxToolLength ? name.substring(0, splatMaxToolLength) : name).trim();
 }
 
-/// What [head], the first bytes of a file of [fileLength] bytes, says; only its first [splatHeadBytes] are read
-SplatProbe probeSplatHead(Uint8List head, int fileLength) {
+/// What [head], the first bytes of a file of [fileLength] bytes, says; only its first [splatHeadBytes] are read. A
+/// share may not give the size of a file (a WebDAV server without getcontentlength): with [fileLength] null, what
+/// needs the end of the file (the rows of a PLY, the end of the streams of a version 4 SPZ) is left to the headset,
+/// which reads the whole file and checks it again
+SplatProbe probeSplatHead(Uint8List head, int? fileLength) {
   final bytes = head.length > splatHeadBytes ? Uint8List.sublistView(head, 0, splatHeadBytes) : head;
   if (bytes.length >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b) {
     return _probeGzipSpz(bytes);
@@ -257,7 +260,7 @@ SplatProbe _probeGzipSpz(Uint8List bytes) {
   return SplatHead(format: SplatFormat.spz, formatVersion: version, gaussians: count, shDegree: degree);
 }
 
-SplatProbe _probeClearSpz(Uint8List bytes, int fileLength) {
+SplatProbe _probeClearSpz(Uint8List bytes, int? fileLength) {
   if (bytes.length < 8) {
     return const SplatRefused(SplatFileProblem.damaged, 'clear SPZ header cut');
   }
@@ -295,7 +298,7 @@ SplatProbe _probeClearSpz(Uint8List bytes, int fileLength) {
   if (sizes == null) {
     return SplatRefused(SplatFileProblem.damaged, '$streams streams for degree $degree');
   }
-  if (toc < 32 || toc + 16 * streams > fileLength) {
+  if (toc < 32 || (fileLength != null && toc + 16 * streams > fileLength)) {
     return SplatRefused(SplatFileProblem.damaged, 'table of contents at $toc out of the file');
   }
   final problem = _tocProblem(bytes, toc, sizes, fileLength);
@@ -306,9 +309,9 @@ SplatProbe _probeClearSpz(Uint8List bytes, int fileLength) {
 }
 
 /// What is wrong with the table of contents of a version 4 file at [toc] of its head [bytes], null when each stream
-/// decompresses to the size of its array ([sizes]) and the streams end with the file of [fileLength] bytes; a table
-/// past the head is left to the headset, which checks the same as it reads the file
-String? _tocProblem(Uint8List bytes, int toc, List<int> sizes, int fileLength) {
+/// decompresses to the size of its array ([sizes]) and the streams end with the file of [fileLength] bytes (when the
+/// share gave it); a table past the head is left to the headset, which checks the same as it reads the file
+String? _tocProblem(Uint8List bytes, int toc, List<int> sizes, int? fileLength) {
   final end = toc + 16 * sizes.length;
   if (end > bytes.length) {
     return null;
@@ -321,15 +324,17 @@ String? _tocProblem(Uint8List bytes, int toc, List<int> sizes, int fileLength) {
     if (decompressed != sizes[i]) {
       return 'stream $i of $decompressed bytes, ${sizes[i]} expected';
     }
-    if (compressed < 0 || compressed > fileLength - streamsEnd) {
+    if (compressed < 0 || (fileLength != null && compressed > fileLength - streamsEnd)) {
       return 'stream $i runs past the end of the file';
     }
     streamsEnd += compressed;
   }
-  return streamsEnd == fileLength ? null : 'the streams end at $streamsEnd, the file at $fileLength';
+  return fileLength == null || streamsEnd == fileLength
+      ? null
+      : 'the streams end at $streamsEnd, the file at $fileLength';
 }
 
-SplatProbe _probePly(Uint8List bytes, int fileLength) {
+SplatProbe _probePly(Uint8List bytes, int? fileLength) {
   final end = _indexOf(bytes, ascii.encode('end_header\n'));
   final endCr = _indexOf(bytes, ascii.encode('end_header\r\n'));
   final int headerBytes;
@@ -443,7 +448,7 @@ SplatProbe _probePly(Uint8List bytes, int fileLength) {
   if (count == 0) {
     return const SplatRefused(SplatFileProblem.damaged, 'no gaussian');
   }
-  if (headerBytes + count * rowBytes > fileLength) {
+  if (fileLength != null && headerBytes + count * rowBytes > fileLength) {
     return SplatRefused(SplatFileProblem.damaged, '$count rows of $rowBytes bytes do not fit in $fileLength');
   }
   return SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: count, shDegree: degree, tool: tool);

@@ -190,6 +190,24 @@ void main() {
       expect(request['gaussians'], 686);
     });
 
+    testWidgets('a version 4 SPZ of a share that does not give its size opens too', (tester) async {
+      // A WebDAV server without getcontentlength (review of 1 November 2026): the page has no size for the file
+      await pumpNetworkRouter(
+        tester,
+        home: SplatPage(sourceId: _source.id, path: '/axes_v4.spz'),
+        overrides: overrides(),
+      );
+
+      expect(find.text('686 gaussians, SPZ version 4'), findsOneWidget);
+      expect(find.byKey(splatRefusalKey), findsNothing);
+      await tester.tap(find.byKey(exploreSplatButtonKey));
+      await tester.pumpAndSettle();
+      final request = jsonDecode(immersiveApi.opened.single.stereoPair!) as Map<String, dynamic>;
+      expect(request['formatVersion'], 4);
+      // The headset reads the file again with its real length
+      expect(request['fileBytes'], 1);
+    });
+
     testWidgets('a PLY says the tool its comment names', (tester) async {
       await pumpPage(tester, '/axes.ply');
 
