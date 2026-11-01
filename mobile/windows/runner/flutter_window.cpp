@@ -14,7 +14,7 @@
 namespace {
 
 // The longest the process lives once Dart told of a close: its own work
-// (1.7 s at most, lib/desktop/window/close_sequence.dart) and the teardown
+// (1.5 s at most, lib/desktop/window/close_sequence.dart) and the teardown
 // of the engine
 constexpr DWORD kClosingMs = 6000;
 

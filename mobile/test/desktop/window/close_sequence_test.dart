@@ -1,7 +1,7 @@
 // The close of the window (close_sequence.dart, FreeKC's report of 1 November 2026: the window froze at a close): the
-// app ends its own work first, one step after the other, each bounded, so that a player, a media bridge, a share or a
-// database that does not answer never holds the close, which then lasts the sum of the bounds at most. What was
-// never made is not made for a close, and the logs go last.
+// app ends its own work first, one step after the other, each bounded, so that a player, a media bridge or a database
+// that does not answer never holds the close, which then lasts the sum of the bounds at most. What was never made is
+// not made for a close, the connections to the shares are left to the end of the process, and the logs go last.
 
 import 'dart:async';
 
@@ -154,13 +154,7 @@ void main() {
       addTearDown(container.dispose);
       container.read(networkConnectionsProvider);
       final steps = container.read(desktopCloseStepsProvider)();
-      expect(steps.map((step) => step.name), [
-        'the watch progress',
-        'the players',
-        'the media bridge',
-        'the shares',
-        'the logs',
-      ]);
+      expect(steps.map((step) => step.name), ['the watch progress', 'the players', 'the media bridge', 'the logs']);
       expect(steps.fold(Duration.zero, (sum, step) => sum + step.timeout), DesktopCloseBounds.total);
       expect(DesktopCloseBounds.player, lessThan(DesktopCloseBounds.players));
       expect(DesktopCloseBounds.total, lessThanOrEqualTo(const Duration(seconds: 2)));
@@ -184,81 +178,78 @@ void main() {
       expect(container.exists(networkConnectionsProvider), isFalse);
     });
 
-    test(
-      'a film playing, a player, a bridge, a share and a database that do not answer: the close ends within its bound, '
-      'the logs written last',
-      () {
-        fakeAsync((async) {
-          final order = <String>[];
-          final bridge = _HangingBridge(order);
-          late _HangingConnections connections;
-          final writes = _StuckWrites();
-          final container = ProviderContainer(
-            overrides: [
-              mediaBridgeProvider.overrideWithValue(bridge),
-              networkConnectionsProvider.overrideWith(
-                (ref) => connections = _HangingConnections(ref, ref.watch(mediaBridgeProvider), order),
-              ),
-              watchProgressRepositoryProvider.overrideWithValue(writes),
-              desktopCloseLogsProvider.overrideWithValue(() {
-                order.add('logs');
-                return Completer<void>().future;
-              }),
-            ],
-          );
-          addTearDown(container.dispose);
-          container.read(networkConnectionsProvider);
+    test('a film playing, a player, a bridge and a database that do not answer: the close ends within its bound, the '
+        'connections to the shares left as they are, the logs written last', () {
+      fakeAsync((async) {
+        final order = <String>[];
+        final bridge = _HangingBridge(order);
+        late _HangingConnections connections;
+        final writes = _StuckWrites();
+        final container = ProviderContainer(
+          overrides: [
+            mediaBridgeProvider.overrideWithValue(bridge),
+            networkConnectionsProvider.overrideWith(
+              (ref) => connections = _HangingConnections(ref, ref.watch(mediaBridgeProvider), order),
+            ),
+            watchProgressRepositoryProvider.overrideWithValue(writes),
+            desktopCloseLogsProvider.overrideWithValue(() {
+              order.add('logs');
+              return Completer<void>().future;
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(networkConnectionsProvider);
 
-          // A film that plays in a page
-          final store = container.read(watchProgressProvider.notifier);
-          async.flushMicrotasks();
-          final player = _Player();
-          const key = WatchKey('asset:film');
-          VideoWatchRecorder(
-            store: store,
-            player: player,
-            key: key,
-            rule: const WatchRule(),
-            duration: const Duration(minutes: 100),
-          ).start();
-          player.emit(
-            position: const Duration(minutes: 31),
-            duration: const Duration(minutes: 100),
-            status: VideoPlaybackStatus.playing,
-          );
+        // A film that plays in a page
+        final store = container.read(watchProgressProvider.notifier);
+        async.flushMicrotasks();
+        final player = _Player();
+        const key = WatchKey('asset:film');
+        VideoWatchRecorder(
+          store: store,
+          player: player,
+          key: key,
+          rule: const WatchRule(),
+          duration: const Duration(minutes: 100),
+        ).start();
+        player.emit(
+          position: const Duration(minutes: 31),
+          duration: const Duration(minutes: 100),
+          status: VideoPlaybackStatus.playing,
+        );
 
-          // Its player, whose libmpv does not answer
-          final players = FakePlayers();
-          desktopPlayerPool = players.pool;
-          final lease = players.pool.lease(PlayerKind.playback, label: 'viewer');
-          late FakePlaybackEngine engine;
-          unawaited(lease.acquire().then((value) => engine = value as FakePlaybackEngine));
-          async.flushMicrotasks();
-          engine.holdDispose = Completer<void>();
+        // Its player, whose libmpv does not answer
+        final players = FakePlayers();
+        desktopPlayerPool = players.pool;
+        final lease = players.pool.lease(PlayerKind.playback, label: 'viewer');
+        late FakePlaybackEngine engine;
+        unawaited(lease.acquire().then((value) => engine = value as FakePlaybackEngine));
+        async.flushMicrotasks();
+        engine.holdDispose = Completer<void>();
 
-          Map<String, DesktopCloseStepEnd>? ends;
-          unawaited(runDesktopClose(container.read(desktopCloseStepsProvider)()).then((value) => ends = value));
-          // Each step has its whole bound, the players their own (all at once): 400 + 400 + 200 + 200 + 400 ms
-          async.elapse(const Duration(milliseconds: 1599));
-          expect(ends, isNull);
-          async.elapse(const Duration(milliseconds: 2));
+        Map<String, DesktopCloseStepEnd>? ends;
+        unawaited(runDesktopClose(container.read(desktopCloseStepsProvider)()).then((value) => ends = value));
+        // Each step has its whole bound, the players their own (all at once): 400 + 400 + 200 + 400 ms
+        async.elapse(const Duration(milliseconds: 1399));
+        expect(ends, isNull);
+        async.elapse(const Duration(milliseconds: 2));
 
-          expect(ends, {
-            'the watch progress': DesktopCloseStepEnd.timedOut,
-            'the players': DesktopCloseStepEnd.done,
-            'the media bridge': DesktopCloseStepEnd.timedOut,
-            'the shares': DesktopCloseStepEnd.timedOut,
-            'the logs': DesktopCloseStepEnd.timedOut,
-          });
-          expect(store.find(key)?.position, const Duration(minutes: 31), reason: 'saved, its write on its way');
-          expect(writes.asked.map((row) => row.position), [const Duration(minutes: 31)]);
-          expect(engine.silenced, isTrue);
-          expect(engine.disposed, isFalse);
-          expect(bridge.stopAsked, isTrue);
-          expect(connections.closeAsked, isTrue);
-          expect(order, ['bridge', 'shares', 'logs']);
+        expect(ends, {
+          'the watch progress': DesktopCloseStepEnd.timedOut,
+          'the players': DesktopCloseStepEnd.done,
+          'the media bridge': DesktopCloseStepEnd.timedOut,
+          'the logs': DesktopCloseStepEnd.timedOut,
         });
-      },
-    );
+        expect(store.find(key)?.position, const Duration(minutes: 31), reason: 'saved, its write on its way');
+        expect(writes.asked.map((row) => row.position), [const Duration(minutes: 31)]);
+        expect(engine.silenced, isTrue);
+        expect(engine.disposed, isFalse);
+        expect(bridge.stopAsked, isTrue);
+        // A polite logoff from a share that stopped answering would wait in libsmb2, which the end of the VM waits for
+        expect(connections.closeAsked, isFalse);
+        expect(order, ['bridge', 'logs']);
+      });
+    });
   });
 }

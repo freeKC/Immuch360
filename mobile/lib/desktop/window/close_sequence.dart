@@ -5,16 +5,18 @@
 // own work first, and what it kept in memory was lost: the logs of the session, where the film was.
 //
 // So the app ends its own work first, one step after the other, each with a bound of its own: none of them can hold
-// the close, which lasts their sum at most (about 1.7 s) and a few milliseconds when nothing waits.
+// the close, which lasts their sum at most (1.5 s) and a few milliseconds when nothing waits.
 // - The films open in a page save where they are (VideoWatchRecorder.closeAll), and stop following their players,
 //   whose teardown says nothing of where the film was.
 // - The players are disposed, all at once: libmpv stops reading and calling Dart. One that does not answer is told to
 //   stop calling Dart and left as it is (PlayerPool.close).
 // - The media bridge stops: its connections are cut, so that a read of libmpv on one of them returns at once.
-// - The connections to the shares close.
 // - The logs of the session are written, the lines of this close included: a window close sends Flutter neither
 //   paused nor detached, and the log service wrote its buffer only then or 5 s after a line.
-// The databases stay open: SQLite's journal keeps every write made, and the end of the process closes them.
+// The databases stay open: SQLite's journal keeps every write made, and the end of the process closes them. So do the
+// connections to the shares: the system closes their sockets at the end of the process, while a polite logoff from an
+// SMB share that stopped answering is itself a libsmb2 call that waits up to 30 s in a worker isolate, which the end of
+// the Dart VM then waits for, as it waited for the reopen of a file in the dumps of 1 November 2026.
 //
 // On Windows the window hides as soon as the close is decided, and the runner ends the process within a few seconds
 // whatever still runs (DesktopWindow.prepareClose, windows/runner/close_watchdog.cpp).
@@ -26,7 +28,6 @@ import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
-import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('DesktopClose');
@@ -52,11 +53,10 @@ abstract final class DesktopCloseBounds {
   static const player = Duration(milliseconds: 400);
   static const players = Duration(milliseconds: 500);
   static const mediaBridge = Duration(milliseconds: 200);
-  static const shares = Duration(milliseconds: 200);
   static const logs = Duration(milliseconds: 400);
 
   /// The longest a close waits for the app, all steps together
-  static const total = Duration(milliseconds: 1700);
+  static const total = Duration(milliseconds: 1500);
 }
 
 /// Runs [steps] one after the other, each within its timeout, and tells how each ended. A step that throws or does
@@ -105,8 +105,6 @@ final desktopCloseStepsProvider = Provider<List<DesktopCloseStep> Function()>((r
     ),
     if (ref.exists(mediaBridgeProvider))
       DesktopCloseStep('the media bridge', DesktopCloseBounds.mediaBridge, () => ref.read(mediaBridgeProvider).stop()),
-    if (ref.exists(networkConnectionsProvider))
-      DesktopCloseStep('the shares', DesktopCloseBounds.shares, () => ref.read(networkConnectionsProvider).closeAll()),
     DesktopCloseStep('the logs', DesktopCloseBounds.logs, ref.read(desktopCloseLogsProvider)),
   ];
 });
