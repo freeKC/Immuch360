@@ -20,7 +20,7 @@ name: Immuch360 Desktop
 #                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
-#                  fake sd-cli and the probes of a generation and of a panorama as the artifact
+#                  fake sd-cli and the probes of a generation, of a panorama and of the splat runners as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), the probe of
@@ -294,8 +294,9 @@ jobs:
       # The fake sd-cli of the 360° panoramas compiled into a real program (no Flutter in it), and immuch360-run, the
       # Linux launcher that makes sd-cli die with the app: the runner and the launcher of lot P2 are tested on them in
       # the suite below (test/desktop/ai/gen, test/desktop/ai/process). The fake COLMAP and the fake Brush of the splat
-      # scenes (lot SP0) are compiled the same way, for test/desktop/ai/splat
-      - name: The fake sd-cli, the fake COLMAP, the fake Brush and the launcher
+      # scenes (lot SP0) are compiled the same way, for test/desktop/ai/splat, with the probe of their runners (lot SP4),
+      # which the suite kills while COLMAP or Brush runs under it
+      - name: The fake sd-cli, the fake COLMAP, the fake Brush, the probe of their runners and the launcher
         id: fake_sd_cli
         working-directory: mobile
         run: |
@@ -303,10 +304,13 @@ jobs:
           mise exec -- dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli"
           mise exec -- dart compile exe test/desktop/ai/fakes/fake_colmap.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-colmap"
           mise exec -- dart compile exe test/desktop/ai/fakes/fake_brush.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-brush"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_runner_probe.dart \
+            -o "$RUNNER_TEMP/sdcpp-fakes/splat-runner-probe"
           gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/sdcpp-fakes/immuch360-run" ../.github/desktop/ai/immuch360_run.c
           echo "fake=$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli" >> "$GITHUB_OUTPUT"
           echo "colmap=$RUNNER_TEMP/sdcpp-fakes/fake-colmap" >> "$GITHUB_OUTPUT"
           echo "brush=$RUNNER_TEMP/sdcpp-fakes/fake-brush" >> "$GITHUB_OUTPUT"
+          echo "probe=$RUNNER_TEMP/sdcpp-fakes/splat-runner-probe" >> "$GITHUB_OUTPUT"
           echo "launcher=$RUNNER_TEMP/sdcpp-fakes/immuch360-run" >> "$GITHUB_OUTPUT"
 
       # The whole suite: the phone regression gate, test/desktop included. IMMUCH360_REQUIRE_SBS_CODEC turns the skip
@@ -318,6 +322,7 @@ jobs:
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
           IMMUCH360_FAKE_COLMAP: ${{ steps.fake_sd_cli.outputs.colmap }}
           IMMUCH360_FAKE_BRUSH: ${{ steps.fake_sd_cli.outputs.brush }}
+          IMMUCH360_SPLAT_PROBE: ${{ steps.fake_sd_cli.outputs.probe }}
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fake_sd_cli.outputs.launcher }}
         run: mise exec -- flutter test
 
@@ -779,8 +784,9 @@ jobs:
       # graphics card (the essay of lot P2), and panorama_probe, the engine of the panoramas on the same PC (the essay
       # of lot P3), all compiled by dart compile exe without Flutter; kept together as the artifact
       # Immuch360-AI-tools-windows-x64, a name no release takes. The fake COLMAP and the fake Brush of the splat scenes
-      # (lot SP0) join them, for test/desktop/ai/splat
-      - name: The fake sd-cli, the fake COLMAP, the fake Brush and the probes of a generation and of a panorama
+      # (lot SP0) join them, for test/desktop/ai/splat, and the probe of their runners (lot SP4), which the suite kills
+      # while COLMAP or Brush runs under it, and which runs the archives of COLMAP and Brush on the PC of the essay
+      - name: The fake sd-cli, COLMAP and Brush, and the probes of a generation, a panorama and the splat runners
         id: fake_sd_cli
         working-directory: mobile
         run: |
@@ -791,9 +797,11 @@ jobs:
           dart compile exe test/desktop/ai/fakes/fake_brush.dart -o "$tools/fake-brush.exe"
           dart compile exe test/desktop/ai/tools/sdcpp_probe.dart -o "$tools/sdcpp-probe.exe"
           dart compile exe test/desktop/ai/tools/panorama_probe.dart -o "$tools/panorama-probe.exe"
+          dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$tools/splat-runner-probe.exe"
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
           echo "colmap=$(cygpath -w "$tools/fake-colmap.exe")" >> "$GITHUB_OUTPUT"
           echo "brush=$(cygpath -w "$tools/fake-brush.exe")" >> "$GITHUB_OUTPUT"
+          echo "probe=$(cygpath -w "$tools/splat-runner-probe.exe")" >> "$GITHUB_OUTPUT"
           echo "tools=$(cygpath -w "$tools")" >> "$GITHUB_OUTPUT"
 
       - name: Upload the fake sd-cli and the probe
@@ -813,6 +821,7 @@ jobs:
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
           IMMUCH360_FAKE_COLMAP: ${{ steps.fake_sd_cli.outputs.colmap }}
           IMMUCH360_FAKE_BRUSH: ${{ steps.fake_sd_cli.outputs.brush }}
+          IMMUCH360_SPLAT_PROBE: ${{ steps.fake_sd_cli.outputs.probe }}
         run: flutter test test/desktop
 
       - name: Build
