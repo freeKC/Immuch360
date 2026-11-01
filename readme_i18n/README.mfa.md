@@ -10,7 +10,7 @@
 
 Gambo nga video rato, 360° nga 3D dari peranti demo, NAS demo, server Immich demo, kamera demo nga dron demo. Tak perlu akaun. Immuch360 ialah aplikasi percumo nga sumber terbuko hok baco gambo nga video demo kat tempat dio dudok nga maing tiap satu dale pemapar hok sesuai: rato, sebagai sfera hok demo leh tengok keliling, dale 3D, ke keliling demo dale headset. Dio jale kat telefon, tablet, TV, headset Meta Quest nga komputer.
 
-**Baru: gambo rato demo, dale 3D.** Kat komputer, "Buat 3D (AI)" tukar satu gambo jadi gambo 3D, adege 3D ke panorama 360°; dale Meta Quest 3 ke 3S, "Rupo timbul AI" tunjuk mano-mano gambo rato dale 3D. Eksperimen, nga sumo jale kat mesin demo sendiri: [tengok macam mano](#turn-one-photo-into-3d-a-scene-a-panorama).
+**Baru dale build 33 sampai 39.** [Filem sambong dari tempak demo berhenti](#pick-up-a-film-where-you-stopped), nga filem dari server hok lembat [mulo lagi awal nga terus maing](#when-a-video-waits-or-will-not-play). Garis maso [zum keluar sampai bule nga taung](#find-a-month-or-a-year-in-a-long-timeline) kat telefon nga komputer. Kat telefon Android ke Meta Quest, ["Lihat folder"](#browse-a-folder-of-your-phone-or-headset) bukak folder peranti macang kongsi, nga gambo TIFF ditunjuk. Android TV [cari ikut tarikh nga remote](#on-android-tv-and-google-tv), Meta Quest 3 ke 3S [bukak Gaussian splats](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) (eksperimen), nga komputer [buat versi 3D gambo dale NAS demo](#turn-one-photo-into-3d-a-scene-a-panorama).
 
 <p align="center">
   <sub>Fork tak rasmi aplikasi mobile Immich. Takdok kaita nga Immich ke FUTO. Namo tu baco macam "I am much 360".</sub>
@@ -29,9 +29,14 @@ Gambo nga video rato, 360° nga 3D dari peranti demo, NAS demo, server Immich de
   - [Tukar satu gambo jadi 3D, adege, panorama](#turn-one-photo-into-3d-a-scene-a-panorama)
   - [Tengok kat TV nga remote](#watch-on-the-tv-with-the-remote): [Android TV nga Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Log masuk TV, headset ke komputer nga telefon demo](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Masuk dale gambo nga video demo nga Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Masuk dale gambo nga video demo nga Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): [mod kiosk](#kiosk-mode-for-an-exhibition-or-a-shop)
+  - [Teroka Gaussian splats dale Meta Quest 3 ke 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)
   - [Maing fail NAS, komputer, server media ke Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Lihat folder telefon ke headset demo](#browse-a-folder-of-your-phone-or-headset)
+  - [Sambong filem dari tempak demo berhenti](#pick-up-a-film-where-you-stopped)
+  - [Bilo video tunggu ke tok maing](#when-a-video-waits-or-will-not-play)
   - [Simpang pustako Immich demo, nga lebih lagi](#keep-your-immich-library-with-more)
+  - [Cari bule ke taung dale garis maso hok panjang](#find-a-month-or-a-year-in-a-long-timeline)
   - [Tengok kamera rumoh demo kat skrin besa](#watch-your-home-cameras-on-the-big-screen)
   - [Dron DJI demo (eksperimen)](#your-dji-drone-experimental): [video live](#see-what-your-drone-sees-on-your-phone), [dale Quest ke kat Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
   - [Bukak fail mentah kamera 360°](#open-the-raw-files-of-360-cameras)
@@ -63,16 +68,16 @@ Takdok akaun Immuch360 nok dibuat, nga takdok apo-apo sampai ko kami: aplikasi c
 
 <div align="center">
 
-| Platform | Mano nok dapat | Status pado 29 Oktober 2026 |
+| Platform | Mano nok dapat | Status pado 1 November 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kat Google Play (build 25; build 32 dihanta untuk semaka Google pado 29 Oktober, ganti build 31), build 32 kat GitHub, hok bukak [panorama 360° hok dibuat kat komputer](#turn-one-photo-into-3d-a-scene-a-panorama) nga label AI dio |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kat Google Play (build 25; build 32 tengoh disemak Google sejak 29 Oktober), build 39 kat GitHub, tempak [filem sambong dari tempak demo berhenti](#pick-up-a-film-where-you-stopped) nga ["Lihat folder"](#browse-a-folder-of-your-phone-or-headset) bukak folder telefon |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone nga iPad** | App Store | versi 3.3.1 (build 27) tengoh tunggu semaka Apple sejak 22 Oktober, lepah tu versi 3.3.2 (build 28), dale TestFlight untuk uji dale; [buat sendiri](../docs/immuch360/build.md) samentara tu |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 32 kat GitHub: [log masuk nga telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) nga imbas kod QR, [bar maso, audio nga sarikato](#on-android-tv-and-google-tv) untuk remote dale pemaing video, nga [video live dron](#watch-it-in-a-meta-quest-or-on-an-android-tv) hok telefon hanta (eksperimen); penyenaraia TV tengoh disemak Google |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 39 kat GitHub: [cari ikut tarikh nga remote](#on-android-tv-and-google-tv), [log masuk nga telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) nga imbas kod QR, bar maso, audio nga sarikato untuk remote dale pemaing video, nga [video live dron](#watch-it-in-a-meta-quest-or-on-an-android-tv) hok telefon hanta (eksperimen); penyenaraia TV tengoh disemak Google |
 | **TV LG** nga webOS 5.0 ke hok lagi baru | [.ipk, versi 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store (tengoh disemak) | versi 1.0.0, dihanta ko LG Content Store pado 24 Oktober, tengoh diuji LG sejak 26 Oktober; versi 1.0.1, kat GitHub sejak 27 Oktober, zoom gambo dari anak panah nga bagitahu bilo gambo masih tengoh dimuat; sampai LG terbitka aplikasi tu, dio dipasang dale [Developer Mode](#lg-tvs-webos). Versi 1.0.0 doh jale kat TV webOS 25 dale Cloud Test Lab LG |
 | **TV Samsung** nga Tizen 5.5 ke hok lagi baru | [build uji .wgt](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | build uji 0.2.0 aplikasi TV hok samo, keno tandatangan nga sijil Samsung demo sendiri nga pasang dale [Developer mode](#samsung-tvs-tizen); 0.1.0 doh jale kat TV Samsung sorang penguji, nga 0.2.0 ado pembaikka dari uji tu; takdok kat kedai Samsung |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kat Horizon Store (build 31, live sejak 28 Oktober; build 32 dihanta pado 29 Oktober), build 32 kat GitHub, nga [rupo timbul AI](#turn-one-photo-into-3d-a-scene-a-panorama) untuk gambo rato kat Quest 3 nga 3S (eksperimen) |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Pemasang ke ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | desktop build 13, pratonton bertandatangan: gambo, video rato nga 360°, kongsi, Plex, kamera (belum disemak nga kamera sebenar), log masuk nga telefon, gambo dipusing nga satu kekunci, antaramuko dale 89 bahaso, nga baru, [gambo 3D, adege 3D nga panorama 360° hok dibuat dari gambo demo](#turn-one-photo-into-3d-a-scene-a-panorama) dek AI (eksperimen) |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS nga Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) | desktop build 13, pratonton: gambo, gambo 360° nga video rato (video 360° maing rato), server Immich nga kongsi rangkaie, nga baru, [gambo 3D nga adege 3D](#turn-one-photo-into-3d-a-scene-a-panorama) hok dibuat dek AI dari gambo demo, nga panorama 360° kat Linux pado kad grafik 8 GB; desktop build 11 doh dicubo pado 26 Oktober dale kontena Ubuntu 24.04 nga kat Mac; tak bertandatangan kat macOS |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kat Horizon Store (build 32, live sejak 30 Oktober), build 39 kat GitHub, nga [mod kiosk](#kiosk-mode-for-an-exhibition-or-a-shop) nga, kat Quest 3 nga 3S, [Gaussian splats](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) nga [rupo timbul AI](#turn-one-photo-into-3d-a-scene-a-panorama) untuk gambo rato, semuo eksperimen |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Pemasang ke ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-19) | desktop build 19, pratonton bertandatangan: gambo, video rato nga 360°, kongsi, Plex, kamera (doh disemak nga kamera simulasi), log masuk nga telefon, gambo dipusing nga satu kekunci, antaramuko dale 89 bahaso, nga [gambo 3D, adege 3D nga panorama 360° hok dibuat dari gambo demo](#turn-one-photo-into-3d-a-scene-a-panorama) dek AI (eksperimen), jugok dari gambo NAS demo |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS nga Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-19) | desktop build 19, pratonton: gambo, gambo 360° nga video rato (video 360° maing rato), server Immich nga kongsi rangkaie, nga [gambo 3D nga adege 3D](#turn-one-photo-into-3d-a-scene-a-panorama) hok dibuat dek AI dari gambo demo, nga panorama 360° kat Linux pado kad grafik 8 GB; desktop build 11 doh dicubo pado 26 Oktober dale kontena Ubuntu 24.04 nga kat Mac; tak bertandatangan kat macOS |
 
 *Status dikemaski tiap kali keluara; perincia, build demi build, ado dale [Status keluara](../docs/immuch360/release-status.md).*
 
@@ -91,18 +96,28 @@ Satu kod asas untuk telefon, tablet, Android TV, Meta Quest nga komputer, nga ap
 | Keboleha | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | Galeri, album, carian nga server Immich | ✅ | ✅ | ✅ pemapar | ✅ pemapar | ✅ pemapar | ✅ |
+| Garis maso ikut bule nga taung | ✅ | 🔜 keluara iOS seteruh | ❌ | ❌ | ❌ | ❌ |
 | Log masuk nga telefon (kod QR) | ✅ imbas kod | 🔜 keluara iOS seteruh | ✅ | ✅ dale pelayar telefon | ❌ ditaip kat TV | ✅ kod ditaip kat telefon |
 | Tanpo server: media peranti sendiri | ✅ | ✅ | kongsi jah | ❌ | ❌ | ✅ |
+| Folder peranti, dibukak macang kongsi | ✅ dale Download | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Gambo nga video rato | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Gambo TIFF | ✅ | ✅ penyahkod sistem | ✅ | ✅ dari server | ✅ dari server | ✅ dale paparan imersif jugok |
 | Pusing gambo nga satu kekunci | ✅ | ✅ | ✅ kekunci warna | ✅ kekunci warna | ✅ | ✅ tetingkap |
 | Gambo 360° sebagai sfera | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersif |
 | Video 360° | ✅ | ✅ takdok bar maso | ✅ mesej kalu tak leh nyahkod | rato jah | rato jah | ✅ immersif |
+| Filem sambong dari tempak demo berhenti | ✅ | 🔜 keluara iOS seteruh | ✅ | ❌ | ❌ | ✅ dale paparan imersif jugok |
+| Sumber video: fail hok peranti ni nyahkod | ✅ | 🔜 keluara iOS seteruh | ✅ | ❌ | ❌ | ✅ |
+| Server lembat: berapo lamo video tunggu, nga sebab apo | ✅ | peratura tunggu dio sendiri | ✅ | ❌ | ❌ | ✅ |
 | 3D nga VR180 | ✅ satu mato | ✅ satu mato | ✅ satu mato | gambo satu mato, video rato | gambo satu mato, video rato | ✅ 3D sebenar |
+| 3D rato ikut namo fail, layar lagi tajam hok demo buleh alih (eksperimen) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Mod kiosk untuk pelawat (eksperimen) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Spatial 2.5D (jejak kepalo) | ✅ eksperimen | ✅ eksperimen | ❌ | ❌ | ❌ | ❌ |
 | Gambo spatial Apple | ✅ satu mato | ✅ satu mato | ✅ satu mato | ❌ | ❌ | ✅ 3D |
+| Gaussian splats, .spz nga .ply (eksperimen) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ Quest 3 nga 3S |
 | Gambo 3D dari gambo 2D (AI) | ✅ bukak dio, sebelah-menyebelah | ✅ bukak dio, sebelah-menyebelah | ✅ bukak dio, sebelah-menyebelah | ✅ bukak dio, sebelah-menyebelah | ✅ bukak dio, sebelah-menyebelah | ✅ rupo timbul AI dale headset (Quest 3 nga 3S), ditunjuk dale 3D |
 | Adege 3D dari gambo 2D (AI) | ✅ bukak dio, sebagai gambo dio | ✅ bukak dio, sebagai gambo dio | ✅ bukak dio, sebagai gambo dio | ✅ bukak dio, sebagai gambo dio | ✅ bukak dio, sebagai gambo dio | ✅ dijelajah dale 3D |
 | Panorama 360° dari gambo 2D (AI) | ✅ bukak dio, nga label AI dio | ✅ bukak dio sebagai gambo 360°, label 🔜 | ✅ bukak dio, nga label AI dio | ✅ bukak dio sebagai gambo 360°, label 🔜 | ✅ bukak dio sebagai gambo 360°, label 🔜 | ✅ bukak dio keliling demo, nga label AI dio |
+| Versi 3D sebeloh gambo kongsi (AI) | ✅ baco dio | ✅ baco dio | ✅ baco dio | ✅ baco dio | ❌ | ✅ baco dio |
 | Fail mentah Insta360, GoPro nga DJI | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | Kongsi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB mulo webOS 22 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
@@ -119,18 +134,28 @@ Satu kod asas untuk telefon, tablet, Android TV, Meta Quest nga komputer, nga ap
 | Keboleha | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Galeri, album, carian nga server Immich | ✅ | ✅ | ✅ |
+| Garis maso ikut bule nga taung | ✅ Ctrl nga roda | ✅ Ctrl nga roda | ✅ Command nga roda |
 | Log masuk nga telefon (kod QR) | ✅ | ✅ (muko web dio doh dicubo) | ✅ (caro mano, tak dicatat) |
 | Tanpo server: media peranti sendiri | ✅ folder | ✅ folder | ✅ folder |
+| Folder peranti, dibukak macang kongsi | ✅ folder | ✅ folder | ✅ folder |
 | Gambo nga video rato | ✅ | ✅ | ✅ |
+| Gambo TIFF | ✅ penyahkod sistem | ❌ gambo kecik ganti | ✅ penyahkod sistem |
 | Pusing gambo nga satu kekunci | ✅ | ✅ | ✅ |
 | Gambo 360° sebagai sfera | ✅ | ✅ | ✅ |
 | Video 360° | ✅ | rato jah | rato jah |
+| Filem sambong dari tempak demo berhenti | ✅ | ✅ | ✅ |
+| Sumber video: fail hok peranti ni nyahkod | ✅ | ✅ | ✅ |
+| Server lembat: berapo lamo video tunggu, nga sebab apo | ✅ | ✅ | ✅ |
 | 3D nga VR180 | ✅ satu mato | gambo satu mato, video rato | gambo satu mato, video rato |
+| 3D rato ikut namo fail, layar lagi tajam hok demo buleh alih (eksperimen) | ❌ | ❌ | ❌ |
+| Mod kiosk untuk pelawat (eksperimen) | ❌ | ❌ | ❌ |
 | Spatial 2.5D (jejak kepalo) | 🔜 dale pembangunan | ❌ | ❌ |
 | Gambo spatial Apple | ✅ satu mato | ✅ satu mato, dari server | ✅ satu mato |
+| Gaussian splats, .spz nga .ply (eksperimen) | ❌ | ❌ | ❌ |
 | Gambo 3D dari gambo 2D (AI) | ✅ | ✅ | ✅ belum dicubo kat Mac lagi |
 | Adege 3D dari gambo 2D (AI) | ✅ | ✅ | ✅ belum dicubo kat Mac lagi |
 | Panorama 360° dari gambo 2D (AI) | ✅ kad grafik 8 GB | ✅ kad grafik 8 GB, belum dicubo nga kad gitu lagi | 🔜 belum ado kat Mac lagi |
+| Versi 3D sebeloh gambo kongsi (AI) | ✅ | ✅ | ✅ gambo 3D nga adege |
 | Fail mentah Insta360, GoPro nga DJI | ✅ | ✅ gambo, video rato | ✅ gambo, video rato |
 | Kongsi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
@@ -144,21 +169,21 @@ Satu kod asas untuk telefon, tablet, Android TV, Meta Quest nga komputer, nga ap
 | Input | tetikuh, papan kekunci | tetikuh, papan kekunci | tetikuh, papan kekunci, pad sentuh |
 | Mano nok dapat | pemasang ke ZIP (pratonton bertandatangan) | .deb, .rpm (pratonton) | DMG ke ZIP (pratonton tak bertandatangan) |
 
-*Linux nga macOS: desktop build 11, dicubo pado 26 Oktober 2026 kat Ubuntu 24.04, dale kontena nga server Immich uji nga kongsi uji, nga dek penulih kat Mac. Baris AI, nga build uji kod desktop build 13, dari 27 sampai 29 Oktober 2026: gambo 3D dibuat dek aplikasi Linux dale kontena kat PC Linux, adege dek aplikasi Windows kat laptop nga RTX 4060 nga dek enjin kat PC Linux tu, panorama 360° kat laptop tu; belum dicubo kat Mac lagi.*
+*Linux nga macOS: desktop build 11, dicubo pado 26 Oktober 2026 kat Ubuntu 24.04, dale kontena nga server Immich uji nga kongsi uji, nga dek penulih kat Mac. Baris AI, nga build uji kod desktop build 13, dari 27 sampai 29 Oktober 2026: gambo 3D dibuat dek aplikasi Linux dale kontena kat PC Linux, adege dek aplikasi Windows kat laptop nga RTX 4060 nga dek enjin kat PC Linux tu, panorama 360° kat laptop tu. Baris build 33 sampai 39: paparan bule nga taung kat PC Windows nga desktop build 14, versi 3D hok ditulis ko kongsi Samba nga WebDAV kat mesin build projek, nga filem, sumber video nga mulo video strim melalui uji CI projek.*
 
 ✅ dale aplikasi kat platform tu · ❌ tak ado kat situ · 🔜 dirancang · 🔧 CI dale sumber, dibuat nga dihidupka dek CI projek kat sistem tu, belum disemak nga server, kongsi ke kamera sebenar kat situ lagi · rato jah: video maing rato, nga mesej, sebab perender video 360° komputer untuk Windows jah; kat TV LG, samo ado webOS bui bingkai video ko sfera masih belum diukur; kat TV Samsung sorang penguji, pelayar bui bingkai video hitam ko pandanga 3D. "Satu mato" maksudnyo fail 3D tunjuk mato kiri dio kat skrin rato. Lajur LG nga Samsung ialah satu aplikasi TV asing: LG versi 1.0.0, hok kongsi nga Plex dio doh disemak nga server sebenar nga kamera dio nga kamera simulasi kat hos build projek, belum kat TV lagi, nga Samsung build uji 0.2.0. Bukan satiap ✅ doh disemak kat peranti sebenar lagi: apo hok disemak kat mano, nga apo hok tingga nok disahka, ado dale [Ciri](../docs/immuch360/features.md), [Sokonga platform](../docs/immuch360/platform-support.md) nga [Keserasia](../docs/immuch360/compatibility.md).
 
 Dale baris AI, "bukak dio" maksud peranti tu bukak apo hok komputer buat, nga dio sendiri tak buat apo-apo: gambo 3D tunjuk duo mato dio sebelah-menyebelah, adege ditunjuk sebagai gambo dio nga tando kecik ADEGE 3D, panorama bukak dale pemapar 360°. Label AI dio ialah lencana "360° AI", ayat "Dijano dek AI luar tepi gambo" nga garis gambo asal, hok aplikasi iPhone, iPad, LG nga Samsung belum tunjuk lagi. Komputer nga Quest jah hok buat apo-apo. Apo hok doh disemak untuk baris ni ado dale [panduan](#turn-one-photo-into-3d-a-scene-a-panorama), belum dale Features nga Platform support.
 
-- **Telefon nga tablet Android**: aplikasi penuh, sentuh nga giroskop, sumo sumber; mulo build 32 dio bukak panorama 360° hok dibuat kat komputer nga label AI dio.
+- **Telefon nga tablet Android**: aplikasi penuh, sentuh nga giroskop, sumo sumber; mulo build 32 dio bukak panorama 360° hok dibuat kat komputer nga label AI dio; mulo build 38 dio lihat folder peranti, tunjuk gambo TIFF nga sambong filem dari tempak demo berhenti, nga mulo build 39 video strim mulo sebaik sambunga buleh, nga dio royak sebab apo dio tunggu.
 - **iPhone nga iPad**: aplikasi penoh; pemaing video 360° ado maing nga henti sekejap jah, pandanga live Tapo nga bahagian telefon untuk log masuk nga telefon mari nga keluara iOS seteruh, nga carian DLNA hanta permintaa unicast sampai Apple bui kebenara multicast.
-- **Android TV nga Google TV**: APK hok samo, dikawal remote, gelap secaro lalai; satu pemapar: sandara, muat naik nga penyunting disembunyi nga perincia baco jah, tapi gambo masih leh dipusing nga satu kekunci. Satiap penapis carian jale nga remote: Lokasi nga Kamera bukak pilihe dio dale senarai, penapis tarikh tunjuk sumo pilihe dio, nga helaia pilihe Tag, Lokasi, Tarikh, Jenis Media, Penilaia Bintang nga Paparan letak Kosongka nga Guno sebeloh pilihe, satu Kane jah, atas kebanyoka tinggi skrin. Grid gambo guno kurang memori imej, nga anak panah hok ditekan lamo gerak dio paling banyok lebih kurang 10 baris sesaat. Mulo build 28 dio log masuk dari telefon, nga kod QR dio ke kod pendek dio (dicubo antaro duo emulator nga kod ditaip, belum nga kamera). Mulo build 29 bar maso video dapat fokus remote, filem dapat menu audio nga sarikato, nga fail seteruh dale kongsi bukak nga kawala dio sendiri. Doh disemak kat emulator Google TV; build 28 jale kat Android TV sebenar pado 23 Oktober, nga masalah video hok jumpo kat situ ialah pembaikka build 29, doh disemak kat emulator, belum kat TV tu lagi. Mulo build 30, kad Drone dio tunjuk video live dron DJI hok telefon hanta, nga nilai dron nga gelang halanga (eksperimen): berpasa nga gambo doh dicubo kat Android TV TCL pado 25 Oktober, nga tersekat-sekat nga warna hijau pado hanta lamo; pado 26 Oktober, nga build 30, strim stabil hok jawab masalah tu biar gambo TV tu terus mari maso terbang, nga 7 kali beku.
+- **Android TV nga Google TV**: APK hok samo, dikawal remote, gelap secaro lalai; satu pemapar: sandara, muat naik nga penyunting disembunyi nga perincia baco jah, tapi gambo masih leh dipusing nga satu kekunci. Satiap penapis carian jale nga remote: Lokasi nga Kamera bukak pilihe dio dale senarai, penapis tarikh tunjuk sumo pilihe dio, nga helaia pilihe Tag, Lokasi, Tarikh, Jenis Media, Penilaia Bintang nga Paparan letak Kosongka nga Guno sebeloh pilihe, satu Kane jah, atas kebanyoka tinggi skrin. Grid gambo guno kurang memori imej, nga anak panah hok ditekan lamo gerak dio paling banyok lebih kurang 10 baris sesaat. Mulo build 28 dio log masuk dari telefon, nga kod QR dio ke kod pendek dio (dicubo antaro duo emulator nga kod ditaip). Mulo build 29 bar maso video dapat fokus remote, filem dapat menu audio nga sarikato, nga fail seteruh dale kongsi bukak nga kawala dio sendiri. Doh disemak kat emulator Google TV; build 28 jale kat Android TV sebenar pado 23 Oktober, nga masalah video hok jumpo kat situ ialah pembaikka build 29, doh disemak kat emulator. Mulo build 30, kad Drone dio tunjuk video live dron DJI hok telefon hanta, nga nilai dron nga gelang halanga (eksperimen): berpasa nga gambo doh dicubo kat Android TV TCL pado 25 Oktober, nga tersekat-sekat nga warna hijau pado hanta lamo; pado 26 Oktober, nga build 30, strim stabil hok jawab masalah tu biar gambo TV tu terus mari maso terbang, nga 7 kali beku. Mulo build 33, cari nga julat tarikh dio jale nga remote, gambo tunjuk tarikh dio kat bawoh kiri, nga tekan laju kat bar maso lompat lagi jauh; mulo build 38, filem sambong dari tempak demo berhenti nga gambo TIFF ditunjuk.
 - **TV LG nga webOS 5.0 ke hok lagi baru**: aplikasi asing untuk remote nga Magic Remote, dibina atas [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): pemapar Immich nga gambo 360° kat sfera, gambo dipusing nga satu kekunci, tema gelap nga 89 bahaso aplikasi (sikit teks aplikasi TV tu sendiri dale bahaso Inggeris buat maso ni); kongsi rangkaie, Plex nga pandanga live kamera Tapo, lalu perkhidmata dio sendiri kat TV (SMB mulo webOS 22); video 360° rato. Versi 1.0.0, hok dihanta ko LG Content Store pado 24 Oktober, doh jale kat TV webOS 25 tigo model dale Cloud Test Lab LG: log masuk, muko log masuk telefon, gambo, album, video, pandanga 360°, tayanga slaid, carian nga Balik dari satiap muko. Versi 0.1.0 doh jale kat TV LG sorang penguji (webOS 22). Kongsi nga Plex doh disemak nga server sebenar nga kamera nga kamera simulasi kat hos build projek, belum kat TV lagi.
 - **TV Samsung nga Tizen 5.5 ke hok lagi baru**: aplikasi TV LG hok dipakej untuk TV Samsung, build uji 0.2.0, untuk demo tandatangan nga pasang sendiri: pemapar Immich untuk remote, log masuk nga taip (alamat server, lepah tu e-mel nga kato lalue ke kunci API), nga tayanga slaid, gambo 360° kat sfera, gambo dipusing nga satu kekunci nga muko Pasal hok bagitahu apo hok TV tu sokong; belum ado log masuk nga telefon, kongsi, Plex ke kamera; video 360° rato, nga notis. Versi 0.1.0 doh jale kat TV Samsung sorang penguji nga Tizen 9: gambo nga video sampai 4K maing, takdok apo-apo lebih 4K hok dinyahkod, nga pelayar TV bui bingkai video hitam ko pandanga 3D. Versi 0.2.0 ado pembaikka dari uji tu (mesej untuk video hok lebih dari penyahkod TV ke hok tersekat, video 360° rato nga notis) nga belum jale kat TV lagi.
-- **Meta Quest 2, Pro, 3 nga 3S**: aplikasi sebagai tingkap, tamboh pandanga immersif nga, mulo build 30, kad Drone hok tunjuk video live dron DJI hok telefon hanta (eksperimen), diuji pertamo kali nga build 30; HEVC codec hok selamat, H.264 berhenti sekitar 4096x2304 kat Quest 3; Quest 3 jah hok diuji, Quest 2, Quest Pro nga Quest 3S belum diuji lagi. Mulo build 32, kat Quest 3 ke 3S, rupo timbul AI tunjuk gambo rato dale 3D, dikiro dale headset, nga gambo 3D, adege nga panorama hok dibuat kat komputer bukak dale 3D (eksperimen).
-- **Windows 10 nga 11**: pratonton, nga folder ganti galeri, pemaing video dio sendiri (libmpv) untuk video rato nga 360°, fail mentah dicantum kat cip grafik, fail nga folder hok dibukak nga program ke dilepah kat tetingkap, pemasang ke ZIP, ditandata dek APROGSYS; mulo desktop build 13, "Buat 3D (AI)" tukar gambo demo jadi gambo 3D nga adege 3D kat pemproses, nga jadi panorama 360° kat kad grafik 8 GB.
-- **Linux**: .deb nga .rpm hok dibuat dek CI projek, dipasang nga disemak kat Ubuntu 22.04 nga 24.04, Debian 12 nga Fedora 40 nga 44; gambo, gambo 360° nga video rato guno libmpv sistem (video 360°, 3D nga mentah maing rato nga mesej), dilukih lalu laluan hardware kat sesi X11 jugok dari desktop build 7; kongsi SMB dari Ubuntu 22.04 nga Debian 12 ke atas; tanpo keyring (GNOME Keyring ke KWallet) aplikasi tak beku lagi 25 s maso mulo pertamo: dio simpan kato lalue untuk sesi tu jah nga bagitahu gitu dale tetapa dio; mulo desktop build 13, "Buat 3D (AI)" buat gambo 3D nga adege kat pemproses, nga panorama 360° kat kad grafik 8 GB (dicubo saiz kecik jah, kat grafik Intel); belum jale kat PC Linux sebenar lagi, kat WSLg nga dale container jah.
-- **macOS**: DMG nga ZIP hok dibuat dek CI projek, universal, tak bertandatangan (Gatekeeper tanyo sekali); dio mulo, bukak fail nga folder hok dibui ko dio, termasuk dari Finder, simpan rahsio dio dale login keychain nga maing video rato nga libmpv dio sendiri, mulo-mulo disemak kat Mac CI projek; pado 26 Oktober 2026 penulis cubo desktop build 11 kat Mac, nga dio jale. Mulo desktop build 13, gambo 3D nga adege dibuat kat pemproses jugok (belum dicubo kat Mac lagi); belum ado panorama 360° kat Mac lagi.
+- **Meta Quest 2, Pro, 3 nga 3S**: aplikasi sebagai tingkap, tamboh pandanga immersif nga, mulo build 30, kad Drone hok tunjuk video live dron DJI hok telefon hanta (eksperimen), diuji pertamo kali nga build 30; HEVC codec hok selamat, H.264 berhenti sekitar 4096x2304 kat Quest 3; aplikasi doh disemak kat Quest 3. Mulo build 32, kat Quest 3 ke 3S, rupo timbul AI tunjuk gambo rato dale 3D, dikiro dale headset, nga gambo 3D, adege nga panorama hok dibuat kat komputer bukak dale 3D (eksperimen). Mulo build 33, layar 3D rato hok demo buleh alih nga mod kiosk; mulo build 36, Gaussian splats kat Quest 3 nga 3S; mulo build 38, filem hok sambong nga gambo TIFF dale paparan imersif.
+- **Windows 10 nga 11**: pratonton, nga folder ganti galeri, pemaing video dio sendiri (libmpv) untuk video rato nga 360°, fail mentah dicantum kat cip grafik, fail nga folder hok dibukak nga program ke dilepah kat tetingkap, pemasang ke ZIP, ditandata dek APROGSYS; mulo desktop build 13, "Buat 3D (AI)" tukar gambo demo jadi gambo 3D nga adege 3D kat pemproses, nga jadi panorama 360° kat kad grafik 8 GB. Mulo desktop build 16, "Buat 3D (AI)" jale jugok nga gambo dari kongsi rangkaie, nga mulo desktop build 18 filem sambong dari tempak demo berhenti.
+- **Linux**: .deb nga .rpm hok dibuat dek CI projek, dipasang nga disemak kat Ubuntu 22.04 nga 24.04, Debian 12 nga Fedora 40 nga 44; gambo, gambo 360° nga video rato guno libmpv sistem (video 360°, 3D nga mentah maing rato nga mesej), dilukih lalu laluan hardware kat sesi X11 jugok dari desktop build 7; kongsi SMB dari Ubuntu 22.04 nga Debian 12 ke atas; tanpo keyring (GNOME Keyring ke KWallet) aplikasi tak beku lagi 25 s maso mulo pertamo: dio simpan kato lalue untuk sesi tu jah nga bagitahu gitu dale tetapa dio; mulo desktop build 13, "Buat 3D (AI)" buat gambo 3D nga adege kat pemproses, nga panorama 360° kat kad grafik 8 GB (dicubo saiz kecik jah, kat grafik Intel); doh disemak kat WSLg nga dale container. Mulo desktop build 16, "Buat 3D (AI)" jale jugok nga gambo dari kongsi rangkaie, nga mulo desktop build 18 filem sambong dari tempak demo berhenti.
+- **macOS**: DMG nga ZIP hok dibuat dek CI projek, universal, tak bertandatangan (Gatekeeper tanyo sekali); dio mulo, bukak fail nga folder hok dibui ko dio, termasuk dari Finder, simpan rahsio dio dale login keychain nga maing video rato nga libmpv dio sendiri, mulo-mulo disemak kat Mac CI projek; pado 26 Oktober 2026 penulis cubo desktop build 11 kat Mac, nga dio jale. Mulo desktop build 13, gambo 3D nga adege dibuat kat pemproses jugok; belum ado panorama 360° kat Mac lagi. Mulo desktop build 16, "Buat 3D (AI)" jale jugok nga gambo dari kongsi rangkaie, nga mulo desktop build 18 filem sambong dari tempak demo berhenti.
 
 <a id="what-you-can-do"></a>
 ## Apo hok demo leh buat
@@ -171,14 +196,19 @@ Tiap baris bukak caro nok buat dio kat bawoh. Panduan penoh, nga satiap pilihe, 
 4. [Tengok kat TV nga remote](#watch-on-the-tv-with-the-remote): Android TV nga Google TV, TV LG, nga TV Samsung sebagai build uji.
 5. [Log masuk TV, headset ke komputer nga telefon demo](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): imbas kod QR dio, sahka, tengok.
 6. [Masuk dale gambo nga video demo nga Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° keliling demo, 3D dale 3D sebenar.
-7. [Maing fail NAS, komputer, server media ke Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): kat tempat dio, takdok apo disalin.
-8. [Simpang pustako Immich demo, nga lebih lagi](#keep-your-immich-library-with-more): aplikasi mudoh alih Immich, tamboh pemapar immersif nga skrin besa.
-9. [Tengok kamera Tapo demo](#watch-your-home-cameras-on-the-big-screen): live, nga rekoda kad memori dio; belum disemak nga kamera sebenar.
-10. [Tengok video live dron DJI demo kat telefon](#see-what-your-drone-sees-on-your-phone), nga [dale Meta Quest ke kat Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): lalu alat kawala DJI RC-N3, terimo jah. *Eksperimen.*
-11. [Bawok gambo nga video dron ke kad kamera ko Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): lalu USB, dari telefon Android. *Eksperimen.*
-12. [Bukak fail mentah kamera 360°](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX nga DJI Osmo 360, dicantum dek aplikasi.
-13. [Pusing gambo nga satu kekunci](#turn-a-photo-with-one-key): butang, kekunci papan kekunci ke kekunci warna remote.
-14. [Guno komputer demo sebagai pemaing media](#use-your-computer-as-the-media-player): folder demo, Open with, fail hok dilepah kat tetingkap. *Pratonton.*
+7. [Teroka Gaussian splats dale Meta Quest 3 ke 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s): tangkapa 3D dari Polycam, Scaniverse ke Luma, dale bilik demo. *Eksperimen.*
+8. [Maing fail NAS, komputer, server media ke Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): kat tempat dio, takdok apo disalin.
+9. [Lihat folder telefon ke headset demo](#browse-a-folder-of-your-phone-or-headset): folder peranti dibukak macang kongsi, termasuk gambo TIFF dio.
+10. [Sambong filem dari tempak demo berhenti](#pick-up-a-film-where-you-stopped): bar kat gambo kecik dio, nga dio sambong dari tempak demo tinggal.
+11. [Bilo video tunggu ke tok maing](#when-a-video-waits-or-will-not-play): fail hok peranti ni nyahkod, berapo lamo lagi nok mulo, nga sebab apo.
+12. [Simpang pustako Immich demo, nga lebih lagi](#keep-your-immich-library-with-more): aplikasi mudoh alih Immich, tamboh pemapar immersif nga skrin besa.
+13. [Cari bule ke taung dale garis maso hok panjang](#find-a-month-or-a-year-in-a-long-timeline): bule, lepah tu taung, sekali ketuk nok bukak.
+14. [Tengok kamera Tapo demo](#watch-your-home-cameras-on-the-big-screen): live, nga rekoda kad memori dio; belum disemak nga kamera sebenar.
+15. [Tengok video live dron DJI demo kat telefon](#see-what-your-drone-sees-on-your-phone), nga [dale Meta Quest ke kat Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): lalu alat kawala DJI RC-N3, terimo jah. *Eksperimen.*
+16. [Bawok gambo nga video dron ke kad kamera ko Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): lalu USB, dari telefon Android. *Eksperimen.*
+17. [Bukak fail mentah kamera 360°](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX nga DJI Osmo 360, dicantum dek aplikasi.
+18. [Pusing gambo nga satu kekunci](#turn-a-photo-with-one-key): butang, kekunci papan kekunci ke kekunci warna remote.
+19. [Guno komputer demo sebagai pemaing media](#use-your-computer-as-the-media-player): folder demo, Open with, fail hok dilepah kat tetingkap. *Pratonton.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -230,18 +260,18 @@ Ambik aplikasi dari kedai peranti demo kat mano dio doh diterbitka, ke dari lama
 <a id="windows"></a>
 ### Windows
 
-1. Muat turun `Immuch360-Desktop-3.3.0-rc.0-desktop.13-windows-x64-setup.exe` dari [pra-keluara desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) (nga `SHA256SUMS.txt` untuk semak dio) nga bukak dio. Pemasang nga ZIP doh ditandata; Windows tunjuk APROGSYS sebagai penerbit. Selagi penerbit tu masih baru bagi SmartScreen, dio mungki tanyo sekali lagi: "More info", lepah tu "Run anyway".
+1. Muat turun `Immuch360-Desktop-3.3.0-rc.0-desktop.19-windows-x64-setup.exe` dari [pra-keluara desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-19) (nga `SHA256SUMS.txt` untuk semak dio) nga bukak dio. Pemasang nga ZIP doh ditandata; Windows tunjuk APROGSYS sebagai penerbit. Selagi penerbit tu masih baru bagi SmartScreen, dio mungki tanyo sekali lagi: "More info", lepah tu "Run anyway".
 2. Pilih "Install for me only" (takdok hak pentadbir) ke "Install for all users", lepah tu bahaso pemasang, hok Windows doh pilih.
 3. Mulaka Immuch360 Desktop dari Start menu. Gambo nga video ado dio dale "Open with" (klik kane fail, Open with); dio tak sekali-kali jadi program default demo. Kali pertamo build baru dimulaka, leh ambik sampai satu minit sementaro Windows imba fail.
 4. Windows 10 ke 11, 64 bit. Nok kemaskini, bukak pemasang build seteruh: log masuk demo, folder nga tetapa demo kekal. ZIP keluara hok samo ialah program hok samo sebagai folder, hok leh dibukak kat mano-mano nga mulaka `immuch360.exe` dari dio. Kat komputer hok desktop build 4 sampai 8 berhenti maso mulo nga "duplicate column name: group_date", build 9 bukak pangkala data tu nga simpan data demo.
 
 ### Linux
 
-Kat Ubuntu 22.04 ke hok lagi baru nga Debian 12 ke hok lagi baru: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-amd64.deb`; kat Fedora 40 ke hok lagi baru: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.13-linux-x86_64.rpm`, duo-duo dari [pra-keluara desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13). Lepah tu mulaka Immuch360 Desktop dari aplikasi demo. Pratonton: folder komputer, gambo nga gambo 360° sebagai sfera, nga video rato guno libmpv sistem, hok pakej tu pasang (video 360°, 3D nga mentah maing rato, nga mesej); kongsi SMB jale dari Ubuntu 22.04 nga Debian 12 ke atas. Kat Fedora, video kamera perlu FFmpeg dari RPM Fusion. Tanpo GNOME Keyring ke KWallet, kato lalue disimpan untuk sesi tu jah, nga tetapa aplikasi bagitahu gitu.
+Kat Ubuntu 22.04 ke hok lagi baru nga Debian 12 ke hok lagi baru: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.19-linux-amd64.deb`; kat Fedora 40 ke hok lagi baru: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.19-linux-x86_64.rpm`, duo-duo dari [pra-keluara desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-19). Lepah tu mulaka Immuch360 Desktop dari aplikasi demo. Pratonton: folder komputer, gambo nga gambo 360° sebagai sfera, nga video rato guno libmpv sistem, hok pakej tu pasang (video 360°, 3D nga mentah maing rato, nga mesej); kongsi SMB jale dari Ubuntu 22.04 nga Debian 12 ke atas. Kat Fedora, video kamera perlu FFmpeg dari RPM Fusion. Tanpo GNOME Keyring ke KWallet, kato lalue disimpan untuk sesi tu jah, nga tetapa aplikasi bagitahu gitu.
 
 ### macOS
 
-Bukak `Immuch360-Desktop-3.3.0-rc.0-desktop.13-macos.dmg` dari [pra-keluara desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13) nga tarik aplikasi tu ko Applications (Apple silicon nga Intel, macOS 12 ke hok lagi baru). Dio belum ditandata ke dinotarisasi lagi: Control klik dio nga pilih Open kat macOS 14 nga hok lebih lamo, ke pilih "Open Anyway" dale System Settings, Privacy & Security kat macOS 15 nga hok lagi baru. Penulis cubo desktop build 11 kat Mac pado 26 Oktober 2026, nga dio jale; Mac nga versi macOS lain belum dicubo, nga lapora dialu-alukan.
+Bukak `Immuch360-Desktop-3.3.0-rc.0-desktop.19-macos.dmg` dari [pra-keluara desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-19) nga tarik aplikasi tu ko Applications (Apple silicon nga Intel, macOS 12 ke hok lagi baru). Dio belum ditandata ke dinotarisasi lagi: Control klik dio nga pilih Open kat macOS 14 nga hok lebih lamo, ke pilih "Open Anyway" dale System Settings, Privacy & Security kat macOS 15 nga hok lagi baru. Penulis cubo desktop build 11 kat Mac pado 26 Oktober 2026, nga dio jale; Mac nga versi macOS lain belum dicubo, nga lapora dialu-alukan.
 
 <a id="how-to"></a>
 ## Caro nok buat
@@ -298,8 +328,8 @@ Kebanyaka gambo demo rato, nga demo tak buleh balik ambik dio lagi dale 3D. Immu
 
 **Kat komputer demo**, nga desktop build 13 kat Windows, Linux ke macOS:
 
-1. Pilih satu ke lebih gambo dale pustako ke dale folder, lepah tu "Buat 3D (AI)".
-2. Pilih apo demo nok: "Gambo 3D", "Adege 3D", "Panorama 360°", ke "Versi 3D gambo 360°" untuk gambo 360° demo sendiri. Kotak tu bagitahu apo hok AI akan anggar ke reko ("Lebih kurang 96% panorama ni akan direko dek AI"), lebih kurang berapo lamo dio ambik kat komputer ni, nga mano fail tu pi: "Sebelah hok asal" ke "Folder hok ambo pileh". Jenih hok komputer ni tak buleh buat kekal kelabu, nga sebab dio, macam "Belum ado lagi kat Mac" ke "Kad grafik ado 6.0 GiB memori, panorama 360° perlu 7.5 GiB".
+1. Pilih satu ke lebih gambo dale pustako, dale folder ke dale kongsi rangkaie, lepah tu "Buat 3D (AI)".
+2. Pilih apo demo nok: "Gambo 3D", "Adege 3D", "Panorama 360°", ke "Versi 3D gambo 360°" untuk gambo 360° demo sendiri. Kotak tu bagitahu apo hok AI akan anggar ke reko ("Lebih kurang 96% panorama ni akan direko dek AI"), lebih kurang berapo lamo dio ambik kat komputer ni, nga mano fail tu pi: "Sebelah hok asal" ke "Folder hok ambo pileh". Jenih hok komputer ni tak buleh buat kekal kelabu, nga sebab dio, macam "Belum ado lagi kat Mac" ke "Kad grafik ado 6.0 GiB memori, panorama 360° perlu 7.5 GiB". Mulo desktop build 15, "Versi 3D gambo 360°" terimo jugok gambo nga bingkai 2:1 nga tanpo label 360°, hok disenarai asingan supayo demo semak dulu.
 3. Kali pertamo, kotak tu tawar komponen jenih tu: "Muat turun", sekali jah. Dio jale kat komputer ni nga lepah tu jale tanpo internet.
 4. "Tukar". Kijo beratur kat duo lorong, pemproses nga kad grafik, nga langkah-langkah dio nga maso hok tinggal; "Cancel" henti satu bilo-bilo maso, nga keluar dari aplikasi tanyo dulu.
 5. Bukak hasil dio. Gambo 3D ditunjuk sebagai "Mato kiri", "Sebelah-menyebelah", "Goyang" (animasi kat atas) ke "Merah nga sian" untuk cermin mato; adege ado "Pratonton dale 3D", dipusing nga tetikus ke pad sentuh, nga "Eksport untuk aplikasi 3D lain (.glb)"; panorama bukak dale pemapar 360°.
@@ -325,6 +355,8 @@ Kebanyaka gambo demo rato, nga demo tak buleh balik ambik dio lagi dale 3D. Immu
 
 Tiap fail baru pi sebelah fail asal dio, tok sekali-kali atas dio, ke dale folder pilihan demo bilo folder asal tak terimo fail baru; kat folder rangkaie, bilo demo kato yo untuk folder tu jah ("Immuch360 tulis fail baru situ, tok sekali-kali hok asal"). Pustako tu sambung tiap versi ko fail asal dio nga lencana dio, "3D AI", "Adege 3D" ke "360° AI", dale album "Versi AI Immuch360", hok tak masuk sandara Immich demo kecuali demo hidupka "Sandar versi AI gak"; hati-hati, "Select all" dale album sandara pilih album ni jugok nga hidupka suis tu. Nok tengok fail kat Quest, simpang dio kat NAS demo, sandar dio ko server Immich demo ke, kat Windows, hidupka "Kongsi komputer ni".
 
+**Gambo dari kongsi rangkaie**, mulo desktop build 16: pilih dio dale kongsi, ke bukak satu nga guno menu ⋮ dio. Aplikasi salin tiap-tiap gambo ko komputer dulu, nga kemajua dio, lepah tu tulis versi 3D sebeloh hok asal kat kongsi SMB ke WebDAV bilo demo jawab "Yo, untuk folder rangkaie ni", tok pernah tindih fail. DLNA nga Plex tok terimo fail, jadi kat situ versi pegi ko folder hok demo pilih. Halama gambo dari kongsi ado Versi, hok senarai versi 3D hok jumpo sebeloh dio. Doh disemak kat mesin build projek nga server Samba nga WebDAV.
+
 **Dale Meta Quest**, nga build 32:
 
 - **Rupo timbul AI**: bukak mano-mano gambo rato, dari pustako demo ke kongsi, nga tekan "Rupo timbul AI" kat bar atas: headset tu anggar rupo timbul sendiri nga tunjuk gambo tu dale 3D, "Rupo timbul dianggar dek AI". Model tu, 99.5 MB, dimuat turun kali pertamo demo tekan dio, nga rupo timbul disimpang dale cache. "Bukak rupo timbul AI dale 2.5D (cubo-cubo)", dale Settings, Advanced, "AI nga 3D", buat bendo dekat gerak depa latar bilo demo gerak kepalo. Kat Quest 2 ke Quest Pro butang tu kekal kelabu, "Belum diuji lagi kat headset ni", sampai demo hidupka "Rupo timbul AI kat Quest 2 nga Quest Pro (belum diuji)" kat situ.
@@ -341,7 +373,7 @@ Had: belum ado panorama 360° kat Mac ("Belum ado lagi kat Mac"), ke tanpo kad g
 
 **Komponen**: kat komputer, Settings, "AI nga 3D" senaraika komponen tiap ciri nga saiz dio, "Muat turun" nga "Buang", lepah tu "Buang semuo komponen AI" nga "Pindoh komponen AI" ko pemacu lain; "Ciri AI" dimatika sorok sumo butang AI nga tak muat turun apo-apo. Tiap fail disemak nga SHA-256 dio. Kat Windows dio duduk dale `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`, hok penyahpasang padam (buke folder hok demo pindoh dio ko); kat Linux dale `~/.local/share/immuch360/ai-components` kat kebanyaka sistem, nga kat Mac dale `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`. Dale Quest, "AI nga 3D" ado dale Settings, Advanced, nga cache rupo timbul.
 
-Lagi: nota [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32) nga [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), nga [model, lesen dio, sumber dio nga jumlah semak dio](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Panduan pengguno dapat bab AI dio pado pusinga seteruh; sampai tu, bahagian ni lah panduan dio.
+Lagi: nota [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32), [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), [desktop build 15](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-15) nga [desktop build 16](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-16), nga [model, lesen dio, sumber dio nga jumlah semak dio](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md).
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
@@ -349,7 +381,7 @@ Lagi: nota [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc
 
 Gambo demo kat skrin besa, nga remote. Sumo aplikasi TV jale samo: anak panah gerak bingkai, OK bukak, Balik pi balik, nga dale gambo 360° anak panah tengok keliling. TV takdok gambo dio sendiri, jadi dio tunjuk server Immich demo nga, kat Android TV nga TV LG, kongsi rangkaie demo, server Plex demo nga kamera demo.
 
-- **Android TV nga Google TV**: aplikasi Android tu sendiri, build 32, dari GitHub sampai Google Play tawar dio kat TV.
+- **Android TV nga Google TV**: aplikasi Android tu sendiri, build 39, dari GitHub sampai Google Play tawar dio kat TV.
 - **TV LG nga webOS 5.0 ke hok lagi baru**: aplikasi TV dio sendiri, versi 1.0.0, tengoh disemak LG untuk LG Content Store, nga versi 1.0.1 kat GitHub.
 - **TV Samsung nga Tizen 5.5 ke hok lagi baru**: aplikasi TV hok samo macam kat TV LG, build uji 0.2.0, hok demo tandatangan nga pasang sendiri.
 
@@ -369,8 +401,15 @@ Aplikasi Android hok samo, dale tema gelap dari mulo-mulo bukak, nga remote seba
 1. Pasang APK nga adb, tengok [Pasang](#android-tv-and-google-tv). Kat muko mulo, pilih "Tambah kongsi rangkaie atau server media" untuk kongsi, server Plex ke kamera, "Guno tanpo server", ke "Sambung ko server Immich", hok muko dio log masukka TV bilo demo imbas kod QR dio nga telefon (tengok [Log masuk nga telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
 2. Dale pemapar, kekunci maing nga henti sekejap, undur, laju ke depa, sebelum nga seteruh kat remote jale. OK maso video tunjuk kawala nga maing nga henti sekejap doh dipilih, nga OK keduo henti sekejap; lepah tu butang -10 s nga +10 s, lepah tu butang audio nga sarikato bilo filem tu ado dio. Mulo build 29, Bawoh dari butang maing sampai ko bar maso: Kiri nga Kane gerak 10 s satu tekan, lagi laju bilo ditekan lamo, nga OK maing ke henti sekejap. Kawala nga tarikh sorok 5 s lepah kekunci terakhir, nga lepah tu Kiri nga Kane pi ko fail sebelum ke seteruh; dale kongsi, fail tu bukak dale muko dio sendiri, nga kawala hok kawal dio. Video tak ulang lagi kat TV, kecuali demo hidupke Tetapa, Pemapar Aset, Video, Ulang.
 3. Kekunci Menu, kekunci Info ke OK hok ditekan lamo bukak perincia gambo ke video, baco jah: tarikh, tempat, kamera, codec, saiz nga kadar bit. Video hok TV tak leh nyahkod bagitahu gitu, nga codec dio, saiz dio nga had penyahkod TV, ganti muat tak abih-abih; video 360° hok lebih dari had penyahkod tanyo dulu sebelum bukak pemaing 360°, nga sebab dio ditulih kat muko Log dale menu profil.
+4. Cari nga remote: Back dari hasil balik ko Search, nga fokus kat ruang cari, nga dale Date, julat sendiri pilih taung mulo nga taung habih dulu, lepah tu bule nga hari. Dale Albums, Clear ado sebeloh ruang cari. Ni kijo Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)), nga commit dio.
+5. Gambo tunjuk tarikh nga maso dio kat bawoh kiri maso kawale dio nampak ("Tunjuk tarikh nga maso gambo", dale Settings, Asset Viewer). Kat bar maso video, siri tekan Left ke Right hok laju lompat 10 s, lepah tu 30 s, lepah tu 60 s tiap kali tekan, nga tiap-tiap tekan dikiro. Album bukak kat gambo pertamo dio, nga namo dio kat bar atah.
 
-Build 28 jale kat Android TV sebenar pado 23 Oktober; pembaikka video build 29 datang dari uji tu nga doh disemak kat emulator Google TV, belum kat TV tu lagi.
+<p align="center">
+  <img src="../.github/readme/tv-b33-date-range.jpg" width="360" alt="Dialog Search untuk pilih julat tarikh kat Google TV: tarikh mulo nga tarikh habih, tiap satu nga butang Year, Month nga Day nga tarikh dale perkataa, taung mulo dale fokus, lepah tu Cancel nga Select">
+  <img src="../.github/readme/tv-b33-photo-date.jpg" width="360" alt="Gambo jala dale pemapar Google TV: tarikh nga maso dio, May 3, 2025 9:20 AM, kat bawoh kiri, nga butang pusing kat bawoh kana">
+</p>
+
+Build 28 jale kat Android TV sebenar pado 23 Oktober; pembaikka video build 29 datang dari uji tu, nga build 29 sampai 35 doh disemak kat emulator Google TV, tempak nga build 35, 13 dari 13 siri tekan laju keno pado maso hok betui.
 
 <a id="immuch360-on-an-lg-tv-webos"></a>
 <a id="on-an-lg-tv-webos"></a>
@@ -437,8 +476,38 @@ Kat Meta Quest aplikasi hok samo jale sebagai tetingkap nga pustako demo sepenoh
 2. Kat muko mulo, ketuk "Guno tanpo server" untuk gambo nga video headset tu sendiri, ke "Sambung ko server Immich": taip kod hok headset tunjuk dale Immuch360 kat telefon demo ([log masuk nga telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), ke log masuk nga alamat server, e-mel nga kato lalue demo.
 3. Bukak gambo ke video 360° nga teka 360°: pandanga immersif bukak. B ke Y, ke butang Balik panel maklumat, bawo tetingkap balik.
 4. Dale pandanga immersif, tolak thumbstick kane ko kiri ke kane untuk pusing pandanga 30° ko arah tu. Mulo build 29 dio pusing ikut arah demo tolak, macam kebanyoka aplikasi headset; build 17 sampai 28 pusing ko arah lain, nga Tetapa, Pemapar Aset, Video, "Terbalikka pusinga thumbstick" bawok balik arah tu.
+5. Dale tingkap, tolak kayu bedik ko kana untuk gambo ke video lepah ni, ko kiri untuk hok sebelum, dari commit Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360)).
+6. "Tengok dale layar besa" letak gambo ke video kat layar rato besa depe demo: tekan lamo butang pegang nok alih dio, tolak kayu bedik nok bawok dio dekat ke jauh, nga tekan lamo duo-duo butang pegang nok tukar saiz dio. Video nga namo macang `Movie_SBS.mp4`, `Film.Half-OU.mkv` ke `clip_LR.mp4` dapat "Tengok dale 3D" nga maing dale 3D kat layar macang tu ("3D ikut namo fail (cubo-cubo)"), nga "Layar rata lagi tajam (cubo-cubo)" lukis layar tu nga supersampling nga penajama headset sendiri; duo-duo ado dale Settings, Advanced.
+7. Bilo penyahkod berhenti video tengoh jale, pemapar maing dio balik lepah bahagian hok gagal, nga dio royak. Filem sambong dari tempak demo berhenti, nga gambo TIFF ditunjuk jugok dale paparan imersif.
+
+<a id="kiosk-mode-for-an-exhibition-or-a-shop"></a>
+#### Mod kiosk, untuk pameran ke kedai
+
+Bagi headset ko pelawat, nga dio bukak sendiri gambo ke video 360° demo, dari mulo, tiap kali ore pakai dio. Idea ni datang dari build pameran [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360), ditulis balik kat kod kawe.
+
+1. Dale Settings, Advanced, "Mod kiosk (cubo-cubo)": pilih "Media kiosk", gambo ke video 360°, nga kalu nok "Teks kad penutup" (kalu tok, "Terimo kasih sebab ikut perjalane ni").
+2. Maso mulo lepah tu, headset tunjuk namo media kiosk beberapo saat, nga Cancel, lepah tu bukak dio.
+3. Filem mulo balik tiap kali ore pakai headset nga habih kat kad. Kiosk tok terimo tekan: tekan lamo B ke Y satu saat nok keluar.
+
+Doh disemak kat Quest 3 pado 30 Oktober nga build 35: gambo sebeloh-menyebeloh kat layar rato lagi tajam, adege 3D nga kiosk duo kali, tiap satu ditutup nga tingkap aplikasi balik.
 
 Lagi: [dale headset Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [headset: codec, store nga kebenara](../docs/immuch360/platform-support.md#meta-quest).
+
+<a id="explore-gaussian-splats-in-a-meta-quest-3-or-3s"></a>
+### Teroka Gaussian splats dale Meta Quest 3 ke 3S
+
+Gaussian splat tu tangkapa 3D tempat ke barang, dibuat nga Polycam, Scaniverse, Postshot, Luma nga alat lain. Kat Meta Quest 3 ke 3S, Immuch360 letak dio depe demo ke keliling demo, ikut saiz dio, nga demo jale keliling dio ke gelongsor lalu dio. Eksperimen, nga hidup secaro lalai.
+
+1. Letak splat .spz ke .ply demo kat kongsi SMB ke WebDAV, ke dale folder headset ("Lihat folder", ke "Buko fail splat" dale menu + Kongsi rangkaie). Dio mari lepah gambo nga video, nga lenco "Splat 3D" nga bilange gaussian dio.
+2. Bukak satu, lepah tu teroka adege splat. Barang tegak depe demo pado paras mato, tempat bukak keliling demo. Kayu bedik kiri gelongsor lalu dio, Reset letak dio balik dari tempat demo berdiri, nga butang tegak pusing hok mari baring ke terbalik, nga ingak untuk fail tu.
+3. Splat tunjuk paling banyok 50,000 gaussian, nga hok lagi besa tunjuk 50,000 hok paling kuat dio; splat besa (cubo-cubo), dale Settings, Advanced, bagi sampai 150,000.
+4. Headset baco fail .ply binari nga SPZ sampai versi 3; fail dale SPZ versi 4 royak supayo eksport dio sebagai .ply ke dale SPZ versi 3 ke lagi lamo.
+
+Gaussian splats guno API eksperimen Meta Spatial SDK, hok Meta tok sokong nga tok jamin: apo-apo kecacata tanggungjawab Immuch360 jah. Kat Quest 2 ke Quest Pro splat disenarai, nga teroka adege splat royak dio perlu Meta Quest 3 ke 3S. Fail nok cubo: contoh CC0 [halama pemapar splat InnerScene](https://www.innerscene.com/tools/gaussian-splat-viewer).
+
+Doh disemak kat Quest 3 pado 31 Oktober: fail hok kod build 39 sedio dari contoh tu bukak dale modul splat Meta Spatial SDK, hok aplikasi guno, tiap satu nampak nga tegak.
+
+Lagi: nota [build 36](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-36) nga [build 39](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-39).
 
 <a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
 <a id="play-the-files-of-a-nas-a-computer-a-media-server-or-plex"></a>
@@ -463,6 +532,54 @@ Pemaing baco byte hok dio perlu menerusi jambata dale aplikasi, nga julat byte, 
 
 Lagi: [kongsi rangkaie](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [kongsi telefon ni kat rangkaie](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [server media DLNA](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
 
+<a id="browse-a-folder-of-your-phone-or-headset"></a>
+### Lihat folder telefon ke headset demo
+
+On this device senarai album peranti satu-satu, tanpo subfolder dio, jadi folder filem dale Download/Quest ke folder splat tok nampak kat situ macang dio disusun. "Lihat folder" bukak folder telefon, tablet ke Meta Quest macang kongsi rangkaie, nga semuo subfolder dio, nga simpan dio dale senarai demo.
+
+<p align="center">
+  <img src="../.github/readme/b38-on-this-device.png" width="260" alt="On this device kat telefon Android: bawoh Folders, folder Quest hok disimpan dari kali lepah, Download/Quest, nga palang dio, lepah tu Lihat folder nga nota pasal Download, lepah tu album peranti">
+  <img src="../.github/readme/b38-folder-browser.jpg" width="260" alt="Folder Quest dibukak macang kongsi rangkaie: subfolder dio Empty, Holidays nga Immuch360-splats, lepah tu gambo 360° nga lenco 360° dio, gambo matohari terbenam nga satu video">
+</p>
+
+1. Pustako, On this device, "Lihat folder" (ke Kongsi rangkaie, +, "Lihat folder alat ni").
+2. Pemilih folder Android bukak dale Download: pilih folder dale dio, macang Download/Quest, lepah tu "Use this folder" nga "Allow". Android 11 nga lepah tu bagi aplikasi bukak folder dale Download, tapi tok Download sendiri, nga gambo hok diletak terus dale Download tinggal dale album Download.
+3. Folder bukak nga subfolder, gambo nga video dio nga lenco 360° nga 3D, nga dale headset, nga Gaussian splats dio. Dio tinggal kat atah On this device; "Tok leh baco loni" maknonyo dio doh dipindoh ke dicabut, nga palang dio buang dio dari senarai, nga Undo, nga tinggal fail kat peranti.
+4. Tekan lamo, ke Select, lepah tu "Muat naik ko Immich" hanta fail ko server Immich demo.
+
+**Gambo TIFF** ditunjuk jugok, kat telefon, tablet, Android TV nga Quest. Dari server demo, TIFF ditunjuk dari JPEG hok server demo buat dari dio ("Tunjuk macang pratonton server: peranti ni tok nyahkod TIFF"); dari peranti ke kongsi, aplikasi nyahkod dio sendiri ("Tengoh nyahkod TIFF kak peranti ni"), nga muat turung simpan TIFF asal. Windows nga macOS tunjuk gambo TIFF nga penyahkod dio sendiri, nga Linux bagi gambo kecik ganti.
+
+Doh disemak kat emulator Android 16: pemilih dale Download, folder nga subfolder dio, gambo, muat naik, mulo balik aplikasi, folder hok dipindoh nga buang dio. Penyahkod TIFF pulang 24 fail uji tepat sampai piksel.
+
+Lagi: nota [build 38](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-38).
+
+<a id="pick-up-a-film-where-you-stopped"></a>
+### Sambong filem dari tempak demo berhenti
+
+Demo balik ko filem esok hari nga tok tahu demo doh sampai mano, ke filem mano hok doh habih. Immuch360 ingak untuk demo: gambo kecik filem tunjuk berapo banyok demo doh tengok, nga filem sambong dari situ.
+
+1. Video hok lagi panjang dari 10 minit dikiro filem. Gambo kecik dio tunjuk bar apo hok demo doh tengok, nga tando bilo demo doh tengok sampai 2 minit terakhir dio.
+2. Bukak dio balik: dio sambong dari tempak demo berhenti, nga "Sambong pado 42:10" beberapo saat. Takdok butang, takdok pop timbul, nga sapu nga kekunci remote jale macang dulu.
+3. "Maing dari awal" nga "Tando belum tengok" ado dale menu pemapar nga dale butira, hok royak jugok "Doh tengok 42 %" ke "Berhenti pado 42:10 dari 01:40:00". Kat TV, remote sampai ko dio dale butira.
+4. Dale Settings, Asset Viewer, Videos, "Ingak tempak ambo berhenti" matike dio, nga gelongsor dio tetapke panjang filem, dari 0 (tiap-tiap video) sampai 60 minit. Filem tok ulang lagi; video hok lagi pendek terus ulang.
+
+Dio jale dale pemapar pustako Immich demo, dale pemaing kongsi rangkaie nga folder peranti, dale paparan imersif Meta Quest nga kat komputer; pemaing 360° telefon nga komputer mulo filem dari awal. Apo hok demo doh tengok tinggal dale pangkala data kat peranti nga tok pernah dihanta ko server demo.
+
+Lagi: nota [build 38](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-38) nga [desktop build 18](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-18).
+
+<a id="when-a-video-waits-or-will-not-play"></a>
+### Bilo video tunggu ke tok maing
+
+Filem dari server ke NAS demo maing dari fail hok peranti ni nyahkod, nga bilo dio keno tunggu, dio royak sebab apo nga berapo lamo.
+
+- **Fail hok buleh dinyahkod hok maing.** Immich simpan video asal nga, bilo dio transkod, satu salinan. Aplikasi maing hok peranti ni nyahkod: "Tengoh maing hok asal: salinan server (H.264 5760 x 2880) lebih dari had penyahkod peranti ni". Bilo server tok leh strim hok asal tu, aplikasi muat turung dio dulu ("Tengoh muat turung hok asal nok maing: 45 %"); bilo takdok fail hok buleh dinyahkod, dio royak apo nok tukar dale Immich. Sapu ko atah kat video: kad "Sumber video" royak fail mano hok maing nga sebab apo, nga butang dio maing hok satu lagi.
+- **Sambunga lembat.** Bawoh penunjuk muat, "Tengoh muat: 2 Mbit/s dari 8.1 Mbit/s hok video ni perlu" nga "Mulo dale lebih kurang 37 s": aplikasi tunggu apo hok sambunga bawok, lepah tu maing bahagian hok lagi panjang. "Server hanta video ni pado 2 Mbit/s, dio perlu 8.1 Mbit/s: dio akan berhenti sekali sekala" mari nga jala keluar: dale Immich, Administration, Video transcoding, resolusi sasara lagi rendoh ke kadar bit maksimum.
+- **Server hok doh berhenti.** "Server doh berhenti hanta video ni. Dio sambong maing bilo server jawab": filem tunggu server nga sambong sebaik dio jawab. Samo jugok untuk kongsi.
+
+iPhone nga iPad kekal penyahkod sistem dio nga peratura tunggu dio sendiri. Doh disemak kat emulator Android nga server nga kongsi hok dilembatke antaro 0.6 nga 3 Mbit/s: filem hok build 38 tinggal lepah 20 s loni maing, nga server hok senyap seminit sambong maing 1.3 s lepah dio jawab.
+
+Lagi: nota [build 37](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-37) nga [build 39](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-39).
+
 <a id="find-your-immich-library"></a>
 <a id="keep-your-immich-library-with-more"></a>
 ### Simpang pustako Immich demo, nga lebih lagi
@@ -473,11 +590,24 @@ Nga server [Immich](https://github.com/immich-app/immich), Immuch360 ialah aplik
 2. Dale Tetapa, Pemapar Aset, Video, "Sumber video" pilih fail asal bilo peranti ni leh nyahkod dio, sentiaso fail asal, ke sentiaso strim ditranskod.
 3. Untuk tunjuk gambo 360° ko orang hok takdok aplikasi ni, kongsi dio nga pauta kongsi Immich: aplikasi web Immich tunjuk dio sebagai sfera dale pelayar demo.
 
-Build sekarang, build 32, berasaska Immich `main` 10 Oktober 2026 (versi 3.3.0-rc.0), samo macam build 28 sampai 31; build 28 doh diuji nga server hok dibuat dari Immich `main` hok samo tu, nga build 27 jugok nga server Immich 3.2.4. Tolong lapor masalah kat [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich.
+Build sekarang, build 39, berasaska Immich `main` 10 Oktober 2026 (versi 3.3.0-rc.0), samo macam build 28 sampai 38; build 28 doh diuji nga server hok dibuat dari Immich `main` hok samo tu, nga build 27 jugok nga server Immich 3.2.4. Tolong lapor masalah kat [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich.
 
 Apo hok samo nga apo hok Immuch360 tamboh ado dale [Bandinga nga Immich](#compared-with-immich).
 
 Lagi: [lain-lain sumonyo Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [bandinga nga aplikasi Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="find-a-month-or-a-year-in-a-long-timeline"></a>
+### Cari bule ke taung dale garis maso hok panjang
+
+Sepuluh taung gambo jadi tatal hok panjang. Cubit lepah gambo kecik hok paling kecik nga garis maso tunjuk satu blok satu bule, nga beberapo gambo kecik halus nga bilange, lepah tu satu blok satu taung nga duo belas bule dio. Diminta dek ChazyChaxxx dale [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10).
+
+1. Kat telefon ke tablet, cubit; kat komputer, tekan lamo Ctrl nga pusing roda tetikus (Command kat Mac), ke cubit kat pad sentuh. "Bule" keluar, lepah tu "Taung".
+2. Ketuk ke klik bule ke taung nok bukak dio pado zum biaso demo; dari bule nga taung, Back balik ko grid.
+3. Bar tatal kat kana tunjuk taung nga bule bawoh jari demo, nga jadi lembat bilo demo pegang dio diam.
+
+Doh disemak kat telefon penulis nga, langkah demi langkah, kat PC Windows nga desktop build 14. Aplikasi sokmo bukak kat grid, nga TV nga tingkap Meta Quest kekal grid.
+
+Lagi: nota [build 33](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-33) nga [desktop build 14](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-14).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 <a id="watch-your-home-cameras-on-the-big-screen"></a>
@@ -629,7 +759,7 @@ Immuch360 simpang sumo aplikasi mudoh alih Immich nga tamboh apo hok ado kelilin
 | **Kongsi nga Plex** | kongsi SMB, WebDAV nga DLNA nga server Plex, dimaing kat tempat dio, nga fail dio dihanta ko server demo nga tangan. |
 | **Kamera Tapo** | pandanga live nga rekoda kad memori, sebeloh gambo demo; belum disemak nga kamera sebenar. |
 | **Pusing nga satu kekunci** | aplikasi Immich pusing gambo dale penyunting dio; Immuch360 pusing dio nga satu kekunci, nga untuk gambo demo sendiri kat Immich 2.6 ke hok lagi baru dio lalu penyunting server hok samo tu, jadi aplikasi web nga peranti demo hok lain tunjuk dio doh dipusing. |
-| **Video** | menu audio nga sarikato dale pemaing Android, hok pemaing Android aplikasi Immich takdok; fail asal ke strim hok ditranskod, dipilih untuk tiap video; perincia teknikal video. |
+| **Video** | menu audio nga sarikato dale pemaing Android, hok pemaing Android aplikasi Immich takdok; fail asal ke strim hok ditranskod, dipilih untuk tiap video; perincia teknikal video; filem hok sambong dari tempak demo berhenti; fail hok peranti ni nyahkod, dipilih untuk demo, nga server lembat hok dibezoke dari server hok doh berhenti. |
 | **Dron demo** | gambo nga video dron DJI dihanta lalu USB, nga video diletak kat peta dari data terbang dio, sedangka aplikasi Immich sandar apo hok doh ado dale galeri telefon jah; nga video live dron lalu alat kawala RC-N3, nga nilai terbang dio nga gelang halanga, kat telefon nga dihanta ko Meta Quest ke Android TV. Duo-duo eksperimen. |
 | **Mano nok lapor** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), buke projek Immich. |
 
@@ -638,7 +768,7 @@ Bandinga fungsi demi fungsi ado dale [Bandinga nga aplikasi Immich](../docs/immu
 <a id="privacy"></a>
 ## Privasi
 
-Takdok apo-apo pi ko pembangun: takdok akaun, takdok analitik, takdok perkhidmata lapora crash, takdok iklan. Aplikasi cakap nga server hok demo pilih jah (server Immich demo, kongsi demo, server Plex demo, kamera demo) nga, tanpo server, tak ko mano-mano. Kato lalue nga token kekal dale storan selamat peranti; TV LG nga Samsung takdok storan gitu untuk aplikasi, jadi kat situ dio kekal dale storan aplikasi tu sendiri, tak tersulit. Kamera diguno kat peranti jah, dek pemaing Spatial 2.5D nga untuk imbas kod skrin hok demo log masukka; gambo dio tak sekali-kali tersimpan nga tak sekali-kali dihanta ko mano-mano. Skrin hok log masuk dari telefon demo dapat sesi dio sendiri, dihanta tersulit kat rangkaie rumoh demo, tak sekali-kali kato lalue demo; TV LG log masuk lalu muko dale pelayar telefon, hok hanta e-mel nga kato lalue demo ko TV tak tersulit kat rangkaie rumoh demo, nga TV simpan sesi jah. Tangkapa nga rekod terimo muko dron kekal kat peranti kecuali demo kongsi dio: dio ado video dron nga mungki ado kedudukan dio, nga tangkapa ado nombor siri alat kawala nga pesawat. Gambo nga nilai dron pi dari telefon ko headset nga TV hok demo pasangka jah, kat rangkaie tempata demo, tak tersulit, samo macam telefon hok dikongsi kat Wi-Fi. Takdok apo-apo dihanta ko DJI, ke ko TP-Link. Polisi penoh ado dale [PRIVACY.md](../PRIVACY.md), nga perincia tiap sumber dale [panduan pengguno](../docs/immuch360/user-guide.md#privacy).
+Takdok apo-apo pi ko pembangun: takdok akaun, takdok analitik, takdok perkhidmata lapora crash, takdok iklan. Aplikasi cakap nga server hok demo pilih jah (server Immich demo, kongsi demo, server Plex demo, kamera demo) nga, tanpo server, tak ko mano-mano. Kato lalue nga token kekal dale storan selamat peranti; TV LG nga Samsung takdok storan gitu untuk aplikasi, jadi kat situ dio kekal dale storan aplikasi tu sendiri, tak tersulit. Kamera diguno kat peranti jah, dek pemaing Spatial 2.5D nga untuk imbas kod skrin hok demo log masukka; gambo dio tak sekali-kali tersimpan nga tak sekali-kali dihanta ko mano-mano. Skrin hok log masuk dari telefon demo dapat sesi dio sendiri, dihanta tersulit kat rangkaie rumoh demo, tak sekali-kali kato lalue demo; TV LG log masuk lalu muko dale pelayar telefon, hok hanta e-mel nga kato lalue demo ko TV tak tersulit kat rangkaie rumoh demo, nga TV simpan sesi jah. Tangkapa nga rekod terimo muko dron kekal kat peranti kecuali demo kongsi dio: dio ado video dron nga mungki ado kedudukan dio, nga tangkapa ado nombor siri alat kawala nga pesawat. Gambo nga nilai dron pi dari telefon ko headset nga TV hok demo pasangka jah, kat rangkaie tempata demo, tak tersulit, samo macam telefon hok dikongsi kat Wi-Fi. Takdok apo-apo dihanta ko DJI, ke ko TP-Link. Polisi penoh ado dale [PRIVACY.md](../PRIVACY.md), nga perincia tiap sumber dale [panduan pengguno](../docs/immuch360/user-guide.md#privacy). Apo hok demo doh tengok dari filem demo disimpan dale pangkala data kat peranti nga tok pernah dihanta ko server demo.
 
 **Ciri AI** jale kat peranti demo jah. Gambo, rupo timbul dio, adege dio nga panorama dio dikiro kat komputer ke dale headset demo nga tak dihanta ko mano-mano. Aplikasi sambung jah nok muat turun komponen hok demo mintak, dari keluara projek ni kat GitHub ke, kalu tak dapat, dari muko rasmi model tu bilo ado, semak tiap fail nga SHA-256 dio, nga lepah tu jale tanpo internet. ONNX Runtime, hok jale model kat komputer, hanta telemetri ko Microsoft dale build rasmi dio; Immuch360 matika dio. Fail baru pi sebelah gambo asal demo, tok sekali-kali atas dio, nga sampai ko server Immich demo kalu demo hidupka "Sandar versi AI gak" jah ("Select all" dale album sandara hidupka dio jugok).
 
@@ -649,6 +779,8 @@ Takdok apo-apo pi ko pembangun: takdok akaun, takdok analitik, takdok perkhidmat
 Immuch360 ialah fork tak rasmi aplikasi mobile [Immich](https://github.com/immich-app/immich), bawoh [GNU AGPL v3](../LICENSE), takdok kaita nga tak disoko dek pasuka Immich ke FUTO. Fork ni wujud sebab tengok 360° kat mobile doh dimintak dale Immich sejak Januari 2024 nga belum ado dale aplikasi rasmi lagi; dio keluarka sekarang, kumpul maklum balas peranti sebenar, nga nok tawar balik ko Immich, dale pull request kecik, apo hok penyelenggara nok. Satiap hok aplikasi rasmi buat dikekalka; cabang, rantaia build nga CI diterangka dale [Buat sendiri](../docs/immuch360/build.md).
 
 Pemapar gambo 360° berasaska pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) dek dmitry-brazhenko, hok dibina atas prototaip bencefr dale [#30192](https://github.com/immich-app/immich/pull/30192); terimo kasih ko keduo-duo. Pembaikka remote untuk penapis carian nga susuna album kat TV bermulo dari kijo mlc70 dale [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), nga rel tindaka nga helaia penapis atas 80 peratus tinggi skrin datang dari [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) dek mlc70, nga kepengarangan dio dikekalka; terimo kasih ko mlc70. Aplikasi LG webOS, hok dipakej jugok untuk TV Samsung, dibina atas [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) dek Seeky91, bawoh lesen MIT, disimpan dale folder dio sendiri; terimo kasih ko Seeky91. Kamera Tapo ditulih ikut apo hok [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) nga [python-kasa](https://github.com/python-kasa/python-kasa) dokumenka. Pandanga Meta Quest bergantung pado Meta Spatial SDK, hok buke sumber terbuka, jadi dio kekal dale fork ni. Kongsi SMB guno libsmb2, bawoh LGPL 2.1 ke hok lagi baru: dari build 27 nga desktop build 7, satiap build bawok notis dio, teks lesen dio nga arkib sumber dio, `Immuch360-libsmb2-sources.tar.gz`, hok dilampir jugok kat tiap keluara. Build Windows nga macOS bawok libmpv (pustako [mpv](https://mpv.io), nga [FFmpeg](https://ffmpeg.org)) hok dibuat dek projek, bawoh LGPL, nga lesen nga sumber dio, hok disenarai kat muko lesen aplikasi (Lesen, kat bawoh menu profil); butira nga tando dagang platform hok disebut kat muko ni ado dale [Lesen nga tando dagang](../docs/immuch360/platform-support.md#license-and-trademarks).
+
+Build 33 bawok navigasi cari Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)) nga commit dio, nga idea dari Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360)) nga dari build pameran [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360), ditulis balik kat kod kawe; paparan bule nga taung jawab ChazyChaxxx dale [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10). Terimo kasih ko demo semuo.
 
 Ciri AI jale model nga enjin hok orang lain buat, dimuat turun bilo demo mintak jah, dari pra-keluara [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1), [ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2) nga [ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3) repositori ni; tiap fail, sumber dio, lesen dio nga SHA-256 dio ado dale [MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md). Terimo kasih ko pengarang dio:
 
@@ -665,8 +797,8 @@ Tangkapa kat muko ni ialah tangkapa sebenar aplikasi: hok telefon kat build Andr
 
 Gapo hok belum siap, hok paling mungki dulu. Takdok gapo sini janji, nga maklum balas dale [penjejak isu](https://github.com/freeKC/Immuch360/issues) tolong putuh gapo mari dulu.
 
-- **Kedai**: Google Play (build 32 tengoh disemak sejak 29 Oktober, ganti build 31; penyenaraia TV tengoh disemak), App Store (versi 3.3.1 tengoh disemak, lepah tu versi 3.3.2 nga build 28), Meta Horizon Store nga build 32 (build 31 kat situ sejak 28 Oktober), LG Content Store (versi 1.0.0 tengoh disemak LG sejak 24 Oktober, lepah tu versi 1.0.1), nga kemudia kedai Samsung.
-- **Pencipta AI**: panorama 360° kat Mac; adege dibina balik dari beberapo gambo tempat hok samo; Gaussian splats (.spz, .ply) hok alat lain buat, dibaco dale headset; label AI dale aplikasi iOS, LG nga Samsung; panorama dicubo kat PC Linux nga kad grafik, nga kat kad AMD nga Intel.
+- **Kedai**: Google Play (build 32 tengoh disemak sejak 29 Oktober, ganti build 31; penyenaraia TV tengoh disemak), App Store (versi 3.3.1 tengoh disemak, lepah tu versi 3.3.2 nga build 28), Meta Horizon Store nga build 39 (build 32 kat situ sejak 30 Oktober), LG Content Store (versi 1.0.0 tengoh disemak LG sejak 24 Oktober, lepah tu versi 1.0.1), nga kemudia kedai Samsung.
+- **Pencipta AI**: panorama 360° kat Mac; adege dibina balik dari beberapo gambo tempat hok samo; label AI dale aplikasi iOS, LG nga Samsung; panorama dicubo kat PC Linux nga kad grafik, nga kat kad AMD nga Intel.
 - **Dron**: terbang kat luar untuk buktika tinggi nga laju lebih 1.8 m nga 1.5 m/s nga jarak halanga nga pita ukur, lepah tu untuk tunjuk satelit nga jarak dari rumoh; gambo stabil hanta hok disemak dale headset; hanta ko TV LG nga Samsung; dron kat iPhone nga iPad, belum mulo; uji muko import nga DJI Neo 2 sebenar, lepah tu bunyi hok telefon rekod dicantum ko dale klip dio. Takdok apo-apo hok hanta arahan ko dron dirancang sebelum uji-uji tu.
 - **TV**: build 29 kat Android TV sebenar, termasuk kawala video dio nga log masuk nga telefon; kongsi, Plex nga pandanga live aplikasi LG kat TV LG sebenar, nga webOS 26; build uji Samsung 0.2.0 kat TV Samsung sebenar, lepah tu log masuk nga telefon, kongsi, Plex nga kamera kat TV Samsung; lepah tu video 360° kat sfera TV LG, bunyi kamera nga rekoda dio (tak sebelum Disember 2026).
 - **Kamera**: kamera Tapo hok disemak nga kamera sebenar.
@@ -701,15 +833,15 @@ Apo hok aplikasi leh baco nga maing, untuk pembaco hok nok tahu sumonyo. Tiap ba
 <details>
 <summary><b>Format, sumber, mainan nga perkakasan, secaro terperinci</b></summary>
 
-- **Format**: gambo nga video rato (apo hok peranti nyahkod: MP4, MOV, MKV nga lain); gambo nga video 360° equirectangular; panorama separuh (potonga GPano); VR180; 3D stereoskopik, atah nga bawoh ke sebeloh-sebeloh, dibaco dari fail (kotak st3d) ke diteko dari bingkai; gambo spatial Apple (pasa stereo HEIC) nga video spatial (MV-HEVC, satu mato); fail mentah Insta360 .insp nga .insv, GoPro .360, DJI .osv; sumber 10 bit HLG nga PQ dipeta tone kat sfera.
+- **Format**: gambo nga video rato (apo hok peranti nyahkod: MP4, MOV, MKV nga lain); gambo nga video 360° equirectangular; panorama separuh (potonga GPano); VR180; 3D stereoskopik, atah nga bawoh ke sebeloh-sebeloh, dibaco dari fail (kotak st3d) ke diteko dari bingkai; gambo spatial Apple (pasa stereo HEIC) nga video spatial (MV-HEVC, satu mato); fail mentah Insta360 .insp nga .insv, GoPro .360, DJI .osv; sumber 10 bit HLG nga PQ dipeta tone kat sfera; TIFF hok aplikasi nyahkod kat Android (8 nga 16 bit, kelabu, RGB, palet nga CMYK, tok dimampat ke nga mampata LZW, Deflate, PackBits ke JPEG); Gaussian splats dale .spz sampai versi 3 nga .ply binari, kat Meta Quest 3 nga 3S.
 - **Unjura nga metadata**: metadata GPano nga sfera dibaco dari fail, nga permintaa julat kat server ke kongsi; pandanga awal kamera; sfera dron DJI dikenali dari kamera dio, nga fail sampinga .xmp pilihe supayo Immich pun tando dio; "Lihat sebagai 360°" diinga kat peranti; VR180 dikenali dari fail ke namo dio; tempat video dron dibaco dari log terbang .SRT dio; metadata kekal utuh sebab fail asal hok dimaing, bukan salina hok ditukar; suku pusinga disimpan lalu penyunting Immich ke disimpan kat peranti, tak sekali-kali kat fail immersif.
-- **Maing asli**: Media3 kat Android nga TV, SceneKit nga AVFoundation kat iOS, Meta Spatial SDK dale headset, libmpv kat Windows; fail asal ke strim ditranskod dipilih ikut apo peranti leh nyahkod; senarai penyahkod video peranti kat Tetapa, Lanju; pilihe trek audio, sarikato dale pemaing Android nga penunjuk buffering.
+- **Maing asli**: Media3 kat Android nga TV, SceneKit nga AVFoundation kat iOS, Meta Spatial SDK dale headset, libmpv kat Windows; fail asal ke strim ditranskod dipilih ikut apo peranti leh nyahkod; senarai penyahkod video peranti kat Tetapa, Lanju; pilihe trek audio, sarikato dale pemaing Android nga penunjuk buffering; mulo video strim ikut apo hok sambunga bawok berbanding apo hok video perlu, nga video hok ditunggu maso server dio senyap.
 - **Fail mentah dicantum kat peranti**: shader fragmen Flutter untuk gambo; kesan GPU dale pemaing untuk video satu trek; duo penyahkod hardware serentak nga compositor GPU untuk video satu lens tiap trek ke tiap fail (OpenGL ES 3 kat Android nga Quest, Metal kat iOS, nga kat Windows, dari desktop build 5, duo pemaing libmpv hok aplikasi cantumka bingkai dio kat cip grafik); kalibrasi kamera dio sendiri (model Mei, V6 nga equidistant) nga rekod akselerometer; patah balik ko satu lens, strim ditranskod, salina LRV kamera ke video hok tak dicantum, bilo peranti tak leh jale duo penyahkod.
-- **Sumber**: galeri peranti; folder komputer; dron ke kad kamera lalu USB, guno pemilih folder sistem (Android, eksperimen); alat kawala DJI RC-N3 lalu kabel dio untuk video live dron (Android, eksperimen), dihanta kat rangkaie tempata ko Meta Quest ke Android TV; server Immich; SMB 2 nga 3, WebDAV, DLNA/UPnP; Plex menerusi HTTPS hok disemak nga sijil server sendiri; kamera Tapo menerusi rangkaie tempata (HTTPS nga RTSP); telefon ke komputer hok dikongsi kat Wi-Fi sebagai server WebDAV; server hok dijumpo nga Bonjour/mDNS, imba rangkaie tempata, SSDP, GDM nga penemua TP-Link, nga diikut bilo dio tukar alamat.
+- **Sumber**: galeri peranti; folder komputer; dron ke kad kamera lalu USB, guno pemilih folder sistem (Android, eksperimen); alat kawala DJI RC-N3 lalu kabel dio untuk video live dron (Android, eksperimen), dihanta kat rangkaie tempata ko Meta Quest ke Android TV; server Immich; SMB 2 nga 3, WebDAV, DLNA/UPnP; Plex menerusi HTTPS hok disemak nga sijil server sendiri; kamera Tapo menerusi rangkaie tempata (HTTPS nga RTSP); telefon ke komputer hok dikongsi kat Wi-Fi sebagai server WebDAV; server hok dijumpo nga Bonjour/mDNS, imba rangkaie tempata, SSDP, GDM nga penemua TP-Link, nga diikut bilo dio tukar alamat; folder telefon, tablet ke Meta Quest Android melalui pemilih folder sistem.
 - **Bacaa ikut permintaa**: jambata tempata layan pemaing nga julat byte nga token tiap sesi; blok besa, baco awal nga sampai nam sambunga SMB selari; thumbnail dari satu bingkai tiap video; takdok apo-apo disalin ko peranti.
 - **Hardware**: penyahkod hardware diguno kat mano dio ado, nga had hok diukur (siling H.264 Quest 3, duo lens 2048x2048 paling banyok untuk penyahkod software); kat Windows pandanga 360° dilukih dek cip grafik dari tiap bingkai hok dinyahkod, saiz bingkai diukur kat tiap komputer, cip bersepadu ke berdedikasi dikesan.
 - **Keistimewaa platform**: giroskop nga pemaing Spatial 2.5D kat telefon; pandanga immersif, kawala nga tangan kat Quest; susune remote, dialog papan kekunci nga sepanduk TV kat Android TV; kat komputer, tetikuh nga papan kekunci, skrin penoh, satu tetingkap jah, fail nga folder hok dibukak nga program ke dilepah kat tetingkap dio, dibaco macam fail folder demo, HEIC, AVIF, TIFF nga gambo mentah kamera folder bilo Windows ado penyahkod untuk dio, nga perlindunga data Windows untuk kato lalue nga token.
-- **Pencipta AI**: gambo 3D sebagai JPEG sebelah-menyebelah lebar penuh, mato kiri dulu, rupo timbul dari Depth Anything V2 Small lalu ONNX Runtime 1.31.0 kat pemproses (1.23.2 kat Mac Intel); adege sebagai JPEG hok bawok adege glTF berlapis dipotong kat tempat kedalama pecoh, dari MoGe-2 ViT-S nga LaMa, nga eksport .glb; panorama 360° 6144 x 3072, dijano dek FLUX.2 klein base 4B nga LoRA 360° lalu stable-diffusion.cpp kat Vulkan, sambunga dicantum dek MI-GAN, perincia dinaikka dek Real-ESRGAN nga piksel sebenar diletak balik; versi 3D gambo 360°, atas nga bawoh; dale tiap fail XMP kami (jenih, asal, SHA-1 gambo asal, bendera kualiti), nga dale adege nga panorama jenih sumber digital IPTC; rupo timbul Quest dek LiteRT, kat cip grafik ke pemproses dio, disimpang dale cache; kat komputer, barisa kat duo lorong nga pintu hok baco kad grafik lalu Vulkan nga tunggu maso program lain pegang memori dio; tiap komponen disemak nga SHA-256 dio, penjano Windows ditandata.
-- **Privasi sejak mulo**: takdok akaun, takdok awan, takdok analitik; kato lalue nga token dale storan selamat peranti (kat TV LG nga Samsung, hok takdok storan gitu untuk aplikasi, dale storan aplikasi tu sendiri, tak tersulit); skrin hok log masuk dari telefon dapat sesi dio sendiri, dihanta tersulit kat rangkaie rumoh, tak sekali-kali kato lalue (TV LG dapat kato lalue dari muko dale pelayar telefon, tak tersulit kat rangkaie rumoh, nga simpan sesi jah); kamera pemaing Spatial nga pengimbas kod diguno kat peranti jah; kongsi, Plex nga kamera dicapai kat rangkaie demo jah; AI dikiro kat peranti, komponen dio dimuat turun bilo demo mintak jah nga disemak nga SHA-256 dio, telemetri ONNX Runtime dimatika.
+- **Pencipta AI**: gambo 3D sebagai JPEG sebelah-menyebelah lebar penuh, mato kiri dulu, rupo timbul dari Depth Anything V2 Small lalu ONNX Runtime 1.31.0 kat pemproses (1.23.2 kat Mac Intel); adege sebagai JPEG hok bawok adege glTF berlapis dipotong kat tempat kedalama pecoh, dari MoGe-2 ViT-S nga LaMa, nga eksport .glb; panorama 360° 6144 x 3072, dijano dek FLUX.2 klein base 4B nga LoRA 360° lalu stable-diffusion.cpp kat Vulkan, sambunga dicantum dek MI-GAN, perincia dinaikka dek Real-ESRGAN nga piksel sebenar diletak balik; versi 3D gambo 360°, atas nga bawoh; dale tiap fail XMP kami (jenih, asal, SHA-1 gambo asal, bendera kualiti), nga dale adege nga panorama jenih sumber digital IPTC; rupo timbul Quest dek LiteRT, kat cip grafik ke pemproses dio, disimpang dale cache; kat komputer, barisa kat duo lorong nga pintu hok baco kad grafik lalu Vulkan nga tunggu maso program lain pegang memori dio; tiap komponen disemak nga SHA-256 dio, penjano Windows ditandata; versi 3D gambo kongsi hok ditulis sebeloh dio kat SMB nga WebDAV.
+- **Privasi sejak mulo**: takdok akaun, takdok awan, takdok analitik; kato lalue nga token dale storan selamat peranti (kat TV LG nga Samsung, hok takdok storan gitu untuk aplikasi, dale storan aplikasi tu sendiri, tak tersulit); skrin hok log masuk dari telefon dapat sesi dio sendiri, dihanta tersulit kat rangkaie rumoh, tak sekali-kali kato lalue (TV LG dapat kato lalue dari muko dale pelayar telefon, tak tersulit kat rangkaie rumoh, nga simpan sesi jah); kamera pemaing Spatial nga pengimbas kod diguno kat peranti jah; kongsi, Plex nga kamera dicapai kat rangkaie demo jah; AI dikiro kat peranti, komponen dio dimuat turun bilo demo mintak jah nga disemak nga SHA-256 dio, telemetri ONNX Runtime dimatika; apo hok demo doh tengok dari filem demo, disimpan kat peranti.
 
 </details>
