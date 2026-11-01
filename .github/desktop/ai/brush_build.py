@@ -156,8 +156,9 @@ def run(command: list, cwd: pathlib.Path | None = None, env: dict | None = None)
 
 
 def output(command: list, cwd: pathlib.Path | None = None, env: dict | None = None) -> str:
-    return subprocess.run([str(part) for part in command], cwd=cwd, check=True, capture_output=True, text=True,
-                          env=env).stdout.strip()
+    """The standard output of a command, read as UTF-8 whatever the code page of the system (cargo writes UTF-8)"""
+    return subprocess.run([str(part) for part in command], cwd=cwd, check=True, capture_output=True,
+                          encoding='utf-8', errors='replace', env=env).stdout.strip()
 
 
 def cargo_env(lock: dict) -> dict:
