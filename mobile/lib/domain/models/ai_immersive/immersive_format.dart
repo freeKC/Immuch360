@@ -319,9 +319,22 @@ String derivedNameEnd(ImmersiveKind kind, String originalName) => switch (kind) 
 
 /// The name of the version of [kind] of [originalName], before the safe file name of the computers: "salon.jpg" gives
 /// "salon_scene3D.jpg", "salon_360.jpg", "salon_360_3D.jpg"; "PANO_0001.jpg" gives "PANO_0001_3D.jpg" for its 3D
-/// version. For a splat scene, [originalName] is the name chosen in its dialog: "salon" gives "salon_splat.spz".
+/// version. For a splat scene, [originalName] is the name chosen in its dialog, kept whole: "salon" gives
+/// "salon_splat.spz", "2024.08 Lyon" gives "2024.08 Lyon_splat.spz" (splatFileNameFor).
 String derivedFileNameFor(ImmersiveKind kind, String originalName) =>
-    '${fileStem(originalName)}${derivedNameEnd(kind, originalName)}';
+    '${derivedNameStem(kind, originalName)}${derivedNameEnd(kind, originalName)}';
+
+/// What comes before the end of the name of a version of [kind] (derivedNameEnd): the name of the original without
+/// its extension, but for a splat scene the name chosen in its dialog as it is, since a name such as "St. Paul" or
+/// "2024.08 Lyon" has no extension to take off (the dialog proposes the name of the folder of the photos)
+String derivedNameStem(ImmersiveKind kind, String originalName) =>
+    kind == ImmersiveKind.gaussianSplat ? originalName : fileStem(originalName);
+
+/// The name of the splat scene named [name] in its dialog: "St. Paul" gives "St. Paul_splat.spz", and with [ply]
+/// "St. Paul_splat.ply", the copy for other 3D apps. The computers then pass it through their safe file name
+/// (versionTargetName) and take "name (1)" when it is taken.
+String splatFileNameFor(String name, {bool ply = false}) =>
+    '$name$splatNameSuffix${ply ? splatPlyExtension : splatFileExtension}';
 
 /// The name of an original without its extension: "salon" for "salon.jpg", "archive.tar" for "archive.tar.gz", the
 /// whole name when it has no extension or starts with its only dot

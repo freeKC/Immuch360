@@ -8,6 +8,7 @@ import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -78,6 +79,29 @@ void main() {
       expect('salon$splatNameSuffix$splatPlyExtension', 'salon_splat.ply');
       expect(derivedNameSuffixes, isNot(contains(splatNameSuffix)));
       expect(qualityFlagsOf(ImmersiveKind.gaussianSplat), isEmpty);
+    });
+
+    test('the name chosen in the dialog is kept whole: its dots, spaces and accents are no extension', () {
+      // The dialog proposes the name of the folder of the photos, and dated folders often hold dots (review of SP0)
+      const names = {
+        'salon': 'salon_splat',
+        'St. Paul': 'St. Paul_splat',
+        '2024.08 Lyon': '2024.08 Lyon_splat',
+        'Room 2.5': 'Room 2.5_splat',
+        'Visite 1.1': 'Visite 1.1_splat',
+        "Salon d'été": "Salon d'été_splat",
+        'Łódź, rynek': 'Łódź, rynek_splat',
+      };
+      for (final MapEntry(key: name, value: stem) in names.entries) {
+        expect(splatFileNameFor(name), '$stem.spz', reason: name);
+        expect(splatFileNameFor(name, ply: true), '$stem.ply', reason: name);
+        expect(derivedFileNameFor(ImmersiveKind.gaussianSplat, name), '$stem.spz', reason: name);
+        // The name made safe for Windows keeps it whole too
+        expect(versionTargetName(ImmersiveKind.gaussianSplat, name), '$stem.spz', reason: name);
+      }
+      expect(splatFileNameFor('Visite 1.1'), isNot(splatFileNameFor('Visite 1.2')));
+      // The other kinds still take the name of a photo without its extension
+      expect(derivedFileNameFor(ImmersiveKind.volumetricScene, 'St. Paul.jpg'), 'St. Paul_scene3D.jpg');
     });
 
     test('splat-v1 holds the choices of the plan', () {

@@ -48,7 +48,11 @@ void main() {
 
     test('each kind has its name, the end of which a shortened name keeps whole', () {
       expect(
-        {for (final kind in ImmersiveKind.values) kind: derivedFileNameFor(kind, 'salon.jpg')},
+        {
+          // A splat scene is named in its dialog, not after a photo: its name is kept whole
+          for (final kind in ImmersiveKind.values)
+            kind: derivedFileNameFor(kind, kind == ImmersiveKind.gaussianSplat ? 'salon' : 'salon.jpg'),
+        },
         {
           ImmersiveKind.stereoPhoto: 'salon_3D_LRF_Full_SBS.jpg',
           ImmersiveKind.volumetricScene: 'salon_scene3D.jpg',
