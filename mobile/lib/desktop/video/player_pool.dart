@@ -305,10 +305,16 @@ class PlayerPool {
   }
 
   /// Disposes [engine] once: a second call while the first runs waits for it (see [close])
-  Future<void> _disposeEngine(PlaybackEngine engine) => _disposing[engine] ??= _endEngine(engine).whenComplete(() {
-    // A block: whenComplete would wait for the future an arrow returned, this one
-    _disposing.remove(engine);
-  });
+  Future<void> _disposeEngine(PlaybackEngine engine) {
+    final running = _disposing[engine];
+    if (running != null) {
+      return running;
+    }
+    final ending = _endEngine(engine);
+    _disposing[engine] = ending;
+    unawaited(ending.whenComplete(() => _disposing.remove(engine)));
+    return ending;
+  }
 
   Future<void> _endEngine(PlaybackEngine engine) async {
     try {
