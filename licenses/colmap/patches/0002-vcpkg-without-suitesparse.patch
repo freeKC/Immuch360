@@ -1,0 +1,30 @@
+diff --git a/vcpkg.json b/vcpkg.json
+index 6fcc199..4d1770d 100644
+--- a/vcpkg.json
++++ b/vcpkg.json
+@@ -12,21 +12,18 @@
+         "boost-property-map",
+         "boost-property-tree",
+         "boost-unordered",
++        "blas",
+         {
+             "name": "ceres",
+             "features": [
+-                "lapack",
+-                "schur",
+-                "suitesparse"
++                "eigensparse",
++                "schur"
+             ]
+         },
+         "eigen3",
+         "gflags",
+         "glog",
+-        {
+-            "name": "jasper",
+-            "default-features": false
+-        },
++        "lapack",
+         "metis",
+         {
+             "name": "openblas",
