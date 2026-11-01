@@ -118,6 +118,38 @@ const _sdcppJobs = r'''
       - run: python3 .github/desktop/ai/sdcpp_build.py pack --system linux-x64
 ''';
 
+/// The two jobs of the desktop workflow that build COLMAP (lot SP1 of the splat maker), as immuch360-desktop.yml has them
+const _colmapJobs = r'''
+  colmap-windows:
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+      - run: python .github/desktop/ai/colmap_build.py pack --system windows-x64
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+  colmap-linux:
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/ai/colmap_build.py pack --system linux-x64
+''';
+
 /// The release workflow with the with_sdcpp input, as immuch360-desktop-release.yml has it: passed to the build only,
 /// and the release job never running with it nor with sign_test
 const _releaseWithSdcpp = '''
@@ -866,6 +898,56 @@ abstract class SyncEvents {
         (
           good.replaceFirst('  sdcpp-linux:', '  sdcpp-macos:'),
           'the job sdcpp-macos builds stable-diffusion.cpp on no known',
+        ),
+      ]) {
+        expect(workflow, isNot(good));
+        final refused = check(workflow);
+        expect(refused.exitCode, 1, reason: '$refused');
+        expect(refused.output, contains(message));
+      }
+    });
+
+    test('the jobs of COLMAP: on the images of the desktop builds, when asked, never as a package', () {
+      const good = '$_goodWorkflow$_sdcppJobs$_colmapJobs';
+      final run = check(good);
+      expect(run.exitCode, 0, reason: '$run');
+      for (final (workflow, message) in [
+        (
+          good.replaceFirst(
+            'runs-on: ubuntu-22.04\n    needs: codegen\n    if: \${{ inputs.colmap',
+            'runs-on: ubuntu-24.04\n    needs: codegen\n    if: \${{ inputs.colmap',
+          ),
+          'the job colmap-linux runs on ubuntu-24.04: COLMAP builds on ubuntu-22.04',
+        ),
+        (
+          good.replaceFirst(
+            'runs-on: windows-2022\n    needs: codegen\n    if: \${{ inputs.colmap',
+            'runs-on: windows-2025\n    needs: codegen\n    if: \${{ inputs.colmap',
+          ),
+          'the job colmap-windows runs on windows-2025',
+        ),
+        (
+          good.replaceFirst(
+            "    if: \${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}\n    timeout-minutes: 300\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3",
+            '    timeout-minutes: 300\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3',
+          ),
+          'the job colmap-linux runs on every event: its "if:" must read inputs.colmap',
+        ),
+        (
+          good.replaceFirst(
+            '          path: dist/\${{ steps.lock.outputs.artifact }}\n  colmap-linux:',
+            '          name: Immuch360-Desktop-colmap.zip\n          path: dist/\${{ steps.lock.outputs.artifact }}\n  colmap-linux:',
+          ),
+          'the job colmap-windows uploads Immuch360-Desktop-colmap.zip',
+        ),
+        (
+          good.replaceFirst('  colmap-linux:', '  colmap-macos:'),
+          'the job colmap-macos builds COLMAP on no known system',
+        ),
+        // The sdcpp input does not ask for COLMAP
+        (
+          good.replaceFirst('if: \${{ inputs.colmap || needs', 'if: \${{ inputs.sdcpp || needs'),
+          'the job colmap-windows runs on every event',
         ),
       ]) {
         expect(workflow, isNot(good));
