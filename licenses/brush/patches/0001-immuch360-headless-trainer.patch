@@ -352,17 +352,21 @@ index 3394b37..58a342f 100644
  [lints]
  workspace = true
 diff --git a/crates/brush-vfs/src/data_source.rs b/crates/brush-vfs/src/data_source.rs
-index 80a87c4..21e44d6 100644
+index 80a87c4..b024d72 100644
 --- a/crates/brush-vfs/src/data_source.rs
 +++ b/crates/brush-vfs/src/data_source.rs
-@@ -1,4 +1,6 @@
+@@ -1,7 +1,10 @@
 +// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): file dialogs behind the pick feature, downloads behind the url feature
  use crate::{BrushVfs, VfsConstructError};
 +#[cfg(feature = "pick")]
  use rrfd::PickFileError;
  use serde::Deserialize;
  use std::{path::Path, str::FromStr};
-@@ -30,11 +32,14 @@ impl FromStr for DataSource {
++#[cfg(any(feature = "pick", target_family = "wasm"))]
+ use tokio::io::BufReader;
+ 
+ #[derive(Clone, Debug, Deserialize)]
+@@ -30,11 +33,14 @@ impl FromStr for DataSource {
  use thiserror::Error;
  #[derive(Debug, Error)]
  pub enum DataSourceError {
@@ -378,7 +382,7 @@ index 80a87c4..21e44d6 100644
      #[error(transparent)]
      ReqwestError(#[from] reqwest::Error),
      #[error("WASM fetch error: {0}")]
-@@ -46,11 +51,17 @@ pub enum DataSourceError {
+@@ -46,11 +52,17 @@ pub enum DataSourceError {
  impl DataSource {
      pub async fn into_vfs(self) -> Result<BrushVfs, DataSourceError> {
          match self {
@@ -396,7 +400,7 @@ index 80a87c4..21e44d6 100644
              Self::PickDirectory => {
                  #[cfg(not(target_family = "wasm"))]
                  {
-@@ -90,7 +101,15 @@ impl DataSource {
+@@ -90,7 +102,15 @@ impl DataSource {
              url = format!("https://{url}");
          }
  
