@@ -1,7 +1,10 @@
 // The work folder of a splat scene (lib/desktop/ai/splat/splat_work_folder.dart, lot SP4): where COLMAP and Brush read
-// and write, and the ASCII path COLMAP is given: its own, its short name on Windows, or another root. On Windows, the
-// short name of a real folder with accents (GetShortPathNameW), when its volume keeps short names.
+// and write, and the ASCII path COLMAP is given: its own, its short name on Windows, or another root; that root, under
+// ProgramData, one folder per account made readable by its account and SYSTEM alone, else not used. On Windows, the
+// short name of a real folder with accents (GetShortPathNameW), when its volume keeps short names, and a real folder
+// made private by icacls, its rules read back by PowerShell.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -45,26 +48,75 @@ void main() {
 
   test('the work root: the first with an ASCII path, made if missing; none when no root has one', () {
     final temp = Directory(p.join(folder.path, 'Frédéric', 'Temp', 'immuch360-ai'));
-    final programData = Directory(p.join(folder.path, 'ProgramData', 'Immuch360', 'ai-work'));
-    final root = asciiWorkRoot([temp, programData], isWindows: true, shortPathOf: (path) => path);
+    final programData = Directory(p.join(folder.path, 'ProgramData', 'Immuch360', 'ai-work', 'S-1-5-21-7-1001'));
+    final private = <String>[];
+    bool makePrivate(Directory root) {
+      private.add(root.path);
+      return true;
+    }
+
+    final roots = [SplatWorkRoot(temp), SplatWorkRoot(programData, shared: true)];
+    final root = asciiWorkRoot(roots, isWindows: true, shortPathOf: (path) => path, makePrivate: makePrivate);
     expect(root!.path, programData.absolute.path);
     expect(programData.existsSync(), isTrue);
     expect(temp.existsSync(), isTrue);
-    expect(asciiWorkRoot([temp], isWindows: false), isNull);
-    expect(asciiWorkRoot([programData, temp])!.path, programData.absolute.path);
+    // Only the shared root is made private, once it is there
+    expect(private, [programData.path]);
+    expect(asciiWorkRoot([SplatWorkRoot(temp)], isWindows: false), isNull);
+    expect(asciiWorkRoot([SplatWorkRoot(folder), SplatWorkRoot(temp)])!.path, folder.absolute.path);
   });
 
-  test('the roots of the app: the temporary folder, then ProgramData on Windows', () {
+  test('a shared root that cannot be made private is never used', () {
+    final temp = Directory(p.join(folder.path, 'Frédéric', 'Temp', 'immuch360-ai'));
+    final programData = Directory(p.join(folder.path, 'ProgramData', 'Immuch360', 'ai-work', 'S-1-5-21-7-1001'));
+    final roots = [SplatWorkRoot(temp), SplatWorkRoot(programData, shared: true)];
+    expect(asciiWorkRoot(roots, isWindows: true, shortPathOf: (path) => path, makePrivate: (_) => false), isNull);
+  });
+
+  test('the roots of the app: the temporary folder, then on Windows a folder of ProgramData for the account', () {
     final temp = Directory(p.join('t', 'Temp'));
-    expect(
-      splatWorkRoots(environment: {'ProgramData': r'C:\ProgramData'}, isWindows: true, temp: temp).map((d) => d.path),
-      [p.join('t', 'Temp', 'immuch360-ai'), p.join(r'C:\ProgramData', 'Immuch360', 'ai-work')],
+    const sid = 'S-1-5-21-1004336348-1177238915-682003330-1001';
+    final windows = splatWorkRoots(
+      environment: {'ProgramData': r'C:\ProgramData'},
+      isWindows: true,
+      temp: temp,
+      userSid: () => sid,
     );
+    expect(windows.map((root) => (root.folder.path, root.shared)), [
+      (p.join('t', 'Temp', 'immuch360-ai'), false),
+      (p.join(r'C:\ProgramData', 'Immuch360', 'ai-work', sid), true),
+    ]);
     expect(
-      splatWorkRoots(environment: {'ProgramData': r'C:\ProgramData'}, isWindows: false, temp: temp).map((d) => d.path),
+      splatWorkRoots(
+        environment: {'ProgramData': r'C:\ProgramData'},
+        isWindows: false,
+        temp: temp,
+        userSid: () => sid,
+      ).map((root) => root.folder.path),
       [p.join('t', 'Temp', 'immuch360-ai')],
     );
-    expect(splatWorkRoots(environment: const {}, isWindows: true, temp: temp), hasLength(1));
+    expect(splatWorkRoots(environment: const {}, isWindows: true, temp: temp, userSid: () => sid), hasLength(1));
+    // No account known, no folder of ProgramData: it would be one for every account
+    expect(
+      splatWorkRoots(environment: {'ProgramData': r'C:\ProgramData'}, isWindows: true, temp: temp, userSid: () => null),
+      hasLength(1),
+    );
+  });
+
+  test('the account of whoami /user, and the rules icacls is given: no inheritance, the account and SYSTEM alone', () {
+    expect(
+      sidOfWhoami('"laptop\\frédéric","S-1-5-21-1004336348-1177238915-682003330-1001"\r\n'),
+      'S-1-5-21-1004336348-1177238915-682003330-1001',
+    );
+    expect(sidOfWhoami('ERROR: something'), isNull);
+    expect(windowsPrivateFolderArguments(r'C:\ProgramData\Immuch360\ai-work\S-1-5-21-7-1001', 'S-1-5-21-7-1001'), [
+      r'C:\ProgramData\Immuch360\ai-work\S-1-5-21-7-1001',
+      '/inheritance:r',
+      '/grant:r',
+      '*S-1-5-21-7-1001:(OI)(CI)F',
+      '*S-1-5-18:(OI)(CI)F',
+      '/q',
+    ]);
   });
 
   test(
@@ -87,4 +139,31 @@ void main() {
     },
     skip: !Platform.isWindows ? 'GetShortPathNameW is Windows only' : false,
   );
+
+  test('Windows: a folder made private keeps no rule it inherited, only the account and SYSTEM, its files too', () {
+    final sid = windowsUserSid() ?? fail('whoami gave no security id');
+    expect(sid, matches(RegExp(r'^S-1-5-\d+(-\d+)*$')));
+    final private = Directory(p.join(folder.path, 'ai-work', sid))..createSync(recursive: true);
+    // The rules of each path, read back: whether it is protected from its parent, then the account of each rule
+    const read =
+        r'$a = Get-Acl -LiteralPath $env:IMMUCH360_ACL_PATH; $a.AreAccessRulesProtected; $a.Access | '
+        r'ForEach-Object { $_.IdentityReference.Translate([Security.Principal.SecurityIdentifier]).Value }';
+    expect(windowsMakePrivate(private, sid: sid), isTrue);
+    File(p.join(private.path, 'photo.jpg')).writeAsStringSync('pixels');
+    for (final path in [private.path, p.join(private.path, 'photo.jpg')]) {
+      final rules = Process.runSync(
+        'powershell.exe',
+        ['-NoProfile', '-NonInteractive', '-Command', read],
+        environment: {'IMMUCH360_ACL_PATH': path},
+      );
+      expect(rules.exitCode, 0, reason: '${rules.stderr}');
+      final lines = [
+        for (final line in LineSplitter.split('${rules.stdout}'))
+          if (line.trim().isNotEmpty) line.trim(),
+      ];
+      // The folder protected from its parent; the file inherits from the folder alone
+      expect(lines.first, path == private.path ? 'True' : 'False', reason: path);
+      expect(lines.skip(1).toSet(), {sid, 'S-1-5-18'}, reason: path);
+    }
+  }, skip: !Platform.isWindows ? 'icacls is Windows only' : false);
 }
