@@ -1,7 +1,9 @@
 // The window of Immuch360 Desktop (design 1.8, 4.2 and 4.4): F11 anywhere and F in a viewer toggle full screen,
 // Escape and the back button of a mouse leave it first, then close the viewer, a dialog keeps its own Escape, a letter
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
-// first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step.
+// first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step,
+// then the window hides, the line of the close is written, and the app ends its own work, each step bounded, before the
+// window goes.
 
 import 'dart:async';
 
@@ -16,10 +18,12 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
+import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:logging/logging.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// window_manager needs the runner: this one records what the app asks of the window
@@ -30,6 +34,9 @@ class FakeDesktopWindow extends DesktopWindow {
   final listeners = <WindowListener>[];
   bool fullScreen = false;
 
+  /// Whether [prepareClose] also does what the app's does, through the channels the test answers
+  bool realPrepareClose = false;
+
   @override
   Future<void> setFullScreen(bool fullScreen) async {
     this.fullScreen = fullScreen;
@@ -38,6 +45,14 @@ class FakeDesktopWindow extends DesktopWindow {
 
   @override
   Future<void> setPreventClose(bool preventClose) async => calls.add('preventClose $preventClose');
+
+  @override
+  Future<void> prepareClose() async {
+    calls.add('prepareClose');
+    if (realPrepareClose) {
+      await super.prepareClose();
+    }
+  }
 
   @override
   Future<void> destroy() async => calls.add('destroy');
@@ -403,6 +418,182 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
       expect(window.calls, contains('destroy'));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the app ends its own work before the window goes, and the window goes even when a step hangs', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final steps = <String>[];
+      await pumpShell(
+        tester,
+        overrides: [
+          desktopCloseStepsProvider.overrideWithValue(
+            () => [
+              DesktopCloseStep('the players', const Duration(milliseconds: 500), () {
+                steps.add('players');
+                window.calls.add('players');
+                // A libmpv that does not answer
+                return Completer<void>().future;
+              }),
+              DesktopCloseStep('the logs', const Duration(milliseconds: 300), () => window.calls.add('logs')),
+            ],
+          ),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pump();
+      expect(window.calls, ['preventClose true', 'prepareClose', 'players']);
+      await tester.pump(const Duration(milliseconds: 499));
+      expect(window.calls, isNot(contains('destroy')));
+      await tester.pump(const Duration(milliseconds: 2));
+      expect(window.calls, ['preventClose true', 'prepareClose', 'players', 'logs', 'destroy']);
+      expect(steps, ['players']);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    group('the window hides as soon as the close is decided, before the app ends its own work', () {
+      const windowManagerChannel = MethodChannel('window_manager');
+      const runnerChannel = MethodChannel('immuch360/window');
+
+      /// Answers window_manager and the Windows runner as the systems do; [hang] names a method that never answers
+      Future<void> pumpClosing(WidgetTester tester, {String? hang}) async {
+        final messenger = tester.binding.defaultBinaryMessenger;
+        Future<Object?> answer(String side, MethodCall call) {
+          window.calls.add('$side ${call.method}');
+          return call.method == hang ? Completer<Object?>().future : Future.value(true);
+        }
+
+        messenger.setMockMethodCallHandler(windowManagerChannel, (call) => answer('window_manager', call));
+        messenger.setMockMethodCallHandler(runnerChannel, (call) => answer('runner', call));
+        addTearDown(() {
+          messenger.setMockMethodCallHandler(windowManagerChannel, null);
+          messenger.setMockMethodCallHandler(runnerChannel, null);
+        });
+        window.realPrepareClose = true;
+        await pumpShell(
+          tester,
+          overrides: [
+            desktopCloseStepsProvider.overrideWithValue(
+              () => [
+                DesktopCloseStep('the players', const Duration(milliseconds: 500), () => window.calls.add('players')),
+              ],
+            ),
+          ],
+        );
+      }
+
+      for (final platform in [TargetPlatform.linux, TargetPlatform.macOS]) {
+        testWidgets('on ${platform.name}, through window_manager: a share that holds the end of the process holds '
+            'no window on screen', (tester) async {
+          debugDefaultTargetPlatformOverride = platform;
+          await pumpClosing(tester);
+
+          window.clickClose();
+          await tester.pumpAndSettle();
+          expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide', 'players', 'destroy']);
+          debugDefaultTargetPlatformOverride = null;
+        });
+      }
+
+      testWidgets('on Windows, by the runner, which also ends the process if it lingers', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        await pumpClosing(tester);
+
+        window.clickClose();
+        await tester.pumpAndSettle();
+        expect(window.calls, ['preventClose true', 'prepareClose', 'runner closing', 'players', 'destroy']);
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      testWidgets('a window that does not answer holds the close 500 ms at most', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+        await pumpClosing(tester, hang: 'hide');
+
+        window.clickClose();
+        await tester.pump();
+        expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide']);
+        await tester.pump(const Duration(milliseconds: 499));
+        expect(window.calls, isNot(contains('players')));
+        await tester.pump(const Duration(milliseconds: 2));
+        await tester.pumpAndSettle();
+        expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide', 'players', 'destroy']);
+        debugDefaultTargetPlatformOverride = null;
+      });
+    });
+
+    testWidgets('the line of the close is written at once, without waiting for it, before any step can block the app; '
+        'the logs are written again last', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final lines = Logger.root.onRecord
+          .where((record) => record.message == 'The window closes')
+          .listen((record) => window.calls.add('line'));
+      addTearDown(() {
+        Logger.root.level = level;
+        unawaited(lines.cancel());
+      });
+      await pumpShell(
+        tester,
+        overrides: [
+          // A database of the logs that does not answer: the first write is not waited for
+          desktopCloseLogsProvider.overrideWithValue(() {
+            window.calls.add('logs');
+            return Completer<void>().future;
+          }),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pump();
+      expect(window.calls, ['preventClose true', 'line', 'logs', 'prepareClose', 'logs']);
+      await tester.pump(DesktopCloseBounds.logs);
+      expect(window.calls, ['preventClose true', 'line', 'logs', 'prepareClose', 'logs', 'destroy']);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the window goes once the line of the close is written: the log service writes the lines it takes, and '
+        'the last write, which finds none, waits for it', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      // The lines the log service holds in memory
+      final held = <String>[];
+      final lines = Logger.root.onRecord.listen((record) => held.add(record.message));
+      addTearDown(() {
+        Logger.root.level = level;
+        unawaited(lines.cancel());
+      });
+      final writing = <Completer<void>>[];
+      await pumpShell(
+        tester,
+        overrides: [
+          // As LogService.flush: takes the lines it holds and waits for the database to write those only
+          desktopCloseLogsProvider.overrideWithValue(() {
+            if (held.isEmpty) {
+              window.calls.add('logs: none');
+              return Future.value();
+            }
+            window.calls.add('logs: ${held.join(', ')}');
+            held.clear();
+            final write = Completer<void>();
+            writing.add(write);
+            return write.future;
+          }),
+        ],
+      );
+
+      window.clickClose();
+      await tester.pump();
+      expect(window.calls, ['preventClose true', 'logs: The window closes', 'prepareClose', 'logs: none']);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(window.calls, isNot(contains('destroy')), reason: 'the line of the close is not written yet');
+      writing.single.complete();
+      await tester.pump();
+      expect(window.calls.last, 'destroy');
       debugDefaultTargetPlatformOverride = null;
     });
 

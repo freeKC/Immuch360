@@ -1,12 +1,14 @@
 // What concerns the whole window of Immuch360 Desktop, wrapped around the navigator inside MaterialApp (main.dart, through
-// desktopAppShell): the keys that work on every page, the back button of the mouse, full screen and the close guard.
-// The viewers read their own keys first (remote_keys.dart): what reaches the shell is what no page handled.
+// desktopAppShell): the keys that work on every page, the back button of the mouse, full screen and the close guard,
+// then the close itself (close_sequence.dart). The viewers read their own keys first (remote_keys.dart): what reaches
+// the shell is what no page handled.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
+import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -72,6 +74,10 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
       if (reasons.isNotEmpty && navigator != null && !await confirmDesktopClose(navigator, reasons)) {
         return;
       }
+      beginDesktopClose(ref.read(desktopCloseLogWritesProvider));
+      await _window.prepareClose();
+      // Each step bounded: whatever plays, and whatever the share or the server does, the window goes
+      await runDesktopClose(ref.read(desktopCloseStepsProvider)());
       await _window.destroy();
     } catch (error, stack) {
       _log.severe('The window could not be closed', error, stack);

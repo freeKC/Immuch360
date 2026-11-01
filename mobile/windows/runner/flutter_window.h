@@ -37,6 +37,14 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       instance_channel_;
 
+  // Where Dart tells that the window closes (OnClosing).
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      window_channel_;
+
+  // The window closes: a later start of the app is not handed over to this
+  // copy, which waits for its end instead (main.cpp).
+  bool closing_ = false;
+
   // The files of later starts handled before that channel was made, sent on
   // it once it is (OnCreate).
   flutter::EncodableList early_hand_overs_;
@@ -48,6 +56,11 @@ class FlutterWindow : public Win32Window {
   // Hands the files and folders dropped on the window to Dart, on the channel
   // of the later starts.
   void OnDropFiles(HDROP drop);
+
+  // The window closes, once Dart decided it (the close guard): the window
+  // hides at once, and the process ends within seconds whatever still runs
+  // (close_watchdog.h), while Dart ends its own work.
+  void OnClosing();
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_
