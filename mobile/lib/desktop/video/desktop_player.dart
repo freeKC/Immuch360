@@ -644,6 +644,24 @@ class DesktopPlayer implements PlaybackEngine {
   @override
   Future<void> seek(Duration position) => _player.seek(position);
 
+  /// Seeks to the frame shown at [position] exactly, decoding from the key frame before it whatever mpv's hr-seek
+  /// option says: the frames of a splat scene (lib/desktop/ai/splat/mpv_frame_source.dart). mpv tells the frame is
+  /// there by its playback-restart ([PlayerEventKind.restarted]).
+  Future<void> seekExact(Duration position) =>
+      _native.command(['seek', (position.inMicroseconds / 1e6).toStringAsFixed(6), 'absolute+exact']);
+
+  /// Shows the next frame and pauses on it, decoding that frame only: the frames of a splat scene, a few apart. mpv
+  /// tells the frame is there by its position ([position]); no playback-restart comes.
+  Future<void> stepFrame() => _native.command(['frame-step']);
+
+  /// Whether mpv shows each frame as soon as it is decoded rather than at its time ([untimed]): a frame step then
+  /// takes the time of one decoding, 4 to 5 ms for a 1080p VP9 frame instead of 35 ms (measured on the lighthouse
+  /// video of the splat scenes, 2026-11-01). Only on a player of its own, never on one of the pool.
+  Future<void> setUntimed(bool untimed) => _set('untimed', untimed ? 'yes' : 'no');
+
+  /// The address of the mpv handle of this player, for [withMpvScreenshot] in another isolate
+  Future<int> get mpvHandle => _player.handle;
+
   @override
   Future<void> setRate(double rate) => _player.setRate(rate);
 
@@ -791,9 +809,40 @@ Uint8List scaleBgr0ToRgba(
 Future<Uint8List?> _grabInBackground(_GrabRequest request) => Isolate.run(() => _grabFrame(request));
 
 /// mpv's "screenshot-raw" of the frame on screen, scaled and encoded as a JPEG; null when there is no frame yet
-Uint8List? _grabFrame(_GrabRequest request) {
-  final lib = mpv.MPV(DynamicLibrary.open(request.library));
-  final ctx = Pointer<mpv.mpv_handle>.fromAddress(request.handle);
+Uint8List? _grabFrame(_GrabRequest request) => withMpvScreenshot(request.handle, request.library, (frame) {
+  final target = frameSizeIn(frame.width, frame.height, (
+    width: request.width,
+    height: request.height,
+    cover: request.cover,
+  ));
+  final rgba = scaleBgr0ToRgba(
+    frame.bgr0,
+    sourceWidth: frame.width,
+    sourceHeight: frame.height,
+    stride: frame.stride,
+    width: target.width,
+    height: target.height,
+  );
+  final image = img.Image.fromBytes(width: target.width, height: target.height, bytes: rgba.buffer, numChannels: 4);
+  // The quality and the colour sampling of the photos' thumbnails
+  return img.encodeJpg(image, quality: thumbnailJpegQuality, chroma: img.JpegChroma.yuv420);
+});
+
+/// The path of the libmpv the players use, which [withMpvScreenshot] opens again in its isolate
+String get mpvLibraryPath => NativeLibrary.path;
+
+/// A frame as mpv's screenshot-raw gives it: [width] x [height] pixels, rows of [stride] bytes, 4 bytes a pixel in the
+/// order blue, green, red, then a byte to leave aside. [bgr0] holds mpv's own memory: it is only valid during the call
+/// of [withMpvScreenshot] that gives it.
+typedef MpvRawFrame = ({int width, int height, int stride, Uint8List bgr0});
+
+/// [use] of mpv's "screenshot-raw" of the frame on screen of the player whose handle is at [handle] ([library] being
+/// the libmpv it was made with), in the order of the video once turned (a video with a rotation is turned by mpv
+/// before its output, the null one of the players without a texture); null when there is no frame yet. Any isolate:
+/// the thumbnails and the frames of a splat scene call it in one of their own.
+T? withMpvScreenshot<T>(int handle, String library, T Function(MpvRawFrame frame) use) {
+  final lib = mpv.MPV(DynamicLibrary.open(library));
+  final ctx = Pointer<mpv.mpv_handle>.fromAddress(handle);
   const args = ['screenshot-raw', 'video'];
   final argv = calloc<Pointer<Int8>>(args.length + 1);
   final node = calloc<mpv.mpv_node>();
@@ -837,18 +886,7 @@ Uint8List? _grabFrame(_GrabRequest request) {
     if (size < stride * height) {
       return null;
     }
-    final target = frameSizeIn(width, height, (width: request.width, height: request.height, cover: request.cover));
-    final rgba = scaleBgr0ToRgba(
-      data.asTypedList(size),
-      sourceWidth: width,
-      sourceHeight: height,
-      stride: stride,
-      width: target.width,
-      height: target.height,
-    );
-    final image = img.Image.fromBytes(width: target.width, height: target.height, bytes: rgba.buffer, numChannels: 4);
-    // The quality and the colour sampling of the photos' thumbnails
-    return img.encodeJpg(image, quality: thumbnailJpegQuality, chroma: img.JpegChroma.yuv420);
+    return use((width: width, height: height, stride: stride, bgr0: data.asTypedList(size)));
   } finally {
     if (filled) {
       lib.mpv_free_node_contents(node);
