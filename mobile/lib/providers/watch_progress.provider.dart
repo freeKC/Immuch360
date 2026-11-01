@@ -7,6 +7,9 @@ import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/infrastructure/repositories/watch_progress.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('WatchProgress');
 
 /// The film rule of the settings ("Remember where I stopped", see WatchRule). Declares its dependency, so that a scope
 /// that overrides the settings (the tests, a viewer) gets its own
@@ -73,7 +76,9 @@ class WatchProgressRows {
 /// Where the videos were left, on this device only: nothing goes to the server, which has no watched state. The rows
 /// are read once from their database (see WatchProgressRepository), held in memory so that a tile shows a save in the
 /// same frame, and written back in the order of the changes, one after the other, so that an older write never lands
-/// after a newer one. A row found under the alias or the fingerprint of a key moves to the key at its next change.
+/// after a newer one. A write that fails is logged and costs that change only: the next ones are written, the save of
+/// the close of the window among them. A row found under the alias or the fingerprint of a key moves to the key at its
+/// next change.
 ///
 /// The players save through [record], the menus through [restart] and [markUnwatched]; the film rule is theirs (see
 /// WatchRule): this store keeps whatever it is given, by the watched rule of [recordWatch].
@@ -94,7 +99,7 @@ class WatchProgressStore extends Notifier<WatchProgressRows> {
   /// over the row of the database (see VideoWatchRecorder)
   bool get isLoaded => _isLoaded;
 
-  /// Completes once every change made so far is written
+  /// Completes once every change made so far is written, or failed and logged; never fails
   Future<void> get flushed => _writes;
 
   @override
@@ -102,7 +107,12 @@ class WatchProgressStore extends Notifier<WatchProgressRows> {
     _repository = ref.watch(watchProgressRepositoryProvider);
     _now = ref.watch(watchProgressClockProvider);
     _loaded = _load();
-    _writes = _loaded;
+    // The writes wait for the rows, whatever became of their read
+    _writes = _loaded.then<void>(
+      (_) {},
+      onError: (Object error, StackTrace stackTrace) =>
+          _log.warning('Could not read the watch progress: the changes are written all the same', error, stackTrace),
+    );
     return WatchProgressRows(const {});
   }
 
@@ -184,13 +194,18 @@ class WatchProgressStore extends Notifier<WatchProgressRows> {
 
     final repository = _repository;
     _writes = _writes.then((_) async {
-      if (moved != null) {
-        await repository.delete(moved);
-      }
-      if (row == null) {
-        await repository.delete(key.key);
-      } else {
-        await repository.upsert(row);
+      try {
+        if (moved != null) {
+          await repository.delete(moved);
+        }
+        if (row == null) {
+          await repository.delete(key.key);
+        } else {
+          await repository.upsert(row);
+        }
+      } catch (error, stackTrace) {
+        // The chain goes on: a failed link would skip every later write of the session
+        _log.warning('Could not write the watch progress of ${key.key}', error, stackTrace);
       }
     });
   }

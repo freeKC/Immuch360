@@ -79,6 +79,30 @@ class _HeldWrites implements WatchProgressRepository {
   Future<void> close() async {}
 }
 
+/// A database that refuses its first write (a disk full for a moment), then writes
+class _RefusesFirstWrite implements WatchProgressRepository {
+  final written = <WatchProgress>[];
+  var refused = false;
+
+  @override
+  Future<List<WatchProgress>> load({int maxRows = watchProgressMaxRows}) async => const [];
+
+  @override
+  Future<void> upsert(WatchProgress row) async {
+    if (!refused) {
+      refused = true;
+      throw StateError('disk full');
+    }
+    written.add(row);
+  }
+
+  @override
+  Future<void> delete(String key) async {}
+
+  @override
+  Future<void> close() async {}
+}
+
 /// The player of a page as the recorder hears it: the test tells its state, and it records what it was asked
 class _Player extends VideoPlayerNotifier {
   final startsAt = <Duration>[];
@@ -342,6 +366,36 @@ void main() {
         async.flushMicrotasks();
         expect(ended, isTrue);
         expect(writes.written.map((row) => row.position), [minute * 50]);
+      });
+    });
+
+    test('a write that failed earlier in the session does not cost the save of the close', () {
+      fakeAsync((async) {
+        final writes = _RefusesFirstWrite();
+        container = ProviderContainer(
+          overrides: [
+            watchProgressRepositoryProvider.overrideWithValue(writes),
+            watchProgressClockProvider.overrideWithValue(() => now),
+          ],
+        );
+        store = container.read(watchProgressProvider.notifier);
+        async.flushMicrotasks();
+        // A film seen earlier, whose save the database refused
+        store.record(const WatchKey('asset:earlier'), position: minute * 20, duration: film);
+        async.flushMicrotasks();
+        expect(writes.refused, isTrue);
+
+        player = _Player();
+        recorderFor();
+        player.emit(position: minute * 50, duration: film, status: VideoPlaybackStatus.playing);
+        var ended = false;
+        Object? failed;
+        unawaited(VideoWatchRecorder.closeAll().then((_) => ended = true, onError: (Object error) => failed = error));
+        async.flushMicrotasks();
+
+        expect(failed, isNull);
+        expect(ended, isTrue);
+        expect(writes.written.map((row) => (row.key, row.position)), [(key.key, minute * 50)]);
       });
     });
   });

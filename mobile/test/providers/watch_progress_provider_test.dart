@@ -9,6 +9,7 @@ import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/infrastructure/repositories/watch_progress.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
+import 'package:logging/logging.dart';
 
 /// The rows in memory, as the database would keep them, with the writes in the order they came; [gate] holds the load
 class _MemoryRepository implements WatchProgressRepository {
@@ -19,6 +20,9 @@ class _MemoryRepository implements WatchProgressRepository {
   Completer<void>? gate;
   Completer<void>? writeGate;
 
+  /// Thrown by the next write, once (a disk full for a moment, an I/O error)
+  Error? failNext;
+
   @override
   Future<List<WatchProgress>> load({int maxRows = watchProgressMaxRows}) async {
     await gate?.future;
@@ -28,6 +32,11 @@ class _MemoryRepository implements WatchProgressRepository {
   @override
   Future<void> upsert(WatchProgress row) async {
     await writeGate?.future;
+    final failure = failNext;
+    if (failure != null) {
+      failNext = null;
+      throw failure;
+    }
     rows[row.key] = row;
     writes.add('upsert ${row.key} ${row.position.inMinutes}${row.watched ? ' watched' : ''}');
   }
@@ -131,6 +140,34 @@ void main() {
 
     expect(repository.writes, ['upsert asset:a 20', 'upsert asset:a 30', 'upsert asset:a 40']);
     expect(repository.rows['asset:a']?.position, minute * 40);
+  });
+
+  test('a write that fails costs that change only: it is logged, and the next ones reach the database', () async {
+    final repository = _MemoryRepository();
+    final container = containerWith(repository);
+    final store = await loaded(container);
+    final level = Logger.root.level;
+    Logger.root.level = Level.ALL;
+    final warnings = <LogRecord>[];
+    final listening = Logger.root.onRecord.where((record) => record.level == Level.WARNING).listen(warnings.add);
+    addTearDown(() {
+      Logger.root.level = level;
+      unawaited(listening.cancel());
+    });
+
+    repository.failNext = StateError('disk full');
+    store.record(const WatchKey('asset:a'), position: minute * 42, duration: film);
+    store.record(const WatchKey('asset:b'), position: minute * 43, duration: film);
+    await store.flushed;
+
+    expect(repository.writes, ['upsert asset:b 43']);
+    expect(store.find(const WatchKey('asset:a'))?.position, minute * 42, reason: 'kept in memory for the session');
+    expect(warnings.map((record) => record.error), [isA<StateError>()]);
+
+    // And the one after it as well
+    store.record(const WatchKey('asset:a'), position: minute * 44, duration: film);
+    await store.flushed;
+    expect(repository.writes, ['upsert asset:b 43', 'upsert asset:a 44']);
   });
 
   test('a save made before the load finished is not lost when the rows arrive', () async {
