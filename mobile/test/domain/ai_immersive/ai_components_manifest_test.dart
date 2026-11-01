@@ -269,10 +269,10 @@ void main() {
       ]);
     });
 
-    test('the app keeps the text of every licence, with its copyright line; an engine brings its own', () {
+    test('the app keeps the text of every licence, with its copyright line; stable-diffusion.cpp brings its own', () {
       for (final component in aiComponents) {
         final text = aiLicenceText(component);
-        if (component.isArchive) {
+        if (component == sdCppWindowsComponent || component == sdCppLinuxComponent) {
           expect(text, 'See ${component.licenceUrl}\n', reason: component.id);
           continue;
         }

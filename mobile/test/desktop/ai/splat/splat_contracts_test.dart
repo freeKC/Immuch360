@@ -363,9 +363,21 @@ void main() {
       expect(colmapWindowsComponent.minGraphicsMemory, isNull, reason: 'COLMAP runs on the processor');
     });
 
-    test('their licences: their archives bring them, the notice of each names it and where to read it', () {
-      expect(aiLicenceText(colmapWindowsComponent), 'See https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt\n');
-      expect(aiLicenceText(brushLinuxComponent), 'See https://github.com/ArthurBrussee/brush/blob/v0.3.0/LICENSE\n');
+    test('their licences: the BSD 3 text of COLMAP with its copyright line, the Apache License 2.0 of Brush', () {
+      // The plan (2.4, the components) asks for the text of COLMAP in the app, as Real-ESRGAN has its own; COPYING.txt
+      // of 4.2.1, 1 909 bytes, SHA-256 ab30dabb... in DOWNLOADS.txt of the measure
+      for (final colmap in [colmapWindowsComponent, colmapLinuxComponent]) {
+        expect(aiLicenceText(colmap), colmapLicence, reason: colmap.id);
+      }
+      expect(colmapLicence, startsWith('The COLMAP library is licensed under the new BSD license.'));
+      expect(colmapLicence, contains('    Copyright (c), ETH Zurich and UNC Chapel Hill.\n    All rights reserved.\n'));
+      expect(colmapLicence, contains('Neither the name of ETH Zurich and UNC Chapel Hill nor the names of'));
+      expect(colmapLicence.length, 1909);
+      for (final brush in [brushWindowsComponent, brushLinuxComponent]) {
+        expect(aiLicenceText(brush), apacheLicence2, reason: brush.id);
+      }
+      // The engine of the panoramas (MIT) still names its licence and where to read it
+      expect(aiLicenceText(sdCppWindowsComponent), 'See ${sdCppWindowsComponent.licenceUrl}\n');
       expect(
         aiComponentLicenceNotice(colmapWindowsComponent, source: 'mirror', installedAt: DateTime.utc(2026, 11, 1)),
         contains('Licence: BSD-3-Clause, https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt'),
