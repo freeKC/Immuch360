@@ -1439,6 +1439,7 @@
   "splat_disclaimer": "I splat gaussian dòvren un'API sperimental del Meta Spatial SDK, che Meta la supòrta minga e la garantiss minga: ogni difett l'è domà de Immuch360.",
   "splat_explore": "Esplora la scena splat",
   "splat_failed": "El splat el s'è minga podud mostrà: {reason}",
+  "splat_hint": "Levetta sinistra: sbrisà. Levetta drita: gira. A, X o grip: mostra o scond sto panel. B o Y: torna a l'app.",
   "splat_large_notice": "Splat grand: el pò scatà",
   "splat_large_setting_subtitle": "El mostra fin a 150.000 gaussian invece de 50.000: on splat grand el pò scatà",
   "splat_large_setting_title": "Splat grand (sperimental)",

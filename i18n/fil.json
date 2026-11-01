@@ -1549,6 +1549,7 @@
   "splat_disclaimer": "Gumagamit ang mga Gaussian splat ng eksperimental na API ng Meta Spatial SDK, na hindi sinusuportahan o ginagarantiyahan ng Meta: anumang depekto ay pananagutan ng Immuch360 lamang.",
   "splat_explore": "Galugarin ang eksena ng splat",
   "splat_failed": "Hindi maipakita ang splat: {reason}",
+  "splat_hint": "Kaliwang thumbstick: dumausdos. Kanang thumbstick: umikot. A, X o grip: ipakita o itago ang panel na ito. B o Y: bumalik sa app.",
   "splat_large_notice": "Malaking splat: maaaring mag-stutter",
   "splat_large_setting_subtitle": "Nagpapakita ng hanggang 150,000 gaussian sa halip na 50,000: maaaring mag-stutter ang malaking splat",
   "splat_large_setting_title": "Malalaking splat (eksperimental)",

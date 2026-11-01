@@ -3566,6 +3566,7 @@
   "splat_disclaimer": "Os splats gaussianos usam uma API experimental do Meta Spatial SDK, sem suporte nem garantia da Meta: qualquer defeito é da exclusiva responsabilidade do Immuch360.",
   "splat_explore": "Explorar a cena splat",
   "splat_failed": "Não foi possível mostrar o splat: {reason}",
+  "splat_hint": "Manípulo esquerdo: deslizar. Manípulo direito: rodar. A, X ou botão lateral: mostrar ou ocultar este painel. B ou Y: voltar à app.",
   "splat_large_notice": "Splat grande: pode engasgar",
   "splat_large_setting_subtitle": "Mostra até 150 000 gaussianas em vez de 50 000: um splat grande pode engasgar",
   "splat_large_setting_title": "Splats grandes (experimental)",

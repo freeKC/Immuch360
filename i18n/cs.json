@@ -3566,6 +3566,7 @@
   "splat_disclaimer": "Gaussovské splaty používají experimentální API sady Meta Spatial SDK, které Meta nepodporuje ani nezaručuje: za jakoukoli vadu odpovídá jen Immuch360.",
   "splat_explore": "Prozkoumat scénu splatu",
   "splat_failed": "Splat nešlo zobrazit: {reason}",
+  "splat_hint": "Levá páčka: klouzání. Pravá páčka: otáčení. A, X nebo grip: zobrazit nebo skrýt tento panel. B nebo Y: zpět do aplikace.",
   "splat_large_notice": "Velký splat: může se trhat",
   "splat_large_setting_subtitle": "Zobrazí až 150 000 gaussiánů místo 50 000: velký splat se může trhat",
   "splat_large_setting_title": "Velké splaty (experimentální)",

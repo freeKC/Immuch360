@@ -1439,6 +1439,7 @@
   "splat_disclaimer": "Gaussian Splats benotzen eng experimentell API vum Meta Spatial SDK, déi Meta weder ënnerstëtzt nach garantéiert: All Feeler läit eleng bei Immuch360.",
   "splat_explore": "Splat-Zeen entdecken",
   "splat_failed": "De Splat konnt net gewise ginn: {reason}",
+  "splat_hint": "Lénke Stick: gleiden. Riets Stick: dréinen. A, X oder Grip: dëse Panel weisen oder verstoppen. B oder Y: zréck an d'App.",
   "splat_large_notice": "Grousse Splat: e kann hänken",
   "splat_large_setting_subtitle": "Weist bis zu 150.000 Gaussen amplaz 50.000: e grousse Splat kann hänken",
   "splat_large_setting_title": "Grouss Splats (experimentell)",

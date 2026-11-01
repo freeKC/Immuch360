@@ -3564,6 +3564,7 @@
   "splat_disclaimer": "Splat Gaussian memakai API eksperimental dari Meta Spatial SDK, yang tidak didukung maupun dijamin oleh Meta: setiap cacat sepenuhnya tanggung jawab Immuch360.",
   "splat_explore": "Jelajahi adegan splat",
   "splat_failed": "Splat tidak dapat ditampilkan: {reason}",
+  "splat_hint": "Thumbstick kiri: meluncur. Thumbstick kanan: berputar. A, X, atau grip: tampilkan atau sembunyikan panel ini. B atau Y: kembali ke aplikasi.",
   "splat_large_notice": "Splat besar: mungkin tersendat",
   "splat_large_setting_subtitle": "Menampilkan hingga 150.000 gaussian, bukan 50.000: splat besar mungkin tersendat",
   "splat_large_setting_title": "Splat besar (eksperimental)",

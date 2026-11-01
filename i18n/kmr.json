@@ -1647,6 +1647,7 @@
   "splat_disclaimer": "Splatên Gauss API-yeke ceribandinî ya Meta Spatial SDK bi kar tînin, ku Meta ne piştgirî dide û ne garantî dike: her kêmasî tenê berpirsiyariya Immuch360 e.",
   "splat_explore": "Sehneya splatê bigere",
   "splat_failed": "Splat nehat nîşandan: {reason}",
+  "splat_hint": "Joystîka çepê: şemitîn. Joystîka rastê: zivirîn. A, X an grip: vê panelê nîşan bide an veşêre. B an Y: vegere sepanê.",
   "splat_large_notice": "Splata mezin: dibe ku biseke",
   "splat_large_setting_subtitle": "Li şûna 50.000an heta 150.000 gaussî nîşan dide: splata mezin dibe ku biseke",
   "splat_large_setting_title": "Splatên mezin (ceribandinî)",

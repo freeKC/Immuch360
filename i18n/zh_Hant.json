@@ -3505,6 +3505,7 @@
   "splat_disclaimer": "高斯潑濺使用 Meta Spatial SDK 的實驗性 API，Meta 對其既不提供支援也不作擔保：任何缺陷均由 Immuch360 自行負責。",
   "splat_explore": "探索潑濺場景",
   "splat_failed": "無法顯示潑濺：{reason}",
+  "splat_hint": "左搖桿：滑行。右搖桿：轉向。A、X 或握把鍵：顯示或隱藏此面板。B 或 Y：返回應用程式。",
   "splat_large_notice": "大型潑濺：可能會卡頓",
   "splat_large_setting_subtitle": "最多顯示 150,000 個高斯，而非 50,000 個：大型潑濺可能會卡頓",
   "splat_large_setting_title": "大型潑濺（實驗性）",

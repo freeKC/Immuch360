@@ -1609,6 +1609,7 @@
   "splat_disclaimer": "Qauss splatları Meta Spatial SDK-nın eksperimental API-sindən istifadə edir, Meta onu nə dəstəkləyir, nə də ona zəmanət verir: istənilən qüsura yalnız Immuch360 cavabdehdir.",
   "splat_explore": "Splat səhnəsini kəşf et",
   "splat_failed": "Splat göstərilə bilmədi: {reason}",
+  "splat_hint": "Sol çubuq: sürüşmə. Sağ çubuq: dönmə. A, X və ya tutacaq: bu paneli göstər və ya gizlət. B və ya Y: tətbiqə qayıt.",
   "splat_large_notice": "Böyük splat: ilişə bilər",
   "splat_large_setting_subtitle": "50.000 əvəzinə 150.000-ə qədər qauss göstərir: böyük splat ilişə bilər",
   "splat_large_setting_title": "Böyük splatlar (eksperimental)",

@@ -1456,6 +1456,7 @@
   "splat_disclaimer": "Ol Gaussian splat oli yusum wan API blong Meta Spatial SDK we i stil testem, we Meta i no sapotem mo i no promes long hem: sapos i gat wan problem, hem i blong Immuch360 nomo.",
   "splat_explore": "Lukluk long sin blong splat",
   "splat_failed": "I no save soem splat: {reason}",
+  "splat_hint": "Lef tamstik: slaed. Raet tamstik: tanem. A, X o grip: soem o haedem panel ia. B o Y: go bak long app.",
   "splat_large_notice": "Bigfala splat: maet i stop smol",
   "splat_large_setting_subtitle": "I soem kasem 150,000 gaussian i no 50,000 nomo: wan bigfala splat maet i stop smol",
   "splat_large_setting_title": "Ol bigfala splat (stil testem)",

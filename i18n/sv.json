@@ -3565,6 +3565,7 @@
   "splat_disclaimer": "Gaussiska splattar använder ett experimentellt API i Meta Spatial SDK, som Meta varken stöder eller garanterar: varje fel är Immuch360s eget.",
   "splat_explore": "Utforska splatscenen",
   "splat_failed": "Splatten kunde inte visas: {reason}",
+  "splat_hint": "Vänster styrspak: glid. Höger styrspak: vrid. A, X eller grepp: visa eller dölj den här panelen. B eller Y: tillbaka till appen.",
   "splat_large_notice": "Stor splat: den kan hacka",
   "splat_large_setting_subtitle": "Visar upp till 150 000 gaussianer i stället för 50 000: en stor splat kan hacka",
   "splat_large_setting_title": "Stora splattar (experimentellt)",

@@ -3566,6 +3566,7 @@
   "splat_disclaimer": "Gauss splatler, Meta Spatial SDK'nin Meta tarafından desteklenmeyen ve garanti edilmeyen deneysel bir API'sini kullanır: her türlü kusurun sorumlusu yalnızca Immuch360'tır.",
   "splat_explore": "Splat sahnesini keşfet",
   "splat_failed": "Splat gösterilemedi: {reason}",
+  "splat_hint": "Sol başparmak çubuğu: kay. Sağ başparmak çubuğu: dön. A, X veya kavrama: bu paneli göster veya gizle. B veya Y: uygulamaya dön.",
   "splat_large_notice": "Büyük splat: takılabilir",
   "splat_large_setting_subtitle": "50.000 yerine en çok 150.000 gauss gösterir: büyük bir splat takılabilir",
   "splat_large_setting_title": "Büyük splatler (deneysel)",

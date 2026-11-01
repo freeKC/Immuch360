@@ -3565,6 +3565,7 @@
   "splat_disclaimer": "Gaussiske splatter bruker et eksperimentelt API i Meta Spatial SDK, som Meta verken støtter eller garanterer: enhver feil er Immuch360s egen.",
   "splat_explore": "Utforsk splatscenen",
   "splat_failed": "Splatten kunne ikke vises: {reason}",
+  "splat_hint": "Venstre styrespak: gli. Høyre styrespak: snu. A, X eller grep: vis eller skjul dette panelet. B eller Y: tilbake til appen.",
   "splat_large_notice": "Stor splat: den kan hakke",
   "splat_large_setting_subtitle": "Viser opptil 150 000 gaussianer i stedet for 50 000: en stor splat kan hakke",
   "splat_large_setting_title": "Store splatter (eksperimentelt)",

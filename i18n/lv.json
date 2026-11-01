@@ -3357,6 +3357,7 @@
   "splat_disclaimer": "Gausa splati izmanto Meta Spatial SDK eksperimentālu API, ko Meta neatbalsta un negarantē: par jebkuru defektu atbild tikai Immuch360.",
   "splat_explore": "Izpētīt splata ainu",
   "splat_failed": "Splatu neizdevās parādīt: {reason}",
+  "splat_hint": "Kreisā kursorsvira: slīdēt. Labā kursorsvira: pagriezt. A, X vai satveršanas poga: rādīt vai slēpt šo paneli. B vai Y: atpakaļ uz lietotni.",
   "splat_large_notice": "Liels splats: var raustīties",
   "splat_large_setting_subtitle": "Rāda līdz 150 000 Gausa elementu 50 000 vietā: liels splats var raustīties",
   "splat_large_setting_title": "Lieli splati (eksperimentāli)",

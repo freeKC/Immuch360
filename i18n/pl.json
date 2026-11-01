@@ -3565,6 +3565,7 @@
   "splat_disclaimer": "Splaty gaussowskie korzystają z eksperymentalnego API Meta Spatial SDK, którego Meta nie wspiera ani nie gwarantuje: za każdą wadę odpowiada wyłącznie Immuch360.",
   "splat_explore": "Odkryj scenę splatu",
   "splat_failed": "Nie udało się pokazać splatu: {reason}",
+  "splat_hint": "Lewy drążek: przesuwanie. Prawy drążek: obrót. A, X lub chwyt: pokaż lub ukryj ten panel. B lub Y: powrót do aplikacji.",
   "splat_large_notice": "Duży splat: może się zacinać",
   "splat_large_setting_subtitle": "Pokazuje do 150 000 gaussianów zamiast 50 000: duży splat może się zacinać",
   "splat_large_setting_title": "Duże splaty (eksperymentalne)",

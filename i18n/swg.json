@@ -1439,6 +1439,7 @@
   "splat_disclaimer": "Gaussian Splats nutzad a experimentelle API vom Meta Spatial SDK, dia Meta weder unterstützt no garantiert: Jeder Fehler liegt bloß bei Immuch360.",
   "splat_explore": "Splat-Szene erkunda",
   "splat_failed": "Dr Splat hot ned zoigt werda kenna: {reason}",
+  "splat_hint": "Linker Thumbstick: gleita. Rechter Thumbstick: dreha. A, X oder Grifftaste: des Panel ei- oder ausblenda. B oder Y: zrück zur App.",
   "splat_large_notice": "Großer Splat: der ka ruckla",
   "splat_large_setting_subtitle": "Zoigt bis zu 150.000 Gauß statt 50.000: a großer Splat ka ruckla",
   "splat_large_setting_title": "Große Splats (experimentell)",

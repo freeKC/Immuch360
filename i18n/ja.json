@@ -3563,6 +3563,7 @@
   "splat_disclaimer": "ガウシアンスプラットは Meta Spatial SDK の試験運用版 API を使用しており、Meta はこの API をサポートも保証もしていません。不具合の責任はすべて Immuch360 にあります。",
   "splat_explore": "スプラットのシーンを探索",
   "splat_failed": "スプラットを表示できませんでした: {reason}",
+  "splat_hint": "左スティック: 移動。右スティック: 回転。A、X またはグリップ: このパネルの表示・非表示。B または Y: アプリに戻る。",
   "splat_large_notice": "大きなスプラット: カクつくことがあります",
   "splat_large_setting_subtitle": "50,000 個ではなく最大 150,000 個のガウシアンを表示します。大きなスプラットはカクつくことがあります",
   "splat_large_setting_title": "大きなスプラット (試験運用)",

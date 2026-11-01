@@ -3017,6 +3017,7 @@
   "splat_disclaimer": "Splatet gausiane përdorin një API eksperimentale të Meta Spatial SDK, të cilën Meta as nuk e mbështet, as nuk e garanton: për çdo defekt përgjigjet vetëm Immuch360.",
   "splat_explore": "Eksploro skenën splat",
   "splat_failed": "Splati nuk mund të shfaqej: {reason}",
+  "splat_hint": "Leva e majtë: rrëshqit. Leva e djathtë: rrotullo. A, X ose kapja: shfaq ose fshih këtë panel. B ose Y: kthehu te aplikacioni.",
   "splat_large_notice": "Splat i madh: mund të ngecë",
   "splat_large_setting_subtitle": "Shfaq deri në 150.000 gausiane në vend të 50.000: një splat i madh mund të ngecë",
   "splat_large_setting_title": "Splate të mëdha (eksperimentale)",

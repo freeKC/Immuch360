@@ -3511,6 +3511,7 @@
   "splat_disclaimer": "Gauso splatai naudoja eksperimentinę Meta Spatial SDK API, kurios Meta nepalaiko ir negarantuoja: už bet kokį defektą atsako tik Immuch360.",
   "splat_explore": "Tyrinėti splato sceną",
   "splat_failed": "Nepavyko parodyti splato: {reason}",
+  "splat_hint": "Kairioji svirtelė: slinkti. Dešinioji svirtelė: sukti. A, X arba griebimo mygtukas: rodyti arba slėpti šį skydelį. B arba Y: atgal į programą.",
   "splat_large_notice": "Didelis splatas: gali strigti",
   "splat_large_setting_subtitle": "Rodo iki 150 000 Gauso elementų vietoj 50 000: didelis splatas gali strigti",
   "splat_large_setting_title": "Dideli splatai (eksperimentinis)",

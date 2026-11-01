@@ -1690,6 +1690,7 @@
   "splat_disclaimer": "Gaussian Splats nutzen eine experimentelle API des Meta Spatial SDK, die Meta weder unterstützt noch gewährleistet: Jeder Fehler liegt allein bei Immuch360.",
   "splat_explore": "Splat-Szene erkunden",
   "splat_failed": "Der Splat konnte nicht angezeigt werden: {reason}",
+  "splat_hint": "Linke Thumbstick: gleite. Rächte Thumbstick: dräie. A, X oder Griff: die Tafle zeige oder verstecke. B oder Y: zrugg zur App.",
   "splat_large_notice": "Grosser Splat: er kann ruckeln",
   "splat_large_setting_subtitle": "Zeigt bis zu 150.000 Gausssche statt 50.000: ein grosser Splat kann ruckeln",
   "splat_large_setting_title": "Grosse Splats (experimentell)",

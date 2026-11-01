@@ -1637,6 +1637,7 @@
   "splat_disclaimer": "Gauss-splats gebruik 'n eksperimentele API van die Meta Spatial SDK, wat Meta nie ondersteun of waarborg nie: enige gebrek is Immuch360 s'n alleen.",
   "splat_explore": "Verken die splattoneel",
   "splat_failed": "Die splat kon nie gewys word nie: {reason}",
+  "splat_hint": "Linker duimstok: gly. Regter duimstok: draai. A, X of greep: wys of versteek hierdie paneel. B of Y: terug na die app.",
   "splat_large_notice": "Groot splat: dit kan haper",
   "splat_large_setting_subtitle": "Wys tot 150 000 gaussiane in plaas van 50 000: 'n groot splat kan haper",
   "splat_large_setting_title": "Groot splats (eksperimenteel)",

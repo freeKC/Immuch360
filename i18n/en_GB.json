@@ -3528,6 +3528,7 @@
   "splat_disclaimer": "Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: any defect is Immuch360's own.",
   "splat_explore": "Explore the splat scene",
   "splat_failed": "The splat could not be shown: {reason}",
+  "splat_hint": "Left thumbstick: glide. Right thumbstick: turn. A, X or grip: show or hide this panel. B or Y: back to the app.",
   "splat_large_notice": "Large splat: it may stutter",
   "splat_large_setting_subtitle": "Shows up to 150,000 gaussians instead of 50,000: a large splat may stutter",
   "splat_large_setting_title": "Large splats (experimental)",

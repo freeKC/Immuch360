@@ -3555,6 +3555,7 @@
   "splat_disclaimer": "Splaturile gaussiene folosesc un API experimental din Meta Spatial SDK, pe care Meta nu îl susține și nu îl garantează: orice defect ține numai de Immuch360.",
   "splat_explore": "Explorează scena splat",
   "splat_failed": "Splatul nu a putut fi afișat: {reason}",
+  "splat_hint": "Joystickul stâng: alunecare. Joystickul drept: rotire. A, X sau butonul de prindere: afișați sau ascundeți acest panou. B sau Y: înapoi la aplicație.",
   "splat_large_notice": "Splat mare: poate sacada",
   "splat_large_setting_subtitle": "Afișează până la 150.000 de gaussiene în loc de 50.000: un splat mare poate sacada",
   "splat_large_setting_title": "Splaturi mari (experimental)",

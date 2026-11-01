@@ -3518,6 +3518,7 @@
   "splat_disclaimer": "Gaŭsaj splatoj uzas eksperimentan API de Meta Spatial SDK, kiun Meta nek subtenas nek garantias: ĉiu difekto estas de Immuch360 mem.",
   "splat_explore": "Esplori la splat-scenon",
   "splat_failed": "Ne eblis montri la splaton: {reason}",
+  "splat_hint": "Maldekstra stirstangeto: gliti. Dekstra stirstangeto: turni. A, X aŭ tenilo: montri aŭ kaŝi ĉi tiun panelon. B aŭ Y: reen al la apo.",
   "splat_large_notice": "Granda splato: ĝi povas skuetiĝi",
   "splat_large_setting_subtitle": "Montras ĝis 150 000 gaŭsojn anstataŭ 50 000: granda splato povas skuetiĝi",
   "splat_large_setting_title": "Grandaj splatoj (eksperimenta)",

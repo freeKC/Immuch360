@@ -3279,6 +3279,7 @@
   "splat_disclaimer": "Gausovi splatovi koriste eksperimentalni API iz Meta Spatial SDK, koji Meta niti podržava niti garantuje: za svaki nedostatak odgovoran je samo Immuch360.",
   "splat_explore": "Istraži splat scenu",
   "splat_failed": "Splat nije moguće prikazati: {reason}",
+  "splat_hint": "Levi džojstik: klizanje. Desni džojstik: okretanje. A, X ili dugme za hvatanje: prikaži ili sakrij ovaj panel. B ili Y: nazad u aplikaciju.",
   "splat_large_notice": "Veliki splat: može da secka",
   "splat_large_setting_subtitle": "Prikazuje do 150.000 gausijana umesto 50.000: veliki splat može da secka",
   "splat_large_setting_title": "Veliki splatovi (eksperimentalno)",

@@ -3378,6 +3378,7 @@
   "splat_disclaimer": "Gaussiset splatit käyttävät Meta Spatial SDK:n kokeellista API:a, jota Meta ei tue eikä takaa: jokaisesta viasta vastaa vain Immuch360.",
   "splat_explore": "Tutki splat-näkymää",
   "splat_failed": "Splatia ei voitu näyttää: {reason}",
+  "splat_hint": "Vasen peukalosauva: liukuminen. Oikea peukalosauva: kääntyminen. A, X tai kahva: näytä tai piilota tämä paneeli. B tai Y: takaisin sovellukseen.",
   "splat_large_notice": "Suuri splat: se voi nykiä",
   "splat_large_setting_subtitle": "Näyttää enintään 150 000 gaussia 50 000:n sijaan: suuri splat voi nykiä",
   "splat_large_setting_title": "Suuret splatit (kokeellinen)",

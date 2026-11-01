@@ -2271,6 +2271,7 @@
   "splat_disclaimer": "Splat Gaussian menggunakan API eksperimen daripada Meta Spatial SDK, yang tidak disokong mahupun dijamin oleh Meta: sebarang kecacatan ialah tanggungjawab Immuch360 sahaja.",
   "splat_explore": "Teroka adegan splat",
   "splat_failed": "Splat tidak dapat dipaparkan: {reason}",
+  "splat_hint": "Kayu bidik kiri: meluncur. Kayu bidik kanan: berpusing. A, X atau butang genggam: tunjuk atau sembunyi panel ini. B atau Y: kembali ke aplikasi.",
   "splat_large_notice": "Splat besar: mungkin tersekat-sekat",
   "splat_large_setting_subtitle": "Memaparkan sehingga 150,000 gaussian dan bukannya 50,000: splat besar mungkin tersekat-sekat",
   "splat_large_setting_title": "Splat besar (eksperimen)",

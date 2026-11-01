@@ -1439,6 +1439,7 @@
   "splat_disclaimer": "Splat za Gaussian zinatumia API ya majaribio ya Meta Spatial SDK, ambayo Meta haiiungi mkono wala haitoi dhamana yake: kasoro yoyote ni jukumu la Immuch360 pekee.",
   "splat_explore": "Chunguza mandhari ya splat",
   "splat_failed": "Splat haikuweza kuonyeshwa: {reason}",
+  "splat_hint": "Kijiti cha kushoto: teleza. Kijiti cha kulia: geuka. A, X au kishikio: onyesha au ficha paneli hii. B au Y: rudi kwenye programu.",
   "splat_large_notice": "Splat kubwa: inaweza kukwamakwama",
   "splat_large_setting_subtitle": "Inaonyesha hadi gaussian 150,000 badala ya 50,000: splat kubwa inaweza kukwamakwama",
   "splat_large_setting_title": "Splat kubwa (ya majaribio)",

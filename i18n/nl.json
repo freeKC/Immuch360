@@ -3565,6 +3565,7 @@
   "splat_disclaimer": "Gaussian splats gebruiken een experimentele API van de Meta Spatial SDK, die Meta niet ondersteunt en niet garandeert: elk gebrek komt voor rekening van Immuch360 zelf.",
   "splat_explore": "Splatscène verkennen",
   "splat_failed": "De splat kon niet worden getoond: {reason}",
+  "splat_hint": "Linkerstick: glijden. Rechterstick: draaien. A, X of grip: dit paneel tonen of verbergen. B of Y: terug naar de app.",
   "splat_large_notice": "Grote splat: kan haperen",
   "splat_large_setting_subtitle": "Toont tot 150.000 gaussians in plaats van 50.000: een grote splat kan haperen",
   "splat_large_setting_title": "Grote splats (experimenteel)",

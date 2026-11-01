@@ -1451,6 +1451,7 @@
   "splat_disclaimer": "Gauss splatlari Meta Spatial SDK ning tajribaviy API'sidan foydalanadi, Meta uni qo'llab-quvvatlamaydi va kafolatlamaydi: har qanday nuqson uchun faqat Immuch360 javob beradi.",
   "splat_explore": "Splat sahnasini o'rganish",
   "splat_failed": "Splatni ko'rsatib bo'lmadi: {reason}",
+  "splat_hint": "Chap stik: sirpanish. O'ng stik: burilish. A, X yoki grip: bu panelni ko'rsatish yoki yashirish. B yoki Y: ilovaga qaytish.",
   "splat_large_notice": "Katta splat: qotib qolishi mumkin",
   "splat_large_setting_subtitle": "50 000 o'rniga 150 000 tagacha gauss ko'rsatadi: katta splat qotib qolishi mumkin",
   "splat_large_setting_title": "Katta splatlar (tajribaviy)",
