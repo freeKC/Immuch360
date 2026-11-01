@@ -20,16 +20,16 @@ archive (the copyright file vcpkg installs with each port).
 
 The licence of each port is the one its `vcpkg.spdx.json` gives; the colmap jobs fail when one is out of our list (MIT,
 BSD, Apache 2.0, BSL 1.0, MPL 2.0, zlib, IJG, libpng, libtiff, public domain) or when this table differs from what they
-installed. Three ports give no licence and were read by hand: `blas` and `lapack`, metapackages without code that select
-OpenBLAS and CLAPACK, and `clapack`, LAPACK 3.2.1 translated to C (BSD 3 Clause, its `COPYING`) with libf2c (above).
-`vcpkg-cmake`, `vcpkg-cmake-config` and `vcpkg-boost` are build scripts of vcpkg, installed beside the libraries
-because the host triplet is the target one, never linked.
+installed. Three ports give no licence (`LicenseRef-vcpkg-null`) and were read by hand: `blas` and `lapack`, metapackages
+without code that select OpenBLAS and CLAPACK, and `clapack`, LAPACK 3.2.1 translated to C (BSD 3 Clause, its
+`COPYING`) with libf2c (above). `vcpkg-cmake`, `vcpkg-cmake-config`, `vcpkg-boost` and `boost-uninstall` are build
+scripts of vcpkg, installed beside the libraries because the host triplet is the target one, never linked.
 
 <!-- vcpkg ports: written by colmap_build.py table, checked by the colmap jobs -->
 
 | Port | Version | Licence (SPDX of vcpkg) | Systems | Text in the archive |
 |---|---|---|---|---|
-| `blas` | 2023-04-14#6 | NOASSERTION | linux-x64, windows-x64 | none, a metapackage without code |
+| `blas` | 2023-04-14#6 | LicenseRef-vcpkg-null | linux-x64, windows-x64 | none, a metapackage without code |
 | `boost-algorithm` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-algorithm.txt` |
 | `boost-align` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-align.txt` |
 | `boost-any` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-any.txt` |
@@ -100,7 +100,7 @@ because the host triplet is the target one, never linked.
 | `boost-type-index` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-type-index.txt` |
 | `boost-type-traits` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-type-traits.txt` |
 | `boost-typeof` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-typeof.txt` |
-| `boost-uninstall` | 1.92.0 | MIT | linux-x64, windows-x64 | `licenses/vcpkg/boost-uninstall.txt` |
+| `boost-uninstall` | 1.92.0 | MIT | linux-x64, windows-x64 | none, a build script of vcpkg (MIT) |
 | `boost-unordered` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-unordered.txt` |
 | `boost-utility` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-utility.txt` |
 | `boost-variant` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-variant.txt` |
@@ -108,7 +108,7 @@ because the host triplet is the target one, never linked.
 | `boost-winapi` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-winapi.txt` |
 | `boost-xpressive` | 1.92.0 | BSL-1.0 | linux-x64, windows-x64 | `licenses/vcpkg/boost-xpressive.txt` |
 | `ceres` | 2.2.0#6 | Apache-2.0 | linux-x64, windows-x64 | `licenses/vcpkg/ceres.txt` |
-| `clapack` | 3.2.1#25 | NOASSERTION | linux-x64, windows-x64 | `licenses/vcpkg/clapack.txt` |
+| `clapack` | 3.2.1#25 | LicenseRef-vcpkg-null | linux-x64, windows-x64 | `licenses/vcpkg/clapack.txt` |
 | `eigen3` | 5.0.1 | MPL-2.0 | linux-x64, windows-x64 | `licenses/vcpkg/eigen3.txt` |
 | `expat` | 2.8.3 | MIT | linux-x64, windows-x64 | `licenses/vcpkg/expat.txt` |
 | `fmt` | 12.2.0#1 | MIT | linux-x64, windows-x64 | `licenses/vcpkg/fmt.txt` |
@@ -116,7 +116,7 @@ because the host triplet is the target one, never linked.
 | `gklib` | 2023-03-27 | Apache-2.0 | linux-x64, windows-x64 | `licenses/vcpkg/gklib.txt` |
 | `glog` | 0.7.1#2 | BSD-3-Clause | linux-x64, windows-x64 | `licenses/vcpkg/glog.txt` |
 | `imath` | 3.2.2 | BSD-3-Clause | linux-x64, windows-x64 | `licenses/vcpkg/imath.txt` |
-| `lapack` | 2023-06-10#4 | NOASSERTION | linux-x64, windows-x64 | none, a metapackage without code |
+| `lapack` | 2023-06-10#4 | LicenseRef-vcpkg-null | linux-x64, windows-x64 | none, a metapackage without code |
 | `libdeflate` | 1.25 | MIT | linux-x64, windows-x64 | `licenses/vcpkg/libdeflate.txt` |
 | `libjpeg-turbo` | 3.2.0 | BSD-3-Clause | linux-x64, windows-x64 | `licenses/vcpkg/libjpeg-turbo.txt` |
 | `libpng` | 1.6.58 | libpng-2.0 | linux-x64, windows-x64 | `licenses/vcpkg/libpng.txt` |

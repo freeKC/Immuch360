@@ -10,8 +10,9 @@ the user installs the components of the splat scenes, as an archive our CI built
 * Our changes to its sources, in `patches/`: `0001-without-cholmod.patch` makes CHOLMOD optional (`CHOLMOD_ENABLED`),
   so that the sparse Cholesky factorization of COLMAP goes through Eigen's `SimplicialLDLT` instead of CHOLMOD's
   supernodal module (GPL 2 or later); `0002-vcpkg-without-suitesparse.patch` builds Ceres with Eigen's sparse solvers
-  instead of SuiteSparse and LAPACK, takes BLAS and LAPACK as faiss needs them, and drops JasPer, which nothing of our
-  build uses. Eigen's sparse Cholesky and AMD ordering, which take over, are under the MPL 2.0 like the rest of Eigen
+  instead of SuiteSparse and LAPACK, takes BLAS and LAPACK as faiss needs them, drops JasPer, which nothing of our
+  build uses, and takes minizip-ng (for OpenColorIO) and libtiff (for OpenImageIO) without their default features, so
+  that neither bzip2, LZMA, zstd nor OpenSSL comes into the program. Eigen's sparse Cholesky and AMD ordering, which take over, are under the MPL 2.0 like the rest of Eigen
   (their headers say that Timothy A. Davis, author of the LDL and CSparse code they come from, licensed it to Google
   LLC for Eigen under the MPL 2.0; read in Eigen 3.4.1 on 2026-11-01).
 * Left out of our build, where the official binaries of COLMAP have them: the graphical interface (Qt, LGPL 3),

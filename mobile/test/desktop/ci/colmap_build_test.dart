@@ -36,8 +36,8 @@ const _ports = {
   'fmt': ('12.1.0', 'MIT'),
   'libjpeg-turbo': ('3.1.3', 'BSD-3-Clause AND IJG AND Zlib'),
   'eigen3': ('3.4.1', 'MPL-2.0'),
-  'blas': ('2023-04-14#6', 'NOASSERTION'),
-  'clapack': ('3.2.1#25', 'NOASSERTION'),
+  'blas': ('2023-04-14#6', 'LicenseRef-vcpkg-null'),
+  'clapack': ('3.2.1#25', 'LicenseRef-vcpkg-null'),
   'tiff': ('4.7.2', 'libtiff'),
 };
 
@@ -223,9 +223,11 @@ void main() {
       });
 
       test('fails on a port without licence that was not reviewed, and on a port our build leaves out', () {
-        final unknown = licences({..._ports, 'mystery': ('1.0', 'NOASSERTION')});
-        expect(unknown.exitCode, 1, reason: '$unknown');
-        expect(unknown.output, contains('mystery 1.0 gives no licence and was not reviewed'));
+        for (final none in ['LicenseRef-vcpkg-null', 'NOASSERTION']) {
+          final unknown = licences({..._ports, 'mystery': ('1.0', none)});
+          expect(unknown.exitCode, 1, reason: '$unknown');
+          expect(unknown.output, contains('mystery 1.0 gives no licence and was not reviewed'));
+        }
         final cholmod = licences({..._ports, 'suitesparse-cholmod': ('5.3.0', 'LGPL-2.1-or-later')});
         expect(cholmod.exitCode, 1, reason: '$cholmod');
         expect(cholmod.output, contains('suitesparse-cholmod 5.3.0 is installed: it is left out of our build'));
@@ -266,7 +268,10 @@ void main() {
         final text = File(p.join(root.path, 'THIRD-PARTY.md')).readAsStringSync();
         expect(text, contains('| `zlib` | 1.3.2#2 | Zlib | linux-x64, windows-x64 | `licenses/vcpkg/zlib.txt` |'));
         expect(text, contains('| `openblas` | 0.3.33 | BSD-3-Clause | linux-x64 |'));
-        expect(text, contains('| `blas` | 2023-04-14#6 | NOASSERTION | linux-x64, windows-x64 | none, a metapackage'));
+        expect(
+          text,
+          contains('| `blas` | 2023-04-14#6 | LicenseRef-vcpkg-null | linux-x64, windows-x64 | none, a metapackage'),
+        );
       });
     });
 

@@ -1,8 +1,8 @@
 diff --git a/vcpkg.json b/vcpkg.json
-index 6fcc199..4d1770d 100644
+index 6fcc199..ea4b65d 100644
 --- a/vcpkg.json
 +++ b/vcpkg.json
-@@ -12,21 +12,18 @@
+@@ -12,22 +12,26 @@
          "boost-property-map",
          "boost-property-tree",
          "boost-unordered",
@@ -20,11 +20,29 @@ index 6fcc199..4d1770d 100644
          "eigen3",
          "gflags",
          "glog",
--        {
++        "lapack",
++        "metis",
+         {
 -            "name": "jasper",
 -            "default-features": false
--        },
-+        "lapack",
-         "metis",
++            "name": "minizip-ng",
++            "default-features": false,
++            "features": [
++                "zlib"
++            ]
+         },
+-        "metis",
          {
              "name": "openblas",
+             "features": [
+@@ -37,6 +41,10 @@
+         },
+         "openimageio",
+         "sqlite3",
++        {
++            "name": "tiff",
++            "default-features": false
++        },
+         {
+             "name": "vcpkg-cmake",
+             "host": true

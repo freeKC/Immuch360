@@ -85,7 +85,8 @@ ALLOWED_LICENCES = {
     'Libpng', 'libtiff', 'ISC', 'blessing', 'Unlicense', 'CC0-1.0',
 }
 ALLOWED_EXCEPTIONS = {'LLVM-exception'}
-# The ports whose vcpkg.json gives no licence, read by hand (NOASSERTION in their vcpkg.spdx.json)
+# The ports whose vcpkg.json gives no licence, read by hand (LicenseRef-vcpkg-null, or NOASSERTION, in their
+# vcpkg.spdx.json)
 REVIEWED = {
     'blas': 'a metapackage without code: it selects OpenBLAS (BSD-3-Clause)',
     'lapack': 'a metapackage without code (our overlay port): it selects CLAPACK',
@@ -93,8 +94,14 @@ REVIEWED = {
                'AT&T, Lucent and Bellcore (F2CLIBS/libf2c/Notice, in licenses/libf2c-Notice.txt): both read on '
                '2026-11-01',
 }
-# The reviewed ports without code, hence without a copyright file
-METAPACKAGES = {'blas', 'lapack'}
+# The licences vcpkg writes for a port whose vcpkg.json gives none
+NO_LICENCE = ('LicenseRef-vcpkg-null', 'NOASSERTION', 'NONE', '')
+# The ports that install no copyright file: two metapackages without code, and a build script of vcpkg
+WITHOUT_COPYRIGHT = {
+    'blas': 'none, a metapackage without code',
+    'lapack': 'none, a metapackage without code',
+    'boost-uninstall': 'none, a build script of vcpkg (MIT)',
+}
 # Never installed: what the official binaries carry and our build leaves out
 FORBIDDEN_PORTS = re.compile(r'^(suitesparse.*|cholmod|qt.*|cgal|gmp|mpfr|glew|lapack-reference|gfortran|curl|openssl|'
                              r'onnxruntime.*|cuda|freeglut|opengl)$')
@@ -354,7 +361,7 @@ def licence_problems(ports: dict) -> list:
     for name, (version, licence) in sorted(ports.items()):
         if FORBIDDEN_PORTS.match(name):
             problems.append(f'{name} {version} is installed: it is left out of our build ({licence})')
-        elif licence in ('NOASSERTION', 'NONE', ''):
+        elif licence in NO_LICENCE:
             if name not in REVIEWED:
                 problems.append(f'{name} {version} gives no licence and was not reviewed: read its copyright file')
         elif not licence_allowed(licence):
@@ -396,7 +403,7 @@ def command_licences(args) -> int:
     triplet = lock['vcpkg']['triplets'][args.system]
     ports = installed_ports(args.installed, triplet)
     for name, (version, licence) in sorted(ports.items()):
-        note = f'  (reviewed: {REVIEWED[name]})' if name in REVIEWED and licence == 'NOASSERTION' else ''
+        note = f'  (reviewed: {REVIEWED[name]})' if name in REVIEWED and licence in NO_LICENCE else ''
         print(f'{name:<34} {version:<20} {licence}{note}')
     if args.ports_json:
         args.ports_json.parent.mkdir(parents=True, exist_ok=True)
@@ -426,7 +433,7 @@ def command_table(args) -> int:
     lines = [TABLE_START, '', '| Port | Version | Licence (SPDX of vcpkg) | Systems | Text in the archive |',
              '|---|---|---|---|---|']
     for name, (version, licence, systems) in sorted(merged.items()):
-        text = 'none, a metapackage without code' if name in METAPACKAGES else f'`licenses/vcpkg/{name}.txt`'
+        text = WITHOUT_COPYRIGHT.get(name, f'`licenses/vcpkg/{name}.txt`')
         lines.append(f'| `{name}` | {version} | {licence} | {", ".join(sorted(systems))} | {text} |')
     lines += ['', TABLE_END]
     text = args.table.read_text(encoding='utf-8')
@@ -617,7 +624,7 @@ def licence_files(lock: dict, system: str, source: pathlib.Path, build: pathlib.
         copyright = spdx.parent / 'copyright'
         if copyright.is_file():
             files[f'licenses/vcpkg/{spdx.parent.name}.txt'] = copyright.read_bytes()
-        elif spdx.parent.name not in METAPACKAGES:
+        elif spdx.parent.name not in WITHOUT_COPYRIGHT:
             problems.append(f'the port {spdx.parent.name} has no copyright file')
     return files, problems
 
