@@ -27,11 +27,12 @@
 //    more try with half the threads on Windows alone, where a std::bad_alloc says nothing either;
 //  - anything else is posesFailed with the end of the output, at once.
 // The alignment, on one thread, is never started again. The extraction and the matching start again where they
-// stopped (COLMAP skips what its database already holds); the mapper starts again from an empty sparse/. The progress,
-// read from glog on the error output as the measure logged it, never goes back: "Processed file [87/150]" (features),
-// "Processing block [4/9, 2/9]" (blocks of the exhaustive matching), "Processing image [120/150]" (the sequential
-// matching), "Registering image #66 (num_reg_frames=120)" (the image is the 121st placed; a second model starts again
-// from 2, the count kept is the largest).
+// stopped (COLMAP skips what its database already holds); the mapper starts again from an empty sparse/. A file of the
+// work folder that cannot be made or removed is posesFailed (diskFull when the disk is full). The progress, read from
+// glog on the error output as the measure logged it, never goes back: "Processed file [87/150]" (features), "Processing
+// block [4/9, 2/9]" (blocks of the exhaustive matching), "Processing image [120/150]" (the sequential matching),
+// "Registering image #66 (num_reg_frames=120)" (the image is the 121st placed; a second model starts again from 2, the
+// count kept is the largest).
 
 import 'dart:io';
 import 'dart:math' as math;
@@ -339,7 +340,7 @@ class ColmapRunner {
   final Duration Function() _elapsed;
 
   /// The poses of the [images] images in the work folder [work] (photos, or the frames of a [video]); throws a
-  /// BackendException: cancelled, posesFailed, posesStalled, outOfMemory, notEnoughOverlap
+  /// BackendException: cancelled, posesFailed, posesStalled, outOfMemory, notEnoughOverlap, diskFull
   Future<ColmapPoses> poses(
     SplatWorkFolder work, {
     required int images,
@@ -355,16 +356,18 @@ class ColmapRunner {
       );
     }
     final at = SplatWorkFolder(Directory(root));
-    for (final folder in [at.sparse, at.aligned]) {
-      if (folder.existsSync()) {
-        folder.deleteSync(recursive: true);
+    _files(() {
+      for (final folder in [at.sparse, at.aligned]) {
+        if (folder.existsSync()) {
+          folder.deleteSync(recursive: true);
+        }
       }
-    }
-    if (at.database.existsSync()) {
-      at.database.deleteSync();
-    }
-    at.colmap.createSync(recursive: true);
-    at.logs.createSync(recursive: true);
+      if (at.database.existsSync()) {
+        at.database.deleteSync();
+      }
+      at.colmap.createSync(recursive: true);
+      at.logs.createSync(recursive: true);
+    });
     final times = <String, Duration>{};
     var threads = colmapThreadsFor(available: memory.read().available, processors: processors);
     final common = colmapCommonThreadsFor(processors);
@@ -403,10 +406,12 @@ class ColmapRunner {
         'mapping',
         common,
         (count) {
-          if (at.sparse.existsSync()) {
-            at.sparse.deleteSync(recursive: true);
-          }
-          at.sparse.createSync(recursive: true);
+          _files(() {
+            if (at.sparse.existsSync()) {
+              at.sparse.deleteSync(recursive: true);
+            }
+            at.sparse.createSync(recursive: true);
+          });
           return colmapMapperArguments(
             database: at.database.path,
             images: at.images.path,
@@ -422,15 +427,15 @@ class ColmapRunner {
       );
     } on SidecarFailure catch (failure) {
       // No initial pair, no model: no two photos could be matched
-      if (failure.code == ImmersiveErrorCode.posesFailed && largestColmapModel(at.sparse) == null) {
+      if (failure.code == ImmersiveErrorCode.posesFailed && _files(() => largestColmapModel(at.sparse)) == null) {
         throw BackendException(ImmersiveErrorCode.notEnoughOverlap, splatCountsMessage(0, images));
       }
       rethrow;
     }
-    final largest = largestColmapModel(at.sparse);
+    final largest = _files(() => largestColmapModel(at.sparse));
     final placed = largest?.placed ?? 0;
     checkPlaced(placed, images);
-    at.aligned.createSync(recursive: true);
+    _files(() => at.aligned.createSync(recursive: true));
     await _command(
       null,
       'align',
@@ -444,7 +449,7 @@ class ColmapRunner {
     );
     final ColmapModel model;
     try {
-      model = ColmapModel.read(at.aligned);
+      model = _files(() => ColmapModel.read(at.aligned));
     } on FormatException catch (error) {
       throw BackendException(
         ImmersiveErrorCode.posesFailed,
@@ -459,6 +464,15 @@ class ColmapRunner {
       times: times,
       threads: threads,
     );
+  }
+
+  /// [action] on the files of the work folder; a file that cannot be made, read or removed is posesFailed, or diskFull
+  T _files<T>(T Function() action) {
+    try {
+      return action();
+    } on FileSystemException catch (error) {
+      throw splatFileFailure(error, 'COLMAP', ImmersiveErrorCode.posesFailed, windows: _windows);
+    }
   }
 
   /// Runs one command to its end, again with fewer threads after a crash for want of memory unless [again] is false

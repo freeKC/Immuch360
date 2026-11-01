@@ -25,6 +25,8 @@
 //    Windows Error Reporting held the real one 80 s after its panic (lot SP2). The message names the failure: the memory
 //    of the card ("failed to reserve", "BufferTooBig", "ErrorOutOfDeviceMemory", Brush issues 551 and 500) is
 //    gpuOutOfMemory, kernels the card refuses ("plane instructions") gpuUnavailable, anything else trainingFailed.
+//  - A file of the work folder that cannot be made, rewritten or removed is trainingFailed (diskFull when the disk is
+//    full), before Brush starts.
 //  - Brush 0.3.0 reads the first 16 387 bytes of each image at once (get_image_data of brush-dataset, lot SP2): a
 //    smaller image fails the whole dataset with "early eof". Such an image is made longer first, by a comment (a COM
 //    segment of a JPEG, a tEXt chunk of a PNG), its pixels untouched.
@@ -291,7 +293,7 @@ class BrushRunner {
 
   /// Trains the dataset of [work] (dataset/images and dataset/sparse/0) into `brush/export_<steps>.ply` with the steps,
   /// the gaussians, the degree and the definition of [settings]; throws a BackendException: cancelled, gpuUnavailable,
-  /// gpuOutOfMemory, trainingFailed, trainingStalled
+  /// gpuOutOfMemory, trainingFailed, trainingStalled, diskFull
   Future<BrushResult> train(
     SplatWorkFolder work, {
     required SplatSettings settings,
@@ -301,19 +303,22 @@ class BrushRunner {
     void Function(int pid)? onStarted,
   }) async {
     final steps = settings.steps;
-    lengthenShortImages(work.images);
+    _files(() => lengthenShortImages(work.images));
     final ready = await _waitForCard(cancel, onWaiting);
     final card = ready.card;
     final device = cubeclDeviceOf(ready.report, card);
     if (device == null) {
       throw BackendException(ImmersiveErrorCode.gpuUnavailable, '${card.name} is not a card Vulkan lists for Brush');
     }
-    final folder = brushCacheFolderOf(cacheRoot, card)..createSync(recursive: true);
-    if (work.export.existsSync()) {
-      work.export.deleteSync(recursive: true);
-    }
-    work.export.createSync(recursive: true);
-    work.logs.createSync(recursive: true);
+    final folder = brushCacheFolderOf(cacheRoot, card);
+    _files(() {
+      folder.createSync(recursive: true);
+      if (work.export.existsSync()) {
+        work.export.deleteSync(recursive: true);
+      }
+      work.export.createSync(recursive: true);
+      work.logs.createSync(recursive: true);
+    });
 
     BrushAdapter? adapter;
     var views = 0;
@@ -442,6 +447,16 @@ class BrushRunner {
       time: _elapsed() - started,
       psnr: psnr,
     );
+  }
+
+  /// [action] on the files of the work folder; a file that cannot be made, rewritten or removed is trainingFailed, or
+  /// diskFull
+  T _files<T>(T Function() action) {
+    try {
+      return action();
+    } on FileSystemException catch (error) {
+      throw splatFileFailure(error, 'Brush', ImmersiveErrorCode.trainingFailed);
+    }
   }
 
   /// Asks the card until it has the memory free (see the top of this file)

@@ -4,8 +4,8 @@
 // caught: 0xC0000409 with no word on Windows, SIGABRT after the words of libstdc++ elsewhere) told from a crash for want
 // of memory, the alignment never started again, the progress read from the logs of the measure of 1 November (fixtures
 // splat/logs/), the five commands of a job in order, the largest model, the thresholds of the poses, the failures, the
-// silence of 600 s, the cancel flag, and a work folder whose path is not ASCII. The same runner against the compiled
-// fake COLMAP is splat_runners_real_test.dart.
+// silence of 600 s, the cancel flag, a work folder whose path is not ASCII, and one that refuses its files. The same
+// runner against the compiled fake COLMAP is splat_runners_real_test.dart.
 
 import 'dart:async';
 import 'dart:io';
@@ -646,6 +646,47 @@ void main() {
         expect(runner.processes.last.killed, isTrue);
         expect(failure, isA<BackendException>().having((e) => e.code, 'code', ImmersiveErrorCode.cancelled));
       });
+    });
+
+    test('a work folder that refuses its files is posesFailed; a disk full is diskFull', () async {
+      // A file where the folder of COLMAP goes: the folder cannot be made
+      File(work.colmap.path).writeAsStringSync('in the way');
+      final runner = _ColmapRunner(scripts());
+      await expectLater(
+        colmap(runner).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+              .having((e) => e.message, 'message', startsWith('The work folder of COLMAP refused a file: ')),
+        ),
+      );
+      expect(runner.launches, isEmpty);
+      // ENOSPC on Linux, ERROR_DISK_FULL and ERROR_HANDLE_DISK_FULL on Windows; anything else the failure of the step
+      FileSystemException error(int code) => FileSystemException('Cannot write', '/w/x', OSError('error $code', code));
+      expect(
+        splatFileFailure(error(28), 'COLMAP', ImmersiveErrorCode.posesFailed, windows: false).code,
+        ImmersiveErrorCode.diskFull,
+      );
+      expect(
+        splatFileFailure(error(112), 'Brush', ImmersiveErrorCode.trainingFailed, windows: true).code,
+        ImmersiveErrorCode.diskFull,
+      );
+      expect(
+        splatFileFailure(error(39), 'Brush', ImmersiveErrorCode.trainingFailed, windows: true).code,
+        ImmersiveErrorCode.diskFull,
+      );
+      expect(
+        splatFileFailure(error(28), 'COLMAP', ImmersiveErrorCode.posesFailed, windows: true).code,
+        ImmersiveErrorCode.posesFailed,
+      );
+      expect(
+        splatFileFailure(error(5), 'COLMAP', ImmersiveErrorCode.posesFailed, windows: true).code,
+        ImmersiveErrorCode.posesFailed,
+      );
+      expect(
+        splatFileFailure(error(13), 'Brush', ImmersiveErrorCode.trainingFailed, windows: false).message,
+        startsWith('The work folder of Brush refused a file: Cannot write'),
+      );
     });
 
     test('a work folder with no ASCII path is refused before COLMAP starts', () async {

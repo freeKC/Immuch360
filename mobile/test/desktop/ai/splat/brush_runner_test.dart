@@ -2,9 +2,9 @@
 // against the help of brush_app 0.3.0 (brush_help.txt of lot SP2), the card named to cubecl, the folder of each card for
 // the autotune cache, the "Using adapter" line checked, the progress of the room of M1 every 200 steps, the wait for the
 // memory of the card, the panics of the Intel UHD (fixtures of lot SP2) and of a memory too short stopped at once, the
-// other failures, the silence of 300 s, the cancel flag, and the images lengthened for Brush 0.3.0. The answer of the
-// budget of the app for Brush is in gpu_budget_test.dart; the same runner against the compiled fake Brush is
-// splat_runners_real_test.dart.
+// other failures, a work folder that refuses its files, the silence of 300 s, the cancel flag, and the images
+// lengthened for Brush 0.3.0. The answer of the budget of the app for Brush is in gpu_budget_test.dart; the same runner
+// against the compiled fake Brush is splat_runners_real_test.dart.
 
 import 'dart:async';
 import 'dart:io';
@@ -428,6 +428,21 @@ void main() {
               .having((e) => e.message, 'message', 'Brush panicked: no message'),
         );
       });
+    });
+
+    test('a work folder that refuses its files is trainingFailed, before Brush starts', () async {
+      // A file where the export of Brush goes
+      File(work.export.path).writeAsStringSync('in the way');
+      final runner = _BrushRunner([FakeProcessScript(lines: _training())]);
+      await expectLater(
+        train(brush(runner)),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.trainingFailed)
+              .having((e) => e.message, 'message', startsWith('The work folder of Brush refused a file: ')),
+        ),
+      );
+      expect(runner.launches, isEmpty);
     });
 
     test('an error before the training is trainingFailed with its end; ended well without its export too', () async {

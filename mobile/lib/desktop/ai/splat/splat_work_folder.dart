@@ -15,6 +15,9 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:path/path.dart' as p;
 
 /// The paths of the work folder of one splat scene (see the top of this file)
@@ -94,6 +97,22 @@ List<Directory> splatWorkRoots({Map<String, String>? environment, bool? isWindow
   ];
 }
 
+/// A file of the work folder that [program] could not make, read or remove ([error]) as the failure of its step:
+/// diskFull when the disk is full, else [otherwise]
+BackendException splatFileFailure(
+  FileSystemException error,
+  String program,
+  ImmersiveErrorCode otherwise, {
+  bool? windows,
+}) {
+  final full = writeFailureOf(error, windows: windows) == WriteFailure.diskFull;
+  final os = error.osError == null ? '' : ' (${error.osError!.message})';
+  return BackendException(
+    full ? ImmersiveErrorCode.diskFull : otherwise,
+    'The work folder of $program refused a file: ${error.message}, ${error.path}$os',
+  );
+}
+
 typedef _ShortPathNative = Uint32 Function(Pointer<Utf16>, Pointer<Utf16>, Uint32);
 typedef _ShortPath = int Function(Pointer<Utf16>, Pointer<Utf16>, int);
 
@@ -102,9 +121,8 @@ _ShortPath? _shortPathFunction;
 /// The short (8.3) path of the existing [path] by GetShortPathNameW of kernel32; the long path itself when the volume
 /// keeps no short names; null when Windows refused (the path does not exist)
 String? windowsShortPath(String path) {
-  final shortPath = _shortPathFunction ??= DynamicLibrary.open(
-    'kernel32.dll',
-  ).lookupFunction<_ShortPathNative, _ShortPath>('GetShortPathNameW');
+  final shortPath = _shortPathFunction ??= DynamicLibrary.open('kernel32.dll')
+      .lookupFunction<_ShortPathNative, _ShortPath>('GetShortPathNameW');
   const capacity = 32768;
   final long = path.toNativeUtf16();
   final buffer = calloc<Uint16>(capacity).cast<Utf16>();
