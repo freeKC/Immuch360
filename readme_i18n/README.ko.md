@@ -799,7 +799,7 @@ nomadoor의 360° LoRA는 모델 카드상 Apache 2.0이며 CC0와 퍼블릭 도
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
-- **스토어**: Google Play(10월 29일부터 build 31 대신 build 32 심사 중; TV 등록 심사 중), App Store(버전 3.3.1 심사 중, 그다음 build 28로 버전 3.3.2), build 39로 Meta Horizon Store(10월 30일부터 build 32 공개 중), LG Content Store(10월 24일부터 버전 1.0.0이 LG 심사 중, 그다음 버전 1.0.1), 그리고 나중에 Samsung 스토어.
+- **스토어**: Google Play(10월 29일부터 build 31 대신 build 32 심사 중; TV 등록 심사 중), App Store(버전 3.3.1 심사 중, 그다음 build 28로 버전 3.3.2), build 40으로 Meta Horizon Store(10월 30일부터 build 32 공개 중), LG Content Store(10월 24일부터 버전 1.0.0이 LG 심사 중, 그다음 버전 1.0.1), 그리고 나중에 Samsung 스토어.
 - **AI 생성 기능**: Mac에서 360° 파노라마; 같은 장소의 여러 사진으로 재구성한 장면; iOS, LG, Samsung 앱의 AI 표시; 그래픽 카드가 있는 Linux PC와 AMD, Intel 카드에서 파노라마 시험.
 - **드론**: 1.8 m와 1.5 m/s를 넘는 높이와 속도, 그리고 줄자로 잰 장애물 거리를 증명하기 위한 야외 비행, 그다음 위성과 홈까지의 거리 표시; 헤드셋에서 확인하는 중계의 안정된 화면; LG와 Samsung TV로의 중계; 아직 시작하지 않은 iPhone과 iPad의 드론 기능; 실제 DJI Neo 2로 가져오기 페이지 테스트, 그다음 휴대폰이 녹음한 소리를 클립에 합치기. 이 테스트들 전에는 드론에 명령을 보내는 어떤 기능도 계획하지 않습니다.
 - **TV**: 실제 Android TV에서 동영상 컨트롤과 휴대폰으로 로그인하기를 포함한 build 29; 실제 LG TV에서 LG 앱의 공유, Plex, 실시간 화면, 그리고 webOS 26; 실제 Samsung TV에서 Samsung 테스트 build 0.2.0, 그다음 Samsung TV에서 휴대폰으로 로그인, 공유, Plex, 카메라; 그다음 LG TV의 구체 위 360° 동영상, 카메라 소리와 녹화 영상(2026년 12월 이전에는 불가).
