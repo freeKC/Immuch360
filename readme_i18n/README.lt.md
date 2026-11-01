@@ -20,7 +20,7 @@ Plokščios, 360° ir 3D nuotraukos bei vaizdo įrašai iš jūsų įrenginio, N
 <summary><b>Turinys</b></summary>
 
 - [Kam ji skirta](#who-it-is-for)
-- [Kokie ekranai](#which-screens), ir [ką daro kiekvienas ekranas](#what-each-screen-does)
+- [Kokie ekranai](#which-screens), [ką jie daro kartu](#use-cases) ir [ką daro kiekvienas ekranas](#what-each-screen-does)
 - [Ką galite daryti](#what-you-can-do)
 - [Įdiekite į savo įrenginį](#get-it-on-your-device)
 - [Kaip tai padaryti](#how-to)
@@ -60,6 +60,7 @@ Plokščios, 360° ir 3D nuotraukos bei vaizdo įrašai iš jūsų įrenginio, N
 - **Naudojate Immich** ir norite jo programos, taip pat panardinančių žiūryklių ir didelių ekranų, prie kurių prisijungiate telefonu: [jūsų Immich biblioteka](#keep-your-immich-library-with-more), [palyginimas su Immich](#compared-with-immich).
 - **Namus stebite Tapo kameromis** ir norite jas matyti šalia nuotraukų, taip pat televizoriuje (patikrinta su imituota kamera): [namų kameros](#watch-your-home-cameras-on-the-big-screen).
 - **Skraidinate DJI droną** ir norite jo tiesioginio vaizdo telefone be DJI Fly, o Meta Quest akiniuose ar Android TV kartu esantiems žmonėms (eksperimentinis): [jūsų dronas](#see-what-your-drone-sees-on-your-phone).
+- **Namuose turite kelis ekranus** ir norite, kad jie veiktų kartu: [ką jūsų ekranai daro kartu](#use-cases).
 
 Nereikia kurti Immuch360 paskyros, ir niekas nesiunčiama mums: programa bendrauja tik su jūsų įrenginiais ir jūsų pasirinktais serveriais, o DI komponentą atsisiunčia tik tada, kai jo paprašote.
 
@@ -86,6 +87,111 @@ Nereikia kurti Immuch360 paskyros, ir niekas nesiunčiama mums: programa bendrau
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Septynios tikros Immuch360 ekrano nuotraukos dviem eilėmis: sferos žiūryklė Android telefone, 360° nuotrauka iPad, 360° nuotrauka Google TV ir LG televizoriuje, tada nuotraukų laiko juosta Samsung televizoriuje, programos langas Meta Quest 3 akiniuose ir vaizdo grotuvas Windows. LG ir Samsung nuotraukos padarytos naršyklėje, atstojančioje televizorių">
 </p>
+
+<a id="use-cases"></a>
+### Ką jūsų ekranai daro kartu
+
+Įdiekite Immuch360 kiekviename ekrane, kuriame žiūrite: kiekvienas pats skaito jūsų šaltinius, o kai kurie perduoda kitam vaizdą, failą ar prisijungimą. Kiekviename paveikslėlyje Immuch360 piktograma žymi įrenginius, kuriuose veikia programa.
+
+#### Jūsų NAS kiekviename ekrane
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Iliustracija su tikromis programos ekrano nuotraukomis: NAS ant lentynos svetainėje sutemus, sujungtas su telefonu, planšete, televizoriumi, akiniais ir nešiojamuoju kompiuteriu; NAS aprūpina kiekvieną ekraną, kiekviename veikia Immuch360">
+</p>
+
+**Jums reikia:** NAS su SMB ar WebDAV bendrinamu aplanku ir Immuch360 kiekviename ekrane, kuriame žiūrite.
+
+Pridėkite bendrinamą aplanką kiekviename ekrane, ir kiekvienas atkuria nuotraukas ir vaizdo įrašus ten, kur jie yra, nieko nekopijuodamas: telefonai, planšetės, Android TV, Meta Quest akiniai, Windows, Linux ir macOS kompiuteriai ir LG televizoriai, prisijungę prie jūsų Immich serverio. 360° nuotrauka sukasi kaip sfera telefone ir televizoriuje, o akiniuose apgaubia jus. Kaip tai padaryti: [Atkurkite NAS, kompiuterio, medijos serverio ar Plex failus](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Jūsų Immich serveris kiekviename ekrane, prijungtas iš jūsų telefono
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: namų serveris, sujungtas su rankoje laikomu telefonu, televizoriumi, akiniais ir nešiojamuoju kompiuteriu, kiekviename veikia Immuch360; punktyrinė linija rodo, kaip Android telefonas prijungia kitus tris">
+</p>
+
+**Jums reikia:** Immich serverio, Immuch360 jūsų Android telefone ir Immuch360 ekranuose, kuriuos prijungiate: Android TV, Meta Quest akiniuose, Windows, Linux ar macOS kompiuteryje.
+
+Telefone Immuch360 išlaiko visą Immich mobiliąją programą, prideda savo 360°, VR180 ir 3D peržiūros priemones ir įdiegiama šalia oficialios programos. Prisijungusi prie jūsų serverio, ji prijungia didžiuosius ekranus: nuskaito televizoriaus ar kompiuterio QR kodą, arba jūs jame įvedate kodą, kurį rodo akiniai, o jūsų slaptažodis lieka telefone. Kaip tai padaryti: [Prijunkite televizorių, akinius ar kompiuterį telefonu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Jūsų plokščios nuotraukos 3D, nuo kompiuterio iki akinių (eksperimentinis)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Iliustracija su viena tikra programos ekrano nuotrauka: nešiojamasis kompiuteris su Immuch360 šalia atspausdintų nuotraukų ir NAS, ir iš nugaros matomas žmogus akiniuose su Immuch360 prieš vieną iš tų peizažų, iškilusį erdviškai">
+</p>
+
+**Jums reikia:** Immuch360 Windows, Linux ar macOS kompiuteryje ir Meta Quest akiniuose, o tarp jų jūsų NAS ar Immich serverio.
+
+Pats kompiuteris paverčia jūsų nuotraukas 3D nuotraukomis ir 3D scenomis, o su 8 GB vaizdo plokšte Windows ar Linux sistemoje ir 360° panoramomis, ir išsaugo jas šalia originalų. Akiniai rodo 3D nuotrauką tikru 3D, padeda sceną jūsų kambaryje, o panoramą aplink jus; telefonai ir televizoriai atveria panoramas savo 360° peržiūros priemonėje. Kaip tai padaryti: [Paverskite vieną nuotrauką 3D, scena, panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Tiesioginis jūsų drono vaizdas akiniuose ar televizoriuje (eksperimentinis)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: terasoje sutemus iš nugaros matomas pilotas skraidina droną su telefonu ant valdiklio; telefonas perduoda tiesioginį vaizdą, tik viena kryptimi, akiniams ir televizoriui">
+</p>
+
+**Jums reikia:** DJI drono ir jo DJI RC-N3 valdiklio, Immuch360 prie valdiklio prijungtame Android telefone ir Immuch360 Meta Quest akiniuose ar Android TV.
+
+Telefonas rodo tiesioginį drono vaizdo įrašą ir perduoda jį per jūsų Wi-Fi ar savo prieigos tašką, kad kartu esantys žmonės stebėtų skrydį akiniuose ar televizoriuje. Tik priėmimas: valdikliui ar dronui niekada nesiunčiama jokia komanda, o valdiklis išlaiko visišką valdymą. Kaip tai padaryti: [Žiūrėkite tai Meta Quest akiniuose ar Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Jūsų 360° kameros neapdoroti failai, sujungiami ten, kur juos žiūrite
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: 360° kamera, jos atminties kortelė ir NAS ant terasos stalo; failai keliauja į NAS, paskui į planšetę, televizorių ir akinius su Immuch360, kurie juos sujungia">
+</p>
+
+**Jums reikia:** Insta360, GoPro MAX ar DJI Osmo 360 kameros, jūsų NAS ir Immuch360 ekranuose: telefonuose, planšetėse, Android TV, Meta Quest akiniuose, Windows.
+
+Nukopijuokite neapdorotus failus iš kameros kortelės į savo NAS SMB ar WebDAV bendrinamą aplanką tokius, kokie jie yra; Immich serveris priima ir Insta360 failus. Kiekvienas ekranas juos sujungia atkurdamas, su kiekviename faile įrašytu kalibravimu, ir prieš tai niekas neeksportuojama kameros programoje. Kaip tai padaryti: [Atverkite 360° kamerų neapdorotus failus](#open-the-raw-files-of-360-cameras).
+
+#### Jūsų Plex ir DLNA serveriai televizoriuje ir akiniuose
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: medijos serveris po namų kino televizoriumi, sujungtas su televizoriumi, ant sofos dėvimais akiniais, telefonu ir nešiojamuoju kompiuteriu, kiekviename veikia Immuch360">
+</p>
+
+**Jums reikia:** Plex Media Server ar DLNA serverio, pavyzdžiui, Jellyfin, Emby ar minidlna, ir Immuch360 kiekviename ekrane: Android TV, Meta Quest akiniuose, telefonuose, planšetėse, Windows.
+
+Plex pateikia originalius jūsų bibliotekų failus, todėl 360° vaizdo įrašas lieka 360°, aplink jus akiniuose, namuose ir, per jūsų prievadų peradresavimą, toli nuo namų; DLNA serveriai randami jūsų namų tinkle. LG televizoriai, prisijungę prie jūsų Immich serverio, juos irgi atkuria. Kaip tai padaryti: [Atkurkite NAS, kompiuterio, medijos serverio ar Plex failus](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Jūsų telefonas ar Windows kompiuteris, atvertas akiniuose
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: iš nugaros matomas žmogus ant sofos dėvi akinius, aplink jį 360° nuotrauka; telefonas ir nešiojamasis kompiuteris su Immuch360 bendrina su akiniais savo nuotraukas per Wi-Fi">
+</p>
+
+**Jums reikia:** Immuch360 Android telefone, iPhone ar Windows kompiuteryje ir Meta Quest akiniuose, tame pačiame namų Wi-Fi tinkle.
+
+Įjunkite „Bendrinti šį telefoną tinkle“ telefone arba „Bendrinti šį kompiuterį tinkle“ kompiuteryje, ir akiniai atkuria jo nuotraukas ir vaizdo įrašus, 360° įrašus aplink jus: jokio serverio, jokio NAS, jokio įkėlimo. iPhone bendrinimas veikia, kol programa atverta. Kaip tai padaryti: [Bendrinti šį telefoną tinkle](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Jūsų Tapo kameros televizoriuje ir akiniuose
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: namų kamera prie lango filmuoja sodą, o televizorius, telefonas, ant sofos dėvimi akiniai ir nešiojamasis kompiuteris, kiekviename veikia Immuch360, rodo tą vieną vaizdą">
+</p>
+
+**Jums reikia:** Tapo kamerų jūsų namų tinkle ir Immuch360 Android telefone, Android TV, Meta Quest akiniuose ar Windows kompiuteryje.
+
+Kiekvienas ekranas rodo kamerą tiesiogiai ir diena po dienos atkuria jos atminties kortelės įrašus, šalia jūsų nuotraukų, o telefonas siunčia klipą į jūsų Immich serverį. Programa kalbasi su kameromis tik jūsų tinkle, niekada per TP-Link serverius. Patikrinta su imituota kamera. Kaip tai padaryti: [Žiūrėkite namų kameras dideliame ekrane](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gauso splatai jūsų kambaryje, Meta Quest 3 ar 3S akiniuose (eksperimentinis)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: svetainėje iš nugaros matomas žmogus akiniuose su Immuch360 stovi prieš natūralaus dydžio fontaną, kitos programos užfiksuotą kaip splatas ir atvertą iš NAS">
+</p>
+
+**Jums reikia:** splato, sukurto su Polycam, Scaniverse, Luma ar kitu įrankiu, kaip .spz ar .ply failo jūsų NAS ar akiniuose, ir Immuch360 Meta Quest 3 ar 3S akiniuose.
+
+Akiniai pastato vietą ar objektą jo dydžio, priešais jus ar aplink jus: apeikite jį, slyskite per jį kairiąja svirtele, sukitės dešiniąja. Gauso splatai naudoja eksperimentinę Meta Spatial SDK API, kurios Meta nepalaiko ir negarantuoja: už bet kokį trūkumą atsako tik Immuch360. Kaip tai padaryti: [Tyrinėkite Gauso splatus Meta Quest 3 ar 3S akiniuose](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest akiniai jūsų lankytojams (eksperimentinis)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Iliustracija, ne ekrano nuotrauka: mažoje parodų salėje iš nugaros matomas lankytojas sėdi akiniuose su Immuch360 kiosko režimu, o du kiti laukia savo eilės">
+</p>
+
+**Jums reikia:** Meta Quest akinių su Immuch360 ir 360° nuotraukos ar vaizdo įrašo akiniuose, jūsų NAS ar jūsų Immich serveryje.
+
+Kiosko režimu akiniai patys atveria jūsų 360° nuotrauką ar vaizdo įrašą nuo pradžių kaskart, kai lankytojas juos užsideda, o filmas baigiasi kortele su jūsų tekstu. Lankytojai nieko nespaudžia; norėdami išeiti, jūs vieną sekundę laikote nuspaudę B ar Y. Kaip tai padaryti: [Kiosko režimas parodai ar parduotuvei](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ DI funkcijos vykdo kitų sukurtus modelius ir variklius, atsisiunčiamus tik jum
 
 360° LoRA, kurią sukūrė nomadoor, jos kortelėje nurodyta kaip Apache 2.0 ir buvo apmokyta su CC0 ir viešojo domeno vaizdais, o dalis su CC BY: tos dalies priskyrimas bus vėlesnėje MODEL-LICENSES.md versijoje. Niekas čia nėra pagal nekomercinę licenciją, ir niekam nereikia CUDA. ONNX Runtime ir LiteRT turi įtrauktų kitų bibliotekų, išvardytų jų pranešimuose, tarp jų Eigen pagal MPL 2.0, silpną copyleft licenciją.
 
-Šio puslapio ekrano nuotraukos yra tikros programos ekrano nuotraukos: telefono nuotraukos iš Android build emuliatoriuje, Android TV nuotraukos iš Google TV emuliatoriaus, LG ir Samsung nuotraukos naršyklėje, atstojančioje televizorių, Windows nuotraukos iš Windows 11 kompiuterio, o Meta Quest langas iš Quest 3, visos su CC0 panoramomis iš [Poly Haven](https://polyhaven.com); panardinančios akinių nuotraukos padarytos Quest 3 su autoriaus nuosavais failais, o iPad nuotrauka iPad simuliatoriuje, su CC0 Poly Haven panorama. DI kūrėjo paveikslėliai yra tikri programos rezultatai, sukurti iš CC0 Poly Haven nuotraukų, su dviem tikromis Windows programos ekrano nuotraukomis. Pradinis vaizdas ir televizoriaus, prisijungimo, pasukimo, kamerų ir drono paveikslėliai yra projektui sukurtos iliustracijos: juose nėra programos ekrano, kitos įmonės logotipo ir veido. Kiekvienas vaizdas su šaltiniu, data ir licencija išvardytas [CAPTURES.md](../.github/readme/CAPTURES.md).
+Šio puslapio ekrano nuotraukos yra tikros programos ekrano nuotraukos: telefono nuotraukos iš Android build emuliatoriuje, Android TV nuotraukos iš Google TV emuliatoriaus, LG ir Samsung nuotraukos naršyklėje, atstojančioje televizorių, Windows nuotraukos iš Windows 11 kompiuterio, o Meta Quest langas iš Quest 3, visos su CC0 panoramomis iš [Poly Haven](https://polyhaven.com); panardinančios akinių nuotraukos padarytos Quest 3 su autoriaus nuosavais failais, o iPad nuotrauka iPad simuliatoriuje, su CC0 Poly Haven panorama. DI kūrėjo paveikslėliai yra tikri programos rezultatai, sukurti iš CC0 Poly Haven nuotraukų, su dviem tikromis Windows programos ekrano nuotraukomis. Pradinis vaizdas ir televizoriaus, prisijungimo, pasukimo, kamerų ir drono paveikslėliai yra projektui sukurtos iliustracijos: juose nėra programos ekrano, kitos įmonės logotipo ir veido. Naudojimo atvejų kortelėse tokia iliustracija dedama virš projektui nupieštos juostos su platformų logotipais, programos piktograma ir, dviejose kortelėse, tikromis programos ekrano nuotraukomis; be platformų logotipų, juose nėra kitos įmonės logotipo ir veido. Kiekvienas vaizdas su šaltiniu, data ir licencija išvardytas [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Planai

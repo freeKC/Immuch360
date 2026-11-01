@@ -20,7 +20,7 @@
 <summary><b>目次</b></summary>
 
 - [誰のためのアプリか](#who-it-is-for)
-- [対応する画面](#which-screens)と[各画面でできること](#what-each-screen-does)
+- [対応する画面](#which-screens)、[画面を組み合わせてできること](#use-cases)と[各画面でできること](#what-each-screen-does)
 - [できること](#what-you-can-do)
 - [お使いのデバイスで入手する](#get-it-on-your-device)
 - [使い方](#how-to)
@@ -60,6 +60,7 @@
 - **Immichを運用している方**で、そのアプリに加えて、イマーシブビューアーと、スマートフォンからログインさせる大画面が欲しい場合: [Immichライブラリ](#keep-your-immich-library-with-more)、[Immichとの比較](#compared-with-immich)。
 - **Tapoカメラで自宅を見守っている方**で、写真の隣に、テレビでもカメラを表示したい場合 (シミュレートしたカメラで確認済み): [家庭用カメラ](#watch-your-home-cameras-on-the-big-screen)。
 - **DJIドローンを飛ばす方**で、DJI Flyなしでスマートフォンにライブ映像を映し、同行者のためにMeta QuestやAndroid TVにも映したい場合 (実験的): [ドローン](#see-what-your-drone-sees-on-your-phone)。
+- **自宅に複数の画面がある方**で、それらを連携させたい場合: [画面を組み合わせてできること](#use-cases)。
 
 作成するImmuch360アカウントはなく、私たちに送られるものもありません。アプリが通信するのは、あなたのデバイスと、あなたが選んだサーバーだけです。AIコンポーネントをダウンロードするのも、あなたが求めたときだけです。
 
@@ -86,6 +87,111 @@
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Immuch360の実際のキャプチャ7枚を2段に並べたもの: Androidスマートフォンの球体ビューアー、iPadの360°写真、Google TVとLGテレビの360°写真、続いてSamsungテレビの写真タイムライン、Meta Quest 3のアプリのウィンドウ、Windowsの動画プレーヤー。LGとSamsungのキャプチャは、テレビの代わりとなるブラウザーで撮影しました">
 </p>
+
+<a id="use-cases"></a>
+### 画面を組み合わせてできること
+
+視聴に使う各画面にImmuch360をインストールしてください。各画面は自分でソースを読み込み、一部の画面は画像、ファイル、ログインを別の画面に渡します。各イラストでは、Immuch360のアイコンがアプリを実行しているデバイスを示しています。
+
+#### NASをすべての画面で
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="イラストで、アプリの実際のキャプチャを含みます: 夕暮れのリビングの棚に置かれたNASが、スマートフォン、タブレット、テレビ、ヘッドセット、ノートパソコンにつながっている。NASがすべての画面にデータを届け、どの画面でもImmuch360が動いている">
+</p>
+
+**必要なもの:** SMBまたはWebDAVの共有があるNASと、視聴する各画面のImmuch360。
+
+各画面に共有を追加すると、どの画面も写真や動画を置かれた場所のまま、何もコピーせずに再生します: スマートフォン、タブレット、Android TV、Meta Quest、Windows、Linux、macOSのコンピューター、ImmichサーバーにログインしたLGテレビ。360°写真はスマートフォンやテレビでは球体として回転し、ヘッドセットではあなたを包み込みます。使い方: [NAS、コンピューター、メディアサーバー、Plexのファイルを再生する](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
+
+#### Immichサーバーをすべての画面で、スマートフォンからログイン
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 自宅のサーバーが、手に持ったスマートフォン、テレビ、ヘッドセット、ノートパソコンにつながり、どれもImmuch360を実行している。破線は、Androidスマートフォンがほかの3台をログインさせる様子を示している">
+</p>
+
+**必要なもの:** Immichサーバー、AndroidスマートフォンのImmuch360、ログインさせる画面のImmuch360: Android TV、Meta Quest、Windows、Linux、macOSのコンピューター。
+
+スマートフォンでは、Immuch360はImmichモバイルアプリの機能をすべて残したまま、360°、VR180、3Dのビューアーを加え、公式アプリと並べてインストールできます。サーバーにログインすると、大画面をログインさせます: テレビやコンピューターのQRコードをスキャンするか、ヘッドセットに表示されたコードをスマートフォンに入力します。パスワードはスマートフォンにとどまります。使い方: [スマートフォンでテレビ、ヘッドセット、コンピューターにログインする](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)。
+
+#### 平面の写真を3Dに、コンピューターからヘッドセットへ (実験的)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="イラストで、アプリの実際のキャプチャを1枚含みます: 印刷した写真とNASの横でImmuch360を実行するノートパソコンと、Immuch360を実行するヘッドセットを着けた後ろ姿の人。その人の前には、それらの風景の1つが立体的に立ち上がっている">
+</p>
+
+**必要なもの:** Windows、Linux、macOSのいずれかのコンピューターとMeta QuestのImmuch360、その間をつなぐNASまたはImmichサーバー。
+
+コンピューター自体が写真を3D写真や3Dシーンに変換し、WindowsまたはLinuxで8 GBのグラフィックカードがあれば360°パノラマにも変換して、元のファイルの隣に保存します。ヘッドセットは3D写真を本物の3Dで表示し、シーンを部屋の中に置き、パノラマをあなたの周り全体に広げます。スマートフォンやテレビはパノラマを360°ビューアーで開きます。使い方: [1枚の写真を3D、シーン、パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama)。
+
+#### ドローンのライブ映像をヘッドセットやテレビで (実験的)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 夕暮れのテラスで、後ろ姿のパイロットがコントローラーにスマートフォンを付けてドローンを飛ばしている。スマートフォンはライブ映像を一方向だけでヘッドセットとテレビに中継している">
+</p>
+
+**必要なもの:** DJIドローンとそのDJI RC-N3コントローラー、コントローラーに接続したAndroidスマートフォンのImmuch360、Meta QuestまたはAndroid TVのImmuch360。
+
+スマートフォンはドローンのライブ映像を表示し、Wi-Fiまたはスマートフォン自身のホットスポット経由で中継するので、同行者はヘッドセットやテレビで飛行を見られます。受信のみです: コントローラーやドローンにコマンドを送ることは一切なく、コントローラーが完全な操縦権を保ちます。使い方: [Meta QuestやAndroid TVで見る](#watch-it-in-a-meta-quest-or-on-an-android-tv)。
+
+#### 360°カメラのRAWファイルを、見る場所でスティッチ
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="イラストで、実際のキャプチャではありません: テラスのテーブルに360°カメラ、そのメモリーカード、NASがある。ファイルはNASへ送られ、そこからImmuch360を実行するタブレット、テレビ、ヘッドセットへ届き、それぞれがスティッチする">
+</p>
+
+**必要なもの:** Insta360、GoPro MAX、DJI Osmo 360のいずれかのカメラ、NAS、各画面のImmuch360: スマートフォン、タブレット、Android TV、Meta Quest、Windows。
+
+カメラのカードからRAWファイルをそのまま、NASのSMBまたはWebDAVの共有にコピーします。ImmichサーバーはInsta360のファイルも受け付けます。各画面は再生しながら、各ファイルに書き込まれたキャリブレーションでスティッチするので、先にカメラのアプリで書き出すものはありません。使い方: [360°カメラのRAWファイルを開く](#open-the-raw-files-of-360-cameras)。
+
+#### PlexとDLNAサーバーをテレビとヘッドセットで
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="イラストで、実際のキャプチャではありません: ホームシアターのテレビの下にあるメディアサーバーが、テレビ、ソファで着けたヘッドセット、スマートフォン、ノートパソコンにつながり、どれもImmuch360を実行している">
+</p>
+
+**必要なもの:** Plex Media Server、またはJellyfin、Emby、minidlnaなどのDLNAサーバーと、各画面のImmuch360: Android TV、Meta Quest、スマートフォン、タブレット、Windows。
+
+Plexはライブラリの元のファイルを渡すので、360°動画は360°のまま、ヘッドセットではあなたの周り全体に広がります。自宅でも、ポートフォワーディングを通して外出先でも同じです。DLNAサーバーは自宅のネットワークで見つかります。ImmichサーバーにログインしたLGテレビでも再生できます。使い方: [NAS、コンピューター、メディアサーバー、Plexのファイルを再生する](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
+
+#### スマートフォンやWindowsコンピューターを、ヘッドセットで開く
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 後ろ姿の人がソファでヘッドセットを着け、周りに360°写真が広がっている。Immuch360を実行するスマートフォンとノートパソコンが、Wi-Fi経由でヘッドセットに写真を共有している">
+</p>
+
+**必要なもの:** Androidスマートフォン、iPhone、WindowsコンピューターのいずれかのImmuch360と、Meta QuestのImmuch360 (同じ自宅のWi-Fi上)。
+
+スマートフォンで「この電話をネットワークで共有」を、コンピューターで「このコンピューターをネットワークで共有」をオンにすると、ヘッドセットがその写真や動画を再生し、360°のものはあなたの周り全体に広がります: サーバーもNASもアップロードも不要です。iPhoneでは、アプリを開いている間、共有が動作します。使い方: [この電話をネットワークで共有](../docs/immuch360/user-guide.md#share-this-phone-on-the-network)。
+
+#### Tapoカメラをテレビとヘッドセットで
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 窓際の家庭用カメラが庭を撮影し、テレビ、スマートフォン、ソファで着けたヘッドセット、ノートパソコンがどれもImmuch360を実行して、その1つの映像を表示している">
+</p>
+
+**必要なもの:** 自宅のネットワークにあるTapoカメラと、Androidスマートフォン、Android TV、Meta Quest、WindowsコンピューターのいずれかのImmuch360。
+
+各画面はカメラをライブで表示し、メモリーカードの録画を日ごとに写真の隣で再生します。スマートフォンはクリップをImmichサーバーに送ります。アプリはお使いのネットワーク内だけでカメラと通信し、TP-Linkのサーバーを経由することはありません。シミュレートしたカメラで確認済みです。使い方: [家庭用カメラを大画面で見る](#watch-your-home-cameras-on-the-big-screen)。
+
+#### 部屋の中にガウシアンスプラットを、Meta Quest 3または3Sで (実験的)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="イラストで、実際のキャプチャではありません: リビングで、Immuch360を実行するヘッドセットを着けた後ろ姿の人が、別のアプリでスプラットとして撮影されNASから開かれた実物大の噴水の前に立っている">
+</p>
+
+**必要なもの:** Polycam、Scaniverse、Lumaなどのツールで作った、NASまたはヘッドセット内の.spzまたは.plyファイルのスプラットと、Meta Quest 3または3SのImmuch360。
+
+ヘッドセットは場所や物を実際の大きさで、目の前またはあなたの周り全体に置きます: 周りを歩いて回り、左のサムスティックで中を滑るように進み、右のサムスティックで向きを変えます。ガウシアンスプラットは Meta Spatial SDK の試験運用版 API を使用しており、Meta はこの API をサポートも保証もしていません。不具合の責任はすべて Immuch360 にあります。使い方: [Meta Quest 3または3Sでガウシアンスプラットを探索する](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)。
+
+#### 来場者のためのMeta Quest (実験的)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 小さな展示室で、キオスクモードのImmuch360を実行するヘッドセットを着けた後ろ姿の来場者が座り、ほかの2人が順番を待っている">
+</p>
+
+**必要なもの:** Immuch360を入れたMeta Questと、ヘッドセット内、NAS、Immichサーバーのいずれかにある360°写真または動画。
+
+キオスクモードでは、来場者がヘッドセットを着けるたびに、ヘッドセットが360°写真や動画を自動で最初から開き、動画はあなたのテキストを載せたエンドカードで終わります。来場者は何も押しません。終了するには、BまたはYを1秒間長押しします。使い方: [展示会や店舗のためのキオスクモード](#kiosk-mode-for-an-exhibition-or-a-shop)。
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ AI機能は他者が作ったモデルとエンジンを実行します。これ
 
 nomadoorの360° LoRAは、そのカードによればApache 2.0で、CC0とパブリックドメインの画像で学習されており、一部はCC BYです: その部分の帰属表示はMODEL-LICENSES.mdの今後の版で追加します。ここには非商用ライセンスのものはなく、CUDAを必要とするものもありません。ONNX RuntimeとLiteRTには他のライブラリが組み込まれており、それぞれの通知に記載されています。その中には弱いコピーレフトライセンスであるMPL 2.0のEigenも含まれます。
 
-このページのキャプチャはアプリの実際のキャプチャです: スマートフォンのものはエミュレーター上のAndroidビルド、Android TVのものはGoogle TVエミュレーター、LGとSamsungのものはテレビの代わりとなるブラウザー、WindowsのものはWindows 11のPC、Meta QuestのウィンドウはQuest 3で撮影し、いずれも[Poly Haven](https://polyhaven.com)のCC0パノラマを使っています。ヘッドセットのイマーシブなキャプチャは作者自身のメディアを使ってQuest 3で撮影し、iPadのものはCC0のPoly Havenパノラマを使ってiPadシミュレーターで撮影しました。AIクリエイターの画像は、Poly HavenのCC0写真から作ったアプリの実際の出力と、Windowsアプリの実際のキャプチャ2枚です。冒頭の画像と、テレビ、ログイン、回転、カメラ、ドローンの画像は、プロジェクトのために作成したイラストです: アプリの画面、他社のロゴ、人の顔は含まれていません。各画像の出典、日付、ライセンスは[CAPTURES.md](../.github/readme/CAPTURES.md)に記載されています。
+このページのキャプチャはアプリの実際のキャプチャです: スマートフォンのものはエミュレーター上のAndroidビルド、Android TVのものはGoogle TVエミュレーター、LGとSamsungのものはテレビの代わりとなるブラウザー、WindowsのものはWindows 11のPC、Meta QuestのウィンドウはQuest 3で撮影し、いずれも[Poly Haven](https://polyhaven.com)のCC0パノラマを使っています。ヘッドセットのイマーシブなキャプチャは作者自身のメディアを使ってQuest 3で撮影し、iPadのものはCC0のPoly Havenパノラマを使ってiPadシミュレーターで撮影しました。AIクリエイターの画像は、Poly HavenのCC0写真から作ったアプリの実際の出力と、Windowsアプリの実際のキャプチャ2枚です。冒頭の画像と、テレビ、ログイン、回転、カメラ、ドローンの画像は、プロジェクトのために作成したイラストです: アプリの画面、他社のロゴ、人の顔は含まれていません。ユースケースのカードでは、このようなイラストを、プロジェクトのために描いた帯の上に配置しています。帯にはプラットフォームのロゴ、アプリのアイコン、そして2枚のカードではアプリの実際のキャプチャが含まれます。プラットフォームのロゴ以外に、他社のロゴや人の顔は含まれていません。各画像の出典、日付、ライセンスは[CAPTURES.md](../.github/readme/CAPTURES.md)に記載されています。
 
 <a id="roadmap"></a>
 ## ロードマップ

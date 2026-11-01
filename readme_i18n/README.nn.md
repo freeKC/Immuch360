@@ -20,7 +20,7 @@ Flate bilete og videoar, 360° og 3D, frå eininga di, NAS-en din, Immich-tenare
 <summary><b>Innhald</b></summary>
 
 - [Kven han er for](#who-it-is-for)
-- [Kva skjermar](#which-screens), og [kva kvar skjerm gjer](#what-each-screen-does)
+- [Kva skjermar](#which-screens), [kva dei gjer saman](#use-cases) og [kva kvar skjerm gjer](#what-each-screen-does)
 - [Kva du kan gjere](#what-you-can-do)
 - [Få han på eininga di](#get-it-on-your-device)
 - [Slik gjer du](#how-to)
@@ -60,6 +60,7 @@ Flate bilete og videoar, 360° og 3D, frå eininga di, NAS-en din, Immich-tenare
 - **Du køyrer Immich** og vil ha appen, pluss dei immersive visarane og storskjermane du loggar inn frå telefonen: [Immich-biblioteket ditt](#keep-your-immich-library-with-more), [jamført med Immich](#compared-with-immich).
 - **Du overvakar heimen med Tapo-kamera** og vil ha dei ved sida av bileta dine, også på TV-en (sjekka mot eit simulert kamera): [heimekamera](#watch-your-home-cameras-on-the-big-screen).
 - **Du flyg ein DJI-drone** og vil ha direktebiletet på telefonen utan DJI Fly, og i ein Meta Quest eller på ein Android TV for dei som er med deg (eksperimentell): [dronen din](#see-what-your-drone-sees-on-your-phone).
+- **Du har fleire skjermar heime** og vil at dei skal verke saman: [kva skjermane dine gjer saman](#use-cases).
 
 Det finst ingen Immuch360-konto å opprette, og ingenting går til oss: appen snakkar berre med einingane dine og med tenarane du vel, og lastar ned ein KI-komponent berre når du ber om det.
 
@@ -86,6 +87,111 @@ Det finst ingen Immuch360-konto å opprette, og ingenting går til oss: appen sn
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sju ekte skjermbilete av Immuch360 i to rader: kulevisaren på ein Android-telefon, eit 360°-bilete på ein iPad, eit 360°-bilete på ein Google TV og på ein LG-TV, deretter bilettidslinja på ein Samsung-TV, vindauget til appen i ein Meta Quest 3 og videospelaren på Windows. LG- og Samsung-bileta er tekne i ein nettlesar som står i staden for TV-en">
 </p>
+
+<a id="use-cases"></a>
+### Kva skjermane dine gjer saman
+
+Installer Immuch360 på kvar skjerm du ser på: kvar skjerm les kjeldene dine sjølv, og nokre gir eit bilete, ei fil eller ei innlogging vidare til ein annan. På kvart bilete markerer Immuch360-ikonet einingane som køyrer appen.
+
+#### NAS-en din på kvar skjerm
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Illustrasjon med ekte skjermbilete av appen: ein NAS på ei hylle i ei stove i skumringa, kopla til ein telefon, eit nettbrett, ein TV, eit hovudsett og ein berbar datamaskin; NAS-en forsyner kvar skjerm, og kvar av dei køyrer Immuch360">
+</p>
+
+**Du treng:** ein NAS med ei SMB- eller WebDAV-deling, og Immuch360 på kvar skjerm du ser på.
+
+Legg til delinga på kvar skjerm, og kvar av dei spelar bileta og videoane der dei ligg, utan at noko blir kopiert: telefonar, nettbrett, Android TV, ein Meta Quest, Windows-, Linux- og macOS-datamaskiner, og LG-TV-ar som er logga inn på Immich-tenaren din. Eit 360°-bilete snur seg som ei kule på telefonen og TV-en, og omgir deg i hovudsettet. Slik gjer du: [Spel filene på ein NAS, ein datamaskin, ein medietenar eller Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Immich-tenaren din på kvar skjerm, logga inn frå telefonen din
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: ein heimetenar kopla til ein telefon som blir halden i ei hand, ein TV, eit hovudsett og ein berbar datamaskin, som alle køyrer Immuch360; ei stipla linje viser Android-telefonen som loggar inn dei tre andre">
+</p>
+
+**Du treng:** ein Immich-tenar, Immuch360 på Android-telefonen din, og Immuch360 på skjermane du loggar inn: Android TV, ein Meta Quest, ei Windows-, Linux- eller macOS-datamaskin.
+
+På telefonen held Immuch360 på heile Immich-mobilappen, legg til 360°-, VR180- og 3D-visarane sine, og blir installert ved sida av den offisielle appen. Når han er logga inn på tenaren din, loggar han inn dei store skjermane: han skannar QR-koden på TV-en eller datamaskina, eller du skriv inn på han koden som hovudsettet viser, og passordet ditt blir verande på telefonen. Slik gjer du: [Logg inn ein TV, eit hovudsett eller ein datamaskin med telefonen din](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Dei flate bileta dine i 3D, frå datamaskina til hovudsettet (eksperimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustrasjon med eit ekte skjermbilete av appen: ein berbar datamaskin som køyrer Immuch360 ved sida av utskrivne bilete og ein NAS, og ein person sett bakfrå i eit hovudsett som køyrer Immuch360, framfor eit av desse landskapa som står i relieff">
+</p>
+
+**Du treng:** Immuch360 på ei Windows-, Linux- eller macOS-datamaskin og i ein Meta Quest, med NAS-en din eller Immich-tenaren din mellom dei.
+
+Datamaskina sjølv gjer bileta dine om til 3D-bilete og 3D-scener, og til 360°-panorama med eit skjermkort på 8 GB på Windows eller Linux, og lagrar dei ved sida av originalane. Hovudsettet viser eit 3D-bilete i ekte 3D, set ei scene i rommet ditt og eit panorama heilt rundt deg; telefonar og TV-ar opnar panorama i 360°-visaren sin. Slik gjer du: [Gjer eitt bilete om til 3D, ei scene, eit panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Direktebiletet frå dronen din i eit hovudsett eller på TV-en (eksperimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: på ein terrasse i skumringa flyg ein pilot sett bakfrå ein drone med ein telefon på fjernkontrollen; telefonen sender direktebiletet vidare, berre i éi retning, til eit hovudsett og ein TV">
+</p>
+
+**Du treng:** ein DJI-drone og DJI RC-N3-fjernkontrollen hans, Immuch360 på Android-telefonen som er kopla til fjernkontrollen, og Immuch360 i ein Meta Quest eller på ein Android TV.
+
+Telefonen viser direktevideoen frå dronen og sender han vidare, over Wi-Fi-en din eller sitt eige tilgangspunkt, så dei som er med deg ser flyginga i hovudsettet eller på TV-en. Berre mottak: ingen kommando blir nokon gong sendt til fjernkontrollen eller dronen, og fjernkontrollen held full kontroll. Slik gjer du: [Sjå det i ein Meta Quest eller på ein Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Råfilene frå 360°-kameraet ditt, sydde saman der du ser dei
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: eit 360°-kamera, minnekortet og ein NAS på eit terrassebord; filene går til NAS-en, så til eit nettbrett, ein TV og eit hovudsett som køyrer Immuch360, som syr dei saman">
+</p>
+
+**Du treng:** eit Insta360-, GoPro MAX- eller DJI Osmo 360-kamera, NAS-en din, og Immuch360 på skjermane: telefonar, nettbrett, Android TV, ein Meta Quest, Windows.
+
+Kopier råfilene frå kortet i kameraet til ei SMB- eller WebDAV-deling på NAS-en din, slik dei er; ein Immich-tenar tek også imot dei frå Insta360. Kvar skjerm syr dei saman medan dei blir spelte, med kalibreringa som er skriven i kvar fil, og ingenting blir eksportert i kameraappen først. Slik gjer du: [Opne råfilene frå 360°-kamera](#open-the-raw-files-of-360-cameras).
+
+#### Plex- og DLNA-tenarane dine på TV-en og i hovudsettet
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: ein medietenar under TV-en i ein heimekino, kopla til TV-en, eit hovudsett som blir bore i sofaen, ein telefon og ein berbar datamaskin, som alle køyrer Immuch360">
+</p>
+
+**Du treng:** ein Plex Media Server eller ein DLNA-tenar som Jellyfin, Emby eller minidlna, og Immuch360 på kvar skjerm: Android TV, ein Meta Quest, telefonar, nettbrett, Windows.
+
+Plex gir originalfilene i biblioteka dine, så ein 360°-video blir verande 360°, heilt rundt deg i hovudsettet, heime og, borte frå heimen, gjennom portvidaresendinga di; DLNA-tenarar blir funne på heimenettverket ditt. LG-TV-ar som er logga inn på Immich-tenaren din, spelar dei også. Slik gjer du: [Spel filene på ein NAS, ein datamaskin, ein medietenar eller Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Telefonen din eller Windows-datamaskina di, opna i hovudsettet
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: ein person sett bakfrå har på seg eit hovudsett i ein sofa, med eit 360°-bilete rundt seg; ein telefon og ein berbar datamaskin som køyrer Immuch360, deler bileta sine med hovudsettet over Wi-Fi-en">
+</p>
+
+**Du treng:** Immuch360 på ein Android-telefon, ein iPhone eller ei Windows-datamaskin, og i ein Meta Quest, på same Wi-Fi heime.
+
+Slå på «Del denne telefonen på nettverket» på telefonen, eller «Del denne datamaskina på nettverket» på datamaskina, og hovudsettet spelar bileta og videoane derifrå, 360°-bileta og -videoane heilt rundt deg: ingen tenar, ingen NAS, inga opplasting. På ein iPhone verkar delinga medan appen er open. Slik gjer du: [Del denne telefonen på nettverket](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Tapo-kameraa dine på TV-en og i hovudsettet
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: eit heimekamera ved vindauget filmar hagen, og ein TV, ein telefon, eit hovudsett som blir bore i sofaen og ein berbar datamaskin, som alle køyrer Immuch360, viser den eine visinga">
+</p>
+
+**Du treng:** Tapo-kamera på heimenettverket ditt, og Immuch360 på ein Android-telefon, ein Android TV, ein Meta Quest eller ei Windows-datamaskin.
+
+Kvar skjerm viser eit kamera direkte og spelar opptaka på minnekortet dag for dag, ved sida av bileta dine, og telefonen sender eit klipp til Immich-tenaren din. Appen snakkar berre med kameraa på nettverket ditt, aldri gjennom tenarane til TP-Link. Sjekka mot eit simulert kamera. Slik gjer du: [Sjå heimekameraa dine på storskjermen](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaussiske splattar i rommet ditt, i ein Meta Quest 3 eller 3S (eksperimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: i ei stove står ein person sett bakfrå i eit hovudsett som køyrer Immuch360, framfor ein fontene i naturleg storleik, fanga som ein splatt av ein annan app og opna frå ein NAS">
+</p>
+
+**Du treng:** ein splatt laga med Polycam, Scaniverse, Luma eller eit anna verktøy, som ei .spz- eller .ply-fil på NAS-en din eller i hovudsettet, og Immuch360 i ein Meta Quest 3 eller 3S.
+
+Hovudsettet set staden eller tingen i rett storleik, framfor deg eller heilt rundt deg: gå rundt han, gli gjennom han med den venstre styrespaken, snu deg med den høgre. Gaussiske splattar brukar eit eksperimentelt API i Meta Spatial SDK, som Meta verken støttar eller garanterer: kvar feil er Immuch360 sin eigen. Slik gjer du: [Utforsk gaussiske splattar i ein Meta Quest 3 eller 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Ein Meta Quest for besøkjande (eksperimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Illustrasjon, ikkje eit skjermbilete: i eit lite utstillingsrom sit ein besøkjande sett bakfrå i eit hovudsett som køyrer Immuch360 i kioskmodus, medan to andre ventar på tur">
+</p>
+
+**Du treng:** ein Meta Quest med Immuch360, og eit 360°-bilete eller ein 360°-video i hovudsettet, på NAS-en din eller på Immich-tenaren din.
+
+I kioskmodus opnar hovudsettet 360°-biletet eller 360°-videoen din av seg sjølv, frå starten, kvar gong ein besøkjande tek det på, og ein film sluttar på eit kort med teksten din. Dei besøkjande trykkjer ikkje på noko; du held inne B eller Y i eitt sekund for å gå ut. Slik gjer du: [Kioskmodus, for ei utstilling eller ein butikk](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ KI-funksjonane køyrer modellar og motorar laga av andre, lasta ned berre når d
 
 360°-LoRA-en frå nomadoor er Apache 2.0 etter kortet sitt og vart trena på CC0-bilete og bilete som har falle i det fri, med ein del under CC BY: namngjevinga for den delen kjem i ein seinare versjon av MODEL-LICENSES.md. Ingenting her er under ein ikkje-kommersiell lisens, og ingenting treng CUDA. ONNX Runtime og LiteRT har andre bibliotek innebygde, oppførte i merknadene deira, mellom dei Eigen under MPL 2.0, ein svak copyleft-lisens.
 
-Skjermbileta på denne sida er ekte skjermbilete av appen: telefonbileta frå Android-builden i ein emulator, Android TV-bileta frå Google TV-emulatoren, LG- og Samsung-bileta i ein nettlesar som står i staden for TV-en, Windows-bileta på ein Windows 11-PC og Meta Quest-vindauget i ein Quest 3, alle med CC0-panorama frå [Poly Haven](https://polyhaven.com); dei immersive skjermbileta frå hovudsettet vart tekne på ein Quest 3 med media som høyrer forfattaren til, og iPad-biletet i iPad-simulatoren, med eit CC0-panorama frå Poly Haven. Bileta av KI-skaparen er ekte resultat frå appen, laga av CC0-bilete frå Poly Haven, med to ekte skjermbilete av Windows-appen. Opningsbiletet og bileta av TV-en, innlogginga, snuinga, kameraa og dronen er illustrasjonar laga for prosjektet: dei viser ingen skjerm frå appen, ingen logo frå eit anna selskap og inga andlet. Kvart bilete, med kjelde, dato og lisens, er oppført i [CAPTURES.md](../.github/readme/CAPTURES.md).
+Skjermbileta på denne sida er ekte skjermbilete av appen: telefonbileta frå Android-builden i ein emulator, Android TV-bileta frå Google TV-emulatoren, LG- og Samsung-bileta i ein nettlesar som står i staden for TV-en, Windows-bileta på ein Windows 11-PC og Meta Quest-vindauget i ein Quest 3, alle med CC0-panorama frå [Poly Haven](https://polyhaven.com); dei immersive skjermbileta frå hovudsettet vart tekne på ein Quest 3 med media som høyrer forfattaren til, og iPad-biletet i iPad-simulatoren, med eit CC0-panorama frå Poly Haven. Bileta av KI-skaparen er ekte resultat frå appen, laga av CC0-bilete frå Poly Haven, med to ekte skjermbilete av Windows-appen. Opningsbiletet og bileta av TV-en, innlogginga, snuinga, kameraa og dronen er illustrasjonar laga for prosjektet: dei viser ingen skjerm frå appen, ingen logo frå eit anna selskap og inga andlet. Korta med bruksdøme set ein slik illustrasjon over ei rad som er teikna for prosjektet, med logoane til plattformene, ikonet til appen og, på to kort, ekte skjermbilete av appen; utanom logoane til plattformene viser dei ingen logo frå eit anna selskap og inga andlet. Kvart bilete, med kjelde, dato og lisens, er oppført i [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Vegkart

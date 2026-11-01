@@ -20,7 +20,7 @@ Foto dhe video të sheshta, 360° dhe 3D nga pajisja juaj, NAS-i juaj, serveri j
 <summary><b>Përmbajtja</b></summary>
 
 - [Për kë është](#who-it-is-for)
-- [Cilat ekrane](#which-screens), dhe [çfarë bën secili ekran](#what-each-screen-does)
+- [Cilat ekrane](#which-screens), [çfarë bëjnë së bashku](#use-cases) dhe [çfarë bën secili ekran](#what-each-screen-does)
 - [Çfarë mund të bëni](#what-you-can-do)
 - [Merreni në pajisjen tuaj](#get-it-on-your-device)
 - [Si ta bëni](#how-to)
@@ -60,6 +60,7 @@ Foto dhe video të sheshta, 360° dhe 3D nga pajisja juaj, NAS-i juaj, serveri j
 - **Përdorni Immich** dhe doni aplikacionin e tij, plus shikuesit përfshirës dhe ekranet e mëdha ku hyni nga telefoni juaj: [biblioteka juaj Immich](#keep-your-immich-library-with-more), [krahasuar me Immich](#compared-with-immich).
 - **E ruani shtëpinë me kamera Tapo** dhe i doni pranë fotove tuaja, edhe në TV (e kontrolluar kundrejt një kamere të simuluar): [kamerat e shtëpisë](#watch-your-home-cameras-on-the-big-screen).
 - **Fluturoni me një dron DJI** dhe doni pamjen e tij të drejtpërdrejtë në telefon pa DJI Fly, dhe në një Meta Quest ose në një Android TV për njerëzit që janë me ju (eksperimentale): [droni juaj](#see-what-your-drone-sees-on-your-phone).
+- **Keni disa ekrane në shtëpi** dhe doni që të punojnë së bashku: [çfarë bëjnë ekranet tuaja së bashku](#use-cases).
 
 Nuk ka asnjë llogari Immuch360 për të krijuar, dhe asgjë nuk vjen te ne: aplikacioni flet vetëm me pajisjet tuaja dhe me serverët që zgjidhni, dhe shkarkon një komponent IA vetëm kur e kërkoni.
 
@@ -86,6 +87,111 @@ Nuk ka asnjë llogari Immuch360 për të krijuar, dhe asgjë nuk vjen te ne: apl
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Shtatë kapje reale të Immuch360 në dy rreshta: shikuesi sferik në një telefon Android, një foto 360° në një iPad, një foto 360° në një Google TV dhe në një TV LG, pastaj rendi kohor i fotove në një TV Samsung, dritarja e aplikacionit në një Meta Quest 3 dhe luajtësi i videove në Windows. Kapjet LG dhe Samsung janë bërë në një shfletues që zëvendëson TV-në">
 </p>
+
+<a id="use-cases"></a>
+### Çfarë bëjnë ekranet tuaja së bashku
+
+Instaloni Immuch360 në çdo ekran ku shikoni: secili i lexon vetë burimet tuaja, dhe disa i kalojnë një tjetri një pamje, një skedar ose një hyrje. Në çdo imazh, ikona e Immuch360 shënon pajisjet që ekzekutojnë aplikacionin.
+
+#### NAS-i juaj në çdo ekran
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustrim me kapje reale të aplikacionit: një NAS mbi një raft në një dhomë ndenjeje në muzg, i lidhur me një telefon, një tabletë, një TV, një kacukë dhe një laptop; NAS-i furnizon çdo ekran, secili me Immuch360">
+</p>
+
+**Çfarë ju duhet:** një NAS me një ndarje SMB ose WebDAV, dhe Immuch360 në çdo ekran ku shikoni.
+
+Shtoni ndarjen në çdo ekran, dhe secili luan fotot dhe videot aty ku ndodhen, pa kopjuar asgjë: telefona, tableta, Android TV, një Meta Quest, kompjuterë Windows, Linux dhe macOS, dhe televizorë LG të lidhur me serverin tuaj Immich. Një foto 360° rrotullohet si sferë në telefon dhe në TV, dhe ju rrethon në kacukë. Si ta bëni: [Luani skedarët e një NAS-i, kompjuteri, serveri mediash ose Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Serveri juaj Immich në çdo ekran, i lidhur nga telefoni juaj
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustrim, jo kapje: një server shtëpie i lidhur me një telefon të mbajtur në dorë, një TV, një kacukë dhe një laptop, secili me Immuch360; një vijë me ndërprerje tregon telefonin Android që lidh tre të tjerët">
+</p>
+
+**Çfarë ju duhet:** një server Immich, Immuch360 në telefonin tuaj Android, dhe Immuch360 në ekranet që lidhni: Android TV, një Meta Quest, një kompjuter Windows, Linux ose macOS.
+
+Në telefon, Immuch360 ruan të gjithë aplikacionin celular të Immich, shton shikuesit e tij 360°, VR180 dhe 3D, dhe instalohet pranë aplikacionit zyrtar. I lidhur me serverin tuaj, ai lidh ekranet e mëdha: skanon kodin QR të TV-së ose të kompjuterit, ose ju shkruani në të kodin që tregon kacuka, dhe fjalëkalimi juaj mbetet në telefon. Si ta bëni: [Lidhni një TV, një kacukë ose një kompjuter me telefonin tuaj](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Fotot tuaja të sheshta në 3D, nga kompjuteri te kacuka (eksperimentale)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrim me një kapje reale të aplikacionit: një laptop me Immuch360 pranë fotove të printuara dhe një NAS-i, dhe një person i parë nga pas në një kacukë me Immuch360, përpara njërit prej atyre peizazheve që ngrihet në reliev">
+</p>
+
+**Çfarë ju duhet:** Immuch360 në një kompjuter Windows, Linux ose macOS dhe në një Meta Quest, me NAS-in ose serverin tuaj Immich mes tyre.
+
+Vetë kompjuteri i kthen fotot tuaja në foto 3D dhe skena 3D, dhe me një kartë grafike me 8 GB në Windows ose Linux në panorama 360°, dhe i ruan pranë origjinaleve. Kacuka tregon një foto 3D në 3D të vërtetë, vendos një skenë në dhomën tuaj dhe një panoramë gjithandej rreth jush; telefonat dhe televizorët i hapin panoramat në shikuesin e tyre 360°. Si ta bëni: [Ktheni një foto në 3D, në skenë, në panoramë](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Pamja e drejtpërdrejtë e dronit tuaj në një kacukë ose në TV (eksperimentale)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustrim, jo kapje: në një tarracë në muzg, një pilot i parë nga pas fluturon një dron me një telefon mbi telekomandë; telefoni e përcjell pamjen e drejtpërdrejtë, vetëm në një drejtim, te një kacukë dhe një TV">
+</p>
+
+**Çfarë ju duhet:** një dron DJI dhe telekomandën e tij DJI RC-N3, Immuch360 në telefonin Android të lidhur me telekomandën, dhe Immuch360 në një Meta Quest ose në një Android TV.
+
+Telefoni tregon videon e drejtpërdrejtë të dronit dhe e përcjell atë, përmes Wi-Fi-së suaj ose hotspot-it të vet, që njerëzit që janë me ju ta shikojnë fluturimin në kacukë ose në TV. Vetëm marrje: asnjë komandë nuk i dërgohet kurrë telekomandës ose dronit, dhe telekomanda ruan kontrollin e plotë. Si ta bëni: [Shikojeni në një Meta Quest ose në një Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Skedarët bruto të kamerës suaj 360°, të bashkuar aty ku i shikoni
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustrim, jo kapje: një kamerë 360°, karta e saj e memories dhe një NAS mbi një tryezë tarrace; skedarët shkojnë te NAS-i, pastaj te një tabletë, një TV dhe një kacukë me Immuch360, që i bashkojnë">
+</p>
+
+**Çfarë ju duhet:** një kamerë Insta360, GoPro MAX ose DJI Osmo 360, NAS-in tuaj, dhe Immuch360 në ekrane: telefona, tableta, Android TV, një Meta Quest, Windows.
+
+Kopjoni skedarët bruto nga karta e kamerës në një ndarje SMB ose WebDAV të NAS-it tuaj, ashtu siç janë; një server Immich pranon edhe ata të Insta360. Secili ekran i bashkon ndërsa i luan, me kalibrimin e shkruar në çdo skedar, dhe asgjë nuk eksportohet më parë në aplikacionin e kamerës. Si ta bëni: [Hapni skedarët bruto të kamerave 360°](#open-the-raw-files-of-360-cameras).
+
+#### Serverët tuaj Plex dhe DLNA në TV dhe në kacukë
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustrim, jo kapje: një server mediash nën TV-në e një kinemaje shtëpie, i lidhur me TV-në, një kacukë të vënë në kokë në divan, një telefon dhe një laptop, secili me Immuch360">
+</p>
+
+**Çfarë ju duhet:** një Plex Media Server ose një server DLNA si Jellyfin, Emby ose minidlna, dhe Immuch360 në çdo ekran: Android TV, një Meta Quest, telefona, tableta, Windows.
+
+Plex jep skedarët origjinalë të bibliotekave tuaja, kështu që një video 360° mbetet 360°, gjithandej rreth jush në kacukë, në shtëpi dhe larg shtëpisë përmes ridrejtimit tuaj të porteve; serverët DLNA gjenden në rrjetin tuaj të shtëpisë. Televizorët LG të lidhur me serverin tuaj Immich i luajnë gjithashtu. Si ta bëni: [Luani skedarët e një NAS-i, kompjuteri, serveri mediash ose Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Telefoni ose kompjuteri juaj Windows, i hapur në kacukë
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustrim, jo kapje: një person i parë nga pas mban një kacukë në divan, me një foto 360° përreth; një telefon dhe një laptop me Immuch360 ndajnë fotot e tyre me kacukën përmes Wi-Fi-së">
+</p>
+
+**Çfarë ju duhet:** Immuch360 në një telefon Android, një iPhone ose një kompjuter Windows, dhe në një Meta Quest, në të njëjtin Wi-Fi të shtëpisë.
+
+Aktivizoni "Ndaje këtë telefon në rrjet" në telefon, ose "Ndaj këtë kompjuter në rrjet" në kompjuter, dhe kacuka luan fotot dhe videot e tij, ato 360° gjithandej rreth jush: pa server, pa NAS, pa ngarkim. Në një iPhone, ndarja funksionon ndërsa aplikacioni është i hapur. Si ta bëni: [Ndaje këtë telefon në rrjet](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Kamerat tuaja Tapo në TV dhe në kacukë
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrim, jo kapje: një kamerë shtëpie pranë dritares filmon kopshtin, dhe një TV, një telefon, një kacukë e vënë në kokë në divan dhe një laptop, secili me Immuch360, shfaqin të njëjtën pamje">
+</p>
+
+**Çfarë ju duhet:** kamera Tapo në rrjetin tuaj të shtëpisë, dhe Immuch360 në një telefon Android, një Android TV, një Meta Quest ose një kompjuter Windows.
+
+Çdo ekran shfaq një kamerë drejtpërdrejt dhe luan regjistrimet e kartës së saj të memories ditë pas dite, pranë fotove tuaja, dhe telefoni dërgon një klip në serverin tuaj Immich. Aplikacioni flet me kamerat vetëm në rrjetin tuaj, kurrë përmes serverëve të TP-Link. E kontrolluar kundrejt një kamere të simuluar. Si ta bëni: [Shikoni kamerat e shtëpisë në ekranin e madh](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splate gausiane në dhomën tuaj, në një Meta Quest 3 ose 3S (eksperimentale)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrim, jo kapje: në një dhomë ndenjeje, një person i parë nga pas në një kacukë me Immuch360 qëndron përpara një shatërvani në madhësi natyrale, të kapur si splat nga një aplikacion tjetër dhe të hapur nga një NAS">
+</p>
+
+**Çfarë ju duhet:** një splat i bërë me Polycam, Scaniverse, Luma ose një mjet tjetër, si skedar .spz ose .ply në NAS-in tuaj ose në kacukë, dhe Immuch360 në një Meta Quest 3 ose 3S.
+
+Kacuka e vendos vendin ose objektin në madhësinë e tij, përpara jush ose gjithandej rreth jush: ecni rreth tij, rrëshqitni nëpër të me levën e majtë, rrotullohuni me të djathtën. Splatet gausiane përdorin një API eksperimentale të Meta Spatial SDK, të cilën Meta as nuk e mbështet, as nuk e garanton: për çdo defekt përgjigjet vetëm Immuch360. Si ta bëni: [Eksploroni splate gausiane në një Meta Quest 3 ose 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Një Meta Quest për vizitorët tuaj (eksperimentale)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustrim, jo kapje: në një sallë të vogël ekspozite, një vizitor i parë nga pas ulet me një kacukë me Immuch360 në modalitetin kiosk, ndërsa dy të tjerë presin radhën e tyre">
+</p>
+
+**Çfarë ju duhet:** një Meta Quest me Immuch360, dhe një foto ose video 360° në kacukë, në NAS-in tuaj ose në serverin tuaj Immich.
+
+Në modalitetin kiosk, kacuka hap vetë foton ose videon tuaj 360°, nga fillimi, sa herë që një vizitor e vë, dhe një film mbaron te një kartë me tekstin tuaj. Vizitorët nuk shtypin asgjë; ju mbani shtypur B ose Y për një sekondë për të dalë. Si ta bëni: [Modaliteti kiosk, për një ekspozitë ose një dyqan](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Veçoritë IA ekzekutojnë modele dhe motorë të bërë nga të tjerë, të shk
 
 LoRA 360° e nomadoor është Apache 2.0 sipas kartës së saj dhe është trajnuar me imazhe CC0 dhe në domen publik, me një pjesë nën CC BY: atribuimi i asaj pjese vjen në një version të mëvonshëm të MODEL-LICENSES.md. Asgjë këtu nuk është nën një licencë jotregtare, dhe asgjë nuk ka nevojë për CUDA. ONNX Runtime dhe LiteRT kanë të përfshira biblioteka të tjera, të listuara në njoftimet e tyre, mes tyre Eigen nën MPL 2.0, një licencë copyleft e dobët.
 
-Kapjet e kësaj faqeje janë kapje reale të aplikacionit: ato të telefonit në build-in Android në një emulues, ato të Android TV në emuluesin e Google TV, ato LG dhe Samsung në një shfletues që zëvendëson TV-në, ato të Windows në një PC Windows 11 dhe dritarja e Meta Quest në një Quest 3, të gjitha me panorama CC0 nga [Poly Haven](https://polyhaven.com); kapjet përfshirëse të kacukës janë bërë në një Quest 3 me mediat e vetë autorit, dhe ajo e iPad në simulatorin e iPad, me një panoramë CC0 të Poly Haven. Imazhet e krijuesit IA janë rezultate reale të aplikacionit, të bëra nga foto CC0 të Poly Haven, me dy kapje reale të aplikacionit Windows. Imazhi hapës dhe pamjet e TV-së, të hyrjes, të rrotullimit, të kamerave dhe të dronit janë ilustrime të bëra për projektin: nuk tregojnë asnjë ekran të aplikacionit, asnjë logo të një kompanie tjetër dhe asnjë fytyrë. Çdo imazh, me burimin, datën dhe licencën e tij, është i listuar në [CAPTURES.md](../.github/readme/CAPTURES.md).
+Kapjet e kësaj faqeje janë kapje reale të aplikacionit: ato të telefonit në build-in Android në një emulues, ato të Android TV në emuluesin e Google TV, ato LG dhe Samsung në një shfletues që zëvendëson TV-në, ato të Windows në një PC Windows 11 dhe dritarja e Meta Quest në një Quest 3, të gjitha me panorama CC0 nga [Poly Haven](https://polyhaven.com); kapjet përfshirëse të kacukës janë bërë në një Quest 3 me mediat e vetë autorit, dhe ajo e iPad në simulatorin e iPad, me një panoramë CC0 të Poly Haven. Imazhet e krijuesit IA janë rezultate reale të aplikacionit, të bëra nga foto CC0 të Poly Haven, me dy kapje reale të aplikacionit Windows. Imazhi hapës dhe pamjet e TV-së, të hyrjes, të rrotullimit, të kamerave dhe të dronit janë ilustrime të bëra për projektin: nuk tregojnë asnjë ekran të aplikacionit, asnjë logo të një kompanie tjetër dhe asnjë fytyrë. Kartat e rasteve të përdorimit e vendosin një ilustrim të tillë mbi një rresht të vizatuar për projektin, me logot e platformave, ikonën e aplikacionit dhe, në dy karta, kapje reale të aplikacionit; përveç logove të platformave, nuk tregojnë asnjë logo të një kompanie tjetër dhe asnjë fytyrë. Çdo imazh, me burimin, datën dhe licencën e tij, është i listuar në [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plani

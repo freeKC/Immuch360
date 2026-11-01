@@ -20,7 +20,7 @@ Fotos e vídeos planos, 360° e 3D do seu dispositivo, do seu NAS, do seu servid
 <summary><b>Conteúdo</b></summary>
 
 - [Para quem é](#who-it-is-for)
-- [Quais telas](#which-screens), e [o que cada tela faz](#what-each-screen-does)
+- [Quais telas](#which-screens), [o que elas fazem juntas](#use-cases) e [o que cada tela faz](#what-each-screen-does)
 - [O que você pode fazer](#what-you-can-do)
 - [Instale no seu dispositivo](#get-it-on-your-device)
 - [Como fazer](#how-to)
@@ -60,6 +60,7 @@ Fotos e vídeos planos, 360° e 3D do seu dispositivo, do seu NAS, do seu servid
 - **Você usa o Immich** e quer o app dele, mais os visualizadores imersivos e as telas grandes conectadas pelo seu celular: [sua biblioteca Immich](#keep-your-immich-library-with-more), [comparado com o Immich](#compared-with-immich).
 - **Você vigia sua casa com câmeras Tapo** e quer vê-las ao lado das suas fotos, também na TV (verificado com uma câmera simulada): [câmeras domésticas](#watch-your-home-cameras-on-the-big-screen).
 - **Você pilota um drone DJI** e quer a imagem ao vivo dele no celular sem o DJI Fly, e em um Meta Quest ou em uma Android TV para as pessoas que estão com você (experimental): [seu drone](#see-what-your-drone-sees-on-your-phone).
+- **Você tem várias telas em casa** e quer que elas funcionem juntas: [o que suas telas fazem juntas](#use-cases).
 
 Não há conta Immuch360 para criar, e nada vem para nós: o app se comunica apenas com os seus dispositivos e com os servidores que você escolher, e só baixa um componente de IA quando você pede.
 
@@ -86,6 +87,111 @@ Não há conta Immuch360 para criar, e nada vem para nós: o app se comunica ape
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sete capturas reais do Immuch360 em duas fileiras: o visualizador esférico em um celular Android, uma foto 360° em um iPad, uma foto 360° em uma Google TV e em uma TV LG, depois a linha do tempo de fotos em uma TV Samsung, a janela do app em um Meta Quest 3 e o reprodutor de vídeo no Windows. As capturas da LG e da Samsung foram feitas em um navegador que faz o papel da TV">
 </p>
+
+<a id="use-cases"></a>
+### O que suas telas fazem juntas
+
+Instale o Immuch360 em cada tela em que você assiste: cada uma lê suas fontes por conta própria, e algumas passam uma imagem, um arquivo ou um login para outra. Em cada imagem, o ícone do Immuch360 marca os aparelhos que rodam o app.
+
+#### Seu NAS em todas as telas
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustração com capturas reais do app: um NAS em uma prateleira de uma sala de estar ao entardecer, ligado a um celular, um tablet, uma TV, um óculos e um notebook; o NAS alimenta todas as telas, cada uma rodando o Immuch360">
+</p>
+
+**Você precisa de:** um NAS com um compartilhamento SMB ou WebDAV, e o Immuch360 em cada tela em que você assiste.
+
+Adicione o compartilhamento em cada tela, e cada uma reproduz as fotos e vídeos onde eles estão, sem copiar nada: celulares, tablets, Android TV, um Meta Quest, computadores Windows, Linux e macOS, e TVs LG conectadas ao seu servidor Immich. Uma foto 360° gira como uma esfera no celular e na TV, e envolve você no óculos. Como fazer: [Reproduza os arquivos de um NAS, de um computador, de um servidor de mídia ou do Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Seu servidor Immich em todas as telas, com login feito pelo celular
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustração, não uma captura: um servidor doméstico ligado a um celular na mão, uma TV, um óculos e um notebook, cada um rodando o Immuch360; uma linha tracejada mostra o celular Android fazendo o login dos outros três">
+</p>
+
+**Você precisa de:** um servidor Immich, o Immuch360 no seu celular Android, e o Immuch360 nas telas em que você faz login: Android TV, um Meta Quest, um computador Windows, Linux ou macOS.
+
+No celular, o Immuch360 mantém o app móvel do Immich inteiro, acrescenta seus visualizadores 360°, VR180 e 3D, e é instalado ao lado do app oficial. Conectado ao seu servidor, ele faz o login das telas grandes: lê o QR code da TV ou do computador, ou você digita nele o código que o óculos mostra, e sua senha fica no celular. Como fazer: [Faça login em uma TV, um óculos ou um computador com o celular](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Suas fotos planas em 3D, do computador ao óculos (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustração com uma captura real do app: um notebook rodando o Immuch360 ao lado de fotos impressas e de um NAS, e uma pessoa vista de costas com um óculos rodando o Immuch360, diante de uma dessas paisagens em relevo">
+</p>
+
+**Você precisa de:** o Immuch360 em um computador Windows, Linux ou macOS e em um Meta Quest, com seu NAS ou seu servidor Immich entre eles.
+
+O próprio computador transforma suas fotos em fotos 3D e cenas 3D, e em panoramas 360° com uma placa de vídeo de 8 GB no Windows ou no Linux, e salva tudo ao lado dos originais. O óculos mostra uma foto 3D em 3D de verdade, coloca uma cena no seu cômodo e um panorama ao seu redor; celulares e TVs abrem os panoramas no visualizador 360° deles. Como fazer: [Transforme uma foto em 3D, uma cena, um panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### A imagem ao vivo do seu drone no óculos ou na TV (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustração, não uma captura: em um terraço ao entardecer, um piloto visto de costas pilota um drone com um celular no controle; o celular retransmite a imagem ao vivo, em um só sentido, para um óculos e uma TV">
+</p>
+
+**Você precisa de:** um drone DJI e o controle DJI RC-N3 dele, o Immuch360 no celular Android conectado ao controle, e o Immuch360 em um Meta Quest ou em uma Android TV.
+
+O celular mostra o vídeo ao vivo do drone e o retransmite, pelo seu Wi-Fi ou pelo próprio hotspot, para que as pessoas que estão com você acompanhem o voo no óculos ou na TV. Só recebe: nenhum comando é jamais enviado ao controle ou ao drone, e o controle mantém o domínio total. Como fazer: [Assista em um Meta Quest ou em uma Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Os arquivos brutos da sua câmera 360°, costurados onde você os assiste
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustração, não uma captura: uma câmera 360°, o cartão de memória dela e um NAS em uma mesa de terraço; os arquivos vão para o NAS, depois para um tablet, uma TV e um óculos rodando o Immuch360, que os costuram">
+</p>
+
+**Você precisa de:** uma câmera Insta360, GoPro MAX ou DJI Osmo 360, seu NAS, e o Immuch360 nas telas: celulares, tablets, Android TV, um Meta Quest, Windows.
+
+Copie os arquivos brutos do cartão da câmera para um compartilhamento SMB ou WebDAV do seu NAS, do jeito que estão; um servidor Immich também aceita os da Insta360. Cada tela os costura durante a reprodução, com a calibração gravada em cada arquivo, e nada é exportado antes no app da câmera. Como fazer: [Abra os arquivos brutos de câmeras 360°](#open-the-raw-files-of-360-cameras).
+
+#### Seus servidores Plex e DLNA na TV e no óculos
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustração, não uma captura: um servidor de mídia embaixo da TV de um home theater, ligado à TV, a um óculos usado no sofá, a um celular e a um notebook, cada um rodando o Immuch360">
+</p>
+
+**Você precisa de:** um Plex Media Server ou um servidor DLNA como Jellyfin, Emby ou minidlna, e o Immuch360 em cada tela: Android TV, um Meta Quest, celulares, tablets, Windows.
+
+O Plex entrega os arquivos originais das suas bibliotecas, então um vídeo 360° continua 360°, ao seu redor no óculos, em casa e, pelo seu redirecionamento de portas, longe de casa; os servidores DLNA são encontrados na sua rede doméstica. As TVs LG conectadas ao seu servidor Immich também os reproduzem. Como fazer: [Reproduza os arquivos de um NAS, de um computador, de um servidor de mídia ou do Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Seu celular ou seu computador Windows, aberto no óculos
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustração, não uma captura: uma pessoa vista de costas usa um óculos em um sofá, com uma foto 360° ao seu redor; um celular e um notebook rodando o Immuch360 compartilham suas fotos com ele pelo Wi-Fi">
+</p>
+
+**Você precisa de:** o Immuch360 em um celular Android, um iPhone ou um computador Windows, e em um Meta Quest, no mesmo Wi-Fi de casa.
+
+Ative "Compartilhar este telefone na rede" no celular, ou "Compartilhar este computador na rede" no computador, e o óculos reproduz as fotos e vídeos dele, os 360° ao seu redor: sem servidor, sem NAS, sem upload. No iPhone, o compartilhamento funciona enquanto o app está aberto. Como fazer: [Compartilhar este telefone na rede](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Suas câmeras Tapo na TV e no óculos
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustração, não uma captura: uma câmera doméstica perto da janela filma o jardim, e uma TV, um celular, um óculos usado no sofá e um notebook, cada um rodando o Immuch360, mostram essa mesma imagem">
+</p>
+
+**Você precisa de:** câmeras Tapo na sua rede doméstica, e o Immuch360 em um celular Android, uma Android TV, um Meta Quest ou um computador Windows.
+
+Cada tela mostra uma câmera ao vivo e reproduz as gravações do cartão de memória dela dia a dia, ao lado das suas fotos, e o celular envia um clipe ao seu servidor Immich. O app fala com as câmeras só na sua rede, nunca pelos servidores da TP-Link. Verificado com uma câmera simulada. Como fazer: [Assista às suas câmeras domésticas na tela grande](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splats gaussianos no seu cômodo, em um Meta Quest 3 ou 3S (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustração, não uma captura: em uma sala de estar, uma pessoa vista de costas com um óculos rodando o Immuch360 está diante de uma fonte em tamanho real, capturada como splat por outro app e aberta a partir de um NAS">
+</p>
+
+**Você precisa de:** um splat feito com Polycam, Scaniverse, Luma ou outra ferramenta, como arquivo .spz ou .ply no seu NAS ou no óculos, e o Immuch360 em um Meta Quest 3 ou 3S.
+
+O óculos coloca o lugar ou o objeto no tamanho dele, à sua frente ou ao seu redor: ande em volta dele, deslize através dele com o analógico esquerdo, gire com o direito. Os splats gaussianos usam uma API experimental do Meta Spatial SDK, sem suporte nem garantia da Meta: qualquer defeito é responsabilidade exclusiva do Immuch360. Como fazer: [Explore splats gaussianos em um Meta Quest 3 ou 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Um Meta Quest para os seus visitantes (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustração, não uma captura: em uma pequena sala de exposição, um visitante visto de costas está sentado com um óculos rodando o Immuch360 no modo quiosque, enquanto dois outros esperam a vez">
+</p>
+
+**Você precisa de:** um Meta Quest com o Immuch360, e uma foto ou vídeo 360° no óculos, no seu NAS ou no seu servidor Immich.
+
+No modo quiosque, o óculos abre sua foto ou vídeo 360° sozinho, desde o início, toda vez que um visitante o coloca, e um filme termina em um cartão com o seu texto. Os visitantes não apertam nada; você segura B ou Y por um segundo para sair. Como fazer: [Modo quiosque, para uma exposição ou uma loja](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Os recursos de IA usam modelos e motores feitos por outros, baixados só quando 
 
 O LoRA 360° de nomadoor é Apache 2.0 segundo o model card dele e foi treinado com imagens CC0 e de domínio público, com uma parte sob CC BY: a atribuição dessa parte vem em uma versão futura do MODEL-LICENSES.md. Nada aqui está sob uma licença não comercial, e nada precisa de CUDA. O ONNX Runtime e o LiteRT têm outras bibliotecas embutidas, listadas nos avisos deles, entre elas o Eigen sob a MPL 2.0, uma licença copyleft fraca.
 
-As capturas desta página são capturas reais do app: as do celular na build Android em um emulador, as da Android TV no emulador do Google TV, as da LG e da Samsung em um navegador que faz o papel da TV, as do Windows em um PC com Windows 11 e a janela do Meta Quest em um Quest 3, todas com panoramas CC0 do [Poly Haven](https://polyhaven.com); as capturas imersivas do óculos foram feitas em um Quest 3 com a mídia do próprio autor, e a do iPad no simulador de iPad, com um panorama CC0 do Poly Haven. As imagens do criador de IA são resultados reais do app, feitos a partir de fotos CC0 do Poly Haven, com duas capturas reais do app Windows. A imagem de abertura e as imagens da TV, do login, da rotação, das câmeras e do drone são ilustrações feitas para o projeto: elas não mostram nenhuma tela do app, nenhum logotipo de outra empresa e nenhum rosto. Cada imagem, com a fonte, a data e a licença, está listada em [CAPTURES.md](../.github/readme/CAPTURES.md).
+As capturas desta página são capturas reais do app: as do celular na build Android em um emulador, as da Android TV no emulador do Google TV, as da LG e da Samsung em um navegador que faz o papel da TV, as do Windows em um PC com Windows 11 e a janela do Meta Quest em um Quest 3, todas com panoramas CC0 do [Poly Haven](https://polyhaven.com); as capturas imersivas do óculos foram feitas em um Quest 3 com a mídia do próprio autor, e a do iPad no simulador de iPad, com um panorama CC0 do Poly Haven. As imagens do criador de IA são resultados reais do app, feitos a partir de fotos CC0 do Poly Haven, com duas capturas reais do app Windows. A imagem de abertura e as imagens da TV, do login, da rotação, das câmeras e do drone são ilustrações feitas para o projeto: elas não mostram nenhuma tela do app, nenhum logotipo de outra empresa e nenhum rosto. Os cartões de casos de uso colocam uma ilustração desse tipo acima de uma faixa desenhada para o projeto, com os logotipos das plataformas, o ícone do app e, em dois cartões, capturas reais do app; além dos logotipos das plataformas, eles não mostram nenhum logotipo de outra empresa e nenhum rosto. Cada imagem, com a fonte, a data e a licença, está listada em [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Roteiro

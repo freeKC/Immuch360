@@ -20,7 +20,7 @@ Plat, 360° en 3D-foto's en -video's vanaf jou toestel, jou NAS, jou Immich-bedi
 <summary><b>Inhoud</b></summary>
 
 - [Vir wie dit is](#who-it-is-for)
-- [Watter skerms](#which-screens), en [wat elke skerm doen](#what-each-screen-does)
+- [Watter skerms](#which-screens), [wat hulle saam doen](#use-cases) en [wat elke skerm doen](#what-each-screen-does)
 - [Wat jy kan doen](#what-you-can-do)
 - [Kry dit op jou toestel](#get-it-on-your-device)
 - [Hoe om dit te doen](#how-to)
@@ -60,6 +60,7 @@ Plat, 360° en 3D-foto's en -video's vanaf jou toestel, jou NAS, jou Immich-bedi
 - **Jy gebruik Immich** en wil sy app hê, plus die omringende kykers en die groot skerms wat jy vanaf jou foon aanmeld: [jou Immich-biblioteek](#keep-your-immich-library-with-more), [vergeleke met Immich](#compared-with-immich).
 - **Jy hou jou huis dop met Tapo-kameras** en wil hulle langs jou foto's hê, ook op die TV (teen 'n gesimuleerde kamera getoets): [tuiskameras](#watch-your-home-cameras-on-the-big-screen).
 - **Jy vlieg 'n DJI-hommeltuig** en wil sy lewendige beeld op jou foon hê sonder DJI Fly, en in 'n Meta Quest of op 'n Android TV vir die mense by jou (eksperimenteel): [jou hommeltuig](#see-what-your-drone-sees-on-your-phone).
+- **Jy het verskeie skerms by die huis** en wil hê hulle moet saamwerk: [wat jou skerms saam doen](#use-cases).
 
 Daar is geen Immuch360-rekening om te skep nie, en niks gaan na ons nie: die app praat net met jou toestelle en met die bedieners wat jy kies, en laai 'n KI-komponent net af wanneer jy daarvoor vra.
 
@@ -86,6 +87,111 @@ Daar is geen Immuch360-rekening om te skep nie, en niks gaan na ons nie: die app
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sewe werklike skermskote van Immuch360 in twee rye: die bolkyker op 'n Android-foon, 'n 360°-foto op 'n iPad, 'n 360°-foto op 'n Google TV en op 'n LG-TV, dan die fototydlyn op 'n Samsung-TV, die venster van die app in 'n Meta Quest 3 en die videospeler op Windows. Die LG- en Samsung-skermskote is geneem in 'n blaaier wat die TV naboots">
 </p>
+
+<a id="use-cases"></a>
+### Wat jou skerms saam doen
+
+Installeer Immuch360 op elke skerm waarop jy kyk: elkeen lees self jou bronne, en sommige gee 'n beeld, 'n lêer of 'n aanmelding aan 'n ander deur. In elke prent merk die Immuch360-ikoon die toestelle waarop die app loop.
+
+#### Jou NAS op elke skerm
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Illustrasie met werklike skermskote van die app: 'n NAS op 'n rak in 'n sitkamer teen skemer, gekoppel aan 'n foon, 'n tablet, 'n TV, 'n headset en 'n skootrekenaar; die NAS voed elke skerm, elkeen met Immuch360">
+</p>
+
+**Wat jy nodig het:** 'n NAS met 'n SMB- of WebDAV-deelplek, en Immuch360 op elke skerm waarop jy kyk.
+
+Voeg die deelplek op elke skerm by, en elkeen speel die foto's en video's waar hulle is, sonder dat iets gekopieer word: fone, tablette, Android TV, 'n Meta Quest, Windows-, Linux- en macOS-rekenaars, en LG-TV's wat by jou Immich-bediener aangemeld is. 'n 360°-foto draai as 'n bol op die foon en die TV, en omring jou in die headset. Hoe om dit te doen: [Speel die lêers van 'n NAS, 'n rekenaar, 'n mediabediener of Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Jou Immich-bediener op elke skerm, aangemeld vanaf jou foon
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: 'n tuisbediener gekoppel aan 'n foon in 'n hand, 'n TV, 'n headset en 'n skootrekenaar, elkeen met Immuch360; 'n stippellyn wys hoe die Android-foon die ander drie aanmeld">
+</p>
+
+**Wat jy nodig het:** 'n Immich-bediener, Immuch360 op jou Android-foon, en Immuch360 op die skerms wat jy aanmeld: Android TV, 'n Meta Quest, 'n Windows-, Linux- of macOS-rekenaar.
+
+Op die foon behou Immuch360 die hele Immich mobile-app, voeg sy 360°-, VR180- en 3D-kykers by, en installeer langs die amptelike app. Aangemeld by jou bediener, meld dit die groot skerms aan: dit skandeer die QR-kode van die TV of die rekenaar, of jy tik daarop die kode in wat die headset wys, en jou wagwoord bly op die foon. Hoe om dit te doen: [Meld 'n TV, 'n headset of 'n rekenaar aan met jou foon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Jou plat foto's in 3D, van jou rekenaar tot in die headset (eksperimenteel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustrasie met 'n werklike skermskoot van die app: 'n skootrekenaar met Immuch360 langs gedrukte foto's en 'n NAS, en 'n persoon van agter gesien in 'n headset met Immuch360, voor een van daardie landskappe wat in reliëf staan">
+</p>
+
+**Wat jy nodig het:** Immuch360 op 'n Windows-, Linux- of macOS-rekenaar en in 'n Meta Quest, met jou NAS of jou Immich-bediener tussen hulle.
+
+Die rekenaar self maak van jou foto's 3D-foto's en 3D-tonele, en 360°-panoramas met 'n grafiese kaart van 8 GB op Windows of Linux, en stoor hulle langs die oorspronklikes. Die headset wys 'n 3D-foto in ware 3D, plaas 'n toneel in jou kamer en 'n panorama reg rondom jou; fone en TV's maak die panoramas in hul 360°-kyker oop. Hoe om dit te doen: [Maak van een foto 3D, 'n toneel, 'n panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Jou hommeltuig se lewendige aansig in 'n headset of op die TV (eksperimenteel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: op 'n terras teen skemer vlieg 'n vlieënier, van agter gesien, 'n hommeltuig met 'n foon op die beheerder; die foon stuur die lewendige beeld aan, net in een rigting, na 'n headset en 'n TV">
+</p>
+
+**Wat jy nodig het:** 'n DJI-hommeltuig en sy DJI RC-N3-beheerder, Immuch360 op die Android-foon wat by die beheerder ingeprop is, en Immuch360 in 'n Meta Quest of op 'n Android TV.
+
+Die foon wys die hommeltuig se lewendige video en stuur dit aan, oor jou Wi-Fi of sy eie hotspot, sodat die mense by jou die vlug in die headset of op die TV kan kyk. Net ontvang: geen opdrag word ooit na die beheerder of die hommeltuig gestuur nie, en die beheerder behou volle beheer. Hoe om dit te doen: [Kyk daarna in 'n Meta Quest of op 'n Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Jou 360°-kamera se rou lêers, saamgevoeg waar jy daarna kyk
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: 'n 360°-kamera, sy geheuekaart en 'n NAS op 'n terrastafel; die lêers gaan na die NAS, dan na 'n tablet, 'n TV en 'n headset met Immuch360, wat hulle saamvoeg">
+</p>
+
+**Wat jy nodig het:** 'n Insta360-, GoPro MAX- of DJI Osmo 360-kamera, jou NAS, en Immuch360 op die skerms: fone, tablette, Android TV, 'n Meta Quest, Windows.
+
+Kopieer die rou lêers van die kamera se kaart na 'n SMB- of WebDAV-deelplek van jou NAS, soos hulle is; 'n Immich-bediener neem die Insta360-lêers ook. Elke skerm voeg hulle saam terwyl hulle speel, met die kalibrasie in elke lêer geskryf, en niks word eers in die kamera se app uitgevoer nie. Hoe om dit te doen: [Open die rou lêers van 360°-kameras](#open-the-raw-files-of-360-cameras).
+
+#### Jou Plex- en DLNA-bedieners op die TV en in die headset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: 'n mediabediener onder die TV van 'n tuisteater, gekoppel aan die TV, 'n headset wat op die bank gedra word, 'n foon en 'n skootrekenaar, elkeen met Immuch360">
+</p>
+
+**Wat jy nodig het:** 'n Plex Media Server of 'n DLNA-bediener soos Jellyfin, Emby of minidlna, en Immuch360 op elke skerm: Android TV, 'n Meta Quest, fone, tablette, Windows.
+
+Plex gee die oorspronklike lêers van jou biblioteke, sodat 'n 360°-video 360° bly, reg rondom jou in die headset, by die huis en deur jou poortoorplasing weg van die huis; DLNA-bedieners word op jou tuisnetwerk gevind. LG-TV's wat by jou Immich-bediener aangemeld is, speel hulle ook. Hoe om dit te doen: [Speel die lêers van 'n NAS, 'n rekenaar, 'n mediabediener of Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Jou foon of jou Windows-rekenaar, in die headset oopgemaak
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: 'n persoon van agter gesien dra 'n headset op 'n bank, met 'n 360°-foto rondom hulle; 'n foon en 'n skootrekenaar met Immuch360 deel hul foto's daarmee oor die Wi-Fi">
+</p>
+
+**Wat jy nodig het:** Immuch360 op 'n Android-foon, 'n iPhone of 'n Windows-rekenaar, en in 'n Meta Quest, op dieselfde tuis-Wi-Fi.
+
+Skakel "Deel hierdie foon op die netwerk" op die foon aan, of "Deel hierdie rekenaar op die netwerk" op die rekenaar, en die headset speel sy foto's en video's, die 360°-ene reg rondom jou: geen bediener, geen NAS, geen oplaai nie. Op 'n iPhone loop die deling terwyl die app oop is. Hoe om dit te doen: [Deel hierdie foon op die netwerk](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Jou Tapo-kameras op die TV en in die headset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: 'n tuiskamera by die venster film die tuin, en 'n TV, 'n foon, 'n headset wat op die bank gedra word en 'n skootrekenaar, elkeen met Immuch360, wys daardie een aansig">
+</p>
+
+**Wat jy nodig het:** Tapo-kameras op jou tuisnetwerk, en Immuch360 op 'n Android-foon, 'n Android TV, 'n Meta Quest of 'n Windows-rekenaar.
+
+Elke skerm wys 'n kamera lewendig en speel die opnames van sy geheuekaart dag vir dag, langs jou foto's, en die foon stuur 'n snit na jou Immich-bediener. Die app praat net op jou netwerk met die kameras, nooit deur TP-Link se bedieners nie. Teen 'n gesimuleerde kamera getoets. Hoe om dit te doen: [Kyk na jou tuiskameras op die groot skerm](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gauss-splats in jou kamer, in 'n Meta Quest 3 of 3S (eksperimenteel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: in 'n sitkamer staan 'n persoon van agter gesien, in 'n headset met Immuch360, voor 'n lewensgrootte fontein wat deur 'n ander app as 'n splat vasgelê en vanaf 'n NAS oopgemaak is">
+</p>
+
+**Wat jy nodig het:** 'n splat wat met Polycam, Scaniverse, Luma of 'n ander hulpmiddel gemaak is, as 'n .spz- of .ply-lêer op jou NAS of in die headset, en Immuch360 in 'n Meta Quest 3 of 3S.
+
+Die headset plaas die plek of die voorwerp op sy eie grootte, voor jou of reg rondom jou: loop daar rondom, gly daardeur met die linker duimstok, draai met die regter een. Gauss-splats gebruik 'n eksperimentele API van die Meta Spatial SDK, wat Meta nie ondersteun of waarborg nie: enige gebrek is Immuch360 s'n alleen. Hoe om dit te doen: [Verken Gauss-splats in 'n Meta Quest 3 of 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### 'n Meta Quest vir jou besoekers (eksperimenteel)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Illustrasie, nie 'n skermskoot nie: in 'n klein uitstallingsvertrek sit 'n besoeker, van agter gesien, in 'n headset met Immuch360 in kioskmodus terwyl twee ander vir hul beurt wag">
+</p>
+
+**Wat jy nodig het:** 'n Meta Quest met Immuch360, en 'n 360°-foto of -video in die headset, op jou NAS of op jou Immich-bediener.
+
+In kioskmodus maak die headset jou 360°-foto of -video vanself oop, van die begin af, elke keer as 'n besoeker dit opsit, en 'n film eindig op 'n kaart met jou teks. Besoekers druk niks nie; jy hou B of Y een sekonde lank in om uit te gaan. Hoe om dit te doen: [Kioskmodus, vir 'n uitstalling of 'n winkel](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Die KI-funksies laat modelle en enjins loop wat deur ander gemaak is, net afgela
 
 Die 360°-LoRA van nomadoor is Apache 2.0 op sy kaart en is op CC0- en publieke-domein-beelde opgelei, met 'n deel onder CC BY: die toeskrywing van daardie deel kom in 'n latere weergawe van MODEL-LICENSES.md. Niks hier is onder 'n nie-kommersiële lisensie nie, en niks benodig CUDA nie. ONNX Runtime en LiteRT het ander biblioteke ingebou, wat in hul kennisgewings gelys word, onder hulle Eigen onder die MPL 2.0, 'n swak copyleft-lisensie.
 
-Die skermskote van hierdie blad is werklike skermskote van die app: dié van die foon op die Android-build in 'n emulator, dié van Android TV op die Google TV-emulator, dié van LG en Samsung in 'n blaaier wat die TV naboots, dié van Windows op 'n Windows 11-PC en die Meta Quest-venster in 'n Quest 3, almal met CC0-panoramas van [Poly Haven](https://polyhaven.com); die omringende skermskote van die headset is op 'n Quest 3 geneem met die outeur se eie media, en dié van die iPad in die iPad-simulator, met 'n CC0-panorama van Poly Haven. Die prente van die KI-skepper is werklike uitsette van die app, gemaak uit CC0-foto's van Poly Haven, met twee werklike skermskote van die Windows-app. Die openingsbeeld en die prente van die TV, die aanmelding, die draai, die kameras en die hommeltuig is illustrasies wat vir die projek gemaak is: hulle wys geen skerm van die app nie, geen logo van 'n ander maatskappy nie en geen gesig nie. Elke beeld, met sy bron, datum en lisensie, word in [CAPTURES.md](../.github/readme/CAPTURES.md) gelys.
+Die skermskote van hierdie blad is werklike skermskote van die app: dié van die foon op die Android-build in 'n emulator, dié van Android TV op die Google TV-emulator, dié van LG en Samsung in 'n blaaier wat die TV naboots, dié van Windows op 'n Windows 11-PC en die Meta Quest-venster in 'n Quest 3, almal met CC0-panoramas van [Poly Haven](https://polyhaven.com); die omringende skermskote van die headset is op 'n Quest 3 geneem met die outeur se eie media, en dié van die iPad in die iPad-simulator, met 'n CC0-panorama van Poly Haven. Die prente van die KI-skepper is werklike uitsette van die app, gemaak uit CC0-foto's van Poly Haven, met twee werklike skermskote van die Windows-app. Die openingsbeeld en die prente van die TV, die aanmelding, die draai, die kameras en die hommeltuig is illustrasies wat vir die projek gemaak is: hulle wys geen skerm van die app nie, geen logo van 'n ander maatskappy nie en geen gesig nie. Die gebruiksgevalkaarte plaas so 'n illustrasie bo 'n ry wat vir die projek geteken is, met die platformlogo's, die app se ikoon en, in twee kaarte, werklike skermskote van die app; behalwe die platformlogo's wys hulle geen logo van 'n ander maatskappy nie en geen gesig nie. Elke beeld, met sy bron, datum en lisensie, word in [CAPTURES.md](../.github/readme/CAPTURES.md) gelys.
 
 <a id="roadmap"></a>
 ## Padkaart

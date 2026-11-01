@@ -20,7 +20,7 @@ Flachi, 360°- und 3D-Foto und -Video vo dim Grät, dim NAS, dim Immich-Server, 
 <summary><b>Inhalt</b></summary>
 
 - [Für wän si isch](#who-it-is-for)
-- [Weli Bildschirm](#which-screens), und [was jede Bildschirm cha](#what-each-screen-does)
+- [Weli Bildschirm](#which-screens), [was si zäme mached](#use-cases) und [was jede Bildschirm cha](#what-each-screen-does)
 - [Was du mache chasch](#what-you-can-do)
 - [Uf dis Grät hole](#get-it-on-your-device)
 - [So gaht's](#how-to)
@@ -60,6 +60,7 @@ Flachi, 360°- und 3D-Foto und -Video vo dim Grät, dim NAS, dim Immich-Server, 
 - **Du betriibsch Immich** und wotsch sini App, plus d immersive Viewer und di grosse Bildschirm, wo du vom Handy us aamäldsch: [dini Immich-Bibliothek](#keep-your-immich-library-with-more), [im Vergliich mit Immich](#compared-with-immich).
 - **Du überwachsch dis Dihei mit Tapo-Kameras** und wotsch si näbe dine Foto, au uf em Fernseh (gäge e simulierti Kamera prüeft): [Heimkameras](#watch-your-home-cameras-on-the-big-screen).
 - **Du flüügsch e DJI-Drohne** und wotsch ihres Live-Bild uf dim Handy ohni DJI Fly, und i ere Meta Quest oder uf emne Android TV für d Lüt bi dir (experimentell): [dini Drohne](#see-what-your-drone-sees-on-your-phone).
+- **Du häsch mehreri Bildschirm dihei** und wotsch, dass si zämeschaffed: [was dini Bildschirm zäme mached](#use-cases).
 
 Es git kei Immuch360-Konto z erstelle, und nüt chunnt zu üs: d App redt nur mit dine Grät und mit de Server, wo du uswählsch, und lädt e KI-Komponente nur abe, wenn du's verlangsch.
 
@@ -86,6 +87,111 @@ Es git kei Immuch360-Konto z erstelle, und nüt chunnt zu üs: d App redt nur mi
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sibe echti Bildschirmufnahme vo Immuch360 i zwei Reihe: de Kugle-Viewer uf emne Android-Handy, es 360°-Foto uf emne iPad, es 360°-Foto uf emne Google TV und uf emne LG-Fernseh, dänn d Foto-Ziitachse uf emne Samsung-Fernseh, s Fänschter vo de App i ere Meta Quest 3 und de Videoplayer uf Windows. D LG- und Samsung-Ufnahme sind i emne Browser gmacht worde, wo de Fernseh vertritt">
 </p>
+
+<a id="use-cases"></a>
+### Was dini Bildschirm zäme mached
+
+Installier Immuch360 uf jedem Bildschirm, wo du druf luegsch: jede list dini Quälle sälber, und es paar gäbed es Bild, e Datei oder e Aamäldig an en andere wiiter. Uf jedem Bild markiert s Immuch360-Icon d Grät, wo d App druf lauft.
+
+#### Dis NAS uf jedem Bildschirm
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Illustration mit echte Ufnahme vo de App: es NAS uf emne Regal i ere Stube i de Dämmerig, verbunde mit emne Handy, emne Tablet, emne Fernseh, emne Headset und emne Laptop; s NAS versorgt jede Bildschirm, uf jedem lauft Immuch360">
+</p>
+
+**Das bruuchsch:** es NAS mit ere SMB- oder WebDAV-Freigab, und Immuch360 uf jedem Bildschirm, wo du druf luegsch.
+
+Füeg d Freigab uf jedem Bildschirm hinzu, und jede spielt d Fotos und Video det ab, wo si sind, nüt wird kopiert: Handys, Tablets, Android TV, e Meta Quest, Windows-, Linux- und macOS-Computer, und LG-Fernseh, wo bi dim Immich-Server aagmäldet sind. Es 360°-Foto dräit sich als Kugle uf em Handy und em Fernseh und umgit di im Headset. So gaht's: [D Dateie vo emne NAS, emne Computer, emne Medieserver oder vo Plex abspiele](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Din Immich-Server uf jedem Bildschirm, vo dim Handy us aagmäldet
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: en Heimserver, verbunde mit emne Handy i de Hand, emne Fernseh, emne Headset und emne Laptop, uf jedem lauft Immuch360; e gstrichleti Linie zeigt, wie s Android-Handy die andere drü aamäldet">
+</p>
+
+**Das bruuchsch:** en Immich-Server, Immuch360 uf dim Android-Handy, und Immuch360 uf de Bildschirm, wo du aamäldisch: Android TV, e Meta Quest, en Windows-, Linux- oder macOS-Computer.
+
+Uf em Handy bhaltet Immuch360 di ganz Immich-Mobile-App, füegt sini 360°-, VR180- und 3D-Viewer dezue und installiert sich näbe de offizielle App. Wänn's bi dim Server aagmäldet isch, mäldet's di grosse Bildschirm aa: es scannt de QR-Code vom Fernseh oder vom Computer, oder du tippsch druf de Code ii, wo s Headset zeigt, und dis Passwort bliibt uf em Handy. So gaht's: [En Fernseh, es Headset oder en Computer mit em Handy aamälde](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Dini flache Fotos in 3D, vom Computer bis is Headset (experimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illustration mit ere echte Ufnahm vo de App: en Laptop mit Immuch360 näbe druckte Fotos und emne NAS, und e Person vo hinde gseh imne Headset mit Immuch360, vor eim vo dene Landschafte, wo im Relief staht">
+</p>
+
+**Das bruuchsch:** Immuch360 uf emne Windows-, Linux- oder macOS-Computer und i ere Meta Quest, mit dim NAS oder dim Immich-Server dezwüsche.
+
+De Computer sälber macht us dine Fotos 3D-Fotos und 3D-Szene, und 360°-Panorame mit ere Grafikcharte vo 8 GB uf Windows oder Linux, und speicheret si näbe de Originale. S Headset zeigt es 3D-Foto in echtem 3D, stellt e Szene i dis Zimmer und es Panorama rundume um di; Handys und Fernseh mached d Panorame i ihrem 360°-Viewer uf. So gaht's: [Us eim Foto 3D, e Szene, es Panorama mache](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### S Live-Bild vo dinere Drohne imne Headset oder uf em Fernseh (experimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: uf ere Terrasse i de Dämmerig flügt en Pilot, vo hinde gseh, e Drohne mit emne Handy uf de Fernsteuerig; s Handy leitet s Live-Bild wiiter, nur i eini Richtig, a es Headset und en Fernseh">
+</p>
+
+**Das bruuchsch:** e DJI-Drohne und ihri DJI RC-N3-Fernsteuerig, Immuch360 uf em Android-Handy, wo a d Fernsteuerig aagschlosse isch, und Immuch360 i ere Meta Quest oder uf emne Android TV.
+
+S Handy zeigt s Live-Video vo de Drohne und leitet's wiiter, über dis Wi-Fi oder sin eigete Hotspot, so dass d Lüt bi dir de Flug im Headset oder uf em Fernseh luege chönd. Nur Empfang: es wird nie en Befehl a d Fernsteuerig oder d Drohne gschickt, und d Fernsteuerig bhaltet di volli Kontrolle. So gaht's: [Lueg's i ere Meta Quest oder uf emne Android TV aa](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### D Rohdateie vo dinere 360°-Kamera, det zämegsetzt, wo du si aaluegsch
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: e 360°-Kamera, ihri Speicherkarte und es NAS uf emne Terrassetisch; d Dateie gönd ufs NAS, dänn uf es Tablet, en Fernseh und es Headset mit Immuch360, wo si zämesetzed">
+</p>
+
+**Das bruuchsch:** e Insta360-, GoPro MAX- oder DJI Osmo 360-Kamera, dis NAS, und Immuch360 uf de Bildschirm: Handys, Tablets, Android TV, e Meta Quest, Windows.
+
+Kopier d Rohdateie vo de Charte vo de Kamera uf e SMB- oder WebDAV-Freigab vo dim NAS, so wie si sind; en Immich-Server nimmt die vo Insta360 au. Jede Bildschirm setzt si bim Abspiele zäme, mit de Kalibrierig, wo i jedere Datei staht, und vorher wird nüt i de App vo de Kamera exportiert. So gaht's: [D Rohdateie vo 360°-Kameras ufmache](#open-the-raw-files-of-360-cameras).
+
+#### Dini Plex- und DLNA-Server uf em Fernseh und im Headset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: en Medieserver under em Fernseh vomne Heimkino, verbunde mit em Fernseh, emne Headset, wo uf em Sofa treit wird, emne Handy und emne Laptop, uf jedem lauft Immuch360">
+</p>
+
+**Das bruuchsch:** en Plex Media Server oder en DLNA-Server wie Jellyfin, Emby oder minidlna, und Immuch360 uf jedem Bildschirm: Android TV, e Meta Quest, Handys, Tablets, Windows.
+
+Plex git d Originaldateie vo dine Bibliotheke, so dass es 360°-Video 360° bliibt, rundume um di im Headset, dihei und dür dis Port-Forwarding au underwägs; DLNA-Server wärded i dim Heimnetz gfunde. LG-Fernseh, wo bi dim Immich-Server aagmäldet sind, spieled si au ab. So gaht's: [D Dateie vo emne NAS, emne Computer, emne Medieserver oder vo Plex abspiele](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Dis Handy oder din Windows-Computer, im Headset ufgmacht
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: e Person vo hinde gseh treit es Headset uf emne Sofa, es 360°-Foto um si ume; es Handy und en Laptop mit Immuch360 teiled ihri Fotos dermit über s Wi-Fi">
+</p>
+
+**Das bruuchsch:** Immuch360 uf emne Android-Handy, emne iPhone oder emne Windows-Computer, und i ere Meta Quest, im gliche Wi-Fi dihei.
+
+Schalt «Das Telefon im Netzwerk freigä» uf em Handy ii, oder «Dä Computer im Netzwerk freigä» uf em Computer, und s Headset spielt sini Fotos und Video ab, die mit 360° rundume um di: kein Server, kes NAS, kei Upload. Uf emne iPhone lauft d Freigab, solang d App offe isch. So gaht's: [Das Telefon im Netzwerk freigä](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Dini Tapo-Kameras uf em Fernseh und im Headset
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: e Heimkamera bim Fänschter filmt de Garte, und en Fernseh, es Handy, es Headset, wo uf em Sofa treit wird, und en Laptop, uf jedem lauft Immuch360, zeiged die eint Aasicht">
+</p>
+
+**Das bruuchsch:** Tapo-Kameras i dim Heimnetz, und Immuch360 uf emne Android-Handy, emne Android TV, ere Meta Quest oder emne Windows-Computer.
+
+Jede Bildschirm zeigt e Kamera live und spielt d Ufnahme vo ihrere Speicherkarte Tag für Tag ab, näbe dine Fotos, und s Handy schickt en Clip a din Immich-Server. D App redt nur i dim Netzwerk mit de Kameras, nie über d Server vo TP-Link. Gäge e simulierti Kamera prüeft. So gaht's: [Dini Heimkameras uf em grosse Bildschirm aaluege](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaussian Splats i dim Zimmer, uf ere Meta Quest 3 oder 3S (experimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: i ere Stube staht e Person vo hinde gseh imne Headset mit Immuch360 vor emne Brunne in Lebensgrössi, wo vo ere andere App als Splat ufgnoh und vomne NAS ufgmacht worde isch">
+</p>
+
+**Das bruuchsch:** en Splat, gmacht mit Polycam, Scaniverse, Luma oder emne andere Wärchzüg, als .spz- oder .ply-Datei uf dim NAS oder im Headset, und Immuch360 uf ere Meta Quest 3 oder 3S.
+
+S Headset stellt de Ort oder s Objekt i sinere Grössi hii, vor dir oder rundume um di: lauf drum ume, gleit mit em linke Stick dur ihn dure, dräi di mit em rächte. Gaussian Splats bruuched e experimentelli API vom Meta Spatial SDK, wo Meta weder unterstützt no garantiert: Jede Fähler liit allei bi Immuch360. So gaht's: [Gaussian Splats uf ere Meta Quest 3 oder 3S entdecke](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### E Meta Quest für dini Bsuecher (experimentell)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Illustration, kei Bildschirmufnahm: imne chliine Usstelligsruum sitzt en Bsuecher, vo hinde gseh, mit emne Headset mit Immuch360 im Kioskmodus, während zwei anderi warted, bis si dra sind">
+</p>
+
+**Das bruuchsch:** e Meta Quest mit Immuch360, und es 360°-Foto oder Video im Headset, uf dim NAS oder uf dim Immich-Server.
+
+Im Kioskmodus macht s Headset dis 360°-Foto oder Video vo sälber uf, vo vorne, jedes Mal wänn en Bsuecher's aaleit, und en Film hört mit ere Charte mit dim Text uf. D Bsuecher drucked nüt; du hebsch B oder Y e Sekunde lang, zum Verlah. So gaht's: [Kioskmodus, für e Usstellig oder en Lade](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ D KI-Funktione lönd Modell und Engines vo andere lauffe, wo nur abeglade wärde
 
 D 360°-LoRA vo nomadoor isch laut ihrere Charte Apache 2.0 und isch uf CC0- und Public-Domain-Bilder trainiert worde, mit emne Teil under CC BY: d Namensnennig vo dem Teil chunnt i ere spötere Version vo MODEL-LICENSES.md. Nüt da isch under ere nöd kommerzielle Lizänz, und nüt bruucht CUDA. ONNX Runtime und LiteRT händ anderi Bibliotheke iibaut, ufgfüehrt i ihrne Hiiwiis, drunder Eigen under de MPL 2.0, ere schwache Copyleft-Lizänz.
 
-D Bildschirmufnahme vo dere Siite sind echti Ufnahme vo de App: die vom Handy mit em Android-Build i emne Emulator, die vo Android TV uf em Google-TV-Emulator, die vo LG und Samsung i emne Browser, wo de Fernseh vertritt, die vo Windows uf emne Windows-11-PC und s Meta-Quest-Fänschter i ere Quest 3, alli mit CC0-Panorame vo [Poly Haven](https://polyhaven.com); d immersive Ufnahme vom Headset sind uf ere Quest 3 mit de eigete Medie vom Autor gmacht worde, und die vom iPad im iPad-Simulator, mit emne CC0-Panorama vo Poly Haven. D Bilder vom KI-Ersteller sind echti Resultat vo de App, us CC0-Fotos vo Poly Haven gmacht, mit zwei echte Ufnahme vo de Windows-App. S Iistiegsbild und d Bilder vom Fernseh, vom Aamälde, vom Dräie, vo de Kameras und vo de Drohne sind Illustratione, wo für s Projekt gmacht worde sind: si zeiged kein Bildschirm vo de App, kes Logo vo ere andere Firma und kes Gsicht. Jedes Bild, mit sinere Quälle, sim Datum und sinere Lizänz, isch i [CAPTURES.md](../.github/readme/CAPTURES.md) ufgfüehrt.
+D Bildschirmufnahme vo dere Siite sind echti Ufnahme vo de App: die vom Handy mit em Android-Build i emne Emulator, die vo Android TV uf em Google-TV-Emulator, die vo LG und Samsung i emne Browser, wo de Fernseh vertritt, die vo Windows uf emne Windows-11-PC und s Meta-Quest-Fänschter i ere Quest 3, alli mit CC0-Panorame vo [Poly Haven](https://polyhaven.com); d immersive Ufnahme vom Headset sind uf ere Quest 3 mit de eigete Medie vom Autor gmacht worde, und die vom iPad im iPad-Simulator, mit emne CC0-Panorama vo Poly Haven. D Bilder vom KI-Ersteller sind echti Resultat vo de App, us CC0-Fotos vo Poly Haven gmacht, mit zwei echte Ufnahme vo de Windows-App. S Iistiegsbild und d Bilder vom Fernseh, vom Aamälde, vom Dräie, vo de Kameras und vo de Drohne sind Illustratione, wo für s Projekt gmacht worde sind: si zeiged kein Bildschirm vo de App, kes Logo vo ere andere Firma und kes Gsicht. D Charte vo de Aawändigsfäll setzed so e Illustration über e Ziile, wo für s Projekt zeichnet worde isch, mit de Logos vo de Plattforme, em Icon vo de App und, i zwei Charte, echte Ufnahme vo de App; abgseh vo de Logos vo de Plattforme zeiged si kes Logo vo ere andere Firma und kes Gsicht. Jedes Bild, mit sinere Quälle, sim Datum und sinere Lizänz, isch i [CAPTURES.md](../.github/readme/CAPTURES.md) ufgfüehrt.
 
 <a id="roadmap"></a>
 ## Fahrplan

@@ -20,7 +20,7 @@ Tiwlafin d tividyutin tizeddigin, n 360° d 3D seg yibenk-ik, NAS-ik, aqeddac-ik
 <summary><b>Agbur</b></summary>
 
 - [I wumi](#who-it-is-for)
-- [Anwi igdilen](#which-screens), d [wayen yetteg yal agdil](#what-each-screen-does)
+- [Anwi igdilen](#which-screens), [ayen xeddmen akken](#use-cases) d [wayen yetteg yal agdil](#what-each-screen-does)
 - [Ayen i tzemreḍ a t-txedmeḍ](#what-you-can-do)
 - [Awi-t ɣef yibenk-ik](#get-it-on-your-device)
 - [Amek ara txedmeḍ](#how-to)
@@ -60,6 +60,7 @@ Tiwlafin d tividyutin tizeddigin, n 360° d 3D seg yibenk-ik, NAS-ik, aqeddac-ik
 - **Tesseqdaceḍ Immich** yerna tebɣiḍ asnas-is, s yimeskanen imirsifen d yigdilen imeqqranen i tqqneḍ seg tilifun-ik: [tamkarḍit-ik Immich](#keep-your-immich-library-with-more), [s umyeẓri d Immich](#compared-with-immich).
 - **Tettɛassaḍ axxam-ik s tkamirawin Tapo** yerna tebɣiḍ-tent ɣer tama n tewlafin-ik, ula ɣef tiliẓri (ttwasenqdent s tkamirat tasemsalt): [tikamirawin n wexxam](#watch-your-home-cameras-on-the-big-screen).
 - **Tessafgeḍ adrun DJI** yerna tebɣiḍ tugna-ines srid ɣef tilifun-ik war DJI Fly, akked deg Meta Quest neɣ ɣef Android TV i yemdanen yellan yid-k (armitan): [adrun-ik](#see-what-your-drone-sees-on-your-phone).
+- **Tesɛiḍ kra n yigdilen deg wexxam** yerna tebɣiḍ ad xedmen akken: [ayen xeddmen yigdilen-ik akken](#use-cases).
 
 Ulac amiḍan Immuch360 ara ternuḍ, yerna ulac ayen i d-yettawḍen ɣur-neɣ: asnas yettmeslay kan d yibenkan-ik d yiqeddacen i tferneḍ, yerna yessadar aḥric AI kan mi ara t-tsutreḍ.
 
@@ -86,6 +87,111 @@ Ulac amiḍan Immuch360 ara ternuḍ, yerna ulac ayen i d-yettawḍen ɣur-neɣ:
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sa n tuṭṭfiwin n ugdil n tidet n Immuch360 deg sin n yizirigen: ameskan n tkuret ɣef tilifun Android, tawlaft n 360° ɣef iPad, tawlaft n 360° ɣef Google TV d ɣef tiliẓri LG, sinna tasnakudt n tewlafin ɣef tiliẓri Samsung, asfaylu n usnas deg Meta Quest 3 d umeskan n tvidyut ɣef Windows. Tuṭṭfiwin n LG d Samsung ttwaṭṭfent deg yiminig i yeṭṭfen amkan n TV">
 </p>
+
+<a id="use-cases"></a>
+### Ayen xeddmen yigdilen-ik akken
+
+Sbedd Immuch360 ɣef yal agdil i ɣef tettwaliḍ: yal yiwen yeqqar iɣbula-ik s yiman-is, yerna kra seg-sen ttaken i wayeḍ tugna, afaylu neɣ tuqqna. Deg yal tugna, tignit n Immuch360 tcerreḍ ibenkan i yesseddayen asnas.
+
+#### NAS-ik ɣef yal agdil
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Tugna s tuṭṭfiwin n tidet n usnas: NAS ɣef terfuft deg texxamt n uqqim deg tmeddit, yeqqnen ɣer tilifun, ɣer tablet, ɣer TV, ɣer yibenk n uqerru d uselkim amaḍfur; NAS yettak i yal agdil, yal yiwen yesseddaya Immuch360">
+</p>
+
+**Ayen i tesriḍ:** NAS s beṭṭu SMB neɣ WebDAV, d Immuch360 ɣef yal agdil i ɣef tettwaliḍ.
+
+Rnu beṭṭu ɣef yal agdil, yal yiwen ad yessurar tiwlafin d tvidyutin anda llant, war ma yettwanɣel kra: tilifunen, tablet, Android TV, Meta Quest, iselkimen Windows, Linux d macOS, d TV LG yeqqnen ɣer uqeddac-ik Immich. Tawlaft n 360° tettezzi am tkurt ɣef tilifun d TV, yerna tezzi yes-k deg yibenk n uqerru. Amek ara txedmeḍ: [Ssurar ifuyla n NAS, n uselkim, n uqeddac n yimidyaten neɣ n Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Aqeddac-ik Immich ɣef yal agdil, yeqqnen seg tilifun-ik
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: aqeddac n wexxam yeqqnen ɣer tilifun yettwaṭṭfen s ufus, ɣer TV, ɣer yibenk n uqerru d uselkim amaḍfur, yal yiwen yesseddaya Immuch360; izirig s yineqqiḍen yesskan-d tilifun Android yesseqqen tlata nniḍen">
+</p>
+
+**Ayen i tesriḍ:** aqeddac Immich, Immuch360 ɣef tilifun-ik Android, d Immuch360 ɣef yigdilen i tesseqqneḍ: Android TV, Meta Quest, aselkim Windows, Linux neɣ macOS.
+
+Ɣef tilifun, Immuch360 yeṭṭef asnas aziraz n Immich akk, yernu imeskanen-is n 360°, VR180 d 3D, yerna yettwasbedd ɣer tama n usnas unṣib. Mi yeqqen ɣer uqeddac-ik, yesseqqen igdilen imeqqranen: yeqqar tangalt QR n TV neɣ n uselkim, neɣ ad taruḍ fell-as tangalt i d-yesskan yibenk n uqerru, yerna awal-ik uffir yeqqim ɣef tilifun. Amek ara txedmeḍ: [Qqen TV, ibenk n uqerru neɣ aselkim s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Tiwlafin-ik 2D s 3D, seg uselkim-ik ɣer yibenk n uqerru (armitan)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Tugna s tuṭṭfa n tidet n usnas: aselkim amaḍfur yesseddayen Immuch360 ɣer tama n tiwlafin yettwasiggzen d NAS, d yiwen umdan yettwalan seg deffir s yibenk n uqerru yesseddayen Immuch360, zdat yiwet seg tmeẓriyin-nni i d-ibedden s teɣzi">
+</p>
+
+**Ayen i tesriḍ:** Immuch360 ɣef uselkim Windows, Linux neɣ macOS d deg Meta Quest, s NAS-ik neɣ aqeddac-ik Immich gar-asen.
+
+Aselkim s yiman-is yettarra tiwlafin-ik d tiwlafin 3D d isayesen 3D, akked d tipanuramikin n 360° s tkarḍa tudlift n 8 GB ɣef Windows neɣ Linux, yerna yettḥerriz-itent ɣer tama n tid tiṣliyin. Ibenk n uqerru yesskan-d tawlaft 3D s 3D n tidet, yessers asayes deg texxamt-ik d tpanuramikt di yal tama-k; tilifunen d TV ldin tipanuramikin deg umeskan-nsen n 360°. Amek ara txedmeḍ: [Rr yiwet n tewlaft d 3D, d asayes, d tapanuramikt](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Tamuɣli srid n udrun-ik deg yibenk n uqerru neɣ ɣef TV (armitan)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: ɣef tesqift deg tmeddit, amsafag yettwalan seg deffir yessafag adrun s tilifun ɣef tlikumand; tilifun yettazen tugna srid, s yiwet n tnila kan, ɣer yibenk n uqerru d TV">
+</p>
+
+**Ayen i tesriḍ:** adrun DJI d tlikumand-is DJI RC-N3, Immuch360 ɣef tilifun Android yeqqnen ɣer tlikumand, d Immuch360 deg Meta Quest neɣ ɣef Android TV.
+
+Tilifun yesskan-d tavidyut srid n udrun yerna yettazen-itt, s Wi-Fi-inek neɣ s hotspot-is, akken imdanen yellan yid-k ad walin asafag deg yibenk n uqerru neɣ ɣef TV. Armas kan: werǧin ad tettwazen tladna i tlikumand neɣ i udrun, yerna tilikumand teṭṭef aḥkam akk. Amek ara txedmeḍ: [Wali-t deg Meta Quest neɣ ɣef Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Ifuyla raw n tkamirat-ik n 360°, ttwaxiyyḍen anda ten-tettwaliḍ
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: takamirat n 360°, takarḍa-ines n tkatut d NAS ɣef ṭṭabla n tesqift; ifuyla ttedun ɣer NAS, syin ɣer tablet, TV d yibenk n uqerru yesseddayen Immuch360, i ten-ixiyyḍen">
+</p>
+
+**Ayen i tesriḍ:** takamirat Insta360, GoPro MAX neɣ DJI Osmo 360, NAS-ik, d Immuch360 ɣef yigdilen: tilifunen, tablet, Android TV, Meta Quest, Windows.
+
+Nɣel ifuyla raw seg tkarḍa n tkamirat ɣer beṭṭu SMB neɣ WebDAV n NAS-ik, akken llan; aqeddac Immich yeqbal ula d wid n Insta360. Yal agdil ixiyyeḍ-iten mi ara ten-yessurar, s useggem yettwarun deg yal afaylu, yerna ulac ayen yettwasifḍen deg usnas n tkamirat uqbel. Amek ara txedmeḍ: [Ldi ifuyla raw n tkamirawin n 360°](#open-the-raw-files-of-360-cameras).
+
+#### Iqeddacen-ik Plex d DLNA ɣef TV d deg yibenk n uqerru
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: aqeddac n yimidyaten ddaw TV n usinima n wexxam, yeqqnen ɣer TV, ɣer yibenk n uqerru yettwalsen ɣef ssufa, ɣer tilifun d uselkim amaḍfur, yal yiwen yesseddaya Immuch360">
+</p>
+
+**Ayen i tesriḍ:** Plex Media Server neɣ aqeddac DLNA am Jellyfin, Emby neɣ minidlna, d Immuch360 ɣef yal agdil: Android TV, Meta Quest, tilifunen, tablet, Windows.
+
+Plex yettak-d ifuyla iṣliyen n temkarḍiwin-ik, ihi tavidyut n 360° teqqim d 360°, di yal tama-k deg yibenk n uqerru, deg wexxam d, beṛṛa n wexxam, s usuɣel n tewwura-k; iqeddacen DLNA ttwafen deg uẓeṭṭa n wexxam-ik. TV LG yeqqnen ɣer uqeddac-ik Immich ssuraren-ten ula d nutni. Amek ara txedmeḍ: [Ssurar ifuyla n NAS, n uselkim, n uqeddac n yimidyaten neɣ n Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Tilifun-ik neɣ aselkim-ik Windows, yeldin deg yibenk n uqerru
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: amdan yettwalan seg deffir yelsa ibenk n uqerru ɣef ssufa, tawlaft n 360° di yal tama-s; tilifun d uselkim amaḍfur yesseddayen Immuch360 bḍan tiwlafin-nsen yid-s s Wi-Fi">
+</p>
+
+**Ayen i tesriḍ:** Immuch360 ɣef tilifun Android, iPhone neɣ aselkim Windows, d deg Meta Quest, ɣef yiwen n Wi-Fi n wexxam.
+
+Rmed "Bḍu tiliɣri-a deg uẓeṭṭa" ɣef tilifun, neɣ "Bḍu aselkim-a deg uẓeṭṭa" ɣef uselkim, yerna ibenk n uqerru ad yessurar tiwlafin d tvidyutin-is, tid n 360° di yal tama-k: ulac aqeddac, ulac NAS, ulac asali. Ɣef iPhone, beṭṭu iteddu mi ara yili usnas yeldi. Amek ara txedmeḍ: [Bḍu tiliɣri-a deg uẓeṭṭa](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Tikamirawin-ik Tapo ɣef TV d deg yibenk n uqerru
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: takamirat n wexxam ɣer tama n ttaq tettṣewwir tabḥirt, yerna TV, tilifun, ibenk n uqerru yettwalsen ɣef ssufa d uselkim amaḍfur, yal yiwen yesseddaya Immuch360, sskanen-d yiwet n tmuɣli-nni">
+</p>
+
+**Ayen i tesriḍ:** tikamirawin Tapo deg uẓeṭṭa n wexxam-ik, d Immuch360 ɣef tilifun Android, Android TV, Meta Quest neɣ aselkim Windows.
+
+Yal agdil yesskan-d takamirat srid yerna yessurar isekla n tkarḍa-ines n tkatut ass s wass, ɣer tama n tewlafin-ik, yerna tilifun yettazen aḥric n tvidyut ɣer uqeddac-ik Immich. Asnas yemmeslay d tkamirawin deg uẓeṭṭa-k kan, werǧin s yiqeddacen n TP-Link. Tettwasenqed s tkamirat tasemsalt. Amek ara txedmeḍ: [Wali tikamirawin n wexxam-ik ɣef ugdil ameqqran](#watch-your-home-cameras-on-the-big-screen).
+
+#### Isplaten n Gauss deg texxamt-ik, deg Meta Quest 3 neɣ 3S (armitan)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: deg texxamt n uqqim, amdan yettwalan seg deffir s yibenk n uqerru yesseddayen Immuch360 ibedd zdat tala s teɣzi-ines n tidet, yettwaṭṭfen am splat s usnas nniḍen yerna yeldi seg NAS">
+</p>
+
+**Ayen i tesriḍ:** splat yettwaxedmen s Polycam, Scaniverse, Luma neɣ s yifecka nniḍen, am ufaylu .spz neɣ .ply ɣef NAS-ik neɣ deg yibenk n uqerru, d Immuch360 deg Meta Quest 3 neɣ 3S.
+
+Ibenk n uqerru yesserseg adeg neɣ taɣawsa s teɣzi-ines, zdat-k neɣ di yal tama-k: zzi-as, zelleq deg-s s tɛekkazt n ufus azelmaḍ, zzi s tin n uyeffus. Isplaten n Gauss sseqdacen API s tirmit n Meta Spatial SDK, ur t-yettɛawan ur t-yettḍemmin Meta: yal tuccḍa d tin n Immuch360 kan. Amek ara txedmeḍ: [Snirem isplaten n Gauss deg Meta Quest 3 neɣ 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest i yinerzafen-ik (armitan)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Tugna, mačči d tuṭṭfa n ugdil: deg texxamt tamecṭuḥt n usmeskan, anerzaf yettwalan seg deffir yeqqim s yibenk n uqerru yesseddayen Immuch360 s uskar n kiyusk, mi ara ttraǧun sin nniḍen tawala-nsen">
+</p>
+
+**Ayen i tesriḍ:** Meta Quest s Immuch360, d tawlaft neɣ tavidyut n 360° deg yibenk n uqerru, ɣef NAS-ik neɣ ɣef uqeddac-ik Immich.
+
+S uskar n kiyusk, ibenk n uqerru yeldi tawlaft neɣ tavidyut-ik n 360° s yiman-is, seg tazwara, yal tikkelt ara t-yels unerzaf, yerna asaru ad ifak ɣef tkarḍa s uḍris-ik. Inerzafen ur ssitin ɣef kra; kečč tṭeṭṭfeḍ B neɣ Y yiwet n tsint akken ad teffɣeḍ. Amek ara txedmeḍ: [Askar n kiyusk, i usmeskan neɣ i tḥanut](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Timahilin AI sseddayent timudmin d yimsedday i xedmen wiyaḍ, ttwasadren kan mi
 
 LoRA n 360° n nomadoor d Apache 2.0 ɣef tkarḍa-ines yerna yettwaselmed ɣef tugniwin CC0 d tid n taɣult tazayezt, s uḥric ddaw CC BY: abder n yimeskaren n uḥric-nni ad d-yas deg lqem i d-iteddun n MODEL-LICENSES.md. Ulac da ayen yellan ddaw turagt mačči tadamsant, yerna ulac ayen yesran CUDA. ONNX Runtime d LiteRT gebren timkarḍiwin nniḍen, yettwabedren deg yilɣa-nsent, gar-asent Eigen ddaw MPL 2.0, d turagt copyleft taḍeɛfant.
 
-Tuṭṭfiwin n usebter-agi d tuṭṭfiwin n tidet n usnas: tid n tilifun ɣef build Android deg emulatur, tid n Android TV ɣef emulatur n Google TV, tid n LG d Samsung deg yiminig i yeṭṭfen amkan n TV, tid n Windows ɣef PC Windows 11 d usfaylu n Meta Quest deg Quest 3, akk s tipanuramikin CC0 seg [Poly Haven](https://polyhaven.com); tuṭṭfiwin timirsifin n yibenk n uqerru ttwaṭṭfent ɣef Quest 3 s yimidyaten n umeskar s yiman-is, yerna tin n iPad deg usemsal n iPad, s tpanuramikt CC0 n Poly Haven. Tugniwin n usnulfu AI d igmaḍ n tidet n usnas, ttwaxedment seg tiwlafin CC0 n Poly Haven, s snat n tuṭṭfiwin n tidet n usnas Windows. Tugna n tazwara d tugniwin n TV, n tuqqna, n tuzzya, n tkamirawin d udrun d tugniwin yettwaxedmen i usenfaṛ: ur d-sskanent ula d agdil n usnas, ula d alugu n tkebbanit nniḍen, ula d udem. Yal tugna, s uɣbalu-ines, azemz-is d turagt-is, tettwabder deg [CAPTURES.md](../.github/readme/CAPTURES.md).
+Tuṭṭfiwin n usebter-agi d tuṭṭfiwin n tidet n usnas: tid n tilifun ɣef build Android deg emulatur, tid n Android TV ɣef emulatur n Google TV, tid n LG d Samsung deg yiminig i yeṭṭfen amkan n TV, tid n Windows ɣef PC Windows 11 d usfaylu n Meta Quest deg Quest 3, akk s tipanuramikin CC0 seg [Poly Haven](https://polyhaven.com); tuṭṭfiwin timirsifin n yibenk n uqerru ttwaṭṭfent ɣef Quest 3 s yimidyaten n umeskar s yiman-is, yerna tin n iPad deg usemsal n iPad, s tpanuramikt CC0 n Poly Haven. Tugniwin n usnulfu AI d igmaḍ n tidet n usnas, ttwaxedment seg tiwlafin CC0 n Poly Haven, s snat n tuṭṭfiwin n tidet n usnas Windows. Tugna n tazwara d tugniwin n TV, n tuqqna, n tuzzya, n tkamirawin d udrun d tugniwin yettwaxedmen i usenfaṛ: ur d-sskanent ula d agdil n usnas, ula d alugu n tkebbanit nniḍen, ula d udem. Tikarḍiwin n yimedyaten n useqdec sserrsent tugna am tagi sufella n yizirig yettwasunɣen i usenfaṛ, s yilugan n tɣerɣarin, tignit n usnas d, deg snat n tkarḍiwin, tuṭṭfiwin n tidet n usnas; beṛṛa n yilugan n tɣerɣarin, ur d-sskanent ula d alugu n tkebbanit nniḍen, ula d udem. Yal tugna, s uɣbalu-ines, azemz-is d turagt-is, tettwabder deg [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Abrid n zdat

@@ -20,7 +20,7 @@ Ploché, 360° a 3D fotografie a videa z vašeho zařízení, vašeho NAS, vaše
 <summary><b>Obsah</b></summary>
 
 - [Pro koho je](#who-it-is-for)
-- [Které obrazovky](#which-screens) a [co která obrazovka umí](#what-each-screen-does)
+- [Které obrazovky](#which-screens), [co dělají společně](#use-cases) a [co která obrazovka umí](#what-each-screen-does)
 - [Co dokážete](#what-you-can-do)
 - [Instalace do vašeho zařízení](#get-it-on-your-device)
 - [Jak na to](#how-to)
@@ -60,6 +60,7 @@ Ploché, 360° a 3D fotografie a videa z vašeho zařízení, vašeho NAS, vaše
 - **Provozujete Immich** a chcete jeho aplikaci, a k tomu imerzní prohlížeče a velké obrazovky, které přihlásíte z telefonu: [vaše knihovna Immich](#keep-your-immich-library-with-more), [ve srovnání s Immich](#compared-with-immich).
 - **Hlídáte domov kamerami Tapo** a chcete je vedle svých fotografií, i na televizoru (ověřeno proti simulované kameře): [domácí kamery](#watch-your-home-cameras-on-the-big-screen).
 - **Létáte s dronem DJI** a chcete jeho živý obraz v telefonu bez DJI Fly, a v Meta Quest nebo na Android TV pro lidi kolem vás (experimentální): [váš dron](#see-what-your-drone-sees-on-your-phone).
+- **Máte doma několik obrazovek** a chcete, aby fungovaly společně: [co vaše obrazovky dělají společně](#use-cases).
 
 Nemusíte si zakládat žádný účet Immuch360 a nic se k nám neposílá: aplikace komunikuje jen s vašimi zařízeními a se servery, které si zvolíte, a AI komponentu stáhne, jen když o ni požádáte.
 
@@ -86,6 +87,111 @@ Nemusíte si zakládat žádný účet Immuch360 a nic se k nám neposílá: apl
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sedm skutečných snímků obrazovky Immuch360 ve dvou řadách: prohlížeč koule na telefonu s Androidem, 360° fotografie na iPadu, 360° fotografie na Google TV a na televizoru LG, pak časová osa fotografií na televizoru Samsung, okno aplikace v Meta Quest 3 a přehrávač videa ve Windows. Snímky LG a Samsung byly pořízeny v prohlížeči, který zastupuje televizor">
 </p>
+
+<a id="use-cases"></a>
+### Co vaše obrazovky dělají společně
+
+Nainstalujte Immuch360 na každou obrazovku, na které se díváte: každá čte vaše zdroje sama a některé předávají jiné obrázek, soubor nebo přihlášení. Na každém obrázku ikona Immuch360 označuje zařízení, na kterých aplikace běží.
+
+#### Váš NAS na každé obrazovce
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustrace se skutečnými snímky aplikace: NAS na polici v obývacím pokoji za soumraku, propojený s telefonem, tabletem, televizorem, headsetem a notebookem; NAS zásobuje každou obrazovku a na každé běží Immuch360">
+</p>
+
+**Potřebujete:** NAS se sdílenou složkou SMB nebo WebDAV a Immuch360 na každé obrazovce, na které se díváte.
+
+Přidejte sdílenou složku na každé obrazovce a každá přehrává fotografie a videa tam, kde jsou, nic se nekopíruje: telefony, tablety, Android TV, Meta Quest, počítače s Windows, Linuxem a macOS a televizory LG přihlášené k vašemu serveru Immich. Fotografie 360° se na telefonu a televizoru otáčí jako koule a v headsetu vás obklopí. Jak na to: [Přehrávejte soubory z NAS, počítače, mediálního serveru nebo Plexu](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Váš server Immich na každé obrazovce, přihlášený z telefonu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: domácí server propojený s telefonem drženým v ruce, televizorem, headsetem a notebookem, na každém běží Immuch360; přerušovaná čára ukazuje, jak telefon s Androidem přihlašuje ostatní tři">
+</p>
+
+**Potřebujete:** server Immich, Immuch360 v telefonu s Androidem a Immuch360 na obrazovkách, které přihlašujete: Android TV, Meta Quest, počítač s Windows, Linuxem nebo macOS.
+
+V telefonu si Immuch360 ponechává celou mobilní aplikaci Immich, přidává své prohlížeče 360°, VR180 a 3D a instaluje se vedle oficiální aplikace. Když je přihlášený k vašemu serveru, přihlásí velké obrazovky: naskenuje QR kód televizoru nebo počítače, nebo do něj napíšete kód, který ukáže headset, a vaše heslo zůstane v telefonu. Jak na to: [Přihlaste televizor, headset nebo počítač telefonem](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Vaše ploché fotografie ve 3D, z počítače do headsetu (experimentální)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustrace se skutečným snímkem aplikace: notebook s Immuch360 vedle vytištěných fotografií a NAS a osoba viděná zezadu v headsetu s Immuch360 před jednou z těch krajin, která stojí v reliéfu">
+</p>
+
+**Potřebujete:** Immuch360 na počítači s Windows, Linuxem nebo macOS a v Meta Quest, s vaším NAS nebo serverem Immich mezi nimi.
+
+Počítač sám promění vaše fotografie ve 3D fotografie a 3D scény, a s grafickou kartou s 8 GB na Windows nebo Linuxu i v panoramata 360°, a uloží je vedle originálů. Headset ukáže 3D fotografii ve skutečném 3D, postaví scénu do vašeho pokoje a panorama kolem vás; telefony a televizory otevírají panoramata ve svém prohlížeči 360°. Jak na to: [Proměňte jednu fotografii ve 3D, scénu, panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Živý obraz vašeho dronu v headsetu nebo na televizoru (experimentální)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: na terase za soumraku řídí pilot viděný zezadu dron s telefonem na ovladači; telefon přeposílá živý obraz, jen jedním směrem, do headsetu a televizoru">
+</p>
+
+**Potřebujete:** dron DJI a jeho ovladač DJI RC-N3, Immuch360 v telefonu s Androidem připojeném k ovladači a Immuch360 v Meta Quest nebo na Android TV.
+
+Telefon ukazuje živé video z dronu a přeposílá ho přes vaši Wi-Fi nebo vlastní hotspot, takže lidé kolem vás sledují let v headsetu nebo na televizoru. Pouze příjem: ovladači ani dronu se nikdy neposílá žádný příkaz a ovladač si ponechává plné řízení. Jak na to: [Sledujte to v Meta Quest nebo na Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Surové soubory vaší 360° kamery, spojené tam, kde je sledujete
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: 360° kamera, její paměťová karta a NAS na stole na terase; soubory jdou do NAS a pak do tabletu, televizoru a headsetu s Immuch360, které je spojí">
+</p>
+
+**Potřebujete:** kameru Insta360, GoPro MAX nebo DJI Osmo 360, váš NAS a Immuch360 na obrazovkách: telefony, tablety, Android TV, Meta Quest, Windows.
+
+Zkopírujte surové soubory z karty kamery do sdílené složky SMB nebo WebDAV na vašem NAS tak, jak jsou; server Immich bere i ty z Insta360. Každá obrazovka je spojuje při přehrávání podle kalibrace zapsané v každém souboru a nic se předem neexportuje v aplikaci kamery. Jak na to: [Otevřete surové soubory 360° kamer](#open-the-raw-files-of-360-cameras).
+
+#### Vaše servery Plex a DLNA na televizoru a v headsetu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: mediální server pod televizorem domácího kina, propojený s televizorem, headsetem nošeným na pohovce, telefonem a notebookem, na každém běží Immuch360">
+</p>
+
+**Potřebujete:** Plex Media Server nebo server DLNA, například Jellyfin, Emby nebo minidlna, a Immuch360 na každé obrazovce: Android TV, Meta Quest, telefony, tablety, Windows.
+
+Plex poskytuje původní soubory vašich knihoven, takže video 360° zůstane 360°, v headsetu všude kolem vás, doma i mimo domov přes vaše přesměrování portů; servery DLNA se najdou ve vaší domácí síti. Přehrávají je i televizory LG přihlášené k vašemu serveru Immich. Jak na to: [Přehrávejte soubory z NAS, počítače, mediálního serveru nebo Plexu](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Váš telefon nebo počítač s Windows, otevřený v headsetu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: osoba viděná zezadu má na pohovce nasazený headset, kolem ní fotografie 360°; telefon a notebook s Immuch360 s ním sdílejí své fotografie přes Wi-Fi">
+</p>
+
+**Potřebujete:** Immuch360 v telefonu s Androidem, v iPhonu nebo na počítači s Windows a v Meta Quest, ve stejné domácí Wi-Fi.
+
+Zapněte "Sdílet tento telefon v síti" v telefonu nebo "Sdílet tento počítač v síti" na počítači a headset přehrává jeho fotografie a videa, ty 360° všude kolem vás: žádný server, žádný NAS, žádné nahrávání. V iPhonu sdílení běží, dokud je aplikace otevřená. Jak na to: [Sdílet tento telefon v síti](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Vaše kamery Tapo na televizoru a v headsetu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: domácí kamera u okna snímá zahradu a televizor, telefon, headset nošený na pohovce a notebook, na každém běží Immuch360, ukazují ten jediný obraz">
+</p>
+
+**Potřebujete:** kamery Tapo ve vaší domácí síti a Immuch360 v telefonu s Androidem, na Android TV, v Meta Quest nebo na počítači s Windows.
+
+Každá obrazovka ukazuje kameru živě a přehrává záznamy z její paměťové karty den po dni, vedle vašich fotografií, a telefon pošle klip na váš server Immich. Aplikace komunikuje s kamerami jen ve vaší síti, nikdy přes servery TP-Link. Ověřeno proti simulované kameře. Jak na to: [Sledujte domácí kamery na velké obrazovce](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaussovské splaty ve vašem pokoji, v Meta Quest 3 nebo 3S (experimentální)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: v obývacím pokoji stojí osoba viděná zezadu v headsetu s Immuch360 před fontánou ve skutečné velikosti, zachycenou jako splat jinou aplikací a otevřenou z NAS">
+</p>
+
+**Potřebujete:** splat vytvořený v Polycam, Scaniverse, Luma nebo jiném nástroji, jako soubor .spz nebo .ply na vašem NAS nebo v headsetu, a Immuch360 v Meta Quest 3 nebo 3S.
+
+Headset postaví místo nebo objekt v jeho skutečné velikosti před vás nebo všude kolem vás: obejděte ho, proplujte jím levou páčkou, otáčejte se pravou. Gaussovské splaty používají experimentální API sady Meta Spatial SDK, které Meta nepodporuje ani nezaručuje: za jakoukoli vadu odpovídá jen Immuch360. Jak na to: [Prozkoumejte gaussovské splaty v Meta Quest 3 nebo 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest pro vaše návštěvníky (experimentální)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustrace, ne snímek obrazovky: v malé výstavní místnosti sedí návštěvník viděný zezadu v headsetu, kde běží Immuch360 v režimu kiosku, zatímco dva další čekají, až na ně přijde řada">
+</p>
+
+**Potřebujete:** Meta Quest s Immuch360 a fotografii nebo video 360° v headsetu, na vašem NAS nebo na vašem serveru Immich.
+
+V režimu kiosku headset sám otevře vaši fotografii nebo video 360°, od začátku, pokaždé když si ho návštěvník nasadí, a film skončí na závěrečné kartě s vaším textem. Návštěvníci nic nemačkají; pro odchod podržíte B nebo Y jednu sekundu. Jak na to: [Režim kiosku pro výstavu nebo obchod](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Funkce AI spouštějí modely a enginy vytvořené jinými, stahované jen na va
 
 360° LoRA od nomadoor je podle své karty pod Apache 2.0 a byla natrénována na obrázcích CC0 a volných dílech, s částí pod CC BY: uvedení autorství této části přijde v pozdější verzi MODEL-LICENSES.md. Nic z toho není pod nekomerční licencí a nic nepotřebuje CUDA. ONNX Runtime a LiteRT mají vestavěné další knihovny, uvedené v jejich upozorněních, mezi nimi Eigen pod MPL 2.0, slabou copyleftovou licencí.
 
-Snímky na této stránce jsou skutečné snímky aplikace: ty z telefonu z buildu pro Android v emulátoru, ty z Android TV z emulátoru Google TV, ty z LG a Samsung v prohlížeči, který zastupuje televizor, ty z Windows na PC s Windows 11 a okno Meta Quest v Quest 3, všechny s panoramaty CC0 z [Poly Haven](https://polyhaven.com); imerzní snímky z headsetu byly pořízeny na Quest 3 s vlastními médii autora a snímek z iPadu v simulátoru iPadu, s panoramatem CC0 z Poly Haven. Obrázky AI tvůrce jsou skutečné výstupy aplikace, vytvořené z fotografií CC0 z Poly Haven, se dvěma skutečnými snímky aplikace pro Windows. Úvodní obrázek a obrázky televizoru, přihlášení, otočení, kamer a dronu jsou ilustrace vytvořené pro projekt: neukazují žádnou obrazovku aplikace, žádné logo jiné společnosti a žádnou tvář. Každý obrázek, se zdrojem, datem a licencí, je uveden v [CAPTURES.md](../.github/readme/CAPTURES.md).
+Snímky na této stránce jsou skutečné snímky aplikace: ty z telefonu z buildu pro Android v emulátoru, ty z Android TV z emulátoru Google TV, ty z LG a Samsung v prohlížeči, který zastupuje televizor, ty z Windows na PC s Windows 11 a okno Meta Quest v Quest 3, všechny s panoramaty CC0 z [Poly Haven](https://polyhaven.com); imerzní snímky z headsetu byly pořízeny na Quest 3 s vlastními médii autora a snímek z iPadu v simulátoru iPadu, s panoramatem CC0 z Poly Haven. Obrázky AI tvůrce jsou skutečné výstupy aplikace, vytvořené z fotografií CC0 z Poly Haven, se dvěma skutečnými snímky aplikace pro Windows. Úvodní obrázek a obrázky televizoru, přihlášení, otočení, kamer a dronu jsou ilustrace vytvořené pro projekt: neukazují žádnou obrazovku aplikace, žádné logo jiné společnosti a žádnou tvář. Karty případů použití umisťují takovou ilustraci nad řádek nakreslený pro projekt, s logy platforem, ikonou aplikace a ve dvou kartách se skutečnými snímky aplikace; kromě log platforem neukazují žádné logo jiné společnosti a žádnou tvář. Každý obrázek, se zdrojem, datem a licencí, je uveden v [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plán

@@ -20,7 +20,7 @@ Plataj, 360°-aj kaj 3D-fotoj kaj videoj el via aparato, via NAS, via Immich-ser
 <summary><b>Enhavo</b></summary>
 
 - [Por kiu ĝi estas](#who-it-is-for)
-- [Kiuj ekranoj](#which-screens), kaj [kion faras ĉiu ekrano](#what-each-screen-does)
+- [Kiuj ekranoj](#which-screens), [kion ili faras kune](#use-cases) kaj [kion faras ĉiu ekrano](#what-each-screen-does)
 - [Kion vi povas fari](#what-you-can-do)
 - [Akiru ĝin sur via aparato](#get-it-on-your-device)
 - [Kiel fari](#how-to)
@@ -60,6 +60,7 @@ Plataj, 360°-aj kaj 3D-fotoj kaj videoj el via aparato, via NAS, via Immich-ser
 - **Vi uzas Immich** kaj volas ĝian apon, plus la mergajn spektilojn kaj la grandajn ekranojn, kiujn vi ensalutigas per via telefono: [via Immich-biblioteko](#keep-your-immich-library-with-more), [kompare kun Immich](#compared-with-immich).
 - **Vi gardas vian hejmon per Tapo-kameraoj** kaj volas ilin apud viaj fotoj, ankaŭ en la televidilo (kontrolita kontraŭ simulita kamerao): [hejmaj kameraoj](#watch-your-home-cameras-on-the-big-screen).
 - **Vi flugigas DJI-dronon** kaj volas ĝian vivan bildon sur via telefono sen DJI Fly, kaj en Meta Quest aŭ sur Android TV por la homoj kun vi (eksperimenta): [via drono](#see-what-your-drone-sees-on-your-phone).
+- **Vi havas plurajn ekranojn hejme** kaj volas, ke ili funkciu kune: [kion viaj ekranoj faras kune](#use-cases).
 
 Ne estas Immuch360-konto por krei, kaj nenio venas al ni: la apo parolas nur kun viaj aparatoj kaj kun la serviloj, kiujn vi elektas, kaj elŝutas AI-komponanton nur kiam vi petas ĝin.
 
@@ -86,6 +87,111 @@ Ne estas Immuch360-konto por krei, kaj nenio venas al ni: la apo parolas nur kun
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sep realaj ekrankopioj de Immuch360 en du vicoj: la sfera spektilo sur Android-telefono, 360°-foto sur iPad, 360°-foto sur Google TV kaj sur LG-televidilo, poste la fototempolinio sur Samsung-televidilo, la fenestro de la apo en Meta Quest 3 kaj la videoludilo sur Windows. La LG- kaj Samsung-ekrankopioj estis faritaj en retumilo, kiu anstataŭas la televidilon">
 </p>
+
+<a id="use-cases"></a>
+### Kion viaj ekranoj faras kune
+
+Instalu Immuch360 sur ĉiu ekrano, sur kiu vi spektas: ĉiu legas viajn fontojn mem, kaj kelkaj transdonas bildon, dosieron aŭ ensaluton al alia. En ĉiu bildo, la piktogramo de Immuch360 markas la aparatojn, kiuj rulas la apon.
+
+#### Via NAS sur ĉiu ekrano
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustraĵo kun realaj ekrankopioj de la apo: NAS sur breto en salono en krepusko, ligita al telefono, tabulkomputilo, televidilo, kasko kaj tekkomputilo; la NAS nutras ĉiun ekranon, ĉiu kun Immuch360">
+</p>
+
+**Vi bezonas:** NAS kun SMB- aŭ WebDAV-kunhavigo, kaj Immuch360 sur ĉiu ekrano, sur kiu vi spektas.
+
+Aldonu la kunhavigon sur ĉiu ekrano, kaj ĉiu ludas la fotojn kaj videojn tie, kie ili estas, nenio kopiita: telefonoj, tabulkomputiloj, Android TV, Meta Quest, Windows-, Linux- kaj macOS-komputiloj, kaj LG-televidiloj ensalutintaj al via Immich-servilo. 360°-foto turniĝas kiel sfero sur la telefono kaj la televidilo, kaj ĉirkaŭas vin en la kasko. Kiel fari: [Ludi la dosierojn de NAS, komputilo, aŭdvida servilo aŭ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Via Immich-servilo sur ĉiu ekrano, ensalutigita el via telefono
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: hejma servilo ligita al telefono tenata en mano, televidilo, kasko kaj tekkomputilo, ĉiu kun Immuch360; streka linio montras la Android-telefonon, kiu ensalutigas la aliajn tri">
+</p>
+
+**Vi bezonas:** Immich-servilon, Immuch360 sur via Android-telefono, kaj Immuch360 sur la ekranoj, kiujn vi ensalutigas: Android TV, Meta Quest, Windows-, Linux- aŭ macOS-komputilo.
+
+Sur la telefono, Immuch360 konservas la tutan poŝaparatan apon de Immich, aldonas siajn 360°-, VR180- kaj 3D-spektilojn, kaj instaliĝas apud la oficiala apo. Ensalutinta al via servilo, ĝi ensalutigas la grandajn ekranojn: ĝi skanas la QR-kodon de la televidilo aŭ de la komputilo, aŭ vi tajpas sur ĝi la kodon, kiun la kasko montras, kaj via pasvorto restas sur la telefono. Kiel fari: [Ensalutigi televidilon, kaskon aŭ komputilon per via telefono](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Viaj plataj fotoj en 3D, de via komputilo al la kasko (eksperimenta)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustraĵo kun reala ekrankopio de la apo: tekkomputilo kun Immuch360 apud presitaj fotoj kaj NAS, kaj persono vidata de malantaŭe en kasko kun Immuch360, antaŭ unu el tiuj pejzaĝoj starantaj en reliefo">
+</p>
+
+**Vi bezonas:** Immuch360 sur Windows-, Linux- aŭ macOS-komputilo kaj en Meta Quest, kun via NAS aŭ via Immich-servilo inter ili.
+
+La komputilo mem transformas viajn fotojn en 3D-fotojn kaj 3D-scenojn, kaj en 360°-panoramojn per grafika karto de 8 GB sur Windows aŭ Linux, kaj konservas ilin apud la originaloj. La kasko montras 3D-foton en vera 3D, metas scenon en vian ĉambron kaj panoramon ĉirkaŭ vi; telefonoj kaj televidiloj malfermas la panoramojn en sia 360°-spektilo. Kiel fari: [Transformi unu foton en 3D, scenon, panoramon](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### La viva vido de via drono en kasko aŭ sur la televidilo (eksperimenta)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: sur teraso en krepusko, piloto vidata de malantaŭe flugigas dronon kun telefono sur la regilo; la telefono relajas la vivan bildon, nur en unu direkto, al kasko kaj televidilo">
+</p>
+
+**Vi bezonas:** DJI-dronon kaj ĝian regilon DJI RC-N3, Immuch360 sur la Android-telefono konektita al la regilo, kaj Immuch360 en Meta Quest aŭ sur Android TV.
+
+La telefono montras la vivan videon de la drono kaj relajas ĝin, per via Wi-Fi aŭ per sia propra tradireto, por ke la homoj kun vi spektu la flugon en la kasko aŭ sur la televidilo. Nur ricevado: neniu komando iam estas sendita al la regilo aŭ al la drono, kaj la regilo tenas la plenan regadon. Kiel fari: [Spekti ĝin en Meta Quest aŭ sur Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### La krudaj dosieroj de via 360°-kamerao, kunkudritaj tie, kie vi spektas ilin
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: 360°-kamerao, ĝia memorkarto kaj NAS sur teraso-tablo; la dosieroj iras al la NAS, poste al tabulkomputilo, televidilo kaj kasko kun Immuch360, kiuj kunkudras ilin">
+</p>
+
+**Vi bezonas:** kameraon Insta360, GoPro MAX aŭ DJI Osmo 360, vian NAS, kaj Immuch360 sur la ekranoj: telefonoj, tabulkomputiloj, Android TV, Meta Quest, Windows.
+
+Kopiu la krudajn dosierojn de la karto de la kamerao al SMB- aŭ WebDAV-kunhavigo de via NAS, tiaj, kiaj ili estas; Immich-servilo akceptas ankaŭ tiujn de Insta360. Ĉiu ekrano kunkudras ilin dum ili ludas, kun la kalibrado skribita en ĉiu dosiero, kaj nenio estas unue eksportita en la apo de la kamerao. Kiel fari: [Malfermi la krudajn dosierojn de 360°-kameraoj](#open-the-raw-files-of-360-cameras).
+
+#### Viaj Plex- kaj DLNA-serviloj sur la televidilo kaj en la kasko
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: aŭdvida servilo sub la televidilo de hejma kinejo, ligita al la televidilo, al kasko portata sur la sofo, al telefono kaj al tekkomputilo, ĉiu kun Immuch360">
+</p>
+
+**Vi bezonas:** Plex Media Server aŭ DLNA-servilon kiel Jellyfin, Emby aŭ minidlna, kaj Immuch360 sur ĉiu ekrano: Android TV, Meta Quest, telefonoj, tabulkomputiloj, Windows.
+
+Plex donas la originalajn dosierojn de viaj bibliotekoj, do 360°-video restas 360°, ĉirkaŭ vi en la kasko, hejme kaj, tra via pordplusendo, for de hejmo; DLNA-serviloj estas trovataj en via hejma reto. LG-televidiloj ensalutintaj al via Immich-servilo ankaŭ ludas ilin. Kiel fari: [Ludi la dosierojn de NAS, komputilo, aŭdvida servilo aŭ Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Via telefono aŭ via Windows-komputilo, malfermita en la kasko
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: persono vidata de malantaŭe portas kaskon sur sofo, 360°-foto ĉirkaŭ ĝi; telefono kaj tekkomputilo kun Immuch360 kunhavigas siajn fotojn kun ĝi per la Wi-Fi">
+</p>
+
+**Vi bezonas:** Immuch360 sur Android-telefono, iPhone aŭ Windows-komputilo, kaj en Meta Quest, en la sama hejma Wi-Fi.
+
+Ŝaltu "Kunhavigi ĉi tiun telefonon en la reto" sur la telefono, aŭ "Kunhavigi ĉi tiun komputilon en la reto" sur la komputilo, kaj la kasko ludas ĝiajn fotojn kaj videojn, la 360°-ajn ĉirkaŭ vi: neniu servilo, neniu NAS, neniu alŝuto. Sur iPhone, la kunhavigo funkcias dum la apo estas malfermita. Kiel fari: [Kunhavigi ĉi tiun telefonon en la reto](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Viaj Tapo-kameraoj sur la televidilo kaj en la kasko
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: hejma kamerao apud la fenestro filmas la ĝardenon, kaj televidilo, telefono, kasko portata sur la sofo kaj tekkomputilo, ĉiu kun Immuch360, montras tiun unu vidon">
+</p>
+
+**Vi bezonas:** Tapo-kameraojn en via hejma reto, kaj Immuch360 sur Android-telefono, Android TV, Meta Quest aŭ Windows-komputilo.
+
+Ĉiu ekrano montras kameraon vive kaj ludas la registraĵojn de ĝia memorkarto tagon post tago, apud viaj fotoj, kaj la telefono sendas klipon al via Immich-servilo. La apo parolas kun la kameraoj nur en via reto, neniam tra la serviloj de TP-Link. Kontrolita kontraŭ simulita kamerao. Kiel fari: [Spekti viajn hejmajn kameraojn sur la granda ekrano](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaŭsaj splatoj en via ĉambro, en Meta Quest 3 aŭ 3S (eksperimenta)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: en salono, persono vidata de malantaŭe en kasko kun Immuch360 staras antaŭ vivgranda fontano kaptita kiel splato de alia apo kaj malfermita el NAS">
+</p>
+
+**Vi bezonas:** splaton faritan per Polycam, Scaniverse, Luma aŭ alia ilo, kiel .spz- aŭ .ply-dosieron sur via NAS aŭ en la kasko, kaj Immuch360 en Meta Quest 3 aŭ 3S.
+
+La kasko metas la lokon aŭ la objekton en ĝia grandeco, antaŭ vi aŭ ĉirkaŭ vi: piediru ĉirkaŭ ĝi, glitu tra ĝi per la maldekstra stirstangeto, turniĝu per la dekstra. Gaŭsaj splatoj uzas eksperimentan API de Meta Spatial SDK, kiun Meta nek subtenas nek garantias: ĉiu difekto estas de Immuch360 mem. Kiel fari: [Esplori gaŭsajn splatojn en Meta Quest 3 aŭ 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest por viaj vizitantoj (eksperimenta)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustraĵo, ne ekrankopio: en malgranda ekspozicia ĉambro, vizitanto vidata de malantaŭe sidas en kasko kun Immuch360 en kioska reĝimo, dum du aliaj atendas sian vicon">
+</p>
+
+**Vi bezonas:** Meta Quest kun Immuch360, kaj 360°-foton aŭ -videon en la kasko, sur via NAS aŭ sur via Immich-servilo.
+
+En kioska reĝimo, la kasko malfermas vian 360°-foton aŭ -videon per si mem, de la komenco, ĉiufoje kiam vizitanto surmetas ĝin, kaj filmo finiĝas sur fina karto kun via teksto. Vizitantoj premas nenion; vi tenas B aŭ Y dum unu sekundo por eliri. Kiel fari: [Kioska reĝimo, por ekspozicio aŭ vendejo](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ La AI-funkcioj rulas modelojn kaj motorojn faritajn de aliaj, elŝutatajn nur ki
 
 La 360°-LoRA de nomadoor estas Apache 2.0 laŭ sia karto kaj estis trejnita per CC0- kaj publikdomajnaj bildoj, kun parto sub CC BY: la atribuo de tiu parto venos en posta versio de MODEL-LICENSES.md. Nenio ĉi tie estas sub nekomerca permesilo, kaj nenio bezonas CUDA. ONNX Runtime kaj LiteRT enhavas aliajn bibliotekojn, listigitajn en iliaj avizoj, inter ili Eigen sub la MPL 2.0, malforta kopimaldekstra permesilo.
 
-La ekrankopioj de ĉi tiu paĝo estas realaj ekrankopioj de la apo: la telefonaj sur la Android-konstruo en emulilo, la Android TV-aj sur la Google TV-emulilo, la LG- kaj Samsung-aj en retumilo, kiu anstataŭas la televidilon, la Windows-aj sur Windows 11-komputilo kaj la Meta Quest-fenestro en Quest 3, ĉiuj kun CC0-panoramoj de [Poly Haven](https://polyhaven.com); la mergaj ekrankopioj de la kasko estis faritaj sur Quest 3 kun la propraj memeaĵoj de la aŭtoro, kaj la iPad-a en la iPad-simulilo, kun CC0-panoramo de Poly Haven. La bildoj de la AI-kreilo estas realaj rezultoj de la apo, faritaj el CC0-fotoj de Poly Haven, kun du realaj ekrankopioj de la Windows-apo. La komenca bildo kaj la bildoj de la televidilo, la ensaluto, la turnado, la kameraoj kaj la drono estas ilustraĵoj faritaj por la projekto: ili montras neniun ekranon de la apo, neniun emblemon de alia firmao kaj neniun vizaĝon. Ĉiu bildo, kun sia fonto, dato kaj permesilo, estas listigita en [CAPTURES.md](../.github/readme/CAPTURES.md).
+La ekrankopioj de ĉi tiu paĝo estas realaj ekrankopioj de la apo: la telefonaj sur la Android-konstruo en emulilo, la Android TV-aj sur la Google TV-emulilo, la LG- kaj Samsung-aj en retumilo, kiu anstataŭas la televidilon, la Windows-aj sur Windows 11-komputilo kaj la Meta Quest-fenestro en Quest 3, ĉiuj kun CC0-panoramoj de [Poly Haven](https://polyhaven.com); la mergaj ekrankopioj de la kasko estis faritaj sur Quest 3 kun la propraj memeaĵoj de la aŭtoro, kaj la iPad-a en la iPad-simulilo, kun CC0-panoramo de Poly Haven. La bildoj de la AI-kreilo estas realaj rezultoj de la apo, faritaj el CC0-fotoj de Poly Haven, kun du realaj ekrankopioj de la Windows-apo. La komenca bildo kaj la bildoj de la televidilo, la ensaluto, la turnado, la kameraoj kaj la drono estas ilustraĵoj faritaj por la projekto: ili montras neniun ekranon de la apo, neniun emblemon de alia firmao kaj neniun vizaĝon. La kartoj de la uzokazoj metas tian ilustraĵon super vico desegnita por la projekto, kun la emblemoj de la platformoj, la piktogramo de la apo kaj, en du kartoj, realaj ekrankopioj de la apo; krom la emblemoj de la platformoj, ili montras neniun emblemon de alia firmao kaj neniun vizaĝon. Ĉiu bildo, kun sia fonto, dato kaj permesilo, estas listigita en [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Vojmapo

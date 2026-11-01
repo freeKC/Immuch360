@@ -20,7 +20,7 @@ Fotos y vídeos planos, 360° y 3D de tu dispositivo, tu NAS, tu servidor Immich
 <summary><b>Contenido</b></summary>
 
 - [Para quién es](#who-it-is-for)
-- [Qué pantallas](#which-screens), y [qué hace cada pantalla](#what-each-screen-does)
+- [Qué pantallas](#which-screens), [qué hacen juntas](#use-cases) y [qué hace cada pantalla](#what-each-screen-does)
 - [Qué puedes hacer](#what-you-can-do)
 - [Instálala en tu dispositivo](#get-it-on-your-device)
 - [Cómo hacerlo](#how-to)
@@ -60,6 +60,7 @@ Fotos y vídeos planos, 360° y 3D de tu dispositivo, tu NAS, tu servidor Immich
 - **Usas Immich** y quieres su app, más los visores inmersivos y las pantallas grandes en las que inicias sesión desde tu teléfono: [tu biblioteca de Immich](#keep-your-immich-library-with-more), [comparado con Immich](#compared-with-immich).
 - **Vigilas tu casa con cámaras Tapo** y las quieres junto a tus fotos, también en la TV (comprobado con una cámara simulada): [cámaras de casa](#watch-your-home-cameras-on-the-big-screen).
 - **Vuelas un dron DJI** y quieres su imagen en directo en tu teléfono sin DJI Fly, y en unas Meta Quest o en un Android TV para las personas que te acompañan (experimental): [tu dron](#see-what-your-drone-sees-on-your-phone).
+- **Tienes varias pantallas en casa** y quieres que trabajen juntas: [qué hacen tus pantallas juntas](#use-cases).
 
 No hay ninguna cuenta de Immuch360 que crear, y nada nos llega: la app solo habla con tus dispositivos y con los servidores que elijas, y solo descarga un componente de IA cuando tú lo pides.
 
@@ -86,6 +87,111 @@ No hay ninguna cuenta de Immuch360 que crear, y nada nos llega: la app solo habl
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Siete capturas reales de Immuch360 en dos filas: el visor de esfera en un teléfono Android, una foto 360° en un iPad, una foto 360° en un Google TV y en un televisor LG, y después la línea de tiempo de fotos en un televisor Samsung, la ventana de la app en unas Meta Quest 3 y el reproductor de vídeo en Windows. Las capturas de LG y Samsung se hicieron en un navegador que hace las veces del televisor">
 </p>
+
+<a id="use-cases"></a>
+### Qué hacen tus pantallas juntas
+
+Instala Immuch360 en cada pantalla en la que ves tu contenido: cada una lee tus fuentes por sí misma, y algunas pasan una imagen, un archivo o un inicio de sesión a otra. En cada imagen, el icono de Immuch360 marca los dispositivos en los que funciona la app.
+
+#### Tu NAS en todas tus pantallas
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustración con capturas reales de la app: un NAS en una estantería de un salón al anochecer, conectado a un teléfono, una tableta, un televisor, unas gafas y un portátil; el NAS alimenta cada pantalla, cada una con Immuch360">
+</p>
+
+**Necesitas:** un NAS con un recurso compartido SMB o WebDAV, e Immuch360 en cada pantalla en la que ves tu contenido.
+
+Añade el recurso compartido en cada pantalla, y cada una reproduce las fotos y los vídeos donde están, sin copiar nada: teléfonos, tabletas, Android TV, unas Meta Quest, ordenadores con Windows, Linux y macOS, y televisores LG con sesión iniciada en tu servidor Immich. Una foto 360° gira como una esfera en el teléfono y en el televisor, y te rodea en las gafas. Cómo hacerlo: [Reproducir los archivos de un NAS, un ordenador, un servidor multimedia o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Tu servidor Immich en todas tus pantallas, con la sesión iniciada desde tu teléfono
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustración, no una captura: un servidor doméstico conectado a un teléfono sostenido en una mano, un televisor, unas gafas y un portátil, cada uno con Immuch360; una línea discontinua muestra el teléfono Android iniciando la sesión en los otros tres">
+</p>
+
+**Necesitas:** un servidor Immich, Immuch360 en tu teléfono Android, e Immuch360 en las pantallas en las que inicias sesión: Android TV, unas Meta Quest, un ordenador con Windows, Linux o macOS.
+
+En el teléfono, Immuch360 conserva toda la app móvil de Immich, añade sus visores 360°, VR180 y 3D, y se instala junto a la app oficial. Con la sesión iniciada en tu servidor, inicia la sesión en las pantallas grandes: escanea el código QR del televisor o del ordenador, o escribes en él el código que muestran las gafas, y tu contraseña se queda en el teléfono. Cómo hacerlo: [Inicia sesión en una TV, unas gafas o un ordenador con tu teléfono](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Tus fotos planas en 3D, de tu ordenador a las gafas (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustración con una captura real de la app: un portátil con Immuch360 junto a fotos impresas y un NAS, y una persona vista de espaldas con unas gafas con Immuch360, ante uno de esos paisajes en relieve">
+</p>
+
+**Necesitas:** Immuch360 en un ordenador con Windows, Linux o macOS y en unas Meta Quest, con tu NAS o tu servidor Immich entre ambos.
+
+El propio ordenador convierte tus fotos en fotos 3D y escenas 3D, y en panoramas 360° con una tarjeta gráfica de 8 GB en Windows o Linux, y los guarda junto a los originales. Las gafas muestran una foto 3D en 3D real, colocan una escena en tu habitación y un panorama a tu alrededor; los teléfonos y los televisores abren los panoramas en su visor 360°. Cómo hacerlo: [Convertir una foto en 3D, en una escena, en un panorama](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### La vista en directo de tu dron en unas gafas o en el televisor (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustración, no una captura: en una terraza al anochecer, un piloto visto de espaldas vuela un dron con un teléfono en el control remoto; el teléfono retransmite la imagen en directo, en un solo sentido, a unas gafas y a un televisor">
+</p>
+
+**Necesitas:** un dron DJI y su control remoto DJI RC-N3, Immuch360 en el teléfono Android conectado al control remoto, e Immuch360 en unas Meta Quest o en un Android TV.
+
+El teléfono muestra el vídeo en directo del dron y lo retransmite, por tu Wi-Fi o por su propio punto de acceso, para que las personas que te acompañan vean el vuelo en las gafas o en el televisor. Solo recepción: nunca se envía ninguna orden al control remoto ni al dron, y el control remoto conserva todo el control. Cómo hacerlo: [Verlo en unas Meta Quest o en un Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Los archivos nativos de tu cámara 360°, unidos donde los ves
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustración, no una captura: una cámara 360°, su tarjeta de memoria y un NAS en una mesa de terraza; los archivos van al NAS y luego a una tableta, un televisor y unas gafas con Immuch360, que los unen">
+</p>
+
+**Necesitas:** una cámara Insta360, GoPro MAX o DJI Osmo 360, tu NAS, e Immuch360 en las pantallas: teléfonos, tabletas, Android TV, unas Meta Quest, Windows.
+
+Copia los archivos nativos de la tarjeta de la cámara a un recurso compartido SMB o WebDAV de tu NAS, tal como están; un servidor Immich también acepta los de Insta360. Cada pantalla los une mientras se reproducen, con la calibración escrita en cada archivo, y no se exporta nada antes en la app de la cámara. Cómo hacerlo: [Abrir los archivos nativos de las cámaras 360°](#open-the-raw-files-of-360-cameras).
+
+#### Tus servidores Plex y DLNA en el televisor y en las gafas
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustración, no una captura: un servidor multimedia bajo el televisor de un cine en casa, conectado al televisor, a unas gafas puestas en el sofá, a un teléfono y a un portátil, cada uno con Immuch360">
+</p>
+
+**Necesitas:** un Plex Media Server o un servidor DLNA como Jellyfin, Emby o minidlna, e Immuch360 en cada pantalla: Android TV, unas Meta Quest, teléfonos, tabletas, Windows.
+
+Plex da los archivos originales de tus bibliotecas, así que un vídeo 360° sigue siendo 360°, a tu alrededor en las gafas, en casa y, mediante tu redirección de puertos, fuera de casa; los servidores DLNA se encuentran en tu red doméstica. Los televisores LG con sesión iniciada en tu servidor Immich también los reproducen. Cómo hacerlo: [Reproducir los archivos de un NAS, un ordenador, un servidor multimedia o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Tu teléfono o tu ordenador con Windows, abierto en las gafas
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustración, no una captura: una persona vista de espaldas lleva unas gafas en un sofá, con una foto 360° a su alrededor; un teléfono y un portátil con Immuch360 comparten sus fotos con ellas por la Wi-Fi">
+</p>
+
+**Necesitas:** Immuch360 en un teléfono Android, un iPhone o un ordenador con Windows, y en unas Meta Quest, en la misma Wi-Fi de casa.
+
+Activa "Compartir este teléfono en la red" en el teléfono, o "Compartir este ordenador en la red" en el ordenador, y las gafas reproducen sus fotos y vídeos, los 360° a tu alrededor: sin servidor, sin NAS, sin subir nada. En un iPhone, el uso compartido funciona mientras la app está abierta. Cómo hacerlo: [Compartir este teléfono en la red](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Tus cámaras Tapo en el televisor y en las gafas
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustración, no una captura: una cámara doméstica junto a la ventana graba el jardín, y un televisor, un teléfono, unas gafas puestas en el sofá y un portátil, cada uno con Immuch360, muestran esa misma vista">
+</p>
+
+**Necesitas:** cámaras Tapo en tu red doméstica, e Immuch360 en un teléfono Android, un Android TV, unas Meta Quest o un ordenador con Windows.
+
+Cada pantalla muestra una cámara en directo y reproduce las grabaciones de su tarjeta de memoria día a día, junto a tus fotos, y el teléfono envía un clip a tu servidor Immich. La app habla con las cámaras solo en tu red, nunca a través de los servidores de TP-Link. Comprobado con una cámara simulada. Cómo hacerlo: [Ver tus cámaras de casa en la pantalla grande](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splats gaussianos en tu habitación, con unas Meta Quest 3 o 3S (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustración, no una captura: en un salón, una persona vista de espaldas con unas gafas con Immuch360 está ante una fuente a tamaño real, capturada como splat por otra app y abierta desde un NAS">
+</p>
+
+**Necesitas:** un splat hecho con Polycam, Scaniverse, Luma u otra herramienta, como archivo .spz o .ply en tu NAS o en las gafas, e Immuch360 en unas Meta Quest 3 o 3S.
+
+Las gafas colocan el lugar o el objeto a su tamaño, delante de ti o a tu alrededor: camina a su alrededor, deslízate a través de él con el joystick izquierdo, gira con el derecho. Los splats gaussianos usan una API experimental del Meta Spatial SDK, que Meta no admite ni garantiza: cualquier defecto es responsabilidad exclusiva de Immuch360. Cómo hacerlo: [Explora splats gaussianos con unas Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Unas Meta Quest para tus visitantes (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustración, no una captura: en una pequeña sala de exposición, un visitante visto de espaldas está sentado con unas gafas con Immuch360 en modo quiosco mientras otros dos esperan su turno">
+</p>
+
+**Necesitas:** unas Meta Quest con Immuch360, y una foto o un vídeo 360° en las gafas, en tu NAS o en tu servidor Immich.
+
+En modo quiosco, las gafas abren solas tu foto o tu vídeo 360°, desde el principio, cada vez que un visitante se las pone, y una película termina en una tarjeta con tu texto. Los visitantes no pulsan nada; tú mantienes B o Y un segundo para salir. Cómo hacerlo: [Modo quiosco, para una exposición o una tienda](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Las funciones de IA ejecutan modelos y motores hechos por otros, que solo se des
 
 La LoRA 360° de nomadoor es Apache 2.0 según su ficha y se entrenó con imágenes CC0 y de dominio público, con una parte bajo CC BY: la atribución de esa parte llegará en una versión posterior de MODEL-LICENSES.md. Nada aquí está bajo una licencia no comercial, y nada necesita CUDA. ONNX Runtime y LiteRT incluyen otras bibliotecas, enumeradas en sus avisos, entre ellas Eigen bajo la MPL 2.0, una licencia copyleft débil.
 
-Las capturas de esta página son capturas reales de la app: las del teléfono en la compilación de Android en un emulador, las de Android TV en el emulador de Google TV, las de LG y Samsung en un navegador que hace las veces del televisor, las de Windows en un PC con Windows 11 y la ventana de Meta Quest en unas Quest 3, todas con panorámicas CC0 de [Poly Haven](https://polyhaven.com); las capturas inmersivas de las gafas se tomaron en unas Quest 3 con contenido propio del autor, y la del iPad en el simulador de iPad, con una panorámica CC0 de Poly Haven. Las imágenes del creador de IA son resultados reales de la app, hechos a partir de fotos CC0 de Poly Haven, con dos capturas reales de la app de Windows. La imagen de apertura y las imágenes del televisor, el inicio de sesión, el giro, las cámaras y el dron son ilustraciones hechas para el proyecto: no muestran ninguna pantalla de la app, ningún logotipo de otra empresa y ninguna cara. Cada imagen, con su origen, fecha y licencia, figura en [CAPTURES.md](../.github/readme/CAPTURES.md).
+Las capturas de esta página son capturas reales de la app: las del teléfono en la compilación de Android en un emulador, las de Android TV en el emulador de Google TV, las de LG y Samsung en un navegador que hace las veces del televisor, las de Windows en un PC con Windows 11 y la ventana de Meta Quest en unas Quest 3, todas con panorámicas CC0 de [Poly Haven](https://polyhaven.com); las capturas inmersivas de las gafas se tomaron en unas Quest 3 con contenido propio del autor, y la del iPad en el simulador de iPad, con una panorámica CC0 de Poly Haven. Las imágenes del creador de IA son resultados reales de la app, hechos a partir de fotos CC0 de Poly Haven, con dos capturas reales de la app de Windows. La imagen de apertura y las imágenes del televisor, el inicio de sesión, el giro, las cámaras y el dron son ilustraciones hechas para el proyecto: no muestran ninguna pantalla de la app, ningún logotipo de otra empresa y ninguna cara. Las tarjetas de casos de uso colocan una ilustración así sobre una fila dibujada para el proyecto, con los logotipos de las plataformas, el icono de la app y, en dos tarjetas, capturas reales de la app; aparte de los logotipos de las plataformas, no muestran ningún logotipo de otra empresa y ninguna cara. Cada imagen, con su origen, fecha y licencia, figura en [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Hoja de ruta

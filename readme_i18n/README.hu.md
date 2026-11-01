@@ -20,7 +20,7 @@ Sík, 360°-os és 3D fényképek és videók az eszközéről, a NAS-áról, az
 <summary><b>Tartalom</b></summary>
 
 - [Kinek szól](#who-it-is-for)
-- [Mely képernyők](#which-screens), és [mit tud az egyes képernyő](#what-each-screen-does)
+- [Mely képernyők](#which-screens), [mit tesznek együtt](#use-cases) és [mit tud az egyes képernyő](#what-each-screen-does)
 - [Mit tehet](#what-you-can-do)
 - [Szerezze be az eszközére](#get-it-on-your-device)
 - [Útmutatók](#how-to)
@@ -60,6 +60,7 @@ Sík, 360°-os és 3D fényképek és videók az eszközéről, a NAS-áról, az
 - **Immichet használ** és szeretné az alkalmazását, hozzá az immerzív nézegetőket és a nagy képernyőket, amelyeket a telefonjáról jelentkeztet be: [az Immich képtára](#keep-your-immich-library-with-more), [összehasonlítva az Immichcsel](#compared-with-immich).
 - **Tapo kamerákkal figyeli az otthonát** és a fényképei mellett, a tévén is látni szeretné őket (szimulált kamerával ellenőrizve): [otthoni kamerák](#watch-your-home-cameras-on-the-big-screen).
 - **DJI drónt repül** és az élő képét DJI Fly nélkül szeretné a telefonján, valamint egy Meta Questben vagy egy Android TV-n a társai számára (kísérleti): [a drónja](#see-what-your-drone-sees-on-your-phone).
+- **Több képernyője van otthon** és szeretné, ha együtt működnének: [mit tesznek együtt a képernyői](#use-cases).
 
 Nincs Immuch360 fiók, amit létre kellene hozni, és semmi sem jut el hozzánk: az alkalmazás csak az Ön eszközeivel és az Ön által választott szerverekkel beszél, és MI-összetevőt csak akkor tölt le, ha Ön kéri.
 
@@ -86,6 +87,111 @@ Nincs Immuch360 fiók, amit létre kellene hozni, és semmi sem jut el hozzánk:
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Az Immuch360 hét valódi képernyőképe két sorban: a gömbnézegető egy Android telefonon, egy 360°-os fénykép egy iPaden, egy 360°-os fénykép egy Google TV-n és egy LG tévén, aztán a fényképek idővonala egy Samsung tévén, az alkalmazás ablaka egy Meta Quest 3-ban és a videólejátszó Windowson. Az LG és a Samsung képernyőképei egy, a tévét helyettesítő böngészőben készültek">
 </p>
+
+<a id="use-cases"></a>
+### Mit tesznek együtt a képernyői
+
+Telepítse az Immuch360-at minden képernyőre, amelyen néz: mindegyik maga olvassa a forrásait, és némelyik egy képet, egy fájlt vagy egy bejelentkezést ad át egy másiknak. Minden képen az Immuch360 ikonja jelöli azokat az eszközöket, amelyeken az alkalmazás fut.
+
+#### A NAS-a minden képernyőn
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Illusztráció az alkalmazás valódi képernyőképeivel: egy NAS egy polcon egy nappaliban alkonyatkor, egy telefonhoz, egy táblagéphez, egy tévéhez, egy headsethez és egy laptophoz kapcsolva; a NAS minden képernyőt ellát, és mindegyiken az Immuch360 fut">
+</p>
+
+**Amire szüksége van:** egy NAS SMB- vagy WebDAV-megosztással, és az Immuch360 minden képernyőn, amelyen néz.
+
+Adja hozzá a megosztást minden képernyőn, és mindegyik ott játssza le a fényképeket és videókat, ahol vannak, semmit sem másol: telefonok, táblagépek, Android TV, egy Meta Quest, Windows, Linux és macOS rendszerű számítógépek, valamint az Immich-szerverére bejelentkezett LG tévék. Egy 360°-os fénykép gömbként forog a telefonon és a tévén, a headsetben pedig körülveszi Önt. Útmutató: [Játssza le egy NAS, egy számítógép, egy médiaszerver vagy a Plex fájljait](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Az Immich-szervere minden képernyőn, a telefonjáról bejelentkeztetve
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy otthoni szerver egy kézben tartott telefonhoz, egy tévéhez, egy headsethez és egy laptophoz kapcsolva, mindegyiken az Immuch360 fut; egy szaggatott vonal mutatja, hogy az androidos telefon bejelentkezteti a másik hármat">
+</p>
+
+**Amire szüksége van:** egy Immich-szerver, az Immuch360 az androidos telefonján, és az Immuch360 azokon a képernyőkön, amelyeket bejelentkeztet: Android TV, egy Meta Quest, egy Windows, Linux vagy macOS rendszerű számítógép.
+
+A telefonon az Immuch360 megtartja a teljes Immich mobilalkalmazást, hozzáadja a 360°-os, VR180 és 3D nézegetőit, és a hivatalos alkalmazás mellé települ. A szerverére bejelentkezve bejelentkezteti a nagy képernyőket: beolvassa a tévé vagy a számítógép QR-kódját, vagy Ön beírja rajta a headset által mutatott kódot, és a jelszava a telefonon marad. Útmutató: [Jelentkeztessen be egy tévét, headsetet vagy számítógépet a telefonjával](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Sík fényképei 3D-ben, a számítógépétől a headsetig (kísérleti)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Illusztráció az alkalmazás egy valódi képernyőképével: egy laptop, amelyen az Immuch360 fut, nyomtatott fényképek és egy NAS mellett, és egy hátulról látott személy egy headsetben, amelyen az Immuch360 fut, az egyik ilyen táj előtt, amely térben kiemelkedik">
+</p>
+
+**Amire szüksége van:** az Immuch360 egy Windows, Linux vagy macOS rendszerű számítógépen és egy Meta Questben, köztük a NAS-ával vagy az Immich-szerverével.
+
+Maga a számítógép alakítja a fényképeit 3D fényképekké és 3D jelenetekké, valamint Windowson vagy Linuxon egy 8 GB-os videokártyával 360°-os panorámákká, és az eredetik mellé menti őket. A headset egy 3D fényképet valódi 3D-ben mutat, egy jelenetet a szobájába helyez, egy panorámát pedig Ön köré; a telefonok és tévék a 360°-os nézegetőjükben nyitják meg a panorámákat. Útmutató: [Alakítson egy fényképet 3D-vé, jelenetté, panorámává](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### A drónja élő képe egy headsetben vagy a tévén (kísérleti)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy teraszon alkonyatkor egy hátulról látott pilóta drónt repül egy telefonnal a távirányítón; a telefon továbbítja az élő képet, csak egy irányba, egy headsetnek és egy tévének">
+</p>
+
+**Amire szüksége van:** egy DJI drón és annak DJI RC-N3 távirányítója, az Immuch360 a távirányítóhoz csatlakoztatott androidos telefonon, és az Immuch360 egy Meta Questben vagy egy Android TV-n.
+
+A telefon mutatja a drón élő videóját és továbbítja azt, a Wi-Fi-jén vagy a saját hotspotján át, így a társai a headsetben vagy a tévén követik a repülést. Csak vétel: soha semmilyen parancs nem megy a távirányítónak vagy a drónnak, és a távirányító megtartja a teljes irányítást. Útmutató: [Nézze egy Meta Questben vagy egy Android TV-n](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### A 360°-os kamerája nyers fájljai, ott összefűzve, ahol nézi őket
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy 360°-os kamera, a memóriakártyája és egy NAS egy teraszasztalon; a fájlok a NAS-ra kerülnek, majd egy táblagépre, egy tévére és egy headsetre, amelyeken az Immuch360 fut, és amelyek összefűzik őket">
+</p>
+
+**Amire szüksége van:** egy Insta360, GoPro MAX vagy DJI Osmo 360 kamera, a NAS-a, és az Immuch360 a képernyőkön: telefonok, táblagépek, Android TV, egy Meta Quest, Windows.
+
+Másolja a nyers fájlokat a kamera kártyájáról a NAS-a egy SMB- vagy WebDAV-megosztására, úgy, ahogy vannak; egy Immich-szerver az Insta360 fájljait is fogadja. Minden képernyő lejátszás közben fűzi össze őket, az egyes fájlokban rögzített kalibrációval, és előtte semmit sem kell exportálni a kamera alkalmazásában. Útmutató: [Nyissa meg a 360°-os kamerák nyers fájljait](#open-the-raw-files-of-360-cameras).
+
+#### A Plex- és DLNA-szerverei a tévén és a headsetben
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy médiaszerver egy házimozi tévéje alatt, a tévéhez, egy a kanapén viselt headsethez, egy telefonhoz és egy laptophoz kapcsolva, mindegyiken az Immuch360 fut">
+</p>
+
+**Amire szüksége van:** egy Plex Media Server vagy egy DLNA-szerver, például Jellyfin, Emby vagy minidlna, és az Immuch360 minden képernyőn: Android TV, egy Meta Quest, telefonok, táblagépek, Windows.
+
+A Plex a könyvtárai eredeti fájljait adja, így egy 360°-os videó 360°-os marad, Ön körül a headsetben, otthon és a porttovábbításán át otthonától távol is; a DLNA-szervereket az otthoni hálózatán találja meg. Az Immich-szerverére bejelentkezett LG tévék is lejátsszák őket. Útmutató: [Játssza le egy NAS, egy számítógép, egy médiaszerver vagy a Plex fájljait](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### A telefonja vagy a windowsos számítógépe, megnyitva a headsetben
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy hátulról látott személy headsetet visel egy kanapén, körülötte egy 360°-os fénykép; egy telefon és egy laptop, amelyeken az Immuch360 fut, megosztják vele a fényképeiket a Wi-Fi-n">
+</p>
+
+**Amire szüksége van:** az Immuch360 egy androidos telefonon, egy iPhone-on vagy egy windowsos számítógépen, és egy Meta Questben, ugyanazon az otthoni Wi-Fi-n.
+
+Kapcsolja be „A telefon megosztása a hálózaton” lehetőséget a telefonon, vagy „A számítógép megosztása a hálózaton” lehetőséget a számítógépen, és a headset lejátssza annak fényképeit és videóit, a 360°-osakat Ön körül: nincs szerver, nincs NAS, nincs feltöltés. iPhone-on a megosztás addig fut, amíg az alkalmazás nyitva van. Útmutató: [A telefon megosztása a hálózaton](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### A Tapo kamerái a tévén és a headsetben
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy otthoni kamera az ablaknál a kertet filmezi, és egy tévé, egy telefon, egy a kanapén viselt headset és egy laptop, mindegyiken az Immuch360 fut, ugyanazt az egy képet mutatja">
+</p>
+
+**Amire szüksége van:** Tapo kamerák az otthoni hálózatán, és az Immuch360 egy androidos telefonon, egy Android TV-n, egy Meta Questben vagy egy windowsos számítógépen.
+
+Minden képernyő élőben mutat egy kamerát, és napról napra lejátssza a memóriakártyája felvételeit, a fényképei mellett, a telefon pedig egy klipet küld az Immich-szerverére. Az alkalmazás csak a hálózatán beszél a kamerákkal, soha nem a TP-Link szerverein keresztül. Szimulált kamerával ellenőrizve. Útmutató: [Nézze otthoni kameráit a nagy képernyőn](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gauss-splatek a szobájában, egy Meta Quest 3-on vagy 3S-en (kísérleti)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy nappaliban egy hátulról látott személy egy headsetben, amelyen az Immuch360 fut, egy életnagyságú szökőkút előtt áll, amelyet egy másik alkalmazás rögzített splatként, és egy NAS-ról nyitottak meg">
+</p>
+
+**Amire szüksége van:** egy Polycam, Scaniverse, Luma vagy más eszköz segítségével készült splat, .spz vagy .ply fájlként a NAS-án vagy a headsetben, és az Immuch360 egy Meta Quest 3-on vagy 3S-en.
+
+A headset a helyet vagy a tárgyat a saját méretében helyezi el, Ön előtt vagy Ön körül: járja körbe, sikljon át rajta a bal karral, forduljon a jobbal. A gauss-splatek a Meta Spatial SDK egy kísérleti API-ját használják, amelyet a Meta nem támogat és nem garantál: minden hibáért kizárólag az Immuch360 felel. Útmutató: [Gauss-splatek felfedezése Meta Quest 3-on vagy 3S-en](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Egy Meta Quest a látogatóinak (kísérleti)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Illusztráció, nem képernyőkép: egy kis kiállítóteremben egy hátulról látott látogató ül egy headsetben, amelyen kioszk módban az Immuch360 fut, miközben két másik a sorára vár">
+</p>
+
+**Amire szüksége van:** egy Meta Quest az Immuch360-nal, és egy 360°-os fénykép vagy videó a headsetben, a NAS-án vagy az Immich-szerverén.
+
+Kioszk módban a headset magától nyitja meg a 360°-os fényképét vagy videóját, az elejéről, minden alkalommal, amikor egy látogató felveszi, és egy film az Ön szövegét tartalmazó kártyán ér véget. A látogatók semmit sem nyomnak meg; Ön egy másodpercig nyomva tartja a B vagy Y gombot a kilépéshez. Útmutató: [Kioszk mód kiállításhoz vagy üzlethez](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Az MI-funkciók mások által készített modelleket és motorokat futtatnak, am
 
 A nomadoor 360°-os LoRA-ja a kártyája szerint Apache 2.0 licencű, és CC0 és közkincs képeken tanították, egy CC BY alatti résszel: ennek a résznek a forrásmegjelölése a MODEL-LICENSES.md egy későbbi verziójában érkezik. Itt semmi sincs nem kereskedelmi licenc alatt, és semmihez sem kell CUDA. Az ONNX Runtime és a LiteRT más könyvtárakat is tartalmaz, ezeket a közleményeik sorolják fel, köztük az Eigent az MPL 2.0, egy gyenge copyleft licenc alatt.
 
-Az oldal képernyőképei az alkalmazás valódi képernyőképei: a telefonosak az Android buildről egy emulátorban, az Android TV-sek a Google TV emulátoron, az LG-sek és Samsungosak egy, a tévét helyettesítő böngészőben, a Windowsosak egy Windows 11-es PC-n, a Meta Quest ablaka pedig egy Quest 3-ban, mindegyik a [Poly Haven](https://polyhaven.com) CC0 panorámáival; a headset immerzív képernyőképei egy Quest 3-on készültek a szerző saját médiájával, az iPades pedig az iPad szimulátorban, egy CC0 Poly Haven panorámával. Az MI-készítő képei az alkalmazás valódi kimenetei, a Poly Haven CC0 fényképeiből, a Windows alkalmazás két valódi képernyőképével. A nyitókép és a tévé, a bejelentkezés, a forgatás, a kamerák és a drón képei a projekt számára készült illusztrációk: nem mutatják az alkalmazás egyetlen képernyőjét sem, más cég logóját sem, és arcot sem. Minden kép, a forrásával, dátumával és licencével, a [CAPTURES.md](../.github/readme/CAPTURES.md) fájlban szerepel.
+Az oldal képernyőképei az alkalmazás valódi képernyőképei: a telefonosak az Android buildről egy emulátorban, az Android TV-sek a Google TV emulátoron, az LG-sek és Samsungosak egy, a tévét helyettesítő böngészőben, a Windowsosak egy Windows 11-es PC-n, a Meta Quest ablaka pedig egy Quest 3-ban, mindegyik a [Poly Haven](https://polyhaven.com) CC0 panorámáival; a headset immerzív képernyőképei egy Quest 3-on készültek a szerző saját médiájával, az iPades pedig az iPad szimulátorban, egy CC0 Poly Haven panorámával. Az MI-készítő képei az alkalmazás valódi kimenetei, a Poly Haven CC0 fényképeiből, a Windows alkalmazás két valódi képernyőképével. A nyitókép és a tévé, a bejelentkezés, a forgatás, a kamerák és a drón képei a projekt számára készült illusztrációk: nem mutatják az alkalmazás egyetlen képernyőjét sem, más cég logóját sem, és arcot sem. Az alkalmazási példák kártyái egy ilyen illusztrációt helyeznek egy, a projekt számára rajzolt sáv fölé, a platformok logóival, az alkalmazás ikonjával és, két kártyán, az alkalmazás valódi képernyőképeivel; a platformok logóin kívül nem mutatják más cég logóját sem, és arcot sem. Minden kép, a forrásával, dátumával és licencével, a [CAPTURES.md](../.github/readme/CAPTURES.md) fájlban szerepel.
 
 <a id="roadmap"></a>
 ## Ütemterv

@@ -20,7 +20,7 @@ Ravne, 360° i 3D fotografije i video zapisi s vašeg uređaja, vašeg NAS-a, va
 <summary><b>Sadržaj</b></summary>
 
 - [Za koga je](#who-it-is-for)
-- [Koji ekrani](#which-screens), i [šta svaki ekran radi](#what-each-screen-does)
+- [Koji ekrani](#which-screens), [šta rade zajedno](#use-cases) i [šta svaki ekran radi](#what-each-screen-does)
 - [Šta možete da radite](#what-you-can-do)
 - [Nabavite je na svom uređaju](#get-it-on-your-device)
 - [Uputstva](#how-to)
@@ -60,6 +60,7 @@ Ravne, 360° i 3D fotografije i video zapisi s vašeg uređaja, vašeg NAS-a, va
 - **Koristite Immich** i želite njegovu aplikaciju, uz imerzivne preglednike i velike ekrane koje prijavljujete s telefona: [vaša Immich biblioteka](#keep-your-immich-library-with-more), [u poređenju s Immichom](#compared-with-immich).
 - **Pratite svoj dom Tapo kamerama** i želite ih pored svojih fotografija, i na televizoru (provjereno sa simuliranom kamerom): [kućne kamere](#watch-your-home-cameras-on-the-big-screen).
 - **Letite DJI dronom** i želite njegovu sliku uživo na telefonu bez DJI Fly, te u Meta Questu ili na Android TV-u za ljude koji su s vama (eksperimentalno): [vaš dron](#see-what-your-drone-sees-on-your-phone).
+- **Imate nekoliko ekrana kod kuće** i želite da rade zajedno: [šta vaši ekrani rade zajedno](#use-cases).
 
 Nema Immuch360 računa za kreiranje i ništa ne stiže do nas: aplikacija komunicira samo s vašim uređajima i sa serverima koje izaberete, a AI komponentu preuzima samo kada je zatražite.
 
@@ -86,6 +87,111 @@ Nema Immuch360 računa za kreiranje i ništa ne stiže do nas: aplikacija komuni
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Sedam stvarnih snimaka ekrana Immuch360 u dva reda: sferni preglednik na Android telefonu, 360° fotografija na iPadu, 360° fotografija na Google TV-u i na LG televizoru, zatim vremenska linija fotografija na Samsung televizoru, prozor aplikacije u Meta Questu 3 i reproduktor videa na Windowsu. Snimci za LG i Samsung napravljeni su u web pregledniku koji zamjenjuje televizor">
 </p>
+
+<a id="use-cases"></a>
+### Šta vaši ekrani rade zajedno
+
+Instalirajte Immuch360 na svaki ekran na kojem gledate: svaki sam čita vaše izvore, a neki predaju sliku, datoteku ili prijavu drugom. Na svakoj slici ikona Immuch360 označava uređaje na kojima radi aplikacija.
+
+#### Vaš NAS na svakom ekranu
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Ilustracija sa stvarnim snimcima ekrana aplikacije: NAS na polici u dnevnoj sobi u sumrak, povezan s telefonom, tabletom, televizorom, slušalicama i laptopom; NAS napaja svaki ekran, a na svakom radi Immuch360">
+</p>
+
+**Potrebno vam je:** NAS sa SMB ili WebDAV dijeljenim resursom, i Immuch360 na svakom ekranu na kojem gledate.
+
+Dodajte dijeljeni resurs na svakom ekranu, i svaki reproducira fotografije i videozapise tamo gdje jesu, bez kopiranja: telefoni, tableti, Android TV, Meta Quest, Windows, Linux i macOS računari, i LG televizori prijavljeni na vaš Immich server. 360° fotografija se okreće kao sfera na telefonu i televizoru, i okružuje vas u slušalicama. Uputstva: [Reproducirajte datoteke NAS-a, računara, medijskog servera ili Plexa](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Vaš Immich server na svakom ekranu, prijavljen s vašeg telefona
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Ilustracija, ne snimak ekrana: kućni server povezan s telefonom u ruci, televizorom, slušalicama i laptopom, a na svakom radi Immuch360; isprekidana linija pokazuje kako Android telefon prijavljuje ostala tri">
+</p>
+
+**Potrebno vam je:** Immich server, Immuch360 na vašem Android telefonu, i Immuch360 na ekranima koje prijavljujete: Android TV, Meta Quest, Windows, Linux ili macOS računar.
+
+Na telefonu Immuch360 zadržava cijelu Immich mobilnu aplikaciju, dodaje svoje 360°, VR180 i 3D preglednike, i instalira se pored zvanične aplikacije. Prijavljen na vaš server, on prijavljuje velike ekrane: skenira QR kod televizora ili računara, ili vi na njemu ukucate kod koji prikazuju slušalice, a vaša lozinka ostaje na telefonu. Uputstva: [Prijavite televizor, slušalice ili računar telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Vaše ravne fotografije u 3D-u, od računara do slušalica (eksperimentalno)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Ilustracija sa stvarnim snimkom ekrana aplikacije: laptop na kojem radi Immuch360 pored odštampanih fotografija i NAS-a, i osoba viđena s leđa u slušalicama na kojima radi Immuch360, ispred jednog od tih pejzaža koji stoji u reljefu">
+</p>
+
+**Potrebno vam je:** Immuch360 na Windows, Linux ili macOS računaru i u Meta Questu, s vašim NAS-om ili vašim Immich serverom između njih.
+
+Računar sam pretvara vaše fotografije u 3D fotografije i 3D scene, i u 360° panorame s grafičkom karticom od 8 GB na Windowsu ili Linuxu, i sprema ih pored originala. Slušalice prikazuju 3D fotografiju u pravom 3D-u, stavljaju scenu u vašu sobu i panoramu svuda oko vas; telefoni i televizori otvaraju panorame u svom 360° pregledniku. Uputstva: [Pretvorite jednu fotografiju u 3D, scenu, panoramu](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### Prikaz uživo s vašeg drona u slušalicama ili na televizoru (eksperimentalno)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Ilustracija, ne snimak ekrana: na terasi u sumrak pilot viđen s leđa upravlja dronom s telefonom na daljinskom upravljaču; telefon prosljeđuje sliku uživo, samo u jednom smjeru, slušalicama i televizoru">
+</p>
+
+**Potrebno vam je:** DJI dron i njegov daljinski upravljač DJI RC-N3, Immuch360 na Android telefonu priključenom na daljinski upravljač, i Immuch360 u Meta Questu ili na Android TV-u.
+
+Telefon prikazuje video uživo s drona i prosljeđuje ga, preko vašeg Wi-Fi-ja ili vlastitog hotspota, tako da ljudi koji su s vama gledaju let u slušalicama ili na televizoru. Samo prijem: nijedna komanda se nikad ne šalje daljinskom upravljaču ni dronu, a daljinski upravljač zadržava potpunu kontrolu. Uputstva: [Gledajte ga u Meta Questu ili na Android TV-u](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Sirove datoteke vaše 360° kamere, sastavljene tamo gdje ih gledate
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Ilustracija, ne snimak ekrana: 360° kamera, njena memorijska kartica i NAS na stolu na terasi; datoteke idu na NAS, zatim na tablet, televizor i slušalice na kojima radi Immuch360, koji ih sastavljaju">
+</p>
+
+**Potrebno vam je:** kamera Insta360, GoPro MAX ili DJI Osmo 360, vaš NAS, i Immuch360 na ekranima: telefoni, tableti, Android TV, Meta Quest, Windows.
+
+Kopirajte sirove datoteke s kartice kamere na SMB ili WebDAV dijeljeni resurs vašeg NAS-a, onakve kakve jesu; Immich server prima i one s Insta360. Svaki ekran ih sastavlja tokom reprodukcije, s kalibracijom upisanom u svakoj datoteci, i ništa se prethodno ne izvozi u aplikaciji kamere. Uputstva: [Otvorite sirove datoteke 360° kamera](#open-the-raw-files-of-360-cameras).
+
+#### Vaši Plex i DLNA serveri na televizoru i u slušalicama
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Ilustracija, ne snimak ekrana: medijski server ispod televizora kućnog kina, povezan s televizorom, slušalicama koje neko nosi na sofi, telefonom i laptopom, a na svakom radi Immuch360">
+</p>
+
+**Potrebno vam je:** Plex Media Server ili DLNA server kao što su Jellyfin, Emby ili minidlna, i Immuch360 na svakom ekranu: Android TV, Meta Quest, telefoni, tableti, Windows.
+
+Plex daje originalne datoteke vaših biblioteka, tako da 360° video ostaje 360°, svuda oko vas u slušalicama, kod kuće i putem vašeg prosljeđivanja portova van kuće; DLNA serveri se pronalaze na vašoj kućnoj mreži. LG televizori prijavljeni na vaš Immich server ih također reproduciraju. Uputstva: [Reproducirajte datoteke NAS-a, računara, medijskog servera ili Plexa](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### Vaš telefon ili vaš Windows računar, otvoren u slušalicama
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Ilustracija, ne snimak ekrana: osoba viđena s leđa nosi slušalice na sofi, s 360° fotografijom oko sebe; telefon i laptop na kojima radi Immuch360 dijele s njima svoje fotografije preko Wi-Fi-ja">
+</p>
+
+**Potrebno vam je:** Immuch360 na Android telefonu, iPhoneu ili Windows računaru, i u Meta Questu, na istoj kućnoj Wi-Fi mreži.
+
+Uključite "Dijeli ovaj telefon na mreži" na telefonu, ili "Dijeli ovaj računar na mreži" na računaru, i slušalice reproduciraju njegove fotografije i videozapise, one od 360° svuda oko vas: bez servera, bez NAS-a, bez otpremanja. Na iPhoneu dijeljenje radi dok je aplikacija otvorena. Uputstva: [Dijeli ovaj telefon na mreži](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Vaše Tapo kamere na televizoru i u slušalicama
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Ilustracija, ne snimak ekrana: kućna kamera kraj prozora snima baštu, a televizor, telefon, slušalice koje neko nosi na sofi i laptop, na svakom od kojih radi Immuch360, prikazuju taj jedan prikaz">
+</p>
+
+**Potrebno vam je:** Tapo kamere na vašoj kućnoj mreži, i Immuch360 na Android telefonu, Android TV-u, Meta Questu ili Windows računaru.
+
+Svaki ekran prikazuje kameru uživo i reproducira snimke s njene memorijske kartice dan po dan, pored vaših fotografija, a telefon šalje isječak na vaš Immich server. Aplikacija razgovara s kamerama samo na vašoj mreži, nikad preko servera TP-Linka. Provjereno sa simuliranom kamerom. Uputstva: [Gledajte svoje kućne kamere na velikom ekranu](#watch-your-home-cameras-on-the-big-screen).
+
+#### Gaussovi splatovi u vašoj sobi, u Meta Questu 3 ili 3S (eksperimentalno)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Ilustracija, ne snimak ekrana: u dnevnoj sobi osoba viđena s leđa, u slušalicama na kojima radi Immuch360, stoji ispred fontane u prirodnoj veličini koju je druga aplikacija snimila kao splat i koja je otvorena s NAS-a">
+</p>
+
+**Potrebno vam je:** splat napravljen alatom Polycam, Scaniverse, Luma ili nekim drugim alatom, kao datoteka .spz ili .ply na vašem NAS-u ili u slušalicama, i Immuch360 u Meta Questu 3 ili 3S.
+
+Slušalice postavljaju mjesto ili predmet u njegovoj veličini, ispred vas ili svuda oko vas: obiđite ga, klizite kroz njega lijevom palicom, okrećite se desnom. Gaussovi splatovi koriste eksperimentalni API iz Meta Spatial SDK, koji Meta ne podržava niti za njega daje garanciju: za svaki nedostatak odgovoran je samo Immuch360. Uputstva: [Istražite Gaussove splatove u Meta Questu 3 ili 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Meta Quest za vaše posjetioce (eksperimentalno)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Ilustracija, ne snimak ekrana: u maloj izložbenoj sali posjetilac viđen s leđa sjedi sa slušalicama na kojima radi Immuch360 u načinu kioska, dok dvoje drugih čeka svoj red">
+</p>
+
+**Potrebno vam je:** Meta Quest s Immuch360, i 360° fotografija ili video u slušalicama, na vašem NAS-u ili na vašem Immich serveru.
+
+U načinu kioska slušalice same otvaraju vašu 360° fotografiju ili video, od početka, svaki put kad ih posjetilac stavi, a film se završava karticom s vašim tekstom. Posjetioci ništa ne pritišću; vi držite B ili Y jednu sekundu da izađete. Uputstva: [Način kioska, za izložbu ili trgovinu](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ AI funkcije pokreću modele i engine koje su napravili drugi, preuzete samo kada
 
 360° LoRA od nomadoor je pod Apache 2.0 na svojoj kartici i trenirana je na CC0 slikama i slikama u javnom vlasništvu, s dijelom pod CC BY: atribucija tog dijela dolazi u kasnijoj verziji MODEL-LICENSES.md. Ništa ovdje nije pod nekomercijalnom licencom, i ništa ne treba CUDA. ONNX Runtime i LiteRT imaju ugrađene druge biblioteke, navedene u njihovim obavještenjima, među njima Eigen pod MPL 2.0, licencom slabog copylefta.
 
-Snimci ekrana na ovoj stranici su stvarni snimci aplikacije: oni s telefona na Android buildu u emulatoru, oni s Android TV-a na Google TV emulatoru, oni za LG i Samsung u web pregledniku koji zamjenjuje televizor, oni za Windows na Windows 11 računaru, a prozor Meta Questa u Questu 3, svi s CC0 panoramama sa [Poly Haven](https://polyhaven.com); imerzivni snimci slušalica napravljeni su na Questu 3 s autorovim vlastitim sadržajem, a onaj s iPada u iPad simulatoru, s CC0 Poly Haven panoramom. Slike AI kreatora su stvarni rezultati aplikacije, napravljeni iz CC0 fotografija sa Poly Haven, uz dva stvarna snimka ekrana Windows aplikacije. Početna slika i slike televizora, prijave, okretanja, kamera i drona su ilustracije napravljene za projekat: ne prikazuju nijedan ekran aplikacije, nijedan logo druge kompanije i nijedno lice. Svaka slika, s izvorom, datumom i licencom, navedena je u [CAPTURES.md](../.github/readme/CAPTURES.md).
+Snimci ekrana na ovoj stranici su stvarni snimci aplikacije: oni s telefona na Android buildu u emulatoru, oni s Android TV-a na Google TV emulatoru, oni za LG i Samsung u web pregledniku koji zamjenjuje televizor, oni za Windows na Windows 11 računaru, a prozor Meta Questa u Questu 3, svi s CC0 panoramama sa [Poly Haven](https://polyhaven.com); imerzivni snimci slušalica napravljeni su na Questu 3 s autorovim vlastitim sadržajem, a onaj s iPada u iPad simulatoru, s CC0 Poly Haven panoramom. Slike AI kreatora su stvarni rezultati aplikacije, napravljeni iz CC0 fotografija sa Poly Haven, uz dva stvarna snimka ekrana Windows aplikacije. Početna slika i slike televizora, prijave, okretanja, kamera i drona su ilustracije napravljene za projekat: ne prikazuju nijedan ekran aplikacije, nijedan logo druge kompanije i nijedno lice. Kartice slučajeva upotrebe postavljaju takvu ilustraciju iznad reda nacrtanog za projekat, s logotipima platformi, ikonom aplikacije i, na dvije kartice, stvarnim snimcima ekrana aplikacije; osim logotipa platformi, ne prikazuju nijedan logo druge kompanije i nijedno lice. Svaka slika, s izvorom, datumom i licencom, navedena je u [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plan razvoja

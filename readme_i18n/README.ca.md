@@ -20,7 +20,7 @@ Fotos i vídeos plans, 360° i 3D del teu dispositiu, el teu NAS, el teu servido
 <summary><b>Contingut</b></summary>
 
 - [Per a qui és](#who-it-is-for)
-- [Quines pantalles](#which-screens), i [què fa cada pantalla](#what-each-screen-does)
+- [Quines pantalles](#which-screens), [què fan juntes](#use-cases) i [què fa cada pantalla](#what-each-screen-does)
 - [Què pots fer](#what-you-can-do)
 - [Instal·la-la al teu dispositiu](#get-it-on-your-device)
 - [Com fer-ho](#how-to)
@@ -60,6 +60,7 @@ Fotos i vídeos plans, 360° i 3D del teu dispositiu, el teu NAS, el teu servido
 - **Fas servir Immich** i en vols l'aplicació, més els visualitzadors immersius i les pantalles grans on inicies la sessió des del telèfon: [la teva biblioteca Immich](#keep-your-immich-library-with-more), [comparat amb Immich](#compared-with-immich).
 - **Vigiles casa teva amb càmeres Tapo** i les vols al costat de les teves fotos, també al televisor (comprovat amb una càmera simulada): [càmeres de casa](#watch-your-home-cameras-on-the-big-screen).
 - **Fas volar un dron DJI** i en vols la imatge en directe al telèfon sense DJI Fly, i en una Meta Quest o en un Android TV per a la gent que t'acompanya (experimental): [el teu dron](#see-what-your-drone-sees-on-your-phone).
+- **Tens diverses pantalles a casa** i vols que funcionin juntes: [què fan juntes les teves pantalles](#use-cases).
 
 No cal crear cap compte d'Immuch360, i res no ens arriba: l'aplicació només parla amb els teus dispositius i amb els servidors que tries, i només descarrega un component d'IA quan tu ho demanes.
 
@@ -86,6 +87,111 @@ No cal crear cap compte d'Immuch360, i res no ens arriba: l'aplicació només pa
 <p align="center">
   <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Set captures reals d'Immuch360 en dues files: el visualitzador d'esfera en un telèfon Android, una foto 360° en un iPad, una foto 360° en un Google TV i en un televisor LG, i després la cronologia de fotos en un televisor Samsung, la finestra de l'aplicació en una Meta Quest 3 i el reproductor de vídeo a Windows. Les captures d'LG i Samsung es van fer en un navegador que fa de televisor">
 </p>
+
+<a id="use-cases"></a>
+### Què fan juntes les teves pantalles
+
+Instal·la Immuch360 a cada pantalla on mires: cadascuna llegeix les teves fonts per si mateixa, i algunes passen una imatge, un fitxer o un inici de sessió a una altra. A cada imatge, la icona d'Immuch360 marca els dispositius que executen l'aplicació.
+
+#### El teu NAS a cada pantalla
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-01-nas.jpg" width="720" alt="Il·lustració amb captures reals de l'aplicació: un NAS en un prestatge d'una sala d'estar al capvespre, connectat a un telèfon, una tauleta, un televisor, unes ulleres i un portàtil; el NAS alimenta totes les pantalles, i cadascuna executa Immuch360">
+</p>
+
+**El que necessites:** un NAS amb una carpeta compartida SMB o WebDAV, i Immuch360 a cada pantalla on mires.
+
+Afegeix la carpeta compartida a cada pantalla, i cadascuna reprodueix les fotos i els vídeos allà on són, sense copiar res: telèfons, tauletes, Android TV, unes Meta Quest, ordinadors Windows, Linux i macOS, i televisors LG amb la sessió iniciada al teu servidor Immich. Una foto 360° gira com una esfera al telèfon i al televisor, i t'envolta a les ulleres. Com fer-ho: [Reprodueix els fitxers d'un NAS, un ordinador, un servidor multimèdia o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### El teu servidor Immich a cada pantalla, amb la sessió iniciada des del telèfon
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-02-immich.jpg" width="720" alt="Il·lustració, no una captura: un servidor domèstic connectat a un telèfon que sosté una mà, un televisor, unes ulleres i un portàtil, cadascun amb Immuch360; una línia discontínua mostra el telèfon Android iniciant la sessió dels altres tres">
+</p>
+
+**El que necessites:** un servidor Immich, Immuch360 al teu telèfon Android, i Immuch360 a les pantalles on inicies la sessió: Android TV, unes Meta Quest, un ordinador Windows, Linux o macOS.
+
+Al telèfon, Immuch360 conserva tota l'aplicació mòbil d'Immich, hi afegeix els seus visors 360°, VR180 i 3D, i s'instal·la al costat de l'aplicació oficial. Amb la sessió iniciada al teu servidor, inicia la sessió de les pantalles grans: escaneja el codi QR del televisor o de l'ordinador, o hi escrius el codi que mostren les ulleres, i la teva contrasenya es queda al telèfon. Com fer-ho: [Inicia la sessió en un televisor, unes ulleres o un ordinador amb el telèfon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
+#### Les teves fotos planes en 3D, de l'ordinador a les ulleres (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="Il·lustració amb una captura real de l'aplicació: un portàtil amb Immuch360 al costat de fotos impreses i un NAS, i una persona vista d'esquena amb unes ulleres que executen Immuch360, davant d'un d'aquells paisatges en relleu">
+</p>
+
+**El que necessites:** Immuch360 en un ordinador Windows, Linux o macOS i en unes Meta Quest, amb el teu NAS o el teu servidor Immich entre ells.
+
+El mateix ordinador converteix les teves fotos en fotos 3D i escenes 3D, i en panoràmiques 360° amb una targeta gràfica de 8 GB a Windows o Linux, i les desa al costat dels originals. Les ulleres mostren una foto 3D en 3D real, posen una escena a la teva habitació i una panoràmica al teu voltant; els telèfons i els televisors obren les panoràmiques al seu visor 360°. Com fer-ho: [Converteix una foto en 3D, una escena, una panoràmica](#turn-one-photo-into-3d-a-scene-a-panorama).
+
+#### La imatge en directe del teu dron a les ulleres o al televisor (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="Il·lustració, no una captura: en una terrassa al capvespre, un pilot vist d'esquena fa volar un dron amb un telèfon al comandament; el telèfon retransmet la imatge en directe, en un sol sentit, a unes ulleres i un televisor">
+</p>
+
+**El que necessites:** un dron DJI i el seu comandament DJI RC-N3, Immuch360 al telèfon Android connectat al comandament, i Immuch360 en unes Meta Quest o en un Android TV.
+
+El telèfon mostra el vídeo en directe del dron i el retransmet, per la teva Wi-Fi o pel seu propi punt d'accés, perquè la gent que t'acompanya miri el vol a les ulleres o al televisor. Només recepció: mai no s'envia cap ordre al comandament ni al dron, i el comandament en manté el control total. Com fer-ho: [Mira-ho en una Meta Quest o en un Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv).
+
+#### Els fitxers en brut de la teva càmera 360°, units allà on els mires
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-05-raw360.jpg" width="720" alt="Il·lustració, no una captura: una càmera 360°, la seva targeta de memòria i un NAS sobre una taula de terrassa; els fitxers van al NAS i després a una tauleta, un televisor i unes ulleres amb Immuch360, que els uneixen">
+</p>
+
+**El que necessites:** una càmera Insta360, GoPro MAX o DJI Osmo 360, el teu NAS, i Immuch360 a les pantalles: telèfons, tauletes, Android TV, unes Meta Quest, Windows.
+
+Copia els fitxers en brut de la targeta de la càmera a una carpeta compartida SMB o WebDAV del teu NAS, tal com són; un servidor Immich també accepta els d'Insta360. Cada pantalla els uneix mentre els reprodueix, amb el calibratge escrit a cada fitxer, i no cal exportar res abans a l'aplicació de la càmera. Com fer-ho: [Obre els fitxers en brut de les càmeres 360°](#open-the-raw-files-of-360-cameras).
+
+#### Els teus servidors Plex i DLNA al televisor i a les ulleres
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-06-plex.jpg" width="720" alt="Il·lustració, no una captura: un servidor multimèdia sota el televisor d'un cinema a casa, connectat al televisor, a unes ulleres posades al sofà, a un telèfon i a un portàtil, cadascun amb Immuch360">
+</p>
+
+**El que necessites:** un Plex Media Server o un servidor DLNA com Jellyfin, Emby o minidlna, i Immuch360 a cada pantalla: Android TV, unes Meta Quest, telèfons, tauletes, Windows.
+
+Plex dona els fitxers originals de les teves biblioteques, de manera que un vídeo 360° continua sent 360°, al teu voltant a les ulleres, a casa i, fora de casa, a través de la teva redirecció de ports; els servidors DLNA es troben a la teva xarxa domèstica. Els televisors LG amb la sessió iniciada al teu servidor Immich també els reprodueixen. Com fer-ho: [Reprodueix els fitxers d'un NAS, un ordinador, un servidor multimèdia o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+
+#### El teu telèfon o el teu ordinador Windows, obert a les ulleres
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-07-share.jpg" width="720" alt="Il·lustració, no una captura: una persona vista d'esquena porta unes ulleres en un sofà, amb una foto 360° al seu voltant; un telèfon i un portàtil amb Immuch360 hi comparteixen les seves fotos per la Wi-Fi">
+</p>
+
+**El que necessites:** Immuch360 en un telèfon Android, un iPhone o un ordinador Windows, i en unes Meta Quest, a la mateixa Wi-Fi de casa.
+
+Activa "Comparteix aquest telèfon a la xarxa" al telèfon, o "Comparteix aquest ordinador a la xarxa" a l'ordinador, i les ulleres en reprodueixen les fotos i els vídeos, els 360° al teu voltant: sense servidor, sense NAS, sense pujar res. En un iPhone, la compartició funciona mentre l'aplicació és oberta. Com fer-ho: [Comparteix aquest telèfon a la xarxa](../docs/immuch360/user-guide.md#share-this-phone-on-the-network).
+
+#### Les teves càmeres Tapo al televisor i a les ulleres
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-08-tapo.jpg" width="720" alt="Il·lustració, no una captura: una càmera domèstica a la finestra filma el jardí, i un televisor, un telèfon, unes ulleres posades al sofà i un portàtil, cadascun amb Immuch360, mostren aquella mateixa imatge">
+</p>
+
+**El que necessites:** càmeres Tapo a la teva xarxa domèstica, i Immuch360 en un telèfon Android, un Android TV, unes Meta Quest o un ordinador Windows.
+
+Cada pantalla mostra una càmera en directe i reprodueix les gravacions de la seva targeta de memòria dia a dia, al costat de les teves fotos, i el telèfon envia un clip al teu servidor Immich. L'aplicació parla amb les càmeres només a la teva xarxa, mai a través dels servidors de TP-Link. Comprovat amb una càmera simulada. Com fer-ho: [Mira les càmeres de casa a la pantalla gran](#watch-your-home-cameras-on-the-big-screen).
+
+#### Splats gaussians a la teva habitació, amb unes Meta Quest 3 o 3S (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="Il·lustració, no una captura: en una sala d'estar, una persona vista d'esquena amb unes ulleres que executen Immuch360 és davant d'una font a mida real capturada com a splat amb una altra aplicació i oberta des d'un NAS">
+</p>
+
+**El que necessites:** un splat fet amb Polycam, Scaniverse, Luma o una altra eina, com a fitxer .spz o .ply al teu NAS o a les ulleres, i Immuch360 en unes Meta Quest 3 o 3S.
+
+Les ulleres col·loquen el lloc o l'objecte a la seva mida, davant teu o al teu voltant: camina-hi al voltant, llisca-hi a través amb el joystick esquerre, gira amb el dret. Els splats gaussians fan servir una API experimental del Meta Spatial SDK, que Meta no admet ni garanteix: qualsevol defecte és responsabilitat exclusiva d'Immuch360. Com fer-ho: [Explora splats gaussians amb unes Meta Quest 3 o 3S](#explore-gaussian-splats-in-a-meta-quest-3-or-3s).
+
+#### Unes Meta Quest per als teus visitants (experimental)
+
+<p align="center">
+  <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="Il·lustració, no una captura: en una sala d'exposició petita, un visitant vist d'esquena seu amb unes ulleres que executen Immuch360 en mode quiosc mentre dos més esperen el seu torn">
+</p>
+
+**El que necessites:** unes Meta Quest amb Immuch360, i una foto o un vídeo 360° a les ulleres, al teu NAS o al teu servidor Immich.
+
+En mode quiosc, les ulleres obren soles la teva foto o el teu vídeo 360°, des del principi, cada vegada que un visitant se les posa, i una pel·lícula acaba en una targeta amb el teu text. Els visitants no premen res; tu mantens premut B o Y durant un segon per sortir. Com fer-ho: [Mode quiosc, per a una exposició o una botiga](#kiosk-mode-for-an-exhibition-or-a-shop).
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
@@ -792,7 +898,7 @@ Les funcions d'IA executen models i motors fets per altres, descarregats només 
 
 La LoRA 360° de nomadoor és Apache 2.0 segons la seva fitxa i es va entrenar amb imatges CC0 i de domini públic, amb una part sota CC BY: l'atribució d'aquesta part arribarà en una versió posterior de MODEL-LICENSES.md. Res d'això no està sota una llicència no comercial, i res no necessita CUDA. ONNX Runtime i LiteRT porten altres biblioteques incorporades, llistades als seus avisos, entre elles Eigen sota la MPL 2.0, una llicència de copyleft feble.
 
-Les captures d'aquesta pàgina són captures reals de l'aplicació: les del telèfon amb la compilació Android en un emulador, les d'Android TV a l'emulador de Google TV, les d'LG i Samsung en un navegador que fa de televisor, les de Windows en un PC amb Windows 11 i la finestra de la Meta Quest en una Quest 3, totes amb panoràmiques CC0 de [Poly Haven](https://polyhaven.com); les captures immersives de les ulleres es van fer en una Quest 3 amb contingut propi de l'autor, i la de l'iPad al simulador d'iPad, amb una panoràmica CC0 de Poly Haven. Les imatges del creador d'IA són resultats reals de l'aplicació, fets a partir de fotos CC0 de Poly Haven, amb dues captures reals de l'aplicació de Windows. La imatge d'obertura i les imatges del televisor, l'inici de sessió, el gir, les càmeres i el dron són il·lustracions fetes per al projecte: no mostren cap pantalla de l'aplicació, cap logotip d'una altra empresa ni cap cara. Cada imatge, amb el seu origen, data i llicència, és a [CAPTURES.md](../.github/readme/CAPTURES.md).
+Les captures d'aquesta pàgina són captures reals de l'aplicació: les del telèfon amb la compilació Android en un emulador, les d'Android TV a l'emulador de Google TV, les d'LG i Samsung en un navegador que fa de televisor, les de Windows en un PC amb Windows 11 i la finestra de la Meta Quest en una Quest 3, totes amb panoràmiques CC0 de [Poly Haven](https://polyhaven.com); les captures immersives de les ulleres es van fer en una Quest 3 amb contingut propi de l'autor, i la de l'iPad al simulador d'iPad, amb una panoràmica CC0 de Poly Haven. Les imatges del creador d'IA són resultats reals de l'aplicació, fets a partir de fotos CC0 de Poly Haven, amb dues captures reals de l'aplicació de Windows. La imatge d'obertura i les imatges del televisor, l'inici de sessió, el gir, les càmeres i el dron són il·lustracions fetes per al projecte: no mostren cap pantalla de l'aplicació, cap logotip d'una altra empresa ni cap cara. Les targetes de casos d'ús col·loquen una il·lustració d'aquest tipus damunt d'una franja dibuixada per al projecte, amb els logotips de les plataformes, la icona de l'aplicació i, en dues targetes, captures reals de l'aplicació; a part dels logotips de les plataformes, no mostren cap logotip d'una altra empresa ni cap cara. Cada imatge, amb el seu origen, data i llicència, és a [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Full de ruta
