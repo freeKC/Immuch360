@@ -222,14 +222,17 @@ void main() {
       ).writeTo(Directory(path('dataset/sparse/0')));
     }
 
+    /// Brush run in the work folder [workIn] (under the folder of the test), where it keeps its autotune cache
     ProcessResult brush(
       List<String> arguments, {
       String mode = 'ok',
       String rustLog = _rustLog,
       Map<String, String> environment = const {},
+      String workIn = 'work',
     }) => Process.runSync(
       _brush!,
       [path('dataset'), ...arguments],
+      workingDirectory: (Directory(path(workIn))..createSync(recursive: true)).path,
       environment: {
         'IMMUCH360_FAKE_BRUSH_MODE': mode,
         'IMMUCH360_FAKE_BRUSH_STEP_MS': '0',
@@ -237,6 +240,15 @@ void main() {
         ...environment,
       },
     );
+
+    /// The folder of the autotune cache of cubecl 0.7.0 under the work folder [workIn], as Brush 0.3.0 writes it
+    /// (target\autotune\0.7.0\device-4-0-wgpu_wgsl_, lot SP2): the same key for every card
+    Directory autotuneIn(String workIn) =>
+        Directory(p.join(path(workIn), 'target', 'autotune', '0.7.0', 'device-4-0-wgpu_wgsl_'));
+
+    const discrete = {'CUBECL_WGPU_DEFAULT_DEVICE': 'DiscreteGpu(0)'};
+    const integrated = {'CUBECL_WGPU_DEFAULT_DEVICE': 'IntegratedGpu(0)'};
+    final aborted = Platform.isWindows ? -1073740791 : -ProcessSignal.sigabrt.signalNumber;
 
     const train = [
       '--total-steps',
@@ -253,10 +265,7 @@ void main() {
 
     test('trains with the lines of the measure and exports in the alphabetical order of Brush 0.3.0', () {
       dataset(24);
-      final run = brush(
-        [...train, '--export-path', path('export')],
-        environment: {'CUBECL_WGPU_DEFAULT_DEVICE': 'DiscreteGpu(0)'},
-      );
+      final run = brush([...train, '--export-path', path('export')], environment: discrete);
 
       expect(run.exitCode, 0, reason: '${run.stderr}');
       final lines = LineSplitter.split('${run.stdout}').toList();
@@ -334,28 +343,94 @@ void main() {
       expect('${run.stderr}', contains("error: unexpected argument '--steps' found"));
     }, skip: _skipBrush);
 
+    test('the Intel graphics train in a work folder of their own, and keep their autotune cache there', () {
+      // SP2, 1 November 2026: with its own cache the Intel UHD trains (1 000 steps in 107 s, exit 0), some ten times
+      // slower than the RTX (fixture brush_igpu_fresh_cache_stdout.txt)
+      dataset(6);
+      final intel = brush([...train, '--export-path', path('export')], environment: integrated, workIn: 'igpu');
+
+      expect(intel.exitCode, 0, reason: '${intel.stderr}');
+      expect('${intel.stdout}', contains('device_type: IntegratedGpu'));
+      expect('${intel.stdout}', contains('Start training loop.'));
+      expect('${intel.stdout}', contains('Done training!'));
+      expect(File(path('export/export_2000.ply')).existsSync(), isTrue);
+      expect(autotuneIn('igpu').listSync(), isNotEmpty);
+      // Its own cache again: it trains again
+      expect(brush(train, environment: integrated, workIn: 'igpu').exitCode, 0);
+      // The RTX in a folder of its own trains as well, beside it
+      expect(brush(train, environment: discrete, workIn: 'rtx').exitCode, 0);
+      expect(autotuneIn('rtx').listSync(), isNotEmpty);
+    }, skip: _skipBrush);
+
+    test('the cache another card left in the same work folder ends in the panic of the measure', () {
+      // SP2 (sp2-igpu-stale-cache, 17h07): the cache the RTX left, its kernels picked for the RTX, makes the Intel UHD
+      // panic at its first kernel, before "Start training loop." (fixtures brush_igpu_plane_failure_*.txt)
+      dataset(6);
+      expect(brush(train, environment: discrete, workIn: 'shared').exitCode, 0);
+      final intel = brush(train, environment: integrated, workIn: 'shared');
+
+      expect(intel.exitCode, aborted);
+      expect('${intel.stdout}', contains('device_type: IntegratedGpu'));
+      expect(LineSplitter.split('${intel.stdout}').last, endsWith('brush_cli] Completed loading.'));
+      expect('${intel.stdout}', isNot(contains('Start training loop.')));
+      expect('${intel.stderr}', contains("thread 'main' panicked at "));
+      expect(
+        '${intel.stderr}',
+        contains(
+          'Trying to launch a kernel using plane instructions, but the min and max plane dimensions are different.',
+        ),
+      );
+      // A work folder of its own, and the same Intel trains
+      expect(brush(train, environment: integrated, workIn: 'igpu').exitCode, 0);
+      // The planes mode panics whatever the cache, on any card
+      expect(brush(train, mode: 'planes', environment: discrete, workIn: 'rtx').exitCode, aborted);
+    }, skip: _skipBrush);
+
     test(
-      'the Intel graphics of the measure stop at the first kernel, a short memory and a dataset it cannot read fail',
-      () {
+      'after its panic it may stay a while, as Windows Error Reporting held it 80 s: the runner kills it on the line',
+      () async {
         dataset(6);
-        final intel = brush(train, environment: {'CUBECL_WGPU_DEFAULT_DEVICE': 'IntegratedGpu(0)'});
-        expect('${intel.stdout}', contains('device_type: IntegratedGpu'));
-        expect('${intel.stderr}', contains('Trying to launch a kernel using plane instructions'));
-        expect(intel.exitCode, Platform.isWindows ? -1073740791 : -ProcessSignal.sigabrt.signalNumber);
-        expect(brush(train, mode: 'planes').exitCode, intel.exitCode);
-
-        final oom = brush(train, mode: 'oom');
-        expect(oom.exitCode, 101);
-        expect('${oom.stderr}', contains('ErrorOutOfDeviceMemory'));
-        expect('${oom.stderr}', contains('failed to reserve'));
-
-        final failed = brush(train, mode: 'fail', environment: {'IMMUCH360_FAKE_BRUSH_PID': path('brush.pid')});
-        expect(failed.exitCode, 1);
-        expect('${failed.stderr}', contains('Failed to load dataset'));
-        expect(int.parse(File(path('brush.pid')).readAsStringSync()), greaterThan(0));
+        final stopwatch = Stopwatch()..start();
+        final held = await Process.start(
+          _brush!,
+          [path('dataset'), ...train],
+          workingDirectory: (Directory(path('held'))..createSync()).path,
+          environment: {
+            'IMMUCH360_FAKE_BRUSH_MODE': 'planes',
+            'IMMUCH360_FAKE_BRUSH_PANIC_HOLD_MS': '60000',
+            'RUST_LOG': _rustLog,
+          },
+        );
+        unawaited(held.stdout.drain<void>());
+        final panicked = Completer<void>();
+        held.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen((line) {
+          if (line.contains('panicked at') && !panicked.isCompleted) {
+            panicked.complete();
+          }
+        });
+        await panicked.future.timeout(const Duration(seconds: 30));
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        expect(await held.exitCode.timeout(Duration.zero, onTimeout: () => 999), 999, reason: 'still held');
+        held.kill(ProcessSignal.sigkill);
+        await held.exitCode;
+        expect(stopwatch.elapsed, lessThan(const Duration(seconds: 30)));
       },
       skip: _skipBrush,
+      timeout: const Timeout(Duration(minutes: 1)),
     );
+
+    test('a short memory and a dataset it cannot read fail', () {
+      dataset(6);
+      final oom = brush(train, mode: 'oom');
+      expect(oom.exitCode, 101);
+      expect('${oom.stderr}', contains('ErrorOutOfDeviceMemory'));
+      expect('${oom.stderr}', contains('failed to reserve'));
+
+      final failed = brush(train, mode: 'fail', environment: {'IMMUCH360_FAKE_BRUSH_PID': path('brush.pid')});
+      expect(failed.exitCode, 1);
+      expect('${failed.stderr}', contains('Failed to load dataset'));
+      expect(int.parse(File(path('brush.pid')).readAsStringSync()), greaterThan(0));
+    }, skip: _skipBrush);
 
     test(
       'silent until killed',
@@ -364,6 +439,7 @@ void main() {
         final silent = await Process.start(
           _brush!,
           [path('dataset'), ...train],
+          workingDirectory: folder.path,
           environment: {'IMMUCH360_FAKE_BRUSH_MODE': 'silent', 'RUST_LOG': _rustLog},
         );
         final out = silent.stdout.transform(utf8.decoder).join();

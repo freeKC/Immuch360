@@ -2,7 +2,17 @@
 // compile exe` (the test and windows jobs of the desktop workflow, or by hand) and given to the tests by
 // IMMUCH360_FAKE_BRUSH, so that the runner of the splat scenes (lot SP4) and the launcher (managed_process.dart) are
 // tested against a real child process, with no graphics card: no runner of the CI has one, and Brush 0.3.0 stops at its
-// first kernel on lavapipe and on the Intel UHD (measure of 1 November 2026, section 7).
+// first kernel on lavapipe (measure of 1 November 2026, section 7).
+//
+// The autotune cache of cubecl: Brush keeps the kernels it picked for a card in target/autotune/0.7.0/
+// device-4-0-wgpu_wgsl_/ under its working folder, under the key of the default device, the same for every card (lot
+// SP2, 1 November 2026, 17h07 to 17h14). With a cache of its own the Intel UHD trains, some ten times slower than the
+// RTX; with the cache the RTX left in the same folder it panics at its first kernel ("plane instructions"), as the
+// measure of the morning did. So does this fake: it writes its cache under its working folder, naming the card, and
+// panics when it finds there the cache of another card (that a card panics on the cache of any other is not measured:
+// only the Intel on the cache of the RTX was). The runner (lot SP4) gives each card a work folder of its own; the
+// outputs of the real Brush on the Intel UHD, trained and failing, are the fixtures brush_igpu_fresh_cache_stdout.txt
+// and brush_igpu_plane_failure_*.txt of lot SP2 (test/fixtures/ai_immersive).
 //
 // It takes the options of the help of brush_app 0.3.0 (read by lot SP2 from the official binary) and, as clap does,
 // refuses any other with exit code 2. Its lines are those the measure logged with RUST_LOG naming brush_cli,
@@ -11,16 +21,18 @@
 // sparse/0) and writes at each multiple of --export-every, in --export-path, the export named by --export-name
 // ("export_{iter}.ply"): a PLY of gaussians on the points of sparse/0, its properties in the alphabetical order of Brush
 // 0.3.0, after its comments "Exported from Brush", "Vertical axis: y", "SH degree: 3". The card it says it uses
-// ("Using adapter AdapterInfo { name: ..., device_type: DiscreteGpu ... }") follows CUBECL_WGPU_DEFAULT_DEVICE: an
-// IntegratedGpu(n) is the Intel graphics of the measure, which then stops at its first kernel. IMMUCH360_FAKE_BRUSH_MODE
-// says how it goes:
+// ("Using adapter AdapterInfo { name: ..., device_type: DiscreteGpu ... }", the lines measured for the RTX 4060 Laptop
+// in logs/b4-2k.out and for the Intel UHD by SP2) follows CUBECL_WGPU_DEFAULT_DEVICE: an IntegratedGpu(n) is the Intel
+// graphics of the measure, which trains ten times slower. IMMUCH360_FAKE_BRUSH_MODE says how it goes:
 //   ok        the steps, then the export (the default)
 //   slow      as ok, half a second between two lines of progress (IMMUCH360_FAKE_BRUSH_STEP_MS sets it otherwise,
-//             1 ms); a line every 200 steps, as the real one
+//             1 ms, ten times more on an integrated card); a line every 200 steps, as the real one
 //   silent    the lines up to the training, then nothing until killed
-//   planes    the panic of the measure on the Intel UHD ("Trying to launch a kernel using plane instructions, but the
-//             min and max plane dimensions are different."), whatever the card, then the exit code it had there
-//             (0xC0000409 on Windows, SIGABRT elsewhere)
+//   planes    the panic of the Intel UHD on the cache of the RTX ("Trying to launch a kernel using plane instructions,
+//             but the min and max plane dimensions are different."), whatever the card and its cache, then the exit
+//             code it had there (0xC0000409 on Windows, SIGABRT elsewhere); after a panic it stays
+//             IMMUCH360_FAKE_BRUSH_PANIC_HOLD_MS before it ends (0 by default; Windows Error Reporting held the real
+//             one 80 s, so the runner kills it on the line "panicked at")
 //   oom       a panic whose words carry those Brush issues 500 and 551 report for a memory of the card too short
 //             ("failed to reserve", "ErrorOutOfDeviceMemory"; not seen on this PC), exit code 101
 //   fail      an error before the training (a dataset it cannot read), exit code 1
@@ -35,6 +47,7 @@
 // Pure Dart, with no Flutter: compiled outside of any test.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -143,11 +156,13 @@ Future<void> main(List<String> arguments) async {
 
   final device = Platform.environment['CUBECL_WGPU_DEFAULT_DEVICE'] ?? '';
   final integrated = device.startsWith('IntegratedGpu');
+  final card = integrated ? 'Intel(R) RaptorLake-S Mobile Graphics Controller' : 'NVIDIA GeForce RTX 4060 Laptop GPU';
   final adapter = integrated
-      ? 'AdapterInfo { name: "Intel(R) RaptorLake-S Mobile Graphics Controller", vendor: 32902, device: 42888, '
-            'device_type: IntegratedGpu, driver: "Intel Corporation", driver_info: "101.7088", backend: Vulkan }'
-      : 'AdapterInfo { name: "NVIDIA GeForce RTX 4060 Laptop GPU", vendor: 4318, device: 10400, device_type: '
-            'DiscreteGpu, driver: "NVIDIA", driver_info: "616.56", backend: Vulkan }';
+      ? 'AdapterInfo { name: "$card", vendor: 32902, device: 42888, device_type: IntegratedGpu, driver: "Intel '
+            'Corporation", driver_info: "101.7088", backend: Vulkan }'
+      : 'AdapterInfo { name: "$card", vendor: 4318, device: 10400, device_type: DiscreteGpu, driver: "NVIDIA", '
+            'driver_info: "616.56", backend: Vulkan }';
+  final pace = integrated ? stepMs * 10 : stepMs;
   _log('cubecl_wgpu::runtime', 'Using adapter $adapter');
   _log('brush_cli', 'Starting up');
   _log('brush_process::process', 'Starting process with source Path("${source ?? ''}")');
@@ -169,20 +184,28 @@ Future<void> main(List<String> arguments) async {
   _log('brush_cli', 'Loaded dataset with ${views - evalViews} training, $evalViews eval views');
   _log('brush_process::train_stream', 'Loading initial splats if any.');
   _log('brush_cli', 'Completed loading.');
-  _log('brush_process::train_stream', 'Start training loop.');
-  await _flush();
   if (mode == 'silent') {
+    _log('brush_process::train_stream', 'Start training loop.');
+    await _flush();
     await Future<void>.delayed(const Duration(hours: 1));
     return;
   }
-  if (mode == 'planes' || integrated) {
+  // The first kernel: picked by the autotune cache of the working folder, or tuned for this card and kept there
+  if (mode == 'planes' || !_autotune(card)) {
     stderr.write(
       "\nthread 'main' panicked at C:\\Users\\runneradmin\\.cargo\\git\\checkouts\\cubecl-01990d4f7f2c358d\\43580a8\\"
       'crates\\cubecl-runtime\\src\\tune\\local.rs:180:30:\nShould run when selected by autotune.: Unknown("Trying to '
       'launch a kernel using plane instructions, but the min and max plane dimensions are different.")\n'
-      'note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n',
+      'note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n'
+      "\nthread 'main' panicked at C:\\Users\\runneradmin\\.cargo\\git\\checkouts\\burn-6c277d792b0d5d7a\\dd2a029\\"
+      'crates\\burn-fusion\\src\\stream\\execution\\ordering.rs:67:38:\nindex out of bounds: the len is 0 but the index '
+      'is 0\n',
     );
     await _flush();
+    final hold = int.tryParse(Platform.environment['IMMUCH360_FAKE_BRUSH_PANIC_HOLD_MS'] ?? '') ?? 0;
+    if (hold > 0) {
+      await Future<void>.delayed(Duration(milliseconds: hold));
+    }
     if (Platform.isWindows) {
       exit(-1073740791);
     }
@@ -190,6 +213,8 @@ Future<void> main(List<String> arguments) async {
     await Future<void>.delayed(const Duration(hours: 1));
     return;
   }
+  _log('brush_process::train_stream', 'Start training loop.');
+  await _flush();
   if (model == null) {
     return;
   }
@@ -210,8 +235,8 @@ Future<void> main(List<String> arguments) async {
         exit(101);
       }
       await stdout.flush();
-      if (stepMs > 0) {
-        await Future<void>.delayed(Duration(milliseconds: stepMs));
+      if (pace > 0) {
+        await Future<void>.delayed(Duration(milliseconds: pace));
       }
     }
     if (evalViews > 0 && iter % evalEvery == 0) {
@@ -225,6 +250,36 @@ Future<void> main(List<String> arguments) async {
   final seconds = DateTime.now().difference(started).inSeconds;
   _log('brush_cli', 'Done training! Took FormattedDuration(${seconds}s).');
   await _flush();
+}
+
+/// The autotune cache of cubecl 0.7.0 under the working folder, under the key of the default device whatever the card
+/// (lot SP2): what Brush 0.3.0 keeps of the kernels it picked
+final _autotuneFolder = Directory(
+  [Directory.current.path, 'target', 'autotune', '0.7.0', 'device-4-0-wgpu_wgsl_'].join(Platform.pathSeparator),
+);
+
+/// The file of the cache this fake writes, a line per card that tuned its kernels there (the real files hold the
+/// kernels picked, which name no card)
+const _autotuneFile = 'burn_cubecl_fusion-reduce-tune.json.log';
+
+/// Whether the kernels in the cache of the working folder are those of [card]: none yet, they are tuned for it and
+/// kept; those of another card, false (the first kernel then panics)
+bool _autotune(String card) {
+  final file = File('${_autotuneFolder.path}${Platform.pathSeparator}$_autotuneFile');
+  final cards = file.existsSync()
+      ? {
+          for (final line in file.readAsLinesSync())
+            if (line.trim().isNotEmpty) (jsonDecode(line) as Map<String, dynamic>)['fake_immuch360_card'],
+        }
+      : const <Object?>{};
+  if (cards.any((other) => other != card)) {
+    return false;
+  }
+  if (cards.isEmpty) {
+    _autotuneFolder.createSync(recursive: true);
+    file.writeAsStringSync('${jsonEncode({'fake_immuch360_card': card})}\n');
+  }
+  return true;
 }
 
 /// A line of env_logger, written when RUST_LOG asks for its target at the level info
