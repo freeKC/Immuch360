@@ -13,14 +13,17 @@ by this script from the public descriptions of the formats, never by the code un
   after the other for all points: positions (float16 in version 1, 24 bit fixed point after), alphas (1 byte),
   colours (3 bytes), scales (3 bytes, log encoded), rotations (3 bytes in versions 1 and 2, 4 bytes "smallest three"
   from version 3) and the spherical harmonics (3 bytes for each coefficient past the first). Version 4 has a 32 byte
-  clear header, a table of contents and one ZSTD stream per attribute.
+  clear header, a table of contents (the compressed and the decompressed size of each stream, 8 bytes each) and one
+  ZSTD stream per attribute that is not empty, in the same order (README and src/cc/load-spz.cc of the repository at
+  affd0ec, read again on 1 November 2026: saveSpz writes no stream for an empty array, so degree 0 has 5 streams),
+  holding the arrays of version 3; its degree of the harmonics goes up to 4 (24 coefficients, 72 bytes a point).
 * PLY of 3D Gaussian Splatting (Kerbl et al. 2023): binary little endian, one element vertex with x y z, f_dc_0 to 2,
   f_rest_* for the higher degrees, opacity (a logit), scale_0 to 2 (natural logarithms) and rot_0 to 3 (w first).
 
   make_splat_fixtures.py               writes mobile/test/fixtures/splat/ and its expected.json
   make_splat_fixtures.py --check       exit 1 when a fixture differs from what this script writes (for the ZSTD
-                                       file, its header and its decompressed streams: the compressed bytes depend on
-                                       the version of the zstandard module)
+                                       files, their header and their decompressed streams: the compressed bytes depend
+                                       on the version of the zstandard module)
   make_splat_fixtures.py --kit DIR     also writes the synthetic files of the owner's kit into DIR (larger: a room of
                                        60 000 gaussians in SPZ, one of 200 000 in PLY, the axes, the refusals)
 
@@ -39,6 +42,12 @@ The fixtures:
   long_header.ply            a splat whose header ends past 64 KiB: refused
   negative_count.ply         a splat whose header says element vertex -5: damaged, never a count
   bad_magic.spz, reserved.spz, newer.spz, truncated.spz   SPZ heads that are refused
+  axes_v4_niantic.spz        the axes in version 4 as Niantic's writer gives them: 5 streams, none for the empty
+                             harmonics (axes_v4.spz, the file of the owner's kit of 31 October, has an empty sixth)
+  turns_v4.spz               turns_v3.spz in version 4, its 6 streams (degree 1)
+  sh4_v4.spz, sh4_v2.spz     eight gaussians of degree 4 in version 4, and the same rewritten as version 2 by
+                             [as_v2]: degree 3, the first 15 coefficients of each point kept (the coefficient is the
+                             slow axis, the colour the fast one)
   turns_v3.spz, turns_v2.spz, axes_v1_v2.spz   the SPZ the splat module of the headset reads is version 2 only
       (measured on a Quest 3 on 31 October 2026: version 3 and 4 abort the process, version 1 loads but its points
       are not where they should be). turns_v3.spz holds 40 gaussians of degree 1 with rotations of every kind
@@ -322,14 +331,69 @@ def write_spz(gaussians, version: int, sh_degree: int = 0) -> bytes:
     return gzip.compress(payload, compresslevel=9, mtime=0)
 
 
-def write_spz_v4(gaussians, sh_degree: int = 0) -> bytes:
-    streams = spz_arrays(gaussians, 4, sh_degree)
+def write_spz_v4_arrays(arrays, count: int, sh_degree: int, keep_empty: bool = False) -> bytes:
+    """A version 4 file of the six [arrays] of version 3: one ZSTD stream for each, an empty one left out as Niantic's
+    saveSpz leaves it out, unless [keep_empty] (the file of the owner's kit of 31 October 2026 has one)"""
+    streams = [a for a in arrays if keep_empty or len(a) > 0]
     compressor = zstandard.ZstdCompressor(level=3, write_checksum=False, write_content_size=True)
     packed = [compressor.compress(s) for s in streams]
-    header = struct.pack("<IIIBBBBI", SPZ_MAGIC, 4, len(gaussians), sh_degree, FRACTIONAL_BITS, 0, len(streams), 32)
+    header = struct.pack("<IIIBBBBI", SPZ_MAGIC, 4, count, sh_degree, FRACTIONAL_BITS, 0, len(streams), 32)
     header += bytes(12)
     toc = b"".join(struct.pack("<QQ", len(p), len(s)) for p, s in zip(packed, streams))
     return header + toc + b"".join(packed)
+
+
+def write_spz_v4(gaussians, sh_degree: int = 0, keep_empty: bool = False) -> bytes:
+    return write_spz_v4_arrays(spz_arrays(gaussians, 4, sh_degree), len(gaussians), sh_degree, keep_empty)
+
+
+def arrays_of(raw: bytes) -> tuple:
+    """The header fields and the six arrays of the data of an SPZ of version 1 to 3 (its gzip stream inflated)"""
+    magic, version, count, sh_degree, fractional, flags, reserved = struct.unpack_from("<IIIBBBB", raw, 0)
+    assert magic == SPZ_MAGIC and version in (1, 2, 3) and reserved == 0
+    sizes = [count * (6 if version == 1 else 9), count, 3 * count, 3 * count, count * (4 if version >= 3 else 3),
+             count * sh_rest(sh_degree)]
+    parts = []
+    at = 16
+    for size in sizes:
+        parts.append(raw[at:at + size])
+        at += size
+    return (version, count, sh_degree, fractional, flags), parts
+
+
+def v4_from_v3(data: bytes) -> bytes:
+    """An SPZ of version 3 written as version 4, as Niantic's writer would: its arrays, one ZSTD stream each"""
+    (version, count, sh_degree, _, _), parts = arrays_of(gzip.decompress(data))
+    assert version == 3
+    return write_spz_v4_arrays(parts, count, sh_degree)
+
+
+def v4_payload(data: bytes) -> bytes:
+    """The data of a version 4 file as versions 1 to 3 hold it: a 16 byte header (version 4), then its arrays"""
+    magic, version, count, sh_degree, fractional, flags, streams, toc_at = struct.unpack_from("<IIIBBBBI", data, 0)
+    assert magic == SPZ_MAGIC and version == 4
+    sizes = [struct.unpack_from("<QQ", data, toc_at + 16 * k) for k in range(streams)]
+    at = toc_at + 16 * streams
+    decompressor = zstandard.ZstdDecompressor()
+    body = bytearray()
+    for packed, plain in sizes:
+        body += decompressor.decompress(data[at:at + packed], max_output_size=plain) if plain else b""
+        at += packed
+    assert at == len(data)
+    return spz_header(4, count, sh_degree, fractional, flags) + bytes(body)
+
+
+def sh4_v4(count: int = 8) -> bytes:
+    """Eight gaussians of degree 4 in version 4: 24 coefficients a point, each byte its own"""
+    gaussians = [Gaussian(k * 0.1, 0.05 * (k % 3), -0.02 * k, 0.5, 0.4, 0.3, 0.8, 0.01 + 0.002 * k) for k in range(count)]
+    arrays = spz_arrays(gaussians, 4, 0)
+    rest = sh_rest(4)
+    arrays[5] = bytes((i * rest + k) * 13 % 256 for i in range(count) for k in range(rest))
+    return write_spz_v4_arrays(arrays, count, 4)
+
+
+# The files written with ZSTD, whose compressed bytes depend on the version of the zstandard module
+V4_FILES = ("axes_v4.spz", "axes_v4_niantic.spz", "turns_v4.spz", "sh4_v4.spz")
 
 
 def v4_content(data: bytes) -> bytes:
@@ -428,20 +492,27 @@ def turns_v3(count: int = 40, sh_degree: int = 1) -> bytes:
 
 
 def as_v2(data: bytes) -> bytes:
-    """An SPZ of version 1 or 3 rewritten as version 2, the one the splat module of the headset reads, from the
+    """An SPZ of version 1, 3 or 4 rewritten as version 2, the one the splat module of the headset reads, from the
     public description of the format: the header with version 2 and the flag of extensions cleared, the positions of
-    version 1 as 24 bit fixed point, the rotations of version 3 as three bytes, everything else copied"""
-    raw = gzip.decompress(data)
-    magic, version, count, sh_degree, fractional, flags, reserved = struct.unpack_from("<IIIBBBB", raw, 0)
-    assert magic == SPZ_MAGIC and version in (1, 2, 3) and reserved == 0
-    sizes = [count * (6 if version == 1 else 9), count, 3 * count, 3 * count, count * (4 if version >= 3 else 3),
-             count * sh_rest(sh_degree)]
-    parts = []
-    at = 16
-    for size in sizes:
-        parts.append(raw[at:at + size])
-        at += size
+    version 1 as 24 bit fixed point, the rotations of versions 3 and 4 as three bytes, the harmonics of degree 4 cut to
+    degree 3 (the first 15 coefficients of each point), everything else copied"""
+    if struct.unpack_from("<I", data, 0)[0] == SPZ_MAGIC:
+        raw = v4_payload(data)
+        _, _, count, sh_degree, fractional, flags = struct.unpack_from("<IIIBBB", raw, 0)
+        sizes = [9 * count, count, 3 * count, 3 * count, 4 * count, count * sh_rest(sh_degree)]
+        parts = []
+        at = 16
+        for size in sizes:
+            parts.append(raw[at:at + size])
+            at += size
+        version = 4
+    else:
+        (version, count, sh_degree, fractional, flags), parts = arrays_of(gzip.decompress(data))
     positions, alphas, colors, scales, rotations, sh = parts
+    if sh_degree == 4:
+        rest3, rest4 = sh_rest(3), sh_rest(4)
+        sh = b"".join(sh[k * rest4:k * rest4 + rest3] for k in range(count))
+        sh_degree = 3
     if version == 1:
         fixed = bytearray()
         for k in range(3 * count):
@@ -450,7 +521,7 @@ def as_v2(data: bytes) -> bytes:
             n = min(max(n, -(1 << 23)), (1 << 23) - 1)
             fixed += struct.pack("<i", n)[:3]
         positions = bytes(fixed)
-    if version == 3:
+    if version >= 3:
         rotations = b"".join(pack_first_three(unpack_smallest_three(rotations[4 * k:4 * k + 4])) for k in range(count))
     header = spz_header(2, count, sh_degree, fractional, flags & ~0x2)
     return gzip.compress(header + positions + alphas + colors + scales + rotations + sh, compresslevel=9, mtime=0)
@@ -507,7 +578,12 @@ def expected(files: dict) -> dict:
     out["headers"]["axes_v3.spz"].update(format="spz", version=3, gaussians=len(gaussians), shDegree=0)
     out["headers"]["axes_v2.spz"].update(format="spz", version=2, gaussians=len(gaussians), shDegree=0)
     out["headers"]["axes_v1.spz"].update(format="spz", version=1, gaussians=len(gaussians), shDegree=0)
-    out["headers"]["axes_v4.spz"].update(format="spz", version=4, gaussians=len(gaussians), shDegree=0)
+    out["headers"]["axes_v4.spz"].update(format="spz", version=4, gaussians=len(gaussians), shDegree=0, streams=6)
+    out["headers"]["axes_v4_niantic.spz"].update(format="spz", version=4, gaussians=len(gaussians), shDegree=0,
+                                                 streams=5)
+    out["headers"]["turns_v4.spz"].update(format="spz", version=4, gaussians=40, shDegree=1, streams=6)
+    out["headers"]["sh4_v4.spz"].update(format="spz", version=4, gaussians=8, shDegree=4, streams=6)
+    out["headers"]["sh4_v2.spz"].update(format="spz", version=2, gaussians=8, shDegree=3)
     out["headers"]["turns_v3.spz"].update(format="spz", version=3, gaussians=40, shDegree=1)
     out["headers"]["turns_v2.spz"].update(format="spz", version=2, gaussians=40, shDegree=1)
     out["headers"]["axes_v1_v2.spz"].update(format="spz", version=2, gaussians=len(gaussians), shDegree=0)
@@ -538,7 +614,9 @@ def expected(files: dict) -> dict:
         xyz = [b / 127.5 - 1.0 for b in v2[rot3 + 3 * k:rot3 + 3 * k + 3]]
         b = xyz + [math.sqrt(max(0.0, 1.0 - sum(c * c for c in xyz)))]
         worst = max(worst, 1 - min(1.0, abs(sum(x * y for x, y in zip(a, b)))))
-    out["moduleSpz"] = {"version": 2, "rewrites": {"turns_v3.spz": "turns_v2.spz", "axes_v1.spz": "axes_v1_v2.spz"},
+    out["moduleSpz"] = {"version": 2, "rewrites": {"turns_v3.spz": "turns_v2.spz", "axes_v1.spz": "axes_v1_v2.spz",
+                                                   "axes_v4.spz": "axes_v2.spz", "axes_v4_niantic.spz": "axes_v2.spz",
+                                                   "turns_v4.spz": "turns_v2.spz", "sh4_v4.spz": "sh4_v2.spz"},
                         "worstRotation": round(worst, 6)}
     for version in (3, 1):
         positions = quantized_positions(gaussians, version)
@@ -576,9 +654,11 @@ def fixtures(cache: pathlib.Path) -> dict:
         "axes_v1.spz": write_spz(gaussians, 1),
         "axes_v2.spz": write_spz(gaussians, 2),
         "axes_v3.spz": write_spz(gaussians, 3),
-        "axes_v4.spz": write_spz_v4(gaussians),
+        "axes_v4.spz": write_spz_v4(gaussians, keep_empty=True),
+        "axes_v4_niantic.spz": write_spz_v4(gaussians),
         "axes.ply": write_ply(gaussians, comments=["Generated by make_splat_fixtures.py"]),
         "sh3.ply": write_ply(sh3, sh_degree=3, normals=True),
+        "sh4_v4.spz": sh4_v4(),
         "ranked_v3.spz": write_spz(ranked(), 3),
         "ranked.ply": write_ply(ranked()),
         "mesh_cube.ply": mesh_cube(),
@@ -595,6 +675,8 @@ def fixtures(cache: pathlib.Path) -> dict:
     }
     files["turns_v3.spz"] = turns_v3()
     files["turns_v2.spz"] = as_v2(files["turns_v3.spz"])
+    files["turns_v4.spz"] = v4_from_v3(files["turns_v3.spz"])
+    files["sh4_v2.spz"] = as_v2(files["sh4_v4.spz"])
     files["axes_v1_v2.spz"] = as_v2(files["axes_v1.spz"])
     for name in INNERSCENE:
         files[name] = innerscene_head(name, cache)
@@ -607,7 +689,7 @@ def kit(folder: pathlib.Path, cache: pathlib.Path) -> None:
     made = {
         "axes_v3.spz": write_spz(gaussians, 3),
         "axes_v2.spz": write_spz(gaussians, 2),
-        "axes_v4.spz": write_spz_v4(gaussians),
+        "axes_v4.spz": write_spz_v4(gaussians, keep_empty=True),
         "axes.ply": write_ply(gaussians, comments=["Generated by make_splat_fixtures.py"]),
         "room_60k.spz": write_spz(room(60000), 3),
         "room_200k.ply": write_ply(room(200000, seed=11), comments=["Generated by make_splat_fixtures.py"]),
@@ -640,17 +722,18 @@ def main() -> int:
             path = FIXTURES / name
             if not path.is_file():
                 bad.append(name)
-            elif name == "axes_v4.spz":
+            elif name in V4_FILES:
                 if v4_content(path.read_bytes()) != v4_content(data):
                     bad.append(name)
             elif path.read_bytes() != data:
                 bad.append(name)
         current = (FIXTURES / "expected.json").read_text(encoding="utf-8") if (FIXTURES / "expected.json").is_file() else ""
-        # The sha256 and size of the version 4 file follow the zstandard module: compared apart from them
+        # The sha256 and size of the version 4 files follow the zstandard module: compared apart from them
         def without_v4(text):
             data = json.loads(text) if text else {}
-            data.get("headers", {}).get("axes_v4.spz", {}).pop("sha256", None)
-            data.get("headers", {}).get("axes_v4.spz", {}).pop("bytes", None)
+            for name in V4_FILES:
+                data.get("headers", {}).get(name, {}).pop("sha256", None)
+                data.get("headers", {}).get(name, {}).pop("bytes", None)
             return data
         if without_v4(current) != without_v4(exp):
             bad.append("expected.json")
