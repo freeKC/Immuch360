@@ -22,9 +22,13 @@
 //    iter 12401, 148213 splats." every 200 steps (2 to 8 s apart in the measure), "Done training! Took ..."; silent for
 //    300 s, it is stopped (trainingStalled).
 //  - A panic ("thread 'main' panicked at ...", then its message) stops it at once, without waiting for its end:
-//    Windows Error Reporting held the real one 80 s after its panic (lot SP2). The message names the failure: the memory
-//    of the card ("failed to reserve", "BufferTooBig", "ErrorOutOfDeviceMemory", Brush issues 551 and 500) is
-//    gpuOutOfMemory, kernels the card refuses ("plane instructions") gpuUnavailable, anything else trainingFailed.
+//    Windows Error Reporting held the real one 80 s after its panic (lot SP2). Its message is every line up to the note
+//    Rust writes after it ("note: run with `RUST_BACKTRACE=1` ..."), a backtrace or another panic, or what came within
+//    a second: wgpu 26.0.2 (that of Brush 0.3.0) panics with "wgpu error: Validation Error", a blank line, "Caused by:"
+//    and the causes below, so a blank line ends nothing. The message names the failure: the memory of the card ("failed
+//    to reserve", "BufferTooBig", "ErrorOutOfDeviceMemory" of Brush issues 551 and 500; "Out of Memory" and "Not enough
+//    memory left." of wgpu, read without case) is gpuOutOfMemory, kernels the card refuses ("plane instructions")
+//    gpuUnavailable, anything else trainingFailed. The same words before an exit code other than 0 are gpuOutOfMemory.
 //  - A file of the work folder that cannot be made, rewritten or removed is trainingFailed (diskFull when the disk is
 //    full), before Brush starts.
 //  - Brush 0.3.0 reads the first 16 387 bytes of each image at once (get_image_data of brush-dataset, lot SP2): a
@@ -50,8 +54,24 @@ String brushIn(String folder, {bool? windows}) =>
 /// What Brush logs: its training, its process, and the card cubecl took
 const brushRustLog = 'brush_cli=info,brush_process=info,cubecl_wgpu=info';
 
-/// The texts of a memory of the graphics card too short (Brush issues 551 and 500)
-const brushOutOfMemoryTexts = ['failed to reserve', 'BufferTooBig', 'ErrorOutOfDeviceMemory'];
+/// The texts of a memory of the graphics card too short, read without case: Brush issues 551 and 500, and the words of
+/// wgpu 26.0.2 for its own ("Out of Memory" of an error of that kind, "Not enough memory left." of a device)
+const brushOutOfMemoryTexts = [
+  'failed to reserve',
+  'buffertoobig',
+  'erroroutofdevicememory',
+  'out of memory',
+  'not enough memory',
+];
+
+/// Whether [text] says the memory of the graphics card was too short ([brushOutOfMemoryTexts])
+bool brushSaysOutOfMemory(String text) {
+  final lower = text.toLowerCase();
+  return brushOutOfMemoryTexts.any(lower.contains);
+}
+
+/// The most lines of a panic its message keeps
+const brushPanicLines = 12;
 
 /// The text of kernels the card refuses (lot SP2: the Intel UHD on the autotune cache of the RTX; lavapipe)
 const brushPlaneText = 'plane instructions';
@@ -59,13 +79,12 @@ const brushPlaneText = 'plane instructions';
 /// The fewest bytes Brush 0.3.0 reads of an image at once
 const brushMinImageBytes = 16387;
 
-/// Brush to its run
+/// Brush to its run; its words of memory are read by the runner, without case ([brushSaysOutOfMemory])
 const brushProgram = SidecarProgram(
   name: 'Brush',
   failed: ImmersiveErrorCode.trainingFailed,
   stalled: ImmersiveErrorCode.trainingStalled,
   outOfMemory: ImmersiveErrorCode.gpuOutOfMemory,
-  outOfMemoryTexts: brushOutOfMemoryTexts,
 );
 
 /// What the graphics card answers before Brush starts
@@ -327,11 +346,12 @@ class BrushRunner {
     double? psnr;
     Duration? trainingStarted;
     Duration? panicAt;
-    String? panicMessage;
+    final panicLines = <String>[];
+    var saidOutOfMemory = false;
 
-    BackendException panicFailure(String? message) {
-      final words = message ?? 'no message';
-      if (brushOutOfMemoryTexts.any(words.contains)) {
+    BackendException panicFailure() {
+      final words = panicLines.isEmpty ? 'no message' : panicLines.join(' ');
+      if (brushSaysOutOfMemory(words)) {
         return BackendException(ImmersiveErrorCode.gpuOutOfMemory, 'Brush ran out of graphics memory: $words');
       }
       if (words.contains(brushPlaneText)) {
@@ -370,15 +390,25 @@ class BrushRunner {
       pollInterval: pollInterval,
       log: work.logOf('brush'),
       onStarted: onStarted,
-      onTick: () => panicAt != null && _elapsed() - panicAt! >= panicGrace ? panicFailure(panicMessage) : null,
+      onTick: () => panicAt != null && _elapsed() - panicAt! >= panicGrace ? panicFailure() : null,
       onLine: (line, {required isError}) {
+        if (brushSaysOutOfMemory(line)) {
+          saidOutOfMemory = true;
+        }
         if (panicAt != null) {
-          // The message of the panic is the line after it on the error output
-          if (!isError || line.trim().isEmpty) {
+          // The message of the panic: its lines on the error output, blank ones too (wgpu puts one before its causes),
+          // up to the note of Rust, a backtrace or another panic
+          if (!isError) {
             return null;
           }
-          panicMessage = line.trim();
-          return panicFailure(panicMessage);
+          final text = line.trim();
+          if (text.startsWith('note:') || text.startsWith('stack backtrace:') || text.contains(_panic)) {
+            return panicFailure();
+          }
+          if (text.isNotEmpty && panicLines.length < brushPanicLines) {
+            panicLines.add(text);
+          }
+          return null;
         }
         if (isError && line.contains(_panic)) {
           panicAt = _elapsed();
@@ -431,7 +461,22 @@ class BrushRunner {
       },
     );
     final started = _elapsed();
-    await run.run();
+    try {
+      await run.run();
+    } on SidecarFailure catch (failure) {
+      // Ended before the end of its panic was read, or after it said its memory was short
+      if (panicAt != null) {
+        throw panicFailure();
+      }
+      if (saidOutOfMemory && failure.code == ImmersiveErrorCode.trainingFailed) {
+        throw SidecarFailure(
+          ImmersiveErrorCode.gpuOutOfMemory,
+          'Brush ran out of graphics memory: ${failure.message}',
+          exitCode: failure.exitCode,
+        );
+      }
+      rethrow;
+    }
     final ply = brushExportOf(work.export, steps);
     if (!ply.existsSync()) {
       throw BackendException(

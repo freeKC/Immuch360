@@ -1,10 +1,10 @@
 // The runner of Brush (lib/desktop/ai/splat/brush_runner.dart, lot SP4) with the fake runner: its frozen arguments
 // against the help of brush_app 0.3.0 (brush_help.txt of lot SP2), the card named to cubecl, the folder of each card for
 // the autotune cache, the "Using adapter" line checked, the progress of the room of M1 every 200 steps, the wait for the
-// memory of the card, the panics of the Intel UHD (fixtures of lot SP2) and of a memory too short stopped at once, the
-// other failures, a work folder that refuses its files, the silence of 300 s, the cancel flag, and the images
-// lengthened for Brush 0.3.0. The answer of the budget of the app for Brush is in gpu_budget_test.dart; the same runner
-// against the compiled fake Brush is splat_runners_real_test.dart.
+// memory of the card, the panics of the Intel UHD (fixtures of lot SP2) and of a memory too short stopped at once, those
+// of wgpu read down to their causes, the other failures, a work folder that refuses its files, the silence of 300 s,
+// the cancel flag, and the images lengthened for Brush 0.3.0. The answer of the budget of the app for Brush is in
+// gpu_budget_test.dart; the same runner against the compiled fake Brush is splat_runners_real_test.dart.
 
 import 'dart:async';
 import 'dart:io';
@@ -428,6 +428,93 @@ void main() {
               .having((e) => e.message, 'message', 'Brush panicked: no message'),
         );
       });
+    });
+
+    test('wgpu saying its memory is short, on one line or down its causes, is gpuOutOfMemory too', () async {
+      // wgpu 26.0.2, the one of Brush 0.3.0 (its Cargo.lock), panics with "wgpu error: {err}\n": "Out of Memory" for an
+      // error of that kind; "Validation Error", a blank line, "Caused by:" and the causes for the others, the cause of a
+      // device short of memory being "Not enough memory left." (wgpu/src/backend/wgpu_core.rs, wgpu/src/api/device.rs,
+      // wgpu-core/src/device/mod.rs of its sources; not seen on the PC)
+      List<(String, {bool isError})> panic(List<String> message, {bool note = true}) => [
+        ..._training().take(30),
+        (
+          "thread 'main' panicked at C:\\Users\\runneradmin\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\"
+              "wgpu-26.0.2\\src\\backend\\wgpu_core.rs:659:5:",
+          isError: true,
+        ),
+        for (final line in message) (line, isError: true),
+        if (note) ('note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace', isError: true),
+      ];
+      const causes = [
+        'wgpu error: Validation Error',
+        '',
+        'Caused by:',
+        "  In Device::create_buffer, label = 'splats'",
+        '    Not enough memory left.',
+        '',
+        '',
+      ];
+      for (final (message, note, exitCode) in [
+        (['wgpu error: Out of Memory', ''], true, 0),
+        (causes, true, 0),
+        // Ended before its note: the lines of the panic are read all the same
+        (causes, false, 101),
+      ]) {
+        final runner = _BrushRunner([
+          FakeProcessScript(
+            lines: panic(message, note: note),
+            exitCode: exitCode,
+            hangs: exitCode == 0,
+          ),
+        ]);
+        await expectLater(
+          train(brush(runner)),
+          throwsA(
+            isA<BackendException>()
+                .having((e) => e.code, 'code', ImmersiveErrorCode.gpuOutOfMemory)
+                .having((e) => e.message, 'message', startsWith('Brush ran out of graphics memory: wgpu error: ')),
+          ),
+          reason: '$message',
+        );
+      }
+      // Another cause is trainingFailed, its causes in the message
+      final lost = _BrushRunner([
+        FakeProcessScript(
+          lines: panic([
+            'wgpu error: Validation Error',
+            '',
+            'Caused by:',
+            '  In a queue submit',
+            '    Device lost',
+            '',
+          ]),
+          hangs: true,
+        ),
+      ]);
+      await expectLater(
+        train(brush(lost)),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.trainingFailed)
+              .having(
+                (e) => e.message,
+                'message',
+                'Brush panicked: wgpu error: Validation Error Caused by: In a queue submit Device lost',
+              ),
+        ),
+      );
+      // Said without a panic, before an exit code other than 0
+      final said = _BrushRunner([
+        FakeProcessScript(lines: [..._training().take(30), ('Error: Out of Memory', isError: true)], exitCode: 1),
+      ]);
+      await expectLater(
+        train(brush(said)),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.gpuOutOfMemory)
+              .having((e) => e.message, 'message', contains('Error: Out of Memory')),
+        ),
+      );
     });
 
     test('a work folder that refuses its files is trainingFailed, before Brush starts', () async {
