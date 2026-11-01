@@ -215,6 +215,11 @@ jobs:
       - name: The tiny models of ONNX Runtime are what their script writes
         run: python3 .github/desktop/ai/make_tiny_models.py --check
 
+      # The synthetic room of the splat scenes (lot SP0): 24 views of two cameras around three boxes, ray cast in pure
+      # Python, with their exact poses for the measures of lots SP1 and SP4; the same pixels on every system
+      - name: The synthetic dataset of the splat scenes is what its script writes
+        run: python3 .github/desktop/ai/make_splat_dataset.py --check
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
