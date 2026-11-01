@@ -2,7 +2,7 @@
 // Escape and the back button of a mouse leave it first, then close the viewer, a dialog keeps its own Escape, a letter
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
 // first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step,
-// then the app ends its own work, each step bounded, before the window goes.
+// then the window hides and the app ends its own work, each step bounded, before the window goes.
 
 import 'dart:async';
 
@@ -32,6 +32,9 @@ class FakeDesktopWindow extends DesktopWindow {
   final listeners = <WindowListener>[];
   bool fullScreen = false;
 
+  /// Whether [prepareClose] also does what the app's does, through the channels the test answers
+  bool realPrepareClose = false;
+
   @override
   Future<void> setFullScreen(bool fullScreen) async {
     this.fullScreen = fullScreen;
@@ -42,7 +45,12 @@ class FakeDesktopWindow extends DesktopWindow {
   Future<void> setPreventClose(bool preventClose) async => calls.add('preventClose $preventClose');
 
   @override
-  Future<void> prepareClose() async => calls.add('prepareClose');
+  Future<void> prepareClose() async {
+    calls.add('prepareClose');
+    if (realPrepareClose) {
+      await super.prepareClose();
+    }
+  }
 
   @override
   Future<void> destroy() async => calls.add('destroy');
@@ -442,6 +450,76 @@ void main() {
       expect(window.calls, ['preventClose true', 'prepareClose', 'players', 'logs', 'destroy']);
       expect(steps, ['players']);
       debugDefaultTargetPlatformOverride = null;
+    });
+
+    group('the window hides as soon as the close is decided, before the app ends its own work', () {
+      const windowManagerChannel = MethodChannel('window_manager');
+      const runnerChannel = MethodChannel('immuch360/window');
+
+      /// Answers window_manager and the Windows runner as the systems do; [hang] names a method that never answers
+      Future<void> pumpClosing(WidgetTester tester, {String? hang}) async {
+        final messenger = tester.binding.defaultBinaryMessenger;
+        Future<Object?> answer(String side, MethodCall call) {
+          window.calls.add('$side ${call.method}');
+          return call.method == hang ? Completer<Object?>().future : Future.value(true);
+        }
+
+        messenger.setMockMethodCallHandler(windowManagerChannel, (call) => answer('window_manager', call));
+        messenger.setMockMethodCallHandler(runnerChannel, (call) => answer('runner', call));
+        addTearDown(() {
+          messenger.setMockMethodCallHandler(windowManagerChannel, null);
+          messenger.setMockMethodCallHandler(runnerChannel, null);
+        });
+        window.realPrepareClose = true;
+        await pumpShell(
+          tester,
+          overrides: [
+            desktopCloseStepsProvider.overrideWithValue(
+              () => [
+                DesktopCloseStep('the players', const Duration(milliseconds: 500), () => window.calls.add('players')),
+              ],
+            ),
+          ],
+        );
+      }
+
+      for (final platform in [TargetPlatform.linux, TargetPlatform.macOS]) {
+        testWidgets('on ${platform.name}, through window_manager: a share that holds the end of the process holds '
+            'no window on screen', (tester) async {
+          debugDefaultTargetPlatformOverride = platform;
+          await pumpClosing(tester);
+
+          window.clickClose();
+          await tester.pumpAndSettle();
+          expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide', 'players', 'destroy']);
+          debugDefaultTargetPlatformOverride = null;
+        });
+      }
+
+      testWidgets('on Windows, by the runner, which also ends the process if it lingers', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        await pumpClosing(tester);
+
+        window.clickClose();
+        await tester.pumpAndSettle();
+        expect(window.calls, ['preventClose true', 'prepareClose', 'runner closing', 'players', 'destroy']);
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      testWidgets('a window that does not answer holds the close 500 ms at most', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+        await pumpClosing(tester, hang: 'hide');
+
+        window.clickClose();
+        await tester.pump();
+        expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide']);
+        await tester.pump(const Duration(milliseconds: 499));
+        expect(window.calls, isNot(contains('players')));
+        await tester.pump(const Duration(milliseconds: 2));
+        await tester.pumpAndSettle();
+        expect(window.calls, ['preventClose true', 'prepareClose', 'window_manager hide', 'players', 'destroy']);
+        debugDefaultTargetPlatformOverride = null;
+      });
     });
 
     testWidgets('asks while uploads and the share run; Cancel keeps the app, Quit closes it', (tester) async {

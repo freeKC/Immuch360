@@ -18,8 +18,8 @@
 // SMB share that stopped answering is itself a libsmb2 call that waits up to 30 s in a worker isolate, which the end of
 // the Dart VM then waits for, as it waited for the reopen of a file in the dumps of 1 November 2026.
 //
-// On Windows the window hides as soon as the close is decided, and the runner ends the process within a few seconds
-// whatever still runs (DesktopWindow.prepareClose, windows/runner/close_watchdog.cpp).
+// The window hides as soon as the close is decided, on the three systems (DesktopWindow.prepareClose); on Windows the
+// runner also ends the process within a few seconds whatever still runs (windows/runner/close_watchdog.cpp).
 
 import 'dart:async';
 
