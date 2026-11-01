@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "app_identity.h"
+#include "close_watchdog.h"
 #include "crash_dumps.h"
 #include "flutter_window.h"
 #include "gpu_probe.h"
@@ -111,6 +112,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     ::CloseHandle(instance_mutex);
     return EXIT_SUCCESS;
   }
+
+  // Ends the process a few seconds after its window closes, whatever still
+  // runs then (close_watchdog.h); made before the engine loads anything
+  StartCloseWatchdog();
 
   // Attach to console when present (e.g., 'flutter run') or create a
   // new console when running with a debugger.

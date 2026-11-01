@@ -7,8 +7,22 @@
 #include <string>
 
 #include "app_identity.h"
+#include "close_watchdog.h"
 #include "flutter/generated_plugin_registrant.h"
 #include "utils.h"
+
+namespace {
+
+// The longest the process lives once Dart told of a close: its own work
+// (1.7 s at most, lib/desktop/window/close_sequence.dart) and the teardown
+// of the engine
+constexpr DWORD kClosingMs = 6000;
+
+// The longest the process lives once the engine's teardown starts: a clean
+// one took 0.27 to 1.08 s on the PC of the report of 1 November 2026
+constexpr DWORD kTeardownMs = 3000;
+
+}  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -56,6 +70,21 @@ bool FlutterWindow::OnCreate() {
       std::make_unique<flutter::EncodableValue>(flutter::EncodableList{
           flutter::EncodableValue(IMMUCH360_INSTANCE_CHANNEL),
           flutter::EncodableValue(1000)}));
+  window_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(), IMMUCH360_WINDOW_CHANNEL,
+          &flutter::StandardMethodCodec::GetInstance());
+  window_channel_->SetMethodCallHandler(
+      [this](const flutter::MethodCall<flutter::EncodableValue>& call,
+             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
+                 result) {
+        if (call.method_name() == "closing") {
+          OnClosing();
+          result->Success();
+        } else {
+          result->NotImplemented();
+        }
+      });
   if (!early_hand_overs_.empty()) {
     instance_channel_->InvokeMethod(
         "openFiles",
@@ -81,12 +110,30 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  if (flutter_controller_) {
+    // The engine goes now, on this thread, and may wait for native code that
+    // does not return: the window must not stay on screen meanwhile (Windows
+    // would say it does not answer), and the wait gets a bound. Here after
+    // window_manager's destroy() (the close guard), and in WM_DESTROY for a
+    // window closed before Dart set the guard, whose window is already gone.
+    HWND window = GetHandle();
+    if (window != nullptr) {
+      ::ShowWindow(window, SW_HIDE);
+    }
+    EndProcessWithin(kTeardownMs);
+  }
+  window_channel_ = nullptr;
   instance_channel_ = nullptr;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }
 
   Win32Window::OnDestroy();
+}
+
+void FlutterWindow::OnClosing() {
+  ::ShowWindow(GetHandle(), SW_HIDE);
+  EndProcessWithin(kClosingMs);
 }
 
 LRESULT

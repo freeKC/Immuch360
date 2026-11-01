@@ -44,4 +44,8 @@
 // (lib/desktop/window/single_instance.dart).
 #define IMMUCH360_INSTANCE_CHANNEL "immuch360/instance"
 
+// The method channel by which Dart tells of a close of the window
+// (DesktopWindow.prepareClose in lib/desktop/window/full_screen.dart).
+#define IMMUCH360_WINDOW_CHANNEL "immuch360/window"
+
 #endif  // RUNNER_APP_IDENTITY_H_
