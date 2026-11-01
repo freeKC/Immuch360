@@ -56,6 +56,53 @@ String _git(String dir, List<String> arguments) {
   return '${result.stdout}'.trim();
 }
 
+/// A 64 bit little endian ELF file reduced to what the ELF reader of sdcpp_build.py reads: the section headers, a
+/// string table and a dynamic section that asks for the libraries [needed]
+Uint8List _fakeElf(List<String> needed) {
+  final strings = BytesBuilder()..addByte(0);
+  final names = <int>[];
+  for (final name in needed) {
+    names.add(strings.length);
+    strings
+      ..add(utf8.encode(name))
+      ..addByte(0);
+  }
+  final table = strings.toBytes();
+  const dynamicAt = 64;
+  final dynamicSize = (needed.length + 1) * 16;
+  final stringsAt = dynamicAt + dynamicSize;
+  final sectionsAt = (stringsAt + table.length + 7) & ~7;
+  final data = ByteData(sectionsAt + 3 * 64);
+  for (final (at, byte) in [(0, 0x7F), (1, 0x45), (2, 0x4C), (3, 0x46), (4, 2), (5, 1), (6, 1)]) {
+    data.setUint8(at, byte);
+  }
+  data
+    ..setUint16(0x10, 3, Endian.little)
+    ..setUint16(0x12, 0x3E, Endian.little)
+    ..setUint64(0x28, sectionsAt, Endian.little)
+    ..setUint16(0x3A, 64, Endian.little)
+    ..setUint16(0x3C, 3, Endian.little);
+  for (var i = 0; i < needed.length; i++) {
+    data
+      ..setInt64(dynamicAt + i * 16, 1, Endian.little)
+      ..setUint64(dynamicAt + i * 16 + 8, names[i], Endian.little);
+  }
+  for (var i = 0; i < table.length; i++) {
+    data.setUint8(stringsAt + i, table[i]);
+  }
+  // Section 1, the strings (SHT_STRTAB); section 2, the dynamic section (SHT_DYNAMIC) linked to them
+  data
+    ..setUint32(sectionsAt + 64 + 4, 3, Endian.little)
+    ..setUint64(sectionsAt + 64 + 24, stringsAt, Endian.little)
+    ..setUint64(sectionsAt + 64 + 32, table.length, Endian.little)
+    ..setUint32(sectionsAt + 128 + 4, 6, Endian.little)
+    ..setUint64(sectionsAt + 128 + 24, dynamicAt, Endian.little)
+    ..setUint64(sectionsAt + 128 + 32, dynamicSize, Endian.little)
+    ..setUint32(sectionsAt + 128 + 40, 1, Endian.little)
+    ..setUint64(sectionsAt + 128 + 56, 16, Endian.little);
+  return data.buffer.asUint8List();
+}
+
 /// The interpreter of the Python that runs the scripts, by its full path
 String get _pythonExecutable {
   final command = python!;
@@ -616,6 +663,73 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
       expect(licence.exitCode, 1, reason: '$licence');
       expect(licence.output, contains('brush-LICENSE.txt'));
     });
+
+    test(
+      'the Linux archive: brush_app and immuch360-run, which need only the base of a distribution, and the licences',
+      () {
+        ScriptRun linux(List<String> needed) {
+          File(path('brush_app')).writeAsBytesSync([..._fakeElf(needed), ..._filler(4096, 9)]);
+          File(path('immuch360-run')).writeAsBytesSync(_fakeElf(['libc.so.6']));
+          return runCiScript(_script, [
+            'pack',
+            '--system',
+            'linux-x64',
+            '--source',
+            path('source'),
+            '--bin',
+            path('brush_app'),
+            '--third-party',
+            path('THIRD-PARTY.md'),
+            '--launcher',
+            path('immuch360-run'),
+            '--out',
+            path('linux'),
+          ]);
+        }
+
+        final run = linux(['libgcc_s.so.1', 'libm.so.6', 'libc.so.6', 'ld-linux-x86-64.so.2']);
+        expect(run.exitCode, 0, reason: '$run');
+        final id = _lock()['id'];
+        expect(File(path('linux/Immuch360-AI-brush-$id-linux-x64.zip')).existsSync(), isTrue, reason: '$run');
+        expect(run.output, contains('brush_app imports: libgcc_s.so.1, libm.so.6, libc.so.6, ld-linux-x86-64.so.2'));
+        for (final name in [
+          'brush_app  (program)',
+          'immuch360-run  (program)',
+          'BUILD-INFO.txt',
+          'licenses/README.md',
+          'licenses/brush-LICENSE.txt',
+          'licenses/EXTRA-NOTICES.md',
+          'licenses/THIRD-PARTY.md',
+          'licenses/patches/0001-immuch360-headless-trainer.patch',
+        ]) {
+          expect(run.output, contains(name));
+        }
+        expect(run.output, isNot(contains('.dll')));
+
+        final torch = linux(['libc.so.6', 'libtorch_cpu.so']);
+        expect(torch.exitCode, 1, reason: '$torch');
+        expect(
+          torch.output,
+          contains('brush_app needs libtorch_cpu.so, which the base of a distribution does not have'),
+        );
+
+        final noLauncher = runCiScript(_script, [
+          'pack',
+          '--system',
+          'linux-x64',
+          '--source',
+          path('source'),
+          '--bin',
+          path('brush_app'),
+          '--third-party',
+          path('THIRD-PARTY.md'),
+          '--out',
+          path('linux'),
+        ]);
+        expect(noLauncher.exitCode, 2, reason: '$noLauncher');
+        expect(noLauncher.output, contains('--launcher'));
+      },
+    );
   }, skip: skip);
 
   // THIRD-PARTY.md of the archives (lot SP2, fix round of the review): cargo and cargo about are fakes found on the PATH
