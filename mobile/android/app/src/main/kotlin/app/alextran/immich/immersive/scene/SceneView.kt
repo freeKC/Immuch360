@@ -172,9 +172,7 @@ internal object SceneTexts {
       LABEL_RESET to "Reset",
       LABEL_PHOTO_2D to "Photo (2D)",
       LABEL_SCENE_3D to "3D scene",
-      LABEL_HINT to
-        "Left thumbstick: glide. Click a thumbstick: Reset. A, X or grip: show or hide this panel. B or Y: back to " +
-          "the app.",
+      LABEL_HINT to "Left thumbstick: glide. A, X or grip: show or hide this panel. B or Y: back to the app.",
       LABEL_ZONE to "Room to move: about $SIZE each way",
       LABEL_HIDDEN to "Hidden areas filled: $PERCENT%",
       LABEL_TOO_HEAVY to "This scene is too heavy for this headset ($TRIANGLES triangles, at most $MAX)",

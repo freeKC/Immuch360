@@ -36,6 +36,13 @@ internal class ImmersiveInputSystem(
      */
     fun onButtonsHeld(controllerBits: Int) = Unit
 
+    /**
+     * Whether the right thumbstick only turns on this frame, asked before the controllers are read: while a splat
+     * shows, its up and down mean nothing, so that a push which crosses them before left or right still turns (see
+     * ControllerEdges.rightStickTurnsOnly). False by default.
+     */
+    fun rightStickTurnsOnly(): Boolean = false
+
     /** Whether [onControllerRays] is wanted on this frame: while a flat screen shows. False by default. */
     fun wantsControllerRays(): Boolean = false
 
@@ -60,6 +67,11 @@ internal class ImmersiveInputSystem(
     var controllerBits = 0
     var handBits = 0
     var heldBits = 0
+    try {
+      edges.rightStickTurnsOnly = listener.rightStickTurnsOnly()
+    } catch (e: Exception) {
+      Log.e(TAG, "thumbstick mode failed", e)
+    }
     try {
       val controllers = Query.where { has(Controller.id) }.eval().filter { it.isLocal() }
       val present = HashSet<Long>()
@@ -135,6 +147,14 @@ internal class ImmersiveInputSystem(
  * sweep around the sphere is one long push, not a series of flicks. Pure: no Spatial SDK call, unit tested.
  */
 internal class ControllerEdges(private val log: (String) -> Unit = {}) {
+  /**
+   * The right thumbstick only turns (a splat shows): its up and down are left out of the edges, so that a push which
+   * crosses down or up before left or right still gives its turn (one direction a push, [firstDirectionOnly], would
+   * otherwise keep the down or the up, which does nothing in a splat, and drop the turn). The buttons are kept as they
+   * are held, so that a change of this setting with the stick held down gives no edge.
+   */
+  var rightStickTurnsOnly = false
+
   private class Seen(var active: Boolean, var type: String, var buttons: Int) {
     /** The turn direction being held, and when it fires again (uptime ms); 0 when none is held. */
     var turnBit = 0
@@ -167,12 +187,14 @@ internal class ControllerEdges(private val log: (String) -> Unit = {}) {
       seen.turnBit = 0
       return 0
     }
-    val before = seen.buttons
+    val counted = if (rightStickTurnsOnly) RIGHT_UP_DOWN.inv() else -1
+    val before = seen.buttons and counted
     seen.buttons = buttons
-    var down = buttons and before.inv()
+    val now = buttons and counted
+    var down = now and before.inv()
     down = firstDirectionOnly(down, before, LEFT_STICK)
     down = firstDirectionOnly(down, before, RIGHT_STICK)
-    return down or turnRepeat(seen, down, buttons, nowMs)
+    return down or turnRepeat(seen, down, now, nowMs)
   }
 
   /** The turn direction to report again because the right thumbstick is still held, or 0. */
@@ -233,6 +255,9 @@ internal class ControllerEdges(private val log: (String) -> Unit = {}) {
     /** The right thumbstick left or right turns the view, and keeps turning while held. */
     val TURN_BITS = ButtonBits.ButtonThumbRL or ButtonBits.ButtonThumbRR
 
+    /** The right thumbstick up or down, left out while it only turns ([rightStickTurnsOnly]) */
+    val RIGHT_UP_DOWN = ButtonBits.ButtonThumbRU or ButtonBits.ButtonThumbRD
+
     /** A push turns once at once; held past this delay it turns again, then at this interval. */
     const val TURN_REPEAT_DELAY_MS = 350L
     const val TURN_REPEAT_INTERVAL_MS = 220L
@@ -255,8 +280,12 @@ internal class ControllerEdges(private val log: (String) -> Unit = {}) {
  *
  * A 3D scene ([actionsFor] with scene, design-final 2026-10-27, section 3.3) takes the thumbsticks for itself: the left
  * one held glides the eye (read every frame, see [SceneStick]), the right one does nothing (a scene is frontal, turning
- * it would show the void), neither asks for previous or next, and a click of either one is [Action.RESET]. B, Y, A,
- * X, grip and menu do what they do everywhere; the trigger plays nothing.
+ * it would show the void), and neither asks for previous or next. A Gaussian splat is explored the same way, and its
+ * right thumbstick left or right turns it ([actionsFor] with sceneTurns: [Action.TURN_LEFT], [Action.TURN_RIGHT], the
+ * snap turn of the spheres, repeated while held), since a splat surrounds the user. A click of a thumbstick does
+ * nothing in either: it came with most pushes in the headset (79 of the 81 clicks logged on 1 November 2026), and as
+ * Reset it put the user back where the scene opened at each push. Reset is a button of the panel. B, Y, A, X, grip and
+ * menu do what they do everywhere; the trigger plays nothing.
  *
  * A flat screen ([actionsFor] with screenGrabbable: a photo of the stereo quad or a video of the flat video screen)
  * leaves the grips to [ScreenGrip], which tells a short press (the info panel, as everywhere) from a hold that grabs
@@ -277,7 +306,6 @@ internal object ImmersiveControls {
     TOGGLE_PANEL,
     SHOW_PANEL,
     PLAY_PAUSE,
-    RESET,
     SCREEN_FARTHER,
     SCREEN_NEARER,
   }
@@ -291,8 +319,9 @@ internal object ImmersiveControls {
 
   /**
    * The actions for [controllerBits] and [handBits] pressed on the same update, in the order to run them, in a 3D
-   * [scene] or on any other media. [screenGrabbable]: the media is on a flat screen, whose grips [ScreenGrip] reads;
-   * [screenHeld]: a grip holds that screen now.
+   * [scene] or on any other media. [sceneTurns]: the scene is a splat, which the right thumbstick turns.
+   * [screenGrabbable]: the media is on a flat screen, whose grips [ScreenGrip] reads; [screenHeld]: a grip holds that
+   * screen now.
    */
   fun actionsFor(
     controllerBits: Int,
@@ -301,6 +330,7 @@ internal object ImmersiveControls {
     scene: Boolean = false,
     screenGrabbable: Boolean = false,
     screenHeld: Boolean = false,
+    sceneTurns: Boolean = false,
   ): List<Action> {
     val controllerOnly =
       ButtonBits.ButtonB or ButtonBits.ButtonY or ControllerEdges.LEFT_STICK or ControllerEdges.RIGHT_STICK or
@@ -311,7 +341,13 @@ internal object ImmersiveControls {
     val actions = mutableListOf<Action>()
     val flatScreen = screenGrabbable && !scene
     when {
-      scene -> if ((controller and STICK_CLICKS) != 0) actions += Action.RESET
+      scene ->
+        if (sceneTurns) {
+          when {
+            (controller and ButtonBits.ButtonThumbRL) != 0 -> actions += Action.TURN_LEFT
+            (controller and ButtonBits.ButtonThumbRR) != 0 -> actions += Action.TURN_RIGHT
+          }
+        }
       flatScreen && screenHeld ->
         when {
           (controller and STICKS_UP) != 0 -> actions += Action.SCREEN_FARTHER

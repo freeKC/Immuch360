@@ -6,8 +6,9 @@ import java.util.Locale
 /**
  * The texts of a splat in the headset (lot S5), translated by Flutter in stereoLabels under these keys
  * (splatViewerLabels of immersive_viewer_labels.dart), each with its English text for a key Flutter did not send. The
- * numbers go where the translations put {count}, {version}, {tool}, {kept}, {total} and {reason}. Reset, the
- * controller hint, the free memory and the heat say what they say for the 3D scenes (SceneTexts).
+ * numbers go where the translations put {count}, {version}, {tool}, {kept}, {total} and {reason}. Reset, the free
+ * memory and the heat say what they say for the 3D scenes (SceneTexts); the controller hint of a splat is its own,
+ * its right thumbstick turning it.
  */
 internal object SplatTexts {
   const val LABEL_PREPARING = "splatPreparing"
@@ -17,6 +18,7 @@ internal object SplatTexts {
   const val LABEL_LARGE = "splatLarge"
   const val LABEL_REDUCED = "splatReduced"
   const val LABEL_UPRIGHT = "splatUpright"
+  const val LABEL_HINT = "splatHint"
   const val LABEL_SPZ = "splatSpz"
   const val LABEL_PLY = "splatPly"
   const val LABEL_PLY_TOOL = "splatPlyTool"
@@ -54,6 +56,9 @@ internal object SplatTexts {
       LABEL_LARGE to "Large splat: it may stutter",
       LABEL_REDUCED to "Reduced to $KEPT of $TOTAL gaussians",
       LABEL_UPRIGHT to "Turn upright",
+      LABEL_HINT to
+        "Left thumbstick: glide. Right thumbstick: turn. A, X or grip: show or hide this panel. B or Y: back to the " +
+          "app.",
       LABEL_SPZ to "$COUNT gaussians, SPZ version $VERSION",
       LABEL_PLY to "$COUNT gaussians, PLY",
       LABEL_PLY_TOOL to "$COUNT gaussians, PLY, made with $TOOL",
