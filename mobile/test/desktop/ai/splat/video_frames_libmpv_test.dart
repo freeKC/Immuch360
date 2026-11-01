@@ -2,8 +2,9 @@
 // of the app, on Linux the system's (libmpv_for_tests.dart), skipped elsewhere or without one. The fixture
 // portrait-blur-6s.mp4 (make_portrait_blur.sh) is a video filmed upright as a phone stores it, lying with its rotation
 // in the file, sharp only from 0.40 to 0.57 s of each second, blurred all along its fourth second: its frames must come
-// out upright (180 x 320, the white band at the top), each window of a second must keep its sharp moment, at half a
-// second exactly, and the blurred second must be left out.
+// out upright (180 x 320, the white band at the top), whether this libmpv turns them before its output (those of the
+// Linux distributions) or leaves it to its output (the app's Windows build: the app turns them then), each window of a
+// second must keep its sharp moment, at half a second exactly, and the blurred second must be left out.
 //
 // By hand, the measure of the plan on a real video (never in the CI):
 //   IMMUCH360_SPLAT_VIDEO  a video (the lighthouse of the measure: 150 frames in under 2 minutes)
@@ -67,13 +68,18 @@ void main() {
           frames: 6,
           candidates: 5,
         );
+        expect(source.fileRotation, 90, reason: 'the rotation of the phones, read from the file');
         expect(inputs.total, 6);
         expect(inputs.images.map((image) => image.source), ['0:00.5', '0:01.5', '0:02.5', '0:04.5', '0:05.5']);
         // The fourth second is blurred all along: its best candidate, whichever, stays under half of its neighbours'
         expect(inputs.leftOut.map((left) => left.reason), [SplatLeftOutReason.blurred]);
         expect(inputs.leftOut.single.name, startsWith('0:03.'));
         for (final image in inputs.images) {
-          expect((image.width, image.height), (180, 320), reason: 'upright, as the rotation of the file says');
+          expect(
+            (image.width, image.height),
+            (180, 320),
+            reason: 'upright, as the rotation of the file says (${source.outputRotation} left to the output by mpv)',
+          );
           final decoded = img.decodeJpg(File(p.join(images, image.relativePath)).readAsBytesSync())!;
           expect((decoded.width, decoded.height), (180, 320));
           double meanOfRows(int from, int to) {

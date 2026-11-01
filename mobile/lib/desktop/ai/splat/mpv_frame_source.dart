@@ -1,10 +1,16 @@
 // The frames of a video for a splat scene taken by the app's own libmpv (plan 2026-11-01, section 2.2, lot SP5), the
 // way VideoThumbnailGrabber takes a thumbnail: a muted player without texture or audio opens the file once, goes to the
-// frame of each candidate exactly, and takes mpv's screenshot-raw of it. A video filmed upright with its rotation in
-// the file comes out upright: with the null output of a player without texture, mpv turns the frames before its output
-// (its autorotate filter), so the screenshot holds them turned. The grey copy and its sharpness are made in an isolate
-// from mpv's memory; only the sharpest frame of a window is turned into RGBA, reduced to 1 600 pixels and encoded, in
-// another isolate.
+// frame of each candidate exactly, and takes mpv's screenshot-raw of it. The grey copy and its sharpness are made in an
+// isolate from mpv's memory; only the sharpest frame of a window is turned into RGBA, turned upright, reduced to 1 600
+// pixels and encoded, in another isolate.
+//
+// A video filmed upright, its rotation in the file (a phone's portrait video), must come out upright, and the libmpv
+// builds do not agree: those of the Linux distributions (mpv 0.34 of Ubuntu 22.04, 0.35 of Debian 12) put a rotation
+// filter before the null output of a player without texture, so the screenshot is turned already; the app's Windows
+// build (mpv of 2026-10-09) leaves the rotation to its output, and the screenshot comes lying (320 x 180 for a video of
+// 180 x 320, seen in the CI on 1 November 2026). splatScreenshotTurns tells which by the size of the screenshot against
+// the size of the decoded frames, and by the rotation mpv still leaves to its output for a half turn, whose size says
+// nothing.
 //
 // How it goes to a frame: an exact seek (absolute+exact) decodes from the key frame before it, half a group of frames
 // on average; the lighthouse video of the measure has one key frame every 4.27 s, and 600 exact seeks took 4 min 22 s
@@ -22,6 +28,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
@@ -30,6 +37,9 @@ import 'package:immich_mobile/desktop/ai/splat/sharpness.dart';
 import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('MpvSplatFrameSource');
 
 /// Makes the player of the frames: a muted one of [PlayerKind.thumbnail], with the mpv options of the app
 typedef SplatPlayerFactory = Future<DesktopPlayer> Function();
@@ -72,6 +82,18 @@ class MpvSplatFrameSource implements SplatFrameSource {
 
   /// The time of the frame shown, null before the first
   Duration? _shown;
+
+  /// The size of the frames as decoded, the rotation the file asks for and what of it mpv leaves to its output, in
+  /// degrees clockwise (video-params, video-out-params)
+  var _decodedWidth = 0;
+  var _decodedHeight = 0;
+  var _fileRotation = 0;
+  var _outputRotation = 0;
+
+  /// The rotation the file asks for and what of it mpv leaves to its output, degrees clockwise, for the log and the
+  /// tests
+  int get fileRotation => _fileRotation;
+  int get outputRotation => _outputRotation;
 
   void _wake() {
     if (!_changed.isClosed) {
@@ -117,6 +139,15 @@ class MpvSplatFrameSource implements SplatFrameSource {
       throw const ConversionException(ImmersiveErrorCode.decodeFailed, 'The file has no video');
     }
     _handle = await player.mpvHandle;
+    Future<int> number(String property) async => int.tryParse(await player.mpvProperty(property)) ?? 0;
+    _decodedWidth = await number('video-params/w');
+    _decodedHeight = await number('video-params/h');
+    _fileRotation = await number('video-params/rotate');
+    _outputRotation = await number('video-out-params/rotate');
+    _log.info(
+      'Frames of a video of $_decodedWidth x $_decodedHeight, turned $_fileRotation degrees by its file, '
+      '$_outputRotation of them left to the output',
+    );
     await player.setUntimed(true);
     _shown = player.position.value;
     final fps = double.tryParse(await player.mpvProperty('container-fps'));
@@ -164,7 +195,15 @@ class MpvSplatFrameSource implements SplatFrameSource {
     for (var attempt = 0; attempt < 10; attempt++) {
       final grab = await _grabInBackground(handle, library);
       if (grab != null) {
-        return _MpvFrame(at, grab, this);
+        final turns = splatScreenshotTurns(
+          fileRotation: _fileRotation,
+          outputRotation: _outputRotation,
+          decodedWidth: _decodedWidth,
+          decodedHeight: _decodedHeight,
+          shotWidth: grab.width,
+          shotHeight: grab.height,
+        );
+        return _MpvFrame(at, grab, turns, this);
       }
       await Future<void>.delayed(const Duration(milliseconds: 20));
     }
@@ -213,19 +252,44 @@ _Grab? _grab(int handle, String library) => withMpvScreenshot(handle, library, (
   return _Grab(frame.width, frame.height, sharpness, TransferableTypedData.fromList([packed]));
 });
 
+/// The quarter turns, clockwise, that make a screenshot of mpv upright: none when mpv turned it already (its size is
+/// then the decoded size turned), the rotation of the file otherwise ([fileRotation], in degrees clockwise, as mpv's
+/// video-params/rotate gives it). A half turn keeps the size: it is done when mpv leaves it to its output
+/// ([outputRotation], video-out-params/rotate), as is any turn of a square video.
+int splatScreenshotTurns({
+  required int fileRotation,
+  required int outputRotation,
+  required int decodedWidth,
+  required int decodedHeight,
+  required int shotWidth,
+  required int shotHeight,
+}) {
+  final turns = (fileRotation % 360) ~/ 90;
+  if (turns == 0 || fileRotation % 90 != 0) {
+    return 0;
+  }
+  if (turns.isOdd && decodedWidth != decodedHeight && decodedWidth > 0 && decodedHeight > 0) {
+    return shotWidth == decodedWidth && shotHeight == decodedHeight ? turns : 0;
+  }
+  return outputRotation % 360 == fileRotation % 360 ? turns : 0;
+}
+
 class _MpvFrame implements SplatFrame {
-  _MpvFrame(this.time, this._grab, this._source);
+  _MpvFrame(this.time, this._grab, this._turns, this._source);
 
   @override
   final Duration time;
   final _Grab _grab;
+
+  /// Quarter turns clockwise still to do (splatScreenshotTurns)
+  final int _turns;
   final MpvSplatFrameSource _source;
 
   @override
-  int get width => _grab.width;
+  int get width => _turns.isOdd ? _grab.height : _grab.width;
 
   @override
-  int get height => _grab.height;
+  int get height => _turns.isOdd ? _grab.width : _grab.height;
 
   @override
   double get sharpness => _grab.sharpness;
@@ -236,6 +300,7 @@ class _MpvFrame implements SplatFrame {
       _grab.pixels,
       _grab.width,
       _grab.height,
+      _turns,
       path,
       _source.longSide,
       _source.quality,
@@ -246,11 +311,23 @@ class _MpvFrame implements SplatFrame {
 }
 
 class _EncodeRequest {
-  const _EncodeRequest(this.pixels, this.width, this.height, this.path, this.longSide, this.quality, this.codec);
+  const _EncodeRequest(
+    this.pixels,
+    this.width,
+    this.height,
+    this.turns,
+    this.path,
+    this.longSide,
+    this.quality,
+    this.codec,
+  );
 
   final TransferableTypedData pixels;
   final int width;
   final int height;
+
+  /// Quarter turns clockwise that make it upright
+  final int turns;
   final String path;
   final int longSide;
   final int quality;
@@ -270,11 +347,11 @@ Future<({int width, int height})> _encodeInBackground(_EncodeRequest request) =>
     rgba[at + 2] = blue;
     rgba[at + 3] = 0xFF;
   }
-  final fitted = fitEye(
+  final upright = orientDecoded(
     SbsDecoded(width: request.width, height: request.height, rgba: rgba),
-    maxWidth: request.longSide,
-    maxHeight: request.longSide,
+    quarterTurns: request.turns,
   );
+  final fitted = fitEye(upright, maxWidth: request.longSide, maxHeight: request.longSide);
   SbsCodecException? refusal;
   for (final codec in request.codec.codecs()) {
     try {
