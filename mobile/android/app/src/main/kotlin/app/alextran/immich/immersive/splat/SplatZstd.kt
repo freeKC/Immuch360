@@ -15,7 +15,8 @@ internal interface SplatZstd {
 
   /**
    * The bytes the ZSTD frames of [compressed] hold, decompressed as they are read; closing it closes [compressed]. A
-   * frame that is damaged or cut throws an IOException (or a RuntimeException of the decoder) while it is read
+   * frame cut, or one the decoder rejects, throws an IOException (or a RuntimeException of the decoder) while it is
+   * read. The frames of an SPZ carry no checksum: a byte changed inside their data may decompress without an error
    */
   fun open(compressed: InputStream): InputStream
 }

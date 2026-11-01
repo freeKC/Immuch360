@@ -513,9 +513,12 @@ internal object SplatReducer {
    * header of 16 bytes made from its clear one (magic, version, points, degree, fractional bits, flags, 0), then its
    * arrays, each the stream of its table of contents decompressed by [zstd] within its own bytes of the file. Its
    * extensions are skipped (they are not copied). Stops with [SplatFileProblem.DAMAGED] on a clear header that is not
-   * the one probed, a table that does not match the arrays (SplatHeader.v4StreamSizes), a stream that is damaged or
-   * gives more or fewer bytes than its array, or that leaves some of its bytes unread, and bytes after the last stream
-   * (Niantic's reader asks the same). Closing it closes the decoder of the stream being read and the file
+   * the one probed, a table that does not match the arrays (SplatHeader.v4StreamSizes), a stream the decoder rejects
+   * or that gives more or fewer bytes than its array, or that leaves some of its bytes unread, and bytes after the last
+   * stream (Niantic's reader asks the same). Niantic's writer gives its ZSTD frames no checksum: a byte changed inside
+   * the data of a stream may go through unseen, as it would in Niantic's reader, harmless to the module (every field
+   * of the arrays is a byte, so no size and no number goes wrong). Closing it closes the decoder of the stream being
+   * read and the file
    */
   private class V4Payload(private val input: InputStream, head: SplatProbe.Spz, private val zstd: SplatZstd) :
     InputStream() {
