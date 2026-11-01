@@ -1,6 +1,6 @@
 # Platform logos: sources and licences
 
-These logos appear in the platform table at the top of the README, at 22 px, only to show on which platforms Immuch360 runs. Each one is a trademark of its owner (see the "License and trademark" section of the README). Showing them here implies no endorsement by, or affiliation with, any of these companies or projects.
+These logos appear in the platform table at the top of the README, at 22 px, and on the use case cards (`../usecases/`), on white chips, only to show on which platforms Immuch360 runs. Each one is a trademark of its owner (see the "License and trademark" section of the README). Showing them here implies no endorsement by, or affiliation with, any of these companies or projects.
 
 All files were downloaded on 9 October 2026. Every file is a plain SVG with a square viewBox, no script, no text and no external reference.
 
