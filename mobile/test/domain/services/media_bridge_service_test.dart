@@ -408,6 +408,45 @@ void main() {
       expect(other.urlFor('nas1', '/sub/clip.mp4').pathSegments[0], isNot(url.pathSegments[0]));
       await other.stop();
     });
+
+    test('a stop cuts a film being streamed at once, while the share does not answer its next read', () async {
+      // The close of the window of 1 November 2026 (desktop build 19): a player reading a film of a share that stopped
+      // answering must get the end of its connection at once, so that its read returns
+      final firstRead = Completer<void>();
+      final answer = Completer<void>();
+      share.beforeRead = (path) async {
+        if (!firstRead.isCompleted) {
+          firstRead.complete();
+          return;
+        }
+        await answer.future;
+      };
+      final client = HttpClient();
+      addTearDown(() => client.close(force: true));
+      final response = await (await client.getUrl(bridge.urlFor('nas1', '/big.mp4'))).close();
+      var received = 0;
+      final ended = Completer<void>();
+      response.listen(
+        (chunk) => received += chunk.length,
+        onDone: ended.complete,
+        onError: (Object _) => ended.complete(),
+        cancelOnError: true,
+      );
+      await _until(() => received > 0 && share.reads.length > 1);
+      expect(received, lessThan(big.length));
+
+      final watch = Stopwatch()..start();
+      await bridge.stop().timeout(const Duration(seconds: 2));
+      await ended.future.timeout(const Duration(seconds: 2));
+      expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
+      expect(received, lessThan(big.length), reason: 'the body was cut, not completed');
+
+      // The share answers late: what it brings goes nowhere, and no other read starts
+      final reads = share.reads.length;
+      answer.complete();
+      expect(await _settled(() => share.reads.length), reads);
+      expect(await _released(bridge), 0);
+    });
   });
 
   group('whole files', () {
