@@ -200,8 +200,13 @@ void main() {
         'salon_scene3D (1).jpg',
       ]);
       expect(derivedNameCandidates('PANO_0001.jpg', names), ['PANO_0001_3D.jpg']);
-      // The names the app writes are candidates of their original
-      for (final kind in ImmersiveKind.values) {
+      // The names the app writes are candidates of their original; a splat scene is made from many photos and is no
+      // version of one of them (plan 2026-11-01, decision D2)
+      expect(
+        isDerivedNameCandidate('salon.jpg', derivedFileNameFor(ImmersiveKind.gaussianSplat, 'salon.jpg')),
+        isFalse,
+      );
+      for (final kind in ImmersiveKind.values.where((kind) => kind != ImmersiveKind.gaussianSplat)) {
         expect(isDerivedNameCandidate('salon.jpg', derivedFileNameFor(kind, 'salon.jpg')), isTrue, reason: '$kind');
         expect(
           isDerivedNameCandidate('PANO_0001.jpg', derivedFileNameFor(kind, 'PANO_0001.jpg')),

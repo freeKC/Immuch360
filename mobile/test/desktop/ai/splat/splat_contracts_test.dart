@@ -1,0 +1,511 @@
+// The contracts of the splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, lot SP0), which the lots of
+// the formats, the runners, the inputs, the engine and the screens build on: the kind of file and its name, the steps
+// and their states, the failures and the counts they carry, the spec of a job and what it tells at the end, the kind
+// of the queue on the lane of the graphics card whose engine tells the whole time left, the memory it holds, the
+// feature and its group held back with entries that have no sums yet, the settings, and the words of the panel.
+
+import 'dart:ffi' show Abi;
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
+
+import '../creator/english_texts.dart';
+
+const _gib = 1024 * 1024 * 1024;
+const _lead = ImmersiveSource(name: 'DSCF4667.JPG', size: 4182311, sha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=', path: '/p');
+
+class _Member implements SplatMember {
+  _Member(this.name);
+
+  @override
+  final String name;
+
+  @override
+  DateTime? get taken => null;
+
+  @override
+  String? get camera => null;
+
+  @override
+  Future<ImmersiveSource> load(NativeCancelFlag cancel) async => _lead;
+
+  @override
+  Future<void> release() async {}
+}
+
+SplatJob _job({bool video = false, SplatSettings settings = const SplatSettings(), int members = 3}) => SplatJob(
+  id: 'splat-1',
+  lead: _lead,
+  members: [for (var k = 0; k < (video ? 1 : members); k++) _Member('DSCF${4667 + k}.JPG')],
+  isVideo: video,
+  settings: settings,
+  partPath: '/out/.salon_splat.spz.1-1.immuch360.part',
+  derivativeId: 'urn:uuid:1',
+  creatorTool: 'Immuch360 Desktop 3.3.0',
+  created: '2026-11-01T15:00:00+01:00',
+);
+
+/// Every component installed, the gate asking nothing of ONNX Runtime
+class _Installed implements AiComponentFiles {
+  @override
+  Future<File?> verifiedFile(AiComponent component) async => File('/components/${component.installPath}');
+
+  @override
+  AiComponentState stateOf(AiComponent component) => AiComponentState.installed;
+}
+
+void main() {
+  group('the kind of file', () {
+    test('a splat scene is GaussianSplat, written as <name>_splat.spz, not a version of one photo', () {
+      expect(ImmersiveKind.gaussianSplat.xmp, 'GaussianSplat');
+      expect(ImmersiveKind.fromXmp('GaussianSplat'), ImmersiveKind.gaussianSplat);
+      expect(derivedNameEnd(ImmersiveKind.gaussianSplat, 'salon'), '_splat.spz');
+      expect(derivedFileNameFor(ImmersiveKind.gaussianSplat, 'salon'), 'salon_splat.spz');
+      expect('salon$splatNameSuffix$splatPlyExtension', 'salon_splat.ply');
+      expect(derivedNameSuffixes, isNot(contains(splatNameSuffix)));
+      expect(qualityFlagsOf(ImmersiveKind.gaussianSplat), isEmpty);
+    });
+
+    test('splat-v1 holds the choices of the plan', () {
+      expect(SplatV1.pipeline, 'splat-v1');
+      expect((SplatV1.minImages, SplatV1.fewImages, SplatV1.maxPhotos), (20, 50, 200));
+      expect((SplatV1.minVideo, SplatV1.maxVideo), (const Duration(seconds: 10), const Duration(minutes: 5)));
+      expect((SplatV1.videoFrames, SplatV1.maxVideoFrames), (150, 250));
+      expect((SplatV1.photoLongSide, SplatV1.photoQuality, SplatV1.siftMaxImageSize), (1600, 95, 1024));
+      expect((SplatV1.steps, SplatV1.maxGaussians, SplatV1.shDegree), (20000, 150000, 3));
+      expect(SplatV1.trainingResolution, 1024, reason: 'until the measure M1 says otherwise');
+      expect((SplatV1.minPlacedShare, SplatV1.minPlaced, SplatV1.partialShare), (0.5, 20, 0.9));
+      expect(
+        (SplatV1.colmapSilence, SplatV1.brushSilence),
+        (const Duration(seconds: 600), const Duration(seconds: 300)),
+      );
+      expect((SplatV1.objectSize, SplatV1.placeCameraHeight, SplatV1.placeMinSize), (1.0, 1.5, 3.0));
+      expect((SplatV1.spzVersion, SplatV1.spzFractionalBits), (2, 12));
+      expect((SplatV1.minGraphicsMemory, SplatV1.minPhysicalMemory, SplatV1.jobMemory), (4 * _gib, 8 * _gib, 4 * _gib));
+      expect(SplatV1.freeGraphicsMemory, 2560 * 1024 * 1024);
+      expect(SplatV1.workKept, const Duration(hours: 24));
+    });
+  });
+
+  group('the steps', () {
+    test('the photos or the frames, COLMAP, Brush, the copy for the headset, each with its phase', () {
+      expect(ImmersiveStage.of(ImmersiveKind.gaussianSplat), ImmersiveStage.splat);
+      expect(ImmersiveStage.splat, [
+        ImmersiveStage.reading,
+        ImmersiveStage.photos,
+        ImmersiveStage.frames,
+        ImmersiveStage.features,
+        ImmersiveStage.matching,
+        ImmersiveStage.mapping,
+        ImmersiveStage.training,
+        ImmersiveStage.splatCopy,
+        ImmersiveStage.writing,
+      ]);
+      expect(
+        [for (final stage in ImmersiveStage.splat) stage.phase],
+        [
+          ImmersivePhase.preparing,
+          ImmersivePhase.preparing,
+          ImmersivePhase.preparing,
+          ImmersivePhase.computing,
+          ImmersivePhase.computing,
+          ImmersivePhase.computing,
+          ImmersivePhase.computing,
+          ImmersivePhase.finishing,
+          ImmersivePhase.finishing,
+        ],
+      );
+    });
+
+    test('a job of photos skips the frames, a job of a video skips the photos', () {
+      expect(_job().stages, isNot(contains(ImmersiveStage.frames)));
+      expect(_job().stages, contains(ImmersiveStage.photos));
+      expect(_job(video: true).stages, isNot(contains(ImmersiveStage.photos)));
+      expect(_job(video: true).stages, contains(ImmersiveStage.frames));
+      expect(_job().stages.length, ImmersiveStage.splat.length - 1);
+    });
+
+    test('each has its state in the queue, before encoding, so that the other kinds keep their order', () {
+      for (final stage in ImmersiveStage.splat) {
+        expect(ConversionState.of(stage).name, stage.name);
+      }
+      expect(ConversionState.splatCopy.index, lessThan(ConversionState.encoding.index));
+      expect(ConversionState.photos.index, greaterThan(ConversionState.rightEye.index));
+      expect(ConversionState.training.phase, ConversionPhase.computing);
+      expect(ConversionState.splatCopy.phase, ConversionPhase.finishing);
+    });
+  });
+
+  group('the failures', () {
+    test('the codes of placing the photos and of the training', () {
+      expect(
+        ImmersiveErrorCode.values.map((code) => code.name),
+        containsAll([
+          'tooFewImages',
+          'posesFailed',
+          'posesStalled',
+          'notEnoughOverlap',
+          'trainingFailed',
+          'trainingStalled',
+        ]),
+      );
+    });
+
+    test('the counts a failure carries as its message', () {
+      expect(splatCountsMessage(12, 150), '12/150');
+      expect(splatCountsOf('12/150'), (12, 150));
+      expect(splatCountsOf(splatCountsMessage(0, 24)), (0, 24));
+      for (final message in [null, '', 'COLMAP crashed', '12 / 150', '-1/3', '12/150/1']) {
+        expect(splatCountsOf(message), isNull, reason: '$message');
+      }
+    });
+  });
+
+  group('the spec of a job', () {
+    test('the lead is its original, the members are read one by one, the settings are those of splat-v1', () {
+      final job = _job();
+
+      expect(job.kind, ImmersiveKind.gaussianSplat);
+      expect(job.sources, [_lead]);
+      expect(job.original, _lead);
+      expect(job.members.map((member) => member.name), ['DSCF4667.JPG', 'DSCF4668.JPG', 'DSCF4669.JPG']);
+      expect(job.plyPartPath, isNull);
+      expect(job.quarterTurns, 0);
+      const settings = SplatSettings();
+      expect(settings.subject, SplatSubject.place);
+      expect(
+        (settings.steps, settings.maxGaussians, settings.shDegree, settings.trainingResolution),
+        (SplatV1.steps, SplatV1.maxGaussians, SplatV1.shDegree, SplatV1.trainingResolution),
+      );
+      expect(settings.siftMaxImageSize, SplatV1.siftMaxImageSize);
+      expect(settings.keepPly, isFalse);
+    });
+
+    test('the key of its settings tells two scenes apart, the copy for other apps aside', () {
+      const object = SplatSettings(subject: SplatSubject.object);
+
+      expect(const SplatSettings().key, 'splat-v1;place;20000;150000;3;1024;1024');
+      expect(object.key, isNot(const SplatSettings().key));
+      expect(const SplatSettings(keepPly: true).key, const SplatSettings().key);
+      expect(const SplatSettings(keepPly: true), isNot(const SplatSettings()));
+      expect(object, const SplatSettings(subject: SplatSubject.object));
+      expect(object.hashCode, const SplatSettings(subject: SplatSubject.object).hashCode);
+    });
+
+    test('its result: the gaussians, the images placed, the images left out, the .ply', () {
+      const details = SplatResultDetails(
+        gaussians: 150000,
+        images: 150,
+        placed: 126,
+        subject: SplatSubject.place,
+        scale: 0.42,
+        plyBytes: 35401551,
+      );
+      const result = ImmersiveResult.made(details: details, bytesWritten: 3612448);
+
+      expect(result.isDone, isTrue);
+      expect(result.details, same(details));
+      expect(details.leftOut, 24);
+      expect(details.isPartial, isTrue, reason: '126 of 150 is under 90 %');
+      expect(
+        const SplatResultDetails(
+          gaussians: 1,
+          images: 150,
+          placed: 135,
+          subject: SplatSubject.object,
+          scale: 1,
+        ).isPartial,
+        isFalse,
+      );
+      expect(details.fromVideo, isFalse);
+      expect(details.blurred, 0);
+      expect(details.shDegree, 3);
+    });
+  });
+
+  group('the kind of the queue', () {
+    test('a splat scene runs on the lane of the graphics card and its engine tells the whole time left', () {
+      expect(ConversionKind.splatScene.output, ImmersiveKind.gaussianSplat);
+      expect(ConversionKind.splatScene.lane, ConversionLane.gpu);
+      expect(ConversionKind.splatScene.stages, ImmersiveStage.splat);
+      expect(
+        [
+          for (final kind in ConversionKind.values)
+            if (kind.tellsWholeTimeLeft) kind,
+        ],
+        [ConversionKind.splatScene],
+      );
+      expect(
+        conversionTimeLeft(
+          ConversionKind.splatScene,
+          ImmersiveStage.training,
+          timings: const AiTimings(),
+          inStage: const Duration(minutes: 1),
+          stageLeft: const Duration(minutes: 3),
+        ),
+        const Duration(minutes: 3),
+      );
+      expect(conversionTimeLeft(ConversionKind.splatScene, ImmersiveStage.mapping, timings: const AiTimings()), isNull);
+      // Another kind adds the timings of the steps after it
+      expect(
+        conversionTimeLeft(
+          ConversionKind.panoramaFromPhoto,
+          ImmersiveStage.generating,
+          timings: const AiTimings(),
+          stageLeft: const Duration(minutes: 3),
+        ),
+        greaterThan(const Duration(minutes: 3)),
+      );
+    });
+
+    test('the time of the dialog before the first scene: some 13 minutes for 150 photos, as the plan estimates', () {
+      final expected = ConversionKind.splatScene.expectedDuration(const AiTimings());
+
+      expect(expected, greaterThan(const Duration(minutes: 12)));
+      expect(expected, lessThan(const Duration(minutes: 14)));
+    });
+
+    test('it holds 4 GiB of memory until the points of the images are found', () {
+      expect(jobMemoryNeedOf(ImmersiveKind.gaussianSplat), 4 * _gib);
+      expect(memoryPeakOf(ImmersiveKind.gaussianSplat), ImmersiveStage.features);
+      expect(jobMemoryStillNeeded(ImmersiveKind.gaussianSplat, ImmersiveStage.photos), 4 * _gib);
+      expect(jobMemoryStillNeeded(ImmersiveKind.gaussianSplat, ImmersiveStage.training), 0);
+    });
+
+    test('it is not a type of "Make 3D (AI)": a button of its own, never offered on one photo yet', () {
+      expect(conversionDialogKinds, isNot(contains(ConversionKind.splatScene)));
+      expect(aiFeatureOf(ConversionKind.splatScene), AiFeature.splatScene);
+    });
+  });
+
+  group('the feature and its components', () {
+    test('Windows only, a group of its own, held back until ai-components-4 is published', () {
+      expect(AiFeature.splatScene.platforms, [AiPlatform.windowsX64]);
+      expect(AiFeatureGroup.splats.features, {AiFeature.splatScene});
+      expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
+      expect(aiComponentsSplatsReleaseTag, 'ai-components-4');
+      expect(
+        aiComponentGroupsFor(AiPlatform.windowsX64).map((group) => group.group),
+        isNot(contains(AiFeatureGroup.splats)),
+      );
+    });
+
+    test('COLMAP and Brush, archives of our CI without sizes nor sums yet: never offered', () {
+      expect(aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.splatScene), [
+        colmapWindowsComponent,
+        brushWindowsComponent,
+      ]);
+      expect(aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.splatScene), isEmpty);
+      expect(aiComponentsFor(AiPlatform.macosArm64, feature: AiFeature.splatScene), isEmpty);
+      final splats = [colmapWindowsComponent, colmapLinuxComponent, brushWindowsComponent, brushLinuxComponent];
+      expect(splats.map((component) => component.id), [
+        'colmap-cpu-win-x64',
+        'colmap-cpu-linux-x64',
+        'brush-vulkan-win-x64',
+        'brush-vulkan-linux-x64',
+      ]);
+      for (final component in splats) {
+        expect(aiComponents, contains(component));
+        expect(component.kind, AiComponentKind.archive, reason: component.id);
+        expect(component.releaseTag, 'ai-components-4', reason: component.id);
+        expect(component.features, {AiFeature.splatScene}, reason: component.id);
+        expect(component.officialUrls, isEmpty, reason: 'our builds only: ${component.id}');
+        expect((component.size, component.sha256), (null, null), reason: component.id);
+        expect(component.archiveFiles, isEmpty, reason: component.id);
+        expect(component.isComplete, isFalse, reason: component.id);
+        expect(component.installPath, 'engines/${component.id}');
+        expect(component.assetName, '${component.id}.zip');
+      }
+      expect({for (final component in splats) component.licence}, {'BSD-3-Clause', 'Apache-2.0'});
+      expect(colmapWindowsComponent.version, '4.2.1-imm1');
+      expect(brushWindowsComponent.version, '0.3.0-imm1');
+      expect(colmapWindowsComponent.licenceUrl, 'https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt');
+      expect(brushWindowsComponent.licenceUrl, 'https://github.com/ArthurBrussee/brush/blob/v0.3.0/LICENSE');
+      expect(brushWindowsComponent.minGraphicsMemory, SplatV1.minGraphicsMemory);
+      expect(colmapWindowsComponent.minGraphicsMemory, isNull, reason: 'COLMAP runs on the processor');
+    });
+
+    test('their licences: their archives bring them, the notice of each names it and where to read it', () {
+      expect(aiLicenceText(colmapWindowsComponent), 'See https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt\n');
+      expect(aiLicenceText(brushLinuxComponent), 'See https://github.com/ArthurBrussee/brush/blob/v0.3.0/LICENSE\n');
+      expect(
+        aiComponentLicenceNotice(colmapWindowsComponent, source: 'mirror', installedAt: DateTime.utc(2026, 11, 1)),
+        contains('Licence: BSD-3-Clause, https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt'),
+      );
+    });
+
+    test('the gate refuses the feature: held back on Windows, not on the other systems yet', () async {
+      HardwareGate gate(Abi abi, {List<AiComponent> catalogue = aiComponents}) => HardwareGate(
+        components: _Installed(),
+        facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: 16 * _gib),
+        loadRuntime: (path) async => (version: '1.31.0', error: null),
+        catalogue: catalogue,
+      );
+      expect(
+        (await gate(Abi.windowsX64).evaluate(feature: AiFeature.splatScene)).reason,
+        AiGateReason.notInThisVersion,
+      );
+      // Complete as the test build makes them, still held back here
+      AiComponent complete(AiComponent component) => AiComponent(
+        id: component.id,
+        version: component.version,
+        kind: component.kind,
+        platforms: component.platforms,
+        assetName: component.assetName,
+        installPath: component.installPath,
+        size: 100,
+        sha256: 'a' * 64,
+        compression: component.compression,
+        licence: component.licence,
+        licenceUrl: component.licenceUrl,
+        features: component.features,
+        releaseTag: component.releaseTag,
+        archiveFiles: const [AiArchiveFile(path: 'program.exe', size: 100, sha256: 'bb', executable: true)],
+      );
+      final built = [for (final component in aiComponents) component.isComplete ? component : complete(component)];
+      expect(
+        (await gate(Abi.windowsX64, catalogue: built).evaluate(feature: AiFeature.splatScene)).reason,
+        AiGateReason.notInThisVersion,
+      );
+      for (final abi in [Abi.linuxX64, Abi.macosArm64, Abi.macosX64]) {
+        expect((await gate(abi).evaluate(feature: AiFeature.splatScene)).reason, AiGateReason.notHere, reason: '$abi');
+      }
+      // The 3D photo is not touched by the hold
+      expect((await gate(Abi.windowsX64).evaluate()).isAvailable, isTrue);
+    });
+  });
+
+  group('the settings', () {
+    test('"Splat scenes (experimental)" on by default, a place, no .ply', () {
+      const settings = DesktopAiSettings();
+
+      expect(settings.splatScenes, isTrue);
+      expect(settings.splatSubject, SplatSubject.place);
+      expect(settings.splatKeepPly, isFalse);
+      expect(DesktopAiSettings.fromJson(const {}), settings);
+    });
+
+    test('kept in desktop_ai.json, an unknown value read as its default', () {
+      final changed = const DesktopAiSettings().copyWith(
+        splatScenes: false,
+        splatSubject: SplatSubject.object,
+        splatKeepPly: true,
+      );
+      final json = changed.toJson();
+
+      expect((json['splatScenes'], json['splatSubject'], json['splatKeepPly']), (false, 'object', true));
+      expect(DesktopAiSettings.fromJson(json), changed);
+      expect(changed, isNot(const DesktopAiSettings()));
+      expect(
+        DesktopAiSettings.fromJson(const {'splatScenes': 'no', 'splatSubject': 'animal', 'splatKeepPly': 1}),
+        const DesktopAiSettings(),
+      );
+    });
+  });
+
+  group('the words', () {
+    setUpAll(loadEnglishTexts);
+    final t = StaticTranslations.instance;
+
+    test('of the kind, its honesty, its group', () {
+      expect(conversionKindText(t, ConversionKind.splatScene), 'Photos to splat scene');
+      expect(t.ai_immersive_job_type_splat_video, 'Video to splat scene');
+      expect(conversionKindName(t, ConversionKind.splatScene), 'Splat scene');
+      expect(
+        conversionKindLabel(t, ConversionKind.splatScene),
+        'Rebuilt from your photos: places no photo saw stay empty or blurred',
+      );
+      expect(conversionKindHonesty(t, ConversionKind.splatScene), conversionKindLabel(t, ConversionKind.splatScene));
+      expect(aiFeatureGroupName(t, AiFeatureGroup.splats), 'Splat scenes');
+      expect(t.ai_immersive_components_splats(size: '183 MB'), 'Splat scenes: 183 MB');
+      expect(t.ai_immersive_splat_make, 'Make a splat scene (AI)');
+      expect(t.ai_immersive_splat_setting, 'Splat scenes (experimental)');
+    });
+
+    test('of each failure, with the counts it carries', () {
+      String text(ImmersiveErrorCode code, [String? message]) => conversionFailureText(t, code, message);
+
+      expect(
+        text(ImmersiveErrorCode.tooFewImages, '12/150'),
+        'Only 12 of 150 images can be used: a splat scene needs at least 20',
+      );
+      expect(
+        text(ImmersiveErrorCode.tooFewImages),
+        'A splat scene needs at least 20 photos of the same place, taken from different spots; 50 to 200 is best.',
+      );
+      expect(
+        text(ImmersiveErrorCode.notEnoughOverlap, '12/150'),
+        startsWith('Only 12 of 150 images could be placed in 3D.'),
+      );
+      for (final message in ['0/150', null, 'garbage']) {
+        expect(
+          text(ImmersiveErrorCode.notEnoughOverlap, message),
+          'No two photos could be matched: they do not show the same place clearly enough.',
+          reason: '$message',
+        );
+      }
+      expect(text(ImmersiveErrorCode.posesFailed, 'Check failed'), 'Placing the photos in 3D stopped: Check failed');
+      expect(text(ImmersiveErrorCode.posesStalled), 'Placing the photos stopped responding');
+      expect(text(ImmersiveErrorCode.trainingFailed, 'panicked'), 'The splat training stopped: panicked');
+      expect(text(ImmersiveErrorCode.trainingStalled), 'The splat training stopped responding');
+    });
+
+    test('of each step, its counts in its words, the steps of the training in the progress', () {
+      ConversionJob job(ConversionState state, {int? step, int? steps}) => ConversionJob(
+        id: 'j',
+        source: LocalFileSource('/photos/salon/DSCF4667.JPG'),
+        batchIndex: 1,
+        batchSize: 1,
+        kind: ConversionKind.splatScene,
+        state: state,
+        step: step,
+        steps: steps,
+      );
+
+      expect(
+        conversionStageText(t, job(ConversionState.photos, step: 42, steps: 150)),
+        'Preparing the photos: 42 of 150',
+      );
+      expect(conversionStageText(t, job(ConversionState.photos)), isNull);
+      expect(conversionStageText(t, job(ConversionState.frames, step: 61, steps: 150)), 'Taking the frames: 61 of 150');
+      expect(
+        conversionStageText(t, job(ConversionState.features, step: 87, steps: 150)),
+        'Placing the photos in 3D: finding features, 87 of 150',
+      );
+      expect(
+        conversionStageText(t, job(ConversionState.matching, step: 4, steps: 9)),
+        'Placing the photos in 3D: matching, 4 of 9',
+      );
+      expect(
+        conversionStageText(t, job(ConversionState.mapping, step: 120, steps: 150)),
+        'Placing the photos in 3D: rebuilding, 120 of 150 placed',
+      );
+      for (final state in [ConversionState.features, ConversionState.matching, ConversionState.mapping]) {
+        expect(conversionStageText(t, job(state)), 'Placing the photos in 3D', reason: '$state');
+      }
+      expect(conversionStageText(t, job(ConversionState.training, step: 12400, steps: 20000)), 'Training the splat');
+      expect(conversionStageText(t, job(ConversionState.splatCopy)), 'Writing the headset copy');
+      // The steps of the training in the progress, the images of COLMAP not counted twice
+      const left = Duration(minutes: 3);
+      expect(
+        conversionProgressText(t, job(ConversionState.training, step: 12400, steps: 20000), left),
+        'step 12,400 of 20,000, about 3 min left',
+      );
+      expect(conversionProgressText(t, job(ConversionState.features, step: 87, steps: 150), left), 'About 3 min left');
+    });
+  });
+}

@@ -835,7 +835,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// The spec of [job] for its engine; null for a panorama whose engine names no generator
+  /// The spec of [job] for its engine; null for a panorama whose engine names no generator, and for a splat scene until
+  /// the queue makes its members from the sources of its dialog (lot SP6)
   ImmersiveJobSpec? _specOf(
     ConversionJob job,
     ConversionTools tools,
@@ -890,6 +891,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           steps: steps,
           seed: tools.newSeed(),
         );
+      case ConversionKind.splatScene:
+        return null;
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(
           id: job.id,

@@ -221,15 +221,32 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
   ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
   ImmersiveErrorCode.tooLarge => t.ai_immersive_failed_too_large,
   ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
+  ImmersiveErrorCode.tooFewImages => switch (splatCountsOf(message)) {
+    (final usable, final all)? => t.ai_immersive_failed_splat_too_few(
+      count: usable,
+      total: all,
+      min: SplatV1.minImages,
+    ),
+    null => t.ai_immersive_splat_too_few(min: SplatV1.minImages, good: SplatV1.fewImages, max: SplatV1.maxPhotos),
+  },
+  ImmersiveErrorCode.posesFailed => t.ai_immersive_failed_splat_poses(message: message ?? ''),
+  ImmersiveErrorCode.posesStalled => t.ai_immersive_failed_splat_poses_stalled,
+  ImmersiveErrorCode.notEnoughOverlap => switch (splatCountsOf(message)) {
+    (final placed, final all)? when placed > 0 => t.ai_immersive_failed_splat_overlap(placed: placed, total: all),
+    _ => t.ai_immersive_failed_splat_no_match,
+  },
+  ImmersiveErrorCode.trainingFailed => t.ai_immersive_failed_splat_training(message: message ?? ''),
+  ImmersiveErrorCode.trainingStalled => t.ai_immersive_failed_splat_training_stalled,
 };
 
 /// What a job makes, in the words of the panel: "2D to 3D SBS", "2D to 3D scene", "2D to 360° panorama", "360° to 3D
-/// 360°"
+/// 360°", "Photos to splat scene" (the screens of the splat scenes say "Video to splat scene" for a video, lot SP7)
 String conversionKindText(Translations t, ConversionKind kind) => switch (kind) {
   ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
   ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
+  ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
 };
 
 /// The honesty label of the files of a kind, as the head of the panel says it
@@ -237,6 +254,7 @@ String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind)
   ConversionKind.sbsFromPhoto || ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
   ConversionKind.sceneFromPhoto => t.ai_immersive_scene_honesty,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
+  ConversionKind.splatScene => t.ai_immersive_splat_honesty,
 };
 
 /// The honesty label of the file of [job]: that of its kind, but the 3D version of a panorama the app generated (chained
@@ -246,8 +264,8 @@ String conversionJobLabel(Translations t, ConversionJob job, ConversionJobInfo? 
     ? t.ai_immersive_panorama_honesty
     : conversionKindLabel(t, job.kind);
 
-/// The step of a long job in words ("Estimating the geometry", "Filling hidden areas: 2 of 5"), null for the steps
-/// the state says well enough (those of the 3D photo)
+/// The step of a long job in words ("Estimating the geometry", "Filling hidden areas: 2 of 5", "Placing the photos in
+/// 3D: finding features, 87 of 150"), null for the steps the state says well enough (those of the 3D photo)
 String? conversionStageText(Translations t, ConversionJob job) => switch (job.state) {
   ConversionState.geometry => t.ai_immersive_stage_geometry,
   ConversionState.layers => t.ai_immersive_stage_layers,
@@ -262,7 +280,41 @@ String? conversionStageText(Translations t, ConversionJob job) => switch (job.st
   ConversionState.upscale => t.ai_immersive_stage_upscale,
   ConversionState.pasteBack => t.ai_immersive_stage_paste_back,
   ConversionState.panoramaDepth => t.ai_immersive_stage_panorama_depth,
+  ConversionState.photos => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_photos(index: step, total: steps),
+    _ => null,
+  },
+  ConversionState.frames => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_frames(index: step, total: steps),
+    _ => null,
+  },
+  ConversionState.features => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_features(index: step, total: steps),
+    _ => t.ai_immersive_stage_splat_poses,
+  },
+  ConversionState.matching => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_matching(index: step, total: steps),
+    _ => t.ai_immersive_stage_splat_poses,
+  },
+  ConversionState.mapping => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_mapping(index: step, total: steps),
+    _ => t.ai_immersive_stage_splat_poses,
+  },
+  ConversionState.training => t.ai_immersive_stage_splat_training,
+  ConversionState.splatCopy => t.ai_immersive_stage_splat_copy,
   _ => null,
+};
+
+/// The states whose counts the words of their step already say ([conversionStageText]): the regions of the hidden
+/// areas, the photos, frames and images of a splat scene; the steps of a generation and of a training are said by the
+/// progress ("step 12,400 of 20,000, about 3 min left")
+const _countedInStageText = {
+  ConversionState.inpaint,
+  ConversionState.photos,
+  ConversionState.frames,
+  ConversionState.features,
+  ConversionState.matching,
+  ConversionState.mapping,
 };
 
 /// "step 12 of 28, about 3 min left" while a generation tells its steps, else "About 20 s left"; [left] is what is
@@ -273,8 +325,8 @@ String? conversionProgressText(Translations t, ConversionJob job, Duration? left
   }
   final time = aiDurationText(t, left);
   final (step, steps) = (job.step, job.steps);
-  // The regions of the hidden areas are counted in the words of their step
-  if (step != null && steps != null && job.state != ConversionState.inpaint) {
+  // The regions of the hidden areas and the images of a splat scene are counted in the words of their step
+  if (step != null && steps != null && !_countedInStageText.contains(job.state)) {
     return t.ai_immersive_step_progress(step: step, steps: steps, time: time);
   }
   return t.ai_immersive_time_left(time: time);

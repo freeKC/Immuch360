@@ -13,6 +13,7 @@ void main() {
         'Panorama360',
         'StereoPanorama360',
         'VolumetricScene',
+        'GaussianSplat',
       ]);
       expect(StereoEyes.full.xmp, 'SideBySideFull');
       expect(StereoEyes.half.json, 'half');
@@ -53,6 +54,7 @@ void main() {
           ImmersiveKind.volumetricScene: 'salon_scene3D.jpg',
           ImmersiveKind.panorama360: 'salon_360.jpg',
           ImmersiveKind.stereoPanorama360: 'salon_360_3D.jpg',
+          ImmersiveKind.gaussianSplat: 'salon_splat.spz',
         },
       );
       // The 3D version of a 360° photo whose name says so only adds _3D
