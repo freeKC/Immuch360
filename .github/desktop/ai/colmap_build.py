@@ -402,7 +402,7 @@ def command_licences(args) -> int:
         args.ports_json.parent.mkdir(parents=True, exist_ok=True)
         args.ports_json.write_text(json.dumps({'system': args.system, 'triplet': triplet, 'ports': {
             name: {'version': version, 'licence': licence} for name, (version, licence) in sorted(ports.items())}},
-            indent=1) + '\n', encoding='utf-8')
+            indent=1) + '\n', encoding='utf-8', newline='\n')
     problems = licence_problems(ports)
     problems += table_problems(ports, read_table(args.table), args.system)
     for problem in problems:
@@ -431,7 +431,7 @@ def command_table(args) -> int:
     lines += ['', TABLE_END]
     text = args.table.read_text(encoding='utf-8')
     start, end = text.index(TABLE_START), text.index(TABLE_END) + len(TABLE_END)
-    args.table.write_text(text[:start] + '\n'.join(lines) + text[end:], encoding='utf-8')
+    args.table.write_text(text[:start] + '\n'.join(lines) + text[end:], encoding='utf-8', newline='\n')
     print(f'{len(merged)} ports written in {args.table}')
     return 0
 
@@ -482,7 +482,7 @@ def command_build(args) -> int:
             'if not "%CONFIGURED%"=="0" exit /b 1',
             ' '.join(quote(part) for part in build) + ' || exit /b 1',
             '',
-        ]), encoding='utf-8')
+        ]), encoding='utf-8', newline='')
         print(f'Visual Studio: {studio}')
         run(['cmd.exe', '/d', '/c', str(script)])
     problems = configure_problems(log.read_text(encoding='utf-8', errors='replace'))
@@ -674,7 +674,7 @@ def command_pack(args) -> int:
             print(f'{len(files[name]):>10}  {hashlib.sha256(files[name]).hexdigest()}  {name}'
                   + ('  (program)' if name in programs else ''))
     digest = hashlib.sha256(target.read_bytes()).hexdigest()
-    (args.out / f'{target.name}.sha256').write_text(f'{digest}  {target.name}\n', encoding='utf-8')
+    (args.out / f'{target.name}.sha256').write_text(f'{digest}  {target.name}\n', encoding='utf-8', newline='\n')
     print(f'{target.name}: {target.stat().st_size} bytes, SHA-256 {digest}, {len(files)} files ({ports} licences of '
           'vcpkg ports)')
     write_outputs({'archive': target, 'sha256': digest})
@@ -714,12 +714,12 @@ def command_help(args) -> int:
     if args.save:
         args.save.mkdir(parents=True, exist_ok=True)
         for command, lines in texts.items():
-            (args.save / f'{command}.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            (args.save / f'{command}.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
     for command, lines in texts.items():
         fixture = args.fixtures / f'{command}.txt'
         if args.write:
             args.fixtures.mkdir(parents=True, exist_ok=True)
-            fixture.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            fixture.write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
             continue
         frozen = normalized_help(fixture.read_text(encoding='utf-8')) if fixture.is_file() else []
         if lines != frozen:

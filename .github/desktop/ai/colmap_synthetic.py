@@ -222,7 +222,7 @@ def command_render(args) -> int:
         poses[name] = {'camera': folder, 'focal': focal, 'rotation': rotation, 'translation': translation,
                        'centre': list(centre)}
     (args.out / 'poses.json').write_text(json.dumps({'width': args.width, 'height': args.height, 'images': poses},
-                                                    indent=1, sort_keys=True) + '\n', encoding='utf-8')
+                                                    indent=1, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
     print(f'{len(poses)} views of {args.width} x {args.height} in {args.out / "images"}, true poses in poses.json')
     return 0
 
