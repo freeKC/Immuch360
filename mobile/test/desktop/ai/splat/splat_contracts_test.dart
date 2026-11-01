@@ -459,7 +459,8 @@ void main() {
 
     test('of the kind, its honesty, its group', () {
       expect(conversionKindText(t, ConversionKind.splatScene), 'Photos to splat scene');
-      expect(t.ai_immersive_job_type_splat_video, 'Video to splat scene');
+      expect(conversionKindText(t, ConversionKind.splatScene, fromVideo: true), 'Video to splat scene');
+      expect(conversionKindText(t, ConversionKind.sbsFromPhoto, fromVideo: true), '2D to 3D SBS');
       expect(conversionKindName(t, ConversionKind.splatScene), 'Splat scene');
       expect(
         conversionKindLabel(t, ConversionKind.splatScene),
@@ -498,15 +499,26 @@ void main() {
       expect(text(ImmersiveErrorCode.posesStalled), 'Placing the photos stopped responding');
       expect(text(ImmersiveErrorCode.trainingFailed, 'panicked'), 'The splat training stopped: panicked');
       expect(text(ImmersiveErrorCode.trainingStalled), 'The splat training stopped responding');
+      // COLMAP out of memory: the words of a splat scene, not those of a photo (review of SP0)
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.outOfMemory, null, kind: ConversionKind.splatScene),
+        'Not enough memory to place the photos: close other apps and retry, or use fewer photos.',
+      );
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.outOfMemory, null, kind: ConversionKind.sceneFromPhoto),
+        conversionFailureText(t, ImmersiveErrorCode.outOfMemory, null),
+      );
+      expect(text(ImmersiveErrorCode.outOfMemory), isNot(t.ai_immersive_failed_splat_memory));
     });
 
     test('of each step, its counts in its words, the steps of the training in the progress', () {
-      ConversionJob job(ConversionState state, {int? step, int? steps}) => ConversionJob(
+      ConversionJob job(ConversionState state, {int? step, int? steps, bool video = false}) => ConversionJob(
         id: 'j',
         source: LocalFileSource('/photos/salon/DSCF4667.JPG'),
         batchIndex: 1,
         batchSize: 1,
         kind: ConversionKind.splatScene,
+        fromVideo: video,
         state: state,
         step: step,
         steps: steps,
@@ -522,10 +534,19 @@ void main() {
         conversionStageText(t, job(ConversionState.features, step: 87, steps: 150)),
         'Placing the photos in 3D: finding features, 87 of 150',
       );
+      // The photos are matched in blocks (exhaustive_matcher), the frames of a video one after the other
       expect(
         conversionStageText(t, job(ConversionState.matching, step: 4, steps: 9)),
-        'Placing the photos in 3D: matching, 4 of 9',
+        'Placing the photos in 3D: matching, block 4 of 9',
       );
+      expect(
+        conversionStageText(t, job(ConversionState.matching, step: 61, steps: 150, video: true)),
+        'Placing the photos in 3D: matching, 61 of 150',
+      );
+      // A job knows it is made from a video, whatever happens to it
+      final video = job(ConversionState.waiting, video: true);
+      expect(video.copyWith(state: ConversionState.matching, step: () => 1).fromVideo, isTrue);
+      expect(job(ConversionState.waiting).fromVideo, isFalse);
       expect(
         conversionStageText(t, job(ConversionState.mapping, step: 120, steps: 150)),
         'Placing the photos in 3D: rebuilding, 120 of 150 placed',

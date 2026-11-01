@@ -425,9 +425,14 @@ class ConversionJob {
     this.remaining,
     this.waitingFor,
     this.waitingFree,
+    this.fromVideo = false,
   });
 
   final String id;
+
+  /// A splat scene made from one video rather than from photos: its kind is said "Video to splat scene", its frames
+  /// are matched one after the other rather than in blocks, and its times are kept apart (ConversionKind.timingsKey)
+  final bool fromVideo;
 
   /// The original: the photo, also for a 360° 3D panorama chained after the panorama made from it
   final ConversionSource source;
@@ -549,6 +554,7 @@ class ConversionJob {
     remaining: remaining == null ? this.remaining : remaining(),
     waitingFor: waitingFor == null ? this.waitingFor : waitingFor(),
     waitingFree: waitingFree == null ? this.waitingFree : waitingFree(),
+    fromVideo: fromVideo,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then
@@ -564,6 +570,7 @@ class ConversionJob {
     quarterTurns: quarterTurns,
     existing: existing,
     whenExists: whenExists,
+    fromVideo: fromVideo,
   );
 
   @override
