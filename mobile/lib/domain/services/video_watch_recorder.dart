@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('VideoWatchRecorder');
 
 /// Resumes a film where it was left and saves where it is, for one video loaded in a page of the in-app player (the
 /// asset viewer, the video page of the shares): FreeKC's rule of 31 October 2026, see WatchRule. Nothing to press:
@@ -23,6 +27,9 @@ import 'package:immich_mobile/providers/watch_progress.provider.dart';
 /// the database are in memory: nothing is saved before, and a film that did not really start resumes then.
 ///
 /// It holds the store object and the player, never a ref, so that it still saves as the page goes.
+///
+/// At the close of the window on a computer, the pages never go: [closeAll] saves the films open then, before the
+/// players are disposed.
 class VideoWatchRecorder implements VideoPositionWatcher {
   VideoWatchRecorder({
     required this._store,
@@ -50,6 +57,32 @@ class VideoWatchRecorder implements VideoPositionWatcher {
 
   /// Longest a page waits for the rows of the database before it loads a video (see [storeReady])
   static const storeWait = Duration(seconds: 2);
+
+  /// The recorders that follow a player now, for [closeAll]
+  static final _open = <VideoWatchRecorder>{};
+
+  /// The window closes (the close of a computer's window, which takes no page down): each film that a page follows
+  /// saves where it is, at once, and follows its player no more, whose teardown (a stop, a position back to 0) says
+  /// nothing of where the film was. Completes once those saves are written; the caller bounds the wait, since a
+  /// database may not answer.
+  static Future<void> closeAll() {
+    final stores = <WatchProgressStore>{};
+    for (final recorder in [..._open]) {
+      try {
+        if (recorder._save()) {
+          stores.add(recorder._store);
+        }
+      } catch (error, stackTrace) {
+        _log.warning('Could not save where ${recorder.key.key} was', error, stackTrace);
+      }
+      recorder._stop();
+    }
+    return Future.wait([for (final store in stores) store.flushed]);
+  }
+
+  /// Forgets the recorders a test left following its player, whose store belongs to a test that ended
+  @visibleForTesting
+  static void forgetOpen() => _open.clear();
 
   /// Completes once [store] holds the rows of its database, [storeWait] at most: a recorder made before finds no row,
   /// saves nothing until they come and takes the film where it was left then (see [_onRowsLoaded]). Read once at the
@@ -101,6 +134,7 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   /// Follows the player from now on, and takes a film to where it was left once ready: right before the page loads.
   /// The restore of an external player waiting wins: the film goes where that player left it, with no notice.
   void start() {
+    _open.add(this);
     _player.watcher = this;
     final target = _target;
     if (target != null && !_player.seekWhenReady(target)) {
@@ -210,16 +244,18 @@ class VideoWatchRecorder implements VideoPositionWatcher {
   /// While an external player has the video, nothing: that player tells where it is ([onHandBack], the reports of the
   /// immersive viewer). Once it handed the video back, the player goes there only once ready again, at 0 until then:
   /// the position it goes to is where the film is.
-  void _save({Duration? at, bool ended = false, bool later = false}) {
+  ///
+  /// True when something was saved.
+  bool _save({Duration? at, bool ended = false, bool later = false}) {
     if (!_played || !_store.isLoaded) {
-      return;
+      return false;
     }
     final duration = _playerDuration ?? _knownDuration;
     if (duration == null || !rule.isFilm(duration)) {
-      return;
+      return false;
     }
     if (at == null && _player.isSuspendedForExternalPlayer) {
-      return;
+      return false;
     }
     final position = at ?? _player.pendingRestorePosition ?? _stopPosition(ended: ended);
     final store = _store;
@@ -228,6 +264,7 @@ class VideoWatchRecorder implements VideoPositionWatcher {
     } else {
       store.record(key, position: position, duration: duration);
     }
+    return true;
   }
 
   /// Where the player stopped: the last position it played at for an end reported at 0
@@ -265,6 +302,15 @@ class VideoWatchRecorder implements VideoPositionWatcher {
       return;
     }
     _save(later: true);
+    _stop();
+  }
+
+  /// Follows the player no more
+  void _stop() {
+    if (_disposed) {
+      return;
+    }
+    _open.remove(this);
     _disposed = true;
     _timer?.cancel();
     _timer = null;
