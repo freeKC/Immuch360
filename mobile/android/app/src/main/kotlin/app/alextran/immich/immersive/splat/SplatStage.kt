@@ -23,8 +23,9 @@ import kotlin.math.abs
  * The splat of the immersive viewer in the world (lot S5): its entity made by the splat module ([SplatEngine]) once
  * the file is prepared ([SplatPreparer]), its life kept by [SplatSession], its place given by [SplatPlacement] in the
  * frame of a [SceneNavigator] anchored at the head (the glide of the left thumbstick at [GLIDE_SPEED] in a zone of
- * [ZONE] each way, Reset, Turn upright). Everything runs on the main thread; the load event of the module is posted
- * there. Once the scene of the SDK is down ([shutDown], from onSpatialShutdown) nothing here calls the SDK again.
+ * [ZONE] each way, the snap turn of the right thumbstick about the user, Reset, Turn upright). Everything runs on the
+ * main thread; the load event of the module is posted there. Once the scene of the SDK is down ([shutDown], from
+ * onSpatialShutdown) nothing here calls the SDK again.
  *
  * What the module was seen to need on a Quest 3 on 31 October 2026: every pose is computed in the frame of the SDK
  * and handed to the module converted to its own frame, at one place ([modulePose]) for its three entry points (the
@@ -69,6 +70,9 @@ internal class SplatStage(
     var entity: Entity? = null
     var shown = false
     var reanchor = true
+
+    /** The turns of the right thumbstick not made yet, in degrees of yaw of the SDK, made at the next frame */
+    var pendingTurn = 0f
 
     /** The position of the entity in the frame of the anchor and its rotation, for the orientation of now */
     var local: Pair<Vector3, Quaternion>? = null
@@ -230,27 +234,52 @@ internal class SplatStage(
   }
 
   /**
-   * One frame of [seconds] with the [head] pose of the SDK and the buttons [held]: the glide once the splat shows, a
-   * new anchor after Reset or Turn upright, and the splat moved when its pose changed
+   * One frame of [seconds] with the [head] pose of the SDK and the buttons [held]: the glide once the splat shows, the
+   * turns of the right thumbstick, a new anchor after Reset or Turn upright, and the splat moved when its pose changed
    */
   fun onFrame(head: Pose, held: Int, seconds: Double) {
     if (session.isDown) return
     val splat = current ?: return
     val entity = splat.entity ?: return
     if (splat.reanchor) {
-      // Reset or Turn upright: placed again from the head of now, the glide back to nothing
+      // Reset or Turn upright: placed again from the head of now, the glide back to nothing, no turn left to make
+      splat.pendingTurn = 0f
       move(splat, entity, anchorAndPlace(splat, head.t, head.forward()))
       return
     }
+    // A turn of the right thumbstick: the splat turns about the head of now, the place the glide reached kept. It is
+    // composed in the navigator, before the one conversion of the pose for the module (modulePose)
+    val turned = splat.pendingTurn
+    if (turned != 0f) {
+      splat.pendingTurn = 0f
+      splat.navigator.turnInSdk(head.t.x.toDouble(), head.t.z.toDouble(), turned.toDouble())
+    }
     // The stick glides only once the splat shows; the root stays fixed in the world otherwise, and nothing is set
     val (right, forward) = if (splat.shown) SceneStick.of(held) else 0.0 to 0.0
-    move(splat, entity, poseOf(splat, update(splat, head.t, head.forward(), right, forward, seconds)))
+    val navigation = update(splat, head.t, head.forward(), right, forward, seconds)
+    if (turned != 0f) {
+      val yaw = navigation.sdkRootYawDegrees
+      Log.i(TAG, String.format(Locale.ROOT, "splat: turned by %.0f, yaw now %.0f", turned, yaw))
+    }
+    move(splat, entity, poseOf(splat, navigation))
   }
 
-  /** Reset, from the panel or a click of a thumbstick: the splat placed again from where the user is now */
+  /**
+   * A push of the right thumbstick to the left or the right, [sdkDegrees] the yaw of the SDK the splat turns by
+   * (ImmersiveControls.snapTurnDegrees, the snap turn of the spheres and its Reverse thumbstick turn setting): made at
+   * the next frame, about the head, nothing once the splat does not show
+   */
+  fun turn(sdkDegrees: Float) {
+    val splat = current ?: return
+    if (!splat.shown) return
+    splat.pendingTurn += sdkDegrees
+  }
+
+  /** Reset, from the panel: the splat placed again from where the user is now, as it opened */
   fun reset() {
     val splat = current ?: return
     if (!splat.shown) return
+    splat.pendingTurn = 0f
     splat.reanchor = true
     Log.i(TAG, "splat: Reset")
   }
@@ -261,6 +290,7 @@ internal class SplatStage(
     if (!splat.shown) return null
     splat.upright = splat.upright.next()
     splat.local = null
+    splat.pendingTurn = 0f
     splat.reanchor = true
     memory.write(splat.spec.name, splat.prepared.sourceBytes, splat.upright)
     Log.i(TAG, "splat: upright ${splat.upright.key}")
@@ -309,9 +339,7 @@ internal class SplatStage(
   /** The pose of the entity in the world for the root of [frame]: the root, then the place in its frame */
   private fun poseOf(splat: Current, frame: SceneNavigation): Pose {
     val (position, rotation) = splat.local ?: localOf(splat).also { splat.local = it }
-    val root = Quaternion(0f, frame.sdkRootYawDegrees.toFloat(), 0f)
-    val origin = Vector3(frame.sdkRootX.toFloat(), frame.sdkRootY.toFloat(), frame.sdkRootZ.toFloat())
-    return Pose(origin.plus(root.times(position)), root.times(rotation))
+    return SplatPose.of(frame, position, rotation)
   }
 
   /**
@@ -394,5 +422,19 @@ internal class SplatStage(
     /** A head at 1.6 m looking along +z, for a splat made before the first head pose */
     private val DEFAULT_POSITION = Vector3(0f, 1.6f, 0f)
     private val DEFAULT_FORWARD = Vector3(0f, 0f, 1f)
+  }
+}
+
+/**
+ * The pose of a splat in the world of the SDK (lot S5): the root of its navigator ([SceneNavigation.sdkRootX] and the
+ * like, the glide and the turns of the thumbsticks composed there), then its [position] and [rotation] in the frame of
+ * that root (SplatStage.localOf: the centre of its bounds, its orientation). The pose of the frame of the SDK, which
+ * SplatStage converts once for the module (SplatModuleFrame). Pure, tested by SplatTurnPoseTest.
+ */
+internal object SplatPose {
+  fun of(frame: SceneNavigation, position: Vector3, rotation: Quaternion): Pose {
+    val root = Quaternion(0f, frame.sdkRootYawDegrees.toFloat(), 0f)
+    val origin = Vector3(frame.sdkRootX.toFloat(), frame.sdkRootY.toFloat(), frame.sdkRootZ.toFloat())
+    return Pose(origin.plus(root.times(position)), root.times(rotation))
   }
 }
