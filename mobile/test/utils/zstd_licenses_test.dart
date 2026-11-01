@@ -52,4 +52,18 @@ void main() {
   test('a quest build without the asset lists nothing rather than failing', () async {
     expect(await zstdLicenses(flavor: 'quest', bundle: _TextBundle({})).toList(), isEmpty);
   });
+
+  test('main.dart registers it and keeps its CRLF line ends, as upstream and immuch360 have them', () {
+    // A main.dart written back with LF changes each of its lines: every branch that registers a licence there then
+    // conflicts on the whole file, and its history is lost (review of 1 November 2026)
+    final main = File('lib/main.dart').readAsStringSync();
+    expect(main, contains('LicenseRegistry.addLicense(zstdLicenses);\r\n'));
+    final lines = main.split('\n');
+    expect(lines.last, isEmpty, reason: 'the file ends with its line end');
+    final bare = [
+      for (var i = 0; i < lines.length - 1; i++)
+        if (!lines[i].endsWith('\r')) i + 1,
+    ];
+    expect(bare.length, 0, reason: 'lines ending with LF alone, from line ${bare.firstOrNull}');
+  });
 }
