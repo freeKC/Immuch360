@@ -84,10 +84,11 @@ void main() {
 
   test('a version 4 SPZ whose table of contents does not match its arrays is damaged, as in SplatHeaderTest.kt', () {
     final good = bytesOf('axes_v4_niantic.spz');
-    SplatFileProblem? refusalOf(Uint8List bytes, [int? length]) => switch (probeSplatHead(bytes, length ?? bytes.length)) {
-      SplatRefused(:final problem) => problem,
-      _ => null,
-    };
+    SplatFileProblem? refusalOf(Uint8List bytes, [int? length]) =>
+        switch (probeSplatHead(bytes, length ?? bytes.length)) {
+          SplatRefused(:final problem) => problem,
+          _ => null,
+        };
     Uint8List withLong(Uint8List source, int at, int value) {
       final copy = Uint8List.fromList(source);
       ByteData.sublistView(copy).setInt64(at, value, Endian.little);

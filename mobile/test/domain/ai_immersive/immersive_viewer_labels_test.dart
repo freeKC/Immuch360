@@ -200,7 +200,10 @@ void main() {
     expect(labels['scenePhoto2d'], 'Photo (2D)');
     expect(labels['scene3d'], '3D scene');
     // A click of a thumbstick no longer resets a scene (FreeKC's report of 1 November 2026): Reset is in the panel
-    expect(labels['sceneHint'], 'Left thumbstick: glide. A, X or grip: show or hide this panel. B or Y: back to the app.');
+    expect(
+      labels['sceneHint'],
+      'Left thumbstick: glide. A, X or grip: show or hide this panel. B or Y: back to the app.',
+    );
     // A splat has its own hint: its right thumbstick turns it (SplatTexts.kt)
     expect(
       splatViewerLabels(await english(tester))['splatHint'],
