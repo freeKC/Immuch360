@@ -271,8 +271,12 @@ class DesktopAiSettings {
 /// measured it on the RTX 4060 Laptop (at most 250 s, the generation some 200 s, the upscale 41 s, the photo pasted
 /// back and the JPEG 3 s), the 360° 3D panorama as the design estimates it (some 10 s), the splat scene of 150 photos at
 /// the settings of the first test build as the plan of 1 November estimates it from its measure (some 13 min: the photos
-/// 45 s, the poses 260 s measured with SIFT at 1 024 pixels, the training 7.5 min). Its engine tells the time left of
-/// the whole job (ConversionKind.tellsWholeTimeLeft): these only give the time of the dialog until the first scene.
+/// 45 s, the poses 260 s measured with SIFT at 1 024 pixels, the training 7.5 min, what the measure M1 gives for photos
+/// of 4:3 at 1 024 x 768, those of a phone, beside its 366 s measured on photos of 3:2 at 1 024 x 683), and the splat
+/// scene of a video of two minutes, kept apart ("splatSceneVideo", ConversionKind.timingsKey: some 8.5 min, the frames
+/// 40 to 90 s as the plan estimates them, the sequential matching 81 s and the mapping 30 s of the measure, the training
+/// 306 s measured by M1 at 1 024 x 576). Its engine tells the time left of the whole job
+/// (ConversionKind.tellsWholeTimeLeft): these only give the time of the dialog until the first scene.
 const aiDefaultTimings = <String, Map<String, int>>{
   'sbsFromPhoto': {'reading': 100, 'decoding': 500, 'depth': 1000, 'rightEye': 500, 'encoding': 600, 'writing': 100},
   'sceneFromPhoto': {
@@ -313,6 +317,16 @@ const aiDefaultTimings = <String, Map<String, int>>{
     'matching': 195000,
     'mapping': 50000,
     'training': 450000,
+    'splatCopy': 10000,
+    'writing': 1000,
+  },
+  'splatSceneVideo': {
+    'reading': 5000,
+    'frames': 60000,
+    'features': 15000,
+    'matching': 81000,
+    'mapping': 30000,
+    'training': 306000,
     'splatCopy': 10000,
     'writing': 1000,
   },

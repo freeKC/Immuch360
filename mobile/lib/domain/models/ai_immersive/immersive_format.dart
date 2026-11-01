@@ -614,8 +614,8 @@ enum SplatSubject { place, object }
 /// The settings of splat-v1, the splat scene a computer rebuilds from 20 to 200 photos or one video: the poses of the
 /// cameras by COLMAP on the processor, the training by Brush on the graphics card, a copy for the headset trained to at
 /// most [maxGaussians] gaussians and written as SPZ version 2 (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md,
-/// sections 2.1, 2.2, 2.4 and 2.5, with the measures of measure-2026-11-01.md). The definition of the training waits
-/// for the short measure M1; the other values are the choices of the plan.
+/// sections 2.1, 2.2, 2.4 and 2.5, with the measures of measure-2026-11-01.md). The definition of the training is the
+/// one the short measure M1 set (measure-m1-2026-11-01.md); the other values are the choices of the plan.
 abstract final class SplatV1 {
   /// The name of the pipeline, for the logs now and for Immuch360:Pipeline once a photo carries the scene
   static const pipeline = 'splat-v1';
@@ -663,7 +663,8 @@ abstract final class SplatV1 {
 
   /// The training of the copy for the headset: [steps] steps, at most [maxGaussians] gaussians (trained so, never cut
   /// afterwards: 30.24 dB against 21.28 in the measure), spherical harmonics of degree [shDegree], images of
-  /// [trainingResolution] pixels at most (until M1 sets it)
+  /// [trainingResolution] pixels at most on their longest side (set by M1: 0.20 dB from 1 280 pixels for 34 % less
+  /// time, 366 s against 556 s, and right for a video too)
   static const steps = 20000;
   static const maxGaussians = 150000;
   static const shDegree = 3;

@@ -104,9 +104,16 @@ enum ImmersiveStage {
   static const stereoPanorama = [reading, decoding, panoramaDepth, rightEye, encoding, writing];
 
   /// The steps of a splat scene: the sources read (a photo of the server copied, the sums of the photos), then the
-  /// photos, or the frames of a video (SplatJob.stages keeps the one of its job), COLMAP, Brush, the copy for the
-  /// headset and the file written
+  /// photos, or the frames of a video (SplatJob.stages keeps the one of its job, [splatOf]), COLMAP, Brush, the copy
+  /// for the headset and the file written
   static const splat = [reading, photos, frames, features, matching, mapping, training, splatCopy, writing];
+
+  /// The steps of a splat scene made from a video ([video]) or from photos: those of [splat] without the frames of a
+  /// video for photos, without the photos for a video
+  static List<ImmersiveStage> splatOf({required bool video}) => [
+    for (final stage in splat)
+      if (stage != (video ? photos : frames)) stage,
+  ];
 
   /// The steps of a job that makes a file of [kind], in their order
   static List<ImmersiveStage> of(ImmersiveKind kind) => switch (kind) {
@@ -457,10 +464,7 @@ final class SplatJob extends ImmersiveJobSpec {
 
   /// The steps of the splat scene without those of the other source: the frames of a video, or the photos
   @override
-  List<ImmersiveStage> get stages => [
-    for (final stage in ImmersiveStage.splat)
-      if (stage != (isVideo ? ImmersiveStage.photos : ImmersiveStage.frames)) stage,
-  ];
+  List<ImmersiveStage> get stages => ImmersiveStage.splatOf(video: isVideo);
 }
 
 /// One photo to make into a 360° panorama generated beyond its edges, `<name>_360.jpg` (pano-v1): the transformer

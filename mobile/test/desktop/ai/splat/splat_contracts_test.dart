@@ -111,7 +111,7 @@ void main() {
       expect((SplatV1.videoFrames, SplatV1.maxVideoFrames), (150, 250));
       expect((SplatV1.photoLongSide, SplatV1.photoQuality, SplatV1.siftMaxImageSize), (1600, 95, 1024));
       expect((SplatV1.steps, SplatV1.maxGaussians, SplatV1.shDegree), (20000, 150000, 3));
-      expect(SplatV1.trainingResolution, 1024, reason: 'until the measure M1 says otherwise');
+      expect(SplatV1.trainingResolution, 1024, reason: 'set by the measure M1: 0.20 dB from 1 280 px, 34 % faster');
       expect((SplatV1.minPlacedShare, SplatV1.minPlaced, SplatV1.partialShare), (0.5, 20, 0.9));
       expect(
         (SplatV1.colmapSilence, SplatV1.brushSilence),
@@ -301,6 +301,37 @@ void main() {
 
       expect(expected, greaterThan(const Duration(minutes: 12)));
       expect(expected, lessThan(const Duration(minutes: 14)));
+      // The training of M1 at 1 024 pixels: 366 s on photos of 3:2, some 7.5 min on photos of 4:3 (1 024 x 768, the
+      // photos of a phone), 306 s on the video of 1 024 x 576
+      expect(aiDefaultTimings['splatScene']!['training'], 450000);
+      expect(aiDefaultTimings['splatSceneVideo']!['training'], 306000);
+    });
+
+    test('a job of photos is timed by the steps of photos, a job of a video by its own (review of SP0)', () {
+      expect(ConversionKind.splatScene.stagesOf(), _job().stages);
+      expect(ConversionKind.splatScene.stagesOf(fromVideo: true), _job(video: true).stages);
+      expect(ConversionKind.sceneFromPhoto.stagesOf(fromVideo: true), ConversionKind.sceneFromPhoto.stages);
+      expect(ConversionKind.splatScene.timingsKey(), 'splatScene');
+      expect(ConversionKind.splatScene.timingsKey(fromVideo: true), 'splatSceneVideo');
+      expect(ConversionKind.panoramaFromPhoto.timingsKey(fromVideo: true), 'panoramaFromPhoto');
+
+      // Some 8.5 minutes for a video of two minutes: the frames, the sequential matching (81 s) and the mapping (30 s)
+      // of the measure, the training of M1 (306 s)
+      final video = ConversionKind.splatScene.expectedDuration(const AiTimings(), fromVideo: true);
+      expect(video, greaterThan(const Duration(minutes: 8)));
+      expect(video, lessThan(const Duration(minutes: 9)));
+      // What a video took never weighs on the time of photos, nor the other way around
+      const slowVideo = AiTimings({
+        'splatSceneVideo': {'frames': 3600000, 'matching': 3600000},
+      });
+      expect(
+        ConversionKind.splatScene.expectedDuration(slowVideo),
+        ConversionKind.splatScene.expectedDuration(const AiTimings()),
+      );
+      const slowPhotos = AiTimings({
+        'splatScene': {'photos': 3600000, 'matching': 3600000},
+      });
+      expect(ConversionKind.splatScene.expectedDuration(slowPhotos, fromVideo: true), video);
     });
 
     test('it holds 4 GiB of memory until the points of the images are found', () {

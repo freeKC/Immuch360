@@ -55,9 +55,24 @@ enum ConversionKind {
   /// its pixels, not a time per step
   bool get tellsWholeTimeLeft => this == splatScene;
 
-  /// How long a job of this kind takes on this computer, as [timings] tell its steps
-  Duration expectedDuration(AiTimings timings) =>
-      Duration(milliseconds: stages.fold(0, (sum, stage) => sum + (timings.of(name, stage.name) ?? 0)));
+  /// The steps of a job of this kind, made from a video ([fromVideo]) or not: a splat scene of photos has no frames
+  /// to take, one of a video no photos to prepare (ImmersiveStage.splatOf); the other kinds have their [stages]
+  List<ImmersiveStage> stagesOf({bool fromVideo = false}) =>
+      this == splatScene ? ImmersiveStage.splatOf(video: fromVideo) : stages;
+
+  /// The name the times of the steps of a job of this kind are kept under (AiTimings, desktop_ai.json): its name, but
+  /// "splatSceneVideo" for a splat scene of a video, whose matching and training take their own times (81 s and 306 s
+  /// in the measures, against 195 s and some 7.5 min for 150 photos)
+  String timingsKey({bool fromVideo = false}) => this == splatScene && fromVideo ? 'splatSceneVideo' : name;
+
+  /// How long a job of this kind takes on this computer, as [timings] tell its steps; a splat scene of a video
+  /// ([fromVideo]) by the steps and the times of a video
+  Duration expectedDuration(AiTimings timings, {bool fromVideo = false}) {
+    final key = timingsKey(fromVideo: fromVideo);
+    return Duration(
+      milliseconds: stagesOf(fromVideo: fromVideo).fold(0, (sum, stage) => sum + (timings.of(key, stage.name) ?? 0)),
+    );
+  }
 }
 
 /// The time left of a job of [kind] at [stage], which has taken [inStage] so far: the time the step itself tells
