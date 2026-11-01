@@ -6,7 +6,9 @@
 // (licenses/ID-ThirdPartyNotices.txt) and named by its address too. Phases 2 and 3 (design-final 2026-10-27, section
 // 7.3) add the MIT licences of MoGe (with the Apache License 2.0 of its DINOv2 parts) and of MI-GAN, and the BSD
 // 3-Clause licence of Real-ESRGAN, each with its own copyright line; the other models of the scenes and panoramas are
-// under the Apache License 2.0.
+// under the Apache License 2.0. An engine built by our CI, an archive (stable-diffusion.cpp, and COLMAP and Brush of
+// the splat scenes, plan 2026-11-01), brings its own licences in the licenses folder of its archive: its notice names
+// its licence and where to read it.
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 
@@ -33,6 +35,7 @@ const _onnxRuntimeRepository = 'https://github.com/microsoft/onnxruntime/blob';
 
 /// The licence text of [component]
 String aiLicenceText(AiComponent component) => switch (component.licence) {
+  _ when component.isArchive => 'See ${component.licenceUrl}\n',
   'Apache-2.0' => apacheLicence2,
   'MIT' when component.kind == AiComponentKind.runtime => onnxRuntimeLicence,
   'MIT' when component.id == mogeGeometryComponent.id => mogeLicence,

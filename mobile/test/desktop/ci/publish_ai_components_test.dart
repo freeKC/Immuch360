@@ -559,5 +559,35 @@ void main() {
       expect(run.output, contains('onnxruntime-1.31.0-linux-x64: incomplete in the catalogue (size None'));
       expect(run.output, contains('MODEL-LICENSES.md lacks the row | `depth_anything_v2_small.tflite`'));
     }, skip: skipCiScripts);
+
+    test('the components of the splat scenes are held for ai-components-4: no size, no sums, a licence allowed', () {
+      final run = runCiScript(_script, ['--check']);
+
+      expect(run.exitCode, 0, reason: '$run');
+      expect(
+        run.output,
+        contains(
+          'held for ai-components-4: brush-vulkan-linux-x64, brush-vulkan-win-x64, colmap-cpu-linux-x64, '
+          'colmap-cpu-win-x64',
+        ),
+      );
+
+      // A checkout on Windows may hold CRLF line ends; the script reads either
+      var text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
+      final start = text.indexOf("  id: 'colmap-cpu-win-x64',");
+      final licence = text.indexOf("  licence: 'BSD-3-Clause',", start);
+      text = text.replaceRange(licence, licence + 26, "  licence: 'GPL-3.0',");
+      final size = text.indexOf('  size: null,', start);
+      catalogue.writeAsStringSync(text.replaceRange(size, size + 13, '  size: 1000,'));
+
+      final refused = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+
+      expect(refused.exitCode, 1, reason: '$refused');
+      expect(refused.output, contains('colmap-cpu-win-x64: licence GPL-3.0 is not one this project allows'));
+      expect(
+        refused.output,
+        contains('colmap-cpu-win-x64: held until ai-components-4 is made, yet the catalogue gives it a size or sums'),
+      );
+    }, skip: skipCiScripts);
   });
 }

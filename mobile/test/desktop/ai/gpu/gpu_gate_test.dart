@@ -3,8 +3,8 @@
 // memory, a card of 6 GB, the RTX 4060 of 8 GB, two cards, a probe that does not answer, a Mac, 15.6 GiB of memory) and
 // the reason each one gives; the integrated graphics allowed by their switch; the features of phases 1 and 2 never
 // starting the probe; the words of each reason. The gates here hold back what this build holds back
-// (aiHeldFeatureGroups: nothing since ai-components-3 was published), so the rules of the card are what the tests see;
-// one test holds the panoramas back, and the card is looked at first all the same.
+// (aiHeldFeatureGroups: only the splat scenes since ai-components-3 was published), so the rules of the card are what
+// the tests see; one test holds the panoramas back, and the card is looked at first all the same.
 
 import 'dart:convert';
 import 'dart:ffi' show Abi;
