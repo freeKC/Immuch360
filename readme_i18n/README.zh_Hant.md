@@ -483,7 +483,7 @@ Immich 自己的應用程式無法安裝在 LG 電視上。Immuch360 為搭載 w
 <a id="kiosk-mode-for-an-exhibition-or-a-shop"></a>
 #### 展示台模式，適用於展覽或商店
 
-把頭戴裝置交給訪客，每次有人戴上，它都會從頭開啟你的 360° 照片或影片。這個構想來自 [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) 的示範 build，並在我們的程式碼上重新撰寫。
+把頭戴裝置交給訪客，每次有人戴上，它都會從頭開啟你的 360° 照片或影片。這個構想來自 [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) 的展覽用 build，並在我們的程式碼上重新撰寫。
 
 1. 在「設定」、「進階」、「展示台模式（實驗性）」中：選擇展示台媒體，也就是一張 360° 照片或一部影片，需要的話再填寫結尾卡片文字。
 2. 下次啟動時，頭戴裝置會顯示展示台媒體的名稱幾秒鐘，並提供「取消」，然後將其開啟。
@@ -780,7 +780,7 @@ Immuch360 是 [Immich](https://github.com/immich-app/immich) 行動應用程式�
 
 360° 照片檢視器是基於 dmitry-brazhenko 提出的上游 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)，而該 pull request 本身又是建立在 bencefr 於 [#30192](https://github.com/immich-app/immich/pull/30192) 中提出的原型之上；在此感謝兩位的貢獻。以遙控器操作搜尋篩選器的修正，以及電視上的相簿排序，源自 mlc70 在 [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) 中的成果，而操作列以及佔螢幕高度 80% 的篩選面板則來自 mlc70 的 [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3)，並保留了其作者資訊；感謝 mlc70。LG webOS 應用程式也打包供 Samsung 電視使用，它以 Seeky91 的 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 為基礎建置，採用 MIT 授權，保留在其自己的資料夾中；感謝 Seeky91。Tapo 相機功能是依據 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 和 [python-kasa](https://github.com/python-kasa/python-kasa) 所記載的內容撰寫而成。Meta Quest 畫面依賴 Meta Spatial SDK，由於它並非開放原始碼，因此只會保留在這個分支中。SMB 共用使用 libsmb2，採用 LGPL 2.1 或更新版本授權：從 build 27 和桌面版 build 7 起，每個 build 都附有其聲明、授權條款文字和原始碼封存檔 `Immuch360-libsmb2-sources.tar.gz`，這個檔案也會附加在每個發行版本中。Windows 和 macOS 的 build 隨附由本專案建置的 libmpv（[mpv](https://mpv.io) 的函式庫，搭配 [FFmpeg](https://ffmpeg.org)），採用 LGPL 授權，並附有其授權條款和原始碼，列在應用程式的授權頁面中（個人資料選單底部的「授權」）；本頁提及平台的詳細資訊和商標說明請見[授權和商標](../docs/immuch360/platform-support.md#license-and-trademarks)。
 
-build 33 帶來了 Michael Cloutier（[mlc70](https://github.com/mlc70/Immuch-Android-TV)）的搜尋導覽及其 commit，以及 Gaurav Mukherjee（[gmfun](https://github.com/gmfun/Immuch360)）和 [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) 示範 build 的構想，並在我們的程式碼上重新撰寫；月和年檢視回應了 ChazyChaxxx 在 [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10) 中的請求。感謝他們。
+build 33 帶來了 Michael Cloutier（[mlc70](https://github.com/mlc70/Immuch-Android-TV)）的搜尋導覽及其 commit，以及 Gaurav Mukherjee（[gmfun](https://github.com/gmfun/Immuch360)）和 [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) 展覽用 build 的構想，並在我們的程式碼上重新撰寫；月和年檢視回應了 ChazyChaxxx 在 [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10) 中的請求。感謝他們。
 
 AI 功能執行的是他人製作的模型和引擎，只在你要求時從本儲存庫的預發行版 [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1)、[ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2) 和 [ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3) 下載；每個檔案及其來源、授權和 SHA-256 都列在 [MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md) 中。感謝它們的作者：
 
