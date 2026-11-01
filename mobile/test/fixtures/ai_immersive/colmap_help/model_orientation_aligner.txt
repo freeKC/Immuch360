@@ -1,0 +1,13 @@
+  -h [ --help ]
+  --project_path arg
+  --default_random_seed arg (=0)
+  --log_target arg (=stderr_and_file) {stderr, stdout, file, stderr_and_file}
+  --log_path arg
+  --log_level arg (=0)
+  --log_severity arg (=0)             0:INFO, 1:WARNING, 2:ERROR, 3:FATAL
+  --log_color arg (=1)
+  --image_path arg
+  --input_path arg
+  --output_path arg
+  --method arg (=IMAGE-ORIENTATION)   {IMAGE-ORIENTATION}
+  --max_image_size arg (=1024)
