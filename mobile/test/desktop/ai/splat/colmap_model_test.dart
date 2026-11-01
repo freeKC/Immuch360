@@ -91,7 +91,7 @@ void main() {
 
   test('the count of a model is the first 8 bytes of its images.bin; none without, or with fewer bytes', () {
     _circle(150).writeTo(at('0'));
-    final head = File(p.join(at('0').path, 'images.bin')).openSync().readSync(8);
+    final head = File(p.join(at('0').path, 'images.bin')).readAsBytesSync().sublist(0, 8);
     File(p.join((at('1')..createSync()).path, 'images.bin')).writeAsBytesSync(head);
     File(p.join((at('2')..createSync()).path, 'images.bin')).writeAsBytesSync(head.sublist(0, 4));
     expect(colmapPlacedIn(at('0')), 150);
