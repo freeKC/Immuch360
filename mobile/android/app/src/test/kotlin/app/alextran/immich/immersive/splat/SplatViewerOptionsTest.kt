@@ -3,7 +3,10 @@ package app.alextran.immich.immersive.splat
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** The options a session of measures may push for the splats (lot S5): how the splat moves, and when it shows */
+/**
+ * The options a session of measures may push for the splats (lot S5): how the splat moves, when it shows, and the
+ * frame its poses reach the module in
+ */
 class SplatViewerOptionsTest {
   @Test
   fun `the defaults move the Transform and show the splat 500 ms after its load`() {
@@ -23,5 +26,12 @@ class SplatViewerOptionsTest {
       SplatViewerOptions(),
       SplatViewerOptions.parse("""{"move": "teleport", "revealDelayMs": 99999, "other": true}"""),
     )
+  }
+
+  @Test
+  fun `the poses reach the module in its own frame, unless a session asks for the frame of the SDK`() {
+    assertEquals(SplatViewerOptions.Frame.MODULE, SplatViewerOptions.parse(null).frame)
+    assertEquals(SplatViewerOptions.Frame.SDK, SplatViewerOptions.parse("""{"frame": "sdk"}""").frame)
+    assertEquals(SplatViewerOptions.Frame.MODULE, SplatViewerOptions.parse("""{"frame": "mirror"}""").frame)
   }
 }

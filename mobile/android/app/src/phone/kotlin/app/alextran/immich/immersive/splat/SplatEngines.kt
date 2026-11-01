@@ -21,4 +21,6 @@ internal object SplatEngines : SplatEngine {
     throw UnsupportedOperationException("this version of the app has no splat module: it is in the Quest version")
 
   override fun moveBySystem(systems: SystemManager, entity: Entity, pose: Pose): Boolean = false
+
+  override fun rendererReady(systems: SystemManager): Boolean? = null
 }

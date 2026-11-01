@@ -1,13 +1,14 @@
 package app.alextran.immich.immersive.splat
 
 import java.io.File
+import java.util.BitSet
 
 /** What the reading of a splat file gave, off the main thread */
 internal sealed interface SplatPreparation {
   /**
    * The splat may show: [file] is what the splat module reads (the file itself, or a copy of the cache, reduced or
-   * named after its format), [owned] when it is a file of the viewer that goes with the splat; [bounds] null without
-   * positions read (a version 4 SPZ); [sourceBytes] the size of the source as the viewer read it, which names the
+   * named after its format, or rewritten as version 2), [owned] when it is a file of the viewer that goes with the
+   * splat; [bounds] null without positions read; [sourceBytes] the size of the source as the viewer read it, which names the
    * file in the memory of its orientation (the size of a request may be unknown)
    */
   class Ready(
@@ -17,10 +18,12 @@ internal sealed interface SplatPreparation {
     val verdict: SplatVerdict.Open,
     val bounds: SplatBounds?,
     val sourceBytes: Long = file.length(),
+    /** The orientation its gaussians say a place opens in (SplatPlacement.uprightOf), null for the default */
+    val upright: SplatUpright? = null,
   ) : SplatPreparation
 
-  /** Not shown, for [verdict]; [head] when the file was read */
-  class Stopped(val verdict: SplatVerdict.Refused, val head: SplatHead?) : SplatPreparation
+  /** Not shown, for [verdict]; [head] when the file was read; [detail] for the log */
+  class Stopped(val verdict: SplatVerdict.Refused, val head: SplatHead?, val detail: String? = null) : SplatPreparation
 }
 
 /**
@@ -28,7 +31,15 @@ internal sealed interface SplatPreparation {
  * gate of this headset, the first reading (scores and positions), the reduction when the gate asks for one, and the
  * bounds of the gaussians kept. The file the module reads ends with the extension of its format in lower case
  * (".spz", ".ply"), whatever the source was named ("SCENE.SPZ" too): a download of the viewer is renamed, a copy of the
- * cache is made of any other file. Pure JVM, tested by SplatPreparerTest on the fixtures.
+ * cache is made of any other file.
+ *
+ * The module reads SPZ version 2 only, and aborts the process on any other and on a version 2 cut or short of its data
+ * (SplatModuleFormat): every SPZ of versions 1 to 3 is always written again as version 2, reduced or whole, never
+ * handed over as it is; its source is read to its end, and a damaged one stops with SplatReadException (DAMAGED, "This
+ * splat file is damaged or incomplete"). Whatever the preparation gives the module, a PLY read where it is, a copy, a
+ * reduction or a rewrite, the whole of it is read once more and must be one the module reads, with the count expected
+ * ([SplatModuleFormat.checkWhole]): otherwise the splat stops with [SplatRefusal.MODULE_CANNOT_READ] and the copy
+ * goes. Pure JVM, tested by SplatPreparerTest on the fixtures.
  */
 internal object SplatPreparer {
   /**
@@ -72,35 +83,36 @@ internal object SplatPreparer {
     verdict as SplatVerdict.Open
     head!!
     extension!!
-    val zstd = head is SplatProbe.Spz && head.isZstd
-    val scan = if (zstd) null else SplatReducer.scan(source.inputStream(), head, cancelled = cancelled)
+    val scan = SplatReducer.scan(source.inputStream(), head, cancelled = cancelled)
     val keep = verdict.keep
-    if (keep != null && scan != null) {
-      val kept = SplatReducer.select(scan.scores, keep)
-      val reduced = File(cacheDir, "$prefix${System.nanoTime()}$extension")
+    val shown = keep?.toLong() ?: head.gaussians
+    if (keep != null || SplatModuleFormat.needsRewrite(head)) {
+      // Reduced, or an SPZ rewritten whole as version 2 (versions 1 to 3)
+      val kept =
+        if (keep != null) SplatReducer.select(scan.scores, keep)
+        else BitSet(head.gaussians.toInt()).apply { set(0, head.gaussians.toInt()) }
+      val written = File(cacheDir, "$prefix${System.nanoTime()}$extension")
       try {
-        reduced.outputStream().use { SplatReducer.write(source.inputStream(), head, kept, it, cancelled) }
+        written.outputStream().use { SplatReducer.write(source.inputStream(), head, kept, it, cancelled) }
       } catch (e: Throwable) {
-        reduced.delete()
+        written.delete()
         throw e
       }
       if (sourceOwned) source.delete()
-      return SplatPreparation.Ready(
-        reduced,
-        owned = true,
-        head,
-        verdict,
-        SplatPlacement.boundsOf(scan, kept),
-        sourceBytes,
-      )
+      val keptSet = if (keep != null) kept else null
+      val bounds = SplatPlacement.boundsOf(scan, keptSet)
+      val upright = SplatPlacement.uprightOf(scan, keptSet, bounds)
+      val ready = SplatPreparation.Ready(written, owned = true, head, verdict, bounds, sourceBytes, upright)
+      return guarded(ready, shown)
     }
-    val bounds = scan?.let { SplatPlacement.boundsOf(it, null) }
+    val bounds = SplatPlacement.boundsOf(scan, null)
+    val upright = SplatPlacement.uprightOf(scan, null, bounds)
     if (source.name.endsWith(extension)) {
-      return SplatPreparation.Ready(source, sourceOwned, head, verdict, bounds, sourceBytes)
+      return guarded(SplatPreparation.Ready(source, sourceOwned, head, verdict, bounds, sourceBytes, upright), shown)
     }
     val named = File(cacheDir, "$prefix${System.nanoTime()}$extension")
     if (sourceOwned && source.renameTo(named)) {
-      return SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes)
+      return guarded(SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes, upright), shown)
     }
     try {
       source.copyTo(named, overwrite = true)
@@ -109,7 +121,17 @@ internal object SplatPreparer {
       throw e
     }
     if (sourceOwned) source.delete()
-    return SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes)
+    return guarded(SplatPreparation.Ready(named, owned = true, head, verdict, bounds, sourceBytes, upright), shown)
+  }
+
+  /**
+   * [ready] when the file it gives the module is one the module reads, the whole of it, with [gaussians] in it;
+   * otherwise stopped with [SplatRefusal.MODULE_CANNOT_READ], its copy of the cache deleted (a file of the user stays)
+   */
+  private fun guarded(ready: SplatPreparation.Ready, gaussians: Long): SplatPreparation {
+    val why = SplatModuleFormat.checkWhole(ready.file, gaussians) ?: return ready
+    if (ready.owned) ready.file.delete()
+    return SplatPreparation.Stopped(SplatVerdict.Refused(SplatRefusal.MODULE_CANNOT_READ), ready.head, why)
   }
 }
 

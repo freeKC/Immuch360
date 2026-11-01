@@ -18,8 +18,24 @@ internal enum class SplatRefusal {
   NEWER_SPZ,
   DAMAGED,
 
-  /** More gaussians than the reduction takes, or a version 4 SPZ beyond the count: "Too large for this headset" */
+  /** More gaussians than the reduction takes: "Too large for this headset" */
   TOO_LARGE,
+
+  /**
+   * A version 4 SPZ (ZSTD streams), whatever its count: the splat module of the headset reads version 2 only and
+   * aborts the process on any other (measured on a Quest 3 on 31 October 2026); the viewer rewrites every SPZ of
+   * versions 1 to 3 as version 2, but does not read ZSTD
+   */
+  SPZ_V4,
+
+  /**
+   * The last guard before the entity (SplatModuleFormat.check): the file prepared for the module is not one it was
+   * seen to read. Said rather than handed over, since the module would abort the process
+   */
+  MODULE_CANNOT_READ,
+
+  /** The splat loaded, but the renderer of the module still says it is not running after the splat was shown */
+  NO_RENDERER,
   NOT_ENOUGH_MEMORY,
 
   /** The cache of the headset cannot hold the download, the reduced copy or the copy named after the format */
@@ -55,17 +71,19 @@ internal sealed interface SplatVerdict {
  * 2. The headset: the Quest 2 (hollywood) and the Quest Pro (seacliff) refused, any other taken (the Quest 3 eureka,
  *    the Quest 3S panther, and a headset this build does not know, as the scenes take it).
  * 3. The file: what the probe refused keeps its reason ([SplatHeader]).
- * 4. The heat: THERMAL_STATUS_SEVERE or worse refused, as for the scenes.
- * 5. The count: at most the count of the request ([SAFE_GAUSSIANS] until a measure in the headset, [LARGE_GAUSSIANS]
+ * 4. The version of an SPZ: a version 4 (ZSTD, which this build does not decompress) is refused whatever its count,
+ *    since the module reads version 2 only and aborts the process on any other; every SPZ of versions 1 to 3 is
+ *    rewritten as version 2 by the preparation, version 2 included ([SplatModuleFormat], [SplatReducer]).
+ * 5. The heat: THERMAL_STATUS_SEVERE or worse refused, as for the scenes.
+ * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] until a measure in the headset, [LARGE_GAUSSIANS]
  *    with Large splats, never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to
- *    [MAX_REDUCIBLE_GAUSSIANS] gaussians and [MAX_REDUCIBLE_BYTES]; a version 4 SPZ (ZSTD, which this build does not
- *    decompress) is shown whole within the count only.
- * 6. The memory: the free memory (ActivityManager.MemoryInfo.availMem) holds what the module loads, [MEMORY_FACTOR]
+ *    [MAX_REDUCIBLE_GAUSSIANS] gaussians and [MAX_REDUCIBLE_BYTES].
+ * 7. The memory: the free memory (ActivityManager.MemoryInfo.availMem) holds what the module loads, [MEMORY_FACTOR]
  *    times the larger of the file it reads and its gaussians decoded, plus what the reducer holds while it reads the
  *    whole file ([memoryNeeded]): a large capture reduced to 150 000 gaussians weighs what it shows, not its source.
- * 7. The cache: its free space holds what the preparation writes there, the reduced copy or a copy named after the
- *    format ([cacheBytesWritten]), with [CACHE_RESERVE_BYTES] left over; a download is weighed before it starts
- *    ([roomForDownload]).
+ * 8. The cache: its free space holds what the preparation writes there, the reduced copy, the copy rewritten as
+ *    version 2 or a copy named after the format ([cacheBytesWritten]), with [CACHE_RESERVE_BYTES] left over; a download
+ *    is weighed before it starts ([roomForDownload]).
  *
  * The module itself runs only when [registers] said so as the viewer opened: on the Quest 3 and 3S, in the quest
  * flavour, in a build that offers the splats (not the store build, [SplatBuild]), with Gaussian splats on. A splat that
@@ -136,10 +154,21 @@ internal object SplatGate {
   fun decodedBytesPerGaussian(shDegree: Int): Long =
     4L * (14 + 3 * SplatHeader.shCoefficients(shDegree.coerceIn(0, 4)))
 
-  /** The size of the file the module reads: [fileBytes] whole, or its share of the [keep] gaussians kept of [count] */
-  fun loadedFileBytes(fileBytes: Long, count: Long, keep: Int?): Long =
-    if (keep == null || count <= 0) fileBytes
-    else ceil(fileBytes.toDouble() * keep / count).toLong() + REDUCED_SLACK_BYTES
+  /**
+   * The size of the file the module reads: [fileBytes] whole, or its share of the [keep] gaussians kept of [count];
+   * with [growth] for a copy rewritten as version 2 ([rewriteGrowth])
+   */
+  fun loadedFileBytes(fileBytes: Long, count: Long, keep: Int?, growth: Double = 1.0): Long =
+    if (keep == null || count <= 0) ceil(fileBytes * growth).toLong()
+    else ceil(fileBytes.toDouble() * growth * keep / count).toLong() + REDUCED_SLACK_BYTES
+
+  /**
+   * How much larger a copy of [head] rewritten as version 2 may be than its source: the positions of version 1 take
+   * 9 bytes instead of 6 (at most 19 bytes instead of 16 a point, compressed alike, taken as 1.5); version 3 loses a
+   * byte of each rotation (1); version 2 is the same data again (1); a PLY is not rewritten (1)
+   */
+  fun rewriteGrowth(head: SplatHead): Double =
+    if (head is SplatProbe.Spz && head.version == 1) 1.5 else 1.0
 
   /**
    * The free memory a splat of [head] needs, a file of [fileBytes] shown whole or reduced to [keep]: [MEMORY_FACTOR]
@@ -148,18 +177,28 @@ internal object SplatGate {
    */
   fun memoryNeeded(head: SplatHead, fileBytes: Long, keep: Int?): Long {
     val shown = keep?.toLong() ?: head.gaussians
-    val loaded = maxOf(loadedFileBytes(fileBytes, head.gaussians, keep), shown * decodedBytesPerGaussian(head.shDegree))
+    val file = loadedFileBytes(fileBytes, head.gaussians, keep, rewriteGrowth(head))
+    val loaded = maxOf(file, shown * decodedBytesPerGaussian(head.shDegree))
     val reducer = if (keep == null) 0L else REDUCER_BYTES_PER_GAUSSIAN * head.gaussians + REDUCER_OVERHEAD_BYTES
     return MEMORY_FACTOR * loaded + reducer
   }
 
   /**
-   * The bytes the preparation writes into the cache: the reduced copy, else the whole file when it is copied under the
-   * name of its format ([copiesWhole]), else nothing
+   * The bytes the preparation writes into the cache: the reduced copy, else the whole file rewritten as version 2
+   * ([rewrites], an SPZ of versions 1 to 3, larger by [growth]), else the whole file when it is copied under the name
+   * of its format ([copiesWhole]), else nothing
    */
-  fun cacheBytesWritten(fileBytes: Long, count: Long, keep: Int?, copiesWhole: Boolean): Long =
+  fun cacheBytesWritten(
+    fileBytes: Long,
+    count: Long,
+    keep: Int?,
+    copiesWhole: Boolean,
+    rewrites: Boolean = false,
+    growth: Double = 1.0,
+  ): Long =
     when {
-      keep != null -> loadedFileBytes(fileBytes, count, keep)
+      keep != null -> loadedFileBytes(fileBytes, count, keep, growth)
+      rewrites -> loadedFileBytes(fileBytes, count, null, growth) + REDUCED_SLACK_BYTES
       copiesWhole -> fileBytes
       else -> 0L
     }
@@ -172,7 +211,8 @@ internal object SplatGate {
    * The verdict for [probe], a file of [fileBytes], on the headset [device] with the splat module when [engine], at
    * most [cap] gaussians (the maxGaussians of the request); [availableMemory], [thermalStatus] and [freeCache] (the
    * free space of the cache) null when unknown; [copiesWhole] when the file is copied whole under the name of its
-   * format before the module reads it
+   * format before the module reads it. Every SPZ of versions 1 to 3 is written again as version 2, reduced or whole
+   * (SplatModuleFormat.needsRewrite), and the cache must hold that copy
    */
   fun check(
     engine: Boolean,
@@ -192,6 +232,8 @@ internal object SplatGate {
         is SplatProbe.Refused -> return SplatVerdict.Refused(refusalOf(probe.problem))
         is SplatHead -> probe
       }
+    // The module reads SPZ version 2 only and aborts on any other: versions 1 to 3 are rewritten, ZSTD is not read
+    if (head is SplatProbe.Spz && head.isZstd) return SplatVerdict.Refused(SplatRefusal.SPZ_V4)
     if (thermalStatus != null && thermalStatus >= THERMAL_STATUS_SEVERE) {
       return SplatVerdict.Refused(SplatRefusal.TOO_WARM)
     }
@@ -201,8 +243,7 @@ internal object SplatGate {
       if (count <= most) {
         null
       } else {
-        val zstd = head is SplatProbe.Spz && head.isZstd
-        if (zstd || count > MAX_REDUCIBLE_GAUSSIANS || fileBytes > MAX_REDUCIBLE_BYTES) {
+        if (count > MAX_REDUCIBLE_GAUSSIANS || fileBytes > MAX_REDUCIBLE_BYTES) {
           return SplatVerdict.Refused(SplatRefusal.TOO_LARGE, count)
         }
         most
@@ -210,7 +251,8 @@ internal object SplatGate {
     if (availableMemory != null && availableMemory < memoryNeeded(head, fileBytes, keep)) {
       return SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_MEMORY)
     }
-    val written = cacheBytesWritten(fileBytes, count, keep, copiesWhole)
+    val rewrites = SplatModuleFormat.needsRewrite(head)
+    val written = cacheBytesWritten(fileBytes, count, keep, copiesWhole, rewrites, rewriteGrowth(head))
     if (freeCache != null && written > 0 && freeCache < written + CACHE_RESERVE_BYTES) {
       return SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE)
     }

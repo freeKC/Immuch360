@@ -16,11 +16,12 @@ import java.util.zip.GZIPInputStream
 //
 // SPZ (Niantic Labs, MIT, https://github.com/nianticlabs/spz): versions 1 to 3 are one gzip stream that starts with a
 // 16 byte header, little endian: magic 0x5053474e ("NGSP"), version, number of points, degree of the spherical
-// harmonics (0 to 3), fractional bits of the fixed point positions, flags, a reserved byte at 0. Version 4 starts with
-// a clear header of 32 bytes: the same first fields, the number of ZSTD streams, the offset of their table of
-// contents, 12 reserved bytes at 0. PLY of 3D Gaussian Splatting: binary little endian, one element vertex with x y z,
-// f_dc_0 to 2, opacity, scale_0 to 2, rot_0 to 3, and f_rest_* for the higher degrees. Pure JVM, tested by
-// SplatHeaderTest on the fixtures of .github/desktop/ai/make_splat_fixtures.py.
+// harmonics (0 to 3), fractional bits of the fixed point positions (1 to 23 from version 2 on), flags, a reserved byte
+// at 0. Version 4 starts with a clear header of 32 bytes: the same first fields, the number of ZSTD streams, the offset
+// of their table of contents, 12 reserved bytes at 0. PLY of 3D Gaussian Splatting: binary little endian, one element
+// vertex with x y z, f_dc_0 to 2, opacity, scale_0 to 2, rot_0 to 3, and 0, 9, 24 or 45 f_rest_* for the degrees 0 to
+// 3, all of them floats or doubles. Pure JVM, tested by SplatHeaderTest on the fixtures of
+// .github/desktop/ai/make_splat_fixtures.py.
 
 /** The formats of the splat files the headset reads, as the gaussianSplat JSON names them */
 internal enum class SplatFormat(val json: String) {
@@ -40,7 +41,7 @@ internal enum class SplatFileProblem {
   /** The compressed PLY of SuperSplat and PlayCanvas (element chunk, packed_* properties) */
   COMPRESSED_PLY,
 
-  /** A PLY written in ASCII or big endian, or with values of a type the reader does not take */
+  /** A PLY written in ASCII or big endian, with values not stored as floats, or with harmonics past degree 3 */
   UNSUPPORTED_PLY,
 
   /** An SPZ of a version after 4 */
@@ -52,7 +53,7 @@ internal enum class SplatFileProblem {
 
 /** A property of the vertex element of a PLY: its [name], its [type], its [size] in bytes, its [offset] in a row */
 internal data class PlyProperty(val name: String, val type: String, val size: Int, val offset: Int) {
-  /** A 4 or 8 byte float, the only types the reducer reads (positions, opacity, scales) */
+  /** A 4 or 8 byte float: the only types the reducer reads (positions, opacity, scales) and the module was seen to read */
   val isFloat: Boolean
     get() = type == "float" || type == "float32" || type == "double" || type == "float64"
 }
@@ -139,8 +140,14 @@ internal object SplatHeader {
     "rot_0", "rot_1", "rot_2", "rot_3",
   )
 
-  /** The properties the reducer reads as numbers */
-  val FLOAT_PLY = listOf("x", "y", "z", "opacity", "scale_0", "scale_1", "scale_2")
+  /**
+   * The counts of f_rest_* properties the splat module was seen to read, and the degree of the spherical harmonics
+   * each gives: 0 to 3 (Quest 3, 31 October 2026). Any other count, degree 4 (72) among them, is refused
+   */
+  val PLY_REST_DEGREES = mapOf(0 to 0, 9 to 1, 24 to 2, 45 to 3)
+
+  /** The fractional bits a 24 bit fixed point position of an SPZ of version 2 or 3 can have */
+  val SPZ_FRACTIONAL_BITS = 1..23
 
   private val TOOL_COMMENT =
     Regex("^(?:generated|exported|created|made|written|saved)\\s+(?:by|with|from|using|in)\\s+(.+)$", RegexOption.IGNORE_CASE)
@@ -207,6 +214,9 @@ internal object SplatHeader {
       reserved != 0 -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "reserved byte $reserved")
       count == 0L -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "no point")
       degree > 3 -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "degree $degree")
+      // Version 1 stores its positions as float16 and never reads them (SplatReducer.fractionalBitsOf)
+      version >= 2 && fractional !in SPZ_FRACTIONAL_BITS ->
+        SplatProbe.Refused(SplatFileProblem.DAMAGED, "$fractional fractional bits")
       else -> SplatProbe.Spz(version, count, degree, fractional, flags)
     }
   }
@@ -305,9 +315,18 @@ internal object SplatHeader {
       return SplatProbe.Refused(SplatFileProblem.NOT_A_SPLAT, "no ${missing.joinToString()}: a point cloud or a mesh")
     }
     if (unknownType != null) return SplatProbe.Refused(SplatFileProblem.UNSUPPORTED_PLY, "type $unknownType")
-    if (FLOAT_PLY.any { name -> properties.first { it.name == name }.isFloat.not() }) {
-      return SplatProbe.Refused(SplatFileProblem.UNSUPPORTED_PLY, "positions, opacity or scales not stored as floats")
+    // Floats or doubles, what the module was seen to read, for every property of the gaussians and their harmonics
+    val notFloats = properties.filter { (it.name in REQUIRED_PLY || it.name.startsWith("f_rest_")) && !it.isFloat }
+    if (notFloats.isNotEmpty()) {
+      return SplatProbe.Refused(
+        SplatFileProblem.UNSUPPORTED_PLY,
+        "not stored as floats: ${notFloats.joinToString { "${it.name} ${it.type}" }}",
+      )
     }
+    val rest = properties.count { it.name.startsWith("f_rest_") }
+    val degree =
+      PLY_REST_DEGREES[rest]
+        ?: return SplatProbe.Refused(SplatFileProblem.UNSUPPORTED_PLY, "$rest f_rest properties: no degree from 0 to 3")
     if (others.values.any { it > 0 }) {
       return SplatProbe.Refused(SplatFileProblem.UNSUPPORTED_PLY, "other elements: ${others.keys.joinToString()}")
     }
@@ -315,9 +334,6 @@ internal object SplatHeader {
     if (headerBytes + count * rowBytes > fileLength) {
       return SplatProbe.Refused(SplatFileProblem.DAMAGED, "$count rows of $rowBytes bytes do not fit in $fileLength")
     }
-    val rest = properties.count { it.name.startsWith("f_rest_") }
-    var degree = 0
-    while (degree < 4 && 3 * shCoefficients(degree + 1) <= rest) degree++
     return SplatProbe.Ply(count, degree, tool, headerBytes, rowBytes, properties)
   }
 

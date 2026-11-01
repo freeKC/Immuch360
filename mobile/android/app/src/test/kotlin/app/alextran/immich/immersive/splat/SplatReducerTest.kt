@@ -16,8 +16,9 @@ import org.junit.Test
 
 /**
  * The reduction of a splat to its strongest gaussians (lot S5): the scores (opacity times volume, as logarithms), the
- * selection with its ties, and the files written again in their format, the rows or the attributes kept byte for
- * byte, checked against what make_splat_fixtures.py computed. Then the sample of the positions the placement reads.
+ * selection with its ties, and the files written again in their format, the rows of a PLY kept byte for byte, an SPZ
+ * as version 2 (the only one the splat module reads), checked against what make_splat_fixtures.py computed. Then the
+ * sample of the positions the placement reads.
  */
 class SplatReducerTest {
   private val reduction = SplatFixtures.expected.getValue("reduction").jsonObject
@@ -60,25 +61,33 @@ class SplatReducerTest {
     assertEquals(0, SplatReducer.select(floatArrayOf(1f, 2f), 0).cardinality())
   }
 
-  @Test
-  fun `an SPZ is written again with the kept points of each attribute, untouched`() {
-    val name = "ranked_v3.spz"
-    val source = head(name) as SplatProbe.Spz
-    val kept = SplatReducer.select(scan(name).scores, keep)
+  private fun gunzip(bytes: ByteArray): ByteArray = GZIPInputStream(ByteArrayInputStream(bytes)).readBytes()
+
+  private fun written(name: String, kept: java.util.BitSet): ByteArray {
     val out = ByteArrayOutputStream()
-    SplatReducer.write(SplatFixtures.file(name).inputStream(), source, kept, out)
-    val written = out.toByteArray()
-    // A version 3 SPZ of 10 points, as the probe reads it
+    SplatReducer.write(SplatFixtures.file(name).inputStream(), head(name), kept, out)
+    return out.toByteArray()
+  }
+
+  private fun all(count: Int) = java.util.BitSet().apply { set(0, count) }
+
+  @Test
+  fun `an SPZ is written again as version 2 with the kept points of each attribute`() {
+    val name = "ranked_v3.spz"
+    val kept = SplatReducer.select(scan(name).scores, keep)
+    val written = written(name, kept)
+    // A version 2 SPZ of 10 points, as the probe reads it: the one version the splat module reads
     val probe = SplatHeader.probe(written, written.size.toLong()) as SplatProbe.Spz
-    assertEquals(3, probe.version)
+    assertEquals(2, probe.version)
     assertEquals(keep.toLong(), probe.gaussians)
-    val before = GZIPInputStream(SplatFixtures.file(name).inputStream()).readBytes()
-    val after = GZIPInputStream(ByteArrayInputStream(written)).readBytes()
+    assertTrue(SplatModuleFormat.reads(probe))
+    val before = gunzip(SplatFixtures.bytes(name))
+    val after = gunzip(written)
     val indices = expectedKept(name)
-    val sizes = listOf(9, 1, 3, 3, 4)
+    // Positions, alphas, colours and scales copied; the rotations of 4 bytes as 3 (identity: 128, 128, 128)
     var from = 16
     var to = 16
-    for (size in sizes) {
+    for (size in listOf(9, 1, 3, 3)) {
       for ((j, i) in indices.withIndex()) {
         assertArrayEquals(
           before.copyOfRange(from + i * size, from + (i + 1) * size),
@@ -88,10 +97,78 @@ class SplatReducerTest {
       from += 24 * size
       to += indices.size * size
     }
-    assertEquals(to, after.size)
-    // The header but its count, untouched
-    assertArrayEquals(before.copyOfRange(0, 8), after.copyOfRange(0, 8))
+    for (j in indices.indices) assertArrayEquals(byteArrayOf(-128, -128, -128), after.copyOfRange(to + 3 * j, to + 3 * j + 3))
+    assertEquals(to + 3 * indices.size, after.size)
+    // The header: magic, version 2, the new count, the degree, the fractional bits and the flags of the source
+    assertArrayEquals(before.copyOfRange(0, 4), after.copyOfRange(0, 4))
+    assertEquals(2, after[4].toInt())
     assertArrayEquals(before.copyOfRange(12, 16), after.copyOfRange(12, 16))
+  }
+
+  @Test
+  fun `a version 3 SPZ rewritten whole is the version 2 of the reference, every rotation recoded`() {
+    // turns_v3.spz: 40 gaussians of degree 1, rotations of every kind; turns_v2.spz: the same as version 2, written
+    // by make_splat_fixtures.py from the public description of the format
+    val module = SplatFixtures.expected.getValue("moduleSpz").jsonObject
+    for ((source, reference) in module.getValue("rewrites").jsonObject) {
+      val count = head(source).gaussians.toInt()
+      val written = written(source, all(count))
+      assertArrayEquals(source, gunzip(SplatFixtures.bytes(reference.jsonPrimitive.content)), gunzip(written))
+      val probe = SplatHeader.probe(written, written.size.toLong()) as SplatProbe.Spz
+      assertEquals(2, probe.version)
+      assertEquals(count.toLong(), probe.gaussians)
+    }
+  }
+
+  @Test
+  fun `a version 1 SPZ reduced keeps the fixed point positions of its kept points`() {
+    val name = "axes_v1.spz"
+    val kept = java.util.BitSet().apply {
+      set(5, 40)
+      set(600, 686)
+    }
+    val after = gunzip(written(name, kept))
+    val reference = gunzip(SplatFixtures.bytes("axes_v1_v2.spz"))
+    val indices = (0 until 686).filter { kept[it] }
+    var from = 16
+    var to = 16
+    for (size in listOf(9, 1, 3, 3, 3)) {
+      for ((j, i) in indices.withIndex()) {
+        assertArrayEquals(
+          "$size $i",
+          reference.copyOfRange(from + i * size, from + (i + 1) * size),
+          after.copyOfRange(to + j * size, to + (j + 1) * size),
+        )
+      }
+      from += 686 * size
+      to += indices.size * size
+    }
+    assertEquals(to, after.size)
+  }
+
+  @Test
+  fun `the recoded rotations turn as the source ones, within the precision of three bytes`() {
+    // As the reference measures it: 1 - |q3 . q2| for each rotation of turns_v3.spz
+    val worst = SplatFixtures.expected.getValue("moduleSpz").jsonObject.getValue("worstRotation").jsonPrimitive.double
+    assertTrue("$worst", worst < 0.005)
+    // The identity, a half turn about x, and w negative: the same rotation with w made positive
+    val out = ByteArray(3)
+    fun recode(comp: Long): List<Int> {
+      val bytes = byteArrayOf(comp.toByte(), (comp shr 8).toByte(), (comp shr 16).toByte(), (comp shr 24).toByte())
+      SplatReducer.firstThreeOfSmallestThree(bytes, 0, out, 0)
+      return out.map { it.toInt() and 0xff }
+    }
+    assertEquals(listOf(128, 128, 128), recode(3L shl 30))
+    // x the largest, the others 0: (1, 0, 0, 0), x stored as 255
+    assertEquals(listOf(255, 128, 128), recode(0L shl 30))
+    // w the largest and y at -0.5: sign bit of y set, 9 bits of 0.5 / sqrt(1/2) * 511 = 361
+    val y = (1L shl 9) or 361L
+    val comp = (3L shl 30) or (y shl 10)
+    val q = recode(comp)
+    assertEquals(128, q[0])
+    // About -0.5 * 127.5 + 128 = 64.25
+    assertTrue("$q", q[1] in 63..65)
+    assertEquals(128, q[2])
   }
 
   @Test
@@ -151,6 +228,31 @@ class SplatReducerTest {
     val bounds = SplatPlacement.boundsOf(scan, kept)!!
     // The first 350 points are the 100 of +X and 150 of +Y and 100 of +Z
     assertTrue(bounds.high[2] < 1.01)
+  }
+
+  @Test
+  fun `a rewrite reads its source to the end of its gzip stream, a trailer cut or a wrong CRC is damaged`() {
+    // The module would read the copy written by the viewer, whole and clean; the source, though, is damaged, and its
+    // points may not be what was written: said as such rather than shown
+    val source = SplatFixtures.bytes("turns_v2.spz")
+    val head = head("turns_v2.spz")
+    val cut = source.copyOf(source.size - 4)
+    val crc = source.copyOf().also { it[it.size - 8] = (it[it.size - 8].toInt() xor 0xff).toByte() }
+    for ((what, bytes) in listOf("trailer cut" to cut, "wrong CRC" to crc)) {
+      try {
+        SplatReducer.write(ByteArrayInputStream(bytes), head, all(40), ByteArrayOutputStream())
+        fail(what)
+      } catch (e: SplatReadException) {
+        assertEquals(what, SplatFileProblem.DAMAGED, e.problem)
+      }
+    }
+    // A reduction reads it to its end too
+    try {
+      SplatReducer.write(ByteArrayInputStream(crc), head, java.util.BitSet().apply { set(0, 10) }, ByteArrayOutputStream())
+      fail("reduced")
+    } catch (e: SplatReadException) {
+      assertEquals(SplatFileProblem.DAMAGED, e.problem)
+    }
   }
 
   @Test

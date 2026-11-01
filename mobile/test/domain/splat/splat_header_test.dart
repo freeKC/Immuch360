@@ -20,6 +20,38 @@ void main() {
     return probeSplatHead(bytes.length > splatHeadBytes ? bytes.sublist(0, splatHeadBytes) : bytes, length);
   }
 
+  /// The probe of a PLY of 2 gaussians with [rest] f_rest_*, every property a float but those [types] names
+  SplatProbe plyOf(int rest, {Map<String, String> types = const {}}) {
+    final names = [
+      'x', 'y', 'z', 'nx', 'ny', 'nz', 'f_dc_0', 'f_dc_1', 'f_dc_2', //
+      for (var i = 0; i < rest; i++) 'f_rest_$i',
+      'opacity', 'scale_0', 'scale_1', 'scale_2', 'rot_0', 'rot_1', 'rot_2', 'rot_3',
+    ];
+    const sizes = {'float': 4, 'double': 8, 'uchar': 1, 'ushort': 2, 'int': 4};
+    final header = StringBuffer('ply\nformat binary_little_endian 1.0\nelement vertex 2\n');
+    var row = 0;
+    for (final name in names) {
+      final type = types[name] ?? 'float';
+      header.write('property $type $name\n');
+      row += sizes[type]!;
+    }
+    header.write('end_header\n');
+    final bytes = Uint8List.fromList([...ascii.encode(header.toString()), ...Uint8List(2 * row)]);
+    return probeSplatHead(bytes, bytes.length);
+  }
+
+  /// A gzip SPZ header of [version], 10 points, with [fractional] bits, and room for the probe
+  Uint8List spzHeader(int version, {int fractional = 12}) {
+    final data = ByteData(16 + 64)
+      ..setUint32(0, splatSpzMagic, Endian.little)
+      ..setUint32(4, version, Endian.little)
+      ..setUint32(8, 10, Endian.little)
+      ..setUint8(13, fractional);
+    return data.buffer.asUint8List();
+  }
+
+  Uint8List gzipOf(Uint8List bytes) => Uint8List.fromList(gzip.encode(bytes));
+
   SplatFileProblem? refusal(String name) => switch (probe(name)) {
     SplatRefused(:final problem) => problem,
     _ => null,
@@ -92,6 +124,42 @@ void main() {
       ..setUint32(4, 5, Endian.little)
       ..setUint32(8, 10, Endian.little);
     expect(probeSplatHead(clear.buffer.asUint8List(), 4096), const SplatRefused(SplatFileProblem.newerSpz, ''));
+  });
+
+  test('a PLY the module was never seen to read is refused: harmonics past degree 3, values not stored as floats', () {
+    // The same rules as SplatHeader.kt: degrees 0 to 3, floats or doubles (measured on a Quest 3 on 31 October 2026)
+    for (final (rest, degree) in [(0, 0), (9, 1), (24, 2), (45, 3)]) {
+      expect((plyOf(rest) as SplatHead).shDegree, degree, reason: '$rest');
+    }
+    final doubles = plyOf(45, types: {'x': 'double', 'rot_0': 'double', 'f_rest_7': 'double'});
+    expect((doubles as SplatHead).shDegree, 3);
+    for (final rest in [72, 12, 3, 46]) {
+      expect(plyOf(rest), const SplatRefused(SplatFileProblem.unsupportedPly, ''), reason: '$rest');
+    }
+    for (final (name, type) in [
+      ('rot_0', 'uchar'),
+      ('rot_3', 'ushort'),
+      ('f_dc_1', 'uchar'),
+      ('f_rest_4', 'uchar'),
+      ('f_dc_0', 'int'),
+    ]) {
+      expect(plyOf(9, types: {name: type}), const SplatRefused(SplatFileProblem.unsupportedPly, ''), reason: name);
+    }
+  });
+
+  test('an SPZ whose fixed point positions cannot be read is damaged', () {
+    for (final bits in [1, 12, 23]) {
+      expect(probeSplatHead(gzipOf(spzHeader(2, fractional: bits)), 100), isA<SplatHead>(), reason: '$bits');
+    }
+    for (final (version, bits) in [(2, 0), (2, 24), (2, 32), (3, 0), (3, 40)]) {
+      expect(
+        probeSplatHead(gzipOf(spzHeader(version, fractional: bits)), 100),
+        const SplatRefused(SplatFileProblem.damaged, ''),
+        reason: 'version $version, $bits bits',
+      );
+    }
+    // Version 1 stores its positions as float16: its header may say anything
+    expect(probeSplatHead(gzipOf(spzHeader(1, fractional: 0)), 100), isA<SplatHead>());
   });
 
   test('anything else is no splat', () {

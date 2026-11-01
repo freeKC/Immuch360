@@ -25,24 +25,28 @@ internal class SplatBounds(val low: DoubleArray, val high: DoubleArray) {
 
 /**
  * Which axis of the file is up in the world, the rotation of the splat about the x axis of the Spatial SDK by
- * [pitchDegrees]: Quaternion(pitchDegrees, 0f, 0f). Turn upright goes to the [next] one, and the choice is remembered
- * for the file ([SplatUprightMemory]).
+ * [pitchDegrees]: Quaternion(pitchDegrees, 0f, 0f), applied to the file as the splat module shows it (z mirrored,
+ * SplatModuleFrame) and handed to the module converted. Turn upright goes to the [next] one, and the choice is
+ * remembered for the file ([SplatUprightMemory]).
  *
- * [Z_UP] is the rotation of Meta's SplatSample (MIT, Meta-Spatial-SDK-Samples, SplatSampleActivity: "-90 degrees on X
- * axis converts from original Splat coordinate space to Spatial SDK space"), so the first one a file shows in. How
- * the module maps the axes of an SPZ (right, up, back, by its specification) and of a PLY (often right, down,
- * forward, as the captures of COLMAP) is not documented: the axes of make_splat_fixtures.py tell it in the headset.
+ * Measured on a Quest 3 on 31 October 2026 with the axes of make_splat_fixtures.py and the captures of InnerScene, the
+ * same for a PLY and an SPZ: a file whose y is up shows upright at 0 degrees, one whose z is up at +90 (Meta's
+ * SplatSample turns its own files by -90 degrees without the conversion, which is +90 with it), one whose y is down
+ * at 180. [DEFAULT] is [Y_DOWN], the axes of a 3D Gaussian Splatting training (those of COLMAP, right, down, forward),
+ * which every real capture of the owner's kit has, in PLY and in SPZ alike. A place whose floor lies at the bottom of
+ * its y axis opens with Y up instead ([SplatPlacement.uprightOf]); an object with y up (the axes of
+ * make_splat_fixtures.py) is one Turn upright away.
  */
 internal enum class SplatUpright(val key: String, val pitchDegrees: Float) {
   Y_UP("yUp", 0f),
-  Z_UP("zUp", -90f),
+  Z_UP("zUp", 90f),
   Y_DOWN("yDown", 180f);
 
   /** The orientation after this one: Y up, Z up, Y down, then Y up again */
   fun next(): SplatUpright = entries[(ordinal + 1) % entries.size]
 
   companion object {
-    val DEFAULT = Z_UP
+    val DEFAULT = Y_DOWN
 
     fun of(key: String?): SplatUpright? = entries.firstOrNull { it.key == key }
   }
@@ -50,21 +54,24 @@ internal enum class SplatUpright(val key: String, val pitchDegrees: Float) {
 
 /**
  * Where a splat goes when it opens, at Reset and at Turn upright (lot S5): from its bounds, an object (under
- * [OBJECT_LIMIT] on its largest side) has its centre in front of the user, [OBJECT_GAP] plus half its size away and
- * [OBJECT_DROP] under the eyes; a scene (a room, a street) has its centre right where the user stands, [SCENE_DROP]
- * under the eyes, so that the user is inside it. A splat without positions read (a version 4 SPZ) has the origin of
- * its file [UNKNOWN_DISTANCE] ahead, [SCENE_DROP] under the eyes.
+ * [OBJECT_LIMIT] on its largest side) has its centre in front of the user, [OBJECT_GAP] plus half its size away, at
+ * the height of the eyes less [OBJECT_DROP] (none: the info panel, 0.3 m under the eyes, would cover it otherwise); a
+ * scene (a room, a street) has its centre right where the user stands, [SCENE_DROP] under the eyes, so that the user
+ * is inside it. A splat without positions read has the origin of its file [UNKNOWN_DISTANCE] ahead, [SCENE_DROP]
+ * under the eyes.
  *
  * The frame is that of the anchor of the splat (SceneNavigator.anchorInSdk at the head, its yaw only): the numbers of
- * the Spatial SDK, x to the right, y up, z ahead. The viewer rotates the centre of the bounds by the orientation with
- * the quaternion of the SDK itself (Quaternion(pitchDegrees, 0f, 0f) times the centre), then [localPosition] gives the
- * position of the entity in that frame, and the root of the navigator, which carries the glide, puts it in the world.
- * Pure JVM, tested by SplatPlacementTest.
+ * the Spatial SDK, x to the right, y up, z ahead. The viewer takes the centre of the bounds as the splat module shows
+ * the file (z mirrored, SplatModuleFrame.filePoint), rotates it by the orientation with the quaternion of the SDK
+ * itself (Quaternion(pitchDegrees, 0f, 0f) times that centre), then [localPosition] gives the position of the entity
+ * in that frame, and the root of the navigator, which carries the glide, puts it in the world. The pose goes to the
+ * module converted, once (SplatStage). Checked on a Quest 3 on 31 October 2026: the measuring tape and the cactus
+ * upright in the middle of the gaze, the room around the user. Pure JVM, tested by SplatPlacementTest.
  */
 internal object SplatPlacement {
   const val OBJECT_LIMIT = 2.5
   const val OBJECT_GAP = 0.6
-  const val OBJECT_DROP = 0.2
+  const val OBJECT_DROP = 0.0
   const val SCENE_DROP = 0.3
   const val UNKNOWN_DISTANCE = 2.0
   const val LOW_PERCENTILE = 5
@@ -90,6 +97,45 @@ internal object SplatPlacement {
   fun percentile(sorted: DoubleArray, p: Int): Double {
     val rank = maxOf(1, (p * sorted.size + 99) / 100)
     return sorted[rank - 1]
+  }
+
+  /** The share of the height of a place, at its bottom and at its top, where its floor is looked for */
+  const val FLOOR_BAND = 0.1
+
+  /** How many times more gaussians the bottom band must hold than the top band to be taken as the floor */
+  const val FLOOR_RATIO = 3.0
+
+  /** The least share of the gaussians the floor band must hold */
+  const val FLOOR_SHARE = 0.15
+
+  /**
+   * The orientation a place (not an object, see [isObject]) opens in when its gaussians say which way is up: a room or
+   * a street has its floor as a dense layer at one end of its vertical axis, few gaussians at the other (a ceiling is
+   * seldom captured as well, the sky not at all). When the bottom band of y ([FLOOR_BAND] of the height between the
+   * bounds) holds at least [FLOOR_SHARE] of the sampled gaussians and [FLOOR_RATIO] times those of the top band, the
+   * floor is at the bottom of y: [SplatUpright.Y_UP]. Otherwise null, and the measured default holds
+   * ([SplatUpright.DEFAULT], the floor of a training at the top of y). An object never: an object with a flat top
+   * would read as upside down. The kept gaussians only when [kept] is given
+   */
+  fun uprightOf(scan: SplatScan, kept: BitSet?, bounds: SplatBounds?): SplatUpright? {
+    if (bounds == null || isObject(bounds)) return null
+    val low = bounds.low[1]
+    val high = bounds.high[1]
+    val band = (high - low) * FLOOR_BAND
+    if (!(band > 0)) return null
+    var total = 0
+    var bottom = 0
+    var top = 0
+    for (k in 0 until scan.sampleCount) {
+      if (kept != null && !kept[scan.sampleIndices[k]]) continue
+      val y = scan.samplePositions[3 * k + 1].toDouble()
+      if (!y.isFinite()) continue
+      total++
+      if (y <= low + band) bottom++
+      if (y >= high - band) top++
+    }
+    if (total == 0) return null
+    return if (bottom >= FLOOR_SHARE * total && bottom >= FLOOR_RATIO * top) SplatUpright.Y_UP else null
   }
 
   /** Whether the splat of [bounds] is an object to look at, rather than a place to stand in */
@@ -123,12 +169,21 @@ internal interface SplatUprightStore {
 
 /**
  * The orientation the user chose for a file with Turn upright, by its name and its size (lot S5): the same file found
- * again, on a share or picked from the headset, opens upright at once
+ * again, on a share or picked from the headset, opens upright at once. The keys start with [PREFIX]: the choices of
+ * the builds before 39 ("upright:") were made on splats that did not show where they were placed, and are left
+ * unread
  */
 internal class SplatUprightMemory(private val store: SplatUprightStore) {
-  fun keyOf(name: String, fileBytes: Long): String = "upright:$fileBytes:$name"
+  fun keyOf(name: String, fileBytes: Long): String = "$PREFIX$fileBytes:$name"
 
-  fun read(name: String, fileBytes: Long): SplatUpright = SplatUpright.of(store.read(keyOf(name, fileBytes))) ?: SplatUpright.DEFAULT
+  companion object {
+    const val PREFIX = "splatUp:"
+  }
+
+  /** The orientation the user chose for the file, null when none */
+  fun chosen(name: String, fileBytes: Long): SplatUpright? = SplatUpright.of(store.read(keyOf(name, fileBytes)))
+
+  fun read(name: String, fileBytes: Long): SplatUpright = chosen(name, fileBytes) ?: SplatUpright.DEFAULT
 
   fun write(name: String, fileBytes: Long, upright: SplatUpright) = store.write(keyOf(name, fileBytes), upright.key)
 }

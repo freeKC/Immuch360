@@ -9,7 +9,8 @@ import org.junit.Test
 /**
  * The gate of the splats in the headset (lot S5): Quest 3 and 3S only, the flavour with the splat module, the count
  * the headset takes (50 000 until measured, 150 000 with Large splats), the reduction beyond it within its limits,
- * the free memory and the heat.
+ * the free memory and the heat; the version 4 of SPZ, which the module does not read, refused, every SPZ of versions 1
+ * to 3 rewritten as version 2.
  */
 class SplatGateTest {
   private val spz = SplatProbe.Spz(version = 3, gaussians = 47_819, shDegree = 0, fractionalBits = 12, flags = 0)
@@ -27,6 +28,8 @@ class SplatGateTest {
   ): SplatVerdict = SplatGate.check(engine, device, probe, fileBytes, cap, memory, thermal, freeSpace, copiesWhole)
 
   private fun spz(count: Long, version: Int = 3) = spz.copy(version = version, gaussians = count)
+
+  private fun ply(count: Long) = SplatProbe.Ply(count, 0, null, 400, 56, emptyList())
 
   @Test
   fun `a splat within the count opens whole on a Quest 3, a 3S and a headset this build does not know`() {
@@ -77,16 +80,53 @@ class SplatGateTest {
   }
 
   @Test
-  fun `the reduction stops at 4 million gaussians, 1 GiB and the version 4 of SPZ`() {
+  fun `the reduction stops at 4 million gaussians and 1 GiB`() {
     assertEquals(SplatVerdict.Open(4_000_000, keep = 50_000, large = false), check(probe = spz(4_000_000)))
     assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 4_000_001), check(probe = spz(4_000_001)))
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 452_451),
       check(probe = spz(452_451), fileBytes = (1L shl 30) + 1, memory = null),
     )
-    // Version 4 is ZSTD, which this build does not decompress: whole within the count, else too large
-    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = spz(47_819, version = 4)))
-    assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 60_000), check(probe = spz(60_000, version = 4)))
+  }
+
+  @Test
+  fun `a version 4 SPZ is refused whatever its count, the module aborting on it`() {
+    // The module reads version 2 only (Quest 3, 31 October 2026); version 4 is ZSTD, which this build does not read
+    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(686, version = 4)))
+    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(60_000, version = 4)))
+    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(9_000_000, version = 4)))
+    // After the flavour, the headset and the problems of the file, before the heat
+    assertEquals(SplatVerdict.Refused(SplatRefusal.OLDER_HEADSET), check(probe = spz(686, version = 4), device = "hollywood"))
+    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(686, version = 4), thermal = 4))
+    // Versions 1 to 3 open, rewritten as version 2 by the preparation
+    for (version in 1..3) {
+      assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = spz(47_819, version = version)))
+    }
+  }
+
+  @Test
+  fun `an SPZ of version 1, 2 or 3 shown whole is rewritten as version 2, and the cache must hold the copy`() {
+    val reserve = SplatGate.CACHE_RESERVE_BYTES
+    // Version 3: the copy is about the size of the file (a byte less a rotation), with the slack of a header
+    val v3 = SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = false, rewrites = true)
+    assertEquals(686_150L + SplatGate.REDUCED_SLACK_BYTES, v3)
+    assertEquals(SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE), check(freeSpace = v3 + reserve - 1))
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(freeSpace = v3 + reserve))
+    // Version 1: its float16 positions take 9 bytes instead of 6, the copy weighed half again as large
+    assertEquals(1.5, SplatGate.rewriteGrowth(spz(860, version = 1)), 0.0)
+    assertEquals(1.0, SplatGate.rewriteGrowth(spz(860, version = 3)), 0.0)
+    assertEquals(
+      SplatGate.cacheBytesWritten(860, 686, null, copiesWhole = false, rewrites = true, growth = 1.5),
+      1_290L + SplatGate.REDUCED_SLACK_BYTES,
+    )
+    // Version 2 too, since a version 2 cut or short of its data aborts the module: the copy is about its size
+    val v2 = spz(47_819, version = 2)
+    assertEquals(1.0, SplatGate.rewriteGrowth(v2), 0.0)
+    assertEquals(SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE), check(probe = v2, freeSpace = v3 + reserve - 1))
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = v2, freeSpace = v3 + reserve))
+    // Only a PLY is read where it is: nothing written, no space asked
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = ply(47_819), freeSpace = 0))
+    assertEquals(0L, SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = false, rewrites = false))
   }
 
   @Test
@@ -136,13 +176,14 @@ class SplatGateTest {
       SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE),
       check(probe = big, fileBytes = 6_824_362, freeSpace = reduced + reserve - 1),
     )
-    // Shown whole where it is, nothing is written: no space asked
-    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(freeSpace = 0))
+    // Shown whole where it is (a PLY, which is not rewritten), nothing is written: no space asked
+    val whole = ply(47_819)
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = whole, freeSpace = 0))
     // Copied whole under the name of its format: the file itself
     assertEquals(686_150L, SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = true))
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE),
-      check(freeSpace = 686_150 + reserve - 1, copiesWhole = true),
+      check(probe = whole, freeSpace = 686_150 + reserve - 1, copiesWhole = true),
     )
     assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(freeSpace = null, copiesWhole = true))
     // A download is weighed before it starts, unless its size is not known

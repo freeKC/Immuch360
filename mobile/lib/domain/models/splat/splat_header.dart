@@ -4,11 +4,12 @@
 //
 // SPZ (Niantic Labs, MIT, https://github.com/nianticlabs/spz): versions 1 to 3 are one gzip stream that starts with a
 // 16 byte header, little endian: magic 0x5053474e ("NGSP"), version, number of points, degree of the spherical
-// harmonics (0 to 3), fractional bits, flags, a reserved byte at 0. Version 4 starts with a clear header of 32 bytes:
-// the same first fields, the number of ZSTD streams, the offset of their table of contents, 12 reserved bytes at 0.
-// PLY of 3D Gaussian Splatting: binary little endian, one element vertex with x y z, f_dc_0 to 2, opacity, scale_0
-// to 2, rot_0 to 3, and f_rest_* for the higher degrees. Pure, tested by splat_header_test.dart on the fixtures of
-// .github/desktop/ai/make_splat_fixtures.py (test/fixtures/splat).
+// harmonics (0 to 3), fractional bits (1 to 23 from version 2 on), flags, a reserved byte at 0. Version 4 starts with a
+// clear header of 32 bytes: the same first fields, the number of ZSTD streams, the offset of their table of contents,
+// 12 reserved bytes at 0. PLY of 3D Gaussian Splatting: binary little endian, one element vertex with x y z, f_dc_0 to
+// 2, opacity, scale_0 to 2, rot_0 to 3, and 0, 9, 24 or 45 f_rest_* for the degrees 0 to 3, all of them floats or
+// doubles (what the splat module of the headset was seen to read). Pure, tested by splat_header_test.dart on the
+// fixtures of .github/desktop/ai/make_splat_fixtures.py (test/fixtures/splat).
 
 import 'dart:convert';
 import 'dart:io' show RawZLibFilter;
@@ -31,7 +32,7 @@ enum SplatFileProblem {
   /// The compressed PLY of SuperSplat and PlayCanvas (element chunk, packed_* properties)
   compressedPly,
 
-  /// A PLY written in ASCII or big endian, or with values of a type the reader does not take
+  /// A PLY written in ASCII or big endian, with values not stored as floats, or with harmonics past degree 3
   unsupportedPly,
 
   /// An SPZ of a version after 4
@@ -66,7 +67,7 @@ final class SplatHead extends SplatProbe {
   /// What a comment of a PLY names as the tool that made it, null when none does
   final String? tool;
 
-  /// A version 4 SPZ, compressed with ZSTD: the headset shows it whole or not at all
+  /// A version 4 SPZ, compressed with ZSTD: the headset does not read it (splatGateOf refuses it)
   bool get isZstd => format == SplatFormat.spz && formatVersion >= 4;
 
   @override
@@ -128,7 +129,13 @@ const _requiredPly = [
   'rot_3',
 ];
 
-const _floatPly = ['x', 'y', 'z', 'opacity', 'scale_0', 'scale_1', 'scale_2'];
+/// The counts of f_rest_* properties the splat module was seen to read, and the degree each gives (degree 4, its 72,
+/// and any other count refused)
+const _plyRestDegrees = {0: 0, 9: 1, 24: 2, 45: 3};
+
+/// The fractional bits a 24 bit fixed point position of an SPZ of version 2 or 3 can have
+const _spzMinFractionalBits = 1;
+const _spzMaxFractionalBits = 23;
 
 const _plySizes = {
   'char': 1,
@@ -206,6 +213,7 @@ SplatProbe _probeGzipSpz(Uint8List bytes) {
   final version = _littleInt(header, 4);
   final count = _littleUint(header, 8);
   final degree = header[12];
+  final fractional = header[13];
   final reserved = header[15];
   if (version > 4) {
     return SplatRefused(SplatFileProblem.newerSpz, 'SPZ version $version');
@@ -221,6 +229,10 @@ SplatProbe _probeGzipSpz(Uint8List bytes) {
   }
   if (degree > 3) {
     return SplatRefused(SplatFileProblem.damaged, 'degree $degree');
+  }
+  // Version 1 stores its positions as float16 and never reads them
+  if (version >= 2 && (fractional < _spzMinFractionalBits || fractional > _spzMaxFractionalBits)) {
+    return SplatRefused(SplatFileProblem.damaged, '$fractional fractional bits');
   }
   return SplatHead(format: SplatFormat.spz, formatVersion: version, gaussians: count, shDegree: degree);
 }
@@ -356,8 +368,18 @@ SplatProbe _probePly(Uint8List bytes, int fileLength) {
   if (unknownType != null) {
     return SplatRefused(SplatFileProblem.unsupportedPly, 'type $unknownType');
   }
-  if (_floatPly.any((name) => !_floatTypes.contains(properties[name]))) {
-    return const SplatRefused(SplatFileProblem.unsupportedPly, 'positions, opacity or scales not stored as floats');
+  // Floats or doubles, what the module was seen to read, for every property of the gaussians and their harmonics
+  final notFloats = names
+      .where((name) => _requiredPly.contains(name) || name.startsWith('f_rest_'))
+      .where((name) => !_floatTypes.contains(properties[name]))
+      .toList();
+  if (notFloats.isNotEmpty) {
+    return SplatRefused(SplatFileProblem.unsupportedPly, 'not stored as floats: ${notFloats.join(', ')}');
+  }
+  final rest = names.where((name) => name.startsWith('f_rest_')).length;
+  final degree = _plyRestDegrees[rest];
+  if (degree == null) {
+    return SplatRefused(SplatFileProblem.unsupportedPly, '$rest f_rest properties: no degree from 0 to 3');
   }
   if (others.values.any((value) => value > 0)) {
     return SplatRefused(SplatFileProblem.unsupportedPly, 'other elements: ${others.keys.join(', ')}');
@@ -367,11 +389,6 @@ SplatProbe _probePly(Uint8List bytes, int fileLength) {
   }
   if (headerBytes + count * rowBytes > fileLength) {
     return SplatRefused(SplatFileProblem.damaged, '$count rows of $rowBytes bytes do not fit in $fileLength');
-  }
-  final rest = names.where((name) => name.startsWith('f_rest_')).length;
-  var degree = 0;
-  while (degree < 4 && 3 * splatShCoefficients(degree + 1) <= rest) {
-    degree++;
   }
   return SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: count, shDegree: degree, tool: tool);
 }

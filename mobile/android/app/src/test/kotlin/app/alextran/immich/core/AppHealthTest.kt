@@ -47,6 +47,24 @@ class AppHealthTest {
   }
 
   @Test
+  fun `an end by a signal names it, a native abort apart from the low memory killer`() {
+    // The splat module of build 38 aborted the app on an SPZ of version 3: signal 6, not the low memory killer
+    assertEquals(
+      "a native abort (signal 6, SIGABRT): a native library stopped the app",
+      AppHealth.reasonName(ApplicationExitInfo.REASON_SIGNALED, 6),
+    )
+    assertEquals(
+      "killed by signal 9 (SIGKILL, often the low memory killer)",
+      AppHealth.reasonName(ApplicationExitInfo.REASON_SIGNALED, 9),
+    )
+    assertEquals("killed by signal 15", AppHealth.reasonName(ApplicationExitInfo.REASON_SIGNALED, 15))
+    assertEquals("killed for low memory", AppHealth.reasonName(ApplicationExitInfo.REASON_LOW_MEMORY))
+    val abort = AppHealth.reasonName(ApplicationExitInfo.REASON_SIGNALED, 6)
+    val text = AppHealth.describeExit(abort, 0L, null, 470 * 1024, 571 * 1024, null)
+    assertTrue(text, text.contains(": $abort, memory PSS 470 MB"))
+  }
+
+  @Test
   fun `a stall says where the main thread was`() {
     val dart = AppHealth.describeStall(4200, listOf("android.os.MessageQueue.nativePollOnce(Native Method)"), "Memory: x.")
     assertTrue(dart, dart.startsWith("The main thread did not answer for 4.2 s, busy in native code (Dart"))
