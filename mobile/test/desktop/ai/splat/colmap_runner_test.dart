@@ -427,6 +427,19 @@ void main() {
       );
       expect(_threadsOf(windows.launches, 'feature_extractor', '--FeatureExtraction.num_threads'), ['10', '5']);
       expect(windows.launches.map((l) => l.arguments.first), everyElement('feature_extractor'));
+      // Our build on a folder named outside the code page of the PC (2 November): 0xC0000409 before its first line
+      final silent = _ColmapRunner({
+        ...scripts(),
+        'feature_extractor': [const FakeProcessScript(exitCode: -1073740791)],
+      });
+      await expectLater(
+        colmap(silent, windows: true).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
+              .having((e) => e.message, 'message', 'COLMAP (features) aborted with -1073740791: no output'),
+        ),
+      );
 
       // Elsewhere libstdc++ names the exception before its SIGABRT: a check that failed fails again, no second try
       final linux = _ColmapRunner({

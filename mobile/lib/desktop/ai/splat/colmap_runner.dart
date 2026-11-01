@@ -524,6 +524,8 @@ class ColmapRunner {
           windows: _windows,
         );
         final fewer = again ? colmapFewerThreads(count) : null;
+        // Our build may end before its first line (a name outside the code page of Windows, 2 November)
+        final tail = run.tail.isEmpty ? 'no output' : run.tail;
         switch (end) {
           case ColmapEnd.failed:
             rethrow;
@@ -531,12 +533,12 @@ class ColmapRunner {
             if (fewer == null) {
               throw BackendException(
                 ImmersiveErrorCode.outOfMemory,
-                'COLMAP ($name) crashed with $code at $count thread${count == 1 ? '' : 's'}: ${run.tail}',
+                'COLMAP ($name) crashed with $code at $count thread${count == 1 ? '' : 's'}: $tail',
               );
             }
           case ColmapEnd.abort:
             if (fewer == null || abortedOnce || !_windows) {
-              throw BackendException(ImmersiveErrorCode.posesFailed, 'COLMAP ($name) aborted with $code: ${run.tail}');
+              throw BackendException(ImmersiveErrorCode.posesFailed, 'COLMAP ($name) aborted with $code: $tail');
             }
             abortedOnce = true;
         }
