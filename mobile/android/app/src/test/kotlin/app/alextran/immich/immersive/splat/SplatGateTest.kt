@@ -9,8 +9,8 @@ import org.junit.Test
 /**
  * The gate of the splats in the headset (lot S5): Quest 3 and 3S only, the flavour with the splat module, the count
  * the headset takes (50 000 until measured, 150 000 with Large splats), the reduction beyond it within its limits,
- * the free memory and the heat; the version 4 of SPZ, which the module does not read, refused, every SPZ of versions 1
- * to 3 rewritten as version 2.
+ * the free memory and the heat; every SPZ, version 4 (ZSTD) included, rewritten as version 2, the only one the module
+ * reads.
  */
 class SplatGateTest {
   private val spz = SplatProbe.Spz(version = 3, gaussians = 47_819, shDegree = 0, fractionalBits = 12, flags = 0)
@@ -25,7 +25,9 @@ class SplatGateTest {
     thermal: Int? = 0,
     freeSpace: Long? = 8L shl 30,
     copiesWhole: Boolean = false,
-  ): SplatVerdict = SplatGate.check(engine, device, probe, fileBytes, cap, memory, thermal, freeSpace, copiesWhole)
+    zstd: Boolean = true,
+  ): SplatVerdict =
+    SplatGate.check(engine, device, probe, fileBytes, cap, memory, thermal, freeSpace, copiesWhole, readsZstd = zstd)
 
   private fun spz(count: Long, version: Int = 3) = spz.copy(version = version, gaussians = count)
 
@@ -90,18 +92,48 @@ class SplatGateTest {
   }
 
   @Test
-  fun `a version 4 SPZ is refused whatever its count, the module aborting on it`() {
-    // The module reads version 2 only (Quest 3, 31 October 2026); version 4 is ZSTD, which this build does not read
-    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(686, version = 4)))
-    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(60_000, version = 4)))
-    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(9_000_000, version = 4)))
-    // After the flavour, the headset and the problems of the file, before the heat
-    assertEquals(SplatVerdict.Refused(SplatRefusal.OLDER_HEADSET), check(probe = spz(686, version = 4), device = "hollywood"))
-    assertEquals(SplatVerdict.Refused(SplatRefusal.SPZ_V4), check(probe = spz(686, version = 4), thermal = 4))
-    // Versions 1 to 3 open, rewritten as version 2 by the preparation
+  fun `a version 4 SPZ opens as the others, rewritten as version 2, reduced beyond the count`() {
+    // FreeKC's report of 1 November 2026: axes_v4.spz was refused. Its ZSTD streams are read in the quest flavour and
+    // the splat written again as version 2, the only version the module reads (Quest 3, 31 October 2026)
+    assertEquals(SplatVerdict.Open(686, keep = null, large = false), check(probe = spz(686, version = 4)))
+    assertEquals(SplatVerdict.Open(452_451, keep = 50_000, large = false), check(probe = spz(452_451, version = 4)))
+    assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 9_000_000), check(probe = spz(9_000_000, version = 4)))
+    assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_WARM), check(probe = spz(686, version = 4), thermal = 4))
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.OLDER_HEADSET),
+      check(probe = spz(686, version = 4), device = "hollywood"),
+    )
+    // A build without the ZSTD decoder says it is not in this version, as for a build without the module
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.NOT_IN_THIS_VERSION),
+      check(probe = spz(686, version = 4), zstd = false),
+    )
     for (version in 1..3) {
-      assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = spz(47_819, version = version)))
+      assertEquals(
+        SplatVerdict.Open(47_819, keep = null, large = false),
+        check(probe = spz(47_819, version = version), zstd = false),
+      )
     }
+  }
+
+  @Test
+  fun `a version 4 SPZ counts its rewrite in the cache, and its decoder in the memory`() {
+    // Its copy as version 2 measured from 0.91 to 1.03 times the version 4 file (four files of 1 November 2026)
+    val v4 = spz(47_819, version = 4)
+    assertEquals(1.25, SplatGate.rewriteGrowth(v4), 0.0)
+    val copy = SplatGate.cacheBytesWritten(686_150, 47_819, null, copiesWhole = false, rewrites = true, growth = 1.25)
+    assertEquals(857_688L + SplatGate.REDUCED_SLACK_BYTES, copy)
+    val reserve = SplatGate.CACHE_RESERVE_BYTES
+    assertEquals(SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_SPACE), check(probe = v4, freeSpace = copy + reserve - 1))
+    assertEquals(SplatVerdict.Open(47_819, keep = null, large = false), check(probe = v4, freeSpace = copy + reserve))
+    // The window of the decoder on top of what a version 3 of the same size needs (its decoded gaussians weigh more
+    // than its file, rewritten or not)
+    val v3 = spz(47_819, version = 3)
+    assertEquals(
+      SplatGate.memoryNeeded(v3, 686_150, null) + SplatGate.ZSTD_DECODER_BYTES,
+      SplatGate.memoryNeeded(v4, 686_150, null),
+    )
+    assertEquals(8L shl 20, SplatGate.ZSTD_DECODER_BYTES)
   }
 
   @Test

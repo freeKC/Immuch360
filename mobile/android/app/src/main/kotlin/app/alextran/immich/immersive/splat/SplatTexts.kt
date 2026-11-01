@@ -33,7 +33,6 @@ internal object SplatTexts {
   const val LABEL_NO_SPACE = "splatNoSpace"
   const val LABEL_NOT_RUNNING = "splatNotRunning"
   const val LABEL_FAILED = "splatFailed"
-  const val LABEL_SPZ_V4 = "splatSpzV4"
   const val LABEL_MODULE_CANNOT_READ = "splatModuleCannotRead"
   const val LABEL_NO_RENDERER = "splatNoRenderer"
 
@@ -73,8 +72,6 @@ internal object SplatTexts {
       LABEL_NO_SPACE to "Not enough free space on the headset for this splat",
       LABEL_NOT_RUNNING to "The splat module did not start with this viewer: close it and open the splat again",
       LABEL_FAILED to "The splat could not be shown: $REASON",
-      LABEL_SPZ_V4 to
-        "This device cannot show this splat: it is in SPZ version 4. Export it as .ply or in SPZ version 3 or earlier",
       LABEL_MODULE_CANNOT_READ to
         "This device cannot show this splat: its copy for the headset is not in a form the splat module reads",
       LABEL_NO_RENDERER to "This device cannot show this splat: the splat renderer did not start",
@@ -138,7 +135,6 @@ internal object SplatTexts {
       SplatRefusal.NOT_ENOUGH_SPACE -> label(labels, LABEL_NO_SPACE)
       SplatRefusal.TOO_WARM -> SceneTexts.label(labels, SceneTexts.LABEL_TOO_WARM)
       SplatRefusal.MODULE_NOT_RUNNING -> label(labels, LABEL_NOT_RUNNING)
-      SplatRefusal.SPZ_V4 -> label(labels, LABEL_SPZ_V4)
       SplatRefusal.MODULE_CANNOT_READ -> label(labels, LABEL_MODULE_CANNOT_READ)
       SplatRefusal.NO_RENDERER -> label(labels, LABEL_NO_RENDERER)
     }

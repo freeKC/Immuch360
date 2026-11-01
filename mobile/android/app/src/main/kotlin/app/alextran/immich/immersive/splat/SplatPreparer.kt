@@ -34,9 +34,9 @@ internal sealed interface SplatPreparation {
  * cache is made of any other file.
  *
  * The module reads SPZ version 2 only, and aborts the process on any other and on a version 2 cut or short of its data
- * (SplatModuleFormat): every SPZ of versions 1 to 3 is always written again as version 2, reduced or whole, never
- * handed over as it is; its source is read to its end, and a damaged one stops with SplatReadException (DAMAGED, "This
- * splat file is damaged or incomplete"). Whatever the preparation gives the module, a PLY read where it is, a copy, a
+ * (SplatModuleFormat): every SPZ, version 4 included (its ZSTD decompressed by [SplatZstd]), is always written again
+ * as version 2, reduced or whole, never handed over as it is; its source is read to its end, and a damaged one stops
+ * with SplatReadException (DAMAGED, "This splat file is damaged or incomplete"). Whatever the preparation gives the module, a PLY read where it is, a copy, a
  * reduction or a rewrite, the whole of it is read once more and must be one the module reads, with the count expected
  * ([SplatModuleFormat.checkWhole]): otherwise the splat stops with [SplatRefusal.MODULE_CANNOT_READ] and the copy
  * goes. Pure JVM, tested by SplatPreparerTest on the fixtures.
@@ -45,7 +45,7 @@ internal object SplatPreparer {
   /**
    * Prepares [source] (a file of the viewer when [sourceOwned], which it may rename) for a request of at most [cap]
    * gaussians, on the headset [device] with the splat module when [engine]; copies go to [cacheDir] under [prefix],
-   * whose free space [freeCache] gives (null when unknown)
+   * whose free space [freeCache] gives (null when unknown). A version 4 SPZ is decompressed by [zstd]
    */
   fun prepare(
     source: File,
@@ -59,6 +59,7 @@ internal object SplatPreparer {
     prefix: String,
     cancelled: () -> Boolean = { false },
     freeCache: () -> Long? = { null },
+    zstd: SplatZstd = SplatZstds,
   ): SplatPreparation {
     val probe = SplatHeader.read(source)
     val head = probe as? SplatHead
@@ -78,22 +79,23 @@ internal object SplatPreparer {
         thermalStatus(),
         freeCache(),
         copiesWhole,
+        readsZstd = zstd.available,
       )
     if (verdict is SplatVerdict.Refused) return SplatPreparation.Stopped(verdict, head)
     verdict as SplatVerdict.Open
     head!!
     extension!!
-    val scan = SplatReducer.scan(source.inputStream(), head, cancelled = cancelled)
+    val scan = SplatReducer.scan(source.inputStream(), head, cancelled = cancelled, zstd = zstd)
     val keep = verdict.keep
     val shown = keep?.toLong() ?: head.gaussians
     if (keep != null || SplatModuleFormat.needsRewrite(head)) {
-      // Reduced, or an SPZ rewritten whole as version 2 (versions 1 to 3)
+      // Reduced, or an SPZ rewritten whole as version 2 (versions 1 to 4)
       val kept =
         if (keep != null) SplatReducer.select(scan.scores, keep)
         else BitSet(head.gaussians.toInt()).apply { set(0, head.gaussians.toInt()) }
       val written = File(cacheDir, "$prefix${System.nanoTime()}$extension")
       try {
-        written.outputStream().use { SplatReducer.write(source.inputStream(), head, kept, it, cancelled) }
+        written.outputStream().use { SplatReducer.write(source.inputStream(), head, kept, it, cancelled, zstd) }
       } catch (e: Throwable) {
         written.delete()
         throw e

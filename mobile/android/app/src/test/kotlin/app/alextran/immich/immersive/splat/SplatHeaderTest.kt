@@ -53,6 +53,48 @@ class SplatHeaderTest {
     assertEquals(6, head.streams)
     assertEquals(32L, head.tocOffset)
     assertTrue(head.isZstd)
+    // As Niantic's writer gives them: no stream for an empty array, so 5 for degree 0, 6 from degree 1, up to degree 4
+    for (name in listOf("axes_v4_niantic.spz", "turns_v4.spz", "sh4_v4.spz")) {
+      val expected = headers.getValue(name).jsonObject
+      val v4 = probe(name) as SplatProbe.Spz
+      assertEquals(name, 4, v4.version)
+      assertEquals(name, expected.getValue("gaussians").jsonPrimitive.long, v4.gaussians)
+      assertEquals(name, expected.getValue("shDegree").jsonPrimitive.int, v4.shDegree)
+      assertEquals(name, expected.getValue("streams").jsonPrimitive.int, v4.streams)
+      assertEquals(name, 12, v4.fractionalBits)
+    }
+    assertEquals(72, (probe("sh4_v4.spz") as SplatProbe.Spz).shBytes)
+  }
+
+  /** [name] with the little endian long at [at] set to [value] */
+  private fun withLong(name: String, at: Int, value: Long): ByteArray =
+    SplatFixtures.bytes(name).also { ByteBuffer.wrap(it).order(ByteOrder.LITTLE_ENDIAN).putLong(at, value) }
+
+  private fun refusalOf(bytes: ByteArray, length: Long = bytes.size.toLong()): SplatFileProblem? =
+    (SplatHeader.probe(bytes, length) as? SplatProbe.Refused)?.problem
+
+  @Test
+  fun `a version 4 SPZ whose table of contents does not match its arrays is damaged`() {
+    // The table of axes_v4_niantic.spz: 5 streams of 9, 1, 3, 3 and 4 bytes a point, from byte 32
+    val good = SplatFixtures.bytes("axes_v4_niantic.spz")
+    assertNull(refusalOf(good))
+    // A decompressed size that is not the one of its array
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(withLong("axes_v4_niantic.spz", 32 + 8, 686L * 9 + 1)))
+    // A compressed size that runs past the end of the file, or streams that end before it
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(withLong("axes_v4_niantic.spz", 32, 100_000)))
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(good, good.size + 1L))
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(good.copyOf(good.size - 1)))
+    // Fewer streams than arrays, or a sixth one for harmonics of degree 0 that is not empty
+    val four = good.copyOf().also { it[15] = 4 }
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(four))
+    val sixth = withLong("axes_v4.spz", 32 + 5 * 16 + 8, 1)
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(sixth))
+    // Positions that a fixed point of 24 bits cannot hold
+    val bits = good.copyOf().also { it[13] = 0 }
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(bits))
+    // Harmonics past degree 4
+    val degree = good.copyOf().also { it[12] = 5 }
+    assertEquals(SplatFileProblem.DAMAGED, refusalOf(degree))
   }
 
   @Test

@@ -10,3 +10,9 @@
 -dontwarn com.google.android.play.core.aipacks.**
 -dontwarn com.google.android.gms.tasks.**
 ##---------------End: LiteRT ----------
+
+##---------------Begin: zstd-jni (the version 4 SPZ splats) ----------
+# The native library of zstd-jni reads and writes the fields of its streams and contexts by name from native code,
+# which R8 cannot see: its classes keep their names and members (the AAR carries no rules of its own).
+-keep class com.github.luben.zstd.** { *; }
+##---------------End: zstd-jni ----------

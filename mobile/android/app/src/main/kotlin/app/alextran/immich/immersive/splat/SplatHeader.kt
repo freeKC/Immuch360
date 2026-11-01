@@ -17,8 +17,11 @@ import java.util.zip.GZIPInputStream
 // SPZ (Niantic Labs, MIT, https://github.com/nianticlabs/spz): versions 1 to 3 are one gzip stream that starts with a
 // 16 byte header, little endian: magic 0x5053474e ("NGSP"), version, number of points, degree of the spherical
 // harmonics (0 to 3), fractional bits of the fixed point positions (1 to 23 from version 2 on), flags, a reserved byte
-// at 0. Version 4 starts with a clear header of 32 bytes: the same first fields, the number of ZSTD streams, the offset
-// of their table of contents, 12 reserved bytes at 0. PLY of 3D Gaussian Splatting: binary little endian, one element
+// at 0. Version 4 starts with a clear header of 32 bytes: the same first fields (degree 0 to 4), the number of ZSTD
+// streams, the offset of their table of contents, 12 reserved bytes at 0; the table gives the compressed and the
+// decompressed size of each stream (8 bytes each), one stream for each array that is not empty, in the order of
+// versions 1 to 3, holding the arrays of version 3, the streams ending with the file (README and load-spz.cc of the
+// repository, read on 1 November 2026). PLY of 3D Gaussian Splatting: binary little endian, one element
 // vertex with x y z, f_dc_0 to 2, opacity, scale_0 to 2, rot_0 to 3, and 0, 9, 24 or 45 f_rest_* for the degrees 0 to
 // 3, all of them floats or doubles. Pure JVM, tested by SplatHeaderTest on the fixtures of
 // .github/desktop/ai/make_splat_fixtures.py.
@@ -47,7 +50,10 @@ internal enum class SplatFileProblem {
   /** An SPZ of a version after 4 */
   NEWER_SPZ,
 
-  /** A wrong magic, a reserved field set, a stream or rows cut short, a header past [SplatHeader.HEAD_BYTES] */
+  /**
+   * A wrong magic, a reserved field set, a stream or rows cut short, a header past [SplatHeader.HEAD_BYTES], a table
+   * of contents of version 4 that does not match the arrays of the header or the length of the file
+   */
   DAMAGED,
 }
 
@@ -60,7 +66,10 @@ internal data class PlyProperty(val name: String, val type: String, val size: In
 
 /** What the head of a file says */
 internal sealed interface SplatProbe {
-  /** The SPZ of Niantic, gzip ([isZstd] false, versions 1 to 3) or ZSTD (version 4) */
+  /**
+   * The SPZ of Niantic, gzip ([isZstd] false, versions 1 to 3) or ZSTD (version 4, read in the quest flavour and
+   * written again as version 2 like the others, SplatReducer)
+   */
   data class Spz(
     val version: Int,
     override val gaussians: Long,
@@ -80,7 +89,7 @@ internal sealed interface SplatProbe {
     val isZstd: Boolean
       get() = version >= 4
 
-    /** The bytes of one point in each attribute array, in the order of the file (versions 1 to 3) */
+    /** The bytes of one point in each attribute array, in the order of the file (version 4 has the arrays of 3) */
     val positionBytes: Int
       get() = if (version == 1) 6 else 9
 
@@ -146,7 +155,7 @@ internal object SplatHeader {
    */
   val PLY_REST_DEGREES = mapOf(0 to 0, 9 to 1, 24 to 2, 45 to 3)
 
-  /** The fractional bits a 24 bit fixed point position of an SPZ of version 2 or 3 can have */
+  /** The fractional bits a 24 bit fixed point position of an SPZ of version 2 to 4 can have */
   val SPZ_FRACTIONAL_BITS = 1..23
 
   private val TOOL_COMMENT =
@@ -162,6 +171,21 @@ internal object SplatHeader {
 
   /** The coefficients of the spherical harmonics past the first, for [degree]: 0, 3, 8, 15, 24 */
   fun shCoefficients(degree: Int): Int = (degree + 1) * (degree + 1) - 1
+
+  /**
+   * The decompressed size of each stream of a version 4 file of [count] points of degree [shDegree] holding [streams]
+   * streams, in the order of the file: positions, alphas, colours, scales, rotations, harmonics. Niantic's writer
+   * leaves an empty array out, so 5 streams without harmonics and 6 with them; a sixth stream that is empty is taken
+   * too (the file of the owner's kit of 31 October 2026 has one). Null for any other count of streams
+   */
+  fun v4StreamSizes(count: Long, shDegree: Int, streams: Int): LongArray? {
+    val arrays = longArrayOf(9 * count, count, 3 * count, 3 * count, 4 * count, 3L * shCoefficients(shDegree) * count)
+    return when {
+      streams == arrays.size -> arrays
+      streams == arrays.size - 1 && arrays.last() == 0L -> arrays.copyOf(streams)
+      else -> null
+    }
+  }
 
   /** The head of [file] (its first [HEAD_BYTES]) probed with its length */
   fun read(file: File): SplatProbe {
@@ -234,15 +258,41 @@ internal object SplatHeader {
     val streams = bytes[15].toInt() and 0xff
     val toc = littleInt(bytes, 16).toLong() and 0xffffffffL
     val reserved = (20 until 32).any { bytes[it].toInt() != 0 }
+    val sizes = v4StreamSizes(count, degree, streams)
     return when {
       reserved -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "reserved bytes set")
       count == 0L -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "no point")
       degree > 4 -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "degree $degree")
+      fractional !in SPZ_FRACTIONAL_BITS -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "$fractional fractional bits")
       streams == 0 -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "no stream")
+      sizes == null -> SplatProbe.Refused(SplatFileProblem.DAMAGED, "$streams streams for degree $degree")
       toc < 32 || toc + 16L * streams > fileLength ->
         SplatProbe.Refused(SplatFileProblem.DAMAGED, "table of contents at $toc out of the file")
-      else -> SplatProbe.Spz(version, count, degree, fractional, flags, streams, toc)
+      else ->
+        tocProblem(bytes, toc, sizes, fileLength)?.let { SplatProbe.Refused(SplatFileProblem.DAMAGED, it) }
+          ?: SplatProbe.Spz(version, count, degree, fractional, flags, streams, toc)
     }
+  }
+
+  /**
+   * What is wrong with the table of contents of a version 4 file at [toc] of its head [bytes], null when each stream
+   * decompresses to the size of its array ([sizes]) and the streams end with the file of [fileLength] bytes, as
+   * Niantic's reader asks. A table past the head (extensions of more than 64 KiB) is left to the reading of the file
+   * (SplatReducer), which checks the same
+   */
+  private fun tocProblem(bytes: ByteArray, toc: Long, sizes: LongArray, fileLength: Long): String? {
+    val end = toc + 16L * sizes.size
+    if (end > bytes.size) return null
+    val table = ByteBuffer.wrap(bytes, toc.toInt(), 16 * sizes.size).order(ByteOrder.LITTLE_ENDIAN)
+    var streamsEnd = end
+    for (i in sizes.indices) {
+      val compressed = table.long
+      val decompressed = table.long
+      if (decompressed != sizes[i]) return "stream $i of $decompressed bytes, ${sizes[i]} expected"
+      if (compressed < 0 || compressed > fileLength - streamsEnd) return "stream $i runs past the end of the file"
+      streamsEnd += compressed
+    }
+    return if (streamsEnd != fileLength) "the streams end at $streamsEnd, the file at $fileLength" else null
   }
 
   private fun probePly(bytes: ByteArray, fileLength: Long): SplatProbe {

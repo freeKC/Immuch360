@@ -196,7 +196,14 @@ dependencies {
   // phone APKs keep their size.
   questImplementation libs.meta.spatial.sdk.splat
 
+  // The ZSTD decoder of the version 4 SPZ splats (immersive/splat/SplatZstds.kt of src/quest): zstd-jni 1.5.7-3, BSD
+  // 2-Clause, with zstd 1.5.7 under its BSD licence (licenses/zstd-jni/README.md). Its Android archive, in the quest
+  // flavour only: about 600 KB of native library in the arm64 Quest APK, the phone APKs unchanged. The tests on the JVM
+  // take its jar, which carries the native library of each desktop system
+  questImplementation "com.github.luben:zstd-jni:${libs.versions.zstd.jni.get()}@aar"
+
   testImplementation libs.junit
+  testImplementation libs.zstd.jni
 }
 
 // This is uncommented in F-Droid build script
