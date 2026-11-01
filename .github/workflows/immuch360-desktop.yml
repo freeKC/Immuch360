@@ -1758,6 +1758,29 @@ jobs:
           chmod +x "$RUNNER_TEMP/unpacked/brush_app" "$RUNNER_TEMP/unpacked/immuch360-run"
           "$RUNNER_TEMP/unpacked/immuch360-run" --parent $$ -- "$RUNNER_TEMP/unpacked/brush_app" --version
 
+      # The archive trains, not only starts: 30 steps of a small posed scene (brush_build.py scene) on the processor,
+      # through Mesa's lavapipe, in a fresh working folder (the autotune cache of cubecl lives there, and one left by
+      # another device makes Brush fail at its first kernel), started by immuch360-run as the app starts it
+      - name: brush_app of the archive trains on the processor (lavapipe)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends mesa-vulkan-drivers
+          python3 .github/desktop/ai/brush_build.py scene --dir "$RUNNER_TEMP/brush-scene"
+          mkdir -p "$RUNNER_TEMP/brush-train"
+          cd "$RUNNER_TEMP/brush-train"
+          status=0
+          # immuch360-run must be a child of this shell (--parent $$) and runs a program by its path: the time limit
+          # goes after it, by its path
+          VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json \
+          RUST_LOG='brush_cli=info,brush_process=info,cubecl_wgpu=info' \
+            "$RUNNER_TEMP/unpacked/immuch360-run" --parent $$ -- "$(command -v timeout)" 900 \
+            "$RUNNER_TEMP/unpacked/brush_app" "$RUNNER_TEMP/brush-scene" --total-steps 30 --max-resolution 128 \
+            --export-every 30 --export-path "$RUNNER_TEMP/brush-train/out" > train.log 2>&1 || status=$?
+          cat train.log
+          [ "$status" -eq 0 ] || { echo "::error::brush_app exited $status on lavapipe"; exit 1; }
+          python3 "$GITHUB_WORKSPACE/.github/desktop/ai/brush_build.py" trained --log train.log \
+            --ply out/export_30.ply
+
       - name: Upload the archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

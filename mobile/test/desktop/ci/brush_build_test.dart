@@ -103,6 +103,11 @@ Uint8List _fakeElf(List<String> needed) {
   return data.buffer.asUint8List();
 }
 
+/// The last lines of a training of brush_app, as RUST_LOG=brush_cli=info shows them
+const _doneLog =
+    '[2026-11-01T17:33:35Z INFO  brush_process::train_stream] Start training loop.\n'
+    '[2026-11-01T17:34:00Z INFO  brush_cli] Done training! Took FormattedDuration(24s).\n';
+
 /// The interpreter of the Python that runs the scripts, by its full path
 String get _pythonExecutable {
   final command = python!;
@@ -1050,6 +1055,20 @@ out.write_text((here / 'generated.md').read_text(encoding='utf-8'), encoding='ut
         expect(steps, contains('--advisories "\$RUNNER_TEMP/brush-advisories.txt"'), reason: name);
       }
     });
+
+    test('brush-linux trains 30 steps of the small scene with the archive, on lavapipe, in a fresh folder', () {
+      final steps = job('brush-linux');
+      for (final part in [
+        'mesa-vulkan-drivers',
+        'VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json',
+        'brush_build.py scene --dir "\$RUNNER_TEMP/brush-scene"',
+        '"\$RUNNER_TEMP/unpacked/immuch360-run" --parent \$\$ -- "\$(command -v timeout)" 900',
+        '"\$RUNNER_TEMP/unpacked/brush_app" "\$RUNNER_TEMP/brush-scene" --total-steps 30',
+        'brush_build.py" trained --log',
+      ]) {
+        expect(steps, contains(part));
+      }
+    });
   }, skip: skip);
 
   // The advisories of the RustSec database (lot SP2, fix round of the review): recorded, never blocking, so that the
@@ -1125,6 +1144,134 @@ out.write_text((here / 'generated.md').read_text(encoding='utf-8'), encoding='ut
       final run = advisories(['not a line of JSON']);
       expect(run.exitCode, 0, reason: '$run');
       expect(File(path('advisories.txt')).readAsStringSync(), contains('not checked'));
+    });
+  }, skip: skip);
+
+  // The small scene the brush-linux job trains on with Mesa's lavapipe (lot SP2, fix round of the review), and the
+  // check of what brush_app gives back: every build of Brush is then known to train, not only to start
+  group('scene and trained', () {
+    late Directory root;
+    String path(String relative) => p.joinAll([root.path, ...relative.split('/')]);
+    setUp(() => root = Directory.systemTemp.createTempSync('immuch360_brush_scene_'));
+    tearDown(() => root.deleteSync(recursive: true));
+
+    ScriptRun scene(String dir) =>
+        runCiScript(_script, ['scene', '--dir', path(dir), '--views', '4', '--width', '32', '--height', '24']);
+
+    test('the views as PNG and their exact poses as the COLMAP text files brush_app reads, the same on every run', () {
+      final run = scene('scene');
+      expect(run.exitCode, 0, reason: '$run');
+      for (var k = 1; k <= 4; k++) {
+        final png = File(path('scene/images/view_0$k.png')).readAsBytesSync();
+        expect(png.sublist(0, 8), [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+        final header = ByteData.sublistView(png, 16, 24);
+        expect([header.getUint32(0), header.getUint32(4)], [32, 24]);
+        // Brush v0.3.0 reads the first 16,387 bytes of an image at once, and fails on a smaller file
+        expect(png.length, greaterThanOrEqualTo(16387));
+      }
+      final cameras = File(path('scene/sparse/0/cameras.txt')).readAsStringSync();
+      expect(cameras.split('\n').where((line) => line.isNotEmpty && !line.startsWith('#')), [
+        matches(RegExp(r'^1 PINHOLE 32 24 [\d.]+ [\d.]+ 16(\.0+)? 12(\.0+)?$')),
+      ]);
+      // images.txt: each view on a line, its points on the next one, here none; no other blank line
+      final images = File(path('scene/sparse/0/images.txt')).readAsStringSync();
+      final lines = images.split('\n').where((line) => !line.startsWith('#')).toList();
+      expect(lines, hasLength(9));
+      for (var k = 0; k < 4; k++) {
+        final fields = lines[2 * k].split(' ');
+        expect(fields, hasLength(10));
+        expect(fields[0], '${k + 1}');
+        expect(fields[8], '1');
+        expect(fields[9], 'view_0${k + 1}.png');
+        expect(lines[2 * k + 1], isEmpty);
+        // The pose is the world seen by the camera: its centre, -R^T t, stands on the circle of the cameras
+        final [w, x, y, z, tx, ty, tz] = [for (final field in fields.sublist(1, 8)) double.parse(field)];
+        expect(w * w + x * x + y * y + z * z, closeTo(1, 1e-9));
+        final r = [
+          [1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
+          [2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)],
+          [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)],
+        ];
+        final t = [tx, ty, tz];
+        final centre = [for (var i = 0; i < 3; i++) -(r[0][i] * t[0] + r[1][i] * t[1] + r[2][i] * t[2])];
+        expect(centre[1], closeTo(1.3, 1e-6));
+        expect(centre[0] * centre[0] + centre[2] * centre[2], closeTo(1.0, 1e-6));
+        // Its third row, the axis it looks along, points across the room and slightly down
+        expect(r[2][0] * centre[0] + r[2][2] * centre[2], lessThan(0));
+        expect(r[2][1], lessThan(0));
+      }
+      expect(lines.last, isEmpty);
+      final points = File(path('scene/sparse/0/points3D.txt')).readAsStringSync();
+      final rows = points.split('\n').where((line) => line.isNotEmpty && !line.startsWith('#')).toList();
+      expect(rows.length, greaterThanOrEqualTo(500));
+      for (final row in rows) {
+        expect(row.split(' '), hasLength(8), reason: row);
+      }
+
+      expect(scene('again').exitCode, 0);
+      for (final file in ['cameras.txt', 'images.txt', 'points3D.txt']) {
+        expect(
+          File(path('again/sparse/0/$file')).readAsStringSync(),
+          File(path('scene/sparse/0/$file')).readAsStringSync(),
+        );
+      }
+      expect(
+        File(path('again/images/view_02.png')).readAsBytesSync(),
+        File(path('scene/images/view_02.png')).readAsBytesSync(),
+      );
+    });
+
+    List<String> properties(int shDegree) => [
+      'f_dc_0',
+      'f_dc_1',
+      'f_dc_2',
+      ...[for (var i = 0; i < 3 * ((shDegree + 1) * (shDegree + 1) - 1); i++) 'f_rest_$i']..sort(),
+      'opacity',
+      'rot_0',
+      'rot_1',
+      'rot_2',
+      'rot_3',
+      'scale_0',
+      'scale_1',
+      'scale_2',
+      'x',
+      'y',
+      'z',
+    ];
+
+    ScriptRun trained({int shDegree = 3, int vertices = 2, int missing = 0, String log = _doneLog}) {
+      final names = properties(shDegree);
+      final header =
+          'ply\nformat binary_little_endian 1.0\ncomment Exported from Brush\ncomment Vertical axis: y\n'
+          'comment SH degree: $shDegree\nelement vertex $vertices\n'
+          '${names.map((name) => 'property float $name\n').join()}end_header\n';
+      File(
+        path('export_30.ply'),
+      ).writeAsBytesSync([...utf8.encode(header), ...Uint8List(vertices * names.length * 4 - missing)]);
+      File(path('train.log')).writeAsStringSync(log);
+      return runCiScript(_script, ['trained', '--log', path('train.log'), '--ply', path('export_30.ply')]);
+    }
+
+    test('a training that ended with Done training! and a PLY of SH degree 3 (59 properties) passes', () {
+      expect(properties(3), hasLength(59));
+      final run = trained();
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('2 gaussians, 59 properties, SH degree 3'));
+    });
+
+    test('another SH degree, a short PLY, no Done training! or a panic fails the job', () {
+      final degree = trained(shDegree: 2);
+      expect(degree.exitCode, 1, reason: '$degree');
+      expect(degree.output, contains('38 properties'));
+      final short = trained(missing: 4);
+      expect(short.exitCode, 1, reason: '$short');
+      final unfinished = trained(
+        log: '[2026-11-01T17:33:35Z INFO  brush_process::train_stream] Start training loop.\n',
+      );
+      expect(unfinished.exitCode, 1, reason: '$unfinished');
+      expect(unfinished.output, contains('Done training!'));
+      final panic = trained(log: "$_doneLog\nthread 'main' panicked at crates/brush-train/src/train.rs:86:9:\n");
+      expect(panic.exitCode, 1, reason: '$panic');
     });
   }, skip: skip);
 }

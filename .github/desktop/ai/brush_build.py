@@ -47,6 +47,14 @@ start with Immuch360-Desktop-, so no release of the app ever attaches it.
       every distribution has; licenses/ (README.md, Brush's LICENSE compared with the sources built, THIRD-PARTY.md,
       the patches) and BUILD-INFO.txt, with the advisories of the build when given. Sorted names, fixed dates: the
       same files give the same bytes.
+  brush_build.py scene --dir DIR [--views N] [--width W] [--height H]
+      a small scene for brush_app to train on where there is no graphics card (Mesa's lavapipe, in the job
+      brush-linux): N views (12) of a closed room with checkered walls, drawn by casting a ray per pixel, in
+      DIR/images, with their exact poses and points on the walls as the COLMAP text files brush_app reads
+      (DIR/sparse/0/cameras.txt, images.txt, points3D.txt). The same files on every run
+  brush_build.py trained --log FILE --ply FILE [--sh-degree D]
+      what brush_app gives back after a training: "Done training!" and no panic in its output (RUST_LOG=brush_cli=info),
+      and a PLY of Brush with its gaussians and the properties of SH degree D (3: 59 properties)
 
 Only the Python standard library is used. Exit codes: 0 good, 1 a check failed, 2 bad arguments or missing inputs.
 """
@@ -60,13 +68,16 @@ import json
 import os
 import pathlib
 import re
+import math
 import shutil
 import stat
+import struct
 import subprocess
 import sys
 import tarfile
 import tempfile
 import urllib.request
+import zlib
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -860,6 +871,182 @@ def command_pack(args) -> int:
     return 0
 
 
+# --- scene and trained -----------------------------------------------------------------------------------------------
+
+ROOM_MIN, ROOM_MAX = (-2.0, 0.0, -2.0), (2.0, 2.4, 2.0)
+CAMERA_RADIUS, CAMERA_HEIGHT, TARGET_HEIGHT = 1.0, 1.3, 0.9
+# The colour of each wall, by the axis it is normal to and its side: x low and high, y (floor, ceiling), z low and high
+WALL_COLOURS = {(0, 0): (200, 70, 60), (0, 1): (60, 160, 90), (1, 0): (150, 130, 100), (1, 1): (230, 230, 220),
+                (2, 0): (70, 90, 190), (2, 1): (210, 180, 60)}
+
+
+def wall_colour(axis: int, side: int, point: tuple) -> tuple:
+    """The colour of a wall at a point: its own colour, checkered by tiles of 0.4 m, with stripes of 0.13 m"""
+    u, v = (point[i] for i in range(3) if i != axis)
+    tile = (math.floor(u / 0.4) + math.floor(v / 0.4)) % 2
+    stripe = math.floor((u + 2 * v) / 0.13) % 3
+    return tuple(min(255, int(c * (0.55 + 0.35 * tile) + 18 * stripe)) for c in WALL_COLOURS[(axis, side)])
+
+
+def unit(v: tuple) -> tuple:
+    n = math.sqrt(sum(c * c for c in v))
+    return tuple(c / n for c in v)
+
+
+def cross(a: tuple, b: tuple) -> tuple:
+    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+
+
+def quaternion(r: list) -> tuple:
+    """The quaternion (w, x, y, z) of a rotation matrix given by its rows, w positive"""
+    trace = r[0][0] + r[1][1] + r[2][2]
+    if trace > 0:
+        s = math.sqrt(trace + 1.0) * 2.0
+        q = (0.25 * s, (r[2][1] - r[1][2]) / s, (r[0][2] - r[2][0]) / s, (r[1][0] - r[0][1]) / s)
+    elif r[0][0] > r[1][1] and r[0][0] > r[2][2]:
+        s = math.sqrt(1.0 + r[0][0] - r[1][1] - r[2][2]) * 2.0
+        q = ((r[2][1] - r[1][2]) / s, 0.25 * s, (r[0][1] + r[1][0]) / s, (r[0][2] + r[2][0]) / s)
+    elif r[1][1] > r[2][2]:
+        s = math.sqrt(1.0 + r[1][1] - r[0][0] - r[2][2]) * 2.0
+        q = ((r[0][2] - r[2][0]) / s, (r[0][1] + r[1][0]) / s, 0.25 * s, (r[1][2] + r[2][1]) / s)
+    else:
+        s = math.sqrt(1.0 + r[2][2] - r[0][0] - r[1][1]) * 2.0
+        q = ((r[1][0] - r[0][1]) / s, (r[0][2] + r[2][0]) / s, (r[1][2] + r[2][1]) / s, 0.25 * s)
+    return q if q[0] >= 0 else tuple(-c for c in q)
+
+
+def room_hit(origin: tuple, direction: tuple) -> tuple:
+    """Where a ray from inside the room meets its walls: the point, the axis of the wall and its side"""
+    best = (math.inf, 0, 0)
+    for axis in range(3):
+        if direction[axis] > 0:
+            best = min(best, ((ROOM_MAX[axis] - origin[axis]) / direction[axis], axis, 1))
+        elif direction[axis] < 0:
+            best = min(best, ((ROOM_MIN[axis] - origin[axis]) / direction[axis], axis, 0))
+    t, axis, side = best
+    return tuple(origin[i] + t * direction[i] for i in range(3)), axis, side
+
+
+# Brush v0.3.0 reads the first 16,387 bytes of each image at once (read_exact in get_image_data of
+# crates/brush-dataset/src/scene.rs): a smaller file fails the whole dataset with "early eof"
+BRUSH_MIN_IMAGE_BYTES = 16387
+
+
+def png(width: int, height: int, rows: list) -> bytes:
+    """An RGB PNG of the rows, padded by a comment up to the size Brush needs to read an image"""
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    raw = b''.join(b'\0' + bytes(row) for row in rows)
+    head = (b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0))
+            + chunk(b'IDAT', zlib.compress(raw, 9)))
+    tail = chunk(b'IEND', b'')
+    missing = BRUSH_MIN_IMAGE_BYTES - len(head) - len(tail)
+    if missing > 0:
+        keyword = b'Comment\0'
+        head += chunk(b'tEXt', keyword + b' ' * max(0, missing - 12 - len(keyword)))
+    return head + tail
+
+
+def command_scene(args) -> int:
+    width, height, views = args.width, args.height, args.views
+    focal = 0.8 * width
+    images = args.dir / 'images'
+    sparse = args.dir / 'sparse' / '0'
+    images.mkdir(parents=True, exist_ok=True)
+    sparse.mkdir(parents=True, exist_ok=True)
+    poses = ['# Image list with two lines of data per image:',
+             '#   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, NAME',
+             '#   POINTS2D[] as (X, Y, POINT3D_ID)']
+    for k in range(views):
+        angle = 2 * math.pi * k / views
+        centre = (CAMERA_RADIUS * math.cos(angle), CAMERA_HEIGHT, CAMERA_RADIUS * math.sin(angle))
+        target = (-CAMERA_RADIUS * math.cos(angle), TARGET_HEIGHT, -CAMERA_RADIUS * math.sin(angle))
+        forward = unit(tuple(target[i] - centre[i] for i in range(3)))
+        right = unit(cross(forward, (0.0, 1.0, 0.0)))
+        down = cross(forward, right)
+        rows = []
+        for y in range(height):
+            row = []
+            for x in range(width):
+                dx, dy = (x + 0.5 - width / 2) / focal, (y + 0.5 - height / 2) / focal
+                direction = tuple(right[i] * dx + down[i] * dy + forward[i] for i in range(3))
+                point, axis, side = room_hit(centre, direction)
+                row.extend(wall_colour(axis, side, point))
+            rows.append(row)
+        name = f'view_{k + 1:02d}.png'
+        (images / name).write_bytes(png(width, height, rows))
+        # The world as the camera sees it (x right, y down, z forward): rotation rows, translation -R C
+        rotation = [right, down, forward]
+        translation = tuple(-sum(rotation[i][j] * centre[j] for j in range(3)) for i in range(3))
+        values = (*quaternion(rotation), *translation)
+        poses += [f'{k + 1} ' + ' '.join(f'{round(value, 12) + 0.0:.12f}' for value in values) + f' 1 {name}', '']
+    (sparse / 'images.txt').write_text('\n'.join(poses) + '\n', encoding='utf-8', newline='\n')
+    (sparse / 'cameras.txt').write_text(
+        '# Camera list with one line of data per camera:\n#   CAMERA_ID, MODEL, WIDTH, HEIGHT, PARAMS[]\n'
+        f'1 PINHOLE {width} {height} {focal:.6f} {focal:.6f} {width / 2:.6f} {height / 2:.6f}\n',
+        encoding='utf-8', newline='\n')
+    # Points on the walls, by a fixed linear congruential generator, with their colours
+    state, points = 20261101, ['# 3D point list with one line of data per point:',
+                               '#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)']
+
+    def random() -> float:
+        nonlocal state
+        state = (state * 1103515245 + 12345) % (1 << 31)
+        return state / (1 << 31)
+
+    for index in range(600):
+        axis, side = int(random() * 3), int(random() * 2)
+        point = [ROOM_MIN[i] + random() * (ROOM_MAX[i] - ROOM_MIN[i]) for i in range(3)]
+        point[axis] = (ROOM_MIN, ROOM_MAX)[side][axis]
+        colour = wall_colour(axis, side, tuple(point))
+        points.append(f'{index + 1} ' + ' '.join(f'{c:.6f}' for c in point) + ' ' + ' '.join(map(str, colour)) + ' 0.5')
+    (sparse / 'points3D.txt').write_text('\n'.join(points) + '\n', encoding='utf-8', newline='\n')
+    print(f'{args.dir}: {views} views of {width} x {height}, focal {focal:.1f}, 600 points')
+    return 0
+
+
+def ply_properties(sh_degree: int) -> set:
+    """The properties of a PLY of Brush: position, scale, rotation, opacity and the SH coefficients of the degree"""
+    rest = 3 * ((sh_degree + 1) ** 2 - 1)
+    return {'x', 'y', 'z', 'opacity', *(f'scale_{i}' for i in range(3)), *(f'rot_{i}' for i in range(4)),
+            *(f'f_dc_{i}' for i in range(3)), *(f'f_rest_{i}' for i in range(rest))}
+
+
+def command_trained(args) -> int:
+    problems = []
+    log = read_text(args.log)
+    if 'Done training!' not in log:
+        problems.append(f'{args.log.name}: no "Done training!" (run with RUST_LOG=brush_cli=info)')
+    if 'panicked at' in log:
+        problems.append(f'{args.log.name}: brush_app panicked')
+    data = args.ply.read_bytes()
+    end = data.find(b'end_header\n')
+    if not data.startswith(b'ply\n') or end < 0:
+        raise Failure(f'{args.ply.name} is not a PLY file')
+    header = data[:end].decode('ascii', errors='replace').splitlines()
+    vertices = next((int(line.split()[2]) for line in header if line.startswith('element vertex ')), 0)
+    properties = [line.split()[2] for line in header if line.startswith('property float ')]
+    expected = ply_properties(args.sh_degree)
+    if 'format binary_little_endian 1.0' not in header:
+        problems.append(f'{args.ply.name}: not binary little endian')
+    if vertices <= 0:
+        problems.append(f'{args.ply.name}: no gaussian')
+    if set(properties) != expected or len(properties) != len(expected):
+        problems.append(f'{args.ply.name}: {len(properties)} properties, SH degree {args.sh_degree} has '
+                        f'{len(expected)}')
+    if len(data) < end + len('end_header\n') + vertices * len(properties) * 4:
+        problems.append(f'{args.ply.name}: {len(data)} bytes, shorter than {vertices} gaussians')
+    if problems:
+        for problem in problems:
+            print(f'::error::{problem}')
+        return 1
+    done = next(line for line in log.splitlines() if 'Done training!' in line)
+    print(f'{args.ply.name}: {vertices} gaussians, {len(properties)} properties, SH degree {args.sh_degree}; '
+          f'{done.strip()}')
+    return 0
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--lock', type=pathlib.Path, default=LOCK)
@@ -914,6 +1101,15 @@ def main(argv=None) -> int:
     pack.add_argument('--crt-dir', type=pathlib.Path)
     pack.add_argument('--system-dir', type=pathlib.Path)
     pack.add_argument('--advisories', type=pathlib.Path)
+    scene = commands.add_parser('scene')
+    scene.add_argument('--dir', type=pathlib.Path, required=True)
+    scene.add_argument('--views', type=int, default=12)
+    scene.add_argument('--width', type=int, default=128)
+    scene.add_argument('--height', type=int, default=96)
+    trained = commands.add_parser('trained')
+    trained.add_argument('--log', type=pathlib.Path, required=True)
+    trained.add_argument('--ply', type=pathlib.Path, required=True)
+    trained.add_argument('--sh-degree', type=int, default=3)
     args = parser.parse_args(argv)
     if args.command == 'advisories' and not args.diagnostics and not (args.source and args.cargo_deny):
         parser.error('advisories needs --source and --cargo-deny, or --diagnostics')
@@ -924,7 +1120,8 @@ def main(argv=None) -> int:
         return {'lock': command_lock, 'sources': command_sources, 'tools': command_tools, 'build': command_build,
                 'graph': command_graph, 'deny': command_deny, 'advisories': command_advisories,
                 'about': command_about, 'lpips': command_lpips,
-                'help': command_help, 'pack': command_pack}[args.command](args)
+                'help': command_help, 'pack': command_pack, 'scene': command_scene,
+                'trained': command_trained}[args.command](args)
     except (Failure, OSError, subprocess.CalledProcessError, json.JSONDecodeError, KeyError) as error:
         print(f'::error::{error}')
         return 1 if isinstance(error, (Failure, subprocess.CalledProcessError, KeyError)) else 2
