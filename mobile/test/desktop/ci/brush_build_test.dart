@@ -756,6 +756,39 @@ wgpu v26.0.1 (https://github.com/ArthurBrussee/wgpu?branch=v26#5ad9c6b0)
         expect(noLauncher.output, contains('--launcher'));
       },
     );
+
+    test('BUILD-INFO.txt holds the advisories of the build, or says they were not checked', () {
+      File(path('advisories.txt')).writeAsStringSync(
+        'Advisories of the RustSec database on 2026-11-01: 1 vulnerabilities\n'
+        '  vulnerability RUSTSEC-2026-0007 bytes 1.10.1: Integer overflow in reserve\n',
+      );
+      File(path('brush_app.exe')).writeAsBytesSync(program());
+      List<String> arguments(String advisories) => [
+        'pack',
+        '--system',
+        'windows-x64',
+        '--source',
+        path('source'),
+        '--bin',
+        path('brush_app.exe'),
+        '--third-party',
+        path('THIRD-PARTY.md'),
+        '--out',
+        path('dist'),
+        '--crt-dir',
+        path('crt'),
+        '--system-dir',
+        path('system'),
+        '--advisories',
+        advisories,
+      ];
+      final run = runCiScript(_script, arguments(path('advisories.txt')));
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('  vulnerability RUSTSEC-2026-0007 bytes 1.10.1: Integer overflow in reserve'));
+      final missing = runCiScript(_script, arguments(path('none.txt')));
+      expect(missing.exitCode, 0, reason: '$missing');
+      expect(missing.output, contains('Advisories of the RustSec database: not checked'));
+    });
   }, skip: skip);
 
   // THIRD-PARTY.md of the archives (lot SP2, fix round of the review): cargo and cargo about are fakes found on the PATH
@@ -1007,6 +1040,91 @@ out.write_text((here / 'generated.md').read_text(encoding='utf-8'), encoding='ut
         expect(steps, contains('"\$PROGRAM" . --lpips-loss-weight 0.5'), reason: name);
         expect(steps, contains('grep -q "no LPIPS weights"'), reason: name);
       }
+    });
+
+    test('both jobs record the advisories of the RustSec database without failing on them', () {
+      for (final name in ['brush-windows', 'brush-linux']) {
+        final steps = job(name);
+        final step = steps.substring(steps.indexOf('brush_build.py advisories') - 400);
+        expect(step, contains('continue-on-error: true'), reason: name);
+        expect(steps, contains('--advisories "\$RUNNER_TEMP/brush-advisories.txt"'), reason: name);
+      }
+    });
+  }, skip: skip);
+
+  // The advisories of the RustSec database (lot SP2, fix round of the review): recorded, never blocking, so that the
+  // maintainer decides before the components are published; cargo deny's JSON lines stand in a fixture here
+  group('advisories', () {
+    late Directory root;
+    String path(String relative) => p.joinAll([root.path, ...relative.split('/')]);
+    setUp(() => root = Directory.systemTemp.createTempSync('immuch360_brush_advisories_'));
+    tearDown(() => root.deleteSync(recursive: true));
+
+    String diagnostic(String code, String name, String version, {String? id, String? title}) => jsonEncode({
+      'type': 'diagnostic',
+      'fields': {
+        'code': code,
+        'severity': code == 'yanked' ? 'warning' : 'error',
+        'message': title ?? 'detected yanked crate',
+        'advisory': id == null ? null : {'id': id, 'package': name, 'title': title},
+        'graphs': [
+          {
+            'Krate': {'name': name, 'version': version},
+          },
+        ],
+      },
+    });
+
+    ScriptRun advisories(List<String> lines) {
+      File(path('deny.jsonl')).writeAsStringSync('${lines.join('\n')}\n');
+      return runCiScript(_script, [
+        'advisories',
+        '--system',
+        'linux-x64',
+        '--diagnostics',
+        path('deny.jsonl'),
+        '--out',
+        path('advisories.txt'),
+      ]);
+    }
+
+    test('the advisories by kind, vulnerabilities first, written for BUILD-INFO.txt, without failing the job', () {
+      final run = advisories([
+        diagnostic('unsound', 'anyhow', '1.0.99', id: 'RUSTSEC-2026-0190', title: 'Unsoundness in downcast_mut'),
+        diagnostic(
+          'vulnerability',
+          'zstd',
+          '0.13.3',
+          id: 'RUSTSEC-2026-0391',
+          title: 'Data leaks into the next stream',
+        ),
+        diagnostic('vulnerability', 'bytes', '1.10.1', id: 'RUSTSEC-2026-0007', title: 'Integer overflow in reserve'),
+        diagnostic('unmaintained', 'paste', '1.0.15', id: 'RUSTSEC-2024-0436', title: 'paste - no longer maintained'),
+        diagnostic('yanked', 'spin', '0.10.0'),
+        '{"type":"summary","fields":{"advisories":{"errors":4,"helps":0,"notes":0,"warnings":1}}}',
+        'not a line of JSON',
+      ]);
+      expect(run.exitCode, 0, reason: '$run');
+      final text = File(path('advisories.txt')).readAsStringSync();
+      expect(text, contains('2 vulnerabilities, 1 unsound, 1 unmaintained, 1 yanked'));
+      expect(
+        text,
+        contains(
+          '  vulnerability RUSTSEC-2026-0007 bytes 1.10.1: Integer overflow in reserve\n'
+          '  vulnerability RUSTSEC-2026-0391 zstd 0.13.3: Data leaks into the next stream\n'
+          '  unsound RUSTSEC-2026-0190 anyhow 1.0.99: Unsoundness in downcast_mut\n'
+          '  unmaintained RUSTSEC-2024-0436 paste 1.0.15: paste - no longer maintained\n'
+          '  yanked spin 0.10.0\n',
+        ),
+      );
+      expect(run.output, contains('::warning::'));
+      expect(run.output, contains('RUSTSEC-2026-0391'));
+    });
+
+    test('a database that could not be read is written as not checked, still without failing the job', () {
+      final run = advisories(['not a line of JSON']);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(File(path('advisories.txt')).readAsStringSync(), contains('not checked'));
     });
   }, skip: skip);
 }

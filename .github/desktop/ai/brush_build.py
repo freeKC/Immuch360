@@ -27,6 +27,10 @@ start with Immuch360-Desktop-, so no release of the app ever attaches it.
       LPIPS crate, rerun, a network client or server, TLS, a window or a file dialog
   brush_build.py deny --system SYSTEM --source DIR --cargo-deny FILE
       cargo deny check licenses bans sources with licenses/brush/deny.toml, our list (not Brush's)
+  brush_build.py advisories --system SYSTEM (--source DIR --cargo-deny FILE | --diagnostics FILE) --out FILE
+      cargo deny check advisories on the same graph, with the RustSec database of the day, never failing the job: the
+      advisories found, by kind, written to FILE for BUILD-INFO.txt and shown as warnings (--diagnostics reads the JSON
+      lines of an earlier cargo deny instead). Whether to update Cargo.lock for them is the maintainer's decision
   brush_build.py about --system SYSTEM --source DIR --cargo-about FILE --out FILE
       THIRD-PARTY.md by cargo about (licenses/brush/about.toml and about.hbs, offline), with the NOTICE files of the
       code compiled in: next to each crate, at the root of each git repository a crate comes from (cargo checks those
@@ -37,17 +41,19 @@ start with Immuch360-Desktop-, so no release of the app ever attaches it.
       brush_app --help compared with mobile/test/fixtures/ai_immersive/brush_help.txt, the text the arguments of the
       runner are frozen by (the name of the program apart), and brush_app --version with the version line of the lock
   brush_build.py pack --system SYSTEM --source DIR --bin FILE --third-party FILE --out DIR [--launcher FILE]
-                      [--crt-dir DIR] [--system-dir DIR]
+                      [--crt-dir DIR] [--system-dir DIR] [--advisories FILE]
       the archive in DIR: brush_app (checked again for the LPIPS weights), on Windows the Visual C++ runtime DLLs it
       imports (every import checked as windows_bundle.py does), on Linux the launcher immuch360-run and the libraries
       every distribution has; licenses/ (README.md, Brush's LICENSE compared with the sources built, THIRD-PARTY.md,
-      the patches) and BUILD-INFO.txt. Sorted names, fixed dates: the same files give the same bytes.
+      the patches) and BUILD-INFO.txt, with the advisories of the build when given. Sorted names, fixed dates: the
+      same files give the same bytes.
 
 Only the Python standard library is used. Exit codes: 0 good, 1 a check failed, 2 bad arguments or missing inputs.
 """
 from __future__ import annotations
 
 import argparse
+import datetime
 import difflib
 import hashlib
 import json
@@ -428,6 +434,83 @@ def command_deny(args) -> int:
     return 0
 
 
+# --- advisories ------------------------------------------------------------------------------------------------------
+
+ADVISORY_KINDS = ('vulnerability', 'unsound', 'unmaintained', 'notice', 'yanked')
+ADVISORY_TITLE = 'Advisories of the RustSec database'
+
+
+def advisory_lines(diagnostics: str) -> tuple:
+    """The advisories of cargo deny's JSON lines, vulnerabilities first, as lines of text, the count of each kind, and
+    whether cargo deny got as far as its summary"""
+    found, summary = [], False
+    for line in diagnostics.splitlines():
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if not isinstance(entry, dict):
+            continue
+        if entry.get('type') == 'summary':
+            summary = True
+        if entry.get('type') != 'diagnostic':
+            continue
+        fields = entry.get('fields') or {}
+        code = fields.get('code') or 'other'
+        advisory = fields.get('advisory') or {}
+        graphs = fields.get('graphs') or [{}]
+        krate = (graphs[0] or {}).get('Krate') or {}
+        what = f'{krate.get("name", advisory.get("package", "?"))} {krate.get("version", "")}'.strip()
+        if advisory.get('id'):
+            text = f'{code} {advisory["id"]} {what}: {advisory.get("title") or fields.get("message", "")}'
+        else:
+            text = f'{code} {what}'
+        rank = ADVISORY_KINDS.index(code) if code in ADVISORY_KINDS else len(ADVISORY_KINDS)
+        found.append((rank, text, code))
+    found.sort()
+    counts = {}
+    for _, _, code in found:
+        counts[code] = counts.get(code, 0) + 1
+    return [text for _, text, _ in found], counts, summary
+
+
+def command_advisories(args) -> int:
+    if args.diagnostics:
+        diagnostics, code = args.diagnostics.read_text(encoding='utf-8', errors='replace'), 0
+    else:
+        lock = load_lock(args.lock)
+        manifest = args.source / 'crates' / lock['cargo']['package'] / 'Cargo.toml'
+        command = [args.cargo_deny, '--color', 'never', '--format', 'json', '--manifest-path', manifest,
+                   *lock['cargo']['arguments'], '--exclude-dev', '--target', TARGETS[args.system], '--locked',
+                   '--config', LICENCES / 'deny.toml', 'check', 'advisories']
+        print('$ ' + ' '.join(str(part) for part in command), flush=True)
+        result = subprocess.run([str(part) for part in command], env=cargo_env(lock), capture_output=True,
+                                encoding='utf-8', errors='replace')
+        diagnostics, code = result.stdout + '\n' + result.stderr, result.returncode
+    lines, counts, summary = advisory_lines(diagnostics)
+    day = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    if not summary and not lines:
+        head = f'{ADVISORY_TITLE}: not checked (cargo deny exited {code} without its summary)'
+        print(diagnostics[-4000:])
+    else:
+        def named(kind: str) -> str:
+            return 'vulnerabilities' if kind == 'vulnerability' and counts[kind] > 1 else kind
+
+        kinds = ', '.join(f'{counts[kind]} {named(kind)}' for kind in (*ADVISORY_KINDS, 'other') if counts.get(kind))
+        head = (f'{ADVISORY_TITLE} on {day} (cargo deny check advisories, not blocking: updating Cargo.lock is the '
+                f'maintainer\'s decision): {kinds or "none"}')
+    text = '\n'.join([head, *(f'  {line}' for line in lines)]) + '\n'
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(text, encoding='utf-8')
+    print(text, end='')
+    for line in lines:
+        print(f'::warning::brush_app: {line}')
+    if os.environ.get('GITHUB_STEP_SUMMARY'):
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as stream:
+            stream.write(f'### Brush, {args.system}\n\n```\n{text}```\n')
+    return 0
+
+
 # --- about -----------------------------------------------------------------------------------------------------------
 
 def tree_source(rest: str) -> tuple:
@@ -733,6 +816,10 @@ def command_pack(args) -> int:
     files['licenses/THIRD-PARTY.md'] = text(args.third_party)
     for name in lock['patches']:
         files[f'licenses/patches/{name}'] = text(LICENCES / 'patches' / name)
+    advisories = []
+    if args.advisories:
+        advisories = (text(args.advisories).decode('utf-8', errors='replace').rstrip('\n').split('\n')
+                      if args.advisories.is_file() else [f'{ADVISORY_TITLE}: not checked (no {args.advisories.name})'])
     run_url = ''
     if os.environ.get('GITHUB_RUN_ID'):
         run_url = (f'{os.environ.get("GITHUB_SERVER_URL", "https://github.com")}/{os.environ.get("GITHUB_REPOSITORY")}'
@@ -748,6 +835,7 @@ def command_pack(args) -> int:
         f'LPIPS weights {lock["lpips"]["path"]} ({lock["lpips"]["size"]} bytes, SHA-256 {lock["lpips"]["sha256"]}) '
         'removed from the sources before the build; none of their probes in the program',
         f'Imports of brush_app: {", ".join(imports) or "none"}',
+        *advisories,
         *([f'Built by {run_url}'] if run_url else []),
         'Licences: licenses/ (Brush under the Apache License 2.0, the code built into it in licenses/THIRD-PARTY.md)',
         '',
@@ -759,6 +847,8 @@ def command_pack(args) -> int:
     sys.path.insert(0, str(HERE))
     import sdcpp_build  # noqa: E402 (the same archive writer: sorted names, fixed dates)
 
+    print('BUILD-INFO.txt:')
+    print(files['BUILD-INFO.txt'].decode(), end='')
     target = args.out / artifact_name(lock, args.system)
     sdcpp_build.write_archive(target, files, programs)
     for name in sorted(files):
@@ -797,6 +887,12 @@ def main(argv=None) -> int:
     deny.add_argument('--system', choices=SYSTEMS, required=True)
     deny.add_argument('--source', type=pathlib.Path, required=True)
     deny.add_argument('--cargo-deny', type=pathlib.Path, required=True)
+    advisories = commands.add_parser('advisories')
+    advisories.add_argument('--system', choices=SYSTEMS, required=True)
+    advisories.add_argument('--source', type=pathlib.Path)
+    advisories.add_argument('--cargo-deny', type=pathlib.Path)
+    advisories.add_argument('--diagnostics', type=pathlib.Path)
+    advisories.add_argument('--out', type=pathlib.Path, required=True)
     about = commands.add_parser('about')
     about.add_argument('--system', choices=SYSTEMS, required=True)
     about.add_argument('--source', type=pathlib.Path, required=True)
@@ -817,13 +913,17 @@ def main(argv=None) -> int:
     pack.add_argument('--launcher', type=pathlib.Path)
     pack.add_argument('--crt-dir', type=pathlib.Path)
     pack.add_argument('--system-dir', type=pathlib.Path)
+    pack.add_argument('--advisories', type=pathlib.Path)
     args = parser.parse_args(argv)
+    if args.command == 'advisories' and not args.diagnostics and not (args.source and args.cargo_deny):
+        parser.error('advisories needs --source and --cargo-deny, or --diagnostics')
     if args.command == 'pack' and args.system == 'linux-x64' and args.launcher is None:
         parser.error('the Linux archive needs --launcher (immuch360-run)')
     sys.path.insert(0, str(HERE))
     try:
         return {'lock': command_lock, 'sources': command_sources, 'tools': command_tools, 'build': command_build,
-                'graph': command_graph, 'deny': command_deny, 'about': command_about, 'lpips': command_lpips,
+                'graph': command_graph, 'deny': command_deny, 'advisories': command_advisories,
+                'about': command_about, 'lpips': command_lpips,
                 'help': command_help, 'pack': command_pack}[args.command](args)
     except (Failure, OSError, subprocess.CalledProcessError, json.JSONDecodeError, KeyError) as error:
         print(f'::error::{error}')

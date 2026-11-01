@@ -1575,6 +1575,15 @@ jobs:
           CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
         run: python .github/desktop/ai/brush_build.py deny --system windows-x64 --source "$RUNNER_TEMP/brush" --cargo-deny "$CARGO_DENY"
 
+      # Recorded in BUILD-INFO.txt, never blocking: updating Cargo.lock of the tag for them is the maintainer's decision
+      - name: Advisories of the RustSec database
+        continue-on-error: true
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: |
+          python .github/desktop/ai/brush_build.py advisories --system windows-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-deny "$CARGO_DENY" --out "$RUNNER_TEMP/brush-advisories.txt"
+
       - name: THIRD-PARTY.md by cargo about
         env:
           CARGO_ABOUT: ${{ steps.tools.outputs.cargo_about }}
@@ -1612,7 +1621,8 @@ jobs:
           PROGRAM: ${{ steps.build.outputs.program }}
         run: |
           python .github/desktop/ai/brush_build.py pack --system windows-x64 --source "$RUNNER_TEMP/brush" \
-            --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" --out dist
+            --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" \
+            --advisories "$RUNNER_TEMP/brush-advisories.txt" --out dist
 
       - name: Upload the archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -1690,6 +1700,15 @@ jobs:
           CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
         run: python3 .github/desktop/ai/brush_build.py deny --system linux-x64 --source "$RUNNER_TEMP/brush" --cargo-deny "$CARGO_DENY"
 
+      # Recorded in BUILD-INFO.txt, never blocking: updating Cargo.lock of the tag for them is the maintainer's decision
+      - name: Advisories of the RustSec database
+        continue-on-error: true
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: |
+          python3 .github/desktop/ai/brush_build.py advisories --system linux-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-deny "$CARGO_DENY" --out "$RUNNER_TEMP/brush-advisories.txt"
+
       - name: THIRD-PARTY.md by cargo about
         env:
           CARGO_ABOUT: ${{ steps.tools.outputs.cargo_about }}
@@ -1733,7 +1752,7 @@ jobs:
         run: |
           python3 .github/desktop/ai/brush_build.py pack --system linux-x64 --source "$RUNNER_TEMP/brush" \
             --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" \
-            --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+            --advisories "$RUNNER_TEMP/brush-advisories.txt" --launcher "$RUNNER_TEMP/immuch360-run" --out dist
           mkdir -p "$RUNNER_TEMP/unpacked"
           python3 -m zipfile -e "dist/$ARTIFACT" "$RUNNER_TEMP/unpacked"
           chmod +x "$RUNNER_TEMP/unpacked/brush_app" "$RUNNER_TEMP/unpacked/immuch360-run"
