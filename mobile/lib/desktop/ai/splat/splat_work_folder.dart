@@ -11,10 +11,11 @@
 // COLMAP by an ASCII path: its own when it is one, else its short name (GetShortPathNameW, the 8.3 name, which a volume
 // may not keep), else the job goes to another root whose path is ASCII ([asciiWorkRoot]); the names inside the folder
 // are always ASCII. That other root is a folder of ProgramData, one per account, named by its security id: ProgramData
-// lets every account of the computer read what it holds, so the folder of an account is first made readable by that
-// account and SYSTEM alone ([windowsMakePrivate], icacls), and never used when it cannot be (the photos of the user
-// are in it). Removing the folders left there by an app that died is the work of the queue (lot SP6), with the rule of
-// the temporary folder.
+// lets every account of the computer read what it holds, so the folder of an account first gets a whole new list of
+// rules, the account and SYSTEM alone ([windowsMakePrivate]: SetNamedSecurityInfoW, in one go, the rules of its own
+// replaced too, what it holds following), and is never used when it cannot (the photos of the user are in it).
+// Removing the folders left there by an app that died is the work of the queue (lot SP6), with the rule of the
+// temporary folder.
 
 import 'dart:ffi';
 import 'dart:io';
@@ -140,28 +141,65 @@ String? windowsUserSid() {
   }
 }
 
-/// The arguments of icacls that leave [path] to the account [sid] and SYSTEM alone: the rules it inherited removed,
-/// full control to both, for the folder, its folders and its files
-List<String> windowsPrivateFolderArguments(String path, String sid) => [
-  path,
-  '/inheritance:r',
-  '/grant:r',
-  '*$sid:(OI)(CI)F',
-  '*S-1-5-18:(OI)(CI)F',
-  '/q',
-];
+/// The rules of a folder of the account [sid] and SYSTEM alone, in SDDL: protected from those of its parent, full
+/// control to both, inherited by its folders and its files
+String windowsPrivateDacl(String sid) => 'D:P(A;OICI;FA;;;$sid)(A;OICI;FA;;;SY)';
 
-/// Makes [folder] readable by the account ([sid], [windowsUserSid] by default) and SYSTEM alone (icacls); whether it
-/// did
+typedef _SddlNative = Int32 Function(Pointer<Utf16>, Uint32, Pointer<Pointer<Void>>, Pointer<Uint32>);
+typedef _Sddl = int Function(Pointer<Utf16>, int, Pointer<Pointer<Void>>, Pointer<Uint32>);
+typedef _DaclNative = Int32 Function(Pointer<Void>, Pointer<Int32>, Pointer<Pointer<Void>>, Pointer<Int32>);
+typedef _Dacl = int Function(Pointer<Void>, Pointer<Int32>, Pointer<Pointer<Void>>, Pointer<Int32>);
+typedef _SetSecurityNative =
+    Uint32 Function(Pointer<Utf16>, Int32, Uint32, Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
+typedef _SetSecurity =
+    int Function(Pointer<Utf16>, int, int, Pointer<Void>, Pointer<Void>, Pointer<Void>, Pointer<Void>);
+typedef _LocalFreeNative = Pointer<Void> Function(Pointer<Void>);
+
+/// SE_FILE_OBJECT, and DACL_SECURITY_INFORMATION with PROTECTED_DACL_SECURITY_INFORMATION
+const _fileObject = 1;
+const _protectedDacl = 0x80000004;
+
+/// Gives [folder] the rules of the account ([sid], [windowsUserSid] by default) and SYSTEM alone ([windowsPrivateDacl])
+/// in one go, by SetNamedSecurityInfoW of advapi32: the rules it inherited and those of its own replaced, what it holds
+/// inheriting the new ones; whether it did
 bool windowsMakePrivate(Directory folder, {String? sid}) {
   final account = sid ?? windowsUserSid();
   if (account == null) {
     return false;
   }
+  final advapi = DynamicLibrary.open('advapi32.dll');
+  final toDescriptor = advapi.lookupFunction<_SddlNative, _Sddl>(
+    'ConvertStringSecurityDescriptorToSecurityDescriptorW',
+  );
+  final daclOf = advapi.lookupFunction<_DaclNative, _Dacl>('GetSecurityDescriptorDacl');
+  final setSecurity = advapi.lookupFunction<_SetSecurityNative, _SetSecurity>('SetNamedSecurityInfoW');
+  final localFree = DynamicLibrary.open('kernel32.dll').lookupFunction<_LocalFreeNative, _LocalFreeNative>('LocalFree');
+  final sddl = windowsPrivateDacl(account).toNativeUtf16();
+  final path = folder.path.toNativeUtf16();
+  final descriptor = calloc<Pointer<Void>>();
+  final dacl = calloc<Pointer<Void>>();
+  final present = calloc<Int32>();
+  final defaulted = calloc<Int32>();
   try {
-    return Process.runSync('icacls', windowsPrivateFolderArguments(folder.path, account)).exitCode == 0;
-  } on ProcessException {
-    return false;
+    // SDDL_REVISION_1
+    if (toDescriptor(sddl, 1, descriptor, nullptr) == 0) {
+      return false;
+    }
+    try {
+      if (daclOf(descriptor.value, present, dacl, defaulted) == 0 || present.value == 0) {
+        return false;
+      }
+      return setSecurity(path, _fileObject, _protectedDacl, nullptr, nullptr, dacl.value, nullptr) == 0;
+    } finally {
+      localFree(descriptor.value);
+    }
+  } finally {
+    calloc.free(sddl);
+    calloc.free(path);
+    calloc.free(descriptor);
+    calloc.free(dacl);
+    calloc.free(present);
+    calloc.free(defaulted);
   }
 }
 

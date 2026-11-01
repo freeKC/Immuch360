@@ -103,20 +103,14 @@ void main() {
     );
   });
 
-  test('the account of whoami /user, and the rules icacls is given: no inheritance, the account and SYSTEM alone', () {
+  test('the account of whoami /user, and the rules of a private folder: protected, the account and SYSTEM alone', () {
     expect(
       sidOfWhoami('"laptop\\frédéric","S-1-5-21-1004336348-1177238915-682003330-1001"\r\n'),
       'S-1-5-21-1004336348-1177238915-682003330-1001',
     );
     expect(sidOfWhoami('ERROR: something'), isNull);
-    expect(windowsPrivateFolderArguments(r'C:\ProgramData\Immuch360\ai-work\S-1-5-21-7-1001', 'S-1-5-21-7-1001'), [
-      r'C:\ProgramData\Immuch360\ai-work\S-1-5-21-7-1001',
-      '/inheritance:r',
-      '/grant:r',
-      '*S-1-5-21-7-1001:(OI)(CI)F',
-      '*S-1-5-18:(OI)(CI)F',
-      '/q',
-    ]);
+    // In SDDL: protected from its parent, full control to both, inherited by its folders and files
+    expect(windowsPrivateDacl('S-1-5-21-7-1001'), 'D:P(A;OICI;FA;;;S-1-5-21-7-1001)(A;OICI;FA;;;SY)');
   });
 
   test(
@@ -140,17 +134,28 @@ void main() {
     skip: !Platform.isWindows ? 'GetShortPathNameW is Windows only' : false,
   );
 
-  test('Windows: a folder made private keeps no rule it inherited, only the account and SYSTEM, its files too', () {
+  test('Windows: a folder made private keeps no rule but those of the account and SYSTEM, its folders and files too', () {
     final sid = windowsUserSid() ?? fail('whoami gave no security id');
     expect(sid, matches(RegExp(r'^S-1-5-\d+(-\d+)*$')));
     final private = Directory(p.join(folder.path, 'ai-work', sid))..createSync(recursive: true);
+    final job = Directory(p.join(private.path, 'job-1'))..createSync();
+    // Rules of its own beside those it inherits: Users, as ProgramData gives, and Administrators, as a folder made by an
+    // elevated account with nothing to inherit holds (the runner of the CI, run 41361256501)
+    final granted = Process.runSync('icacls', [
+      private.path,
+      '/grant',
+      '*S-1-5-32-545:(OI)(CI)RX',
+      '*S-1-5-32-544:(OI)(CI)F',
+      '/q',
+    ]);
+    expect(granted.exitCode, 0, reason: '${granted.stdout}${granted.stderr}');
+    expect(windowsMakePrivate(private, sid: sid), isTrue);
+    File(p.join(private.path, 'photo.jpg')).writeAsStringSync('pixels');
     // The rules of each path, read back: whether it is protected from its parent, then the account of each rule
     const read =
         r'$a = Get-Acl -LiteralPath $env:IMMUCH360_ACL_PATH; $a.AreAccessRulesProtected; $a.Access | '
         r'ForEach-Object { $_.IdentityReference.Translate([Security.Principal.SecurityIdentifier]).Value }';
-    expect(windowsMakePrivate(private, sid: sid), isTrue);
-    File(p.join(private.path, 'photo.jpg')).writeAsStringSync('pixels');
-    for (final path in [private.path, p.join(private.path, 'photo.jpg')]) {
+    for (final path in [private.path, job.path, p.join(private.path, 'photo.jpg')]) {
       final rules = Process.runSync(
         'powershell.exe',
         ['-NoProfile', '-NonInteractive', '-Command', read],
@@ -161,9 +166,9 @@ void main() {
         for (final line in LineSplitter.split('${rules.stdout}'))
           if (line.trim().isNotEmpty) line.trim(),
       ];
-      // The folder protected from its parent; the file inherits from the folder alone
+      // The folder protected from its parent; what is in it inherits from it alone
       expect(lines.first, path == private.path ? 'True' : 'False', reason: path);
-      expect(lines.skip(1).toSet(), {sid, 'S-1-5-18'}, reason: path);
+      expect(lines.skip(1).toSet(), {sid, 'S-1-5-18'}, reason: '$path: ${Process.runSync('icacls', [path]).stdout}');
     }
-  }, skip: !Platform.isWindows ? 'icacls is Windows only' : false);
+  }, skip: !Platform.isWindows ? 'the rules of a folder are of Windows' : false);
 }
