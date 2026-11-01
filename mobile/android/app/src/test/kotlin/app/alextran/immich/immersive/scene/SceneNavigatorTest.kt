@@ -376,6 +376,125 @@ class SceneNavigatorTest {
     assertEquals(0.95, up.darken, 0.0)
   }
 
+  // The turn of the right thumbstick in a splat (FreeKC's report of 1 November 2026: a turn after a glide put him back
+  // in the middle of the scene)
+
+  /** The eye of [step] in the world of the navigator: the root, then the eye turned by the yaw of the root */
+  private fun worldEye(step: SceneNavigation): Pair<Double, Double> {
+    val c = cos(step.rootYaw)
+    val s = sin(step.rootYaw)
+    return Pair(step.rootX + step.eyeX * c + step.eyeZ * s, step.rootZ - step.eyeX * s + step.eyeZ * c)
+  }
+
+  @Test
+  fun `a turn keeps the eye where it is in the scene, the scene turning about the head`() {
+    val navigator = SceneNavigator(SafeZone(5.0, 5.0, 5.0, 5.0), glideSpeed = 0.5)
+    navigator.anchor(0.0, 1.6, 0.0, 0.0)
+    // Glided 2 s forward and stopped, then a real step of 0.6 m to the right
+    navigator.hold(2.0, 0.0, 1.0)
+    navigator.hold(0.5, 0.0, 0.0)
+    val stepped = navigator.update(0.6, 1.6, 0.0, 0.0, 0.0, 0.0, frame)
+    assertTrue("glided ${stepped.eyeZ}", stepped.eyeZ < -0.8)
+    assertEquals(0.6, stepped.eyeX, 1e-9)
+    navigator.turn(0.6, 0.0, PI / 6)
+    val turned = navigator.update(0.6, 1.6, 0.0, 0.0, 0.0, 0.0, frame)
+    // The user stays where the glide and the step took him in the scene: no jump back to the middle
+    assertEquals(stepped.eyeX, turned.eyeX, 1e-9)
+    assertEquals(stepped.eyeY, turned.eyeY, 1e-9)
+    assertEquals(stepped.eyeZ, turned.eyeZ, 1e-9)
+    assertEquals(stepped.rho, turned.rho, 1e-9)
+    assertEquals(stepped.flatten, turned.flatten, 0.0)
+    // The scene turned by the angle, about the head: the head is where it was in the world, the root moved around it
+    assertEquals(stepped.rootYaw + PI / 6, turned.rootYaw, 1e-12)
+    val before = Math.hypot(stepped.rootX - 0.6, stepped.rootZ)
+    assertEquals(before, Math.hypot(turned.rootX - 0.6, turned.rootZ), 1e-9)
+    val (eyeX, eyeZ) = worldEye(turned)
+    // The eye in the world is the head plus the glide turned with the scene: same distance from the head as before
+    val (oldX, oldZ) = worldEye(stepped)
+    assertEquals(Math.hypot(oldX - 0.6, oldZ), Math.hypot(eyeX - 0.6, eyeZ), 1e-9)
+    assertEquals(stepped.rootY, turned.rootY, 0.0)
+  }
+
+  @Test
+  fun `turns add up, and Reset alone goes back to the start`() {
+    val navigator = SceneNavigator(SafeZone(5.0, 5.0, 5.0, 5.0), glideSpeed = 0.5)
+    navigator.anchor(0.0, 1.6, 0.0, 0.0)
+    val glided = navigator.hold(1.0, 1.0, 1.0)
+    repeat(12) { navigator.turn(0.0, 0.0, PI / 6) }
+    // Twelve turns of 30 degrees: the whole way round, the scene as it was
+    val round = navigator.update(0.0, 1.6, 0.0, 0.0, 0.0, 0.0, frame)
+    assertEquals(glided.eyeX, round.eyeX, 0.01)
+    assertEquals(glided.eyeZ, round.eyeZ, 0.01)
+    assertEquals(0.0, Math.IEEEremainder(round.rootYaw, 2 * PI), 1e-9)
+    // Reset: the anchor at the head of now, nothing glided, the yaw of the gaze of now
+    navigator.anchor(0.0, 1.6, 0.0, 0.2)
+    val reset = navigator.update(0.0, 1.6, 0.0, 0.2, 0.0, 0.0, frame)
+    assertEquals(listOf(0.0, 0.0, 0.0), listOf(reset.eyeX, reset.eyeY, reset.eyeZ))
+    assertEquals(0.2, reset.rootYaw, 0.0)
+  }
+
+  @Test
+  fun `after a turn the glide goes where the user looks, and a glide under way keeps its course in the world`() {
+    val navigator = SceneNavigator(SafeZone(5.0, 5.0, 5.0, 5.0), glideSpeed = 0.5)
+    navigator.anchor(0.0, 1.6, 0.0, 0.0)
+    val cruising = navigator.hold(1.0, 0.0, 1.0)
+    val last = navigator.update(0.0, 1.6, 0.0, 0.0, 0.0, 1.0, frame)
+    // Gliding forward at full speed: the scene slides towards the user (+z of the navigator) at 0.5 m per second
+    assertEquals(0.5, (last.rootZ - cruising.rootZ) / frame, 1e-6)
+    // A quarter turn of the scene the way Quaternion(0f, 90f, 0f) of the SDK turns: what was on the left of the user
+    // comes in front
+    navigator.turn(0.0, 0.0, -PI / 2)
+    val first = navigator.update(0.0, 1.6, 0.0, 0.0, 0.0, 1.0, frame)
+    val next = navigator.update(0.0, 1.6, 0.0, 0.0, 0.0, 1.0, frame)
+    // In the world the scene keeps sliding towards the user as before, at the same speed, without a swerve
+    assertEquals(0.5, (next.rootZ - first.rootZ) / frame, 1e-6)
+    assertEquals(0.0, (next.rootX - first.rootX) / frame, 1e-6)
+    // In the scene the user now glides towards what was on his left, along -x of the scene
+    assertEquals(-0.5 * frame, next.eyeX - first.eyeX, 1e-9)
+    assertEquals(0.0, next.eyeZ - first.eyeZ, 1e-9)
+    // At the turn itself the eye moved no more than one frame of glide
+    assertTrue(Math.hypot(first.eyeX - last.eyeX, first.eyeZ - last.eyeZ) <= 0.5 * frame + 1e-9)
+  }
+
+  @Test
+  fun `a turn in the SDK turns the root about the head as Quaternion(0f, degrees, 0f) does`() {
+    val random = Random(11)
+    fun between(low: Double, high: Double) = low + (high - low) * random.nextDouble()
+    repeat(100) {
+      val navigator = SceneNavigator(SafeZone(5.0, 5.0, 5.0, 5.0), glideSpeed = 0.5)
+      val x = between(-2.0, 2.0)
+      val y = between(1.2, 1.8)
+      val z = between(-2.0, 2.0)
+      val gaze = between(-PI, PI)
+      navigator.anchorInSdk(x, y, z, sin(gaze), cos(gaze))
+      var step = navigator.updateInSdk(x, y, z, sin(gaze), cos(gaze), between(-1.0, 1.0), between(-1.0, 1.0), frame)
+      repeat(50) { step = navigator.updateInSdk(x, y, z, sin(gaze), cos(gaze), 0.3, 1.0, frame) }
+      // Stopped: the glide eased out
+      repeat(30) { step = navigator.updateInSdk(x, y, z, sin(gaze), cos(gaze), 0.0, 0.0, frame) }
+      // The head somewhere else now, and a snap turn of the viewer: 30 degrees one way or the other
+      val headX = x + between(-0.5, 0.5)
+      val headZ = z + between(-0.5, 0.5)
+      val before = navigator.updateInSdk(headX, y, headZ, sin(gaze), cos(gaze), 0.0, 0.0, frame)
+      val degrees = if (random.nextBoolean()) 30.0 else -30.0
+      navigator.turnInSdk(headX, headZ, degrees)
+      val after = navigator.updateInSdk(headX, y, headZ, sin(gaze), cos(gaze), 0.0, 0.0, frame)
+      assertEquals(0.0, Math.IEEEremainder(after.sdkRootYawDegrees - before.sdkRootYawDegrees - degrees, 360.0), 1e-9)
+      val (turnedX, turnedZ) = sdkTurn(degrees, before.sdkRootX - headX, before.sdkRootZ - headZ)
+      assertEquals(headX + turnedX, after.sdkRootX, 1e-9)
+      assertEquals(headZ + turnedZ, after.sdkRootZ, 1e-9)
+      assertEquals(before.eyeX, after.eyeX, 1e-9)
+      assertEquals(before.eyeZ, after.eyeZ, 1e-9)
+    }
+  }
+
+  @Test
+  fun `a turn before the first anchor does nothing`() {
+    val navigator = SceneNavigator(SafeZone(5.0, 5.0, 5.0, 5.0), glideSpeed = 0.5)
+    navigator.turnInSdk(1.0, 1.0, 30.0)
+    val first = navigator.update(1.0, 1.6, -1.0, 0.4, 0.0, 0.0, frame)
+    assertEquals(listOf(1.0, 1.6, -1.0, 0.4), listOf(first.rootX, first.rootY, first.rootZ, first.rootYaw))
+  }
+
   /** Quaternion(0f, [degrees], 0f) of the Spatial SDK applied to [x], [z]: a positive yaw takes +z towards +x */
   private fun sdkTurn(degrees: Double, x: Double, z: Double): Pair<Double, Double> {
     val a = Math.toRadians(degrees)
