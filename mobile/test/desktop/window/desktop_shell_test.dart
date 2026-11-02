@@ -702,6 +702,31 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('names a splat scene being made with its step and its time left, which go on', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      reasons = {DesktopCloseReason.conversions, DesktopCloseReason.splat};
+      late _Splatting queue;
+      await pumpShell(tester, overrides: [conversionQueueProvider.overrideWith(() => queue = _Splatting())]);
+
+      window.clickClose();
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'A splat scene is being made (Training the splat, step 12,400 of 20,000, about 3 min left). Closing stops it.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('3D conversions are running: quitting stops them.'), findsNothing);
+
+      queue.toCopy();
+      await tester.pump();
+      expect(find.text('A splat scene is being made (Writing the headset copy). Closing stops it.'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('desktop_close_cancel')));
+      await tester.pumpAndSettle();
+      expect(window.calls, isNot(contains('destroy')));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('the dialog follows Tab from Cancel to Quit', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       reasons = {DesktopCloseReason.uploads};
@@ -761,6 +786,39 @@ class _Generating extends ConversionQueueNotifier {
   void nextStep() => state = state.copyWith(
     jobs: [
       for (final job in state.jobs) job.id == 'conversion-1' ? job.copyWith(step: () => (job.step ?? 0) + 1) : job,
+    ],
+  );
+}
+
+/// The queue with a splat scene in its training, at step 12 400 of 20 000, some 3 min left
+class _Splatting extends ConversionQueueNotifier {
+  @override
+  ConversionQueueState build() => ConversionQueueState(
+    jobs: [
+      ConversionJob(
+        id: 'conversion-1',
+        source: LocalFileSource('/photos/salon/IMG_0001.jpg'),
+        kind: ConversionKind.splatScene,
+        batchIndex: 1,
+        batchSize: 1,
+        target: const ConversionTarget(folder: '/photos/salon', fileName: 'salon_splat.spz'),
+        state: ConversionState.training,
+        step: 12400,
+        steps: 20000,
+        remaining: const Duration(minutes: 3, seconds: 7),
+      ),
+    ],
+  );
+
+  /// The training ended, the copy for the headset written
+  void toCopy() => state = ConversionQueueState(
+    jobs: [
+      state.jobs.single.copyWith(
+        state: ConversionState.splatCopy,
+        step: () => null,
+        steps: () => null,
+        remaining: () => const Duration(seconds: 4),
+      ),
     ],
   );
 }
