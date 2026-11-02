@@ -271,7 +271,9 @@ void main() {
     test('the app keeps the text of every licence, with its copyright line; the engine of P2 brings its own', () {
       for (final component in aiComponents) {
         final text = aiLicenceText(component);
-        if (component.isArchive) {
+        // An engine brings its texts in its archive; the AV2 decoder too, but the app keeps those of dav2d and the
+        // patent licence of AV2 for the card shown before it is downloaded (av2_decoder_licences.dart)
+        if (component.isArchive && !component.features.contains(AiFeature.av2Video)) {
           expect(text, 'See ${component.licenceUrl}\n', reason: component.id);
           continue;
         }

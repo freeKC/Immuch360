@@ -9,6 +9,7 @@
 // under the Apache License 2.0.
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/av2_decoder_licences.dart';
 
 /// The text of the licence file of [component] (licenses/ID.txt), installed from [source] (its address, or the words
 /// of a file found in place) at [installedAt]
@@ -33,6 +34,8 @@ const _onnxRuntimeRepository = 'https://github.com/microsoft/onnxruntime/blob';
 
 /// The licence text of [component]
 String aiLicenceText(AiComponent component) => switch (component.licence) {
+  // The AV2 decoder of the computers: dav2d, x86inc.asm and the patent licence (av2_decoder_licences.dart)
+  'BSD-2-Clause' when component.features.contains(AiFeature.av2Video) => av2DecoderLicenceText(component),
   'Apache-2.0' => apacheLicence2,
   'MIT' when component.kind == AiComponentKind.runtime => onnxRuntimeLicence,
   'MIT' when component.id == mogeGeometryComponent.id => mogeLicence,
