@@ -10,6 +10,7 @@ import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
+import 'package:immich_mobile/desktop/splat/splat_window_licenses.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
@@ -46,5 +47,7 @@ Future<void> startDesktop(List<String> args) async {
   registerVideoLicenses();
   // The Rust crates of the JPEG codec of the AI features, from the texts the library carries (the three systems)
   registerSbsCodecLicenses();
+  // The WebView2 SDK and wil of the splat viewer's window (Windows)
+  registerSplatWindowLicenses();
   await setUpDesktopWindow();
 }
