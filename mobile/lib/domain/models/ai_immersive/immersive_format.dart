@@ -692,10 +692,13 @@ abstract final class SplatV1 {
 
   /// The gate and the queue: a dedicated graphics card of Vulkan 1.2 with [minGraphicsMemory] at least, [freeGraphicsMemory]
   /// of it free before the training, [minPhysicalMemory] of memory in the computer, [jobMemory] of it held until the
-  /// poses are found
-  static const minGraphicsMemory = 4 * 1024 * 1024 * 1024;
+  /// poses are found. The gate compares them to what the hardware reports, which is less than the size it is sold
+  /// with, as the app does elsewhere (3.5 GiB for a computer of 4 GB, 14 GiB for 16 GB): a card sold with 4 GB (the GTX
+  /// 1650 and the RTX 3050 Laptop the design expects; the 8 GB RTX 4060 Laptop reads 7.77 GiB) is let in at 3.5 GiB,
+  /// a computer sold with 8 GB (7.6 to 7.9 GiB once the firmware and the graphics took their share) at 7 GiB
+  static const minGraphicsMemory = 3584 * 1024 * 1024;
   static const freeGraphicsMemory = 2560 * 1024 * 1024;
-  static const minPhysicalMemory = 8 * 1024 * 1024 * 1024;
+  static const minPhysicalMemory = 7 * 1024 * 1024 * 1024;
   static const jobMemory = 4 * 1024 * 1024 * 1024;
 
   /// The work folder of a job that failed is kept this long, so that Retry starts again from the poses found

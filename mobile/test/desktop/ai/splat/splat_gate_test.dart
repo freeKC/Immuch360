@@ -1,8 +1,9 @@
 // The gate of the splat scenes (plan 2026-11-01, sections 2.4 and 4.1, lot SP6): a feature of archives alone, which
-// never loads ONNX Runtime; the dedicated card of Vulkan 1.2 with the most memory, 4 GiB at least, an integrated one
-// refused with its own words (Brush 0.3.0 fails on the Intel UHD with the cache of another card, and trains ten times
-// slower with its own: a decision of time for the first test build); 8 GiB of memory in the computer; and the budget
-// of the queue asked with the need of the kind of the job, 2.5 GiB free for a splat scene, 6 GiB for a panorama.
+// never loads ONNX Runtime; the dedicated card of Vulkan 1.2 with the most memory, a card sold with 4 GB at least (3.5
+// GiB as it is read), an integrated one refused with its own words (Brush 0.3.0 fails on the Intel UHD with the cache
+// of another card, and trains ten times slower with its own: a decision of time for the first test build); a computer
+// sold with 8 GB (7 GiB as it is read); and the budget of the queue asked with the need of the kind of the job, 2.5 GiB
+// free for a splat scene, 6 GiB for a panorama.
 
 import 'dart:ffi' show Abi;
 import 'dart:io';
@@ -212,13 +213,24 @@ void main() {
       expect((await splat(FakeGpuReports.noAnswer)).reason, AiGateReason.gpuNoAnswer);
     });
 
-    test('a dedicated card of 3 GiB is too small, said with its memory and the 4 GiB needed', () async {
+    test('a dedicated card of 3 GiB is too small, said with its memory and the 3.5 GiB needed', () async {
       final result = await splat(GpuReport(adapters: [_card(memory: 3 * _gib)]));
 
       expect(result.reason, AiGateReason.splatGpuTooSmall);
       expect(result.graphicsMemory, 3 * _gib);
-      expect(result.graphicsMemoryNeeded, 4 * _gib);
+      expect(result.graphicsMemoryNeeded, 3584 * _mib);
     });
+
+    test(
+      'a card sold with 4 GB, read as 3 962 MiB, makes splat scenes; the 8 GB of the RTX 4060 read as 7.77 GiB',
+      () async {
+        final four = await splat(GpuReport(adapters: [_card(memory: 3962 * _mib)]));
+        final eight = await splat(GpuReport(adapters: [_card(memory: 8342470656)]));
+
+        expect(four.isAvailable, isTrue, reason: '$four');
+        expect(eight.isAvailable, isTrue, reason: '$eight');
+      },
+    );
 
     test('a dedicated card of 6 GiB, too small for a panorama, makes splat scenes', () async {
       final result = await splat(FakeGpuReports.sixGigabytes);
@@ -233,15 +245,18 @@ void main() {
       expect((await splat(GpuReport(adapters: [small, large]))).gpu!.name, 'Large');
     });
 
-    test('8 GiB of memory in the computer: 7.8 GiB seen is refused, said with both, the card told', () async {
-      final short = await splat(FakeGpuReports.rtx4060, memory: 7 * _gib + 800 * _mib);
-      final eight = await splat(FakeGpuReports.rtx4060, memory: 8 * _gib);
+    test(
+      'a computer sold with 8 GB, read as 7.8 GiB, makes splat scenes; 6.9 GiB is refused, said with both',
+      () async {
+        final eight = await splat(FakeGpuReports.rtx4060, memory: 7 * _gib + 800 * _mib);
+        final short = await splat(FakeGpuReports.rtx4060, memory: 6 * _gib + 922 * _mib);
 
-      expect(short.reason, AiGateReason.splatMemory);
-      expect(short.memoryNeeded, SplatV1.minPhysicalMemory);
-      expect(short.physicalMemory, 7 * _gib + 800 * _mib);
-      expect(eight.isAvailable, isTrue, reason: '$eight');
-    });
+        expect(eight.isAvailable, isTrue, reason: '$eight');
+        expect(short.reason, AiGateReason.splatMemory);
+        expect(short.memoryNeeded, 7 * _gib);
+        expect(short.physicalMemory, 6 * _gib + 922 * _mib);
+      },
+    );
 
     test('splatCardOf alone: integrated never allowed, whatever the switch of the panoramas says', () {
       final choice = splatCardOf(FakeGpuReports.integratedOnly, integratedAllowed: true);
@@ -287,11 +302,11 @@ void main() {
       );
       expect(
         aiGateReasonText(t, await splat(GpuReport(adapters: [_card(memory: 3 * _gib)]))),
-        'The graphics card has ${formatBytes(3 * _gib)} of memory, splat scenes need ${formatBytes(4 * _gib)}',
+        'The graphics card has ${formatBytes(3 * _gib)} of memory, splat scenes need ${formatBytes(3584 * _mib)}',
       );
       expect(
-        aiGateReasonText(t, await splat(FakeGpuReports.rtx4060, memory: 7 * _gib)),
-        'Needs ${formatBytes(8 * _gib)} of memory, this computer has ${formatBytes(7 * _gib)}',
+        aiGateReasonText(t, await splat(FakeGpuReports.rtx4060, memory: 6 * _gib)),
+        'Needs ${formatBytes(7 * _gib)} of memory, this computer has ${formatBytes(6 * _gib)}',
       );
     });
 
