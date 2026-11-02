@@ -18,7 +18,7 @@ the app takes (MIT, BSD, Apache 2.0, MPL 2.0). This script builds the same tag w
      wasm-bindgen-shared uses for the identifiers of its build tools only);
   4. the WebAssembly built as Spark's own script does (wasm-pack, simd128 and bulk-memory), with the toolchain of the
      lock and CONST_RANDOM_SEED fixed (ahash takes its keys from const-random at build time: without the seed two
-     builds differ);
+     builds differ), and the paths of the sources remapped to /cargo and /spark (the panic messages hold them);
   5. npm ci on Spark's package-lock.json (no install scripts) and its vite build;
   6. the files of the page copied to the output folder: spark.module.min.js, spark_rs_bg.wasm, three.module.min.js,
      three.core.min.js and Pass.js of three.js; the licences to <out>/licenses: Spark's, three.js's, fflate's (the one
@@ -296,7 +296,11 @@ def build(work: pathlib.Path, out: pathlib.Path) -> None:
         run(['git', 'apply', '--verbose', str(HERE / 'patches' / patch)], cwd=source)
 
     crates = wasm_crates(source)
-    env = dict(os.environ, RUSTFLAGS='-C target-feature=+simd128,+bulk-memory',
+    # The paths of the sources in the panic messages of the module do not depend on the machine: the registry of cargo
+    # and the clone written as /cargo and /spark (the home folders of ai1 and of the runner gave 72 bytes apart)
+    cargo_home = os.environ.get('CARGO_HOME') or os.path.join(os.path.expanduser('~'), '.cargo')
+    remaps = f'--remap-path-prefix={cargo_home}=/cargo --remap-path-prefix={source}=/spark'
+    env = dict(os.environ, RUSTFLAGS=f'-C target-feature=+simd128,+bulk-memory {remaps}',
                CONST_RANDOM_SEED=lock['toolchain']['const_random_seed'], SOURCE_DATE_EPOCH='0')
     run(['wasm-pack', 'build', '--target', 'web', '--release'], cwd=source / 'rust/spark-rs', env=env)
     run(['npm', 'ci', '--no-audit', '--no-fund', '--ignore-scripts'], cwd=source, env=env)

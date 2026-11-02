@@ -7,6 +7,6 @@
 bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601       1081  licenses/LICENSE-three
 3a5327c31b10ddf5b0688748caa322967e73f202d32bee7102e3ee050ff9bc53     106951  licenses/THIRD_PARTY_NOTICES.txt
 ddc66bfb5d2d827583659b0afd9bf3e093f7325a15a8bc61790463d9cfb26796     438236  spark.module.min.js
-e6f741ef5d947f05c89cd6e8ccb4cf4e9ed9cb54a2e3b6863b79c1190cf70aa8    1637495  spark_rs_bg.wasm
+5f00442689e8aa4bad595a425ee3d9166c697b4816ae2d75e49bd33ac6844760    1636503  spark_rs_bg.wasm
 61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de     381124  three.core.min.js
 e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6     338908  three.module.min.js
