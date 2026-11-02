@@ -87,6 +87,9 @@ dependencies:
   # Immuch360 Desktop: the window (title, smallest size, close guard, full screen); Windows, macOS and Linux only, used
   # under lib/desktop/ only
   window_manager: ^0.5.2
+  # Immuch360 Desktop: the window of the splat viewer (WebView2, WebKitGTK, WKWebView), already brought by
+  # flutter_web_auth_2; a patched copy in packages/ (dependency_overrides below), used under lib/desktop/ only
+  desktop_webview_window: ^0.3.0
   # Immuch360 Desktop: video through libmpv, used under lib/desktop/ only. The four packages are copies of one
   # media-kit commit in packages/ (dependency_overrides below, changes in their IMMUCH360-NOTE.md); the libmpv and ANGLE
   # libraries come with the Windows libs package, whose plugin declares windows only; the Linux libs package, linux
@@ -156,6 +159,11 @@ dev_dependencies:
 # cast 2.1.0 declares a loose bonsoir range but its code targets the 5.x API.
 # Pin bonsoir to 5.x until cast releases a version compatible with bonsoir 6.x.
 dependency_overrides:
+  # Immuch360 Desktop: desktop_webview_window 0.3.0 (Apache 2.0) without its title bar engine, with the keys, the focus,
+  # the arguments of WebView2 and the death of the page's process handled for the splat viewer (see its
+  # IMMUCH360-NOTE.md); its plugin platforms are linux, macos and windows only, as upstream
+  desktop_webview_window:
+    path: packages/desktop_webview_window
   dart_smb2:
     path: packages/dart_smb2
   # Copy of background_downloader 9.5.6 (MIT) with the "trust every certificate" code replaced by a log line: the

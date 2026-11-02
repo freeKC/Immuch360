@@ -29,6 +29,8 @@ class WebviewImpl extends Webview {
 
   final Set<OnWebMessageReceivedCallback> _onWebMessageReceivedCallbacks = {};
 
+  OnProcessFailedCallback? _onProcessFailed;
+
   WebviewImpl(this.viewId, this.channel);
 
   @override
@@ -36,7 +38,18 @@ class WebviewImpl extends Webview {
 
   void onClosed() {
     _closed = true;
-    _closeCompleter.complete();
+    if (!_closeCompleter.isCompleted) {
+      _closeCompleter.complete();
+    }
+  }
+
+  void notifyProcessFailed(String kind) {
+    _onProcessFailed?.call(kind);
+  }
+
+  @override
+  void setOnProcessFailedCallback(OnProcessFailedCallback? callback) {
+    _onProcessFailed = callback;
   }
 
   void onJavaScriptMessage(String name, dynamic body) {

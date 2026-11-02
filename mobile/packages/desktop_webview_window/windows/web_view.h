@@ -26,8 +26,12 @@ class WebView {
   WebView(std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> method_channel,
           int64_t web_view_id,
           std::wstring userDataFolder,
+          std::wstring additionalBrowserArguments,
           std::function<void(HRESULT)> on_web_view_created_callback
   );
+
+  // Immuch360 (P2): the keyboard focus to the page
+  void Focus();
 
   virtual ~WebView();
 

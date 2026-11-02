@@ -10,11 +10,15 @@ import FlutterMacOS
 import WebKit
 
 class WebViewLayoutController: NSViewController {
-  private lazy var titleBarController: FlutterViewController = {
+  // Immuch360 (P1): no title bar engine when the title bar has no height, so that no second Flutter engine starts
+  // (it would run the app's main with the arguments web_view_title_bar <id>)
+  private var titleBarController: FlutterViewController?
+
+  private func makeTitleBarController() -> FlutterViewController {
     let project = FlutterDartProject()
     project.dartEntrypointArguments = ["web_view_title_bar", "\(viewId)", "\(titleBarTopPadding)"]
     return FlutterViewController(project: project)
-  }()
+  }
 
   private lazy var webView: WKWebView = {
     WKWebView()
@@ -55,35 +59,47 @@ class WebViewLayoutController: NSViewController {
   override func loadView() {
     super.loadView()
 
-    addChild(titleBarController)
-    titleBarController.view.translatesAutoresizingMaskIntoConstraints = false
+    var webViewTop = view.topAnchor
+    if titleBarHeight > 0 {
+      let controller = makeTitleBarController()
+      titleBarController = controller
+      addChild(controller)
+      controller.view.translatesAutoresizingMaskIntoConstraints = false
 
-    // Register titlebar plugins
-    ClientMessageChannelPlugin.register(with: titleBarController.registrar(forPlugin: "DesktopWebviewWindowPlugin"))
+      // Register titlebar plugins
+      ClientMessageChannelPlugin.register(with: controller.registrar(forPlugin: "DesktopWebviewWindowPlugin"))
 
-    let flutterView = titleBarController.view
+      let flutterView = controller.view
 
-    flutterView.translatesAutoresizingMaskIntoConstraints = false
+      flutterView.translatesAutoresizingMaskIntoConstraints = false
 
-    view.addSubview(flutterView)
+      view.addSubview(flutterView)
 
-    let constraints = [
-      flutterView.topAnchor.constraint(equalTo: view.topAnchor),
-      flutterView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      flutterView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      flutterView.heightAnchor.constraint(equalToConstant: CGFloat(titleBarHeight + titleBarTopPadding)),
-    ]
+      let constraints = [
+        flutterView.topAnchor.constraint(equalTo: view.topAnchor),
+        flutterView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        flutterView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        flutterView.heightAnchor.constraint(equalToConstant: CGFloat(titleBarHeight + titleBarTopPadding)),
+      ]
 
-    NSLayoutConstraint.activate(constraints)
+      NSLayoutConstraint.activate(constraints)
+      webViewTop = flutterView.bottomAnchor
+    }
 
     view.addSubview(webView)
     webView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      webView.topAnchor.constraint(equalTo: flutterView.bottomAnchor),
+      webView.topAnchor.constraint(equalTo: webViewTop),
       webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
+  }
+
+  // Immuch360: the keys go to the page once it is shown
+  override func viewDidAppear() {
+    super.viewDidAppear()
+    view.window?.makeFirstResponder(webView)
   }
 
   override func viewDidLoad() {
@@ -155,7 +171,7 @@ class WebViewLayoutController: NSViewController {
   func destroy() {
     webView.stopLoading(self)
     webView.removeFromSuperview()
-    titleBarController.engine.shutDownEngine()
+    titleBarController?.engine.shutDownEngine()
   }
 
   func reload() {
@@ -239,6 +255,15 @@ extension WebViewLayoutController: WKNavigationDelegate {
 
   func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
     decisionHandler(.allow)
+  }
+
+  // Immuch360 (P5): a web process that dies (out of memory most often) is told to Dart, which closes the window and
+  // says so, rather than leaving a blank page
+  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    methodChannel.invokeMethod("onProcessFailed", arguments: [
+      "id": viewId,
+      "kind": "rendererExited",
+    ] as [String: Any])
   }
 }
 

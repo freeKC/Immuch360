@@ -53,7 +53,8 @@ WebviewWindow::~WebviewWindow() {
 void WebviewWindow::CreateAndShow(const std::wstring &title, int height, int width,
                                   const std::wstring &userDataFolder,
                                   int windowPosX, int windowPosY, bool useWindowPositionAndSize,
-                                  bool openMaximized, CreateCallback callback) {
+                                  bool openMaximized, const std::wstring &additionalBrowserArguments,
+                                  CreateCallback callback) {
 
   RegisterWindowClass(kWebViewWindowClassName, WebviewWindow::WndProc);
 
@@ -101,7 +102,7 @@ void WebviewWindow::CreateAndShow(const std::wstring &title, int height, int wid
 
   // Create the browser view.
   web_view_ = std::make_unique<webview_window::WebView>(
-      method_channel_, window_id_, userDataFolder,
+      method_channel_, window_id_, userDataFolder, additionalBrowserArguments,
       [callback](HRESULT hr) {
         if (SUCCEEDED(hr)) {
           callback(true);
@@ -118,13 +119,16 @@ void WebviewWindow::CreateAndShow(const std::wstring &title, int height, int wid
              true);
   ShowWindow(web_view_handle, SW_SHOW);
 
-  // Create the title bar view.
-  std::vector<std::string> args = {"web_view_title_bar", std::to_string(window_id_)};
-  flutter_action_bar_ = std::make_unique<webview_window::FlutterView>(std::move(args));
-  auto title_bar_handle = flutter_action_bar_->GetWindow();
-  SetParent(title_bar_handle, hwnd_.get());
-  MoveWindow(title_bar_handle, 0, 0, rc.right - rc.left, title_bar_height, true);
-  ShowWindow(title_bar_handle, SW_SHOW);
+  // Create the title bar view. Immuch360 (P1): none when the title bar has no height, so that no second Flutter
+  // engine starts (it would run the app's main with the arguments web_view_title_bar <id>)
+  if (title_bar_height_ > 0) {
+    std::vector<std::string> args = {"web_view_title_bar", std::to_string(window_id_)};
+    flutter_action_bar_ = std::make_unique<webview_window::FlutterView>(std::move(args));
+    auto title_bar_handle = flutter_action_bar_->GetWindow();
+    SetParent(title_bar_handle, hwnd_.get());
+    MoveWindow(title_bar_handle, 0, 0, rc.right - rc.left, title_bar_height, true);
+    ShowWindow(title_bar_handle, SW_SHOW);
+  }
 
   assert(hwnd_ != nullptr);
 
@@ -134,6 +138,14 @@ void WebviewWindow::CreateAndShow(const std::wstring &title, int height, int wid
 }
 
 void WebviewWindow::SetBrightness(int brightness) {
+}
+
+// Immuch360: a close asked by Dart ends as the user's close does, with WM_DESTROY, so that Dart is told
+// (onWindowClose) and the window is taken off the plugin's list by its own callback
+void WebviewWindow::Close() {
+  if (hwnd_ && !destroyed_) {
+    ::DestroyWindow(hwnd_.get());
+  }
 }
 
 void WebviewWindow::setVisibility(bool visible)
@@ -278,6 +290,16 @@ WebviewWindow::MessageHandler(
       break;
     }
     case WM_ACTIVATE: {
+      // Immuch360 (P2): the keys go to the page as soon as the window is active again (Alt+Tab, a click)
+      if (LOWORD(wparam) != WA_INACTIVE && web_view_) {
+        web_view_->Focus();
+      }
+      return 0;
+    }
+    case WM_SETFOCUS: {
+      if (web_view_) {
+        web_view_->Focus();
+      }
       return 0;
     }
   }

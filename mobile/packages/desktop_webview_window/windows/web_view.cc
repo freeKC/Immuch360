@@ -35,6 +35,7 @@ WebView::WebView(
     std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>>
         method_channel,
     int64_t web_view_id, std::wstring userDataFolder,
+    std::wstring additionalBrowserArguments,
     std::function<void(HRESULT)> on_web_view_created)
     : method_channel_(std::move(method_channel)),
       web_view_id_(web_view_id),
@@ -50,6 +51,14 @@ WebView::WebView(
     return;
   }
 
+  // Immuch360 (P4): the arguments of the browser process (--force_high_performance_gpu, the high performance graphics
+  // card of a laptop with two), read by WebView2 from this variable when it starts the browser of this user data
+  // folder; the app gives each set of arguments its own folder, since one browser process takes one set
+  if (!additionalBrowserArguments.empty()) {
+    ::SetEnvironmentVariableW(L"WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", additionalBrowserArguments.c_str());
+  } else {
+    ::SetEnvironmentVariableW(L"WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", nullptr);
+  }
   CreateCoreWebView2EnvironmentWithOptions(
       nullptr, user_data_folder_.c_str(), nullptr,
       Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
@@ -100,6 +109,20 @@ void WebView::OnWebviewControllerCreated() {
   settings->put_AreDefaultContextMenusEnabled(false);
   settings->put_IsStatusBarEnabled(false);
   settings->put_IsWebMessageEnabled(true);
+  // Immuch360 (P3): no developer tools outside debug builds, and the browser's own keys (F5 and Ctrl+R reload, Ctrl+P
+  // prints, Ctrl+F finds, F12 and Ctrl+Shift+I the tools) do nothing: the page is an app's screen, not a browser's
+#ifdef NDEBUG
+  settings->put_AreDevToolsEnabled(false);
+#endif
+  wil::com_ptr<ICoreWebView2Settings3> settings3;
+  if (SUCCEEDED(settings->QueryInterface(IID_PPV_ARGS(&settings3))) && settings3) {
+    settings3->put_AreBrowserAcceleratorKeysEnabled(false);
+  }
+  // A black page while the splat loads, rather than white
+  wil::com_ptr<ICoreWebView2Controller2> controller2;
+  if (SUCCEEDED(webview_controller_->QueryInterface(IID_PPV_ARGS(&controller2))) && controller2) {
+    controller2->put_DefaultBackgroundColor(COREWEBVIEW2_COLOR{255, 0, 0, 0});
+  }
 
   wil::com_ptr<ICoreWebView2Settings2> settings2;
   hr = settings->QueryInterface(IID_PPV_ARGS(&settings2));
@@ -112,6 +135,48 @@ void WebView::OnWebviewControllerCreated() {
   }
 
   UpdateBounds();
+  // Immuch360 (P2): the keys go to the page at once, without a first click
+  Focus();
+
+  // Immuch360 (P5): a process of the page that dies (out of memory most often) is told to Dart, which closes the
+  // window and says so, rather than leaving a white page
+  webview_->add_ProcessFailed(
+      Callback<ICoreWebView2ProcessFailedEventHandler>(
+          [this](ICoreWebView2 *sender,
+                 ICoreWebView2ProcessFailedEventArgs *args) -> HRESULT {
+            COREWEBVIEW2_PROCESS_FAILED_KIND kind;
+            if (FAILED(args->get_ProcessFailedKind(&kind))) {
+              return S_OK;
+            }
+            std::string name;
+            switch (kind) {
+              case COREWEBVIEW2_PROCESS_FAILED_KIND_BROWSER_PROCESS_EXITED:
+                name = "browserExited";
+                break;
+              case COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED:
+                name = "rendererExited";
+                break;
+              case COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_UNRESPONSIVE:
+                name = "rendererUnresponsive";
+                break;
+              case COREWEBVIEW2_PROCESS_FAILED_KIND_GPU_PROCESS_EXITED:
+                name = "gpuExited";
+                break;
+              default:
+                return S_OK;
+            }
+            method_channel_->InvokeMethod(
+                "onProcessFailed",
+                std::make_unique<flutter::EncodableValue>(flutter::EncodableMap{
+                    {flutter::EncodableValue("id"),
+                     flutter::EncodableValue(web_view_id_)},
+                    {flutter::EncodableValue("kind"),
+                     flutter::EncodableValue(name)},
+                }));
+            return S_OK;
+          })
+          .Get(),
+      nullptr);
 
   // Always use single window to load web page.
   webview_->add_NewWindowRequested(
@@ -262,6 +327,12 @@ void WebView::OnWebviewControllerCreated() {
           })
           .Get(),
       nullptr);
+}
+
+void WebView::Focus() {
+  if (webview_controller_) {
+    webview_controller_->MoveFocus(COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC);
+  }
 }
 
 void WebView::UpdateBounds() {

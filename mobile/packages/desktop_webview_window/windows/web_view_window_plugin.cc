@@ -69,6 +69,14 @@ void WebviewWindowPlugin::HandleMethodCall(
         arguments->at(flutter::EncodableValue("windowPosX")).LongValue();
     auto windowPosY =
         arguments->at(flutter::EncodableValue("windowPosY")).LongValue();
+    // Immuch360 (P4): the arguments of the browser process, none when the app gives none
+    std::string additionalBrowserArguments;
+    auto browserArguments =
+        arguments->find(flutter::EncodableValue("additionalBrowserArguments"));
+    if (browserArguments != arguments->end() &&
+        std::holds_alternative<std::string>(browserArguments->second)) {
+      additionalBrowserArguments = std::get<std::string>(browserArguments->second);
+    }
 
     auto window_id = next_window_id_;
     auto window = std::make_unique<WebviewWindow>(
@@ -80,6 +88,7 @@ void WebviewWindowPlugin::HandleMethodCall(
         utf8_to_wide(title), int(height), int(width),
         utf8_to_wide(userDataFolder), int(windowPosX), int(windowPosY),
         useWindowPositionAndSize, openMaximized,
+        utf8_to_wide(additionalBrowserArguments),
         [this, window_id, result(result2)](bool succeed) mutable {
           if (!succeed) {
             result->Error("0", "failed to show window");
@@ -312,6 +321,9 @@ void WebviewWindowPlugin::HandleMethodCall(
       result->Error("0", "can not find webview window for id");
       return;
     }
+    // Immuch360: closed as the user closes it (WM_DESTROY tells Dart and takes it off the list), then taken off the
+    // list in case the window was already gone
+    windows_[window_id]->Close();
     windows_.erase(window_id);
     result->Success();
   } else if (method_call.method_name() == "evaluateJavaScript") {

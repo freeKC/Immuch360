@@ -20,6 +20,10 @@ class CreateConfiguration {
   final bool useWindowPositionAndSize;
   final bool openMaximized;
 
+  /// Immuch360: the arguments of the browser process on Windows (WebView2), such as --force_high_performance_gpu;
+  /// one browser process takes one set, so give each set a user data folder of its own
+  final String additionalBrowserArguments;
+
   const CreateConfiguration({
     this.windowWidth = 1280,
     this.windowHeight = 720,
@@ -31,6 +35,7 @@ class CreateConfiguration {
     this.userDataFolderWindows = 'webview_window_WebView2',
     this.useWindowPositionAndSize = false,
     this.openMaximized = false,
+    this.additionalBrowserArguments = '',
   });
 
   factory CreateConfiguration.platform() {
@@ -50,5 +55,6 @@ class CreateConfiguration {
         "userDataFolderWindows": userDataFolderWindows,
         "useWindowPositionAndSize": useWindowPositionAndSize,
         "openMaximized": openMaximized,
+        "additionalBrowserArguments": additionalBrowserArguments,
       };
 }

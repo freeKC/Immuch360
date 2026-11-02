@@ -17,6 +17,10 @@ typedef OnUrlRequestCallback = bool Function(String url);
 /// [message] constains the webmessage
 typedef OnWebMessageReceivedCallback = void Function(String message);
 
+/// Immuch360: a process of the page died ("rendererExited", "rendererOutOfMemory", "rendererUnresponsive",
+/// "browserExited", "gpuExited")
+typedef OnProcessFailedCallback = void Function(String kind);
+
 abstract class Webview {
   Future<void> get onClose;
 
@@ -89,6 +93,9 @@ abstract class Webview {
   );
 
   void removeAllWebMessageReceivedCallback();
+
+  /// Immuch360: told when a process of the page dies, so that the app closes the window and says so
+  void setOnProcessFailedCallback(OnProcessFailedCallback? callback);
 
   /// Close the web view window.
   void close();

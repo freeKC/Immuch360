@@ -78,7 +78,11 @@ const wchar_t *RegisterWindowClass(LPCWSTR class_name, WNDPROC wnd_proc) {
     window_class.cbClsExtra = 0;
     window_class.cbWndExtra = 0;
     window_class.hInstance = GetModuleHandle(nullptr);
-    window_class.hIcon = LoadIcon(window_class.hInstance, IDI_APPLICATION);
+    // Immuch360: the icon of the app (IDI_APP_ICON, 101, of the Flutter runner), the system's when there is none
+    window_class.hIcon = LoadIcon(window_class.hInstance, MAKEINTRESOURCE(101));
+    if (!window_class.hIcon) {
+      window_class.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+    }
     window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     window_class.lpszMenuName = nullptr;
     window_class.lpfnWndProc = wnd_proc;

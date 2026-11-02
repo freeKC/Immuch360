@@ -153,6 +153,10 @@ class WebviewWindow {
           'message': message,
         });
         break;
+      case "onProcessFailed":
+        webview
+            .notifyProcessFailed(args['kind'] as String? ?? 'rendererExited');
+        break;
       case "onNavigationCompleted":
         webview.onNavigationCompleted();
         await _otherIsolateMessageHandler
