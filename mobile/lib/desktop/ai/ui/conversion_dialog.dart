@@ -83,6 +83,7 @@ import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/scene/focal_shift.dart' show halfDiagonal35mm;
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_parts.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
@@ -1660,15 +1661,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               if (kind == ConversionKind.panoramaFromPhoto && _invented != null)
-                _Note(
+                ConversionNote(
                   key: const Key('ai_conversion_invented'),
                   text: t.ai_immersive_invented_share(percent: _invented!),
                 ),
               const SizedBox(height: 4),
               Text(t.ai_immersive_no_guarantee, style: Theme.of(context).textTheme.bodySmall),
-              if (time != null) _Note(key: const Key('ai_conversion_time'), text: time),
+              if (time != null) ConversionNote(key: const Key('ai_conversion_time'), text: time),
               if (kind.lane == ConversionLane.gpu)
-                _Note(key: const Key('ai_conversion_gpu_busy'), text: t.ai_immersive_gpu_busy_warning),
+                ConversionNote(key: const Key('ai_conversion_gpu_busy'), text: t.ai_immersive_gpu_busy_warning),
               if (kind == ConversionKind.panoramaFromPhoto)
                 CheckboxListTile(
                   key: const Key('ai_conversion_also_stereo'),
@@ -1688,9 +1689,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                   child: Center(child: CircularProgressIndicator()),
                 ),
               if (refusal != null)
-                _Note(key: const Key('ai_conversion_refused'), text: aiGateReasonText(t, refusal), error: true),
+                ConversionNote(
+                  key: const Key('ai_conversion_refused'),
+                  text: aiGateReasonText(t, refusal),
+                  error: true,
+                ),
               if (moving)
-                _Note(key: const Key('ai_conversion_moving'), text: t.ai_immersive_components_moving)
+                ConversionNote(key: const Key('ai_conversion_moving'), text: t.ai_immersive_components_moving)
               else if (missing && found?.platform != null)
                 Card(
                   key: const Key('ai_conversion_install'),
@@ -1709,7 +1714,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                             }
                           },
                         ),
-                        _InstallSpace(choice: choice),
+                        ConversionInstallSpace(choice: choice),
                       ],
                     ),
                   ),
@@ -1718,9 +1723,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 if (session != null) ..._destination(t, session),
                 if (session != null) ..._existingChoice(t, kind),
                 if (_runs.any((candidate) => candidate.quarterTurns != 0))
-                  _Note(key: const Key('ai_conversion_rotation'), text: t.ai_immersive_rotation_applied),
+                  ConversionNote(key: const Key('ai_conversion_rotation'), text: t.ai_immersive_rotation_applied),
                 if (_runs.any((candidate) => candidate.serverEdits))
-                  _Note(key: const Key('ai_conversion_server_edits'), text: t.ai_immersive_server_edits_ignored),
+                  ConversionNote(
+                    key: const Key('ai_conversion_server_edits'),
+                    text: t.ai_immersive_server_edits_ignored,
+                  ),
                 _PlanList(candidates: candidates, kindName: conversionKindName(t, kind)),
               ],
             ],
@@ -1843,9 +1851,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           ),
         ),
       if (!_libraryReady)
-        _Note(key: const Key('ai_conversion_library_not_ready'), text: t.ai_immersive_library_not_ready),
+        ConversionNote(key: const Key('ai_conversion_library_not_ready'), text: t.ai_immersive_library_not_ready),
       for (final MapEntry(key: folder, value: group) in groups.entries)
-        _FolderLine(
+        ConversionFolderLine(
           key: ValueKey('ai_conversion_folder_$folder'),
           folder: folder,
           count: _runs.length > 1 ? group.count : null,
@@ -1858,7 +1866,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           cloud: group.cloud,
         ),
       for (final MapEntry(key: key, value: folder) in session.pendingConsents.entries)
-        _NetworkQuestion(
+        ConversionNetworkQuestion(
           key: ValueKey('ai_conversion_network_$key'),
           folder: folder,
           onYes: _gestures == 0 ? () => unawaited(_gesture(() => session.allowNetwork(key))) : null,
@@ -1967,128 +1975,6 @@ class _ShareCopyLine extends StatelessWidget {
   }
 }
 
-class _Note extends StatelessWidget {
-  const _Note({super.key, required this.text, this.error = false});
-
-  final String text;
-  final bool error;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Text(text, style: TextStyle(color: error ? colors.error : colors.onSurfaceVariant)),
-    );
-  }
-}
-
-/// A folder the 3D photos go to: its path, how many, why it is not next to the original, and Change for a folder of
-/// my choice
-class _FolderLine extends StatelessWidget {
-  const _FolderLine({
-    super.key,
-    required this.folder,
-    required this.count,
-    required this.reason,
-    required this.check,
-    required this.onChange,
-    required this.shareHint,
-    required this.cloud,
-  });
-
-  final String folder;
-  final int? count;
-  final String? reason;
-  final ProbeResult? check;
-  final VoidCallback? onChange;
-  final bool shareHint;
-  final bool cloud;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final colors = Theme.of(context).colorScheme;
-    final check = this.check;
-    final failure = check == null || check.accepted ? null : _checkText(t, check);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.folder_outlined, size: 20, color: colors.onSurfaceVariant),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SelectableText(count == null ? folder : '$folder  ($count)'),
-                if (reason case final reason?) Text(reason, style: TextStyle(color: colors.onSurfaceVariant)),
-                if (failure != null) Text(failure, style: TextStyle(color: colors.error)),
-                if (shareHint) Text(t.ai_immersive_share_hint, style: TextStyle(color: colors.onSurfaceVariant)),
-                if (cloud) Text(t.ai_immersive_onedrive_download, style: TextStyle(color: colors.onSurfaceVariant)),
-              ],
-            ),
-          ),
-          if (onChange != null)
-            TextButton(key: const Key('ai_conversion_change_folder'), onPressed: onChange, child: Text(t.change)),
-        ],
-      ),
-    );
-  }
-
-  static String _checkText(Translations t, ProbeResult check) => switch (check.status) {
-    ProbeStatus.readOnly => t.ai_immersive_failed_read_only,
-    ProbeStatus.diskFull => t.ai_immersive_failed_disk_full,
-    ProbeStatus.missing || ProbeStatus.failed => t.ai_immersive_failed_write(message: check.message ?? ''),
-    ProbeStatus.ready || ProbeStatus.notChecked => '',
-  };
-}
-
-/// "Save 3D photos in the folders of this network folder?" with Yes and No
-class _NetworkQuestion extends StatelessWidget {
-  const _NetworkQuestion({super.key, required this.folder, required this.onYes, required this.onNo});
-
-  final String folder;
-  final VoidCallback? onYes;
-  final VoidCallback? onNo;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(t.ai_immersive_network_root_ask),
-            const SizedBox(height: 4),
-            SelectableText(folder, style: Theme.of(context).textTheme.bodySmall),
-            const SizedBox(height: 8),
-            Wrap(
-              alignment: WrapAlignment.end,
-              spacing: 8,
-              children: [
-                TextButton(
-                  key: const Key('ai_conversion_network_no'),
-                  onPressed: onNo,
-                  child: Text(t.ai_immersive_network_root_no),
-                ),
-                FilledButton.tonal(
-                  key: const Key('ai_conversion_network_yes'),
-                  onPressed: onYes,
-                  child: Text(t.ai_immersive_network_root_yes),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// What will be done with each photo of the selection: for a mixed one, the photos the type makes, under its name;
 /// the photos taken for the 3D version of a 360° photo by their 2:1 frame alone, to be checked; then the photos
 /// skipped, each with why
@@ -2145,45 +2031,6 @@ class _PlanList extends StatelessWidget {
                 Text('${candidate.asset.name}: ${conversionSkipText(t, candidate.skip!)}', style: secondary),
               if (skipped.length > _listed) Text('…', style: secondary),
             ],
-          ),
-      ],
-    );
-  }
-}
-
-/// Under the components to install: what the drive of the components lacks for them, else its free space; and the
-/// folder they were moved to when its drive is not connected
-class _InstallSpace extends ConsumerWidget {
-  const _InstallSpace({required this.choice});
-
-  final AiChoiceFeatures choice;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final t = context.t;
-    final space = ref.watch(aiInstallSpaceProvider(choice)).valueOrNull;
-    final unreachable = ref.watch(aiComponentsFolderMissingProvider).valueOrNull;
-    final colors = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (unreachable != null)
-          Text(
-            t.ai_immersive_components_folder_missing(folder: unreachable),
-            key: const Key('ai_conversion_folder_missing'),
-            style: TextStyle(color: colors.error),
-          )
-        else if (space?.shortage case final shortage?)
-          Text(
-            aiSpaceShortageText(t, shortage),
-            key: const Key('ai_conversion_space_short'),
-            style: TextStyle(color: colors.error),
-          )
-        else if (space?.space case final free?)
-          Text(
-            t.ai_immersive_free_space(free: formatBytes(free.free), drive: free.volume),
-            key: const Key('ai_conversion_free_space'),
-            style: TextStyle(color: colors.onSurfaceVariant),
           ),
       ],
     );
