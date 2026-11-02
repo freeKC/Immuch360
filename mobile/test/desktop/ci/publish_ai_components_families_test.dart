@@ -15,6 +15,13 @@ import 'ci_scripts.dart';
 const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
+/// --check on the branch of the test build of the splat scenes, whose catalogue lifts them (lot SP8): as the gates of
+/// the desktop workflow run it there
+ScriptRun _check(List<String> arguments) =>
+    runCiScript(_script, ['--check', ...arguments, '--test-build', 'feat-splat-maker'], environment: _onTestBuild);
+
+const _onTestBuild = {'GITHUB_REF_NAME': 'feat-splat-maker'};
+
 /// Parts of 1000 bytes for a file of 2048 bytes or more, in place of 1945 MiB and 2 GiB
 const _small = ['--part-size', '1000', '--asset-limit', '2048'];
 
@@ -338,8 +345,7 @@ void main() {
     ...extra,
   ];
 
-  ScriptRun checkCopy(String release) => runCiScript(_script, [
-    '--check',
+  ScriptRun checkCopy(String release) => _check([
     '--release',
     release,
     '--sources',
@@ -523,14 +529,14 @@ void main() {
 
   group('publish_ai_components.py --check, the three releases', () {
     test('the catalogue of the app and MODEL-LICENSES.md agree; the engines of P2 are written, nothing pending', () {
-      final run = runCiScript(_script, ['--check']);
+      final run = _check([]);
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
       // Pending before lot P2 wrote them: the run of the panoramas above starts from such a catalogue
       expect(run.output, isNot(contains('pending')));
       for (final release in ['ai-components-1', 'ai-components-2', 'ai-components-3']) {
-        expect(runCiScript(_script, ['--check', '--release', release]).exitCode, 0, reason: release);
+        expect(_check(['--release', release]).exitCode, 0, reason: release);
       }
     }, skip: skipCiScripts);
 
@@ -544,7 +550,7 @@ void main() {
       text = text.replaceFirst('      size: 457800992,', '      size: 457800991,');
       catalogue.writeAsStringSync(text);
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final run = _check(['--catalogue', catalogue.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(
@@ -567,7 +573,7 @@ void main() {
       final size = text.indexOf('  size: null,', start);
       catalogue.writeAsStringSync(text.replaceRange(size, size + 13, '  size: 1000,'));
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final run = _check(['--catalogue', catalogue.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(run.output, contains('sd-cpp-vulkan-linux-x64: incomplete in the catalogue (size 1000, sha256 None'));

@@ -16,6 +16,13 @@ import 'ci_scripts.dart';
 const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
+/// --check on the branch of the test build of the splat scenes, whose catalogue lifts them (lot SP8): as the gates of
+/// the desktop workflow run it there
+ScriptRun _check(List<String> arguments) =>
+    runCiScript(_script, ['--check', ...arguments, '--test-build', 'feat-splat-maker'], environment: _onTestBuild);
+
+const _onTestBuild = {'GITHUB_REF_NAME': 'feat-splat-maker'};
+
 final String _catalogue = p.join(
   repositoryRoot,
   'mobile',
@@ -336,15 +343,7 @@ void main() {
       expect(run.output, contains('not published: ai-components-1 is created only with --publish'));
 
       // The offline check agrees with what was written
-      final check = runCiScript(_script, [
-        '--check',
-        '--sources',
-        sources.path,
-        '--catalogue',
-        catalogue.path,
-        '--licences',
-        licences.path,
-      ]);
+      final check = _check(['--sources', sources.path, '--catalogue', catalogue.path, '--licences', licences.path]);
       expect(check.exitCode, 0, reason: '$check');
     }, skip: skipCiScripts);
 
@@ -530,14 +529,14 @@ void main() {
       final licence = text.indexOf("  licence: 'Apache-2.0',", start);
       catalogue.writeAsStringSync(text.replaceRange(licence, licence + 24, "  licence: 'CC-BY-NC-4.0',"));
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final run = _check(['--catalogue', catalogue.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(run.output, contains('depth-anything-v2-small-onnx: licence CC-BY-NC-4.0 is not one this project allows'));
     }, skip: skipCiScripts);
 
     test('the catalogue of the app and MODEL-LICENSES.md of the repository agree, every component complete', () {
-      final run = runCiScript(_script, ['--check']);
+      final run = _check([]);
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
@@ -553,16 +552,51 @@ void main() {
         File(_licences).readAsStringSync().split('\n').where((line) => !line.contains('.tflite')).join('\n'),
       );
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path, '--licences', licences.path]);
+      final run = _check(['--catalogue', catalogue.path, '--licences', licences.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(run.output, contains('onnxruntime-1.31.0-linux-x64: incomplete in the catalogue (size None'));
       expect(run.output, contains('MODEL-LICENSES.md lacks the row | `depth_anything_v2_small.tflite`'));
     }, skip: skipCiScripts);
 
+    test(
+      'a catalogue that lifts the splat scenes is refused but on the branch of their test build, named by the gates',
+      () {
+        // Merged into the phone and desktop branch
+        final merged = runCiScript(
+          _script,
+          ['--check', '--test-build', 'feat-splat-maker'],
+          environment: const {'GITHUB_REF_NAME': 'immuch360'},
+        );
+        expect(merged.exitCode, 1, reason: '$merged');
+        expect(
+          merged.output,
+          contains('the splat scenes are lifted on immuch360: only feat-splat-maker may lift them; hold them again'),
+        );
+        // Taken by a branch made from the test build
+        final taken = runCiScript(
+          _script,
+          ['--check', '--test-build', 'feat-splat-maker'],
+          environment: const {'GITHUB_REF_NAME': 'feat-splat-maker-sp9'},
+        );
+        expect(taken.exitCode, 1, reason: '$taken');
+        expect(taken.output, contains('lifted on feat-splat-maker-sp9'));
+        // On the branch itself, but without the gates saying it is the test build, or naming another branch
+        final unnamed = runCiScript(_script, ['--check'], environment: _onTestBuild);
+        expect(unnamed.exitCode, 1, reason: '$unnamed');
+        expect(unnamed.output, contains('with no --test-build: only the branch of their test build may lift them'));
+        final other = runCiScript(_script, ['--check', '--test-build', 'immuch360'], environment: _onTestBuild);
+        expect(other.exitCode, 1, reason: '$other');
+        expect(other.output, contains('with --test-build immuch360'));
+        // As the gates run it on the branch of the test build
+        expect(_check(const []).exitCode, 0);
+      },
+      skip: skipCiScripts,
+    );
+
     test('the components of the splat scenes, lifted on the branch of the test build: the Windows archives of the CI '
         'complete, the Linux ones not made, a licence allowed; held again, their sums are refused', () {
-      final run = runCiScript(_script, ['--check']);
+      final run = _check([]);
 
       expect(run.exitCode, 0, reason: '$run');
       expect(
@@ -582,7 +616,7 @@ void main() {
       catalogue.writeAsStringSync(
         text.replaceFirst(lifted, 'const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.splats};'),
       );
-      final held = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final held = _check(['--catalogue', catalogue.path]);
       expect(held.exitCode, 1, reason: '$held');
       expect(
         held.output,
@@ -599,7 +633,7 @@ void main() {
       final filesEnd = changed.indexOf('\n  ],\n', files) + '\n  ],\n'.length;
       changed = changed.replaceRange(files, filesEnd, '');
       catalogue.writeAsStringSync(changed);
-      final refused = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final refused = _check(['--catalogue', catalogue.path]);
       expect(refused.exitCode, 1, reason: '$refused');
       expect(refused.output, contains('colmap-cpu-win-x64: licence GPL-3.0 is not one this project allows'));
       expect(

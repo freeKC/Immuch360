@@ -46,7 +46,7 @@ per release, the other sections kept as they are) and SHA256SUMS.
       published as a prerelease that is never "Latest" (the app reads releases/latest); its tag starts with no "v", so
       no release workflow runs on it (the upstream workflows that run on a published release are disabled in the
       fork). A release that exists already is never touched.
-  publish_ai_components.py --check [--release TAG]
+  publish_ai_components.py --check [--release TAG] [--test-build BRANCH]
       offline, for the three releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
       MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart).
@@ -55,7 +55,9 @@ per release, the other sections kept as they are) and SHA256SUMS.
       them held. On the branch of the test build, whose catalogue lifts their group (aiHeldFeatureGroups without
       AiFeatureGroup.splats, lot SP8), a component of theirs that has a size or a sum carries an archive of the CI as
       it is, served by a local mirror: then it needs its size, its SHA-256 and its files with a program among them,
-      and the check says it lifted.
+      and the check says it lifted. A catalogue that lifts them is refused unless --test-build names that branch
+      (TEST_BUILD) and the branch checked is it (GITHUB_REF_NAME in the CI, else the branch of the checkout): merged
+      into another branch, or taken by a branch made from it, the lift fails the gate until the group is held again.
 
 Without --publish nothing leaves this computer; the network is used only to download the files and to read the cards
 and the artifacts. --sources FILE replaces the addresses and upstream sums of the tables below (the tests serve small
@@ -77,6 +79,7 @@ import os
 import pathlib
 import re
 import shutil
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -101,6 +104,8 @@ TAG_SPLATS = 'ai-components-4'
 HELD = ('colmap-cpu-win-x64', 'colmap-cpu-linux-x64', 'brush-vulkan-win-x64', 'brush-vulkan-linux-x64')
 # The groups the catalogue holds back: the splat scenes stay held unless the branch of the test build lifts them
 HELD_GROUPS = re.compile(r'^const aiHeldFeatureGroups = <AiFeatureGroup>\{([^}]*)\};', re.MULTILINE)
+# The only branch whose catalogue may lift them, with the archives of the CI as they are (lot SP8, test build T1)
+TEST_BUILD = 'feat-splat-maker'
 FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas'}
 SUMS = 'SHA256SUMS'
 # GitHub refuses an asset of 2 GiB or more; a larger file goes in parts of the largest whole number of MiB under 1.9 GiB
@@ -1307,6 +1312,33 @@ def splats_lifted(text: str) -> bool:
     return held is not None and 'AiFeatureGroup.splats' not in held.group(1)
 
 
+def current_branch() -> str | None:
+    """The branch checked: GITHUB_REF_NAME in the CI, else the branch of the checkout; None when neither says"""
+    name = os.environ.get('GITHUB_REF_NAME', '').strip()
+    if name:
+        return name
+    try:
+        result = subprocess.run(['git', 'branch', '--show-current'], cwd=ROOT, capture_output=True, text=True,
+                                timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return (result.stdout.strip() or None) if result.returncode == 0 else None
+
+
+def lift_refusal(lifted: bool, test_build: str | None, branch: str | None) -> str | None:
+    """Why a catalogue that lifts the splat scenes ([lifted]) is refused on [branch] with --test-build [test_build];
+    None when it holds them, or on the branch of the test build named so"""
+    if not lifted or (test_build == TEST_BUILD and branch == TEST_BUILD):
+        return None
+    if test_build != TEST_BUILD:
+        given = f'--test-build {test_build}' if test_build else 'no --test-build'
+        return (f'the splat scenes are lifted (aiHeldFeatureGroups without AiFeatureGroup.splats), with {given}: only '
+                f'the branch of their test build may lift them (--test-build {TEST_BUILD}); hold them again before '
+                f'this catalogue goes anywhere else')
+    return (f'the splat scenes are lifted on {branch or "a branch that is not known"}: only {TEST_BUILD} may lift them; '
+            f'hold them again (AiFeatureGroup.splats in aiHeldFeatureGroups) before merging')
+
+
 def held_has_sums(component: dict) -> bool:
     return component.get('size') is not None or component.get('sha256') is not None or bool(component['archiveFiles'])
 
@@ -1560,6 +1592,8 @@ def main(argv=None) -> int:
                         'offline')
     parser.add_argument('--publish', action='store_true', help='create the prerelease on GitHub')
     parser.add_argument('--check', action='store_true', help='check the catalogue and MODEL-LICENSES.md, offline')
+    parser.add_argument('--test-build', help=f'the branch whose catalogue may lift the splat scenes ({TEST_BUILD}), '
+                        'given by the gates of the desktop workflow; refused on any other branch')
     parser.add_argument('--token-file', type=pathlib.Path, help='a file holding the token')
     parser.add_argument('--sources', type=pathlib.Path, help=argparse.SUPPRESS)
     parser.add_argument('--catalogue', type=pathlib.Path, default=CATALOGUE, help=argparse.SUPPRESS)
@@ -1598,6 +1632,9 @@ def main(argv=None) -> int:
         releases = (args.release,) if args.release else RELEASES
         lifted = splats_lifted(catalogue_text)
         found, pending = check(catalogue, licences, args.sources, releases, lifted)
+        refusal = lift_refusal(lifted, args.test_build, current_branch() if lifted else None)
+        if refusal:
+            found.insert(0, refusal)
         for line in found:
             print(f'publish_ai_components: {line}')
         if found:
