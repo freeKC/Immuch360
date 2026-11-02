@@ -560,8 +560,8 @@
     "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; the viewing number told back with the closing, and a new page shown while the activity is on top"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerApiImpl.kt": {
-    "blob": "d7a47145e72bdc29f42ae84ae3706f8c4fa1fec3",
-    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; the viewing number told back with the closing, and a new page shown while the activity is on top"
+    "blob": "07c47ad50dff7cc86df352df3e4cc2d36095666d",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; the viewing number told back with the closing, and a new page shown while the activity is on top; the free bytes of a folder (StatFs) before a preparation"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerRules.kt": {
     "blob": "04dff2f2642ee7e2f5bc4aca13e4e9a9b9f1c16a",
