@@ -5,19 +5,24 @@
 // in once everything is settled.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
@@ -27,6 +32,30 @@ import 'av2_test_components.dart';
 const _head = Av2Head.ivf(width: 1920, height: 1080, rate: 24, scale: 1, framesInHeader: 240, headerLength: 32);
 const _video = Av2VideoRef.file('/videos/cosmos.ivf', _head);
 const _player = Text('the player');
+
+/// The files of the folder library by asset id
+class _Files extends StorageRepository {
+  _Files(this.files);
+
+  final Map<String, File> files;
+  final asked = <String>[];
+
+  @override
+  Future<File?> getFileForAsset(String assetId) async {
+    asked.add(assetId);
+    return files[assetId];
+  }
+}
+
+LocalAsset _asset(String id, String name) => LocalAsset(
+  id: id,
+  name: name,
+  type: AssetType.video,
+  createdAt: DateTime(2026, 11, 2),
+  updatedAt: DateTime(2026, 11, 2),
+  playbackStyle: AssetPlaybackStyle.video,
+  isEdited: false,
+);
 
 void main() {
   late PresentationContext context;
@@ -308,6 +337,84 @@ void main() {
       );
       expect(Av2VideoFormat.ofHead(ntsc).frameRate, closeTo(59.94, 0.01));
       expect(Av2VideoFormat.ofHead(const Av2Head.obu()), const Av2VideoFormat(frameRate: 30));
+    });
+  });
+
+  group('the gates of the pages', () {
+    Future<void> pumpPage(WidgetTester tester, Widget gate, List<Override> more) => tester.pumpTestWidget(
+      context,
+      gate,
+      overrides: [
+        av2DecoderProvider.overrideWith((ref) => Av2Decoder(service, AiPlatform.windowsX64)),
+        av2ProbeProvider.overrideWithValue((video) async => Av2VideoFormat.ofHead(video.head)),
+        ...more,
+      ],
+    );
+
+    testWidgets('a video of the library or opened with the app: the AV2 file goes through the gate', (tester) async {
+      final read = <({String id, String name})>[];
+      final more = [
+        av2LocalVideoProvider.overrideWith((ref, asset) async {
+          read.add(asset);
+          return asset.name == 'cosmos.ivf' ? _video : null;
+        }),
+      ];
+      await pumpPage(tester, Av2AssetGate(asset: _asset('v1', 'cosmos.ivf'), child: _player), more);
+      expect(find.byKey(const Key('av2_install_card')), findsOneWidget);
+      expect(find.text('the player'), findsNothing);
+
+      // An IVF of AV1: its head says no, the player has it
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpPage(tester, Av2AssetGate(asset: _asset('v2', 'old.ivf'), child: _player), more);
+      expect(find.text('the player'), findsOneWidget);
+
+      // Any other video, without a read
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpPage(tester, Av2AssetGate(asset: _asset('v3', 'clip.mp4'), child: _player), more);
+      expect(find.text('the player'), findsOneWidget);
+      expect(read.map((asset) => asset.name), ['cosmos.ivf', 'old.ivf']);
+      expect(Av2AssetGate.applies(_asset('v3', 'clip.mp4')), isFalse);
+    }, variant: desktop);
+
+    testWidgets('a file of a share: the AV2 file goes through the gate', (tester) async {
+      const av2 = (sourceId: 'nas', path: '/clips/cosmos.ivf', size: 5365, modified: null);
+      const av1 = (sourceId: 'nas', path: '/clips/old.ivf', size: 442, modified: null);
+      final more = [networkAv2HeadProvider.overrideWith((ref, key) async => key.path == av2.path ? _head : null)];
+      await pumpPage(tester, const Av2ShareGate(file: av2, child: _player), more);
+      expect(find.byKey(const Key('av2_install_card')), findsOneWidget);
+      installed();
+      await tester.pumpAndSettle();
+      expect(find.text('the player'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpPage(tester, const Av2ShareGate(file: av1, child: _player), more);
+      expect(find.text('the player'), findsOneWidget);
+    }, variant: desktop);
+
+    testWidgets('on a phone, an AV2 file of a share or of the device says it plays on the computers', (tester) async {
+      const file = (sourceId: 'nas', path: '/clips/cosmos.ivf', size: 5365, modified: null);
+      await pumpPage(tester, const Av2ShareGate(file: file, child: _player), const []);
+      expect(find.text('AV2 videos play in Immuch360 Desktop only for now (Windows, Linux, macOS)'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpPage(tester, Av2AssetGate(asset: _asset('v1', 'cosmos.obu'), child: _player), const []);
+      expect(find.text('AV2 videos play in Immuch360 Desktop only for now (Windows, Linux, macOS)'), findsOneWidget);
+      expect(find.text('the player'), findsNothing);
+    });
+
+    test('the file of a video: its path and its head, read only for an AV2 file of the library', () async {
+      final storage = _Files({
+        'a': File('test/fixtures/av2/av2-256x144-8bit.ivf'),
+        'b': File('test/fixtures/av2/av1-256x144-8bit.ivf'),
+      });
+      final container = ProviderContainer(overrides: [storageRepositoryProvider.overrideWithValue(storage)]);
+      addTearDown(container.dispose);
+      final video = await container.read(av2LocalVideoProvider((id: 'a', name: 'cosmos.ivf')).future);
+      expect(video?.path, 'test/fixtures/av2/av2-256x144-8bit.ivf');
+      expect((video?.head.width, video?.head.height), (256, 144));
+      expect(await container.read(av2LocalVideoProvider((id: 'b', name: 'old.ivf')).future), isNull);
+      expect(await container.read(av2LocalVideoProvider((id: 'c', name: 'gone.ivf')).future), isNull);
+      expect(await container.read(av2LocalVideoProvider((id: 'd', name: 'clip.mp4')).future), isNull);
+      expect(storage.asked, ['a', 'b', 'c']);
     });
   });
 

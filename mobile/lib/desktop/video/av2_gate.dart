@@ -22,13 +22,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:logging/logging.dart';
 
@@ -40,6 +43,79 @@ const macosLibmpvWithoutY4m = {'libmpv-macos-20261020-9'};
 
 /// Whether the libmpv of macOS [release] plays the pictures of the AV2 decoder
 bool av2PlaysWithMacLibmpv(String release) => !macosLibmpvWithoutY4m.contains(release);
+
+/// The AV2 file of a video of the folder library or of one opened with the app ([id], the id of its local asset, named
+/// [name]): its path and its head; null for a file named otherwise, one that is not AV2 (an IVF of AV1) and one that
+/// cannot be found
+final av2LocalVideoProvider = FutureProvider.autoDispose.family<Av2VideoRef?, ({String id, String name})>((
+  ref,
+  asset,
+) async {
+  if (!isAv2FileName(asset.name)) {
+    return null;
+  }
+  final file = await ref.read(storageRepositoryProvider).getFileForAsset(asset.id);
+  if (file == null) {
+    return null;
+  }
+  final head = await readAv2HeadOfFile(file.path);
+  return head == null ? null : Av2VideoRef.file(file.path, head);
+});
+
+/// The gate of a video of the asset viewer: [child], its player, unless [asset] is an AV2 file (named .ivf or .obu,
+/// and its head says so), which goes through [Av2PlaybackGate]; on a phone such a file says it plays on the computers
+class Av2AssetGate extends ConsumerWidget {
+  const Av2AssetGate({super.key, required this.asset, required this.child});
+
+  final BaseAsset asset;
+  final Widget child;
+
+  /// Whether [asset] may be an AV2 file, which the gate reads
+  static bool applies(BaseAsset asset) => asset.isVideo && isAv2FileName(asset.name);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final id = asset.localId;
+    if (!applies(asset) || id == null) {
+      return child;
+    }
+    if (!CurrentPlatform.isDesktop) {
+      return Av2Notice(key: const Key('av2_notice_not_here'), text: context.t.av2_error_not_here);
+    }
+    return switch (ref.watch(av2LocalVideoProvider((id: id, name: asset.name)))) {
+      AsyncData(value: final video?) => Av2PlaybackGate(video: video, child: child),
+      AsyncData() || AsyncError() => child,
+      _ => const _Waiting(),
+    };
+  }
+}
+
+/// The gate of the player of a file of a share ([key]): [child] unless the file is AV2; on a phone such a file says it
+/// plays on the computers
+class Av2ShareGate extends ConsumerWidget {
+  const Av2ShareGate({super.key, required this.file, required this.child});
+
+  final NetworkMediaKey file;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!isAv2FileName(file.path)) {
+      return child;
+    }
+    if (!CurrentPlatform.isDesktop) {
+      return Av2Notice(key: const Key('av2_notice_not_here'), text: context.t.av2_error_not_here);
+    }
+    return switch (ref.watch(networkAv2HeadProvider(file))) {
+      AsyncData(value: final head?) => Av2PlaybackGate(
+        video: Av2VideoRef.share(file.sourceId, file.path, head),
+        child: child,
+      ),
+      AsyncData() || AsyncError() => child,
+      _ => const _Waiting(),
+    };
+  }
+}
 
 /// The player of the AV2 [video], [child], once each step at the top of this file is settled
 class Av2PlaybackGate extends ConsumerStatefulWidget {

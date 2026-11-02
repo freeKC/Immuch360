@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart' show Drag, kTouchSlop;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
+import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
@@ -482,7 +483,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       );
     }
 
-    return PhotoView.customChild(
+    final player = PhotoView.customChild(
       key: Key(asset.heroTag),
       childSize: asset.width != null && asset.height != null
           ? Size(asset.width!.toDouble(), asset.height!.toDouble())
@@ -513,6 +514,9 @@ class _AssetPageState extends ConsumerState<AssetPage> {
         watchProgress: true,
       ),
     );
+    // Immuch360 Desktop: an AV2 video (.ivf, .obu) plays once its decoder is there, its setting on and its speed told
+    // (lib/desktop/video/av2_gate.dart); a phone says it plays on the computers
+    return Av2AssetGate.applies(asset) ? Av2AssetGate(asset: asset, child: player) : player;
   }
 
   @override

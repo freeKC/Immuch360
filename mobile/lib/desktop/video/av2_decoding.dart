@@ -11,6 +11,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -39,6 +43,22 @@ Future<Av2Head?> readAv2HeadOfFile(String path) async {
     await file?.close();
   }
 }
+
+/// The head of the AV2 file [key] of a share, for the badge and the tile of the browser and for its player: the first
+/// 32 bytes of an .ivf or .obu, read on the computers only (the phones do not list them); null for any other file, one
+/// that is not AV2, and one that cannot be read
+final networkAv2HeadProvider = FutureProvider.autoDispose.family<Av2Head?, NetworkMediaKey>((ref, key) async {
+  if (!CurrentPlatform.isDesktop || !isAv2FileName(key.path)) {
+    return null;
+  }
+  try {
+    final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(key.sourceId);
+    return readAv2Head(await fileSystem.readRange(key.path, 0, av2HeadLength));
+  } on NetworkFileSystemException catch (error) {
+    _log.info('The head of ${p.posix.basename(key.path)} could not be read: $error');
+    return null;
+  }
+});
 
 /// How fast the AV2 video playing decodes on this computer, from the stat lines of the companion
 @immutable
