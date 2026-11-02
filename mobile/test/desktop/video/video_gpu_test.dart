@@ -1,8 +1,8 @@
 // Which graphics card suits a video and how mpv decodes it (video_gpu.dart), on machines described by the test: the
 // development laptop (an Intel UHD driving the panel and an RTX 4060 Laptop, as its decoder probe and GPU list read
-// them on 2026-11-02), with the app on either card, a desktop with one card, a laptop with an integrated GPU only, and
-// a Windows without IDXGIFactory6. Also the GPU list as the plugin's DLL writes it, and DesktopGpuDecoders reading the
-// machine once per run.
+// them on 2026-11-02), with the app on either card, a desktop with one card, a laptop with an integrated GPU only, an
+// AMD APU listed twice, the software renderer in use, and a Windows without IDXGIFactory6. Also the GPU list as the
+// plugin's DLL writes it, and DesktopGpuDecoders reading the machine once per run.
 
 import 'dart:convert';
 
@@ -250,6 +250,62 @@ void main() {
         onIt: false,
         advice: VideoGpuAdvice.useHighPerformanceCard,
       );
+    });
+
+    test('an AMD APU that DXGI lists twice, without a dedicated GPU: its second LUID is not a better card', () {
+      // The development laptop lists its Intel UHD twice, with two LUIDs; an APU that reserves 512 MB or more is not
+      // taken for an integrated GPU by the list, so its second entry looks like a card of its own
+      final apu = _card('AMD Radeon(TM) Graphics', integrated: true, luid: 'c', dedicatedMB: 2048);
+      final listed = _card('AMD Radeon(TM) Graphics', integrated: false, luid: 'c', dedicatedMB: 2048);
+      final twice = _card('AMD Radeon(TM) Graphics', integrated: false, luid: 'e', dedicatedMB: 2048);
+      final software = _card('Microsoft Basic Render Driver', integrated: true, luid: 'z', software: true);
+      for (final named in ['c', 'e', '']) {
+        expectChoice(
+          chooseVideoGpu(
+            (
+              inUse: apu,
+              gpus: GpuList(adapters: [listed, twice, software], highPerformance: named, minimumPower: named),
+            ),
+            width: 7680,
+            height: 4320,
+          ),
+          card: 'AMD Radeon(TM) Graphics',
+          onIt: true,
+          advice: VideoGpuAdvice.none,
+        );
+      }
+      // With a dedicated GPU beside it, that one is still suggested
+      final dgpu = _card('AMD Radeon RX 7600S', integrated: false, luid: 'd', dedicatedMB: 8176);
+      expectChoice(
+        chooseVideoGpu(
+          (
+            inUse: apu,
+            gpus: GpuList(adapters: [listed, twice, dgpu, software], highPerformance: 'c', minimumPower: 'c'),
+          ),
+          width: 7680,
+          height: 4320,
+        ),
+        card: 'AMD Radeon RX 7600S',
+        onIt: false,
+        advice: VideoGpuAdvice.useHighPerformanceCard,
+      );
+    });
+
+    test("the app on Windows' software renderer (a Remote Desktop session, a missing driver): no card to suggest", () {
+      final software = _inUse(_laptop.adapters[3]);
+      expect((software.software, software.integrated), (true, true));
+      for (final gpus in [
+        _laptop,
+        GpuList(adapters: _laptop.adapters),
+        GpuList(adapters: _laptop.adapters, highPerformance: _laptop.adapters[3].luid),
+      ]) {
+        expectChoice(
+          chooseVideoGpu((inUse: software, gpus: gpus), width: 7680, height: 4320),
+          card: 'Microsoft Basic Render Driver',
+          onIt: true,
+          advice: VideoGpuAdvice.none,
+        );
+      }
     });
 
     test('a Windows without IDXGIFactory6: a card with memory of its own beside the integrated one in use', () {

@@ -71,13 +71,19 @@ const heavyFramePixels = 3840 * 2160 * 9 ~/ 10;
 bool sameGpu(GpuAdapter a, GpuAdapter b) =>
     a.luid.isNotEmpty && b.luid.isNotEmpty ? a.luid == b.luid : a.key == b.key && a.name == b.name;
 
+/// Whether [a] and [b] are the same model of card (PCI vendor and device): DXGI may list one GPU twice under two LUIDs,
+/// as the development laptop's Intel UHD
+bool _sameModel(GpuAdapter a, GpuAdapter b) => a.vendorId != 0 && a.vendorId == b.vendorId && a.deviceId == b.deviceId;
+
 /// The high performance card of [gpus] when it is another than [inUse] and better suited to a large video: Windows'
 /// own answer (IDXGIFactory6) first, then a card with memory of its own beside the integrated card in use. Windows
 /// answers with the card its graphics setting gives the app: with Power saving chosen for Immuch360, that is the
 /// integrated card in use (seen on the development laptop), and the card to suggest is then among the others. Null
-/// when the card in use is the best the computer has, or when nothing tells.
+/// when the card in use is the best the computer has, when nothing tells, and on Windows' software renderer (a Remote
+/// Desktop session, a missing driver), where the graphics setting changes nothing. A second LUID of the card in use is
+/// never another card: an APU that reserves 512 MB or more is not taken for an integrated GPU by the list.
 GpuAdapter? _betterCard(GpuAdapter inUse, GpuList gpus) {
-  if (!inUse.integrated) {
+  if (inUse.software || !inUse.integrated) {
     return null;
   }
   final named = gpus.byLuid(gpus.highPerformance);
@@ -87,7 +93,7 @@ GpuAdapter? _betterCard(GpuAdapter inUse, GpuList gpus) {
       if (!gpu.integrated) gpu,
   ];
   for (final gpu in candidates) {
-    if (!gpu.software && !gpu.integrated && !sameGpu(gpu, inUse)) {
+    if (!gpu.software && !gpu.integrated && !sameGpu(gpu, inUse) && !_sameModel(gpu, inUse)) {
       return gpu;
     }
   }
