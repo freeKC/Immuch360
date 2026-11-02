@@ -133,8 +133,8 @@ class SplatSelectionPlan {
   /// when they all come from one
   final List<int> lenses;
 
-  /// The name the dialog proposes: the folder of the photos when they share one, else the first photo in time; the
-  /// video without its extension
+  /// The name the dialog proposes: the folder of the photos when they share one (the share at the root of a share,
+  /// see splatFolderName), else the first photo in time; the video without its extension
   final String defaultName;
 
   /// The photo, or the video, whose place the destination of the scene is planned for: one of the folder that holds
@@ -230,10 +230,23 @@ SplatLeftOutReason? splatLeftOutOf(SplatCandidate candidate, {bool? linux}) {
 }
 
 /// The folder of the original of [candidate] on this computer, null for an original of the server
-String? _folderOf(SplatCandidate candidate) => switch (candidate.found?.location) {
-  LibraryOriginal(:final path) || OpenedOriginal(:final path) => p.dirname(path),
+String? _folderOf(SplatCandidate candidate, p.Context paths) => switch (candidate.found?.location) {
+  LibraryOriginal(:final path) || OpenedOriginal(:final path) => paths.dirname(path),
   _ => null,
 };
+
+/// The name [folder] gives a scene: its last segment; at the root of a share (\\nas\photo) the name of the share; at
+/// the root of a drive (D:\) or of the computer, none, and the first photo names the scene
+String splatFolderName(String folder, {p.Context? paths}) {
+  final context = paths ?? p.context;
+  final root = context.rootPrefix(folder);
+  if (root.isEmpty || context.split(folder).length > 1) {
+    return context.basename(folder);
+  }
+  final segments = root.split(RegExp(r'[\\/]+')).where((segment) => segment.isNotEmpty).toList();
+  final share = (root.startsWith(r'\\') || root.startsWith('//')) && segments.length >= 2;
+  return share ? segments.last : '';
+}
 
 /// Orders by the time they were taken, then by name
 int _byTime(SplatCandidate a, SplatCandidate b) {
@@ -241,8 +254,9 @@ int _byTime(SplatCandidate a, SplatCandidate b) {
   return time != 0 ? time : a.asset.name.compareTo(b.asset.name);
 }
 
-/// See the top of this file; [linux] for the tests, the system of this computer by default
-SplatSelectionPlan planSplatSelection(List<SplatCandidate> candidates, {bool? linux}) {
+/// See the top of this file; [linux] and [paths] for the tests, the system of this computer and its paths by default
+SplatSelectionPlan planSplatSelection(List<SplatCandidate> candidates, {bool? linux, p.Context? paths}) {
+  final context = paths ?? p.context;
   final videos = [
     for (final candidate in candidates)
       if (candidate.asset.isVideo) candidate,
@@ -282,7 +296,7 @@ SplatSelectionPlan planSplatSelection(List<SplatCandidate> candidates, {bool? li
   final byFolder = <String, List<SplatCandidate>>{};
   var server = false;
   for (final photo in used) {
-    final folder = _folderOf(photo);
+    final folder = _folderOf(photo, context);
     if (folder == null) {
       server = true;
     } else {
@@ -296,7 +310,7 @@ SplatSelectionPlan planSplatSelection(List<SplatCandidate> candidates, {bool? li
     }
   }
   final oneFolder = byFolder.length == 1 && !server ? byFolder.keys.single : null;
-  final folderName = oneFolder == null ? '' : p.basename(oneFolder);
+  final folderName = oneFolder == null ? '' : splatFolderName(oneFolder, paths: context);
 
   return SplatSelectionPlan(
     used: used,

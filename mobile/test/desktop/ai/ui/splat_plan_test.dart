@@ -1,10 +1,12 @@
 // The plan of a selection for a splat scene (plan 2026-11-01, sections 2.1 and 4.1, lot SP7), before anything runs:
 // the refusals (fewer than 20 photos, photos and a video together, several videos, a video under 10 s or over 5 min,
 // a 360° video, a video that cannot be reached), the photos left out with their reason, 200 photos at most spread
-// evenly in time, the warning under 50 photos, the lenses, the folders, the name proposed, the folder the scene goes
-// to, the frames of a video and the time on this computer.
+// evenly in time, the warning under 50 photos, the lenses, the folders, the name proposed (at the root of a share or
+// of a drive too, with the paths of Windows), the folder the scene goes to, the frames of a video and the time on this
+// computer.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -37,9 +39,10 @@ SplatCandidate _photo(
   int? focal35,
   bool server = false,
   bool reachable = true,
+  p.Context? paths,
 }) {
   final asset = _asset(name, taken: DateTime(2026, 10, 20, 9, minute));
-  final path = p.posix.join(folder, name);
+  final path = (paths ?? p.posix).join(folder, name);
   return SplatCandidate(
     asset: asset,
     facts: facts,
@@ -81,9 +84,9 @@ SplatCandidate _video(String name, Duration duration, {bool is360 = false, bool 
   );
 }
 
-List<SplatCandidate> _photos(int count, {String folder = '/photos/salon', int from = 0}) => [
+List<SplatCandidate> _photos(int count, {String folder = '/photos/salon', int from = 0, p.Context? paths}) => [
   for (var index = 0; index < count; index++)
-    _photo('IMG_${(from + index).toString().padLeft(4, '0')}.jpg', folder: folder, minute: from + index),
+    _photo('IMG_${(from + index).toString().padLeft(4, '0')}.jpg', folder: folder, minute: from + index, paths: paths),
 ];
 
 void main() {
@@ -265,6 +268,34 @@ void main() {
       expect(plan.defaultName, 'Salon tour');
       expect((plan.destination!.found!.location as LibraryOriginal).path, '/videos/Salon tour.mp4');
       expect(plan.videoDuration, const Duration(minutes: 1, seconds: 51));
+    });
+
+    test('photos at the root of a share take the name of the share, at the root of a drive the first photo', () {
+      String nameOf(String folder, p.Context paths) => planSplatSelection(
+        _photos(30, folder: folder, paths: paths),
+        linux: false,
+        paths: paths,
+      ).defaultName;
+
+      expect(nameOf(r'\\nas\photo', p.windows), 'photo');
+      expect(nameOf(r'\\nas\photo\salon', p.windows), 'salon');
+      expect(nameOf(r'D:\', p.windows), 'IMG_0000');
+      expect(nameOf('/', p.posix), 'IMG_0000');
+    });
+
+    test('a folder of Windows with accents and spaces names the scene and its file as it is written', () {
+      final plan = planSplatSelection(
+        _photos(30, folder: r'D:\Photos\Salon été 2026', paths: p.windows),
+        linux: false,
+        paths: p.windows,
+      );
+      expect(plan.folders, 1);
+      expect(plan.defaultName, 'Salon été 2026');
+      expect(versionTargetName(ImmersiveKind.gaussianSplat, plan.defaultName), 'Salon été 2026_splat.spz');
+      expect(
+        p.windows.dirname((plan.destination!.found!.location as LibraryOriginal).path),
+        r'D:\Photos\Salon été 2026',
+      );
     });
 
     test('the place of the scene is named by the name chosen, so that its file is <name>_splat.spz', () {
