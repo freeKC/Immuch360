@@ -188,6 +188,10 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   PlaybackEngine? _engine;
   StreamSubscription<PlayerEvent>? _events;
 
+  /// From the load to the first frame, and from a seek to the frame after it: the times the log gives
+  final _loadWatch = Stopwatch();
+  Stopwatch? _seekWatch;
+
   /// Changed by every load and stop: what an older one started is not taken for the current video
   int _generation = 0;
   bool _ready = false;
@@ -231,6 +235,10 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         startAt ??
         (stoppedEarly != null && stoppedEarly.path == videoSource.path ? stoppedEarly.position : Duration.zero);
     await stop();
+    _loadWatch
+      ..reset()
+      ..start();
+    _seekWatch = null;
     final generation = ++_generation;
     _letGo(_resource);
     _videoSource = null;
@@ -327,6 +335,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     if (_unloaded) {
       await _open(engine, _generation, Duration(milliseconds: position));
     } else if (!suspended) {
+      _seekWatch = Stopwatch()..start();
       await engine.seek(Duration(milliseconds: position));
     }
     if (_status != PlaybackStatus.playing) {
@@ -611,7 +620,13 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       case PlayerEventKind.loaded:
         break;
       case PlayerEventKind.restarted:
+        final seek = _seekWatch;
+        if (seek != null && _restarted && !_unloaded) {
+          _seekWatch = null;
+          _log.fine('A frame ${seek.elapsedMilliseconds} ms after a seek');
+        }
         if (!_restarted && !_unloaded) {
+          _log.fine('The first frame ${_loadWatch.elapsedMilliseconds} ms after the load');
           _restarted = true;
           _readyTimer?.cancel();
           _readyTimer = Timer(readyWithoutSize, () => _announceReady(force: true));

@@ -760,6 +760,9 @@ class Av2Session {
 
   RunningProcess? _process;
   late final NativeCancelFlag _cancel;
+
+  /// From the start of the session (the head of the file read): the times its log gives
+  final _since = Stopwatch()..start();
   late final Future<void> _ended;
   bool _stopping = false;
   bool _stopped = false;
@@ -814,6 +817,7 @@ class Av2Session {
     Future<Av2Probe> Function()? probe,
     Future<void> Function(Av2Format format)? beforeServe,
   }) async {
+    final watch = Stopwatch()..start();
     final length = await bytes.length();
     final head = await bytes.read(0, math.min(av2HeadLength, length));
     if (readAv2Head(head) == null) {
@@ -856,7 +860,12 @@ class Av2Session {
       decoderVersion: decoderVersion,
     );
     await beforeServe?.call(session.format);
+    final prepared = watch.elapsedMilliseconds;
     await session._serve(files, runner, parentPid: parentPid, threads: threads);
+    _log.info(
+      'AV2 video ${session.format}, ${layout.frames} pictures, ${points.length} access points: read and probed in '
+      '$prepared ms, served from ${watch.elapsedMilliseconds} ms',
+    );
     return session;
   }
 
@@ -963,6 +972,7 @@ class Av2Session {
         _generation = generation;
         _from = unit;
         _wake();
+        _log.fine('The AV2 companion: $line (${_since.elapsedMilliseconds} ms)');
       }
       return;
     }
@@ -987,7 +997,7 @@ class Av2Session {
     }
     if (line.startsWith('request ')) {
       _requestedFrame.value = int.tryParse(RegExp(r'frame=(\d+)').firstMatch(line)?.group(1) ?? '');
-      _log.fine('The AV2 companion: $line');
+      _log.fine('The AV2 companion: $line (${_since.elapsedMilliseconds} ms)');
     } else if (line.startsWith('refused ')) {
       _log.warning('The AV2 companion $line');
     } else if (line.startsWith('exit ')) {
