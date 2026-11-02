@@ -975,7 +975,7 @@ jobs:
             echo "- Recipe: \`$MACOS_RECIPE_REPOSITORY\` at \`$MACOS_RECIPE_REF\` with \`.github/desktop/libmpv-macos\`: FFmpeg and mpv at the commits of the Windows build, every library and archive in \`BUILDINFO-macos.txt\`."
             echo "- Licence: GNU LGPL version 3 or later for libmpv and FFmpeg as built (mpv -Dgpl=false, FFmpeg --enable-version3 without GPL or nonfree parts); the licence texts of each library are in \`$TAG-licenses.tar.gz\`, the notices in \`licenses/NOTICES.md\` of \`mobile/packages/media_kit_libs_macos_video\` and in the app."
             echo "- Corresponding source: \`$TAG-sources.tar.xz\` (the recipe with the overlay, and every archive it builds from)."
-            echo "- Checked on the build runner: every function the frameworks look up at run time is defined (\`check_undefined.py\`), and libmpv reads a y4m, 8 and 10 bit, from a file and over HTTP with exact seeks, as the AV2 decoder of the app serves it (\`check_y4m.py\`, its line in \`BUILDINFO-macos.txt\`)."
+            echo "- Checked on the build runner: every function the frameworks look up at run time is defined (\`check_undefined.py\`), and libmpv reads a y4m, 8 and 10 bit, from a file and over HTTP with exact seeks (\`check_y4m.py\`, its line in \`BUILDINFO-macos.txt\`)."
             echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo
             echo "SHA-256:"
