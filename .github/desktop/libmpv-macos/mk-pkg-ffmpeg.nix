@@ -3,8 +3,12 @@
 # apply_overlay.sh. They were made for FFmpeg 6.0: two (HLS seek, DASH base URL) no longer apply to the FFmpeg commit of
 # packages.lock.nix and concern streams the app never gives libmpv (local files and its own loopback bridge), one is for
 # iOS only (HDR textures), and the VP9 one adds a separate VideoToolbox VP9 decoder where FFmpeg's vp9_videotoolbox
-# hwaccel, enabled by the recipe's meson.build, already decodes VP9 on the GPU. The configure options stay the recipe's
-# (its meson.build): the default flavor, LGPL only, no GPL or nonfree part.
+# hwaccel, enabled by the recipe's meson.build, already decodes VP9 on the GPU. The configure options are the recipe's
+# (its meson.build: the default flavor, LGPL only, no GPL or nonfree part) with two more in the video list, which the
+# Windows build has too: the yuv4mpegpipe demuxer and the rawvideo decoder, with which libmpv reads the y4m that the AV2
+# decoder of the app serves over HTTP on 127.0.0.1. apply_overlay.sh puts mk-pkg-ffmpeg-meson.build, the recipe's file
+# with those two lines, over the meson.build that this file copies into the sources; check_y4m.py, run by the workflow
+# on the frameworks, checks that the build reads a y4m.
 {
   pkgs ? import ../../utils/default/pkgs.nix,
   os ? import ../../utils/default/os.nix,
