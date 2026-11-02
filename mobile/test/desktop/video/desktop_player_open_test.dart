@@ -87,12 +87,27 @@ class _FakeNativePlayer extends Fake implements NativePlayer {
     commands.add(command);
   }
 
+  /// What DesktopPlayer observes, by event id and by property name
+  final events = <int, Future<void> Function(Pointer<mpv.mpv_event>)>{};
+  final observed = <String, Future<void> Function(String)>{};
+
   @override
   Future<void> observeEvent(
     int event,
     Future<void> Function(Pointer<mpv.mpv_event>) listener, {
     bool waitForInitialization = true,
-  }) async {}
+  }) async {
+    events[event] = listener;
+  }
+
+  @override
+  Future<void> observeProperty(
+    String property,
+    Future<void> Function(String) listener, {
+    bool waitForInitialization = true,
+  }) async {
+    observed[property] = listener;
+  }
 
   @override
   Future<void> stop({bool open = false, bool notify = true, bool synchronized = true}) async {
@@ -269,6 +284,25 @@ void main() {
     await native.load();
     expect(native.properties.containsKey('start'), isFalse, reason: 'a stop forgets the start of the last open');
     await player.dispose();
+  });
+
+  test('tells how mpv decodes the open file, and forgets it when the next file loads', () async {
+    final player = await DesktopPlayer.withPlatform(PlayerKind.playback, native);
+    expect(player.hwdec.value, isNull);
+    await native.observed['hwdec-current']!('d3d11va');
+    expect(player.hwdec.value, 'd3d11va');
+    // mpv falls back to another decoder in the middle of a file
+    await native.observed['hwdec-current']!('no');
+    expect(player.hwdec.value, 'no');
+    await native.events[mpv.mpv_event_id.MPV_EVENT_FILE_LOADED]!(nullptr);
+    expect(player.hwdec.value, isNull, reason: 'the decoder of the previous file says nothing of this one');
+    await player.dispose();
+
+    // The frame grab has no texture and nobody asks how it decodes
+    final grabber = _FakeNativePlayer(listFiles);
+    final thumbnail = await DesktopPlayer.withPlatform(PlayerKind.thumbnail, grabber);
+    expect(grabber.observed.containsKey('hwdec-current'), isFalse);
+    await thumbnail.dispose();
   });
 
   test('a live stream has no start', () async {

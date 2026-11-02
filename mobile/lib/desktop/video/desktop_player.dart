@@ -151,6 +151,10 @@ abstract class PlaybackEngine {
 
   /// Whether the open file has a video track, null until it is open
   ValueListenable<bool?> get hasVideo;
+
+  /// How mpv decodes the video of the open file (hwdec-current: "d3d11va", "d3d11va-copy", "no" for the processor),
+  /// null until it says; for the "Video decoding" line of the video details (video_gpu.dart)
+  ValueListenable<String?> get hwdec;
   ValueListenable<List<DesktopAudioTrack>> get audioTracks;
 
   /// The id of the audio track that plays, null for none or not known yet
@@ -456,6 +460,7 @@ class DesktopPlayer implements PlaybackEngine {
   final _textureLost = ValueNotifier(false);
   final _videoSize = ValueNotifier<VideoFrameSize?>(null);
   final _hasVideo = ValueNotifier<bool?>(null);
+  final _hwdec = ValueNotifier<String?>(null);
   final _audioTracks = ValueNotifier<List<DesktopAudioTrack>>(const []);
   final _audioTrack = ValueNotifier<String?>(null);
   final _events = StreamController<PlayerEvent>.broadcast();
@@ -489,6 +494,8 @@ class DesktopPlayer implements PlaybackEngine {
   ValueListenable<VideoFrameSize?> get videoSize => _videoSize;
   @override
   ValueListenable<bool?> get hasVideo => _hasVideo;
+  @override
+  ValueListenable<String?> get hwdec => _hwdec;
   @override
   ValueListenable<List<DesktopAudioTrack>> get audioTracks => _audioTracks;
   @override
@@ -557,8 +564,17 @@ class DesktopPlayer implements PlaybackEngine {
       }
     });
     await _native.observeEvent(mpv.mpv_event_id.MPV_EVENT_FILE_LOADED, (_) async {
+      // The decoder of the previous file says nothing of this one
+      _hwdec.value = null;
       _emit(const PlayerEvent(PlayerEventKind.loaded));
     });
+    if (kind != PlayerKind.thumbnail) {
+      // mpv tells it once the decoder is open, and again when it falls back to another one; without a value (no file)
+      // the listener is not called
+      await _native.observeProperty('hwdec-current', (value) async {
+        _hwdec.value = value.trim().isEmpty ? null : value.trim();
+      });
+    }
     await _native.observeEvent(mpv.mpv_event_id.MPV_EVENT_PLAYBACK_RESTART, (_) async {
       _emit(const PlayerEvent(PlayerEventKind.restarted));
     });
