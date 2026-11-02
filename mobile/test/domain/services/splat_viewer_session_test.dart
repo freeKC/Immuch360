@@ -1,7 +1,6 @@
 // The session of one viewing of the splat viewer (lot SV1), served by the real media bridge over HTTP on loopback, as
 // the page fetches it: the page with its Content-Security-Policy, the modules as JavaScript, the session and the scene
 // never cached, the events posted back; nothing once the session is gone.
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';

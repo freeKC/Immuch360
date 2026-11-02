@@ -399,7 +399,7 @@ Future<void> writeKept(
       void write(List<int> bytes) => gzipSink.add(bytes);
       // Arrays of every point, one after the other: positions, alphas, colours, scales, rotations, harmonics
       final shBytes = 3 * splatShCoefficients(head.shDegree);
-      final steps = 6;
+      const steps = 6;
       var step = 0;
       void stepProgress(double share) => progress?.call((step + share) / steps);
       if (version == 1) {

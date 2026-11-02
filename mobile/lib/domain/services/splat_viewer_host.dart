@@ -19,7 +19,7 @@ enum SplatHostClosed {
 }
 
 abstract interface class SplatViewerHost {
-  /// Shows [pageUrl] (http://127.0.0.1:<port>/<token>/<session>/index.html), titled [title]; completes once it is
+  /// Shows [pageUrl] (`http://127.0.0.1:<port>/<token>/<session>/index.html`), titled [title]; completes once it is
   /// shown. Only URLs under the session's folder are loaded.
   Future<void> open(Uri pageUrl, {required String title});
 
@@ -30,7 +30,8 @@ abstract interface class SplatViewerHost {
   Stream<SplatHostClosed> get closed;
 }
 
-/// The folder of the session a page URL is in, which the hosts keep the viewer to: http://127.0.0.1:<port>/<token>/<s>/
+/// The folder of the session a page URL is in, which the hosts keep the viewer to:
+/// `http://127.0.0.1:<port>/<token>/<s>/`
 String splatViewerPrefixOf(Uri pageUrl) {
   final segments = pageUrl.pathSegments;
   return pageUrl

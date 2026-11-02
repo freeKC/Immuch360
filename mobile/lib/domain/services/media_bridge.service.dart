@@ -505,12 +505,8 @@ class LocalMediaBridge implements MediaBridge {
   /// A file of generated media on disk ([diskFile]), streamed from it: its size and date read at each request, a
   /// single range when one is asked (on the condition of its date with If-Range), 404 once the file is gone
   Future<void> _answerDisk(HttpRequest request, HttpResponse response, GeneratedFile file, File diskFile) async {
-    final FileStat stat;
-    try {
-      stat = await diskFile.stat();
-    } on FileSystemException {
-      return _fail(response, HttpStatus.notFound, 'Not found');
-    }
+    // Synchronous: a stat of a file of this device is quick, and the size and date must be those of this request
+    final stat = diskFile.statSync();
     if (stat.type != FileSystemEntityType.file) {
       return _fail(response, HttpStatus.notFound, 'Not found');
     }
