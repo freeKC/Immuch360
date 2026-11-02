@@ -142,8 +142,15 @@ class FakeAiComponentsService extends AiComponentsService {
     if (removeOutcome == AiRemoveOutcome.removed) {
       space = 0;
     }
+    // As the service does, the components of no AI stay (the AV2 decoder)
+    final spared = {
+      for (final component in catalogue)
+        if (component.features.isNotEmpty && !component.features.any((feature) => feature.isAi)) component.id,
+    };
     for (final id in [..._states.keys]) {
-      _removed(id);
+      if (!spared.contains(id)) {
+        _removed(id);
+      }
     }
     return removeOutcome;
   }

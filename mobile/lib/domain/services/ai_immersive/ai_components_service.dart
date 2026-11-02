@@ -750,29 +750,58 @@ class AiComponentsService extends ChangeNotifier {
 
   /// Removes the folders of the app in the folder of the components: every component (those of other versions too),
   /// the licences and the .part files, and installed.json (the keys of a newer version too). Nothing else in the
-  /// folder, and never what a link leads to. Refused while a conversion runs.
+  /// folder, and never what a link leads to. Refused while a conversion runs. The components of no AI stay, with their
+  /// licence and their entry: the AV2 decoder, which the tile of the AI components never shows and the settings of the
+  /// videos remove (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3).
   Future<AiRemoveOutcome> removeAll() async {
     await load();
     if (inUse() || _move != null) {
       return AiRemoveOutcome.busy;
     }
+    final spared = [
+      for (final component in catalogue)
+        if (_isSpared(component)) component,
+    ];
     for (final component in catalogue) {
-      await _stop(component);
+      if (!spared.contains(component)) {
+        await _stop(component);
+      }
     }
     final root = _root!;
-    final folders = [
-      for (final name in _ownFolders)
-        if (FileSystemEntity.typeSync(p.join(root.path, name), followLinks: false) != FileSystemEntityType.notFound)
-          name,
-    ];
-    // Written first: everything is forgotten and the folders are noted for the next start, then they go
+    // What stays of a spared component: its folder or file, and its licence; a folder of the app that holds one is
+    // emptied of everything else, entry by entry, so that nothing noted for the next start reaches it
+    final keep = {
+      for (final component in spared) ...[component.installPath, '$_licenses/${component.id}.txt'],
+    };
+    final targets = <String>[];
+    for (final name in _ownFolders) {
+      final path = p.join(root.path, name);
+      final type = FileSystemEntity.typeSync(path, followLinks: false);
+      if (type == FileSystemEntityType.notFound) {
+        continue;
+      }
+      if (type == FileSystemEntityType.directory && keep.any((kept) => kept.startsWith('$name/'))) {
+        for (final entity in Directory(path).listSync(followLinks: false)) {
+          final relative = '$name/${p.basename(entity.path)}';
+          if (!keep.contains(relative)) {
+            targets.add(relative);
+          }
+        }
+      } else {
+        targets.add(name);
+      }
+    }
+    // Written first: everything else is forgotten and noted for the next start, then it goes
     final before = _installed;
-    _installed = _Installed(pendingDeletes: [...folders]);
+    _installed = _Installed(
+      components: {for (final component in spared) component.id: ?before.components[component.id]},
+      pendingDeletes: [...targets],
+    );
     if (!await _trySave(undo: () => _installed = before)) {
       return AiRemoveOutcome.writeFailed;
     }
     final kept = <String>[];
-    for (final name in folders) {
+    for (final name in targets) {
       kept.addAll(await _empty(root, name));
     }
     final leftover = File(p.join(root.path, '$installedFileName.tmp'));
@@ -785,6 +814,9 @@ class AiComponentsService extends ChangeNotifier {
       _log.warning('the folders of the components stay noted in installed.json until the next start');
     }
     for (final component in catalogue) {
+      if (spared.contains(component)) {
+        continue;
+      }
       final path = component.installPath;
       _statuses[component.id] = AiComponentStatus(
         kept.any((left) => left == path || left.startsWith('$path/'))
@@ -795,6 +827,10 @@ class AiComponentsService extends ChangeNotifier {
     _notify();
     return kept.isEmpty ? AiRemoveOutcome.removed : AiRemoveOutcome.nextStart;
   }
+
+  /// Whether Remove all leaves [component]: one that serves no feature of the AI (the AV2 decoder)
+  static bool _isSpared(AiComponent component) =>
+      component.features.isNotEmpty && !component.features.any((feature) => feature.isAi);
 
   /// Deletes the folder [name] of [root] and what it holds, a link as a link (never followed); returns the paths the
   /// system keeps ("/" between folders)

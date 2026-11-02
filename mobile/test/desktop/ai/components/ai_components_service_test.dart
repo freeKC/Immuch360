@@ -79,6 +79,7 @@ AiComponent _engineComponent(
   Map<String, List<int>> files, {
   Set<String> programs = const {'sd-cli'},
   String id = 'test-engine',
+  Set<AiFeature> features = const {AiFeature.panorama},
 }) => AiComponent(
   id: id,
   version: 'test',
@@ -91,7 +92,7 @@ AiComponent _engineComponent(
   compression: AiCompression.none,
   licence: 'MIT',
   licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/master/LICENSE',
-  features: const {AiFeature.panorama},
+  features: features,
   archiveFiles: [
     for (final MapEntry(:key, :value) in files.entries)
       AiArchiveFile(
@@ -1103,6 +1104,95 @@ void main() {
       expect(await components.spaceUsed(), 0);
       expect(components.statusOf(_runtimeComponent).state, AiComponentState.notInstalled);
       expect(components.statusOf(_modelComponent).state, AiComponentState.notInstalled);
+    });
+
+    test('remove all leaves the AV2 decoder, which is no AI: its files, its licence and its entry', () async {
+      final engineZip = _zipOf(_engineFiles);
+      final engine = _engineComponent(engineZip, _engineFiles);
+      final av2Files = {
+        'immuch360-av2': utf8.encode('ELF program of the AV2 decoder ' * 20),
+        'licenses/dav2d-COPYING.txt': utf8.encode('BSD 2-Clause'),
+      };
+      final av2Zip = _zipOf(av2Files);
+      final av2 = _engineComponent(
+        av2Zip,
+        av2Files,
+        id: 'av2-decoder-linux-x64',
+        programs: {'immuch360-av2'},
+        features: {AiFeature.av2Video},
+      );
+      File(p.join(mirror.path, engine.assetName)).writeAsBytesSync(engineZip);
+      File(p.join(mirror.path, av2.assetName)).writeAsBytesSync(av2Zip);
+      final catalogue = [_runtimeComponent, _modelComponent, engine, av2];
+      final components = service(catalogue: catalogue);
+      for (final component in catalogue) {
+        await components.install(component);
+      }
+      File(p.join(root.path, 'tmp', 'test_model.onnx.part')).writeAsBytesSync([1, 2, 3]);
+
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+
+      final left = [
+        for (final file in root.listSync(recursive: true).whereType<File>())
+          p.split(p.relative(file.path, from: root.path)).join('/'),
+      ]..sort();
+      expect(left, [
+        'engines/av2-decoder-linux-x64/immuch360-av2',
+        'engines/av2-decoder-linux-x64/licenses/dav2d-COPYING.txt',
+        'installed.json',
+        'licenses/av2-decoder-linux-x64.txt',
+      ]);
+      expect((installedJson()['components'] as Map).keys, ['av2-decoder-linux-x64']);
+      expect(installedJson()['pendingDeletes'], isEmpty);
+      expect(components.statusOf(av2).state, AiComponentState.installed);
+      for (final component in [_runtimeComponent, _modelComponent, engine]) {
+        expect(components.statusOf(component).state, AiComponentState.notInstalled, reason: component.id);
+      }
+      // As the next start reads it
+      final again = service(catalogue: catalogue);
+      await again.load();
+      expect(again.statusOf(av2).state, AiComponentState.installed);
+      expect(again.statusOf(engine).state, AiComponentState.notInstalled);
+      // The video settings remove it by its group
+      expect((await again.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.av2)).outcome, AiRemoveOutcome.removed);
+      expect(root.listSync(recursive: true).whereType<File>(), isEmpty);
+    });
+
+    test('remove all with a locked file never notes the folder of the AV2 decoder for the next start', () async {
+      final av2Files = {'immuch360-av2': utf8.encode('ELF program of the AV2 decoder ' * 20)};
+      final av2Zip = _zipOf(av2Files);
+      final av2 = _engineComponent(
+        av2Zip,
+        av2Files,
+        id: 'av2-decoder-linux-x64',
+        programs: {'immuch360-av2'},
+        features: {AiFeature.av2Video},
+      );
+      File(p.join(mirror.path, av2.assetName)).writeAsBytesSync(av2Zip);
+      final engineZip = _zipOf(_engineFiles);
+      final engine = _engineComponent(engineZip, _engineFiles);
+      File(p.join(mirror.path, engine.assetName)).writeAsBytesSync(engineZip);
+      final catalogue = [_runtimeComponent, engine, av2];
+      final installer = service(catalogue: catalogue);
+      for (final component in catalogue) {
+        await installer.install(component);
+      }
+      final locked = File(p.join(root.path, 'engines', 'test-engine', 'sd-cli'));
+      final components = service(
+        catalogue: catalogue,
+        delete: (entity) async => p.equals(entity.path, locked.path)
+            ? throw FileSystemException('locked', entity.path, const OSError('Access is denied.', 5))
+            : entity.delete(recursive: true),
+      );
+
+      expect(await components.removeAll(), AiRemoveOutcome.nextStart);
+
+      expect(installedJson()['pendingDeletes'], ['engines/test-engine/sd-cli']);
+      AiComponentsService.resetStartPassForTests();
+      await AiComponentsService.freePendingAtStart(() async => root);
+      AiComponentsService.resetStartPassForTests();
+      expect(locked.existsSync(), isFalse);
+      expect(File(p.join(root.path, 'engines', 'av2-decoder-linux-x64', 'immuch360-av2')).existsSync(), isTrue);
     });
 
     test('remove all with a locked file says the space comes back at the next start', () async {
