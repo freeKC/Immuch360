@@ -1,10 +1,11 @@
 libmpv for macOS (arm64 and x86_64, macOS 12 and later), built for Immuch360 Desktop
-run: https://github.com/freeKC/Immuch360/actions/runs/39420482861
-repository commit: 50a7b85a72a45d34684ab3d25656c282724dffbb
+release: libmpv-macos-20261102-12
+run: https://github.com/freeKC/Immuch360/actions/runs/41452970040
+repository commit: 9d79e0b168b8a58c12a5778841dbc2dc2b6471cd
 recipe: https://github.com/media-kit/libmpv-darwin-build at aadae8ce295dd15a222839c361c4c984ce9befb2, with .github/desktop/libmpv-macos
 package: mk-out-archive-xcframeworks-macos-universal-video-default
 Xcode: Xcode 16.4 Build version 16F6 
-Nix: nix (Determinate Nix 3.23.3) 2.35.3
+Nix: nix (Determinate Nix 3.24.1) 2.35.3
 
 Archives of packages.lock.nix (name, version, URL, SHA-256 of the archive):
 dav1d 1.2.1 https://code.videolan.org/videolan/dav1d/-/archive/1.2.1/dav1d-1.2.1.tar.bz2 a4003623cdc0109dec3aac8435520aa3fb12c4d69454fa227f2658cdb6dab5fa
@@ -27,3 +28,5 @@ mbedtls 3.4.1 https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.g
 mpv 0b7ed670 https://github.com/mpv-player/mpv/archive/0b7ed670f7c353dd3dd4f8ae0fc788a181a15aa6.tar.gz d84b3c706592558bfba8e6305d00f86406c647c3b8b317236433e25caf4d9d91
 uchardet 0.0.8 https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
 vulkan-headers c4685086 https://github.com/KhronosGroup/Vulkan-Headers/archive/c46850864f4661461b0f6cb9922c058ffea4915e.tar.gz 539ff8eaa4abf22fddbd98225c68a0c5ddb940075a4048c8b7f5d04449070a4e
+
+y4m check (check_y4m.py): passed, 92 checks; yuv4mpegpipe demuxer and rawvideo decoder, 8 and 10 bit, from a file and over HTTP with exact seeks; x86_64, arm64
