@@ -1,0 +1,4 @@
+option('source_commit', type: 'string', value: 'unknown',
+  description: 'The commit of Immuch360 the program is built from, for --version')
+option('dav2d_commit', type: 'string', value: 'unknown',
+  description: 'The commit of dav2d of av2.lock.json, for --version')
