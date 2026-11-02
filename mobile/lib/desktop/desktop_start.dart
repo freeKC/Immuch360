@@ -3,6 +3,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec_licenses.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
@@ -15,6 +16,15 @@ import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+
+/// Whether [args] are those desktop_webview_window gives the engine of a title bar: `web_view_title_bar <id>`
+bool isWebViewTitleBarEngine(List<String> args) => args.isNotEmpty && args.first == 'web_view_title_bar';
+
+/// A second engine that runs nothing of the app: an empty view, no database, no window setup
+void runEmptyEngine() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const SizedBox.shrink());
+}
 
 /// [args] are the command line of the program: the files given to "Open with", or dropped on the program, opened once
 /// a session is (see DesktopOpenFilesHandler), like those of the later starts and of the drops on the window

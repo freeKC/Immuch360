@@ -14,11 +14,13 @@ import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_host.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/infrastructure/repositories/watch_progress.repository.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
 
 import '../video/fake_playback_engine.dart';
@@ -149,12 +151,20 @@ void main() {
         overrides: [
           mediaBridgeProvider.overrideWithValue(_HangingBridge()),
           networkConnectionsProvider.overrideWith((ref) => _HangingConnections(ref, ref.watch(mediaBridgeProvider))),
+          splatViewerHostProvider.overrideWithValue(_SplatHost()),
         ],
       );
       addTearDown(container.dispose);
       container.read(networkConnectionsProvider);
+      container.read(splatViewerHostProvider);
       final steps = container.read(desktopCloseStepsProvider)();
-      expect(steps.map((step) => step.name), ['the watch progress', 'the players', 'the media bridge', 'the logs']);
+      expect(steps.map((step) => step.name), [
+        'the watch progress',
+        'the players',
+        'the splat viewer',
+        'the media bridge',
+        'the logs',
+      ]);
       expect(steps.fold(Duration.zero, (sum, step) => sum + step.timeout), DesktopCloseBounds.total);
       expect(DesktopCloseBounds.player, lessThan(DesktopCloseBounds.players));
       expect(DesktopCloseBounds.total, lessThanOrEqualTo(const Duration(seconds: 2)));
@@ -187,6 +197,31 @@ void main() {
   });
 
   group('the steps of the app', () {
+    test('a splat viewer window that does not close is left after its bound, and the close goes on', () {
+      fakeAsync((async) {
+        final host = _SplatHost(hang: true);
+        final container = ProviderContainer(
+          overrides: [
+            desktopCloseLogsProvider.overrideWithValue(() async {}),
+            splatViewerHostProvider.overrideWithValue(host),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(splatViewerHostProvider);
+
+        Map<String, DesktopCloseStepEnd>? ends;
+        unawaited(runDesktopClose(container.read(desktopCloseStepsProvider)()).then((value) => ends = value));
+        async.elapse(DesktopCloseBounds.splatViewer - const Duration(milliseconds: 1));
+        expect(ends, isNull);
+        async.elapse(const Duration(milliseconds: 2));
+        async.flushMicrotasks();
+
+        expect(host.closeAsked, isTrue);
+        expect(ends?['the splat viewer'], DesktopCloseStepEnd.timedOut);
+        expect(ends?['the logs'], DesktopCloseStepEnd.done);
+      });
+    });
+
     test('nothing that was never made is made for a close', () async {
       var flushed = 0;
       final container = ProviderContainer(
@@ -277,4 +312,24 @@ void main() {
       });
     });
   });
+}
+
+/// A splat viewer window: [hang] makes its close never end
+class _SplatHost implements SplatViewerHost {
+  _SplatHost({this.hang = false});
+
+  final bool hang;
+  bool closeAsked = false;
+
+  @override
+  Stream<SplatHostClosed> get closed => const Stream.empty();
+
+  @override
+  Future<void> open(Uri pageUrl, {required String title}) async {}
+
+  @override
+  Future<void> close() {
+    closeAsked = true;
+    return hang ? Completer<void>().future : Future.value();
+  }
 }

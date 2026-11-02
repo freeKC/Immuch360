@@ -15,12 +15,15 @@ import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
+import 'package:immich_mobile/desktop/splat/desktop_splat_viewer_host.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/self_check.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/repositories/file_media.repository.dart';
@@ -60,6 +63,11 @@ List<Override> desktopOverrides() => [
   aiFreeSpaceProvider.overrideWithValue(systemFreeSpace),
   // The 3D conversions run with the engine on ONNX Runtime, the safe writer and the index of the folder library
   conversionToolsProvider.overrideWith(desktopConversionTools),
+  // The splat viewer in a window of its own over the app's, on the dedicated graphics chip of a Windows computer with
+  // two unless the setting says otherwise
+  splatViewerHostProvider.overrideWith(
+    (ref) => DesktopSplatViewerHost(highPerformanceGpu: () => ref.read(appConfigProvider).viewer.highPerformanceGpu),
+  ),
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,

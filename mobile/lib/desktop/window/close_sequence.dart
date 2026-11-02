@@ -5,13 +5,14 @@
 // own work first, and what it kept in memory was lost: the logs of the session, where the film was.
 //
 // So the app ends its own work first, one step after the other, each with a bound of its own: none of them can hold
-// the close, which lasts their sum at most (1.5 s) and a few milliseconds when nothing waits. Before the steps, the
+// the close, which lasts their sum at most (1.8 s) and a few milliseconds when nothing waits. Before the steps, the
 // line of the close is written at once, without waiting (beginDesktopClose): a step that blocks the app in native
 // code cannot be cut by any bound, and the logs written last would then be lost with the session's last lines.
 // - The films open in a page save where they are (VideoWatchRecorder.closeAll), and stop following their players,
 //   whose teardown says nothing of where the film was.
 // - The players are disposed, all at once: libmpv stops reading and calling Dart. One that does not answer is told to
 //   stop calling Dart and left as it is (PlayerPool.close).
+// - The window of the splat viewer closes, when one is open: its page stops reading the scene from the media bridge.
 // - The media bridge stops: its connections are cut, so that a read of libmpv on one of them returns at once.
 // - The logs of the session are written, the lines of this close included: a window close sends Flutter neither
 //   paused nor detached, and the log service wrote its buffer only then or 5 s after a line.
@@ -30,6 +31,7 @@ import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('DesktopClose');
@@ -54,11 +56,12 @@ abstract final class DesktopCloseBounds {
   /// Each player, all at once
   static const player = Duration(milliseconds: 400);
   static const players = Duration(milliseconds: 500);
+  static const splatViewer = Duration(milliseconds: 300);
   static const mediaBridge = Duration(milliseconds: 200);
   static const logs = Duration(milliseconds: 400);
 
   /// The longest a close waits for the app, all steps together
-  static const total = Duration(milliseconds: 1500);
+  static const total = Duration(milliseconds: 1800);
 }
 
 /// Runs [steps] one after the other, each within its timeout, and tells how each ended. A step that throws or does
@@ -138,6 +141,12 @@ final desktopCloseStepsProvider = Provider<List<DesktopCloseStep> Function()>((r
       DesktopCloseBounds.players,
       () => closeDesktopPlayerPool(timeout: DesktopCloseBounds.player),
     ),
+    if (ref.exists(splatViewerHostProvider))
+      DesktopCloseStep(
+        'the splat viewer',
+        DesktopCloseBounds.splatViewer,
+        () => ref.read(splatViewerHostProvider)?.close(),
+      ),
     if (ref.exists(mediaBridgeProvider))
       DesktopCloseStep('the media bridge', DesktopCloseBounds.mediaBridge, () => ref.read(mediaBridgeProvider).stop()),
     DesktopCloseStep('the logs', DesktopCloseBounds.logs, ref.read(desktopCloseLogWritesProvider)),

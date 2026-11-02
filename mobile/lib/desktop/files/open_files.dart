@@ -1,7 +1,8 @@
 // How a computer opens the files given to the program (see opened_files.dart for how each one is read): the command
 // line of the first start, the files a later start hands over and the files dropped on the window, a batch at a time,
-// once a session is open. One photo or video opens in the viewer, in 360° when it is a 360° file; several files, or a
-// folder, open as a page of their own, like a folder of the library, without joining it.
+// once a session is open. One photo or video opens in the viewer, in 360° when it is a 360° file; one splat file (.spz,
+// .ply) on its page; several files, or a folder, open as a page of their own, like a folder of the library, without
+// joining it.
 
 import 'dart:async';
 import 'dart:collection';
@@ -11,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/view_intent_api.g.dart';
@@ -22,6 +24,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -260,6 +263,14 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
 
   Future<void> _open(List<String> paths) async {
     final router = _ref.read(appRouterProvider);
+    // A splat file given alone opens on its page, which offers Explore the splat scene, when the splats are on
+    if (paths.length == 1 && isSplatFilePath(paths.single) && _ref.read(networkSplatsEnabledProvider)) {
+      await _whenAppShown(router);
+      final path = paths.single;
+      _log.info('Opening a splat file given to the program');
+      await router.replaceAll([const TabShellRoute(), SplatRoute(key: UniqueKey(), path: path, size: _sizeOf(path))]);
+      return;
+    }
     final opening = _read(paths).then((batch) {
       _remember(batch);
       return batch;
@@ -328,6 +339,17 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
       _ref.read(desktopOpenIn360Provider.notifier).request(asset);
     }
   }
+}
+
+/// Whether [path] names a file a Gaussian splat may be in (.spz, .ply; the head of the file decides on its page)
+bool isSplatFilePath(String path) {
+  final extension = p.extension(path).toLowerCase();
+  return extension.length > 1 && NetworkEntry.splatExtensions.contains(extension.substring(1));
+}
+
+int? _sizeOf(String path) {
+  final stat = File(path).statSync();
+  return stat.type == FileSystemEntityType.notFound ? null : stat.size;
 }
 
 /// The end of the next frame, or half a second when no frame comes (a hidden window may draw none)

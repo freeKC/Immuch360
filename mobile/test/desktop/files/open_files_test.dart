@@ -32,6 +32,7 @@ import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/services/auth.service.dart';
@@ -173,6 +174,14 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('the command line', () {
+    test('a splat may be in a .spz or a .ply, whatever the case of its extension', () {
+      expect(isSplatFilePath(r'C:\Users\me\cactus.spz'), isTrue);
+      expect(isSplatFilePath('/home/me/room.PLY'), isTrue);
+      expect(isSplatFilePath('/home/me/photo.jpg'), isFalse);
+      expect(isSplatFilePath('/home/me/spz'), isFalse);
+      expect(isSplatFilePath('/home/me/.ply'), isFalse);
+    });
+
     test('its files are its arguments that are no options, a file URI as its path', () {
       final uri = Uri.file(Platform.isWindows ? r'C:\Photos\pano 1.jpg' : '/photos/pano 1.jpg').toString();
 
@@ -327,6 +336,7 @@ void main() {
     late DesktopOpenFilesHandler handler;
     late Directory directory;
     late Duration together;
+    var splatsOn = true;
 
     // Until the handler has opened all it can: the batches come and open within a few turns of the event loop, except
     // that one path given alone waits for the file system to tell whether it is a folder; waited for, then a few turns
@@ -347,6 +357,7 @@ void main() {
     });
 
     setUp(() {
+      splatsOn = true;
       // The batches open as soon as nothing more comes, at the next turn of the event loop
       together = DesktopOpenRequests.together;
       DesktopOpenRequests.together = Duration.zero;
@@ -367,6 +378,7 @@ void main() {
           assetServiceProvider.overrideWithValue(_FakeAssetService()),
           localSessionProvider.overrideWith(FakeLocalSessionNotifier.new),
           authProvider.overrideWith(_TestAuthNotifier.new),
+          networkSplatsEnabledProvider.overrideWith((ref) => splatsOn),
         ],
       );
       auth = container.read(authProvider.notifier) as _TestAuthNotifier;
@@ -538,6 +550,36 @@ void main() {
       File(text).writeAsStringSync('text');
 
       DesktopOpenRequests.add([text]);
+      await settle();
+
+      verifyNever(() => router.replaceAll(any()));
+      expect(toasts.errors, hasLength(1));
+    });
+
+    test('one splat file opens on its page, which offers Explore the splat scene', () async {
+      await container.read(localSessionProvider.notifier).enter();
+      final splat = p.join(directory.path, 'cactus.SPZ');
+      File(splat).writeAsBytesSync(List.filled(1234, 0));
+
+      DesktopOpenRequests.add([splat]);
+      await settle();
+
+      final routes = verify(() => router.replaceAll(captureAny())).captured.single as List<PageRouteInfo<dynamic>>;
+      expect(routes.map((route) => route.routeName), [TabShellRoute.name, SplatRoute.name]);
+      final args = routes.last.args! as SplatRouteArgs;
+      expect(args.path, splat);
+      expect(args.size, 1234);
+      expect(args.sourceId, isNull);
+      expect(toasts.errors, isEmpty);
+    });
+
+    test('with Gaussian splats off, a .ply is read as any other file', () async {
+      splatsOn = false;
+      await container.read(localSessionProvider.notifier).enter();
+      final ply = p.join(directory.path, 'mesh.ply');
+      File(ply).writeAsStringSync('ply');
+
+      DesktopOpenRequests.add([ply]);
       await settle();
 
       verifyNever(() => router.replaceAll(any()));
