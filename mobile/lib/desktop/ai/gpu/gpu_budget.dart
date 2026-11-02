@@ -12,9 +12,14 @@
 // 1536 x 768, and keeps 512 MiB of the free memory in reserve; with less free, it cuts its graph into segments, which
 // with the LoRA and the guidance spoils the image. The answer of a check that passes carries the whole report, so that
 // the generator is given the card the check looked at (ggmlVulkanIndexOf).
+//
+// A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
+// Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes
+// (SplatV1.freeGraphicsMemory) and the card its own rule chooses ([GpuBudget.cardOf], lot SP6).
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 
 /// The memory of the graphics card a 360° panorama needs free when it starts (see the top of this file)
 const panoramaFreeGraphicsMemory = 6 * 1024 * 1024 * 1024;
@@ -52,8 +57,12 @@ class GpuBudgetUnavailable extends GpuBudgetCheck {
 
 /// See the top of this file
 class GpuBudget {
-  GpuBudget({required this.probe, Future<bool> Function()? integratedAllowed, this.need = panoramaFreeGraphicsMemory})
-    : _integratedAllowed = integratedAllowed ?? (() async => false);
+  GpuBudget({
+    required this.probe,
+    Future<bool> Function()? integratedAllowed,
+    this.need = panoramaFreeGraphicsMemory,
+    this.cardOf = panoramaCardOf,
+  }) : _integratedAllowed = integratedAllowed ?? (() async => false);
 
   /// Starts the probe of the graphics cards again (the gate keeps its answer in the app)
   final Future<GpuReport> Function() probe;
@@ -62,10 +71,13 @@ class GpuBudget {
   /// The memory a job needs free on its card
   final int need;
 
+  /// The rule of the gate that chooses the card: that of the panoramas unless told
+  final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
+
   /// Starts the probe again and tells whether a job may start on the card now
   Future<GpuBudgetCheck> check() async {
     final report = await probe();
-    final choice = panoramaCardOf(report, integratedAllowed: await _integratedAllowed());
+    final choice = cardOf(report, integratedAllowed: await _integratedAllowed());
     final card = choice.card;
     if (card == null || choice.refusal != null) {
       return GpuBudgetUnavailable(choice.refusal ?? AiGateReason.gpuNone);
@@ -74,3 +86,11 @@ class GpuBudget {
     return free >= need ? GpuBudgetReady(card, free, report) : GpuBudgetWait(card, free);
   }
 }
+
+/// The answer of [budget] as the runner of Brush asks it before it starts (brush_runner.dart): the card and its report,
+/// the memory free while other programs hold it, or the reason of the gate when no card can train
+Future<BrushCard> brushCardOf(GpuBudget budget) async => switch (await budget.check()) {
+  GpuBudgetReady(:final card, :final report) => BrushCardReady(card, report),
+  GpuBudgetWait(:final free) => BrushCardWait(free),
+  GpuBudgetUnavailable(:final reason) => BrushCardRefused(reason.name),
+};

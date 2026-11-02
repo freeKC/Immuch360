@@ -1,0 +1,53 @@
+  -h [ --help ]
+  --project_path arg
+  --default_random_seed arg (=0)
+  --log_target arg (=stderr_and_file)   {stderr, stdout, file, stderr_and_file}
+  --log_path arg
+  --log_level arg (=0)
+  --log_severity arg (=0)               0:INFO, 1:WARNING, 2:ERROR, 3:FATAL
+  --log_color arg (=1)
+  --database_path arg
+  --image_path arg
+  --camera_mode arg (=-1)
+  --image_list_path arg
+  --descriptor_normalization arg (=l1_root)
+                                        {'l1_root', 'l2'}
+  --ImageReader.mask_path arg
+  --ImageReader.camera_model arg (=SIMPLE_RADIAL)
+  --ImageReader.single_camera arg (=0)
+  --ImageReader.single_camera_per_folder arg (=0)
+  --ImageReader.single_camera_per_image arg (=0)
+  --ImageReader.existing_camera_id arg (=-1)
+  --ImageReader.camera_params arg
+  --ImageReader.default_focal_length_factor arg (=1.2)
+  --ImageReader.camera_mask_path arg
+  --FeatureExtraction.type arg (=SIFT)
+  --FeatureExtraction.num_threads arg (=-1)
+  --FeatureExtraction.use_gpu arg (=0)
+  --FeatureExtraction.gpu_index arg (=-1)
+  --FeatureExtraction.max_image_size arg (=-1)
+  --SiftExtraction.max_num_features arg (=8192)
+  --SiftExtraction.first_octave arg (=-1)
+  --SiftExtraction.num_octaves arg (=4)
+  --SiftExtraction.octave_resolution arg (=3)
+  --SiftExtraction.peak_threshold arg (=0.00667)
+  --SiftExtraction.edge_threshold arg (=10)
+  --SiftExtraction.estimate_affine_shape arg (=0)
+  --SiftExtraction.max_num_orientations arg (=2)
+  --SiftExtraction.upright arg (=0)
+  --SiftExtraction.domain_size_pooling arg (=0)
+  --SiftExtraction.dsp_min_scale arg (=0.167)
+  --SiftExtraction.dsp_max_scale arg (=3)
+  --SiftExtraction.dsp_num_scales arg (=10)
+  --AlikedExtraction.max_num_features arg (=2048)
+  --AlikedExtraction.min_score arg (=0.2)
+  --AlikedExtraction.n16rot_model_path arg
+  --AlikedExtraction.n32_model_path arg
+  --LomaExtraction.max_num_features arg (=2048)
+  --LomaExtraction.min_score arg (=0)
+  --LomaExtraction.use_bf16 arg (=0)
+  --LomaExtraction.use_fast_resize arg (=0)
+  --LomaExtraction.detector_model_path arg
+  --LomaExtraction.descriptor_model_path arg
+  --LomaExtraction.descriptor_model_path_bf16 arg
+  --LomaExtraction.descriptor_b128_model_path arg
