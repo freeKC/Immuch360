@@ -35,6 +35,10 @@ name: Immuch360 Desktop
 #                  stable-diffusion.cpp on Vulkan, the generator of the 360° panoramas, built from the commits of
 #                  .github/desktop/ai/sd_cpp.lock.json: only when asked (the sdcpp input) or when the lock changed,
 #                  as artifacts Immuch360-AI-sdcpp-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
+#   spark          Spark, the renderer of the splat viewer, built from its tag with flate2 on miniz_oxide
+#                  (.github/desktop/splat_viewer/spark_build.py): only when asked (the spark input) or when its lock,
+#                  patches or script changed, as the artifact Immuch360-splat-viewer-spark, compared with the files
+#                  committed under mobile/assets/splat_viewer (the same bytes, or the job fails)
 #
 # Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
 # from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
@@ -54,6 +58,10 @@ on:
     inputs:
       sdcpp:
         description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
+        type: boolean
+        default: false
+      spark:
+        description: Also build Spark for the splat viewer (the spark job), as when its lock changes
         type: boolean
         default: false
   # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
@@ -89,6 +97,7 @@ jobs:
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
+      spark_lock_changed: ${{ steps.sdcpp.outputs.spark_changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -124,6 +133,14 @@ jobs:
           fi
           echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          # The same for Spark, the renderer of the splat viewer: its lock, its patches and its build script
+          spark_changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/splat_viewer/spark.lock.json \
+            .github/desktop/splat_viewer/patches .github/desktop/splat_viewer/spark_build.py; then
+            spark_changed=true
+          fi
+          echo "Spark's lock, patches or script changed since ${base:-no base}: $spark_changed"
+          echo "spark_changed=$spark_changed" >> "$GITHUB_OUTPUT"
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -196,6 +213,10 @@ jobs:
 
       - name: The file types of the packages, and the document types of the macOS app
         run: python3 .github/desktop/desktop_installers.py check
+
+      # Spark and three.js of the splat viewer's page, as the spark job built them (licenses/splat-viewer/MANIFEST)
+      - name: The engine files of the splat viewer are those of its MANIFEST
+        run: python3 .github/desktop/splat_viewer/check_vendor.py
 
       # relief-v1 is written once, in Python: the Dart of the computers and the Kotlin of the Quest meet its fixture
       - name: The golden fixture of relief-v1 is what its script writes
@@ -1457,6 +1478,55 @@ jobs:
 
   # An upstream change of a pigeon contract, of main.dart or of the HTTP clients shows on the day of the merge: the
   # test and linux jobs of the same run analyze, test and build the sync; this job adds what to read by hand
+  # Spark 2.4.0 built from its tag on miniz_oxide (lot SV0 of the splat viewer): the toolchain of spark.lock.json,
+  # nothing but the repository and the public registries, no secret; the files are committed by hand from the artifact
+  spark:
+    name: Spark for the splat viewer
+    runs-on: ubuntu-24.04
+    needs: codegen
+    if: ${{ inputs.spark || needs.codegen.outputs.spark_lock_changed == 'true' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Node, Rust and wasm-pack of the lock
+        run: |
+          lock=.github/desktop/splat_viewer/spark.lock.json
+          node_version=$(python3 -c "import json; print(json.load(open('$lock'))['toolchain']['node'])")
+          rust_version=$(python3 -c "import json; print(json.load(open('$lock'))['toolchain']['rust'])")
+          pack_version=$(python3 -c "import json; print(json.load(open('$lock'))['toolchain']['wasm_pack'])")
+          mise install "node@$node_version"
+          echo "$(mise where "node@$node_version")/bin" >> "$GITHUB_PATH"
+          rustup toolchain install "$rust_version" --profile minimal --target wasm32-unknown-unknown
+          rustup default "$rust_version"
+          cargo install wasm-pack --version "$pack_version" --locked
+
+      - name: Build
+        run: |
+          node --version
+          python3 .github/desktop/splat_viewer/spark_build.py --work "$RUNNER_TEMP/spark-work" \
+            --out "$RUNNER_TEMP/spark-out"
+
+      - name: Upload Spark
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-splat-viewer-spark
+          path: ${{ runner.temp }}/spark-out
+          retention-days: 14
+          if-no-files-found: error
+
+      # The same bytes as the files committed under mobile/assets/splat_viewer, once some are
+      - name: The same bytes as the committed files
+        run: python3 .github/desktop/splat_viewer/check_vendor.py --built "$RUNNER_TEMP/spark-out"
+
   upstream-sync:
     name: Upstream sync checklist
     runs-on: ubuntu-24.04
