@@ -8,8 +8,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:path/path.dart' as p;
+
+/// Whether a test can make a folder whose files cannot be deleted: chmod, on Linux or macOS, as another user than root
+final _canLock = !Platform.isWindows && Process.runSync('id', ['-u']).stdout.toString().trim() != '0';
+
+/// What [folder] holds made impossible to delete (read and enter only), as a file Windows still holds; undone after the
+/// test
+void _lock(Directory folder) {
+  File(p.join(folder.path, 'held.jpg')).writeAsStringSync('held');
+  Process.runSync('chmod', ['500', folder.path]);
+  addTearDown(() => Process.runSync('chmod', ['700', folder.path]));
+}
 
 void main() {
   late Directory folder;
@@ -29,6 +41,53 @@ void main() {
     expect(path(work.export), p.join('splat-1', 'brush'));
     expect(p.relative(work.logOf('colmap-features').path, from: 'w'), p.join('splat-1', 'logs', 'colmap-features.log'));
   });
+
+  test(
+    'the work folders of the splat scenes a day old go, under each root; the young ones and the rest stay',
+    () async {
+      final temp = SplatWorkRoot(Directory(p.join(folder.path, 'temp', 'immuch360-ai')));
+      final shared = SplatWorkRoot(
+        Directory(p.join(folder.path, 'ProgramData', 'ai-work', 'S-1-5-21-1')),
+        shared: true,
+      );
+      final old = Directory(p.join(temp.folder.path, splatWorkFolderName('a' * 40)))..createSync(recursive: true);
+      final young = Directory(p.join(shared.folder.path, splatWorkFolderName('b' * 40)))..createSync(recursive: true);
+      final other = Directory(p.join(temp.folder.path, 'panorama-1'))..createSync(recursive: true);
+      final later = DateTime.now().add(const Duration(hours: 25));
+      // A job that failed during its training last used it an hour ago
+      touchAiWorkFolder(young, at: later.subtract(const Duration(hours: 1)));
+
+      expect(
+        await deleteOldSplatWork([temp, shared, SplatWorkRoot(Directory(p.join(folder.path, 'none')))], now: later),
+        1,
+      );
+      expect(old.existsSync(), isFalse);
+      expect(young.existsSync(), isTrue);
+      expect(other.existsSync(), isTrue, reason: 'not a folder of a splat scene: the rule of an hour of its owner');
+      expect(splatWorkFolderName('0123456789abcdef0123'), 'splat-0123456789abcdef');
+    },
+  );
+
+  test('a work folder that cannot be deleted now stays for the next time, the others of its root go', () async {
+    final temp = SplatWorkRoot(Directory(p.join(folder.path, 'temp')));
+    final later = DateTime.now().add(const Duration(hours: 25));
+    final held = <Directory>[];
+    final free = <Directory>[];
+    for (var k = 0; k < 20; k++) {
+      final work = Directory(p.join(temp.folder.path, splatWorkFolderName('$k'.padLeft(2, '0').padRight(40, 'c'))))
+        ..createSync(recursive: true);
+      if (k.isEven) {
+        _lock(Directory(p.join(work.path, 'dataset'))..createSync());
+        held.add(work);
+      } else {
+        free.add(work);
+      }
+    }
+
+    expect(await deleteOldSplatWork([temp], now: later), free.length);
+    expect(free.where((work) => work.existsSync()), isEmpty);
+    expect(held.every((work) => work.existsSync()), isTrue);
+  }, skip: _canLock ? false : 'a folder that cannot be deleted needs chmod, as another user than root');
 
   test('an ASCII path is its own; another one its short name on Windows, if ASCII; none elsewhere', () {
     expect(isAsciiPath(r'C:\Users\freek\AppData\Local\Temp'), isTrue);

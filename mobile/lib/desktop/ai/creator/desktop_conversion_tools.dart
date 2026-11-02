@@ -22,6 +22,13 @@
 // components are not removed (AiComponentsService.inUse). Each engine kept between two jobs (keptAiEnginesProvider)
 // is let go before the components are removed or moved (ai_settings_section.dart).
 //
+// The splat scenes (plan 2026-11-01, lot SP6) are registered too: DesktopSplatEngine, made for each job from what the
+// gate of the feature splatScene finds then (COLMAP and Brush of the archives of ai-components-4, the dedicated card of
+// splatCardOf), their programs through the same session, Brush asking the card again with the need of the splat scenes
+// before it trains; the photos and the frames prepared by the app (splat_images.dart); the autotune cache of Brush kept
+// from one job to the next in the support folder of the app, one folder per card and driver. The writer puts the .ply
+// of a scene beside its .spz, under the same name (ConversionCompanionOutput).
+//
 // The writer adapts SafeWriter to the queue. The partial file the dialog made to check a folder is handed over to the
 // job of that photo, which writes into it; one no job took (a photo skipped, cancelled while waiting) is deleted at
 // once. Its refusals become the codes of the queue: a disk full at the rename still pauses it. Before the final rename
@@ -51,6 +58,10 @@ import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
+import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_images.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -60,6 +71,7 @@ import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('DesktopConversionTools');
 
@@ -67,7 +79,7 @@ final _log = Logger('DesktopConversionTools');
 const libraryNotReadyMessage = 'the album of the generated 3D photos is not out of the backup yet';
 
 /// The writer of the 3D photos as the queue asks for it, on SafeWriter
-class SafeWriterOutput implements ConversionOutput {
+class SafeWriterOutput implements ConversionOutput, ConversionCompanionOutput {
   SafeWriterOutput({SafeWriter? writer, this._mayWriteInto}) : _writer = writer ?? SafeWriter.instance;
 
   final SafeWriter _writer;
@@ -159,6 +171,40 @@ class SafeWriterOutput implements ConversionOutput {
   Future<void> discard(String partPath) async {
     final part = _parts.remove(partPath);
     await _writer.discard(part ?? PartFile(folder: p.dirname(partPath), finalName: '', path: partPath));
+  }
+
+  @override
+  Future<String> beginCompanion(ConversionJob job, String fileName) async {
+    try {
+      final part = await _writer.createPart(job.target!.folder, fileName);
+      _parts[part.path] = part;
+      return part.path;
+    } on CreatorWriteException catch (error) {
+      throw ConversionException(error.failure.errorCode, error.message);
+    }
+  }
+
+  @override
+  Future<String> finishCompanion(
+    ConversionJob job,
+    String partPath, {
+    required String versionPath,
+    required ImmersiveSource original,
+  }) async {
+    final part = _parts.remove(partPath) ?? PartFile(folder: p.dirname(partPath), finalName: '', path: partPath);
+    // The name of the version as it was saved ("salon_splat (1).spz"), with the extension of the companion
+    final name = '${p.basenameWithoutExtension(versionPath)}${p.extension(part.finalName)}';
+    try {
+      final saved = await _writer.commit(
+        PartFile(folder: p.dirname(versionPath), finalName: name, path: part.path),
+        original: OriginalIdentity.of(original),
+        kind: job.kind.output,
+      );
+      return saved.path;
+    } on CreatorWriteException catch (error) {
+      _parts[part.path] = part;
+      throw ConversionException(error.failure.errorCode, error.message);
+    }
   }
 
   PartFile _partAt(ConversionJob job, String partPath) =>
@@ -541,18 +587,20 @@ PanoramaSetup panoramaSetupOf(AiGateResult found) {
   );
 }
 
-/// The code a panorama the gate refused for [reason] fails with, its message being the name of the reason (that of
-/// ONNX Runtime when it does not load): a card the gate finds wanting is gpuUnavailable, a shortage of memory
-/// outOfMemory, a component missing or damaged componentsMissing; a feature this computer or this version does not
-/// offer is told by its reason after "The AI model failed", as the other engines tell it. Every reason is placed, so
-/// that a new one has to be.
+/// The code a panorama (or a splat scene) the gate refused for [reason] fails with, its message being the name of the
+/// reason (that of ONNX Runtime when it does not load): a card the gate finds wanting is gpuUnavailable, a shortage of
+/// memory outOfMemory, a component missing or damaged componentsMissing; a feature this computer or this version does
+/// not offer is told by its reason after "The AI model failed", as the other engines tell it. Every reason is placed,
+/// so that a new one has to be.
 ImmersiveErrorCode panoramaRefusalCode(AiGateReason? reason) => switch (reason) {
   AiGateReason.gpuNone ||
   AiGateReason.gpuNoAnswer ||
   AiGateReason.gpuIntegrated ||
   AiGateReason.gpuTooSmall ||
+  AiGateReason.splatGpuIntegrated ||
+  AiGateReason.splatGpuTooSmall ||
   AiGateReason.notYetOnMac => ImmersiveErrorCode.gpuUnavailable,
-  AiGateReason.memory || AiGateReason.panoramaMemory => ImmersiveErrorCode.outOfMemory,
+  AiGateReason.memory || AiGateReason.panoramaMemory || AiGateReason.splatMemory => ImmersiveErrorCode.outOfMemory,
   AiGateReason.componentsMissing || AiGateReason.componentsDamaged || null => ImmersiveErrorCode.componentsMissing,
   AiGateReason.runtimeFailed ||
   AiGateReason.system ||
@@ -637,6 +685,143 @@ class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
   @override
   Future<void> dispose() => release();
 }
+
+/// The programs of a splat scene, read from what the gate found: COLMAP and Brush of the archives of this system, and
+/// on Linux the launcher of the archive of COLMAP
+class SplatSetup {
+  const SplatSetup({required this.colmap, required this.brush, this.linuxLauncher});
+
+  final String colmap;
+  final String brush;
+  final String? linuxLauncher;
+}
+
+/// The programs of a splat scene as the gate [found] them available. Throws [PanoramaSetupRefused] when a component is
+/// missing.
+SplatSetup splatSetupOf(AiGateResult found) {
+  final platform = found.platform!;
+  final windows = platform == AiPlatform.windowsX64;
+  String program(AiComponent component, String Function(String folder, {bool? windows}) named) {
+    final file =
+        found.fileOf(component.id) ??
+        (throw PanoramaSetupRefused(
+          ImmersiveErrorCode.componentsMissing,
+          'An AI component is missing: ${component.id}',
+        ));
+    // The main file of the archive, or the program of its folder; the separators of the system throughout (the paths
+    // of the catalogue are written with /)
+    final main = p.normalize(file.path);
+    final expected = named(p.dirname(main), windows: windows);
+    return p.basename(main).toLowerCase() == p.basename(expected).toLowerCase() ? main : expected;
+  }
+
+  final components = aiComponentsFor(platform, feature: AiFeature.splatScene);
+  final colmap = components.firstWhere((component) => component.name == 'COLMAP');
+  final brush = components.firstWhere((component) => component.name == 'Brush');
+  final colmapPath = program(colmap, colmapIn);
+  return SplatSetup(
+    colmap: colmapPath,
+    brush: program(brush, brushIn),
+    linuxLauncher: platform == AiPlatform.linuxX64 ? p.join(p.dirname(colmapPath), linuxLauncherName) : null,
+  );
+}
+
+/// The folder the autotune cache of Brush is kept in, one folder per card and driver under it: in the support folder
+/// of the app, kept from one job to the next
+Future<Directory> brushCacheRoot() async =>
+    Directory(p.join((await getApplicationSupportDirectory()).path, 'ai-cache', 'brush'));
+
+/// The engine of the splat scenes (lot SP6), made for each job from what the gate finds then: the components of the
+/// feature splatScene and the dedicated card the probe reads again (the queue asked it just before, with the need of
+/// the splat scenes). COLMAP and Brush run through the session of the programs of the app; Brush asks the card again
+/// before it trains, some minutes later. A scene asked while a component is missing fails with componentsMissing,
+/// never downloads anything; one without a card that can train it fails with gpuUnavailable and the reason of the
+/// gate.
+class DesktopSplatEngine implements ImmersiveEngine, KeptAiEngine {
+  DesktopSplatEngine({
+    required this.gate,
+    AiProcessSession Function()? session,
+    SplatImagesMaker? images,
+    Future<Directory> Function()? cacheRoot,
+    this.create,
+  }) : _openSession = session ?? AiProcessSession.new,
+       _images = images ?? appSplatImages(),
+       _cacheRoot = cacheRoot ?? brushCacheRoot;
+
+  final HardwareGate gate;
+  final AiProcessSession Function() _openSession;
+  final SplatImagesMaker _images;
+  final Future<Directory> Function() _cacheRoot;
+
+  /// Makes the engine of a job; null: SplatEngine on the programs of [SplatSetup]
+  final ImmersiveEngine Function(SplatSetup setup, AiGateResult found)? create;
+  AiProcessSession? _session;
+  var _running = false;
+
+  @override
+  bool get isRunning => _running;
+
+  @override
+  Future<ImmersiveResult> run(
+    SplatJob job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) async {
+    _running = true;
+    try {
+      final found = await gate.evaluate(feature: AiFeature.splatScene);
+      if (!found.isAvailable) {
+        return ImmersiveResult.failed(
+          panoramaRefusalCode(found.reason),
+          message: found.message ?? found.reason?.name ?? 'The splat scene cannot be made here',
+        );
+      }
+      final setup = splatSetupOf(found);
+      final make = create;
+      final ImmersiveEngine engine;
+      if (make != null) {
+        engine = make(setup, found);
+      } else {
+        final runner = (_session ??= _openSession()).runner(linuxLauncher: setup.linuxLauncher);
+        final budget = GpuBudget(
+          probe: () => gate.gpuReport(fresh: true),
+          need: SplatV1.freeGraphicsMemory,
+          cardOf: splatCardOf,
+        );
+        engine = SplatEngine(
+          images: _images,
+          colmap: ColmapRunner(runner: runner, colmap: setup.colmap),
+          brush: BrushRunner(
+            runner: runner,
+            brush: setup.brush,
+            cardCheck: () => brushCardOf(budget),
+            cacheRoot: await _cacheRoot(),
+          ),
+        );
+      }
+      return await engine.run(job, cancel: cancel, onProgress: onProgress);
+    } on PanoramaSetupRefused catch (refused) {
+      return ImmersiveResult.failed(refused.code, message: refused.message);
+    } catch (error, stack) {
+      _log.warning('The splat scene ${job.id} could not run', error, stack);
+      return ImmersiveResult.failed(ImmersiveErrorCode.modelFailed, message: '$error');
+    } finally {
+      _running = false;
+    }
+  }
+
+  /// Nothing is kept between two jobs
+  @override
+  Future<void> release() async {}
+
+  @override
+  Future<void> dispose() => release();
+}
+
+/// The engine of the splat scenes as the queue is given it: no version is looked for (a scene is a file of its own,
+/// beside the photos), so no key of settings
+ConversionEngine splatConversionEngine(ImmersiveEngine engine) =>
+    ConversionEngine(engine: engine, settingsKey: (source, quarterTurns) => null);
 
 /// The key of the settings a 360° panorama of a photo seen with [quarterTurns] would carry (PanoramaXmp.settingsKey):
 /// the transformer and the LoRA of the catalogue, pano-v1 and its steps; the seed is not part of it
@@ -737,20 +922,32 @@ final desktopPanoramaEngineProvider = Provider<DesktopPanoramaEngine>((ref) {
   return engine;
 });
 
+/// The engine of the splat scenes of the app (lot SP6)
+final desktopSplatEngineProvider = Provider<DesktopSplatEngine>((ref) {
+  final engine = DesktopSplatEngine(
+    gate: ref.watch(desktopAiGateProvider),
+    session: () => ref.read(aiProcessSessionProvider),
+  );
+  ref.onDispose(() => unawaited(engine.dispose()));
+  return engine;
+});
+
 /// The engines kept between two jobs, let go before the components are removed or moved: the 3D photos, the 3D scenes
-/// (S1), the 3D versions of the 360° panoramas (P1), and the 360° panoramas (P3), which keep nothing but tell while
-/// they run
+/// (S1), the 3D versions of the 360° panoramas (P1), the 360° panoramas (P3) and the splat scenes (SP6), the last two
+/// keeping nothing but telling while they run
 final keptAiEnginesProvider = Provider<List<KeptAiEngine>>(
   (ref) => [
     ref.watch(desktopAiEngineProvider),
     ref.watch(desktopSceneEngineProvider),
     ref.watch(desktopStereoPanoramaEngineProvider),
     ref.watch(desktopPanoramaEngineProvider),
+    ref.watch(desktopSplatEngineProvider),
   ],
 );
 
 /// The engines of the kinds of phases 2 and 3, by kind, each with the key of the settings its files carry: the 3D
-/// scene (S1), the 360° panorama (P3), the 3D version of a 360° panorama (P1). The tests give the fakes.
+/// scene (S1), the 360° panorama (P3), the 3D version of a 360° panorama (P1), and the splat scene (SP6), which has
+/// none. The tests give the fakes.
 final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>>(
   (ref) => {
     ConversionKind.sceneFromPhoto: sceneConversionEngine(ref.watch(desktopSceneEngineProvider)),
@@ -758,6 +955,7 @@ final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>
     ConversionKind.stereoPanoramaFromPanorama: stereoPanoramaConversionEngine(
       ref.watch(desktopStereoPanoramaEngineProvider),
     ),
+    ConversionKind.splatScene: splatConversionEngine(ref.watch(desktopSplatEngineProvider)),
   },
 );
 

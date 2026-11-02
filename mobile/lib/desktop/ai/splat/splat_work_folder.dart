@@ -14,8 +14,9 @@
 // lets every account of the computer read what it holds, so the folder of an account first gets a whole new list of
 // rules, the account and SYSTEM alone ([windowsMakePrivate]: SetNamedSecurityInfoW, in one go, the rules of its own
 // replaced too, what it holds following), and is never used when it cannot (the photos of the user are in it).
-// Removing the folders left there by an app that died is the work of the queue (lot SP6), with the rule of the
-// temporary folder.
+// A job's folder is named by the key of its photos and settings (splat-<16 hexadecimal digits>, lot SP6): kept a day
+// after a failure once COLMAP found the poses, so that Retry starts again from them, then deleted under each root by
+// [deleteOldSplatWork] (the folders of other jobs keep the rule of an hour of their owner, managed_process.dart).
 
 import 'dart:ffi';
 import 'dart:io';
@@ -24,6 +25,8 @@ import 'package:ffi/ffi.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
 /// The paths of the work folder of one splat scene (see the top of this file)
@@ -54,6 +57,41 @@ class SplatWorkFolder {
 
   /// The log of a program, "colmap-features", "brush"
   File logOf(String name) => File(p.join(logs.path, '$name.log'));
+}
+
+/// The name of the work folder of a splat scene of key [key] (hexadecimal digits): its first 16 after "splat-"
+String splatWorkFolderName(String key) => '$splatWorkFolderPrefix${key.substring(0, 16)}';
+
+/// Deletes under each of [roots] the work folders of splat scenes not used for SplatV1.workKept (aiWorkFolderLastUsed);
+/// returns how many went. A folder that cannot be deleted now (a file a program still holds) stays for the next time,
+/// the others go. The deletes run off the isolate that asks (the window's in the app).
+Future<int> deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now}) async {
+  final limit = (now ?? DateTime.now()).subtract(SplatV1.workKept);
+  var deleted = 0;
+  for (final root in roots) {
+    final List<FileSystemEntity> entries;
+    try {
+      if (!root.folder.existsSync()) {
+        continue;
+      }
+      entries = root.folder.listSync();
+    } on FileSystemException {
+      continue;
+    }
+    for (final entry in entries) {
+      try {
+        if (entry is Directory &&
+            p.basename(entry.path).startsWith(splatWorkFolderPrefix) &&
+            aiWorkFolderLastUsed(entry).isBefore(limit)) {
+          await entry.delete(recursive: true);
+          deleted++;
+        }
+      } on FileSystemException {
+        // The next job tries again
+      }
+    }
+  }
+  return deleted;
 }
 
 /// Whether every character of [path] is ASCII

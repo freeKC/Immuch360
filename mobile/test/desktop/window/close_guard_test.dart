@@ -227,4 +227,23 @@ void main() {
       {DesktopCloseReason.conversions},
     );
   });
+
+  test('a splat scene being made, at any of its steps, not while it waits nor once it ended', () {
+    Set<DesktopCloseReason> reasonsWith(_Conversions Function() queue) {
+      final container = ProviderContainer(overrides: [conversionQueueProvider.overrideWith(queue)]);
+      addTearDown(container.dispose);
+      container.read(conversionQueueProvider);
+      return container.read(desktopCloseReasonsProvider)();
+    }
+
+    const splat = ConversionKind.splatScene;
+    for (final state in [ConversionState.photos, ConversionState.matching, ConversionState.training]) {
+      expect(reasonsWith(() => _Conversions([state], kind: splat, step: 12400, steps: 20000)), {
+        DesktopCloseReason.conversions,
+        DesktopCloseReason.splat,
+      }, reason: state.name);
+    }
+    expect(reasonsWith(() => _Conversions([ConversionState.waiting], kind: splat)), {DesktopCloseReason.conversions});
+    expect(reasonsWith(() => _Conversions([ConversionState.done], kind: splat)), isEmpty);
+  });
 }

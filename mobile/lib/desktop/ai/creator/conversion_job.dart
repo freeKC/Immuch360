@@ -391,6 +391,15 @@ class ConversionTarget {
   String get path => p.join(folder, fileName);
 }
 
+/// The photos, or the video, of a splat scene and its settings (lot SP6): [members] in the order the dialog gives them
+/// (the engine plans them in time, 200 photos at most), the video alone for a video
+class SplatSelection {
+  const SplatSelection({required this.members, this.settings = const SplatSettings()});
+
+  final List<SplatMember> members;
+  final SplatSettings settings;
+}
+
 /// One photo to convert, as the dialog hands it to the queue
 class ConversionRequest {
   const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip})
@@ -441,9 +450,13 @@ class ConversionJob {
     this.waitingFor,
     this.waitingFree,
     this.fromVideo = false,
+    this.splat,
   });
 
   final String id;
+
+  /// A splat scene: its photos or its video, and its settings; null for the other kinds
+  final SplatSelection? splat;
 
   /// A splat scene made from one video rather than from photos: its kind is said "Video to splat scene", its frames
   /// are matched one after the other rather than in blocks, and its times are kept apart (ConversionKind.timingsKey)
@@ -570,6 +583,7 @@ class ConversionJob {
     waitingFor: waitingFor == null ? this.waitingFor : waitingFor(),
     waitingFree: waitingFree == null ? this.waitingFree : waitingFree(),
     fromVideo: fromVideo,
+    splat: splat,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then
@@ -586,6 +600,7 @@ class ConversionJob {
     existing: existing,
     whenExists: whenExists,
     fromVideo: fromVideo,
+    splat: splat,
   );
 
   @override

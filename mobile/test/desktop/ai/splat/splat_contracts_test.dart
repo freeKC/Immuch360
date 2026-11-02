@@ -119,7 +119,11 @@ void main() {
       );
       expect((SplatV1.objectSize, SplatV1.placeCameraHeight, SplatV1.placeMinSize), (1.0, 1.5, 3.0));
       expect((SplatV1.spzVersion, SplatV1.spzFractionalBits), (2, 12));
-      expect((SplatV1.minGraphicsMemory, SplatV1.minPhysicalMemory, SplatV1.jobMemory), (4 * _gib, 8 * _gib, 4 * _gib));
+      // A card sold with 4 GB and a computer sold with 8 GB, as they are read (3.9 and 7.8 GiB or so)
+      expect(
+        (SplatV1.minGraphicsMemory, SplatV1.minPhysicalMemory, SplatV1.jobMemory),
+        (3584 * 1024 * 1024, 7 * _gib, 4 * _gib),
+      );
       expect(SplatV1.freeGraphicsMemory, 2560 * 1024 * 1024);
       expect(SplatV1.workKept, const Duration(hours: 24));
     });

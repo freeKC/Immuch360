@@ -214,7 +214,10 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
         AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
         AiGateReason.gpuNone => t.ai_immersive_gpu_none,
         AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
+        AiGateReason.splatGpuIntegrated => t.ai_immersive_splat_gpu_integrated,
         AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
+        // Brush refused the kernels of the card, or took another one
+        _ when kind == ConversionKind.splatScene => t.ai_immersive_splat_gpu_unsupported,
         _ => t.ai_immersive_failed_gpu_unavailable,
       },
       ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,

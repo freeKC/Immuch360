@@ -357,6 +357,14 @@ abstract interface class SplatMember {
   Future<void> release();
 }
 
+/// A member that says the SHA-1 of its original without reading it, in base64 as ImmersiveSource.sha1: an asset of the
+/// server, whose checksum Immich gives. A Retry from the poses compares it with the sum kept instead of downloading the
+/// original again; a member without one is read for its sum.
+abstract interface class SplatMemberSum {
+  /// Null when it is not known
+  String? get knownSha1;
+}
+
 /// The settings of one splat scene, those of SplatV1 unless the measure M1 or the user says otherwise
 class SplatSettings {
   const SplatSettings({
@@ -432,7 +440,9 @@ final class SceneJob extends ImmersiveJobSpec {
 /// were taken, at most SplatV1.maxPhotos photos, or the video alone ([isVideo]). [lead] is the source the scene names
 /// as its original, the first photo in time or the video, which the queue prepares as the source of every job; the
 /// engine reads the others through [members]. With [plyPartPath], the engine also writes the same gaussians as a .ply
-/// there ("Also save a .ply for other 3D apps"), renamed by the caller with the .spz.
+/// there ("Also save a .ply for other 3D apps"), renamed by the caller with the .spz. [timings] are the times of the
+/// steps of a job of 150 images on this computer (AiTimings, lot SP6), from which the engine tells the time left of the
+/// whole job; the defaults of the plan when the queue gives none.
 final class SplatJob extends ImmersiveJobSpec {
   const SplatJob({
     required super.id,
@@ -445,6 +455,7 @@ final class SplatJob extends ImmersiveJobSpec {
     this.isVideo = false,
     this.settings = const SplatSettings(),
     this.plyPartPath,
+    this.timings = const {},
     super.exif = const ImmersiveExif(),
   });
 
@@ -455,6 +466,9 @@ final class SplatJob extends ImmersiveJobSpec {
   final bool isVideo;
   final SplatSettings settings;
   final String? plyPartPath;
+
+  /// The times of the steps of a job of 150 images, as this computer measured them
+  final Map<ImmersiveStage, Duration> timings;
 
   @override
   ImmersiveKind get kind => ImmersiveKind.gaussianSplat;
@@ -666,7 +680,8 @@ class ImmersiveResult {
     this.stageTimes = const {},
   }) : error = null,
        message = null,
-       _made = null;
+       _made = null,
+       afterSaved = null;
 
   /// A file of another kind written, with what it tells of itself
   const ImmersiveResult.made({
@@ -674,6 +689,7 @@ class ImmersiveResult {
     required int this.bytesWritten,
     this.qualityFlags = const [],
     this.stageTimes = const {},
+    this.afterSaved,
   }) : _made = details,
        error = null,
        message = null,
@@ -687,7 +703,8 @@ class ImmersiveResult {
       bytesWritten = null,
       reduced = false,
       qualityFlags = const [],
-      _made = null;
+      _made = null,
+      afterSaved = null;
 
   final ImmersiveResultDetails? _made;
 
@@ -719,6 +736,11 @@ class ImmersiveResult {
 
   /// How long each step took
   final Map<ImmersiveStage, Duration> stageTimes;
+
+  /// What the engine keeps for this job until its file is saved, let go once the queue saved it (renamed, or dropped
+  /// for a name taken): the work folder of a splat scene, which a Retry starts again from when the file could not be
+  /// written. Null when the engine keeps nothing; never throws.
+  final Future<void> Function()? afterSaved;
 
   bool get isDone => error == null;
 }

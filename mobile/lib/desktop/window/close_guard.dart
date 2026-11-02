@@ -8,7 +8,10 @@
 //
 // A 360° panorama being generated (design-final 2026-10-27, section 4.5.7) is told with its step, "A 360° panorama is
 // being generated (step 12 of 28). Closing stops it.", which follows the generation while the dialog shows; the line
-// of the conversions stays beside it when other jobs run or wait on the queue, since quitting stops them too.
+// of the conversions stays beside it when other jobs run or wait on the queue, since quitting stops them too. A splat
+// scene being made (plan 2026-11-01, lot SP6) is told the same way at any of its steps, in the words of the panel: "A
+// splat scene is being made (Training the splat, step 12,400 of 20,000, about 3 min left). Closing stops it." Quitting
+// kills COLMAP or Brush with the app (their job object); the poses already found are kept a day for Retry.
 
 import 'dart:async';
 
@@ -17,6 +20,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
@@ -38,6 +43,9 @@ enum DesktopCloseReason {
 
   /// A 360° panorama being generated, once its generation tells its steps
   generation,
+
+  /// A splat scene being made, at any of its steps
+  splat,
 }
 
 /// Whether the backup is sending a file: a failed one stays in the list until the next run, and stops nothing
@@ -60,6 +68,8 @@ final desktopCloseReasonsProvider = Provider<Set<DesktopCloseReason> Function()>
       DesktopCloseReason.conversions,
     if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.generating != null))
       DesktopCloseReason.generation,
+    if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.splatting != null))
+      DesktopCloseReason.splat,
   };
 });
 
@@ -67,6 +77,17 @@ final desktopCloseReasonsProvider = Provider<Set<DesktopCloseReason> Function()>
 final desktopNavigatorKeyProvider = Provider<GlobalKey<NavigatorState>>(
   (ref) => ref.watch(appRouterProvider).navigatorKey,
 );
+
+/// The step of the splat scene [job] in the words of the close dialog: those of the panel, and in its training its step
+/// and the time left ("Training the splat, step 12,400 of 20,000, about 3 min left")
+String splatCloseStage(Translations t, ConversionJob job) {
+  final stage = conversionStageText(t, job) ?? conversionKindText(t, job.kind, fromVideo: job.fromVideo);
+  final (step, steps, left) = (job.step, job.steps, job.remaining);
+  if (job.state == ConversionState.training && step != null && steps != null && left != null) {
+    return '$stage, ${t.ai_immersive_step_progress(step: step, steps: steps, time: aiDurationText(t, left))}';
+  }
+  return stage;
+}
 
 /// Asks whether to quit while [reasons] run: true to quit. Cancel has the focus, so that Enter never quits by surprise.
 Future<bool> confirmDesktopClose(BuildContext context, Set<DesktopCloseReason> reasons) async {
@@ -89,13 +110,18 @@ class DesktopCloseDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
     // The reason comes from the queue, which exists then
-    final (generating, pending) = reasons.contains(DesktopCloseReason.generation)
+    final watchesQueue = reasons.contains(DesktopCloseReason.generation) || reasons.contains(DesktopCloseReason.splat);
+    final (generating, pending) = watchesQueue
         ? ref.watch(conversionQueueProvider.select((state) => (state.generating, state.pending)))
         : (null, 0);
     final generation = switch (generating) {
       ConversionJob(:final step?, :final steps?) => (step: step, steps: steps),
       _ => null,
     };
+    final splatting = reasons.contains(DesktopCloseReason.splat)
+        ? ref.watch(conversionQueueProvider.select((state) => state.splatting))
+        : null;
+    final told = (generation == null ? 0 : 1) + (splatting == null ? 0 : 1);
     return TvFocusRing(
       child: AlertDialog(
         title: Text(t.desktop_close_title),
@@ -111,8 +137,14 @@ class DesktopCloseDialog extends ConsumerWidget {
                 t.ai_immersive_close_generating(step: generation.step, steps: generation.steps),
                 key: const Key('desktop_close_generating'),
               ),
-            // The 3D photos, scenes and versions beside the generation or waiting after it stop too
-            if (reasons.contains(DesktopCloseReason.conversions) && (generation == null || pending > 1))
+            if (splatting != null)
+              Text(
+                t.ai_immersive_close_splat(stage: splatCloseStage(t, splatting)),
+                key: const Key('desktop_close_splat'),
+              ),
+            // The 3D photos, scenes and versions beside the generation or the splat scene, or waiting after them, stop
+            // too
+            if (reasons.contains(DesktopCloseReason.conversions) && (told == 0 || pending > told))
               Text(t.ai_immersive_close_running),
           ],
         ),

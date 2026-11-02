@@ -403,6 +403,15 @@ String aiGateReasonText(Translations t, AiGateResult gate) => switch (gate.reaso
     memory: formatBytes(gate.graphicsMemory ?? 0),
     needed: formatBytes(gate.graphicsMemoryNeeded ?? 0),
   ),
+  AiGateReason.splatMemory => t.ai_immersive_gpu_memory(
+    needed: formatBytes(gate.memoryNeeded ?? 0),
+    memory: formatBytes(gate.physicalMemory ?? 0),
+  ),
+  AiGateReason.splatGpuIntegrated => t.ai_immersive_splat_gpu_integrated,
+  AiGateReason.splatGpuTooSmall => t.ai_immersive_splat_gpu_too_small(
+    memory: formatBytes(gate.graphicsMemory ?? 0),
+    needed: formatBytes(gate.graphicsMemoryNeeded ?? 0),
+  ),
 };
 
 /// The words of a reason to skip a photo

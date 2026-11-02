@@ -1039,8 +1039,9 @@ const brushLinuxComponent = AiComponent(
 );
 
 /// The memory of graphics card the training of a splat scene asks for (SplatV1.minGraphicsMemory: 1.1 to 1.6 GB used
-/// on the RTX 4060 Laptop for the copy of 150 000 gaussians, 3.0 GB for a whole splat at 1 557 pixels)
-const _splatGraphicsMemory = 4 * 1024 * 1024 * 1024;
+/// on the RTX 4060 Laptop for the copy of 150 000 gaussians, 3.0 GB for a whole splat at 1 557 pixels): a card sold
+/// with 4 GB, as its memory is read
+const _splatGraphicsMemory = 3584 * 1024 * 1024;
 
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
