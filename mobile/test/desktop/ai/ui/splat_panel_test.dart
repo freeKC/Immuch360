@@ -1,9 +1,10 @@
 // A splat scene in the panel of the conversions (plan 2026-11-01, section 2.1, points 5 and 6, lot SP7), from the
 // states of the queue: "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos" or "of frames", the .ply kept for
-// other 3D apps, the photos COLMAP could not place, the blurred frames of a video, Open folder and "How to open it in
-// the headset" with the line of a folder of the network or of this computer; no View and no Delete for a file the
-// computer neither shows nor marks as ours; the training with its step and the time left; a refusal of integrated
-// graphics in the words of the splat scenes; and the close of the window that names the step of a scene being made.
+// other 3D apps, the photos COLMAP could not place, the photos left out as blurred, the blurred frames of a video,
+// Open folder and "How to open it in the headset" with the line of a folder of the network or of this computer; no
+// View and no Delete for a file the computer neither shows nor marks as ours; the training with its step and the time
+// left; a refusal of integrated graphics in the words of the splat scenes; and the close of the window that names the
+// step of a scene being made.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -159,6 +160,7 @@ void main() {
     );
     expect(inRow('conversion-1', find.text('/photos/salon/salon_splat.spz')), findsOneWidget);
     expect(inRow('conversion-1', find.byKey(const Key('ai_job_splat_partial'))), findsNothing);
+    expect(inRow('conversion-1', find.byKey(const Key('ai_job_splat_blurred_photos'))), findsNothing);
     expect(inRow('conversion-1', find.byKey(const Key('ai_job_splat_ply'))), findsNothing);
     // No viewer of splat scenes on the computer, and a .spz carries no XMP to tell it is ours
     expect(inRow('conversion-1', find.byKey(const Key('ai_job_view'))), findsNothing);
@@ -245,6 +247,33 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('photos left out as blurred are said: the user chose 150, the scene was made of 140', (tester) async {
+    SplatResultDetails blurred(int count) => SplatResultDetails(
+      gaussians: 150000,
+      images: 150 - count,
+      placed: 150 - count,
+      subject: SplatSubject.place,
+      scale: 0.42,
+      blurred: count,
+    );
+    await pumpPanel(tester, [
+      _splat('conversion-6', details: blurred(10)),
+      _splat('conversion-7', details: blurred(1)),
+      _splat('conversion-8', details: blurred(0)),
+    ]);
+
+    expect(
+      inRow('conversion-6', find.text('Done: 150,000 gaussians, 3.4 MiB, from 140 of 140 photos')),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-6', find.text('10 photos left out: blurred')), findsOneWidget);
+    expect(inRow('conversion-7', find.text('1 photo left out: blurred')), findsOneWidget);
+    expect(inRow('conversion-8', find.byKey(const Key('ai_job_splat_done'))), findsOneWidget);
+    expect(inRow('conversion-8', find.byKey(const Key('ai_job_splat_blurred_photos'))), findsNothing);
+    // Not the sentence of the frames of a video, which says a share of the frames
+    expect(inRow('conversion-6', find.byKey(const Key('ai_job_splat_blurred'))), findsNothing);
   });
 
   testWidgets('a few blurred frames are not said, nor the photos left out above nine in ten placed', (tester) async {

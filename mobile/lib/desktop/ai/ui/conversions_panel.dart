@@ -806,8 +806,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
   }
 
   /// "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos" (of frames for a video), the images COLMAP could not
-  /// place when they are more than one in ten, the blurred frames of a video when they are many, and the .ply kept for
-  /// other 3D apps, named as the .spz written
+  /// place when they are more than one in ten, the photos left out as blurred (the dialog cannot know them, they are
+  /// found while the photos are prepared, and the done line counts only the photos kept), the blurred frames of a video
+  /// when they are many, and the .ply kept for other 3D apps, named as the .spz written
   List<Widget> _splatDone(Translations t, SplatResultDetails details, String? written, TextStyle secondary) {
     final bytes = written == null ? null : ref.watch(splatFileSizeProvider(written)).valueOrNull;
     final size = bytes == null ? '…' : formatBytes(bytes);
@@ -835,6 +836,12 @@ class _JobRowState extends ConsumerState<_JobRow> {
               ? t.ai_immersive_splat_partial_video(left: details.leftOut, total: details.images)
               : t.ai_immersive_splat_partial(left: details.leftOut, total: details.images),
           key: const Key('ai_job_splat_partial'),
+          style: secondary,
+        ),
+      if (!details.fromVideo && details.blurred > 0)
+        Text(
+          t.ai_immersive_splat_left_out(count: details.blurred, reason: t.ai_immersive_splat_left_out_blurred),
+          key: const Key('ai_job_splat_blurred_photos'),
           style: secondary,
         ),
       if (details.fromVideo && details.blurred > 0 && details.blurred >= framesSeen * splatBlurredShareSaid)
