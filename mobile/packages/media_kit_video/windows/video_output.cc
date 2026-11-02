@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <exception>
 
 // Limit the frame size to 1080p in software rendering.
@@ -336,6 +337,14 @@ void VideoOutput::CheckAndResize() {
     projection->OutputSize(&width, &height);
     required_width = width;
     required_height = height;
+  } else if (!width_.has_value() && !height_.has_value() &&
+             surface_manager_ != nullptr) {
+    // Immuch360: until the size Dart gives arrives, the video's own size is
+    // capped as Dart caps it, so that the first texture of an 8K video is
+    // not made at 7680 x 4320 (two textures of 133 MB) and made again at
+    // 2560 x 1440 a frame later (IMMUCH360-NOTE.md, patch 11).
+    CapToHeight(configuration_.max_output_height, &required_width,
+                &required_height);
   }
   if (required_width < 1 || required_height < 1) {
     // Invalid.
@@ -545,6 +554,20 @@ int64_t VideoOutput::GetVideoWidth() {
   }
 
   return width;
+}
+
+void VideoOutput::CapToHeight(int64_t max_height,
+                              int64_t* width,
+                              int64_t* height) {
+  if (max_height <= 0 || *height <= max_height || *width < 1) {
+    return;
+  }
+  // The arithmetic of the Dart side (native_video_controller/real.dart):
+  // (width * cap / height).round() & ~1, in doubles, halves away from zero
+  const auto scaled = static_cast<double>(*width * max_height) /
+                      static_cast<double>(*height);
+  *width = static_cast<int64_t>(std::llround(scaled)) & ~int64_t{1};
+  *height = max_height;
 }
 
 int64_t VideoOutput::GetVideoHeight() {

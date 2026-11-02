@@ -198,6 +198,9 @@ class NativeVideoController extends PlatformVideoController {
           'height': configuration.height.toString(),
           'enableHardwareAcceleration':
               configuration.enableHardwareAcceleration,
+          // Immuch360: the plugin caps the first texture as [videoParamsSubscription] caps the size it gives
+          // (IMMUCH360-NOTE.md, patch 11)
+          'maxOutputHeight': VideoController.maxOutputHeight.toString(),
         },
       },
     );

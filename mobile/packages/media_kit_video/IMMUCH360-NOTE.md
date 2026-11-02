@@ -210,6 +210,20 @@ Patches:
    of the desktop workflow on its virtual screen, paints a GTK window as Flutter's view does and checks all of it;
    checked on this PC too, under Xvfb (llvmpipe) and under WSLg on X11 and Wayland (D3D12 on an Intel GPU), where the
    former code failed with 0x3002 on X11.
+11. Windows, the first texture of a video at the capped size (`windows/video_output.{h,cc}`,
+   `windows/media_kit_video_plugin.cc`, `lib/src/video_controller/native_video_controller/real.dart`). The cap of
+   patch 3 is applied by Dart once mpv reports the video's parameters; until that size reaches the plugin,
+   `CheckAndResize` sized the texture to `video-out-params`. A video of 7680 x 4320 then got two textures of 133 MB
+   for its first frame, made again at 2560 x 1440 a frame later with a new texture id: in 3 of 6 opens of an 8K HEVC
+   file from a Samsung S24+ on the owner's PC (2026-11-02), and 4 of 23 opens of 5.7K and 8K files on 2026-10-09.
+   `VideoOutputManager.Create` now also gives `maxOutputHeight` (`VideoController.maxOutputHeight`, "null" when not
+   set), kept in `VideoOutputConfiguration::max_output_height`, and `CheckAndResize` caps the video's own size with it
+   while no size was given (no projection, H/W rendering), with the arithmetic of the Dart side
+   (`(width * cap / height).round() & ~1`), so that the size Dart gives next is the same and makes no new texture.
+   A size given by the configuration or by `setSize` is not capped, as before.
 
-Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
-mismatch on a hybrid GPU machine.
+Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses. It is not needed on a
+laptop with two GPUs: Flutter's ANGLE, the plugin's device and display and mpv's decoder all take the adapter DXGI
+lists first, which Windows' graphics preference for the app and the runner's NvOptimusEnablement and
+AmdPowerXpressRequestHighPerformance exports (`mobile/windows/runner/main.cpp`, 2026-11-02) choose for the whole
+process, so the three never differ (measured with both cards of the owner's laptop).

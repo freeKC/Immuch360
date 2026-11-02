@@ -250,6 +250,10 @@ void MediaKitVideoPlugin::HandleMethodCall(
     }
     configuration_value.enable_hardware_acceleration =
         configuration_enable_hardware_acceleration;
+    // Immuch360: the render height cap of patch 3, also for the first
+    // texture (patch 11); absent or "null", no cap
+    configuration_value.max_output_height = std::max<int64_t>(
+        0, ToInt64(Find(configuration, "maxOutputHeight"), 0));
 
     video_output_manager_->Create(
         handle_value, configuration_value,
