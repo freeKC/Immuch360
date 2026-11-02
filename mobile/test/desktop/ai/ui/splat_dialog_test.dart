@@ -401,6 +401,30 @@ void main() {
     await tester.tap(finder);
   }
 
+  Finder start() => find.byKey(const Key('ai_splat_start'));
+
+  bool startEnabled(WidgetTester tester) => tester.widget<FilledButton>(start()).onPressed != null;
+
+  /// Whether the dialog read its selection and checked its folder: Make the scene enabled, or what keeps it greyed on
+  /// the screen. The check of a folder writes a real file, which a loaded machine may take a while to do with nothing
+  /// changing on the screen meanwhile (see settle_still.dart).
+  bool dialogSettled(WidgetTester tester) {
+    if (find.byKey(const Key('ai_splat_dialog')).evaluate().isEmpty) {
+      return true;
+    }
+    if (find.byType(CircularProgressIndicator).evaluate().isNotEmpty) {
+      return false;
+    }
+    const greyed = [
+      'ai_splat_refusal',
+      'ai_splat_install',
+      'ai_splat_gate_refused',
+      'ai_splat_work_space',
+      'ai_conversion_network_yes',
+    ];
+    return startEnabled(tester) || greyed.any((key) => find.byKey(Key(key)).evaluate().isNotEmpty);
+  }
+
   /// A page with a button that opens the dialog for [assets], in a window the size of a computer screen
   Future<void> openDialog(WidgetTester tester, List<BaseAsset> assets) async {
     tester.view.physicalSize = const Size(1600, 1400);
@@ -419,12 +443,8 @@ void main() {
       overrides: overrides(selected: assets),
     );
     await tester.tap(find.byKey(const Key('open')));
-    await settle(tester);
+    await settle(tester, until: () => dialogSettled(tester));
   }
-
-  Finder start() => find.byKey(const Key('ai_splat_start'));
-
-  bool startEnabled(WidgetTester tester) => tester.widget<FilledButton>(start()).onPressed != null;
 
   group('the entry', () {
     Future<void> pumpEntry(WidgetTester tester, {bool menuItem = false, List<BaseAsset>? selected}) async {
@@ -779,6 +799,7 @@ void main() {
 
     await tester.enterText(find.byKey(const Key('ai_splat_name')), 'Room 2.5');
     await tester.pump();
+    expect(startEnabled(tester), isTrue);
     await tapIn(tester, start());
     await settle(tester);
     expect(launches.single.name, 'Room 2.5');
@@ -859,7 +880,7 @@ void main() {
   testWidgets('a network folder answered No: the folder of my choice, the headset cannot see it', (tester) async {
     await openDialog(tester, salon(60, folder: p.join(nas, 'salon'), network: true));
     await tapIn(tester, find.byKey(const Key('ai_conversion_network_no')));
-    await settle(tester);
+    await settle(tester, until: () => startEnabled(tester));
     expect(files.callsUnder(nas), isEmpty);
     expect(find.textContaining(chosen), findsOneWidget);
     expect(find.textContaining('Your headset cannot see this folder'), findsOneWidget);
@@ -877,9 +898,9 @@ void main() {
     await openDialog(tester, salon(60));
 
     await tapIn(tester, find.byKey(const Key('ai_splat_chosen_folder')));
-    await settle(tester);
+    await settle(tester, until: () => find.byKey(const Key('ai_conversion_change_folder')).evaluate().isNotEmpty);
     await tapIn(tester, find.byKey(const Key('ai_conversion_change_folder')));
-    await settle(tester);
+    await settle(tester, until: () => startEnabled(tester) && find.textContaining(picked).evaluate().isNotEmpty);
     expect(find.textContaining(picked), findsOneWidget);
     expect(find.textContaining('In the headset: open this folder in Network shares'), findsOneWidget);
 
