@@ -864,7 +864,7 @@
   "av2_error_format": "Šis AV2 videoklips ir {format}: šī AV2 dekodētāja versija to vēl neatskaņo",
   "av2_error_mac_libmpv": "AV2 videoklipiem šajā Mac vajag jaunāku Immuch360 Desktop",
   "av2_error_not_here": "AV2 videoklipi pagaidām atskaņojas tikai Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 videoklipi ir izslēgti: Iestatījumi, Videoklipi, AV2 videoklipi",
+  "av2_error_off": "AV2 videoklipi ir izslēgti: Iestatījumi, Failu skatītājs, AV2 videoklipi (eksperimentāls)",
   "av2_install_body": "Šis videoklips ir AV2, formāts, ko vēl neviena ierīce nedekodē aparatūrā. Immuch360 var to dekodēt ar šī datora procesoru: lejupielādējiet AV2 dekodētāju vienu reizi ({size}, atvērtais kods: VideoLAN dav2d, BSD-2-Clause).",
   "av2_install_button": "Lejupielādēt un atskaņot",
   "av2_install_failed": "AV2 dekodētājs netika lejupielādēts: {reason}",

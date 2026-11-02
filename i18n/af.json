@@ -450,7 +450,7 @@
   "av2_error_format": "Hierdie AV2-video is {format}: hierdie weergawe van die AV2-dekodeerder speel dit nog nie",
   "av2_error_mac_libmpv": "AV2-video's het 'n nuwer Immuch360 Desktop op hierdie Mac nodig",
   "av2_error_not_here": "AV2-video's speel tans net in Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2-video's is afgeskakel: Instellings, Video’s, AV2-video's",
+  "av2_error_off": "AV2-video's is afgeskakel: Instellings, Asset Viewer, AV2-video's (eksperimenteel)",
   "av2_install_body": "Hierdie video is AV2, 'n formaat wat nog geen toestel in hardeware dekodeer nie. Immuch360 kan dit met die verwerker van hierdie rekenaar dekodeer: laai die AV2-dekodeerder een keer af ({size}, oopbron: dav2d deur VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Laai af en speel",
   "av2_install_failed": "Die AV2-dekodeerder is nie afgelaai nie: {reason}",

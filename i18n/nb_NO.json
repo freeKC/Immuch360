@@ -912,7 +912,7 @@
   "av2_error_format": "Denne AV2-videoen er {format}: denne versjonen av AV2-dekoderen spiller den ikke ennå",
   "av2_error_mac_libmpv": "AV2-videoer trenger en nyere Immuch360 Desktop på denne Mac-en",
   "av2_error_not_here": "AV2-videoer spilles foreløpig bare i Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2-videoer er slått av: Innstillinger, Videoer, AV2-videoer",
+  "av2_error_off": "AV2-videoer er slått av: Innstillinger, Objektviser, AV2-videoer (eksperimentell)",
   "av2_install_body": "Denne videoen er AV2, et format som ingen enhet dekoder i maskinvare ennå. Immuch360 kan dekode den med prosessoren i denne datamaskinen: last ned AV2-dekoderen én gang ({size}, åpen kildekode: dav2d fra VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Last ned og spill",
   "av2_install_failed": "AV2-dekoderen ble ikke lastet ned: {reason}",

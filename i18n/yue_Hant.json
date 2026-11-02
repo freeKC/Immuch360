@@ -912,7 +912,7 @@
   "av2_error_format": "呢條 AV2 片係 {format}：呢個版本嘅 AV2 解碼器暫時播唔到",
   "av2_error_mac_libmpv": "要喺呢部 Mac 播 AV2 片，需要較新嘅 Immuch360 Desktop",
   "av2_error_not_here": "AV2 片暫時只可以喺 Immuch360 Desktop 播（Windows、Linux、macOS）",
-  "av2_error_off": "AV2 片已經熄咗：設定、影片、AV2 影片",
+  "av2_error_off": "AV2 片已經熄咗：設定、文件查閱器、AV2 影片（實驗性）",
   "av2_install_body": "呢條片係 AV2，一種暫時冇任何裝置用硬件解碼嘅格式。Immuch360 可以用呢部電腦嘅處理器解碼：下載一次 AV2 解碼器就得（{size}，開源：VideoLAN 嘅 dav2d，BSD-2-Clause）。",
   "av2_install_button": "下載並播放",
   "av2_install_failed": "未能下載 AV2 解碼器：{reason}",

@@ -912,7 +912,7 @@
   "av2_error_format": "Video AV2 này là {format}: phiên bản này của bộ giải mã AV2 chưa phát được",
   "av2_error_mac_libmpv": "Video AV2 cần Immuch360 Desktop mới hơn trên Mac này",
   "av2_error_not_here": "Hiện video AV2 chỉ phát được trong Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Video AV2 đang tắt: Cài đặt, Video, Video AV2",
+  "av2_error_off": "Video AV2 đang tắt: Cài đặt, Duyệt tài nguyên, Video AV2 (thử nghiệm)",
   "av2_install_body": "Video này là AV2, một định dạng chưa thiết bị nào giải mã bằng phần cứng. Immuch360 có thể giải mã bằng bộ xử lý của máy tính này: tải bộ giải mã AV2 một lần ({size}, mã nguồn mở: dav2d của VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Tải xuống và phát",
   "av2_install_failed": "Chưa tải được bộ giải mã AV2: {reason}",

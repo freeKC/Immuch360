@@ -912,7 +912,7 @@
   "av2_error_format": "Ten film AV2 to {format}: ta wersja dekodera AV2 jeszcze go nie odtwarza",
   "av2_error_mac_libmpv": "Filmy AV2 wymagają nowszego Immuch360 Desktop na tym Macu",
   "av2_error_not_here": "Filmy AV2 na razie odtwarza tylko Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Filmy AV2 są wyłączone: Ustawienia, Filmy, Filmy AV2",
+  "av2_error_off": "Filmy AV2 są wyłączone: Ustawienia, Przeglądarka zasobów, Filmy AV2 (eksperymentalne)",
   "av2_install_body": "Ten film to AV2, format, którego żadne urządzenie nie dekoduje jeszcze sprzętowo. Immuch360 może go zdekodować procesorem tego komputera: pobierz dekoder AV2 jeden raz ({size}, open source: dav2d od VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Pobierz i odtwórz",
   "av2_install_failed": "Nie pobrano dekodera AV2: {reason}",

@@ -904,7 +904,7 @@
   "av2_error_format": "Kjo video AV2 është {format}: ky version i dekoduesit AV2 nuk e luan ende",
   "av2_error_mac_libmpv": "Videot AV2 kanë nevojë për një Immuch360 Desktop më të ri në këtë Mac",
   "av2_error_not_here": "Videot AV2 luhen vetëm në Immuch360 Desktop për momentin (Windows, Linux, macOS)",
-  "av2_error_off": "Videot AV2 janë çaktivizuar: Cilësimet, Videot, Videot AV2",
+  "av2_error_off": "Videot AV2 janë çaktivizuar: Cilësimet, Shikuesi i asetit, Video AV2 (eksperimentale)",
   "av2_install_body": "Kjo video është AV2, një format që ende asnjë pajisje nuk e dekodon me harduer. Immuch360 mund ta dekodojë me procesorin e këtij kompjuteri: shkarkojeni dekoduesin AV2 një herë ({size}, burim i hapur: dav2d nga VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Shkarko dhe luaj",
   "av2_install_failed": "Dekoduesi AV2 nuk u shkarkua: {reason}",

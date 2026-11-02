@@ -912,7 +912,7 @@
   "av2_error_format": "Ez az AV2-videó {format}: az AV2-dekóder ezen verziója még nem játssza le",
   "av2_error_mac_libmpv": "Az AV2-videókhoz újabb Immuch360 Desktop kell ezen a Macen",
   "av2_error_not_here": "Az AV2-videók egyelőre csak az Immuch360 Desktopban játszhatók le (Windows, Linux, macOS)",
-  "av2_error_off": "Az AV2-videók ki vannak kapcsolva: Beállítások, Videók, AV2-videók",
+  "av2_error_off": "Az AV2-videók ki vannak kapcsolva: Beállítások, Elemnézegető, AV2-videók (kísérleti)",
   "av2_install_body": "Ez a videó AV2, egy olyan formátum, amelyet még egyetlen eszköz sem dekódol hardveresen. Az Immuch360 ennek a számítógépnek a processzorával dekódolni tudja: töltse le egyszer az AV2-dekódert ({size}, nyílt forráskódú: a VideoLAN dav2d-je, BSD-2-Clause).",
   "av2_install_button": "Letöltés és lejátszás",
   "av2_install_failed": "Az AV2-dekóder nem töltődött le: {reason}",

@@ -321,7 +321,7 @@
   "av2_error_format": "Ang AV2 video na ito ay {format}: hindi pa ito napapatugtog ng bersyong ito ng AV2 decoder",
   "av2_error_mac_libmpv": "Kailangan ng mga AV2 video ng mas bagong Immuch360 Desktop sa Mac na ito",
   "av2_error_not_here": "Sa ngayon, sa Immuch360 Desktop lang napapatugtog ang mga AV2 video (Windows, Linux, macOS)",
-  "av2_error_off": "Naka-off ang mga AV2 video: Mga Setting, Mga Video, Mga AV2 video",
+  "av2_error_off": "Naka-off ang mga AV2 video: Mga Setting, Asset Viewer, Mga AV2 video (eksperimental)",
   "av2_install_body": "AV2 ang video na ito, isang format na wala pang device na nagde-decode gamit ang hardware. Kaya itong i-decode ng Immuch360 gamit ang processor ng computer na ito: i-download nang isang beses ang AV2 decoder ({size}, open source: dav2d ng VideoLAN, BSD-2-Clause).",
   "av2_install_button": "I-download at patugtugin",
   "av2_install_failed": "Hindi na-download ang AV2 decoder: {reason}",

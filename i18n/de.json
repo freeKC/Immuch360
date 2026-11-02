@@ -912,7 +912,7 @@
   "av2_error_format": "Dieses AV2-Video ist {format}: diese Version des AV2-Decoders spielt es noch nicht ab",
   "av2_error_mac_libmpv": "AV2-Videos brauchen ein neueres Immuch360 Desktop auf diesem Mac",
   "av2_error_not_here": "AV2-Videos laufen vorerst nur in Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2-Videos sind ausgeschaltet: Einstellungen, Videos, AV2-Videos",
+  "av2_error_off": "AV2-Videos sind ausgeschaltet: Einstellungen, Fotoanzeige, AV2-Videos (experimentell)",
   "av2_install_body": "Dieses Video ist AV2, ein Format, das noch kein Gerät in Hardware decodiert. Immuch360 kann es mit dem Prozessor dieses Computers decodieren: Laden Sie den AV2-Decoder einmal herunter ({size}, Open Source: dav2d von VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Herunterladen und abspielen",
   "av2_install_failed": "Der AV2-Decoder wurde nicht heruntergeladen: {reason}",

@@ -910,7 +910,7 @@
   "av2_error_format": "Acest videoclip AV2 este {format}: această versiune a decodorului AV2 încă nu îl redă",
   "av2_error_mac_libmpv": "Videoclipurile AV2 au nevoie de un Immuch360 Desktop mai nou pe acest Mac",
   "av2_error_not_here": "Deocamdată videoclipurile AV2 se redau doar în Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Videoclipurile AV2 sunt dezactivate: Setări, Videoclipuri, Videoclipuri AV2",
+  "av2_error_off": "Videoclipurile AV2 sunt dezactivate: Setări, Vizualizator resurse, Videoclipuri AV2 (experimental)",
   "av2_install_body": "Acest videoclip este AV2, un format pe care încă niciun dispozitiv nu îl decodează hardware. Immuch360 îl poate decoda cu procesorul acestui computer: descărcați o singură dată decodorul AV2 ({size}, sursă deschisă: dav2d de la VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Descarcă și redă",
   "av2_install_failed": "Decodorul AV2 nu a fost descărcat: {reason}",

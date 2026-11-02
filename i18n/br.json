@@ -284,7 +284,7 @@
   "av2_error_format": "Ar video AV2-mañ a zo {format}: ar stumm-mañ eus an diskoder AV2 n’he lenn ket c’hoazh",
   "av2_error_mac_libmpv": "Ezhomm o deus ar videoioù AV2 eus un Immuch360 Desktop nevesoc'h war ar Mac-mañ",
   "av2_error_not_here": "Ar videoioù AV2 a vez lennet en Immuch360 Desktop hepken evit poent (Windows, Linux, macOS)",
-  "av2_error_off": "Diweredekaet eo ar videoioù AV2: Arventennoù, Videoioù, Videoioù AV2",
+  "av2_error_off": "Diweredekaet eo ar videoioù AV2: Arventennoù, Asset Viewer, Videoioù AV2 (taol-arnod)",
   "av2_install_body": "AV2 eo ar video-mañ, ur furmad ha n’eo ket diskodet gant ardivinkaj gant trobarzhell ebet c’hoazh. Immuch360 a c’hall e ziskodañ gant kewerier an urzhiataer-mañ: pellgargit an diskoder AV2 ur wech hepken ({size}, mammenn digor: dav2d gant VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Pellgargañ ha lenn",
   "av2_install_failed": "N'eo ket bet pellgarget an diskoder AV2: {reason}",

@@ -382,7 +382,7 @@
   "av2_error_format": "វីដេអូ AV2 នេះជា {format}៖ កំណែនេះនៃកម្មវិធីឌិកូដ AV2 មិនទាន់ចាក់វាបានទេ",
   "av2_error_mac_libmpv": "វីដេអូ AV2 ត្រូវការ Immuch360 Desktop ថ្មីជាងនេះលើ Mac នេះ",
   "av2_error_not_here": "វីដេអូ AV2 ចាក់បានតែក្នុង Immuch360 Desktop ប៉ុណ្ណោះសម្រាប់ពេលនេះ (Windows, Linux, macOS)",
-  "av2_error_off": "វីដេអូ AV2 ត្រូវបានបិទ៖ ការកំណត់, វីដេអូ, វីដេអូ AV2",
+  "av2_error_off": "វីដេអូ AV2 ត្រូវបានបិទ៖ ការកំណត់, Asset Viewer, វីដេអូ AV2 (សាកល្បង)",
   "av2_install_body": "វីដេអូនេះជា AV2 ជាទម្រង់ដែលមិនទាន់មានឧបករណ៍ណាឌិកូដដោយផ្នែករឹងនៅឡើយ។ Immuch360 អាចឌិកូដវាដោយប្រូសេស្ស័ររបស់កុំព្យូទ័រនេះ៖ ទាញយកកម្មវិធីឌិកូដ AV2 តែម្តង ({size}, កូដបើកចំហ៖ dav2d ដោយ VideoLAN, BSD-2-Clause)។",
   "av2_install_button": "ទាញយក ហើយចាក់",
   "av2_install_failed": "មិនបានទាញយកកម្មវិធីឌិកូដ AV2 ទេ៖ {reason}",

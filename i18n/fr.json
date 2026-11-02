@@ -912,7 +912,7 @@
   "av2_error_format": "Cette vidéo AV2 est en {format} : cette version du décodeur AV2 ne la lit pas encore",
   "av2_error_mac_libmpv": "Les vidéos AV2 demandent un Immuch360 Desktop plus récent sur ce Mac",
   "av2_error_not_here": "Les vidéos AV2 ne se lisent que dans Immuch360 Desktop pour l'instant (Windows, Linux, macOS)",
-  "av2_error_off": "Les vidéos AV2 sont désactivées : Paramètres, Vidéos, Vidéos AV2",
+  "av2_error_off": "Les vidéos AV2 sont désactivées : Paramètres, Visualiseur d'éléments, Vidéos AV2 (expérimental)",
   "av2_install_body": "Cette vidéo est en AV2, un format qu'aucun appareil ne décode encore matériellement. Immuch360 peut la décoder avec le processeur de cet ordinateur : téléchargez une fois le décodeur AV2 ({size}, open source : dav2d de VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Télécharger et lire",
   "av2_install_failed": "Le décodeur AV2 n'a pas été téléchargé : {reason}",

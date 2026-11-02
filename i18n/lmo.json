@@ -284,7 +284,7 @@
   "av2_error_format": "Quell video AV2 chì l'è {format}: sta version chì del decodificador AV2 la le riproduss anmò minga",
   "av2_error_mac_libmpv": "I video AV2 gh'hann bisogn d'on Immuch360 Desktop pussee noeuv in su sto Mac chì",
   "av2_error_not_here": "Per adess i video AV2 se riproduss domà in Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "I video AV2 hinn smorzaa: Impostazion, Video, Video AV2",
+  "av2_error_off": "I video AV2 hinn smorzaa: Impostazion, Asset Viewer, Video AV2 (sperimental)",
   "av2_install_body": "Quell video chì l'è AV2, on format che nissun dispositiv el decodifica anmò in hardware. Immuch360 el le pò decodificà cont el processor de quell computer chì: scarega el decodificador AV2 domà ona volta ({size}, open source: dav2d de VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Scarega e riproduss",
   "av2_install_failed": "El decodificador AV2 l'è minga staa scaregaa: {reason}",

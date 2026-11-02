@@ -911,7 +911,7 @@
   "av2_error_format": "이 AV2 동영상은 {format}입니다: 이 버전의 AV2 디코더는 아직 재생하지 못합니다",
   "av2_error_mac_libmpv": "이 Mac에서 AV2 동영상을 재생하려면 더 새로운 Immuch360 Desktop이 필요합니다",
   "av2_error_not_here": "AV2 동영상은 지금은 Immuch360 Desktop에서만 재생됩니다 (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 동영상이 꺼져 있습니다: 설정, 동영상, AV2 동영상",
+  "av2_error_off": "AV2 동영상이 꺼져 있습니다: 설정, 보기 옵션, AV2 동영상 (실험적)",
   "av2_install_body": "이 동영상은 AV2입니다. 아직 어떤 기기도 하드웨어로 디코딩하지 않는 형식입니다. Immuch360은 이 컴퓨터의 프로세서로 디코딩할 수 있습니다: AV2 디코더를 한 번만 다운로드하세요 ({size}, 오픈 소스: VideoLAN의 dav2d, BSD-2-Clause).",
   "av2_install_button": "다운로드 후 재생",
   "av2_install_failed": "AV2 디코더를 다운로드하지 못했습니다: {reason}",

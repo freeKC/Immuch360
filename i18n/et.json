@@ -912,7 +912,7 @@
   "av2_error_format": "See AV2 video on {format}: AV2 dekoodri see versioon ei esita seda veel",
   "av2_error_mac_libmpv": "AV2 videod vajavad selles Macis uuemat Immuch360 Desktopi",
   "av2_error_not_here": "AV2 videod esitatakse praegu ainult Immuch360 Desktopis (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 videod on välja lülitatud: Seaded, Videod, AV2 videod",
+  "av2_error_off": "AV2 videod on välja lülitatud: Seaded, Üksuste vaatur, AV2 videod (katseline)",
   "av2_install_body": "See video on AV2, vorming, mida ükski seade veel riistvaraliselt ei dekodeeri. Immuch360 saab selle dekodeerida selle arvuti protsessoriga: laadi AV2 dekooder alla üks kord ({size}, avatud lähtekood: VideoLAN-i dav2d, BSD-2-Clause).",
   "av2_install_button": "Laadi alla ja esita",
   "av2_install_failed": "AV2 dekoodrit ei laaditud alla: {reason}",

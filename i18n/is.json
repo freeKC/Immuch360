@@ -911,7 +911,7 @@
   "av2_error_format": "Þetta AV2-myndskeið er {format}: þessi útgáfa AV2-afkóðarans spilar það ekki enn",
   "av2_error_mac_libmpv": "AV2-myndskeið þurfa nýrra Immuch360 Desktop á þessum Mac",
   "av2_error_not_here": "AV2-myndskeið spilast aðeins í Immuch360 Desktop í bili (Windows, Linux, macOS)",
-  "av2_error_off": "Slökkt er á AV2-myndskeiðum: Stillingar, Myndskeið, AV2-myndskeið",
+  "av2_error_off": "Slökkt er á AV2-myndskeiðum: Stillingar, Skoðun Eigna, AV2-myndskeið (tilraun)",
   "av2_install_body": "Þetta myndskeið er AV2, snið sem ekkert tæki afkóðar enn í vélbúnaði. Immuch360 getur afkóðað það með örgjörva þessarar tölvu: sæktu AV2-afkóðarann einu sinni ({size}, opinn hugbúnaður: dav2d frá VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Sækja og spila",
   "av2_install_failed": "AV2-afkóðarinn var ekki sóttur: {reason}",

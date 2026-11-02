@@ -912,7 +912,7 @@
   "av2_error_format": "Toto video AV2 je {format}: táto verzia dekodéra AV2 ho zatiaľ neprehrá",
   "av2_error_mac_libmpv": "Videá AV2 potrebujú na tomto Macu novší Immuch360 Desktop",
   "av2_error_not_here": "Videá AV2 sa zatiaľ prehrávajú iba v Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Videá AV2 sú vypnuté: Nastavenia, Videá, Videá AV2",
+  "av2_error_off": "Videá AV2 sú vypnuté: Nastavenia, Prehliadač médií, Videá AV2 (experimentálne)",
   "av2_install_body": "Toto video je AV2, formát, ktorý zatiaľ žiadne zariadenie nedekóduje hardvérovo. Immuch360 ho dokáže dekódovať procesorom tohto počítača: stiahnite si raz dekodér AV2 ({size}, otvorený zdroj: dav2d od VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Stiahnuť a prehrať",
   "av2_install_failed": "Dekodér AV2 sa nestiahol: {reason}",

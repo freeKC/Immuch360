@@ -284,7 +284,7 @@
   "av2_error_format": "He {format} tēnei ataata AV2: kāore anō tēnei putanga o te pūwetewete AV2 kia whakatangi i a ia",
   "av2_error_mac_libmpv": "Me whai Immuch360 Desktop hou ake ngā ataata AV2 i tēnei Mac",
   "av2_error_not_here": "Ka whakatangihia ngā ataata AV2 i Immuch360 Desktop anake i tēnei wā (Windows, Linux, macOS)",
-  "av2_error_off": "Kua whakawetongia ngā ataata AV2: Tautuhinga, Ngā ataata, Ngā ataata AV2",
+  "av2_error_off": "Kua whakawetongia ngā ataata AV2: Tautuhinga, Asset Viewer, Ngā ataata AV2 (whakamātau)",
   "av2_install_body": "He AV2 tēnei ataata, he hōputu kāore anō kia wetewetehia e tētahi pūrere mā te pūmārō. Ka taea e Immuch360 te wetewete mā te pūtukatuka o tēnei rorohiko: tikiake kotahi te pūwetewete AV2 ({size}, puna tuwhera: dav2d nā VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Tikiake, whakatangi",
   "av2_install_failed": "Kāore i tikiakehia te pūwetewete AV2: {reason}",

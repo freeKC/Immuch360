@@ -912,7 +912,7 @@
   "av2_error_format": "Is {format} an físeán AV2 seo: ní sheinneann an leagan seo den díchódóir AV2 é fós",
   "av2_error_mac_libmpv": "Teastaíonn Immuch360 Desktop níos nuaí ar an Mac seo le haghaidh físeáin AV2",
   "av2_error_not_here": "Ní sheinntear físeáin AV2 ach in Immuch360 Desktop faoi láthair (Windows, Linux, macOS)",
-  "av2_error_off": "Tá físeáin AV2 múchta: Socruithe, Físeáin, Físeáin AV2",
+  "av2_error_off": "Tá físeáin AV2 múchta: Socruithe, Amharcóir Sócmhainní, Físeáin AV2 (turgnamhach)",
   "av2_install_body": "Is AV2 an físeán seo, formáid nach ndíchódaíonn aon ghléas i gcrua-earraí fós. Is féidir le Immuch360 é a dhíchódú le próiseálaí an ríomhaire seo: íoslódáil an díchódóir AV2 uair amháin ({size}, foinse oscailte: dav2d le VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Íoslódáil agus seinn",
   "av2_install_failed": "Níor íoslódáladh an díchódóir AV2: {reason}",

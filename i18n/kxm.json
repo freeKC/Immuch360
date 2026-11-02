@@ -284,7 +284,7 @@
   "av2_error_format": "วิดีโอ AV2 นี้เป็น {format}: ตัวถอดรหัส AV2 รุ่นนี้ยังบ่เล่นได้",
   "av2_error_mac_libmpv": "วิดีโอ AV2 ต้องใช้ Immuch360 Desktop รุ่นใหม่กว่าบน Mac นี้",
   "av2_error_not_here": "วิดีโอ AV2 เล่นได้แค่ใน Immuch360 Desktop ตอนนี้ (Windows, Linux, macOS)",
-  "av2_error_off": "วิดีโอ AV2 ปิดอยู่: การตั้งค่า, วิดีโอ, วิดีโอ AV2",
+  "av2_error_off": "วิดีโอ AV2 ปิดอยู่: การตั้งค่า, Asset Viewer, วิดีโอ AV2 (ทดลอง)",
   "av2_install_body": "วิดีโอนี้เป็น AV2 รูปแบบที่ยังบ่มีอุปกรณ์ใดถอดรหัสด้วยฮาร์ดแวร์ Immuch360 ถอดรหัสได้ด้วยโปรเซสเซอร์ของคอมพิวเตอร์นี้: ดาวน์โหลดตัวถอดรหัส AV2 ครั้งเดียว ({size}, โอเพนซอร์ส: dav2d ของ VideoLAN, BSD-2-Clause)",
   "av2_install_button": "ดาวน์โหลดแล้วเล่น",
   "av2_install_failed": "บ่ได้ดาวน์โหลดตัวถอดรหัส AV2: {reason}",

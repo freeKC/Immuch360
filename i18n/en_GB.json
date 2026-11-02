@@ -904,7 +904,7 @@
   "av2_error_format": "This AV2 video is {format}: this version of the AV2 decoder does not play it yet",
   "av2_error_mac_libmpv": "AV2 videos need a newer Immuch360 Desktop on this Mac",
   "av2_error_not_here": "AV2 videos play in Immuch360 Desktop only for now (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 videos are turned off: Settings, Videos, AV2 videos",
+  "av2_error_off": "AV2 videos are turned off: Settings, Asset Viewer, AV2 videos (experimental)",
   "av2_install_body": "This video is AV2, a format no device decodes in hardware yet. Immuch360 can decode it with the processor of this computer: download the AV2 decoder once ({size}, open source: dav2d by VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Download and play",
   "av2_install_failed": "The AV2 decoder was not downloaded: {reason}",

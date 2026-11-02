@@ -103,6 +103,8 @@ void main() {
     await SettingsRepository.instance.write(.viewerAv2Videos, false);
     await pumpGate(tester);
     expect(find.byKey(const Key('av2_notice_off')), findsOneWidget);
+    // Where the setting is: the Asset Viewer section of the settings, its Videos group
+    expect(find.text('AV2 videos are turned off: Settings, Asset Viewer, AV2 videos (experimental)'), findsOneWidget);
     expect(find.text('the player'), findsNothing);
 
     await tester.tap(find.byKey(const Key('av2_turn_on')));

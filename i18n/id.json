@@ -912,7 +912,7 @@
   "av2_error_format": "Video AV2 ini {format}: versi dekoder AV2 ini belum dapat memutarnya",
   "av2_error_mac_libmpv": "Video AV2 memerlukan Immuch360 Desktop yang lebih baru di Mac ini",
   "av2_error_not_here": "Untuk saat ini video AV2 hanya diputar di Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Video AV2 dimatikan: Pengaturan, Video, Video AV2",
+  "av2_error_off": "Video AV2 dimatikan: Pengaturan, Penampil Aset, Video AV2 (eksperimental)",
   "av2_install_body": "Video ini AV2, format yang belum didekode perangkat keras di perangkat mana pun. Immuch360 dapat mendekodenya dengan prosesor komputer ini: unduh dekoder AV2 sekali saja ({size}, sumber terbuka: dav2d dari VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Unduh dan putar",
   "av2_install_failed": "Dekoder AV2 tidak terunduh: {reason}",
