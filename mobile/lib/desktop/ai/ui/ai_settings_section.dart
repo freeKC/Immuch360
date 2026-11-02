@@ -19,6 +19,10 @@
 // graphics (untested)", off by default, lets a panorama run on integrated graphics, with a warning on the time that
 // fades after a few seconds.
 //
+// Once this version makes splat scenes (plan 2026-11-01, lot SP7: their engine registered, their group not held back),
+// "Splat scenes (experimental)" sits right under the switch of the AI features, on by default as every experimental
+// feature of the app; off, no "Make a splat scene (AI)" anywhere.
+//
 // The settings of the conversions live in desktop_ai.json (DesktopAiSettings); the switch of the AI features is a
 // setting shared with the Meta Quest (AiImmersiveConfig).
 
@@ -37,6 +41,7 @@ import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
@@ -209,6 +214,17 @@ class DesktopAiSettingsSection extends ConsumerWidget {
           subtitle: Text(t.ai_immersive_enabled_subtitle),
           onChanged: (on) => unawaited(ref.read(aiFeaturesSwitchProvider)(on)),
         ),
+        if (enabled && settings != null && ref.watch(aiSplatScenesOfferedProvider))
+          SwitchListTile(
+            key: const Key('ai_settings_splat_scenes'),
+            value: settings.splatScenes,
+            title: Text(t.ai_immersive_splat_setting),
+            subtitle: Text(t.ai_immersive_splat_setting_subtitle),
+            onChanged: (on) async {
+              await _update(ref, (kept) => kept.copyWith(splatScenes: on));
+              ref.invalidate(aiSplatScenesSwitchProvider);
+            },
+          ),
         // The components stay listed with the features off, so that their space can still be freed; nothing is
         // downloaded then
         if (platform != null) ...[
