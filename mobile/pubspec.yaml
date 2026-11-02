@@ -211,6 +211,10 @@ flutter:
     # The licence of the Meta Spatial SDK, which every Android APK ships, and the notices of its native libraries
     # (lib/utils/meta_spatial_licenses.dart)
     - assets/licenses/meta-spatial-sdk/
+    # The splat viewer of the computers, phones and tablets: its page with Spark and three.js, in every build (the
+    # computers build without a flavour), and their licences (licenses/splat-viewer, lib/utils/splat_viewer_licenses.dart)
+    - assets/splat_viewer/
+    - assets/licenses/splat-viewer/
   fonts:
     - family: GoogleSans
       fonts:

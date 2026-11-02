@@ -1,0 +1,58 @@
+adler2 2.0.1 | 0BSD OR MIT OR Apache-2.0 | taken under MIT | 0 functions
+ahash 0.7.8 | MIT OR Apache-2.0 | taken under MIT | 11 functions
+ahash 0.8.12 | MIT OR Apache-2.0 | taken under MIT | 11 functions
+anyhow 1.0.98 | MIT OR Apache-2.0 | taken under MIT | 185 functions
+bitflags 2.11.0 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+bytemuck 1.25.0 | Zlib OR Apache-2.0 OR MIT | taken under MIT | 0 functions
+byteorder-lite 0.1.0 | Unlicense OR MIT | taken under MIT | 5 functions
+cfg-if 1.0.0 | MIT/Apache-2.0 | taken under MIT | 0 functions
+console_error_panic_hook 0.1.7 | Apache-2.0/MIT | taken under MIT | 8 functions
+const-random 0.1.18 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+crc32fast 1.5.0 | MIT OR Apache-2.0 | taken under MIT | 1 functions
+doc-comment 0.3.4 | MIT | taken under MIT | 0 functions
+either 1.15.0 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+equivalent 1.0.2 | Apache-2.0 OR MIT | taken under MIT | 0 functions
+fdeflate 0.3.7 | MIT OR Apache-2.0 | taken under MIT | 7 functions
+flate2 1.1.10 | MIT OR Apache-2.0 | taken under MIT | 24 functions
+glam 0.30.8 | MIT OR Apache-2.0 | taken under MIT | 5 functions
+half 2.6.0 | MIT OR Apache-2.0 | taken under MIT | 2 functions
+hashbrown 0.11.2 | Apache-2.0/MIT | taken under MIT | 24 functions
+hashbrown 0.16.1 | MIT OR Apache-2.0 | taken under MIT | 24 functions
+hnsw 0.11.0 | MIT | taken under MIT | 0 functions
+image 0.25.10 | MIT OR Apache-2.0 | taken under MIT | 118 functions
+image-webp 0.2.4 | MIT OR Apache-2.0 | taken under MIT | 96 functions
+indexmap 2.13.0 | Apache-2.0 OR MIT | taken under MIT | 2 functions
+itertools 0.14.0 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+itoa 1.0.15 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+js-sys 0.3.94 | MIT OR Apache-2.0 | taken under MIT | 170 functions
+libm 0.2.16 | MIT | taken under MIT | 0 functions
+memchr 2.7.6 | Unlicense OR MIT | taken under MIT | 4 functions
+miniz_oxide 0.8.9 | MIT OR Zlib OR Apache-2.0 | taken under MIT | 12 functions
+miniz_oxide 0.9.1 | MIT OR Zlib OR Apache-2.0 | taken under MIT | 12 functions
+moxcms 0.8.1 | BSD-3-Clause OR Apache-2.0 | taken under Apache-2.0 | 3 functions
+num-traits 0.2.19 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+once_cell 1.21.3 | MIT OR Apache-2.0 | taken under MIT | 1 functions
+ordered-float 5.1.0 | MIT | taken under MIT | 36 functions
+png 0.18.1 | MIT OR Apache-2.0 | taken under MIT | 63 functions
+pxfm 0.1.28 | BSD-3-Clause OR Apache-2.0 | taken under Apache-2.0 | 0 functions
+quick-error 2.0.1 | MIT/Apache-2.0 | taken under MIT | 0 functions
+rand_core 0.6.4 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+rand_pcg 0.3.1 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+ruzstd 0.9.1 | MIT | taken under MIT | 169 functions
+ryu 1.0.20 | Apache-2.0 OR BSL-1.0 | taken under Apache-2.0 | 1 functions
+serde 1.0.228 | MIT OR Apache-2.0 | taken under MIT | 23 functions
+serde-wasm-bindgen 0.6.5 | MIT | taken under MIT | 18 functions
+serde_core 1.0.228 | MIT OR Apache-2.0 | taken under MIT | 143 functions
+serde_json 1.0.145 | MIT OR Apache-2.0 | taken under MIT | 163 functions
+simd-adler32 0.3.9 | MIT | taken under MIT | 1 functions
+smallvec 1.15.1 | MIT OR Apache-2.0 | taken under MIT | 20 functions
+space 0.17.0 | MIT | taken under MIT | 0 functions
+spark-lib 0.1.0 | MIT | taken under MIT | 675 functions
+spark-rs 0.1.0 | MIT | taken under MIT | 673 functions
+typed-path 0.12.3 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+unicode-ident 1.0.18 | (MIT OR Apache-2.0) AND Unicode-3.0 | not in the WebAssembly: no function of the linked module mentions it
+wasm-bindgen 0.2.117 | MIT OR Apache-2.0 | taken under MIT | 167 functions
+wasm-bindgen-shared 0.2.117 | MIT OR Apache-2.0 | taken under MIT | 0 functions
+web-sys 0.3.94 | MIT OR Apache-2.0 | taken under MIT | 2 functions
+zerocopy 0.8.27 | BSD-2-Clause OR Apache-2.0 OR MIT | taken under MIT | 0 functions
+zip 7.2.0 | MIT | taken under MIT | 78 functions

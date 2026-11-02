@@ -1,0 +1,23 @@
+{
+  "spark": {
+    "repository": "https://github.com/sparkjsdev/spark.git",
+    "tag": "v2.4.0",
+    "commit": "ffe210dc0a45d0515a06c9235878108112827d61",
+    "license": "MIT"
+  },
+  "three": {
+    "version": "0.180.0",
+    "license": "MIT"
+  },
+  "toolchain": {
+    "rust": "1.98.0",
+    "wasm_pack": "0.15.1",
+    "node": "24.21.0",
+    "const_random_seed": "immuch360-spark-2.4.0"
+  },
+  "patches": [
+    "0001-flate2-and-zip-on-miniz-oxide.patch",
+    "0002-wasm-as-its-own-file.patch"
+  ],
+  "refused_crates": ["zlib-rs", "libz-sys", "libz-rs-sys"]
+}
