@@ -94,6 +94,22 @@ class SplatModuleFormatTest {
     ByteArrayOutputStream().also { out -> GZIPOutputStream(out).use { it.write(payload) } }.toByteArray()
 
   @Test
+  fun `the splat scenes made on a computer reach the module as they are written, read to their end`() {
+    // The SPZ version 2 of make_splat_fixtures.py and the one the Dart writer made (scene_sh3_v2_dart.spz, its gzip)
+    val scenes = listOf("sh3_v2.spz" to 8L, "edges_sh3_v2.spz" to 32L, "scene_sh3_v2.spz" to 38L)
+    for ((name, gaussians) in scenes + ("scene_sh3_v2_dart.spz" to 38L)) {
+      assertTrue(name, SplatModuleFormat.reads(probe(name)))
+      val copy = SplatFixtures.file(name).copyTo(File(folder, name), overwrite = true)
+      assertNull(name, SplatModuleFormat.checkWhole(copy, gaussians))
+      assertEquals(name, SplatModuleFormat.payloadBytes(probe(name) as SplatProbe.Spz), 16L + gaussians * (19 + 45))
+    }
+    for ((name, gaussians) in listOf("scene_sh3.ply" to 38L, "brush_sh3.ply" to 40L)) {
+      assertTrue(name, SplatModuleFormat.reads(probe(name)))
+      assertNull(name, SplatModuleFormat.checkWhole(SplatFixtures.file(name).copyTo(File(folder, name)), gaussians))
+    }
+  }
+
+  @Test
   fun `the last check refuses what the module would abort on, and a file that is not what was prepared`() {
     fun copy(name: String, as_: String): File = SplatFixtures.file(name).copyTo(File(folder, as_), overwrite = true)
     assertNull(SplatModuleFormat.check(copy("axes_v2.spz", "a.spz"), 686))

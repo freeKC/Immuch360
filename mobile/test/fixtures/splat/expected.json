@@ -72,6 +72,15 @@
       "bytes": 578,
       "sha256": "9abe9337984ee48a3e921e0238cf703aa2998a0b6bce57acb43a8199b8c1780b"
     },
+    "brush_sh3.ply": {
+      "bytes": 10987,
+      "sha256": "fe3e228cb60ad655fedaa38b3ea04f974266a2330356a30b93656612ded04891",
+      "format": "ply",
+      "gaussians": 40,
+      "shDegree": 3,
+      "tool": "Brush",
+      "rowBytes": 236
+    },
     "cash_register_head.spz": {
       "bytes": 65536,
       "sha256": "1ada3d901f35bf0b4e3c402952b6a01e030687370157d28c8b70e4db1ed638cd",
@@ -148,6 +157,27 @@
     "reserved.spz": {
       "bytes": 35,
       "sha256": "47dbc94964cccf90a7f816a18a88705fd059d97df71b1abb024466dd27267ca5"
+    },
+    "scene_sh3.ply": {
+      "bytes": 10625,
+      "sha256": "5bfffbe4adcc9376e6989f684564af62ddc1e51adda0356423f32c7c58c7a825",
+      "format": "ply",
+      "gaussians": 38,
+      "shDegree": 3,
+      "tool": "Immuch360 Desktop (COLMAP, Brush)",
+      "rowBytes": 236,
+      "brush": "brush_sh3.ply",
+      "scale": 0.5,
+      "note": "Immuch360 splat-v1, place, scale 0.500000 (floor)"
+    },
+    "scene_sh3_v2.spz": {
+      "bytes": 1893,
+      "sha256": "d2654acae4b5849c8a785daea8b0d23104a4f17b2c37df2b5363e627036d9d86",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 38,
+      "shDegree": 3,
+      "ply": "scene_sh3.ply"
     },
     "sh3.ply": {
       "bytes": 3510,
