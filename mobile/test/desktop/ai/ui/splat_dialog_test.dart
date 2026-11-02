@@ -963,4 +963,28 @@ void main() {
     expect(launches, hasLength(1));
     expect(find.byKey(const Key('ai_splat_dialog')), findsNothing);
   });
+
+  group('the room of the work files', () {
+    Future<AiFreeSpace?> shortWith(Map<String, AiFreeSpace> drives) async {
+      final container = ProviderContainer(
+        overrides: [
+          aiFreeSpaceProvider.overrideWithValue((folder) async => drives[folder.path]),
+          aiComponentsFolderProvider.overrideWithValue(() async => Directory('/components')),
+        ],
+      );
+      addTearDown(container.dispose);
+      final listened = container.listen(splatWorkSpaceShortProvider.future, (_, _) {});
+      return listened.read();
+    }
+
+    test('is looked for on the drive of the temporary files, where the work folder goes, never on that of the '
+        'components', () async {
+      final temporary = Directory.systemTemp.path;
+      const short = AiFreeSpace(free: 900 << 20, volume: r'C:\');
+      const roomy = AiFreeSpace(free: 400 * _gib, volume: r'D:\');
+      expect((await shortWith({temporary: short, '/components': roomy}))?.volume, r'C:\');
+      expect(await shortWith({temporary: const AiFreeSpace(free: 3 * _gib, volume: r'C:\')}), isNull);
+      expect(await shortWith(const {}), isNull, reason: 'not known: the work itself says a full drive');
+    });
+  });
 }

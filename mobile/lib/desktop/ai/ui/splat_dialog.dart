@@ -120,30 +120,21 @@ final splatVideo360ReaderProvider = Provider<SplatVideo360Reader>((ref) {
 });
 
 /// The room the work files of a scene need on their drive (the images prepared, the database of COLMAP, the export of
-/// Brush): under 2 GB for 150 photos as the design expects it, not measured yet
+/// Brush): under 2 GB for 150 photos as the design expects it, not measured yet (T1), and the originals of the server
+/// copied there not counted (their size is not known before they are fetched)
 const splatWorkSpaceNeeded = 2 * 1024 * 1024 * 1024;
 
-/// The drive of the temporary files when it lacks [splatWorkSpaceNeeded], and the drive of the AI components too (the
-/// work folder goes there when the temporary one is short); null when one of them has the room, or when the free space
-/// cannot be read
+/// The drive of the temporary files when it lacks [splatWorkSpaceNeeded]; null when it has the room, or when its free
+/// space cannot be read. The work folder of a scene goes under the temporary files first (splatWorkRoots of the
+/// engine), then under ProgramData, both on the system drive as a rule, never on the drive of the AI components: the
+/// room there does not help
 final splatWorkSpaceShortProvider = FutureProvider.autoDispose<AiFreeSpace?>((ref) async {
   final reader = ref.watch(aiFreeSpaceProvider);
   if (reader == null) {
     return null;
   }
   final temporary = await reader(Directory.systemTemp);
-  if (temporary == null || temporary.free >= splatWorkSpaceNeeded) {
-    return null;
-  }
-  try {
-    final components = await reader(await ref.watch(aiComponentsFolderProvider)());
-    if (components == null || components.free >= splatWorkSpaceNeeded) {
-      return null;
-    }
-  } catch (error) {
-    _log.fine('The free space of the drive of the AI components is not known: $error');
-  }
-  return temporary;
+  return temporary == null || temporary.free >= splatWorkSpaceNeeded ? null : temporary;
 });
 
 /// The size the copy for the headset takes: 3 612 448 bytes measured for 150 000 gaussians of degree 3 (some 24 bytes
