@@ -357,6 +357,14 @@ abstract interface class SplatMember {
   Future<void> release();
 }
 
+/// A member that says the SHA-1 of its original without reading it, in base64 as ImmersiveSource.sha1: an asset of the
+/// server, whose checksum Immich gives. A Retry from the poses compares it with the sum kept instead of downloading the
+/// original again; a member without one is read for its sum.
+abstract interface class SplatMemberSum {
+  /// Null when it is not known
+  String? get knownSha1;
+}
+
 /// The settings of one splat scene, those of SplatV1 unless the measure M1 or the user says otherwise
 class SplatSettings {
   const SplatSettings({

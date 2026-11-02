@@ -49,6 +49,14 @@ void main() {
     expect(file.existsSync(), isTrue, reason: 'a file of this computer is read in place, never deleted');
   });
 
+  test('an asset of the server may say its sum without being read: the checksum Immich gives, in base64', () {
+    final source = LocalFileSource(p.join(root.path, 'IMG_1.jpg'));
+    expect(SourceSplatMember(source).knownSha1, isNull);
+    final member = SourceSplatMember(source, sha1: 'pZGm1Av0IEBKARczz7exkNYsZb8=');
+    expect(member, isA<SplatMemberSum>());
+    expect(member.knownSha1, 'pZGm1Av0IEBKARczz7exkNYsZb8=');
+  });
+
   test('the originals of the server are copied one at a time, counted, and none is left', () async {
     final photos = {
       for (var step = 0; step < 22; step++) 'asset-$step': testJpeg(texturedRgba(320, 240, shift: step * 5), 320, 240),

@@ -21,7 +21,8 @@
 //
 // Retry from the poses: a job that failed or was cancelled once COLMAP had placed its photos keeps its work folder a
 // day after its last use (managed_process.dart). A job of the same key finds it, reads each member again for its sum
-// (a photo of this computer is hashed in place, an original of the server downloaded and released at once), and when
+// (a photo of this computer is hashed in place; an original of the server gives the checksum of its asset,
+// SplatMemberSum, or is downloaded and released at once), and when
 // every sum is the one kept, starts again at the training, from the model COLMAP aligned. Otherwise the folder is
 // emptied and the job starts from the photos. The folder goes once the queue saved the file the job made
 // (ImmersiveResult.afterSaved: a destination that refuses it, or a Cancel during the copy, leaves it for Retry), and
@@ -418,16 +419,22 @@ class SplatEngine implements ImmersiveEngine {
     ];
     for (final (index, (member, kept)) in read.indexed) {
       onRead(index, read.length);
-      String? sum;
-      try {
-        sum = (await member.load(cancel)).sha1;
-      } catch (error) {
-        if (cancel.isCancelled) {
-          throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled');
+      // The sum the server gives for its asset, else the member read again (an original of the server downloaded)
+      var sum = switch (member) {
+        SplatMemberSum(:final knownSha1) => knownSha1,
+        _ => null,
+      };
+      if (sum == null) {
+        try {
+          sum = (await member.load(cancel)).sha1;
+        } catch (error) {
+          if (cancel.isCancelled) {
+            throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled');
+          }
+          _log.info('${member.name} could not be read again: $error');
+        } finally {
+          await member.release();
         }
-        _log.info('${member.name} could not be read again: $error');
-      } finally {
-        await member.release();
       }
       if (sum != kept) {
         _log.info('${member.name} changed since its poses were found: they are made again');

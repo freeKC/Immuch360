@@ -90,6 +90,15 @@ class _FileMember implements SplatMember {
   Future<void> release() async => releases++;
 }
 
+/// An original of the server as a member: it says its sum (the checksum Immich gives) without being read; [knownSha1]
+/// is what the server says, the sum of its file unless the test changes it
+class _ServerMember extends _FileMember implements SplatMemberSum {
+  _ServerMember(super.file, super.taken) : knownSha1 = base64.encode(sha1.convert(file.readAsBytesSync()).bytes);
+
+  @override
+  String? knownSha1;
+}
+
 /// What the test gives the engine for the preparation, as the app does it: 200 photos at most, each read and copied
 /// into one camera, or SplatV1.videoFrames frames of the one video, [delay] after each image and [onEach] called, counting
 /// its calls
@@ -429,6 +438,30 @@ void main() {
       expect((again.details! as SplatResultDetails).placed, 24);
       await again.afterSaved!();
       expect(workFolders(), isEmpty);
+    },
+    skip: _skip(),
+  );
+
+  test(
+    'Retry from the poses of originals of the server: their sums taken from the server, none downloaded again',
+    () async {
+      final members = [for (final member in photos(24)) _ServerMember(member.file, member.taken)];
+      final images = _Images();
+      final failed = await engine(images: images, brushMode: 'fail').run(job(members), cancel: cancel);
+      expect(failed.error, ImmersiveErrorCode.trainingFailed);
+
+      final again = await engine(images: images).run(job(members), cancel: cancel);
+      expect(again.isDone, isTrue, reason: '${again.error}: ${again.message}');
+      expect(images.calls, 1, reason: 'the poses were taken again');
+      expect(members.every((member) => member.loads == 1), isTrue, reason: 'read by the preparation only');
+      await again.afterSaved!();
+
+      // An original changed on the server since: its new sum makes the poses again
+      await engine(images: images, brushMode: 'fail').run(job(members), cancel: cancel);
+      members[3].knownSha1 = base64.encode(List.filled(20, 7));
+      final changed = await engine(images: images).run(job(members), cancel: cancel);
+      expect(changed.isDone, isTrue, reason: '${changed.error}: ${changed.message}');
+      expect(images.calls, 3);
     },
     skip: _skip(),
   );
