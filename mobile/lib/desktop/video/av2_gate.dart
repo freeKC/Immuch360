@@ -130,7 +130,7 @@ class Av2PlaybackGate extends ConsumerStatefulWidget {
 
 class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
   late final Future<void> _loaded = _load();
-  Future<Av2VideoFormat>? _probe;
+  Future<({Av2VideoFormat format, Av2Speed? speed})>? _probe;
   bool _playAnyway = false;
 
   Future<void> _load() async {
@@ -185,10 +185,19 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
     );
   }
 
+  /// The probe of the video, then the last speed this computer measured for its format
+  Future<({Av2VideoFormat format, Av2Speed? speed})> _check() async {
+    final format = await ref.read(av2ProbeProvider)(widget.video);
+    if (format.refusedFormat != null) {
+      return (format: format, speed: null);
+    }
+    return (format: format, speed: await ref.read(av2SpeedProvider)(format));
+  }
+
   Widget _probed(BuildContext context) {
-    final probe = _probe ??= ref.read(av2ProbeProvider)(widget.video);
-    return FutureBuilder<Av2VideoFormat>(
-      future: probe,
+    final check = _probe ??= _check();
+    return FutureBuilder<({Av2VideoFormat format, Av2Speed? speed})>(
+      future: check,
       builder: (context, snapshot) {
         final t = context.t;
         if (snapshot.hasError) {
@@ -197,18 +206,18 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
             text: t.av2_error_decoder_stopped(reason: '${snapshot.error}'),
           );
         }
-        final format = snapshot.data;
-        if (format == null) {
+        final checked = snapshot.data;
+        if (checked == null) {
           return const _Waiting();
         }
-        final refused = format.refusedFormat;
+        final refused = checked.format.refusedFormat;
         if (refused != null) {
           return Av2Notice(
             key: const Key('av2_notice_format'),
             text: t.av2_error_format(format: refused),
           );
         }
-        final speed = ref.watch(av2SpeedProvider)(format);
+        final speed = checked.speed;
         if (speed != null && speed.tooSlow && !_playAnyway) {
           return Av2TooSlowNotice(speed: speed, onPlay: () => setState(() => _playAnyway = true));
         }

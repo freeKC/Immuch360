@@ -99,10 +99,6 @@ class Av2DecodingStats {
 /// (activeDesktopVideo). Set by the playback of lot AD3, read by the "Video decoding" line of the details.
 final activeAv2Decoding = ValueNotifier<Av2DecodingStats?>(null);
 
-/// Under this share of the frame rate of a video, its format is too slow for this computer: the video does not start by
-/// itself, the notice says how fast it decodes and offers to play it anyway (plan, section 1.4)
-const av2TooSlowRatio = 0.95;
-
 /// The last speed this computer measured for a format of AV2 video
 @immutable
 class Av2Speed {
@@ -111,11 +107,15 @@ class Av2Speed {
   final double decodedFps;
   final double neededFps;
 
+  /// Under this share of the frame rate of a video, its format is too slow for this computer: the video does not start
+  /// by itself, the notice says how fast it decodes and offers to play it anyway (plan, section 1.4)
+  static const tooSlowRatio = 0.95;
+
   /// How many times the real time this computer decodes the format
   double get ratio => neededFps <= 0 ? double.infinity : decodedFps / neededFps;
 
   /// Whether the video would pause to catch up
-  bool get tooSlow => ratio < av2TooSlowRatio;
+  bool get tooSlow => ratio < tooSlowRatio;
 
   @override
   bool operator ==(Object other) => other is Av2Speed && other.decodedFps == decodedFps && other.neededFps == neededFps;
@@ -197,11 +197,11 @@ final av2ProbeProvider = Provider<Future<Av2VideoFormat> Function(Av2VideoRef vi
       (video) async => Av2VideoFormat.ofHead(video.head),
 );
 
-/// The last speed this computer measured for [format], null when it never played one (lot AD3 keeps them); by default
-/// none is known
-final av2SpeedProvider = Provider<Av2Speed? Function(Av2VideoFormat format)>(
+/// The last speed this computer measured for [format], null when it never played one (lot AD3 keeps them in the
+/// decoder measures, which it reads from their file); by default none is known
+final av2SpeedProvider = Provider<Future<Av2Speed?> Function(Av2VideoFormat format)>(
   (ref) =>
-      (_) => null,
+      (_) async => null,
 );
 
 /// A number of frames per second as the AV2 texts give it in [locale]: whole from 10 up, one decimal below ("7.4"), and

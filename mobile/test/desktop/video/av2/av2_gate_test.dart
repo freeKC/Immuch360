@@ -84,7 +84,7 @@ void main() {
         probed.add(video);
         return probe(video);
       }),
-      av2SpeedProvider.overrideWithValue((format) => speed(format)),
+      av2SpeedProvider.overrideWithValue((format) async => speed(format)),
     ],
   );
 
