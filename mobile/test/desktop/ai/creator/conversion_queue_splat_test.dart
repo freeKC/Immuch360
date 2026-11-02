@@ -154,16 +154,22 @@ class _ScriptedSplat implements ImmersiveEngine {
 
 /// A video of 30 s, every frame sharp, its JPEG [jpeg]
 class _Video implements SplatFrameSource {
-  _Video(this.jpeg);
+  _Video(this.jpeg, {this.decoding = Duration.zero});
 
   final Uint8List jpeg;
+
+  /// How long a frame takes to come, as a decoder
+  final Duration decoding;
 
   @override
   Future<SplatVideoFacts> open(String resource) async =>
       const SplatVideoFacts(duration: Duration(seconds: 30), fps: 30);
 
   @override
-  Future<SplatFrame?> frameAt(Duration time) async => _VideoFrame(time, jpeg);
+  Future<SplatFrame?> frameAt(Duration time) async {
+    await Future<void>.delayed(decoding);
+    return _VideoFrame(time, jpeg);
+  }
 
   @override
   Future<void> close() async {}
@@ -459,10 +465,10 @@ void main() {
       vulkanIndex: 0,
     );
 
-    ProviderContainer realContainer({DesktopAiSettingsStore? settings}) {
+    ProviderContainer realContainer({DesktopAiSettingsStore? settings, Duration decoding = Duration.zero}) {
       final runner = ManagedProcessRunner(linuxLauncher: _launcher);
       final engine = SplatEngine(
-        images: appSplatImages(frameSource: () => _Video(testJpeg(texturedRgba(64, 48), 64, 48))),
+        images: appSplatImages(frameSource: () => _Video(testJpeg(texturedRgba(64, 48), 64, 48), decoding: decoding)),
         colmap: ColmapRunner(
           runner: runner,
           colmap: _colmap,
@@ -581,6 +587,30 @@ void main() {
           expect(output.discarded, hasLength(1), reason: 'the .part of the .spz');
         }, skip: _skipFakes());
       }
+
+      test('frames', () async {
+        // 600 candidates of a video of 30 s, 20 ms each to decode: some 12 s of frames
+        container = realContainer(decoding: const Duration(milliseconds: 20));
+        final video = File(p.join(folder.path, 'walk.mp4'))..writeAsBytesSync(List.filled(1024, 1));
+        final id = queue().addSplat(
+          lead: LocalFileSource(video.path),
+          selection: SplatSelection(members: [SourceSplatMember(LocalFileSource(video.path))], settings: quick),
+          target: ConversionTarget(folder: folder.path, fileName: splatFileNameFor('walk')),
+          video: true,
+        );
+        await until(
+          (state) => job(id).state == ConversionState.frames && (job(id).step ?? 0) >= 2,
+          within: const Duration(minutes: 2),
+        );
+        final watch = Stopwatch()..start();
+        queue().cancel(id);
+        await until((state) => job(id).state.isEnded);
+        watch.stop();
+
+        expect(job(id).state, ConversionState.cancelled, reason: '${job(id).error} ${job(id).message}');
+        expect(watch.elapsed, lessThan(const Duration(seconds: 1)), reason: 'frames: ${watch.elapsed}');
+        expect(work.listSync(), isEmpty, reason: 'nothing kept before the poses');
+      }, skip: _skipFakes());
     });
 
     test('Retry from the poses after a training that failed: COLMAP not run again', () async {
