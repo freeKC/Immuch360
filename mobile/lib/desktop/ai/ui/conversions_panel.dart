@@ -194,42 +194,64 @@ String conversionStateText(Translations t, ConversionJob job) => switch (job.pha
 };
 
 /// Why a job failed, in words; the message of the system or of the model where the text has room for it. A job of the
-/// graphics card the gate turned away carries the name of the reason (AiGateReason) as its message.
-String conversionFailureText(Translations t, ImmersiveErrorCode code, String? message) => switch (code) {
-  ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
-  ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
-  ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
-  ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
-  ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
-  ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
-  ImmersiveErrorCode.diskFull => t.ai_immersive_failed_disk_full,
-  ImmersiveErrorCode.readOnly => t.ai_immersive_failed_read_only,
-  ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
-  ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
-  ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
-  ImmersiveErrorCode.gpuUnavailable => switch (AiGateReason.values.asNameMap()[message]) {
-    AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
-    AiGateReason.gpuNone => t.ai_immersive_gpu_none,
-    AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
-    AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
-    _ => t.ai_immersive_failed_gpu_unavailable,
-  },
-  ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
-  ImmersiveErrorCode.gpuOutOfMemory => t.ai_immersive_failed_gpu_memory,
-  ImmersiveErrorCode.generatorFailed => t.ai_immersive_failed_generator(message: message ?? ''),
-  ImmersiveErrorCode.generatorStalled => t.ai_immersive_failed_generator_stalled,
-  ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
-  ImmersiveErrorCode.tooLarge => t.ai_immersive_failed_too_large,
-  ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
-};
+/// graphics card the gate turned away carries the name of the reason (AiGateReason) as its message. The [kind] of the
+/// job says what the memory was short for: placing the photos of a splat scene (COLMAP), or a photo.
+String conversionFailureText(Translations t, ImmersiveErrorCode code, String? message, {ConversionKind? kind}) =>
+    switch (code) {
+      ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
+      ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
+      ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
+      ImmersiveErrorCode.outOfMemory when kind == ConversionKind.splatScene => t.ai_immersive_failed_splat_memory,
+      ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
+      ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
+      ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
+      ImmersiveErrorCode.diskFull => t.ai_immersive_failed_disk_full,
+      ImmersiveErrorCode.readOnly => t.ai_immersive_failed_read_only,
+      ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
+      ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
+      ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
+      ImmersiveErrorCode.gpuUnavailable => switch (AiGateReason.values.asNameMap()[message]) {
+        AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
+        AiGateReason.gpuNone => t.ai_immersive_gpu_none,
+        AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
+        AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
+        _ => t.ai_immersive_failed_gpu_unavailable,
+      },
+      ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
+      ImmersiveErrorCode.gpuOutOfMemory => t.ai_immersive_failed_gpu_memory,
+      ImmersiveErrorCode.generatorFailed => t.ai_immersive_failed_generator(message: message ?? ''),
+      ImmersiveErrorCode.generatorStalled => t.ai_immersive_failed_generator_stalled,
+      ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
+      ImmersiveErrorCode.tooLarge => t.ai_immersive_failed_too_large,
+      ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
+      ImmersiveErrorCode.tooFewImages => switch (splatCountsOf(message)) {
+        (final usable, final all)? => t.ai_immersive_failed_splat_too_few(
+          count: usable,
+          total: all,
+          min: SplatV1.minImages,
+        ),
+        null => t.ai_immersive_splat_too_few(min: SplatV1.minImages, good: SplatV1.fewImages, max: SplatV1.maxPhotos),
+      },
+      ImmersiveErrorCode.posesFailed => t.ai_immersive_failed_splat_poses(message: message ?? ''),
+      ImmersiveErrorCode.posesStalled => t.ai_immersive_failed_splat_poses_stalled,
+      ImmersiveErrorCode.notEnoughOverlap => switch (splatCountsOf(message)) {
+        (final placed, final all)? when placed > 0 => t.ai_immersive_failed_splat_overlap(placed: placed, total: all),
+        _ => t.ai_immersive_failed_splat_no_match,
+      },
+      ImmersiveErrorCode.trainingFailed => t.ai_immersive_failed_splat_training(message: message ?? ''),
+      ImmersiveErrorCode.trainingStalled => t.ai_immersive_failed_splat_training_stalled,
+    };
 
 /// What a job makes, in the words of the panel: "2D to 3D SBS", "2D to 3D scene", "2D to 360° panorama", "360° to 3D
-/// 360°"
-String conversionKindText(Translations t, ConversionKind kind) => switch (kind) {
+/// 360°", "Photos to splat scene", or "Video to splat scene" for a splat scene of a video ([fromVideo],
+/// ConversionJob.fromVideo)
+String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo = false}) => switch (kind) {
   ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
   ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
+  ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
+  ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
 };
 
 /// The honesty label of the files of a kind, as the head of the panel says it
@@ -237,6 +259,7 @@ String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind)
   ConversionKind.sbsFromPhoto || ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
   ConversionKind.sceneFromPhoto => t.ai_immersive_scene_honesty,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
+  ConversionKind.splatScene => t.ai_immersive_splat_honesty,
 };
 
 /// The honesty label of the file of [job]: that of its kind, but the 3D version of a panorama the app generated (chained
@@ -246,8 +269,10 @@ String conversionJobLabel(Translations t, ConversionJob job, ConversionJobInfo? 
     ? t.ai_immersive_panorama_honesty
     : conversionKindLabel(t, job.kind);
 
-/// The step of a long job in words ("Estimating the geometry", "Filling hidden areas: 2 of 5"), null for the steps
-/// the state says well enough (those of the 3D photo)
+/// The step of a long job in words ("Estimating the geometry", "Filling hidden areas: 2 of 5", "Placing the photos in
+/// 3D: finding features, 87 of 150"), null for the steps the state says well enough (those of the 3D photo). The
+/// photos of a splat scene are matched in blocks ("matching, block 4 of 9", exhaustive_matcher), the frames of a video
+/// one after the other ("matching, 61 of 150", sequential_matcher).
 String? conversionStageText(Translations t, ConversionJob job) => switch (job.state) {
   ConversionState.geometry => t.ai_immersive_stage_geometry,
   ConversionState.layers => t.ai_immersive_stage_layers,
@@ -262,7 +287,42 @@ String? conversionStageText(Translations t, ConversionJob job) => switch (job.st
   ConversionState.upscale => t.ai_immersive_stage_upscale,
   ConversionState.pasteBack => t.ai_immersive_stage_paste_back,
   ConversionState.panoramaDepth => t.ai_immersive_stage_panorama_depth,
+  ConversionState.photos => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_photos(index: step, total: steps),
+    _ => null,
+  },
+  ConversionState.frames => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_frames(index: step, total: steps),
+    _ => null,
+  },
+  ConversionState.features => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_features(index: step, total: steps),
+    _ => t.ai_immersive_stage_splat_poses,
+  },
+  ConversionState.matching => switch ((job.step, job.steps)) {
+    (final step?, final steps?) when job.fromVideo => t.ai_immersive_stage_splat_matching(index: step, total: steps),
+    (final step?, final steps?) => t.ai_immersive_stage_splat_matching_blocks(index: step, total: steps),
+    _ => t.ai_immersive_stage_splat_poses,
+  },
+  ConversionState.mapping => switch ((job.step, job.steps)) {
+    (final step?, final steps?) => t.ai_immersive_stage_splat_mapping(index: step, total: steps),
+    _ => t.ai_immersive_stage_splat_poses,
+  },
+  ConversionState.training => t.ai_immersive_stage_splat_training,
+  ConversionState.splatCopy => t.ai_immersive_stage_splat_copy,
   _ => null,
+};
+
+/// The states whose counts the words of their step already say ([conversionStageText]): the regions of the hidden
+/// areas, the photos, frames and images of a splat scene; the steps of a generation and of a training are said by the
+/// progress ("step 12,400 of 20,000, about 3 min left")
+const _countedInStageText = {
+  ConversionState.inpaint,
+  ConversionState.photos,
+  ConversionState.frames,
+  ConversionState.features,
+  ConversionState.matching,
+  ConversionState.mapping,
 };
 
 /// "step 12 of 28, about 3 min left" while a generation tells its steps, else "About 20 s left"; [left] is what is
@@ -273,8 +333,8 @@ String? conversionProgressText(Translations t, ConversionJob job, Duration? left
   }
   final time = aiDurationText(t, left);
   final (step, steps) = (job.step, job.steps);
-  // The regions of the hidden areas are counted in the words of their step
-  if (step != null && steps != null && job.state != ConversionState.inpaint) {
+  // The regions of the hidden areas and the images of a splat scene are counted in the words of their step
+  if (step != null && steps != null && !_countedInStageText.contains(job.state)) {
     return t.ai_immersive_step_progress(step: step, steps: steps, time: time);
   }
   return t.ai_immersive_time_left(time: time);
@@ -524,7 +584,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final lines = <Widget>[
       Text(
         [
-          conversionKindText(t, job.kind),
+          conversionKindText(t, job.kind, fromVideo: job.fromVideo),
           if (job.batchSize > 1) t.ai_immersive_progress_count(index: job.batchIndex, total: job.batchSize),
         ].join('  •  '),
         style: secondary,
@@ -544,7 +604,10 @@ class _JobRowState extends ConsumerState<_JobRow> {
       if (job.skipReason case final reason?)
         Text(conversionSkipText(t, reason, name: job.target?.fileName), style: secondary),
       if (job.state == ConversionState.failed && job.error != null)
-        Text(conversionFailureText(t, job.error!, job.message), style: TextStyle(color: colors.error)),
+        Text(
+          conversionFailureText(t, job.error!, job.message, kind: job.kind),
+          style: TextStyle(color: colors.error),
+        ),
       if (folder != null && !job.state.isEnded || job.state == ConversionState.done) ...[
         if (publish != null && job.state == ConversionState.done && !publish.state.isEnded)
           Text(t.ai_immersive_share_saving, key: const Key('ai_job_share_saving'), style: secondary),

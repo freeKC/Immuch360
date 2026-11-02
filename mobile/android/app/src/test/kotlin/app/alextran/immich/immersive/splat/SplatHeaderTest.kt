@@ -120,6 +120,37 @@ class SplatHeaderTest {
   }
 
   @Test
+  fun `the splat scenes made on a computer, SPZ version 2 and PLY, the one the Dart writer made among them`() {
+    // The golden files of make_splat_fixtures.py and scene_sh3_v2_dart.spz, which the Dart writer made of brush_sh3.ply
+    val scenes = listOf("sh3_v2.spz" to 8L, "edges_sh3_v2.spz" to 32L, "scene_sh3_v2.spz" to 38L)
+    for ((name, gaussians) in scenes + ("scene_sh3_v2_dart.spz" to 38L)) {
+      val head = probe(name) as SplatProbe.Spz
+      assertEquals(name, 2, head.version)
+      assertEquals(name, gaussians, head.gaussians)
+      assertEquals(name, 3, head.shDegree)
+      assertEquals(name, 12, head.fractionalBits)
+      assertEquals(name, 0, head.flags)
+      assertTrue(name, !head.isZstd)
+    }
+    // Brush's export in its alphabetical order, and the PLY of the scene in the usual one: the tool each comment names
+    val brush = probe("brush_sh3.ply") as SplatProbe.Ply
+    assertEquals(expectedCount("brush_sh3.ply"), brush.gaussians)
+    assertEquals(3, brush.shDegree)
+    assertEquals("Brush", brush.tool)
+    assertEquals(236, brush.rowBytes)
+    assertEquals(4 * 48, brush.offsetOf("opacity"))
+    val scene = probe("scene_sh3.ply") as SplatProbe.Ply
+    assertEquals(expectedCount("scene_sh3.ply"), scene.gaussians)
+    assertEquals(3, scene.shDegree)
+    assertEquals("Immuch360 Desktop (COLMAP, Brush)", scene.tool)
+    assertEquals(236, scene.rowBytes)
+    assertEquals(0, scene.offsetOf("x"))
+    assertEquals(4 * 51, scene.offsetOf("opacity"))
+    val bytes = SplatFixtures.bytes("scene_sh3.ply")
+    assertEquals(bytes.size.toLong(), scene.headerBytes + scene.gaussians * scene.rowBytes)
+  }
+
+  @Test
   fun `the heads of two files of another writer read with the length of the whole file`() {
     val register = probe("cash_register_head.spz") as SplatProbe.Spz
     assertEquals(3, register.version)

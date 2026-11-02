@@ -5,7 +5,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+
+/// One photo of a splat scene, read in place
+class _Member implements SplatMember {
+  const _Member(this.source);
+
+  final ImmersiveSource source;
+
+  @override
+  String get name => source.name;
+
+  @override
+  DateTime? get taken => null;
+
+  @override
+  String? get camera => null;
+
+  @override
+  Future<ImmersiveSource> load(NativeCancelFlag cancel) async => source;
+
+  @override
+  Future<void> release() async {}
+}
 
 void main() {
   const source = ImmersiveSource(name: 'salon.jpg', size: 4182311, sha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=', path: '/p');
@@ -69,7 +92,7 @@ void main() {
   });
 
   group('the kinds of the queue', () {
-    test('write their kind of file, on the processor but the panorama', () {
+    test('write their kind of file, on the processor but the panorama and the splat scene', () {
       expect(
         {for (final kind in ConversionKind.values) kind: (kind.output, kind.lane)},
         {
@@ -77,6 +100,7 @@ void main() {
           ConversionKind.sceneFromPhoto: (ImmersiveKind.volumetricScene, ConversionLane.cpu),
           ConversionKind.panoramaFromPhoto: (ImmersiveKind.panorama360, ConversionLane.gpu),
           ConversionKind.stereoPanoramaFromPanorama: (ImmersiveKind.stereoPanorama360, ConversionLane.cpu),
+          ConversionKind.splatScene: (ImmersiveKind.gaussianSplat, ConversionLane.gpu),
         },
       );
       expect(ConversionKind.sceneFromPhoto.stages, ImmersiveStage.scene);
@@ -89,6 +113,7 @@ void main() {
       SceneJob() => 'scene of ${job.sources.length}',
       PanoramaJob() => 'panorama ${job.steps} steps',
       StereoPanoramaJob() => 'stereo of ${job.original.name}',
+      SplatJob() => 'splat of ${job.members.length}${job.isVideo ? ' video' : ''}',
     };
 
     test('each names its kind, its sources, the original it is a version of and its steps', () {
@@ -136,15 +161,32 @@ void main() {
         creatorTool: 'tool',
         created: 'now',
       );
+      const splat = SplatJob(
+        id: '6',
+        lead: source,
+        members: [_Member(source), _Member(panorama)],
+        partPath: '/out/.f.part',
+        derivativeId: 'urn:uuid:6',
+        creatorTool: 'tool',
+        created: 'now',
+      );
 
-      expect([sbs, scene, generated, stereoOfGenerated].map((job) => job.kind).toSet(), ImmersiveKind.values.toSet());
-      expect([sbs, scene, generated, stereoOfGenerated, stereoOf360].map(describe), [
+      expect(
+        [sbs, scene, generated, stereoOfGenerated, splat].map((job) => job.kind).toSet(),
+        ImmersiveKind.values.toSet(),
+      );
+      expect([sbs, scene, generated, stereoOfGenerated, stereoOf360, splat].map(describe), [
         'photo ${ReliefV1.parallax}',
         'scene of 1',
         'panorama 28 steps',
         'stereo of salon.jpg',
         'stereo of salon_360.jpg',
+        'splat of 2',
       ]);
+      // A splat scene names its lead as its original, and reads the others as its members
+      expect(splat.sources, [source]);
+      expect(splat.original, source);
+      expect(splat.stages, isNot(contains(ImmersiveStage.frames)));
       // The 3D version of a generated panorama reads the panorama, and is a version of the photo
       expect(stereoOfGenerated.sources, [panorama]);
       expect(stereoOfGenerated.original, source);

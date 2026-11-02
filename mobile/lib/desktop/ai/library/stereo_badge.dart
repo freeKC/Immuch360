@@ -54,6 +54,8 @@ StereoBadge? stereoBadgeOf({
       ImmersiveKind.panorama360 => StereoBadge.generatedPanorama,
       ImmersiveKind.stereoPanorama360 =>
         origin == IndexedOrigin.generated ? StereoBadge.generatedPanorama : StereoBadge.estimatedRelief,
+      // No picture carries a splat scene in this version (plan 2026-11-01, decision D2): no badge for one of a newer one
+      ImmersiveKind.gaussianSplat => null,
       null => switch (origin) {
         IndexedOrigin.estimated => StereoBadge.estimatedRelief,
         IndexedOrigin.reconstructed => StereoBadge.scene,

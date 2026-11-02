@@ -16,14 +16,21 @@
 // one that holds in 8 GB) and wait for P2 (the archives of stable-diffusion.cpp, built and signed by our CI) and for the
 // verdict of M3 before ai-components-3 is published: an entry without its size or sum is never offered.
 //
+// The splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3) take two programs built by our CI
+// from pinned sources, COLMAP 4.2.1 without its GPL parts (lot SP1) and Brush 0.3.0 without the LPIPS weights (lot
+// SP2), as archives of ai-components-4. Until those archives exist their entries have no size nor sum, and their
+// group stays held: never offered, never downloaded. The test build lifts the hold on its own branch only, with the
+// sums of the archives of the CI served by a local mirror.
+//
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
 /// The tag of the prerelease that hosts the files of phase 1 (never "Latest": the app reads releases/latest)
 const aiComponentsReleaseTag = 'ai-components-1';
 
-/// The tags of the releases of the components of the scenes and of the panoramas, prereleases too
+/// The tags of the releases of the components of the scenes, of the panoramas and of the splat scenes, prereleases too
 const aiComponentsScenesReleaseTag = 'ai-components-2';
 const aiComponentsPanoramasReleaseTag = 'ai-components-3';
+const aiComponentsSplatsReleaseTag = 'ai-components-4';
 
 /// Where the files of the release [tag] are downloaded from
 String aiComponentsReleaseBaseOf(String tag) => 'https://github.com/freeKC/Immuch360/releases/download/$tag/';
@@ -43,13 +50,17 @@ enum AiPlatform { windowsX64, linuxX64, macosArm64, macosX64, questArm64 }
 /// installed in `engines/<id>/`
 enum AiComponentKind { model, runtime, archive }
 
-/// The features of the AI a component serves: the 3D photo (phase 1), the 3D scene, the 360° panorama and the 360° 3D
-/// panorama. The gate, the dialog, the tile and the engines ask for the components of one feature.
+/// The features of the AI a component serves: the 3D photo (phase 1), the 3D scene, the 360° panorama, the 360° 3D
+/// panorama and the splat scene. The gate, the dialog, the tile and the engines ask for the components of one feature.
 enum AiFeature {
   stereoPhoto([..._computers, AiPlatform.questArm64]),
   scene(_computers),
   panorama([AiPlatform.windowsX64, AiPlatform.linuxX64]),
-  stereoPanorama(_computers);
+  stereoPanorama(_computers),
+
+  /// Windows only in the first test build (plan 2026-11-01, section 4.1): Linux once a Linux computer with a dedicated
+  /// card has run it (its archives are built from the start), macOS later
+  splatScene([AiPlatform.windowsX64]);
 
   const AiFeature(this.platforms);
 
@@ -61,11 +72,13 @@ enum AiFeature {
 const _computers = [AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64, AiPlatform.macosX64];
 
 /// The groups the screens show the components in (design 7.1, point 7): the 3D photos, with the 3D version of a 360°
-/// photo, which needs nothing more; the 3D scenes; the 360° panoramas. Each is installed, sized and removed as a whole.
+/// photo, which needs nothing more; the 3D scenes; the 360° panoramas; the splat scenes. Each is installed, sized and
+/// removed as a whole.
 enum AiFeatureGroup {
   photos({AiFeature.stereoPhoto, AiFeature.stereoPanorama}),
   scenes({AiFeature.scene}),
-  panoramas({AiFeature.panorama});
+  panoramas({AiFeature.panorama}),
+  splats({AiFeature.splatScene});
 
   const AiFeatureGroup(this.features);
 
@@ -935,6 +948,100 @@ const upscalerComponent = AiComponent(
   officialUrls: ['https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth'],
 );
 
+// The two programs of a splat scene, each an archive of ai-components-4 built by our CI for Windows x64 and Linux x64
+// (plan 2026-11-01, section 2.3): COLMAP for the poses of the cameras, on the processor, and Brush for the training, on
+// the graphics card by Vulkan. Their size, their sum and the list of their files are written by
+// .github/desktop/ai/publish_ai_components.py from the archives of the CI (lots SP1 and SP2, then SP8 on the branch of
+// the test build only); until then they are incomplete, so never offered. Neither has an official source: the
+// official binaries of COLMAP carry SiftGPU (non commercial), LSD (AGPL 3) and the GPL parts of CHOLMOD, and those of
+// Brush the LPIPS weights, whose origin is not written.
+
+/// The licence of COLMAP at the tag 4.2.1 (its COPYING.txt: the new BSD licence of ETH Zurich and UNC Chapel Hill)
+const _colmapLicenceUrl = 'https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt';
+
+/// The licence of Brush at the tag v0.3.0 (its LICENSE: the Apache License 2.0)
+const _brushLicenceUrl = 'https://github.com/ArthurBrussee/brush/blob/v0.3.0/LICENSE';
+
+/// COLMAP 4.2.1 on the processor for Windows x64, our build without its GPL parts (lot SP1): colmap.exe, the Visual
+/// C++ runtime, and the licences of the libraries built into it in licenses/, unpacked into engines/
+const colmapWindowsComponent = AiComponent(
+  id: 'colmap-cpu-win-x64',
+  name: 'COLMAP',
+  version: '4.2.1-imm1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'colmap-cpu-win-x64.zip',
+  installPath: 'engines/colmap-cpu-win-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'BSD-3-Clause',
+  licenceUrl: _colmapLicenceUrl,
+  features: {AiFeature.splatScene},
+  releaseTag: aiComponentsSplatsReleaseTag,
+);
+
+/// COLMAP 4.2.1 on the processor for Linux x64, our build without its GPL parts (lot SP1), with immuch360-run
+const colmapLinuxComponent = AiComponent(
+  id: 'colmap-cpu-linux-x64',
+  name: 'COLMAP',
+  version: '4.2.1-imm1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'colmap-cpu-linux-x64.zip',
+  installPath: 'engines/colmap-cpu-linux-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'BSD-3-Clause',
+  licenceUrl: _colmapLicenceUrl,
+  features: {AiFeature.splatScene},
+  releaseTag: aiComponentsSplatsReleaseTag,
+);
+
+/// Brush 0.3.0 on Vulkan for Windows x64, our build of the tag v0.3.0 without the LPIPS weights (lot SP2): brush_app.exe
+/// and the licences of its crates in licenses/. It needs a dedicated graphics card of 4 GiB at least.
+const brushWindowsComponent = AiComponent(
+  id: 'brush-vulkan-win-x64',
+  name: 'Brush',
+  version: '0.3.0-imm1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'brush-vulkan-win-x64.zip',
+  installPath: 'engines/brush-vulkan-win-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _brushLicenceUrl,
+  features: {AiFeature.splatScene},
+  releaseTag: aiComponentsSplatsReleaseTag,
+  minGraphicsMemory: _splatGraphicsMemory,
+);
+
+/// Brush 0.3.0 on Vulkan for Linux x64, our build (lot SP2), with immuch360-run
+const brushLinuxComponent = AiComponent(
+  id: 'brush-vulkan-linux-x64',
+  name: 'Brush',
+  version: '0.3.0-imm1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'brush-vulkan-linux-x64.zip',
+  installPath: 'engines/brush-vulkan-linux-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _brushLicenceUrl,
+  features: {AiFeature.splatScene},
+  releaseTag: aiComponentsSplatsReleaseTag,
+  minGraphicsMemory: _splatGraphicsMemory,
+);
+
+/// The memory of graphics card the training of a splat scene asks for (SplatV1.minGraphicsMemory: 1.1 to 1.6 GB used
+/// on the RTX 4060 Laptop for the copy of 150 000 gaussians, 3.0 GB for a whole splat at 1 557 pixels)
+const _splatGraphicsMemory = 4 * 1024 * 1024 * 1024;
+
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
 const aiComponents = <AiComponent>[
@@ -954,6 +1061,10 @@ const aiComponents = <AiComponent>[
   fluxVaeComponent,
   panoramaLoraComponent,
   upscalerComponent,
+  colmapWindowsComponent,
+  colmapLinuxComponent,
+  brushWindowsComponent,
+  brushLinuxComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the
@@ -1002,12 +1113,15 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
   return need(b) < need(a) ? b : a;
 }
 
-/// The groups the app does not offer yet, whatever their catalogue says; none since 29 October 2026. The 360°
-/// panoramas were held here until their components were published: ai-components-3 is out (D6) and FreeKC gave his go
-/// for build 32, so they ship as an experimental feature, behind the gate of the graphics card and with their honesty
-/// texts. The author's own judgement of their quality in a headset is pending; the release notes report it. A group
-/// put back here is no longer offered: not listed in the dialog, refused by the gate as not in this version.
-const aiHeldFeatureGroups = <AiFeatureGroup>{};
+/// The groups the app does not offer yet, whatever their catalogue says. The 360° panoramas were held here until their
+/// components were published: ai-components-3 is out (D6) and FreeKC gave his go for build 32, so they ship as an
+/// experimental feature, behind the gate of the graphics card and with their honesty texts. The author's own judgement
+/// of their quality in a headset is pending; the release notes report it. A group put back here is no longer offered:
+/// not listed in the dialog, refused by the gate as not in this version.
+///
+/// The splat scenes are held from 1 November 2026 until ai-components-4 is published and FreeKC says yes (plan
+/// 2026-11-01, lot SP14): only the branch of the test build lifts the hold.
+const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.splats};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
 /// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)

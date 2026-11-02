@@ -365,7 +365,8 @@ void main() {
   testWidgets('the hardware line: logical processors, memory, and the card of the 360° panoramas this build offers', (
     tester,
   ) async {
-    // The engines and the hold of this build: nothing held back since ai-components-3 was published
+    // The engines and the hold of this build: since ai-components-3 was published, only the splat scenes held back
+    // until ai-components-4 is
     await pump(
       tester,
       gate: HardwareGate(
@@ -374,7 +375,7 @@ void main() {
         gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       ),
     );
-    expect(aiHeldFeatureGroups, isEmpty);
+    expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
     expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
     expect(
       find.text('NVIDIA GeForce RTX 4060 Laptop GPU, 8.0 GiB, Vulkan 1.4: 360° panoramas available'),
