@@ -64,6 +64,20 @@ class _MemoryMedia implements GeneratedMedia {
   }
 }
 
+// Generated media that takes the posts to "events", as the splat viewer's session does
+class _SinkMedia extends _MemoryMedia implements GeneratedMediaSink {
+  final posts = <(String, String)>[];
+
+  @override
+  bool received(String name, Uint8List body) {
+    if (name != 'events') {
+      return false;
+    }
+    posts.add((name, utf8.decode(body)));
+    return true;
+  }
+}
+
 // A share held in memory, counting what the bridge asks of it
 class _MemoryShare implements NetworkFileSystem {
   _MemoryShare(String id) : source = NetworkSource(id: id, type: NetworkSourceType.smb, name: 'Share $id', host: 'nas');
@@ -246,7 +260,14 @@ class _Reply {
   String? header(String name) => headers.value(name);
 }
 
-Future<_Reply> _send(Uri url, {String method = 'GET', String? range, String? ifRange, HttpClient? client}) async {
+Future<_Reply> _send(
+  Uri url, {
+  String method = 'GET',
+  String? range,
+  String? ifRange,
+  HttpClient? client,
+  List<int>? body,
+}) async {
   final http = client ?? HttpClient();
   try {
     final request = await http.openUrl(method, url);
@@ -256,10 +277,15 @@ Future<_Reply> _send(Uri url, {String method = 'GET', String? range, String? ifR
     if (ifRange != null) {
       request.headers.set(HttpHeaders.ifRangeHeader, ifRange);
     }
+    if (body != null) {
+      request.headers.contentType = ContentType.json;
+      request.contentLength = body.length;
+      request.add(body);
+    }
     final response = await request.close();
-    final body = BytesBuilder(copy: false);
-    await response.forEach(body.add);
-    return _Reply(response.statusCode, response.headers, body.takeBytes());
+    final received = BytesBuilder(copy: false);
+    await response.forEach(received.add);
+    return _Reply(response.statusCode, response.headers, received.takeBytes());
   } finally {
     if (client == null) {
       http.close();
@@ -774,6 +800,144 @@ void main() {
       await bridge.stop();
       await bridge.start();
       expect((await _send(url)).body, _playlistBytes);
+    });
+  });
+
+  // The splat viewer's session (lot SV1 of the splat viewer): a file of the computer or of the cache streamed from
+  // disk with ranges, the headers each file asks for, and the small posts of the page
+  group('generated files on disk, their headers and posts', () {
+    const id = 'f0e1d2c3b4a5968778695a4b3c2d1e0f';
+    late Directory folder;
+    late File scene;
+    late Uint8List sceneBytes;
+    late _SinkMedia viewer;
+
+    setUp(() async {
+      folder = await Directory.systemTemp.createTemp('bridge_disk_test');
+      addTearDown(() => folder.delete(recursive: true));
+      sceneBytes = _bytes(3 * _mib + 17, seed: 11);
+      scene = File('${folder.path}/scene.spz')..writeAsBytesSync(sceneBytes);
+      viewer = _SinkMedia()
+        ..files['scene.spz'] = GeneratedFile.disk(
+          scene,
+          'application/octet-stream',
+          headers: const {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'},
+        )
+        ..files['index.html'] = GeneratedFile(
+          Uint8List.fromList(utf8.encode('<!doctype html>')),
+          'text/html; charset=utf-8',
+          headers: const {'Content-Security-Policy': "default-src 'none'", 'X-Content-Type-Options': 'nosniff'},
+        );
+      bridge.registerGenerated(id, viewer);
+    });
+
+    test('streams the whole file from disk, with its headers', () async {
+      final reply = await _send(bridge.urlFor(id, 'scene.spz'));
+      expect(reply.status, HttpStatus.ok);
+      expect(reply.body, sceneBytes);
+      expect(reply.header(HttpHeaders.contentLengthHeader), '${sceneBytes.length}');
+      expect(reply.header(HttpHeaders.acceptRangesHeader), 'bytes');
+      expect(reply.header(HttpHeaders.contentTypeHeader), 'application/octet-stream');
+      expect(reply.header(HttpHeaders.cacheControlHeader), 'no-store');
+      expect(reply.header('x-content-type-options'), 'nosniff');
+      expect(reply.header(HttpHeaders.lastModifiedHeader), HttpDate.format(scene.lastModifiedSync()));
+    });
+
+    test('the first, a middle and the last byte, and a range past the end', () async {
+      final url = bridge.urlFor(id, 'scene.spz');
+      final first = await _send(url, range: 'bytes=0-0');
+      expect(first.status, HttpStatus.partialContent);
+      expect(first.body, sceneBytes.sublist(0, 1));
+      expect(first.header(HttpHeaders.contentRangeHeader), 'bytes 0-0/${sceneBytes.length}');
+      final middle = await _send(url, range: 'bytes=${_mib + 5}-${2 * _mib + 9}');
+      expect(middle.body, sceneBytes.sublist(_mib + 5, 2 * _mib + 10));
+      final last = await _send(url, range: 'bytes=-1');
+      expect(last.body, sceneBytes.sublist(sceneBytes.length - 1));
+      final open = await _send(url, range: 'bytes=${sceneBytes.length - 3}-');
+      expect(open.body, sceneBytes.sublist(sceneBytes.length - 3));
+      final past = await _send(url, range: 'bytes=${sceneBytes.length}-');
+      expect(past.status, HttpStatus.requestedRangeNotSatisfiable);
+      expect(past.header(HttpHeaders.contentRangeHeader), 'bytes */${sceneBytes.length}');
+    });
+
+    test(
+      'a range on the condition of its date: the part when the file is the same, the whole file otherwise',
+      () async {
+        final url = bridge.urlFor(id, 'scene.spz');
+        final date = HttpDate.format(scene.lastModifiedSync());
+        final same = await _send(url, range: 'bytes=10-19', ifRange: date);
+        expect(same.status, HttpStatus.partialContent);
+        expect(same.body, sceneBytes.sublist(10, 20));
+        final changed = await _send(url, range: 'bytes=10-19', ifRange: HttpDate.format(DateTime.utc(2001)));
+        expect(changed.status, HttpStatus.ok);
+        expect(changed.body.length, sceneBytes.length);
+      },
+    );
+
+    test('HEAD gives the size and no body', () async {
+      final head = await _send(bridge.urlFor(id, 'scene.spz'), method: 'HEAD');
+      expect(head.status, HttpStatus.ok);
+      expect(head.body, isEmpty);
+      expect(head.header(HttpHeaders.contentLengthHeader), '${sceneBytes.length}');
+    });
+
+    test('a file of memory with its own headers', () async {
+      final page = await _send(bridge.urlFor(id, 'index.html'));
+      expect(page.status, HttpStatus.ok);
+      expect(utf8.decode(page.body), '<!doctype html>');
+      expect(page.header(HttpHeaders.contentTypeHeader), 'text/html; charset=utf-8');
+      expect(page.header('content-security-policy'), "default-src 'none'");
+      expect(page.header('x-content-type-options'), 'nosniff');
+      expect(page.header(HttpHeaders.cacheControlHeader), 'no-cache', reason: 'the default of generated media');
+    });
+
+    test('a file gone from disk is not found', () async {
+      await scene.delete();
+      expect((await _send(bridge.urlFor(id, 'scene.spz'))).status, HttpStatus.notFound);
+    });
+
+    test('a post to the sink is handed over and answered 204', () async {
+      final reply = await _send(bridge.urlFor(id, 'events'), method: 'POST', body: utf8.encode('{"type":"ready"}'));
+      expect(reply.status, HttpStatus.noContent);
+      expect(viewer.posts, [('events', '{"type":"ready"}')]);
+    });
+
+    test('a post of 16 KiB is taken, a larger one is refused with 413 and not handed over', () async {
+      final most = List.filled(GeneratedMediaSink.maxPostBytes, 0x20);
+      expect((await _send(bridge.urlFor(id, 'events'), method: 'POST', body: most)).status, HttpStatus.noContent);
+      final over = List.filled(GeneratedMediaSink.maxPostBytes + 1, 0x20);
+      final refused = await _send(bridge.urlFor(id, 'events'), method: 'POST', body: over);
+      expect(refused.status, HttpStatus.requestEntityTooLarge);
+      expect(viewer.posts, hasLength(1));
+    });
+
+    test('a post to a name the sink does not take is not found', () async {
+      final reply = await _send(bridge.urlFor(id, 'scene.spz'), method: 'POST', body: utf8.encode('{}'));
+      expect(reply.status, HttpStatus.notFound);
+      expect(viewer.posts, isEmpty);
+    });
+
+    test('a post to media without a sink, and other methods, are not allowed', () async {
+      final live = _MemoryMedia()..files['live.m3u8'] = GeneratedFile(_playlistBytes, 'application/vnd.apple.mpegurl');
+      bridge.registerGenerated('a1b2c3d4e5f6a7b8c9d0e1f2', live);
+      final post = await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8'), method: 'POST', body: [1]);
+      expect(post.status, HttpStatus.methodNotAllowed);
+      expect(post.header(HttpHeaders.allowHeader), 'GET, HEAD');
+      final put = await _send(bridge.urlFor(id, 'events'), method: 'PUT', body: [1]);
+      expect(put.status, HttpStatus.methodNotAllowed);
+      expect(put.header(HttpHeaders.allowHeader), 'GET, HEAD, POST');
+      expect(viewer.posts, isEmpty);
+    });
+
+    test('the token is needed for the files and the posts, and nothing is served once unregistered', () async {
+      final scenery = bridge.urlFor(id, 'scene.spz');
+      final events = bridge.urlFor(id, 'events');
+      expect((await _send(_withToken(scenery, 'A' * 32))).status, HttpStatus.notFound);
+      expect((await _send(_withToken(events, 'A' * 32), method: 'POST', body: [1])).status, HttpStatus.notFound);
+      bridge.unregisterGenerated(id);
+      expect((await _send(scenery)).status, HttpStatus.notFound);
+      expect((await _send(events, method: 'POST', body: utf8.encode('{}'))).status, HttpStatus.notFound);
+      expect(viewer.posts, isEmpty);
     });
   });
 

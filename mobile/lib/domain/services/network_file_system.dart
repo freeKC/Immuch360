@@ -3,6 +3,7 @@
 // and never copy a whole file to the device, except the clips of a camera: it cannot serve a part of one, so a clip
 // is fetched whole into the cache before it plays.
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -98,17 +99,36 @@ abstract class MediaBridge {
   Future<void> stop();
 }
 
-/// Files the app makes in memory, that the bridge serves next to the shares
+/// Files the app makes in memory, or keeps on this device, that the bridge serves next to the shares
 abstract class GeneratedMedia {
   /// The file [name] (one path segment), null when there is none (or no longer)
   GeneratedFile? file(String name);
 }
 
+/// Generated media that also takes small posts: the events the page of the splat viewer sends to the app
+abstract class GeneratedMediaSink {
+  /// The most bytes of a post; the bridge answers 413 to a larger one and hands nothing over
+  static const maxPostBytes = 16 * 1024;
+
+  /// The body of a POST to [name]; false when [name] takes no post (the bridge answers 404)
+  bool received(String name, Uint8List body);
+}
+
 class GeneratedFile {
-  const GeneratedFile(this.bytes, this.contentType);
+  /// A file held in memory
+  const GeneratedFile(Uint8List this.bytes, this.contentType, {this.headers = const {}}) : diskFile = null;
 
-  final Uint8List bytes;
+  /// A file of this device, read from disk at each request with the same ranges: a splat file of the computer, a
+  /// file picked on a phone or a reduced copy in the cache, which the bridge never holds in memory
+  const GeneratedFile.disk(File this.diskFile, this.contentType, {this.headers = const {}}) : bytes = null;
 
-  /// Without parameters ("application/vnd.apple.mpegurl", "video/mp4")
+  final Uint8List? bytes;
+  final File? diskFile;
+
+  /// "application/vnd.apple.mpegurl", "video/mp4", "text/javascript; charset=utf-8"
   final String contentType;
+
+  /// More headers of the answer: the Content-Security-Policy of a page, X-Content-Type-Options, a Cache-Control that
+  /// replaces the bridge's no-cache
+  final Map<String, String> headers;
 }
