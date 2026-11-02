@@ -232,10 +232,24 @@ class SplatSelectionSource implements ConversionSource {
   @override
   Future<ImmersiveSource> prepare(NativeCancelFlag cancel) => _lead.prepare(cancel);
 
+  /// Lets every member go, even after one failed to (a copy still open): the first failure is thrown once all were
+  /// tried, the others are logged
   @override
   Future<void> release() async {
+    (Object, StackTrace)? first;
     for (final member in launch.members) {
-      await member.source.release();
+      try {
+        await member.source.release();
+      } catch (error, stack) {
+        if (first == null) {
+          first = (error, stack);
+        } else {
+          _log.warning('${member.source.name} of ${launch.label} could not be let go', error, stack);
+        }
+      }
+    }
+    if (first case (final error, final stack)) {
+      Error.throwWithStackTrace(error, stack);
     }
   }
 }
@@ -428,6 +442,9 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
   var _launched = false;
   var _closed = false;
 
+  /// What went wrong while the selection was read, or when the scene was handed to the queue, in its own words
+  String? _failure;
+
   @override
   void initState() {
     super.initState();
@@ -452,7 +469,20 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     }
   }
 
+  /// Reads and plans the selection, then opens the destination of the scene; what fails is said in the dialog instead
+  /// of a wheel turning for ever
   Future<void> _prepare() async {
+    try {
+      await _prepareSelection();
+    } catch (error, stack) {
+      _log.warning('The selection of a splat scene could not be read', error, stack);
+      if (mounted && !_closed) {
+        setState(() => _failure = '$error');
+      }
+    }
+  }
+
+  Future<void> _prepareSelection() async {
     _settings = await _store.read();
     final candidates = await _read();
     if (!mounted || _closed || candidates == null) {
@@ -659,19 +689,31 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     final members = [
       for (final candidate in plan.used) SplatLaunchMember(asset: candidate.asset, source: candidate.found!.source),
     ];
-    final launch = SplatLaunch(
-      members: members,
-      fromVideo: plan.isVideo,
-      name: name,
-      label: plan.isVideo
-          ? members.single.asset.name
-          : t.ai_immersive_splat_job_photos(name: name, count: members.length),
-      target: ConversionTarget.inFolder(destination.folder, name, kind: ConversionKind.splatScene),
-      subject: _subject,
-      keepPly: _keepPly,
-      isNetwork: destination.isNetwork,
-    );
-    final ids = ref.read(splatLauncherProvider)(launch);
+    final List<String> ids;
+    try {
+      ids = ref.read(splatLauncherProvider)(
+        SplatLaunch(
+          members: members,
+          fromVideo: plan.isVideo,
+          name: name,
+          label: plan.isVideo
+              ? members.single.asset.name
+              : t.ai_immersive_splat_job_photos(name: name, count: members.length),
+          target: ConversionTarget.inFolder(destination.folder, name, kind: ConversionKind.splatScene),
+          subject: _subject,
+          keepPly: _keepPly,
+          isNetwork: destination.isNetwork,
+        ),
+      );
+    } catch (error, stack) {
+      // The dialog stays with why, and Make the scene can be pressed again
+      _log.warning('A splat scene could not be handed to the queue', error, stack);
+      _launched = false;
+      if (mounted && !_closed) {
+        setState(() => _failure = '$error');
+      }
+      return;
+    }
     ref.read(conversionJobInfoProvider.notifier).addAll({
       for (final id in ids) id: ConversionJobInfo(asset: members.first.asset, isNetwork: destination.isNetwork),
     });
@@ -727,7 +769,7 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
               const SizedBox(height: 4),
               Text(t.ai_immersive_no_guarantee, style: theme.textTheme.bodySmall),
               const SizedBox(height: 8),
-              if (plan == null || gateAnswer.isLoading && gate == null)
+              if (plan == null && _failure == null || gateAnswer.isLoading && gate == null)
                 const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
@@ -780,6 +822,13 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
                 const SizedBox(height: 12),
                 if (session != null) ..._where(t, session, plan),
               ],
+              // "Error: ...", the words of what failed (error_saving_image is the generic "Error: {error}")
+              if (_failure case final failure?)
+                ConversionNote(
+                  key: const Key('ai_splat_failed'),
+                  text: t.error_saving_image(error: failure),
+                  error: true,
+                ),
             ],
           ),
         ),

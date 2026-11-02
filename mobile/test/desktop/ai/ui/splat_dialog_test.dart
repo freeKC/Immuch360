@@ -6,7 +6,9 @@
 // headset and its .ply, the components to install, the answer of the gate and the card it found, the time on this
 // computer, the name and the folder, the question of a network folder, the line of the headset for a folder of the
 // network or of this computer, the free space of the work files, the question on battery, and what "Make the scene"
-// hands to the queue, kept for the next dialog.
+// hands to the queue, kept for the next dialog; a video whose length the library could not read, the lenses read for
+// the photos used only and never for a file kept online only, a selection that cannot be read and a launch that
+// fails said in the dialog, and a scene that lets every member go.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -215,6 +217,33 @@ class _UnusedSplatEngine implements ImmersiveEngine {
   Future<void> dispose() async {}
 }
 
+/// A member of a scene that records its release in [released], and fails it with [fails]
+class _Releasing implements ConversionSource {
+  _Releasing(this.name, this.released, {this.fails = false});
+
+  @override
+  final String name;
+  final List<String> released;
+  final bool fails;
+
+  @override
+  String? get folder => '/photos/salon';
+
+  @override
+  ImmersiveExif get exif => const ImmersiveExif();
+
+  @override
+  Future<ImmersiveSource> prepare(NativeCancelFlag cancel) => throw UnimplementedError();
+
+  @override
+  Future<void> release() async {
+    released.add(name);
+    if (fails) {
+      throw FileSystemException('The copy is still open', name);
+    }
+  }
+}
+
 void main() {
   late Directory root;
   late String photos;
@@ -239,6 +268,8 @@ void main() {
   late AiFreeSpace? workSpaceShort;
   late List<SplatLaunch> launches;
   late List<String> focalReads;
+  late Error? launchFailure;
+  late Set<String> unreadable;
 
   final windows = aiComponentsFor(AiPlatform.windowsX64);
   final panorama = aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.panorama);
@@ -290,6 +321,8 @@ void main() {
     workSpaceShort = null;
     launches = [];
     focalReads = [];
+    launchFailure = null;
+    unreadable = {};
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -346,7 +379,9 @@ void main() {
       }),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
-            (asset) async => facts[asset.name] ?? const ConversionPhotoFacts(),
+            (asset) async => unreadable.contains(asset.name)
+            ? throw FileSystemException('The drive is gone', asset.name)
+            : facts[asset.name] ?? const ConversionPhotoFacts(),
       ),
       splatVideo360ReaderProvider.overrideWithValue((video) async => videos360.contains(video.name)),
       splatWorkSpaceShortProvider.overrideWith((ref) async => workSpaceShort),
@@ -375,6 +410,10 @@ void main() {
       ),
       conversionThumbnailProvider.overrideWithValue((asset) => const ColoredBox(color: Colors.grey)),
       splatLauncherProvider.overrideWithValue((launch) {
+        if (launchFailure case final failure?) {
+          launchFailure = null;
+          throw failure;
+        }
         launches.add(launch);
         return ['splat-${launches.length}'];
       }),
@@ -423,6 +462,7 @@ void main() {
       return false;
     }
     const greyed = [
+      'ai_splat_failed',
       'ai_splat_refusal',
       'ai_splat_install',
       'ai_splat_gate_refused',
@@ -994,6 +1034,38 @@ void main() {
     expect(used, containsAll(focalReads));
   });
 
+  testWidgets('a selection that cannot be read: why, and no wheel turning for ever', (tester) async {
+    unreadable.add('IMG_0003.jpg');
+    await openDialog(tester, salon(60));
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.text("Error: FileSystemException: The drive is gone, path = 'IMG_0003.jpg'"), findsOneWidget);
+    expect(startEnabled(tester), isFalse);
+    await tapIn(tester, find.byKey(const Key('ai_splat_cancel')));
+    await settle(tester);
+    expect(find.byKey(const Key('ai_splat_dialog')), findsNothing);
+    expect(launches, isEmpty);
+  });
+
+  testWidgets('a launch that fails: the dialog stays and says why, Make the scene can be pressed again', (
+    tester,
+  ) async {
+    launchFailure = StateError('The queue is closed');
+    await openDialog(tester, salon(60));
+    await tapIn(tester, start());
+    await settle(tester);
+
+    expect(find.byKey(const Key('ai_splat_dialog')), findsOneWidget);
+    expect(find.text('Error: Bad state: The queue is closed'), findsOneWidget);
+    expect(launches, isEmpty);
+    expect(startEnabled(tester), isTrue);
+
+    await tapIn(tester, start());
+    await settle(tester);
+    expect(launches, hasLength(1));
+    expect(find.byKey(const Key('ai_splat_dialog')), findsNothing);
+  });
+
   group('the room of the work files', () {
     Future<AiFreeSpace?> shortWith(Map<String, AiFreeSpace> drives) async {
       final container = ProviderContainer(
@@ -1016,5 +1088,29 @@ void main() {
       expect(await shortWith({temporary: const AiFreeSpace(free: 3 * _gib, volume: r'C:\')}), isNull);
       expect(await shortWith(const {}), isNull, reason: 'not known: the work itself says a full drive');
     });
+  });
+
+  test('a scene lets every member go, even after one of them failed to', () async {
+    final released = <String>[];
+    final source = SplatSelectionSource(
+      SplatLaunch(
+        members: [
+          for (final name in ['a.jpg', 'b.jpg', 'c.jpg'])
+            SplatLaunchMember(
+              asset: _asset(name),
+              source: _Releasing(name, released, fails: name == 'a.jpg'),
+            ),
+        ],
+        fromVideo: false,
+        name: 'salon',
+        label: 'salon (3 photos)',
+        target: const ConversionTarget(folder: '/photos/salon', fileName: 'salon_splat.spz'),
+        subject: SplatSubject.place,
+        keepPly: false,
+        isNetwork: false,
+      ),
+    );
+    await expectLater(source.release(), throwsA(isA<FileSystemException>()));
+    expect(released, ['a.jpg', 'b.jpg', 'c.jpg']);
   });
 }
