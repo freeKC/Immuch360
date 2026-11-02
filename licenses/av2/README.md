@@ -19,4 +19,7 @@ the system), look for the strings of GPL code in it, and compare every licence t
 was built from; a licence of the lock outside the permissive list (`permissive` in the lock) fails the job.
 
 The three texts of dav2d in this folder are copies of its files at the commit of the lock; `av2_build.py licences`
-compares them with the sources at each build, and with the SHA-256 the lock gives.
+compares them with the sources at each build, and with the SHA-256 the lock gives. `AOM-PATENTS.txt` is the patent
+licence as dav2d ships it (`doc/PATENTS`): the same text as the `PATENTS` file of AVM v1.0.0 and of libaom, but for
+typographic quotes and one typo of dav2d's copy ("OTHER PARTRY" for "OTHER PARTY" in section 1.3), kept as it is so
+that the archive carries what the code it holds came with.
