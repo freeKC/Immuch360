@@ -35,6 +35,11 @@ name: Immuch360 Desktop
 #                  stable-diffusion.cpp on Vulkan, the generator of the 360° panoramas, built from the commits of
 #                  .github/desktop/ai/sd_cpp.lock.json: only when asked (the sdcpp input) or when the lock changed,
 #                  as artifacts Immuch360-AI-sdcpp-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
+#   av2-windows, av2-linux, av2-macos
+#                  the AV2 decoder of the app (immuch360-av2 on dav2d), built from mobile/native/av2 and the commit of
+#                  dav2d of .github/desktop/av2/av2.lock.json, and checked by running it on the fixtures: only when
+#                  asked (the av2 input) or when the lock, the program or its scripts changed, as artifacts
+#                  Immuch360-av2-decoder-<lock>-windows-x64.zip, -linux-x64.zip and -macos-universal.zip
 #
 # Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
 # from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
@@ -56,11 +61,19 @@ on:
         description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
         type: boolean
         default: false
+      av2:
+        description: Also build the AV2 decoder (the av2 jobs), as when av2.lock.json or mobile/native/av2 changes
+        type: boolean
+        default: false
   # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
   workflow_call:
     inputs:
       sdcpp:
         description: Also build stable-diffusion.cpp, for the release workflow to sign it (never for a release)
+        type: boolean
+        default: false
+      av2:
+        description: Also build the AV2 decoder (never for a release)
         type: boolean
         default: false
     outputs:
@@ -89,6 +102,7 @@ jobs:
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
+      av2_lock_changed: ${{ steps.av2.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,6 +137,30 @@ jobs:
             changed=true
           fi
           echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      # The av2 jobs build the AV2 decoder when its lock, its sources, its scripts or its licences differ from the base,
+      # with the same bases as above; by hand with the av2 input
+      - name: Did the AV2 decoder change
+        id: av2
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=
+          if [ "$EVENT" = pull_request ]; then
+            base=$(git merge-base HEAD "origin/$BASE_REF")
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          fi
+          changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/av2 mobile/native/av2 licenses/av2 \
+            mobile/test/fixtures/av2; then
+            changed=true
+          fi
+          echo "the AV2 decoder changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Install mise
@@ -1446,6 +1484,273 @@ jobs:
           python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
           chmod +x "$RUNNER_TEMP/unpacked/sd-cli"
           LD_LIBRARY_PATH= "$RUNNER_TEMP/unpacked/sd-cli" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  # The AV2 decoder of the app (plan of the 2nd of November 2026, section 3): immuch360-av2, our program on the library
+  # of dav2d (VideoLAN, BSD 2-Clause) at the commit of .github/desktop/av2/av2.lock.json, built with Meson on the pinned
+  # images of the desktop builds: Windows with MSVC and its static runtime (one .exe, no DLL), Linux on Ubuntu 22.04 for
+  # its glibc with immuch360-run next to it, macOS for arm64 and x86_64 joined by lipo and signed ad hoc. Each job then
+  # checks the archive it made (.github/desktop/av2/av2_build.py check --run): the licence texts equal to the sources,
+  # no GPL licence, string or library, only the system's libraries or imports, --help equal to the fixture, and the
+  # program of the archive itself on the fixtures of mobile/test/fixtures/av2 through serve (the MD5 of avmdec v1.0.0,
+  # ranges, seeks, the token, 127.0.0.1 only, the end of the input; av2_serve_check.py). Only when asked (the av2
+  # input) or when the decoder changed; the archive Immuch360-av2-decoder-<lock>-<system>.zip is not a package of the
+  # app and no release attaches it
+  av2-windows:
+    name: AV2 decoder for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/av2/av2_build.py lock --system windows-x64 --github-output
+
+      - name: dav2d at the commit of the lock
+        run: python .github/desktop/av2/av2_build.py sources
+
+      # Meson and Ninja of the lock in a virtual environment; nasm 2.16.03 of nasm.us, checked by its SHA-256
+      - name: Meson, Ninja and nasm
+        env:
+          MESON: ${{ steps.lock.outputs.meson }}
+          NINJA: ${{ steps.lock.outputs.ninja }}
+          NASM_URL: ${{ steps.lock.outputs.nasm_url }}
+          NASM_SHA256: ${{ steps.lock.outputs.nasm_sha256 }}
+          NASM_VERSION: ${{ steps.lock.outputs.nasm_version }}
+        run: |
+          python -m venv "$RUNNER_TEMP/av2-venv"
+          "$RUNNER_TEMP/av2-venv/Scripts/python.exe" -m pip install --disable-pip-version-check -q "meson==$MESON" \
+            "ninja==$NINJA"
+          echo "$(cygpath -w "$RUNNER_TEMP/av2-venv/Scripts")" >> "$GITHUB_PATH"
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/nasm.zip" "$NASM_URL"
+          echo "$NASM_SHA256  $RUNNER_TEMP/nasm.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/nasm.zip" -d "$RUNNER_TEMP/nasm"
+          echo "$(cygpath -w "$RUNNER_TEMP/nasm/nasm-$NASM_VERSION")" >> "$GITHUB_PATH"
+
+      - name: Build with MSVC and its static runtime
+        id: build
+        run: |
+          meson --version
+          nasm -v
+          python .github/desktop/av2/av2_build.py build --system windows-x64 --build "$RUNNER_TEMP/av2-build"
+
+      - name: The licences of the lock and the sources
+        run: python .github/desktop/av2/av2_build.py licences
+
+      - name: The archive
+        id: pack
+        run: |
+          python .github/desktop/av2/av2_build.py pack --system windows-x64 \
+            --program "$RUNNER_TEMP/av2-build/immuch360-av2.exe" --out dist
+
+      - name: The program of the archive on the fixtures
+        run: |
+          python .github/desktop/av2/av2_build.py check --system windows-x64 \
+            --archive "dist/${{ steps.lock.outputs.artifact }}" --run
+
+      - name: Size and time in the summary
+        env:
+          ARTIFACT: ${{ steps.lock.outputs.artifact }}
+          SECONDS_BUILT: ${{ steps.build.outputs.seconds }}
+          SIZE: ${{ steps.pack.outputs.size }}
+          SHA256: ${{ steps.pack.outputs.sha256 }}
+        run: |
+          program=$(stat -c %s "$RUNNER_TEMP/av2-build/immuch360-av2.exe")
+          {
+            echo "### $ARTIFACT"
+            echo
+            echo "Archive $SIZE bytes, SHA-256 \`$SHA256\`; program $program bytes; built in ${SECONDS_BUILT} s"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  av2-linux:
+    name: AV2 decoder for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/av2/av2_build.py lock --system linux-x64 --github-output
+
+      - name: dav2d at the commit of the lock
+        run: python3 .github/desktop/av2/av2_build.py sources
+
+      - name: Meson, Ninja and nasm
+        env:
+          MESON: ${{ steps.lock.outputs.meson }}
+          NINJA: ${{ steps.lock.outputs.ninja }}
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q nasm
+          python3 -m venv "$RUNNER_TEMP/av2-venv"
+          "$RUNNER_TEMP/av2-venv/bin/python" -m pip install --disable-pip-version-check -q "meson==$MESON" \
+            "ninja==$NINJA"
+          echo "$RUNNER_TEMP/av2-venv/bin" >> "$GITHUB_PATH"
+
+      - name: Build
+        id: build
+        run: |
+          meson --version
+          nasm -v
+          python3 .github/desktop/av2/av2_build.py build --system linux-x64 --build "$RUNNER_TEMP/av2-build"
+
+      # The launcher that makes the decoder die with the app (PR_SET_PDEATHSIG), checked as the sdcpp-linux job does
+      - name: immuch360-run
+        run: |
+          gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+          launcher="$RUNNER_TEMP/immuch360-run"
+          "$launcher" --parent $$ -- /bin/echo "the launcher runs"
+          bash -c "\"$launcher\" --parent \$\$ -- /bin/sh -c 'echo \$\$ > \"$RUNNER_TEMP/child\"; exec sleep 300' & sleep 1; kill -9 \$\$" || true
+          sleep 1
+          child=$(cat "$RUNNER_TEMP/child")
+          if [ -e "/proc/$child" ]; then echo "::error::the child $child outlived its parent"; exit 1; fi
+          echo "the child $child died with its parent"
+
+      - name: The licences of the lock and the sources
+        run: python3 .github/desktop/av2/av2_build.py licences
+
+      - name: The archive
+        id: pack
+        run: |
+          python3 .github/desktop/av2/av2_build.py pack --system linux-x64 \
+            --program "$RUNNER_TEMP/av2-build/immuch360-av2" --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+
+      - name: The program of the archive on the fixtures
+        run: |
+          python3 .github/desktop/av2/av2_build.py check --system linux-x64 \
+            --archive "dist/${{ steps.lock.outputs.artifact }}" --run
+
+      - name: Size and time in the summary
+        env:
+          ARTIFACT: ${{ steps.lock.outputs.artifact }}
+          SECONDS_BUILT: ${{ steps.build.outputs.seconds }}
+          SIZE: ${{ steps.pack.outputs.size }}
+          SHA256: ${{ steps.pack.outputs.sha256 }}
+        run: |
+          program=$(stat -c %s "$RUNNER_TEMP/av2-build/immuch360-av2")
+          {
+            echo "### $ARTIFACT"
+            echo
+            echo "Archive $SIZE bytes, SHA-256 \`$SHA256\`; program $program bytes; built in ${SECONDS_BUILT} s"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  av2-macos:
+    name: AV2 decoder for macOS
+    runs-on: macos-15
+    needs: codegen
+    if: ${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}
+    timeout-minutes: 60
+    env:
+      # The Xcode of the macos job of the app, named rather than the newest the image carries (check_workflow.py)
+      XCODE_VERSION: '26.3'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Xcode
+        run: |
+          xcode="/Applications/Xcode_$XCODE_VERSION.app"
+          if [ ! -d "$xcode" ]; then
+            echo "::error::No Xcode $XCODE_VERSION on this runner image: set XCODE_VERSION to one its readme lists"
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode/Contents/Developer"
+          xcodebuild -version
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/av2/av2_build.py lock --system macos-universal --github-output
+
+      - name: dav2d at the commit of the lock
+        run: python3 .github/desktop/av2/av2_build.py sources
+
+      # nasm for the x86_64 half (the arm64 half is assembled by clang), and Rosetta to run that half here
+      - name: Meson, Ninja, nasm and Rosetta
+        env:
+          MESON: ${{ steps.lock.outputs.meson }}
+          NINJA: ${{ steps.lock.outputs.ninja }}
+        run: |
+          brew install nasm
+          python3 -m venv "$RUNNER_TEMP/av2-venv"
+          "$RUNNER_TEMP/av2-venv/bin/python" -m pip install --disable-pip-version-check -q "meson==$MESON" \
+            "ninja==$NINJA"
+          echo "$RUNNER_TEMP/av2-venv/bin" >> "$GITHUB_PATH"
+          if ! arch -x86_64 /usr/bin/true 2>/dev/null; then
+            sudo softwareupdate --install-rosetta --agree-to-license
+          fi
+          arch -x86_64 /usr/bin/true && echo "Rosetta runs x86_64 programs"
+
+      - name: Build arm64 and x86_64, lipo, ad hoc signature
+        id: build
+        run: |
+          meson --version
+          nasm -v
+          python3 .github/desktop/av2/av2_build.py build --system macos-universal --build "$RUNNER_TEMP/av2-build"
+
+      - name: The licences of the lock and the sources
+        run: python3 .github/desktop/av2/av2_build.py licences
+
+      - name: The archive
+        id: pack
+        run: |
+          python3 .github/desktop/av2/av2_build.py pack --system macos-universal \
+            --program "$RUNNER_TEMP/av2-build/immuch360-av2" --out dist
+
+      - name: The program of the archive on the fixtures, arm64 and x86_64
+        run: |
+          python3 .github/desktop/av2/av2_build.py check --system macos-universal \
+            --archive "dist/${{ steps.lock.outputs.artifact }}" --run --arch-x86-64
+
+      - name: Size and time in the summary
+        env:
+          ARTIFACT: ${{ steps.lock.outputs.artifact }}
+          SECONDS_BUILT: ${{ steps.build.outputs.seconds }}
+          SIZE: ${{ steps.pack.outputs.size }}
+          SHA256: ${{ steps.pack.outputs.sha256 }}
+        run: |
+          program=$(stat -f %z "$RUNNER_TEMP/av2-build/immuch360-av2")
+          {
+            echo "### $ARTIFACT"
+            echo
+            echo "Archive $SIZE bytes, SHA-256 \`$SHA256\`; program $program bytes; built in ${SECONDS_BUILT} s"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

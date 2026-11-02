@@ -32,6 +32,10 @@ with the with_sdcpp input passes it to the build and nothing else ("sdcpp: ${{ i
 job that writes the contents never runs with it or with sign_test (an "if:" that negates both): building and signing
 stable-diffusion.cpp never touches a release of the app.
 
+The AV2 decoder of the app (immuch360-av2 on dav2d, plan of the 2nd of November 2026, section 3) is built by the jobs
+whose names start with "av2" (av2-windows, av2-linux, av2-macos), held to the same rules: windows-2022, ubuntu-22.04
+and macos-15, an "if:" that reads inputs.av2, and no artifact Immuch360-Desktop-*.
+
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
 The Samsung TV app is held to the same: .github/workflows/immuch360-tizen.yml (its package job signs with a throwaway
@@ -67,6 +71,9 @@ SIGNING_LINE = re.compile(r'^(\s+)(' + '|'.join(SIGNING_SECRETS) + r'):\s*\$\{\{
 # The jobs that build stable-diffusion.cpp, by the start of their names, and the image each system builds on
 SDCPP_JOB = 'sdcpp'
 SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
+# The same for the AV2 decoder
+AV2_JOB = 'av2'
+AV2_RUNNERS = {'av2-windows': 'windows-2022', 'av2-linux': 'ubuntu-22.04', 'av2-macos': 'macos-15'}
 
 
 def release_triggers(workflow: str, tag_prefix: str = 'desktop-v') -> list:
@@ -163,20 +170,32 @@ def job_if(body: list) -> str:
 
 def sdcpp_jobs(lines: list, owners: list) -> list:
     """The jobs that build stable-diffusion.cpp: on their images, when asked only, never as a package of the app"""
+    return component_jobs(lines, owners, SDCPP_JOB, SDCPP_RUNNERS, 'stable-diffusion.cpp')
+
+
+def av2_jobs(lines: list, owners: list) -> list:
+    """The jobs that build the AV2 decoder, under the same rules"""
+    return component_jobs(lines, owners, AV2_JOB, AV2_RUNNERS, 'the AV2 decoder')
+
+
+def component_jobs(lines: list, owners: list, prefix: str, runners: dict, what: str) -> list:
+    """The jobs of a component of the app built by the CI: on their images, when asked only (inputs.<prefix>), never
+    as a package of the app"""
     found = []
     for job, body in job_lines(lines, owners).items():
-        if not job.startswith(SDCPP_JOB):
+        if not job.startswith(prefix):
             continue
         runner = next((re.match(r'^    runs-on:\s*(\S+)', line).group(1).strip('\'"') for line in body
                        if re.match(r'^    runs-on:', line)), None)
-        if job not in SDCPP_RUNNERS:
-            found.append(f'the job {job} builds stable-diffusion.cpp on no known system: '
-                         f'{", ".join(SDCPP_RUNNERS)} only')
-        elif runner != SDCPP_RUNNERS[job]:
-            found.append(f'the job {job} runs on {runner}: stable-diffusion.cpp builds on {SDCPP_RUNNERS[job]}, the '
+        if job not in runners:
+            found.append(f'the job {job} builds {what} on no known system: '
+                         f'{", ".join(runners)} only')
+        elif runner != runners[job]:
+            found.append(f'the job {job} runs on {runner}: {what} builds on {runners[job]}, the '
                          'image of the desktop build')
-        if 'inputs.sdcpp' not in job_if(body):
-            found.append(f'the job {job} runs on every event: its "if:" must read inputs.sdcpp (or the lock changed)')
+        if f'inputs.{prefix}' not in job_if(body):
+            found.append(f'the job {job} runs on every event: its "if:" must read inputs.{prefix} (or the lock '
+                         'changed)')
         for line in body:
             name = re.match(r'^\s+name:\s*[\'"]?(Immuch360-Desktop-\S*)', line)
             if name:
@@ -260,6 +279,7 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
                 continue
             found.append(f'line {number}: a write access ({line.strip()})')
     found += sdcpp_jobs(lines, owners)
+    found += av2_jobs(lines, owners)
     if release:
         found += signing_job_writes(lines, owners)
         found += release_triggers(workflow, tag_prefix)
