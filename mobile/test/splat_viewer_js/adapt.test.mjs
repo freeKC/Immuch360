@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { median, quantile, Quality, SCALES } from '../../assets/splat_viewer/adapt.js';
+import { median, quantile, Quality, scalesFor } from '../../assets/splat_viewer/adapt.js';
 
 const run = (quality, ms, seconds, from = 0) => {
   const changes = [];
@@ -19,7 +19,19 @@ test('slow frames for 2 s step the scale down, to 0.5 at most, then say heavy on
   assert.equal(quality.scale, 1);
   const changes = run(quality, 60, 20);
   assert.deepEqual(changes.map((c) => c.change), ['down', 'down', 'heavy']);
-  assert.equal(quality.scale, SCALES[SCALES.length - 1]);
+  assert.equal(quality.scale, 0.5);
+});
+
+test('a computer starts at two pixels per CSS pixel and steps down to half a pixel, as a phone does', () => {
+  // Review of 2 November 2026: a 200 % panel was drawn at a quarter of its pixels, stretched
+  assert.deepEqual(scalesFor(1), [1, 0.75, 0.5]);
+  assert.deepEqual(scalesFor(2), [1, 0.75, 0.5, 0.375, 0.25]);
+  assert.deepEqual(scalesFor(1.5), [1, 0.75, 0.5, 0.375]);
+  const quality = new Quality(2);
+  assert.equal(quality.scale, 1);
+  const changes = run(quality, 60, 30);
+  assert.deepEqual(changes.map((c) => c.change), ['down', 'down', 'down', 'down', 'heavy']);
+  assert.equal(2 * quality.scale, 0.5);
 });
 
 test('fast frames step it back up; frames in between leave it', () => {

@@ -5,7 +5,7 @@
 // happened (events.js). It draws only while something moves, and about a second after.
 
 import { Quality, median, quantile } from './adapt.js';
-import { Navigator, attachInput, startGyroscope } from './controls.js';
+import { Navigator, attachEscape, attachInput, startGyroscope } from './controls.js';
 import { DrawLoop } from './drawloop.js';
 import { createEvents } from './events.js';
 import { createPanel } from './panel.js';
@@ -142,10 +142,19 @@ async function main() {
     help: () => panel.toggleSheet([hint()]),
   });
 
+  // A refusal or a failure ends the viewing: its sheet shows with Back, and Esc closes at once
+  let failed = false;
+  const fail = (text) => {
+    failed = true;
+    panel.showError(text);
+  };
+  // Esc from now on, while the scene loads too (the keys of the scene come once it shows)
+  attachEscape(window, { shown: () => input != null, failed: () => failed, hideSheet: () => panel.hideSheet(), close });
+
   const missing = missingSupport();
   if (missing) {
     events.post('unsupported', { reason: missing });
-    panel.showError(missing === 'simd' ? t.needsSimd ?? t.needsWebgl2 : t.needsWebgl2);
+    fail(missing === 'simd' ? t.needsSimd ?? t.needsWebgl2 : t.needsWebgl2);
     return;
   }
 
@@ -161,7 +170,7 @@ async function main() {
     names = found;
   });
 
-  const quality = new Quality();
+  const quality = new Quality(session.limits.pixelRatioMax);
   const frames = [];
   let statsSince = performance.now();
   const size = { width: 1, height: 1 };
@@ -309,7 +318,7 @@ async function main() {
   canvas.addEventListener('webglcontextlost', (event) => {
     event.preventDefault();
     events.post('error', { message: 'webglcontextlost' });
-    panel.showError(t.graphicsLost ?? t.needsWebgl2);
+    fail(t.graphicsLost ?? t.needsWebgl2);
   });
 
   const started = performance.now();
@@ -319,7 +328,7 @@ async function main() {
     bytes = await fetchScene(session.scene.url, (share) => panel.showLoading(share));
   } catch (error) {
     events.post('error', { message: `fetch: ${error?.message ?? error}` });
-    panel.showError(fill(t.failed, { reason: String(error?.message ?? error) }));
+    fail(fill(t.failed, { reason: String(error?.message ?? error) }));
     return;
   }
   let gaussians;
@@ -329,7 +338,7 @@ async function main() {
     gaussians = await engine.load(bytes, session.scene.type, session.scene.name);
   } catch (error) {
     events.post('error', { message: `load: ${error?.message ?? error}` });
-    panel.showError(fill(t.failed, { reason: String(error?.message ?? error) }));
+    fail(fill(t.failed, { reason: String(error?.message ?? error) }));
     return;
   }
   bytes = null;
@@ -346,11 +355,6 @@ async function main() {
     key: (code) => {
       lastTouch = false;
       switch (code) {
-        case 'Escape':
-          if (!panel.hideSheet()) {
-            close();
-          }
-          break;
         case 'KeyR':
           nav.reset(view);
           panel.setMode(nav.mode === 'walk');
@@ -390,7 +394,12 @@ async function main() {
     walked: () => {
       panel.setMode(true);
     },
-    focusLost: () => {},
+    // The keys were let go with the focus: a computer says how to get them back (Alt+Tab, a click elsewhere)
+    focusLost: () => {
+      if (!touchFirst && !closing) {
+        panel.say(t.focusHint, 4);
+      }
+    },
   });
   canvas.addEventListener('pointerdown', (event) => {
     lastTouch = event.pointerType === 'touch';

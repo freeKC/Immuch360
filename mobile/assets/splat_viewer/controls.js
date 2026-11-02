@@ -321,8 +321,32 @@ export function inStickArea(x, y, width, height) {
 }
 
 /**
+ * Esc on [target] (the window), from the first moment of the page: it closes the viewer while the scene loads and
+ * once a refusal or a failure shows (the review of 2 November 2026: two Esc on the error of a cut SPZ left the window
+ * open); once the scene shows, it closes the open sheet first, the viewer at the next press. [hooks]: shown() whether
+ * the scene shows, failed() whether an error shows, hideSheet() true when it hid a sheet, close(). Returns the unbind.
+ */
+export function attachEscape(target, hooks) {
+  const onKeyDown = (event) => {
+    if (event.code !== 'Escape' && event.key !== 'Escape') {
+      return;
+    }
+    event.preventDefault();
+    if (event.repeat) {
+      return;
+    }
+    if (!hooks.shown() || hooks.failed() || !hooks.hideSheet()) {
+      hooks.close();
+    }
+  };
+  target.addEventListener('keydown', onKeyDown);
+  return () => target.removeEventListener('keydown', onKeyDown);
+}
+
+/**
  * Binds the input of the page to [nav]: [canvas] gets the mouse and the touches, the window the keys. [hooks] are
- * told: changed() after each change of the view, key(code) for the keys of the panel (M, R, U, H, I, Escape),
+ * told: changed() after each change of the view, key(code) for the keys of the panel (M, R, U, H, I; Esc is
+ * attachEscape's, bound from the start of the page),
  * tap() and doubleTap() of a touch, stick(state) to draw the stick, walked() when the input switched to Walk,
  * focusLost(). Returns {stepKeys(dt), held, stop()}.
  */
@@ -342,7 +366,7 @@ export function attachInput(canvas, nav, hooks) {
       event.preventDefault();
       return;
     }
-    if (['KeyM', 'KeyR', 'KeyU', 'KeyH', 'KeyI', 'Escape'].includes(event.code)) {
+    if (['KeyM', 'KeyR', 'KeyU', 'KeyH', 'KeyI'].includes(event.code)) {
       event.preventDefault();
       if (!event.repeat) {
         hooks.key(event.code);

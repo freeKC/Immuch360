@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
+  attachEscape,
   FAST,
   forwardOf,
   GYRO_NOISE,
@@ -178,4 +179,58 @@ test('the gyroscope: the 360 viewer\'s rule, its noise threshold, and the screen
   const down = gyroTurn(1, 1, 0.1, 180);
   near(down.pitch, -0.1);
   near(down.yaw, -0.1);
+});
+
+/** A window that only takes key listeners, and a key event that records preventDefault */
+function fakeWindow() {
+  const listeners = new Set();
+  return {
+    addEventListener: (type, listener) => type === 'keydown' && listeners.add(listener),
+    removeEventListener: (type, listener) => listeners.delete(listener),
+    press(code, repeat = false) {
+      const event = { code, key: code, repeat, prevented: false, preventDefault() { this.prevented = true; } };
+      listeners.forEach((listener) => listener(event));
+      return event;
+    },
+  };
+}
+
+test('Esc closes while the scene loads and on an error at once; once it shows, the sheet first', () => {
+  // Review of 2 November 2026: two Esc on the error of a cut SPZ left the window of a computer open
+  const target = fakeWindow();
+  const state = { shown: false, failed: false, sheet: false, closes: 0 };
+  const unbind = attachEscape(target, {
+    shown: () => state.shown,
+    failed: () => state.failed,
+    hideSheet: () => {
+      const was = state.sheet;
+      state.sheet = false;
+      return was;
+    },
+    close: () => state.closes++,
+  });
+  // Loading
+  assert.equal(target.press('Escape').prevented, true);
+  assert.equal(state.closes, 1);
+  // The error sheet of a file that could not be read, before or after the scene showed
+  state.failed = true;
+  state.sheet = true;
+  target.press('Escape');
+  assert.equal(state.closes, 2);
+  // Shown: the info sheet first, then the viewer
+  state.failed = false;
+  state.shown = true;
+  state.sheet = true;
+  target.press('Escape');
+  assert.equal(state.closes, 2);
+  assert.equal(state.sheet, false);
+  target.press('Escape');
+  assert.equal(state.closes, 3);
+  // A held key repeats nothing; other keys are not its
+  target.press('Escape', true);
+  assert.equal(target.press('KeyW').prevented, false);
+  assert.equal(state.closes, 3);
+  unbind();
+  target.press('Escape');
+  assert.equal(state.closes, 3);
 });

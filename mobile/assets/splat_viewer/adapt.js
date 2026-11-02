@@ -1,8 +1,19 @@
-// The drawing quality follows the frame times (plan section 6): the pixel ratio at most the session's (1 at first),
-// the drawing scale 1, then 0.75, then 0.5 when the median frame stays over 22 ms for 2 s, back up under 12 ms; one
-// "heavy" line per opening when the median stays over 50 ms at the lowest scale. Pure, tested in Node.
+// The drawing quality follows the frame times (plan section 6): the pixel ratio at most the session's (1 on phones and
+// tablets, 2 on computers, whose panels at 200 % were drawn at a quarter of their pixels), the drawing scale 1, then
+// 0.75, then 0.5 when the median frame stays over 22 ms for 2 s, and on down to a drawing at half a pixel per CSS
+// pixel when the session starts at 2; back up under 12 ms; one "heavy" line per opening when the median stays over
+// 50 ms at the lowest scale. Pure, tested in Node.
 
-export const SCALES = [1, 0.75, 0.5];
+export const SCALES = [1, 0.75, 0.5, 0.375, 0.25];
+
+/** The lowest pixel ratio the steps go down to, whatever the session starts at */
+export const LOWEST_RATIO = 0.5;
+
+/** The steps of a session whose pixel ratio is at most [ratioMax]: down to LOWEST_RATIO */
+export function scalesFor(ratioMax = 1) {
+  const base = Math.max(1, ratioMax);
+  return SCALES.filter((scale) => base * scale >= LOWEST_RATIO - 1e-9);
+}
 export const SLOW_MS = 22;
 export const FAST_MS = 12;
 export const HEAVY_MS = 50;
@@ -26,7 +37,8 @@ export function quantile(values, q) {
 
 /** The quality of one viewing: frame(ms, now) for each frame drawn right after another; scale, heavy */
 export class Quality {
-  constructor() {
+  constructor(ratioMax = 1) {
+    this.scales = scalesFor(ratioMax);
     this.step = 0;
     this.frames = [];
     this.since = null;
@@ -34,7 +46,7 @@ export class Quality {
   }
 
   get scale() {
-    return SCALES[this.step];
+    return this.scales[this.step];
   }
 
   /**
@@ -53,7 +65,7 @@ export class Quality {
       return null;
     }
     const middle = median(this.frames.map((frame) => frame.ms));
-    if (middle > SLOW_MS && this.step < SCALES.length - 1) {
+    if (middle > SLOW_MS && this.step < this.scales.length - 1) {
       this.step++;
       this.restart(now);
       return 'down';
@@ -63,7 +75,7 @@ export class Quality {
       this.restart(now);
       return 'up';
     }
-    if (middle > HEAVY_MS && this.step === SCALES.length - 1 && !this.heavy) {
+    if (middle > HEAVY_MS && this.step === this.scales.length - 1 && !this.heavy) {
       this.heavy = true;
       return 'heavy';
     }
