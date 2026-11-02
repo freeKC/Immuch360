@@ -72,6 +72,14 @@ void main() {
       expect(defaultConfig.read(SettingsKey.viewerLargeSplats), isFalse);
     });
 
+    test('the dedicated graphics chip of a Windows computer is used by default (D2), a stored off wins', () {
+      expect(const AppConfig().viewer.highPerformanceGpu, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerHighPerformanceGpu), isTrue);
+      final config = AppConfig.fromEntries({SettingsKey.viewerHighPerformanceGpu: false});
+      expect(config.viewer.highPerformanceGpu, isFalse);
+      expect(config.write(SettingsKey.viewerHighPerformanceGpu, true).viewer.highPerformanceGpu, isTrue);
+    });
+
     test('a stored on wins over the default of Large splats', () {
       final config = AppConfig.fromEntries({SettingsKey.viewerLargeSplats: true});
 

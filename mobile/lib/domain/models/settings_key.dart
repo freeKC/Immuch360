@@ -42,6 +42,8 @@ enum SettingsKey<T> {
   // The Gaussian splat files of other tools on a Meta Quest 3 or 3S, see ViewerConfig.gaussianSplats and largeSplats
   viewerGaussianSplats<bool>(),
   viewerLargeSplats<bool>(),
+  // The dedicated graphics chip of a Windows computer with two, for the splat viewer: ViewerConfig.highPerformanceGpu
+  viewerHighPerformanceGpu<bool>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
 
