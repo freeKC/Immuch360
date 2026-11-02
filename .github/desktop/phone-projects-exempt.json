@@ -1463,6 +1463,10 @@
     "blob": "11b1ac069c48fcca131c191aac3cea3b7e211b2b",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the bounds and the placement; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the orientations as measured, the measuring tape upright at the height of the eyes, the new memory keys; the floor of a place"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPlacementViewerTest.kt": {
+    "blob": "1055959c28121bee4ccc103ec4b62c42ffdf112d",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV3): the Quest's SplatPlacement held to viewer_expected.json, which the page's placement.js is held to too"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPreparerTest.kt": {
     "blob": "968604e7a7b0700043e32bb38b8d3f5c431dacdf",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the preparation of a splat file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 and the last check of every path; no orientation said for an object; a version 2 cut, short, in two members or flagged; the splat turn and SPZ version 4 (fix-quest-splat-navigation): version 4 prepared as version 2"
