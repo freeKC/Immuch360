@@ -24,9 +24,9 @@
 // battery, "Make the scene" asks first. The photos and the folder are read and planned by splat_plan.dart.
 //
 // "Make the scene" hands a SplatLaunch to splatLauncherProvider: the photos in the order of their time, or the video,
-// with the name, the file, what was filmed and the .ply. Until the queue of the splat scenes (lot SP6) takes it, the
-// launcher adds one job of the queue whose source names the scene and reads its first photo; the branch of the test
-// build wires it to the engine (lot SP8).
+// with the name, the file, what was filmed and the .ply. The launcher gives it to the queue of the splat scenes (lot
+// SP6, wired by lot SP8): one job whose source names the scene and reads its first photo, and whose members the engine
+// reads one after the other, an original of the server with the checksum Immich gives for it.
 
 import 'dart:async';
 import 'dart:io';
@@ -39,6 +39,8 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
+import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/splat_members.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/power_probe.dart';
@@ -195,19 +197,32 @@ class SplatLaunch {
 /// Hands a scene to the queue, and gives the ids of its jobs
 typedef SplatLauncher = List<String> Function(SplatLaunch launch);
 
-/// One job of the queue for the whole scene ([SplatSelectionSource]), its file never put over another one; the queue
-/// of the splat scenes (lot SP6) and the branch of the test build (lot SP8) give the engine its members
+/// One job of the queue for the whole scene, its file never put over another one (ConversionQueue.addSplat): named and
+/// read first by [SplatSelectionSource], its members given to the engine with what was filmed and the .ply
 final splatLauncherProvider = Provider<SplatLauncher>(
   (ref) =>
-      (launch) => ref
-          .read(conversionQueueProvider.notifier)
-          .add(
-            [ConversionRequest(source: SplatSelectionSource(launch), target: launch.target)],
-            kind: ConversionKind.splatScene,
-            existing: ExistingVersionChoice.newVersion,
-            whenExists: AiWhenExists.keepBoth,
-            fromVideo: launch.fromVideo,
-          ),
+      (launch) => [
+        ref
+            .read(conversionQueueProvider.notifier)
+            .addSplat(
+              lead: SplatSelectionSource(launch),
+              selection: SplatSelection(
+                members: [for (final member in launch.members) splatMemberOf(member)],
+                settings: SplatSettings(subject: launch.subject, keepPly: launch.keepPly),
+              ),
+              target: launch.target,
+              video: launch.fromVideo,
+            ),
+      ],
+);
+
+/// [member] as the engine reads it: its source, when it was taken, and for an original of the server the checksum
+/// Immich gives for it, which a Retry from the poses compares instead of downloading the photo again. A file of this
+/// computer is read for its sum: the library may know an older one.
+SourceSplatMember splatMemberOf(SplatLaunchMember member) => SourceSplatMember(
+  member.source,
+  taken: member.taken,
+  sha1: member.source is ServerOriginalSource ? member.asset.checksum : null,
 );
 
 /// The photos, or the video, of a scene as one source of the queue: named as the panel shows it, its folder and its

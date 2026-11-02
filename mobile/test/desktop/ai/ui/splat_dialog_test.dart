@@ -24,6 +24,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
+import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -217,6 +218,24 @@ class _UnusedSplatEngine implements ImmersiveEngine {
   Future<void> dispose() async {}
 }
 
+/// The engine of the splat scenes of a test that records the jobs the queue gives it, and stops each at once
+class _RecordingSplatEngine implements ImmersiveEngine {
+  final jobs = <SplatJob>[];
+
+  @override
+  Future<ImmersiveResult> run(
+    ImmersiveJobSpec job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) async {
+    jobs.add(job as SplatJob);
+    return const ImmersiveResult.failed(ImmersiveErrorCode.componentsMissing);
+  }
+
+  @override
+  Future<void> dispose() async {}
+}
+
 /// A member of a scene that records its release in [released], and fails it with [fails]
 class _Releasing implements ConversionSource {
   _Releasing(this.name, this.released, {this.fails = false});
@@ -270,6 +289,7 @@ void main() {
   late List<String> focalReads;
   late Error? launchFailure;
   late Set<String> unreadable;
+  late bool realLauncher;
 
   final windows = aiComponentsFor(AiPlatform.windowsX64);
   final panorama = aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.panorama);
@@ -323,6 +343,7 @@ void main() {
     focalReads = [];
     launchFailure = null;
     unreadable = {};
+    realLauncher = false;
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -409,14 +430,15 @@ void main() {
         ),
       ),
       conversionThumbnailProvider.overrideWithValue((asset) => const ColoredBox(color: Colors.grey)),
-      splatLauncherProvider.overrideWithValue((launch) {
-        if (launchFailure case final failure?) {
-          launchFailure = null;
-          throw failure;
-        }
-        launches.add(launch);
-        return ['splat-${launches.length}'];
-      }),
+      if (!realLauncher)
+        splatLauncherProvider.overrideWithValue((launch) {
+          if (launchFailure case final failure?) {
+            launchFailure = null;
+            throw failure;
+          }
+          launches.add(launch);
+          return ['splat-${launches.length}'];
+        }),
       assetsActionProvider.overrideWith((ref, source) => AssetFilter(selected)),
     ];
   }
@@ -1112,5 +1134,92 @@ void main() {
     );
     await expectLater(source.release(), throwsA(isA<FileSystemException>()));
     expect(released, ['a.jpg', 'b.jpg', 'c.jpg']);
+  });
+
+  testWidgets('Make the scene gives the queue of the engine one job of the whole scene: its members in time, what was '
+      'filmed, the .ply, its file', (tester) async {
+    realLauncher = true;
+    final engine = _RecordingSplatEngine();
+    engines = {ConversionKind.splatScene: ConversionEngine(engine: engine, settingsKey: (source, turns) => null)};
+    await openDialog(tester, salon(60));
+    await tapIn(tester, find.text('An object, walked around'));
+    await tapIn(tester, find.byKey(const Key('ai_splat_keep_ply')));
+    await tester.pump();
+    await tapIn(tester, start());
+    await settle(tester);
+    for (var step = 0; step < 200 && engine.jobs.isEmpty; step++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+
+    final container = ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
+    final job = container.read(conversionQueueProvider).jobs.single;
+    expect(job.kind, ConversionKind.splatScene);
+    expect(job.source, isA<SplatSelectionSource>());
+    expect(job.source.name, 'salon (60 photos)');
+    expect(job.fromVideo, isFalse);
+    expect(job.target!.folder, photos);
+    expect(job.target!.fileName, 'salon_splat.spz');
+    expect(job.existing, ExistingVersionChoice.newVersion);
+    final selection = job.splat!;
+    expect(selection.settings, const SplatSettings(subject: SplatSubject.object, keepPly: true));
+    expect(
+      [for (final member in selection.members) member.name],
+      [for (var index = 0; index < 60; index++) 'IMG_${index.toString().padLeft(4, '0')}.jpg'],
+    );
+    expect(selection.members.first.taken, DateTime(2026, 10, 20, 9));
+    expect([for (final member in selection.members) (member as SplatMemberSum).knownSha1], everyElement(isNull));
+
+    // The queue made the spec of the engine from it: no "No generator"
+    expect(engine.jobs, hasLength(1));
+    final spec = engine.jobs.single;
+    expect(spec.members, hasLength(60));
+    expect(spec.isVideo, isFalse);
+    expect(spec.settings.subject, SplatSubject.object);
+    expect(spec.plyPartPath, isNotNull);
+  });
+
+  test('a photo of the server is a member with the checksum Immich gives, a file of this computer is read for it', () {
+    final server = splatMemberOf(
+      SplatLaunchMember(
+        asset: LocalAsset(
+          id: 'id-a',
+          name: 'a.jpg',
+          type: AssetType.image,
+          createdAt: DateTime(2026, 10, 20, 9),
+          updatedAt: DateTime(2026, 10, 20, 9),
+          checksum: 'qUqP5cyxm6YcTAhz05Hph5gvu9M=',
+          playbackStyle: AssetPlaybackStyle.image,
+          isEdited: false,
+        ),
+        source: ServerOriginalSource(
+          name: 'a.jpg',
+          remoteId: 'asset-a',
+          endpoint: 'http://server.invalid/api',
+          fetch: (url) => throw StateError('never fetched'),
+        ),
+      ),
+    );
+    expect(server.knownSha1, 'qUqP5cyxm6YcTAhz05Hph5gvu9M=');
+    expect(server.taken, DateTime(2026, 10, 20, 9));
+    expect(server.name, 'a.jpg');
+
+    final local = splatMemberOf(
+      SplatLaunchMember(
+        asset: LocalAsset(
+          id: 'id-b',
+          name: 'b.jpg',
+          type: AssetType.image,
+          createdAt: DateTime(2026, 10, 20, 9, 1),
+          updatedAt: DateTime(2026, 10, 20, 9),
+          checksum: 'qUqP5cyxm6YcTAhz05Hph5gvu9M=',
+          playbackStyle: AssetPlaybackStyle.image,
+          isEdited: false,
+        ),
+        source: LocalFileSource('/photos/b.jpg'),
+      ),
+    );
+    expect(local.knownSha1, isNull);
+    expect(local.taken, DateTime(2026, 10, 20, 9, 1));
   });
 }
