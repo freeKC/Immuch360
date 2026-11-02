@@ -35,6 +35,17 @@ class PigeonSplatViewerHost implements SplatViewerHost {
     }
   }
 
+  /// The bytes free for the app on the drive of [folder], null when Android cannot say
+  Future<int?> freeBytes(String folder) async {
+    try {
+      final free = await _api.freeBytes(folder);
+      return free < 0 ? null : free;
+    } catch (error) {
+      _log.fine('Could not read the free space of $folder: $error');
+      return null;
+    }
+  }
+
   @override
   Future<SplatHostClosed> open(Uri pageUrl, {required String title}) async {
     // A viewing still open ends now, as the user's: the activity shows the new page instead

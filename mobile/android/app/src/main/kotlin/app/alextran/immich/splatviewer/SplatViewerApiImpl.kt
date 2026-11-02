@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.os.StatFs
 import android.util.Log
 import android.webkit.WebView
 import io.flutter.plugin.common.BinaryMessenger
@@ -60,4 +61,12 @@ class SplatViewerApiImpl(private val context: Context) : SplatViewerApi {
 
   override fun webViewMajorVersion(): Long =
     SplatViewerRules.majorOf(WebView.getCurrentWebViewPackage()?.versionName).toLong()
+
+  override fun freeBytes(folder: String): Long =
+    try {
+      StatFs(folder).availableBytes
+    } catch (e: IllegalArgumentException) {
+      Log.w(TAG, "No free space for $folder", e)
+      -1L
+    }
 }

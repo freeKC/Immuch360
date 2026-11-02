@@ -24,6 +24,10 @@ abstract class SplatViewerApi {
 
   /// The major version of the Android System WebView the app would use, 0 when there is none
   int webViewMajorVersion();
+
+  /// The bytes free for the app on the drive of [folder] (StatFs.availableBytes), -1 when they cannot be read: the
+  /// splat viewer checks the room for a copy and a reduction before it starts
+  int freeBytes(String folder);
 }
 
 @FlutterApi()
