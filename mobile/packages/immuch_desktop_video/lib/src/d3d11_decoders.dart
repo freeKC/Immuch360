@@ -23,6 +23,7 @@ class GpuAdapter {
     required this.sharedMB,
     required this.integrated,
     required this.software,
+    this.luid = '',
   });
 
   factory GpuAdapter.fromJson(Map<String, Object?> json) => GpuAdapter(
@@ -35,6 +36,7 @@ class GpuAdapter {
     sharedMB: (json['sharedMB'] as num?)?.toInt() ?? 0,
     integrated: json['integrated'] == true,
     software: json['software'] == true,
+    luid: json['luid'] as String? ?? '',
   );
 
   /// Its place in DXGI's list, -1 for the default adapter (the GPU the app renders and decodes on)
@@ -50,6 +52,10 @@ class GpuAdapter {
   final bool integrated;
   final bool software;
 
+  /// Its locally unique id while Windows runs ("00000000:000164ca"), which tells two adapters of the same model apart;
+  /// empty when not known
+  final String luid;
+
   /// The GPU and its driver, without the name: what a measure of the decoder holds for (a driver update may change
   /// what the decoder keeps up with)
   String get key =>
@@ -57,6 +63,48 @@ class GpuAdapter {
 
   @override
   String toString() => 'GpuAdapter($name, $key, ${integrated ? 'integrated' : 'dedicated'})';
+}
+
+/// The GPUs of the computer as DXGI lists them, in its order: the first is the one this process uses by default
+/// (Windows' graphics preference for the app, else the high performance card the runner asks the drivers for, else the
+/// one driving the main display). [highPerformance] and [minimumPower] are the LUIDs of the adapters Windows gives each
+/// preference, empty where it does not tell (before Windows 10 1803). The list is read without any device made on the
+/// adapters, so [GpuAdapter.integrated] comes from their memory only (less than 512 MB of their own).
+class GpuList {
+  const GpuList({this.adapters = const [], this.highPerformance = '', this.minimumPower = '', this.error});
+
+  factory GpuList.fromJson(Map<String, Object?> json) => GpuList(
+    adapters: [
+      for (final adapter in json['adapters'] as List? ?? const [])
+        if (adapter is Map<String, Object?>) GpuAdapter.fromJson(adapter),
+    ],
+    highPerformance: json['highPerformance'] as String? ?? '',
+    minimumPower: json['minimumPower'] as String? ?? '',
+    error: json['error'] as String?,
+  );
+
+  final List<GpuAdapter> adapters;
+  final String highPerformance;
+  final String minimumPower;
+  final String? error;
+
+  /// The adapter of [luid], null when none has it
+  GpuAdapter? byLuid(String luid) {
+    if (luid.isEmpty) {
+      return null;
+    }
+    for (final adapter in adapters) {
+      if (adapter.luid == luid) {
+        return adapter;
+      }
+    }
+    return null;
+  }
+
+  @override
+  String toString() =>
+      'GpuList(${adapters.map((adapter) => '${adapter.name} ${adapter.luid}').join(', ')}; high performance '
+      '$highPerformance, minimum power $minimumPower${error == null ? '' : ', $error'})';
 }
 
 /// A frame size checked against a decoder profile: [accepted] when the driver has a decoder configuration for it
@@ -213,6 +261,8 @@ typedef _Probe =
     );
 typedef _CountNative = Int32 Function();
 typedef _Count = int Function();
+typedef _GpusNative = Int32 Function(Pointer<Utf8> out, Int32 capacity);
+typedef _Gpus = int Function(Pointer<Utf8> out, int capacity);
 
 /// The calls into the plugin's DLL
 abstract final class D3D11Decoders {
@@ -275,4 +325,26 @@ abstract final class D3D11Decoders {
   /// The adapters DXGI lists (GPUs, the software renderer, virtual display adapters)
   static int adapterCount({String library = libraryName}) =>
       DynamicLibrary.open(library).lookupFunction<_CountNative, _Count>('immuch_dv_adapter_count')();
+
+  /// The GPUs of the computer and the ones Windows prefers (see [GpuList]), without any device made on them. Runs in a
+  /// background isolate.
+  static Future<GpuList> gpus({String library = libraryName}) => Isolate.run(() => gpusNow(library: library));
+
+  /// [gpus] on the calling thread
+  static GpuList gpusNow({String library = libraryName}) {
+    final call = DynamicLibrary.open(library).lookupFunction<_GpusNative, _Gpus>('immuch_dv_gpus');
+    var capacity = 16 * 1024;
+    while (true) {
+      final out = calloc<Uint8>(capacity);
+      try {
+        final length = call(out.cast(), capacity);
+        if (length < capacity) {
+          return GpuList.fromJson(jsonDecode(utf8.decode(out.asTypedList(length))) as Map<String, Object?>);
+        }
+        capacity = length + 1;
+      } finally {
+        calloc.free(out);
+      }
+    }
+  }
 }

@@ -12,7 +12,9 @@ DLL of Windows itself (present in System32 and not a Visual C++ runtime, which a
 debug runtime, an unresolved import or a DLL of another architecture fails the run, so that a ZIP which would not
 start on a clean PC is never handed out. With --file-version, the executable must also carry that version in its
 version resource: the fork's build number reaches it through flutter build --build-number, and a build made without
-it would show the pubspec's numbers in the file properties.
+it would show the pubspec's numbers in the file properties. The executable must also export NvOptimusEnablement and
+AmdPowerXpressRequestHighPerformance at 1 (mobile/windows/runner/main.cpp): on a laptop with two graphics cards, the
+drivers then run the app on the high performance one, which an 8K video needs.
 
 The video player's files (libmpv-2.dll, under the LGPL; ANGLE, BSD-3-Clause; SwiftShader and the Vulkan loader,
 Apache-2.0) must travel with their licences, and the README is not in the ZIP: when the folder holds them, NOTICES.md
@@ -86,6 +88,10 @@ UNSIGNED_NOTE = (
     'This build is not signed: Windows SmartScreen may ask for a confirmation at the first start, and Smart App',
     'Control, where it is on, blocks it.',
 )
+# The executable of the app, and the values it exports for the drivers of a laptop with two graphics cards: the
+# high performance card for the whole process (mobile/windows/runner/main.cpp)
+MAIN_EXE = 'immuch360.exe'
+GPU_EXPORTS = {'NvOptimusEnablement': 1, 'AmdPowerXpressRequestHighPerformance': 1}
 # The label desktop_version.py gives a build of a release tag (3.3.0-rc.0-20) or of a desktop pre-release tag
 # (3.3.0-rc.0-desktop.4); every other build has its commit after it. The build number fits a Windows version field (at
 # most 65535, five digits) and the commit has seven characters or more, so the label of a version without a pre-release
@@ -98,7 +104,9 @@ class NotPe(Exception):
 
 
 def read_pe(path: pathlib.Path) -> dict:
-    """The machine and the imported DLL names (plain and delay loaded) of a PE file, read from its tables."""
+    """The machine, the imported DLL names (plain and delay loaded) and the exported names of a PE file, read from its
+    tables; each export with the 32 bit value at its address (what a data export such as NvOptimusEnablement holds),
+    None for one forwarded to another DLL."""
     data = path.read_bytes()
     if len(data) < 0x40 or data[:2] != b'MZ':
         raise NotPe(f'{path.name}: not a PE file')
@@ -123,12 +131,19 @@ def read_pe(path: pathlib.Path) -> dict:
     spans = []
     for i in range(sections):
         virtual_size, virtual_address, raw_size, raw_pointer = struct.unpack_from('<IIII', data, table + i * 40 + 8)
-        spans.append((virtual_address, max(virtual_size, raw_size), raw_pointer))
+        spans.append((virtual_address, max(virtual_size, raw_size), raw_pointer, raw_size))
 
     def offset(rva):
-        for start, size, raw in spans:
+        for start, size, raw, _ in spans:
             if start <= rva < start + size:
                 return rva - start + raw
+        raise NotPe(f'{path.name}: address {rva:#x} outside the sections')
+
+    def dword_at(rva):
+        # Past the bytes a section has in the file, its memory starts at zero (a variable initialized to 0)
+        for start, size, raw, raw_size in spans:
+            if start <= rva < start + size:
+                return struct.unpack_from('<I', data, rva - start + raw)[0] if rva - start + 4 <= raw_size else 0
         raise NotPe(f'{path.name}: address {rva:#x} outside the sections')
 
     def name_at(rva):
@@ -164,7 +179,36 @@ def read_pe(path: pathlib.Path) -> dict:
             delay.append(name_at(name_rva if attributes & 1 else name_rva - image_base))
             at += 32
 
-    return {'machine': MACHINES.get(machine, hex(machine)), 'imports': imports, 'delay_imports': delay}
+    exports = {}
+    rva, size = directory(0)
+    if rva and size:
+        at = offset(rva)
+        names, functions_rva, names_rva, ordinals_rva = struct.unpack_from('<IIII', data, at + 24)
+        for i in range(names):
+            name = name_at(struct.unpack_from('<I', data, offset(names_rva + 4 * i))[0])
+            ordinal = struct.unpack_from('<H', data, offset(ordinals_rva + 2 * i))[0]
+            address = struct.unpack_from('<I', data, offset(functions_rva + 4 * ordinal))[0]
+            # An address inside the export directory is the name of a forwarder, not code or data
+            exports[name] = None if rva <= address < rva + size else dword_at(address)
+
+    return {'machine': MACHINES.get(machine, hex(machine)), 'imports': imports, 'delay_imports': delay,
+            'exports': exports}
+
+
+def gpu_export_problems(exe: pathlib.Path) -> list:
+    """What the executable lacks of GPU_EXPORTS: each must be exported with its value"""
+    try:
+        exports = read_pe(exe)['exports']
+    except (NotPe, struct.error, ValueError) as error:
+        return [f'{exe.name}: unreadable ({error})']
+    problems = []
+    for name, value in GPU_EXPORTS.items():
+        if name not in exports:
+            problems.append(f'{exe.name}: does not export {name}, so a laptop with two graphics cards runs it on the '
+                            'integrated one (mobile/windows/runner/main.cpp)')
+        elif exports[name] != value:
+            problems.append(f'{exe.name}: exports {name} at {exports[name]}, expected {value}')
+    return problems
 
 
 def file_version(path: pathlib.Path) -> str | None:
@@ -344,6 +388,13 @@ def bundle(args) -> int:
                 problems.append(f'{exe.name}: file version {found}, expected {args.file_version}')
             else:
                 print(f'{exe.name}: file version {found}')
+
+    main_exe = folder / MAIN_EXE
+    if main_exe.is_file():
+        found = gpu_export_problems(main_exe)
+        problems.extend(found)
+        if not found:
+            print(f'{MAIN_EXE}: asks for the high performance graphics card ({", ".join(GPU_EXPORTS)} at 1)')
 
     names = {p.name.lower() for p in folder.iterdir() if p.is_file()}
     fork = None

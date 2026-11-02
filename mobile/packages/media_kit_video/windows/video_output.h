@@ -37,13 +37,18 @@ typedef struct _VideoOutputConfiguration {
   std::optional<int64_t> width;
   std::optional<int64_t> height;
   bool enable_hardware_acceleration;
+  // Immuch360: the most lines the texture of a video has while its size is
+  // not fixed, 0 for no cap (IMMUCH360-NOTE.md, patch 11)
+  int64_t max_output_height;
 
   _VideoOutputConfiguration(std::optional<int64_t> width = std::nullopt,
                             std::optional<int64_t> height = std::nullopt,
-                            bool enable_hardware_acceleration = true)
+                            bool enable_hardware_acceleration = true,
+                            int64_t max_output_height = 0)
       : width(width),
         height(height),
-        enable_hardware_acceleration(enable_hardware_acceleration) {}
+        enable_hardware_acceleration(enable_hardware_acceleration),
+        max_output_height(max_output_height) {}
 } VideoOutputConfiguration;
 
 // Immuch360: wakes the primary player of a pair once a frame waited long
@@ -178,6 +183,11 @@ class VideoOutput {
   int64_t GetVideoWidth();
 
   int64_t GetVideoHeight();
+
+  // Immuch360: [width] x [height] (the video's size, rotation applied) capped
+  // at |configuration_.max_output_height| lines, its shape kept and the width
+  // even, as the Dart side of patch 3 caps the size it gives (patch 11).
+  static void CapToHeight(int64_t max_height, int64_t* width, int64_t* height);
 
   // Immuch360: tells Dart, once, that the texture can no longer show a picture
   // (IMMUCH360-NOTE.md, patch 4).

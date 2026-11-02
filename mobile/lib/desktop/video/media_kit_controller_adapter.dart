@@ -126,6 +126,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   final _buffering = ValueNotifier(false);
   final _audioTracks = ValueNotifier<List<DesktopAudioTrack>>(const []);
   final _audioTrack = ValueNotifier<String?>(null);
+  final _decoding = ValueNotifier<({String? hwdec, VideoFrameSize? size})>((hwdec: null, size: null));
 
   /// The texture the view draws, null while the controller holds no player
   ValueListenable<VideoController?> get videoController => _videoController;
@@ -138,6 +139,10 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   /// The id of the audio track that plays
   ValueListenable<String?> get audioTrack => _audioTrack;
+
+  /// How mpv decodes the video of the player held now (PlaybackEngine.hwdec) and the size of its frames, for the Video
+  /// decoding line of the details (desktop_video_decoding_tile.dart); nothing while no player is held
+  ValueListenable<({String? hwdec, VideoFrameSize? size})> get decoding => _decoding;
 
   /// The player held now, for the measurement harness and the tests
   @visibleForTesting
@@ -542,8 +547,11 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.buffering.addListener(_onBuffering);
     engine.audioTracks.addListener(_onAudioTracks);
     engine.audioTrack.addListener(_onAudioTrack);
+    engine.hwdec.addListener(_onDecoding);
+    engine.videoSize.addListener(_onDecoding);
     _events = engine.events.listen(_onEvent);
     _videoController.value = engine.videoController;
+    _onDecoding();
     // Lost while another page held it, or before: no change comes to tell it
     if (engine.textureLost.value) {
       _onTextureLost();
@@ -564,11 +572,14 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.buffering.removeListener(_onBuffering);
     engine.audioTracks.removeListener(_onAudioTracks);
     engine.audioTrack.removeListener(_onAudioTrack);
+    engine.hwdec.removeListener(_onDecoding);
+    engine.videoSize.removeListener(_onDecoding);
     unawaited(_events?.cancel());
     _events = null;
     _engine = null;
     _videoController.value = null;
     _buffering.value = false;
+    _decoding.value = (hwdec: null, size: null);
   }
 
   void _onEvent(PlayerEvent event) {
@@ -700,6 +711,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   }
 
   void _onAudioTrack() => _audioTrack.value = _engine?.audioTrack.value;
+
+  void _onDecoding() => _decoding.value = (hwdec: _engine?.hwdec.value, size: _engine?.videoSize.value);
 
   /// Tells the link of the streamed video open, every [linkInterval] until it is stopped (see [_tellLink])
   void _startLink() {

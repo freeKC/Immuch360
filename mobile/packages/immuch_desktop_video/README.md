@@ -12,7 +12,10 @@ server's transcoded stream, and list the decoders on the troubleshooting page, a
   a raw bitstream (`GetVideoDecoderConfigCount`, `GetVideoDecoderConfig`: the check FFmpeg's d3d11va makes before it
   decodes), and, where Direct3D 12 answers, the frame rate the driver allows at the largest size
   (`D3D12_FEATURE_VIDEO_DECODE_SUPPORT`; a driver that accepts an impossible rate is taken as not telling). The answer
-  is JSON. Each call makes its devices and releases them.
+  is JSON. Each call makes its devices and releases them. A second function lists the adapters without making any
+  device (a dedicated GPU that sleeps stays asleep), with the ones Windows gives the high performance and the minimum
+  power preference (`IDXGIFactory6::EnumAdapterByGpuPreference`): whether the app runs on the card that suits an 8K
+  video, on a laptop with two.
 - `lib/src/d3d11_decoders.dart`: the call in a background isolate, and the parsed answer.
 - `lib/src/d3d11_profiles.dart`: the decoder profile GUIDs the app knows (codec, profile name, depth, chroma), and the
   profiles FFmpeg tries for a codec and depth.

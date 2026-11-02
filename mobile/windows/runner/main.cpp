@@ -12,6 +12,25 @@
 #include "gpu_probe.h"
 #include "utils.h"
 
+// A laptop with two graphics cards (an integrated GPU that drives the panel and
+// an NVIDIA or AMD one) runs a program on the integrated one unless something
+// asks otherwise: the drivers give the high performance card to an executable
+// that exports these two values. Everything of the video follows that card
+// together, since Flutter's ANGLE, the Direct3D 11 device and ANGLE display of
+// media_kit_video and mpv's decoder all take the adapter DXGI lists first: no
+// texture ever crosses from one card to the other. Measured on an i9-13980HX
+// laptop with an Intel UHD and an RTX 4060 Laptop (2 November 2026): an 8K HEVC
+// video from a phone dropped up to 22 of 150 frames and showed black frames on
+// the Intel, whose 3D engine was full, and none on the RTX. Windows' own choice
+// for the app (Settings, System, Display, Graphics, "Power saving") still comes
+// first, measured on the same laptop: that is where a user keeps the integrated
+// card. .github/desktop/windows_bundle.py checks that the executable of each
+// build exports both at 1.
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 namespace {
 
 // The first copy reads what it is handed against its own current folder: an
