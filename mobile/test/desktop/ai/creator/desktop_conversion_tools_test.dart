@@ -131,7 +131,14 @@ void main() {
       ConversionKind.sceneFromPhoto,
       ConversionKind.panoramaFromPhoto,
       ConversionKind.stereoPanoramaFromPanorama,
-    ], reason: 'S1 registers the 3D scene, P3 the 360° panorama, P1 the 3D version of a 360° panorama');
+      ConversionKind.splatScene,
+    ], reason: 'S1 registers the 3D scene, P3 the 360° panorama, P1 the 3D version of a 360° panorama, SP6 the splat');
+    expect(bare.read(conversionEnginesProvider)[ConversionKind.splatScene]!.engine, isA<DesktopSplatEngine>());
+    expect(
+      bare.read(keptAiEnginesProvider),
+      contains(bare.read(desktopSplatEngineProvider)),
+      reason: 'the components of the splat scenes are not removed while one is made',
+    );
     final panorama = bare.read(conversionEnginesProvider)[ConversionKind.panoramaFromPhoto]!;
     expect(panorama.engine, isA<DesktopPanoramaEngine>());
     expect(panorama.generator, fluxTransformerComponent.id);

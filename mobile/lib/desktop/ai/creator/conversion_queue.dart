@@ -33,6 +33,13 @@
 //
 // The queue does not survive the window: closing it asks first (close_guard.dart, reasons "conversions" and
 // "generation"), and the journal of the .part files cleans up what a quit left.
+//
+// A splat scene (plan 2026-11-01, lot SP6) is one job for a whole selection, photos or one video (addSplat): on the lane
+// of the graphics card, since its training holds the card, its poses running on the processor meanwhile; its card asked
+// with its own need (2.5 GiB free on a dedicated card, gpuNeedOf); its spec given its photos or its video, its settings
+// and the times of its steps on this computer, from which its engine tells the time left of the whole job. Its copy for
+// the headset is the file of the job; "Also save a .ply for other 3D apps" adds a second .part, put beside the .spz
+// under the same name by a writer that writes companions (ConversionCompanionOutput), and dropped with it.
 
 import 'dart:async';
 import 'dart:io';
@@ -106,6 +113,24 @@ abstract interface class ConversionOutput {
 
   /// Deletes [partPath] and forgets it; nothing when it is gone already
   Future<void> discard(String partPath);
+}
+
+/// A writer that also writes the companion of a version: a file of another extension beside it, under the same name
+/// (the .ply of a splat scene beside its .spz)
+abstract interface class ConversionCompanionOutput {
+  /// The .part of the companion of [job] named [fileName], in the folder of its target. Throws a ConversionException as
+  /// ConversionOutput.begin.
+  Future<String> beginCompanion(ConversionJob job, String fileName);
+
+  /// Puts [partPath] beside [versionPath], the version of [job] just saved, under its name with the extension of the
+  /// companion, or the first free "name (n)" of it; returns where it went. Throws a ConversionException; the caller then
+  /// discards the .part with ConversionOutput.discard.
+  Future<String> finishCompanion(
+    ConversionJob job,
+    String partPath, {
+    required String versionPath,
+    required ImmersiveSource original,
+  });
 }
 
 /// The engine of one kind of job and what the queue asks before it runs one: the key of the settings the file would
@@ -243,6 +268,10 @@ class ConversionQueueState {
       )
       .firstOrNull;
 
+  /// The splat scene under way, if any: what closing the window would stop, with its step
+  ConversionJob? get splatting =>
+      jobs.where((job) => job.kind == ConversionKind.splatScene && job.state.isActive).firstOrNull;
+
   bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed);
 
   bool get hasEnded => jobs.any((job) => job.state.isEnded);
@@ -350,6 +379,32 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     state = state.copyWith(jobs: [...state.jobs, ...jobs]);
     _pump();
     return [for (final job in jobs) job.id];
+  }
+
+  /// Adds a splat scene of [selection] (its photos, or [video] alone, and its settings): one job, "1 of 1", whose
+  /// source is [lead] (the first photo in time, or the video: its name and its folder, prepared as the original the
+  /// file is made from, a source of its own beside those of the members) and whose file is [target]
+  /// (`<name>_splat.spz`). Gives the id of the job.
+  String addSplat({
+    required ConversionSource lead,
+    required SplatSelection selection,
+    required ConversionTarget target,
+    bool video = false,
+  }) {
+    final job = ConversionJob(
+      id: 'conversion-${++_lastId}',
+      source: lead,
+      kind: ConversionKind.splatScene,
+      batchIndex: 1,
+      batchSize: 1,
+      target: target,
+      existing: ExistingVersionChoice.newVersion,
+      fromVideo: video,
+      splat: selection,
+    );
+    state = state.copyWith(jobs: [...state.jobs, job]);
+    _pump();
+    return job.id;
   }
 
   /// Cancels a job: one waiting never runs (nor the 3D version chained after it), the one under way stops at its next
@@ -609,7 +664,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _end(id, ImmersiveErrorCode.modelFailed, 'This build has no engine for ${job.kind.name}');
       return;
     }
-    if (job.kind.lane == ConversionLane.gpu && !await _graphicsCardReady(id, tools)) {
+    if (job.kind.lane == ConversionLane.gpu && !await _graphicsCardReady(id, tools, job.kind)) {
       return;
     }
     final cancel = NativeCancelFlag();
@@ -628,6 +683,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       ),
     );
     String? part;
+    // The .ply of a splat scene, beside its .spz
+    String? companion;
     // What an unexpected error means at each step
     var failure = ImmersiveErrorCode.sourceLost;
     try {
@@ -693,9 +750,33 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
       failure = ImmersiveErrorCode.writeFailed;
       part = await tools.output.begin(state.byId(id) ?? job);
+      final companions = switch (tools.output) {
+        final ConversionCompanionOutput writer => writer,
+        _ => null,
+      };
+      if (job.splat?.settings.keepPly ?? false) {
+        if (companions != null) {
+          companion = await companions.beginCompanion(
+            state.byId(id) ?? job,
+            '${p.basenameWithoutExtension(target.fileName)}.ply',
+          );
+        } else {
+          _log.warning('The writer of this build writes no .ply beside a splat scene');
+        }
+      }
 
       failure = ImmersiveErrorCode.modelFailed;
-      final spec = _specOf(job, tools, kindEngine, source: source, original: original, parent: parent, part: part);
+      final spec = _specOf(
+        job,
+        tools,
+        kindEngine,
+        source: source,
+        original: original,
+        parent: parent,
+        part: part,
+        companion: companion,
+        timings: timings,
+      );
       if (spec == null) {
         _end(id, ImmersiveErrorCode.componentsMissing, 'No generator for ${job.kind.name} in this build');
         return;
@@ -742,6 +823,31 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       );
       // Renamed, or deleted for a name taken: the writer took it
       part = null;
+      var details = result.details;
+      String? companionMessage;
+      final ply = companion;
+      if (ply != null && saved.outcome != ConversionSaveOutcome.skipped && companions != null) {
+        try {
+          await companions.finishCompanion(state.byId(id) ?? job, ply, versionPath: saved.path, original: original);
+          companion = null;
+        } on ConversionException catch (error) {
+          // The scene is there all the same: the job is done, the .ply said missing
+          _log.warning('The .ply of $id could not be saved: $error');
+          companionMessage = 'The .ply could not be saved: ${error.message ?? error.code.name}';
+          if (details is SplatResultDetails) {
+            details = SplatResultDetails(
+              gaussians: details.gaussians,
+              images: details.images,
+              placed: details.placed,
+              subject: details.subject,
+              scale: details.scale,
+              fromVideo: details.fromVideo,
+              blurred: details.blurred,
+              shDegree: details.shDegree,
+            );
+          }
+        }
+      }
       if (saved.outcome == ConversionSaveOutcome.skipped) {
         _set(
           id,
@@ -769,7 +875,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           eyeHeight: result.eyeHeight,
           reduced: result.reduced,
           qualityFlags: result.qualityFlags,
-          details: result.details,
+          details: details,
+          message: companionMessage,
           remaining: () => null,
         ),
       );
@@ -779,8 +886,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _log.warning('Conversion $id failed', error, stack);
       _end(id, failure, '$error');
     } finally {
-      final partPath = part;
-      if (partPath != null) {
+      for (final partPath in [part, companion]) {
+        if (partPath == null) {
+          continue;
+        }
         try {
           await tools.output.discard(partPath);
         } catch (error) {
@@ -798,17 +907,18 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// Whether the job [id] of the graphics card may start now: the card has the memory free (or nothing is asked of it,
-  /// tools without a budget). Otherwise the job waits with what is free and the lane with it, asked again after
+  /// Whether the job [id] of the graphics card may start now: the card has the memory free that a job of [kind] needs
+  /// (gpuNeedOf: 6 GiB for a panorama, 2.5 GiB on a dedicated card for a splat scene), or nothing is asked of it (tools
+  /// without a budget). Otherwise the job waits with what is free and the lane with it, asked again after
   /// ConversionTools.gpuRecheck; or it fails when no card can take it. False too when it was cancelled meanwhile.
-  Future<bool> _graphicsCardReady(String id, ConversionTools tools) async {
+  Future<bool> _graphicsCardReady(String id, ConversionTools tools, ConversionKind kind) async {
     final budget = tools.gpuBudget;
     if (budget == null) {
       return true;
     }
     GpuBudgetCheck check;
     try {
-      check = await budget.check();
+      check = await budget.check(need: gpuNeedOf(kind.output));
     } catch (error, stack) {
       _log.warning('The graphics card could not be asked for $id', error, stack);
       check = const GpuBudgetUnavailable(AiGateReason.gpuNoAnswer);
@@ -835,8 +945,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// The spec of [job] for its engine; null for a panorama whose engine names no generator, and for a splat scene until
-  /// the queue makes its members from the sources of its dialog (lot SP6)
+  /// The spec of [job] for its engine; null for a panorama whose engine names no generator, and for a splat scene
+  /// without its photos. A splat scene is given its .ply ([companion]) and the times of its steps on this computer
+  /// ([timings], those of a job of 150 images, ConversionKind.timingsKey).
   ImmersiveJobSpec? _specOf(
     ConversionJob job,
     ConversionTools tools,
@@ -845,6 +956,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     required ImmersiveSource original,
     required PanoramaXmp? parent,
     required String part,
+    required AiTimings timings,
+    String? companion,
   }) {
     final derivativeId = tools.newDerivativeId();
     final created = StereoPhotoXmp.xmpDateTime(tools.now());
@@ -892,7 +1005,28 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           seed: tools.newSeed(),
         );
       case ConversionKind.splatScene:
-        return null;
+        final splat = job.splat;
+        if (splat == null || splat.members.isEmpty) {
+          return null;
+        }
+        final key = job.kind.timingsKey(fromVideo: job.fromVideo);
+        return SplatJob(
+          id: job.id,
+          lead: source,
+          members: splat.members,
+          isVideo: job.fromVideo,
+          settings: splat.settings,
+          partPath: part,
+          plyPartPath: companion,
+          derivativeId: derivativeId,
+          creatorTool: tools.creatorTool,
+          created: created,
+          exif: exif,
+          timings: {
+            for (final stage in job.kind.stagesOf(fromVideo: job.fromVideo))
+              if (timings.of(key, stage.name) case final millis?) stage: Duration(milliseconds: millis),
+          },
+        );
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(
           id: job.id,
