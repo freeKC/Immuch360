@@ -1,0 +1,69 @@
+# cargo deny for the Brush that Immuch360 Desktop ships (.github/desktop/ai/brush_build.py deny), on the graph of
+# brush_app built as the jobs brush-windows and brush-linux build it: the brush-app crate without its default features
+# (no viewer), for the target of the job, without dev dependencies. It replaces the deny.toml of Brush, which allows
+# more (CDLA-Permissive-2.0, bzip2-1.0.6) and clarifies the fonts of egui as MIT or Apache-2.0 although they are under
+# the OFL and the Ubuntu Font Licence.
+
+[graph]
+all-features = false
+no-default-features = true
+exclude-dev = true
+
+# Licences: the permissive list of the project (research-2026-11-01.md, section 4); MPL-2.0 for crates compiled
+# unmodified, as Eigen since 27/10/2026. No clarification: every crate is judged by the licence it declares.
+[licenses]
+version = 2
+private = { ignore = true }
+confidence-threshold = 0.93
+allow = [
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Zlib",
+]
+
+# What the program must not hold: the LPIPS weights, rerun, a network client or server, a window, a file dialog,
+# OpenSSL. Versions may repeat: the graph is the one Brush locked.
+[bans]
+multiple-versions = "allow"
+wildcards = "allow"
+deny = [
+    { name = "lpips", reason = "the VGG weights of LPIPS, whose provenance is not written: not shipped" },
+    { name = "rerun", reason = "logging to a rerun viewer: no network" },
+    { name = "re_sdk", reason = "rerun: no network" },
+    { name = "re_grpc_client", reason = "rerun: no network" },
+    { name = "re_grpc_server", reason = "rerun: no network" },
+    { name = "reqwest", reason = "HTTP client: Brush downloads nothing" },
+    { name = "hyper", reason = "HTTP: no network" },
+    { name = "h2", reason = "HTTP/2: no network" },
+    { name = "ureq", reason = "HTTP client: no network" },
+    { name = "tonic", reason = "gRPC: no network" },
+    { name = "rustls", reason = "TLS: no network" },
+    { name = "native-tls", reason = "TLS: no network" },
+    { name = "openssl", reason = "TLS: no network" },
+    { name = "openssl-sys", reason = "TLS: no network" },
+    { name = "egui", reason = "the viewer: brush_app runs without a window" },
+    { name = "eframe", reason = "the viewer: brush_app runs without a window" },
+    { name = "epaint_default_fonts", reason = "the fonts of egui (OFL, Ubuntu Font Licence)" },
+    { name = "winit", reason = "windows: brush_app runs without a window" },
+    { name = "rfd", reason = "file dialogs: brush_app runs without a window" },
+]
+
+# Crates from crates.io, and the git repositories Cargo.lock of the tag pins (each at its locked commit)
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = [
+    "https://github.com/tracel-ai/burn",
+    "https://github.com/tracel-ai/cubecl",
+    "https://github.com/ArthurBrussee/cubecl",
+    "https://github.com/ArthurBrussee/wgpu",
+]

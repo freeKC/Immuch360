@@ -1,0 +1,428 @@
+Immuch360 Desktop: brush_app as a trainer without window, network, rerun or LPIPS weights
+
+Brush v0.3.0 (Apache-2.0, https://github.com/ArthurBrussee/brush, commit 3edecbb2fe79d3e2c87eeab85b15e0b1dd10d486),
+modified by the Immuch360 project on 1 November 2026. Each file this patch changes carries a line saying so, as the
+Apache License 2.0 asks (section 4 b). Applied by .github/desktop/ai/brush_build.py sources before
+cargo build --locked: no dependency is added or removed, so Cargo.lock of the tag stays as it is.
+
+Four parts of Brush become cargo features, all off unless asked for:
+  - brush-app "viewer" (on by default, as upstream): the window (egui, eframe, winit, brush-ui). Built without it,
+    brush_app only trains from a path given on the command line and refuses --with-viewer.
+  - brush-train "lpips", which brush-app "lpips" asks for: the LPIPS loss and its VGG weights
+    (crates/lpips/burn_mapped.bin, 29,433,386 bytes, whose provenance is not written in the repository). Without it,
+    a --lpips-loss-weight above 0 is refused by brush_app before it reads the data or sets up a graphics card, the
+    trainer keeping an assert as a second guard (its default is 0, which Immuch360 never changes).
+  - brush-process "rerun": logging to a rerun.io viewer (a gRPC client and server). Without it, --rerun-enabled only
+    logs a warning.
+  - brush-vfs "pick" and "url": the file dialogs (rfd) and the sources given by a URL (reqwest). Without them, such a
+    source is refused with a message.
+brush-ui asks for "pick", "url" and "rerun", so a build with the viewer keeps what upstream has, the LPIPS loss apart.
+
+diff --git a/crates/brush-app/Cargo.toml b/crates/brush-app/Cargo.toml
+index 2c85817..587564e 100644
+--- a/crates/brush-app/Cargo.toml
++++ b/crates/brush-app/Cargo.toml
+@@ -1,3 +1,4 @@
++# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature, the LPIPS loss behind the lpips feature
+ [package]
+ name = "brush-app"
+ edition.workspace = true
+@@ -18,14 +19,14 @@ path = "src/bin.rs"
+ 
+ [dependencies]
+ # Brush deps.
+-brush-ui.path = "../brush-ui"
++brush-ui = { path = "../brush-ui", optional = true }
+ brush-render.path = "../brush-render"
+ # Only needed for the validation feature atm.
+ brush-train.path = "../brush-train"
+ brush-process.path = "../brush-process"
+ 
+-egui.workspace = true
+-eframe.workspace = true
++egui = { workspace = true, optional = true }
++eframe = { workspace = true, optional = true }
+ 
+ anyhow.workspace = true
+ tracing.workspace = true
+@@ -43,10 +44,10 @@ wgpu = { workspace = true, features = ["vulkan"] }
+ 
+ [target.'cfg(target_os = "android")'.dependencies]
+ wgpu = { workspace = true, features = ["vulkan"] }
+-winit = { version = "0.30", features = ["android-game-activity"] }
++winit = { version = "0.30", features = ["android-game-activity"], optional = true }
+ 
+ rrfd.path = "../rrfd"
+-brush-ui.path = "../brush-ui"
++brush-ui = { path = "../brush-ui", optional = true }
+ tokio = { workspace = true, features = ["io-util", "rt", "rt-multi-thread"] }
+ 
+ android_logger = "0.15.0"
+@@ -58,7 +59,7 @@ jni = "0.21.1"
+ # this perhaps could use a feature on our side as well,
+ # so you could run with cargo run --no-default-features --features=11
+ wgpu = { workspace = true, features = ["vulkan"] }
+-winit = { version = "0.30", features = ["default"] }
++winit = { version = "0.30", features = ["default"], optional = true }
+ clap.workspace = true
+ env_logger.workspace = true
+ brush-cli.path = "../brush-cli"
+@@ -74,5 +75,10 @@ ignored = ["wgpu", "brush-train"] # Need manual backend selection.
+ workspace = true
+ 
+ [features]
++# The window of Brush (egui, eframe, winit): without it brush_app only trains, from a path given on the command line
++default = ["viewer"]
++viewer = ["dep:brush-ui", "dep:egui", "dep:eframe", "dep:winit"]
++# The LPIPS loss and its VGG weights, off unless asked for: without it a --lpips-loss-weight above 0 is refused
++lpips = ["brush-train/lpips"]
+ tracy = ["dep:tracing-subscriber", "dep:tracing-tracy"]
+ debug-validation = ["brush-render/debug-validation", "brush-train/debug-validation"]
+diff --git a/crates/brush-app/src/bin.rs b/crates/brush-app/src/bin.rs
+index c316ed3..a747abb 100644
+--- a/crates/brush-app/src/bin.rs
++++ b/crates/brush-app/src/bin.rs
+@@ -1,12 +1,14 @@
++// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature, a LPIPS weight refused without the lpips feature
+ #![recursion_limit = "256"]
+ 
+ use brush_process::process::process_stream;
++#[cfg(feature = "viewer")]
+ use brush_ui::app::App;
+ 
+ use brush_cli::Cli;
+ use clap::Parser;
+ 
+-#[cfg(target_family = "windows")]
++#[cfg(all(target_family = "windows", feature = "viewer"))]
+ fn is_console() -> bool {
+     let mut buffer = [0u32; 1];
+ 
+@@ -22,7 +24,18 @@ fn is_console() -> bool {
+ fn main() -> Result<(), anyhow::Error> {
+     let args = Cli::parse().validate()?;
+ 
+-    #[cfg(target_family = "windows")]
++    #[cfg(not(feature = "viewer"))]
++    if args.with_viewer {
++        anyhow::bail!("this build of Brush has no viewer: give the path of the data to train on");
++    }
++
++    // Before the data is read or a graphics card is set up: the trainer would otherwise only refuse it once both are
++    #[cfg(not(feature = "lpips"))]
++    if args.process.train_config.lpips_loss_weight > 0.0 {
++        anyhow::bail!("this build of Brush has no LPIPS weights: --lpips-loss-weight must stay 0");
++    }
++
++    #[cfg(all(target_family = "windows", feature = "viewer"))]
+     if args.with_viewer && !is_console() {
+         // Hide the console window on windows when running as a GUI.
+         // SAFETY: FFI.
+@@ -46,8 +59,6 @@ fn main() -> Result<(), anyhow::Error> {
+         .build()
+         .expect("Failed to initialize tokio runtime")
+         .block_on(async move {
+-            let context = std::sync::Arc::new(brush_ui::ui_process::UiProcess::new());
+-
+             env_logger::builder()
+                 .target(env_logger::Target::Stdout)
+                 .init();
+@@ -55,7 +66,9 @@ fn main() -> Result<(), anyhow::Error> {
+             let (sender, args_receiver) = tokio::sync::oneshot::channel();
+             let _ = sender.send(args.process.clone());
+ 
++            #[cfg(feature = "viewer")]
+             if args.with_viewer {
++                let context = std::sync::Arc::new(brush_ui::ui_process::UiProcess::new());
+                 let icon = eframe::icon_data::from_png_bytes(
+                     &include_bytes!("../assets/icon-256.png")[..],
+                 )
+@@ -86,15 +99,16 @@ fn main() -> Result<(), anyhow::Error> {
+                     native_options,
+                     Box::new(move |cc| Ok(Box::new(App::new(cc, context)))),
+                 )?;
+-            } else {
+-                let Some(source) = args.source else {
+-                    panic!("Validation of args failed?");
+-                };
+-                let device = brush_render::burn_init_setup().await;
+-                let stream = process_stream(source, args_receiver, device);
+-                brush_cli::process_ui(stream, args.process).await?;
++                return anyhow::Result::<(), anyhow::Error>::Ok(());
+             }
+ 
++            let Some(source) = args.source else {
++                panic!("Validation of args failed?");
++            };
++            let device = brush_render::burn_init_setup().await;
++            let stream = process_stream(source, args_receiver, device);
++            brush_cli::process_ui(stream, args.process).await?;
++
+             anyhow::Result::<(), anyhow::Error>::Ok(())
+         })?;
+ 
+diff --git a/crates/brush-app/src/lib.rs b/crates/brush-app/src/lib.rs
+index e743c32..0841d9f 100644
+--- a/crates/brush-app/src/lib.rs
++++ b/crates/brush-app/src/lib.rs
+@@ -1,5 +1,6 @@
++// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the window behind the viewer feature
+ #![recursion_limit = "256"]
+-#![cfg(target_os = "android")]
++#![cfg(all(target_os = "android", feature = "viewer"))]
+ 
+ use brush_ui::UiMode;
+ use brush_ui::app::App;
+diff --git a/crates/brush-process/Cargo.toml b/crates/brush-process/Cargo.toml
+index 485cd16..a0c02fc 100644
+--- a/crates/brush-process/Cargo.toml
++++ b/crates/brush-process/Cargo.toml
+@@ -1,3 +1,4 @@
++# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): rerun behind the rerun feature
+ 
+ [package]
+ name = "brush-process"
+@@ -35,7 +36,11 @@ tokio_with_wasm.workspace = true
+ [target.'cfg(target_family = "wasm")'.dependencies]
+ 
+ [target.'cfg(not(target_family = "wasm"))'.dependencies]
+-rerun.workspace = true
++rerun = { workspace = true, optional = true }
++
++[features]
++# Logging to a rerun.io viewer, off unless asked for
++rerun = ["dep:rerun"]
+ 
+ [lints]
+ workspace = true
+diff --git a/crates/brush-process/src/visualize_tools.rs b/crates/brush-process/src/visualize_tools.rs
+index a7c6f5d..9440d97 100644
+--- a/crates/brush-process/src/visualize_tools.rs
++++ b/crates/brush-process/src/visualize_tools.rs
+@@ -1,11 +1,12 @@
++// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): rerun behind the rerun feature
+ #![allow(unused_imports)]
+ 
+ pub struct VisualizeTools {
+-    #[cfg(not(target_family = "wasm"))]
++    #[cfg(all(not(target_family = "wasm"), feature = "rerun"))]
+     rec: rerun::RecordingStream,
+ }
+ 
+-#[cfg(not(target_family = "wasm"))]
++#[cfg(all(not(target_family = "wasm"), feature = "rerun"))]
+ mod visualize_tools_impl {
+     use std::sync::Arc;
+ 
+@@ -328,7 +329,7 @@ mod visualize_tools_impl {
+     }
+ }
+ 
+-#[cfg(target_family = "wasm")]
++#[cfg(any(target_family = "wasm", not(feature = "rerun")))]
+ mod visualize_tools_impl {
+     use std::sync::Arc;
+ 
+@@ -346,7 +347,10 @@ mod visualize_tools_impl {
+     use burn_cubecl::cubecl::MemoryUsage;
+ 
+     impl VisualizeTools {
+-        pub fn new(_enabled: bool) -> Self {
++        pub fn new(enabled: bool) -> Self {
++            if enabled {
++                log::warn!("This build of Brush has no rerun: nothing is logged to rerun");
++            }
+             Self {}
+         }
+ 
+diff --git a/crates/brush-train/Cargo.toml b/crates/brush-train/Cargo.toml
+index 487b33e..765acd2 100644
+--- a/crates/brush-train/Cargo.toml
++++ b/crates/brush-train/Cargo.toml
+@@ -1,3 +1,4 @@
++# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the LPIPS loss behind the lpips feature
+ [package]
+ name = "brush-train"
+ edition.workspace = true
+@@ -24,10 +25,12 @@ burn.workspace = true
+ burn-cubecl.workspace = true
+ 
+ [target.'cfg(not(target_family = "wasm"))'.dependencies]
+-lpips.path = "../lpips"
++lpips = { path = "../lpips", optional = true }
+ 
+ [lints]
+ workspace = true
+ 
+ [features]
+ debug-validation = []
++# The LPIPS loss and its VGG weights (crates/lpips), off unless asked for
++lpips = ["dep:lpips"]
+diff --git a/crates/brush-train/src/train.rs b/crates/brush-train/src/train.rs
+index 47aa071..2a5677e 100644
+--- a/crates/brush-train/src/train.rs
++++ b/crates/brush-train/src/train.rs
+@@ -1,3 +1,4 @@
++// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the LPIPS loss behind the lpips feature
+ use crate::{
+     adam_scaled::{AdamScaled, AdamScaledConfig, AdamState},
+     config::TrainConfig,
+@@ -55,7 +56,7 @@ pub struct SplatTrainer {
+ 
+     bounds: BoundingBox,
+ 
+-    #[cfg(not(target_family = "wasm"))]
++    #[cfg(all(not(target_family = "wasm"), feature = "lpips"))]
+     lpips: Option<lpips::LpipsModel<DiffBackend>>,
+ }
+ 
+@@ -81,6 +82,12 @@ impl SplatTrainer {
+         let decay = (config.lr_scale_end / config.lr_scale).powf(1.0 / config.total_steps as f64);
+         let lr_scale = ExponentialLrSchedulerConfig::new(config.lr_scale, decay);
+ 
++        #[cfg(all(not(target_family = "wasm"), not(feature = "lpips")))]
++        assert!(
++            config.lpips_loss_weight <= 0.0,
++            "This build of Brush has no LPIPS weights: --lpips-loss-weight must stay 0"
++        );
++
+         const SSIM_WINDOW_SIZE: usize = 11; // Could be configurable but meh, rather keep consistent.
+         let ssim = (config.ssim_weight > 0.0).then(|| Ssim::new(SSIM_WINDOW_SIZE, 3, device));
+ 
+@@ -94,7 +101,7 @@ impl SplatTrainer {
+             refine_record: None,
+             ssim,
+             bounds,
+-            #[cfg(not(target_family = "wasm"))]
++            #[cfg(all(not(target_family = "wasm"), feature = "lpips"))]
+             lpips: (config.lpips_loss_weight > 0.0).then(|| lpips::load_vgg_lpips(device)),
+         }
+     }
+@@ -176,7 +183,7 @@ impl SplatTrainer {
+             let loss = total_err.mean();
+ 
+             // TODO: Support masked lpips.
+-            #[cfg(not(target_family = "wasm"))]
++            #[cfg(all(not(target_family = "wasm"), feature = "lpips"))]
+             let loss = if let Some(lpips) = &self.lpips {
+                 loss + lpips.lpips(pred_rgb.unsqueeze_dim(0), gt_rgb.unsqueeze_dim(0))
+                     * self.config.lpips_loss_weight
+diff --git a/crates/brush-ui/Cargo.toml b/crates/brush-ui/Cargo.toml
+index e2dd732..edd9b9e 100644
+--- a/crates/brush-ui/Cargo.toml
++++ b/crates/brush-ui/Cargo.toml
+@@ -1,3 +1,4 @@
++# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): the viewer asks for the dialogs, the downloads and rerun
+ [package]
+ name = "brush-ui"
+ edition.workspace = true
+@@ -8,8 +9,8 @@ license.workspace = true
+ [dependencies]
+ brush-dataset.path = "../brush-dataset"
+ brush-render.path = "../brush-render"
+-brush-vfs.path = "../brush-vfs"
+-brush-process.path = "../brush-process"
++brush-vfs = { path = "../brush-vfs", features = ["pick", "url"] }
++brush-process = { path = "../brush-process", features = ["rerun"] }
+ brush-serde.path = "../brush-serde"
+ rrfd.path = "../rrfd"
+ 
+diff --git a/crates/brush-vfs/Cargo.toml b/crates/brush-vfs/Cargo.toml
+index 3394b37..58a342f 100644
+--- a/crates/brush-vfs/Cargo.toml
++++ b/crates/brush-vfs/Cargo.toml
+@@ -1,3 +1,4 @@
++# Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): file dialogs behind the pick feature, downloads behind the url feature
+ [package]
+ name = "brush-vfs"
+ edition.workspace = true
+@@ -6,7 +7,7 @@ readme.workspace = true
+ license.workspace = true
+ 
+ [dependencies]
+-rrfd.path = "../rrfd"
++rrfd = { path = "../rrfd", optional = true }
+ 
+ thiserror.workspace = true
+ async_zip.workspace = true
+@@ -39,7 +40,13 @@ futures-util = "0.3"
+ 
+ [target.'cfg(not(target_family = "wasm"))'.dependencies]
+ tokio = { workspace = true, features = ["io-util", "fs", "macros", "rt"] }
+-reqwest.workspace = true
++reqwest = { workspace = true, optional = true }
++
++[features]
++# Sources picked in a file dialog (rrfd), off unless asked for
++pick = ["dep:rrfd"]
++# Sources given by a URL, downloaded by reqwest, off unless asked for
++url = ["dep:reqwest"]
+ 
+ [lints]
+ workspace = true
+diff --git a/crates/brush-vfs/src/data_source.rs b/crates/brush-vfs/src/data_source.rs
+index 80a87c4..b024d72 100644
+--- a/crates/brush-vfs/src/data_source.rs
++++ b/crates/brush-vfs/src/data_source.rs
+@@ -1,7 +1,10 @@
++// Modified for Immuch360 Desktop (licenses/brush/patches/0001-immuch360-headless-trainer.patch): file dialogs behind the pick feature, downloads behind the url feature
+ use crate::{BrushVfs, VfsConstructError};
++#[cfg(feature = "pick")]
+ use rrfd::PickFileError;
+ use serde::Deserialize;
+ use std::{path::Path, str::FromStr};
++#[cfg(any(feature = "pick", target_family = "wasm"))]
+ use tokio::io::BufReader;
+ 
+ #[derive(Clone, Debug, Deserialize)]
+@@ -30,11 +33,14 @@ impl FromStr for DataSource {
+ use thiserror::Error;
+ #[derive(Debug, Error)]
+ pub enum DataSourceError {
++    #[cfg(feature = "pick")]
+     #[error(transparent)]
+     FilePicking(#[from] PickFileError),
++    #[error("{0}")]
++    NotInThisBuild(&'static str),
+     #[error(transparent)]
+     VfsError(#[from] VfsConstructError),
+-    #[cfg(not(target_family = "wasm"))]
++    #[cfg(all(not(target_family = "wasm"), feature = "url"))]
+     #[error(transparent)]
+     ReqwestError(#[from] reqwest::Error),
+     #[error("WASM fetch error: {0}")]
+@@ -46,11 +52,17 @@ pub enum DataSourceError {
+ impl DataSource {
+     pub async fn into_vfs(self) -> Result<BrushVfs, DataSourceError> {
+         match self {
++            #[cfg(not(feature = "pick"))]
++            Self::PickFile | Self::PickDirectory => Err(DataSourceError::NotInThisBuild(
++                "this build of Brush has no file dialog: give the path of the data",
++            )),
++            #[cfg(feature = "pick")]
+             Self::PickFile => {
+                 let reader = BufReader::new(rrfd::pick_file().await?);
+                 log::info!("Got file reader");
+                 Ok(BrushVfs::from_reader(reader).await?)
+             }
++            #[cfg(feature = "pick")]
+             Self::PickDirectory => {
+                 #[cfg(not(target_family = "wasm"))]
+                 {
+@@ -90,7 +102,15 @@ impl DataSource {
+             url = format!("https://{url}");
+         }
+ 
+-        #[cfg(not(target_family = "wasm"))]
++        #[cfg(all(not(target_family = "wasm"), not(feature = "url")))]
++        {
++            let _ = url;
++            Err(DataSourceError::NotInThisBuild(
++                "this build of Brush downloads nothing: give the path of the data",
++            ))
++        }
++
++        #[cfg(all(not(target_family = "wasm"), feature = "url"))]
+         {
+             use tokio_stream::StreamExt;
+             use tokio_util::io::StreamReader;

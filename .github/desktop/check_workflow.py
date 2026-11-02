@@ -29,7 +29,9 @@ stable-diffusion.cpp, the generator of the 360° panoramas (lot P2), is built by
 Visual Studio 2022, ubuntu-22.04 for its glibc), only when asked or when the lock changed (an "if:" that reads
 inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. COLMAP, which places the photos
 of the splat scenes (lot SP1 of the splat maker), is built the same way by the jobs whose names start with "colmap"
-(colmap-windows, colmap-linux), when asked by inputs.colmap or when its lock changed. With --release, a workflow
+(colmap-windows, colmap-linux), when asked by inputs.colmap or when its lock changed. Brush, the trainer of the
+splat scenes (lot SP2), is held to the same by the jobs whose names start with "brush" (brush-windows, brush-linux, an
+"if:" that reads inputs.brush). With --release, a workflow
 with the with_sdcpp input passes it to the build and nothing else ("sdcpp: ${{ inputs.with_sdcpp == true }}"), and its
 job that writes the contents never runs with it or with sign_test (an "if:" that negates both): building and signing
 stable-diffusion.cpp never touches a release of the app.
@@ -74,6 +76,7 @@ SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
 SIDECAR_JOBS = {
     SDCPP_JOB: ('stable-diffusion.cpp', SDCPP_RUNNERS, 'inputs.sdcpp'),
     'colmap': ('COLMAP', {'colmap-windows': 'windows-2022', 'colmap-linux': 'ubuntu-22.04'}, 'inputs.colmap'),
+    'brush': ('Brush', {'brush-windows': 'windows-2022', 'brush-linux': 'ubuntu-22.04'}, 'inputs.brush'),
 }
 
 
@@ -170,8 +173,8 @@ def job_if(body: list) -> str:
 
 
 def sdcpp_jobs(lines: list, owners: list) -> list:
-    """The jobs that build stable-diffusion.cpp or COLMAP: on their images, when asked only, never as a package of the
-    app"""
+    """The jobs that build stable-diffusion.cpp, COLMAP or Brush: on their images, when asked only, never as a package
+    of the app"""
     found = []
     for job, body in job_lines(lines, owners).items():
         family = next((name for name in SIDECAR_JOBS if job.startswith(name)), None)
