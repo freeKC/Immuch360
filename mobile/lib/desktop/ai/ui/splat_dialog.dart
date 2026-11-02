@@ -269,16 +269,10 @@ class SplatSelectionSource implements ConversionSource {
   }
 }
 
-/// The words of a refusal of the gate for a splat scene: the card of a splat scene in its own words, the rest as the
-/// other features say it
-String splatGateReasonText(Translations t, AiGateResult gate) => switch (gate.reason) {
-  AiGateReason.gpuIntegrated => t.ai_immersive_splat_gpu_integrated,
-  AiGateReason.gpuTooSmall => t.ai_immersive_splat_gpu_too_small(
-    memory: formatBytes(gate.graphicsMemory ?? 0),
-    needed: formatBytes(gate.graphicsMemoryNeeded ?? SplatV1.minGraphicsMemory),
-  ),
-  _ => aiGateReasonText(t, gate),
-};
+/// The words of a refusal of the gate for a splat scene: the gate of the splat scenes gives its own reasons for the
+/// card and the memory (splatGpuIntegrated, splatGpuTooSmall, splatMemory), which aiGateReasonText says in the words
+/// of the splat scenes, the rest as the other features say it
+String splatGateReasonText(Translations t, AiGateResult gate) => aiGateReasonText(t, gate);
 
 /// "NVIDIA GeForce RTX 4060 Laptop GPU, 8.0 GiB, Vulkan 1.4: splat scenes available", null when the gate names no card
 String? splatCardText(Translations t, AiGateResult gate) {

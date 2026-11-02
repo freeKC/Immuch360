@@ -312,7 +312,7 @@ void main() {
         'conversion-5',
         state: ConversionState.failed,
         error: ImmersiveErrorCode.gpuUnavailable,
-        message: AiGateReason.gpuIntegrated.name,
+        message: AiGateReason.splatGpuIntegrated.name,
       ),
     ]);
     expect(inRow('conversion-4', find.textContaining('Training the splat')), findsOneWidget);

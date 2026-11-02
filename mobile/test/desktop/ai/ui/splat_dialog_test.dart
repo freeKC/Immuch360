@@ -107,15 +107,12 @@ class _GateFiles implements AiComponentFiles {
   AiComponentState stateOf(AiComponent component) => service.statusOf(component).state;
 }
 
-/// What the gate of the test answers for a splat scene, until the gate of the splat scenes (lot SP6) is in
+/// What the gate of the test answers for a splat scene
 enum _SplatAnswer {
   /// Available, the card not named: the answer of the 3D photo, its components installed
   available,
 
-  /// Available on the card of the probe: the answer of the panorama on that card
-  availableWithCard,
-
-  /// The answer of the gate of this build for the splat scene itself: its memory, its components, its group
+  /// The answer of the gate of the splat scenes itself (lot SP6): its memory, its card, its components, its group
   asIs,
 }
 
@@ -139,7 +136,6 @@ class _Gate extends HardwareGate {
     }
     return switch (splat()) {
       _SplatAnswer.available => super.evaluate(),
-      _SplatAnswer.availableWithCard => super.evaluate(feature: AiFeature.panorama),
       _SplatAnswer.asIs => super.evaluate(feature: feature, graphicsMemory: graphicsMemory),
     };
   }
@@ -587,7 +583,6 @@ void main() {
       expect(tester.widget<ImmichColumnButton>(entry()).disabled, isTrue);
 
       memory = 16 * _gib;
-      splat = _SplatAnswer.availableWithCard;
       cards = FakeGpuReports.integratedOnly;
       await tester.pumpWidget(const SizedBox.shrink());
       await pumpEntry(tester);
@@ -904,7 +899,7 @@ void main() {
   });
 
   testWidgets('the gate: its refusal in words, or the card it found', (tester) async {
-    splat = _SplatAnswer.availableWithCard;
+    splat = _SplatAnswer.asIs;
     cards = FakeGpuReports.integratedOnly;
     await openDialog(tester, salon(60));
     expect(
@@ -917,8 +912,13 @@ void main() {
     await tapIn(tester, find.byKey(const Key('ai_splat_cancel')));
     await settle(tester);
 
-    // The probe of another computer
+    // The probe of another computer, the components of the splat scenes installed
     cards = FakeGpuReports.rtx4060;
+    service = FakeAiComponentsService(
+      states: {
+        for (final component in [...windows, ...splatComponents]) component: AiComponentState.installed,
+      },
+    );
     await tester.pumpWidget(const SizedBox.shrink());
     await openDialog(tester, salon(60));
     expect(

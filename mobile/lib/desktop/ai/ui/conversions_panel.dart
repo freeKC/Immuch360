@@ -218,9 +218,6 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
       ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
       ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
       ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
-      ImmersiveErrorCode.gpuUnavailable
-          when kind == ConversionKind.splatScene && message == AiGateReason.gpuIntegrated.name =>
-        t.ai_immersive_splat_gpu_integrated,
       ImmersiveErrorCode.gpuUnavailable => switch (AiGateReason.values.asNameMap()[message]) {
         AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
         AiGateReason.gpuNone => t.ai_immersive_gpu_none,
