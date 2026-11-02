@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 
 /// The stored name of each type is its [Enum.name]. Builds 19 and older know smb, webdav and dlna only and drop any
 /// other type they read, so the later types are stored in a list of their own (see StoreKey.networkSourcesExtra)
@@ -360,8 +361,17 @@ class NetworkEntry {
   // Media3 need video/mp4 for them, whatever the server says.
   static const _cameraMp4Extensions = {'insv', '360', 'osv', 'lrv', 'lrf'};
 
+  /// The AV2 videos in their raw containers, IVF and Section 5 OBUs (store/m2/av2-2026-11-02/plan-2026-11-02.md,
+  /// section 1.1): Immuch360 Desktop decodes them with its own companion, while the phones, the TVs and the Quest have
+  /// no decoder for them, so only the shares of a computer list them. The Immich server refuses them too (see
+  /// [serverRefusedExtensions]).
+  static const desktopVideoExtensions = {'ivf', 'obu'};
+
   bool get isImage => !isDirectory && imageExtensions.contains(extension);
-  bool get isVideo => !isDirectory && videoExtensions.contains(extension);
+  bool get isVideo =>
+      !isDirectory &&
+      (videoExtensions.contains(extension) ||
+          (CurrentPlatform.isDesktop && desktopVideoExtensions.contains(extension)));
   bool get isMedia => isImage || isVideo;
 
   /// The files a Gaussian splat of another tool may be in (lot S5): SPZ, and PLY, which holds meshes and point clouds
@@ -381,9 +391,10 @@ class NetworkEntry {
   /// Whether the file is one of [companionExtensions]: never sent to the server, never listed as media
   bool get isCompanion => !isDirectory && companionExtensions.contains(extension);
 
-  /// The media of 360° cameras the Immich server refuses (DJI .osv, GoPro .360 and .36p): shown and played from where
-  /// they are, never sent
-  static const serverRefusedExtensions = {'osv', '360', '36p'};
+  /// The media the Immich server refuses (server/src/utils/mime-types.ts knows none of these): the files of 360°
+  /// cameras (DJI .osv, GoPro .360 and .36p) and the AV2 videos of the computers ([desktopVideoExtensions]); shown and
+  /// played from where they are, never sent
+  static const serverRefusedExtensions = {'osv', '360', '36p', 'ivf', 'obu'};
 
   /// Whether the server refuses the file, see [serverRefusedExtensions]
   bool get isRefusedByServer => !isDirectory && serverRefusedExtensions.contains(extension);

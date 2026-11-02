@@ -61,6 +61,20 @@ void main() {
     });
   });
 
+  group('AV2 videos on the computers (experimental)', () {
+    test('are on by default', () {
+      expect(const AppConfig().viewer.av2Videos, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerAv2Videos), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({SettingsKey.viewerAv2Videos: false});
+
+      expect(config.viewer.av2Videos, isFalse);
+      expect(config.write(SettingsKey.viewerAv2Videos, true).viewer.av2Videos, isTrue);
+    });
+  });
+
   group('Gaussian splats on the Meta Quest (experimental)', () {
     test('are on by default', () {
       expect(const AppConfig().viewer.gaussianSplats, isTrue);

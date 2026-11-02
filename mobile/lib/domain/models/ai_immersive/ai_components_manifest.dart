@@ -16,6 +16,12 @@
 // one that holds in 8 GB) and wait for P2 (the archives of stable-diffusion.cpp, built and signed by our CI) and for the
 // verdict of M3 before ai-components-3 is published: an entry without its size or sum is never offered.
 //
+// The AV2 decoder of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3) is no AI, but it downloads,
+// checks and installs as the components do: three archives of its own release, av2-decoder-1, shown in the video
+// settings and never in the tile of the AI components. Until that release is made their entries have no size nor sum,
+// so they are never offered; the branch of the test build alone carries the sums of the archives of the CI, served by a
+// local mirror.
+//
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
 /// The tag of the prerelease that hosts the files of phase 1 (never "Latest": the app reads releases/latest)
@@ -44,32 +50,44 @@ enum AiPlatform { windowsX64, linuxX64, macosArm64, macosX64, questArm64 }
 enum AiComponentKind { model, runtime, archive }
 
 /// The features of the AI a component serves: the 3D photo (phase 1), the 3D scene, the 360° panorama and the 360° 3D
-/// panorama. The gate, the dialog, the tile and the engines ask for the components of one feature.
+/// panorama; and the AV2 videos, which are no AI. The gate, the dialog, the tile and the engines ask for the components
+/// of one feature.
 enum AiFeature {
   stereoPhoto([..._computers, AiPlatform.questArm64]),
   scene(_computers),
   panorama([AiPlatform.windowsX64, AiPlatform.linuxX64]),
-  stereoPanorama(_computers);
+  stereoPanorama(_computers),
+
+  /// The AV2 videos of the computers, decoded by the processor with the AV2 decoder: no AI, see [isAi]
+  av2Video(_computers);
 
   const AiFeature(this.platforms);
 
   /// Where the feature is offered: the generated panorama waits for a lot of its own on the Macs (design 4.7, point
   /// 7), and the headset computes only the 3D photo
   final List<AiPlatform> platforms;
+
+  /// Whether it is a feature of the AI, whose components the tile of the AI components shows
+  bool get isAi => this != av2Video;
 }
 
 const _computers = [AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64, AiPlatform.macosX64];
 
 /// The groups the screens show the components in (design 7.1, point 7): the 3D photos, with the 3D version of a 360°
-/// photo, which needs nothing more; the 3D scenes; the 360° panoramas. Each is installed, sized and removed as a whole.
+/// photo, which needs nothing more; the 3D scenes; the 360° panoramas; and the AV2 decoder, which the video settings
+/// show. Each is installed, sized and removed as a whole.
 enum AiFeatureGroup {
   photos({AiFeature.stereoPhoto, AiFeature.stereoPanorama}),
   scenes({AiFeature.scene}),
-  panoramas({AiFeature.panorama});
+  panoramas({AiFeature.panorama}),
+  av2({AiFeature.av2Video});
 
   const AiFeatureGroup(this.features);
 
   final Set<AiFeature> features;
+
+  /// Whether the tile of the AI components shows it: every group but that of the AV2 decoder
+  bool get isAi => features.every((feature) => feature.isAi);
 }
 
 /// The largest asset a release holds: GitHub refuses a file of 2 GiB or more
@@ -935,6 +953,75 @@ const upscalerComponent = AiComponent(
   officialUrls: ['https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth'],
 );
 
+// The AV2 decoder (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3): immuch360-av2, our companion in C on the
+// library of dav2d (VideoLAN, BSD-2-Clause) at the commit of .github/desktop/av2/av2.lock.json, whose id is the version,
+// built by the jobs av2-windows, av2-linux and av2-macos of the desktop workflow (lot AD2). Each archive holds the
+// program (on Linux with immuch360-run beside it), and in licenses/ the COPYING of dav2d, the ISC header of x86inc.asm,
+// the Alliance for Open Media Patent License 1.0, the AGPL 3.0 of the companion and the address of its source, with
+// BUILD-INFO.txt and SHA256SUMS.txt. Its size, its sum and the list of its files are written when av2-decoder-1 is made
+// (lot AD11); until then the entries are incomplete, so never offered.
+
+/// The tag of the prerelease of the AV2 decoder, a release of its own: AV2 is no AI (plan, section 2.7)
+const av2DecoderReleaseTag = 'av2-decoder-1';
+
+/// The licence of dav2d at the pinned commit (its COPYING: BSD 2-Clause, VideoLAN and dav2d authors)
+const _dav2dLicenceUrl =
+    'https://code.videolan.org/videolan/dav2d/-/blob/30140b563596a1b14aef808ff021c90288948315/COPYING';
+
+/// The AV2 decoder for Windows x64: immuch360-av2.exe, built with the static C runtime, and its licences
+const av2DecoderWindowsComponent = AiComponent(
+  id: 'av2-decoder-windows-x64',
+  name: 'AV2 decoder',
+  version: '30140b5-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
+  installPath: 'engines/av2-decoder-windows-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'BSD-2-Clause',
+  licenceUrl: _dav2dLicenceUrl,
+  features: {AiFeature.av2Video},
+  releaseTag: av2DecoderReleaseTag,
+);
+
+/// The AV2 decoder for Linux x64 (glibc of Ubuntu 22.04 and later), with immuch360-run
+const av2DecoderLinuxComponent = AiComponent(
+  id: 'av2-decoder-linux-x64',
+  name: 'AV2 decoder',
+  version: '30140b5-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'Immuch360-av2-decoder-30140b5-1-linux-x64.zip',
+  installPath: 'engines/av2-decoder-linux-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'BSD-2-Clause',
+  licenceUrl: _dav2dLicenceUrl,
+  features: {AiFeature.av2Video},
+  releaseTag: av2DecoderReleaseTag,
+);
+
+/// The AV2 decoder for macOS: one universal program, arm64 with NEON and x86_64 with AVX2
+const av2DecoderMacComponent = AiComponent(
+  id: 'av2-decoder-macos-universal',
+  name: 'AV2 decoder',
+  version: '30140b5-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.macosArm64, AiPlatform.macosX64},
+  assetName: 'Immuch360-av2-decoder-30140b5-1-macos-universal.zip',
+  installPath: 'engines/av2-decoder-macos-universal',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'BSD-2-Clause',
+  licenceUrl: _dav2dLicenceUrl,
+  features: {AiFeature.av2Video},
+  releaseTag: av2DecoderReleaseTag,
+);
+
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
 const aiComponents = <AiComponent>[
@@ -954,6 +1041,9 @@ const aiComponents = <AiComponent>[
   fluxVaeComponent,
   panoramaLoraComponent,
   upscalerComponent,
+  av2DecoderWindowsComponent,
+  av2DecoderLinuxComponent,
+  av2DecoderMacComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the
@@ -1010,17 +1100,19 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
 const aiHeldFeatureGroups = <AiFeatureGroup>{};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
-/// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)
+/// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered). The
+/// groups of the AI unless [only] names others: the AV2 decoder is asked for by name, by the video settings.
 List<AiGroupComponents> aiComponentGroupsFor(
   AiPlatform platform, {
   int? graphicsMemory,
   List<AiComponent> catalogue = aiComponents,
   Set<AiFeatureGroup> held = aiHeldFeatureGroups,
+  Set<AiFeatureGroup>? only,
 }) {
   final groups = <AiGroupComponents>[];
   final earlier = <String>{};
   for (final group in AiFeatureGroup.values) {
-    if (held.contains(group)) {
+    if (held.contains(group) || !(only?.contains(group) ?? group.isAi)) {
       continue;
     }
     final all = <AiComponent>[];

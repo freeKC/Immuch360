@@ -57,6 +57,12 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// FreeKC on 30 October 2026); Settings, Advanced turns it on
     @Default(false) bool largeSplats,
 
+    /// Immuch360 Desktop, experimental: the AV2 videos (.ivf, .obu) of the folders, the shares and "Open with" play,
+    /// decoded by the processor with the AV2 decoder downloaded at the first one (store/m2/av2-2026-11-02/
+    /// plan-2026-11-02.md, section 1.3). On by default, the lab rule (Settings, Asset Viewer, Videos turns it off: an
+    /// AV2 video then says so instead of playing)
+    @Default(true) bool av2Videos,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

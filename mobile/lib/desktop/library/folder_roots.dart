@@ -33,8 +33,9 @@ enum LibraryMediaKind {
 }
 
 // What the Immich server accepts (server/src/utils/mime-types.ts), less the vector images, plus the files of 360°
-// cameras the app opens itself: GoPro .360 and .36p, DJI .osv. The low resolution proxies of the cameras (.lrv, .lrf)
-// are no media of their own.
+// cameras the app opens itself: GoPro .360 and .36p, DJI .osv, and the AV2 videos in IVF and Section 5 OBUs, which
+// Immuch360 Desktop decodes with its own companion (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.1). The low
+// resolution proxies of the cameras (.lrv, .lrf) are no media of their own.
 const _imageExtensions = {
   'jpg',
   'jpeg',
@@ -110,6 +111,8 @@ const _videoExtensions = {
   'wmv',
   '360',
   'osv',
+  'ivf',
+  'obu',
 };
 
 String _extensionOf(String name) {
