@@ -11,7 +11,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:path/path.dart' as p;
 
 class FakeAiComponentsService extends AiComponentsService {
-  FakeAiComponentsService({Map<AiComponent, AiComponentState> states = const {}, this.space = 0})
+  FakeAiComponentsService({Map<AiComponent, AiComponentState> states = const {}, this.space = 0, super.catalogue})
     : super(folder: () async => Directory(p.join(Directory.systemTemp.path, 'no-ai-components'))) {
     for (final MapEntry(:key, :value) in states.entries) {
       _states[key.id] = AiComponentStatus(value);
