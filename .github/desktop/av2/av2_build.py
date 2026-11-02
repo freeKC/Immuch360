@@ -16,14 +16,15 @@ a name that no release of the app attaches.
   av2_build.py build --system SYSTEM --build DIR [--source-commit COMMIT]
       Meson and Ninja with the options of the lock; on Windows with MSVC and its static runtime (Meson finds Visual
       Studio itself, --vsenv), on macOS twice (arm64, then x86_64 by a cross file) and joined by lipo, then signed ad
-      hoc; the program in DIR/immuch360-av2[.exe], and the seconds it took
+      hoc; the program in DIR/immuch360-av2[.exe], the tools that built it in DIR/tools.json (the C compiler as Meson
+      found it, nasm, Meson, Ninja), and the seconds it took
   av2_build.py licences --source DIR
-      the licences of the lock: every component under a permissive licence (ours apart: the AGPL 3.0 of the program,
-      the MIT licence of immuch360-run), and each text of licenses/av2 equal to the file of the sources it comes from
-      and to the SHA-256 of the lock; a GPL entry fails here
+      the licences of the lock: every component under a permissive licence (ours apart, pinned here: the AGPL 3.0 of
+      the program, the MIT licence of immuch360-run), and each text of licenses/av2 equal to the file of the sources it
+      comes from and to the SHA-256 of the lock; a GPL entry fails here
   av2_build.py pack --system SYSTEM --source DIR --program FILE --out DIR [--launcher FILE] [--source-commit COMMIT]
-      the archive: the program (and on Linux immuch360-run), licenses/, BUILD-INFO.txt and SHA256SUMS.txt; sorted
-      names and fixed dates, the same files give the same bytes
+      the archive: the program (and on Linux immuch360-run), licenses/, BUILD-INFO.txt (with the tools of tools.json
+      next to the program) and SHA256SUMS.txt; sorted names and fixed dates, the same files give the same bytes
   av2_build.py check --system SYSTEM --archive FILE [--fixtures DIR] [--run] [--arch-x86-64]
       the archive: its files and their sums, its licences equal to those of the repository, no library or import
       outside the system's, no string of GPL code in the program; with --run, the program of the archive itself: its
@@ -34,7 +35,11 @@ a name that no release of the app attaches.
       the output of immuch360-av2 --help compared with mobile/test/fixtures/av2/immuch360_av2_help.txt, the text the
       app's launcher is frozen by
 
-Only the Python standard library is used. Exit codes: 0 good, 1 a check failed, 2 bad arguments or missing inputs.
+nasm is pinned on Windows only (the lock gives its address and SHA-256); Linux and macOS take the one of apt and of
+Homebrew, whose version BUILD-INFO.txt gives with the compiler's.
+
+Only the Python standard library is used, and it writes no cache next to the scripts (a __pycache__ folder is not
+for the repository). Exit codes: 0 good, 1 a check failed, 2 bad arguments or missing inputs.
 """
 from __future__ import annotations
 
@@ -52,6 +57,9 @@ import sys
 import tempfile
 import time
 import zipfile
+
+# windows_bundle and av2_serve_check are imported later, from here: their caches would land next to them
+sys.dont_write_bytecode = True
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -76,6 +84,9 @@ GPL_STRINGS = (b'GNU General Public License', b'General Public License', b'GPL-2
                b'x264 - core', b'x265 (build', b'--enable-gpl', b'libpostproc', b'GNU Lesser General Public')
 # The licence words of the lock that are a GPL: such an entry fails whatever list it is in
 GPL_LICENCE = re.compile(r'(?i)\b(A|L)?GPL\b|GPL-|General Public')
+# Our own code and its licence, fixed here and not only in the lock: the LICENSE of this repository for the program,
+# the SPDX line of .github/desktop/ai/immuch360_run.c for the launcher. No other component may say it is ours
+OWN_LICENCES = {'immuch360-av2': 'AGPL-3.0-only', 'immuch360-run': 'MIT'}
 
 
 class Failure(Exception):
@@ -215,6 +226,22 @@ def meson_files(build: pathlib.Path, lock: dict) -> tuple:
     return native, cross
 
 
+def tool_versions(build: pathlib.Path) -> dict:
+    """The C compiler Meson found for the build in build, nasm, Meson and Ninja, for BUILD-INFO.txt"""
+    compilers = json.loads(output(['meson', 'introspect', '--compilers', build]))
+    c = compilers.get('host', {}).get('c', {})
+    nasm = shutil.which('nasm')
+    if not c or not nasm:
+        raise Failure(f'the build in {build} names no C compiler, or no nasm on the PATH')
+    full = (c.get('full_version') or '').splitlines()
+    return {
+        'compiler': f'{c.get("id")} {c.get("version")}' + (f' ({full[0]})' if full else ''),
+        'nasm': output([nasm, '-v']).splitlines()[0],
+        'meson': output(['meson', '--version']),
+        'ninja': output(['ninja', '--version']),
+    }
+
+
 def command_build(args) -> int:
     lock = load_lock(args.lock)
     commit = args.source_commit or os.environ.get('GITHUB_SHA') or 'unknown'
@@ -248,7 +275,10 @@ def command_build(args) -> int:
         if args.system == 'linux-x64':
             run(['strip', '--strip-unneeded', program])
     seconds = time.monotonic() - started
-    print(f'{program}: {program.stat().st_size} bytes, built in {seconds:.0f} s')
+    tools = tool_versions(build / 'arm64' if args.system == 'macos-universal' else build)
+    (build / 'tools.json').write_text(json.dumps(tools, indent=1) + '\n', encoding='utf-8')
+    print(f'{program}: {program.stat().st_size} bytes, built in {seconds:.0f} s by {tools["compiler"]}, '
+          f'{tools["nasm"]}')
     if os.environ.get('GITHUB_OUTPUT'):
         with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as stream:
             stream.write(f'program={program}\nseconds={seconds:.0f}\n')
@@ -269,8 +299,10 @@ def licence_problems(lock: dict, source: pathlib.Path | None, licences: pathlib.
     for component in lock['components']:
         name, licence = component['name'], component['licence']
         if 'own' in component:
-            if lock['own'].get(name) != licence:
-                problems.append(f'{name}: {licence}, not the licence the lock gives our own code')
+            if name not in OWN_LICENCES:
+                problems.append(f'{name}: marked as our own code, which only {" and ".join(OWN_LICENCES)} are')
+            elif licence != OWN_LICENCES[name] or lock['own'].get(name) != licence:
+                problems.append(f'{name}: {licence}, not {OWN_LICENCES[name]}, the licence of our own code')
             continue
         # A licence expression: every part of an AND must be permissive, an OR needs one permissive choice
         choices = [[part.strip() for part in re.split(r'\s+AND\s+', choice)]
@@ -328,7 +360,7 @@ def archive_licences(lock: dict, system: str, commit: str, licences: pathlib.Pat
     return files
 
 
-def build_info(lock: dict, system: str, commit: str) -> bytes:
+def build_info(lock: dict, system: str, commit: str, tools: dict) -> bytes:
     run_url = ''
     if os.environ.get('GITHUB_RUN_ID'):
         run_url = (f'{os.environ.get("GITHUB_SERVER_URL", "https://github.com")}/{os.environ.get("GITHUB_REPOSITORY")}'
@@ -337,7 +369,10 @@ def build_info(lock: dict, system: str, commit: str) -> bytes:
         f'immuch360-av2, the AV2 decoder of Immuch360 Desktop, {system}, lock {lock["id"]}',
         f'immuch360-av2 {REPOSITORY}/tree/{commit}/mobile/native/av2 (protocol of serve 1)',
         f'dav2d {lock["dav2d"]["repository"]} {lock["dav2d"]["commit"]} ({lock["dav2d"]["describe"]}), static library',
-        f'Meson {lock["tools"]["meson"]}, options: ' + ' '.join([*lock['meson']['common'], *lock['meson'][system]]),
+        f'C compiler: {tools["compiler"]}',
+        f'nasm: {tools["nasm"]}',
+        f'Meson {tools["meson"]}, Ninja {tools["ninja"]}, options: ' +
+        ' '.join([*lock['meson']['common'], *lock['meson'][system]]),
         *([f'Built by {run_url}'] if run_url else []),
         'Licences: licenses/ (dav2d BSD-2-Clause, x86inc.asm ISC, Alliance for Open Media Patent License 1.0, '
         'immuch360-av2 AGPL-3.0' + (', immuch360-run MIT' if system == 'linux-x64' else '') + ')',
@@ -365,6 +400,10 @@ def command_pack(args) -> int:
     problems = licence_problems(lock, args.source, args.licences, args.system)
     commit = args.source_commit or os.environ.get('GITHUB_SHA') or 'unknown'
     program_name = PROGRAM[args.system]
+    tools_file = args.program.parent / 'tools.json'
+    if not tools_file.is_file():
+        raise Failure(f'no tools.json next to the program in {args.program.parent}: av2_build.py build writes it')
+    tools = json.loads(tools_file.read_text(encoding='utf-8'))
     files = {program_name: args.program.read_bytes()}
     programs = {program_name}
     if args.system == 'linux-x64':
@@ -373,7 +412,7 @@ def command_pack(args) -> int:
         files['immuch360-run'] = args.launcher.read_bytes()
         programs.add('immuch360-run')
     files.update(archive_licences(lock, args.system, commit, args.licences))
-    files['BUILD-INFO.txt'] = build_info(lock, args.system, commit)
+    files['BUILD-INFO.txt'] = build_info(lock, args.system, commit, tools)
     files['SHA256SUMS.txt'] = sums_text(files)
     problems += static_problems(args.system, files, programs)
     if problems:
@@ -417,7 +456,8 @@ def elf_needed(data: bytes) -> list:
 
 
 MACHO_CPUS = {0x01000007: 'x86_64', 0x0100000C: 'arm64'}
-MACHO_DYLIB_COMMANDS = {0xC, 0x80000018, 0x8000001F, 0x80000023}  # load, weak, reexport, lazy
+# LC_LOAD_DYLIB, LC_LAZY_LOAD_DYLIB, LC_LOAD_WEAK_DYLIB, LC_REEXPORT_DYLIB, LC_LOAD_UPWARD_DYLIB
+MACHO_DYLIB_COMMANDS = {0xC, 0x20, 0x80000018, 0x8000001F, 0x80000023}
 
 
 def macho_dylibs(data: bytes) -> dict:
@@ -541,6 +581,10 @@ def command_check(args) -> int:
         problems.append('SHA256SUMS.txt does not give the sums of the files of the archive')
     if 'BUILD-INFO.txt' not in files or lock['dav2d']['commit'].encode() not in files.get('BUILD-INFO.txt', b''):
         problems.append('BUILD-INFO.txt is missing or does not name the commit of dav2d')
+    info_lines = files.get('BUILD-INFO.txt', b'').decode('utf-8', 'replace').splitlines()
+    if not any(line.startswith('C compiler: ') for line in info_lines) or \
+            not any(line.startswith('nasm: ') for line in info_lines):
+        problems.append('BUILD-INFO.txt does not name the C compiler and the nasm of the build')
     commit_match = re.search(rb'/tree/([0-9a-f]{40}|unknown)/mobile/native/av2', files.get('BUILD-INFO.txt', b''))
     commit = commit_match.group(1).decode() if commit_match else 'unknown'
     expected = archive_licences(lock, args.system, commit)
