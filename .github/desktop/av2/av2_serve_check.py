@@ -148,8 +148,11 @@ class Companion:
     """immuch360-av2 serve, fed as the app feeds it"""
 
     def __init__(self, program: pathlib.Path, stream: Stream, info: dict, threads: int = 0, depth: int = 0,
-                 token: str | None = None, extra: list | None = None):
+                 token: str | None = None, extra: list | None = None, hold_from: int | None = None):
         self.stream = stream
+        # The app's side can stop feeding the first generation at a unit, as a slow share would: the program then
+        # waits for that unit, and the request it serves stays open
+        self.hold_from = hold_from
         self.token = token or secrets.token_urlsafe(24)
         picture = info['picture']
         rate, scale = stream.fps
@@ -218,6 +221,7 @@ class Companion:
         if not self._write(0, INDEX_UNIT, index):
             return
         need = self.needs.get()
+        first = True
         while need is not None:
             generation, unit = need
             need = None
@@ -227,11 +231,15 @@ class Companion:
                     break
                 except queue.Empty:
                     pass
+                if first and self.hold_from is not None and at >= self.hold_from:
+                    need = self.needs.get()  # held until the program asks for another generation
+                    break
                 if not self._write(generation, at, self.stream.unit(at)):
                     return
             else:
                 if not self._write(generation, len(self.stream.units), b''):
                     return
+            first = False
             if need is None:
                 need = self.needs.get()
 
@@ -425,24 +433,23 @@ def check_file(report: Report, program: pathlib.Path, path: pathlib.Path, entry:
     report.check(companion.texts()[-1:] == ['exit input-closed'], f'{name}: last line "exit input-closed"')
 
 
-def check_replace_and_pause(report: Report, program: pathlib.Path, path: pathlib.Path, threads: int):
-    """A new request replaces the one being served; a player that stops reading costs no processor time"""
+def check_pause(report: Report, program: pathlib.Path, path: pathlib.Path, threads: int):
+    """A player that stops reading costs no processor time (Linux and macOS, where it can be read)"""
     name = path.name
     stream = Stream(path)
     _, info = probe(program, path, threads)
     header = expected_header(info, stream)
-    record = 6 + info['y4m']['frame_bytes']
     companion = Companion(program, stream, info, threads)
     try:
-        # A raw socket: the first request stays open, read 10 bytes past the header, then left unread
-        first = socket.create_connection(('127.0.0.1', companion.port), timeout=10)
-        first.sendall(f'GET {companion.url_path} HTTP/1.1\r\nHost: 127.0.0.1\r\nRange: bytes=0-\r\n\r\n'.encode())
+        player = socket.create_connection(('127.0.0.1', companion.port), timeout=10)
+        player.sendall(f'GET {companion.url_path} HTTP/1.1\r\nHost: 127.0.0.1\r\nRange: bytes=0-\r\n\r\n'.encode())
         received = b''
         while b'\r\n\r\n' not in received or len(received.split(b'\r\n\r\n', 1)[1]) < len(header) + 10:
-            chunk = first.recv(65536)
+            chunk = player.recv(65536)
             if not chunk:
                 break
             received += chunk
+        time.sleep(0.5)
         before = companion.cpu_seconds()
         time.sleep(1.5)
         after = companion.cpu_seconds()
@@ -450,10 +457,33 @@ def check_replace_and_pause(report: Report, program: pathlib.Path, path: pathlib
             report.check(after - before < 0.05, f'{name}: {after - before:.3f} s of processor while the player waits')
         else:
             print(f'skip  {name}: processor time while the player waits (no /proc or ps here)')
+        player.close()
+    finally:
+        companion.close()
+
+
+def check_replace(report: Report, program: pathlib.Path, path: pathlib.Path, threads: int):
+    """A new request ends the one being served, which waits for a unit the app has not sent yet"""
+    name = path.name
+    stream = Stream(path)
+    _, info = probe(program, path, threads)
+    header = expected_header(info, stream)
+    record = 6 + info['y4m']['frame_bytes']
+    total = len(header) + len(stream.units) * record
+    companion = Companion(program, stream, info, threads, hold_from=3)
+    try:
+        first = socket.create_connection(('127.0.0.1', companion.port), timeout=10)
+        first.sendall(f'GET {companion.url_path} HTTP/1.1\r\nHost: 127.0.0.1\r\nRange: bytes=0-\r\n\r\n'.encode())
+        received = b''
+        while b'\r\n\r\n' not in received or len(received.split(b'\r\n\r\n', 1)[1]) < len(header):
+            chunk = first.recv(65536)
+            if not chunk:
+                break
+            received += chunk
         start = len(header) + 7 * record
         status, _, part = get(companion.port, companion.url_path, start=start, end=start + record - 1)
         report.check(status == 206 and len(part) == record,
-                     f'{name}: a second request is served while the first is open')
+                     f'{name}: a second request is served while the first waits for the app')
         first.settimeout(5)
         try:
             while True:
@@ -465,7 +495,6 @@ def check_replace_and_pause(report: Report, program: pathlib.Path, path: pathlib
             pass
         first.close()
         body = received.split(b'\r\n\r\n', 1)[1] if b'\r\n\r\n' in received else b''
-        total = len(header) + len(stream.units) * record
         report.check(len(body) < total, f'{name}: the first request ended when the second came ({len(body)} of '
                                         f'{total} bytes)')
     finally:
@@ -556,7 +585,8 @@ def command_check(args) -> int:
     report = Report()
     for name in ('av2-256x144-8bit.ivf', 'av2-256x144-10bit.ivf', 'av2-256x144-8bit.obu', 'av2-256x144-10bit.obu'):
         check_file(report, args.program, fixtures / name, entries[name], args.threads)
-    check_replace_and_pause(report, args.program, fixtures / 'av2-256x144-8bit.ivf', args.threads)
+    check_pause(report, args.program, fixtures / 'av2-256x144-10bit.ivf', args.threads)
+    check_replace(report, args.program, fixtures / 'av2-256x144-8bit.ivf', args.threads)
     stream = Stream(fixtures / 'av2-256x144-8bit.ivf')
     _, info = probe(args.program, fixtures / 'av2-256x144-8bit.ivf')
     companion = Companion(args.program, stream, info, args.threads)
