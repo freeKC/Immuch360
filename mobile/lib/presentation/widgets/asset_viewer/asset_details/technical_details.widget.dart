@@ -70,7 +70,7 @@ class TechnicalDetails extends ConsumerWidget {
         if (asset.isVideo) VideoSourceTile(asset: asset),
         // Immuch360 Desktop: how the video playing is decoded and on which graphics card
         // (lib/desktop/video/desktop_video_decoding_tile.dart)
-        if (CurrentPlatform.isDesktop && asset.isVideo) const DesktopVideoDecodingTile(),
+        if (CurrentPlatform.isDesktop && asset.isVideo) DesktopVideoDecodingTile(asset: asset),
         if (cameraTitle != null) ...[
           const SizedBox(height: 16),
           SheetTile(

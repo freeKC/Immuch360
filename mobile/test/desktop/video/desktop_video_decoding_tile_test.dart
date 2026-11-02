@@ -1,17 +1,24 @@
 // "Video decoding" in the details of a video on the computers (desktop_video_decoding_tile.dart): the decoder and the
 // card of the video playing, with the English texts, on the machines of video_gpu_test.dart: the development laptop
 // with the app on the RTX 4060 (the runner's export) or on the Intel UHD (Windows set to power saving for it), and a
-// computer whose cards are not known (Linux, macOS).
+// computer whose cards are not known (Linux, macOS). While the server's copy of a video plays because its original is
+// beyond this computer, the advice is about the original.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_decoding_tile.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/video_gpu.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
+
+import '../../unit/factories/remote_asset_factory.dart';
 
 GpuAdapter _gpu(String name, {required int vendor, required bool integrated, required String luid, int mb = 128}) =>
     GpuAdapter(
@@ -39,34 +46,60 @@ final _laptop = GpuList(adapters: [_intel, _rtx], highPerformance: _rtx.luid, mi
 
 const _eightK = (width: 7680, height: 4320);
 const _hd = (width: 1920, height: 1080);
+const _copy = (width: 1280, height: 720);
+
+const _advice =
+    'NVIDIA GeForce RTX 4060 Laptop GPU plays 4K and 8K videos more smoothly: choose High performance for Immuch360 '
+    'in Windows Settings, System, Display, Graphics, then restart Immuch360';
+
+/// What the player chose for an 8K HEVC server video whose original the decoder check found beyond this computer
+const _switched = ChosenVideoSource(
+  url: 'playback',
+  kind: VideoSourceKind.transcoded,
+  notice: VideoSourceNotice(.switched, codec: 'HEVC', width: 7680, height: 4320),
+  hasCopy: true,
+);
 
 void main() {
   late ValueNotifier<VideoDecoding> decoding;
+  late ProviderContainer container;
 
-  setUp(() => decoding = ValueNotifier((hwdec: null, size: null)));
+  setUp(() {
+    decoding = ValueNotifier((hwdec: null, size: null));
+    container = ProviderContainer();
+  });
 
-  Future<void> pumpTile(WidgetTester tester, VideoMachine machine, {bool given = true}) async {
+  tearDown(() => container.dispose());
+
+  Future<void> pumpTile(WidgetTester tester, VideoMachine machine, {bool given = true, BaseAsset? asset}) async {
     await tester.pumpWidget(
-      EasyLocalization(
-        supportedLocales: locales.values.toList(),
-        path: translationsPath,
-        startLocale: locales.values.first,
-        fallbackLocale: locales.values.first,
-        saveLocale: false,
-        useFallbackTranslations: true,
-        assetLoader: const CodegenLoader(),
-        child: Builder(
-          builder: (context) => MaterialApp(
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            home: Scaffold(
-              body: Column(
-                children: [
-                  // EasyLocalization builds its child once the translations are loaded
-                  const Text('loaded'),
-                  DesktopVideoDecodingTile(decoding: given ? decoding : null, machine: () async => machine),
-                ],
+      UncontrolledProviderScope(
+        container: container,
+        child: EasyLocalization(
+          supportedLocales: locales.values.toList(),
+          path: translationsPath,
+          startLocale: locales.values.first,
+          fallbackLocale: locales.values.first,
+          saveLocale: false,
+          useFallbackTranslations: true,
+          assetLoader: const CodegenLoader(),
+          child: Builder(
+            builder: (context) => MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              home: Scaffold(
+                body: Column(
+                  children: [
+                    // EasyLocalization builds its child once the translations are loaded
+                    const Text('loaded'),
+                    DesktopVideoDecodingTile(
+                      asset: asset,
+                      decoding: given ? decoding : null,
+                      machine: () async => machine,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -112,6 +145,62 @@ void main() {
     );
     // A 1080p video plays well on the Intel: nothing to suggest
     decoding.value = (hwdec: 'd3d11va', size: _hd);
+    await tester.pump();
+    expect(subtitle(tester), 'Hardware, on Intel(R) UHD Graphics  •  d3d11va');
+  });
+
+  testWidgets("the server's copy plays because the 8K original is beyond the Intel: the advice is about the original", (
+    tester,
+  ) async {
+    final video = RemoteAssetFactory.create(type: .video);
+    container.read(chosenVideoSourcesProvider.notifier).record(video.id, _switched);
+    decoding.value = (hwdec: 'd3d11va', size: _copy);
+    await pumpTile(tester, (inUse: _intel, gpus: _laptop), asset: video);
+    expect(subtitle(tester), 'Hardware, on Intel(R) UHD Graphics  •  d3d11va\n$_advice');
+    // On the RTX the original plays: nothing to say, whatever the player chose (a new tile: it reads the cards once)
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpTile(tester, (inUse: _rtx, gpus: _laptop), asset: video);
+    expect(subtitle(tester), 'Hardware, on NVIDIA GeForce RTX 4060 Laptop GPU  •  d3d11va');
+  });
+
+  testWidgets("the server's copy chosen by the settings or by the user, or the original playing: the stream decides", (
+    tester,
+  ) async {
+    final video = RemoteAssetFactory.create(type: .video);
+    final sources = container.read(chosenVideoSourcesProvider.notifier);
+    decoding.value = (hwdec: 'd3d11va', size: _copy);
+    // "Always the transcoded stream": High performance would not play the original
+    sources.record(video.id, const ChosenVideoSource(url: 'playback', kind: VideoSourceKind.transcoded, hasCopy: true));
+    await pumpTile(tester, (inUse: _intel, gpus: _laptop), asset: video);
+    expect(subtitle(tester), 'Hardware, on Intel(R) UHD Graphics  •  d3d11va');
+    // The copy forced in the details
+    sources.record(
+      video.id,
+      const ChosenVideoSource(
+        url: 'playback',
+        kind: VideoSourceKind.transcoded,
+        notice: VideoSourceNotice(.copyForced, codec: 'HEVC', width: 1280, height: 720),
+        hasCopy: true,
+      ),
+    );
+    await tester.pump();
+    expect(subtitle(tester), 'Hardware, on Intel(R) UHD Graphics  •  d3d11va');
+    // The original forced although beyond the decoders: the 8K stream itself tells
+    sources.record(
+      video.id,
+      const ChosenVideoSource(
+        url: 'original',
+        notice: VideoSourceNotice(.originalForced, codec: 'HEVC', width: 7680, height: 4320),
+        hasCopy: true,
+      ),
+    );
+    decoding.value = (hwdec: 'd3d11va', size: _eightK);
+    await tester.pump();
+    expect(subtitle(tester), 'Hardware, on Intel(R) UHD Graphics  •  d3d11va\n$_advice');
+    // Another video's choice says nothing about this one
+    final other = RemoteAssetFactory.create(type: .video);
+    sources.record(other.id, _switched);
+    decoding.value = (hwdec: 'd3d11va', size: _copy);
     await tester.pump();
     expect(subtitle(tester), 'Hardware, on Intel(R) UHD Graphics  •  d3d11va');
   });
