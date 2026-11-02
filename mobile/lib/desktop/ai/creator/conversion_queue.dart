@@ -327,14 +327,16 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// Adds a batch of [kind], "1 of n" to "n of n", each photo with what to do when a version with the same settings
   /// exists and when the name of its file is taken; a request with a reason to skip is added skipped. With
-  /// [alsoStereo], each panorama that runs is followed by its 3D version, chained after it, in the same folder. Gives
-  /// the ids of the jobs, each chained job right after its panorama.
+  /// [alsoStereo], each panorama that runs is followed by its 3D version, chained after it, in the same folder. With
+  /// [fromVideo], a splat scene is made from a video (ConversionJob.fromVideo). Gives the ids of the jobs, each chained
+  /// job right after its panorama.
   List<String> add(
     List<ConversionRequest> requests, {
     ConversionKind kind = ConversionKind.sbsFromPhoto,
     ExistingVersionChoice existing = ExistingVersionChoice.skip,
     AiWhenExists whenExists = AiWhenExists.keepBoth,
     bool alsoStereo = false,
+    bool fromVideo = false,
   }) {
     if (requests.isEmpty) {
       return const [];
@@ -354,6 +356,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         whenExists: whenExists,
         state: request.skip == null ? ConversionState.waiting : ConversionState.skipped,
         skipReason: request.skip,
+        fromVideo: fromVideo && kind == ConversionKind.splatScene,
       );
       jobs.add(job);
       final target = request.target;

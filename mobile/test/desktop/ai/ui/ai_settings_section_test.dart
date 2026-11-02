@@ -7,7 +7,9 @@
 // "Also save a .glb copy"; the engine of the 3D scenes let go with the one of the 3D photos before a removal and
 // before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them; the 360° panoramas this
 // version offers (nothing held back by default), the line of the graphics card for them and "Try on integrated
-// graphics (untested)", kept, with its warning that fades; a group held back keeps the line of phase 1.
+// graphics (untested)", kept, with its warning that fades; a group held back keeps the line of phase 1. The splat
+// scenes (lot SP7): "Splat scenes (experimental)" under the switch of the AI features, on by default and kept, once
+// this version has their engine and does not hold them back.
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
@@ -798,6 +800,52 @@ void main() {
     await tapIn(tester, tile);
     expect((await keptSettings(tester)).exportGlb, isTrue);
     expect(tester.widget<SwitchListTile>(tile).value, isTrue);
+  });
+
+  testWidgets('"Splat scenes (experimental)" under the AI features: on by default, kept; absent while held back', (
+    tester,
+  ) async {
+    final splats = {
+      ConversionKind.splatScene: ConversionEngine(engine: FakeImmersiveEngine(), settingsKey: (source, turns) => null),
+    };
+    HardwareGate gateHolding(Set<AiFeatureGroup> held) => HardwareGate(
+      components: _NoFiles(),
+      facts: () => const AiHardwareFacts(abi: Abi.windowsX64, processors: 22, physicalMemory: 32 << 30),
+      heldGroups: held,
+    );
+
+    await pump(tester, gate: gateHolding(aiHeldFeatureGroups), engines: splats);
+    expect(find.byKey(const Key('ai_settings_splat_scenes')), findsNothing, reason: 'this version holds them back');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pump(tester, gate: gateHolding(const {}), engines: const {});
+    expect(find.byKey(const Key('ai_settings_splat_scenes')), findsNothing, reason: 'no engine of the splat scenes');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pump(tester, gate: gateHolding(const {}), engines: splats);
+    final tile = find.byKey(const Key('ai_settings_splat_scenes'));
+    expect(find.text('Splat scenes (experimental)'), findsOneWidget);
+    expect(
+      find.text(
+        'Rebuild a place or an object from photos or a video, to walk through in a Meta Quest. Off: no button to make '
+        'one.',
+      ),
+      findsOneWidget,
+    );
+    expect(tester.widget<SwitchListTile>(tile).value, isTrue);
+    // Right under the switch of the AI features
+    final order = [
+      for (final element in find.byType(SwitchListTile).evaluate()) (element.widget as SwitchListTile).key,
+    ];
+    expect(order.take(2), [const Key('ai_settings_enabled'), const Key('ai_settings_splat_scenes')]);
+
+    await tapIn(tester, tile);
+    expect((await keptSettings(tester)).splatScenes, isFalse);
+    expect(tester.widget<SwitchListTile>(tile).value, isFalse);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pump(tester, enabled: false, gate: gateHolding(const {}), engines: splats);
+    expect(find.byKey(const Key('ai_settings_splat_scenes')), findsNothing, reason: 'the AI features off');
   });
 
   test('a network folder allowed reads as a path', () {
