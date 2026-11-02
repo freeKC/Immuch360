@@ -14,3 +14,6 @@ packages/sdk/fetch-client.ts -diff -merge
 packages/sdk/fetch-client.ts linguist-generated=true
 
 *.sh text eol=lf
+
+# The patches of the COLMAP built by the colmap jobs apply with git apply to sources checked out without autocrlf
+licenses/colmap/patches/*.patch -text

@@ -1,0 +1,19 @@
+{
+  "$comment": "Overlay of Immuch360 (.github/desktop/ai/colmap/README.md): CLAPACK on every system but the Apple ones, never lapack-reference, whose Fortran brings libgfortran (GPL 3 with the GCC runtime exception)",
+  "name": "lapack",
+  "version-date": "2023-06-10",
+  "port-version": 4,
+  "description": "Metapackage for packages which provide LAPACK",
+  "license": null,
+  "supports": "!android",
+  "dependencies": [
+    {
+      "name": "clapack",
+      "platform": "!osx & !ios"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    }
+  ]
+}

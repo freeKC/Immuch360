@@ -1,0 +1,59 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3de1007..98b4b01 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -70,6 +70,7 @@ option(UNINSTALL_ENABLED "Whether to create a target to 'uninstall' colmap" ON)
+ option(BENCHMARK_ENABLED "Whether to enable runtime benchmarking support" OFF)
+ option(FETCH_POSELIB "Whether to consume PoseLib using FetchContent or find_package" ON)
+ option(FETCH_FAISS "Whether to consume faiss using FetchContent or find_package" ON)
++option(FAISS_WITHOUT_BLAS "Whether the feature index computes its distances with faiss's own code instead of BLAS (for a BLAS without optimized kernels, as OpenBLAS built by MSVC)" OFF)
+ option(FETCH_ONNX "Whether to consume ONNX using FetchContent or find_package" ON)
+ option(BUILD_SHARED_LIBS "Whether to build shared libraries (faster linktime, slower runtime)" OFF)
+ option(ALL_SOURCE_TARGET "Whether to create a target for all source files (for Visual Studio / XCode development)" OFF)
+diff --git a/cmake/FindDependencies.cmake b/cmake/FindDependencies.cmake
+index bb0e6e9..4f518bd 100644
+--- a/cmake/FindDependencies.cmake
++++ b/cmake/FindDependencies.cmake
+@@ -267,6 +267,10 @@ endif()
+ if(NOT FETCH_FAISS)
+     find_package(faiss ${COLMAP_FIND_TYPE})
+ endif()
++if(FAISS_WITHOUT_BLAS)
++    list(APPEND COLMAP_COMPILE_DEFINITIONS COLMAP_FAISS_WITHOUT_BLAS)
++    message(STATUS "Using the distances of faiss instead of BLAS in the feature index")
++endif()
+ 
+ set(COLMAP_LINK_DIRS ${Boost_LIBRARY_DIRS})
+ 
+diff --git a/src/colmap/feature/index.cc b/src/colmap/feature/index.cc
+index 8610558..e309fba 100644
+--- a/src/colmap/feature/index.cc
++++ b/src/colmap/feature/index.cc
+@@ -36,6 +36,11 @@
+ #include <faiss/IndexIVFPQ.h>
+ #include <faiss/IndexPQ.h>
+ #include <faiss/IndexScalarQuantizer.h>
++#ifdef COLMAP_FAISS_WITHOUT_BLAS
++#include <faiss/utils/distances.h>
++
++#include <limits>
++#endif
+ #ifdef _OPENMP
+ #include <omp.h>
+ #endif
+@@ -43,6 +48,15 @@
+ namespace colmap {
+ namespace {
+ 
++#ifdef COLMAP_FAISS_WITHOUT_BLAS
++// For a BLAS without optimized kernels (OpenBLAS built by MSVC), the distances
++// of faiss are faster for the sizes of a feature index: never call BLAS.
++const bool kFaissWithoutBlas = [] {
++  faiss::distance_compute_blas_threshold = std::numeric_limits<int>::max();
++  return true;
++}();
++#endif
++
+ class FaissFeatureDescriptorIndex : public FeatureDescriptorIndex {
+  public:
+   explicit FaissFeatureDescriptorIndex(int num_threads)

@@ -35,6 +35,11 @@ name: Immuch360 Desktop
 #                  stable-diffusion.cpp on Vulkan, the generator of the 360° panoramas, built from the commits of
 #                  .github/desktop/ai/sd_cpp.lock.json: only when asked (the sdcpp input) or when the lock changed,
 #                  as artifacts Immuch360-AI-sdcpp-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
+#   colmap-windows, colmap-linux
+#                  COLMAP on the processor and without its GPL parts, which places the photos of the splat scenes,
+#                  built from .github/desktop/ai/colmap.lock.json with the libraries of vcpkg (binary cache in the
+#                  Actions cache): only when asked (the colmap input) or when the lock or its patches changed, as
+#                  artifacts Immuch360-AI-colmap-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
 #
 # Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
 # from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
@@ -54,6 +59,10 @@ on:
     inputs:
       sdcpp:
         description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
+        type: boolean
+        default: false
+      colmap:
+        description: Also build COLMAP (the colmap jobs), as when colmap.lock.json or its patches change
         type: boolean
         default: false
   # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
@@ -89,6 +98,7 @@ jobs:
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
+      colmap_lock_changed: ${{ steps.colmap.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,6 +133,29 @@ jobs:
             changed=true
           fi
           echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      # The same for COLMAP: its lock, the patches applied to its sources, the overlay ports of vcpkg and the build script
+      - name: Did the COLMAP lock or its patches change
+        id: colmap
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=
+          if [ "$EVENT" = pull_request ]; then
+            base=$(git merge-base HEAD "origin/$BASE_REF")
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          fi
+          changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/colmap.lock.json \
+            .github/desktop/ai/colmap licenses/colmap/patches .github/desktop/ai/colmap_build.py; then
+            changed=true
+          fi
+          echo "the COLMAP lock or its patches changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Install mise
@@ -1473,6 +1506,247 @@ jobs:
           archive: false
           retention-days: 14
           if-no-files-found: error
+
+  # COLMAP 4.2.1 on the processor, without its GPL parts, which places the photos of the splat scenes (lot SP1 of the
+  # splat maker, plan of 2026-11-01, section 3): built from the commit of .github/desktop/ai/colmap.lock.json with the
+  # patches of licenses/colmap/patches (no CHOLMOD, no SuiteSparse in Ceres) and the libraries of vcpkg at the commit of
+  # the lock (LAPACK by CLAPACK, our overlay port, never the Fortran of lapack-reference), on the pinned images of the
+  # desktop builds. A first build of the libraries takes hours: they go to the binary cache of vcpkg, kept in the Actions
+  # cache, so that the next runs take them from there. Only when asked (the colmap input) or when the lock or its patches
+  # changed. The licence of every library is read in its vcpkg.spdx.json against our list, the archive holds no
+  # forbidden file, import or string, the archive's program places every view of a synthetic set where it is, and the
+  # help of the commands the app runs is compared with the fixtures its runner is frozen by
+  # (.github/desktop/ai/colmap_build.py, colmap_synthetic.py). The archive is named Immuch360-AI-colmap-<lock>-<system>.zip,
+  # not Immuch360-Desktop-*, so neither the packages job nor a release takes it.
+  colmap-windows:
+    name: COLMAP for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    env:
+      VCPKG_DISABLE_METRICS: '1'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/colmap_build.py lock --system windows-x64 --github-output
+
+      - name: Sources of COLMAP at the commit of the lock, with our patches
+        run: python .github/desktop/ai/colmap_build.py sources --dir "$RUNNER_TEMP/colmap"
+
+      - name: Restore the binary cache of vcpkg
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+          restore-keys: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-
+
+      - name: vcpkg and the libraries of COLMAP
+        id: vcpkg
+        run: |
+          python .github/desktop/ai/colmap_build.py vcpkg --system windows-x64 --source "$RUNNER_TEMP/colmap" \
+            --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi" --cache "$RUNNER_TEMP/vcpkg-archives" --github-output
+
+      # Even when the libraries failed halfway: what was built is kept for the next run
+      - name: Save the binary cache of vcpkg
+        if: ${{ always() && steps.vcpkg.outputs.cache_grew == 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+
+      # A licence out of our list fails the job at its end, after the build, so that one run says everything
+      - name: The licence of every library (vcpkg.spdx.json) against our list and the table of THIRD-PARTY.md
+        id: licences
+        continue-on-error: true
+        run: |
+          python .github/desktop/ai/colmap_build.py licences --system windows-x64 --installed "$RUNNER_TEMP/vi" \
+            --ports-json "$RUNNER_TEMP/colmap-report/ports-windows-x64.json"
+
+      - name: Build
+        run: |
+          python .github/desktop/ai/colmap_build.py build --system windows-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi"
+
+      - name: The archive
+        id: pack
+        run: |
+          python .github/desktop/ai/colmap_build.py pack --system windows-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --installed "$RUNNER_TEMP/vi" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          python .github/desktop/ai/colmap_build.py check --archive "dist/${{ steps.lock.outputs.artifact }}"
+          {
+            echo "### ${{ steps.lock.outputs.artifact }}"
+            echo
+            echo '```'
+            cat "dist/${{ steps.lock.outputs.artifact }}.sha256"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: The synthetic set posed by the program of the archive
+        run: |
+          python .github/desktop/ai/colmap_synthetic.py render --out "$RUNNER_TEMP/synthetic"
+          python .github/desktop/ai/colmap_synthetic.py pose --colmap "$RUNNER_TEMP/unpacked/colmap.exe" \
+            --set "$RUNNER_TEMP/synthetic"
+          python .github/desktop/ai/colmap_synthetic.py compare --set "$RUNNER_TEMP/synthetic"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: colmap help as the fixtures say
+        id: help
+        if: ${{ always() && steps.pack.outcome == 'success' }}
+        continue-on-error: true
+        run: |
+          python .github/desktop/ai/colmap_build.py help --colmap "$RUNNER_TEMP/unpacked/colmap.exe" \
+            --save "$RUNNER_TEMP/colmap-report/help-windows-x64"
+
+      # The port list and the help texts of this run, to write the table of THIRD-PARTY.md and the fixtures from
+      - name: Upload the port list and the help texts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: colmap-report-windows-x64
+          path: ${{ runner.temp }}/colmap-report
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Licences and help as they must be
+        if: ${{ always() && (steps.licences.outcome == 'failure' || steps.help.outcome == 'failure') }}
+        run: |
+          echo "::error::the licences (${{ steps.licences.outcome }}) or the help (${{ steps.help.outcome }}) failed"
+          exit 1
+
+  colmap-linux:
+    name: COLMAP for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    env:
+      VCPKG_DISABLE_METRICS: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/colmap_build.py lock --system linux-x64 --github-output
+
+      - name: Sources of COLMAP at the commit of the lock, with our patches
+        run: python3 .github/desktop/ai/colmap_build.py sources --dir "$RUNNER_TEMP/colmap"
+
+      # Ninja, and the headers of OpenGL that the CMake of COLMAP looks for even without its interface (nothing links
+      # them: the needed libraries of the archive are checked)
+      - name: Build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build libgl1-mesa-dev
+
+      - name: Restore the binary cache of vcpkg
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+          restore-keys: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-
+
+      - name: vcpkg and the libraries of COLMAP
+        id: vcpkg
+        run: |
+          python3 .github/desktop/ai/colmap_build.py vcpkg --system linux-x64 --source "$RUNNER_TEMP/colmap" \
+            --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi" --cache "$RUNNER_TEMP/vcpkg-archives" --github-output
+
+      - name: Save the binary cache of vcpkg
+        if: ${{ always() && steps.vcpkg.outputs.cache_grew == 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+
+      - name: The licence of every library (vcpkg.spdx.json) against our list and the table of THIRD-PARTY.md
+        id: licences
+        continue-on-error: true
+        run: |
+          python3 .github/desktop/ai/colmap_build.py licences --system linux-x64 --installed "$RUNNER_TEMP/vi" \
+            --ports-json "$RUNNER_TEMP/colmap-report/ports-linux-x64.json"
+
+      - name: Build
+        run: |
+          python3 .github/desktop/ai/colmap_build.py build --system linux-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi"
+
+      - name: immuch360-run
+        run: gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+
+      - name: The archive
+        id: pack
+        run: |
+          python3 .github/desktop/ai/colmap_build.py pack --system linux-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --installed "$RUNNER_TEMP/vi" --launcher "$RUNNER_TEMP/immuch360-run" \
+            --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/colmap" "$RUNNER_TEMP/unpacked/immuch360-run"
+          python3 .github/desktop/ai/colmap_build.py check --archive "dist/${{ steps.lock.outputs.artifact }}"
+          {
+            echo "### ${{ steps.lock.outputs.artifact }}"
+            echo
+            echo '```'
+            cat "dist/${{ steps.lock.outputs.artifact }}.sha256"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: The synthetic set posed by the program of the archive
+        run: |
+          python3 .github/desktop/ai/colmap_synthetic.py render --out "$RUNNER_TEMP/synthetic"
+          python3 .github/desktop/ai/colmap_synthetic.py pose --colmap "$RUNNER_TEMP/unpacked/colmap" \
+            --set "$RUNNER_TEMP/synthetic"
+          python3 .github/desktop/ai/colmap_synthetic.py compare --set "$RUNNER_TEMP/synthetic"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: colmap help as the fixtures say
+        id: help
+        if: ${{ always() && steps.pack.outcome == 'success' }}
+        continue-on-error: true
+        run: |
+          python3 .github/desktop/ai/colmap_build.py help --colmap "$RUNNER_TEMP/unpacked/colmap" \
+            --save "$RUNNER_TEMP/colmap-report/help-linux-x64"
+
+      - name: Upload the port list and the help texts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: colmap-report-linux-x64
+          path: ${{ runner.temp }}/colmap-report
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Licences and help as they must be
+        if: ${{ always() && (steps.licences.outcome == 'failure' || steps.help.outcome == 'failure') }}
+        run: |
+          echo "::error::the licences (${{ steps.licences.outcome }}) or the help (${{ steps.help.outcome }}) failed"
+          exit 1
 
   # An upstream change of a pigeon contract, of main.dart or of the HTTP clients shows on the day of the merge: the
   # test and linux jobs of the same run analyze, test and build the sync; this job adds what to read by hand

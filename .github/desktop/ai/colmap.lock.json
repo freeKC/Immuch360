@@ -1,0 +1,62 @@
+{
+  "id": "4.2.1-imm1",
+  "colmap": {
+    "repository": "https://github.com/colmap/colmap",
+    "tag": "4.2.1",
+    "commit": "bd1fcf654d2dd8fefa1466999c190a246f83f4b9",
+    "date": "2026-09-29",
+    "licence": "BSD-3-Clause"
+  },
+  "patches": [
+    "0001-without-cholmod.patch",
+    "0002-vcpkg-without-suitesparse.patch",
+    "0003-faiss-without-blas.patch"
+  ],
+  "vcpkg": {
+    "repository": "https://github.com/microsoft/vcpkg",
+    "commit": "127402f1c75bb3d5ff6bce04b285faa4930a5aca",
+    "triplets": {
+      "windows-x64": "x64-windows-static-md-release",
+      "linux-x64": "x64-linux-release"
+    }
+  },
+  "cmake": {
+    "common": [
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DGUI_ENABLED=OFF",
+      "-DOPENGL_ENABLED=OFF",
+      "-DCUDA_ENABLED=OFF",
+      "-DCGAL_ENABLED=OFF",
+      "-DLSD_ENABLED=OFF",
+      "-DCHOLMOD_ENABLED=OFF",
+      "-DMVS_ENABLED=OFF",
+      "-DONNX_ENABLED=OFF",
+      "-DDOWNLOAD_ENABLED=OFF",
+      "-DTESTS_ENABLED=OFF",
+      "-DCCACHE_ENABLED=OFF",
+      "-DUNINSTALL_ENABLED=OFF",
+      "-DCOLMAP_HASH_MAP_BACKEND=BOOST",
+      "-DVCPKG_MANIFEST_INSTALL=OFF"
+    ],
+    "windows-x64": [
+      "-G",
+      "Ninja",
+      "-DCMAKE_C_COMPILER=cl.exe",
+      "-DCMAKE_CXX_COMPILER=cl.exe",
+      "-DFAISS_WITHOUT_BLAS=ON"
+    ],
+    "linux-x64": [
+      "-G",
+      "Ninja",
+      "-DCMAKE_EXE_LINKER_FLAGS=-s"
+    ]
+  },
+  "help": [
+    "feature_extractor",
+    "exhaustive_matcher",
+    "sequential_matcher",
+    "mapper",
+    "model_orientation_aligner",
+    "model_analyzer"
+  ]
+}
