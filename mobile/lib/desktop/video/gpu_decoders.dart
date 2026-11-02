@@ -42,6 +42,9 @@ abstract final class DesktopGpuDecoders {
   // Whether a failed probe was asked again: once per run
   static bool _retried = false;
 
+  // Whether a failed list of the GPUs was asked again: once per run
+  static bool _listRetried = false;
+
   static Future<D3D11DecoderProbe> _probeWindows({
     Iterable<String>? profiles,
     Iterable<(int, int)> sizes = const [],
@@ -62,7 +65,8 @@ abstract final class DesktopGpuDecoders {
   static Future<GpuAdapter?> adapter() async => (await decoders())?.adapter;
 
   /// The GPUs of the computer and the ones Windows prefers, null where nothing lists them or the list failed. Read once
-  /// per run, without any device made on the GPUs; the first read logs them with the one in use.
+  /// per run, without any device made on the GPUs, and once more after a failure; the first read logs them with the one
+  /// in use.
   static Future<GpuList?> gpus() => _gpus ??= _list();
 
   /// What a choice of the card for a video needs (video_gpu.dart): the GPU in use and the GPUs of the computer
@@ -92,6 +96,12 @@ abstract final class DesktopGpuDecoders {
       return found;
     } catch (error) {
       _log.info('The graphics cards could not be listed: $error');
+      // As the probe below: the first start of a new build may time out while the antivirus scans it, which left the
+      // Video decoding line without its advice for that whole run
+      if (!_listRetried) {
+        _listRetried = true;
+        _gpus = null;
+      }
       return null;
     }
   }
@@ -156,6 +166,7 @@ abstract final class DesktopGpuDecoders {
     _decoders = null;
     _gpus = null;
     _retried = false;
+    _listRetried = false;
     _checks.clear();
   }
 }

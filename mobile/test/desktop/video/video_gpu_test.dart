@@ -2,10 +2,12 @@
 // development laptop (an Intel UHD driving the panel and an RTX 4060 Laptop, as its decoder probe and GPU list read
 // them on 2026-11-02), with the app on either card, a desktop with one card, a laptop with an integrated GPU only, an
 // AMD APU listed twice, the software renderer in use, and a Windows without IDXGIFactory6. Also the GPU list as the
-// plugin's DLL writes it, and DesktopGpuDecoders reading the machine once per run.
+// plugin's DLL writes it, and DesktopGpuDecoders reading the machine once per run, the list once more after a failure.
 
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
@@ -407,6 +409,63 @@ void main() {
         Logger.root.level = previousLevel;
         await subscription.cancel();
       }
+    });
+
+    test('a list that failed or timed out at the start is asked once more, then kept for the run', () async {
+      // The first start of a new build, while the antivirus scans it: the list does not answer in time
+      var answers = 0;
+      DesktopGpuDecoders.lister = () {
+        lists++;
+        if (lists == 1) {
+          return Future.error(TimeoutException('first start'));
+        }
+        answers++;
+        return Future.value(GpuList.fromJson(jsonDecode(_laptopJson) as Map<String, Object?>));
+      };
+      expect((await DesktopGpuDecoders.machine()).gpus, isNull);
+      expect((await DesktopGpuDecoders.machine()).gpus?.adapters, hasLength(4));
+      expect((await DesktopGpuDecoders.machine()).gpus?.adapters, hasLength(4));
+      expect((lists, answers), (2, 1));
+      // Twice failed: nothing more is asked in this run
+      DesktopGpuDecoders.forget();
+      lists = 0;
+      DesktopGpuDecoders.lister = () {
+        lists++;
+        return Future.error(ArgumentError('Failed to load dynamic library'));
+      };
+      for (var i = 0; i < 3; i++) {
+        expect((await DesktopGpuDecoders.machine()).gpus, isNull);
+      }
+      expect(lists, 2);
+    });
+
+    test('a list that never answers is given up after the timeout, and asked again by the next question', () {
+      fakeAsync((async) {
+        final never = Completer<GpuList>();
+        DesktopGpuDecoders.lister = () {
+          lists++;
+          return lists == 1
+              ? never.future
+              : Future.value(GpuList.fromJson(jsonDecode(_laptopJson) as Map<String, Object?>));
+        };
+        GpuList? first;
+        var firstDone = false;
+        unawaited(
+          DesktopGpuDecoders.gpus().then((gpus) {
+            first = gpus;
+            firstDone = true;
+          }),
+        );
+        async.elapse(DesktopGpuDecoders.timeout - const Duration(milliseconds: 1));
+        expect(firstDone, isFalse);
+        async.elapse(const Duration(milliseconds: 2));
+        expect((firstDone, first), (true, null));
+        GpuList? second;
+        unawaited(DesktopGpuDecoders.gpus().then((gpus) => second = gpus));
+        async.flushMicrotasks();
+        expect(second?.adapters, hasLength(4));
+        expect(lists, 2);
+      });
     });
 
     test('a list that fails or never answers leaves the machine without it, and the app goes on', () async {
