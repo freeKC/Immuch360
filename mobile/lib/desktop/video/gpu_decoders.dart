@@ -7,6 +7,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:immich_mobile/desktop/video/video_gpu.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
@@ -18,15 +19,24 @@ final _log = Logger('DesktopGpuDecoders');
 typedef DecoderProber =
     Future<D3D11DecoderProbe> Function({Iterable<String>? profiles, Iterable<(int, int)> sizes, bool rates});
 
+/// A call of the plugin: the GPUs of the computer, and the ones Windows gives the high performance and the minimum
+/// power preference (GpuList)
+typedef GpuLister = Future<GpuList> Function();
+
 abstract final class DesktopGpuDecoders {
   /// The plugin's probe on Windows, none elsewhere; the tests give their own
   @visibleForTesting
   static DecoderProber? prober = CurrentPlatform.isWindows ? _probeWindows : null;
 
+  /// The plugin's list of the GPUs on Windows, none elsewhere; the tests give their own
+  @visibleForTesting
+  static GpuLister? lister = CurrentPlatform.isWindows ? _listWindows : null;
+
   /// Longest wait for a probe: a driver that does not answer leaves the static rule in place
   static const timeout = Duration(seconds: 10);
 
   static Future<D3D11DecoderProbe?>? _decoders;
+  static Future<GpuList?>? _gpus;
   static final _checks = <String, Future<bool?>>{};
 
   // Whether a failed probe was asked again: once per run
@@ -38,6 +48,8 @@ abstract final class DesktopGpuDecoders {
     bool rates = false,
   }) => D3D11Decoders.probe(profiles: profiles, sizes: sizes, rates: rates);
 
+  static Future<GpuList> _listWindows() => D3D11Decoders.gpus();
+
   /// The profiles whose sizes are worth asking the driver about: those the app knows (the rest are image codecs and
   /// the partial acceleration modes of the first DXVA decoders)
   static Iterable<String> get _knownProfiles => d3d11Profiles.map((profile) => profile.guid);
@@ -48,6 +60,41 @@ abstract final class DesktopGpuDecoders {
 
   /// The GPU in use, null where it is not known
   static Future<GpuAdapter?> adapter() async => (await decoders())?.adapter;
+
+  /// The GPUs of the computer and the ones Windows prefers, null where nothing lists them or the list failed. Read once
+  /// per run, without any device made on the GPUs; the first read logs them with the one in use.
+  static Future<GpuList?> gpus() => _gpus ??= _list();
+
+  /// What a choice of the card for a video needs (video_gpu.dart): the GPU in use and the GPUs of the computer
+  static Future<VideoMachine> machine() async => (inUse: await adapter(), gpus: await gpus());
+
+  static Future<GpuList?> _list() async {
+    final list = lister;
+    if (list == null) {
+      return null;
+    }
+    try {
+      final found = await list().timeout(timeout);
+      final inUse = await adapter();
+      String described(GpuAdapter gpu) {
+        final roles = [
+          if (gpu.luid.isNotEmpty && gpu.luid == found.highPerformance) 'high performance',
+          if (gpu.luid.isNotEmpty && gpu.luid == found.minimumPower) 'power saving',
+          if (gpu.software) 'software',
+          if (inUse != null && sameGpu(gpu, inUse)) 'in use',
+        ];
+        return roles.isEmpty ? gpu.name : '${gpu.name} (${roles.join(', ')})';
+      }
+
+      _log.info(
+        'Graphics cards: ${found.adapters.map(described).join('; ')}${found.error == null ? '' : ', ${found.error}'}',
+      );
+      return found;
+    } catch (error) {
+      _log.info('The graphics cards could not be listed: $error');
+      return null;
+    }
+  }
 
   static Future<D3D11DecoderProbe?> _read() async {
     final probe = prober;
@@ -107,6 +154,7 @@ abstract final class DesktopGpuDecoders {
   @visibleForTesting
   static void forget() {
     _decoders = null;
+    _gpus = null;
     _retried = false;
     _checks.clear();
   }
