@@ -31,6 +31,7 @@ const splatViewerPageFiles = [
   'session.js',
   'placement.js',
   'controls.js',
+  'drawloop.js',
   'panel.js',
   'events.js',
   'adapt.js',

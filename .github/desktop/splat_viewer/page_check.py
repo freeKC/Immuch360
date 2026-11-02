@@ -92,6 +92,13 @@ CASES = [
 
 NON_BLANK_FLOOR = 0.002
 
+# A case kept open at rest after its ready, and the most frames a 10 s report of the page may count: one chain of
+# animation frames at 60 Hz gives 600, the Windows replay of 2 November 2026 counted 19,404 at rest (chains that
+# multiplied), and a page at rest stops drawing a second after the sort settled
+REST_CASE = 'room_floor.spz'
+REST_SECONDS = 12
+MOST_FRAMES = 1300
+
 
 class Sessions:
     def __init__(self, width: int, height: int, device: str):
@@ -249,6 +256,10 @@ def run_cases(browser: str, out: pathlib.Path, width: int, height: int, timeout:
                 if ready and (ready.get('type') != 'ready' or sid in state.captures):
                     break
                 state.lock.wait(0.5)
+            if name == REST_CASE and ready and ready.get('type') == 'ready':
+                rest = time.monotonic()
+                while time.monotonic() - rest < REST_SECONDS:
+                    state.lock.wait(0.5)
         os.killpg(process.pid, signal.SIGTERM)
         try:
             process.wait(10)
@@ -267,6 +278,9 @@ def run_cases(browser: str, out: pathlib.Path, width: int, height: int, timeout:
                 problems += compare(name, ready.get('placement') or {}, expected[name])
             if sid in state.captures:
                 (out / f'{name}.png').write_bytes(state.captures[sid])
+        for stats in (e for e in state.events[sid] if e.get('type') == 'stats'):
+            if (stats.get('frames') or 0) > MOST_FRAMES or not stats.get('fps'):
+                problems.append(f'frames: {stats.get("frames")} in a report, fps {stats.get("fps")}')
         errors = [e for e in state.events[sid] if e.get('type') == 'error']
         problems += [f'error: {e.get("message")}' for e in errors]
         verdict = 'ok' if not problems else 'FAILED ' + '; '.join(problems)

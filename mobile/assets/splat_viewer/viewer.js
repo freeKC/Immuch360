@@ -6,6 +6,7 @@
 
 import { Quality, median, quantile } from './adapt.js';
 import { Navigator, attachInput, startGyroscope } from './controls.js';
+import { DrawLoop } from './drawloop.js';
 import { createEvents } from './events.js';
 import { createPanel } from './panel.js';
 import { boundsOf, firstView, nextUpright, openingUpright, sampleOf, verticalFov } from './placement.js';
@@ -172,35 +173,20 @@ async function main() {
     requestDraw();
   };
 
-  const loop = {
-    scheduled: false,
-    drawUntil: 0,
-    last: null,
-    request() {
-      this.drawUntil = performance.now() + SETTLE_MS;
-      if (!this.scheduled) {
-        this.scheduled = true;
-        requestAnimationFrame((now) => frame(now));
-      }
-    },
-  };
-
-  const frame = (now) => {
-    loop.scheduled = false;
+  const frame = (now, last) => {
     if (!engine || !nav) {
       return;
     }
-    const dt = loop.last == null ? 1 / 60 : Math.min(0.1, (now - loop.last) / 1000);
-    const backToBack = loop.last != null && now - loop.last < 250;
-    loop.last = now;
+    const dt = last == null ? 1 / 60 : Math.min(0.1, (now - last) / 1000);
+    const backToBack = last != null && now - last < 250;
     if (input.stepKeys(dt) || input.active || gyro) {
-      loop.drawUntil = now + SETTLE_MS;
+      loop.keep(now);
     }
     const { eye, look } = nav.camera();
     engine.setCamera(eye, look, verticalFov(size.width / size.height), size.width / size.height);
     engine.render();
     if (backToBack) {
-      const ms = dt * 1000;
+      const ms = now - last;
       frames.push(ms);
       const change = quality.frame(ms, now);
       if (change === 'down' || change === 'up') {
@@ -214,17 +200,17 @@ async function main() {
     if (now - statsSince > STATS_MS) {
       reportStats(now);
     }
-    if (now < loop.drawUntil) {
-      loop.scheduled = true;
-      requestAnimationFrame((next) => frame(next));
-    } else {
-      loop.last = null;
-    }
   };
+  const loop = new DrawLoop({
+    requestFrame: (callback) => requestAnimationFrame(callback),
+    clock: () => performance.now(),
+    settleMs: SETTLE_MS,
+    draw: frame,
+  });
 
   const reportStats = (now) => {
-    if (frames.length >= 10) {
-      const total = frames.reduce((sum, ms) => sum + ms, 0);
+    const total = frames.reduce((sum, ms) => sum + ms, 0);
+    if (frames.length >= 10 && total > 0) {
       events.post('stats', {
         fps: Math.round((10000 * frames.length) / total) / 10,
         medianMs: Math.round(median(frames) * 10) / 10,
@@ -245,7 +231,7 @@ async function main() {
       return null;
     }
     const total = frames.reduce((sum, ms) => sum + ms, 0);
-    return Math.round((1000 * frames.length) / total);
+    return total > 0 ? Math.round((1000 * frames.length) / total) : null;
   };
 
   const axisName = (value) => ({ yUp: t.axisYUp, zUp: t.axisZUp, yDown: t.axisYDown })[value] ?? value;
