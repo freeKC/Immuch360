@@ -874,13 +874,19 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
               child: AnimatedOpacity(
                 opacity: status == VideoPlaybackStatus.buffering ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 400),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(),
-                    // What the link brings against what the video needs, while it waits (see VideoLoadingLine)
-                    VideoLoadingLine(link: _notifier.link),
-                  ],
+                // The spinner turns only while the video waits: hidden, its animation still asked for a frame at every
+                // refresh of the display, and on the computers each of those frames drew the video's texture again
+                // (60 to 113 frames a second for a 30 fps video, 2 November 2026)
+                child: TickerMode(
+                  enabled: status == VideoPlaybackStatus.buffering,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      // What the link brings against what the video needs, while it waits (see VideoLoadingLine)
+                      VideoLoadingLine(link: _notifier.link),
+                    ],
+                  ),
                 ),
               ),
             ),

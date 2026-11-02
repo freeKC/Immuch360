@@ -801,6 +801,37 @@ void main() {
     });
   });
 
+  testWidgets('draws no frame of its own while the video does not wait for its data', (tester) async {
+    // The spinner of a buffering video stays in the tree, invisible, the rest of the time: its animation asked for a
+    // frame at every refresh of the display, and on the computers every such frame draws the video's texture again
+    // (2 November 2026: 60 to 113 frames a second for a 30 fps video, a full 3D engine on an Intel UHD)
+    when(() => storage.getFileForAsset(local.id)).thenAnswer((_) async => File('/videos/local-1.mp4'));
+    await pumpViewer(tester, remote);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
+    final spinner = find.byType(CircularProgressIndicator);
+    expect(spinner, findsOneWidget);
+    expect(TickerMode.valuesOf(tester.element(spinner)).enabled, isFalse);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+
+    // While it waits, the spinner turns; once it plays again, nothing asks for frames after the fade
+    final notifier = ProviderScope.containerOf(
+      tester.element(find.byType(NativeVideoViewer)),
+    ).read(videoPlayerProvider(remote.id).notifier);
+    // ignore: invalid_use_of_protected_member
+    notifier.state = notifier.state.copyWith(status: VideoPlaybackStatus.buffering);
+    await tester.pump();
+    expect(TickerMode.valuesOf(tester.element(spinner)).enabled, isTrue);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.binding.hasScheduledFrame, isTrue);
+    // ignore: invalid_use_of_protected_member
+    notifier.state = notifier.state.copyWith(status: VideoPlaybackStatus.playing);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(TickerMode.valuesOf(tester.element(spinner)).enabled, isFalse);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+  });
+
   testWidgets('gives up when a local only asset has no file', (tester) async {
     when(() => storage.getFileForAsset(local.id)).thenAnswer((_) async => null);
 
