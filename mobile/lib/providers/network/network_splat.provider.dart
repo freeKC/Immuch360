@@ -1,6 +1,7 @@
-// The Gaussian splat files of other tools on a Meta Quest (lot S5): whether they are listed and opened here, and what
-// the head of each says. A .spz or .ply of a share (SMB, WebDAV) is read through the connection of its share, its
-// first 64 KiB only; a file picked on the headset (Open a splat file) is read where the picker copied it.
+// The Gaussian splat files of other tools on a Meta Quest (lot S5), and in the splat viewer of the computers, phones and
+// tablets: whether they are listed and opened here, and what the head of each says. A .spz or .ply of a share (SMB,
+// WebDAV) is read through the connection of its share, its first 64 KiB only; a file picked with Open a splat file is
+// read where the picker left it (a copy on Android, the file itself on a computer).
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -10,15 +11,19 @@ import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 
-/// Whether the splats are listed in the shares and offered in the Add menu: on a Meta Quest, in a build that offers
-/// them (not the build of the Meta Horizon Store, see splatsInThisBuildProvider), with Gaussian splats on
-/// (experimental, on by default). The splat page itself says whether this headset and this APK can show one.
+/// Whether the splats are listed in the shares and folders and offered in the Add menu, with Gaussian splats on
+/// (experimental, on by default): on a Meta Quest in a build that offers them (not the build of the Meta Horizon
+/// Store, see splatsInThisBuildProvider), and where the splat viewer of the computers, phones and tablets is offered
+/// (the computers, the Android phones and tablets, not a TV). The splat page itself says whether this device can show
+/// one.
 final networkSplatsEnabledProvider = Provider<bool>((ref) {
   final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
   final inThisBuild = ref.watch(splatsInThisBuildProvider).valueOrNull ?? false;
-  return horizonOs && inThisBuild && ref.watch(appConfigProvider.select((config) => config.viewer.gaussianSplats));
-});
+  final offered = (horizonOs && inThisBuild) || ref.watch(splatFlatViewerProvider);
+  return offered && ref.watch(appConfigProvider.select((config) => config.viewer.gaussianSplats));
+}, dependencies: [isHorizonOsProvider, splatsInThisBuildProvider, splatFlatViewerProvider, appConfigProvider]);
 
 /// A splat file: a file of the share [sourceId] at [path] of [size] bytes when known, or a file of the headset at
 /// [path] without a share

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
@@ -327,15 +328,68 @@ void main() {
       expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
     });
 
-    testWidgets('are not offered on a phone, which has no immersive viewer', (tester) async {
+    testWidgets('on a phone or a tablet: the splat viewer, its words and its caps, no graphics card switch', (
+      tester,
+    ) async {
       await tester.pumpTestWidget(
         context,
         const AdvancedSettings(),
         overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
       );
+      await tester.scrollUntilVisible(largeSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(splatSwitch);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Lists the .spz and .ply splats of your shares and folders and opens them in 3D, to move through'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Meta Spatial SDK'), findsNothing);
+      await tester.ensureVisible(largeSwitch);
+      await tester.pumpAndSettle();
+      expect(find.text('Shows up to 500,000 gaussians instead of 150,000: a large splat may stutter'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(largeSwitch).value, isFalse);
+      expect(find.byKey(const Key('advanced_settings_splat_gpu')), findsNothing);
+    });
+
+    testWidgets('are not offered on a TV, which has no splat viewer', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => false),
+          tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false)),
+        ],
+      );
 
       expect(find.byKey(const Key('advanced_settings_gaussian_splats')), findsNothing);
       expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+    });
+
+    testWidgets('on a Windows computer: Gaussian splats and the graphics card switch, on by default, no Large splats', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final gpuSwitch = find.descendant(
+        of: find.byKey(const Key('advanced_settings_splat_gpu')),
+        matching: find.byType(SwitchListTile),
+      );
+      await tester.pumpTestWidget(context, const AdvancedSettings());
+      await tester.scrollUntilVisible(gpuSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(splatSwitch);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<SwitchListTile>(splatSwitch).value, isTrue);
+      expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
+      await tester.ensureVisible(gpuSwitch);
+      await tester.pumpAndSettle();
+      expect(find.text('Use the more powerful graphics card'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(gpuSwitch).value, isTrue);
+      await tester.tap(gpuSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.highPerformanceGpu, isFalse);
+      debugDefaultTargetPlatformOverride = null;
     });
   });
 

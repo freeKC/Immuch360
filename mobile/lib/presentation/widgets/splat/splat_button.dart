@@ -1,5 +1,5 @@
 // "Explore the splat scene" (lot S5): a Gaussian splat file of another tool opened in the immersive viewer of a Meta
-// Quest 3 or 3S. The gate of the headset (splatGateOf, from the head of the file) offers it, or greys it with its
+// Quest 3 or 3S, or in the splat viewer of the computers, phones and tablets (plan of 2 November 2026). The gate of the headset (splatGateOf, from the head of the file) offers it, or greys it with its
 // reason from the moment the headset is known (spec 10.2 of the AI immersive design: never hidden); the viewer checks
 // again on the file itself, with the free memory and the heat.
 
@@ -11,11 +11,13 @@ import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.da
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 
 /// The key of "Explore the splat scene"
 const exploreSplatButtonKey = Key('splat_explore');
@@ -23,20 +25,25 @@ const exploreSplatButtonKey = Key('splat_explore');
 /// The key of the reason under a greyed button
 const splatRefusalKey = Key('splat_refusal');
 
-/// The reason a splat is not offered on this headset, as the button says it greyed
-String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale) => switch (verdict.refusal) {
-  SplatRefusal.notInThisVersion => t.ai_immersive_unavailable_build,
-  SplatRefusal.olderHeadset => t.splat_older_headset,
-  SplatRefusal.notASplat => t.splat_not_splat,
-  SplatRefusal.compressedPly => t.splat_compressed_ply,
-  SplatRefusal.unsupportedPly => t.splat_unsupported_ply,
-  SplatRefusal.newerSpz => t.splat_newer_spz,
-  SplatRefusal.damaged => t.splat_damaged,
-  SplatRefusal.tooLarge => t.splat_too_large(count: splatCountText(verdict.gaussians ?? 0, locale)),
-  SplatRefusal.v4AboveCap => t.splat_v4_above_cap(count: splatCountText(verdict.gaussians ?? 0, locale)),
-  SplatRefusal.degree4 => t.splat_degree4,
-  null => '',
-};
+/// The reason a splat is not offered on this device, as the button says it greyed: [onHeadset] false for a computer,
+/// a phone or a tablet
+String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale, {bool onHeadset = true}) =>
+    switch (verdict.refusal) {
+      SplatRefusal.notInThisVersion => t.ai_immersive_unavailable_build,
+      SplatRefusal.olderHeadset => t.splat_older_headset,
+      SplatRefusal.notASplat => t.splat_not_splat,
+      SplatRefusal.compressedPly => t.splat_compressed_ply,
+      SplatRefusal.unsupportedPly => t.splat_unsupported_ply,
+      SplatRefusal.newerSpz => t.splat_newer_spz,
+      SplatRefusal.damaged => t.splat_damaged,
+      SplatRefusal.tooLarge =>
+        onHeadset
+            ? t.splat_too_large(count: splatCountText(verdict.gaussians ?? 0, locale))
+            : t.splat_too_large_device(count: splatCountText(verdict.gaussians ?? 0, locale)),
+      SplatRefusal.v4AboveCap => t.splat_v4_above_cap(count: splatCountText(verdict.gaussians ?? 0, locale)),
+      SplatRefusal.degree4 => t.splat_degree4,
+      null => '',
+    };
 
 /// What the head of a splat file says of it, as the page writes it: "452,451 gaussians, SPZ version 3", "19,469
 /// gaussians, PLY, made with Postshot" (the tool only when a comment of the file names it)
@@ -49,9 +56,24 @@ String splatFileLine(Translations t, SplatHead head, String locale) {
   };
 }
 
-/// The gate of the splat [probe] says, the file [name] of [fileBytes], on this headset with the settings of now; null
-/// until the headset is read and the platform told whether this build offers the splats
+/// The gate of the splat [probe] says, the file [name] of [fileBytes], on this device with the settings of now: the
+/// splat viewer's on a computer, a phone or a tablet, the headset's on a Meta Quest; null until Android said which,
+/// and on the headset until it is read and the platform told whether this build offers the splats
 SplatGateVerdict? splatVerdictOf(WidgetRef ref, SplatProbe probe, {required String name, required int fileBytes}) {
+  // The computers, phones and tablets: the gate of the splat viewer, as soon as Android said this is no headset
+  final device = ref.watch(splatDeviceClassProvider);
+  if (device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) {
+    return splatViewerGateOf(
+      probe: probe,
+      name: name,
+      fileBytes: fileBytes,
+      largeSplats: ref.watch(appConfigProvider.select((config) => config.viewer.largeSplats)),
+      device: device!,
+    );
+  }
+  if (CurrentPlatform.isAndroid && !ref.watch(isHorizonOsProvider).hasValue) {
+    return null;
+  }
   final facts = ref.watch(reliefDeviceFactsProvider);
   final inThisBuild = ref.watch(splatsInThisBuildProvider);
   if ((facts.isLoading && !facts.hasValue && !facts.hasError) || (inThisBuild.isLoading && !inThisBuild.hasValue)) {
@@ -99,7 +121,12 @@ class SplatButton extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              splatRefusalText(context.t, verdict, locale),
+              splatRefusalText(
+                context.t,
+                verdict,
+                locale,
+                onHeadset: ref.watch(splatDeviceClassProvider) == SplatDeviceClass.quest,
+              ),
               key: splatRefusalKey,
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),

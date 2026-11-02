@@ -85,6 +85,10 @@ the gate is per desktop and is noted.
 | `lib/presentation/widgets/drone/drone_import_tile.widget.dart:19` | DJI drone page on Android phones only (October 2026, not in build 20) | hidden: the computers take the not Android branch, so neither the Settings row nor the tile shows, and DocumentTreeApi is never called |
 | `lib/presentation/widgets/map/map.widget.dart:90` | Android map style | hidden: no map on the computers (deviceFeaturesProvider.maps) |
 | `lib/presentation/widgets/map/map.widget.dart:106` | iOS map style | hidden |
+| `lib/presentation/widgets/splat/splat_button.dart:69` | the verdict of a splat waits on Android until it is known whether this is a Meta Quest (splat viewer, 2 November 2026) | right: the computers take the gate of the splat viewer above it, before this line |
+| `lib/presentation/widgets/splat/splat_viewer_launch.dart:65` | Android says to update Android System WebView, else the computer's words for WebAssembly SIMD | right: the computers get their own text |
+| `lib/presentation/widgets/splat/splat_viewer_launch.dart:81` | no web view: WebView2 on Windows, Android System WebView on Android | right: Windows is tested first, Linux and macOS say nothing more than the failure |
+| `lib/presentation/widgets/splat/splat_viewer_launch.dart:85` | idem for a web view without SIMD | right |
 | `lib/providers/app_life_cycle.provider.dart:155` | Android full sync on resume | iOS like partial sync on the computers; LIB adds the folder rescan on resume after five minutes (Design 1.8) |
 | `lib/providers/app_life_cycle.provider.dart:165` | idem | idem |
 | `lib/providers/asset_viewer/local_panorama.provider.dart:123` | iOS local availability check | right: files are local (placeholders are never published) |
@@ -101,6 +105,8 @@ the gate is per desktop and is noted.
 | `lib/providers/permission.provider.dart:13` | initial notification permission state | right: notifications hidden on the computers |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
+| `lib/providers/splat/splat_viewer.provider.dart:28` | the device class of the splats: the computers first, then Android (headset, phone or tablet, not a TV) | right: `CurrentPlatform.isDesktop` is read before this line |
+| `lib/providers/splat/splat_viewer.provider.dart:50` | the host of the splat viewer: SplatViewerActivity through SplatViewerApi on Android | wired: the computers override the provider with DesktopSplatViewerHost (desktop_overrides.dart), SplatViewerApi is never called there |
 | `lib/providers/tapo/tapo_camera.provider.dart:167` | Android and iOS live view events | right: the computers' live view (`DesktopCameraLiveView`, `lib/desktop/video/camera_live_view.dart`) reports its states itself |
 | `lib/providers/view_intent/view_intent_handler.provider.dart:18` | Android view intents, else the stub | right: the computers replace the provider (desktopOverrides) with DesktopOpenFilesHandler, which opens the files given to the program |
 | `lib/repositories/asset_media.repository.dart:41` | Android trash support | right |

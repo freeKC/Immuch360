@@ -39,6 +39,10 @@ class _Pickers implements FilePickers {
     }
     return saveAnswer;
   }
+
+  @override
+  Future<String?> openFile({String? initialDirectory, String? typeLabel, List<String> extensions = const []}) async =>
+      null;
 }
 
 void main() {

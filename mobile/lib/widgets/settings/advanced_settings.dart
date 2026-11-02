@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer_tile.dart';
+import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -21,6 +22,7 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/repositories/permission.repository.dart';
 import 'package:immich_mobile/services/app_settings.service.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -68,6 +70,9 @@ class AdvancedSettings extends HookConsumerWidget {
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     // The Gaussian splats are not offered in the build of the Meta Horizon Store (splatsInThisBuildProvider)
     final splatsInThisBuild = isHorizonOs && (ref.watch(splatsInThisBuildProvider).valueOrNull ?? false);
+    // The splat viewer of the computers, phones and tablets (not a TV): the same switch, its own words and caps
+    final splatDevice = ref.watch(splatDeviceClassProvider);
+    final flatSplats = splatDevice == SplatDeviceClass.phone || splatDevice == SplatDeviceClass.computer;
     // The flat 3D media told by their file name in the immersive viewer of a Meta Quest, experimental and on by default
     final flat3dByName = useState(ref.watch(appConfigProvider).viewer.flat3dByName);
     useValueChanged<bool, void>(flat3dByName.value, (_, _) {
@@ -88,6 +93,11 @@ class AdvancedSettings extends HookConsumerWidget {
     final largeSplats = useState(ref.watch(appConfigProvider).viewer.largeSplats);
     useValueChanged<bool, void>(largeSplats.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerLargeSplats, largeSplats.value));
+    });
+    // The dedicated graphics chip of a Windows computer that has two, for the splat viewer (decision D2), on by default
+    final highPerformanceGpu = useState(ref.watch(appConfigProvider).viewer.highPerformanceGpu);
+    useValueChanged<bool, void>(highPerformanceGpu.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerHighPerformanceGpu, highPerformanceGpu.value));
     });
 
     final logLevel = Level.LEVELS[levelId.value].name;
@@ -214,13 +224,30 @@ class AdvancedSettings extends HookConsumerWidget {
           title: context.t.splat_setting_title,
           // What they do, then that Meta neither supports nor warrants their API (FreeKC's decision of 30 October)
           subtitle: '${context.t.splat_setting_subtitle}\n${context.t.splat_disclaimer}',
+        )
+      else if (flatSplats)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_gaussian_splats'),
+          valueNotifier: gaussianSplats,
+          title: context.t.splat_setting_title,
+          subtitle: context.t.splat_setting_subtitle_device,
         ),
-      if (splatsInThisBuild && gaussianSplats.value)
+      // Large splats on the headset and on phones and tablets: a computer shows up to a million gaussians anyway
+      if ((splatsInThisBuild || splatDevice == SplatDeviceClass.phone) && gaussianSplats.value)
         SettingsSwitchListTile(
           key: const Key('advanced_settings_large_splats'),
           valueNotifier: largeSplats,
           title: context.t.splat_large_setting_title,
-          subtitle: context.t.splat_large_setting_subtitle,
+          subtitle: splatDevice == SplatDeviceClass.phone
+              ? context.t.splat_large_setting_subtitle_phone
+              : context.t.splat_large_setting_subtitle,
+        ),
+      if (CurrentPlatform.isWindows && flatSplats && gaussianSplats.value)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_splat_gpu'),
+          valueNotifier: highPerformanceGpu,
+          title: context.t.splat_gpu_setting_title,
+          subtitle: context.t.splat_gpu_setting_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       // The kiosk mode, for the visitors of an exhibition: a Meta Quest only, like the immersive viewer it opens

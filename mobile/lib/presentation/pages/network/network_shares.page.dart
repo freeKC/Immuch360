@@ -1,14 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/domain/models/device_folder.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
 import 'package:immich_mobile/presentation/widgets/device_folders/device_folders_section.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -89,8 +93,8 @@ enum _AddPick { splatFile, deviceFolder }
 const splatPickFolder = 'picked-splat';
 const splatPickMaxBytes = 1 << 30;
 
-/// Asks what to add (a network share, a Plex Media Server, a Tapo camera, on Android a folder of the device, on a Meta
-/// Quest a splat file) and opens its page
+/// Asks what to add (a network share, a Plex Media Server, a Tapo camera, on Android a folder of the device, a splat
+/// file where splats are offered) and opens its page
 Future<void> _add(BuildContext context, WidgetRef ref) async {
   final choice = await showModalBottomSheet<Object>(context: context, builder: (context) => const _AddChoices());
   if (!context.mounted) {
@@ -105,16 +109,30 @@ Future<void> _add(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Open a splat file (lot S5): the system file picker on the headset, the file copied into the cache, then its page
+/// Open a splat file (lot S5): the file dialog of a computer, the file read where it is; the system file picker on
+/// Android, the file copied into the cache. The splat then opens in the splat viewer of a computer, a phone or a
+/// tablet that shows it, on its page otherwise (on the headset, its page with Explore the splat scene).
 Future<void> pickSplatFile(BuildContext context, WidgetRef ref) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
   final failed = context.t.splat_open_file_failed;
   try {
-    final picked = await ref.read(documentTreeApiProvider).pickFile(splatPickFolder, splatPickMaxBytes);
-    if (picked == null || !context.mounted) {
-      return;
+    final SplatFileKey key;
+    if (CurrentPlatform.isDesktop) {
+      final path = await filePickers.openFile(typeLabel: 'SPZ, PLY', extensions: const ['spz', 'ply']);
+      if (path == null) {
+        return;
+      }
+      key = (sourceId: null, path: path, size: File(path).lengthSync());
+    } else {
+      final picked = await ref.read(documentTreeApiProvider).pickFile(splatPickFolder, splatPickMaxBytes);
+      if (picked == null) {
+        return;
+      }
+      key = (sourceId: null, path: picked.path, size: picked.size);
     }
-    await context.pushRoute(SplatRoute(path: picked.path, size: picked.size));
+    if (context.mounted) {
+      await openSplatFile(context, ref, key);
+    }
   } catch (error) {
     _log.warning('Could not open a splat file: $error');
     messenger?.showSnackBar(SnackBar(content: Text(failed)));
@@ -292,7 +310,7 @@ class _AddChoices extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // On a Meta Quest with Gaussian splats on: a splat file of the headset (lot S5)
+    // With Gaussian splats on, on a Meta Quest, a computer, a phone or a tablet: a splat file of this device
     final splats = ref.watch(networkSplatsEnabledProvider);
     // On Android phones, tablets and the Meta Quest, not on a TV: a folder of the device, browsed as a share
     final folders = ref.watch(deviceFoldersSupportedProvider);

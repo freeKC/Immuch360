@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -11,7 +11,10 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -21,6 +24,7 @@ import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 
 import 'network_viewer_fakes.dart';
 
@@ -56,6 +60,31 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   }) async {
     opened.add((url: url, title: title, stereoPair: stereoPair, isVideo: isVideo));
   }
+}
+
+/// Records the viewings the splat viewer of a phone or a computer is asked for, and ends each as [ending] says
+class _Viewings implements SplatViewerService {
+  final List<({SplatViewerSource source, SplatHead head, int fileBytes, int cap, SplatViewerLook look})> shown = [];
+  SplatViewerOutcome ending = const SplatViewerOutcome(SplatViewerEnd.closed);
+
+  @override
+  Future<SplatViewerOutcome> show({
+    required SplatViewerSource source,
+    required SplatHead head,
+    required int fileBytes,
+    required int cap,
+    required SplatViewerLook look,
+    void Function(SplatPrepareStep step, double done)? progress,
+    SplatPrepareCancel? cancel,
+    void Function()? onOpening,
+  }) async {
+    shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, look: look));
+    onOpening?.call();
+    return ending;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 const _source = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'Home NAS', host: 'nas', share: 'media');
@@ -266,6 +295,110 @@ void main() {
       expect(button(tester).onPressed, isNull);
       expect(find.text('Compressed PLY: export it as .spz or as a standard .ply to open it here'), findsOneWidget);
       expect(immersiveApi.opened, isEmpty);
+    });
+
+    group('in the splat viewer of a phone, a tablet or a computer', () {
+      late _Viewings viewings;
+
+      setUp(() {
+        viewings = _Viewings();
+        share.files['/huge.spz'] = _spzHead(5000000);
+      });
+
+      /// An Android phone or tablet (Android has said this is no headset), a computer under a Windows target platform
+      List<Override> flat({AppConfig config = const AppConfig()}) => [
+        ...overrides(config: config, flavor: null),
+        isHorizonOsProvider.overrideWith((ref) async => false),
+        splatViewerServiceProvider.overrideWithValue(viewings),
+      ];
+
+      testWidgets('Explore opens the file of the share with the cap of a phone, without the words on Meta', (
+        tester,
+      ) async {
+        await pumpPage(tester, '/cash.spz', with_: flat());
+
+        expect(find.text('47,819 gaussians, SPZ version 3'), findsOneWidget);
+        expect(find.byKey(const Key('splat_page_disclaimer')), findsNothing);
+        expect(find.byKey(splatRefusalKey), findsNothing);
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+
+        expect(immersiveApi.opened, isEmpty);
+        final viewing = viewings.shown.single;
+        expect(viewing.source.sourceId, 'nas');
+        expect(viewing.source.path, '/cash.spz');
+        expect(viewing.fileBytes, 65536);
+        expect(viewing.cap, 150000);
+        expect(viewing.look.device, 'phone');
+        expect(viewing.look.maxStdDev, closeTo(2.236, 0.001));
+        expect(viewing.look.texts['countLine'], '47,819 gaussians');
+        expect(viewing.look.texts.containsKey('reducedLine'), isFalse);
+      });
+
+      testWidgets('a splat above the cap of a phone says what this device keeps, and shows that many', (tester) async {
+        await pumpPage(tester, '/cactus.spz', with_: flat());
+
+        expect(find.text('This device keeps its 150,000 strongest gaussians'), findsOneWidget);
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+
+        final viewing = viewings.shown.single;
+        expect(viewing.cap, 150000);
+        expect(viewing.look.texts['countLine'], '150,000 gaussians');
+        expect(viewing.look.texts['reducedLine'], 'Reduced to 150,000 of 452,451 gaussians');
+      });
+
+      testWidgets('with Large splats, a phone keeps 500,000', (tester) async {
+        await pumpPage(
+          tester,
+          '/cactus.spz',
+          with_: flat(config: const AppConfig(viewer: ViewerConfig(largeSplats: true))),
+        );
+
+        expect(find.text('This device keeps its 500,000 strongest gaussians'), findsNothing);
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+        expect(viewings.shown.single.cap, 500000);
+      });
+
+      testWidgets('a computer shows up to a million gaussians, with the cut of its own', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        await pumpPage(tester, '/cactus.spz', with_: flat());
+
+        expect(find.textContaining('strongest gaussians'), findsNothing);
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+        final viewing = viewings.shown.single;
+        expect(viewing.cap, 1000000);
+        expect(viewing.look.device, 'computer');
+        expect(viewing.look.gyroscope, isFalse);
+        expect(viewing.look.maxStdDev, closeTo(2.828, 0.001));
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      testWidgets('a splat beyond what this device can reduce is greyed, in the words of a device', (tester) async {
+        await pumpPage(tester, '/huge.spz', with_: flat());
+
+        expect(button(tester).onPressed, isNull);
+        expect(find.text('Too large for this device (5,000,000 gaussians)'), findsOneWidget);
+      });
+
+      testWidgets('a viewing that ended for want of memory says so; a Back says nothing', (tester) async {
+        viewings.ending = const SplatViewerOutcome(SplatViewerEnd.rendererGone);
+        await pumpPage(tester, '/cash.spz', with_: flat());
+
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+        expect(find.text('This splat needed more memory than this device gives it'), findsOneWidget);
+
+        await tester.pump(const Duration(seconds: 10));
+        await tester.pumpAndSettle();
+        viewings.ending = const SplatViewerOutcome(SplatViewerEnd.closed);
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+        expect(find.byType(SnackBar), findsNothing);
+      });
     });
 
     testWidgets('a file of the headset opens from where the picker copied it', (tester) async {

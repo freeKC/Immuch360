@@ -16,6 +16,7 @@ import 'package:immich_mobile/domain/services/network_video_thumbnail.service.da
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/document_tree_file_system.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
@@ -24,6 +25,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
@@ -326,11 +328,27 @@ void main() {
       expect(find.text('splat ${source.id} /Immuch360-splats/cash.spz 65536'), findsOneWidget);
     });
 
-    testWidgets('lists none on a phone', (tester) async {
+    testWidgets('lists them on a phone or a tablet too, for the splat viewer', (tester) async {
       await pumpBrowser(
         tester,
         path: '/Immuch360-splats',
-        overrides: [isHorizonOsProvider.overrideWith((ref) async => false)],
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          appConfigProvider.overrideWithValue(const AppConfig()),
+        ],
+      );
+
+      expect(find.byType(SplatTile), findsWidgets);
+    });
+
+    testWidgets('lists none on a TV, which has no splat viewer', (tester) async {
+      await pumpBrowser(
+        tester,
+        path: '/Immuch360-splats',
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false)),
+        ],
       );
 
       expect(find.byType(SplatTile), findsNothing);

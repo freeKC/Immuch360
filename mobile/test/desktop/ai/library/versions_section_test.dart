@@ -40,6 +40,10 @@ class _Pickers implements FilePickers {
     String? typeLabel,
     List<String> extensions = const [],
   }) async => answer;
+
+  @override
+  Future<String?> openFile({String? initialDirectory, String? typeLabel, List<String> extensions = const []}) async =>
+      null;
 }
 
 VersionFile _file(String path, {IndexedOrigin? origin, ImmersiveKind? kind, bool available = true}) => VersionFile(

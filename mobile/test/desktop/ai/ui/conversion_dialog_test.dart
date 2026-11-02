@@ -130,6 +130,10 @@ class _FolderPicker implements FilePickers {
     String? typeLabel,
     List<String> extensions = const [],
   }) async => null;
+
+  @override
+  Future<String?> openFile({String? initialDirectory, String? typeLabel, List<String> extensions = const []}) async =>
+      null;
 }
 
 /// On battery or not, as the test says

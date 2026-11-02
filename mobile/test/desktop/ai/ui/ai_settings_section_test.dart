@@ -66,6 +66,10 @@ class _Pickers implements FilePickers {
     String? typeLabel,
     List<String> extensions = const [],
   }) async => null;
+
+  @override
+  Future<String?> openFile({String? initialDirectory, String? typeLabel, List<String> extensions = const []}) async =>
+      null;
 }
 
 class _NoFiles implements AiComponentFiles {

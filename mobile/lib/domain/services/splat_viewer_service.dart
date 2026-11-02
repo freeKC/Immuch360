@@ -140,8 +140,8 @@ class SplatViewerService {
   _reduce;
 
   /// Shows [source] (whose head is [head], [fileBytes] long) with at most [cap] gaussians, the page in the words and
-  /// colours of [look]; [progress] is told the steps of a preparation (the copy from a share, the reduction) and
-  /// [cancel] stops one. Completes once the viewer closed.
+  /// colours of [look]; [progress] is told the steps of a preparation (the copy from a share, the reduction),
+  /// [cancel] stops one, and [onOpening] is told when the viewer opens. Completes once the viewer closed.
   Future<SplatViewerOutcome> show({
     required SplatViewerSource source,
     required SplatHead head,
@@ -150,6 +150,7 @@ class SplatViewerService {
     required SplatViewerLook look,
     void Function(SplatPrepareStep step, double done)? progress,
     SplatPrepareCancel? cancel,
+    void Function()? onOpening,
   }) async {
     final name = source.name;
     final ext = head.format.json;
@@ -247,6 +248,7 @@ class SplatViewerService {
       ),
     );
     final closed = _host.closed.first;
+    onOpening?.call();
     try {
       _log.info('Opening $name: ${head.gaussians} gaussians, ${reduced ? 'reduced to $cap' : 'whole'}');
       await _host.open(_bridge.urlFor(id, 'index.html'), title: name);

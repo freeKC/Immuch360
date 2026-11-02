@@ -16,6 +16,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_media_tile.wi
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -25,6 +26,7 @@ import 'package:immich_mobile/providers/network/network_selection.provider.dart'
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
 import 'package:logging/logging.dart';
@@ -248,10 +250,15 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   }
 
   /// Whether the splats of other tools are listed (see networkSplatsEnabledProvider), once the platform told whether
-  /// this is a Meta Quest and whether this build offers them: the folder may be read before it did
+  /// this is a Meta Quest and whether this build offers them: the folder may be read before it did. The computers,
+  /// phones and tablets list them for their splat viewer.
   Future<bool> _splatsShown() async {
     try {
-      if (!await ref.read(isHorizonOsProvider.future) || !await ref.read(splatsInThisBuildProvider.future)) {
+      if (await ref.read(isHorizonOsProvider.future)) {
+        if (!await ref.read(splatsInThisBuildProvider.future)) {
+          return false;
+        }
+      } else if (!mounted || !ref.read(splatFlatViewerProvider)) {
         return false;
       }
     } catch (error) {
@@ -296,9 +303,10 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     unawaited(context.pushRoute(route));
   }
 
-  /// Opens the page of the splat [entry]
+  /// Opens the splat [entry]: in the splat viewer at once on a computer, a phone or a tablet that shows it, on its
+  /// page otherwise
   void _openSplat(NetworkEntry entry) {
-    unawaited(context.pushRoute(SplatRoute(sourceId: widget.sourceId, path: entry.path, size: entry.size)));
+    unawaited(openSplatFile(context, ref, (sourceId: widget.sourceId, path: entry.path, size: entry.size)));
   }
 
   /// Picks [entry], and starts picking files when the browser was not
