@@ -255,6 +255,7 @@ String aiFeatureGroupName(Translations t, AiFeatureGroup group) => switch (group
   AiFeatureGroup.photos => t.ai_immersive_feature_photos,
   AiFeatureGroup.scenes => t.ai_immersive_feature_scenes,
   AiFeatureGroup.panoramas => t.ai_immersive_feature_panoramas,
+  AiFeatureGroup.splats => t.ai_immersive_feature_splats,
 };
 
 /// "3D scenes: 378 MB", the size of all the components a group needs, from the catalogue: those it shares with another
@@ -265,6 +266,7 @@ String aiFeatureGroupTitle(Translations t, AiGroupComponents group) {
     AiFeatureGroup.photos => t.ai_immersive_components_photos(size: size),
     AiFeatureGroup.scenes => t.ai_immersive_components_scenes(size: size),
     AiFeatureGroup.panoramas => t.ai_immersive_components_panoramas(size: size),
+    AiFeatureGroup.splats => t.ai_immersive_components_splats(size: size),
   };
 }
 

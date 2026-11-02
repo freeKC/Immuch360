@@ -339,7 +339,9 @@ class AiComponentsService extends ChangeNotifier {
     }
     for (final component in catalogue) {
       final entry = _installed.components[component.id];
-      if (entry != null && entry['sha256'] != component.sha256) {
+      // An entry of the catalogue without its sum (held until its release is made, as the splat scenes are) tells no
+      // version: what a build with the sums installed in the same folder stays (review of lot SP0, 1 November 2026)
+      if (entry != null && component.sha256 != null && entry['sha256'] != component.sha256) {
         // An older version: its file goes, the new one is downloaded when asked
         _log.info('${component.id}: version ${entry['version']} replaced by ${component.version}');
         final path = entry['path'];

@@ -49,7 +49,10 @@ per release, the other sections kept as they are) and SHA256SUMS.
   publish_ai_components.py --check [--release TAG]
       offline, for the three releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
-      MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart)
+      MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart).
+      The components of ai-components-4, the splat scenes (HELD below), are not made by this script yet: the check
+      holds them to their release, to a licence this project allows and to no size nor sum, so never offered, and says
+      them held.
 
 Without --publish nothing leaves this computer; the network is used only to download the files and to read the cards
 and the artifacts. --sources FILE replaces the addresses and upstream sums of the tables below (the tests serve small
@@ -89,6 +92,10 @@ TAG = 'ai-components-1'
 TAG_SCENES = 'ai-components-2'
 TAG_PANORAMAS = 'ai-components-3'
 RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS)
+# The splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3): COLMAP and Brush built by our CI
+# (lots SP1 and SP2), held back by the app (aiHeldFeatureGroups) until this release is made and published (lot SP14)
+TAG_SPLATS = 'ai-components-4'
+HELD = ('colmap-cpu-win-x64', 'colmap-cpu-linux-x64', 'brush-vulkan-win-x64', 'brush-vulkan-linux-x64')
 FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas'}
 SUMS = 'SHA256SUMS'
 # GitHub refuses an asset of 2 GiB or more; a larger file goes in parts of the largest whole number of MiB under 1.9 GiB
@@ -1300,9 +1307,20 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
     engines = {engine.component: engine for engine in ENGINES}
     family = {**{component: TAG for component in [*archives, *models]},
               **{component: model.release for component, model in upstream.items()},
-              **{component: TAG_PANORAMAS for component in engines}}
+              **{component: TAG_PANORAMAS for component in engines},
+              **{component: TAG_SPLATS for component in HELD}}
     if set(catalogue) != set(family):
         found.append(f'the catalogue has {sorted(catalogue)}; this script knows {sorted(family)}')
+    for component_id in HELD:
+        component = catalogue.get(component_id)
+        if component is None:
+            continue
+        if component.get('releaseTag') != TAG_SPLATS:
+            found.append(f'{component_id}: in {component.get("releaseTag")}, its family is in {TAG_SPLATS}')
+        if component.get('licence') not in ALLOWED_LICENCES:
+            found.append(f'{component_id}: licence {component.get("licence")} is not one this project allows')
+        if component.get('size') is not None or component.get('sha256') is not None or component['archiveFiles']:
+            found.append(f'{component_id}: held until {TAG_SPLATS} is made, yet the catalogue gives it a size or sums')
     for component_id, component in sorted(catalogue.items()):
         release = family.get(component_id, component.get('releaseTag'))
         if release not in releases:
@@ -1559,8 +1577,10 @@ def main(argv=None) -> int:
         if found:
             return 1
         counted = [component for component in catalogue.values() if component.get('releaseTag') in releases]
+        held = sorted(component for component in HELD if component in catalogue)
         print(f'{len(counted)} components in {", ".join(releases)}, each complete and named with its size and SHA-256 '
-              f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(sorted(pending))}' if pending else ''))
+              f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(sorted(pending))}' if pending else '')
+              + (f'; held for {TAG_SPLATS}: {", ".join(held)}' if held else ''))
         return 0
     if args.out is None:
         print('--out DIR is needed (or --check)')

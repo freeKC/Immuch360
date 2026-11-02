@@ -104,6 +104,7 @@ const _kParamTypeOverrides = <String, String>{
   'ai_immersive_components_panoramas.size': 'String',
   'ai_immersive_components_photos.size': 'String',
   'ai_immersive_components_scenes.size': 'String',
+  'ai_immersive_components_splats.size': 'String',
   'ai_immersive_components_total.size': 'String',
   'ai_immersive_install_prompt.size': 'String',
   'ai_immersive_relief_cache_size.size': 'String',
@@ -112,6 +113,13 @@ const _kParamTypeOverrides = <String, String>{
   'ai_immersive_scene_too_heavy.max': 'String',
   'ai_immersive_scene_zone.size': 'String',
   'ai_immersive_size_on_disk.size': 'String',
+  // The sizes of a splat scene, written with formatBytes as well ("3.6 MB" for the copy of the headset, "35 MB" for its
+  // .ply)
+  'ai_immersive_splat_done.size': 'String',
+  'ai_immersive_splat_done_ply.size': 'String',
+  'ai_immersive_splat_done_video.size': 'String',
+  'ai_immersive_splat_headset_copy.size': 'String',
+  'ai_immersive_splat_keep_ply_hint.size': 'String',
   // A length in millimetres, which the caller writes with its decimals for the locale
   'apple_spatial_baseline.mm': 'String',
   // The size of each eye of a spatial photo: the digits alone, as for the frame sizes below
