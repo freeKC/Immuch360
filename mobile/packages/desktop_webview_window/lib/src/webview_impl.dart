@@ -136,9 +136,25 @@ class WebviewImpl extends Webview {
     _promptHandler = handler;
   }
 
+  /// Immuch360: [method] of a window that may be gone. A window the user closed while it opened is gone before the
+  /// plugin answers its launch, and the answer "can not find webview window for id" of a method that returns nothing
+  /// would reach no caller, only the zone's catch-all: such an answer, or any answer once the window closed, ends
+  /// quietly; any other error still reaches the zone.
+  Future<void> _invokeOnWindow(String method, Map<String, dynamic> arguments) async {
+    try {
+      await channel.invokeMethod(method, arguments);
+    } on PlatformException catch (error) {
+      if (_closed || (error.message ?? '').contains('can not find webview window')) {
+        debugPrint('desktop_webview_window: $method of the window $viewId, which is gone: ${error.message}');
+        return;
+      }
+      rethrow;
+    }
+  }
+
   @override
   void launch(String url, {bool triggerOnUrlRequestEvent = true}) async {
-    await channel.invokeMethod("launch", {
+    await _invokeOnWindow("launch", {
       "url": url,
       "viewId": viewId,
       "triggerOnUrlRequestEvent": triggerOnUrlRequestEvent,
@@ -273,7 +289,8 @@ class WebviewImpl extends Webview {
     if (_closed) {
       return;
     }
-    channel.invokeMethod("close", {"viewId": viewId});
+    // Immuch360: a close of a window that is already gone ends quietly (see _invokeOnWindow)
+    unawaited(_invokeOnWindow("close", {"viewId": viewId}));
   }
 
   @override

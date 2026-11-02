@@ -29,3 +29,11 @@ Patches, to apply again when a newer version is copied here (each marked "Immuch
    (`onWindowClose`, `Webview.onClose`); upstream took it off its list without telling Dart.
 7. Linux: `openMaximized` honoured (`gtk_window_maximize`).
 8. Windows: the window of the viewer takes the app's icon (`IDI_APP_ICON`, 101) rather than the system's.
+9. Dart: `launch` and `close` of a window that is gone end quietly (`WebviewImpl._invokeOnWindow`): a window closed by
+   the user while it opened answered "can not find webview window for id" to a method that returns nothing, which
+   reached the zone's catch-all (review of 2 November 2026); any other error still reaches the zone. Test:
+   `mobile/test/desktop/splat/desktop_webview_window_gone_test.dart`.
+10. Windows: `windows/WebView2-SDK-LICENSE.txt`, the licence of Microsoft's WebView2 SDK 1.0.992.28 (the `LICENSE.txt`
+    of its NuGet package), which `WebView2.h`, `WebView2EnvironmentOptions.h` and `libs/x64/WebView2Loader.dll` (the
+    same bytes as in that package) come from and whose headers point to; not in upstream's copy. wil keeps its own
+    `wil/LICENSE` (MIT). Both are on the app's licence page on Windows (`lib/desktop/splat/splat_window_licenses.dart`).
