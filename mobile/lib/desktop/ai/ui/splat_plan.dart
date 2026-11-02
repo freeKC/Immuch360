@@ -87,8 +87,12 @@ class SplatCandidate {
   /// A video of a 360° camera, or one the user views as 360°
   final bool isVideo360;
 
-  /// The focal length equivalent to 35 mm its EXIF tells, null when it does not
+  /// The focal length equivalent to 35 mm its EXIF tells, null when it does not or when it was not read
   final int? focal35;
+
+  /// The same photo with the focal length read from its head
+  SplatCandidate withFocal(int? focal35) =>
+      SplatCandidate(asset: asset, found: found, facts: facts, isVideo360: isVideo360, focal35: focal35);
 }
 
 /// The plan of a selection for a splat scene, see the top of this file
@@ -145,6 +149,38 @@ class SplatSelectionPlan {
 
   /// The images the poses and the training work on: the photos used, or the frames the video gives
   int get images => isVideo ? splatVideoFrameCount(videoDuration ?? SplatV1.videoFramesUntil) : used.length;
+
+  /// The same plan once the focal lengths of the photos used were read ([focals], in the order of [used], null where
+  /// one was not read): their lenses. The dialog reads them for the photos used only, after the cap.
+  SplatSelectionPlan withFocals(List<int?> focals) {
+    assert(focals.length == used.length, 'One focal length per photo used');
+    final read = [for (final (index, photo) in used.indexed) photo.withFocal(focals[index])];
+    return SplatSelectionPlan(
+      used: read,
+      leftOut: leftOut,
+      usable: usable,
+      folders: folders,
+      refusal: refusal,
+      isVideo: isVideo,
+      videoDuration: videoDuration,
+      lenses: splatLensesOf(read),
+      defaultName: defaultName,
+      destination: destination,
+    );
+  }
+}
+
+/// The lenses of [photos] (their focal lengths equivalent to 35 mm), the one that took the most first; empty when they
+/// all come from one, or when none is known
+List<int> splatLensesOf(Iterable<SplatCandidate> photos) {
+  final lenses = <int, int>{};
+  for (final photo in photos) {
+    if (photo.focal35 case final focal? when focal > 0) {
+      lenses[focal] = (lenses[focal] ?? 0) + 1;
+    }
+  }
+  final byUse = lenses.keys.toList()..sort((a, b) => lenses[b]!.compareTo(lenses[a]!));
+  return byUse.length > 1 ? byUse : const [];
 }
 
 /// [items] when they are [max] at most, else [max] of them spread evenly, the first and the last kept, in their order
@@ -262,22 +298,13 @@ SplatSelectionPlan planSplatSelection(List<SplatCandidate> candidates, {bool? li
   final oneFolder = byFolder.length == 1 && !server ? byFolder.keys.single : null;
   final folderName = oneFolder == null ? '' : p.basename(oneFolder);
 
-  // The lenses, the one that took the most first
-  final lenses = <int, int>{};
-  for (final photo in used) {
-    if (photo.focal35 case final focal? when focal > 0) {
-      lenses[focal] = (lenses[focal] ?? 0) + 1;
-    }
-  }
-  final byUse = lenses.keys.toList()..sort((a, b) => lenses[b]!.compareTo(lenses[a]!));
-
   return SplatSelectionPlan(
     used: used,
     leftOut: ordered,
     usable: usable.length,
     folders: byFolder.length + (server ? 1 : 0),
     refusal: usable.length < SplatV1.minImages ? SplatRefusal.tooFewPhotos : null,
-    lenses: byUse.length > 1 ? byUse : const [],
+    lenses: splatLensesOf(used),
     defaultName: folderName.isNotEmpty ? folderName : (used.isEmpty ? '' : fileStem(used.first.asset.name)),
     destination: most?.first ?? used.firstOrNull,
   );

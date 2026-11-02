@@ -238,6 +238,7 @@ void main() {
   late _Volumes volumes;
   late AiFreeSpace? workSpaceShort;
   late List<SplatLaunch> launches;
+  late List<String> focalReads;
 
   final windows = aiComponentsFor(AiPlatform.windowsX64);
   final panorama = aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.panorama);
@@ -288,12 +289,14 @@ void main() {
     volumes = _Volumes();
     workSpaceShort = null;
     launches = [];
+    focalReads = [];
   });
 
   tearDown(() => root.deleteSync(recursive: true));
 
-  /// The original of [name] in [folder] of a root of the library, on the network with [network]
-  void original(String name, {String? folder, bool network = false}) {
+  /// The original of [name] in [folder] of a root of the library, on the network with [network], kept online only by
+  /// OneDrive with [cloudOnly]
+  void original(String name, {String? folder, bool network = false, bool cloudOnly = false}) {
     final where = folder ?? photos;
     Directory(where).createSync(recursive: true);
     final path = p.join(where, name);
@@ -305,6 +308,7 @@ void main() {
       rootId: network ? 'net-//nas/photos' : 'local:$rootPath',
       rootPath: rootPath,
       rootIsNetwork: network,
+      cloudOnly: cloudOnly,
     );
   }
 
@@ -336,7 +340,10 @@ void main() {
       ),
       conversionEnginesProvider.overrideWithValue(engines),
       aiPowerProbeProvider.overrideWithValue(power),
-      conversionFocalReaderProvider.overrideWithValue((source) async => focals[source.name]),
+      conversionFocalReaderProvider.overrideWithValue((source) async {
+        focalReads.add(source.name);
+        return focals[source.name];
+      }),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
             (asset) async => facts[asset.name] ?? const ConversionPhotoFacts(),
@@ -962,6 +969,29 @@ void main() {
     await settle(tester);
     expect(launches, hasLength(1));
     expect(find.byKey(const Key('ai_splat_dialog')), findsNothing);
+  });
+
+  testWidgets('the lenses are read for the photos used only, never for a file kept online only', (tester) async {
+    final selection = salon(505);
+    // OneDrive downloads a file kept online only as soon as its head is read: the first and the last are used, the
+    // second is not (200 of 505 spread in time)
+    for (final name in ['IMG_0000.jpg', 'IMG_0001.jpg', 'IMG_0504.jpg']) {
+      original(name, cloudOnly: true);
+    }
+    for (var index = 0; index < 505; index++) {
+      focals['IMG_${index.toString().padLeft(4, '0')}.jpg'] = index < 400 ? 26 : 13;
+    }
+    await openDialog(tester, selection);
+
+    expect(find.text('200 photos, from 1 folder'), findsOneWidget);
+    expect(find.text('Photos from 2 lenses (26 mm, 13 mm): one lens gives better results'), findsOneWidget);
+    expect(focalReads, hasLength(198), reason: 'the 200 photos used, but the two kept online only');
+    expect(focalReads, isNot(anyElement(isIn(['IMG_0000.jpg', 'IMG_0001.jpg', 'IMG_0504.jpg']))));
+    await tapIn(tester, start());
+    await settle(tester);
+    final used = {for (final member in launches.single.members) member.asset.name};
+    expect(used, containsAll(['IMG_0000.jpg', 'IMG_0504.jpg']), reason: 'kept online only, but used');
+    expect(used, containsAll(focalReads));
   });
 
   group('the room of the work files', () {

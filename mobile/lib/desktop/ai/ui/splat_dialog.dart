@@ -458,7 +458,10 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     if (!mounted || _closed || candidates == null) {
       return;
     }
-    final plan = planSplatSelection(candidates);
+    final plan = await _readLenses(planSplatSelection(candidates));
+    if (!mounted || _closed) {
+      return;
+    }
     setState(() {
       _plan = plan;
       _subject = _settings.splatSubject;
@@ -487,9 +490,10 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     await _gesture(session.open);
   }
 
-  /// The photos or the video of the selection, read once: what the viewers know of each photo, where its original is,
-  /// its focal length; for a video, where it is and whether it is a 360° one. A selection the plan refuses whatever its
-  /// files (photos and a video, several videos) is not read. Null once the dialog closed meanwhile.
+  /// The photos or the video of the selection, read once: what the viewers know of each photo and where its original
+  /// is; for a video, where it is and whether it is a 360° one. A selection the plan refuses whatever its files (photos
+  /// and a video, several videos) is not read. Null once the dialog closed meanwhile. The focal lengths are read after,
+  /// for the photos used only (_readLenses).
   Future<List<SplatCandidate>?> _read() async {
     final assets = widget.assets;
     final videos = assets.where((asset) => asset.isVideo).length;
@@ -498,7 +502,6 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     }
     final facts = ref.read(conversionFactsReaderProvider);
     final files = ref.read(conversionAssetFilesProvider);
-    final focal = ref.read(conversionFocalReaderProvider);
     final video360 = ref.read(splatVideo360ReaderProvider);
     final candidates = <SplatCandidate>[];
     for (final asset in assets) {
@@ -522,18 +525,38 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
         candidates.add(SplatCandidate(asset: asset, facts: known));
         continue;
       }
-      final found = await files.locate(asset);
-      int? focal35;
-      if (found != null) {
-        try {
-          focal35 = await focal(found.source);
-        } catch (error) {
-          _log.fine('The focal length of ${asset.name} is not known: $error');
-        }
-      }
-      candidates.add(SplatCandidate(asset: asset, facts: known, found: found, focal35: focal35));
+      candidates.add(SplatCandidate(asset: asset, facts: known, found: await files.locate(asset)));
     }
     return candidates;
+  }
+
+  /// [plan] with the lenses of the photos it uses, read from the heads of their files: only the photos used (200 at
+  /// most, not all those selected), and never a file kept online only, which OneDrive would download to read its head
+  /// before the user said yes to anything. [plan] as it is for a video, a refusal, or once the dialog closed meanwhile.
+  Future<SplatSelectionPlan> _readLenses(SplatSelectionPlan plan) async {
+    if (plan.isVideo || plan.refusal != null) {
+      return plan;
+    }
+    final focal = ref.read(conversionFocalReaderProvider);
+    final focals = <int?>[];
+    for (final photo in plan.used) {
+      if (_closed) {
+        return plan;
+      }
+      final found = photo.found;
+      final location = found?.location;
+      if (found == null || location is LibraryOriginal && location.cloudOnly) {
+        focals.add(null);
+        continue;
+      }
+      try {
+        focals.add(await focal(found.source));
+      } catch (error) {
+        _log.fine('The focal length of ${photo.asset.name} is not known: $error');
+        focals.add(null);
+      }
+    }
+    return plan.withFocals(focals);
   }
 
   /// Runs a gesture of the destination session; "Make the scene" waits for it
