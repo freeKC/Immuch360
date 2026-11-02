@@ -299,6 +299,16 @@ jobs:
           echo "fake=$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli" >> "$GITHUB_OUTPUT"
           echo "launcher=$RUNNER_TEMP/sdcpp-fakes/immuch360-run" >> "$GITHUB_OUTPUT"
 
+      # The fake AV2 companion (lot AD1 of the AV2 videos), compiled the same way: it speaks the protocol of
+      # immuch360-av2 over a test pattern, for test/desktop/video/av2 and the playback tested on it
+      - name: The fake AV2 companion
+        id: fake_av2
+        working-directory: mobile
+        run: |
+          mkdir -p "$RUNNER_TEMP/av2-fakes"
+          mise exec -- dart compile exe test/desktop/video/fakes/fake_av2.dart -o "$RUNNER_TEMP/av2-fakes/fake-av2"
+          echo "fake=$RUNNER_TEMP/av2-fakes/fake-av2" >> "$GITHUB_OUTPUT"
+
       # The whole suite: the phone regression gate, test/desktop included. IMMUCH360_REQUIRE_SBS_CODEC turns the skip
       # of the dart:ffi tests of the JPEG codec into a failure: here the build hook must have built the library
       - name: Tests
@@ -307,6 +317,7 @@ jobs:
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fake_sd_cli.outputs.launcher }}
+          IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
         run: mise exec -- flutter test
 
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
@@ -779,6 +790,16 @@ jobs:
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
           echo "tools=$(cygpath -w "$tools")" >> "$GITHUB_OUTPUT"
 
+      # The fake AV2 companion (lot AD1 of the AV2 videos), for test/desktop/video/av2 on Windows
+      - name: The fake AV2 companion
+        id: fake_av2
+        working-directory: mobile
+        run: |
+          fakes="$(cygpath -u "$RUNNER_TEMP")/av2-fakes"
+          mkdir -p "$fakes"
+          dart compile exe test/desktop/video/fakes/fake_av2.dart -o "$fakes/fake-av2.exe"
+          echo "fake=$(cygpath -w "$fakes/fake-av2.exe")" >> "$GITHUB_OUTPUT"
+
       - name: Upload the fake sd-cli and the probe
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -794,6 +815,7 @@ jobs:
           IMMUCH360_ORT_LIB: ${{ steps.ort.outputs.lib }}
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
+          IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
         run: flutter test test/desktop
 
       - name: Build
