@@ -6,10 +6,39 @@
 // is taken as its head says it (an IVF header gives its size and its frame rate) and no speed is known: no notice comes
 // before it plays.
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
+
+final _log = Logger('Av2Decoding');
+
+/// The extensions of the AV2 files the app reads (plan, section 1.1): IVF and Section 5 OBU streams
+const av2FileExtensions = {'ivf', 'obu'};
+
+/// Whether [name] is named like an AV2 file the app reads; its head tells whether it is one (readAv2Head)
+bool isAv2FileName(String name) {
+  final extension = p.extension(name).toLowerCase();
+  return extension.length > 1 && av2FileExtensions.contains(extension.substring(1));
+}
+
+/// The head of the file at [path] when it starts an AV2 stream, null for any other file and one that cannot be read
+Future<Av2Head?> readAv2HeadOfFile(String path) async {
+  RandomAccessFile? file;
+  try {
+    file = await File(path).open();
+    return readAv2Head(await file.read(av2HeadLength));
+  } on FileSystemException catch (error) {
+    _log.info('The head of ${p.basename(path)} could not be read: ${error.message}');
+    return null;
+  } finally {
+    await file?.close();
+  }
+}
 
 /// How fast the AV2 video playing decodes on this computer, from the stat lines of the companion
 @immutable

@@ -16,7 +16,6 @@
 //    what it needs.
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,7 +24,6 @@ import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
-import 'package:immich_mobile/domain/services/av2_stream.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -33,32 +31,8 @@ import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.da
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:logging/logging.dart';
-import 'package:path/path.dart' as p;
 
 final _log = Logger('Av2Gate');
-
-/// The extensions of the AV2 files the app reads (plan, section 1.1): IVF and Section 5 OBU streams
-const av2FileExtensions = {'ivf', 'obu'};
-
-/// Whether [name] is named like an AV2 file the app reads; its head tells whether it is one (readAv2Head)
-bool isAv2FileName(String name) {
-  final extension = p.extension(name).toLowerCase();
-  return extension.length > 1 && av2FileExtensions.contains(extension.substring(1));
-}
-
-/// The head of the file at [path] when it starts an AV2 stream, null for any other file and one that cannot be read
-Future<Av2Head?> readAv2HeadOfFile(String path) async {
-  RandomAccessFile? file;
-  try {
-    file = await File(path).open();
-    return readAv2Head(await file.read(av2HeadLength));
-  } on FileSystemException catch (error) {
-    _log.info('The head of ${p.basename(path)} could not be read: ${error.message}');
-    return null;
-  } finally {
-    await file?.close();
-  }
-}
 
 /// The libmpv releases of macOS whose FFmpeg has neither the yuv4mpegpipe demuxer nor the rawvideo decoder that the
 /// pictures of the AV2 decoder need (plan, section 2.4); lot AD4 pins the next one

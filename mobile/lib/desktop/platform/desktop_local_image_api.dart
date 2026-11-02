@@ -11,6 +11,7 @@ import 'package:immich_mobile/desktop/library/decode_queue.dart';
 import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
 import 'package:immich_mobile/desktop/library/thumbnail_cache.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
@@ -28,6 +29,9 @@ import 'package:thumbhash/thumbhash.dart' as thumbhash_codec;
 ///   the requested size (EXIF orientation included).
 /// - A video gets a frame taken by the desktop player's frame grabber (video_thumbnail_grabber.dart), kept in the
 ///   thumbnail cache like the photos' thumbnails; the film tile without libmpv, or when the video gives no frame.
+/// - An AV2 video (.ivf, .obu whose head says AV2) is never handed to mpv, which has no decoder for it: its frame comes
+///   through the AV2 decoder once installed ([av2FrameGrab], set by its playback), else the film tile says "AV2" and
+///   nothing is downloaded (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2).
 /// - A file the engine cannot decode (HEIC or a camera raw file without a decoder of the system) gets a tile with
 ///   the format's name.
 class DesktopLocalImageApi implements LocalImageApi {
@@ -36,6 +40,7 @@ class DesktopLocalImageApi implements LocalImageApi {
     ThumbnailCache? thumbnails,
     int concurrentDecodes = 3,
     this._videoFrame,
+    this._av2Frame,
   }) : _fileForAsset = fileForAsset ?? _libraryFile,
        _thumbnails = thumbnails ?? ThumbnailCache.shared,
        _queue = DecodeQueue(concurrentDecodes),
@@ -66,6 +71,14 @@ class DesktopLocalImageApi implements LocalImageApi {
   /// 8K video, a slow disk), and the photos of the timeline do not wait for it
   final DecodeQueue _videoQueue;
   final VideoFrameGrab? _videoFrame;
+  final VideoFrameGrab? _av2Frame;
+
+  /// A frame of an AV2 video through the AV2 decoder, set by its playback (lot AD3) once the decoder is installed;
+  /// null until then: an AV2 video gets the film tile that says AV2
+  static VideoFrameGrab? av2FrameGrab;
+
+  /// The word of the tile of an AV2 video, the same in every language, as its badge
+  static const av2TileLabel = 'AV2';
 
   /// Where in a video its thumbnail is taken: past a black first frame or a fade in, as for the share tiles
   /// (NetworkVideoThumbnailService.frameTimeMs)
@@ -206,10 +219,20 @@ class DesktopLocalImageApi implements LocalImageApi {
   /// tile without a frame grab or when the video gives no frame. Any request of a video, the larger ones too, gets a
   /// thumbnail: the viewer shows it until the player shows the video.
   Future<Uint8List?> _videoImage(File file, String assetId, int requestId, int box) async {
-    final grab = _videoFrame ?? _appVideoFrame;
-    if (grab == null) {
-      return _tile(box, video: true);
+    var grab = _videoFrame ?? _appVideoFrame;
+    // An AV2 video: through the AV2 decoder, else its tile; never mpv, which has no decoder for it
+    final av2 = isAv2FileName(file.path) && await readAv2HeadOfFile(file.path) != null;
+    final label = av2 ? av2TileLabel : null;
+    if (av2) {
+      grab = _av2Frame ?? av2FrameGrab;
     }
+    if (_cancelled.contains(requestId)) {
+      return null;
+    }
+    if (grab == null) {
+      return _tile(box, video: true, label: label);
+    }
+    final take = grab;
     final FileStat stat;
     try {
       // ignore: avoid_slow_async_io
@@ -222,7 +245,7 @@ class DesktopLocalImageApi implements LocalImageApi {
     }
     final version = '${file.path}|${stat.size}|${stat.modified.millisecondsSinceEpoch}';
     if (stat.size == 0 || _undecodable.contains(version)) {
-      return _tile(box, video: true);
+      return _tile(box, video: true, label: label);
     }
     final source = ThumbnailSource(assetId: assetId, length: stat.size, modified: stat.modified);
     final cached = await _thumbnails.read(source, box);
@@ -230,10 +253,10 @@ class DesktopLocalImageApi implements LocalImageApi {
       return cached;
     }
     return _videoQueue.run('$version|$box', requestId, () async {
-      final frame = await grab(file.path, box);
+      final frame = await take(file.path, box);
       if (frame == null || frame.isEmpty) {
         _undecodable.add(version);
-        return _tile(box, video: true);
+        return _tile(box, video: true, label: label);
       }
       final write = _thumbnails.write(source, box, frame);
       _writes.add(write);
@@ -242,10 +265,11 @@ class DesktopLocalImageApi implements LocalImageApi {
     });
   }
 
-  /// The tile for a video, or for a file of the [label] format the engine cannot show; made once per kind and size
+  /// The tile for a video (with the word [label] for an AV2 video), or for a file of the [label] format the engine
+  /// cannot show; made once per kind, word and size
   Future<Uint8List> _tile(int size, {bool video = false, String? label}) {
-    final key = '$video|${video ? '' : label}|$size';
-    return _tiles.putIfAbsent(key, () async => _drawTile(key, size, video ? null : label, video: video));
+    final key = '$video|${label ?? ''}|$size';
+    return _tiles.putIfAbsent(key, () async => _drawTile(key, size, label, video: video));
   }
 
   Future<Uint8List> _drawTile(String key, int size, String? label, {required bool video}) async {
