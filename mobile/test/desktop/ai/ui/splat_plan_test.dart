@@ -9,7 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_plan.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
@@ -344,8 +346,9 @@ void main() {
 
     final half = splatTimeOf(timings, images: 75, video: false);
     expect(half.training, photos.training);
-    // A quarter of the pairs, half of the rest
-    expect(half.poses.inMilliseconds, closeTo(115000 / 2 + 195000 * 75 * 74 / (150 * 149), 1));
+    // A quarter of the pairs, half of the photos, their points and the mapping; the reading as it is, as the engine
+    // counts it (SplatTimeModel)
+    expect(half.poses.inMilliseconds, closeTo(5000 + 110000 / 2 + 195000 * 75 * 74 / (150 * 149), 1));
 
     final video = splatTimeOf(timings, images: 150, video: true);
     expect(video.poses, const Duration(seconds: 191));
@@ -361,5 +364,30 @@ void main() {
       video: false,
     );
     expect(measured.training, const Duration(minutes: 10));
+  });
+
+  test('the time the dialog says is the one the engine starts from', () {
+    const timings = AiTimings({
+      'splatScene': {'matching': 240000, 'training': 380000},
+      'splatSceneVideo': {'frames': 52000},
+    });
+    for (final (images, video) in [(20, false), (40, false), (150, false), (200, false), (150, true), (225, true)]) {
+      final key = ConversionKind.splatScene.timingsKey(fromVideo: video);
+      final stages = ConversionKind.splatScene.stagesOf(fromVideo: video);
+      // What the queue gives the engine (SplatJob.timings) and what the engine counts from it
+      final engine = SplatTimeModel(
+        reference: {
+          for (final stage in stages)
+            if (timings.of(key, stage.name) case final millis?) stage: Duration(milliseconds: millis),
+        },
+        stages: stages,
+        images: video ? images : splatPlannedImages(images, video: false),
+        video: video,
+      );
+      final said = splatTimeOf(timings, images: images, video: video);
+      expect(said.total, engine.total, reason: '$images ${video ? 'frames' : 'photos'}');
+      expect(said.training, engine.expected(ImmersiveStage.training));
+      expect(said.poses + said.training + engine.after(ImmersiveStage.training), said.total);
+    }
   });
 }

@@ -16,6 +16,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -371,27 +372,26 @@ OriginalLocation splatNamedLocation(OriginalLocation location, String name) => s
 /// whole job with the copy for the headset
 typedef SplatTime = ({Duration poses, Duration training, Duration total});
 
-/// The images the times of the steps of a splat scene are told for: aiDefaultTimings holds those of 150 photos, and of
-/// a video of two minutes, 150 frames
-const splatTimedImages = SplatV1.videoFrames;
-
 /// The time of a scene of [images] photos, or frames of a video ([video]), from the times of its steps on this computer
-/// ([timings], those of [splatTimedImages] images): the reading, the preparation of the images, their points and the
-/// mapping follow the images, the exhaustive matching of photos follows their pairs (a video is matched one frame after
-/// the other), the training and the writing stay what they are
+/// ([timings], those of 150 images), as the engine counts it when the job starts (SplatTimeModel of splat_time.dart):
+/// the preparation of the images, their points and the mapping follow the images, the exhaustive matching of photos
+/// follows their pairs (a video is matched one frame after the other), the training follows its steps, the rest stays
+/// what it is. The dialog and the panel so say the same time.
 SplatTime splatTimeOf(AiTimings timings, {required int images, required bool video}) {
   const kind = ConversionKind.splatScene;
   final key = kind.timingsKey(fromVideo: video);
-  double ms(ImmersiveStage stage) => (timings.of(key, stage.name) ?? 0).toDouble();
-  final perImage = images / splatTimedImages;
-  final perPair = video ? perImage : images * (images - 1) / (splatTimedImages * (splatTimedImages - 1));
-  final prepared = video ? ImmersiveStage.frames : ImmersiveStage.photos;
-  final poses =
-      (ms(ImmersiveStage.reading) + ms(prepared) + ms(ImmersiveStage.features) + ms(ImmersiveStage.mapping)) *
-          perImage +
-      ms(ImmersiveStage.matching) * perPair;
-  final training = ms(ImmersiveStage.training);
-  final finishing = ms(ImmersiveStage.splatCopy) + ms(ImmersiveStage.writing);
-  Duration of(double millis) => Duration(milliseconds: millis.round());
-  return (poses: of(poses), training: of(training), total: of(poses + training + finishing));
+  final stages = kind.stagesOf(fromVideo: video);
+  final model = SplatTimeModel(
+    reference: {
+      for (final stage in stages)
+        if (timings.of(key, stage.name) case final millis?) stage: Duration(milliseconds: millis),
+    },
+    stages: stages,
+    images: images,
+    video: video,
+  );
+  final poses = stages
+      .takeWhile((stage) => stage != ImmersiveStage.training)
+      .fold(Duration.zero, (sum, stage) => sum + model.expected(stage));
+  return (poses: poses, training: model.expected(ImmersiveStage.training), total: model.total);
 }
