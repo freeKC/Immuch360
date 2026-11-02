@@ -210,22 +210,11 @@ const decodeMeasuresOfTheBuild = [
     source: 'phase 2b, spike 3 and renderer C, both GPUs',
   ),
   // 8K at 4320 lines, a Samsung S24+ video (HEVC, 80 Mbit/s), in the app's viewer without a copy (2026-11-02, the
-  // owner's report of an 8K video that stutters): on the Intel UHD, whose 3D engine the app's drawing and Windows'
-  // composition filled, 0 to 22 of 150 frames dropped over five opens and 13 in one without any other load, with whole
-  // black frames on the window's capture
-  DecodeMeasure(
-    gpu: MeasuredGpu.integrated,
-    codec: VideoMime.hevc,
-    width: 7680,
-    height: 4320,
-    frameRate: 30,
-    hwdec: 'd3d11va',
-    frames: 150,
-    dropped: 13,
-    source: 'report of 2026-11-02, Intel UHD',
-  ),
-  // The same file on the RTX 4060 Laptop (Windows' preference for the app set to high performance): none dropped in
-  // three opens, nor a black frame
+  // owner's report of an 8K video that stutters), on the RTX 4060 Laptop (Windows' preference for the app set to high
+  // performance): none dropped in three opens, nor a black frame. No figure for an integrated GPU: the Intel UHD's (0
+  // to 22 of 150) was taken before the viewer stopped drawing a frame at every refresh, with Windows short of memory,
+  // on one of the smallest integrated GPUs; it would send every integrated GPU to the server's copy without a try, so
+  // an integrated GPU plays the original and measures it itself
   DecodeMeasure(
     gpu: MeasuredGpu.dedicated,
     codec: VideoMime.hevc,
