@@ -218,6 +218,27 @@ jobs:
       - name: The engine files of the splat viewer are those of its MANIFEST
         run: python3 .github/desktop/splat_viewer/check_vendor.py
 
+      # The splat viewer's page (lot SV3): its placement fixtures as their script writes them, its modules in Node
+      # (placement, controls, quality, session), then the page itself in Chrome on SwiftShader, served as the media
+      # bridge serves it (its CSP, a session per fixture): ready, not blank, placed as viewer_expected.json says
+      - name: The splat viewer's page, in Node and in headless Chrome
+        run: |
+          python3 .github/desktop/splat_viewer/make_viewer_fixtures.py --check
+          node --version
+          node --test mobile/test/splat_viewer_js/*.test.mjs
+          google-chrome --version
+          python3 .github/desktop/splat_viewer/page_check.py --browser google-chrome \
+            --out "$RUNNER_TEMP/splat-page-check"
+
+      - name: Upload the pictures of the page check
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: splat-page-check
+          path: ${{ runner.temp }}/splat-page-check
+          retention-days: 7
+          if-no-files-found: ignore
+
       # relief-v1 is written once, in Python: the Dart of the computers and the Kotlin of the Quest meet its fixture
       - name: The golden fixture of relief-v1 is what its script writes
         run: python3 .github/desktop/ai/make_relief_golden.py --check
