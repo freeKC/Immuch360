@@ -8,10 +8,12 @@
 //    process, lot P2, or the ComfyUI of the user, lot P5);
 //  - SceneBackend: the empty place of a model that makes a whole scene from one or several photos, none in version 1;
 //  - GpuProbe: what the graphics cards of the computer offer, read by a child process (lot C6);
-//  - ProcessRunner: a program started, read line by line and stopped (lot P2), for the generator and the probe.
+//  - ProcessRunner: a program started, read line by line and stopped (lot P2), for the generator and the probe, and
+//    fed through its standard input (the AV2 companion, lot AD3 of the AV2 videos).
 // The geometry and the filling run inside the worker isolate as one synchronous event, as DepthBackend; the
 // generator, the upscale, the probe and the processes are asynchronous.
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
@@ -454,10 +456,16 @@ class ProcessLaunch {
   final bool lowPriority;
 }
 
-/// A program running: its id, its output and error output line by line, its end; [kill] stops it within a second, and
-/// it never outlives the app (a job object on Windows, PR_SET_PDEATHSIG on Linux)
+/// A program running: its id, its standard input, its output and error output line by line, its end; [kill] stops it
+/// within a second, and it never outlives the app (a job object on Windows, PR_SET_PDEATHSIG on Linux)
 abstract interface class RunningProcess {
   int get pid;
+
+  /// What the app writes to the program (the AV2 companion reads its temporal units there, lot AD3 of the AV2 videos);
+  /// closing it ends the program's input. Writes to a program that ended are lost without an error the app has to
+  /// catch, but a write and its flush may still fail: await flush() between two writes, so that a program that stops
+  /// reading holds the writer back instead of the app keeping everything in memory
+  IOSink get stdin;
   Stream<String> get stdoutLines;
   Stream<String> get stderrLines;
   Future<int> get exitCode;

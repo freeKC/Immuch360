@@ -145,9 +145,14 @@ class SystemProcessRunner implements ProcessRunner {
 }
 
 class _SystemProcess implements RunningProcess {
-  _SystemProcess(this._process) : stdoutLines = _lines(_process.stdout), stderrLines = _lines(_process.stderr);
+  _SystemProcess(this._process) : stdoutLines = _lines(_process.stdout), stderrLines = _lines(_process.stderr) {
+    unawaited(_process.stdin.done.then<void>((_) {}, onError: (Object _) {}));
+  }
 
   final Process _process;
+
+  @override
+  IOSink get stdin => _process.stdin;
 
   static Stream<String> _lines(Stream<List<int>> bytes) =>
       bytes.transform(const Utf8Decoder(allowMalformed: true)).transform(const LineSplitter());
