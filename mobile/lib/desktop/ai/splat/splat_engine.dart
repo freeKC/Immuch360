@@ -23,8 +23,9 @@
 // day after its last use (managed_process.dart). A job of the same key finds it, reads each member again for its sum
 // (a photo of this computer is hashed in place, an original of the server downloaded and released at once), and when
 // every sum is the one kept, starts again at the training, from the model COLMAP aligned. Otherwise the folder is
-// emptied and the job starts from the photos. The folder goes as soon as the job ends with its file, and at once after
-// a failure or a cancel before the poses were found.
+// emptied and the job starts from the photos. The folder goes once the queue saved the file the job made
+// (ImmersiveResult.afterSaved: a destination that refuses it, or a Cancel during the copy, leaves it for Retry), and
+// at once after a failure or a cancel before the poses were found.
 //
 // No Flutter here: the engine also runs in splat_probe, a program compiled by `dart compile exe` that makes a scene on
 // a PC with the real programs (lot SP6, artifact of the windows job of the desktop workflow); the app gives it the
@@ -340,7 +341,10 @@ class SplatEngine implements ImmersiveEngine {
         '${poses.placed} of ${poses.images} images placed, ${written.scale.note}',
       );
       done = true;
+      final made = work;
       return ImmersiveResult.made(
+        // Kept until the queue saved the file: a destination that refuses it leaves the poses and the training for Retry
+        afterSaved: () => _settle(made, keep: false),
         details: SplatResultDetails(
           gaussians: written.gaussians,
           images: poses.images,
@@ -386,7 +390,7 @@ class SplatEngine implements ImmersiveEngine {
     } finally {
       final folder = work;
       if (folder != null) {
-        await _settle(folder, keep: !done && _readState(folder)?['placed'] is int);
+        await _settle(folder, keep: done || _readState(folder)?['placed'] is int);
       }
     }
   }
@@ -474,7 +478,8 @@ class SplatEngine implements ImmersiveEngine {
     }
   }
 
-  /// At the end of a job: [work] kept and marked used when its poses may serve a Retry ([keep]), else deleted
+  /// At the end of a job: [work] kept and marked used when its poses may serve a Retry ([keep]: the file made and not
+  /// saved yet, or a failure once the poses were found), else deleted
   Future<void> _settle(SplatWorkFolder work, {required bool keep}) async {
     if (keep) {
       touchAiWorkFolder(work.root);

@@ -634,6 +634,29 @@ void main() {
       }, skip: _skipFakes());
     });
 
+    test('a scene made whose file cannot be saved keeps its poses: Retry trains again without COLMAP', () async {
+      final pid = File(p.join(folder.path, 'colmap.pid'));
+      container = realContainer();
+      final paths = photos(24);
+      // The destination refuses the file once, as a disk full or a share gone
+      output.failFinishOf[p.basename(paths.first)] = ImmersiveErrorCode.diskFull;
+      final id = addSplat(paths, settings: quick);
+      await until((state) => job(id).state.isEnded, within: const Duration(minutes: 2));
+      expect(job(id).error, ImmersiveErrorCode.diskFull);
+      expect(work.listSync().whereType<Directory>(), hasLength(1), reason: 'the poses and the training kept');
+
+      colmapEnvironment['IMMUCH360_FAKE_COLMAP_PID'] = pid.path;
+      final states = <ConversionState>{};
+      container.listen(conversionQueueProvider, (_, next) => states.add(next.byId(id)!.state));
+      queue().retry(id);
+      await until((state) => job(id).state.isEnded, within: const Duration(minutes: 2));
+
+      expect(job(id).state, ConversionState.done, reason: '${job(id).error} ${job(id).message}');
+      expect(pid.existsSync(), isFalse, reason: 'COLMAP did not run again');
+      expect(states, isNot(contains(ConversionState.features)));
+      expect(work.listSync(), isEmpty, reason: 'the work folder goes once the file is saved');
+    }, skip: _skipFakes());
+
     test('Retry from the poses after a training that failed: COLMAP not run again', () async {
       brushEnvironment['IMMUCH360_FAKE_BRUSH_MODE'] = 'fail';
       final pid = File(p.join(folder.path, 'colmap.pid'));

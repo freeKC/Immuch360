@@ -304,7 +304,10 @@ void main() {
       );
       // Each member read once and released
       expect(members.every((member) => member.loads == 1 && member.releases == 1), isTrue);
-      // Its work folder gone with its file
+      // Its work folder kept, marked used, until the queue saved its file; then gone
+      expect(workFolders(), hasLength(1));
+      expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
+      await result.afterSaved!();
       expect(workFolders(), isEmpty);
     },
     skip: _skip(),
@@ -424,6 +427,7 @@ void main() {
       // The photos were read again for their sums, once each
       expect(members.every((member) => member.loads == 2 && member.releases == 2), isTrue);
       expect((again.details! as SplatResultDetails).placed, 24);
+      await again.afterSaved!();
       expect(workFolders(), isEmpty);
     },
     skip: _skip(),

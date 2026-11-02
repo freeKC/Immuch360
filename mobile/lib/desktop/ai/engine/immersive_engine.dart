@@ -672,7 +672,8 @@ class ImmersiveResult {
     this.stageTimes = const {},
   }) : error = null,
        message = null,
-       _made = null;
+       _made = null,
+       afterSaved = null;
 
   /// A file of another kind written, with what it tells of itself
   const ImmersiveResult.made({
@@ -680,6 +681,7 @@ class ImmersiveResult {
     required int this.bytesWritten,
     this.qualityFlags = const [],
     this.stageTimes = const {},
+    this.afterSaved,
   }) : _made = details,
        error = null,
        message = null,
@@ -693,7 +695,8 @@ class ImmersiveResult {
       bytesWritten = null,
       reduced = false,
       qualityFlags = const [],
-      _made = null;
+      _made = null,
+      afterSaved = null;
 
   final ImmersiveResultDetails? _made;
 
@@ -725,6 +728,11 @@ class ImmersiveResult {
 
   /// How long each step took
   final Map<ImmersiveStage, Duration> stageTimes;
+
+  /// What the engine keeps for this job until its file is saved, let go once the queue saved it (renamed, or dropped
+  /// for a name taken): the work folder of a splat scene, which a Retry starts again from when the file could not be
+  /// written. Null when the engine keeps nothing; never throws.
+  final Future<void> Function()? afterSaved;
 
   bool get isDone => error == null;
 }

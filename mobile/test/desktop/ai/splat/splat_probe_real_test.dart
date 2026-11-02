@@ -156,6 +156,8 @@ void main() {
       'training',
       'splatCopy',
     ]);
+    // The work folder kept until the files were saved, then gone
+    expect(Directory(p.join(folder.path, 'work')).listSync().whereType<Directory>(), isEmpty);
   }, skip: _skip());
 
   test('the probe killed during the training, as taskkill /F does: Brush goes with it', () async {

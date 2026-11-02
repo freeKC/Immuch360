@@ -406,6 +406,8 @@ Future<int> _run(Map<String, String> options, Map<String, String> environment) a
   }
   spzPart.renameSync(spz.path);
   plyPart?.renameSync(ply!.path);
+  // The work folder, kept until the file is saved
+  await result.afterSaved?.call();
   String probe(File file) {
     final bytes = file.readAsBytesSync();
     return '${probeSplatHead(Uint8List.sublistView(bytes, 0, bytes.length.clamp(0, splatHeadBytes)), bytes.length)}';

@@ -39,7 +39,9 @@
 // with its own need (2.5 GiB free on a dedicated card, gpuNeedOf); its spec given its photos or its video, its settings
 // and the times of its steps on this computer, from which its engine tells the time left of the whole job. Its copy for
 // the headset is the file of the job; "Also save a .ply for other 3D apps" adds a second .part, put beside the .spz
-// under the same name by a writer that writes companions (ConversionCompanionOutput), and dropped with it.
+// under the same name by a writer that writes companions (ConversionCompanionOutput), and dropped with it. Its engine
+// keeps its work folder until the file is saved (ImmersiveResult.afterSaved): a destination that refuses the file
+// leaves the poses and the training for Retry.
 
 import 'dart:async';
 import 'dart:io';
@@ -823,6 +825,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       );
       // Renamed, or deleted for a name taken: the writer took it
       part = null;
+      // What the engine kept until then (the work folder of a splat scene) goes now
+      await _afterSaved(id, result);
       var details = result.details;
       String? companionMessage;
       final ply = companion;
@@ -1170,6 +1174,15 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     } catch (error) {
       _log.warning('The times of the steps could not be read: $error');
       return _measured = const {};
+    }
+  }
+
+  /// Lets the engine of job [id] drop what it kept until its file was saved (ImmersiveResult.afterSaved)
+  Future<void> _afterSaved(String id, ImmersiveResult result) async {
+    try {
+      await result.afterSaved?.call();
+    } catch (error) {
+      _log.warning('What the engine of $id kept could not be let go', error);
     }
   }
 
