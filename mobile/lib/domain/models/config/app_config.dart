@@ -85,6 +85,7 @@ abstract class AppConfig with _$AppConfig {
             .viewerSharpFlatScreens => viewer.sharpFlatScreens,
             .viewerGaussianSplats => viewer.gaussianSplats,
             .viewerLargeSplats => viewer.largeSplats,
+            .viewerAv2Videos => viewer.av2Videos,
             .viewerVideoSource => viewer.videoSource,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
@@ -160,6 +161,7 @@ abstract class AppConfig with _$AppConfig {
       .viewerSharpFlatScreens => copyWith(viewer: viewer.copyWith(sharpFlatScreens: value as bool)),
       .viewerGaussianSplats => copyWith(viewer: viewer.copyWith(gaussianSplats: value as bool)),
       .viewerLargeSplats => copyWith(viewer: viewer.copyWith(largeSplats: value as bool)),
+      .viewerAv2Videos => copyWith(viewer: viewer.copyWith(av2Videos: value as bool)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(

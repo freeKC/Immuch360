@@ -541,7 +541,56 @@ void main() {
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
+      expect(
+        run.output,
+        contains(
+          'the AV2 decoder waits for av2-decoder-1: av2-decoder-linux-x64, av2-decoder-macos-universal, '
+          'av2-decoder-windows-x64',
+        ),
+      );
       expect(File(_licences).readAsStringSync(), contains('Date: '));
+    }, skip: skipCiScripts);
+
+    test('holds the AV2 decoder to the rules of an archive: all its sums or none, its release, BSD-2-Clause', () {
+      final text = File(_catalogue).readAsStringSync();
+      final linux = text.indexOf("  id: 'av2-decoder-linux-x64',");
+      final mac = text.indexOf("  id: 'av2-decoder-macos-universal',");
+      // From the end of the file back, so that each place found stays where it is
+      final changes = [
+        (
+          text.indexOf('  releaseTag: av2DecoderReleaseTag,', mac),
+          '  releaseTag: av2DecoderReleaseTag,',
+          "  releaseTag: 'ai-components-3',",
+        ),
+        (
+          text.indexOf("  licence: 'BSD-2-Clause',", linux),
+          "  licence: 'BSD-2-Clause',",
+          "  licence: 'GPL-2.0-or-later',",
+        ),
+        (text.indexOf('  size: null,', linux), '  size: null,', '  size: 1100000,'),
+      ];
+      var changed = text;
+      for (final (at, old, replacement) in changes) {
+        expect(at, greaterThan(linux));
+        changed = changed.replaceRange(at, at + old.length, replacement);
+      }
+      catalogue.writeAsStringSync(changed);
+
+      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+
+      expect(run.exitCode, 1, reason: '$run');
+      expect(
+        run.output,
+        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 1100000, sha256 None, 0 files)'),
+      );
+      expect(
+        run.output,
+        contains('av2-decoder-linux-x64: licence GPL-2.0-or-later, the AV2 decoder is under BSD-2-Clause'),
+      );
+      expect(
+        run.output,
+        contains('av2-decoder-macos-universal: in ai-components-3, the AV2 decoder is in av2-decoder-1'),
+      );
     }, skip: skipCiScripts);
 
     test('says what is missing: an incomplete component, a row of MODEL-LICENSES.md', () {

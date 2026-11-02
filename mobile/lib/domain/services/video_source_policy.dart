@@ -283,12 +283,14 @@ VideoSourceChoice chooseVideoSource({
 }
 
 /// A name for the codec of a video: [codec] is the four character code of its sample entry ("hvc1") or the MIME type
-/// of a decoder ("video/hevc"). An unknown codec keeps its code.
+/// of a decoder ("video/hevc"). An unknown codec keeps its code. AV2 has the four characters of its IVF files (AV02)
+/// and the sample entries of the draft of its MP4 binding of 28 October 2026 (av2E, av2e).
 String videoCodecName(String codec) => switch (codec.toLowerCase()) {
   'avc1' || 'avc3' || 'video/avc' => 'H.264',
   'hvc1' || 'hev1' || 'video/hevc' => 'HEVC',
   'dvh1' || 'dvhe' || 'video/dolby-vision' => 'Dolby Vision',
   'av01' || 'video/av01' => 'AV1',
+  'av02' || 'av2e' => 'AV2',
   'vp09' || 'video/x-vnd.on2.vp9' => 'VP9',
   'vp08' || 'video/x-vnd.on2.vp8' => 'VP8',
   'mp4v' || 'video/mp4v-es' => 'MPEG-4',

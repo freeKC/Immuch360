@@ -49,7 +49,9 @@ per release, the other sections kept as they are) and SHA256SUMS.
   publish_ai_components.py --check [--release TAG]
       offline, for the three releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
-      MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart)
+      MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart);
+      and, whatever TAG, the three archives of the AV2 decoder (av2-decoder-1, not made by this script): in their
+      release, under BSD-2-Clause, with no size, no sum and no file until that release is made, or all of them
 
 Without --publish nothing leaves this computer; the network is used only to download the files and to read the cards
 and the artifacts. --sources FILE replaces the addresses and upstream sums of the tables below (the tests serve small
@@ -95,6 +97,12 @@ SUMS = 'SHA256SUMS'
 ASSET_LIMIT = 2 * 1024 ** 3
 PART_SIZE = 1945 * 1024 * 1024
 ALLOWED_LICENCES = ('Apache-2.0', 'MIT', 'BSD-3-Clause')
+# The AV2 decoder of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3): archives built by the jobs
+# av2-windows, av2-linux and av2-macos of the desktop workflow, in a release of their own that this script does not
+# make; their entries share the catalogue, so --check holds them to the rules of an archive
+TAG_AV2 = 'av2-decoder-1'
+AV2_DECODERS = ('av2-decoder-windows-x64', 'av2-decoder-linux-x64', 'av2-decoder-macos-universal')
+AV2_LICENCES = ('BSD-2-Clause',)
 LICENCES_NAME = 'MODEL-LICENSES.md'
 ORT_RELEASES = 'https://github.com/microsoft/onnxruntime/releases/download'
 USER_AGENT = 'immuch360-ai-components'
@@ -279,7 +287,8 @@ def sha256_file(path: pathlib.Path) -> str:
 
 COMPONENT_BLOCK = re.compile(r'^const (\w+) = AiComponent\(\n(.*?)^\);\n', re.MULTILINE | re.DOTALL)
 NOTICES_BLOCK = re.compile(r'^const (\w+) = AiNoticesFile\(\n(.*?)^\);\n', re.MULTILINE | re.DOTALL)
-STRING_CONST = re.compile(r"^const (_?\w+) = '([^']*)';$", re.MULTILINE)
+# A string constant, on its line or on the next one when dart format wraps a long one
+STRING_CONST = re.compile(r"^const (_?\w+) =\s+'([^']*)';$", re.MULTILINE)
 FIELD = re.compile(r"^  (\w+): (.+),$", re.MULTILINE)
 
 
@@ -1300,9 +1309,32 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
     engines = {engine.component: engine for engine in ENGINES}
     family = {**{component: TAG for component in [*archives, *models]},
               **{component: model.release for component, model in upstream.items()},
-              **{component: TAG_PANORAMAS for component in engines}}
+              **{component: TAG_PANORAMAS for component in engines},
+              **{component: TAG_AV2 for component in AV2_DECODERS}}
     if set(catalogue) != set(family):
         found.append(f'the catalogue has {sorted(catalogue)}; this script knows {sorted(family)}')
+    for component_id in AV2_DECODERS:
+        component = catalogue.get(component_id)
+        if component is None:
+            continue
+        if component.get('releaseTag') != TAG_AV2:
+            found.append(f'{component_id}: in {component.get("releaseTag")}, the AV2 decoder is in {TAG_AV2}')
+        if component.get('licence') not in AV2_LICENCES:
+            found.append(f'{component_id}: licence {component.get("licence")}, the AV2 decoder is under '
+                         f'{", ".join(AV2_LICENCES)}')
+        if component.get('kind') != 'AiComponentKind.archive':
+            found.append(f'{component_id}: the AV2 decoder is an archive')
+        size, digest, files = component.get('size'), component.get('sha256'), component['archiveFiles']
+        if size is None and digest is None and not files:
+            pending.append(component_id)
+        elif not isinstance(size, int) or not hexadecimal(digest) or not files:
+            found.append(f'{component_id}: incomplete in the catalogue (size {size}, sha256 {digest}, {len(files)} files)')
+        else:
+            for path, _, file_digest, _ in files:
+                if not safe_path(path) or not hexadecimal(file_digest):
+                    found.append(f'{component_id}: the file {path!r} of its archive is not a safe path with a sum')
+            if not any(executable for *_, executable in files):
+                found.append(f'{component_id}: its archive holds no program')
     for component_id, component in sorted(catalogue.items()):
         release = family.get(component_id, component.get('releaseTag'))
         if release not in releases:
@@ -1559,8 +1591,11 @@ def main(argv=None) -> int:
         if found:
             return 1
         counted = [component for component in catalogue.values() if component.get('releaseTag') in releases]
+        engines = sorted(component for component in pending if component not in AV2_DECODERS)
+        decoders = sorted(component for component in pending if component in AV2_DECODERS)
         print(f'{len(counted)} components in {", ".join(releases)}, each complete and named with its size and SHA-256 '
-              f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(sorted(pending))}' if pending else ''))
+              f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(engines)}' if engines else '')
+              + (f'; the AV2 decoder waits for {TAG_AV2}: {", ".join(decoders)}' if decoders else ''))
         return 0
     if args.out is None:
         print('--out DIR is needed (or --check)')

@@ -1,0 +1,2334 @@
+{
+ "made": "2026-11-02 14:00:16 CET",
+ "tools": {
+  "avmenc": {
+   "binary": "build/avm-av2enc/avmenc",
+   "commit": "ad715c88d5b1119780b3a82025696ab8e77f5c55",
+   "describe": "ad715c8",
+   "binary_sha256": "15e1f221e065f49f34e1053acd8f62fd5ff225e4d70aaa8bfc83414289734cf9"
+  },
+  "avmdec": {
+   "binary": "build/avm-dec/avmdec",
+   "commit": "966a7d7cd6fcf60360caf5dc413b2aeeb65e144d",
+   "describe": "v1.0.0",
+   "binary_sha256": "953c16d1db8defca758a9c2530ef8fe264797cd3722cc280c307d9fd56c46373"
+  },
+  "dav2d": {
+   "binary": "build/dav2d/tools/dav2d",
+   "commit": "30140b563596a1b14aef808ff021c90288948315",
+   "describe": "0.0.1-525-g30140b56",
+   "binary_sha256": "82fac2746406066b78f7f68f0f1a66f93cf6b748aa13762c604f8a3692720579"
+  },
+  "ffmpeg": {
+   "binary": "/home/frenaud/.local/share/mise/shims/ffmpeg",
+   "version": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
+  }
+ },
+ "source": {
+  "file": "Orbit_around_Fremantle_South_Mole_Lighthouse_at_sunset.webm",
+  "author": "JamesBromberger",
+  "licence": "CC0 1.0",
+  "sha256": "6a245417eb6bb7077f77178ae8697ba1ae6a8f82bdc19136e526ac40130e812d",
+  "frames_used": [
+   750,
+   1049
+  ],
+  "url": "https://commons.wikimedia.org/wiki/File:Orbit_around_Fremantle_South_Mole_Lighthouse_at_sunset.webm"
+ },
+ "files": {
+  "av2-256x144-8bit.ivf": {
+   "kind": "av2",
+   "bits": 8,
+   "width": 256,
+   "height": 144,
+   "fps": "30/1",
+   "frames": 12,
+   "bytes": 5365,
+   "sha256": "fd424a918379d53f3b6d2295aec5b15aeafd2321e735469c45623152681aa28d",
+   "container": "ivf",
+   "index": {
+    "signature": "DKIF",
+    "version": 0,
+    "header_len": 32,
+    "fourcc": "AV02",
+    "width": 256,
+    "height": 144,
+    "rate": 30,
+    "scale": 1,
+    "frames_in_header": 12,
+    "packets": [
+     {
+      "offset": 32,
+      "size": 1698,
+      "pts": 0,
+      "complete": true
+     },
+     {
+      "offset": 1742,
+      "size": 109,
+      "pts": 1,
+      "complete": true
+     },
+     {
+      "offset": 1863,
+      "size": 9,
+      "pts": 3,
+      "complete": true
+     },
+     {
+      "offset": 1884,
+      "size": 7,
+      "pts": 4,
+      "complete": true
+     },
+     {
+      "offset": 1903,
+      "size": 3309,
+      "pts": 6,
+      "complete": true
+     },
+     {
+      "offset": 5224,
+      "size": 91,
+      "pts": 7,
+      "complete": true
+     },
+     {
+      "offset": 5327,
+      "size": 7,
+      "pts": 9,
+      "complete": true
+     },
+     {
+      "offset": 5346,
+      "size": 7,
+      "pts": 10,
+      "complete": true
+     }
+    ],
+    "trailing_bytes": 0,
+    "whole_units": 12,
+    "access_points": [
+     0,
+     6
+    ],
+    "units": [
+     {
+      "index": 0,
+      "offset": 44,
+      "size": 1698,
+      "packet": 0,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 1,
+      "offset": 1754,
+      "size": 95,
+      "packet": 1,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 2,
+      "offset": 1849,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 3,
+      "offset": 1856,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 4,
+      "offset": 1875,
+      "size": 9,
+      "packet": 2,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 5,
+      "offset": 1896,
+      "size": 7,
+      "packet": 3,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 6,
+      "offset": 1915,
+      "size": 3309,
+      "packet": 4,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 7,
+      "offset": 5236,
+      "size": 77,
+      "packet": 5,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 8,
+      "offset": 5313,
+      "size": 7,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 9,
+      "offset": 5320,
+      "size": 7,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 10,
+      "offset": 5339,
+      "size": 7,
+      "packet": 6,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 11,
+      "offset": 5358,
+      "size": 7,
+      "packet": 7,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     }
+    ]
+   },
+   "frame_md5": [
+    "09b1abae0f90a9536779d05c0150e2c2",
+    "9c7577eef292bd93d716ad4611787a85",
+    "a2e8f77bc528ddd3ff991ea4affa2576",
+    "25b59ced2cdf4ee9148d09f47e298ec5",
+    "1b721fba4f21abca8350c5b0ed8e0a7e",
+    "359cbff13563b17be11dbe9623121c0c",
+    "9eb0176c4953125b6a379a9e7a213ee1",
+    "8aa5275f39225948c6151bc590b084e8",
+    "667fcd7420206b8f60f2310fbd50a0a1",
+    "36015d3c2ece7aacb3edf2da8be6cad6",
+    "68e4b7a64021bfe929f42b468879fc0f",
+    "6c2697dca26a92d58d99fb211cc51136"
+   ],
+   "md5_all_frames": {
+    "avmdec --md5": "5a18f2703dfbb812d58d326cac00f746",
+    "dav2d --muxer md5": "5a18f2703dfbb812d58d326cac00f746"
+   },
+   "decoders_equal": true,
+   "decoders": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    },
+    "dav2d_cpumask_avx2": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    },
+    "dav2d_cpumask_0": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    }
+   },
+   "coding_order": {
+    "unit_codes_frame": [
+     0,
+     5,
+     2,
+     1,
+     3,
+     4,
+     6,
+     11,
+     8,
+     7,
+     9,
+     10
+    ],
+    "decoders_agree": true,
+    "frames_out_after_first_k_units": [
+     [
+      0
+     ],
+     [
+      0,
+      5
+     ],
+     [
+      0,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ]
+    ]
+   },
+   "encoder_summary": {
+    "kbps": 104.74,
+    "psnr_overall_db": 42.480009
+   },
+   "encode_reproducible": true
+  },
+  "av2-256x144-8bit.obu": {
+   "kind": "av2",
+   "bits": 8,
+   "width": 256,
+   "height": 144,
+   "fps": "30/1",
+   "frames": 12,
+   "bytes": 5237,
+   "sha256": "f1ba28c2352657d4cb82d56fd6b515bcb3222132d45b6eb5ae8b46d37a376941",
+   "container": "obu",
+   "index": {
+    "whole_units": 12,
+    "access_points": [
+     0,
+     6
+    ],
+    "units": [
+     {
+      "index": 0,
+      "offset": 0,
+      "size": 1698,
+      "packet": null,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 1,
+      "offset": 1698,
+      "size": 95,
+      "packet": null,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 2,
+      "offset": 1793,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 3,
+      "offset": 1800,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 4,
+      "offset": 1807,
+      "size": 9,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 5,
+      "offset": 1816,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 6,
+      "offset": 1823,
+      "size": 3309,
+      "packet": null,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 7,
+      "offset": 5132,
+      "size": 77,
+      "packet": null,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 8,
+      "offset": 5209,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 9,
+      "offset": 5216,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 10,
+      "offset": 5223,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 11,
+      "offset": 5230,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     }
+    ]
+   },
+   "frame_md5": [
+    "09b1abae0f90a9536779d05c0150e2c2",
+    "9c7577eef292bd93d716ad4611787a85",
+    "a2e8f77bc528ddd3ff991ea4affa2576",
+    "25b59ced2cdf4ee9148d09f47e298ec5",
+    "1b721fba4f21abca8350c5b0ed8e0a7e",
+    "359cbff13563b17be11dbe9623121c0c",
+    "9eb0176c4953125b6a379a9e7a213ee1",
+    "8aa5275f39225948c6151bc590b084e8",
+    "667fcd7420206b8f60f2310fbd50a0a1",
+    "36015d3c2ece7aacb3edf2da8be6cad6",
+    "68e4b7a64021bfe929f42b468879fc0f",
+    "6c2697dca26a92d58d99fb211cc51136"
+   ],
+   "md5_all_frames": {
+    "avmdec --md5": "5a18f2703dfbb812d58d326cac00f746",
+    "dav2d --muxer md5": "5a18f2703dfbb812d58d326cac00f746"
+   },
+   "decoders_equal": true,
+   "decoders": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    },
+    "dav2d_cpumask_avx2": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    },
+    "dav2d_cpumask_0": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "5a18f2703dfbb812d58d326cac00f746"
+    }
+   },
+   "coding_order": {
+    "unit_codes_frame": [
+     0,
+     5,
+     2,
+     1,
+     3,
+     4,
+     6,
+     11,
+     8,
+     7,
+     9,
+     10
+    ],
+    "decoders_agree": true,
+    "frames_out_after_first_k_units": [
+     [
+      0
+     ],
+     [
+      0,
+      5
+     ],
+     [
+      0,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ]
+    ]
+   },
+   "equal_to_ivf_payloads": true,
+   "frame_md5_equal_to_ivf": true,
+   "random_access_from_second_access_point": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 6,
+     "equal_to_full_decode_tail": true
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 6,
+     "equal_to_full_decode_tail": true
+    }
+   }
+  },
+  "av2-256x144-10bit.ivf": {
+   "kind": "av2",
+   "bits": 10,
+   "width": 256,
+   "height": 144,
+   "fps": "30/1",
+   "frames": 12,
+   "bytes": 5288,
+   "sha256": "1f1b9f68762ce6e407f587ccacaa703b106ff74f4afd6a42d8cf1a698fef8002",
+   "container": "ivf",
+   "index": {
+    "signature": "DKIF",
+    "version": 0,
+    "header_len": 32,
+    "fourcc": "AV02",
+    "width": 256,
+    "height": 144,
+    "rate": 30,
+    "scale": 1,
+    "frames_in_header": 12,
+    "packets": [
+     {
+      "offset": 32,
+      "size": 1663,
+      "pts": 0,
+      "complete": true
+     },
+     {
+      "offset": 1707,
+      "size": 109,
+      "pts": 1,
+      "complete": true
+     },
+     {
+      "offset": 1828,
+      "size": 9,
+      "pts": 3,
+      "complete": true
+     },
+     {
+      "offset": 1849,
+      "size": 7,
+      "pts": 4,
+      "complete": true
+     },
+     {
+      "offset": 1868,
+      "size": 3260,
+      "pts": 6,
+      "complete": true
+     },
+     {
+      "offset": 5140,
+      "size": 98,
+      "pts": 7,
+      "complete": true
+     },
+     {
+      "offset": 5250,
+      "size": 7,
+      "pts": 9,
+      "complete": true
+     },
+     {
+      "offset": 5269,
+      "size": 7,
+      "pts": 10,
+      "complete": true
+     }
+    ],
+    "trailing_bytes": 0,
+    "whole_units": 12,
+    "access_points": [
+     0,
+     6
+    ],
+    "units": [
+     {
+      "index": 0,
+      "offset": 44,
+      "size": 1663,
+      "packet": 0,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 1,
+      "offset": 1719,
+      "size": 95,
+      "packet": 1,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 2,
+      "offset": 1814,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 3,
+      "offset": 1821,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 4,
+      "offset": 1840,
+      "size": 9,
+      "packet": 2,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 5,
+      "offset": 1861,
+      "size": 7,
+      "packet": 3,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 6,
+      "offset": 1880,
+      "size": 3260,
+      "packet": 4,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 7,
+      "offset": 5152,
+      "size": 84,
+      "packet": 5,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 8,
+      "offset": 5236,
+      "size": 7,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 9,
+      "offset": 5243,
+      "size": 7,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 10,
+      "offset": 5262,
+      "size": 7,
+      "packet": 6,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 11,
+      "offset": 5281,
+      "size": 7,
+      "packet": 7,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     }
+    ]
+   },
+   "frame_md5": [
+    "3b058f724f45a2aa47358127b625d57a",
+    "e1b4cb484f4bd713ce9c721449d2f665",
+    "953859f5b019e999c9d6810d16fd0f84",
+    "942936c070718e8443a55a4553dcb216",
+    "323d7e06b7ba56532c245147e5b99033",
+    "44064630150e38f5b310c50ad7293094",
+    "a080a78c8e82fa1e3d75392c0b9a6b24",
+    "9f769e0fa400880a16fb345894e70a77",
+    "f8526293659e51828f093c818e65c2de",
+    "132e8bb03883b4b45c62e514d4b61bf9",
+    "eea60db3d326acc6ad4730cef38927eb",
+    "9f3705aafa5fd0eebb34d6146817d3b8"
+   ],
+   "md5_all_frames": {
+    "avmdec --md5": "457cc73ee41a520b21b1584ec267ab8f",
+    "dav2d --muxer md5": "457cc73ee41a520b21b1584ec267ab8f"
+   },
+   "decoders_equal": true,
+   "decoders": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    },
+    "dav2d_cpumask_avx2": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    },
+    "dav2d_cpumask_0": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    }
+   },
+   "coding_order": {
+    "unit_codes_frame": [
+     0,
+     5,
+     2,
+     1,
+     3,
+     4,
+     6,
+     11,
+     8,
+     7,
+     9,
+     10
+    ],
+    "decoders_agree": true,
+    "frames_out_after_first_k_units": [
+     [
+      0
+     ],
+     [
+      0,
+      5
+     ],
+     [
+      0,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ]
+    ]
+   },
+   "encoder_summary": {
+    "kbps": 103.2,
+    "psnr_overall_db": 42.751061
+   },
+   "encode_reproducible": true
+  },
+  "av2-256x144-10bit.obu": {
+   "kind": "av2",
+   "bits": 10,
+   "width": 256,
+   "height": 144,
+   "fps": "30/1",
+   "frames": 12,
+   "bytes": 5160,
+   "sha256": "5aa5275a7e7587185ddb7710d0b235bfa32a52afee62f3bc009b82a7171bc736",
+   "container": "obu",
+   "index": {
+    "whole_units": 12,
+    "access_points": [
+     0,
+     6
+    ],
+    "units": [
+     {
+      "index": 0,
+      "offset": 0,
+      "size": 1663,
+      "packet": null,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 1,
+      "offset": 1663,
+      "size": 95,
+      "packet": null,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 2,
+      "offset": 1758,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 3,
+      "offset": 1765,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 4,
+      "offset": 1772,
+      "size": 9,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 5,
+      "offset": 1781,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 6,
+      "offset": 1788,
+      "size": 3260,
+      "packet": null,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 7,
+      "offset": 5048,
+      "size": 84,
+      "packet": null,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 8,
+      "offset": 5132,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 9,
+      "offset": 5139,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 10,
+      "offset": 5146,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 11,
+      "offset": 5153,
+      "size": 7,
+      "packet": null,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     }
+    ]
+   },
+   "frame_md5": [
+    "3b058f724f45a2aa47358127b625d57a",
+    "e1b4cb484f4bd713ce9c721449d2f665",
+    "953859f5b019e999c9d6810d16fd0f84",
+    "942936c070718e8443a55a4553dcb216",
+    "323d7e06b7ba56532c245147e5b99033",
+    "44064630150e38f5b310c50ad7293094",
+    "a080a78c8e82fa1e3d75392c0b9a6b24",
+    "9f769e0fa400880a16fb345894e70a77",
+    "f8526293659e51828f093c818e65c2de",
+    "132e8bb03883b4b45c62e514d4b61bf9",
+    "eea60db3d326acc6ad4730cef38927eb",
+    "9f3705aafa5fd0eebb34d6146817d3b8"
+   ],
+   "md5_all_frames": {
+    "avmdec --md5": "457cc73ee41a520b21b1584ec267ab8f",
+    "dav2d --muxer md5": "457cc73ee41a520b21b1584ec267ab8f"
+   },
+   "decoders_equal": true,
+   "decoders": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    },
+    "dav2d_cpumask_avx2": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    },
+    "dav2d_cpumask_0": {
+     "exit": 0,
+     "frames": 12,
+     "rest_bytes": 0,
+     "md5_all": "457cc73ee41a520b21b1584ec267ab8f"
+    }
+   },
+   "coding_order": {
+    "unit_codes_frame": [
+     0,
+     5,
+     2,
+     1,
+     3,
+     4,
+     6,
+     11,
+     8,
+     7,
+     9,
+     10
+    ],
+    "decoders_agree": true,
+    "frames_out_after_first_k_units": [
+     [
+      0
+     ],
+     [
+      0,
+      5
+     ],
+     [
+      0,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11
+     ],
+     [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ]
+    ]
+   },
+   "equal_to_ivf_payloads": true,
+   "frame_md5_equal_to_ivf": true,
+   "random_access_from_second_access_point": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 6,
+     "equal_to_full_decode_tail": true
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 6,
+     "equal_to_full_decode_tail": true
+    }
+   }
+  },
+  "av2-256x144-8bit-cut.ivf": {
+   "kind": "av2-cut",
+   "bits": 8,
+   "width": 256,
+   "height": 144,
+   "fps": "30/1",
+   "bytes": 5317,
+   "sha256": "65c14fc174d8e340099c326ab21ecd6f2ff04f608174b741d7552d4f11a6a8af",
+   "container": "ivf",
+   "cut_from": "av2-256x144-8bit.ivf",
+   "cut_at_byte": 5317,
+   "cut_in_unit": 8,
+   "cut_in_packet": 5,
+   "index": {
+    "signature": "DKIF",
+    "version": 0,
+    "header_len": 32,
+    "fourcc": "AV02",
+    "width": 256,
+    "height": 144,
+    "rate": 30,
+    "scale": 1,
+    "frames_in_header": 12,
+    "packets": [
+     {
+      "offset": 32,
+      "size": 1698,
+      "pts": 0,
+      "complete": true
+     },
+     {
+      "offset": 1742,
+      "size": 109,
+      "pts": 1,
+      "complete": true
+     },
+     {
+      "offset": 1863,
+      "size": 9,
+      "pts": 3,
+      "complete": true
+     },
+     {
+      "offset": 1884,
+      "size": 7,
+      "pts": 4,
+      "complete": true
+     },
+     {
+      "offset": 1903,
+      "size": 3309,
+      "pts": 6,
+      "complete": true
+     },
+     {
+      "offset": 5224,
+      "size": 91,
+      "pts": 7,
+      "complete": false
+     }
+    ],
+    "trailing_bytes": 0,
+    "whole_units": 8,
+    "access_points": [
+     0,
+     6
+    ],
+    "units": [
+     {
+      "index": 0,
+      "offset": 44,
+      "size": 1698,
+      "packet": 0,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 1,
+      "offset": 1754,
+      "size": 95,
+      "packet": 1,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 2,
+      "offset": 1849,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 3,
+      "offset": 1856,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 4,
+      "offset": 1875,
+      "size": 9,
+      "packet": 2,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 5,
+      "offset": 1896,
+      "size": 7,
+      "packet": 3,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 6,
+      "offset": 1915,
+      "size": 3309,
+      "packet": 4,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 7,
+      "offset": 5236,
+      "size": 77,
+      "packet": 5,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 8,
+      "offset": 5313,
+      "size": 4,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": false
+     }
+    ]
+   },
+   "whole_units": 8,
+   "frames_carried_by_whole_units": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    11
+   ],
+   "contiguous_frames_from_start": 7,
+   "decoders_on_cut_file": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 7,
+     "display_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "stderr_tail": [
+      "Warning: Failed to read full frame"
+     ]
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 7,
+     "display_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "stderr_tail": [
+      "Failed to read frame data: Inappropriate ioctl for device"
+     ]
+    }
+   },
+   "decoders_on_whole_units_as_obu": {
+    "avmdec": {
+     "exit": 0,
+     "frames": 8,
+     "display_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11
+     ],
+     "frame_md5": [
+      "09b1abae0f90a9536779d05c0150e2c2",
+      "9c7577eef292bd93d716ad4611787a85",
+      "a2e8f77bc528ddd3ff991ea4affa2576",
+      "25b59ced2cdf4ee9148d09f47e298ec5",
+      "1b721fba4f21abca8350c5b0ed8e0a7e",
+      "359cbff13563b17be11dbe9623121c0c",
+      "9eb0176c4953125b6a379a9e7a213ee1",
+      "6c2697dca26a92d58d99fb211cc51136"
+     ]
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 8,
+     "display_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11
+     ],
+     "frame_md5": [
+      "09b1abae0f90a9536779d05c0150e2c2",
+      "9c7577eef292bd93d716ad4611787a85",
+      "a2e8f77bc528ddd3ff991ea4affa2576",
+      "25b59ced2cdf4ee9148d09f47e298ec5",
+      "1b721fba4f21abca8350c5b0ed8e0a7e",
+      "359cbff13563b17be11dbe9623121c0c",
+      "9eb0176c4953125b6a379a9e7a213ee1",
+      "6c2697dca26a92d58d99fb211cc51136"
+     ]
+    }
+   }
+  },
+  "av2-256x144-8bit-damaged.ivf": {
+   "kind": "av2-damaged",
+   "bits": 8,
+   "width": 256,
+   "height": 144,
+   "fps": "30/1",
+   "bytes": 5365,
+   "sha256": "1e9ae470b6c3bb7541a681b86f91f9f14be0ab9d56ed32374e2112c76bce26dd",
+   "container": "ivf",
+   "damaged_from": "av2-256x144-8bit.ivf",
+   "damaged_unit": 1,
+   "damaged_bytes": {
+    "offset": 1760,
+    "length": 16,
+    "value": "0xFF",
+    "obu_type": 7,
+    "where": "payload bytes 2 to 17 of the unit's REGULAR_TILE_GROUP OBU"
+   },
+   "index": {
+    "signature": "DKIF",
+    "version": 0,
+    "header_len": 32,
+    "fourcc": "AV02",
+    "width": 256,
+    "height": 144,
+    "rate": 30,
+    "scale": 1,
+    "frames_in_header": 12,
+    "packets": [
+     {
+      "offset": 32,
+      "size": 1698,
+      "pts": 0,
+      "complete": true
+     },
+     {
+      "offset": 1742,
+      "size": 109,
+      "pts": 1,
+      "complete": true
+     },
+     {
+      "offset": 1863,
+      "size": 9,
+      "pts": 3,
+      "complete": true
+     },
+     {
+      "offset": 1884,
+      "size": 7,
+      "pts": 4,
+      "complete": true
+     },
+     {
+      "offset": 1903,
+      "size": 3309,
+      "pts": 6,
+      "complete": true
+     },
+     {
+      "offset": 5224,
+      "size": 91,
+      "pts": 7,
+      "complete": true
+     },
+     {
+      "offset": 5327,
+      "size": 7,
+      "pts": 9,
+      "complete": true
+     },
+     {
+      "offset": 5346,
+      "size": 7,
+      "pts": 10,
+      "complete": true
+     }
+    ],
+    "trailing_bytes": 0,
+    "whole_units": 12,
+    "access_points": [
+     0,
+     6
+    ],
+    "units": [
+     {
+      "index": 0,
+      "offset": 44,
+      "size": 1698,
+      "packet": 0,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 1,
+      "offset": 1754,
+      "size": 95,
+      "packet": 1,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 2,
+      "offset": 1849,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 3,
+      "offset": 1856,
+      "size": 7,
+      "packet": 1,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 4,
+      "offset": 1875,
+      "size": 9,
+      "packet": 2,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 5,
+      "offset": 1896,
+      "size": 7,
+      "packet": 3,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 6,
+      "offset": 1915,
+      "size": 3309,
+      "packet": 4,
+      "obu_types": [
+       2,
+       1,
+       4
+      ],
+      "access_point": true,
+      "complete": true
+     },
+     {
+      "index": 7,
+      "offset": 5236,
+      "size": 77,
+      "packet": 5,
+      "obu_types": [
+       2,
+       7
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 8,
+      "offset": 5313,
+      "size": 7,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 9,
+      "offset": 5320,
+      "size": 7,
+      "packet": 5,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 10,
+      "offset": 5339,
+      "size": 7,
+      "packet": 6,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     },
+     {
+      "index": 11,
+      "offset": 5358,
+      "size": 7,
+      "packet": 7,
+      "obu_types": [
+       2,
+       14
+      ],
+      "access_point": false,
+      "complete": true
+     }
+    ]
+   },
+   "whole_units": 12,
+   "decoders": {
+    "avmdec": {
+     "exit": 1,
+     "frames": 1,
+     "display_indices": [
+      0
+     ],
+     "stderr_tail": [
+      "Warning: Failed to decode frame 2: Corrupt frame detected",
+      "Warning: Additional information: Corrupted segment_ids"
+     ]
+    },
+    "dav2d": {
+     "exit": 0,
+     "frames": 7,
+     "display_indices": [
+      0,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "stderr_tail": [
+      "Error decoding frame: Invalid argument",
+      "Error decoding frame: Invalid argument",
+      "Error decoding frame: Invalid argument"
+     ]
+    }
+   }
+  },
+  "av1-256x144-8bit.ivf": {
+   "kind": "av1-negative",
+   "bits": 8,
+   "width": 256,
+   "height": 144,
+   "frames": 2,
+   "bytes": 442,
+   "sha256": "06617733ad6165abee0345e4e1484bc3f9a8cb7ea1356755172580fe6f10e120",
+   "container": "ivf",
+   "ivf_header": {
+    "signature": "DKIF",
+    "version": 0,
+    "header_len": 32,
+    "fourcc": "AV01",
+    "width": 256,
+    "height": 144,
+    "rate": 30,
+    "scale": 1,
+    "frames_in_header": 2
+   }
+  }
+ },
+ "damage_survey": [
+  {
+   "damage": "unit 1 tile payload bytes 2-17 set to 0xFF (the kept damaged fixture)",
+   "first_byte": 1760,
+   "bytes": 16,
+   "dav2d": {
+    "exit": 0,
+    "display_indices": [
+     0,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": 1,
+    "display_indices": [
+     0
+    ],
+    "last_message": "Warning: Additional information: Corrupted segment_ids"
+   }
+  },
+  {
+   "damage": "unit 1 tile OBU last 8 bytes set to 0x00",
+   "first_byte": 1841,
+   "bytes": 8,
+   "dav2d": {
+    "exit": 0,
+    "display_indices": [
+     0,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": 1,
+    "display_indices": [
+     0
+    ],
+    "last_message": "Warning: Additional information: Failed to decode tile data"
+   }
+  },
+  {
+   "damage": "unit 1 tile payload all set to 0x00",
+   "first_byte": 1758,
+   "bytes": 91,
+   "dav2d": {
+    "exit": 0,
+    "display_indices": [
+     0,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": -11,
+    "display_indices": [],
+    "last_message": ""
+   }
+  },
+  {
+   "damage": "unit 6 key OBU, 16 bytes in the middle set to 0xFF",
+   "first_byte": 3586,
+   "bytes": 16,
+   "dav2d": {
+    "exit": 1,
+    "display_indices": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": 1,
+    "display_indices": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "last_message": "Warning: Additional information: Failed to decode tile data"
+   }
+  },
+  {
+   "damage": "unit 6 key OBU, first 8 payload bytes set to 0xFF",
+   "first_byte": 1945,
+   "bytes": 8,
+   "dav2d": {
+    "exit": 1,
+    "display_indices": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": 1,
+    "display_indices": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "last_message": "Warning: Additional information: Frame dimensions are larger than the maximum values"
+   }
+  },
+  {
+   "damage": "unit 7 tile payload bytes 2-17 set to 0xFF",
+   "first_byte": 5242,
+   "bytes": 16,
+   "dav2d": {
+    "exit": 0,
+    "display_indices": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": 1,
+    "display_indices": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "last_message": "Warning: Additional information: Invalid rst_ref_pic_idx: ref frame frame filter disabled"
+   }
+  },
+  {
+   "damage": "unit 0 sequence header payload all set to 0xFF",
+   "first_byte": 48,
+   "bytes": 23,
+   "dav2d": {
+    "exit": 0,
+    "display_indices": [
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "last_message": "Error decoding frame: Invalid argument"
+   },
+   "avmdec": {
+    "exit": 1,
+    "display_indices": [],
+    "last_message": "Warning: Additional information: Truncated packet"
+   }
+  }
+ ],
+ "total_bytes": 32174,
+ "commands": [
+  "build/avm-av2enc/avmenc --cpu-used=6 --end-usage=q --qp=160 --kf-min-dist=6 --kf-max-dist=6 --threads=1 --test-decode=fatal --psnr --limit=12 --bit-depth=8 --input-bit-depth=8 --ivf -o fixtures/out/av2-256x144-8bit.ivf fixtures/src/lighthouse-256x144-8bit-12f.y4m",
+  "build/avm-av2enc/avmenc --cpu-used=6 --end-usage=q --qp=160 --kf-min-dist=6 --kf-max-dist=6 --threads=1 --test-decode=fatal --psnr --limit=12 --bit-depth=8 --input-bit-depth=8 --obu -o fixtures/out/av2-256x144-8bit.obu fixtures/src/lighthouse-256x144-8bit-12f.y4m",
+  "build/avm-av2enc/avmenc --cpu-used=6 --end-usage=q --qp=160 --kf-min-dist=6 --kf-max-dist=6 --threads=1 --test-decode=fatal --psnr --limit=12 --bit-depth=8 --input-bit-depth=8 --ivf -o fixtures/tmp/again-8.ivf fixtures/src/lighthouse-256x144-8bit-12f.y4m",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/out/av2-256x144-8bit.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask avx2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask 0",
+  "build/avm-dec/avmdec --rawvideo --md5 -t 2 fixtures/out/av2-256x144-8bit.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.ivf --muxer md5 -o - --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/out/av2-256x144-8bit.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask avx2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask 0",
+  "build/avm-dec/avmdec --rawvideo --md5 -t 2 fixtures/out/av2-256x144-8bit.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit.obu --muxer md5 -o - --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/from-ap6.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/from-ap6.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-av2enc/avmenc --cpu-used=6 --end-usage=q --qp=160 --kf-min-dist=6 --kf-max-dist=6 --threads=1 --test-decode=fatal --psnr --limit=12 --bit-depth=10 --input-bit-depth=10 --ivf -o fixtures/out/av2-256x144-10bit.ivf fixtures/src/lighthouse-256x144-10bit-12f.y4m",
+  "build/avm-av2enc/avmenc --cpu-used=6 --end-usage=q --qp=160 --kf-min-dist=6 --kf-max-dist=6 --threads=1 --test-decode=fatal --psnr --limit=12 --bit-depth=10 --input-bit-depth=10 --obu -o fixtures/out/av2-256x144-10bit.obu fixtures/src/lighthouse-256x144-10bit-12f.y4m",
+  "build/avm-av2enc/avmenc --cpu-used=6 --end-usage=q --qp=160 --kf-min-dist=6 --kf-max-dist=6 --threads=1 --test-decode=fatal --psnr --limit=12 --bit-depth=10 --input-bit-depth=10 --ivf -o fixtures/tmp/again-10.ivf fixtures/src/lighthouse-256x144-10bit-12f.y4m",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/out/av2-256x144-10bit.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask avx2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask 0",
+  "build/avm-dec/avmdec --rawvideo --md5 -t 2 fixtures/out/av2-256x144-10bit.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.ivf --muxer md5 -o - --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/out/av2-256x144-10bit.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask avx2",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2 --cpumask 0",
+  "build/avm-dec/avmdec --rawvideo --md5 -t 2 fixtures/out/av2-256x144-10bit.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-10bit.obu --muxer md5 -o - --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/from-ap6.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/from-ap6.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/out/av2-256x144-8bit-cut.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit-cut.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/cut-whole-units.obu",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/cut-whole-units.obu --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/out/av2-256x144-8bit-damaged.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/out/av2-256x144-8bit-damaged.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
+  "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
+  "/home/frenaud/.local/share/mise/shims/ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse-256x144-8bit-12f.y4m -frames:v 2 -c:v libaom-av1 -cpu-used 8 -crf 50 -g 2 -threads 1 -f ivf fixtures/out/av1-256x144-8bit.ivf"
+ ]
+}
