@@ -131,7 +131,7 @@ void main() {
       }
     });
 
-    test('the laptop with the app on the Intel (Windows set to power saving for it): 4K and more want the RTX', () {
+    test('the laptop with the app on the Intel (a build without the exports): 4K and more want the RTX', () {
       final machine = (inUse: _intel, gpus: _laptop);
       // The video of the report, a Samsung S24+ 8K, and the 4K sizes
       for (final (width, height) in [
@@ -158,6 +158,45 @@ void main() {
           advice: VideoGpuAdvice.none,
         );
       }
+    });
+
+    test('the laptop with Power saving chosen for the app in Windows: Windows names the Intel as its high performance '
+        'card too, and the RTX is still the one to suggest', () {
+      // What the branch build logged on the development laptop with GpuPreference=1 for it (2 November 2026, 14:10):
+      // "Intel(R) UHD Graphics (high performance, power saving, in use); NVIDIA GeForce RTX 4060 Laptop GPU; ..."
+      final powerSaving = GpuList(
+        adapters: _laptop.adapters,
+        highPerformance: _laptop.adapters[0].luid,
+        minimumPower: _laptop.adapters[0].luid,
+      );
+      expectChoice(
+        chooseVideoGpu((inUse: _intel, gpus: powerSaving), width: 7680, height: 4320),
+        card: 'NVIDIA GeForce RTX 4060 Laptop GPU',
+        onIt: false,
+        advice: VideoGpuAdvice.useHighPerformanceCard,
+      );
+      expectChoice(
+        chooseVideoGpu((inUse: _intel, gpus: powerSaving), width: 1920, height: 1080),
+        card: 'Intel(R) UHD Graphics',
+        onIt: true,
+        advice: VideoGpuAdvice.none,
+      );
+      // The same setting on the AMD laptop below, whose integrated GPU the list does not take for one
+      final apu = _card('AMD Radeon 780M', integrated: true, luid: 'c', dedicatedMB: 2048);
+      final amd = GpuList(
+        adapters: [
+          _card('AMD Radeon 780M', integrated: false, luid: 'c', dedicatedMB: 2048),
+          _card('AMD Radeon RX 7600S', integrated: false, luid: 'd', dedicatedMB: 8176),
+        ],
+        highPerformance: 'c',
+        minimumPower: 'c',
+      );
+      expectChoice(
+        chooseVideoGpu((inUse: apu, gpus: amd), width: 3840, height: 2160),
+        card: 'AMD Radeon RX 7600S',
+        onIt: false,
+        advice: VideoGpuAdvice.useHighPerformanceCard,
+      );
     });
 
     test('a desktop with one card, and a laptop with an integrated GPU only: nothing better to suggest', () {

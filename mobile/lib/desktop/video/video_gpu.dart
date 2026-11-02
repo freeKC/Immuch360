@@ -72,19 +72,20 @@ bool sameGpu(GpuAdapter a, GpuAdapter b) =>
     a.luid.isNotEmpty && b.luid.isNotEmpty ? a.luid == b.luid : a.key == b.key && a.name == b.name;
 
 /// The high performance card of [gpus] when it is another than [inUse] and better suited to a large video: Windows'
-/// own answer (IDXGIFactory6) when it gives one, else a card with memory of its own beside an integrated card in use.
-/// Null when the card in use is the best the computer has, or when nothing tells.
+/// own answer (IDXGIFactory6) first, then a card with memory of its own beside the integrated card in use. Windows
+/// answers with the card its graphics setting gives the app: with Power saving chosen for Immuch360, that is the
+/// integrated card in use (seen on the development laptop), and the card to suggest is then among the others. Null
+/// when the card in use is the best the computer has, or when nothing tells.
 GpuAdapter? _betterCard(GpuAdapter inUse, GpuList gpus) {
   if (!inUse.integrated) {
     return null;
   }
   final named = gpus.byLuid(gpus.highPerformance);
-  final candidates = named != null
-      ? [named]
-      : [
-          for (final gpu in gpus.adapters)
-            if (!gpu.integrated) gpu,
-        ];
+  final candidates = [
+    ?named,
+    for (final gpu in gpus.adapters)
+      if (!gpu.integrated) gpu,
+  ];
   for (final gpu in candidates) {
     if (!gpu.software && !gpu.integrated && !sameGpu(gpu, inUse)) {
       return gpu;
