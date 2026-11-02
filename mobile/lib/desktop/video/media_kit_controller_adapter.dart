@@ -19,7 +19,11 @@
 // - the link: what the media bridge reads of the file (every streamed video goes through it here) and mpv's wait are
 //   told as the Android player tells its own (onLinkChanged, NativeVideoLink), twice a second, so that a slow share
 //   or server is never taken for a dead one while bytes arrive, and mpv's wait after a stall follows the link (the
-//   rule of video_link_rule.dart);
+//   rule of video_link_rule.dart); for an AV2 video the link is its decoder (av2_playback.dart), the pictures it
+//   decodes a second against those the video needs, by the same rule, and a decoder that stopped fails the video
+//   with its reason;
+// - the companion of a resource (the AV2 decoder serving its y4m) is let go once the controller loads another video
+//   or is disposed: [release];
 // - audio tracks, which the phones' flat players do not offer: listed here for the audio track button of the
 //   controls (desktop_audio_track_button.dart).
 
@@ -44,6 +48,14 @@ typedef DesktopVideoSourceResolver = Future<String> Function(VideoSource source)
 /// of this computer or one the bridge does not read (see LocalMediaBridge.trafficOf)
 typedef DesktopVideoLinkOf = ({VideoLinkMeter meter, int? size})? Function(String resource);
 
+/// What the decoder of [resource] says when a program of the app decodes it (the AV2 companion, av2_playback.dart):
+/// the frames it decodes a second (null until measured), those the video needs, and why it stopped (null while it
+/// runs); null for a resource mpv decodes itself
+typedef DesktopVideoDecodingOf = ({double? fps, double needed, String? failure})? Function(String resource);
+
+/// Lets go of what serves [resource] (the AV2 companion), once no player of the controller opens it again
+typedef DesktopVideoRelease = Future<void> Function(String resource);
+
 /// The player that played or loaded last: the audio track button of the controls follows it. One video plays at a
 /// time on the computers, the viewer loading only the page on screen.
 final activeDesktopVideo = ValueNotifier<MediaKitVideoPlayerController?>(null);
@@ -57,6 +69,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     this._prepare,
     this._unprepare,
     this._linkOf,
+    this._decodingOf,
+    this._release,
   }) {
     _lease = pool.lease(PlayerKind.playback, label: label, onSuspend: _onSuspend);
   }
@@ -65,6 +79,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   static const linkInterval = Duration(milliseconds: 500);
 
   final DesktopVideoLinkOf? _linkOf;
+  final DesktopVideoDecodingOf? _decodingOf;
+  final DesktopVideoRelease? _release;
   Timer? _linkTimer;
   int? _resumeWaitMs;
 
@@ -216,6 +232,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         (stoppedEarly != null && stoppedEarly.path == videoSource.path ? stoppedEarly.position : Duration.zero);
     await stop();
     final generation = ++_generation;
+    _letGo(_resource);
     _videoSource = null;
     _videoInfo = null;
     _resource = null;
@@ -234,6 +251,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       return;
     }
     if (_disposed || generation != _generation) {
+      // Loaded again or disposed meanwhile: nobody opens it
+      _letGo(resource);
       return;
     }
     _resource = resource;
@@ -376,6 +395,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _positionTimer?.cancel();
     _linkTimer?.cancel();
     final engine = _engine;
+    final resource = _resource;
     _unbind();
     if (identical(activeDesktopVideo.value, this)) {
       activeDesktopVideo.value = null;
@@ -389,8 +409,23 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         await _lease.guard(() => _undoPrepare(engine));
       }
       await _lease.release();
+      // After the player let go of it: the companion stops with nothing reading
+      _letGo(resource);
     }());
     super.dispose();
+  }
+
+  /// Lets go of what serves [resource], when something does (see [_release])
+  void _letGo(String? resource) {
+    final release = _release;
+    if (resource == null || release == null) {
+      return;
+    }
+    unawaited(
+      release(resource).catchError((Object error, StackTrace stackTrace) {
+        _log.warning('What served a video could not be let go', error, stackTrace);
+      }),
+    );
   }
 
   /// The player for a call, taken from the pool when needed. After a suspension the video opens again where it was,
@@ -666,6 +701,12 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     final position = engine.position.value;
     final duration = engine.duration.value;
     final tolerance = duration ~/ 100 > endTolerance ? duration ~/ 100 : endTolerance;
+    final decoderFailure = _decoderFailure();
+    if (decoderFailure != null) {
+      // The decoder of the app stopped (the AV2 companion): its reason, rather than a file that could not be read
+      _failDecoder(engine, decoderFailure);
+      return;
+    }
     if (duration > Duration.zero && position < duration - tolerance) {
       // mpv 0.39 takes a read error for the end of the file, after FFmpeg's reconnects too, plays what it had, and
       // stops there (keep-open) without a failure: the share, the server or the drive went away
@@ -701,12 +742,24 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   void _onAudioTrack() => _audioTrack.value = _engine?.audioTrack.value;
 
+  /// Why the decoder of the app that decodes the open video stopped, null when it runs or mpv decodes the video
+  String? _decoderFailure() {
+    final resource = _resource;
+    return resource == null ? null : _decodingOf?.call(resource)?.failure;
+  }
+
+  /// The decoder of the app stopped on the video: the video fails with its reason, the player lets go of it
+  void _failDecoder(PlaybackEngine engine, String reason) {
+    _fail(_generation, 'The AV2 decoder stopped on this video: $reason');
+    unawaited(_onEngine(engine, engine.stop));
+  }
+
   /// Tells the link of the streamed video open, every [linkInterval] until it is stopped (see [_tellLink])
   void _startLink() {
     _linkTimer?.cancel();
     _linkTimer = null;
     final resource = _resource;
-    if (_linkOf == null || resource == null || !resource.startsWith('http')) {
+    if ((_linkOf == null && _decodingOf == null) || resource == null || !resource.startsWith('http')) {
       return;
     }
     _linkOpened = true;
@@ -719,6 +772,11 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     final engine = _engine;
     final resource = _resource;
     if (_disposed || _unloaded || engine == null || resource == null) {
+      return;
+    }
+    final decoding = _decodingOf?.call(resource);
+    if (decoding != null) {
+      _tellDecoder(engine, decoding);
       return;
     }
     final traffic = _linkOf?.call(resource);
@@ -751,6 +809,37 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       loading: waiting || aheadMs < (DesktopPlayerOptions.streamedCacheSeconds - 5) * 1000,
       receivedBytes: meter.receivedBytes,
       network: meter.started,
+    );
+    final resumeMs = linkTargetMs(ratio, rebuffering: true);
+    if (ratio != null && resumeMs != _resumeWaitMs) {
+      _resumeWaitMs = resumeMs;
+      unawaited(_onEngine(engine, () => engine.setResumeWait(Duration(milliseconds: resumeMs))));
+    }
+  }
+
+  /// The link of a video a program of the app decodes (the AV2 companion): its frames a second against those the
+  /// video needs at its speed, the same rule as a network's for the wait (plan of the AV2 videos, section 1.4)
+  void _tellDecoder(PlaybackEngine engine, ({double? fps, double needed, String? failure}) decoding) {
+    final failure = decoding.failure;
+    if (failure != null) {
+      _failDecoder(engine, failure);
+      return;
+    }
+    final stalled = _ready && engine.buffering.value;
+    final waiting = !_ready || stalled;
+    final fps = decoding.fps;
+    final needed = decoding.needed * _speed;
+    final ratio = fps != null && needed > 0 ? fps / needed : null;
+    final ahead = engine.buffered.value - engine.position.value;
+    final aheadMs = ahead > Duration.zero ? ahead.inMilliseconds : 0;
+    onLinkChanged.value = NativeVideoLink(
+      waiting: waiting,
+      rebuffering: stalled,
+      aheadMs: aheadMs,
+      targetMs: waiting ? linkTargetMs(ratio, rebuffering: stalled) : 0,
+      loading: waiting || aheadMs < (DesktopPlayerOptions.streamedCacheSeconds - 5) * 1000,
+      framesPerSecond: fps,
+      neededFramesPerSecond: needed,
     );
     final resumeMs = linkTargetMs(ratio, rebuffering: true);
     if (ratio != null && resumeMs != _resumeWaitMs) {

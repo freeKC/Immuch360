@@ -6,9 +6,10 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 
 /// What the link of a video brings against what the video needs, while the video waits for it: "Loading: 1.2 Mbit/s
-/// of the 3 Mbit/s this video needs", and "Starts in about 12 s" while the player waits for more than it has (see
-/// VideoLinkView). Nothing while nothing is measured, and nothing once the link stopped sending (the failure panel or
-/// the page says so).
+/// of the 3 Mbit/s this video needs", or for a video decoded by the processor (an AV2 video of the computers)
+/// "Decoding: 18 of the 24 frames per second this video needs", and "Starts in about 12 s" while the player waits for
+/// more than it has (see VideoLinkView). Nothing while nothing is measured, and nothing once the link stopped sending
+/// (the failure panel or the page says so).
 class VideoLoadingLine extends StatelessWidget {
   const VideoLoadingLine({super.key, required this.link, this.color = Colors.white});
 
@@ -43,10 +44,15 @@ String? videoLoadingText(VideoLinkView? view, Translations t, {required String l
   if (view == null || view.dead || !view.showsRates) {
     return null;
   }
-  final rates = t.video_loading_rate(
-    got: formatBitRate(view.bitsPerSecond!, t, locale: locale),
-    need: formatBitRate(view.neededBitsPerSecond!, t, locale: locale),
-  );
+  final rates = view.isDecoder
+      ? t.av2_decoding_rate(
+          got: NumberFormat.decimalPattern(locale).format(view.framesPerSecond!.round()),
+          need: NumberFormat.decimalPattern(locale).format(view.neededFramesPerSecond!.round()),
+        )
+      : t.video_loading_rate(
+          got: formatBitRate(view.bitsPerSecond!, t, locale: locale),
+          need: formatBitRate(view.neededBitsPerSecond!, t, locale: locale),
+        );
   final startsIn = view.startsIn;
   if (startsIn == null) {
     return rates;

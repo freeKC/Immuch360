@@ -60,6 +60,8 @@ class VideoLinkView {
     this.dead = false,
     this.waitedFor = Duration.zero,
     this.loading = false,
+    this.framesPerSecond,
+    this.neededFramesPerSecond,
   });
 
   final bool waiting;
@@ -75,8 +77,21 @@ class VideoLinkView {
   /// How long the wait under way lasts, zero while it does not wait
   final Duration waitedFor;
 
+  /// The link is a decoder (an AV2 video of the computers, decoded by the processor): the pictures it decodes per
+  /// second against those the video needs ("Decoding: 18 of the 24 frames per second this video needs"), in place of
+  /// the bits of a network
+  final double? framesPerSecond;
+  final double? neededFramesPerSecond;
+
+  bool get isDecoder => neededFramesPerSecond != null;
+
   /// What the link brings per second against what the video consumes, null until both are measured
   double? get ratio {
+    if (isDecoder) {
+      final fps = framesPerSecond;
+      final needed = neededFramesPerSecond!;
+      return fps == null || needed <= 0 ? null : fps / needed;
+    }
     final got = bitsPerSecond;
     final need = neededBitsPerSecond;
     return got == null || need == null || need <= 0 ? null : got / need;
@@ -99,11 +114,23 @@ class VideoLinkView {
       other.slow == slow &&
       other.dead == dead &&
       other.waitedFor == waitedFor &&
-      other.loading == loading;
+      other.loading == loading &&
+      other.framesPerSecond == framesPerSecond &&
+      other.neededFramesPerSecond == neededFramesPerSecond;
 
   @override
-  int get hashCode =>
-      Object.hash(waiting, bitsPerSecond, neededBitsPerSecond, startsIn, slow, dead, waitedFor, loading);
+  int get hashCode => Object.hash(
+    waiting,
+    bitsPerSecond,
+    neededBitsPerSecond,
+    startsIn,
+    slow,
+    dead,
+    waitedFor,
+    loading,
+    framesPerSecond,
+    neededFramesPerSecond,
+  );
 
   @override
   String toString() =>
@@ -501,6 +528,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       dead: dead,
       waitedFor: waitedFor,
       loading: link.loading,
+      framesPerSecond: link.framesPerSecond,
+      neededFramesPerSecond: link.neededFramesPerSecond,
     );
   }
 

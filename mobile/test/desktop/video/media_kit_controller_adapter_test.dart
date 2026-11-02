@@ -96,6 +96,142 @@ void main() {
     });
   });
 
+  group('an AV2 video, decoded by the app\'s companion (lot AD3)', () {
+    const companionUrl = 'http://127.0.0.1:50123/AbCdEfGhIjKlMnOp0123456789abcdef/video.y4m';
+
+    test(
+      'its link is the decoder: the frames it decodes against those the video needs, the same rule for the wait',
+      () {
+        fakeAsync((async) {
+          players = FakePlayers();
+          ({double? fps, double needed, String? failure})? decoding = (fps: null, needed: 24, failure: null);
+          final video = MediaKitVideoPlayerController(
+            pool: players.pool,
+            resolve: _asIs,
+            positionInterval: Duration.zero,
+            linkOf: (resource) => fail('the bridge measures no companion'),
+            decodingOf: (resource) => resource == companionUrl ? decoding : null,
+          );
+          unawaited(_network(companionUrl).then(video.loadVideoSource));
+          async.flushMicrotasks();
+          final engine = players.made.single;
+          expect(engine.calls.single, 'open $companionUrl at 0 streamed');
+          engine.duration.value = const Duration(seconds: 2);
+          async.elapse(const Duration(milliseconds: 600));
+          var link = video.onLinkChanged.value!;
+          expect(
+            (link.waiting, link.isDecoder, link.framesPerSecond, link.neededFramesPerSecond, link.network),
+            (true, true, null, 24.0, false),
+          );
+          expect(engine.resumeWaits, isEmpty, reason: 'nothing measured yet');
+
+          // 7 of the 24 frames a second (cosmos 4K in 10 bits on ai1): mpv waits for 42 s of video after a stall, at
+          // most 30 (60 s x (1 - 0.3))
+          decoding = (fps: 7.2, needed: 24, failure: null);
+          async.elapse(const Duration(milliseconds: 500));
+          link = video.onLinkChanged.value!;
+          expect(link.ratio, closeTo(0.3, 0.001));
+          expect(engine.resumeWaits.last, const Duration(seconds: 30));
+          // Twice the speed of the video: 2 s after a stall, as a fast link
+          decoding = (fps: 48, needed: 24, failure: null);
+          async.elapse(const Duration(milliseconds: 500));
+          expect(engine.resumeWaits.last, const Duration(seconds: 2));
+          // At speed x2 the same decoder is just fast enough: 4 s after a stall
+          unawaited(video.setPlaybackSpeed(2));
+          async.elapse(const Duration(milliseconds: 500));
+          expect(video.onLinkChanged.value!.neededFramesPerSecond, 48);
+          expect(engine.resumeWaits.last, const Duration(seconds: 4));
+
+          unawaited(video.stop());
+          async.flushMicrotasks();
+          video.dispose();
+          async.flushMicrotasks();
+        });
+      },
+    );
+
+    test('its decoder stopped: the video fails with the reason, and the player lets go of it', () {
+      fakeAsync((async) {
+        players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(seconds: 2));
+        String? failure;
+        final video = MediaKitVideoPlayerController(
+          pool: players.pool,
+          resolve: _asIs,
+          positionInterval: Duration.zero,
+          decodingOf: (resource) => (fps: 120, needed: 30, failure: failure),
+        );
+        unawaited(_network(companionUrl).then(video.loadVideoSource));
+        async.elapse(const Duration(seconds: 1));
+        expect(video.onError.value, isNull);
+        failure = 'immuch360-av2 ended with -9: ';
+        async.elapse(const Duration(milliseconds: 600));
+        expect(video.onError.value, 'The AV2 decoder stopped on this video: immuch360-av2 ended with -9: ');
+        expect(video.onPlaybackStatusChanged.value, PlaybackStatus.stopped);
+        expect(players.made.single.calls.last, 'stop');
+        video.dispose();
+        async.flushMicrotasks();
+      });
+    });
+
+    test(
+      'the end of the y4m cut by a decoder that stopped says the decoder, not a file that could not be read',
+      () async {
+        String? failure;
+        final video = MediaKitVideoPlayerController(
+          pool: players.pool,
+          resolve: _asIs,
+          positionInterval: Duration.zero,
+          decodingOf: (resource) => (fps: 120, needed: 30, failure: failure),
+        );
+        await video.loadVideoSource(await _network(companionUrl));
+        await pumpEventQueue();
+        final engine = players.made.single;
+        engine.position.value = const Duration(seconds: 3);
+        failure = 'dav2d error -22 at picture 90';
+        engine.completed.value = true;
+        expect(video.onError.value, 'The AV2 decoder stopped on this video: dav2d error -22 at picture 90');
+        video.dispose();
+      },
+    );
+
+    test('its companion is let go once another video loads, and when the controller goes', () async {
+      final released = <String>[];
+      final video = MediaKitVideoPlayerController(
+        pool: players.pool,
+        resolve: _asIs,
+        positionInterval: Duration.zero,
+        release: (resource) async => released.add(resource),
+      );
+      await video.loadVideoSource(await _network(companionUrl));
+      await video.stop();
+      expect(released, isEmpty, reason: 'a play after a stop opens it again');
+      await video.loadVideoSource(await _network(_bridgeUrl));
+      expect(released, [companionUrl]);
+      video.dispose();
+      await pumpEventQueue();
+      expect(released, [companionUrl, _bridgeUrl]);
+    });
+
+    test('a load replaced while its source resolves lets go of what it resolved', () async {
+      final released = <String>[];
+      final resolving = Completer<String>();
+      final video = MediaKitVideoPlayerController(
+        pool: players.pool,
+        resolve: (source) => source.path == companionUrl ? resolving.future : _asIs(source),
+        positionInterval: Duration.zero,
+        release: (resource) async => released.add(resource),
+      );
+      final first = _network(companionUrl).then(video.loadVideoSource);
+      await pumpEventQueue();
+      await video.loadVideoSource(await _network(_bridgeUrl));
+      resolving.complete(companionUrl);
+      await first;
+      expect(released, [companionUrl]);
+      video.dispose();
+      await pumpEventQueue();
+    });
+  });
+
   test('a film opened again a while after its share failed is no dead link while its first bytes come', () {
     fakeAsync((async) {
       players = FakePlayers();
