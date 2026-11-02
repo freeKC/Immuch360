@@ -10,6 +10,9 @@ import 'ci_scripts.dart';
 const _kernel = ['KERNEL32.dll', 'api-ms-win-crt-runtime-l1-1-0.dll'];
 const _runtime = ['MSVCP140.dll', 'VCRUNTIME140.dll', 'VCRUNTIME140_1.dll'];
 
+/// What the runner exports for the drivers of a laptop with two graphics cards (mobile/windows/runner/main.cpp)
+const _gpuExports = {'NvOptimusEnablement': 1, 'AmdPowerXpressRequestHighPerformance': 1};
+
 void main() {
   late Directory root;
 
@@ -20,7 +23,10 @@ void main() {
   /// A Flutter Windows Release folder as the build leaves it, the Visual C++ redistributable folder and the System32
   /// folder of a clean Windows, all fakes
   void writeBuild({List<String> pluginImports = const ['flutter_windows.dll', ..._runtime, ..._kernel]}) {
-    writePe('Release/immuch360.exe', fakePe(imports: ['flutter_windows.dll', 'plugin.dll', ..._runtime, ..._kernel]));
+    writePe(
+      'Release/immuch360.exe',
+      fakePe(imports: ['flutter_windows.dll', 'plugin.dll', ..._runtime, ..._kernel], exports: _gpuExports),
+    );
     writePe('Release/flutter_windows.dll', fakePe(imports: _kernel, delayImports: ['dbghelp.dll']));
     writePe('Release/plugin.dll', fakePe(imports: pluginImports));
     writePe('Release/dartjni.dll', fakePe(imports: ['jvm.dll', ..._kernel]));
@@ -92,13 +98,24 @@ void main() {
         'machine': 'x64',
         'imports': ['KERNEL32.dll', 'flutter_windows.dll'],
         'delay_imports': ['dwmapi.dll'],
+        'exports': <String, int>{},
       });
       expect(result['b.dll'], {
         'machine': 'x86',
         'imports': ['USER32.dll'],
         'delay_imports': <String>[],
+        'exports': <String, int>{},
       });
       expect((result['c.dll'] as Map)['machine'], 'arm64');
+    });
+
+    test('reads the data exports of a PE file with their values', () {
+      writePe('a.exe', fakePe(imports: _kernel, exports: {'NvOptimusEnablement': 1, 'Other': 0x12345678}));
+      final run = runCiScript('windows_bundle.py', ['--imports', path('a.exe')]);
+      expect(run.exitCode, 0, reason: '$run');
+      final result = jsonDecode(run.output) as Map<String, dynamic>;
+      expect((result['a.exe'] as Map)['exports'], {'NvOptimusEnablement': 1, 'Other': 0x12345678});
+      expect((result['a.exe'] as Map)['imports'], _kernel);
     });
 
     test('says when a file is not a PE file', () {
@@ -184,9 +201,37 @@ void main() {
       expect(run.output, contains('plugin.dll: built for arm64, the folder is x64'));
     });
 
+    group('the high performance graphics card', () {
+      test('the executable asks for it', () {
+        writeBuild();
+        final run = bundle();
+        expect(run.exitCode, 0, reason: '$run');
+        expect(run.output, contains('immuch360.exe: asks for the high performance graphics card'));
+      });
+
+      test('refuses an executable that does not export both values, or exports another value, and makes no ZIP', () {
+        final imports = ['flutter_windows.dll', 'plugin.dll', ..._runtime, ..._kernel];
+        writeBuild();
+        writePe('Release/immuch360.exe', fakePe(imports: imports));
+        var run = bundle();
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('immuch360.exe: does not export NvOptimusEnablement'));
+        expect(run.output, contains('immuch360.exe: does not export AmdPowerXpressRequestHighPerformance'));
+        expect(File(path('dist/Immuch360-Desktop-test-windows-x64.zip')).existsSync(), isFalse);
+
+        writePe(
+          'Release/immuch360.exe',
+          fakePe(imports: imports, exports: {'NvOptimusEnablement': 0, 'AmdPowerXpressRequestHighPerformance': 1}),
+        );
+        run = bundle();
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('immuch360.exe: exports NvOptimusEnablement at 0, expected 1'));
+      });
+    });
+
     group('--file-version', () {
       Uint8List executable(List<int>? version) => Uint8List.fromList([
-        ...fakePe(imports: ['flutter_windows.dll', 'plugin.dll', ..._runtime, ..._kernel]),
+        ...fakePe(imports: ['flutter_windows.dll', 'plugin.dll', ..._runtime, ..._kernel], exports: _gpuExports),
         if (version != null) ...fakeVersionInfo(version),
       ]);
 
