@@ -4,7 +4,9 @@
 //
 // A muted player of the pool, without texture or audio, opens the file or the bridge URL, goes to the frame asked
 // for (past a black first frame or a fade in), and mpv's screenshot of that frame is scaled and encoded as a JPEG in
-// another isolate (DesktopPlayer.grabFrame). One grab at a time: each is a decoder, and an 8K HEVC one is heavy. The
+// another isolate (DesktopPlayer.grabFrame). An AV2 video (.ivf, .obu) is opened through the URL of its companion,
+// started for the grab and stopped after it (av2_playback.dart); without the AV2 decoder installed it gives no frame,
+// and the caller shows its tile without one (no download without a gesture: plan of the AV2 videos, section 1.2). One grab at a time: each is a decoder, and an 8K HEVC one is heavy. The
 // callers keep the results as the phones keep theirs: the share tiles in the video thumbnail disk cache, the library
 // in its thumbnail cache.
 
@@ -12,6 +14,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:logging/logging.dart';
@@ -23,7 +26,8 @@ class VideoThumbnailGrabber {
     this._pool,
     this.openTimeout = const Duration(seconds: 30),
     this.frameTimeout = const Duration(seconds: 15),
-  });
+    Av2Playbacks? Function()? av2,
+  }) : _av2 = av2 ?? (() => Av2Playbacks.app);
 
   /// The grabber of the app, on the app's pool
   static final shared = VideoThumbnailGrabber();
@@ -38,6 +42,9 @@ class VideoThumbnailGrabber {
 
   PlayerPool get _players => _pool ?? desktopPlayerPool;
 
+  /// The AV2 videos' companions: the app's once its window started
+  final Av2Playbacks? Function() _av2;
+
   Future<void> _turn = Future.value();
 
   /// A JPEG of the frame at [time] of [resource] (a path of this computer or a media bridge URL), scaled into [box];
@@ -50,6 +57,28 @@ class VideoThumbnailGrabber {
   }
 
   Future<Uint8List?> _grab(String resource, Duration time, FrameBox box) async {
+    final av2 = _av2();
+    String? served;
+    if (av2 != null) {
+      try {
+        served = await av2.openResource(resource, forThumbnail: true);
+      } on Av2NotAv2 {
+        // Another codec in an .ivf: as any video
+      } on Av2PlaybackException catch (error) {
+        _log.fine('No thumbnail of an AV2 video: $error');
+        return null;
+      }
+    }
+    try {
+      return await _grabFrame(served ?? resource, time, box);
+    } finally {
+      if (served != null) {
+        await av2!.release(served);
+      }
+    }
+  }
+
+  Future<Uint8List?> _grabFrame(String resource, Duration time, FrameBox box) async {
     final lease = _players.lease(PlayerKind.thumbnail, label: 'thumbnails');
     // Wakes the waits below at each event of the player
     final changed = StreamController<void>.broadcast();

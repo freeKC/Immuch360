@@ -8,18 +8,29 @@
 // the view shows it, hidden until a video is ready, and the controller reports the load as an error, which the page
 // shows with its Retry.
 
+import 'dart:async';
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/network/immich_server_file_system.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
+import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_sources.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -56,6 +67,8 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
       label: 'video view',
       resolve: widget.resolve ?? (_playable ? desktopAppVideoResolver(ref) : _unavailable),
       linkOf: widget.resolve == null ? desktopAppVideoLink(ref) : null,
+      decodingOf: widget.resolve == null ? desktopAppVideoDecoding(ref) : null,
+      release: widget.resolve == null ? desktopAppVideoRelease(ref) : null,
     );
     // After the first frame, as the platform view calls back once it exists
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -111,10 +124,11 @@ DesktopVideoLinkOf desktopAppVideoLink(WidgetRef ref) {
   };
 }
 
-/// What the app's players are given for a source: through the app's media bridge and the server the app uses (see
-/// desktop_video_sources.dart)
+/// What the app's players are given for a source: through the app's media bridge and the server the app uses, and
+/// the AV2 companion for an AV2 video (see desktop_video_sources.dart)
 DesktopVideoSourceResolver desktopAppVideoResolver(WidgetRef ref) {
   final bridge = ref.read(mediaBridgeProvider);
+  final av2 = ref.read(av2PlaybacksProvider);
   String? endpoint() => Store.tryGet(StoreKey.serverEndpoint);
   return (source) => resolveDesktopVideoSource(
     source,
@@ -122,5 +136,50 @@ DesktopVideoSourceResolver desktopAppVideoResolver(WidgetRef ref) {
     serverEndpoint: endpoint(),
     // The app's client at each request: it changes with the network settings
     serverFileSystem: () => ImmichServerFileSystem(endpoint: endpoint, client: () => NetworkRepository.client),
+    av2: av2,
   );
 }
+
+/// What the decoder of an AV2 video tells the link of its player (Av2Playbacks.decodingOf)
+DesktopVideoDecodingOf desktopAppVideoDecoding(WidgetRef ref) => ref.read(av2PlaybacksProvider).decodingOf;
+
+/// The companion of an AV2 video stops once its player lets go of it (Av2Playbacks.release)
+DesktopVideoRelease desktopAppVideoRelease(WidgetRef ref) => ref.read(av2PlaybacksProvider).release;
+
+/// The AV2 videos of the app (av2_playback.dart): the companion of the AV2 decoder installed for this computer,
+/// started by the session of the AI programs (its journal, the job object, immuch360-run), while "AV2 videos
+/// (experimental)" is on; the speeds it measures kept with the decoder measures. Made at the start of the window, so
+/// that the thumbnails of the library and of the shares find it (Av2Playbacks.app).
+final av2PlaybacksProvider = Provider<Av2Playbacks>((ref) {
+  final platform = aiPlatformOf(Abi.current());
+  final component = platform == null
+      ? null
+      : aiComponents
+            .where((entry) => entry.features.contains(AiFeature.av2Video) && entry.platforms.contains(platform))
+            .firstOrNull;
+  final bridge = ref.read(mediaBridgeProvider);
+  final playbacks = Av2Playbacks(
+    companion: () async {
+      if (component == null) {
+        return null;
+      }
+      final main = await ref.read(aiComponentsServiceProvider).verifiedFile(component);
+      return main == null ? null : av2CompanionFilesIn(main.path);
+    },
+    runner: (launcher) => ref.read(aiProcessSessionProvider).runner(linuxLauncher: launcher),
+    enabled: () => SettingsRepository.instance.appConfig.viewer.av2Videos,
+    decoderVersion: component?.version ?? '',
+    loadMeasure: DecoderMeasureStore.shared.av2Speed,
+    recordMeasure: DecoderMeasureStore.shared.recordAv2Speed,
+    parentPid: pid,
+    bridge: bridge is LocalMediaBridge ? bridge.fileOf : null,
+  );
+  Av2Playbacks.app = playbacks;
+  ref.onDispose(() {
+    if (identical(Av2Playbacks.app, playbacks)) {
+      Av2Playbacks.app = null;
+    }
+    unawaited(playbacks.releaseAll());
+  });
+  return playbacks;
+});
