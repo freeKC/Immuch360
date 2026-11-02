@@ -66,10 +66,12 @@ typedef Av2CompanionFiles = ({String program, String? launcher});
 /// program of it, or its folder while the catalogue lists no file of it (no sums yet: the branch of the test build
 /// alone has them). The launcher only on Linux, beside the program.
 Av2CompanionFiles av2CompanionFilesIn(String main, {bool? windows, bool? linux, bool Function(String path)? isFolder}) {
-  final name = av2ProgramFileName(windows: windows);
+  final onWindows = windows ?? io.Platform.isWindows;
+  final path = onWindows ? p.windows : p.posix;
+  final name = av2ProgramFileName(windows: onWindows);
   final folder = (isFolder ?? io.FileSystemEntity.isDirectorySync)(main);
-  final program = folder ? p.join(main, name) : p.join(p.dirname(main), name);
-  final launcher = (linux ?? io.Platform.isLinux) ? p.join(p.dirname(program), _linuxLauncherName) : null;
+  final program = folder ? path.join(main, name) : path.join(path.dirname(main), name);
+  final launcher = (linux ?? io.Platform.isLinux) ? path.join(path.dirname(program), _linuxLauncherName) : null;
   return (program: program, launcher: launcher);
 }
 

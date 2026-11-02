@@ -170,7 +170,7 @@ void main() {
           linux: false,
           isFolder: (_) => true,
         ),
-        (program: p.join(r'C:\c\engines\av2-decoder-windows-x64', 'immuch360-av2.exe'), launcher: null),
+        (program: r'C:\c\engines\av2-decoder-windows-x64\immuch360-av2.exe', launcher: null),
       );
       expect(
         av2CompanionFilesIn('/c/engines/av2-decoder-linux-x64', windows: false, linux: true, isFolder: (_) => true),
