@@ -540,7 +540,10 @@ void main() {
       expect(launched.launches.where((launch) => launch.arguments.first == 'serve'), hasLength(serves));
       // The thumbnail does not ask, Play anyway plays
       final thumbnail = await playbacks.open(Av2Bytes.file(file.path), forThumbnail: true);
+      await readAv2Url(Uri.parse(thumbnail));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
       await playbacks.release(thumbnail);
+      expect(kept, hasLength(2), reason: 'a thumbnail measures nothing');
       playbacks.playAnyway((refusal! as Av2TooSlow).key);
       final anyway = await playbacks.open(Av2Bytes.file(file.path));
       await playbacks.releaseAll();

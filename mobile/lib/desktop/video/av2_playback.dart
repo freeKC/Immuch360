@@ -1172,6 +1172,9 @@ class Av2Playbacks {
   final _sessions = <String, Av2Session>{};
   final _anyway = <String>{};
 
+  /// The URLs served for a thumbnail: a grab measures no speed (a burst of a few pictures, beside the player's start)
+  final _thumbnails = <String>{};
+
   /// The session serving [url], null for another resource
   Av2Session? sessionOf(String url) => _sessions[url];
 
@@ -1211,7 +1214,9 @@ class Av2Playbacks {
     final url = session.url.toString();
     _sessions[url] = session;
     desktopResourceOptions[url] = session.mpvOptions;
-    if (!forThumbnail) {
+    if (forThumbnail) {
+      _thumbnails.add(url);
+    } else {
       session.stat.addListener(() => _measureOnce(session));
     }
     return url;
@@ -1265,7 +1270,9 @@ class Av2Playbacks {
     }
     desktopResourceOptions.remove(resource);
     await session.stop();
-    await _record(session);
+    if (!_thumbnails.remove(resource)) {
+      await _record(session);
+    }
   }
 
   /// Stops every companion, at the close of the app
