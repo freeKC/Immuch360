@@ -163,6 +163,14 @@ void main() {
     // No viewer of splat scenes on the computer, and a .spz carries no XMP to tell it is ours
     expect(inRow('conversion-1', find.byKey(const Key('ai_job_view'))), findsNothing);
     expect(inRow('conversion-1', find.byKey(const Key('ai_job_delete'))), findsNothing);
+    // Saved on this computer: how the headset gets the file, never "Share this computer", which serves the media of
+    // the library only (seen in the test build T1)
+    expect(
+      tester.widget<Text>(inRow('conversion-1', find.byKey(const Key('ai_job_local_only')))).data,
+      "Your headset cannot see this folder: choose a folder on your NAS, or copy the file to the headset's Download "
+      'folder.',
+    );
+    expect(inRow('conversion-1', find.textContaining('Share this computer')), findsNothing);
 
     await tester.tap(inRow('conversion-1', find.byKey(const Key('ai_job_open_folder'))));
     await tester.pump();
@@ -172,9 +180,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('How to open it in the headset'), findsWidgets);
     expect(
-      find.text(
-        "Your headset cannot see this folder: choose a folder on your NAS, or copy the file to the headset's Download "
-        'folder.',
+      find.descendant(
+        of: find.byKey(const Key('ai_job_splat_headset_dialog')),
+        matching: find.text(
+          "Your headset cannot see this folder: choose a folder on your NAS, or copy the file to the headset's "
+          'Download folder.',
+        ),
       ),
       findsOneWidget,
     );

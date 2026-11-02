@@ -591,14 +591,16 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final onShare = publish != null && !kept;
     final folder = onShare ? publish.target.folder.label : (written != null ? p.dirname(written) : job.target?.folder);
     // A version kept in the folder of my choice is on the network when that folder is
+    final isNetwork = publish?.state == SharePublishState.keptHere
+        ? publish!.target.fallbackIsNetwork
+        : info?.isNetwork ?? false;
+    // A splat scene on this computer: how the headset gets it, as the dialog says it; Share this computer serves the
+    // media of the library only, never a .spz
     final localOnly = publish?.state == SharePublishState.notKept
         ? null
-        : localOnlyMessage(
-            t,
-            isNetwork: publish?.state == SharePublishState.keptHere
-                ? publish!.target.fallbackIsNetwork
-                : info?.isNetwork ?? false,
-          );
+        : job.kind == ConversionKind.splatScene
+        ? (isNetwork ? null : t.ai_immersive_splat_headset_local)
+        : localOnlyMessage(t, isNetwork: isNetwork);
     final secondary = TextStyle(color: colors.onSurfaceVariant);
     final stage = job.state.isActive ? conversionStageText(t, job) : null;
     final progress = job.state.isActive ? conversionProgressText(t, job, _left) : null;
