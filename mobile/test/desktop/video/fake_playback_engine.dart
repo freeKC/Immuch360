@@ -39,6 +39,8 @@ class FakePlaybackEngine implements PlaybackEngine {
   @override
   final ValueNotifier<bool?> hasVideo = ValueNotifier(null);
   @override
+  final ValueNotifier<String?> hwdec = ValueNotifier(null);
+  @override
   final ValueNotifier<List<DesktopAudioTrack>> audioTracks = ValueNotifier(const []);
   @override
   final ValueNotifier<String?> audioTrack = ValueNotifier(null);

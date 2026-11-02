@@ -99,9 +99,12 @@ void writeFiles(Directory root, Map<String, String> files) {
 
 /// A PE file reduced to what windows_bundle.py reads: the headers, one section holding the import and delay import
 /// tables and the DLL names. [pe32] makes a 32 bit header, [machine] is 0x8664 (x64), 0xAA64 (arm64) or 0x14C (x86).
+/// [exports] are data exports, each name with the 32 bit value at its address, as a linker lays out
+/// `__declspec(dllexport) DWORD NvOptimusEnablement = 1`: the export directory, then the values after it.
 Uint8List fakePe({
   List<String> imports = const [],
   List<String> delayImports = const [],
+  Map<String, int> exports = const {},
   int machine = 0x8664,
   bool pe32 = false,
 }) {
@@ -118,7 +121,16 @@ Uint8List fakePe({
   final namesOffset = importSize + delaySize;
   final names = [...imports, ...delayImports];
   final namesSize = names.fold<int>(0, (size, name) => size + name.length + 1);
-  final sectionSize = ((namesOffset + namesSize + 0x1FF) ~/ 0x200) * 0x200;
+  int align4(int value) => (value + 3) ~/ 4 * 4;
+  // The export directory (40 bytes), its tables of addresses, name addresses and ordinals, the names, then the values
+  final exported = exports.keys.toList()..sort();
+  final exportOffset = align4(namesOffset + namesSize);
+  final exportTables = 40 + exported.length * 10;
+  final exportNamesSize = exported.fold<int>(0, (size, name) => size + name.length + 1);
+  final exportSize = exported.isEmpty ? 0 : align4(exportTables + exportNamesSize);
+  final valuesOffset = exportOffset + exportSize;
+  final end = exported.isEmpty ? namesOffset + namesSize : valuesOffset + exported.length * 4;
+  final sectionSize = ((end + 0x1FF) ~/ 0x200) * 0x200;
   final bytes = ByteData(sectionRaw + (sectionSize == 0 ? 0x200 : sectionSize));
 
   bytes
@@ -150,6 +162,35 @@ Uint8List fakePe({
     bytes
       ..setUint32(directories + 13 * 8, sectionRva + importSize, Endian.little)
       ..setUint32(directories + 13 * 8 + 4, delaySize, Endian.little);
+  }
+  if (exported.isNotEmpty) {
+    bytes
+      ..setUint32(directories, sectionRva + exportOffset, Endian.little)
+      ..setUint32(directories + 4, exportSize, Endian.little);
+    final directory = sectionRaw + exportOffset;
+    final functions = exportOffset + 40;
+    final namePointers = functions + exported.length * 4;
+    final ordinals = namePointers + exported.length * 4;
+    var nameAt = exportOffset + exportTables;
+    bytes
+      ..setUint32(directory + 16, 1, Endian.little)
+      ..setUint32(directory + 20, exported.length, Endian.little)
+      ..setUint32(directory + 24, exported.length, Endian.little)
+      ..setUint32(directory + 28, sectionRva + functions, Endian.little)
+      ..setUint32(directory + 32, sectionRva + namePointers, Endian.little)
+      ..setUint32(directory + 36, sectionRva + ordinals, Endian.little);
+    for (var i = 0; i < exported.length; i++) {
+      final name = exported[i];
+      bytes
+        ..setUint32(sectionRaw + functions + i * 4, sectionRva + valuesOffset + i * 4, Endian.little)
+        ..setUint32(sectionRaw + namePointers + i * 4, sectionRva + nameAt, Endian.little)
+        ..setUint16(sectionRaw + ordinals + i * 2, i, Endian.little)
+        ..setUint32(sectionRaw + valuesOffset + i * 4, exports[name]!, Endian.little);
+      for (var c = 0; c < name.length; c++) {
+        bytes.setUint8(sectionRaw + nameAt + c, name.codeUnitAt(c));
+      }
+      nameAt += name.length + 1;
+    }
   }
 
   const name = '.idata';

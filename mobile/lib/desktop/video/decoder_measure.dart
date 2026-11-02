@@ -209,6 +209,23 @@ const decodeMeasuresOfTheBuild = [
     dropped: 0,
     source: 'phase 2b, spike 3 and renderer C, both GPUs',
   ),
+  // 8K at 4320 lines, a Samsung S24+ video (HEVC, 80 Mbit/s), in the app's viewer without a copy (2026-11-02, the
+  // owner's report of an 8K video that stutters), on the RTX 4060 Laptop (Windows' preference for the app set to high
+  // performance): none dropped in three opens, nor a black frame. No figure for an integrated GPU: the Intel UHD's (0
+  // to 22 of 150) was taken before the viewer stopped drawing a frame at every refresh, with Windows short of memory,
+  // on one of the smallest integrated GPUs; it would send every integrated GPU to the server's copy without a try, so
+  // an integrated GPU plays the original and measures it itself
+  DecodeMeasure(
+    gpu: MeasuredGpu.dedicated,
+    codec: VideoMime.hevc,
+    width: 7680,
+    height: 4320,
+    frameRate: 30,
+    hwdec: 'd3d11va',
+    frames: 150,
+    dropped: 0,
+    source: 'report of 2026-11-02, RTX 4060 Laptop',
+  ),
   // 5.7K H.264 at 132 Mbit/s, the export of the 360 cameras, in software since no Direct3D, DXVA2 or NVDEC decoder of
   // either GPU takes H.264 above 4096: none dropped, 2.2 to 2.9 of 24 processor threads busy
   DecodeMeasure(

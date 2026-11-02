@@ -16,7 +16,7 @@
 #include <d3d11.h>
 #include <d3d12.h>
 #include <d3d12video.h>
-#include <dxgi1_2.h>
+#include <dxgi1_6.h>
 #include <wrl/client.h>
 
 #include <cstdint>
@@ -337,9 +337,57 @@ std::string Probe(int32_t index, const char* filter, const int32_t* sizes, int32
   return json;
 }
 
+// The LUID of the adapter Windows gives [preference] (DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE or _MINIMUM_POWER), as
+// JSON ("00000000:000164ca"), or null where DXGI has no IDXGIFactory6 (before Windows 10 1803) or no such adapter.
+// The order follows the drivers' and Windows' own knowledge of the cards, not this process's preference.
+std::string PreferredLuid(IDXGIFactory1* factory, DXGI_GPU_PREFERENCE preference) {
+  ComPtr<IDXGIFactory6> factory6;
+  ComPtr<IDXGIAdapter1> adapter;
+  DXGI_ADAPTER_DESC1 desc = {};
+  if (FAILED(factory->QueryInterface(IID_PPV_ARGS(&factory6))) ||
+      FAILED(factory6->EnumAdapterByGpuPreference(0, preference, IID_PPV_ARGS(&adapter))) ||
+      FAILED(adapter->GetDesc1(&desc))) {
+    return "null";
+  }
+  char text[24];
+  std::snprintf(text, sizeof(text), "\"%08lx:%08lx\"", static_cast<unsigned long>(desc.AdapterLuid.HighPart),
+                static_cast<unsigned long>(desc.AdapterLuid.LowPart));
+  return text;
+}
+
+// The adapters DXGI lists, in its order (the first is the one this process uses by default), without a device made on
+// any of them, so that a dedicated GPU that sleeps is not woken; with the LUIDs of the adapters Windows gives the high
+// performance and the minimum power preference. "integrated" is then told by the memory of the adapter only (see
+// AdapterJson): the probe of the default adapter tells it from Direct3D.
+std::string Gpus() {
+  ComPtr<IDXGIFactory1> factory;
+  if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&factory)))) {
+    return "{\"adapters\":[],\"error\":\"no DXGI factory\"}";
+  }
+  std::string json = "{\"adapters\":[";
+  ComPtr<IDXGIAdapter1> adapter;
+  for (UINT i = 0; factory->EnumAdapters1(i, adapter.ReleaseAndGetAddressOf()) != DXGI_ERROR_NOT_FOUND; i++) {
+    json += (i == 0 ? "" : ",") + AdapterJson(static_cast<int32_t>(i), adapter.Get(), nullptr);
+  }
+  json += "],\"highPerformance\":" + PreferredLuid(factory.Get(), DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE) +
+          ",\"minimumPower\":" + PreferredLuid(factory.Get(), DXGI_GPU_PREFERENCE_MINIMUM_POWER) + "}";
+  return json;
+}
+
 }  // namespace
 
 extern "C" {
+
+// Writes the JSON of Gpus() into [out], [capacity] bytes with the closing zero; returns its length, and when that is
+// [capacity] or more nothing usable was written (the call is made again with a larger buffer, as immuch_dv_probe)
+__declspec(dllexport) int32_t immuch_dv_gpus(char* out, int32_t capacity) {
+  const std::string json = Gpus();
+  const auto length = static_cast<int32_t>(json.size());
+  if (out != nullptr && capacity > length) {
+    std::memcpy(out, json.c_str(), json.size() + 1);
+  }
+  return length;
+}
 
 // The adapters DXGI lists (GPUs, the software renderer, virtual display adapters), in its order: the first is the
 // one the per app graphics preference picks
