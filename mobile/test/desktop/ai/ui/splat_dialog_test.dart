@@ -564,7 +564,7 @@ void main() {
     });
 
     testWidgets('is absent while this version holds the splat scenes back, or has no engine for them', (tester) async {
-      held = aiHeldFeatureGroups;
+      held = const {AiFeatureGroup.splats};
       await pumpEntry(tester);
       expect(entry(), findsNothing);
 

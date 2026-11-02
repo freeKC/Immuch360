@@ -1309,10 +1309,10 @@ void main() {
       await settle(tester);
     }
 
-    testWidgets('held back by a version, it is not listed, whatever the engine; this build holds the splats only', (
+    testWidgets('held back by a version, it is not listed, whatever the engine; the test build holds nothing back', (
       tester,
     ) async {
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
+      expect(aiHeldFeatureGroups, isEmpty);
       panoramas();
       held = const {AiFeatureGroup.panoramas};
       original('salon.jpg');

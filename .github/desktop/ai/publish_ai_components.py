@@ -52,7 +52,10 @@ per release, the other sections kept as they are) and SHA256SUMS.
       MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart).
       The components of ai-components-4, the splat scenes (HELD below), are not made by this script yet: the check
       holds them to their release, to a licence this project allows and to no size nor sum, so never offered, and says
-      them held.
+      them held. On the branch of the test build, whose catalogue lifts their group (aiHeldFeatureGroups without
+      AiFeatureGroup.splats, lot SP8), a component of theirs that has a size or a sum carries an archive of the CI as
+      it is, served by a local mirror: then it needs its size, its SHA-256 and its files with a program among them,
+      and the check says it lifted.
 
 Without --publish nothing leaves this computer; the network is used only to download the files and to read the cards
 and the artifacts. --sources FILE replaces the addresses and upstream sums of the tables below (the tests serve small
@@ -96,6 +99,8 @@ RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS)
 # (lots SP1 and SP2), held back by the app (aiHeldFeatureGroups) until this release is made and published (lot SP14)
 TAG_SPLATS = 'ai-components-4'
 HELD = ('colmap-cpu-win-x64', 'colmap-cpu-linux-x64', 'brush-vulkan-win-x64', 'brush-vulkan-linux-x64')
+# The groups the catalogue holds back: the splat scenes stay held unless the branch of the test build lifts them
+HELD_GROUPS = re.compile(r'^const aiHeldFeatureGroups = <AiFeatureGroup>\{([^}]*)\};', re.MULTILINE)
 FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas'}
 SUMS = 'SHA256SUMS'
 # GitHub refuses an asset of 2 GiB or more; a larger file goes in parts of the largest whole number of MiB under 1.9 GiB
@@ -1296,9 +1301,21 @@ def hexadecimal(digest) -> bool:
     return isinstance(digest, str) and re.fullmatch(r'[0-9a-f]{64}', digest) is not None
 
 
-def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, releases: tuple = RELEASES) -> tuple:
+def splats_lifted(text: str) -> bool:
+    """Whether the catalogue [text] lifts the hold of the splat scenes (the branch of the test build)"""
+    held = HELD_GROUPS.search(text)
+    return held is not None and 'AiFeatureGroup.splats' not in held.group(1)
+
+
+def held_has_sums(component: dict) -> bool:
+    return component.get('size') is not None or component.get('sha256') is not None or bool(component['archiveFiles'])
+
+
+def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, releases: tuple = RELEASES,
+          lifted: bool = False) -> tuple:
     """What is wrong in the catalogue and MODEL-LICENSES.md for [releases], without the network, and the engines that
-    still wait for lot P2"""
+    still wait for lot P2. With [lifted], the splat scenes are offered by the test build: their components that have
+    sums must be complete."""
     found, pending = [], []
     archives_table, models_table, _, upstream_table = load_sources(sources)
     archives = {archive.component: archive for archive in archives_table}
@@ -1319,8 +1336,16 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
             found.append(f'{component_id}: in {component.get("releaseTag")}, its family is in {TAG_SPLATS}')
         if component.get('licence') not in ALLOWED_LICENCES:
             found.append(f'{component_id}: licence {component.get("licence")} is not one this project allows')
-        if component.get('size') is not None or component.get('sha256') is not None or component['archiveFiles']:
+        if not held_has_sums(component):
+            continue
+        if not lifted:
             found.append(f'{component_id}: held until {TAG_SPLATS} is made, yet the catalogue gives it a size or sums')
+            continue
+        files = component['archiveFiles']
+        if (not isinstance(component.get('size'), int) or not hexadecimal(component.get('sha256')) or not files
+                or not any(executable for *_, executable in files)
+                or any(not hexadecimal(digest) for _, _, digest, _ in files)):
+            found.append(f'{component_id}: lifted for the test build, yet its size, its sum or its files are missing')
     for component_id, component in sorted(catalogue.items()):
         release = family.get(component_id, component.get('releaseTag'))
         if release not in releases:
@@ -1571,16 +1596,21 @@ def main(argv=None) -> int:
     if args.check:
         licences = args.licences.read_text(encoding='utf-8') if args.licences.is_file() else ''
         releases = (args.release,) if args.release else RELEASES
-        found, pending = check(catalogue, licences, args.sources, releases)
+        lifted = splats_lifted(catalogue_text)
+        found, pending = check(catalogue, licences, args.sources, releases, lifted)
         for line in found:
             print(f'publish_ai_components: {line}')
         if found:
             return 1
         counted = [component for component in catalogue.values() if component.get('releaseTag') in releases]
         held = sorted(component for component in HELD if component in catalogue)
+        given = sorted(component for component in held if held_has_sums(catalogue[component]))
+        splats = (f'; lifted for the test build (archives of the CI as they are, {TAG_SPLATS} not made): '
+                  f'{", ".join(given)}; not made yet: {", ".join(sorted(set(held) - set(given)))}' if lifted
+                  else f'; held for {TAG_SPLATS}: {", ".join(held)}' if held else '')
         print(f'{len(counted)} components in {", ".join(releases)}, each complete and named with its size and SHA-256 '
               f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(sorted(pending))}' if pending else '')
-              + (f'; held for {TAG_SPLATS}: {", ".join(held)}' if held else ''))
+              + splats)
         return 0
     if args.out is None:
         print('--out DIR is needed (or --check)')

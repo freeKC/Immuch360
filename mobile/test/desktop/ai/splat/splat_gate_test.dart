@@ -165,7 +165,10 @@ void main() {
 
     test('held back: not in this version, before the probe of the cards is started', () async {
       final probe = FakeGpuProbe.of(FakeGpuReports.rtx4060);
-      final result = await gate(probe, heldGroups: aiHeldFeatureGroups).evaluate(feature: AiFeature.splatScene);
+      final result = await gate(
+        probe,
+        heldGroups: const {AiFeatureGroup.splats},
+      ).evaluate(feature: AiFeature.splatScene);
 
       expect(result.reason, AiGateReason.notInThisVersion);
       expect(probe.calls, 0);

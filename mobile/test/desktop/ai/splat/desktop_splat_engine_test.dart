@@ -157,7 +157,7 @@ void main() {
 
   test('held back in this version: the reason said, nothing made', () async {
     final engine = DesktopSplatEngine(
-      gate: gate(FakeGpuProbe.of(FakeGpuReports.rtx4060), held: aiHeldFeatureGroups),
+      gate: gate(FakeGpuProbe.of(FakeGpuReports.rtx4060), held: const {AiFeatureGroup.splats}),
       create: (setup, found) => fail('held back'),
     );
     final result = await engine.run(job(), cancel: cancel);

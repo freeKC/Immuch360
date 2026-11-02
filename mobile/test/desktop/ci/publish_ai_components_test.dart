@@ -560,33 +560,51 @@ void main() {
       expect(run.output, contains('MODEL-LICENSES.md lacks the row | `depth_anything_v2_small.tflite`'));
     }, skip: skipCiScripts);
 
-    test('the components of the splat scenes are held for ai-components-4: no size, no sums, a licence allowed', () {
+    test('the components of the splat scenes, lifted on the branch of the test build: the Windows archives of the CI '
+        'complete, the Linux ones not made, a licence allowed; held again, their sums are refused', () {
       final run = runCiScript(_script, ['--check']);
 
       expect(run.exitCode, 0, reason: '$run');
       expect(
         run.output,
         contains(
-          'held for ai-components-4: brush-vulkan-linux-x64, brush-vulkan-win-x64, colmap-cpu-linux-x64, '
-          'colmap-cpu-win-x64',
+          'lifted for the test build (archives of the CI as they are, ai-components-4 not made): '
+          'brush-vulkan-win-x64, colmap-cpu-win-x64; not made yet: brush-vulkan-linux-x64, colmap-cpu-linux-x64',
         ),
       );
 
       // A checkout on Windows may hold CRLF line ends; the script reads either
-      var text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
-      final start = text.indexOf("  id: 'colmap-cpu-win-x64',");
-      final licence = text.indexOf("  licence: 'BSD-3-Clause',", start);
-      text = text.replaceRange(licence, licence + 26, "  licence: 'GPL-3.0',");
-      final size = text.indexOf('  size: null,', start);
-      catalogue.writeAsStringSync(text.replaceRange(size, size + 13, '  size: 1000,'));
+      final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
+      const lifted = 'const aiHeldFeatureGroups = <AiFeatureGroup>{};';
+      expect(text, contains(lifted));
 
+      // The hold put back: the sums of the test build are refused, as before ai-components-4 is made
+      catalogue.writeAsStringSync(
+        text.replaceFirst(lifted, 'const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.splats};'),
+      );
+      final held = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      expect(held.exitCode, 1, reason: '$held');
+      expect(
+        held.output,
+        contains('colmap-cpu-win-x64: held until ai-components-4 is made, yet the catalogue gives it a size or sums'),
+      );
+
+      // Lifted, a licence this project does not allow, and an archive given without its files
+      var changed = text;
+      final colmap = changed.indexOf("  id: 'colmap-cpu-win-x64',");
+      final licence = changed.indexOf("  licence: 'BSD-3-Clause',", colmap);
+      changed = changed.replaceRange(licence, licence + 26, "  licence: 'GPL-3.0',");
+      final brush = changed.indexOf("  id: 'brush-vulkan-win-x64',");
+      final files = changed.indexOf('  archiveFiles: [', brush);
+      final filesEnd = changed.indexOf('\n  ],\n', files) + '\n  ],\n'.length;
+      changed = changed.replaceRange(files, filesEnd, '');
+      catalogue.writeAsStringSync(changed);
       final refused = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
-
       expect(refused.exitCode, 1, reason: '$refused');
       expect(refused.output, contains('colmap-cpu-win-x64: licence GPL-3.0 is not one this project allows'));
       expect(
         refused.output,
-        contains('colmap-cpu-win-x64: held until ai-components-4 is made, yet the catalogue gives it a size or sums'),
+        contains('brush-vulkan-win-x64: lifted for the test build, yet its size, its sum or its files are missing'),
       );
     }, skip: skipCiScripts);
   });

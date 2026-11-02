@@ -377,7 +377,7 @@ void main() {
         gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       ),
     );
-    expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
+    expect(aiHeldFeatureGroups, isEmpty);
     expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
     expect(
       find.text('NVIDIA GeForce RTX 4060 Laptop GPU, 8.0 GiB, Vulkan 1.4: 360° panoramas available'),
@@ -814,8 +814,8 @@ void main() {
       heldGroups: held,
     );
 
-    await pump(tester, gate: gateHolding(aiHeldFeatureGroups), engines: splats);
-    expect(find.byKey(const Key('ai_settings_splat_scenes')), findsNothing, reason: 'this version holds them back');
+    await pump(tester, gate: gateHolding(const {AiFeatureGroup.splats}), engines: splats);
+    expect(find.byKey(const Key('ai_settings_splat_scenes')), findsNothing, reason: 'a version that holds them back');
 
     await tester.pumpWidget(const SizedBox.shrink());
     await pump(tester, gate: gateHolding(const {}), engines: const {});

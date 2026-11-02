@@ -20,7 +20,9 @@
 // from pinned sources, COLMAP 4.2.1 without its GPL parts (lot SP1) and Brush 0.3.0 without the LPIPS weights (lot
 // SP2), as archives of ai-components-4. Until those archives exist their entries have no size nor sum, and their
 // group stays held: never offered, never downloaded. The test build lifts the hold on its own branch only, with the
-// sums of the archives of the CI served by a local mirror.
+// sums of the archives of the CI served by a local mirror: this is that branch (feat-splat-maker, lot SP8), whose
+// Windows entries carry the archives of the runs 41338110566 (COLMAP) and 41338726969 (Brush) as they are. It is never
+// merged as it is: ai-components-4 is not made, and only IMMUCH360_AI_COMPONENTS_MIRROR serves these files.
 //
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
@@ -954,7 +956,10 @@ const upscalerComponent = AiComponent(
 // .github/desktop/ai/publish_ai_components.py from the archives of the CI (lots SP1 and SP2, then SP8 on the branch of
 // the test build only); until then they are incomplete, so never offered. Neither has an official source: the
 // official binaries of COLMAP carry SiftGPU (non commercial), LSD (AGPL 3) and the GPL parts of CHOLMOD, and those of
-// Brush the LPIPS weights, whose origin is not written.
+// Brush the LPIPS weights, whose origin is not written. On the branch of the test build, the Windows entries carry the
+// archives of the CI as they are (lot SP8: COLMAP of the run 41338110566, Brush of the run 41338726969), each file with
+// its size and SHA-256, colmap.exe and brush_app.exe the programs the engines run; the Linux entries stay without, the
+// splat scenes being offered on Windows only in this version.
 
 /// The licence of COLMAP at the tag 4.2.1 (its COPYING.txt: the new BSD licence of ETH Zurich and UNC Chapel Hill)
 const _colmapLicenceUrl = 'https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt';
@@ -972,13 +977,631 @@ const colmapWindowsComponent = AiComponent(
   platforms: {AiPlatform.windowsX64},
   assetName: 'colmap-cpu-win-x64.zip',
   installPath: 'engines/colmap-cpu-win-x64',
-  size: null,
-  sha256: null,
+  size: 10090414,
+  sha256: '775fae804f4f4ae4cf3b26045e770a07527f0ff0dc046f5a093fa25ce7fb4e2e',
   compression: AiCompression.none,
   licence: 'BSD-3-Clause',
   licenceUrl: _colmapLicenceUrl,
   features: {AiFeature.splatScene},
   releaseTag: aiComponentsSplatsReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 1337,
+      sha256: '6ea120aec1e9b35ed36140aad00b12b5a71f1f0c173bac9aa685b578f4185948',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 11850,
+      sha256: '6f82b744e5069f3181cb0ce50bcc74f733d2c6793d20d89a56263abfdf1625f8',
+    ),
+    AiArchiveFile(
+      path: 'colmap.exe',
+      size: 26231296,
+      sha256: '7b475114081e25d316e7d6d0cfa7f9d2c20ec7d7a9fb7f63203ab50720bfb7eb',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/COPYING.txt',
+      size: 1942,
+      sha256: 'beda69d6c1e7544a470002af34c5d754497f0ad7da168556a9b20852993404c3',
+    ),
+    AiArchiveFile(
+      path: 'licenses/PoissonRecon-LICENSE.txt',
+      size: 1096,
+      sha256: 'bbcbdc44ed818f009eb4433db9ab5e6509578d0ba43ddcb662b8a0cc9c160fb3',
+    ),
+    AiArchiveFile(
+      path: 'licenses/PoseLib-LICENSE.txt',
+      size: 1551,
+      sha256: 'f2974dfc7803858e4c3d35c4d5f26291cf072b6607a561caa2fae4758bfc13d2',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 3568,
+      sha256: '4538aaaaebf4ab65bb8c21f71bad530a5966837445dfe220c14f341b5099fac9',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 13063,
+      sha256: '4f98948de029572969568477be74c24d26fe46997e0288bc0aff245fafe1f1cf',
+    ),
+    AiArchiveFile(
+      path: 'licenses/VLFeat-LICENSE.txt',
+      size: 1390,
+      sha256: 'a31ef034eeab41e1c24e72747608a54c8e72c7e7f6ebcf7391f00c7e63c1495e',
+    ),
+    AiArchiveFile(
+      path: 'licenses/faiss-LICENSE.txt',
+      size: 1107,
+      sha256: 'f08a94bfb0bdc1d7f1cb59badaf0f8c551b10db871185622dbf1fd036affa9cb',
+    ),
+    AiArchiveFile(
+      path: 'licenses/libf2c-Notice.txt',
+      size: 1235,
+      sha256: 'cabd9f61080c1d7c155121cb4b7a57dfa0e7482449c640b7eeb633d9d757bacf',
+    ),
+    AiArchiveFile(
+      path: 'licenses/patches/0001-without-cholmod.patch',
+      size: 5514,
+      sha256: 'a6cc9cc28c9256cee75ca8f62661ccc4262c4bf5f14940aadec272b3a9ac191b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/patches/0002-vcpkg-without-suitesparse.patch',
+      size: 1119,
+      sha256: 'a916f7ba404eca19298f24031287fd23a3dc8d25807e9bdcc48448d10ca68c2e',
+    ),
+    AiArchiveFile(
+      path: 'licenses/patches/0003-faiss-without-blas.patch',
+      size: 2438,
+      sha256: '88f6efa8303509abc27a29b792c674a47834fa34ce122f1c9fba4e28f60f0642',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-algorithm.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-align.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-any.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-array.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-assert.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-atomic.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-bimap.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-bind.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-chrono.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-cmake.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-compat.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-concept-check.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-config.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-container-hash.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-container.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-conversion.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-core.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-date-time.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-describe.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-detail.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-dynamic-bitset.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-endian.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-exception.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-foreach.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-function-types.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-function.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-fusion.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-graph.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-headers.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-heap.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-integer.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-intrusive.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-io.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-iterator.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-lambda.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-lexical-cast.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-math.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-move.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-mp11.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-mpl.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-multi-index.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-multiprecision.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-numeric-conversion.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-optional.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-parameter.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-phoenix.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-pool.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-predef.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-preprocessor.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-program-options.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-property-map.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-property-tree.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-proto.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-random.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-range.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-ratio.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-regex.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-serialization.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-smart-ptr.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-spirit.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-static-assert.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-system.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-thread.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-throw-exception.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-tokenizer.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-tti.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-tuple.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-type-index.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-type-traits.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-typeof.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-unordered.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-utility.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-variant.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-variant2.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-winapi.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/boost-xpressive.txt',
+      size: 1338,
+      sha256: 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/ceres.txt',
+      size: 14355,
+      sha256: '765fd9eac4cb827fa5de4304d1f81f4f2c5c332a3f1d6f0f3f7a69a33156729b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/clapack.txt',
+      size: 1607,
+      sha256: '23014869214a231525b38c39fdb5f82364fa24154ac80fdcab2a79671460fd09',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/eigen3.txt',
+      size: 32831,
+      sha256: 'ad251846a5a37acfed04407b7eee9161fbd58a91874b20fd949904413c407b2a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/expat.txt',
+      size: 1144,
+      sha256: '31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/fmt.txt',
+      size: 1094,
+      sha256: 'a65fcc5a1095fc33cc37e4fff69366e49d7e92f613558a2b95ed1b70e33758b4',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/gflags.txt',
+      size: 1479,
+      sha256: '90d1f3701813c3cd65eee2dc736746fe46b465918f3f7d6d31463a2018b33fa5',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/gklib.txt',
+      size: 641,
+      sha256: '81118d7ac02c98ad2d49a8b7d12d24f41e3bef962342f5483bf1b80a79ce1992',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/glog.txt',
+      size: 1479,
+      sha256: '136d48dea7a681413691f3db3098f6cf5ffaa3119d96d97bb83b8cff3ce38c4a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/imath.txt',
+      size: 1497,
+      sha256: 'c20236d3b39fd20eba8e3d1fb3b892a5483df2e7d8d61bf43f165d3fac22f601',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/libdeflate.txt',
+      size: 1078,
+      sha256: '4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/libjpeg-turbo.txt',
+      size: 6077,
+      sha256: 'ba6bceebcba0fdd35488477c2cca8c4632ce82c74dbfbc87d886ce6fc4433579',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/libpng.txt',
+      size: 5345,
+      sha256: 'bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/metis.txt',
+      size: 641,
+      sha256: '64ab947d7b289ad76e935adff51b31e4ac160df7dfad24480dbaa452e39bbe79',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/minizip-ng.txt',
+      size: 877,
+      sha256: '675181c03fc1302a1c8554c00f7be9bb420c5dbc9dcc2013433cec144413de03',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/openblas.txt',
+      size: 1548,
+      sha256: '190b5a9c8d9723fe958ad33916bd7346d96fab3c5ea90832bb02d854f620fcff',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/opencolorio.txt',
+      size: 1485,
+      sha256: '82a40c52065ee968aa62015735e84378ac11425db7a233e6a2dcd2c83fc24276',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/openexr.txt',
+      size: 1501,
+      sha256: '84853c91d4c2e0310741d4773469d98bb93e61029608e0ba0882a3fffdf330bd',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/openimageio.txt',
+      size: 25011,
+      sha256: '7585beae16904f28ee1a32fcc97f108e7717d78ddec927ebb98e09be7c5530d5',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/openjph.txt',
+      size: 1448,
+      sha256: '5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/pystring.txt',
+      size: 1530,
+      sha256: 'f7f060301402ea0b5c507b865b1a9de037d4d7b24f37422a93b70fe9c7a9b78a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/robin-map.txt',
+      size: 1102,
+      sha256: '11f2c685ba565a31aef1219f63a7a8845602c97bff70016b9e3278dfe51a2ec5',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/sqlite3.txt',
+      size: 71,
+      sha256: '3cafdd9b568b924b234b91f4a24649d509f02643ae727eac6a4e33818288c9c4',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/tiff.txt',
+      size: 2416,
+      sha256: '0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/vcpkg-boost.txt',
+      size: 1073,
+      sha256: '1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/vcpkg-cmake-config.txt',
+      size: 1096,
+      sha256: '04b60f99a43bfd7fefdc8364b24aac704a2160cef969b75ba6a38b62dc4c4b70',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/vcpkg-cmake.txt',
+      size: 1073,
+      sha256: '1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/yaml-cpp.txt',
+      size: 1061,
+      sha256: 'aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/vcpkg/zlib.txt',
+      size: 1002,
+      sha256: 'e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140.dll',
+      size: 557728,
+      sha256: '0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140_2.dll',
+      size: 280200,
+      sha256: '3ea06f0ee098b4823cb79599df3780e7f23cce52c19aac31d2a0d47efe33a5e9',
+    ),
+    AiArchiveFile(
+      path: 'vcomp140.dll',
+      size: 193152,
+      sha256: '55aba23cdcd6484fbb06f4155b8ca75adfce7a881f10afd0c49457165e677164',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140.dll',
+      size: 124544,
+      sha256: 'd5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140_1.dll',
+      size: 49792,
+      sha256: '1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f',
+    ),
+  ],
 );
 
 /// COLMAP 4.2.1 on the processor for Linux x64, our build without its GPL parts (lot SP1), with immuch360-run
@@ -1009,13 +1632,56 @@ const brushWindowsComponent = AiComponent(
   platforms: {AiPlatform.windowsX64},
   assetName: 'brush-vulkan-win-x64.zip',
   installPath: 'engines/brush-vulkan-win-x64',
-  size: null,
-  sha256: null,
+  size: 16354351,
+  sha256: '875e9308a3ea827cccb412dadf1bb1606ee15abb2d3b41029f522ccff7367202',
   compression: AiCompression.none,
   licence: 'Apache-2.0',
   licenceUrl: _brushLicenceUrl,
   features: {AiFeature.splatScene},
   releaseTag: aiComponentsSplatsReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 2780,
+      sha256: 'b7b172d23685730e1d12f27dd92b84680c9daa6caef3b0e2f0029dbc3f9ef732',
+    ),
+    AiArchiveFile(
+      path: 'brush_app.exe',
+      size: 63759872,
+      sha256: '2d10dc03e96f28d885fa699129d28d9271a614e6a53211ef2015f894e3616a05',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/EXTRA-NOTICES.md',
+      size: 5935,
+      sha256: '2b18770127e5c1212e88983220ec5a9eb8559df9033bd1b62ec89ef3307ebf31',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 4527,
+      sha256: '07d0bba845a345ebfd2ededea5ae022e353262b2b4eab78eb929e25f9fc1ecaf',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 467291,
+      sha256: 'e5d8003e290996831420222a73dc69cee5a0653ed978170d4378db1243d9814a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/brush-LICENSE.txt',
+      size: 11358,
+      sha256: 'cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30',
+    ),
+    AiArchiveFile(
+      path: 'licenses/patches/0001-immuch360-headless-trainer.patch',
+      size: 17608,
+      sha256: '788070930f92eb8922209337429762df0a5748567586cf2bb7e880f5d17be1bf',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140.dll',
+      size: 124544,
+      sha256: 'd5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066',
+    ),
+  ],
   minGraphicsMemory: _splatGraphicsMemory,
 );
 
@@ -1121,8 +1787,9 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
 /// not listed in the dialog, refused by the gate as not in this version.
 ///
 /// The splat scenes are held from 1 November 2026 until ai-components-4 is published and FreeKC says yes (plan
-/// 2026-11-01, lot SP14): only the branch of the test build lifts the hold.
-const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.splats};
+/// 2026-11-01, lot SP14): only the branch of the test build lifts the hold, and this is that branch (feat-splat-maker,
+/// lot SP8), whose components come from a local mirror. Put the group back here before anything of it is merged.
+const aiHeldFeatureGroups = <AiFeatureGroup>{};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
 /// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)

@@ -25,6 +25,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
 
 import '../creator/english_texts.dart';
+import '../fakes/fake_gpu_probe.dart';
 
 const _gib = 1024 * 1024 * 1024;
 const _lead = ImmersiveSource(name: 'DSCF4667.JPG', size: 4182311, sha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=', path: '/p');
@@ -352,18 +353,25 @@ void main() {
   });
 
   group('the feature and its components', () {
-    test('Windows only, a group of its own, held back until ai-components-4 is published', () {
+    test('Windows only, a group of its own, lifted on the branch of the test build only', () {
       expect(AiFeature.splatScene.platforms, [AiPlatform.windowsX64]);
       expect(AiFeatureGroup.splats.features, {AiFeature.splatScene});
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
+      // feat-splat-maker (lot SP8) lifts the hold that every other branch keeps until ai-components-4 is published
+      expect(aiHeldFeatureGroups, isEmpty);
       expect(aiComponentsSplatsReleaseTag, 'ai-components-4');
+      expect(aiComponentGroupsFor(AiPlatform.windowsX64).map((group) => group.group), contains(AiFeatureGroup.splats));
       expect(
-        aiComponentGroupsFor(AiPlatform.windowsX64).map((group) => group.group),
+        aiComponentGroupsFor(AiPlatform.linuxX64).map((group) => group.group),
+        isNot(contains(AiFeatureGroup.splats)),
+      );
+      expect(
+        aiComponentGroupsFor(AiPlatform.windowsX64, held: const {AiFeatureGroup.splats}).map((group) => group.group),
         isNot(contains(AiFeatureGroup.splats)),
       );
     });
 
-    test('COLMAP and Brush, archives of our CI without sizes nor sums yet: never offered', () {
+    test('COLMAP and Brush, archives of our CI: the Windows ones as the runs 41338110566 and 41338726969 made them, '
+        'the Linux ones not made yet', () {
       expect(aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.splatScene), [
         colmapWindowsComponent,
         brushWindowsComponent,
@@ -383,11 +391,56 @@ void main() {
         expect(component.releaseTag, 'ai-components-4', reason: component.id);
         expect(component.features, {AiFeature.splatScene}, reason: component.id);
         expect(component.officialUrls, isEmpty, reason: 'our builds only: ${component.id}');
+        expect(component.installPath, 'engines/${component.id}');
+        expect(component.assetName, '${component.id}.zip');
+      }
+      // Served by the local mirror of the test build, the archives of the CI as they are
+      expect(
+        (colmapWindowsComponent.size, colmapWindowsComponent.sha256),
+        (10090414, '775fae804f4f4ae4cf3b26045e770a07527f0ff0dc046f5a093fa25ce7fb4e2e'),
+      );
+      expect(
+        (brushWindowsComponent.size, brushWindowsComponent.sha256),
+        (16354351, '875e9308a3ea827cccb412dadf1bb1606ee15abb2d3b41029f522ccff7367202'),
+      );
+      expect(colmapWindowsComponent.archiveFiles, hasLength(123));
+      expect(brushWindowsComponent.archiveFiles, hasLength(8));
+      expect(colmapWindowsComponent.installedSize, 27697172);
+      expect(brushWindowsComponent.installedSize, 64393915);
+      // The program each engine runs, and the licences that travel with it
+      expect(colmapWindowsComponent.mainPath, 'engines/colmap-cpu-win-x64/colmap.exe');
+      expect(brushWindowsComponent.mainPath, 'engines/brush-vulkan-win-x64/brush_app.exe');
+      List<String> paths(AiComponent component) => [for (final file in component.archiveFiles) file.path];
+      expect(
+        paths(colmapWindowsComponent),
+        containsAll(['licenses/COPYING.txt', 'licenses/THIRD-PARTY.md', 'licenses/README.md', 'BUILD-INFO.txt']),
+      );
+      expect(paths(colmapWindowsComponent).where((path) => path.startsWith('licenses/')), hasLength(115));
+      expect(
+        paths(brushWindowsComponent),
+        containsAll([
+          'licenses/brush-LICENSE.txt',
+          'licenses/THIRD-PARTY.md',
+          'licenses/EXTRA-NOTICES.md',
+          'licenses/patches/0001-immuch360-headless-trainer.patch',
+          'BUILD-INFO.txt',
+        ]),
+      );
+      for (final component in [colmapWindowsComponent, brushWindowsComponent]) {
+        expect(component.isComplete, isTrue, reason: component.id);
+        expect(
+          [
+            for (final file in component.archiveFiles)
+              if (file.executable) file.path,
+          ],
+          [component == colmapWindowsComponent ? 'colmap.exe' : 'brush_app.exe'],
+        );
+        expect(component.archiveFiles.every((file) => RegExp(r'^[0-9a-f]{64}$').hasMatch(file.sha256)), isTrue);
+      }
+      for (final component in [colmapLinuxComponent, brushLinuxComponent]) {
         expect((component.size, component.sha256), (null, null), reason: component.id);
         expect(component.archiveFiles, isEmpty, reason: component.id);
         expect(component.isComplete, isFalse, reason: component.id);
-        expect(component.installPath, 'engines/${component.id}');
-        expect(component.assetName, '${component.id}.zip');
       }
       expect({for (final component in splats) component.licence}, {'BSD-3-Clause', 'Apache-2.0'});
       expect(colmapWindowsComponent.version, '4.2.1-imm1');
@@ -419,44 +472,31 @@ void main() {
       );
     });
 
-    test('the gate refuses the feature: held back on Windows, not on the other systems yet', () async {
-      HardwareGate gate(Abi abi, {List<AiComponent> catalogue = aiComponents}) => HardwareGate(
+    test('the gate offers the feature on Windows on this branch, refuses it while a version holds it back, and on '
+        'the other systems', () async {
+      HardwareGate gate(Abi abi, {Set<AiFeatureGroup> held = aiHeldFeatureGroups}) => HardwareGate(
         components: _Installed(),
         facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: 16 * _gib),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
-        catalogue: catalogue,
+        heldGroups: held,
+        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       );
+      final windows = await gate(Abi.windowsX64).evaluate(feature: AiFeature.splatScene);
+      expect(windows.isAvailable, isTrue, reason: '$windows');
+      expect(windows.fileOf(colmapWindowsComponent.id), isNotNull);
+      expect(windows.fileOf(brushWindowsComponent.id), isNotNull);
       expect(
-        (await gate(Abi.windowsX64).evaluate(feature: AiFeature.splatScene)).reason,
-        AiGateReason.notInThisVersion,
-      );
-      // Complete as the test build makes them, still held back here
-      AiComponent complete(AiComponent component) => AiComponent(
-        id: component.id,
-        version: component.version,
-        kind: component.kind,
-        platforms: component.platforms,
-        assetName: component.assetName,
-        installPath: component.installPath,
-        size: 100,
-        sha256: 'a' * 64,
-        compression: component.compression,
-        licence: component.licence,
-        licenceUrl: component.licenceUrl,
-        features: component.features,
-        releaseTag: component.releaseTag,
-        archiveFiles: const [AiArchiveFile(path: 'program.exe', size: 100, sha256: 'bb', executable: true)],
-      );
-      final built = [for (final component in aiComponents) component.isComplete ? component : complete(component)];
-      expect(
-        (await gate(Abi.windowsX64, catalogue: built).evaluate(feature: AiFeature.splatScene)).reason,
+        (await gate(
+          Abi.windowsX64,
+          held: const {AiFeatureGroup.splats},
+        ).evaluate(feature: AiFeature.splatScene)).reason,
         AiGateReason.notInThisVersion,
       );
       for (final abi in [Abi.linuxX64, Abi.macosArm64, Abi.macosX64]) {
         expect((await gate(abi).evaluate(feature: AiFeature.splatScene)).reason, AiGateReason.notHere, reason: '$abi');
       }
       // The 3D photo is not touched by the hold
-      expect((await gate(Abi.windowsX64).evaluate()).isAvailable, isTrue);
+      expect((await gate(Abi.windowsX64, held: const {AiFeatureGroup.splats}).evaluate()).isAvailable, isTrue);
     });
   });
 

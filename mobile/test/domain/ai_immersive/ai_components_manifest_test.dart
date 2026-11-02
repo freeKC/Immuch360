@@ -146,10 +146,13 @@ void main() {
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
-        // The archives of the splat scenes have no files until their release is made (lot SP0)
+        // The archives of the splat scenes have no files until their release is made (lot SP0), but on the branch of
+        // the test build, whose Windows entries carry the archives of the CI (lot SP8)
         expect(
           component.archiveFiles.isNotEmpty,
-          component.isArchive && component.releaseTag != aiComponentsSplatsReleaseTag,
+          component.isArchive &&
+              (component.releaseTag != aiComponentsSplatsReleaseTag ||
+                  component.platforms.contains(AiPlatform.windowsX64)),
           reason: '${component.id}: files of archives only',
         );
         expect(
@@ -231,9 +234,9 @@ void main() {
         expect(component.isComplete, isTrue, reason: component.id);
         expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
       }
-      // Only the splat scenes held back since ai-components-3 was published: the panoramas are offered where their
-      // engine runs
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
+      // Nothing held back on the branch of the test build, which lifts the splat scenes (lot SP8): the panoramas are
+      // offered where their engine runs
+      expect(aiHeldFeatureGroups, isEmpty);
       for (final platform in AiPlatform.values) {
         expect(
           aiComponentGroupsFor(platform).map((group) => group.group),
@@ -341,13 +344,17 @@ void main() {
     });
 
     test('the groups: each component under the first group that needs it, a shared one counted once', () {
-      // The splat scenes are held back, their entries without sums (lot SP0)
+      // The splat scenes, lifted on the branch of the test build with the archives of the CI (lot SP8), come last with
+      // their own two programs, which no other group needs
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
       expect(windows.map((group) => group.group), [
         AiFeatureGroup.photos,
         AiFeatureGroup.scenes,
         AiFeatureGroup.panoramas,
+        AiFeatureGroup.splats,
       ]);
+      expect(windows.last.all, [colmapWindowsComponent, brushWindowsComponent]);
+      expect(windows.last.own, [colmapWindowsComponent, brushWindowsComponent]);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
       expect(windows[1].all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
       expect(windows[1].own, [mogeGeometryComponent, lamaInpaintComponent]);
@@ -375,17 +382,30 @@ void main() {
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
       // A group held back is never offered, its components complete; only the splat scenes are held back by default
-      // since the publication of ai-components-3 (29 October 2026), from 1 November 2026
+      // since the publication of ai-components-3 (29 October 2026), from 1 November 2026, but on the branch of the
+      // test build (lot SP8)
       expect(
         aiComponentGroupsFor(
           AiPlatform.windowsX64,
           catalogue: complete,
           held: const {AiFeatureGroup.panoramas},
         ).map((group) => group.group),
-        [AiFeatureGroup.photos, AiFeatureGroup.scenes],
+        [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.splats],
       );
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.splats});
-      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete);
+      // The branch of the test build lifts the splat scenes (lot SP8): held as on the other branches, the panoramas
+      // come last
+      expect(aiHeldFeatureGroups, isEmpty);
+      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), [
+        AiFeatureGroup.photos,
+        AiFeatureGroup.scenes,
+        AiFeatureGroup.panoramas,
+        AiFeatureGroup.splats,
+      ]);
+      final groups = aiComponentGroupsFor(
+        AiPlatform.windowsX64,
+        catalogue: complete,
+        held: const {AiFeatureGroup.splats},
+      );
       expect(groups.map((group) => group.group), [
         AiFeatureGroup.photos,
         AiFeatureGroup.scenes,
