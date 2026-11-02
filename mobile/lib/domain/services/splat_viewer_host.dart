@@ -11,6 +11,10 @@ enum SplatHostClosed {
   /// The web view's process died (out of memory most often): the app says so, it is not a white screen
   rendererGone,
 
+  /// The page stopped answering, or the graphics process of the web view ended: the window is closed rather than
+  /// left frozen over the app, and the app says the graphics stopped drawing the splat
+  stalled,
+
   /// No web view that can show the page: the WebView2 Runtime missing on Windows, an Android System WebView too old
   noWebView,
 

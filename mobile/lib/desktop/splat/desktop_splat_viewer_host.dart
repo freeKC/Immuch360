@@ -1,8 +1,8 @@
 // The splat viewer of the computers (lot SV2 of the splat viewer): the page in a window of its own over the app's,
 // at its place and size (maximized when the app's is), through the patched copy of desktop_webview_window
 // (packages/desktop_webview_window/IMMUCH360-NOTE.md): WebView2 on Windows, WebKitGTK on Linux, WKWebView on macOS.
-// The keys go straight to the page; the page's Back or Esc closes the window; a page whose process died closes it and
-// the app says why. One viewer at a time: a second splat closes the first window. On Windows the WebView2 data stays
+// The keys go straight to the page; the page's Back or Esc closes the window; a page whose process died or stopped
+// answering closes it and the app says why. One viewer at a time: a second splat closes the first window. On Windows the WebView2 data stays
 // in the app's support folder (an isolated copy keeps its own), one folder per set of browser arguments, since one
 // browser process takes one set: with the high performance graphics card (--force_high_performance_gpu) or not.
 
@@ -115,7 +115,7 @@ class DesktopSplatViewerHost implements SplatViewerHost {
     });
     window.setOnProcessFailedCallback((kind) {
       _log.warning('The process of the splat viewer stopped: $kind');
-      _ending ??= SplatHostClosed.rendererGone;
+      _ending ??= splatHostClosedOf(kind);
       window.close();
     });
     unawaited(
@@ -140,6 +140,14 @@ class DesktopSplatViewerHost implements SplatViewerHost {
     await window.onClose.timeout(const Duration(milliseconds: 500), onTimeout: () {});
   }
 }
+
+/// How a viewer whose web view process failed with [kind] (desktop_webview_window's names) ended: a renderer that
+/// died is most often out of memory; one that stopped answering, or a graphics process that ended, stalled the page
+SplatHostClosed splatHostClosedOf(String kind) => switch (kind) {
+  'rendererExited' || 'rendererOutOfMemory' => SplatHostClosed.rendererGone,
+  'rendererUnresponsive' || 'gpuExited' => SplatHostClosed.stalled,
+  _ => SplatHostClosed.error,
+};
 
 /// The place of the app's window, in the physical pixels CreateWindow takes on Windows
 Future<SplatWindowPlace> appWindowPlace() async {

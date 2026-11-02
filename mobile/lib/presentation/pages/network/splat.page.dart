@@ -37,7 +37,8 @@ class SplatPage extends ConsumerWidget {
   final String path;
   final int? size;
 
-  String get _name => path.split('/').where((part) => part.isNotEmpty).lastOrNull ?? path;
+  /// The file's name, from a path of a share or of this device (backslashes on Windows)
+  String get _name => path.split(RegExp(r'[/\\]')).where((part) => part.isNotEmpty).lastOrNull ?? path;
 
   /// Opens the splat of [splat]: in the splat viewer on a computer, a phone or a tablet; in the immersive viewer of the
   /// headset through the media bridge for a file of a share, from its place for a file of the headset

@@ -124,10 +124,27 @@ void main() {
     final viewer = host();
     final closed = viewer.closed.first;
     await viewer.open(page, title: 'a.spz');
-    windows.single.failed!('renderProcessExited');
+    windows.single.failed!('rendererExited');
 
     expect(await closed, SplatHostClosed.rendererGone);
     expect(windows.single.closes, 1);
+  });
+
+  test('a page that stopped answering closes the window too, as stalled; a process that ended for another reason', () {
+    expect(splatHostClosedOf('rendererExited'), SplatHostClosed.rendererGone);
+    expect(splatHostClosedOf('rendererOutOfMemory'), SplatHostClosed.rendererGone);
+    expect(splatHostClosedOf('rendererUnresponsive'), SplatHostClosed.stalled);
+    expect(splatHostClosedOf('gpuExited'), SplatHostClosed.stalled);
+    expect(splatHostClosedOf('browserExited'), SplatHostClosed.error);
+  });
+
+  test('the replay of 2 November 2026: an unresponsive page ends as stalled, not out of memory', () async {
+    final viewer = host();
+    final closed = viewer.closed.first;
+    await viewer.open(page, title: 'a.spz');
+    windows.single.failed!('rendererUnresponsive');
+
+    expect(await closed, SplatHostClosed.stalled);
   });
 
   test('no web view on this computer, or a window that cannot be made: the viewer says so', () async {

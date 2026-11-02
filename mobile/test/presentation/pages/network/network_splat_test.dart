@@ -384,7 +384,7 @@ void main() {
         expect(find.text('Too large for this device (5,000,000 gaussians)'), findsOneWidget);
       });
 
-      testWidgets('a viewing that ended for want of memory says so; a Back says nothing', (tester) async {
+      testWidgets('a viewing that ended for want of memory or stalled says so; a Back says nothing', (tester) async {
         viewings.ending = const SplatViewerOutcome(SplatViewerEnd.rendererGone);
         await pumpPage(tester, '/cash.spz', with_: flat());
 
@@ -394,11 +394,31 @@ void main() {
 
         await tester.pump(const Duration(seconds: 10));
         await tester.pumpAndSettle();
+        viewings.ending = const SplatViewerOutcome(SplatViewerEnd.stalled);
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+        expect(find.text('The graphics of this device stopped drawing the splat'), findsOneWidget);
+
+        await tester.pump(const Duration(seconds: 10));
+        await tester.pumpAndSettle();
         viewings.ending = const SplatViewerOutcome(SplatViewerEnd.closed);
         await tester.tap(find.byKey(exploreSplatButtonKey));
         await tester.pumpAndSettle();
         expect(find.byType(SnackBar), findsNothing);
       });
+    });
+
+    testWidgets('a file of a Windows computer is named by its file name, not its whole path', (tester) async {
+      await pumpNetworkRouter(
+        tester,
+        home: const SplatPage(path: r'D:\splats\owner-test\cactus.spz'),
+        overrides: overrides(),
+        settle: false,
+      );
+      await tester.pump();
+
+      expect(find.descendant(of: find.byType(AppBar), matching: find.text('cactus.spz')), findsOneWidget);
+      expect(find.textContaining(r'D:\splats'), findsNothing);
     });
 
     testWidgets('a file of the headset opens from where the picker copied it', (tester) async {

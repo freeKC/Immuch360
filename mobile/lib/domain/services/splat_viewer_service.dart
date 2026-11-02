@@ -68,6 +68,9 @@ enum SplatViewerEnd {
   /// The web view's process died: "This splat needed more memory than this device gives it"
   rendererGone,
 
+  /// The page stopped answering or its graphics process ended: "The graphics of this device stopped drawing the splat"
+  stalled,
+
   /// No web view that can show the page
   noWebView,
 
@@ -260,6 +263,7 @@ class SplatViewerService {
       return SplatViewerOutcome(switch (how) {
         SplatHostClosed.user => SplatViewerEnd.closed,
         SplatHostClosed.rendererGone => SplatViewerEnd.rendererGone,
+        SplatHostClosed.stalled => SplatViewerEnd.stalled,
         SplatHostClosed.noWebView => SplatViewerEnd.noWebView,
         SplatHostClosed.error => SplatViewerEnd.failed,
       });

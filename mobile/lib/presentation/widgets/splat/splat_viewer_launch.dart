@@ -77,6 +77,7 @@ String splatCssColor(Color color) {
 String? splatViewerEndText(Translations t, SplatViewerOutcome outcome) => switch (outcome.end) {
   SplatViewerEnd.closed || SplatViewerEnd.cancelled => null,
   SplatViewerEnd.rendererGone => t.splat_renderer_gone,
+  SplatViewerEnd.stalled => t.splat_graphics_lost,
   SplatViewerEnd.noWebView =>
     CurrentPlatform.isWindows ? t.splat_needs_webview2 : (CurrentPlatform.isAndroid ? t.splat_update_webview : null),
   SplatViewerEnd.unsupported =>
