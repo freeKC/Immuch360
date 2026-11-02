@@ -339,6 +339,11 @@ void main() {
       ('video/av01', 'AV1'),
       ('vp09', 'VP9'),
       ('video/x-vnd.on2.vp9', 'VP9'),
+      // AV2: the four characters of an IVF, and the sample entries of the draft of its MP4 binding
+      ('AV02', 'AV2'),
+      ('av02', 'AV2'),
+      ('av2E', 'AV2'),
+      ('av2e', 'AV2'),
       ('video/x-unknown', 'video/x-unknown'),
     ]) {
       expect(videoCodecName(codec), name, reason: codec);
