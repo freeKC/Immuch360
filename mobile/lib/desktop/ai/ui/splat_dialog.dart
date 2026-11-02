@@ -169,6 +169,7 @@ class SplatLaunch {
     required this.subject,
     required this.keepPly,
     required this.isNetwork,
+    this.images,
   });
 
   /// The photos in the order of their time, SplatV1.maxPhotos at most spread evenly, or the video alone; never empty
@@ -192,6 +193,10 @@ class SplatLaunch {
 
   /// Whether the folder is on the network: the headset can open the file there
   final bool isNetwork;
+
+  /// The images the dialog counted and told the time of (SplatSelectionPlan.images): the photos, or the frames of the
+  /// video by its length
+  final int? images;
 }
 
 /// Hands a scene to the queue, and gives the ids of its jobs
@@ -209,6 +214,7 @@ final splatLauncherProvider = Provider<SplatLauncher>(
               selection: SplatSelection(
                 members: [for (final member in launch.members) splatMemberOf(member)],
                 settings: SplatSettings(subject: launch.subject, keepPly: launch.keepPly),
+                images: launch.images,
               ),
               target: launch.target,
               video: launch.fromVideo,
@@ -712,6 +718,7 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
           subject: _subject,
           keepPly: _keepPly,
           isNetwork: destination.isNetwork,
+          images: plan.images,
         ),
       );
     } catch (error, stack) {

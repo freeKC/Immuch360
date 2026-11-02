@@ -10,13 +10,12 @@
 // The blurred photos are not known here: they are found while the photos are prepared (lot SP5) and said at the end
 // of the job.
 
-import 'dart:math' as math;
-
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
+import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -193,16 +192,6 @@ List<T> spreadEvenly<T>(List<T> items, int max) {
     return max == 1 ? [items.first] : [];
   }
   return [for (var index = 0; index < max; index++) items[(index * (items.length - 1) / (max - 1)).round()]];
-}
-
-/// The frames a video of [duration] gives: SplatV1.videoFrames up to SplatV1.videoFramesUntil, one every
-/// videoFramesUntil / videoFrames after that, SplatV1.maxVideoFrames at most
-int splatVideoFrameCount(Duration duration) {
-  if (duration <= SplatV1.videoFramesUntil) {
-    return SplatV1.videoFrames;
-  }
-  final every = SplatV1.videoFramesUntil.inMicroseconds / SplatV1.videoFrames;
-  return math.min(SplatV1.maxVideoFrames, (duration.inMicroseconds / every).round());
 }
 
 /// Why [candidate], a photo, is left out of a scene, null when it is used; [linux]: no decoder for HEIF and AVIF there

@@ -5,19 +5,29 @@
 // of a drive too, with the paths of Windows), the folder the scene goes to, the frames of a video and the time on this
 // computer.
 
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
-import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
+import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
+import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
+import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_plan.dart';
+import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:path/path.dart' as p;
+
+import '../fakes/fake_process_runner.dart';
 
 LocalAsset _asset(String name, {AssetType type = AssetType.image, DateTime? taken, int? durationMs}) => LocalAsset(
   id: 'id-$name',
@@ -90,6 +100,26 @@ List<SplatCandidate> _photos(int count, {String folder = '/photos/salon', int fr
   for (var index = 0; index < count; index++)
     _photo('IMG_${(from + index).toString().padLeft(4, '0')}.jpg', folder: folder, minute: from + index, paths: paths),
 ];
+
+/// A member of a job whose preparation never reads it
+class _Member implements SplatMember {
+  _Member(this.name);
+
+  @override
+  final String name;
+
+  @override
+  DateTime? get taken => null;
+
+  @override
+  String? get camera => null;
+
+  @override
+  Future<ImmersiveSource> load(NativeCancelFlag cancel) => throw UnimplementedError('never read');
+
+  @override
+  Future<void> release() async {}
+}
 
 void main() {
   group('the refusals before anything runs', () {
@@ -327,14 +357,23 @@ void main() {
     });
   });
 
-  test('the frames of a video: 150 up to two minutes, one every 0.8 s after, 250 at most', () {
-    expect(splatVideoFrameCount(const Duration(seconds: 30)), 150);
-    expect(splatVideoFrameCount(const Duration(minutes: 2)), 150);
-    expect(splatVideoFrameCount(const Duration(minutes: 3)), 225);
-    expect(splatVideoFrameCount(const Duration(minutes: 5)), 250);
-    final plan = planSplatSelection([_video('salon.mp4', const Duration(minutes: 3))], linux: false);
-    expect(plan.images, 225);
-  });
+  test(
+    'the frames of a video are those the engine takes: 150 up to two minutes, one every 0.8 s after, 250 at most',
+    () {
+      for (final (length, frames) in [
+        (const Duration(seconds: 30), 150),
+        (const Duration(minutes: 2), 150),
+        // 160.4 windows of 0.8 s: the engine takes 161 (video_frames.dart)
+        (const Duration(milliseconds: 128300), 161),
+        (const Duration(minutes: 3), 225),
+        (const Duration(minutes: 4), 250),
+      ]) {
+        final plan = planSplatSelection([_video('salon.mp4', length)], linux: false);
+        expect(plan.images, frames, reason: '$length');
+        expect(planVideoFrames(length).length, frames, reason: 'the windows of the engine for $length');
+      }
+    },
+  );
 
   test('the time on this computer: the poses follow the images and the pairs, the training stays', () {
     const timings = AiTimings();
@@ -366,28 +405,68 @@ void main() {
     expect(measured.training, const Duration(minutes: 10));
   });
 
-  test('the time the dialog says is the one the engine starts from', () {
+  test('the time the dialog says is the one the engine tells when it starts, given what the queue gives it', () async {
     const timings = AiTimings({
       'splatScene': {'matching': 240000, 'training': 380000},
       'splatSceneVideo': {'frames': 52000},
     });
-    for (final (images, video) in [(20, false), (40, false), (150, false), (200, false), (150, true), (225, true)]) {
+    final root = Directory.systemTemp.createTempSync('splat-plan-time-');
+    addTearDown(() => root.deleteSync(recursive: true));
+    final cancel = NativeCancelFlag();
+    addTearDown(cancel.free);
+    final runner = FakeProcessRunner(const []);
+    // The engine of the app with programs that never start: the preparation stops the job at once
+    final engine = SplatEngine(
+      images: (members, {required video, required imagesFolder, required cancel, required onProgress}) async =>
+          throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled'),
+      colmap: ColmapRunner(runner: runner, colmap: 'colmap'),
+      brush: BrushRunner(
+        runner: runner,
+        brush: 'brush_app',
+        cardCheck: () async => const BrushCardRefused('gpuNone'),
+        cacheRoot: root,
+      ),
+      roots: [SplatWorkRoot(Directory(p.join(root.path, 'work')))],
+      elapsed: () => Duration.zero,
+    );
+    for (final (photos, length) in [
+      (20, null),
+      (40, null),
+      (150, null),
+      (250, null),
+      (0, const Duration(seconds: 111)),
+      // FreeKC's video of 2 November is 128.5 s long: more than two minutes, so more than 150 frames
+      (0, const Duration(milliseconds: 128300)),
+      (0, const Duration(minutes: 3)),
+    ]) {
+      final video = length != null;
+      final plan = planSplatSelection(video ? [_video('walk.mp4', length)] : _photos(photos), linux: false);
+      final said = splatTimeOf(timings, images: plan.images, video: video);
+      // The spec the queue makes of what the dialog gives it (conversion_queue.dart): the times kept on this computer
+      // and the images the dialog counted
       final key = ConversionKind.splatScene.timingsKey(fromVideo: video);
-      final stages = ConversionKind.splatScene.stagesOf(fromVideo: video);
-      // What the queue gives the engine (SplatJob.timings) and what the engine counts from it
-      final engine = SplatTimeModel(
-        reference: {
-          for (final stage in stages)
+      final job = SplatJob(
+        id: 'conversion-1',
+        lead: const ImmersiveSource(name: 'IMG_0000.jpg', size: 1, sha1: 'x', path: '/photos/salon/IMG_0000.jpg'),
+        members: [for (final candidate in plan.used) _Member(candidate.asset.name)],
+        isVideo: video,
+        partPath: p.join(root.path, '.salon_splat.spz.part'),
+        derivativeId: 'd',
+        creatorTool: 't',
+        created: 'c',
+        timings: {
+          for (final stage in ConversionKind.splatScene.stagesOf(fromVideo: video))
             if (timings.of(key, stage.name) case final millis?) stage: Duration(milliseconds: millis),
         },
-        stages: stages,
-        images: video ? images : splatPlannedImages(images, video: false),
-        video: video,
+        plannedImages: plan.images,
       );
-      final said = splatTimeOf(timings, images: images, video: video);
-      expect(said.total, engine.total, reason: '$images ${video ? 'frames' : 'photos'}');
-      expect(said.training, engine.expected(ImmersiveStage.training));
-      expect(said.poses + said.training + engine.after(ImmersiveStage.training), said.total);
+      final progress = <ImmersiveProgress>[];
+      final result = await engine.run(job, cancel: cancel, onProgress: progress.add);
+      expect(result.error, ImmersiveErrorCode.cancelled);
+      final what = video ? '$length, ${plan.images} frames' : '${plan.images} photos';
+      expect(progress.first.remaining, said.total, reason: what);
+      expect(said.poses + said.training, lessThanOrEqualTo(said.total), reason: what);
     }
+    expect(runner.launches, isEmpty);
   });
 }

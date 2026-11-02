@@ -176,7 +176,7 @@ class SplatEngine implements ImmersiveEngine {
           ? splatTimingsOf(job.isVideo ? splatSceneVideoDefaultTimings : splatSceneDefaultTimings)
           : job.timings,
       stages: job.stages,
-      images: splatPlannedImages(job.members.length, video: job.isVideo),
+      images: job.plannedImages ?? splatPlannedImages(job.members.length, video: job.isVideo),
       video: job.isVideo,
       steps: job.settings.steps,
     );

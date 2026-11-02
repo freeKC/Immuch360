@@ -456,6 +456,7 @@ final class SplatJob extends ImmersiveJobSpec {
     this.settings = const SplatSettings(),
     this.plyPartPath,
     this.timings = const {},
+    this.plannedImages,
     super.exif = const ImmersiveExif(),
   });
 
@@ -469,6 +470,10 @@ final class SplatJob extends ImmersiveJobSpec {
 
   /// The times of the steps of a job of 150 images, as this computer measured them
   final Map<ImmersiveStage, Duration> timings;
+
+  /// The images the dialog counted and told the time of (SplatSelection.images): the engine starts its time from them,
+  /// so that the panel says at first what the dialog said; null: splatPlannedImages
+  final int? plannedImages;
 
   @override
   ImmersiveKind get kind => ImmersiveKind.gaussianSplat;

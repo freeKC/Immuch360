@@ -394,10 +394,14 @@ class ConversionTarget {
 /// The photos, or the video, of a splat scene and its settings (lot SP6): [members] in the order the dialog gives them
 /// (the engine plans them in time, 200 photos at most), the video alone for a video
 class SplatSelection {
-  const SplatSelection({required this.members, this.settings = const SplatSettings()});
+  const SplatSelection({required this.members, this.settings = const SplatSettings(), this.images});
 
   final List<SplatMember> members;
   final SplatSettings settings;
+
+  /// The images the dialog counted and told the time of: the photos used, or the frames of the video by its length
+  /// (161 for a video of 128.5 s); null when not counted, the engine then plans its own (splatPlannedImages)
+  final int? images;
 }
 
 /// One photo to convert, as the dialog hands it to the queue

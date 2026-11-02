@@ -1033,6 +1033,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
             for (final stage in job.kind.stagesOf(fromVideo: job.fromVideo))
               if (timings.of(key, stage.name) case final millis?) stage: Duration(milliseconds: millis),
           },
+          plannedImages: splat.images,
         );
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(

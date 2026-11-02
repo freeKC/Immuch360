@@ -1177,6 +1177,9 @@ void main() {
     expect(spec.isVideo, isFalse);
     expect(spec.settings.subject, SplatSubject.object);
     expect(spec.plyPartPath, isNotNull);
+    // The images the dialog counted and told the time of: the engine starts its time from them
+    expect(selection.images, 60);
+    expect(spec.plannedImages, 60);
   });
 
   test('a photo of the server is a member with the checksum Immich gives, a file of this computer is read for it', () {
