@@ -202,6 +202,12 @@ const panoramaJobMemory = 6 * _gib + 512 * _mib;
 /// of the depth model
 const stereoPanoramaJobMemory = 2 * 4 * 8192 * 4096 + 2 * 4 * 4096 * 4096 + 64 * _mib + depthSessionMemory + 64 * _mib;
 
+/// What the job of a splat scene needs of the memory of the computer while COLMAP finds the poses (SplatV1.jobMemory):
+/// the extraction peaked at 3.6 GB with 24 threads at 779 pixels and 2.4 GB with 12 threads at 1 024 (measure of 1
+/// November), and its threads follow the memory free; Brush then holds 0.6 to 1.9 GB, within [secondLaneReserve]
+/// plus what the poses gave back
+const splatJobMemory = SplatV1.jobMemory;
+
 /// What a job that makes a file of [kind] needs at its peak, told before it runs, to decide whether it may run beside
 /// a job of the other lane: a 3D photo of 24 Mpx with its session to open for the 3D photo, whose own job then checks
 /// the size of its photo (jobMemoryNeed)
@@ -216,6 +222,7 @@ int jobMemoryNeedOf(ImmersiveKind kind) => switch (kind) {
   ImmersiveKind.volumetricScene => sceneJobMemory,
   ImmersiveKind.panorama360 => panoramaJobMemory,
   ImmersiveKind.stereoPanorama360 => stereoPanoramaJobMemory,
+  ImmersiveKind.gaussianSplat => splatJobMemory,
 };
 
 /// What is kept free for the job under way on the other lane when a second one starts: M3 saw the free memory of
@@ -225,12 +232,14 @@ const secondLaneReserve = _gib;
 
 /// The step from which a job of [kind] holds the memory [jobMemoryNeedOf] counts for it: the one where its models run,
 /// the depth of a 3D photo or of a 360° 3D panorama, the geometry of a scene, the generation of a panorama once
-/// stable-diffusion.cpp loaded its models. What it takes after that step stays within [secondLaneReserve].
+/// stable-diffusion.cpp loaded its models, the points of the images for a splat scene (the extraction is its peak).
+/// What it takes after that step stays within [secondLaneReserve].
 ImmersiveStage memoryPeakOf(ImmersiveKind kind) => switch (kind) {
   ImmersiveKind.stereoPhoto => ImmersiveStage.depth,
   ImmersiveKind.volumetricScene => ImmersiveStage.geometry,
   ImmersiveKind.panorama360 => ImmersiveStage.generating,
   ImmersiveKind.stereoPanorama360 => ImmersiveStage.panoramaDepth,
+  ImmersiveKind.gaussianSplat => ImmersiveStage.features,
 };
 
 /// What a job of [kind] at [stage] (null: not started yet) may still take beyond the memory free read now: its whole

@@ -13,6 +13,7 @@ void main() {
         'Panorama360',
         'StereoPanorama360',
         'VolumetricScene',
+        'GaussianSplat',
       ]);
       expect(StereoEyes.full.xmp, 'SideBySideFull');
       expect(StereoEyes.half.json, 'half');
@@ -47,12 +48,17 @@ void main() {
 
     test('each kind has its name, the end of which a shortened name keeps whole', () {
       expect(
-        {for (final kind in ImmersiveKind.values) kind: derivedFileNameFor(kind, 'salon.jpg')},
+        {
+          // A splat scene is named in its dialog, not after a photo: its name is kept whole
+          for (final kind in ImmersiveKind.values)
+            kind: derivedFileNameFor(kind, kind == ImmersiveKind.gaussianSplat ? 'salon' : 'salon.jpg'),
+        },
         {
           ImmersiveKind.stereoPhoto: 'salon_3D_LRF_Full_SBS.jpg',
           ImmersiveKind.volumetricScene: 'salon_scene3D.jpg',
           ImmersiveKind.panorama360: 'salon_360.jpg',
           ImmersiveKind.stereoPanorama360: 'salon_360_3D.jpg',
+          ImmersiveKind.gaussianSplat: 'salon_splat.spz',
         },
       );
       // The 3D version of a 360° photo whose name says so only adds _3D

@@ -87,6 +87,24 @@
       "bytes": 594,
       "sha256": "c71a4409ac3aa0a1f2054e45552de9c7117ffe7e37c89119e20da462cd7199d0"
     },
+    "edges_sh3.ply": {
+      "bytes": 9069,
+      "sha256": "934d97b1d2914d98a3814fa6706b1d864c0945c85426342c947c9a986b461493",
+      "format": "ply",
+      "gaussians": 32,
+      "shDegree": 3,
+      "tool": "make_splat_fixtures.py",
+      "rowBytes": 236
+    },
+    "edges_sh3_v2.spz": {
+      "bytes": 240,
+      "sha256": "63380343d8378307e4b51405746e4883e9f293c27ee9ecc1044ae95a3818d347",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 32,
+      "shDegree": 3,
+      "ply": "edges_sh3.ply"
+    },
     "long_header.ply": {
       "bytes": 88581,
       "sha256": "308b987f831b6e9b3e7c1949f328e58ab70cda4e38716f7d0b08817365ae0182"
@@ -139,6 +157,15 @@
       "shDegree": 3,
       "tool": null,
       "rowBytes": 248
+    },
+    "sh3_v2.spz": {
+      "bytes": 163,
+      "sha256": "5b66b9e92a6fc9c3203eb3036fe36c27d8a1d2a0cf1e9d11d8fb624349d010f3",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 8,
+      "shDegree": 3,
+      "ply": "sh3.ply"
     },
     "sh4_v2.spz": {
       "bytes": 413,

@@ -116,6 +116,8 @@ String versionKindText(VersionFile file, Translations t) => switch (file.kind) {
   ImmersiveKind.panorama360 => t.ai_immersive_version_panorama,
   ImmersiveKind.stereoPanorama360 =>
     file.origin == IndexedOrigin.generated ? t.ai_immersive_version_stereo_panorama : t.ai_immersive_version_stereo_360,
+  // No picture carries a splat scene in this version (plan 2026-11-01, decision D2): one is from a newer version
+  ImmersiveKind.gaussianSplat => t.ai_immersive_newer_version,
   null => switch (file.origin) {
     IndexedOrigin.estimated => t.ai_immersive_3d_photo_estimated,
     IndexedOrigin.reconstructed => t.ai_immersive_version_scene,

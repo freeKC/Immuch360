@@ -11,6 +11,11 @@
 //
 // DartImmersiveEngine (lot A4b) chains the decoding, DepthBackend (ONNX Runtime), relief-v1 and SbsCodec in a worker
 // isolate. No engine opens the original for writing or touches the final name: the caller renames the .part.
+//
+// The splat scene (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, lot SP0) is the first kind made from many
+// sources: SplatJob names the photos, or the video, as members the engine reads one after the other, never all copied
+// at once; its steps are those of the photos (or of the frames of the video), of COLMAP, of Brush and of the copy for
+// the headset, its failures those of placing the photos and of the training, and its result the counts the panel tells.
 
 import 'dart:typed_data';
 
@@ -53,6 +58,18 @@ enum ImmersiveStage {
   /// A 3D photo and a 360° 3D panorama: the right eye (the percentage comes from its rows)
   rightEye(ImmersivePhase.computing),
 
+  /// A splat scene: the photos prepared (turned, reduced, the blurred ones left out) or the frames taken from the
+  /// video, each counted; then COLMAP on the processor, the points of each image, the matching (blocks of an exhaustive
+  /// matching, images of a sequential one) and the mapping (the cameras placed); then Brush on the graphics card, its
+  /// steps; then the copy for the headset, scaled and written as SPZ version 2 (and the .ply when asked)
+  photos(ImmersivePhase.preparing),
+  frames(ImmersivePhase.preparing),
+  features(ImmersivePhase.computing),
+  matching(ImmersivePhase.computing),
+  mapping(ImmersivePhase.computing),
+  training(ImmersivePhase.computing),
+  splatCopy(ImmersivePhase.finishing),
+
   /// Every kind but the scene: the JPEG encoded; then every kind: the file written
   encoding(ImmersivePhase.finishing),
   writing(ImmersivePhase.finishing);
@@ -86,12 +103,25 @@ enum ImmersiveStage {
   /// The steps of a 360° 3D panorama
   static const stereoPanorama = [reading, decoding, panoramaDepth, rightEye, encoding, writing];
 
+  /// The steps of a splat scene: the sources read (a photo of the server copied, the sums of the photos), then the
+  /// photos, or the frames of a video (SplatJob.stages keeps the one of its job, [splatOf]), COLMAP, Brush, the copy
+  /// for the headset and the file written
+  static const splat = [reading, photos, frames, features, matching, mapping, training, splatCopy, writing];
+
+  /// The steps of a splat scene made from a video ([video]) or from photos: those of [splat] without the frames of a
+  /// video for photos, without the photos for a video
+  static List<ImmersiveStage> splatOf({required bool video}) => [
+    for (final stage in splat)
+      if (stage != (video ? photos : frames)) stage,
+  ];
+
   /// The steps of a job that makes a file of [kind], in their order
   static List<ImmersiveStage> of(ImmersiveKind kind) => switch (kind) {
     ImmersiveKind.stereoPhoto => sbs,
     ImmersiveKind.volumetricScene => scene,
     ImmersiveKind.panorama360 => panorama,
     ImmersiveKind.stereoPanorama360 => stereoPanorama,
+    ImmersiveKind.gaussianSplat => splat,
   };
 }
 
@@ -149,6 +179,37 @@ enum ImmersiveErrorCode {
 
   /// The 360° panorama has too little relief, or too much would be filled in: no 3D version is written
   notEnoughRelief,
+
+  /// A splat scene: fewer usable photos or frames than SplatV1.minImages once the unreadable and the blurred ones are
+  /// left out; the message is splatCountsMessage(usable, all)
+  tooFewImages,
+
+  /// COLMAP ended with an error (not a crash for want of memory, which is [outOfMemory]); the end of its error output
+  /// goes with it
+  posesFailed,
+
+  /// COLMAP wrote nothing for SplatV1.colmapSilence and was stopped
+  posesStalled,
+
+  /// Too few images placed in 3D: fewer than SplatV1.minPlacedShare of them or than SplatV1.minPlaced, none when no
+  /// two photos could be matched; the message is splatCountsMessage(placed, all)
+  notEnoughOverlap,
+
+  /// Brush ended with an error; the end of its error output goes with it
+  trainingFailed,
+
+  /// Brush wrote nothing for SplatV1.brushSilence and was stopped
+  trainingStalled,
+}
+
+/// The counts a failure of a splat scene carries as its message: "12/150", the images it could use or place of those
+/// it was given
+String splatCountsMessage(int count, int all) => '$count/$all';
+
+/// The counts of [message] (see [splatCountsMessage]), null when it holds none
+(int count, int all)? splatCountsOf(String? message) {
+  final match = RegExp(r'^(\d+)/(\d+)$').firstMatch(message ?? '');
+  return match == null ? null : (int.parse(match.group(1)!), int.parse(match.group(2)!));
 }
 
 /// The original of a job: a file read in place, or bytes already copied (a server original, a file of a share)
@@ -273,6 +334,74 @@ final class ImmersiveJob extends ImmersiveJobSpec {
 /// The spec of a 3D photo, by the name of the specs of phases 2 and 3
 typedef SbsJob = ImmersiveJob;
 
+/// One photo, or the video, a splat scene is made from. The engine reads the members one after the other while it
+/// prepares them ([load], then [release] once its own copy is made), so that 200 photos of a server are never copied at
+/// once. The queue makes them from the sources of the dialog (lot SP6): a file of this computer read in place, an
+/// original of the server downloaded to the work folder.
+abstract interface class SplatMember {
+  /// The name of the original, "DSCF4667.JPG"
+  String get name;
+
+  /// When it was taken, which orders the photos in time (the sequential matching of a video, 200 of 512 photos spread
+  /// evenly); null when nothing tells it, the name then orders it
+  DateTime? get taken;
+
+  /// The camera that took it, "Canon EOS REBEL T3 18 mm 4272x2848": the photos of one camera share their intrinsics
+  /// (one folder per camera for COLMAP); null when nothing tells it
+  String? get camera;
+
+  /// Reads, or copies, the original; throws a ConversionException as a source of the queue does
+  Future<ImmersiveSource> load(NativeCancelFlag cancel);
+
+  /// Deletes what [load] copied; nothing for a file read in place
+  Future<void> release();
+}
+
+/// The settings of one splat scene, those of SplatV1 unless the measure M1 or the user says otherwise
+class SplatSettings {
+  const SplatSettings({
+    this.subject = SplatSubject.place,
+    this.steps = SplatV1.steps,
+    this.maxGaussians = SplatV1.maxGaussians,
+    this.shDegree = SplatV1.shDegree,
+    this.trainingResolution = SplatV1.trainingResolution,
+    this.siftMaxImageSize = SplatV1.siftMaxImageSize,
+    this.keepPly = false,
+  });
+
+  /// "What did you film?": a place or an object, which sets the scale
+  final SplatSubject subject;
+  final int steps;
+  final int maxGaussians;
+  final int shDegree;
+  final int trainingResolution;
+  final int siftMaxImageSize;
+
+  /// "Also save a .ply for other 3D apps": the same gaussians, at full precision, in the order of 3D Gaussian Splatting
+  final bool keepPly;
+
+  /// What makes two scenes of the same photos the same, with the sums of the photos: the key of a work folder kept for
+  /// Retry (SplatV1.workKept)
+  String get key =>
+      '${SplatV1.pipeline};${subject.name};$steps;$maxGaussians;$shDegree;$trainingResolution;'
+      '$siftMaxImageSize';
+
+  @override
+  bool operator ==(Object other) =>
+      other is SplatSettings &&
+      other.subject == subject &&
+      other.steps == steps &&
+      other.maxGaussians == maxGaussians &&
+      other.shDegree == shDegree &&
+      other.trainingResolution == trainingResolution &&
+      other.siftMaxImageSize == siftMaxImageSize &&
+      other.keepPly == keepPly;
+
+  @override
+  int get hashCode =>
+      Object.hash(subject, steps, maxGaussians, shDegree, trainingResolution, siftMaxImageSize, keepPly);
+}
+
 /// One photo to make into a 3D scene, `<name>_scene3D.jpg` (scene-v1). [sources] holds one photo in version 1, never
 /// none; a scene made from several, one day, comes through SceneBackend with the same spec. With [glbPartPath], the
 /// engine also writes the scene as a .glb there. The app leaves it null: "Also save a .glb copy" copies the scene the
@@ -297,6 +426,45 @@ final class SceneJob extends ImmersiveJobSpec {
 
   @override
   ImmersiveKind get kind => ImmersiveKind.volumetricScene;
+}
+
+/// Photos or a video to make into a splat scene, `<name>_splat.spz` (splat-v1): [members] in the order of the time they
+/// were taken, at most SplatV1.maxPhotos photos, or the video alone ([isVideo]). [lead] is the source the scene names
+/// as its original, the first photo in time or the video, which the queue prepares as the source of every job; the
+/// engine reads the others through [members]. With [plyPartPath], the engine also writes the same gaussians as a .ply
+/// there ("Also save a .ply for other 3D apps"), renamed by the caller with the .spz.
+final class SplatJob extends ImmersiveJobSpec {
+  const SplatJob({
+    required super.id,
+    required this.lead,
+    required this.members,
+    required super.partPath,
+    required super.derivativeId,
+    required super.creatorTool,
+    required super.created,
+    this.isVideo = false,
+    this.settings = const SplatSettings(),
+    this.plyPartPath,
+    super.exif = const ImmersiveExif(),
+  });
+
+  final ImmersiveSource lead;
+
+  /// Never empty; the video alone for a video
+  final List<SplatMember> members;
+  final bool isVideo;
+  final SplatSettings settings;
+  final String? plyPartPath;
+
+  @override
+  ImmersiveKind get kind => ImmersiveKind.gaussianSplat;
+
+  @override
+  List<ImmersiveSource> get sources => [lead];
+
+  /// The steps of the splat scene without those of the other source: the frames of a video, or the photos
+  @override
+  List<ImmersiveStage> get stages => ImmersiveStage.splatOf(video: isVideo);
 }
 
 /// One photo to make into a 360° panorama generated beyond its edges, `<name>_360.jpg` (pano-v1): the transformer
@@ -449,6 +617,41 @@ final class StereoPanoramaResultDetails extends ImmersiveResultDetails {
   final int width;
   final int height;
   final double filledFraction;
+}
+
+/// A splat scene: its [gaussians] (the bytes of the .spz are those of ImmersiveResult.bytesWritten), the [images] it was
+/// trained from and how many of them COLMAP [placed] ("Done: 150,000 gaussians, 3.6 MB, from 150 of 150 photos"; "24 of
+/// 150 photos could not be placed"), photos or frames of a video ([fromVideo]), the frames left out as [blurred], the
+/// scale written ([scale], metres a unit of COLMAP) for what was filmed ([subject]), and the size of the .ply when one
+/// was written
+final class SplatResultDetails extends ImmersiveResultDetails {
+  const SplatResultDetails({
+    required this.gaussians,
+    required this.images,
+    required this.placed,
+    required this.subject,
+    required this.scale,
+    this.fromVideo = false,
+    this.blurred = 0,
+    this.shDegree = SplatV1.shDegree,
+    this.plyBytes,
+  });
+
+  final int gaussians;
+  final int images;
+  final int placed;
+  final SplatSubject subject;
+  final double scale;
+  final bool fromVideo;
+  final int blurred;
+  final int shDegree;
+  final int? plyBytes;
+
+  /// The images COLMAP could not place, left out of the scene
+  int get leftOut => images - placed;
+
+  /// Whether enough of them were left out to say so (fewer than SplatV1.partialShare placed)
+  bool get isPartial => images > 0 && placed < images * SplatV1.partialShare;
 }
 
 /// How a job ended

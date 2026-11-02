@@ -76,7 +76,8 @@ abstract interface class ImmersiveXmp {
   String toXml();
 
   /// The packet of [xmp] as its kind reads it: a 3D scene, a panorama, a 360° 3D panorama, or the StereoPhotoXmp of
-  /// phase 1 for a 3D photo and for a kind this build does not know; null without our namespace or a Kind
+  /// phase 1 for a 3D photo and for a kind this build does not know, or cannot show yet (a splat scene, which no
+  /// picture carries in this version); null without our namespace or a Kind
   static ImmersiveXmp? parse(String xmp) {
     final prefix = xmpPrefixOf(xmp, immuch360XmpNamespace);
     if (prefix == null) {
@@ -86,7 +87,7 @@ abstract interface class ImmersiveXmp {
       ImmersiveKind.volumetricScene => SceneXmp.parse(xmp),
       ImmersiveKind.panorama360 => PanoramaXmp.parse(xmp),
       ImmersiveKind.stereoPanorama360 => StereoPanoramaXmp.parse(xmp),
-      ImmersiveKind.stereoPhoto || null => StereoPhotoXmp.parse(xmp),
+      ImmersiveKind.stereoPhoto || ImmersiveKind.gaussianSplat || null => StereoPhotoXmp.parse(xmp),
     };
   }
 

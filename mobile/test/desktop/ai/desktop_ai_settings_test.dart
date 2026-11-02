@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
@@ -110,6 +111,9 @@ void main() {
           'panoramaFromPhoto': {'generating': 412000},
         },
         comfyUiUrl: 'http://127.0.0.1:8188',
+        splatScenes: false,
+        splatSubject: SplatSubject.object,
+        splatKeepPly: true,
       );
 
       await store.write(settings);

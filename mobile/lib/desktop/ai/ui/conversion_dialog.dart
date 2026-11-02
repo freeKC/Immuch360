@@ -166,7 +166,8 @@ final aiGateResultProvider = aiGateResultForProvider(AiFeature.stereoPhoto);
 
 /// The types of version the dialog offers, in their order (design-final 2026-10-27, section 9.1, point 2): the 3D photo
 /// of phase 1, the 3D scene of phase 2, the 360° panorama of phase 3 (lot U3) and the 3D version of a 360° photo (lot
-/// P1)
+/// P1). Not the splat scene, made from a whole selection by a button and a dialog of its own (plan 2026-11-01, lot
+/// SP7)
 const conversionDialogKinds = [
   ConversionKind.sbsFromPhoto,
   ConversionKind.sceneFromPhoto,
@@ -193,6 +194,7 @@ AiFeature aiFeatureOf(ConversionKind kind) => switch (kind) {
   ConversionKind.sceneFromPhoto => AiFeature.scene,
   ConversionKind.panoramaFromPhoto => AiFeature.panorama,
   ConversionKind.stereoPanoramaFromPanorama => AiFeature.stereoPanorama,
+  ConversionKind.splatScene => AiFeature.splatScene,
 };
 
 /// The name of a type of version in the dialog: "3D photo", "3D scene"
@@ -201,6 +203,7 @@ String conversionKindName(Translations t, ConversionKind kind) => switch (kind) 
   ConversionKind.sceneFromPhoto => t.ai_immersive_type_scene,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_type_panorama,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_type_stereo_360,
+  ConversionKind.splatScene => t.ai_immersive_type_splat,
 };
 
 /// What a type of version is, in the words of its honesty label; the 3D version of a panorama the app [generated] is
@@ -211,6 +214,7 @@ String conversionKindHonesty(Translations t, ConversionKind kind, {bool generate
   ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
   ConversionKind.stereoPanoramaFromPanorama when generated => t.ai_immersive_panorama_honesty,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
+  ConversionKind.splatScene => t.ai_immersive_splat_honesty,
 };
 
 /// "6 s", "4 min": a time of the conversions, the seconds rounded up under a minute, the minutes rounded above
@@ -715,9 +719,10 @@ class ConversionCandidate {
 }
 
 /// Whether a version of ours holds two eyes: a 3D photo, a 360° 3D panorama, and a version whose kind this build does
-/// not know (or not read again since the index learnt the kinds), which is never made into another version either
+/// not know (or not read again since the index learnt the kinds), which is never made into another version either. The
+/// picture that will carry a splat scene is one flat image, as that of a 3D scene.
 bool versionHoldsTwoEyes(IndexedVersion version) => switch (version.kind) {
-  ImmersiveKind.volumetricScene || ImmersiveKind.panorama360 => false,
+  ImmersiveKind.volumetricScene || ImmersiveKind.panorama360 || ImmersiveKind.gaussianSplat => false,
   ImmersiveKind.stereoPhoto || ImmersiveKind.stereoPanorama360 || null => true,
 };
 
@@ -850,13 +855,14 @@ IndexedVersion? _versionOf(Ref ref, BaseAsset asset) {
 
 /// Whether the viewer may offer "Make 3D (AI)" for [asset] to make a version of [kind]: a flat photo for a 3D photo, a
 /// 3D scene and a 360° panorama ([aiFlatPhotoProvider]), a 360° photo that holds one eye for its 3D version
-/// ([aiMonoPanoramaProvider])
+/// ([aiMonoPanoramaProvider]); never for a splat scene, made from a whole selection by its own button (lot SP7)
 final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, ConversionKind kind})>(
   (ref, source) => switch (source.kind) {
     ConversionKind.sbsFromPhoto ||
     ConversionKind.sceneFromPhoto ||
     ConversionKind.panoramaFromPhoto => ref.watch(aiFlatPhotoProvider(source.asset)),
     ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
+    ConversionKind.splatScene => false,
   },
 );
 

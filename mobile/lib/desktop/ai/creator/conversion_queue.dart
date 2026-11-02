@@ -754,7 +754,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         return;
       }
       // Kept before the job is told done: nothing of it is still written once it shows done
-      await _keepTimings(tools, job.kind, result.stageTimes);
+      await _keepTimings(tools, job.kind.timingsKey(fromVideo: job.fromVideo), result.stageTimes);
       // What the writer did, not what was asked: it keeps both when the version is no longer ours at the rename
       final replaced = saved.outcome == ConversionSaveOutcome.replaced;
       _set(
@@ -835,7 +835,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// The spec of [job] for its engine; null for a panorama whose engine names no generator
+  /// The spec of [job] for its engine; null for a panorama whose engine names no generator, and for a splat scene until
+  /// the queue makes its members from the sources of its dialog (lot SP6)
   ImmersiveJobSpec? _specOf(
     ConversionJob job,
     ConversionTools tools,
@@ -890,6 +891,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           steps: steps,
           seed: tools.newSeed(),
         );
+      case ConversionKind.splatScene:
+        return null;
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(
           id: job.id,
@@ -1036,12 +1039,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// Takes in the times of the steps of a job of [kind] that ended well
-  Future<void> _keepTimings(
-    ConversionTools tools,
-    ConversionKind kind,
-    Map<ImmersiveStage, Duration> stageTimes,
-  ) async {
+  /// Takes in the times of the steps of a job that ended well, kept under [key] (ConversionKind.timingsKey)
+  Future<void> _keepTimings(ConversionTools tools, String key, Map<ImmersiveStage, Duration> stageTimes) async {
     final store = tools.settings;
     if (store == null || stageTimes.isEmpty) {
       return;
@@ -1049,7 +1048,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     final times = {for (final MapEntry(key: stage, value: time) in stageTimes.entries) stage.name: time.inMilliseconds};
     try {
       final kept = await store.update(
-        (settings) => settings.copyWith(timings: AiTimings.merged(settings.timings, kind.name, times)),
+        (settings) => settings.copyWith(timings: AiTimings.merged(settings.timings, key, times)),
       );
       _measured = kept.timings;
     } catch (error) {

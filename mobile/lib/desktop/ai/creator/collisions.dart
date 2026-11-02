@@ -26,11 +26,12 @@ const versionHeadLength = 128 * 1024;
 String sbsTargetName(String originalName) => versionTargetName(ImmersiveKind.stereoPhoto, originalName);
 
 /// The name of the version of [kind] of [originalName] on a computer, made safe for Windows: "salon_scene3D.jpg",
-/// "salon_360.jpg", "salon_360_3D.jpg", "PANO_0001_3D.jpg" (derivedNameEnd). A name too long is shortened before its
-/// end, which always stays whole: the devices and the search of the neighbours read it.
+/// "salon_360.jpg", "salon_360_3D.jpg", "PANO_0001_3D.jpg" (derivedNameEnd), and for a splat scene the name chosen in
+/// its dialog, kept whole: "St. Paul_splat.spz" (derivedNameStem). A name too long is shortened before its end, which
+/// always stays whole: the devices and the search of the neighbours read it.
 String versionTargetName(ImmersiveKind kind, String originalName) {
   final end = derivedNameEnd(kind, originalName);
-  var stem = fileStem(originalName);
+  var stem = derivedNameStem(kind, originalName);
   for (;;) {
     final name = safeFileName('$stem$end');
     if (name.endsWith(end) || stem.isEmpty) {
