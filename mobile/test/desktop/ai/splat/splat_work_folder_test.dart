@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:path/path.dart' as p;
 
@@ -28,6 +29,23 @@ void main() {
     expect(path(work.sparse), p.join('splat-1', 'colmap', 'sparse'));
     expect(path(work.export), p.join('splat-1', 'brush'));
     expect(p.relative(work.logOf('colmap-features').path, from: 'w'), p.join('splat-1', 'logs', 'colmap-features.log'));
+  });
+
+  test('the work folders of the splat scenes a day old go, under each root; the young ones and the rest stay', () {
+    final temp = SplatWorkRoot(Directory(p.join(folder.path, 'temp', 'immuch360-ai')));
+    final shared = SplatWorkRoot(Directory(p.join(folder.path, 'ProgramData', 'ai-work', 'S-1-5-21-1')), shared: true);
+    final old = Directory(p.join(temp.folder.path, splatWorkFolderName('a' * 40)))..createSync(recursive: true);
+    final young = Directory(p.join(shared.folder.path, splatWorkFolderName('b' * 40)))..createSync(recursive: true);
+    final other = Directory(p.join(temp.folder.path, 'panorama-1'))..createSync(recursive: true);
+    final later = DateTime.now().add(const Duration(hours: 25));
+    // A job that failed during its training last used it an hour ago
+    touchAiWorkFolder(young, at: later.subtract(const Duration(hours: 1)));
+
+    expect(deleteOldSplatWork([temp, shared, SplatWorkRoot(Directory(p.join(folder.path, 'none')))], now: later), 1);
+    expect(old.existsSync(), isFalse);
+    expect(young.existsSync(), isTrue);
+    expect(other.existsSync(), isTrue, reason: 'not a folder of a splat scene: the rule of an hour of its owner');
+    expect(splatWorkFolderName('0123456789abcdef0123'), 'splat-0123456789abcdef');
   });
 
   test('an ASCII path is its own; another one its short name on Windows, if ASCII; none elsewhere', () {

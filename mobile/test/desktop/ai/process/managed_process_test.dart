@@ -13,6 +13,7 @@ import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/process/process_job_object.dart';
 import 'package:immich_mobile/desktop/ai/process/process_priority.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
 /// A process that writes what it is given and ends when told
@@ -264,6 +265,31 @@ void main() {
       expect(old.existsSync(), isFalse);
       expect(folders.delete(job), isTrue);
       expect(AiWorkFolders.system().root.path, p.join(Directory.systemTemp.path, 'immuch360-ai'));
+    });
+
+    test('the work folder of a splat scene is kept a day, for Retry from its poses; the others an hour', () {
+      final folders = AiWorkFolders(Directory(p.join(folder.path, aiWorkFolderName)));
+      final splat = folders.create('${splatWorkFolderPrefix}0123456789abcdef');
+      final panorama = folders.create('panorama-1');
+
+      expect(folders.deleteOld(now: DateTime.now().add(const Duration(minutes: 61))), 1);
+      expect(panorama.existsSync(), isFalse);
+      expect(splat.existsSync(), isTrue);
+      expect(folders.deleteOld(now: DateTime.now().add(const Duration(hours: 23))), 0);
+      expect(folders.deleteOld(now: DateTime.now().add(SplatV1.workKept + const Duration(minutes: 1))), 1);
+      expect(splat.existsSync(), isFalse);
+    });
+
+    test('a work folder used again counts from its last use, told by its .last-used file', () {
+      final folders = AiWorkFolders(Directory(p.join(folder.path, aiWorkFolderName)));
+      final splat = folders.create('${splatWorkFolderPrefix}fedcba9876543210');
+      final later = DateTime.now().add(const Duration(hours: 30));
+      touchAiWorkFolder(splat, at: later.subtract(const Duration(hours: 2)));
+
+      final used = aiWorkFolderLastUsed(splat).difference(later.subtract(const Duration(hours: 2)));
+      expect(used.inSeconds.abs(), lessThan(2));
+      expect(folders.deleteOld(now: later), 0);
+      expect(splat.existsSync(), isTrue);
     });
 
     test('the answer of a probe of the graphics cards an earlier session left is deleted with the old folders', () {
