@@ -78,7 +78,8 @@ void main() {
 
   test('the window takes the place of the app, the title of the file and its WebView2 folder, then the page', () async {
     final viewer = host();
-    await viewer.open(page, title: 'cactus.spz');
+    unawaited(viewer.open(page, title: 'cactus.spz'));
+    await pumpEventQueue();
 
     expect(made.single['title'], 'cactus.spz');
     expect(made.single['place'], (x: 10, y: 20, width: 1600, height: 900, maximized: true));
@@ -100,7 +101,8 @@ void main() {
 
   test('the page is kept to the folder of its session', () async {
     final viewer = host();
-    await viewer.open(page, title: 'a.spz');
+    unawaited(viewer.open(page, title: 'a.spz'));
+    await pumpEventQueue();
     final allow = windows.single.allow!;
 
     expect(allow(page.toString()), isTrue);
@@ -112,8 +114,8 @@ void main() {
 
   test('the user closes the window: the viewer says so', () async {
     final viewer = host();
-    final closed = viewer.closed.first;
-    await viewer.open(page, title: 'a.spz');
+    final closed = viewer.open(page, title: 'a.spz');
+    await pumpEventQueue();
     windows.single.closeByUser();
 
     expect(await closed, SplatHostClosed.user);
@@ -122,8 +124,8 @@ void main() {
 
   test('a process of the page that died closes the window and says why', () async {
     final viewer = host();
-    final closed = viewer.closed.first;
-    await viewer.open(page, title: 'a.spz');
+    final closed = viewer.open(page, title: 'a.spz');
+    await pumpEventQueue();
     windows.single.failed!('rendererExited');
 
     expect(await closed, SplatHostClosed.rendererGone);
@@ -140,34 +142,39 @@ void main() {
 
   test('the replay of 2 November 2026: an unresponsive page ends as stalled, not out of memory', () async {
     final viewer = host();
-    final closed = viewer.closed.first;
-    await viewer.open(page, title: 'a.spz');
+    final closed = viewer.open(page, title: 'a.spz');
+    await pumpEventQueue();
     windows.single.failed!('rendererUnresponsive');
 
     expect(await closed, SplatHostClosed.stalled);
   });
 
   test('no web view on this computer, or a window that cannot be made: the viewer says so', () async {
-    final none = host(available: false);
-    final closedNone = none.closed.first;
-    await none.open(page, title: 'a.spz');
-    expect(await closedNone, SplatHostClosed.noWebView);
+    expect(await host(available: false).open(page, title: 'a.spz'), SplatHostClosed.noWebView);
     expect(made, isEmpty);
-
-    final failing = host(fails: true);
-    final closedFailing = failing.closed.first;
-    await failing.open(page, title: 'a.spz');
-    expect(await closedFailing, SplatHostClosed.noWebView);
+    expect(await host(fails: true).open(page, title: 'a.spz'), SplatHostClosed.noWebView);
   });
 
-  test('a second splat closes the first window; close closes the open one', () async {
+  test('a second splat closes the first window, whose end never ends the second viewing', () async {
+    // The replay of 2 November 2026: a second splat opened while the first window was open showed "Not Found", the
+    // close of the first window having ended the second viewing at once
     final viewer = host();
-    await viewer.open(page, title: 'a.spz');
-    await viewer.open(page, title: 'b.spz');
+    final first = viewer.open(page, title: 'a.spz');
+    await pumpEventQueue();
+    var secondEnded = false;
+    final second = viewer.open(page, title: 'b.spz');
+    unawaited(second.then((_) => secondEnded = true));
+    await pumpEventQueue();
 
+    expect(await first, SplatHostClosed.user);
+    expect(windows, hasLength(2));
     expect(windows.first.closes, 1);
     expect(windows.last.closes, 0);
+    expect(secondEnded, isFalse);
+    expect(viewer.isOpen, isTrue);
+
     await viewer.close();
+    expect(await second, SplatHostClosed.user);
     expect(windows.last.closes, 1);
     expect(viewer.isOpen, isFalse);
     // Nothing left to close

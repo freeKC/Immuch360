@@ -250,12 +250,10 @@ class SplatViewerService {
         onEvent: onEvent,
       ),
     );
-    final closed = _host.closed.first;
     onOpening?.call();
     try {
       _log.info('Opening $name: ${head.gaussians} gaussians, ${reduced ? 'reduced to $cap' : 'whole'}');
-      await _host.open(_bridge.urlFor(id, 'index.html'), title: name);
-      final how = await closed;
+      final how = await _host.open(_bridge.urlFor(id, 'index.html'), title: name);
       _log.info('The splat viewer closed: $how');
       if (unsupported != null) {
         return SplatViewerOutcome(SplatViewerEnd.unsupported, unsupported: unsupported);

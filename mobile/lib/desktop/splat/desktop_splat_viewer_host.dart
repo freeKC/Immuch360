@@ -63,14 +63,7 @@ class DesktopSplatViewerHost implements SplatViewerHost {
   final Future<Directory> Function() _supportFolder;
   final bool Function() _highPerformanceGpu;
 
-  final _closed = StreamController<SplatHostClosed>.broadcast();
   SplatWindow? _window;
-
-  /// How the window being closed ended, told once it is gone
-  SplatHostClosed? _ending;
-
-  @override
-  Stream<SplatHostClosed> get closed => _closed.stream;
 
   /// Whether a viewer window is open
   bool get isOpen => _window != null;
@@ -82,12 +75,11 @@ class DesktopSplatViewerHost implements SplatViewerHost {
   }
 
   @override
-  Future<void> open(Uri pageUrl, {required String title}) async {
+  Future<SplatHostClosed> open(Uri pageUrl, {required String title}) async {
     await close();
     if (!await _isAvailable()) {
       _log.warning('No web view on this computer: the splat viewer cannot open');
-      _closed.add(SplatHostClosed.noWebView);
-      return;
+      return SplatHostClosed.noWebView;
     }
     final arguments = Platform.isWindows && _highPerformanceGpu() ? splatHighPerformanceGpuArgument : '';
     final SplatWindow window;
@@ -100,11 +92,12 @@ class DesktopSplatViewerHost implements SplatViewerHost {
       );
     } catch (error, stackTrace) {
       _log.warning('The splat viewer window could not be made', error, stackTrace);
-      _closed.add(SplatHostClosed.noWebView);
-      return;
+      return SplatHostClosed.noWebView;
     }
     _window = window;
-    _ending = null;
+    // This window's own end: only its close ends this viewing
+    final ended = Completer<SplatHostClosed>();
+    SplatHostClosed? ending;
     final prefix = splatViewerPrefixOf(pageUrl);
     window.setOnUrlRequestCallback((url) {
       final allowed = splatViewerAllows(prefix, url);
@@ -115,7 +108,7 @@ class DesktopSplatViewerHost implements SplatViewerHost {
     });
     window.setOnProcessFailedCallback((kind) {
       _log.warning('The process of the splat viewer stopped: $kind');
-      _ending ??= splatHostClosedOf(kind);
+      ending ??= splatHostClosedOf(kind);
       window.close();
     });
     unawaited(
@@ -123,10 +116,13 @@ class DesktopSplatViewerHost implements SplatViewerHost {
         if (identical(_window, window)) {
           _window = null;
         }
-        _closed.add(_ending ?? SplatHostClosed.user);
+        if (!ended.isCompleted) {
+          ended.complete(ending ?? SplatHostClosed.user);
+        }
       }),
     );
     window.launch(pageUrl.toString());
+    return ended.future;
   }
 
   @override

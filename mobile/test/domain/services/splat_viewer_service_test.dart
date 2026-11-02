@@ -23,7 +23,7 @@ class _PageHost implements SplatViewerHost {
 
   /// The events posted once the scene is read, in order
   final List<Map<String, Object?>> script;
-  final _closed = StreamController<SplatHostClosed>.broadcast();
+  Completer<SplatHostClosed>? _ended;
   Map<String, Object?>? session;
   Uint8List? scene;
   Uri? opened;
@@ -32,12 +32,10 @@ class _PageHost implements SplatViewerHost {
   SplatHostClosed ending = SplatHostClosed.user;
 
   @override
-  Stream<SplatHostClosed> get closed => _closed.stream;
-
-  @override
-  Future<void> open(Uri pageUrl, {required String title}) async {
+  Future<SplatHostClosed> open(Uri pageUrl, {required String title}) async {
     opened = pageUrl;
     this.title = title;
+    final ended = _ended = Completer<SplatHostClosed>();
     final client = HttpClient();
     try {
       Future<Uint8List> get(Uri url) async {
@@ -62,12 +60,16 @@ class _PageHost implements SplatViewerHost {
     } finally {
       client.close();
     }
+    return ended.future;
   }
 
   @override
   Future<void> close() async {
     closes++;
-    _closed.add(ending);
+    final ended = _ended;
+    if (ended != null && !ended.isCompleted) {
+      ended.complete(ending);
+    }
   }
 }
 

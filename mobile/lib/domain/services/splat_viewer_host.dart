@@ -23,15 +23,15 @@ enum SplatHostClosed {
 }
 
 abstract interface class SplatViewerHost {
-  /// Shows [pageUrl] (`http://127.0.0.1:<port>/<token>/<session>/index.html`), titled [title]; completes once it is
-  /// shown. Only URLs under the session's folder are loaded.
-  Future<void> open(Uri pageUrl, {required String title});
+  /// Shows [pageUrl] (`http://127.0.0.1:<port>/<token>/<session>/index.html`), titled [title], and completes with how
+  /// this viewing ended, once its window or screen is gone. Only URLs under the session's folder are loaded. A viewer
+  /// still open is closed first, and its own viewing ends then: the end of one viewing never ends the next (the
+  /// Windows replay of 2 November 2026 opened a second splat while the first window was open, and the close of the
+  /// first ended the second at once, its page not found).
+  Future<SplatHostClosed> open(Uri pageUrl, {required String title});
 
   /// Closes the viewer (the page asked to, or the app is closing); nothing when none is open
   Future<void> close();
-
-  /// Once per open, how it closed
-  Stream<SplatHostClosed> get closed;
 }
 
 /// The folder of the session a page URL is in, which the hosts keep the viewer to:

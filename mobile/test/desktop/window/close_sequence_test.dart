@@ -322,10 +322,7 @@ class _SplatHost implements SplatViewerHost {
   bool closeAsked = false;
 
   @override
-  Stream<SplatHostClosed> get closed => const Stream.empty();
-
-  @override
-  Future<void> open(Uri pageUrl, {required String title}) async {}
+  Future<SplatHostClosed> open(Uri pageUrl, {required String title}) async => SplatHostClosed.user;
 
   @override
   Future<void> close() {

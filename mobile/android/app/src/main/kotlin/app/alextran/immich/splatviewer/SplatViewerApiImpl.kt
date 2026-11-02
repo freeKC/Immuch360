@@ -32,15 +32,15 @@ class SplatViewerApiImpl(private val context: Context) : SplatViewerApi {
       }
     }
 
-    /** Tells Flutter the viewer closed, on the main thread; dropped without an engine for the app UI */
-    fun notifyClosed(reason: String) {
+    /** Tells Flutter the viewer of the viewing [viewing] closed, on the main thread; dropped without an engine */
+    fun notifyClosed(reason: String, viewing: Long) {
       val send = Runnable {
         val current = events
         if (current == null) {
           Log.i(TAG, "No Flutter engine to tell that the splat viewer closed")
           return@Runnable
         }
-        current.closed(reason) { result ->
+        current.closed(reason, viewing) { result ->
           result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the closed event", it) }
         }
       }
@@ -48,8 +48,8 @@ class SplatViewerApiImpl(private val context: Context) : SplatViewerApi {
     }
   }
 
-  override fun open(pageUrl: String, title: String) {
-    val intent = SplatViewerActivity.intent(context, pageUrl, title)
+  override fun open(pageUrl: String, title: String, viewing: Long) {
+    val intent = SplatViewerActivity.intent(context, pageUrl, title, viewing)
     if (context !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
   }

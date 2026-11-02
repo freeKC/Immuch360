@@ -20,10 +20,10 @@ class PigeonSplatViewerHost implements SplatViewerHost {
   }
 
   final SplatViewerApi _api;
-  final _closed = StreamController<SplatHostClosed>.broadcast();
 
-  @override
-  Stream<SplatHostClosed> get closed => _closed.stream;
+  /// The number of the last viewing opened, and its end
+  int _viewing = 0;
+  Completer<SplatHostClosed>? _ended;
 
   /// The major version of Android System WebView, 0 when there is none or the question failed
   Future<int> webViewMajorVersion() async {
@@ -36,13 +36,19 @@ class PigeonSplatViewerHost implements SplatViewerHost {
   }
 
   @override
-  Future<void> open(Uri pageUrl, {required String title}) async {
+  Future<SplatHostClosed> open(Uri pageUrl, {required String title}) async {
+    // A viewing still open ends now, as the user's: the activity shows the new page instead
+    _end(SplatHostClosed.user);
+    final viewing = ++_viewing;
+    final ended = Completer<SplatHostClosed>();
+    _ended = ended;
     try {
-      await _api.open(pageUrl.toString(), title);
+      await _api.open(pageUrl.toString(), title, viewing);
     } catch (error) {
       _log.warning('The splat viewer did not open: $error');
-      _closed.add(SplatHostClosed.error);
+      _end(SplatHostClosed.error);
     }
+    return ended.future;
   }
 
   @override
@@ -54,15 +60,28 @@ class PigeonSplatViewerHost implements SplatViewerHost {
     }
   }
 
-  /// The activity closed for [reason]: 'user', 'rendererGone', 'noWebView' or 'error'
-  void onActivityClosed(String reason) {
+  /// The activity of the viewing [viewing] closed for [reason]: 'user', 'rendererGone', 'noWebView' or 'error'. The
+  /// closing of an earlier viewing, told late, is only logged.
+  void onActivityClosed(String reason, int viewing) {
     _log.info('The splat viewer closed: $reason');
-    _closed.add(switch (reason) {
+    if (viewing != _viewing) {
+      _log.fine('That was the viewing $viewing; the viewing $_viewing goes on');
+      return;
+    }
+    _end(switch (reason) {
       'rendererGone' => SplatHostClosed.rendererGone,
       'noWebView' => SplatHostClosed.noWebView,
       'error' => SplatHostClosed.error,
       _ => SplatHostClosed.user,
     });
+  }
+
+  void _end(SplatHostClosed how) {
+    final ended = _ended;
+    _ended = null;
+    if (ended != null && !ended.isCompleted) {
+      ended.complete(how);
+    }
   }
 }
 
@@ -72,5 +91,5 @@ class _ActivityEvents implements SplatViewerEvents {
   final PigeonSplatViewerHost _host;
 
   @override
-  void closed(String reason) => _host.onActivityClosed(reason);
+  void closed(String reason, int viewing) => _host.onActivityClosed(reason, viewing);
 }

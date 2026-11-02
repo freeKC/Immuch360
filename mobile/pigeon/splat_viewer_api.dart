@@ -15,8 +15,9 @@ import 'package:pigeon/pigeon.dart';
 )
 @HostApi()
 abstract class SplatViewerApi {
-  /// Shows [pageUrl] full screen, titled [title]; only the URLs of its folder load in it
-  void open(String pageUrl, String title);
+  /// Shows [pageUrl] full screen, titled [title], as the viewing number [viewing]; only the URLs of its folder load in
+  /// it
+  void open(String pageUrl, String title, int viewing);
 
   /// Closes the viewer when it is open
   void close();
@@ -27,6 +28,7 @@ abstract class SplatViewerApi {
 
 @FlutterApi()
 abstract class SplatViewerEvents {
-  /// The viewer closed: "user", "rendererGone", "noWebView" or "error"
-  void closed(String reason);
+  /// The viewer of the viewing number [viewing] closed: "user", "rendererGone", "noWebView" or "error". A late
+  /// closing of an earlier viewing never ends the current one.
+  void closed(String reason, int viewing);
 }

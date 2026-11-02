@@ -38,26 +38,35 @@ class SplatViewerActivity : ComponentActivity() {
   companion object {
     private const val EXTRA_URL = "url"
     private const val EXTRA_TITLE = "title"
+    private const val EXTRA_VIEWING = "viewing"
 
     /** The viewer on screen, to close it from Flutter; read and written on the main thread */
     var current: SplatViewerActivity? = null
       private set
 
-    fun intent(context: Context, url: String, title: String): Intent =
+    fun intent(context: Context, url: String, title: String, viewing: Long): Intent =
       Intent(context, SplatViewerActivity::class.java)
         .putExtra(EXTRA_URL, url)
         .putExtra(EXTRA_TITLE, title)
+        .putExtra(EXTRA_VIEWING, viewing)
   }
 
   private var webView: WebView? = null
   private var reason = "user"
   private var told = false
 
+  /** The viewing this activity shows, told back to Flutter with its closing */
+  private var viewing = 0L
+
+  /** The folder of the session the WebView is kept to */
+  private var prefix = ""
+
   @SuppressLint("SetJavaScriptEnabled")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     current = this
     val url = intent.getStringExtra(EXTRA_URL)
+    viewing = intent.getLongExtra(EXTRA_VIEWING, 0L)
     if (url == null) {
       finishWith("error")
       return
@@ -80,7 +89,7 @@ class SplatViewerActivity : ComponentActivity() {
       window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
     }
 
-    val prefix = SplatViewerRules.prefixOf(url)
+    prefix = SplatViewerRules.prefixOf(url)
     WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
     val view =
       try {
@@ -146,6 +155,21 @@ class SplatViewerActivity : ComponentActivity() {
     view.loadUrl(url)
   }
 
+  /**
+   * A new viewing while this one shows (singleTop): this viewing ends as the user's, and the WebView loads the new page
+   */
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    val url = intent.getStringExtra(EXTRA_URL) ?: return
+    val view = webView ?: return
+    SplatViewerApiImpl.notifyClosed("user", viewing)
+    setIntent(intent)
+    viewing = intent.getLongExtra(EXTRA_VIEWING, 0L)
+    title = intent.getStringExtra(EXTRA_TITLE) ?: ""
+    prefix = SplatViewerRules.prefixOf(url)
+    if (SplatViewerRules.allows(prefix, url)) view.loadUrl(url) else finishWith("error")
+  }
+
   override fun onResume() {
     super.onResume()
     webView?.onResume()
@@ -177,7 +201,7 @@ class SplatViewerActivity : ComponentActivity() {
     if (current === this) current = null
     if (!told && isFinishing) {
       told = true
-      SplatViewerApiImpl.notifyClosed(reason)
+      SplatViewerApiImpl.notifyClosed(reason, viewing)
     }
     super.onDestroy()
   }
