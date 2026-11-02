@@ -659,6 +659,11 @@ class DesktopPlayer implements PlaybackEngine {
   /// video of the splat scenes, 2026-11-01). Only on a player of its own, never on one of the pool.
   Future<void> setUntimed(bool untimed) => _set('untimed', untimed ? 'yes' : 'no');
 
+  /// The filters of mpv each decoded frame goes through ([filters], mpv's vf; empty for none): the frames of a splat
+  /// scene of an 8K video scaled down as they are decoded (lib/desktop/ai/splat/mpv_frame_source.dart). Only on a player
+  /// of its own, never on one of the pool; a filter this libmpv refuses is left out, said in the log.
+  Future<void> setVideoFilters(String filters) => _set('vf', filters);
+
   /// The address of the mpv handle of this player, for [withMpvScreenshot] in another isolate
   Future<int> get mpvHandle => _player.handle;
 

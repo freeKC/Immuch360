@@ -110,6 +110,44 @@ void main() {
   }
 
   test(
+    'a video larger than twice the frames written is scaled by mpv as it is decoded, and still comes out upright',
+    () async {
+      // The fixture of 320 x 180 stands for an 8K video: over 200 pixels, its frames are scaled to 160 as decoded
+      final fixture = File(p.join('test', 'fixtures', 'video', 'portrait-blur-6s.mp4')).absolute.path;
+      final images = p.join(work.path, 'images');
+      final source = MpvSplatFrameSource(longSide: 160, maxDecodedSide: 200);
+      final inputs = await takeVideoFrames(
+        fixture,
+        source: source,
+        imagesFolder: images,
+        cancel: cancel,
+        frames: 6,
+        candidates: 5,
+      );
+      expect(source.decodeScale, 'lavfi-scale=w=160:h=-2:flags=area');
+      expect(inputs.images.map((image) => image.source), ['0:00.5', '0:01.5', '0:02.5', '0:04.5', '0:05.5']);
+      expect(inputs.leftOut.map((left) => left.reason), [SplatLeftOutReason.blurred]);
+      for (final image in inputs.images) {
+        expect((image.width, image.height), (90, 160), reason: 'scaled, and upright (${source.outputRotation} left)');
+        final decoded = img.decodeJpg(File(p.join(images, image.relativePath)).readAsBytesSync())!;
+        expect((decoded.width, decoded.height), (90, 160));
+        var top = 0.0;
+        var bottom = 0.0;
+        for (var x = 0; x < decoded.width; x++) {
+          for (var y = 0; y < 10; y++) {
+            top += decoded.getPixel(x, y).luminance;
+            bottom += decoded.getPixel(x, 159 - y).luminance;
+          }
+        }
+        expect(top / (10 * decoded.width), greaterThan(200), reason: 'the white band at the top of ${image.source}');
+        expect(bottom / (10 * decoded.width), lessThan(170), reason: 'the texture at the bottom of ${image.source}');
+      }
+    },
+    skip: skip,
+    timeout: const Timeout(Duration(seconds: 120)),
+  );
+
+  test(
     'the measure of the plan on a real video: IMMUCH360_SPLAT_VIDEO into IMMUCH360_SPLAT_OUT',
     () async {
       final folder = Directory(out!);

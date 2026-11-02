@@ -28,6 +28,28 @@ void main() {
     expect(turns(270, 0, (1920, 1080), (1080, 1920)), 0);
   });
 
+  test('frames scaled by mpv as they are decoded: the orientation of the screenshot tells, not its size', () {
+    // FreeKC's 8K video of 2 November, had it been filmed upright: decoded lying, scaled to 1 600 pixels
+    expect(turns(90, 90, (7680, 4320), (1600, 900)), 1, reason: 'the build of the app on Windows');
+    expect(turns(90, 0, (7680, 4320), (900, 1600)), 0, reason: 'a libmpv that turned it before its output');
+    expect(turns(270, 270, (3840, 2160), (1600, 900)), 3);
+    expect(turns(180, 180, (7680, 4320), (1600, 900)), 2);
+    expect(turns(0, 0, (7680, 4320), (1600, 900)), 0);
+  });
+
+  test('a video over twice the frames written is scaled by mpv as it is decoded, to their long side', () {
+    String? scale(int width, int height) =>
+        splatDecodeScale(decodedWidth: width, decodedHeight: height, longSide: 1600, maxDecodedSide: 3200);
+    expect(scale(7680, 4320), 'lavfi-scale=w=1600:h=-2:flags=area', reason: 'FreeKC\'s 8K video');
+    expect(scale(4320, 7680), 'lavfi-scale=w=-2:h=1600:flags=area', reason: 'decoded upright');
+    expect(scale(3840, 2160), 'lavfi-scale=w=1600:h=-2:flags=area', reason: '4K');
+    expect(scale(5760, 2880), 'lavfi-scale=w=1600:h=-2:flags=area', reason: 'a 360 video of 5.7K, were it taken');
+    expect(scale(3200, 1800), isNull, reason: 'twice the frames written at most: as decoded');
+    expect(scale(1920, 1080), isNull);
+    expect(scale(0, 0), isNull, reason: 'a size mpv did not give');
+    expect(MpvSplatFrameSource().maxDecodedSide, 3200);
+  });
+
   test('a half turn and a square video: what mpv leaves to its output', () {
     expect(turns(180, 180, (1920, 1080), (1920, 1080)), 2);
     expect(turns(180, 0, (1920, 1080), (1920, 1080)), 0);

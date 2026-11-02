@@ -19,6 +19,13 @@
 // further than [MpvSplatFrameSource.maxStep] ahead or behind. A step and a seek land on the same frame: the first one
 // whose time is the candidate's or after it.
 //
+// A video larger than twice the frames written (a 4K, 5.7K or 8K one: [MpvSplatFrameSource.maxDecodedSide]) is scaled
+// by mpv as it is decoded, to the long side of the frames written ([splatDecodeScale], swscale's area filter): FreeKC's
+// 8K HEVC video of a phone (7680 x 4320, 128.5 s, 2 November 2026) took 764 s for its 161 windows on the PC without it
+// (4.7 s a window, the dialog counting about a minute), every screenshot 133 MB of BGR0 copied twice in Dart, the app
+// at 771 MB; the frames are written at 1 600 pixels all the same. The decoded size is then not the size of a screenshot: which way a screenshot lies is
+// told by its orientation against that of the decoded frames ([splatScreenshotTurns]).
+//
 // The player is made for the job and disposed after it, outside the app's pool: the pool has one player for the
 // thumbnails, which a minute of frames would hold from the library, or lose to it in the middle of the video. Nothing
 // but a path of this computer is opened (a server original is copied first, as for the photos).
@@ -26,6 +33,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
@@ -53,6 +61,7 @@ class MpvSplatFrameSource implements SplatFrameSource {
     this.quality = SplatV1.photoQuality,
     this.codec = SbsCodecChoice.auto,
     this.maxStep = const Duration(seconds: 1),
+    this.maxDecodedSide = 2 * SplatV1.photoLongSide,
   }) : _create = create ?? (() => DesktopPlayer.create(PlayerKind.thumbnail));
 
   final SplatPlayerFactory _create;
@@ -68,6 +77,13 @@ class MpvSplatFrameSource implements SplatFrameSource {
 
   /// The farthest a candidate may be ahead of the frame shown to be stepped to rather than sought
   final Duration maxStep;
+
+  /// The longest side of the decoded frames that mpv hands over as they are: a larger video is scaled to [longSide] as
+  /// it is decoded (see the top of this file)
+  final int maxDecodedSide;
+
+  /// The filter mpv was given for the frames of this video, null when none: for the log and the tests
+  String? decodeScale;
 
   /// The exact seeks and the frame steps so far, for the log
   int seeks = 0;
@@ -144,9 +160,19 @@ class MpvSplatFrameSource implements SplatFrameSource {
     _decodedHeight = await number('video-params/h');
     _fileRotation = await number('video-params/rotate');
     _outputRotation = await number('video-out-params/rotate');
+    final scale = splatDecodeScale(
+      decodedWidth: _decodedWidth,
+      decodedHeight: _decodedHeight,
+      longSide: longSide,
+      maxDecodedSide: maxDecodedSide,
+    );
+    if (scale != null) {
+      await player.setVideoFilters(scale);
+      decodeScale = scale;
+    }
     _log.info(
       'Frames of a video of $_decodedWidth x $_decodedHeight, turned $_fileRotation degrees by its file, '
-      '$_outputRotation of them left to the output',
+      '$_outputRotation of them left to the output${scale == null ? '' : ', scaled as decoded: $scale'}',
     );
     await player.setUntimed(true);
     _shown = player.position.value;
@@ -252,10 +278,29 @@ _Grab? _grab(int handle, String library) => withMpvScreenshot(handle, library, (
   return _Grab(frame.width, frame.height, sharpness, TransferableTypedData.fromList([packed]));
 });
 
-/// The quarter turns, clockwise, that make a screenshot of mpv upright: none when mpv turned it already (its size is
-/// then the decoded size turned), the rotation of the file otherwise ([fileRotation], in degrees clockwise, as mpv's
-/// video-params/rotate gives it). A half turn keeps the size: it is done when mpv leaves it to its output
-/// ([outputRotation], video-out-params/rotate), as is any turn of a square video.
+/// The filter of mpv that scales the frames of a video decoded at [decodedWidth] x [decodedHeight] to [longSide] on
+/// their long side as they are decoded, when that side is over [maxDecodedSide]; null otherwise. libavfilter's scale,
+/// its area filter (a downscale of 4.8 times for an 8K video), the other side keeping the shape, even.
+String? splatDecodeScale({
+  required int decodedWidth,
+  required int decodedHeight,
+  required int longSide,
+  required int maxDecodedSide,
+}) {
+  if (decodedWidth <= 0 || decodedHeight <= 0 || math.max(decodedWidth, decodedHeight) <= maxDecodedSide) {
+    return null;
+  }
+  return decodedWidth >= decodedHeight
+      ? 'lavfi-scale=w=$longSide:h=-2:flags=area'
+      : 'lavfi-scale=w=-2:h=$longSide:flags=area';
+}
+
+/// The quarter turns, clockwise, that make a screenshot of mpv upright: none when mpv turned it already (it then lies
+/// across the decoded frames: portrait for frames decoded landscape), the rotation of the file otherwise
+/// ([fileRotation], in degrees clockwise, as mpv's video-params/rotate gives it). Their orientations are compared, not
+/// their sizes: mpv may scale the frames as they are decoded ([splatDecodeScale]). A half turn keeps the orientation:
+/// it is done when mpv leaves it to its output ([outputRotation], video-out-params/rotate), as is any turn of a square
+/// video.
 int splatScreenshotTurns({
   required int fileRotation,
   required int outputRotation,
@@ -269,7 +314,7 @@ int splatScreenshotTurns({
     return 0;
   }
   if (turns.isOdd && decodedWidth != decodedHeight && decodedWidth > 0 && decodedHeight > 0) {
-    return shotWidth == decodedWidth && shotHeight == decodedHeight ? turns : 0;
+    return (shotWidth > shotHeight) == (decodedWidth > decodedHeight) ? turns : 0;
   }
   return outputRotation % 360 == fileRotation % 360 ? turns : 0;
 }
