@@ -63,25 +63,32 @@ class SplatWorkFolder {
 String splatWorkFolderName(String key) => '$splatWorkFolderPrefix${key.substring(0, 16)}';
 
 /// Deletes under each of [roots] the work folders of splat scenes not used for SplatV1.workKept (aiWorkFolderLastUsed);
-/// returns how many went. A folder that cannot be deleted now (a file a program still holds) stays for the next time.
-int deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now}) {
+/// returns how many went. A folder that cannot be deleted now (a file a program still holds) stays for the next time,
+/// the others go. The deletes run off the isolate that asks (the window's in the app).
+Future<int> deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now}) async {
   final limit = (now ?? DateTime.now()).subtract(SplatV1.workKept);
   var deleted = 0;
   for (final root in roots) {
+    final List<FileSystemEntity> entries;
     try {
       if (!root.folder.existsSync()) {
         continue;
       }
-      for (final entry in root.folder.listSync()) {
+      entries = root.folder.listSync();
+    } on FileSystemException {
+      continue;
+    }
+    for (final entry in entries) {
+      try {
         if (entry is Directory &&
             p.basename(entry.path).startsWith(splatWorkFolderPrefix) &&
             aiWorkFolderLastUsed(entry).isBefore(limit)) {
-          entry.deleteSync(recursive: true);
+          await entry.delete(recursive: true);
           deleted++;
         }
+      } on FileSystemException {
+        // The next job tries again
       }
-    } on FileSystemException {
-      // The next job tries again
     }
   }
   return deleted;

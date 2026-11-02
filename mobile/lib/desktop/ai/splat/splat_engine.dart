@@ -200,7 +200,7 @@ class SplatEngine implements ImmersiveEngine {
     try {
       report(ImmersiveStage.reading, 0);
       final key = splatJobKey(job);
-      deleteOldSplatWork(roots);
+      await deleteOldSplatWork(roots);
       final root = _pickRoot(roots);
       if (root == null) {
         throw const BackendException(
@@ -231,7 +231,7 @@ class SplatEngine implements ImmersiveEngine {
         }
       }
       if (poses == null || aligned == null) {
-        _fresh(work);
+        await _fresh(work);
         final members = [for (final member in job.members) _SummedMember(member)];
         report(first, 0, done: 0, total: model.read);
         final prepared = await images(
@@ -386,7 +386,7 @@ class SplatEngine implements ImmersiveEngine {
     } finally {
       final folder = work;
       if (folder != null) {
-        _settle(folder, keep: !done && _readState(folder)?['placed'] is int);
+        await _settle(folder, keep: !done && _readState(folder)?['placed'] is int);
       }
     }
   }
@@ -442,11 +442,11 @@ class SplatEngine implements ImmersiveEngine {
     return _Poses(images: images, total: total, placed: placed, blurred: blurred is int ? blurred : 0);
   }
 
-  /// [work] empty and marked used now
-  void _fresh(SplatWorkFolder work) {
+  /// [work] empty and marked used now; the delete runs off this isolate (the window's in the app)
+  Future<void> _fresh(SplatWorkFolder work) async {
     try {
       if (work.root.existsSync()) {
-        work.root.deleteSync(recursive: true);
+        await work.root.delete(recursive: true);
       }
       work.root.createSync(recursive: true);
       touchAiWorkFolder(work.root);
@@ -475,17 +475,18 @@ class SplatEngine implements ImmersiveEngine {
   }
 
   /// At the end of a job: [work] kept and marked used when its poses may serve a Retry ([keep]), else deleted
-  void _settle(SplatWorkFolder work, {required bool keep}) {
+  Future<void> _settle(SplatWorkFolder work, {required bool keep}) async {
     if (keep) {
       touchAiWorkFolder(work.root);
       _log.info('The work folder ${work.root.path} is kept a day, for Retry from its poses');
       return;
     }
-    // A program on Windows may hold a file of its folder a moment after it ended
+    // A program on Windows may hold a file of its folder a moment after it ended: tried again, the window's isolate
+    // never held, the delete itself running off it
     for (var attempt = 0; attempt < 10; attempt++) {
       try {
         if (work.root.existsSync()) {
-          work.root.deleteSync(recursive: true);
+          await work.root.delete(recursive: true);
         }
         return;
       } on FileSystemException catch (error) {
@@ -494,7 +495,7 @@ class SplatEngine implements ImmersiveEngine {
           touchAiWorkFolder(work.root);
           return;
         }
-        sleep(const Duration(milliseconds: 100));
+        await Future<void>.delayed(const Duration(milliseconds: 100));
       }
     }
   }

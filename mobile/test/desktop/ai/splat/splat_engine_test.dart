@@ -94,7 +94,7 @@ class _FileMember implements SplatMember {
 /// into one camera, or SplatV1.videoFrames frames of the one video, [delay] after each image and [onEach] called, counting
 /// its calls
 class _Images {
-  _Images({this.delay = Duration.zero, this.usable, this.onEach});
+  _Images({this.delay = Duration.zero, this.usable, this.onEach, this.after});
 
   final Duration delay;
 
@@ -103,6 +103,9 @@ class _Images {
 
   /// Called after each image, as the time it takes passes
   final void Function()? onEach;
+
+  /// Called with the images folder once they are prepared
+  final void Function(String imagesFolder)? after;
   var calls = 0;
 
   Future<SplatPrepared> call(
@@ -154,6 +157,7 @@ class _Images {
         await next(index, total);
       }
     }
+    after?.call(imagesFolder);
     final count = usable ?? total;
     return SplatPrepared(images: count, total: total, blurred: total - count);
   }
@@ -441,6 +445,43 @@ void main() {
     expect(images.calls, 2);
     expect(pids.existsSync(), isTrue);
   }, skip: _skip());
+
+  test(
+    'a work folder that cannot be deleted at once: tried again without holding the isolate, then left for a day',
+    () async {
+      // A folder of the work folder whose file cannot be deleted, as Windows holds a file a moment after its program
+      final images = _Images(
+        after: (imagesFolder) {
+          final held = Directory(p.join(p.dirname(p.dirname(imagesFolder)), 'held'))..createSync();
+          File(p.join(held.path, 'export.ply')).writeAsStringSync('held');
+          Process.runSync('chmod', ['500', held.path]);
+          addTearDown(() => Process.runSync('chmod', ['700', held.path]));
+        },
+      );
+      // The longest the isolate went without running a timer of 10 ms, to the end of the job
+      var longest = Duration.zero;
+      final beat = Stopwatch()..start();
+      void tick() {
+        if (beat.elapsed > longest) {
+          longest = beat.elapsed;
+        }
+        beat.reset();
+      }
+
+      final timer = Timer.periodic(const Duration(milliseconds: 10), (_) => tick());
+      final result = await engine(images: images, colmapMode: 'nomodel').run(job(photos(24)), cancel: cancel);
+      tick();
+      timer.cancel();
+
+      expect(result.error, ImmersiveErrorCode.notEnoughOverlap);
+      expect(workFolders(), hasLength(1), reason: 'it stays until it is a day old');
+      expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
+      expect(longest, lessThan(const Duration(milliseconds: 500)));
+    },
+    skip: Platform.isWindows || Process.runSync('id', ['-u']).stdout.toString().trim() == '0'
+        ? 'a folder that cannot be deleted needs chmod, as another user than root'
+        : _skip(),
+  );
 
   group('Cancel within a second at every step, the program gone, nothing kept before the poses', () {
     // The exhaustive matching counts blocks of 50 images: 60 photos give 4 of them
