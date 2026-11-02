@@ -17,6 +17,14 @@ const _build = 'av2/av2_build.py';
 const _client = 'av2/av2_serve_check.py';
 const _commit = '30140b563596a1b14aef808ff021c90288948315';
 
+/// What av2_build.py build records next to the program it built, for BUILD-INFO.txt
+const _tools = {
+  'compiler': 'msvc 19.44.35215 (Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35215 for x64)',
+  'nasm': 'NASM version 2.16.03 compiled on Apr 17 2024',
+  'meson': '1.7.0',
+  'ninja': '1.13.0',
+};
+
 /// A 64 bit little endian ELF file reduced to what av2_build.py reads: the section headers, a string table and a
 /// dynamic section that needs [needed]
 Uint8List _elf(List<String> needed, {String extra = ''}) {
@@ -65,17 +73,18 @@ Uint8List _elf(List<String> needed, {String extra = ''}) {
   return bytes;
 }
 
-/// A 64 bit Mach-O file of one architecture (0x0100000C arm64, 0x01000007 x86_64) that loads [dylibs]
-Uint8List _thinMachO(int cpu, List<String> dylibs) {
+/// A 64 bit Mach-O file of one architecture (0x0100000C arm64, 0x01000007 x86_64) that loads [dylibs] with the load
+/// command [command] (0xC LC_LOAD_DYLIB, 0x20 LC_LAZY_LOAD_DYLIB, 0x80000023 LC_LOAD_UPWARD_DYLIB...)
+Uint8List _thinMachO(int cpu, List<String> dylibs, {int command = 0xC}) {
   final commands = BytesBuilder();
   for (final dylib in dylibs) {
     final name = utf8.encode(dylib);
     final size = ((24 + name.length + 1 + 7) ~/ 8) * 8;
-    final command = ByteData(size)
-      ..setUint32(0, 0xC, Endian.little)
+    final load = ByteData(size)
+      ..setUint32(0, command, Endian.little)
       ..setUint32(4, size, Endian.little)
       ..setUint32(8, 24, Endian.little);
-    final bytes = command.buffer.asUint8List()..setRange(24, 24 + name.length, name);
+    final bytes = load.buffer.asUint8List()..setRange(24, 24 + name.length, name);
     commands.add(bytes);
   }
   final body = commands.toBytes();
@@ -273,7 +282,31 @@ void main() {
           'GPL-3.0-only';
       final ours = build(['--lock', writeLock(tree({}), own), 'licences', '--source', source]);
       expect(ours.exitCode, 1, reason: '$ours');
-      expect(ours.output, contains('immuch360-av2: GPL-3.0-only, not the licence the lock gives our own code'));
+      expect(ours.output, contains('immuch360-av2: GPL-3.0-only, not AGPL-3.0-only, the licence of our own code'));
+    });
+
+    test('our own licences are pinned by the script: changed in the lock too, or claimed for dav2d, they fail', () {
+      final source = sources().path;
+      Map<String, dynamic> component(Map<String, dynamic> lock, String name) =>
+          (lock['components'] as List).firstWhere((c) => (c as Map)['name'] == name) as Map<String, dynamic>;
+
+      for (final (name, licence) in [('immuch360-av2', 'GPL-3.0-only'), ('immuch360-run', 'GPL-2.0-only')]) {
+        final both = repositoryLock();
+        component(both, name)['licence'] = licence;
+        (both['own'] as Map)[name] = licence;
+        final run = build(['--lock', writeLock(tree({}), both), 'licences', '--source', source]);
+        expect(run.exitCode, 1, reason: '$name: $run');
+        expect(run.output, contains('$name: $licence, not '));
+      }
+
+      final claimed = repositoryLock();
+      component(claimed, 'dav2d')
+        ..['own'] = 'LICENSE'
+        ..['licence'] = 'GPL-2.0-or-later';
+      (claimed['own'] as Map)['dav2d'] = 'GPL-2.0-or-later';
+      final run = build(['--lock', writeLock(tree({}), claimed), 'licences', '--source', source]);
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('dav2d: marked as our own code, which only immuch360-av2 and immuch360-run are'));
     });
 
     test('a licence text that differs from the sources fails', () {
@@ -290,6 +323,10 @@ void main() {
     group('pack and check', () {
       String program(Directory root, String name, List<int> bytes) {
         final file = File(p.join(root.path, name))..writeAsBytesSync(bytes);
+        final tools = File(p.join(root.path, 'tools.json'));
+        if (!tools.existsSync()) {
+          tools.writeAsStringSync(jsonEncode(_tools));
+        }
         return file.path;
       }
 
@@ -330,12 +367,69 @@ void main() {
         ]);
         final source = utf8.decode(files['licenses/immuch360-av2-SOURCE.txt']!);
         expect(source, contains('/tree/0123456789abcdef0123456789abcdef01234567/mobile/native/av2'));
+        final info = utf8.decode(files['BUILD-INFO.txt']!);
+        expect(info, contains('C compiler: ${_tools['compiler']}'));
+        expect(info, contains('nasm: ${_tools['nasm']}'));
+        expect(info, contains('Meson 1.7.0, Ninja 1.13.0'));
         expect(pack('windows-x64', exe, out: out).exitCode, 0);
         expect(archive.readAsBytesSync(), first, reason: 'the same files give the same bytes');
 
         final check = build(['check', '--system', 'windows-x64', '--archive', archive.path]);
         expect(check.exitCode, 0, reason: '$check');
         expect(check.output, contains('sums, licences, libraries and strings as they should be'));
+      });
+
+      test('a build that recorded no tools next to its program is not packed', () {
+        final root = tree({});
+        final bare = Directory(p.join(root.path, 'bare'))..createSync();
+        final exe = File(p.join(bare.path, 'immuch360-av2.exe'))..writeAsBytesSync(fakePe(imports: ['KERNEL32.dll']));
+        final run = pack('windows-x64', exe.path, out: Directory(p.join(root.path, 'dist')));
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('no tools.json next to the program'));
+      });
+
+      test('the scripts write no Python cache next to themselves, even when Python would', () {
+        final caches = [
+          Directory(p.join(ciScriptsDir, '__pycache__')),
+          Directory(p.join(ciScriptsDir, 'av2', '__pycache__')),
+        ];
+        Set<String> files() => {
+          for (final cache in caches)
+            if (cache.existsSync()) ...cache.listSync().map((f) => '${f.path} ${f.statSync().modified}'),
+        };
+        final existed = [for (final cache in caches) cache.existsSync()];
+        final before = files();
+        final root = tree({});
+        final out = Directory(p.join(root.path, 'dist'));
+        final exe = program(root, 'immuch360-av2.exe', fakePe(imports: ['KERNEL32.dll']));
+        const writes = {'PYTHONDONTWRITEBYTECODE': ''};
+        final packed = runCiScript(_build, [
+          'pack',
+          '--system',
+          'windows-x64',
+          '--source',
+          sources().path,
+          '--program',
+          exe,
+          '--out',
+          out.path,
+        ], environment: writes);
+        final checked = runCiScript(_build, [
+          'check',
+          '--system',
+          'windows-x64',
+          '--archive',
+          p.join(out.path, 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip'),
+        ], environment: writes);
+        final written = files().difference(before);
+        for (var i = 0; i < caches.length; i++) {
+          if (!existed[i] && caches[i].existsSync()) {
+            caches[i].deleteSync(recursive: true);
+          }
+        }
+        expect(packed.exitCode, 0, reason: '$packed');
+        expect(checked.exitCode, 0, reason: '$checked');
+        expect(written, isEmpty);
       });
 
       test('Windows: a Visual C++ runtime import or a string of GPL code fails the archive', () {
@@ -431,6 +525,23 @@ void main() {
         );
         expect(brewed.exitCode, 1, reason: '$brewed');
         expect(brewed.output, contains('(arm64) loads /opt/homebrew/lib/libx265.dylib, not a library of the system'));
+
+        for (final (command, name) in [(0x20, 'lazy'), (0x80000023, 'upward')]) {
+          final loaded = pack(
+            'macos-universal',
+            program(
+              root,
+              name,
+              _fatMachO([
+                (0x0100000C, _thinMachO(0x0100000C, [system])),
+                (0x01000007, _thinMachO(0x01000007, ['/usr/local/lib/libx265.dylib'], command: command)),
+              ]),
+            ),
+            out: out,
+          );
+          expect(loaded.exitCode, 1, reason: '$name: $loaded');
+          expect(loaded.output, contains('(x86_64) loads /usr/local/lib/libx265.dylib, not a library of the system'));
+        }
       });
 
       test('an archive changed after the pack fails its check', () {
@@ -456,6 +567,9 @@ void main() {
         final extra = changed('extra', {'libx264-164.dll': 'MZ'});
         expect(extra.exitCode, 1, reason: '$extra');
         expect(extra.output, contains('libx264-164.dll: a file the archive should not hold'));
+        final info = changed('info', {'BUILD-INFO.txt': 'dav2d $_commit\n'});
+        expect(info.exitCode, 1, reason: '$info');
+        expect(info.output, contains('BUILD-INFO.txt does not name the C compiler and the nasm of the build'));
       });
     });
 
@@ -495,6 +609,16 @@ void main() {
       final ivf = index('av2-256x144-8bit.ivf');
       final units = ((files['av2-256x144-8bit.obu'] as Map)['index'] as Map)['units'] as List;
       expect(ivf['sizes'], [for (final unit in units) (unit as Map)['size']]);
+    });
+
+    test('the fixtures name no folder of the computer they were made on', () {
+      final home = RegExp(r'/home/|/Users/|[A-Za-z]:\\Users\\');
+      for (final file in fixtures.listSync().whereType<File>()) {
+        if (file.path.endsWith('.ivf') || file.path.endsWith('.obu')) {
+          continue;
+        }
+        expect(home.hasMatch(file.readAsStringSync()), isFalse, reason: p.basename(file.path));
+      }
     });
 
     test('a file cut in a unit keeps its whole units; an AV1 IVF is refused', () {

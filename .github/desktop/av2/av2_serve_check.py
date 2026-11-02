@@ -13,9 +13,19 @@ of the program. Then, as a player would, it reads the virtual y4m over HTTP and 
   - a range that starts in the middle of a picture, a seek to a picture after a random access point (the program asks
     for that unit again, "need"), a seek back, a new request that replaces the one being served;
   - another token (403) and another path (404) refused, the socket on 127.0.0.1 only, the "stat" lines every half
-    second, no processor time while the player does not read (Linux and macOS), and the program gone within a second
-    of the standard input closing, with exit code 0;
+    second and their decoding speed, no processor time while the player does not read (Linux and macOS), and the
+    program gone within a second of the standard input closing, with exit code 0, whatever its queue of units holds
+    (full with no request, with a paused player, after the player closed);
+  - the program gone too when the app is gone without closing it: its standard output closed, or the --parent process
+    ended;
+  - a request that trickles in a byte at a time holds neither the player's requests nor its connection beyond 2 s;
+  - --depth 8, and the probe of a file cut in its first picture, of the standard input, and of a first picture after
+    5, 20 and 70 MiB (its steps of 1, 4, 16 and 64 MiB);
   - a damaged file stops the program with its error line and exit code 3, never a crash.
+
+The app's side writes the standard input of serve as dart:io does: writes that never hold the writer, so that closing
+it always closes the pipe (a pipe whose end does not block on Linux and macOS, a named pipe with overlapped writes on
+Windows, the program reading its client end).
 
   av2_serve_check.py check --program FILE --fixtures DIR [--threads N]
       every check above on the fixtures of DIR (mobile/test/fixtures/av2); exit 1 on a failure
@@ -38,16 +48,18 @@ import pathlib
 import queue
 import re
 import secrets
+import select
 import socket
 import struct
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 
 RECORD = struct.Struct('<4sIII')
 INDEX_UNIT = 0xFFFFFFFF
-TEMPORAL_DELIMITER, CLOSED_LOOP_KEY = 2, 4
+TEMPORAL_DELIMITER, CLOSED_LOOP_KEY, PADDING = 2, 4, 25
 
 
 class Failure(Exception):
@@ -132,6 +144,41 @@ class Stream:
         return self.data[offset:offset + length]
 
 
+class Repeated:
+    """The units of a stream played times times in a row: a long video made of a fixture (each copy starts with its
+    key frame and its sequence header)"""
+
+    def __init__(self, stream: Stream, times: int):
+        self.base = stream
+        self.path = stream.path
+        self.fps = stream.fps
+        self.units = stream.units * times
+        self.raps = [copy * len(stream.units) + rap for copy in range(times) for rap in stream.raps]
+
+    def unit(self, index: int) -> bytes:
+        return self.base.unit(index % len(self.base.units))
+
+
+def leb128_bytes(value: int) -> bytes:
+    out = bytearray()
+    while True:
+        byte = value & 0x7F
+        value >>= 7
+        out.append(byte | (0x80 if value else 0))
+        if not value:
+            return bytes(out)
+
+
+def padded_ivf(data: bytes, padding: int) -> bytes:
+    """An IVF with a padding OBU of padding bytes at the end of its first packet: its first picture whole, but past
+    the first steps of the probe"""
+    header, = struct.unpack_from('<H', data, 6)
+    size, = struct.unpack_from('<I', data, header)
+    packet = data[header + 12:header + 12 + size] + leb128_bytes(1 + padding) + bytes([PADDING << 2]) + bytes(padding)
+    return (data[:header] + struct.pack('<I', len(packet)) + data[header + 4:header + 12] + packet +
+            data[header + 12 + size:])
+
+
 # --- the program ------------------------------------------------------------------------------------------------------
 
 def probe(program: pathlib.Path, path: pathlib.Path, threads: int = 0) -> tuple:
@@ -144,26 +191,145 @@ def probe(program: pathlib.Path, path: pathlib.Path, threads: int = 0) -> tuple:
         raise Failure(f'probe {path.name}: not JSON: {text!r}')
 
 
+class AppPipe:
+    """The standard input of serve as the app holds it. dart:io never blocks on a write: it waits for room in the pipe
+    without holding a thread, and closing its end always closes the pipe. A blocking write would not do here: on
+    Linux, a pipe with a write still blocked in it keeps its writer after close(), and on Windows CloseHandle waits for
+    that write. So: a pipe whose end of the app does not block (Linux, macOS), or a named pipe whose server end the app
+    writes with overlapped writes, the program reading the client end, as dart:io makes it (Windows)"""
+
+    def __init__(self):
+        self.closed = threading.Event()
+        self.waiting_since = None  # when the write under way started to wait for room, None when it is not waiting
+        self._lock = threading.Lock()
+        self._pending = None
+        if os.name == 'nt':
+            import _winapi
+            import msvcrt
+
+            self._winapi = _winapi
+            name = rf'\\.\pipe\immuch360-av2-check-{os.getpid()}-{secrets.token_hex(8)}'
+            # Outbound, overlapped, first instance; a byte pipe of 64 KiB
+            self._server = _winapi.CreateNamedPipe(name, 0x2 | _winapi.FILE_FLAG_OVERLAPPED | 0x80000, 0, 1, 65536,
+                                                   65536, 0, _winapi.NULL)
+            client = _winapi.CreateFile(name, _winapi.GENERIC_READ, 0, _winapi.NULL, _winapi.OPEN_EXISTING,
+                                        _winapi.FILE_FLAG_OVERLAPPED, _winapi.NULL)
+            connected = _winapi.ConnectNamedPipe(self._server, overlapped=True)
+            try:
+                connected.GetOverlappedResult(True)
+            except OSError:
+                pass  # ERROR_PIPE_CONNECTED: the client end was opened first, as here
+            self.child = msvcrt.open_osfhandle(client, os.O_RDONLY)
+        else:
+            self.child, self._writer = os.pipe()
+            os.set_blocking(self._writer, False)
+
+    def started(self):
+        """The program holds its end: the app keeps only its own"""
+        os.close(self.child)
+
+    def write(self, data: bytes, timeout: float | None = None) -> bool:
+        """data whole, waiting while the pipe is full; False once the pipe is closed or broken, or after timeout
+        seconds"""
+        view = memoryview(data)
+        limit = None if timeout is None else time.monotonic() + timeout
+        while view:
+            if self.closed.is_set() or (limit is not None and time.monotonic() > limit):
+                return False
+            try:
+                written = self._write_some(view)
+            except OSError:
+                return False
+            if written:
+                view = view[written:]
+                self.waiting_since = None
+            elif self.waiting_since is None:
+                self.waiting_since = time.monotonic()
+        return True
+
+    def _write_some(self, view) -> int:
+        """The bytes one write took, 0 when the pipe had no room for 0.1 s"""
+        if os.name != 'nt':
+            with self._lock:
+                if self.closed.is_set():
+                    raise OSError('closed')
+                try:
+                    return os.write(self._writer, view)
+                except BlockingIOError:
+                    writer = self._writer
+            select.select([], [writer], [], 0.1)
+            return 0
+        winapi = self._winapi
+        with self._lock:
+            if self.closed.is_set():
+                raise OSError('closed')
+            overlapped, _ = winapi.WriteFile(self._server, bytes(view), overlapped=True)
+            self._pending = overlapped
+        try:
+            while winapi.WaitForSingleObject(overlapped.event, 100) != 0:
+                if self.waiting_since is None:
+                    self.waiting_since = time.monotonic()
+            written, _ = overlapped.GetOverlappedResult(True)
+            return written
+        finally:
+            with self._lock:
+                self._pending = None
+
+    def waited(self, timeout: float, held: float = 0.5) -> bool:
+        """Whether a write waited for room for held seconds within timeout seconds: the pipe is full"""
+        limit = time.monotonic() + timeout
+        while time.monotonic() < limit:
+            since = self.waiting_since
+            if since is not None and time.monotonic() - since >= held:
+                return True
+            time.sleep(0.05)
+        return False
+
+    def close(self):
+        """Closes the end of the app, as the app does to stop the program; a write under way ends at once"""
+        with self._lock:
+            if self.closed.is_set():
+                return
+            self.closed.set()
+            if os.name == 'nt':
+                if self._pending is not None:
+                    try:
+                        self._pending.cancel()
+                    except OSError:
+                        pass
+                self._winapi.CloseHandle(self._server)
+            else:
+                os.close(self._writer)
+
+
+def serve_command(program: pathlib.Path, stream, info: dict, token: str, threads: int = 0, depth: int = 0) -> list:
+    picture = info['picture']
+    rate, scale = stream.fps
+    command = [str(program), 'serve', '--token', token, '--width', str(picture['width']), '--height',
+               str(picture['height']), '--bits', str(picture['bits']), '--fps', f'{rate}/{scale}', '--frames',
+               str(len(stream.units)), '--threads', str(threads), '--range', info['color']['range']]
+    if depth:
+        command += ['--depth', str(depth)]
+    return command
+
+
 class Companion:
     """immuch360-av2 serve, fed as the app feeds it"""
 
-    def __init__(self, program: pathlib.Path, stream: Stream, info: dict, threads: int = 0, depth: int = 0,
-                 token: str | None = None, extra: list | None = None, hold_from: int | None = None):
+    def __init__(self, program: pathlib.Path, stream, info: dict, threads: int = 0, depth: int = 0,
+                 token: str | None = None, extra: list | None = None, hold_from: int | None = None,
+                 feed: bool = True):
         self.stream = stream
         # The app's side can stop feeding the first generation at a unit, as a slow share would: the program then
         # waits for that unit, and the request it serves stays open
         self.hold_from = hold_from
         self.token = token or secrets.token_urlsafe(24)
-        picture = info['picture']
-        rate, scale = stream.fps
-        command = [str(program), 'serve', '--token', self.token, '--width', str(picture['width']), '--height',
-                   str(picture['height']), '--bits', str(picture['bits']), '--fps', f'{rate}/{scale}', '--frames',
-                   str(len(stream.units)), '--threads', str(threads), '--range', info['color']['range']]
-        if depth:
-            command += ['--depth', str(depth)]
-        command += extra or []
-        self.process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        command = serve_command(program, stream, info, self.token, threads, depth) + (extra or [])
+        self.pipe = AppPipe()
+        self.units_written = 0
+        self.process = subprocess.Popen(command, stdin=self.pipe.child, stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE, bufsize=0)
+        self.pipe.started()
         self.lines = []
         self.lines_lock = threading.Condition()
         self.needs = queue.Queue()
@@ -173,10 +339,12 @@ class Companion:
         self.reader = threading.Thread(target=self._read_lines, daemon=True)
         self.reader.start()
         threading.Thread(target=self._read_errors, daemon=True).start()
-        self.feeding = threading.Thread(target=self._feed, daemon=True)
+        # Without feed, the test writes the records itself (write_record)
+        self.feeding = threading.Thread(target=self._feed if feed else self._index_only, daemon=True)
         self.feeding.start()
         line = self.wait_line(lambda text: text.startswith(('listening ', 'error ')), 20)
         if not line or not line.startswith('listening '):
+            self.kill()
             raise Failure(f'serve did not listen: {line!r}, stderr {self.errors()!r}')
         self.port = int(line.split()[1])
         fields = dict(part.split('=', 1) for part in line.split()[2:])
@@ -208,12 +376,18 @@ class Companion:
     def errors(self) -> str:
         return getattr(self, 'stderr', b'').decode('utf-8', 'replace')
 
+    def write_record(self, generation: int, unit: int, payload: bytes, timeout: float | None = None) -> bool:
+        return self.pipe.write(RECORD.pack(b'AV2R', generation, unit, len(payload)) + payload, timeout)
+
     def _write(self, generation: int, unit: int, payload: bytes) -> bool:
-        try:
-            self.process.stdin.write(RECORD.pack(b'AV2R', generation, unit, len(payload)) + payload)
-            return True
-        except (BrokenPipeError, OSError, ValueError):
+        if not self.write_record(generation, unit, payload):
             return False
+        if payload:
+            self.units_written += 1
+        return True
+
+    def _index_only(self):
+        self._write(0, INDEX_UNIT, b''.join(struct.pack('<I', rap) for rap in self.stream.raps))
 
     def _feed(self):
         """The index first, then for each need the units from its unit on, until the next need"""
@@ -267,10 +441,7 @@ class Companion:
     def close(self, timeout: float = 5.0) -> tuple:
         """Closes the standard input; the exit code and the seconds the program took to go"""
         started = time.monotonic()
-        try:
-            self.process.stdin.close()
-        except OSError:
-            pass
+        self.pipe.close()
         try:
             code = self.process.wait(timeout)
         except subprocess.TimeoutExpired:
@@ -283,6 +454,7 @@ class Companion:
         if self.process.poll() is None:
             self.process.kill()
             self.process.wait()
+        self.pipe.close()
 
     def cpu_seconds(self) -> float | None:
         """Processor time of the program so far (Linux and macOS), None elsewhere"""
@@ -579,6 +751,286 @@ def check_refusals(report: Report, program: pathlib.Path, fixtures: pathlib.Path
     report.check(result.returncode == 2, 'serve with a short token: exit code 2')
 
 
+def wait_exit(process: subprocess.Popen, timeout: float = 3.0) -> tuple:
+    """The exit code of a program and the seconds it took to end, or None after timeout seconds (then killed)"""
+    started = time.monotonic()
+    try:
+        code = process.wait(timeout)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait()
+        return None, timeout
+    return code, time.monotonic() - started
+
+
+def paused_player(companion: Companion, header_length: int) -> socket.socket:
+    """A player that asks for the whole video, reads its header and the start of the first picture, then stops reading
+    (a pause): the program blocks on its write, then the app on its own once the queue of units is full"""
+    player = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    player.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 65536)
+    player.settimeout(10)
+    player.connect(('127.0.0.1', companion.port))
+    player.sendall(f'GET {companion.url_path} HTTP/1.1\r\nHost: 127.0.0.1\r\nRange: bytes=0-\r\n\r\n'.encode())
+    received = b''
+    while b'\r\n\r\n' not in received or len(received.split(b'\r\n\r\n', 1)[1]) < header_length + 10:
+        chunk = player.recv(65536)
+        if not chunk:
+            break
+        received += chunk
+    return player
+
+
+def check_input_end(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """The program ends within a second of its standard input closing, whatever its queue of units holds: full (64
+    units) with no request, full with a paused player, full after the player closed. The app writes as fast as the
+    pipe takes its records, so that a real video always fills the queue"""
+    path = fixtures / 'av2-256x144-8bit.ivf'
+    _, info = probe(program, path, threads)
+    # No request: 90 units of generation 0, 64 in the queue, one read, the rest in the pipe
+    stream = Repeated(Stream(path), 10)
+    companion = Companion(program, stream, info, threads, feed=False)
+    try:
+        sent = all(companion.write_record(0, unit, stream.unit(unit), 10) for unit in range(90))
+        time.sleep(0.5)
+        report.check(sent and companion.process.poll() is None,
+                     'no request, 90 units sent: the program waits for room in its queue')
+        code, seconds = companion.close(3)
+        report.check(code == 0 and seconds < 1.0,
+                     f'no request, the queue full: gone {seconds:.2f} s after its input closed, exit {code}')
+        report.check(companion.texts()[-1:] == ['exit input-closed'],
+                     f'no request, the queue full: last line "exit input-closed" ({companion.texts()[-1:]})')
+    finally:
+        companion.kill()
+
+    # A paused player, then the input closed; the player closed, then the input closed
+    path = fixtures / 'av2-256x144-10bit.ivf'
+    _, info = probe(program, path, threads)
+    stream = Repeated(Stream(path), 40)
+    header_length = len(expected_header(info, stream))
+    for label, close_player in (('a paused player', False), ('the player closed', True)):
+        companion = Companion(program, stream, info, threads)
+        player = None
+        try:
+            player = paused_player(companion, header_length)
+            full = companion.pipe.waited(20)
+            report.check(full, f'{label}: the app waits on a full pipe, the queue of the program full '
+                               f'({companion.units_written} of {len(stream.units)} units written)')
+            if close_player:
+                player.close()
+                time.sleep(0.3)
+            code, seconds = companion.close(3)
+            report.check(code == 0 and seconds < 1.0,
+                         f'{label}: gone {seconds:.2f} s after its input closed, exit {code}')
+            report.check(companion.texts()[-1:] == ['exit input-closed'],
+                         f'{label}: last line "exit input-closed" ({companion.texts()[-1:]})')
+        except (OSError, Failure) as error:
+            report.check(False, f'{label}: {error}')
+        finally:
+            if player is not None:
+                player.close()
+            companion.kill()
+
+
+def check_app_gone(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """The app gone without closing the input (another process may still hold its end): the program ends when its
+    lines can no longer be written (at the next stat line), and when the process of --parent ends"""
+    path = fixtures / 'av2-256x144-8bit.ivf'
+    stream = Stream(path)
+    _, info = probe(program, path, threads)
+
+    pipe = AppPipe()
+    lines, write_end = os.pipe()
+    command = serve_command(program, stream, info, secrets.token_urlsafe(24), threads)
+    process = subprocess.Popen(command, stdin=pipe.child, stdout=write_end, stderr=subprocess.DEVNULL)
+    pipe.started()
+    os.close(write_end)
+    try:
+        first = b''
+        while not first.endswith(b'\n'):
+            chunk = os.read(lines, 1)
+            if not chunk:
+                break
+            first += chunk
+        pipe.write(RECORD.pack(b'AV2R', 0, INDEX_UNIT, 8) + struct.pack('<II', 0, 6))
+        os.close(lines)
+        code, seconds = wait_exit(process)
+        report.check(first.startswith(b'listening ') and code == 0 and seconds < 1.5,
+                     f'its standard output closed: gone {seconds:.2f} s later, exit {code}')
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait()
+        pipe.close()
+
+    parent = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
+    companion = None
+    try:
+        try:
+            companion = Companion(program, stream, info, threads, extra=['--parent', str(parent.pid)])
+        except Failure as error:
+            report.check(False, f'--parent {parent.pid}: {error}')
+            return
+        time.sleep(0.3)
+        report.check(companion.process.poll() is None, '--parent: the program runs while that process lives')
+        parent.kill()
+        parent.wait()
+        code, seconds = wait_exit(companion.process)
+        report.check(code == 0 and seconds < 1.0 and companion.wait_line(lambda t: t == 'exit parent-gone', 1),
+                     f'--parent: gone {seconds:.2f} s after that process ended, exit {code}, "exit parent-gone"')
+    finally:
+        if parent.poll() is None:
+            parent.kill()
+            parent.wait()
+        if companion is not None:
+            companion.kill()
+
+
+def check_slow_request(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """A local program that sends its request a byte at a time, without the token, holds neither the requests of the
+    player nor its own connection beyond 2 s"""
+    path = fixtures / 'av2-256x144-8bit.ivf'
+    stream = Stream(path)
+    _, info = probe(program, path, threads)
+    companion = Companion(program, stream, info, threads)
+    stop = threading.Event()
+    trickler = socket.create_connection(('127.0.0.1', companion.port), timeout=10)
+    connected = time.monotonic()
+
+    def trickle():
+        for byte in b'GET /x HTTP/1.1\r\nHost: 127.0.0.1\r\nX-Slow: ' + b'y' * 200:
+            if stop.is_set():
+                return
+            try:
+                trickler.send(bytes([byte]))
+            except OSError:
+                return
+            time.sleep(0.3)
+
+    threading.Thread(target=trickle, daemon=True).start()
+    try:
+        time.sleep(0.2)
+        started = time.monotonic()
+        try:
+            status = get(companion.port, companion.url_path, method='HEAD', timeout=5)[0]
+        except (OSError, http.client.HTTPException):
+            status = None
+        seconds = time.monotonic() - started
+        report.check(status == 200 and seconds < 1.0,
+                     f'a request trickling in a byte at a time: the player\'s HEAD answered in {seconds:.2f} s '
+                     f'({status})')
+        trickler.settimeout(6)
+        try:
+            while trickler.recv(4096):
+                pass
+        except OSError:
+            pass
+        held = time.monotonic() - connected
+        report.check(held < 3.0, f'a request trickling in a byte at a time: its connection closed {held:.1f} s after '
+                                 'it came')
+    finally:
+        stop.set()
+        trickler.close()
+        companion.close()
+
+
+def check_depth8(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """--depth 8: the 10-bit pictures as 8-bit samples, (v + 2) >> 2, in a C420 y4m"""
+    path = fixtures / 'av2-256x144-10bit.ivf'
+    stream = Stream(path)
+    _, info = probe(program, path, threads)
+    served = {}
+    for depth in (0, 8):
+        companion = Companion(program, stream, info, threads, depth)
+        try:
+            served[depth] = (companion.listening, get(companion.port, companion.url_path, start=0)[2])
+        finally:
+            companion.close()
+    (wide, body10), (narrow, body8) = served[0], served[8]
+    header = expected_header(info, stream).replace(b' C420p10 ', b' C420 ')
+    frame10, frame8 = int(wide['frame']), int(narrow['frame'])
+    right = (body8[:len(header)] == header and frame10 == 2 * frame8 and
+             len(body8) == len(header) + len(stream.units) * (6 + frame8))
+    pictures10 = frames_of(body10, int(wide['header']), frame10)
+    pictures8 = frames_of(body8, int(narrow['header']), frame8) if right else []
+    rounded = [bytes(min(255, (value + 2) >> 2) for value in struct.unpack(f'<{len(p) // 2}H', p)) for p in pictures10]
+    report.check(right and len(pictures8) == len(stream.units) and pictures8 == rounded,
+                 f'--depth 8: a C420 y4m of {len(pictures8)} pictures, the 10-bit ones rounded to 8 bits')
+
+
+def check_speed(report: Report, program: pathlib.Path, fixtures: pathlib.Path, entry: dict, threads: int):
+    """The decoding speed of the stat lines on a video the player reads as fast as it can (600 pictures: the fixture
+    50 times, each copy decoded as avmdec v1.0.0 decodes the fixture)"""
+    path = fixtures / 'av2-256x144-8bit.ivf'
+    _, info = probe(program, path, threads)
+    stream = Repeated(Stream(path), 50)
+    header_length = len(expected_header(info, stream))
+    companion = Companion(program, stream, info, threads)
+    try:
+        started = time.monotonic()
+        status, _, body = get(companion.port, companion.url_path, start=0, timeout=120)
+        seconds = time.monotonic() - started
+        pictures = frames_of(body, header_length, info['y4m']['frame_bytes'])
+        count = len(entry['frame_md5'])
+        report.check(status == 206 and len(pictures) == len(stream.units) and
+                     all(hashlib.md5(p).hexdigest() == entry['frame_md5'][k % count] for k, p in enumerate(pictures)),
+                     f'the fixture 50 times: {len(pictures)} pictures, each as avmdec v1.0.0 decodes the fixture')
+        mark = companion.line_count()
+        line = companion.wait_line(lambda text: text.startswith('stat '), 2, mark) or ''
+        fields = dict(part.split('=', 1) for part in line.split()[1:])
+        fps = float(fields.get('fps', 0))
+        rate = len(pictures) / seconds if seconds > 0 else 0
+        report.check(fps > 0 and fps >= 0.5 * rate,
+                     f'the decoding speed of the stat lines: fps={fps:.0f}, {rate:.0f} pictures per second served')
+    finally:
+        companion.close()
+
+
+def check_probe_starts(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """The probe of the start of a file: cut in its first picture, too short for a sequence header, read on the
+    standard input, and a first picture after 5, 20 and 70 MiB (steps of 1, 4, 16 and 64 MiB)"""
+    path = fixtures / 'av2-256x144-8bit.ivf'
+    data = path.read_bytes()
+    _, whole = probe(program, path, threads)
+    with tempfile.TemporaryDirectory(prefix='av2-probe-') as folder:
+        folder = pathlib.Path(folder)
+        cut = folder / 'cut-in-first-picture.ivf'
+        cut.write_bytes(data[:1000])
+        code, info = probe(program, cut, threads)
+        report.check(code == 0 and info.get('playable') is False and
+                     info.get('refusal') == 'a stream without a picture in its start' and
+                     info.get('sequence', {}).get('bits') == 8,
+                     f'probe of the first 1000 bytes: the sequence header, not playable ({info.get("refusal")})')
+        short = folder / 'short.ivf'
+        short.write_bytes(data[:40])
+        code, info = probe(program, short, threads)
+        report.check(code == 3 and 'no AV2 sequence header' in info.get('error', ''),
+                     f'probe of the first 40 bytes: exit 3, no sequence header ({info})')
+        piped = subprocess.run([str(program), 'probe', '-', '--threads', str(threads)], input=data,
+                               capture_output=True, timeout=60)
+        text = piped.stdout.decode('utf-8', 'replace').strip()
+        report.check(piped.returncode == 0 and text and json.loads(text.splitlines()[-1]) == whole,
+                     'probe - on the standard input: the JSON of the file')
+        for megabytes, playable in ((5, True), (20, True), (70, False)):
+            padded = folder / f'first-picture-after-{megabytes}-mib.ivf'
+            padded.write_bytes(padded_ivf(data, megabytes << 20))
+            code, info = probe(program, padded, threads)
+            if playable:
+                good = code == 0 and info.get('playable') is True and info.get('picture', {}).get('width') == 256
+            else:
+                good = (code == 0 and info.get('playable') is False and
+                        info.get('refusal') == 'a stream without a picture in its start')
+            report.check(good, f'probe of a first picture after {megabytes} MiB: '
+                               f'{"playable" if playable else "beyond 64 MiB, not playable"} ({info.get("refusal")})')
+            if megabytes == 20:
+                piped = subprocess.run([str(program), 'probe', '-', '--threads', str(threads)],
+                                       input=padded.read_bytes(), capture_output=True, timeout=60)
+                text = piped.stdout.decode('utf-8', 'replace').strip()
+                info = json.loads(text.splitlines()[-1]) if text else {}
+                report.check(piped.returncode == 0 and info.get('playable') is True,
+                             'probe - of a first picture after 20 MiB on the standard input: playable')
+            padded.unlink()
+
+
 def command_check(args) -> int:
     fixtures = args.fixtures
     entries = json.loads((fixtures / 'fixtures.json').read_text(encoding='utf-8'))['files']
@@ -599,6 +1051,12 @@ def command_check(args) -> int:
     check_damaged(report, args.program, fixtures / 'av2-256x144-8bit-damaged.ivf', fixtures / 'av2-256x144-8bit.ivf',
                   args.threads)
     check_refusals(report, args.program, fixtures)
+    check_probe_starts(report, args.program, fixtures, args.threads)
+    check_depth8(report, args.program, fixtures, args.threads)
+    check_speed(report, args.program, fixtures, entries['av2-256x144-8bit.ivf'], args.threads)
+    check_slow_request(report, args.program, fixtures, args.threads)
+    check_input_end(report, args.program, fixtures, args.threads)
+    check_app_gone(report, args.program, fixtures, args.threads)
     if report.failures:
         for failure in report.failures:
             print(f'::error::{failure}')
