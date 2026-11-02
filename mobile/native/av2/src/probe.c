@@ -20,49 +20,59 @@
 #include <shellapi.h>
 #endif
 
-// The probe reads the start of a file: the first pictures of any AV2 stream are well inside
+// The probe reads the start of a file, 1 MiB first, then four times more each time no picture came out, up to 64 MiB:
+// on a share, the first picture of a stream comes after a few hundred kilobytes at most
+#define PROBE_FIRST ((size_t)1 << 20)
 #define PROBE_LIMIT ((size_t)64 << 20)
 #define PROBE_PACKETS 64
 
-static uint8_t *read_input(const char *path, int index, size_t *size) {
-  FILE *file = NULL;
+typedef struct Input {
+  FILE *file;
+  int from_stdin, ended;
+  uint8_t *data;
+  size_t used, capacity;
+} Input;
+
+static int input_open(Input *in, const char *path, int index) {
+  memset(in, 0, sizeof(*in));
   if (strcmp(path, "-") == 0) {
-    file = stdin;
-  } else {
+    in->from_stdin = 1;
+    return 1;
+  }
 #ifdef _WIN32
-    // The path as the app gave it, in UTF-16: argv of the C runtime is in the code page and loses other letters
-    int count = 0;
-    wchar_t **wide = CommandLineToArgvW(GetCommandLineW(), &count);
-    if (wide && index < count) file = _wfopen(wide[index], L"rb");
-    if (wide) LocalFree(wide);
+  // The path as the app gave it, in UTF-16: argv of the C runtime is in the code page and loses other letters
+  int count = 0;
+  wchar_t **wide = CommandLineToArgvW(GetCommandLineW(), &count);
+  if (wide && index < count) in->file = _wfopen(wide[index], L"rb");
+  if (wide) LocalFree(wide);
 #else
-    (void)index;
-    file = fopen(path, "rb");
+  (void)index;
+  in->file = fopen(path, "rb");
 #endif
+  return in->file != NULL;
+}
+
+// Reads until the input holds target bytes or ends; 0 without memory
+static int input_fill(Input *in, size_t target) {
+  if (target > in->capacity) {
+    uint8_t *grown = realloc(in->data, target);
+    if (!grown) return 0;
+    in->data = grown;
+    in->capacity = target;
   }
-  if (!file) return NULL;
-  size_t capacity = 1 << 20, used = 0;
-  uint8_t *data = malloc(capacity);
-  while (data) {
-    if (used == capacity) {
-      if (capacity >= PROBE_LIMIT) break;
-      uint8_t *grown = realloc(data, capacity * 2);
-      if (!grown) {
-        free(data);
-        data = NULL;
-        break;
-      }
-      data = grown;
-      capacity *= 2;
-    }
-    size_t room = capacity - used;
-    size_t got = file == stdin ? av2_stdin_read(data + used, room) : fread(data + used, 1, room, file);
-    if (got == 0) break;
-    used += got;
+  while (!in->ended && in->used < target) {
+    size_t room = target - in->used;
+    size_t got = in->from_stdin ? av2_stdin_read(in->data + in->used, room)
+                                : fread(in->data + in->used, 1, room, in->file);
+    if (got == 0) in->ended = 1;
+    in->used += got;
   }
-  if (file != stdin) fclose(file);
-  *size = used;
-  return data;
+  return 1;
+}
+
+static void input_close(Input *in) {
+  if (in->file) fclose(in->file);
+  free(in->data);
 }
 
 static const char *layout_name(int layout) {
@@ -136,16 +146,11 @@ static int fail(const char *reason) {
   return AV2_EXIT_VIDEO;
 }
 
-int av2_probe(const char *path, int path_index, int threads) {
-  size_t size = 0;
-  uint8_t *data = read_input(path, path_index, &size);
-  if (!data) return fail("the file could not be read");
+// Probes the bytes read so far: the exit code, or -1 when more bytes may give a picture (not final)
+static int probe_bytes(const uint8_t *data, size_t size, int threads, int final) {
   Container container;
   const char *reason = NULL;
-  if (!container_open(&container, data, size, &reason)) {
-    free(data);
-    return fail(reason);
-  }
+  if (!container_open(&container, data, size, &reason)) return fail(reason);
 
   Dav2dSequenceHeader sequence;
   int have_sequence = 0;
@@ -156,10 +161,7 @@ int av2_probe(const char *path, int path_index, int threads) {
   settings.all_layers = 0;
   settings.logger.callback = NULL;
   Dav2dContext *decoder = NULL;
-  if (dav2d_open(&decoder, &settings) < 0) {
-    free(data);
-    return fail("the decoder could not start");
-  }
+  if (dav2d_open(&decoder, &settings) < 0) return fail("the decoder could not start");
   Dav2dPicture picture;
   memset(&picture, 0, sizeof(picture));
   int have_picture = 0, decode_error = 0;
@@ -193,14 +195,22 @@ int av2_probe(const char *path, int path_index, int threads) {
     if (decode_error) break;
   }
   if (!have_picture && !decode_error) {
+    if (!final) {
+      dav2d_close(&decoder);
+      return -1;
+    }
     dav2d_send_data(decoder, NULL);
     if (dav2d_get_picture(decoder, &picture) == 0) have_picture = 1;
   }
 
+  // Bytes that end inside the first packet still hold its sequence header (the first OBUs after the delimiter)
+  if (!have_sequence) {
+    size_t at = container.ivf ? ((size_t)data[6] | (size_t)data[7] << 8) + 12 : 0;
+    if (at < size) have_sequence = parse_sequence(data + at, size - at, &sequence);
+  }
   if (!have_sequence) {
     if (have_picture) dav2d_picture_unref(&picture);
     dav2d_close(&decoder);
-    free(data);
     return fail("no AV2 sequence header in the start of the file");
   }
 
@@ -258,6 +268,20 @@ int av2_probe(const char *path, int path_index, int threads) {
 
   if (have_picture) dav2d_picture_unref(&picture);
   dav2d_close(&decoder);
-  free(data);
   return AV2_EXIT_OK;
+}
+
+int av2_probe(const char *path, int path_index, int threads) {
+  Input in;
+  if (!input_open(&in, path, path_index)) return fail("the file could not be read");
+  int code = -1;
+  for (size_t target = PROBE_FIRST; code < 0; target *= 4) {
+    if (!input_fill(&in, target)) {
+      code = fail("no memory for the start of the file");
+      break;
+    }
+    code = probe_bytes(in.data, in.used, threads, in.ended || target >= PROBE_LIMIT);
+  }
+  input_close(&in);
+  return code;
 }

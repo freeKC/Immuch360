@@ -21,8 +21,11 @@ meson compile -C build
 
 * `immuch360-av2 probe FILE|- [--threads N]`: what the start of an AV2 file holds, as one line of JSON (the sequence
   header, the first picture decoded: size, depth, layout, colour description and range; `playable`, and `format`, the
-  words the app shows when it refuses a stream: "4:4:4 10-bit", "4:2:0 12-bit"...). `-` reads the bytes on the standard
-  input (the start of a file of a share). Exit code 3 and `{"error": "..."}` when it is not AV2 or not readable.
+  words the app shows when it refuses a stream: "4:4:4 10-bit", "4:2:0 12-bit"...). It reads 1 MiB first, then four
+  times more while no picture came out, up to 64 MiB; `-` reads the bytes on the standard input until it closes (the
+  start of a file of a share: the app sends what it has read, then closes it; bytes that end inside the first picture
+  give `"playable": false` and the refusal "a stream without a picture in its start"). Exit code 3 and
+  `{"error": "..."}` when it is not AV2 or not readable.
 * `immuch360-av2 serve --token TOKEN --width W --height H --bits 8|10 --fps NUM/DEN --frames N [--threads N]
   [--range limited|full] [--depth 8] [--frame-bytes B] [--port P]`: below.
 * `immuch360-av2 --version`: `immuch360-av2 protocol 1, source <commit>`, `dav2d <commit> (<describe>)`,
