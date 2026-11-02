@@ -45,6 +45,8 @@ import app.alextran.immich.spatial.SpatialVideoApi
 import app.alextran.immich.spatial.SpatialVideoApiImpl
 import app.alextran.immich.spherical.SphericalVideoApi
 import app.alextran.immich.spherical.SphericalVideoApiImpl
+import app.alextran.immich.splatviewer.SplatViewerApi
+import app.alextran.immich.splatviewer.SplatViewerApiImpl
 import app.alextran.immich.sync.NativeSyncApi
 import app.alextran.immich.sync.NativeSyncApiImpl26
 import app.alextran.immich.sync.NativeSyncApiImpl30
@@ -72,6 +74,7 @@ class MainActivity : FlutterFragmentActivity() {
     SphericalVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    SplatViewerApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     // The Stop action of the phone share notification, for the engine that runs the share
     PhoneShareApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     val messenger = flutterEngine.dartExecutor.binaryMessenger
@@ -113,6 +116,7 @@ class MainActivity : FlutterFragmentActivity() {
     SphericalVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    SplatViewerApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     // The TV dialog must not keep this activity once it is gone
     TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
@@ -187,6 +191,7 @@ class MainActivity : FlutterFragmentActivity() {
       SphericalVideoApi.setUp(messenger, SphericalVideoApiImpl(ctx))
       SpatialVideoApi.setUp(messenger, SpatialVideoApiImpl(ctx))
       ImmersiveApi.setUp(messenger, ImmersiveApiImpl(ctx))
+      SplatViewerApi.setUp(messenger, SplatViewerApiImpl(ctx))
       PhoneShareApi.setUp(messenger, PhoneShareApiImpl(ctx))
       VideoThumbnailApi.setUp(messenger, VideoThumbnailApiImpl())
       VideoDecoderApi.setUp(messenger, VideoDecoderApiImpl())
