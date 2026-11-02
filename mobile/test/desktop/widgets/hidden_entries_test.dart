@@ -2,8 +2,9 @@
 // device", the map of the location editor, whose coordinates stay, the Places card of the Library, the map of the
 // details, and the mobile data and charging options of the backup, replaced by a line saying that the backup runs
 // while the app is open. The phones keep every one of them. The settings list and the OAuth line are tested with their
-// pages (settings_page_test.dart, login_form_tv_test.dart). The other way round, "Make 3D (AI)" and the button of its
-// conversions are on the computers only, and never in the locked folder nor in the trash.
+// pages (settings_page_test.dart, login_form_tv_test.dart). The other way round, "Make 3D (AI)", "Make a splat scene
+// (AI)" (in a selection, and in the menu of the viewer of a video) and the button of the conversions are on the
+// computers only, and never in the locked folder nor in the trash.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,6 +16,7 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_bar_button.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
@@ -105,7 +107,8 @@ void main() {
       );
       final actions = withDesktopSelectionActions(const [SizedBox.shrink()]);
       expect(actions.whereType<DesktopMakeImmersiveButton>(), hasLength(computer ? 1 : 0), reason: platform.name);
-      expect(actions, hasLength(computer ? 2 : 1), reason: platform.name);
+      expect(actions.whereType<DesktopMakeSplatButton>(), hasLength(computer ? 1 : 0), reason: platform.name);
+      expect(actions, hasLength(computer ? 3 : 1), reason: platform.name);
     }
   });
 
@@ -129,6 +132,38 @@ void main() {
       isEdited: false,
     );
     expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(video)), isFalse);
+  });
+
+  test('"Make a splat scene (AI)" is in the menu of the viewer of a video, on the computers only', () {
+    final video = RemoteAsset(
+      id: 'clip',
+      name: 'clip.mp4',
+      ownerId: 'owner',
+      checksum: 'clip',
+      type: AssetType.video,
+      createdAt: DateTime(2025),
+      updatedAt: DateTime(2025),
+      isEdited: false,
+    );
+    for (final platform in TargetPlatform.values) {
+      debugDefaultTargetPlatformOverride = platform;
+      final computer = _desktops.contains(platform);
+      expect(ActionButtonType.makeSplatScene.shouldShow(_viewerContext(video)), computer, reason: platform.name);
+      expect(
+        ActionButtonType.makeSplatScene.buildButton(_viewerContext(video)),
+        computer ? isA<DesktopMakeSplatButton>() : isNot(isA<DesktopMakeSplatButton>()),
+        reason: platform.name,
+      );
+    }
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    // A photo has "Make 3D (AI)"; nothing leaves the locked folder nor the trash
+    expect(ActionButtonType.makeSplatScene.shouldShow(_viewerContext(_remote)), isFalse);
+    expect(ActionButtonType.makeSplatScene.shouldShow(_viewerContext(video, locked: true)), isFalse);
+    expect(
+      ActionButtonType.makeSplatScene.shouldShow(_viewerContext(video, origin: TimelineOrigin.lockedFolder)),
+      isFalse,
+    );
+    expect(ActionButtonType.makeSplatScene.shouldShow(_viewerContext(video, origin: TimelineOrigin.trash)), isFalse);
   });
 
   group('the app bar', () {

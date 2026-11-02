@@ -86,6 +86,7 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_parts.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
@@ -975,10 +976,13 @@ class DesktopMakeImmersiveButton extends ConsumerWidget {
   }
 }
 
-/// The [actions] of the bottom sheet of a selection, with "Make 3D (AI)" on a computer
+/// The [actions] of the bottom sheet of a selection, with "Make 3D (AI)" and "Make a splat scene (AI)" on a computer
 List<Widget> withDesktopSelectionActions(List<Widget> actions) => [
   ...actions,
-  if (CurrentPlatform.isDesktop) const DesktopMakeImmersiveButton(source: ActionSource.timeline),
+  if (CurrentPlatform.isDesktop) ...[
+    const DesktopMakeImmersiveButton(source: ActionSource.timeline),
+    const DesktopMakeSplatButton(source: ActionSource.timeline),
+  ],
 ];
 
 /// Opens the conversion dialog for [assets], on the type [kind] when it takes one of them ("Make the 3D version" of a
