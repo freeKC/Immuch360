@@ -37,8 +37,8 @@ read in the container: the one the `dav2d` program writes is wrong for files of 
 `FRAME\n` and the picture (4:2:0, 8 bits, or 10 bits in 16 bit little endian words; `--depth 8` serves 10-bit pictures
 as 8-bit samples). Its length is known before any decoding: `header + frames x (6 + frame bytes)`.
 
-A request (GET or HEAD, `Range: bytes=a-`, `a-b` or `-n`) maps to picture k and an offset in it. The decoder goes on from
-where it is when the random access unit before k is not after its position; otherwise it starts again there: a new
+A request (GET or HEAD, `Range: bytes=a-`, `a-b` or `-n`) maps to picture k and an offset in it. The decoder goes on
+from where it is when the random access unit before k is not after its position; otherwise it starts again there: a new
 generation, `dav2d_flush`, and the line `need G U` for the app. The pictures before k are dropped without being
 written. Another token gets 403, another path 404, a range past the end 416; a request from an address other than
 127.0.0.1 is closed. One request is served at a time: a new one ends the one being served (its socket is shut down), as
@@ -80,8 +80,15 @@ player closes, and the system closes it when the app dies.
 | `error KIND MESSAGE` | then the program ends with the code below |
 | `exit input-closed` | the standard input closed |
 
-`fps` is the decoding speed over the last two seconds of decoding: the time the decoder waits for the player (pause,
-full cache) or for the app does not count, so the number says what this computer can decode.
+`fps` is the speed at which this computer decodes and serves the video, measured on runs of pictures that the decoder
+alone paced: a run ends when a write to the player takes more than 10 ms for 256 KiB (the player does not read: its
+cache is full, or it is paused) or when a unit of the app has not come, and its first pictures are left out (the
+decoder threads worked ahead while the main thread waited). Such runs happen when playback starts, after each seek, and
+all the time on a computer too slow for the video; between them the line keeps the last speed measured, and `0.0`
+until the first one (a few frames at least, 100 ms at least). On ai1 (lot AD2), it read 125 to 153 fps for WorldCup
+(dav2d alone: 120 hot to 168 cold), 42 for FlowerSky 4K 8 bits (41.7), 8.7 for cosmos 4K 10 bits (8.4), and 15 to
+20 % above dav2d alone for Skater and cosmos 2048 in 10 bits. The app can also count `decoded` and `served` against
+the clock.
 
 ### Exit codes
 

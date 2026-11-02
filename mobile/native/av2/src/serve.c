@@ -13,6 +13,12 @@
 //  - the accept thread reads each new request, refuses another token or address, and hands it to the main thread;
 //    a new request replaces the one being served (its socket is shut down), as the player does when it seeks;
 //  - the report thread writes the "stat" line every half second.
+//
+// The decoding speed of the stat line is measured on the main thread over runs of pictures where nothing but the
+// decoder held it: neither a player that does not read (a write that has to wait) nor the app (a unit that has not
+// come). The first pictures of a run are left out, the decoder threads having worked ahead while the main thread
+// waited. A run happens when playback starts, after a seek, and all the time when the computer is too slow: the number
+// says what this computer decodes, not the frame rate of the video.
 #include "av2.h"
 
 #include <inttypes.h>
@@ -63,13 +69,23 @@ typedef struct Server {
   Request pending;
   av2_socket serving;
 
-  uint64_t decoded, served, busy_ns;
+  uint64_t decoded, served;
   int64_t position;
+  double fps;  // the last decoding speed measured, 0 before the first
 } Server;
+
+// A run of pictures the decoder alone paced (main thread only)
+typedef struct Run {
+  unsigned pictures;   // since the start of the run
+  unsigned skip;       // the first pictures, left out: the decoder threads worked ahead of them
+  uint64_t first_ns;   // when picture `skip` came
+  uint64_t last_ns;    // when the last picture came
+} Run;
 
 typedef struct Decoder {
   Server *server;
   Dav2dContext *context;
+  Run run;
   Dav2dData data;       // taken from the queue, not yet taken by dav2d
   int started, draining, ended;
   uint32_t expected;    // the unit the next record must carry
@@ -174,9 +190,18 @@ static void *read_input(void *argument) {
   return NULL;
 }
 
-// The next record of the current generation, or NULL when a new request came first
-static Record *take_record(Server *s) {
+static void run_break(struct Decoder *d);
+
+// The next record of the current generation, or NULL when a new request came first. Waiting for the app ends the
+// run of the decoding speed
+static Record *take_record(struct Decoder *d) {
+  Server *s = d->server;
   av2_mutex_lock(&s->lock);
+  if (!s->head && !s->has_pending) {
+    av2_mutex_unlock(&s->lock);
+    run_break(d);
+    av2_mutex_lock(&s->lock);
+  }
   while (!s->head && !s->has_pending) av2_cond_wait(&s->wake, &s->lock);
   Record *record = s->head;
   if (record) {
@@ -193,6 +218,37 @@ static Record *take_record(Server *s) {
 static void free_record_data(const uint8_t *data, void *cookie) {
   (void)cookie;
   free((void *)data);
+}
+
+// --- the decoding speed ----------------------------------------------------------------------------------------------
+
+#define RUN_PICTURES 6
+#define RUN_NS 100000000u
+
+static void run_measure(Decoder *d) {
+  Run *run = &d->run;
+  if (run->pictures < run->skip + RUN_PICTURES || run->last_ns - run->first_ns < RUN_NS) return;
+  double fps = (double)(run->pictures - run->skip) * 1e9 / (double)(run->last_ns - run->first_ns);
+  av2_mutex_lock(&d->server->lock);
+  d->server->fps = fps;
+  av2_mutex_unlock(&d->server->lock);
+}
+
+// Something other than the decoder held the main thread: the run ends there
+static void run_break(Decoder *d) {
+  run_measure(d);
+  d->run.pictures = 0;
+}
+
+static void run_picture(Decoder *d) {
+  Run *run = &d->run;
+  uint64_t now = av2_now_ns();
+  run->pictures++;
+  if (run->pictures == run->skip) run->first_ns = now;
+  run->last_ns = now;
+  // A long run (a computer too slow for the video) updates the speed as it goes
+  if (run->pictures > run->skip && now - run->first_ns >= 5 * RUN_NS && (run->pictures - run->skip) % 8 == 0)
+    run_measure(d);
 }
 
 // --- the decoder -----------------------------------------------------------------------------------------------------
@@ -275,7 +331,6 @@ static void decode_failure(Decoder *d, int code) {
 static int next_picture(Decoder *d, int keep) {
   Server *s = d->server;
   for (;;) {
-    uint64_t started = av2_now_ns();
     if (d->data.sz > 0) {
       int sent = dav2d_send_data(d->context, &d->data);
       if (sent < 0 && sent != DAV2D_ERR(EAGAIN)) decode_failure(d, sent);
@@ -283,10 +338,6 @@ static int next_picture(Decoder *d, int keep) {
     Dav2dPicture picture;
     memset(&picture, 0, sizeof(picture));
     int got = dav2d_get_picture(d->context, &picture);
-    uint64_t spent = av2_now_ns() - started;
-    av2_mutex_lock(&s->lock);
-    s->busy_ns += spent;
-    av2_mutex_unlock(&s->lock);
     if (got == 0) {
       const ServeOptions *o = s->options;
       if (picture.p.w != (int)o->width || picture.p.h != (int)o->height || picture.p.bpc != (int)o->bits ||
@@ -303,6 +354,7 @@ static int next_picture(Decoder *d, int keep) {
       }
       dav2d_picture_unref(&picture);
       d->next++;
+      run_picture(d);
       av2_mutex_lock(&s->lock);
       s->decoded++;
       av2_mutex_unlock(&s->lock);
@@ -319,7 +371,7 @@ static int next_picture(Decoder *d, int keep) {
       d->ended = 1;
       return -1;
     }
-    Record *record = take_record(s);
+    Record *record = take_record(d);
     if (!record) return 0;
     if (record->unit != d->expected) {
       char message[96];
@@ -518,6 +570,24 @@ static void *accept_requests(void *argument) {
   return NULL;
 }
 
+// Writes the bytes of a picture, 256 KiB at a time. A write that takes more than 10 ms (less than 25 MB/s) means a
+// player that does not read (its cache is full, or it is paused): that ends the run of the decoding speed. Faster ones
+// are the copy to the player, part of what serving costs
+#define WRITE_CHUNK ((size_t)256 << 10)
+#define HELD_NS 10000000u
+
+static int send_picture(Decoder *d, av2_socket socket, const uint8_t *data, size_t size) {
+  while (size > 0) {
+    size_t chunk = size < WRITE_CHUNK ? size : WRITE_CHUNK;
+    uint64_t started = av2_now_ns();
+    if (av2_send_all(socket, data, chunk) != 0) return -1;
+    if (av2_now_ns() - started > HELD_NS) run_break(d);
+    data += chunk;
+    size -= chunk;
+  }
+  return 0;
+}
+
 static void serve_request(Decoder *d, const Request *request) {
   Server *s = d->server;
   const Y4mLayout *y4m = &s->y4m;
@@ -551,7 +621,7 @@ static void serve_request(Decoder *d, const Request *request) {
     }
     uint64_t size = y4m->record_bytes - offset;
     if (size > end - at + 1) size = end - at + 1;
-    if (av2_send_all(request->socket, d->frame + offset, (size_t)size) != 0) return;
+    if (send_picture(d, request->socket, d->frame + offset, (size_t)size) != 0) return;
     at += size;
     av2_mutex_lock(&s->lock);
     if (offset + size == y4m->record_bytes) s->served++;
@@ -564,27 +634,16 @@ static void serve_request(Decoder *d, const Request *request) {
 
 static void *report(void *argument) {
   Server *s = argument;
-  enum { WINDOW = 4 };
-  uint64_t busy_seen[WINDOW + 1] = {0}, decoded_seen[WINDOW + 1] = {0};
-  unsigned ticks = 0;
-  double fps = 0;
   const char *simd = av2_simd_level();
   for (;;) {
     av2_sleep_ms(500);
     av2_mutex_lock(&s->lock);
-    uint64_t decoded = s->decoded, served = s->served, busy = s->busy_ns;
+    uint64_t decoded = s->decoded, served = s->served;
     uint32_t generation = s->generation;
     int64_t position = s->position;
     int serving = s->serving != AV2_NO_SOCKET;
+    double fps = s->fps;
     av2_mutex_unlock(&s->lock);
-    // The decoding speed over the last two seconds of decoding: the time the decoder waits for the player or for the
-    // app does not count, so a paused or slow player does not make the computer look slow
-    unsigned oldest = ticks < WINDOW ? 0 : (ticks - WINDOW) % (WINDOW + 1);
-    uint64_t busy_span = busy - busy_seen[oldest], decoded_span = decoded - decoded_seen[oldest];
-    if (ticks > 0 && busy_span >= 50000000u && decoded_span > 0) fps = (double)decoded_span * 1e9 / (double)busy_span;
-    busy_seen[ticks % (WINDOW + 1)] = busy;
-    decoded_seen[ticks % (WINDOW + 1)] = decoded;
-    ticks++;
     av2_line("stat decoded=%" PRIu64 " served=%" PRIu64 " fps=%.1f simd=%s gen=%" PRIu32 " frame=%" PRId64
              " serving=%d",
              decoded, served, fps, simd, generation, position, serving);
@@ -632,6 +691,8 @@ int av2_serve(const ServeOptions *o) {
     av2_line("error decode the decoder could not start");
     return AV2_EXIT_INTERNAL;
   }
+  int delay = dav2d_get_frame_delay(&settings);
+  d.run.skip = delay > 0 ? (unsigned)delay : 1;
 
   unsigned port = 0;
   s->listener = av2_listen_loopback(o->port, &port);
@@ -655,7 +716,9 @@ int av2_serve(const ServeOptions *o) {
     s->has_pending = 0;
     s->serving = request.socket;
     av2_mutex_unlock(&s->lock);
+    run_break(&d);
     serve_request(&d, &request);
+    run_break(&d);
     av2_mutex_lock(&s->lock);
     s->serving = AV2_NO_SOCKET;
     av2_mutex_unlock(&s->lock);
