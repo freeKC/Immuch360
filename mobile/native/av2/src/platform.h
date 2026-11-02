@@ -2,8 +2,8 @@
 // Copyright (c) 2026 FreeKC (Immuch360)
 //
 // What immuch360-av2 needs from the system, the same on Windows, Linux and macOS: threads, a mutex and a condition,
-// a monotonic clock, the loopback socket of the server, the raw standard input, the lines of the standard output, and
-// the SIMD level of the processor as dav2d sees it.
+// a monotonic clock, the loopback socket of the server, the raw standard input and whether its writer left, the end
+// of another process, the lines of the standard output, and the SIMD level of the processor as dav2d sees it.
 #ifndef IMMUCH360_AV2_PLATFORM_H
 #define IMMUCH360_AV2_PLATFORM_H
 
@@ -33,7 +33,7 @@ typedef pthread_t av2_thread;
 
 // Exit codes of the program, named in the README and by the app
 enum {
-  AV2_EXIT_OK = 0,           // the input closed: the app is done with the video
+  AV2_EXIT_OK = 0,           // the input or the output closed, or the --parent process ended: the app is done
   AV2_EXIT_INTERNAL = 1,     // out of memory, a thread that could not start
   AV2_EXIT_USAGE = 2,        // bad arguments
   AV2_EXIT_VIDEO = 3,        // the video could not be decoded, or is not what serve was told
@@ -51,6 +51,7 @@ void av2_cond_wait(av2_cond *c, av2_mutex *m);
 // Waits at most ms milliseconds; spurious and timed out wakes look the same to the caller, who checks its state
 void av2_cond_timedwait(av2_cond *c, av2_mutex *m, unsigned ms);
 void av2_cond_broadcast(av2_cond *c);
+// Starts a detached thread (never joined)
 int av2_thread_start(av2_thread *t, void *(*run)(void *), void *arg);
 
 // Nanoseconds of a monotonic clock
@@ -59,8 +60,16 @@ void av2_sleep_ms(unsigned ms);
 
 // Reads exactly size bytes of the standard input; returns the bytes read, less than size at its end or on an error
 size_t av2_stdin_read(void *buffer, size_t size);
+// Whether the writer of the standard input has gone, even while bytes it wrote still wait in the pipe, where a read
+// would only see the end after them: POLLHUP of poll on Linux, EV_EOF of kqueue on macOS, the closing state of the
+// pipe on Windows. 0 when it cannot be told (a file, a console), where the reads see the end
+int av2_stdin_closed(void);
 
-// One line on the standard output, flushed, never mixed with a line of another thread
+// Blocks until the process pid has ended, at once when there is none: 0, or -1 when it cannot be watched
+int av2_wait_process(unsigned long pid);
+
+// One line on the standard output, flushed, never mixed with a line of another thread. A line that cannot be written
+// ends the program (code 0): nobody reads them any more, the app is gone
 void av2_line(const char *format, ...)
 #if defined(__GNUC__) || defined(__clang__)
     __attribute__((format(printf, 1, 2)))

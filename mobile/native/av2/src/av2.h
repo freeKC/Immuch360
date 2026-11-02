@@ -27,6 +27,7 @@ typedef struct ServeOptions {
   int full_range;
   unsigned port;
   uint64_t frame_bytes;  // 0: not checked
+  unsigned long parent;  // the process the program ends with, 0: none
 } ServeOptions;
 
 int av2_probe(const char *path, int path_index, int threads);

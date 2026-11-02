@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 FreeKC (Immuch360)
 //
-// immuch360-av2 serve: one decoder, one connection at a time. Four threads:
+// immuch360-av2 serve: one decoder, one connection served at a time. The threads:
 //
 //  - the main thread answers the requests of the player: a byte range of the virtual y4m maps to the picture k and an
 //    offset in it; the decoder goes on from where it is when the random access point before k is not after it, and
@@ -9,10 +9,13 @@
 //    unwritten, then each picture is written whole to the socket. A paused player stops reading, the write blocks,
 //    the decoder and the app wait: no processor time is spent;
 //  - the input thread reads the records of the app into a short queue, skips those of an older generation, and ends
-//    the program when the standard input closes;
-//  - the accept thread reads each new request, refuses another token or address, and hands it to the main thread;
-//    a new request replaces the one being served (its socket is shut down), as the player does when it seeks;
-//  - the report thread writes the "stat" line every half second.
+//    the program when the standard input closes, also while it waits for room in a full queue;
+//  - the accept thread takes each new connection from 127.0.0.1 and hands it to a short thread of its own, which reads
+//    its request within 2 s, refuses another token, and hands it to the main thread; a new request replaces the one
+//    being served (its socket is shut down), as the player does when it seeks;
+//  - the report thread writes the "stat" line every half second; when it can no longer be written, the app is gone
+//    and the program ends;
+//  - with --parent, a thread that ends the program when that process ends.
 //
 // The decoding speed of the stat line is measured on the main thread over runs of pictures where nothing but the
 // decoder held it: neither a player that does not read (a write that has to wait) nor the app (a unit that has not
@@ -36,7 +39,10 @@
 #define RECORD_LIMIT ((uint32_t)256 << 20)
 #define QUEUE_RECORDS 64
 #define QUEUE_BYTES ((size_t)32 << 20)
+#define INPUT_CHECK_MS 100
 #define REQUEST_LIMIT 16384
+#define REQUEST_MS 2000
+#define READERS_LIMIT 8
 
 typedef struct Record {
   struct Record *next;
@@ -68,6 +74,7 @@ typedef struct Server {
   int has_pending;
   Request pending;
   av2_socket serving;
+  unsigned readers;  // the threads reading a request
 
   uint64_t decoded, served;
   int64_t position;
@@ -128,16 +135,22 @@ static void read_index(Server *s, const uint8_t *data, uint32_t length) {
   av2_mutex_unlock(&s->lock);
 }
 
+// Closed by the app (or the app is gone): the end, whatever the player was doing
+static void input_closed(void) {
+  av2_line("exit input-closed");
+  av2_exit_now(AV2_EXIT_OK);
+}
+
+static int queue_full(const Server *s) {
+  return s->queued_records >= QUEUE_RECORDS || (s->queued_records > 0 && s->queued_bytes >= QUEUE_BYTES);
+}
+
 static void *read_input(void *argument) {
   Server *s = argument;
   for (;;) {
     uint8_t header[16];
     size_t got = av2_stdin_read(header, sizeof(header));
-    if (got < sizeof(header)) {
-      // Closed by the app (or the app is gone): the end, whatever the player was doing
-      av2_line("exit input-closed");
-      av2_exit_now(AV2_EXIT_OK);
-    }
+    if (got < sizeof(header)) input_closed();
     if (le32(header) != RECORD_MAGIC) stop(AV2_EXIT_PROTOCOL, "protocol", "a record without its AV2R mark");
     uint32_t generation = le32(header + 4), unit = le32(header + 8), length = le32(header + 12);
     if (length > RECORD_LIMIT) stop(AV2_EXIT_PROTOCOL, "protocol", "a record above 256 MiB");
@@ -145,10 +158,7 @@ static void *read_input(void *argument) {
     if (length > 0) {
       data = malloc(length);
       if (!data) stop(AV2_EXIT_INTERNAL, "memory", "no memory for a record");
-      if (av2_stdin_read(data, length) < length) {
-        av2_line("exit input-closed");
-        av2_exit_now(AV2_EXIT_OK);
-      }
+      if (av2_stdin_read(data, length) < length) input_closed();
     }
     if (unit == INDEX_UNIT) {
       read_index(s, data, length);
@@ -160,9 +170,16 @@ static void *read_input(void *argument) {
       av2_mutex_unlock(&s->lock);
       stop(AV2_EXIT_PROTOCOL, "protocol", "a unit before the index");
     }
-    while (generation == s->generation &&
-           (s->queued_records >= QUEUE_RECORDS || (s->queued_records > 0 && s->queued_bytes >= QUEUE_BYTES)))
-      av2_cond_wait(&s->wake, &s->lock);
+    // Waiting for room, nothing reads the standard input, so no read sees its end; and the queue can stay full for
+    // ever: a paused player, a closed one, no request. So the pipe itself is asked every 100 ms whether the app
+    // closed it, even with bytes still in it
+    while (generation == s->generation && queue_full(s)) {
+      av2_cond_timedwait(&s->wake, &s->lock, INPUT_CHECK_MS);
+      if (generation != s->generation || !queue_full(s)) break;
+      av2_mutex_unlock(&s->lock);
+      if (av2_stdin_closed()) input_closed();
+      av2_mutex_lock(&s->lock);
+    }
     if (generation != s->generation) {
       // Asked for before a seek: dropped
       av2_mutex_unlock(&s->lock);
@@ -481,6 +498,98 @@ static int parse_range(const char *value, uint64_t total, uint64_t *start, uint6
   return 1;
 }
 
+typedef struct Connection {
+  Server *server;
+  av2_socket socket;
+} Connection;
+
+// One request: read within REQUEST_MS of its connection (a local program that trickles its bytes holds only its own
+// thread, never the next request), refused, answered (HEAD) or handed to the main thread
+static void read_request(Server *s, av2_socket c) {
+  char text[REQUEST_LIMIT + 1];
+  size_t used = 0;
+  uint64_t deadline = av2_now_ns() + (uint64_t)REQUEST_MS * 1000000u;
+  text[0] = '\0';
+  while (used < REQUEST_LIMIT) {
+    uint64_t now = av2_now_ns();
+    if (now >= deadline) break;
+    av2_socket_timeout(c, (unsigned)((deadline - now) / 1000000u) + 1);
+    long got = av2_recv(c, text + used, REQUEST_LIMIT - used);
+    if (got <= 0) break;
+    used += (size_t)got;
+    text[used] = '\0';
+    if (strstr(text, "\r\n\r\n")) break;
+  }
+  text[used] = '\0';
+  char method[8] = "", target[256] = "";
+  if (!strstr(text, "\r\n\r\n") || sscanf(text, "%7s %255s", method, target) != 2) {
+    respond(c, 400, &s->y4m, 0, 0);
+    av2_line("refused request");
+    av2_socket_close(c);
+    return;
+  }
+  int head = strcmp(method, "HEAD") == 0;
+  if (!head && strcmp(method, "GET") != 0) {
+    respond(c, 405, &s->y4m, 0, 0);
+    av2_line("refused method");
+    av2_socket_close(c);
+    return;
+  }
+  if (strcmp(target, s->path) != 0) {
+    // Another token, or another file under the token
+    const char *token = s->options->token;
+    size_t length = strlen(token);
+    int token_matches = target[0] == '/' && strncmp(target + 1, token, length) == 0 && target[length + 1] == '/';
+    respond(c, token_matches ? 404 : 403, &s->y4m, 0, 0);
+    av2_line(token_matches ? "refused path" : "refused token");
+    av2_socket_close(c);
+    return;
+  }
+  Request request;
+  request.socket = c;
+  request.start = 0;
+  request.end = s->y4m.total - 1;
+  request.ranged = 0;
+  for (char *line = strstr(text, "\r\n"); line && line[2] && !(line[2] == '\r' && line[3] == '\n');
+       line = strstr(line + 2, "\r\n")) {
+    if (starts_with_word(line + 2, "range:")) {
+      request.ranged = 1;
+      if (!parse_range(line + 2 + 6, s->y4m.total, &request.start, &request.end) || request.start > request.end ||
+          request.start >= s->y4m.total) {
+        respond(c, 416, &s->y4m, 0, 0);
+        av2_line("refused range");
+        av2_socket_close(c);
+        return;
+      }
+      break;
+    }
+  }
+  if (head) {
+    respond(c, request.ranged ? 206 : 200, &s->y4m, request.start, request.end);
+    av2_socket_close(c);
+    return;
+  }
+  av2_socket_timeout(c, 0);
+  av2_mutex_lock(&s->lock);
+  if (s->has_pending) av2_socket_close(s->pending.socket);
+  s->pending = request;
+  s->has_pending = 1;
+  // The request being served is over: its blocked write fails at once
+  if (s->serving != AV2_NO_SOCKET) av2_socket_shutdown(s->serving);
+  av2_cond_broadcast(&s->wake);
+  av2_mutex_unlock(&s->lock);
+}
+
+static void *reader(void *argument) {
+  Connection connection = *(Connection *)argument;
+  free(argument);
+  read_request(connection.server, connection.socket);
+  av2_mutex_lock(&connection.server->lock);
+  connection.server->readers--;
+  av2_mutex_unlock(&connection.server->lock);
+  return NULL;
+}
+
 static void *accept_requests(void *argument) {
   Server *s = argument;
   for (;;) {
@@ -495,77 +604,26 @@ static void *accept_requests(void *argument) {
       av2_socket_close(c);
       continue;
     }
-    av2_socket_timeout(c, 2000);
-    char text[REQUEST_LIMIT + 1];
-    size_t used = 0;
-    while (used < REQUEST_LIMIT) {
-      long got = av2_recv(c, text + used, REQUEST_LIMIT - used);
-      if (got <= 0) break;
-      used += (size_t)got;
-      text[used] = '\0';
-      if (strstr(text, "\r\n\r\n")) break;
-    }
-    text[used] = '\0';
-    char method[8] = "", target[256] = "";
-    if (!strstr(text, "\r\n\r\n") || sscanf(text, "%7s %255s", method, target) != 2) {
-      respond(c, 400, &s->y4m, 0, 0);
-      av2_line("refused request");
-      av2_socket_close(c);
-      continue;
-    }
-    int head = strcmp(method, "HEAD") == 0;
-    if (!head && strcmp(method, "GET") != 0) {
-      respond(c, 405, &s->y4m, 0, 0);
-      av2_line("refused method");
-      av2_socket_close(c);
-      continue;
-    }
-    if (strcmp(target, s->path) != 0) {
-      // Another token, or another file under the token
-      const char *token = s->options->token;
-      size_t length = strlen(token);
-      int token_matches = target[0] == '/' && strncmp(target + 1, token, length) == 0 && target[length + 1] == '/';
-      respond(c, token_matches ? 404 : 403, &s->y4m, 0, 0);
-      av2_line(token_matches ? "refused path" : "refused token");
-      av2_socket_close(c);
-      continue;
-    }
-    Request request;
-    request.socket = c;
-    request.start = 0;
-    request.end = s->y4m.total - 1;
-    request.ranged = 0;
-    for (char *line = strstr(text, "\r\n"); line && line[2] && !(line[2] == '\r' && line[3] == '\n');
-         line = strstr(line + 2, "\r\n")) {
-      if (starts_with_word(line + 2, "range:")) {
-        request.ranged = 1;
-        if (!parse_range(line + 2 + 6, s->y4m.total, &request.start, &request.end) || request.start > request.end ||
-            request.start >= s->y4m.total) {
-          respond(c, 416, &s->y4m, 0, 0);
-          av2_line("refused range");
-          request.socket = AV2_NO_SOCKET;
-        }
-        break;
-      }
-    }
-    if (request.socket == AV2_NO_SOCKET) {
-      av2_socket_close(c);
-      continue;
-    }
-    if (head) {
-      respond(c, request.ranged ? 206 : 200, &s->y4m, request.start, request.end);
-      av2_socket_close(c);
-      continue;
-    }
-    av2_socket_timeout(c, 0);
+    // A few requests read at once (the player asks for one or two); more would only be another program's
     av2_mutex_lock(&s->lock);
-    if (s->has_pending) av2_socket_close(s->pending.socket);
-    s->pending = request;
-    s->has_pending = 1;
-    // The request being served is over: its blocked write fails at once
-    if (s->serving != AV2_NO_SOCKET) av2_socket_shutdown(s->serving);
-    av2_cond_broadcast(&s->wake);
+    int busy = s->readers >= READERS_LIMIT;
+    if (!busy) s->readers++;
     av2_mutex_unlock(&s->lock);
+    Connection *connection = busy ? NULL : malloc(sizeof(*connection));
+    av2_thread thread;
+    if (connection) {
+      connection->server = s;
+      connection->socket = c;
+      if (av2_thread_start(&thread, reader, connection) == 0) continue;
+      free(connection);
+    }
+    if (!busy) {
+      av2_mutex_lock(&s->lock);
+      s->readers--;
+      av2_mutex_unlock(&s->lock);
+    }
+    av2_line("refused busy");
+    av2_socket_close(c);
   }
   return NULL;
 }
@@ -651,6 +709,20 @@ static void *report(void *argument) {
   return NULL;
 }
 
+// --- the parent ------------------------------------------------------------------------------------------------------
+
+// --parent PID: the program ends with that process (the app), even if something else still holds its input open
+static void *watch_parent(void *argument) {
+  const ServeOptions *o = argument;
+  if (av2_wait_process(o->parent) != 0) {
+    av2_line("error usage the process %lu of --parent cannot be watched", o->parent);
+    av2_exit_now(AV2_EXIT_USAGE);
+  }
+  av2_line("exit parent-gone");
+  av2_exit_now(AV2_EXIT_OK);
+  return NULL;
+}
+
 // --- serve -----------------------------------------------------------------------------------------------------------
 
 int av2_serve(const ServeOptions *o) {
@@ -702,9 +774,10 @@ int av2_serve(const ServeOptions *o) {
   }
   av2_line("listening %u address=127.0.0.1 length=%" PRIu64 " header=%zu frame=%zu frames=%" PRIu64, port,
            s->y4m.total, s->y4m.header_length, s->y4m.frame_bytes, s->y4m.frames);
-  av2_thread input_thread, accept_thread, report_thread;
+  av2_thread input_thread, accept_thread, report_thread, parent_thread;
   if (av2_thread_start(&input_thread, read_input, s) != 0 ||
-      av2_thread_start(&accept_thread, accept_requests, s) != 0 || av2_thread_start(&report_thread, report, s) != 0) {
+      av2_thread_start(&accept_thread, accept_requests, s) != 0 || av2_thread_start(&report_thread, report, s) != 0 ||
+      (o->parent && av2_thread_start(&parent_thread, watch_parent, (void *)o) != 0)) {
     av2_line("error thread a thread could not start");
     return AV2_EXIT_INTERNAL;
   }

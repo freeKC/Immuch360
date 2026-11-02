@@ -39,14 +39,16 @@ static const char help[] =
     "  --depth 8              serves 10-bit pictures as 8-bit samples\n"
     "  --frame-bytes B        stops unless a picture takes B bytes in the y4m\n"
     "  --port P               the port to listen on (default 0, any free port)\n"
+    "  --parent PID           ends when the process PID ends (the app), as when the standard input closes\n"
     "\n"
     "Standard input of serve: records of a 16-byte header, little endian (\"AV2R\", generation, unit, length), then\n"
     "length bytes. First the index: generation 0, unit 4294967295, the random access units as 32-bit numbers.\n"
     "Then, for each line \"need G U\", the temporal units from U on with generation G, and a record of length 0\n"
     "after the last unit.\n"
-    "Standard output of serve: listening PORT, need G U, request, stat, refused, error and exit lines.\n"
-    "Exit codes: 0 the standard input closed, 1 internal error, 2 bad arguments, 3 the video cannot be decoded,\n"
-    "4 no socket on 127.0.0.1, 5 records that are not the protocol's.\n";
+    "Standard output of serve: listening PORT, need G U, request, stat, refused, error and exit lines; serve ends\n"
+    "when they can no longer be written.\n"
+    "Exit codes: 0 the standard input or output closed, or the --parent process ended, 1 internal error, 2 bad\n"
+    "arguments, 3 the video cannot be decoded, 4 no socket on 127.0.0.1, 5 records that are not the protocol's.\n";
 
 static int usage(const char *problem) {
   fprintf(stderr, "immuch360-av2: %s (see immuch360-av2 --help)\n", problem);
@@ -128,6 +130,9 @@ static int serve(int argc, char **argv) {
     } else if (strcmp(name, "--port") == 0) {
       if (!number(value, 65535, &n)) return usage("--port takes a number from 0 to 65535");
       o.port = (unsigned)n;
+    } else if (strcmp(name, "--parent") == 0) {
+      if (!number(value, 0xffffffffu, &n) || n == 0) return usage("--parent takes the number of a process");
+      o.parent = (unsigned long)n;
     } else {
       return usage("an unknown option of serve");
     }

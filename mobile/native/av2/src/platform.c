@@ -4,6 +4,7 @@
 // The system calls behind platform.h: Win32 and Winsock on Windows, POSIX threads and BSD sockets elsewhere.
 #ifndef _WIN32
 #define _POSIX_C_SOURCE 200809L
+#define _DEFAULT_SOURCE  // syscall() of glibc
 #define _DARWIN_C_SOURCE
 #endif
 
@@ -23,11 +24,18 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <poll.h>
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+#if defined(__APPLE__)
+#include <sys/event.h>
+#elif defined(__linux__)
+#include <sys/syscall.h>
+#endif
 #endif
 
 #if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86))
@@ -79,11 +87,14 @@ int av2_thread_start(av2_thread *t, void *(*run)(void *), void *arg) {
   if (!start) return -1;
   start->run = run;
   start->arg = arg;
-  *t = CreateThread(NULL, 0, thread_trampoline, start, 0, NULL);
-  if (!*t) {
+  HANDLE thread = CreateThread(NULL, 0, thread_trampoline, start, 0, NULL);
+  if (!thread) {
     free(start);
     return -1;
   }
+  // Never joined: its handle goes at once, as pthread_detach does elsewhere
+  CloseHandle(thread);
+  *t = NULL;
   return 0;
 }
 
@@ -107,6 +118,37 @@ size_t av2_stdin_read(void *buffer, size_t size) {
     done += got;
   }
   return done;
+}
+
+int av2_stdin_closed(void) {
+  HANDLE input = GetStdHandle(STD_INPUT_HANDLE);
+  if (input == NULL || input == INVALID_HANDLE_VALUE || GetFileType(input) != FILE_TYPE_PIPE) return 0;
+  // A pipe that still holds bytes reads them before it tells that its writer left (PeekNamedPipe too); its state says
+  // it at once: NtQueryInformationFile of ntdll, looked up here (nothing more to import), FilePipeLocalInformation
+  // (24), whose NamedPipeState becomes FILE_PIPE_CLOSING_STATE (4) when the other end closes, whether the app made the
+  // pipe with CreatePipe or as dart:io does (a named pipe, overlapped)
+  typedef LONG(WINAPI * QueryInformationFile)(HANDLE, void *, void *, ULONG, int);
+  static QueryInformationFile query;
+  if (!query) {
+    HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+    if (ntdll) query = (QueryInformationFile)(void (*)(void))GetProcAddress(ntdll, "NtQueryInformationFile");
+    if (!query) return 0;
+  }
+  struct {
+    void *status;
+    ULONG_PTR information;
+  } io;
+  ULONG pipe[10];  // FILE_PIPE_LOCAL_INFORMATION, ten ULONGs: NamedPipeState is the ninth
+  if (query(input, &io, pipe, sizeof(pipe), 24) < 0) return 0;
+  return pipe[8] == 4;
+}
+
+int av2_wait_process(unsigned long pid) {
+  HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, (DWORD)pid);
+  if (!process) return GetLastError() == ERROR_INVALID_PARAMETER ? 0 : -1;
+  WaitForSingleObject(process, INFINITE);
+  CloseHandle(process);
+  return 0;
 }
 #else
 void av2_mutex_init(av2_mutex *m) { pthread_mutex_init(m, NULL); }
@@ -155,16 +197,75 @@ size_t av2_stdin_read(void *buffer, size_t size) {
   }
   return done;
 }
+
+int av2_stdin_closed(void) {
+#if defined(__APPLE__)
+  int queue = kqueue();
+  if (queue < 0) return 0;
+  struct kevent change, event;
+  EV_SET(&change, 0, EVFILT_READ, EV_ADD, 0, 0, NULL);
+  struct timespec now = {0, 0};
+  int got = kevent(queue, &change, 1, &event, 1, &now);
+  close(queue);
+  return got > 0 && !(event.flags & EV_ERROR) && (event.flags & EV_EOF);
+#else
+  struct pollfd input = {0, POLLIN, 0};
+  int got;
+  do {
+    got = poll(&input, 1, 0);
+  } while (got < 0 && errno == EINTR);
+  return got > 0 && (input.revents & POLLHUP);
+#endif
+}
+
+int av2_wait_process(unsigned long pid) {
+#if defined(__APPLE__)
+  int queue = kqueue();
+  if (queue < 0) return -1;
+  struct kevent change, event;
+  EV_SET(&change, (uintptr_t)pid, EVFILT_PROC, EV_ADD | EV_ONESHOT, NOTE_EXIT, 0, NULL);
+  if (kevent(queue, &change, 1, NULL, 0, NULL) < 0) {
+    int gone = errno == ESRCH;
+    close(queue);
+    return gone ? 0 : -1;
+  }
+  while (kevent(queue, NULL, 0, &event, 1, NULL) < 0 && errno == EINTR) {
+  }
+  close(queue);
+  return 0;
+#else
+#if defined(__linux__) && defined(SYS_pidfd_open)
+  int process = (int)syscall(SYS_pidfd_open, (pid_t)pid, 0);
+  if (process >= 0) {
+    // Readable when the process ends
+    struct pollfd watch = {process, POLLIN, 0};
+    while (poll(&watch, 1, -1) < 0 && errno == EINTR) {
+    }
+    close(process);
+    return 0;
+  }
+  if (errno == ESRCH) return 0;
+#endif
+  // A kernel without pidfd (before Linux 5.3): asked every 200 ms
+  for (;;) {
+    if (kill((pid_t)pid, 0) != 0 && errno == ESRCH) return 0;
+    av2_sleep_ms(200);
+  }
+#endif
+}
 #endif
 
 void av2_line(const char *format, ...) {
   va_list arguments;
   av2_mutex_lock(&output_lock);
   va_start(arguments, format);
-  vfprintf(stdout, format, arguments);
+  int failed = vfprintf(stdout, format, arguments) < 0;
   va_end(arguments);
-  fputc('\n', stdout);
-  fflush(stdout);
+  if (fputc('\n', stdout) == EOF) failed = 1;
+  if (fflush(stdout) != 0) failed = 1;
+  // The other end of the pipe closed: the app is gone, even if something else still holds the standard input open.
+  // serve writes a stat line every half second, so it ends within half a second of the app
+  if (failed) _exit(AV2_EXIT_OK);
   av2_mutex_unlock(&output_lock);
 }
 

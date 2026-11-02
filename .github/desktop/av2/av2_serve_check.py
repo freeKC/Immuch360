@@ -815,6 +815,14 @@ def check_input_end(report: Report, program: pathlib.Path, fixtures: pathlib.Pat
             full = companion.pipe.waited(20)
             report.check(full, f'{label}: the app waits on a full pipe, the queue of the program full '
                                f'({companion.units_written} of {len(stream.units)} units written)')
+            if not close_player:
+                # Asking the pipe every 100 ms while the queue is full costs no processor time to speak of
+                before = companion.cpu_seconds()
+                time.sleep(1.5)
+                after = companion.cpu_seconds()
+                if before is not None and after is not None:
+                    report.check(after - before < 0.05,
+                                 f'{label}, the queue full: {after - before:.3f} s of processor in 1.5 s')
             if close_player:
                 player.close()
                 time.sleep(0.3)
