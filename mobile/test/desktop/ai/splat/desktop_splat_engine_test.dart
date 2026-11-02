@@ -30,7 +30,8 @@ class _Installed implements AiComponentFiles {
     if (missing) {
       return null;
     }
-    final file = File(p.join(folder.path, component.mainPath))..createSync(recursive: true);
+    // As the service gives it: the path of the catalogue (written with /) under the folder of the components
+    final file = File('${folder.path}/${component.mainPath}')..createSync(recursive: true);
     return file;
   }
 

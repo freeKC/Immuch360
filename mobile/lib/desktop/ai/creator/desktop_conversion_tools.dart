@@ -708,9 +708,11 @@ SplatSetup splatSetupOf(AiGateResult found) {
           ImmersiveErrorCode.componentsMissing,
           'An AI component is missing: ${component.id}',
         ));
-    // The main file of the archive, or the program of its folder
-    final expected = named(p.dirname(file.path), windows: windows);
-    return p.basename(file.path).toLowerCase() == p.basename(expected).toLowerCase() ? file.path : expected;
+    // The main file of the archive, or the program of its folder; the separators of the system throughout (the paths
+    // of the catalogue are written with /)
+    final main = p.normalize(file.path);
+    final expected = named(p.dirname(main), windows: windows);
+    return p.basename(main).toLowerCase() == p.basename(expected).toLowerCase() ? main : expected;
   }
 
   final components = aiComponentsFor(platform, feature: AiFeature.splatScene);
