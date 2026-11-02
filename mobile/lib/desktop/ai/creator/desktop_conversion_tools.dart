@@ -62,6 +62,7 @@ import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_images.dart';
+import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -743,15 +744,20 @@ class DesktopSplatEngine implements ImmersiveEngine, KeptAiEngine {
     AiProcessSession Function()? session,
     SplatImagesMaker? images,
     Future<Directory> Function()? cacheRoot,
+    Future<Directory> Function()? failureLogs,
     this.create,
   }) : _openSession = session ?? AiProcessSession.new,
        _images = images ?? appSplatImages(),
-       _cacheRoot = cacheRoot ?? brushCacheRoot;
+       _cacheRoot = cacheRoot ?? brushCacheRoot,
+       _failureLogs = failureLogs ?? appLogsDirectory;
 
   final HardwareGate gate;
   final AiProcessSession Function() _openSession;
   final SplatImagesMaker _images;
   final Future<Directory> Function() _cacheRoot;
+
+  /// The logs folder of the app, where a job that failed leaves the logs of its programs (SplatEngine.failureLogs)
+  final Future<Directory> Function() _failureLogs;
 
   /// Makes the engine of a job; null: SplatEngine on the programs of [SplatSetup]
   final ImmersiveEngine Function(SplatSetup setup, AiGateResult found)? create;
@@ -797,6 +803,7 @@ class DesktopSplatEngine implements ImmersiveEngine, KeptAiEngine {
             cardCheck: () => brushCardOf(budget),
             cacheRoot: await _cacheRoot(),
           ),
+          failureLogs: await _failureLogs(),
         );
       }
       return await engine.run(job, cancel: cancel, onProgress: onProgress);

@@ -28,6 +28,11 @@
 // (ImmersiveResult.afterSaved: a destination that refuses it, or a Cancel during the copy, leaves it for Retry), and
 // at once after a failure or a cancel before the poses were found.
 //
+// After a failure, a Cancel apart, the logs of the programs (logs/ of the work folder) are first copied into the logs
+// folder of the app when the engine is given one ([SplatEngine.failureLogs]: keepSplatFailureLogs, the five newest kept,
+// the failure and its step at their top), so that a failure before the poses, whose work folder goes, still says what
+// COLMAP did: "Save logs to a file" takes them with the log.
+//
 // No Flutter here: the engine also runs in splat_probe, a program compiled by `dart compile exe` that makes a scene on
 // a PC with the real programs (lot SP6, artifact of the windows job of the desktop workflow); the app gives it the
 // preparation of lot SP5, which needs Flutter (splat_images.dart).
@@ -134,6 +139,7 @@ class SplatEngine implements ImmersiveEngine {
     List<SplatWorkRoot>? roots,
     Directory? Function(List<SplatWorkRoot> roots)? pickRoot,
     Duration Function()? elapsed,
+    this.failureLogs,
   }) : roots = roots ?? splatWorkRoots(),
        _pickRoot = pickRoot ?? ((roots) => asciiWorkRoot(roots)),
        _elapsed = elapsed ?? _stopwatch();
@@ -145,6 +151,9 @@ class SplatEngine implements ImmersiveEngine {
 
   /// The roots of the work folders, in order
   final List<SplatWorkRoot> roots;
+
+  /// Where the logs of the programs of a job that failed are copied (the logs folder of the app); none when null
+  final Directory? failureLogs;
   final Directory? Function(List<SplatWorkRoot> roots) _pickRoot;
   final Duration Function() _elapsed;
 
@@ -199,6 +208,13 @@ class SplatEngine implements ImmersiveEngine {
 
     SplatWorkFolder? work;
     var done = false;
+    // The failure the job ends with, for the logs it keeps
+    (ImmersiveErrorCode, String)? failed;
+    ImmersiveResult fail(ImmersiveErrorCode code, String message) {
+      failed = (code, message);
+      return ImmersiveResult.failed(code, message: message, stageTimes: times);
+    }
+
     try {
       report(ImmersiveStage.reading, 0);
       final key = splatJobKey(job);
@@ -364,34 +380,39 @@ class SplatEngine implements ImmersiveEngine {
       if (error.code != ImmersiveErrorCode.cancelled) {
         _log.warning('Splat scene ${job.id} failed: ${error.code.name}: ${error.message}');
       }
-      return ImmersiveResult.failed(
-        cancel.isCancelled ? ImmersiveErrorCode.cancelled : error.code,
-        message: error.message,
-        stageTimes: times,
-      );
+      return fail(cancel.isCancelled ? ImmersiveErrorCode.cancelled : error.code, error.message);
     } on SplatFormatException catch (error) {
-      return ImmersiveResult.failed(
-        ImmersiveErrorCode.trainingFailed,
-        message: 'The export of Brush cannot be read: ${error.message}',
-        stageTimes: times,
-      );
+      return fail(ImmersiveErrorCode.trainingFailed, 'The export of Brush cannot be read: ${error.message}');
     } on FileSystemException catch (error) {
-      return ImmersiveResult.failed(
-        writeFailureOf(error).errorCode,
-        message: error.osError?.message ?? error.message,
-        stageTimes: times,
-      );
+      return fail(writeFailureOf(error).errorCode, error.osError?.message ?? error.message);
     } catch (error, stack) {
       _log.warning('Splat scene ${job.id} could not be made', error, stack);
-      return ImmersiveResult.failed(
-        cancel.isCancelled ? ImmersiveErrorCode.cancelled : ImmersiveErrorCode.modelFailed,
-        message: '$error',
-        stageTimes: times,
-      );
+      return fail(cancel.isCancelled ? ImmersiveErrorCode.cancelled : ImmersiveErrorCode.modelFailed, '$error');
     } finally {
       final folder = work;
       if (folder != null) {
-        await _settle(folder, keep: done || _readState(folder)?['placed'] is int);
+        final failure = failed;
+        final logs = failureLogs;
+        if (failure != null && failure.$1 != ImmersiveErrorCode.cancelled && logs != null) {
+          final (code, message) = failure;
+          final what = job.isVideo ? 'a video' : '${job.members.length} photos';
+          final kept = await keepSplatFailureLogs(
+            folder,
+            logs,
+            header:
+                'Splat scene ${job.id} (${job.lead.name}, $what, ${job.settings.subject.name}) failed: ${code.name}: '
+                '$message\nThe last step the panel showed: ${stage.name}',
+          );
+          if (kept != null) {
+            _log.info('The logs of the programs of splat scene ${job.id} are kept in ${kept.path}');
+          }
+        }
+        final placed = _readState(folder)?['placed'] is int;
+        await _settle(
+          folder,
+          keep: done || placed,
+          why: done ? 'until the file is saved' : 'a day, for Retry from its poses',
+        );
       }
     }
   }
@@ -486,11 +507,11 @@ class SplatEngine implements ImmersiveEngine {
   }
 
   /// At the end of a job: [work] kept and marked used when its poses may serve a Retry ([keep]: the file made and not
-  /// saved yet, or a failure once the poses were found), else deleted
-  Future<void> _settle(SplatWorkFolder work, {required bool keep}) async {
+  /// saved yet, or a failure once the poses were found), the log saying how long ([why]), else deleted
+  Future<void> _settle(SplatWorkFolder work, {required bool keep, String why = ''}) async {
     if (keep) {
       touchAiWorkFolder(work.root);
-      _log.info('The work folder ${work.root.path} is kept a day, for Retry from its poses');
+      _log.info('The work folder ${work.root.path} is kept $why');
       return;
     }
     // A program on Windows may hold a file of its folder a moment after it ended: tried again, the window's isolate

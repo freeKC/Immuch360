@@ -5,7 +5,11 @@
 //   colmap/database.db, colmap/sparse/<n>/   the points, the matches and the models of the mapper
 //   dataset/sparse/0/                    the largest model, upright (model_orientation_aligner): what Brush reads
 //   brush/export_<steps>.ply             what Brush writes
-//   logs/colmap-*.log, logs/brush.log    every line of the programs, kept with the folder after a failure
+//   logs/colmap-*.log, logs/brush.log    every line of the programs; after a failure (a Cancel is none), the end of
+//                                        each copied into the logs folder of the app as one file,
+//                                        splat-<16 hexadecimal digits>-<date>.log, the five newest kept
+//                                        ([keepSplatFailureLogs]), which "Save logs to a file" takes with the log: the
+//                                        work folder may go with the failure (before the poses), its logs stay
 // COLMAP takes its paths as narrow strings on Windows: our build fails on a folder named "été Łódź" and passes on "été"
 // (lot SP4, measured on 1 November; the ANSI code page of that PC, 1252, holds é and not Ł). So the folder is given to
 // COLMAP by an ASCII path: its own when it is one, else its short name (GetShortPathNameW, the 8.3 name, which a volume
@@ -61,6 +65,89 @@ class SplatWorkFolder {
 
 /// The name of the work folder of a splat scene of key [key] (hexadecimal digits): its first 16 after "splat-"
 String splatWorkFolderName(String key) => '$splatWorkFolderPrefix${key.substring(0, 16)}';
+
+/// How many logs of failed splat scenes the logs folder of the app keeps, the newest ([keepSplatFailureLogs])
+const splatFailureLogsKept = 5;
+
+/// The most of the end of each log of a program that the log of a failure takes: what came before the failure, without
+/// the hundreds of lines of the images read one by one before it when the log is long
+const splatFailureLogTail = 256 * 1024;
+
+final _failureLogName = RegExp('^$splatWorkFolderPrefix[0-9a-f]{16}-.+\\.log\$');
+
+/// The name of the log of a failure of the job of [work] at [at]: `splat-<16 hexadecimal digits>-<date and time>.log`,
+/// without the colons Windows refuses
+String splatFailureLogName(SplatWorkFolder work, DateTime at) {
+  String two(int value) => '$value'.padLeft(2, '0');
+  final date = '${at.year}-${two(at.month)}-${two(at.day)}T${two(at.hour)}-${two(at.minute)}-${two(at.second)}';
+  return '${p.basename(work.root.path)}-$date.log';
+}
+
+/// After a failure of the job of [work] (a Cancel is none): the logs of its programs (logs/*.log, in the order they
+/// were written, the last [tail] bytes of each that is longer) copied into [into], the logs folder of the app, as one
+/// file after [header] (what failed and where), named by [splatFailureLogName]; then the oldest of those files beyond
+/// [keep] deleted. The file written, null when the job wrote no log or the file could not be written (the failure is
+/// told all the same).
+Future<File?> keepSplatFailureLogs(
+  SplatWorkFolder work,
+  Directory into, {
+  required String header,
+  DateTime? now,
+  int keep = splatFailureLogsKept,
+  int tail = splatFailureLogTail,
+}) async {
+  final List<(File, DateTime)> logs;
+  try {
+    if (!work.logs.existsSync()) {
+      return null;
+    }
+    logs = [
+      for (final entry in work.logs.listSync())
+        if (entry is File && p.extension(entry.path) == '.log') (entry, entry.lastModifiedSync()),
+    ];
+  } on FileSystemException {
+    return null;
+  }
+  if (logs.isEmpty) {
+    return null;
+  }
+  logs.sort((a, b) {
+    final byTime = a.$2.compareTo(b.$2);
+    return byTime != 0 ? byTime : a.$1.path.compareTo(b.$1.path);
+  });
+  final file = File(p.join(into.path, splatFailureLogName(work, now ?? DateTime.now())));
+  try {
+    into.createSync(recursive: true);
+    final sink = file.openWrite();
+    try {
+      sink.write('$header\nWork folder: ${work.root.path}\n');
+      for (final (log, _) in logs) {
+        final length = log.lengthSync();
+        final from = length > tail ? length - tail : 0;
+        sink.write('\n===== ${p.basename(log.path)}, $length bytes${from > 0 ? ', the last $tail' : ''} =====\n');
+        await sink.addStream(log.openRead(from));
+      }
+    } finally {
+      await sink.close();
+    }
+  } on FileSystemException {
+    return null;
+  }
+  try {
+    final kept = [
+      for (final entry in into.listSync())
+        if (entry is File && _failureLogName.hasMatch(p.basename(entry.path))) (entry, entry.lastModifiedSync()),
+    ]..sort((a, b) => b.$2.compareTo(a.$2));
+    for (final (old, _) in kept.skip(keep)) {
+      if (old.path != file.path) {
+        old.deleteSync();
+      }
+    }
+  } on FileSystemException {
+    // The next failure tries again
+  }
+  return file;
+}
 
 /// Deletes under each of [roots] the work folders of splat scenes not used for SplatV1.workKept (aiWorkFolderLastUsed);
 /// returns how many went. A folder that cannot be deleted now (a file a program still holds) stays for the next time,

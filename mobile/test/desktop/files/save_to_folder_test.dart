@@ -152,17 +152,19 @@ void main() {
   group('Save logs to a file', () {
     late File log;
     late Directory dumps;
+    late Directory programs;
 
     setUp(() {
       log = write('temp/Immich_log_2026-10-08T10-20-30.log', 'line one\nline two\n');
       dumps = Directory(p.join(root.path, 'crash_dumps'));
+      programs = Directory(p.join(root.path, 'logs'));
     });
 
     test('the log alone when nothing crashed', () async {
       pickers.saveAnswer = p.join(root.path, 'kept', 'logs.log');
       Directory(p.join(root.path, 'kept')).createSync();
 
-      expect(await saveLogFile(log, crashDumps: dumps, announce: false), isTrue);
+      expect(await saveLogFile(log, crashDumps: dumps, programLogs: programs, announce: false), isTrue);
       expect(pickers.asked, ['save Immich_log_2026-10-08T10-20-30.log log']);
       expect(File(pickers.saveAnswer!).readAsStringSync(), 'line one\nline two\n');
       expect(Directory(p.join(root.path, 'kept')).listSync(), hasLength(1), reason: 'no partial file left');
@@ -180,7 +182,7 @@ void main() {
       // A name typed without an extension gets the right one
       pickers.saveAnswer = p.join(root.path, 'for the issue');
 
-      expect(await saveLogFile(log, crashDumps: dumps, announce: false), isTrue);
+      expect(await saveLogFile(log, crashDumps: dumps, programLogs: programs, announce: false), isTrue);
       // The name tells the user that crash reports go with the log
       expect(pickers.asked.single, 'save Immich_log_2026-10-08T10-20-30-with-crash-reports.zip zip');
       final entries = readZip(File('${pickers.saveAnswer}.zip').readAsBytesSync());
@@ -192,10 +194,36 @@ void main() {
       expect(entries['crash_dumps/immuch360-11.dmp'], List.filled(111, 11));
     });
 
+    test('the logs a splat scene that failed left beside them go with the log, the latest ten', () async {
+      programs.createSync();
+      final now = DateTime.now();
+      for (var index = 0; index < 12; index++) {
+        File(p.join(programs.path, 'splat-0123456789abcd${index.toString().padLeft(2, '0')}-2026-11-02T10-00-00.log'))
+          ..writeAsStringSync('COLMAP (exhaustive_matcher) $index')
+          ..setLastModifiedSync(now.subtract(Duration(minutes: 12 - index)));
+      }
+      pickers.saveAnswer = p.join(root.path, 'for the issue.zip');
+
+      expect(await saveLogFile(log, crashDumps: dumps, programLogs: programs, announce: false), isTrue);
+      // No crash report: the name says what the archive holds
+      expect(pickers.asked.single, 'save Immich_log_2026-10-08T10-20-30-with-program-logs.zip zip');
+      final entries = readZip(File(pickers.saveAnswer!).readAsBytesSync());
+      expect(entries.keys.first, 'Immich_log_2026-10-08T10-20-30.log');
+      expect(entries.keys.skip(1).toSet(), {
+        for (var index = 2; index < 12; index++)
+          'logs/splat-0123456789abcd${index.toString().padLeft(2, '0')}-2026-11-02T10-00-00.log',
+      });
+      expect(
+        utf8.decode(entries['logs/splat-0123456789abcd11-2026-11-02T10-00-00.log']!),
+        'COLMAP (exhaustive_matcher) 11',
+      );
+      expect(await latestProgramLogs(Directory(p.join(root.path, 'none'))), isEmpty, reason: 'no folder');
+    });
+
     test('nothing written when the dialog is closed, or fails', () async {
-      expect(await saveLogFile(log, crashDumps: dumps, announce: false), isFalse);
+      expect(await saveLogFile(log, crashDumps: dumps, programLogs: programs, announce: false), isFalse);
       pickers.fails = true;
-      expect(await saveLogFile(log, crashDumps: dumps, announce: false), isFalse);
+      expect(await saveLogFile(log, crashDumps: dumps, programLogs: programs, announce: false), isFalse);
     });
 
     test('the latest dumps first, at most ten', () async {

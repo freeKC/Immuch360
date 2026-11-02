@@ -3,7 +3,8 @@
 // started through the launcher of the app (the job object on Windows, immuch360-run on Linux, IMMUCH360_RUN_LAUNCHER).
 // A scene from the photos to the .spz the app's probe accepts, its steps in order with their counts and the time left;
 // Retry from the poses kept, and not when a photo changed; Cancel at every step, within a second, the program gone;
-// the failures of each step with their codes. Skipped without the fakes; the test job on Linux and the windows job of
+// the failures of each step with their codes, the logs of a failure kept in the logs folder of the app and the command
+// of COLMAP named. Skipped without the fakes; the test job on Linux and the windows job of
 // the desktop workflow compile them.
 
 import 'dart:async';
@@ -26,6 +27,7 @@ import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _colmap = Platform.environment['IMMUCH360_FAKE_COLMAP'] ?? '';
@@ -209,6 +211,19 @@ void main() {
 
   ManagedProcessRunner runner() => ManagedProcessRunner(linuxLauncher: _launcher);
 
+  /// What the engine logs from now to the end of the test (the tests run with the log off)
+  List<String> listenToLog() {
+    final said = <String>[];
+    final previous = Logger.root.level;
+    Logger.root.level = Level.ALL;
+    final listening = Logger.root.onRecord.listen((record) => said.add(record.message));
+    addTearDown(() async {
+      await listening.cancel();
+      Logger.root.level = previous;
+    });
+    return said;
+  }
+
   SplatEngine engine({
     _Images? images,
     String colmapMode = 'ok',
@@ -216,6 +231,8 @@ void main() {
     Map<String, String> colmapMore = const {},
     Map<String, String> brushMore = const {},
     Duration Function()? elapsed,
+    Duration colmapStall = SplatV1.colmapSilence,
+    Directory? failureLogs,
   }) => SplatEngine(
     images: (images ?? _Images()).call,
     colmap: ColmapRunner(
@@ -223,6 +240,7 @@ void main() {
       colmap: _colmap,
       memory: const _Memory(),
       processors: 16,
+      stallTimeout: colmapStall,
       environment: {'IMMUCH360_FAKE_COLMAP_MODE': colmapMode, 'IMMUCH360_FAKE_COLMAP_STEP_MS': '0', ...colmapMore},
     ),
     brush: BrushRunner(
@@ -234,6 +252,7 @@ void main() {
     ),
     roots: [SplatWorkRoot(root)],
     elapsed: elapsed,
+    failureLogs: failureLogs,
   );
 
   SplatJob job(List<SplatMember> members, {bool ply = false, SplatSettings? settings}) {
@@ -262,6 +281,7 @@ void main() {
     () async {
       final members = photos(24);
       final progress = <ImmersiveProgress>[];
+      final said = listenToLog();
       final splat = job(
         members,
         ply: true,
@@ -313,7 +333,10 @@ void main() {
       );
       // Each member read once and released
       expect(members.every((member) => member.loads == 1 && member.releases == 1), isTrue);
-      // Its work folder kept, marked used, until the queue saved its file; then gone
+      // Its work folder kept, marked used, until the queue saved its file, as its log says; then gone
+      expect(said.where((line) => line.contains('The work folder')), [
+        'The work folder ${workFolders().single.path} is kept until the file is saved',
+      ]);
       expect(workFolders(), hasLength(1));
       expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
       await result.afterSaved!();
@@ -410,9 +433,21 @@ void main() {
     () async {
       final members = photos(24);
       final images = _Images();
-      final failed = await engine(images: images, brushMode: 'fail').run(job(members), cancel: cancel);
+      final said = listenToLog();
+      final logs = Directory(p.join(folder.path, 'app-logs'));
+      final failed = await engine(
+        images: images,
+        brushMode: 'fail',
+        failureLogs: logs,
+      ).run(job(members), cancel: cancel);
       expect(failed.error, ImmersiveErrorCode.trainingFailed);
       expect(workFolders(), hasLength(1));
+      expect(said, contains('The work folder ${workFolders().single.path} is kept a day, for Retry from its poses'));
+      // The logs of COLMAP and of Brush kept with the failure, its folder kept too
+      final kept = logs.listSync().whereType<File>().single.readAsStringSync();
+      expect(kept, contains('failed: trainingFailed: '));
+      expect(kept, contains('===== colmap-features.log, '));
+      expect(kept, contains('===== brush.log, '));
       final state = jsonDecode(File(p.join(workFolders().single.path, splatStateFileName)).readAsStringSync()) as Map;
       expect(state['placed'], 24);
       expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
@@ -569,6 +604,75 @@ void main() {
   });
 
   group('the failures of each step, with their codes', () {
+    test('COLMAP silent at the matching: posesStalled naming the command and its last lines; the logs of the job kept '
+        'in the logs folder of the app though its work folder went', () async {
+      final logs = Directory(p.join(folder.path, 'app-logs'));
+      final result = await engine(
+        colmapMode: 'silent',
+        colmapMore: {'IMMUCH360_FAKE_COLMAP_MODE_AT': 'exhaustive_matcher'},
+        colmapStall: const Duration(seconds: 2),
+        failureLogs: logs,
+      ).run(job(photos(24)), cancel: cancel);
+
+      expect(result.error, ImmersiveErrorCode.posesStalled);
+      expect(
+        result.message,
+        startsWith('COLMAP (exhaustive_matcher) wrote nothing for 2 s and was stopped; its last lines:\n'),
+      );
+      expect(result.message, contains('Generating exhaustive image pairs...'));
+      expect(workFolders(), isEmpty, reason: 'nothing is kept before the poses');
+      final kept = logs.listSync().whereType<File>().single;
+      expect(p.basename(kept.path), matches(RegExp(r'^splat-[0-9a-f]{16}-\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d\.log$')));
+      final text = kept.readAsStringSync();
+      expect(
+        text,
+        startsWith(
+          'Splat scene conversion-1 (IMG_1000.jpg, 24 photos, place) failed: posesStalled: '
+          'COLMAP (exhaustive_matcher) wrote nothing for 2 s',
+        ),
+      );
+      expect(text, contains('===== colmap-features.log, '));
+      expect(text, contains('Processed file [24/24]'));
+      expect(text, contains('===== colmap-matching.log, '));
+      expect(text, contains('Generating exhaustive image pairs...'));
+    }, skip: _skip());
+
+    test(
+      'COLMAP failing at the extraction: posesFailed naming the command, its log kept; a Cancel keeps none',
+      () async {
+        final logs = Directory(p.join(folder.path, 'app-logs'));
+        final result = await engine(colmapMode: 'fail', failureLogs: logs).run(job(photos(24)), cancel: cancel);
+
+        expect(result.error, ImmersiveErrorCode.posesFailed);
+        expect(result.message, startsWith('COLMAP (feature_extractor) ended with 1: '));
+        expect(result.message, contains('(fake failure)'));
+        expect(workFolders(), isEmpty);
+        final text = logs.listSync().whereType<File>().single.readAsStringSync();
+        expect(text, contains('failed: posesFailed: COLMAP (feature_extractor) ended with 1: '));
+        expect(text, contains('===== colmap-features.log, '));
+        expect(text, contains('=== Feature extraction ==='));
+
+        // Cancelled at the extraction: no log kept
+        final again = Directory(p.join(folder.path, 'app-logs-cancel'));
+        final reached = Completer<void>();
+        final cancelled =
+            engine(colmapMode: 'slow', colmapMore: {'IMMUCH360_FAKE_COLMAP_STEP_MS': '100'}, failureLogs: again).run(
+              job(photos(24)),
+              cancel: cancel,
+              onProgress: (progress) {
+                if (progress.stage == ImmersiveStage.features && (progress.step ?? 0) >= 2 && !reached.isCompleted) {
+                  reached.complete();
+                }
+              },
+            );
+        await reached.future.timeout(const Duration(seconds: 60));
+        cancel.cancel();
+        expect((await cancelled).error, ImmersiveErrorCode.cancelled);
+        expect(again.existsSync() ? again.listSync() : const <FileSystemEntity>[], isEmpty);
+      },
+      skip: _skip(),
+    );
+
     test('fewer than 20 usable images: tooFewImages with the counts, nothing kept', () async {
       final result = await engine(images: _Images(usable: 12)).run(job(photos(24)), cancel: cancel);
       expect((result.error, result.message), (ImmersiveErrorCode.tooFewImages, '12/24'));

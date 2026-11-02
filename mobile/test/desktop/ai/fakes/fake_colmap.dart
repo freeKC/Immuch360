@@ -38,6 +38,8 @@
 //   silent    the first lines of the command, then nothing until killed
 //   slow      as ok, half a second between two lines of progress (IMMUCH360_FAKE_COLMAP_STEP_MS sets it otherwise,
 //             1 ms)
+// IMMUCH360_FAKE_COLMAP_MODE_AT, when it names a command ("exhaustive_matcher"), gives the mode to that command alone,
+// the others going as ok: a job that goes silent at the matching, after an extraction that went well.
 // It writes its process id to the file IMMUCH360_FAKE_COLMAP_PID names, when it does.
 //
 //   fake_colmap host PIDFILE
@@ -72,7 +74,10 @@ Future<void> main(List<String> arguments) async {
   if (pidFile != null && pidFile.isNotEmpty) {
     File(pidFile).writeAsStringSync('$pid');
   }
-  _mode = Platform.environment['IMMUCH360_FAKE_COLMAP_MODE'] ?? 'ok';
+  final modeAt = Platform.environment['IMMUCH360_FAKE_COLMAP_MODE_AT'] ?? '';
+  _mode = modeAt.isEmpty || (arguments.isNotEmpty && arguments.first == modeAt)
+      ? Platform.environment['IMMUCH360_FAKE_COLMAP_MODE'] ?? 'ok'
+      : 'ok';
   _stepMs = int.tryParse(Platform.environment['IMMUCH360_FAKE_COLMAP_STEP_MS'] ?? '') ?? (_mode == 'slow' ? 500 : 1);
   if (arguments.isEmpty || arguments.first == '-h' || arguments.first == '--help' || arguments.first == 'help') {
     stdout.write('COLMAP 4.2.1 (fake of Immuch360)\n\nUsage:\n  colmap [command] [options]\n');

@@ -42,6 +42,87 @@ void main() {
     expect(p.relative(work.logOf('colmap-features').path, from: 'w'), p.join('splat-1', 'logs', 'colmap-features.log'));
   });
 
+  group('the logs of a job that failed, kept in the logs folder of the app', () {
+    late SplatWorkFolder work;
+    late Directory logs;
+
+    setUp(() {
+      work = SplatWorkFolder(Directory(p.join(folder.path, 'work', 'splat-0123456789abcdef')));
+      logs = Directory(p.join(folder.path, 'app', 'logs'));
+    });
+
+    /// [lines] written as the log of [program], changed [minutes] after 10:00
+    void written(String program, List<String> lines, int minutes) {
+      work.logOf(program)
+        ..createSync(recursive: true)
+        ..writeAsStringSync('${lines.join('\n')}\n')
+        ..setLastModifiedSync(DateTime(2026, 11, 2, 10, minutes));
+    }
+
+    test(
+      'the logs of its programs in the order they were written, after what failed, under the key and the time',
+      () async {
+        written('colmap-matching', ['=== Feature matching ===', 'Processing block [2/9, 5/9]'], 20);
+        written('colmap-features', ['=== Feature extraction ===', 'Processed file [150/150]'], 12);
+
+        final kept = await keepSplatFailureLogs(
+          work,
+          logs,
+          header: 'Splat scene conversion-1 failed at the step matching: posesStalled: COLMAP (exhaustive_matcher) ...',
+          now: DateTime(2026, 11, 2, 10, 31, 7),
+        );
+
+        expect(p.basename(kept!.path), 'splat-0123456789abcdef-2026-11-02T10-31-07.log');
+        expect(p.dirname(kept.path), logs.path);
+        final text = kept.readAsStringSync();
+        expect(text, startsWith('Splat scene conversion-1 failed at the step matching: posesStalled: COLMAP'));
+        expect(text, contains('Work folder: ${work.root.path}'));
+        final features = text.indexOf('===== colmap-features.log, ');
+        final matching = text.indexOf('===== colmap-matching.log, ');
+        expect(features, greaterThan(0));
+        expect(matching, greaterThan(features), reason: 'the extraction ran first');
+        expect(text, contains('Processed file [150/150]'));
+        expect(text, endsWith('Processing block [2/9, 5/9]\n'));
+      },
+    );
+
+    test('the end of a long log only; nothing without a log; the five newest kept', () async {
+      written('brush', [for (var step = 0; step < 4000; step++) 'Refine iter $step, 150000 splats.'], 40);
+      final kept = await keepSplatFailureLogs(work, logs, header: 'failed', now: DateTime(2026, 11, 2, 11), tail: 1000);
+      final text = kept!.readAsStringSync();
+      expect(text, contains('===== brush.log, ${work.logOf('brush').lengthSync()} bytes, the last 1000 ====='));
+      expect(text, endsWith('Refine iter 3999, 150000 splats.\n'));
+      expect(text, isNot(contains('Refine iter 100,')));
+      expect(text.length, lessThan(1200));
+
+      final empty = SplatWorkFolder(Directory(p.join(folder.path, 'work', 'splat-fedcba9876543210')));
+      expect(await keepSplatFailureLogs(empty, logs, header: 'failed'), isNull, reason: 'no log was written');
+
+      // Six failures before: the oldest goes, another file of the folder stays
+      final other = File(p.join(logs.path, 'Immich_log.log'))..writeAsStringSync('not a splat');
+      for (var k = 0; k < 6; k++) {
+        File(p.join(logs.path, 'splat-00000000000000a$k-2026-11-01T09-0$k-00.log'))
+          ..writeAsStringSync('old $k')
+          ..setLastModifiedSync(DateTime(2026, 11, 1, 9, k));
+      }
+      final last = await keepSplatFailureLogs(work, logs, header: 'failed', now: DateTime(2026, 11, 2, 12));
+      final names = [
+        for (final entry in logs.listSync())
+          if (p.basename(entry.path).startsWith('splat-')) p.basename(entry.path),
+      ]..sort();
+      // The newest by their last change: the two of today, then the three last of the day before
+      expect(names, [
+        'splat-00000000000000a3-2026-11-01T09-03-00.log',
+        'splat-00000000000000a4-2026-11-01T09-04-00.log',
+        'splat-00000000000000a5-2026-11-01T09-05-00.log',
+        p.basename(kept.path),
+        p.basename(last!.path),
+      ]);
+      expect(splatFailureLogsKept, 5);
+      expect(other.existsSync(), isTrue);
+    });
+  });
+
   test(
     'the work folders of the splat scenes a day old go, under each root; the young ones and the rest stay',
     () async {
