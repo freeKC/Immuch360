@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_decoding_tile.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
@@ -67,6 +68,9 @@ class TechnicalDetails extends ConsumerWidget {
         if (asset.isVideo) _VideoDecodeTiles(asset: asset),
         // Which file plays, the original or the server's copy, and the other one to play instead
         if (asset.isVideo) VideoSourceTile(asset: asset),
+        // Immuch360 Desktop: how the video playing is decoded and on which graphics card
+        // (lib/desktop/video/desktop_video_decoding_tile.dart)
+        if (CurrentPlatform.isDesktop && asset.isVideo) const DesktopVideoDecodingTile(),
         if (cameraTitle != null) ...[
           const SizedBox(height: 16),
           SheetTile(
