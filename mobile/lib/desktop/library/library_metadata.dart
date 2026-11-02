@@ -12,7 +12,10 @@
 //  - HEIF and AVIF: the meta box (primary item, its ispe and irot properties, the Exif item);
 //  - PNG, GIF, WebP, BMP: their headers;
 //  - MP4 and MOV (the raw videos of 360° cameras included): mvhd for the duration and the date, the tkhd and hdlr of the
-//    first video track for its size and rotation, walked a box header at a time, since cameras write moov at the end.
+//    first video track for its size and rotation, walked a box header at a time, since cameras write moov at the end;
+//  - AV2 streams (.ivf, .obu, store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2): the 32 bytes of their head say
+//    AV2, and an IVF header gives the frame size, the frame rate and the number of frames; the index keeps the codec,
+//    so that the badge of a thumbnail never reads the file.
 // Anything else, or a damaged file, gives what could be read and the file dates stand in for the date taken.
 //
 // Pure Dart over synchronous reads: the scanner runs it in its own isolate.
@@ -24,6 +27,11 @@ import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/services/av2_stream.dart';
+
+/// The codec of a video that the index keeps, for the videos the app plays its own way: the AV2 streams, which its
+/// companion decodes (store/m2/av2-2026-11-02/plan-2026-11-02.md); null for every other video, which mpv plays
+enum IndexedVideoCodec { av2 }
 
 /// What a media file tells about itself
 class MediaMetadata {
@@ -39,6 +47,7 @@ class MediaMetadata {
     this.immersive,
     this.animated = false,
     this.readFailed = false,
+    this.videoCodec,
   });
 
   /// Read, and nothing found: a damaged file, or a format without metadata
@@ -76,6 +85,9 @@ class MediaMetadata {
   /// See [failedRead]
   final bool readFailed;
 
+  /// The codec of a video the app plays its own way (an AV2 stream), null for any other file
+  final IndexedVideoCodec? videoCodec;
+
   /// Whether the picture is shown turned by a quarter, its width and height swapped
   bool get turnsQuarter => orientation >= 5 && orientation <= 8;
 
@@ -87,7 +99,7 @@ class MediaMetadata {
   String toString() =>
       'MediaMetadata(${width}x$height, orientation: $orientation, takenAt: $takenAt, '
       'gps: $latitude,$longitude, durationMs: $durationMs, projection: $projection, immersive: $immersive, '
-      'animated: $animated, readFailed: $readFailed)';
+      'animated: $animated, readFailed: $readFailed, videoCodec: ${videoCodec?.name})';
 }
 
 /// Reads up to [length] bytes from [offset]: fewer at the end, none past it
@@ -152,6 +164,9 @@ MediaMetadata readMediaMetadata(ByteSource source, LibraryMediaKind kind) {
   try {
     final head = source.read(0, 32);
     if (kind == LibraryMediaKind.video) {
+      if (readAv2Head(head) case final av2?) {
+        return _av2Metadata(av2);
+      }
       return _isoBmffBrand(head) != null || _looksLikeBoxes(head) ? _readMovie(source) : MediaMetadata.none;
     }
     if (head.length >= 3 && head[0] == 0xff && head[1] == 0xd8 && head[2] == 0xff) {
@@ -183,6 +198,19 @@ MediaMetadata readMediaMetadata(ByteSource source, LibraryMediaKind kind) {
     // Same
   }
   return MediaMetadata.none;
+}
+
+/// An AV2 stream: an IVF header gives its frame size and, with its frame rate and its number of frames, its length; a
+/// Section 5 stream gives neither until its decoder reads it
+MediaMetadata _av2Metadata(Av2Head head) {
+  final rate = head.frameRate;
+  final frames = head.framesInHeader ?? 0;
+  return MediaMetadata(
+    width: head.width,
+    height: head.height,
+    durationMs: rate == null || frames <= 0 ? 0 : frames * 1000 * rate.denominator ~/ rate.numerator,
+    videoCodec: IndexedVideoCodec.av2,
+  );
 }
 
 // --- Bytes -----------------------------------------------------------------------------------------------------------

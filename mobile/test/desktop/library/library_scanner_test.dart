@@ -277,6 +277,7 @@ void main() {
       // id of that version
       const oldId = 'f0123456789abcdef0123456789abcdef01234567';
       sqlite3.open(fixture.indexPath)
+        ..execute('ALTER TABLE files DROP COLUMN video_codec')
         ..execute('ALTER TABLE files DROP COLUMN immersive_kind')
         ..execute('DROP INDEX files_by_source')
         ..execute('DROP INDEX files_generated')

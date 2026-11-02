@@ -26,14 +26,16 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
+import 'package:immich_mobile/desktop/library/library_metadata.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
 // 1: the first schema; 2: the key of the ids, and the files whose content could not be read; 3: what the XMP of a 3D
-// photo made by Immuch360 says; 4: the kind of every file Immuch360 makes (design-final 2026-10-27, section 8.4)
-const _schemaVersion = 4;
+// photo made by Immuch360 says; 4: the kind of every file Immuch360 makes (design-final 2026-10-27, section 8.4); 5: the
+// codec of a video the app plays its own way, an AV2 stream (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2)
+const _schemaVersion = 5;
 
 /// The name of the index file, in the support folder of the app
 const libraryIndexFileName = 'desktop_library.sqlite';
@@ -120,6 +122,7 @@ class IndexedFile {
     this.derivativeId,
     this.derivedSettings,
     this.immersiveKind,
+    this.videoCodec,
   });
 
   final String id;
@@ -186,6 +189,10 @@ class IndexedFile {
   /// The kind of a file Immuch360 made, as its XMP declares it; null for any other file, and for a kind this build
   /// does not know
   final ImmersiveKind? immersiveKind;
+
+  /// The codec of a video the app plays its own way, as the head of the file says it (an AV2 stream); null for any
+  /// other file. The badge of its thumbnail reads it here, never in the file.
+  final IndexedVideoCodec? videoCodec;
 
   /// A file Immuch360 made, which the virtual album of the versions holds
   bool get isGenerated => origin != null;
@@ -306,6 +313,10 @@ class LibraryIndex {
           // changed
           _setMeta('full_sync', 1);
         }
+      }
+      if (version < 5) {
+        // No file needs reading again: the builds before it listed no .ivf nor .obu, the only files it is set for
+        _db.execute('ALTER TABLE files ADD COLUMN video_codec TEXT');
       }
       _db.execute('PRAGMA user_version = $_schemaVersion');
     });
@@ -572,8 +583,8 @@ class LibraryIndex {
       final statement = _db.prepare('''
         INSERT INTO files (id, root_id, album_id, rel_path, type, size, modified_ms, added_s, created_s, width, height,
           duration_ms, playback_style, latitude, longitude, projection, cloud_only, read_failed, change_seq, stereo,
-          origin, source_sha1, derivative_id, derived_settings, immersive_kind)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          origin, source_sha1, derivative_id, derived_settings, immersive_kind, video_codec)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (id) DO UPDATE SET album_id = excluded.album_id, rel_path = excluded.rel_path, type = excluded.type,
           size = excluded.size, modified_ms = excluded.modified_ms, created_s = excluded.created_s,
           width = excluded.width, height = excluded.height, duration_ms = excluded.duration_ms,
@@ -611,6 +622,7 @@ class LibraryIndex {
             file.derivativeId,
             file.derivedSettings,
             file.immersiveKind?.name,
+            file.videoCodec?.name,
           ]);
         }
       } finally {
@@ -621,9 +633,18 @@ class LibraryIndex {
   }
 
   // What the XMP of a file said, kept when the file changed but could not be read again: a version would otherwise
-  // leave the album the backup leaves out, and its folder would send it before the next scan reads it
+  // leave the album the backup leaves out, and its folder would send it before the next scan reads it. The codec of a
+  // video too, which its badge and its player go by.
   static final _keptWhenUnread = [
-    for (final column in ['stereo', 'origin', 'source_sha1', 'derivative_id', 'derived_settings', 'immersive_kind'])
+    for (final column in [
+      'stereo',
+      'origin',
+      'source_sha1',
+      'derivative_id',
+      'derived_settings',
+      'immersive_kind',
+      'video_codec',
+    ])
       '$column = CASE WHEN excluded.read_failed = 1 THEN files.$column ELSE excluded.$column END',
   ].join(', ');
 
@@ -683,6 +704,7 @@ class LibraryIndex {
     derivativeId: row['derivative_id'] as String?,
     derivedSettings: row['derived_settings'] as String?,
     immersiveKind: _byName(ImmersiveKind.values, row['immersive_kind']),
+    videoCodec: _byName(IndexedVideoCodec.values, row['video_codec']),
   );
 
   /// The changes after the checkpoint [after], up to the current generation, read in one transaction
@@ -777,6 +799,14 @@ class LibraryIndex {
     ))
       if (_byName(IndexedOrigin.values, row['origin']) case final origin?)
         row['id'] as String: (origin: origin, kind: _byName(ImmersiveKind.values, row['immersive_kind'])),
+  };
+
+  /// The AV2 streams of the library (none kept online only), by id: the AV2 badge of the thumbnails
+  Set<String> av2VideoIds() => {
+    for (final row in _db.select('SELECT id FROM files WHERE video_codec = ? AND cloud_only = 0', [
+      IndexedVideoCodec.av2.name,
+    ]))
+      row['id'] as String,
   };
 
   // The files the app is shown (none kept online only) that match [where], those changed after a date when given
