@@ -159,12 +159,13 @@ class SplatEngine implements ImmersiveEngine {
   }) async {
     final times = <ImmersiveStage, Duration>{};
     final first = job.isVideo ? ImmersiveStage.frames : ImmersiveStage.photos;
+    // The images the job will take, not its members: a video is one member and 150 frames
     final model = SplatTimeModel(
       reference: job.timings.isEmpty
           ? splatTimingsOf(job.isVideo ? splatSceneVideoDefaultTimings : splatSceneDefaultTimings)
           : job.timings,
       stages: job.stages,
-      images: job.members.length,
+      images: splatPlannedImages(job.members.length, video: job.isVideo),
       video: job.isVideo,
       steps: job.settings.steps,
     );
@@ -232,14 +233,24 @@ class SplatEngine implements ImmersiveEngine {
       if (poses == null || aligned == null) {
         _fresh(work);
         final members = [for (final member in job.members) _SummedMember(member)];
-        report(first, 0, done: 0, total: job.members.length);
+        report(first, 0, done: 0, total: model.read);
         final prepared = await images(
           members,
           video: job.isVideo,
           imagesFolder: work.images.path,
           cancel: cancel,
-          onProgress: (count, all) => report(first, all == 0 ? 0 : count / all, done: count, total: all),
+          onProgress: (count, all) {
+            // What the preparation reads, once it says (the frames of a video longer than two minutes)
+            if (all > 0 && all != model.read) {
+              model
+                ..read = all
+                ..images = all;
+            }
+            report(first, all == 0 ? 0 : count / all, done: count, total: all);
+          },
         );
+        // The preparation by what it read, the steps after it by the images it kept
+        model.read = prepared.total;
         times[first] = model.normalized(first, timeOf(first));
         checkCancel();
         if (prepared.images < SplatV1.minImages) {
@@ -284,7 +295,9 @@ class SplatEngine implements ImmersiveEngine {
         poses = _Poses(images: prepared.images, total: prepared.total, placed: found.placed, blurred: prepared.blurred);
         _writeState(work, {..._readState(work) ?? const {}, 'placed': found.placed});
       } else {
-        model.images = poses.images;
+        model
+          ..read = poses.total
+          ..images = poses.images;
       }
       checkCancel();
 
@@ -394,13 +407,13 @@ class SplatEngine implements ImmersiveEngine {
     if (sums is! List || sums.length != job.members.length) {
       return null;
     }
-    for (final (index, member) in job.members.indexed) {
-      onRead(index, job.members.length);
-      final kept = sums[index];
-      // A member the preparation never read (beyond the 200 photos taken) is not looked at
-      if (kept == null) {
-        continue;
-      }
+    // A member the preparation never read (beyond the 200 photos taken) is not looked at, nor counted
+    final read = [
+      for (final (index, member) in job.members.indexed)
+        if (sums[index] != null) (member, sums[index]),
+    ];
+    for (final (index, (member, kept)) in read.indexed) {
+      onRead(index, read.length);
       String? sum;
       try {
         sum = (await member.load(cancel)).sha1;
@@ -417,7 +430,7 @@ class SplatEngine implements ImmersiveEngine {
         return null;
       }
     }
-    onRead(job.members.length, job.members.length);
+    onRead(read.length, read.length);
     final images = state['images'];
     final total = state['total'];
     final placed = state['placed'];

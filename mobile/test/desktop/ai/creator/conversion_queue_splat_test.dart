@@ -557,6 +557,27 @@ void main() {
       expect((job(id).details! as SplatResultDetails).images, 150);
     }, skip: _skipFakes());
 
+    test('a video of one member: the time of its frames kept under splatSceneVideo as they went', () async {
+      final store = DesktopAiSettingsStore(settingsDirectory: () async => Directory(p.join(folder.path, 'settings')));
+      // 600 candidates of 3 ms each to decode
+      container = realContainer(settings: store, decoding: const Duration(milliseconds: 3));
+      final video = File(p.join(folder.path, 'walk.mp4'))..writeAsBytesSync(List.filled(1024, 1));
+      final watch = Stopwatch()..start();
+      final id = queue().addSplat(
+        lead: LocalFileSource(video.path),
+        selection: SplatSelection(members: [SourceSplatMember(LocalFileSource(video.path))], settings: quick),
+        target: ConversionTarget(folder: folder.path, fileName: splatFileNameFor('walk')),
+        video: true,
+      );
+      await until((state) => job(id).state.isEnded, within: const Duration(minutes: 2));
+      watch.stop();
+
+      expect(job(id).state, ConversionState.done, reason: '${job(id).error} ${job(id).message}');
+      // 150 frames taken, the 150 the times are kept for: what they took, within the time of the whole job
+      final frames = (await store.read()).timings['splatSceneVideo']!['frames']!;
+      expect(frames, inInclusiveRange(1, watch.elapsedMilliseconds));
+    }, skip: _skipFakes());
+
     group('Cancel from the queue within a second', () {
       for (final at in [
         ConversionState.photos,

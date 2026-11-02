@@ -10,6 +10,11 @@
 // step, at the definition of the settings); the rest not at all. The times a job measured go back to the reference
 // the same way before they are kept ([SplatTimeModel.normalized]).
 //
+// The counts a job starts from are those it will take ([splatPlannedImages]): the 150 frames of a video (its one member
+// is not an image), 200 of more photos. The step of the photos or of the frames follows what the preparation reads
+// ([SplatTimeModel.read]: the photos taken, the windows of the video, as soon as it says how many), the steps after it
+// the images it kept ([SplatTimeModel.images]); each is measured and kept by its own count.
+//
 // While a step runs, what is left of it is told by what it went through: the pace of its images (done of total) once a
 // tenth of them is done, blended with what was expected before; for the training, the pace of its last 1 000 steps
 // ([SplatTrainingPace]: M1 measured 19 to 20 s per 1 000 steps from the 5 000th to the end, the cap of 150 000 gaussians
@@ -53,6 +58,12 @@ Map<ImmersiveStage, Duration> splatTimingsOf(Map<String, int> milliseconds) => {
   for (final MapEntry(key: name, value: millis) in milliseconds.entries)
     ?ImmersiveStage.values.asNameMap()[name]: Duration(milliseconds: millis),
 };
+
+/// The images a job of [members] (photos, or the one video when [video]) plans before its preparation says more: the
+/// SplatV1.videoFrames frames of a video of up to two minutes (a longer one tells its own count once open), the photos
+/// up to SplatV1.maxPhotos (more are spread evenly in time, planSplatPhotos)
+int splatPlannedImages(int members, {required bool video}) =>
+    video ? SplatV1.videoFrames : math.min(members, SplatV1.maxPhotos);
 
 /// How many times longer than for the reference job a step of a job of [images] images (photos, or frames of a
 /// [video]) and [steps] steps of training takes (see the top of this file)
@@ -115,7 +126,9 @@ class SplatTimeModel {
     required int images,
     required this.video,
     this.steps = SplatV1.steps,
-  }) : _images = math.max(1, images);
+    int? read,
+  }) : _images = math.max(1, images),
+       _read = math.max(1, read ?? images);
 
   /// What each step takes for the reference job on this computer (the times kept)
   final Map<ImmersiveStage, Duration> reference;
@@ -127,11 +140,26 @@ class SplatTimeModel {
   /// The steps of the training
   final int steps;
   int _images;
+  int _read;
 
-  /// The images of the job: the members until they are prepared, then the images kept
+  /// The images of the job, which the steps after the preparation follow: those planned ([splatPlannedImages]) until
+  /// they are prepared, then the images kept
   int get images => _images;
 
   set images(int count) => _images = math.max(1, count);
+
+  /// The photos or the frames the preparation reads, which its step follows: those planned until it says how many
+  int get read => _read;
+
+  set read(int count) => _read = math.max(1, count);
+
+  /// The scale of [stage] for this job: the preparation by what it reads, the other steps by the images kept
+  double _scaleOf(ImmersiveStage stage) => splatStageScale(
+    stage,
+    images: stage == ImmersiveStage.photos || stage == ImmersiveStage.frames ? _read : _images,
+    video: video,
+    steps: steps,
+  );
 
   /// What [stage] is expected to take for this job
   Duration expected(ImmersiveStage stage) {
@@ -139,7 +167,7 @@ class SplatTimeModel {
     if (base == null) {
       return Duration.zero;
     }
-    return base * splatStageScale(stage, images: _images, video: video, steps: steps);
+    return base * _scaleOf(stage);
   }
 
   /// What the whole job is expected to take
@@ -196,7 +224,7 @@ class SplatTimeModel {
   /// What [stage] would have taken for the reference job, having taken [took] for this one: what is kept on this
   /// computer
   Duration normalized(ImmersiveStage stage, Duration took) {
-    final scale = splatStageScale(stage, images: _images, video: video, steps: steps);
+    final scale = _scaleOf(stage);
     return scale <= 0 ? took : took * (1 / scale);
   }
 }

@@ -90,15 +90,19 @@ class _FileMember implements SplatMember {
   Future<void> release() async => releases++;
 }
 
-/// What the test gives the engine for the preparation: each member read and copied into one camera, [delay] after each,
-/// counting its calls
+/// What the test gives the engine for the preparation, as the app does it: 200 photos at most, each read and copied
+/// into one camera, or SplatV1.videoFrames frames of the one video, [delay] after each image and [onEach] called, counting
+/// its calls
 class _Images {
-  _Images({this.delay = Duration.zero, this.usable});
+  _Images({this.delay = Duration.zero, this.usable, this.onEach});
 
   final Duration delay;
 
-  /// Fewer usable images than members, when given (the others blurred)
+  /// Fewer usable images than taken, when given (the others blurred)
   final int? usable;
+
+  /// Called after each image, as the time it takes passes
+  final void Function()? onEach;
   var calls = 0;
 
   Future<SplatPrepared> call(
@@ -110,21 +114,48 @@ class _Images {
   }) async {
     calls++;
     final folder = Directory(p.join(imagesFolder, video ? 'video' : 'cam1'))..createSync(recursive: true);
-    for (final (index, member) in members.indexed) {
+    void checkCancel() {
       if (cancel.isCancelled) {
         throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled');
       }
-      final source = await member.load(cancel);
-      try {
-        File(source.path!).copySync(p.join(folder.path, '${'${index + 1}'.padLeft(5, '0')}.jpg'));
-      } finally {
-        await member.release();
-      }
-      onProgress(index + 1, members.length);
+    }
+
+    Future<void> next(int index, int total) async {
+      onEach?.call();
+      onProgress(index + 1, total);
       await Future<void>.delayed(delay);
     }
-    final count = usable ?? members.length;
-    return SplatPrepared(images: count, total: members.length, blurred: members.length - count);
+
+    final int total;
+    if (video) {
+      // The frames of a video of up to two minutes
+      total = SplatV1.videoFrames;
+      final source = await members.single.load(cancel);
+      try {
+        for (var index = 0; index < total; index++) {
+          checkCancel();
+          File(source.path!).copySync(p.join(folder.path, '${'${index + 1}'.padLeft(5, '0')}.jpg'));
+          await next(index, total);
+        }
+      } finally {
+        await members.single.release();
+      }
+    } else {
+      final taken = members.take(SplatV1.maxPhotos).toList();
+      total = taken.length;
+      for (final (index, member) in taken.indexed) {
+        checkCancel();
+        final source = await member.load(cancel);
+        try {
+          File(source.path!).copySync(p.join(folder.path, '${'${index + 1}'.padLeft(5, '0')}.jpg'));
+        } finally {
+          await member.release();
+        }
+        await next(index, total);
+      }
+    }
+    final count = usable ?? total;
+    return SplatPrepared(images: count, total: total, blurred: total - count);
   }
 }
 
@@ -171,6 +202,7 @@ void main() {
     String brushMode = 'ok',
     Map<String, String> colmapMore = const {},
     Map<String, String> brushMore = const {},
+    Duration Function()? elapsed,
   }) => SplatEngine(
     images: (images ?? _Images()).call,
     colmap: ColmapRunner(
@@ -188,6 +220,7 @@ void main() {
       environment: {'IMMUCH360_FAKE_BRUSH_MODE': brushMode, 'IMMUCH360_FAKE_BRUSH_STEP_MS': '0', ...brushMore},
     ),
     roots: [SplatWorkRoot(root)],
+    elapsed: elapsed,
   );
 
   SplatJob job(List<SplatMember> members, {bool ply = false, SplatSettings? settings}) {
@@ -273,26 +306,87 @@ void main() {
     skip: _skip(),
   );
 
-  test('a video: its frames, one camera, its steps without the photos', () async {
-    final members = photos(24);
+  /// A clock of the engine: the time that passes, and [simulated] more, which the preparation adds to as a decoder
+  /// would take it
+  var simulated = Duration.zero;
+  Duration Function() clock() {
+    simulated = Duration.zero;
+    final watch = Stopwatch()..start();
+    return () => watch.elapsed + simulated;
+  }
+
+  /// A video of this computer as the one member of its job, as the queue gives it
+  _FileMember video() {
+    final file = File(p.join(folder.path, 'walk.mp4'))
+      ..writeAsBytesSync(img.encodeJpg(img.Image(width: 64, height: 48)..clear(img.ColorRgb8(90, 60, 30))));
+    return _FileMember(file, DateTime.utc(2026, 11, 1, 10));
+  }
+
+  SplatJob videoJob(_FileMember member) => SplatJob(
+    id: 'conversion-2',
+    lead: const ImmersiveSource(name: 'walk.mp4', size: 1, sha1: 'x', path: 'walk.mp4'),
+    members: [member],
+    isVideo: true,
+    partPath: (File(p.join(folder.path, '.walk_splat.spz.part'))..writeAsBytesSync(const [])).path,
+    derivativeId: 'd',
+    creatorTool: 't',
+    created: 'c',
+    settings: const SplatSettings(steps: 400, maxGaussians: 3000),
+  );
+
+  test('a video, its one member: its frames, one camera, its steps without the photos', () async {
     final progress = <ImmersiveProgress>[];
-    final splat = SplatJob(
-      id: 'conversion-2',
-      lead: const ImmersiveSource(name: 'walk.mp4', size: 1, sha1: 'x', path: 'walk.mp4'),
-      members: members,
-      isVideo: true,
-      partPath: (File(p.join(folder.path, '.walk_splat.spz.part'))..writeAsBytesSync(const [])).path,
-      derivativeId: 'd',
-      creatorTool: 't',
-      created: 'c',
-      settings: const SplatSettings(steps: 400, maxGaussians: 3000),
-    );
-    final result = await engine().run(splat, cancel: cancel, onProgress: progress.add);
+    final result = await engine().run(videoJob(video()), cancel: cancel, onProgress: progress.add);
 
     expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
     expect((result.details! as SplatResultDetails).fromVideo, isTrue);
+    expect((result.details! as SplatResultDetails).images, SplatV1.videoFrames);
     expect(progress.map((x) => x.stage), contains(ImmersiveStage.frames));
     expect(progress.map((x) => x.stage), isNot(contains(ImmersiveStage.photos)));
+  }, skip: _skip());
+
+  test(
+    'the time of a video of one member: its 150 frames told from the start and their time kept as it went',
+    () async {
+      final elapsed = clock();
+      final progress = <ImmersiveProgress>[];
+      final result = await engine(
+        images: _Images(onEach: () => simulated += const Duration(milliseconds: 100)),
+        elapsed: elapsed,
+      ).run(videoJob(video()), cancel: cancel, onProgress: progress.add);
+
+      expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+      // The defaults of a video, for the 150 frames they are kept for, the training at 400 steps of 20 000
+      const told = 5000 + 60000 + 15000 + 81000 + 30000 + 306000 * 400 / 20000 + 10000 + 1000;
+      expect(progress.first.remaining!.inMilliseconds, closeTo(told, 1000));
+      final frames = progress.firstWhere((x) => x.stage == ImmersiveStage.frames);
+      expect((frames.step, frames.steps), (0, SplatV1.videoFrames));
+      // 150 frames of 100 ms: 15 s, kept as they went (the times are kept for 150 frames)
+      expect(result.stageTimes[ImmersiveStage.frames]!.inMilliseconds, closeTo(15000, 3000));
+    },
+    skip: _skip(),
+  );
+
+  test('more than 200 photos: the 200 taken, counted, told and kept from the start', () async {
+    final elapsed = clock();
+    final progress = <ImmersiveProgress>[];
+    final result = await engine(
+      images: _Images(onEach: () => simulated += const Duration(milliseconds: 100)),
+      elapsed: elapsed,
+      colmapMode: 'nomodel',
+    ).run(job(photos(250)), cancel: cancel, onProgress: progress.add);
+
+    expect(result.error, ImmersiveErrorCode.notEnoughOverlap);
+    // The defaults of photos for 200 of them, their exhaustive matching by their pairs, 1 000 steps of 20 000
+    const scale = 200 / 150;
+    const pairs = 200 * 199 / (150 * 149);
+    const told =
+        5000 + 45000 * scale + 15000 * scale + 195000 * pairs + 50000 * scale + 450000 * 1000 / 20000 + 10000 + 1000;
+    expect(progress.first.remaining!.inMilliseconds, closeTo(told, 1000));
+    final first = progress.firstWhere((x) => x.stage == ImmersiveStage.photos);
+    expect((first.step, first.steps), (0, SplatV1.maxPhotos));
+    // 200 photos of 100 ms: 20 s, kept as 15 s for the 150 the times are kept for
+    expect(result.stageTimes[ImmersiveStage.photos]!.inMilliseconds, closeTo(15000, 3000));
   }, skip: _skip());
 
   test(

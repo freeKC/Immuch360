@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 Map<ImmersiveStage, Duration> _reference(String kind) => {
   for (final MapEntry(:key, :value) in aiDefaultTimings[kind]!.entries)
@@ -50,6 +51,29 @@ void main() {
     );
     expect(model.expected(ImmersiveStage.matching).inMilliseconds, closeTo(81000 * 250 / 150, 1));
     expect(model.expected(ImmersiveStage.photos), Duration.zero);
+  });
+
+  test('the images a job plans: a video its frames, whatever its one member; photos 200 at most', () {
+    expect(splatPlannedImages(1, video: true), SplatV1.videoFrames);
+    expect(splatPlannedImages(24, video: false), 24);
+    expect(splatPlannedImages(250, video: false), SplatV1.maxPhotos);
+  });
+
+  test('what was read and what was kept apart: the photos or frames by the first, the steps after by the second', () {
+    // 150 frames read, 120 of them sharp
+    final model = SplatTimeModel(
+      reference: _reference('splatSceneVideo'),
+      stages: ImmersiveStage.splatOf(video: true),
+      images: 120,
+      read: 150,
+      video: true,
+    );
+    expect(model.expected(ImmersiveStage.frames), const Duration(seconds: 60));
+    expect(model.expected(ImmersiveStage.features), const Duration(seconds: 12));
+    expect(model.normalized(ImmersiveStage.frames, const Duration(seconds: 10)), const Duration(seconds: 10));
+    expect(model.normalized(ImmersiveStage.features, const Duration(seconds: 8)), const Duration(seconds: 10));
+    model.read = 75;
+    expect(model.normalized(ImmersiveStage.frames, const Duration(seconds: 10)), const Duration(seconds: 20));
   });
 
   test('the images known once prepared change what is expected of the steps after', () {
