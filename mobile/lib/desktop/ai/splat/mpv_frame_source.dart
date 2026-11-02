@@ -23,8 +23,9 @@
 // by mpv as it is decoded, to the long side of the frames written ([splatDecodeScale], swscale's area filter): FreeKC's
 // 8K HEVC video of a phone (7680 x 4320, 128.5 s, 2 November 2026) took 764 s for its 161 windows on the PC without it
 // (4.7 s a window, the dialog counting about a minute), every screenshot 133 MB of BGR0 copied twice in Dart, the app
-// at 771 MB; the frames are written at 1 600 pixels all the same. The decoded size is then not the size of a screenshot: which way a screenshot lies is
-// told by its orientation against that of the decoded frames ([splatScreenshotTurns]).
+// at 771 MB; the frames are written at 1 600 pixels all the same. The decoded size is then not the size of a
+// screenshot: which way a screenshot lies is told by its orientation against that of the decoded frames
+// ([splatScreenshotTurns]).
 //
 // The player is made for the job and disposed after it, outside the app's pool: the pool has one player for the
 // thumbnails, which a minute of frames would hold from the library, or lose to it in the middle of the video. Nothing

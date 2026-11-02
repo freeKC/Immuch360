@@ -29,9 +29,9 @@
 // at once after a failure or a cancel before the poses were found.
 //
 // After a failure, a Cancel apart, the logs of the programs (logs/ of the work folder) are first copied into the logs
-// folder of the app when the engine is given one ([SplatEngine.failureLogs]: keepSplatFailureLogs, the five newest kept,
-// the failure and its step at their top), so that a failure before the poses, whose work folder goes, still says what
-// COLMAP did: "Save logs to a file" takes them with the log.
+// folder of the app when the engine is given one ([SplatEngine.failureLogs]: keepSplatFailureLogs, the five newest
+// kept, the failure and its step at their top), so that a failure before the poses, whose work folder goes, still says
+// what COLMAP did: "Save logs to a file" takes them with the log.
 //
 // No Flutter here: the engine also runs in splat_probe, a program compiled by `dart compile exe` that makes a scene on
 // a PC with the real programs (lot SP6, artifact of the windows job of the desktop workflow); the app gives it the
