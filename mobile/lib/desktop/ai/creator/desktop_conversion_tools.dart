@@ -541,18 +541,20 @@ PanoramaSetup panoramaSetupOf(AiGateResult found) {
   );
 }
 
-/// The code a panorama the gate refused for [reason] fails with, its message being the name of the reason (that of
-/// ONNX Runtime when it does not load): a card the gate finds wanting is gpuUnavailable, a shortage of memory
-/// outOfMemory, a component missing or damaged componentsMissing; a feature this computer or this version does not
-/// offer is told by its reason after "The AI model failed", as the other engines tell it. Every reason is placed, so
-/// that a new one has to be.
+/// The code a panorama (or a splat scene) the gate refused for [reason] fails with, its message being the name of the
+/// reason (that of ONNX Runtime when it does not load): a card the gate finds wanting is gpuUnavailable, a shortage of
+/// memory outOfMemory, a component missing or damaged componentsMissing; a feature this computer or this version does
+/// not offer is told by its reason after "The AI model failed", as the other engines tell it. Every reason is placed,
+/// so that a new one has to be.
 ImmersiveErrorCode panoramaRefusalCode(AiGateReason? reason) => switch (reason) {
   AiGateReason.gpuNone ||
   AiGateReason.gpuNoAnswer ||
   AiGateReason.gpuIntegrated ||
   AiGateReason.gpuTooSmall ||
+  AiGateReason.splatGpuIntegrated ||
+  AiGateReason.splatGpuTooSmall ||
   AiGateReason.notYetOnMac => ImmersiveErrorCode.gpuUnavailable,
-  AiGateReason.memory || AiGateReason.panoramaMemory => ImmersiveErrorCode.outOfMemory,
+  AiGateReason.memory || AiGateReason.panoramaMemory || AiGateReason.splatMemory => ImmersiveErrorCode.outOfMemory,
   AiGateReason.componentsMissing || AiGateReason.componentsDamaged || null => ImmersiveErrorCode.componentsMissing,
   AiGateReason.runtimeFailed ||
   AiGateReason.system ||

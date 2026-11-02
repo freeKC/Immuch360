@@ -705,6 +705,9 @@ void _panoramaEngineTests(Directory Function() root) {
         AiGateReason.gpuNoAnswer: ImmersiveErrorCode.gpuUnavailable,
         AiGateReason.gpuIntegrated: ImmersiveErrorCode.gpuUnavailable,
         AiGateReason.gpuTooSmall: ImmersiveErrorCode.gpuUnavailable,
+        AiGateReason.splatMemory: ImmersiveErrorCode.outOfMemory,
+        AiGateReason.splatGpuIntegrated: ImmersiveErrorCode.gpuUnavailable,
+        AiGateReason.splatGpuTooSmall: ImmersiveErrorCode.gpuUnavailable,
       };
       expect(expected.keys, unorderedEquals(AiGateReason.values), reason: 'every reason has its code');
       for (final reason in AiGateReason.values) {

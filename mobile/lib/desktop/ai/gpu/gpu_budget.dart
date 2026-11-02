@@ -15,14 +15,35 @@
 //
 // A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
 // Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes
-// (SplatV1.freeGraphicsMemory) and the card its own rule chooses ([GpuBudget.cardOf], lot SP6).
+// (SplatV1.freeGraphicsMemory: 2.5 GiB, where M1 measured 1.0 to 1.2 GiB at the peak at 1 024 pixels) and the card
+// its own rule chooses (splatCardOf of hardware_gate.dart: a dedicated card only). The queue asks with the need of the
+// kind of each job ([gpuNeedOf], lot SP6).
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 /// The memory of the graphics card a 360° panorama needs free when it starts (see the top of this file)
 const panoramaFreeGraphicsMemory = 6 * 1024 * 1024 * 1024;
+
+/// What a kind of job needs of the graphics card: [bytes] free on the card [cardOf] chooses
+class GpuNeed {
+  const GpuNeed(this.bytes, this.cardOf);
+
+  final int bytes;
+  final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
+}
+
+/// A 360° panorama: [panoramaFreeGraphicsMemory] on the card of panoramaCardOf
+const panoramaGpuNeed = GpuNeed(panoramaFreeGraphicsMemory, panoramaCardOf);
+
+/// A splat scene: SplatV1.freeGraphicsMemory on the dedicated card of splatCardOf
+const splatGpuNeed = GpuNeed(SplatV1.freeGraphicsMemory, splatCardOf);
+
+/// What a job that makes a file of [kind] needs of the graphics card: a splat scene its own, any other job of the card
+/// that of a panorama
+GpuNeed gpuNeedOf(ImmersiveKind kind) => kind == ImmersiveKind.gaussianSplat ? splatGpuNeed : panoramaGpuNeed;
 
 /// What the graphics card answers before a job
 sealed class GpuBudgetCheck {
@@ -74,16 +95,17 @@ class GpuBudget {
   /// The rule of the gate that chooses the card: that of the panoramas unless told
   final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
 
-  /// Starts the probe again and tells whether a job may start on the card now
-  Future<GpuBudgetCheck> check() async {
+  /// Starts the probe again and tells whether a job may start on the card now: a job that [need]s its own (the kind
+  /// of the job, [gpuNeedOf]), else one of [GpuBudget.need] on the card of [GpuBudget.cardOf]
+  Future<GpuBudgetCheck> check({GpuNeed? need}) async {
     final report = await probe();
-    final choice = cardOf(report, integratedAllowed: await _integratedAllowed());
+    final choice = (need?.cardOf ?? cardOf)(report, integratedAllowed: await _integratedAllowed());
     final card = choice.card;
     if (card == null || choice.refusal != null) {
       return GpuBudgetUnavailable(choice.refusal ?? AiGateReason.gpuNone);
     }
     final free = card.freeMemory;
-    return free >= need ? GpuBudgetReady(card, free, report) : GpuBudgetWait(card, free);
+    return free >= (need?.bytes ?? this.need) ? GpuBudgetReady(card, free, report) : GpuBudgetWait(card, free);
   }
 }
 

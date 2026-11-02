@@ -26,6 +26,17 @@
 // panoramas", "The graphics card did not answer"); the memory of that card at least what the transformer it takes asks
 // for ("The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB"). The card goes with the result, for the
 // line of the settings and for the index stable-diffusion.cpp must be given (ggmlVulkanIndexOf).
+//
+// The splat scenes (plan 2026-11-01, sections 2.4 and 4.1, lot SP6) are the first feature of archives alone, COLMAP
+// and Brush: no ONNX Runtime is asked for nor loaded, the rule "a runtime and a model" holding only for a feature that
+// has them. Their gate asks, after the system, the catalogue of this version and the groups it holds back (a feature
+// held is "Not in this version of the app" before any card is looked at): 8 GiB of memory in the computer (an estimate:
+// the chain holds in 4 GB of work with the threads COLMAP is given, nothing was measured under 15.6 GiB); the dedicated
+// card of Vulkan 1.2 with the most memory among those Vulkan lists ([splatCardOf]), 4 GiB at least (1.0 to 1.6 GB
+// measured for the copy of 150 000 gaussians); an integrated card refused with its own words whatever the switch of
+// the panoramas says (Brush 0.3.0 trains ten times slower on the Intel UHD, and panics on the kernels another card left:
+// a decision of time for the first test build). The card goes with the result: Brush is given its rank among the
+// dedicated cards (cubeclDeviceOf of brush_runner.dart).
 
 import 'dart:ffi' show Abi;
 import 'dart:io';
@@ -36,6 +47,7 @@ import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart' show ggmlVulkanDevi
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:logging/logging.dart';
 
@@ -83,7 +95,16 @@ enum AiGateReason {
   gpuIntegrated('ai_immersive_gpu_integrated'),
 
   /// The card has less memory than the transformer asks for ({memory}, {needed})
-  gpuTooSmall('ai_immersive_gpu_too_small');
+  gpuTooSmall('ai_immersive_gpu_too_small'),
+
+  /// Less physical memory than SplatV1.minPhysicalMemory for a splat scene ({needed}, {memory})
+  splatMemory('ai_immersive_gpu_memory'),
+
+  /// Only integrated graphics for a splat scene, which needs a dedicated card in the first test build
+  splatGpuIntegrated('ai_immersive_splat_gpu_integrated'),
+
+  /// The dedicated card has less memory than SplatV1.minGraphicsMemory ({memory}, {needed})
+  splatGpuTooSmall('ai_immersive_splat_gpu_too_small');
 
   const AiGateReason(this.textKey);
 
@@ -131,7 +152,7 @@ class AiGateResult {
   final AiPlatform? platform;
 
   /// The files the engine runs, when available: ONNX Runtime, and the first model of the feature (the depth model of
-  /// the 3D photo)
+  /// the 3D photo); none for a feature of archives alone (the splat scenes)
   final File? runtimeFile;
   final File? modelFile;
 
@@ -145,15 +166,18 @@ class AiGateResult {
   final int? physicalMemory;
   final int processors;
 
-  /// The graphics card a panorama would run on, and the whole answer of the probe; null for the other features
+  /// The graphics card a panorama or a splat scene would run on, and the whole answer of the probe; null for the other
+  /// features
   final GpuAdapter? gpu;
   final GpuReport? gpuReport;
 
-  /// The memory of that card, and what the transformer asks for, for [AiGateReason.gpuTooSmall]
+  /// The memory of that card, and what the transformer (or the training of a splat scene) asks for, for
+  /// [AiGateReason.gpuTooSmall] and [AiGateReason.splatGpuTooSmall]
   final int? graphicsMemory;
   final int? graphicsMemoryNeeded;
 
-  /// What a panorama asks of the physical memory, for [AiGateReason.panoramaMemory]
+  /// What a panorama or a splat scene asks of the physical memory, for [AiGateReason.panoramaMemory] and
+  /// [AiGateReason.splatMemory]
   final int? memoryNeeded;
 
   bool get isAvailable => reason == null;
@@ -245,6 +269,48 @@ PanoramaCard panoramaCardOf(GpuReport report, {required bool integratedAllowed})
   return (card: null, refusal: AiGateReason.gpuNone);
 }
 
+/// What the cards of [report] give a splat scene (see the top of this file): the dedicated card of Vulkan 1.2 with the
+/// most memory among those Vulkan lists, given whatever its memory (the gate then says it is too small); an integrated
+/// one is given with its refusal, [integratedAllowed] (the switch of the panoramas) changing nothing
+PanoramaCard splatCardOf(GpuReport report, {bool integratedAllowed = false}) {
+  switch (report.problem) {
+    case GpuProbeProblem.noAnswer || GpuProbeProblem.failed:
+      return (card: null, refusal: AiGateReason.gpuNoAnswer);
+    case GpuProbeProblem.notSupported:
+      return (card: null, refusal: AiGateReason.notHere);
+    case GpuProbeProblem.noVulkan:
+      return (card: null, refusal: AiGateReason.gpuNone);
+    case null:
+      break;
+  }
+  bool atLeast12((int, int) version) => version.$1 > 1 || (version.$1 == 1 && version.$2 >= 2);
+  if (report.instanceVersion != null && !atLeast12(vulkanMajorMinor(report.instanceVersion))) {
+    return (card: null, refusal: AiGateReason.gpuNone);
+  }
+  GpuAdapter? best(GpuKind kind) {
+    GpuAdapter? found;
+    for (final adapter in report.adapters) {
+      if (adapter.source == 'vulkan' &&
+          adapter.kind == kind &&
+          atLeast12(adapter.vulkanVersion) &&
+          (found == null || adapter.localMemory > found.localMemory)) {
+        found = adapter;
+      }
+    }
+    return found;
+  }
+
+  final discrete = best(GpuKind.discrete);
+  if (discrete != null) {
+    return (card: discrete, refusal: null);
+  }
+  final integrated = best(GpuKind.integrated);
+  if (integrated != null) {
+    return (card: integrated, refusal: AiGateReason.splatGpuIntegrated);
+  }
+  return (card: null, refusal: AiGateReason.gpuNone);
+}
+
 /// Why [abi] is refused: "not yet on this processor" for Windows and Linux on another processor, "not on this system
 /// yet" for the rest
 AiGateReason refusalOf(Abi abi) {
@@ -294,6 +360,7 @@ class HardwareGate {
     Future<RuntimeLoad> Function(String path)? loadRuntime,
     this.minimumMemory = aiMinimumPhysicalMemory,
     this.panoramaMemory = aiPanoramaMinimumPhysicalMemory,
+    this.splatMemory = SplatV1.minPhysicalMemory,
     this.catalogue = aiComponents,
     this.heldGroups = aiHeldFeatureGroups,
     this.gpu,
@@ -316,6 +383,7 @@ class HardwareGate {
   final Future<RuntimeLoad> Function(String path) _loadRuntime;
   final int minimumMemory;
   final int panoramaMemory;
+  final int splatMemory;
 
   /// The probe of the graphics cards; without one (the tests of the other features) no card is known
   final GpuProbe? gpu;
@@ -436,6 +504,22 @@ class HardwareGate {
     if (heldGroups.any((group) => group.features.contains(feature))) {
       return refused(AiGateReason.notInThisVersion);
     }
+    if (feature == AiFeature.splatScene) {
+      cards = await gpuReport();
+      final choice = splatCardOf(cards);
+      card = choice.card;
+      cardMemory = graphicsMemory ?? card?.localMemory;
+      cardNeeds = SplatV1.minGraphicsMemory;
+      if (memory != null && memory < splatMemory) {
+        return refused(AiGateReason.splatMemory, memoryNeeded: splatMemory);
+      }
+      if (choice.refusal case final refusal?) {
+        return refused(refusal);
+      }
+      if (cardMemory != null && cardMemory < cardNeeds) {
+        return refused(AiGateReason.splatGpuTooSmall);
+      }
+    }
 
     final files = <String, File>{};
     final missing = <AiComponent>[];
@@ -456,8 +540,25 @@ class HardwareGate {
 
     final runtime = first(AiComponentKind.runtime);
     final model = first(AiComponentKind.model);
-    if (missing.isNotEmpty || runtime == null || model == null) {
+    // A feature of archives alone (the splat scenes) has neither, and never loads ONNX Runtime
+    bool needs(AiComponentKind kind) => needed.any((component) => component.kind == kind);
+    if (missing.isNotEmpty ||
+        (needs(AiComponentKind.runtime) && runtime == null) ||
+        (needs(AiComponentKind.model) && model == null)) {
       return refused(damaged ? AiGateReason.componentsDamaged : AiGateReason.componentsMissing, missing: missing);
+    }
+    if (runtime == null) {
+      return AiGateResult._(
+        platform: platform,
+        feature: feature,
+        files: files,
+        physicalMemory: memory,
+        processors: facts.processors,
+        gpu: card,
+        gpuReport: cards,
+        graphicsMemory: cardMemory,
+        graphicsMemoryNeeded: cardNeeds,
+      );
     }
 
     final stat = runtime.statSync();
