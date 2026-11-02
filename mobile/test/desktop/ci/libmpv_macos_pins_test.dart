@@ -106,7 +106,7 @@ void main() {
 
   group('FFmpeg of the macOS libmpv', () {
     test('the default video flavor reads the y4m of the AV2 decoder over HTTP: yuv4mpegpipe and rawvideo', () {
-      final meson = _ffmpegMeson.readAsStringSync();
+      final meson = _readMeson();
       expect(
         _mesonList(meson, 'video_default_options'),
         containsAll(['--enable-demuxer=yuv4mpegpipe', '--enable-decoder=rawvideo']),
@@ -126,7 +126,7 @@ void main() {
     });
 
     test('nothing GPL or nonfree in the default flavor', () {
-      final meson = _ffmpegMeson.readAsStringSync();
+      final meson = _readMeson();
       for (final list in [
         'common_options',
         'audio_common_options',
@@ -143,7 +143,7 @@ void main() {
     });
 
     test("the copy is the recipe's meson.build and the lines that say Immuch360, checked by its SHA-256", () {
-      final copy = _ffmpegMeson.readAsStringSync().replaceAll('\r\n', '\n');
+      final copy = _readMeson();
       final pin = RegExp(
         r'^ffmpeg_meson_sha256=([0-9a-f]{64})$',
         multiLine: true,
@@ -163,7 +163,7 @@ void main() {
     late String copy;
 
     setUp(() {
-      copy = _ffmpegMeson.readAsStringSync().replaceAll('\r\n', '\n');
+      copy = _readMeson();
       const minVersion = "min_version   = '-mmacosx-version-min=10.9'\n";
       recipe = fixtureTree({
         for (final file in [
@@ -210,6 +210,9 @@ final Object _skipOverlay = Platform.isWindows
     : !_ffmpegMeson.existsSync() && !_lock.existsSync()
     ? 'no libmpv overlay in $ciScriptsDir'
     : false;
+
+/// The FFmpeg meson.build of the overlay, with the line ends of git (a Windows checkout may write CRLF)
+String _readMeson() => _ffmpegMeson.readAsStringSync().replaceAll('\r\n', '\n');
 
 /// The quoted options of the list [name] of a meson.build
 List<String> _mesonList(String meson, String name) {
