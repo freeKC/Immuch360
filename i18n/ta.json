@@ -764,7 +764,6 @@
   "ai_immersive_stage_splat_photos": "படங்கள் தயாராகின்றன: {total} இல் {index}",
   "ai_immersive_stage_splat_poses": "படங்கள் 3D இல் வைக்கப்படுகின்றன",
   "ai_immersive_stage_splat_training": "ஸ்ப்ளாட் பயிற்சி",
-  "ai_immersive_stage_splat_training_step": "ஸ்ப்ளாட் பயிற்சி: {steps} இல் படி {step}",
   "ai_immersive_stage_upscale": "விவரம் அதிகரிக்கப்படுகிறது",
   "ai_immersive_state_cancelled": "ரத்துசெய்யப்பட்டது",
   "ai_immersive_state_computing": "கணக்கிடுகிறது",

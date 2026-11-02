@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Đang chuẩn bị ảnh: {index} trên {total}",
   "ai_immersive_stage_splat_poses": "Đang đặt ảnh trong 3D",
   "ai_immersive_stage_splat_training": "Đang huấn luyện splat",
-  "ai_immersive_stage_splat_training_step": "Đang huấn luyện splat: bước {step} trên {steps}",
   "ai_immersive_stage_upscale": "Đang tăng độ chi tiết",
   "ai_immersive_state_cancelled": "Đã hủy",
   "ai_immersive_state_computing": "Đang tính toán",

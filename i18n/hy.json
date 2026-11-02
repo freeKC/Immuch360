@@ -326,7 +326,6 @@
   "ai_immersive_stage_splat_photos": "Լուսանկարները պատրաստվում են՝ {index} / {total}",
   "ai_immersive_stage_splat_poses": "Լուսանկարները տեղադրվում են 3D-ում",
   "ai_immersive_stage_splat_training": "Սփլաթի ուսուցում",
-  "ai_immersive_stage_splat_training_step": "Սփլաթի ուսուցում՝ քայլ {step}/{steps}",
   "ai_immersive_stage_upscale": "Մանրամասնության բարձրացում",
   "ai_immersive_state_cancelled": "Չեղարկված",
   "ai_immersive_state_computing": "Հաշվարկ",

@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "Se prepàren i foto: {index} de {total}",
   "ai_immersive_stage_splat_poses": "Se piazzen i foto in 3D",
   "ai_immersive_stage_splat_training": "Se addestra el splat",
-  "ai_immersive_stage_splat_training_step": "Se addestra el splat: passagg {step} de {steps}",
   "ai_immersive_stage_upscale": "Se cress i detaj",
   "ai_immersive_state_cancelled": "Anullaa",
   "ai_immersive_state_computing": "Calcol in cors",

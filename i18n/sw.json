@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "Inaandaa picha: {index} kati ya {total}",
   "ai_immersive_stage_splat_poses": "Inaweka picha katika 3D",
   "ai_immersive_stage_splat_training": "Inafunza splat",
-  "ai_immersive_stage_splat_training_step": "Inafunza splat: hatua {step} kati ya {steps}",
   "ai_immersive_stage_upscale": "Inaongeza undani",
   "ai_immersive_state_cancelled": "Imeghairiwa",
   "ai_immersive_state_computing": "Inakokotoa",

@@ -769,7 +769,6 @@
   "ai_immersive_stage_splat_photos": "Fotoattēlu sagatavošana: {index} no {total}",
   "ai_immersive_stage_splat_poses": "Fotoattēlu izvietošana 3D",
   "ai_immersive_stage_splat_training": "Splat apmācība",
-  "ai_immersive_stage_splat_training_step": "Splat apmācība: {step}. solis no {steps}",
   "ai_immersive_stage_upscale": "Palielina detalizāciju",
   "ai_immersive_state_cancelled": "Atcelts",
   "ai_immersive_state_computing": "Aprēķina",

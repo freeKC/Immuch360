@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "מכינים את התמונות: {index} מתוך {total}",
   "ai_immersive_stage_splat_poses": "ממקמים את התמונות ב־3D",
   "ai_immersive_stage_splat_training": "מאמנים את הספלאט",
-  "ai_immersive_stage_splat_training_step": "מאמנים את הספלאט: שלב {step} מתוך {steps}",
   "ai_immersive_stage_upscale": "מגדילים את רמת הפירוט",
   "ai_immersive_state_cancelled": "בוטל",
   "ai_immersive_state_computing": "בחישוב",

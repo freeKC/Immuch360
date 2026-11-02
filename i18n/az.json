@@ -462,7 +462,6 @@
   "ai_immersive_stage_splat_photos": "Fotolar hazırlanır: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Fotolar 3D-də yerləşdirilir",
   "ai_immersive_stage_splat_training": "Splat öyrədilir",
-  "ai_immersive_stage_splat_training_step": "Splat öyrədilir: addım {step} / {steps}",
   "ai_immersive_stage_upscale": "Detallar artırılır",
   "ai_immersive_state_cancelled": "Ləğv edildi",
   "ai_immersive_state_computing": "Hesablanır",

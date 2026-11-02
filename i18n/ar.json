@@ -807,7 +807,6 @@
   "ai_immersive_stage_splat_photos": "جارٍ تحضير الصور: {index} من {total}",
   "ai_immersive_stage_splat_poses": "جارٍ وضع الصور في 3D",
   "ai_immersive_stage_splat_training": "جارٍ تدريب السبلات",
-  "ai_immersive_stage_splat_training_step": "جارٍ تدريب السبلات: الخطوة {step} من {steps}",
   "ai_immersive_stage_upscale": "جارٍ زيادة التفاصيل",
   "ai_immersive_state_cancelled": "أُلغي",
   "ai_immersive_state_computing": "جارٍ الحساب",

@@ -805,7 +805,6 @@
   "ai_immersive_stage_splat_photos": "正在準備相片：{index} / {total}",
   "ai_immersive_stage_splat_poses": "正在將相片放置到 3D 中",
   "ai_immersive_stage_splat_training": "正在訓練潑濺",
-  "ai_immersive_stage_splat_training_step": "正在訓練潑濺：第 {step} 步，共 {steps} 步",
   "ai_immersive_stage_upscale": "正在增強細節",
   "ai_immersive_state_cancelled": "已取消",
   "ai_immersive_state_computing": "計算中",

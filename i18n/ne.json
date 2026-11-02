@@ -314,7 +314,6 @@
   "ai_immersive_stage_splat_photos": "फोटोहरू तयार गर्दै: {total} मध्ये {index}",
   "ai_immersive_stage_splat_poses": "फोटोहरू 3D मा राख्दै",
   "ai_immersive_stage_splat_training": "स्प्ल्याटको तालिम",
-  "ai_immersive_stage_splat_training_step": "स्प्ल्याटको तालिम: {steps} मध्ये चरण {step}",
   "ai_immersive_stage_upscale": "विवरण बढाउँदै",
   "ai_immersive_state_cancelled": "रद्द गरियो",
   "ai_immersive_state_computing": "गणना गर्दै",

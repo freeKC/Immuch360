@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Förbereder fotona: {index} av {total}",
   "ai_immersive_stage_splat_poses": "Placerar fotona i 3D",
   "ai_immersive_stage_splat_training": "Tränar splatten",
-  "ai_immersive_stage_splat_training_step": "Tränar splatten: steg {step} av {steps}",
   "ai_immersive_stage_upscale": "Ökar detaljrikedomen",
   "ai_immersive_state_cancelled": "Avbruten",
   "ai_immersive_state_computing": "Beräknar",

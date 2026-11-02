@@ -443,7 +443,6 @@
   "ai_immersive_stage_splat_photos": "ფოტოები მზადდება: {index} / {total}",
   "ai_immersive_stage_splat_poses": "ფოტოები თავსდება 3D-ში",
   "ai_immersive_stage_splat_training": "სპლატის სწავლება",
-  "ai_immersive_stage_splat_training_step": "სპლატის სწავლება: ნაბიჯი {step} / {steps}",
   "ai_immersive_stage_upscale": "დეტალების გაზრდა",
   "ai_immersive_state_cancelled": "გაუქმებულია",
   "ai_immersive_state_computing": "გამოთვლა",

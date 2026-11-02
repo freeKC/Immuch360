@@ -570,7 +570,6 @@
   "ai_immersive_stage_splat_photos": "Førebur bileta: {index} av {total}",
   "ai_immersive_stage_splat_poses": "Plasserer bileta i 3D",
   "ai_immersive_stage_splat_training": "Trenar splatten",
-  "ai_immersive_stage_splat_training_step": "Trenar splatten: steg {step} av {steps}",
   "ai_immersive_stage_upscale": "Aukar detaljnivået",
   "ai_immersive_state_cancelled": "Avbroten",
   "ai_immersive_state_computing": "Reknar ut",

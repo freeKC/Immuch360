@@ -428,7 +428,6 @@
   "ai_immersive_stage_splat_photos": "Зургуудыг бэлдэж байна: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Зургуудыг 3D-д байрлуулж байна",
   "ai_immersive_stage_splat_training": "Сплатыг сургаж байна",
-  "ai_immersive_stage_splat_training_step": "Сплатыг сургаж байна: алхам {step}/{steps}",
   "ai_immersive_stage_upscale": "Нарийвчлалыг нэмэгдүүлж байна",
   "ai_immersive_state_cancelled": "Цуцалсан",
   "ai_immersive_state_computing": "Тооцоолж байна",

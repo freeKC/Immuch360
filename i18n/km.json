@@ -391,7 +391,6 @@
   "ai_immersive_stage_splat_photos": "កំពុងរៀបចំរូបថត៖ {index} ក្នុងចំណោម {total}",
   "ai_immersive_stage_splat_poses": "កំពុងដាក់រូបថតក្នុង 3D",
   "ai_immersive_stage_splat_training": "កំពុងហ្វឹកហាត់ស្ពឡាត",
-  "ai_immersive_stage_splat_training_step": "កំពុងហ្វឹកហាត់ស្ពឡាត៖ ជំហាន {step} ក្នុងចំណោម {steps}",
   "ai_immersive_stage_upscale": "កំពុងបង្កើនព័ត៌មានលម្អិត",
   "ai_immersive_state_cancelled": "បានបោះបង់",
   "ai_immersive_state_computing": "កំពុងគណនា",

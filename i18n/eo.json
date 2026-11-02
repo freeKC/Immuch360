@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Preparado de la fotoj: {index} el {total}",
   "ai_immersive_stage_splat_poses": "Lokado de la fotoj en 3D",
   "ai_immersive_stage_splat_training": "Trejnado de la splato",
-  "ai_immersive_stage_splat_training_step": "Trejnado de la splato: paŝo {step} el {steps}",
   "ai_immersive_stage_upscale": "Pliigo de la detaloj",
   "ai_immersive_state_cancelled": "Nuligita",
   "ai_immersive_state_computing": "Kalkulado",

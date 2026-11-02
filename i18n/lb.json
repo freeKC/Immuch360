@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "Fotoe ginn preparéiert: {index} vun {total}",
   "ai_immersive_stage_splat_poses": "Fotoe ginn an 3D placéiert",
   "ai_immersive_stage_splat_training": "Splat gëtt trainéiert",
-  "ai_immersive_stage_splat_training_step": "Splat gëtt trainéiert: Schrëtt {step} vun {steps}",
   "ai_immersive_stage_upscale": "D'Detailer gi verfeinert",
   "ai_immersive_state_cancelled": "Ofgebrach",
   "ai_immersive_state_computing": "Gëtt gerechent",

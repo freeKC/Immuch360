@@ -803,7 +803,6 @@
   "ai_immersive_stage_splat_photos": "Argazkiak prestatzen: {index}/{total}",
   "ai_immersive_stage_splat_poses": "Argazkiak 3Dn kokatzen",
   "ai_immersive_stage_splat_training": "Splata entrenatzen",
-  "ai_immersive_stage_splat_training_step": "Splata entrenatzen: {step}/{steps} urratsa",
   "ai_immersive_stage_upscale": "Xehetasuna handitzen",
   "ai_immersive_state_cancelled": "Ezeztatuta",
   "ai_immersive_state_computing": "Kalkulatzen",

@@ -807,7 +807,6 @@
   "ai_immersive_stage_splat_photos": "Preparing the photos: {index} of {total}",
   "ai_immersive_stage_splat_poses": "Placing the photos in 3D",
   "ai_immersive_stage_splat_training": "Training the splat",
-  "ai_immersive_stage_splat_training_step": "Training the splat: step {step} of {steps}",
   "ai_immersive_stage_upscale": "Increasing the detail",
   "ai_immersive_state_cancelled": "Cancelled",
   "ai_immersive_state_computing": "Computing",

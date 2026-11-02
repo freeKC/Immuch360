@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "準備緊啲相：{index}/{total}",
   "ai_immersive_stage_splat_poses": "喺 3D 放緊相",
   "ai_immersive_stage_splat_training": "訓練緊潑濺",
-  "ai_immersive_stage_splat_training_step": "訓練緊潑濺：第 {step} 步，共 {steps} 步",
   "ai_immersive_stage_upscale": "提升緊細節",
   "ai_immersive_state_cancelled": "已取消",
   "ai_immersive_state_computing": "計算緊",

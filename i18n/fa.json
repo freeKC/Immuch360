@@ -807,7 +807,6 @@
   "ai_immersive_stage_splat_photos": "در حال آماده‌سازی عکس‌ها: {index} از {total}",
   "ai_immersive_stage_splat_poses": "در حال جای‌گذاری عکس‌ها در 3D",
   "ai_immersive_stage_splat_training": "در حال آموزش اسپلت",
-  "ai_immersive_stage_splat_training_step": "در حال آموزش اسپلت: مرحلهٔ {step} از {steps}",
   "ai_immersive_stage_upscale": "در حال افزایش جزئیات",
   "ai_immersive_state_cancelled": "لغو شد",
   "ai_immersive_state_computing": "در حال محاسبه",

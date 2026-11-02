@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Undirbý myndirnar: {index} af {total}",
   "ai_immersive_stage_splat_poses": "Staðset myndirnar í 3D",
   "ai_immersive_stage_splat_training": "Þjálfa splattið",
-  "ai_immersive_stage_splat_training_step": "Þjálfa splattið: skref {step} af {steps}",
   "ai_immersive_stage_upscale": "Eyk smáatriðin",
   "ai_immersive_state_cancelled": "Hætt við",
   "ai_immersive_state_computing": "Reikna",

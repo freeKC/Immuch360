@@ -306,7 +306,6 @@
   "ai_immersive_stage_splat_photos": "I stap rerem ol foto: {index} long {total}",
   "ai_immersive_stage_splat_poses": "I stap putum ol foto long 3D",
   "ai_immersive_stage_splat_training": "I stap trenem splat",
-  "ai_immersive_stage_splat_training_step": "I stap trenem splat: step {step} long {steps}",
   "ai_immersive_stage_upscale": "I stap mekem ditel i moa",
   "ai_immersive_state_cancelled": "I kanselem",
   "ai_immersive_state_computing": "I stap kaontem",

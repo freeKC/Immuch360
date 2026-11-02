@@ -801,7 +801,6 @@
   "ai_immersive_stage_splat_photos": "Προετοιμασία των φωτογραφιών: {index} από {total}",
   "ai_immersive_stage_splat_poses": "Τοποθέτηση των φωτογραφιών σε 3D",
   "ai_immersive_stage_splat_training": "Εκπαίδευση του splat",
-  "ai_immersive_stage_splat_training_step": "Εκπαίδευση του splat: βήμα {step} από {steps}",
   "ai_immersive_stage_upscale": "Αύξηση της λεπτομέρειας",
   "ai_immersive_state_cancelled": "Ακυρώθηκε",
   "ai_immersive_state_computing": "Υπολογισμός",

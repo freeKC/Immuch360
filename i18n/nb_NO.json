@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Forbereder bildene: {index} av {total}",
   "ai_immersive_stage_splat_poses": "Plasserer bildene i 3D",
   "ai_immersive_stage_splat_training": "Trener splatten",
-  "ai_immersive_stage_splat_training_step": "Trener splatten: trinn {step} av {steps}",
   "ai_immersive_stage_upscale": "Øker detaljnivået",
   "ai_immersive_state_cancelled": "Avbrutt",
   "ai_immersive_state_computing": "Beregner",

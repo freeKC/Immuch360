@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "Priprema fotografija: {index} od {total}",
   "ai_immersive_stage_splat_poses": "Postavljanje fotografija u 3D",
   "ai_immersive_stage_splat_training": "Treniranje splata",
-  "ai_immersive_stage_splat_training_step": "Treniranje splata: korak {step} od {steps}",
   "ai_immersive_stage_upscale": "Povećavanje detalja",
   "ai_immersive_state_cancelled": "Otkazano",
   "ai_immersive_state_computing": "Računanje",

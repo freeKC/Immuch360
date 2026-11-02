@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Foto's voorbereiden: {index} van {total}",
   "ai_immersive_stage_splat_poses": "Foto's in 3D plaatsen",
   "ai_immersive_stage_splat_training": "De splat trainen",
-  "ai_immersive_stage_splat_training_step": "De splat trainen: stap {step} van {steps}",
   "ai_immersive_stage_upscale": "Het detail verhogen",
   "ai_immersive_state_cancelled": "Geannuleerd",
   "ai_immersive_state_computing": "Berekenen",

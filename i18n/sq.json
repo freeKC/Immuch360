@@ -807,7 +807,6 @@
   "ai_immersive_stage_splat_photos": "Po përgatiten fotot: {index} nga {total}",
   "ai_immersive_stage_splat_poses": "Po vendosen fotot në 3D",
   "ai_immersive_stage_splat_training": "Po trajnohet splat",
-  "ai_immersive_stage_splat_training_step": "Po trajnohet splat: hapi {step} nga {steps}",
   "ai_immersive_stage_upscale": "Po rriten detajet",
   "ai_immersive_state_cancelled": "Anuluar",
   "ai_immersive_state_computing": "Po llogaritet",

@@ -663,7 +663,6 @@
   "ai_immersive_stage_splat_photos": "ఫోటోలను సిద్ధం చేస్తోంది: {total}లో {index}",
   "ai_immersive_stage_splat_poses": "ఫోటోలను 3Dలో ఉంచుతోంది",
   "ai_immersive_stage_splat_training": "స్ప్లాట్‌కు శిక్షణ ఇస్తోంది",
-  "ai_immersive_stage_splat_training_step": "స్ప్లాట్‌కు శిక్షణ ఇస్తోంది: {steps}లో దశ {step}",
   "ai_immersive_stage_upscale": "వివరాలను పెంచుతోంది",
   "ai_immersive_state_cancelled": "రద్దు చేయబడింది",
   "ai_immersive_state_computing": "గణిస్తోంది",

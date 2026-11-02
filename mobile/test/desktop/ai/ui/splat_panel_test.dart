@@ -19,10 +19,8 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/generated/translations.g.dart';
 
 import '../../../widget_tester_extensions.dart';
-import '../creator/english_texts.dart';
 
 /// A queue that shows [shown]
 class _ShownQueue extends ConversionQueueNotifier {
@@ -353,10 +351,15 @@ void main() {
       expect(reasonsWith([_splat('a')]), isEmpty);
     });
 
-    testWidgets('names the step of the scene: the training with its step, the matching with its block', (tester) async {
-      await pumpClose(tester, [_splat('a', state: ConversionState.training, step: 12400, steps: 20000)]);
+    testWidgets('names the step of the scene: the training with its step and the time left, the matching with its '
+        'block', (tester) async {
+      await pumpClose(tester, [
+        _splat('a', state: ConversionState.training, step: 12400, steps: 20000, remaining: const Duration(minutes: 3)),
+      ]);
       expect(
-        find.text('A splat scene is being made (Training the splat: step 12,400 of 20,000). Closing stops it.'),
+        find.text(
+          'A splat scene is being made (Training the splat, step 12,400 of 20,000, about 3 min left). Closing stops it.',
+        ),
         findsOneWidget,
       );
       expect(find.text('3D conversions are running: quitting stops them.'), findsNothing);
@@ -383,16 +386,5 @@ void main() {
       expect(find.textContaining('A splat scene is being made'), findsOneWidget);
       expect(find.text('3D conversions are running: quitting stops them.'), findsOneWidget);
     });
-  });
-
-  test('the words of the training step, for the close of the window', () {
-    loadEnglishTexts();
-    final t = StaticTranslations.instance;
-    expect(
-      splatCloseStageText(t, _splat('a', state: ConversionState.training, step: 400, steps: 20000)),
-      'Training the splat: step 400 of 20,000',
-    );
-    expect(splatCloseStageText(t, _splat('a', state: ConversionState.training)), 'Training the splat');
-    expect(splatCloseStageText(t, _splat('a', state: ConversionState.splatCopy)), 'Writing the headset copy');
   });
 }

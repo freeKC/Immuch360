@@ -371,7 +371,6 @@
   "ai_immersive_stage_splat_photos": "تصاویر تیار کی جا رہی ہیں: {total} میں سے {index}",
   "ai_immersive_stage_splat_poses": "تصاویر 3D میں رکھی جا رہی ہیں",
   "ai_immersive_stage_splat_training": "اسپلیٹ کی تربیت",
-  "ai_immersive_stage_splat_training_step": "اسپلیٹ کی تربیت: {steps} میں سے مرحلہ {step}",
   "ai_immersive_stage_upscale": "تفصیل بڑھائی جا رہی ہے",
   "ai_immersive_state_cancelled": "منسوخ",
   "ai_immersive_state_computing": "حساب ہو رہا ہے",

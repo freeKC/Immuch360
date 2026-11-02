@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Příprava fotek: {index} z {total}",
   "ai_immersive_stage_splat_poses": "Umísťování fotek do 3D",
   "ai_immersive_stage_splat_training": "Trénování splatu",
-  "ai_immersive_stage_splat_training_step": "Trénování splatu: krok {step} z {steps}",
   "ai_immersive_stage_upscale": "Zvyšují se detaily",
   "ai_immersive_state_cancelled": "Zrušeno",
   "ai_immersive_state_computing": "Výpočet",

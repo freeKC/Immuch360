@@ -409,7 +409,6 @@
   "ai_immersive_stage_splat_photos": "Подготовка на фотографиите: {index} од {total}",
   "ai_immersive_stage_splat_poses": "Поставување на фотографиите во 3D",
   "ai_immersive_stage_splat_training": "Обучување на сплатот",
-  "ai_immersive_stage_splat_training_step": "Обучување на сплатот: чекор {step} од {steps}",
   "ai_immersive_stage_upscale": "Се зголемуваат деталите",
   "ai_immersive_state_cancelled": "Откажано",
   "ai_immersive_state_computing": "Се пресметува",

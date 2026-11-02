@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Fotode ettevalmistamine: {index}/{total}",
   "ai_immersive_stage_splat_poses": "Fotode paigutamine 3D-sse",
   "ai_immersive_stage_splat_training": "Splati treenimine",
-  "ai_immersive_stage_splat_training_step": "Splati treenimine: samm {step}/{steps}",
   "ai_immersive_stage_upscale": "Detailsuse suurendamine",
   "ai_immersive_state_cancelled": "Katkestatud",
   "ai_immersive_state_computing": "Arvutamine",

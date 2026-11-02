@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Menyiapkan foto: {index} dari {total}",
   "ai_immersive_stage_splat_poses": "Menempatkan foto dalam 3D",
   "ai_immersive_stage_splat_training": "Melatih splat",
-  "ai_immersive_stage_splat_training_step": "Melatih splat: langkah {step} dari {steps}",
   "ai_immersive_stage_upscale": "Meningkatkan detail",
   "ai_immersive_state_cancelled": "Dibatalkan",
   "ai_immersive_state_computing": "Menghitung",

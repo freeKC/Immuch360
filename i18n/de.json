@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Fotos werden vorbereitet: {index} von {total}",
   "ai_immersive_stage_splat_poses": "Fotos werden in 3D platziert",
   "ai_immersive_stage_splat_training": "Splat wird trainiert",
-  "ai_immersive_stage_splat_training_step": "Splat wird trainiert: Schritt {step} von {steps}",
   "ai_immersive_stage_upscale": "Details werden verfeinert",
   "ai_immersive_state_cancelled": "Abgebrochen",
   "ai_immersive_state_computing": "Berechnung",

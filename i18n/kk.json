@@ -315,7 +315,6 @@
   "ai_immersive_stage_splat_photos": "Фотолар дайындалуда: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Фотолар 3D-де орналастырылуда",
   "ai_immersive_stage_splat_training": "Сплат үйретілуде",
-  "ai_immersive_stage_splat_training_step": "Сплат үйретілуде: қадам {step}/{steps}",
   "ai_immersive_stage_upscale": "Егжей-тегжей арттырылуда",
   "ai_immersive_state_cancelled": "Бас тартылды",
   "ai_immersive_state_computing": "Есептелуде",

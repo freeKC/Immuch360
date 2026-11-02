@@ -757,7 +757,6 @@
   "ai_immersive_stage_splat_photos": "फ़ोटो तैयार की जा रही हैं: {total} में से {index}",
   "ai_immersive_stage_splat_poses": "फ़ोटो 3D में रखी जा रही हैं",
   "ai_immersive_stage_splat_training": "स्प्लैट का प्रशिक्षण",
-  "ai_immersive_stage_splat_training_step": "स्प्लैट का प्रशिक्षण: {steps} में से चरण {step}",
   "ai_immersive_stage_upscale": "विवरण बढ़ाया जा रहा है",
   "ai_immersive_state_cancelled": "रद्द किया गया",
   "ai_immersive_state_computing": "गणना हो रही है",

@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "Tengoh siapke gambo: {index} dari {total}",
   "ai_immersive_stage_splat_poses": "Tengoh letak gambo dale 3D",
   "ai_immersive_stage_splat_training": "Tengoh latih splat",
-  "ai_immersive_stage_splat_training_step": "Tengoh latih splat: langkah {step} dari {steps}",
   "ai_immersive_stage_upscale": "Tengoh tambah butir",
   "ai_immersive_state_cancelled": "Doh batal",
   "ai_immersive_state_computing": "Tengoh kiro",

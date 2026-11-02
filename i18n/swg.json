@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "Fotos werdet vorbereitet: {index} vo {total}",
   "ai_immersive_stage_splat_poses": "Fotos werdet en 3D platziert",
   "ai_immersive_stage_splat_training": "Splat wird trainiert",
-  "ai_immersive_stage_splat_training_step": "Splat wird trainiert: Schritt {step} vo {steps}",
   "ai_immersive_stage_upscale": "D Details werdat verfeinert",
   "ai_immersive_state_cancelled": "Abbrocha",
   "ai_immersive_state_computing": "Rechnet",

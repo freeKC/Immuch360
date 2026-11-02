@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Подготовка фото: {index} из {total}",
   "ai_immersive_stage_splat_poses": "Расстановка фото в 3D",
   "ai_immersive_stage_splat_training": "Обучение сплата",
-  "ai_immersive_stage_splat_training_step": "Обучение сплата: шаг {step} из {steps}",
   "ai_immersive_stage_upscale": "Повышение детализации",
   "ai_immersive_state_cancelled": "Отменено",
   "ai_immersive_state_computing": "Вычисление",

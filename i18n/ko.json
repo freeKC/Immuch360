@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "사진 준비 중: {index}/{total}",
   "ai_immersive_stage_splat_poses": "사진을 3D로 배치하는 중",
   "ai_immersive_stage_splat_training": "스플랫 학습 중",
-  "ai_immersive_stage_splat_training_step": "스플랫 학습 중: {steps}단계 중 {step}단계",
   "ai_immersive_stage_upscale": "디테일 높이는 중",
   "ai_immersive_state_cancelled": "취소됨",
   "ai_immersive_state_computing": "계산 중",

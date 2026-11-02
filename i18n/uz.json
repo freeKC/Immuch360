@@ -305,7 +305,6 @@
   "ai_immersive_stage_splat_photos": "Suratlar tayyorlanmoqda: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Suratlar 3D da joylashtirilmoqda",
   "ai_immersive_stage_splat_training": "Splat o'qitilmoqda",
-  "ai_immersive_stage_splat_training_step": "Splat o'qitilmoqda: qadam {step} / {steps}",
   "ai_immersive_stage_upscale": "Tafsilotlar oshirilmoqda",
   "ai_immersive_state_cancelled": "Bekor qilindi",
   "ai_immersive_state_computing": "Hisoblanmoqda",

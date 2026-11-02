@@ -813,7 +813,6 @@
   "ai_immersive_stage_splat_photos": "Ruošiamos nuotraukos: {index} iš {total}",
   "ai_immersive_stage_splat_poses": "Nuotraukų išdėstymas 3D erdvėje",
   "ai_immersive_stage_splat_training": "Splat mokymas",
-  "ai_immersive_stage_splat_training_step": "Splat mokymas: {step} žingsnis iš {steps}",
   "ai_immersive_stage_upscale": "Didinamas detalumas",
   "ai_immersive_state_cancelled": "Atšaukta",
   "ai_immersive_state_computing": "Skaičiuojama",

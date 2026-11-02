@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Przygotowywanie zdjęć: {index} z {total}",
   "ai_immersive_stage_splat_poses": "Umieszczanie zdjęć w 3D",
   "ai_immersive_stage_splat_training": "Trenowanie splatu",
-  "ai_immersive_stage_splat_training_step": "Trenowanie splatu: krok {step} z {steps}",
   "ai_immersive_stage_upscale": "Zwiększanie szczegółowości",
   "ai_immersive_state_cancelled": "Anulowano",
   "ai_immersive_state_computing": "Obliczanie",

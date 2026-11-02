@@ -452,7 +452,6 @@
   "ai_immersive_stage_splat_photos": "Berei die foto’s voor: {index} van {total}",
   "ai_immersive_stage_splat_poses": "Plaas die foto’s in 3D",
   "ai_immersive_stage_splat_training": "Lei die splat op",
-  "ai_immersive_stage_splat_training_step": "Lei die splat op: stap {step} van {steps}",
   "ai_immersive_stage_upscale": "Verhoog die detail",
   "ai_immersive_state_cancelled": "Gekanselleer",
   "ai_immersive_state_computing": "Bereken",

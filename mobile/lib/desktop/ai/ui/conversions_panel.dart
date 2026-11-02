@@ -324,16 +324,6 @@ String? conversionStageText(Translations t, ConversionJob job) => switch (job.st
   _ => null,
 };
 
-/// The step of a splat scene being made, as the close of the window names it: "Training the splat: step 12,400 of
-/// 20,000", "Placing the photos in 3D: matching, block 4 of 9", else its state
-String splatCloseStageText(Translations t, ConversionJob job) => switch ((job.state, job.step, job.steps)) {
-  (ConversionState.training, final step?, final steps?) => t.ai_immersive_stage_splat_training_step(
-    step: step,
-    steps: steps,
-  ),
-  _ => conversionStageText(t, job) ?? conversionStateText(t, job),
-};
-
 /// The share of the frames of a video left out as blurred from which the panel says so: "Many frames of this video are
 /// blurred (52 of 202)". A choice of this lot, not measured: a few blurred frames among 150 do not make a poor scene.
 const splatBlurredShareSaid = 0.2;

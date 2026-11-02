@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Fotoğraflar hazırlanıyor: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Fotoğraflar 3D olarak yerleştiriliyor",
   "ai_immersive_stage_splat_training": "Splat eğitiliyor",
-  "ai_immersive_stage_splat_training_step": "Splat eğitiliyor: adım {step} / {steps}",
   "ai_immersive_stage_upscale": "Ayrıntı artırılıyor",
   "ai_immersive_state_cancelled": "İptal edildi",
   "ai_immersive_state_computing": "Hesaplanıyor",

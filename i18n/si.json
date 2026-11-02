@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "ඡායාරූප සූදානම් කරමින්: {total} න් {index}",
   "ai_immersive_stage_splat_poses": "ඡායාරූප 3D තුළ තබමින්",
   "ai_immersive_stage_splat_training": "ස්ප්ලැට් පුහුණු කරමින්",
-  "ai_immersive_stage_splat_training_step": "ස්ප්ලැට් පුහුණු කරමින්: පියවර {steps} න් {step}",
   "ai_immersive_stage_upscale": "විස්තර වැඩි කරමින්",
   "ai_immersive_state_cancelled": "අවලංගු කළා",
   "ai_immersive_state_computing": "ගණනය කරමින්",

@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Grianghraif á n-ullmhú: {index} as {total}",
   "ai_immersive_stage_splat_poses": "Grianghraif á suíomh i 3D",
   "ai_immersive_stage_splat_training": "An splat á oiliúint",
-  "ai_immersive_stage_splat_training_step": "An splat á oiliúint: céim {step} as {steps}",
   "ai_immersive_stage_upscale": "An mionsonra á mhéadú",
   "ai_immersive_state_cancelled": "Cealaithe",
   "ai_immersive_state_computing": "Á ríomh",

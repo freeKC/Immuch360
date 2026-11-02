@@ -796,7 +796,6 @@
   "ai_immersive_stage_splat_photos": "ಫೋಟೋಗಳನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ: {total} ರಲ್ಲಿ {index}",
   "ai_immersive_stage_splat_poses": "ಫೋಟೋಗಳನ್ನು 3D ಯಲ್ಲಿ ಇರಿಸಲಾಗುತ್ತಿದೆ",
   "ai_immersive_stage_splat_training": "ಸ್ಪ್ಲಾಟ್ ತರಬೇತಿ",
-  "ai_immersive_stage_splat_training_step": "ಸ್ಪ್ಲಾಟ್ ತರಬೇತಿ: {steps} ರಲ್ಲಿ {step} ನೇ ಹಂತ",
   "ai_immersive_stage_upscale": "ವಿವರವನ್ನು ಹೆಚ್ಚಿಸಲಾಗುತ್ತಿದೆ",
   "ai_immersive_state_cancelled": "ರದ್ದುಮಾಡಲಾಗಿದೆ",
   "ai_immersive_state_computing": "ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತಿದೆ",

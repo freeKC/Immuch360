@@ -807,7 +807,6 @@
   "ai_immersive_stage_splat_photos": "ছবিগুলো প্রস্তুত করা হচ্ছে: {total}টির মধ্যে {index}",
   "ai_immersive_stage_splat_poses": "ছবিগুলো 3D-তে বসানো হচ্ছে",
   "ai_immersive_stage_splat_training": "স্প্ল্যাট প্রশিক্ষণ চলছে",
-  "ai_immersive_stage_splat_training_step": "স্প্ল্যাট প্রশিক্ষণ চলছে: {steps} ধাপের মধ্যে {step} নম্বর ধাপ",
   "ai_immersive_stage_upscale": "খুঁটিনাটি বাড়ানো হচ্ছে",
   "ai_immersive_state_cancelled": "বাতিল হয়েছে",
   "ai_immersive_state_computing": "গণনা চলছে",

@@ -813,7 +813,6 @@
   "ai_immersive_stage_splat_photos": "Se pregătesc fotografiile: {index} din {total}",
   "ai_immersive_stage_splat_poses": "Se plasează fotografiile în 3D",
   "ai_immersive_stage_splat_training": "Se antrenează splatul",
-  "ai_immersive_stage_splat_training_step": "Se antrenează splatul: pasul {step} din {steps}",
   "ai_immersive_stage_upscale": "Se mărește nivelul de detaliu",
   "ai_immersive_state_cancelled": "Anulat",
   "ai_immersive_state_computing": "Se calculează",

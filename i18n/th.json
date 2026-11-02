@@ -807,7 +807,6 @@
   "ai_immersive_stage_splat_photos": "กำลังเตรียมภาพ: {index} จาก {total}",
   "ai_immersive_stage_splat_poses": "กำลังวางภาพใน 3D",
   "ai_immersive_stage_splat_training": "กำลังฝึกสแปลต",
-  "ai_immersive_stage_splat_training_step": "กำลังฝึกสแปลต: ขั้นตอนที่ {step} จาก {steps}",
   "ai_immersive_stage_upscale": "กำลังเพิ่มรายละเอียด",
   "ai_immersive_state_cancelled": "ยกเลิกแล้ว",
   "ai_immersive_state_computing": "กำลังคำนวณ",

@@ -814,7 +814,6 @@
   "ai_immersive_stage_splat_photos": "Fotók előkészítése: {index} / {total}",
   "ai_immersive_stage_splat_poses": "A fotók 3D-elhelyezése",
   "ai_immersive_stage_splat_training": "A splat tanítása",
-  "ai_immersive_stage_splat_training_step": "A splat tanítása: {step}/{steps}. lépés",
   "ai_immersive_stage_upscale": "A részletesség növelése",
   "ai_immersive_state_cancelled": "Megszakítva",
   "ai_immersive_state_computing": "Számítás",

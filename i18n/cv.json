@@ -348,7 +348,6 @@
   "ai_immersive_stage_splat_photos": "Сӑнӳкерчӗксене хатӗрлетпӗр: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Сӑнӳкерчӗксене 3D-ра вырнаҫтаратпӑр",
   "ai_immersive_stage_splat_training": "Сплата вӗрентетпӗр",
-  "ai_immersive_stage_splat_training_step": "Сплата вӗрентетпӗр: {steps} утӑмран {step}-мӗшӗ",
   "ai_immersive_stage_upscale": "Вак-тӗвеке ӳстеретпӗр",
   "ai_immersive_state_cancelled": "Пӑрахӑҫланӑ",
   "ai_immersive_state_computing": "Шутлатпӑр",

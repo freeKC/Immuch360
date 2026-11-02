@@ -752,7 +752,6 @@
   "ai_immersive_stage_splat_photos": "Fotos werded vorbereitet: {index} vo {total}",
   "ai_immersive_stage_splat_poses": "Fotos werded in 3D platziert",
   "ai_immersive_stage_splat_training": "Splat wird trainiert",
-  "ai_immersive_stage_splat_training_step": "Splat wird trainiert: Schritt {step} vo {steps}",
   "ai_immersive_stage_upscale": "D Details wärded verbesseret",
   "ai_immersive_state_cancelled": "Abbroche",
   "ai_immersive_state_computing": "Am Rächne",

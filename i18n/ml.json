@@ -800,7 +800,6 @@
   "ai_immersive_stage_splat_photos": "ഫോട്ടോകൾ തയ്യാറാക്കുന്നു: {total}-ൽ {index}",
   "ai_immersive_stage_splat_poses": "ഫോട്ടോകൾ 3D-യിൽ സ്ഥാപിക്കുന്നു",
   "ai_immersive_stage_splat_training": "സ്പ്ലാറ്റ് പരിശീലിപ്പിക്കുന്നു",
-  "ai_immersive_stage_splat_training_step": "സ്പ്ലാറ്റ് പരിശീലിപ്പിക്കുന്നു: ഘട്ടം {step} / {steps}",
   "ai_immersive_stage_upscale": "വിശദാംശങ്ങൾ വർദ്ധിപ്പിക്കുന്നു",
   "ai_immersive_state_cancelled": "റദ്ദാക്കി",
   "ai_immersive_state_computing": "കണക്കുകൂട്ടുന്നു",

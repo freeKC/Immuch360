@@ -293,7 +293,6 @@
   "ai_immersive_stage_splat_photos": "E whakarite ana i ngā whakaahua: {index} o {total}",
   "ai_immersive_stage_splat_poses": "E whakatakoto ana i ngā whakaahua ki te 3D",
   "ai_immersive_stage_splat_training": "E whakangungu ana i te splat",
-  "ai_immersive_stage_splat_training_step": "E whakangungu ana i te splat: hipanga {step} o {steps}",
   "ai_immersive_stage_upscale": "E whakanui ana i ngā taipitopito",
   "ai_immersive_state_cancelled": "Kua whakakorea",
   "ai_immersive_state_computing": "E tātai ana",

@@ -773,7 +773,6 @@
   "ai_immersive_stage_splat_photos": "Valmistellaan kuvia: {index}/{total}",
   "ai_immersive_stage_splat_poses": "Sijoitetaan kuvia 3D:hen",
   "ai_immersive_stage_splat_training": "Opetetaan splatia",
-  "ai_immersive_stage_splat_training_step": "Opetetaan splatia: vaihe {step}/{steps}",
   "ai_immersive_stage_upscale": "Lisätään yksityiskohtia",
   "ai_immersive_state_cancelled": "Peruutettu",
   "ai_immersive_state_computing": "Lasketaan",

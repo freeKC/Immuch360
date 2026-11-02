@@ -766,7 +766,6 @@
   "ai_immersive_stage_splat_photos": "फोटो तयार करत आहे: {total} पैकी {index}",
   "ai_immersive_stage_splat_poses": "फोटो 3D मध्ये ठेवत आहे",
   "ai_immersive_stage_splat_training": "स्प्लॅटचे प्रशिक्षण",
-  "ai_immersive_stage_splat_training_step": "स्प्लॅटचे प्रशिक्षण: {steps} पैकी {step} पायरी",
   "ai_immersive_stage_upscale": "तपशील वाढवत आहे",
   "ai_immersive_state_cancelled": "रद्द केले",
   "ai_immersive_state_computing": "गणना करत आहे",
