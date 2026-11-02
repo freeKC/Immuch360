@@ -5,15 +5,25 @@
 // domain/services/raw/raw_360_detection.dart, and a thumbnail of the original would show one eye where the viewers
 // expect the pair.
 //
+// A photo prepared for a splat scene (plan 2026-11-01, lot SP5) gets another minimal EXIF, splatPhotoExif: the
+// orientation 1, the make and the model, and its focal length the way COLMAP reads it to start its cameras from
+// (Bitmap::ExifFocalLength of COLMAP 4.2.1: FocalLengthIn35mmFilm, else FocalLength with FocalPlaneXResolution, else
+// FocalLength with the sensor width of its camera database, found by make and model). The focal plane resolution is in
+// pixels of the original: it is scaled with the photo, otherwise COLMAP starts from a focal length several times too
+// long (10 221 pixels for the 1 600 pixels of the skull of the measure, about 3 830 in truth).
+//
 // The reader is a small one of its own rather than the one of the library scan (desktop/library/library_metadata.dart,
 // private to the scan) or of package:image (which turns a damaged EXIF into an exception): it reads the few tags it
 // needs, checks every offset and gives up on a tag rather than on the file.
 
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 
+const _tagMake = 0x010F;
+const _tagModel = 0x0110;
 const _tagOrientation = 0x0112;
 const _tagSoftware = 0x0131;
 const _tagExifIfd = 0x8769;
@@ -21,6 +31,10 @@ const _tagGpsIfd = 0x8825;
 const _tagExifVersion = 0x9000;
 const _tagDateTimeOriginal = 0x9003;
 const _tagOffsetTimeOriginal = 0x9011;
+const _tagFocalLength = 0x920A;
+const _tagFocalPlaneXResolution = 0xA20E;
+const _tagFocalPlaneYResolution = 0xA20F;
+const _tagFocalPlaneResolutionUnit = 0xA210;
 const _tagFocalLength35mm = 0xA405;
 const _tagGpsVersion = 0x0000;
 const _tagGpsLatitudeRef = 0x0001;
@@ -175,6 +189,137 @@ ImmersiveExif keptExif(Uint8List? exif, {String? software}) {
   );
 }
 
+/// The camera of a photo as its EXIF tells it: what COLMAP reads to start its camera from (see the top of this file).
+/// The rationals are kept as written, numerator and denominator.
+class CameraExif {
+  const CameraExif({
+    this.make,
+    this.model,
+    this.focalLength,
+    this.focalLength35mm,
+    this.focalPlaneXResolution,
+    this.focalPlaneYResolution,
+    this.focalPlaneResolutionUnit,
+  });
+
+  /// "Canon", "samsung"
+  final String? make;
+
+  /// "Canon EOS REBEL T3", "SM-S926B"
+  final String? model;
+
+  /// FocalLength, in millimetres
+  final (int, int)? focalLength;
+
+  /// FocalLengthIn35mmFilm, in millimetres
+  final int? focalLength35mm;
+
+  /// Pixels of the original a unit of [focalPlaneResolutionUnit] of the sensor holds
+  final (int, int)? focalPlaneXResolution;
+  final (int, int)? focalPlaneYResolution;
+
+  /// 2 inches, 3 centimetres, 4 millimetres, 5 micrometres
+  final int? focalPlaneResolutionUnit;
+
+  /// The focal length in millimetres, null without one
+  double? get focalLengthMm {
+    final focal = focalLength;
+    return focal == null || focal.$2 == 0 ? null : focal.$1 / focal.$2;
+  }
+
+  /// "Canon EOS REBEL T3 55 mm", "samsung SM-S926B 6.3 mm": the make left out when the model starts with it; null when
+  /// the EXIF names no camera
+  String? get label {
+    final maker = make?.trim() ?? '';
+    final camera = model?.trim() ?? '';
+    final name = camera.toLowerCase().startsWith(maker.toLowerCase()) ? camera : '$maker $camera'.trim();
+    final focal = focalLengthMm;
+    final mm = focal == null ? '' : ' ${_millimetres(focal)} mm';
+    return name.isEmpty ? (mm.isEmpty ? null : mm.trim()) : '$name$mm';
+  }
+
+  /// The same camera with the focal plane resolution of a copy [scale] times the size of the original
+  CameraExif scaled(double scale) {
+    (int, int)? scaledResolution((int, int)? resolution) => resolution == null || resolution.$2 == 0
+        ? null
+        : ((resolution.$1 / resolution.$2 * scale * 1000).round(), 1000);
+    return CameraExif(
+      make: make,
+      model: model,
+      focalLength: focalLength,
+      focalLength35mm: focalLength35mm,
+      focalPlaneXResolution: scaledResolution(focalPlaneXResolution),
+      focalPlaneYResolution: scaledResolution(focalPlaneYResolution),
+      focalPlaneResolutionUnit: focalPlaneResolutionUnit,
+    );
+  }
+}
+
+String _millimetres(double value) {
+  final rounded = (value * 10).round() / 10;
+  return rounded == rounded.roundToDouble() ? '${rounded.round()}' : '$rounded';
+}
+
+/// The camera of [exif], an APP1 payload from "Exif\0\0" on; empty when it has none or cannot be read. A zero focal
+/// length or resolution (unknown) is left out.
+CameraExif cameraExifOf(Uint8List? exif) {
+  final tiff = _Tiff.of(exif);
+  if (tiff == null) {
+    return const CameraExif();
+  }
+  final ifd0 = tiff.ifd(tiff.firstIfd);
+  final exifIfd = ifd0[_tagExifIfd] == null ? const <int, _Value>{} : tiff.ifd(tiff.integer(ifd0[_tagExifIfd]!));
+  (int, int)? rational(int tag) {
+    final value = exifIfd[tag];
+    final first = value == null ? null : tiff.rawRationals(value).firstOrNull;
+    return first == null || first.$1 == 0 || first.$2 == 0 ? null : first;
+  }
+
+  int? positive(int tag) {
+    final value = exifIfd[tag];
+    final number = value == null ? null : tiff.integer(value);
+    return number == null || number <= 0 ? null : number;
+  }
+
+  return CameraExif(
+    make: _blankToNull(ifd0[_tagMake] == null ? null : tiff.text(ifd0[_tagMake]!)),
+    model: _blankToNull(ifd0[_tagModel] == null ? null : tiff.text(ifd0[_tagModel]!)),
+    focalLength: rational(_tagFocalLength),
+    focalLength35mm: positive(_tagFocalLength35mm),
+    focalPlaneXResolution: rational(_tagFocalPlaneXResolution),
+    focalPlaneYResolution: rational(_tagFocalPlaneYResolution),
+    focalPlaneResolutionUnit: positive(_tagFocalPlaneResolutionUnit),
+  );
+}
+
+/// The APP1 payload of the EXIF of a photo prepared for a splat scene: "Exif\0\0", then little endian TIFF. IFD0
+/// holds the orientation 1, [camera]'s make and model and the pointer to the EXIF IFD (version 0232, FocalLength,
+/// FocalPlaneXResolution, FocalPlaneYResolution, FocalPlaneResolutionUnit, FocalLengthIn35mmFilm, those it has). No
+/// date, no place, no thumbnail: COLMAP needs none of them.
+Uint8List splatPhotoExif(CameraExif camera) {
+  final exifEntries = <_Entry>[
+    _Entry(_tagExifVersion, _typeUndefined, 4, ascii.encode('0232')),
+    if (camera.focalLength case final focal?) _Entry.rationals(_tagFocalLength, [focal]),
+    if (camera.focalPlaneXResolution case final x?) _Entry.rationals(_tagFocalPlaneXResolution, [x]),
+    if (camera.focalPlaneYResolution case final y?) _Entry.rationals(_tagFocalPlaneYResolution, [y]),
+    if (camera.focalPlaneResolutionUnit case final unit?) _Entry.short(_tagFocalPlaneResolutionUnit, unit),
+    if (camera.focalLength35mm case final focal?) _Entry.short(_tagFocalLength35mm, math.min(focal, 0xFFFF)),
+  ];
+  List<_Entry> ifd0(int exifAt) => [
+    if (camera.make case final make?) _Entry.ascii(_tagMake, make),
+    if (camera.model case final model?) _Entry.ascii(_tagModel, model),
+    _Entry.short(_tagOrientation, 1),
+    _Entry.long(_tagExifIfd, exifAt),
+  ];
+  final exifAt = 8 + _ifdSize(ifd0(0));
+  final tiff = BytesBuilder(copy: false)
+    ..add(const [0x49, 0x49, 0x2A, 0x00]) // "II*\0", little endian
+    ..add(_u32(8))
+    ..add(_ifd(ifd0(exifAt), 8))
+    ..add(_ifd(exifEntries, exifAt));
+  return Uint8List.fromList([..._exifHeader, ...tiff.takeBytes()]);
+}
+
 String? _blankToNull(String? text) => text == null || text.trim().isEmpty ? null : text;
 
 /// Degrees, minutes and seconds of [value] as rationals, the seconds to a ten thousandth
@@ -327,6 +472,17 @@ class _Tiff {
     final bytes = Uint8List.sublistView(data, value.offset, value.offset + value.count);
     final end = bytes.indexOf(0);
     return latin1.decode(end < 0 ? bytes : Uint8List.sublistView(bytes, 0, end)).trim();
+  }
+
+  /// The rationals of [value] as written, numerator and denominator
+  List<(int, int)> rawRationals(_Value value) {
+    if (value.type != _typeRational) {
+      return const [];
+    }
+    return [
+      for (var index = 0; index < value.count; index++)
+        (_u32(value.offset + 8 * index), _u32(value.offset + 8 * index + 4)),
+    ];
   }
 
   /// The rationals of [value], null for a zero denominator
