@@ -17,6 +17,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
+import 'package:immich_mobile/desktop/video/player_resource_options.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as mpv;
 import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
@@ -268,6 +269,44 @@ void main() {
     await player.stop();
     await native.load();
     expect(native.properties.containsKey('start'), isFalse, reason: 'a stop forgets the start of the last open');
+    await player.dispose();
+  });
+
+  test('the options of a resource (the y4m of an AV2 companion) are set for its open, and taken back after', () async {
+    const y4m = 'http://127.0.0.1:50123/AbCdEfGhIjKlMnOp0123456789abcdef/video.y4m';
+    desktopResourceOptions[y4m] = {
+      'demuxer-lavf-format': 'yuv4mpegpipe',
+      'demuxer-max-bytes': '536870912',
+      'vf': 'format=colormatrix=bt.709',
+    };
+    addTearDown(() => desktopResourceOptions.remove(y4m));
+    final player = await DesktopPlayer.withPlatform(PlayerKind.playback, native);
+    native.calls.clear();
+    await player.open(y4m, streamed: true);
+    final load = native.calls.indexOf('loadfile $y4m replace');
+    expect(
+      native.calls.indexOf('set demuxer-max-bytes=268435456'),
+      lessThan(native.calls.indexOf('set demuxer-max-bytes=536870912')),
+    );
+    for (final call in [
+      'set demuxer-lavf-format=yuv4mpegpipe',
+      'set demuxer-max-bytes=536870912',
+      'set vf=format=colormatrix=bt.709',
+    ]) {
+      expect(native.calls.indexOf(call), allOf(greaterThanOrEqualTo(0), lessThan(load)), reason: call);
+    }
+    native.calls.clear();
+    await player.open(_bridgeUrl, streamed: true);
+    expect(native.properties['demuxer-lavf-format'], '');
+    expect(native.properties['vf'], '');
+    expect(native.properties['demuxer-max-bytes'], '268435456', reason: 'the streamed cache of every open');
+    native.calls.clear();
+    await player.open(_bridgeUrl, streamed: true);
+    expect(
+      native.calls.where((call) => call.startsWith('set vf') || call.startsWith('set demuxer-lavf-format')),
+      isEmpty,
+      reason: 'nothing to take back: a filter another feature sets is left alone',
+    );
     await player.dispose();
   });
 

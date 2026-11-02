@@ -16,6 +16,7 @@
 //              damaged file
 //   no-socket  "error network no socket on 127.0.0.1", exit 4
 // IMMUCH360_FAKE_AV2_FPS sets its decoding speed in pictures per second (240 by default), which the stat lines tell;
+// --parent PID ends it when that process ends, watched on Linux only (the job object of the app does it on Windows);
 // IMMUCH360_FAKE_AV2_SIMD the level they name (avx2). Its probe reads the head of the file as the app does
 // (av2_stream.dart): an IVF gives its own size, a Section 5 stream IMMUCH360_FAKE_AV2_SIZE (256x144); the depth comes
 // from IMMUCH360_FAKE_AV2_BITS (8), since nothing is decoded. It writes its process id to the file
@@ -322,6 +323,12 @@ class _ServeOptions {
             return _ServeOptions._('--port takes a number from 0 to 65535');
           }
           options.port = n;
+        case '--parent':
+          final n = number(value, 0xffffffff);
+          if (n == null || n == 0) {
+            return _ServeOptions._('--parent takes a process id');
+          }
+          options.parent = n;
         default:
           return _ServeOptions._('an unknown option of serve');
       }
@@ -344,6 +351,7 @@ class _ServeOptions {
   var fullRange = false;
   int? frameBytes;
   var port = 0;
+  int? parent;
 }
 
 /// A request of the player: its socket and the bytes asked, [end] included
@@ -436,6 +444,7 @@ class _Server {
       'frame=${layout.frameBytes} frames=${layout.frames}',
     );
     unawaited(_readInput());
+    _watchParent();
     listener.listen((socket) => unawaited(_accept(socket)));
     if (mode == 'silent') {
       // Hangs: no line, no picture, until the standard input closes
@@ -459,6 +468,22 @@ class _Server {
         request.socket.destroy();
       }
     }
+  }
+
+  /// --parent: the end when that process ends, as the real one does; watched where /proc tells it (Linux), the job
+  /// object of the app doing it on Windows
+  void _watchParent() {
+    final parent = options.parent;
+    if (parent == null || !Platform.isLinux) {
+      return;
+    }
+    Timer.periodic(const Duration(milliseconds: 200), (_) async {
+      if (!Directory('/proc/$parent').existsSync()) {
+        _line('exit parent-gone');
+        await stdout.flush();
+        exit(_exitOk);
+      }
+    });
   }
 
   // --- the input ---------------------------------------------------------------------------------------------------
