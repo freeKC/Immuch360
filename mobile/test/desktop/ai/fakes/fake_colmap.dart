@@ -18,7 +18,10 @@
 // parse options - unrecognised option '--SiftExtraction.use_gpu'.", base_option_manager.cc:265), as it refuses a
 // value or an option the command needs that is missing. The mapper refuses an output folder that is not there
 // ("`output_path` is not a directory.", sfm.cc:363); the aligner stops on it when it writes, as the real one throws
-// there (Reconstruction::WriteBinary, read in the sources, not measured).
+// there (THROW_CHECK_DIR_EXISTS of Reconstruction::WriteBinary), an exception nothing catches: on Windows our build ends
+// with 0xC0000409 and not a word (measured on 1 November, lot SP4 review); elsewhere libstdc++ writes "terminate called
+// after throwing an instance of 'std::invalid_argument'" and its what(), then SIGABRT (read in the sources of COLMAP and
+// libstdc++, not measured).
 // IMMUCH360_FAKE_COLMAP_MODE says how it goes:
 //   ok        every image placed, in sparse/0 (the default)
 //   split     two models, as the measure saw once: sparse/0 with the 4 last images, sparse/1 with the others
@@ -27,8 +30,10 @@
 //   nomodel   no initial pair found, no model, "failed to create sparse model" and exit 1 (words of the sources of
 //             COLMAP, not seen in the measure)
 //   memory    the extraction ends as on a memory too short when it runs more threads than IMMUCH360_FAKE_COLMAP_THREADS
-//             (4 by default): 0xC0000005 on Windows (seen at 24 threads), elsewhere a SIGABRT, as a program of C++
-//             ends when an allocation fails (not measured)
+//             (4 by default): 0xC0000005 on Windows (seen at 24 threads), elsewhere a std::bad_alloc nothing caught,
+//             named by libstdc++, then SIGABRT, as a program of C++ ends when an allocation fails (not measured)
+//   abort     the extraction stops on a check that fails a third of the way (its words made up), and ends as the
+//             aligner on a folder missing
 //   fail      an error line, then exit 1 (made up)
 //   silent    the first lines of the command, then nothing until killed
 //   slow      as ok, half a second between two lines of progress (IMMUCH360_FAKE_COLMAP_STEP_MS sets it otherwise,
@@ -161,6 +166,20 @@ Future<Never> _silent() async {
   exit(0);
 }
 
+/// Ends as COLMAP does on an exception of [type] that nothing caught, [what] its message: on Windows 0xC0000409 and not
+/// a word (the runtime of Visual C++, measured on 1 November with our build); elsewhere the words of libstdc++, then
+/// SIGABRT
+Future<int> _uncaught(String type, String what) async {
+  if (Platform.isWindows) {
+    await _flush();
+    exit(-1073740791);
+  }
+  stderr.write("terminate called after throwing an instance of '$type'\n  what():  $what\n");
+  await _flush();
+  Process.killPid(pid, ProcessSignal.sigabrt);
+  return _silent();
+}
+
 Future<int> _fail(String where) async {
   _log(where, 'Failed to read the database: database disk image is malformed (fake failure)', severity: 'E');
   return 1;
@@ -213,12 +232,17 @@ Future<int> _extract(Map<String, String> options) async {
     if (_mode == 'memory' &&
         threads > (int.tryParse(Platform.environment['IMMUCH360_FAKE_COLMAP_THREADS'] ?? '') ?? 4) &&
         i >= names.length ~/ 3) {
-      await _flush();
       if (Platform.isWindows) {
+        await _flush();
         exit(-1073741819);
       }
-      Process.killPid(pid, ProcessSignal.sigabrt);
-      return _silent();
+      return _uncaught('std::bad_alloc', 'std::bad_alloc');
+    }
+    if (_mode == 'abort' && i >= names.length ~/ 3) {
+      return _uncaught(
+        'std::invalid_argument',
+        '[feature_extraction.cc:331] Check failed: ExistsDir(image_path) Image path does not exist',
+      );
     }
     _log('feature_extraction.cc:270', 'Processed file [${i + 1}/${names.length}]');
     _log('feature_extraction.cc:273', '  Name:            ${name.split('/').last}');
@@ -414,19 +438,11 @@ Future<int> _align(Map<String, String> options) async {
   _log('model.cc:882', ' 0.990996  0.123359 0.0520441\n-0.123359  0.690162  0.713063\n0.0520441 -0.713063  0.699166');
   _log('model.cc:886', 'Writing aligned reconstruction...', thread: 24084);
   if (!Directory(output).existsSync()) {
-    // THROW_CHECK_DIR_EXISTS of Reconstruction::WriteBinary, an exception nothing catches: abort()
-    _log(
-      'reconstruction.cc:1053',
-      'Check failed: colmap::ExistsDir(path_val) Directory "$output" does not exist.',
-      severity: 'E',
-      thread: 24084,
+    // THROW_CHECK_DIR_EXISTS of Reconstruction::WriteBinary, an exception nothing catches
+    return _uncaught(
+      'std::invalid_argument',
+      '[reconstruction.cc:1053] Check failed: colmap::ExistsDir(path_val) Directory "$output" does not exist.',
     );
-    await _flush();
-    if (Platform.isWindows) {
-      exit(3);
-    }
-    Process.killPid(pid, ProcessSignal.sigabrt);
-    return _silent();
   }
   model.writeTo(Directory(output), create: false);
   return 0;

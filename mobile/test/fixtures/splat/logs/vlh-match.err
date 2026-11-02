@@ -1,0 +1,29 @@
+I20261101 13:52:46.605842 22232 feature_matching.cc:196] === Feature matching & geometric verification ===
+I20261101 13:52:46.614358 35496 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614358 35532 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614358  9844 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614358 34256 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614405 34828 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614432 26032 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614437 33488 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614444  6872 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.614840 36508 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.615160 30120 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.615332 29912 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.615505 28692 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.615706  9468 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.616037 31020 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.616224 29552 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 13:52:46.630815 22232 pairing.cc:562] Processing image [1/150]
+I20261101 13:52:48.036019 22232 feature_matching.cc:218] in 1.405s
+I20261101 13:52:48.036710 22232 pairing.cc:562] Processing image [2/150]
+I20261101 13:52:49.181399 22232 feature_matching.cc:218] in 1.145s
+I20261101 13:52:49.182181 22232 pairing.cc:562] Processing image [3/150]
+I20261101 13:52:50.355161 22232 feature_matching.cc:218] in 1.173s
+I20261101 13:54:06.528583 22232 pairing.cc:562] Processing image [148/150]
+I20261101 13:54:06.639154 22232 feature_matching.cc:218] in 0.111s
+I20261101 13:54:06.639679 22232 pairing.cc:562] Processing image [149/150]
+I20261101 13:54:06.770699 22232 feature_matching.cc:218] in 0.131s
+I20261101 13:54:06.771405 22232 pairing.cc:562] Processing image [150/150]
+I20261101 13:54:06.771655 22232 feature_matching.cc:218] in 0.000s
+I20261101 13:54:06.772061 22232 timer.cc:90] Elapsed time: 1.336 [minutes]

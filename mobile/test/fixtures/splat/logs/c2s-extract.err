@@ -1,0 +1,50 @@
+I20261101 12:36:08.346174  7448 feature_extraction.cc:498] === Feature extraction ===
+I20261101 12:36:08.348653 22568 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348782 20500 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348654  4048 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348747 22072 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348819  3840 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348716 21804 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348659 16948 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348650 14944 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348653 18528 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348681 30124 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348654 26604 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:08.348983 33284 sift.cc:764] Creating SIFT CPU feature extractor
+I20261101 12:36:09.514663 24228 feature_extraction.cc:270] Processed file [1/150]
+I20261101 12:36:09.515243 24228 feature_extraction.cc:273]   Name:            DSCF4667.JPG
+I20261101 12:36:09.515546 24228 feature_extraction.cc:282]   Dimensions:      1557 x 1038
+I20261101 12:36:09.515735 24228 feature_extraction.cc:285]   Camera:          #1 - SIMPLE_RADIAL
+I20261101 12:36:09.515896 24228 feature_extraction.cc:289]   Focal Length:    1868.40px
+I20261101 12:36:09.516074 24228 feature_extraction.cc:294]   Features:        3581 (SIFT)
+I20261101 12:36:09.596411 24228 feature_extraction.cc:270] Processed file [2/150]
+I20261101 12:36:09.596875 24228 feature_extraction.cc:273]   Name:            DSCF4671.JPG
+I20261101 12:36:09.597077 24228 feature_extraction.cc:282]   Dimensions:      1557 x 1038
+I20261101 12:36:09.597446 24228 feature_extraction.cc:285]   Camera:          #1 - SIMPLE_RADIAL
+I20261101 12:36:09.597647 24228 feature_extraction.cc:289]   Focal Length:    1868.40px
+I20261101 12:36:09.597827 24228 feature_extraction.cc:294]   Features:        3659 (SIFT)
+I20261101 12:36:09.648807 24228 feature_extraction.cc:270] Processed file [3/150]
+I20261101 12:36:09.649317 24228 feature_extraction.cc:273]   Name:            DSCF4669.JPG
+I20261101 12:36:09.649717 24228 feature_extraction.cc:282]   Dimensions:      1557 x 1038
+I20261101 12:36:09.649926 24228 feature_extraction.cc:285]   Camera:          #1 - SIMPLE_RADIAL
+I20261101 12:36:09.650109 24228 feature_extraction.cc:289]   Focal Length:    1868.40px
+I20261101 12:36:09.650292 24228 feature_extraction.cc:294]   Features:        3467 (SIFT)
+I20261101 12:36:20.529090 24228 feature_extraction.cc:270] Processed file [148/150]
+I20261101 12:36:20.529347 24228 feature_extraction.cc:273]   Name:            DSCF4971.JPG
+I20261101 12:36:20.529432 24228 feature_extraction.cc:282]   Dimensions:      1557 x 1038
+I20261101 12:36:20.529510 24228 feature_extraction.cc:285]   Camera:          #1 - SIMPLE_RADIAL
+I20261101 12:36:20.529582 24228 feature_extraction.cc:289]   Focal Length:    1868.40px
+I20261101 12:36:20.529652 24228 feature_extraction.cc:294]   Features:        2091 (SIFT)
+I20261101 12:36:20.571048 24228 feature_extraction.cc:270] Processed file [149/150]
+I20261101 12:36:20.571477 24228 feature_extraction.cc:273]   Name:            DSCF4973.JPG
+I20261101 12:36:20.571947 24228 feature_extraction.cc:282]   Dimensions:      1557 x 1038
+I20261101 12:36:20.572362 24228 feature_extraction.cc:285]   Camera:          #1 - SIMPLE_RADIAL
+I20261101 12:36:20.572562 24228 feature_extraction.cc:289]   Focal Length:    1868.40px
+I20261101 12:36:20.572893 24228 feature_extraction.cc:294]   Features:        2211 (SIFT)
+I20261101 12:36:20.611461 24228 feature_extraction.cc:270] Processed file [150/150]
+I20261101 12:36:20.612055 24228 feature_extraction.cc:273]   Name:            DSCF4977.JPG
+I20261101 12:36:20.612477 24228 feature_extraction.cc:282]   Dimensions:      1557 x 1038
+I20261101 12:36:20.612898 24228 feature_extraction.cc:285]   Camera:          #1 - SIMPLE_RADIAL
+I20261101 12:36:20.613392 24228 feature_extraction.cc:289]   Focal Length:    1868.40px
+I20261101 12:36:20.613755 24228 feature_extraction.cc:294]   Features:        2533 (SIFT)
+I20261101 12:36:20.626758  7448 timer.cc:90] Elapsed time: 0.205 [minutes]

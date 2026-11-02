@@ -9,6 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 import '../fakes/fake_gpu_probe.dart';
 
@@ -107,4 +109,38 @@ void main() {
     expect(await checks.check(), isA<GpuBudgetReady>());
     expect(probe.calls, 2);
   });
+
+  test('the runner of Brush gets the card and its report, what is free, or the reason of the gate (lot SP4)', () async {
+    GpuBudget splat(GpuReport report) =>
+        GpuBudget(probe: FakeGpuProbe.of(report).probe, need: SplatV1.freeGraphicsMemory);
+
+    final ready = await brushCardOf(splat(FakeGpuReports.twoCards));
+    expect(ready, isA<BrushCardReady>());
+    expect((ready as BrushCardReady).card.name, rtx4060Laptop.name);
+    expect(ready.report.adapters, hasLength(2));
+    // 2.0 GiB free under the 2.5 GiB of a splat scene
+    final wait = await brushCardOf(splat(FakeGpuReports.rtx4060Busy));
+    expect((wait as BrushCardWait).free, 2000 * _mib);
+    expect(await brushCardOf(splat(FakeGpuReports.noDevice)), isA<BrushCardRefused>());
+    expect((await brushCardOf(splat(FakeGpuReports.integratedOnly)) as BrushCardRefused).reason, 'gpuIntegrated');
+  });
+
+  test(
+    'the rule that chooses the card is the one given, that of the panoramas unless told (lot SP4, for SP6)',
+    () async {
+      final seen = <GpuReport>[];
+      final budget = GpuBudget(
+        probe: FakeGpuProbe.of(FakeGpuReports.twoCards).probe,
+        need: 0,
+        cardOf: (report, {required integratedAllowed}) {
+          seen.add(report);
+          return (card: null, refusal: AiGateReason.gpuTooSmall);
+        },
+      );
+      final check = await budget.check();
+      expect((check as GpuBudgetUnavailable).reason, AiGateReason.gpuTooSmall);
+      expect(seen, hasLength(1));
+      expect(GpuBudget(probe: FakeGpuProbe.of(FakeGpuReports.twoCards).probe).cardOf, panoramaCardOf);
+    },
+  );
 }

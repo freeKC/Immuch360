@@ -1,0 +1,53 @@
+I20261101 12:36:21.962697 18264 feature_matching.cc:196] === Feature matching & geometric verification ===
+I20261101 12:36:21.965814 27092 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965824 11928 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965834 31288 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965853 35544 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965853 27796 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965870  3416 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965869 35660 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965885 32984 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965883 29996 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965895 10564 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965866 29428 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965868 27332 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965904 13428 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965890 25512 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.965963  3488 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966069 35260 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966256 28628 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966283 35804 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966342 35676 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966354 35552 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966551 35508 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966580 31660 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966614 12232 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966641 14920 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966668 29456 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.966919 21712 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.967036 23812 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.967060 29136 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.967123 26672 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.967232 20064 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.967389 12092 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.967922 20476 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261101 12:36:21.971897 18264 pairing.cc:181] Generating exhaustive image pairs...
+I20261101 12:36:21.972075 18264 pairing.cc:214] Processing block [1/3, 1/3]
+I20261101 12:36:43.524829 18264 feature_matching.cc:218] in 21.553s
+I20261101 12:36:43.525344 18264 pairing.cc:214] Processing block [1/3, 2/3]
+I20261101 12:37:08.016559 18264 feature_matching.cc:218] in 24.491s
+I20261101 12:37:08.017366 18264 pairing.cc:214] Processing block [1/3, 3/3]
+I20261101 12:37:31.156696 18264 feature_matching.cc:218] in 23.139s
+I20261101 12:37:31.157212 18264 pairing.cc:214] Processing block [2/3, 1/3]
+I20261101 12:38:02.143911 18264 feature_matching.cc:218] in 30.987s
+I20261101 12:38:02.144363 18264 pairing.cc:214] Processing block [2/3, 2/3]
+I20261101 12:38:23.729271 18264 feature_matching.cc:218] in 21.585s
+I20261101 12:38:23.729912 18264 pairing.cc:214] Processing block [2/3, 3/3]
+I20261101 12:38:39.978911 18264 feature_matching.cc:218] in 16.249s
+I20261101 12:38:39.979722 18264 pairing.cc:214] Processing block [3/3, 1/3]
+I20261101 12:39:02.437780 18264 feature_matching.cc:218] in 22.458s
+I20261101 12:39:02.438511 18264 pairing.cc:214] Processing block [3/3, 2/3]
+I20261101 12:39:25.545680 18264 feature_matching.cc:218] in 23.107s
+I20261101 12:39:25.546102 18264 pairing.cc:214] Processing block [3/3, 3/3]
+I20261101 12:39:35.783470 18264 feature_matching.cc:218] in 10.237s
+I20261101 12:39:35.784096 18264 timer.cc:90] Elapsed time: 3.230 [minutes]

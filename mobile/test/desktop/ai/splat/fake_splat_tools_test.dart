@@ -267,9 +267,16 @@ void main() {
         '--method',
         'IMAGE-ORIENTATION',
       ]);
-      expect(aligned.exitCode, Platform.isWindows ? 3 : -ProcessSignal.sigabrt.signalNumber);
-      expect('${aligned.stderr}', contains('Writing aligned reconstruction...'));
-      expect('${aligned.stderr}', contains('does not exist.'));
+      // An exception nothing caught: on Windows 0xC0000409 and not a word, as our build was measured on 1 November;
+      // elsewhere libstdc++ names it, then SIGABRT
+      expect(aligned.exitCode, Platform.isWindows ? -1073740791 : -ProcessSignal.sigabrt.signalNumber);
+      expect('${aligned.stderr}', contains('] Writing aligned reconstruction...'));
+      if (Platform.isWindows) {
+        expect(LineSplitter.split('${aligned.stderr}').last, endsWith('] Writing aligned reconstruction...'));
+      } else {
+        expect('${aligned.stderr}', contains("terminate called after throwing an instance of 'std::invalid_argument'"));
+        expect('${aligned.stderr}', contains('Check failed: colmap::ExistsDir(path_val)'));
+      }
       expect(Directory(path('dataset/sparse/0')).existsSync(), isFalse);
     }, skip: _skipColmap);
 
@@ -308,10 +315,33 @@ void main() {
       photos(12);
       final crashed = colmap(extract(threads: 8), mode: 'memory');
 
+      // On Windows an access violation, as measured at 24 threads; elsewhere a std::bad_alloc nothing caught, which
+      // libstdc++ names before its SIGABRT
       expect(crashed.exitCode, Platform.isWindows ? -1073741819 : -ProcessSignal.sigabrt.signalNumber);
       expect('${crashed.stderr}', contains('Processed file [1/12]'));
       expect('${crashed.stderr}', isNot(contains('Processed file [12/12]')));
+      if (!Platform.isWindows) {
+        expect('${crashed.stderr}', contains("terminate called after throwing an instance of 'std::bad_alloc'"));
+      }
       expect(colmap(extract(threads: 4), mode: 'memory').exitCode, 0);
+    }, skip: _skipColmap);
+
+    test('a check that fails ends as an exception nothing caught: 0xC0000409 with no word on Windows', () {
+      photos(12);
+      final aborted = colmap(extract(), mode: 'abort');
+
+      expect(aborted.exitCode, Platform.isWindows ? -1073740791 : -ProcessSignal.sigabrt.signalNumber);
+      expect('${aborted.stderr}', contains('Processed file [1/12]'));
+      expect('${aborted.stderr}', isNot(contains('Processed file [12/12]')));
+      if (Platform.isWindows) {
+        expect('${aborted.stderr}', isNot(contains('Check failed')));
+        expect('${aborted.stderr}', isNot(contains('terminate called')));
+      } else {
+        expect('${aborted.stderr}', contains("terminate called after throwing an instance of 'std::invalid_argument'"));
+        expect('${aborted.stderr}', contains('Check failed'));
+        expect('${aborted.stderr}', isNot(contains('bad_alloc')));
+      }
+      expect(File(path('database.db')).existsSync(), isFalse);
     }, skip: _skipColmap);
 
     test('a failure, a missing folder, and its process id', () {

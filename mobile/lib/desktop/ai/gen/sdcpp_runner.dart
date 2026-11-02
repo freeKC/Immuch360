@@ -15,7 +15,8 @@
 //    so it never becomes a file;
 //  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read), generatorStalled
 //    after 180 s without a line, generatorFailed with the end of its error output, cancelled within a second of the
-//    flag; the process is killed in every case where it still runs;
+//    flag; the process is killed in every case where it still runs (the run of a program, its watch of the silence
+//    and of the flag, is SidecarRun of process/sidecar_run.dart since lot SP4, shared with COLMAP and Brush);
 //  - the image it wrote is checked (image_checks.dart, in an isolate of its own): its size, not grey, no pure green
 //    left outside the photo; a refused image, or a file that does not decode, is deleted and outputRejected (the
 //    engine of P3 makes it once more, then gives up).
@@ -28,6 +29,7 @@ import 'dart:math' as math;
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gen/image_checks.dart';
+import 'package:immich_mobile/desktop/ai/process/sidecar_run.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
@@ -184,126 +186,43 @@ List<String> sdCppUpscaleArguments(SdCppSettings settings, UpscaleRequest reques
   request.outputPath,
 ];
 
+/// sd-cli to its run (process/sidecar_run.dart): its failures, the texts of a memory too short, and the end of its
+/// output without its bars
+const sdCppProgram = SidecarProgram(
+  name: 'sd-cli',
+  failed: ImmersiveErrorCode.generatorFailed,
+  stalled: ImmersiveErrorCode.generatorStalled,
+  outOfMemoryTexts: sdCppOutOfMemoryTexts,
+  tailLines: sdCppErrorTailLines,
+  inTail: _inSdCppTail,
+);
+
+bool _inSdCppTail(String line) => sdCppBarOf(line) == null && !line.contains('MB/s');
+
 /// One run of sd-cli to its end, read as it goes
-class _SdCppRun {
-  _SdCppRun({
-    required this.runner,
-    required this.settings,
-    required this.arguments,
-    required this.workFolder,
-    required this.cancel,
-    required this.elapsed,
-    required this.onLine,
-  });
-
-  final ProcessRunner runner;
-  final SdCppSettings settings;
-  final List<String> arguments;
-  final String workFolder;
-  final NativeCancelFlag cancel;
-  final Duration Function() elapsed;
-
-  /// Each line of either output; returns a failure to stop the run with, or null to go on
-  final BackendException? Function(String line) onLine;
-
-  final _errorTail = <String>[];
-  final _outputTail = <String>[];
-  var _outOfMemory = false;
-  BackendException? _stop;
-
-  /// The end of the error output, or of the output when the error output said nothing
-  String get tail => (_errorTail.isNotEmpty ? _errorTail : _outputTail).join('\n');
-
-  void _remember(List<String> tail, String line) {
-    if (line.trim().isEmpty || sdCppBarOf(line) != null || line.contains('MB/s')) {
-      return;
-    }
-    tail.add(line);
-    if (tail.length > sdCppErrorTailLines) {
-      tail.removeAt(0);
-    }
-  }
-
-  Future<void> run() async {
-    if (cancel.isCancelled) {
-      throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled before sd-cli started');
-    }
-    final RunningProcess process;
-    try {
-      process = await runner.start(
-        ProcessLaunch(
-          executable: settings.sdCli,
-          arguments: arguments,
-          workingDirectory: workFolder,
-          environment: settings.environment,
-        ),
-      );
-    } on ProcessException catch (error) {
-      throw BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli could not start: ${error.message}');
-    }
-    var lastLine = elapsed();
-    void stop(BackendException reason) {
-      if (_stop == null) {
-        _stop = reason;
-        process.kill();
-      }
-    }
-
-    void read(String line, {required bool isError}) {
-      // Once stopped, what was still in the pipes says nothing more: no progress after a refusal
-      if (_stop != null) {
-        return;
-      }
-      lastLine = elapsed();
-      _remember(isError ? _errorTail : _outputTail, line);
-      if (sdCppOutOfMemoryTexts.any(line.contains)) {
-        _outOfMemory = true;
-      }
-      final failure = onLine(line);
-      if (failure != null) {
-        stop(failure);
-      }
-    }
-
-    final outputs = [
-      process.stdoutLines.listen((line) => read(line, isError: false)).asFuture<void>(),
-      process.stderrLines.listen((line) => read(line, isError: true)).asFuture<void>(),
-    ];
-    final watch = Timer.periodic(settings.pollInterval, (_) {
-      if (cancel.isCancelled) {
-        stop(const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled'));
-      } else if (elapsed() - lastLine > settings.stallTimeout) {
-        stop(
-          BackendException(
-            ImmersiveErrorCode.generatorStalled,
-            'sd-cli wrote nothing for ${settings.stallTimeout.inSeconds} s and was stopped',
-          ),
-        );
-      }
-    });
-    final int code;
-    try {
-      code = await process.exitCode;
-      await Future.wait(outputs).timeout(const Duration(seconds: 5), onTimeout: () => const []);
-    } finally {
-      watch.cancel();
-    }
-    final stopped = _stop;
-    if (stopped != null) {
-      throw stopped;
-    }
-    if (code != 0) {
-      throw _outOfMemory
-          ? BackendException(ImmersiveErrorCode.gpuOutOfMemory, tail)
-          : BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended with $code: $tail');
-    }
-  }
-}
-
-Duration Function() _stopwatch() {
-  final watch = Stopwatch()..start();
-  return () => watch.elapsed;
-}
+SidecarRun _sdCppRun({
+  required ProcessRunner runner,
+  required SdCppSettings settings,
+  required List<String> arguments,
+  required String workFolder,
+  required NativeCancelFlag cancel,
+  required Duration Function() elapsed,
+  required BackendException? Function(String line) onLine,
+}) => SidecarRun(
+  runner: runner,
+  program: sdCppProgram,
+  launch: ProcessLaunch(
+    executable: settings.sdCli,
+    arguments: arguments,
+    workingDirectory: workFolder,
+    environment: settings.environment,
+  ),
+  cancel: cancel,
+  elapsed: elapsed,
+  stallTimeout: settings.stallTimeout,
+  pollInterval: settings.pollInterval,
+  onLine: (line, {required isError}) => onLine(line),
+);
 
 /// The generator of a panorama: klein base 4B with the 360 ERP LoRA, through sd-cli
 class SdCppGenerator implements GeneratorBackend {
@@ -314,7 +233,7 @@ class SdCppGenerator implements GeneratorBackend {
     required this.loraSha256,
     Duration Function()? elapsed,
     this.checkImages = true,
-  }) : _elapsed = elapsed ?? _stopwatch();
+  }) : _elapsed = elapsed ?? sidecarStopwatch();
 
   final ProcessRunner runner;
   final SdCppSettings settings;
@@ -344,7 +263,7 @@ class SdCppGenerator implements GeneratorBackend {
     }
     var sampling = false;
     var done = 0;
-    await _SdCppRun(
+    await _sdCppRun(
       runner: runner,
       settings: settings,
       arguments: argumentsOf(request),
@@ -407,7 +326,7 @@ Future<GeneratedImageReport> checkGeneratedFileInIsolate(String path, {String? c
 /// The upscale of a panorama: Real-ESRGAN x4plus through sd-cli
 class SdCppUpscaler implements UpscaleBackend {
   SdCppUpscaler({required this.runner, required this.settings, required this.modelSha256, Duration Function()? elapsed})
-    : _elapsed = elapsed ?? _stopwatch();
+    : _elapsed = elapsed ?? sidecarStopwatch();
 
   final ProcessRunner runner;
   final SdCppSettings settings;
@@ -434,7 +353,7 @@ class SdCppUpscaler implements UpscaleBackend {
     }
     var tiling = false;
     var done = 0;
-    await _SdCppRun(
+    await _sdCppRun(
       runner: runner,
       settings: settings,
       arguments: argumentsOf(request),
