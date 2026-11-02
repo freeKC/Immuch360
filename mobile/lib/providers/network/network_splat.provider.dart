@@ -29,6 +29,11 @@ final networkSplatsEnabledProvider = Provider<bool>((ref) {
 /// [path] without a share
 typedef SplatFileKey = ({String? sourceId, String path, int? size});
 
+/// The path of a splat file given to the program (computers) whose page opens the scene at once, as a tap on a splat
+/// does (plan decision 6; the page stays for the files the gate refuses, with the reason); the page that shows the
+/// file takes it, once
+final splatExploreAtOnceProvider = StateProvider<String?>((ref) => null);
+
 /// What the head of the splat file of [key] says (see probeSplatHead). Tests replace it.
 final splatProbeProvider = FutureProvider.autoDispose.family<SplatProbe, SplatFileKey>((ref, key) async {
   final sourceId = key.sourceId;

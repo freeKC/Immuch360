@@ -1,8 +1,8 @@
 // How a computer opens the files given to the program (see opened_files.dart for how each one is read): the command
 // line of the first start, the files a later start hands over and the files dropped on the window, a batch at a time,
 // once a session is open. One photo or video opens in the viewer, in 360° when it is a 360° file; one splat file (.spz,
-// .ply) on its page; several files, or a folder, open as a page of their own, like a folder of the library, without
-// joining it.
+// .ply) in the splat viewer, as a tap on a splat, its page staying under it (and saying why when the gate refuses
+// it); several files, or a folder, open as a page of their own, like a folder of the library, without joining it.
 
 import 'dart:async';
 import 'dart:collection';
@@ -263,11 +263,13 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
 
   Future<void> _open(List<String> paths) async {
     final router = _ref.read(appRouterProvider);
-    // A splat file given alone opens on its page, which offers Explore the splat scene, when the splats are on
+    // A splat file given alone opens in the splat viewer from its page, which stays under it with Explore the splat
+    // scene (or the reason the gate refuses it), when the splats are on
     if (paths.length == 1 && isSplatFilePath(paths.single) && _ref.read(networkSplatsEnabledProvider)) {
       await _whenAppShown(router);
       final path = paths.single;
       _log.info('Opening a splat file given to the program');
+      _ref.read(splatExploreAtOnceProvider.notifier).state = path;
       await router.replaceAll([const TabShellRoute(), SplatRoute(key: UniqueKey(), path: path, size: _sizeOf(path))]);
       return;
     }

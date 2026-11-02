@@ -25,6 +25,7 @@ import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 
 import 'network_viewer_fakes.dart';
@@ -412,6 +413,60 @@ void main() {
         expect(viewing.look.gyroscope, isFalse);
         expect(viewing.look.maxStdDev, closeTo(2.828, 0.001));
         debugDefaultTargetPlatformOverride = null;
+      });
+
+      group('a splat given to the program (a computer)', () {
+        late Directory folder;
+
+        setUp(() => folder = Directory.systemTemp.createTempSync('splat-given'));
+        tearDown(() => folder.deleteSync(recursive: true));
+
+        Future<ProviderContainer> pumpGiven(WidgetTester tester, File file, {String? expected}) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          await pumpNetworkRouter(
+            tester,
+            home: SplatPage(path: file.path, size: file.lengthSync()),
+            overrides: [...flat(), splatExploreAtOnceProvider.overrideWith((ref) => file.path)],
+            settle: false,
+          );
+          // The file is read off the test zone, the page waiting meanwhile
+          for (var i = 0; i < 20 && find.byKey(exploreSplatButtonKey).evaluate().isEmpty; i++) {
+            await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+            await tester.pump();
+          }
+          await tester.pumpAndSettle();
+          return ProviderScope.containerOf(tester.element(find.byType(SplatPage)));
+        }
+
+        testWidgets('opens the scene at once, as a tap does, the page staying under it; once', (tester) async {
+          // Plan decision 6: the splat page stays for the files the gate refuses
+          final file = File('${folder.path}/axes_v3.spz')..writeAsBytesSync(_fixture('axes_v3.spz'));
+          final container = await pumpGiven(tester, file);
+
+          expect(viewings.shown, hasLength(1));
+          expect(viewings.shown.single.source.path, file.path);
+          expect(viewings.shown.single.source.sourceId, isNull);
+          expect(viewings.shown.single.look.device, 'computer');
+          expect(viewings.shown.single.look.pixelRatioMax, 2);
+          expect(container.read(splatExploreAtOnceProvider), isNull);
+          expect(find.byKey(exploreSplatButtonKey), findsOneWidget);
+          // Built again, the page opens nothing more
+          await tester.pump();
+          await tester.pumpAndSettle();
+          expect(viewings.shown, hasLength(1));
+          debugDefaultTargetPlatformOverride = null;
+        });
+
+        testWidgets('a file the gate refuses stays on its page with the reason', (tester) async {
+          final file = File('${folder.path}/packed.ply')..writeAsBytesSync(_fixture('compressed.ply'));
+          await pumpGiven(tester, file);
+
+          expect(viewings.shown, isEmpty);
+          expect(button(tester).onPressed, isNull);
+          expect(find.byKey(splatRefusalKey), findsOneWidget);
+          debugDefaultTargetPlatformOverride = null;
+        });
       });
 
       testWidgets('on Linux, a window closed without a picture names the variable of WebKitGTK', (tester) async {

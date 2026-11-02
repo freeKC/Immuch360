@@ -556,7 +556,7 @@ void main() {
       expect(toasts.errors, hasLength(1));
     });
 
-    test('one splat file opens on its page, which offers Explore the splat scene', () async {
+    test('one splat file opens on its page, which shows the scene at once as a tap does', () async {
       await container.read(localSessionProvider.notifier).enter();
       final splat = p.join(directory.path, 'cactus.SPZ');
       File(splat).writeAsBytesSync(List.filled(1234, 0));
@@ -570,6 +570,8 @@ void main() {
       expect(args.path, splat);
       expect(args.size, 1234);
       expect(args.sourceId, isNull);
+      // The page opens the viewer for this file once it read its head (plan decision 6), the gate permitting
+      expect(container.read(splatExploreAtOnceProvider), splat);
       expect(toasts.errors, isEmpty);
     });
 

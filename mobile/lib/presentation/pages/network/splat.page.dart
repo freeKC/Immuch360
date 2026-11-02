@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -85,6 +86,20 @@ class SplatPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final probe = ref.watch(splatProbeProvider((sourceId: sourceId, path: path, size: size)));
     final value = probe.valueOrNull;
+    // A splat given to the program opens at once, as a tap on a splat does; once
+    if (value != null && sourceId == null && ref.watch(splatExploreAtOnceProvider) == path) {
+      final request = splatVerdictOf(ref, value, name: _name, fileBytes: size ?? _localSize() ?? 1)?.request;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final once = ref.read(splatExploreAtOnceProvider.notifier);
+        if (!context.mounted || once.state != path) {
+          return;
+        }
+        once.state = null;
+        if (request != null) {
+          unawaited(_open(context, ref, request, value));
+        }
+      });
+    }
     final Widget body;
     if (value != null) {
       body = _SplatDetails(
