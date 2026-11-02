@@ -223,8 +223,9 @@ void main() {
 
   test('the releases named are those the builds download', () {
     final cmake = File('packages/media_kit_libs_windows_video/windows/CMakeLists.txt').readAsStringSync();
-    final swift = File('packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Package.swift')
-        .readAsStringSync();
+    final swift = File(
+      'packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Package.swift',
+    ).readAsStringSync();
 
     expect(RegExp(r'set\(IMMUCH360_LIBMPV_TAG "([^"]+)"\)').firstMatch(cmake)?.group(1), windowsLibmpvRelease);
     expect(RegExp(r'let libmpvTag = "([^"]+)"').firstMatch(swift)?.group(1), macosLibmpvRelease);
