@@ -147,4 +147,68 @@ void main() {
       expect(kept.longitude, isNull);
     });
   });
+
+  group('the EXIF of a photo prepared for a splat scene', () {
+    test('keeps the camera and the focal length COLMAP reads, the orientation 1, nothing else', () {
+      const camera = CameraExif(
+        make: 'Canon',
+        model: 'Canon EOS REBEL T3',
+        focalLength: (55, 1),
+        focalLength35mm: 88,
+        focalPlaneXResolution: (4272000, 866),
+        focalPlaneYResolution: (2848000, 577),
+        focalPlaneResolutionUnit: 2,
+      );
+      final exif = splatPhotoExif(camera);
+      final read = readByPackageImage(exif);
+      expect(read.imageIfd.orientation, 1);
+      expect(read.imageIfd['Make']!.toString(), 'Canon');
+      expect(read.imageIfd['Model']!.toString(), 'Canon EOS REBEL T3');
+      expect(read.exifIfd['FocalLength']!.toRational().toDouble(), 55);
+      expect(read.exifIfd['FocalLengthIn35mmFilm']!.toInt(), 88);
+      expect(read.exifIfd['FocalPlaneXResolution']!.toRational().toDouble(), closeTo(4933.03, 0.01));
+      expect(read.exifIfd['FocalPlaneResolutionUnit']!.toInt(), 2);
+      expect(read.exifIfd['DateTimeOriginal'], isNull);
+      expect(read.gpsIfd.isEmpty, isTrue);
+      expect(read.imageIfd['Software'], isNull);
+      // And our reader reads it back as written
+      final back = cameraExifOf(exif);
+      expect(back.make, 'Canon');
+      expect(back.model, 'Canon EOS REBEL T3');
+      expect(back.focalLength, (55, 1));
+      expect(back.focalLength35mm, 88);
+      expect(back.focalPlaneXResolution, (4272000, 866));
+      expect(back.focalPlaneYResolution, (2848000, 577));
+      expect(back.focalPlaneResolutionUnit, 2);
+      expect(back.label, 'Canon EOS REBEL T3 55 mm');
+    });
+
+    test('scales the focal plane resolution with the photo, never the focal length', () {
+      const camera = CameraExif(make: 'Canon', model: 'X', focalLength: (55, 1), focalPlaneXResolution: (4272000, 866));
+      final scaled = camera.scaled(1600 / 4272);
+      final resolution = scaled.focalPlaneXResolution!;
+      // COLMAP: 55 mm x 4933.03 / 25.4 pixels a millimetre = 10 682 pixels for the original of 4 272, 4 001 for 1 600
+      expect(55 * resolution.$1 / resolution.$2 / 25.4, closeTo(55 * 4272000 / 866 / 25.4 * 1600 / 4272, 0.01));
+      expect(scaled.focalLength, (55, 1));
+      expect(scaled.focalPlaneYResolution, isNull);
+    });
+
+    test('reads what a photo of a camera says, and nothing when it says nothing', () {
+      final image = img.Image(width: 8, height: 8);
+      image.exif.imageIfd['Make'] = 'samsung';
+      image.exif.imageIfd['Model'] = 'SM-S926B';
+      image.exif.exifIfd['FocalLength'] = img.IfdValueRational(630, 100);
+      image.exif.exifIfd['FocalLengthIn35mmFilm'] = img.IfdValueShort(23);
+      final header = JpegHeader.read(img.encodeJpg(image));
+      final camera = cameraExifOf(header.exif);
+      expect(
+        (camera.make, camera.model, camera.focalLength, camera.focalLength35mm),
+        ('samsung', 'SM-S926B', (630, 100), 23),
+      );
+      expect(camera.focalPlaneXResolution, isNull);
+      expect(camera.label, 'samsung SM-S926B 6.3 mm');
+      expect(cameraExifOf(null).label, isNull);
+      expect(cameraExifOf(Uint8List.fromList([1, 2, 3])).make, isNull);
+    });
+  });
 }

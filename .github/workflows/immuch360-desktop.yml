@@ -565,12 +565,14 @@ jobs:
       # The tests of test/desktop that need a real libmpv, skipped by the test job (no libmpv there), here with the
       # libmpv1 of Ubuntu 22.04, the oldest the packages accept (libmpv_for_tests.dart): FFmpeg's answer to a camera's
       # Digest challenge (the Tapo live view), the references a file may not open, the app's player on a path and
-      # through the media bridge (the folders, the shares and the server)
+      # through the media bridge (the folders, the shares and the server), and the frames of a splat scene taken from a
+      # video filmed upright (exact seeks and frame steps, the rotation of the file, the sharpest moment kept)
       - name: Desktop tests on the system's libmpv
         working-directory: mobile
         run: |
           mise exec -- flutter test test/desktop/video/camera_live_libmpv_test.dart \
-            test/desktop/video/mpv_references_test.dart test/desktop/video/desktop_player_libmpv_test.dart
+            test/desktop/video/mpv_references_test.dart test/desktop/video/desktop_player_libmpv_test.dart \
+            test/desktop/ai/splat/video_frames_libmpv_test.dart
 
       # The probe of the graphics cards of the AI features (lot C6, linux/runner/gpu_probe.cc): the app of the bundle
       # started with --immuch360-gpu-probe=<file> must answer within 10 s without crashing; the runner has no graphics
@@ -943,15 +945,17 @@ jobs:
       # no account or rtsp:// address in mpv's lines (camera_live_libmpv_test), the references a file may not open
       # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_libmpv_test),
       # the GLSL of renderer C compiled and drawn by ANGLE (plugin_shaders_windows_test: the hosted runners have no GPU,
-      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software). The tests that need a
-      # GPU's video decoder or mpv drawing into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
+      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software), the frames of a splat
+      # scene taken from a video filmed upright (video_frames_libmpv_test). The tests that need a GPU's video decoder
+      # or mpv drawing into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
       - name: Desktop tests on the build (libmpv, ANGLE)
         working-directory: mobile
         env:
           IMMUCH360_BUILD_DIR: build/windows/x64/runner/Release
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
-            test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart
+            test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart \
+            test/desktop/ai/splat/video_frames_libmpv_test.dart
 
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
