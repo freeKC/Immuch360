@@ -45,6 +45,7 @@ void main() {
     SidecarProgram program = _program,
     void Function(int pid)? onStarted,
     File? log,
+    String? label,
   }) => SidecarRun(
     runner: runner,
     program: program,
@@ -56,6 +57,7 @@ void main() {
     onStarted: onStarted,
     stallTimeout: const Duration(seconds: 600),
     log: log,
+    label: label,
   );
 
   test('gives each line with its output and ends quietly on 0; the launch is the one it was given', () async {
@@ -204,9 +206,72 @@ void main() {
         failure,
         isA<BackendException>()
             .having((e) => e.code, 'code', ImmersiveErrorCode.posesStalled)
-            .having((e) => e.message, 'message', 'COLMAP wrote nothing for 600 s and was stopped'),
+            .having(
+              (e) => e.message,
+              'message',
+              'COLMAP wrote nothing for 600 s and was stopped; its last lines:\nstart',
+            ),
       );
     });
+  });
+
+  test('the messages name the command of the program when given, and a silence tells the last lines before it', () {
+    fakeAsync((async) {
+      final runner = FakeProcessRunner([
+        const FakeProcessScript(
+          lines: [
+            ('Generating exhaustive image pairs...', isError: true),
+            ('Processing block [2/9, 4/9]', isError: true),
+            ('in 21.304s', isError: true),
+            ('Processing block [2/9, 5/9]', isError: true),
+          ],
+          hangs: true,
+        ),
+      ]);
+      Object? failure;
+      unawaited(
+        run(
+          runner,
+          elapsed: () => async.elapsed,
+          label: 'COLMAP (exhaustive_matcher)',
+        ).run().then<void>((_) {}, onError: (Object error) => failure = error),
+      );
+      async.elapse(const Duration(seconds: 601));
+      expect(
+        failure,
+        isA<BackendException>()
+            .having((e) => e.code, 'code', ImmersiveErrorCode.posesStalled)
+            .having(
+              (e) => e.message,
+              'message',
+              'COLMAP (exhaustive_matcher) wrote nothing for 600 s and was stopped; its last lines:\n'
+                  'Processing block [2/9, 4/9]\nin 21.304s\nProcessing block [2/9, 5/9]',
+            ),
+      );
+    });
+  });
+
+  test('an exit code other than 0, and a program that cannot start, name the command when given', () async {
+    final runner = FakeProcessRunner([
+      const FakeProcessScript(
+        lines: [('E20261101 database.cc:300] Failed to open the database', isError: true)],
+        exitCode: 1,
+      ),
+    ]);
+    await expectLater(
+      run(runner, label: 'COLMAP (mapper)').run(),
+      throwsA(
+        isA<SidecarFailure>().having(
+          (e) => e.message,
+          'message',
+          'COLMAP (mapper) ended with 1: E20261101 database.cc:300] Failed to open the database',
+        ),
+      ),
+    );
+    await expectLater(
+      run(_FailingRunner(), label: 'COLMAP (mapper)').run(),
+      throwsA(isA<SidecarFailure>().having((e) => e.message, 'message', 'COLMAP (mapper) could not start: not found')),
+    );
   });
 
   test('cancelled, it is stopped within the interval of the watch; cancelled before, nothing starts', () async {

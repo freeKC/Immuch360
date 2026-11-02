@@ -212,7 +212,7 @@ void main() {
           throwsA(
             isA<BackendException>()
                 .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-                .having((e) => e.message, 'message', startsWith('COLMAP (features) aborted with $code: ')),
+                .having((e) => e.message, 'message', startsWith('COLMAP (feature_extractor) aborted with $code: ')),
           ),
         );
         // Started again once with half the threads on Windows, where a std::bad_alloc says nothing either

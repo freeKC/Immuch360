@@ -9,12 +9,14 @@
 //    lines of the error output, or of the output when the error output said nothing;
 //  - the cancel flag and the silence are looked at every 200 ms: cancelled, the program is killed within a second;
 //    silent for longer than its program allows (180 s for sd-cli, 600 s for COLMAP, 300 s for Brush), it is killed and
-//    the run fails as stalled; the caller may look too at each tick (Brush, held by Windows Error Reporting after a
-//    panic, is killed without waiting for its end);
+//    the run fails as stalled, with the last lines it wrote; the caller may look too at each tick (Brush, held by
+//    Windows Error Reporting after a panic, is killed without waiting for its end);
 //  - an exit code other than 0 is named: out of memory when a line said so, otherwise failed with the end of the
 //    output, the code kept on the failure (SidecarFailure), so that COLMAP can start again with fewer threads after a
 //    crash for want of memory;
-//  - each line is written to a log file when one is given (the logs a splat scene keeps in its work folder).
+//  - each line is written to a log file when one is given (the logs a splat scene keeps in its work folder);
+//  - the messages name the program by its label: its name, or the command of it that runs ("COLMAP (mapper)"), so
+//    that a failure says which of a program's commands went wrong.
 
 import 'dart:async';
 import 'dart:io';
@@ -83,7 +85,8 @@ class SidecarRun {
     this.onTick,
     this.onStarted,
     this.log,
-  });
+    String? label,
+  }) : label = label ?? program.name;
 
   final ProcessRunner runner;
   final SidecarProgram program;
@@ -109,6 +112,9 @@ class SidecarRun {
   /// Where each line is written as it comes, when given (appended)
   final File? log;
 
+  /// The program in the messages: its name by default, "COLMAP (exhaustive_matcher)" for a command of COLMAP
+  final String label;
+
   final _errorTail = <String>[];
   final _outputTail = <String>[];
   var _outOfMemory = false;
@@ -129,7 +135,7 @@ class SidecarRun {
   }
 
   Future<void> run() async {
-    final name = program.name;
+    final name = label;
     if (cancel.isCancelled) {
       throw BackendException(ImmersiveErrorCode.cancelled, 'Cancelled before $name started');
     }
@@ -183,7 +189,14 @@ class SidecarRun {
       if (cancel.isCancelled) {
         stop(const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled'));
       } else if (elapsed() - lastLine > stallTimeout) {
-        stop(BackendException(program.stalled, '$name wrote nothing for ${stallTimeout.inSeconds} s and was stopped'));
+        final said = tail;
+        stop(
+          BackendException(
+            program.stalled,
+            '$name wrote nothing for ${stallTimeout.inSeconds} s and was stopped'
+            '${said.isEmpty ? '' : '; its last lines:\n$said'}',
+          ),
+        );
       } else if (_stop == null) {
         final failure = onTick?.call();
         if (failure != null) {

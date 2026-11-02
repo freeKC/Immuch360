@@ -397,7 +397,11 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.outOfMemory)
-              .having((e) => e.message, 'message', startsWith('COLMAP (features) crashed with -6 at 2 threads')),
+              .having(
+                (e) => e.message,
+                'message',
+                startsWith('COLMAP (feature_extractor) crashed with -6 at 2 threads'),
+              ),
         ),
       );
       expect(always.launches.map((l) => l.arguments.first), everyElement('feature_extractor'));
@@ -421,7 +425,7 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-              .having((e) => e.message, 'message', startsWith('COLMAP (features) aborted with -1073740791: '))
+              .having((e) => e.message, 'message', startsWith('COLMAP (feature_extractor) aborted with -1073740791: '))
               .having((e) => e.message, 'message', contains('Processed file [2/150]')),
         ),
       );
@@ -437,7 +441,7 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-              .having((e) => e.message, 'message', 'COLMAP (features) aborted with -1073740791: no output'),
+              .having((e) => e.message, 'message', 'COLMAP (feature_extractor) aborted with -1073740791: no output'),
         ),
       );
 
@@ -459,7 +463,7 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-              .having((e) => e.message, 'message', startsWith('COLMAP (matching) aborted with -6: '))
+              .having((e) => e.message, 'message', startsWith('COLMAP (exhaustive_matcher) aborted with -6: '))
               .having((e) => e.message, 'message', contains('Check failed: ExistsImage(image_id)')),
         ),
       );
@@ -480,7 +484,7 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-              .having((e) => e.message, 'message', startsWith('COLMAP (mapping) aborted with -6: ')),
+              .having((e) => e.message, 'message', startsWith('COLMAP (mapper) aborted with -6: ')),
         ),
       );
       expect(mapper.launches.where((l) => l.arguments.first == 'mapper'), hasLength(1));
@@ -500,7 +504,11 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-              .having((e) => e.message, 'message', 'COLMAP (align) aborted with -1073740791: $writing'),
+              .having(
+                (e) => e.message,
+                'message',
+                'COLMAP (model_orientation_aligner) aborted with -1073740791: $writing',
+              ),
         ),
       );
       expect(aborted.launches.where((l) => l.arguments.first == 'model_orientation_aligner'), hasLength(1));
@@ -516,7 +524,11 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.outOfMemory)
-              .having((e) => e.message, 'message', startsWith('COLMAP (align) crashed with -1073741819 at 1 thread: ')),
+              .having(
+                (e) => e.message,
+                'message',
+                startsWith('COLMAP (model_orientation_aligner) crashed with -1073741819 at 1 thread: '),
+              ),
         ),
       );
       expect(crashed.launches.where((l) => l.arguments.first == 'model_orientation_aligner'), hasLength(1));
@@ -618,7 +630,11 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((e) => e.code, 'code', ImmersiveErrorCode.posesFailed)
-              .having((e) => e.message, 'message', contains('COLMAP ended with 1: E20261101 database.cc:300]')),
+              .having(
+                (e) => e.message,
+                'message',
+                contains('COLMAP (exhaustive_matcher) ended with 1: E20261101 database.cc:300]'),
+              ),
         ),
       );
       expect(runner.launches.map((l) => l.arguments.first), ['feature_extractor', 'exhaustive_matcher']);
@@ -640,7 +656,18 @@ void main() {
         expect(failure, isNull);
         async.elapse(const Duration(seconds: 2));
         expect(runner.processes.last.killed, isTrue);
-        expect(failure, isA<BackendException>().having((e) => e.code, 'code', ImmersiveErrorCode.posesStalled));
+        // The command that went silent and what it said last: the first test build lost both (2 November)
+        expect(
+          failure,
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.posesStalled)
+              .having(
+                (e) => e.message,
+                'message',
+                startsWith('COLMAP (exhaustive_matcher) wrote nothing for 600 s and was stopped; its last lines:\n'),
+              )
+              .having((e) => e.message, 'message', endsWith(_measured('c2s-match.err')[9].$1)),
+        );
       });
       fakeAsync((async) {
         final runner = _ColmapRunner({

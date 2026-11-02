@@ -16,7 +16,9 @@
 //    which finds the floor).
 // Every argument is one the help of our build lists (the fixtures colmap_help/ of lot SP1), with --log_target stderr:
 // the default, stderr_and_file, leaves a glog file per run in %TEMP% (112 of them after the measure of 1 November).
-// How a command that did not end with 0 ended ([colmapEndOf]):
+// Every message of a failure names the command of COLMAP that failed and carries the end of its output: "COLMAP
+// (exhaustive_matcher) wrote nothing for 600 s and was stopped; its last lines: ..." (the first test build lost the
+// step of a silence of 600 s, 2 November). How a command that did not end with 0 ended ([colmapEndOf]):
 //  - a crash for want of memory (an access violation, measured at 24 threads, or a memory refused on Windows; SIGSEGV,
 //    SIGBUS, or SIGKILL from the OOM killer elsewhere) starts again with half of its threads, 2 at least; one that
 //    crashes at 2 is outOfMemory;
@@ -487,12 +489,16 @@ class ColmapRunner {
     var count = threads;
     var abortedOnce = false;
     while (true) {
+      final launched = arguments(count);
+      // The command in the messages: "COLMAP (exhaustive_matcher) ended with 1: ..."
+      final label = 'COLMAP (${launched.first})';
       final run = SidecarRun(
         runner: runner,
         program: colmapProgram,
+        label: label,
         launch: ProcessLaunch(
           executable: colmap,
-          arguments: arguments(count),
+          arguments: launched,
           workingDirectory: at.colmap.path,
           environment: environment,
         ),
@@ -533,12 +539,12 @@ class ColmapRunner {
             if (fewer == null) {
               throw BackendException(
                 ImmersiveErrorCode.outOfMemory,
-                'COLMAP ($name) crashed with $code at $count thread${count == 1 ? '' : 's'}: $tail',
+                '$label crashed with $code at $count thread${count == 1 ? '' : 's'}: $tail',
               );
             }
           case ColmapEnd.abort:
             if (fewer == null || abortedOnce || !_windows) {
-              throw BackendException(ImmersiveErrorCode.posesFailed, 'COLMAP ($name) aborted with $code: $tail');
+              throw BackendException(ImmersiveErrorCode.posesFailed, '$label aborted with $code: $tail');
             }
             abortedOnce = true;
         }
