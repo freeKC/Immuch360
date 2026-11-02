@@ -384,7 +384,8 @@ void main() {
       expect(find.byKey(const Key('advanced_settings_large_splats')), findsNothing);
       await tester.ensureVisible(gpuSwitch);
       await tester.pumpAndSettle();
-      expect(find.text('Use the more powerful graphics card'), findsOneWidget);
+      // Review of 2 November 2026: labelled experimental, and about the splats only (it moves the splats' WebView2)
+      expect(find.text('Splats on the more powerful graphics card (experimental)'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(gpuSwitch).value, isTrue);
       await tester.tap(gpuSwitch);
       await tester.pumpAndSettle();

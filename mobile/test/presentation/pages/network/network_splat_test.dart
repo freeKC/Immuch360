@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -81,6 +82,41 @@ class _Viewings implements SplatViewerService {
     shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, look: look));
     onOpening?.call();
     return ending;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A viewing held at "Preparing 30 %" until [release]; then it opens the viewer unless it was cancelled meanwhile, as
+/// the service does
+class _HeldViewings implements SplatViewerService {
+  final _release = Completer<void>();
+  SplatPrepareCancel? cancel;
+  bool opened = false;
+
+  void release() => _release.complete();
+
+  @override
+  Future<SplatViewerOutcome> show({
+    required SplatViewerSource source,
+    required SplatHead head,
+    required int fileBytes,
+    required int cap,
+    required SplatViewerLook look,
+    void Function(SplatPrepareStep step, double done)? progress,
+    SplatPrepareCancel? cancel,
+    void Function()? onOpening,
+  }) async {
+    this.cancel = cancel;
+    progress?.call(SplatPrepareStep.reduce, 0.3);
+    await Future.any([_release.future, if (cancel != null) cancel.whenCancelled]);
+    if (cancel?.isCancelled ?? false) {
+      return const SplatViewerOutcome(SplatViewerEnd.cancelled);
+    }
+    opened = true;
+    onOpening?.call();
+    return const SplatViewerOutcome(SplatViewerEnd.closed);
   }
 
   @override
@@ -331,6 +367,7 @@ void main() {
         expect(viewing.cap, 150000);
         expect(viewing.look.device, 'phone');
         expect(viewing.look.maxStdDev, closeTo(2.236, 0.001));
+        expect(viewing.look.pixelRatioMax, 1);
         expect(viewing.look.texts['countLine'], '47,819 gaussians');
         expect(viewing.look.texts.containsKey('reducedLine'), isFalse);
       });
@@ -375,6 +412,89 @@ void main() {
         expect(viewing.look.gyroscope, isFalse);
         expect(viewing.look.maxStdDev, closeTo(2.828, 0.001));
         debugDefaultTargetPlatformOverride = null;
+      });
+
+      testWidgets('on Linux, a window closed without a picture names the variable of WebKitGTK', (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        viewings.ending = const SplatViewerOutcome(SplatViewerEnd.closed, noPicture: true);
+        await pumpPage(tester, '/cash.spz', with_: flat());
+
+        await tester.tap(find.byKey(exploreSplatButtonKey));
+        await tester.pumpAndSettle();
+        expect(
+          find.text(
+            'The splat viewer drew nothing. With an NVIDIA graphics card, start Immuch360 with '
+            'WEBKIT_DISABLE_DMABUF_RENDERER=1',
+          ),
+          findsOneWidget,
+        );
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      group('while a splat above the cap is prepared', () {
+        late _HeldViewings held;
+
+        Future<void> explore(WidgetTester tester) async {
+          held = _HeldViewings();
+          await pumpPage(
+            tester,
+            '/cactus.spz',
+            with_: [
+              ...overrides(flavor: null),
+              isHorizonOsProvider.overrideWith((ref) async => false),
+              splatViewerServiceProvider.overrideWithValue(held),
+            ],
+          );
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 500));
+          expect(find.byKey(const Key('splat_prepare_cancel')), findsOneWidget);
+          expect(find.text('Preparing the splat: 30%'), findsOneWidget);
+        }
+
+        testWidgets('the system Back cancels the preparation: the dialog goes and the viewer never opens', (
+          tester,
+        ) async {
+          // Review of 2 November 2026: Back hid the dialog, the copy and the reduction went on, then the viewer
+          // opened over whatever page the user had gone to
+          await explore(tester);
+
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+
+          expect(held.cancel?.isCancelled, isTrue);
+          expect(find.byKey(const Key('splat_prepare_cancel')), findsNothing);
+          expect(find.byKey(exploreSplatButtonKey), findsOneWidget, reason: 'the splat page stays');
+          held.release();
+          await tester.pumpAndSettle();
+          expect(held.opened, isFalse);
+          expect(find.byType(SnackBar), findsNothing);
+        });
+
+        testWidgets('Cancel stops it the same way', (tester) async {
+          await explore(tester);
+
+          await tester.tap(find.byKey(const Key('splat_prepare_cancel')));
+          await tester.pumpAndSettle();
+
+          expect(held.cancel?.isCancelled, isTrue);
+          expect(find.byKey(const Key('splat_prepare_cancel')), findsNothing);
+          held.release();
+          await tester.pumpAndSettle();
+          expect(held.opened, isFalse);
+        });
+
+        testWidgets('left alone, the viewer opens once the splat is ready, and the dialog goes', (tester) async {
+          await explore(tester);
+
+          held.release();
+          await tester.pumpAndSettle();
+
+          expect(held.cancel?.isCancelled, isFalse);
+          expect(held.opened, isTrue);
+          expect(find.byKey(const Key('splat_prepare_cancel')), findsNothing);
+        });
       });
 
       testWidgets('a splat beyond what this device can reduce is greyed, in the words of a device', (tester) async {

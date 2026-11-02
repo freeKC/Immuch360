@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/splat/pigeon_splat_viewer_host.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -56,10 +57,27 @@ final splatUprightStoreProvider = Provider<SplatUprightStore>(
       SplatUprightStore(() async => File(p.join((await getApplicationSupportDirectory()).path, 'splat_uprights.json'))),
 );
 
-/// The reduced copies of the splats above the cap, in the temporary folder of the app
+/// The reduced copies of the splats above the cap, in the cache folder of the app: %LOCALAPPDATA% of this copy of the
+/// app on Windows, ~/.cache of the app on Linux, the cache of the app on Android and macOS; never the system's
+/// temporary folder, which every copy of the app and every user share (review of 2 November 2026)
 final splatViewerCacheProvider = Provider<SplatViewerCache>(
-  (ref) => SplatViewerCache(() async => Directory(p.join((await getTemporaryDirectory()).path, 'splat_viewer'))),
+  (ref) => SplatViewerCache(() async => Directory(p.join((await getApplicationCacheDirectory()).path, 'splat_viewer'))),
 );
+
+/// The bytes free on the drive of a folder, for the room a preparation needs: the computers' reader of the AI
+/// components (GetDiskFreeSpaceExW, statvfs; desktopOverrides), StatFs through the splat viewer's API on Android;
+/// null elsewhere, and the preparation then finds a full drive only when a write fails
+final splatFreeBytesProvider = Provider<Future<int?> Function(Directory folder)?>((ref) {
+  final computers = ref.watch(aiFreeSpaceProvider);
+  if (computers != null) {
+    return (folder) async => (await computers(folder))?.free;
+  }
+  final host = ref.watch(splatViewerHostProvider);
+  if (host is PigeonSplatViewerHost) {
+    return (folder) => host.freeBytes(folder.path);
+  }
+  return null;
+});
 
 /// The viewings, null where no host shows the page
 final splatViewerServiceProvider = Provider<SplatViewerService?>((ref) {
@@ -76,5 +94,6 @@ final splatViewerServiceProvider = Provider<SplatViewerService?>((ref) {
     cache: ref.read(splatViewerCacheProvider),
     fileSystem: connections.fileSystem,
     shareUrl: connections.mediaUrl,
+    freeBytes: ref.read(splatFreeBytesProvider),
   );
 });

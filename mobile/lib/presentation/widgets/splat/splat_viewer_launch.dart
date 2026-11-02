@@ -31,6 +31,12 @@ final _log = Logger('SplatViewerLaunch');
 const splatPhoneMaxStdDev = 2.2360679774997896;
 const splatComputerMaxStdDev = 2.8284271247461903;
 
+/// The most pixels drawn per CSS pixel: 1 on phones and tablets until a real phone was measured; 2 on computers (a
+/// panel at 200 % was drawn at a quarter of its pixels, the RTX 4060 at 120 frames per second), the page's quality
+/// steps going down to half a pixel when frames are slow
+const splatPhonePixelRatioMax = 1.0;
+const splatComputerPixelRatioMax = 2.0;
+
 /// The texts of the page, in the app's language: the templates keep their {names} for the page to fill
 Map<String, String> splatViewerPageTexts(Translations t, {required String countLine, String? reducedLine}) => {
   'back': t.back,
@@ -75,6 +81,9 @@ String splatCssColor(Color color) {
 
 /// What to say once a viewing ended as [outcome], null when nothing is to be said
 String? splatViewerEndText(Translations t, SplatViewerOutcome outcome) => switch (outcome.end) {
+  // On Linux a window that stayed blank: WebKitGTK's DMABUF renderer and some NVIDIA drivers (plan section 2.5); the
+  // app names the variable and never sets it by itself
+  SplatViewerEnd.closed when outcome.noPicture && CurrentPlatform.isLinux => t.splat_linux_no_picture,
   SplatViewerEnd.closed || SplatViewerEnd.cancelled => null,
   SplatViewerEnd.rendererGone => t.splat_renderer_gone,
   SplatViewerEnd.stalled => t.splat_graphics_lost,
@@ -167,6 +176,7 @@ Future<void> showSplatViewer(
     device: phone ? 'phone' : 'computer',
     gyroscope: phone && ref.read(deviceFeaturesProvider).gyroscope,
     maxStdDev: phone ? splatPhoneMaxStdDev : splatComputerMaxStdDev,
+    pixelRatioMax: phone ? splatPhonePixelRatioMax : splatComputerPixelRatioMax,
   );
   final progress = ValueNotifier<(SplatPrepareStep, double)?>(null);
   final cancel = SplatPrepareCancel();
@@ -230,26 +240,36 @@ class _PrepareDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return AlertDialog(
-      content: ValueListenableBuilder<(SplatPrepareStep, double)?>(
-        valueListenable: progress,
-        builder: (context, value, _) {
-          final percent = _percent(context, value?.$2 ?? 0);
-          final line = value?.$1 == SplatPrepareStep.copy
-              ? t.splat_copying_progress(percent: percent)
-              : t.splat_preparing_progress(percent: percent);
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(value == null ? t.splat_preparing : line, key: const Key('splat_prepare_line')),
-              const SizedBox(height: 16),
-              LinearProgressIndicator(value: value?.$2),
-            ],
-          );
-        },
+    // The system Back is Cancel: popping the dialog alone would leave the copy and the reduction running, and the
+    // viewer would open later over whatever page the user went to
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          onCancel();
+        }
+      },
+      child: AlertDialog(
+        content: ValueListenableBuilder<(SplatPrepareStep, double)?>(
+          valueListenable: progress,
+          builder: (context, value, _) {
+            final percent = _percent(context, value?.$2 ?? 0);
+            final line = value?.$1 == SplatPrepareStep.copy
+                ? t.splat_copying_progress(percent: percent)
+                : t.splat_preparing_progress(percent: percent);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(value == null ? t.splat_preparing : line, key: const Key('splat_prepare_line')),
+                const SizedBox(height: 16),
+                LinearProgressIndicator(value: value?.$2),
+              ],
+            );
+          },
+        ),
+        actions: [TextButton(key: const Key('splat_prepare_cancel'), onPressed: onCancel, child: Text(t.cancel))],
       ),
-      actions: [TextButton(key: const Key('splat_prepare_cancel'), onPressed: onCancel, child: Text(t.cancel))],
     );
   }
 }

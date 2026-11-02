@@ -4,9 +4,12 @@
 //   a small JSON file of the app (the headset keeps its own in SharedPreferences): the same file opens upright at once
 //   on this device afterwards;
 // * the reduced copies of the splats above the cap of this device: the last three, 1 GiB at most together, keyed by
-//   the source (share and path, or file path), its size and date and the cap, so that opening the same splat again
-//   skips "Preparing the splat"; a file of a share to reduce is first copied into the same folder, through the share,
-//   so that the two passes of the reduction never cross the network twice, and deleted once reduced.
+//   the source (share and path, or file path), its size, its date when the file system gives one, a fingerprint of
+//   its content and the cap, so that opening the same splat again skips "Preparing the splat" and another file of the
+//   same name and size never shows a copy that is not its own (review of 2 November 2026); a file of a share to reduce
+//   is first copied into the same folder, through the share, so that the two passes of the reduction never cross the
+//   network twice, and deleted once reduced. The folder is the app's own cache folder, never the system's temporary
+//   folder that every copy of the app and every user share.
 //
 // The reduction runs in an isolate of its own, with progress, and a cancel that ends the isolate at once.
 
@@ -15,6 +18,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
@@ -100,11 +104,22 @@ class SplatViewerCache {
   final int maxBytes;
 
   /// The name of the reduced copy of [source] (a share and a path, or a path) of [fileBytes] changed at [modified],
-  /// reduced to [cap], in [format]
-  static String nameOf(String source, int fileBytes, DateTime? modified, int cap, SplatFormat format) {
-    final key = '$source|$fileBytes|${modified?.millisecondsSinceEpoch}|$cap';
+  /// whose content gives [fingerprint] (splatFingerprint), reduced to [cap], in [format]
+  static String nameOf(
+    String source,
+    int fileBytes,
+    DateTime? modified,
+    int cap,
+    SplatFormat format, {
+    String fingerprint = '',
+  }) {
+    final key = '$source|$fileBytes|${modified?.millisecondsSinceEpoch}|$cap|$fingerprint';
     return 'reduced-${sha1.convert(utf8.encode(key))}.${format.json}';
   }
+
+  /// How old a file that is not a finished reduced copy must be before a prune deletes it: a copy from a share or a
+  /// reduction of another viewing may be in progress, and a day is far longer than any
+  static const leftoverAge = Duration(days: 1);
 
   Future<Directory> folder() async {
     final folder = await _folder();
@@ -129,18 +144,22 @@ class SplatViewerCache {
   /// A file of the folder for [name], not made yet
   Future<File> fileFor(String name) async => File(p.join((await folder()).path, name));
 
-  /// Keeps the [keep] newest reduced copies within [maxBytes]; the copies of shares and the unfinished files go
+  /// Keeps the [keep] newest reduced copies within [maxBytes]; the copies of shares and the unfinished files a viewing
+  /// left (a crash, a power cut) go once older than [leftoverAge], those of a viewing in progress stay (each viewing
+  /// deletes its own)
   Future<void> prune() async {
     final dir = await folder();
     final reduced = <(File, FileStat)>[];
+    final now = DateTime.now();
     await for (final entity in dir.list()) {
       if (entity is! File) {
         continue;
       }
       final name = p.basename(entity.path);
+      final stat = entity.statSync();
       if (name.startsWith('reduced-') && !name.endsWith('.part')) {
-        reduced.add((entity, entity.statSync()));
-      } else {
+        reduced.add((entity, stat));
+      } else if (now.difference(stat.modified) > leftoverAge) {
         await _delete(entity);
       }
     }
@@ -165,6 +184,57 @@ class SplatViewerCache {
 
 /// The steps of the preparation of a splat above the cap
 enum SplatPrepareStep { copy, reduce }
+
+/// The bytes of each end of a file the fingerprint reads, the bytes it reads at each place between, and the number of
+/// those places; a file up to [splatFingerprintWhole] bytes is read whole
+const splatFingerprintEdge = 64 << 10;
+const splatFingerprintSample = 8 << 10;
+const splatFingerprintPlaces = 7;
+const splatFingerprintWhole = 1 << 20;
+
+/// What tells one version of a splat file from another of the same name and size (review of 2 November 2026): a
+/// SHA-1 of its first and last 64 KiB and of 8 KiB at seven places between, read through [read] from a file of
+/// [length] bytes (about 184 KiB, a few reads of a share). Every gaussian of a file trained or exported again moves,
+/// and a PLY's rows start within its first kilobytes, so two scenes never give the same one in practice; the date of
+/// the file, where the file system gives one, joins it in the key of the reduced copy for the edits of a few rows.
+Future<String> splatFingerprint(Future<List<int>> Function(int offset, int length) read, int length) async {
+  final ranges = <(int, int)>[];
+  if (length <= splatFingerprintWhole) {
+    ranges.add((0, length));
+  } else {
+    ranges.add((0, splatFingerprintEdge));
+    for (var place = 1; place <= splatFingerprintPlaces; place++) {
+      ranges.add((length * place ~/ (splatFingerprintPlaces + 1), splatFingerprintSample));
+    }
+    ranges.add((length - splatFingerprintEdge, splatFingerprintEdge));
+  }
+  final bytes = BytesBuilder(copy: false);
+  for (final (offset, count) in ranges) {
+    if (count > 0) {
+      final part = await read(offset, count);
+      if (part.length != count) {
+        throw SplatReduceException('the file gave ${part.length} bytes of $count at $offset');
+      }
+      bytes.add(part);
+    }
+  }
+  return '${sha1.convert(bytes.takeBytes())}';
+}
+
+/// The free space a preparation needs, in bytes: the copy of a file of a share ([copied], [fileBytes]) and the reduced
+/// file at most (a PLY's rows in proportion; an SPZ written again as version 2, uncompressed at most: 19 bytes a
+/// gaussian and 3 for each harmonic coefficient of each colour), and 1 MiB
+int splatPrepareBytes(SplatHead head, {required int fileBytes, required int cap, required bool copied}) {
+  final kept = math.min(cap, head.gaussians);
+  final int reduced;
+  if (head.format == SplatFormat.ply) {
+    reduced = head.gaussians <= 0 ? fileBytes : (fileBytes * kept / head.gaussians).ceil();
+  } else {
+    final coefficients = (head.shDegree + 1) * (head.shDegree + 1) - 1;
+    reduced = 16 + kept * (19 + 3 * coefficients);
+  }
+  return (copied ? fileBytes : 0) + reduced + (1 << 20);
+}
 
 /// Cancels a preparation: [cancel] stops it at once
 class SplatPrepareCancel {

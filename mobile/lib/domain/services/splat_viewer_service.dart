@@ -47,6 +47,7 @@ class SplatViewerLook {
     required this.device,
     required this.gyroscope,
     required this.maxStdDev,
+    required this.pixelRatioMax,
   });
 
   final Map<String, String> texts;
@@ -58,6 +59,10 @@ class SplatViewerLook {
   final String device;
   final bool gyroscope;
   final double maxStdDev;
+
+  /// The most pixels drawn per CSS pixel: 1 on phones and tablets until a real phone was measured, 2 on computers
+  /// (a panel at 200 % was drawn at a quarter of its pixels); the page's quality steps go down from there
+  final double pixelRatioMax;
 }
 
 /// How a viewing ended
@@ -88,9 +93,13 @@ enum SplatViewerEnd {
 }
 
 class SplatViewerOutcome {
-  const SplatViewerOutcome(this.end, {this.unsupported, this.detail});
+  const SplatViewerOutcome(this.end, {this.unsupported, this.detail, this.noPicture = false});
 
   final SplatViewerEnd end;
+
+  /// The page never said it showed the scene, though its window stayed open longer than a scene takes to show
+  /// (SplatViewerService.noPictureAfter): on Linux, WebKitGTK's DMABUF renderer with some NVIDIA drivers
+  final bool noPicture;
 
   /// 'webgl2' or 'simd'
   final String? unsupported;
@@ -99,7 +108,8 @@ class SplatViewerOutcome {
   final String? detail;
 
   @override
-  String toString() => 'SplatViewerOutcome($end${unsupported == null ? '' : ', $unsupported'})';
+  String toString() =>
+      'SplatViewerOutcome($end${unsupported == null ? '' : ', $unsupported'}${noPicture ? ', no picture' : ''})';
 }
 
 /// See the top of this file
@@ -121,6 +131,8 @@ class SplatViewerService {
       SplatPrepareCancel? cancel,
     })?
     reduce,
+    this._freeBytes,
+    this.noPictureAfter = const Duration(seconds: 10),
   }) : _reduce = reduce ?? reduceSplatInIsolate;
 
   final MediaBridge _bridge;
@@ -141,6 +153,12 @@ class SplatViewerService {
     SplatPrepareCancel? cancel,
   })
   _reduce;
+
+  /// The free bytes of the drive of a folder, null when they cannot be read (no check then)
+  final Future<int?> Function(Directory folder)? _freeBytes;
+
+  /// A page that has not said ready this long after its window opened is logged, and said after it closed
+  final Duration noPictureAfter;
 
   /// Shows [source] (whose head is [head], [fileBytes] long) with at most [cap] gaussians, the page in the words and
   /// colours of [look]; [progress] is told the steps of a preparation (the copy from a share, the reduction),
@@ -169,6 +187,9 @@ class SplatViewerService {
         prepared = await _prepare(source, head, fileBytes, cap, progress, cancel);
       } on SplatReduceCancelled {
         return const SplatViewerOutcome(SplatViewerEnd.cancelled);
+      } on _NoSpace catch (error) {
+        _log.warning('The splat $name could not be prepared: $error');
+        return SplatViewerOutcome(SplatViewerEnd.noSpace, detail: '$error');
       } on FileSystemException catch (error) {
         final noSpace = _isNoSpace(error);
         _log.warning('The splat $name could not be prepared: $error');
@@ -176,6 +197,10 @@ class SplatViewerService {
       } catch (error) {
         _log.warning('The splat $name could not be prepared: $error');
         return SplatViewerOutcome(SplatViewerEnd.failed, detail: '$error');
+      }
+      // A Cancel or a Back that came as the preparation ended: the reduced copy is kept, nothing opens
+      if (cancel?.isCancelled ?? false) {
+        return const SplatViewerOutcome(SplatViewerEnd.cancelled);
       }
       sceneFile = prepared;
       sceneUrl = sceneName;
@@ -203,7 +228,7 @@ class SplatViewerService {
       },
       'upright': upright,
       'device': look.device,
-      'limits': {'pixelRatioMax': 1, 'maxStdDev': look.maxStdDev},
+      'limits': {'pixelRatioMax': look.pixelRatioMax, 'maxStdDev': look.maxStdDev},
       'gyroscope': look.gyroscope,
       'locale': look.locale,
       'texts': look.texts,
@@ -212,9 +237,11 @@ class SplatViewerService {
     };
     String? unsupported;
     var closing = false;
+    var ready = false;
     void onEvent(SplatViewerEvent event) {
       switch (event) {
         case SplatViewerReady(:final fields):
+          ready = true;
           _log.info(
             'Ready: $name ${fields['loadMs']} ms, ${fields['gaussians']} gaussians, ${fields['renderer']}, '
             'non blank ${fields['nonBlank']}, ${fields['drawingBuffer']}, ${fields['placement']}',
@@ -251,6 +278,12 @@ class SplatViewerService {
       ),
     );
     onOpening?.call();
+    final watch = Stopwatch()..start();
+    final noPicture = Timer(noPictureAfter, () {
+      if (!ready && !closing) {
+        _log.warning('The splat viewer page of $name said nothing in ${noPictureAfter.inSeconds} s');
+      }
+    });
     try {
       _log.info('Opening $name: ${head.gaussians} gaussians, ${reduced ? 'reduced to $cap' : 'whole'}');
       final how = await _host.open(_bridge.urlFor(id, 'index.html'), title: name);
@@ -264,13 +297,48 @@ class SplatViewerService {
         SplatHostClosed.stalled => SplatViewerEnd.stalled,
         SplatHostClosed.noWebView => SplatViewerEnd.noWebView,
         SplatHostClosed.error => SplatViewerEnd.failed,
-      });
+      }, noPicture: !ready && how == SplatHostClosed.user && watch.elapsed >= noPictureAfter);
     } finally {
+      noPicture.cancel();
       _bridge.unregisterGenerated(id);
       if (reduced) {
         unawaited(_cache.prune().catchError((Object error) => _log.fine('Prune: $error')));
       }
     }
+  }
+
+  /// The date and the fingerprint of [source] for the key of its reduced copy: the date of a file of this device, or
+  /// the one its share gives (null when it gives none), and splatFingerprint of its content
+  Future<(DateTime?, String)> _identityOf(SplatViewerSource source, int fileBytes) async {
+    final sourceId = source.sourceId;
+    if (sourceId == null) {
+      final file = File(source.path);
+      final modified = file.statSync().modified;
+      final handle = await file.open();
+      try {
+        final fingerprint = await splatFingerprint((offset, length) async {
+          await handle.setPosition(offset);
+          return handle.read(length);
+        }, await handle.length());
+        return (modified, fingerprint);
+      } finally {
+        await handle.close();
+      }
+    }
+    final fileSystem = await _fileSystem(sourceId);
+    var modified = source.modified;
+    if (modified == null) {
+      try {
+        modified = (await fileSystem.stat(source.path)).modified;
+      } catch (error) {
+        _log.fine('No date for ${source.name}: $error');
+      }
+    }
+    final fingerprint = await splatFingerprint(
+      (offset, length) => fileSystem.readRange(source.path, offset, length),
+      fileBytes,
+    );
+    return (modified, fingerprint);
   }
 
   /// The reduced copy of [source]: the one kept when there is one, else made now (copied from its share first)
@@ -282,15 +350,25 @@ class SplatViewerService {
     void Function(SplatPrepareStep step, double done)? progress,
     SplatPrepareCancel? cancel,
   ) async {
-    final name = SplatViewerCache.nameOf(source.key, fileBytes, source.modified, cap, head.format);
+    final (modified, fingerprint) = await _identityOf(source, fileBytes);
+    final name = SplatViewerCache.nameOf(source.key, fileBytes, modified, cap, head.format, fingerprint: fingerprint);
     final kept = await _cache.find(name);
     if (kept != null) {
       _log.info('The reduced copy of ${source.name} is kept: no preparation');
       return kept;
     }
+    if (cancel?.isCancelled ?? false) {
+      throw const SplatReduceCancelled();
+    }
+    final sourceId = source.sourceId;
+    // Room for the copy and the reduced file before the first byte (plan section 6)
+    final needed = splatPrepareBytes(head, fileBytes: fileBytes, cap: cap, copied: sourceId != null);
+    final free = await _freeBytesOf(await _cache.folder());
+    if (free != null && free < needed) {
+      throw _NoSpace(needed, free);
+    }
     var input = File(source.path);
     File? copy;
-    final sourceId = source.sourceId;
     if (sourceId != null) {
       final fileSystem = await _fileSystem(sourceId);
       copy = await _cache.fileFor('copy-$name');
@@ -329,9 +407,33 @@ class SplatViewerService {
     }
   }
 
+  Future<int?> _freeBytesOf(Directory folder) async {
+    final read = _freeBytes;
+    if (read == null) {
+      return null;
+    }
+    try {
+      return await read(folder);
+    } catch (error) {
+      _log.fine('The free space of ${folder.path} could not be read: $error');
+      return null;
+    }
+  }
+
   static bool _isNoSpace(FileSystemException error) {
     final code = error.osError?.errorCode;
     // ENOSPC on Linux and Android (28), macOS (28), ERROR_DISK_FULL (112) and ERROR_HANDLE_DISK_FULL (39) on Windows
     return code == 28 || code == 112 || code == 39;
   }
+}
+
+/// Not enough free space for a preparation, found before it started
+class _NoSpace implements Exception {
+  const _NoSpace(this.needed, this.free);
+
+  final int needed;
+  final int free;
+
+  @override
+  String toString() => 'not enough free space: $needed bytes needed, $free free';
 }
