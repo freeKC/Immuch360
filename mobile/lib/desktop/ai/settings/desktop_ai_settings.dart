@@ -15,6 +15,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -310,26 +311,8 @@ const aiDefaultTimings = <String, Map<String, int>>{
     'encoding': 1500,
     'writing': 300,
   },
-  'splatScene': {
-    'reading': 5000,
-    'photos': 45000,
-    'features': 15000,
-    'matching': 195000,
-    'mapping': 50000,
-    'training': 450000,
-    'splatCopy': 10000,
-    'writing': 1000,
-  },
-  'splatSceneVideo': {
-    'reading': 5000,
-    'frames': 60000,
-    'features': 15000,
-    'matching': 81000,
-    'mapping': 30000,
-    'training': 306000,
-    'splatCopy': 10000,
-    'writing': 1000,
-  },
+  'splatScene': splatSceneDefaultTimings,
+  'splatSceneVideo': splatSceneVideoDefaultTimings,
 };
 
 /// The time the steps of the jobs take on this computer: those it measured (DesktopAiSettings.timings), else

@@ -23,6 +23,37 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 /// The images the times of the steps of a splat scene are kept for
 const splatReferenceImages = 150;
 
+/// The milliseconds of each step of a splat scene of 150 photos before this computer finished one, as the plan of 1
+/// November estimates them from its measure (aiDefaultTimings of desktop_ai_settings.dart, "splatScene"): some 13 min
+const splatSceneDefaultTimings = <String, int>{
+  'reading': 5000,
+  'photos': 45000,
+  'features': 15000,
+  'matching': 195000,
+  'mapping': 50000,
+  'training': 450000,
+  'splatCopy': 10000,
+  'writing': 1000,
+};
+
+/// The same for a splat scene of a video of two minutes ("splatSceneVideo"): some 8.5 min
+const splatSceneVideoDefaultTimings = <String, int>{
+  'reading': 5000,
+  'frames': 60000,
+  'features': 15000,
+  'matching': 81000,
+  'mapping': 30000,
+  'training': 306000,
+  'splatCopy': 10000,
+  'writing': 1000,
+};
+
+/// The times of [milliseconds] (by the names of the steps) as the engine reads them; a name of no step is left out
+Map<ImmersiveStage, Duration> splatTimingsOf(Map<String, int> milliseconds) => {
+  for (final MapEntry(key: name, value: millis) in milliseconds.entries)
+    ?ImmersiveStage.values.asNameMap()[name]: Duration(milliseconds: millis),
+};
+
 /// How many times longer than for the reference job a step of a job of [images] images (photos, or frames of a
 /// [video]) and [steps] steps of training takes (see the top of this file)
 double splatStageScale(ImmersiveStage stage, {required int images, required bool video, int steps = SplatV1.steps}) {
