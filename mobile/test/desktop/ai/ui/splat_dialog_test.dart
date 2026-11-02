@@ -754,6 +754,21 @@ void main() {
     expect(launch.label, 'Salon tour.mp4');
   });
 
+  testWidgets('a video whose length the library could not read (0): not refused, its frames as for two minutes', (
+    tester,
+  ) async {
+    original('Salon tour.mkv');
+    await openDialog(tester, [_asset('Salon tour.mkv', type: AssetType.video, durationMs: 0)]);
+
+    expect(find.byKey(const Key('ai_splat_refusal')), findsNothing);
+    expect(find.textContaining('0 s long'), findsNothing);
+    expect(find.text('1 video, …: about 150 frames will be taken, the sharpest of each moment'), findsOneWidget);
+    expect(startEnabled(tester), isTrue);
+    await tapIn(tester, start());
+    await settle(tester);
+    expect(launches.single.fromVideo, isTrue);
+  });
+
   testWidgets('an object, and the .ply: handed to the queue, kept for the next dialog', (tester) async {
     final selection = salon(60);
     await openDialog(tester, selection);

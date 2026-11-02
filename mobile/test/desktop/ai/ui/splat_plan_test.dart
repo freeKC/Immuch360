@@ -135,17 +135,21 @@ void main() {
     });
 
     test('a video whose length is not known is not refused for it: the frames are counted as for two minutes', () {
-      final video = SplatCandidate(
-        asset: _asset('clip.mp4', type: AssetType.video),
-        found: (
-          location: const OpenedOriginal(name: 'clip.mp4', path: '/videos/clip.mp4'),
-          source: LocalFileSource('/videos/clip.mp4'),
-        ),
-      );
-      final plan = planSplatSelection([video], linux: false);
-      expect(plan.refusal, isNull);
-      expect(plan.videoDuration, isNull);
-      expect(plan.images, SplatV1.videoFrames);
+      // The library of the computer and the sync of the server store 0 for a length they could not read (a MKV, an
+      // AVI, a file kept online only by OneDrive), never null
+      for (final durationMs in [null, 0]) {
+        final video = SplatCandidate(
+          asset: _asset('clip.mkv', type: AssetType.video, durationMs: durationMs),
+          found: (
+            location: const OpenedOriginal(name: 'clip.mkv', path: '/videos/clip.mkv'),
+            source: LocalFileSource('/videos/clip.mkv'),
+          ),
+        );
+        final plan = planSplatSelection([video], linux: false);
+        expect(plan.refusal, isNull, reason: 'durationMs: $durationMs');
+        expect(plan.videoDuration, isNull, reason: 'durationMs: $durationMs');
+        expect(plan.images, SplatV1.videoFrames, reason: 'durationMs: $durationMs');
+      }
     });
 
     test('nothing to take: a selection of no photo and no video', () {

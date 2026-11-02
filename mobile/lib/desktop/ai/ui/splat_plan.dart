@@ -122,7 +122,7 @@ class SplatSelectionPlan {
   final SplatRefusal? refusal;
   final bool isVideo;
 
-  /// The length of the video, null for photos and for a video whose length is not known
+  /// The length of the video, null for photos and for a video whose length is not known (null or 0 in its asset)
   final Duration? videoDuration;
 
   /// The lenses of the photos used (their focal lengths equivalent to 35 mm), the one that took the most first; empty
@@ -284,8 +284,10 @@ SplatSelectionPlan planSplatSelection(List<SplatCandidate> candidates, {bool? li
 }
 
 SplatSelectionPlan _planVideo(SplatCandidate video) {
-  final known = video.asset.durationMs != null;
-  final duration = known ? video.asset.duration : null;
+  // A length the library could not read comes as 0, not null: the library of the computer reads it only in the mvhd
+  // box of a MP4 or a MOV and never opens a file kept online only, and the sync of the server stores 0 too
+  final ms = video.asset.durationMs;
+  final duration = ms != null && ms > 0 ? Duration(milliseconds: ms) : null;
   SplatRefusal? refusal;
   if (video.isVideo360) {
     refusal = SplatRefusal.video360;
