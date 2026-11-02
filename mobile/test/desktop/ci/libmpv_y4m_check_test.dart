@@ -95,7 +95,7 @@ void _tests() {
         final start = _frameOffset(depth, frame);
         expect(ascii.decode(bytes.sublist(start, start + 6)), 'FRAME\n', reason: 'frame $frame');
         final data = ByteData.sublistView(bytes, start + 6);
-        final lumaSamples = _width * _height;
+        const lumaSamples = _width * _height;
         if (depth == 8) {
           expect(data.getUint8(0), 16 + 6 * frame);
           expect(data.getUint8(lumaSamples - 1), 16 + 6 * frame);
