@@ -2,7 +2,8 @@
 // closed while it opened is gone before the plugin answers its launch, and the answer "can not find webview window for
 // id" of a method that returns nothing reached no caller but the zone's catch-all (the review's replay of 2 November
 // 2026, the 637k room closed 300 ms after its window showed). Such a call to a window that is gone ends quietly; any
-// other error still reaches the zone.
+// other error still reaches the zone. Each system words that answer its own way (second review of 3 November 2026):
+// the three are known.
 import 'dart:async';
 
 import 'package:desktop_webview_window/desktop_webview_window.dart';
@@ -14,10 +15,12 @@ void main() {
   const channel = MethodChannel('webview_window');
   late List<String> calls;
   late String launchError;
+  late String closeError;
 
   setUp(() {
     calls = [];
     launchError = 'can not find webview window for id';
+    closeError = 'can not find webview window for id';
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
       calls.add(call.method);
       switch (call.method) {
@@ -26,7 +29,7 @@ void main() {
         case 'launch':
           throw PlatformException(code: '0', message: launchError);
         case 'close':
-          throw PlatformException(code: '0', message: 'can not find webview window for id');
+          throw PlatformException(code: '0', message: closeError);
       }
       return null;
     });
@@ -36,13 +39,28 @@ void main() {
     () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null),
   );
 
-  test('launch and close of a window that is gone end quietly', () async {
-    final webview = await WebviewWindow.create(configuration: const CreateConfiguration(titleBarHeight: 0));
-    webview.launch('http://127.0.0.1:41000/token/session/index.html');
-    webview.close();
-    await pumpEventQueue();
-    expect(calls, ['create', 'launch', 'close']);
-  });
+  // The answer of each plugin to a method on a window it no longer has (windows/web_view_window_plugin.cc,
+  // linux/desktop_webview_window_plugin.cc, macos/.../DesktopWebviewWindowPlugin.swift)
+  const gone = {
+    'Windows': 'can not find webview window for id',
+    'Linux': 'can not found webview for viewId',
+    'macOS': 'can not find webview for id: 7',
+  };
+  for (final MapEntry(key: system, value: message) in gone.entries) {
+    test('launch and close of a window that is gone end quietly, in the words of $system', () async {
+      launchError = message;
+      closeError = message;
+      final errors = <Object>[];
+      await runZonedGuarded(() async {
+        final webview = await WebviewWindow.create(configuration: const CreateConfiguration(titleBarHeight: 0));
+        webview.launch('http://127.0.0.1:41000/token/session/index.html');
+        webview.close();
+        await pumpEventQueue();
+      }, (error, stack) => errors.add(error));
+      expect(errors, isEmpty);
+      expect(calls, ['create', 'launch', 'close']);
+    });
+  }
 
   test('a window whose close came before the answer to create still ends (patch 12)', () async {
     // The fix round's replay of 3 November 2026: a window closed about 300 ms after it showed, right as its controller

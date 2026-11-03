@@ -136,15 +136,21 @@ class WebviewImpl extends Webview {
     _promptHandler = handler;
   }
 
+  /// Immuch360: whether [error] is the plugin's answer for a window it no longer has, in the words of each system:
+  /// "can not find webview window for id" on Windows, "can not found webview for viewId" on Linux, "can not find
+  /// webview for id: N" on macOS (second review of 3 November 2026)
+  static bool isWindowGone(PlatformException error) =>
+      RegExp(r'^can not f(?:ind|ound) webview\b').hasMatch(error.message ?? '');
+
   /// Immuch360: [method] of a window that may be gone. A window the user closed while it opened is gone before the
-  /// plugin answers its launch, and the answer "can not find webview window for id" of a method that returns nothing
-  /// would reach no caller, only the zone's catch-all: such an answer, or any answer once the window closed, ends
-  /// quietly; any other error still reaches the zone.
+  /// plugin answers its launch, and the answer for a window it no longer has (isWindowGone) of a method that returns
+  /// nothing would reach no caller, only the zone's catch-all: such an answer, or any answer once the window closed,
+  /// ends quietly; any other error still reaches the zone.
   Future<void> _invokeOnWindow(String method, Map<String, dynamic> arguments) async {
     try {
       await channel.invokeMethod(method, arguments);
     } on PlatformException catch (error) {
-      if (_closed || (error.message ?? '').contains('can not find webview window')) {
+      if (_closed || isWindowGone(error)) {
         debugPrint('desktop_webview_window: $method of the window $viewId, which is gone: ${error.message}');
         return;
       }
