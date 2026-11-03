@@ -658,7 +658,6 @@
   "ai_immersive_stage_splat_features": "ఫోటోలను 3Dలో ఉంచుతోంది: పాయింట్‌లను వెతుకుతోంది, {total}లో {index}",
   "ai_immersive_stage_splat_frames": "ఫ్రేమ్‌లను తీసుకుంటోంది: {total}లో {index}",
   "ai_immersive_stage_splat_mapping": "ఫోటోలను 3Dలో ఉంచుతోంది: పునర్నిర్మిస్తోంది, {total}లో {index} ఉంచబడ్డాయి",
-  "ai_immersive_stage_splat_matching": "ఫోటోలను 3Dలో ఉంచుతోంది: సరిపోలుస్తోంది, {total}లో {index}",
   "ai_immersive_stage_splat_matching_blocks": "ఫోటోలను 3Dలో ఉంచుతోంది: సరిపోలుస్తోంది, {total}లో బ్లాక్ {index}",
   "ai_immersive_stage_splat_photos": "ఫోటోలను సిద్ధం చేస్తోంది: {total}లో {index}",
   "ai_immersive_stage_splat_poses": "ఫోటోలను 3Dలో ఉంచుతోంది",

@@ -796,7 +796,6 @@
   "ai_immersive_stage_splat_features": "Τοποθέτηση των φωτογραφιών σε 3D: εύρεση σημείων, {index} από {total}",
   "ai_immersive_stage_splat_frames": "Λήψη των καρέ: {index} από {total}",
   "ai_immersive_stage_splat_mapping": "Τοποθέτηση των φωτογραφιών σε 3D: ανακατασκευή, {index} από {total} τοποθετημένες",
-  "ai_immersive_stage_splat_matching": "Τοποθέτηση των φωτογραφιών σε 3D: αντιστοίχιση, {index} από {total}",
   "ai_immersive_stage_splat_matching_blocks": "Τοποθέτηση των φωτογραφιών σε 3D: αντιστοίχιση, μπλοκ {index} από {total}",
   "ai_immersive_stage_splat_photos": "Προετοιμασία των φωτογραφιών: {index} από {total}",
   "ai_immersive_stage_splat_poses": "Τοποθέτηση των φωτογραφιών σε 3D",

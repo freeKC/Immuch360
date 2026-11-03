@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "A fotók 3D-elhelyezése: pontok keresése, {index} / {total}",
   "ai_immersive_stage_splat_frames": "Képkockák kivétele: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "A fotók 3D-elhelyezése: újraépítés, {index} / {total} elhelyezve",
-  "ai_immersive_stage_splat_matching": "A fotók 3D-elhelyezése: illesztés, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "A fotók 3D-elhelyezése: illesztés, {index} / {total} blokk",
   "ai_immersive_stage_splat_photos": "Fotók előkészítése: {index} / {total}",
   "ai_immersive_stage_splat_poses": "A fotók 3D-elhelyezése",

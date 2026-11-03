@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Đang đặt ảnh trong 3D: tìm điểm đặc trưng, {index} trên {total}",
   "ai_immersive_stage_splat_frames": "Đang lấy khung hình: {index} trên {total}",
   "ai_immersive_stage_splat_mapping": "Đang đặt ảnh trong 3D: dựng lại, đã đặt {index} trên {total}",
-  "ai_immersive_stage_splat_matching": "Đang đặt ảnh trong 3D: ghép cặp, {index} trên {total}",
   "ai_immersive_stage_splat_matching_blocks": "Đang đặt ảnh trong 3D: ghép cặp, khối {index} trên {total}",
   "ai_immersive_stage_splat_photos": "Đang chuẩn bị ảnh: {index} trên {total}",
   "ai_immersive_stage_splat_poses": "Đang đặt ảnh trong 3D",

@@ -1,0 +1,63 @@
+  -h [ --help ]
+  --project_path arg
+  --default_random_seed arg (=0)
+  --log_target arg (=stderr_and_file)   {stderr, stdout, file, stderr_and_file}
+  --log_path arg
+  --log_level arg (=0)
+  --log_severity arg (=0)               0:INFO, 1:WARNING, 2:ERROR, 3:FATAL
+  --log_color arg (=1)
+  --database_path arg
+  --match_list_path arg
+  --match_type arg (=pairs)             {'pairs', 'raw', 'inliers'}
+  --FeatureMatching.type arg (=SIFT_BRUTEFORCE)
+  --FeatureMatching.num_threads arg (=-1)
+  --FeatureMatching.use_gpu arg (=0)
+  --FeatureMatching.gpu_index arg (=-1)
+  --FeatureMatching.guided_matching arg (=0)
+  --FeatureMatching.skip_geometric_verification arg (=0)
+  --FeatureMatching.rig_verification arg (=0)
+  --FeatureMatching.skip_image_pairs_in_same_frame arg (=0)
+  --FeatureMatching.max_num_matches arg (=32768)
+  --SiftMatching.max_ratio arg (=0.8)
+  --SiftMatching.max_distance arg (=0.7)
+  --SiftMatching.cross_check arg (=1)
+  --SiftMatching.cpu_brute_force_matcher arg (=0)
+  --SiftMatching.lightglue_min_score arg (=0.1)
+  --SiftMatching.lightglue_model_path arg
+  --AlikedMatching.brute_force_min_cossim arg (=0.85)
+  --AlikedMatching.brute_force_max_ratio arg (=1)
+  --AlikedMatching.brute_force_cross_check arg (=1)
+  --AlikedMatching.bruteforce_model_path arg
+  --AlikedMatching.lightglue_min_score arg (=0.1)
+  --AlikedMatching.lightglue_model_path arg
+  --LomaMatching.min_score arg (=0.1)
+  --LomaMatching.use_bf16 arg (=0)
+  --LomaMatching.b_model_path arg
+  --LomaMatching.b_model_path_bf16 arg
+  --LomaMatching.b128_model_path arg
+  --LomaMatching.b128_model_path_bf16 arg
+  --LomaMatching.r_model_path arg
+  --LomaMatching.r_model_path_bf16 arg
+  --LomaMatching.l_model_path arg
+  --LomaMatching.l_model_path_bf16 arg
+  --LomaMatching.g_model_path arg
+  --LomaMatching.g_model_path_bf16 arg
+  --LomaMatching.brute_force_min_cossim arg (=0.85)
+  --LomaMatching.brute_force_max_ratio arg (=1)
+  --LomaMatching.brute_force_cross_check arg (=1)
+  --LomaMatching.brute_force_model_path arg
+  --TwoViewGeometry.min_num_inliers arg (=15)
+  --TwoViewGeometry.multiple_models arg (=0)
+  --TwoViewGeometry.compute_relative_pose arg (=0)
+  --TwoViewGeometry.detect_watermark arg (=1)
+  --TwoViewGeometry.multiple_ignore_watermark arg (=1)
+  --TwoViewGeometry.watermark_detection_max_error arg (=4)
+  --TwoViewGeometry.filter_stationary_matches arg (=0)
+  --TwoViewGeometry.stationary_matches_max_error arg (=4)
+  --TwoViewGeometry.use_degensac arg (=0)
+  --TwoViewGeometry.use_sampson_refinement arg (=1)
+  --TwoViewGeometry.max_error arg (=4)
+  --TwoViewGeometry.confidence arg (=0.999)
+  --TwoViewGeometry.max_num_trials arg (=10000)
+  --TwoViewGeometry.min_inlier_ratio arg (=0)
+  --TwoViewGeometry.random_seed arg (=-1)

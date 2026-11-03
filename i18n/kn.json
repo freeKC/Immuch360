@@ -791,7 +791,6 @@
   "ai_immersive_stage_splat_features": "ಫೋಟೋಗಳನ್ನು 3D ಯಲ್ಲಿ ಇರಿಸಲಾಗುತ್ತಿದೆ: ಬಿಂದುಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ, {total} ರಲ್ಲಿ {index}",
   "ai_immersive_stage_splat_frames": "ಫ್ರೇಮ್‌ಗಳನ್ನು ತೆಗೆಯಲಾಗುತ್ತಿದೆ: {total} ರಲ್ಲಿ {index}",
   "ai_immersive_stage_splat_mapping": "ಫೋಟೋಗಳನ್ನು 3D ಯಲ್ಲಿ ಇರಿಸಲಾಗುತ್ತಿದೆ: ಮರುನಿರ್ಮಾಣ, {total} ರಲ್ಲಿ {index} ಇರಿಸಲಾಗಿದೆ",
-  "ai_immersive_stage_splat_matching": "ಫೋಟೋಗಳನ್ನು 3D ಯಲ್ಲಿ ಇರಿಸಲಾಗುತ್ತಿದೆ: ಹೊಂದಾಣಿಕೆ, {total} ರಲ್ಲಿ {index}",
   "ai_immersive_stage_splat_matching_blocks": "ಫೋಟೋಗಳನ್ನು 3D ಯಲ್ಲಿ ಇರಿಸಲಾಗುತ್ತಿದೆ: ಹೊಂದಾಣಿಕೆ, {total} ರಲ್ಲಿ ಬ್ಲಾಕ್ {index}",
   "ai_immersive_stage_splat_photos": "ಫೋಟೋಗಳನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ: {total} ರಲ್ಲಿ {index}",
   "ai_immersive_stage_splat_poses": "ಫೋಟೋಗಳನ್ನು 3D ಯಲ್ಲಿ ಇರಿಸಲಾಗುತ್ತಿದೆ",

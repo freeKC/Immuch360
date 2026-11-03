@@ -759,7 +759,6 @@
   "ai_immersive_stage_splat_features": "படங்கள் 3D இல் வைக்கப்படுகின்றன: புள்ளிகள் தேடப்படுகின்றன, {total} இல் {index}",
   "ai_immersive_stage_splat_frames": "ஃப்ரேம்கள் எடுக்கப்படுகின்றன: {total} இல் {index}",
   "ai_immersive_stage_splat_mapping": "படங்கள் 3D இல் வைக்கப்படுகின்றன: மீண்டும் உருவாக்குகிறது, {total} இல் {index} வைக்கப்பட்டன",
-  "ai_immersive_stage_splat_matching": "படங்கள் 3D இல் வைக்கப்படுகின்றன: பொருத்துகிறது, {total} இல் {index}",
   "ai_immersive_stage_splat_matching_blocks": "படங்கள் 3D இல் வைக்கப்படுகின்றன: பொருத்துகிறது, {total} இல் தொகுதி {index}",
   "ai_immersive_stage_splat_photos": "படங்கள் தயாராகின்றன: {total} இல் {index}",
   "ai_immersive_stage_splat_poses": "படங்கள் 3D இல் வைக்கப்படுகின்றன",

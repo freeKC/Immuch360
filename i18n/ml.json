@@ -795,7 +795,6 @@
   "ai_immersive_stage_splat_features": "ഫോട്ടോകൾ 3D-യിൽ സ്ഥാപിക്കുന്നു: പോയിന്റുകൾ തിരയുന്നു, {total}-ൽ {index}",
   "ai_immersive_stage_splat_frames": "ഫ്രെയിമുകൾ എടുക്കുന്നു: {total}-ൽ {index}",
   "ai_immersive_stage_splat_mapping": "ഫോട്ടോകൾ 3D-യിൽ സ്ഥാപിക്കുന്നു: പുനർനിർമ്മിക്കുന്നു, {total}-ൽ {index} സ്ഥാപിച്ചു",
-  "ai_immersive_stage_splat_matching": "ഫോട്ടോകൾ 3D-യിൽ സ്ഥാപിക്കുന്നു: പൊരുത്തപ്പെടുത്തുന്നു, {total}-ൽ {index}",
   "ai_immersive_stage_splat_matching_blocks": "ഫോട്ടോകൾ 3D-യിൽ സ്ഥാപിക്കുന്നു: പൊരുത്തപ്പെടുത്തുന്നു, {total}-ൽ ബ്ലോക്ക് {index}",
   "ai_immersive_stage_splat_photos": "ഫോട്ടോകൾ തയ്യാറാക്കുന്നു: {total}-ൽ {index}",
   "ai_immersive_stage_splat_poses": "ഫോട്ടോകൾ 3D-യിൽ സ്ഥാപിക്കുന്നു",

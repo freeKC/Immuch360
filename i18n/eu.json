@@ -798,7 +798,6 @@
   "ai_immersive_stage_splat_features": "Argazkiak 3Dn kokatzen: puntuak bilatzen, {index}/{total}",
   "ai_immersive_stage_splat_frames": "Fotogramak ateratzen: {index}/{total}",
   "ai_immersive_stage_splat_mapping": "Argazkiak 3Dn kokatzen: berreraikitzen, {index}/{total} kokatuta",
-  "ai_immersive_stage_splat_matching": "Argazkiak 3Dn kokatzen: parekatzen, {index}/{total}",
   "ai_immersive_stage_splat_matching_blocks": "Argazkiak 3Dn kokatzen: parekatzen, {index}/{total} blokea",
   "ai_immersive_stage_splat_photos": "Argazkiak prestatzen: {index}/{total}",
   "ai_immersive_stage_splat_poses": "Argazkiak 3Dn kokatzen",

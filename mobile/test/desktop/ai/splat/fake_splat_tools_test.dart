@@ -29,7 +29,7 @@ Object _skipHost(Object skip) => skip != false
 
 const _rustLog = 'brush_cli=info,brush_process=info,cubecl_wgpu=info';
 
-/// The help of the six commands of our COLMAP, frozen by lot SP1
+/// The help of the commands of our COLMAP, frozen by lot SP1 (matches_importer by lot SPF1)
 final _colmapHelp = p.join('test', 'fixtures', 'ai_immersive', 'colmap_help');
 
 void main() {
@@ -289,6 +289,51 @@ void main() {
       expect('${matched.stderr}', contains('pairing.cc:438] Generating sequential image pairs...'));
       expect(RegExp(r'Processing image \[\d+/5\]').allMatches('${matched.stderr}'), hasLength(5));
     }, skip: _skipColmap);
+
+    test(
+      'a long video is matched by its list of pairs: blocks of 1 225, a name the database does not hold skipped',
+      () {
+        photos(5);
+        expect(colmap(extract()).exitCode, 0);
+        File(path('pairs.txt')).writeAsStringSync(
+          [
+            for (var i = 1; i <= 50; i++)
+              for (var j = i + 1; j <= 51; j++) 'cam0/${'${(i - 1) % 5 + 1}'.padLeft(4, '0')}.jpg cam0/0002.jpg',
+            'cam0/nope.jpg cam0/0001.jpg',
+            'cam0/0001.jpg',
+          ].join('\n'),
+        );
+        List<String> imported(String list) => [
+          'matches_importer',
+          '--database_path',
+          path('database.db'),
+          '--match_list_path',
+          path(list),
+          '--match_type',
+          'pairs',
+          '--FeatureMatching.use_gpu',
+          '0',
+          '--FeatureMatching.num_threads',
+          '2',
+        ];
+        final matched = colmap(imported('pairs.txt'));
+
+        expect(matched.exitCode, 0, reason: '${matched.stderr}');
+        expect('${matched.stderr}', contains('pairing.cc:905] Importing image pairs...'));
+        expect('${matched.stderr}', contains('pairing.cc:78] Image cam0/nope.jpg does not exist.'));
+        expect('${matched.stderr}', contains('pairing.cc:82] Image  does not exist.'));
+        // 1 275 pairs of names it holds: two blocks
+        expect(RegExp(r'Processing block \[\d/\d\]').allMatches('${matched.stderr}').map((m) => m.group(0)), [
+          'Processing block [1/2]',
+          'Processing block [2/2]',
+        ]);
+        // A list that is not there: 9 and nothing more, as measured on our build
+        final missing = colmap(imported('missing.txt'));
+        expect(missing.exitCode, 9);
+        expect('${missing.stderr}', isNot(contains('Processing block')));
+      },
+      skip: _skipColmap,
+    );
 
     test('two models, part of the images, a third of them, none: the counts the runner will judge', () {
       photos(30);

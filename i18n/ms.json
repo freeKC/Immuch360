@@ -746,7 +746,6 @@
   "ai_immersive_stage_splat_features": "Meletakkan foto dalam 3D: mencari titik ciri, {index} daripada {total}",
   "ai_immersive_stage_splat_frames": "Mengambil bingkai: {index} daripada {total}",
   "ai_immersive_stage_splat_mapping": "Meletakkan foto dalam 3D: membina semula, {index} daripada {total} diletakkan",
-  "ai_immersive_stage_splat_matching": "Meletakkan foto dalam 3D: memadankan, {index} daripada {total}",
   "ai_immersive_stage_splat_matching_blocks": "Meletakkan foto dalam 3D: memadankan, blok {index} daripada {total}",
   "ai_immersive_stage_splat_photos": "Menyediakan foto: {index} daripada {total}",
   "ai_immersive_stage_splat_poses": "Meletakkan foto dalam 3D",

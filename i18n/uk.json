@@ -802,7 +802,6 @@
   "ai_immersive_stage_splat_features": "Розстановка фото в 3D: пошук точок, {index} з {total}",
   "ai_immersive_stage_splat_frames": "Видобування кадрів: {index} з {total}",
   "ai_immersive_stage_splat_mapping": "Розстановка фото в 3D: відновлення, розставлено {index} з {total}",
-  "ai_immersive_stage_splat_matching": "Розстановка фото в 3D: зіставлення, {index} з {total}",
   "ai_immersive_stage_splat_matching_blocks": "Розстановка фото в 3D: зіставлення, блок {index} з {total}",
   "ai_immersive_stage_splat_photos": "Підготовка фото: {index} з {total}",
   "ai_immersive_stage_splat_poses": "Розстановка фото в 3D",

@@ -61,7 +61,7 @@ enum ConversionKind {
       this == splatScene ? ImmersiveStage.splatOf(video: fromVideo) : stages;
 
   /// The name the times of the steps of a job of this kind are kept under (AiTimings, desktop_ai.json): its name, but
-  /// "splatSceneVideo" for a splat scene of a video, whose matching and training take their own times (81 s and 306 s
+  /// "splatSceneVideo" for a splat scene of a video, whose matching and training take their own times (286 s and 306 s
   /// in the measures, against 195 s and some 7.5 min for 150 photos)
   String timingsKey({bool fromVideo = false}) => this == splatScene && fromVideo ? 'splatSceneVideo' : name;
 

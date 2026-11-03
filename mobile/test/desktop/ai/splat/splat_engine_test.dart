@@ -396,7 +396,7 @@ void main() {
 
       expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
       // The defaults of a video, for the 150 frames they are kept for, the training at 400 steps of 20 000
-      const told = 5000 + 60000 + 15000 + 81000 + 30000 + 306000 * 400 / 20000 + 10000 + 1000;
+      const told = 5000 + 60000 + 15000 + 286000 + 36000 + 306000 * 400 / 20000 + 10000 + 1000;
       expect(progress.first.remaining!.inMilliseconds, closeTo(told, 1000));
       final frames = progress.firstWhere((x) => x.stage == ImmersiveStage.frames);
       expect((frames.step, frames.steps), (0, SplatV1.videoFrames));

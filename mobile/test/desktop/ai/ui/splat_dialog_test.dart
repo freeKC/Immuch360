@@ -804,7 +804,7 @@ void main() {
     expect(find.text('Next to the video'), findsOneWidget);
     expect(
       find.text(
-        'About 8 min on this computer: 3 min on the processor to place the photos, 5 min on the graphics card to '
+        'About 12 min on this computer: 7 min on the processor to place the photos, 5 min on the graphics card to '
         'train the splat',
       ),
       findsOneWidget,

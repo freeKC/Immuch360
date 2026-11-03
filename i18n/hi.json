@@ -752,7 +752,6 @@
   "ai_immersive_stage_splat_features": "फ़ोटो 3D में रखी जा रही हैं: बिंदु खोजे जा रहे हैं, {total} में से {index}",
   "ai_immersive_stage_splat_frames": "फ़्रेम लिए जा रहे हैं: {total} में से {index}",
   "ai_immersive_stage_splat_mapping": "फ़ोटो 3D में रखी जा रही हैं: फिर से बनाया जा रहा है, {total} में से {index} रखी गईं",
-  "ai_immersive_stage_splat_matching": "फ़ोटो 3D में रखी जा रही हैं: मिलान, {total} में से {index}",
   "ai_immersive_stage_splat_matching_blocks": "फ़ोटो 3D में रखी जा रही हैं: मिलान, {total} में से ब्लॉक {index}",
   "ai_immersive_stage_splat_photos": "फ़ोटो तैयार की जा रही हैं: {total} में से {index}",
   "ai_immersive_stage_splat_poses": "फ़ोटो 3D में रखी जा रही हैं",

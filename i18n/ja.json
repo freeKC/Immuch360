@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "写真を 3D に配置中: 特徴点を検出中、{index} / {total}",
   "ai_immersive_stage_splat_frames": "フレームを取り出し中: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "写真を 3D に配置中: 再構成中、{total} 枚中 {index} 枚を配置済み",
-  "ai_immersive_stage_splat_matching": "写真を 3D に配置中: 対応付け中、{index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "写真を 3D に配置中: 対応付け中、ブロック {index} / {total}",
   "ai_immersive_stage_splat_photos": "写真を準備中: {index} / {total}",
   "ai_immersive_stage_splat_poses": "写真を 3D に配置中",

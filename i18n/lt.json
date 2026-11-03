@@ -808,7 +808,6 @@
   "ai_immersive_stage_splat_features": "Nuotraukų išdėstymas 3D erdvėje: ieškoma taškų, {index} iš {total}",
   "ai_immersive_stage_splat_frames": "Imami kadrai: {index} iš {total}",
   "ai_immersive_stage_splat_mapping": "Nuotraukų išdėstymas 3D erdvėje: atkūrimas, išdėstyta {index} iš {total}",
-  "ai_immersive_stage_splat_matching": "Nuotraukų išdėstymas 3D erdvėje: poravimas, {index} iš {total}",
   "ai_immersive_stage_splat_matching_blocks": "Nuotraukų išdėstymas 3D erdvėje: poravimas, blokas {index} iš {total}",
   "ai_immersive_stage_splat_photos": "Ruošiamos nuotraukos: {index} iš {total}",
   "ai_immersive_stage_splat_poses": "Nuotraukų išdėstymas 3D erdvėje",

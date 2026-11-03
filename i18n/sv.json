@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Placerar fotona i 3D: söker punkter, {index} av {total}",
   "ai_immersive_stage_splat_frames": "Tar bildrutorna: {index} av {total}",
   "ai_immersive_stage_splat_mapping": "Placerar fotona i 3D: återskapar, {index} av {total} placerade",
-  "ai_immersive_stage_splat_matching": "Placerar fotona i 3D: matchar, {index} av {total}",
   "ai_immersive_stage_splat_matching_blocks": "Placerar fotona i 3D: matchar, block {index} av {total}",
   "ai_immersive_stage_splat_photos": "Förbereder fotona: {index} av {total}",
   "ai_immersive_stage_splat_poses": "Placerar fotona i 3D",

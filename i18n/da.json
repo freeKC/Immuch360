@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Placerer billederne i 3D: finder punkter, {index} af {total}",
   "ai_immersive_stage_splat_frames": "Udtager billederne: {index} af {total}",
   "ai_immersive_stage_splat_mapping": "Placerer billederne i 3D: genskaber, {index} af {total} placeret",
-  "ai_immersive_stage_splat_matching": "Placerer billederne i 3D: matcher, {index} af {total}",
   "ai_immersive_stage_splat_matching_blocks": "Placerer billederne i 3D: matcher, blok {index} af {total}",
   "ai_immersive_stage_splat_photos": "Forbereder billederne: {index} af {total}",
   "ai_immersive_stage_splat_poses": "Placerer billederne i 3D",

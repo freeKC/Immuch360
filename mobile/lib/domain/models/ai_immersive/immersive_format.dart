@@ -645,8 +645,23 @@ abstract final class SplatV1 {
   static const blurRatio = 0.5;
 
   /// SIFT on the processor, on images of [siftMaxImageSize] pixels at most (the same poses as the full definition, 2.3
-  /// times faster in the measure)
+  /// times faster in the measure; 1 600 pixels placed no more of FreeKC's object of 3 November, diag-2026-11-03.md)
   static const siftMaxImageSize = 1024;
+
+  /// The matching: every pair of images (exhaustive_matcher) for the photos and for a video of up to
+  /// [maxExhaustiveFrames] frames, the pairs of 200 photos; a longer video by a list of pairs (matches_importer), each
+  /// frame with the 1st, 2nd, 4th ... 512th after it and every frame with each [keyFrameStep]th frame, which ties the
+  /// turns around an object together. Measured on 3 November (diag-2026-11-03.md, lot SPF1) after FreeKC's object, 68
+  /// of 139 frames placed by sequential_matcher: every pair 123 of 139 (129 with [absPoseMinInliers]), the list 115
+  /// (125), for 9 591 and 2 526 pairs; his place in 8K, 55 of 140 by sequential_matcher, 116 (125) by every pair. The
+  /// cost, on the 22 threads of the PC: every pair of 150 frames of the lighthouse 286 s (sequential_matcher 58 to
+  /// 81 s), its list of 2 887 pairs 49 s
+  static const maxExhaustiveFrames = 200;
+  static const keyFrameStep = 10;
+
+  /// The mapper places an image from [absPoseMinInliers] inliers of its pose, COLMAP's 30 halved: +6 frames of 139 on
+  /// FreeKC's object, +9 of 140 on his place, the poses found otherwise unchanged (0.03 % of the scene)
+  static const absPoseMinInliers = 15;
 
   /// The threads of the extraction: (memory free - [colmapMemoryReserve]) / [colmapMemoryPerThread], from
   /// [colmapMinThreads] to the processors less two; once more with half of them after a crash (0xC0000005, seen at 24

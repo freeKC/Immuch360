@@ -802,7 +802,6 @@
   "ai_immersive_stage_splat_features": "جارٍ وضع الصور في 3D: البحث عن النقاط المميزة، {index} من {total}",
   "ai_immersive_stage_splat_frames": "جارٍ أخذ الإطارات: {index} من {total}",
   "ai_immersive_stage_splat_mapping": "جارٍ وضع الصور في 3D: إعادة البناء، وُضعت {index} من {total}",
-  "ai_immersive_stage_splat_matching": "جارٍ وضع الصور في 3D: المطابقة، {index} من {total}",
   "ai_immersive_stage_splat_matching_blocks": "جارٍ وضع الصور في 3D: المطابقة، الكتلة {index} من {total}",
   "ai_immersive_stage_splat_photos": "جارٍ تحضير الصور: {index} من {total}",
   "ai_immersive_stage_splat_poses": "جارٍ وضع الصور في 3D",

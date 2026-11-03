@@ -10,6 +10,10 @@
 //       [--ImageReader.single_camera_per_folder 1] [--FeatureExtraction.num_threads N] ...
 //   exhaustive_matcher --database_path D ...    blocks of --ExhaustiveMatching.block_size images (50)
 //   sequential_matcher --database_path D ...    image after image
+//   matches_importer --database_path D --match_list_path L --match_type pairs ...    the pairs of the list L ("a.jpg
+//       b.jpg" a line), blocks of 1 225 pairs; a name the database does not hold said ("Image nope.jpg does not
+//       exist.") and its pair skipped, as the real one does (lot SPF1, measured on 3 November); a list that is not
+//       there ends with 9 and nothing more, as measured too
 //   mapper --database_path D --image_path I --output_path S ...    S must be there, as for the real one
 //   model_orientation_aligner --image_path I --input_path M --output_path O --method IMAGE-ORIENTATION
 //   model_analyzer --path M
@@ -98,6 +102,7 @@ Future<void> main(List<String> arguments) async {
   final code = switch (command) {
     'feature_extractor' => await _extract(options),
     'exhaustive_matcher' || 'sequential_matcher' => await _match(options, sequential: command == 'sequential_matcher'),
+    'matches_importer' => await _import(options),
     'mapper' => await _map(options),
     'model_orientation_aligner' => await _align(options),
     'model_analyzer' => await _analyze(options),
@@ -320,6 +325,57 @@ Future<int> _match(Map<String, String> options, {required bool sequential}) asyn
       await _step();
       _log('feature_matching.cc:218', 'in ${(20 + (a * b) % 9).toStringAsFixed(3)}s', thread: 18264);
     }
+  }
+  return 0;
+}
+
+/// The pairs of a list a block, as matches_importer counts them (1 225: the blocks of 2 887 pairs were 3, measured)
+const _importBlock = 1225;
+
+Future<int> _import(Map<String, String> options) async {
+  _log('feature_matching.cc:196', '=== Feature matching & geometric verification ===', thread: 18264);
+  final database = _database(options);
+  if (database == null) {
+    _log('database.cc:300', 'Failed to open the database', severity: 'E');
+    return 1;
+  }
+  if (_mode == 'fail') {
+    return _fail('feature_matching.cc:205');
+  }
+  final asked = int.tryParse(options['FeatureMatching.num_threads'] ?? '-1') ?? -1;
+  for (var k = 0; k < (asked <= 0 ? Platform.numberOfProcessors : asked); k++) {
+    _log('sift.cc:1685', 'Creating SIFT CPU feature matcher', thread: 30000 + k);
+  }
+  _log('pairing.cc:905', 'Importing image pairs...', thread: 18264);
+  final list = File(options['match_list_path']!);
+  if (!list.existsSync()) {
+    await _flush();
+    return 9;
+  }
+  if (_mode == 'silent') {
+    return _silent();
+  }
+  final known = {for (final name in database['images']! as List) name as String};
+  var pairs = 0;
+  for (final line in list.readAsLinesSync()) {
+    final names = line.trim().split(RegExp(r'\s+'));
+    final first = names.isEmpty ? '' : names[0];
+    final second = names.length < 2 ? '' : names[1];
+    if (!known.contains(first)) {
+      _log('pairing.cc:78', 'Image $first does not exist.', severity: 'E', thread: 18264);
+      continue;
+    }
+    if (!known.contains(second)) {
+      _log('pairing.cc:82', 'Image $second does not exist.', severity: 'E', thread: 18264);
+      continue;
+    }
+    pairs++;
+  }
+  final blocks = pairs == 0 ? 1 : (pairs + _importBlock - 1) ~/ _importBlock;
+  for (var b = 1; b <= blocks; b++) {
+    _log('pairing.cc:938', 'Processing block [$b/$blocks]', thread: 18264);
+    await _step();
+    _log('feature_matching.cc:218', 'in ${(20 + b % 3).toStringAsFixed(3)}s', thread: 18264);
   }
   return 0;
 }

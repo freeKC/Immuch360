@@ -802,7 +802,6 @@
   "ai_immersive_stage_splat_features": "กำลังวางภาพใน 3D: ค้นหาจุดเด่น {index} จาก {total}",
   "ai_immersive_stage_splat_frames": "กำลังดึงเฟรม: {index} จาก {total}",
   "ai_immersive_stage_splat_mapping": "กำลังวางภาพใน 3D: สร้างขึ้นใหม่ วางแล้ว {index} จาก {total}",
-  "ai_immersive_stage_splat_matching": "กำลังวางภาพใน 3D: จับคู่ {index} จาก {total}",
   "ai_immersive_stage_splat_matching_blocks": "กำลังวางภาพใน 3D: จับคู่ บล็อก {index} จาก {total}",
   "ai_immersive_stage_splat_photos": "กำลังเตรียมภาพ: {index} จาก {total}",
   "ai_immersive_stage_splat_poses": "กำลังวางภาพใน 3D",

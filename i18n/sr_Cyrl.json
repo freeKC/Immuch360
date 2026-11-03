@@ -676,7 +676,6 @@
   "ai_immersive_stage_splat_features": "Постављање фотографија у 3D: тражење тачака, {index} од {total}",
   "ai_immersive_stage_splat_frames": "Узимање кадрова: {index} од {total}",
   "ai_immersive_stage_splat_mapping": "Постављање фотографија у 3D: обнова, постављено {index} од {total}",
-  "ai_immersive_stage_splat_matching": "Постављање фотографија у 3D: упаривање, {index} од {total}",
   "ai_immersive_stage_splat_matching_blocks": "Постављање фотографија у 3D: упаривање, блок {index} од {total}",
   "ai_immersive_stage_splat_photos": "Припрема фотографија: {index} од {total}",
   "ai_immersive_stage_splat_poses": "Постављање фотографија у 3D",

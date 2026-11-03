@@ -155,15 +155,36 @@ void main() {
       expect(File(p.join(work.aligned.path, 'images.bin')).existsSync(), isTrue);
     }, skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'));
 
-    test('a video: the sequential matching, one camera', () async {
+    test('a video: every pair of its frames matched, one camera', () async {
       photos(24, cameras: 1);
       final progress = <ColmapProgress>[];
       final poses = await colmap('ok').poses(work, images: 24, video: true, cancel: cancel, onProgress: progress.add);
       expect(poses.model.cameras, hasLength(1));
-      expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => x.done), [
-        for (var k = 1; k <= 24; k++) k,
-      ]);
+      expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => (x.done, x.total)), [(1, 1)]);
+      expect(work.logOf('colmap-matching').readAsStringSync(), contains('Generating exhaustive image pairs...'));
     }, skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'));
+
+    test(
+      'a video of 210 frames: the list of its pairs, every name one COLMAP holds, matched by matches_importer',
+      () async {
+        photos(210, cameras: 1);
+        final progress = <ColmapProgress>[];
+        final poses = await colmap(
+          'ok',
+        ).poses(work, images: 210, video: true, cancel: cancel, onProgress: progress.add);
+        expect(poses.placed, 210);
+        final pairs = colmapVideoPairs(210).length;
+        expect(work.pairs.readAsLinesSync(), hasLength(pairs));
+        final blocks = (pairs + 1224) ~/ 1225;
+        expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => (x.done, x.total)), [
+          for (var b = 1; b <= blocks; b++) (b, blocks),
+        ]);
+        final log = work.logOf('colmap-matching').readAsStringSync();
+        expect(log, contains('Importing image pairs...'));
+        expect(log, isNot(contains('does not exist')));
+      },
+      skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'),
+    );
 
     test('two models: the largest; 70 % placed: partial; a third: refused; no pair: refused with none', () async {
       photos(30);

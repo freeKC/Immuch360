@@ -300,7 +300,6 @@
   "ai_immersive_stage_splat_features": "Suratlar 3D da joylashtirilmoqda: nuqtalar qidirilmoqda, {index} / {total}",
   "ai_immersive_stage_splat_frames": "Kadrlar olinmoqda: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "Suratlar 3D da joylashtirilmoqda: qayta qurish, {index} / {total} joylashtirildi",
-  "ai_immersive_stage_splat_matching": "Suratlar 3D da joylashtirilmoqda: moslash, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "Suratlar 3D da joylashtirilmoqda: moslash, blok {index} / {total}",
   "ai_immersive_stage_splat_photos": "Suratlar tayyorlanmoqda: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Suratlar 3D da joylashtirilmoqda",

@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Posicionando as fotos em 3D: buscando pontos, {index} de {total}",
   "ai_immersive_stage_splat_frames": "Tirando os quadros: {index} de {total}",
   "ai_immersive_stage_splat_mapping": "Posicionando as fotos em 3D: reconstruindo, {index} de {total} posicionadas",
-  "ai_immersive_stage_splat_matching": "Posicionando as fotos em 3D: combinando, {index} de {total}",
   "ai_immersive_stage_splat_matching_blocks": "Posicionando as fotos em 3D: combinando, bloco {index} de {total}",
   "ai_immersive_stage_splat_photos": "Preparando as fotos: {index} de {total}",
   "ai_immersive_stage_splat_poses": "Posicionando as fotos em 3D",

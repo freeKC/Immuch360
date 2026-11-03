@@ -310,7 +310,6 @@
   "ai_immersive_stage_splat_features": "Фотолар 3D-де орналастырылуда: нүктелерді іздеу, {index} / {total}",
   "ai_immersive_stage_splat_frames": "Кадрлар алынуда: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "Фотолар 3D-де орналастырылуда: қайта құру, {index} / {total} орналастырылды",
-  "ai_immersive_stage_splat_matching": "Фотолар 3D-де орналастырылуда: сәйкестендіру, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "Фотолар 3D-де орналастырылуда: сәйкестендіру, блок {index} / {total}",
   "ai_immersive_stage_splat_photos": "Фотолар дайындалуда: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Фотолар 3D-де орналастырылуда",

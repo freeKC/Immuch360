@@ -802,7 +802,6 @@
   "ai_immersive_stage_splat_features": "در حال جای‌گذاری عکس‌ها در 3D: یافتن نقاط، {index} از {total}",
   "ai_immersive_stage_splat_frames": "در حال برداشتن فریم‌ها: {index} از {total}",
   "ai_immersive_stage_splat_mapping": "در حال جای‌گذاری عکس‌ها در 3D: بازسازی، {index} از {total} جای‌گذاری شد",
-  "ai_immersive_stage_splat_matching": "در حال جای‌گذاری عکس‌ها در 3D: تطبیق، {index} از {total}",
   "ai_immersive_stage_splat_matching_blocks": "در حال جای‌گذاری عکس‌ها در 3D: تطبیق، بلوک {index} از {total}",
   "ai_immersive_stage_splat_photos": "در حال آماده‌سازی عکس‌ها: {index} از {total}",
   "ai_immersive_stage_splat_poses": "در حال جای‌گذاری عکس‌ها در 3D",

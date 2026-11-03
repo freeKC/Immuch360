@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Fotoğraflar 3D olarak yerleştiriliyor: noktalar aranıyor, {index} / {total}",
   "ai_immersive_stage_splat_frames": "Kareler alınıyor: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "Fotoğraflar 3D olarak yerleştiriliyor: yeniden oluşturma, {index} / {total} yerleştirildi",
-  "ai_immersive_stage_splat_matching": "Fotoğraflar 3D olarak yerleştiriliyor: eşleştirme, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "Fotoğraflar 3D olarak yerleştiriliyor: eşleştirme, blok {index} / {total}",
   "ai_immersive_stage_splat_photos": "Fotoğraflar hazırlanıyor: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Fotoğraflar 3D olarak yerleştiriliyor",

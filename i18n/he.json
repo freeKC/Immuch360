@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "ממקמים את התמונות ב־3D: מחפשים נקודות, {index} מתוך {total}",
   "ai_immersive_stage_splat_frames": "לוקחים פריימים: {index} מתוך {total}",
   "ai_immersive_stage_splat_mapping": "ממקמים את התמונות ב־3D: משחזרים, {index} מתוך {total} מוקמו",
-  "ai_immersive_stage_splat_matching": "ממקמים את התמונות ב־3D: מתאימים, {index} מתוך {total}",
   "ai_immersive_stage_splat_matching_blocks": "ממקמים את התמונות ב־3D: מתאימים, בלוק {index} מתוך {total}",
   "ai_immersive_stage_splat_photos": "מכינים את התמונות: {index} מתוך {total}",
   "ai_immersive_stage_splat_poses": "ממקמים את התמונות ב־3D",

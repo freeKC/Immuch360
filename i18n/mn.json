@@ -423,7 +423,6 @@
   "ai_immersive_stage_splat_features": "Зургуудыг 3D-д байрлуулж байна: цэгүүдийг хайж байна, {index} / {total}",
   "ai_immersive_stage_splat_frames": "Кадруудыг авч байна: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "Зургуудыг 3D-д байрлуулж байна: сэргээн босгож байна, {index} / {total} байрласан",
-  "ai_immersive_stage_splat_matching": "Зургуудыг 3D-д байрлуулж байна: тааруулж байна, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "Зургуудыг 3D-д байрлуулж байна: тааруулж байна, блок {index} / {total}",
   "ai_immersive_stage_splat_photos": "Зургуудыг бэлдэж байна: {index} / {total}",
   "ai_immersive_stage_splat_poses": "Зургуудыг 3D-д байрлуулж байна",

@@ -3,6 +3,7 @@
 //   dataset/images/<group>/000001.jpg   the photos prepared or the frames taken (lot SP5), one folder per group of
 //                                        cameras; COLMAP's --image_path, and the images/ Brush reads
 //   colmap/database.db, colmap/sparse/<n>/   the points, the matches and the models of the mapper
+//   colmap/pairs.txt                     the pairs of the frames of a long video, matched by matches_importer
 //   dataset/sparse/0/                    the largest model, upright (model_orientation_aligner): what Brush reads
 //   brush/export_<steps>.ply             what Brush writes
 //   logs/colmap-*.log, logs/brush.log    every line of the programs; after a failure (a Cancel is none), the end of
@@ -50,6 +51,9 @@ class SplatWorkFolder {
 
   /// Where the mapper writes its models, 0, 1...
   Directory get sparse => Directory(p.join(colmap.path, 'sparse'));
+
+  /// The pairs of the frames of a long video, which matches_importer matches
+  File get pairs => File(p.join(colmap.path, 'pairs.txt'));
 
   /// The largest model, upright
   Directory get aligned => Directory(p.join(dataset.path, 'sparse', '0'));

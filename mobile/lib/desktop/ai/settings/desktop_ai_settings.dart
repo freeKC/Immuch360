@@ -274,9 +274,10 @@ class DesktopAiSettings {
 /// the settings of the first test build as the plan of 1 November estimates it from its measure (some 13 min: the photos
 /// 45 s, the poses 260 s measured with SIFT at 1 024 pixels, the training 7.5 min, what the measure M1 gives for photos
 /// of 4:3 at 1 024 x 768, those of a phone, beside its 366 s measured on photos of 3:2 at 1 024 x 683), and the splat
-/// scene of a video of two minutes, kept apart ("splatSceneVideo", ConversionKind.timingsKey: some 8.5 min, the frames
-/// 40 to 90 s as the plan estimates them, the sequential matching 81 s and the mapping 30 s of the measure, the training
-/// 306 s measured by M1 at 1 024 x 576). Its engine tells the time left of the whole job
+/// scene of a video of two minutes, kept apart ("splatSceneVideo", ConversionKind.timingsKey: some 12 min, the frames
+/// 40 to 90 s as the plan estimates them, every pair of its frames matched in 286 s and the mapping in 36 s as lot
+/// SPF1 measured them on the lighthouse, the training 306 s measured by M1 at 1 024 x 576). Its engine tells the time
+/// left of the whole job
 /// (ConversionKind.tellsWholeTimeLeft): these only give the time of the dialog until the first scene.
 const aiDefaultTimings = <String, Map<String, int>>{
   'sbsFromPhoto': {'reading': 100, 'decoding': 500, 'depth': 1000, 'rightEye': 500, 'encoding': 600, 'writing': 100},

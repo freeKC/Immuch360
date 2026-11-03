@@ -42,15 +42,25 @@ void main() {
     expect(model.expected(ImmersiveStage.frames), Duration.zero, reason: 'a job of photos takes no frames');
   });
 
-  test('a video: its matching by its frames, sequential', () {
-    final model = SplatTimeModel(
+  test('a video: its matching by its pairs, every pair up to 200 frames, its list of pairs beyond', () {
+    SplatTimeModel video(int images) => SplatTimeModel(
       reference: _reference('splatSceneVideo'),
       stages: ImmersiveStage.splatOf(video: true),
-      images: 250,
+      images: images,
       video: true,
     );
-    expect(model.expected(ImmersiveStage.matching).inMilliseconds, closeTo(81000 * 250 / 150, 1));
-    expect(model.expected(ImmersiveStage.photos), Duration.zero);
+    // The default: every pair of the 150 frames of the lighthouse, 285.7 s on the 22 threads of the PC (lot SPF1)
+    final matching = aiDefaultTimings['splatSceneVideo']!['matching']!;
+    expect(matching, 286000);
+    expect(video(150).expected(ImmersiveStage.matching), const Duration(milliseconds: 286000));
+    expect(video(200).expected(ImmersiveStage.matching).inMilliseconds, closeTo(matching * 19900 / 11175, 1));
+    // 7 322 pairs listed for 250 frames, fewer than the 19 900 of 200 frames matched pair by pair
+    expect(video(250).expected(ImmersiveStage.matching).inMilliseconds, closeTo(matching * 7322 / 11175, 1));
+    expect(video(150).expected(ImmersiveStage.photos), Duration.zero);
+    expect(
+      video(200).normalized(ImmersiveStage.matching, const Duration(seconds: 100)).inMilliseconds,
+      closeTo(100000 * 11175 / 19900, 1),
+    );
   });
 
   test('the images a job plans: a video its frames, whatever its one member; photos 200 at most', () {

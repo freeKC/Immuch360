@@ -764,7 +764,6 @@
   "ai_immersive_stage_splat_features": "Fotoattēlu izvietošana 3D: punktu meklēšana, {index} no {total}",
   "ai_immersive_stage_splat_frames": "Kadru ņemšana: {index} no {total}",
   "ai_immersive_stage_splat_mapping": "Fotoattēlu izvietošana 3D: atjaunošana, izvietoti {index} no {total}",
-  "ai_immersive_stage_splat_matching": "Fotoattēlu izvietošana 3D: savienošana pārī, {index} no {total}",
   "ai_immersive_stage_splat_matching_blocks": "Fotoattēlu izvietošana 3D: savienošana pārī, bloks {index} no {total}",
   "ai_immersive_stage_splat_photos": "Fotoattēlu sagatavošana: {index} no {total}",
   "ai_immersive_stage_splat_poses": "Fotoattēlu izvietošana 3D",

@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Placement des photos en 3D : recherche des points, {index} sur {total}",
   "ai_immersive_stage_splat_frames": "Prise des images : {index} sur {total}",
   "ai_immersive_stage_splat_mapping": "Placement des photos en 3D : reconstruction, {index} sur {total} placées",
-  "ai_immersive_stage_splat_matching": "Placement des photos en 3D : appariement, {index} sur {total}",
   "ai_immersive_stage_splat_matching_blocks": "Placement des photos en 3D : appariement, bloc {index} sur {total}",
   "ai_immersive_stage_splat_photos": "Préparation des photos : {index} sur {total}",
   "ai_immersive_stage_splat_poses": "Placement des photos en 3D",

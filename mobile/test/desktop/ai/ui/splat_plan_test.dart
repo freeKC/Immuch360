@@ -389,10 +389,11 @@ void main() {
     // counts it (SplatTimeModel)
     expect(half.poses.inMilliseconds, closeTo(5000 + 110000 / 2 + 195000 * 75 * 74 / (150 * 149), 1));
 
+    // A video: 5 + 60 + 15 + 286 + 36 s of poses since lot SPF1 (every pair of its frames matched, 81 s before)
     final video = splatTimeOf(timings, images: 150, video: true);
-    expect(video.poses, const Duration(seconds: 191));
+    expect(video.poses, const Duration(seconds: 402));
     expect(video.training, const Duration(seconds: 306));
-    expect(video.total, const Duration(seconds: 508));
+    expect(video.total, const Duration(seconds: 719));
 
     // What this computer measured replaces the defaults
     final measured = splatTimeOf(

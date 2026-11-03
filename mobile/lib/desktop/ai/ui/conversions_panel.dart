@@ -282,8 +282,9 @@ String conversionJobLabel(Translations t, ConversionJob job, ConversionJobInfo? 
 
 /// The step of a long job in words ("Estimating the geometry", "Filling hidden areas: 2 of 5", "Placing the photos in
 /// 3D: finding features, 87 of 150"), null for the steps the state says well enough (those of the 3D photo). The
-/// photos of a splat scene are matched in blocks ("matching, block 4 of 9", exhaustive_matcher), the frames of a video
-/// one after the other ("matching, 61 of 150", sequential_matcher).
+/// photos and the frames of a splat scene are matched in blocks ("matching, block 4 of 9": exhaustive_matcher, or
+/// matches_importer for a video of more than 200 frames; until lot SPF1 the frames of a video were matched one after
+/// the other).
 String? conversionStageText(Translations t, ConversionJob job) => switch (job.state) {
   ConversionState.geometry => t.ai_immersive_stage_geometry,
   ConversionState.layers => t.ai_immersive_stage_layers,
@@ -311,7 +312,6 @@ String? conversionStageText(Translations t, ConversionJob job) => switch (job.st
     _ => t.ai_immersive_stage_splat_poses,
   },
   ConversionState.matching => switch ((job.step, job.steps)) {
-    (final step?, final steps?) when job.fromVideo => t.ai_immersive_stage_splat_matching(index: step, total: steps),
     (final step?, final steps?) => t.ai_immersive_stage_splat_matching_blocks(index: step, total: steps),
     _ => t.ai_immersive_stage_splat_poses,
   },

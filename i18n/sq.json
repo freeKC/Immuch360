@@ -802,7 +802,6 @@
   "ai_immersive_stage_splat_features": "Po vendosen fotot në 3D: po kërkohen pikat, {index} nga {total}",
   "ai_immersive_stage_splat_frames": "Po merren pamjet: {index} nga {total}",
   "ai_immersive_stage_splat_mapping": "Po vendosen fotot në 3D: rindërtim, {index} nga {total} të vendosura",
-  "ai_immersive_stage_splat_matching": "Po vendosen fotot në 3D: përputhje, {index} nga {total}",
   "ai_immersive_stage_splat_matching_blocks": "Po vendosen fotot në 3D: përputhje, blloku {index} nga {total}",
   "ai_immersive_stage_splat_photos": "Po përgatiten fotot: {index} nga {total}",
   "ai_immersive_stage_splat_poses": "Po vendosen fotot në 3D",

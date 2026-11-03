@@ -404,7 +404,6 @@
   "ai_immersive_stage_splat_features": "Поставување на фотографиите во 3D: барање точки, {index} од {total}",
   "ai_immersive_stage_splat_frames": "Земање на кадрите: {index} од {total}",
   "ai_immersive_stage_splat_mapping": "Поставување на фотографиите во 3D: обнова, поставени {index} од {total}",
-  "ai_immersive_stage_splat_matching": "Поставување на фотографиите во 3D: спарување, {index} од {total}",
   "ai_immersive_stage_splat_matching_blocks": "Поставување на фотографиите во 3D: спарување, блок {index} од {total}",
   "ai_immersive_stage_splat_photos": "Подготовка на фотографиите: {index} од {total}",
   "ai_immersive_stage_splat_poses": "Поставување на фотографиите во 3D",

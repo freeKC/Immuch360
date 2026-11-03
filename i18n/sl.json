@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Postavljanje fotografij v 3D: iskanje točk, {index} od {total}",
   "ai_immersive_stage_splat_frames": "Jemanje sličic: {index} od {total}",
   "ai_immersive_stage_splat_mapping": "Postavljanje fotografij v 3D: obnova, postavljenih {index} od {total}",
-  "ai_immersive_stage_splat_matching": "Postavljanje fotografij v 3D: povezovanje, {index} od {total}",
   "ai_immersive_stage_splat_matching_blocks": "Postavljanje fotografij v 3D: povezovanje, blok {index} od {total}",
   "ai_immersive_stage_splat_photos": "Priprava fotografij: {index} od {total}",
   "ai_immersive_stage_splat_poses": "Postavljanje fotografij v 3D",

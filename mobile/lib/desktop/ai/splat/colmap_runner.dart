@@ -6,11 +6,15 @@
 //    definition, 2.3 times faster in the measure), one camera per folder of photos (one folder per group of cameras,
 //    lot SP5), one camera for the frames of a video; its threads chosen from the memory free now, (free - 1.5 GiB) /
 //    307 MiB, from 2 to the processors less two: the measure saw it crash with 0xC0000005 at 24 threads and 2.9 GB free;
-//  - exhaustive_matcher for photos (200 at most), sequential_matcher without loop detection for a video (the
-//    vocabulary tree of COLMAP has no written licence), the processors less two;
-//  - mapper into colmap/sparse, which must be there first, the processors less two; then the largest of its models
-//    (colmap_model.dart), refused under SplatV1.minPlaced images or SplatV1.minPlacedShare of them (notEnoughOverlap,
-//    "placed/all"), said partial under SplatV1.partialShare;
+//  - exhaustive_matcher for photos (200 at most) and for a video of up to SplatV1.maxExhaustiveFrames frames; a longer
+//    video by matches_importer, the list of its pairs written to colmap/pairs.txt first ([colmapVideoPairs]); the
+//    processors less two. Until lot SPF1 a video was matched by sequential_matcher without loop detection (the
+//    vocabulary tree of COLMAP has no written licence), which tries the frames 1, 2, 4 ... 128 apart and never ties two
+//    turns around an object together: 68 of FreeKC's 139 frames placed on 3 November, 129 now (diag-2026-11-03.md);
+//  - mapper into colmap/sparse, which must be there first, the processors less two, an image placed from
+//    SplatV1.absPoseMinInliers inliers; then the largest of its models (colmap_model.dart), refused under
+//    SplatV1.minPlaced images or SplatV1.minPlacedShare of them (notEnoughOverlap, "placed/all"), said partial under
+//    SplatV1.partialShare;
 //  - model_orientation_aligner by IMAGE-ORIENTATION into dataset/sparse/0, the model upright (+y down), which Brush and
 //    the headset read; then the model read whole, the centres of its cameras for the scale (splat_scale.dart, lot SP3,
 //    which finds the floor).
@@ -33,7 +37,7 @@
 // stopped (COLMAP skips what its database already holds); the mapper starts again from an empty sparse/. A file of the
 // work folder that cannot be made or removed is posesFailed (diskFull when the disk is full). The progress, read from
 // glog on the error output as the measure logged it, never goes back: "Processed file [87/150]" (features), "Processing
-// block [4/9, 2/9]" (blocks of the exhaustive matching), "Processing image [120/150]" (the sequential matching),
+// block [4/9, 2/9]" (blocks of the exhaustive matching), "Processing block [2/3]" (blocks of 1 225 pairs of a list),
 // "Registering image #66 (num_reg_frames=120)" (the image is the 121st placed; a second model starts again from 2, the
 // count kept is the largest).
 
@@ -147,16 +151,67 @@ List<String> colmapExtractArguments({
   'stderr',
 ];
 
-/// The arguments of the matching, frozen: exhaustive for photos, sequential without loop detection for a video
-List<String> colmapMatchArguments({required String database, required int threads, required bool video}) => [
-  if (video) 'sequential_matcher' else 'exhaustive_matcher',
+/// How the images of a job are matched (see the top of this file)
+enum ColmapMatching {
+  /// Every pair: exhaustive_matcher
+  exhaustive,
+
+  /// The pairs of a list ([colmapVideoPairs]): matches_importer
+  pairs,
+}
+
+/// How [images] images are matched: every pair, but for a video of more than SplatV1.maxExhaustiveFrames frames
+ColmapMatching colmapMatchingOf(int images, {required bool video}) =>
+    video && images > SplatV1.maxExhaustiveFrames ? ColmapMatching.pairs : ColmapMatching.exhaustive;
+
+/// The pairs of [frames] frames of a video matched by a list, by their indexes in the order of time from 0, the first
+/// below the second, sorted: each frame with the 1st, 2nd, 4th ... 512th frame after it (what sequential_matcher tries
+/// by default), and every frame with each SplatV1.keyFrameStep-th frame from the first (0, 10, 20...), which ties the
+/// turns around an object together (q-r2 of diag-2026-11-03.md: 2 526 pairs of 139 frames)
+List<(int, int)> colmapVideoPairs(int frames) {
+  final pairs = <(int, int)>{};
+  for (var i = 0; i < frames; i++) {
+    for (var gap = 1; gap <= 512 && i + gap < frames; gap *= 2) {
+      pairs.add((i, i + gap));
+    }
+  }
+  for (var key = 0; key < frames; key += SplatV1.keyFrameStep) {
+    for (var other = 0; other < frames; other++) {
+      if (other != key) {
+        pairs.add(other < key ? (other, key) : (key, other));
+      }
+    }
+  }
+  return pairs.toList()..sort((a, b) => a.$1 != b.$1 ? a.$1.compareTo(b.$1) : a.$2.compareTo(b.$2));
+}
+
+/// The pairs the matching of [images] images tries ([colmapMatchingOf])
+int colmapPairsOf(int images, {required bool video}) => switch (colmapMatchingOf(images, video: video)) {
+  ColmapMatching.exhaustive => images * (images - 1) ~/ 2,
+  ColmapMatching.pairs => colmapVideoPairs(images).length,
+};
+
+/// The images under [images] as COLMAP names them: their paths from it with "/" between folders, sorted (the frames of
+/// a video in the order of time)
+List<String> colmapImageNames(Directory images) {
+  final root = images.absolute.path;
+  return [
+    for (final entity in images.absolute.listSync(recursive: true))
+      if (entity is File && RegExp(r'\.(jpe?g|png)$', caseSensitive: false).hasMatch(entity.path))
+        p.relative(entity.path, from: root).replaceAll(r'\', '/'),
+  ]..sort();
+}
+
+/// The arguments of the matching, frozen: every pair, or the pairs of the list in the file [pairs]
+List<String> colmapMatchArguments({required String database, required int threads, String? pairs}) => [
+  if (pairs == null) 'exhaustive_matcher' else 'matches_importer',
   '--database_path',
   database,
+  if (pairs != null) ...['--match_list_path', pairs, '--match_type', 'pairs'],
   '--FeatureMatching.use_gpu',
   '0',
   '--FeatureMatching.num_threads',
   '$threads',
-  if (video) ...['--SequentialMatching.loop_detection', '0'],
   '--log_target',
   'stderr',
 ];
@@ -177,6 +232,8 @@ List<String> colmapMapperArguments({
   output,
   '--Mapper.num_threads',
   '$threads',
+  '--Mapper.abs_pose_min_num_inliers',
+  '${SplatV1.absPoseMinInliers}',
   '--log_target',
   'stderr',
 ];
@@ -198,7 +255,7 @@ List<String> colmapAlignArguments({required String images, required String input
 
 final _processedFile = RegExp(r'\] Processed file \[(\d+)/(\d+)\]');
 final _block = RegExp(r'\] Processing block \[(\d+)/(\d+), (\d+)/(\d+)\]');
-final _sequential = RegExp(r'\] Processing image \[(\d+)/(\d+)\]');
+final _listBlock = RegExp(r'\] Processing block \[(\d+)/(\d+)\]');
 final _registered = RegExp(r'\] Registering image #\d+ \(num_reg_frames=(\d+)\)');
 final _initialPair = RegExp(r'\] Registering initial image pair #\d+ and #\d+');
 
@@ -263,7 +320,7 @@ class ColmapLog {
       final blocks = int.parse(block.group(4)!);
       return ((int.parse(block.group(1)!) - 1) * blocks + b, int.parse(block.group(2)!) * blocks);
     }
-    return _pair(_sequential.firstMatch(line));
+    return _pair(_listBlock.firstMatch(line));
   }
 
   (int?, int?) _mapping(String line) {
@@ -391,11 +448,28 @@ class ColmapRunner {
       onProgress: onProgress,
       times: times,
     );
+    // A long video by the list of its pairs, by the names of its frames
+    final listed = colmapMatchingOf(images, video: video) == ColmapMatching.pairs;
+    if (listed) {
+      _files(() {
+        final names = colmapImageNames(at.images);
+        at.pairs.writeAsStringSync(
+          [for (final (i, j) in colmapVideoPairs(names.length)) '${names[i]} ${names[j]}\n'].join(),
+          flush: true,
+        );
+      });
+    } else {
+      _files(() {
+        if (at.pairs.existsSync()) {
+          at.pairs.deleteSync();
+        }
+      });
+    }
     await _command(
       ImmersiveStage.matching,
       'matching',
       common,
-      (count) => colmapMatchArguments(database: at.database.path, threads: count, video: video),
+      (count) => colmapMatchArguments(database: at.database.path, threads: count, pairs: listed ? at.pairs.path : null),
       at,
       images: images,
       cancel: cancel,

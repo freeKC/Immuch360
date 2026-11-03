@@ -802,7 +802,6 @@
   "ai_immersive_stage_splat_features": "ছবিগুলো 3D-তে বসানো হচ্ছে: বৈশিষ্ট্য খোঁজা হচ্ছে, {total}টির মধ্যে {index}",
   "ai_immersive_stage_splat_frames": "ফ্রেম নেওয়া হচ্ছে: {total}টির মধ্যে {index}",
   "ai_immersive_stage_splat_mapping": "ছবিগুলো 3D-তে বসানো হচ্ছে: পুনর্গঠন, {total}টির মধ্যে {index}টি বসানো হয়েছে",
-  "ai_immersive_stage_splat_matching": "ছবিগুলো 3D-তে বসানো হচ্ছে: মেলানো হচ্ছে, {total}টির মধ্যে {index}",
   "ai_immersive_stage_splat_matching_blocks": "ছবিগুলো 3D-তে বসানো হচ্ছে: মেলানো হচ্ছে, {total}টির মধ্যে ব্লক {index}",
   "ai_immersive_stage_splat_photos": "ছবিগুলো প্রস্তুত করা হচ্ছে: {total}টির মধ্যে {index}",
   "ai_immersive_stage_splat_poses": "ছবিগুলো 3D-তে বসানো হচ্ছে",

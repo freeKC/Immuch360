@@ -747,7 +747,6 @@
   "ai_immersive_stage_splat_features": "Fotos werded in 3D platziert: Merkmal sueche, {index} vo {total}",
   "ai_immersive_stage_splat_frames": "Bilder werded usegnoh: {index} vo {total}",
   "ai_immersive_stage_splat_mapping": "Fotos werded in 3D platziert: Rekonstruktion, {index} vo {total} platziert",
-  "ai_immersive_stage_splat_matching": "Fotos werded in 3D platziert: Zueordnig, {index} vo {total}",
   "ai_immersive_stage_splat_matching_blocks": "Fotos werded in 3D platziert: Zueordnig, Block {index} vo {total}",
   "ai_immersive_stage_splat_photos": "Fotos werded vorbereitet: {index} vo {total}",
   "ai_immersive_stage_splat_poses": "Fotos werded in 3D platziert",

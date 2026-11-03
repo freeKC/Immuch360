@@ -5,10 +5,12 @@
 // The times of the steps a computer keeps (AiTimings, desktop_ai.json, under "splatScene" and "splatSceneVideo") are
 // those of a job of [splatReferenceImages] images, 150 photos or 150 frames, at 20 000 steps: the defaults of the plan
 // until this computer finished one, then the mean of what it measured. A job of other counts scales them: the photos
-// or frames prepared, the points of the images and the mapping with its images; the exhaustive matching of photos with
-// its pairs (n (n - 1) / 2), the sequential one of a video with its images; the training with its steps (one image a
-// step, at the definition of the settings); the rest not at all. The times a job measured go back to the reference
-// the same way before they are kept ([SplatTimeModel.normalized]).
+// or frames prepared, the points of the images and the mapping with its images; the matching with the pairs it tries
+// (colmapPairsOf: n (n - 1) / 2 for every pair, the photos and a video of up to 200 frames; the list of pairs of a
+// longer video, 7 322 for 250 frames); the training with its steps (one image a step, at the definition of the
+// settings); the rest not at all. The times a job measured go back to the reference the same way before they are kept
+// ([SplatTimeModel.normalized]). Until lot SPF1 a video was matched by sequential_matcher, its time by its images: a
+// time of a video kept then would tell the matching far too short (only the test build T1 could have kept one).
 //
 // The counts a job starts from are those it will take ([splatPlannedImages]): the 150 frames of a video (its one member
 // is not an image), 200 of more photos. The step of the photos or of the frames follows what the preparation reads
@@ -23,6 +25,7 @@
 import 'dart:math' as math;
 
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 /// The images the times of the steps of a splat scene are kept for
@@ -41,13 +44,16 @@ const splatSceneDefaultTimings = <String, int>{
   'writing': 1000,
 };
 
-/// The same for a splat scene of a video of two minutes ("splatSceneVideo"): some 8.5 min
+/// The same for a splat scene of a video of two minutes ("splatSceneVideo"): some 12 min. The matching and the mapping
+/// of lot SPF1, measured on 3 November on the 22 threads of the PC: every pair of the 150 frames of the lighthouse,
+/// rich in points (2 455 an image), 285.7 s, and its mapper at 15 inliers, 36.3 s (FreeKC's object, poor in points: 11
+/// and 10 s); sequential_matcher took 58 to 81 s there
 const splatSceneVideoDefaultTimings = <String, int>{
   'reading': 5000,
   'frames': 60000,
   'features': 15000,
-  'matching': 81000,
-  'mapping': 30000,
+  'matching': 286000,
+  'mapping': 36000,
   'training': 306000,
   'splatCopy': 10000,
   'writing': 1000,
@@ -75,7 +81,7 @@ double splatStageScale(ImmersiveStage stage, {required int images, required bool
     ImmersiveStage.frames ||
     ImmersiveStage.features ||
     ImmersiveStage.mapping => n / reference,
-    ImmersiveStage.matching => video ? n / reference : (n * (n - 1)) / (reference * (reference - 1)),
+    ImmersiveStage.matching => colmapPairsOf(n, video: video) / colmapPairsOf(reference, video: video),
     ImmersiveStage.training => steps / SplatV1.steps,
     _ => 1,
   };

@@ -288,7 +288,6 @@
   "ai_immersive_stage_splat_features": "Se piazzen i foto in 3D: se cerchen i pont, {index} de {total}",
   "ai_immersive_stage_splat_frames": "Se ciapen i fotogramma: {index} de {total}",
   "ai_immersive_stage_splat_mapping": "Se piazzen i foto in 3D: ricostruzion, {index} de {total} piazzade",
-  "ai_immersive_stage_splat_matching": "Se piazzen i foto in 3D: abinament, {index} de {total}",
   "ai_immersive_stage_splat_matching_blocks": "Se piazzen i foto in 3D: abinament, bloch {index} de {total}",
   "ai_immersive_stage_splat_photos": "Se prepàren i foto: {index} de {total}",
   "ai_immersive_stage_splat_poses": "Se piazzen i foto in 3D",

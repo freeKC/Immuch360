@@ -301,7 +301,6 @@
   "ai_immersive_stage_splat_features": "I stap putum ol foto long 3D: i stap lukaot ol poen, {index} long {total}",
   "ai_immersive_stage_splat_frames": "I stap tekem ol pikja: {index} long {total}",
   "ai_immersive_stage_splat_mapping": "I stap putum ol foto long 3D: i stap wokem bakegen, {index} long {total} oli putum",
-  "ai_immersive_stage_splat_matching": "I stap putum ol foto long 3D: i stap matsem, {index} long {total}",
   "ai_immersive_stage_splat_matching_blocks": "I stap putum ol foto long 3D: i stap matsem, blok {index} long {total}",
   "ai_immersive_stage_splat_photos": "I stap rerem ol foto: {index} long {total}",
   "ai_immersive_stage_splat_poses": "I stap putum ol foto long 3D",

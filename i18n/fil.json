@@ -366,7 +366,6 @@
   "ai_immersive_stage_splat_features": "Inilalagay ang mga larawan sa 3D: hinahanap ang mga feature, {index} sa {total}",
   "ai_immersive_stage_splat_frames": "Kinukuha ang mga frame: {index} sa {total}",
   "ai_immersive_stage_splat_mapping": "Inilalagay ang mga larawan sa 3D: muling binubuo, {index} sa {total} ang nailagay",
-  "ai_immersive_stage_splat_matching": "Inilalagay ang mga larawan sa 3D: pinagtutugma, {index} sa {total}",
   "ai_immersive_stage_splat_matching_blocks": "Inilalagay ang mga larawan sa 3D: pinagtutugma, block {index} sa {total}",
   "ai_immersive_stage_splat_photos": "Inihahanda ang mga larawan: {index} sa {total}",
   "ai_immersive_stage_splat_poses": "Inilalagay ang mga larawan sa 3D",

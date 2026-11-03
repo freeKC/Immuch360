@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Fotos werden in 3D platziert: Merkmale suchen, {index} von {total}",
   "ai_immersive_stage_splat_frames": "Bilder werden entnommen: {index} von {total}",
   "ai_immersive_stage_splat_mapping": "Fotos werden in 3D platziert: Rekonstruktion, {index} von {total} platziert",
-  "ai_immersive_stage_splat_matching": "Fotos werden in 3D platziert: Zuordnung, {index} von {total}",
   "ai_immersive_stage_splat_matching_blocks": "Fotos werden in 3D platziert: Zuordnung, Block {index} von {total}",
   "ai_immersive_stage_splat_photos": "Fotos werden vorbereitet: {index} von {total}",
   "ai_immersive_stage_splat_poses": "Fotos werden in 3D platziert",

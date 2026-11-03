@@ -386,7 +386,6 @@
   "ai_immersive_stage_splat_features": "កំពុងដាក់រូបថតក្នុង 3D៖ កំពុងស្វែងរកចំណុច {index} ក្នុងចំណោម {total}",
   "ai_immersive_stage_splat_frames": "កំពុងយកស៊ុម៖ {index} ក្នុងចំណោម {total}",
   "ai_immersive_stage_splat_mapping": "កំពុងដាក់រូបថតក្នុង 3D៖ កំពុងបង្កើតឡើងវិញ បានដាក់ {index} ក្នុងចំណោម {total}",
-  "ai_immersive_stage_splat_matching": "កំពុងដាក់រូបថតក្នុង 3D៖ កំពុងផ្គូផ្គង {index} ក្នុងចំណោម {total}",
   "ai_immersive_stage_splat_matching_blocks": "កំពុងដាក់រូបថតក្នុង 3D៖ កំពុងផ្គូផ្គង ប្លុក {index} ក្នុងចំណោម {total}",
   "ai_immersive_stage_splat_photos": "កំពុងរៀបចំរូបថត៖ {index} ក្នុងចំណោម {total}",
   "ai_immersive_stage_splat_poses": "កំពុងដាក់រូបថតក្នុង 3D",

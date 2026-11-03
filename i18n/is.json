@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Staðset myndirnar í 3D: finn punkta, {index} af {total}",
   "ai_immersive_stage_splat_frames": "Tek rammana: {index} af {total}",
   "ai_immersive_stage_splat_mapping": "Staðset myndirnar í 3D: endurgeri, {index} af {total} staðsettar",
-  "ai_immersive_stage_splat_matching": "Staðset myndirnar í 3D: para saman, {index} af {total}",
   "ai_immersive_stage_splat_matching_blocks": "Staðset myndirnar í 3D: para saman, blokk {index} af {total}",
   "ai_immersive_stage_splat_photos": "Undirbý myndirnar: {index} af {total}",
   "ai_immersive_stage_splat_poses": "Staðset myndirnar í 3D",

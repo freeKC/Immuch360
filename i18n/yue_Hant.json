@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "喺 3D 放緊相：搵緊特徵點，{index}/{total}",
   "ai_immersive_stage_splat_frames": "攞緊影格：{index}/{total}",
   "ai_immersive_stage_splat_mapping": "喺 3D 放緊相：重建緊，放咗 {index}/{total}",
-  "ai_immersive_stage_splat_matching": "喺 3D 放緊相：配對緊，{index}/{total}",
   "ai_immersive_stage_splat_matching_blocks": "喺 3D 放緊相：配對緊，第 {index}/{total} 區塊",
   "ai_immersive_stage_splat_photos": "準備緊啲相：{index}/{total}",
   "ai_immersive_stage_splat_poses": "喺 3D 放緊相",

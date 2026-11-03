@@ -808,7 +808,6 @@
   "ai_immersive_stage_splat_features": "Se plasează fotografiile în 3D: se caută puncte, {index} din {total}",
   "ai_immersive_stage_splat_frames": "Se extrag cadrele: {index} din {total}",
   "ai_immersive_stage_splat_mapping": "Se plasează fotografiile în 3D: reconstrucție, {index} din {total} plasate",
-  "ai_immersive_stage_splat_matching": "Se plasează fotografiile în 3D: asociere, {index} din {total}",
   "ai_immersive_stage_splat_matching_blocks": "Se plasează fotografiile în 3D: asociere, blocul {index} din {total}",
   "ai_immersive_stage_splat_photos": "Se pregătesc fotografiile: {index} din {total}",
   "ai_immersive_stage_splat_poses": "Se plasează fotografiile în 3D",

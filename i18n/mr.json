@@ -761,7 +761,6 @@
   "ai_immersive_stage_splat_features": "फोटो 3D मध्ये ठेवत आहे: बिंदू शोधत आहे, {total} पैकी {index}",
   "ai_immersive_stage_splat_frames": "फ्रेम्स घेत आहे: {total} पैकी {index}",
   "ai_immersive_stage_splat_mapping": "फोटो 3D मध्ये ठेवत आहे: पुन्हा तयार करत आहे, {total} पैकी {index} ठेवले",
-  "ai_immersive_stage_splat_matching": "फोटो 3D मध्ये ठेवत आहे: जुळवत आहे, {total} पैकी {index}",
   "ai_immersive_stage_splat_matching_blocks": "फोटो 3D मध्ये ठेवत आहे: जुळवत आहे, {total} पैकी ब्लॉक {index}",
   "ai_immersive_stage_splat_photos": "फोटो तयार करत आहे: {total} पैकी {index}",
   "ai_immersive_stage_splat_poses": "फोटो 3D मध्ये ठेवत आहे",

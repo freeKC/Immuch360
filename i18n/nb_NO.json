@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Plasserer bildene i 3D: finner punkter, {index} av {total}",
   "ai_immersive_stage_splat_frames": "Tar ut bildene: {index} av {total}",
   "ai_immersive_stage_splat_mapping": "Plasserer bildene i 3D: gjenskaper, {index} av {total} plassert",
-  "ai_immersive_stage_splat_matching": "Plasserer bildene i 3D: matcher, {index} av {total}",
   "ai_immersive_stage_splat_matching_blocks": "Plasserer bildene i 3D: matcher, blokk {index} av {total}",
   "ai_immersive_stage_splat_photos": "Forbereder bildene: {index} av {total}",
   "ai_immersive_stage_splat_poses": "Plasserer bildene i 3D",

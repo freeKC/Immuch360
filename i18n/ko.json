@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "사진을 3D로 배치하는 중: 특징점 찾는 중, {index}/{total}",
   "ai_immersive_stage_splat_frames": "프레임 추출 중: {index}/{total}",
   "ai_immersive_stage_splat_mapping": "사진을 3D로 배치하는 중: 재구성 중, {total}장 중 {index}장 배치됨",
-  "ai_immersive_stage_splat_matching": "사진을 3D로 배치하는 중: 매칭 중, {index}/{total}",
   "ai_immersive_stage_splat_matching_blocks": "사진을 3D로 배치하는 중: 매칭 중, 블록 {index}/{total}",
   "ai_immersive_stage_splat_photos": "사진 준비 중: {index}/{total}",
   "ai_immersive_stage_splat_poses": "사진을 3D로 배치하는 중",

@@ -438,7 +438,6 @@
   "ai_immersive_stage_splat_features": "ფოტოები თავსდება 3D-ში: წერტილების ძიება, {index} / {total}",
   "ai_immersive_stage_splat_frames": "კადრები აიღება: {index} / {total}",
   "ai_immersive_stage_splat_mapping": "ფოტოები თავსდება 3D-ში: აღდგენა, განთავსებულია {index} / {total}",
-  "ai_immersive_stage_splat_matching": "ფოტოები თავსდება 3D-ში: შესაბამისობა, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "ფოტოები თავსდება 3D-ში: შესაბამისობა, ბლოკი {index} / {total}",
   "ai_immersive_stage_splat_photos": "ფოტოები მზადდება: {index} / {total}",
   "ai_immersive_stage_splat_poses": "ფოტოები თავსდება 3D-ში",

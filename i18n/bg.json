@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Подреждане на снимките в 3D: търсене на точки, {index} от {total}",
   "ai_immersive_stage_splat_frames": "Извличане на кадрите: {index} от {total}",
   "ai_immersive_stage_splat_mapping": "Подреждане на снимките в 3D: възстановяване, подредени {index} от {total}",
-  "ai_immersive_stage_splat_matching": "Подреждане на снимките в 3D: свързване, {index} от {total}",
   "ai_immersive_stage_splat_matching_blocks": "Подреждане на снимките в 3D: свързване, блок {index} от {total}",
   "ai_immersive_stage_splat_photos": "Подготовка на снимките: {index} от {total}",
   "ai_immersive_stage_splat_poses": "Подреждане на снимките в 3D",

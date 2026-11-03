@@ -1,8 +1,10 @@
-// The options of the six commands of COLMAP 4.2.1 the splat scenes run, as the help of our build gives them (lot SP1:
-// test/fixtures/ai_immersive/colmap_help/<command>.txt, frozen from the colmap of the CI, branch
-// feat-splat-maker-sp1-colmap-ci at d0f1dfab2): the fake COLMAP refuses any other, as the real one does ("Failed to
-// parse options - unrecognised option '--Foo.bar'.", base_option_manager.cc:265, exit code 1). Every one takes a value
-// ("arg" in the help). fake_splat_tools_test.dart checks these lists against the help files once they are in the tree.
+// The options of the commands of COLMAP 4.2.1 the splat scenes run (and of sequential_matcher, which matched the frames
+// of a video until lot SPF1), as the help of our build gives them (lot SP1: test/fixtures/ai_immersive/colmap_help/
+// <command>.txt, frozen from the colmap of the CI, branch feat-splat-maker-sp1-colmap-ci at d0f1dfab2; lot SPF1 added
+// matches_importer.txt from the colmap.exe of that build in the test build T1): the fake COLMAP refuses any other, as
+// the real one does ("Failed to parse options - unrecognised option '--Foo.bar'.", base_option_manager.cc:265, exit
+// code 1). Every one takes a value ("arg" in the help). fake_splat_tools_test.dart checks these lists against the help
+// files once they are in the tree.
 //
 // Pure Dart, with no Flutter: compiled with fake_colmap.dart outside of any test.
 
@@ -199,6 +201,70 @@ const fakeColmapOptions = <String, Set<String>>{
     'SequentialMatching.vocab_tree_path',
     'SequentialMatching.num_threads',
   },
+  'matches_importer': {
+    'project_path',
+    'default_random_seed',
+    'log_target',
+    'log_path',
+    'log_level',
+    'log_severity',
+    'log_color',
+    'database_path',
+    'match_list_path',
+    'match_type',
+    'FeatureMatching.type',
+    'FeatureMatching.num_threads',
+    'FeatureMatching.use_gpu',
+    'FeatureMatching.gpu_index',
+    'FeatureMatching.guided_matching',
+    'FeatureMatching.skip_geometric_verification',
+    'FeatureMatching.rig_verification',
+    'FeatureMatching.skip_image_pairs_in_same_frame',
+    'FeatureMatching.max_num_matches',
+    'SiftMatching.max_ratio',
+    'SiftMatching.max_distance',
+    'SiftMatching.cross_check',
+    'SiftMatching.cpu_brute_force_matcher',
+    'SiftMatching.lightglue_min_score',
+    'SiftMatching.lightglue_model_path',
+    'AlikedMatching.brute_force_min_cossim',
+    'AlikedMatching.brute_force_max_ratio',
+    'AlikedMatching.brute_force_cross_check',
+    'AlikedMatching.bruteforce_model_path',
+    'AlikedMatching.lightglue_min_score',
+    'AlikedMatching.lightglue_model_path',
+    'LomaMatching.min_score',
+    'LomaMatching.use_bf16',
+    'LomaMatching.b_model_path',
+    'LomaMatching.b_model_path_bf16',
+    'LomaMatching.b128_model_path',
+    'LomaMatching.b128_model_path_bf16',
+    'LomaMatching.r_model_path',
+    'LomaMatching.r_model_path_bf16',
+    'LomaMatching.l_model_path',
+    'LomaMatching.l_model_path_bf16',
+    'LomaMatching.g_model_path',
+    'LomaMatching.g_model_path_bf16',
+    'LomaMatching.brute_force_min_cossim',
+    'LomaMatching.brute_force_max_ratio',
+    'LomaMatching.brute_force_cross_check',
+    'LomaMatching.brute_force_model_path',
+    'TwoViewGeometry.min_num_inliers',
+    'TwoViewGeometry.multiple_models',
+    'TwoViewGeometry.compute_relative_pose',
+    'TwoViewGeometry.detect_watermark',
+    'TwoViewGeometry.multiple_ignore_watermark',
+    'TwoViewGeometry.watermark_detection_max_error',
+    'TwoViewGeometry.filter_stationary_matches',
+    'TwoViewGeometry.stationary_matches_max_error',
+    'TwoViewGeometry.use_degensac',
+    'TwoViewGeometry.use_sampson_refinement',
+    'TwoViewGeometry.max_error',
+    'TwoViewGeometry.confidence',
+    'TwoViewGeometry.max_num_trials',
+    'TwoViewGeometry.min_inlier_ratio',
+    'TwoViewGeometry.random_seed',
+  },
   'mapper': {
     'project_path',
     'default_random_seed',
@@ -316,6 +382,7 @@ const fakeColmapRequired = <String, List<String>>{
   'feature_extractor': ['database_path', 'image_path'],
   'exhaustive_matcher': ['database_path'],
   'sequential_matcher': ['database_path'],
+  'matches_importer': ['database_path', 'match_list_path'],
   'mapper': ['database_path', 'image_path', 'output_path'],
   'model_orientation_aligner': ['image_path', 'input_path', 'output_path'],
   'model_analyzer': ['path'],

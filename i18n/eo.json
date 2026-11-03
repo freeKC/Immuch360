@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Lokado de la fotoj en 3D: serĉado de punktoj, {index} el {total}",
   "ai_immersive_stage_splat_frames": "Prenado de la kadroj: {index} el {total}",
   "ai_immersive_stage_splat_mapping": "Lokado de la fotoj en 3D: rekonstruado, {index} el {total} lokitaj",
-  "ai_immersive_stage_splat_matching": "Lokado de la fotoj en 3D: kongruigado, {index} el {total}",
   "ai_immersive_stage_splat_matching_blocks": "Lokado de la fotoj en 3D: kongruigado, bloko {index} el {total}",
   "ai_immersive_stage_splat_photos": "Preparado de la fotoj: {index} el {total}",
   "ai_immersive_stage_splat_poses": "Lokado de la fotoj en 3D",

@@ -1,5 +1,7 @@
 // The runner of COLMAP (lib/desktop/ai/splat/colmap_runner.dart, lot SP4) with the fake runner: its frozen arguments
-// against the help of our build (fixtures colmap_help/ of lot SP1), the threads chosen from the memory free, the crash
+// against the help of our build (fixtures colmap_help/ of lot SP1, matches_importer.txt added by lot SPF1 from the
+// colmap.exe of the test build T1), the matching of a video (every pair up to 200 frames, a list of pairs beyond: lot
+// SPF1, after the 68 of 139 frames of 3 November), the threads chosen from the memory free, the crash
 // for want of memory and the start again with half the threads, a check of COLMAP that fails (an exception nothing
 // caught: 0xC0000409 with no word on Windows, SIGABRT after the words of libstdc++ elsewhere) told from a crash for want
 // of memory, the alignment never started again, the progress read from the logs of the measure of 1 November (fixtures
@@ -163,8 +165,8 @@ void main() {
       final commands = {
         'feature_extractor': colmapExtractArguments(database: 'D', images: 'I', threads: 7, video: false),
         'feature_extractor (video)': colmapExtractArguments(database: 'D', images: 'I', threads: 7, video: true),
-        'exhaustive_matcher': colmapMatchArguments(database: 'D', threads: 14, video: false),
-        'sequential_matcher': colmapMatchArguments(database: 'D', threads: 14, video: true),
+        'exhaustive_matcher': colmapMatchArguments(database: 'D', threads: 14),
+        'matches_importer': colmapMatchArguments(database: 'D', threads: 14, pairs: 'P'),
         'mapper': colmapMapperArguments(database: 'D', images: 'I', output: 'S', threads: 14),
         'model_orientation_aligner': colmapAlignArguments(images: 'I', input: 'S/0', output: 'A'),
       };
@@ -212,12 +214,71 @@ void main() {
         '--log_target',
         'stderr',
       ]);
-      // No loop detection: the vocabulary tree of COLMAP has no written licence
-      expect(commands['sequential_matcher'], containsAllInOrder(['--SequentialMatching.loop_detection', '0']));
-      expect(commands['mapper'], containsAllInOrder(['--output_path', 'S', '--Mapper.num_threads', '14']));
+      // A list of pairs, never the vocabulary tree of sequential_matcher, which has no written licence
+      expect(commands['matches_importer'], [
+        'matches_importer',
+        '--database_path',
+        'D',
+        '--match_list_path',
+        'P',
+        '--match_type',
+        'pairs',
+        '--FeatureMatching.use_gpu',
+        '0',
+        '--FeatureMatching.num_threads',
+        '14',
+        '--log_target',
+        'stderr',
+      ]);
+      // An image placed from 15 inliers of its pose, not COLMAP's 30 (the diagnosis of 3 November: 123 to 129 of 139)
+      expect(
+        commands['mapper'],
+        containsAllInOrder([
+          '--output_path',
+          'S',
+          '--Mapper.num_threads',
+          '14',
+          '--Mapper.abs_pose_min_num_inliers',
+          '15',
+        ]),
+      );
       expect(commands['model_orientation_aligner'], containsAllInOrder(['--method', 'IMAGE-ORIENTATION']));
       expect(colmapIn('/e', windows: true), p.join('/e', 'colmap.exe'));
       expect(colmapIn('/e', windows: false), p.join('/e', 'colmap'));
+    });
+
+    test('a video is matched pair by pair up to 200 frames; beyond, by its list: the 2 526 pairs of the diagnosis', () {
+      expect(colmapMatchingOf(150, video: false), ColmapMatching.exhaustive);
+      expect(colmapMatchingOf(200, video: false), ColmapMatching.exhaustive);
+      expect(colmapMatchingOf(139, video: true), ColmapMatching.exhaustive);
+      expect(colmapMatchingOf(200, video: true), ColmapMatching.exhaustive);
+      expect(colmapMatchingOf(201, video: true), ColmapMatching.pairs);
+      expect(colmapMatchingOf(250, video: true), ColmapMatching.pairs);
+      expect(SplatV1.maxExhaustiveFrames, 200);
+
+      // The pairs q-r2 of the diagnosis (pairs-r2.txt): 125 of 139 frames placed with the mapper at 15 inliers
+      final pairs = colmapVideoPairs(139);
+      expect(pairs, hasLength(2526));
+      expect(pairs.toSet(), hasLength(2526));
+      expect(pairs.every((pair) => pair.$1 < pair.$2 && pair.$2 < 139), isTrue);
+      expect(pairs, orderedEquals([...pairs]..sort((a, b) => a.$1 != b.$1 ? a.$1 - b.$1 : a.$2 - b.$2)));
+      // Each frame with the 1st, 2nd, 4th ... 128th after it
+      expect(pairs, containsAll([(0, 1), (0, 2), (0, 4), (0, 128), (5, 6), (5, 7), (5, 9), (5, 69), (137, 138)]));
+      // Every frame with the key frames 0, 10, 20 ... 130: the turns around an object tied together
+      expect(pairs, containsAll([(0, 3), (3, 10), (10, 137), (1, 130), (130, 138), (57, 60)]));
+      // Neither a power of two apart nor a key frame
+      expect(pairs, isNot(contains((1, 4))));
+      expect(pairs, isNot(contains((11, 17))));
+      expect(colmapVideoPairs(250), hasLength(7322));
+      expect(colmapVideoPairs(2), [(0, 1)]);
+      expect(colmapVideoPairs(1), isEmpty);
+
+      expect(colmapPairsOf(150, video: false), 11175);
+      expect(colmapPairsOf(200, video: false), 19900);
+      expect(colmapPairsOf(150, video: true), 11175);
+      expect(colmapPairsOf(200, video: true), 19900);
+      expect(colmapPairsOf(201, video: true), 5067);
+      expect(colmapPairsOf(250, video: true), 7322);
     });
 
     test('the extraction takes (free - 1.5 GiB) / 307 MiB threads, from 2 to the processors less two', () {
@@ -279,15 +340,9 @@ void main() {
       expect(blocks.map((x) => (x.done, x.total)), [for (var k = 1; k <= 9; k++) (k, 9)]);
     });
 
-    test('the sequential matching of the video: image after image', () {
-      expect(read(ImmersiveStage.matching, 'vlh-match.err').map((x) => '${x.done}/${x.total}'), [
-        '1/150',
-        '2/150',
-        '3/150',
-        '148/150',
-        '149/150',
-        '150/150',
-      ]);
+    test('the matching of the video by its list of pairs: its blocks, in their order', () {
+      final blocks = read(ImmersiveStage.matching, 'vlh-pairs-match.err');
+      expect(blocks.map((x) => (x.done, x.total)), [(1, 3), (2, 3), (3, 3)]);
     });
 
     test('the mapping of the video: 144 placed in the first model; the second one, from 2 again, never lowers it', () {
@@ -302,7 +357,7 @@ void main() {
     Map<String, List<FakeProcessScript>> scripts({int placed = 150}) => {
       'feature_extractor': [FakeProcessScript(lines: _measured('c2s-extract.err'))],
       'exhaustive_matcher': [FakeProcessScript(lines: _measured('c2s-match.err'))],
-      'sequential_matcher': [FakeProcessScript(lines: _measured('vlh-match.err'))],
+      'matches_importer': [FakeProcessScript(lines: _measured('vlh-pairs-match.err'))],
       'mapper': [FakeProcessScript(lines: _mapping(placed))],
     };
 
@@ -353,14 +408,54 @@ void main() {
       expect(work.logOf('colmap-mapping').readAsStringSync(), contains('(num_reg_frames=149)'));
     });
 
-    test('a video: one camera for all its frames, the sequential matching, image after image', () async {
+    test('a video of up to 200 frames: one camera for all its frames, every pair matched, block after block', () async {
       final runner = _ColmapRunner(scripts());
       final progress = <ColmapProgress>[];
       await colmap(runner).poses(work, images: 150, video: true, cancel: cancel, onProgress: progress.add);
       expect(runner.launches[0].arguments, containsAllInOrder(['--ImageReader.single_camera', '1']));
-      expect(runner.launches[1].arguments.first, 'sequential_matcher');
-      expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => x.done), [1, 2, 3, 148, 149, 150]);
+      expect(runner.launches[1].arguments, colmapMatchArguments(database: work.database.path, threads: 14));
+      expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => x.done), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      expect(work.pairs.existsSync(), isFalse);
+      expect(runner.launches[2].arguments, containsAllInOrder(['--Mapper.abs_pose_min_num_inliers', '15']));
     });
+
+    test(
+      'a video of 250 frames: the list of its pairs by the names of its frames, matched by matches_importer',
+      () async {
+        // The frames as the app writes them, one folder, numbered in the order of time
+        for (var k = 1; k <= 250; k++) {
+          File(p.join(work.images.path, 'video', '${'$k'.padLeft(5, '0')}.jpg')).createSync(recursive: true);
+        }
+        final runner = _ColmapRunner(scripts());
+        final progress = <ColmapProgress>[];
+        final poses = await colmap(
+          runner,
+        ).poses(work, images: 250, video: true, cancel: cancel, onProgress: progress.add);
+        expect(runner.launches.map((launch) => launch.arguments.first), [
+          'feature_extractor',
+          'matches_importer',
+          'mapper',
+          'model_orientation_aligner',
+        ]);
+        expect(work.pairs.path, p.join(work.colmap.path, 'pairs.txt'));
+        expect(
+          runner.launches[1].arguments,
+          colmapMatchArguments(database: work.database.path, threads: 14, pairs: work.pairs.path),
+        );
+        final lines = work.pairs.readAsLinesSync();
+        expect(lines, hasLength(7322));
+        expect(lines.first, 'video/00001.jpg video/00002.jpg');
+        expect(lines, contains('video/00011.jpg video/00250.jpg'));
+        expect(lines, contains('video/00249.jpg video/00250.jpg'));
+        expect(lines.toSet(), hasLength(7322));
+        expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => (x.done, x.total)), [
+          (1, 3),
+          (2, 3),
+          (3, 3),
+        ]);
+        expect((poses.images, poses.placed), (250, 150));
+      },
+    );
 
     test('the extraction crashed at 10 threads starts again at 5, then 2; at 2 it is outOfMemory', () async {
       // 4.5 GiB free: 10 threads; a std::bad_alloc nothing caught, which libstdc++ names before its SIGABRT

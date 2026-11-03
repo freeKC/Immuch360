@@ -114,6 +114,7 @@ void main() {
       expect((SplatV1.steps, SplatV1.maxGaussians, SplatV1.shDegree), (20000, 150000, 3));
       expect(SplatV1.trainingResolution, 1024, reason: 'set by the measure M1: 0.20 dB from 1 280 px, 34 % faster');
       expect((SplatV1.minPlacedShare, SplatV1.minPlaced, SplatV1.partialShare), (0.5, 20, 0.9));
+      expect((SplatV1.maxExhaustiveFrames, SplatV1.keyFrameStep, SplatV1.absPoseMinInliers), (200, 10, 15));
       expect(
         (SplatV1.colmapSilence, SplatV1.brushSilence),
         (const Duration(seconds: 600), const Duration(seconds: 300)),
@@ -320,11 +321,13 @@ void main() {
       expect(ConversionKind.splatScene.timingsKey(fromVideo: true), 'splatSceneVideo');
       expect(ConversionKind.panoramaFromPhoto.timingsKey(fromVideo: true), 'panoramaFromPhoto');
 
-      // Some 8.5 minutes for a video of two minutes: the frames, the sequential matching (81 s) and the mapping (30 s)
-      // of the measure, the training of M1 (306 s)
+      // Some 12 minutes for a video of two minutes: the frames of the measure, every pair of its 150 frames matched
+      // (285.7 s for the lighthouse) and the mapping (36.3 s) of lot SPF1, the training of M1 (306 s)
       final video = ConversionKind.splatScene.expectedDuration(const AiTimings(), fromVideo: true);
-      expect(video, greaterThan(const Duration(minutes: 8)));
-      expect(video, lessThan(const Duration(minutes: 9)));
+      expect(video, greaterThan(const Duration(minutes: 11)));
+      expect(video, lessThan(const Duration(minutes: 12)));
+      expect(aiDefaultTimings['splatSceneVideo']!['matching'], 286000);
+      expect(aiDefaultTimings['splatSceneVideo']!['mapping'], 36000);
       // What a video took never weighs on the time of photos, nor the other way around
       const slowVideo = AiTimings({
         'splatSceneVideo': {'frames': 3600000, 'matching': 3600000},
@@ -609,14 +612,15 @@ void main() {
         conversionStageText(t, job(ConversionState.features, step: 87, steps: 150)),
         'Placing the photos in 3D: finding features, 87 of 150',
       );
-      // The photos are matched in blocks (exhaustive_matcher), the frames of a video one after the other
+      // The photos and the frames of a video are matched in blocks (exhaustive_matcher, or matches_importer for a
+      // video of more than 200 frames: lot SPF1)
       expect(
         conversionStageText(t, job(ConversionState.matching, step: 4, steps: 9)),
         'Placing the photos in 3D: matching, block 4 of 9',
       );
       expect(
-        conversionStageText(t, job(ConversionState.matching, step: 61, steps: 150, video: true)),
-        'Placing the photos in 3D: matching, 61 of 150',
+        conversionStageText(t, job(ConversionState.matching, step: 2, steps: 5, video: true)),
+        'Placing the photos in 3D: matching, block 2 of 5',
       );
       // A job knows it is made from a video, whatever happens to it
       final video = job(ConversionState.waiting, video: true);

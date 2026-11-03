@@ -565,7 +565,6 @@
   "ai_immersive_stage_splat_features": "Plasserer bileta i 3D: finn punkt, {index} av {total}",
   "ai_immersive_stage_splat_frames": "Tek ut bileta: {index} av {total}",
   "ai_immersive_stage_splat_mapping": "Plasserer bileta i 3D: gjenskaper, {index} av {total} plasserte",
-  "ai_immersive_stage_splat_matching": "Plasserer bileta i 3D: matchar, {index} av {total}",
   "ai_immersive_stage_splat_matching_blocks": "Plasserer bileta i 3D: matchar, blokk {index} av {total}",
   "ai_immersive_stage_splat_photos": "Førebur bileta: {index} av {total}",
   "ai_immersive_stage_splat_poses": "Plasserer bileta i 3D",

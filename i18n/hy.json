@@ -321,7 +321,6 @@
   "ai_immersive_stage_splat_features": "Լուսանկարները տեղադրվում են 3D-ում՝ կետերի որոնում, {index} / {total}",
   "ai_immersive_stage_splat_frames": "Կադրերը վերցվում են՝ {index} / {total}",
   "ai_immersive_stage_splat_mapping": "Լուսանկարները տեղադրվում են 3D-ում՝ վերակառուցում, տեղադրված է {index} / {total}",
-  "ai_immersive_stage_splat_matching": "Լուսանկարները տեղադրվում են 3D-ում՝ համադրում, {index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "Լուսանկարները տեղադրվում են 3D-ում՝ համադրում, բլոկ {index} / {total}",
   "ai_immersive_stage_splat_photos": "Լուսանկարները պատրաստվում են՝ {index} / {total}",
   "ai_immersive_stage_splat_poses": "Լուսանկարները տեղադրվում են 3D-ում",

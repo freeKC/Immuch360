@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Umísťování fotek do 3D: hledání bodů, {index} z {total}",
   "ai_immersive_stage_splat_frames": "Odebírání snímků: {index} z {total}",
   "ai_immersive_stage_splat_mapping": "Umísťování fotek do 3D: obnova, umístěno {index} z {total}",
-  "ai_immersive_stage_splat_matching": "Umísťování fotek do 3D: párování, {index} z {total}",
   "ai_immersive_stage_splat_matching_blocks": "Umísťování fotek do 3D: párování, blok {index} z {total}",
   "ai_immersive_stage_splat_photos": "Příprava fotek: {index} z {total}",
   "ai_immersive_stage_splat_poses": "Umísťování fotek do 3D",

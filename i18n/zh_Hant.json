@@ -800,7 +800,6 @@
   "ai_immersive_stage_splat_features": "正在將相片放置到 3D 中：尋找特徵點，{index} / {total}",
   "ai_immersive_stage_splat_frames": "正在擷取影格：{index} / {total}",
   "ai_immersive_stage_splat_mapping": "正在將相片放置到 3D 中：重建，已放置 {index} / {total}",
-  "ai_immersive_stage_splat_matching": "正在將相片放置到 3D 中：配對，{index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "正在將相片放置到 3D 中：配對，第 {index} / {total} 區塊",
   "ai_immersive_stage_splat_photos": "正在準備相片：{index} / {total}",
   "ai_immersive_stage_splat_poses": "正在將相片放置到 3D 中",

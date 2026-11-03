@@ -768,7 +768,6 @@
   "ai_immersive_stage_splat_features": "Sijoitetaan kuvia 3D:hen: etsitään pisteitä, {index}/{total}",
   "ai_immersive_stage_splat_frames": "Otetaan kuvia: {index}/{total}",
   "ai_immersive_stage_splat_mapping": "Sijoitetaan kuvia 3D:hen: rakennetaan, {index}/{total} sijoitettu",
-  "ai_immersive_stage_splat_matching": "Sijoitetaan kuvia 3D:hen: yhdistetään, {index}/{total}",
   "ai_immersive_stage_splat_matching_blocks": "Sijoitetaan kuvia 3D:hen: yhdistetään, lohko {index}/{total}",
   "ai_immersive_stage_splat_photos": "Valmistellaan kuvia: {index}/{total}",
   "ai_immersive_stage_splat_poses": "Sijoitetaan kuvia 3D:hen",

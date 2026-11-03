@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "Fotode paigutamine 3D-sse: punktide otsimine, {index}/{total}",
   "ai_immersive_stage_splat_frames": "Kaadrite võtmine: {index}/{total}",
   "ai_immersive_stage_splat_mapping": "Fotode paigutamine 3D-sse: taastamine, paigutatud {index}/{total}",
-  "ai_immersive_stage_splat_matching": "Fotode paigutamine 3D-sse: sobitamine, {index}/{total}",
   "ai_immersive_stage_splat_matching_blocks": "Fotode paigutamine 3D-sse: sobitamine, plokk {index}/{total}",
   "ai_immersive_stage_splat_photos": "Fotode ettevalmistamine: {index}/{total}",
   "ai_immersive_stage_splat_poses": "Fotode paigutamine 3D-sse",

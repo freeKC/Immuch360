@@ -809,7 +809,6 @@
   "ai_immersive_stage_splat_features": "正在将照片放置到 3D 中：查找特征点，{index} / {total}",
   "ai_immersive_stage_splat_frames": "正在提取帧：{index} / {total}",
   "ai_immersive_stage_splat_mapping": "正在将照片放置到 3D 中：重建，已放置 {index} / {total}",
-  "ai_immersive_stage_splat_matching": "正在将照片放置到 3D 中：匹配，{index} / {total}",
   "ai_immersive_stage_splat_matching_blocks": "正在将照片放置到 3D 中：匹配，第 {index} / {total} 块",
   "ai_immersive_stage_splat_photos": "正在准备照片：{index} / {total}",
   "ai_immersive_stage_splat_poses": "正在将照片放置到 3D 中",
