@@ -606,7 +606,7 @@ void main() {
   });
 
   group('the measure a session keeps', () {
-    test('its best: a start measured low beside the thumbnails is settled by a later measure that keeps up', () async {
+    test('the median of its last seconds: a start measured low beside the thumbnails decides nothing alone', () async {
       final process = _HeldProcess();
       final runner = _OneProcessRunner(process);
       final starting = Av2Session.start(
@@ -620,7 +620,7 @@ void main() {
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
       final session = await starting;
       addTearDown(session.stop);
-      expect((session.bestMeasuredFps, session.measureSettled), (null, false));
+      expect((session.settledFps, session.measureSettled), (null, false));
       // Skater in 10 bits on the PC on 3 November: 16.9 at the start, 36.8 at the end, for a video of 30
       process.say('stat decoded=20 served=18 fps=16.9 simd=avx2 gen=1 frame=18 serving=1');
       await _until(() => session.measuredFps == 16.9);
@@ -631,10 +631,14 @@ void main() {
       );
       process.say('stat decoded=40 served=38 fps=36.8 simd=avx2 gen=1 frame=38 serving=1');
       await _until(() => session.measuredFps == 36.8);
-      expect((session.bestMeasuredFps, session.measureSettled), (36.8, true));
+      expect(session.measureSettled, isFalse, reason: 'the median of 16.9 and 36.8 is still below the video');
       process.say('stat decoded=60 served=58 fps=31.0 simd=avx2 gen=1 frame=58 serving=1');
       await _until(() => session.measuredFps == 31.0);
-      expect(session.bestMeasuredFps, 36.8, reason: 'what this computer can, not its last moment');
+      expect((session.settledFps, session.measureSettled), (31.0, true));
+      // The same speed again: the line between two runs of the companion, no new measure
+      process.say('stat decoded=80 served=78 fps=31.0 simd=avx2 gen=1 frame=78 serving=1');
+      await _until(() => session.stat.value?.decoded == 80);
+      expect(session.settledFps, 31.0);
     });
 
     test('too slow, it is settled after ${av2SlowVerdictAfter.inSeconds} s of measures only', () async {
@@ -657,8 +661,52 @@ void main() {
       await Future<void>.delayed(av2SlowVerdictAfter);
       process.say('stat decoded=9 served=8 fps=7.2 simd=avx2 gen=1 frame=8 serving=1');
       await _until(() => session.measuredFps == 7.2);
-      expect((session.bestMeasuredFps, session.measureSettled), (7.4, true));
+      expect(session.measureSettled, isTrue);
+      expect(session.settledFps, closeTo(7.3, 0.001), reason: 'the median of the last ${av2MeasureWindow.inSeconds} s');
     }, timeout: const Timeout(Duration(seconds: 30)));
+
+    test('a fast run after a seek is left out: the slow steady run that follows is what the store keeps', () async {
+      final runner = ScriptedAv2Runner();
+      final kept = <Av2SpeedMeasure>[];
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+        decoderVersion: 'test',
+        recordMeasure: (measure) async => kept.add(measure),
+      );
+      final opening = playbacks.open(
+        Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+      );
+      await _until(() => runner.serves.isNotEmpty);
+      final process = runner.serves.single..say(av2ListeningLine);
+      final url = await opening;
+      final session = playbacks.sessionOf(url)!;
+      Future<void> stat(double fps, int frame, {int generation = 1}) async {
+        process.say('stat decoded=$frame served=$frame fps=$fps simd=avx2 gen=$generation frame=$frame serving=1');
+        await _until(() => session.stat.value?.frame == frame);
+      }
+
+      // The start keeps up, 40 of the 30 frames a second: kept at once
+      process.say('request bytes=0-663625 frame=0');
+      await stat(40, 10);
+      await _until(() => kept.isNotEmpty);
+      expect(kept.single.fps, 40);
+      // A seek: the run after it decodes the pictures before the one asked without writing them, faster than
+      // playback (WorldCup on the PC on 3 November: 155 frames a second against 107 while it played)
+      process
+        ..say('request bytes=331857-663625 frame=6')
+        ..say('need 2 6');
+      await stat(155, 12, generation: 2);
+      // Then this computer decodes 20 a second, steadily: a hot or loaded computer
+      for (var i = 1; i <= 13; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        await stat(i.isEven ? 20.2 : 19.8, 12 + i, generation: 2);
+      }
+      await playbacks.release(url);
+      expect(kept.last.fps, closeTo(20, 0.25), reason: 'the last seconds of playback, not its best moment');
+      expect(av2IsTooSlow(kept.last), isTrue);
+    }, timeout: const Timeout(Duration(seconds: 40)));
   });
 
   group('on the compiled fake companion', () {
@@ -852,7 +900,7 @@ void main() {
       expect(playbacks.sessionOf(anyway), isNull);
     }, skip: skipWithoutFakeAv2);
 
-    test('a session too slow and closed early keeps no measure; one that keeps up keeps its best at once', () async {
+    test('a session too slow and closed early keeps no measure; one that keeps up keeps its own at once', () async {
       final file = File(p.join(folder.path, 'clip.ivf'))
         ..writeAsBytesSync(repeatAv2Ivf(av2Fixture('av2-256x144-8bit.ivf'), 10));
       final kept = <Av2SpeedMeasure>[];

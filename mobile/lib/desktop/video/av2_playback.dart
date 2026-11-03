@@ -652,6 +652,23 @@ const av2ClockMeasureSeconds = 1.4;
 /// at the end, for a video of 30)
 const av2SlowVerdictAfter = Duration(seconds: 3);
 
+/// The last seconds of playback whose measures the speed kept is the median of (plan 1.4 keeps the last measure of a
+/// format; the median of a few seconds keeps one run that went faster or slower than the others from deciding)
+const av2MeasureWindow = Duration(seconds: 4);
+
+/// How long after a seek the measures are left out, the first one after it in any case: the run that follows a seek
+/// decodes the pictures before the one asked without writing them, faster than playback (WorldCup on the PC on 3
+/// November: 155 frames a second against 107 while it played), and the companion's stat lines repeat that speed until
+/// its next run (review of lot AD3, m3)
+const av2SeekSettle = Duration(seconds: 2);
+
+/// The median of [values], not empty: the mean of the two middle ones for an even count
+double _median(List<double> values) {
+  final sorted = [...values]..sort();
+  final middle = sorted.length ~/ 2;
+  return sorted.length.isOdd ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
 /// How long the companion has to end once its standard input closed, before it is killed
 const av2EndGrace = Duration(milliseconds: 300);
 
@@ -831,39 +848,63 @@ class Av2Session {
   ValueListenable<int?> get requestedFrame => _requestedFrame;
   final _requestedFrame = ValueNotifier<int?>(null);
 
-  /// The speed the companion measured last (its fps above 0), or the pictures decoded against the clock by a decoder
-  /// slower than the video (see [_onStat])
+  /// The last measure taken: a new speed the companion measured (its fps above 0, once per run), or the pictures
+  /// decoded against the clock by a decoder slower than the video (see [_onStat]); those that follow a seek are left
+  /// out ([av2SeekSettle])
   double? get measuredFps => _measuredFps;
   double? _measuredFps;
 
-  /// The best speed measured in the session: what this computer can, which the store keeps once [measureSettled]
-  double? get bestMeasuredFps => _bestFps;
-  double? _bestFps;
+  /// The speed the store keeps (plan 1.4, the last measure): the median of the measures of the last
+  /// [av2MeasureWindow] of playback, once settled ([measureSettled]); null before
+  double? get settledFps => _settledFps;
+  double? _settledFps;
 
-  /// When the first speed was measured, on [_clock]
+  /// Whether [settledFps] may be kept: at once when the measures keep up, after [av2SlowVerdictAfter] of measures
+  /// when they are too slow (a start measured low, beside the thumbnails, says nothing alone)
+  bool get measureSettled => _settledFps != null;
+
+  /// The measures of the last [av2MeasureWindow], with their time on [_clock]
+  final _measures = <(double fps, Duration at)>[];
+
+  /// When the first measure was taken, on [_clock]
   Duration? _firstMeasureAt;
 
-  /// Whether [bestMeasuredFps] may be kept: at once when it keeps up, after [av2SlowVerdictAfter] of measures when
-  /// it is too slow
-  bool get measureSettled {
-    final best = _bestFps;
-    final since = _firstMeasureAt;
-    if (best == null || since == null) {
-      return false;
-    }
-    return best >= neededFps * av2TooSlowRatio || _clock.elapsed - since >= av2SlowVerdictAfter;
-  }
+  /// The companion's last speed: its stat lines repeat it until its next run
+  double? _companionFps;
+
+  /// The requests of the player so far, and when the last seek was (a request after the first, or a first one past
+  /// the start)
+  int _requests = 0;
+  Duration? _seekAt;
+  bool _leftOutAfterSeek = false;
 
   void _measure(double fps) {
+    final now = _clock.elapsed;
+    final seek = _seekAt;
+    if (seek != null && (!_leftOutAfterSeek || now - seek < av2SeekSettle)) {
+      _leftOutAfterSeek = true;
+      return;
+    }
     _measuredFps = fps;
-    _bestFps = math.max(_bestFps ?? 0, fps);
-    _firstMeasureAt ??= _clock.elapsed;
+    _firstMeasureAt ??= now;
+    _measures
+      ..add((fps, now))
+      ..removeWhere((measure) => now - measure.$2 > av2MeasureWindow);
+    final median = _median([for (final (fps, _) in _measures) fps]);
+    if (median >= neededFps * av2TooSlowRatio || now - _firstMeasureAt! >= av2SlowVerdictAfter) {
+      _settledFps = median;
+    }
+  }
+
+  void _seeked() {
+    _seekAt = _clock.elapsed;
+    _leftOutAfterSeek = false;
   }
 
   /// What the link of the player is told
   Av2Decoding get decoding => (fps: _speed.value, needed: neededFps, failure: _failure.value);
 
-  /// Whether this computer decodes the video below [av2TooSlowRatio] of its speed, as measured now
+  /// Whether this computer decodes the video below [av2TooSlowRatio] of its speed, as measured last
   bool get tooSlow => (_measuredFps ?? double.infinity) < neededFps * av2TooSlowRatio;
 
   RunningProcess? _process;
@@ -1113,7 +1154,11 @@ class Av2Session {
       return;
     }
     if (line.startsWith('request ')) {
-      _requestedFrame.value = int.tryParse(RegExp(r'frame=(\d+)').firstMatch(line)?.group(1) ?? '');
+      final frame = int.tryParse(RegExp(r'frame=(\d+)').firstMatch(line)?.group(1) ?? '');
+      _requestedFrame.value = frame;
+      if (_requests++ > 0 || (frame ?? 0) > 0) {
+        _seeked();
+      }
       _log.fine('The AV2 companion: $line (${_since.elapsedMilliseconds} ms)');
     } else if (line.startsWith('refused ')) {
       _log.warning('The AV2 companion $line');
@@ -1123,9 +1168,19 @@ class Av2Session {
   }
 
   void _onStat(Av2Stat stat) {
+    _measureOf(stat);
+    // Told once the line is measured: the playbacks keep the speed as soon as a line settles it
+    // (Av2Playbacks._measureOnce), not one line later
     _stat.value = stat;
+  }
+
+  void _measureOf(Av2Stat stat) {
     if (stat.fps > 0) {
-      _measure(stat.fps);
+      // A new run measured; the lines between two runs repeat the last speed
+      if (stat.fps != _companionFps) {
+        _companionFps = stat.fps;
+        _measure(stat.fps);
+      }
       _speed.value = stat.fps;
       _decodedSeen.clear();
       return;
@@ -1384,7 +1439,7 @@ class Av2Playbacks {
   }
 
   // The measure of a session is kept as soon as it is settled (Av2Session.measureSettled), so that a video closed
-  // early still tells the next one, and again at the release
+  // early still tells the next one, and again at the release: the median of its last seconds then
   final _measured = Expando<bool>('measured');
 
   void _measureOnce(Av2Session session) {
@@ -1395,11 +1450,11 @@ class Av2Playbacks {
     unawaited(_record(session));
   }
 
-  /// Keeps the best speed of [session] once it is settled: a start too slow and closed early keeps nothing
+  /// Keeps the settled speed of [session] (Av2Session.settledFps): a start too slow and closed early keeps nothing
   Future<void> _record(Av2Session session) async {
-    final fps = session.bestMeasuredFps;
+    final fps = session.settledFps;
     final record = recordMeasure;
-    if (fps == null || record == null || !session.measureSettled) {
+    if (fps == null || record == null) {
       return;
     }
     try {
