@@ -109,6 +109,35 @@ void main() {
     });
 
     test(
+      'a probe that failed is asked once more at the next splat; a chip the page named as integrated needs none',
+      () async {
+        final probe = FakeGpuProbe([FakeGpuReports.noAnswer, FakeGpuReports.twoCards, FakeGpuReports.noAnswer]);
+        final reader = DesktopSplatComputer(
+          probe: probe,
+          answers: answers,
+          highPerformance: () => true,
+          memory: const _Memory(16 << 30),
+          system: SplatDesktopSystem.windows,
+        );
+        expect((await reader.read()).gpu, SplatGpu.unknown);
+        expect((await reader.read()).gpu, rtx);
+        expect((await reader.read()).gpu, rtx);
+        expect(probe.calls, 2, reason: 'the list kept once it answered');
+        final quiet = FakeGpuProbe.of(FakeGpuReports.twoCards);
+        await answers.writeRenderer(intelRenderer, highPerformance: true);
+        final named = DesktopSplatComputer(
+          probe: quiet,
+          answers: answers,
+          highPerformance: () => true,
+          memory: const _Memory(16 << 30),
+          system: SplatDesktopSystem.windows,
+        );
+        expect((await named.read()).gpu.kind, SplatGpuKind.integrated);
+        expect(quiet.calls, 0, reason: 'no card woken for nothing');
+      },
+    );
+
+    test(
       'a probe that fails leaves the chip unknown, which keeps the cap of the chips that share the memory',
       () async {
         final reader = DesktopSplatComputer(

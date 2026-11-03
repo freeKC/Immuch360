@@ -103,16 +103,30 @@ class DesktopSplatComputer {
   Future<GpuReport?>? _cards;
   String? _told;
 
+  // Whether a failed list of the cards was asked again: once per run
+  bool _retried = false;
+
   Future<GpuReport?> _listCards() async {
     try {
       final report = await _probe.probe();
       if (report.problem != null) {
         _log.info('The graphics cards could not be listed for the splats: ${report.problem!.name}');
+        _retryOnce();
       }
       return report;
     } catch (error) {
       _log.info('The graphics cards could not be listed for the splats: $error');
+      _retryOnce();
       return null;
+    }
+  }
+
+  // The first start of a new build may outlast the probe's 10 s while the antivirus scans it (seen on 3 November
+  // 2026: 50 s): the next splat asks again, once
+  void _retryOnce() {
+    if (!_retried) {
+      _retried = true;
+      _cards = null;
     }
   }
 
@@ -124,7 +138,10 @@ class DesktopSplatComputer {
     } catch (error) {
       _log.fine('No renderer kept: $error');
     }
-    final cards = _system == SplatDesktopSystem.macos ? null : await (_cards ??= _listCards());
+    // A chip the page named as one that shares the memory needs no list: only a dedicated card's memory is read there
+    final needsCards =
+        _system != SplatDesktopSystem.macos && splatGpuKindOfRenderer(renderer) != SplatGpuKind.integrated;
+    final cards = needsCards ? await (_cards ??= _listCards()) : null;
     final gpu = splatGpuOf(system: _system, renderer: renderer, cards: cards, highPerformance: highPerformance);
     final computer = SplatComputer(gpu: gpu, physicalMemory: _memory.read().physical);
     final told = '$computer';
