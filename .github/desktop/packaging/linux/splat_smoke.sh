@@ -59,12 +59,13 @@ start() {
   pid=$!
 }
 
+# Its own count of half seconds: the waits of the checks keep theirs
 stop() {
   kill "$pid" 2>/dev/null || true
-  waited=0
-  while kill -0 "$pid" 2>/dev/null && [ "$waited" -lt 10 ]; do
+  halves=0
+  while kill -0 "$pid" 2>/dev/null && [ "$halves" -lt 10 ]; do
     sleep 0.5
-    waited=$((waited + 1))
+    halves=$((halves + 1))
   done
   kill -9 "$pid" 2>/dev/null || true
   wait "$pid" 2>/dev/null || true
