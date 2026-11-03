@@ -5,10 +5,11 @@ Google Play's Deep links page reads the intent filters of the app. A filter on h
 links of a domain open the app only once https://<domain>/.well-known/assetlinks.json names the package and the
 signing key of the app, which only the owner of the domain can publish. The project owns no web domain, so such a
 filter can never be verified, and Play reports its domain as not verified and its links as broken. That was the case
-of my.immich.app, Immich's own domain, whose file names Immich's app, never com.aprogsys.immuch360 nor the
-app.alextran.immich of the GitHub build. autoVerify asks Android and Play to verify those domains: with no domain of
-its own, the project has nothing to verify. A VIEW filter on another scheme (content, immich, immuch360, app.immich)
-is listed as a custom scheme, and Play's app checks want it to carry the DEFAULT and BROWSABLE categories.
+of my.immich.app, Immich's own domain, whose file names Immich's app (app.alextran.immich, Immich's signing keys),
+never com.aprogsys.immuch360, the package of every Immuch360 build (app.alextran.immich is only the namespace of its
+classes). autoVerify asks Android and Play to verify those domains: with no domain of its own, the project has
+nothing to verify. A VIEW filter on another scheme (content, immich, immuch360, app.immich) is listed as a custom
+scheme, and Play's app checks want it to carry the DEFAULT and BROWSABLE categories.
 
 So this check reads every mobile/android/app/src/*/AndroidManifest.xml (main, the phone and quest flavours, debug,
 profile) and fails on an intent filter that names an http or https scheme with a host that is not the project's
