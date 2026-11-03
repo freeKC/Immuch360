@@ -11,11 +11,15 @@ of the program. Then, as a player would, it reads the virtual y4m over HTTP and 
   - the MD5 of the pictures, all of them, against the MD5 the reference decoder avmdec v1.0.0 gave (fixtures.json of
     the fixtures, lot AD0);
   - a range that starts in the middle of a picture, a seek to a picture after a random access point (the program asks
-    for that unit again, "need"), a seek back, a new request that replaces the one being served;
-  - another token (403) and another path (404) refused, the socket on 127.0.0.1 only, the "stat" lines every half
-    second and their decoding speed, no processor time while the player does not read (Linux and macOS), and the
-    program gone within a second of the standard input closing, with exit code 0, whatever its queue of units holds
-    (full with no request, with a paused player, after the player closed);
+    for that unit again, "need"), a seek back, a new request that replaces the one being served, both while that one
+    waits for a unit of the app and while it is blocked writing to a player that stopped reading (a pause, or a full
+    cache: the player opens the new connection before it closes the old one);
+  - the token in the environment (IMMUCH360_AV2_TOKEN), never on the command line every account can read, and
+    --token for runs by hand; another token (403) and another path (404) refused, the socket on 127.0.0.1 only, the
+    "stat" lines every half second and their decoding speed, no processor time while the player does not read, and
+    the program gone within a second of the standard input closing, with exit code 0, whatever its queue of units
+    holds (full with no request, with a paused player, after the player closed), also when the wall clock steps back
+    during the wait (Linux);
   - the program gone too when the app is gone without closing it: its standard output closed, or the --parent process
     ended;
   - a request that trickles in a byte at a time holds neither the player's requests nor its connection beyond 2 s;
@@ -49,6 +53,7 @@ import queue
 import re
 import secrets
 import select
+import shutil
 import socket
 import struct
 import subprocess
@@ -59,6 +64,9 @@ import time
 
 RECORD = struct.Struct('<4sIII')
 INDEX_UNIT = 0xFFFFFFFF
+# Where the app puts the token of serve: the environment of a process is readable by its own account only, its
+# command line by every account of the computer (/proc/PID/cmdline on Linux, ps on macOS)
+TOKEN_VARIABLE = 'IMMUCH360_AV2_TOKEN'
 TEMPORAL_DELIMITER, CLOSED_LOOP_KEY, PADDING = 2, 4, 25
 
 
@@ -302,15 +310,29 @@ class AppPipe:
                 os.close(self._writer)
 
 
-def serve_command(program: pathlib.Path, stream, info: dict, token: str, threads: int = 0, depth: int = 0) -> list:
+def serve_command(program: pathlib.Path, stream, info: dict, threads: int = 0, depth: int = 0,
+                  token_argument: str | None = None) -> list:
+    """The command line of serve, as the app writes it: the token is not on it (serve_environment), unless
+    token_argument gives it as a run by hand does (--token)"""
     picture = info['picture']
     rate, scale = stream.fps
-    command = [str(program), 'serve', '--token', token, '--width', str(picture['width']), '--height',
-               str(picture['height']), '--bits', str(picture['bits']), '--fps', f'{rate}/{scale}', '--frames',
-               str(len(stream.units)), '--threads', str(threads), '--range', info['color']['range']]
+    command = [str(program), 'serve', '--width', str(picture['width']), '--height', str(picture['height']), '--bits',
+               str(picture['bits']), '--fps', f'{rate}/{scale}', '--frames', str(len(stream.units)), '--threads',
+               str(threads), '--range', info['color']['range']]
     if depth:
         command += ['--depth', str(depth)]
+    if token_argument is not None:
+        command += ['--token', token_argument]
     return command
+
+
+def serve_environment(token: str | None, extra: dict | None = None) -> dict:
+    """The environment of serve: this one's, with the token in IMMUCH360_AV2_TOKEN (none when token is None)"""
+    environment = {key: value for key, value in os.environ.items() if key != TOKEN_VARIABLE}
+    if token is not None:
+        environment[TOKEN_VARIABLE] = token
+    environment.update(extra or {})
+    return environment
 
 
 class Companion:
@@ -318,17 +340,21 @@ class Companion:
 
     def __init__(self, program: pathlib.Path, stream, info: dict, threads: int = 0, depth: int = 0,
                  token: str | None = None, extra: list | None = None, hold_from: int | None = None,
-                 feed: bool = True):
+                 feed: bool = True, token_by: str = 'environment', environment: dict | None = None):
         self.stream = stream
         # The app's side can stop feeding the first generation at a unit, as a slow share would: the program then
         # waits for that unit, and the request it serves stays open
         self.hold_from = hold_from
         self.token = token or secrets.token_urlsafe(24)
-        command = serve_command(program, stream, info, self.token, threads, depth) + (extra or [])
+        # The token in the environment, as the app passes it; on the command line (--token) as a run by hand does
+        by_argument = token_by == 'argument'
+        command = serve_command(program, stream, info, threads, depth,
+                                token_argument=self.token if by_argument else None) + (extra or [])
         self.pipe = AppPipe()
         self.units_written = 0
         self.process = subprocess.Popen(command, stdin=self.pipe.child, stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE, bufsize=0)
+                                        stderr=subprocess.PIPE, bufsize=0,
+                                        env=serve_environment(None if by_argument else self.token, environment))
         self.pipe.started()
         self.lines = []
         self.lines_lock = threading.Condition()
@@ -456,9 +482,27 @@ class Companion:
             self.process.wait()
         self.pipe.close()
 
+    def last_stat(self) -> dict:
+        """The fields of the last stat line"""
+        for text in reversed(self.texts()):
+            if text.startswith('stat '):
+                return dict(part.split('=', 1) for part in text.split()[1:])
+        return {}
+
     def cpu_seconds(self) -> float | None:
-        """Processor time of the program so far (Linux and macOS), None elsewhere"""
+        """Processor time of the program so far: /proc on Linux, ps on macOS, GetProcessTimes on Windows"""
         pid = self.process.pid
+        if os.name == 'nt':
+            import ctypes
+            from ctypes import wintypes
+
+            kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+            kernel32.GetProcessTimes.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
+            kernel32.GetProcessTimes.restype = wintypes.BOOL
+            times = [wintypes.FILETIME() for _ in range(4)]  # creation, exit, kernel, user
+            if not kernel32.GetProcessTimes(int(self.process._handle), *[ctypes.byref(t) for t in times]):
+                return None
+            return sum(t.dwHighDateTime << 32 | t.dwLowDateTime for t in times[2:]) / 1e7
         if sys.platform.startswith('linux'):
             fields = pathlib.Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()
             return (int(fields[11]) + int(fields[12])) / os.sysconf('SC_CLK_TCK')
@@ -606,7 +650,7 @@ def check_file(report: Report, program: pathlib.Path, path: pathlib.Path, entry:
 
 
 def check_pause(report: Report, program: pathlib.Path, path: pathlib.Path, threads: int):
-    """A player that stops reading costs no processor time (Linux and macOS, where it can be read)"""
+    """A player that stops reading costs no processor time"""
     name = path.name
     stream = Stream(path)
     _, info = probe(program, path, threads)
@@ -628,7 +672,7 @@ def check_pause(report: Report, program: pathlib.Path, path: pathlib.Path, threa
         if before is not None and after is not None:
             report.check(after - before < 0.05, f'{name}: {after - before:.3f} s of processor while the player waits')
         else:
-            print(f'skip  {name}: processor time while the player waits (no /proc or ps here)')
+            report.check(False, f'{name}: the processor time of the program cannot be read here')
         player.close()
     finally:
         companion.close()
@@ -671,6 +715,187 @@ def check_replace(report: Report, program: pathlib.Path, path: pathlib.Path, thr
                                         f'{total} bytes)')
     finally:
         companion.close()
+
+
+def settled(companion: Companion, timeout: float = 20.0) -> int | None:
+    """The pictures served once serve no longer moves (its write to the player blocked), or None after timeout s"""
+    limit = time.monotonic() + timeout
+    last, since = None, time.monotonic()
+    while time.monotonic() < limit:
+        time.sleep(0.25)
+        stat = companion.last_stat()
+        if 'served' not in stat:
+            continue
+        if stat['served'] != last:
+            last, since = stat['served'], time.monotonic()
+        elif time.monotonic() - since >= 1.2 and stat.get('serving') == '1':
+            return int(last)
+    return None
+
+
+def check_blocked_replace(report: Report, program: pathlib.Path, fixtures: pathlib.Path, entry: dict,
+                          threads: int):
+    """A seek while serve is blocked writing to the player: a pause, or a player whose cache is full, the normal state
+    of playback. The player (http_seek of FFmpeg) opens the new connection first and closes the old one only once the
+    new one has answered, so the new request must end the blocked write at once, on every system: on Windows,
+    shutting a socket down does not wake a send() blocked in another thread"""
+    path = fixtures / 'av2-256x144-10bit.ivf'
+    _, info = probe(program, path, threads)
+    stream = Repeated(Stream(path), 40)  # 480 pictures, 53 MB: far more than the buffers of the two sockets
+    header_length = len(expected_header(info, stream))
+    record = 6 + info['y4m']['frame_bytes']
+    label = 'a seek while serve is blocked writing'
+    companion = Companion(program, stream, info, threads)
+    old = new = None
+    try:
+        old = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        old.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 65536)
+        old.settimeout(10)
+        old.connect(('127.0.0.1', companion.port))
+        old.sendall(f'GET {companion.url_path} HTTP/1.1\r\nHost: 127.0.0.1\r\nRange: bytes=0-\r\n\r\n'.encode())
+        read = 0
+        while read < 1 << 20:
+            chunk = old.recv(65536)
+            if not chunk:
+                break
+            read += len(chunk)
+        # The player stops reading and keeps its connection open
+        served = settled(companion)
+        report.check(served is not None and served < len(stream.units),
+                     f'{label}: the player read 1 MiB then stopped, serve blocked after {served} pictures')
+        target = 300  # a random access unit: copy 25 of the fixture
+        started = time.monotonic()
+        new = socket.create_connection(('127.0.0.1', companion.port), timeout=10)
+        new.settimeout(5)
+        new.sendall(f'GET {companion.url_path} HTTP/1.1\r\nHost: 127.0.0.1\r\n'
+                    f'Range: bytes={header_length + target * record}-\r\n\r\n'.encode())
+        data, whole = b'', None
+        try:
+            while whole is None:
+                chunk = new.recv(65536)
+                if not chunk:
+                    break
+                data += chunk
+                if b'\r\n\r\n' in data and len(data) >= data.index(b'\r\n\r\n') + 4 + record:
+                    whole = time.monotonic() - started
+        except OSError:
+            pass
+        status = data.split(b'\r\n', 1)[0].decode('latin-1')
+        picture = data.split(b'\r\n\r\n', 1)[1][:record] if whole is not None else b''
+        expected = entry['frame_md5'][target % len(entry['frame_md5'])]
+        right = picture[:6] == b'FRAME\n' and hashlib.md5(picture[6:]).hexdigest() == expected
+        seconds = f'{whole:.3f} s' if whole is not None else f'nothing whole in 5 s ({len(data)} bytes)'
+        report.check(status.startswith('HTTP/1.1 206 ') and whole is not None and whole < 1.0 and right,
+                     f'{label}, the old connection open and unread: "{status}", picture {target} as avmdec v1.0.0 '
+                     f'decodes it, {seconds} (1 s at most)')
+        # serve closed the old connection: what its buffers held, then the end
+        old.settimeout(5)
+        closed = False
+        try:
+            while old.recv(1 << 20):
+                pass
+            closed = True
+        except ConnectionError:
+            closed = True
+        except OSError:
+            pass
+        report.check(closed, f'{label}: serve closed the old connection')
+    except (OSError, Failure) as error:
+        report.check(False, f'{label}: {error}')
+    finally:
+        for connection in (old, new):
+            if connection is not None:
+                connection.close()
+        companion.close()
+
+
+def check_token(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """The token in the environment (IMMUCH360_AV2_TOKEN), as the app passes it: the environment of a process is
+    readable by its own account only, its command line by every account of the computer. --token stays for runs by
+    hand. Without a token, or with one that is not a token, serve stops with exit code 2"""
+    path = fixtures / 'av2-256x144-8bit.ivf'
+    stream = Stream(path)
+    _, info = probe(program, path, threads)
+    for token_by in ('environment', 'argument'):
+        try:
+            companion = Companion(program, stream, info, threads, token_by=token_by)
+        except Failure as error:
+            report.check(False, f'the token in the {token_by}: {error}')
+            continue
+        try:
+            status = get(companion.port, companion.url_path, method='HEAD', timeout=10)[0]
+            other = get(companion.port, f'/{secrets.token_urlsafe(24)}/video.y4m', method='HEAD', timeout=10)[0]
+            report.check(status == 200 and other == 403,
+                         f'the token in the {token_by}: its path served ({status}), another token refused ({other})')
+            if token_by == 'environment' and sys.platform != 'win32':
+                if sys.platform.startswith('linux'):
+                    shown = pathlib.Path(f'/proc/{companion.process.pid}/cmdline').read_bytes()
+                else:
+                    shown = subprocess.run(['ps', '-ww', '-o', 'command=', '-p', str(companion.process.pid)],
+                                           capture_output=True).stdout
+                report.check(b'serve' in shown and companion.token.encode() not in shown,
+                             'the token in the environment: not on the command line, which every account reads')
+        finally:
+            companion.close()
+    for label, token in (('no token', None), ('a token of 5 letters in the environment', 'short')):
+        result = subprocess.run(serve_command(program, stream, info, threads), env=serve_environment(token),
+                                stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
+        said = result.stderr.decode('utf-8', 'replace').strip()
+        report.check(result.returncode == 2 and TOKEN_VARIABLE in said, f'serve with {label}: exit 2 ({said})')
+
+
+# gettimeofday an hour ahead of the system's clock, preloaded ahead of the C library: what a wait whose deadline came
+# from the wall clock sees when that clock steps back an hour (NTP, a change by hand) during the wait
+CLOCK_STEP = r"""
+#include <time.h>
+struct step_timeval { long tv_sec; long tv_usec; };
+int gettimeofday(struct step_timeval *tv, void *zone) {
+  struct timespec now;
+  (void)zone;
+  clock_gettime(CLOCK_REALTIME, &now);
+  tv->tv_sec = now.tv_sec + 3600;
+  tv->tv_usec = now.tv_nsec / 1000;
+  return 0;
+}
+"""
+
+
+def check_clock_step(report: Report, program: pathlib.Path, fixtures: pathlib.Path, threads: int):
+    """The bounded waits of serve on the monotonic clock: the wall clock stepped back during a pause with the queue
+    full does not hold back the end of the input (Linux, where a library preloaded ahead of the C library moves the
+    wall clock of the program alone; skipped without a C compiler)"""
+    if not sys.platform.startswith('linux'):
+        return
+    compiler = shutil.which('cc') or shutil.which('gcc')
+    if not compiler:
+        print('skip  the wall clock stepped back: no C compiler for the preloaded library')
+        return
+    with tempfile.TemporaryDirectory(prefix='av2-clock-') as folder:
+        source, library = pathlib.Path(folder) / 'step.c', pathlib.Path(folder) / 'step.so'
+        source.write_text(CLOCK_STEP, encoding='utf-8')
+        built = subprocess.run([compiler, '-shared', '-fPIC', '-O1', '-o', str(library), str(source)],
+                               capture_output=True, text=True)
+        if built.returncode != 0:
+            report.check(False, f'the wall clock stepped back: the preloaded library did not build ({built.stderr})')
+            return
+        path = fixtures / 'av2-256x144-10bit.ivf'
+        _, info = probe(program, path, threads)
+        stream = Repeated(Stream(path), 40)
+        companion = Companion(program, stream, info, threads, environment={'LD_PRELOAD': str(library)})
+        player = None
+        try:
+            player = paused_player(companion, len(expected_header(info, stream)))
+            full = companion.pipe.waited(20)
+            code, seconds = companion.close(3)
+            report.check(full and code == 0 and seconds < 1.0,
+                         f'the wall clock stepped back an hour, a paused player and the queue full: gone {seconds:.2f} '
+                         f's after its input closed, exit {code}')
+        except (OSError, Failure) as error:
+            report.check(False, f'the wall clock stepped back: {error}')
+        finally:
+            if player is not None:
+                player.close()
+            companion.kill()
 
 
 def check_loopback_only(report: Report, companion_port: int):
@@ -820,9 +1045,10 @@ def check_input_end(report: Report, program: pathlib.Path, fixtures: pathlib.Pat
                 before = companion.cpu_seconds()
                 time.sleep(1.5)
                 after = companion.cpu_seconds()
-                if before is not None and after is not None:
-                    report.check(after - before < 0.05,
-                                 f'{label}, the queue full: {after - before:.3f} s of processor in 1.5 s')
+                spent = after - before if before is not None and after is not None else None
+                shown = f'{spent:.3f}' if spent is not None else 'unreadable'
+                report.check(spent is not None and spent < 0.05,
+                             f'{label}, the queue full: {shown} s of processor in 1.5 s')
             if close_player:
                 player.close()
                 time.sleep(0.3)
@@ -848,8 +1074,9 @@ def check_app_gone(report: Report, program: pathlib.Path, fixtures: pathlib.Path
 
     pipe = AppPipe()
     lines, write_end = os.pipe()
-    command = serve_command(program, stream, info, secrets.token_urlsafe(24), threads)
-    process = subprocess.Popen(command, stdin=pipe.child, stdout=write_end, stderr=subprocess.DEVNULL)
+    command = serve_command(program, stream, info, threads)
+    process = subprocess.Popen(command, stdin=pipe.child, stdout=write_end, stderr=subprocess.DEVNULL,
+                               env=serve_environment(secrets.token_urlsafe(24)))
     pipe.started()
     os.close(write_end)
     try:
@@ -1047,6 +1274,8 @@ def command_check(args) -> int:
         check_file(report, args.program, fixtures / name, entries[name], args.threads)
     check_pause(report, args.program, fixtures / 'av2-256x144-10bit.ivf', args.threads)
     check_replace(report, args.program, fixtures / 'av2-256x144-8bit.ivf', args.threads)
+    check_blocked_replace(report, args.program, fixtures, entries['av2-256x144-10bit.ivf'], args.threads)
+    check_token(report, args.program, fixtures, args.threads)
     stream = Stream(fixtures / 'av2-256x144-8bit.ivf')
     _, info = probe(args.program, fixtures / 'av2-256x144-8bit.ivf')
     companion = Companion(args.program, stream, info, args.threads)
@@ -1064,6 +1293,7 @@ def command_check(args) -> int:
     check_speed(report, args.program, fixtures, entries['av2-256x144-8bit.ivf'], args.threads)
     check_slow_request(report, args.program, fixtures, args.threads)
     check_input_end(report, args.program, fixtures, args.threads)
+    check_clock_step(report, args.program, fixtures, args.threads)
     check_app_gone(report, args.program, fixtures, args.threads)
     if report.failures:
         for failure in report.failures:

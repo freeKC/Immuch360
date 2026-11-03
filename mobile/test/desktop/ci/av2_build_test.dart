@@ -212,19 +212,45 @@ void main() {
         expect(run.output, contains('artifact=Immuch360-av2-decoder-30140b5-1-$system.zip'));
         expect(run.output, contains('commit=$_commit'));
         expect(run.output, contains('meson=1.7.0'));
+        expect(run.output, contains('nasm_version=2.16.03'));
+        expect(
+          run.output,
+          contains(
+            system == 'windows-x64'
+                ? 'nasm_url=https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win64/nasm-2.16.03-win64.zip'
+                : 'nasm_url=https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.xz',
+          ),
+        );
+        expect(
+          run.output,
+          contains(
+            system == 'windows-x64'
+                ? 'nasm_sha256=3ee4782247bcb874378d02f7eab4e294a84d3d15f3f6ee2de2f47a46aa7226e6'
+                : 'nasm_sha256=1412a1c760bbd05db026b6c0d1657affd6631cd0a63cddb6f73cc6d4aa616148',
+          ),
+        );
       }
       final lock = repositoryLock();
       expect((lock['dav2d'] as Map)['repository'], 'https://code.videolan.org/videolan/dav2d.git');
       expect(lock['meson'], containsPair('windows-x64', ['-Db_vscrt=mt']));
     });
 
-    test('a lock without a full commit, with the id of another commit or without the sum of nasm is refused', () {
+    test('a lock without a full commit, with the id of another commit or without a sum of nasm is refused', () {
       for (final (change, message) in [
         ((Map<String, dynamic> lock) => (lock['dav2d'] as Map)['commit'] = '30140b56', 'not a full commit'),
         ((Map<String, dynamic> lock) => lock['id'] = 'abcdef0-1', 'is not <short commit of dav2d>-<build>'),
         (
           (Map<String, dynamic> lock) => (((lock['tools'] as Map)['nasm'] as Map)['windows-x64'] as Map)['sha256'] = '',
-          'no https address or SHA-256',
+          'the nasm of Windows has no https address or SHA-256',
+        ),
+        (
+          (Map<String, dynamic> lock) => (((lock['tools'] as Map)['nasm'] as Map)['source'] as Map)['sha256'] = '',
+          'the source of nasm, built on Linux and macOS, has no https address or SHA-256',
+        ),
+        (
+          (Map<String, dynamic> lock) =>
+              (((lock['tools'] as Map)['nasm'] as Map)['source'] as Map)['url'] = 'http://www.nasm.us/nasm.tar.xz',
+          'the source of nasm, built on Linux and macOS, has no https address or SHA-256',
         ),
       ]) {
         final lock = repositoryLock();
@@ -377,6 +403,34 @@ void main() {
         final check = build(['check', '--system', 'windows-x64', '--archive', archive.path]);
         expect(check.exitCode, 0, reason: '$check');
         expect(check.output, contains('sums, licences, libraries and strings as they should be'));
+      });
+
+      test('a program assembled by another nasm than that of the lock is neither packed nor accepted', () {
+        final root = tree({});
+        final out = Directory(p.join(root.path, 'dist'));
+        final exe = program(root, 'immuch360-av2.exe', fakePe(imports: ['KERNEL32.dll']));
+        expect(pack('windows-x64', exe, out: out).exitCode, 0);
+        final archive = p.join(out.path, 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip');
+        final info = utf8.decode(_unzip(archive)['BUILD-INFO.txt']!);
+
+        // Homebrew's NASM 3.02 in the tools of the build: not packed
+        final other = Directory(p.join(root.path, 'other'))..createSync();
+        File(
+          p.join(other.path, 'tools.json'),
+        ).writeAsStringSync(jsonEncode({..._tools, 'nasm': 'NASM version 3.02 compiled on Oct 10 2026'}));
+        final otherExe = File(p.join(other.path, 'immuch360-av2.exe'))
+          ..writeAsBytesSync(fakePe(imports: ['KERNEL32.dll']));
+        final refused = pack('windows-x64', otherExe.path, out: Directory(p.join(root.path, 'dist-other')));
+        expect(refused.exitCode, 1, reason: '$refused');
+        expect(refused.output, contains('NASM version 3.02 compiled on Oct 10 2026, not the 2.16.03 of the lock'));
+
+        // An archive whose BUILD-INFO.txt names it: not accepted
+        final changed = Directory(p.join(root.path, 'changed'))..createSync();
+        final file = p.join(changed.path, p.basename(archive));
+        _rezip(archive, file, {'BUILD-INFO.txt': info.replaceFirst('NASM version 2.16.03', 'NASM version 3.02')});
+        final check = build(['check', '--system', 'windows-x64', '--archive', file]);
+        expect(check.exitCode, 1, reason: '$check');
+        expect(check.output, contains('nasm NASM version 3.02 compiled on Apr 17 2024, not the 2.16.03 of the lock'));
       });
 
       test('a build that recorded no tools next to its program is not packed', () {
@@ -576,6 +630,7 @@ void main() {
     test('the help of the program against its fixture', () {
       final fixture = File(p.join(fixtures.path, 'immuch360_av2_help.txt')).readAsStringSync();
       expect(fixture, contains('immuch360-av2 serve --token TOKEN'));
+      expect(fixture, contains('the environment variable IMMUCH360_AV2_TOKEN'));
       final root = tree({'same.txt': fixture, 'other.txt': fixture.replaceFirst('--depth 8', '--depth 6')});
       final same = build(['help', '--output', p.join(root.path, 'same.txt')]);
       expect(same.exitCode, 0, reason: '$same');

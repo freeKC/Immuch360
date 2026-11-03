@@ -11,7 +11,9 @@ Usage:
   immuch360-av2 --help
 
 Options of serve:
-  --token TOKEN          16 to 128 letters, digits, - or _: the first part of the path of the video
+  --token TOKEN          16 to 128 letters, digits, - or _: the first part of the path of the video. Every
+                         account of the computer can read a command line: the app leaves --token out and sets
+                         the environment variable IMMUCH360_AV2_TOKEN instead
   --width W --height H   the size of the pictures, as the probe found it
   --bits 8|10            the depth of the pictures
   --fps NUM/DEN          the frame rate the y4m header gives the player
