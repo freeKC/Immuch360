@@ -116,6 +116,58 @@ class _HeldConsumer implements StreamConsumer<List<int>> {
   Future<void> close() async => open = false;
 }
 
+/// A companion that died: its standard input breaks at the first write, and the system tells its end a moment later
+/// (Windows told the broken pipe first in the CI run 41622847292)
+class _DeadProcess implements RunningProcess {
+  _DeadProcess() {
+    stdin = IOSink(_BrokenConsumer());
+  }
+
+  final _out = StreamController<String>();
+  final _exit = Completer<int>();
+
+  @override
+  final int pid = 9002;
+
+  // Closed by the session it is given to
+  @override
+  // ignore: close_sinks
+  late final IOSink stdin;
+
+  @override
+  Stream<String> get stdoutLines => _out.stream;
+
+  @override
+  Stream<String> get stderrLines => const Stream.empty();
+
+  @override
+  Future<int> get exitCode => _exit.future;
+
+  void say(String line) => _out.add(line);
+
+  /// The end the system tells, after the pipe broke
+  void end() {
+    if (!_exit.isCompleted) {
+      unawaited(_out.close());
+      _exit.complete(-9);
+    }
+  }
+
+  @override
+  void kill() => Timer(const Duration(milliseconds: 50), end);
+}
+
+class _BrokenConsumer implements StreamConsumer<List<int>> {
+  @override
+  Future<void> addStream(Stream<List<int>> stream) async {
+    await stream.drain<void>();
+    throw const SocketException('Broken pipe (OS Error: The pipe is being closed, errno = 232)');
+  }
+
+  @override
+  Future<void> close() async {}
+}
+
 class _OneProcessRunner implements ProcessRunner {
   _OneProcessRunner(this.process);
 
@@ -372,6 +424,29 @@ void main() {
       expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
       expect(session.isRunning, isFalse);
       expect(session.failure.value, isNull, reason: 'asked to stop');
+    });
+  });
+
+  group('a companion that died', () {
+    test('its input broken before its end is told: the video says how it ended, not that its file went away', () async {
+      final process = _DeadProcess();
+      final runner = _OneProcessRunner(process);
+      final starting = Av2Session.start(
+        bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+        files: (program: 'immuch360-av2', launcher: null),
+        runner: runner,
+        decoderVersion: 'test',
+        probe: () async => Av2Probe.fromJson(_probeJson()),
+      );
+      await _until(() => runner.launches.isNotEmpty);
+      process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
+      final session = await starting;
+      addTearDown(session.stop);
+      // The index could not be written: the pipe broke; the system tells the end 300 ms later
+      Timer(const Duration(milliseconds: 300), process.end);
+      await _until(() => session.failure.value != null);
+      expect(session.failure.value, contains('immuch360-av2 ended with'));
+      expect(session.isRunning, isFalse);
     });
   });
 

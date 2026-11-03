@@ -708,6 +708,13 @@ String? _errorOf(List<String> lines) {
   return null;
 }
 
+/// A unit of the file that could not be read, as opposed to a write to the companion that failed
+class _UnitsUnread implements Exception {
+  const _UnitsUnread(this.error);
+
+  final Object error;
+}
+
 /// What the player's link is told of the decoder: the speed this computer decodes at ([fps], null until measured),
 /// the speed the video needs ([needed]), and why the companion stopped ([failure], null while it runs)
 typedef Av2Decoding = ({double? fps, double needed, String? failure});
@@ -1099,12 +1106,17 @@ class Av2Session {
         var unit = _from;
         while (!_stopping && !_stopped && generation == _generation && unit < layout.frames) {
           final part = index.units[unit];
-          final payload = await bytes.read(part.offset, part.length);
+          final Uint8List payload;
+          try {
+            payload = await bytes.read(part.offset, part.length);
+          } catch (error) {
+            throw _UnitsUnread(error);
+          }
           if (generation != _generation || _stopping || _stopped) {
             break;
           }
           if (payload.length != part.length) {
-            throw io.FileSystemException('the file is shorter than its index', bytes.key);
+            throw _UnitsUnread(io.FileSystemException('the file is shorter than its index', bytes.key));
           }
           await _write(av2Record(generation, unit, payload));
           unit++;
@@ -1114,11 +1126,18 @@ class Av2Session {
           await _write(av2Record(generation, layout.frames, const []));
         }
       }
+    } on _UnitsUnread catch (unread) {
+      if (!_stopping && !_stopped) {
+        // The file went away (a share, a drive pulled out): the companion stops
+        _log.warning('The units of an AV2 video could not be read: ${unread.error}');
+        _fail('its file could no longer be read');
+        _process?.kill();
+      }
     } catch (error) {
       if (!_stopping && !_stopped) {
-        // The file went away (a share, a drive pulled out), or the companion's pipe broke: it stops
+        // The companion's input broke: it ended or ends, and its end says why (SidecarRun); the system may tell the
+        // broken pipe first (Windows), so no reason is given here. Killed, should it still be there.
         _log.warning('The units of an AV2 video could not be written: $error');
-        _fail('its file could no longer be read');
         _process?.kill();
       }
     }
