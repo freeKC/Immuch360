@@ -645,9 +645,38 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         // A file libmpv cannot open, before "ready". Once a file plays, mpv 0.39 takes a read error for its end and
         // sends no failure: see [_onCompleted]
         if (!_unloaded) {
-          _fail(_generation, event.message ?? 'The video could not be played');
+          final message = event.message ?? 'The video could not be played';
+          final resource = _resource;
+          if (resource != null && _decodingOf?.call(resource) != null) {
+            unawaited(_failAfterDecoder(_generation, resource, message));
+          } else {
+            _fail(_generation, message);
+          }
         }
     }
+  }
+
+  /// How long a failure of mpv on a video a program of the app decodes waits for that program's own end, which names
+  /// the reason: a companion that dies before mpv loaded its y4m makes mpv fail at once ("libmpv: loading failed", 20
+  /// ms after the kill in the review of lot AD3), its end comes a moment later
+  static const decoderFailureWait = Duration(seconds: 1);
+  static const _decoderFailurePoll = Duration(milliseconds: 50);
+
+  /// Fails the video with the reason of its decoder when that decoder stops within [decoderFailureWait], else with
+  /// mpv's [message]
+  Future<void> _failAfterDecoder(int generation, String resource, String message) async {
+    for (var waited = Duration.zero; waited < decoderFailureWait; waited += _decoderFailurePoll) {
+      if (_decodingOf?.call(resource)?.failure != null) {
+        break;
+      }
+      await Future<void>.delayed(_decoderFailurePoll);
+      if (_disposed || generation != _generation || _unloaded) {
+        // Another video, a stop, or the link's own look at the decoder (_tellDecoder) said it first
+        return;
+      }
+    }
+    final failure = _decodingOf?.call(resource)?.failure;
+    _fail(generation, failure == null ? message : 'The AV2 decoder stopped on this video: $failure');
   }
 
   void _checkReady() => _announceReady(force: false);

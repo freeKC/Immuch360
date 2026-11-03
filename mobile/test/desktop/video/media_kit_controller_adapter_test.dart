@@ -179,6 +179,51 @@ void main() {
       });
     });
 
+    test('its decoder died before mpv loaded the y4m: the video says the decoder, not mpv\'s loading failure', () {
+      fakeAsync((async) {
+        players = FakePlayers();
+        String? failure;
+        final video = MediaKitVideoPlayerController(
+          pool: players.pool,
+          resolve: _asIs,
+          positionInterval: Duration.zero,
+          decodingOf: (resource) => resource == companionUrl ? (fps: null, needed: 30, failure: failure) : null,
+        );
+        unawaited(_network(companionUrl).then(video.loadVideoSource));
+        async.flushMicrotasks();
+        // The companion killed right after the load: mpv's connection is refused 20 ms later, the end of the companion
+        // comes after it (4 rounds of 4 on libmpv in the review of lot AD3)
+        players.made.single.emit(PlayerEventKind.failed, 'libmpv: loading failed');
+        async.elapse(const Duration(milliseconds: 300));
+        expect(video.onError.value, isNull, reason: 'its decoder may still say why');
+        failure = 'it was stopped (code -9)';
+        async.elapse(const Duration(seconds: 1));
+        expect(video.onError.value, 'The AV2 decoder stopped on this video: it was stopped (code -9)');
+        expect(video.onPlaybackStatusChanged.value, PlaybackStatus.stopped);
+        video.dispose();
+        async.flushMicrotasks();
+      });
+    });
+
+    test('mpv fails on a y4m whose decoder still runs: mpv\'s message, a second later', () {
+      fakeAsync((async) {
+        players = FakePlayers();
+        final video = MediaKitVideoPlayerController(
+          pool: players.pool,
+          resolve: _asIs,
+          positionInterval: Duration.zero,
+          decodingOf: (resource) => resource == companionUrl ? (fps: null, needed: 30, failure: null) : null,
+        );
+        unawaited(_network(companionUrl).then(video.loadVideoSource));
+        async.flushMicrotasks();
+        players.made.single.emit(PlayerEventKind.failed, 'libmpv: unrecognized file format');
+        async.elapse(const Duration(milliseconds: 1100));
+        expect(video.onError.value, 'libmpv: unrecognized file format');
+        video.dispose();
+        async.flushMicrotasks();
+      });
+    });
+
     test(
       'the end of the y4m cut by a decoder that stopped says the decoder, not a file that could not be read',
       () async {
