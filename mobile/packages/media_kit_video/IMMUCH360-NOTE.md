@@ -222,8 +222,9 @@ Patches:
    default: measured on the PC on 3 November 2026 (the fix round of lot AD3 of the AV2 videos, PresentMon and Flutter's
    frame times, H.264 and AV2 runs one after the other), it changed nothing steady: at 1080p the AV2 video already
    presented as often as H.264, and at 4K, with a decoder slower than the video, one pair of runs was better with it,
-   one the same and one worse; the Intel UHD, busy 12.5 to 13.3 ms a present with the 4K AV2 video against 5.4 to 8.6
-   ms with H.264, looked like the limit rather than the lock. Kept for the next measures.
+   one the same and one worse; the Intel UHD, busy 8.4 to 13.3 ms a present with the 4K AV2 video (12.5 or more in 4
+   of those 6 runs) against 5.4 to 8.6 ms with H.264, looked like the limit rather than the lock. Kept for the next
+   measures.
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.
