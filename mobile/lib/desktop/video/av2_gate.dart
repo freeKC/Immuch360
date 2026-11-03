@@ -14,6 +14,9 @@
 //    decodes this AV2 video at about 7 frames per second and it needs 24: it will pause to catch up", and "Play
 //    anyway" (decision D2 of the plan). Without a measure the video plays, and the start rule of the player waits for
 //    what it needs.
+//
+// In the asset viewer these screens take the place of the view that carries the gestures of the viewer: they show its
+// bars, which a video opens without, and take its tap (Av2ViewerScreen), so that the mouse always has Back.
 
 import 'dart:async';
 
@@ -30,6 +33,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
+import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -67,15 +71,26 @@ final av2LocalVideoProvider = FutureProvider.autoDispose.family<Av2VideoRef?, ({
 });
 
 /// The gate of a video of the asset viewer: [child], its player, unless [asset] is an AV2 file (named .ivf or .obu,
-/// and its head says so), which goes through [Av2PlaybackGate]; on a phone such a file says it plays on the computers
+/// and its head says so), which goes through [Av2PlaybackGate]; on a phone such a file says it plays on the computers.
+/// What shows in the place of [child] is an [Av2ViewerScreen]: the bars of the viewer when [asset] is the file it
+/// shows ([isCurrent]), and [onTapUp], what a tap on the video does.
 class Av2AssetGate extends ConsumerWidget {
-  const Av2AssetGate({super.key, required this.asset, required this.child});
+  const Av2AssetGate({super.key, required this.asset, required this.child, this.isCurrent = false, this.onTapUp});
 
   final BaseAsset asset;
   final Widget child;
 
+  /// Whether [asset] is the file the viewer shows, not a neighbour built beside it
+  final bool isCurrent;
+
+  /// What a tap on the video does in the viewer: the bars, or the next file with tap to navigate
+  final GestureTapUpCallback? onTapUp;
+
   /// Whether [asset] may be an AV2 file, which the gate reads
   static bool applies(BaseAsset asset) => asset.isVideo && isAv2FileName(asset.name);
+
+  Widget _screen(Widget screen, {required bool waiting}) =>
+      Av2ViewerScreen(showBars: isCurrent && !waiting, onTapUp: onTapUp, child: screen);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -84,14 +99,65 @@ class Av2AssetGate extends ConsumerWidget {
       return child;
     }
     if (!CurrentPlatform.isDesktop) {
-      return Av2Notice(key: const Key('av2_notice_not_here'), text: context.t.av2_error_not_here);
+      return _screen(
+        Av2Notice(key: const Key('av2_notice_not_here'), text: context.t.av2_error_not_here),
+        waiting: false,
+      );
     }
     return switch (ref.watch(av2LocalVideoProvider((id: id, name: asset.name)))) {
-      AsyncData(value: final video?) => Av2PlaybackGate(video: video, child: child),
+      AsyncData(value: final video?) => Av2PlaybackGate(video: video, frame: _screen, child: child),
       AsyncData() || AsyncError() => child,
-      _ => const _Waiting(),
+      _ => _screen(const _Waiting(), waiting: true),
     };
   }
+}
+
+/// A screen of the gate in the asset viewer, in the place of the video and of the view that carried the gestures of
+/// the viewer. A video opens with the bars of the viewer hidden and a tap on it shows them; a card in its place would
+/// leave the mouse without Back. So the bars show once the screen is there ([showBars]: on the file the viewer shows,
+/// not while the gate only waits), never over the details, and a tap beside the card does what a tap on the video does.
+class Av2ViewerScreen extends ConsumerStatefulWidget {
+  const Av2ViewerScreen({super.key, required this.showBars, required this.onTapUp, required this.child});
+
+  final bool showBars;
+  final GestureTapUpCallback? onTapUp;
+  final Widget child;
+
+  @override
+  ConsumerState<Av2ViewerScreen> createState() => _Av2ViewerScreenState();
+}
+
+class _Av2ViewerScreenState extends ConsumerState<Av2ViewerScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.showBars) {
+      _showBars();
+    }
+  }
+
+  @override
+  void didUpdateWidget(Av2ViewerScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showBars && !oldWidget.showBars) {
+      _showBars();
+    }
+  }
+
+  /// After the frame: the page of the viewer sets its file, and hides the bars of a video, before it builds the gate
+  void _showBars() => WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (mounted && !ref.read(assetViewerProvider).showingDetails) {
+      ref.read(assetViewerProvider.notifier).setControls(true);
+    }
+  });
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    key: const Key('av2_viewer_screen'),
+    behavior: HitTestBehavior.opaque,
+    onTapUp: widget.onTapUp,
+    child: SizedBox.expand(child: widget.child),
+  );
 }
 
 /// The gate of the player of a file of a share ([key]): [child] unless the file is AV2; on a phone such a file says it
@@ -121,12 +187,18 @@ class Av2ShareGate extends ConsumerWidget {
   }
 }
 
-/// The player of the AV2 [video], [child], once each step at the top of this file is settled
+/// What a page puts around a screen of the gate, anything but the player; [waiting] while the gate only waits for a
+/// read
+typedef Av2ScreenFrame = Widget Function(Widget screen, {required bool waiting});
+
+/// The player of the AV2 [video], [child], once each step at the top of this file is settled; [frame] goes around what
+/// shows in its place
 class Av2PlaybackGate extends ConsumerStatefulWidget {
-  const Av2PlaybackGate({super.key, required this.video, required this.child});
+  const Av2PlaybackGate({super.key, required this.video, required this.child, this.frame});
 
   final Av2VideoRef video;
   final Widget child;
+  final Av2ScreenFrame? frame;
 
   @override
   ConsumerState<Av2PlaybackGate> createState() => _Av2PlaybackGateState();
@@ -155,36 +227,42 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
     }
   }
 
+  /// [screen] in the frame of the page, when it gives one
+  Widget _framed(Widget screen, {bool waiting = false}) => widget.frame?.call(screen, waiting: waiting) ?? screen;
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
     if (!CurrentPlatform.isDesktop) {
-      return Av2Notice(key: const Key('av2_notice_not_here'), text: t.av2_error_not_here);
+      return _framed(Av2Notice(key: const Key('av2_notice_not_here'), text: t.av2_error_not_here));
     }
     if (!ref.watch(appConfigProvider.select((config) => config.viewer.av2Videos))) {
-      return Av2Notice(
-        key: const Key('av2_notice_off'),
-        text: t.av2_error_off,
-        action: SwitchListTile(
-          key: const Key('av2_turn_on'),
-          contentPadding: EdgeInsets.zero,
-          title: Text(t.av2_settings_title),
-          value: false,
-          onChanged: (on) => unawaited(ref.read(settingsProvider).write(.viewerAv2Videos, on)),
+      return _framed(
+        Av2Notice(
+          key: const Key('av2_notice_off'),
+          text: t.av2_error_off,
+          action: SwitchListTile(
+            key: const Key('av2_turn_on'),
+            contentPadding: EdgeInsets.zero,
+            title: Text(t.av2_settings_title),
+            value: false,
+            onChanged: (on) => unawaited(ref.read(settingsProvider).write(.viewerAv2Videos, on)),
+          ),
         ),
       );
     }
     if (CurrentPlatform.isMacOS && !av2PlaysWithMacLibmpv(ref.watch(av2MacLibmpvReleaseProvider))) {
-      return Av2Notice(key: const Key('av2_notice_mac'), text: t.av2_error_mac_libmpv);
+      return _framed(Av2Notice(key: const Key('av2_notice_mac'), text: t.av2_error_mac_libmpv));
     }
     final decoder = ref.watch(av2DecoderProvider);
     return FutureBuilder<void>(
       future: _loaded,
       builder: (context, loaded) => loaded.connectionState != ConnectionState.done
-          ? const _Waiting()
+          ? _framed(const _Waiting(), waiting: true)
           : ListenableBuilder(
               listenable: decoder.service,
-              builder: (context, _) => decoder.isInstalled ? _probed(context) : Av2InstallCard(decoder: decoder),
+              builder: (context, _) =>
+                  decoder.isInstalled ? _probed(context) : _framed(Av2InstallCard(decoder: decoder)),
             ),
     );
   }
@@ -205,25 +283,29 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
       builder: (context, snapshot) {
         final t = context.t;
         if (snapshot.hasError) {
-          return Av2Notice(
-            key: const Key('av2_notice_stopped'),
-            text: t.av2_error_decoder_stopped(reason: '${snapshot.error}'),
+          return _framed(
+            Av2Notice(
+              key: const Key('av2_notice_stopped'),
+              text: t.av2_error_decoder_stopped(reason: '${snapshot.error}'),
+            ),
           );
         }
         final checked = snapshot.data;
         if (checked == null) {
-          return const _Waiting();
+          return _framed(const _Waiting(), waiting: true);
         }
         final refused = checked.format.refusedFormat;
         if (refused != null) {
-          return Av2Notice(
-            key: const Key('av2_notice_format'),
-            text: t.av2_error_format(format: refused),
+          return _framed(
+            Av2Notice(
+              key: const Key('av2_notice_format'),
+              text: t.av2_error_format(format: refused),
+            ),
           );
         }
         final speed = checked.speed;
         if (speed != null && speed.tooSlow && !_playAnyway) {
-          return Av2TooSlowNotice(speed: speed, onPlay: () => setState(() => _playAnyway = true));
+          return _framed(Av2TooSlowNotice(speed: speed, onPlay: () => setState(() => _playAnyway = true)));
         }
         return widget.child;
       },

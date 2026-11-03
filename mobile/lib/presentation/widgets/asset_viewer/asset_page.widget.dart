@@ -291,7 +291,10 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     _viewer.setOpacity(opacity);
   }
 
-  void _onTapUp(BuildContext context, TapUpDetails details, PhotoViewControllerValue controllerValue) {
+  void _onTapUp(BuildContext context, TapUpDetails details, PhotoViewControllerValue controllerValue) =>
+      _onTap(context, details);
+
+  void _onTap(BuildContext context, TapUpDetails details) {
     if (_showingDetails || _dragStart != null) {
       return;
     }
@@ -515,8 +518,16 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       ),
     );
     // Immuch360 Desktop: an AV2 video (.ivf, .obu) plays once its decoder is there, its setting on and its speed told
-    // (lib/desktop/video/av2_gate.dart); a phone says it plays on the computers
-    return Av2AssetGate.applies(asset) ? Av2AssetGate(asset: asset, child: player) : player;
+    // (lib/desktop/video/av2_gate.dart); a phone says it plays on the computers. What shows in the place of the view
+    // has the bars and the tap of the viewer.
+    return Av2AssetGate.applies(asset)
+        ? Av2AssetGate(
+            asset: asset,
+            isCurrent: isCurrent,
+            onTapUp: (details) => _onTap(context, details),
+            child: player,
+          )
+        : player;
   }
 
   @override
