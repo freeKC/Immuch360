@@ -12,6 +12,9 @@
 // ([SplatTimeModel.normalized]). Until lot SPF1 a video was matched by sequential_matcher, its time by its images: a
 // time of a video kept then would tell the matching far too short (only the test build T1 could have kept one).
 //
+// Before a computer finished a scene, the defaults of the steps of COLMAP follow its threads (lot SPF2,
+// [splatProcessorFactor]): measured on 24 processors, they told a laptop of 4 cores its first scene far too short.
+//
 // The counts a job starts from are those it will take ([splatPlannedImages]): the 150 frames of a video (its one member
 // is not an image), 200 of more photos. The step of the photos or of the frames follows what the preparation reads
 // ([SplatTimeModel.read]: the photos taken, the windows of the video, as soon as it says how many), the steps after it
@@ -58,6 +61,40 @@ const splatSceneVideoDefaultTimings = <String, int>{
   'splatCopy': 10000,
   'writing': 1000,
 };
+
+/// The steps of COLMAP, whose defaults follow the threads of the computer ([splatProcessorFactor])
+const splatProcessorStages = {'features', 'matching', 'mapping'};
+
+/// How many times longer than the defaults the steps of COLMAP take on a computer of [processors] processors, before
+/// it finished a scene (lot SPF2, m1 of the review of lot SPF1): the defaults were measured on the 22 threads of the
+/// PC of the measure (24 processors less two, colmapCommonThreadsFor), some 31.4 s a block of 1 225 pairs in the 286 s
+/// of the 11 175 pairs of 150 frames. The same blocks of the lighthouse took 68.5 s on 2 threads and 47.2 s on 6 of the
+/// same processor (review of lot SPF1): 2.19 and 1.51 times as long. Between two measures, by the logarithm of the
+/// threads; 1 from 22 threads on, never faster than measured; the cores of an older laptop are slower still, which the
+/// first scene of the computer then says (AiTimings keeps what it measured)
+double splatProcessorFactor(int processors) {
+  final threads = colmapCommonThreadsFor(processors);
+  const measured = [(2, 68.5 * 11175 / 1225 / 286), (6, 47.2 * 11175 / 1225 / 286), (22, 1.0)];
+  if (threads <= measured.first.$1) {
+    return measured.first.$2;
+  }
+  for (var k = 1; k < measured.length; k++) {
+    final (low, slow) = measured[k - 1];
+    final (high, fast) = measured[k];
+    if (threads <= high) {
+      final at = (math.log(threads) - math.log(low)) / (math.log(high) - math.log(low));
+      return slow + (fast - slow) * at;
+    }
+  }
+  return 1.0;
+}
+
+/// The default of [stage] of a splat scene ([kind] "splatScene" or "splatSceneVideo") on a computer of [processors]
+/// processors: the steps of COLMAP times [splatProcessorFactor], the others as they are; any other kind as it is
+int splatDefaultOn(String kind, String stage, int milliseconds, {required int processors}) =>
+    (kind == 'splatScene' || kind == 'splatSceneVideo') && splatProcessorStages.contains(stage)
+    ? (milliseconds * splatProcessorFactor(processors)).round()
+    : milliseconds;
 
 /// The times of [milliseconds] (by the names of the steps) as the engine reads them; a name of no step is left out
 Map<ImmersiveStage, Duration> splatTimingsOf(Map<String, int> milliseconds) => {

@@ -29,6 +29,7 @@ import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_images.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -229,6 +230,7 @@ void main() {
     GpuBudget? budget,
     DesktopAiSettingsStore? settings,
     FakePanoramaEngine? panorama,
+    int? processors,
   }) {
     final made = ProviderContainer(
       overrides: [
@@ -252,6 +254,7 @@ void main() {
             gpuBudget: budget,
             gpuRecheck: const Duration(milliseconds: 30),
             settings: settings,
+            processors: processors,
           ),
         ),
       ],
@@ -453,6 +456,21 @@ void main() {
       expect(engine.specs, hasLength(2));
       expect(identical(engine.specs[0].members, engine.specs[1].members), isTrue);
     });
+
+    test(
+      'the first video of a laptop of 8 processors: the steps of COLMAP of its spec by its threads (lot SPF2)',
+      () async {
+        final engine = _ScriptedSplat();
+        container = containerWith(engine, processors: 8);
+        final id = addSplat(photos(1), video: true);
+        await until((state) => job(id).state.isEnded);
+
+        final timings = engine.specs.single.timings;
+        expect(timings[ImmersiveStage.matching], Duration(milliseconds: (286000 * splatProcessorFactor(8)).round()));
+        expect(timings[ImmersiveStage.features], Duration(milliseconds: (15000 * splatProcessorFactor(8)).round()));
+        expect(timings[ImmersiveStage.training], const Duration(milliseconds: 306000));
+      },
+    );
 
     test('a video: its times kept under splatSceneVideo, those of the photos untouched', () async {
       final store = DesktopAiSettingsStore(settingsDirectory: () async => folder);

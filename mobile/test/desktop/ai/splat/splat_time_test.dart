@@ -63,6 +63,42 @@ void main() {
     );
   });
 
+  test('before a computer finished a scene, the steps of COLMAP by its threads (lot SPF2): the defaults are those of '
+      'the 22 threads of the PC of the measure', () {
+    // 1 225 pairs of the lighthouse: 68.5 s on 2 threads, 47.2 s on 6 (review of lot SPF1), against 31.4 s a block in
+    // the default of 286 s for the 11 175 pairs of 150 frames
+    expect(splatProcessorFactor(4), closeTo(68.5 * 11175 / 1225 / 286, 1e-3), reason: '2 threads');
+    expect(splatProcessorFactor(8), closeTo(47.2 * 11175 / 1225 / 286, 1e-3), reason: '6 threads');
+    expect(splatProcessorFactor(24), 1.0);
+    expect(splatProcessorFactor(32), 1.0, reason: 'never faster than measured');
+    expect(splatProcessorFactor(2), splatProcessorFactor(4), reason: 'COLMAP takes 2 threads at least');
+    // Between two measures, by the logarithm of the threads
+    expect(splatProcessorFactor(12), allOf(lessThan(splatProcessorFactor(8)), greaterThan(1.0)));
+    expect(splatProcessorFactor(16), lessThan(splatProcessorFactor(12)));
+
+    const laptop = AiTimings({}, 8);
+    for (final kind in ['splatScene', 'splatSceneVideo']) {
+      for (final stage in ['features', 'matching', 'mapping']) {
+        expect(
+          laptop.of(kind, stage),
+          (aiDefaultTimings[kind]![stage]! * splatProcessorFactor(8)).round(),
+          reason: '$kind $stage',
+        );
+      }
+      for (final stage in ['photos', 'frames', 'training', 'splatCopy']) {
+        expect(laptop.of(kind, stage), aiDefaultTimings[kind]![stage], reason: '$kind $stage');
+      }
+    }
+    // What a computer measured stays what it measured; the other kinds keep their defaults; no count, no change
+    const measured = AiTimings({
+      'splatSceneVideo': {'matching': 90000},
+    }, 4);
+    expect(measured.of('splatSceneVideo', 'matching'), 90000);
+    expect(measured.of('splatSceneVideo', 'mapping'), (36000 * splatProcessorFactor(4)).round());
+    expect(laptop.of('sceneFromPhoto', 'geometry'), 4500);
+    expect(const AiTimings().of('splatSceneVideo', 'matching'), 286000);
+  });
+
   test('the images a job plans: a video its frames, whatever its one member; photos 200 at most', () {
     expect(splatPlannedImages(1, video: true), SplatV1.videoFrames);
     expect(splatPlannedImages(24, video: false), 24);

@@ -170,6 +170,7 @@ class ConversionTools {
     this.gpuBudget,
     this.gpuRecheck = const Duration(seconds: 15),
     this.settings,
+    this.processors,
     DateTime Function()? now,
     String Function()? newDerivativeId,
     int Function()? newSeed,
@@ -204,6 +205,10 @@ class ConversionTools {
 
   /// Where the times of the steps are kept (desktop_ai.json); null: the timings of the design only, nothing kept
   final DesktopAiSettingsStore? settings;
+
+  /// The processors of the computer, which the default times of a splat scene follow (AiTimings); null for the defaults
+  /// as measured
+  final int? processors;
   final DateTime Function() now;
   final String Function() newDerivativeId;
 
@@ -693,7 +698,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     // What an unexpected error means at each step
     var failure = ImmersiveErrorCode.sourceLost;
     try {
-      final timings = AiTimings(await _measuredTimings(tools));
+      final timings = AiTimings(await _measuredTimings(tools), tools.processors);
       final target = job.target!;
       final input = job.inputPath;
       final ImmersiveSource source;

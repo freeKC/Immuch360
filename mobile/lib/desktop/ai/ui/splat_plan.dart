@@ -363,9 +363,9 @@ typedef SplatTime = ({Duration poses, Duration training, Duration total});
 
 /// The time of a scene of [images] photos, or frames of a video ([video]), from the times of its steps on this computer
 /// ([timings], those of 150 images), as the engine counts it when the job starts (SplatTimeModel of splat_time.dart):
-/// the preparation of the images, their points and the mapping follow the images, the exhaustive matching of photos
-/// follows their pairs (a video is matched one frame after the other), the training follows its steps, the rest stays
-/// what it is. The dialog and the panel so say the same time.
+/// the preparation of the images, their points and the mapping follow the images, the matching follows its pairs
+/// (every pair, or the list of a long video), the training follows its steps, the rest stays what it is. The dialog
+/// and the panel so say the same time.
 SplatTime splatTimeOf(AiTimings timings, {required int images, required bool video}) {
   const kind = ConversionKind.splatScene;
   final key = kind.timingsKey(fromVideo: video);

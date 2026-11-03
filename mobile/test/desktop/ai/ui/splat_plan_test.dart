@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
@@ -374,6 +375,19 @@ void main() {
       }
     },
   );
+
+  test('the time on a computer of 8 processors before its first scene: the steps of COLMAP half as long again', () {
+    final fast = splatTimeOf(const AiTimings({}, 24), images: 150, video: true);
+    final laptop = splatTimeOf(const AiTimings({}, 8), images: 150, video: true);
+    // 15 + 286 + 36 s of COLMAP times 1.51; the frames, the training and the copy as they are
+    expect(
+      (laptop.poses - fast.poses).inMilliseconds,
+      closeTo((15000 + 286000 + 36000) * (splatProcessorFactor(8) - 1), 3),
+    );
+    expect(laptop.training, fast.training);
+    expect(fast.total, const Duration(seconds: 719));
+    expect(laptop.total.inSeconds, inInclusiveRange(885, 895));
+  });
 
   test('the time on this computer: the poses follow the images and the pairs, the training stays', () {
     const timings = AiTimings();

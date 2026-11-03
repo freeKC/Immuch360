@@ -317,14 +317,27 @@ const aiDefaultTimings = <String, Map<String, int>>{
 };
 
 /// The time the steps of the jobs take on this computer: those it measured (DesktopAiSettings.timings), else
-/// [aiDefaultTimings]. They give the time left of a job and the time a photo takes in the dialog.
+/// [aiDefaultTimings], those of the steps of COLMAP of a splat scene by the [processors] of the computer when given
+/// (splatDefaultOn, lot SPF2; as measured on 24 processors without). They give the time left of a job and the time a
+/// photo takes in the dialog.
 class AiTimings {
-  const AiTimings([this.measured = const {}]);
+  const AiTimings([this.measured = const {}, this.processors]);
 
   final Map<String, Map<String, int>> measured;
 
+  /// The processors of the computer, Platform.numberOfProcessors in the app; null for the defaults as measured
+  final int? processors;
+
   /// The milliseconds the step [stage] of a job of [kind] takes, null when nothing tells it
-  int? of(String kind, String stage) => measured[kind]?[stage] ?? aiDefaultTimings[kind]?[stage];
+  int? of(String kind, String stage) {
+    final kept = measured[kind]?[stage];
+    if (kept != null) {
+      return kept;
+    }
+    final byDefault = aiDefaultTimings[kind]?[stage];
+    final count = processors;
+    return byDefault == null || count == null ? byDefault : splatDefaultOn(kind, stage, byDefault, processors: count);
+  }
 
   /// [measured] with the steps of a job of [kind] that just ended well: each step the mean of what it was and what it
   /// took this time (the first time, what it took), so that one slow job weighs but half and a faster computer is

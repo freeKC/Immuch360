@@ -1003,6 +1003,7 @@ ConversionTools desktopConversionTools(Ref ref) {
     creatorTool: aiCreatorTool(version),
     software: aiSoftware(version),
     settings: ref.watch(desktopAiSettingsStoreProvider),
+    processors: Platform.numberOfProcessors,
     // The answer of the probe the gate keeps is asked again, so that the dialog and the settings see it too
     gpuBudget: GpuBudget(
       probe: () => gate.gpuReport(fresh: true),

@@ -274,6 +274,7 @@ void main() {
   late Set<String> videos360;
   late bool enabled;
   late int memory;
+  late int processors;
   late _SplatAnswer splat;
   late GpuReport cards;
   late Set<AiFeatureGroup> held;
@@ -326,6 +327,7 @@ void main() {
     videos360 = {};
     enabled = true;
     memory = 16 * _gib;
+    processors = 24;
     splat = _SplatAnswer.available;
     cards = FakeGpuReports.rtx4060;
     held = const {};
@@ -381,7 +383,7 @@ void main() {
       desktopAiGateProvider.overrideWithValue(
         _Gate(
           components: _GateFiles(service, root.path),
-          facts: () => AiHardwareFacts(abi: Abi.windowsX64, processors: 24, physicalMemory: memory),
+          facts: () => AiHardwareFacts(abi: Abi.windowsX64, processors: processors, physicalMemory: memory),
           catalogue: catalogue,
           heldGroups: held,
           gpu: FakeGpuProbe.of(cards),
@@ -816,6 +818,21 @@ void main() {
     expect([for (final member in launch.members) member.asset.name], ['Salon tour.mp4']);
     expect(launch.target.fileName, 'Salon tour_splat.spz');
     expect(launch.label, 'Salon tour.mp4');
+  });
+
+  testWidgets('a video on a laptop of 8 processors before its first scene: COLMAP half as long again (lot SPF2)', (
+    tester,
+  ) async {
+    processors = 8;
+    original('Salon tour.mp4');
+    await openDialog(tester, [_video('Salon tour.mp4', const Duration(minutes: 1, seconds: 51))]);
+    expect(
+      find.text(
+        'About 15 min on this computer: 10 min on the processor to place the photos, 5 min on the graphics card to '
+        'train the splat',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('a video whose length the library could not read (0): not refused, its frames as for two minutes', (

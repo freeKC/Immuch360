@@ -659,8 +659,13 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
   /// The file of the copy for the headset under the name typed
   String get _fileName => versionTargetName(ImmersiveKind.gaussianSplat, _name.text.trim());
 
-  SplatTime _time(SplatSelectionPlan plan) =>
-      splatTimeOf(AiTimings(_settings.timings), images: plan.images, video: plan.isVideo);
+  /// The time of [plan] on this computer: the times it measured, else the defaults by its processors as the gate read
+  /// them (as measured until the gate answers)
+  SplatTime _time(SplatSelectionPlan plan) => splatTimeOf(
+    AiTimings(_settings.timings, ref.read(aiGateResultForProvider(AiFeature.splatScene)).valueOrNull?.processors),
+    images: plan.images,
+    video: plan.isVideo,
+  );
 
   Future<void> _start(DestinationSession session) async {
     final plan = _plan;
