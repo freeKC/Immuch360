@@ -527,6 +527,24 @@ void main() {
           expect(find.byType(SnackBar), findsNothing);
         });
 
+        testWidgets('a route change that takes the dialog away stops it the same way', (tester) async {
+          // Second review of 3 November 2026: a splat dropped on the window or given by a later start replaces the
+          // routes while the dialog shows; the dialog went without a cancel, the reduction went on, and the first
+          // viewer opened over the second file's page
+          await explore(tester);
+
+          final dialog = ModalRoute.of(tester.element(find.byKey(const Key('splat_prepare_cancel'))))!;
+          dialog.navigator!.removeRoute(dialog);
+          await tester.pumpAndSettle();
+
+          expect(held.cancel?.isCancelled, isTrue);
+          expect(find.byKey(const Key('splat_prepare_cancel')), findsNothing);
+          expect(find.byKey(exploreSplatButtonKey), findsOneWidget, reason: 'only the dialog went');
+          held.release();
+          await tester.pumpAndSettle();
+          expect(held.opened, isFalse);
+        });
+
         testWidgets('Cancel stops it the same way', (tester) async {
           await explore(tester);
 

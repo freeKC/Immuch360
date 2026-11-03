@@ -197,7 +197,14 @@ Future<void> showSplatViewer(
         barrierDismissible: false,
         useRootNavigator: true,
         builder: (context) => _PrepareDialog(progress: progress, onCancel: cancel.cancel),
-      ).whenComplete(() => dialogShown = false),
+      ).whenComplete(() {
+        // Gone without closeDialog: the routes changed under it (a splat dropped on the window, or given by a later
+        // start, replaces them). The preparation stops as on Back, or the viewer would open over the other page
+        if (dialogShown) {
+          dialogShown = false;
+          cancel.cancel();
+        }
+      }),
     );
   }
   final SplatViewerOutcome outcome;

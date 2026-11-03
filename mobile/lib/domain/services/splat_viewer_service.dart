@@ -269,6 +269,10 @@ class SplatViewerService {
     }
 
     final page = await _loadPage();
+    // A Cancel or a Back while the orientation and the page were read: nothing opens. No await from here to onOpening
+    if (cancel?.isCancelled ?? false) {
+      return const SplatViewerOutcome(SplatViewerEnd.cancelled);
+    }
     _bridge.registerGenerated(
       id,
       SplatViewerSession(

@@ -451,6 +451,40 @@ void main() {
     expect(host.opened, isNull);
   });
 
+  test('a Back while the orientation and the page are read, once the splat is ready, still opens nothing', () async {
+    // Second review of 3 November 2026: the cancel was checked after the preparation, then the orientation and the
+    // page were read before the viewer opened
+    final file = File('${folder.path}/ranked.ply')..writeAsBytesSync(ranked);
+    final cancel = SplatPrepareCancel();
+    final host = _PageHost(const []);
+    var opening = false;
+    final outcome =
+        await SplatViewerService(
+          bridge: bridge,
+          host: host,
+          loadPage: () async {
+            cancel.cancel();
+            return page;
+          },
+          uprights: uprights,
+          cache: cache,
+          fileSystem: (sourceId) => throw UnimplementedError(),
+          shareUrl: (sourceId, path) => throw UnimplementedError(),
+          reduce: reduceForTest,
+        ).show(
+          source: SplatViewerSource.local(file.path),
+          head: _head(ranked),
+          fileBytes: ranked.length,
+          cap: 10,
+          look: look,
+          cancel: cancel,
+          onOpening: () => opening = true,
+        );
+    expect(outcome.end, SplatViewerEnd.cancelled);
+    expect(opening, isFalse);
+    expect(host.opened, isNull);
+  });
+
   test('a splat picked again on Android keeps its reduced copy; a file of the device written again does not', () async {
     // Second review of 3 November 2026: Android copies every pick again into cache/picked-splat, emptied first, so
     // the copy's date is the time of the pick, and the same splat picked twice was reduced twice into two copies
