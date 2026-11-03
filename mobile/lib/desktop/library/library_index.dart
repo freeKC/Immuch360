@@ -244,11 +244,34 @@ class LibraryIndex {
   factory LibraryIndex.open(String path) {
     Directory(p.dirname(path)).createSync(recursive: true);
     final db = sqlite3.open(path);
-    db
-      ..execute('PRAGMA journal_mode = WAL')
-      ..execute('PRAGMA synchronous = NORMAL')
-      ..execute('PRAGMA busy_timeout = 10000');
+    // The time out first: a connection without one fails at once on another one's lock ("database is locked") instead
+    // of waiting for it. The scan, the sync API and the main isolate open the new file together at the first start of
+    // the app, while the first of them switches it to WAL
+    db.execute('PRAGMA busy_timeout = ${_busyTimeout.inMilliseconds}');
+    _switchToWal(db);
+    db.execute('PRAGMA synchronous = NORMAL');
     return LibraryIndex._(db, path);
+  }
+
+  static const _busyTimeout = Duration(seconds: 10);
+
+  // Two connections that switch a new file to WAL together: the second one holds a read lock and needs the write lock
+  // the first one holds, which SQLite does not wait for even with a time out (they could wait for each other), so it
+  // gets "database is locked" at once. It tries again, within the time out: its next read waits for the first one's
+  // switch, after which the file is in WAL and the pragma has nothing left to do
+  static void _switchToWal(Database db) {
+    final clock = Stopwatch()..start();
+    while (true) {
+      try {
+        db.execute('PRAGMA journal_mode = WAL');
+        return;
+      } on SqliteException catch (error) {
+        if (error.resultCode != SqlError.SQLITE_BUSY || clock.elapsed >= _busyTimeout) {
+          rethrow;
+        }
+        sleep(const Duration(milliseconds: 10));
+      }
+    }
   }
 
   final Database _db;
