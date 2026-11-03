@@ -99,6 +99,11 @@ class AdvancedSettings extends HookConsumerWidget {
     useValueChanged<bool, void>(highPerformanceGpu.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerHighPerformanceGpu, highPerformanceGpu.value));
     });
+    // Every gaussian of a splat on a computer whose graphics chip shares its memory (lot SVC), off by default
+    final keepAllGaussians = useState(ref.watch(appConfigProvider).viewer.keepAllGaussians);
+    useValueChanged<bool, void>(keepAllGaussians.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerKeepAllGaussians, keepAllGaussians.value));
+    });
 
     final logLevel = Level.LEVELS[levelId.value].name;
 
@@ -248,6 +253,13 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: highPerformanceGpu,
           title: context.t.splat_gpu_setting_title,
           subtitle: context.t.splat_gpu_setting_subtitle,
+        ),
+      if (splatDevice == SplatDeviceClass.computer && gaussianSplats.value)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_keep_all_gaussians'),
+          valueNotifier: keepAllGaussians,
+          title: context.t.splat_keep_all_setting_title,
+          subtitle: context.t.splat_keep_all_setting_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       // The kiosk mode, for the visitors of an exhibition: a Meta Quest only, like the immersive viewer it opens

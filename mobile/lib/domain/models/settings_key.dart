@@ -44,6 +44,8 @@ enum SettingsKey<T> {
   viewerLargeSplats<bool>(),
   // The dedicated graphics chip of a Windows computer with two, for the splat viewer: ViewerConfig.highPerformanceGpu
   viewerHighPerformanceGpu<bool>(),
+  // Every gaussian of a splat on a computer whose graphics chip shares its memory: ViewerConfig.keepAllGaussians
+  viewerKeepAllGaussians<bool>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
 

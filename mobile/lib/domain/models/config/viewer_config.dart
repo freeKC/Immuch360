@@ -63,6 +63,12 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// (Settings, Advanced turns it off: Windows then chooses)
     @Default(true) bool highPerformanceGpu,
 
+    /// Computers, experimental: a splat shows whole up to what the computer's memory holds also on a graphics chip
+    /// that shares that memory, which otherwise keeps its 1,000,000 strongest gaussians (lot SVC, 3 November 2026). Off
+    /// by default: such a chip draws 2 million gaussians at about 33 frames per second, 4 million at 12 to 20 (an Intel
+    /// UHD, measured); a dedicated graphics card shows every gaussian whatever this says
+    @Default(false) bool keepAllGaussians,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

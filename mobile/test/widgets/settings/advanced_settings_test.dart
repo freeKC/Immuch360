@@ -392,6 +392,39 @@ void main() {
       expect(SettingsRepository.instance.appConfig.viewer.highPerformanceGpu, isFalse);
       debugDefaultTargetPlatformOverride = null;
     });
+
+    testWidgets('on a computer: Keep every gaussian, experimental, off by default (lot SVC); not on a phone', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final keepSwitch = find.descendant(
+        of: find.byKey(const Key('advanced_settings_keep_all_gaussians')),
+        matching: find.byType(SwitchListTile),
+      );
+      await tester.pumpTestWidget(context, const AdvancedSettings());
+      await tester.scrollUntilVisible(keepSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Keep every gaussian (experimental)'), findsOneWidget);
+      expect(find.byKey(const Key('advanced_settings_splat_gpu')), findsNothing, reason: 'Windows only');
+      expect(tester.widget<SwitchListTile>(keepSwitch).value, isFalse);
+      await tester.tap(keepSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.keepAllGaussians, isTrue);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a phone has no Keep every gaussian: its caps stay', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+      await tester.scrollUntilVisible(largeSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('advanced_settings_keep_all_gaussians')), findsNothing);
+    });
   });
 
   group('DJI live video (experimental)', () {
