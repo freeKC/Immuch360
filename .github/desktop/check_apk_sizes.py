@@ -78,6 +78,19 @@ ONE_TIME_KIND_THRESHOLDS = {
     # 38 and the ordinary threshold again. Should another release be published before build 38, this entry moves to
     # the tag that release becomes.
     'v3.3.0-rc.0-37': {'armeabi-v7a': 1.5, 'aab': 1.5, 'universal': 1.5, 'x86_64': 1.5},
+    # 3 November 2026, for the release that brings the splat viewer of the computers, phones and tablets (branch
+    # feat-splat-viewer), compared with release 41 (the 8K fix and the deep links, which add next to nothing to the
+    # phones). Every APK and the AAB carry the viewer's page and engine in the assets (Spark's WebAssembly 1,636,503
+    # bytes, spark.module.min.js 438,236, three.js 720,032, their licence texts), SplatViewerActivity, and the Dart
+    # of the viewing and its 37 texts in 89 languages. The packages of the branch at 1d679d47c (release workflow run
+    # 41604518218, the same Dart and assets as the head of the fix round), against release 40, before 41 exists:
+    #   armeabi-v7a 90,387,778 bytes against 89,016,860, +1.540 %; x86_64 96,066,519 against 94,793,909, +1.343 %;
+    #   the AAB 240,627,689 against 238,259,429, +0.994 %; arm64-v8a 149,631,094 against 148,358,480, +0.858 %;
+    #   the Quest APK +0.797 % and the universal APK +0.724 %.
+    # Half a point over each kind near or over 1 %, for the fixes of the trials on the S24+ and the computers; the Quest
+    # and the universal APK keep the ordinary 1 %. Should another release be published before the one with the viewer,
+    # this entry moves to the tag that release becomes.
+    'v3.3.0-rc.0-41': {'armeabi-v7a': 2.1, 'x86_64': 1.9, 'aab': 1.5, 'arm64-v8a': 1.4},
 }
 
 
