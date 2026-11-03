@@ -364,6 +364,48 @@ void main() {
     });
   });
 
+  group('the speed of the decoder', () {
+    test('the stat lines: the speed the companion measured, or while it says 0.0 and serves, the pictures it decodes '
+        'against the clock', () async {
+      final process = _HeldProcess();
+      final runner = _OneProcessRunner(process);
+      final starting = Av2Session.start(
+        bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+        files: (program: 'immuch360-av2', launcher: null),
+        runner: runner,
+        decoderVersion: 'test',
+        probe: () async => Av2Probe.fromJson(_probeJson()),
+      );
+      await _until(() => runner.launches.isNotEmpty);
+      process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
+      final session = await starting;
+      addTearDown(session.stop);
+      expect(session.speed.value, isNull);
+      expect(session.decoding, (fps: null, needed: 30.0, failure: null));
+
+      // A player that reads at the pace of the video from the start: no run long enough for the companion to measure
+      // (mobile/native/av2/README.md, stat), so the pictures decoded a second while it serves
+      process.say('stat decoded=4 served=3 fps=0.0 simd=avx2 gen=1 frame=3 serving=1');
+      await _until(() => session.stat.value?.decoded == 4);
+      expect(session.speed.value, isNull, reason: 'one line says no speed');
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      process.say('stat decoded=19 served=18 fps=0.0 simd=avx2 gen=1 frame=18 serving=1');
+      await _until(() => session.stat.value?.decoded == 19);
+      expect(session.speed.value, inInclusiveRange(15 / 0.8, 15 / 0.45));
+      expect(session.measuredFps, isNull, reason: 'a paced count is no measure of this computer');
+      // Nothing served (a pause): the count starts again, the last speed stays
+      final paced = session.speed.value;
+      process.say('stat decoded=19 served=18 fps=0.0 simd=avx2 gen=1 frame=18 serving=0');
+      await _until(() => session.stat.value?.serving == false);
+      expect(session.speed.value, paced);
+      // The companion's own measure wins and is kept
+      process.say('stat decoded=80 served=60 fps=232.4 simd=avx2 gen=2 frame=60 serving=1');
+      await _until(() => session.stat.value?.decoded == 80);
+      expect((session.speed.value, session.measuredFps), (232.4, 232.4));
+      expect(session.decoding.fps, 232.4);
+    });
+  });
+
   group('on the compiled fake companion', () {
     late Directory folder;
     late ManagedProcessRunner runner;
