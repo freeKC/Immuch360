@@ -641,60 +641,57 @@ void main() {
       expect(poses.placed, 150);
     });
 
-    test(
-      'no model: notEnoughOverlap of none placed; the largest of two; under 30 %: refused; under half: incomplete; '
-      'under 90 %: partial',
-      () async {
-        final none = _ColmapRunner({
-          ...scripts(),
-          'mapper': [
-            const FakeProcessScript(
-              lines: [
-                ('I20261101 incremental_pipeline.cc:477] => No good initial image pair found.', isError: true),
-                ('E20261101 sfm.cc:242] failed to create sparse model', isError: true),
-              ],
-              exitCode: 1,
-            ),
-          ],
-        }, models: const []);
-        await expectLater(
-          colmap(none).poses(work, images: 150, video: false, cancel: cancel),
-          throwsA(
-            isA<BackendException>()
-                .having((e) => e.code, 'code', ImmersiveErrorCode.notEnoughOverlap)
-                .having((e) => e.message, 'message', '0/150'),
+    test('no model: notEnoughOverlap of none placed; the largest of two; under 30 %: refused; under half: incomplete; '
+        'under 90 %: partial', () async {
+      final none = _ColmapRunner({
+        ...scripts(),
+        'mapper': [
+          const FakeProcessScript(
+            lines: [
+              ('I20261101 incremental_pipeline.cc:477] => No good initial image pair found.', isError: true),
+              ('E20261101 sfm.cc:242] failed to create sparse model', isError: true),
+            ],
+            exitCode: 1,
           ),
-        );
-        expect(none.launches.map((l) => l.arguments.first), isNot(contains('model_orientation_aligner')));
+        ],
+      }, models: const []);
+      await expectLater(
+        colmap(none).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.notEnoughOverlap)
+              .having((e) => e.message, 'message', '0/150'),
+        ),
+      );
+      expect(none.launches.map((l) => l.arguments.first), isNot(contains('model_orientation_aligner')));
 
-        final split = _ColmapRunner(scripts(), models: const [26, 144]);
-        final poses = await colmap(split).poses(work, images: 150, video: true, cancel: cancel);
-        expect(split.launches.last.arguments, containsAllInOrder(['--input_path', p.join(work.sparse.path, '1')]));
-        expect((poses.placed, poses.incomplete, poses.partial), (144, false, false));
+      final split = _ColmapRunner(scripts(), models: const [26, 144]);
+      final poses = await colmap(split).poses(work, images: 150, video: true, cancel: cancel);
+      expect(split.launches.last.arguments, containsAllInOrder(['--input_path', p.join(work.sparse.path, '1')]));
+      expect((poses.placed, poses.incomplete, poses.partial), (144, false, false));
 
-        final few = _ColmapRunner(scripts(), models: const [44]);
-        await expectLater(
-          colmap(few).poses(work, images: 150, video: false, cancel: cancel),
-          throwsA(
-            isA<BackendException>()
-                .having((e) => e.code, 'code', ImmersiveErrorCode.notEnoughOverlap)
-                .having((e) => e.message, 'message', '44/150'),
-          ),
-        );
-        expect(few.launches.map((l) => l.arguments.first), isNot(contains('model_orientation_aligner')));
+      final few = _ColmapRunner(scripts(), models: const [44]);
+      await expectLater(
+        colmap(few).poses(work, images: 150, video: false, cancel: cancel),
+        throwsA(
+          isA<BackendException>()
+              .having((e) => e.code, 'code', ImmersiveErrorCode.notEnoughOverlap)
+              .having((e) => e.message, 'message', '44/150'),
+        ),
+      );
+      expect(few.launches.map((l) => l.arguments.first), isNot(contains('model_orientation_aligner')));
 
-        // Refused until 3 November (74 of 150, under half): made now, said maybe incomplete
-        final incomplete = await colmap(
-          _ColmapRunner(scripts(), models: const [74]),
-        ).poses(work, images: 150, video: false, cancel: cancel);
-        expect((incomplete.placed, incomplete.incomplete, incomplete.partial), (74, true, true));
+      // Refused until 3 November (74 of 150, under half): made now, said maybe incomplete
+      final incomplete = await colmap(
+        _ColmapRunner(scripts(), models: const [74]),
+      ).poses(work, images: 150, video: false, cancel: cancel);
+      expect((incomplete.placed, incomplete.incomplete, incomplete.partial), (74, true, true));
 
-        final partial = await colmap(
-          _ColmapRunner(scripts(), models: const [112]),
-        ).poses(work, images: 150, video: false, cancel: cancel);
-        expect((partial.placed, partial.incomplete, partial.partial), (112, false, true));
-      },
-    );
+      final partial = await colmap(
+        _ColmapRunner(scripts(), models: const [112]),
+      ).poses(work, images: 150, video: false, cancel: cancel);
+      expect((partial.placed, partial.incomplete, partial.partial), (112, false, true));
+    });
 
     test('the thresholds of the poses: 20 images and 30 % of them at least, half for a scene not incomplete, 90 % for '
         'a whole scene', () {
