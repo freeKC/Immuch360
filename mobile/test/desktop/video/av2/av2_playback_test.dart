@@ -19,6 +19,7 @@ import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/player_resource_options.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
 import 'package:immich_mobile/domain/services/y4m_layout.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_av2.dart';
@@ -707,6 +708,24 @@ void main() {
       expect(kept.last.fps, closeTo(20, 0.25), reason: 'the last seconds of playback, not its best moment');
       expect(av2IsTooSlow(kept.last), isTrue);
     }, timeout: const Timeout(Duration(seconds: 40)));
+  });
+
+  group('the log', () {
+    test('the cost of the index before the first frame: its time, its reads and their bytes, from a share', () async {
+      final lines = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.INFO;
+      addTearDown(() => Logger.root.level = level);
+      final listening = Logger.root.onRecord.listen((record) => lines.add(record.message));
+      addTearDown(listening.cancel);
+      final (session, _) = await _scriptedSession(ScriptedAv2Runner());
+      addTearDown(session.stop);
+      // A share is read through the network: 250 to 562 MiB for a long video (review of lot AD3, m5)
+      expect(
+        lines.where((line) => line.startsWith('AV2 video ')).single,
+        matches(RegExp(r'indexed in \d+ ms \(\d+ reads, \d+\.\d MiB from a share\)')),
+      );
+    });
   });
 
   group('a thumbnail', () {

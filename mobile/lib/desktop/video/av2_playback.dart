@@ -994,11 +994,22 @@ class Av2Session {
       throw Av2NotAv2(length < av2HeadLength ? 'a file of $length bytes' : 'its first bytes');
     }
     final Av2Index index;
+    // The cost of the index, for the log: it reads every header of the file before the first frame, through the
+    // network for a share (review of lot AD3, m5)
+    var reads = 0;
+    var bytesRead = 0;
+    final indexWatch = Stopwatch()..start();
     try {
-      index = await indexAv2Stream(bytes.read, length);
+      index = await indexAv2Stream((offset, count) async {
+        reads++;
+        final read = await bytes.read(offset, count);
+        bytesRead += read.length;
+        return read;
+      }, length);
     } on Av2FormatException catch (error) {
       throw Av2NotAv2('$error');
     }
+    final indexed = indexWatch.elapsedMilliseconds;
     final found = await (probe ?? () => runAv2Probe(runner, files, bytes, lowPriority: lowPriority))();
     if (!found.playable || found.width == null || found.height == null || found.bits == null) {
       throw Av2FormatRefused(found.refusal ?? found.format);
@@ -1033,8 +1044,9 @@ class Av2Session {
     final prepared = watch.elapsedMilliseconds;
     await session._serve(files, runner, parentPid: parentPid, threads: threads, lowPriority: lowPriority);
     _log.info(
-      'AV2 video ${session.format}, ${layout.frames} pictures, ${points.length} access points: read and probed in '
-      '$prepared ms, served from ${watch.elapsedMilliseconds} ms',
+      'AV2 video ${session.format}, ${layout.frames} pictures, ${points.length} access points: indexed in $indexed ms '
+      '($reads reads, ${(bytesRead / (1 << 20)).toStringAsFixed(1)} MiB${bytes.localPath == null ? ' from a share' : ''}), '
+      'read and probed in $prepared ms, served from ${watch.elapsedMilliseconds} ms',
     );
     return session;
   }
