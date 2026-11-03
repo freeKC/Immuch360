@@ -10,11 +10,14 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_licenses.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/av2_decoder_licences.dart';
 import 'package:path/path.dart' as p;
+
+import 'av2_test_components.dart';
 
 String _sha256(String text) => sha256.convert(utf8.encode(text)).toString();
 
@@ -61,8 +64,16 @@ void main() {
     setUp(() => dir = Directory.systemTemp.createTempSync('av2_licenses_test_'));
     tearDown(() => dir.deleteSync(recursive: true));
 
-    Future<List<LicenseEntry>> entries(AiPlatform? platform, {Future<Directory> Function()? folder}) =>
-        av2LicenseEntries(folder ?? () async => dir, platform: platform).toList();
+    /// The entries of a version that offers the decoder (the sums of the test build), unless [catalogue] says else
+    Future<List<LicenseEntry>> entries(
+      AiPlatform? platform, {
+      Future<Directory> Function()? folder,
+      List<AiComponent>? catalogue,
+    }) => av2LicenseEntries(
+      folder ?? () async => dir,
+      platform: platform,
+      catalogue: catalogue ?? av2CompleteCatalogue,
+    ).toList();
 
     test(
       'before the decoder is downloaded: dav2d, the patent licence and immuch360-av2, from the kept texts',
@@ -107,6 +118,17 @@ void main() {
       expect(av2LicencePageText(dav2dCopying), dav2dCopying);
       expect(av2LicencePageText(';* a\n;*\n;* b\nnot a comment\n'), ';* a\n;*\n;* b\nnot a comment\n');
       expect(av2LicencePageText(';****\n;* a\n;****\n;* b\n;*   c\n;*\n;* d\n'), 'a\n\nb\n  c\n\nd');
+    });
+
+    test('a version that does not offer the decoder never says it downloads, and lists the same texts', () async {
+      // The catalogue of this branch: the entries of the decoder have no sums until av2-decoder-1
+      expect(av2DecoderComponentFor(AiPlatform.windowsX64)?.isComplete, isFalse);
+      final listed = await entries(AiPlatform.windowsX64, catalogue: aiComponents);
+      expect(listed, hasLength(3));
+      final dav2d = _paragraphs(listed[0]).join('\n');
+      expect(dav2d, isNot(contains('downloaded')));
+      expect(dav2d, contains('The texts below are those of the AV2 decoder, kept in Immuch360.'));
+      expect(dav2d, contains('Copyright © 2018-2026, VideoLAN and dav2d authors'));
     });
 
     test('on Linux, immuch360-run too; nothing where there is no decoder', () async {

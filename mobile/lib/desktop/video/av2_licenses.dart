@@ -4,7 +4,8 @@
 // (MIT). Once the decoder is installed the texts come from the licenses/ folder of its archive (engines/<id>/licenses in
 // the folder of the components): the texts the jobs of the CI compared with the sources, with the AGPL of
 // immuch360-av2 and the commit it was built from. Before that, from the texts the app keeps
-// (av2_decoder_licences.dart), since the decoder is offered at the first AV2 video. Nothing under the GPL.
+// (av2_decoder_licences.dart), since the decoder is offered at the first AV2 video; a version that does not offer it
+// (no sums in its catalogue) never says it downloads. Nothing under the GPL.
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -31,14 +32,15 @@ abstract final class Av2LicensePackages {
 void registerAv2Licenses(Future<Directory> Function() componentsFolder) =>
     LicenseRegistry.addLicense(() => av2LicenseEntries(componentsFolder, platform: aiPlatformOf(Abi.current())));
 
-/// The entries for the decoder of [platform], from the licenses/ folder of the decoder installed in [componentsFolder],
-/// else from the texts the app keeps; none where there is no decoder. A folder that cannot be read gives the texts the
-/// app keeps, rather than a licence page that fails.
+/// The entries for the decoder of [platform] in [catalogue], from the licenses/ folder of the decoder installed in
+/// [componentsFolder], else from the texts the app keeps; none where there is no decoder. A folder that cannot be read
+/// gives the texts the app keeps, rather than a licence page that fails.
 Stream<LicenseEntry> av2LicenseEntries(
   Future<Directory> Function() componentsFolder, {
   required AiPlatform? platform,
+  List<AiComponent> catalogue = aiComponents,
 }) async* {
-  final component = av2DecoderComponentFor(platform);
+  final component = av2DecoderComponentFor(platform, catalogue: catalogue);
   if (component == null) {
     return;
   }
@@ -71,9 +73,12 @@ Stream<LicenseEntry> av2LicenseEntries(
   const intro =
       'dav2d, the AV2 decoder of VideoLAN (https://code.videolan.org/videolan/dav2d, commit $av2Dav2dCommit), built '
       'into immuch360-av2, the AV2 decoder of Immuch360 Desktop.';
-  final where = licenses == null
+  final where = licenses != null
+      ? 'The texts below are those of the decoder installed on this computer, in ${licenses.path}.'
+      // A version with the sums of the decoder offers it (Av2Decoder.offered); one without never downloads it
+      : component.isComplete
       ? 'The texts below are those Immuch360 keeps until the decoder is downloaded, the first time an AV2 video plays.'
-      : 'The texts below are those of the decoder installed on this computer, in ${licenses.path}.';
+      : 'The texts below are those of the AV2 decoder, kept in Immuch360.';
   yield LicenseEntryWithLineBreaks(
     const [Av2LicensePackages.dav2d],
     [
