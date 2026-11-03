@@ -9,6 +9,9 @@ import 'package:immich_mobile/desktop/ai/splat/sharpness.dart';
 
 import 'splat_input_support.dart';
 
+/// The windows of FreeKC's video the neighbours left out on 3 November (frames.csv of the diagnosis, from 0)
+const _byNeighbours = {17, 21, 42, 70, 71, 90, 103, 121, 132, 142, 147};
+
 void main() {
   group('the grey copy', () {
     test('is the luma of Pillow\'s "L", fitted in 512 pixels by area average, from RGBA or from BGR0 rows', () {
@@ -87,6 +90,178 @@ void main() {
       expect(blurredAmong([12, 11, 13, 12, 11, 12]), isEmpty);
       expect(blurredAmong([3]), isEmpty);
       expect(blurredAmong([]), isEmpty);
+    });
+
+    test('a run of blurred ones, which the neighbours keep, under a quarter of the median of all (lot SPF2)', () {
+      // Four blurred in a row: each has blurred neighbours, the median of all (100) leaves them under its quarter
+      expect(blurredAmong([100, 100, 100, 10, 10, 10, 10, 100, 100, 100]), {3, 4, 5, 6});
+      // The floor alone (no rule of the neighbours): a quarter of the median of all
+      expect(blurredAmong([100, 100, 100, 26, 26, 26, 100, 100, 100], ratio: 0), isEmpty, reason: 'a quarter is 25');
+      expect(blurredAmong([100, 100, 100, 24, 24, 24, 100, 100, 100], ratio: 0), {3, 4, 5});
+      expect(blurredAmong([100, 100, 100, 24, 24, 24, 100, 100, 100], ratio: 0, floor: 0), isEmpty);
+    });
+
+    test('FreeKC\'s video of 3 November: the 11 windows the neighbours leave out, and the run of close-ups out of '
+        'focus, the frames 125 to 133 the app kept that morning (diag-2026-11-03.md, section 3.2)', () {
+      // The sharpest candidate of each of the 150 windows, in the order of time, as the diagnosis took them again
+      const sharpness = <double>[
+        219.05,
+        232.56,
+        228.58,
+        204.75,
+        194.53,
+        193.25,
+        187.06,
+        218.66,
+        262.56,
+        233.33,
+        199.07,
+        204.96,
+        296.60,
+        222.38,
+        331.60,
+        314.81,
+        185.20,
+        35.93,
+        55.31,
+        43.55,
+        108.17,
+        42.04,
+        92.70,
+        151.74,
+        182.52,
+        249.03,
+        226.07,
+        209.23,
+        192.27,
+        144.10,
+        112.62,
+        121.18,
+        122.59,
+        115.09,
+        155.90,
+        225.71,
+        109.46,
+        155.56,
+        186.15,
+        141.41,
+        135.36,
+        205.43,
+        81.68,
+        152.58,
+        198.12,
+        191.74,
+        223.96,
+        224.43,
+        244.34,
+        201.10,
+        212.80,
+        201.47,
+        125.04,
+        207.22,
+        166.79,
+        143.94,
+        211.03,
+        217.75,
+        170.60,
+        164.15,
+        185.69,
+        209.69,
+        193.56,
+        184.16,
+        78.07,
+        83.87,
+        62.96,
+        39.86,
+        43.49,
+        43.24,
+        9.59,
+        12.46,
+        52.42,
+        182.48,
+        123.57,
+        144.49,
+        116.29,
+        115.59,
+        126.08,
+        94.68,
+        164.01,
+        174.85,
+        96.68,
+        64.09,
+        67.41,
+        43.84,
+        71.37,
+        116.91,
+        136.94,
+        153.07,
+        82.93,
+        187.17,
+        193.03,
+        238.70,
+        199.53,
+        115.42,
+        163.35,
+        122.31,
+        129.11,
+        214.24,
+        170.14,
+        197.14,
+        197.07,
+        84.90,
+        130.77,
+        173.90,
+        287.76,
+        287.33,
+        112.02,
+        103.17,
+        147.85,
+        122.04,
+        82.20,
+        74.96,
+        63.24,
+        53.70,
+        74.51,
+        92.03,
+        70.26,
+        58.16,
+        58.43,
+        25.92,
+        98.35,
+        64.92,
+        217.59,
+        139.07,
+        70.28,
+        67.88,
+        41.40,
+        34.27,
+        57.76,
+        69.92,
+        18.59,
+        27.49,
+        28.64,
+        11.23,
+        16.37,
+        6.54,
+        9.62,
+        7.75,
+        4.89,
+        8.71,
+        10.50,
+        62.92,
+        79.17,
+        41.55,
+        114.56,
+        54.52,
+        136.21,
+        155.03,
+      ];
+      final blurred = blurredAmong(sharpness);
+      expect(blurred.difference(_byNeighbours), {133, 134, 135, 136, 137, 138, 139, 140, 141});
+      expect(blurred, containsAll(_byNeighbours));
+      expect(150 - blurred.length, 130, reason: '129 of them placed by COLMAP in the diagnosis, 10 of 139 before');
+      // The floor: a quarter of the median of the 150 (129.94), 32.5; the next frame kept is at 34.27
+      expect(blurred, isNot(contains(129)));
     });
 
     test('in a synthetic walk, the blurred photos are found', () {
