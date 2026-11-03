@@ -6,6 +6,7 @@
 // immuch360-av2 and the commit it was built from. Before that, from the texts the app keeps
 // (av2_decoder_licences.dart), since the decoder is offered at the first AV2 video. Nothing under the GPL.
 
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -80,7 +81,7 @@ Stream<LicenseEntry> av2LicenseEntries(
       'COPYING (BSD-2-Clause):',
       text('dav2d-COPYING.txt', dav2dCopying),
       'x86inc.asm of the x264 project, part of dav2d (ISC):',
-      text('x86inc-ISC.txt', x86incIsc),
+      av2LicencePageText(text('x86inc-ISC.txt', x86incIsc)),
     ].join('\n\n'),
   );
   yield LicenseEntryWithLineBreaks(
@@ -102,4 +103,25 @@ Stream<LicenseEntry> av2LicenseEntries(
       Av2LicensePackages.launcher,
     ], text('immuch360-run-MIT.txt', immuch360RunMit));
   }
+}
+
+final _commentRule = RegExp(r'^\**\s*$');
+
+/// [text] as the licence page shows it. The page joins the lines of a paragraph and splits paragraphs at blank lines
+/// only, which runs the header of an assembly file (x86inc.asm: each line a ";*" comment, rules of asterisks) into one
+/// block: such a text loses its comment marks and rules, and its empty comment lines part its paragraphs. Any other
+/// text, one line of which is no comment, stays as it is. The texts kept and installed stay the files, byte for byte.
+String av2LicencePageText(String text) {
+  final lines = const LineSplitter().convert(text);
+  if (lines.any((line) => line.trim().isNotEmpty && !line.startsWith(';'))) {
+    return text;
+  }
+  final body = lines.map((line) {
+    final comment = line.replaceFirst(RegExp(r'^;\*?'), '');
+    if (_commentRule.hasMatch(comment)) {
+      return '';
+    }
+    return comment.startsWith(' ') ? comment.substring(1) : comment;
+  });
+  return body.join('\n').replaceAll(RegExp(r'\n{3,}'), '\n\n').trim();
 }

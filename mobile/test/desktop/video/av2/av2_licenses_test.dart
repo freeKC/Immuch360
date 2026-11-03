@@ -82,6 +82,33 @@ void main() {
       },
     );
 
+    test('the header of x86inc.asm reads as text: no comment marks, a paragraph for each of its parts', () async {
+      final dav2d = _paragraphs((await entries(AiPlatform.windowsX64))[0]);
+      expect(dav2d.where((paragraph) => paragraph.contains(';*') || paragraph.contains('*****')), isEmpty);
+      expect(dav2d, contains('x86inc.asm: x86 abstraction layer'));
+      expect(dav2d, contains('Copyright (C) 2005-2024 x264 project'));
+      expect(
+        dav2d,
+        contains(
+          'Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is '
+          'hereby granted, provided that the above copyright notice and this permission notice appear in all copies.',
+        ),
+      );
+      expect(dav2d.where((paragraph) => paragraph.startsWith('THE SOFTWARE IS PROVIDED "AS IS"')), hasLength(1));
+      // The kept text itself stays the header of the file, byte for byte
+      expect(x86incIsc, startsWith(';****'));
+    });
+
+    test('a text that is no assembly comment stays as it is, a comment loses its marks and its rules', () {
+      expect(
+        av2LicencePageText('ISC of the archive\n\nsecond paragraph\n'),
+        'ISC of the archive\n\nsecond paragraph\n',
+      );
+      expect(av2LicencePageText(dav2dCopying), dav2dCopying);
+      expect(av2LicencePageText(';* a\n;*\n;* b\nnot a comment\n'), ';* a\n;*\n;* b\nnot a comment\n');
+      expect(av2LicencePageText(';****\n;* a\n;****\n;* b\n;*   c\n;*\n;* d\n'), 'a\n\nb\n  c\n\nd');
+    });
+
     test('on Linux, immuch360-run too; nothing where there is no decoder', () async {
       final linux = await entries(AiPlatform.linuxX64);
       expect(linux.last.packages, ['immuch360-run']);
