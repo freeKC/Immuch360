@@ -15,6 +15,7 @@ import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
+import 'package:immich_mobile/desktop/splat/desktop_splat_computer.dart';
 import 'package:immich_mobile/desktop/splat/desktop_splat_viewer_host.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/self_check.dart';
@@ -67,6 +68,14 @@ List<Override> desktopOverrides() => [
   // two unless the setting says otherwise
   splatViewerHostProvider.overrideWith(
     (ref) => DesktopSplatViewerHost(highPerformanceGpu: () => ref.read(appConfigProvider).viewer.highPerformanceGpu),
+  ),
+  // Which chip draws the splat viewer and the computer's memory, for its cap (lot SVC)
+  splatComputerReaderProvider.overrideWith(
+    (ref) => DesktopSplatComputer(
+      probe: ref.read(aiGpuProbeProvider),
+      answers: ref.read(splatAnswerStoreProvider),
+      highPerformance: () => ref.read(appConfigProvider).viewer.highPerformanceGpu,
+    ).read,
   ),
 ];
 
