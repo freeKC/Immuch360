@@ -13,7 +13,8 @@
 #     container fails where another passed;
 #   - with SPLAT=<a small .spz> in the environment, then, the app started with the splat shows it in the splat viewer,
 #     a WebKitGTK window of the distribution's WebKitGTK with Mesa's software renderer (splat_smoke.sh, next to this
-#     script): the page must say ready with lit pixels; its output, log and capture go to OUT_DIR/splat.
+#     script): the page must say ready with lit pixels and Esc must close the viewer with the app still running; its
+#     output, log and capture go to OUT_DIR/splat.
 #
 # H.264 on Fedora: its FFmpeg (ffmpeg-free, which mpv-libs takes) has no H.264 decoder of its own and decodes H.264
 # through libopenh264, which two packages provide: openh264, Cisco's build, from the fedora-cisco-openh264 repository,
@@ -59,7 +60,8 @@ case "$package" in
     h264=yes
     # gdb for the stacks of a start that crashed or does not get on (video_smoke.sh)
     install_extra() {
-      sh "$(dirname "$0")/apt_install.sh" xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 gdb >/tmp/extra.log \
+      sh "$(dirname "$0")/apt_install.sh" xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 gdb xdotool \
+        >/tmp/extra.log \
         || { cat /tmp/extra.log; exit 1; }
     }
     video_stack() {
@@ -88,7 +90,8 @@ case "$package" in
     fi
     echo "  libopenh264: $(rpm -q openh264 noopenh264 | grep -v 'not installed' | tr '\n' ' ')"
     install_extra() {
-      dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers xwd xwininfo sqlite gdb >/tmp/extra.log \
+      dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers xwd xwininfo sqlite gdb xdotool \
+        >/tmp/extra.log \
         2>&1 || { cat /tmp/extra.log; exit 1; }
     }
     video_stack() {

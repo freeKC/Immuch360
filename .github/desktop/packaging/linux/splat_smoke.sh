@@ -7,7 +7,11 @@
 #   - the page says ready within 120 seconds, with some lit pixels (the app's log: "Ready: <name> ... non blank N",
 #     logger SplatViewer, read from its database with sqlite3), and the app still runs;
 #   - the page said nothing else went wrong: no "cannot show splats" (WebGL 2 or WebAssembly SIMD missing in this
-#     WebKitGTK), no error of the page, no catch all error of the app.
+#     WebKitGTK), no error of the page, no catch all error of the app;
+#   - Esc closes the viewer as the user closes it: the app logs "The splat viewer closed: SplatHostClosed.user" and
+#     still runs after it. Every end of a viewing on Linux goes through the "destroy" handler of the window, which
+#     read the window it had just deleted before patch 13 of the copy (upstream issue #497 of desktop_webview_window,
+#     its fix #513; review of 3 November 2026).
 # The renderer the page drew with (Mesa's software renderer on a virtual screen) and its time to ready are printed; the
 # screen is captured as screen.png when ImageMagick is there. Software rendering only: no frame rate is claimed.
 #
@@ -15,7 +19,7 @@
 #
 # APP is the executable of a build (bundle/immuch360) or the launcher of a package (immuch360), SPLAT a path to a small
 # splat (mobile/test/fixtures/splat_viewer/room_floor.spz), OUT_DIR receives the output of the app, the lines of its
-# log and the capture. Needs xwd and sqlite3. Exit 1 when a check fails.
+# log and the capture. Needs xwd, sqlite3 and xdotool. Exit 1 when a check fails.
 #
 # As video_smoke.sh: the app runs in a home of its own, twice (a file opened with the program waits for a session, so
 # a first start makes the databases and the session without a server is written in the store), line buffered, without
@@ -144,13 +148,36 @@ while [ "$waited" -lt 120 ] && kill -0 "$pid" 2>/dev/null; do
     break
   fi
 done
+closed=
+window=
 if kill -0 "$pid" 2>/dev/null; then
   if command -v xwd >/dev/null 2>&1; then
     xwd -root -silent >"$out/screen.xwd" || true
   fi
-  # The lines of the last seconds reach the database before the stop
+  if [ -n "$ready" ]; then
+    # Esc to the viewer, as the user closes it: its window takes the keyboard focus (no window manager on this screen,
+    # so the focus is set on the window itself), then the key comes from the keyboard of the virtual screen
+    window=$(xdotool search --onlyvisible --name "$name" 2>/dev/null | head -n 1 || true)
+    if [ -n "$window" ]; then
+      xdotool windowfocus "$window" 2>/dev/null || true
+      sleep 1
+      xdotool key Escape || echo "  xdotool could not send Esc"
+      waited_close=0
+      while [ "$waited_close" -lt 30 ] && kill -0 "$pid" 2>/dev/null; do
+        sleep 2
+        waited_close=$((waited_close + 2))
+        log_lines >"$out/log.txt"
+        closed=$(awk -F '\t' '$2 == "SplatViewer" && index($3, "The splat viewer closed: ") == 1' "$out/log.txt" \
+          | head -n 1 | cut -f 3)
+        [ -z "$closed" ] || break
+      done
+    fi
+  fi
+  # The lines of the last seconds reach the database before the stop, and an app that a close ended is seen ended
   sleep 6
   log_lines >"$out/log.txt"
+fi
+if kill -0 "$pid" 2>/dev/null; then
   running=yes
 else
   running=no
@@ -173,7 +200,24 @@ else
   fail "the page did not say ready within 120 seconds"
   echo "  (WebKitGTK and some NVIDIA drivers: WEBKIT_DISABLE_DMABUF_RENDERER=1; here a virtual screen without a GPU)"
 fi
-[ "$running" = yes ] || fail "the app ended by itself"
+if [ -n "$ready" ]; then
+  if [ -z "$window" ]; then
+    fail "no window named $name to close"
+  elif [ -z "$closed" ]; then
+    fail "Esc did not close the viewer (no \"The splat viewer closed\" in the app's log)"
+  elif [ "$closed" != "The splat viewer closed: SplatHostClosed.user" ]; then
+    fail "the viewer did not close as the user closes it: $closed"
+  else
+    echo "  Esc closed the viewer: $closed"
+  fi
+fi
+if [ "$running" = no ]; then
+  if [ -n "$window" ]; then
+    fail "the app ended when the viewer was closed"
+  else
+    fail "the app ended by itself"
+  fi
+fi
 if awk -F '\t' '$2 == "SplatViewer" && $1 >= 6' "$out/log.txt" | grep -q 'cannot show splats'; then
   fail "the web view of this system cannot show splats (WebGL 2 or WebAssembly SIMD)"
 fi
