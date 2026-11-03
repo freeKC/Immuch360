@@ -562,6 +562,14 @@ void main() {
       {'type': 'close'},
     ]);
     expect(shown.noPicture, isFalse);
+    // A page that said what went wrong (a cut file, a share that stopped answering) was not blank: the Linux sentence
+    // on NVIDIA's drivers would mislead there (second review of 3 November 2026)
+    final failed = await open([
+      {'type': 'error', 'message': 'the file ends early'},
+      {'type': 'close'},
+    ]);
+    expect(failed.end, SplatViewerEnd.closed);
+    expect(failed.noPicture, isFalse);
   });
 
   test('cancelled while preparing: nothing opens, nothing kept', () async {

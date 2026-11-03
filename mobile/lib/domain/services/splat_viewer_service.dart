@@ -238,6 +238,8 @@ class SplatViewerService {
     String? unsupported;
     var closing = false;
     var ready = false;
+    // The page said what went wrong (a cut file, a share that stopped answering): it did not stay blank
+    var pageError = false;
     void onEvent(SplatViewerEvent event) {
       switch (event) {
         case SplatViewerReady(:final fields):
@@ -256,6 +258,7 @@ class SplatViewerService {
           _log.warning('This web view cannot show splats: $reason');
           unsupported = reason;
         case SplatViewerError(:final message):
+          pageError = true;
           _log.warning('The splat viewer page: $message');
         case SplatViewerClose():
           if (!closing) {
@@ -280,7 +283,7 @@ class SplatViewerService {
     onOpening?.call();
     final watch = Stopwatch()..start();
     final noPicture = Timer(noPictureAfter, () {
-      if (!ready && !closing) {
+      if (!ready && !closing && !pageError && unsupported == null) {
         _log.warning('The splat viewer page of $name said nothing in ${noPictureAfter.inSeconds} s');
       }
     });
@@ -297,7 +300,7 @@ class SplatViewerService {
         SplatHostClosed.stalled => SplatViewerEnd.stalled,
         SplatHostClosed.noWebView => SplatViewerEnd.noWebView,
         SplatHostClosed.error => SplatViewerEnd.failed,
-      }, noPicture: !ready && how == SplatHostClosed.user && watch.elapsed >= noPictureAfter);
+      }, noPicture: !ready && !pageError && how == SplatHostClosed.user && watch.elapsed >= noPictureAfter);
     } finally {
       noPicture.cancel();
       _bridge.unregisterGenerated(id);
