@@ -74,19 +74,23 @@ void main() {
 
   tearDown(() => context.dispose());
 
-  Future<void> pumpGate(WidgetTester tester, {AiPlatform? platform = AiPlatform.windowsX64}) => tester.pumpTestWidget(
-    context,
-    const Av2PlaybackGate(video: _video, child: _player),
-    overrides: [
-      // The scope of the test is nested in that of PresentationContext: the decoder is made in it
-      av2DecoderProvider.overrideWith((ref) => Av2Decoder(service, platform)),
-      av2ProbeProvider.overrideWithValue((video) {
-        probed.add(video);
-        return probe(video);
-      }),
-      av2SpeedProvider.overrideWithValue((format) async => speed(format)),
-    ],
-  );
+  /// The gate of [_video] on [platform]; [macLibmpv], the libmpv release of macOS the gate asks about, the pinned one
+  /// when null
+  Future<void> pumpGate(WidgetTester tester, {AiPlatform? platform = AiPlatform.windowsX64, String? macLibmpv}) =>
+      tester.pumpTestWidget(
+        context,
+        const Av2PlaybackGate(video: _video, child: _player),
+        overrides: [
+          // The scope of the test is nested in that of PresentationContext: the decoder is made in it
+          av2DecoderProvider.overrideWith((ref) => Av2Decoder(service, platform)),
+          if (macLibmpv != null) av2MacLibmpvReleaseProvider.overrideWithValue(macLibmpv),
+          av2ProbeProvider.overrideWithValue((video) {
+            probed.add(video);
+            return probe(video);
+          }),
+          av2SpeedProvider.overrideWithValue((format) async => speed(format)),
+        ],
+      );
 
   void installed() => service.setStatus(av2WindowsComplete, const AiComponentStatus(AiComponentState.installed));
 
@@ -278,13 +282,29 @@ void main() {
     expect(find.text('the player'), findsOneWidget, reason: '0.96 times the real time is enough');
   }, variant: desktop);
 
-  testWidgets('a Mac with the libmpv of before lot AD4 says it needs a newer Immuch360 Desktop', (tester) async {
+  testWidgets('a Mac whose libmpv has no y4m demuxer says it needs a newer Immuch360 Desktop', (tester) async {
     installed();
-    await pumpGate(tester, platform: AiPlatform.macosArm64);
-    expect(macosLibmpvWithoutY4m, contains(macosLibmpvRelease));
+    await pumpGate(tester, platform: AiPlatform.macosArm64, macLibmpv: 'libmpv-macos-20261020-9');
     expect(find.text('AV2 videos need a newer Immuch360 Desktop on this Mac'), findsOneWidget);
     expect(find.text('the player'), findsNothing);
+    expect(service.installs, isEmpty);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  testWidgets('a Mac whose libmpv reads the y4m of the decoder is offered the decoder like the others', (tester) async {
+    await pumpGate(tester, platform: AiPlatform.macosArm64, macLibmpv: 'libmpv-macos-20261102-12');
+    expect(find.text('AV2 videos need a newer Immuch360 Desktop on this Mac'), findsNothing);
+    expect(find.text('Download and play'), findsOneWidget);
+    await tester.tap(find.text('Download and play'));
+    await tester.pumpAndSettle();
+    expect(service.installs, ['av2-decoder-macos-universal']);
+    expect(find.text('the player'), findsOneWidget);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  test('the gate asks about the libmpv the app pins, whichever release it is', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    expect(container.read(av2MacLibmpvReleaseProvider), macosLibmpvRelease);
+  });
 
   testWidgets('Linux has its own decoder, offered the same way', (tester) async {
     await pumpGate(tester, platform: AiPlatform.linuxX64);

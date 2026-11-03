@@ -4,8 +4,8 @@
 //
 // 1. A phone, the TV or the Quest: "AV2 videos play in Immuch360 Desktop only for now".
 // 2. The setting "AV2 videos (experimental)" off: it says so, with the switch to turn it on there.
-// 3. A Mac whose libmpv has neither the y4m demuxer nor the raw video decoder (lot AD4 builds the next one): "AV2
-//    videos need a newer Immuch360 Desktop on this Mac".
+// 3. A Mac whose libmpv has no y4m demuxer (libmpv-macos-20261020-9; lot AD4 builds the next one): "AV2 videos need a
+//    newer Immuch360 Desktop on this Mac".
 // 4. The AV2 decoder not installed: the card "Play AV2 videos (experimental)", what it is, its size and its licence,
 //    then "Download and play", its progress, Cancel, and why a download failed. Nothing is downloaded before the tap.
 //    A version that does not offer it (no size nor sum in its catalogue) says "Not in this version of the app".
@@ -37,12 +37,16 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('Av2Gate');
 
-/// The libmpv releases of macOS whose FFmpeg has neither the yuv4mpegpipe demuxer nor the rawvideo decoder that the
-/// pictures of the AV2 decoder need (plan, section 2.4); lot AD4 pins the next one
+/// The libmpv releases of macOS whose FFmpeg lacks the yuv4mpegpipe demuxer that the pictures of the AV2 decoder need
+/// (plan, section 2.4; its rawvideo decoder was already there); lot AD4 pins the next one
 const macosLibmpvWithoutY4m = {'libmpv-macos-20261020-9'};
 
 /// Whether the libmpv of macOS [release] plays the pictures of the AV2 decoder
 bool av2PlaysWithMacLibmpv(String release) => !macosLibmpvWithoutY4m.contains(release);
+
+/// The libmpv release of macOS the gate asks about: the one the app pins, another in the tests, which hold true
+/// whichever release is pinned
+final av2MacLibmpvReleaseProvider = Provider<String>((ref) => macosLibmpvRelease);
 
 /// The AV2 file of a video of the folder library or of one opened with the app ([id], the id of its local asset, named
 /// [name]): its path and its head; null for a file named otherwise, one that is not AV2 (an IVF of AV1) and one that
@@ -170,7 +174,7 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
         ),
       );
     }
-    if (CurrentPlatform.isMacOS && !av2PlaysWithMacLibmpv(macosLibmpvRelease)) {
+    if (CurrentPlatform.isMacOS && !av2PlaysWithMacLibmpv(ref.watch(av2MacLibmpvReleaseProvider))) {
       return Av2Notice(key: const Key('av2_notice_mac'), text: t.av2_error_mac_libmpv);
     }
     final decoder = ref.watch(av2DecoderProvider);
