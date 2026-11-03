@@ -20,7 +20,7 @@ class FakeAiComponentsService extends AiComponentsService {
 
   final _states = <String, AiComponentStatus>{};
 
-  /// What spaceUsed answers
+  /// What spaceUsed and aiSpaceUsed answer
   int space;
 
   /// Whether a conversion runs: removals are refused while it does
@@ -76,6 +76,9 @@ class FakeAiComponentsService extends AiComponentsService {
 
   @override
   Future<int> spaceUsed() async => space;
+
+  @override
+  Future<int> aiSpaceUsed() async => space;
 
   @override
   Future<void> install(AiComponent component) async {

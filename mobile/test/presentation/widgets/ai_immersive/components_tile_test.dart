@@ -248,4 +248,45 @@ void main() {
     expect(find.byKey(Key('ai_component_remove_${runtime.id}')), findsOneWidget);
     expect(find.byKey(const Key('ai_components_download')), findsOneWidget);
   });
+
+  testWidgets('with the real service, the AV2 decoder alone gives no total and no Remove all; an AI file does', (
+    tester,
+  ) async {
+    // The folder of the components as the decoder leaves it (lot AD5): its program, its licence, installed.json
+    final folder = Directory.systemTemp.createTempSync('ai-tile-av2');
+    addTearDown(() => folder.deleteSync(recursive: true));
+    File(p.join(folder.path, 'engines', 'av2-decoder-linux-x64', 'immuch360-av2'))
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(List.filled(1300, 7));
+    File(p.join(folder.path, 'licenses', 'av2-decoder-linux-x64.txt'))
+      ..createSync(recursive: true)
+      ..writeAsStringSync('BSD-2-Clause');
+    File(p.join(folder.path, 'installed.json')).writeAsStringSync('{"formatVersion":1,"components":{}}');
+    final real = AiComponentsService(folder: () async => folder);
+    Future<void> pumpReal() async {
+      await tester.pumpConsumerWidget(
+        Scaffold(
+          body: SingleChildScrollView(
+            child: AiComponentsTile(components: linux, onCancelConversions: () async {}),
+          ),
+        ),
+        overrides: [aiComponentsServiceProvider.overrideWithValue(real)],
+      );
+      await readFiles(tester);
+    }
+
+    await pumpReal();
+    expect(find.text('Total: 0 B'), findsOneWidget);
+    expect(find.byKey(const Key('ai_components_remove_all')), findsNothing);
+
+    // A file of the AI next to it: counted, with installed.json, and Remove all is offered
+    File(p.join(folder.path, 'models', 'depth.onnx'))
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(List.filled(4000, 1));
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpReal();
+    final json = File(p.join(folder.path, 'installed.json')).lengthSync();
+    expect(find.text('Total: ${formatBytes(4000 + json)}'), findsOneWidget);
+    expect(find.byKey(const Key('ai_components_remove_all')), findsOneWidget);
+  });
 }

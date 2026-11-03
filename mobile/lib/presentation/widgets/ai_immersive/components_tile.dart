@@ -59,7 +59,8 @@ class AiComponentsTile extends ConsumerStatefulWidget {
 class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   late final AiComponentsService _service = ref.read(aiComponentsServiceProvider);
 
-  /// The space the folder really takes, the .part files included; null until measured
+  /// The space the components of the AI really take, the .part files included (the AV2 decoder apart, which the
+  /// settings of the videos show); null until measured
   int? _spaceUsed;
   bool _removing = false;
 
@@ -72,7 +73,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   Future<void> _refresh() async {
     try {
       await _service.load();
-      final used = await _service.spaceUsed();
+      final used = await _service.aiSpaceUsed();
       if (mounted) {
         setState(() => _spaceUsed = used);
       }

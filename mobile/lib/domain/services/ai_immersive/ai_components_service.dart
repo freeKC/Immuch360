@@ -1058,6 +1058,48 @@ class AiComponentsService extends ChangeNotifier {
     return total;
   }
 
+  /// The space the components of the AI take in the folder, the .part files included: what the tile of the AI
+  /// components shows, and what its Remove all frees. What Remove all leaves is not counted: a component of no AI (the
+  /// AV2 decoder, which the settings of the videos show and remove), its licence and its .part, nor installed.json
+  /// when nothing else is there.
+  Future<int> aiSpaceUsed() async {
+    final root = _root ?? await _folder();
+    if (!root.existsSync()) {
+      return 0;
+    }
+    final apart = {
+      for (final component in catalogue)
+        if (_isSpared(component)) ...[
+          component.installPath,
+          '$_licenses/${component.id}.txt',
+          '$_tmp/${component.assetName}.part',
+          '$_tmp/${component.assetName}.part.unpack',
+        ],
+    };
+    var total = 0;
+    var installed = 0;
+    await for (final entity in root.list(recursive: true, followLinks: false)) {
+      if (entity is! File) {
+        continue;
+      }
+      final relative = p.split(p.relative(entity.path, from: root.path)).join('/');
+      if (apart.any((path) => relative == path || relative.startsWith('$path/'))) {
+        continue;
+      }
+      try {
+        final length = await entity.length();
+        if (relative == installedFileName || relative == '$installedFileName.tmp') {
+          installed += length;
+        } else {
+          total += length;
+        }
+      } on FileSystemException {
+        // Gone meanwhile
+      }
+    }
+    return total == 0 ? 0 : total + installed;
+  }
+
   /// Writes installed.json, one write after the other; a write that failed does not stop the next one. When this one
   /// fails, [undo] puts the memory back as the disk still has it, then the error is thrown.
   Future<void> _save({void Function()? undo}) async {

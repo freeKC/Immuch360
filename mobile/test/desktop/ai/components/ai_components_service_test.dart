@@ -1195,6 +1195,33 @@ void main() {
       expect(File(p.join(root.path, 'engines', 'av2-decoder-linux-x64', 'immuch360-av2')).existsSync(), isTrue);
     });
 
+    test('the space of the AI leaves the AV2 decoder out, and installed.json once nothing else is there', () async {
+      final av2Files = {'immuch360-av2': utf8.encode('ELF program of the AV2 decoder ' * 20)};
+      final av2Zip = _zipOf(av2Files);
+      final av2 = _engineComponent(
+        av2Zip,
+        av2Files,
+        id: 'av2-decoder-linux-x64',
+        programs: {'immuch360-av2'},
+        features: {AiFeature.av2Video},
+      );
+      File(p.join(mirror.path, av2.assetName)).writeAsBytesSync(av2Zip);
+      final components = service(catalogue: [_modelComponent, av2]);
+      await components.install(av2);
+      expect(await components.spaceUsed(), greaterThan(av2Files['immuch360-av2']!.length));
+      expect(await components.aiSpaceUsed(), 0, reason: 'the tile of the AI components has nothing of its own');
+
+      await components.install(_modelComponent);
+      final licence = File(p.join(root.path, 'licenses', '${_modelComponent.id}.txt')).lengthSync();
+      final json = File(p.join(root.path, 'installed.json')).lengthSync();
+      expect(await components.aiSpaceUsed(), _model.length + licence + json);
+
+      // What Remove all of the tile frees is what it counted: nothing is left to count, nor to remove
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+      expect(await components.aiSpaceUsed(), 0);
+      expect(components.statusOf(av2).state, AiComponentState.installed);
+    });
+
     test('remove all with a locked file says the space comes back at the next start', () async {
       await service().install(_runtimeComponent);
       final locked = installedFile(_runtimeComponent);
