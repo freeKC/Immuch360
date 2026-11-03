@@ -33,6 +33,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
@@ -161,7 +162,7 @@ class _Av2ViewerScreenState extends ConsumerState<Av2ViewerScreen> {
 }
 
 /// The gate of the player of a file of a share ([key]): [child] unless the file is AV2; on a phone such a file says it
-/// plays on the computers
+/// plays on the computers. A head that could not be read says why, with Retry, rather than going to the player.
 class Av2ShareGate extends ConsumerWidget {
   const Av2ShareGate({super.key, required this.file, required this.child});
 
@@ -181,7 +182,14 @@ class Av2ShareGate extends ConsumerWidget {
         video: Av2VideoRef.share(file.sourceId, file.path, head),
         child: child,
       ),
-      AsyncData() || AsyncError() => child,
+      AsyncData() => child,
+      // Never mpv for a file whose head is unknown: what the share said, and Retry reads it again
+      AsyncError(:final error) => NetworkErrorView(
+        key: const Key('av2_share_head_error'),
+        error: error,
+        onRetry: () => ref.invalidate(networkAv2HeadProvider(file)),
+        color: Colors.white70,
+      ),
       _ => const _Waiting(),
     };
   }

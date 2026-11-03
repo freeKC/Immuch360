@@ -442,12 +442,18 @@ class NetworkMediaTile extends ConsumerWidget {
     final url = this.url;
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
     // Immuch360 Desktop: the head of an .ivf or .obu says whether it is AV2 (lib/desktop/video/av2_decoding.dart);
-    // until it is read, and for an AV2 file, no frame is asked of mpv, which has no AV2 decoder
+    // a frame is asked of mpv, which has no AV2 decoder, only once it says no AV2: never while it is read, for an AV2
+    // file, nor when it could not be read
     final av2Head = entry.isVideo && CurrentPlatform.isDesktop && isAv2FileName(entry.name)
         ? ref.watch(networkAv2HeadProvider(networkMediaKey(entry)))
         : null;
     final isAv2 = av2Head?.valueOrNull != null;
-    final hasFrame = entry.isVideo && url != null && !isAv2 && !(av2Head?.isLoading ?? false);
+    final noAv2 = switch (av2Head) {
+      null => true,
+      AsyncData(:final value) => value == null,
+      _ => false,
+    };
+    final hasFrame = entry.isVideo && url != null && noAv2;
     final isSelected = this.isSelected;
     // A share whose server makes the pictures of its media (a Plex server) shows those, read through its connection
     final serverPictures = switch (ref.watch(networkConnectionsProvider).opened(entry.sourceId)) {

@@ -7,13 +7,13 @@
 // before it plays.
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
-import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -46,19 +46,86 @@ Future<Av2Head?> readAv2HeadOfFile(String path) async {
   }
 }
 
+/// The heads of the .ivf and .obu files of the shares, read once in the session for each file (its share, its path,
+/// its size and its date): a tile that comes back on screen does not read its 32 bytes again. [maxConcurrent] reads go
+/// at a time and the others wait their turn, as the frames of the videos do. A read that fails is not kept: the next
+/// tile or the player tries again. At most [maxKept] heads are kept, the oldest go first.
+class NetworkAv2Heads {
+  NetworkAv2Heads({this.maxConcurrent = 4, this.maxKept = 20000});
+
+  final int maxConcurrent;
+  final int maxKept;
+
+  /// What each head said: null for a file that is no AV2 (an IVF of AV1)
+  final _heads = <NetworkMediaKey, Av2Head?>{};
+  final _pending = <NetworkMediaKey, Future<Av2Head?>>{};
+  final _waiting = Queue<Completer<void>>();
+  int _running = 0;
+
+  /// The head of [key], read by [read] (its first bytes) unless known; the error of [read] when it fails
+  Future<Av2Head?> head(NetworkMediaKey key, Future<List<int>> Function() read) async {
+    if (_heads.containsKey(key)) {
+      return _heads[key];
+    }
+    // Before any wait: a second tile asking meanwhile shares the read
+    return _pending[key] ??= _read(key, read);
+  }
+
+  Future<Av2Head?> _read(NetworkMediaKey key, Future<List<int>> Function() read) async {
+    await _takeTurn();
+    try {
+      final head = readAv2Head(await read());
+      if (_heads.length >= maxKept) {
+        _heads.remove(_heads.keys.first);
+      }
+      _heads[key] = head;
+      return head;
+    } finally {
+      // The future it gives back is this read, which its callers await
+      unawaited(_pending.remove(key));
+      _endTurn();
+    }
+  }
+
+  Future<void> _takeTurn() async {
+    if (_running < maxConcurrent && _waiting.isEmpty) {
+      _running++;
+      return;
+    }
+    final turn = Completer<void>();
+    _waiting.add(turn);
+    // Handed over by _endTurn, the count of reads under way staying the same
+    await turn.future;
+  }
+
+  void _endTurn() {
+    if (_waiting.isNotEmpty) {
+      _waiting.removeFirst().complete();
+    } else {
+      _running--;
+    }
+  }
+}
+
+/// The heads of the files of the shares read in this session
+final networkAv2HeadsProvider = Provider<NetworkAv2Heads>((ref) => NetworkAv2Heads());
+
 /// The head of the AV2 file [key] of a share, for the badge and the tile of the browser and for its player: the first
-/// 32 bytes of an .ivf or .obu, read on the computers only (the phones do not list them); null for any other file, one
-/// that is not AV2, and one that cannot be read
+/// 32 bytes of an .ivf or .obu, read on the computers only (the phones do not list them), once in the session
+/// (NetworkAv2Heads); null for any other file and one that is not AV2. A head that cannot be read is an error, never
+/// "no AV2": the tile then asks mpv for no frame, and the player says why and tries again.
 final networkAv2HeadProvider = FutureProvider.autoDispose.family<Av2Head?, NetworkMediaKey>((ref, key) async {
   if (!CurrentPlatform.isDesktop || !isAv2FileName(key.path)) {
     return null;
   }
   try {
-    final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(key.sourceId);
-    return readAv2Head(await fileSystem.readRange(key.path, 0, av2HeadLength));
-  } on NetworkFileSystemException catch (error) {
+    return await ref.read(networkAv2HeadsProvider).head(key, () async {
+      final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(key.sourceId);
+      return fileSystem.readRange(key.path, 0, av2HeadLength);
+    });
+  } catch (error) {
     _log.info('The head of ${p.posix.basename(key.path)} could not be read: $error');
-    return null;
+    rethrow;
   }
 });
 

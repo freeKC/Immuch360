@@ -20,6 +20,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
@@ -484,6 +485,30 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       await pumpPage(tester, const Av2ShareGate(file: av1, child: _player), more);
       expect(find.text('the player'), findsOneWidget);
+    }, variant: desktop);
+
+    testWidgets('a file of a share whose head cannot be read: never the player, what the share said, and Retry', (
+      tester,
+    ) async {
+      const file = (sourceId: 'nas', path: '/clips/cosmos.ivf', size: 5365, modified: null);
+      var reads = 0;
+      final more = [
+        networkAv2HeadProvider.overrideWith((ref, key) async {
+          if (reads++ == 0) {
+            throw const NetworkFileSystemException('The share does not answer');
+          }
+          return _head;
+        }),
+      ];
+      await pumpPage(tester, const Av2ShareGate(file: file, child: _player), more);
+      expect(find.text('the player'), findsNothing);
+      expect(find.byKey(const Key('av2_share_head_error')), findsOneWidget);
+      expect(find.text('Could not open this file: The share does not answer'), findsOneWidget);
+
+      await tester.tap(find.text('Retry'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('av2_install_card')), findsOneWidget);
+      expect(reads, 2);
     }, variant: desktop);
 
     testWidgets('on a phone, an AV2 file of a share or of the device says it plays on the computers', (tester) async {
