@@ -26,7 +26,7 @@ LICENCES = ROOT / 'mobile' / 'assets' / 'licenses' / 'splat-viewer'
 # The page's own files, written in the repository (not built)
 OWN_FILES = {
     'index.html', 'viewer.js', 'session.js', 'placement.js', 'controls.js', 'drawloop.js', 'panel.js', 'events.js',
-    'adapt.js', 'engine-spark.js', 'viewer.css',
+    'adapt.js', 'engine-spark.js', 'viewer.css', 'framewatch.js',
 }
 
 

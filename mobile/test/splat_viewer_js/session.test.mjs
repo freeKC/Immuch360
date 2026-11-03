@@ -48,3 +48,10 @@ test('the texts are filled by name, unknown names left as they are', () => {
   assert.equal(fill('{a} and {b}', { a: 1 }), '1 and {b}');
   assert.equal(fill(undefined, {}), '');
 });
+
+test('the first frames are watched only when the app asks (a computer that shows the splat whole)', () => {
+  assert.equal(parseSession({ scene: { url: 'x' } }).watch, null);
+  assert.equal(parseSession({ scene: { url: 'x' }, watch: null }).watch, null);
+  assert.deepEqual(parseSession({ scene: { url: 'x' }, watch: { floor: 150000 } }).watch, { floor: 150000 });
+  assert.deepEqual(parseSession({ scene: { url: 'x' }, watch: {} }).watch, { floor: 150000 });
+});

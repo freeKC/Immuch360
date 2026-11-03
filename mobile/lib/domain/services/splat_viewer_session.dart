@@ -35,6 +35,7 @@ const splatViewerPageFiles = [
   'panel.js',
   'events.js',
   'adapt.js',
+  'framewatch.js',
   'engine-spark.js',
   'spark.module.min.js',
   'spark_rs_bg.wasm',

@@ -1,6 +1,6 @@
-// The session of one viewing, as the app wrote it (lib/domain/services/splat_viewer_session.dart): the scene to
-// show, the orientation remembered for the file, the device class and its limits, the texts in the app's language and
-// its colours. Read once, from the app's own origin.
+// The session of one viewing, as the app wrote it (lib/domain/services/splat_viewer_service.dart): the scene to
+// show, the orientation remembered for the file, the device class and its limits, whether the first frames are
+// watched, the texts in the app's language and its colours. Read once, from the app's own origin.
 
 /** The session from its JSON, with defaults for what an older app would not give; throws when the scene is missing */
 export function parseSession(data) {
@@ -27,6 +27,11 @@ export function parseSession(data) {
       maxStdDev: Number(limits.maxStdDev) > 0 ? Number(limits.maxStdDev) : Math.sqrt(8),
     },
     gyroscope: data.gyroscope === true,
+    // A computer that shows the splat whole watches its first frames (framewatch.js); null elsewhere
+    watch:
+      data.watch && typeof data.watch === 'object'
+        ? { floor: Number(data.watch.floor) > 0 ? Number(data.watch.floor) : 150000 }
+        : null,
     locale: typeof data.locale === 'string' ? data.locale : 'en',
     texts: { ...(data.texts ?? {}) },
     theme: { dark: true, primary: '#4250af', ...(data.theme ?? {}) },

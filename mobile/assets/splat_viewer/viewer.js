@@ -2,12 +2,14 @@
 // served by the app's media bridge on 127.0.0.1 with the session of one viewing and the splat file. It checks that
 // the web view can draw (WebGL 2, WebAssembly SIMD), loads the splat with Spark, places it by the headset's rules
 // (placement.js), lets the user walk in a place or turn around an object (controls.js), and tells the app what
-// happened (events.js). It draws only while something moves, and about a second after.
+// happened (events.js). It draws only while something moves, and about a second after; on a computer that shows the
+// splat whole, it draws the first seconds whatever moves and offers a reduced copy when they are slow (framewatch.js).
 
 import { Quality, median, quantile } from './adapt.js';
 import { Navigator, attachEscape, attachInput, startGyroscope } from './controls.js';
 import { DrawLoop } from './drawloop.js';
 import { createEvents } from './events.js';
+import { FrameWatch } from './framewatch.js';
 import { createPanel } from './panel.js';
 import { boundsOf, firstView, nextUpright, openingUpright, sampleOf, verticalFov } from './placement.js';
 import { fill, readSession } from './session.js';
@@ -171,6 +173,11 @@ async function main() {
   });
 
   const quality = new Quality(session.limits.pixelRatioMax);
+  const watch =
+    session.watch && !session.scene.reduced
+      ? new FrameWatch({ gaussians: session.scene.gaussians, floor: session.watch.floor })
+      : null;
+  let onWatched = () => {};
   const frames = [];
   let statsSince = performance.now();
   const size = { width: 1, height: 1 };
@@ -200,11 +207,21 @@ async function main() {
       const change = quality.frame(ms, now);
       if (change === 'down' || change === 'up') {
         engine.setQuality(size.width, size.height, pixelRatio());
+        watch?.restart();
       } else if (change === 'heavy') {
         panel.say(t.heavy, 6);
       }
+      const found = watch?.frame(ms, now, quality.step === quality.scales.length - 1);
+      if (found) {
+        onWatched(found);
+      }
     } else {
       quality.pause();
+      watch?.pause();
+    }
+    // The first seconds are drawn whatever moves, for the watch to see them
+    if (watch && !watch.done) {
+      loop.keep(now);
     }
     if (now - statsSince > STATS_MS) {
       reportStats(now);
@@ -248,12 +265,28 @@ async function main() {
     new Intl.NumberFormat(session.locale, { maximumFractionDigits: digits }).format(value);
   const infoLines = () => [
     t.countLine,
-    session.scene.reduced ? t.reducedLine : null,
+    session.scene.reduced ? t.reducedLine : t.wholeLine,
     view?.object ? fill(t.kindObject, { size: `${number(view.size, 2)} m` }) : t.kindPlace,
     fill(t.turnedLine, { axis: axisName(upright) }),
     lastFps() != null ? fill(t.fpsLine, { fps: lastFps() }) : null,
     fill(t.gpuLine, { name: engine?.renderer ?? '' }),
   ];
+
+  // What the watch found: the app logs it; slow frames get the offer of the reduced copy, one tap, the answer kept
+  // by the app for the file
+  onWatched = (found) => {
+    events.post('watch', found);
+    if (!found.slow || !t.slowReduce) {
+      return;
+    }
+    panel.showOffer({
+      text: fill(t.slowLine, { fps: number(found.fps, 0) }),
+      reduceLabel: fill(t.slowReduce, { kept: number(found.keep, 0), total: number(session.scene.gaussians, 0) }),
+      keepLabel: t.slowKeep,
+      onReduce: () => events.post('reduce', { keep: found.keep }),
+      onKeep: () => events.post('keepWhole'),
+    });
+  };
 
   const place = () => {
     view = firstView(bounds, upright);

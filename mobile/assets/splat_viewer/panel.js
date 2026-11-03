@@ -1,7 +1,8 @@
 // The panel of the page, in the app's language and colours (the texts and the theme come from the session): the
 // bar with Back, the name and the count, Walk or Turn around, Reset, Turn upright, the gyroscope on phones, the
 // details and the help; the lines that fade after a few seconds (FreeKC's rule); loading, the info sheet, the stick
-// under the left thumb and the refusals.
+// under the left thumb, the refusals, and on a computer the offer of a reduced copy when the frames are slow
+// (framewatch.js), which stays until it is answered.
 
 const ICONS = {
   back: 'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
@@ -101,6 +102,10 @@ export function createPanel(root, session, actions) {
   stickBase.appendChild(stickKnob);
   root.appendChild(stickBase);
 
+  const offer = element('div', 'offer hidden');
+  offer.setAttribute('role', 'alertdialog');
+  root.appendChild(offer);
+
   const loading = element('div', 'loading hidden');
   const loadingText = element('div', 'loading-text', t.loading ?? '');
   const bar2 = element('div', 'progress');
@@ -154,6 +159,32 @@ export function createPanel(root, session, actions) {
       sheet.appendChild(back);
       sheet.classList.remove('hidden');
       panel.showBar(true);
+    },
+    /**
+     * The offer of a reduced copy: [text], then [reduceLabel] (calls [onReduce]) and [keepLabel] (calls [onKeep]); it
+     * goes once either is pressed
+     */
+    showOffer({ text, reduceLabel, keepLabel, onReduce, onKeep }) {
+      const answer = (action) => {
+        offer.classList.add('hidden');
+        action();
+      };
+      const reduce = element('button', 'sheet-button offer-reduce', reduceLabel);
+      reduce.type = 'button';
+      reduce.addEventListener('click', (event) => {
+        event.stopPropagation();
+        answer(onReduce);
+      });
+      const keep = element('button', 'sheet-button offer-keep', keepLabel);
+      keep.type = 'button';
+      keep.addEventListener('click', (event) => {
+        event.stopPropagation();
+        answer(onKeep);
+      });
+      const buttons = element('div', 'offer-buttons');
+      buttons.append(reduce, keep);
+      offer.replaceChildren(element('p', null, text), buttons);
+      offer.classList.remove('hidden');
     },
     /** The info sheet or the help, [lines] of text; closed by a second press, Esc or a tap */
     toggleSheet(lines) {
