@@ -35,8 +35,9 @@ a name that no release of the app attaches.
       the output of immuch360-av2 --help compared with mobile/test/fixtures/av2/immuch360_av2_help.txt, the text the
       app's launcher is frozen by
 
-nasm is pinned on Windows only (the lock gives its address and SHA-256); Linux and macOS take the one of apt and of
-Homebrew, whose version BUILD-INFO.txt gives with the compiler's.
+nasm is pinned on every system, at the version of the lock: on Windows the build of nasm.us, on Linux and macOS its
+source of nasm.us built on the runner, each checked against the SHA-256 of the lock. BUILD-INFO.txt gives its version
+with the compiler's, and a program that another nasm assembled is neither packed nor accepted by check.
 
 Only the Python standard library is used, and it writes no cache next to the scripts (a __pycache__ folder is not
 for the repository). Exit codes: 0 good, 1 a check failed, 2 bad arguments or missing inputs.
@@ -106,10 +107,24 @@ def load_lock(path: pathlib.Path = LOCK) -> dict:
     for name, digest in lock['dav2d'].get('files', {}).items():
         if not re.fullmatch(r'[0-9a-f]{64}', digest):
             raise Failure(f'{path.name}: no SHA-256 for {name}')
-    nasm = lock['tools'].get('nasm', {}).get('windows-x64', {})
-    if not re.fullmatch(r'[0-9a-f]{64}', nasm.get('sha256', '')) or not nasm.get('url', '').startswith('https://'):
-        raise Failure(f'{path.name}: the nasm of Windows has no https address or SHA-256')
+    nasm = lock['tools'].get('nasm', {})
+    for key, what in (('windows-x64', 'the nasm of Windows'),
+                      ('source', 'the source of nasm, built on Linux and macOS,')):
+        entry = nasm.get(key, {})
+        url, digest = entry.get('url', ''), entry.get('sha256', '')
+        if not re.fullmatch(r'[0-9a-f]{64}', digest) or not url.startswith('https://'):
+            raise Failure(f'{path.name}: {what} has no https address or SHA-256')
+    if not re.fullmatch(r'\d+\.\d+(\.\d+)*', nasm.get('version', '')):
+        raise Failure(f'{path.name}: no version of nasm')
     return lock
+
+
+def nasm_problem(text: str, lock: dict) -> str | None:
+    """What is wrong with the nasm a build names (the first line of nasm -v): None when it is the version of the lock"""
+    version = lock['tools']['nasm']['version']
+    if re.match(rf'NASM version {re.escape(version)}(\s|$)', text):
+        return None
+    return f'nasm {text}, not the {version} of the lock'
 
 
 def artifact_name(lock: dict, system: str) -> str:
@@ -139,6 +154,8 @@ def text_bytes(data: bytes) -> bytes:
 
 def command_lock(args) -> int:
     lock = load_lock(args.lock)
+    # The build of nasm.us on Windows, its source elsewhere
+    nasm = lock['tools']['nasm']['windows-x64' if args.system == 'windows-x64' else 'source']
     values = {
         'id': lock['id'],
         'artifact': artifact_name(lock, args.system),
@@ -146,8 +163,8 @@ def command_lock(args) -> int:
         'meson': lock['tools']['meson'],
         'ninja': lock['tools']['ninja'],
         'nasm_version': lock['tools']['nasm']['version'],
-        'nasm_url': lock['tools']['nasm']['windows-x64']['url'],
-        'nasm_sha256': lock['tools']['nasm']['windows-x64']['sha256'],
+        'nasm_url': nasm['url'],
+        'nasm_sha256': nasm['sha256'],
         'program': PROGRAM[args.system],
     }
     for key, value in values.items():
@@ -404,6 +421,9 @@ def command_pack(args) -> int:
     if not tools_file.is_file():
         raise Failure(f'no tools.json next to the program in {args.program.parent}: av2_build.py build writes it')
     tools = json.loads(tools_file.read_text(encoding='utf-8'))
+    problem = nasm_problem(tools.get('nasm', ''), lock)
+    if problem:
+        raise Failure(f'{tools_file}: {problem}')
     files = {program_name: args.program.read_bytes()}
     programs = {program_name}
     if args.system == 'linux-x64':
@@ -582,9 +602,12 @@ def command_check(args) -> int:
     if 'BUILD-INFO.txt' not in files or lock['dav2d']['commit'].encode() not in files.get('BUILD-INFO.txt', b''):
         problems.append('BUILD-INFO.txt is missing or does not name the commit of dav2d')
     info_lines = files.get('BUILD-INFO.txt', b'').decode('utf-8', 'replace').splitlines()
-    if not any(line.startswith('C compiler: ') for line in info_lines) or \
-            not any(line.startswith('nasm: ') for line in info_lines):
+    nasm_lines = [line[len('nasm: '):] for line in info_lines if line.startswith('nasm: ')]
+    nasm_wrong = nasm_problem(nasm_lines[0], lock) if nasm_lines else None
+    if not any(line.startswith('C compiler: ') for line in info_lines) or not nasm_lines:
         problems.append('BUILD-INFO.txt does not name the C compiler and the nasm of the build')
+    elif nasm_wrong:
+        problems.append(f'BUILD-INFO.txt: {nasm_wrong}')
     commit_match = re.search(rb'/tree/([0-9a-f]{40}|unknown)/mobile/native/av2', files.get('BUILD-INFO.txt', b''))
     commit = commit_match.group(1).decode() if commit_match else 'unknown'
     expected = archive_licences(lock, args.system, commit)

@@ -1603,17 +1603,27 @@ jobs:
       - name: dav2d at the commit of the lock
         run: python3 .github/desktop/av2/av2_build.py sources
 
+      # Meson and Ninja of the lock in a virtual environment; nasm of the lock built from its source of nasm.us, checked
+      # by its SHA-256 (the nasm of apt is 2.15.05)
       - name: Meson, Ninja and nasm
         env:
           MESON: ${{ steps.lock.outputs.meson }}
           NINJA: ${{ steps.lock.outputs.ninja }}
+          NASM_URL: ${{ steps.lock.outputs.nasm_url }}
+          NASM_SHA256: ${{ steps.lock.outputs.nasm_sha256 }}
+          NASM_VERSION: ${{ steps.lock.outputs.nasm_version }}
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q nasm
           python3 -m venv "$RUNNER_TEMP/av2-venv"
           "$RUNNER_TEMP/av2-venv/bin/python" -m pip install --disable-pip-version-check -q "meson==$MESON" \
             "ninja==$NINJA"
           echo "$RUNNER_TEMP/av2-venv/bin" >> "$GITHUB_PATH"
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/nasm.tar.xz" "$NASM_URL"
+          echo "$NASM_SHA256  $RUNNER_TEMP/nasm.tar.xz" | sha256sum -c -
+          tar -xJf "$RUNNER_TEMP/nasm.tar.xz" -C "$RUNNER_TEMP"
+          (cd "$RUNNER_TEMP/nasm-$NASM_VERSION" && ./configure --quiet && make -s -j"$(nproc)" nasm)
+          mkdir -p "$RUNNER_TEMP/nasm-bin"
+          cp "$RUNNER_TEMP/nasm-$NASM_VERSION/nasm" "$RUNNER_TEMP/nasm-bin/"
+          echo "$RUNNER_TEMP/nasm-bin" >> "$GITHUB_PATH"
 
       - name: Build
         id: build
@@ -1701,17 +1711,27 @@ jobs:
       - name: dav2d at the commit of the lock
         run: python3 .github/desktop/av2/av2_build.py sources
 
-      # nasm for the x86_64 half (the arm64 half is assembled by clang), and Rosetta to run that half here
+      # nasm for the x86_64 half (the arm64 half is assembled by clang), that of the lock built from its source of
+      # nasm.us and checked by its SHA-256 (Homebrew has NASM 3), and Rosetta to run that half here
       - name: Meson, Ninja, nasm and Rosetta
         env:
           MESON: ${{ steps.lock.outputs.meson }}
           NINJA: ${{ steps.lock.outputs.ninja }}
+          NASM_URL: ${{ steps.lock.outputs.nasm_url }}
+          NASM_SHA256: ${{ steps.lock.outputs.nasm_sha256 }}
+          NASM_VERSION: ${{ steps.lock.outputs.nasm_version }}
         run: |
-          brew install nasm
           python3 -m venv "$RUNNER_TEMP/av2-venv"
           "$RUNNER_TEMP/av2-venv/bin/python" -m pip install --disable-pip-version-check -q "meson==$MESON" \
             "ninja==$NINJA"
           echo "$RUNNER_TEMP/av2-venv/bin" >> "$GITHUB_PATH"
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/nasm.tar.xz" "$NASM_URL"
+          echo "$NASM_SHA256  $RUNNER_TEMP/nasm.tar.xz" | shasum -a 256 -c -
+          tar -xJf "$RUNNER_TEMP/nasm.tar.xz" -C "$RUNNER_TEMP"
+          (cd "$RUNNER_TEMP/nasm-$NASM_VERSION" && ./configure --quiet && make -s -j"$(sysctl -n hw.ncpu)" nasm)
+          mkdir -p "$RUNNER_TEMP/nasm-bin"
+          cp "$RUNNER_TEMP/nasm-$NASM_VERSION/nasm" "$RUNNER_TEMP/nasm-bin/"
+          echo "$RUNNER_TEMP/nasm-bin" >> "$GITHUB_PATH"
           if ! arch -x86_64 /usr/bin/true 2>/dev/null; then
             sudo softwareupdate --install-rosetta --agree-to-license
           fi
