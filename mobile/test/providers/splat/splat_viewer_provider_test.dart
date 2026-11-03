@@ -11,8 +11,8 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:immich_mobile/domain/services/splat_viewer_host.dart';
 import 'package:immich_mobile/infrastructure/splat/pigeon_splat_viewer_host.dart';
 import 'package:immich_mobile/platform/splat_viewer_api.g.dart';
-import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
@@ -68,7 +68,7 @@ void main() {
         overrides: [
           aiFreeSpaceProvider.overrideWithValue((folder) async {
             asked = folder;
-            return AiFreeSpace(free: 123456, volume: 'D:');
+            return const AiFreeSpace(free: 123456, volume: 'D:');
           }),
           splatViewerHostProvider.overrideWithValue(_NoHost()),
         ],
