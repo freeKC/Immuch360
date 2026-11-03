@@ -47,6 +47,7 @@ python3 .github/desktop/check_platform_ternaries.py
 python3 .github/desktop/check_platform_audit.py
 python3 .github/desktop/check_pigeon_desktop.py
 python3 .github/desktop/check_workflow.py
+python3 .github/desktop/check_android_manifest.py
 ```
 
 For a change to the computer version, also run `check_phone_projects.py` and `check_phone_packages.py` from the same folder: they make sure the phone builds do not change.
