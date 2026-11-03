@@ -20,14 +20,17 @@
 // lets every account of the computer read what it holds, so the folder of an account first gets a whole new list of
 // rules, the account and SYSTEM alone ([windowsMakePrivate]: SetNamedSecurityInfoW, in one go, the rules of its own
 // replaced too, what it holds following), and is never used when it cannot (the photos of the user are in it).
-// A job's folder is named by the key of its photos and settings (splat-<16 hexadecimal digits>, lot SP6): kept a day
-// after a failure once COLMAP found the poses, so that Retry starts again from them, and after a failure of COLMAP
-// once the images were prepared (lot SPF1: Retry starts again from the images, and the frames, the database and the
-// models stay for a diagnosis; FreeKC's frames of 3 November went with the failure), then deleted under each root by
-// [deleteOldSplatWork] (the folders of other jobs keep the rule of an hour of their owner, managed_process.dart).
+// A job's folder is named by the key of its photos and settings (splat-<16 hexadecimal digits>, lot SP6): kept after
+// a failure once COLMAP found the poses, so that Retry starts again from them, and after a failure of COLMAP once the
+// images were prepared (lot SPF1: Retry starts again from the images, and the frames, the database and the models stay
+// for a diagnosis; FreeKC's frames of 3 November went with the failure), until the next scene or a day (lot SPF2): the
+// next scene deletes those of the other scenes, and [deleteOldSplatWork] those a day old under each root, at each
+// scene and at the start of the app ([cleanUpSplatWorkAtStart]); the folders of other jobs keep the rule of an hour of
+// their owner (managed_process.dart).
 
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
@@ -35,7 +38,10 @@ import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
+
+final _log = Logger('SplatWorkFolder');
 
 /// The paths of the work folder of one splat scene (see the top of this file)
 class SplatWorkFolder {
@@ -156,10 +162,13 @@ Future<File?> keepSplatFailureLogs(
   return file;
 }
 
-/// Deletes under each of [roots] the work folders of splat scenes not used for SplatV1.workKept (aiWorkFolderLastUsed);
-/// returns how many went. A folder that cannot be deleted now (a file a program still holds) stays for the next time,
-/// the others go. The deletes run off the isolate that asks (the window's in the app).
-Future<int> deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now}) async {
+/// Deletes under each of [roots] the work folders of splat scenes not used for SplatV1.workKept (aiWorkFolderLastUsed),
+/// and, when a scene starts ([keep], the name of its own folder, which a Retry finds again), every other one: a folder
+/// a failure left is kept until the next scene or a day (lot SPF2: each failure of another scene kept its own, 45 to
+/// 100 MB, and nothing bound their count but their age, review of lot SPF1, m3); returns how many went. A folder that
+/// cannot be deleted now (a file a program still holds) stays for the next time, the others go. The deletes run off
+/// the isolate that asks (the window's in the app).
+Future<int> deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now, String? keep}) async {
   final limit = (now ?? DateTime.now()).subtract(SplatV1.workKept);
   var deleted = 0;
   for (final root in roots) {
@@ -174,9 +183,10 @@ Future<int> deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now}) async
     }
     for (final entry in entries) {
       try {
+        final name = p.basename(entry.path);
         if (entry is Directory &&
-            p.basename(entry.path).startsWith(splatWorkFolderPrefix) &&
-            aiWorkFolderLastUsed(entry).isBefore(limit)) {
+            name.startsWith(splatWorkFolderPrefix) &&
+            (keep != null && name != keep || aiWorkFolderLastUsed(entry).isBefore(limit))) {
           await entry.delete(recursive: true);
           deleted++;
         }
@@ -186,6 +196,22 @@ Future<int> deleteOldSplatWork(List<SplatWorkRoot> roots, {DateTime? now}) async
     }
   }
   return deleted;
+}
+
+/// At the start of the app: the work folders of splat scenes unused for a day deleted under [roots]
+/// ([splatWorkRoots] by default; [deleteOldSplatWork]), in an isolate of its own (whoami names the root of ProgramData
+/// on Windows); never fails. Until lot SPF2 a folder a failure left stayed in the temporary folder until the next job
+/// of the AI features, however long after
+Future<void> cleanUpSplatWorkAtStart({List<SplatWorkRoot> Function()? roots, DateTime? now}) async {
+  final rootsOf = roots ?? () => splatWorkRoots();
+  try {
+    final deleted = await Isolate.run(() => deleteOldSplatWork(rootsOf(), now: now), debugName: 'splat work');
+    if (deleted > 0) {
+      _log.info('$deleted work folders of splat scenes a day old deleted at the start');
+    }
+  } catch (error, stack) {
+    _log.warning('The work folders of the splat scenes were not cleaned up at the start', error, stack);
+  }
 }
 
 /// Whether every character of [path] is ASCII

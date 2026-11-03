@@ -4,10 +4,11 @@
 // A scene from the photos to the .spz the app's probe accepts, its steps in order with their counts and the time left;
 // Retry from the poses kept, and not when a photo changed; Cancel at every step, within a second, the program gone;
 // the failures of each step with their codes, the logs of a failure kept in the logs folder of the app and the command
-// of COLMAP named; after a failure of COLMAP, the work folder kept a day with its images, its database and its models,
+// of COLMAP named; after a failure of COLMAP, the work folder kept with its images, its database and its models,
 // named in the result and in the log of the failure, and a Retry from its images (lot SPF1); a scene of fewer than
-// half of its images placed made all the same, the count told from the poses on. Skipped without the fakes; the test
-// job on Linux and the windows job of the desktop workflow compile them.
+// half of its images placed made all the same, the count told from the poses on; the folder a failure left gone when
+// another scene starts (lot SPF2). Skipped without the fakes; the test job on Linux and the windows job of the desktop
+// workflow compile them.
 
 import 'dart:async';
 import 'dart:convert';
@@ -430,54 +431,51 @@ void main() {
     expect(result.stageTimes[ImmersiveStage.photos]!.inMilliseconds, closeTo(15000, 3000));
   }, skip: _skip());
 
-  test(
-    'Retry from the poses: the training failed, the folder kept; again, COLMAP and the photos are not run',
-    () async {
-      final members = photos(24);
-      final images = _Images();
-      final said = listenToLog();
-      final logs = Directory(p.join(folder.path, 'app-logs'));
-      final failed = await engine(
-        images: images,
-        brushMode: 'fail',
-        failureLogs: logs,
-      ).run(job(members), cancel: cancel);
-      expect(failed.error, ImmersiveErrorCode.trainingFailed);
-      expect(workFolders(), hasLength(1));
-      expect(said, contains('The work folder ${workFolders().single.path} is kept a day, for Retry from its poses'));
-      // The logs of COLMAP and of Brush kept with the failure, its folder kept too
-      final kept = logs.listSync().whereType<File>().single.readAsStringSync();
-      expect(kept, contains('failed: trainingFailed: '));
-      expect(kept, contains('===== colmap-features.log, '));
-      expect(kept, contains('===== brush.log, '));
-      final state = jsonDecode(File(p.join(workFolders().single.path, splatStateFileName)).readAsStringSync()) as Map;
-      expect(state['placed'], 24);
-      expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
+  test('Retry from the poses: the training failed, the folder kept; again, COLMAP and the photos are not run', () async {
+    final members = photos(24);
+    final images = _Images();
+    final said = listenToLog();
+    final logs = Directory(p.join(folder.path, 'app-logs'));
+    final failed = await engine(images: images, brushMode: 'fail', failureLogs: logs).run(job(members), cancel: cancel);
+    expect(failed.error, ImmersiveErrorCode.trainingFailed);
+    expect(workFolders(), hasLength(1));
+    expect(
+      said,
+      contains(
+        'The work folder ${workFolders().single.path} is kept until the next scene or a day, for Retry from its poses',
+      ),
+    );
+    // The logs of COLMAP and of Brush kept with the failure, its folder kept too
+    final kept = logs.listSync().whereType<File>().single.readAsStringSync();
+    expect(kept, contains('failed: trainingFailed: '));
+    expect(kept, contains('===== colmap-features.log, '));
+    expect(kept, contains('===== brush.log, '));
+    final state = jsonDecode(File(p.join(workFolders().single.path, splatStateFileName)).readAsStringSync()) as Map;
+    expect(state['placed'], 24);
+    expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
 
-      final pids = File(p.join(folder.path, 'colmap.pid'));
-      final progress = <ImmersiveProgress>[];
-      final again = await engine(
-        images: images,
-        colmapMore: {'IMMUCH360_FAKE_COLMAP_PID': pids.path},
-      ).run(job(members), cancel: cancel, onProgress: progress.add);
+    final pids = File(p.join(folder.path, 'colmap.pid'));
+    final progress = <ImmersiveProgress>[];
+    final again = await engine(
+      images: images,
+      colmapMore: {'IMMUCH360_FAKE_COLMAP_PID': pids.path},
+    ).run(job(members), cancel: cancel, onProgress: progress.add);
 
-      expect(again.isDone, isTrue, reason: '${again.error}: ${again.message}');
-      expect(images.calls, 1, reason: 'the photos were not prepared again');
-      expect(pids.existsSync(), isFalse, reason: 'COLMAP did not run again');
-      expect(progress.map((x) => x.stage).toSet(), {
-        ImmersiveStage.reading,
-        ImmersiveStage.photos,
-        ImmersiveStage.training,
-        ImmersiveStage.splatCopy,
-      });
-      // The photos were read again for their sums, once each
-      expect(members.every((member) => member.loads == 2 && member.releases == 2), isTrue);
-      expect((again.details! as SplatResultDetails).placed, 24);
-      await again.afterSaved!();
-      expect(workFolders(), isEmpty);
-    },
-    skip: _skip(),
-  );
+    expect(again.isDone, isTrue, reason: '${again.error}: ${again.message}');
+    expect(images.calls, 1, reason: 'the photos were not prepared again');
+    expect(pids.existsSync(), isFalse, reason: 'COLMAP did not run again');
+    expect(progress.map((x) => x.stage).toSet(), {
+      ImmersiveStage.reading,
+      ImmersiveStage.photos,
+      ImmersiveStage.training,
+      ImmersiveStage.splatCopy,
+    });
+    // The photos were read again for their sums, once each
+    expect(members.every((member) => member.loads == 2 && member.releases == 2), isTrue);
+    expect((again.details! as SplatResultDetails).placed, 24);
+    await again.afterSaved!();
+    expect(workFolders(), isEmpty);
+  }, skip: _skip());
 
   test(
     'Retry from the poses of originals of the server: their sums taken from the server, none downloaded again',
@@ -570,14 +568,15 @@ void main() {
       expect(Directory(p.join(work.sparse.path, '0')).existsSync(), isTrue);
       expect(work.logOf('colmap-mapping').existsSync(), isTrue);
       expect(File(p.join(kept.path, aiWorkLastUsedName)).existsSync(), isTrue);
-      expect(said, contains('The work folder ${kept.path} is kept a day, for Retry from its images and a diagnosis'));
+      // A Retry of the same images would place the same ones: kept for a diagnosis (lot SPF2)
+      expect(said, contains('The work folder ${kept.path} is kept until the next scene or a day, for a diagnosis'));
       final text = logs.listSync().whereType<File>().single.readAsStringSync();
       expect(text, contains('failed: notEnoughOverlap: 4/24\n'));
       expect(
         text,
         contains(
-          'The work folder is kept a day, for Retry and for a diagnosis (its images, the database and the models '
-          'of COLMAP)\nWork folder: ${kept.path}\n',
+          'The work folder is kept until the next scene or a day, for a diagnosis (its images, the database and the '
+          'models of COLMAP; a Retry of the same images would place the same ones)\nWork folder: ${kept.path}\n',
         ),
       );
 
@@ -603,6 +602,21 @@ void main() {
     },
     skip: _skip(),
   );
+
+  test('the folder a failure left goes when another scene starts, whatever its age, and with it every other one (lot '
+      'SPF2): a failure keeps its folder until the next scene or a day', () async {
+    final failed = await engine(colmapMode: 'few').run(job(photos(24)), cancel: cancel);
+    final first = Directory(failed.keptFolder!);
+    expect(workFolders().map((work) => work.path), [first.path]);
+    // A folder of another scene, left by an earlier session an hour ago
+    final other = Directory(p.join(root.path, splatWorkFolderName('f' * 40)))..createSync(recursive: true);
+    touchAiWorkFolder(other, at: DateTime.now().subtract(const Duration(hours: 1)));
+
+    final again = await engine(colmapMode: 'few').run(job(photos(30)), cancel: cancel);
+    expect(again.keptFolder, isNotNull);
+    expect(workFolders().map((work) => work.path), [again.keptFolder]);
+    expect((first.existsSync(), other.existsSync()), (false, false));
+  }, skip: _skip());
 
   test('a photo changed after a failure of COLMAP: the images are prepared again', () async {
     final members = photos(24);

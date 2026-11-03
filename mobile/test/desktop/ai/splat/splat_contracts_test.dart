@@ -579,9 +579,26 @@ void main() {
         text(ImmersiveErrorCode.tooFewImages),
         'A splat scene needs at least 20 photos of the same place, taken from different spots; 50 to 200 is best.',
       );
+      // Photos, a video of a place, a video of an object (lot SPF2): a Retry would place the same ones
       expect(
         text(ImmersiveErrorCode.notEnoughOverlap, '12/150'),
-        startsWith('Only 12 of 150 images could be placed in 3D.'),
+        startsWith('Only 12 of 150 photos could be placed in 3D, and a Retry would place the same ones. Add photos'),
+      );
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.notEnoughOverlap, '12/150', fromVideo: true),
+        startsWith(
+          'Only 12 of 150 frames could be placed in 3D, and a Retry would place the same ones. Film the place',
+        ),
+      );
+      expect(
+        conversionFailureText(
+          t,
+          ImmersiveErrorCode.notEnoughOverlap,
+          '12/150',
+          fromVideo: true,
+          subject: SplatSubject.object,
+        ),
+        contains('Film the object again from 20 to 30 cm away at least'),
       );
       for (final message in ['0/150', null, 'garbage']) {
         expect(

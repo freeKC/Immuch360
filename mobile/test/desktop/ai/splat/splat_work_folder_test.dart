@@ -149,6 +149,44 @@ void main() {
     },
   );
 
+  test('when a scene starts, the folders of the other scenes go whatever their age, under each root; its own and the '
+      'rest stay (lot SPF2: kept until the next scene or a day)', () async {
+    final temp = SplatWorkRoot(Directory(p.join(folder.path, 'temp', 'immuch360-ai')));
+    final shared = SplatWorkRoot(Directory(p.join(folder.path, 'ProgramData', 'ai-work', 'S-1-5-21-1')), shared: true);
+    final own = Directory(p.join(temp.folder.path, splatWorkFolderName('a' * 40)))..createSync(recursive: true);
+    final others = [
+      Directory(p.join(temp.folder.path, splatWorkFolderName('b' * 40)))..createSync(recursive: true),
+      Directory(p.join(shared.folder.path, splatWorkFolderName('c' * 40)))..createSync(recursive: true),
+    ];
+    final panorama = Directory(p.join(temp.folder.path, 'panorama-1'))..createSync(recursive: true);
+    for (final work in [own, ...others]) {
+      touchAiWorkFolder(work);
+    }
+
+    expect(await deleteOldSplatWork([temp, shared], keep: splatWorkFolderName('a' * 40)), 2);
+    expect(own.existsSync(), isTrue, reason: 'Retry finds it');
+    expect(others.where((work) => work.existsSync()), isEmpty);
+    expect(panorama.existsSync(), isTrue);
+    // Without a scene starting, a day as before
+    final young = Directory(p.join(temp.folder.path, splatWorkFolderName('d' * 40)))..createSync(recursive: true);
+    touchAiWorkFolder(young);
+    expect(await deleteOldSplatWork([temp, shared]), 0);
+  });
+
+  test('at the start of the app, in an isolate: the folders a day old go, the young ones stay (lot SPF2)', () async {
+    final temp = SplatWorkRoot(Directory(p.join(folder.path, 'temp', 'immuch360-ai')));
+    final old = Directory(p.join(temp.folder.path, splatWorkFolderName('a' * 40)))..createSync(recursive: true);
+    final young = Directory(p.join(temp.folder.path, splatWorkFolderName('b' * 40)))..createSync(recursive: true);
+    final later = DateTime.now().add(const Duration(hours: 25));
+    touchAiWorkFolder(young, at: later.subtract(const Duration(hours: 1)));
+
+    await cleanUpSplatWorkAtStart(roots: () => [temp], now: later);
+    expect(old.existsSync(), isFalse);
+    expect(young.existsSync(), isTrue);
+    // A root that cannot be read never fails it
+    await cleanUpSplatWorkAtStart(roots: () => throw const FileSystemException('gone'));
+  });
+
   test('a work folder that cannot be deleted now stays for the next time, the others of its root go', () async {
     final temp = SplatWorkRoot(Directory(p.join(folder.path, 'temp')));
     final later = DateTime.now().add(const Duration(hours: 25));

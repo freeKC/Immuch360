@@ -441,6 +441,30 @@ void main() {
       },
     );
 
+    test('too few images placed: not among the failures Retry failed runs again, which would place the same ones; a '
+        'scene that stalled is (lot SPF2)', () async {
+      var runs = 0;
+      final engine = _ScriptedSplat()
+        ..result = (job) => switch (++runs) {
+          1 => const ImmersiveResult.failed(ImmersiveErrorCode.notEnoughOverlap, message: '40/139'),
+          2 => const ImmersiveResult.failed(ImmersiveErrorCode.posesStalled, message: 'COLMAP (mapper) wrote nothing'),
+          _ => _ScriptedSplat._made(job),
+        };
+      container = containerWith(engine);
+      final few = addSplat(photos(3));
+      await until((state) => job(few).state.isEnded);
+      expect(job(few).retryGivesTheSame, isTrue);
+      expect(container.read(conversionQueueProvider).hasFailed, isFalse, reason: 'no Retry failed to offer');
+      final stalled = addSplat(photos(4));
+      await until((state) => job(stalled).state.isEnded);
+      expect(job(stalled).retryGivesTheSame, isFalse);
+      expect(container.read(conversionQueueProvider).hasFailed, isTrue);
+      queue().retryFailed();
+      await until((state) => job(stalled).state == ConversionState.done);
+      expect(job(few).state, ConversionState.failed);
+      expect(engine.specs, hasLength(3));
+    });
+
     test('Retry runs the same selection again', () async {
       var runs = 0;
       final engine = _ScriptedSplat()

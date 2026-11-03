@@ -21,14 +21,17 @@
 // Cancel stops the program under way within a second (SidecarRun looks every 200 ms; the preparation of the photos
 // between two photos, the frames between two candidates); the copy, under a second, ends before the job does.
 //
-// Retry from the poses: a job that failed or was cancelled once COLMAP had placed its photos keeps its work folder a
-// day after its last use (managed_process.dart). A job of the same key finds it, reads each member again for its sum
+// Retry from the poses: a job that failed or was cancelled once COLMAP had placed its photos keeps its work folder
+// until the next scene or a day after its last use (managed_process.dart; lot SPF2: the next scene deletes the folders
+// of the other scenes). A job of the same key finds it, reads each member again for its sum
 // (a photo of this computer is hashed in place; an original of the server gives the checksum of its asset,
 // SplatMemberSum, or is downloaded and released at once), and when
 // every sum is the one kept, starts again at the training, from the model COLMAP aligned. Retry from the images (lot
-// SPF1): a job that failed in COLMAP, once its images were prepared, keeps its work folder a day too, with its images,
+// SPF1): a job that failed in COLMAP, once its images were prepared, keeps its work folder as long, with its images,
 // the database and the models of COLMAP, which a diagnosis reads (FreeKC's frames of 3 November, 68 of 139 placed,
 // went with the failure); a job of the same key whose sums are the ones kept starts again at COLMAP, from those images.
+// After too few images placed the panel offers no Retry (the mapper places the same images the same way): the folder
+// is said kept for a diagnosis.
 // Otherwise the folder is emptied and the job starts from the photos. The folder goes once the queue saved the file the
 // job made (ImmersiveResult.afterSaved: a destination that refuses it, or a Cancel during the copy, leaves it for
 // Retry), and at once after a failure before the images were prepared, after a full disk, and after a cancel before
@@ -108,9 +111,13 @@ bool splatWorkKept({required bool done, required bool placed, required bool prep
     placed ||
     (prepared && failure != null && failure != ImmersiveErrorCode.cancelled && failure != ImmersiveErrorCode.diskFull);
 
-/// What the log of a failure says of a work folder kept
-const _keptSaid =
-    'The work folder is kept a day, for Retry and for a diagnosis (its images, the database and the models of COLMAP)';
+/// What the log of a failure says of a work folder kept: for Retry and a diagnosis, or for a diagnosis alone when a
+/// Retry would place the same images the same way (too few placed)
+String _keptSaid(ImmersiveErrorCode code) => code == ImmersiveErrorCode.notEnoughOverlap
+    ? 'The work folder is kept until the next scene or a day, for a diagnosis (its images, the database and the models '
+          'of COLMAP; a Retry of the same images would place the same ones)'
+    : 'The work folder is kept until the next scene or a day, for Retry and for a diagnosis (its images, the database '
+          'and the models of COLMAP)';
 
 /// What a job found, as splat.json keeps it: its images once prepared, and those COLMAP [placed] once it did
 class _Found {
@@ -244,7 +251,8 @@ class SplatEngine implements ImmersiveEngine {
     try {
       report(ImmersiveStage.reading, 0);
       final key = splatJobKey(job);
-      await deleteOldSplatWork(roots);
+      // The folders other scenes left go now, those a day old too: a failure's is kept until the next scene
+      await deleteOldSplatWork(roots, keep: splatWorkFolderName(key));
       final root = _pickRoot(roots);
       if (root == null) {
         throw const BackendException(
@@ -452,7 +460,7 @@ class SplatEngine implements ImmersiveEngine {
             header:
                 'Splat scene ${job.id} (${job.lead.name}, $what, ${job.settings.subject.name}) failed: ${code.name}: '
                 '$message\nThe last step the panel showed: ${stage.name}\n'
-                '${keep ? _keptSaid : 'The work folder is deleted'}',
+                '${keep ? _keptSaid(code) : 'The work folder is deleted'}',
           );
           if (kept != null) {
             _log.info('The logs of the programs of splat scene ${job.id} are kept in ${kept.path}');
@@ -465,8 +473,10 @@ class SplatEngine implements ImmersiveEngine {
           why: done
               ? 'until the file is saved'
               : placed
-              ? 'a day, for Retry from its poses'
-              : 'a day, for Retry from its images and a diagnosis',
+              ? 'until the next scene or a day, for Retry from its poses'
+              : failure?.$1 == ImmersiveErrorCode.notEnoughOverlap
+              ? 'until the next scene or a day, for a diagnosis'
+              : 'until the next scene or a day, for Retry from its images and a diagnosis',
         );
       }
     }

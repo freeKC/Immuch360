@@ -204,54 +204,67 @@ String conversionStateText(Translations t, ConversionJob job) => switch (job.pha
 /// Why a job failed, in words; the message of the system or of the model where the text has room for it. A job of the
 /// graphics card the gate turned away carries the name of the reason (AiGateReason) as its message. The [kind] of the
 /// job says what the memory was short for: placing the photos of a splat scene (COLMAP), or a photo.
-String conversionFailureText(Translations t, ImmersiveErrorCode code, String? message, {ConversionKind? kind}) =>
-    switch (code) {
-      ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
-      ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
-      ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
-      ImmersiveErrorCode.outOfMemory when kind == ConversionKind.splatScene => t.ai_immersive_failed_splat_memory,
-      ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
-      ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
-      ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
-      ImmersiveErrorCode.diskFull => t.ai_immersive_failed_disk_full,
-      ImmersiveErrorCode.readOnly => t.ai_immersive_failed_read_only,
-      ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
-      ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
-      ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
-      ImmersiveErrorCode.gpuUnavailable => switch (AiGateReason.values.asNameMap()[message]) {
-        AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
-        AiGateReason.gpuNone => t.ai_immersive_gpu_none,
-        AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
-        AiGateReason.splatGpuIntegrated => t.ai_immersive_splat_gpu_integrated,
-        AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
-        // Brush refused the kernels of the card, or took another one
-        _ when kind == ConversionKind.splatScene => t.ai_immersive_splat_gpu_unsupported,
-        _ => t.ai_immersive_failed_gpu_unavailable,
-      },
-      ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
-      ImmersiveErrorCode.gpuOutOfMemory => t.ai_immersive_failed_gpu_memory,
-      ImmersiveErrorCode.generatorFailed => t.ai_immersive_failed_generator(message: message ?? ''),
-      ImmersiveErrorCode.generatorStalled => t.ai_immersive_failed_generator_stalled,
-      ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
-      ImmersiveErrorCode.tooLarge => t.ai_immersive_failed_too_large,
-      ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
-      ImmersiveErrorCode.tooFewImages => switch (splatCountsOf(message)) {
-        (final usable, final all)? => t.ai_immersive_failed_splat_too_few(
-          count: usable,
-          total: all,
-          min: SplatV1.minImages,
-        ),
-        null => t.ai_immersive_splat_too_few(min: SplatV1.minImages, good: SplatV1.fewImages, max: SplatV1.maxPhotos),
-      },
-      ImmersiveErrorCode.posesFailed => t.ai_immersive_failed_splat_poses(message: message ?? ''),
-      ImmersiveErrorCode.posesStalled => t.ai_immersive_failed_splat_poses_stalled,
-      ImmersiveErrorCode.notEnoughOverlap => switch (splatCountsOf(message)) {
-        (final placed, final all)? when placed > 0 => t.ai_immersive_failed_splat_overlap(placed: placed, total: all),
-        _ => t.ai_immersive_failed_splat_no_match,
-      },
-      ImmersiveErrorCode.trainingFailed => t.ai_immersive_failed_splat_training(message: message ?? ''),
-      ImmersiveErrorCode.trainingStalled => t.ai_immersive_failed_splat_training_stalled,
-    };
+String conversionFailureText(
+  Translations t,
+  ImmersiveErrorCode code,
+  String? message, {
+  ConversionKind? kind,
+  bool fromVideo = false,
+  SplatSubject? subject,
+}) => switch (code) {
+  ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
+  ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
+  ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
+  ImmersiveErrorCode.outOfMemory when kind == ConversionKind.splatScene => t.ai_immersive_failed_splat_memory,
+  ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
+  ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
+  ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
+  ImmersiveErrorCode.diskFull => t.ai_immersive_failed_disk_full,
+  ImmersiveErrorCode.readOnly => t.ai_immersive_failed_read_only,
+  ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
+  ImmersiveErrorCode.modelFailed => t.ai_immersive_failed_model(message: message ?? ''),
+  ImmersiveErrorCode.componentsMissing => t.ai_immersive_unavailable_missing,
+  ImmersiveErrorCode.gpuUnavailable => switch (AiGateReason.values.asNameMap()[message]) {
+    AiGateReason.gpuNoAnswer => t.ai_immersive_gpu_no_answer,
+    AiGateReason.gpuNone => t.ai_immersive_gpu_none,
+    AiGateReason.gpuIntegrated => t.ai_immersive_gpu_integrated,
+    AiGateReason.splatGpuIntegrated => t.ai_immersive_splat_gpu_integrated,
+    AiGateReason.notYetOnMac => t.ai_immersive_gpu_not_on_mac,
+    // Brush refused the kernels of the card, or took another one
+    _ when kind == ConversionKind.splatScene => t.ai_immersive_splat_gpu_unsupported,
+    _ => t.ai_immersive_failed_gpu_unavailable,
+  },
+  ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
+  ImmersiveErrorCode.gpuOutOfMemory => t.ai_immersive_failed_gpu_memory,
+  ImmersiveErrorCode.generatorFailed => t.ai_immersive_failed_generator(message: message ?? ''),
+  ImmersiveErrorCode.generatorStalled => t.ai_immersive_failed_generator_stalled,
+  ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
+  ImmersiveErrorCode.tooLarge => t.ai_immersive_failed_too_large,
+  ImmersiveErrorCode.notEnoughRelief => t.ai_immersive_failed_flat_panorama,
+  ImmersiveErrorCode.tooFewImages => switch (splatCountsOf(message)) {
+    (final usable, final all)? => t.ai_immersive_failed_splat_too_few(
+      count: usable,
+      total: all,
+      min: SplatV1.minImages,
+    ),
+    null => t.ai_immersive_splat_too_few(min: SplatV1.minImages, good: SplatV1.fewImages, max: SplatV1.maxPhotos),
+  },
+  ImmersiveErrorCode.posesFailed => t.ai_immersive_failed_splat_poses(message: message ?? ''),
+  ImmersiveErrorCode.posesStalled => t.ai_immersive_failed_splat_poses_stalled,
+  // A Retry of the same images would place the same ones (the mapper gave 69 and 69, 129 and 129, diagnosis of 3
+  // November): what to film or to add instead, for a video of an object as the diagnosis of FreeKC's repeater
+  // found it (lot SPF2)
+  ImmersiveErrorCode.notEnoughOverlap => switch (splatCountsOf(message)) {
+    (final placed, final all)? when placed > 0 => switch ((fromVideo, subject)) {
+      (true, SplatSubject.object) => t.ai_immersive_failed_splat_overlap_video_object(placed: placed, total: all),
+      (true, _) => t.ai_immersive_failed_splat_overlap_video_place(placed: placed, total: all),
+      _ => t.ai_immersive_failed_splat_overlap_photos(placed: placed, total: all),
+    },
+    _ => t.ai_immersive_failed_splat_no_match,
+  },
+  ImmersiveErrorCode.trainingFailed => t.ai_immersive_failed_splat_training(message: message ?? ''),
+  ImmersiveErrorCode.trainingStalled => t.ai_immersive_failed_splat_training_stalled,
+};
 
 /// What a job makes, in the words of the panel: "2D to 3D SBS", "2D to 3D scene", "2D to 360° panorama", "360° to 3D
 /// 360°", "Photos to splat scene", or "Video to splat scene" for a splat scene of a video ([fromVideo],
@@ -637,13 +650,23 @@ class _JobRowState extends ConsumerState<_JobRow> {
         Text(conversionSkipText(t, reason, name: job.target?.fileName), style: secondary),
       if (job.state == ConversionState.failed && job.error != null)
         Text(
-          conversionFailureText(t, job.error!, job.message, kind: job.kind),
+          conversionFailureText(
+            t,
+            job.error!,
+            job.message,
+            kind: job.kind,
+            fromVideo: job.fromVideo,
+            subject: job.splat?.settings.subject,
+          ),
           style: TextStyle(color: colors.error),
         ),
-      // What a failure of a splat scene left for Retry and for a diagnosis, where "Save logs to a file" names it too
+      // What a failure of a splat scene left for Retry and for a diagnosis, where "Save logs to a file" names it too,
+      // until the next scene or a day; for a diagnosis only when a Retry would place the same images again
       if (job.state == ConversionState.failed && job.keptFolder != null)
         SelectableText(
-          t.ai_immersive_splat_work_kept(folder: job.keptFolder!),
+          job.error == ImmersiveErrorCode.notEnoughOverlap
+              ? t.ai_immersive_splat_work_kept_diagnosis(folder: job.keptFolder!)
+              : t.ai_immersive_splat_work_kept_retry(folder: job.keptFolder!),
           key: const Key('ai_job_splat_work_kept'),
           style: secondary,
         ),
@@ -707,7 +730,10 @@ class _JobRowState extends ConsumerState<_JobRow> {
         ),
       if (!job.state.isEnded)
         TextButton(key: const Key('ai_job_cancel'), onPressed: () => notifier.cancel(job.id), child: Text(t.cancel)),
-      if (job.target != null && (job.state == ConversionState.failed || job.state == ConversionState.cancelled))
+      // Not for a splat scene of too few images placed: the same images would be placed the same way
+      if (job.target != null &&
+          (job.state == ConversionState.failed || job.state == ConversionState.cancelled) &&
+          !job.retryGivesTheSame)
         TextButton(
           key: const Key('ai_job_retry'),
           onPressed: () => notifier.retry(job.id),
@@ -852,6 +878,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
           key: const Key('ai_job_splat_partial'),
           style: secondary,
         ),
+      // An object with no plane found under it keeps the upright of COLMAP, which may leave it on its side (lot SPF2)
+      if (details.subject == SplatSubject.object && details.upright == SplatUpright.imageOrientation)
+        Text(t.ai_immersive_splat_upright_images, key: const Key('ai_job_splat_upright'), style: secondary),
       if (!details.fromVideo && details.blurred > 0)
         Text(
           t.ai_immersive_splat_left_out(count: details.blurred, reason: t.ai_immersive_splat_left_out_blurred),

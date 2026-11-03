@@ -535,8 +535,12 @@ class ConversionJob {
   /// in 3D: the scene may be incomplete" while it trains
   final SplatPlaced? placed;
 
-  /// The work folder a failure left for a day (ImmersiveResult.keptFolder), named in the panel
+  /// The work folder a failure left until the next scene or a day (ImmersiveResult.keptFolder), named in the panel
   final String? keptFolder;
+
+  /// Whether a Retry would end the same way: a splat scene of too few images placed, whose images the mapper places
+  /// the same way every time (69 and 69, 129 and 129 in the diagnosis of 3 November); the panel offers none (lot SPF2)
+  bool get retryGivesTheSame => kind == ConversionKind.splatScene && error == ImmersiveErrorCode.notEnoughOverlap;
 
   ConversionPhase get phase => state.phase;
 

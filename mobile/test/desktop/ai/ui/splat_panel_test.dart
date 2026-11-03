@@ -81,6 +81,7 @@ ConversionJob _splat(
   String? message,
   SplatPlaced? placed,
   String? keptFolder,
+  SplatSubject subject = SplatSubject.place,
 }) => ConversionJob(
   id: id,
   source: _Named(label),
@@ -99,6 +100,10 @@ ConversionJob _splat(
   message: message,
   placed: placed,
   keptFolder: keptFolder,
+  splat: SplatSelection(
+    members: const [],
+    settings: SplatSettings(subject: subject),
+  ),
 );
 
 void main() {
@@ -390,19 +395,11 @@ void main() {
     expect(inRow('conversion-11', find.byKey(const Key('ai_job_splat_incomplete'))), findsNothing);
   });
 
-  testWidgets('a failure of COLMAP: its refusal, and the work folder kept a day named; none after a Cancel', (
-    tester,
-  ) async {
+  testWidgets('a failure of COLMAP: its refusal, and the work folder kept until the next scene named; none after a '
+      'Cancel', (tester) async {
     const kept = r'C:\Users\freek\AppData\Local\Temp\immuch360-ai\splat-e263f1e4fcd3d331';
     await pumpPanel(tester, [
-      _splat(
-        'conversion-12',
-        state: ConversionState.failed,
-        fromVideo: true,
-        error: ImmersiveErrorCode.notEnoughOverlap,
-        message: '40/139',
-        keptFolder: kept,
-      ),
+      _splat('conversion-12', state: ConversionState.failed, error: ImmersiveErrorCode.posesStalled, keptFolder: kept),
       _splat('conversion-13', state: ConversionState.failed, error: ImmersiveErrorCode.tooFewImages, message: '12/24'),
     ]);
 
@@ -410,21 +407,117 @@ void main() {
       inRow(
         'conversion-12',
         find.text(
-          'Only 40 of 139 images could be placed in 3D. The photos must overlap: take them a step apart, each one '
-          'seeing most of what the previous one saw, and avoid plain walls, windows and mirrors.',
+          'The prepared images and the work files are kept until the next scene or for 24 h, for Retry and for a '
+          'diagnosis: $kept',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-12', find.byKey(const Key('ai_job_retry'))), findsOneWidget);
+    expect(inRow('conversion-13', find.byKey(const Key('ai_job_splat_work_kept'))), findsNothing);
+  });
+
+  testWidgets('too few images placed (lot SPF2): no Retry, which would place the same ones; what to do instead, in '
+      'the words of photos, of a video of an object, of a video of a place; the folder kept for a diagnosis', (
+    tester,
+  ) async {
+    const kept = r'C:\Users\freek\AppData\Local\Temp\immuch360-ai\splat-e263f1e4fcd3d331';
+    await pumpPanel(tester, [
+      _splat(
+        'conversion-14',
+        state: ConversionState.failed,
+        fromVideo: true,
+        subject: SplatSubject.object,
+        error: ImmersiveErrorCode.notEnoughOverlap,
+        message: '40/139',
+        keptFolder: kept,
+      ),
+      _splat(
+        'conversion-15',
+        state: ConversionState.failed,
+        fromVideo: true,
+        error: ImmersiveErrorCode.notEnoughOverlap,
+        message: '30/140',
+      ),
+      _splat(
+        'conversion-16',
+        state: ConversionState.failed,
+        error: ImmersiveErrorCode.notEnoughOverlap,
+        message: '20/96',
+      ),
+    ]);
+
+    expect(
+      inRow(
+        'conversion-14',
+        find.text(
+          'Only 40 of 139 frames could be placed in 3D, and a Retry would place the same ones. Film the object again '
+          'from 20 to 30 cm away at least, so that it stays sharp, set a plain object on a surface with a pattern (a '
+          'newspaper, a printed cloth), and walk around it several times, at two heights.',
         ),
       ),
       findsOneWidget,
     );
     expect(
       inRow(
-        'conversion-12',
-        find.text('The prepared images and the work files are kept for a day, for Retry and for a diagnosis: $kept'),
+        'conversion-15',
+        find.text(
+          'Only 30 of 140 frames could be placed in 3D, and a Retry would place the same ones. Film the place again, '
+          'walking slowly, looking across it rather than at plain walls, windows and mirrors.',
+        ),
       ),
       findsOneWidget,
     );
-    expect(inRow('conversion-12', find.byKey(const Key('ai_job_retry'))), findsOneWidget);
-    expect(inRow('conversion-13', find.byKey(const Key('ai_job_splat_work_kept'))), findsNothing);
+    expect(
+      inRow(
+        'conversion-16',
+        find.text(
+          'Only 20 of 96 photos could be placed in 3D, and a Retry would place the same ones. Add photos: take them a '
+          'step apart, each one seeing most of what the previous one saw, and avoid plain walls, windows and mirrors.',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      inRow(
+        'conversion-14',
+        find.text(
+          'The prepared images and the work files are kept until the next scene or for 24 h, for a diagnosis: $kept',
+        ),
+      ),
+      findsOneWidget,
+    );
+    for (final id in ['conversion-14', 'conversion-15', 'conversion-16']) {
+      expect(inRow(id, find.byKey(const Key('ai_job_retry'))), findsNothing, reason: id);
+    }
+  });
+
+  testWidgets('an object with nothing found under it: said that it may lie tilted; nothing for an object set upright, '
+      'nor for a place (lot SPF2)', (tester) async {
+    SplatResultDetails details(SplatSubject subject, SplatUpright upright) => SplatResultDetails(
+      gaussians: 129325,
+      images: 139,
+      placed: 129,
+      subject: subject,
+      scale: 0.53,
+      fromVideo: true,
+      upright: upright,
+    );
+    await pumpPanel(tester, [
+      _splat('conversion-17', fromVideo: true, details: details(SplatSubject.object, SplatUpright.imageOrientation)),
+      _splat('conversion-18', fromVideo: true, details: details(SplatSubject.object, SplatUpright.supportPlane)),
+      _splat('conversion-19', fromVideo: true, details: details(SplatSubject.place, SplatUpright.imageOrientation)),
+    ]);
+
+    expect(
+      inRow(
+        'conversion-17',
+        find.text('No surface was found under the object: it is set upright as the images had it, and may lie tilted.'),
+      ),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-18', find.byKey(const Key('ai_job_splat_upright'))), findsNothing);
+    expect(inRow('conversion-19', find.byKey(const Key('ai_job_splat_upright'))), findsNothing);
   });
 
   testWidgets('the frames of a video are matched in blocks, as photos are', (tester) async {

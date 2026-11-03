@@ -279,7 +279,8 @@ class ConversionQueueState {
   ConversionJob? get splatting =>
       jobs.where((job) => job.kind == ConversionKind.splatScene && job.state.isActive).firstOrNull;
 
-  bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed);
+  /// A job failed that a Retry may mend: not a splat scene of too few images placed, which would place the same ones
+  bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed && !job.retryGivesTheSame);
 
   bool get hasEnded => jobs.any((job) => job.state.isEnded);
 
@@ -489,7 +490,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     state = ConversionQueueState(
       jobs: _restarted({
         for (final job in state.jobs)
-          if (job.state == ConversionState.failed) job.id,
+          if (job.state == ConversionState.failed && !job.retryGivesTheSame) job.id,
       }),
     );
     _pump();
