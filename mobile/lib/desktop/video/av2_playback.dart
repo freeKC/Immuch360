@@ -514,9 +514,14 @@ String? _mpvGamma(int code) => const {
 
 String? _mpvMatrix(int code) => const {1: 'bt.709', 5: 'bt.601', 6: 'bt.601', 9: 'bt.2020-ncl', 10: 'bt.2020-cl'}[code];
 
+/// The video mpv waits for after a stall until the speed of the decoder is known: its own second, not the 5 s of a
+/// streamed video (DesktopPlayerOptions.streamedResumeSeconds), a decoder sending its pictures steadily where a network
+/// sends in bursts; the controller of the player then follows the speed measured (decoderResumeWaitMs)
+const av2ResumeWaitSeconds = 1;
+
 /// The options mpv opens the companion's y4m with, beyond those of a streamed video: the y4m demuxer without a probe,
-/// the cache of [av2CacheBytes], and the colours of the stream, which a y4m does not carry, set by the format filter
-/// when the stream describes them
+/// the cache of [av2CacheBytes], the wait of [av2ResumeWaitSeconds] after a stall, and the colours of the stream, which
+/// a y4m does not carry, set by the format filter when the stream describes them
 Map<String, String> av2MpvOptions(Y4mLayout layout, Av2Colour? colour) {
   final filter = <String>[];
   if (colour != null) {
@@ -536,6 +541,7 @@ Map<String, String> av2MpvOptions(Y4mLayout layout, Av2Colour? colour) {
   return {
     'demuxer-lavf-format': 'yuv4mpegpipe',
     'demuxer-max-bytes': '${av2CacheBytes(layout)}',
+    'cache-pause-wait': '$av2ResumeWaitSeconds',
     if (filter.isNotEmpty) 'vf': 'format=${filter.join(':')}',
   };
 }

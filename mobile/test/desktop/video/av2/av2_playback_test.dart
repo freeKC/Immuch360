@@ -258,14 +258,20 @@ void main() {
       expect(() => Av2Probe.fromJson(const {'error': 'x'}), throwsFormatException);
     });
 
-    test('mpv reads the y4m without a probe, with a cache of a second at least, up to 512 MiB, and its colours', () {
+    test('mpv reads the y4m without a probe, with a cache of a second at least, up to 512 MiB, its colours, and waits '
+        'a second after a stall', () {
       final hd = Y4mLayout(width: 1920, height: 1080, bits: 8, fpsNumerator: 30, fpsDenominator: 1, frames: 151);
       final uhd10 = Y4mLayout(width: 4096, height: 2160, bits: 10, fpsNumerator: 24, fpsDenominator: 1, frames: 51);
       final uhd8 = Y4mLayout(width: 3840, height: 2160, bits: 8, fpsNumerator: 30, fpsDenominator: 1, frames: 60);
       expect(av2CacheBytes(hd), 256 * 1024 * 1024, reason: '86 pictures, 2.9 s');
       expect(av2CacheBytes(uhd8), uhd8.recordBytes * 30, reason: '256 MiB hold 21 pictures: a second asked');
       expect(av2CacheBytes(uhd10), 512 * 1024 * 1024, reason: 'a second would be 637 MB');
-      expect(av2MpvOptions(hd, null), {'demuxer-lavf-format': 'yuv4mpegpipe', 'demuxer-max-bytes': '268435456'});
+      expect(av2MpvOptions(hd, null), {
+        'demuxer-lavf-format': 'yuv4mpegpipe',
+        'demuxer-max-bytes': '268435456',
+        // A second of video after a stall until the decoder's speed is known, mpv's own, not the 5 s of a network
+        'cache-pause-wait': '1',
+      });
       expect(
         av2MpvOptions(hd, (primaries: 1, transfer: 1, matrix: 1))['vf'],
         'format=colormatrix=bt.709:primaries=bt.709:gamma=bt.1886',

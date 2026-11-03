@@ -126,21 +126,27 @@ void main() {
           expect(engine.resumeWaits, isEmpty, reason: 'nothing measured yet');
 
           // 7 of the 24 frames a second (cosmos 4K in 10 bits on ai1): mpv waits for 42 s of video after a stall, at
-          // most 30 (60 s x (1 - 0.3))
+          // most 30 (60 s x (1 - 0.3)), as for a link: fewer and longer pauses
           decoding = (fps: 7.2, needed: 24, failure: null);
           async.elapse(const Duration(milliseconds: 500));
           link = video.onLinkChanged.value!;
           expect(link.ratio, closeTo(0.3, 0.001));
           expect(engine.resumeWaits.last, const Duration(seconds: 30));
-          // Twice the speed of the video: 2 s after a stall, as a fast link
+          // Twice the speed of the video: a decoder that keeps up stalls only while it starts again after a seek or
+          // a loop, a second of video is enough (mpv's own wait; a link's would be 2 s, 1.6 s still at 1.24x)
           decoding = (fps: 48, needed: 24, failure: null);
           async.elapse(const Duration(milliseconds: 500));
-          expect(engine.resumeWaits.last, const Duration(seconds: 2));
-          // At speed x2 the same decoder is just fast enough: 4 s after a stall
+          expect(engine.resumeWaits.last, const Duration(seconds: 1));
+          expect(video.onLinkChanged.value!.targetMs, 1000, reason: 'the start waits by the rule of a link');
+          // At speed x2 the same decoder is just fast enough: still a second (a link's would be 4 s)
           unawaited(video.setPlaybackSpeed(2));
           async.elapse(const Duration(milliseconds: 500));
           expect(video.onLinkChanged.value!.neededFramesPerSecond, 48);
-          expect(engine.resumeWaits.last, const Duration(seconds: 4));
+          expect(engine.resumeWaits.last, const Duration(seconds: 1));
+          // Below the speed of the video at x2 (0.9x): the rule of a link again, 6 s
+          decoding = (fps: 43.2, needed: 24, failure: null);
+          async.elapse(const Duration(milliseconds: 500));
+          expect(engine.resumeWaits.last, const Duration(seconds: 6));
 
           unawaited(video.stop());
           async.flushMicrotasks();

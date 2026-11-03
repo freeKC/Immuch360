@@ -56,6 +56,13 @@ typedef DesktopVideoDecodingOf = ({double? fps, double needed, String? failure})
 /// Lets go of what serves [resource] (the AV2 companion), once no player of the controller opens it again
 typedef DesktopVideoRelease = Future<void> Function(String resource);
 
+/// The video mpv waits for after a stall when a program of the app decodes it (the AV2 companion), [ratio] being the
+/// frames it decodes a second against those the video needs: a decoder that keeps up stalls only while it starts
+/// again after a seek or a loop (from the access point before the picture, nothing in the cache yet), so a second is
+/// enough, mpv's own wait, where a link's rule would wait 2 to 4 s (1.6 to 3.3 s at 1.2x; plan of the AV2 videos,
+/// AD2's m2); one that does not keep up waits by the rule of a link, fewer and longer pauses
+int decoderResumeWaitMs(double? ratio) => ratio == null || ratio >= 1 ? 1000 : linkTargetMs(ratio, rebuffering: true);
+
 /// The player that played or loaded last: the audio track button of the controls follows it. One video plays at a
 /// time on the computers, the viewer loading only the page on screen.
 final activeDesktopVideo = ValueNotifier<MediaKitVideoPlayerController?>(null);
@@ -316,6 +323,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     }
     _unloaded = true;
     _buffering.value = false;
+    _stallWatch = null;
     onPlaybackPositionChanged.value = 0;
     onPlaybackStatusChanged.value = PlaybackStatus.stopped;
   }
@@ -613,6 +621,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _engine = null;
     _videoController.value = null;
     _buffering.value = false;
+    _stallWatch = null;
   }
 
   void _onEvent(PlayerEvent event) {
@@ -738,7 +747,19 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     onPlaybackEnded.notifyListeners();
   }
 
-  void _onBuffering() => _buffering.value = _engine?.buffering.value ?? false;
+  /// From the start of a stall (mpv waiting for its cache once the video played), for the log
+  Stopwatch? _stallWatch;
+
+  void _onBuffering() {
+    final buffering = _engine?.buffering.value ?? false;
+    _buffering.value = buffering;
+    if (buffering && _ready && _stallWatch == null) {
+      _stallWatch = Stopwatch()..start();
+    } else if (!buffering && _stallWatch != null) {
+      _log.fine('A stall of ${_stallWatch!.elapsedMilliseconds} ms');
+      _stallWatch = null;
+    }
+  }
 
   void _onAudioTracks() {
     final tracks = _engine?.audioTracks.value ?? const [];
@@ -833,7 +854,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   }
 
   /// The link of a video a program of the app decodes (the AV2 companion): its frames a second against those the
-  /// video needs at its speed, the same rule as a network's for the wait (plan of the AV2 videos, section 1.4)
+  /// video needs at its speed, the rule of a network for the start, [decoderResumeWaitMs] after a stall (plan of the
+  /// AV2 videos, section 1.4)
   void _tellDecoder(PlaybackEngine engine, ({double? fps, double needed, String? failure}) decoding) {
     final failure = decoding.failure;
     if (failure != null) {
@@ -851,12 +873,12 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       waiting: waiting,
       rebuffering: stalled,
       aheadMs: aheadMs,
-      targetMs: waiting ? linkTargetMs(ratio, rebuffering: stalled) : 0,
+      targetMs: waiting ? (stalled ? decoderResumeWaitMs(ratio) : linkTargetMs(ratio, rebuffering: false)) : 0,
       loading: waiting || aheadMs < (DesktopPlayerOptions.streamedCacheSeconds - 5) * 1000,
       framesPerSecond: fps,
       neededFramesPerSecond: needed,
     );
-    final resumeMs = linkTargetMs(ratio, rebuffering: true);
+    final resumeMs = decoderResumeWaitMs(ratio);
     if (ratio != null && resumeMs != _resumeWaitMs) {
       _resumeWaitMs = resumeMs;
       unawaited(_onEngine(engine, () => engine.setResumeWait(Duration(milliseconds: resumeMs))));
