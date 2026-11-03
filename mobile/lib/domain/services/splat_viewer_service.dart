@@ -308,12 +308,15 @@ class SplatViewerService {
   }
 
   /// The date and the fingerprint of [source] for the key of its reduced copy: the date of a file of this device, or
-  /// the one its share gives (null when it gives none), and splatFingerprint of its content
+  /// the one its share gives (null when it gives none), and splatFingerprint of its content. A file in the app's own
+  /// cache folder is a copy the app made (a splat picked on Android is copied again at each pick): its date is the
+  /// time of that copy, not a change of the splat, so it is left out and the fingerprint and the size tell the
+  /// versions apart (second review of 3 November 2026)
   Future<(DateTime?, String)> _identityOf(SplatViewerSource source, int fileBytes) async {
     final sourceId = source.sourceId;
     if (sourceId == null) {
       final file = File(source.path);
-      final modified = file.statSync().modified;
+      final modified = await _cache.isAppCopy(source.path) ? null : file.statSync().modified;
       final handle = await file.open();
       try {
         final fingerprint = await splatFingerprint((offset, length) async {

@@ -451,6 +451,64 @@ void main() {
     expect(host.opened, isNull);
   });
 
+  test('a splat picked again on Android keeps its reduced copy; a file of the device written again does not', () async {
+    // Second review of 3 November 2026: Android copies every pick again into cache/picked-splat, emptied first, so
+    // the copy's date is the time of the pick, and the same splat picked twice was reduced twice into two copies
+    var reductions = 0;
+    Future<void> show(File file) async {
+      final host = _PageHost([
+        {'type': 'close'},
+      ]);
+      await SplatViewerService(
+        bridge: bridge,
+        host: host,
+        loadPage: () async => page,
+        uprights: uprights,
+        cache: cache,
+        fileSystem: (sourceId) => throw UnimplementedError(),
+        shareUrl: (sourceId, path) => throw UnimplementedError(),
+        reduce: ({required source, required head, required keep, required out, progress, cancel}) {
+          reductions++;
+          return reduceForTest(source: source, head: head, keep: keep, out: out, progress: progress);
+        },
+      ).show(
+        source: SplatViewerSource.local(file.path),
+        head: _head(file.readAsBytesSync()),
+        fileBytes: file.lengthSync(),
+        cap: 10,
+        look: look,
+      );
+    }
+
+    List<String> reducedCopies() => Directory(
+      '${folder.path}/cache',
+    ).listSync().map((entry) => entry.uri.pathSegments.last).where((name) => name.startsWith('reduced-')).toList();
+
+    // In the app's cache folder, where the reduced copies' folder is: the pick, then the same file picked again
+    final picked = Directory('${folder.path}/picked-splat')..createSync();
+    final copy = File('${picked.path}/point_cloud.ply')..writeAsBytesSync(ranked);
+    await show(copy);
+    copy
+      ..deleteSync()
+      ..writeAsBytesSync(ranked)
+      ..setLastModifiedSync(DateTime.now().add(const Duration(minutes: 1)));
+    await show(copy);
+    expect(reductions, 1, reason: 'the second pick of the same bytes keeps the reduced copy');
+    expect(reducedCopies(), hasLength(1));
+
+    // Elsewhere on the device the date still counts: the file written again later is another version
+    final elsewhere = Directory.systemTemp.createTempSync('splat_elsewhere');
+    addTearDown(() => elsewhere.deleteSync(recursive: true));
+    final own = File('${elsewhere.path}/point_cloud.ply')..writeAsBytesSync(ranked);
+    await show(own);
+    own
+      ..writeAsBytesSync(ranked)
+      ..setLastModifiedSync(DateTime.now().add(const Duration(minutes: 1)));
+    await show(own);
+    expect(reductions, 3);
+    expect(reducedCopies(), hasLength(3));
+  });
+
   test('the session gives the page the pixel ratio of the device class: 2 on computers', () async {
     final file = File('${folder.path}/axes.spz')..writeAsBytesSync(axes);
     final host = _PageHost([

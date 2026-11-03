@@ -141,6 +141,10 @@ class SplatViewerCache {
     return file;
   }
 
+  /// Whether [path] is in the app's cache folder, the one this folder is in: a file the app copied there (Android
+  /// copies a picked splat to cache/picked-splat at each pick) has the date of its copy, not of its content
+  Future<bool> isAppCopy(String path) async => p.isWithin(p.dirname((await folder()).path), p.absolute(path));
+
   /// A file of the folder for [name], not made yet
   Future<File> fileFor(String name) async => File(p.join((await folder()).path, name));
 
