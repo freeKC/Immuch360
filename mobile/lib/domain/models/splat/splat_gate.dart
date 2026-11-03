@@ -10,7 +10,10 @@
 // decompresses, FreeKC's report of 1 November 2026). The immersive viewer checks again (SplatGate.kt), with the free
 // memory and the heat of the headset.
 
+import 'dart:math' as math;
+
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 
 /// The count of gaussians until a measure in the headset (decision D7 of design-final 2026-10-27)
@@ -47,6 +50,10 @@ enum SplatRefusal {
   /// "Too large for this device (N gaussians)"
   tooLarge,
 
+  /// A computer that shows splats whole (lot SVC): beyond what its memory holds, "Too large for this computer: N
+  /// gaussians, its memory holds about M" (SplatGateVerdict.most)
+  beyondMemory,
+
   /// The splat viewer of the computers, phones and tablets: an SPZ of version 4 above the cap, which only the page
   /// could reduce (lot SV8)
   v4AboveCap,
@@ -64,7 +71,8 @@ enum SplatDeviceClass { quest, phone, computer }
 const splatPhoneGaussians = 150000;
 const splatPhoneLargeGaussians = 500000;
 
-/// Computers show this many whole, Large splats or not
+/// Computers whose graphics chip shares their memory show this many whole, Large splats or not; a dedicated graphics
+/// card, or the setting "Keep every gaussian", shows every gaussian up to splatComputerMostGaussians (lot SVC)
 const splatComputerGaussians = 1000000;
 
 /// The most gaussians a [device] shows whole, the rest reduced away
@@ -78,12 +86,19 @@ int splatViewerCapOf(SplatDeviceClass device, {required bool largeSplats}) => sw
 /// SPZ version and PLY opens as it is under the cap (Spark reads them); above it the strongest gaussians are kept
 /// (splat_reducer.dart) up to 4 million gaussians and 1 GiB, an SPZ of version 4 excepted until the page reduces it.
 /// Harmonics of degree 4 are refused: Spark draws degrees 0 to 3. The headset keeps [splatGateOf].
+///
+/// A computer ([computer], lot SVC) with a dedicated graphics card, or with "Keep every gaussian", shows the splat whole
+/// up to what its memory holds (splatComputerMostGaussians), refused beyond with that number; any other keeps the cap of
+/// [splatComputerGaussians]. The user's [answer] to the page's offer for this file comes first: the count kept, or
+/// every gaussian.
 SplatGateVerdict splatViewerGateOf({
   required SplatProbe probe,
   required String name,
   required int fileBytes,
   required bool largeSplats,
   required SplatDeviceClass device,
+  SplatComputer computer = const SplatComputer(),
+  SplatFrameAnswer? answer,
 }) {
   if (device == SplatDeviceClass.quest) {
     return const SplatGateVerdict.refused(SplatRefusal.notInThisVersion);
@@ -98,7 +113,26 @@ SplatGateVerdict splatViewerGateOf({
   if (head.shDegree > 3) {
     return const SplatGateVerdict.refused(SplatRefusal.degree4);
   }
-  final cap = splatViewerCapOf(device, largeSplats: largeSplats);
+  var cap = splatViewerCapOf(device, largeSplats: largeSplats);
+  if (device == SplatDeviceClass.computer) {
+    final most = splatComputerMostGaussians(
+      computer,
+      fileBytesPerGaussian: head.gaussians > 0 ? fileBytes / head.gaussians : 0,
+    );
+    final keep = answer?.keep;
+    if (keep != null && keep < head.gaussians && !head.isZstd) {
+      // The user chose the reduced copy the page offered: the reduction reads the file from the disk, whatever its size
+      return SplatGateVerdict.open(_requestOf(head, name, fileBytes, math.min(keep, most)));
+    }
+    // A dedicated card or the setting, or the user who chose to keep them all for this file
+    if (computer.showsWhole || answer?.reduces == false) {
+      if (head.gaussians > most) {
+        return SplatGateVerdict.refused(SplatRefusal.beyondMemory, gaussians: head.gaussians, most: most);
+      }
+      return SplatGateVerdict.open(_requestOf(head, name, fileBytes, head.gaussians));
+    }
+    cap = math.min(cap, most);
+  }
   if (head.gaussians > cap) {
     if (head.gaussians > splatMaxReducibleGaussians || fileBytes > splatMaxReducibleBytes) {
       return SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: head.gaussians);
@@ -107,43 +141,66 @@ SplatGateVerdict splatViewerGateOf({
       return SplatGateVerdict.refused(SplatRefusal.v4AboveCap, gaussians: head.gaussians);
     }
   }
-  return SplatGateVerdict.open(
-    GaussianSplatRequest(
-      format: head.format.json,
-      formatVersion: head.formatVersion,
-      gaussians: head.gaussians,
-      shDegree: head.shDegree,
-      fileBytes: fileBytes,
-      maxGaussians: cap,
-      tool: head.tool,
-      name: name,
-    ),
-  );
+  return SplatGateVerdict.open(_requestOf(head, name, fileBytes, cap));
 }
+
+GaussianSplatRequest _requestOf(SplatHead head, String name, int fileBytes, int cap) => GaussianSplatRequest(
+  format: head.format.json,
+  formatVersion: head.formatVersion,
+  gaussians: head.gaussians,
+  shDegree: head.shDegree,
+  fileBytes: fileBytes,
+  maxGaussians: cap,
+  tool: head.tool,
+  name: name,
+);
+
+/// Whether the page of a viewing on a computer watches its first frames and offers a reduced copy when they are slow
+/// (lot SVC): a splat shown whole, above the phones' cap, that the reduction reads (not an SPZ of version 4), and for
+/// which the user did not already choose
+bool splatWatchesFrames({
+  required SplatDeviceClass device,
+  required SplatHead head,
+  required int cap,
+  SplatFrameAnswer? answer,
+}) =>
+    device == SplatDeviceClass.computer &&
+    answer == null &&
+    cap >= head.gaussians &&
+    head.gaussians > splatFrameWatchFloor &&
+    !head.isZstd;
 
 /// What the gate says of a splat: open with the [request] for the viewer, or refused with its [refusal] (and the
 /// [gaussians] of a splat too large)
 class SplatGateVerdict {
-  const SplatGateVerdict.open(GaussianSplatRequest this.request) : refusal = null, gaussians = null;
+  const SplatGateVerdict.open(GaussianSplatRequest this.request) : refusal = null, gaussians = null, most = null;
 
-  const SplatGateVerdict.refused(SplatRefusal this.refusal, {this.gaussians}) : request = null;
+  const SplatGateVerdict.refused(SplatRefusal this.refusal, {this.gaussians, this.most}) : request = null;
 
   final GaussianSplatRequest? request;
   final SplatRefusal? refusal;
   final int? gaussians;
 
+  /// The most gaussians this computer shows whole, for [SplatRefusal.beyondMemory]
+  final int? most;
+
   bool get isOpen => request != null;
 
   @override
   bool operator ==(Object other) =>
-      other is SplatGateVerdict && other.request == request && other.refusal == refusal && other.gaussians == gaussians;
+      other is SplatGateVerdict &&
+      other.request == request &&
+      other.refusal == refusal &&
+      other.gaussians == gaussians &&
+      other.most == most;
 
   @override
-  int get hashCode => Object.hash(request, refusal, gaussians);
+  int get hashCode => Object.hash(request, refusal, gaussians, most);
 
   @override
-  String toString() =>
-      isOpen ? 'SplatGateVerdict.open(${request!.toJsonString()})' : 'SplatGateVerdict.refused($refusal)';
+  String toString() => isOpen
+      ? 'SplatGateVerdict.open(${request!.toJsonString()})'
+      : 'SplatGateVerdict.refused($refusal${gaussians == null ? '' : ', $gaussians'}${most == null ? '' : ' of $most'})';
 }
 
 /// The refusal of a file the probe refused
