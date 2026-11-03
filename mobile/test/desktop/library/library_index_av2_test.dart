@@ -29,6 +29,29 @@ void main() {
       }
     });
 
+    test('a crafted IVF header gives a length that never overflows: 4294967295 frames at one per second', () {
+      final crafted = Uint8List.fromList(_fixture('av2-256x144-8bit.ivf'));
+      final header = ByteData.sublistView(crafted);
+      // Time base 4294967295 / 4294967295 (one frame a second), 4294967295 frames: frames x 1000 x scale is 2^74
+      header
+        ..setUint32(16, 0xffffffff, Endian.little)
+        ..setUint32(20, 0xffffffff, Endian.little)
+        ..setUint32(24, 0xffffffff, Endian.little);
+      final metadata = readMediaMetadata(BytesSource(crafted), LibraryMediaKind.video);
+      expect(metadata.videoCodec, IndexedVideoCodec.av2);
+      expect(metadata.durationMs, 0xffffffff * 1000);
+
+      // 60000 / 1001 frames a second, the NTSC rate, stays exact
+      header
+        ..setUint32(16, 60000, Endian.little)
+        ..setUint32(20, 1001, Endian.little)
+        ..setUint32(24, 0xffffffff, Endian.little);
+      expect(
+        readMediaMetadata(BytesSource(crafted), LibraryMediaKind.video).durationMs,
+        0xffffffff * 1000 * 1001 ~/ 60000,
+      );
+    });
+
     test('a Section 5 stream says AV2, without a frame size nor a length, which only its decoder knows', () {
       for (final name in ['av2-256x144-8bit.obu', 'av2-256x144-10bit.obu']) {
         final metadata = readMediaMetadata(BytesSource(_fixture(name)), LibraryMediaKind.video);

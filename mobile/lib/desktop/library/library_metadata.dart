@@ -208,10 +208,17 @@ MediaMetadata _av2Metadata(Av2Head head) {
   return MediaMetadata(
     width: head.width,
     height: head.height,
-    durationMs: rate == null || frames <= 0 ? 0 : frames * 1000 * rate.denominator ~/ rate.numerator,
+    durationMs: rate == null || frames <= 0 ? 0 : _ivfDurationMs(frames, rate),
     videoCodec: IndexedVideoCodec.av2,
   );
 }
+
+/// The length of [frames] frames at [rate], in milliseconds. The number of frames and the time scale of an IVF header
+/// are 32-bit: their product with 1000 can pass the 63 bits of an int (a crafted header gave a negative length), so it
+/// is made exactly; the frame rate is at least 1 (Av2Head.frameRate), so the length itself is at most 1000 times the
+/// frames, which an int holds.
+int _ivfDurationMs(int frames, ({int numerator, int denominator}) rate) =>
+    (BigInt.from(frames) * BigInt.from(1000) * BigInt.from(rate.denominator) ~/ BigInt.from(rate.numerator)).toInt();
 
 // --- Bytes -----------------------------------------------------------------------------------------------------------
 
