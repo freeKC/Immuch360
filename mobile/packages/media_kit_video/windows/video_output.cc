@@ -318,21 +318,28 @@ bool VideoOutput::FlatBackBufferWanted() {
     return forced == 1;
   }
   // A frame of the graphics card names its format in hw-pixelformat (d3d11);
-  // one decoded by the processor has none
-  char* hardware =
-      mpv_get_property_string(handle_, "video-out-params/hw-pixelformat");
-  if (hardware != nullptr) {
-    mpv_free(hardware);
+  // one decoded by the processor has none. One read of the parameters, as
+  // |GetVideoWidth| reads them for each frame
+  mpv_node params;
+  if (mpv_get_property(handle_, "video-out-params", MPV_FORMAT_NODE,
+                       &params) < 0) {
     return false;
   }
-  char* format =
-      mpv_get_property_string(handle_, "video-out-params/pixelformat");
-  if (format == nullptr) {
-    // No frame yet
-    return false;
+  auto format = false;
+  auto hardware = false;
+  if (params.format == MPV_FORMAT_NODE_MAP) {
+    for (int32_t i = 0; i < params.u.list->num; i++) {
+      const char* key = params.u.list->keys[i];
+      if (strcmp(key, "pixelformat") == 0) {
+        format = true;
+      } else if (strcmp(key, "hw-pixelformat") == 0) {
+        hardware = true;
+      }
+    }
   }
-  mpv_free(format);
-  return true;
+  mpv_free_node_contents(&params);
+  // No frame yet: upstream's drawing
+  return format && !hardware;
 }
 
 void VideoOutput::SetTextureUpdateCallback(
