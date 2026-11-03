@@ -10,6 +10,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:desktop_webview_window/desktop_webview_window.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_host.dart';
 import 'package:logging/logging.dart';
@@ -21,6 +22,10 @@ final _log = Logger('SplatViewerWindow');
 
 /// The argument WebView2 takes to draw with the high performance graphics card of a laptop with two
 const splatHighPerformanceGpuArgument = '--force_high_performance_gpu';
+
+/// What the copy of desktop_webview_window answers to create on Windows when the window was closed (by the user, a
+/// WM_CLOSE, the app's end) before WebView2 made its page (packages/desktop_webview_window/IMMUCH360-NOTE.md, patch 11)
+const splatWindowClosedWhileOpening = 'the window was closed while it opened';
 
 /// Where the window goes: over the app's, at its place and size in physical pixels, maximized when the app's is
 typedef SplatWindowPlace = ({int x, int y, int width, int height, bool maximized});
@@ -91,6 +96,11 @@ class DesktopSplatViewerHost implements SplatViewerHost {
         browserArguments: arguments,
       );
     } catch (error, stackTrace) {
+      // Closed before its page existed: the user's close, nothing to say
+      if (error is PlatformException && error.message == splatWindowClosedWhileOpening) {
+        _log.info('The splat viewer window was closed while it opened');
+        return SplatHostClosed.user;
+      }
       _log.warning('The splat viewer window could not be made', error, stackTrace);
       return SplatHostClosed.noWebView;
     }

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/desktop_start.dart';
 import 'package:immich_mobile/desktop/splat/desktop_splat_viewer_host.dart';
@@ -55,7 +56,7 @@ void main() {
 
   tearDown(() => support.deleteSync(recursive: true));
 
-  DesktopSplatViewerHost host({bool available = true, bool fails = false}) => DesktopSplatViewerHost(
+  DesktopSplatViewerHost host({bool available = true, bool fails = false, Exception? error}) => DesktopSplatViewerHost(
     isAvailable: () async => available,
     place: () async => (x: 10, y: 20, width: 1600, height: 900, maximized: true),
     supportFolder: () async => support,
@@ -67,6 +68,9 @@ void main() {
           required String browserArguments,
         }) async {
           if (fails) {
+            if (error != null) {
+              throw error;
+            }
             throw StateError('no window');
           }
           made.add({'title': title, 'place': place, 'folder': userDataFolder, 'arguments': browserArguments});
@@ -153,6 +157,15 @@ void main() {
     expect(await host(available: false).open(page, title: 'a.spz'), SplatHostClosed.noWebView);
     expect(made, isEmpty);
     expect(await host(fails: true).open(page, title: 'a.spz'), SplatHostClosed.noWebView);
+  });
+
+  test('a window closed while WebView2 still made its page ends as the user closed it, not as no web view', () async {
+    // The replay of 3 November 2026: the window closed 300 ms after it showed, before its controller existed; the
+    // plugin's copy now answers create with this error at the window's close (patch 11) instead of ending the app
+    final closedWhileOpening = PlatformException(code: '0', message: splatWindowClosedWhileOpening);
+    expect(await host(fails: true, error: closedWhileOpening).open(page, title: 'a.spz'), SplatHostClosed.user);
+    final failed = PlatformException(code: '0', message: 'failed to show window');
+    expect(await host(fails: true, error: failed).open(page, title: 'a.spz'), SplatHostClosed.noWebView);
   });
 
   test('a second splat closes the first window, whose end never ends the second viewing', () async {
