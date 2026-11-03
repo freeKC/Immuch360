@@ -591,8 +591,12 @@ void main() {
       expect(refusal, isA<Av2TooSlow>().having((e) => e.fps, 'fps', 7).having((e) => e.needed, 'needed', 30));
       expect(playbacks.sessions, isEmpty);
       expect(launched.launches.where((launch) => launch.arguments.first == 'serve'), hasLength(serves));
-      // The thumbnail does not ask, Play anyway plays
+      // The thumbnail does not ask, and its companion runs at a low priority: the player's start comes first (two
+      // grabs and the playback at once when a file is opened with the app, measured on the PC on 3 November)
       final thumbnail = await playbacks.open(Av2Bytes.file(file.path), forThumbnail: true);
+      final serveLaunches = launched.launches.where((launch) => launch.arguments.first == 'serve').toList();
+      expect(serveLaunches.first.lowPriority, isFalse, reason: 'the player');
+      expect(serveLaunches.last.lowPriority, isTrue, reason: 'the thumbnail');
       await readAv2Url(Uri.parse(thumbnail));
       await Future<void>.delayed(const Duration(milliseconds: 600));
       await playbacks.release(thumbnail);

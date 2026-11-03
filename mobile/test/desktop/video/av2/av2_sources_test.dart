@@ -135,6 +135,12 @@ void main() {
     await installed.grab('/v/clip.ivf', time: const Duration(seconds: 1), box: (width: 320, height: 320, cover: true));
     expect(playbacks.thumbnails, ['/v/clip.ivf']);
     expect(players.made.single.calls, contains('open $_served at 0 streamed'));
+    // The key picture of the start, without a seek to the second asked: a seek would decode every picture from the
+    // access point before it, 30 of them for a second at 30 fps (plan of the AV2 videos, section 1.2)
+    final calls = players.made.single.calls;
+    final afterServed = calls.sublist(calls.indexOf('open $_served at 0 streamed'));
+    expect(afterServed.where((call) => call.startsWith('seek')), isEmpty);
+    expect(calls.where((call) => call.startsWith('seek')), ['seek 1000'], reason: 'the share URL, opened as it is');
     expect(playbacks.released, [_served]);
     expect(playbacks.opened, isEmpty, reason: 'a thumbnail asks no measure of speed');
   });

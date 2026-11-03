@@ -794,6 +794,7 @@ class Av2Session {
   /// [runner]; ready once the companion listens. Throws an [Av2PlaybackException], or [Av2NotAv2] for an IVF of
   /// another codec. [parentPid]: the app's process, which the companion watches (null in the tests that want none).
   /// [beforeServe] may refuse the format before any companion serves it (the measure of speed, see [Av2Playbacks]).
+  /// [lowPriority]: a companion that gives way to the others (a thumbnail's, beside the player's start).
   static Future<Av2Session> start({
     required Av2Bytes bytes,
     required Av2CompanionFiles files,
@@ -801,6 +802,7 @@ class Av2Session {
     required String decoderVersion,
     int? parentPid,
     int? threads,
+    bool lowPriority = false,
     Future<Av2Probe> Function()? probe,
     Future<void> Function(Av2Format format)? beforeServe,
   }) async {
@@ -812,6 +814,7 @@ class Av2Session {
         decoderVersion: decoderVersion,
         parentPid: parentPid,
         threads: threads,
+        lowPriority: lowPriority,
         probe: probe,
         beforeServe: beforeServe,
       );
@@ -826,6 +829,7 @@ class Av2Session {
     required Av2CompanionFiles files,
     required ProcessRunner runner,
     required String decoderVersion,
+    required bool lowPriority,
     int? parentPid,
     int? threads,
     Future<Av2Probe> Function()? probe,
@@ -875,7 +879,7 @@ class Av2Session {
     );
     await beforeServe?.call(session.format);
     final prepared = watch.elapsedMilliseconds;
-    await session._serve(files, runner, parentPid: parentPid, threads: threads);
+    await session._serve(files, runner, parentPid: parentPid, threads: threads, lowPriority: lowPriority);
     _log.info(
       'AV2 video ${session.format}, ${layout.frames} pictures, ${points.length} access points: read and probed in '
       '$prepared ms, served from ${watch.elapsedMilliseconds} ms',
@@ -883,7 +887,13 @@ class Av2Session {
     return session;
   }
 
-  Future<void> _serve(Av2CompanionFiles files, ProcessRunner runner, {int? parentPid, int? threads}) async {
+  Future<void> _serve(
+    Av2CompanionFiles files,
+    ProcessRunner runner, {
+    required bool lowPriority,
+    int? parentPid,
+    int? threads,
+  }) async {
     final token = _token();
     final listening = Completer<int>();
     final rate = '${layout.fpsNumerator}/${layout.fpsDenominator}';
@@ -913,8 +923,8 @@ class Av2Session {
           if (parentPid != null) ...['--parent', '$parentPid'],
         ],
         environment: {av2TokenVariable: token},
-        // Playback is the task in front: the decoder runs at the normal priority
-        lowPriority: false,
+        // Playback is the task in front: the decoder runs at the normal priority, a thumbnail's below it
+        lowPriority: lowPriority,
       ),
       cancel: _cancel,
       elapsed: sidecarStopwatch(),
@@ -1215,6 +1225,9 @@ class Av2Playbacks {
       runner: runner(files.launcher),
       decoderVersion: decoderVersion,
       parentPid: parentPid,
+      // A thumbnail gives way: two grabs and the player's start come at once when a file is opened with the app, and
+      // each companion would take every core
+      lowPriority: forThumbnail,
       beforeServe: forThumbnail || _anyway.contains(bytes.key)
           ? null
           : (format) async {

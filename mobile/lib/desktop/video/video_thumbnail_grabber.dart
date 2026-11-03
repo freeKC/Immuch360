@@ -5,10 +5,12 @@
 // A muted player of the pool, without texture or audio, opens the file or the bridge URL, goes to the frame asked
 // for (past a black first frame or a fade in), and mpv's screenshot of that frame is scaled and encoded as a JPEG in
 // another isolate (DesktopPlayer.grabFrame). An AV2 video (.ivf, .obu) is opened through the URL of its companion,
-// started for the grab and stopped after it (av2_playback.dart); without the AV2 decoder installed it gives no frame,
-// and the caller shows its tile without one (no download without a gesture: plan of the AV2 videos, section 1.2). One grab at a time: each is a decoder, and an 8K HEVC one is heavy. The
-// callers keep the results as the phones keep theirs: the share tiles in the video thumbnail disk cache, the library
-// in its thumbnail cache.
+// started for the grab and stopped after it (av2_playback.dart), and gives its first picture, the key picture of its
+// start: a later one would cost the decoding of every picture before it on the processor. Without the AV2 decoder
+// installed it gives no frame, and the caller shows its tile without one (no download without a gesture: plan of the
+// AV2 videos, section 1.2). One grab at a time: each is a decoder, and an 8K HEVC one is heavy. The callers keep the
+// results as the phones keep theirs: the share tiles in the video thumbnail disk cache, the library in its thumbnail
+// cache.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -70,7 +72,8 @@ class VideoThumbnailGrabber {
       }
     }
     try {
-      return await _grabFrame(served ?? resource, time, box);
+      // The key picture of the start of an AV2 video: no seek, which would decode every picture before the one asked
+      return await _grabFrame(served ?? resource, served != null ? Duration.zero : time, box);
     } finally {
       if (served != null) {
         await av2!.release(served);
