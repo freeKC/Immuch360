@@ -160,6 +160,7 @@
       <intent-filter android:label="View in Immich">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="content" android:mimeType="image/*" />
       </intent-filter>
 
@@ -167,6 +168,7 @@
       <intent-filter android:label="View in Immich">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="content" android:mimeType="video/*" />
       </intent-filter>
 
@@ -186,30 +188,8 @@
         <data android:scheme="immuch360" android:host="pair" />
       </intent-filter>
 
-      <!-- my.immich.app deep link -->
-      <intent-filter android:autoVerify="true">
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-
-        <data android:scheme="https" />
-
-        <data
-          android:host="my.immich.app"
-          android:path="/" />
-        <data
-          android:host="my.immich.app"
-          android:pathPrefix="/albums/" />
-        <data
-          android:host="my.immich.app"
-          android:pathPrefix="/people/" />
-        <data
-          android:host="my.immich.app"
-          android:path="/memory" />
-        <data
-          android:host="my.immich.app"
-          android:pathPrefix="/photos/" />
-      </intent-filter>
+      <!-- No https links of my.immich.app, Immich's domain: its assetlinks.json names Immich's app only, so Google Play
+           reported them as broken (.github/desktop/check_android_manifest.py) -->
     </activity>
 
 
