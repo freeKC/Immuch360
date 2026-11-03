@@ -53,3 +53,13 @@ Patches, to apply again when a newer version is copied here (each marked "Immuch
     (`assert` in debug, dropped in release) and the viewing never ended. The ids of such closes are kept
     (`_closedBeforeCreated`) and `create` gives a web view already closed. Test:
     `mobile/test/desktop/splat/desktop_webview_window_gone_test.dart`.
+13. Linux: the window's "destroy" handler ran the close callback first, which erases the window from the plugin's map
+    and so deletes it, then read `window_id_` and `method_channel_` of the deleted window to send `onWindowClose`
+    (upstream issue MixinNetwork/flutter-plugins#497, "use-after-free / SIGSEGV on every window close", 0.3.0). Every
+    end of a viewing on Linux goes through it: Esc or Back of the page, the window's close button, a second splat, a
+    web process that died (patch 5), the app's end with a viewer open. In the second review of 3 November 2026 the
+    freed `method_channel_` held glibc's tcache key; on this PC's replay of the CI build of `7c3685e56` under Xvfb
+    the app logged "invalid uninstantiatable type in cast to FlMethodChannel", Dart never had `onWindowClose` and the
+    viewing never ended; elsewhere it may crash. Upstream's fix #513 (0.4.0) as it is: the callback moved into a local
+    first, `onWindowClose` sent, the callback called last. Test: the close by Esc of
+    `.github/desktop/packaging/linux/splat_smoke.sh` (the `linux` job and the five package containers).
