@@ -6,7 +6,8 @@
 // Brush room (637,401, SH degree 3) and of the InnerScene cactus (452,451), SPZ version 2, in the app's page in Chrome
 // 156 at 2482 x 1170 on a laptop with 16 GB, an RTX 4060 Laptop (8 GB) and an Intel UHD:
 //
-// * the RTX 4060 draws them whole: 118 fps at 1 million, 114 at 2, 99 to 104 at 4, 94 to 98 at 6, 78 to 87 at 8;
+// * the RTX 4060 draws them whole: 118 fps at 1 million, 114 at 2, 99 to 104 at 4, 94 to 98 at 6, 78 to 87 at 8, and
+//   50 to 57 at 12 (4,069 MB, a quarter of the laptop's memory: past this rule's margin, which makes it 10.3 million);
 // * the Intel UHD, its quality steps down to a quarter of the drawing: 48 fps at 1 million, 33 at 2, 22 to 27 at 3,
 //   12 to 20 at 4;
 // * the web view's processes (page, graphics process, browser) took 822 MB at 1 million and 3,065 MB at 8 on the RTX,
@@ -109,7 +110,7 @@ const splatCardBytesPerGaussian = 180;
 const splatCardMemoryShare = 0.5;
 
 /// The most gaussians the page is given whatever the memory: it decoded 96 million (a file of 1.96 GB, 5.6 GB in the
-/// page, 68 s) in Chromium 156 on ai1 without dying (3 November 2026); two thirds of it
+/// page, 68 s) in Chromium 153 on ai1 without dying (3 November 2026); two thirds of it
 const splatEngineMostGaussians = 64000000;
 
 /// The memory the page takes for [gaussians] gaussians of a file of [fileBytes] (see [splatPageBaseBytes])

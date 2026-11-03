@@ -52,7 +52,7 @@ void main() {
   Map<String, Object?> measured(String gpu, int gaussians, {String page = 'app'}) =>
       cases.firstWhere((kase) => kase['gpu'] == gpu && kase['gaussians'] == gaussians && kase['page'] == page);
 
-  test('the fixture holds the measures of both chips, 637,401 to 8 million gaussians', () {
+  test('the fixture holds the measures of both chips, 637,401 to 12 million gaussians', () {
     expect(cases.where((kase) => kase['gpu'] == 'rtx' && kase['page'] == 'app').map((kase) => kase['gaussians']), [
       637401,
       1000000,
@@ -61,6 +61,7 @@ void main() {
       4000000,
       6000000,
       8000000,
+      12000000,
     ]);
     expect(cases.where((kase) => kase['gpu'] == 'intel' && kase['page'] == 'app').length, 5);
     for (final kase in cases) {
@@ -101,12 +102,20 @@ void main() {
     expect(splatComputerMostGaussians(const SplatComputer()), splatEngineMostGaussians);
   });
 
-  test('on the RTX every measured scene opens whole, with no reduction', () {
-    for (final kase in cases.where((kase) => kase['gpu'] == 'rtx')) {
+  test('on the RTX every measured scene up to 8 million opens whole; 12 million, which ran, is past the margin', () {
+    for (final kase in cases.where((kase) => kase['gpu'] == 'rtx' && (kase['gaussians']! as int) <= 8000000)) {
       final verdict = gate(kase, rtx);
       expect(verdict.isOpen, isTrue, reason: '${kase['file']}');
       expect(verdict.request!.maxGaussians, kase['gaussians'], reason: '${kase['file']} whole');
     }
+    // Drawn at 50 to 57 fps with 4,069 MB in the web view, a quarter of this laptop's memory; the rule keeps a third
+    // at its own count of 450 bytes a gaussian, which makes it 10.3 million here: refused, with the numbers
+    final twelve = measured('rtx', 12000000);
+    expect((twelve['fps']! as List).every((fps) => (fps as num) >= 30), isTrue);
+    final verdict = gate(twelve, rtx);
+    expect(verdict.refusal, SplatRefusal.beyondMemory);
+    expect(verdict.gaussians, 12000000);
+    expect(verdict.most, inInclusiveRange(10000000, 11000000));
   });
 
   test('on the Intel the cap of 1,000,000 stays, reduced up to 4 million, refused beyond as before', () {

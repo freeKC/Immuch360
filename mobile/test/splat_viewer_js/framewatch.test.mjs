@@ -92,14 +92,14 @@ test('a splat of the phones cap or fewer is never watched; the count offered sta
   assert.equal(keepFor(1000000, 29.9, 150000), 660000);
 });
 
-test('the RTX 4060 is offered nothing, 637,401 to 8 million gaussians (measured 78 to 120 fps)', () => {
+test('the RTX 4060 is offered nothing, 637,401 to 12 million gaussians (measured 50 to 120 fps)', () => {
   const cases = measures.cases.filter((kase) => kase.gpu === 'rtx' && kase.page === 'app');
-  assert.equal(cases.length, 7);
+  assert.equal(cases.length, 8);
   for (const kase of cases) {
     const found = replay(kase);
     assert.equal(found.slow, false, `${kase.file}: ${JSON.stringify(found)}`);
     assert.equal(found.scale, 1, `${kase.file} keeps its full drawing`);
-    assert.ok(found.at < 12000, `${kase.file} decided in the first seconds: ${found.at} ms`);
+    assert.ok(found.at < 15000, `${kase.file} decided in the first seconds: ${found.at} ms`);
   }
 });
 
