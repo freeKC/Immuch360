@@ -245,7 +245,7 @@ void VideoOutput::Render() {
         DrawProjection(*projection);
         return;
       }
-      surface_manager_->Draw([&]() {
+      const auto draw = [&]() {
         mpv_opengl_fbo fbo{
             0,
             surface_manager_->width(),
@@ -257,7 +257,27 @@ void VideoOutput::Render() {
             {MPV_RENDER_PARAM_INVALID, nullptr},
         };
         mpv_render_context_render(render_context_, params);
-      });
+      };
+      // Immuch360: a frame decoded by the processor is uploaded by this draw
+      // (12 MB for a 4K picture of the AV2 videos' y4m), which held the lock
+      // |Read| takes on Flutter's raster thread for as long, and the window's
+      // own frames with it: drawn and finished into the texture Flutter does
+      // not copy from, then swapped under the lock, as renderer C does
+      // (IMMUCH360-NOTE.md, patch 11). Frames of the graphics card keep
+      // upstream's single texture.
+      const auto back = FlatBackBufferWanted();
+      if (back != surface_manager_->double_buffered()) {
+        surface_manager_->SetDoubleBuffered(back);
+      }
+      if (back && surface_manager_->double_buffered()) {
+        surface_manager_->MakeBackCurrent();
+        draw();
+        glFinish();
+        surface_manager_->MakeCurrent(false);
+        surface_manager_->SwapBack();
+      } else {
+        surface_manager_->Draw(draw);
+      }
     }
     // S/W
     if (pixel_buffer_ != nullptr) {
@@ -282,6 +302,37 @@ void VideoOutput::Render() {
       // Prevent any redundant exceptions if the texture is unregistered etc.
     }
   }
+}
+
+bool VideoOutput::FlatBackBufferWanted() {
+  static const int forced = []() {
+    char value[4] = {0};
+    const DWORD length = ::GetEnvironmentVariableA(
+        "IMMUCH360_FLAT_BACK_BUFFER", value, static_cast<DWORD>(sizeof(value)));
+    if (length != 1u) {
+      return -1;
+    }
+    return value[0] == '1' ? 1 : value[0] == '0' ? 0 : -1;
+  }();
+  if (forced >= 0) {
+    return forced == 1;
+  }
+  // A frame of the graphics card names its format in hw-pixelformat (d3d11);
+  // one decoded by the processor has none
+  char* hardware =
+      mpv_get_property_string(handle_, "video-out-params/hw-pixelformat");
+  if (hardware != nullptr) {
+    mpv_free(hardware);
+    return false;
+  }
+  char* format =
+      mpv_get_property_string(handle_, "video-out-params/pixelformat");
+  if (format == nullptr) {
+    // No frame yet
+    return false;
+  }
+  mpv_free(format);
+  return true;
 }
 
 void VideoOutput::SetTextureUpdateCallback(

@@ -83,6 +83,10 @@ class ANGLESurfaceManager {
   // |MakeBackCurrent| and |SwapBack| instead.
   void SetDoubleBuffered(bool value);
 
+  // Immuch360: whether the second internal texture is on (patch 6, and the
+  // frames decoded by the processor of patch 11).
+  bool double_buffered() const { return double_buffered_; }
+
   // Makes the context current on the internal texture that |Read| does not
   // copy from: what is drawn into its FBO 0 shows after |SwapBack|.
   void MakeBackCurrent();
