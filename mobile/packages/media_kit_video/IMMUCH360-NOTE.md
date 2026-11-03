@@ -210,21 +210,20 @@ Patches:
    of the desktop workflow on its virtual screen, paints a GTK window as Flutter's view does and checks all of it;
    checked on this PC too, under Xvfb (llvmpipe) and under WSLg on X11 and Wayland (D3D12 on an Intel GPU), where the
    former code failed with 0x3002 on X11.
-11. Windows, a flat frame decoded by the processor drawn outside the lock (`windows/video_output.{h,cc}`,
+11. Windows, a flat frame drawn outside the lock, when asked (`windows/video_output.{h,cc}`,
    `windows/angle_surface_manager.h`). Upstream draws each flat frame (`ANGLESurfaceManager::Draw`: mpv's draw, then
    `glFinish`) under the lock that `Read` takes on Flutter's raster thread to copy the texture. A frame of the graphics
    card's decoder is drawn in a millisecond or two, but a frame decoded by the processor is uploaded by that draw: the
-   y4m of an AV2 video (Immuch360's AV2 companion, `lib/desktop/video/av2_playback.dart`), 12 MB a picture in 4K, and
-   the lock stays held while it is uploaded and finished, Flutter's raster thread waiting for it (the review of lot AD3
-   of the AV2 videos, 3 November 2026, found the work of the window's presenting thread per present at 9.7 to 11.5 ms
-   with AV2 against 1.2 to 1.4 ms with H.264 on the Intel UHD of the PC, whatever the companion's priority or
-   processors). Such a frame is now drawn as renderer C draws (patch 6): into the internal texture `Read` does not copy
-   from, finished there, then swapped under the lock.
-   The frame is taken for the processor's when mpv's `video-out-params` has a `pixelformat` and no `hw-pixelformat`
-   (a d3d11 frame names its format there); frames of the graphics card keep upstream's single texture, and the second
-   texture goes when they come back (`SetDoubleBuffered`, which a projection also sets for itself). The variable
-   `IMMUCH360_FLAT_BACK_BUFFER` of the app's environment, `1` or `0`, draws every flat frame one way or the other
-   instead, for the measures.
+   y4m of an AV2 video (Immuch360's AV2 companion, `lib/desktop/video/av2_playback.dart`), 12 MB a picture in 4K. With
+   the variable `IMMUCH360_FLAT_BACK_BUFFER` of the app's environment, a flat frame is drawn as renderer C draws (patch
+   6): into the internal texture `Read` does not copy from, finished there, then swapped under the lock; `1` for every
+   flat frame, `2` for the frames of the processor only (mpv's `video-out-params` has a `pixelformat` and no
+   `hw-pixelformat`, which a d3d11 frame names), read once per frame. Without it, upstream's single texture. Not on by
+   default: measured on the PC on 3 November 2026 (the fix round of lot AD3 of the AV2 videos, PresentMon and Flutter's
+   frame times, H.264 and AV2 runs one after the other), it changed nothing steady: at 1080p the AV2 video already
+   presented as often as H.264, and at 4K, with a decoder slower than the video, one pair of runs was better with it,
+   one the same and one worse; the Intel UHD, busy 12.5 to 13.3 ms a present with the 4K AV2 video against 5.4 to 8.6
+   ms with H.264, looked like the limit rather than the lock. Kept for the next measures.
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.

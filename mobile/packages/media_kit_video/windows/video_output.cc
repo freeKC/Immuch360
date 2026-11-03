@@ -258,13 +258,12 @@ void VideoOutput::Render() {
         };
         mpv_render_context_render(render_context_, params);
       };
-      // Immuch360: a frame decoded by the processor is uploaded by this draw
-      // (12 MB for a 4K picture of the AV2 videos' y4m), which held the lock
-      // |Read| takes on Flutter's raster thread for as long, and the window's
-      // own frames with it: drawn and finished into the texture Flutter does
-      // not copy from, then swapped under the lock, as renderer C does
-      // (IMMUCH360-NOTE.md, patch 11). Frames of the graphics card keep
-      // upstream's single texture.
+      // Immuch360: when the environment asks (IMMUCH360-NOTE.md, patch 11), a
+      // flat frame is drawn and finished into the texture Flutter does not
+      // copy from, then swapped under the lock |Read| takes on Flutter's
+      // raster thread, as renderer C does: a frame decoded by the processor
+      // is uploaded by this draw (12 MB for a 4K picture of the AV2 videos'
+      // y4m). Upstream's single texture otherwise.
       const auto back = FlatBackBufferWanted();
       if (back != surface_manager_->double_buffered()) {
         surface_manager_->SetDoubleBuffered(back);
@@ -305,17 +304,19 @@ void VideoOutput::Render() {
 }
 
 bool VideoOutput::FlatBackBufferWanted() {
-  static const int forced = []() {
+  // 1: every flat frame, 2: the frames of the processor; otherwise (and
+  // without the variable) upstream's drawing under the lock
+  static const int wanted = []() {
     char value[4] = {0};
     const DWORD length = ::GetEnvironmentVariableA(
         "IMMUCH360_FLAT_BACK_BUFFER", value, static_cast<DWORD>(sizeof(value)));
     if (length != 1u) {
-      return -1;
+      return 0;
     }
-    return value[0] == '1' ? 1 : value[0] == '0' ? 0 : -1;
+    return value[0] == '1' ? 1 : value[0] == '2' ? 2 : 0;
   }();
-  if (forced >= 0) {
-    return forced == 1;
+  if (wanted != 2) {
+    return wanted == 1;
   }
   // A frame of the graphics card names its format in hw-pixelformat (d3d11);
   // one decoded by the processor has none. One read of the parameters, as

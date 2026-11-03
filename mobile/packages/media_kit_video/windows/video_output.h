@@ -173,10 +173,9 @@ class VideoOutput {
 
   // Immuch360: whether the flat frame is drawn outside the lock that |Read|
   // takes on Flutter's raster thread, into the texture Flutter does not copy
-  // from (IMMUCH360-NOTE.md, patch 11): when mpv's frame was decoded by the
-  // processor, and so is uploaded at each draw. IMMUCH360_FLAT_BACK_BUFFER=0
-  // or 1 in the environment of the app says never or always instead, for the
-  // measures.
+  // from (IMMUCH360-NOTE.md, patch 11), as IMMUCH360_FLAT_BACK_BUFFER in the
+  // environment of the app asks: 1 every flat frame, 2 the frames decoded by
+  // the processor (uploaded at each draw); never without it.
   bool FlatBackBufferWanted();
 
   void CheckAndResize();
