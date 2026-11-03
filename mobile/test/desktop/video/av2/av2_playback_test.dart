@@ -417,6 +417,80 @@ void main() {
     });
   });
 
+  group('the speed of a decoder slower than the video', () {
+    test('counted against the clock while the player takes every picture, it is a measure of this computer', () async {
+      final process = _HeldProcess();
+      final runner = _OneProcessRunner(process);
+      final starting = Av2Session.start(
+        bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+        files: (program: 'immuch360-av2', launcher: null),
+        runner: runner,
+        decoderVersion: 'test',
+        probe: () async => Av2Probe.fromJson(_probeJson()),
+      );
+      await _until(() => runner.launches.isNotEmpty);
+      process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
+      final session = await starting;
+      addTearDown(session.stop);
+      Future<void> stat(int decoded, int served, {bool serving = true}) async {
+        process.say(
+          'stat decoded=$decoded served=$served fps=0.0 simd=avx2 gen=1 frame=$served serving=${serving ? 1 : 0}',
+        );
+        await _until(() => session.stat.value?.decoded == decoded && session.stat.value?.served == served);
+      }
+
+      // Paused: nothing decoded nor served, no measure (the companion never timed a run: cosmos 4K in 10 bits on the
+      // PC on 3 November, its player waiting for every picture, kept no speed and the notice never came)
+      await stat(10, 9);
+      await Future<void>.delayed(const Duration(milliseconds: 800));
+      await stat(10, 9);
+      await Future<void>.delayed(const Duration(milliseconds: 800));
+      await stat(10, 9);
+      expect(session.measuredFps, isNull);
+      // 6 pictures a second for a video of 30, every one taken by the player at once: the decoder sets the pace
+      for (var i = 1; i <= 3; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        await stat(10 + 3 * i, 9 + 3 * i);
+      }
+      expect(session.measuredFps, isNotNull);
+      expect(session.measuredFps, inInclusiveRange(2, 6.5), reason: "9 pictures in 1.5 s, the test's delays at least");
+      expect(session.tooSlow, isTrue);
+    });
+
+    test('a count that the player paces, or that a seek spends on pictures it drops, is no measure', () async {
+      final process = _HeldProcess();
+      final runner = _OneProcessRunner(process);
+      final starting = Av2Session.start(
+        bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+        files: (program: 'immuch360-av2', launcher: null),
+        runner: runner,
+        decoderVersion: 'test',
+        probe: () async => Av2Probe.fromJson(_probeJson()),
+      );
+      await _until(() => runner.launches.isNotEmpty);
+      process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
+      final session = await starting;
+      addTearDown(session.stop);
+      Future<void> stat(int decoded, int served) async {
+        process.say('stat decoded=$decoded served=$served fps=0.0 simd=avx2 gen=1 frame=$served serving=1');
+        await _until(() => session.stat.value?.decoded == decoded && session.stat.value?.served == served);
+      }
+
+      // At the pace of the video (15 a half second): what the player reads, not what the decoder can
+      for (var i = 0; i <= 4; i++) {
+        await stat(15 * i, 15 * i);
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      }
+      expect(session.measuredFps, isNull);
+      // A seek: 40 pictures decoded to reach the one asked, 1 served
+      for (var i = 1; i <= 4; i++) {
+        await stat(60 + 10 * i, 61);
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      }
+      expect(session.measuredFps, isNull);
+    });
+  });
+
   group('on the compiled fake companion', () {
     late Directory folder;
     late ManagedProcessRunner runner;

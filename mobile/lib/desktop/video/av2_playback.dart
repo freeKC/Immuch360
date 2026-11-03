@@ -590,6 +590,10 @@ const av2ListenTimeout = Duration(seconds: 15);
 /// player does
 const av2SilenceAllowed = Duration(seconds: 10);
 
+/// The least time the pictures decoded are counted against the clock before the count is kept as the speed of this
+/// computer (Av2Session.measuredFps): about three stat lines
+const av2ClockMeasureSeconds = 1.4;
+
 /// How long the companion has to end once its standard input closed, before it is killed
 const av2EndGrace = Duration(milliseconds: 300);
 
@@ -762,7 +766,8 @@ class Av2Session {
   ValueListenable<int?> get requestedFrame => _requestedFrame;
   final _requestedFrame = ValueNotifier<int?>(null);
 
-  /// The speed the companion measured last (its fps above 0), which the store keeps
+  /// The speed the companion measured last (its fps above 0), or the pictures decoded against the clock by a decoder
+  /// slower than the video (see [_onStat]): what the store keeps
   double? get measuredFps => _measuredFps;
   double? _measuredFps;
 
@@ -786,8 +791,8 @@ class Av2Session {
   int _from = 0;
   Completer<void> _asked = Completer<void>();
 
-  // The speed against the clock: decoded counts of the last stat lines while serving, with their times
-  final _decodedSeen = <(int decoded, Duration at)>[];
+  // The speed against the clock: decoded and served counts of the last stat lines while serving, with their times
+  final _decodedSeen = <(int decoded, int served, Duration at)>[];
   final _clock = Stopwatch()..start();
 
   /// Probes [bytes] with the companion [files], reads its container and starts the companion's serve through
@@ -1036,21 +1041,37 @@ class Av2Session {
       _decodedSeen.clear();
       return;
     }
-    // No measure yet: the pictures decoded against the clock, while it serves
+    // No measure yet: the pictures decoded against the clock, while it serves; a line without a picture more (a
+    // pause, a player that stopped reading) starts the count again
     if (!stat.serving) {
       _decodedSeen.clear();
       return;
     }
     final now = _clock.elapsed;
-    _decodedSeen.add((stat.decoded, now));
+    if (_decodedSeen.isNotEmpty && _decodedSeen.last.$1 == stat.decoded) {
+      _decodedSeen.clear();
+    }
+    _decodedSeen.add((stat.decoded, stat.served, now));
     while (_decodedSeen.length > 5) {
       _decodedSeen.removeAt(0);
     }
     if (_decodedSeen.length >= 2) {
-      final (first, from) = _decodedSeen.first;
+      final (first, firstServed, from) = _decodedSeen.first;
       final seconds = (now - from).inMicroseconds / 1e6;
       if (seconds > 0) {
-        _speed.value = (stat.decoded - first) / seconds;
+        final decoded = stat.decoded - first;
+        final speed = decoded / seconds;
+        _speed.value = speed;
+        // Clearly below the speed of the video ([av2TooSlowRatio]) while the player took every picture decoded at
+        // once: the decoder set the pace, not the player, so the count is a measure of this computer. The companion
+        // times only the runs it paced alone, and a decoder this slow may give it none (cosmos 4K in 10 bits on the PC
+        // on 3 November: no speed kept, so no notice the next time). A count at the pace of the video is the
+        // player's; one where a seek decodes pictures it drops is not served.
+        final everyPictureTaken = stat.served - firstServed >= decoded - 2;
+        final tooSlow = speed < neededFps * av2TooSlowRatio;
+        if (seconds >= av2ClockMeasureSeconds && decoded >= 3 && everyPictureTaken && tooSlow) {
+          _measuredFps = speed;
+        }
       }
     }
   }
