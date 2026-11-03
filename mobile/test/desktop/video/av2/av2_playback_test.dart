@@ -566,6 +566,62 @@ void main() {
     });
   });
 
+  group('the measure a session keeps', () {
+    test('its best: a start measured low beside the thumbnails is settled by a later measure that keeps up', () async {
+      final process = _HeldProcess();
+      final runner = _OneProcessRunner(process);
+      final starting = Av2Session.start(
+        bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+        files: (program: 'immuch360-av2', launcher: null),
+        runner: runner,
+        decoderVersion: 'test',
+        probe: () async => Av2Probe.fromJson(_probeJson()),
+      );
+      await _until(() => runner.launches.isNotEmpty);
+      process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
+      final session = await starting;
+      addTearDown(session.stop);
+      expect((session.bestMeasuredFps, session.measureSettled), (null, false));
+      // Skater in 10 bits on the PC on 3 November: 16.9 at the start, 36.8 at the end, for a video of 30
+      process.say('stat decoded=20 served=18 fps=16.9 simd=avx2 gen=1 frame=18 serving=1');
+      await _until(() => session.measuredFps == 16.9);
+      expect(
+        session.measureSettled,
+        isFalse,
+        reason: 'too slow, measured for less than ${av2SlowVerdictAfter.inSeconds} s',
+      );
+      process.say('stat decoded=40 served=38 fps=36.8 simd=avx2 gen=1 frame=38 serving=1');
+      await _until(() => session.measuredFps == 36.8);
+      expect((session.bestMeasuredFps, session.measureSettled), (36.8, true));
+      process.say('stat decoded=60 served=58 fps=31.0 simd=avx2 gen=1 frame=58 serving=1');
+      await _until(() => session.measuredFps == 31.0);
+      expect(session.bestMeasuredFps, 36.8, reason: 'what this computer can, not its last moment');
+    });
+
+    test('too slow, it is settled after ${av2SlowVerdictAfter.inSeconds} s of measures only', () async {
+      final process = _HeldProcess();
+      final runner = _OneProcessRunner(process);
+      final starting = Av2Session.start(
+        bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+        files: (program: 'immuch360-av2', launcher: null),
+        runner: runner,
+        decoderVersion: 'test',
+        probe: () async => Av2Probe.fromJson(_probeJson()),
+      );
+      await _until(() => runner.launches.isNotEmpty);
+      process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
+      final session = await starting;
+      addTearDown(session.stop);
+      process.say('stat decoded=5 served=4 fps=7.4 simd=avx2 gen=1 frame=4 serving=1');
+      await _until(() => session.measuredFps == 7.4);
+      expect(session.measureSettled, isFalse);
+      await Future<void>.delayed(av2SlowVerdictAfter);
+      process.say('stat decoded=9 served=8 fps=7.2 simd=avx2 gen=1 frame=8 serving=1');
+      await _until(() => session.measuredFps == 7.2);
+      expect((session.bestMeasuredFps, session.measureSettled), (7.4, true));
+    }, timeout: const Timeout(Duration(seconds: 30)));
+  });
+
   group('on the compiled fake companion', () {
     late Directory folder;
     late ManagedProcessRunner runner;
@@ -754,6 +810,35 @@ void main() {
       final anyway = await playbacks.open(Av2Bytes.file(file.path));
       await playbacks.releaseAll();
       expect(playbacks.sessionOf(anyway), isNull);
+    }, skip: skipWithoutFakeAv2);
+
+    test('a session too slow and closed early keeps no measure; one that keeps up keeps its best at once', () async {
+      final file = File(p.join(folder.path, 'clip.ivf'))
+        ..writeAsBytesSync(repeatAv2Ivf(av2Fixture('av2-256x144-8bit.ivf'), 10));
+      final kept = <Av2SpeedMeasure>[];
+      var fps = '12';
+      final playbacks = Av2Playbacks(
+        companion: () async => files(),
+        runner: (launcher) => EnvironmentRunner(runner, {'IMMUCH360_FAKE_AV2_FPS': fps}),
+        enabled: () => true,
+        decoderVersion: 'fake-1',
+        recordMeasure: (measure) async => kept.add(measure),
+        parentPid: pid,
+      );
+      // 12 of the 30 a second, closed after a second of measures: a start, no verdict
+      var url = await playbacks.open(Av2Bytes.file(file.path));
+      unawaited(readAv2Url(Uri.parse(url), cut: true).then((_) {}, onError: (Object _) {}));
+      await _until(() => playbacks.sessionOf(url)!.measuredFps != null);
+      await playbacks.release(url);
+      expect(kept, isEmpty);
+      // At 600 a second: kept at once, and at the release
+      fps = '600';
+      url = await playbacks.open(Av2Bytes.file(file.path));
+      await readAv2Url(Uri.parse(url));
+      await _until(() => kept.isNotEmpty);
+      expect(kept.single.fps, greaterThan(100));
+      await playbacks.release(url);
+      expect(kept, hasLength(2));
     }, skip: skipWithoutFakeAv2);
 
     test('a format this version does not play is refused by its name', () async {

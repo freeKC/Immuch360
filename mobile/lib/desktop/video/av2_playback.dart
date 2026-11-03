@@ -594,6 +594,12 @@ const av2SilenceAllowed = Duration(seconds: 10);
 /// computer (Av2Session.measuredFps): about three stat lines
 const av2ClockMeasureSeconds = 1.4;
 
+/// How long a session measures a speed below [av2TooSlowRatio] before the verdict is kept: the start of a playback
+/// measures low (the decoder warming up beside the thumbnails' companions), and a video closed then would make the next
+/// one say "too slow" for nothing (Skater in 10 bits on the PC on 3 November: 16.9 frames a second at the start, 36.8
+/// at the end, for a video of 30)
+const av2SlowVerdictAfter = Duration(seconds: 3);
+
 /// How long the companion has to end once its standard input closed, before it is killed
 const av2EndGrace = Duration(milliseconds: 300);
 
@@ -774,9 +780,33 @@ class Av2Session {
   final _requestedFrame = ValueNotifier<int?>(null);
 
   /// The speed the companion measured last (its fps above 0), or the pictures decoded against the clock by a decoder
-  /// slower than the video (see [_onStat]): what the store keeps
+  /// slower than the video (see [_onStat])
   double? get measuredFps => _measuredFps;
   double? _measuredFps;
+
+  /// The best speed measured in the session: what this computer can, which the store keeps once [measureSettled]
+  double? get bestMeasuredFps => _bestFps;
+  double? _bestFps;
+
+  /// When the first speed was measured, on [_clock]
+  Duration? _firstMeasureAt;
+
+  /// Whether [bestMeasuredFps] may be kept: at once when it keeps up, after [av2SlowVerdictAfter] of measures when
+  /// it is too slow
+  bool get measureSettled {
+    final best = _bestFps;
+    final since = _firstMeasureAt;
+    if (best == null || since == null) {
+      return false;
+    }
+    return best >= neededFps * av2TooSlowRatio || _clock.elapsed - since >= av2SlowVerdictAfter;
+  }
+
+  void _measure(double fps) {
+    _measuredFps = fps;
+    _bestFps = math.max(_bestFps ?? 0, fps);
+    _firstMeasureAt ??= _clock.elapsed;
+  }
 
   /// What the link of the player is told
   Av2Decoding get decoding => (fps: _speed.value, needed: neededFps, failure: _failure.value);
@@ -1043,7 +1073,7 @@ class Av2Session {
   void _onStat(Av2Stat stat) {
     _stat.value = stat;
     if (stat.fps > 0) {
-      _measuredFps = stat.fps;
+      _measure(stat.fps);
       _speed.value = stat.fps;
       _decodedSeen.clear();
       return;
@@ -1077,7 +1107,7 @@ class Av2Session {
         final everyPictureTaken = stat.served - firstServed >= decoded - 2;
         final tooSlow = speed < neededFps * av2TooSlowRatio;
         if (seconds >= av2ClockMeasureSeconds && decoded >= 3 && everyPictureTaken && tooSlow) {
-          _measuredFps = speed;
+          _measure(speed);
         }
       }
     }
@@ -1301,21 +1331,23 @@ class Av2Playbacks {
     return isAv2VideoPath(resource) ? open(Av2Bytes.file(resource), forThumbnail: forThumbnail) : null;
   }
 
-  // The first measure of a session is kept at once: a video closed early still tells the next one
+  // The measure of a session is kept as soon as it is settled (Av2Session.measureSettled), so that a video closed
+  // early still tells the next one, and again at the release
   final _measured = Expando<bool>('measured');
 
   void _measureOnce(Av2Session session) {
-    if (_measured[session] == true || session.measuredFps == null) {
+    if (_measured[session] == true || !session.measureSettled) {
       return;
     }
     _measured[session] = true;
     unawaited(_record(session));
   }
 
+  /// Keeps the best speed of [session] once it is settled: a start too slow and closed early keeps nothing
   Future<void> _record(Av2Session session) async {
-    final fps = session.measuredFps;
+    final fps = session.bestMeasuredFps;
     final record = recordMeasure;
-    if (fps == null || record == null) {
+    if (fps == null || record == null || !session.measureSettled) {
       return;
     }
     try {
