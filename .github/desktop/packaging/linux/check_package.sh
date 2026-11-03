@@ -10,7 +10,10 @@
 #   - with --video CLIP, the app started with the clip plays it on a virtual screen (video_smoke.sh, next to this
 #     script), with the libmpv of the distribution; its output, log and captures go to OUT_DIR (/tmp/video-smoke by
 #     default). The machine (its processor) and the versions of the video stack are printed first, for the day a
-#     container fails where another passed.
+#     container fails where another passed;
+#   - with SPLAT=<a small .spz> in the environment, then, the app started with the splat shows it in the splat viewer,
+#     a WebKitGTK window of the distribution's WebKitGTK with Mesa's software renderer (splat_smoke.sh, next to this
+#     script): the page must say ready with lit pixels; its output, log and capture go to OUT_DIR/splat.
 #
 # H.264 on Fedora: its FFmpeg (ffmpeg-free, which mpv-libs takes) has no H.264 decoder of its own and decodes H.264
 # through libopenh264, which two packages provide: openh264, Cisco's build, from the fedora-cisco-openh264 repository,
@@ -29,6 +32,7 @@
 #     -v "$PWD/mobile/test/fixtures/video:/clips:ro" -v "$PWD/video-smoke:/out" ubuntu:24.04 \
 #     sh /check/check_package.sh /pkgs/Immuch360-Desktop-<label>-linux-amd64.deb \
 #     [--start | --video /clips/flat-6s.mp4 [/out [/clips/flat-6s-theora.mkv]]]
+# (with -v "$PWD/mobile/test/fixtures/splat_viewer:/splats:ro" -e SPLAT=/splats/room_floor.spz for the splat viewer)
 #
 # Run as root inside the container; exit 1 on the first failed check.
 set -eu
@@ -180,5 +184,12 @@ elif [ "$start" = "--start" ]; then
     echo "  the app ended by itself after less than 20 seconds (exit $status)"
     exit 1
   fi
+fi
+if [ -n "${SPLAT:-}" ]; then
+  [ "$start" = "--video" ] || install_extra
+  echo "-- a splat shown on a virtual screen"
+  dpkg-query -W -f '  ${Package} ${Version}\n' 'libwebkit2gtk-4.1-0' 'libjavascriptcoregtk-4.1-0' 2>/dev/null \
+    || rpm -q webkit2gtk4.1 javascriptcoregtk4.1 2>/dev/null | sed 's/^/  /' || true
+  xvfb-run -a -s "-screen 0 1280x800x24" sh "$(dirname "$0")/splat_smoke.sh" immuch360 "$SPLAT" "$smoke_out/splat"
 fi
 echo "== $PRETTY_NAME: all checks passed"

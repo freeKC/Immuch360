@@ -642,10 +642,33 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # The release build started with a small splat as a file opened with the program, on the same kind of virtual
+      # screen: the splat viewer must open at once in its WebKitGTK window (the patched desktop_webview_window), its
+      # page served by the app's media bridge must say ready with lit pixels, and the app's log must hold no error of
+      # the page and nothing in the catch all (packaging/linux/splat_smoke.sh). Mesa's software renderer draws: no
+      # frame rate is asked. The output, the log lines and the capture are an artifact. Run after a failed test above
+      # too, once the packages are made
+      - name: A splat shown on a virtual screen
+        if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
+        run: |
+          xvfb-run -a -s "-screen 0 1280x800x24" sh .github/desktop/packaging/linux/splat_smoke.sh \
+            mobile/build/linux/x64/release/bundle/immuch360 "$PWD/mobile/test/fixtures/splat_viewer/room_floor.spz" \
+            splat-smoke
+
+      - name: Upload the splat start
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-splat-smoke
+          path: splat-smoke/
+          retention-days: 14
+          if-no-files-found: ignore
+
   # Each package installed as a user would install it, in a clean container: the package manager brings the
   # dependencies the package declares, then every library the ELF files need must be found, libmpv and libsmb2 among
   # them, the desktop entry must be valid, the MIME types of the raw camera files registered, and the installed app
-  # must play a short video on a virtual screen with the distribution's libmpv (check_package.sh --video). The oldest
+  # must play a short video on a virtual screen with the distribution's libmpv (check_package.sh --video) and show a
+  # small splat in the splat viewer with the distribution's WebKitGTK (SPLAT, splat_smoke.sh). The oldest
   # and newest Ubuntu LTS, Debian stable, Fedora 40 and the newest Fedora. On Fedora the H.264 clip needs Cisco's
   # openh264, which the check installs first; when Cisco's repository cannot be reached from the runner, the H.264
   # clip is played for information only and the same picture in Theora is the one that must play, with a warning.
@@ -701,6 +724,7 @@ jobs:
           status=0
           docker run --rm --ulimit core=-1 -v "$PWD/dist:/pkgs:ro" \
             -v "$PWD/.github/desktop/packaging/linux:/check:ro" -v "$PWD/mobile/test/fixtures/video:/clips:ro" \
+            -v "$PWD/mobile/test/fixtures/splat_viewer:/splats:ro" -e SPLAT=/splats/room_floor.spz \
             -v "$PWD/video-smoke:/out" "$IMAGE" \
             sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4 /out /clips/flat-6s-theora.mkv \
             | tee "$RUNNER_TEMP/check.log" || status=$?
