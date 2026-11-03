@@ -677,17 +677,23 @@ const av2EndGrace = Duration(milliseconds: 300);
 const av2ProbeSteps = [1 << 20, 4 << 20, 16 << 20, 64 << 20];
 
 /// Runs the probe of the companion [files] through [runner] on [bytes]: the file itself for a file of this computer,
-/// the start of the file on the standard input for a share
-Future<Av2Probe> runAv2Probe(ProcessRunner runner, Av2CompanionFiles files, Av2Bytes bytes) async {
+/// the start of the file on the standard input for a share. [lowPriority]: below the others, as a thumbnail's
+/// companion (the probe decodes the first picture with every thread: 0.9 s for a 4K picture in 10 bits on four cores)
+Future<Av2Probe> runAv2Probe(
+  ProcessRunner runner,
+  Av2CompanionFiles files,
+  Av2Bytes bytes, {
+  bool lowPriority = false,
+}) async {
   final path = bytes.localPath;
   if (path != null) {
-    return _probeOnce(runner, files, ['probe', path], null);
+    return _probeOnce(runner, files, ['probe', path], null, lowPriority: lowPriority);
   }
   final length = await bytes.length();
   Av2Probe? probe;
   for (final step in av2ProbeSteps) {
     final input = await bytes.read(0, math.min(step, length));
-    probe = await _probeOnce(runner, files, ['probe', '-'], input);
+    probe = await _probeOnce(runner, files, ['probe', '-'], input, lowPriority: lowPriority);
     if (probe.refusal != Av2Probe.noPictureYet || input.length >= length) {
       break;
     }
@@ -699,15 +705,16 @@ Future<Av2Probe> _probeOnce(
   ProcessRunner runner,
   Av2CompanionFiles files,
   List<String> arguments,
-  Uint8List? input,
-) async {
+  Uint8List? input, {
+  required bool lowPriority,
+}) async {
   final lines = <String>[];
   final cancel = NativeCancelFlag();
   final started = Completer<RunningProcess>();
   final run = SidecarRun(
     runner: _HandingRunner(runner, started.complete),
     program: av2SidecarProgram,
-    launch: ProcessLaunch(executable: files.program, arguments: arguments, lowPriority: false),
+    launch: ProcessLaunch(executable: files.program, arguments: arguments, lowPriority: lowPriority),
     cancel: cancel,
     elapsed: sidecarStopwatch(),
     stallTimeout: av2ProbeTimeout,
@@ -982,7 +989,7 @@ class Av2Session {
     } on Av2FormatException catch (error) {
       throw Av2NotAv2('$error');
     }
-    final found = await (probe ?? () => runAv2Probe(runner, files, bytes))();
+    final found = await (probe ?? () => runAv2Probe(runner, files, bytes, lowPriority: lowPriority))();
     if (!found.playable || found.width == null || found.height == null || found.bits == null) {
       throw Av2FormatRefused(found.refusal ?? found.format);
     }

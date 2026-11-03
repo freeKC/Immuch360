@@ -709,6 +709,35 @@ void main() {
     }, timeout: const Timeout(Duration(seconds: 40)));
   });
 
+  group('a thumbnail', () {
+    test('gives way from its probe on: the probe decodes the first picture with every thread', () async {
+      final runner = ScriptedAv2Runner();
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+      );
+      Future<String> open({required bool forThumbnail}) async {
+        final serves = runner.serves.length;
+        final opening = playbacks.open(
+          Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+          forThumbnail: forThumbnail,
+        );
+        await _until(() => runner.serves.length > serves);
+        runner.serves.last.say(av2ListeningLine);
+        return opening;
+      }
+
+      await playbacks.release(await open(forThumbnail: true));
+      expect(runner.launchesOf('probe').single.lowPriority, isTrue);
+      expect(runner.launchesOf('serve').single.lowPriority, isTrue);
+      // A playback: the task in front, both at the normal priority
+      await playbacks.release(await open(forThumbnail: false));
+      expect(runner.launchesOf('probe').last.lowPriority, isFalse);
+      expect(runner.launchesOf('serve').last.lowPriority, isFalse);
+    });
+  });
+
   group('on the compiled fake companion', () {
     late Directory folder;
     late ManagedProcessRunner runner;
