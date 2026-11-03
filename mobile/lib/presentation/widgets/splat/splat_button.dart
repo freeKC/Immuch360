@@ -68,8 +68,13 @@ SplatGateVerdict? splatVerdictOf(WidgetRef ref, SplatProbe probe, {required Stri
   // The computers, phones and tablets: the gate of the splat viewer, as soon as Android said this is no headset
   final device = ref.watch(splatDeviceClassProvider);
   if (device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) {
-    // A computer: the chip that draws and the memory once read, the cap of the chips that share it until then
-    final computer = device == SplatDeviceClass.computer ? ref.watch(splatComputerProvider).valueOrNull : null;
+    // A computer: nothing until the chip that draws and the memory are read (a probe of the cards, once per run), so
+    // that a splat a dedicated card shows whole is never said too large first
+    final facts = device == SplatDeviceClass.computer ? ref.watch(splatComputerProvider) : null;
+    if (facts != null && !facts.hasValue && !facts.hasError) {
+      return null;
+    }
+    final computer = facts?.valueOrNull;
     final answer = device == SplatDeviceClass.computer
         ? ref.watch(splatAnswerProvider((name, fileBytes))).valueOrNull
         : null;

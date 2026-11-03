@@ -449,6 +449,26 @@ void main() {
           debugDefaultTargetPlatformOverride = null;
         });
 
+        testWidgets('nothing is offered nor refused until the chip is known', (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          final known = Completer<SplatComputer>();
+          await pumpPage(
+            tester,
+            '/huge.spz',
+            with_: [...flat(), splatComputerReaderProvider.overrideWithValue(() => known.future)],
+          );
+          await tester.pump();
+
+          expect(find.byKey(exploreSplatButtonKey), findsNothing);
+          expect(find.byKey(splatRefusalKey), findsNothing, reason: 'never "too large" first');
+          known.complete(rtx);
+          await tester.pumpAndSettle();
+          expect(find.byKey(exploreSplatButtonKey), findsOneWidget);
+          expect(find.byKey(splatRefusalKey), findsNothing);
+          debugDefaultTargetPlatformOverride = null;
+        });
+
         testWidgets('the reduced copy taken in the page opens at once, not watched again', (tester) async {
           debugDefaultTargetPlatformOverride = TargetPlatform.windows;
           addTearDown(() => debugDefaultTargetPlatformOverride = null);

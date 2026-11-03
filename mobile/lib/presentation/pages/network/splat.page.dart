@@ -91,9 +91,13 @@ class SplatPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final probe = ref.watch(splatProbeProvider((sourceId: sourceId, path: path, size: size)));
     final value = probe.valueOrNull;
-    // A splat given to the program opens at once, as a tap on a splat does; once
-    if (value != null && sourceId == null && ref.watch(splatExploreAtOnceProvider) == path) {
-      final request = splatVerdictOf(ref, value, name: _name, fileBytes: size ?? _localSize() ?? 1)?.request;
+    // A splat given to the program opens at once, as a tap on a splat does; once. Not before the gate can answer
+    // (a computer whose graphics chip is still being read): the build that follows opens it
+    final verdict = value != null && sourceId == null && ref.watch(splatExploreAtOnceProvider) == path
+        ? splatVerdictOf(ref, value, name: _name, fileBytes: size ?? _localSize() ?? 1)
+        : null;
+    if (value != null && verdict != null) {
+      final request = verdict.request;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final once = ref.read(splatExploreAtOnceProvider.notifier);
         if (!context.mounted || once.state != path) {
