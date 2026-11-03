@@ -186,13 +186,14 @@ void main() {
       skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'),
     );
 
-    test('two models: the largest; 70 % placed: partial; a third: refused; no pair: refused with none', () async {
+    test('two models: the largest; 70 % placed: partial; a fifth, or two fifths under 20: refused; no pair: refused '
+        'with none; two fifths of 60: incomplete', () async {
       photos(30);
       final split = await colmap('split').poses(work, images: 30, video: false, cancel: cancel);
       expect(split.placed, 26);
       final partial = await colmap('partial').poses(work, images: 30, video: false, cancel: cancel);
-      expect((partial.placed, partial.partial), (21, true));
-      for (final (mode, counts) in [('few', '10/30'), ('nomodel', '0/30')]) {
+      expect((partial.placed, partial.incomplete, partial.partial), (21, false, true));
+      for (final (mode, counts) in [('few', '6/30'), ('incomplete', '12/30'), ('nomodel', '0/30')]) {
         await expectLater(
           colmap(mode).poses(work, images: 30, video: false, cancel: cancel),
           throwsA(
@@ -203,6 +204,10 @@ void main() {
           reason: mode,
         );
       }
+      // 24 of 60: more than 20 and than 30 %, fewer than half: made, said maybe incomplete
+      photos(60);
+      final incomplete = await colmap('incomplete').poses(work, images: 60, video: false, cancel: cancel);
+      expect((incomplete.placed, incomplete.incomplete, incomplete.partial), (24, true, true));
     }, skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'));
 
     test('the extraction crashes at 10 and 5 threads, passes at 2: the real exit code of a crash read', () async {

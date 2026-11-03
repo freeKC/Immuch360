@@ -11,7 +11,8 @@
 //     one read is kept in splat.json of the work folder; fewer than SplatV1.minImages usable images fail as
 //     tooFewImages ("12/150");
 //  3. features, matching, mapping: COLMAP on the processor (colmap_runner.dart, lot SP4), the poses of the cameras,
-//     written to splat.json once found;
+//     written to splat.json once found; from then on every progress tells the images placed (ImmersiveProgress.placed),
+//     so that the panel says a scene of fewer than SplatV1.incompleteShare of them may be incomplete while it trains;
 //  4. training: Brush on the graphics card (brush_runner.dart), which asks the card again before it starts, its steps
 //     and the time left by the pace of its last 1 000 steps;
 //  5. splatCopy: the export of Brush read, its scale set from the gaussians and the centres of the cameras, the SPZ and
@@ -23,15 +24,20 @@
 // day after its last use (managed_process.dart). A job of the same key finds it, reads each member again for its sum
 // (a photo of this computer is hashed in place; an original of the server gives the checksum of its asset,
 // SplatMemberSum, or is downloaded and released at once), and when
-// every sum is the one kept, starts again at the training, from the model COLMAP aligned. Otherwise the folder is
-// emptied and the job starts from the photos. The folder goes once the queue saved the file the job made
-// (ImmersiveResult.afterSaved: a destination that refuses it, or a Cancel during the copy, leaves it for Retry), and
-// at once after a failure or a cancel before the poses were found.
+// every sum is the one kept, starts again at the training, from the model COLMAP aligned. Retry from the images (lot
+// SPF1): a job that failed in COLMAP, once its images were prepared, keeps its work folder a day too, with its images,
+// the database and the models of COLMAP, which a diagnosis reads (FreeKC's frames of 3 November, 68 of 139 placed,
+// went with the failure); a job of the same key whose sums are the ones kept starts again at COLMAP, from those images.
+// Otherwise the folder is emptied and the job starts from the photos. The folder goes once the queue saved the file the
+// job made (ImmersiveResult.afterSaved: a destination that refuses it, or a Cancel during the copy, leaves it for
+// Retry), and at once after a failure before the images were prepared, after a full disk, and after a cancel before
+// the poses were found ([splatWorkKept]). A failure that leaves it names it (ImmersiveResult.keptFolder) for the
+// panel.
 //
 // After a failure, a Cancel apart, the logs of the programs (logs/ of the work folder) are first copied into the logs
 // folder of the app when the engine is given one ([SplatEngine.failureLogs]: keepSplatFailureLogs, the five newest
-// kept, the failure and its step at their top), so that a failure before the poses, whose work folder goes, still says
-// what COLMAP did: "Save logs to a file" takes them with the log.
+// kept, the failure, its step and what became of the work folder at their top), so that a failure whose work folder
+// goes still says what COLMAP did: "Save logs to a file" takes them with the log.
 //
 // No Flutter here: the engine also runs in splat_probe, a program compiled by `dart compile exe` that makes a scene on
 // a PC with the real programs (lot SP6, artifact of the windows job of the desktop workflow); the app gives it the
@@ -93,14 +99,26 @@ String splatJobKey(SplatJob job) {
   return sha1.convert(utf8.encode(text.toString())).toString();
 }
 
-/// What a job found once COLMAP placed its photos, as splat.json keeps it
-class _Poses {
-  const _Poses({required this.images, required this.total, required this.placed, required this.blurred});
+/// Whether the work folder of a job is kept when the job ends (see the top of this file): until its file is saved once
+/// [done]; a day once the poses were [placed] (Retry from them); a day after a [failure] once the images were
+/// [prepared], except a Cancel and a full disk (Retry from the images, and a diagnosis); otherwise it goes at once
+bool splatWorkKept({required bool done, required bool placed, required bool prepared, ImmersiveErrorCode? failure}) =>
+    done ||
+    placed ||
+    (prepared && failure != null && failure != ImmersiveErrorCode.cancelled && failure != ImmersiveErrorCode.diskFull);
+
+/// What the log of a failure says of a work folder kept
+const _keptSaid =
+    'The work folder is kept a day, for Retry and for a diagnosis (its images, the database and the models of COLMAP)';
+
+/// What a job found, as splat.json keeps it: its images once prepared, and those COLMAP [placed] once it did
+class _Found {
+  const _Found({required this.images, required this.total, required this.blurred, this.placed});
 
   final int images;
   final int total;
-  final int placed;
   final int blurred;
+  final int? placed;
 }
 
 /// A member whose sum is kept when the preparation reads it
@@ -182,6 +200,8 @@ class SplatEngine implements ImmersiveEngine {
     );
     var stage = ImmersiveStage.reading;
     var stageStarted = _elapsed();
+    // The images COLMAP placed, once it did, told with every progress
+    SplatPlaced? placedNow;
     void report(ImmersiveStage at, double fraction, {int? done, int? total, Duration? stageLeft}) {
       if (at != stage) {
         stage = at;
@@ -194,6 +214,7 @@ class SplatEngine implements ImmersiveEngine {
           step: done,
           steps: total,
           remaining: model.left(at, inStage: _elapsed() - stageStarted, done: done, total: total, stageLeft: stageLeft),
+          placed: placedNow,
         ),
       );
     }
@@ -212,7 +233,11 @@ class SplatEngine implements ImmersiveEngine {
     (ImmersiveErrorCode, String)? failed;
     ImmersiveResult fail(ImmersiveErrorCode code, String message) {
       failed = (code, message);
-      return ImmersiveResult.failed(code, message: message, stageTimes: times);
+      final folder = work;
+      final kept = folder != null && code != ImmersiveErrorCode.cancelled && _kept(folder, done: false, failure: code)
+          ? folder.root.path
+          : null;
+      return ImmersiveResult.failed(code, message: message, stageTimes: times, keptFolder: kept);
     }
 
     try {
@@ -230,8 +255,8 @@ class SplatEngine implements ImmersiveEngine {
       times[ImmersiveStage.reading] = timeOf(ImmersiveStage.reading);
       checkCancel();
 
-      // The poses a job of the same photos found, when their sums have not changed
-      var poses = await _keptPoses(
+      // What a job of the same photos found, when their sums have not changed: its poses, or its images
+      var found = await _keptFound(
         job,
         work,
         key,
@@ -240,51 +265,65 @@ class SplatEngine implements ImmersiveEngine {
       );
       checkCancel();
       ColmapModel? aligned;
-      if (poses != null) {
+      if (found != null && found.placed != null) {
         try {
           aligned = ColmapModel.read(work.aligned);
         } on Object catch (error) {
-          _log.warning('The poses kept in ${work.root.path} do not read, made again: $error');
-          poses = null;
+          _log.warning('The poses kept in ${work.root.path} do not read, found again from its images: $error');
+          found = _Found(images: found.images, total: found.total, blurred: found.blurred);
         }
       }
-      if (poses == null || aligned == null) {
-        await _fresh(work);
-        final members = [for (final member in job.members) _SummedMember(member)];
-        report(first, 0, done: 0, total: model.read);
-        final prepared = await images(
-          members,
-          video: job.isVideo,
-          imagesFolder: work.images.path,
-          cancel: cancel,
-          onProgress: (count, all) {
-            // What the preparation reads, once it says (the frames of a video longer than two minutes)
-            if (all > 0 && all != model.read) {
-              model
-                ..read = all
-                ..images = all;
-            }
-            report(first, all == 0 ? 0 : count / all, done: count, total: all);
-          },
-        );
-        // The preparation by what it read, the steps after it by the images it kept
-        model.read = prepared.total;
-        times[first] = model.normalized(first, timeOf(first));
-        checkCancel();
-        if (prepared.images < SplatV1.minImages) {
-          throw BackendException(ImmersiveErrorCode.tooFewImages, splatCountsMessage(prepared.images, prepared.total));
+      final keptPlaced = found?.placed;
+      if (found == null || keptPlaced == null || aligned == null) {
+        final SplatPrepared prepared;
+        if (found != null) {
+          // The images of the last try, which COLMAP failed on: placed again from them
+          _log.info('The images of ${work.root.path} are taken again: ${found.images} of ${found.total}');
+          prepared = SplatPrepared(images: found.images, total: found.total, blurred: found.blurred);
+          model
+            ..read = found.total
+            ..images = found.images;
+        } else {
+          await _fresh(work);
+          final members = [for (final member in job.members) _SummedMember(member)];
+          report(first, 0, done: 0, total: model.read);
+          prepared = await images(
+            members,
+            video: job.isVideo,
+            imagesFolder: work.images.path,
+            cancel: cancel,
+            onProgress: (count, all) {
+              // What the preparation reads, once it says (the frames of a video longer than two minutes)
+              if (all > 0 && all != model.read) {
+                model
+                  ..read = all
+                  ..images = all;
+              }
+              report(first, all == 0 ? 0 : count / all, done: count, total: all);
+            },
+          );
+          // The preparation by what it read, the steps after it by the images it kept
+          model.read = prepared.total;
+          times[first] = model.normalized(first, timeOf(first));
+          checkCancel();
+          if (prepared.images < SplatV1.minImages) {
+            throw BackendException(
+              ImmersiveErrorCode.tooFewImages,
+              splatCountsMessage(prepared.images, prepared.total),
+            );
+          }
+          model.images = prepared.images;
+          _writeState(work, {
+            'key': key,
+            'sums': [for (final member in members) member.sum],
+            'images': prepared.images,
+            'total': prepared.total,
+            'blurred': prepared.blurred,
+          });
         }
-        model.images = prepared.images;
-        _writeState(work, {
-          'key': key,
-          'sums': [for (final member in members) member.sum],
-          'images': prepared.images,
-          'total': prepared.total,
-          'blurred': prepared.blurred,
-        });
 
         report(ImmersiveStage.features, 0, done: 0, total: prepared.images);
-        final found = await colmap.poses(
+        final poses = await colmap.poses(
           work,
           images: prepared.images,
           video: job.isVideo,
@@ -301,22 +340,29 @@ class SplatEngine implements ImmersiveEngine {
           ('matching', ImmersiveStage.matching),
           ('mapping', ImmersiveStage.mapping),
         ]) {
-          final took = found.times[name];
+          final took = poses.times[name];
           if (took != null) {
             times[at] = model.normalized(
               at,
-              took + (at == ImmersiveStage.mapping ? found.times['align'] ?? Duration.zero : Duration.zero),
+              took + (at == ImmersiveStage.mapping ? poses.times['align'] ?? Duration.zero : Duration.zero),
             );
           }
         }
-        aligned = found.model;
-        poses = _Poses(images: prepared.images, total: prepared.total, placed: found.placed, blurred: prepared.blurred);
-        _writeState(work, {..._readState(work) ?? const {}, 'placed': found.placed});
+        aligned = poses.model;
+        found = _Found(images: prepared.images, total: prepared.total, blurred: prepared.blurred, placed: poses.placed);
+        _writeState(work, {..._readState(work) ?? const {}, 'placed': poses.placed});
+        if (poses.incomplete) {
+          _log.warning(
+            'Splat scene ${job.id}: only ${poses.placed} of ${poses.images} images placed, made all the same: the '
+            'scene may be incomplete',
+          );
+        }
       } else {
         model
-          ..read = poses.total
-          ..images = poses.images;
+          ..read = found.total
+          ..images = found.images;
       }
+      placedNow = SplatPlaced(found.placed!, found.images);
       checkCancel();
 
       report(ImmersiveStage.training, 0, done: 0, total: job.settings.steps);
@@ -355,7 +401,7 @@ class SplatEngine implements ImmersiveEngine {
       report(ImmersiveStage.splatCopy, 1);
       _log.info(
         'Splat scene ${job.id}: ${written.gaussians} gaussians (${written.dropped} dropped), '
-        '${poses.placed} of ${poses.images} images placed, ${written.scale.note}',
+        '${found.placed} of ${found.images} images placed, ${written.scale.note}',
       );
       done = true;
       final made = work;
@@ -364,12 +410,12 @@ class SplatEngine implements ImmersiveEngine {
         afterSaved: () => _settle(made, keep: false),
         details: SplatResultDetails(
           gaussians: written.gaussians,
-          images: poses.images,
-          placed: poses.placed,
+          images: found.images,
+          placed: found.placed!,
           subject: job.settings.subject,
           scale: written.scale.factor,
           fromVideo: job.isVideo,
-          blurred: poses.blurred,
+          blurred: found.blurred,
           shDegree: written.shDegree,
           plyBytes: written.plyBytes,
         ),
@@ -392,6 +438,7 @@ class SplatEngine implements ImmersiveEngine {
       final folder = work;
       if (folder != null) {
         final failure = failed;
+        final keep = _kept(folder, done: done, failure: failure?.$1);
         final logs = failureLogs;
         if (failure != null && failure.$1 != ImmersiveErrorCode.cancelled && logs != null) {
           final (code, message) = failure;
@@ -401,7 +448,8 @@ class SplatEngine implements ImmersiveEngine {
             logs,
             header:
                 'Splat scene ${job.id} (${job.lead.name}, $what, ${job.settings.subject.name}) failed: ${code.name}: '
-                '$message\nThe last step the panel showed: ${stage.name}',
+                '$message\nThe last step the panel showed: ${stage.name}\n'
+                '${keep ? _keptSaid : 'The work folder is deleted'}',
           );
           if (kept != null) {
             _log.info('The logs of the programs of splat scene ${job.id} are kept in ${kept.path}');
@@ -410,15 +458,31 @@ class SplatEngine implements ImmersiveEngine {
         final placed = _readState(folder)?['placed'] is int;
         await _settle(
           folder,
-          keep: done || placed,
-          why: done ? 'until the file is saved' : 'a day, for Retry from its poses',
+          keep: keep,
+          why: done
+              ? 'until the file is saved'
+              : placed
+              ? 'a day, for Retry from its poses'
+              : 'a day, for Retry from its images and a diagnosis',
         );
       }
     }
   }
 
-  /// The poses kept in [work] for [key], when every member read again has the sum it had; null otherwise
-  Future<_Poses?> _keptPoses(
+  /// Whether [work] stays when the job ends ([splatWorkKept]), by what splat.json says it holds
+  bool _kept(SplatWorkFolder work, {required bool done, ImmersiveErrorCode? failure}) {
+    final state = _readState(work);
+    return splatWorkKept(
+      done: done,
+      placed: state?['placed'] is int,
+      prepared: state?['images'] is int,
+      failure: failure,
+    );
+  }
+
+  /// What [work] kept for [key] (its poses, or its images only), when every member read again has the sum it had; null
+  /// otherwise
+  Future<_Found?> _keptFound(
     SplatJob job,
     SplatWorkFolder work,
     String key,
@@ -426,7 +490,16 @@ class SplatEngine implements ImmersiveEngine {
     void Function(int read, int all) onRead,
   ) async {
     final state = _readState(work);
-    if (state == null || state['key'] != key || state['placed'] is! int || !work.aligned.existsSync()) {
+    final images = state?['images'];
+    final total = state?['total'];
+    final placed = state?['placed'];
+    final blurred = state?['blurred'];
+    if (state == null || state['key'] != key || images is! int || total is! int) {
+      return null;
+    }
+    final withPoses = placed is int && work.aligned.existsSync();
+    // Without the poses, the images COLMAP failed on, all of them
+    if (!withPoses && _files(() => colmapImageNames(work.images).length) != images) {
       return null;
     }
     final sums = state['sums'];
@@ -458,20 +531,29 @@ class SplatEngine implements ImmersiveEngine {
         }
       }
       if (sum != kept) {
-        _log.info('${member.name} changed since its poses were found: they are made again');
+        _log.info('${member.name} changed since its images were prepared: they are made again');
         return null;
       }
     }
     onRead(read.length, read.length);
-    final images = state['images'];
-    final total = state['total'];
-    final placed = state['placed'];
-    final blurred = state['blurred'];
-    if (images is! int || total is! int || placed is! int) {
+    if (withPoses) {
+      _log.info('The poses of ${work.root.path} are taken again: $placed of $images images placed');
+    }
+    return _Found(
+      images: images,
+      total: total,
+      blurred: blurred is int ? blurred : 0,
+      placed: withPoses ? placed : null,
+    );
+  }
+
+  /// [action] on the files of the work folder; one that cannot be read leaves nothing to take again
+  T? _files<T>(T Function() action) {
+    try {
+      return action();
+    } on FileSystemException {
       return null;
     }
-    _log.info('The poses of ${work.root.path} are taken again: $placed of $images images placed');
-    return _Poses(images: images, total: total, placed: placed, blurred: blurred is int ? blurred : 0);
   }
 
   /// [work] empty and marked used now; the delete runs off this isolate (the window's in the app)
@@ -506,8 +588,9 @@ class SplatEngine implements ImmersiveEngine {
     }
   }
 
-  /// At the end of a job: [work] kept and marked used when its poses may serve a Retry ([keep]: the file made and not
-  /// saved yet, or a failure once the poses were found), the log saying how long ([why]), else deleted
+  /// At the end of a job: [work] kept and marked used when it may serve a Retry ([keep], [splatWorkKept]: the file made
+  /// and not saved yet, a failure once the poses were found, or a failure of COLMAP once the images were prepared), the
+  /// log saying how long ([why]), else deleted
   Future<void> _settle(SplatWorkFolder work, {required bool keep, String why = ''}) async {
     if (keep) {
       touchAiWorkFolder(work.root);

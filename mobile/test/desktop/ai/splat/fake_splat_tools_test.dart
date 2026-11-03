@@ -335,7 +335,7 @@ void main() {
       skip: _skipColmap,
     );
 
-    test('two models, part of the images, a third of them, none: the counts the runner will judge', () {
+    test('two models, part of the images, two fifths and a fifth of them, none: the counts the runner will judge', () {
       photos(30);
       expect(colmap(extract()).exitCode, 0);
       int placed(String model) => FakeColmapModel.readFrom(Directory(path('sparse/$model')))!.images.length;
@@ -346,8 +346,11 @@ void main() {
       expect(colmap(map(), mode: 'partial').exitCode, 0);
       expect(placed('0'), 21);
       Directory(path('sparse')).deleteSync(recursive: true);
+      expect(colmap(map(), mode: 'incomplete').exitCode, 0);
+      expect(placed('0'), 12);
+      Directory(path('sparse')).deleteSync(recursive: true);
       expect(colmap(map(), mode: 'few').exitCode, 0);
-      expect(placed('0'), 10);
+      expect(placed('0'), 6);
       Directory(path('sparse')).deleteSync(recursive: true);
       final none = colmap(map(), mode: 'nomodel');
       expect(none.exitCode, 1);

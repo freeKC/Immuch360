@@ -642,7 +642,8 @@ void main() {
     });
 
     test(
-      'no model: notEnoughOverlap of none placed; the largest of two; too few: refused; under 90 %: partial',
+      'no model: notEnoughOverlap of none placed; the largest of two; under 30 %: refused; under half: incomplete; '
+      'under 90 %: partial',
       () async {
         final none = _ColmapRunner({
           ...scripts(),
@@ -669,26 +670,34 @@ void main() {
         final split = _ColmapRunner(scripts(), models: const [26, 144]);
         final poses = await colmap(split).poses(work, images: 150, video: true, cancel: cancel);
         expect(split.launches.last.arguments, containsAllInOrder(['--input_path', p.join(work.sparse.path, '1')]));
-        expect((poses.placed, poses.partial), (144, false));
+        expect((poses.placed, poses.incomplete, poses.partial), (144, false, false));
 
-        final few = _ColmapRunner(scripts(), models: const [74]);
+        final few = _ColmapRunner(scripts(), models: const [44]);
         await expectLater(
           colmap(few).poses(work, images: 150, video: false, cancel: cancel),
           throwsA(
             isA<BackendException>()
                 .having((e) => e.code, 'code', ImmersiveErrorCode.notEnoughOverlap)
-                .having((e) => e.message, 'message', '74/150'),
+                .having((e) => e.message, 'message', '44/150'),
           ),
         );
+        expect(few.launches.map((l) => l.arguments.first), isNot(contains('model_orientation_aligner')));
+
+        // Refused until 3 November (74 of 150, under half): made now, said maybe incomplete
+        final incomplete = await colmap(
+          _ColmapRunner(scripts(), models: const [74]),
+        ).poses(work, images: 150, video: false, cancel: cancel);
+        expect((incomplete.placed, incomplete.incomplete, incomplete.partial), (74, true, true));
 
         final partial = await colmap(
           _ColmapRunner(scripts(), models: const [112]),
         ).poses(work, images: 150, video: false, cancel: cancel);
-        expect((partial.placed, partial.partial), (112, true));
+        expect((partial.placed, partial.incomplete, partial.partial), (112, false, true));
       },
     );
 
-    test('the thresholds of the poses: 20 images and half of them at least, 90 % for a whole scene', () {
+    test('the thresholds of the poses: 20 images and 30 % of them at least, half for a scene not incomplete, 90 % for '
+        'a whole scene', () {
       void refused(int placed, int images) => expect(
         () => checkPlaced(placed, images),
         throwsA(
@@ -700,13 +709,17 @@ void main() {
       );
       refused(19, 20);
       refused(19, 30);
-      refused(20, 41);
-      refused(74, 150);
+      refused(20, 67);
+      refused(44, 150);
       checkPlaced(20, 20);
-      checkPlaced(20, 40);
-      checkPlaced(75, 150);
+      checkPlaced(20, 66);
+      checkPlaced(45, 150);
+      // FreeKC's object of 3 November, refused then
+      checkPlaced(68, 139);
+      checkPlaced(74, 150);
       expect(SplatV1.minPlaced, 20);
-      expect(SplatV1.minPlacedShare, 0.5);
+      expect(SplatV1.minPlacedShare, 0.3);
+      expect(SplatV1.incompleteShare, 0.5);
       expect(SplatV1.partialShare, 0.9);
     });
 

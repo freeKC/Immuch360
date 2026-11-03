@@ -4,8 +4,10 @@
 // A scene from the photos to the .spz the app's probe accepts, its steps in order with their counts and the time left;
 // Retry from the poses kept, and not when a photo changed; Cancel at every step, within a second, the program gone;
 // the failures of each step with their codes, the logs of a failure kept in the logs folder of the app and the command
-// of COLMAP named. Skipped without the fakes; the test job on Linux and the windows job of
-// the desktop workflow compile them.
+// of COLMAP named; after a failure of COLMAP, the work folder kept a day with its images, its database and its models,
+// named in the result and in the log of the failure, and a Retry from its images (lot SPF1); a scene of fewer than
+// half of its images placed made all the same, the count told from the poses on. Skipped without the fakes; the test
+// job on Linux and the windows job of the desktop workflow compile them.
 
 import 'dart:async';
 import 'dart:convert';
@@ -518,6 +520,119 @@ void main() {
     expect(pids.existsSync(), isTrue);
   }, skip: _skip());
 
+  test('which work folder stays when a job ends: until saved, a day once placed, a day after a failure of COLMAP', () {
+    expect(splatWorkKept(done: true, placed: false, prepared: true), isTrue);
+    expect(
+      splatWorkKept(done: false, placed: true, prepared: true, failure: ImmersiveErrorCode.trainingFailed),
+      isTrue,
+    );
+    expect(splatWorkKept(done: false, placed: true, prepared: true, failure: ImmersiveErrorCode.cancelled), isTrue);
+    // The images prepared, COLMAP failed: kept for Retry and for a diagnosis (the frames of 3 November were lost)
+    for (final code in [
+      ImmersiveErrorCode.notEnoughOverlap,
+      ImmersiveErrorCode.posesFailed,
+      ImmersiveErrorCode.posesStalled,
+      ImmersiveErrorCode.outOfMemory,
+    ]) {
+      expect(splatWorkKept(done: false, placed: false, prepared: true, failure: code), isTrue, reason: code.name);
+    }
+    // A Cancel, and a full disk, which the folder would fill more
+    expect(splatWorkKept(done: false, placed: false, prepared: true, failure: ImmersiveErrorCode.cancelled), isFalse);
+    expect(splatWorkKept(done: false, placed: false, prepared: true, failure: ImmersiveErrorCode.diskFull), isFalse);
+    // Before the images were prepared: nothing worth keeping
+    expect(
+      splatWorkKept(done: false, placed: false, prepared: false, failure: ImmersiveErrorCode.tooFewImages),
+      isFalse,
+    );
+  });
+
+  test(
+    'COLMAP placed too few: the work folder kept a day with its images, database and models, named in the result and '
+    'in the log of the failure; Retry from its images, COLMAP run again; gone a day later',
+    () async {
+      final members = photos(24);
+      final images = _Images();
+      final said = listenToLog();
+      final logs = Directory(p.join(folder.path, 'app-logs'));
+      // A fifth placed: 4 of 24
+      final failed = await engine(
+        images: images,
+        colmapMode: 'few',
+        failureLogs: logs,
+      ).run(job(members), cancel: cancel);
+
+      expect((failed.error, failed.message), (ImmersiveErrorCode.notEnoughOverlap, '4/24'));
+      final kept = workFolders().single;
+      expect(failed.keptFolder, kept.path);
+      final work = SplatWorkFolder(kept);
+      expect(work.images.listSync(recursive: true).whereType<File>(), hasLength(24));
+      expect(work.database.existsSync(), isTrue);
+      expect(Directory(p.join(work.sparse.path, '0')).existsSync(), isTrue);
+      expect(work.logOf('colmap-mapping').existsSync(), isTrue);
+      expect(File(p.join(kept.path, aiWorkLastUsedName)).existsSync(), isTrue);
+      expect(said, contains('The work folder ${kept.path} is kept a day, for Retry from its images and a diagnosis'));
+      final text = logs.listSync().whereType<File>().single.readAsStringSync();
+      expect(text, contains('failed: notEnoughOverlap: 4/24\n'));
+      expect(
+        text,
+        contains(
+          'The work folder is kept a day, for Retry and for a diagnosis (its images, the database and the models '
+          'of COLMAP)\nWork folder: ${kept.path}\n',
+        ),
+      );
+
+      final pids = File(p.join(folder.path, 'colmap.pid'));
+      final again = await engine(
+        images: images,
+        colmapMore: {'IMMUCH360_FAKE_COLMAP_PID': pids.path},
+      ).run(job(members), cancel: cancel);
+      expect(again.isDone, isTrue, reason: '${again.error}: ${again.message}');
+      expect(images.calls, 1, reason: 'the photos were not prepared again');
+      expect(pids.existsSync(), isTrue, reason: 'COLMAP ran again');
+      expect(members.every((member) => member.loads == 2), isTrue, reason: 'read again for their sums');
+      expect((again.details! as SplatResultDetails).placed, 24);
+      await again.afterSaved!();
+      expect(workFolders(), isEmpty);
+
+      // Failed again, then a day later: the sweep of the next job takes it
+      await engine(images: images, colmapMode: 'few').run(job(members), cancel: cancel);
+      expect(workFolders(), hasLength(1));
+      touchAiWorkFolder(workFolders().single, at: DateTime.now().subtract(const Duration(hours: 25)));
+      expect(await deleteOldSplatWork([SplatWorkRoot(root)]), 1);
+      expect(workFolders(), isEmpty);
+    },
+    skip: _skip(),
+  );
+
+  test('a photo changed after a failure of COLMAP: the images are prepared again', () async {
+    final members = photos(24);
+    final images = _Images();
+    await engine(images: images, colmapMode: 'few').run(job(members), cancel: cancel);
+    members[5].file.writeAsBytesSync(img.encodeJpg(img.Image(width: 64, height: 48)..clear(img.ColorRgb8(9, 8, 7))));
+    final again = await engine(images: images).run(job(members), cancel: cancel);
+    expect(again.isDone, isTrue, reason: '${again.error}: ${again.message}');
+    expect(images.calls, 2);
+    await again.afterSaved!();
+  }, skip: _skip());
+
+  test('two fifths placed: made all the same, the count told from the poses to the end and in the result', () async {
+    final progress = <ImmersiveProgress>[];
+    final result = await engine(
+      colmapMode: 'incomplete',
+    ).run(job(photos(60)), cancel: cancel, onProgress: progress.add);
+
+    expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+    final details = result.details! as SplatResultDetails;
+    expect((details.placed, details.images, details.isIncomplete), (24, 60, true));
+    expect(result.keptFolder, isNull);
+    // Nothing said before the poses, then the count with every progress
+    expect(progress.where((x) => x.stage == ImmersiveStage.features).map((x) => x.placed).toSet(), {null});
+    final after = progress.where((x) => x.stage == ImmersiveStage.training || x.stage == ImmersiveStage.splatCopy);
+    expect(after, isNotEmpty);
+    expect(after.map((x) => x.placed).toSet(), {const SplatPlaced(24, 60)});
+    await result.afterSaved!();
+  }, skip: _skip());
+
   test(
     'a work folder that cannot be deleted at once: tried again without holding the isolate, then left for a day',
     () async {
@@ -541,11 +656,14 @@ void main() {
       }
 
       final timer = Timer.periodic(const Duration(milliseconds: 10), (_) => tick());
-      final result = await engine(images: images, colmapMode: 'nomodel').run(job(photos(24)), cancel: cancel);
+      // Too few usable images: a failure before COLMAP, whose folder goes at once
+      final result = await engine(
+        images: _Images(usable: 12, after: images.after),
+      ).run(job(photos(24)), cancel: cancel);
       tick();
       timer.cancel();
 
-      expect(result.error, ImmersiveErrorCode.notEnoughOverlap);
+      expect(result.error, ImmersiveErrorCode.tooFewImages);
       expect(workFolders(), hasLength(1), reason: 'it stays until it is a day old');
       expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
       expect(longest, lessThan(const Duration(milliseconds: 500)));
@@ -620,7 +738,9 @@ void main() {
         startsWith('COLMAP (exhaustive_matcher) wrote nothing for 2 s and was stopped; its last lines:\n'),
       );
       expect(result.message, contains('Generating exhaustive image pairs...'));
-      expect(workFolders(), isEmpty, reason: 'nothing is kept before the poses');
+      // Its images kept a day with what COLMAP wrote, for Retry and for a diagnosis (lot SPF1)
+      expect(workFolders(), hasLength(1));
+      expect(result.keptFolder, workFolders().single.path);
       final kept = logs.listSync().whereType<File>().single;
       expect(p.basename(kept.path), matches(RegExp(r'^splat-[0-9a-f]{16}-\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d\.log$')));
       final text = kept.readAsStringSync();
@@ -646,7 +766,7 @@ void main() {
         expect(result.error, ImmersiveErrorCode.posesFailed);
         expect(result.message, startsWith('COLMAP (feature_extractor) ended with 1: '));
         expect(result.message, contains('(fake failure)'));
-        expect(workFolders(), isEmpty);
+        expect(workFolders(), hasLength(1), reason: 'its images kept a day');
         final text = logs.listSync().whereType<File>().single.readAsStringSync();
         expect(text, contains('failed: posesFailed: COLMAP (feature_extractor) ended with 1: '));
         expect(text, contains('===== colmap-features.log, '));
@@ -667,8 +787,12 @@ void main() {
             );
         await reached.future.timeout(const Duration(seconds: 60));
         cancel.cancel();
-        expect((await cancelled).error, ImmersiveErrorCode.cancelled);
+        final ended = await cancelled;
+        expect(ended.error, ImmersiveErrorCode.cancelled);
+        expect(ended.keptFolder, isNull);
         expect(again.existsSync() ? again.listSync() : const <FileSystemEntity>[], isEmpty);
+        // A Cancel keeps no folder, not even the one of the failure before (the same photos, the same key)
+        expect(workFolders(), isEmpty);
       },
       skip: _skip(),
     );
@@ -679,9 +803,10 @@ void main() {
       expect(workFolders(), isEmpty);
     }, skip: _skip());
 
-    test('no two photos matched: notEnoughOverlap, none placed', () async {
+    test('no two photos matched: notEnoughOverlap, none placed, the images kept a day', () async {
       final result = await engine(colmapMode: 'nomodel').run(job(photos(24)), cancel: cancel);
       expect((result.error, result.message), (ImmersiveErrorCode.notEnoughOverlap, '0/24'));
+      expect(result.keptFolder, workFolders().single.path);
     }, skip: _skip());
 
     test('kernels the card refuses: gpuUnavailable, the poses kept for another card', () async {

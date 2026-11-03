@@ -113,7 +113,9 @@ void main() {
       expect((SplatV1.photoLongSide, SplatV1.photoQuality, SplatV1.siftMaxImageSize), (1600, 95, 1024));
       expect((SplatV1.steps, SplatV1.maxGaussians, SplatV1.shDegree), (20000, 150000, 3));
       expect(SplatV1.trainingResolution, 1024, reason: 'set by the measure M1: 0.20 dB from 1 280 px, 34 % faster');
-      expect((SplatV1.minPlacedShare, SplatV1.minPlaced, SplatV1.partialShare), (0.5, 20, 0.9));
+      // 30 % placed at least since FreeKC's object of 3 November (68 of 139 frames), said maybe incomplete under half
+      expect((SplatV1.minPlacedShare, SplatV1.minPlaced, SplatV1.partialShare), (0.3, 20, 0.9));
+      expect(SplatV1.incompleteShare, 0.5);
       expect((SplatV1.maxExhaustiveFrames, SplatV1.keyFrameStep, SplatV1.absPoseMinInliers), (200, 10, 15));
       expect(
         (SplatV1.colmapSilence, SplatV1.brushSilence),
@@ -251,6 +253,21 @@ void main() {
       expect(result.details, same(details));
       expect(details.leftOut, 24);
       expect(details.isPartial, isTrue, reason: '126 of 150 is under 90 %');
+      expect(details.isIncomplete, isFalse, reason: '126 of 150 is more than half');
+      expect(
+        const SplatResultDetails(
+          gaussians: 1,
+          images: 139,
+          placed: 68,
+          subject: SplatSubject.object,
+          scale: 1,
+          fromVideo: true,
+        ).isIncomplete,
+        isTrue,
+      );
+      expect(const SplatPlaced(68, 139).isIncomplete, isTrue);
+      expect(const SplatPlaced(70, 139).isIncomplete, isFalse);
+      expect(const SplatPlaced(68, 139), const SplatPlaced(68, 139));
       expect(
         const SplatResultDetails(
           gaussians: 1,

@@ -670,9 +670,12 @@ abstract final class SplatV1 {
   static const colmapMemoryPerThread = 307 * 1024 * 1024;
   static const colmapMinThreads = 2;
 
-  /// The poses: refused when fewer than [minPlacedShare] of the images or fewer than [minPlaced] are placed, said when
-  /// fewer than [partialShare] are
-  static const minPlacedShare = 0.5;
+  /// The poses: refused when fewer than [minPlacedShare] of the images or fewer than [minPlaced] are placed; made all
+  /// the same under [incompleteShare], said maybe incomplete from the poses to the result ("68 of 139 images placed in
+  /// 3D: the scene may be incomplete"); the images left out said under [partialShare]. [minPlacedShare] was half until
+  /// 3 November: FreeKC's object, 68 of 139 frames placed, was refused where he could hardly film better (lot SPF1)
+  static const minPlacedShare = 0.3;
+  static const incompleteShare = 0.5;
   static const minPlaced = 20;
   static const partialShare = 0.9;
 
@@ -716,7 +719,8 @@ abstract final class SplatV1 {
   static const minPhysicalMemory = 7 * 1024 * 1024 * 1024;
   static const jobMemory = 4 * 1024 * 1024 * 1024;
 
-  /// The work folder of a job that failed is kept this long, so that Retry starts again from the poses found
+  /// The work folder of a job that failed is kept this long, so that Retry starts again from the poses found, or from
+  /// its images after a failure of COLMAP (which a diagnosis reads too: lot SPF1)
   static const workKept = Duration(hours: 24);
 }
 

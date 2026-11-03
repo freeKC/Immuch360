@@ -13,8 +13,8 @@
 //    turns around an object together: 68 of FreeKC's 139 frames placed on 3 November, 129 now (diag-2026-11-03.md);
 //  - mapper into colmap/sparse, which must be there first, the processors less two, an image placed from
 //    SplatV1.absPoseMinInliers inliers; then the largest of its models (colmap_model.dart), refused under
-//    SplatV1.minPlaced images or SplatV1.minPlacedShare of them (notEnoughOverlap, "placed/all"), said partial under
-//    SplatV1.partialShare;
+//    SplatV1.minPlaced images or SplatV1.minPlacedShare of them (notEnoughOverlap, "placed/all"), said incomplete
+//    under SplatV1.incompleteShare and partial under SplatV1.partialShare;
 //  - model_orientation_aligner by IMAGE-ORIENTATION into dataset/sparse/0, the model upright (+y down), which Brush and
 //    the headset read; then the model read whole, the centres of its cameras for the scale (splat_scale.dart, lot SP3,
 //    which finds the floor).
@@ -357,6 +357,9 @@ class ColmapPoses {
 
   /// Fewer than SplatV1.partialShare of the images placed: the scene says so
   bool get partial => placed < images * SplatV1.partialShare;
+
+  /// Fewer than SplatV1.incompleteShare of them: the scene is made all the same, said maybe incomplete
+  bool get incomplete => placed < images * SplatV1.incompleteShare;
 }
 
 /// Whether [placed] images of [images] are enough: throws notEnoughOverlap ("placed/images") when they are fewer than

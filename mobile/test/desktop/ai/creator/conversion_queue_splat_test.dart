@@ -2,7 +2,8 @@
 // given its photos or its video, its settings, its .ply and the times of its steps on this computer; the card asked
 // with the need of a splat scene; the time left the engine tells taken as it is; the .ply put beside the .spz under the
 // same name; both .part files dropped when the scene is not made; the times kept under "splatSceneVideo" for a video;
-// Retry. Then end to end on the fakes: the engine of the app (SplatEngine) with the preparation of the app (the photos
+// Retry; the images placed and the work folder kept after a failure, as the engine tells them (lot SPF1). Then end to
+// end on the fakes: the engine of the app (SplatEngine) with the preparation of the app (the photos
 // of lot SP5, the frames from a synthetic source) and the fake COLMAP and Brush compiled as programs, through the
 // queue: the .spz written next to the photos and accepted by the probe of the app, Cancel at every step within a
 // second, Retry from the poses after a training that failed.
@@ -86,6 +87,9 @@ class _ScriptedSplat implements ImmersiveEngine {
   /// Holds the next job in its training until [release]
   var hold = false;
 
+  /// The images COLMAP placed, told with the training
+  SplatPlaced? placed;
+
   static ImmersiveResult _made(SplatJob job) {
     File(job.partPath).writeAsBytesSync(Uint8List.fromList([1, 2, 3]));
     final ply = job.plyPartPath;
@@ -127,12 +131,13 @@ class _ScriptedSplat implements ImmersiveEngine {
     specs.add(job);
     onProgress?.call(const ImmersiveProgress(ImmersiveStage.features, 120, step: 87, steps: 150));
     onProgress?.call(
-      const ImmersiveProgress(
+      ImmersiveProgress(
         ImmersiveStage.training,
         500,
         step: 12400,
         steps: 20000,
-        remaining: Duration(minutes: 3, seconds: 7),
+        remaining: const Duration(minutes: 3, seconds: 7),
+        placed: placed,
       ),
     );
     if (hold) {
@@ -377,6 +382,56 @@ void main() {
       expect(output.discarded, hasLength(2));
       expect(output.discarded.every((path) => !File(path).existsSync()), isTrue);
     });
+
+    test('the images placed, told from the poses on, go with the job; a Retry starts without them', () async {
+      var runs = 0;
+      final engine = _ScriptedSplat()
+        ..hold = true
+        ..placed = const SplatPlaced(68, 139)
+        ..result = (job) => ++runs == 1
+            ? const ImmersiveResult.failed(ImmersiveErrorCode.trainingFailed, message: 'panic')
+            : _ScriptedSplat._made(job);
+      container = containerWith(engine);
+      final id = addSplat(photos(3));
+      await until((state) => job(id).state == ConversionState.training);
+      expect(job(id).placed, const SplatPlaced(68, 139));
+      engine.release();
+      await until((state) => job(id).state.isEnded);
+      expect((job(id).state, job(id).placed), (ConversionState.failed, const SplatPlaced(68, 139)));
+      engine
+        ..hold = true
+        ..placed = null;
+      queue().retry(id);
+      expect(job(id).placed, isNull);
+      await until((state) => job(id).state == ConversionState.training);
+      expect(job(id).placed, isNull);
+      engine.release();
+      await until((state) => job(id).state.isEnded);
+    });
+
+    test(
+      'a failure whose work folder the engine keeps: the folder goes with the job; a Retry starts without it',
+      () async {
+        var runs = 0;
+        final engine = _ScriptedSplat()
+          ..result = (job) => ++runs == 1
+              ? const ImmersiveResult.failed(
+                  ImmersiveErrorCode.notEnoughOverlap,
+                  message: '40/139',
+                  keptFolder: '/tmp/immuch360-ai/splat-e263f1e4fcd3d331',
+                )
+              : _ScriptedSplat._made(job);
+        container = containerWith(engine);
+        final id = addSplat(photos(3));
+        await until((state) => job(id).state.isEnded);
+        expect((job(id).error, job(id).message), (ImmersiveErrorCode.notEnoughOverlap, '40/139'));
+        expect(job(id).keptFolder, '/tmp/immuch360-ai/splat-e263f1e4fcd3d331');
+        queue().retry(id);
+        expect(job(id).keptFolder, isNull);
+        await until((state) => job(id).state == ConversionState.done);
+        expect(job(id).keptFolder, isNull);
+      },
+    );
 
     test('Retry runs the same selection again', () async {
       var runs = 0;

@@ -10,7 +10,8 @@
 //                                        each copied into the logs folder of the app as one file,
 //                                        splat-<16 hexadecimal digits>-<date>.log, the five newest kept
 //                                        ([keepSplatFailureLogs]), which "Save logs to a file" takes with the log: the
-//                                        work folder may go with the failure (before the poses), its logs stay
+//                                        work folder may go with the failure (before the images were prepared, or
+//                                        after a Cancel), its logs stay
 // COLMAP takes its paths as narrow strings on Windows: our build fails on a folder named "été Łódź" and passes on "été"
 // (lot SP4, measured on 1 November; the ANSI code page of that PC, 1252, holds é and not Ł). So the folder is given to
 // COLMAP by an ASCII path: its own when it is one, else its short name (GetShortPathNameW, the 8.3 name, which a volume
@@ -20,7 +21,9 @@
 // rules, the account and SYSTEM alone ([windowsMakePrivate]: SetNamedSecurityInfoW, in one go, the rules of its own
 // replaced too, what it holds following), and is never used when it cannot (the photos of the user are in it).
 // A job's folder is named by the key of its photos and settings (splat-<16 hexadecimal digits>, lot SP6): kept a day
-// after a failure once COLMAP found the poses, so that Retry starts again from them, then deleted under each root by
+// after a failure once COLMAP found the poses, so that Retry starts again from them, and after a failure of COLMAP
+// once the images were prepared (lot SPF1: Retry starts again from the images, and the frames, the database and the
+// models stay for a diagnosis; FreeKC's frames of 3 November went with the failure), then deleted under each root by
 // [deleteOldSplatWork] (the folders of other jobs keep the rule of an hour of their owner, managed_process.dart).
 
 import 'dart:ffi';

@@ -455,6 +455,8 @@ class ConversionJob {
     this.waitingFree,
     this.fromVideo = false,
     this.splat,
+    this.placed,
+    this.keptFolder,
   });
 
   final String id;
@@ -529,13 +531,20 @@ class ConversionJob {
   /// The memory of the graphics card free when it was asked, for [ConversionWait.graphicsMemory], in bytes
   final int? waitingFree;
 
+  /// A splat scene: the images COLMAP placed, once it placed them (ImmersiveProgress.placed); "68 of 139 images placed
+  /// in 3D: the scene may be incomplete" while it trains
+  final SplatPlaced? placed;
+
+  /// The work folder a failure left for a day (ImmersiveResult.keptFolder), named in the panel
+  final String? keptFolder;
+
   ConversionPhase get phase => state.phase;
 
   /// From 0 to 1
   double get progress => perMille / 1000;
 
   /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [waitingFree] are given
-  /// as functions, so that they may go back to null
+  /// as functions, so that they may go back to null; [placed] and [keptFolder] go back to null with [restarted] only
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -556,6 +565,8 @@ class ConversionJob {
     Duration? Function()? remaining,
     ConversionWait? Function()? waitingFor,
     int? Function()? waitingFree,
+    SplatPlaced? placed,
+    String? keptFolder,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -588,6 +599,8 @@ class ConversionJob {
     waitingFree: waitingFree == null ? this.waitingFree : waitingFree(),
     fromVideo: fromVideo,
     splat: splat,
+    placed: placed ?? this.placed,
+    keptFolder: keptFolder ?? this.keptFolder,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then

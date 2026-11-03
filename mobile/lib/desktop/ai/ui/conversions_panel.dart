@@ -629,6 +629,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
         const SizedBox(height: 4),
         LinearProgressIndicator(value: job.phase == ConversionPhase.preparing ? null : job.progress),
         if (progress != null) Text(progress, key: const Key('ai_job_time_left'), style: secondary),
+        // A splat scene of fewer than half of its images placed goes on: said as soon as COLMAP placed them
+        if (job.placed case final placed? when placed.isIncomplete)
+          _splatIncomplete(t, placed.placed, placed.images, colors),
       ],
       if (job.skipReason case final reason?)
         Text(conversionSkipText(t, reason, name: job.target?.fileName), style: secondary),
@@ -636,6 +639,13 @@ class _JobRowState extends ConsumerState<_JobRow> {
         Text(
           conversionFailureText(t, job.error!, job.message, kind: job.kind),
           style: TextStyle(color: colors.error),
+        ),
+      // What a failure of a splat scene left for Retry and for a diagnosis, where "Save logs to a file" names it too
+      if (job.state == ConversionState.failed && job.keptFolder != null)
+        SelectableText(
+          t.ai_immersive_splat_work_kept(folder: job.keptFolder!),
+          key: const Key('ai_job_splat_work_kept'),
+          style: secondary,
         ),
       if (folder != null && !job.state.isEnded || job.state == ConversionState.done) ...[
         if (publish != null && job.state == ConversionState.done && !publish.state.isEnded)
@@ -797,10 +807,20 @@ class _JobRowState extends ConsumerState<_JobRow> {
     );
   }
 
+  /// "68 of 139 images placed in 3D: the scene may be incomplete", from the poses to the result of a splat scene of
+  /// fewer than SplatV1.incompleteShare of its images placed, in the colour of the errors: the scene is made, but may
+  /// show one side of an object only
+  Widget _splatIncomplete(Translations t, int placed, int images, ColorScheme colors) => Text(
+    t.ai_immersive_splat_incomplete(placed: placed, total: images),
+    key: const Key('ai_job_splat_incomplete'),
+    style: TextStyle(color: colors.error),
+  );
+
   /// "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos" (of frames for a video), the images COLMAP could not
-  /// place when they are more than one in ten, the photos left out as blurred (the dialog cannot know them, they are
-  /// found while the photos are prepared, and the done line counts only the photos kept), the blurred frames of a video
-  /// when they are many, and the .ply kept for other 3D apps, named as the .spz written
+  /// place when they are more than one in ten (the scene said maybe incomplete instead when they are more than half),
+  /// the photos left out as blurred (the dialog cannot know them, they are found while the photos are prepared, and the
+  /// done line counts only the photos kept), the blurred frames of a video when they are many, and the .ply kept for
+  /// other 3D apps, named as the .spz written
   List<Widget> _splatDone(Translations t, SplatResultDetails details, String? written, TextStyle secondary) {
     final bytes = written == null ? null : ref.watch(splatFileSizeProvider(written)).valueOrNull;
     final size = bytes == null ? '…' : formatBytes(bytes);
@@ -822,7 +842,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
               ),
         key: const Key('ai_job_splat_done'),
       ),
-      if (details.isPartial)
+      if (details.isIncomplete)
+        _splatIncomplete(t, details.placed, details.images, Theme.of(context).colorScheme)
+      else if (details.isPartial)
         Text(
           details.fromVideo
               ? t.ai_immersive_splat_partial_video(left: details.leftOut, total: details.images)

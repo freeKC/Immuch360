@@ -30,7 +30,8 @@
 //   ok        every image placed, in sparse/0 (the default)
 //   split     two models, as the measure saw once: sparse/0 with the 4 last images, sparse/1 with the others
 //   partial   one model with 7 images of 10 placed (between half and 90 %: the scene says so)
-//   few       one model with a third of the images (under half: refused)
+//   incomplete  one model with two images of five placed (between 30 % and half: made, said maybe incomplete)
+//   few       one model with a fifth of the images (under 30 %: refused)
 //   nomodel   no initial pair found, no model, "failed to create sparse model" and exit 1 (words of the sources of
 //             COLMAP, not seen in the measure)
 //   memory    the extraction ends as on a memory too short when it runs more threads than IMMUCH360_FAKE_COLMAP_THREADS
@@ -421,8 +422,11 @@ Future<int> _map(Map<String, String> options) async {
     'partial' => [
       [for (var i = 0; i < (n * 7 + 9) ~/ 10; i++) i],
     ],
+    'incomplete' => [
+      [for (var i = 0; i < (n * 2 ~/ 5 < 2 ? 2 : n * 2 ~/ 5); i++) i],
+    ],
     'few' => [
-      [for (var i = 0; i < (n ~/ 3 < 2 ? 2 : n ~/ 3); i++) i],
+      [for (var i = 0; i < (n ~/ 5 < 2 ? 2 : n ~/ 5); i++) i],
     ],
     _ => [
       [for (var i = 0; i < n; i++) i],

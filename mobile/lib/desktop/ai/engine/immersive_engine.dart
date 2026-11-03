@@ -546,11 +546,32 @@ final class StereoPanoramaJob extends ImmersiveJobSpec {
   ImmersiveSource get original => photo ?? source;
 }
 
+/// The images of a splat scene COLMAP [placed] in 3D, of the [images] it was given
+class SplatPlaced {
+  const SplatPlaced(this.placed, this.images);
+
+  final int placed;
+  final int images;
+
+  /// Fewer than SplatV1.incompleteShare of them: the scene is made all the same, said maybe incomplete
+  bool get isIncomplete => images > 0 && placed < images * SplatV1.incompleteShare;
+
+  @override
+  bool operator ==(Object other) => other is SplatPlaced && other.placed == placed && other.images == images;
+
+  @override
+  int get hashCode => Object.hash(placed, images);
+
+  @override
+  String toString() => 'SplatPlaced($placed of $images)';
+}
+
 /// Where a job is: its step and how far, in thousandths of the whole job. A long step may also count what it goes
 /// through, [step] of [steps] (the steps of a generation, the regions filled in), with the [remaining] time when the
-/// engine can tell it: "step 12 of 28, about 3 min left".
+/// engine can tell it: "step 12 of 28, about 3 min left". A splat scene tells the images COLMAP [placed] with every
+/// progress once they are known, so that the panel warns of a scene that may be incomplete while it trains.
 class ImmersiveProgress {
-  const ImmersiveProgress(this.stage, this.perMille, {this.step, this.steps, this.remaining});
+  const ImmersiveProgress(this.stage, this.perMille, {this.step, this.steps, this.remaining, this.placed});
 
   final ImmersiveStage stage;
 
@@ -559,6 +580,7 @@ class ImmersiveProgress {
   final int? step;
   final int? steps;
   final Duration? remaining;
+  final SplatPlaced? placed;
 
   @override
   bool operator ==(Object other) =>
@@ -567,10 +589,11 @@ class ImmersiveProgress {
       other.perMille == perMille &&
       other.step == step &&
       other.steps == steps &&
-      other.remaining == remaining;
+      other.remaining == remaining &&
+      other.placed == placed;
 
   @override
-  int get hashCode => Object.hash(stage, perMille, step, steps, remaining);
+  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed);
 
   @override
   String toString() => 'ImmersiveProgress($stage, $perMille${steps == null ? '' : ', $step of $steps'})';
@@ -671,6 +694,9 @@ final class SplatResultDetails extends ImmersiveResultDetails {
 
   /// Whether enough of them were left out to say so (fewer than SplatV1.partialShare placed)
   bool get isPartial => images > 0 && placed < images * SplatV1.partialShare;
+
+  /// Whether so few were placed that the scene may be incomplete (fewer than SplatV1.incompleteShare)
+  bool get isIncomplete => SplatPlaced(placed, images).isIncomplete;
 }
 
 /// How a job ended
@@ -686,7 +712,8 @@ class ImmersiveResult {
   }) : error = null,
        message = null,
        _made = null,
-       afterSaved = null;
+       afterSaved = null,
+       keptFolder = null;
 
   /// A file of another kind written, with what it tells of itself
   const ImmersiveResult.made({
@@ -700,16 +727,21 @@ class ImmersiveResult {
        message = null,
        eyeWidth = null,
        eyeHeight = null,
-       reduced = false;
+       reduced = false,
+       keptFolder = null;
 
-  const ImmersiveResult.failed(ImmersiveErrorCode this.error, {this.message, this.stageTimes = const {}})
-    : eyeWidth = null,
-      eyeHeight = null,
-      bytesWritten = null,
-      reduced = false,
-      qualityFlags = const [],
-      _made = null,
-      afterSaved = null;
+  const ImmersiveResult.failed(
+    ImmersiveErrorCode this.error, {
+    this.message,
+    this.stageTimes = const {},
+    this.keptFolder,
+  }) : eyeWidth = null,
+       eyeHeight = null,
+       bytesWritten = null,
+       reduced = false,
+       qualityFlags = const [],
+       _made = null,
+       afterSaved = null;
 
   final ImmersiveResultDetails? _made;
 
@@ -741,6 +773,10 @@ class ImmersiveResult {
 
   /// How long each step took
   final Map<ImmersiveStage, Duration> stageTimes;
+
+  /// The work folder a failure leaves for a day, for Retry and for a diagnosis (a splat scene: its images, and the
+  /// database and the models of COLMAP); null when none stays
+  final String? keptFolder;
 
   /// What the engine keeps for this job until its file is saved, let go once the queue saved it (renamed, or dropped
   /// for a name taken): the work folder of a splat scene, which a Retry starts again from when the file could not be

@@ -3,8 +3,9 @@
 // other 3D apps, the photos COLMAP could not place, the photos left out as blurred, the blurred frames of a video,
 // Open folder and "How to open it in the headset" with the line of a folder of the network or of this computer; no
 // View and no Delete for a file the computer neither shows nor marks as ours; the training with its step and the time
-// left; a refusal of integrated graphics in the words of the splat scenes; and the close of the window that names the
-// step of a scene being made.
+// left; a refusal of integrated graphics in the words of the splat scenes; a scene of fewer than half of its images
+// placed, said from the poses to the result, and the work folder kept after a failure of COLMAP, named (lot SPF1); the
+// matching of a video in blocks; and the close of the window that names the step of a scene being made.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -78,6 +79,8 @@ ConversionJob _splat(
   Duration? remaining,
   ImmersiveErrorCode? error,
   String? message,
+  SplatPlaced? placed,
+  String? keptFolder,
 }) => ConversionJob(
   id: id,
   source: _Named(label),
@@ -94,6 +97,8 @@ ConversionJob _splat(
   remaining: remaining,
   error: error,
   message: message,
+  placed: placed,
+  keptFolder: keptFolder,
 );
 
 void main() {
@@ -334,6 +339,100 @@ void main() {
           'Integrated graphics are not supported for splat scenes yet: a dedicated graphics card with Vulkan is needed',
         ),
       ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('fewer than half of the images placed: said while the scene trains and in its result, instead of the '
+      'images left out', (tester) async {
+    await pumpPanel(tester, [
+      _splat(
+        'conversion-9',
+        state: ConversionState.training,
+        fromVideo: true,
+        step: 400,
+        steps: 20000,
+        placed: const SplatPlaced(68, 139),
+      ),
+      _splat(
+        'conversion-10',
+        fromVideo: true,
+        placed: const SplatPlaced(68, 139),
+        details: const SplatResultDetails(
+          gaussians: 129325,
+          images: 139,
+          placed: 68,
+          subject: SplatSubject.object,
+          scale: 0.05,
+          fromVideo: true,
+          blurred: 11,
+        ),
+      ),
+      _splat(
+        'conversion-11',
+        state: ConversionState.training,
+        step: 400,
+        steps: 20000,
+        placed: const SplatPlaced(129, 139),
+      ),
+    ]);
+
+    const line = '68 of 139 images placed in 3D: the scene may be incomplete';
+    expect(inRow('conversion-9', find.text(line)), findsOneWidget);
+    expect(inRow('conversion-9', find.byKey(const Key('ai_job_splat_incomplete'))), findsOneWidget);
+    expect(
+      inRow('conversion-10', find.text('Done: 129,325 gaussians, 3.4 MiB, from 68 of 139 frames')),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-10', find.text(line)), findsOneWidget);
+    expect(inRow('conversion-10', find.byKey(const Key('ai_job_splat_partial'))), findsNothing);
+    // 129 of 139: nothing said while it trains
+    expect(inRow('conversion-11', find.byKey(const Key('ai_job_splat_incomplete'))), findsNothing);
+  });
+
+  testWidgets('a failure of COLMAP: its refusal, and the work folder kept a day named; none after a Cancel', (
+    tester,
+  ) async {
+    const kept = r'C:\Users\freek\AppData\Local\Temp\immuch360-ai\splat-e263f1e4fcd3d331';
+    await pumpPanel(tester, [
+      _splat(
+        'conversion-12',
+        state: ConversionState.failed,
+        fromVideo: true,
+        error: ImmersiveErrorCode.notEnoughOverlap,
+        message: '40/139',
+        keptFolder: kept,
+      ),
+      _splat('conversion-13', state: ConversionState.failed, error: ImmersiveErrorCode.tooFewImages, message: '12/24'),
+    ]);
+
+    expect(
+      inRow(
+        'conversion-12',
+        find.text(
+          'Only 40 of 139 images could be placed in 3D. The photos must overlap: take them a step apart, each one '
+          'seeing most of what the previous one saw, and avoid plain walls, windows and mirrors.',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      inRow(
+        'conversion-12',
+        find.text('The prepared images and the work files are kept for a day, for Retry and for a diagnosis: $kept'),
+      ),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-12', find.byKey(const Key('ai_job_retry'))), findsOneWidget);
+    expect(inRow('conversion-13', find.byKey(const Key('ai_job_splat_work_kept'))), findsNothing);
+  });
+
+  testWidgets('the frames of a video are matched in blocks, as photos are', (tester) async {
+    await pumpPanel(tester, [
+      _splat('conversion-14', state: ConversionState.matching, fromVideo: true, step: 4, steps: 16),
+    ]);
+    expect(
+      inRow('conversion-14', find.textContaining('Placing the photos in 3D: matching, block 4 of 16')),
       findsOneWidget,
     );
   });

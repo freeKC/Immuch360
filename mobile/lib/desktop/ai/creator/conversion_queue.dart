@@ -805,7 +805,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
       final error = result.error;
       if (error != null) {
-        _end(id, error, result.message);
+        _end(id, error, result.message, result.keptFolder);
         return;
       }
 
@@ -1208,14 +1208,20 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   }
 
   /// Ends a job that made no file: cancelled, or failed with [code]; a disk full pauses the queue
-  void _end(String id, ImmersiveErrorCode code, [String? message]) {
+  void _end(String id, ImmersiveErrorCode code, [String? message, String? keptFolder]) {
     if (code == ImmersiveErrorCode.cancelled) {
       _set(id, (job) => job.copyWith(state: ConversionState.cancelled, remaining: () => null));
       return;
     }
     _set(
       id,
-      (job) => job.copyWith(state: ConversionState.failed, error: code, message: message, remaining: () => null),
+      (job) => job.copyWith(
+        state: ConversionState.failed,
+        error: code,
+        message: message,
+        remaining: () => null,
+        keptFolder: keptFolder,
+      ),
     );
     if (code == ImmersiveErrorCode.diskFull && !_disposed) {
       _diskFull.add(id);
@@ -1246,6 +1252,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       perMille: math.max(job.perMille, progress.perMille.clamp(0, 1000)),
       step: current ? () => progress.step : null,
       steps: current ? () => progress.steps : null,
+      placed: progress.placed,
       remaining: () => conversionTimeLeft(
         job.kind,
         stage,
