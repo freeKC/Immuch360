@@ -164,27 +164,24 @@ void main() {
       expect(work.logOf('colmap-matching').readAsStringSync(), contains('Generating exhaustive image pairs...'));
     }, skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'));
 
-    test(
-      'a video of 210 frames: the list of its pairs, every name one COLMAP holds, matched by matches_importer',
-      () async {
-        photos(210, cameras: 1);
-        final progress = <ColmapProgress>[];
-        final poses = await colmap(
-          'ok',
-        ).poses(work, images: 210, video: true, cancel: cancel, onProgress: progress.add);
-        expect(poses.placed, 210);
-        final pairs = colmapVideoPairs(210).length;
-        expect(work.pairs.readAsLinesSync(), hasLength(pairs));
-        final blocks = (pairs + 1224) ~/ 1225;
-        expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => (x.done, x.total)), [
-          for (var b = 1; b <= blocks; b++) (b, blocks),
-        ]);
-        final log = work.logOf('colmap-matching').readAsStringSync();
-        expect(log, contains('Importing image pairs...'));
-        expect(log, isNot(contains('does not exist')));
-      },
-      skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'),
-    );
+    test('a video of 210 frames: the list of its pairs, every name one COLMAP holds, matched by matches_importer; its '
+        'work folder under a root with a space (lot SPF2: the path of the list is one argument)', () async {
+      work = SplatWorkFolder(Directory(p.join(folder.path, 'work dir', 'job')));
+      photos(210, cameras: 1);
+      final progress = <ColmapProgress>[];
+      final poses = await colmap('ok').poses(work, images: 210, video: true, cancel: cancel, onProgress: progress.add);
+      expect(poses.placed, 210);
+      final pairs = colmapVideoPairs(210).length;
+      expect(work.pairs.readAsLinesSync(), hasLength(pairs));
+      final blocks = (pairs + 1224) ~/ 1225;
+      expect(progress.where((x) => x.stage == ImmersiveStage.matching).map((x) => (x.done, x.total)), [
+        for (var b = 1; b <= blocks; b++) (b, blocks),
+      ]);
+      final log = work.logOf('colmap-matching').readAsStringSync();
+      expect(log, contains('Importing image pairs...'));
+      expect(log, isNot(contains('does not exist')));
+      expect(work.pairs.path, contains('work dir'));
+    }, skip: _skip(_colmap, 'IMMUCH360_FAKE_COLMAP'));
 
     test('two models: the largest; 70 % placed: partial; a fifth, or two fifths under 20: refused; no pair: refused '
         'with none; two fifths of 60: incomplete', () async {

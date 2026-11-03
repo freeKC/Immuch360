@@ -7,8 +7,8 @@
 // of COLMAP named; after a failure of COLMAP, the work folder kept with its images, its database and its models,
 // named in the result and in the log of the failure, and a Retry from its images (lot SPF1); a scene of fewer than
 // half of its images placed made all the same, the count told from the poses on; the folder a failure left gone when
-// another scene starts (lot SPF2). Skipped without the fakes; the test job on Linux and the windows job of the desktop
-// workflow compile them.
+// another scene starts, and a Cancel while a long video is matched by its list of pairs (lot SPF2). Skipped without
+// the fakes; the test job on Linux and the windows job of the desktop workflow compile them.
 
 import 'dart:async';
 import 'dart:convert';
@@ -108,7 +108,7 @@ class _ServerMember extends _FileMember implements SplatMemberSum {
 /// into one camera, or SplatV1.videoFrames frames of the one video, [delay] after each image and [onEach] called, counting
 /// its calls
 class _Images {
-  _Images({this.delay = Duration.zero, this.usable, this.onEach, this.after});
+  _Images({this.delay = Duration.zero, this.usable, this.onEach, this.after, this.frames = SplatV1.videoFrames});
 
   final Duration delay;
 
@@ -120,6 +120,9 @@ class _Images {
 
   /// Called with the images folder once they are prepared
   final void Function(String imagesFolder)? after;
+
+  /// The frames of a video: those of a video of up to two minutes by default
+  final int frames;
   var calls = 0;
 
   Future<SplatPrepared> call(
@@ -145,8 +148,8 @@ class _Images {
 
     final int total;
     if (video) {
-      // The frames of a video of up to two minutes
-      total = SplatV1.videoFrames;
+      // The frames of a video of up to two minutes, or as many as asked
+      total = frames;
       final source = await members.single.load(cancel);
       try {
         for (var index = 0; index < total; index++) {
@@ -734,6 +737,47 @@ void main() {
       }, skip: _skip());
     }
   });
+
+  test(
+    'Cancel within a second while a long video is matched by the list of its pairs (201 frames, matches_importer; lot '
+    'SPF2): the program gone, nothing kept',
+    () async {
+      final pid = File(p.join(folder.path, 'program.pid'));
+      final reached = Completer<ImmersiveProgress>();
+      final result =
+          engine(
+            images: _Images(frames: 201),
+            // Slow at the list alone: half a second a block, the other commands at once
+            colmapMode: 'slow',
+            colmapMore: {
+              'IMMUCH360_FAKE_COLMAP_PID': pid.path,
+              'IMMUCH360_FAKE_COLMAP_MODE_AT': 'matches_importer',
+              'IMMUCH360_FAKE_COLMAP_STEP_MS': '',
+            },
+          ).run(
+            videoJob(video()),
+            cancel: cancel,
+            onProgress: (progress) {
+              if (progress.stage == ImmersiveStage.matching && (progress.step ?? 0) >= 2 && !reached.isCompleted) {
+                reached.complete(progress);
+              }
+            },
+          );
+      final matching = await reached.future.timeout(const Duration(seconds: 60));
+      // The blocks of 1 225 pairs of the list (5 067 pairs), not the 25 blocks of every pair of 201 frames
+      expect(matching.steps, (colmapVideoPairs(201).length + 1224) ~/ 1225);
+      final watch = Stopwatch()..start();
+      cancel.cancel();
+      final ended = await result;
+      watch.stop();
+
+      expect(ended.error, ImmersiveErrorCode.cancelled);
+      expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
+      expect(processImageOf(int.parse(pid.readAsStringSync())), isNull, reason: 'matches_importer is gone');
+      expect(workFolders(), isEmpty);
+    },
+    skip: _skip(),
+  );
 
   group('the failures of each step, with their codes', () {
     test('COLMAP silent at the matching: posesStalled naming the command and its last lines; the logs of the job kept '
