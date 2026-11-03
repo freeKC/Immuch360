@@ -9,6 +9,7 @@
 // before the picture asked and the pictures before it dropped. Its pictures are a test pattern, not decoded: unit k
 // gives picture k, whose first four luma samples hold k (fakeAv2FrameOf), over a ramp that moves with k.
 //
+// serve takes its token from IMMUCH360_AV2_TOKEN when --token is left out, as the real one (the app gives it there).
 // IMMUCH360_FAKE_AV2_MODE says what it does:
 //   play       serves what it is fed (the default)
 //   silent     writes its listening line, then nothing more and never decodes: a companion that hangs
@@ -35,6 +36,9 @@ import 'package:immich_mobile/domain/services/y4m_layout.dart';
 
 /// The protocol of serve the fake speaks, as the first line of --version says
 const fakeAv2Protocol = 1;
+
+/// The variable of the environment that gives serve its token when --token is left out, as the app gives it
+const fakeAv2TokenVariable = 'IMMUCH360_AV2_TOKEN';
 
 /// "AV2R" read as a little endian 32-bit number: the mark of each record of the standard input
 const fakeAv2RecordMagic = 0x52325641;
@@ -333,8 +337,22 @@ class _ServeOptions {
           return _ServeOptions._('an unknown option of serve');
       }
     }
+    if ((have & 1) == 0) {
+      // The app leaves --token out and gives the token in the environment, as the real one takes it
+      final token = Platform.environment[fakeAv2TokenVariable] ?? '';
+      if (token.isNotEmpty) {
+        if (!RegExp(r'^[A-Za-z0-9_-]{16,128}$').hasMatch(token)) {
+          return _ServeOptions._('$fakeAv2TokenVariable takes 16 to 128 letters, digits, - or _');
+        }
+        options.token = token;
+        have |= 1;
+      }
+    }
+    if ((have & 1) == 0) {
+      return _ServeOptions._('serve needs a token, in the environment variable $fakeAv2TokenVariable or by --token');
+    }
     if (have != 63) {
-      return _ServeOptions._('serve needs --token, --width, --height, --bits, --fps and --frames');
+      return _ServeOptions._('serve needs --width, --height, --bits, --fps and --frames');
     }
     return options;
   }

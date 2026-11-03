@@ -12,7 +12,9 @@
 //     other than 0 named;
 //  4. it answers "listening PORT": the player opens http://127.0.0.1:PORT/TOKEN/video.y4m as a file of a share, whose
 //     length is known before anything is decoded: the duration is right, a seek is a byte range, a pause blocks the
-//     companion's writes, then its reads of the units, then the app's writes (each one awaits its flush): no processor;
+//     companion's writes, then its reads of the units, then the app's writes (each one awaits its flush): no processor.
+//     The token goes in the companion's environment, never on its command line, which any account of the computer
+//     reads;
 //  5. the app writes the index of the access points, then the units of each generation the companion asks for ("need G
 //     U"), read from the file of this computer or from the share, and drops an older generation as soon as a newer one
 //     is asked for;
@@ -544,6 +546,10 @@ final _companionUrl = RegExp(r'^http://127\.0\.0\.1:\d{1,5}/[A-Za-z0-9_-]{16,128
 /// Whether [resource] is the y4m of an AV2 companion: http://127.0.0.1:PORT/TOKEN/video.y4m
 bool isAv2CompanionUrl(String resource) => _companionUrl.hasMatch(resource);
 
+/// The variable of the companion's environment that holds its token (mobile/native/av2/README.md, serve): every account
+/// of a computer can read the command line of a process, only its own account its environment
+const av2TokenVariable = 'IMMUCH360_AV2_TOKEN';
+
 /// A token of the companion: 32 letters and digits drawn by the system's generator
 String _token() {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -883,8 +889,6 @@ class Av2Session {
         executable: files.program,
         arguments: [
           'serve',
-          '--token',
-          token,
           '--width',
           '${layout.width}',
           '--height',
@@ -902,6 +906,7 @@ class Av2Session {
           if (threads != null) ...['--threads', '$threads'],
           if (parentPid != null) ...['--parent', '$parentPid'],
         ],
+        environment: {av2TokenVariable: token},
         // Playback is the task in front: the decoder runs at the normal priority
         lowPriority: false,
       ),

@@ -325,9 +325,14 @@ void main() {
       expect(launch.lowPriority, isFalse, reason: 'playback is the task in front');
       expect(launch.arguments.take(1), ['serve']);
       expect(launch.arguments.join(' '), contains('--width 256 --height 144 --bits 8 --fps 30/1 --frames 12'));
+      // The token in the companion's environment, never on its command line, which every account of the computer
+      // reads (n1 of the second review of lot AD2)
+      expect(launch.arguments, isNot(contains('--token')));
+      final token = launch.environment['IMMUCH360_AV2_TOKEN'];
+      expect(token, matches(RegExp(r'^[A-Za-z0-9]{32}$')));
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
       final session = await starting;
-      expect(session.url.toString(), matches(RegExp(r'^http://127\.0\.0\.1:50123/[A-Za-z0-9]{32}/video\.y4m$')));
+      expect(session.url.toString(), 'http://127.0.0.1:50123/$token/video.y4m');
       expect(isAv2CompanionUrl(session.url.toString()), isTrue);
 
       // The index first, held until the pipe takes it
