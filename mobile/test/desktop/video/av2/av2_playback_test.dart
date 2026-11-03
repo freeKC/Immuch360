@@ -29,20 +29,6 @@ Future<Av2Index> _index(Uint8List bytes) => indexAv2Stream(
   bytes.length,
 );
 
-/// The probe of a 256x144 stream in 8 bits, as the companion writes it
-Map<String, Object?> _probeJson({int bits = 8, bool playable = true, String? refusal, Map<String, Object?>? color}) => {
-  'container': 'ivf',
-  'fourcc': 'AV02',
-  'ivf': {'width': 256, 'height': 144, 'rate': 30, 'scale': 1, 'frames': 12},
-  'sequence': {'profile': 0, 'bits': bits, 'layout': '420', 'max_width': 256, 'max_height': 144},
-  'picture': playable ? {'width': 256, 'height': 144, 'bits': bits, 'layout': '420'} : null,
-  'color': color ?? {'description': false, 'primaries': 2, 'transfer': 2, 'matrix': 2, 'range': 'limited'},
-  'format': '4:2:0 $bits-bit',
-  'playable': playable,
-  'refusal': refusal,
-  'y4m': null,
-};
-
 /// A process that answers as the companion would, without being one: its lines are the test's, and its standard
 /// input takes each write only when the test lets it, as a pipe the companion stopped reading
 class _HeldProcess implements RunningProcess {
@@ -191,6 +177,20 @@ Future<void> _until(bool Function() condition, {Duration timeout = const Duratio
   }
 }
 
+/// A session of a share served by a [FakeAv2ServeProcess] of [runner], once it listens
+Future<(Av2Session, FakeAv2ServeProcess)> _scriptedSession(ScriptedAv2Runner runner) async {
+  final starting = Av2Session.start(
+    bytes: Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+    files: (program: 'immuch360-av2', launcher: null),
+    runner: runner,
+    decoderVersion: 'test',
+    probe: () async => Av2Probe.fromJson(av2ProbeJson()),
+  );
+  await _until(() => runner.serves.isNotEmpty);
+  final process = runner.serves.last..say(av2ListeningLine);
+  return (await starting, process);
+}
+
 /// The picture numbers of the records of [bytes], the y4m of [layout] from picture [first]
 List<int> _frames(Uint8List bytes, Y4mLayout layout, {bool withHeader = false}) {
   var at = withHeader ? layout.headerLength : 0;
@@ -295,15 +295,15 @@ void main() {
     });
 
     test('the probe of the companion: the first picture, the refusal, the colours', () {
-      final plain = Av2Probe.fromJson(_probeJson());
+      final plain = Av2Probe.fromJson(av2ProbeJson());
       expect(
         (plain.width, plain.height, plain.bits, plain.playable, plain.colour, plain.fullRange),
         (256, 144, 8, true, null, false),
       );
-      final refused = Av2Probe.fromJson(_probeJson(bits: 12, playable: false, refusal: '4:2:0 12-bit'));
+      final refused = Av2Probe.fromJson(av2ProbeJson(bits: 12, playable: false, refusal: '4:2:0 12-bit'));
       expect((refused.playable, refused.refusal, refused.width), (false, '4:2:0 12-bit', null));
       final described = Av2Probe.fromJson(
-        _probeJson(color: const {'description': true, 'primaries': 9, 'transfer': 16, 'matrix': 9, 'range': 'full'}),
+        av2ProbeJson(color: const {'description': true, 'primaries': 9, 'transfer': 16, 'matrix': 9, 'range': 'full'}),
       );
       expect(described.colour, (primaries: 9, transfer: 16, matrix: 9));
       expect(described.fullRange, isTrue);
@@ -376,7 +376,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       final launch = runner.launches.single;
@@ -436,7 +436,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
@@ -445,8 +445,47 @@ void main() {
       // The index could not be written: the pipe broke; the system tells the end 300 ms later
       Timer(const Duration(milliseconds: 300), process.end);
       await _until(() => session.failure.value != null);
-      expect(session.failure.value, contains('immuch360-av2 ended with'));
+      expect(session.failure.value, contains('(code -9)'));
       expect(session.isRunning, isFalse);
+    });
+
+    test('killed while it served: its end in words, without the lines of its protocol', () async {
+      final runner = ScriptedAv2Runner();
+      final (session, process) = await _scriptedSession(runner);
+      addTearDown(session.stop);
+      process
+        ..say('request bytes=0-663625 frame=0')
+        ..say('need 1 0')
+        ..say('stat decoded=4 served=3 fps=0.0 simd=avx2 gen=1 frame=3 serving=1');
+      await _until(() => session.stat.value != null);
+      // Killed by another program, or by the system short of memory: the review of lot AD3 saw "immuch360-av2 ended
+      // with -9: listening 52771 ... / request bytes=0-... / need 1 0" in three lines of the failure panel
+      process.kill();
+      await _until(() => session.failure.value != null);
+      final failure = session.failure.value!;
+      for (final protocol in ['listening', 'request', 'need', 'stat', 'immuch360-av2', '\n']) {
+        expect(failure, isNot(contains(protocol)));
+      }
+      expect(failure, contains('(code -9)'));
+      if (!Platform.isWindows) {
+        expect(failure, 'it was stopped (code -9)');
+      }
+    });
+
+    test('a crash after a line of its own: its end in words, and that line', () async {
+      final runner = ScriptedAv2Runner();
+      final (session, process) = await _scriptedSession(runner);
+      addTearDown(session.stop);
+      process
+        ..say('request bytes=0-663625 frame=0')
+        ..say('dav2d: assertion failed in lr_apply')
+        ..say('need 1 0')
+        ..end(-6);
+      await _until(() => session.failure.value != null);
+      expect(session.failure.value, endsWith('(code -6): dav2d: assertion failed in lr_apply'));
+      if (!Platform.isWindows) {
+        expect(session.failure.value, 'it crashed (code -6): dav2d: assertion failed in lr_apply');
+      }
     });
   });
 
@@ -460,7 +499,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
@@ -501,7 +540,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
@@ -540,7 +579,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
@@ -575,7 +614,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
@@ -606,7 +645,7 @@ void main() {
         files: (program: 'immuch360-av2', launcher: null),
         runner: runner,
         decoderVersion: 'test',
-        probe: () async => Av2Probe.fromJson(_probeJson()),
+        probe: () async => Av2Probe.fromJson(av2ProbeJson()),
       );
       await _until(() => runner.launches.isNotEmpty);
       process.say('listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12');
@@ -729,7 +768,8 @@ void main() {
       await readAv2Url(session.url, length: session.layout.headerLength + session.layout.recordBytes);
       Process.killPid(session.pid!, ProcessSignal.sigkill);
       await _until(() => session.failure.value != null, timeout: const Duration(seconds: 5));
-      expect(session.failure.value, contains('immuch360-av2 ended with'));
+      // A signal on Linux, TerminateProcess and its -1 on Windows; never the lines of its protocol
+      expect(session.failure.value, Platform.isWindows ? 'it was stopped (code -1)' : 'it was stopped (code -9)');
       expect(session.isRunning, isFalse);
     }, skip: skipWithoutFakeAv2);
 

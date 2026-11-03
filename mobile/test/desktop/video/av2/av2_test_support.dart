@@ -1,8 +1,12 @@
 // What the tests of the AV2 playback share (lot AD3): the fixtures of lot AD0, a longer stream made of a fixture
 // repeated (each copy a closed group of pictures that starts with its key frame and its sequence header, as the checks
-// of lot AD2 repeat it for the real companion), a share over bytes, and a runner that gives the compiled fake companion
-// (IMMUCH360_FAKE_AV2) the mode of a test through its environment.
+// of lot AD2 repeat it for the real companion), a share over bytes, a runner that gives the compiled fake companion
+// (IMMUCH360_FAKE_AV2) the mode of a test through its environment, and a runner of processes that answer as the
+// companion would without being one (a probe's line, a serve whose lines the test writes), for the tests that need
+// no program.
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -133,3 +137,124 @@ Future<Uint8List> readAv2Url(
     client.close(force: true);
   }
 }
+
+/// The probe of a 256x144 stream in 8 bits, as the companion writes it
+Map<String, Object?> av2ProbeJson({int bits = 8, bool playable = true, String? refusal, Map<String, Object?>? color}) =>
+    {
+      'container': 'ivf',
+      'fourcc': 'AV02',
+      'ivf': {'width': 256, 'height': 144, 'rate': 30, 'scale': 1, 'frames': 12},
+      'sequence': {'profile': 0, 'bits': bits, 'layout': '420', 'max_width': 256, 'max_height': 144},
+      'picture': playable ? {'width': 256, 'height': 144, 'bits': bits, 'layout': '420'} : null,
+      'color': color ?? {'description': false, 'primaries': 2, 'transfer': 2, 'matrix': 2, 'range': 'limited'},
+      'format': '4:2:0 $bits-bit',
+      'playable': playable,
+      'refusal': refusal,
+      'y4m': null,
+    };
+
+/// A standard input that takes whatever it is given
+class _Drain implements StreamConsumer<List<int>> {
+  @override
+  Future<void> addStream(Stream<List<int>> stream) => stream.drain<void>();
+
+  @override
+  Future<void> close() async {}
+}
+
+/// A probe that answers as the companion's: its line, then exit code 0
+class FakeAv2ProbeProcess implements RunningProcess {
+  FakeAv2ProbeProcess(String line) {
+    stdin = IOSink(_Drain());
+    _out.add(line);
+    unawaited(_out.close());
+  }
+
+  final _out = StreamController<String>();
+
+  @override
+  final int pid = 9101;
+
+  // Closed by the probe that writes to it
+  @override
+  // ignore: close_sinks
+  late final IOSink stdin;
+
+  @override
+  Stream<String> get stdoutLines => _out.stream;
+
+  @override
+  Stream<String> get stderrLines => const Stream.empty();
+
+  @override
+  Future<int> get exitCode async => 0;
+
+  @override
+  void kill() {}
+}
+
+/// A serve that answers as the companion's: its lines are the test's ([say]), its standard input takes everything,
+/// and it ends when it is killed (code -9, as a signal on Linux) or when the test ends it with a code ([end])
+class FakeAv2ServeProcess implements RunningProcess {
+  FakeAv2ServeProcess() {
+    stdin = IOSink(_Drain());
+  }
+
+  final _out = StreamController<String>();
+  final _exit = Completer<int>();
+
+  @override
+  final int pid = 9102;
+
+  // Closed by the session it is given to
+  @override
+  // ignore: close_sinks
+  late final IOSink stdin;
+
+  @override
+  Stream<String> get stdoutLines => _out.stream;
+
+  @override
+  Stream<String> get stderrLines => const Stream.empty();
+
+  @override
+  Future<int> get exitCode => _exit.future;
+
+  void say(String line) => _out.add(line);
+
+  /// The program ends by itself with [code]
+  void end(int code) {
+    if (!_exit.isCompleted) {
+      unawaited(_out.close());
+      _exit.complete(code);
+    }
+  }
+
+  @override
+  void kill() => end(-9);
+}
+
+/// A runner of [FakeAv2ProbeProcess] for each probe and [FakeAv2ServeProcess] for each serve, which keeps the launches
+class ScriptedAv2Runner implements ProcessRunner {
+  ScriptedAv2Runner({Map<String, Object?>? probe}) : probe = probe ?? av2ProbeJson();
+
+  final Map<String, Object?> probe;
+  final launches = <ProcessLaunch>[];
+  final serves = <FakeAv2ServeProcess>[];
+
+  Iterable<ProcessLaunch> launchesOf(String command) => launches.where((launch) => launch.arguments.first == command);
+
+  @override
+  Future<RunningProcess> start(ProcessLaunch launch) async {
+    launches.add(launch);
+    if (launch.arguments.first == 'probe') {
+      return FakeAv2ProbeProcess(jsonEncode(probe));
+    }
+    final process = FakeAv2ServeProcess();
+    serves.add(process);
+    return process;
+  }
+}
+
+/// The line a 256x144 serve of 12 pictures writes once it listens
+const av2ListeningLine = 'listening 50123 address=127.0.0.1 length=663626 header=63 frame=55296 frames=12';

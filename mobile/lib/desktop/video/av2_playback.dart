@@ -430,15 +430,67 @@ class Av2NotAv2 implements Exception {
   String toString() => 'Not an AV2 stream: $reason';
 }
 
-/// What the companion is to its run (SidecarRun): its name and its failures
+/// What the companion is to its run (SidecarRun): its name and its failures; the end of its output a failure carries
+/// leaves the lines of its protocol out ([av2LineSaysWhy])
 const av2SidecarProgram = SidecarProgram(
   name: 'immuch360-av2',
   failed: ImmersiveErrorCode.decodeFailed,
   stalled: ImmersiveErrorCode.decodeFailed,
   outOfMemory: ImmersiveErrorCode.outOfMemory,
   outOfMemoryTexts: ['error memory'],
-  tailLines: 5,
+  tailLines: 2,
+  inTail: av2LineSaysWhy,
 );
+
+final _protocolLine = RegExp(r'^(listening|need|request|stat|refused|exit|error) |^\{');
+
+/// Whether a line of the companion may say why it ended: not a line of its protocol (mobile/native/av2/README.md,
+/// standard output), which says where it was, nor the probe's JSON, nor its error line, which is the reason itself
+/// (Av2Session._errorText); the review of lot AD3 saw "immuch360-av2 ended with -9: listening 52771 ... / request
+/// bytes=0-... / need 1 0" in three lines of the failure panel
+bool av2LineSaysWhy(String line) => !_protocolLine.hasMatch(line);
+
+/// Why the companion ended, in words, from its exit code [code] when no error line of its own said it: a signal on
+/// Linux and macOS, which Dart gives as a negative code; on Windows the code TerminateProcess leaves (-1, Process.kill
+/// and the Task Manager's end of a task) or an exception of the system (0xC0000005); or one of its own exit codes
+/// (mobile/native/av2/README.md, exit codes)
+String av2EndedReason(int code, {bool? windows}) {
+  if (windows ?? io.Platform.isWindows) {
+    final status = code & 0xffffffff;
+    if (status == 0xffffffff) {
+      return 'it was stopped (code -1)';
+    }
+    if (status >= 0xc0000000 && status <= 0xcfffffff) {
+      return 'it crashed (code 0x${status.toRadixString(16).toUpperCase()})';
+    }
+  } else if (code < 0) {
+    return switch (-code) {
+      // SIGHUP, SIGINT, SIGKILL, SIGTERM: another program, the system short of memory, a session that ends
+      1 || 2 || 9 || 15 => 'it was stopped (code $code)',
+      // SIGILL, SIGABRT, SIGBUS, SIGFPE, SIGSEGV
+      4 || 6 || 7 || 8 || 11 => 'it crashed (code $code)',
+      _ => 'it ended on a signal (code $code)',
+    };
+  }
+  return switch (code) {
+    1 => 'it ran short of memory or threads (code 1)',
+    2 || 5 => 'it did not understand the app (code $code)',
+    3 => 'it could not decode this video (code 3)',
+    4 => 'it could not listen on 127.0.0.1 (code 4)',
+    _ => 'it ended with code $code',
+  };
+}
+
+/// Why the run of a companion failed: its exit code in words ([av2EndedReason]) and the last line it wrote outside
+/// its protocol, when one ended it; what the run says otherwise (silent for too long, could not start)
+String _endOf(Object error, String tail) {
+  if (error is SidecarFailure && error.exitCode != null) {
+    final reason = av2EndedReason(error.exitCode!);
+    final said = tail.split('\n').map((line) => line.trim()).where((line) => line.isNotEmpty).lastOrNull;
+    return said == null ? reason : '$reason: $said';
+  }
+  return error is BackendException ? error.message : '$error';
+}
 
 /// "AV2R" read as a little endian 32-bit number: the mark of each record of the standard input
 const av2RecordMagic = 0x52325641;
@@ -675,7 +727,7 @@ Future<Av2Probe> _probeOnce(
       if (said != null) {
         throw Av2DecoderStopped(said);
       }
-      throw Av2DecoderStopped(failure.message);
+      throw Av2DecoderStopped(_endOf(failure, run.tail));
     } on BackendException catch (error) {
       throw Av2DecoderStopped(error.message);
     }
@@ -988,7 +1040,7 @@ class Av2Session {
           },
           onError: (Object error) {
             if (!_stopping) {
-              _fail(_errorText ?? (error is BackendException ? error.message : '$error'));
+              _fail(_errorText ?? _endOf(error, run.tail));
             }
           },
         )
