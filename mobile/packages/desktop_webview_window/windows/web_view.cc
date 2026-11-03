@@ -59,10 +59,19 @@ WebView::WebView(
   } else {
     ::SetEnvironmentVariableW(L"WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", nullptr);
   }
+  // Immuch360 (P11): a window closed while WebView2 still makes its environment or its controller destroys this
+  // WebView first; WebView2 then ends the creation (with a failure, from the destruction of the host window, or
+  // later), and its callback called the callback member already destroyed (std::bad_function_call, then abort: the
+  // app ended, review replay of 3 November 2026). Each callback now holds alive_ and does nothing once it is false,
+  // and a controller made for a WebView that is gone is closed
+  auto alive = alive_;
   CreateCoreWebView2EnvironmentWithOptions(
       nullptr, user_data_folder_.c_str(), nullptr,
       Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
-          [this](HRESULT result, ICoreWebView2Environment *env) -> HRESULT {
+          [this, alive](HRESULT result, ICoreWebView2Environment *env) -> HRESULT {
+            if (!*alive) {
+              return S_OK;
+            }
             if (!SUCCEEDED(result)) {
               on_web_view_created_callback_(result);
               return S_OK;
@@ -71,8 +80,14 @@ WebView::WebView(
                 view_window_.get(),
                 Callback<
                     ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-                    [this](HRESULT result,
+                    [this, alive](HRESULT result,
                            ICoreWebView2Controller *controller) -> HRESULT {
+                      if (!*alive) {
+                        if (SUCCEEDED(result) && controller) {
+                          controller->Close();
+                        }
+                        return S_OK;
+                      }
                       on_web_view_created_callback_(result);
                       if (SUCCEEDED(result)) {
                         webview_controller_ = controller;
@@ -594,6 +609,8 @@ void WebView::setTriggerOnUrlRequestedEvent(const bool value) {
 }
 
 WebView::~WebView() {
+  // Immuch360 (P11): from now on the callbacks of a creation in progress do nothing
+  *alive_ = false;
   if (webview_) {
     webview_->Stop();
   }

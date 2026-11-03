@@ -33,6 +33,10 @@ class WebviewWindowPlugin: public flutter::Plugin {
 
   MethodChannelPtr method_channel_;
 
+  // Immuch360 (P11): the answers to create still waiting for the window's controller, by window id; declared before
+  // windows_, so that it outlives the windows that answer them at their close
+  std::map<int64_t, std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>> pending_creates_;
+
   std::map<int64_t, std::unique_ptr<WebviewWindow>> windows_;
 
 };

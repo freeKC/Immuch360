@@ -7,6 +7,7 @@
 
 #include <windows.h>
 
+#include <memory>
 #include <string>
 
 #include <flutter/method_channel.h>
@@ -88,6 +89,10 @@ class WebView {
   std::wstring user_data_folder_;
 
   bool triggerOnUrlRequestedEvent{true};
+
+  // Immuch360 (P11): true until the destructor runs; the callbacks of WebView2's creation hold it, so that a creation
+  // that ends after this WebView (a window closed while it opened) reaches none of its members
+  std::shared_ptr<bool> alive_{std::make_shared<bool>(true)};
 
   void OnWebviewControllerCreated();
 

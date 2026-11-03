@@ -79,17 +79,33 @@ void WebviewWindowPlugin::HandleMethodCall(
     }
 
     auto window_id = next_window_id_;
+    // Immuch360 (P11): the answer to create waits for the window's controller; a window closed before it (by the
+    // user, a WM_CLOSE, the app's end) answers it with an error at its close, rather than never
+    pending_creates_[window_id] =
+        std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
     auto window = std::make_unique<WebviewWindow>(
         method_channel_, window_id, int(titleBarHeight),
-        [this, window_id]() { windows_.erase(window_id); });
-    std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>> result2(
-        std::move(result));
+        [this, window_id]() {
+          auto pending = pending_creates_.find(window_id);
+          if (pending != pending_creates_.end()) {
+            auto waiting = pending->second;
+            pending_creates_.erase(pending);
+            waiting->Error("0", "the window was closed while it opened");
+          }
+          windows_.erase(window_id);
+        });
     window->CreateAndShow(
         utf8_to_wide(title), int(height), int(width),
         utf8_to_wide(userDataFolder), int(windowPosX), int(windowPosY),
         useWindowPositionAndSize, openMaximized,
         utf8_to_wide(additionalBrowserArguments),
-        [this, window_id, result(result2)](bool succeed) mutable {
+        [this, window_id](bool succeed) {
+          auto pending = pending_creates_.find(window_id);
+          if (pending == pending_creates_.end()) {
+            return;
+          }
+          auto result = pending->second;
+          pending_creates_.erase(pending);
           if (!succeed) {
             result->Error("0", "failed to show window");
             windows_.erase(window_id);

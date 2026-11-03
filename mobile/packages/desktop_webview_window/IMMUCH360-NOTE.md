@@ -37,3 +37,13 @@ Patches, to apply again when a newer version is copied here (each marked "Immuch
     of its NuGet package), which `WebView2.h`, `WebView2EnvironmentOptions.h` and `libs/x64/WebView2Loader.dll` (the
     same bytes as in that package) come from and whose headers point to; not in upstream's copy. wil keeps its own
     `wil/LICENSE` (MIT). Both are on the app's licence page on Windows (`lib/desktop/splat/splat_window_licenses.dart`).
+11. Windows: a window closed while WebView2 still makes its environment or its controller (the user's close, a
+    WM_CLOSE, the app's end, a few hundred milliseconds after the window showed) ended the app: the destruction of
+    the host window made WebView2 end the creation at once, and its callback called `on_web_view_created_callback_`,
+    a member already destroyed (`std::bad_function_call`, then `abort`, BEX64 c0000409 in the review replay of
+    3 November 2026; the dump's stack runs from `WM_DESTROY` through `Controller::Close` into the callback). Each
+    callback of the creation now holds `WebView::alive_`, cleared first by the destructor, and does nothing once it is
+    false (a controller made for a WebView that is gone is closed); the plugin keeps the answer to `create` by window
+    id (`pending_creates_`) and answers it at the window's close with the error "the window was closed while it
+    opened" rather than never, which the app takes as the user's close (`splatWindowClosedWhileOpening`). Test of the
+    Dart side: `mobile/test/desktop/splat/desktop_splat_viewer_host_test.dart`.
