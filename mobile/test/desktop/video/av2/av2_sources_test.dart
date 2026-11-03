@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/network/immich_server_file_system.dart';
+import 'package:immich_mobile/desktop/platform/desktop_video_thumbnail_api.dart';
 import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_sources.dart';
@@ -116,10 +117,17 @@ void main() {
         bridge: bridge.fileOf,
       ),
     );
-    // Without the decoder: no frame, nothing downloaded
+    // Without the decoder: no frame, nothing downloaded, and the caller told it may come later (the library would
+    // keep a file without a frame for the session: review of lot AD3, m4)
+    await expectLater(
+      grabber.grab('/v/clip.ivf', time: const Duration(seconds: 1), box: (width: 320, height: 320, cover: true)),
+      throwsA(isA<VideoFrameNotYet>()),
+    );
+    // A share tile: no frame now, the thumbnail service of the shares asks again later
+    final shareUrl = bridge.urlFor(share.source.id, share.path).toString();
     expect(
-      await grabber.grab('/v/clip.ivf', time: const Duration(seconds: 1), box: (width: 320, height: 320, cover: true)),
-      isNull,
+      await DesktopVideoThumbnailApi(grabber: grabber, available: true).thumbnailForUrl(shareUrl, const {}, 0, 320),
+      isEmpty,
     );
     expect(players.made, isEmpty);
 

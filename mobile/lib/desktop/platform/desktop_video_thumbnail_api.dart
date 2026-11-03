@@ -28,12 +28,18 @@ class DesktopVideoThumbnailApi implements VideoThumbnailApi {
     if (!(_available ?? desktopVideoAvailable) || !isBridgeUrl(url) || maxWidth <= 0) {
       return Uint8List(0);
     }
-    final frame = await (_grabber ?? VideoThumbnailGrabber.shared).grab(
-      url,
-      time: Duration(milliseconds: timeMs),
-      // As wide as asked, as tall as the frame's shape gives (a portrait video four times taller at most)
-      box: (width: maxWidth, height: maxWidth * 4, cover: false),
-    );
+    final Uint8List? frame;
+    try {
+      frame = await (_grabber ?? VideoThumbnailGrabber.shared).grab(
+        url,
+        time: Duration(milliseconds: timeMs),
+        // As wide as asked, as tall as the frame's shape gives (a portrait video four times taller at most)
+        box: (width: maxWidth, height: maxWidth * 4, cover: false),
+      );
+    } on VideoFrameNotYet {
+      // An AV2 video before its decoder is installed: no frame now, the service asks again later
+      return Uint8List(0);
+    }
     return frame ?? Uint8List(0);
   }
 

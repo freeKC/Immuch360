@@ -8,9 +8,11 @@
 // started for the grab and stopped after it (av2_playback.dart), and gives its first picture, the key picture of its
 // start: a later one would cost the decoding of every picture before it on the processor. Without the AV2 decoder
 // installed it gives no frame, and the caller shows its tile without one (no download without a gesture: plan of the
-// AV2 videos, section 1.2). One grab at a time: each is a decoder, and an 8K HEVC one is heavy. The callers keep the
-// results as the phones keep theirs: the share tiles in the video thumbnail disk cache, the library in its thumbnail
-// cache.
+// AV2 videos, section 1.2): that frame may come later, once the decoder is installed or AV2 videos are on again, so the
+// grab throws VideoFrameNotYet rather than giving no frame, which the library would keep as a file without one for the
+// session (review of lot AD3, m4). One grab at a time: each is a decoder, and an 8K HEVC one is heavy. The callers keep
+// the results as the phones keep theirs: the share tiles in the video thumbnail disk cache, the library in its
+// thumbnail cache.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -22,6 +24,17 @@ import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('VideoThumbnailGrabber');
+
+/// A frame that may come later: the video is AV2 and its decoder is not installed yet, or AV2 videos are turned off.
+/// The caller shows its tile and keeps no verdict on the file
+class VideoFrameNotYet implements Exception {
+  const VideoFrameNotYet(this.reason);
+
+  final String reason;
+
+  @override
+  String toString() => 'No frame yet: $reason';
+}
 
 class VideoThumbnailGrabber {
   VideoThumbnailGrabber({
@@ -51,7 +64,7 @@ class VideoThumbnailGrabber {
 
   /// A JPEG of the frame at [time] of [resource] (a path of this computer or a media bridge URL), scaled into [box];
   /// at the middle of a video shorter than twice [time]. Null when the video gives no frame: the caller shows its
-  /// film tile.
+  /// film tile. Throws [VideoFrameNotYet] for a frame that may come later.
   Future<Uint8List?> grab(String resource, {required Duration time, required FrameBox box}) {
     final result = _turn.then((_) => _grab(resource, time, box));
     _turn = result.then<void>((_) {}, onError: (Object _) {});
@@ -66,6 +79,10 @@ class VideoThumbnailGrabber {
         served = await av2.openResource(resource, forThumbnail: true);
       } on Av2NotAv2 {
         // Another codec in an .ivf: as any video
+      } on Av2DecoderMissing catch (error) {
+        throw VideoFrameNotYet(error.message);
+      } on Av2TurnedOff catch (error) {
+        throw VideoFrameNotYet(error.message);
       } on Av2PlaybackException catch (error) {
         _log.fine('No thumbnail of an AV2 video: $error');
         return null;

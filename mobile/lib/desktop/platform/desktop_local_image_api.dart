@@ -230,7 +230,13 @@ class DesktopLocalImageApi implements LocalImageApi {
       return cached;
     }
     return _videoQueue.run('$version|$box', requestId, () async {
-      final frame = await grab(file.path, box);
+      final Uint8List? frame;
+      try {
+        frame = await grab(file.path, box);
+      } on VideoFrameNotYet {
+        // An AV2 video before its decoder is installed, or while AV2 videos are off: asked again next time
+        return _tile(box, video: true);
+      }
       if (frame == null || frame.isEmpty) {
         _undecodable.add(version);
         return _tile(box, video: true);
