@@ -29,7 +29,9 @@ static const char help[] =
     "  immuch360-av2 --help\n"
     "\n"
     "Options of serve:\n"
-    "  --token TOKEN          16 to 128 letters, digits, - or _: the first part of the path of the video\n"
+    "  --token TOKEN          16 to 128 letters, digits, - or _: the first part of the path of the video. Every\n"
+    "                         account of the computer can read a command line: the app leaves --token out and sets\n"
+    "                         the environment variable IMMUCH360_AV2_TOKEN instead\n"
     "  --width W --height H   the size of the pictures, as the probe found it\n"
     "  --bits 8|10            the depth of the pictures\n"
     "  --fps NUM/DEN          the frame rate the y4m header gives the player\n"
@@ -49,6 +51,10 @@ static const char help[] =
     "when they can no longer be written.\n"
     "Exit codes: 0 the standard input or output closed, or the --parent process ended, 1 internal error, 2 bad\n"
     "arguments, 3 the video cannot be decoded, 4 no socket on 127.0.0.1, 5 records that are not the protocol's.\n";
+
+// Where the app puts the token: the environment of a process is readable by its own account only, its command line by
+// every account of the computer (/proc/PID/cmdline on Linux, ps on macOS)
+#define TOKEN_VARIABLE "IMMUCH360_AV2_TOKEN"
 
 static int usage(const char *problem) {
   fprintf(stderr, "immuch360-av2: %s (see immuch360-av2 --help)\n", problem);
@@ -137,8 +143,16 @@ static int serve(int argc, char **argv) {
       return usage("an unknown option of serve");
     }
   }
-  if (!o.token || !have_width || !have_height || !have_bits || !have_fps || !have_frames)
-    return usage("serve needs --token, --width, --height, --bits, --fps and --frames");
+  if (!o.token) {
+    const char *token = getenv(TOKEN_VARIABLE);
+    if (token && *token) {
+      if (!token_ok(token)) return usage(TOKEN_VARIABLE " takes 16 to 128 letters, digits, - or _");
+      o.token = token;
+    }
+  }
+  if (!o.token) return usage("serve needs a token, in the environment variable " TOKEN_VARIABLE " or by --token");
+  if (!have_width || !have_height || !have_bits || !have_fps || !have_frames)
+    return usage("serve needs --width, --height, --bits, --fps and --frames");
   return av2_serve(&o);
 }
 

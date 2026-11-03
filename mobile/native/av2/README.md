@@ -27,7 +27,10 @@ meson compile -C build
   give `"playable": false` and the refusal "a stream without a picture in its start"). Exit code 3 and
   `{"error": "..."}` when it is not AV2 or not readable.
 * `immuch360-av2 serve --token TOKEN --width W --height H --bits 8|10 --fps NUM/DEN --frames N [--threads N]
-  [--range limited|full] [--depth 8] [--frame-bytes B] [--port P] [--parent PID]`: below.
+  [--range limited|full] [--depth 8] [--frame-bytes B] [--port P] [--parent PID]`: below. The app leaves `--token`
+  out and puts the token in the environment variable `IMMUCH360_AV2_TOKEN`: every account of the computer can read
+  the command line of a process (`/proc/PID/cmdline` on Linux, `ps` on macOS), only its own account its environment.
+  `--token` is for runs by hand, and wins when both are given.
 * `immuch360-av2 --version`: `immuch360-av2 protocol 1, source <commit>`, `dav2d <commit> (<describe>)`,
   `simd <levels the processor has>, uses <level dav2d uses>`.
 * `immuch360-av2 --help`: frozen in `mobile/test/fixtures/av2/immuch360_av2_help.txt`.
@@ -46,9 +49,12 @@ generation, `dav2d_flush`, and the line `need G U` for the app. The pictures bef
 written. Another token gets 403, another path 404, a range past the end 416; a request from an address other than
 127.0.0.1 is closed. Each connection is read by a short thread of its own, within 2 s of its arrival (then 400): a local
 program that sends its request a byte at a time holds nothing but that thread, and beyond 8 such connections at once
-the next ones are closed (`refused busy`). One request is served at a time: a new one ends the one being served (its
-socket is shut down), as the player does when it seeks. A player that stops reading (pause) blocks the write, then the
-decoder, then the app's writes on the standard input: no processor time is spent.
+the next ones are closed (`refused busy`). One request is served at a time: a new one ends the one being served at
+once, even while its write is blocked on a player that stopped reading (the socket is shut down, and on Windows, where
+that leaves a blocked `send()` blocked, its I/O cancelled by `CancelIoEx`). It must: the player seeks by opening a new
+connection and closes the old one only once the new one has answered (`http_seek` of FFmpeg). A player that stops
+reading (pause) blocks the write, then the decoder, then the app's writes on the standard input: no processor time is
+spent.
 
 ### Standard input: records
 
@@ -81,7 +87,8 @@ units, or Dart keeps the whole video in memory.
 * **Closing the standard input ends the program** within a second (`exit input-closed`, code 0), whatever the player is
   doing and however full the queue is: while the queue is full nothing reads the pipe, so the program asks the pipe
   itself every 100 ms whether its writer left, even with bytes still in it (`poll` and `POLLHUP` on Linux, `kqueue`
-  and `EV_EOF` on macOS, the closing state of the pipe on Windows, which `PeekNamedPipe` does not give). The app stops
+  and `EV_EOF` on macOS, the closing state of the pipe on Windows, which `PeekNamedPipe` does not give). Those 100 ms
+  are counted on the monotonic clock: a step of the wall clock during the wait does not stretch them. The app stops
   it this way when the player closes; killing it (the stop of `SidecarRun`) stays the backstop, should it still be
   there a second later.
 * **The app gone**: the system closes both pipes. The standard input as above; and a line that cannot be written (the
@@ -127,7 +134,9 @@ records that are not the protocol's.
 
 `.github/desktop/av2/av2_serve_check.py check` plays the app's side in Python against the program of each archive in
 the CI, writing the standard input as dart:io does: the MD5 of the pictures of the fixtures against those of the
-reference decoder `avmdec` v1.0.0, ranges, seeks, the replaced request, the token, 127.0.0.1 only, a request trickling
-in, the stat lines and their speed, no processor time while the player waits, `--depth 8`, the probe of cut and padded
-files, the end of the input with the queue full (no request, a paused player, a closed one), the standard output
-closed, `--parent`, a damaged file. `av2_serve_check.py feed` serves a file for mpv by hand.
+reference decoder `avmdec` v1.0.0, ranges, seeks, the replaced request (waiting for a unit, and blocked writing to a
+player that stopped reading), the token in the environment and not on the command line, 127.0.0.1 only, a request
+trickling in, the stat lines and their speed, no processor time while the player waits, `--depth 8`, the probe of cut
+and padded files, the end of the input with the queue full (no request, a paused player, a closed one, and on Linux the
+wall clock stepped back an hour by a preloaded library), the standard output closed, `--parent`, a damaged file.
+`av2_serve_check.py feed` serves a file for mpv by hand.

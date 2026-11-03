@@ -38,6 +38,10 @@
 #endif
 #endif
 
+#if defined(_WIN32) && !defined(SIO_BASE_HANDLE)
+#define SIO_BASE_HANDLE 0x48000022  // _WSAIOR(IOC_WS2, 34), in the headers of recent SDKs only
+#endif
+
 #if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86))
 #include <intrin.h>
 #define AV2_X86 1
@@ -154,17 +158,35 @@ int av2_wait_process(unsigned long pid) {
 void av2_mutex_init(av2_mutex *m) { pthread_mutex_init(m, NULL); }
 void av2_mutex_lock(av2_mutex *m) { pthread_mutex_lock(m); }
 void av2_mutex_unlock(av2_mutex *m) { pthread_mutex_unlock(m); }
-void av2_cond_init(av2_cond *c) { pthread_cond_init(c, NULL); }
+
+// The bounded waits count on the monotonic clock: a step of the wall clock (NTP, a change by hand) during a pause with
+// the queue full must not delay the question to the pipe, hence the end of the input, by as much
+void av2_cond_init(av2_cond *c) {
+#if defined(__APPLE__)
+  pthread_cond_init(c, NULL);  // no clock attribute there: its waits are relative (below)
+#else
+  pthread_condattr_t attributes;
+  pthread_condattr_init(&attributes);
+  pthread_condattr_setclock(&attributes, CLOCK_MONOTONIC);
+  pthread_cond_init(c, &attributes);
+  pthread_condattr_destroy(&attributes);
+#endif
+}
+
 void av2_cond_wait(av2_cond *c, av2_mutex *m) { pthread_cond_wait(c, m); }
 
 void av2_cond_timedwait(av2_cond *c, av2_mutex *m, unsigned ms) {
-  struct timeval now;
-  gettimeofday(&now, NULL);
-  uint64_t ns = (uint64_t)now.tv_usec * 1000u + (uint64_t)ms * 1000000u;
+#if defined(__APPLE__)
+  struct timespec wait = {(time_t)(ms / 1000), (long)(ms % 1000) * 1000000L};
+  pthread_cond_timedwait_relative_np(c, m, &wait);
+#else
   struct timespec until;
-  until.tv_sec = now.tv_sec + (time_t)(ns / 1000000000u);
+  clock_gettime(CLOCK_MONOTONIC, &until);
+  uint64_t ns = (uint64_t)until.tv_nsec + (uint64_t)ms * 1000000u;
+  until.tv_sec += (time_t)(ns / 1000000000u);
   until.tv_nsec = (long)(ns % 1000000000u);
   pthread_cond_timedwait(c, m, &until);
+#endif
 }
 
 void av2_cond_broadcast(av2_cond *c) { pthread_cond_broadcast(c); }
@@ -367,6 +389,14 @@ void av2_socket_timeout(av2_socket s, unsigned ms) {
 void av2_socket_shutdown(av2_socket s) {
 #ifdef _WIN32
   shutdown(s, SD_BOTH);
+  // Where Linux and macOS make a send() blocked in another thread fail at once, Winsock leaves it blocked until the
+  // peer reads or closes. The player opens its new connection before it closes the old one (http_seek of FFmpeg): the
+  // two would wait on each other. Cancelling the I/O of the socket, of its base provider should a layered one sit on
+  // top, makes that send() fail at once (WSAESHUTDOWN)
+  SOCKET base = s;
+  DWORD bytes = 0;
+  if (WSAIoctl(s, SIO_BASE_HANDLE, NULL, 0, &base, sizeof(base), &bytes, NULL, NULL) != 0) base = s;
+  CancelIoEx((HANDLE)base, NULL);
 #else
   shutdown(s, SHUT_RDWR);
 #endif

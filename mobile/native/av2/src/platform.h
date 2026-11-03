@@ -48,7 +48,8 @@ void av2_mutex_lock(av2_mutex *m);
 void av2_mutex_unlock(av2_mutex *m);
 void av2_cond_init(av2_cond *c);
 void av2_cond_wait(av2_cond *c, av2_mutex *m);
-// Waits at most ms milliseconds; spurious and timed out wakes look the same to the caller, who checks its state
+// Waits at most ms milliseconds of the monotonic clock; spurious and timed out wakes look the same to the caller, who
+// checks its state
 void av2_cond_timedwait(av2_cond *c, av2_mutex *m, unsigned ms);
 void av2_cond_broadcast(av2_cond *c);
 // Starts a detached thread (never joined)
@@ -86,6 +87,7 @@ av2_socket av2_accept(av2_socket listener, int *from_loopback);
 int av2_send_all(av2_socket s, const void *data, size_t size);
 long av2_recv(av2_socket s, void *buffer, size_t size);
 void av2_socket_timeout(av2_socket s, unsigned ms);
+// Ends the connection s while another thread may be blocked writing to it: that write fails at once, on Windows too
 void av2_socket_shutdown(av2_socket s);
 void av2_socket_close(av2_socket s);
 
