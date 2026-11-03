@@ -185,10 +185,13 @@ List<(int, int)> colmapVideoPairs(int frames) {
   return pairs.toList()..sort((a, b) => a.$1 != b.$1 ? a.$1.compareTo(b.$1) : a.$2.compareTo(b.$2));
 }
 
+/// The pairs of a list of each count of frames, once counted: the time of a job asks at each of its progresses
+final _listedPairs = <int, int>{};
+
 /// The pairs the matching of [images] images tries ([colmapMatchingOf])
 int colmapPairsOf(int images, {required bool video}) => switch (colmapMatchingOf(images, video: video)) {
   ColmapMatching.exhaustive => images * (images - 1) ~/ 2,
-  ColmapMatching.pairs => colmapVideoPairs(images).length,
+  ColmapMatching.pairs => _listedPairs.putIfAbsent(images, () => colmapVideoPairs(images).length),
 };
 
 /// The images under [images] as COLMAP names them: their paths from it with "/" between folders, sorted (the frames of
