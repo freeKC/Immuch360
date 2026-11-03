@@ -173,6 +173,7 @@ final av2PlaybacksProvider = Provider<Av2Playbacks>((ref) {
     recordMeasure: DecoderMeasureStore.shared.recordAv2Speed,
     parentPid: pid,
     bridge: bridge is LocalMediaBridge ? bridge.fileOf : null,
+    threads: av2ThreadsFrom(Platform.environment),
   );
   Av2Playbacks.app = playbacks;
   ref.onDispose(() {

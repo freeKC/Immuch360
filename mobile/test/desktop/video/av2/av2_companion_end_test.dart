@@ -1,8 +1,20 @@
-// What the app says of an AV2 companion that ended (lot AD3, m1 of its review): the exit code in words, and the lines
-// of its protocol left out of a failure.
+// What the app says of an AV2 companion that ended, and the threads it is given (lot AD3, its review's m1 and M1): the
+// exit code in words, the lines of its protocol left out of a failure, and the threads of IMMUCH360_AV2_THREADS.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/av2_playback.dart';
+
+import 'av2_test_support.dart';
+
+Future<void> _until(bool Function() condition) async {
+  final watch = Stopwatch()..start();
+  while (!condition()) {
+    if (watch.elapsed > const Duration(seconds: 10)) {
+      fail('waited 10 s');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+  }
+}
 
 void main() {
   test('an exit code in words: a signal on Linux and macOS', () {
@@ -48,5 +60,33 @@ void main() {
     }
     expect(av2LineSaysWhy('dav2d: assertion failed in lr_apply'), isTrue);
     expect(av2SidecarProgram.inTail, isNotNull);
+  });
+
+  test('the threads of the decoder: dav2d chooses, or IMMUCH360_AV2_THREADS says how many', () async {
+    expect(av2ThreadsFrom(const {}), isNull);
+    expect(av2ThreadsFrom(const {av2ThreadsVariable: '8'}), 8);
+    expect(av2ThreadsFrom(const {av2ThreadsVariable: '0'}), isNull);
+    expect(av2ThreadsFrom(const {av2ThreadsVariable: 'all'}), isNull);
+    expect(av2ThreadsFrom(const {av2ThreadsVariable: '1000'}), isNull);
+
+    Future<List<String>> serveArguments(int? threads) async {
+      final runner = ScriptedAv2Runner();
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+        threads: threads,
+      );
+      final opening = playbacks.open(
+        Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), '/clips/video.ivf'),
+      );
+      await _until(() => runner.serves.isNotEmpty);
+      runner.serves.single.say(av2ListeningLine);
+      await playbacks.release(await opening);
+      return runner.launchesOf('serve').single.arguments;
+    }
+
+    expect((await serveArguments(8)).join(' '), contains('--threads 8'));
+    expect(await serveArguments(null), isNot(contains('--threads')));
   });
 }

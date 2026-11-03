@@ -631,6 +631,16 @@ class _HandingRunner implements ProcessRunner {
   }
 }
 
+/// The variable of the app's environment that sets the threads of the companions' decoder, for the measures of the
+/// frame times of the window (lot AD3, M1 of its review); dav2d's own choice without it (every logical processor)
+const av2ThreadsVariable = 'IMMUCH360_AV2_THREADS';
+
+/// The threads [environment] asks for ([av2ThreadsVariable]): 1 to 256, null otherwise
+int? av2ThreadsFrom(Map<String, String> environment) {
+  final threads = int.tryParse(environment[av2ThreadsVariable] ?? '');
+  return threads != null && threads >= 1 && threads <= 256 ? threads : null;
+}
+
 /// How long the probe of a file may take: it decodes the first picture (0.9 s for a 4K picture in 10 bits on a
 /// four-core laptop)
 const av2ProbeTimeout = Duration(seconds: 30);
@@ -1348,6 +1358,7 @@ class Av2Playbacks {
     this.recordMeasure,
     this.parentPid,
     this.bridge,
+    this.threads,
   });
 
   /// The app's, once the providers made it (desktop_video_view.dart); the thumbnails of the library and of the shares
@@ -1375,6 +1386,9 @@ class Av2Playbacks {
 
   /// The share and the path behind a URL of the app's media bridge (LocalMediaBridge.fileOf), for [openResource]
   final ({NetworkFileSystem fileSystem, String path})? Function(Uri url)? bridge;
+
+  /// The threads of each companion's decoder, dav2d's own choice when null (see [av2ThreadsFrom])
+  final int? threads;
 
   final _sessions = <String, Av2Session>{};
   final _anyway = <String>{};
@@ -1409,6 +1423,7 @@ class Av2Playbacks {
       runner: runner(files.launcher),
       decoderVersion: decoderVersion,
       parentPid: parentPid,
+      threads: threads,
       // A thumbnail gives way: two grabs and the player's start come at once when a file is opened with the app, and
       // each companion would take every core
       lowPriority: forThumbnail,
