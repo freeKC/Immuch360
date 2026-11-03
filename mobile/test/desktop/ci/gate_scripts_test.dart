@@ -478,6 +478,174 @@ abstract class SyncEvents {
     });
   }, skip: skipCiScripts);
 
+  group('check_android_manifest.py', () {
+    const head =
+        '<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n'
+        '  xmlns:tools="http://schemas.android.com/tools">\n';
+
+    /// A manifest whose MainActivity holds [filters] (the text of its intent filters), [after] after the application
+    String manifest(String filters, {String after = ''}) =>
+        '$head  <application>\n    <activity android:name=".MainActivity" android:exported="true">\n'
+        '$filters    </activity>\n  </application>\n$after</manifest>\n';
+
+    /// An intent filter with [action], [categories] and the [data] elements given by their attributes
+    String filter({
+      String action = 'android.intent.action.VIEW',
+      List<String> categories = const ['DEFAULT', 'BROWSABLE'],
+      List<String> data = const [],
+      String attributes = '',
+    }) => [
+      '      <intent-filter$attributes>',
+      '        <action android:name="$action" />',
+      for (final category in categories) '        <category android:name="android.intent.category.$category" />',
+      for (final attributes in data) '        <data $attributes />',
+      '      </intent-filter>',
+      '',
+    ].join('\n');
+
+    ScriptRun check(Directory root, {List<String> options = const []}) =>
+        runCiScript('check_android_manifest.py', ['--root', root.path, ...options]);
+
+    test('passes on custom schemes with DEFAULT and BROWSABLE, whatever the flavour and debug manifests hold', () {
+      final root = tree({
+        'mobile/android/app/src/main/AndroidManifest.xml': manifest(
+          [
+            filter(data: ['android:scheme="content" android:mimeType="image/*"']),
+            filter(data: ['android:scheme="immich"']),
+            filter(data: ['android:scheme="immuch360" android:host="pair"']),
+            // Sharing to the app is no link: SEND with a type and no scheme
+            filter(action: 'android.intent.action.SEND', categories: ['DEFAULT'], data: ['android:mimeType="video/*"']),
+          ].join(),
+          // Asking whether a browser is installed claims no link
+          after:
+              '  <queries>\n    <intent>\n      <action android:name="android.intent.action.VIEW" />\n'
+              '      <data android:scheme="https" />\n    </intent>\n  </queries>\n',
+        ),
+        'mobile/android/app/src/quest/AndroidManifest.xml': '$head  <application />\n</manifest>\n',
+        'mobile/android/app/src/debug/AndroidManifest.xml': '$head</manifest>\n',
+      });
+      final run = check(root);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(
+        run.output,
+        contains(
+          'mobile/android/app/src/main/AndroidManifest.xml: 4 intent filters, schemes content, immich, immuch360, '
+          'hosts pair',
+        ),
+      );
+      expect(run.output, contains('mobile/android/app/src/quest/AndroidManifest.xml: 0 intent filters'));
+      expect(run.output, contains('3 manifests: no web link to a domain the project does not own, no autoVerify'));
+    });
+
+    test("fails on the web links and the autoVerify of another domain, the shape of Immich's filter", () {
+      final root = tree({
+        'mobile/android/app/src/main/AndroidManifest.xml': manifest(
+          filter(
+            attributes: ' android:autoVerify="true"',
+            data: [
+              'android:scheme="https"',
+              'android:host="my.immich.app" android:path="/"',
+              'android:host="my.immich.app" android:pathPrefix="/albums/"',
+            ],
+          ),
+        ),
+      });
+      final run = check(root);
+      expect(run.exitCode, 1, reason: '$run');
+      expect(
+        run.output,
+        contains('AndroidManifest.xml:5: .MainActivity: web links to my.immich.app, not a domain of the project'),
+      );
+      expect(run.output, contains('AndroidManifest.xml:5: .MainActivity: autoVerify="true": only a domain of the'));
+    });
+
+    test('fails on a web filter with no host, and on an autoVerify that names no web domain', () {
+      final root = tree({
+        'mobile/android/app/src/main/AndroidManifest.xml': manifest(
+          filter(data: ['android:scheme="http"']) +
+              filter(attributes: ' android:autoVerify="true"', data: ['android:scheme="immich"']),
+        ),
+      });
+      final run = check(root);
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('web links with no host: the filter would take every http or https address'));
+      expect(run.output, contains('AndroidManifest.xml:11: .MainActivity: autoVerify="true"'));
+    });
+
+    test('fails on a VIEW filter of a custom scheme without BROWSABLE or DEFAULT, not on another action', () {
+      final root = tree({
+        'mobile/android/app/src/main/AndroidManifest.xml': manifest(
+          [
+            filter(categories: ['DEFAULT'], data: ['android:scheme="content" android:mimeType="video/*"']),
+            filter(categories: ['BROWSABLE'], data: ['android:scheme="immich"']),
+            // An NFC tag is no link to open from a browser
+            filter(
+              action: 'android.nfc.action.NDEF_DISCOVERED',
+              categories: ['DEFAULT'],
+              data: ['android:scheme="immich"'],
+            ),
+          ].join(),
+        ),
+      });
+      final run = check(root);
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('AndroidManifest.xml:5: .MainActivity: VIEW on content:// without the BROWSABLE'));
+      expect(run.output, contains('AndroidManifest.xml:10: .MainActivity: VIEW on immich:// without the DEFAULT'));
+      expect(RegExp('VIEW on').allMatches(run.output), hasLength(2));
+    });
+
+    test('passes the web links of a domain of the project, and leaves out what tools:node removes', () {
+      final root = tree({
+        'mobile/android/app/src/main/AndroidManifest.xml': manifest(
+          filter(
+            attributes: ' android:autoVerify="true"',
+            data: ['android:scheme="https" android:host="Photos.Example.org"'],
+          ),
+        ),
+        'mobile/android/app/src/quest/AndroidManifest.xml':
+            '$head  <application>\n'
+            '    <activity android:name=".Gone" tools:node="remove">\n${filter(data: ['android:scheme="https"'])}'
+            '    </activity>\n  </application>\n</manifest>\n',
+      });
+      final run = check(root, options: ['--our-host', 'photos.example.org']);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('hosts photos.example.org'));
+      expect(run.output, contains('mobile/android/app/src/quest/AndroidManifest.xml: 0 intent filters'));
+
+      final notOurs = check(root);
+      expect(notOurs.exitCode, 1, reason: '$notOurs');
+      expect(notOurs.output, contains('web links to photos.example.org'));
+    });
+
+    test('reads the manifests it is given, a merged one, and says when there is nothing to read', () {
+      final root = tree({
+        'build/merged/AndroidManifest.xml': manifest(filter(data: ['android:scheme="content"'], categories: [])),
+        'broken.xml': '<manifest><application></manifest>\n',
+      });
+      final merged = runCiScript('check_android_manifest.py', [
+        '--root',
+        root.path,
+        p.join(root.path, 'build', 'merged', 'AndroidManifest.xml'),
+      ]);
+      expect(merged.exitCode, 1, reason: '$merged');
+      expect(
+        merged.output,
+        contains(
+          'build/merged/AndroidManifest.xml:5: .MainActivity: VIEW on content:// without the DEFAULT and '
+          'BROWSABLE categories',
+        ),
+      );
+
+      final broken = runCiScript('check_android_manifest.py', ['--root', root.path, p.join(root.path, 'broken.xml')]);
+      expect(broken.exitCode, 2, reason: '$broken');
+      expect(broken.output, contains('broken.xml: cannot be read as XML'));
+
+      final none = check(root);
+      expect(none.exitCode, 2, reason: '$none');
+      expect(none.output, contains('no manifest matches mobile/android/app/src/*/AndroidManifest.xml'));
+    });
+  }, skip: skipCiScripts);
+
   group('check_phone_projects.py', () {
     ScriptRun check(List<String> changed) {
       final root = tree({'changed.txt': changed.join('\n')});
@@ -1014,6 +1182,11 @@ abstract class SyncEvents {
 
     test('every pigeon host API is answered on the computers', () {
       final run = runCiScript('check_pigeon_desktop.py', []);
+      expect(run.exitCode, 0, reason: '$run');
+    });
+
+    test('the Android manifests claim no web link of another domain and pass the app checks of Google Play', () {
+      final run = runCiScript('check_android_manifest.py', []);
       expect(run.exitCode, 0, reason: '$run');
     });
 

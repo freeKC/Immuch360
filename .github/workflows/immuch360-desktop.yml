@@ -188,6 +188,11 @@ jobs:
       - name: Every pigeon host API answered on the computers
         run: python3 .github/desktop/check_pigeon_desktop.py
 
+      # Google Play's Deep links page: no web link of a domain the project does not own, no autoVerify, DEFAULT and
+      # BROWSABLE on every VIEW filter of a custom scheme; the Android release workflow reads the merged manifests too
+      - name: The Android manifests claim no web link of another domain and pass Play's app checks
+        run: python3 .github/desktop/check_android_manifest.py
+
       - name: This workflow pinned and without secrets
         run: python3 .github/desktop/check_workflow.py
 
