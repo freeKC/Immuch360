@@ -8,8 +8,8 @@
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the R8 rules of the quest flavour only, which keep the classes of the LiteRT API that its JNI library builds by name; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the R8 rule that keeps the classes of zstd-jni"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "13f25557c5d2ca850cc88cfba30426836e3b8d28",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone"
+    "blob": "2af8dfb25793d37756f983b6eed35a4d08669078",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone; Play deep links (fix-play-deep-links): no https links of my.immich.app, Immich's domain, and BROWSABLE on the two content:// viewer filters"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
     "blob": "2b6311df0527629a1d9e4761c86170b43128b8af",
