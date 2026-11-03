@@ -12,6 +12,7 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
@@ -64,10 +65,13 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   }
 }
 
-/// Records the viewings the splat viewer of a phone or a computer is asked for, and ends each as [ending] says
+/// Records the viewings the splat viewer of a phone or a computer is asked for, and ends each as [endings] say in
+/// turn, then as [ending] says
 class _Viewings implements SplatViewerService {
-  final List<({SplatViewerSource source, SplatHead head, int fileBytes, int cap, SplatViewerLook look})> shown = [];
+  final List<({SplatViewerSource source, SplatHead head, int fileBytes, int cap, SplatViewerLook look, bool watch})>
+  shown = [];
   SplatViewerOutcome ending = const SplatViewerOutcome(SplatViewerEnd.closed);
+  final List<SplatViewerOutcome> endings = [];
 
   @override
   Future<SplatViewerOutcome> show({
@@ -79,10 +83,11 @@ class _Viewings implements SplatViewerService {
     void Function(SplatPrepareStep step, double done)? progress,
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
+    bool watchFrames = false,
   }) async {
-    shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, look: look));
+    shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, look: look, watch: watchFrames));
     onOpening?.call();
-    return ending;
+    return endings.isEmpty ? ending : endings.removeAt(0);
   }
 
   @override
@@ -108,6 +113,7 @@ class _HeldViewings implements SplatViewerService {
     void Function(SplatPrepareStep step, double done)? progress,
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
+    bool watchFrames = false,
   }) async {
     this.cancel = cancel;
     progress?.call(SplatPrepareStep.reduce, 0.3);
@@ -342,11 +348,13 @@ void main() {
         share.files['/huge.spz'] = _spzHead(5000000);
       });
 
-      /// An Android phone or tablet (Android has said this is no headset), a computer under a Windows target platform
-      List<Override> flat({AppConfig config = const AppConfig()}) => [
+      /// An Android phone or tablet (Android has said this is no headset), a computer under a Windows target platform,
+      /// whose chip and memory are [computer] when given
+      List<Override> flat({AppConfig config = const AppConfig(), SplatComputer? computer}) => [
         ...overrides(config: config, flavor: null),
         isHorizonOsProvider.overrideWith((ref) async => false),
         splatViewerServiceProvider.overrideWithValue(viewings),
+        if (computer != null) splatComputerReaderProvider.overrideWithValue(() async => computer),
       ];
 
       testWidgets('Explore opens the file of the share with the cap of a phone, without the words on Meta', (
@@ -413,6 +421,89 @@ void main() {
         expect(viewing.look.gyroscope, isFalse);
         expect(viewing.look.maxStdDev, closeTo(2.828, 0.001));
         debugDefaultTargetPlatformOverride = null;
+      });
+
+      group('a computer with a dedicated graphics card (lot SVC)', () {
+        const rtx = SplatComputer(
+          gpu: SplatGpu(SplatGpuKind.dedicated, name: 'NVIDIA GeForce RTX 4060 Laptop GPU', memory: 8188 << 20),
+          physicalMemory: 16013 << 20,
+        );
+
+        testWidgets('shows a splat of 5 million whole, says so, and its page watches the first frames', (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          await pumpPage(tester, '/huge.spz', with_: flat(computer: rtx));
+          await tester.pumpAndSettle();
+
+          expect(find.textContaining('strongest gaussians'), findsNothing);
+          expect(find.byKey(splatRefusalKey), findsNothing);
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          final viewing = viewings.shown.single;
+          expect(viewing.cap, 5000000);
+          expect(viewing.watch, isTrue);
+          expect(viewing.look.texts['countLine'], '5,000,000 gaussians');
+          expect(viewing.look.texts['wholeLine'], 'Shown whole: all 5,000,000 gaussians');
+          expect(viewing.look.texts.containsKey('reducedLine'), isFalse);
+          expect(viewing.look.texts['slowReduce'], 'Show {kept} of the {total} gaussians');
+          debugDefaultTargetPlatformOverride = null;
+        });
+
+        testWidgets('the reduced copy taken in the page opens at once, not watched again', (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          viewings.endings.add(const SplatViewerOutcome(SplatViewerEnd.reduce, keep: 1710000));
+          await pumpPage(tester, '/huge.spz', with_: flat(computer: rtx));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          expect(viewings.shown.map((viewing) => viewing.cap), [5000000, 1710000]);
+          expect(viewings.shown.last.watch, isFalse);
+          expect(viewings.shown.last.look.texts['reducedLine'], 'Reduced to 1,710,000 of 5,000,000 gaussians');
+          expect(find.byType(SnackBar), findsNothing);
+          debugDefaultTargetPlatformOverride = null;
+        });
+
+        testWidgets('a computer with too little memory refuses it with the numbers', (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          await pumpPage(
+            tester,
+            '/huge.spz',
+            with_: flat(
+              computer: const SplatComputer(gpu: SplatGpu(SplatGpuKind.dedicated), physicalMemory: 4 << 30),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(tester.widget<FilledButton>(find.byKey(exploreSplatButtonKey)).onPressed, isNull);
+          expect(
+            find.text('Too large for this computer (5,000,000 gaussians): its memory holds about 2,016,372'),
+            findsOneWidget,
+          );
+          debugDefaultTargetPlatformOverride = null;
+        });
+
+        testWidgets('the integrated chip keeps 1,000,000, and every gaussian with the setting', (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          const intel = SplatComputer(gpu: SplatGpu(SplatGpuKind.integrated), physicalMemory: 16013 << 20);
+          await pumpPage(
+            tester,
+            '/cactus.spz',
+            with_: flat(
+              computer: intel,
+              config: const AppConfig(viewer: ViewerConfig(keepAllGaussians: true)),
+            ),
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          expect(viewings.shown.single.cap, 452451);
+          expect(viewings.shown.single.watch, isTrue);
+          debugDefaultTargetPlatformOverride = null;
+        });
       });
 
       group('a splat given to the program (a computer)', () {

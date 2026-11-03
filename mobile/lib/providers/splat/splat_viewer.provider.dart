@@ -1,10 +1,12 @@
 // The splat viewer of the computers, phones and tablets (plan of 2 November 2026): where it is offered, its host, its
 // service. The headset keeps its immersive viewer (splatsInThisBuildProvider, splat_button.dart).
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_host.dart';
@@ -15,6 +17,7 @@ import 'package:immich_mobile/infrastructure/splat/pigeon_splat_viewer_host.dart
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:path/path.dart' as p;
@@ -57,6 +60,49 @@ final splatUprightStoreProvider = Provider<SplatUprightStore>(
       SplatUprightStore(() async => File(p.join((await getApplicationSupportDirectory()).path, 'splat_uprights.json'))),
 );
 
+/// The answers to the page's offer of a reduced copy per file, and the renderer the page last drew with, in the
+/// support folder of the app (lot SVC)
+final splatAnswerStoreProvider = Provider<SplatAnswerStore>(
+  (ref) =>
+      SplatAnswerStore(() async => File(p.join((await getApplicationSupportDirectory()).path, 'splat_answers.json'))),
+);
+
+/// What this computer gives the splat viewer, the setting aside: the chip that draws its page and its memory (lot SVC);
+/// the computers' reader (desktopOverrides), null on phones and tablets
+final splatComputerReaderProvider = Provider<Future<SplatComputer> Function()?>((ref) => null);
+
+/// How long the splat viewer waits for the computer's graphics chips before it keeps the cap of the chips that share
+/// the computer's memory (the probe of the cards ends itself after 10 s)
+const splatComputerReadTimeout = Duration(seconds: 12);
+
+/// What this computer gives the splat viewer now, with the setting "Keep every gaussian"; null on phones and tablets.
+/// A reader that fails or takes too long gives a computer of unknown chip, which keeps the cap of 1,000,000
+final splatComputerNowProvider = Provider<Future<SplatComputer?> Function()>(
+  (ref) => () async {
+    final read = ref.read(splatComputerReaderProvider);
+    if (read == null) {
+      return null;
+    }
+    final keep = ref.read(appConfigProvider).viewer.keepAllGaussians;
+    try {
+      return (await read().timeout(splatComputerReadTimeout)).copyWith(keepEveryGaussian: keep);
+    } catch (error) {
+      return SplatComputer(keepEveryGaussian: keep);
+    }
+  },
+);
+
+/// [splatComputerNowProvider] for the pages, read again each time a page that shows a splat is built
+final splatComputerProvider = FutureProvider.autoDispose<SplatComputer?>((ref) {
+  ref.watch(appConfigProvider.select((config) => config.viewer.keepAllGaussians));
+  return ref.watch(splatComputerNowProvider)();
+});
+
+/// The answer kept for the file of a name and a size (computers)
+final splatAnswerProvider = FutureProvider.autoDispose.family<SplatFrameAnswer?, (String, int)>(
+  (ref, file) => ref.watch(splatAnswerStoreProvider).answer(file.$1, file.$2),
+);
+
 /// The reduced copies of the splats above the cap, in the cache folder of the app: %LOCALAPPDATA% of this copy of the
 /// app on Windows, ~/.cache of the app on Linux, the cache of the app on Android and macOS; never the system's
 /// temporary folder, which every copy of the app and every user share (review of 2 November 2026)
@@ -95,5 +141,14 @@ final splatViewerServiceProvider = Provider<SplatViewerService?>((ref) {
     fileSystem: connections.fileSystem,
     shareUrl: connections.mediaUrl,
     freeBytes: ref.read(splatFreeBytesProvider),
+    answers: ref.read(splatAnswerStoreProvider),
+    // A computer keeps the chip its page drew with, per set of the web view's arguments, to know it next time
+    onRenderer: CurrentPlatform.isDesktop
+        ? (renderer) => unawaited(
+            ref
+                .read(splatAnswerStoreProvider)
+                .writeRenderer(renderer, highPerformance: ref.read(appConfigProvider).viewer.highPerformanceGpu),
+          )
+        : null,
   );
 });

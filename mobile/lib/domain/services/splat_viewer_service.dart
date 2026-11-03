@@ -2,12 +2,15 @@
 // November 2026): the splat made ready (copied from its share and reduced when it holds more than this device shows),
 // the session registered on the media bridge, the host opened on its page, the page's events followed (the
 // orientation chosen kept for the file, ready and the frame rates logged under SplatViewer), and everything taken
-// down once the host says the viewer closed.
+// down once the host says the viewer closed. On a computer that shows the splat whole (lot SVC), the page watches its
+// first frames: the user's answer to its offer of a reduced copy is kept for the file, and a reduced copy taken closes
+// the viewer for the caller to open that copy.
 
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_reducer.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -90,12 +93,18 @@ enum SplatViewerEnd {
 
   /// The user cancelled the preparation
   cancelled,
+
+  /// The user took the reduced copy the page offered: [SplatViewerOutcome.keep] gaussians, to open now
+  reduce,
 }
 
 class SplatViewerOutcome {
-  const SplatViewerOutcome(this.end, {this.unsupported, this.detail, this.noPicture = false});
+  const SplatViewerOutcome(this.end, {this.unsupported, this.detail, this.noPicture = false, this.keep});
 
   final SplatViewerEnd end;
+
+  /// The gaussians of the reduced copy the user took ([SplatViewerEnd.reduce])
+  final int? keep;
 
   /// The page never said it showed the scene, though its window stayed open longer than a scene takes to show
   /// (SplatViewerService.noPictureAfter): on Linux, WebKitGTK's DMABUF renderer with some NVIDIA drivers
@@ -109,7 +118,8 @@ class SplatViewerOutcome {
 
   @override
   String toString() =>
-      'SplatViewerOutcome($end${unsupported == null ? '' : ', $unsupported'}${noPicture ? ', no picture' : ''})';
+      'SplatViewerOutcome($end${unsupported == null ? '' : ', $unsupported'}${noPicture ? ', no picture' : ''}'
+      '${keep == null ? '' : ', keep $keep'})';
 }
 
 /// See the top of this file
@@ -132,6 +142,8 @@ class SplatViewerService {
     })?
     reduce,
     this._freeBytes,
+    this._answers,
+    this._onRenderer,
     this.noPictureAfter = const Duration(seconds: 10),
   }) : _reduce = reduce ?? reduceSplatInIsolate;
 
@@ -160,9 +172,16 @@ class SplatViewerService {
   /// A page that has not said ready this long after its window opened is logged, and said after it closed
   final Duration noPictureAfter;
 
+  /// The answers to the page's offer of a reduced copy, per file (computers)
+  final SplatAnswerStore? _answers;
+
+  /// Told the renderer the page drew with, from its ready (computers: which chip draws)
+  final void Function(String renderer)? _onRenderer;
+
   /// Shows [source] (whose head is [head], [fileBytes] long) with at most [cap] gaussians, the page in the words and
   /// colours of [look]; [progress] is told the steps of a preparation (the copy from a share, the reduction),
-  /// [cancel] stops one, and [onOpening] is told when the viewer opens. Completes once the viewer closed.
+  /// [cancel] stops one, and [onOpening] is told when the viewer opens. With [watchFrames] the page watches its first
+  /// frames and may offer a reduced copy (splatWatchesFrames). Completes once the viewer closed.
   Future<SplatViewerOutcome> show({
     required SplatViewerSource source,
     required SplatHead head,
@@ -172,6 +191,7 @@ class SplatViewerService {
     void Function(SplatPrepareStep step, double done)? progress,
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
+    bool watchFrames = false,
   }) async {
     final name = source.name;
     final ext = head.format.json;
@@ -230,24 +250,44 @@ class SplatViewerService {
       'device': look.device,
       'limits': {'pixelRatioMax': look.pixelRatioMax, 'maxStdDev': look.maxStdDev},
       'gyroscope': look.gyroscope,
+      'watch': watchFrames && !reduced ? {'floor': splatFrameWatchFloor} : null,
       'locale': look.locale,
       'texts': look.texts,
       'theme': {'dark': look.dark, 'primary': look.primary},
       'events': 'events',
     };
     String? unsupported;
+    int? reduceTo;
     var closing = false;
     var ready = false;
     // The page said what went wrong (a cut file, a share that stopped answering): it did not stay blank
     var pageError = false;
     void onEvent(SplatViewerEvent event) {
       switch (event) {
-        case SplatViewerReady(:final fields):
+        case SplatViewerReady(:final fields, :final renderer):
           ready = true;
           _log.info(
             'Ready: $name ${fields['loadMs']} ms, ${fields['gaussians']} gaussians, ${fields['renderer']}, '
             'non blank ${fields['nonBlank']}, ${fields['drawingBuffer']}, ${fields['placement']}',
           );
+          if (renderer != null && renderer.isNotEmpty) {
+            _onRenderer?.call(renderer);
+          }
+        case SplatViewerWatch(:final slow, :final fps, :final keep):
+          _log.info(
+            'The first frames of $name: ${fps ?? '?'} fps${slow ? ', slow: the page offers $keep gaussians' : ''}',
+          );
+        case SplatViewerReduce(:final keep):
+          _log.info('$name: the user takes the reduced copy of $keep gaussians');
+          reduceTo = keep;
+          unawaited(_answers?.writeAnswer(name, fileBytes, SplatFrameAnswer.reduce(keep)));
+          if (!closing) {
+            closing = true;
+            unawaited(_host.close());
+          }
+        case SplatViewerKeepWhole():
+          _log.info('$name: the user keeps every gaussian');
+          unawaited(_answers?.writeAnswer(name, fileBytes, const SplatFrameAnswer.whole()));
         case SplatViewerStats(:final fields):
           _log.info('Frames of $name: $fields');
         case SplatViewerUpright(:final value):
@@ -295,6 +335,10 @@ class SplatViewerService {
       _log.info('Opening $name: ${head.gaussians} gaussians, ${reduced ? 'reduced to $cap' : 'whole'}');
       final how = await _host.open(_bridge.urlFor(id, 'index.html'), title: name);
       _log.info('The splat viewer closed: $how');
+      final keep = reduceTo;
+      if (keep != null && keep < head.gaussians) {
+        return SplatViewerOutcome(SplatViewerEnd.reduce, keep: keep);
+      }
       if (unsupported != null) {
         return SplatViewerOutcome(SplatViewerEnd.unsupported, unsupported: unsupported);
       }

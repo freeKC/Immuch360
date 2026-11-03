@@ -47,13 +47,18 @@ class SplatPage extends ConsumerWidget {
     final device = ref.read(splatDeviceClassProvider);
     if ((device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) && probe is SplatHead) {
       final sourceId = this.sourceId;
+      final fileBytes = size ?? _localSize() ?? 0;
+      final answer = device == SplatDeviceClass.computer
+          ? ref.read(splatAnswerProvider((_name, size ?? 1))).valueOrNull
+          : null;
       await showSplatViewer(
         context,
         ref,
         source: sourceId == null ? SplatViewerSource.local(path) : SplatViewerSource.share(sourceId, path),
         head: probe,
-        fileBytes: size ?? _localSize() ?? 0,
+        fileBytes: fileBytes,
         cap: splat.maxGaussians,
+        watchFrames: splatWatchesFrames(device: device!, head: probe, cap: splat.maxGaussians, answer: answer),
       );
       return;
     }

@@ -1148,6 +1148,7 @@ class _Viewings implements SplatViewerService {
     void Function(SplatPrepareStep step, double done)? progress,
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
+    bool watchFrames = false,
   }) async {
     shown.add((source.sourceId, source.path, cap));
     return const SplatViewerOutcome(SplatViewerEnd.closed);

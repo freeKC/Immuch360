@@ -3,6 +3,9 @@
 // * the orientation the user chose for a file with Turn upright, under the headset's key splatUp:<bytes>:<name>, in
 //   a small JSON file of the app (the headset keeps its own in SharedPreferences): the same file opens upright at once
 //   on this device afterwards;
+// * on a computer (lot SVC), the answer the user gave when the first frames of a file were slow (the reduced copy of
+//   N gaussians, or every gaussian) under splatFrames:<bytes>:<name>, and the graphics chip the page last said it drew
+//   with, in another small JSON file (SplatAnswerStore);
 // * the reduced copies of the splats above the cap of this device: the last three, 1 GiB at most together, keyed by
 //   the source (share and path, or file path), its size, its date when the file system gives one, a fingerprint of
 //   its content and the cap, so that opening the same splat again skips "Preparing the splat" and another file of the
@@ -21,6 +24,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_reducer.dart';
 import 'package:logging/logging.dart';
@@ -87,6 +91,82 @@ class SplatUprightStore {
         await file.writeAsString(text, flush: true);
       } catch (error) {
         _log.warning('The orientation of a splat could not be written: $error');
+      }
+    });
+    await _writing;
+  }
+}
+
+/// The key of the answer for the file [name] of [fileBytes], beside the headset's key of its orientation
+String splatAnswerKey(String name, int fileBytes) => 'splatFrames:$fileBytes:$name';
+
+/// The key of the renderer the page last said it drew with, per set of the web view's arguments ([highPerformance]:
+/// the dedicated chip asked on a Windows computer with two)
+String splatRendererKey({required bool highPerformance}) => 'renderer:${highPerformance ? 'high' : 'default'}';
+
+/// The answers to the page's offer per file and the renderer the page last drew with (see the top of this file), in
+/// the JSON file [file] gives; read once, each change written at once
+class SplatAnswerStore {
+  SplatAnswerStore(this._file);
+
+  /// The most files remembered: the oldest answers go first
+  static const maxEntries = 500;
+
+  final Future<File> Function() _file;
+  Future<Map<String, Object?>>? _loading;
+  Future<void> _writing = Future.value();
+
+  Future<Map<String, Object?>> _load() => _loading ??= () async {
+    try {
+      final file = await _file();
+      if (!file.existsSync()) {
+        return <String, Object?>{};
+      }
+      final json = jsonDecode(await file.readAsString());
+      return {if (json is Map) ...json.map((key, value) => MapEntry('$key', value))};
+    } catch (error) {
+      _log.warning('The answers of the splat viewer could not be read: $error');
+      return <String, Object?>{};
+    }
+  }();
+
+  /// What the user answered for the file [name] of [fileBytes], null when nothing
+  Future<SplatFrameAnswer?> answer(String name, int fileBytes) async =>
+      SplatFrameAnswer.fromJson((await _load())[splatAnswerKey(name, fileBytes)]);
+
+  /// Remembers [answer] for the file [name] of [fileBytes]
+  Future<void> writeAnswer(String name, int fileBytes, SplatFrameAnswer answer) =>
+      _write(splatAnswerKey(name, fileBytes), answer.toJson());
+
+  /// The renderer the page last said it drew with, under the arguments of [highPerformance]
+  Future<String?> renderer({required bool highPerformance}) async {
+    final value = (await _load())[splatRendererKey(highPerformance: highPerformance)];
+    return value is String ? value : null;
+  }
+
+  /// Remembers [name] as the renderer of the arguments of [highPerformance], when it changed
+  Future<void> writeRenderer(String name, {required bool highPerformance}) async {
+    if (await renderer(highPerformance: highPerformance) == name) {
+      return;
+    }
+    await _write(splatRendererKey(highPerformance: highPerformance), name);
+  }
+
+  Future<void> _write(String key, Object? value) async {
+    final entries = await _load();
+    entries.remove(key);
+    entries[key] = value;
+    while (entries.length > maxEntries) {
+      entries.remove(entries.keys.first);
+    }
+    final text = jsonEncode(entries);
+    _writing = _writing.then((_) async {
+      try {
+        final file = await _file();
+        await file.parent.create(recursive: true);
+        await file.writeAsString(text, flush: true);
+      } catch (error) {
+        _log.warning('An answer of the splat viewer could not be written: $error');
       }
     });
     await _writing;

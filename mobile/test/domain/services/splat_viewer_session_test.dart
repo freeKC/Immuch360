@@ -143,6 +143,19 @@ void main() {
     expect(events[3], isA<SplatViewerClose>());
   });
 
+  test('the first frames of a computer: what the page found, the reduced copy taken, every gaussian kept', () {
+    final watch = SplatViewerEvent.parse({'type': 'watch', 'slow': true, 'fps': 19.3, 'keep': 1710000})!;
+    expect(watch, isA<SplatViewerWatch>());
+    expect((watch as SplatViewerWatch).slow, isTrue);
+    expect(watch.fps, 19.3);
+    expect(watch.keep, 1710000);
+    expect((SplatViewerEvent.parse({'type': 'watch', 'slow': false, 'fps': 117})! as SplatViewerWatch).slow, isFalse);
+    expect((SplatViewerEvent.parse({'type': 'reduce', 'keep': 1710000})! as SplatViewerReduce).keep, 1710000);
+    expect(SplatViewerEvent.parse({'type': 'reduce', 'keep': 0}), isNull);
+    expect(SplatViewerEvent.parse({'type': 'reduce', 'keep': '1000'}), isNull);
+    expect(SplatViewerEvent.parse({'type': 'keepWhole'}), isA<SplatViewerKeepWhole>());
+  });
+
   test('nothing is served once the session is unregistered', () async {
     bridge.unregisterGenerated(id);
     expect((await _send(bridge.urlFor(id, 'index.html'))).status, HttpStatus.notFound);

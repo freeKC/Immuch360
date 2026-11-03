@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -67,12 +68,19 @@ SplatGateVerdict? splatVerdictOf(WidgetRef ref, SplatProbe probe, {required Stri
   // The computers, phones and tablets: the gate of the splat viewer, as soon as Android said this is no headset
   final device = ref.watch(splatDeviceClassProvider);
   if (device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) {
+    // A computer: the chip that draws and the memory once read, the cap of the chips that share it until then
+    final computer = device == SplatDeviceClass.computer ? ref.watch(splatComputerProvider).valueOrNull : null;
+    final answer = device == SplatDeviceClass.computer
+        ? ref.watch(splatAnswerProvider((name, fileBytes))).valueOrNull
+        : null;
     return splatViewerGateOf(
       probe: probe,
       name: name,
       fileBytes: fileBytes,
       largeSplats: ref.watch(appConfigProvider.select((config) => config.viewer.largeSplats)),
       device: device!,
+      computer: computer ?? const SplatComputer(),
+      answer: answer,
     );
   }
   if (CurrentPlatform.isAndroid && !ref.watch(isHorizonOsProvider).hasValue) {

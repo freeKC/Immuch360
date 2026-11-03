@@ -96,6 +96,9 @@ sealed class SplatViewerEvent {
     'unsupported' => SplatViewerUnsupported('${json['reason']}'),
     'error' => SplatViewerError('${json['message']}'),
     'close' => const SplatViewerClose(),
+    'watch' => SplatViewerWatch(json),
+    'reduce' when json['keep'] is int && (json['keep']! as int) > 0 => SplatViewerReduce(json['keep']! as int),
+    'keepWhole' => const SplatViewerKeepWhole(),
     _ => null,
   };
 }
@@ -150,6 +153,30 @@ final class SplatViewerError extends SplatViewerEvent {
 /// The page's Back or Esc: the host closes the viewer
 final class SplatViewerClose extends SplatViewerEvent {
   const SplatViewerClose();
+}
+
+/// What the page found in the first frames of a computer (framewatch.js): slow or not, the frame rate, and the count
+/// it offers when slow
+final class SplatViewerWatch extends SplatViewerEvent {
+  const SplatViewerWatch(this.fields);
+
+  final Map<String, Object?> fields;
+
+  bool get slow => fields['slow'] == true;
+  double? get fps => (fields['fps'] as num?)?.toDouble();
+  int? get keep => (fields['keep'] as num?)?.toInt();
+}
+
+/// The user took the reduced copy the page offered, of [keep] gaussians
+final class SplatViewerReduce extends SplatViewerEvent {
+  const SplatViewerReduce(this.keep);
+
+  final int keep;
+}
+
+/// The user kept every gaussian when the page offered a reduced copy
+final class SplatViewerKeepWhole extends SplatViewerEvent {
+  const SplatViewerKeepWhole();
 }
 
 /// The generated media of one viewing: [page] (from [loadSplatViewerPage]), [session] written as session.json, and

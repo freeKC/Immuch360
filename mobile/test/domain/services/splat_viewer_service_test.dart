@@ -9,6 +9,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_reducer.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
@@ -711,6 +712,118 @@ void main() {
     await expectLater(running, throwsA(isA<SplatReduceCancelled>()));
     expect(cancelled.existsSync(), isFalse);
     expect(File('${cancelled.path}.part').existsSync(), isFalse);
+  });
+
+  group('the first frames on a computer (lot SVC)', () {
+    late SplatAnswerStore answers;
+    late List<String> renderers;
+
+    setUp(() {
+      answers = SplatAnswerStore(() async => File('${folder.path}/answers.json'));
+      renderers = [];
+    });
+
+    SplatViewerService computerService(SplatViewerHost host) => SplatViewerService(
+      bridge: bridge,
+      host: host,
+      loadPage: () async => page,
+      uprights: uprights,
+      cache: cache,
+      fileSystem: (sourceId) async => throw StateError('no share'),
+      shareUrl: (sourceId, path) async => throw StateError('no share'),
+      answers: answers,
+      onRenderer: renderers.add,
+    );
+
+    test('a splat shown whole is watched; the reduced copy taken closes the viewer and is kept for the file', () async {
+      final file = File('${folder.path}/ranked.ply')..writeAsBytesSync(ranked);
+      final head = _head(ranked);
+      final host = _PageHost([
+        {
+          'type': 'ready',
+          'loadMs': 90,
+          'gaussians': head.gaussians,
+          'renderer': 'ANGLE (Intel, Intel(R) UHD Graphics)',
+        },
+        {'type': 'watch', 'slow': true, 'fps': 19.3, 'keep': 10},
+        {'type': 'reduce', 'keep': 10},
+      ]);
+      final outcome = await computerService(host).show(
+        source: SplatViewerSource.local(file.path),
+        head: head,
+        fileBytes: ranked.length,
+        cap: head.gaussians,
+        look: look,
+        watchFrames: true,
+      );
+      expect(host.session!['watch'], {'floor': 150000});
+      expect(outcome.end, SplatViewerEnd.reduce);
+      expect(outcome.keep, 10);
+      expect(host.closes, 1, reason: 'the viewer closes for the reduced copy to open');
+      expect(await answers.answer('ranked.ply', ranked.length), const SplatFrameAnswer.reduce(10));
+      expect(renderers, ['ANGLE (Intel, Intel(R) UHD Graphics)']);
+    });
+
+    test('keep them all is kept for the file; the viewer stays open', () async {
+      final file = File('${folder.path}/ranked.ply')..writeAsBytesSync(ranked);
+      final head = _head(ranked);
+      final host = _PageHost([
+        {'type': 'watch', 'slow': true, 'fps': 25, 'keep': 10},
+        {'type': 'keepWhole'},
+        {'type': 'close'},
+      ]);
+      final outcome = await computerService(host).show(
+        source: SplatViewerSource.local(file.path),
+        head: head,
+        fileBytes: ranked.length,
+        cap: head.gaussians,
+        look: look,
+        watchFrames: true,
+      );
+      expect(outcome.end, SplatViewerEnd.closed);
+      expect(host.closes, 1, reason: 'closed by the page only');
+      expect(await answers.answer('ranked.ply', ranked.length), const SplatFrameAnswer.whole());
+    });
+
+    test('no watch unless asked, nor on a reduced copy; a reduce of the whole count or more changes nothing', () async {
+      final file = File('${folder.path}/ranked.ply')..writeAsBytesSync(ranked);
+      final head = _head(ranked);
+      final plain = _PageHost([
+        {'type': 'close'},
+      ]);
+      await computerService(plain).show(
+        source: SplatViewerSource.local(file.path),
+        head: head,
+        fileBytes: ranked.length,
+        cap: head.gaussians,
+        look: look,
+      );
+      expect(plain.session!['watch'], isNull);
+      final reduced = _PageHost([
+        {'type': 'reduce', 'keep': head.gaussians},
+      ]);
+      final outcome =
+          await SplatViewerService(
+            bridge: bridge,
+            host: reduced,
+            loadPage: () async => page,
+            uprights: uprights,
+            cache: cache,
+            fileSystem: (sourceId) async => throw StateError('no share'),
+            shareUrl: (sourceId, path) async => throw StateError('no share'),
+            reduce: reduceForTest,
+            answers: answers,
+          ).show(
+            source: SplatViewerSource.local(file.path),
+            head: head,
+            fileBytes: ranked.length,
+            cap: 10,
+            look: look,
+            watchFrames: true,
+          );
+      expect(reduced.session!['watch'], isNull, reason: 'a reduced copy is not watched');
+      expect(outcome.end, SplatViewerEnd.closed);
+    });
   });
 
   test('a copy from a share is cut by a cancel and leaves nothing', () async {

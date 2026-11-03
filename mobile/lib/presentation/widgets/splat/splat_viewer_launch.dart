@@ -1,7 +1,9 @@
 // Opening a splat in the splat viewer of the computers, phones and tablets (plan of 2 November 2026): a tap on a splat
 // opens the scene at once when this device shows it, its page otherwise (the reason it is refused). A splat above the
 // cap of the device is made ready first, with its progress and a Cancel; the page gets its texts in the app's language
-// and the app's colours; how the viewing ended is said when it was not the user's Back.
+// and the app's colours; how the viewing ended is said when it was not the user's Back. On a computer (lot SVC) the
+// cap follows the chip that draws and the memory, the page watches the first frames of a splat shown whole, and the
+// reduced copy it offers opens as soon as the user takes it.
 
 import 'dart:async';
 import 'dart:io';
@@ -9,6 +11,7 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
@@ -38,7 +41,12 @@ const splatPhonePixelRatioMax = 1.0;
 const splatComputerPixelRatioMax = 2.0;
 
 /// The texts of the page, in the app's language: the templates keep their {names} for the page to fill
-Map<String, String> splatViewerPageTexts(Translations t, {required String countLine, String? reducedLine}) => {
+Map<String, String> splatViewerPageTexts(
+  Translations t, {
+  required String countLine,
+  String? reducedLine,
+  String? wholeLine,
+}) => {
   'back': t.back,
   'reset': t.reset,
   'upright': t.splat_upright,
@@ -51,6 +59,10 @@ Map<String, String> splatViewerPageTexts(Translations t, {required String countL
   'loading': t.splat_loading,
   'countLine': countLine,
   'reducedLine': ?reducedLine,
+  'wholeLine': ?wholeLine,
+  'slowLine': t.splat_slow_line(fps: '{fps}'),
+  'slowReduce': t.splat_slow_reduce(kept: '{kept}', total: '{total}'),
+  'slowKeep': t.splat_slow_keep,
   'hintKeys': t.splat_hint_keys(keys: '{keys}', updown: '{updown}'),
   'hintKeysOrbit': t.splat_hint_keys_orbit(keys: '{keys}'),
   'hintTouch': t.splat_hint_touch,
@@ -84,7 +96,7 @@ String? splatViewerEndText(Translations t, SplatViewerOutcome outcome) => switch
   // On Linux a window that stayed blank: WebKitGTK's DMABUF renderer and some NVIDIA drivers (plan section 2.5); the
   // app names the variable and never sets it by itself
   SplatViewerEnd.closed when outcome.noPicture && CurrentPlatform.isLinux => t.splat_linux_no_picture,
-  SplatViewerEnd.closed || SplatViewerEnd.cancelled => null,
+  SplatViewerEnd.closed || SplatViewerEnd.cancelled || SplatViewerEnd.reduce => null,
   SplatViewerEnd.rendererGone => t.splat_renderer_gone,
   SplatViewerEnd.stalled => t.splat_graphics_lost,
   SplatViewerEnd.noWebView =>
@@ -97,11 +109,40 @@ String? splatViewerEndText(Translations t, SplatViewerOutcome outcome) => switch
   SplatViewerEnd.failed => t.splat_open_file_failed,
 };
 
-SplatGateVerdict? _verdict(SplatDeviceClass? device, bool large, SplatProbe probe, String name, int fileBytes) {
+SplatGateVerdict? _verdict(
+  SplatDeviceClass? device,
+  bool large,
+  SplatProbe probe,
+  String name,
+  int fileBytes, {
+  SplatComputer? computer,
+  SplatFrameAnswer? answer,
+}) {
   if (device != SplatDeviceClass.phone && device != SplatDeviceClass.computer) {
     return null;
   }
-  return splatViewerGateOf(probe: probe, name: name, fileBytes: fileBytes, largeSplats: large, device: device!);
+  return splatViewerGateOf(
+    probe: probe,
+    name: name,
+    fileBytes: fileBytes,
+    largeSplats: large,
+    device: device!,
+    computer: computer ?? const SplatComputer(),
+    answer: answer,
+  );
+}
+
+/// The answer kept for the file [name] of [fileBytes] on a computer, null elsewhere or when none
+Future<SplatFrameAnswer?> _answerOf(WidgetRef ref, SplatDeviceClass? device, String name, int? fileBytes) async {
+  if (device != SplatDeviceClass.computer || fileBytes == null) {
+    return null;
+  }
+  try {
+    return await ref.read(splatAnswerStoreProvider).answer(name, fileBytes);
+  } catch (error) {
+    _log.fine('No answer read for $name: $error');
+    return null;
+  }
 }
 
 /// Opens the splat file of [key]: in the splat viewer at once when this device shows it, on its page otherwise
@@ -111,24 +152,31 @@ Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key
       final probe = await ref.read(splatProbeProvider(key).future);
       final size = key.size ?? (key.sourceId == null ? File(key.path).lengthSync() : null);
       final name = key.path.split(RegExp(r'[/\\]')).where((part) => part.isNotEmpty).lastOrNull ?? key.path;
+      final device = ref.read(splatDeviceClassProvider);
+      final computer = await ref.read(splatComputerNowProvider)();
+      final answer = await _answerOf(ref, device, name, size);
       final verdict = _verdict(
-        ref.read(splatDeviceClassProvider),
+        device,
         ref.read(appConfigProvider).viewer.largeSplats,
         probe,
         name,
         size ?? 1,
+        computer: computer,
+        answer: answer,
       );
       if (verdict != null && verdict.isOpen && probe is SplatHead && context.mounted) {
         final source = key.sourceId == null
             ? SplatViewerSource.local(key.path)
             : SplatViewerSource.share(key.sourceId!, key.path);
+        final cap = verdict.request!.maxGaussians;
         await showSplatViewer(
           context,
           ref,
           source: source,
           head: probe,
           fileBytes: size ?? 0,
-          cap: verdict.request!.maxGaussians,
+          cap: cap,
+          watchFrames: device != null && splatWatchesFrames(device: device, head: probe, cap: cap, answer: answer),
         );
         return;
       }
@@ -142,7 +190,8 @@ Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key
 }
 
 /// Shows [source] (its head [head], [fileBytes] long) with at most [cap] gaussians in the splat viewer: a dialog with
-/// the progress and Cancel while a splat above the cap is made ready, then the viewer; what went wrong is said after
+/// the progress and Cancel while a splat above the cap is made ready, then the viewer; what went wrong is said after.
+/// With [watchFrames] the page watches its first frames; the reduced copy the user takes there opens right after.
 Future<void> showSplatViewer(
   BuildContext context,
   WidgetRef ref, {
@@ -150,6 +199,7 @@ Future<void> showSplatViewer(
   required SplatHead head,
   required int fileBytes,
   required int cap,
+  bool watchFrames = false,
 }) async {
   final service = ref.read(splatViewerServiceProvider);
   if (service == null) {
@@ -169,6 +219,7 @@ Future<void> showSplatViewer(
       reducedLine: reduced
           ? t.splat_reduced(kept: splatCountText(cap, locale), total: splatCountText(head.gaussians, locale))
           : null,
+      wholeLine: reduced ? null : t.splat_shown_whole(count: splatCountText(head.gaussians, locale)),
     ),
     locale: locale,
     dark: theme.brightness == Brightness.dark,
@@ -218,10 +269,17 @@ Future<void> showSplatViewer(
       progress: (step, done) => progress.value = (step, done),
       cancel: cancel,
       onOpening: closeDialog,
+      watchFrames: watchFrames,
     );
   } finally {
     closeDialog();
     progress.dispose();
+  }
+  // The reduced copy the page offered: made now (or found kept), then shown
+  final keep = outcome.keep;
+  if (outcome.end == SplatViewerEnd.reduce && keep != null && keep < head.gaussians && context.mounted) {
+    await showSplatViewer(context, ref, source: source, head: head, fileBytes: fileBytes, cap: keep);
+    return;
   }
   final text = splatViewerEndText(t, outcome);
   if (text != null) {
