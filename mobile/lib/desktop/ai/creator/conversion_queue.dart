@@ -851,6 +851,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
               fromVideo: details.fromVideo,
               blurred: details.blurred,
               shDegree: details.shDegree,
+              upright: details.upright,
             );
           }
         }

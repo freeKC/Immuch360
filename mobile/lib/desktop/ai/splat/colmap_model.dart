@@ -11,6 +11,8 @@
 //    (0.66 px for the room of the measure). The centres, x y z of each ([ColmapModel.centres]), go to the scale of the
 //    copy for the headset (splat_scale.dart, lot SP3), which finds the floor under them as a plane: the floor of the
 //    room of M1 stands 19.9 degrees off level after IMAGE-ORIENTATION, so no rule here that takes the model as upright.
+//    Where the cameras look ([ColmapModel.axes], lot SPF2) gives the point an object's cameras look at: its scale is
+//    measured there, and it is set upright on the plane under it (FreeKC's repeater of 3 November lay on its side).
 
 import 'dart:convert';
 import 'dart:io';
@@ -61,7 +63,8 @@ class ColmapImage {
     required this.qvec,
     required this.tvec,
     this.observations = 0,
-  }) : center = colmapCenterOf(qvec, tvec);
+  }) : center = colmapCenterOf(qvec, tvec),
+       axis = colmapAxisOf(qvec);
 
   final int id;
 
@@ -76,6 +79,9 @@ class ColmapImage {
 
   /// -Rᵀ t: where the camera stands in the world
   final List<double> center;
+
+  /// Rᵀ (0, 0, 1): where the camera looks in the world, a unit vector
+  final List<double> axis;
 }
 
 /// One point of a model: where it is, its colour, its mean reprojection error (negative when COLMAP gave none), and how
@@ -104,6 +110,17 @@ List<double> colmapCenterOf(List<double> q, List<double> t) {
     [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)],
   ];
   return [for (var j = 0; j < 3; j++) -(r[0][j] * t[0] + r[1][j] * t[1] + r[2][j] * t[2])];
+}
+
+/// Where a camera of pose [q] (w, x, y, z, the world to the camera) looks in the world: Rᵀ (0, 0, 1), the third row of
+/// R, a unit vector
+List<double> colmapAxisOf(List<double> q) {
+  final norm = math.sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
+  final w = q[0] / norm;
+  final x = q[1] / norm;
+  final y = q[2] / norm;
+  final z = q[3] / norm;
+  return [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)];
 }
 
 /// The number of images the model in [folder] placed, read from the first 8 bytes of its images.bin; null when it has
@@ -237,6 +254,16 @@ class ColmapModel {
       centres.setRange(3 * k, 3 * k + 3, images[k].center);
     }
     return centres;
+  }
+
+  /// Where the cameras look, x y z of each in the order of [images]: the point an object's cameras look at, which its
+  /// scale measures and its upright stands over (lot SPF2)
+  Float64List get axes {
+    final axes = Float64List(3 * images.length);
+    for (var k = 0; k < images.length; k++) {
+      axes.setRange(3 * k, 3 * k + 3, images[k].axis);
+    }
+    return axes;
   }
 }
 

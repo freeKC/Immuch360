@@ -546,6 +546,17 @@ final class StereoPanoramaJob extends ImmersiveJobSpec {
   ImmersiveSource get original => photo ?? source;
 }
 
+/// How a splat scene was set upright (lot SPF2): an object on the plane it stands on, found under its cameras
+/// (splat_scale.dart), or as COLMAP turned it (model_orientation_aligner by IMAGE-ORIENTATION, the median "down" of the
+/// images: FreeKC's repeater of 3 November, filmed from above and with the phone turned, lay on its side)
+enum SplatUpright {
+  /// The plane the object stands on, level, the object on it
+  supportPlane,
+
+  /// The upright of COLMAP, kept: a place, or an object with nothing found under it
+  imageOrientation,
+}
+
 /// The images of a splat scene COLMAP [placed] in 3D, of the [images] it was given
 class SplatPlaced {
   const SplatPlaced(this.placed, this.images);
@@ -664,8 +675,8 @@ final class StereoPanoramaResultDetails extends ImmersiveResultDetails {
 /// A splat scene: its [gaussians] (the bytes of the .spz are those of ImmersiveResult.bytesWritten), the [images] it was
 /// trained from and how many of them COLMAP [placed] ("Done: 150,000 gaussians, 3.6 MB, from 150 of 150 photos"; "24 of
 /// 150 photos could not be placed"), photos or frames of a video ([fromVideo]), the frames left out as [blurred], the
-/// scale written ([scale], metres a unit of COLMAP) for what was filmed ([subject]), and the size of the .ply when one
-/// was written
+/// scale written ([scale], metres a unit of COLMAP) for what was filmed ([subject]), how it was set [upright], and the
+/// size of the .ply when one was written
 final class SplatResultDetails extends ImmersiveResultDetails {
   const SplatResultDetails({
     required this.gaussians,
@@ -677,6 +688,7 @@ final class SplatResultDetails extends ImmersiveResultDetails {
     this.blurred = 0,
     this.shDegree = SplatV1.shDegree,
     this.plyBytes,
+    this.upright = SplatUpright.imageOrientation,
   });
 
   final int gaussians;
@@ -688,6 +700,9 @@ final class SplatResultDetails extends ImmersiveResultDetails {
   final int blurred;
   final int shDegree;
   final int? plyBytes;
+
+  /// How the scene was set upright: an object on the plane under it, or as COLMAP turned it
+  final SplatUpright upright;
 
   /// The images COLMAP could not place, left out of the scene
   int get leftOut => images - placed;

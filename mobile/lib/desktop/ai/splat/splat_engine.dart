@@ -15,8 +15,9 @@
 //     so that the panel says a scene of fewer than SplatV1.incompleteShare of them may be incomplete while it trains;
 //  4. training: Brush on the graphics card (brush_runner.dart), which asks the card again before it starts, its steps
 //     and the time left by the pace of its last 1 000 steps;
-//  5. splatCopy: the export of Brush read, its scale set from the gaussians and the centres of the cameras, the SPZ and
-//     the .ply written in an isolate (splat_files.dart, lot SP3), under a second for 150 000 gaussians.
+//  5. splatCopy: the export of Brush read, its scale set from the gaussians, the centres of the cameras and where they
+//     look, an object set upright on the plane it stands on (lot SPF2), the SPZ and the .ply written in an isolate
+//     (splat_files.dart, lot SP3), under a second for 150 000 gaussians; the result says how it was set upright.
 // Cancel stops the program under way within a second (SidecarRun looks every 200 ms; the preparation of the photos
 // between two photos, the frames between two candidates); the copy, under a second, ends before the job does.
 //
@@ -394,6 +395,7 @@ class SplatEngine implements ImmersiveEngine {
         plyPath: job.plyPartPath,
         subject: job.settings.subject,
         cameras: aligned.centres,
+        axes: aligned.axes,
         shDegree: job.settings.shDegree,
         maxGaussians: job.settings.maxGaussians,
       );
@@ -401,7 +403,7 @@ class SplatEngine implements ImmersiveEngine {
       report(ImmersiveStage.splatCopy, 1);
       _log.info(
         'Splat scene ${job.id}: ${written.gaussians} gaussians (${written.dropped} dropped), '
-        '${found.placed} of ${found.images} images placed, ${written.scale.note}',
+        '${found.placed} of ${found.images} images placed, ${written.scale.note}; ${written.scale.said}',
       );
       done = true;
       final made = work;
@@ -418,6 +420,7 @@ class SplatEngine implements ImmersiveEngine {
           blurred: found.blurred,
           shDegree: written.shDegree,
           plyBytes: written.plyBytes,
+          upright: written.scale.upright,
         ),
         bytesWritten: written.spzBytes,
         stageTimes: times,

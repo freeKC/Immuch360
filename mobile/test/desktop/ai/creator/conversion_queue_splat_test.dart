@@ -105,6 +105,9 @@ class _ScriptedSplat implements ImmersiveEngine {
         scale: 0.45,
         fromVideo: job.isVideo,
         plyBytes: ply == null ? null : 2,
+        upright: job.settings.subject == SplatSubject.object
+            ? SplatUpright.supportPlane
+            : SplatUpright.imageOrientation,
       ),
       bytesWritten: 3,
       stageTimes: const {
@@ -355,15 +358,17 @@ void main() {
       expect(File(p.join(p.dirname(paths.first), 'salon_splat (1).ply')).existsSync(), isTrue);
     });
 
-    test('a .ply that cannot be saved: the scene is done all the same, the .ply said missing', () async {
+    test('a .ply that cannot be saved: the scene is done all the same, the .ply said missing, how it was set upright '
+        'kept', () async {
       container = containerWith(_ScriptedSplat());
       output.failCompanion = ImmersiveErrorCode.diskFull;
-      final id = addSplat(photos(3), settings: const SplatSettings(keepPly: true));
+      final id = addSplat(photos(3), settings: const SplatSettings(subject: SplatSubject.object, keepPly: true));
       await until((state) => job(id).state.isEnded);
 
       expect(job(id).state, ConversionState.done);
       expect(job(id).message, contains('.ply could not be saved'));
       expect((job(id).details! as SplatResultDetails).plyBytes, isNull);
+      expect((job(id).details! as SplatResultDetails).upright, SplatUpright.supportPlane);
       expect(output.discarded, hasLength(1), reason: 'the .part of the .ply');
     });
 

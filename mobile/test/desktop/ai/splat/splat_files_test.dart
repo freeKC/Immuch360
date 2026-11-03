@@ -8,6 +8,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_files.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_scale.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -62,6 +63,79 @@ import '../../../domain/splat/splat_test_clouds.dart';
     ],
   ]);
   return (ply: out, cameras: cameras);
+}
+
+/// [count] gaussians of degree 3 as Brush 0.3.0 exports them, of an object filmed on a desk as FreeKC filmed his
+/// repeater on 3 November, lying on its side as COLMAP turned it: the up of the room along -x of the file, 0.05 m a
+/// unit. The first half of the rows on the desk (1 x 0.6 m), the next fifth on a box of 8 x 9 x 5 cm standing on it,
+/// the rest on a monitor behind; the centres of 60 cameras going round the box 25 cm away, 20 to 60 degrees above the
+/// desk, and where each looks (at the box)
+({Uint8List ply, Float64List cameras, Float64List axes, int desk, int box}) _brushDesk(int count, {int seed = 1}) {
+  final random = math.Random(seed);
+  double between(double low, double high) => low + random.nextDouble() * (high - low);
+  const unit = 0.05;
+  // Metres, y up, to the file: up along -x
+  List<double> file(List<double> m) => [-m[1] / unit + 2, m[0] / unit - 1, m[2] / unit + 3];
+  final names = brushOrder(3);
+  final header = StringBuffer('ply\nformat binary_little_endian 1.0\n')
+    ..write('comment Exported from Brush\ncomment Vertical axis: y\ncomment SH degree: 3\n')
+    ..write('element vertex $count\n');
+  for (final name in names) {
+    header.write('property float $name\n');
+  }
+  header.write('end_header\n');
+  final head = header.toString().codeUnits;
+  final out = Uint8List(head.length + count * names.length * 4)..setRange(0, head.length, head);
+  final data = ByteData.sublistView(out, head.length);
+  final slot = {for (var k = 0; k < names.length; k++) names[k]: k};
+  final row = Float32List(names.length);
+  final desk = count ~/ 2;
+  final box = count ~/ 5;
+  for (var i = 0; i < count; i++) {
+    for (var k = 0; k < row.length; k++) {
+      row[k] = between(-0.9, 0.9);
+    }
+    final List<double> metres;
+    if (i < desk) {
+      metres = [between(-0.5, 0.5), 0, between(-0.3, 0.3)];
+    } else if (i < desk + box) {
+      metres = switch (random.nextInt(3)) {
+        0 => [between(-0.04, 0.04), 0.09, between(-0.025, 0.025)],
+        1 => [random.nextBool() ? -0.04 : 0.04, between(0, 0.09), between(-0.025, 0.025)],
+        _ => [between(-0.04, 0.04), between(0, 0.09), random.nextBool() ? -0.025 : 0.025],
+      };
+    } else {
+      metres = [between(-0.3, 0.3), between(0.1, 0.45), -0.28];
+    }
+    final at = file(metres);
+    row[slot['x']!] = at[0];
+    row[slot['y']!] = at[1];
+    row[slot['z']!] = at[2];
+    row[slot['opacity']!] = between(-5, 5);
+    for (var k = 0; k < 3; k++) {
+      row[slot['scale_$k']!] = between(-8, -3);
+    }
+    for (var k = 0; k < row.length; k++) {
+      data.setFloat32((i * row.length + k) * 4, row[k], Endian.little);
+    }
+  }
+  final cameras = <double>[];
+  final axes = <double>[];
+  for (var k = 0; k < 60; k++) {
+    final azimuth = 4 * math.pi * k / 60;
+    final elevation = between(20, 60) * math.pi / 180;
+    final centre = [
+      0.25 * math.cos(elevation) * math.cos(azimuth),
+      0.045 + 0.25 * math.sin(elevation),
+      0.25 * math.cos(elevation) * math.sin(azimuth),
+    ];
+    final look = [-centre[0], 0.045 - centre[1], -centre[2]];
+    final length = math.sqrt(look[0] * look[0] + look[1] * look[1] + look[2] * look[2]);
+    cameras.addAll(file(centre));
+    // A direction, not a point: turned as the points are, not moved
+    axes.addAll([-look[1] / length, look[0] / length, look[2] / length]);
+  }
+  return (ply: out, cameras: Float64List.fromList(cameras), axes: Float64List.fromList(axes), desk: desk, box: box);
 }
 
 void main() {
@@ -140,6 +214,44 @@ void main() {
     expect(written.shDegree, 1);
     final spz = File('${folder.path}/vase_splat.spz.part').readAsBytesSync();
     expect((probeSplatHead(spz, spz.length) as SplatHead).shDegree, 1);
+  });
+
+  test('an object lying on its side: both files set upright on its desk, the box standing on it at 1 m, the note '
+      'saying so', () async {
+    final scene = _brushDesk(6000);
+    final brush = File('${folder.path}/export_20000.ply')..writeAsBytesSync(scene.ply);
+    final written = await writeSplatFiles(
+      brushPly: brush.path,
+      spzPath: '${folder.path}/repeteur_splat.spz.part',
+      plyPath: '${folder.path}/repeteur_splat.ply.part',
+      subject: SplatSubject.object,
+      cameras: scene.cameras,
+      axes: scene.axes,
+    );
+    expect(written.scale.upright, SplatUpright.supportPlane);
+    expect(written.scale.rule, SplatScaleRule.lookedAt);
+    expect(written.scale.supportTilt, closeTo(90, 1));
+    final ply = readSplatPly(File('${folder.path}/repeteur_splat.ply.part').readAsBytesSync());
+    expect(ply.comments, contains(written.scale.note));
+    expect(written.scale.note, endsWith('(lookedAt), upright supportPlane'));
+    final positions = ply.positions;
+    List<double> axis(int from, int to, int axis) => [for (var i = from; i < to; i++) positions[3 * i + axis]]..sort();
+    // The desk level (y down): its heights within a few millimetres of the metre-sized box
+    final desk = axis(0, scene.desk, 1);
+    expect(desk.last - desk.first, lessThan(0.01));
+    // The box on it, its 9 cm of height above the desk, its longest side at 1 m between the percentiles 5 and 95 (as
+    // the headset measures it: 9 cm of the box are some 8 cm so)
+    final heights = axis(scene.desk, scene.desk + scene.box, 1);
+    expect(heights.last, lessThan(desk.first + 0.01), reason: 'above the desk, y down');
+    expect(desk.first - heights.first, closeTo(0.09 * written.scale.factor * 20, 0.01));
+    double side(int axis) {
+      final values = [for (var i = scene.desk; i < scene.desk + scene.box; i++) positions[3 * i + axis]]..sort();
+      return values[values.length * 95 ~/ 100] - values[values.length * 5 ~/ 100];
+    }
+
+    expect([side(0), side(1), side(2)].reduce(math.max), closeTo(SplatV1.objectSize, 0.1));
+    // The SPZ holds the same gaussians as the PLY
+    expect(gzip.decode(File('${folder.path}/repeteur_splat.spz.part').readAsBytesSync()), spzV2Payload(ply));
   });
 
   test('an export the headset could not read, or none, fails with why', () async {

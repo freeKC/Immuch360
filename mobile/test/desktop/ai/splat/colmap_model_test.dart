@@ -132,6 +132,32 @@ void main() {
     expect(const ColmapModel(cameras: {}, images: [], points: []).centres, isEmpty);
   });
 
+  test('where the cameras look, x y z of each in the order of the images: the fakes on their circle look at its centre '
+      '(lot SPF2)', () {
+    _circle(6).writeTo(at('0'));
+    final model = ColmapModel.read(at('0'));
+    final axes = model.axes;
+    expect(axes, isA<Float64List>());
+    expect(axes, hasLength(18));
+    for (final (k, image) in model.images.indexed) {
+      expect(axes.sublist(3 * k, 3 * k + 3), image.axis);
+      final c = image.center;
+      final a = image.axis;
+      expect(a[0] * a[0] + a[1] * a[1] + a[2] * a[2], closeTo(1, 1e-12));
+      // Towards the origin, 1.3 m away
+      for (var j = 0; j < 3; j++) {
+        expect(c[j] + 1.3 * a[j], closeTo(0, 1e-9), reason: 'image $k, axis $j');
+      }
+    }
+    expect(const ColmapModel(cameras: {}, images: [], points: []).axes, isEmpty);
+    // Turned a quarter about the vertical: it looks along x
+    const half = math.pi / 4;
+    final axis = colmapAxisOf([math.cos(half), 0, math.sin(half), 0]);
+    expect(axis[0], closeTo(-1, 1e-12));
+    expect(axis[1], closeTo(0, 1e-12));
+    expect(axis[2], closeTo(0, 1e-12));
+  });
+
   test('the centre of a camera is -Rᵀ t', () {
     // Turned a quarter about the vertical, the origin 2 m in front of it along its own z: it stands at x = 2
     const half = math.pi / 4;
