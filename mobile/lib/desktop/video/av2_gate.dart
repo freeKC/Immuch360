@@ -267,13 +267,20 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
     );
   }
 
-  /// The probe of the video, then the last speed this computer measured for its format
+  /// The probe of the video, then the last speed this computer measured for its format. A measure that cannot be read
+  /// is no measure: the video plays, as one never measured does (plan, section 1.4)
   Future<({Av2VideoFormat format, Av2Speed? speed})> _check() async {
     final format = await ref.read(av2ProbeProvider)(widget.video);
     if (format.refusedFormat != null) {
       return (format: format, speed: null);
     }
-    return (format: format, speed: await ref.read(av2SpeedProvider)(format));
+    Av2Speed? speed;
+    try {
+      speed = await ref.read(av2SpeedProvider)(format);
+    } catch (error, stack) {
+      _log.warning('the measures of the AV2 decoder could not be read', error, stack);
+    }
+    return (format: format, speed: speed);
   }
 
   Widget _probed(BuildContext context) {
@@ -282,11 +289,24 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
       future: check,
       builder: (context, snapshot) {
         final t = context.t;
-        if (snapshot.hasError) {
+        final error = snapshot.error;
+        if (error != null) {
           return _framed(
             Av2Notice(
               key: const Key('av2_notice_stopped'),
-              text: t.av2_error_decoder_stopped(reason: '${snapshot.error}'),
+              text: t.av2_error_decoder_stopped(reason: av2ErrorReason(error)),
+              // The probe again, without leaving the video
+              action: Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton(
+                    key: const Key('av2_retry'),
+                    onPressed: () => setState(() => _probe = null),
+                    child: Text(t.ai_immersive_retry),
+                  ),
+                ),
+              ),
             ),
           );
         }
@@ -508,7 +528,9 @@ class _Av2InstallCardState extends State<Av2InstallCard> {
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  failure != null ? aiDownloadFailureText(t, failure) : t.av2_install_failed(reason: '$error'),
+                  failure != null
+                      ? aiDownloadFailureText(t, failure)
+                      : t.av2_install_failed(reason: av2ErrorReason(error!)),
                   key: const Key('av2_install_failure'),
                   style: TextStyle(color: context.colorScheme.error),
                 ),

@@ -215,7 +215,8 @@ void main() {
 
     await tester.tap(find.text('Download and play'));
     await tester.pumpAndSettle();
-    expect(find.text('The AV2 decoder was not downloaded: Bad state: the folder is gone'), findsOneWidget);
+    // The words of the error, not its type
+    expect(find.text('The AV2 decoder was not downloaded: the folder is gone'), findsOneWidget);
   }, variant: desktop);
 
   testWidgets('a version without the sum of the decoder says it is not in this version, with no button', (
@@ -246,11 +247,53 @@ void main() {
     expect(find.text('the player'), findsNothing);
   }, variant: desktop);
 
-  testWidgets('a probe that fails says the decoder stopped on this video', (tester) async {
+  testWidgets('a probe that fails says the decoder stopped on this video, in its words, and Retry probes again', (
+    tester,
+  ) async {
     installed();
-    probe = (_) async => throw const FormatException('not an AV2 stream');
+    var attempts = 0;
+    probe = (video) async {
+      if (attempts++ == 0) {
+        throw const FormatException('not an AV2 stream');
+      }
+      return Av2VideoFormat.ofHead(video.head);
+    };
     await pumpGate(tester);
-    expect(find.text('The AV2 decoder stopped on this video: FormatException: not an AV2 stream'), findsOneWidget);
+    expect(find.text('The AV2 decoder stopped on this video: not an AV2 stream'), findsOneWidget);
+    expect(find.text('the player'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('av2_retry')));
+    await tester.pumpAndSettle();
+    expect(find.text('the player'), findsOneWidget);
+    expect(probed, [_video, _video]);
+  }, variant: desktop);
+
+  testWidgets('a file the probe cannot open is said without its path, which holds the name of the user', (
+    tester,
+  ) async {
+    installed();
+    probe = (_) async => throw const FileSystemException(
+      'Cannot open file',
+      r'C:\Users\Jean Dupont\Videos\cosmos.ivf',
+      OSError('The process cannot access the file because it is being used by another process.', 32),
+    );
+    await pumpGate(tester);
+    expect(
+      find.text(
+        'The AV2 decoder stopped on this video: The process cannot access the file because it is being used by '
+        'another process.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Jean'), findsNothing);
+  }, variant: desktop);
+
+  testWidgets('a measure that cannot be read is no measure: the video plays', (tester) async {
+    installed();
+    speed = (_) => throw const FileSystemException('Cannot read file', '/home/jean/.local/share/measures.json');
+    await pumpGate(tester);
+    expect(find.text('the player'), findsOneWidget);
+    expect(find.byKey(const Key('av2_notice_stopped')), findsNothing);
   }, variant: desktop);
 
   testWidgets('a format measured too slow here: the numbers, then Play anyway plays it', (tester) async {
@@ -328,6 +371,36 @@ void main() {
     test('a libmpv of macOS rebuilt by lot AD4 plays the pictures of the decoder', () {
       expect(av2PlaysWithMacLibmpv('libmpv-macos-20261020-9'), isFalse);
       expect(av2PlaysWithMacLibmpv('libmpv-macos-20261102-12'), isTrue);
+    });
+
+    test('the reason of an error: its words, without its type nor a path of the computer', () {
+      expect(av2ErrorReason(const FormatException('not an AV2 stream')), 'not an AV2 stream');
+      expect(av2ErrorReason(StateError('the folder is gone')), 'the folder is gone');
+      expect(av2ErrorReason(Exception('the companion did not start')), 'the companion did not start');
+      expect(
+        av2ErrorReason(const FileSystemException('Cannot open file', '/home/jean/Videos/cosmos.ivf')),
+        'Cannot open file',
+      );
+      expect(
+        av2ErrorReason(const ProcessException('/home/jean/.local/share/immuch360/immuch360-av2', [], 'No such file')),
+        'No such file',
+      );
+      // Paths written inside a message: the name of the file stays, the folders go
+      expect(
+        av2ErrorReason(Exception(r"cannot read 'C:\Users\Jean Dupont\Videos\été 2026.ivf' now")),
+        "cannot read 'été 2026.ivf' now",
+      );
+      expect(av2ErrorReason(Exception(r'cannot read C:\Users\jean\cosmos.ivf')), 'cannot read cosmos.ivf');
+      expect(av2ErrorReason(Exception(r'cannot read \\nas\videos\cosmos.ivf')), 'cannot read cosmos.ivf');
+      expect(av2ErrorReason(Exception('cannot read /home/jean/Videos/cosmos.ivf')), 'cannot read cosmos.ivf');
+      expect(
+        av2ErrorReason(Exception('see https://code.videolan.org/videolan/dav2d')),
+        'see https://code.videolan.org/videolan/dav2d',
+        reason: 'an address stays whole',
+      );
+      expect(av2ErrorReason(Exception('first line\nsecond line')), 'first line');
+      expect(av2ErrorReason(Exception('')), 'no reason given');
+      expect(av2ErrorReason(Exception('x' * 400)).length, 160);
     });
 
     test('the frames per second as the texts say them', () {

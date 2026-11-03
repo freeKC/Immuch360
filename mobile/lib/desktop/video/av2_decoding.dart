@@ -6,6 +6,8 @@
 // is taken as its head says it (an IVF header gives its size and its frame rate) and no speed is known: no notice comes
 // before it plays.
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -203,6 +205,40 @@ final av2SpeedProvider = Provider<Future<Av2Speed?> Function(Av2VideoFormat form
   (ref) =>
       (_) async => null,
 );
+
+/// A path in quotes, spaces allowed, as FileSystemException and others write it
+final _quotedPath = RegExp(r"""(['"])((?:[A-Za-z]:\\|\\\\|/)[^'"]*)\1""");
+
+/// A path of Windows (C:\..., \\server\...) or of the other systems (/home/...), up to a space or a quote
+final _windowsPath = RegExp(r"""(?:[A-Za-z]:|\\\\[^\\\s'"]+)\\[^\s'"]*""");
+final _posixPath = RegExp(r"""(?<![\w.~:/])/(?:[^\s/'"]+/)+[^\s/'"]*""");
+
+/// The last part of [path], a path of any system
+String _lastPart(String path) => path.contains('\\') ? p.windows.basename(path) : p.posix.basename(path);
+
+/// The reason the screens of the AV2 videos give for [error], after "The AV2 decoder stopped on this video:" or "The
+/// AV2 decoder was not downloaded:": what went wrong in a few words, never the type of the error nor a path of this
+/// computer, which holds the name of the user (a file keeps its name). Lot AD6 adds the errors of the playback.
+String av2ErrorReason(Object error) {
+  final text = switch (error) {
+    FileSystemException(:final osError?) when osError.message.trim().isNotEmpty => osError.message,
+    FileSystemException(:final message) => message,
+    ProcessException(:final message) => message,
+    FormatException(:final message) => message,
+    StateError(:final message) => message,
+    TimeoutException() => 'no answer in time',
+    _ => '$error'.replaceFirst(RegExp(r'^(?:Exception|Error)\b:?\s*'), ''),
+  };
+  final line = const LineSplitter().convert(text.trim()).firstOrNull?.trim() ?? '';
+  final named = line
+      .replaceAllMapped(_quotedPath, (match) => '${match[1]}${_lastPart(match[2]!)}${match[1]}')
+      .replaceAllMapped(_windowsPath, (match) => _lastPart(match[0]!))
+      .replaceAllMapped(_posixPath, (match) => _lastPart(match[0]!));
+  if (named.isEmpty) {
+    return 'no reason given';
+  }
+  return named.length <= 160 ? named : '${named.substring(0, 159)}…';
+}
 
 /// A number of frames per second as the AV2 texts give it in [locale]: whole from 10 up, one decimal below ("7.4"), and
 /// the frame rate of a video with the decimals it has ("29.97", "30") when [exact]
