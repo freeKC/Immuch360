@@ -1222,6 +1222,46 @@ void main() {
       expect(components.statusOf(av2).state, AiComponentState.installed);
     });
 
+    test('remove all keeps the note of an AV2 decoder removed while held, and the next start deletes it', () async {
+      final av2Files = {'immuch360-av2': utf8.encode('ELF program of the AV2 decoder ' * 20)};
+      final av2Zip = _zipOf(av2Files);
+      final av2 = _engineComponent(
+        av2Zip,
+        av2Files,
+        id: 'av2-decoder-linux-x64',
+        programs: {'immuch360-av2'},
+        features: {AiFeature.av2Video},
+      );
+      File(p.join(mirror.path, av2.assetName)).writeAsBytesSync(av2Zip);
+      final catalogue = [_modelComponent, av2];
+      final installer = service(catalogue: catalogue);
+      await installer.install(av2);
+      await installer.install(_modelComponent);
+      // The decoder plays a video on Windows: its program is held, its removal waits for the next start
+      final program = File(p.join(root.path, 'engines', 'av2-decoder-linux-x64', 'immuch360-av2'));
+      final components = service(
+        catalogue: catalogue,
+        delete: (entity) async =>
+            p.isWithin(p.join(root.path, 'engines', 'av2-decoder-linux-x64'), entity.path) ||
+                p.equals(entity.path, p.join(root.path, 'engines', 'av2-decoder-linux-x64'))
+            ? throw FileSystemException('held', entity.path, const OSError('Access is denied.', 5))
+            : entity.delete(recursive: true),
+      );
+      expect(await components.remove(av2), AiRemoveOutcome.nextStart);
+      expect(installedJson()['pendingDeletes'], ['engines/av2-decoder-linux-x64']);
+
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+      expect(installedJson()['pendingDeletes'], ['engines/av2-decoder-linux-x64'], reason: 'still to delete');
+      expect(program.existsSync(), isTrue);
+
+      AiComponentsService.resetStartPassForTests();
+      await AiComponentsService.freePendingAtStart(() async => root);
+      AiComponentsService.resetStartPassForTests();
+      expect(program.existsSync(), isFalse);
+      expect(Directory(p.join(root.path, 'engines', 'av2-decoder-linux-x64')).existsSync(), isFalse);
+      expect(installedJson()['pendingDeletes'], isEmpty);
+    });
+
     test('remove all with a locked file says the space comes back at the next start', () async {
       await service().install(_runtimeComponent);
       final locked = installedFile(_runtimeComponent);

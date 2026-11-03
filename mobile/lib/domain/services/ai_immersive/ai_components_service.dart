@@ -791,11 +791,17 @@ class AiComponentsService extends ChangeNotifier {
         targets.add(name);
       }
     }
-    // Written first: everything else is forgotten and noted for the next start, then it goes
+    // Written first: everything else is forgotten and noted for the next start, then it goes. A spared component
+    // removed while the system held it (the AV2 decoder during a playback on Windows) keeps its note: it is no longer
+    // installed, and its folder goes at the next start.
     final before = _installed;
+    final sparedNotes = [
+      for (final path in before.pendingDeletes)
+        if (keep.any((kept) => path == kept || path.startsWith('$kept/'))) path,
+    ];
     _installed = _Installed(
       components: {for (final component in spared) component.id: ?before.components[component.id]},
-      pendingDeletes: [...targets],
+      pendingDeletes: [...targets, ...sparedNotes],
     );
     if (!await _trySave(undo: () => _installed = before)) {
       return AiRemoveOutcome.writeFailed;
@@ -808,7 +814,7 @@ class AiComponentsService extends ChangeNotifier {
     if (FileSystemEntity.typeSync(leftover.path, followLinks: false) == FileSystemEntityType.file) {
       await _tryDelete(leftover, _delete);
     }
-    _installed.pendingDeletes = kept;
+    _installed.pendingDeletes = [...kept, ...sparedNotes];
     if (!await _trySave()) {
       // The folders stay noted: the start pass deletes what is left of them
       _log.warning('the folders of the components stay noted in installed.json until the next start');
