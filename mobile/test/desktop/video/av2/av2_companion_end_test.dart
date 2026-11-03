@@ -41,7 +41,8 @@ void main() {
       expect(av2EndedReason(3, windows: windows), 'it could not decode this video (code 3)');
       expect(av2EndedReason(4, windows: windows), 'it could not listen on 127.0.0.1 (code 4)');
       expect(av2EndedReason(5, windows: windows), 'it did not understand the app (code 5)');
-      expect(av2EndedReason(42, windows: windows), 'it ended with code 42');
+      expect(av2EndedReason(42, windows: windows), 'it ended (code 42)');
+      expect(av2EndedReason(-9, windows: true), 'it ended (code -9)', reason: 'no signal on Windows');
     }
   });
 

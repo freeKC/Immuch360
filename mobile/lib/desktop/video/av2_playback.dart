@@ -477,7 +477,7 @@ String av2EndedReason(int code, {bool? windows}) {
     2 || 5 => 'it did not understand the app (code $code)',
     3 => 'it could not decode this video (code 3)',
     4 => 'it could not listen on 127.0.0.1 (code 4)',
-    _ => 'it ended with code $code',
+    _ => 'it ended (code $code)',
   };
 }
 
