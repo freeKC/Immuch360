@@ -47,3 +47,9 @@ Patches, to apply again when a newer version is copied here (each marked "Immuch
     id (`pending_creates_`) and answers it at the window's close with the error "the window was closed while it
     opened" rather than never, which the app takes as the user's close (`splatWindowClosedWhileOpening`). Test of the
     Dart side: `mobile/test/desktop/splat/desktop_splat_viewer_host_test.dart`.
+12. Dart: a window closed right as WebView2 made its controller (about 300 ms after it showed, in the same replay)
+    sent `onWindowClose` before Dart had the answer to `create`: Flutter's merged platform and UI threads hand the
+    method call to Dart at once while the answer waits for its task, the close found no web view of that id
+    (`assert` in debug, dropped in release) and the viewing never ended. The ids of such closes are kept
+    (`_closedBeforeCreated`) and `create` gives a web view already closed. Test:
+    `mobile/test/desktop/splat/desktop_webview_window_gone_test.dart`.

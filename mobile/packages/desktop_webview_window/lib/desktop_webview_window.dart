@@ -69,9 +69,19 @@ class WebviewWindow {
       configuration.toMap(),
     ) as int;
     final webview = WebviewImpl(viewId, _channel);
+    // Immuch360 (patch 12): its window closed before this answer reached Dart
+    if (_closedBeforeCreated.remove(viewId)) {
+      webview.onClosed();
+      return webview;
+    }
     _webviews.add(webview);
     return webview;
   }
+
+  /// Immuch360 (patch 12): the ids whose onWindowClose came before the answer to create, which Flutter's merged
+  /// platform and UI threads can hand to Dart first (a window closed right as WebView2 made its controller); create
+  /// then gives a web view already closed rather than one whose close never comes
+  static final _closedBeforeCreated = <int>{};
 
   static Future<dynamic> _handleOtherIsolateMethodCall(MethodCall call) async {
     final webViewId = call.arguments['webViewId'] as int;
@@ -106,8 +116,11 @@ class WebviewWindow {
     final webview = _webviews
         .cast<WebviewImpl?>()
         .firstWhere((e) => e?.viewId == viewId, orElse: () => null);
-    assert(webview != null);
     if (webview == null) {
+      // Immuch360 (patch 12): a close before the answer to create is kept for create
+      if (call.method == "onWindowClose") {
+        _closedBeforeCreated.add(viewId);
+      }
       return;
     }
     switch (call.method) {

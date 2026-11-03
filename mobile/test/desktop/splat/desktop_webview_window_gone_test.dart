@@ -44,6 +44,30 @@ void main() {
     expect(calls, ['create', 'launch', 'close']);
   });
 
+  test('a window whose close came before the answer to create still ends (patch 12)', () async {
+    // The fix round's replay of 3 November 2026: a window closed about 300 ms after it showed, right as its controller
+    // was made; Flutter's merged platform and UI threads hand onWindowClose to Dart before the answer to create, the
+    // close found no web view of that id and was dropped, and the viewing never ended
+    const codec = StandardMethodCodec();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
+      calls.add(call.method);
+      if (call.method == 'create') {
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+          'webview_window',
+          codec.encodeMethodCall(const MethodCall('onWindowClose', {'id': 8})),
+          (_) {},
+        );
+        return 8;
+      }
+      return null;
+    });
+    final webview = await WebviewWindow.create(configuration: const CreateConfiguration(titleBarHeight: 0));
+    var closed = false;
+    unawaited(webview.onClose.then((_) => closed = true));
+    await pumpEventQueue();
+    expect(closed, isTrue);
+  });
+
   test('another error of a launch still reaches the zone', () async {
     launchError = 'the web view failed';
     final errors = <Object>[];
