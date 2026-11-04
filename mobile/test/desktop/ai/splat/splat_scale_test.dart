@@ -5,7 +5,8 @@
 // filmed on a desk is set upright on the plane it stands on, found under its cameras, whatever the upright of COLMAP
 // made of it (FreeKC's repeater of 3 November lay on its side, its desk along x), and the gaussians its cameras look at
 // are brought to 1 m, the desk and the rest of the scene with them; an object with nothing under it keeps the upright
-// of COLMAP, and says so.
+// of COLMAP, and says so. Its review: a wall behind an object, which holds more positions than the shelf under it but
+// not twice as many, does not lay the object down.
 
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -242,6 +243,80 @@ Float32List _turned(Float32List positions, Float64List r) => Float32List.fromLis
 List<double> _axis(Float32List positions, int axis) => [
   for (var i = 0; i < positions.length ~/ 3; i++) positions[3 * i + axis],
 ];
+
+/// In metres, y up: the box of [_desk] standing on a plain shelf of 1 m x ([wallGap] + 30 cm), against a wall [wallGap]
+/// behind it, with [wallShare] of the points on the wall and [shelfShare] on the shelf, a quarter on the box, the rest
+/// floaters in front of the wall; 80 cameras 20 to 30 cm away, 15 to 65 degrees above the shelf, on the front half
+/// only ([front], the wall in the way) or all around what the wall lets through, each looking at the box; then in the
+/// frame of COLMAP, its upright right but for [tilt] degrees about x (the median "down" of the images of a phone held
+/// upright before an object filmed from the front), [unit] metres a unit. The review of lot SPF2 found the wall taken
+/// for the plane the box stands on, at 30 % of the points against 15 % for the shelf
+({Float32List positions, Float64List cameras, Float64List axes, List<double> up}) _shelf({
+  double wallGap = 0.15,
+  double wallShare = 0.3,
+  double shelfShare = 0.15,
+  bool front = true,
+  double tilt = 0,
+  double unit = 1,
+  int seed = 3,
+}) {
+  final random = math.Random(seed);
+  double between(double low, double high) => low + random.nextDouble() * (high - low);
+  final points = <List<double>>[];
+  for (var i = 0; i < 40000; i++) {
+    final kind = random.nextDouble();
+    if (kind < shelfShare) {
+      points.add([between(-0.5, 0.5), between(-0.001, 0.001), between(-wallGap, 0.3)]);
+    } else if (kind < shelfShare + wallShare) {
+      points.add([between(-0.6, 0.6), between(0, 0.8), -wallGap + between(-0.002, 0.002)]);
+    } else if (kind < shelfShare + wallShare + 0.25) {
+      final (a, b) = (random.nextDouble(), random.nextDouble());
+      points.add(switch (random.nextInt(5)) {
+        0 => [-0.04 + 0.08 * a, 0.09, -0.025 + 0.05 * b],
+        1 => [-0.04, 0.09 * a, -0.025 + 0.05 * b],
+        2 => [0.04, 0.09 * a, -0.025 + 0.05 * b],
+        3 => [-0.04 + 0.08 * a, 0.09 * b, -0.025],
+        _ => [-0.04 + 0.08 * a, 0.09 * b, 0.025],
+      });
+    } else {
+      points.add([between(-1, 1), between(-0.5, 1), between(-wallGap, 1)]);
+    }
+  }
+  final centres = <List<double>>[];
+  final looks = <List<double>>[];
+  while (centres.length < 80) {
+    final azimuth = (front ? between(10, 170) : between(0, 360)) * math.pi / 180;
+    final elevation = between(15, 65) * math.pi / 180;
+    final distance = between(0.2, 0.3);
+    final centre = [
+      distance * math.cos(elevation) * math.cos(azimuth),
+      0.045 + distance * math.sin(elevation),
+      distance * math.cos(elevation) * math.sin(azimuth),
+    ];
+    if (centre[2] < -wallGap) {
+      continue;
+    }
+    final aim = [between(-0.01, 0.01), 0.045 + between(-0.01, 0.01), between(-0.01, 0.01)];
+    final look = [for (var j = 0; j < 3; j++) aim[j] - centre[j]];
+    final length = math.sqrt(look[0] * look[0] + look[1] * look[1] + look[2] * look[2]);
+    centres.add(centre);
+    looks.add([for (final v in look) v / length]);
+  }
+  final scene = _toColmap(points, centres, unit: unit, tilt: tilt);
+  // The axes turned as _toColmap turns the points, without the move nor the unit
+  final a = tilt * math.pi / 180;
+  List<double> turn(List<double> v) => [
+    v[0],
+    -v[1] * math.cos(a) - v[2] * math.sin(a),
+    -v[1] * math.sin(a) + v[2] * math.cos(a),
+  ];
+  return (
+    positions: scene.positions,
+    cameras: scene.cameras,
+    axes: Float64List.fromList([for (final l in looks) ...turn(l)]),
+    up: turn(const [0, 1, 0]),
+  );
+}
 
 void main() {
   test('an object: its longest side brought to 1 m, which the headset takes for an object', () {
@@ -544,5 +619,39 @@ void main() {
       expect(again.factor, first.factor);
       expect(again.turn, first.turn);
     }
+  });
+
+  test('an object on a shelf against a wall: the shelf, nearer to the upright of COLMAP, is the plane it stands on '
+      'while the wall does not hold twice as many positions (review of lot SPF2, m2)', () {
+    for (final (wallGap, wallShare, shelfShare, front, tilt) in [
+      (0.15, 0.3, 0.15, true, 0.0),
+      (0.15, 0.3, 0.15, false, 0.0),
+      (0.15, 0.3, 0.15, true, 15.0),
+      (0.15, 0.15, 0.3, true, 0.0),
+      (0.3, 0.3, 0.15, true, 0.0),
+      (0.10, 0.25, 0.25, true, 0.0),
+    ]) {
+      final scene = _shelf(wallGap: wallGap, wallShare: wallShare, shelfShare: shelfShare, front: front, tilt: tilt);
+      final scale = splatScaleOf(
+        subject: SplatSubject.object,
+        positions: scene.positions,
+        cameras: scene.cameras,
+        axes: scene.axes,
+      );
+      final label = 'wall $wallGap m behind, $wallShare, shelf $shelfShare, ${front ? 'front' : 'around'}, $tilt deg';
+      expect(scale.upright, SplatUpright.supportPlane, reason: label);
+      expect(_angle(scale.supportNormal!, scene.up), lessThan(1.5), reason: label);
+      expect(_angle(_turn(scale.turn!, scene.up), const [0, -1, 0]), lessThan(1.5), reason: label);
+    }
+    // A wall that holds more than twice as many positions as the shelf is still taken: the upright of COLMAP only
+    // settles planes of about the same weight (it was 94 degrees off FreeKC's desk)
+    final heavy = _shelf(wallShare: 0.5, shelfShare: 0.1);
+    final scale = splatScaleOf(
+      subject: SplatSubject.object,
+      positions: heavy.positions,
+      cameras: heavy.cameras,
+      axes: heavy.axes,
+    );
+    expect(_angle(scale.supportNormal!, heavy.up), closeTo(90, 1.5));
   });
 }

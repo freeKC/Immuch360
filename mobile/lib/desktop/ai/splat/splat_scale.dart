@@ -31,8 +31,9 @@
 //   point is behind the cameras. On the repeater: 4.3 units from the cameras (23 cm), its axes 0.47 units from it;
 // * the plane it stands on: the planes through three positions drawn as for a floor, of any tilt, that leave nine in
 //   ten of the cameras on one side (above it) and the point looked at above it by less than the distance of the
-//   cameras; the one most positions lie on, a tenth of them at least, fitted again to them by least squares. On the
-//   repeater: the desk, 25 % of the gaussians, all the cameras above it, the point looked at 0.73 units over it;
+//   cameras, a tenth of the positions at least lying on it; the one most positions lie on, or one nearer to the upright
+//   of COLMAP (see below), fitted again to them by least squares. On the repeater: the desk, 25 % of the gaussians, all
+//   the cameras above it, the point looked at 0.73 units over it;
 // * turned so that its normal points up, -y ([SplatScale.turn], splat_turn.dart turns the gaussians); without such a
 //   plane (an object filmed all around, a skull on nothing) the upright of COLMAP is kept, and said
 //   ([SplatScale.upright]);
@@ -40,6 +41,12 @@
 //   above the plane when there is one: their longest side between the percentiles 5 and 95, once turned. On the
 //   repeater: 1.9 units, the desk, the keyboard and the monitor left out; so the repeater at about 1 m, and the whole
 //   scene with it (about ten metres: the headset opens it as a place, around the user, SplatPlacement.kt).
+//
+// The plane it stands on is, among those that hold (one per orientation, the most populated of the planes within
+// [splatSupportSameAngle] of one another), the one nearest to the upright of COLMAP, unless the most populated of all
+// holds at least twice as many positions (the review of lot SPF2): a wall 15 cm behind an object filmed from the front
+// held 30 % of the gaussians against 15 % for the shelf under it, and laid the object down where IMAGE-ORIENTATION had
+// it right; while FreeKC's desk, 94 degrees off that upright, is the only plane under his repeater.
 //
 // Pure Dart, tested on synthetic clouds by splat_scale_test.dart.
 
@@ -158,6 +165,12 @@ const splatFloorSample = 6000;
 /// The plane an object stands on: the share of the cameras above it, and of the positions on it, at least
 const splatSupportCameraShare = 0.9;
 const splatSupportMinShare = 0.1;
+
+/// Planes closer than this to one another, in degrees, are one orientation (the same surface or parallel ones), of
+/// which the most populated stands for all; another orientation is preferred when nearer to the upright of COLMAP and
+/// the most populated of all does not hold [splatSupportOutweighs] times as many positions
+const splatSupportSameAngle = 30.0;
+const splatSupportOutweighs = 2.0;
 
 /// The point the cameras of an object look at: their axes must spread, the least eigenvalue of the sum of their
 /// projections (the identity less a aᵀ) this share of their count at least; nine in ten of them must have it ahead
@@ -379,9 +392,9 @@ Float64List splatTurnOf(Float64List normal) {
     return count;
   }
 
-  var best = 0;
-  List<double>? bestNormal;
-  var bestOffset = 0.0;
+  // Every plane that holds and that enough positions lie on, in the order it was tried
+  final minimum = math.max(30, splatSupportMinShare * m);
+  final planes = <({List<double> normal, double offset, int count, int tried})>[];
   // The same linear congruential sequence as the floor: the same planes on every system and every run
   var state = 12345;
   int next(int bound) {
@@ -417,19 +430,35 @@ Float64List splatTurnOf(Float64List normal) {
       continue;
     }
     final count = onIt(normal, offset);
-    if (count > best) {
-      best = count;
-      bestNormal = normal;
-      bestOffset = offset;
+    if (count >= minimum) {
+      planes.add((normal: normal, offset: offset, count: count, tried: t));
     }
   }
-  final found = bestNormal;
-  if (found == null || best < splatSupportMinShare * m || best < 30) {
+  if (planes.isEmpty) {
     return null;
   }
+  // The most populated of each orientation (the first tried among equals), the most populated orientation first
+  planes.sort((a, b) => a.count != b.count ? b.count.compareTo(a.count) : a.tried.compareTo(b.tried));
+  final same = math.cos(splatSupportSameAngle * math.pi / 180);
+  double cosine(List<double> a, List<double> b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  final orientations = <({List<double> normal, double offset, int count, int tried})>[];
+  for (final plane in planes) {
+    if (orientations.every((kept) => cosine(kept.normal, plane.normal) < same)) {
+      orientations.add(plane);
+    }
+  }
+  // The one nearest to the upright of COLMAP (-y, its normal towards the cameras), unless the most populated of all
+  // holds splatSupportOutweighs times as many positions
+  final most = orientations.first;
+  var chosen = most;
+  for (final plane in orientations.skip(1)) {
+    if (splatSupportOutweighs * plane.count > most.count && -plane.normal[1] > -chosen.normal[1]) {
+      chosen = plane;
+    }
+  }
   // Fitted again to the positions on it, twice: the normal of their least spread (least squares)
-  var normal = found;
-  var offset = bestOffset;
+  var normal = chosen.normal;
+  var offset = chosen.offset;
   for (var round = 0; round < 2; round++) {
     final on = <int>[
       for (var k = 0; k < m; k++)
