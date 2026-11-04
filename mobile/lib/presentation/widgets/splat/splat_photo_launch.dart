@@ -6,14 +6,15 @@
 // * on a computer, a phone or a tablet, the splat viewer opens it, the gate asked again with the head of the SPZ itself
 //   (which wins over the packet), keyed by SplatName as the .spz of a share is, SplatUp the orientation when the user
 //   chose none on this device (lot L3);
-// * on a Meta Quest 3 or 3S, the splat viewer of the computers and phones is not there: the immersive viewer of the
-//   headset gets the scene in a next step (lot L4).
+// * on a Meta Quest 3 or 3S, the immersive viewer gets the file of the cache in the unchanged gaussianSplat request of
+//   version 1, with its optional up (lot L4); the headset reduces it as it does any splat.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
@@ -29,6 +30,7 @@ import 'package:immich_mobile/extensions/network_capability_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
@@ -257,6 +259,10 @@ Future<void> openSplatPhoto(
   }
   final name = xmp.splatName!;
   final fileBytes = xmp.splatLength!;
+  if (device == SplatDeviceClass.quest) {
+    await openSplatPhotoOnHeadset(context, ref, scene, xmp, request);
+    return;
+  }
   // The gate again with the head of the SPZ itself
   final verdict = await splatViewerVerdictNow(ref, scene.head, name: name, fileBytes: fileBytes);
   final open = verdict?.request;
@@ -281,6 +287,49 @@ Future<void> openSplatPhoto(
     cap: open.maxGaussians,
     watchFrames: splatWatchesFrames(device: device, head: scene.head, cap: open.maxGaussians, answer: answer),
   );
+}
+
+/// Opens the scene [scene] of a splat photo in the immersive viewer of the headset (lot L4): the file of the cache in
+/// the gaussianSplat request of version 1 the gate gave ([request]), with the name of its SPZ, its length and the
+/// orientation chosen before it was saved
+Future<void> openSplatPhotoOnHeadset(
+  BuildContext context,
+  WidgetRef ref,
+  SplatPhotoScene scene,
+  SplatPhotoXmp xmp,
+  GaussianSplatRequest request,
+) async {
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final errorMessage = context.t.immersive_viewer_open_failed;
+  final stereoLabels = stereoPhotoViewerLabels(context.t);
+  final head = scene.head;
+  final splat = GaussianSplatRequest(
+    format: head.format.json,
+    formatVersion: head.formatVersion,
+    gaussians: head.gaussians,
+    shDegree: head.shDegree,
+    fileBytes: xmp.splatLength!,
+    maxGaussians: request.maxGaussians,
+    name: xmp.splatName!,
+    up: xmp.splatUp,
+  );
+  try {
+    _log.info('Opening the scene of the splat photo ${xmp.splatName} on the headset: ${splat.toJsonString()}');
+    await openImmersiveUrl(
+      ref,
+      request: ImmersiveRequest(
+        url: Uri.file(scene.file.path).toString(),
+        isVideo: false,
+        title: xmp.splatName!,
+        view: stereoPhotoSphereView,
+        stereoPair: StereoPhotoRequest.splat(splat).toImmersiveJson(),
+      ),
+      stereoLabels: stereoLabels,
+    );
+  } catch (error) {
+    _log.warning('Could not open the scene ${xmp.splatName} on the headset: $error');
+    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+  }
 }
 
 /// Whether [file] is a scene of the splat photos kept on this device

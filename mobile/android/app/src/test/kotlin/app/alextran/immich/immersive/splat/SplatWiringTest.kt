@@ -45,10 +45,10 @@ class SplatWiringTest {
   }
 
   @Test
-  fun `a splat opens in the orientation chosen for its file, else the one its gaussians say, else the default`() {
+  fun `a splat opens in the orientation chosen for its file, else the one of its splat photo, else the one its gaussians say, else the default`() {
     assertInOrder(
       bodyOf(stage, "fun show(\n    prepared: SplatPreparation.Ready"),
-      "val upright = memory.chosen(spec.name, prepared.sourceBytes) ?: prepared.upright ?: SplatUpright.DEFAULT",
+      "val upright = memory.chosen(spec.name, prepared.sourceBytes) ?: spec.up ?: prepared.upright ?: SplatUpright.DEFAULT",
       "Current(prepared, spec, options, upright)",
     )
   }

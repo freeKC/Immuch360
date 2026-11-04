@@ -3,6 +3,7 @@
 // or the immersive viewer of a Meta Quest gets it in the unchanged gaussianSplat request with its up; nothing
 // downloaded at the second opening; a large scene over a metered network is asked first.
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -208,6 +209,43 @@ void main() {
     await tester.pumpAndSettle();
     expect(viewings.shown.single.source.up, 'yUp');
     expect(viewings.shown.single.source.name, 'axes_v4.spz');
+  });
+
+  testWidgets('a Meta Quest gets the cache file in the request of version 1, with its name, size and up', (
+    tester,
+  ) async {
+    served = splatPhotoFixture('ok_v4.jpg');
+    final asset = RemoteAssetFactory.create(name: 'axes_splat.jpg', width: 48, height: 32);
+    final xmp = SplatPhotoXmp.findIn(served)!;
+    await tester.pumpConsumerWidget(
+      opener(asset, xmp, requestOf(xmp, cap: 50000)),
+      overrides: overrides(device: SplatDeviceClass.quest),
+    );
+
+    await tester.runAsync(() async {
+      await tester.tap(find.text('open'));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+    });
+    await tester.pumpAndSettle();
+
+    expect(viewings.shown, isEmpty);
+    final opened = immersiveApi.opened.single;
+    expect(opened.url, startsWith('file://'));
+    expect(opened.url, endsWith('.spz'));
+    expect(File(Uri.parse(opened.url).toFilePath()).readAsBytesSync(), splatFixture('axes_v4.spz'));
+    expect(jsonDecode(opened.stereoPair!), {
+      'kind': 'gaussianSplat',
+      'version': 1,
+      'format': 'spz',
+      'formatVersion': 4,
+      'gaussians': 686,
+      'shDegree': 0,
+      'fileBytes': 954,
+      'maxGaussians': 50000,
+      'tool': null,
+      'name': 'axes_v4.spz',
+      'up': 'yUp',
+    });
   });
 
   testWidgets('a large scene over a metered network is asked first; Cancel downloads nothing', (tester) async {

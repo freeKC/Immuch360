@@ -427,7 +427,10 @@ const gaussianSplatVersion = 1;
 /// [formatVersion], [gaussians] and [shDegree]), its size in [fileBytes], the most gaussians the headset shows
 /// ([maxGaussians], 50 000, or 150 000 with Large splats), the [tool] a comment of a PLY names, and the file [name],
 /// under which the headset remembers the orientation the user chose. The viewer reads the head of the file again,
-/// which wins over this JSON; frozen in test/fixtures/ai_immersive/gaussian_splat_contract_v1.json.
+/// which wins over this JSON; frozen in test/fixtures/ai_immersive/gaussian_splat_contract_v1.json. The scene of a
+/// splat photo (plan of 3 November 2026, lot L4) adds the optional [up], the orientation chosen before it was saved,
+/// which the headset takes when the user chose none for the file there; written only when there is one, so that a
+/// request without it is the one release 40 reads, and ignored by release 40 when there is one.
 class GaussianSplatRequest {
   const GaussianSplatRequest({
     required this.format,
@@ -438,6 +441,7 @@ class GaussianSplatRequest {
     required this.maxGaussians,
     required this.name,
     this.tool,
+    this.up,
   });
 
   /// spz or ply
@@ -450,6 +454,12 @@ class GaussianSplatRequest {
   final String? tool;
   final String name;
 
+  /// yUp, zUp or yDown, see the class
+  final String? up;
+
+  /// The orientations [up] may name
+  static const ups = {'yUp', 'zUp', 'yDown'};
+
   Map<String, Object?> toJson() => {
     'kind': gaussianSplatKind,
     'version': gaussianSplatVersion,
@@ -461,6 +471,7 @@ class GaussianSplatRequest {
     'maxGaussians': maxGaussians,
     'tool': tool,
     'name': name,
+    if (up != null) 'up': up,
   };
 
   /// The stereoPair JSON of ImmersiveApi.open
@@ -480,6 +491,7 @@ class GaussianSplatRequest {
     final maxGaussians = json['maxGaussians'];
     final tool = json['tool'];
     final name = json['name'];
+    final up = json['up'];
     if ((format != 'spz' && format != 'ply') ||
         formatVersion is! int ||
         formatVersion < 1 ||
@@ -506,6 +518,8 @@ class GaussianSplatRequest {
       maxGaussians: maxGaussians,
       tool: tool as String?,
       name: name,
+      // An orientation it does not know is no orientation, as the Kotlin side reads it
+      up: ups.contains(up) ? up as String : null,
     );
   }
 
@@ -519,8 +533,9 @@ class GaussianSplatRequest {
       other.fileBytes == fileBytes &&
       other.maxGaussians == maxGaussians &&
       other.tool == tool &&
-      other.name == name;
+      other.name == name &&
+      other.up == up;
 
   @override
-  int get hashCode => Object.hash(format, formatVersion, gaussians, shDegree, fileBytes, maxGaussians, tool, name);
+  int get hashCode => Object.hash(format, formatVersion, gaussians, shDegree, fileBytes, maxGaussians, tool, name, up);
 }

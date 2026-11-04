@@ -1,5 +1,5 @@
 {
-  "about": "The stereoPair JSON of ImmersiveApi.open for a Gaussian splat file of another tool (.spz or .ply), version 1: the viewer of a Meta Quest 3 or 3S reads the file again (its head wins over this JSON), reduces it to maxGaussians when it holds more, and shows it with the splat module of the Meta Spatial SDK. format is spz or ply, formatVersion the SPZ version (1 to 4) or 1 for a PLY, gaussians and shDegree as the head of the file says, fileBytes the size of the file, maxGaussians 50000 or 150000 (Large splats), tool what a comment of a PLY names, null otherwise, name the file name, for the orientation the user chose. The Dart tests write the requests and compare them with this file; the Kotlin tests read it. unknown holds requests a reader of version 1 refuses: the viewer then says the splat could not be shown.",
+  "about": "The stereoPair JSON of ImmersiveApi.open for a Gaussian splat file of another tool (.spz or .ply), version 1: the viewer of a Meta Quest 3 or 3S reads the file again (its head wins over this JSON), reduces it to maxGaussians when it holds more, and shows it with the splat module of the Meta Spatial SDK. format is spz or ply, formatVersion the SPZ version (1 to 4) or 1 for a PLY, gaussians and shDegree as the head of the file says, fileBytes the size of the file, maxGaussians 50000 or 150000 (Large splats), tool what a comment of a PLY names, null otherwise, name the file name, for the orientation the user chose. The Dart tests write the requests and compare them with this file; the Kotlin tests read it. unknown holds requests a reader of version 1 refuses: the viewer then says the splat could not be shown. splatPhoto is the scene of a splat photo of the Immich server (plan of 3 November 2026): the file of the cache of the app, with the optional up, the orientation chosen before it was saved, which a reader of version 1 that does not know it ignores.",
   "gaussianSplat": {
     "kind": "gaussianSplat",
     "version": 1,
@@ -23,6 +23,19 @@
     "maxGaussians": 150000,
     "tool": "make_splat_fixtures.py",
     "name": "axes.ply"
+  },
+  "splatPhoto": {
+    "kind": "gaussianSplat",
+    "version": 1,
+    "format": "spz",
+    "formatVersion": 2,
+    "gaussians": 150000,
+    "shDegree": 3,
+    "fileBytes": 3612448,
+    "maxGaussians": 50000,
+    "tool": null,
+    "name": "mipnerf360-room-brush-150k.spz",
+    "up": "yUp"
   },
   "unknown": [
     {

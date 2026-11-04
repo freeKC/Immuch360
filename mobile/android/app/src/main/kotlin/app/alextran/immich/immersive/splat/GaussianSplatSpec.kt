@@ -13,7 +13,10 @@ import kotlinx.serialization.json.longOrNull
  * [format] and [formatVersion] of the file, its [gaussians] and the degree of its spherical harmonics as its head said
  * to Flutter, its size in [fileBytes], the most gaussians the headset shows ([maxGaussians], 50 000, or 150 000 with
  * Large splats), the [tool] a comment of a PLY names, and the file [name], under which the orientation the user chose
- * is remembered. The viewer reads the head of the file again, which wins over this JSON.
+ * is remembered. The viewer reads the head of the file again, which wins over this JSON. The scene of a splat photo
+ * of the Immich server (plan of 3 November 2026, lot L4) comes as a file of the app's cache with the optional [up], the
+ * orientation chosen before it was saved, taken when the user chose none for the file on the headset; release 40 reads
+ * the same request and ignores it.
  */
 internal data class GaussianSplatSpec(
   val format: SplatFormat,
@@ -24,6 +27,7 @@ internal data class GaussianSplatSpec(
   val maxGaussians: Int,
   val tool: String?,
   val name: String,
+  val up: SplatUpright? = null,
 ) {
   companion object {
     const val KIND = "gaussianSplat"
@@ -48,6 +52,13 @@ internal data class GaussianSplatSpec(
           maxGaussians = root.integer("maxGaussians") ?: return null,
           tool = tool,
           name = root.string("name") ?: return null,
+          // An orientation it does not know is no orientation: the splat opens as without one
+          up =
+            when (root["up"]) {
+              null,
+              is JsonNull -> null
+              else -> SplatUpright.of(root.string("up"))
+            },
         )
       return spec.takeIf {
         it.formatVersion >= 1 &&
