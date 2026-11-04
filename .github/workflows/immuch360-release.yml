@@ -157,6 +157,15 @@ jobs:
           mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true $BUILD_NUMBER
           ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/
 
+      # Google Play's Deep links page reads the manifest of the build, with the entries of the libraries: no web link of
+      # a domain the project does not own, no autoVerify, DEFAULT and BROWSABLE on every VIEW filter of a custom scheme
+      # (.github/desktop/check_android_manifest.py, which the desktop workflow runs on the source manifests)
+      - name: Deep links of the merged manifests
+        run: |
+          python3 .github/desktop/check_android_manifest.py \
+            mobile/build/app/intermediates/merged_manifest/phoneRelease/processPhoneReleaseMainManifest/AndroidManifest.xml \
+            mobile/build/app/intermediates/merged_manifest/questRelease/processQuestReleaseMainManifest/AndroidManifest.xml
+
       - name: 16 KB page size check
         # Google Play refuses an app targeting Android 15 or later when a 64 bit native library has LOAD segments
         # aligned below 16 KB or the APK is not zip aligned for 16 KB pages; fail here rather than at the upload
