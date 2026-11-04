@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
   // before the application and any window
   const char* gpu_probe_output = GpuProbeOutput(argc, argv);
   if (gpu_probe_output != nullptr) {
-    return RunGpuProbe(gpu_probe_output);
+    return RunGpuProbe(gpu_probe_output, GpuProbePid(argc, argv));
   }
   g_autoptr(MyApplication) app = my_application_new();
   return g_application_run(G_APPLICATION(app), argc, argv);

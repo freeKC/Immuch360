@@ -273,6 +273,12 @@ enum GpuKind {
 /// hexadecimal, its VkDriverId and whether it has 16 bit storage buffers: what ggml looks at to number the cards
 /// (lot C6, gpu_probe.dart), which stable-diffusion.cpp must be told (M3: Vulkan0 is the integrated graphics of a
 /// laptop, its dedicated card Vulkan1).
+///
+/// Since lot fix-ai-gpu-budget (issue #13), a card also tells its PCI address on Linux ([pci], VK_EXT_pci_bus_info), and
+/// what this app itself holds of its memory ([appMemory]) when the probe could read it: NVML on an NVIDIA card under
+/// Linux, the counter of Windows for the process, or the DRM fdinfo of the app on Linux for the other cards
+/// (app_graphics_memory.dart). The app's own share counts as used in [budget]: the message of a panorama that waits says
+/// it apart.
 class GpuAdapter {
   const GpuAdapter({
     required this.name,
@@ -290,6 +296,8 @@ class GpuAdapter {
     this.luid,
     this.driverId,
     this.storage16Bit,
+    this.pci,
+    this.appMemory,
   });
 
   final String name;
@@ -312,11 +320,38 @@ class GpuAdapter {
   final int? driverId;
   final bool? storage16Bit;
 
+  /// "0000:01:00.0", the PCI address of the card (Linux), null when not told
+  final String? pci;
+
+  /// The bytes of the card's memory this app holds, null when the probe could not read them
+  final int? appMemory;
+
   /// The memory free for a job now: the budget less what is used, the local memory when the budget is not known
   int get freeMemory => budget == null ? localMemory : (budget! - (usage ?? 0)).clamp(0, budget!);
 
   /// The major and minor of [apiVersion], (0, 0) when it is not known
   (int, int) get vulkanVersion => vulkanMajorMinor(apiVersion);
+
+  /// This card with [appMemory] set, the share of the app read apart (the DRM fdinfo of the app on Linux)
+  GpuAdapter withAppMemory(int? held) => GpuAdapter(
+    name: name,
+    kind: kind,
+    localMemory: localMemory,
+    vendorId: vendorId,
+    deviceId: deviceId,
+    driverVersion: driverVersion,
+    apiVersion: apiVersion,
+    budget: budget,
+    usage: usage,
+    source: source,
+    vulkanIndex: vulkanIndex,
+    uuid: uuid,
+    luid: luid,
+    driverId: driverId,
+    storage16Bit: storage16Bit,
+    pci: pci,
+    appMemory: held,
+  );
 
   Map<String, Object?> toJson() => {
     'name': name,
@@ -334,6 +369,8 @@ class GpuAdapter {
     'luid': luid,
     'driverId': driverId,
     'storage16Bit': storage16Bit,
+    'pci': pci,
+    'appMemory': appMemory,
   };
 
   /// The adapter of [json], null when its name or its memory is missing
@@ -364,6 +401,8 @@ class GpuAdapter {
       luid: text('luid'),
       driverId: integer('driverId'),
       storage16Bit: json['storage16Bit'] is bool ? json['storage16Bit'] as bool : null,
+      pci: text('pci'),
+      appMemory: integer('appMemory'),
     );
   }
 }

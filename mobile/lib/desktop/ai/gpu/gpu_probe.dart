@@ -9,6 +9,12 @@
 // The gate asks for it when it looks at the panoramas (hardware_gate.dart), and the queue again before each job on the
 // graphics card (gpu_budget.dart).
 //
+// The probe is also given the id of the app's process ([gpuProbePidFlag], issue #13): what the app itself holds of each
+// card counts as used in the budget the driver gives, as another program's would, and the message of a panorama that
+// waits says it apart. The probe reads it where only a driver library tells it, in the child: NVML on an NVIDIA card
+// under Linux, the counter "GPU Process Memory" of Windows. On Linux the other cards tell it in the DRM fdinfo of the
+// app's own files, which the app reads itself (app_graphics_memory.dart).
+//
 // stable-diffusion.cpp must be told which card to run on: left to choose, ggml numbers the cards its own way, and on a
 // laptop the integrated graphics come first (M3: Vulkan0 the Intel, Vulkan1 the RTX 4060). [ggmlVulkanDevices] follows
 // ggml_vk_instance_init of the ggml the pinned stable-diffusion.cpp builds (ggml a5915eb, src/ggml-vulkan/ggml-vulkan.cpp
@@ -31,6 +37,10 @@ final _log = Logger('GpuProbe');
 /// The flag the runners read; the path of the JSON follows it
 const gpuProbeFlag = '--immuch360-gpu-probe=';
 
+/// The flag that gives the probe the id of the app's process, whose share of each card it reads (see the top of this
+/// file)
+const gpuProbePidFlag = '--immuch360-gpu-probe-pid=';
+
 /// How long the probe may take; the runners end it past the same time themselves
 const gpuProbeTimeout = Duration(seconds: 10);
 
@@ -46,8 +56,10 @@ class ProcessGpuProbe implements GpuProbe {
     this.timeout = gpuProbeTimeout,
     Directory Function()? folder,
     bool? isMacOS,
+    int? appPid,
   }) : _folder = folder ?? aiWorkFolder,
-       _isMacOS = isMacOS ?? Platform.isMacOS;
+       _isMacOS = isMacOS ?? Platform.isMacOS,
+       appPid = appPid ?? pid;
 
   /// The executable of this app: the runner of a release, of a debug build, or of a test of the real probe
   factory ProcessGpuProbe.ofThisApp() => ProcessGpuProbe(executable: Platform.resolvedExecutable);
@@ -55,6 +67,9 @@ class ProcessGpuProbe implements GpuProbe {
   final String executable;
   final Duration timeout;
   final ProcessRunner runner;
+
+  /// The process whose share of each card the probe reads: this app
+  final int appPid;
   final Directory Function() _folder;
   final bool _isMacOS;
 
@@ -83,7 +98,11 @@ class ProcessGpuProbe implements GpuProbe {
       final RunningProcess process;
       try {
         process = await runner.start(
-          ProcessLaunch(executable: executable, arguments: ['$gpuProbeFlag${output.path}'], lowPriority: false),
+          ProcessLaunch(
+            executable: executable,
+            arguments: ['$gpuProbeFlag${output.path}', '$gpuProbePidFlag$appPid'],
+            lowPriority: false,
+          ),
         );
       } on Object catch (error) {
         _log.warning('The probe of the graphics cards did not start: $error');
