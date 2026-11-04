@@ -7,6 +7,9 @@
 //   SPLAT_E2E_URL=http://192.168.4.134:2283 SPLAT_E2E_KEY=... SPLAT_E2E_PROXY=http://192.168.4.134:2285 \
 //   SPLAT_E2E_SCENE=room.spz SPLAT_E2E_OUT=result.json flutter test tool/splat_photo/splat_photo_e2e_test.dart
 //
+// SPLAT_E2E_CARRIER=path keeps a copy of the splat photo as the server holds it; SPLAT_E2E_KEEP=1 leaves the asset
+// and its album on the server for the web check (their ids in the result), to delete afterwards.
+//
 // The key is read from the environment only, never printed nor written.
 
 import 'dart:async';
@@ -35,6 +38,9 @@ class _HttpServer implements SplatSaveServer {
   final String key;
   final client = http.Client();
   int bodyBytesSent = 0;
+
+  /// The upload requests made: a save that finds its scene there already makes none
+  int uploadRequests = 0;
 
   @override
   String get url => '$base/api';
@@ -129,6 +135,7 @@ class _HttpServer implements SplatSaveServer {
     Completer<void>? cancel,
     void Function(int, int)? onProgress,
   }) async {
+    uploadRequests++;
     final request = http.MultipartRequest('POST', Uri.parse('$url/assets'))
       ..headers.addAll(_headers)
       ..headers.addAll(source.headers)
@@ -211,10 +218,12 @@ void main() {
       try {
         out['version'] = '${await server.version()}';
         final scene = File(scenePath);
+        // A PLY is converted by the job: its SPZ is the one in the packet
+        final isPly = scenePath.toLowerCase().endsWith('.ply');
         final records = SplatSaveRecords(() async => File('${work.path}/splat_saves.json'));
         final suffix = DateTime.now().millisecondsSinceEpoch;
         // A copy of the scene under a name of its own, so that a run never meets the files of another
-        final named = scene.copySync('${work.path}/e2e_$suffix.spz')
+        final named = scene.copySync('${work.path}/e2e_$suffix.${isPly ? 'ply' : 'spz'}')
           ..setLastModifiedSync(DateTime.utc(2026, 11, 3, 15));
         SplatSaveJob jobOf({bool force = false}) => SplatSaveJob(
           request: SplatSaveRequest(
@@ -240,9 +249,16 @@ void main() {
         final clock = Stopwatch()..start();
         final saved = await jobOf().run();
         out['saveMs'] = clock.elapsedMilliseconds;
-        out['save'] = {'state': saved.state.name, 'bytes': saved.carrierBytes, 'detail': saved.detail};
+        out['save'] = {
+          'state': saved.state.name,
+          'bytes': saved.carrierBytes,
+          'sceneBytes': saved.sceneBytes,
+          'inputBytes': scene.lengthSync(),
+          'detail': saved.detail,
+        };
         expect(saved.state, SplatSaveState.done, reason: '$saved');
         final assetId = saved.assetId!;
+        out['assetId'] = assetId;
         made.add(assetId);
         final asset = (await server._json('GET', '/assets/$assetId'))! as Map;
         out['asset'] = {
@@ -271,10 +287,15 @@ void main() {
           'gaussians': xmp.splatGaussians,
           'poster': xmp.splatPoster?.name,
         };
-        expect(xmp.splatLength, scene.lengthSync());
+        expect(xmp.splatLength, isPly ? saved.sceneBytes : scene.lengthSync());
+        if (isPly) {
+          out['packet'] = {...out['packet']! as Map, 'sourceSha256': xmp.splatSourceSha256};
+          expect(xmp.splatSourceSha256, sha256.convert(scene.readAsBytesSync()).toString());
+        }
 
-        // 3. The scene taken out of the end of the original, directly and through the proxy
-        final sum = sha256.convert(scene.readAsBytesSync()).toString();
+        // 3. The scene taken out of the end of the original, directly and through the proxy: the SPZ of the packet
+        final sum = isPly ? xmp.splatSha256 : sha256.convert(scene.readAsBytesSync()).toString();
+        expect(xmp.splatSha256, sum);
         Future<Map<String, Object?>> takeOut(String through) async {
           final file = File('${work.path}/tail-${through.hashCode}.spz');
           final watch = Stopwatch()..start();
@@ -306,7 +327,9 @@ void main() {
           out['headThroughProxy'] = proxied?.length;
         }
 
-        // 4. Saved again: from the record of this device, then from the heads of the server's splat photos
+        // 4. Saved again: from the record of this device, then from the heads of the server's splat photos; no upload
+        // request in steps 4 and 5
+        out['uploadRequestsAfterSave'] = server.uploadRequests;
         final again = await jobOf().run();
         out['againFromRecord'] = again.state.name;
         expect(again.state, SplatSaveState.alreadyThere);
@@ -319,6 +342,8 @@ void main() {
         final copy = await jobOf(force: true).run();
         out['anotherCopy'] = copy.state.name;
         expect(copy.state, SplatSaveState.duplicate);
+        out['uploadRequestsAfterAgain'] = server.uploadRequests;
+        expect(server.uploadRequests, out['uploadRequestsAfterSave']);
 
         // 6. The checksum header alone: the server answers a duplicate before the body
         server.bodyBytesSent = 0;
@@ -327,6 +352,10 @@ void main() {
           http.Request('GET', splatPhotoOriginalUri(server.url, assetId))..headers.addAll(server._headers),
         );
         await original.stream.pipe(carrier.openWrite());
+        final keepCarrier = _env['SPLAT_E2E_CARRIER'];
+        if (keepCarrier != null) {
+          carrier.copySync(keepCarrier);
+        }
         final sha1sum = sha1.convert(carrier.readAsBytesSync()).toString();
         final early = await server.upload(
           UploadSource(
@@ -350,8 +379,12 @@ void main() {
       } finally {
         out['finished'] = DateTime.now().toIso8601String();
         try {
-          await server.delete(assets: made, albums: albums.toList());
-          out['deleted'] = made.length;
+          if (_env['SPLAT_E2E_KEEP'] == '1') {
+            out['kept'] = {'assets': made, 'albums': albums.toList()};
+          } else {
+            await server.delete(assets: made, albums: albums.toList());
+            out['deleted'] = made.length;
+          }
         } catch (error) {
           out['deleteError'] = '$error';
         }
