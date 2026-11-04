@@ -548,6 +548,33 @@ void main() {
           debugDefaultTargetPlatformOverride = null;
         });
 
+        testWidgets('a file of a share that does not give its size keeps its answer too', (tester) async {
+          // Review of 4 November 2026: the answer was written under 0 bytes and read under 1
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          final answers = SplatAnswerStore(() async => throw const FileSystemException('no support folder'));
+          viewings
+            ..answers = answers
+            ..answering.add(const SplatFrameAnswer.reduce(1710000))
+            ..endings.add(const SplatViewerOutcome(SplatViewerEnd.reduce, keep: 1710000));
+          await pumpNetworkRouter(
+            tester,
+            home: SplatPage(sourceId: _source.id, path: '/huge.spz'),
+            overrides: [
+              ...flat(computer: rtx),
+              splatAnswerStoreProvider.overrideWithValue(answers),
+            ],
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          expect(viewings.shown.map((viewing) => viewing.cap), [5000000, 1710000, 1710000]);
+          expect(viewings.shown.last.watch, isFalse);
+          debugDefaultTargetPlatformOverride = null;
+        });
+
         testWidgets('a computer with too little memory refuses it with the numbers', (tester) async {
           debugDefaultTargetPlatformOverride = TargetPlatform.windows;
           addTearDown(() => debugDefaultTargetPlatformOverride = null);

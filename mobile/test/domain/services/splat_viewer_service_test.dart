@@ -764,6 +764,14 @@ void main() {
       expect(renderers, ['ANGLE (Intel, Intel(R) UHD Graphics)']);
     });
 
+    test('a file whose size is not known keeps one answer, whatever stands in for its size', () async {
+      // Review of 4 November 2026: the service wrote it under 0 bytes, the page read it under 1
+      await answers.writeAnswer('huge.spz', 0, const SplatFrameAnswer.reduce(1710000));
+      expect(await answers.answer('huge.spz', 1), const SplatFrameAnswer.reduce(1710000));
+      expect(await answers.answer('huge.spz', 0), const SplatFrameAnswer.reduce(1710000));
+      expect(await answers.answer('huge.spz', 2), isNull, reason: 'a size that is known is its own');
+    });
+
     test('keep them all is kept for the file; the viewer stays open', () async {
       final file = File('${folder.path}/ranked.ply')..writeAsBytesSync(ranked);
       final head = _head(ranked);

@@ -132,13 +132,14 @@ SplatGateVerdict? _verdict(
   );
 }
 
-/// The answer kept for the file [name] of [fileBytes] on a computer, null elsewhere or when none
+/// The answer kept for the file [name] of [fileBytes] (null: a share that does not give it) on a computer, null
+/// elsewhere or when none
 Future<SplatFrameAnswer?> _answerOf(WidgetRef ref, SplatDeviceClass? device, String name, int? fileBytes) async {
-  if (device != SplatDeviceClass.computer || fileBytes == null) {
+  if (device != SplatDeviceClass.computer) {
     return null;
   }
   try {
-    return await ref.read(splatAnswerStoreProvider).answer(name, fileBytes);
+    return await ref.read(splatAnswerStoreProvider).answer(name, fileBytes ?? 0);
   } catch (error) {
     _log.fine('No answer read for $name: $error');
     return null;

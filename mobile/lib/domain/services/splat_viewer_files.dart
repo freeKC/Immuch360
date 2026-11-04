@@ -97,8 +97,9 @@ class SplatUprightStore {
   }
 }
 
-/// The key of the answer for the file [name] of [fileBytes], beside the headset's key of its orientation
-String splatAnswerKey(String name, int fileBytes) => 'splatFrames:$fileBytes:$name';
+/// The key of the answer for the file [name] of [fileBytes], beside the headset's key of its orientation. A file of a
+/// share that does not give its size has one key, whatever stands in for the size (0 or 1 byte, which no splat is)
+String splatAnswerKey(String name, int fileBytes) => 'splatFrames:${fileBytes > 1 ? fileBytes : 0}:$name';
 
 /// The key of the renderer the page last said it drew with, per set of the web view's arguments ([highPerformance]:
 /// the dedicated chip asked on a Windows computer with two)
