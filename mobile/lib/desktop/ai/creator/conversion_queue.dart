@@ -34,8 +34,9 @@
 // video players, asks the card again every few seconds while their memory comes back. The job is made the way the
 // memory free allows (the full
 // reference of the generator, else the reduced one, PanoramaReference). A wait that cannot end does not last: 30 s
-// after the lane first found the memory short, the job leaves the queue with the figures (gpuMemoryShort), and the
-// panoramas waiting behind it at their first answer, unless the user asked a job to keep waiting (keepWaiting).
+// after the lane first showed the figures of the wait, the job leaves the queue with them (gpuMemoryShort), and the
+// panoramas waiting behind it at their first answer, without a release nor a settle, unless the user asked a job to
+// keep waiting (keepWaiting).
 //
 // The queue does not survive the window: closing it asks first (close_guard.dart, reasons "conversions" and
 // "generation"), and the journal of the .part files cleans up what a quit left.
@@ -194,8 +195,8 @@ class ConversionTools {
   final Duration gpuSettle;
   final Duration gpuSettlePoll;
 
-  /// How long the lane of the graphics card waits for its memory before the job leaves the queue (unless the user asked
-  /// it to keep waiting)
+  /// How long the lane of the graphics card waits for its memory, from the first answer whose figures are shown,
+  /// before the job leaves the queue (unless the user asked it to keep waiting)
   final Duration gpuGiveUp;
 
   /// Where the times of the steps are kept (desktop_ai.json); null: the timings of the design only, nothing kept
@@ -301,8 +302,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   var _gpuWaits = false;
   Timer? _gpuRecheck;
 
-  /// Runs since the lane of the graphics card first asked the card without finding the memory free, while jobs of it
-  /// wait; null otherwise. Past ConversionTools.gpuGiveUp, a job that finds it short leaves the queue.
+  /// Runs since the lane of the graphics card first showed the figures of a wait for its memory (the first answer that
+  /// found it short, after the release and its settle), while jobs of it wait; null otherwise. Past
+  /// ConversionTools.gpuGiveUp, a job that finds it short leaves the queue, and those behind it ask the card once.
   Stopwatch? _gpuShort;
 
   /// The jobs that let go of the app's share of the card already in this wait
@@ -874,18 +876,21 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// Whether the job [id] of the graphics card may start now: the card has the memory free for one way to run it (or
   /// nothing is asked of it, tools without a budget). First, once per job, the app lets go of its share of the card and
   /// the card is asked again while that memory comes back. Short, the job waits with the figures and the lane with it,
-  /// asked again after ConversionTools.gpuRecheck; past ConversionTools.gpuGiveUp of the lane's wait, it leaves the
-  /// queue with them, unless it keeps waiting; it fails when no card can take it. False too when it was cancelled
-  /// meanwhile.
+  /// asked again after ConversionTools.gpuRecheck; past ConversionTools.gpuGiveUp of the lane's wait (counted from its
+  /// first figures shown), it leaves the queue with them, unless it keeps waiting, and a job behind it asks the card
+  /// once, without a release; it fails when no card can take it. False too when it was cancelled meanwhile.
   Future<bool> _graphicsCardReady(String id, ConversionTools tools) async {
     final budget = tools.gpuBudget;
     if (budget == null) {
       return true;
     }
-    final short = _gpuShort ??= Stopwatch()..start();
+    // Behind a panorama that left the queue for the memory, a panorama asks the card once and goes the same way unless
+    // the memory came free: the app's share was let go already, and the wait was shown for the whole time
+    final behindGiveUp =
+        !(state.byId(id)?.keepsWaiting ?? false) && (_gpuShort?.elapsed ?? Duration.zero) >= tools.gpuGiveUp;
     var released = false;
     final release = tools.releaseGraphics;
-    if (release != null && _gpuReleased.add(id)) {
+    if (!behindGiveUp && release != null && _gpuReleased.add(id)) {
       _set(id, (job) => job.copyWith(waitingFor: () => ConversionWait.graphicsRelease));
       try {
         final what = await release().timeout(tools.gpuSettle);
@@ -937,7 +942,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         return true;
       case GpuBudgetWait(:final free, :final need, :final appHolds):
         final shortfall = GpuShortfall(need: need, free: free, appHolds: appHolds);
-        final waited = short.elapsed;
+        // The time counts from the first answer whose figures are shown, after the release and its settle
+        final waited = (_gpuShort ??= Stopwatch()..start()).elapsed;
         final held = appHolds == null ? 'an unknown share' : '$appHolds bytes';
         _log.info('The graphics card has $free bytes free for $id, $need needed, the app holding $held');
         if (!job.keepsWaiting && waited >= tools.gpuGiveUp) {

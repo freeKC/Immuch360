@@ -92,13 +92,14 @@ enum ConversionWait {
   /// at the latest when the other one ends
   memory,
 
-  /// The app lets go of what it holds of the graphics card (its paused videos, its cached pictures) and waits a few
-  /// seconds for that memory to come back before it asks the card (graphics_release.dart)
+  /// The app lets go of what it holds of the graphics card (its paused videos, its cached pictures) and, when it closed
+  /// video players, waits a few seconds for their memory to come back before it decides (graphics_release.dart)
   graphicsRelease,
 
   /// The memory free on the graphics card is short (gpu_budget.dart): the job starts once enough is free, asked again
   /// a little later or when the user asks for it; the figures go with it (ConversionJob.gpuShortfall). Unless the user
-  /// asked it to keep waiting, it leaves the queue 30 s after it was first asked (ImmersiveErrorCode.gpuMemoryShort).
+  /// asked it to keep waiting, it leaves the queue 30 s after its figures were first shown
+  /// (ImmersiveErrorCode.gpuMemoryShort).
   graphicsMemory,
 }
 

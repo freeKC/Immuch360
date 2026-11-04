@@ -5,8 +5,8 @@
 // answers never runs. Issue #13: before it asks, the app lets go of its share of the card, once per job, says so, and
 // asks again while that memory comes back; the panorama is made the way the memory free allows (the full reference,
 // else the reduced one); the wait carries what is needed, what is free and what the app holds; a wait that cannot end
-// leaves the queue with those figures within the give up time, the panoramas behind it at once, unless the user asked
-// a job to keep waiting.
+// leaves the queue with those figures once they were shown for the give up time, the panoramas behind it at their
+// first answer, without a release nor a settle, unless the user asked a job to keep waiting.
 
 import 'dart:async';
 import 'dart:io';
@@ -471,6 +471,71 @@ void main() {
       expect(panorama.jobs, isEmpty);
       await until((state) => state.byId(made)!.state.isEnded);
       expect(job(made).state, ConversionState.done);
+    });
+
+    test('a slow release and its settle do not eat the time: the figures show for the whole give up time', () async {
+      final probe = FakeGpuProbe.of(_rtx2060(4900, appMib: 1402));
+      container = containerWith(
+        probe.probe,
+        // Past the settle time (a turn of the player pool held), then the settle while the players' memory comes back
+        release: () => Future.delayed(const Duration(milliseconds: 120), () => const GraphicsRelease(players: 2)),
+        settle: const Duration(milliseconds: 100),
+        settlePoll: const Duration(milliseconds: 10),
+        recheck: const Duration(milliseconds: 40),
+        giveUp: const Duration(milliseconds: 150),
+      );
+      final watch = Stopwatch()..start();
+      Duration? figuresAt;
+      Duration? endedAt;
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      final seen = container.listen(conversionQueueProvider, (_, next) {
+        final shown = next.byId(pano)!;
+        if (figuresAt == null && shown.waitingFor == ConversionWait.graphicsMemory && shown.gpuShortfall != null) {
+          figuresAt = watch.elapsed;
+        }
+        if (endedAt == null && shown.state.isEnded) {
+          endedAt = watch.elapsed;
+        }
+      });
+      addTearDown(seen.close);
+      await until((state) => state.byId(pano)!.state.isEnded);
+
+      expect(job(pano).error, ImmersiveErrorCode.gpuMemoryShort);
+      expect(figuresAt, isNotNull, reason: 'the wait was shown with its figures before the panorama left');
+      // The queue's clock starts a moment before the figures reach the state
+      expect(endedAt! - figuresAt!, greaterThanOrEqualTo(const Duration(milliseconds: 140)));
+      expect(job(pano).gpuShortfall?.free, 4900 * _mib);
+    });
+
+    test('a panorama behind a give up asks the card once, without a release nor a settle, then leaves', () async {
+      final asked = <String>[];
+      var releases = 0;
+      late String first;
+      container = containerWith(
+        () async {
+          asked.add(job(first).state.isEnded ? 'second' : 'first');
+          return _rtx2060(4900, appMib: 1402);
+        },
+        release: () async {
+          releases++;
+          return const GraphicsRelease(players: 1);
+        },
+        settle: const Duration(milliseconds: 50),
+        settlePoll: const Duration(milliseconds: 10),
+        recheck: const Duration(milliseconds: 40),
+        giveUp: const Duration(milliseconds: 100),
+      );
+
+      first = add('a.jpg', ConversionKind.panoramaFromPhoto);
+      final second = add('b.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(second)!.state.isEnded);
+
+      expect(job(first).error, ImmersiveErrorCode.gpuMemoryShort);
+      expect(job(second).error, ImmersiveErrorCode.gpuMemoryShort);
+      expect(job(second).gpuShortfall?.appHolds, 1402 * _mib);
+      expect(releases, 1, reason: 'the first panorama only');
+      expect(asked.where((which) => which == 'second'), hasLength(1));
+      expect(asked.where((which) => which == 'first').length, greaterThan(6), reason: 'its settle, then its wait');
     });
 
     test('Keep waiting puts it back without a time limit; it runs once the card is free', () async {
