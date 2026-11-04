@@ -920,7 +920,7 @@
   "av2_install_title": "Esita AV2 videoid (katseline)",
   "av2_licence": "dav2d, VideoLAN-i AV2 dekooder (BSD-2-Clause), Alliance for Open Media Patent License 1.0 alusel",
   "av2_play_anyway": "Esita ikkagi",
-  "av2_settings_description": "Dekodeerib AV2 videoid protsessoriga. Neljatuumalisel sülearvuti protsessoril jookseb 8-bitine AV2 sujuvalt kuni 4K-ni ja 10-bitine kuni 1080p-ni; 10-bitine 4K vajab võimsat protsessorit. Dekodeerimine kasutab kõiki tuumasid ja soojendab arvutit.",
+  "av2_settings_description": "Dekodeerib AV2 videoid protsessoriga (katseline). Meie katsetes mängivad 8-bitised videod kuni 1080p sujuvalt; 10-bitised ja 4K videod võivad vajada rohkem, kui arvuti anda suudab, ning peatuvad siis järele jõudmiseks. Video üksikasjades olev „Video dekodeerimine“ näitab, kui kiiresti see arvuti seda dekodeerib. Dekodeerimine kasutab kõiki tuumasid ja soojendab arvutit.",
   "av2_settings_installed": "AV2 dekooder {version}, {size}",
   "av2_settings_not_installed": "AV2 dekooder laaditakse alla esimesel korral, kui AV2 videot esitatakse ({size})",
   "av2_settings_remove": "Eemalda AV2 dekooder",

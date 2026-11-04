@@ -292,7 +292,7 @@
   "av2_install_title": "Lenn videoioù AV2 (taol-arnod)",
   "av2_licence": "dav2d, diskoder AV2 VideoLAN (BSD-2-Clause), dindan an Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Lenn memes tra",
-  "av2_settings_description": "Diskodañ a ra ar videoioù AV2 gant ar c'hewerier. War kewerier un urzhiataer hezoug gant pevar c'hraonell, AV2 8 bit a dremen flour betek 4K hag AV2 10 bit betek 1080p; 4K e 10 bit en deus ezhomm eus ur c'hewerier kreñv. An diskodañ a implij an holl c'hraonelloù hag a dommañ an urzhiataer.",
+  "av2_settings_description": "Diskodañ a ra ar videoioù AV2 gant ar c'hewerier (taol-arnod). En hon amprouennoù e vez lennet flour ar videoioù 8 bit betek 1080p; ar videoioù 10 bit ha 4K a c'hall goulenn muioc'h eget ar pezh a c'hall an urzhiataer reiñ, hag ehaniñ a reont neuze evit tapout o dale. Diskodañ ar video, e munudoù ur video, a ziskouez pegen buan e tiskod an urzhiataer-mañ anezhañ. An diskodañ a implij an holl c'hraonelloù hag a dommañ an urzhiataer.",
   "av2_settings_installed": "Diskoder AV2 {version}, {size}",
   "av2_settings_not_installed": "An diskoder AV2 a vez pellgarget ar wech kentañ ma vez lennet ur video AV2 ({size})",
   "av2_settings_remove": "Dilemel an diskoder AV2",

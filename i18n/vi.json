@@ -920,7 +920,7 @@
   "av2_install_title": "Phát video AV2 (thử nghiệm)",
   "av2_licence": "dav2d, bộ giải mã AV2 của VideoLAN (BSD-2-Clause), theo Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Vẫn phát",
-  "av2_settings_description": "Giải mã video AV2 bằng bộ xử lý. Trên bộ xử lý laptop bốn nhân, AV2 8 bit phát mượt đến 4K và 10 bit đến 1080p; 4K 10 bit cần bộ xử lý mạnh. Việc giải mã dùng mọi nhân và làm nóng máy tính.",
+  "av2_settings_description": "Giải mã video AV2 bằng bộ xử lý (thử nghiệm). Trong các thử nghiệm của chúng tôi, video 8 bit đến 1080p phát mượt; video 10 bit và 4K có thể cần nhiều hơn khả năng của máy tính, và khi đó sẽ tạm dừng để bắt kịp. Giải mã video, trong chi tiết của một video, cho biết máy tính này giải mã nó nhanh đến mức nào. Việc giải mã dùng mọi lõi và làm máy tính nóng lên.",
   "av2_settings_installed": "Bộ giải mã AV2 {version}, {size}",
   "av2_settings_not_installed": "Bộ giải mã AV2 được tải xuống lần đầu phát video AV2 ({size})",
   "av2_settings_remove": "Gỡ bộ giải mã AV2",

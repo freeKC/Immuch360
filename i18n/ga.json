@@ -920,7 +920,7 @@
   "av2_install_title": "Seinn físeáin AV2 (turgnamhach)",
   "av2_licence": "dav2d, díchódóir AV2 VideoLAN (BSD-2-Clause), faoin Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Seinn ar aon nós",
-  "av2_settings_description": "Díchódaíonn sé físeáin AV2 leis an bpróiseálaí. Ar phróiseálaí ríomhaire glúine ceithre chroí, seinntear AV2 8 ngiotán go réidh suas go 4K agus 10 ngiotán suas go 1080p; teastaíonn próiseálaí ardleibhéil le haghaidh 4K i 10 ngiotán. Úsáideann an díchódú gach croí agus téann an ríomhaire.",
+  "av2_settings_description": "Díchódaíonn sé físeáin AV2 leis an bpróiseálaí (turgnamhach). Inár dtrialacha, seinntear físeáin 8 ngiotán suas go 1080p go réidh; d'fhéadfadh go mbeadh níos mó ag teastáil ó fhíseáin 10 ngiotán agus 4K ná mar is féidir leis an ríomhaire a thabhairt, agus ansin stopann siad chun teacht suas. Taispeánann Díchódú físe, i sonraí físeáin, cé chomh tapa agus a dhíchódaíonn an ríomhaire seo é. Úsáideann an díchódú gach croí agus téann an ríomhaire.",
   "av2_settings_installed": "Díchódóir AV2 {version}, {size}",
   "av2_settings_not_installed": "Íoslódáiltear an díchódóir AV2 an chéad uair a sheinntear físeán AV2 ({size})",
   "av2_settings_remove": "Bain an díchódóir AV2",

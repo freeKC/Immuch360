@@ -872,7 +872,7 @@
   "av2_install_title": "Atskaņot AV2 videoklipus (eksperimentāls)",
   "av2_licence": "dav2d, VideoLAN AV2 dekodētājs (BSD-2-Clause), saskaņā ar Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Tomēr atskaņot",
-  "av2_settings_description": "Dekodē AV2 videoklipus ar procesoru. Četrkodolu klēpjdatora procesorā 8 bitu AV2 vienmērīgi atskaņojas līdz 4K un 10 bitu līdz 1080p; 10 bitu 4K vajag jaudīgu procesoru. Dekodēšana izmanto visus kodolus un sasilda datoru.",
+  "av2_settings_description": "Dekodē AV2 videoklipus ar procesoru (eksperimentāls). Mūsu testos 8 bitu videoklipi līdz 1080p atskaņojas vienmērīgi; 10 bitu un 4K videoklipiem var būt vajadzīgs vairāk, nekā dators spēj dot, un tad tie apstājas, lai panāktu. “Video dekodēšana” videoklipa informācijā rāda, cik ātri šis dators to dekodē. Dekodēšana izmanto visus kodolus un sasilda datoru.",
   "av2_settings_installed": "AV2 dekodētājs {version}, {size}",
   "av2_settings_not_installed": "AV2 dekodētājs tiek lejupielādēts, kad pirmo reizi atskaņo AV2 videoklipu ({size})",
   "av2_settings_remove": "Noņemt AV2 dekodētāju",

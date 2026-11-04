@@ -918,7 +918,7 @@
   "av2_install_title": "Redă videoclipuri AV2 (experimental)",
   "av2_licence": "dav2d, decodorul AV2 de la VideoLAN (BSD-2-Clause), sub Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Redă oricum",
-  "av2_settings_description": "Decodează videoclipurile AV2 cu procesorul. Pe un procesor de laptop cu patru nuclee, AV2 pe 8 biți rulează fluid până la 4K, iar pe 10 biți până la 1080p; 4K pe 10 biți are nevoie de un procesor performant. Decodarea folosește toate nucleele și încălzește computerul.",
+  "av2_settings_description": "Decodează videoclipurile AV2 cu procesorul (experimental). În testele noastre, videoclipurile pe 8 biți până la 1080p rulează fluent; videoclipurile pe 10 biți și 4K pot cere mai mult decât poate da computerul și atunci se opresc ca să recupereze. „Decodarea videoclipului”, în detaliile unui videoclip, arată cât de repede îl decodează acest computer. Decodarea folosește toate nucleele și încălzește computerul.",
   "av2_settings_installed": "Decodor AV2 {version}, {size}",
   "av2_settings_not_installed": "Decodorul AV2 se descarcă prima dată când se redă un videoclip AV2 ({size})",
   "av2_settings_remove": "Elimină decodorul AV2",

@@ -919,7 +919,7 @@
   "av2_install_title": "Spila AV2-myndskeið (tilraun)",
   "av2_licence": "dav2d, AV2-afkóðari VideoLAN (BSD-2-Clause), samkvæmt Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Spila samt",
-  "av2_settings_description": "Afkóðar AV2-myndskeið með örgjörvanum. Á fjögurra kjarna fartölvuörgjörva spilast 8 bita AV2 hnökralaust upp í 4K og 10 bita upp í 1080p; 4K í 10 bitum þarf öflugan örgjörva. Afkóðunin notar alla kjarna og hitar tölvuna.",
+  "av2_settings_description": "Afkóðar AV2-myndskeið með örgjörvanum (tilraun). Í prófunum okkar spilast 8 bita myndskeið upp í 1080p hnökralaust; 10 bita og 4K myndskeið geta þurft meira en tölvan getur gefið og gera þá hlé til að ná sér. Afkóðun myndskeiða, í upplýsingum myndskeiðs, sýnir hve hratt þessi tölva afkóðar það. Afkóðunin notar alla kjarna og hitar tölvuna.",
   "av2_settings_installed": "AV2-afkóðari {version}, {size}",
   "av2_settings_not_installed": "AV2-afkóðarinn er sóttur í fyrsta sinn sem AV2-myndskeið er spilað ({size})",
   "av2_settings_remove": "Fjarlægja AV2-afkóðarann",

@@ -2,6 +2,9 @@
 // plan-2026-11-02.md, sections 1.3 and 4): the switch on by default, what it does, the decoder installed with its size
 // and Remove, the size it downloads at the first AV2 video, or not in this version; its licence; nothing on a phone.
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
@@ -18,9 +21,13 @@ import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.da
 import '../../../unit/presentation/presentation_context.dart';
 import 'av2_test_components.dart';
 
+// On the speeds the app measured (review of lot AD6, m3): 1080p in 8 bit smooth on the PC and in the Linux containers,
+// 10-bit at the limit, 4K in 8 bit too slow even on the i9 (18.6 to 20.6 frames a second kept, the pictures of 12 MB
+// that the player takes being the limit as much as the decoder), so no promise of 4K on four cores
 const _description =
-    'Decodes AV2 videos with the processor. On a four-core laptop processor, 8-bit AV2 plays smoothly up to 4K and '
-    '10-bit up to 1080p; 4K in 10 bit needs a high-end processor. Decoding uses every core and warms the computer.';
+    'Decodes AV2 videos with the processor (experimental). In our tests, 8-bit videos up to 1080p play smoothly; '
+    '10-bit and 4K videos may need more than the computer can give, and then pause to catch up. Video decoding, in the '
+    'details of a video, shows how fast this computer decodes it. Decoding uses every core and warms the computer.';
 
 void main() {
   late PresentationContext context;
@@ -64,6 +71,25 @@ void main() {
       findsOneWidget,
     );
   }, variant: desktop);
+
+  test('promises no more than the app measured, in every language: no smooth 4K, no four cores, experimental', () {
+    final folder = Directory('../i18n');
+    final english = jsonDecode(File('${folder.path}/en.json').readAsStringSync()) as Map<String, dynamic>;
+    final text = english['av2_settings_description'] as String;
+    expect(text, _description);
+    expect(text, contains('experimental'));
+    expect(text, isNot(matches(RegExp(r'four.core|smoothly up to 4K', caseSensitive: false))));
+    final locales = folder.listSync().whereType<File>().where((file) => file.path.endsWith('.json'));
+    expect(locales, hasLength(89));
+    for (final file in locales) {
+      final values = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final value = values['av2_settings_description'];
+      expect(value, isA<String>(), reason: file.path);
+      // The text before lot AD11 promised 4K in 8 bit on four cores: its 4K came before 10-bit
+      expect((value as String).contains('1080p'), isTrue, reason: file.path);
+      expect(value.indexOf('1080p') < value.indexOf('4K'), isTrue, reason: '${file.path}: $value');
+    }
+  });
 
   testWidgets('turns the AV2 videos off and on', (tester) async {
     await pumpSetting(tester);

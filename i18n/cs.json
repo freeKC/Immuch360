@@ -920,7 +920,7 @@
   "av2_install_title": "Přehrávat videa AV2 (experimentální)",
   "av2_licence": "dav2d, dekodér AV2 od VideoLAN (BSD-2-Clause), podle Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Přesto přehrát",
-  "av2_settings_description": "Dekóduje videa AV2 procesorem. Na čtyřjádrovém procesoru notebooku hraje 8bitové AV2 plynule až do 4K a 10bitové do 1080p; 4K v 10 bitech potřebuje výkonný procesor. Dekódování využívá všechna jádra a zahřívá počítač.",
+  "av2_settings_description": "Dekóduje videa AV2 procesorem (experimentální). V našich testech se 8bitová videa do 1080p přehrávají plynule; 10bitová a 4K videa mohou potřebovat víc, než počítač zvládne, a pak se zastavují, aby dohnala zpoždění. „Dekódování videa“ v podrobnostech videa ukazuje, jak rychle ho tento počítač dekóduje. Dekódování využívá všechna jádra a zahřívá počítač.",
   "av2_settings_installed": "Dekodér AV2 {version}, {size}",
   "av2_settings_not_installed": "Dekodér AV2 se stáhne při prvním přehrání videa AV2 ({size})",
   "av2_settings_remove": "Odebrat dekodér AV2",

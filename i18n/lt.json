@@ -918,7 +918,7 @@
   "av2_install_title": "Leisti AV2 vaizdo įrašus (eksperimentinis)",
   "av2_licence": "dav2d, VideoLAN AV2 dekoderis (BSD-2-Clause), pagal Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Vis tiek paleisti",
-  "av2_settings_description": "Dekoduoja AV2 vaizdo įrašus procesoriumi. Keturių branduolių nešiojamojo kompiuterio procesoriuje 8 bitų AV2 sklandžiai rodomas iki 4K, o 10 bitų iki 1080p; 10 bitų 4K reikia galingo procesoriaus. Dekodavimas naudoja visus branduolius ir šildo kompiuterį.",
+  "av2_settings_description": "Dekoduoja AV2 vaizdo įrašus procesoriumi (eksperimentinis). Mūsų bandymuose 8 bitų vaizdo įrašai iki 1080p atkuriami sklandžiai; 10 bitų ir 4K vaizdo įrašams gali prireikti daugiau, nei kompiuteris gali duoti, ir tada jie sustoja, kad pasivytų. „Vaizdo įrašo dekodavimas“ vaizdo įrašo išsamioje informacijoje rodo, kaip greitai šis kompiuteris jį dekoduoja. Dekodavimas naudoja visus branduolius ir šildo kompiuterį.",
   "av2_settings_installed": "AV2 dekoderis {version}, {size}",
   "av2_settings_not_installed": "AV2 dekoderis atsisiunčiamas, kai pirmą kartą leidžiamas AV2 vaizdo įrašas ({size})",
   "av2_settings_remove": "Pašalinti AV2 dekoderį",

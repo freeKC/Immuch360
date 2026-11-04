@@ -292,7 +292,7 @@
   "av2_install_title": "Whakatangihia ngā ataata AV2 (whakamātau)",
   "av2_licence": "dav2d, te pūwetewete AV2 a VideoLAN (BSD-2-Clause), i raro i te Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Whakatangihia tonu",
-  "av2_settings_description": "Ka wetewete i ngā ataata AV2 mā te pūtukatuka. I runga i te pūtukatuka rorohiko pōnaho e whā ngā iho, ka rere māeneene te AV2 8 moka tae noa ki te 4K, te 10 moka tae noa ki te 1080p; me whai pūtukatuka kaha te 4K i te 10 moka. Ka whakamahia e te wetewete ngā iho katoa, ka whakamahana i te rorohiko.",
+  "av2_settings_description": "Ka wetewete i ngā ataata AV2 mā te pūtukatuka (whakamātau). I ā mātou whakamātautau, ka rere māeneene ngā ataata 8 moka tae noa ki te 1080p; tērā pea ka nui ake te hiahia o ngā ataata 10 moka me ngā ataata 4K i tā te rorohiko e taea ai te hoatu, ā, ka tatari ai rātou kia mau anō. Ko Te wetewete ataata, kei ngā taipitopito o tētahi ataata, e whakaatu ana i te tere o tēnei rorohiko ki te wetewete. Ka whakamahia e te wetewete ngā iho katoa, ka whakamahana i te rorohiko.",
   "av2_settings_installed": "Pūwetewete AV2 {version}, {size}",
   "av2_settings_not_installed": "Ka tikiakehia te pūwetewete AV2 i te wā tuatahi ka whakatangihia he ataata AV2 ({size})",
   "av2_settings_remove": "Tangohia te pūwetewete AV2",

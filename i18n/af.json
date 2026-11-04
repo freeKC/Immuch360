@@ -458,7 +458,7 @@
   "av2_install_title": "Speel AV2-video's (eksperimenteel)",
   "av2_licence": "dav2d, die AV2-dekodeerder van VideoLAN (BSD-2-Clause), onder die Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Speel tog",
-  "av2_settings_description": "Dekodeer AV2-video's met die verwerker. Op 'n vierkern-skootrekenaarverwerker speel 8-bis AV2 glad tot 4K en 10-bis tot 1080p; 4K in 10 bis het 'n hoëprestasie-verwerker nodig. Dekodering gebruik elke kern en maak die rekenaar warm.",
+  "av2_settings_description": "Dekodeer AV2-video's met die verwerker (eksperimenteel). In ons toetse speel 8-bis-video's tot 1080p glad; 10-bis- en 4K-video's kan meer vra as wat die rekenaar kan gee en hou dan stil om in te haal. Videodekodering, in die besonderhede van 'n video, wys hoe vinnig hierdie rekenaar dit dekodeer. Dekodering gebruik elke kern en maak die rekenaar warm.",
   "av2_settings_installed": "AV2-dekodeerder {version}, {size}",
   "av2_settings_not_installed": "Die AV2-dekodeerder word afgelaai die eerste keer dat 'n AV2-video speel ({size})",
   "av2_settings_remove": "Verwyder die AV2-dekodeerder",

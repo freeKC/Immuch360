@@ -920,7 +920,7 @@
   "av2_install_title": "Ludi AV2-videojn (eksperimenta)",
   "av2_licence": "dav2d, la AV2-malkodilo de VideoLAN (BSD-2-Clause), laŭ la Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Tamen ludi",
-  "av2_settings_description": "Malkodas AV2-videojn per la procesoro. En kvarkerna tekkomputila procesoro, 8-bita AV2 ludiĝas glate ĝis 4K kaj 10-bita ĝis 1080p; 4K en 10 bitoj bezonas potencan procesoron. La malkodado uzas ĉiujn kernojn kaj varmigas la komputilon.",
+  "av2_settings_description": "Malkodas AV2-videojn per la procesoro (eksperimenta). En niaj provoj, 8-bitaj videoj ĝis 1080p ludiĝas glate; 10-bitaj kaj 4K-videoj eble bezonas pli ol la komputilo povas doni, kaj tiam paŭzas por atingi la malfruon. Malkodado de videoj, en la detaloj de video, montras kiom rapide ĉi tiu komputilo malkodas ĝin. La malkodado uzas ĉiujn kernojn kaj varmigas la komputilon.",
   "av2_settings_installed": "AV2-malkodilo {version}, {size}",
   "av2_settings_not_installed": "La AV2-malkodilo elŝutiĝas la unuan fojon kiam AV2-video ludiĝas ({size})",
   "av2_settings_remove": "Forigi la AV2-malkodilon",

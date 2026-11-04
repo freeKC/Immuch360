@@ -920,7 +920,7 @@
   "av2_install_title": "AV2 動画を再生 (試験運用)",
   "av2_licence": "dav2d、VideoLAN の AV2 デコーダー (BSD-2-Clause)、Alliance for Open Media Patent License 1.0 に基づく",
   "av2_play_anyway": "それでも再生",
-  "av2_settings_description": "AV2 動画をプロセッサーでデコードします。4 コアのノートパソコン用プロセッサーでは、8 ビットの AV2 は 4K まで、10 ビットは 1080p まで滑らかに再生できます。10 ビットの 4K には高性能なプロセッサーが必要です。デコードはすべてのコアを使い、コンピューターが熱くなります。",
+  "av2_settings_description": "AV2 動画をプロセッサーでデコードします (試験運用)。私たちのテストでは、1080p までの 8 ビット動画は滑らかに再生されます。10 ビットと 4K の動画はコンピューターが出せる以上の性能を必要とすることがあり、その場合は追いつくために一時停止します。動画の詳細にある「動画のデコード」に、このコンピューターがどれだけ速くデコードできるかが表示されます。デコードはすべてのコアを使い、コンピューターが熱くなります。",
   "av2_settings_installed": "AV2 デコーダー {version}、{size}",
   "av2_settings_not_installed": "AV2 デコーダーは AV2 動画を初めて再生するときにダウンロードされます ({size})",
   "av2_settings_remove": "AV2 デコーダーを削除",

@@ -919,7 +919,7 @@
   "av2_install_title": "AV2 동영상 재생 (실험적)",
   "av2_licence": "dav2d, VideoLAN의 AV2 디코더 (BSD-2-Clause), Alliance for Open Media Patent License 1.0 적용",
   "av2_play_anyway": "그래도 재생",
-  "av2_settings_description": "AV2 동영상을 프로세서로 디코딩합니다. 4코어 노트북 프로세서에서 8비트 AV2는 4K까지, 10비트는 1080p까지 부드럽게 재생됩니다. 10비트 4K에는 고성능 프로세서가 필요합니다. 디코딩은 모든 코어를 사용하며 컴퓨터를 뜨겁게 만듭니다.",
+  "av2_settings_description": "프로세서로 AV2 동영상을 디코딩합니다 (실험적). 테스트에서 1080p까지의 8비트 동영상은 부드럽게 재생되었고, 10비트와 4K 동영상은 컴퓨터가 낼 수 있는 것보다 더 많은 성능이 필요할 수 있으며 그러면 따라잡기 위해 잠시 멈춥니다. 동영상 세부 정보의 동영상 디코딩에서 이 컴퓨터가 얼마나 빠르게 디코딩하는지 볼 수 있습니다. 디코딩은 모든 코어를 사용하며 컴퓨터가 뜨거워집니다.",
   "av2_settings_installed": "AV2 디코더 {version}, {size}",
   "av2_settings_not_installed": "AV2 디코더는 AV2 동영상을 처음 재생할 때 다운로드됩니다 ({size})",
   "av2_settings_remove": "AV2 디코더 제거",

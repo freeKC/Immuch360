@@ -292,7 +292,7 @@
   "av2_install_title": "AV2-Videoe spillen (experimentell)",
   "av2_licence": "dav2d, den AV2-Decoder vu VideoLAN (BSD-2-Clause), ënnert der Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Trotzdeem spillen",
-  "av2_settings_description": "Dekodéiert AV2-Videoe mam Prozessor. Op engem Laptopprozessor mat véier Kären leeft 8-Bit-AV2 flësseg bis 4K an 10-Bit bis 1080p; 4K an 10 Bit brauch e staarke Prozessor. D'Dekodéiere benotzt all Kären a mécht de Computer waarm.",
+  "av2_settings_description": "Dekodéiert AV2-Videoe mam Prozessor (experimentell). An eisen Tester lafen 8-Bit-Videoe bis 1080p flësseg; 10-Bit- an 4K-Videoe kënne méi brauchen, wéi de Computer ka ginn, an halen dann un, fir nozehuelen. „Video-Dekodéierung“ an den Detailer vun engem Video weist, wéi séier dëse Computer en dekodéiert. D'Dekodéiere benotzt all Kären a mécht de Computer waarm.",
   "av2_settings_installed": "AV2-Decoder {version}, {size}",
   "av2_settings_not_installed": "Den AV2-Decoder gëtt dat éischt Mol erofgelueden, wann en AV2-Video gespillt gëtt ({size})",
   "av2_settings_remove": "AV2-Decoder ewechhuelen",

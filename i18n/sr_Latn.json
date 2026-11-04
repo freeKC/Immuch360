@@ -915,7 +915,7 @@
   "av2_install_title": "Puštaj AV2 video zapise (eksperimentalno)",
   "av2_licence": "dav2d, AV2 dekoder VideoLAN-a (BSD-2-Clause), prema Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Ipak pusti",
-  "av2_settings_description": "Dekodira AV2 video zapise procesorom. Na četvorojezgarnom procesoru laptopa 8-bitni AV2 ide glatko do 4K, a 10-bitni do 1080p; 4K u 10 bita traži moćan procesor. Dekodiranje koristi sva jezgra i zagreva računar.",
+  "av2_settings_description": "Dekodira AV2 video zapise procesorom (eksperimentalno). U našim testovima 8-bitni video zapisi do 1080p reprodukuju se glatko; 10-bitnim i 4K video zapisima može trebati više nego što računar može da da, pa tada zastanu da sustignu. „Dekodiranje videa“ u detaljima video zapisa pokazuje koliko brzo ga ovaj računar dekodira. Dekodiranje koristi sva jezgra i zagreva računar.",
   "av2_settings_installed": "AV2 dekoder {version}, {size}",
   "av2_settings_not_installed": "AV2 dekoder se preuzima prvi put kada se pusti AV2 video ({size})",
   "av2_settings_remove": "Ukloni AV2 dekoder",

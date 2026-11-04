@@ -920,7 +920,7 @@
   "av2_install_title": "Predvajaj videoposnetke AV2 (preizkusno)",
   "av2_licence": "dav2d, dekodirnik AV2 podjetja VideoLAN (BSD-2-Clause), po Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Vseeno predvajaj",
-  "av2_settings_description": "Dekodira videoposnetke AV2 s procesorjem. Na štirijedrnem procesorju prenosnika se 8-bitni AV2 tekoče predvaja do 4K, 10-bitni pa do 1080p; 4K v 10 bitih potrebuje zmogljiv procesor. Dekodiranje uporablja vsa jedra in segreva računalnik.",
+  "av2_settings_description": "Dekodira videoposnetke AV2 s procesorjem (preizkusno). V naših preizkusih se 8-bitni videoposnetki do 1080p predvajajo tekoče; 10-bitni in 4K videoposnetki lahko zahtevajo več, kot lahko da računalnik, in se tedaj ustavijo, da ujamejo zaostanek. »Dekodiranje videa« v podrobnostih videoposnetka pokaže, kako hitro ga ta računalnik dekodira. Dekodiranje uporablja vsa jedra in segreva računalnik.",
   "av2_settings_installed": "Dekodirnik AV2 {version}, {size}",
   "av2_settings_not_installed": "Dekodirnik AV2 se prenese ob prvem predvajanju videoposnetka AV2 ({size})",
   "av2_settings_remove": "Odstrani dekodirnik AV2",

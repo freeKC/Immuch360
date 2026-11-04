@@ -920,7 +920,7 @@
   "av2_install_title": "播放 AV2 视频（实验性）",
   "av2_licence": "dav2d，VideoLAN 的 AV2 解码器（BSD-2-Clause），依据 Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "仍要播放",
-  "av2_settings_description": "使用处理器解码 AV2 视频。在四核笔记本处理器上，8 位 AV2 可流畅播放至 4K，10 位可至 1080p；10 位 4K 需要高端处理器。解码会占用所有核心并使电脑发热。",
+  "av2_settings_description": "用处理器解码 AV2 视频（实验性）。在我们的测试中，1080p 以内的 8 位视频可以流畅播放；10 位和 4K 视频可能需要超出电脑所能提供的性能，这时会暂停以追上进度。视频详细信息中的「视频解码」会显示这台电脑的解码速度。解码会占用所有核心，并使电脑发热。",
   "av2_settings_installed": "AV2 解码器 {version}，{size}",
   "av2_settings_not_installed": "首次播放 AV2 视频时下载 AV2 解码器（{size}）",
   "av2_settings_remove": "移除 AV2 解码器",

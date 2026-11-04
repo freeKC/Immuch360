@@ -920,7 +920,7 @@
   "av2_install_title": "AV2-videók lejátszása (kísérleti)",
   "av2_licence": "dav2d, a VideoLAN AV2-dekódere (BSD-2-Clause), az Alliance for Open Media Patent License 1.0 alapján",
   "av2_play_anyway": "Lejátszás mégis",
-  "av2_settings_description": "A processzorral dekódolja az AV2-videókat. Négymagos laptopprocesszoron a 8 bites AV2 akadásmentesen megy 4K-ig, a 10 bites 1080p-ig; a 10 bites 4K-hoz erős processzor kell. A dekódolás minden magot használ, és felmelegíti a számítógépet.",
+  "av2_settings_description": "Az AV2-videókat a processzorral dekódolja (kísérleti). Tesztjeinkben a 8 bites videók 1080p-ig akadásmentesen játszódnak le; a 10 bites és a 4K videók többet kívánhatnak, mint amennyit a számítógép adni tud, és ilyenkor megállnak, hogy behozzák a lemaradást. A videó részleteiben a Videódekódolás mutatja, milyen gyorsan dekódolja ez a számítógép. A dekódolás minden magot használ, és felmelegíti a számítógépet.",
   "av2_settings_installed": "AV2-dekóder {version}, {size}",
   "av2_settings_not_installed": "Az AV2-dekóder az első AV2-videó lejátszásakor töltődik le ({size})",
   "av2_settings_remove": "Az AV2-dekóder eltávolítása",

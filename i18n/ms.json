@@ -819,7 +819,7 @@
   "av2_install_title": "Main video AV2 (eksperimen)",
   "av2_licence": "dav2d, penyahkod AV2 oleh VideoLAN (BSD-2-Clause), di bawah Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Main juga",
-  "av2_settings_description": "Menyahkod video AV2 dengan pemproses. Pada pemproses komputer riba empat teras, AV2 8-bit dimainkan dengan lancar hingga 4K dan 10-bit hingga 1080p; 4K dalam 10 bit memerlukan pemproses mewah. Penyahkodan menggunakan semua teras dan memanaskan komputer.",
+  "av2_settings_description": "Menyahkod video AV2 dengan pemproses (eksperimen). Dalam ujian kami, video 8-bit sehingga 1080p dimainkan dengan lancar; video 10-bit dan 4K mungkin memerlukan lebih daripada yang boleh diberikan oleh komputer, lalu berhenti seketika untuk mengejar. Penyahkodan video, dalam butiran sesebuah video, menunjukkan sepantas mana komputer ini menyahkodnya. Penyahkodan menggunakan semua teras dan memanaskan komputer.",
   "av2_settings_installed": "Penyahkod AV2 {version}, {size}",
   "av2_settings_not_installed": "Penyahkod AV2 dimuat turun kali pertama video AV2 dimainkan ({size})",
   "av2_settings_remove": "Alih keluar penyahkod AV2",

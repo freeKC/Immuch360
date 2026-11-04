@@ -876,7 +876,7 @@
   "av2_install_title": "Toista AV2-videoita (kokeellinen)",
   "av2_licence": "dav2d, VideoLANin AV2-dekooderi (BSD-2-Clause), Alliance for Open Media Patent License 1.0 -lisenssillä",
   "av2_play_anyway": "Toista silti",
-  "av2_settings_description": "Purkaa AV2-videot suorittimella. Neliytimisellä kannettavan suorittimella 8-bittinen AV2 toistuu sujuvasti 4K:hon asti ja 10-bittinen 1080p:hen asti; 10-bittinen 4K vaatii tehokkaan suorittimen. Purku käyttää kaikkia ytimiä ja lämmittää tietokonetta.",
+  "av2_settings_description": "Purkaa AV2-videot suorittimella (kokeellinen). Testeissämme 8-bittiset videot 1080p:hen asti toistuvat sujuvasti; 10-bittiset ja 4K-videot voivat vaatia enemmän kuin tietokone pystyy antamaan, ja silloin ne pysähtyvät kiriäkseen kiinni. Videon tiedoissa oleva Videon purku näyttää, kuinka nopeasti tämä tietokone purkaa sen. Purku käyttää kaikkia ytimiä ja lämmittää tietokonetta.",
   "av2_settings_installed": "AV2-dekooderi {version}, {size}",
   "av2_settings_not_installed": "AV2-dekooderi ladataan, kun AV2-video toistetaan ensimmäisen kerran ({size})",
   "av2_settings_remove": "Poista AV2-dekooderi",

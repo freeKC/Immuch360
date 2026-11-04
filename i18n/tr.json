@@ -920,7 +920,7 @@
   "av2_install_title": "AV2 videolarını oynat (deneysel)",
   "av2_licence": "dav2d, VideoLAN'ın AV2 kod çözücüsü (BSD-2-Clause), Alliance for Open Media Patent License 1.0 kapsamında",
   "av2_play_anyway": "Yine de oynat",
-  "av2_settings_description": "AV2 videolarını işlemciyle çözer. Dört çekirdekli bir dizüstü işlemcisinde 8 bit AV2 4K'ya, 10 bit AV2 1080p'ye kadar akıcı oynar; 10 bit 4K güçlü bir işlemci ister. Kod çözme tüm çekirdekleri kullanır ve bilgisayarı ısıtır.",
+  "av2_settings_description": "AV2 videolarının kodunu işlemciyle çözer (deneysel). Testlerimizde 1080p'ye kadar 8 bit videolar akıcı oynatılır; 10 bit ve 4K videolar bilgisayarın verebileceğinden fazlasını gerektirebilir ve o zaman yetişmek için duraklar. Bir videonun ayrıntılarındaki Video kod çözme, bu bilgisayarın onu ne kadar hızlı çözdüğünü gösterir. Kod çözme tüm çekirdekleri kullanır ve bilgisayarı ısıtır.",
   "av2_settings_installed": "AV2 kod çözücü {version}, {size}",
   "av2_settings_not_installed": "AV2 kod çözücü, bir AV2 videosu ilk kez oynatıldığında indirilir ({size})",
   "av2_settings_remove": "AV2 kod çözücüyü kaldır",

@@ -920,7 +920,7 @@
   "av2_install_title": "Spela AV2-videor (experimentell)",
   "av2_licence": "dav2d, AV2-avkodaren från VideoLAN (BSD-2-Clause), under Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Spela ändå",
-  "av2_settings_description": "Avkodar AV2-videor med processorn. På en bärbar processor med fyra kärnor spelas 8-bitars AV2 smidigt upp till 4K och 10-bitars upp till 1080p; 4K i 10 bitar kräver en kraftfull processor. Avkodningen använder alla kärnor och värmer upp datorn.",
+  "av2_settings_description": "Avkodar AV2-videor med processorn (experimentell). I våra tester spelas 8-bitarsvideor upp till 1080p upp jämnt; 10-bitars- och 4K-videor kan kräva mer än datorn kan ge och pausar då för att komma ikapp. Videoavkodning i detaljerna för en video visar hur snabbt den här datorn avkodar den. Avkodningen använder alla kärnor och gör datorn varm.",
   "av2_settings_installed": "AV2-avkodare {version}, {size}",
   "av2_settings_not_installed": "AV2-avkodaren laddas ner första gången en AV2-video spelas ({size})",
   "av2_settings_remove": "Ta bort AV2-avkodaren",

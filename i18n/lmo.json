@@ -292,7 +292,7 @@
   "av2_install_title": "Riproduss i video AV2 (sperimental)",
   "av2_licence": "dav2d, el decodificador AV2 de VideoLAN (BSD-2-Clause), sota la Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Riproduss istess",
-  "av2_settings_description": "El decodifica i video AV2 cont el processor. In su on processor de portatil a quatter core, l'AV2 a 8 bit el va lisc fin al 4K e quell a 10 bit fin al 1080p; el 4K a 10 bit el gh'ha bisogn d'on processor potent. La decodifica la dopera tucc i core e la scolda el computer.",
+  "av2_settings_description": "El decodifica i video AV2 cont el processor (sperimental). In di noster proeuv, i video a 8 bit fin al 1080p van lisc; i video a 10 bit e quei 4K poden vegh bisogn de pussee de quell che 'l computer el po dà, e allora se fermen per ricuperà. «Decodifica del video», in di detaj d'on video, el fa vedè quant de spressa el computer el le decodifica. La decodifica la dopera tucc i core e la scolda el computer.",
   "av2_settings_installed": "Decodificador AV2 {version}, {size}",
   "av2_settings_not_installed": "El decodificador AV2 el se scarega la prima volta che se riproduss on video AV2 ({size})",
   "av2_settings_remove": "Tira via el decodificador AV2",

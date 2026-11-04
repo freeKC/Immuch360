@@ -912,7 +912,7 @@
   "av2_install_title": "Luaj video AV2 (eksperimentale)",
   "av2_licence": "dav2d, dekoduesi AV2 i VideoLAN (BSD-2-Clause), sipas Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Luaje gjithsesi",
-  "av2_settings_description": "Dekodon videot AV2 me procesorin. Në një procesor laptopi me katër bërthama, AV2 me 8 bit luhet rrjedhshëm deri në 4K dhe me 10 bit deri në 1080p; 4K me 10 bit kërkon procesor të fuqishëm. Dekodimi përdor të gjitha bërthamat dhe e ngroh kompjuterin.",
+  "av2_settings_description": "Deshifron videot AV2 me procesorin (eksperimentale). Në provat tona, videot 8-bitëshe deri në 1080p luhen pa ndërprerje; videot 10-bitëshe dhe 4K mund të kërkojnë më shumë se sa mund të japë kompjuteri, dhe atëherë ndalen për të arritur. «Deshifrimi i videos», në detajet e një videoje, tregon sa shpejt e deshifron ky kompjuter. Deshifrimi përdor të gjitha bërthamat dhe e ngroh kompjuterin.",
   "av2_settings_installed": "Dekoduesi AV2 {version}, {size}",
   "av2_settings_not_installed": "Dekoduesi AV2 shkarkohet herën e parë që luhet një video AV2 ({size})",
   "av2_settings_remove": "Hiq dekoduesin AV2",

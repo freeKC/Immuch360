@@ -920,7 +920,7 @@
   "av2_install_title": "AV2-Videos abspielen (experimentell)",
   "av2_licence": "dav2d, der AV2-Decoder von VideoLAN (BSD-2-Clause), unter der Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Trotzdem abspielen",
-  "av2_settings_description": "Decodiert AV2-Videos mit dem Prozessor. Auf einem Vierkern-Laptopprozessor läuft 8-Bit-AV2 flüssig bis 4K und 10-Bit bis 1080p; 4K in 10 Bit braucht einen leistungsstarken Prozessor. Die Decodierung nutzt alle Kerne und erwärmt den Computer.",
+  "av2_settings_description": "Decodiert AV2-Videos mit dem Prozessor (experimentell). In unseren Tests laufen 8-Bit-Videos bis 1080p flüssig; 10-Bit- und 4K-Videos können mehr verlangen, als der Computer leisten kann, und halten dann an, um aufzuholen. „Videodekodierung“ in den Details eines Videos zeigt, wie schnell dieser Computer es decodiert. Die Decodierung nutzt alle Kerne und erwärmt den Computer.",
   "av2_settings_installed": "AV2-Decoder {version}, {size}",
   "av2_settings_not_installed": "Der AV2-Decoder wird beim ersten Abspielen eines AV2-Videos heruntergeladen ({size})",
   "av2_settings_remove": "AV2-Decoder entfernen",

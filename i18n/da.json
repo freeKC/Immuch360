@@ -920,7 +920,7 @@
   "av2_install_title": "Afspil AV2-videoer (eksperimentel)",
   "av2_licence": "dav2d, AV2-dekoderen fra VideoLAN (BSD-2-Clause), under Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Afspil alligevel",
-  "av2_settings_description": "Afkoder AV2-videoer med processoren. På en firekernet bærbar processor afspilles 8-bit AV2 jævnt op til 4K og 10-bit op til 1080p; 4K i 10 bit kræver en kraftig processor. Afkodningen bruger alle kerner og gør computeren varm.",
+  "av2_settings_description": "Afkoder AV2-videoer med processoren (eksperimentel). I vores test afspilles 8-bit-videoer op til 1080p jævnt; 10-bit- og 4K-videoer kan kræve mere, end computeren kan give, og holder så pause for at indhente. Videoafkodning i detaljerne om en video viser, hvor hurtigt denne computer afkoder den. Afkodningen bruger alle kerner og gør computeren varm.",
   "av2_settings_installed": "AV2-dekoder {version}, {size}",
   "av2_settings_not_installed": "AV2-dekoderen hentes første gang en AV2-video afspilles ({size})",
   "av2_settings_remove": "Fjern AV2-dekoderen",

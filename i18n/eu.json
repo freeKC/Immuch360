@@ -908,7 +908,7 @@
   "av2_install_title": "Erreproduzitu AV2 bideoak (esperimentala)",
   "av2_licence": "dav2d, VideoLAN-en AV2 deskodetzailea (BSD-2-Clause), Alliance for Open Media Patent License 1.0 lizentziapean",
   "av2_play_anyway": "Erreproduzitu hala ere",
-  "av2_settings_description": "AV2 bideoak prozesadorearekin deskodetzen ditu. Lau nukleoko eramangarri-prozesadore batean, 8 biteko AV2 arin doa 4K arte eta 10 bitekoa 1080p arte; 10 biteko 4K-k goi-mailako prozesadore bat behar du. Deskodetzeak nukleo guztiak erabiltzen ditu eta ordenagailua berotzen du.",
+  "av2_settings_description": "AV2 bideoak prozesadorearekin deskodetzen ditu (esperimentala). Gure probetan, 8 biteko bideoak 1080p arte arin erreproduzitzen dira; 10 biteko eta 4K bideoek ordenagailuak eman dezakeena baino gehiago behar dezakete, eta orduan gelditu egiten dira atzerapena berreskuratzeko. Bideo baten xehetasunetako «Bideoaren deskodetzea» atalak ordenagailu honek zein azkar deskodetzen duen erakusten du. Deskodetzeak nukleo guztiak erabiltzen ditu eta ordenagailua berotzen du.",
   "av2_settings_installed": "AV2 deskodetzailea {version}, {size}",
   "av2_settings_not_installed": "AV2 deskodetzailea AV2 bideo bat lehen aldiz erreproduzitzean deskargatzen da ({size})",
   "av2_settings_remove": "Kendu AV2 deskodetzailea",

@@ -920,7 +920,7 @@
   "av2_install_title": "Odtwarzaj filmy AV2 (eksperymentalne)",
   "av2_licence": "dav2d, dekoder AV2 od VideoLAN (BSD-2-Clause), na licencji Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Odtwórz mimo to",
-  "av2_settings_description": "Dekoduje filmy AV2 procesorem. Na czterordzeniowym procesorze laptopa 8-bitowe AV2 odtwarza się płynnie do 4K, a 10-bitowe do 1080p; 4K w 10 bitach wymaga wydajnego procesora. Dekodowanie używa wszystkich rdzeni i nagrzewa komputer.",
+  "av2_settings_description": "Dekoduje filmy AV2 procesorem (eksperymentalne). W naszych testach filmy 8-bitowe do 1080p odtwarzają się płynnie; filmy 10-bitowe i 4K mogą wymagać więcej, niż komputer może dać, i wtedy zatrzymują się, aby nadrobić. „Dekodowanie wideo” w szczegółach filmu pokazuje, jak szybko ten komputer go dekoduje. Dekodowanie używa wszystkich rdzeni i nagrzewa komputer.",
   "av2_settings_installed": "Dekoder AV2 {version}, {size}",
   "av2_settings_not_installed": "Dekoder AV2 pobiera się przy pierwszym odtworzeniu filmu AV2 ({size})",
   "av2_settings_remove": "Usuń dekoder AV2",

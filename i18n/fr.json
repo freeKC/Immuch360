@@ -920,7 +920,7 @@
   "av2_install_title": "Lire les vidéos AV2 (expérimental)",
   "av2_licence": "dav2d, le décodeur AV2 de VideoLAN (BSD-2-Clause), sous l'Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Lire quand même",
-  "av2_settings_description": "Décode les vidéos AV2 avec le processeur. Sur un processeur de portable à quatre cœurs, l'AV2 8 bits se lit sans à-coups jusqu'en 4K et le 10 bits jusqu'en 1080p ; la 4K en 10 bits demande un processeur haut de gamme. Le décodage utilise tous les cœurs et chauffe l'ordinateur.",
+  "av2_settings_description": "Décode les vidéos AV2 avec le processeur (expérimental). Dans nos essais, les vidéos 8 bits jusqu'en 1080p se lisent sans à-coups ; les vidéos 10 bits et 4K peuvent demander plus que ce que l'ordinateur peut donner, et font alors des pauses pour rattraper leur retard. « Décodage vidéo », dans les détails d'une vidéo, montre à quelle vitesse cet ordinateur la décode. Le décodage utilise tous les cœurs et chauffe l'ordinateur.",
   "av2_settings_installed": "Décodeur AV2 {version}, {size}",
   "av2_settings_not_installed": "Le décodeur AV2 se télécharge à la première lecture d'une vidéo AV2 ({size})",
   "av2_settings_remove": "Supprimer le décodeur AV2",

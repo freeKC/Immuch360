@@ -292,7 +292,7 @@
   "av2_install_title": "Maing video AV2 (cubo-cubo)",
   "av2_licence": "dav2d, penyahkod AV2 dari VideoLAN (BSD-2-Clause), bawah Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Maing jugok",
-  "av2_settings_description": "Nyahkod video AV2 pakai pemproses. Dale pemproses laptop empak teras, AV2 8-bit maing lancar sapa 4K dan 10-bit sapa 1080p; 4K dale 10 bit keno pemproses hok kuat. Nyahkod guno gak semuo teras dan buat kompute panah.",
+  "av2_settings_description": "Nyahkod video AV2 pakai pemproses (cubo-cubo). Dale ujian kami, video 8-bit sapa 1080p maing lancar; video 10-bit dan 4K buleh keno lebih daripado hok kompute buleh bui, lepah tu dio berenti sekejap nok kejar. Nyahkod video, dale butire video, tunjuk gapo laju kompute ni nyahkod dio. Nyahkod guno gak semuo teras dan buat kompute panah.",
   "av2_settings_installed": "Penyahkod AV2 {version}, {size}",
   "av2_settings_not_installed": "Penyahkod AV2 dimuat turun kali pertamo video AV2 maing ({size})",
   "av2_settings_remove": "Buang penyahkod AV2",

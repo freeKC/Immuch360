@@ -920,7 +920,7 @@
   "av2_install_title": "Reproducir vídeos AV2 (experimental)",
   "av2_licence": "dav2d, o descodificador AV2 de VideoLAN (BSD-2-Clause), baixo a Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Reproducir igualmente",
-  "av2_settings_description": "Descodifica os vídeos AV2 co procesador. Nun procesador de portátil de catro núcleos, o AV2 de 8 bits reprodúcese con fluidez ata 4K e o de 10 bits ata 1080p; o 4K en 10 bits precisa un procesador de gama alta. A descodificación usa todos os núcleos e quenta o ordenador.",
+  "av2_settings_description": "Descodifica os vídeos AV2 co procesador (experimental). Nas nosas probas, os vídeos de 8 bits ata 1080p reprodúcense con fluidez; os vídeos de 10 bits e os 4K poden precisar máis do que o ordenador pode dar, e entón deteñense para poñerse ao día. «Descodificación do vídeo», nos detalles dun vídeo, mostra o rápido que o descodifica este ordenador. A descodificación usa todos os núcleos e quenta o ordenador.",
   "av2_settings_installed": "Descodificador AV2 {version}, {size}",
   "av2_settings_not_installed": "O descodificador AV2 descárgase a primeira vez que se reproduce un vídeo AV2 ({size})",
   "av2_settings_remove": "Eliminar o descodificador AV2",

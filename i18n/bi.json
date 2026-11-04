@@ -305,7 +305,7 @@
   "av2_install_title": "Plei ol video AV2 (eksperimen)",
   "av2_licence": "dav2d, AV2 dekoda blong VideoLAN (BSD-2-Clause), anda long Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Plei nomo",
-  "av2_settings_description": "I dekodem ol video AV2 wetem prosesa. Long wan prosesa blong laptop we i gat fo kor, AV2 8-bit i plei gud kasem 4K mo 10-bit kasem 1080p; 4K long 10 bit i nidim wan strong prosesa. Dekod i yusum evri kor mo i mekem kompiuta i hot.",
+  "av2_settings_description": "I dekodem ol video AV2 wetem prosesa (eksperimen). Long ol test blong mifala, ol video 8-bit kasem 1080p oli plei gud; ol video 10-bit mo 4K oli save nidim moa long wanem we kompiuta i save givim, nao oli stop smol blong kasem. Dekoding blong video, long ol ditel blong wan video, i soem hamas spid kompiuta ia i dekodem hem. Dekod i yusum evri kor mo i mekem kompiuta i hot.",
   "av2_settings_installed": "AV2 dekoda {version}, {size}",
   "av2_settings_not_installed": "AV2 dekoda i daonlod fas taem we wan video AV2 i plei ({size})",
   "av2_settings_remove": "Tekemaot AV2 dekoda",

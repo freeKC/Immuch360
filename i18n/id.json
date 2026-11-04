@@ -920,7 +920,7 @@
   "av2_install_title": "Putar video AV2 (eksperimental)",
   "av2_licence": "dav2d, dekoder AV2 dari VideoLAN (BSD-2-Clause), di bawah Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Tetap putar",
-  "av2_settings_description": "Mendekode video AV2 dengan prosesor. Pada prosesor laptop empat inti, AV2 8-bit diputar lancar hingga 4K dan 10-bit hingga 1080p; 4K dalam 10 bit memerlukan prosesor kelas atas. Dekode memakai semua inti dan membuat komputer hangat.",
+  "av2_settings_description": "Mendekode video AV2 dengan prosesor (eksperimental). Dalam pengujian kami, video 8-bit hingga 1080p diputar dengan lancar; video 10-bit dan 4K mungkin membutuhkan lebih dari yang dapat diberikan komputer, lalu berhenti sejenak untuk mengejar. Dekode video, di detail sebuah video, menunjukkan seberapa cepat komputer ini mendekodenya. Dekode memakai semua inti dan membuat komputer hangat.",
   "av2_settings_installed": "Dekoder AV2 {version}, {size}",
   "av2_settings_not_installed": "Dekoder AV2 diunduh saat video AV2 pertama kali diputar ({size})",
   "av2_settings_remove": "Hapus dekoder AV2",

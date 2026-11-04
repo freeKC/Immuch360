@@ -292,7 +292,7 @@
   "av2_install_title": "Ɣer ividyuten AV2 (d armitan)",
   "av2_licence": "dav2d, amekkas n tengalt AV2 n VideoLAN (BSD-2-Clause), ddaw Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Ɣer ɣas akken",
-  "av2_settings_description": "Yettekkes tengalt i yividyuten AV2 s umesbaḍ. Ɣef umesbaḍ n uselkim amaṭṭaf s ukuẓ n wulawen, AV2 n 8 n yibiten yettwaɣra s leɛqel alamma d 4K, win n 10 n yibiten alamma d 1080p; 4K s 10 n yibiten yesra amesbaḍ yeǧhed. Tukksa n tengalt tesseqdac akk ulawen, tettseḥmu aselkim.",
+  "av2_settings_description": "Yettekkes tengalt i yividyuten AV2 s umesbaḍ (d armitan). Deg yirmiten-nneɣ, ividyuten n 8 n yibiten alamma d 1080p ttwaɣran s leɛqel; ividyuten n 10 n yibiten akked 4K zemren ad sran ugar n wayen i yezmer ad d-yefk uselkim, dɣa ad ḥebsen akken ad d-ṭṭfen. Tukksa n usettengel n tvidyut, deg telqayin n tvidyut, tesskanay acḥal i yettekkes uselkim-a tengalt-is s zzerba. Tukksa n tengalt tesseqdac akk ulawen, tettseḥmu aselkim.",
   "av2_settings_installed": "Amekkas n tengalt AV2 {version}, {size}",
   "av2_settings_not_installed": "Amekkas n tengalt AV2 yettwasader tikkelt tamezwarut ara yettwaɣer uvidyu AV2 ({size})",
   "av2_settings_remove": "Kkes amekkas n tengalt AV2",

@@ -920,7 +920,7 @@
   "av2_install_title": "播放 AV2 影片（實驗性）",
   "av2_licence": "dav2d，VideoLAN 嘅 AV2 解碼器（BSD-2-Clause），按 Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "照播",
-  "av2_settings_description": "用處理器解碼 AV2 影片。喺四核手提電腦處理器上，8 位元 AV2 可以順暢播到 4K，10 位元播到 1080p；10 位元 4K 要高階處理器。解碼會用晒所有核心，部電腦會熱。",
+  "av2_settings_description": "用處理器解碼 AV2 影片（實驗性）。喺我哋嘅測試入面，1080p 以內嘅 8 位元影片可以順暢播放；10 位元同 4K 影片可能需要多過部電腦俾得到嘅效能，咁就會停一停嚟追返。影片詳細資料入面嘅「影片解碼」會顯示呢部電腦解碼得幾快。解碼會用晒所有核心，部電腦會熱。",
   "av2_settings_installed": "AV2 解碼器 {version}，{size}",
   "av2_settings_not_installed": "第一次播 AV2 影片時會下載 AV2 解碼器（{size}）",
   "av2_settings_remove": "移除 AV2 解碼器",

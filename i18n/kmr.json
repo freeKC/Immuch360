@@ -366,7 +366,7 @@
   "av2_install_title": "Vîdyoyên AV2 bilîze (ceribandinî)",
   "av2_licence": "dav2d, dekodera AV2 ya VideoLAN (BSD-2-Clause), di bin Alliance for Open Media Patent License 1.0 de",
   "av2_play_anyway": "Dîsa jî bilîze",
-  "av2_settings_description": "Vîdyoyên AV2 bi pêvajokerê dekod dike. Li ser pêvajokereke laptopê ya çar navikî, AV2-ya 8 bit heta 4K û ya 10 bit heta 1080p bi nermî tê lîstin; 4K bi 10 bit pêvajokereke bihêz hewce dike. Dekodkirin hemû navikan bi kar tîne û komputerê germ dike.",
+  "av2_settings_description": "Vîdyoyên AV2 bi pêvajokerê dekod dike (ceribandinî). Di ceribandinên me de vîdyoyên 8 bit heta 1080p bi nermî tên lîstin; vîdyoyên 10 bit û 4K dikarin ji ya ku komputer dikare bide bêtir bixwazin, û hingê disekinin da ku bigihîjin. Dekodkirina vîdyoyê, di hûrguliyên vîdyoyekê de, nîşan dide ku ev komputer wê çiqas zû dekod dike. Dekodkirin hemû navikan bi kar tîne û komputerê germ dike.",
   "av2_settings_installed": "Dekodera AV2 {version}, {size}",
   "av2_settings_not_installed": "Dekodera AV2 cara yekem ku vîdyoyeke AV2 tê lîstin tê daxistin ({size})",
   "av2_settings_remove": "Dekodera AV2 rake",

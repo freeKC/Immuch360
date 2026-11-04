@@ -576,7 +576,7 @@
   "av2_install_title": "Spel av AV2-videoar (eksperimentell)",
   "av2_licence": "dav2d, AV2-dekodaren frå VideoLAN (BSD-2-Clause), under Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Spel likevel",
-  "av2_settings_description": "Dekodar AV2-videoar med prosessoren. På ein firekjerneprosessor i ein berbar vert 8-bits AV2 spela jamt opp til 4K og 10-bits opp til 1080p; 4K i 10 bit treng ein kraftig prosessor. Dekodinga brukar alle kjernane og varmar opp datamaskina.",
+  "av2_settings_description": "Dekodar AV2-videoar med prosessoren (eksperimentell). I testane våre vert 8-bits videoar opp til 1080p spela jamt av; 10-bits og 4K-videoar kan krevje meir enn datamaskina kan gje, og stoppar då opp for å ta att. Videodekoding i detaljane for ein video viser kor raskt denne datamaskina dekodar han. Dekodinga brukar alle kjernar og gjer datamaskina varm.",
   "av2_settings_installed": "AV2-dekodar {version}, {size}",
   "av2_settings_not_installed": "AV2-dekodaren vert lasta ned første gong ein AV2-video vert spela ({size})",
   "av2_settings_remove": "Fjern AV2-dekodaren",

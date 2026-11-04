@@ -912,7 +912,7 @@
   "av2_install_title": "Play AV2 videos (experimental)",
   "av2_licence": "dav2d, the AV2 decoder of VideoLAN (BSD-2-Clause), under the Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Play anyway",
-  "av2_settings_description": "Decodes AV2 videos with the processor. On a four-core laptop processor, 8-bit AV2 plays smoothly up to 4K and 10-bit up to 1080p; 4K in 10 bit needs a high-end processor. Decoding uses every core and warms the computer.",
+  "av2_settings_description": "Decodes AV2 videos with the processor (experimental). In our tests, 8-bit videos up to 1080p play smoothly; 10-bit and 4K videos may need more than the computer can give, and then pause to catch up. Video decoding, in the details of a video, shows how fast this computer decodes it. Decoding uses every core and warms the computer.",
   "av2_settings_installed": "AV2 decoder {version}, {size}",
   "av2_settings_not_installed": "The AV2 decoder downloads the first time an AV2 video plays ({size})",
   "av2_settings_remove": "Remove the AV2 decoder",

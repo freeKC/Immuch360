@@ -304,7 +304,7 @@
   "av2_install_title": "AV2 videolarini ijro etish (tajribaviy)",
   "av2_licence": "dav2d, VideoLAN AV2 dekoderi (BSD-2-Clause), Alliance for Open Media Patent License 1.0 asosida",
   "av2_play_anyway": "Baribir ijro etish",
-  "av2_settings_description": "AV2 videolarini protsessor bilan dekodlaydi. Toʻrt yadroli noutbuk protsessorida 8 bitli AV2 4K gacha, 10 bitli esa 1080p gacha ravon ijro etiladi; 10 bitli 4K uchun kuchli protsessor kerak. Dekodlash barcha yadrolardan foydalanadi va kompyuterni qizdiradi.",
+  "av2_settings_description": "AV2 videolarini protsessor bilan dekodlaydi (tajribaviy). Sinovlarimizda 1080p gacha bo'lgan 8 bitli videolar ravon ijro etiladi; 10 bitli va 4K videolarga kompyuter bera oladiganidan ko'prog'i kerak bo'lishi mumkin, shunda ular yetib olish uchun to'xtaydi. Video tafsilotlaridagi «Videoni dekodlash» bu kompyuter uni qanchalik tez dekodlashini ko'rsatadi. Dekodlash barcha yadrolardan foydalanadi va kompyuterni qizdiradi.",
   "av2_settings_installed": "AV2 dekoderi {version}, {size}",
   "av2_settings_not_installed": "AV2 dekoderi birinchi AV2 video ijro etilganda yuklab olinadi ({size})",
   "av2_settings_remove": "AV2 dekoderini olib tashlash",

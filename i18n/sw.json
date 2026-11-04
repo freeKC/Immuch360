@@ -292,7 +292,7 @@
   "av2_install_title": "Cheza video za AV2 (ya majaribio)",
   "av2_licence": "dav2d, kisimbuzi cha AV2 cha VideoLAN (BSD-2-Clause), chini ya Alliance for Open Media Patent License 1.0",
   "av2_play_anyway": "Cheza hata hivyo",
-  "av2_settings_description": "Husimbua video za AV2 kwa prosesa. Kwenye prosesa ya kompyuta mpakato yenye viini vinne, AV2 ya biti 8 inacheza vizuri hadi 4K na ya biti 10 hadi 1080p; 4K ya biti 10 inahitaji prosesa yenye nguvu. Usimbuaji hutumia viini vyote na huipasha moto kompyuta.",
+  "av2_settings_description": "Husimbua video za AV2 kwa prosesa (ya majaribio). Katika majaribio yetu, video za biti 8 hadi 1080p zinacheza vizuri; video za biti 10 na 4K zinaweza kuhitaji zaidi ya kile kompyuta inaweza kutoa, na hapo husimama ili kufidia. Usimbuaji wa video, katika maelezo ya video, unaonyesha jinsi kompyuta hii inavyoisimbua kwa kasi. Usimbuaji hutumia viini vyote na huipasha moto kompyuta.",
   "av2_settings_installed": "Kisimbuzi cha AV2 {version}, {size}",
   "av2_settings_not_installed": "Kisimbuzi cha AV2 hupakuliwa mara ya kwanza video ya AV2 inapochezwa ({size})",
   "av2_settings_remove": "Ondoa kisimbuzi cha AV2",
