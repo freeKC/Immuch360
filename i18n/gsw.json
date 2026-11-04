@@ -843,7 +843,7 @@
   "av2_error_format": "Das AV2-Video isch {format}: die Version vom AV2-Decoder spilt s no nöd ab",
   "av2_error_mac_libmpv": "AV2-Videos bruuched es nöiers Immuch360 Desktop uf däm Mac",
   "av2_error_not_here": "AV2-Videos laufed vorerscht nur im Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2-Videos sind abgschalte: Iistellige, Videos, AV2-Videos",
+  "av2_error_off": "AV2-Videos sind abgschalte: Iistellige, Foto-Aazeig, AV2-Videos (experimentell)",
   "av2_install_body": "Das Video isch AV2, es Format, wo no kei Grät i de Hardware dekodiert. Immuch360 cha s mit em Prozessor vo däm Computer dekodiere: Lad de AV2-Decoder eimal abe ({size}, Open Source: dav2d vo VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Abelade und abspile",
   "av2_install_failed": "De AV2-Decoder isch nöd abeglade worde: {reason}",

@@ -868,7 +868,7 @@
   "av2_error_format": "Tämä AV2-video on {format}: tämä AV2-dekooderin versio ei vielä toista sitä",
   "av2_error_mac_libmpv": "AV2-videot tarvitsevat uudemman Immuch360 Desktopin tähän Maciin",
   "av2_error_not_here": "AV2-videot toistuvat toistaiseksi vain Immuch360 Desktopissa (Windows, Linux, macOS)",
-  "av2_error_off": "AV2-videot on poistettu käytöstä: Asetukset, Videot, AV2-videot",
+  "av2_error_off": "AV2-videot on poistettu käytöstä: Asetukset, Katselin, AV2-videot (kokeellinen)",
   "av2_install_body": "Tämä video on AV2-muotoa, jota mikään laite ei vielä pura laitteistolla. Immuch360 voi purkaa sen tämän tietokoneen suorittimella: lataa AV2-dekooderi kerran ({size}, avoin lähdekoodi: VideoLANin dav2d, BSD-2-Clause).",
   "av2_install_button": "Lataa ja toista",
   "av2_install_failed": "AV2-dekooderia ei ladattu: {reason}",

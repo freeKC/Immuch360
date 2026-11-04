@@ -305,7 +305,7 @@
   "av2_error_format": "यो AV2 भिडियो {format} हो: AV2 डिकोडरको यो संस्करणले यसलाई अझै चलाउँदैन",
   "av2_error_mac_libmpv": "यो Mac मा AV2 भिडियोका लागि नयाँ Immuch360 Desktop चाहिन्छ",
   "av2_error_not_here": "AV2 भिडियो अहिलेलाई Immuch360 Desktop मा मात्र चल्छन् (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 भिडियो बन्द छन्: सेटिङ, भिडियो, AV2 भिडियो",
+  "av2_error_off": "AV2 भिडियो बन्द छन्: सेटिङ, Asset Viewer, AV2 भिडियो (प्रयोगात्मक)",
   "av2_install_body": "यो भिडियो AV2 हो, यस्तो ढाँचा जसलाई अझै कुनै उपकरणले हार्डवेयरमा डिकोड गर्दैन। Immuch360 ले यसलाई यो कम्प्युटरको प्रोसेसरले डिकोड गर्न सक्छ: AV2 डिकोडर एक पटक डाउनलोड गर्नुहोस् ({size}, खुला स्रोत: VideoLAN को dav2d, BSD-2-Clause)।",
   "av2_install_button": "डाउनलोड गरेर चलाउनुहोस्",
   "av2_install_failed": "AV2 डिकोडर डाउनलोड भएन: {reason}",

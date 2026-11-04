@@ -811,7 +811,7 @@
   "av2_error_format": "Video AV2 ini ialah {format}: versi penyahkod AV2 ini belum dapat memainkannya",
   "av2_error_mac_libmpv": "Video AV2 memerlukan Immuch360 Desktop yang lebih baharu pada Mac ini",
   "av2_error_not_here": "Video AV2 hanya dimainkan dalam Immuch360 Desktop buat masa ini (Windows, Linux, macOS)",
-  "av2_error_off": "Video AV2 dimatikan: Tetapan, Video, Video AV2",
+  "av2_error_off": "Video AV2 dimatikan: Tetapan, Asset Viewer, Video AV2 (eksperimen)",
   "av2_install_body": "Video ini ialah AV2, format yang belum dinyahkod secara perkakasan oleh mana-mana peranti. Immuch360 boleh menyahkodnya dengan pemproses komputer ini: muat turun penyahkod AV2 sekali sahaja ({size}, sumber terbuka: dav2d oleh VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Muat turun dan main",
   "av2_install_failed": "Penyahkod AV2 tidak dimuat turun: {reason}",

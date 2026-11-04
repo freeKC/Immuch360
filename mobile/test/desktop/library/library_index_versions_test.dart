@@ -1,6 +1,6 @@
 // Schemas 3 and 4 of the index of the folder library: what the XMP of a file made by Immuch360 says, read by the scan,
 // kept in six columns (its kind since schema 4: a 3D photo, a 3D scene, a 360° panorama, a 360° 3D panorama), and how
-// an index of schema 2 or 3 gets them.
+// an index of schema 2 or 3 gets them (and up to the latest schema, 5, library_index_av2_test.dart).
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -443,7 +443,7 @@ void main() {
 
       final db = sqlite3.open(fixture.indexPath);
       addTearDown(db.close);
-      expect(db.select('PRAGMA user_version').first.values.first, 4);
+      expect(db.select('PRAGMA user_version').first.values.first, 5);
       final columns = {for (final row in db.select('PRAGMA table_info(files)')) row['name'] as String};
       expect(columns, containsAll(['stereo', 'origin', 'source_sha1', 'derivative_id', 'derived_settings']));
       final indexes = {for (final row in db.select('PRAGMA index_list(files)')) row['name'] as String};
@@ -606,7 +606,7 @@ void main() {
 
       final db = sqlite3.open(fixture.indexPath);
       addTearDown(db.close);
-      expect(db.select('PRAGMA user_version').first.values.first, 4);
+      expect(db.select('PRAGMA user_version').first.values.first, 5);
       final columns = {for (final row in db.select('PRAGMA table_info(files)')) row['name'] as String};
       expect(columns, contains('immersive_kind'));
 
@@ -688,11 +688,11 @@ void main() {
     }
   });
 
-  test('an index made new has schema 4 at once', () {
+  test('an index made new has the latest schema at once', () {
     final index = fixture.index();
     expect(index.generatedFileIds(), isEmpty);
     final db = sqlite3.open(fixture.indexPath);
     addTearDown(db.close);
-    expect(db.select('PRAGMA user_version').first.values.first, 4);
+    expect(db.select('PRAGMA user_version').first.values.first, 5);
   });
 }

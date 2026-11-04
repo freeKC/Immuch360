@@ -912,7 +912,7 @@
   "av2_error_format": "סרטון AV2 זה הוא {format}: הגרסה הזו של מפענח AV2 עוד לא מנגנת אותו",
   "av2_error_mac_libmpv": "סרטוני AV2 דורשים Immuch360 Desktop חדש יותר ב-Mac הזה",
   "av2_error_not_here": "סרטוני AV2 מתנגנים בינתיים רק ב-Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "סרטוני AV2 כבויים: הגדרות, סרטונים, סרטוני AV2",
+  "av2_error_off": "סרטוני AV2 כבויים: הגדרות, מציג התמונות, סרטוני AV2 (ניסיוני)",
   "av2_install_body": "הסרטון הזה הוא AV2, פורמט שאף מכשיר עוד לא מפענח בחומרה. Immuch360 יכול לפענח אותו במעבד של המחשב הזה: הורידו את מפענח AV2 פעם אחת ({size}, קוד פתוח: dav2d של VideoLAN, BSD-2-Clause).",
   "av2_install_button": "הורדה והפעלה",
   "av2_install_failed": "מפענח AV2 לא הורד: {reason}",

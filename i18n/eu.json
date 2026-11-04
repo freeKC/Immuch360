@@ -900,7 +900,7 @@
   "av2_error_format": "AV2 bideo hau {format} da: AV2 deskodetzailearen bertsio honek oraindik ez du erreproduzitzen",
   "av2_error_mac_libmpv": "AV2 bideoek Immuch360 Desktop berriago bat behar dute Mac honetan",
   "av2_error_not_here": "AV2 bideoak Immuch360 Desktop-en bakarrik erreproduzitzen dira oraingoz (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 bideoak desaktibatuta daude: Ezarpenak, Bideoak, AV2 bideoak",
+  "av2_error_off": "AV2 bideoak desaktibatuta daude: Ezarpenak, Baliabide ikuslea, AV2 bideoak (esperimentala)",
   "av2_install_body": "Bideo hau AV2 da, oraindik gailu batek ere hardwarez deskodetzen ez duen formatua. Immuch360-k ordenagailu honen prozesadorearekin deskodetu dezake: deskargatu AV2 deskodetzailea behin bakarrik ({size}, kode irekia: VideoLAN-en dav2d, BSD-2-Clause).",
   "av2_install_button": "Deskargatu eta erreproduzitu",
   "av2_install_failed": "Ez da AV2 deskodetzailea deskargatu: {reason}",

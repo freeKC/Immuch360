@@ -284,7 +284,7 @@
   "av2_error_format": "Video AV2 ni {format}: versi penyahkod AV2 ni belum buleh maing lagi",
   "av2_error_mac_libmpv": "Video AV2 keno Immuch360 Desktop hok baru lagi dale Mac ni",
   "av2_error_not_here": "Video AV2 maing dale Immuch360 Desktop jah buat masa ni (Windows, Linux, macOS)",
-  "av2_error_off": "Video AV2 dimatike: Tetapan, Video, Video AV2",
+  "av2_error_off": "Video AV2 dimatike: Tetapan, Asset Viewer, Video AV2 (cubo-cubo)",
   "av2_install_body": "Video ni AV2, format hok belum ado peranti nyahkod pakai perkakasan lagi. Immuch360 buleh nyahkod dio pakai pemproses kompute ni: muat turun penyahkod AV2 sekali jah ({size}, sumber terbuka: dav2d dari VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Muat turun dan maing",
   "av2_install_failed": "Penyahkod AV2 tak dimuat turun: {reason}",

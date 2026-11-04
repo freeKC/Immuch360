@@ -358,7 +358,7 @@
   "av2_error_format": "Ev vîdyoya AV2 {format} e: ev guhertoya dekodera AV2 hîn wê nalîze",
   "av2_error_mac_libmpv": "Vîdyoyên AV2 li ser vê Mac-ê Immuch360 Desktop-a nûtir hewce dikin",
   "av2_error_not_here": "Vîdyoyên AV2 niha tenê di Immuch360 Desktop de tên lîstin (Windows, Linux, macOS)",
-  "av2_error_off": "Vîdyoyên AV2 girtî ne: Mîheng, Vîdyo, Vîdyoyên AV2",
+  "av2_error_off": "Vîdyoyên AV2 girtî ne: Mîheng, Asset Viewer, Vîdyoyên AV2 (ceribandinî)",
   "av2_install_body": "Ev vîdyo AV2 ye, formateke ku hîn tu cîhaz bi hardware dekod nake. Immuch360 dikare wê bi pêvajokera vê komputerê dekod bike: dekodera AV2 carekê dakêşe ({size}, çavkaniya vekirî: dav2d ya VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Dakêşe û bilîze",
   "av2_install_failed": "Dekodera AV2 nehat daxistin: {reason}",

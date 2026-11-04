@@ -904,7 +904,7 @@
   "av2_error_format": "فيديو AV2 هذا بصيغة {format}: هذا الإصدار من مفكك ترميز AV2 لا يشغّلها بعد",
   "av2_error_mac_libmpv": "تحتاج فيديوهات AV2 إلى إصدار أحدث من Immuch360 Desktop على جهاز Mac هذا",
   "av2_error_not_here": "تُشغَّل فيديوهات AV2 في Immuch360 Desktop فقط حاليًا (Windows وLinux وmacOS)",
-  "av2_error_off": "فيديوهات AV2 متوقفة: الإعدادات، فيديوهات، فيديوهات AV2",
+  "av2_error_off": "فيديوهات AV2 متوقفة: الإعدادات، عارض الأصول، فيديوهات AV2 (تجريبي)",
   "av2_install_body": "هذا الفيديو بصيغة AV2، ولا يفك أي جهاز ترميزها بالعتاد بعد. يستطيع Immuch360 فك ترميزه بمعالج هذا الحاسوب: نزّل مفكك ترميز AV2 مرة واحدة ({size}، مفتوح المصدر: dav2d من VideoLAN، BSD-2-Clause).",
   "av2_install_button": "تنزيل وتشغيل",
   "av2_install_failed": "لم يُنزَّل مفكك ترميز AV2: {reason}",

@@ -912,7 +912,7 @@
   "av2_error_format": "Ta videoposnetek AV2 je {format}: ta različica dekodirnika AV2 ga še ne predvaja",
   "av2_error_mac_libmpv": "Videoposnetki AV2 potrebujejo novejši Immuch360 Desktop na tem Macu",
   "av2_error_not_here": "Videoposnetki AV2 se zaenkrat predvajajo samo v Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Videoposnetki AV2 so izklopljeni: Nastavitve, Videoposnetki, Videoposnetki AV2",
+  "av2_error_off": "Videoposnetki AV2 so izklopljeni: Nastavitve, Pregledovalnik sredstev, Videoposnetki AV2 (preizkusno)",
   "av2_install_body": "Ta videoposnetek je AV2, oblika, ki je še nobena naprava ne dekodira strojno. Immuch360 ga lahko dekodira s procesorjem tega računalnika: enkrat prenesite dekodirnik AV2 ({size}, odprta koda: dav2d podjetja VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Prenesi in predvajaj",
   "av2_install_failed": "Dekodirnik AV2 ni bil prenesen: {reason}",

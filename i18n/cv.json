@@ -343,7 +343,7 @@
   "av2_error_format": "Ҫак AV2 видео {format}: AV2 декодерӗн ҫак версийӗ ӑна халлӗхе вылятмасть",
   "av2_error_mac_libmpv": "AV2 видеосене ҫак Mac ҫинче ҫӗнӗрех Immuch360 Desktop кирлӗ",
   "av2_error_not_here": "AV2 видеосем халлӗхе Immuch360 Desktop-ра ҫеҫ выляҫҫӗ (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 видеосем сӳнтернӗ: Ӗнерленӳсем, Видеосем, AV2 видеосем",
+  "av2_error_off": "AV2 видеосем сӳнтернӗ: Ӗнерленӳсем, Asset Viewer, AV2 видеосем (тӗрӗслевлӗ)",
   "av2_install_body": "Ҫак видео AV2, ӑна халлӗхе пӗр хатӗр те аппаратпа декодламасть. Immuch360 ӑна ҫак компьютерӑн процессорӗпе декодлама пултарать: AV2 декодерне пӗрре ҫеҫ илсе лартӑр ({size}, уҫӑ код: VideoLAN-ӑн dav2d, BSD-2-Clause).",
   "av2_install_button": "Илсе лартса вылят",
   "av2_install_failed": "AV2 декодерне илсе лартаймарӗ: {reason}",

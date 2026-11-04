@@ -306,7 +306,7 @@
   "av2_error_format": "Бұл AV2 бейнесі {format}: AV2 декодерінің бұл нұсқасы оны әзірге ойнатпайды",
   "av2_error_mac_libmpv": "AV2 бейнелеріне осы Mac-та жаңарақ Immuch360 Desktop керек",
   "av2_error_not_here": "AV2 бейнелері әзірге тек Immuch360 Desktop-та ойнатылады (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 бейнелері өшірулі: Параметрлер, Бейнелер, AV2 бейнелері",
+  "av2_error_off": "AV2 бейнелері өшірулі: Параметрлер, Asset Viewer, AV2 бейнелері (тәжірибелік)",
   "av2_install_body": "Бұл бейне AV2, оны әзірге ешбір құрылғы аппараттық түрде декодтамайды. Immuch360 оны осы компьютердің процессорымен декодтай алады: AV2 декодерін бір рет жүктеп алыңыз ({size}, ашық бастапқы код: VideoLAN-ның dav2d, BSD-2-Clause).",
   "av2_install_button": "Жүктеп алып ойнату",
   "av2_install_failed": "AV2 декодері жүктелмеді: {reason}",

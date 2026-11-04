@@ -912,7 +912,7 @@
   "av2_error_format": "Este vídeo AV2 é {format}: esta versão do decodificador AV2 ainda não o reproduz",
   "av2_error_mac_libmpv": "Os vídeos AV2 precisam de um Immuch360 Desktop mais recente neste Mac",
   "av2_error_not_here": "Por enquanto, os vídeos AV2 só são reproduzidos no Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "Os vídeos AV2 estão desativados: Configurações, Vídeos, Vídeos AV2",
+  "av2_error_off": "Os vídeos AV2 estão desativados: Configurações, Visualizador de Mídia, Vídeos AV2 (experimental)",
   "av2_install_body": "Este vídeo é AV2, um formato que nenhum dispositivo decodifica ainda por hardware. O Immuch360 pode decodificá-lo com o processador deste computador: baixe o decodificador AV2 uma única vez ({size}, código aberto: dav2d da VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Baixar e reproduzir",
   "av2_install_failed": "O decodificador AV2 não foi baixado: {reason}",

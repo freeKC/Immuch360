@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
@@ -1186,7 +1187,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
             ),
           ),
           body: video != null
-              ? _buildPlayer()
+              // Immuch360 Desktop: an AV2 file plays once its decoder is there, its setting on and its speed told
+              // (lib/desktop/video/av2_gate.dart); a phone says it plays on the computers
+              ? Av2ShareGate(file: networkMediaKey(video.entry), child: _buildPlayer())
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
               : Focus(

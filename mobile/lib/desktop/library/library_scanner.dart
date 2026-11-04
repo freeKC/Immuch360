@@ -684,6 +684,7 @@ class _Scan {
       derivedSettings: xmp?.settingsKey,
       // Kept with the origin only: a packet of ours without an id makes no version
       immersiveKind: origin == null ? null : xmp?.kind,
+      videoCodec: metadata.videoCodec,
     );
   }
 }

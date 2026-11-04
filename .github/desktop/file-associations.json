@@ -20,6 +20,8 @@
     "webm": "WebM video",
     "insv": "Insta360 360° video",
     "360": "GoPro 360° video",
-    "osv": "DJI 360° video"
+    "osv": "DJI 360° video",
+    "ivf": "AV2 video (IVF)",
+    "obu": "AV2 video (OBU stream)"
   }
 }

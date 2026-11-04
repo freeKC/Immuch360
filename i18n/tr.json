@@ -912,7 +912,7 @@
   "av2_error_format": "Bu AV2 videosu {format}: AV2 kod çözücünün bu sürümü onu henüz oynatmıyor",
   "av2_error_mac_libmpv": "AV2 videoları bu Mac'te daha yeni bir Immuch360 Desktop gerektiriyor",
   "av2_error_not_here": "AV2 videoları şimdilik yalnızca Immuch360 Desktop'ta oynatılıyor (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 videoları kapalı: Ayarlar, Videolar, AV2 videoları",
+  "av2_error_off": "AV2 videoları kapalı: Ayarlar, İçerik Görüntüleyici, AV2 videoları (deneysel)",
   "av2_install_body": "Bu video AV2, henüz hiçbir cihazın donanımla çözmediği bir biçim. Immuch360 onu bu bilgisayarın işlemcisiyle çözebilir: AV2 kod çözücüyü bir kez indirin ({size}, açık kaynak: VideoLAN tarafından geliştirilen dav2d, BSD-2-Clause).",
   "av2_install_button": "İndir ve oynat",
   "av2_install_failed": "AV2 kod çözücü indirilemedi: {reason}",

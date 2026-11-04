@@ -284,7 +284,7 @@
   "av2_error_format": "මෙම AV2 වීඩියෝව {format} වේ: AV2 විකේතකයේ මෙම අනුවාදය එය තවම වාදනය නොකරයි",
   "av2_error_mac_libmpv": "මෙම Mac හි AV2 වීඩියෝ සඳහා නවතම Immuch360 Desktop අවශ්‍යයි",
   "av2_error_not_here": "AV2 වීඩියෝ දැනට Immuch360 Desktop තුළ පමණක් වාදනය වේ (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 වීඩියෝ අක්‍රියයි: සැකසුම්, වීඩියෝ, AV2 වීඩියෝ",
+  "av2_error_off": "AV2 වීඩියෝ අක්‍රියයි: සැකසුම්, Asset Viewer, AV2 වීඩියෝ (පර්යේෂණාත්මක)",
   "av2_install_body": "මෙම වීඩියෝව AV2 වේ, තවම කිසිදු උපාංගයක් දෘඩාංගයෙන් විකේතනය නොකරන ආකෘතියකි. Immuch360 ට මෙම පරිගණකයේ ප්‍රොසෙසරයෙන් එය විකේතනය කළ හැක: AV2 විකේතකය එක් වරක් බාගන්න ({size}, විවෘත මූලාශ්‍ර: VideoLAN හි dav2d, BSD-2-Clause).",
   "av2_install_button": "බාගෙන වාදනය කරන්න",
   "av2_install_failed": "AV2 විකේතකය බාගත නොවීය: {reason}",

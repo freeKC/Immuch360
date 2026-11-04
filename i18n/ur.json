@@ -362,7 +362,7 @@
   "av2_error_format": "یہ AV2 ویڈیو {format} ہے: AV2 ڈیکوڈر کا یہ ورژن اسے ابھی نہیں چلاتا",
   "av2_error_mac_libmpv": "اس Mac پر AV2 ویڈیوز کے لیے نیا Immuch360 Desktop درکار ہے",
   "av2_error_not_here": "AV2 ویڈیوز فی الحال صرف Immuch360 Desktop میں چلتی ہیں (Windows، Linux، macOS)",
-  "av2_error_off": "AV2 ویڈیوز بند ہیں: ترتیبات، ویڈیوز، AV2 ویڈیوز",
+  "av2_error_off": "AV2 ویڈیوز بند ہیں: ترتیبات، Asset Viewer، AV2 ویڈیوز (تجرباتی)",
   "av2_install_body": "یہ ویڈیو AV2 ہے، ایسا فارمیٹ جسے ابھی کوئی آلہ ہارڈویئر میں ڈیکوڈ نہیں کرتا۔ Immuch360 اسے اس کمپیوٹر کے پروسیسر سے ڈیکوڈ کر سکتا ہے: AV2 ڈیکوڈر ایک بار ڈاؤن لوڈ کریں ({size}، اوپن سورس: VideoLAN کا dav2d، BSD-2-Clause)۔",
   "av2_install_button": "ڈاؤن لوڈ کر کے چلائیں",
   "av2_install_failed": "AV2 ڈیکوڈر ڈاؤن لوڈ نہیں ہوا: {reason}",

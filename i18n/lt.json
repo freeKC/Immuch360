@@ -910,7 +910,7 @@
   "av2_error_format": "Šis AV2 vaizdo įrašas yra {format}: ši AV2 dekoderio versija jo dar neatkuria",
   "av2_error_mac_libmpv": "AV2 vaizdo įrašams šiame Mac reikia naujesnės Immuch360 Desktop",
   "av2_error_not_here": "AV2 vaizdo įrašai kol kas atkuriami tik Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 vaizdo įrašai išjungti: Nustatymai, Video, AV2 vaizdo įrašai",
+  "av2_error_off": "AV2 vaizdo įrašai išjungti: Nustatymai, Elementų peržiūra, AV2 vaizdo įrašai (eksperimentinis)",
   "av2_install_body": "Šis vaizdo įrašas yra AV2, formatas, kurio dar nedekoduoja aparatine įranga joks įrenginys. Immuch360 gali jį dekoduoti šio kompiuterio procesoriumi: vieną kartą atsisiųskite AV2 dekoderį ({size}, atvirasis kodas: VideoLAN dav2d, BSD-2-Clause).",
   "av2_install_button": "Atsisiųsti ir paleisti",
   "av2_install_failed": "AV2 dekoderis neatsisiųstas: {reason}",

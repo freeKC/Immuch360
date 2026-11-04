@@ -297,7 +297,7 @@
   "av2_error_format": "Video AV2 ia hem i {format}: vesen ia blong AV2 dekoda i no pleplei yet",
   "av2_error_mac_libmpv": "Ol video AV2 oli nidim wan niu Immuch360 Desktop long Mac ia",
   "av2_error_not_here": "Ol video AV2 oli pleplei long Immuch360 Desktop nomo naoia (Windows, Linux, macOS)",
-  "av2_error_off": "Ol video AV2 oli ofem: Seting, Ol video, Ol video AV2",
+  "av2_error_off": "Ol video AV2 oli ofem: Seting, Asset Viewer, Ol video AV2 (eksperimen)",
   "av2_install_body": "Video ia hem i AV2, wan fomat we i no gat wan masin i dekodem long hadwea yet. Immuch360 i save dekodem wetem prosesa blong kompiuta ia: daonlodem AV2 dekoda wan taem nomo ({size}, open sos: dav2d blong VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Daonlod mo plei",
   "av2_install_failed": "AV2 dekoda i no daonlod: {reason}",

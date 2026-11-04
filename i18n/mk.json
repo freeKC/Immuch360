@@ -413,7 +413,7 @@
   "av2_error_format": "Ова AV2 видео е {format}: оваа верзија на AV2 декодерот сè уште не го пушта",
   "av2_error_mac_libmpv": "AV2 видеата бараат понов Immuch360 Desktop на овој Mac",
   "av2_error_not_here": "AV2 видеата засега се пуштаат само во Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 видеата се исклучени: Поставки, Видеа, AV2 видеа",
+  "av2_error_off": "AV2 видеата се исклучени: Поставки, Asset Viewer, AV2 видеа (експериментално)",
   "av2_install_body": "Ова видео е AV2, формат што сè уште ниту еден уред не го декодира хардверски. Immuch360 може да го декодира со процесорот на овој компјутер: преземете го AV2 декодерот еднаш ({size}, отворен код: dav2d од VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Преземи и пушти",
   "av2_install_failed": "AV2 декодерот не беше преземен: {reason}",

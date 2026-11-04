@@ -912,7 +912,7 @@
   "av2_error_format": "この AV2 動画は {format} です: このバージョンの AV2 デコーダーはまだ再生できません",
   "av2_error_mac_libmpv": "この Mac で AV2 動画を再生するには、より新しい Immuch360 Desktop が必要です",
   "av2_error_not_here": "AV2 動画は今のところ Immuch360 Desktop でのみ再生できます (Windows、Linux、macOS)",
-  "av2_error_off": "AV2 動画はオフになっています: 設定、動画、AV2 動画",
+  "av2_error_off": "AV2 動画はオフになっています: 設定、アセットビューアー、AV2 動画 (試験運用)",
   "av2_install_body": "この動画は AV2 です。まだどのデバイスもハードウェアでデコードしない形式です。Immuch360 はこのコンピューターのプロセッサーでデコードできます: AV2 デコーダーを 1 回だけダウンロードしてください ({size}、オープンソース: VideoLAN の dav2d、BSD-2-Clause)。",
   "av2_install_button": "ダウンロードして再生",
   "av2_install_failed": "AV2 デコーダーをダウンロードできませんでした: {reason}",

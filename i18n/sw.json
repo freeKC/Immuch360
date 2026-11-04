@@ -284,7 +284,7 @@
   "av2_error_format": "Video hii ya AV2 ni {format}: toleo hili la kisimbuzi cha AV2 bado haliichezi",
   "av2_error_mac_libmpv": "Video za AV2 zinahitaji Immuch360 Desktop mpya zaidi kwenye Mac hii",
   "av2_error_not_here": "Video za AV2 zinachezwa kwenye Immuch360 Desktop pekee kwa sasa (Windows, Linux, macOS)",
-  "av2_error_off": "Video za AV2 zimezimwa: Mipangilio, Video, Video za AV2",
+  "av2_error_off": "Video za AV2 zimezimwa: Mipangilio, Asset Viewer, Video za AV2 (ya majaribio)",
   "av2_install_body": "Video hii ni AV2, umbizo ambalo bado hakuna kifaa kinachosimbua kwa maunzi. Immuch360 inaweza kuisimbua kwa prosesa ya kompyuta hii: pakua kisimbuzi cha AV2 mara moja ({size}, chanzo huria: dav2d ya VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Pakua na ucheze",
   "av2_install_failed": "Kisimbuzi cha AV2 hakijapakuliwa: {reason}",

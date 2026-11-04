@@ -284,7 +284,7 @@
   "av2_error_format": "Avidyu-a AV2 d {format}: lqem-a n umekkas n tengalt AV2 ur t-yeqqar ara yakan",
   "av2_error_mac_libmpv": "Ividyuten AV2 sran Immuch360 Desktop amaynut ugar ɣef Mac-a",
   "av2_error_not_here": "Ividyuten AV2 ttwaɣran deg Immuch360 Desktop kan i tura (Windows, Linux, macOS)",
-  "av2_error_off": "Ividyuten AV2 ttwasensen: Iɣewwaren, Ividyuten, Ividyuten AV2",
+  "av2_error_off": "Ividyuten AV2 ttwasensen: Iɣewwaren, Asset Viewer, Ividyuten AV2 (d armitan)",
   "av2_install_body": "Avidyu-a d AV2, d amasal ur yettkes ara tengalt yiwen n yibenk s warrum. Immuch360 yezmer ad as-yekkes tengalt s umesbaḍ n uselkim-a: sader amekkas n tengalt AV2 tikkelt kan ({size}, aɣbalu yeldin: dav2d n VideoLAN, BSD-2-Clause).",
   "av2_install_button": "Sader sakin ɣer",
   "av2_install_failed": "Amekkas n tengalt AV2 ur d-yettwasader ara: {reason}",

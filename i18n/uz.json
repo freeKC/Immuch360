@@ -296,7 +296,7 @@
   "av2_error_format": "Bu AV2 video {format}: AV2 dekoderining bu versiyasi uni hali ijro etmaydi",
   "av2_error_mac_libmpv": "AV2 videolari uchun bu Macʻda yangiroq Immuch360 Desktop kerak",
   "av2_error_not_here": "AV2 videolari hozircha faqat Immuch360 Desktopʻda ijro etiladi (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 videolari oʻchirilgan: Sozlamalar, Videolar, AV2 videolari",
+  "av2_error_off": "AV2 videolari oʻchirilgan: Sozlamalar, Asset Viewer, AV2 videolari (tajribaviy)",
   "av2_install_body": "Bu video AV2 formatida, uni hali birorta qurilma apparat orqali dekodlamaydi. Immuch360 uni shu kompyuter protsessori bilan dekodlay oladi: AV2 dekoderini bir marta yuklab oling ({size}, ochiq manba: VideoLAN tomonidan dav2d, BSD-2-Clause).",
   "av2_install_button": "Yuklab olib ijro etish",
   "av2_install_failed": "AV2 dekoderi yuklab olinmadi: {reason}",

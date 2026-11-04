@@ -284,7 +284,7 @@
   "av2_error_format": "Ovaj AV2 video je {format}: ova verzija AV2 dekodera ga još ne reproducira",
   "av2_error_mac_libmpv": "AV2 videi trebaju noviji Immuch360 Desktop na ovom Macu",
   "av2_error_not_here": "AV2 videi se zasad reproduciraju samo u Immuch360 Desktop (Windows, Linux, macOS)",
-  "av2_error_off": "AV2 videi su isključeni: Postavke, Videozapisi, AV2 videi",
+  "av2_error_off": "AV2 videi su isključeni: Postavke, Asset Viewer, AV2 videi (eksperimentalno)",
   "av2_install_body": "Ovaj video je AV2, format koji još nijedan uređaj ne dekodira hardverski. Immuch360 ga može dekodirati procesorom ovog računara: preuzmite AV2 dekoder jednom ({size}, otvoreni kod: dav2d od VideoLAN-a, BSD-2-Clause).",
   "av2_install_button": "Preuzmi i reproduciraj",
   "av2_install_failed": "AV2 dekoder nije preuzet: {reason}",
