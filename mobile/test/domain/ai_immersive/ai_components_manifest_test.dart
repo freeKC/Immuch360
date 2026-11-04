@@ -150,10 +150,11 @@ void main() {
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
-        // The archives of the AV2 decoder list their files once av2-decoder-1 is made
+        // Every archive lists its files; those of the AV2 decoder on the branch of the test build AVT alone (the
+        // archives of the CI, av2-decoder-1 not made: publish_ai_components.py --check --test-build feat-av2)
         expect(
           component.archiveFiles.isNotEmpty,
-          component.isArchive && !av2,
+          component.isArchive,
           reason: '${component.id}: files of archives only',
         );
         expect(component.isArchive, component.id.startsWith('sd-cpp-') || av2, reason: component.id);
@@ -403,9 +404,20 @@ void main() {
     });
 
     test(
-      'the AV2 decoder: three archives of av2-decoder-1 without sums, never offered, never in the tile of the AI',
+      'the AV2 decoder: three archives of av2-decoder-1, those of the CI on the branch of the test build, never in the '
+      'tile of the AI',
       () {
         final decoders = [av2DecoderWindowsComponent, av2DecoderLinuxComponent, av2DecoderMacComponent];
+        const ciArchives = {
+          'av2-decoder-windows-x64': (791890, '161c150cede23a0c3e52dc5ea319585edd089093d897ec4d60561698788aa0cc'),
+          'av2-decoder-linux-x64': (953205, '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7'),
+          'av2-decoder-macos-universal': (1664304, 'a6621f4e38ce0c831d0248226e4f12ccf28bd843f4a98f75b6fa98e5e9b36e1f'),
+        };
+        const programs = {
+          'av2-decoder-windows-x64': ['immuch360-av2.exe'],
+          'av2-decoder-linux-x64': ['immuch360-av2', 'immuch360-run'],
+          'av2-decoder-macos-universal': ['immuch360-av2'],
+        };
         expect(AiFeature.av2Video.isAi, isFalse);
         expect(AiFeature.av2Video.platforms, {
           AiPlatform.windowsX64,
@@ -434,10 +446,21 @@ void main() {
           expect(decoder.licence, 'BSD-2-Clause', reason: decoder.id);
           expect(decoder.licenceUrl, contains('/30140b563596a1b14aef808ff021c90288948315/COPYING'), reason: decoder.id);
           expect(decoder.officialUrls, isEmpty, reason: decoder.id);
-          // No size, no sum, no file until the release is made: never offered, never downloaded
-          expect((decoder.size, decoder.sha256), (null, null), reason: decoder.id);
-          expect(decoder.archiveFiles, isEmpty, reason: decoder.id);
-          expect(decoder.isComplete, isFalse, reason: decoder.id);
+          // On this branch only (feat-av2, the test build AVT): the archives of the CI run 41607804420 of lot AD2 as
+          // they are, served by a local mirror; the gate of the catalogue refuses their sums on any other branch
+          expect((decoder.size, decoder.sha256), ciArchives[decoder.id], reason: decoder.id);
+          expect(decoder.isComplete, isTrue, reason: decoder.id);
+          expect(
+            [for (final file in decoder.archiveFiles) file.path],
+            containsAll(['BUILD-INFO.txt', 'licenses/dav2d-COPYING.txt', 'licenses/AOM-PATENTS.txt']),
+            reason: decoder.id,
+          );
+          expect(
+            [for (final file in decoder.archiveFiles.where((file) => file.executable)) file.path],
+            programs[decoder.id],
+            reason: decoder.id,
+          );
+          expect(decoder.mainPath, 'engines/${decoder.id}/${programs[decoder.id]!.first}', reason: decoder.id);
           expect(aiComponentById(decoder.id), same(decoder));
           expect(
             decoder.urls().single,
@@ -455,38 +478,12 @@ void main() {
               reason: platform.name,
             );
           }
-          expect(aiComponentGroupsFor(platform, only: {AiFeatureGroup.av2}), isEmpty, reason: 'incomplete');
+          // The video settings find its group by name; the tile of the AI never lists it
+          final av2 = aiComponentGroupsFor(platform, only: {AiFeatureGroup.av2});
+          expect(av2.map((group) => group.own), platform == AiPlatform.questArm64 ? isEmpty : [forPlatform]);
+          expect(aiComponentGroupsFor(platform).map((group) => group.group), isNot(contains(AiFeatureGroup.av2)));
         }
         expect(aiComponentsFor(AiPlatform.macosX64, feature: AiFeature.av2Video), [av2DecoderMacComponent]);
-
-        // With its sums (the branch of the test build), the video settings find the group by name; the tile of the AI
-        // still never lists it
-        const complete = AiComponent(
-          id: 'av2-decoder-windows-x64',
-          name: 'AV2 decoder',
-          version: '30140b5-1',
-          kind: AiComponentKind.archive,
-          platforms: {AiPlatform.windowsX64},
-          assetName: 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
-          installPath: 'engines/av2-decoder-windows-x64',
-          size: 1100000,
-          sha256: 'aa',
-          compression: AiCompression.none,
-          licence: 'BSD-2-Clause',
-          licenceUrl: 'https://example.org',
-          features: {AiFeature.av2Video},
-          releaseTag: av2DecoderReleaseTag,
-          archiveFiles: [AiArchiveFile(path: 'immuch360-av2.exe', size: 2400000, sha256: 'bb', executable: true)],
-        );
-        final catalogue = [for (final component in aiComponents) component.id == complete.id ? complete : component];
-        expect(
-          aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: catalogue).map((group) => group.group),
-          isNot(contains(AiFeatureGroup.av2)),
-        );
-        final av2 = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: catalogue, only: {AiFeatureGroup.av2});
-        expect(av2.single.group, AiFeatureGroup.av2);
-        expect(av2.single.own, [complete]);
-        expect(complete.mainPath, 'engines/av2-decoder-windows-x64/immuch360-av2.exe');
       },
     );
 
