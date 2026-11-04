@@ -2,7 +2,8 @@
 // bar with Back, the name and the count, Walk or Turn around, Reset, Turn upright, the gyroscope on phones, the
 // details and the help; the lines that fade after a few seconds (FreeKC's rule); loading, the info sheet, the stick
 // under the left thumb, the refusals, and on a computer the offer of a reduced copy when the frames are slow
-// (framewatch.js), which stays until it is answered.
+// (framewatch.js), which stays until it is answered. Save to Immich (save.js): its button, or "On your Immich
+// server" for the scene of a splat photo, and its panel.
 
 const ICONS = {
   back: 'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
@@ -13,6 +14,8 @@ const ICONS = {
   orbit: 'M12 6c-3.87 0-7 2.69-7 6h2c0-2.21 2.24-4 5-4v3l4-4-4-4v3zm7 6c0 2.21-2.24 4-5 4v-3l-4 4 4 4v-3c3.87 0 7-2.69 7-6h-2z',
   gyroscope: 'M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z',
   info: 'M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z',
+  // Material's cloud_upload: Save to Immich
+  save: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z',
   help: 'M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z',
 };
 
@@ -55,7 +58,7 @@ function button(name, label, onClick, withLabel = false) {
   return node;
 }
 
-/** The panel of [session] in [root]; [actions] are back, reset, upright, mode, gyroscope, info, help */
+/** The panel of [session] in [root]; [actions] are back, reset, upright, mode, gyroscope, info, help, save */
 export function createPanel(root, session, actions) {
   const t = session.texts;
   document.documentElement.lang = session.locale;
@@ -85,6 +88,18 @@ export function createPanel(root, session, actions) {
     gyro = button('gyroscope', t.gyroscope ?? 'Gyroscope', actions.gyroscope);
     tools.appendChild(gyro);
   }
+  // Save to Immich: the button, greyed without a server; the scene of a splat photo is there already
+  const save = session.save;
+  if (save?.onServer) {
+    tools.appendChild(element('span', 'tool-note', save.texts?.onServer ?? ''));
+  } else if (save?.offered) {
+    const saveButton = button('save', save.texts?.save ?? 'Save to Immich', actions.save, true);
+    saveButton.classList.toggle('off', !save.connected);
+    if (!save.connected && save.texts?.notConnected) {
+      saveButton.title = save.texts.notConnected;
+    }
+    tools.appendChild(saveButton);
+  }
   tools.appendChild(button('info', t.info ?? 'Info', actions.info));
   tools.appendChild(button('help', t.helpLabel ?? 'Help', actions.help));
   bar.appendChild(tools);
@@ -105,6 +120,16 @@ export function createPanel(root, session, actions) {
   const offer = element('div', 'offer hidden');
   offer.setAttribute('role', 'alertdialog');
   root.appendChild(offer);
+
+  const savePanel = element('div', 'save-panel hidden');
+  savePanel.setAttribute('role', 'dialog');
+  savePanel.addEventListener('click', (event) => event.stopPropagation());
+  savePanel.addEventListener('pointerdown', (event) => event.stopPropagation());
+  root.appendChild(savePanel);
+  let saveLine = null;
+  let saveButtons = null;
+  let saveAlbum = null;
+  let saveActions = null;
 
   const loading = element('div', 'loading hidden');
   const loadingText = element('div', 'loading-text', t.loading ?? '');
@@ -217,6 +242,79 @@ export function createPanel(root, session, actions) {
           panel.showBar(false);
         }
       }, 3000);
+    },
+    /**
+     * The panel of Save to Immich: the [poster] (a blob URL), the [title], the [lines] (name, size and gaussians,
+     * date, a warning, what it does), the album switch, Cancel and Save
+     */
+    showSave({ poster, title, lines, albumLabel, album, cancelLabel, saveLabel, onSave, onAgain, onCancel }) {
+      saveActions = { onSave, onAgain, onCancel };
+      const image = element('img', 'save-poster');
+      image.src = poster;
+      image.alt = '';
+      const switchLabel = element('label', 'save-album');
+      saveAlbum = element('input');
+      saveAlbum.type = 'checkbox';
+      saveAlbum.checked = album;
+      switchLabel.append(saveAlbum, element('span', null, albumLabel ?? ''));
+      saveLine = element('p', 'save-line');
+      const cancel = element('button', 'sheet-button save-cancel', cancelLabel ?? 'Cancel');
+      cancel.type = 'button';
+      cancel.addEventListener('click', () => saveActions?.onCancel());
+      const go = element('button', 'sheet-button save-go', saveLabel ?? 'Save');
+      go.type = 'button';
+      go.addEventListener('click', () => {
+        go.disabled = true;
+        saveAlbum.disabled = true;
+        saveActions?.onSave(saveAlbum.checked);
+      });
+      saveButtons = element('div', 'offer-buttons');
+      saveButtons.append(cancel, go);
+      savePanel.replaceChildren(
+        element('h2', 'save-title', title ?? ''),
+        image,
+        ...lines.filter(Boolean).map((text) => element('p', 'save-text', text)),
+        switchLabel,
+        saveLine,
+        saveButtons,
+      );
+      savePanel.classList.remove('hidden');
+      panel.showBar(true);
+    },
+    /** Where the save stands: [text], and [percent] when it sends */
+    setSaveLine(text) {
+      if (saveLine) {
+        saveLine.textContent = text;
+      }
+    },
+    /** The save ended: Cancel becomes Close, and "Save another copy" when the server had the scene already */
+    showSaveResult({ again, againLabel, closeLabel }) {
+      if (!saveButtons) {
+        return;
+      }
+      const buttons = [];
+      if (again && againLabel) {
+        const another = element('button', 'sheet-button save-again', againLabel);
+        another.type = 'button';
+        another.addEventListener('click', () => {
+          another.disabled = true;
+          saveActions?.onAgain(saveAlbum?.checked ?? true);
+        });
+        buttons.push(another);
+      }
+      const close = element('button', 'sheet-button save-close', closeLabel ?? 'OK');
+      close.type = 'button';
+      close.addEventListener('click', () => panel.hideSave());
+      buttons.push(close);
+      saveButtons.replaceChildren(...buttons);
+    },
+    hideSave() {
+      savePanel.classList.add('hidden');
+      saveLine = null;
+      saveButtons = null;
+    },
+    saveShown() {
+      return !savePanel.classList.contains('hidden');
     },
     stick(state) {
       if (!state) {

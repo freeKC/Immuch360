@@ -22,6 +22,7 @@ import 'package:immich_mobile/domain/services/network_source_relocator.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -1149,6 +1150,7 @@ class _Viewings implements SplatViewerService {
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
     bool watchFrames = false,
+    SplatViewerSaving? saving,
   }) async {
     shown.add((source.sourceId, source.path, cap));
     return const SplatViewerOutcome(SplatViewerEnd.closed);

@@ -201,6 +201,7 @@ class SplatViewerService {
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
     bool watchFrames = false,
+    SplatViewerSaving? saving,
   }) async {
     final name = source.name;
     final ext = head.format.json;
@@ -266,6 +267,8 @@ class SplatViewerService {
       'texts': look.texts,
       'theme': {'dark': look.dark, 'primary': look.primary},
       'events': 'events',
+      // Save to Immich (plan of 3 November 2026, section 6.1): the panel's texts and switch, the poster and save URLs
+      'save': saving?.session,
     };
     String? unsupported;
     int? reduceTo;
@@ -316,6 +319,9 @@ class SplatViewerService {
             closing = true;
             unawaited(_host.close());
           }
+        // The session hands them to the saving
+        case SplatViewerSave() || SplatViewerCancelSave():
+          break;
       }
     }
 
@@ -333,6 +339,7 @@ class SplatViewerService {
         scene: sceneFile,
         sceneName: sceneFile == null ? null : sceneName,
         onEvent: onEvent,
+        saving: saving,
       ),
     );
     onOpening?.call();

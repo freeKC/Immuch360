@@ -6,6 +6,8 @@
 //   GET  /<token>/<s>/session.json                                            what the page needs, in the app's words
 //   GET  /<token>/<s>/scene.spz | scene.ply                                   a file of this device, from disk
 //   POST /<token>/<s>/events                                                  what the page tells the app
+//   POST /<token>/<s>/poster                                                  the view captured for Save to Immich
+//   GET  /<token>/<s>/save                                                    where that save stands
 //
 // A file of a share keeps its own bridge URL (/<token>/<source>/<path>), on the same origin. The page is served with
 // a Content-Security-Policy that lets it load nothing but the app's own origin (no runtime download: every script is
@@ -34,6 +36,8 @@ const splatViewerPageFiles = [
   'drawloop.js',
   'panel.js',
   'events.js',
+  'save.js',
+  'mark.js',
   'adapt.js',
   'framewatch.js',
   'engine-spark.js',
@@ -99,8 +103,63 @@ sealed class SplatViewerEvent {
     'watch' => SplatViewerWatch(json),
     'reduce' when json['keep'] is int && (json['keep']! as int) > 0 => SplatViewerReduce(json['keep']! as int),
     'keepWhole' => const SplatViewerKeepWhole(),
+    'save' => SplatViewerSave(album: json['album'] != false),
+    'saveAgain' => SplatViewerSave(album: json['album'] != false, again: true),
+    'cancelSave' => const SplatViewerCancelSave(),
     _ => null,
   };
+}
+
+/// Save to Immich of the page's panel: the user pressed Save ([again] for "Save another copy"), with the album or not
+final class SplatViewerSave extends SplatViewerEvent {
+  const SplatViewerSave({required this.album, this.again = false});
+
+  final bool album;
+  final bool again;
+}
+
+/// The user closed the panel of Save to Immich, or pressed its Cancel while it ran
+final class SplatViewerCancelSave extends SplatViewerEvent {
+  const SplatViewerCancelSave();
+}
+
+/// Save to Immich in the page (plan of 3 November 2026, section 6.1), given by the app: what session.json says of it,
+/// the poster the page captured, and where the save stands
+abstract class SplatViewerSaving {
+  /// The "save" entry of session.json: offered, the album switch, the texts of the panel
+  Map<String, Object?> get session;
+
+  /// The JPEG the page captured; false when it is none the writer takes
+  bool takePoster(Uint8List jpeg);
+
+  /// The user's answer in the panel (the events save, saveAgain and cancelSave)
+  void onEvent(SplatViewerEvent event);
+
+  /// The orientation the user chose in the page, kept with the scene
+  void upright(String value);
+
+  /// {state, percent, text, assetId}
+  Map<String, Object?> state();
+}
+
+/// The most bytes of the poster the page posts: a JPEG of 1,600 px at quality 85 is about 300 KB
+const splatViewerPosterMaxBytes = 2 << 20;
+
+/// Whether [bytes] start as a JPEG and hold a frame (a SOF marker in their first 64 KiB)
+bool isSplatViewerPoster(Uint8List bytes) {
+  if (bytes.length < 4 || bytes[0] != 0xFF || bytes[1] != 0xD8) {
+    return false;
+  }
+  final end = bytes.length < 65536 ? bytes.length - 1 : 65535;
+  for (var i = 2; i < end; i++) {
+    if (bytes[i] == 0xFF) {
+      final marker = bytes[i + 1];
+      if (marker >= 0xC0 && marker <= 0xCF && marker != 0xC4 && marker != 0xC8 && marker != 0xCC) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /// The scene shows: how long it took, what drew it, and where the page placed it
@@ -182,7 +241,7 @@ final class SplatViewerKeepWhole extends SplatViewerEvent {
 /// The generated media of one viewing: [page] (from [loadSplatViewerPage]), [session] written as session.json, and
 /// [scene] (a file of this device, served as scene.spz or scene.ply) when the scene is not a file of a share. The
 /// events the page posts come out of [onEvent]; anything else posted is refused.
-class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink {
+class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink, GeneratedMediaLargePosts {
   SplatViewerSession({
     required this.id,
     required Map<String, Uint8List> page,
@@ -190,6 +249,7 @@ class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink {
     this.scene,
     this.sceneName,
     required this.onEvent,
+    this.saving,
   }) : _page = page,
        _session = Uint8List.fromList(utf8.encode(jsonEncode(session))),
        _csp = splatViewerCsp(utf8.decode(page['index.html'] ?? Uint8List(0), allowMalformed: true));
@@ -205,6 +265,9 @@ class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink {
 
   final void Function(SplatViewerEvent event) onEvent;
 
+  /// Save to Immich, when the app offers it for this scene
+  final SplatViewerSaving? saving;
+
   static const _noStore = {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'};
 
   @override
@@ -215,6 +278,14 @@ class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink {
     }
     if (name == 'session.json') {
       return GeneratedFile(_session, splatViewerContentType(name), headers: _noStore);
+    }
+    final saving = this.saving;
+    if (name == 'save' && saving != null) {
+      return GeneratedFile(
+        Uint8List.fromList(utf8.encode(jsonEncode(saving.state()))),
+        splatViewerContentType('save.json'),
+        headers: _noStore,
+      );
     }
     final bytes = _page[name];
     if (bytes == null) {
@@ -232,7 +303,15 @@ class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink {
   }
 
   @override
+  int postLimit(String name) =>
+      name == 'poster' && saving != null ? splatViewerPosterMaxBytes : GeneratedMediaSink.maxPostBytes;
+
+  @override
   bool received(String name, Uint8List body) {
+    final saving = this.saving;
+    if (name == 'poster' && saving != null) {
+      return isSplatViewerPoster(body) && saving.takePoster(body);
+    }
     if (name != 'events') {
       return false;
     }
@@ -240,7 +319,12 @@ class SplatViewerSession implements GeneratedMedia, GeneratedMediaSink {
       final json = jsonDecode(utf8.decode(body));
       if (json is Map<String, Object?>) {
         final event = SplatViewerEvent.parse(json);
-        if (event != null) {
+        if (event is SplatViewerSave || event is SplatViewerCancelSave) {
+          saving?.onEvent(event!);
+        } else if (event != null) {
+          if (event is SplatViewerUpright) {
+            saving?.upright(event.value);
+          }
           onEvent(event);
         }
       }

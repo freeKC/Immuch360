@@ -114,6 +114,12 @@ abstract class GeneratedMediaSink {
   bool received(String name, Uint8List body);
 }
 
+/// A sink that takes larger posts to some names: the poster of a splat scene saved from the splat viewer's page
+abstract class GeneratedMediaLargePosts {
+  /// The most bytes of a post to [name]
+  int postLimit(String name);
+}
+
 class GeneratedFile {
   /// A file held in memory
   const GeneratedFile(Uint8List this.bytes, this.contentType, {this.headers = const {}}) : diskFile = null;

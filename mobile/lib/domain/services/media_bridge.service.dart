@@ -434,10 +434,14 @@ class LocalMediaBridge implements MediaBridge {
     return isM2ts;
   }
 
-  /// A post of at most [GeneratedMediaSink.maxPostBytes] to [name] of [sink]: 204 once handed over, 404 when [name]
-  /// takes no post, 413 when larger (nothing handed over, the connection closed rather than read to its end)
+  /// A post of at most [GeneratedMediaSink.maxPostBytes] to [name] of [sink] (or what a [GeneratedMediaLargePosts]
+  /// sink takes for [name]): 204 once handed over, 404 when [name] takes no post, 413 when larger (nothing handed
+  /// over, the connection closed rather than read to its end)
   Future<void> _answerPost(HttpRequest request, HttpResponse response, GeneratedMediaSink sink, String name) async {
-    const most = GeneratedMediaSink.maxPostBytes;
+    final most = switch (sink) {
+      final GeneratedMediaLargePosts large => large.postLimit(name),
+      _ => GeneratedMediaSink.maxPostBytes,
+    };
     var tooLarge = request.contentLength > most;
     final body = BytesBuilder(copy: false);
     if (!tooLarge) {

@@ -4,6 +4,7 @@
 // (placement.js), lets the user walk in a place or turn around an object (controls.js), and tells the app what
 // happened (events.js). It draws only while something moves, and about a second after; on a computer that shows the
 // splat whole, it draws the first seconds whatever moves and offers a reduced copy when they are slow (framewatch.js).
+// Save to Immich (save.js) makes the view on screen the poster of a splat photo.
 
 import { Quality, median, quantile } from './adapt.js';
 import { Navigator, attachEscape, attachInput, startGyroscope } from './controls.js';
@@ -12,6 +13,7 @@ import { createEvents } from './events.js';
 import { FrameWatch } from './framewatch.js';
 import { createPanel } from './panel.js';
 import { boundsOf, firstView, nextUpright, openingUpright, sampleOf, verticalFov } from './placement.js';
+import { capturePoster, createSaver } from './save.js';
 import { fill, readSession } from './session.js';
 
 /** The page keeps drawing this long after the last change, for Spark's sort to settle */
@@ -120,6 +122,9 @@ async function main() {
   let engine = null;
   let lastTouch = touchFirst;
   const requestDraw = () => loop.request();
+  // Save to Immich: the poster is taken right after the next frame is drawn
+  let saver = null;
+  let pendingCapture = null;
 
   const panel = createPanel(document.body, session, {
     back: close,
@@ -142,7 +147,21 @@ async function main() {
     gyroscope: () => toggleGyroscope(),
     info: () => panel.toggleSheet(infoLines()),
     help: () => panel.toggleSheet([hint()]),
+    save: () => saver?.start(),
   });
+  if (session.save?.offered) {
+    saver = createSaver({
+      save: session.save,
+      panel,
+      events,
+      capture: () =>
+        new Promise((resolve) => {
+          pendingCapture = resolve;
+          requestDraw();
+        }),
+      say: (text, seconds) => panel.say(text, seconds),
+    });
+  }
 
   // A refusal or a failure ends the viewing: its sheet shows with Back, and Esc closes at once
   let failed = false;
@@ -201,6 +220,12 @@ async function main() {
     const { eye, look } = nav.camera();
     engine.setCamera(eye, look, verticalFov(size.width / size.height), size.width / size.height);
     engine.render();
+    if (pendingCapture) {
+      // The drawing buffer holds this frame until the task ends: copied now, before anything else draws
+      const resolve = pendingCapture;
+      pendingCapture = null;
+      capturePoster(canvas, { mark: session.save?.mark === true }).then(resolve, () => resolve(null));
+    }
     if (backToBack) {
       const ms = now - last;
       frames.push(ms);

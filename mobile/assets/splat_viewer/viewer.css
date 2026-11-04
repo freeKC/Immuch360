@@ -239,3 +239,54 @@ html, body {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.75);
 }
+/* Save to Immich (save.js): the note of a scene already on the server, the button without a server, the panel */
+.tool-note {
+  align-self: center;
+  padding: 0 8px;
+  font-size: 0.85em;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+.tool.off {
+  opacity: 0.45;
+}
+.save-panel {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 520px);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: var(--bar);
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+.save-panel.hidden {
+  display: none;
+}
+.save-title {
+  margin: 0 0 10px;
+  font-size: 1.1em;
+}
+.save-poster {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.save-text {
+  margin: 4px 0;
+}
+.save-album {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+.save-line {
+  min-height: 1.3em;
+  margin: 6px 0;
+}

@@ -22,6 +22,7 @@ import 'package:immich_mobile/domain/services/splat_photo/splat_photo_scenes.dar
 import 'package:immich_mobile/domain/services/splat_photo/splat_tail_fetch.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -49,6 +50,7 @@ class _Viewings implements SplatViewerService {
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
     bool watchFrames = false,
+    SplatViewerSaving? saving,
   }) async {
     shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap));
     onOpening?.call();

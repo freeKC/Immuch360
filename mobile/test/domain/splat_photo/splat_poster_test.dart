@@ -198,6 +198,24 @@ void main() {
     expect(at(12, 12), greaterThan(0.5), reason: 'the edge between the faces');
   });
 
+  test('the page draws the same mark: the path and the numbers of mark.js are those of SplatMark', () {
+    final js = File('assets/splat_viewer/mark.js').readAsStringSync();
+    final path = RegExp(r"MARK_PATH =\s*'([^']+)'").firstMatch(js)!.group(1);
+    expect(path, splatMarkPath);
+    final numbers = RegExp(r'MARK = \{([^}]+)\}').firstMatch(js)!.group(1)!;
+    final values = {
+      for (final pair in numbers.split(',')) pair.split(':')[0].trim(): double.parse(pair.split(':')[1].trim()),
+    };
+    expect(values, {
+      'size': SplatMark.size,
+      'margin': SplatMark.margin,
+      'radius': SplatMark.radius,
+      'backAlpha': SplatMark.backAlpha,
+      'glyph': SplatMark.glyph,
+      'glyphAlpha': SplatMark.glyphAlpha,
+    });
+  });
+
   test('a drawn poster goes into a splat photo whose scene reads back', () async {
     final file = _scene('axes_v2.spz');
     final drawing = await drawSplatPoster(file: file, head: _head(file));
