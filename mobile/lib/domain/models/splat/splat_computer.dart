@@ -67,8 +67,9 @@ class SplatComputer {
   final int? physicalMemory;
   final bool keepEveryGaussian;
 
-  /// Whether a splat shows whole up to the memory: a dedicated card, or the setting
-  bool get showsWhole => gpu.kind == SplatGpuKind.dedicated || keepEveryGaussian;
+  /// Whether a splat shows whole up to the memory: a dedicated card, or the setting, on a computer whose memory is
+  /// known (review of 4 November 2026)
+  bool get showsWhole => (gpu.kind == SplatGpuKind.dedicated || keepEveryGaussian) && physicalMemory != null;
 
   SplatComputer copyWith({SplatGpu? gpu, int? physicalMemory, bool? keepEveryGaussian}) => SplatComputer(
     gpu: gpu ?? this.gpu,
@@ -89,6 +90,11 @@ class SplatComputer {
   @override
   String toString() => 'SplatComputer($gpu, memory $physicalMemory, keep every gaussian $keepEveryGaussian)';
 }
+
+/// Computers whose graphics chip shares their memory show this many whole, Large splats or not; a dedicated graphics
+/// card, or the setting "Keep every gaussian", shows every gaussian up to splatComputerMostGaussians (lot SVC); a
+/// computer whose memory is not known, this many too
+const splatComputerGaussians = 1000000;
 
 /// The memory of the web view's processes for a splat, twice the file's bytes on top (the page reads the whole file,
 /// and Spark's decoder takes a copy): at most 500 MB and 450 bytes a gaussian in every measure (822 MB measured at 1
@@ -120,6 +126,11 @@ const splatCardMemoryShare = 0.5;
 /// page, 68 s) in Chromium 153 on ai1 without dying (3 November 2026); two thirds of it
 const splatEngineMostGaussians = 64000000;
 
+/// The largest file the page loaded, that of the 96 million gaussians: a file shown whole is at most this long until a
+/// larger one is measured (a PLY of degree 3 that the memory of a computer of 64 GB allows is 5.5 GB; review of 4
+/// November 2026)
+const splatComputerMostFileBytes = 1960197759;
+
 /// The memory the page takes for [gaussians] gaussians of a file of [fileBytes] (see [splatPageBaseBytes])
 int splatPageBytes(int gaussians, {int fileBytes = 0}) =>
     splatPageBaseBytes + splatPageBytesPerGaussian * gaussians + 2 * fileBytes;
@@ -134,14 +145,18 @@ int _layered(int gaussians) => gaussians <= splatCardLayerGaussians
 
 /// The most gaussians [computer] shows whole for a file of [fileBytesPerGaussian] bytes a gaussian (21 for the SPZ of
 /// the measures, about 248 for a PLY of degree 3): what a third of its physical memory holds, what half the memory of
-/// its dedicated card holds, and [splatEngineMostGaussians]. A memory not known limits nothing.
+/// its dedicated card holds, and [splatEngineMostGaussians]. A computer whose memory is not known shows the cap of the
+/// chips that share it, [splatComputerGaussians] (review of 4 November 2026).
 int splatComputerMostGaussians(SplatComputer computer, {double fileBytesPerGaussian = 0}) {
-  var most = splatEngineMostGaussians;
   final physical = computer.physicalMemory;
-  if (physical != null) {
-    final room = physical * splatPageMemoryShare - splatPageBaseBytes;
-    most = math.min(most, (room / (splatPageBytesPerGaussian + 2 * fileBytesPerGaussian)).floor());
+  if (physical == null) {
+    return splatComputerGaussians;
   }
+  final room = physical * splatPageMemoryShare - splatPageBaseBytes;
+  var most = math.min(
+    splatEngineMostGaussians,
+    (room / (splatPageBytesPerGaussian + 2 * fileBytesPerGaussian)).floor(),
+  );
   final card = computer.gpu.memory;
   if (computer.gpu.kind == SplatGpuKind.dedicated && card != null) {
     final room = card * splatCardMemoryShare - splatCardBaseBytes;

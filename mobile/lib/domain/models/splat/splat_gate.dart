@@ -71,10 +71,6 @@ enum SplatDeviceClass { quest, phone, computer }
 const splatPhoneGaussians = 150000;
 const splatPhoneLargeGaussians = 500000;
 
-/// Computers whose graphics chip shares their memory show this many whole, Large splats or not; a dedicated graphics
-/// card, or the setting "Keep every gaussian", shows every gaussian up to splatComputerMostGaussians (lot SVC)
-const splatComputerGaussians = 1000000;
-
 /// The most gaussians a [device] shows whole, the rest reduced away
 int splatViewerCapOf(SplatDeviceClass device, {required bool largeSplats}) => switch (device) {
   SplatDeviceClass.quest => largeSplats ? splatLargeGaussians : splatSafeGaussians,
@@ -124,8 +120,12 @@ SplatGateVerdict splatViewerGateOf({
       // The user chose the reduced copy the page offered: the reduction reads the file from the disk, whatever its size
       return SplatGateVerdict.open(_requestOf(head, name, fileBytes, math.min(keep, most)));
     }
-    // A dedicated card or the setting, or the user who chose to keep them all for this file
-    if (computer.showsWhole || answer?.reduces == false) {
+    // A dedicated card or the setting, or the user who chose to keep them all for this file, on a computer whose
+    // memory is known; never a file larger than the page ever loaded
+    if (computer.physicalMemory != null && (computer.showsWhole || answer?.reduces == false)) {
+      if (fileBytes > splatComputerMostFileBytes) {
+        return SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: head.gaussians);
+      }
       if (head.gaussians > most) {
         return SplatGateVerdict.refused(SplatRefusal.beyondMemory, gaussians: head.gaussians, most: most);
       }

@@ -122,10 +122,47 @@ void main() {
     expect(most, lessThan(16000000), reason: 'a third of 16 GB: the RTX drew 8 million with 3.07 GB');
     expect(splatComputerMostGaussians(rtx, fileBytesPerGaussian: 236), greaterThan(4000000), reason: 'PLY');
     // Half of the card's 8 GB would hold more: the computer's memory is what limits this laptop
-    final cardOnly = splatComputerMostGaussians(SplatComputer(gpu: rtx.gpu));
+    final cardOnly = splatComputerMostGaussians(SplatComputer(gpu: rtx.gpu, physicalMemory: 256 << 30));
     expect(cardOnly, greaterThan(20000000));
     expect(cardOnly, lessThan(splatEngineMostGaussians));
-    expect(splatComputerMostGaussians(const SplatComputer()), splatEngineMostGaussians);
+  });
+
+  test('a computer whose memory is not known keeps the cap of the chips that share it, card or answer', () {
+    // Review of 4 November 2026: a dedicated card with no list and no memory read was given 64 million
+    final blind = SplatComputer(gpu: rtx.gpu);
+    expect(splatComputerMostGaussians(blind), splatComputerGaussians);
+    expect(splatComputerMostGaussians(const SplatComputer()), splatComputerGaussians);
+    expect(blind.showsWhole, isFalse);
+    expect(blind.copyWith(keepEveryGaussian: true).showsWhole, isFalse);
+    final four = measured('rtx', 4000000);
+    expect(gate(four, blind).request!.maxGaussians, splatComputerGaussians);
+    expect(gate(four, blind, answer: const SplatFrameAnswer.whole()).request!.maxGaussians, splatComputerGaussians);
+    expect(gate(measured('rtx', 8000000), blind).refusal, SplatRefusal.tooLarge);
+  });
+
+  test('a file larger than any the page loaded is not shown whole, whatever the memory allows', () {
+    // Review of 4 November 2026: the page loaded 1,960,197,759 bytes (96 million gaussians, ai1); a PLY of degree 3
+    // that a computer of 64 GB allows by its count is far beyond
+    expect(splatComputerMostFileBytes, 1960197759);
+    final big = SplatComputer(gpu: rtx.gpu, physicalMemory: 64 << 30);
+    const ply = SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: 7000000, shDegree: 3);
+    expect(gate(measured('rtx', 8000000), big, head: ply, fileBytes: 7000000 * 248).request!.maxGaussians, 7000000);
+    const huge = SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: 16000000, shDegree: 3);
+    expect(splatComputerMostGaussians(big, fileBytesPerGaussian: 248), greaterThan(16000000));
+    expect(
+      gate(measured('rtx', 12000000), big, head: huge, fileBytes: 16000000 * 248),
+      const SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: 16000000),
+    );
+    expect(
+      gate(
+        measured('rtx', 12000000),
+        big,
+        head: huge,
+        fileBytes: 16000000 * 248,
+        answer: const SplatFrameAnswer.whole(),
+      ).refusal,
+      SplatRefusal.tooLarge,
+    );
   });
 
   test('on the RTX every measured scene up to 8 million opens whole; 12 million, which ran, is past the margin', () {
