@@ -3,13 +3,21 @@
 // reads the file: the scan of the folder library wrote "av2" in the index for each .ivf and .obu whose head starts an
 // AV2 stream (library_index.dart, video_codec), and the badge reads the index again at the end of each local sync. The
 // tiles of the shares read the head of the file in turn with the other tiles (network_media_tile.widget.dart).
+//
+// The image of such a tile is the neutral tile until the AV2 decoder is installed, then a frame the decoder gives
+// (desktop_local_image_api.dart). Flutter's image cache keeps the neutral one under the key of the tile, so the key of
+// an AV2 video of the library carries whether the decoder is installed (desktopAv2ThumbnailVariant): installed, the
+// tile asks for its image again and gets its frame without a restart of the app, and the neutral tile it had is
+// dropped from the cache (review of lot AD6, m1).
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
+import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 
 /// The AV2 streams of the folder library, by asset id, read from its index again each time a local sync ends
@@ -54,4 +62,30 @@ class DesktopAv2Badge extends ConsumerWidget {
       child: Av2BadgeLabel(),
     );
   }
+}
+
+/// The variant of the key of the thumbnail of an AV2 video once the AV2 decoder is installed
+const av2DecoderThumbnailVariant = 'av2-decoder';
+
+/// What keys the thumbnail of [asset] beside its file (LocalThumbProvider.variant), from the build of its tile
+/// ([ref]): [av2DecoderThumbnailVariant] for an AV2 video of the index while the AV2 decoder is installed, else null.
+/// When the decoder comes, the thumbnail the tile had (the neutral tile) leaves the image cache.
+Object? desktopAv2ThumbnailVariant(WidgetRef ref, BaseAsset? asset) {
+  final localId = asset?.localId;
+  if (asset == null || !asset.isVideo || localId == null) {
+    return null;
+  }
+  final isAv2 = ref.watch(av2LibraryVideosProvider.select((ids) => ids.valueOrNull?.contains(localId) ?? false));
+  if (!isAv2) {
+    return null;
+  }
+  ref.listen<bool>(av2DecoderInstalledProvider, (before, installed) {
+    if (installed && before != true) {
+      final neutral = getThumbnailImageProvider(asset);
+      if (neutral != null) {
+        PaintingBinding.instance.imageCache.evict(neutral);
+      }
+    }
+  });
+  return ref.watch(av2DecoderInstalledProvider) ? av2DecoderThumbnailVariant : null;
 }

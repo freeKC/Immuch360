@@ -11,7 +11,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
+import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
@@ -19,6 +21,12 @@ import 'package:path/path.dart' as p;
 
 import '../../../unit/presentation/presentation_context.dart';
 import '../../library/library_test_support.dart';
+
+/// Whether the AV2 decoder is installed, in the tests of the tiles
+final _installed = StateProvider<bool>((ref) => false);
+
+/// An image the cache holds for a key, which never completes: the neutral tile a tile got before the decoder came
+class _Kept extends ImageStreamCompleter {}
 
 LocalAsset _video(String id, String name, {AssetType type = AssetType.video}) => LocalAsset(
   id: id,
@@ -134,6 +142,81 @@ void main() {
       await pumpTile(tester, _video('v1', 'clip.ivf'));
       expect(find.byType(DesktopAv2Badge), findsNothing);
       expect(find.text('AV2'), findsNothing);
+    });
+  });
+
+  // Review of lot AD6, m1: the library opened before the first AV2 video played kept its neutral AV2 tiles until the
+  // app restarted, the image cache holding them under the key of the tile
+  group('the image of the tile of an AV2 video', () {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    late PresentationContext context;
+
+    setUp(() async => context = await PresentationContext.create());
+    tearDown(() async {
+      PaintingBinding.instance.imageCache
+        ..clear()
+        ..clearLiveImages();
+      await context.dispose();
+    });
+
+    Future<ProviderContainer> pumpTile(WidgetTester tester, BaseAsset asset) async {
+      await tester.pumpTestWidget(
+        context,
+        SizedBox.square(dimension: 200, child: ThumbnailTile(asset)),
+        overrides: [
+          av2LibraryVideosProvider.overrideWith((ref) async => {'v1'}),
+          av2DecoderInstalledProvider.overrideWith((ref) => ref.watch(_installed)),
+          generatedVersionsProvider.overrideWith((ref) async => {}),
+          isPanoramaProvider(asset).overrideWith((ref) => false),
+        ],
+        expectSettle: false,
+      );
+      await tester.pump();
+      // The thumbnail itself does not load in a test
+      tester.takeException();
+      return ProviderScope.containerOf(tester.element(find.byType(ThumbnailTile)));
+    }
+
+    ImageProvider? imageOf(WidgetTester tester) => tester.widget<Thumbnail>(find.byType(Thumbnail)).imageProvider;
+
+    testWidgets('is asked again once the AV2 decoder is installed, and the tile it had leaves the image cache', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        final container = await pumpTile(tester, _video('v1', 'clip.ivf'));
+        final before = imageOf(tester)!;
+        final cache = PaintingBinding.instance.imageCache;
+        cache.putIfAbsent(before, _Kept.new);
+        expect(cache.containsKey(before), isTrue, reason: 'the neutral tile the image API gave, kept by the cache');
+
+        container.read(_installed.notifier).state = true;
+        await tester.pump();
+        tester.takeException();
+        final after = imageOf(tester)!;
+        expect(after, isNot(before), reason: 'another key: the tile asks the image API again, which grabs a frame');
+        expect(cache.containsKey(before), isFalse, reason: 'the neutral tile is not kept');
+
+        // Taken again by the same tile, the key holds
+        await tester.pump();
+        expect(imageOf(tester), after);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('of another video of the library does not change when the AV2 decoder is installed', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        final container = await pumpTile(tester, _video('v2', 'clip.mp4'));
+        final before = imageOf(tester);
+        container.read(_installed.notifier).state = true;
+        await tester.pump();
+        tester.takeException();
+        expect(imageOf(tester), before);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     });
   });
 }

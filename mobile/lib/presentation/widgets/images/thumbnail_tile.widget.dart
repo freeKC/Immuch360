@@ -129,6 +129,9 @@ class _ThumbnailTileState extends ConsumerState<ThumbnailTile> {
                       remoteType: widget.remoteType,
                       // The thumbnails of a TV are decoded larger than their tile (see tvThumbnailDecodeSize)
                       filterQuality: ref.watch(tvModeProvider) ? FilterQuality.medium : FilterQuality.low,
+                      // Immuch360 Desktop: the tile of an AV2 video is asked again once its decoder is installed
+                      // (lib/desktop/video/av2_badge.dart)
+                      localVariant: CurrentPlatform.isDesktop ? desktopAv2ThumbnailVariant(ref, asset) : null,
                     ),
                     // Placeholderbuilder used to hide indicators on first hero animation, since flightShuttleBuilder isn't called until both source and destination hero exist in widget tree.
                     placeholderBuilder: (context, heroSize, child) {

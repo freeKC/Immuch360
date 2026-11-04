@@ -26,12 +26,18 @@ class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
   /// thumbnails being made by the decoder that refuses it
   final bool decodeInDart;
 
+  /// What else tells two renders of the same file apart, null for nearly every thumbnail. Immuch360 Desktop: the tile
+  /// of an AV2 video before and after its decoder is installed, the image cache keeping the tile without a frame
+  /// otherwise (lib/desktop/video/av2_badge.dart)
+  final Object? variant;
+
   const LocalThumbProvider({
     required this.id,
     required this.assetType,
     this.checksum,
     this.size = kThumbnailResolution,
     this.decodeInDart = false,
+    this.variant,
   });
 
   @override
@@ -66,13 +72,16 @@ class LocalThumbProvider extends ImageProvider<LocalThumbProvider> {
       return true;
     }
     if (other is LocalThumbProvider) {
-      return id == other.id && checksum == other.checksum && decodeInDart == other.decodeInDart;
+      return id == other.id &&
+          checksum == other.checksum &&
+          decodeInDart == other.decodeInDart &&
+          variant == other.variant;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hash(id, checksum, decodeInDart);
+  int get hashCode => Object.hash(id, checksum, decodeInDart, variant);
 }
 
 class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {

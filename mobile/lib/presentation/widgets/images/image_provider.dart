@@ -249,6 +249,9 @@ ImageProvider? getThumbnailImageProvider(
   /// The picture of the server for a remote asset: its thumbnail, or its preview for the larger tiles of a TV.
   AssetMediaSize remoteType = AssetMediaSize.thumbnail,
   bool edited = true,
+
+  /// What else keys the thumbnail of the file of the device (LocalThumbProvider.variant)
+  Object? localVariant,
 }) {
   if (_showsFromDevice(asset)) {
     final id = asset is LocalAsset ? asset.id : (asset as RemoteAsset).localId!;
@@ -258,6 +261,7 @@ ImageProvider? getThumbnailImageProvider(
       assetType: asset.type,
       checksum: asset.checksum,
       decodeInDart: photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
+      variant: localVariant,
     );
   }
 

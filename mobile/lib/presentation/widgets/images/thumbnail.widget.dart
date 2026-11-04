@@ -56,6 +56,9 @@ class Thumbnail extends StatefulWidget {
 
     /// The picture of the server for a remote asset: its thumbnail, or its preview for the larger tiles of a TV.
     AssetMediaSize remoteType = AssetMediaSize.thumbnail,
+
+    /// What else keys the thumbnail of the file of the device (LocalThumbProvider.variant)
+    Object? localVariant,
     super.key,
   }) : thumbhashProvider = switch (asset) {
          RemoteAsset() when asset.thumbHash != null && asset.localId == null => ThumbHashProvider(
@@ -65,7 +68,13 @@ class Thumbnail extends StatefulWidget {
        },
        imageProvider = asset == null
            ? null
-           : getThumbnailImageProvider(asset, size: size, remoteSize: remoteSize, remoteType: remoteType);
+           : getThumbnailImageProvider(
+               asset,
+               size: size,
+               remoteSize: remoteSize,
+               remoteType: remoteType,
+               localVariant: localVariant,
+             );
 
   @override
   State<Thumbnail> createState() => _ThumbnailState();
