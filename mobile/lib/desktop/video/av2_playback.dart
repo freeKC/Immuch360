@@ -677,11 +677,19 @@ const av2SeekSettle = Duration(seconds: 2);
 
 /// How long after another companion of the app stopped decoding (a frame grab, a probe) the lines of a player's
 /// companion are still left out: the run a line reports may have begun while the two shared the processor (review
-/// of lot AD6, m2)
+/// of lot AD6, m2). This holds for the short runs (the cache filling, a seek, playback at the pace of the video). A
+/// decoder slower than the video (a 4K) decodes in one long run, whose speed the companion updates from its start
+/// (serve.c, run_picture): when a grab or a probe decoded at that start, the lines taken after this window still carry
+/// that shared part (about a tenth 3 s after, less later) and are kept. The effect on the verdict is small (a format
+/// too slow stays so); a time of the decoder alone on the stat line (protocol 2) would settle it (review of lot
+/// AD11, m3)
 const av2QuietBeforeMeasure = Duration(seconds: 2);
 
-/// How long a frame grab waits at most while the player's companion takes its first measures: a player that never
-/// measures (paused at once, a video of a second) holds the grabs no longer
+/// How long the grabs of frames wait at most, from the open of a player, while its companion takes its first measures.
+/// The hold is the player's, not each grab's: once it ran out, the grabs that follow go at once, and a player whose
+/// companion served and stopped (a short video that ended and stays open) holds none, so that a player that never
+/// settles (paused at once, a companion that times no run) delays the video tiles once, not each of them (review of
+/// lot AD11, m1)
 const av2ThumbnailHold = Duration(seconds: 8);
 
 /// The median of [values], not empty: the mean of the two middle ones for an even count
@@ -1412,6 +1420,7 @@ class Av2Playbacks {
     this.parentPid,
     this.bridge,
     this.threads,
+    this.thumbnailHold = av2ThumbnailHold,
   });
 
   /// The app's, once the providers made it (desktop_video_view.dart); the thumbnails of the library and of the shares
@@ -1442,6 +1451,12 @@ class Av2Playbacks {
 
   /// The threads of each companion's decoder, dav2d's own choice when null (see [av2ThreadsFrom])
   final int? threads;
+
+  /// How long the grabs wait for the measures of a player, from its open ([av2ThumbnailHold]; shorter in the tests)
+  final Duration thumbnailHold;
+
+  /// When the hold of each player ends, on [_clock]: its open plus [thumbnailHold]
+  final _holdEnds = Expando<Duration>('hold of the grabs');
 
   final _sessions = <String, Av2Session>{};
   final _anyway = <String>{};
@@ -1478,14 +1493,17 @@ class Av2Playbacks {
 
   void _otherEnded() => _otherEndedAt = _clock.elapsed;
 
-  /// Waits while the companion of the player takes its first measures (its speed not settled), [av2ThumbnailHold] at
-  /// most: a frame grab would decode beside it, and the speed shown and kept would be that of a shared computer
+  /// Waits while the companion of the player takes its first measures (its speed not settled), until the hold of that
+  /// player ends ([thumbnailHold] from its open): a frame grab would decode beside it, and the speed shown and kept
+  /// would be that of a shared computer. A player whose companion served and serves no more (its video ended) holds
+  /// nothing: no measure comes from it
   Future<void> _afterPlayerMeasures() async {
-    final deadline = _clock.elapsed + av2ThumbnailHold;
     while (true) {
       final player = _playing.value;
-      final left = deadline - _clock.elapsed;
-      if (player == null || player.measureSettled || !player.isRunning || left <= Duration.zero) {
+      final stat = player?.stat.value;
+      final ended = stat != null && !stat.serving && stat.decoded > 0;
+      final left = player == null ? Duration.zero : (_holdEnds[player] ?? Duration.zero) - _clock.elapsed;
+      if (player == null || player.measureSettled || !player.isRunning || ended || left <= Duration.zero) {
         return;
       }
       final changed = Completer<void>();
@@ -1608,6 +1626,7 @@ class Av2Playbacks {
       _thumbnails.add(url);
     } else {
       session.stat.addListener(() => _measureOnce(session));
+      _holdEnds[session] = since + thumbnailHold;
       _playing.value = session;
     }
     return url;

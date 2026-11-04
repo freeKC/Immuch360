@@ -879,6 +879,70 @@ void main() {
       await grabbing;
     });
 
+    // Review of lot AD11, m1: the hold was taken anew by each grab, so that behind a player that never settles (a
+    // video paused at once, a short one that ended and stays open) each grab waited the whole hold, one after the
+    // other (8008 and 8009 ms on ai1), and every video tile queued behind them with it
+    group('a player that never settles its measure', () {
+      const hold = Duration(seconds: 2);
+
+      Future<(Av2Playbacks, ScriptedAv2Runner, FakeAv2ServeProcess, Stopwatch)> playing() async {
+        final runner = ScriptedAv2Runner();
+        final playbacks = Av2Playbacks(
+          companion: () async => (program: 'immuch360-av2', launcher: null),
+          runner: (_) => runner,
+          enabled: () => true,
+          decoderVersion: 'test',
+          thumbnailHold: hold,
+        );
+        addTearDown(playbacks.releaseAll);
+        final opened = Stopwatch()..start();
+        final opening = playbacks.open(video());
+        await _until(() => runner.serves.isNotEmpty);
+        final player = runner.serves.single..say(av2ListeningLine);
+        await opening;
+        return (playbacks, runner, player, opened);
+      }
+
+      /// A grab of [path] as the thumbnails ask it, one at a time: when its companion starts, from [clock]
+      Future<Duration> grab(Av2Playbacks playbacks, ScriptedAv2Runner runner, Stopwatch clock, String path) async {
+        final serves = runner.serves.length;
+        final grabbing = playbacks.open(video(path), forThumbnail: true);
+        await _until(() => runner.serves.length == serves + 1, timeout: const Duration(seconds: 20));
+        final started = clock.elapsed;
+        runner.serves.last.say(av2ListeningLine);
+        await playbacks.release(await grabbing);
+        return started;
+      }
+
+      test('holds the grabs ${hold.inSeconds} s from its open, not each of them: the next grab goes at once', () async {
+        final (playbacks, runner, player, opened) = await playing();
+        // Paused at once: the companion serves, decodes nothing more, measures nothing
+        player.say('stat decoded=4 served=2 fps=0.0 simd=avx2 gen=1 frame=2 serving=1');
+        await _until(() => playbacks.playing.value?.stat.value != null);
+
+        final first = await grab(playbacks, runner, opened, '/clips/one.ivf');
+        expect(first, greaterThanOrEqualTo(hold), reason: 'the first grab waits out the hold of the player');
+        final asked = opened.elapsed;
+        final second = await grab(playbacks, runner, opened, '/clips/two.ivf');
+        expect(second - asked, lessThan(hold ~/ 2), reason: 'the hold of the player ran out with the first grab');
+        final third = opened.elapsed;
+        expect(await grab(playbacks, runner, opened, '/clips/three.ivf') - third, lessThan(hold ~/ 2));
+      }, timeout: const Timeout(Duration(seconds: 60)));
+
+      test('that served and stopped (a short video that ended and stays open) holds no grab', () async {
+        final (playbacks, runner, player, opened) = await playing();
+        player.say('stat decoded=12 served=12 fps=0.0 simd=avx2 gen=1 frame=12 serving=0');
+        await _until(() => playbacks.playing.value?.stat.value != null);
+        final asked = opened.elapsed;
+        final started = await grab(playbacks, runner, opened, '/clips/one.ivf');
+        expect(
+          started - asked,
+          lessThan(hold ~/ 2),
+          reason: 'no measure can come from a companion that serves nothing',
+        );
+      }, timeout: const Timeout(Duration(seconds: 60)));
+    });
+
     test('the speed shown and the measure kept leave out the lines taken while another companion decodes', () async {
       final runner = ScriptedAv2Runner();
       final kept = <Av2SpeedMeasure>[];
