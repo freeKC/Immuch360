@@ -220,8 +220,9 @@ abstract interface class SplatSaveServer {
   /// The assets whose original file name holds [name], the newest first, trashed ones too
   Future<List<SplatServerAsset>> searchByName(String name, {int size = 50});
 
-  /// The first [length] bytes of the original of [assetId]; null when they could not be read
-  Future<Uint8List?> head(String assetId, int length);
+  /// The first [length] bytes of the original of [assetId]; null when they could not be read in time, or once
+  /// [cancelled] says so. Whatever the server sends past them is not read.
+  Future<Uint8List?> head(String assetId, int length, {bool Function()? cancelled});
 
   Future<SplatBulkAnswer> bulkCheck(String id, String sha1);
 
@@ -768,7 +769,7 @@ class SplatSaveJob {
     ];
     for (final asset in ordered.take(splatSaveHeadReads)) {
       _check();
-      final head = await _server.head(asset.id, splatPhotoHeadBytes);
+      final head = await _server.head(asset.id, splatPhotoHeadBytes, cancelled: () => isCancelled);
       final xmp = head == null ? null : SplatPhotoXmp.findIn(head);
       if (xmp == null) {
         continue;

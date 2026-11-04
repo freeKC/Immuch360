@@ -43,9 +43,16 @@ class FakeSplatSaveServer implements SplatSaveServer {
     ];
   }
 
+  /// Called by each head read with its cancel, before it answers
+  Future<void> Function(bool Function()? cancelled)? onHead;
+
   @override
-  Future<Uint8List?> head(String assetId, int length) async {
+  Future<Uint8List?> head(String assetId, int length, {bool Function()? cancelled}) async {
     calls.add('head $assetId');
+    await onHead?.call(cancelled);
+    if (cancelled?.call() ?? false) {
+      return null;
+    }
     final bytes = assets[assetId]?.bytes;
     return bytes == null ? null : Uint8List.sublistView(bytes, 0, bytes.length < length ? bytes.length : length);
   }

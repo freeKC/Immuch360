@@ -96,7 +96,7 @@ class _HttpServer implements SplatSaveServer {
   }
 
   @override
-  Future<Uint8List?> head(String assetId, int length) async {
+  Future<Uint8List?> head(String assetId, int length, {bool Function()? cancelled}) async {
     final request = http.Request('GET', splatPhotoOriginalUri(url, assetId))
       ..headers.addAll(_headers)
       ..headers['range'] = 'bytes=0-${length - 1}';

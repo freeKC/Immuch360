@@ -1,6 +1,10 @@
 // The Immich server a SplatSaveJob saves to (plan of 3 November 2026, section 6.3), through the app's API client, its
 // upload service and its shared HTTP client: the version, an asset, the search by original file name, the head of an
 // original (one range request, without the edited parameter), bulk-upload-check, the upload and the album.
+//
+// The head is read by httpRangeReader, whose transfer stops by an abort once the bytes came, past the time limit or on
+// a cancel: the client of Android (package:ok_http) reads on to the end of a body nobody listens to, and a server that
+// ignores the range, as FreeKC's does, would send each whole splat photo read (review of 4 November 2026).
 
 import 'dart:async';
 import 'dart:io';
@@ -10,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/services/splat_photo/splat_photo_probe.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/repositories/upload.repository.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -22,6 +27,7 @@ class ImmichSplatSaveServer implements SplatSaveServer {
     required this._uploads,
     this._client,
     Map<String, String> Function()? headers,
+    this.headTimeout = const Duration(seconds: 15),
   }) : _headers = headers ?? ApiService.getRequestHeaders;
 
   /// The server's endpoint, "https://photos.example/api"
@@ -31,6 +37,9 @@ class ImmichSplatSaveServer implements SplatSaveServer {
   final ForegroundUploadService _uploads;
   final http.Client? _client;
   final Map<String, String> Function() _headers;
+
+  /// The longest a head read takes, as the probe of the splat photos gives its own
+  final Duration headTimeout;
 
   http.Client get _http => _client ?? NetworkRepository.client;
 
@@ -99,37 +108,21 @@ class ImmichSplatSaveServer implements SplatSaveServer {
   }
 
   @override
-  Future<Uint8List?> head(String assetId, int length) async {
+  Future<Uint8List?> head(String assetId, int length, {bool Function()? cancelled}) async {
+    // Past its time the read is dropped, and its transfer stopped as on a cancel
+    var over = false;
+    final read = httpRangeReader(
+      _http,
+      splatPhotoOriginalUri(url, assetId),
+      headers: _headers(),
+      cancelled: () => over || (cancelled?.call() ?? false),
+    );
     try {
-      final request = http.Request('GET', splatPhotoOriginalUri(url, assetId))
-        ..headers.addAll(_headers())
-        ..headers['range'] = 'bytes=0-${length - 1}';
-      final response = await _http.send(request);
-      if (response.statusCode != 200 && response.statusCode != 206) {
-        await response.stream.drain<void>();
-        return null;
-      }
-      // A 200 sends the whole file: only its first bytes are read, then the answer is dropped
-      final builder = BytesBuilder(copy: false);
-      final done = Completer<void>();
-      late StreamSubscription<List<int>> subscription;
-      subscription = response.stream.listen(
-        (chunk) {
-          builder.add(chunk);
-          if (builder.length >= length && !done.isCompleted) {
-            done.complete();
-            unawaited(subscription.cancel());
-          }
-        },
-        onError: (Object error) => done.isCompleted ? null : done.completeError(error),
-        onDone: () => done.isCompleted ? null : done.complete(),
-        cancelOnError: true,
-      );
-      await done.future;
-      final bytes = builder.takeBytes();
-      return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
+      return await read(0, length).timeout(headTimeout);
     } catch (_) {
       return null;
+    } finally {
+      over = true;
     }
   }
 

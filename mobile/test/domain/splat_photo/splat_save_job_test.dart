@@ -3,6 +3,7 @@
 // duplicate, "already there" from the record and from the heads of the splat photos of the server, a PLY converted
 // as the maker converts it, the album made once, and the failures in the words of the job.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -170,6 +171,28 @@ void main() {
     expect(again.state, SplatSaveState.alreadyThere);
     expect(again.assetId, first.assetId);
     expect(server.calls, ['search _splat', 'head ${first.assetId}']);
+  });
+
+  test('a cancel during a head read of the server reaches the read, which stops', () async {
+    final spz = scene('axes_v2.spz');
+    await jobOf(requestOf(spz)).run();
+    File('${dir.path}/support/splat_saves.json').deleteSync();
+    final job = jobOf(requestOf(spz));
+    var seen = false;
+    server.onHead = (cancelled) async {
+      unawaited(Future<void>.delayed(const Duration(milliseconds: 20), job.cancel));
+      // A read that would hang without the cancel
+      for (var i = 0; i < 200 && !(cancelled?.call() ?? false); i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+      seen = cancelled?.call() ?? false;
+    };
+    final watch = Stopwatch()..start();
+    final status = await job.run();
+    expect(seen, isTrue, reason: 'the job gives its cancel to the read');
+    expect(status.state, SplatSaveState.cancelled);
+    expect(watch.elapsedMilliseconds, lessThan(1500));
+    expect(server.uploads, hasLength(1), reason: 'the first save only');
   });
 
   test(
